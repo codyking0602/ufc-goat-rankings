@@ -39,12 +39,13 @@ jobs:
           from pathlib import Path
           index = Path('_site/index.html')
           marker = (
-              '  <script src="assets/compare-profiles.js?v=profiles-20260630e"></script>\n'
-              '  <script src="assets/compare-profile-enhancements-v1-1.js?v=profile-enhancements-v1-1-20260630b"></script>\n'
-              '  <script src="assets/compare-title-prime-v1-2.js?v=title-prime-v1-2-20260630a"></script>\n'
-              '  <script src="assets/compare-fight-ledger-v1-2.js?v=fight-ledger-v1-2-20260630a"></script>\n'
-              '  <script src="assets/compare-mode.js?v=special-matchups-20260630e"></script>\n'
-              '  <script src="assets/compare-engine-v1-2.js?v=compare-engine-v1-2-20260630a"></script>\n'
+              '  <script src="assets/compare-profiles.js?v=profiles-20260630f"></script>\n'
+              '  <script src="assets/compare-profile-enhancements-v1-1.js?v=profile-enhancements-v1-1-20260630c"></script>\n'
+              '  <script src="assets/compare-title-prime-v1-2.js?v=title-prime-v1-2-20260630b"></script>\n'
+              '  <script src="assets/compare-legacy-stats-v1-3.js?v=legacy-stats-v1-3-20260630a"></script>\n'
+              '  <script src="assets/compare-fight-ledger-v1-2.js?v=fight-ledger-v1-2-20260630b"></script>\n'
+              '  <script src="assets/compare-mode.js?v=special-matchups-20260630f"></script>\n'
+              '  <script src="assets/compare-engine-v1-3.js?v=compare-engine-v1-3-20260630a"></script>\n'
           )
           html = index.read_text(encoding='utf-8')
           # Remove any older injected Compare Mode scripts so cache-busting versions always win.
@@ -53,11 +54,13 @@ jobs:
               if 'assets/compare-profiles.js' not in line
               and 'assets/compare-profile-enhancements-v1-1.js' not in line
               and 'assets/compare-title-prime-v1-2.js' not in line
+              and 'assets/compare-legacy-stats-v1-3.js' not in line
               and 'assets/compare-fight-ledger-v1-2.js' not in line
               and 'assets/compare-mode.js' not in line
               and 'assets/compare-angle-engine-v1.js' not in line
               and 'assets/compare-angle-engine-v1-1.js' not in line
               and 'assets/compare-engine-v1-2.js' not in line
+              and 'assets/compare-engine-v1-3.js' not in line
           ]
           html = '\n'.join(lines)
           html = html.replace('</body>', marker + '</body>')
