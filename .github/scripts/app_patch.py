@@ -52,17 +52,17 @@ s = s.replace('.category-card::before { content:""; position:absolute; inset:0 a
 s = s.replace('.category-chip small { display:block; margin-top:3px; color:#22c55e;', '.category-chip small { display:block; margin-top:3px; color:var(--tier-color, #35a86b);')
 s = s.replace('.tier-pill { display:inline-flex; margin-top:10px; border:1px solid rgba(34,197,94,.52); background:rgba(34,197,94,.10); color:#22c55e;', '.tier-pill { display:inline-flex; margin-top:10px; border:1px solid color-mix(in srgb, var(--tier-color, var(--accent)) 52%, transparent); background:color-mix(in srgb, var(--tier-color, var(--accent)) 12%, transparent); color:var(--tier-color, var(--accent));')
 
-# Replace category JS block so categories are percentiles, include Loss Context, and detail copy is app-readable.
+# Replace the full category JS block with more public-facing copy.
 start = s.find('const CATEGORY_INFO = [')
 end = s.find('function snapshotGrid', start)
 if start == -1 or end == -1:
     raise SystemExit('Could not find category JS block')
 new_block = r'''const CATEGORY_INFO = [
-  ["championship", "Title Reign", "Title resume and championship control"],
-  ["opponentQuality", "Quality Wins", "Quality of wins and opponent context"],
-  ["primeDominance", "Prime Dominance", "Peak separation and round-by-round control"],
-  ["longevity", "Elite Longevity", "Active elite years, not just calendar span"],
-  ["penalty", "Loss Context", "How clean the UFC loss record is after timing/opponent/finish context"]
+  ["championship", "Title Reign", "Championship résumé: title-fight wins, reign strength, and control of the division"],
+  ["opponentQuality", "Quality Wins", "Who he beat, when he beat them, and how strong the division was"],
+  ["primeDominance", "Prime Dominance", "How clearly he separated from opponents at his best"],
+  ["longevity", "Elite Longevity", "How long he stayed elite in the UFC, not just calendar span"],
+  ["penalty", "Loss Context", "How much UFC losses actually hurt the résumé after context"]
 ];
 function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
 function ordinal(n){ const s=["th","st","nd","rd"], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
@@ -117,11 +117,11 @@ function categoryCards(f){
 }
 function titleFightWinsFromNotes(title){
   const match = String(title?.notes || '').match(/Total title fight wins = ([0-9.]+)/);
-  return match ? match[1] : null;
+  return match ? match[1].replace(/\.0$/, '') : null;
 }
 function cleanOpponentName(name){ return String(name || '').replace(/\s+\d+$/, '').trim(); }
 function compactOpponentNames(opps, count=5){
-  if(!opps.length) return 'Detailed opponent rows are not loaded yet.';
+  if(!opps.length) return 'Opponent detail is still being loaded for this fighter.';
   const sorted = [...opps].sort((a,b)=>Number(b.credit||0)-Number(a.credit||0));
   const picked = [];
   const counts = {};
@@ -134,11 +134,11 @@ function compactOpponentNames(opps, count=5){
   return picked.slice(0,count).map(n => counts[n] > 1 ? `${n} x${counts[n]}` : n).join(', ');
 }
 function compactOpponentContext(opps, count=3){
-  if(!opps.length) return 'Opponent context still needs more data.';
+  if(!opps.length) return 'More opponent detail will be added here.';
   return [...opps]
     .sort((a,b)=>Number(b.credit||0)-Number(a.credit||0))
     .slice(0,count)
-    .map(o => `${cleanOpponentName(o.opponent)}${o.context ? ` — ${o.context}` : ''}`)
+    .map(o => `${cleanOpponentName(o.opponent)} — ${o.context || 'key UFC win'}`)
     .join(' · ');
 }
 function rawCreditTotal(opps){
@@ -151,10 +151,16 @@ function lossPenaltyValue(f){
 }
 function titleMix(title){
   const parts = [];
-  if(Number(title.normalTitleWins || 0)) parts.push(`${title.normalTitleWins} normal`);
+  if(Number(title.normalTitleWins || 0)) parts.push(`${title.normalTitleWins} regular title wins`);
   if(Number(title.interimTitleWins || 0)) parts.push(`${title.interimTitleWins} interim`);
-  if(Number(title.vacantUndisputedWins || 0)) parts.push(`${title.vacantUndisputedWins} vacant`);
-  return parts.length ? parts.join(' · ') : 'No UFC title-win mix loaded';
+  if(Number(title.vacantUndisputedWins || 0)) parts.push(`${title.vacantUndisputedWins} vacant-title win`);
+  return parts.length ? parts.join(' · ') : 'No UFC title wins loaded';
+}
+function ufcRecordLine(f){
+  if(f.ufcRecord) return f.ufcRecord;
+  if(f.record) return f.record;
+  if(f.ufcWins !== undefined && f.ufcLosses !== undefined) return `${f.ufcWins}-${f.ufcLosses}`;
+  return 'Record detail loaded in résumé snapshot';
 }
 function categoryEvidenceItems(f, key){
   const title = f.title || {};
@@ -164,30 +170,30 @@ function categoryEvidenceItems(f, key){
   const items = [];
   if(key === 'championship'){
     const tfw = titleFightWinsFromNotes(title);
-    if(tfw) items.push(['Title-fight wins', tfw]);
-    if(title.adjustedTitleWins) items.push(['Adjusted title wins', Number(title.adjustedTitleWins).toFixed(1)]);
-    items.push(['Title mix', titleMix(title)]);
-    items.push(['Championship read', 'Rewards sustained title-level control, not just winning a belt once.']);
+    if(tfw) items.push(['UFC title-fight wins', tfw]);
+    if(title.adjustedTitleWins) items.push(['Adjusted title credit', `${Number(title.adjustedTitleWins).toFixed(1)} title-win value`]);
+    items.push(['Title résumé type', titleMix(title)]);
+    items.push(['Plain-English read', 'This rewards actually ruling at UFC championship level, not just owning a belt once.']);
   } else if(key === 'opponentQuality'){
-    items.push(['Key wins', compactOpponentNames(opps, 5)]);
-    if(rawCreditTotal(opps)) items.push(['Elite-win depth', rawCreditTotal(opps)]);
-    items.push(['Best context', compactOpponentContext(opps, 3)]);
-    items.push(['Judgment call', 'Prime timing and division strength decide how much each name is worth.']);
+    items.push(['Key UFC wins', compactOpponentNames(opps, 5)]);
+    if(rawCreditTotal(opps)) items.push(['Win-depth score', rawCreditTotal(opps)]);
+    items.push(['Best win context', compactOpponentContext(opps, 3)]);
+    items.push(['Plain-English read', 'Beating great fighters in their best window counts more than just beating famous names.']);
   } else if(key === 'primeDominance'){
     items.push(['Finish rate', pct(f.finishRatePct)]);
-    items.push(['Prime finish losses', `${f.timesFinishedPrime ?? 0}`]);
-    if(rounds.length) items.push(['Round-control sample', `${rounds.length} UFC fights tracked`]);
-    items.push(['Dominance read', 'Rewards clean separation: control, danger, and rarely being broken at peak.']);
+    items.push(['Finished at peak', `${f.timesFinishedPrime ?? 0} time${Number(f.timesFinishedPrime||0) === 1 ? '' : 's'}`]);
+    if(rounds.length) items.push(['Control sample', `${rounds.length} UFC fights tracked`]);
+    items.push(['Plain-English read', 'This asks how much opponents could really do to him when he was at his best.']);
   } else if(key === 'longevity'){
     items.push(['Active elite years', fmt(f.activeEliteYears)]);
     if(f.primeStart || f.primeEnd) items.push(['Prime window', `${f.primeStart || '—'} to ${f.primeEnd || '—'}`]);
-    items.push(['Gap rule', 'Long inactivity gaps are capped so calendar span does not overrate a resume.']);
-    items.push(['Longevity read', 'Rewards sustained elite UFC relevance, not late-career volume.']);
+    items.push(['Gap handling', 'Inactive gaps are limited so calendar span does not create fake longevity.']);
+    items.push(['Plain-English read', 'This rewards staying elite in real UFC fights, not simply being around longer.']);
   } else if(key === 'penalty'){
-    items.push(['Penalty applied', penalty === 0 ? 'None' : penalty.toFixed(2)]);
-    items.push(['UFC losses', `${f.ufcLosses ?? '—'}`]);
-    items.push(['Finished in prime', `${f.timesFinishedPrime ?? 0}`]);
-    items.push(['Loss read', f.notes || 'Losses are weighted by timing, opponent quality, finish context, and division context.']);
+    items.push(['UFC record context', ufcRecordLine(f)]);
+    items.push(['Resume impact from losses', penalty === 0 ? 'None in the current model' : `Small/moderate hit (${penalty.toFixed(2)})`]);
+    items.push(['Finished at peak', `${f.timesFinishedPrime ?? 0} time${Number(f.timesFinishedPrime||0) === 1 ? '' : 's'}`]);
+    items.push(['Important context', f.notes || 'Losses are weighed by timing, opponent quality, and whether the fighter was finished.']);
   }
   return items.filter(([,v]) => v !== null && v !== undefined && String(v).trim() !== '' && String(v).trim() !== '— to —');
 }
@@ -199,21 +205,21 @@ function categoryLogicSentence(f, key){
   if(key === 'championship'){
     const adj = title.adjustedTitleWins ? Number(title.adjustedTitleWins).toFixed(1) : null;
     const tfw = titleFightWinsFromNotes(title);
-    if(rank <= 3) return `${f.fighter} has a top-tier UFC championship case: ${tfw ? `${tfw} title-fight wins` : 'high title-fight success'}${adj ? ` and ${adj} adjusted title wins` : ''}. This is the division-rule part of the resume.`;
-    return `${f.fighter}'s title case is strong, but this category is where long-reigning UFC champions separate. ${adj ? `${adj} adjusted title wins` : 'The current title total'} keeps him in the mix without putting him at the very top yet.`;
+    if(rank <= 3) return `${f.fighter} is at the top of this category because his UFC title résumé has rare volume and staying power${tfw ? `: ${tfw} UFC title-fight wins` : ''}${adj ? ` and ${adj} adjusted title-win credit` : ''}.`;
+    return `${f.fighter} scores well here, but this category favors fighters who stacked title-fight wins over a longer UFC reign.`;
   }
   if(key === 'opponentQuality'){
-    return `${f.fighter}'s quality-wins case is built around ${compactOpponentNames(opps, 5)}. The model gives the most credit when the opponent was elite, in-form, and in the right division context.`;
+    return `${f.fighter}'s quality-wins case is built around ${compactOpponentNames(opps, 5)}. This category is about who he beat, when he beat them, and whether the division context made those wins harder.`;
   }
   if(key === 'primeDominance'){
-    return `${f.fighter}'s prime score is about how clearly he separated at his best: ${pct(f.finishRatePct)} finish rate, control/round data, prime record context, and how rarely opponents could damage or finish him.`;
+    return `${f.fighter}'s prime score measures how dominant he looked at his best: finishing threat, round control, prime record, and whether opponents had real moments of success.`;
   }
   if(key === 'longevity'){
-    return `${f.fighter}'s longevity score counts ${fmt(f.activeEliteYears)} active elite UFC years. It does not hand out extra credit for inactive gaps or post-prime appearances.`;
+    return `${f.fighter}'s longevity score counts ${fmt(f.activeEliteYears)} active elite UFC years. It is not just a calendar-span award.`;
   }
   if(key === 'penalty'){
-    if(penalty === 0) return `${f.fighter}'s loss context is nearly spotless in the UFC-only model: no scored UFC loss penalty, with weird or technical results handled by context.`;
-    return `${f.fighter}'s loss context is still strong, but not perfect. The model applies ${penalty.toFixed(2)} points of penalty after weighing timing, opponent quality, and finish context.`;
+    if(penalty === 0) return `${f.fighter}'s loss résumé is extremely clean in this UFC-only model. Official weirdness still appears in the record, but it is not treated the same as a real competitive loss.`;
+    return `${f.fighter}'s loss résumé is still strong, but not spotless. The model looks at when the loss happened, who it was against, and whether he was finished.`;
   }
   return '';
 }
@@ -221,24 +227,28 @@ function whyNotHigher(f, key){
   const rank = categoryRank(f, key);
   const penalty = lossPenaltyValue(f);
   if(key === 'championship'){
-    if(rank <= 3) return 'Only tiny separation exists at the very top; this is already a championship GOAT-tier case.';
+    if(rank <= 1) return 'This is basically the ceiling for UFC championship résumé.';
+    if(rank <= 3) return 'Already elite; only tiny separation exists among the best championship cases.';
     return 'Needs more title-fight volume or longer championship control to catch the longest UFC reigns.';
   }
   if(key === 'opponentQuality'){
+    if(rank <= 1) return 'This is the benchmark quality-wins case in the current board.';
     if(rank <= 3) return 'Already near the ceiling; only the deepest UFC-only win ledgers can challenge it.';
-    return 'Still trails the very deepest UFC-only elite-win resumes in total depth and prime-name volume.';
+    return 'The very top names have either more elite wins, better prime timing, or stronger division context.';
   }
   if(key === 'primeDominance'){
+    if(rank <= 1) return 'This is the current peak-dominance benchmark.';
     if(rank <= 3) return 'Already close to the ceiling; only the cleanest peak-control cases compare.';
     return 'Needs a longer or cleaner peak sample to pass the all-time dominance outliers.';
   }
   if(key === 'longevity'){
+    if(rank <= 1) return 'This is the current active-elite longevity benchmark.';
     if(rank <= 3) return 'Already a top longevity case; only small model differences separate the leaders.';
-    return 'Needs more active elite UFC years to match the longest-running championship resumes.';
+    return 'Needs more active elite UFC years to match the longest-running championship résumés.';
   }
   if(key === 'penalty'){
-    if(penalty === 0) return 'No real penalty problem here; this is already one of the cleanest UFC loss-context cases.';
-    return 'A counted loss penalty keeps it below cleaner UFC records, even if the loss has context.';
+    if(penalty === 0) return 'No meaningful loss problem here; this is already one of the cleanest UFC loss-context cases.';
+    return 'A counted loss keeps this below cleaner records, even when the loss has understandable context.';
   }
   return '';
 }
@@ -253,7 +263,7 @@ function categoryExplanation(f, key){
   return `<div class="category-explainer ${tier.cls}">
     <div class="category-explainer-kicker">${tier.label} · #${rank || '—'} in category</div>
     <h3>${label}: ${ordinal(pctScore)} percentile</h3>
-    <p><strong>Why this score:</strong> ${categoryLogicSentence(f, key) || description}</p>
+    <p><strong>In plain English:</strong> ${categoryLogicSentence(f, key) || description}</p>
     <div class="category-explainer-grid">
       ${items.map(([k,v])=>`<div class="category-explainer-item"><strong>${k}</strong><small>${v}</small></div>`).join('')}
     </div>
@@ -281,7 +291,7 @@ s = s[:start] + new_block + s[end:]
 
 # Insert explainer into the profile if it is not already present.
 s = s.replace('<p class="profile-copy">${override.oneLiner || `${f.fighter}\\\'s UFC resume is graded across championship success, quality wins, prime dominance, and longevity.`}</p>', '<p class="profile-copy">${override.oneLiner || `${f.fighter}\\\'s UFC resume is graded across championship success, quality wins, prime dominance, and longevity.`}</p><div class="tap-hint">Tap any category card for fighter-specific scoring context.</div>')
-s = s.replace('<div class="category-grid">${categoryCards(f)}</div>', '<div class="category-grid">${categoryCards(f)}</div>\n    <div id="categoryExplanation" class="category-explainer"><h3>Category Breakdown</h3><p>Tap any category to see the fighter-specific scoring logic, key evidence, and why the percentile/rank lands there.</p></div>')
+s = s.replace('<div class="category-grid">${categoryCards(f)}</div>', '<div class="category-grid">${categoryCards(f)}</div>\n    <div id="categoryExplanation" class="category-explainer"><h3>Category Breakdown</h3><p>Tap any category to see what it means, what evidence matters, and why this fighter lands there.</p></div>')
 s = s.replace("  el('drawer').classList.add('open');\n  el('drawer').setAttribute('aria-hidden','false');\n}", "  el('drawer').classList.add('open');\n  el('drawer').setAttribute('aria-hidden','false');\n  const panel = document.querySelector('.drawer-panel');\n  if(panel) panel.scrollTop = 0;\n  attachCategoryExplanations(f);\n}")
 
 # Category chips/meters should read as percentiles.
@@ -328,7 +338,7 @@ s = s.replace("""      <tr><td><strong>Elite Longevity</strong></td><td>Active e
     </tbody></table></div>
     <div class="card"><h3>Division Strength</h3><table class="table"><thead><tr><th>Division/Era</th><th>Multiplier</th><th>Rationale</th></tr></thead><tbody>${divRows}</tbody></table></div>
     <div class="card"><h3>Model Note</h3><p>Loss context is still part of the behind-the-scenes scoring logic, but it is not displayed as a front-end category.</p></div>""", """      <tr><td><strong>Elite Longevity</strong></td><td>Active elite years, not just calendar span.</td></tr>
-      <tr><td><strong>Loss Context</strong></td><td>How clean the UFC loss record is after timing, opponent quality, finish context, and division context.</td></tr>
+      <tr><td><strong>Loss Context</strong></td><td>How much UFC losses actually hurt the résumé after timing, opponent quality, finish context, and division context.</td></tr>
     </tbody></table></div>
     <div class="card"><h3>Division Strength</h3><table class="table"><thead><tr><th>Division/Era</th><th>Multiplier</th><th>Rationale</th></tr></thead><tbody>${divRows}</tbody></table></div>
     <div class="card"><h3>Model Note</h3><p>Overall fighter score remains an OVR. Category cards are percentile-style scores so they read as category standing instead of mini-overalls.</p></div>""")
