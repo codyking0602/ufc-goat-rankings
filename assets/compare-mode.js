@@ -1,15 +1,4 @@
 (function () {
-  const TYPE_LABELS = {
-    blowout: "Blowout comparison",
-    clear_with_counter: "Clear winner, real counterargument",
-    close_split: "Close split debate",
-    peak_vs_resume_split: "Peak vs resume split",
-    same_division_rivalry: "Same-division rivalry",
-    elite_category_tension: "Elite vs elite with category tension",
-    scope_context: "Scope/context issue",
-    star_power_vs_resume: "Star power vs resume"
-  };
-
   const SPECIAL_COMPARISONS = {
     "jon jones|georges st-pierre": "jones_gsp",
     "georges st-pierre|jon jones": "jones_gsp",
@@ -34,7 +23,7 @@
   const CATEGORY_WORDS = {
     championship: "championship case",
     opponentQuality: "win-depth case",
-    primeDominance: "peak-dominance case",
+    primeDominance: "peak argument",
     longevity: "long-term resume",
     penalty: "cleaner record context"
   };
@@ -59,6 +48,10 @@
       if (typeof DISPLAY_OVERRIDES !== "undefined" && DISPLAY_OVERRIDES[name]) return DISPLAY_OVERRIDES[name];
     } catch (e) {}
     return {};
+  }
+
+  function compareProfile(f) {
+    return overrideFor(f.fighter).compareProfile || f.compareProfile || {};
   }
 
   function score(f) {
@@ -94,9 +87,8 @@
   }
 
   function sameDivision(a, b) {
-    const aDivs = [a.primaryDivision, a.secondaryDivision].filter(Boolean).join(" / ").toLowerCase();
     const bDivs = [b.primaryDivision, b.secondaryDivision].filter(Boolean).join(" / ").toLowerCase();
-    if (!aDivs || !bDivs) return false;
+    if (!bDivs) return false;
     return [a.primaryDivision, a.secondaryDivision].filter(Boolean).some(div => bDivs.includes(String(div).toLowerCase()));
   }
 
@@ -138,7 +130,6 @@
     if (gap >= 8 || rank(loser) - rank(winner) >= 14) return "blowout";
     if (sameDivision(a, b) && gap <= 8) return "same_division_rivalry";
     if (gap <= 4 && loserPrime - winnerPrime >= 4 && winnerResume - loserResume >= 4) return "peak_vs_resume_split";
-    if (gap <= 1.5) return "close_split";
     if (gap <= 4) return "close_split";
     return "clear_with_counter";
   }
@@ -150,6 +141,15 @@
       <h3>${escapeHtml(f.fighter)}</h3>
       <p>${escapeHtml(f.ufcRecord || "")}${divLabel ? ` · ${escapeHtml(divLabel)}` : ""}</p>
     </div>`;
+  }
+
+  function firstUseful(items, fallback) {
+    return items.find(x => x && String(x).trim()) || fallback;
+  }
+
+  function fighterHook(f, key, fallback) {
+    const p = compareProfile(f);
+    return firstUseful([p[key], p.shortCase, p.careerSummary], fallback);
   }
 
   function specialCopy(key) {
@@ -170,7 +170,7 @@
         paragraphs: [
           "Usman has the better champion argument. At his best, he looked more controlled, more complete, and more dominant in title fights. His title run had real authority: he shut down contenders, controlled rounds, finished elite opponents, and carried himself like the clear best fighter in the world for that stretch.",
           "Holloway's edge is the bigger overall resume. He has more long-term elite volume, more time proving himself against top-tier names, and a deeper body of work across different phases of his career. He was not always as clean as Usman at the very top, but he kept stacking relevant wins for longer and against a wider range of elite opponents.",
-          "That is what makes this a split debate. Usman peaked higher as champion. Holloway built the slightly greater total resume."
+          "Usman peaked higher as champion. Holloway built the slightly greater total resume."
         ],
         finalTake: "Holloway wins, barely. Usman has the stronger champion/peak argument, but Holloway's longevity, opponent volume, and sustained elite relevance give him the edge in the overall ranking."
       },
@@ -180,7 +180,7 @@
         paragraphs: [
           "Khabib still has the better peak argument. At his best, he was cleaner, more terrifying, and more untouchable. He never lost in the UFC, never really had a bad night, and his final stretch felt like complete separation from the rest of the division.",
           "But Islam has passed him in total resume. The title-run volume is bigger, the elite-win depth is stronger, and he has had more time to prove his championship level against different styles. Khabib's case is built on perfection and dominance. Islam's case is built on a larger body of elite work.",
-          "That is the split: Khabib has the cleaner peak. Islam has the stronger overall ranking case."
+          "Khabib has the cleaner peak. Islam has the stronger overall ranking case."
         ],
         finalTake: "Islam wins. Khabib still owns the peak-dominance argument, but Islam has built the deeper championship resume and now has the stronger total GOAT case in this model."
       },
@@ -190,7 +190,7 @@
         paragraphs: [
           "Holloway has the volume argument. His resume is longer, deeper, and loaded with elite featherweight wins across multiple phases of his career. Max's case is built on durability, activity, elite opponent volume, and staying relevant for years.",
           "But Volkanovski has the separation argument, and in a same-division rivalry, that matters a lot. He did not just edge past Holloway once and disappear. He beat him three times, took the championship from him, defended the era, and left very little doubt by the end of the trilogy.",
-          "In a normal comparison, Holloway's volume keeps it close. In a same-division legacy fight, Volk's head-to-head and championship edge decide it."
+          "Holloway's volume keeps it close. Volk's head-to-head and championship edge decide it."
         ],
         finalTake: "Volkanovski wins. Holloway has the volume argument, but Volk has the cleaner championship case, the head-to-head separation, and the stronger claim as the defining featherweight of their shared era."
       },
@@ -200,7 +200,7 @@
         paragraphs: [
           "Anderson has the bigger aura argument. At his peak, he felt like the most dangerous fighter in the sport. The title reign, the finishes, the creativity, the matrix moments — Anderson's case has a kind of mythology that almost no one else can match.",
           "But DJ has the more complete overall case in this model. His dominance was cleaner, his skill set was more complete, and his championship run had less collapse at the end of the prime window. Anderson's peak was spectacular, but the Weidman losses create real drag because they happened before the model fully moves him into post-prime protection.",
-          "The division-strength adjustment keeps this close. Anderson gets more credit for ruling a larger, historically more familiar division, while DJ's flyweight run gets slightly discounted because the division was thinner. Even with that adjustment, DJ's consistency and cleaner championship resume give him the edge."
+          "Anderson has the bigger aura. DJ has the cleaner, more complete ranking case."
         ],
         finalTake: "Demetrious Johnson wins. Anderson has the bigger aura and the more iconic peak, but DJ has the cleaner, more complete all-time case and fewer penalties pulling down his ranking."
       },
@@ -208,9 +208,9 @@
         type: "scope_context",
         winner: "Jose Aldo",
         paragraphs: [
-          "This is one of the few matchups where the ranking needs a quick scope note. Aldo's WEC run and Cruz's WEC run both matter historically, but this model is scoring the UFC portion of their careers. That matters because both fighters built part of their legend before their divisions were fully established in the UFC.",
+          "Aldo's WEC run and Cruz's WEC run both matter historically, but this model is scoring the UFC portion of their careers. That matters because both fighters built part of their legend before their divisions were fully established in the UFC.",
           "With that boundary set, Aldo has the stronger overall case. He still has enough championship weight, elite wins, and long-term relevance inside the UFC to sit above Cruz. Even after his featherweight reign ended, Aldo kept adding meaningful value by staying competitive with elite opponents and later making a serious bantamweight run.",
-          "Cruz has a real counterargument, but it is harder to score cleanly. At his best, he was a brilliant champion with one of the most unique styles ever. His comeback win over Dillashaw is one of the best legacy wins in UFC history. But the gaps, injuries, and thinner UFC fight volume make his ranking case harder to stack against Aldo's."
+          "Cruz has the incredible comeback win over Dillashaw and one of the most unique styles ever, but the gaps, injuries, and thinner UFC fight volume make his ranking case harder to stack against Aldo's."
         ],
         finalTake: "Aldo wins. Cruz has the incredible comeback story and the more complicated context, but Aldo has the deeper UFC resume, more sustained elite relevance, and the stronger overall ranking case."
       },
@@ -220,7 +220,7 @@
         paragraphs: [
           "Conor has the bigger star-power argument. He changed the business, became the first simultaneous two-division UFC champion, and owns some of the most iconic moments in company history. The Aldo knockout, the Eddie Alvarez performance, the double-champ moment — those are legacy moments that very few fighters can match.",
           "But Usman has the much stronger ranking case. His championship run was longer, cleaner, and more complete. He ruled welterweight with real control, defended the belt repeatedly, and built a deeper title-level resume than Conor.",
-          "That is the difference. Conor's highs are enormous, but his actual ranked resume is shorter and more uneven. He reached a level of fame Usman never touched, but Usman did more of the things this model is designed to reward: sustained championship control, elite consistency, and long-term title relevance."
+          "Conor's highs are enormous, but his actual ranked resume is shorter and more uneven. Usman did more of the things this model rewards: sustained championship control, elite consistency, and long-term title relevance."
         ],
         finalTake: "Usman wins. Conor is the bigger star and the more historically famous fighter, but Usman has the clearly stronger GOAT resume and belongs higher in the ranking."
       },
@@ -230,7 +230,7 @@
         paragraphs: [
           "O'Malley is a high-level modern bantamweight with real star power, dangerous striking, and a legitimate championship moment. This is not a disrespect comparison.",
           "But this is not really a GOAT debate yet. Jones is the all-time benchmark in this model. His championship resume, title-fight volume, elite longevity, and opponent depth are on a completely different level.",
-          "O'Malley can be framed as a great current star, not as someone with an equal all-time argument. The comparison should respect what he is while being honest about what he is not yet."
+          "O'Malley may still add to his case. Jones has already built the standard everyone else is chasing."
         ],
         finalTake: "Jones wins easily. O'Malley may still be building a strong modern bantamweight legacy, but Jones is already the standard."
       }
@@ -244,15 +244,17 @@
     const winnerEdge = bestEdge(winner, loser);
     const loserLane = CATEGORY_WORDS[loserEdge?.key] || "best argument";
     const winnerLane = CATEGORY_WORDS[winnerEdge?.key] || "overall case";
+    const loserPeak = fighterHook(loser, "peak", `${loser.fighter}'s strongest argument is the ${loserLane}.`);
+    const winnerResume = fighterHook(winner, "resume", `${winner.fighter} has the stronger total case, especially through the ${winnerLane}.`);
 
     if (type === "blowout") {
       return {
         type,
         winner: winner.fighter,
         paragraphs: [
-          `${loser.fighter} has a real fighting legacy, but this is not especially close as a ranking comparison. The gap is too big in total score, all-time placement, and overall resume weight.`,
-          `${winner.fighter} has the much stronger total case. The model sees more championship value, more elite relevance, and a deeper all-time resume.`,
-          `This should not force a fake debate. ${loser.fighter} can still be respected without pretending the ranking case is equal.`
+          fighterHook(loser, "shortCase", `${loser.fighter} has a real fighting legacy, but the all-time gap is large here.`),
+          winnerResume,
+          `${winner.fighter}'s ranking case is much more complete: more total resume weight, stronger all-time placement, and a clearer path to the top of this list.`
         ],
         finalTake: `${winner.fighter} wins comfortably. ${loser.fighter} has a case worth respecting, but ${winner.fighter} is clearly higher in this ranking.`
       };
@@ -263,9 +265,9 @@
         type,
         winner: winner.fighter,
         paragraphs: [
-          `${loser.fighter} has a real lane in this debate, especially through the ${loserLane}.`,
-          `But ${winner.fighter} has the cleaner same-division separation. When two fighters overlap by division or era, direct championship separation and divisional control matter more than a normal cross-division comparison.`,
-          `${loser.fighter}'s argument keeps the debate alive, but ${winner.fighter}'s overall placement is stronger.`
+          fighterHook(loser, "resume", `${loser.fighter} has a real argument here, especially through the ${loserLane}.`),
+          fighterHook(winner, "rivalry", `${winner.fighter} has the cleaner same-division separation, which matters when two legacies overlap by division or era.`),
+          `${loser.fighter}'s argument keeps it competitive, but ${winner.fighter}'s overall placement is stronger.`
         ],
         finalTake: `${winner.fighter} wins. ${loser.fighter} has a real argument, but ${winner.fighter} has the stronger same-division ranking case.`
       };
@@ -276,9 +278,9 @@
         type,
         winner: winner.fighter,
         paragraphs: [
-          `${loser.fighter} has the better peak argument. At his best, the case is cleaner and more forceful than the total score alone shows.`,
-          `But ${winner.fighter} has the stronger total resume. The ranking rewards more than the best version of a fighter; it also rewards championship volume, elite wins, longevity, and how complete the case is across the full career window.`,
-          `That is the split: ${loser.fighter} owns the peak lane, but ${winner.fighter} owns the overall resume lane.`
+          loserPeak,
+          winnerResume,
+          `${loser.fighter} owns the peak lane, but ${winner.fighter} owns the overall resume lane.`
         ],
         finalTake: `${winner.fighter} wins. ${loser.fighter} has the better peak argument, but ${winner.fighter} has the stronger total GOAT case in this model.`
       };
@@ -289,9 +291,9 @@
         type,
         winner: winner.fighter,
         paragraphs: [
-          `${loser.fighter} has a very real argument here, especially through the ${loserLane}. This is the kind of comparison where the category strengths point in different directions.`,
-          `${winner.fighter}'s edge is the ${winnerLane}. It is not a blowout; it is a small overall advantage created by how the pieces add up.`,
-          `That is what makes this a close split debate. ${loser.fighter} may win one version of the argument, but ${winner.fighter} wins the full ranking comparison.`
+          fighterHook(loser, "counter", `${loser.fighter} has a very real argument here, especially through the ${loserLane}.`),
+          fighterHook(winner, "edge", `${winner.fighter}'s edge is the ${winnerLane}. It is a small overall advantage created by how the pieces add up.`),
+          `${loser.fighter} may win one version of the argument, but ${winner.fighter} wins the full ranking comparison.`
         ],
         finalTake: `${winner.fighter} wins, barely. ${loser.fighter} has the strongest counterargument, but ${winner.fighter}'s total resume gives him the edge.`
       };
@@ -301,8 +303,8 @@
       type: "clear_with_counter",
       winner: winner.fighter,
       paragraphs: [
-        `${loser.fighter} has a real counterargument, especially through the ${loserLane}. This is not a throwaway comparison. There is a legitimate lane where his case looks cleaner or more impressive.`,
-        `But ${winner.fighter} has the bigger overall case. The ${winnerLane} is stronger, and the total resume gives him clearer separation in this ranking.`,
+        fighterHook(loser, "counter", `${loser.fighter} has a real counterargument, especially through the ${loserLane}.`),
+        fighterHook(winner, "edge", `${winner.fighter} has the bigger overall case. The ${winnerLane} is stronger, and the total resume gives him clearer separation in this ranking.`),
         `${loser.fighter} has the cleaner lane in part of the debate. ${winner.fighter} has the greater total case.`
       ],
       finalTake: `${winner.fighter} wins. ${loser.fighter} has a real counterargument, but ${winner.fighter}'s overall ranking case is stronger.`
@@ -324,14 +326,12 @@
     const a = lookup(fighterA.value);
     const b = lookup(fighterB.value);
     const copy = comparisonCopy(a, b);
-    const typeLabel = TYPE_LABELS[copy.type] || copy.type;
 
     result.classList.add("compare-natural");
     result.innerHTML = `
       ${fighterCard(a)}
       ${fighterCard(b)}
       <article class="card debate-card">
-        <div class="debate-kicker">${escapeHtml(typeLabel)}</div>
         <h3>${escapeHtml(copy.winner)} wins this comparison.</h3>
         ${copy.paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join("")}
         <div class="final-take"><strong>Final take:</strong> ${escapeHtml(copy.finalTake)}</div>
@@ -340,7 +340,7 @@
 
     const compareSection = document.querySelector("#compare .section-title p");
     if (compareSection) {
-      compareSection.textContent = "Pick two fighters and get a natural debate summary. The engine classifies the matchup first, then gives a clear winner.";
+      compareSection.textContent = "Pick two fighters and get a clear debate summary with a winner, the best counterargument, and the deciding edge.";
     }
   }
 
@@ -355,9 +355,8 @@
       .compare-fighter-card p { color:var(--muted); margin:0; line-height:1.45; }
       .compare-fighter-rank { position:absolute; top:14px; right:14px; border:1px solid rgba(250,204,21,.35); background:rgba(250,204,21,.08); color:#fde68a; border-radius:999px; padding:5px 9px; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.04em; }
       .debate-card { grid-column:1 / -1; padding:22px; }
-      .debate-card h3 { margin:4px 0 14px; font-size:30px; line-height:1.05; }
+      .debate-card h3 { margin:0 0 14px; font-size:30px; line-height:1.05; }
       .debate-card p { color:#cbd5e1; line-height:1.62; max-width:940px; }
-      .debate-kicker { display:inline-flex; border:1px solid rgba(249,115,22,.42); background:rgba(249,115,22,.10); color:#fed7aa; border-radius:999px; padding:6px 10px; font-size:11px; font-weight:950; text-transform:uppercase; letter-spacing:.08em; }
       .final-take { margin-top:16px; border-left:4px solid var(--accent2); background:rgba(250,204,21,.08); border-radius:14px; padding:14px 16px; color:#f8fafc; line-height:1.55; }
       .final-take strong { color:var(--accent2); }
       @media (max-width:760px){ .compare-natural { grid-template-columns:1fr; } .debate-card h3 { font-size:24px; } .compare-fighter-card h3 { margin-top:32px; } }
