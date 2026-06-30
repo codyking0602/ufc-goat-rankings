@@ -35,6 +35,15 @@ jobs:
             --exclude='tmp.txt' \
             --exclude='tmp-test.txt' \
             --exclude='assets/fighters/test-binary-as-text.txt'
+          python - <<'PY'
+          from pathlib import Path
+          index = Path('_site/index.html')
+          marker = '  <script src="assets/compare-mode.js?v=natural-compare"></script>\n'
+          html = index.read_text(encoding='utf-8')
+          if 'assets/compare-mode.js' not in html:
+              html = html.replace('</body>', marker + '</body>')
+              index.write_text(html, encoding='utf-8')
+          PY
           find _site -maxdepth 3 -type f | sort
 
       - name: Setup Pages
