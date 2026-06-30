@@ -39,14 +39,17 @@ jobs:
           from pathlib import Path
           index = Path('_site/index.html')
           marker = (
-              '  <script src="assets/compare-profiles.js?v=starter"></script>\n'
-              '  <script src="assets/compare-mode.js?v=natural-compare"></script>\n'
+              '  <script src="assets/compare-profiles.js?v=profiles-20260630a"></script>\n'
+              '  <script src="assets/compare-mode.js?v=usman-cejudo-test-20260630a"></script>\n'
           )
           html = index.read_text(encoding='utf-8')
-          if 'assets/compare-mode.js' not in html:
-              html = html.replace('</body>', marker + '</body>')
-          elif 'assets/compare-profiles.js' not in html:
-              html = html.replace('<script src="assets/compare-mode.js?v=natural-compare"></script>', '<script src="assets/compare-profiles.js?v=starter"></script>\n  <script src="assets/compare-mode.js?v=natural-compare"></script>')
+          # Remove any older injected Compare Mode scripts so cache-busting versions always win.
+          lines = [
+              line for line in html.splitlines()
+              if 'assets/compare-profiles.js' not in line and 'assets/compare-mode.js' not in line
+          ]
+          html = '\n'.join(lines)
+          html = html.replace('</body>', marker + '</body>')
           index.write_text(html, encoding='utf-8')
           PY
           find _site -maxdepth 3 -type f | sort
