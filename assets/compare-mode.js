@@ -160,22 +160,24 @@
       jones_gsp: {
         type: "clear_with_counter",
         winner: "Jon Jones",
+        headline: "Jon Jones wins, but GSP is the cleanest counterargument to the throne.",
         paragraphs: [
-          "GSP has the cleaner argument. His resume is easier to defend: he avenged both losses, controlled his division with consistency, and has fewer weird record-context issues. If someone values polish, professionalism, and opponent quality control, GSP is the strongest counterargument to Jones.",
-          "But Jones has the bigger overall case. He has more championship weight, a longer run at the very top, and more separation across multiple eras. Even with the messy context around his record, Jones' total resume is just larger. He was elite for longer, beat more title-level opponents, and stayed at the top across a wider competitive window.",
-          "GSP is the cleaner case. Jones is the greater case."
+          "GSP has the cleaner case. He avenged the Hughes and Serra losses, controlled welterweight for years, and built one of the best quality-win ledgers ever with names like Penn, Fitch, Shields, Condit, Hendricks, and Bisping. If the debate is about polish, consistency, and fewer weird resume questions, GSP is the guy.",
+          "Jones separates because his total championship weight is bigger. He took the light heavyweight belt from Shogun, beat Rampage, Machida, Rashad, Gustafsson, Glover, and Cormier, then later added heavyweight gold. The case gets messy around the edges, but the title-fight volume and multi-era opponent list are enormous.",
+          "GSP has the cleaner resume. Jones has the larger one."
         ],
-        finalTake: "Jones wins. GSP is the best counterargument because his resume is cleaner, but Jones has too much total championship volume, longevity, and all-time separation to rank behind him."
+        finalTake: "Jones wins. GSP is the best counterargument because his resume is cleaner, but Jones has too much championship volume, opponent depth, and all-time separation to rank behind him."
       },
       usman_holloway: {
         type: "close_split",
         winner: "Max Holloway",
+        headline: "Max Holloway wins by a hair, but Usman has the stronger champion-peak argument.",
         paragraphs: [
-          "Usman has the better champion argument. At his best, he looked more controlled, more complete, and more dominant in title fights. His title run had real authority: he shut down contenders, controlled rounds, finished elite opponents, and carried himself like the clear best fighter in the world for that stretch.",
-          "Holloway's edge is the bigger overall resume. He has more long-term elite volume, more time proving himself against top-tier names, and a deeper body of work across different phases of his career. He was not always as clean as Usman at the very top, but he kept stacking relevant wins for longer and against a wider range of elite opponents.",
-          "Usman peaked higher as champion. Holloway built the slightly greater total resume."
+          "Usman has the better title-run argument. He took the belt from Woodley, defended against Colby twice, beat Burns, knocked out Masvidal, and looked like the clear welterweight standard during his best stretch. At his peak, he felt more controlled and more champion-like than almost anyone outside the very top tier.",
+          "Holloway separates through volume. He beat Aldo twice, ran through Ortega, put on historic performances against Kattar and Yair, stayed relevant after losing the belt, and added the Gaethje moment to an already deep resume. Usman's peak was sharper, but Max kept stacking elite proof for longer.",
+          "Usman has the better championship peak. Holloway has the deeper overall body of work."
         ],
-        finalTake: "Holloway wins, barely. Usman has the stronger champion/peak argument, but Holloway's longevity, opponent volume, and sustained elite relevance give him the edge in the overall ranking."
+        finalTake: "Holloway wins, barely. Usman has the stronger champion-peak argument, but Holloway's longevity, opponent volume, and sustained elite relevance give him the edge."
       },
       usman_cejudo: {
         type: "compact_peak_vs_long_reign",
@@ -191,62 +193,68 @@
       khabib_islam: {
         type: "peak_vs_resume_split",
         winner: "Islam Makhachev",
+        headline: "Islam Makhachev wins, but Khabib still owns the cleaner peak argument.",
         paragraphs: [
-          "Khabib still has the better peak argument. At his best, he was cleaner, more terrifying, and more untouchable. He never lost in the UFC, never really had a bad night, and his final stretch felt like complete separation from the rest of the division.",
-          "But Islam has passed him in total resume. The title-run volume is bigger, the elite-win depth is stronger, and he has had more time to prove his championship level against different styles. Khabib's case is built on perfection and dominance. Islam's case is built on a larger body of elite work.",
-          "Khabib has the cleaner peak. Islam has the stronger overall ranking case."
+          "Khabib has the purity argument. He never lost in the UFC, ran through RDA, Barboza, McGregor, Poirier, and Gaethje, and left before the resume ever got messy. At his best, he felt like the most inevitable fighter in the sport.",
+          "Islam separates because the title-level resume has grown bigger. Oliveira, Volkanovski, Poirier, and the deeper modern lightweight run give him more championship volume and more elite proof across different styles. Khabib's case is cleaner; Islam's case has more total weight now.",
+          "Khabib has the more untouchable peak. Islam has the deeper championship resume."
         ],
-        finalTake: "Islam wins. Khabib still owns the peak-dominance argument, but Islam has built the deeper championship resume and now has the stronger total GOAT case in this model."
+        finalTake: "Islam wins. Khabib still owns the peak-dominance argument, but Islam's title-run volume and elite-win depth give him the stronger total case."
       },
       volk_holloway: {
         type: "same_division_rivalry",
         winner: "Alexander Volkanovski",
+        headline: "Volkanovski wins, because the trilogy gives him the cleanest separation.",
         paragraphs: [
-          "Holloway has the volume argument. His resume is longer, deeper, and loaded with elite featherweight wins across multiple phases of his career. Max's case is built on durability, activity, elite opponent volume, and staying relevant for years.",
-          "But Volkanovski has the separation argument, and in a same-division rivalry, that matters a lot. He did not just edge past Holloway once and disappear. He beat him three times, took the championship from him, defended the era, and left very little doubt by the end of the trilogy.",
-          "Holloway's volume keeps it close. Volk's head-to-head and championship edge decide it."
+          "Holloway has the volume argument. Aldo twice, Ortega, Kattar, Yair, Korean Zombie, Gaethje, and years of elite relevance give Max one of the deepest featherweight resumes ever. If this were just about total body of work, Max makes it uncomfortable.",
+          "Volk separates because he directly took the era from him. He beat Holloway three times, took the belt, defended against elite contenders, and left the trilogy with the cleaner championship claim. In a same-division rivalry, that kind of direct separation matters a lot.",
+          "Max has the deeper volume case. Volk has the stronger head-to-head and championship separation."
         ],
-        finalTake: "Volkanovski wins. Holloway has the volume argument, but Volk has the cleaner championship case, the head-to-head separation, and the stronger claim as the defining featherweight of their shared era."
+        finalTake: "Volkanovski wins. Holloway's volume is real, but Volk's trilogy edge and title-run control make him the defining featherweight of their shared era."
       },
       anderson_dj: {
         type: "elite_category_tension",
         winner: "Demetrious Johnson",
+        headline: "Demetrious Johnson wins, but Anderson has the bigger aura argument.",
         paragraphs: [
-          "Anderson has the bigger aura argument. At his peak, he felt like the most dangerous fighter in the sport. The title reign, the finishes, the creativity, the matrix moments — Anderson's case has a kind of mythology that almost no one else can match.",
-          "But DJ has the more complete overall case in this model. His dominance was cleaner, his skill set was more complete, and his championship run had less collapse at the end of the prime window. Anderson's peak was spectacular, but the Weidman losses create real drag because they happened before the model fully moves him into post-prime protection.",
-          "Anderson has the bigger aura. DJ has the cleaner, more complete ranking case."
+          "Anderson has the mythology. The Franklin destruction, the Forrest Griffin matrix moment, the Vitor front kick, the Chael comeback, and the long middleweight reign made him feel like the most dangerous champion in the sport. His peak had a fear factor DJ never really matched culturally.",
+          "DJ separates because his case is cleaner and more complete. He defended flyweight for years, beat Benavidez, Dodson, Cejudo, and Horiguchi, and rarely looked out of control during his prime run. Anderson's aura is bigger, but the Weidman losses create real drag in this scoring window.",
+          "Anderson has the more iconic peak. DJ has the cleaner all-around resume."
         ],
-        finalTake: "Demetrious Johnson wins. Anderson has the bigger aura and the more iconic peak, but DJ has the cleaner, more complete all-time case and fewer penalties pulling down his ranking."
+        finalTake: "Demetrious Johnson wins. Anderson's aura is massive, but DJ's consistency, technical completeness, and cleaner championship run give him the edge."
       },
       aldo_cruz: {
         type: "scope_context",
         winner: "Jose Aldo",
+        headline: "Jose Aldo wins, but Cruz is one of the trickiest scope debates.",
         paragraphs: [
-          "Aldo's WEC run and Cruz's WEC run both matter historically, but this model is scoring the UFC portion of their careers. That matters because both fighters built part of their legend before their divisions were fully established in the UFC.",
-          "With that boundary set, Aldo has the stronger overall case. He still has enough championship weight, elite wins, and long-term relevance inside the UFC to sit above Cruz. Even after his featherweight reign ended, Aldo kept adding meaningful value by staying competitive with elite opponents and later making a serious bantamweight run.",
-          "Cruz has the incredible comeback win over Dillashaw and one of the most unique styles ever, but the gaps, injuries, and thinner UFC fight volume make his ranking case harder to stack against Aldo's."
+          "Cruz has the comeback and style argument. He was a tactical nightmare, beat Demetrious Johnson at bantamweight, and the Dillashaw comeback win is one of the best legacy moments in UFC history. The problem is that injuries broke the resume into pieces.",
+          "Aldo separates through sustained elite relevance. Even with the WEC run treated as historical context instead of scored value, Aldo still has Edgar, Mendes, Korean Zombie, Lamas, Stephens, Moicano, Vera, and Font inside the UFC picture. He also stayed dangerous long after the featherweight reign ended.",
+          "Cruz has the cleaner comeback story. Aldo has the deeper scored resume."
         ],
-        finalTake: "Aldo wins. Cruz has the incredible comeback story and the more complicated context, but Aldo has the deeper UFC resume, more sustained elite relevance, and the stronger overall ranking case."
+        finalTake: "Aldo wins. Cruz has the brilliant comeback and unique style, but Aldo's UFC resume has more volume, more sustained relevance, and more usable all-time weight."
       },
       conor_usman: {
         type: "star_power_vs_resume",
         winner: "Kamaru Usman",
+        headline: "Kamaru Usman wins, but Conor owns the impact argument.",
         paragraphs: [
-          "Conor has the bigger star-power argument. He changed the business, became the first simultaneous two-division UFC champion, and owns some of the most iconic moments in company history. The Aldo knockout, the Eddie Alvarez performance, the double-champ moment — those are legacy moments that very few fighters can match.",
-          "But Usman has the much stronger ranking case. His championship run was longer, cleaner, and more complete. He ruled welterweight with real control, defended the belt repeatedly, and built a deeper title-level resume than Conor.",
-          "Conor's highs are enormous, but his actual ranked resume is shorter and more uneven. Usman did more of the things this model rewards: sustained championship control, elite consistency, and long-term title relevance."
+          "Conor has the iconic-moment case. The Aldo knockout, the Mendes interim win, the Alvarez masterclass, and the first simultaneous double-champ moment changed the sport. If the debate is fame, impact, and unforgettable highs, Conor is in a different universe.",
+          "Usman separates because his title run has more substance. He beat Woodley, Colby twice, Burns, Masvidal, Edwards, and RDA while spending years as the welterweight standard. Conor's highs are bigger, but Usman's championship resume is longer, cleaner, and more complete.",
+          "Conor has the bigger star case. Usman has the stronger ranking case."
         ],
-        finalTake: "Usman wins. Conor is the bigger star and the more historically famous fighter, but Usman has the clearly stronger GOAT resume and belongs higher in the ranking."
+        finalTake: "Usman wins. Conor is the bigger icon, but Usman has the deeper title run, better sustained elite work, and stronger overall resume."
       },
       jones_omalley: {
         type: "blowout",
         winner: "Jon Jones",
+        headline: "Jon Jones wins easily; this is a star-vs-standard comparison.",
         paragraphs: [
-          "O'Malley is a high-level modern bantamweight with real star power, dangerous striking, and a legitimate championship moment. This is not a disrespect comparison.",
-          "But this is not really a GOAT debate yet. Jones is the all-time benchmark in this model. His championship resume, title-fight volume, elite longevity, and opponent depth are on a completely different level.",
-          "O'Malley may still add to his case. Jones has already built the standard everyone else is chasing."
+          "O'Malley has real star power and a legitimate championship moment. He is dangerous, marketable, and skilled enough to matter in a strong bantamweight era. This is not a disrespect comparison.",
+          "Jones is just operating on a completely different all-time scale. Shogun, Rampage, Machida, Rashad, Gustafsson, Cormier, Glover, Gane, title-fight volume, multi-era dominance — that is the benchmark case in this ranking.",
+          "O'Malley is still building. Jones is the standard everyone else is chasing."
         ],
-        finalTake: "Jones wins easily. O'Malley may still be building a strong modern bantamweight legacy, but Jones is already the standard."
+        finalTake: "Jones wins easily. O'Malley has the star profile, but Jones has the championship resume, longevity, and opponent depth of an all-time benchmark."
       }
     };
     return blocks[key] || null;
