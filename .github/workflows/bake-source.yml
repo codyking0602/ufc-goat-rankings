@@ -1,0 +1,106 @@
+name: Bake Patched App Source
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/bake-source.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bake:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Bake current patches into index.html
+        run: |
+          set -e
+
+          if [ -f .github/scripts/app_patch.py ]; then
+            python3 .github/scripts/app_patch.py index.html
+          fi
+
+          if [ -f .github/scripts/copy_cleanup.py ]; then
+            python3 .github/scripts/copy_cleanup.py index.html
+          fi
+
+          cat > .github/workflows/pages.yml <<'EOF'
+          name: Deploy UFC GOAT Rankings
+
+          on:
+            push:
+              branches: [main]
+            workflow_dispatch:
+
+          permissions:
+            contents: read
+            pages: write
+            id-token: write
+
+          concurrency:
+            group: pages
+            cancel-in-progress: false
+
+          jobs:
+            deploy:
+              environment:
+                name: github-pages
+                url: ${{ steps.deployment.outputs.page_url }}
+              runs-on: ubuntu-latest
+              steps:
+                - name: Checkout
+                  uses: actions/checkout@v4
+
+                - name: Prepare site
+                  run: |
+                    mkdir -p _site
+                    rsync -a ./ _site/ \
+                      --exclude='.git' \
+                      --exclude='.github' \
+                      --exclude='_site' \
+                      --exclude='ufc_goat_rankings_github_pages_ready.zip' \
+                      --exclude='tmp.txt' \
+                      --exclude='tmp-test.txt' \
+                      --exclude='assets/fighters/test-binary-as-text.txt'
+                    find _site -maxdepth 3 -type f | sort
+
+                - name: Setup Pages
+                  uses: actions/configure-pages@v5
+
+                - name: Upload artifact
+                  uses: actions/upload-pages-artifact@v3
+                  with:
+                    path: _site
+
+                - name: Deploy to GitHub Pages
+                  id: deployment
+                  uses: actions/deploy-pages@v4
+          EOF
+
+          # Remove one-time/patch scripts so the repo source becomes the source of truth.
+          rm -f .github/scripts/app_patch.py
+          rm -f .github/scripts/copy_cleanup.py
+          rm -f .github/scripts/image_assets_patch.py
+          rm -f .github/workflows/apply-tier-style.yml
+          rm -f .github/workflows/unpack-source.yml
+          rm -f .github/workflows/bake-source.yml
+          rm -f tmp.txt tmp-test.txt assets/fighters/test-binary-as-text.txt
+
+      - name: Commit baked source
+        run: |
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No source cleanup changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Bake app patches into source and simplify deploy"
+          git push
