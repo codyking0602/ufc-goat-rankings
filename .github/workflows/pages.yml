@@ -32,29 +32,174 @@ jobs:
             --exclude='.git' \
             --exclude='.github' \
             --exclude='_site' \
-            --exclude='ufc_goat_rankings_github_pages_ready.zip'
+            --exclude='ufc_goat_rankings_github_pages_ready.zip' \
+            --exclude='tmp.txt' \
+            --exclude='tmp-test.txt'
+          rm -f _site/assets/fighters/test-binary-as-text.txt
 
           python3 - <<'PY'
           from pathlib import Path
           p = Path('_site/index.html')
-          if p.exists():
-              s = p.read_text()
+          if not p.exists():
+              raise SystemExit('index.html missing')
+          s = p.read_text()
 
-              # Keep the deployed site current even if old cached source rules are present.
-              s = s.replace('--tier-alltime: #22c55e;', '--tier-legendary: #d6a73c;')
-              s = s.replace('if (ovr >= 97) return {label:"All-Time Elite", cls:"tier-alltime"};', 'if (ovr >= 97) return {label:"Legendary", cls:"tier-legendary"};')
-              s = s.replace('.tier-alltime { --tier-color: var(--tier-alltime); }', '.tier-legendary { --tier-color: var(--tier-legendary); }')
-              s = s.replace('.bar > i { background:#22c55e; }', '.bar > i { background:var(--tier-color, #35a86b); }')
-              s = s.replace('.category-bar > i { display:block; height:100%; border-radius:999px; background:#22c55e; }', '.category-bar > i { display:block; height:100%; border-radius:999px; background:var(--tier-color, #35a86b); }')
-              s = s.replace('.category-card::before { content:""; position:absolute; inset:0 auto 0 0; width:4px; background:#22c55e; }', '.category-card::before { content:""; position:absolute; inset:0 auto 0 0; width:4px; background:var(--tier-color, #35a86b); }')
-              s = s.replace('.category-chip small { display:block; margin-top:3px; color:#22c55e;', '.category-chip small { display:block; margin-top:3px; color:var(--tier-color, #35a86b);')
-              s = s.replace('.tier-pill { display:inline-flex; margin-top:10px; border:1px solid rgba(34,197,94,.52); background:rgba(34,197,94,.10); color:#22c55e;', '.tier-pill { display:inline-flex; margin-top:10px; border:1px solid color-mix(in srgb, var(--tier-color, var(--accent)) 52%, transparent); background:color-mix(in srgb, var(--tier-color, var(--accent)) 12%, transparent); color:var(--tier-color, var(--accent));')
+          # Tier labels/colors.
+          s = s.replace('--tier-alltime: #22c55e;', '--tier-legendary: #d6a73c;')
+          s = s.replace('--tier-elite: #22c55e;', '--tier-elite: #35a86b;')
+          s = s.replace('--tier-great: #22c55e;', '--tier-great: #8b6fb3;')
+          s = s.replace('--tier-good: #22c55e;', '--tier-good: #4f7fa8;')
+          s = s.replace('--tier-average: #22c55e;', '--tier-average: #c8753e;')
+          s = s.replace('if (ovr >= 97) return {label:"All-Time Elite", cls:"tier-alltime"};', 'if (ovr >= 97) return {label:"Legendary", cls:"tier-legendary"};')
+          s = s.replace('.tier-alltime { --tier-color: var(--tier-alltime); }', '.tier-legendary { --tier-color: var(--tier-legendary); }')
+          s = s.replace('.bar > i { background:#22c55e; }', '.bar > i { background:var(--tier-color, #35a86b); }')
+          s = s.replace('.category-bar > i { display:block; height:100%; border-radius:999px; background:#22c55e; }', '.category-bar > i { display:block; height:100%; border-radius:999px; background:var(--tier-color, #35a86b); }')
+          s = s.replace('.category-card::before { content:""; position:absolute; inset:0 auto 0 0; width:4px; background:#22c55e; }', '.category-card::before { content:""; position:absolute; inset:0 auto 0 0; width:4px; background:var(--tier-color, #35a86b); }')
+          s = s.replace('.category-chip small { display:block; margin-top:3px; color:#22c55e;', '.category-chip small { display:block; margin-top:3px; color:var(--tier-color, #35a86b);')
+          s = s.replace('.tier-pill { display:inline-flex; margin-top:10px; border:1px solid rgba(34,197,94,.52); background:rgba(34,197,94,.10); color:#22c55e;', '.tier-pill { display:inline-flex; margin-top:10px; border:1px solid color-mix(in srgb, var(--tier-color, var(--accent)) 52%, transparent); background:color-mix(in srgb, var(--tier-color, var(--accent)) 12%, transparent); color:var(--tier-color, var(--accent));')
+          s = s.replace('if (rank <= 5) return "All-time elite resume";', 'if (rank <= 5) return "Legendary UFC resume";')
 
-              # Photo crop behavior for mobile profile view.
-              s = s.replace('.fighter-photo.has-photo { background-size:cover; background-position:center 8%; }', '.fighter-photo.has-photo { background-size:cover; background-position:center top; }')
-              s = s.replace('.fighter-photo-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center 8%; z-index:0; }', '.fighter-photo-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center top; z-index:0; }')
-              s = s.replace('@media (max-width:800px){ .profile-hero { grid-template-columns:1fr; } .fighter-photo { min-height:260px; } .profile-ovr { font-size:58px; } }', '@media (max-width:800px){ .profile-hero { grid-template-columns:1fr; } .fighter-photo { aspect-ratio:4 / 5; min-height:0; } .profile-ovr { font-size:58px; } }')
-              p.write_text(s)
+          # Photo crop behavior and visibility.
+          s = s.replace('.fighter-photo.has-photo { background-size:cover; background-position:center 8%; }', '.fighter-photo.has-photo { background-size:cover; background-position:center top; }')
+          s = s.replace('.fighter-photo-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center 8%; z-index:0; }', '.fighter-photo-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center top; z-index:0; display:block; }')
+          s = s.replace('@media (max-width:800px){ .profile-hero { grid-template-columns:1fr; } .fighter-photo { min-height:260px; } .profile-ovr { font-size:58px; } }', '@media (max-width:800px){ .profile-hero { grid-template-columns:1fr; } .fighter-photo { aspect-ratio:4 / 5; min-height:0; width:100%; } .profile-ovr { font-size:58px; } }')
+          s = s.replace('  .fighter-photo { min-height:360px; border-radius:22px; }', '  .fighter-photo { aspect-ratio:4 / 5; min-height:0; width:100%; border-radius:22px; }')
+          s = s.replace('  .fighter-photo { min-height:330px; }', '  .fighter-photo { aspect-ratio:4 / 5; min-height:0; width:100%; }')
+          if '.fighter-photo { width:100%; min-width:0; }' not in s:
+              s = s.replace('.fighter-photo { min-height:320px;', '.fighter-photo { width:100%; min-width:0; }\n.fighter-photo { min-height:320px;')
+
+          # Clickable category explainer CSS.
+          css_anchor = '.category-card { border:1px solid var(--line); border-radius:16px; padding:14px; background:rgba(18,23,34,.88); position:relative; overflow:hidden; }'
+          extra_css = '''
+          .category-card { cursor:pointer; text-align:left; color:var(--text); font-family:inherit; }
+          .category-card:hover, .category-card.active { border-color:color-mix(in srgb, var(--tier-color, var(--accent)) 70%, var(--line)); transform:translateY(-1px); }
+          .category-card:focus-visible { outline:2px solid var(--accent2); outline-offset:2px; }
+          .category-explainer { border:1px solid var(--line); border-radius:18px; padding:16px; background:linear-gradient(180deg, rgba(23,29,42,.96), rgba(18,23,34,.94)); margin:-2px 0 16px; }
+          .category-explainer h3 { margin:0 0 8px; font-size:20px; }
+          .category-explainer p { margin:8px 0; color:var(--muted); line-height:1.5; }
+          .category-explainer-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:8px; margin-top:12px; }
+          .category-explainer-item { border:1px solid var(--line); border-radius:12px; padding:10px; background:rgba(15,23,42,.62); }
+          .category-explainer-item strong { display:block; font-size:14px; }
+          .category-explainer-item small { color:var(--muted); line-height:1.35; }
+          .tap-hint { margin-top:10px; color:var(--muted); font-size:12px; font-weight:750; letter-spacing:.02em; text-transform:uppercase; }
+          '''
+          if '.category-explainer {' not in s:
+              s = s.replace(css_anchor, css_anchor + '\n' + extra_css)
+
+          old_cards = '''function categoryCards(f){
+            return CATEGORY_INFO.map(([key,label,description]) => {
+              const ovr = categoryOvr(f,key);
+              const rank = categoryRank(f,key);
+              const tier = tierForOvr(ovr);
+              const width = Math.max(0, Math.min(100, ovr));
+              return `<div class="category-card ${tier.cls}">
+                <span class="category-label">${label}</span>
+                <strong>${ovr} <span class="meta">OVR</span></strong>
+                <small>#${rank || '—'} in category · ${description}</small>
+                <span class="tier-pill">${tier.label}</span>
+                <div class="category-bar"><i style="width:${width}%"></i></div>
+              </div>`;
+            }).join('');
+          }'''
+          new_cards = '''function categoryCards(f){
+            return CATEGORY_INFO.map(([key,label,description]) => {
+              const ovr = categoryOvr(f,key);
+              const rank = categoryRank(f,key);
+              const tier = tierForOvr(ovr);
+              const width = Math.max(0, Math.min(100, ovr));
+              return `<button type="button" class="category-card ${tier.cls}" data-category="${key}" aria-label="Explain ${label} score for ${f.fighter}">
+                <span class="category-label">${label}</span>
+                <strong>${ovr} <span class="meta">OVR</span></strong>
+                <small>#${rank || '—'} in category · ${description}</small>
+                <span class="tier-pill">${tier.label}</span>
+                <div class="category-bar"><i style="width:${width}%"></i></div>
+              </button>`;
+            }).join('');
+          }'''
+          s = s.replace(old_cards, new_cards)
+
+          funcs = r'''function categoryEvidenceItems(f, key){
+            const title = f.title || {};
+            const opps = f.opponents || [];
+            const rounds = f.rounds || [];
+            const items = [];
+            if(key === 'championship'){
+              items.push(['Title-fight wins', title.notes ? (title.notes.match(/Total title fight wins = ([0-9.]+)/)?.[1] || 'Scored in model') : 'Scored in model']);
+              items.push(['Adjusted title wins', title.adjustedTitleWins ? Number(title.adjustedTitleWins).toFixed(1) : '—']);
+              items.push(['What it rewards', 'Actual UFC title-level control, not belt-count trivia.']);
+              items.push(['Why it matters', 'Longer, cleaner title rule separates the top GOAT cases.']);
+            } else if(key === 'opponentQuality'){
+              items.push(['Elite wins logged', opps.length ? `${opps.length} opponent rows` : 'Best-available current data']);
+              items.push(['Prime timing', 'Names matter less if the win came outside the opponent’s best window.']);
+              items.push(['Division context', 'LW/WW/FW era strength can boost or discount the case.']);
+              items.push(['What it rewards', 'Top-5 quality, title-opponent quality, and elite-win depth.']);
+            } else if(key === 'primeDominance'){
+              items.push(['Finish rate', pct(f.finishRatePct)]);
+              items.push(['Prime finish losses', f.timesFinishedPrime ?? 0]);
+              items.push(['Round control rows', rounds.length ? `${rounds.length} fights tracked` : 'Best-available current data']);
+              items.push(['What it rewards', 'Separation: winning clearly, rarely being hurt, and controlling rounds.']);
+            } else if(key === 'longevity'){
+              items.push(['Active elite years', fmt(f.activeEliteYears)]);
+              items.push(['Gap rule', 'Long gaps are capped/limited so inactivity does not inflate the score.']);
+              items.push(['Post-prime handling', 'Late losses do not create fake longevity or crush the prime case.']);
+              items.push(['What it rewards', 'Sustained UFC relevance against elite/title-level opposition.']);
+            }
+            return items;
+          }
+          function categoryExplanation(f, key){
+            const info = CATEGORY_INFO.find(([k]) => k === key) || [key, key, ''];
+            const label = info[1];
+            const description = info[2];
+            const ovr = categoryOvr(f,key);
+            const rank = categoryRank(f,key);
+            const tier = tierForOvr(ovr);
+            const items = categoryEvidenceItems(f,key);
+            const categoryLogic = {
+              championship: `${f.fighter}'s Title Reign score is based on UFC title-fight wins, adjusted title wins, and whether the resume shows real championship control rather than just a belt-capture moment.`,
+              opponentQuality: `${f.fighter}'s Quality Wins score is based on the quality and timing of UFC wins, with top-tier opponents and division-strength context carrying the most weight.`,
+              primeDominance: `${f.fighter}'s Prime Dominance score is based on how clearly he separated from opponents at his best: round control, finishing threat, prime record, and not being finished in meaningful prime losses.`,
+              longevity: `${f.fighter}'s Elite Longevity score counts active elite UFC years, not just calendar span. Long gaps and post-prime activity do not inflate the score.`
+            };
+            return `<div class="category-explainer ${tier.cls}">
+              <h3>${label}: ${ovr} OVR <span class="meta">· #${rank || '—'} in category · ${tier.label}</span></h3>
+              <p>${categoryLogic[key] || description}</p>
+              <p><strong>Why this matters:</strong> ${description}</p>
+              <div class="category-explainer-grid">
+                ${items.map(([k,v])=>`<div class="category-explainer-item"><strong>${k}</strong><small>${v}</small></div>`).join('')}
+              </div>
+            </div>`;
+          }
+          function attachCategoryExplanations(f){
+            const cards = document.querySelectorAll('#fighterDetail .category-card');
+            const target = document.getElementById('categoryExplanation');
+            if(!cards.length || !target) return;
+            cards.forEach(card => {
+              card.addEventListener('click', e => {
+                e.stopPropagation();
+                cards.forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                target.innerHTML = categoryExplanation(f, card.dataset.category);
+                target.scrollIntoView({behavior:'smooth', block:'nearest'});
+              });
+            });
+          }
+
+          '''
+          if 'function categoryExplanation(f, key)' not in s:
+              s = s.replace('function snapshotGrid(items){', funcs + 'function snapshotGrid(items){')
+
+          s = s.replace('<div class="category-grid">${categoryCards(f)}</div>', '<div class="category-grid">${categoryCards(f)}</div>\n    <div id="categoryExplanation" class="category-explainer"><h3>Category Breakdown</h3><p>Tap Title Reign, Quality Wins, Prime Dominance, or Elite Longevity to see why the score/rank lands there.</p></div>')
+          s = s.replace('<p class="profile-copy">${override.oneLiner || `${f.fighter}\'s UFC resume is graded across championship success, quality wins, prime dominance, and longevity.`}</p>', '<p class="profile-copy">${override.oneLiner || `${f.fighter}\'s UFC resume is graded across championship success, quality wins, prime dominance, and longevity.`}</p><div class="tap-hint">Tap any category card for the scoring explanation.</div>')
+          s = s.replace("""  el('drawer').classList.add('open');
+            el('drawer').setAttribute('aria-hidden','false');
+          }""", """  el('drawer').classList.add('open');
+            el('drawer').setAttribute('aria-hidden','false');
+            const panel = document.querySelector('.drawer-panel');
+            if(panel) panel.scrollTop = 0;
+            attachCategoryExplanations(f);
+          }""")
+
+          p.write_text(s)
           PY
 
           find _site -maxdepth 3 -type f | sort
