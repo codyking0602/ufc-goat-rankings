@@ -42,8 +42,8 @@ jobs:
               '  <script src="assets/compare-data.js?v=compare-data-20260630a"></script>\n'
               '  <script src="assets/compare-coverage-pack-1.js?v=compare-coverage-pack-1-20260630a"></script>\n'
               '  <script src="assets/compare-coverage-pack-2.js?v=compare-coverage-pack-2-20260630a"></script>\n'
-              '  <script src="assets/compare-mode.js?v=special-matchups-20260630j"></script>\n'
-              '  <script src="assets/compare-engine-v1-4.js?v=compare-engine-v1-4-20260630d"></script>\n'
+              '  <script src="assets/compare-mode.js?v=special-matchups-20260630k"></script>\n'
+              '  <script src="assets/compare-engine-v1-5.js?v=compare-engine-v1-5-20260630a"></script>\n'
           )
           html = index.read_text(encoding='utf-8')
           # Remove any older injected Compare Mode scripts so cache-busting versions always win.
@@ -63,6 +63,7 @@ jobs:
               and 'assets/compare-engine-v1-2.js' not in line
               and 'assets/compare-engine-v1-3.js' not in line
               and 'assets/compare-engine-v1-4.js' not in line
+              and 'assets/compare-engine-v1-5.js' not in line
           ]
           html = '\n'.join(lines)
           html = html.replace('</body>', marker + '</body>')
