@@ -17,11 +17,11 @@
   --accent2: #facc15;
   --good: #22c55e;
   --bad: #ef4444;
-  --tier-alltime: #22c55e;
-  --tier-elite: #22c55e;
-  --tier-great: #22c55e;
-  --tier-good: #22c55e;
-  --tier-average: #22c55e;
+  --tier-legendary: #d6a73c;
+--tier-elite: #35a86b;
+--tier-great: #8b6fb3;
+--tier-good: #4f7fa8;
+--tier-average: #c8753e;
 }
 * { box-sizing: border-box; }
 body { margin:0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif; background: radial-gradient(circle at top left, #1d2334, var(--bg) 45%); color:var(--text); }
@@ -61,12 +61,12 @@ input, select { background:var(--panel); border:1px solid var(--line); color:var
 .category-mini-head span { color:var(--muted); white-space:nowrap; }
 .bar { height:8px; background:#0f172a; border-radius:99px; overflow:hidden; border:1px solid rgba(255,255,255,.04); }
 .bar > i { display:block; height:100%; border-radius:99px; }
-.tier-alltime { --tier-color: var(--tier-alltime); }
+.tier-legendary { --tier-color: var(--tier-legendary); }
 .tier-elite { --tier-color: var(--tier-elite); }
 .tier-great { --tier-color: var(--tier-great); }
 .tier-good { --tier-color: var(--tier-good); }
 .tier-average { --tier-color: var(--tier-average); }
-.bar > i { background:#22c55e; }
+.bar > i { background:var(--tier-color, #35a86b); }
 .badge { display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--line); padding:6px 10px; border-radius:999px; color:var(--muted); font-size:12px; }
 .drawer { position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; z-index:20; }
 .drawer.open { display:block; }
@@ -104,7 +104,7 @@ input, select { background:var(--panel); border:1px solid var(--line); color:var
 .profile-copy { color:var(--muted); line-height:1.48; margin:12px 0 0; max-width:620px; }
 .category-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(185px,1fr)); gap:10px; margin:16px 0; }
 .category-card { border:1px solid var(--line); border-radius:16px; padding:14px; background:rgba(18,23,34,.88); position:relative; overflow:hidden; }
-.category-card::before { content:""; position:absolute; inset:0 auto 0 0; width:4px; background:#22c55e; }
+.category-card::before { content:""; position:absolute; inset:0 auto 0 0; width:4px; background:var(--tier-color, #35a86b); }
 .category-label { display:block; color:var(--text); font-weight:850; margin-bottom:8px; }
 .category-card strong { display:block; font-size:28px; line-height:1; }
 .category-card small { display:block; color:var(--muted); margin-top:6px; line-height:1.35; }
@@ -130,9 +130,9 @@ input, select { background:var(--panel); border:1px solid var(--line); color:var
 .category-chip { border:1px solid var(--line); border-radius:13px; padding:8px 10px; background:rgba(15,23,42,.68); min-width:0; }
 .category-chip b { display:block; font-size:11px; line-height:1.1; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .category-chip span { display:block; margin-top:3px; color:#f8fafc; font-size:12px; font-weight:850; white-space:nowrap; }
-.category-chip small { display:block; margin-top:3px; color:#22c55e; font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.04em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.category-chip small { display:block; margin-top:3px; color:var(--tier-color, #35a86b); font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.04em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .fighter-photo-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center top; z-index:0; }
-.tier-pill { display:inline-flex; margin-top:10px; border:1px solid rgba(34,197,94,.52); background:rgba(34,197,94,.10); color:#22c55e; border-radius:999px; padding:5px 8px; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.04em; }
+.tier-pill { display:inline-flex; margin-top:10px; border:1px solid color-mix(in srgb, var(--tier-color, var(--accent)) 52%, transparent); background:color-mix(in srgb, var(--tier-color, var(--accent)) 12%, transparent); color:var(--tier-color, var(--accent)); border-radius:999px; padding:5px 8px; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.04em; }
 .category-bar { margin-top:12px; height:8px; background:#0f172a; border-radius:999px; overflow:hidden; border:1px solid rgba(255,255,255,.04); }
 .category-bar > i { display:block; height:100%; border-radius:999px; background:#22c55e; }
 
@@ -10111,7 +10111,7 @@ function categoryRank(f, key){
 }
 function fighterInitials(name){ return name.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase(); }
 function tierForOvr(ovr){
-  if (ovr >= 97) return {label:"All-Time Elite", cls:"tier-alltime"};
+  if (ovr >= 97) return {label:"Legendary", cls:"tier-legendary"};
   if (ovr >= 90) return {label:"Elite", cls:"tier-elite"};
   if (ovr >= 85) return {label:"Great", cls:"tier-great"};
   if (ovr >= 80) return {label:"Good", cls:"tier-good"};
