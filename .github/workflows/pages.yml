@@ -39,19 +39,16 @@ jobs:
           from pathlib import Path
           index = Path('_site/index.html')
           marker = (
-              '  <script src="assets/compare-profiles.js?v=profiles-20260630g"></script>\n'
-              '  <script src="assets/compare-profile-enhancements-v1-1.js?v=profile-enhancements-v1-1-20260630d"></script>\n'
-              '  <script src="assets/compare-title-prime-v1-2.js?v=title-prime-v1-2-20260630c"></script>\n'
-              '  <script src="assets/compare-legacy-stats-v1-3.js?v=legacy-stats-v1-3-20260630b"></script>\n'
-              '  <script src="assets/compare-fight-ledger-v1-2.js?v=fight-ledger-v1-2-20260630c"></script>\n'
-              '  <script src="assets/compare-mode.js?v=special-matchups-20260630g"></script>\n'
-              '  <script src="assets/compare-engine-v1-4.js?v=compare-engine-v1-4-20260630a"></script>\n'
+              '  <script src="assets/compare-data.js?v=compare-data-20260630a"></script>\n'
+              '  <script src="assets/compare-mode.js?v=special-matchups-20260630h"></script>\n'
+              '  <script src="assets/compare-engine-v1-4.js?v=compare-engine-v1-4-20260630b"></script>\n'
           )
           html = index.read_text(encoding='utf-8')
           # Remove any older injected Compare Mode scripts so cache-busting versions always win.
           lines = [
               line for line in html.splitlines()
-              if 'assets/compare-profiles.js' not in line
+              if 'assets/compare-data.js' not in line
+              and 'assets/compare-profiles.js' not in line
               and 'assets/compare-profile-enhancements-v1-1.js' not in line
               and 'assets/compare-title-prime-v1-2.js' not in line
               and 'assets/compare-legacy-stats-v1-3.js' not in line
