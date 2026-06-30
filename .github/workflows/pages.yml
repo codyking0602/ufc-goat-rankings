@@ -36,6 +36,7 @@ jobs:
             --exclude='tmp-test.txt' \
             --exclude='assets/fighters/test-binary-as-text.txt'
           python3 .github/scripts/app_patch.py _site/index.html
+          python3 .github/scripts/copy_cleanup.py _site/index.html
           find _site -maxdepth 3 -type f | sort
 
       - name: Setup Pages
