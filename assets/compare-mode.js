@@ -4,6 +4,8 @@
     "georges st-pierre|jon jones": "jones_gsp",
     "kamaru usman|max holloway": "usman_holloway",
     "max holloway|kamaru usman": "usman_holloway",
+    "kamaru usman|henry cejudo": "usman_cejudo",
+    "henry cejudo|kamaru usman": "usman_cejudo",
     "khabib nurmagomedov|islam makhachev": "khabib_islam",
     "islam makhachev|khabib nurmagomedov": "khabib_islam",
     "alexander volkanovski|max holloway": "volk_holloway",
@@ -111,6 +113,7 @@
       return {
         jones_gsp: "clear_with_counter",
         usman_holloway: "close_split",
+        usman_cejudo: "compact_peak_vs_long_reign",
         khabib_islam: "peak_vs_resume_split",
         volk_holloway: "same_division_rivalry",
         anderson_dj: "elite_category_tension",
@@ -173,6 +176,17 @@
           "Usman peaked higher as champion. Holloway built the slightly greater total resume."
         ],
         finalTake: "Holloway wins, barely. Usman has the stronger champion/peak argument, but Holloway's longevity, opponent volume, and sustained elite relevance give him the edge in the overall ranking."
+      },
+      usman_cejudo: {
+        type: "compact_peak_vs_long_reign",
+        winner: "Kamaru Usman",
+        headline: "Kamaru Usman wins, but Cejudo makes this more interesting than the rank gap suggests.",
+        paragraphs: [
+          "Cejudo has the flashier achievement stack. He beat Demetrious Johnson, finished T.J. Dillashaw, moved up to bantamweight, and won a second belt against Marlon Moraes. For a short UFC run, that is a ridiculous amount of legacy packed into a small window.",
+          "Usman separates because his title run was bigger and more sustained. He beat Woodley to take the belt, defended against Colby twice, knocked out Masvidal, beat Burns, and spent years as the clear welterweight standard. Cejudo's peak is loud, but Usman's reign has more weight behind it.",
+          "Cejudo has the better compact resume. Usman has the stronger championship resume."
+        ],
+        finalTake: "Usman wins. Cejudo's two-division peak deserves real respect, but Usman's welterweight reign was longer, deeper, and more complete."
       },
       khabib_islam: {
         type: "peak_vs_resume_split",
@@ -326,13 +340,14 @@
     const a = lookup(fighterA.value);
     const b = lookup(fighterB.value);
     const copy = comparisonCopy(a, b);
+    const headline = copy.headline || `${copy.winner} wins this comparison.`;
 
     result.classList.add("compare-natural");
     result.innerHTML = `
       ${fighterCard(a)}
       ${fighterCard(b)}
       <article class="card debate-card">
-        <h3>${escapeHtml(copy.winner)} wins this comparison.</h3>
+        <h3>${escapeHtml(headline)}</h3>
         ${copy.paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join("")}
         <div class="final-take"><strong>Final take:</strong> ${escapeHtml(copy.finalTake)}</div>
       </article>
