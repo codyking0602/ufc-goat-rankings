@@ -38,11 +38,16 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           index = Path('_site/index.html')
-          marker = '  <script src="assets/compare-mode.js?v=natural-compare"></script>\n'
+          marker = (
+              '  <script src="assets/compare-profiles.js?v=starter"></script>\n'
+              '  <script src="assets/compare-mode.js?v=natural-compare"></script>\n'
+          )
           html = index.read_text(encoding='utf-8')
           if 'assets/compare-mode.js' not in html:
               html = html.replace('</body>', marker + '</body>')
-              index.write_text(html, encoding='utf-8')
+          elif 'assets/compare-profiles.js' not in html:
+              html = html.replace('<script src="assets/compare-mode.js?v=natural-compare"></script>', '<script src="assets/compare-profiles.js?v=starter"></script>\n  <script src="assets/compare-mode.js?v=natural-compare"></script>')
+          index.write_text(html, encoding='utf-8')
           PY
           find _site -maxdepth 3 -type f | sort
 
