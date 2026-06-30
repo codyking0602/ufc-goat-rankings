@@ -16,7 +16,7 @@ jobs:
           persist-credentials: true
           fetch-depth: 0
 
-      - name: Bake patches into real source
+      - name: Bake patches into index.html only
         run: |
           set -euxo pipefail
 
@@ -28,84 +28,17 @@ jobs:
             python3 .github/scripts/copy_cleanup.py index.html
           fi
 
-          cat > .github/workflows/pages.yml <<'YAML'
-          name: Deploy UFC GOAT Rankings
+          git status --short index.html
 
-          on:
-            push:
-              branches: [main]
-            workflow_dispatch:
-
-          permissions:
-            contents: read
-            pages: write
-            id-token: write
-
-          concurrency:
-            group: pages
-            cancel-in-progress: false
-
-          jobs:
-            deploy:
-              environment:
-                name: github-pages
-              runs-on: ubuntu-latest
-              steps:
-                - name: Checkout
-                  uses: actions/checkout@v4
-
-                - name: Prepare site
-                  run: |
-                    mkdir -p _site
-                    rsync -a ./ _site/ \
-                      --exclude='.git' \
-                      --exclude='.github' \
-                      --exclude='_site' \
-                      --exclude='ufc_goat_rankings_github_pages_ready.zip' \
-                      --exclude='tmp.txt' \
-                      --exclude='tmp-test.txt' \
-                      --exclude='assets/fighters/test-binary-as-text.txt'
-                    find _site -maxdepth 3 -type f | sort
-
-                - name: Setup Pages
-                  uses: actions/configure-pages@v5
-
-                - name: Upload artifact
-                  uses: actions/upload-pages-artifact@v3
-                  with:
-                    path: _site
-
-                - name: Deploy to GitHub Pages
-                  id: deployment
-                  uses: actions/deploy-pages@v4
-          YAML
-
-          python3 - <<'PY'
-          from pathlib import Path
-          p = Path('.github/workflows/pages.yml')
-          text = p.read_text()
-          # Remove the 10 spaces introduced because this YAML is nested inside a run block.
-          p.write_text('\n'.join((line[10:] if line.startswith('          ') else line) for line in text.splitlines()) + '\n')
-          PY
-
-          rm -f .github/scripts/app_patch.py
-          rm -f .github/scripts/copy_cleanup.py
-          rm -f .github/scripts/image_assets_patch.py
-          rm -f .github/workflows/apply-tier-style.yml
-          rm -f .github/workflows/unpack-source.yml
-          rm -f tmp.txt tmp-test.txt assets/fighters/test-binary-as-text.txt
-
-          git status --short
-
-      - name: Commit cleanup
+      - name: Commit baked index.html
         run: |
           set -euxo pipefail
-          git add -A
+          git add index.html
           if git diff --cached --quiet; then
-            echo "No source cleanup changes to commit."
+            echo "No index.html changes to commit."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Bake app patches into source and simplify deploy"
+          git commit -m "Bake app patches into index source"
           git push origin HEAD:main
