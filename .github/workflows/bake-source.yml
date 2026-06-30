@@ -31,60 +31,60 @@ jobs:
             python3 .github/scripts/copy_cleanup.py index.html
           fi
 
-          cat > .github/workflows/pages.yml <<'EOF'
-          name: Deploy UFC GOAT Rankings
+          python3 - <<'PY'
+          from pathlib import Path
+          Path('.github/workflows/pages.yml').write_text('''name: Deploy UFC GOAT Rankings
 
-          on:
-            push:
-              branches: [main]
-            workflow_dispatch:
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
 
-          permissions:
-            contents: read
-            pages: write
-            id-token: write
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
-          concurrency:
-            group: pages
-            cancel-in-progress: false
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
-          jobs:
-            deploy:
-              environment:
-                name: github-pages
-                url: ${{ steps.deployment.outputs.page_url }}
-              runs-on: ubuntu-latest
-              steps:
-                - name: Checkout
-                  uses: actions/checkout@v4
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-                - name: Prepare site
-                  run: |
-                    mkdir -p _site
-                    rsync -a ./ _site/ \
-                      --exclude='.git' \
-                      --exclude='.github' \
-                      --exclude='_site' \
-                      --exclude='ufc_goat_rankings_github_pages_ready.zip' \
-                      --exclude='tmp.txt' \
-                      --exclude='tmp-test.txt' \
-                      --exclude='assets/fighters/test-binary-as-text.txt'
-                    find _site -maxdepth 3 -type f | sort
+      - name: Prepare site
+        run: |
+          mkdir -p _site
+          rsync -a ./ _site/ \\
+            --exclude='.git' \\
+            --exclude='.github' \\
+            --exclude='_site' \\
+            --exclude='ufc_goat_rankings_github_pages_ready.zip' \\
+            --exclude='tmp.txt' \\
+            --exclude='tmp-test.txt' \\
+            --exclude='assets/fighters/test-binary-as-text.txt'
+          find _site -maxdepth 3 -type f | sort
 
-                - name: Setup Pages
-                  uses: actions/configure-pages@v5
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
 
-                - name: Upload artifact
-                  uses: actions/upload-pages-artifact@v3
-                  with:
-                    path: _site
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
 
-                - name: Deploy to GitHub Pages
-                  id: deployment
-                  uses: actions/deploy-pages@v4
-          EOF
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+''')
+          PY
 
-          # Remove one-time/patch scripts so the repo source becomes the source of truth.
           rm -f .github/scripts/app_patch.py
           rm -f .github/scripts/copy_cleanup.py
           rm -f .github/scripts/image_assets_patch.py
