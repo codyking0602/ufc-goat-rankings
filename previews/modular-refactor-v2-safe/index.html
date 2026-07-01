@@ -18,9 +18,9 @@
   <header>
     <div>
       <h1>UFC App Safe Preview</h1>
-      <p>Phase 2G preview: built app uses source-style data/app paths. Main homepage is still untouched.</p>
+      <p>Phase 2H preview: materialized source files are loaded directly from the safe branch. Main homepage is still untouched.</p>
     </div>
-    <div class="badge">Phase 2G safe preview</div>
+    <div class="badge">Phase 2H safe preview</div>
   </header>
   <iframe id="preview" title="UFC App safe preview"></iframe>
 
@@ -28,11 +28,14 @@
     const branchName = 'modular-refactor-v2-safe';
     const rawBase = 'https://raw.githubusercontent.com/codyking0602/ufc-goat-rankings/' + branchName + '/';
     const rootBase = 'https://codyking0602.github.io/ufc-goat-rankings/';
-    const cacheBust = 'phase2g-source-path-promotion-' + Date.now();
+    const cacheBust = 'phase2h-materialized-source-' + Date.now();
     const SCRIPT_OPEN = '<scr' + 'ipt>';
     const SCRIPT_CLOSE = '</scr' + 'ipt>';
 
     const scriptPaths = [
+      'assets/data/ranking-data.js',
+      'assets/data/display-overrides.js',
+      'assets/js/app.js',
       'assets/data/ranking-data-patches.js',
       'assets/compare-data.js',
       'assets/compare-coverage-pack-1.js',
@@ -41,6 +44,14 @@
       'assets/compare-mode.js',
       'assets/compare-engine-v1-5.js',
       'assets/compare-copy-fixes-v1.js'
+    ];
+
+    const scriptNeedles = [
+      'assets/data/ranking-data.js',
+      'assets/data/display-overrides.js',
+      'assets/js/app.js',
+      'assets/data/ranking-data-patches.js',
+      'assets/compare-'
     ];
 
     function noStore(url) {
@@ -55,108 +66,8 @@
       return SCRIPT_OPEN + safeSource + SCRIPT_CLOSE;
     }
 
-    function findObjectAssignment(html, marker, label) {
-      const start = html.indexOf(marker);
-      if (start === -1) throw new Error('Could not find embedded ' + label);
-
-      let literalStart = start + marker.length;
-      while (literalStart < html.length && /\s/.test(html[literalStart])) literalStart += 1;
-      if (html[literalStart] !== '{') throw new Error(label + ' does not start with an object literal');
-
-      let depth = 0;
-      let inString = false;
-      let quote = '';
-      let escaped = false;
-      let literalEnd = -1;
-
-      for (let i = literalStart; i < html.length; i += 1) {
-        const ch = html[i];
-        if (inString) {
-          if (escaped) escaped = false;
-          else if (ch === '\\') escaped = true;
-          else if (ch === quote) inString = false;
-          continue;
-        }
-        if (ch === '"' || ch === "'") {
-          inString = true;
-          quote = ch;
-          continue;
-        }
-        if (ch === '{') depth += 1;
-        else if (ch === '}') {
-          depth -= 1;
-          if (depth === 0) {
-            literalEnd = i + 1;
-            break;
-          }
-        }
-      }
-
-      if (literalEnd === -1) throw new Error('Could not find end of ' + label);
-
-      let assignmentEnd = literalEnd;
-      while (assignmentEnd < html.length && /\s/.test(html[assignmentEnd])) assignmentEnd += 1;
-      if (html[assignmentEnd] === ';') assignmentEnd += 1;
-
-      return {
-        start,
-        assignmentEnd,
-        literal: html.slice(literalStart, literalEnd)
-      };
-    }
-
-    function splitObjectAssignmentForPreview(html, marker, generatedSource, label) {
-      const assignment = findObjectAssignment(html, marker, label);
-      const dataScript = inlineScript(generatedSource + assignment.literal + ';');
-      return html.slice(0, assignment.start) + SCRIPT_CLOSE + '\n' + dataScript + '\n' + SCRIPT_OPEN + html.slice(assignment.assignmentEnd);
-    }
-
-    function splitRankingDataForPreview(html) {
-      return splitObjectAssignmentForPreview(html, 'window.RANKING_DATA = ', 'window.RANKING_DATA = ', 'ranking data');
-    }
-
-    function splitDisplayOverridesForPreview(html) {
-      return splitObjectAssignmentForPreview(html, 'const DISPLAY_OVERRIDES = ', 'const DISPLAY_OVERRIDES = ', 'display overrides');
-    }
-
-    function findNextScriptBlock(html, searchFrom, label) {
-      const scriptStart = html.indexOf(SCRIPT_OPEN, searchFrom);
-      if (scriptStart === -1) throw new Error('Could not find ' + label + ' script start');
-      const contentStart = scriptStart + SCRIPT_OPEN.length;
-      const scriptEnd = html.indexOf(SCRIPT_CLOSE, contentStart);
-      if (scriptEnd === -1) throw new Error('Could not find ' + label + ' script end');
-      return {
-        scriptStart,
-        contentStart,
-        scriptEnd,
-        blockEnd: scriptEnd + SCRIPT_CLOSE.length,
-        content: html.slice(contentStart, scriptEnd)
-      };
-    }
-
-    function splitAppJsForPreview(html) {
-      const rankingStart = html.indexOf('window.RANKING_DATA = ');
-      if (rankingStart === -1) throw new Error('Could not find split ranking data script');
-      const rankingEnd = html.indexOf(SCRIPT_CLOSE, rankingStart);
-      if (rankingEnd === -1) throw new Error('Could not find split ranking data script end');
-
-      const pre = findNextScriptBlock(html, rankingEnd + SCRIPT_CLOSE.length, 'pre-display app');
-      if (!pre.content.includes('const DATA = window.RANKING_DATA;')) throw new Error('Pre-display app chunk did not contain DATA setup');
-
-      const displayStart = html.indexOf('const DISPLAY_OVERRIDES = ', pre.blockEnd);
-      if (displayStart === -1) throw new Error('Could not find split display overrides script');
-      const displayEnd = html.indexOf(SCRIPT_CLOSE, displayStart);
-      if (displayEnd === -1) throw new Error('Could not find split display overrides script end');
-
-      const post = findNextScriptBlock(html, displayEnd + SCRIPT_CLOSE.length, 'post-display app');
-      if (!post.content.includes('function renderList') || !post.content.includes('populateControls(); refresh();')) {
-        throw new Error('Post-display app chunk did not contain render logic and boot call');
-      }
-
-      const appScript = inlineScript(pre.content.trim() + '\n\n' + post.content.trim());
-      html = html.slice(0, post.scriptStart) + appScript + html.slice(post.blockEnd);
-      html = html.slice(0, pre.scriptStart) + html.slice(pre.blockEnd);
-      return html;
+    function stripSourceScriptTags(html) {
+      return html.split('\n').filter(line => !scriptNeedles.some(needle => line.includes(needle))).join('\n');
     }
 
     Promise.all([
@@ -166,16 +77,12 @@
       .then(([html, ...scripts]) => {
         const baseTag = '<base href="' + rootBase + '">';
         let output = html.replace('<head>', '<head>' + baseTag);
-        output = splitRankingDataForPreview(output);
-        output = splitDisplayOverridesForPreview(output);
-        output = splitAppJsForPreview(output);
-
-        output = output.replace('<scr' + 'ipt src="assets/data/ranking-data-patches.js"></scr' + 'ipt>', '');
+        output = stripSourceScriptTags(output);
 
         const inlineScripts = scripts.map(inlineScript).join('\n');
         const debugScript = inlineScript(`
-          window.UFC_SAFE_PREVIEW_MODE = 'phase2g-source-path-promotion';
-          document.documentElement.setAttribute('data-safe-preview-mode', 'phase2g-source-path-promotion');
+          window.UFC_SAFE_PREVIEW_MODE = 'phase2h-materialized-source';
+          document.documentElement.setAttribute('data-safe-preview-mode', 'phase2h-materialized-source');
           setTimeout(function () {
             if (typeof window.UFC_PHASE2_DATA_REFRESH === 'function') window.UFC_PHASE2_DATA_REFRESH();
             if (typeof window.renderCompare === 'function') window.renderCompare();
