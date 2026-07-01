@@ -25,17 +25,26 @@
   </header>
   <iframe id="preview" title="UFC App branch preview"></iframe>
   <script>
-    const branchHtmlUrl = 'https://raw.githubusercontent.com/codyking0602/ufc-goat-rankings/modular-refactor-v2-safe/index.html';
+    const branchBase = 'https://raw.githubusercontent.com/codyking0602/ufc-goat-rankings/modular-refactor-v2-safe/';
+    const branchHtmlUrl = branchBase + 'index.html';
+    const branchPatchUrl = branchBase + 'assets/data/ranking-data-patches.js';
     const rootBase = 'https://codyking0602.github.io/ufc-goat-rankings/';
 
-    fetch(branchHtmlUrl, { cache: 'no-store' })
-      .then(response => {
+    Promise.all([
+      fetch(branchHtmlUrl, { cache: 'no-store' }).then(response => {
         if (!response.ok) throw new Error('Could not load branch HTML');
         return response.text();
+      }),
+      fetch(branchPatchUrl, { cache: 'no-store' }).then(response => {
+        if (!response.ok) throw new Error('Could not load branch patch file');
+        return response.text();
       })
-      .then(html => {
+    ])
+      .then(([html, patchScript]) => {
         const baseTag = `<base href="${rootBase}">`;
-        const patchedHtml = html.replace('<head>', `<head>${baseTag}`);
+        let patchedHtml = html.replace('<head>', `<head>${baseTag}`);
+        patchedHtml = patchedHtml.replace('<script src="assets/data/ranking-data-patches.js"></script>', '');
+        patchedHtml = patchedHtml.replace('</body>', `<script>${patchScript.replace(/<\/script/gi, '<\\/script')}</script></body>`);
         document.getElementById('preview').srcdoc = patchedHtml;
       })
       .catch(error => {
