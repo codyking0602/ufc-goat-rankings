@@ -3,7 +3,7 @@
 
 (function () {
   const data = window.RANKING_DATA;
-  const PATCH_VERSION = 'jon-profile-package-2026-07-01c';
+  const PATCH_VERSION = 'jon-profile-package-2026-07-01d';
 
   const JON_PROFILE_STATS = {
     ufcRecord: '22-1, 1 NC',
@@ -93,7 +93,7 @@
   }
 
   function applyJonProfilePackage() {
-    if (!data || !window.DISPLAY_OVERRIDES) return;
+    if (!data || typeof DISPLAY_OVERRIDES === 'undefined') return;
     const jon = data.fighters?.find(f => f.fighter === 'Jon Jones');
     if (jon) {
       jon.snapshotStats = { ...JON_PROFILE_STATS };
