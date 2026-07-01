@@ -34,3 +34,5 @@ jobs:
           git add index.html assets/data/ranking-data.js assets/data/display-overrides.js assets/js/app.js
           git commit -m "Materialize source files for Phase 2H"
           git push origin HEAD:modular-refactor-v2-safe
+
+# Phase 2H cleanup rerun marker: 2026-07-01a
