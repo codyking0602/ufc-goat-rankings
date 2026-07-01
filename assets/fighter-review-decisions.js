@@ -73,7 +73,7 @@ window.FIGHTER_REVIEW_DECISIONS = {
       readyForAppUpdate: false,
       remaining: [
         "Optionally wire Frankie compare profile into compare pack after nearby fighters are finalized",
-        "Charles matchup should stay on hold until Charles audit"
+        "Charles matchup should stay on hold until Charles compare profile is written"
       ]
     },
     "Dustin Poirier": {
@@ -135,12 +135,60 @@ window.FIGHTER_REVIEW_DECISIONS = {
         "Tito Ortiz": "Dustin Poirier wins. Tito has the early UFC title-reign headline, but Dustin fought a much deeper modern schedule and stacked better opponent-quality wins. Tito’s title volume keeps it competitive; Dustin’s quality-wins case is stronger.",
         "Conor McGregor": "Dustin Poirier wins on total UFC résumé. Conor has the higher peak headline with two belts and the Aldo/Alvarez wins. Dustin has the deeper lightweight body of work, better long-term divisional relevance, and the later head-to-head edge. Conor owns the bigger moment; Dustin owns the stronger complete résumé.",
         "Justin Gaethje": "Dustin Poirier wins narrowly. Gaethje has the direct head-to-head equalizer after the second fight and a strong elite lightweight case, but Dustin has more total UFC depth, the interim title, and a broader quality-wins ledger. Their cases are close because both are violence-era lightweight greats, but Dustin has more layers.",
-        "Charles Oliveira": "Hold until Charles is audited. Charles has the stronger undisputed title/finish-record case. Dustin has the cleaner quality-wins depth argument. This one should not be locked until Charles’ scoring card is fixed."
+        "Charles Oliveira": "Hold until Charles compare profile is written. Charles has the stronger undisputed title/finish-record case. Dustin has the cleaner quality-wins depth argument."
       },
       readyForAppUpdate: false,
       remaining: [
         "Optionally wire Dustin compare profile into compare pack after nearby fighters are finalized",
-        "Charles and Ilia matchups should stay on hold until those audits are complete"
+        "Charles matchup should stay on hold until Charles compare profile is written",
+        "Ilia matchup should stay on hold until Ilia audit is complete"
+      ]
+    },
+    "Charles Oliveira": {
+      status: "Scoring inputs locked; compare profile not done",
+      lockedInputs: {
+        primeStart: "Kevin Lee",
+        primeEnd: "Max Holloway 3",
+        gaethjeTitleCredit: 0.90,
+        adjustedTitleWins: 2.80,
+        ufcRecord: "25-11, 1 NC",
+        divisionAdjustedOpponentQuality: 17.85,
+        primeRoundsWon: "22 / 31 = 71.0%",
+        primeFinishRate: "6 / 12 = 50.0%",
+        timesFinishedInPrime: 2,
+        activeEliteYears: 5.99,
+        lossPenalty: -10.00,
+        finalScore: 40.13
+      },
+      scoringCard: {
+        currentRank: "About #22, between T.J. Dillashaw and B.J. Penn",
+        ufcRecord: "25-11, 1 NC",
+        adjustedTitleWins: 2.80,
+        divisionAdjustedOpponentQuality: 17.85,
+        primeRoundsWon: "22 / 31 = 71.0%",
+        primeFinishRate: "6 / 12 = 50.0%",
+        timesFinishedInPrime: 2,
+        activeEliteYears: 5.99,
+        lossPenalty: -10.00,
+        finalScore: 40.13
+      },
+      divisionStrengthUsed: [
+        { divisionEra: "Early lightweight / featherweight development years", multiplier: 1.00 },
+        { divisionEra: "Modern lightweight contender run", multiplier: 1.10 },
+        { divisionEra: "Lightweight championship era", multiplier: 1.10 },
+        { divisionEra: "BMF fights", multiplier: "Quality/opponent context only; no title credit" }
+      ],
+      bigAssumptions: [
+        "Prime starts with Kevin Lee because that is the clean elite-lightweight breakthrough before the Ferguson/Chandler/Poirier/Gaethje title run.",
+        "Prime runs through Max Holloway 3 under the current audit draft treatment.",
+        "Gaethje is credited as 0.90 adjusted title-level win because Oliveira won the fight but missed championship weight and was not eligible to retain/win the belt.",
+        "Opponent-quality credit includes Tony Ferguson, Michael Chandler x2, Dustin Poirier, Justin Gaethje, Beneil Dariush, Mateusz Gamrot, Max Holloway, Kevin Lee, with lighter credit for earlier quality names where appropriate.",
+        "BMF belts do not count as championship credit, but the opponents still count for quality when they were elite.",
+        "Loss penalty stays at -10.00 cap because counted losses include pre-prime UFC losses plus elite prime losses to Islam Makhachev, Arman Tsarukyan, and Ilia Topuria."
+      ],
+      remaining: [
+        "Write compare profile after scoring card is locked",
+        "Add matchup blurbs"
       ]
     }
   }
