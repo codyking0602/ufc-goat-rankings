@@ -3,28 +3,32 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>UFC App Direct Safe Preview</title>
+  <title>UFC App Safe Preview</title>
   <style>
     :root { color-scheme: dark; }
-    body { margin:0; min-height:100vh; display:grid; place-items:center; font-family:system-ui,-apple-system,Segoe UI,sans-serif; background:#0b0d12; color:#eef2ff; }
-    .box { max-width:720px; margin:24px; padding:22px; border:1px solid #263244; border-radius:18px; background:#121722; }
-    h1 { margin:0 0 8px; font-size:22px; }
-    p { margin:6px 0; color:#9ca3af; line-height:1.45; }
-    code { color:#facc15; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, sans-serif; background:#0b0d12; color:#eef2ff; }
+    header { padding:12px 16px; border-bottom:1px solid #263244; background:#121722; display:flex; justify-content:space-between; gap:12px; align-items:center; flex-wrap:wrap; }
+    h1 { margin:0; font-size:17px; }
+    p { margin:4px 0 0; color:#9ca3af; font-size:12px; }
+    .badge { border:1px solid #263244; border-radius:999px; padding:6px 10px; color:#facc15; font-size:12px; font-weight:800; }
+    iframe { width:100%; height:calc(100vh - 68px); border:0; display:block; background:#0b0d12; }
   </style>
 </head>
 <body>
-  <div class="box">
-    <h1>Loading direct safe preview…</h1>
-    <p>This preview modifies the safe app before it runs, so Phase 1 test data cannot be missed by old startup state.</p>
-    <p><code>modular-refactor-v2-safe @ a48db67 + preview boot patch</code></p>
-  </div>
+  <header>
+    <div>
+      <h1>UFC App Safe Preview</h1>
+      <p>Pinned to safe commit a48db67. Main homepage is still untouched.</p>
+    </div>
+    <div class="badge">Safe preview</div>
+  </header>
+  <iframe id="preview" title="UFC App safe preview"></iframe>
 
   <script>
     const safeCommit = 'a48db67d282e891b74b20d7fccb659c74a3b89a4';
     const rawBase = 'https://raw.githubusercontent.com/codyking0602/ufc-goat-rankings/' + safeCommit + '/';
     const rootBase = 'https://codyking0602.github.io/ufc-goat-rankings/';
-    const cacheBust = 'direct-boot-patch-v2-' + safeCommit + '-' + Date.now();
+    const cacheBust = 'iframe-preview-' + safeCommit + '-' + Date.now();
 
     function noStore(url) {
       return fetch(url + '?v=' + encodeURIComponent(cacheBust), { cache: 'no-store' }).then(response => {
@@ -33,200 +37,32 @@
       });
     }
 
-    function phase1DataPatchSource() {
-      return '(' + function phase1DataPatch() {
-        const data = window.RANKING_DATA;
-        if (!data) return;
-
-        function findRow(boardName, fighterName) {
-          const board = data && data[boardName];
-          if (!Array.isArray(board)) return null;
-          return board.find(row => row.fighter === fighterName) || null;
-        }
-
-        function patchRow(boardName, fighterName, patch) {
-          const row = findRow(boardName, fighterName);
-          if (!row) return null;
-          Object.assign(row, patch);
-          return row;
-        }
-
-        function upsertRow(boardName, row) {
-          const board = data[boardName] = Array.isArray(data[boardName]) ? data[boardName] : [];
-          const existing = board.find(item => item.fighter === row.fighter);
-          if (existing) {
-            Object.assign(existing, row);
-            return existing;
-          }
-          board.push(row);
-          return row;
-        }
-
-        function upsertProfile(profile) {
-          data.fighters = Array.isArray(data.fighters) ? data.fighters : [];
-          const existing = data.fighters.find(item => item.fighter === profile.fighter);
-          if (existing) {
-            Object.assign(existing, profile);
-            return existing;
-          }
-          data.fighters.push(profile);
-          return profile;
-        }
-
-        const yan = {
-          rank: 16,
-          fighter: 'Petr Yan',
-          totalScore: 43.35,
-          championship: 5.04,
-          opponentQuality: 13.10,
-          primeDominance: 21.43,
-          longevity: 5.98,
-          penalty: -5.25,
-          leaderboard: 'men',
-          gender: 'Men',
-          ufcRecord: '12-4',
-          primaryDivision: 'Bantamweight',
-          secondaryDivision: '',
-          finishRatePct: 18.2,
-          activeEliteYears: 5.98,
-          timesFinishedPrime: 0,
-          primeRecord: '7-4 in title/elite window',
-          roundsWonPct: 65.2,
-          notes: 'Audited bantamweight title case. Sterling DQ context reduced, later elite losses counted without finish add-ons.'
-        };
-
-        patchRow('men', 'Georges St-Pierre', {
-          timesFinishedPrime: 1,
-          primeRecord: '18-1 after first Hughes loss; Serra is the counted prime finish loss',
-          notes: 'Hughes 2004 is an early elite loss. Serra 2007 is the counted prime finished loss, then avenged decisively.'
-        });
-
-        const gspProfile = (data.fighters || []).find(f => f.fighter === 'Georges St-Pierre');
-        if (gspProfile) {
-          Object.assign(gspProfile, {
-            timesFinishedPrime: 1,
-            primeRecord: '18-1 after first Hughes loss; Serra is the counted prime finish loss',
-            notes: 'Hughes 2004 is an early elite loss. Serra 2007 is the counted prime finished loss, then avenged decisively.'
+    Promise.all([
+      noStore(rawBase + 'index.html'),
+      noStore(rawBase + 'assets/data/ranking-data-patches.js')
+    ])
+      .then(([html, patchScript]) => {
+        const baseTag = '<base href="' + rootBase + '">';
+        const openScript = '<scr' + 'ipt>';
+        const closeScript = '</scr' + 'ipt>';
+        const safePatchScript = patchScript.replace(/<\/script/gi, '<\\/script');
+        const previewDebugScript = `
+          window.UFC_DIRECT_PREVIEW_COMMIT = '${safeCommit}';
+          window.addEventListener('load', function () {
+            document.documentElement.setAttribute('data-direct-preview-commit', '${safeCommit}');
+            setTimeout(function () {
+              if (typeof window.UFC_PHASE1_FORCE_REFRESH === 'function') window.UFC_PHASE1_FORCE_REFRESH();
+            }, 0);
           });
-        }
-
-        patchRow('men', 'Charles Oliveira', {
-          rank: 24,
-          totalScore: 40.13,
-          championship: 5.32,
-          opponentQuality: 17.85,
-          primeDominance: 20.96,
-          longevity: 5.99,
-          penalty: -10.0
-        });
-
-        patchRow('men', 'Ilia Topuria', {
-          rank: 15,
-          totalScore: 43.44,
-          championship: 5.99,
-          opponentQuality: 13.10,
-          primeDominance: 23.60,
-          longevity: 2.97,
-          penalty: -2.25
-        });
-
-        upsertRow('men', yan.fighter, yan);
-        upsertProfile({
-          ...yan,
-          title: { adjustedTitleWins: 2.65, notes: 'UFC bantamweight champion with elite title-race context. Sterling DQ is handled with reduced context.' },
-          opponents: [
-            { opponent: 'Jose Aldo', division: 'Bantamweight', context: 'Vacant title win / elite former champion' },
-            { opponent: 'Cory Sandhagen', division: 'Bantamweight', context: 'Interim title win / top contender' }
-          ],
-          rounds: []
-        });
-
-        ['men', 'women'].forEach(boardName => {
-          if (Array.isArray(data[boardName])) {
-            data[boardName].sort((a, b) => Number(a.rank || 999) - Number(b.rank || 999));
-          }
-        });
-
-        window.UFC_PHASE1_PATCH_STATUS = {
-          version: 'direct-preview-boot-patch-v2',
-          petrYanInMen: Array.isArray(data.men) && data.men.some(f => f.fighter === 'Petr Yan'),
-          petrYanInProfiles: Array.isArray(data.fighters) && data.fighters.some(f => f.fighter === 'Petr Yan'),
-          debateComparePatched: true,
-          appliedBeforeAppBoot: true
-        };
-      }.toString() + ')();';
-    }
-
-    function patchedRenderCompareSource() {
-      return function renderCompare() {
-        const a = fullRow({ fighter: el('fighterA').value });
-        const b = fullRow({ fighter: el('fighterB').value });
-        const aScore = Number(a.totalScore || 0);
-        const bScore = Number(b.totalScore || 0);
-        const winner = aScore >= bScore ? a : b;
-        const loser = aScore >= bScore ? b : a;
-        const gap = Math.abs(aScore - bScore).toFixed(2);
-        const contextKey = [a.fighter, b.fighter].sort().join('|');
-        const directContext = {
-          'Aljamain Sterling|Petr Yan': 'Direct rivalry context: Sterling officially holds the 2-0 UFC edge, but the first title win came by DQ and the rematch was close enough that this needs special debate context, not a simple category table.',
-          'Alexander Volkanovski|Ilia Topuria': 'Direct fight context: Topuria has the head-to-head title win over Volkanovski, but Volk still owns the deeper total UFC featherweight championship resume.',
-          'Charles Oliveira|Dustin Poirier': 'Direct fight context: Oliveira finished Poirier in a UFC lightweight title fight, which is a major direct edge inside a very strong lightweight resume debate.',
-          'Georges St-Pierre|Jon Jones': 'No direct fight context. This is resume versus resume: Jones has the stronger title-volume case, while GSP has the cleaner complete champion and quality-wins argument.'
-        }[contextKey] || '';
-        const shortCase = {
-          'Jon Jones': 'The UFC-only benchmark: unmatched title-fight volume, elite LHW run, heavyweight chapter, and no true competitive loss in the scoring rules.',
-          'Georges St-Pierre': 'The complete resume case: all-time welterweight reign, best quality-wins argument, and decisive revenge over the two losses that define the debate.',
-          'Petr Yan': 'A modern bantamweight title case with elite skill, strong round control, and unusual DQ context that needs more nuance than a normal loss.',
-          'Aljamain Sterling': 'A real bantamweight title-reign case with strong grappling control, but the Yan DQ, Dillashaw context, and O’Malley finish loss need explanation.',
-          'Ilia Topuria': 'A short but explosive two-division peak case built on Volk, Max, and Charles-level wins, with limited longevity compared to the legends.',
-          'Alexander Volkanovski': 'The complete featherweight champion case: elite title consistency, Max trilogy value, and reduced upward-division Islam loss context.',
-          'Charles Oliveira': 'A modern lightweight quality-wins and finishing case with huge opponent value, held back by loss volume and a shorter undisputed reign.',
-          'Dustin Poirier': 'A lightweight quality-wins monster with elite longevity and violence, but no undisputed UFC title win keeps a clear ceiling.'
-        };
-        const scoreToOvr = score => Math.max(60, Math.min(99, Math.round(75 + (Number(score || 0) / 88.7) * 24)));
-        const rankLabel = f => f.rank ? '#' + f.rank : 'unranked';
-        const caseFor = f => shortCase[f.fighter] || `${f.fighter} is graded by UFC title success, quality wins, prime dominance, elite longevity, and loss context.`;
-
-        const target = el('compareResult');
-        target.dataset.phase1Compare = 'debate';
-        target.innerHTML = `
-          <div class="card" style="grid-column:1/-1">
-            <h3>Verdict</h3>
-            <p><strong>${winner.fighter}</strong> has the stronger UFC-only resume over ${loser.fighter} in the current scoring table.</p>
-            <p class="meta">${winner.fighter} leads by ${gap} raw-score points. Raw score is shown here for branch testing only; the normal product should keep OVR front-facing.</p>
-          </div>
-          ${directContext ? `<div class="card" style="grid-column:1/-1"><h3>Direct fight / rivalry context</h3><p>${directContext}</p></div>` : ''}
-          <div class="card"><h3>${a.fighter}</h3><p><span class="badge">${rankLabel(a)}</span> <span class="badge">${scoreToOvr(a.totalScore)} OVR</span> <span class="badge">${aScore.toFixed(2)} raw</span></p><p>${caseFor(a)}</p></div>
-          <div class="card"><h3>${b.fighter}</h3><p><span class="badge">${rankLabel(b)}</span> <span class="badge">${scoreToOvr(b.totalScore)} OVR</span> <span class="badge">${bScore.toFixed(2)} raw</span></p><p>${caseFor(b)}</p></div>
         `;
-      }.toString();
-    }
 
-    function injectPhase1BeforeAppBoot(html) {
-      const dataMarker = 'const DATA = window.RANKING_DATA;';
-      if (!html.includes(dataMarker)) throw new Error('Could not find app data boot marker');
-      let output = html.replace(dataMarker, phase1DataPatchSource() + '\n\n' + dataMarker);
-
-      const compareStart = output.indexOf('function renderCompare(){');
-      const compareEnd = output.indexOf('\nfunction renderRules(){', compareStart);
-      if (compareStart === -1 || compareEnd === -1) throw new Error('Could not replace old compare function');
-      output = output.slice(0, compareStart) + patchedRenderCompareSource() + '\n' + output.slice(compareEnd + 1);
-
-      output = output.replace('<head>', '<head><base href="' + rootBase + '">');
-      output = output.replace('<scr' + 'ipt src="assets/data/ranking-data-patches.js"></scr' + 'ipt>', '');
-      output = output.replace('</body>', '<scr' + 'ipt>document.documentElement.setAttribute("data-direct-preview-commit", "' + safeCommit + '");</scr' + 'ipt></body>');
-      return output;
-    }
-
-    noStore(rawBase + 'index.html')
-      .then(html => {
-        const output = injectPhase1BeforeAppBoot(html);
-        document.open();
-        document.write(output);
-        document.close();
+        let output = html.replace('<head>', '<head>' + baseTag);
+        output = output.replace('<scr' + 'ipt src="assets/data/ranking-data-patches.js"></scr' + 'ipt>', '');
+        output = output.replace('</body>', openScript + safePatchScript + closeScript + openScript + previewDebugScript + closeScript + '</body>');
+        document.getElementById('preview').srcdoc = output;
       })
       .catch(error => {
-        document.body.innerHTML = '<div class="box"><h1>Preview failed</h1><p>' + error.message + '</p></div>';
+        document.body.innerHTML = '<div style="padding:20px;color:#fecaca"><h1>Preview failed</h1><p>' + error.message + '</p></div>';
       });
   </script>
 </body>
