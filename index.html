@@ -271,7 +271,7 @@ input, select { background:var(--panel); border:1px solid var(--line); color:var
   <script>
 (function(){
   const data = window.RANKING_DATA;
-  if(!data || !window.DISPLAY_OVERRIDES) return;
+  if(!data || typeof DISPLAY_OVERRIDES === 'undefined') return;
   const POLISHED_CATEGORY_INFO = [
     ['championship','Title Reign','Championship resume: title-fight wins, reign strength, and control of the division'],
     ['opponentQuality','Quality Wins','Who he beat, when he beat them, and how strong the division was'],
