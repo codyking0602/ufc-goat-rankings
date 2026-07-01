@@ -5,6 +5,9 @@
   const data = window.RANKING_DATA;
   if (!data) return;
 
+  const PATCH_VERSION = 'phase1-yan-compare-2026-07-01';
+  let compareRenderInProgress = false;
+
   function findRow(boardName, fighterName) {
     const board = data && data[boardName];
     if (!Array.isArray(board)) return null;
@@ -79,6 +82,68 @@
     });
   }
 
+  function repairLegacyState(profile) {
+    // The old single-file app builds lookup helpers before this patch runs.
+    // This keeps the patch layer from fighting those already-created helpers.
+    try {
+      if (typeof byName !== 'undefined' && byName && typeof byName === 'object') {
+        byName[profile.fighter] = profile;
+      }
+    } catch (error) {}
+
+    try {
+      if (typeof allProfiles !== 'undefined' && Array.isArray(allProfiles) && !allProfiles.some(f => f.fighter === profile.fighter)) {
+        allProfiles.push(profile);
+      }
+    } catch (error) {}
+
+    try {
+      if (typeof menNames !== 'undefined' && menNames && typeof menNames.add === 'function') {
+        menNames.add(profile.fighter);
+      }
+      if (typeof womenNames !== 'undefined' && womenNames && typeof womenNames.delete === 'function') {
+        womenNames.delete(profile.fighter);
+      }
+    } catch (error) {}
+
+    try {
+      if (typeof DISPLAY_OVERRIDES !== 'undefined' && DISPLAY_OVERRIDES && typeof DISPLAY_OVERRIDES === 'object') {
+        DISPLAY_OVERRIDES['Petr Yan'] = {
+          overallOvr: scoreToOvr(profile.totalScore),
+          allTimeRank: profile.rank,
+          divisionLabel: 'BW',
+          resumeTag: 'Modern bantamweight title case',
+          oneLiner: 'A modern bantamweight title case with elite skill, strong round control, and unusual DQ context that needs more nuance than a normal loss.',
+          categories: {
+            championship: { ovr: 78, rank: 20 },
+            opponentQuality: { ovr: 86, rank: 10 },
+            primeDominance: { ovr: 91, rank: 8 },
+            longevity: { ovr: 82, rank: 20 }
+          },
+          snapshot: [
+            ['UFC Record', profile.ufcRecord || '12-4'],
+            ['UFC Title-Fight Wins', '2 adjusted title-win credit'],
+            ['Championship Level', 'Former Bantamweight Champion'],
+            ['Quality Wins', 'Aldo and Sandhagen anchor the case'],
+            ['Prime Record', profile.primeRecord || '7-4 in title/elite window'],
+            ['Active Elite Years', '6.0 Elite Years'],
+            ['Loss Context', 'Sterling DQ and elite-loss context need nuance']
+          ],
+          whyRankedHere: 'Yan ranks here because his UFC-only case has real bantamweight title value, strong elite-round control, and enough quality-win/context credit to belong in the all-time conversation rather than being hidden by the messy Sterling rivalry.',
+          whyNotHigher: 'He does not climb higher because the championship volume is limited and the official loss column is heavy for an all-time case, even when several losses have strong context.',
+          keyJudgmentCalls: [
+            ['Sterling DQ', 'treated with special context instead of like a normal competitive title loss.'],
+            ['Sandhagen win', 'important interim-title and elite contender value.'],
+            ['Aldo win', 'vacant title win over an elite former champion, but not prime Aldo at featherweight.'],
+            ['Later losses', 'count against the resume, but without finish add-ons where appropriate.'],
+            ['Bantamweight depth', 'modern bantamweight is treated as a strong division context.']
+          ],
+          finalTakeaway: 'Yan is a legit modern bantamweight title case: not a top-tier GOAT resume, but clearly strong enough that he should appear in the ranking and compare mode.'
+        };
+      }
+    } catch (error) {}
+  }
+
   const yan = {
     rank: 16,
     fighter: 'Petr Yan',
@@ -138,7 +203,7 @@
     });
 
     upsertRow('men', yan.fighter, yan);
-    upsertProfile({
+    const yanProfile = upsertProfile({
       ...yan,
       title: { adjustedTitleWins: 2.65, notes: 'UFC bantamweight champion with elite title-race context. Sterling DQ is handled with reduced context.' },
       opponents: [
@@ -148,6 +213,7 @@
       rounds: []
     });
 
+    repairLegacyState(yanProfile);
     sortBoards();
     syncCompareSelects();
   }
@@ -156,7 +222,8 @@
     meta: {
       purpose: 'Phase 1 modular-refactor-v2-safe ranking data patch layer',
       note: 'Keeps old UI intact while allowing fighter scoring fixes outside index.html.',
-      updated: '2026-07-01'
+      updated: '2026-07-01',
+      version: PATCH_VERSION
     },
     apply: applyPhase1Data
   };
@@ -212,6 +279,8 @@
     const gap = Math.abs(aScore - bScore).toFixed(2);
     const context = directContext(a.fighter, b.fighter);
 
+    compareRenderInProgress = true;
+    target.dataset.phase1Compare = 'debate';
     target.innerHTML = `
       <div class="card" style="grid-column:1/-1">
         <h3>Verdict</h3>
@@ -222,6 +291,7 @@
       <div class="card"><h3>${a.fighter}</h3><p><span class="badge">${rankLabel(a)}</span> <span class="badge">${scoreToOvr(a.totalScore)} OVR</span> <span class="badge">${aScore.toFixed(2)} raw</span></p><p>${shortCase(a)}</p></div>
       <div class="card"><h3>${b.fighter}</h3><p><span class="badge">${rankLabel(b)}</span> <span class="badge">${scoreToOvr(b.totalScore)} OVR</span> <span class="badge">${bScore.toFixed(2)} raw</span></p><p>${shortCase(b)}</p></div>
     `;
+    compareRenderInProgress = false;
   }
 
   function enhanceDrawer(name) {
@@ -250,6 +320,26 @@
     }
     if (typeof renderDivision === 'function') renderDivision();
     patchedRenderCompare();
+    document.documentElement.setAttribute('data-phase1-patch', PATCH_VERSION);
+    window.UFC_PHASE1_PATCH_STATUS = {
+      version: PATCH_VERSION,
+      petrYanInMen: Array.isArray(data.men) && data.men.some(f => f.fighter === 'Petr Yan'),
+      petrYanInProfiles: Array.isArray(data.fighters) && data.fighters.some(f => f.fighter === 'Petr Yan'),
+      debateComparePatched: true,
+      appliedAt: new Date().toISOString()
+    };
+  }
+
+  function observeCompareOutput() {
+    const target = document.getElementById('compareResult');
+    if (!target || typeof MutationObserver !== 'function') return;
+    const observer = new MutationObserver(() => {
+      if (compareRenderInProgress) return;
+      if (target.dataset.phase1Compare !== 'debate' || target.querySelector('table')) {
+        setTimeout(patchedRenderCompare, 0);
+      }
+    });
+    observer.observe(target, { childList: true, subtree: true });
   }
 
   applyPhase1Data();
@@ -293,6 +383,7 @@
   }, true);
 
   window.UFC_PHASE1_FORCE_REFRESH = forceBoardRefresh;
+  observeCompareOutput();
   forceBoardRefresh();
   setTimeout(forceBoardRefresh, 250);
   setTimeout(forceBoardRefresh, 1000);
