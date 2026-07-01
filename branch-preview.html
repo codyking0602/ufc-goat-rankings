@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UFC App Branch Preview</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, sans-serif; background:#0b0d12; color:#eef2ff; }
+    header { padding:14px 18px; border-bottom:1px solid #263244; background:#121722; display:flex; justify-content:space-between; gap:12px; align-items:center; flex-wrap:wrap; }
+    h1 { margin:0; font-size:18px; }
+    p { margin:4px 0 0; color:#9ca3af; font-size:13px; }
+    a { color:#facc15; }
+    iframe { width:100%; height:calc(100vh - 76px); border:0; display:block; background:#0b0d12; }
+    .badge { border:1px solid #263244; border-radius:999px; padding:6px 10px; color:#facc15; font-size:12px; font-weight:800; }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>UFC App Branch Preview</h1>
+      <p>Previewing <strong>modular-refactor-v2-safe</strong>. The live homepage is still main.</p>
+    </div>
+    <div class="badge">Safe preview</div>
+  </header>
+  <iframe id="preview" title="UFC App branch preview"></iframe>
+  <script>
+    const branchHtmlUrl = 'https://raw.githubusercontent.com/codyking0602/ufc-goat-rankings/modular-refactor-v2-safe/index.html';
+    const rootBase = 'https://codyking0602.github.io/ufc-goat-rankings/';
+
+    fetch(branchHtmlUrl, { cache: 'no-store' })
+      .then(response => {
+        if (!response.ok) throw new Error('Could not load branch HTML');
+        return response.text();
+      })
+      .then(html => {
+        const baseTag = `<base href="${rootBase}">`;
+        const patchedHtml = html.replace('<head>', `<head>${baseTag}`);
+        document.getElementById('preview').srcdoc = patchedHtml;
+      })
+      .catch(error => {
+        document.body.insertAdjacentHTML('beforeend', `<div style="padding:20px;color:#fecaca;">Preview failed: ${error.message}</div>`);
+      });
+  </script>
+</body>
+</html>
