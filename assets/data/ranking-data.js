@@ -1,5 +1,5 @@
-// Built from the embedded source payload by tools/split-ranking-data.py.
-// Long-term source target: edit this file directly once index.html is fully layout-only.
+// UFC GOAT base ranking/profile payload.
+// Main score/stat source for fighter rankings.
 window.RANKING_DATA = {
   "meta": {
     "title": "UFC All-Time Rankings MVP",
@@ -28,7 +28,10 @@ window.RANKING_DATA = {
       "primeDominance": 22.73,
       "longevity": 13.09,
       "penalty": -6.25,
-      "leaderboard": "men"
+      "leaderboard": "men",
+      "timesFinishedPrime": 1,
+      "primeRecord": "18-1 after first Hughes loss; Serra is the counted prime finish loss",
+      "notes": "Hughes 2004 is an early elite loss. Serra 2007 is the counted prime finished loss, then avenged decisively."
     },
     {
       "rank": 3,
@@ -164,6 +167,17 @@ window.RANKING_DATA = {
     },
     {
       "rank": 15,
+      "fighter": "Ilia Topuria",
+      "totalScore": 43.44,
+      "championship": 5.99,
+      "opponentQuality": 13.1,
+      "primeDominance": 23.6,
+      "longevity": 2.97,
+      "penalty": -2.25,
+      "leaderboard": "men"
+    },
+    {
+      "rank": 15,
       "fighter": "Israel Adesanya",
       "totalScore": 43.27,
       "championship": 14.72,
@@ -185,6 +199,27 @@ window.RANKING_DATA = {
       "leaderboard": "men"
     },
     {
+      "rank": 16,
+      "fighter": "Petr Yan",
+      "totalScore": 43.35,
+      "championship": 5.04,
+      "opponentQuality": 13.1,
+      "primeDominance": 21.43,
+      "longevity": 5.98,
+      "penalty": -5.25,
+      "leaderboard": "men",
+      "gender": "Men",
+      "ufcRecord": "12-4",
+      "primaryDivision": "Bantamweight",
+      "secondaryDivision": "",
+      "finishRatePct": 18.2,
+      "activeEliteYears": 5.98,
+      "timesFinishedPrime": 0,
+      "primeRecord": "7-4 in title/elite window",
+      "roundsWonPct": 65.2,
+      "notes": "Audited bantamweight title case. Sterling DQ context reduced, later elite losses counted without finish add-ons."
+    },
+    {
       "rank": 17,
       "fighter": "Merab Dvalishvili",
       "totalScore": 42.52,
@@ -204,17 +239,6 @@ window.RANKING_DATA = {
       "primeDominance": 16.27,
       "longevity": 9.62,
       "penalty": -8.5,
-      "leaderboard": "men"
-    },
-    {
-      "rank": 19,
-      "fighter": "Ilia Topuria",
-      "totalScore": 39.09,
-      "championship": 5.98,
-      "opponentQuality": 7.84,
-      "primeDominance": 20.9,
-      "longevity": 6.63,
-      "penalty": -2.25,
       "leaderboard": "men"
     },
     {
@@ -263,6 +287,17 @@ window.RANKING_DATA = {
     },
     {
       "rank": 24,
+      "fighter": "Charles Oliveira",
+      "totalScore": 40.13,
+      "championship": 5.32,
+      "opponentQuality": 17.85,
+      "primeDominance": 20.96,
+      "longevity": 5.99,
+      "penalty": -10.0,
+      "leaderboard": "men"
+    },
+    {
+      "rank": 24,
       "fighter": "Henry Cejudo",
       "totalScore": 34.65,
       "championship": 7.88,
@@ -270,17 +305,6 @@ window.RANKING_DATA = {
       "primeDominance": 18.05,
       "longevity": 7.97,
       "penalty": -6.75,
-      "leaderboard": "men"
-    },
-    {
-      "rank": 25,
-      "fighter": "Charles Oliveira",
-      "totalScore": 32.02,
-      "championship": 3.61,
-      "opponentQuality": 13.34,
-      "primeDominance": 17.44,
-      "longevity": 7.63,
-      "penalty": -10.0,
       "leaderboard": "men"
     },
     {
@@ -788,12 +812,12 @@ window.RANKING_DATA = {
       "scoredUfcFights": 22,
       "finishWins": 8,
       "finishRatePct": 36.4,
-      "timesFinishedPrime": 0,
+      "timesFinishedPrime": 1,
       "lossPenalty": null,
       "activeEliteYears": 9.15,
       "primeStart": "",
       "primeEnd": "",
-      "notes": "UFC. Hughes 2004 = pre-prime elite finished loss (-1.5). Serra 2007 = prime non-elite finished loss (-4.75).",
+      "notes": "Hughes 2004 is an early elite loss. Serra 2007 is the counted prime finished loss, then avenged decisively.",
       "rank": 2,
       "totalScore": 79.26,
       "championship": 24.68,
@@ -1236,7 +1260,8 @@ window.RANKING_DATA = {
           "confidence": "Medium",
           "notes": "Sherdog media scoring split round 2; editable."
         }
-      ]
+      ],
+      "primeRecord": "18-1 after first Hughes loss; Serra is the counted prime finish loss"
     },
     {
       "id": "AS001",
@@ -8957,6 +8982,46 @@ window.RANKING_DATA = {
           "notes": "Final prime/near-prime loss; Chuck credited round 1."
         }
       ]
+    },
+    {
+      "rank": 16,
+      "fighter": "Petr Yan",
+      "totalScore": 43.35,
+      "championship": 5.04,
+      "opponentQuality": 13.1,
+      "primeDominance": 21.43,
+      "longevity": 5.98,
+      "penalty": -5.25,
+      "leaderboard": "men",
+      "gender": "Men",
+      "ufcRecord": "12-4",
+      "primaryDivision": "Bantamweight",
+      "secondaryDivision": "",
+      "finishRatePct": 18.2,
+      "activeEliteYears": 5.98,
+      "timesFinishedPrime": 0,
+      "primeRecord": "7-4 in title/elite window",
+      "roundsWonPct": 65.2,
+      "notes": "Audited bantamweight title case. Sterling DQ context reduced, later elite losses counted without finish add-ons.",
+      "title": {
+        "adjustedTitleWins": 2.65,
+        "notes": "UFC bantamweight champion with elite title-race context. Sterling DQ is handled with reduced context."
+      },
+      "opponents": [
+        {
+          "opponent": "Jose Aldo",
+          "division": "Bantamweight",
+          "context": "Vacant title win / elite former champion",
+          "credit": 1.0
+        },
+        {
+          "opponent": "Cory Sandhagen",
+          "division": "Bantamweight",
+          "context": "Interim title win / top contender",
+          "credit": 1.0
+        }
+      ],
+      "rounds": []
     }
   ],
   "divisionStrength": [
