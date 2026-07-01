@@ -31,6 +31,48 @@
     return compareProfiles()[name] || {};
   }
 
+  function fighterSlug(name) {
+    return String(name || '')
+      .toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/['’]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  function fighterInitials(name) {
+    return String(name || '')
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map(part => part[0])
+      .join('')
+      .toUpperCase();
+  }
+
+  function photoUrls(row) {
+    const profile = profileFor(row.fighter);
+    const slug = profile.slug || row.slug || fighterSlug(row.fighter);
+    return {
+      profile: profile.photoUrl || row.photoUrl || `assets/fighters/${slug}.webp`,
+      profileFallback: profile.photoFallbackUrl || row.photoFallbackUrl || `assets/fighters/${slug}-profile.webp`,
+      thumb: profile.thumbUrl || row.thumbUrl || `assets/fighters/${slug}-thumb.webp`
+    };
+  }
+
+  function rowPhoto(row) {
+    const urls = photoUrls(row);
+    return `<div class="row-photo"><span>${esc(fighterInitials(row.fighter))}</span><img src="${esc(urls.thumb)}" alt="" loading="lazy" onerror="this.remove()"></div>`;
+  }
+
+  function profilePhoto(row) {
+    const urls = photoUrls(row);
+    return `<div class="fighter-photo">
+      <div class="photo-initials">${esc(fighterInitials(row.fighter))}</div>
+      <img src="${esc(urls.profile)}" data-fallback="${esc(urls.profileFallback)}" alt="${esc(row.fighter)} profile photo" class="fighter-photo-img" loading="lazy" onerror="if(this.dataset.fallback){this.src=this.dataset.fallback;this.dataset.fallback='';}else{this.remove();}">
+    </div>`;
+  }
+
   function ovr(row) {
     return row?.ovr ?? Math.round(75 + ((Number(row?.score || 0) / 88.7) * 24));
   }
@@ -53,6 +95,7 @@
       const profile = profileFor(row.fighter);
       return `<article class="row fighter-row" data-fighter="${esc(row.fighter)}">
         <div class="rank">#${esc(row.rank)}</div>
+        ${rowPhoto(row)}
         <div class="row-main">
           <div class="name">${esc(row.fighter)}</div>
           <div class="meta">Score ${Number(row.score).toFixed(2)} · ${esc(row.source || 'current')}</div>
@@ -149,10 +192,15 @@
 
     $('fighterDetail').innerHTML = `
       <button id="closeDrawerInner" class="close">×</button>
-      <div class="profile-topline"><span class="profile-pill gold">UFC All-Time Rank: #${esc(row.rank)}</span><span class="profile-pill">${esc(row.leaderboard === 'women' ? 'Women' : 'Men')}</span></div>
-      <h2>${esc(row.fighter)}</h2>
-      <div class="profile-ovr">${esc(ovr(row))} <small>OVR</small></div>
-      <p class="profile-copy">${esc(profile.shortCase || row.review || 'Profile copy pending.')}</p>
+      <section class="profile-hero">
+        ${profilePhoto(row)}
+        <div class="profile-summary">
+          <div class="profile-topline"><span class="profile-pill gold">UFC All-Time Rank: #${esc(row.rank)}</span><span class="profile-pill">${esc(row.leaderboard === 'women' ? 'Women' : 'Men')}</span></div>
+          <h2>${esc(row.fighter)}</h2>
+          <div class="profile-ovr">${esc(ovr(row))} <small>OVR</small></div>
+          <p class="profile-copy">${esc(profile.shortCase || row.review || 'Profile copy pending.')}</p>
+        </div>
+      </section>
       <div class="card"><h3>Snapshot</h3><div class="snapshot-grid">${stats.map(([key, value]) => `<div class="snapshot-item"><strong>${esc(value)}</strong><small>${esc(key)}</small></div>`).join('')}</div></div>
       <div class="card"><h3>Best argument</h3><p>${esc(profile.resume || profile.edge || row.review || 'Pending.')}</p></div>
       <div class="card"><h3>Title context</h3><p>${esc(profile.titleSummary || profile.championship || 'Pending.')}</p></div>
@@ -173,8 +221,8 @@
 
   function renderRules() {
     $('rulesContent').innerHTML = `
-      <div class="card"><h3>Current file structure</h3><ul class="list"><li><strong>index.html</strong> is the shell.</li><li><strong>assets/css/styles.css</strong> controls the look.</li><li><strong>assets/js/app.js</strong> controls rendering.</li><li><strong>assets/data/fighters.js</strong> controls scores and ranks.</li><li><strong>compare packs</strong> control Compare Profiles and Fight Ledger entries.</li></ul></div>
-      <div class="card"><h3>Update workflow</h3><p>Future fighter changes should hit data files only: fighter scores, Compare Profiles, and Fight Ledger. The HTML shell should rarely change.</p></div>
+      <div class="card"><h3>Current file structure</h3><ul class="list"><li><strong>index.html</strong> is the shell.</li><li><strong>assets/css/styles.css</strong> controls the look.</li><li><strong>assets/css/photo-fix.css</strong> controls fighter photos.</li><li><strong>assets/js/app.js</strong> controls rendering.</li><li><strong>assets/data/fighters.js</strong> controls scores and ranks.</li><li><strong>compare packs</strong> control Compare Profiles and Fight Ledger entries.</li></ul></div>
+      <div class="card"><h3>Photo workflow</h3><p>Drop two files into assets/fighters: fighter-slug.webp for the profile photo and fighter-slug-thumb.webp for the ranking-card thumbnail. The app builds the paths automatically from the fighter name.</p></div>
       <div class="card"><h3>Compare Mode</h3><p>Compare Mode uses fighter identity profiles plus direct fight/rivalry context. Men and women stay separate.</p></div>
     `;
   }
