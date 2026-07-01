@@ -3,61 +3,25 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="refresh" content="0; url=previews/modular-refactor-v2-safe/index.html?v=a48db67" />
   <title>UFC App Branch Preview</title>
   <style>
     :root { color-scheme: dark; }
-    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, sans-serif; background:#0b0d12; color:#eef2ff; }
-    header { padding:14px 18px; border-bottom:1px solid #263244; background:#121722; display:flex; justify-content:space-between; gap:12px; align-items:center; flex-wrap:wrap; }
-    h1 { margin:0; font-size:18px; }
-    p { margin:4px 0 0; color:#9ca3af; font-size:13px; }
-    a { color:#facc15; }
-    iframe { width:100%; height:calc(100vh - 76px); border:0; display:block; background:#0b0d12; }
-    .badge { border:1px solid #263244; border-radius:999px; padding:6px 10px; color:#facc15; font-size:12px; font-weight:800; }
+    body { margin:0; min-height:100vh; display:grid; place-items:center; font-family:system-ui,-apple-system,Segoe UI,sans-serif; background:#0b0d12; color:#eef2ff; }
+    .box { max-width:680px; margin:24px; padding:22px; border:1px solid #263244; border-radius:18px; background:#121722; }
+    h1 { margin:0 0 8px; font-size:22px; }
+    p { margin:6px 0; color:#9ca3af; line-height:1.45; }
+    a { color:#facc15; font-weight:800; }
   </style>
 </head>
 <body>
-  <header>
-    <div>
-      <h1>UFC App Branch Preview</h1>
-      <p>Previewing <strong>modular-refactor-v2-safe</strong>. The live homepage is still main.</p>
-    </div>
-    <div class="badge">Safe preview</div>
-  </header>
-  <iframe id="preview" title="UFC App branch preview"></iframe>
+  <div class="box">
+    <h1>Opening direct safe preview…</h1>
+    <p>The old iframe preview has been replaced because it was not reliably showing the safe-branch patch.</p>
+    <p><a href="previews/modular-refactor-v2-safe/index.html?v=a48db67">Open direct safe preview</a></p>
+  </div>
   <script>
-    const branchName = 'modular-refactor-v2-safe';
-    const branchBase = 'https://raw.githubusercontent.com/codyking0602/ufc-goat-rankings/' + branchName + '/';
-    const previewVersion = 'a48db67d282e891b74b20d7fccb659c74a3b89a4-' + Date.now();
-    const branchHtmlUrl = branchBase + 'index.html?v=' + encodeURIComponent(previewVersion);
-    const branchPatchUrl = branchBase + 'assets/data/ranking-data-patches.js?v=' + encodeURIComponent(previewVersion);
-    const rootBase = 'https://codyking0602.github.io/ufc-goat-rankings/';
-
-    Promise.all([
-      fetch(branchHtmlUrl, { cache: 'no-store' }).then(response => {
-        if (!response.ok) throw new Error('Could not load branch HTML');
-        return response.text();
-      }),
-      fetch(branchPatchUrl, { cache: 'no-store' }).then(response => {
-        if (!response.ok) throw new Error('Could not load branch patch file');
-        return response.text();
-      })
-    ])
-      .then(([html, patchScript]) => {
-        const baseTag = '<base href="' + rootBase + '">';
-        let patchedHtml = html.replace('<head>', '<head>' + baseTag);
-        patchedHtml = patchedHtml.replace('<scr' + 'ipt src="assets/data/ranking-data-patches.js"></scr' + 'ipt>', '');
-        const openScript = '<scr' + 'ipt>';
-        const closeScript = '</scr' + 'ipt>';
-        const safePatchScript = patchScript.replace(/<\/script/gi, '<\\/script');
-        patchedHtml = patchedHtml.replace('</body>', openScript + safePatchScript + closeScript + '</body>');
-        document.getElementById('preview').srcdoc = patchedHtml;
-      })
-      .catch(error => {
-        const message = document.createElement('div');
-        message.style.cssText = 'padding:20px;color:#fecaca;';
-        message.textContent = 'Preview failed: ' + error.message;
-        document.body.appendChild(message);
-      });
+    window.location.replace('previews/modular-refactor-v2-safe/index.html?v=a48db67-' + Date.now());
   </script>
 </body>
 </html>
