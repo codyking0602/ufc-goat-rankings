@@ -2,17 +2,15 @@
 
 This folder is where ranking/profile data patches and generated ranking payloads live.
 
-## Current Phase 2D structure
+## Current Phase 2E structure
 
-The original app still has the large `window.RANKING_DATA` payload embedded in `index.html` at source level.
+The original app still has the large `window.RANKING_DATA` payload and `DISPLAY_OVERRIDES` object embedded in `index.html` at source level.
 
-During the Pages build, `tools/split-ranking-data.py` extracts that embedded payload into:
+During the Pages build:
 
-```text
-assets/data/ranking-data-generated.js
-```
-
-Then the built `index.html` loads that generated file before the remaining app code runs.
+1. `tools/split-ranking-data.py` extracts the embedded ranking payload into `assets/data/ranking-data-generated.js`.
+2. `tools/split-display-overrides.py` extracts the embedded display/profile polish into `assets/data/display-overrides-generated.js`.
+3. The built `index.html` loads both generated files before the remaining app code runs.
 
 This gives us a safer migration path:
 
@@ -41,9 +39,30 @@ Generated during the Pages build by `tools/split-ranking-data.py`.
 
 Do not edit directly because it is generated from the embedded source payload.
 
+### `display-overrides-generated.js`
+
+Generated during the Pages build by `tools/split-display-overrides.py`.
+
+This contains app-facing polish such as:
+
+- front-end OVR values
+- all-time rank labels
+- division labels
+- resume tags
+- photo paths
+- one-liners
+- category display ratings
+- profile snapshot rows
+- why-ranked-here copy
+- why-not-higher copy
+- key judgment calls
+- final takeaways
+
+Do not edit directly because it is generated from the embedded source payload.
+
 ## Long-term target
 
-Eventually, the source `index.html` should not contain fighter data at all.
+Eventually, the source `index.html` should not contain fighter data or display/profile polish at all.
 
 Target structure:
 
@@ -62,7 +81,7 @@ Do not add large new fighter batches until the ranking/profile structure is clea
 For now, continue restructuring in this order:
 
 1. Compare stack cleanup. Done in Phase 2C.
-2. Ranking data split. In progress in Phase 2D.
-3. Display overrides split.
+2. Ranking data split. Done in Phase 2D build/preview path.
+3. Display overrides split. Done in Phase 2E build/preview path.
 4. App/rendering JS split.
 5. Then add new fighter batches through the proper structure.
