@@ -16,9 +16,9 @@ The output should usually show:
 
 The main Compare output should stay natural and group-chat friendly. Category numbers can support the engine, but they should not become the main visual experience unless Cody asks for a drill-down.
 
-## Active Compare stack
+## Current Compare stack
 
-These are the Compare files that matter right now:
+These are the only Compare files that should matter right now:
 
 1. `assets/compare-data.js`
    - Base `COMPARE_PROFILES` and `COMPARE_FIGHT_LEDGER`.
@@ -50,7 +50,7 @@ These are the Compare files that matter right now:
 
 ## Load order
 
-The Pages workflow injects the active Compare stack in this order:
+The Pages workflow injects the current Compare stack in this order:
 
 ```html
 <script src="assets/compare-data.js"></script>
@@ -137,25 +137,6 @@ Bad examples:
 - Random mid-card comparisons.
 - Thousands of pair-specific blurbs.
 - Any direct fight context that should live in `COMPARE_FIGHT_LEDGER` instead.
-
-## Deleted old Compare files
-
-During Phase 2C, older unused Compare files were removed from the safe branch so future chats do not get confused by stale engines or old data packs.
-
-Removed examples include:
-
-- `compare-engine-v1-2.js`
-- `compare-engine-v1-3.js`
-- `compare-engine-v1-4.js`
-- `compare-angle-engine-v1.js`
-- `compare-angle-engine-v1-1.js`
-- `compare-profile-enhancements-v1-1.js`
-- `compare-title-prime-v1-2.js`
-- `compare-legacy-stats-v1-3.js`
-- `compare-fight-ledger-v1-2.js`
-- `compare-profiles.js`
-
-Do not resurrect those old files unless there is a very specific reason.
 
 ## Current restructuring rule
 
