@@ -1,48 +1,36 @@
 # Ranking data structure
 
-This folder is where ranking/profile data patches and generated ranking payloads live.
+This folder is where ranking/profile data and patch layers live.
 
-## Current Phase 2F structure
+## Current Phase 2G structure
 
 The original app still has the large `window.RANKING_DATA` payload, `DISPLAY_OVERRIDES` object, and app/rendering JavaScript embedded in `index.html` at source level.
 
-During the Pages build:
+During the Pages build, those chunks are promoted into source-style paths:
 
-1. `tools/split-ranking-data.py` extracts the embedded ranking payload into `assets/data/ranking-data-generated.js`.
-2. `tools/split-display-overrides.py` extracts the embedded display/profile polish into `assets/data/display-overrides-generated.js`.
-3. `tools/split-app-js.py` extracts the app/rendering behavior into `assets/js/app-generated.js`.
-4. The built `index.html` loads the generated files before the Compare stack and patch layer finish booting.
+1. `tools/split-ranking-data.py` extracts the embedded ranking payload into `assets/data/ranking-data.js`.
+2. `tools/split-display-overrides.py` extracts the embedded display/profile polish into `assets/data/display-overrides.js`.
+3. `tools/split-app-js.py` extracts the app/rendering behavior into `assets/js/app.js`.
+4. The built `index.html` loads those files before the Compare stack and patch layer finish booting.
 
 This gives us a safer migration path:
 
 1. Keep the polished UI intact.
 2. Stop shipping one giant all-in-one HTML file in the built app.
-3. Create a clean path for moving source data and source app logic out of `index.html` later.
+3. Move the deployed structure to the same file names we want long-term.
+4. Create a clean path for making those files true committed source files next.
 
 ## Files
 
-### `ranking-data-patches.js`
+### `ranking-data.js`
 
-Current Phase 2 patch layer.
+Built during the Pages build by `tools/split-ranking-data.py`.
 
-Use this for temporary safe-branch data fixes while restructuring, including:
+Long-term, this should become the real committed source file for base fighter scores/stats.
 
-- Petr Yan ranking/profile insertion.
-- GSP loss-context cleanup.
-- Charles Oliveira and Ilia Topuria score patches.
-- Dropdown/profile refresh after data patches.
+### `display-overrides.js`
 
-This file should stay data-only. It should not own Compare rendering.
-
-### `ranking-data-generated.js`
-
-Generated during the Pages build by `tools/split-ranking-data.py`.
-
-Do not edit directly because it is generated from the embedded source payload.
-
-### `display-overrides-generated.js`
-
-Generated during the Pages build by `tools/split-display-overrides.py`.
+Built during the Pages build by `tools/split-display-overrides.py`.
 
 This contains app-facing polish such as:
 
@@ -59,7 +47,20 @@ This contains app-facing polish such as:
 - key judgment calls
 - final takeaways
 
-Do not edit directly because it is generated from the embedded source payload.
+Long-term, this should become the real committed source file for front-end profile/card polish.
+
+### `ranking-data-patches.js`
+
+Current Phase 2 patch layer.
+
+Use this for temporary safe-branch data fixes while restructuring, including:
+
+- Petr Yan ranking/profile insertion.
+- GSP loss-context cleanup.
+- Charles Oliveira and Ilia Topuria score patches.
+- Dropdown/profile refresh after data patches.
+
+This file should stay data-only. It should not own Compare rendering.
 
 ## Long-term target
 
@@ -85,5 +86,6 @@ For now, continue restructuring in this order:
 2. Ranking data split. Done in Phase 2D build/preview path.
 3. Display overrides split. Done in Phase 2E build/preview path.
 4. App/rendering JS split. Done in Phase 2F build/preview path.
-5. Then convert generated files into real source files.
-6. Then add new fighter batches through the proper structure.
+5. Source-style path promotion. Done in Phase 2G build path.
+6. Then make `ranking-data.js`, `display-overrides.js`, and `app.js` committed source files.
+7. Then add new fighter batches through the proper structure.
