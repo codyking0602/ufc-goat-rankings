@@ -77,7 +77,7 @@ window.FIGHTER_REVIEW_DECISIONS = {
       ]
     },
     "Dustin Poirier": {
-      status: "Scoring inputs locked; compare profile not done",
+      status: "Scoring inputs locked; compare profile and first matchup blurbs drafted",
       lockedInputs: {
         primeStartOption: "Option A",
         primeStart: "Carlos Diego Ferreira",
@@ -119,9 +119,28 @@ window.FIGHTER_REVIEW_DECISIONS = {
         "BMF belts do not count as championship credit, but the opponents still count for quality when they were elite.",
         "Loss penalty hits the -10.00 cap because counted losses include Khabib, Oliveira, Gaethje 2, Islam, Holloway 3, and Michael Johnson inside the Option A window."
       ],
+      compareProfile: {
+        coreCase: "Dustin Poirier is a quality-wins and lightweight-depth résumé case. His argument comes from building one of the deepest modern UFC lightweight ledgers: Holloway, Gaethje, Alvarez, Pettis, Conor, Hooker, Chandler, Saint Denis, and a long run near the top of the toughest division in the sport.",
+        bestArgument: "Dustin’s best argument is that he fought the strongest possible UFC schedule for years and kept stacking meaningful wins. Even without an undisputed belt, his win ledger is deeper than many champions around him, and the lightweight multiplier matters because those wins came in a brutal era.",
+        holdsBack: "Dustin has elite contender credibility and an interim title, but not an undisputed UFC title win. The fights against Khabib, Oliveira, Islam, Gaethje 2, and Holloway 3 define the ceiling of the résumé: he was consistently at the highest level, but several of the fights that would have lifted him into the championship great tier went the other way.",
+        comparisonTone: "Dustin’s case is about depth, schedule strength, and quality wins. The question is whether that deep lightweight résumé outweighs a cleaner title reign or a shorter, higher-peak championship case from the fighter across from him."
+      },
+      matchupBlurbs: {
+        "Frankie Edgar": "Dustin Poirier wins narrowly. Frankie has the stronger belt argument because he became undisputed UFC lightweight champion. Dustin has the stronger modern lightweight quality-wins case, with deeper wins in one of the toughest UFC divisions. Frankie’s longevity is excellent, but Dustin’s opponent ledger gives him the edge.",
+        "Robert Whittaker": "Dustin Poirier wins narrowly. Whittaker has the cleaner undisputed champion label and a strong middleweight résumé, but Dustin’s lightweight win ledger is deeper. Dustin has more elite wins across a harder division, while Whittaker has the stronger formal belt argument. This comes down to quality-win depth versus championship label, and Dustin edges it on total UFC résumé.",
+        "Alex Pereira": "Alex Pereira wins narrowly if the comparison prioritizes championship impact. Dustin has the deeper UFC win ledger and longer lightweight résumé, but Pereira’s two-division title achievement gives him a cleaner high-end championship case. Dustin’s argument is depth; Pereira’s argument is peak title impact.",
+        "Ilia Topuria": "Hold until Ilia is audited. Dustin has far more volume and lightweight depth. Ilia has the cleaner unbeaten/short-peak championship case. This matchup should wait until Ilia’s title wins, active status, and prime window are locked.",
+        "Chuck Liddell": "Dustin Poirier wins on opponent-quality depth. Chuck has the stronger classic UFC title-reign identity, but Dustin’s modern lightweight ledger is deeper and came in a stronger division context. Chuck’s case is cleaner as a champion; Dustin’s case is stronger as a total win résumé.",
+        "Deiveson Figueiredo": "Dustin Poirier wins narrowly. Figueiredo has a stronger divisional title-rivalry case, but Dustin’s lightweight opponent quality and longer elite schedule carry more weight. Deiveson has the better belt argument; Dustin has the better depth argument.",
+        "Tito Ortiz": "Dustin Poirier wins. Tito has the early UFC title-reign headline, but Dustin fought a much deeper modern schedule and stacked better opponent-quality wins. Tito’s title volume keeps it competitive; Dustin’s quality-wins case is stronger.",
+        "Conor McGregor": "Dustin Poirier wins on total UFC résumé. Conor has the higher peak headline with two belts and the Aldo/Alvarez wins. Dustin has the deeper lightweight body of work, better long-term divisional relevance, and the later head-to-head edge. Conor owns the bigger moment; Dustin owns the stronger complete résumé.",
+        "Justin Gaethje": "Dustin Poirier wins narrowly. Gaethje has the direct head-to-head equalizer after the second fight and a strong elite lightweight case, but Dustin has more total UFC depth, the interim title, and a broader quality-wins ledger. Their cases are close because both are violence-era lightweight greats, but Dustin has more layers.",
+        "Charles Oliveira": "Hold until Charles is audited. Charles has the stronger undisputed title/finish-record case. Dustin has the cleaner quality-wins depth argument. This one should not be locked until Charles’ scoring card is fixed."
+      },
+      readyForAppUpdate: false,
       remaining: [
-        "Write compare profile after scoring card is locked",
-        "Add matchup blurbs"
+        "Optionally wire Dustin compare profile into compare pack after nearby fighters are finalized",
+        "Charles and Ilia matchups should stay on hold until those audits are complete"
       ]
     }
   }
