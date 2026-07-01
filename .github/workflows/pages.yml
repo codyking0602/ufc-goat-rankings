@@ -37,6 +37,7 @@ jobs:
             --exclude='assets/fighters/test-binary-as-text.txt'
           python tools/split-ranking-data.py _site/index.html _site/assets/data/ranking-data-generated.js
           python tools/split-display-overrides.py _site/index.html _site/assets/data/display-overrides-generated.js
+          python tools/split-app-js.py _site/index.html _site/assets/js/app-generated.js
           python - <<'PY'
           from pathlib import Path
           index = Path('_site/index.html')
