@@ -75,6 +75,54 @@ window.FIGHTER_REVIEW_DECISIONS = {
         "Optionally wire Frankie compare profile into compare pack after nearby fighters are finalized",
         "Charles matchup should stay on hold until Charles audit"
       ]
+    },
+    "Dustin Poirier": {
+      status: "Scoring inputs locked; compare profile not done",
+      lockedInputs: {
+        primeStartOption: "Option A",
+        primeStart: "Carlos Diego Ferreira",
+        primeEnd: "Max Holloway 3",
+        primeWindowTreatment: "Full lightweight longevity counted; Michael Johnson loss remains inside counted window.",
+        ufcRecord: "22-9, 1 NC",
+        adjustedTitleWins: 0.75,
+        divisionAdjustedOpponentQuality: 18.20,
+        primeRoundsWon: "31 / 57 = 54.4%",
+        primeFinishRate: "10 / 21 = 47.6%",
+        timesFinishedInPrime: 4,
+        activeEliteYears: 10.60,
+        lossPenalty: -10.00,
+        finalScore: 38.35
+      },
+      scoringCard: {
+        currentRank: "#25, between Alex Pereira and Robert Whittaker",
+        ufcRecord: "22-9, 1 NC",
+        adjustedTitleWins: 0.75,
+        divisionAdjustedOpponentQuality: 18.20,
+        primeRoundsWon: "31 / 57 = 54.4%",
+        primeFinishRate: "10 / 21 = 47.6%",
+        timesFinishedInPrime: 4,
+        activeEliteYears: 10.60,
+        lossPenalty: -10.00,
+        finalScore: 38.35
+      },
+      divisionStrengthUsed: [
+        { divisionEra: "Featherweight early UFC period", multiplier: 1.00 },
+        { divisionEra: "Lightweight prime contender era", multiplier: 1.10 },
+        { divisionEra: "Lightweight title-contender era", multiplier: 1.10 },
+        { divisionEra: "BMF fights", multiplier: "Quality/opponent context only; no title credit" }
+      ],
+      bigAssumptions: [
+        "Prime/elite window starts with Carlos Diego Ferreira because Cody locked Option A.",
+        "Prime/elite window runs through Max Holloway 3 because it was still a major ranked/lightweight/BMF-level fight and Dustin's retirement fight.",
+        "Opponent-quality credit includes Max Holloway x2, Justin Gaethje, Eddie Alvarez, Anthony Pettis, Conor McGregor x2, Dan Hooker, Michael Chandler, Benoît Saint Denis, Jim Miller, plus smaller/early credit where appropriate.",
+        "No undisputed-title win is credited. The interim lightweight title over Max Holloway is treated as 0.75 adjusted title wins.",
+        "BMF belts do not count as championship credit, but the opponents still count for quality when they were elite.",
+        "Loss penalty hits the -10.00 cap because counted losses include Khabib, Oliveira, Gaethje 2, Islam, Holloway 3, and Michael Johnson inside the Option A window."
+      ],
+      remaining: [
+        "Write compare profile after scoring card is locked",
+        "Add matchup blurbs"
+      ]
     }
   }
 };
