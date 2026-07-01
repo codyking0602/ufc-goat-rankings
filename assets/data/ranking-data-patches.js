@@ -1,6 +1,5 @@
 // Phase 1 safe data layer.
-// This file is intentionally designed as a patch layer first, not a full UI rewrite.
-// It mutates window.RANKING_DATA in place so the old product layout can stay intact.
+// Patch layer only: keep the old product layout intact while moving score/profile fixes outside index.html.
 
 (function () {
   const data = window.RANKING_DATA;
@@ -64,14 +63,18 @@
       const select = document.getElementById(id);
       if (!select) return;
       const current = select.value;
+      const existing = new Set([...select.options].map(option => option.value));
       names.forEach(name => {
-        if (![...select.options].some(option => option.value === name)) {
+        if (!existing.has(name)) {
           const option = document.createElement('option');
           option.value = name;
           option.textContent = name;
           select.appendChild(option);
         }
       });
+      [...select.options]
+        .sort((a, b) => a.textContent.localeCompare(b.textContent))
+        .forEach(option => select.appendChild(option));
       if (names.includes(current)) select.value = current;
     });
   }
@@ -98,65 +101,64 @@
     notes: 'Audited bantamweight title case. Sterling DQ context reduced, later elite losses counted without finish add-ons.'
   };
 
-  window.UFC_RANKING_DATA_PATCHES_V1 = {
-    meta: {
-      purpose: 'Phase 1 modular-refactor-v2-safe ranking data patch layer',
-      note: 'Keeps the old UI intact while allowing fighter scoring fixes outside index.html.',
-      updated: '2026-07-01'
-    },
-    apply() {
-      patchRow('men', 'Georges St-Pierre', {
+  function applyPhase1Data() {
+    patchRow('men', 'Georges St-Pierre', {
+      timesFinishedPrime: 1,
+      primeRecord: '18-1 after first Hughes loss; Serra is the counted prime finish loss',
+      notes: 'Hughes 2004 is an early elite loss. Serra 2007 is the counted prime finished loss, then avenged decisively.'
+    });
+
+    const gspProfile = (data.fighters || []).find(f => f.fighter === 'Georges St-Pierre');
+    if (gspProfile) {
+      Object.assign(gspProfile, {
         timesFinishedPrime: 1,
         primeRecord: '18-1 after first Hughes loss; Serra is the counted prime finish loss',
         notes: 'Hughes 2004 is an early elite loss. Serra 2007 is the counted prime finished loss, then avenged decisively.'
       });
-
-      const gspProfile = (data.fighters || []).find(f => f.fighter === 'Georges St-Pierre');
-      if (gspProfile) {
-        Object.assign(gspProfile, {
-          timesFinishedPrime: 1,
-          primeRecord: '18-1 after first Hughes loss; Serra is the counted prime finish loss',
-          notes: 'Hughes 2004 is an early elite loss. Serra 2007 is the counted prime finished loss, then avenged decisively.'
-        });
-      }
-
-      patchRow('men', 'Charles Oliveira', {
-        rank: 24,
-        totalScore: 40.13,
-        championship: 5.32,
-        opponentQuality: 17.85,
-        primeDominance: 20.96,
-        longevity: 5.99,
-        penalty: -10.0
-      });
-
-      patchRow('men', 'Ilia Topuria', {
-        rank: 15,
-        totalScore: 43.44,
-        championship: 5.99,
-        opponentQuality: 13.10,
-        primeDominance: 23.60,
-        longevity: 2.97,
-        penalty: -2.25
-      });
-
-      upsertRow('men', yan.fighter, yan);
-      upsertProfile({
-        ...yan,
-        totalScore: yan.totalScore,
-        title: { adjustedTitleWins: 2.65, notes: 'UFC bantamweight champion with elite title-race context. Sterling DQ is handled with reduced context.' },
-        opponents: [
-          { opponent: 'Jose Aldo', division: 'Bantamweight', context: 'Vacant title win / elite former champion' },
-          { opponent: 'Cory Sandhagen', division: 'Bantamweight', context: 'Interim title win / top contender' }
-        ],
-        rounds: []
-      });
-
-      patchRow('men', 'Petr Yan', yan);
-
-      sortBoards();
-      syncCompareSelects();
     }
+
+    patchRow('men', 'Charles Oliveira', {
+      rank: 24,
+      totalScore: 40.13,
+      championship: 5.32,
+      opponentQuality: 17.85,
+      primeDominance: 20.96,
+      longevity: 5.99,
+      penalty: -10.0
+    });
+
+    patchRow('men', 'Ilia Topuria', {
+      rank: 15,
+      totalScore: 43.44,
+      championship: 5.99,
+      opponentQuality: 13.10,
+      primeDominance: 23.60,
+      longevity: 2.97,
+      penalty: -2.25
+    });
+
+    upsertRow('men', yan.fighter, yan);
+    upsertProfile({
+      ...yan,
+      title: { adjustedTitleWins: 2.65, notes: 'UFC bantamweight champion with elite title-race context. Sterling DQ is handled with reduced context.' },
+      opponents: [
+        { opponent: 'Jose Aldo', division: 'Bantamweight', context: 'Vacant title win / elite former champion' },
+        { opponent: 'Cory Sandhagen', division: 'Bantamweight', context: 'Interim title win / top contender' }
+      ],
+      rounds: []
+    });
+
+    sortBoards();
+    syncCompareSelects();
+  }
+
+  window.UFC_RANKING_DATA_PATCHES_V1 = {
+    meta: {
+      purpose: 'Phase 1 modular-refactor-v2-safe ranking data patch layer',
+      note: 'Keeps old UI intact while allowing fighter scoring fixes outside index.html.',
+      updated: '2026-07-01'
+    },
+    apply: applyPhase1Data
   };
 
   function fighterByName(name) {
@@ -172,7 +174,7 @@
   function shortCase(f) {
     const cases = {
       'Jon Jones': 'The UFC-only benchmark: unmatched title-fight volume, elite LHW run, heavyweight chapter, and no true competitive loss in the scoring rules.',
-      'Georges St-Pierre': 'The complete résumé case: all-time welterweight reign, best quality-wins argument, and decisive revenge over the two losses that define the debate.',
+      'Georges St-Pierre': 'The complete resume case: all-time welterweight reign, best quality-wins argument, and decisive revenge over the two losses that define the debate.',
       'Petr Yan': 'A modern bantamweight title case with elite skill, strong round control, and unusual DQ context that needs more nuance than a normal loss.',
       'Aljamain Sterling': 'A real bantamweight title-reign case with strong grappling control, but the Yan DQ, Dillashaw context, and O’Malley finish loss need explanation.',
       'Ilia Topuria': 'A short but explosive two-division peak case built on Volk, Max, and Charles-level wins, with limited longevity compared to the legends.',
@@ -187,14 +189,15 @@
     const key = [a, b].sort().join('|');
     const ledger = {
       'Aljamain Sterling|Petr Yan': 'Direct rivalry context: Sterling officially holds the 2-0 UFC edge, but the first title win came by DQ and the rematch was close enough that this needs special debate context, not a simple category table.',
-      'Alexander Volkanovski|Ilia Topuria': 'Direct fight context: Topuria has the head-to-head title win over Volkanovski, but Volk still owns the deeper total UFC featherweight championship résumé.',
-      'Charles Oliveira|Dustin Poirier': 'Direct fight context: Oliveira finished Poirier in a UFC lightweight title fight, which is a major direct edge inside a very strong lightweight résumé debate.',
-      'Georges St-Pierre|Jon Jones': 'No direct fight context. This is résumé versus résumé: Jones has the stronger title-volume case, while GSP has the cleaner complete champion and quality-wins argument.'
+      'Alexander Volkanovski|Ilia Topuria': 'Direct fight context: Topuria has the head-to-head title win over Volkanovski, but Volk still owns the deeper total UFC featherweight championship resume.',
+      'Charles Oliveira|Dustin Poirier': 'Direct fight context: Oliveira finished Poirier in a UFC lightweight title fight, which is a major direct edge inside a very strong lightweight resume debate.',
+      'Georges St-Pierre|Jon Jones': 'No direct fight context. This is resume versus resume: Jones has the stronger title-volume case, while GSP has the cleaner complete champion and quality-wins argument.'
     };
     return ledger[key] || '';
   }
 
   function patchedRenderCompare() {
+    applyPhase1Data();
     const fighterA = document.getElementById('fighterA');
     const fighterB = document.getElementById('fighterB');
     const target = document.getElementById('compareResult');
@@ -212,7 +215,7 @@
     target.innerHTML = `
       <div class="card" style="grid-column:1/-1">
         <h3>Verdict</h3>
-        <p><strong>${winner.fighter}</strong> has the stronger UFC-only résumé over ${loser.fighter} in the current scoring table.</p>
+        <p><strong>${winner.fighter}</strong> has the stronger UFC-only resume over ${loser.fighter} in the current scoring table.</p>
         <p class="meta">${winner.fighter} leads by ${gap} raw-score points. Raw score is shown here for branch testing only; the normal product should keep OVR front-facing.</p>
       </div>
       ${context ? `<div class="card" style="grid-column:1/-1"><h3>Direct fight / rivalry context</h3><p>${context}</p></div>` : ''}
@@ -235,11 +238,36 @@
     }
   }
 
-  window.UFC_RANKING_DATA_PATCHES_V1.apply();
+  function forceBoardRefresh() {
+    applyPhase1Data();
+    if (typeof renderList === 'function') {
+      renderList('menList', data.men || []);
+      renderList('womenList', data.women || []);
+    }
+    if (typeof setKpis === 'function') {
+      setKpis('menStats', data.men || []);
+      setKpis('womenStats', data.women || []);
+    }
+    if (typeof renderDivision === 'function') renderDivision();
+    patchedRenderCompare();
+  }
+
+  applyPhase1Data();
 
   if (typeof renderCompare === 'function') {
     renderCompare = patchedRenderCompare;
     window.renderCompare = patchedRenderCompare;
+  }
+
+  if (typeof refresh === 'function') {
+    const originalRefresh = refresh;
+    refresh = function patchedRefresh() {
+      applyPhase1Data();
+      originalRefresh();
+      syncCompareSelects();
+      patchedRenderCompare();
+    };
+    window.refresh = refresh;
   }
 
   if (typeof openFighter === 'function') {
@@ -251,7 +279,21 @@
     window.openFighter = openFighter;
   }
 
-  if (typeof refresh === 'function') {
-    refresh();
-  }
+  document.addEventListener('change', function interceptCompareChange(event) {
+    if (event.target && (event.target.id === 'fighterA' || event.target.id === 'fighterB')) {
+      event.stopImmediatePropagation();
+      setTimeout(patchedRenderCompare, 0);
+    }
+  }, true);
+
+  document.addEventListener('click', function interceptCompareTab(event) {
+    if (event.target && event.target.dataset && event.target.dataset.view === 'compare') {
+      setTimeout(patchedRenderCompare, 0);
+    }
+  }, true);
+
+  window.UFC_PHASE1_FORCE_REFRESH = forceBoardRefresh;
+  forceBoardRefresh();
+  setTimeout(forceBoardRefresh, 250);
+  setTimeout(forceBoardRefresh, 1000);
 })();
