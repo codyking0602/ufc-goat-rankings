@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UFC App Direct Safe Preview</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { margin:0; min-height:100vh; display:grid; place-items:center; font-family:system-ui,-apple-system,Segoe UI,sans-serif; background:#0b0d12; color:#eef2ff; }
+    .box { max-width:680px; margin:24px; padding:22px; border:1px solid #263244; border-radius:18px; background:#121722; }
+    h1 { margin:0 0 8px; font-size:22px; }
+    p { margin:6px 0; color:#9ca3af; line-height:1.45; }
+    code { color:#facc15; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>Loading direct safe preview…</h1>
+    <p>This page loads the exact safe-branch commit instead of the moving branch preview iframe.</p>
+    <p><code>modular-refactor-v2-safe @ a48db67</code></p>
+  </div>
+
+  <script>
+    const safeCommit = 'a48db67d282e891b74b20d7fccb659c74a3b89a4';
+    const rawBase = 'https://raw.githubusercontent.com/codyking0602/ufc-goat-rankings/' + safeCommit + '/';
+    const rootBase = 'https://codyking0602.github.io/ufc-goat-rankings/';
+    const cacheBust = safeCommit + '-' + Date.now();
+
+    function noStore(url) {
+      return fetch(url + '?v=' + encodeURIComponent(cacheBust), { cache: 'no-store' }).then(response => {
+        if (!response.ok) throw new Error('Could not load ' + url);
+        return response.text();
+      });
+    }
+
+    Promise.all([
+      noStore(rawBase + 'index.html'),
+      noStore(rawBase + 'assets/data/ranking-data-patches.js')
+    ])
+      .then(([html, patchScript]) => {
+        const baseTag = '<base href="' + rootBase + '">';
+        let output = html.replace('<head>', '<head>' + baseTag);
+        output = output.replace('<scr' + 'ipt src="assets/data/ranking-data-patches.js"></scr' + 'ipt>', '');
+
+        const debugScript = `
+          <scr` + `ipt>
+            window.UFC_DIRECT_PREVIEW_COMMIT = '${safeCommit}';
+            window.addEventListener('load', function () {
+              document.documentElement.setAttribute('data-direct-preview-commit', '${safeCommit}');
+              if (typeof window.UFC_PHASE1_FORCE_REFRESH === 'function') window.UFC_PHASE1_FORCE_REFRESH();
+            });
+          </scr` + `ipt>`;
+
+        const safePatchScript = patchScript.replace(/<\/script/gi, '<\\/script');
+        output = output.replace('</body>', '<scr' + 'ipt>' + safePatchScript + '</scr' + 'ipt>' + debugScript + '</body>');
+
+        document.open();
+        document.write(output);
+        document.close();
+      })
+      .catch(error => {
+        document.body.innerHTML = '<div class="box"><h1>Preview failed</h1><p>' + error.message + '</p></div>';
+      });
+  </script>
+</body>
+</html>
