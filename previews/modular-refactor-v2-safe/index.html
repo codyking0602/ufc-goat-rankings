@@ -18,7 +18,7 @@
   <header>
     <div>
       <h1>UFC App Safe Preview</h1>
-      <p>Pinned to safe commit a48db67. Main homepage is still untouched.</p>
+      <p>Preview boot-patches Yan and debate Compare before the old app starts. Main homepage is still untouched.</p>
     </div>
     <div class="badge">Safe preview</div>
   </header>
@@ -28,7 +28,7 @@
     const safeCommit = 'a48db67d282e891b74b20d7fccb659c74a3b89a4';
     const rawBase = 'https://raw.githubusercontent.com/codyking0602/ufc-goat-rankings/' + safeCommit + '/';
     const rootBase = 'https://codyking0602.github.io/ufc-goat-rankings/';
-    const cacheBust = 'iframe-preview-' + safeCommit + '-' + Date.now();
+    const cacheBust = 'bootpatch-v3-' + safeCommit + '-' + Date.now();
 
     function noStore(url) {
       return fetch(url + '?v=' + encodeURIComponent(cacheBust), { cache: 'no-store' }).then(response => {
@@ -37,28 +37,210 @@
       });
     }
 
-    Promise.all([
-      noStore(rawBase + 'index.html'),
-      noStore(rawBase + 'assets/data/ranking-data-patches.js')
-    ])
-      .then(([html, patchScript]) => {
+    function phase1DataPatchSource() {
+      return '(' + function phase1DataPatch() {
+        const data = window.RANKING_DATA;
+        if (!data) return;
+
+        function patchRow(boardName, fighterName, patch) {
+          const board = data[boardName];
+          if (!Array.isArray(board)) return null;
+          const row = board.find(item => item.fighter === fighterName);
+          if (!row) return null;
+          Object.assign(row, patch);
+          return row;
+        }
+
+        function upsertRow(boardName, row) {
+          const board = data[boardName] = Array.isArray(data[boardName]) ? data[boardName] : [];
+          const existing = board.find(item => item.fighter === row.fighter);
+          if (existing) {
+            Object.assign(existing, row);
+            return existing;
+          }
+          board.push(row);
+          return row;
+        }
+
+        function upsertProfile(profile) {
+          data.fighters = Array.isArray(data.fighters) ? data.fighters : [];
+          const existing = data.fighters.find(item => item.fighter === profile.fighter);
+          if (existing) {
+            Object.assign(existing, profile);
+            return existing;
+          }
+          data.fighters.push(profile);
+          return profile;
+        }
+
+        patchRow('men', 'Georges St-Pierre', {
+          timesFinishedPrime: 1,
+          primeRecord: '18-1 after first Hughes loss; Serra is the counted prime finish loss',
+          notes: 'Hughes 2004 is an early elite loss. Serra 2007 is the counted prime finished loss, then avenged decisively.'
+        });
+        patchRow('men', 'Charles Oliveira', {
+          rank: 24,
+          totalScore: 40.13,
+          championship: 5.32,
+          opponentQuality: 17.85,
+          primeDominance: 20.96,
+          longevity: 5.99,
+          penalty: -10.0
+        });
+        patchRow('men', 'Ilia Topuria', {
+          rank: 15,
+          totalScore: 43.44,
+          championship: 5.99,
+          opponentQuality: 13.10,
+          primeDominance: 23.60,
+          longevity: 2.97,
+          penalty: -2.25
+        });
+
+        const yan = {
+          rank: 16,
+          fighter: 'Petr Yan',
+          totalScore: 43.35,
+          championship: 5.04,
+          opponentQuality: 13.10,
+          primeDominance: 21.43,
+          longevity: 5.98,
+          penalty: -5.25,
+          leaderboard: 'men',
+          gender: 'Men',
+          ufcRecord: '12-4',
+          primaryDivision: 'Bantamweight',
+          secondaryDivision: '',
+          finishRatePct: 18.2,
+          activeEliteYears: 5.98,
+          timesFinishedPrime: 0,
+          primeRecord: '7-4 in title/elite window',
+          roundsWonPct: 65.2,
+          notes: 'Audited bantamweight title case. Sterling DQ context reduced, later elite losses counted without finish add-ons.'
+        };
+
+        upsertRow('men', yan);
+        upsertProfile({
+          ...yan,
+          title: { adjustedTitleWins: 2.65, notes: 'UFC bantamweight champion with elite title-race context. Sterling DQ is handled with reduced context.' },
+          opponents: [
+            { opponent: 'Jose Aldo', division: 'Bantamweight', context: 'Vacant title win / elite former champion', credit: 1.0 },
+            { opponent: 'Cory Sandhagen', division: 'Bantamweight', context: 'Interim title win / top contender', credit: 1.0 }
+          ],
+          rounds: []
+        });
+
+        if (Array.isArray(data.men)) data.men.sort((a, b) => Number(a.rank || 999) - Number(b.rank || 999));
+        window.UFC_PREVIEW_BOOTPATCH_DATA = {
+          applied: true,
+          petrYanInMen: Array.isArray(data.men) && data.men.some(f => f.fighter === 'Petr Yan'),
+          petrYanInProfiles: Array.isArray(data.fighters) && data.fighters.some(f => f.fighter === 'Petr Yan')
+        };
+      } + ')();';
+    }
+
+    function yanDisplayOverrideSource() {
+      return `
+  "Petr Yan": {
+    overallOvr: 87,
+    allTimeRank: 16,
+    divisionLabel: "BW",
+    resumeTag: "Modern bantamweight title case",
+    oneLiner: "A modern bantamweight title case with elite skill, strong round control, and unusual DQ context that needs more nuance than a normal loss.",
+    categories: {
+      championship: { ovr: 78, rank: 20 },
+      opponentQuality: { ovr: 86, rank: 10 },
+      primeDominance: { ovr: 91, rank: 8 },
+      longevity: { ovr: 82, rank: 20 }
+    },
+    snapshot: [
+      ["UFC Record", "12-4"],
+      ["UFC Title-Fight Wins", "2 adjusted title-win credit"],
+      ["Championship Level", "Former Bantamweight Champion"],
+      ["Quality Wins", "Aldo and Sandhagen anchor the case"],
+      ["Prime Record", "7-4 in title/elite window"],
+      ["Active Elite Years", "6.0 Elite Years"],
+      ["Loss Context", "Sterling DQ and elite-loss context need nuance"]
+    ],
+    whyRankedHere: "Yan ranks here because his UFC-only case has real bantamweight title value, strong elite-round control, and enough quality-win/context credit to belong in the all-time conversation rather than being hidden by the messy Sterling rivalry.",
+    whyNotHigher: "He does not climb higher because the championship volume is limited and the official loss column is heavy for an all-time case, even when several losses have strong context.",
+    keyJudgmentCalls: [
+      ["Sterling DQ", "treated with special context instead of like a normal competitive title loss."],
+      ["Sandhagen win", "important interim-title and elite contender value."],
+      ["Aldo win", "vacant title win over an elite former champion, but not prime Aldo at featherweight."],
+      ["Later losses", "count against the resume, but without finish add-ons where appropriate."],
+      ["Bantamweight depth", "modern bantamweight is treated as a strong division context."]
+    ],
+    finalTakeaway: "Yan is a legit modern bantamweight title case: not a top-tier GOAT resume, but clearly strong enough that he should appear in the ranking and compare mode."
+  },`;
+    }
+
+    function patchedRenderCompareSource() {
+      return function patchedRenderCompare() {
+        const a = fullRow({fighter: el('fighterA').value});
+        const b = fullRow({fighter: el('fighterB').value});
+        const target = el('compareResult');
+        if (!target) return;
+
+        const aScore = Number(a.totalScore || 0);
+        const bScore = Number(b.totalScore || 0);
+        const winner = aScore >= bScore ? a : b;
+        const loser = aScore >= bScore ? b : a;
+        const gap = Math.abs(aScore - bScore).toFixed(2);
+        const key = [a.fighter, b.fighter].sort().join('|');
+        const directLedger = {
+          'Aljamain Sterling|Petr Yan': 'Direct rivalry context: Sterling officially holds the 2-0 UFC edge, but the first title win came by DQ and the rematch was close enough that this needs special debate context, not a simple category table.',
+          'Alexander Volkanovski|Ilia Topuria': 'Direct fight context: Topuria has the head-to-head title win over Volkanovski, but Volk still owns the deeper total UFC featherweight championship resume.',
+          'Charles Oliveira|Dustin Poirier': 'Direct fight context: Oliveira finished Poirier in a UFC lightweight title fight, which is a major direct edge inside a very strong lightweight resume debate.',
+          'Georges St-Pierre|Jon Jones': 'No direct fight context. This is resume versus resume: Jones has the stronger title-volume case, while GSP has the cleaner complete champion and quality-wins argument.'
+        };
+        const shortCases = {
+          'Jon Jones': 'The UFC-only benchmark: unmatched title-fight volume, elite LHW run, heavyweight chapter, and no true competitive loss in the scoring rules.',
+          'Georges St-Pierre': 'The complete resume case: all-time welterweight reign, best quality-wins argument, and decisive revenge over the two losses that define the debate.',
+          'Petr Yan': 'A modern bantamweight title case with elite skill, strong round control, and unusual DQ context that needs more nuance than a normal loss.',
+          'Aljamain Sterling': 'A real bantamweight title-reign case with strong grappling control, but the Yan DQ, Dillashaw context, and O’Malley finish loss need explanation.',
+          'Ilia Topuria': 'A short but explosive two-division peak case built on Volk, Max, and Charles-level wins, with limited longevity compared to the legends.',
+          'Alexander Volkanovski': 'The complete featherweight champion case: elite title consistency, Max trilogy value, and reduced upward-division Islam loss context.',
+          'Charles Oliveira': 'A modern lightweight quality-wins and finishing case with huge opponent value, held back by loss volume and a shorter undisputed reign.',
+          'Dustin Poirier': 'A lightweight quality-wins monster with elite longevity and violence, but no undisputed UFC title win keeps a clear ceiling.'
+        };
+        function rankLabel(f) {
+          return f.rank ? '#' + f.rank : 'unranked';
+        }
+        function shortCase(f) {
+          return shortCases[f.fighter] || `${f.fighter} is graded by UFC title success, quality wins, prime dominance, elite longevity, and loss context.`;
+        }
+        function card(f, score) {
+          return `<div class="card"><h3>${f.fighter}</h3><p><span class="badge">${rankLabel(f)}</span> <span class="badge">${overallOvr(f)} OVR</span> <span class="badge">${score.toFixed(2)} raw</span></p><p>${shortCase(f)}</p></div>`;
+        }
+
+        target.dataset.phase1Compare = 'debate';
+        target.innerHTML = `
+          <div class="card" style="grid-column:1/-1">
+            <h3>Verdict</h3>
+            <p><strong>${winner.fighter}</strong> has the stronger UFC-only resume over ${loser.fighter} in the current scoring table.</p>
+            <p class="meta">${winner.fighter} leads by ${gap} raw-score points. Raw score is shown here for branch testing only; the normal product should keep OVR front-facing.</p>
+          </div>
+          ${directLedger[key] ? `<div class="card" style="grid-column:1/-1"><h3>Direct fight / rivalry context</h3><p>${directLedger[key]}</p></div>` : ''}
+          ${card(a, aScore)}
+          ${card(b, bScore)}
+        `;
+      }.toString().replace('function patchedRenderCompare', 'function renderCompare');
+    }
+
+    noStore(rawBase + 'index.html')
+      .then(html => {
         const baseTag = '<base href="' + rootBase + '">';
         const openScript = '<scr' + 'ipt>';
         const closeScript = '</scr' + 'ipt>';
-        const safePatchScript = patchScript.replace(/<\/script/gi, '<\\/script');
-        const previewDebugScript = `
-          window.UFC_DIRECT_PREVIEW_COMMIT = '${safeCommit}';
-          window.addEventListener('load', function () {
-            document.documentElement.setAttribute('data-direct-preview-commit', '${safeCommit}');
-            setTimeout(function () {
-              if (typeof window.UFC_PHASE1_FORCE_REFRESH === 'function') window.UFC_PHASE1_FORCE_REFRESH();
-            }, 0);
-          });
-        `;
-
         let output = html.replace('<head>', '<head>' + baseTag);
+
         output = output.replace('<scr' + 'ipt src="assets/data/ranking-data-patches.js"></scr' + 'ipt>', '');
-        output = output.replace('</body>', openScript + safePatchScript + closeScript + openScript + previewDebugScript + closeScript + '</body>');
+        output = output.replace('const DATA = window.RANKING_DATA;', phase1DataPatchSource() + '\nconst DATA = window.RANKING_DATA;');
+        output = output.replace('const DISPLAY_OVERRIDES = {', 'const DISPLAY_OVERRIDES = {' + yanDisplayOverrideSource());
+        output = output.replace(/function renderCompare\(\)\{[\s\S]*?\n\}\n\nfunction renderRules\(\)\{/, patchedRenderCompareSource() + '\n\nfunction renderRules(){');
+        output = output.replace('</body>', openScript + "window.UFC_PREVIEW_BOOTPATCH_VERSION='bootpatch-v3'; document.documentElement.setAttribute('data-preview-bootpatch','bootpatch-v3');" + closeScript + '</body>');
+
         document.getElementById('preview').srcdoc = output;
       })
       .catch(error => {
