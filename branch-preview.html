@@ -41,14 +41,20 @@
       })
     ])
       .then(([html, patchScript]) => {
-        const baseTag = `<base href="${rootBase}">`;
-        let patchedHtml = html.replace('<head>', `<head>${baseTag}`);
-        patchedHtml = patchedHtml.replace('<script src="assets/data/ranking-data-patches.js"></script>', '');
-        patchedHtml = patchedHtml.replace('</body>', `<script>${patchScript.replace(/<\/script/gi, '<\\/script')}</script></body>`);
+        const baseTag = '<base href="' + rootBase + '">';
+        let patchedHtml = html.replace('<head>', '<head>' + baseTag);
+        patchedHtml = patchedHtml.replace('<scr' + 'ipt src="assets/data/ranking-data-patches.js"></scr' + 'ipt>', '');
+        const openScript = '<scr' + 'ipt>';
+        const closeScript = '</scr' + 'ipt>';
+        const safePatchScript = patchScript.replace(/<\/script/gi, '<\\/script');
+        patchedHtml = patchedHtml.replace('</body>', openScript + safePatchScript + closeScript + '</body>');
         document.getElementById('preview').srcdoc = patchedHtml;
       })
       .catch(error => {
-        document.body.insertAdjacentHTML('beforeend', `<div style="padding:20px;color:#fecaca;">Preview failed: ${error.message}</div>`);
+        const message = document.createElement('div');
+        message.style.cssText = 'padding:20px;color:#fecaca;';
+        message.textContent = 'Preview failed: ' + error.message;
+        document.body.appendChild(message);
       });
   </script>
 </body>
