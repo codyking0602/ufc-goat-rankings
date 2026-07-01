@@ -18,9 +18,9 @@
   <header>
     <div>
       <h1>UFC App Safe Preview</h1>
-      <p>Phase 2F preview: ranking data, display overrides, and app JS are split before the app boots. Main homepage is still untouched.</p>
+      <p>Phase 2G preview: built app uses source-style data/app paths. Main homepage is still untouched.</p>
     </div>
-    <div class="badge">Phase 2F safe preview</div>
+    <div class="badge">Phase 2G safe preview</div>
   </header>
   <iframe id="preview" title="UFC App safe preview"></iframe>
 
@@ -28,7 +28,7 @@
     const branchName = 'modular-refactor-v2-safe';
     const rawBase = 'https://raw.githubusercontent.com/codyking0602/ufc-goat-rankings/' + branchName + '/';
     const rootBase = 'https://codyking0602.github.io/ufc-goat-rankings/';
-    const cacheBust = 'phase2f-preview-script-escape-fix-' + Date.now();
+    const cacheBust = 'phase2g-source-path-promotion-' + Date.now();
     const SCRIPT_OPEN = '<scr' + 'ipt>';
     const SCRIPT_CLOSE = '</scr' + 'ipt>';
 
@@ -170,13 +170,12 @@
         output = splitDisplayOverridesForPreview(output);
         output = splitAppJsForPreview(output);
 
-        // Do not let the old file-level script tag double-run. The preview inlines the safe branch scripts in a controlled order.
         output = output.replace('<scr' + 'ipt src="assets/data/ranking-data-patches.js"></scr' + 'ipt>', '');
 
         const inlineScripts = scripts.map(inlineScript).join('\n');
         const debugScript = inlineScript(`
-          window.UFC_SAFE_PREVIEW_MODE = 'phase2f-split-app-js';
-          document.documentElement.setAttribute('data-safe-preview-mode', 'phase2f-split-app-js');
+          window.UFC_SAFE_PREVIEW_MODE = 'phase2g-source-path-promotion';
+          document.documentElement.setAttribute('data-safe-preview-mode', 'phase2g-source-path-promotion');
           setTimeout(function () {
             if (typeof window.UFC_PHASE2_DATA_REFRESH === 'function') window.UFC_PHASE2_DATA_REFRESH();
             if (typeof window.renderCompare === 'function') window.renderCompare();
