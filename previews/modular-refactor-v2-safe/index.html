@@ -18,9 +18,9 @@
   <header>
     <div>
       <h1>UFC App Safe Preview</h1>
-      <p>Phase 2E preview: ranking data and display overrides are split before the app boots. Main homepage is still untouched.</p>
+      <p>Phase 2F preview: ranking data, display overrides, and app JS are split before the app boots. Main homepage is still untouched.</p>
     </div>
-    <div class="badge">Phase 2E safe preview</div>
+    <div class="badge">Phase 2F safe preview</div>
   </header>
   <iframe id="preview" title="UFC App safe preview"></iframe>
 
@@ -28,7 +28,7 @@
     const branchName = 'modular-refactor-v2-safe';
     const rawBase = 'https://raw.githubusercontent.com/codyking0602/ufc-goat-rankings/' + branchName + '/';
     const rootBase = 'https://codyking0602.github.io/ufc-goat-rankings/';
-    const cacheBust = 'phase2e-split-display-overrides-' + Date.now();
+    const cacheBust = 'phase2f-split-app-js-' + Date.now();
 
     const scriptPaths = [
       'assets/data/ranking-data-patches.js',
@@ -117,6 +117,46 @@
       return splitObjectAssignmentForPreview(html, 'const DISPLAY_OVERRIDES = ', 'const DISPLAY_OVERRIDES = ', 'display overrides');
     }
 
+    function findNextScriptBlock(html, searchFrom, label) {
+      const scriptStart = html.indexOf('<scr' + 'ipt>', searchFrom);
+      if (scriptStart === -1) throw new Error('Could not find ' + label + ' script start');
+      const contentStart = scriptStart + '<script>'.length;
+      const scriptEnd = html.indexOf('</scr' + 'ipt>', contentStart);
+      if (scriptEnd === -1) throw new Error('Could not find ' + label + ' script end');
+      return {
+        scriptStart,
+        contentStart,
+        scriptEnd,
+        blockEnd: scriptEnd + '</script>'.length,
+        content: html.slice(contentStart, scriptEnd)
+      };
+    }
+
+    function splitAppJsForPreview(html) {
+      const rankingStart = html.indexOf('window.RANKING_DATA = ');
+      if (rankingStart === -1) throw new Error('Could not find split ranking data script');
+      const rankingEnd = html.indexOf('</scr' + 'ipt>', rankingStart);
+      if (rankingEnd === -1) throw new Error('Could not find split ranking data script end');
+
+      const pre = findNextScriptBlock(html, rankingEnd + '</script>'.length, 'pre-display app');
+      if (!pre.content.includes('const DATA = window.RANKING_DATA;')) throw new Error('Pre-display app chunk did not contain DATA setup');
+
+      const displayStart = html.indexOf('const DISPLAY_OVERRIDES = ', pre.blockEnd);
+      if (displayStart === -1) throw new Error('Could not find split display overrides script');
+      const displayEnd = html.indexOf('</scr' + 'ipt>', displayStart);
+      if (displayEnd === -1) throw new Error('Could not find split display overrides script end');
+
+      const post = findNextScriptBlock(html, displayEnd + '</script>'.length, 'post-display app');
+      if (!post.content.includes('function renderList') || !post.content.includes('populateControls(); refresh();')) {
+        throw new Error('Post-display app chunk did not contain render logic and boot call');
+      }
+
+      const appScript = inlineScript(pre.content.trim() + '\n\n' + post.content.trim());
+      html = html.slice(0, post.scriptStart) + appScript + html.slice(post.blockEnd);
+      html = html.slice(0, pre.scriptStart) + html.slice(pre.blockEnd);
+      return html;
+    }
+
     Promise.all([
       noStore(rawBase + 'index.html'),
       ...scriptPaths.map(path => noStore(rawBase + path))
@@ -126,14 +166,15 @@
         let output = html.replace('<head>', '<head>' + baseTag);
         output = splitRankingDataForPreview(output);
         output = splitDisplayOverridesForPreview(output);
+        output = splitAppJsForPreview(output);
 
         // Do not let the old file-level script tag double-run. The preview inlines the safe branch scripts in a controlled order.
         output = output.replace('<scr' + 'ipt src="assets/data/ranking-data-patches.js"></scr' + 'ipt>', '');
 
         const inlineScripts = scripts.map(inlineScript).join('\n');
         const debugScript = inlineScript(`
-          window.UFC_SAFE_PREVIEW_MODE = 'phase2e-split-display-overrides';
-          document.documentElement.setAttribute('data-safe-preview-mode', 'phase2e-split-display-overrides');
+          window.UFC_SAFE_PREVIEW_MODE = 'phase2f-split-app-js';
+          document.documentElement.setAttribute('data-safe-preview-mode', 'phase2f-split-app-js');
           setTimeout(function () {
             if (typeof window.UFC_PHASE2_DATA_REFRESH === 'function') window.UFC_PHASE2_DATA_REFRESH();
             if (typeof window.renderCompare === 'function') window.renderCompare();
