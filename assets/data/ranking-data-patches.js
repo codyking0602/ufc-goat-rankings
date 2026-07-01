@@ -62,5 +62,8 @@
 
   if (window.RANKING_DATA) {
     window.UFC_RANKING_DATA_PATCHES_V1.apply();
+    if (typeof window.refresh === 'function') {
+      window.refresh();
+    }
   }
 })();
