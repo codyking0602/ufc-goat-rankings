@@ -44,11 +44,10 @@ window.CHARLES_OLIVEIRA_AUDIT_V1 = {
     "Michael Chandler": "Charles Oliveira wins clearly. Chandler’s UFC run has major moments, but Charles beat him for the lightweight title and has far more UFC-only accomplishment. Non-UFC résumé does not enter the main score.",
     "Islam Makhachev": "Islam Makhachev wins. Charles has the deeper UFC finishing résumé and more chaos-value, but Islam has the cleaner lightweight championship-control case and the direct title-fight win. Charles is the more explosive legacy; Islam is the stronger UFC-only GOAT résumé right now.",
     "Khabib Nurmagomedov": "Khabib Nurmagomedov wins. Charles has more UFC volume and finishing records, but Khabib’s undefeated UFC run, lightweight title control, and clean dominance give him the stronger GOAT case. Charles’ résumé is deeper in chaos; Khabib’s is cleaner at the top.",
-    "Ilia Topuria": "Hold until Ilia is audited. Charles has more UFC volume, title-run depth, and finishing records. Ilia has the short, unbeaten, high-impact championship case and the direct win. This matchup should be locked after Ilia’s audit."
+    "Ilia Topuria": "Ilia Topuria wins. Charles has much more UFC volume, the finishing records, and a stronger long-form lightweight résumé. Ilia has the direct title-fight win, the two-division championship peak, and cleaner high-end title impact. Charles owns depth; Ilia owns the sharper peak and head-to-head result."
   },
   readyForAppUpdate: false,
   remaining: [
-    "Wire Charles compare profile into compare pack after nearby fighters are finalized.",
-    "Hold Ilia matchup until Ilia audit is complete."
+    "Wire Charles compare profile into compare pack after nearby fighters are finalized."
   ]
 };
