@@ -1,0 +1,35 @@
+name: Materialize UFC Source Files
+
+on:
+  push:
+    branches: [modular-refactor-v2-safe]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    if: ${{ !contains(github.event.head_commit.message, 'Materialize source files for Phase 2H') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: modular-refactor-v2-safe
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Materialize source files
+        run: python tools/materialize-source-files.py
+
+      - name: Commit materialized files
+        run: |
+          if git diff --quiet; then
+            echo "No source materialization changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html assets/data/ranking-data.js assets/data/display-overrides.js assets/js/app.js
+          git commit -m "Materialize source files for Phase 2H"
+          git push
