@@ -86,7 +86,6 @@ input, select { background:var(--panel); border:1px solid var(--line); color:var
 .winner { color:var(--good); font-weight:900; }
 .rules-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(320px,1fr)); gap:14px; }
 .notice { border:1px solid rgba(250,204,21,.35); background:rgba(250,204,21,.08); padding:12px 14px; border-radius:14px; color:#fde68a; }
-
 .drawer-panel { width:min(920px, 100vw); }
 .profile-hero { display:grid; grid-template-columns: minmax(210px, 280px) 1fr; gap:18px; align-items:stretch; margin:6px 0 18px; }
 .fighter-photo { width:100%; min-width:0; }
@@ -105,7 +104,6 @@ input, select { background:var(--panel); border:1px solid var(--line); color:var
 .profile-copy { color:var(--muted); line-height:1.48; margin:12px 0 0; max-width:620px; }
 .category-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(185px,1fr)); gap:10px; margin:16px 0; }
 .category-card { border:1px solid var(--line); border-radius:16px; padding:14px; background:rgba(18,23,34,.88); position:relative; overflow:hidden; }
-
 .category-card { cursor:pointer; text-align:left; color:var(--text); font-family:inherit; }
 .category-card:hover, .category-card.active { border-color:color-mix(in srgb, var(--tier-color, var(--accent)) 70%, var(--line)); transform:translateY(-1px); }
 .category-card:focus-visible { outline:2px solid var(--accent2); outline-offset:2px; }
@@ -118,39 +116,34 @@ input, select { background:var(--panel); border:1px solid var(--line); color:var
 .category-explainer-item strong { display:block; font-size:14px; }
 .category-explainer-item small { display:block; color:var(--muted); line-height:1.35; margin-top:3px; }
 .tap-hint { margin-top:10px; color:var(--muted); font-size:12px; font-weight:750; letter-spacing:.02em; text-transform:uppercase; }
-
 .category-card::before { content:""; position:absolute; inset:0 auto 0 0; width:4px; background:var(--tier-color, #35a86b); }
 .category-label { display:block; color:var(--text); font-weight:850; margin-bottom:8px; }
 .category-card strong { display:block; font-size:28px; line-height:1; }
 .category-card small { display:block; color:var(--muted); margin-top:6px; line-height:1.35; }
-.tier-pill { display:none; margin-top:10px; border:1px solid color-mix(in srgb, var(--tier-color, var(--accent)) 55%, transparent); background:color-mix(in srgb, var(--tier-color, var(--accent)) 14%, transparent); color:var(--tier-color, var(--accent)); border-radius:999px; padding:5px 8px; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.04em; }
+.tier-pill { display:inline-flex; margin-top:10px; border:1px solid color-mix(in srgb, var(--tier-color, var(--accent)) 52%, transparent); background:color-mix(in srgb, var(--tier-color, var(--accent)) 12%, transparent); color:var(--tier-color, var(--accent)); border-radius:999px; padding:5px 8px; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.04em; }
 .snapshot-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap:10px; margin-top:10px; }
 .snapshot-item { border:1px solid var(--line); border-radius:14px; padding:12px; background:rgba(18,23,34,.72); }
 .snapshot-item strong { display:block; font-size:17px; }
 .snapshot-item small { color:var(--muted); }
 .judgment-list { margin:8px 0 0; padding-left:18px; color:var(--muted); line-height:1.55; }
 .judgment-list strong { color:var(--text); }
+.row.clean-row { grid-template-columns:54px 64px minmax(0,1fr) 96px; overflow:visible; }
+.row.clean-row .score { display:grid; justify-items:end; gap:2px; line-height:1; }
+.row.clean-row .score strong { font-size:26px; line-height:.9; letter-spacing:-.03em; }
+.row.clean-row .score .meta { display:block; margin:0; font-size:11px; letter-spacing:.08em; text-transform:uppercase; }
+.row.clean-row .resume-tag { max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.profile-pill.tier-overall { border-color:rgba(34,197,94,.35); background:rgba(34,197,94,.08); color:#bbf7d0; }
+.profile-ovr-wrap { display:flex; align-items:end; gap:12px; flex-wrap:wrap; }
+.profile-ovr-wrap .tier-pill { margin:0 0 8px; }
+.category-card strong .meta { display:inline; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+.category-explainer h3 span { color:var(--muted); font-size:13px; font-weight:750; letter-spacing:.04em; text-transform:uppercase; }
+.profile-deep-cuts { margin-top:16px; }
+.profile-deep-cuts .card + .card, .profile-main-flow .card + .card { margin-top:12px; }
+.profile-main-flow > .card, .profile-deep-cuts > .card { overflow:visible; }
+.snapshot-item strong { line-height:1.15; }
+.snapshot-item small { display:block; margin-top:5px; line-height:1.25; }
 @media (max-width:800px){ .profile-hero { grid-template-columns:1fr; } .fighter-photo { aspect-ratio:4 / 5; min-height:0; width:100%; } .profile-ovr { font-size:58px; } }
-
 @media (max-width:800px){ .hero { flex-direction:column; align-items:flex-start; } .row { grid-template-columns:40px 1fr 80px; } .bars,.badge { grid-column:2 / -1; } .score { text-align:left; } }
-
-
-/* Polished ranking cards */
-.row { grid-template-columns: 54px 64px minmax(190px,1.1fr) 96px minmax(320px,2fr); }
-.row-photo { width:64px; height:64px; border:1px solid var(--line); border-radius:16px; overflow:hidden; background:radial-gradient(circle at 50% 20%, rgba(249,115,22,.25), transparent 42%), #0f172a; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.72); font-weight:950; letter-spacing:-.04em; position:relative; }
-.row-photo img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center 10%; }
-.row-main { min-width:0; }
-.resume-tag { display:inline-flex; margin-top:7px; border:1px solid rgba(34,197,94,.35); background:rgba(34,197,94,.08); color:#bbf7d0; border-radius:999px; padding:4px 8px; font-size:11px; font-weight:850; }
-.category-chips { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px; }
-.category-chip { border:1px solid var(--line); border-radius:13px; padding:8px 10px; background:rgba(15,23,42,.68); min-width:0; }
-.category-chip b { display:block; font-size:11px; line-height:1.1; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.category-chip span { display:block; margin-top:3px; color:#f8fafc; font-size:12px; font-weight:850; white-space:nowrap; }
-.category-chip small { display:block; margin-top:3px; color:var(--tier-color, #35a86b); font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.04em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.fighter-photo-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center top; z-index:0; }
-.tier-pill { display:inline-flex; margin-top:10px; border:1px solid color-mix(in srgb, var(--tier-color, var(--accent)) 52%, transparent); background:color-mix(in srgb, var(--tier-color, var(--accent)) 12%, transparent); color:var(--tier-color, var(--accent)); border-radius:999px; padding:5px 8px; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.04em; }
-.category-bar { margin-top:12px; height:8px; background:#0f172a; border-radius:999px; overflow:hidden; border:1px solid rgba(255,255,255,.04); }
-.category-bar > i { display:block; height:100%; border-radius:999px; background:var(--tier-color, #35a86b); }
-
 @media (max-width:900px){
   .hero { padding:24px 16px; flex-direction:column; align-items:flex-start; gap:16px; }
   h1 { font-size:40px; line-height:.98; }
@@ -167,6 +160,9 @@ input, select { background:var(--panel); border:1px solid var(--line); color:var
   .kpis { grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px; }
   .kpi, .card { padding:12px; border-radius:16px; }
   .row { grid-template-columns:34px 58px minmax(0,1fr) 70px; gap:10px; padding:12px; border-radius:18px; align-items:center; }
+  .row.clean-row { grid-template-columns:34px 58px minmax(0,1fr) 70px; }
+  .row.clean-row .score strong { font-size:21px; }
+  .row.clean-row .score .meta { font-size:10px; }
   .rank { font-size:18px; }
   .row-photo { width:58px; height:58px; border-radius:15px; }
   .name { font-size:15px; line-height:1.12; }
@@ -200,8 +196,6 @@ input, select { background:var(--panel); border:1px solid var(--line); color:var
   .fighter-photo { aspect-ratio:4 / 5; min-height:0; }
   .detail-grid { grid-template-columns:1fr; }
 }
-
-
   </style>
 </head>
 <body>
@@ -272,9 +266,219 @@ input, select { background:var(--panel); border:1px solid var(--line); color:var
   </aside>
 
   <script src="assets/data/ranking-data.js?v=ranking-data-20260701a"></script>
-  
   <script src="assets/data/display-overrides.js?v=display-overrides-20260701a"></script>
-    <script src="assets/js/app.js?v=app-20260701a"></script>
+  <script src="assets/js/app.js?v=app-20260701a"></script>
+  <script>
+(function(){
+  const data = window.RANKING_DATA;
+  if(!data || !window.DISPLAY_OVERRIDES) return;
+  const POLISHED_CATEGORY_INFO = [
+    ['championship','Title Reign','Championship resume: title-fight wins, reign strength, and control of the division'],
+    ['opponentQuality','Quality Wins','Who he beat, when he beat them, and how strong the division was'],
+    ['primeDominance','Prime Dominance','How clearly he separated from opponents at his best'],
+    ['longevity','Elite Longevity','How long he stayed elite in the UFC, not just calendar span'],
+    ['penalty','Loss Context','How much UFC losses actually hurt the resume after context']
+  ];
+
+  function cleanRankLabel(f){ return DISPLAY_OVERRIDES[f.fighter]?.allTimeRank || f.rank || '—'; }
+  function categoryInfo(key){ return POLISHED_CATEGORY_INFO.find(([k]) => k === key) || [key, key, '']; }
+  function titleFightWinsText(title){
+    const noteWins = titleFightWinsFromNotes(title);
+    if(noteWins) return noteWins;
+    const vals = ['normalTitleWins','interimTitleWins','vacantUndisputedWins','secondDivisionUndisputedWins','vacantSecondDivisionWins'].map(k => Number(title?.[k] || 0));
+    const total = vals.reduce((a,b)=>a+b,0);
+    return total ? String(Number(total.toFixed(1)).toString()).replace(/\.0$/,'') : '—';
+  }
+  function eliteWinsText(f){
+    const opps = f.opponents || [];
+    const full = opps.filter(o => Number(o.credit || 0) >= 1).length;
+    if(full) return `${full} elite-credit wins`;
+    const raw = rawCreditTotal(opps);
+    if(raw) return `${raw} quality-win credit`;
+    return '—';
+  }
+  function standardSnapshot(f){
+    const title = f.title || {};
+    return [
+      ['UFC Record', ufcRecordLine(f)],
+      ['UFC Title-Fight Wins', titleFightWinsText(title)],
+      ['Elite Wins', eliteWinsText(f)],
+      ['Prime Record', primeRecordText(f) || 'Prime window noted in context'],
+      ['Finish Rate', pct(f.finishRatePct)],
+      ['Rounds Won', roundControlText(f) || '—'],
+      ['Active Elite Years', fmt(f.activeEliteYears)],
+      ['Loss Context', lossImpactText(f)]
+    ];
+  }
+  function strongestCategory(f){
+    const ranked = POLISHED_CATEGORY_INFO
+      .filter(([key]) => key !== 'penalty')
+      .map(([key,label]) => ({ key, label, value: categoryOvr(f,key) }))
+      .sort((a,b)=>b.value-a.value);
+    return ranked[0] || { label:'overall balance', value:overallOvr(f) };
+  }
+  function defaultWhyRankedHere(f){
+    const rank = cleanRankLabel(f);
+    const strong = strongestCategory(f);
+    return `${f.fighter} sits at #${rank} because the UFC-only score balances title success, quality wins, prime dominance, elite longevity, and loss context. The strongest separator is ${strong.label.toLowerCase()}, while the rest of the profile keeps the ranking tied to the actual UFC resume instead of reputation alone.`;
+  }
+  function defaultWhyNotHigherParagraph(f){
+    const issues = whyNotHigher(f).map(([k]) => k.toLowerCase());
+    const issueText = issues.length ? issues.join(', ') : 'the benchmark gap above him';
+    return `${f.fighter} is held back mostly by ${issueText}. The ranking is not a subjective override; it is showing which inputs keep the resume from climbing higher.`;
+  }
+  function defaultTakeaway(f){
+    const strong = strongestCategory(f);
+    return `${f.fighter}'s UFC-only case is built around ${strong.label.toLowerCase()} and how that strength fits with championship success, opponent quality, dominance, longevity, and loss context.`;
+  }
+
+  categoryCards = function(f){
+    return POLISHED_CATEGORY_INFO.map(([key,label,description]) => {
+      const rating = categoryOvr(f,key);
+      const rank = categoryRank(f,key);
+      const tier = tierForOvr(rating);
+      const width = Math.max(0, Math.min(100, rating));
+      return `<button type="button" class="category-card ${tier.cls}" data-category="${key}" aria-label="Explain ${label} rating for ${f.fighter}">
+        <span class="category-label">${label}</span>
+        <strong>${rating} <span class="meta">Rating</span></strong>
+        <small>#${rank || '—'} in category · ${description}</small>
+        <span class="tier-pill">${tier.label}</span>
+        <div class="category-bar"><i style="width:${width}%"></i></div>
+      </button>`;
+    }).join('');
+  };
+
+  categoryExplanation = function(f, key){
+    const info = categoryInfo(key);
+    const label = info[1];
+    const rating = categoryOvr(f,key);
+    const rank = categoryRank(f,key);
+    const tier = tierForOvr(rating);
+    const items = categoryEvidenceItems(f,key);
+    return `<div class="category-explainer ${tier.cls}">
+      <div class="category-explainer-kicker">${tier.label} · #${rank || '—'} in category</div>
+      <h3>${label}: ${rating} <span>rating</span></h3>
+      <p><strong>What it means:</strong> ${categoryLogicSentence(f, key) || info[2]}</p>
+      <div class="category-explainer-grid">
+        ${items.map(([k,v])=>`<div class="category-explainer-item"><strong>${k}</strong><small>${v}</small></div>`).join('')}
+      </div>
+    </div>`;
+  };
+
+  renderList = function(containerId, rows){
+    const q = el('search').value.trim().toLowerCase();
+    const div = el('divisionFilter').value;
+    const filtered = rows.map(fullRow).filter(r => {
+      const textHit = !q || r.fighter.toLowerCase().includes(q);
+      const divs = [r.primaryDivision, r.secondaryDivision].join(' ').toLowerCase();
+      const divHit = div === 'All' || divs.includes(div.toLowerCase());
+      return textHit && divHit;
+    });
+    el(containerId).innerHTML = filtered.map(r => `
+      <article class="row clean-row fighter-row" data-fighter="${r.fighter}">
+        <div class="rank">#${r.rank || '—'}</div>
+        ${rowPhoto(r)}
+        <div class="row-main"><div class="name">${r.fighter}</div><div class="meta">${r.ufcRecord || ''} · ${r.primaryDivision || ''}${r.secondaryDivision ? ' / ' + r.secondaryDivision : ''}</div><div class="resume-tag">${resumeTagFor(r)}</div></div>
+        <div class="score"><strong>${overallOvr(r)}</strong><span class="meta">OVR</span></div>
+      </article>`).join('') || '<div class="notice">No fighters match that filter.</div>';
+    document.querySelectorAll(`#${containerId} .row`).forEach(row => row.addEventListener('click', () => openFighter(row.dataset.fighter)));
+  };
+
+  renderDivision = function(){
+    const div = el('divisionFilter').value;
+    const rows = data.fighters.filter(f => f.gender === 'Men').map(f => fullRow(data.men.find(x=>x.fighter===f.fighter) || { fighter: f.fighter, totalScore: f.totalScore }))
+      .filter(f => div === 'All' || [f.primaryDivision, f.secondaryDivision].join(' ').toLowerCase().includes(div.toLowerCase()))
+      .sort((a,b)=>(b.totalScore||0)-(a.totalScore||0));
+    el('divisionList').innerHTML = `<div class="notice">Prototype note: this is a division filter using the current P4P score. True division-only scoring will use division-specific fight rows next.</div>`;
+    el('divisionList').innerHTML += rows.map((r,i)=>`<article class="row clean-row fighter-row" data-fighter="${r.fighter}"><div class="rank">#${i+1}</div>${rowPhoto(r)}<div class="row-main"><div class="name">${r.fighter}</div><div class="meta">${r.ufcRecord || ''} · ${r.primaryDivision || ''}${r.secondaryDivision ? ' / ' + r.secondaryDivision : ''}</div><div class="resume-tag">${div === 'All' ? resumeTagFor(r) : div + ' view'}</div></div><div class="score"><strong>${overallOvr(r)}</strong><span class="meta">OVR</span></div></article>`).join('');
+    document.querySelectorAll(`#divisionList .row`).forEach(row => row.addEventListener('click', () => openFighter(row.dataset.fighter)));
+  };
+
+  whyNotHigher = function(f){
+    const reasons = [];
+    if ((f.championship || 0) < 10) reasons.push(['limited title volume', 'Championship resume trails the top tier.']);
+    if ((f.opponentQuality || 0) < 10) reasons.push(['opponent-quality gap', 'Quality wins are strong, but not as deep as the highest-end UFC-only ledgers.']);
+    if ((f.primeDominance || 0) < 18) reasons.push(['dominance gap', 'Rounds won, finish rate, or times finished keep the peak below the very best cases.']);
+    if ((f.longevity || 0) < 8) reasons.push(['shorter active elite window', 'Less sustained UFC elite time than the longest-running championship resumes.']);
+    if ((f.timesFinishedPrime || 0) >= 2) reasons.push(['prime finish losses', `${f.timesFinishedPrime} counted prime finish losses hurt the dominance profile.`]);
+    if (!reasons.length) reasons.push(['benchmark separation', 'The names above have more title volume, quality wins, active elite longevity, or cleaner loss context.']);
+    return reasons.slice(0,5);
+  };
+
+  openFighter = function(name){
+    const f = fullRow((data.men.find(x=>x.fighter===name) || data.women.find(x=>x.fighter===name) || {fighter:name}));
+    const override = DISPLAY_OVERRIDES[f.fighter] || {};
+    const title = f.title || {};
+    const opps = f.opponents || [];
+    const rounds = f.rounds || [];
+    const divisionLabel = override.divisionLabel || `${f.primaryDivision || ''}${f.secondaryDivision ? ' / ' + f.secondaryDivision : ''}`;
+    const rankLabel = cleanRankLabel(f);
+    const photoUrl = override.photoUrl || '';
+    const photoClass = photoUrl ? 'fighter-photo has-photo' : 'fighter-photo';
+    const overallTier = tierForOvr(overallOvr(f));
+    const snapshot = standardSnapshot(f);
+    const rankedSectionTitle = Number(rankLabel) === 1 ? 'Why Not Lower?' : 'Why Not Ranked Higher?';
+    const rankedSectionBody = Number(rankLabel) === 1
+      ? `<p>${override.whyNotLower || 'The #1 case holds because the fighters below do not match the same full blend of title volume, elite wins, longevity, and clean loss context.'}</p>`
+      : `<p>${override.whyNotHigher || defaultWhyNotHigherParagraph(f)}</p>`;
+    const keyJudgments = override.keyJudgmentCalls
+      ? `<ul class="judgment-list">${override.keyJudgmentCalls.map(([k,v])=>`<li><strong>${k}:</strong> ${v}</li>`).join('')}</ul>`
+      : `<p>${f.notes || 'No extra judgment-call note entered yet.'}</p>`;
+    const finalTakeaway = override.finalTakeaway || defaultTakeaway(f);
+    el('fighterDetail').innerHTML = `
+      <section class="profile-hero">
+        <div class="${photoClass}">
+          ${photoUrl ? `<img src="${photoUrl}" alt="${f.fighter} profile photo" class="fighter-photo-img">` : `<div class="photo-initials">${fighterInitials(f.fighter)}</div>`}
+          ${override.photoNote ? `<div class="photo-note">${override.photoNote}</div>` : (!photoUrl ? `<div class="photo-note">Photo slot: use a licensed upper-half fighter crop, centered from head to waist.</div>` : '')}
+        </div>
+        <div class="profile-summary">
+          <div class="profile-topline"><span class="profile-pill gold">UFC All-Time Rank: #${rankLabel}</span><span class="profile-pill">${divisionLabel}</span><span class="profile-pill tier-overall">${overallTier.label} OVR</span></div>
+          <h2>${f.fighter}</h2>
+          <div class="profile-ovr-wrap"><div class="profile-ovr">${overallOvr(f)} <small>OVR</small></div><span class="tier-pill ${overallTier.cls}">${overallTier.label}</span></div>
+          <p class="profile-copy">${override.oneLiner || `${f.fighter}'s UFC resume is graded across championship success, quality wins, prime dominance, elite longevity, and loss context.`}</p>
+        </div>
+      </section>
+      <section class="profile-main-flow">
+        <div class="card"><h3>Resume Snapshot</h3>${snapshotGrid(snapshot)}</div>
+        <div class="category-grid">${categoryCards(f)}</div>
+        <div id="categoryExplanation" class="category-explainer"><h3>Category Breakdown</h3><p>Tap any category to see what it means, what evidence matters, and why this fighter lands there.</p></div>
+        <div class="card"><h3>Why Ranked Here</h3><p>${override.whyRankedHere || defaultWhyRankedHere(f)}</p></div>
+        <div class="card"><h3>${rankedSectionTitle}</h3>${rankedSectionBody}</div>
+        <div class="card"><h3>Key Judgment Calls</h3>${keyJudgments}</div>
+        <div class="card"><h3>Final Takeaway</h3><p>${finalTakeaway}</p></div>
+      </section>
+      <section class="profile-deep-cuts">
+        <div class="card"><h3>Title Context</h3><p>${title.notes || 'No title note entered.'}</p></div>
+        <div class="card"><h3>Quality Wins</h3>${rowsTable(opps, [{key:'opponent',label:'Opponent'},{key:'division',label:'Division'},{key:'context',label:'Context'}])}</div>
+        <div class="card"><h3>Round Control</h3>${rowsTable(rounds, [{key:'opponent',label:'Opponent'},{key:'method',label:'Result'},{key:'roundsWon',label:'Rounds Won'},{key:'roundsCounted',label:'Fight Rounds'}])}</div>
+      </section>
+    `;
+    el('drawer').classList.add('open');
+    el('drawer').setAttribute('aria-hidden','false');
+    const panel = document.querySelector('.drawer-panel');
+    if(panel) panel.scrollTop = 0;
+    attachCategoryExplanations(f);
+  };
+
+  renderRules = function(){
+    const divRows = data.divisionStrength.map(r=>`<tr><td>${r.divisionEra}</td><td>${r.multiplier ?? 'Varies'}</td><td>${r.rationale}</td></tr>`).join('');
+    el('rulesContent').innerHTML = `
+      <div class="card"><h3>Visible Categories</h3><table class="table"><tbody>
+        <tr><td><strong>Title Reign</strong></td><td>UFC championship-level resume, weighted toward title-fight wins and reign strength.</td></tr>
+        <tr><td><strong>Quality Wins</strong></td><td>Who the fighter beat, when they beat them, and how strong the division was.</td></tr>
+        <tr><td><strong>Prime Dominance</strong></td><td>How dominant the fighter was at their best: rounds, finishes, separation, durability, and control.</td></tr>
+        <tr><td><strong>Elite Longevity</strong></td><td>Active elite UFC years, not just calendar span.</td></tr>
+        <tr><td><strong>Loss Context</strong></td><td>How much UFC losses actually hurt the resume after timing, opponent quality, finish context, and division context.</td></tr>
+      </tbody></table></div>
+      <div class="card"><h3>Division Strength</h3><table class="table"><thead><tr><th>Division/Era</th><th>Multiplier</th><th>Rationale</th></tr></thead><tbody>${divRows}</tbody></table></div>
+      <div class="card"><h3>Model Note</h3><p>Overall score is shown as OVR for the app. Category cards use game-style ratings and tier labels so the profile feels readable without exposing raw formula totals on the main leaderboard.</p></div>
+    `;
+  };
+
+  document.documentElement.setAttribute('data-template-polish','20260701a');
+  if(typeof refresh === 'function') refresh();
+})();
+  </script>
   <script src="assets/data/ranking-data-patches.js"></script>
 </body>
 </html>
