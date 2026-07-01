@@ -18,7 +18,7 @@
   <header>
     <div>
       <h1>UFC App Safe Preview</h1>
-      <p>Preview boot-patches Yan and debate Compare before the old app starts. Main homepage is still untouched.</p>
+      <p>Preview boot-patches Yan and polished Compare before the old app starts. Main homepage is still untouched.</p>
     </div>
     <div class="badge">Safe preview</div>
   </header>
@@ -28,7 +28,7 @@
     const safeCommit = 'a48db67d282e891b74b20d7fccb659c74a3b89a4';
     const rawBase = 'https://raw.githubusercontent.com/codyking0602/ufc-goat-rankings/' + safeCommit + '/';
     const rootBase = 'https://codyking0602.github.io/ufc-goat-rankings/';
-    const cacheBust = 'bootpatch-v3-' + safeCommit + '-' + Date.now();
+    const cacheBust = 'compare-polished-v4-' + safeCommit + '-' + Date.now();
 
     function noStore(url) {
       return fetch(url + '?v=' + encodeURIComponent(cacheBust), { cache: 'no-store' }).then(response => {
@@ -41,7 +41,6 @@
       return '(' + function phase1DataPatch() {
         const data = window.RANKING_DATA;
         if (!data) return;
-
         function patchRow(boardName, fighterName, patch) {
           const board = data[boardName];
           if (!Array.isArray(board)) return null;
@@ -50,53 +49,25 @@
           Object.assign(row, patch);
           return row;
         }
-
         function upsertRow(boardName, row) {
           const board = data[boardName] = Array.isArray(data[boardName]) ? data[boardName] : [];
           const existing = board.find(item => item.fighter === row.fighter);
-          if (existing) {
-            Object.assign(existing, row);
-            return existing;
-          }
-          board.push(row);
-          return row;
+          if (existing) { Object.assign(existing, row); return existing; }
+          board.push(row); return row;
         }
-
         function upsertProfile(profile) {
           data.fighters = Array.isArray(data.fighters) ? data.fighters : [];
           const existing = data.fighters.find(item => item.fighter === profile.fighter);
-          if (existing) {
-            Object.assign(existing, profile);
-            return existing;
-          }
-          data.fighters.push(profile);
-          return profile;
+          if (existing) { Object.assign(existing, profile); return existing; }
+          data.fighters.push(profile); return profile;
         }
-
         patchRow('men', 'Georges St-Pierre', {
           timesFinishedPrime: 1,
           primeRecord: '18-1 after first Hughes loss; Serra is the counted prime finish loss',
           notes: 'Hughes 2004 is an early elite loss. Serra 2007 is the counted prime finished loss, then avenged decisively.'
         });
-        patchRow('men', 'Charles Oliveira', {
-          rank: 24,
-          totalScore: 40.13,
-          championship: 5.32,
-          opponentQuality: 17.85,
-          primeDominance: 20.96,
-          longevity: 5.99,
-          penalty: -10.0
-        });
-        patchRow('men', 'Ilia Topuria', {
-          rank: 15,
-          totalScore: 43.44,
-          championship: 5.99,
-          opponentQuality: 13.10,
-          primeDominance: 23.60,
-          longevity: 2.97,
-          penalty: -2.25
-        });
-
+        patchRow('men', 'Charles Oliveira', { rank: 24, totalScore: 40.13, championship: 5.32, opponentQuality: 17.85, primeDominance: 20.96, longevity: 5.99, penalty: -10.0 });
+        patchRow('men', 'Ilia Topuria', { rank: 15, totalScore: 43.44, championship: 5.99, opponentQuality: 13.10, primeDominance: 23.60, longevity: 2.97, penalty: -2.25 });
         const yan = {
           rank: 16,
           fighter: 'Petr Yan',
@@ -118,7 +89,6 @@
           roundsWonPct: 65.2,
           notes: 'Audited bantamweight title case. Sterling DQ context reduced, later elite losses counted without finish add-ons.'
         };
-
         upsertRow('men', yan);
         upsertProfile({
           ...yan,
@@ -129,7 +99,6 @@
           ],
           rounds: []
         });
-
         if (Array.isArray(data.men)) data.men.sort((a, b) => Number(a.rank || 999) - Number(b.rank || 999));
         window.UFC_PREVIEW_BOOTPATCH_DATA = {
           applied: true,
@@ -181,49 +150,72 @@
         const b = fullRow({fighter: el('fighterB').value});
         const target = el('compareResult');
         if (!target) return;
-
         const aScore = Number(a.totalScore || 0);
         const bScore = Number(b.totalScore || 0);
         const winner = aScore >= bScore ? a : b;
         const loser = aScore >= bScore ? b : a;
-        const gap = Math.abs(aScore - bScore).toFixed(2);
         const key = [a.fighter, b.fighter].sort().join('|');
-        const directLedger = {
-          'Aljamain Sterling|Petr Yan': 'Direct rivalry context: Sterling officially holds the 2-0 UFC edge, but the first title win came by DQ and the rematch was close enough that this needs special debate context, not a simple category table.',
-          'Alexander Volkanovski|Ilia Topuria': 'Direct fight context: Topuria has the head-to-head title win over Volkanovski, but Volk still owns the deeper total UFC featherweight championship resume.',
-          'Charles Oliveira|Dustin Poirier': 'Direct fight context: Oliveira finished Poirier in a UFC lightweight title fight, which is a major direct edge inside a very strong lightweight resume debate.',
-          'Georges St-Pierre|Jon Jones': 'No direct fight context. This is resume versus resume: Jones has the stronger title-volume case, while GSP has the cleaner complete champion and quality-wins argument.'
+        const displayName = { 'Georges St-Pierre': 'GSP' };
+        const short = name => displayName[name] || name;
+        const divisionLine = f => [f.primaryDivision, f.secondaryDivision].filter(Boolean).join(' / ') || 'Division TBD';
+        const rank = f => DISPLAY_OVERRIDES[f.fighter]?.allTimeRank || f.rank || '—';
+        const badge = f => `#${rank(f)} · ${overallOvr(f)} OVR`;
+        function fighterCard(f) {
+          return `<div class="card" style="position:relative; min-height:132px; display:flex; flex-direction:column; justify-content:center;">
+            <span class="badge" style="position:absolute; right:16px; top:14px; border-color:rgba(250,204,21,.48); color:#facc15; font-weight:950;">${badge(f)}</span>
+            <h3 style="font-size:24px; margin:18px 0 8px;">${f.fighter}</h3>
+            <p class="meta" style="font-size:15px;">${f.ufcRecord || ''} · ${divisionLine(f)}</p>
+          </div>`;
+        }
+        const canned = {
+          'Georges St-Pierre|Jon Jones': {
+            headline: 'Jon Jones wins, but GSP is the cleanest counterargument to the throne.',
+            p1: 'GSP has the cleaner case. He avenged the Hughes and Serra losses, controlled welterweight for years, and built one of the best quality-win ledgers ever with names like Penn, Fitch, Shields, Condit, Hendricks, and Bisping. If the debate is about polish, consistency, and fewer weird resume questions, GSP is the guy.',
+            p2: 'Jones separates because his total championship weight is bigger. He took the light heavyweight belt from Shogun, beat Rampage, Machida, Rashad, Gustafsson, Glover, and Cormier, then later added heavyweight gold. The case gets messy around the edges, but the title-fight volume and multi-era opponent list are enormous.',
+            p3: 'GSP has the cleaner resume. Jones has the larger one.',
+            final: 'Jones wins. GSP is the best counterargument because his resume is cleaner, but Jones has too much championship volume, opponent depth, and all-time separation to rank behind him.'
+          },
+          'Aljamain Sterling|Petr Yan': {
+            headline: 'Sterling has the official edge, but Yan needs special context instead of a simple table loss.',
+            p1: 'Sterling owns the official 2-0 UFC head-to-head, and that matters. He also has real bantamweight title-reign value, strong grappling control, and enough championship volume to be taken seriously in a division debate.',
+            p2: 'Yan has the cleaner eye-test and round-control counterargument. The first Sterling fight ended by DQ, the rematch was close, and Yan also owns strong bantamweight title-race wins over Aldo and Sandhagen. That is why this comparison needs debate context rather than just reading the record cold.',
+            p3: 'Sterling has the official rivalry edge. Yan has the cleaner context argument.',
+            final: 'Sterling usually wins the UFC-only resume comparison because of official title volume and head-to-head results, but Yan should not be buried by the DQ loss or treated like a normal 0-2 case.'
+          },
+          'Alexander Volkanovski|Ilia Topuria': {
+            headline: 'Topuria owns the direct win, but Volk still has the deeper UFC resume right now.',
+            p1: 'Topuria has the biggest direct argument possible: he beat Volkanovski in a UFC title fight and added elite finishing danger to a short, explosive resume.',
+            p2: 'Volkanovski still has more total UFC championship work, the Max trilogy value, the Aldo win, and a longer elite featherweight run. The direct fight matters, but the full resume is still larger on Volk’s side for now.',
+            p3: 'Topuria has the head-to-head. Volk has the resume volume.',
+            final: 'Volkanovski wins the current UFC-only GOAT resume comparison, while Topuria is the fast-rising threat with the direct-fight trump card.'
+          },
+          'Charles Oliveira|Dustin Poirier': {
+            headline: 'Oliveira wins because he paired the quality wins with the undisputed title moment.',
+            p1: 'Poirier has an outstanding lightweight quality-wins case and a long elite shelf life. His resume is deep, violent, and easy to respect.',
+            p2: 'Oliveira separates because he finished Poirier in a UFC lightweight title fight and added the undisputed belt piece that Poirier never captured. In a close quality-wins debate, that title result matters a lot.',
+            p3: 'Poirier has the volume argument. Oliveira has the higher championship ceiling.',
+            final: 'Oliveira wins the UFC-only resume comparison because the title win and direct finish give him the deciding edge.'
+          }
         };
-        const shortCases = {
-          'Jon Jones': 'The UFC-only benchmark: unmatched title-fight volume, elite LHW run, heavyweight chapter, and no true competitive loss in the scoring rules.',
-          'Georges St-Pierre': 'The complete resume case: all-time welterweight reign, best quality-wins argument, and decisive revenge over the two losses that define the debate.',
-          'Petr Yan': 'A modern bantamweight title case with elite skill, strong round control, and unusual DQ context that needs more nuance than a normal loss.',
-          'Aljamain Sterling': 'A real bantamweight title-reign case with strong grappling control, but the Yan DQ, Dillashaw context, and O’Malley finish loss need explanation.',
-          'Ilia Topuria': 'A short but explosive two-division peak case built on Volk, Max, and Charles-level wins, with limited longevity compared to the legends.',
-          'Alexander Volkanovski': 'The complete featherweight champion case: elite title consistency, Max trilogy value, and reduced upward-division Islam loss context.',
-          'Charles Oliveira': 'A modern lightweight quality-wins and finishing case with huge opponent value, held back by loss volume and a shorter undisputed reign.',
-          'Dustin Poirier': 'A lightweight quality-wins monster with elite longevity and violence, but no undisputed UFC title win keeps a clear ceiling.'
+        const generic = {
+          headline: `${winner.fighter} wins the UFC-only resume comparison over ${loser.fighter}.`,
+          p1: `${loser.fighter} has a real counterargument, especially if the debate leans toward peak form, style matchup, or specific category strengths. The app should make that argument easy to see instead of just dumping a category table.`,
+          p2: `${winner.fighter} separates because the current scoring model gives him the stronger overall balance of championship value, quality wins, prime dominance, elite longevity, and loss context.`,
+          p3: `${short(loser.fighter)} has the counterargument. ${short(winner.fighter)} has the bigger UFC-only resume.`,
+          final: `${winner.fighter} wins for now, but the deciding edge should stay visible so this still feels like a debate instead of a spreadsheet answer.`
         };
-        function rankLabel(f) {
-          return f.rank ? '#' + f.rank : 'unranked';
-        }
-        function shortCase(f) {
-          return shortCases[f.fighter] || `${f.fighter} is graded by UFC title success, quality wins, prime dominance, elite longevity, and loss context.`;
-        }
-        function card(f, score) {
-          return `<div class="card"><h3>${f.fighter}</h3><p><span class="badge">${rankLabel(f)}</span> <span class="badge">${overallOvr(f)} OVR</span> <span class="badge">${score.toFixed(2)} raw</span></p><p>${shortCase(f)}</p></div>`;
-        }
-
-        target.dataset.phase1Compare = 'debate';
+        const copy = canned[key] || generic;
+        target.dataset.phase1Compare = 'polished-debate';
         target.innerHTML = `
-          <div class="card" style="grid-column:1/-1">
-            <h3>Verdict</h3>
-            <p><strong>${winner.fighter}</strong> has the stronger UFC-only resume over ${loser.fighter} in the current scoring table.</p>
-            <p class="meta">${winner.fighter} leads by ${gap} raw-score points. Raw score is shown here for branch testing only; the normal product should keep OVR front-facing.</p>
+          ${fighterCard(a)}
+          ${fighterCard(b)}
+          <div class="card" style="grid-column:1/-1; padding:24px 22px;">
+            <h2 style="font-size:30px; line-height:1.15; margin:0 0 16px;">${copy.headline}</h2>
+            <p style="max-width:880px; line-height:1.55; margin:0 0 18px;">${copy.p1}</p>
+            <p style="max-width:880px; line-height:1.55; margin:0 0 18px;">${copy.p2}</p>
+            <p style="max-width:880px; line-height:1.55; margin:0 0 18px;">${copy.p3}</p>
+            <div style="border-left:4px solid #facc15; background:rgba(250,204,21,.08); border-radius:12px; padding:14px 18px; line-height:1.45;"><strong style="color:#facc15;">Final take:</strong> ${copy.final}</div>
           </div>
-          ${directLedger[key] ? `<div class="card" style="grid-column:1/-1"><h3>Direct fight / rivalry context</h3><p>${directLedger[key]}</p></div>` : ''}
-          ${card(a, aScore)}
-          ${card(b, bScore)}
         `;
       }.toString().replace('function patchedRenderCompare', 'function renderCompare');
     }
@@ -234,13 +226,12 @@
         const openScript = '<scr' + 'ipt>';
         const closeScript = '</scr' + 'ipt>';
         let output = html.replace('<head>', '<head>' + baseTag);
-
         output = output.replace('<scr' + 'ipt src="assets/data/ranking-data-patches.js"></scr' + 'ipt>', '');
+        output = output.replace('<div class="section-title"><h2>Compare Fighters</h2><p>Pick two fighters and see category edges.</p></div>', '<div class="section-title"><h2>Compare Fighters</h2><p>Pick two fighters and get a clear debate summary with a winner, the best counterargument, and the deciding edge.</p></div>');
         output = output.replace('const DATA = window.RANKING_DATA;', phase1DataPatchSource() + '\nconst DATA = window.RANKING_DATA;');
         output = output.replace('const DISPLAY_OVERRIDES = {', 'const DISPLAY_OVERRIDES = {' + yanDisplayOverrideSource());
         output = output.replace(/function renderCompare\(\)\{[\s\S]*?\n\}\n\nfunction renderRules\(\)\{/, patchedRenderCompareSource() + '\n\nfunction renderRules(){');
-        output = output.replace('</body>', openScript + "window.UFC_PREVIEW_BOOTPATCH_VERSION='bootpatch-v3'; document.documentElement.setAttribute('data-preview-bootpatch','bootpatch-v3');" + closeScript + '</body>');
-
+        output = output.replace('</body>', openScript + "window.UFC_PREVIEW_BOOTPATCH_VERSION='compare-polished-v4'; document.documentElement.setAttribute('data-preview-bootpatch','compare-polished-v4');" + closeScript + '</body>');
         document.getElementById('preview').srcdoc = output;
       })
       .catch(error => {
