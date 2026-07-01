@@ -25,9 +25,11 @@
   </header>
   <iframe id="preview" title="UFC App branch preview"></iframe>
   <script>
-    const branchBase = 'https://raw.githubusercontent.com/codyking0602/ufc-goat-rankings/modular-refactor-v2-safe/';
-    const branchHtmlUrl = branchBase + 'index.html';
-    const branchPatchUrl = branchBase + 'assets/data/ranking-data-patches.js';
+    const branchName = 'modular-refactor-v2-safe';
+    const branchBase = 'https://raw.githubusercontent.com/codyking0602/ufc-goat-rankings/' + branchName + '/';
+    const previewVersion = 'a48db67d282e891b74b20d7fccb659c74a3b89a4-' + Date.now();
+    const branchHtmlUrl = branchBase + 'index.html?v=' + encodeURIComponent(previewVersion);
+    const branchPatchUrl = branchBase + 'assets/data/ranking-data-patches.js?v=' + encodeURIComponent(previewVersion);
     const rootBase = 'https://codyking0602.github.io/ufc-goat-rankings/';
 
     Promise.all([
