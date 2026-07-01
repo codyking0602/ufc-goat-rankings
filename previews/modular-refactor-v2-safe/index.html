@@ -18,9 +18,9 @@
   <header>
     <div>
       <h1>UFC App Safe Preview</h1>
-      <p>Phase 2D preview: ranking data is split before the app boots. Main homepage is still untouched.</p>
+      <p>Phase 2E preview: ranking data and display overrides are split before the app boots. Main homepage is still untouched.</p>
     </div>
-    <div class="badge">Phase 2D safe preview</div>
+    <div class="badge">Phase 2E safe preview</div>
   </header>
   <iframe id="preview" title="UFC App safe preview"></iframe>
 
@@ -28,7 +28,7 @@
     const branchName = 'modular-refactor-v2-safe';
     const rawBase = 'https://raw.githubusercontent.com/codyking0602/ufc-goat-rankings/' + branchName + '/';
     const rootBase = 'https://codyking0602.github.io/ufc-goat-rankings/';
-    const cacheBust = 'phase2d-split-ranking-data-' + Date.now();
+    const cacheBust = 'phase2e-split-display-overrides-' + Date.now();
 
     const scriptPaths = [
       'assets/data/ranking-data-patches.js',
@@ -53,14 +53,13 @@
       return '<scr' + 'ipt>' + safeSource + '</scr' + 'ipt>';
     }
 
-    function findRankingDataAssignment(html) {
-      const marker = 'window.RANKING_DATA = ';
+    function findObjectAssignment(html, marker, label) {
       const start = html.indexOf(marker);
-      if (start === -1) throw new Error('Could not find embedded ranking data');
+      if (start === -1) throw new Error('Could not find embedded ' + label);
 
       let literalStart = start + marker.length;
       while (literalStart < html.length && /\s/.test(html[literalStart])) literalStart += 1;
-      if (html[literalStart] !== '{') throw new Error('Ranking data does not start with an object literal');
+      if (html[literalStart] !== '{') throw new Error(label + ' does not start with an object literal');
 
       let depth = 0;
       let inString = false;
@@ -91,7 +90,7 @@
         }
       }
 
-      if (literalEnd === -1) throw new Error('Could not find end of ranking data');
+      if (literalEnd === -1) throw new Error('Could not find end of ' + label);
 
       let assignmentEnd = literalEnd;
       while (assignmentEnd < html.length && /\s/.test(html[assignmentEnd])) assignmentEnd += 1;
@@ -104,10 +103,18 @@
       };
     }
 
-    function splitRankingDataForPreview(html) {
-      const assignment = findRankingDataAssignment(html);
-      const dataScript = inlineScript('window.RANKING_DATA = ' + assignment.literal + ';');
+    function splitObjectAssignmentForPreview(html, marker, generatedSource, label) {
+      const assignment = findObjectAssignment(html, marker, label);
+      const dataScript = inlineScript(generatedSource + assignment.literal + ';');
       return html.slice(0, assignment.start) + '</scr' + 'ipt>\n' + dataScript + '\n<scr' + 'ipt>' + html.slice(assignment.assignmentEnd);
+    }
+
+    function splitRankingDataForPreview(html) {
+      return splitObjectAssignmentForPreview(html, 'window.RANKING_DATA = ', 'window.RANKING_DATA = ', 'ranking data');
+    }
+
+    function splitDisplayOverridesForPreview(html) {
+      return splitObjectAssignmentForPreview(html, 'const DISPLAY_OVERRIDES = ', 'const DISPLAY_OVERRIDES = ', 'display overrides');
     }
 
     Promise.all([
@@ -118,14 +125,15 @@
         const baseTag = '<base href="' + rootBase + '">';
         let output = html.replace('<head>', '<head>' + baseTag);
         output = splitRankingDataForPreview(output);
+        output = splitDisplayOverridesForPreview(output);
 
         // Do not let the old file-level script tag double-run. The preview inlines the safe branch scripts in a controlled order.
         output = output.replace('<scr' + 'ipt src="assets/data/ranking-data-patches.js"></scr' + 'ipt>', '');
 
         const inlineScripts = scripts.map(inlineScript).join('\n');
         const debugScript = inlineScript(`
-          window.UFC_SAFE_PREVIEW_MODE = 'phase2d-split-ranking-data';
-          document.documentElement.setAttribute('data-safe-preview-mode', 'phase2d-split-ranking-data');
+          window.UFC_SAFE_PREVIEW_MODE = 'phase2e-split-display-overrides';
+          document.documentElement.setAttribute('data-safe-preview-mode', 'phase2e-split-display-overrides');
           setTimeout(function () {
             if (typeof window.UFC_PHASE2_DATA_REFRESH === 'function') window.UFC_PHASE2_DATA_REFRESH();
             if (typeof window.renderCompare === 'function') window.renderCompare();
