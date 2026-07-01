@@ -3,37 +3,37 @@
     "Petr Yan": {
       shortCase: "Yan is a modern bantamweight title case: elite boxing, strong round control, real title-level wins, and loss context that needs more nuance than the record alone shows.",
       peak: "At his best, Yan was one of the cleanest technical pressure fighters in the UFC: sharp boxing, layered defense, pace, and the ability to take over rounds once reads settled in.",
-      resume: "Yan's UFC resume has a compact but serious bantamweight title case. Aldo and Sandhagen anchor the title-race value, while the Sterling rivalry makes the loss column messier than a normal 0-2 read.",
-      championship: "Yan won the UFC bantamweight title and later won an interim title-level fight. The championship case is real, but the title volume is not long enough to push him into the top-tier champion group.",
-      opponentQuality: "Aldo, Sandhagen, Faber, Dodson, and later elite bantamweight context give Yan a useful quality-wins case inside a strong modern division.",
+      resume: "Yan's UFC resume has a compact but serious bantamweight title case. Aldo and Sandhagen anchor the title-race value, while the Sterling rivalry and Merab split series make the loss column more nuanced than a cold record read.",
+      championship: "Yan won the UFC bantamweight title, won an interim title-level fight, and later regained the bantamweight title against Merab. The championship case is real, but the total reign volume is still the ceiling.",
+      opponentQuality: "Aldo, Sandhagen, Faber, Dodson, Merab, and later elite bantamweight context give Yan a useful quality-wins case inside a strong modern division.",
       longevity: "Yan's elite window is solid but not massive. He has enough high-level bantamweight years to belong, but not the long shelf life of the bigger all-time resumes.",
-      counter: "Yan's best counterargument is context. The Sterling DQ should not be treated like a normal competitive title loss, the rematch was close, and several later losses came against elite bantamweights without him being finished.",
-      edge: "Yan wins comparisons when clean skill, round control, and DQ/loss-context nuance matter more than raw title-defense volume.",
+      counter: "Yan's best counterargument is context. The Sterling DQ should not be treated like a normal competitive title loss, the Sterling rematch was close, and the Merab series is split rather than one-way.",
+      edge: "Yan wins comparisons when clean skill, round control, title-rematch context, and DQ/loss-context nuance matter more than raw title-defense volume.",
       eliteCounter: true,
-      signatureWins: "Aldo, Sandhagen, Faber, and Dodson give Yan a compact but real UFC bantamweight win stack, with Aldo and Sandhagen carrying the title-race value.",
+      signatureWins: "Aldo, Sandhagen, Faber, Dodson, and the Merab title-rematch win give Yan a compact but real UFC bantamweight win stack, with Aldo, Sandhagen, and Merab carrying the title-race value.",
       weakness: "The ceiling is title volume. Yan has elite skill and strong context, but the official loss column and lack of a long reign keep him below deeper champion cases.",
-      titleSummary: "Yan's title case is a real bantamweight champion profile, but it is compact: title win, interim title-level value, and no long defense run.",
-      primeSummary: "His prime argument is built on round control and technical separation, with no prime finish losses in the current context assumptions.",
+      titleSummary: "Yan's title case is a real bantamweight champion profile, but it is compact: title win, interim title-level value, title-rematch value, and no long defense run.",
+      primeSummary: "His prime argument is built on round control and technical separation, with major rivalry context against Sterling and Merab.",
       titleStyle: "compactModernBantamweightChampion",
       primeStyle: "technicalRoundControl",
-      legacyStats: { titleFightWins: 2, beltsWon: 1, titleDefenses: 0, activeEliteYearsLabel: "roughly 6 active elite years", primeNote: "modern bantamweight title window with strong round control and unusual DQ context" }
+      legacyStats: { titleFightWins: 3, beltsWon: 1, titleDefenses: 0, activeEliteYearsLabel: "roughly 6 active elite years", primeNote: "modern bantamweight title window with strong round control and unusual DQ/Merab rivalry context" }
     },
     "Merab Dvalishvili": {
-      shortCase: "Merab is the modern bantamweight pressure-and-longevity case: endless pace, elite control, a deep contender run, and a champion profile still being written.",
+      shortCase: "Merab is the modern bantamweight pressure-and-longevity case: endless pace, elite control, a deep contender run, and a championship profile that reached a split rivalry with Yan.",
       peak: "At his best, Merab turns fights into a cardio and wrestling test almost nobody can keep up with. The pace, chain wrestling, and control volume are the whole problem.",
-      resume: "Merab's resume is built on modern bantamweight depth. The Yan win, Cejudo win, Aldo win, and title-level run give him a serious current-era case.",
-      championship: "The championship case is still building. He has the title-level wins and the belt context, but not yet the long defense volume of the established all-time champions.",
-      opponentQuality: "Yan, Cejudo, Aldo, Moraes, and other ranked bantamweight wins give Merab a strong modern opponent-quality lane.",
-      longevity: "Merab's useful elite window is strong and still active. He has stacked years of top-level bantamweight relevance without much decline yet.",
-      counter: "Merab's argument is depth and pace. Even without huge finishing numbers, his control style and modern bantamweight schedule make his case stronger than a simple highlight test suggests.",
+      resume: "Merab's resume is built on modern bantamweight depth. The first Yan win, Cejudo win, Aldo win, O'Malley work, Umar win, and title run give him a serious current-era case, even after Yan reclaimed the belt in the rematch.",
+      championship: "Merab's championship case is strong but now has a rivalry split with Yan. He won the belt, defended through a brutal schedule, then lost the title back to Yan in their second fight.",
+      opponentQuality: "Yan, Cejudo, Aldo, Moraes, O'Malley, Umar, and other ranked bantamweight wins give Merab a strong modern opponent-quality lane.",
+      longevity: "Merab's useful elite window is strong and still active. He stacked years of top-level bantamweight relevance and made one of the division's deepest title runs.",
+      counter: "Merab's argument is depth and pace. Even with the Yan series split, the first Yan win and his broader modern bantamweight schedule make his case stronger than a simple title-loss read suggests.",
       edge: "Merab wins comparisons when modern division depth, pace, wrestling control, and active elite consistency matter most.",
       eliteCounter: true,
-      signatureWins: "Yan, Cejudo, Aldo, Moraes, and ranked bantamweight wins give Merab one of the strongest modern 135-pound ledgers.",
-      titleSummary: "Merab's title case is still active and building, so the score should be ready to move as defenses or new elite wins arrive.",
+      signatureWins: "Yan, Cejudo, Aldo, Moraes, O'Malley, Umar, and ranked bantamweight wins give Merab one of the strongest modern 135-pound ledgers.",
+      titleSummary: "Merab's title case is a major modern bantamweight run, but the Yan rematch means the rivalry is split rather than cleanly one-sided.",
       primeSummary: "His prime is a pressure-control prime: less about finishes, more about making elite opponents fight his pace for five rounds.",
       titleStyle: "activeModernChampionCase",
       primeStyle: "pressureControlPrime",
-      legacyStats: { titleFightWins: 1, beltsWon: 1, titleDefenses: 0, activeEliteYearsLabel: "roughly 5 active elite years", primeNote: "active modern bantamweight pressure-control prime with room to keep climbing" }
+      legacyStats: { titleFightWins: 4, beltsWon: 1, titleDefenses: 3, activeEliteYearsLabel: "roughly 5 active elite years", primeNote: "active modern bantamweight pressure-control prime with a split Yan rivalry" }
     },
     "Aljamain Sterling": {
       shortCase: "Sterling is a real bantamweight title-reign case: elite grappling, back-control danger, multiple title wins, and a rivalry with Yan that needs DQ/rematch context.",
@@ -65,10 +65,10 @@
     },
     "merab dvalishvili|petr yan": {
       fighters: ["Merab Dvalishvili", "Petr Yan"],
-      fights: 1,
-      winner: "Merab Dvalishvili",
+      fights: 2,
+      winner: "Split",
       importance: "major",
-      summary: "Merab beat Yan over five rounds with pace, wrestling pressure, and control, giving Merab a clean direct edge inside the modern bantamweight comparison."
+      summary: "Merab beat Yan over five rounds in 2023 with pace, wrestling pressure, and control. Yan then beat Merab by unanimous decision at UFC 323 to reclaim the bantamweight title, making the rivalry a split series instead of a one-way direct edge."
     }
   };
 
