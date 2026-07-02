@@ -1,8 +1,6 @@
 name: Deploy UFC GOAT Rankings
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -35,25 +33,6 @@ jobs:
             --exclude='tmp.txt' \
             --exclude='tmp-test.txt' \
             --exclude='assets/fighters/test-binary-as-text.txt'
-          python - <<'PY'
-          from pathlib import Path
-          index = Path('_site/index.html')
-          active_compare_scripts = [
-              'assets/compare-data.js?v=compare-data-20260630a',
-              'assets/compare-coverage-pack-1.js?v=compare-coverage-pack-1-20260630a',
-              'assets/compare-coverage-pack-2.js?v=compare-coverage-pack-2-20260630a',
-              'assets/compare-phase2-yan.js?v=compare-phase2-yan-20260701b',
-              'assets/compare-mode.js?v=special-matchups-20260630l',
-              'assets/compare-engine-v1-5.js?v=compare-engine-v1-5-20260630b',
-              'assets/compare-copy-fixes-v1.js?v=compare-copy-fixes-v1-20260630a',
-          ]
-          marker = ''.join(f'  <script src="{src}"></script>\n' for src in active_compare_scripts)
-          html = index.read_text(encoding='utf-8')
-          lines = [line for line in html.splitlines() if 'assets/compare-' not in line]
-          html = '\n'.join(lines)
-          html = html.replace('</body>', marker + '</body>')
-          index.write_text(html, encoding='utf-8')
-          PY
           find _site -maxdepth 3 -type f | sort
 
       - name: Setup Pages
