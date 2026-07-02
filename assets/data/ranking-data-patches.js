@@ -1,26 +1,128 @@
 // Lightweight post-load status hook.
 (function(){
-  const VERSION = 'ranking-data-patches-20260702y';
+  const VERSION = 'ranking-data-patches-20260702z-photo-defaults';
+  let fallbackInstalled = false;
 
-  function applyLateDisplayOverrides(){
+  const SLUG_OVERRIDES = {
+    'B.J. Penn': 'bj-penn',
+    'BJ Penn': 'bj-penn',
+    'Georges St-Pierre': 'georges-st-pierre',
+    'T.J. Dillashaw': 'tj-dillashaw',
+    'TJ Dillashaw': 'tj-dillashaw',
+    'Junior dos Santos': 'junior-dos-santos',
+    'Mauricio Rua': 'mauricio-rua',
+    'Maurício Rua': 'mauricio-rua',
+    'Zabit Magomedsharipov': 'zabit-magomedsharipov'
+  };
+
+  function slugFor(name){
+    if(SLUG_OVERRIDES[name]) return SLUG_OVERRIDES[name];
+    return String(name || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/&/g, ' and ')
+      .replace(/['’]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  function initials(name){
+    return String(name || '')
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0,2)
+      .map(part => part[0])
+      .join('')
+      .toUpperCase() || 'UFC';
+  }
+
+  function fighterNames(){
+    const names = [];
+    const push = fighter => {
+      const name = typeof fighter === 'string' ? fighter : fighter?.fighter;
+      if(name && !names.includes(name)) names.push(name);
+    };
+    (window.RANKING_DATA?.fighters || []).forEach(push);
+    (window.RANKING_DATA?.men || []).forEach(push);
+    (window.RANKING_DATA?.women || []).forEach(push);
+    return names;
+  }
+
+  function applyPhotoPathDefaults(){
     try {
-      if(typeof DISPLAY_OVERRIDES === 'undefined') return;
-      DISPLAY_OVERRIDES["Ilia Topuria"] = {
-        ...(DISPLAY_OVERRIDES["Ilia Topuria"] || {}),
-        photoUrl: "assets/fighters/ilia-topuria.webp",
-        thumbUrl: "assets/fighters/ilia-topuria-thumb.webp"
-      };
-    } catch(e) {}
+      if(typeof DISPLAY_OVERRIDES === 'undefined') return [];
+      const mapped = [];
+      fighterNames().forEach(name => {
+        const slug = slugFor(name);
+        if(!slug) return;
+        DISPLAY_OVERRIDES[name] = {
+          ...(DISPLAY_OVERRIDES[name] || {}),
+          photoUrl: (DISPLAY_OVERRIDES[name] || {}).photoUrl || `assets/fighters/${slug}.webp`,
+          thumbUrl: (DISPLAY_OVERRIDES[name] || {}).thumbUrl || `assets/fighters/${slug}-thumb.webp`
+        };
+        mapped.push({ fighter: name, photoUrl: DISPLAY_OVERRIDES[name].photoUrl, thumbUrl: DISPLAY_OVERRIDES[name].thumbUrl });
+      });
+      window.UFC_PHOTO_PATH_DEFAULTS = { version: VERSION, mapped };
+      return mapped;
+    } catch(e) {
+      return [];
+    }
+  }
+
+  function fallbackImage(img){
+    if(!img || img.dataset.ufcPhotoFallbackApplied) return;
+    const src = img.getAttribute('src') || '';
+    if(!src.includes('assets/fighters/')) return;
+    img.dataset.ufcPhotoFallbackApplied = 'true';
+    const name = String(img.getAttribute('alt') || '').replace(/\s+profile photo$/i, '').trim();
+    const parent = img.closest('.row-photo, .fighter-photo');
+    if(!parent) return;
+    img.remove();
+    if(parent.classList.contains('row-photo')){
+      parent.textContent = initials(name);
+      return;
+    }
+    parent.classList.remove('has-photo');
+    if(!parent.querySelector('.photo-initials')){
+      const fallback = document.createElement('div');
+      fallback.className = 'photo-initials';
+      fallback.textContent = initials(name);
+      parent.prepend(fallback);
+    }
+    if(!parent.querySelector('.photo-note')){
+      const note = document.createElement('div');
+      note.className = 'photo-note';
+      note.textContent = 'Photo slot ready. Upload this fighter photo to assets/fighters/ using the expected WebP filename.';
+      parent.appendChild(note);
+    }
+  }
+
+  function scanBrokenImages(){
+    document.querySelectorAll('img[src*="assets/fighters/"]').forEach(img => {
+      if(img.complete && img.naturalWidth === 0) fallbackImage(img);
+    });
+  }
+
+  function installImageFallback(){
+    if(fallbackInstalled) return;
+    fallbackInstalled = true;
+    document.addEventListener('error', event => {
+      const target = event.target;
+      if(target && target.tagName === 'IMG') fallbackImage(target);
+    }, true);
   }
 
   function refreshApp(){
     if(typeof refresh === 'function'){
       try { refresh(); } catch(e) {}
     }
+    setTimeout(scanBrokenImages, 250);
   }
 
   function status(){
-    applyLateDisplayOverrides();
+    installImageFallback();
+    const photoDefaults = applyPhotoPathDefaults();
     refreshApp();
     window.UFC_PHASE2_DATA_STATUS = {
       version: VERSION,
@@ -37,6 +139,7 @@
       compareLedger: typeof COMPARE_FIGHT_LEDGER !== 'undefined',
       packagedFighters: window.UFC_FIGHTER_PROFILE_PACKAGES?.fighters || [],
       watchMomentFighters: window.UFC_WATCH_MOMENTS?.fighters || [],
+      photoDefaults,
       appliedAt: new Date().toISOString()
     };
     document.documentElement.setAttribute('data-phase2-data-patch', VERSION);
@@ -56,7 +159,7 @@
   }
 
   function loadSequence(items, done){
-    const next = (i) => {
+    const next = i => {
       if(i >= items.length){
         if(done) done();
         return;
@@ -94,14 +197,16 @@
 
   window.UFC_RANKING_DATA_PATCHES_V1 = {
     meta: {
-      purpose: 'Status hook and durable module loader',
+      purpose: 'Status hook, durable module loader, and default fighter photo paths',
       updated: '2026-07-02',
       version: VERSION
     },
-    apply: status
+    apply: status,
+    slugFor
   };
 
-  applyLateDisplayOverrides();
+  installImageFallback();
+  applyPhotoPathDefaults();
   loadModules();
   window.UFC_PHASE2_DATA_REFRESH = status;
 })();
