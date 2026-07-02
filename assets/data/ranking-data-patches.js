@@ -1,7 +1,6 @@
 // Lightweight post-load status hook.
 (function(){
   const VERSION = 'ranking-data-patches-20260702x';
-
   function applyLateDisplayOverrides(){
     if(!window.DISPLAY_OVERRIDES) return;
     window.DISPLAY_OVERRIDES["Ilia Topuria"] = {
