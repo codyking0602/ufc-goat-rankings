@@ -1,6 +1,6 @@
 // Compare Narrative System - Phase 3: flowing article + natural stat weaving.
 (function(){
-  const VERSION = 'compare-narrative-system-20260702c';
+  const VERSION = 'compare-narrative-system-20260702d';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
@@ -19,6 +19,10 @@
   function safe(s){ return String(s ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
   function cleanNum(n){ return Number.isFinite(Number(n)) ? Number(n) : 0; }
   function fmt(n){ return Number.isFinite(Number(n)) ? Number(n).toFixed(1).replace(/\.0$/,'') : '—'; }
+  function roundYear(n){
+    const val = Number(n);
+    return Number.isFinite(val) ? String(Math.max(1, Math.round(val))) : null;
+  }
   function normalizeKey(a,b){ return [String(a||'').toLowerCase(),String(b||'').toLowerCase()].sort().join('|'); }
   function hash(str){ let h=0; for(let i=0;i<String(str).length;i++){ h=((h<<5)-h)+String(str).charCodeAt(i); h|=0; } return Math.abs(h); }
   function pick(list,key){ return list[hash(key) % list.length]; }
@@ -60,10 +64,10 @@
   }
 
   function eliteYears(f,p){
-    if(f.activeEliteYears !== undefined && f.activeEliteYears !== null) return fmt(f.activeEliteYears);
+    if(f.activeEliteYears !== undefined && f.activeEliteYears !== null) return roundYear(f.activeEliteYears);
     const label = p.legacyStats?.activeEliteYearsLabel || '';
     const m = String(label).match(/([0-9]+(?:\.[0-9]+)?)/);
-    return m ? m[1] : null;
+    return m ? roundYear(m[1]) : null;
   }
 
   function compactWins(f,p,count=7){
@@ -76,6 +80,13 @@
       if(n && !names.includes(n)) names.push(n);
     });
     return names.slice(0,count).join(', ');
+  }
+
+  function opponentLine(f,p){
+    const wins = compactWins(f,p,7);
+    if(!wins) return null;
+    if(p.signatureWins) return wins;
+    return `Wins over ${wins} keep the opponent ledger strong.`;
   }
 
   function edgeKeys(f, other){
@@ -150,14 +161,14 @@
     const tfw = titleFightWins(f,p);
     if(tfw === null) return null;
     if(role === 'winner') return `${f.fighter}'s ${tfw} UFC title-fight wins are a major separator.`;
-    return `${f.fighter} is already at ${tfw} UFC title-fight wins, so this is not just projection.`;
+    return `${f.fighter} is already at ${tfw} UFC title-fight wins, so this is already a real argument.`;
   }
 
   function eliteYearsLine(f,p, role){
     const years = eliteYears(f,p);
     if(!years) return null;
-    if(role === 'winner') return `${years} active elite years gives ${f.fighter} more completed UFC proof.`;
-    return `${years} active elite years gives the argument real weight, but it still leaves room to build.`;
+    if(role === 'winner') return `About ${years} active elite years gives ${f.fighter} more completed UFC proof.`;
+    return `About ${years} active elite years gives the argument real weight, but it still leaves room to build.`;
   }
 
   function argumentParagraph(f, other, role, type){
@@ -165,7 +176,7 @@
     const lanes = readableLanes(f, other);
     const titleLine = titleValueLine(f,p,role);
     const yearsLine = eliteYearsLine(f,p,role);
-    const wins = compactWins(f,p,7);
+    const winsLine = opponentLine(f,p);
     const parts = [];
 
     if(role === 'loser'){
@@ -181,7 +192,7 @@
 
     if(titleLine) parts.push(titleLine);
     if(yearsLine) parts.push(yearsLine);
-    if(wins) parts.push(`${wins} keep the opponent ledger strong.`);
+    if(winsLine) parts.push(winsLine);
 
     const detail = role === 'winner'
       ? (p.championship || p.resume || p.edge || p.shortCase)
@@ -226,7 +237,7 @@
       ],
       activeCeiling: [
         `${winner.fighter} gets the nod for now. ${loser.fighter}'s ceiling is real, but ${winner.fighter} owns more of the completed UFC-only resume today.`,
-        `${winner.fighter} wins today. ${loser.fighter} can keep closing the gap, but this is still completed resume over active projection.`
+        `${winner.fighter} wins today. ${loser.fighter} can keep closing the gap, but this is still completed resume over a still-building case.`
       ],
       rivalry: [
         `${winner.fighter} wins. The direct fight history helps, and the broader title/prime case backs it up.`,
