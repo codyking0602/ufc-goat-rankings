@@ -1,6 +1,6 @@
 // Lightweight post-load status hook.
 (function(){
-  const VERSION = 'ranking-data-patches-20260702u';
+  const VERSION = 'ranking-data-patches-20260702v';
 
   function status(){
     window.UFC_PHASE2_DATA_STATUS = {
@@ -14,6 +14,8 @@
       appBranding: !!window.UFC_APP_BRANDING,
       compareNarrative: !!window.UFC_COMPARE_NARRATIVE_SYSTEM,
       compareNarrativeWatchdog: !!window.UFC_COMPARE_NARRATIVE_WATCHDOG,
+      compareProfiles: !!window.COMPARE_PROFILES,
+      compareLedger: !!window.COMPARE_FIGHT_LEDGER,
       packagedFighters: window.UFC_FIGHTER_PROFILE_PACKAGES?.fighters || [],
       watchMomentFighters: window.UFC_WATCH_MOMENTS?.fighters || [],
       appliedAt: new Date().toISOString()
@@ -34,10 +36,32 @@
     document.body.appendChild(script);
   }
 
+  function loadSequence(items, done){
+    const next = (i) => {
+      if(i >= items.length){
+        if(done) done();
+        return;
+      }
+      loadScriptOnce(items[i].src, items[i].attr, () => next(i + 1));
+    };
+    next(0);
+  }
+
   function loadModules(){
+    const compareCoreScripts = [
+      {src:'assets/compare-data.js?v=compare-data-20260630a', attr:'data-compare-data'},
+      {src:'assets/compare-coverage-pack-1.js?v=compare-coverage-pack-1-20260630a', attr:'data-compare-coverage-pack-1'},
+      {src:'assets/compare-coverage-pack-2.js?v=compare-coverage-pack-2-20260630a', attr:'data-compare-coverage-pack-2'},
+      {src:'assets/compare-phase2-yan.js?v=compare-phase2-yan-20260701b', attr:'data-compare-phase2-yan'},
+      {src:'assets/compare-mode.js?v=special-matchups-20260630l', attr:'data-compare-mode'},
+      {src:'assets/compare-engine-v1-5.js?v=compare-engine-v1-5-20260630b', attr:'data-compare-engine-v1-5'},
+      {src:'assets/compare-copy-fixes-v1.js?v=compare-copy-fixes-v1-20260630a', attr:'data-compare-copy-fixes-v1'}
+    ];
+
     const loadCompareWatchdog = () => loadScriptOnce('assets/js/compare-narrative-watchdog.js?v=compare-narrative-watchdog-20260702a', 'data-compare-narrative-watchdog', status);
     const loadCompareNarrative = () => loadScriptOnce('assets/js/compare-narrative-system.js?v=compare-narrative-system-20260702d', 'data-compare-narrative-system', loadCompareWatchdog);
-    const loadBranding = () => loadScriptOnce('assets/js/app-branding.js?v=app-branding-20260702c', 'data-app-branding', loadCompareNarrative);
+    const loadCompareCore = () => loadSequence(compareCoreScripts, loadCompareNarrative);
+    const loadBranding = () => loadScriptOnce('assets/js/app-branding.js?v=app-branding-20260702c', 'data-app-branding', loadCompareCore);
     const loadDivisionRankings = () => loadScriptOnce('assets/js/division-rankings.js?v=division-rankings-20260702f', 'data-division-rankings', loadBranding);
     const loadHomePolish = () => loadScriptOnce('assets/js/home-polish.js?v=home-polish-hybrid-preview-20260702a', 'data-home-polish', loadDivisionRankings);
     const loadWatchMoments = () => loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260702a', 'data-watch-moments', loadHomePolish);
