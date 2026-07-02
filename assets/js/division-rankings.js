@@ -1,27 +1,56 @@
-// Division Rankings: productized division tab, replacing the old prototype note.
+// Division Rankings: men-only division boards with a first-pass division scoring model.
 (function(){
   const DATA = window.RANKING_DATA;
-  const VERSION = 'division-rankings-20260702b';
+  const VERSION = 'division-rankings-20260702c';
   if(!DATA || typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const DIVISION_ORDER = [
-    'Heavyweight','Light Heavyweight','Middleweight','Welterweight','Lightweight','Featherweight','Bantamweight','Flyweight',
-    "Women's Bantamweight","Women's Flyweight","Women's Strawweight","Women's Featherweight"
+    'Heavyweight',
+    'Light Heavyweight',
+    'Middleweight',
+    'Welterweight',
+    'Lightweight',
+    'Featherweight',
+    'Bantamweight',
+    'Flyweight'
   ];
 
-  const DIVISION_RANKS = {
-    'Heavyweight': ['Stipe Miocic','Randy Couture','Daniel Cormier','Cain Velasquez','Francis Ngannou','Jon Jones'],
-    'Light Heavyweight': ['Jon Jones','Daniel Cormier','Chuck Liddell','Alex Pereira','Randy Couture','Anderson Silva'],
-    'Middleweight': ['Anderson Silva','Israel Adesanya','Alex Pereira','Georges St-Pierre'],
-    'Welterweight': ['Georges St-Pierre','Kamaru Usman','Matt Hughes','B.J. Penn','Islam Makhachev'],
-    'Lightweight': ['Khabib Nurmagomedov','Islam Makhachev','B.J. Penn','Charles Oliveira','Max Holloway','Conor McGregor','Alexander Volkanovski'],
-    'Featherweight': ['Alexander Volkanovski','Max Holloway','Jose Aldo','Ilia Topuria','Conor McGregor'],
-    'Bantamweight': ['Dominick Cruz','Merab Dvalishvili','Petr Yan','Henry Cejudo','Jose Aldo'],
-    'Flyweight': ['Demetrious Johnson','Henry Cejudo'],
-    "Women's Bantamweight": ['Amanda Nunes','Ronda Rousey','Valentina Shevchenko'],
-    "Women's Flyweight": ['Valentina Shevchenko','Amanda Nunes'],
-    "Women's Strawweight": ['Zhang Weili','Rose Namajunas'],
-    "Women's Featherweight": ['Amanda Nunes']
+  // Division score = existing UFC résumé components, reweighted for the selected weight class.
+  // Resume factor controls how much of a fighter's all-time résumé actually belongs in that division.
+  // 1.00 = primary division résumé. Lower factors = real but smaller crossover résumé.
+  const DIVISION_RESUME_FACTORS = {
+    'Heavyweight': {
+      'Daniel Cormier': 0.92,
+      'Jon Jones': 0.58
+    },
+    'Light Heavyweight': {
+      'Randy Couture': 0.86,
+      'Anderson Silva': 0.35
+    },
+    'Middleweight': {
+      'Georges St-Pierre': 0.38,
+      'Alex Pereira': 0.82
+    },
+    'Welterweight': {
+      'B.J. Penn': 0.45,
+      'Islam Makhachev': 0.55
+    },
+    'Lightweight': {
+      'Max Holloway': 0.38,
+      'Conor McGregor': 0.75,
+      'Alexander Volkanovski': 0.30
+    },
+    'Featherweight': {
+      'Conor McGregor': 0.78,
+      'Jose Aldo': 1.00
+    },
+    'Bantamweight': {
+      'Jose Aldo': 0.55,
+      'Henry Cejudo': 0.72
+    },
+    'Flyweight': {
+      'Henry Cejudo': 0.78
+    }
   };
 
   const CANONICAL_DIVISIONS = {
@@ -33,16 +62,6 @@
     'featherweight':'Featherweight',
     'bantamweight':'Bantamweight',
     'flyweight':'Flyweight',
-    'strawweight':'Strawweight',
-    'women heavyweight':'Heavyweight',
-    'women light heavyweight':'Light Heavyweight',
-    'women middleweight':'Middleweight',
-    'women welterweight':'Welterweight',
-    'women lightweight':'Lightweight',
-    'women featherweight':'Featherweight',
-    'women bantamweight':'Bantamweight',
-    'women flyweight':'Flyweight',
-    'women strawweight':'Strawweight',
     'lhw':'Light Heavyweight',
     'hw':'Heavyweight'
   };
@@ -69,16 +88,17 @@
       .division-topline-row{display:flex;justify-content:space-between;gap:10px;align-items:center;border-top:1px solid rgba(148,163,184,.28);padding-top:7px;font-size:13px;color:#c7d2e2!important}
       .division-topline-row strong{font-weight:900;color:#f8faff!important}
       .division-topline-row span{color:#c7d2e2!important}
-      .division-role{display:inline-flex;margin-top:7px;border:1px solid rgba(250,204,21,.25);background:rgba(250,204,21,.08);color:#fde68a;border-radius:999px;padding:5px 8px;font-size:11px;font-weight:850;max-width:max-content}
+      .division-formula{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:6px}
+      .division-formula div{border:1px solid rgba(148,163,184,.28);background:rgba(15,23,42,.24);border-radius:14px;padding:9px 10px;color:#f8faff!important}
+      .division-formula strong{display:block;color:#facc15!important;font-size:13px}
+      .division-formula small{display:block;color:#c7d2e2!important;margin-top:2px}
     `;
     document.head.appendChild(style);
   }
 
-  function clean(s){ return String(s || '').toLowerCase().replace(/women'?s/g,'women').replace(/[^a-z0-9]+/g,' ').trim(); }
-  function canonicalDivisionName(s){
-    const c = clean(s);
-    return CANONICAL_DIVISIONS[c] || Object.entries(CANONICAL_DIVISIONS).find(([key]) => c === key)?.[1] || String(s || '').trim();
-  }
+  function clean(s){ return String(s || '').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim(); }
+  function canonicalDivisionName(s){ return CANONICAL_DIVISIONS[clean(s)] || String(s || '').trim(); }
+  function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
   function fighterInitialsLocal(name){ return String(name || '').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase(); }
   function full(row){
     if(typeof fullRow === 'function') return fullRow(row);
@@ -86,42 +106,47 @@
     return {...profile, ...row};
   }
   function allRows(){
-    const boards = [...(DATA.men || []), ...(DATA.women || [])];
+    const boards = [...(DATA.men || [])];
     const names = new Set(boards.map(r => r.fighter));
-    DATA.fighters.forEach(f => names.add(f.fighter));
-    return [...names].map(name => full(boards.find(r => r.fighter === name) || {fighter:name}));
+    DATA.fighters.filter(f => f.gender === 'Men').forEach(f => names.add(f.fighter));
+    return [...names].map(name => full(boards.find(r => r.fighter === name) || {fighter:name})).filter(f => f.gender !== 'Women');
   }
   function divisionsFor(f){
     const raw = [f.primaryDivision, f.secondaryDivision, f.division, f.weightClass].filter(Boolean).join(' / ');
     return raw.split(/\/|,| and /i).map(x => canonicalDivisionName(x.trim())).filter(Boolean);
   }
-  function targetDivision(division){
-    return canonicalDivisionName(String(division || '').replace(/^Women's\s+/i,''));
+  function targetDivision(division){ return canonicalDivisionName(division); }
+  function primaryMatch(f, division){ return canonicalDivisionName(f.primaryDivision) === targetDivision(division); }
+  function resumeFactor(f, division){
+    if(primaryMatch(f, division)) return 1;
+    const explicit = DIVISION_RESUME_FACTORS[division]?.[f.fighter];
+    if(typeof explicit === 'number') return explicit;
+    return 0;
   }
   function divisionMatch(f, division){
     if(division === 'All') return true;
+    if(f.gender === 'Women') return false;
     const target = targetDivision(division);
-    if(String(division).startsWith("Women's") && f.gender !== 'Women') return false;
-    if(!String(division).startsWith("Women's") && f.gender === 'Women') return false;
-    return divisionsFor(f).some(d => d === target);
+    const ownsDivision = divisionsFor(f).some(d => d === target);
+    return ownsDivision && resumeFactor(f, division) > 0;
   }
-  function primaryMatch(f, division){
-    if(!division || division === 'All') return true;
-    if(String(division).startsWith("Women's") && f.gender !== 'Women') return false;
-    if(!String(division).startsWith("Women's") && f.gender === 'Women') return false;
-    return canonicalDivisionName(f.primaryDivision) === targetDivision(division);
+  function divisionScoreParts(f, division){
+    const factor = resumeFactor(f, division);
+    const title = clamp((Number(f.championship || 0) / 30) * 35, 0, 35);
+    const quality = clamp((Number(f.opponentQuality || 0) / 25) * 30, 0, 30);
+    const dominance = clamp((Number(f.primeDominance || 0) / 29) * 20, 0, 20);
+    const longevity = clamp((Number(f.longevity || 0) / 15) * 15, 0, 15);
+    const loss = clamp((Number(f.penalty || 0) / 10) * 5, -5, 0);
+    const base = title + quality + dominance + longevity + loss;
+    const score = clamp(base * factor, 0, 100);
+    return {score, factor, title, quality, dominance, longevity, loss};
   }
-  function rankPriority(f, division){
-    const list = DIVISION_RANKS[division] || [];
-    const manual = list.indexOf(f.fighter);
-    if(manual >= 0) return manual + 1;
-    const secondaryPenalty = primaryMatch(f, division) ? 0 : 100;
-    return 500 + secondaryPenalty - Number(f.totalScore || 0);
-  }
+  function divisionScore(f, division){ return divisionScoreParts(f, division).score; }
+  function divisionRating(f, division){ return clamp(Math.round(70 + divisionScore(f, division) * 0.29), 70, 99); }
   function divisionRows(division){
     return allRows()
       .filter(f => divisionMatch(f, division))
-      .sort((a,b) => rankPriority(a, division) - rankPriority(b, division) || Number(b.totalScore || 0) - Number(a.totalScore || 0));
+      .sort((a,b) => divisionScore(b, division) - divisionScore(a, division) || Number(b.totalScore || 0) - Number(a.totalScore || 0));
   }
   function thumb(f){
     const url = DISPLAY_OVERRIDES[f.fighter]?.thumbUrl || DISPLAY_OVERRIDES[f.fighter]?.photoUrl || '';
@@ -129,11 +154,14 @@
   }
   function roleTag(f, division){
     if(division === 'All') return DISPLAY_OVERRIDES[f.fighter]?.resumeTag || 'Division profile';
-    return primaryMatch(f, division) ? `${division} résumé` : `${division} crossover`;
+    const factor = resumeFactor(f, division);
+    if(primaryMatch(f, division)) return `${division} résumé`;
+    if(factor >= .75) return `${division} title résumé`;
+    return `${division} crossover`;
   }
   function rowHtml(f, i, division){
-    const ovr = typeof overallOvr === 'function' ? overallOvr(f) : Math.round(75 + Number(f.totalScore || 0));
-    return `<article class="row clean-row fighter-row division-row" data-fighter="${f.fighter}"><div class="rank">#${i + 1}</div>${thumb(f)}<div class="row-main"><div class="name">${f.fighter}</div><div class="meta">${f.ufcRecord || ''} · ${f.primaryDivision || ''}${f.secondaryDivision ? ' / ' + f.secondaryDivision : ''}</div><div class="resume-tag">${roleTag(f, division)}</div></div><div class="score"><strong>${ovr}</strong><span class="meta">OVR</span></div></article>`;
+    const rating = divisionRating(f, division);
+    return `<article class="row clean-row fighter-row division-row" data-fighter="${f.fighter}"><div class="rank">#${i + 1}</div>${thumb(f)}<div class="row-main"><div class="name">${f.fighter}</div><div class="meta">${f.ufcRecord || ''} · ${f.primaryDivision || ''}${f.secondaryDivision ? ' / ' + f.secondaryDivision : ''}</div><div class="resume-tag">${roleTag(f, division)}</div></div><div class="score"><strong>${rating}</strong><span class="meta">DIV</span></div></article>`;
   }
   function setDivisionHeading(title, copy){
     const section = document.querySelector('#division .section-title');
@@ -143,17 +171,27 @@
     if(h2) h2.textContent = title;
     if(p) p.textContent = copy;
   }
-  function availableDivisions(){
-    const fromData = (DATA.divisions || []).filter(d => d && d !== 'All');
-    const merged = [...new Set([...DIVISION_ORDER, ...fromData])];
-    return merged.filter(d => divisionRows(d).length > 0);
+  function availableDivisions(){ return DIVISION_ORDER.filter(d => divisionRows(d).length > 0); }
+  function normalizeDivisionSelect(){
+    const select = el('divisionFilter');
+    if(!select || select.dataset.menDivisionOrder === VERSION) return;
+    const current = select.value;
+    select.innerHTML = '<option value="All">All divisions</option>';
+    availableDivisions().forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d;
+      opt.textContent = d;
+      select.appendChild(opt);
+    });
+    select.value = DIVISION_ORDER.includes(current) ? current : 'All';
+    select.dataset.menDivisionOrder = VERSION;
   }
   function renderDivisionHub(){
-    setDivisionHeading('UFC Division Boards', 'Choose a weight class to see the current division résumé board.');
+    setDivisionHeading('UFC Division Boards', 'Men-only weight-class boards, ordered heaviest to lightest.');
     const cards = availableDivisions().map(division => {
       const rows = divisionRows(division);
       const top = rows[0];
-      const topThree = rows.slice(0,3).map((f,i)=>`<div class="division-topline-row"><strong>#${i+1} ${f.fighter}</strong><span class="meta">${typeof overallOvr === 'function' ? overallOvr(f) : Math.round(f.totalScore || 0)} OVR</span></div>`).join('');
+      const topThree = rows.slice(0,3).map((f,i)=>`<div class="division-topline-row"><strong>#${i+1} ${f.fighter}</strong><span>${divisionRating(f, division)} DIV</span></div>`).join('');
       return `<article class="card division-card" data-division-pick="${division}"><h3>${division}<span>${rows.length} loaded</span></h3><p class="meta">Current #1: <strong>${top ? top.fighter : '—'}</strong></p><div class="division-topline">${topThree}</div></article>`;
     }).join('');
     el('divisionList').innerHTML = `<div class="division-grid">${cards}</div>`;
@@ -164,18 +202,19 @@
   }
   window.renderDivision = function(){
     injectCss();
+    normalizeDivisionSelect();
     const division = el('divisionFilter').value;
     if(division === 'All'){
       renderDivisionHub();
       return;
     }
     const rows = divisionRows(division);
-    setDivisionHeading(`${division} GOAT Board`, `Current division résumé board for fighters with meaningful UFC work at ${division}.`);
+    setDivisionHeading(`${division} GOAT Board`, `Division-specific score for men with meaningful UFC work at ${division}.`);
     const top = rows[0];
-    const intro = `<div class="card division-board-intro"><h3>${division} Leaderboard</h3><p class="meta">Sorted by locked division résumé anchors first, then current OVR as fallback. Primary-division cases stay ahead of crossover résumés unless manually ranked.</p><div class="division-stat-strip"><span class="division-stat-pill">${rows.length} fighters loaded</span><span class="division-stat-pill">#1 ${top ? top.fighter : '—'}</span><span class="division-stat-pill">Tap a fighter for profile</span></div></div>`;
+    const intro = `<div class="card division-board-intro"><h3>${division} Leaderboard</h3><p class="meta">First-pass division model: title résumé, quality wins, dominance, longevity, and loss context are reweighted, then multiplied by how much of the fighter's UFC résumé actually belongs in this division.</p><div class="division-stat-strip"><span class="division-stat-pill">${rows.length} fighters loaded</span><span class="division-stat-pill">#1 ${top ? top.fighter : '—'}</span><span class="division-stat-pill">Tap a fighter for profile</span></div><div class="division-formula"><div><strong>35%</strong><small>Title résumé</small></div><div><strong>30%</strong><small>Quality wins</small></div><div><strong>20%</strong><small>Dominance</small></div><div><strong>15%</strong><small>Longevity</small></div></div></div>`;
     el('divisionList').innerHTML = intro + (rows.map((r,i)=>rowHtml(r,i,division)).join('') || '<div class="notice">No fighters are loaded for this division yet.</div>');
     document.querySelectorAll(`#divisionList .fighter-row`).forEach(row => row.addEventListener('click', () => openFighter(row.dataset.fighter)));
   };
-  window.UFC_DIVISION_RANKINGS = { version: VERSION };
+  window.UFC_DIVISION_RANKINGS = { version: VERSION, mode: 'men-only-division-score-v1' };
   if(typeof window.renderDivision === 'function') window.renderDivision();
 })();
