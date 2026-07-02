@@ -1,6 +1,6 @@
 // App shell branding and navigation cleanup.
 (function(){
-  const VERSION = 'app-branding-20260702b';
+  const VERSION = 'app-branding-20260702c';
 
   function upsertMeta(attr, key, content){
     let meta = document.querySelector(`meta[${attr}="${key}"]`);
@@ -31,9 +31,10 @@
     upsertMeta('name', 'mobile-web-app-capable', 'yes');
     upsertMeta('name', 'theme-color', '#f97316');
     upsertMeta('name', 'msapplication-TileColor', '#172033');
-    upsertLink('manifest', 'manifest.webmanifest?v=20260702b');
-    upsertLink('icon', 'assets/app-icon.svg?v=20260702b', {type:'image/svg+xml'});
-    upsertLink('apple-touch-icon', 'assets/app-icon.svg?v=20260702b');
+    upsertMeta('name', 'msapplication-TileImage', 'assets/app-icon-512.png?v=20260702c');
+    upsertLink('manifest', 'manifest.webmanifest?v=20260702c');
+    upsertLink('icon', 'assets/app-icon.png?v=20260702c', {type:'image/png', sizes:'1024x1024'});
+    upsertLink('apple-touch-icon', 'assets/apple-touch-icon.png?v=20260702c', {sizes:'180x180'});
   }
 
   function removeRulesTab(){
