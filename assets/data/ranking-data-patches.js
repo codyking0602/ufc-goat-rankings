@@ -3,7 +3,7 @@
 // Durable fighter stat packages live in assets/js/fighter-profile-packages.js.
 // Watch Moment links live in assets/js/watch-moments.js.
 (function(){
-  const VERSION = 'ranking-data-patches-20260701j';
+  const VERSION = 'ranking-data-patches-20260701k';
 
   function status(){
     const data = window.RANKING_DATA;
@@ -36,8 +36,8 @@
   }
 
   function loadModules(){
-    const loadWatchMoments = () => loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260701b', 'data-watch-moments', status);
-    const loadPackages = () => loadScriptOnce('assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260701b', 'data-fighter-profile-packages', loadWatchMoments);
+    const loadWatchMoments = () => loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260701c', 'data-watch-moments', status);
+    const loadPackages = () => loadScriptOnce('assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260701c', 'data-fighter-profile-packages', loadWatchMoments);
     if(window.UFC_PROFILE_TEMPLATE_SYSTEM){
       loadPackages();
       return;
