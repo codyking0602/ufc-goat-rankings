@@ -1,7 +1,7 @@
 // Division Rankings: productized division tab, replacing the old prototype note.
 (function(){
   const DATA = window.RANKING_DATA;
-  const VERSION = 'division-rankings-20260702a';
+  const VERSION = 'division-rankings-20260702b';
   if(!DATA || typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const DIVISION_ORDER = [
@@ -10,7 +10,7 @@
   ];
 
   const DIVISION_RANKS = {
-    'Heavyweight': ['Stipe Miocic','Randy Couture','Daniel Cormier','Cain Velasquez','Francis Ngannou','Jon Jones','Alex Pereira'],
+    'Heavyweight': ['Stipe Miocic','Randy Couture','Daniel Cormier','Cain Velasquez','Francis Ngannou','Jon Jones'],
     'Light Heavyweight': ['Jon Jones','Daniel Cormier','Chuck Liddell','Alex Pereira','Randy Couture','Anderson Silva'],
     'Middleweight': ['Anderson Silva','Israel Adesanya','Alex Pereira','Georges St-Pierre'],
     'Welterweight': ['Georges St-Pierre','Kamaru Usman','Matt Hughes','B.J. Penn','Islam Makhachev'],
@@ -24,45 +24,61 @@
     "Women's Featherweight": ['Amanda Nunes']
   };
 
-  const ALIASES = {
-    'Heavyweight': ['Heavyweight'],
-    'Light Heavyweight': ['Light Heavyweight','LHW'],
-    'Middleweight': ['Middleweight'],
-    'Welterweight': ['Welterweight'],
-    'Lightweight': ['Lightweight'],
-    'Featherweight': ['Featherweight'],
-    'Bantamweight': ['Bantamweight'],
-    'Flyweight': ['Flyweight'],
-    "Women's Bantamweight": ["Women's Bantamweight",'Women Bantamweight','Bantamweight'],
-    "Women's Flyweight": ["Women's Flyweight",'Women Flyweight','Flyweight'],
-    "Women's Strawweight": ["Women's Strawweight",'Women Strawweight','Strawweight'],
-    "Women's Featherweight": ["Women's Featherweight",'Women Featherweight','Featherweight']
+  const CANONICAL_DIVISIONS = {
+    'heavyweight':'Heavyweight',
+    'light heavyweight':'Light Heavyweight',
+    'middleweight':'Middleweight',
+    'welterweight':'Welterweight',
+    'lightweight':'Lightweight',
+    'featherweight':'Featherweight',
+    'bantamweight':'Bantamweight',
+    'flyweight':'Flyweight',
+    'strawweight':'Strawweight',
+    'women heavyweight':'Heavyweight',
+    'women light heavyweight':'Light Heavyweight',
+    'women middleweight':'Middleweight',
+    'women welterweight':'Welterweight',
+    'women lightweight':'Lightweight',
+    'women featherweight':'Featherweight',
+    'women bantamweight':'Bantamweight',
+    'women flyweight':'Flyweight',
+    'women strawweight':'Strawweight',
+    'lhw':'Light Heavyweight',
+    'hw':'Heavyweight'
   };
 
   function injectCss(){
-    if(document.getElementById('division-rankings-css')) return;
+    const existing = document.getElementById('division-rankings-css');
+    if(existing) existing.remove();
     const style = document.createElement('style');
     style.id = 'division-rankings-css';
     style.textContent = `
-      .division-board-intro{margin:0 0 14px;padding:16px;border-radius:20px;display:grid;gap:10px}
-      .division-board-intro h3{margin:0;font-size:22px;letter-spacing:-.02em}
-      .division-board-intro p{margin:0;line-height:1.45}
+      .division-board-intro{margin:0 0 14px;padding:16px;border-radius:20px;display:grid;gap:10px;color:#f8faff!important}
+      .division-board-intro h3{margin:0;font-size:22px;letter-spacing:-.02em;color:#f8faff!important}
+      .division-board-intro p{margin:0;line-height:1.45;color:#c7d2e2!important}
       .division-stat-strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
-      .division-stat-pill{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);border-radius:999px;padding:7px 10px;font-weight:850;font-size:12px}
+      .division-stat-pill{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(148,163,184,.32);background:rgba(15,23,42,.22);color:#f8faff!important;border-radius:999px;padding:7px 10px;font-weight:850;font-size:12px}
       .division-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:12px}
-      .division-card{cursor:pointer;transition:.16s ease;overflow:hidden}
+      .division-card{cursor:pointer;transition:.16s ease;overflow:hidden;color:#f8faff!important}
       .division-card:hover{transform:translateY(-1px);border-color:rgba(249,115,22,.72)!important}
-      .division-card h3{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:0 0 8px;font-size:18px}
-      .division-card h3 span{font-size:12px;font-weight:900;color:#facc15;text-transform:uppercase;letter-spacing:.08em}
+      .division-card h3{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:0 0 8px;font-size:18px;color:#f8faff!important}
+      .division-card h3 span{font-size:12px;font-weight:900;color:#facc15!important;text-transform:uppercase;letter-spacing:.08em}
+      .division-card p,.division-card .meta{color:#c7d2e2!important}
+      .division-card p strong{color:#f8faff!important}
       .division-topline{display:grid;gap:6px;margin-top:10px}
-      .division-topline-row{display:flex;justify-content:space-between;gap:10px;align-items:center;border-top:1px solid rgba(148,163,184,.22);padding-top:7px;font-size:13px}
-      .division-topline-row strong{font-weight:900}
+      .division-topline-row{display:flex;justify-content:space-between;gap:10px;align-items:center;border-top:1px solid rgba(148,163,184,.28);padding-top:7px;font-size:13px;color:#c7d2e2!important}
+      .division-topline-row strong{font-weight:900;color:#f8faff!important}
+      .division-topline-row span{color:#c7d2e2!important}
       .division-role{display:inline-flex;margin-top:7px;border:1px solid rgba(250,204,21,.25);background:rgba(250,204,21,.08);color:#fde68a;border-radius:999px;padding:5px 8px;font-size:11px;font-weight:850;max-width:max-content}
     `;
     document.head.appendChild(style);
   }
 
   function clean(s){ return String(s || '').toLowerCase().replace(/women'?s/g,'women').replace(/[^a-z0-9]+/g,' ').trim(); }
+  function canonicalDivisionName(s){
+    const c = clean(s);
+    return CANONICAL_DIVISIONS[c] || Object.entries(CANONICAL_DIVISIONS).find(([key]) => c === key)?.[1] || String(s || '').trim();
+  }
   function fighterInitialsLocal(name){ return String(name || '').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase(); }
   function full(row){
     if(typeof fullRow === 'function') return fullRow(row);
@@ -77,21 +93,23 @@
   }
   function divisionsFor(f){
     const raw = [f.primaryDivision, f.secondaryDivision, f.division, f.weightClass].filter(Boolean).join(' / ');
-    return raw.split(/\/|,| and /i).map(x => x.trim()).filter(Boolean);
+    return raw.split(/\/|,| and /i).map(x => canonicalDivisionName(x.trim())).filter(Boolean);
+  }
+  function targetDivision(division){
+    return canonicalDivisionName(String(division || '').replace(/^Women's\s+/i,''));
   }
   function divisionMatch(f, division){
     if(division === 'All') return true;
-    const aliases = (ALIASES[division] || [division]).map(clean);
-    const d = divisionsFor(f).map(clean);
-    if(String(division).startsWith("Women's")){
-      return f.gender === 'Women' && d.some(x => aliases.some(a => x.includes(a) || a.includes(x)));
-    }
-    return d.some(x => aliases.some(a => x === a || x.includes(a) || a.includes(x)));
+    const target = targetDivision(division);
+    if(String(division).startsWith("Women's") && f.gender !== 'Women') return false;
+    if(!String(division).startsWith("Women's") && f.gender === 'Women') return false;
+    return divisionsFor(f).some(d => d === target);
   }
   function primaryMatch(f, division){
     if(!division || division === 'All') return true;
     if(String(division).startsWith("Women's") && f.gender !== 'Women') return false;
-    return clean(f.primaryDivision) === clean(division).replace(/^women\s+/,'') || clean(f.primaryDivision) === clean(division);
+    if(!String(division).startsWith("Women's") && f.gender === 'Women') return false;
+    return canonicalDivisionName(f.primaryDivision) === targetDivision(division);
   }
   function rankPriority(f, division){
     const list = DIVISION_RANKS[division] || [];
@@ -131,7 +149,7 @@
     return merged.filter(d => divisionRows(d).length > 0);
   }
   function renderDivisionHub(){
-    setDivisionHeading('UFC Division Boards', 'Choose a weight class to see the current division-specific leaderboard.');
+    setDivisionHeading('UFC Division Boards', 'Choose a weight class to see the current division résumé board.');
     const cards = availableDivisions().map(division => {
       const rows = divisionRows(division);
       const top = rows[0];
@@ -152,9 +170,9 @@
       return;
     }
     const rows = divisionRows(division);
-    setDivisionHeading(`${division} GOAT Board`, `Current division view for fighters with meaningful UFC work at ${division}.`);
+    setDivisionHeading(`${division} GOAT Board`, `Current division résumé board for fighters with meaningful UFC work at ${division}.`);
     const top = rows[0];
-    const intro = `<div class="card division-board-intro"><h3>${division} Leaderboard</h3><p class="meta">Ranked as a division board, with primary-division résumés ahead of lighter crossover cases when needed.</p><div class="division-stat-strip"><span class="division-stat-pill">${rows.length} fighters loaded</span><span class="division-stat-pill">#1 ${top ? top.fighter : '—'}</span><span class="division-stat-pill">Tap a fighter for profile</span></div></div>`;
+    const intro = `<div class="card division-board-intro"><h3>${division} Leaderboard</h3><p class="meta">Sorted by locked division résumé anchors first, then current OVR as fallback. Primary-division cases stay ahead of crossover résumés unless manually ranked.</p><div class="division-stat-strip"><span class="division-stat-pill">${rows.length} fighters loaded</span><span class="division-stat-pill">#1 ${top ? top.fighter : '—'}</span><span class="division-stat-pill">Tap a fighter for profile</span></div></div>`;
     el('divisionList').innerHTML = intro + (rows.map((r,i)=>rowHtml(r,i,division)).join('') || '<div class="notice">No fighters are loaded for this division yet.</div>');
     document.querySelectorAll(`#divisionList .fighter-row`).forEach(row => row.addEventListener('click', () => openFighter(row.dataset.fighter)));
   };
