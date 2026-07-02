@@ -1,6 +1,6 @@
 {
-  "name": "UFC GOAT Rankings",
-  "short_name": "UFC GOAT",
+  "name": "UFC Rankings",
+  "short_name": "UFC Rankings",
   "description": "UFC-only all-time fighter rankings with OVR ratings, profiles, divisions, and compare mode.",
   "start_url": "./",
   "scope": "./",
