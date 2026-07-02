@@ -1,6 +1,6 @@
 // Lightweight post-load status hook.
 (function(){
-  const VERSION = 'ranking-data-patches-20260702ac-compare-narrative-h';
+  const VERSION = 'ranking-data-patches-20260702ad-compare-post-polish';
   const SLUG_OVERRIDES = {
     'B.J. Penn':'bj-penn','BJ Penn':'bj-penn','Georges St-Pierre':'georges-st-pierre','T.J. Dillashaw':'tj-dillashaw','TJ Dillashaw':'tj-dillashaw','Junior dos Santos':'junior-dos-santos','Mauricio Rua':'mauricio-rua','Maurício Rua':'mauricio-rua','Zabit Magomedsharipov':'zabit-magomedsharipov'
   };
@@ -52,7 +52,7 @@
     installImageFallback();
     const photoDefaults=applyPhotoPathDefaults();
     refreshApp();
-    window.UFC_PHASE2_DATA_STATUS={version:VERSION,mode:'lightweight-status-hook',profileTemplateSystem:!!window.UFC_PROFILE_TEMPLATE_SYSTEM,fighterProfilePackages:!!window.UFC_FIGHTER_PROFILE_PACKAGES,watchMoments:!!window.UFC_WATCH_MOMENTS,homePolish:!!window.UFC_HOME_POLISH,divisionRankings:!!window.UFC_DIVISION_RANKINGS,appBranding:!!window.UFC_APP_BRANDING,compareNarrative:!!window.UFC_COMPARE_NARRATIVE_SYSTEM,compareNarrativeWatchdog:!!window.UFC_COMPARE_NARRATIVE_WATCHDOG,compareProfiles:typeof COMPARE_PROFILES!=='undefined',compareLedger:typeof COMPARE_FIGHT_LEDGER!=='undefined',packagedFighters:window.UFC_FIGHTER_PROFILE_PACKAGES?.fighters||[],watchMomentFighters:window.UFC_WATCH_MOMENTS?.fighters||[],photoDefaults,appliedAt:new Date().toISOString()};
+    window.UFC_PHASE2_DATA_STATUS={version:VERSION,mode:'lightweight-status-hook',profileTemplateSystem:!!window.UFC_PROFILE_TEMPLATE_SYSTEM,fighterProfilePackages:!!window.UFC_FIGHTER_PROFILE_PACKAGES,watchMoments:!!window.UFC_WATCH_MOMENTS,homePolish:!!window.UFC_HOME_POLISH,divisionRankings:!!window.UFC_DIVISION_RANKINGS,appBranding:!!window.UFC_APP_BRANDING,compareNarrative:!!window.UFC_COMPARE_NARRATIVE_SYSTEM,compareNarrativePostPolish:!!window.UFC_COMPARE_NARRATIVE_POST_POLISH,compareNarrativeWatchdog:!!window.UFC_COMPARE_NARRATIVE_WATCHDOG,compareProfiles:typeof COMPARE_PROFILES!=='undefined',compareLedger:typeof COMPARE_FIGHT_LEDGER!=='undefined',packagedFighters:window.UFC_FIGHTER_PROFILE_PACKAGES?.fighters||[],watchMomentFighters:window.UFC_WATCH_MOMENTS?.fighters||[],photoDefaults,appliedAt:new Date().toISOString()};
     document.documentElement.setAttribute('data-phase2-data-patch',VERSION);
   }
   function loadScriptOnce(src,attr,done){
@@ -71,7 +71,8 @@
       {src:'assets/compare-copy-fixes-v1.js?v=compare-copy-fixes-v1-20260630a',attr:'data-compare-copy-fixes-v1'}
     ];
     const loadCompareWatchdog=()=>loadScriptOnce('assets/js/compare-narrative-watchdog.js?v=compare-narrative-watchdog-20260702a','data-compare-narrative-watchdog',status);
-    const loadCompareNarrative=()=>loadScriptOnce('assets/js/compare-narrative-system.js?v=compare-narrative-system-20260702h','data-compare-narrative-system',loadCompareWatchdog);
+    const loadComparePostPolish=()=>loadScriptOnce('assets/js/compare-narrative-post-polish.js?v=compare-narrative-post-polish-20260702a','data-compare-narrative-post-polish',loadCompareWatchdog);
+    const loadCompareNarrative=()=>loadScriptOnce('assets/js/compare-narrative-system.js?v=compare-narrative-system-20260702h','data-compare-narrative-system',loadComparePostPolish);
     const loadCompareCore=()=>loadSequence(compareCoreScripts,loadCompareNarrative);
     const loadBranding=()=>loadScriptOnce('assets/js/app-branding.js?v=app-branding-20260702c','data-app-branding',loadCompareCore);
     const loadDivisionRankings=()=>loadScriptOnce('assets/js/division-rankings.js?v=division-rankings-20260702f','data-division-rankings',loadBranding);
@@ -81,7 +82,7 @@
     if(window.UFC_PROFILE_TEMPLATE_SYSTEM){ loadPackages(); return; }
     loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260701a','data-profile-template-system',loadPackages);
   }
-  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Status hook, module loader, and default fighter photo paths',updated:'2026-07-02',version:VERSION},apply:status,slugFor};
+  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Status hook, module loader, default fighter photo paths, and compare post-polish loader',updated:'2026-07-02',version:VERSION},apply:status,slugFor};
   installImageFallback();
   applyPhotoPathDefaults();
   loadModules();
