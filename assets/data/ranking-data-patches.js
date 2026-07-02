@@ -1,8 +1,9 @@
 // Lightweight post-load status hook.
 // Durable profile rendering lives in assets/js/profile-template-system.js.
 // Durable fighter stat packages live in assets/js/fighter-profile-packages.js.
+// Watch Moment links live in assets/js/watch-moments.js.
 (function(){
-  const VERSION = 'ranking-data-patches-20260701g';
+  const VERSION = 'ranking-data-patches-20260701h';
 
   function status(){
     const data = window.RANKING_DATA;
@@ -11,7 +12,9 @@
       mode: 'lightweight-status-hook',
       profileTemplateSystem: !!window.UFC_PROFILE_TEMPLATE_SYSTEM,
       fighterProfilePackages: !!window.UFC_FIGHTER_PROFILE_PACKAGES,
+      watchMoments: !!window.UFC_WATCH_MOMENTS,
       packagedFighters: window.UFC_FIGHTER_PROFILE_PACKAGES?.fighters || [],
+      watchMomentFighters: window.UFC_WATCH_MOMENTS?.fighters || [],
       petrYanInMen: !!(data && Array.isArray(data.men) && data.men.some(f => f.fighter === 'Petr Yan')),
       petrYanInProfiles: !!(data && Array.isArray(data.fighters) && data.fighters.some(f => f.fighter === 'Petr Yan')),
       appliedAt: new Date().toISOString()
@@ -33,7 +36,8 @@
   }
 
   function loadModules(){
-    const loadPackages = () => loadScriptOnce('assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260701a', 'data-fighter-profile-packages', status);
+    const loadWatchMoments = () => loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260701a', 'data-watch-moments', status);
+    const loadPackages = () => loadScriptOnce('assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260701a', 'data-fighter-profile-packages', loadWatchMoments);
     if(window.UFC_PROFILE_TEMPLATE_SYSTEM){
       loadPackages();
       return;
@@ -44,7 +48,7 @@
   window.UFC_RANKING_DATA_PATCHES_V1 = {
     meta: {
       purpose: 'Status hook and durable module loader',
-      note: 'Presentation logic and fighter packages are split into durable JS modules.',
+      note: 'Presentation logic, fighter packages, and Watch Moment links are split into durable JS modules.',
       updated: '2026-07-01',
       version: VERSION
     },
