@@ -1,12 +1,14 @@
 // Watch Moment links for fighter cards and profiles.
 // Keep links here as app-facing content, separate from scoring.
 (function(){
-  const VERSION = 'watch-moments-20260701a';
+  const VERSION = 'watch-moments-20260701b';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
     'Jon Jones': 'https://youtube.com/shorts/yG-D2r6HVp4?is=fstX4Wc_rvCITSw0',
-    'Georges St-Pierre': 'https://youtube.com/shorts/Gb0lJf0-lZU?is=ViJReSsAfOjWw1xf'
+    'Georges St-Pierre': 'https://youtube.com/shorts/Gb0lJf0-lZU?is=ViJReSsAfOjWw1xf',
+    'Demetrious Johnson': 'https://youtube.com/shorts/U6EH3w_Kg84?is=GNVuKz921_a_zud9',
+    'Anderson Silva': 'https://youtube.com/shorts/KITOr2BPlyg?is=czgA_fjxyDuXlbpO'
   };
 
   Object.entries(WATCH_MOMENTS).forEach(([fighter, url]) => {
