@@ -1,6 +1,6 @@
-// Compare Narrative System - Phase 1: compact cards + structured debate article.
+// Compare Narrative System - Phase 2: stable phrase variety + matchup-aware debate writing.
 (function(){
-  const VERSION = 'compare-narrative-system-20260702a';
+  const VERSION = 'compare-narrative-system-20260702b';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
@@ -12,6 +12,39 @@
     ['penalty','loss context']
   ];
 
+  const PHRASES = {
+    loserTitle: [
+      name => `Where ${name} has the edge`,
+      name => `${name}'s best argument`,
+      name => `The case for ${name}`,
+      name => `Why ${name} is not an easy dismissal`
+    ],
+    winnerTitle: [
+      name => `Where ${name} creates separation`,
+      name => `Why ${name} still wins`,
+      name => `The case for ${name}`, 
+      name => `${name}'s separating argument`
+    ],
+    laneLead: [
+      lanes => `The strongest lanes are ${lanes}.`,
+      lanes => `That case is most convincing in ${lanes}.`,
+      lanes => `The argument starts with ${lanes}.`,
+      lanes => `If you are arguing this side, the cleanest path is ${lanes}.`
+    ],
+    statLead: [
+      stats => `The number that helps frame it: ${stats}.`,
+      stats => `The resume math backs that up: ${stats}.`,
+      stats => `That shows up in the profile: ${stats}.`,
+      stats => `The quick evidence check is ${stats}.`
+    ],
+    verdictSupport: [
+      'The ranking tab tells you who is higher. Compare Mode is about why the argument lands there and what the losing case still gets right.',
+      'This is the debate version of the ranking: not just who is ahead, but why the edge holds up.',
+      'The point here is not to restate the leaderboard. It is to show the best version of both arguments before landing the verdict.',
+      'This should read like the group-chat answer: give the losing case its real respect, then explain why it still does not flip.'
+    ]
+  };
+
   let rendering = false;
 
   function el(id){ return document.getElementById(id); }
@@ -19,6 +52,9 @@
   function cleanNum(n){ return Number.isFinite(Number(n)) ? Number(n) : 0; }
   function fmt(n){ return Number.isFinite(Number(n)) ? Number(n).toFixed(1).replace(/\.0$/,'') : '—'; }
   function normalizeKey(a,b){ return [String(a||'').toLowerCase(),String(b||'').toLowerCase()].sort().join('|'); }
+  function hash(str){ let h=0; for(let i=0;i<String(str).length;i++){ h=((h<<5)-h)+String(str).charCodeAt(i); h|=0; } return Math.abs(h); }
+  function pick(list,key){ return list[hash(key) % list.length]; }
+  function pairKey(a,b,tag=''){ return `${normalizeKey(a.fighter,b.fighter)}|${tag}`; }
 
   function full(name){
     const boardRow = [...(DATA.men || []), ...(DATA.women || [])].find(f => f.fighter === name) || {fighter:name};
@@ -33,9 +69,7 @@
       || {};
   }
 
-  function rankFor(f){
-    return window.DISPLAY_OVERRIDES?.[f.fighter]?.allTimeRank || f.rank || '—';
-  }
+  function rankFor(f){ return window.DISPLAY_OVERRIDES?.[f.fighter]?.allTimeRank || f.rank || '—'; }
 
   function ovrFor(f){
     if(typeof window.overallOvr === 'function') return window.overallOvr(f);
@@ -77,9 +111,7 @@
 
   function edgeKeys(f, other){
     return CATEGORY_KEYS.map(([key,label]) => ({
-      key,
-      label,
-      diff: categoryOvrFor(f,key) - categoryOvrFor(other,key)
+      key, label, diff: categoryOvrFor(f,key) - categoryOvrFor(other,key)
     })).filter(x => x.diff > 0).sort((a,b)=>b.diff-a.diff);
   }
 
@@ -97,14 +129,45 @@
     return {type:'clear'};
   }
 
-  function verdictLine(winner, loser, type){
-    if(type === 'razor') return `${winner.fighter} edges it, but this is a real split-the-room comparison.`;
-    if(type === 'close') return `${winner.fighter} wins, but ${loser.fighter} has a serious counterargument.`;
-    if(type === 'rivalry') return `${winner.fighter} has the stronger UFC-only case, and the direct history matters.`;
-    if(type === 'activeCeiling') return `${winner.fighter} wins for now, but ${loser.fighter}'s ceiling is the interesting part.`;
-    if(type === 'peakVsResume') return `${winner.fighter} has the better UFC-only resume, but ${loser.fighter} has a real peak argument.`;
-    if(type === 'tierGap') return `${winner.fighter} wins this comparison clearly.`;
-    return `${winner.fighter} wins the UFC-only GOAT comparison, but ${loser.fighter} has a real lane.`;
+  function verdictLine(winner, loser, type, a, b){
+    const variants = {
+      razor: [
+        `${winner.fighter} edges it, but this is a real split-the-room comparison.`,
+        `${winner.fighter} is barely ahead; this is one of those debates where the losing case still has teeth.`,
+        `${winner.fighter} wins by the thinnest kind of resume edge.`
+      ],
+      close: [
+        `${winner.fighter} wins, but ${loser.fighter} has a serious counterargument.`,
+        `${winner.fighter} has the better UFC-only case, but this is not a throwaway debate.`,
+        `${winner.fighter} gets the nod, while ${loser.fighter} still has a lane worth arguing.`
+      ],
+      rivalry: [
+        `${winner.fighter} has the stronger UFC-only case, and the direct history matters.`,
+        `${winner.fighter} wins the broader resume argument, with the rivalry context part of the story.`,
+        `${winner.fighter} has the edge, and this one comes with real head-to-head baggage.`
+      ],
+      activeCeiling: [
+        `${winner.fighter} wins for now, but ${loser.fighter}'s ceiling is the interesting part.`,
+        `${winner.fighter} has the completed resume; ${loser.fighter} has the still-building case.`,
+        `${winner.fighter} leads today, but ${loser.fighter} is the one with room to change the answer later.`
+      ],
+      peakVsResume: [
+        `${winner.fighter} has the better UFC-only resume, but ${loser.fighter} has a real peak argument.`,
+        `${winner.fighter} wins the total resume debate; ${loser.fighter} can still make the peak case uncomfortable.`,
+        `${winner.fighter} has more complete UFC value, even if ${loser.fighter}'s best version deserves respect.`
+      ],
+      tierGap: [
+        `${winner.fighter} wins this comparison clearly.`,
+        `This is a tier-gap comparison in ${winner.fighter}'s favor.`,
+        `${loser.fighter} has an argument in pieces, but ${winner.fighter} owns the comparison overall.`
+      ],
+      clear: [
+        `${winner.fighter} wins the UFC-only GOAT comparison, but ${loser.fighter} has a real lane.`,
+        `${winner.fighter} has the stronger case, but the losing argument is still worth laying out.`,
+        `${winner.fighter} is the pick, with ${loser.fighter}'s counterargument sitting in a narrower lane.`
+      ]
+    };
+    return pick(variants[type] || variants.clear, pairKey(a,b,`verdict-${type}`));
   }
 
   function statSentence(f,p){
@@ -116,20 +179,28 @@
     return parts.length ? parts.join(' and ') : '';
   }
 
-  function argumentSection(f, other, preferredTitle){
+  function sectionTitle(kind, f, other, type){
+    const bank = kind === 'winner' ? PHRASES.winnerTitle : PHRASES.loserTitle;
+    return pick(bank, pairKey(f, other, `${kind}-${type}`))(f.fighter);
+  }
+
+  function argumentSection(f, other, title, type, kind){
     const p = profileFor(f.fighter);
     const edges = edgeKeys(f, other);
     const edgeLabels = edges.slice(0,2).map(x => x.label);
     const numbers = statSentence(f,p);
     const wins = compactWins(f,p);
+    const key = pairKey(f, other, `${kind}-${type}`);
 
     const lead = p.shortCase || p.resume || `${f.fighter}'s case is built around the parts of the UFC resume where he creates the most separation.`;
-    let body = lead;
+    const paragraphs = [lead];
+
     if(edgeLabels.length){
-      body += ` The strongest lanes are ${edgeLabels.join(' and ')}.`;
+      const lanes = edgeLabels.join(' and ');
+      paragraphs[0] += ` ${pick(PHRASES.laneLead, key)(lanes)}`;
     }
     if(numbers){
-      body += ` The quick number check: ${numbers}.`;
+      paragraphs[0] += ` ${pick(PHRASES.statLead, key)(numbers)}`;
     }
 
     const detailParts = [];
@@ -138,49 +209,88 @@
     if(edges.some(x => x.key === 'primeDominance') && (p.peak || p.primeSummary)) detailParts.push(p.peak || p.primeSummary);
     if(edges.some(x => x.key === 'longevity') && p.longevity) detailParts.push(p.longevity);
     if(!detailParts.length && p.edge) detailParts.push(p.edge);
-    if(!detailParts.length && wins) detailParts.push(`${wins} give ${f.fighter} the best names in this side of the comparison.`);
+    if(!detailParts.length && wins) detailParts.push(`${wins} give ${f.fighter} the strongest names on this side of the comparison.`);
 
-    return `<section class="compare-article-section"><h3>${safe(preferredTitle)}</h3><p>${safe(body)}</p>${detailParts.slice(0,2).map(x=>`<p>${safe(x)}</p>`).join('')}</section>`;
+    detailParts.slice(0,2).forEach((part,i) => {
+      if(i === 0 && kind === 'loser') paragraphs.push(`That is the strongest version of the ${f.fighter} argument: ${part}`);
+      else if(i === 0 && kind === 'winner') paragraphs.push(`The reason it holds up for ${f.fighter}: ${part}`);
+      else paragraphs.push(part);
+    });
+
+    return `<section class="compare-article-section"><h3>${safe(title)}</h3>${paragraphs.map(x=>`<p>${safe(x)}</p>`).join('')}</section>`;
   }
 
-  function swingSection(winner, loser, type){
+  function swingSection(winner, loser, type, a, b){
     const wp = profileFor(winner.fighter);
     const lp = profileFor(loser.fighter);
     const winnerEdges = edgeKeys(winner, loser).slice(0,3).map(x => x.label);
     const loserEdges = edgeKeys(loser, winner).slice(0,2).map(x => x.label);
-    let copy;
-    if(type === 'razor' || type === 'close'){
-      copy = `The swing point is not whether ${loser.fighter} has a real argument. He does. The difference is that ${winner.fighter}'s advantages in ${winnerEdges.join(', ') || 'the fuller UFC resume'} slightly outweigh ${loser.fighter}'s best lanes${loserEdges.length ? ` in ${loserEdges.join(' and ')}` : ''}.`;
-    } else if(type === 'activeCeiling'){
-      copy = `${loser.fighter}'s case can still grow. Right now, though, ${winner.fighter} has more of the completed UFC-only resume already banked.`;
-    } else if(type === 'peakVsResume'){
-      copy = `${loser.fighter} can own parts of the peak conversation, but the ranking question is broader than peak. ${winner.fighter} has the stronger total UFC-only resume once title value, quality wins, elite years, and loss context are all counted together.`;
-    } else if(type === 'tierGap'){
-      copy = `The gap is mostly resume weight. ${loser.fighter}'s best argument is real, but it does not cover enough categories to pull ${winner.fighter} down into a coin-flip debate.`;
-    } else {
-      copy = `This is where ${winner.fighter} creates separation. ${loser.fighter}'s case has a lane, but ${winner.fighter} is stronger across the full UFC-only scoring picture.`;
-    }
+    const key = pairKey(a,b,`swing-${type}`);
+    const base = {
+      razor: [
+        `The swing point is not whether ${loser.fighter} has a real argument. He does. The difference is that ${winner.fighter}'s advantages in ${winnerEdges.join(', ') || 'the fuller UFC resume'} slightly outweigh ${loser.fighter}'s best lanes${loserEdges.length ? ` in ${loserEdges.join(' and ')}` : ''}.`,
+        `This comes down to which side has more banked UFC value. ${loser.fighter} can win parts of the debate, but ${winner.fighter} owns just enough of the total resume to stay ahead.`
+      ],
+      close: [
+        `${loser.fighter} is close enough that the counterargument matters. The separation is that ${winner.fighter} has more of the complete UFC-only profile once ${winnerEdges.join(', ') || 'the core categories'} are weighed together.`,
+        `The fight is close on paper, but the all-around resume tilts toward ${winner.fighter}. ${loser.fighter}'s best lane is real; it just does not cover enough ground.`
+      ],
+      activeCeiling: [
+        `${loser.fighter}'s case can still grow. Right now, though, ${winner.fighter} has more of the completed UFC-only resume already banked.`,
+        `The ceiling argument belongs to the active/building side. The completed-resume argument still belongs to ${winner.fighter}.`
+      ],
+      peakVsResume: [
+        `${loser.fighter} can own parts of the peak conversation, but the ranking question is broader than peak. ${winner.fighter} has the stronger total UFC-only resume once title value, quality wins, elite years, and loss context are all counted together.`,
+        `This is the classic peak-versus-total case. ${loser.fighter}'s best form is the argument. ${winner.fighter}'s fuller UFC resume is the answer.`
+      ],
+      tierGap: [
+        `The gap is mostly resume weight. ${loser.fighter}'s best argument is real, but it does not cover enough categories to pull ${winner.fighter} down into a coin-flip debate.`,
+        `${loser.fighter} can win a narrow category argument. The problem is that ${winner.fighter} wins too much of the total UFC-only picture.`
+      ],
+      rivalry: [
+        `The direct UFC history gives this comparison a sharper edge, but it does not replace the full resume. The broader all-time case still points to ${winner.fighter}.`,
+        `Head-to-head context matters here, but the final answer still comes from the whole UFC-only resume, not one line item.`
+      ],
+      clear: [
+        `This is where ${winner.fighter} creates separation. ${loser.fighter}'s case has a lane, but ${winner.fighter} is stronger across the full UFC-only scoring picture.`,
+        `The difference is breadth. ${loser.fighter} has a convincing lane; ${winner.fighter} has more ways to win the overall comparison.`
+      ]
+    };
+    let copy = pick(base[type] || base.clear, key);
     if(wp.edge && lp.counter){
-      copy += ` In plain terms: ${wp.edge} ${lp.counter}`;
+      copy += ` Put another way: ${wp.edge} ${lp.counter}`;
     }
-    return `<section class="compare-article-section"><h3>The swing point</h3><p>${safe(copy)}</p></section>`;
+    return `<section class="compare-article-section"><h3>${safe(pick(['The swing point','What decides it','Where the comparison turns','The deciding factor'], key))}</h3><p>${safe(copy)}</p></section>`;
   }
 
-  function betterFighterSection(winner, loser){
+  function betterFighterSection(winner, loser, a, b){
     const loserPrime = edgeKeys(loser,winner).some(x => x.key === 'primeDominance');
+    const key = pairKey(a,b,'better-vs-greater');
+    const title = pick(['Better fighter vs greater UFC resume','Skill argument vs resume argument','The important distinction'], key);
     const copy = loserPrime
       ? `<p><strong>Better fighter argument:</strong> ${safe(loser.fighter)} has a real case if the debate is peak skill, current form, or how dangerous the best version looked.</p><p><strong>Greater UFC-only resume:</strong> ${safe(winner.fighter)} still has the stronger scored resume because the model is measuring completed UFC value, not just who feels scarier at their best.</p>`
       : `<p><strong>Better fighter argument:</strong> This can depend on era, skill projection, and matchup assumptions.</p><p><strong>Greater UFC-only resume:</strong> ${safe(winner.fighter)} has the stronger UFC-only case in this comparison.</p>`;
-    return `<section class="compare-article-section"><h3>Better fighter vs greater UFC resume</h3>${copy}</section>`;
+    return `<section class="compare-article-section"><h3>${safe(title)}</h3>${copy}</section>`;
   }
 
-  function finalTake(winner, loser, type){
+  function finalTake(winner, loser, type, a, b){
     const p = profileFor(winner.fighter);
-    let copy;
-    if(type === 'razor') copy = `${winner.fighter} wins, barely. ${loser.fighter} has enough category strength to make it uncomfortable, but ${winner.fighter}'s full UFC resume gives him the edge.`;
-    else if(type === 'tierGap') copy = `${winner.fighter} wins clearly. ${loser.fighter} has a real argument in specific lanes, but not enough to close the overall UFC-only gap.`;
-    else copy = `${winner.fighter} wins the UFC-only GOAT comparison. ${loser.fighter} has a real argument, but ${winner.fighter}'s title value, quality wins, elite years, and complete resume give him the edge.`;
-    if(p.finalCompareTake) copy = p.finalCompareTake;
+    const variants = {
+      razor: [
+        `${winner.fighter} wins, barely. ${loser.fighter} has enough category strength to make it uncomfortable, but ${winner.fighter}'s full UFC resume gives him the edge.`,
+        `${winner.fighter} is the pick by a thin margin. ${loser.fighter} wins real parts of the debate, but not quite enough of the whole thing.`
+      ],
+      tierGap: [
+        `${winner.fighter} wins clearly. ${loser.fighter} has a real argument in specific lanes, but not enough to close the overall UFC-only gap.`,
+        `${winner.fighter} is too far ahead overall. ${loser.fighter}'s best points matter, but this does not become a true toss-up.`
+      ],
+      default: [
+        `${winner.fighter} wins the UFC-only GOAT comparison. ${loser.fighter} has a real argument, but ${winner.fighter}'s title value, quality wins, elite years, and complete resume give him the edge.`,
+        `${winner.fighter} gets the nod. ${loser.fighter} has a credible case in the right lane, but ${winner.fighter} owns more of the completed UFC-only resume.`,
+        `${winner.fighter} is the answer here. ${loser.fighter}'s argument is real, but it does not outweigh the title value, quality-win depth, and total UFC resume on the other side.`
+      ]
+    };
+    let copy = p.finalCompareTake || pick(variants[type] || variants.default, pairKey(a,b,`final-${type}`));
     return `<div class="compare-final-take"><p><strong>Final take:</strong> ${safe(copy)}</p></div>`;
   }
 
@@ -218,15 +328,15 @@
       ${faceCard(a)}
       ${faceCard(b)}
       <article class="card compare-verdict-card">
-        <h3>${safe(verdictLine(winner, loser, type))}</h3>
-        <p>${safe(type === 'rivalry' ? 'This comparison has direct UFC history, so the fight ledger gets mentioned before the broader resume debate.' : 'The ranking tab tells you who is higher. Compare Mode is about why the argument lands there and what the losing case still gets right.')}</p>
+        <h3>${safe(verdictLine(winner, loser, type, a, b))}</h3>
+        <p>${safe(type === 'rivalry' ? 'This comparison has direct UFC history, so the fight ledger gets mentioned before the broader resume debate.' : pick(PHRASES.verdictSupport, pairKey(a,b,`support-${type}`)))}</p>
       </article>
       ${directSection(typeInfo.ledger)}
-      ${argumentSection(loser, winner, `Where ${loser.fighter} has the edge`)}
-      ${argumentSection(winner, loser, `Where ${winner.fighter} creates separation`)}
-      ${swingSection(winner, loser, type)}
-      ${betterFighterSection(winner, loser)}
-      ${finalTake(winner, loser, type)}
+      ${argumentSection(loser, winner, sectionTitle('loser', loser, winner, type), type, 'loser')}
+      ${argumentSection(winner, loser, sectionTitle('winner', winner, loser, type), type, 'winner')}
+      ${swingSection(winner, loser, type, a, b)}
+      ${betterFighterSection(winner, loser, a, b)}
+      ${finalTake(winner, loser, type, a, b)}
     `;
     rendering = false;
   }
