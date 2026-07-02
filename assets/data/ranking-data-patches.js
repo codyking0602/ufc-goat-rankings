@@ -1,6 +1,6 @@
 // Lightweight post-load status hook.
 (function(){
-  const VERSION = 'ranking-data-patches-20260702aa-compare-narrative-e';
+  const VERSION = 'ranking-data-patches-20260702ab-compare-narrative-f';
   let fallbackInstalled = false;
 
   const SLUG_OVERRIDES = {
@@ -181,7 +181,7 @@
     ];
 
     const loadCompareWatchdog = () => loadScriptOnce('assets/js/compare-narrative-watchdog.js?v=compare-narrative-watchdog-20260702a', 'data-compare-narrative-watchdog', status);
-    const loadCompareNarrative = () => loadScriptOnce('assets/js/compare-narrative-system.js?v=compare-narrative-system-20260702e', 'data-compare-narrative-system', loadCompareWatchdog);
+    const loadCompareNarrative = () => loadScriptOnce('assets/js/compare-narrative-system.js?v=compare-narrative-system-20260702f', 'data-compare-narrative-system', loadCompareWatchdog);
     const loadCompareCore = () => loadSequence(compareCoreScripts, loadCompareNarrative);
     const loadBranding = () => loadScriptOnce('assets/js/app-branding.js?v=app-branding-20260702c', 'data-app-branding', loadCompareCore);
     const loadDivisionRankings = () => loadScriptOnce('assets/js/division-rankings.js?v=division-rankings-20260702f', 'data-division-rankings', loadBranding);
