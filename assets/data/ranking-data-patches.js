@@ -1,6 +1,6 @@
 // Lightweight post-load status hook.
 (function(){
-  const VERSION = 'ranking-data-patches-20260702o';
+  const VERSION = 'ranking-data-patches-20260702p';
 
   function status(){
     window.UFC_PHASE2_DATA_STATUS = {
@@ -34,7 +34,7 @@
   }
 
   function loadModules(){
-    const loadCompareNarrative = () => loadScriptOnce('assets/js/compare-narrative-system.js?v=compare-narrative-system-20260702a', 'data-compare-narrative-system', status);
+    const loadCompareNarrative = () => loadScriptOnce('assets/js/compare-narrative-system.js?v=compare-narrative-system-20260702b', 'data-compare-narrative-system', status);
     const loadBranding = () => loadScriptOnce('assets/js/app-branding.js?v=app-branding-20260702b', 'data-app-branding', loadCompareNarrative);
     const loadDivisionRankings = () => loadScriptOnce('assets/js/division-rankings.js?v=division-rankings-20260702f', 'data-division-rankings', loadBranding);
     const loadHomePolish = () => loadScriptOnce('assets/js/home-polish.js?v=home-polish-hybrid-preview-20260702a', 'data-home-polish', loadDivisionRankings);
