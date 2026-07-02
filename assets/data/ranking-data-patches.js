@@ -1,8 +1,25 @@
 // Lightweight post-load status hook.
 (function(){
-  const VERSION = 'ranking-data-patches-20260702w';
+  const VERSION = 'ranking-data-patches-20260702x';
+
+  function applyLateDisplayOverrides(){
+    if(!window.DISPLAY_OVERRIDES) return;
+    window.DISPLAY_OVERRIDES["Ilia Topuria"] = {
+      ...(window.DISPLAY_OVERRIDES["Ilia Topuria"] || {}),
+      photoUrl: "assets/fighters/ilia-topuria.webp",
+      thumbUrl: "assets/fighters/ilia-topuria-thumb.webp"
+    };
+  }
+
+  function refreshApp(){
+    if(typeof window.refresh === 'function'){
+      try { window.refresh(); } catch(e) {}
+    }
+  }
 
   function status(){
+    applyLateDisplayOverrides();
+    refreshApp();
     window.UFC_PHASE2_DATA_STATUS = {
       version: VERSION,
       mode: 'lightweight-status-hook',
@@ -82,6 +99,7 @@
     apply: status
   };
 
+  applyLateDisplayOverrides();
   loadModules();
   window.UFC_PHASE2_DATA_REFRESH = status;
 })();
