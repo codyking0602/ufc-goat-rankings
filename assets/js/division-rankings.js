@@ -1,7 +1,7 @@
 // Division Rankings: men-only division boards with a first-pass division scoring model.
 (function(){
   const DATA = window.RANKING_DATA;
-  const VERSION = 'division-rankings-20260702c';
+  const VERSION = 'division-rankings-20260702d';
   if(!DATA || typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const DIVISION_ORDER = [
@@ -15,9 +15,9 @@
     'Flyweight'
   ];
 
-  // Division score = existing UFC résumé components, reweighted for the selected weight class.
-  // Resume factor controls how much of a fighter's all-time résumé actually belongs in that division.
-  // 1.00 = primary division résumé. Lower factors = real but smaller crossover résumé.
+  // Division score = existing UFC resume components, reweighted for the selected weight class.
+  // Resume factor controls how much of a fighter's all-time resume actually belongs in that division.
+  // 1.00 = primary division resume. Lower factors = real but smaller crossover resume.
   const DIVISION_RESUME_FACTORS = {
     'Heavyweight': {
       'Daniel Cormier': 0.92,
@@ -155,8 +155,8 @@
   function roleTag(f, division){
     if(division === 'All') return DISPLAY_OVERRIDES[f.fighter]?.resumeTag || 'Division profile';
     const factor = resumeFactor(f, division);
-    if(primaryMatch(f, division)) return `${division} résumé`;
-    if(factor >= .75) return `${division} title résumé`;
+    if(primaryMatch(f, division)) return `${division} resume`;
+    if(factor >= .75) return `${division} title resume`;
     return `${division} crossover`;
   }
   function rowHtml(f, i, division){
@@ -211,7 +211,7 @@
     const rows = divisionRows(division);
     setDivisionHeading(`${division} GOAT Board`, `Division-specific score for men with meaningful UFC work at ${division}.`);
     const top = rows[0];
-    const intro = `<div class="card division-board-intro"><h3>${division} Leaderboard</h3><p class="meta">First-pass division model: title résumé, quality wins, dominance, longevity, and loss context are reweighted, then multiplied by how much of the fighter's UFC résumé actually belongs in this division.</p><div class="division-stat-strip"><span class="division-stat-pill">${rows.length} fighters loaded</span><span class="division-stat-pill">#1 ${top ? top.fighter : '—'}</span><span class="division-stat-pill">Tap a fighter for profile</span></div><div class="division-formula"><div><strong>35%</strong><small>Title résumé</small></div><div><strong>30%</strong><small>Quality wins</small></div><div><strong>20%</strong><small>Dominance</small></div><div><strong>15%</strong><small>Longevity</small></div></div></div>`;
+    const intro = `<div class="card division-board-intro"><h3>${division} Leaderboard</h3><p class="meta">First-pass division model: title resume, quality wins, dominance, longevity, and loss context are reweighted, then multiplied by how much of the fighter's UFC resume actually belongs in this division.</p><div class="division-stat-strip"><span class="division-stat-pill">${rows.length} fighters loaded</span><span class="division-stat-pill">#1 ${top ? top.fighter : '—'}</span><span class="division-stat-pill">Tap a fighter for profile</span></div><div class="division-formula"><div><strong>35%</strong><small>Title resume</small></div><div><strong>30%</strong><small>Quality wins</small></div><div><strong>20%</strong><small>Dominance</small></div><div><strong>15%</strong><small>Longevity</small></div></div></div>`;
     el('divisionList').innerHTML = intro + (rows.map((r,i)=>rowHtml(r,i,division)).join('') || '<div class="notice">No fighters are loaded for this division yet.</div>');
     document.querySelectorAll(`#divisionList .fighter-row`).forEach(row => row.addEventListener('click', () => openFighter(row.dataset.fighter)));
   };
