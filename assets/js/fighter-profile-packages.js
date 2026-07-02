@@ -2,7 +2,7 @@
 // Add each locked fighter snapshot and opponent display priority here.
 (function(){
   const DATA = window.RANKING_DATA;
-  const VERSION = 'fighter-profile-packages-20260701a';
+  const VERSION = 'fighter-profile-packages-20260701b';
   if(!DATA || typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const PROFILE_PACKAGES = {
@@ -36,6 +36,68 @@
         'Karo Parisyan': 15,
         'Jason Miller': 16,
         'Jay Hieron': 17
+      }
+    },
+
+    'Demetrious Johnson': {
+      stats: {
+        ufcRecord: '15-2-1',
+        titleFightWins: 12,
+        eliteWins: 8,
+        primeRecord: '13-2-1',
+        finishRatePct: 43.8,
+        roundsWonPct: 73.9,
+        activeEliteYears: 6.84,
+        timesFinishedPrime: 0
+      },
+      photoPosition: 'center top',
+      priority: {
+        'Dominick Cruz': 1,
+        'Henry Cejudo': 2,
+        'Joseph Benavidez': 3,
+        'John Dodson': 4,
+        'Kyoji Horiguchi': 5,
+        'Miguel Torres': 6,
+        'Ian McCall': 7,
+        'Ray Borg': 8,
+        'Ali Bagautinov': 9,
+        'Wilson Reis': 10,
+        'John Moraga': 11,
+        'Tim Elliott': 12,
+        'Chris Cariaso': 13,
+        'Kid Yamamoto': 14
+      }
+    },
+
+    'Anderson Silva': {
+      stats: {
+        ufcRecord: '17-7, 1 NC',
+        titleFightWins: 11,
+        eliteWins: 7,
+        primeRecord: '16-2',
+        finishRatePct: 77.8,
+        roundsWonPct: 69.2,
+        activeEliteYears: 7.21,
+        timesFinishedPrime: 2
+      },
+      photoPosition: 'center top',
+      priority: {
+        'Dan Henderson': 1,
+        'Rich Franklin': 2,
+        'Forrest Griffin': 3,
+        'Chael Sonnen': 4,
+        'Vitor Belfort': 5,
+        'Yushin Okami': 6,
+        'Demian Maia': 7,
+        'Nate Marquardt': 8,
+        'Chris Weidman': 9,
+        'Derek Brunson': 10,
+        'Thales Leites': 11,
+        'Patrick Cote': 12,
+        'Travis Lutter': 13,
+        'Stephan Bonnar': 14,
+        'James Irvin': 15,
+        'Chris Leben': 16
       }
     }
   };
