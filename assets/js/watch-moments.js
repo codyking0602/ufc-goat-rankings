@@ -1,14 +1,20 @@
 // Watch Moment links for fighter cards and profiles.
 // Keep links here as app-facing content, separate from scoring.
 (function(){
-  const VERSION = 'watch-moments-20260701b';
+  const VERSION = 'watch-moments-20260701c';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
     'Jon Jones': 'https://youtube.com/shorts/yG-D2r6HVp4?is=fstX4Wc_rvCITSw0',
     'Georges St-Pierre': 'https://youtube.com/shorts/Gb0lJf0-lZU?is=ViJReSsAfOjWw1xf',
     'Demetrious Johnson': 'https://youtube.com/shorts/U6EH3w_Kg84?is=GNVuKz921_a_zud9',
-    'Anderson Silva': 'https://youtube.com/shorts/KITOr2BPlyg?is=czgA_fjxyDuXlbpO'
+    'Anderson Silva': 'https://youtube.com/shorts/KITOr2BPlyg?is=czgA_fjxyDuXlbpO',
+    'Islam Makhachev': 'https://youtube.com/shorts/_S2i56bqwE8?is=WYg2MSMlw8IGYa9H',
+    'Khabib Nurmagomedov': 'https://youtube.com/shorts/VqN3MN87_FU?is=O2pn1pdk6aS9aqo2',
+    'Alexander Volkanovski': 'https://youtube.com/shorts/5zVynz57V-c?is=UsPP0oG5BB8Xlg8r',
+    'Randy Couture': 'https://youtube.com/shorts/nU1eSclGMeA?is=R8t0HlpAbHb_E1DO',
+    'Max Holloway': 'https://youtube.com/shorts/z4m1wNoAC7k?is=BRWVC4am_k8yJQzZ',
+    'Kamaru Usman': 'https://youtube.com/shorts/IESw7PEdMVo?is=okf-XopaawJFybfz'
   };
 
   Object.entries(WATCH_MOMENTS).forEach(([fighter, url]) => {
