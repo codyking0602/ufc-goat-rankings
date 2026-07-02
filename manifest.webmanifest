@@ -1,0 +1,19 @@
+{
+  "name": "UFC GOAT Rankings",
+  "short_name": "UFC GOAT",
+  "description": "UFC-only all-time fighter rankings with OVR ratings, profiles, divisions, and compare mode.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#eef3f8",
+  "theme_color": "#f97316",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
