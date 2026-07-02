@@ -1,7 +1,7 @@
 // Watch Moment links for fighter cards and profiles.
 // Keep links here as app-facing content, separate from scoring.
 (function(){
-  const VERSION = 'watch-moments-20260701c';
+  const VERSION = 'watch-moments-20260702a';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -14,7 +14,13 @@
     'Alexander Volkanovski': 'https://youtube.com/shorts/5zVynz57V-c?is=UsPP0oG5BB8Xlg8r',
     'Randy Couture': 'https://youtube.com/shorts/nU1eSclGMeA?is=R8t0HlpAbHb_E1DO',
     'Max Holloway': 'https://youtube.com/shorts/z4m1wNoAC7k?is=BRWVC4am_k8yJQzZ',
-    'Kamaru Usman': 'https://youtube.com/shorts/IESw7PEdMVo?is=okf-XopaawJFybfz'
+    'Kamaru Usman': 'https://youtube.com/shorts/IESw7PEdMVo?is=okf-XopaawJFybfz',
+    'Jose Aldo': 'https://youtube.com/shorts/BC0MG13fz20?is=3YJEJvXqUfyAMg6W',
+    'Matt Hughes': 'https://youtube.com/shorts/GmHGebqse1A?is=5ebbOhdaf9CEd8jN',
+    'Daniel Cormier': 'https://youtube.com/shorts/seA_5VuSqFM?is=2bLCZ4sd8urFGiE8',
+    'Stipe Miocic': 'https://youtube.com/shorts/h_ThhOpI_dg?is=4Sr5Mcp01GkYxtrG',
+    'Ilia Topuria': 'https://youtube.com/shorts/8HrxSwOoLZM?is=eygzt_4-hGWU87kL',
+    'Israel Adesanya': 'https://youtube.com/shorts/CbvjjHBCUQM?is=J86x9mup7tQHDZS7'
   };
 
   Object.entries(WATCH_MOMENTS).forEach(([fighter, url]) => {
