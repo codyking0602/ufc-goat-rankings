@@ -3,7 +3,7 @@
 // Durable fighter stat packages live in assets/js/fighter-profile-packages.js.
 // Watch Moment links live in assets/js/watch-moments.js.
 (function(){
-  const VERSION = 'ranking-data-patches-20260701k';
+  const VERSION = 'ranking-data-patches-20260702a';
 
   function status(){
     const data = window.RANKING_DATA;
@@ -36,8 +36,8 @@
   }
 
   function loadModules(){
-    const loadWatchMoments = () => loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260701c', 'data-watch-moments', status);
-    const loadPackages = () => loadScriptOnce('assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260701c', 'data-fighter-profile-packages', loadWatchMoments);
+    const loadWatchMoments = () => loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260702a', 'data-watch-moments', status);
+    const loadPackages = () => loadScriptOnce('assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260702a', 'data-fighter-profile-packages', loadWatchMoments);
     if(window.UFC_PROFILE_TEMPLATE_SYSTEM){
       loadPackages();
       return;
@@ -49,7 +49,7 @@
     meta: {
       purpose: 'Status hook and durable module loader',
       note: 'Presentation logic, fighter packages, and Watch Moment links are split into durable JS modules.',
-      updated: '2026-07-01',
+      updated: '2026-07-02',
       version: VERSION
     },
     apply: status
