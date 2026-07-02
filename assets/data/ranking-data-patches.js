@@ -2,8 +2,9 @@
 // Durable profile rendering lives in assets/js/profile-template-system.js.
 // Durable fighter stat packages live in assets/js/fighter-profile-packages.js.
 // Watch Moment links live in assets/js/watch-moments.js.
+// Home polish lives in assets/js/home-polish.js.
 (function(){
-  const VERSION = 'ranking-data-patches-20260702a';
+  const VERSION = 'ranking-data-patches-20260702b';
 
   function status(){
     const data = window.RANKING_DATA;
@@ -13,6 +14,7 @@
       profileTemplateSystem: !!window.UFC_PROFILE_TEMPLATE_SYSTEM,
       fighterProfilePackages: !!window.UFC_FIGHTER_PROFILE_PACKAGES,
       watchMoments: !!window.UFC_WATCH_MOMENTS,
+      homePolish: !!window.UFC_HOME_POLISH,
       packagedFighters: window.UFC_FIGHTER_PROFILE_PACKAGES?.fighters || [],
       watchMomentFighters: window.UFC_WATCH_MOMENTS?.fighters || [],
       petrYanInMen: !!(data && Array.isArray(data.men) && data.men.some(f => f.fighter === 'Petr Yan')),
@@ -36,7 +38,8 @@
   }
 
   function loadModules(){
-    const loadWatchMoments = () => loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260702a', 'data-watch-moments', status);
+    const loadHomePolish = () => loadScriptOnce('assets/js/home-polish.js?v=home-polish-20260702a', 'data-home-polish', status);
+    const loadWatchMoments = () => loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260702a', 'data-watch-moments', loadHomePolish);
     const loadPackages = () => loadScriptOnce('assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260702a', 'data-fighter-profile-packages', loadWatchMoments);
     if(window.UFC_PROFILE_TEMPLATE_SYSTEM){
       loadPackages();
@@ -48,7 +51,7 @@
   window.UFC_RANKING_DATA_PATCHES_V1 = {
     meta: {
       purpose: 'Status hook and durable module loader',
-      note: 'Presentation logic, fighter packages, and Watch Moment links are split into durable JS modules.',
+      note: 'Presentation logic, fighter packages, Watch Moment links, and home polish are split into durable JS modules.',
       updated: '2026-07-02',
       version: VERSION
     },
