@@ -1,7 +1,7 @@
 // Division Rankings: men-only division boards with a first-pass division scoring model.
 (function(){
   const DATA = window.RANKING_DATA;
-  const VERSION = 'division-rankings-20260702d';
+  const VERSION = 'division-rankings-20260702e';
   if(!DATA || typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const DIVISION_ORDER = [
@@ -72,11 +72,6 @@
     const style = document.createElement('style');
     style.id = 'division-rankings-css';
     style.textContent = `
-      .division-board-intro{margin:0 0 14px;padding:16px;border-radius:20px;display:grid;gap:10px;color:#f8faff!important}
-      .division-board-intro h3{margin:0;font-size:22px;letter-spacing:-.02em;color:#f8faff!important}
-      .division-board-intro p{margin:0;line-height:1.45;color:#c7d2e2!important}
-      .division-stat-strip{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
-      .division-stat-pill{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(148,163,184,.32);background:rgba(15,23,42,.22);color:#f8faff!important;border-radius:999px;padding:7px 10px;font-weight:850;font-size:12px}
       .division-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:12px}
       .division-card{cursor:pointer;transition:.16s ease;overflow:hidden;color:#f8faff!important}
       .division-card:hover{transform:translateY(-1px);border-color:rgba(249,115,22,.72)!important}
@@ -88,10 +83,6 @@
       .division-topline-row{display:flex;justify-content:space-between;gap:10px;align-items:center;border-top:1px solid rgba(148,163,184,.28);padding-top:7px;font-size:13px;color:#c7d2e2!important}
       .division-topline-row strong{font-weight:900;color:#f8faff!important}
       .division-topline-row span{color:#c7d2e2!important}
-      .division-formula{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:6px}
-      .division-formula div{border:1px solid rgba(148,163,184,.28);background:rgba(15,23,42,.24);border-radius:14px;padding:9px 10px;color:#f8faff!important}
-      .division-formula strong{display:block;color:#facc15!important;font-size:13px}
-      .division-formula small{display:block;color:#c7d2e2!important;margin-top:2px}
     `;
     document.head.appendChild(style);
   }
@@ -209,10 +200,8 @@
       return;
     }
     const rows = divisionRows(division);
-    setDivisionHeading(`${division} GOAT Board`, `Division-specific score for men with meaningful UFC work at ${division}.`);
-    const top = rows[0];
-    const intro = `<div class="card division-board-intro"><h3>${division} Leaderboard</h3><p class="meta">First-pass division model: title resume, quality wins, dominance, longevity, and loss context are reweighted, then multiplied by how much of the fighter's UFC resume actually belongs in this division.</p><div class="division-stat-strip"><span class="division-stat-pill">${rows.length} fighters loaded</span><span class="division-stat-pill">#1 ${top ? top.fighter : '—'}</span><span class="division-stat-pill">Tap a fighter for profile</span></div><div class="division-formula"><div><strong>35%</strong><small>Title resume</small></div><div><strong>30%</strong><small>Quality wins</small></div><div><strong>20%</strong><small>Dominance</small></div><div><strong>15%</strong><small>Longevity</small></div></div></div>`;
-    el('divisionList').innerHTML = intro + (rows.map((r,i)=>rowHtml(r,i,division)).join('') || '<div class="notice">No fighters are loaded for this division yet.</div>');
+    setDivisionHeading(`${division} GOAT Board`, `${rows.length} loaded fighters · ranked by division-specific DIV rating.`);
+    el('divisionList').innerHTML = rows.map((r,i)=>rowHtml(r,i,division)).join('') || '<div class="notice">No fighters are loaded for this division yet.</div>';
     document.querySelectorAll(`#divisionList .fighter-row`).forEach(row => row.addEventListener('click', () => openFighter(row.dataset.fighter)));
   };
   window.UFC_DIVISION_RANKINGS = { version: VERSION, mode: 'men-only-division-score-v1' };
