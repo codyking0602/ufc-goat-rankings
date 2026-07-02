@@ -1,6 +1,6 @@
 // App shell branding and navigation cleanup.
 (function(){
-  const VERSION = 'app-branding-20260702a';
+  const VERSION = 'app-branding-20260702b';
 
   function upsertMeta(attr, key, content){
     let meta = document.querySelector(`meta[${attr}="${key}"]`);
@@ -24,16 +24,16 @@
   }
 
   function applyBranding(){
-    document.title = 'UFC GOAT Rankings';
-    upsertMeta('name', 'application-name', 'UFC GOAT');
-    upsertMeta('name', 'apple-mobile-web-app-title', 'UFC GOAT');
+    document.title = 'UFC Rankings';
+    upsertMeta('name', 'application-name', 'UFC Rankings');
+    upsertMeta('name', 'apple-mobile-web-app-title', 'UFC Rankings');
     upsertMeta('name', 'apple-mobile-web-app-capable', 'yes');
     upsertMeta('name', 'mobile-web-app-capable', 'yes');
     upsertMeta('name', 'theme-color', '#f97316');
     upsertMeta('name', 'msapplication-TileColor', '#172033');
-    upsertLink('manifest', 'manifest.webmanifest?v=20260702a');
-    upsertLink('icon', 'assets/app-icon.svg?v=20260702a', {type:'image/svg+xml'});
-    upsertLink('apple-touch-icon', 'assets/app-icon.svg?v=20260702a');
+    upsertLink('manifest', 'manifest.webmanifest?v=20260702b');
+    upsertLink('icon', 'assets/app-icon.svg?v=20260702b', {type:'image/svg+xml'});
+    upsertLink('apple-touch-icon', 'assets/app-icon.svg?v=20260702b');
   }
 
   function removeRulesTab(){
@@ -53,7 +53,7 @@
   function apply(){
     applyBranding();
     removeRulesTab();
-    window.UFC_APP_BRANDING = { version: VERSION, name: 'UFC GOAT Rankings', shortName: 'UFC GOAT' };
+    window.UFC_APP_BRANDING = { version: VERSION, name: 'UFC Rankings', shortName: 'UFC Rankings' };
   }
 
   apply();
