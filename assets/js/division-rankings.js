@@ -1,7 +1,7 @@
 // Division Rankings: men-only division boards with a first-pass division scoring model.
 (function(){
   const DATA = window.RANKING_DATA;
-  const VERSION = 'division-rankings-20260702e';
+  const VERSION = 'division-rankings-20260702f';
   if(!DATA || typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const DIVISION_ORDER = [
@@ -160,7 +160,7 @@
     const h2 = section.querySelector('h2');
     const p = section.querySelector('p');
     if(h2) h2.textContent = title;
-    if(p) p.textContent = copy;
+    if(p) p.textContent = copy || '';
   }
   function availableDivisions(){ return DIVISION_ORDER.filter(d => divisionRows(d).length > 0); }
   function normalizeDivisionSelect(){
@@ -178,7 +178,7 @@
     select.dataset.menDivisionOrder = VERSION;
   }
   function renderDivisionHub(){
-    setDivisionHeading('UFC Division Boards', 'Men-only weight-class boards, ordered heaviest to lightest.');
+    setDivisionHeading('UFC Division Boards', '');
     const cards = availableDivisions().map(division => {
       const rows = divisionRows(division);
       const top = rows[0];
@@ -200,7 +200,7 @@
       return;
     }
     const rows = divisionRows(division);
-    setDivisionHeading(`${division} GOAT Board`, `${rows.length} loaded fighters · ranked by division-specific DIV rating.`);
+    setDivisionHeading(`${division} All-Time Rankings`, '');
     el('divisionList').innerHTML = rows.map((r,i)=>rowHtml(r,i,division)).join('') || '<div class="notice">No fighters are loaded for this division yet.</div>';
     document.querySelectorAll(`#divisionList .fighter-row`).forEach(row => row.addEventListener('click', () => openFighter(row.dataset.fighter)));
   };
