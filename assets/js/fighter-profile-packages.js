@@ -2,7 +2,7 @@
 // Add each locked fighter snapshot and opponent display priority here.
 (function(){
   const DATA = window.RANKING_DATA;
-  const VERSION = 'fighter-profile-packages-20260701c';
+  const VERSION = 'fighter-profile-packages-20260702a';
   if(!DATA || typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const PROFILE_PACKAGES = {
@@ -251,6 +251,161 @@
         'Demian Maia': 7,
         'Sean Strickland': 8,
         'Emil Meek': 9
+      }
+    },
+
+    'Jose Aldo': {
+      stats: {
+        ufcRecord: '14-9',
+        titleFightWins: 5,
+        eliteWins: 8,
+        primeRecord: '10-4',
+        finishRatePct: 50.0,
+        roundsWonPct: 64.8,
+        activeEliteYears: 9.43,
+        timesFinishedPrime: 1
+      },
+      photoPosition: 'center top',
+      priority: {
+        'Max Holloway': 1,
+        'Alexander Volkanovski': 2,
+        'Chad Mendes': 3,
+        'Frankie Edgar': 4,
+        'Chan Sung Jung': 5,
+        'Marlon Vera': 6,
+        'Rob Font': 7,
+        'Pedro Munhoz': 8,
+        'Renato Moicano': 9,
+        'Jeremy Stephens': 10
+      }
+    },
+
+    'Matt Hughes': {
+      stats: {
+        ufcRecord: '18-7',
+        titleFightWins: 9,
+        eliteWins: 9,
+        primeRecord: '13-4',
+        finishRatePct: 61.1,
+        roundsWonPct: 70.6,
+        activeEliteYears: 8.36,
+        timesFinishedPrime: 2
+      },
+      photoPosition: 'center top',
+      priority: {
+        'Georges St-Pierre': 1,
+        'B.J. Penn': 2,
+        'Frank Trigg': 3,
+        'Sean Sherk': 4,
+        'Carlos Newton': 5,
+        'Matt Serra': 6,
+        'Joe Riggs': 7,
+        'Royce Gracie': 8,
+        'Chris Lytle': 9,
+        'Thiago Alves': 10
+      }
+    },
+
+    'Daniel Cormier': {
+      stats: {
+        ufcRecord: '15-3, 1 NC',
+        titleFightWins: 6,
+        eliteWins: 9,
+        primeRecord: '12-3, 1 NC',
+        finishRatePct: 53.3,
+        roundsWonPct: 74.6,
+        activeEliteYears: 7.05,
+        timesFinishedPrime: 2
+      },
+      photoPosition: 'center top',
+      priority: {
+        'Jon Jones': 1,
+        'Stipe Miocic': 2,
+        'Anthony Johnson': 3,
+        'Alexander Gustafsson': 4,
+        'Anderson Silva': 5,
+        'Derrick Lewis': 6,
+        'Volkan Oezdemir': 7,
+        'Dan Henderson': 8,
+        'Frank Mir': 9,
+        'Patrick Cummins': 10
+      }
+    },
+
+    'Stipe Miocic': {
+      stats: {
+        ufcRecord: '15-5',
+        titleFightWins: 6,
+        eliteWins: 9,
+        primeRecord: '11-4',
+        finishRatePct: 80.0,
+        roundsWonPct: 68.4,
+        activeEliteYears: 7.62,
+        timesFinishedPrime: 2
+      },
+      photoPosition: 'center top',
+      priority: {
+        'Daniel Cormier': 1,
+        'Francis Ngannou': 2,
+        'Fabricio Werdum': 3,
+        'Junior dos Santos': 4,
+        'Alistair Overeem': 5,
+        'Mark Hunt': 6,
+        'Andrei Arlovski': 7,
+        'Roy Nelson': 8,
+        'Gabriel Gonzaga': 9,
+        'Stefan Struve': 10
+      }
+    },
+
+    'Ilia Topuria': {
+      stats: {
+        ufcRecord: '9-0',
+        titleFightWins: 2,
+        eliteWins: 4,
+        primeRecord: '9-0',
+        finishRatePct: 66.7,
+        roundsWonPct: 83.3,
+        activeEliteYears: 3.18,
+        timesFinishedPrime: 0
+      },
+      photoPosition: 'center top',
+      priority: {
+        'Alexander Volkanovski': 1,
+        'Max Holloway': 2,
+        'Josh Emmett': 3,
+        'Bryce Mitchell': 4,
+        'Dan Ige': 5,
+        'Jai Herbert': 6,
+        'Ryan Hall': 7,
+        'Damon Jackson': 8,
+        'Youssef Zalal': 9
+      }
+    },
+
+    'Israel Adesanya': {
+      stats: {
+        ufcRecord: '14-5',
+        titleFightWins: 7,
+        eliteWins: 10,
+        primeRecord: '12-4',
+        finishRatePct: 42.9,
+        roundsWonPct: 72.9,
+        activeEliteYears: 6.54,
+        timesFinishedPrime: 2
+      },
+      photoPosition: 'center top',
+      priority: {
+        'Alex Pereira': 1,
+        'Robert Whittaker': 2,
+        'Dricus Du Plessis': 3,
+        'Sean Strickland': 4,
+        'Marvin Vettori': 5,
+        'Paulo Costa': 6,
+        'Jared Cannonier': 7,
+        'Yoel Romero': 8,
+        'Kelvin Gastelum': 9,
+        'Anderson Silva': 10
       }
     }
   };
