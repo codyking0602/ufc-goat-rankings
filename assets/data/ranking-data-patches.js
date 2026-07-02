@@ -4,7 +4,7 @@
 // Watch Moment links live in assets/js/watch-moments.js.
 // Home polish lives in assets/js/home-polish.js.
 (function(){
-  const VERSION = 'ranking-data-patches-20260702d';
+  const VERSION = 'ranking-data-patches-20260702e';
 
   function status(){
     const data = window.RANKING_DATA;
@@ -38,7 +38,7 @@
   }
 
   function loadModules(){
-    const loadHomePolish = () => loadScriptOnce('assets/js/home-polish.js?v=home-polish-20260702c', 'data-home-polish', status);
+    const loadHomePolish = () => loadScriptOnce('assets/js/home-polish.js?v=home-polish-light-preview-20260702a', 'data-home-polish', status);
     const loadWatchMoments = () => loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260702a', 'data-watch-moments', loadHomePolish);
     const loadPackages = () => loadScriptOnce('assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260702a', 'data-fighter-profile-packages', loadWatchMoments);
     if(window.UFC_PROFILE_TEMPLATE_SYSTEM){
