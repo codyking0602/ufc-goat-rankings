@@ -2,7 +2,7 @@
 // Add each locked fighter snapshot and opponent display priority here.
 (function(){
   const DATA = window.RANKING_DATA;
-  const VERSION = 'fighter-profile-packages-20260701b';
+  const VERSION = 'fighter-profile-packages-20260701c';
   if(!DATA || typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const PROFILE_PACKAGES = {
@@ -98,6 +98,159 @@
         'Stephan Bonnar': 14,
         'James Irvin': 15,
         'Chris Leben': 16
+      }
+    },
+
+    'Islam Makhachev': {
+      stats: {
+        ufcRecord: '17-1',
+        titleFightWins: 6,
+        eliteWins: 7,
+        primeRecord: '9-0',
+        finishRatePct: 75.0,
+        roundsWonPct: 85.7,
+        activeEliteYears: 4.7,
+        timesFinishedPrime: 0
+      },
+      photoPosition: 'center top',
+      priority: {
+        'Alexander Volkanovski': 1,
+        'Charles Oliveira': 2,
+        'Jack Della Maddalena': 3,
+        'Dustin Poirier': 4,
+        'Arman Tsarukyan': 5,
+        'Dan Hooker': 6,
+        'Renato Moicano': 7,
+        'King Green': 8,
+        'Bobby Green': 8
+      }
+    },
+
+    'Khabib Nurmagomedov': {
+      stats: {
+        ufcRecord: '13-0',
+        titleFightWins: 4,
+        eliteWins: 5,
+        primeRecord: '8-0',
+        finishRatePct: 62.5,
+        roundsWonPct: 94.7,
+        activeEliteYears: 6.02,
+        timesFinishedPrime: 0
+      },
+      photoPosition: 'center top',
+      priority: {
+        'Dustin Poirier': 1,
+        'Justin Gaethje': 2,
+        'Conor McGregor': 3,
+        'Rafael dos Anjos': 4,
+        'Edson Barboza': 5,
+        'Al Iaquinta': 6,
+        'Michael Johnson': 7,
+        'Pat Healy': 8,
+        'Gleison Tibau': 9,
+        'Abel Trujillo': 10
+      }
+    },
+
+    'Alexander Volkanovski': {
+      stats: {
+        ufcRecord: '15-3',
+        titleFightWins: 7,
+        eliteWins: 9,
+        primeRecord: '10-3',
+        finishRatePct: 53.3,
+        roundsWonPct: 76.5,
+        activeEliteYears: 5.72,
+        timesFinishedPrime: 2
+      },
+      photoPosition: 'center top',
+      priority: {
+        'Max Holloway': 1,
+        'Jose Aldo': 2,
+        'Islam Makhachev': 3,
+        'Brian Ortega': 4,
+        'Yair Rodriguez': 5,
+        'Chad Mendes': 6,
+        'Chan Sung Jung': 7,
+        'Ilia Topuria': 8,
+        'Diego Lopes': 9
+      }
+    },
+
+    'Randy Couture': {
+      stats: {
+        ufcRecord: '16-8',
+        titleFightWins: 8,
+        eliteWins: 8,
+        primeRecord: '11-5',
+        finishRatePct: 43.8,
+        roundsWonPct: 66.7,
+        activeEliteYears: 8.54,
+        timesFinishedPrime: 2
+      },
+      photoPosition: 'center top',
+      priority: {
+        'Chuck Liddell': 1,
+        'Tito Ortiz': 2,
+        'Tim Sylvia': 3,
+        'Vitor Belfort': 4,
+        'Pedro Rizzo': 5,
+        'Kevin Randleman': 6,
+        'Gabriel Gonzaga': 7,
+        'Maurice Smith': 8,
+        'Brandon Vera': 9,
+        'Brock Lesnar': 10
+      }
+    },
+
+    'Max Holloway': {
+      stats: {
+        ufcRecord: '23-9',
+        titleFightWins: 5,
+        eliteWins: 9,
+        primeRecord: '11-5',
+        finishRatePct: 52.2,
+        roundsWonPct: 72.8,
+        activeEliteYears: 8.31,
+        timesFinishedPrime: 1
+      },
+      photoPosition: 'center top',
+      priority: {
+        'Alexander Volkanovski': 1,
+        'Jose Aldo': 2,
+        'Dustin Poirier': 3,
+        'Justin Gaethje': 4,
+        'Brian Ortega': 5,
+        'Frankie Edgar': 6,
+        'Yair Rodriguez': 7,
+        'Anthony Pettis': 8,
+        'Calvin Kattar': 9,
+        'Chan Sung Jung': 10
+      }
+    },
+
+    'Kamaru Usman': {
+      stats: {
+        ufcRecord: '16-3',
+        titleFightWins: 6,
+        eliteWins: 8,
+        primeRecord: '12-2',
+        finishRatePct: 56.3,
+        roundsWonPct: 78.1,
+        activeEliteYears: 6.04,
+        timesFinishedPrime: 1
+      },
+      photoPosition: 'center top',
+      priority: {
+        'Leon Edwards': 1,
+        'Colby Covington': 2,
+        'Tyron Woodley': 3,
+        'Gilbert Burns': 4,
+        'Jorge Masvidal': 5,
+        'Rafael dos Anjos': 6,
+        'Demian Maia': 7,
+        'Sean Strickland': 8,
+        'Emil Meek': 9
       }
     }
   };
