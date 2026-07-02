@@ -1,6 +1,6 @@
 // Lightweight post-load status hook.
 (function(){
-  const VERSION = 'ranking-data-patches-20260702n';
+  const VERSION = 'ranking-data-patches-20260702o';
 
   function status(){
     window.UFC_PHASE2_DATA_STATUS = {
@@ -12,6 +12,7 @@
       homePolish: !!window.UFC_HOME_POLISH,
       divisionRankings: !!window.UFC_DIVISION_RANKINGS,
       appBranding: !!window.UFC_APP_BRANDING,
+      compareNarrative: !!window.UFC_COMPARE_NARRATIVE_SYSTEM,
       packagedFighters: window.UFC_FIGHTER_PROFILE_PACKAGES?.fighters || [],
       watchMomentFighters: window.UFC_WATCH_MOMENTS?.fighters || [],
       appliedAt: new Date().toISOString()
@@ -33,7 +34,8 @@
   }
 
   function loadModules(){
-    const loadBranding = () => loadScriptOnce('assets/js/app-branding.js?v=app-branding-20260702b', 'data-app-branding', status);
+    const loadCompareNarrative = () => loadScriptOnce('assets/js/compare-narrative-system.js?v=compare-narrative-system-20260702a', 'data-compare-narrative-system', status);
+    const loadBranding = () => loadScriptOnce('assets/js/app-branding.js?v=app-branding-20260702b', 'data-app-branding', loadCompareNarrative);
     const loadDivisionRankings = () => loadScriptOnce('assets/js/division-rankings.js?v=division-rankings-20260702f', 'data-division-rankings', loadBranding);
     const loadHomePolish = () => loadScriptOnce('assets/js/home-polish.js?v=home-polish-hybrid-preview-20260702a', 'data-home-polish', loadDivisionRankings);
     const loadWatchMoments = () => loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260702a', 'data-watch-moments', loadHomePolish);
