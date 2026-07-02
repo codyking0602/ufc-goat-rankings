@@ -1,6 +1,6 @@
 // Lightweight post-load status hook.
 (function(){
-  const VERSION = 'ranking-data-patches-20260702t';
+  const VERSION = 'ranking-data-patches-20260702u';
 
   function status(){
     window.UFC_PHASE2_DATA_STATUS = {
