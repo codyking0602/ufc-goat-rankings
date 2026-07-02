@@ -1,6 +1,6 @@
 // Lightweight post-load status hook.
 (function(){
-  const VERSION = 'ranking-data-patches-20260702ad-compare-post-polish';
+  const VERSION = 'ranking-data-patches-20260702ae-compare-post-polish-b';
   const SLUG_OVERRIDES = {
     'B.J. Penn':'bj-penn','BJ Penn':'bj-penn','Georges St-Pierre':'georges-st-pierre','T.J. Dillashaw':'tj-dillashaw','TJ Dillashaw':'tj-dillashaw','Junior dos Santos':'junior-dos-santos','Mauricio Rua':'mauricio-rua','Maurício Rua':'mauricio-rua','Zabit Magomedsharipov':'zabit-magomedsharipov'
   };
@@ -71,7 +71,7 @@
       {src:'assets/compare-copy-fixes-v1.js?v=compare-copy-fixes-v1-20260630a',attr:'data-compare-copy-fixes-v1'}
     ];
     const loadCompareWatchdog=()=>loadScriptOnce('assets/js/compare-narrative-watchdog.js?v=compare-narrative-watchdog-20260702a','data-compare-narrative-watchdog',status);
-    const loadComparePostPolish=()=>loadScriptOnce('assets/js/compare-narrative-post-polish.js?v=compare-narrative-post-polish-20260702a','data-compare-narrative-post-polish',loadCompareWatchdog);
+    const loadComparePostPolish=()=>loadScriptOnce('assets/js/compare-narrative-post-polish.js?v=compare-narrative-post-polish-20260702b','data-compare-narrative-post-polish',loadCompareWatchdog);
     const loadCompareNarrative=()=>loadScriptOnce('assets/js/compare-narrative-system.js?v=compare-narrative-system-20260702h','data-compare-narrative-system',loadComparePostPolish);
     const loadCompareCore=()=>loadSequence(compareCoreScripts,loadCompareNarrative);
     const loadBranding=()=>loadScriptOnce('assets/js/app-branding.js?v=app-branding-20260702c','data-app-branding',loadCompareCore);
