@@ -1,18 +1,21 @@
 // Lightweight post-load status hook.
 (function(){
-  const VERSION = 'ranking-data-patches-20260702x';
+  const VERSION = 'ranking-data-patches-20260702y';
+
   function applyLateDisplayOverrides(){
-    if(!window.DISPLAY_OVERRIDES) return;
-    window.DISPLAY_OVERRIDES["Ilia Topuria"] = {
-      ...(window.DISPLAY_OVERRIDES["Ilia Topuria"] || {}),
-      photoUrl: "assets/fighters/ilia-topuria.webp",
-      thumbUrl: "assets/fighters/ilia-topuria-thumb.webp"
-    };
+    try {
+      if(typeof DISPLAY_OVERRIDES === 'undefined') return;
+      DISPLAY_OVERRIDES["Ilia Topuria"] = {
+        ...(DISPLAY_OVERRIDES["Ilia Topuria"] || {}),
+        photoUrl: "assets/fighters/ilia-topuria.webp",
+        thumbUrl: "assets/fighters/ilia-topuria-thumb.webp"
+      };
+    } catch(e) {}
   }
 
   function refreshApp(){
-    if(typeof window.refresh === 'function'){
-      try { window.refresh(); } catch(e) {}
+    if(typeof refresh === 'function'){
+      try { refresh(); } catch(e) {}
     }
   }
 
@@ -30,8 +33,8 @@
       appBranding: !!window.UFC_APP_BRANDING,
       compareNarrative: !!window.UFC_COMPARE_NARRATIVE_SYSTEM,
       compareNarrativeWatchdog: !!window.UFC_COMPARE_NARRATIVE_WATCHDOG,
-      compareProfiles: !!window.COMPARE_PROFILES,
-      compareLedger: !!window.COMPARE_FIGHT_LEDGER,
+      compareProfiles: typeof COMPARE_PROFILES !== 'undefined',
+      compareLedger: typeof COMPARE_FIGHT_LEDGER !== 'undefined',
       packagedFighters: window.UFC_FIGHTER_PROFILE_PACKAGES?.fighters || [],
       watchMomentFighters: window.UFC_WATCH_MOMENTS?.fighters || [],
       appliedAt: new Date().toISOString()
