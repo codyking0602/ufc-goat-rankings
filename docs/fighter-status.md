@@ -61,7 +61,7 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 | Petr Yan | Men #16 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Yan fix needed | `assets/data/fighter-packets/petr-yan.js` |
 | Merab Dvalishvili | Men #17 | Packet live, Watch Moment added | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Merab Watch Moment fix needed | `assets/data/fighter-packets/merab-dvalishvili.js` |
 | B.J. Penn | Men #18 | Packet live, Watch Moment added | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No BJ Watch Moment fix needed | `assets/data/fighter-packets/bj-penn.js` |
-| Alex Pereira | Men #20 | Packet live, Watch Moment added | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Alex Watch Moment fix needed | `assets/data/fighter-packets/alex-pereira.js` |
+| Alex Pereira | Men #20 | Packet live, Watch Moment added, Gane loss updated | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Raw scoring table can be recalculated later | `assets/data/fighter-packets/alex-pereira.js` |
 | Chuck Liddell | Men #21 | Packet live, Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | Add Chuck Watch Moment link | `assets/data/fighter-packets/chuck-liddell.js` |
 | Dominick Cruz | Men #22 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Cruz photos/watch | `assets/data/fighter-packets/dominick-cruz.js` |
 | Francis Ngannou | Men #23 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Francis photos/watch | `assets/data/fighter-packets/francis-ngannou.js` |
