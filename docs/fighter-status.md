@@ -68,7 +68,7 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 | Francis Ngannou | Men #23 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Francis photos | `assets/data/fighter-packets/francis-ngannou.js` |
 | Charles Oliveira | Men #24 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Charles photos | `assets/data/fighter-packets/charles-oliveira.js` |
 | Henry Cejudo | Men #24 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Henry photos | `assets/data/fighter-packets/henry-cejudo.js` |
-| Frankie Edgar | Men #25 | Permanent hand-added fighter; photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Frankie Watch Moment and photos | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/frankie-edgar.js` |
+| Frankie Edgar | Men #25 | Permanent hand-added fighter; Watch Moment added; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Frankie photos | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/frankie-edgar.js` |
 | Conor McGregor | Men #26 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Conor photos | `assets/data/fighter-packets/conor-mcgregor.js` |
 | Amanda Nunes | Women #1 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Amanda photos | `assets/data/fighter-packets/amanda-nunes.js` |
 | Valentina Shevchenko | Women #2 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Valentina photos | `assets/data/fighter-packets/valentina-shevchenko.js` |
@@ -78,7 +78,6 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 ## Current priorities
 
 1. Justin Gaethje and Frankie Edgar are permanent through `assets/data/ranking-data-additions.js` plus fighter packets.
-2. Watch Moment still needed for Frankie Edgar.
-3. Photos still needed for Cruz, Francis, Charles, Henry, Conor, Justin Gaethje, Frankie Edgar, Amanda, Valentina, Joanna, and Ronda.
-4. During the next full scoring-table rebuild, fold `assets/data/ranking-data-additions.js` into `assets/data/ranking-data.js`.
-5. Next cleanup should focus on photos, then testing Compare Mode pairings.
+2. Photos still needed for Cruz, Francis, Charles, Henry, Conor, Justin Gaethje, Frankie Edgar, Amanda, Valentina, Joanna, and Ronda.
+3. During the next full scoring-table rebuild, fold `assets/data/ranking-data-additions.js` into `assets/data/ranking-data.js`.
+4. Next cleanup should focus on photos, then testing Compare Mode pairings.
