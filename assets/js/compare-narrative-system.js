@@ -1,7 +1,7 @@
 // Compare Narrative System
 // Engine-only layer: stats decide matchup lanes; fighter packets provide seasoning; matchup frames live in compare-matchups.js.
 (function(){
-  const VERSION = 'compare-narrative-system-20260703b-packet-driven';
+  const VERSION = 'compare-narrative-system-20260703c-tight-composer';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
@@ -22,7 +22,16 @@
     const accentResumes = new RegExp('r\\u00e9sum\\u00e9s','g');
     const accentResumeCap = new RegExp('R\\u00e9sum\\u00e9','g');
     const accentResumesCap = new RegExp('R\\u00e9sum\\u00e9s','g');
-    return String(s || '').replace(accentResumes,'resumes').replace(accentResume,'resume').replace(accentResumesCap,'Resumes').replace(accentResumeCap,'Resume');
+    return String(s || '')
+      .replace(accentResumes,'resumes').replace(accentResume,'resume').replace(accentResumesCap,'Resumes').replace(accentResumeCap,'Resume')
+      .replace(/title column/gi,'title resume')
+      .replace(/opponent-volume cases/gi,'win-depth resumes')
+      .replace(/opponent-volume case/gi,'win-depth resume')
+      .replace(/better best-version angle/gi,'best-version argument')
+      .replace(/folded back into the bigger picture/gi,'weighed against the full resume')
+      .replace(/bigger picture/gi,'full resume')
+      .replace(/\s+/g,' ')
+      .trim();
   }
   function cleanNum(n){ return Number.isFinite(Number(n)) ? Number(n) : 0; }
   function roundYear(n){ const val = Number(n); return Number.isFinite(val) ? String(Math.max(1, Math.round(val))) : null; }
@@ -32,6 +41,22 @@
   function pairKey(a,b,tag=''){ return `${normalizeKey(a.fighter,b.fighter)}|${tag}`; }
   function pronoun(f){ return (String(f.gender || f.sex || '').toLowerCase() === 'women') ? 'she' : 'he'; }
   function capPronoun(f){ return pronoun(f) === 'she' ? 'She' : 'He'; }
+
+  function compactParagraph(parts, maxSentences=3, maxChars=560){
+    const text = cleanText(parts.filter(Boolean).join(' '));
+    if(!text) return '';
+    const sentences = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [text];
+    const kept = [];
+    for(const raw of sentences){
+      const sentence = cleanText(raw);
+      if(!sentence) continue;
+      const next = cleanText([...kept, sentence].join(' '));
+      if(kept.length && (kept.length >= maxSentences || next.length > maxChars)) break;
+      kept.push(sentence);
+      if(kept.length >= maxSentences) break;
+    }
+    return cleanText(kept.join(' '));
+  }
 
   function matchup(){ return window.UFC_COMPARE_MATCHUPS || {}; }
   function frameFor(a,b){ return matchup().frameFor ? matchup().frameFor(a.fighter,b.fighter) : null; }
@@ -117,6 +142,7 @@
     return nonPenalty.length ? nonPenalty.concat(edges.filter(x => x.key === 'penalty')) : edges;
   }
   function bestEdges(f,other){ return edgeKeys(f,other).filter(x => x.key !== 'penalty').slice(0,2); }
+  function primaryLane(f,other){ return bestEdges(f,other)[0]?.key || null; }
   function lanesText(f,other){
     const edges = bestEdges(f,other).map(x => x.label);
     if(!edges.length) return 'the narrowest lane';
@@ -154,60 +180,64 @@
   }
 
   function laneLead(f, other, role){
-    const fTitlePrime = hasEdge(f,other,'championship') && hasEdge(f,other,'primeDominance');
-    const fVolume = hasEdge(f,other,'opponentQuality') || hasEdge(f,other,'longevity');
+    const lane = primaryLane(f,other);
     if(role === 'loser'){
       if(isUnbeatenCase(f)) return `${f.fighter} keeps this uncomfortable through peak purity.`;
-      if(fTitlePrime) return `${f.fighter} keeps this close by turning it into a champion-peak debate.`;
-      if(fVolume) return `${f.fighter} keeps this close by pulling it toward volume and longevity.`;
-      if(hasEdge(f,other,'championship')) return `${f.fighter}'s best path starts with the title column.`;
-      if(hasEdge(f,other,'primeDominance')) return `${f.fighter}'s best path is the better best-version angle.`;
+      if(lane === 'championship') return `${f.fighter} keeps this close through championship value.`;
+      if(lane === 'opponentQuality') return `${f.fighter} keeps this close through win depth.`;
+      if(lane === 'longevity') return `${f.fighter} keeps this close through longevity.`;
+      if(lane === 'primeDominance') return f.fighter === 'Francis Ngannou' ? `${f.fighter} keeps this close through the scarier best-version argument.` : `${f.fighter} keeps this close through the best-version argument.`;
       return `${f.fighter} has a real lane, but it is narrower.`;
     }
     if(isUnbeatenCase(f)) return `${f.fighter} compresses this into peak purity.`;
-    if(fTitlePrime) return `${f.fighter} turns this into a champion-peak debate.`;
-    if(fVolume) return `${f.fighter} wins the long-view side.`;
-    if(hasEdge(f,other,'championship')) return `${f.fighter} starts with the title column.`;
-    if(hasEdge(f,other,'primeDominance')) return `${f.fighter} starts with the better best-version angle.`;
+    if(lane === 'championship') return `${f.fighter} wins through the bigger title resume.`;
+    if(lane === 'opponentQuality') return `${f.fighter} wins through the deeper win list.`;
+    if(lane === 'longevity') return `${f.fighter} wins the long-view side.`;
+    if(lane === 'primeDominance') return `${f.fighter} starts with the better best-version argument.`;
     return `${f.fighter} has the slightly fuller read.`;
   }
 
-  function statLines(f, other, role){
+  function primaryStatLine(f, other, role, lane){
     const p = profileFor(f.fighter);
     const otherP = profileFor(other.fighter);
-    const lines = [];
     const tfw = titleFightWins(f,p);
     const otherTfw = titleFightWins(other,otherP);
     const years = eliteYears(f,p);
     const wins = compactWins(f,p,7);
-    if(hasEdge(f,other,'championship') && tfw !== null){
-      lines.push(otherTfw !== null ? `${capPronoun(f)} has ${tfw} title-fight wins to ${other.fighter}'s ${otherTfw}.` : `${capPronoun(f)} has ${tfw} title-fight wins.`);
-    } else if(role === 'loser' && tfw !== null && otherTfw !== null && Number(tfw) > 0){
-      lines.push(`${f.fighter}'s ${tfw} title-fight wins keep this credible, but belt volume is not where ${pronoun(f)} wins it.`);
+    if(lane === 'championship' && tfw !== null){
+      return otherTfw !== null ? `${capPronoun(f)} has ${tfw} title-fight wins to ${other.fighter}'s ${otherTfw}.` : `${capPronoun(f)} has ${tfw} title-fight wins.`;
     }
-    if(hasEdge(f,other,'longevity') && years){
-      if(role === 'loser' && isStillBuilding(other)) lines.push(`${capPronoun(f)} has enough time at the top to keep this serious, but ${other.fighter}'s run is still moving.`);
-      else lines.push(`About ${years} active elite years gives ${f.fighter} more time at the top.`);
-    } else if(role === 'loser' && hasEdge(other,f,'longevity')){
-      lines.push(`The problem is that ${other.fighter} owns the longer top-level window.`);
+    if(lane === 'longevity' && years){
+      return `About ${years} active elite years gives ${f.fighter} more time at the top.`;
     }
-    if(hasEdge(f,other,'opponentQuality') && wins && !profileFor(f.fighter).signatureWins){
-      lines.push(`${wins} give ${f.fighter} the deeper win list.`);
+    if(lane === 'opponentQuality' && wins){
+      return wins;
     }
-    return lines;
+    if(lane === 'primeDominance'){
+      return cleanText(p.primeSummary || p.peak || p.bestArgument || '');
+    }
+    if(role === 'loser' && hasEdge(other,f,'championship') && tfw !== null && otherTfw !== null && Number(tfw) > 0){
+      return `${f.fighter}'s ${tfw} title-fight wins keep this credible, but belt volume is not where ${pronoun(f)} wins it.`;
+    }
+    return '';
   }
 
-  function seasoningLine(f, other, role){
+  function seasoningLine(f, other, role, lane){
     const p = profileFor(f.fighter);
-    const edges = bestEdges(f,other).map(x => x.key);
     const candidates = [];
-    if((edges.includes('opponentQuality') || edges.includes('longevity')) && p.signatureWins) candidates.push(p.signatureWins);
-    if(edges.includes('championship') && p.titleSummary) candidates.push(p.titleSummary);
-    if(edges.includes('primeDominance') && p.bestArgument) candidates.push(p.bestArgument);
-    if(edges.includes('primeDominance') && p.peak) candidates.push(p.peak);
-    if(role === 'loser' && p.weakness) candidates.push(p.weakness);
-    if(role === 'winner' && p.edge) candidates.push(p.edge);
-    candidates.push(p.resume, p.shortCase);
+    if(role === 'loser'){
+      if(lane === 'primeDominance') candidates.push(p.bestArgument, p.peak, p.primeSummary);
+      if(lane === 'championship') candidates.push(p.titleSummary, p.championship);
+      if(lane === 'opponentQuality') candidates.push(p.opponentQuality, p.resume);
+      if(lane === 'longevity') candidates.push(p.longevity, p.resume);
+      candidates.push(p.weakness);
+    } else {
+      if(lane === 'championship') candidates.push(p.titleSummary, p.championship);
+      if(lane === 'opponentQuality') candidates.push(p.signatureWins, p.opponentQuality);
+      if(lane === 'longevity') candidates.push(p.longevity, p.resume);
+      if(lane === 'primeDominance') candidates.push(p.bestArgument, p.peak, p.primeSummary);
+      candidates.push(p.edge, p.resume, p.shortCase);
+    }
     return cleanText(candidates.find(Boolean) || '');
   }
 
@@ -216,25 +246,28 @@
     return `${f.fighter}'s resume is not closed yet, so this gap can still stretch if more title-level wins follow.`;
   }
   function winnerCloseLine(f, type){
-    if(type === 'rivalry') return `That is why ${f.fighter} still gets the nod once the direct history is folded back into the bigger picture.`;
+    if(type === 'rivalry') return `That is why ${f.fighter} still gets the nod once the full resume is weighed.`;
     if(isStillBuilding(f)) return null;
     return `That is why ${f.fighter} still gets the nod.`;
   }
 
   function debateParagraph(f, other, role, type){
-    const parts = [laneLead(f,other,role), ...statLines(f,other,role)];
-    const flavor = seasoningLine(f,other,role);
-    if(flavor) parts.push(flavor);
+    const lane = primaryLane(f,other);
+    const parts = [laneLead(f,other,role)];
+    const stat = primaryStatLine(f,other,role,lane);
+    if(stat) parts.push(stat);
+    const flavor = seasoningLine(f,other,role,lane);
+    if(flavor && cleanText(flavor) !== cleanText(stat)) parts.push(flavor);
     const active = activeLine(f,role);
     if(active) parts.push(active);
     if(role === 'winner') parts.push(winnerCloseLine(f,type));
-    return cleanText(parts.filter(Boolean).join(' '));
+    return compactParagraph(parts, 3, role === 'winner' ? 560 : 520);
   }
 
   function ledgerWinnerMatches(ledger, fighter){ return String(ledger?.winner || '').toLowerCase() === String(fighter?.fighter || fighter || '').toLowerCase(); }
   function swingParagraph(winner, loser, type, ledger, a, b){
     const special = swingFor(a,b);
-    if(special) return special;
+    if(special) return cleanText(special);
     if(type === 'rivalry' && ledger){
       if(ledgerWinnerMatches(ledger,winner)) return `${ledger.summary} The fight history is not the whole story, but here it points the same direction as the resume.`;
       if(ledgerWinnerMatches(ledger,loser)) return `${ledger.summary} That result matters, but it does not end the debate. ${winner.fighter} still has the broader resume.`;
@@ -259,7 +292,7 @@
 
   function finalTake(winner, loser, type, a, b, ledger){
     const specialFinal = finalFor(a,b);
-    if(specialFinal) return specialFinal;
+    if(specialFinal) return cleanText(specialFinal);
     const lanes = lanesText(winner, loser);
     const scope = hasOutsideContext(winner) || hasOutsideContext(loser) ? 'UFC-only resume' : 'resume';
     if(type === 'rivalry' && ledger){
