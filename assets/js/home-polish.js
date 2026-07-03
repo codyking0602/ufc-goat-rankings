@@ -1,6 +1,6 @@
 // Home screen polish: light background with dark card preview across all tabs and profiles.
 (function(){
-  const VERSION = 'home-polish-hybrid-preview-20260702a';
+  const VERSION = 'home-polish-hybrid-preview-20260702b';
 
   function injectCss(){
     const existing = document.getElementById('home-polish-css');
@@ -71,6 +71,9 @@
       .score strong,.profile-ovr{color:#f8faff !important}
       .section-title p{color:#475569 !important}
       .meta,.kpi small,.category-card small,.category-explainer p,.category-explainer-item small,.snapshot-item small,.profile-copy,.judgment-list{color:#c7d2e2 !important}
+      .card p,.card li,.profile-main-flow .card p,.profile-deep-cuts .card p,.profile-main-flow .card li,.profile-deep-cuts .card li,.evidence-empty{color:#c7d2e2 !important;line-height:1.5 !important}
+      .card p strong,.card li strong{color:#f8faff !important}
+      .profile-pill.tier-overall,.profile-ovr-wrap > .tier-pill{display:none !important}
       .row-photo{background:#111827 !important;color:#f8faff !important}
       .resume-tag{background:rgba(250,204,21,.12) !important;border-color:rgba(250,204,21,.36) !important;color:#fde68a !important}
       .watch-moment-link{background:rgba(248,113,113,.15) !important;border-color:rgba(248,113,113,.52) !important;color:#fecaca !important}
@@ -86,7 +89,6 @@
       .profile-summary h2{color:#f8faff !important}
       .profile-pill{background:rgba(255,255,255,.05) !important;border-color:#40536f !important;color:#c7d2e2 !important}
       .profile-pill.gold{background:#f97316 !important;border-color:#f97316 !important;color:#111827 !important}
-      .profile-pill.tier-overall{background:rgba(34,197,94,.10) !important;border-color:rgba(34,197,94,.38) !important;color:#bbf7d0 !important}
       .tier-pill{background:color-mix(in srgb,var(--tier-color,var(--accent)) 12%,transparent) !important}
       .category-card{background:linear-gradient(180deg,#23324a,#172033) !important;box-shadow:0 10px 24px rgba(15,23,42,.16)}
       .category-bar{background:#111827 !important}
