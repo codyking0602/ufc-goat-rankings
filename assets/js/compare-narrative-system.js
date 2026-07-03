@@ -1,7 +1,7 @@
 // Compare Narrative System
 // Engine-only layer: stats decide matchup lanes; fighter packets provide seasoning; matchup frames live in compare-matchups.js.
 (function(){
-  const VERSION = 'compare-narrative-system-20260703a-packet-driven';
+  const VERSION = 'compare-narrative-system-20260703b-packet-driven';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
@@ -17,7 +17,13 @@
 
   function el(id){ return document.getElementById(id); }
   function safe(s){ return String(s ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
-  function cleanText(s){ return String(s || '').replace(/résumés/g,'resumes').replace(/résumé/g,'resume').replace(/Résumés/g,'Resumes').replace(/Résumé/g,'Resume'); }
+  function cleanText(s){
+    const accentResume = new RegExp('r\\u00e9sum\\u00e9','g');
+    const accentResumes = new RegExp('r\\u00e9sum\\u00e9s','g');
+    const accentResumeCap = new RegExp('R\\u00e9sum\\u00e9','g');
+    const accentResumesCap = new RegExp('R\\u00e9sum\\u00e9s','g');
+    return String(s || '').replace(accentResumes,'resumes').replace(accentResume,'resume').replace(accentResumesCap,'Resumes').replace(accentResumeCap,'Resume');
+  }
   function cleanNum(n){ return Number.isFinite(Number(n)) ? Number(n) : 0; }
   function roundYear(n){ const val = Number(n); return Number.isFinite(val) ? String(Math.max(1, Math.round(val))) : null; }
   function normalizeKey(a,b){ return [String(a||'').toLowerCase(),String(b||'').toLowerCase()].sort().join('|'); }
