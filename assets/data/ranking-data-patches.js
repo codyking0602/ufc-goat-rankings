@@ -1,6 +1,6 @@
 // Lightweight post-load status hook.
 (function(){
-  const VERSION = 'ranking-data-patches-20260702bc-profile-evidence-polish';
+  const VERSION = 'ranking-data-patches-20260703a-packet-schema-matchups';
   const SLUG_OVERRIDES = {
     'B.J. Penn':'bj-penn','BJ Penn':'bj-penn','Georges St-Pierre':'georges-st-pierre','T.J. Dillashaw':'tj-dillashaw','TJ Dillashaw':'tj-dillashaw','Junior dos Santos':'junior-dos-santos','Mauricio Rua':'mauricio-rua','Maurício Rua':'mauricio-rua','Zabit Magomedsharipov':'zabit-magomedsharipov'
   };
@@ -178,7 +178,8 @@
     const photoDefaults=applyPhotoPathDefaults();
     const packetProfileStatsSynced=syncPacketProfileStats();
     refreshApp();
-    window.UFC_PHASE2_DATA_STATUS={version:VERSION,mode:'lightweight-status-hook',profileTemplateSystem:!!window.UFC_PROFILE_TEMPLATE_SYSTEM,fighterProfilePackages:!!window.UFC_FIGHTER_PROFILE_PACKAGES,fighterPackets:!!window.UFC_FIGHTER_PACKET_SYSTEM,watchMoments:!!window.UFC_WATCH_MOMENTS,homePolish:!!window.UFC_HOME_POLISH,divisionRankings:!!window.UFC_DIVISION_RANKINGS,appBranding:!!window.UFC_APP_BRANDING,compareNarrative:!!window.UFC_COMPARE_NARRATIVE_SYSTEM,compareVerdictClarity:!!window.UFC_COMPARE_VERDICT_CLARITY,compareNarrativeWatchdog:!!window.UFC_COMPARE_NARRATIVE_WATCHDOG,compareProfiles:typeof COMPARE_PROFILES!=='undefined',compareLedger:typeof COMPARE_FIGHT_LEDGER!=='undefined',dynamicFighters,packagedFighters:window.UFC_FIGHTER_PROFILE_PACKAGES?.fighters||[],packetFighters:window.UFC_FIGHTER_PACKET_SYSTEM?.fighters||[],watchMomentFighters:window.UFC_WATCH_MOMENTS?.fighters||[],packetProfileStatsSynced,photoDefaults,appliedAt:new Date().toISOString()};
+    const packetAudit=window.UFC_FIGHTER_PACKET_SCHEMA?.auditPackets ? window.UFC_FIGHTER_PACKET_SCHEMA.auditPackets() : null;
+    window.UFC_PHASE2_DATA_STATUS={version:VERSION,mode:'lightweight-status-hook',fighterPacketSchema:!!window.UFC_FIGHTER_PACKET_SCHEMA,profileTemplateSystem:!!window.UFC_PROFILE_TEMPLATE_SYSTEM,fighterProfilePackages:!!window.UFC_FIGHTER_PROFILE_PACKAGES,fighterPackets:!!window.UFC_FIGHTER_PACKET_SYSTEM,watchMoments:!!window.UFC_WATCH_MOMENTS,homePolish:!!window.UFC_HOME_POLISH,divisionRankings:!!window.UFC_DIVISION_RANKINGS,appBranding:!!window.UFC_APP_BRANDING,compareNarrative:!!window.UFC_COMPARE_NARRATIVE_SYSTEM,compareMatchups:!!window.UFC_COMPARE_MATCHUPS,compareNarrativeWatchdog:!!window.UFC_COMPARE_NARRATIVE_WATCHDOG,compareProfiles:typeof COMPARE_PROFILES!=='undefined',compareLedger:typeof COMPARE_FIGHT_LEDGER!=='undefined',dynamicFighters,packagedFighters:window.UFC_FIGHTER_PROFILE_PACKAGES?.fighters||[],packetFighters:window.UFC_FIGHTER_PACKET_SYSTEM?.fighters||[],watchMomentFighters:window.UFC_WATCH_MOMENTS?.fighters||[],packetProfileStatsSynced,packetAudit,photoDefaults,appliedAt:new Date().toISOString()};
     document.documentElement.setAttribute('data-phase2-data-patch',VERSION);
   }
   function loadScriptOnce(src,attr,done){
@@ -188,11 +189,12 @@
   function loadSequence(items,done){ const next=i=>{ if(i>=items.length){ if(done) done(); return; } loadScriptOnce(items[i].src,items[i].attr,()=>next(i+1)); }; next(0); }
   function loadModules(){
     const compareCoreScripts=[
+      {src:'assets/data/fighter-packet-schema.js?v=fighter-packet-schema-20260703a',attr:'data-fighter-packet-schema'},
       {src:'assets/compare-data.js?v=compare-data-20260630a',attr:'data-compare-data'},
       {src:'assets/compare-coverage-pack-1.js?v=compare-coverage-pack-1-20260630a',attr:'data-compare-coverage-pack-1'},
       {src:'assets/compare-coverage-pack-2.js?v=compare-coverage-pack-2-20260630a',attr:'data-compare-coverage-pack-2'},
       {src:'assets/compare-phase2-yan.js?v=compare-phase2-yan-20260701b',attr:'data-compare-phase2-yan'},
-      {src:'assets/data/fighter-packets.js?v=fighter-packets-20260702a',attr:'data-fighter-packets'},
+      {src:'assets/data/fighter-packets.js?v=fighter-packets-20260702c',attr:'data-fighter-packets'},
       {src:'assets/data/fighter-packets/demetrious-johnson.js?v=fighter-packet-demetrious-johnson-20260702a',attr:'data-fighter-packet-demetrious-johnson'},
       {src:'assets/data/fighter-packets/anderson-silva.js?v=fighter-packet-anderson-silva-20260702a',attr:'data-fighter-packet-anderson-silva'},
       {src:'assets/data/fighter-packets/khabib-nurmagomedov.js?v=fighter-packet-khabib-nurmagomedov-20260702a',attr:'data-fighter-packet-khabib-nurmagomedov'},
@@ -223,13 +225,13 @@
       {src:'assets/data/fighter-packets/valentina-shevchenko.js?v=fighter-packet-valentina-shevchenko-20260702a',attr:'data-fighter-packet-valentina-shevchenko'},
       {src:'assets/data/fighter-packets/joanna-jedrzejczyk.js?v=fighter-packet-joanna-jedrzejczyk-20260702b',attr:'data-fighter-packet-joanna-jedrzejczyk'},
       {src:'assets/data/fighter-packets/ronda-rousey.js?v=fighter-packet-ronda-rousey-20260702b',attr:'data-fighter-packet-ronda-rousey'},
+      {src:'assets/data/compare-matchups.js?v=compare-matchups-20260703a',attr:'data-compare-matchups'},
       {src:'assets/compare-mode.js?v=special-matchups-20260630l',attr:'data-compare-mode'},
       {src:'assets/compare-engine-v1-5.js?v=compare-engine-v1-5-20260630b',attr:'data-compare-engine-v1-5'},
       {src:'assets/compare-copy-fixes-v1.js?v=compare-copy-fixes-v1-20260630a',attr:'data-compare-copy-fixes-v1'}
     ];
     const loadCompareWatchdog=()=>loadScriptOnce('assets/js/compare-narrative-watchdog.js?v=compare-narrative-watchdog-20260702a','data-compare-narrative-watchdog',status);
-    const loadCompareClarity=()=>loadScriptOnce('assets/js/compare-verdict-clarity.js?v=compare-verdict-clarity-20260702a','data-compare-verdict-clarity',loadCompareWatchdog);
-    const loadCompareNarrative=()=>loadScriptOnce('assets/js/compare-narrative-system.js?v=compare-narrative-system-20260702k','data-compare-narrative-system',loadCompareClarity);
+    const loadCompareNarrative=()=>loadScriptOnce('assets/js/compare-narrative-system.js?v=compare-narrative-system-20260703a','data-compare-narrative-system',loadCompareWatchdog);
     const loadCompareCore=()=>loadSequence(compareCoreScripts,loadCompareNarrative);
     const loadBranding=()=>loadScriptOnce('assets/js/app-branding.js?v=app-branding-20260702c','data-app-branding',loadCompareCore);
     const loadDivisionRankings=()=>loadScriptOnce('assets/js/division-rankings.js?v=division-rankings-20260702f','data-division-rankings',loadBranding);
@@ -239,7 +241,7 @@
     if(window.UFC_PROFILE_TEMPLATE_SYSTEM){ loadPackages(); return; }
     loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260702b','data-profile-template-system',loadPackages);
   }
-  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Status hook, module loader, default fighter photo paths, compare verdict clarity loader, fighter packet loader, fighter packet stat bridge, and temporary new-fighter runtime add-on',updated:'2026-07-02',version:VERSION},apply:status,slugFor,syncPacketProfileStats,applyDynamicFighterRows};
+  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Status hook, module loader, fighter packet schema, compare matchup loader, fighter packet stat bridge, and temporary new-fighter runtime add-on',updated:'2026-07-03',version:VERSION},apply:status,slugFor,syncPacketProfileStats,applyDynamicFighterRows};
   installImageFallback();
   applyDynamicFighterRows();
   applyPhotoPathDefaults();
