@@ -1,11 +1,11 @@
 // Merab Dvalishvili fighter packet extension.
 (function(){
-  const VERSION = 'fighter-packet-merab-dvalishvili-20260702a';
+  const VERSION = 'fighter-packet-merab-dvalishvili-20260702b';
   const fighter = 'Merab Dvalishvili';
 
   const packet = {
-    status: { stage: 'packet live; Watch Moment needed', lastUpdated: '2026-07-02', nextFix: 'Add Merab Watch Moment link when Cody picks one.' },
-    repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/merab-dvalishvili.js', displayFallback: 'assets/data/display-overrides.js', compareFallback: 'assets/compare-coverage-pack-2.js and assets/compare-phase2-yan.js', photos: 'assets/fighters/merab-dvalishvili.webp and assets/fighters/merab-dvalishvili-thumb.webp' },
+    status: { stage: 'packet live; Watch Moment added', lastUpdated: '2026-07-02', nextFix: 'None for Merab Watch Moment. Add more rivalry copy only if needed.' },
+    repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/merab-dvalishvili.js', displayFallback: 'assets/data/display-overrides.js', compareFallback: 'assets/compare-coverage-pack-2.js and assets/compare-phase2-yan.js', watchFallback: 'assets/data/fighter-packets/merab-dvalishvili.js', photos: 'assets/fighters/merab-dvalishvili.webp and assets/fighters/merab-dvalishvili-thumb.webp' },
     photos: { photoUrl: 'assets/fighters/merab-dvalishvili.webp', thumbUrl: 'assets/fighters/merab-dvalishvili-thumb.webp' },
     display: {
       overallOvr: 86, allTimeRank: 17, divisionLabel: 'BW', resumeTag: 'Modern bantamweight pace case',
@@ -34,11 +34,12 @@
       primeSummary: 'His prime is a pressure-control prime: less about finishes, more about making elite opponents fight his pace for five rounds.',
       titleStyle: 'Modern Bantamweight Pace Champion', primeStyle: 'Pressure-Control Prime',
       legacyStats: { ufcRecord: '13-3', titleFightWins: 3, beltsWon: 1, titleDefenses: 2, activeEliteYearsLabel: 'roughly 5 active elite years', primeNote: 'modern bantamweight pace prime with elite contender wins and a growing title run' }
-    }
+    },
+    watchMoment: { url: 'https://youtube.com/shorts/v8qciKt0g9Y?is=9I22lnhlQVqsQyQT', label: 'Watch Moment' }
   };
   function mergeLegacyStats(a,b){ return { ...(a || {}), ...(b || {}) }; }
   function mergeCompareProfile(a,b){ return { ...(a || {}), ...(b || {}), legacyStats: mergeLegacyStats((a || {}).legacyStats, (b || {}).legacyStats) }; }
-  function applyDisplay(){ if(typeof DISPLAY_OVERRIDES === 'undefined') return; DISPLAY_OVERRIDES[fighter] = { ...(DISPLAY_OVERRIDES[fighter] || {}), ...(packet.display || {}), ...(packet.photos || {}) }; DISPLAY_OVERRIDES[fighter].packetProfileStats = { ...(DISPLAY_OVERRIDES[fighter].packetProfileStats || {}), ...(packet.profileStats || {}) }; DISPLAY_OVERRIDES[fighter].packetStatus = packet.status || {}; DISPLAY_OVERRIDES[fighter].repoLocations = packet.repoLocations || {}; }
+  function applyDisplay(){ if(typeof DISPLAY_OVERRIDES === 'undefined') return; DISPLAY_OVERRIDES[fighter] = { ...(DISPLAY_OVERRIDES[fighter] || {}), ...(packet.display || {}), ...(packet.photos || {}) }; if(packet.watchMoment?.url){ DISPLAY_OVERRIDES[fighter].watchUrl = packet.watchMoment.url; DISPLAY_OVERRIDES[fighter].watchLabel = packet.watchMoment.label || 'Watch Moment'; } DISPLAY_OVERRIDES[fighter].packetProfileStats = { ...(DISPLAY_OVERRIDES[fighter].packetProfileStats || {}), ...(packet.profileStats || {}) }; DISPLAY_OVERRIDES[fighter].packetStatus = packet.status || {}; DISPLAY_OVERRIDES[fighter].repoLocations = packet.repoLocations || {}; }
   function applyCompare(){ window.COMPARE_PROFILES = window.COMPARE_PROFILES || {}; window.COMPARE_PROFILES[fighter] = mergeCompareProfile(window.COMPARE_PROFILES[fighter], packet.compareSeasoning); if(typeof DISPLAY_OVERRIDES !== 'undefined'){ DISPLAY_OVERRIDES[fighter] = DISPLAY_OVERRIDES[fighter] || {}; DISPLAY_OVERRIDES[fighter].compareProfile = mergeCompareProfile(DISPLAY_OVERRIDES[fighter].compareProfile, window.COMPARE_PROFILES[fighter]); } }
   function registerPacket(){ window.UFC_FIGHTER_PACKETS = window.UFC_FIGHTER_PACKETS || {}; window.UFC_FIGHTER_PACKETS[fighter] = packet; const current = window.UFC_FIGHTER_PACKET_SYSTEM || {}; const fighters = Array.from(new Set([...(current.fighters || []), fighter])); const packetExtensions = Array.from(new Set([...(current.packetExtensions || []), VERSION])); window.UFC_FIGHTER_PACKET_SYSTEM = { ...current, version: current.version || VERSION, purpose: current.purpose || 'Central source for fighter-facing app content during migration.', fighters, packetExtensions, appliedAt: new Date().toISOString() }; }
   applyDisplay(); applyCompare(); registerPacket();
