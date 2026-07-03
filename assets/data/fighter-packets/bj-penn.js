@@ -1,11 +1,11 @@
 // B.J. Penn fighter packet extension.
 (function(){
-  const VERSION = 'fighter-packet-bj-penn-20260702a';
+  const VERSION = 'fighter-packet-bj-penn-20260702b';
   const fighter = 'B.J. Penn';
 
   const packet = {
-    status: { stage: 'packet live; Watch Moment needed', lastUpdated: '2026-07-02', nextFix: 'Add BJ Watch Moment link when Cody picks one.' },
-    repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/bj-penn.js', displayFallback: 'assets/data/display-overrides.js', compareFallback: 'assets/compare-coverage-pack-1.js', photos: 'assets/fighters/bj-penn.webp and assets/fighters/bj-penn-thumb.webp' },
+    status: { stage: 'packet live; Watch Moment added', lastUpdated: '2026-07-02', nextFix: 'None for BJ Watch Moment.' },
+    repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/bj-penn.js', displayFallback: 'assets/data/display-overrides.js', compareFallback: 'assets/compare-coverage-pack-1.js', watchFallback: 'assets/data/fighter-packets/bj-penn.js', photos: 'assets/fighters/bj-penn.webp and assets/fighters/bj-penn-thumb.webp' },
     photos: { photoUrl: 'assets/fighters/bj-penn.webp', thumbUrl: 'assets/fighters/bj-penn-thumb.webp' },
     display: {
       overallOvr: 85, allTimeRank: 18, divisionLabel: 'LW / WW', resumeTag: 'Two-division skill legend',
@@ -34,11 +34,12 @@
       primeSummary: 'His best UFC years were brilliant but not long enough to erase the late-career collapse.',
       titleStyle: 'Two-Division Skill Champion', primeStyle: 'Brilliant But Messy Prime',
       legacyStats: { ufcRecord: '12-13-2', titleFightWins: 5, beltsWon: 2, titleDefenses: 3, activeEliteYearsLabel: 'roughly 6 active elite years', primeNote: 'brilliant lightweight and welterweight peak with a late-career collapse that hurts the overall case' }
-    }
+    },
+    watchMoment: { url: 'https://youtube.com/shorts/FfBpWXo-EWo?is=4SrvWa7ntRkx5Bia', label: 'Watch Moment' }
   };
   function mergeLegacyStats(a,b){ return { ...(a || {}), ...(b || {}) }; }
   function mergeCompareProfile(a,b){ return { ...(a || {}), ...(b || {}), legacyStats: mergeLegacyStats((a || {}).legacyStats, (b || {}).legacyStats) }; }
-  function applyDisplay(){ if(typeof DISPLAY_OVERRIDES === 'undefined') return; DISPLAY_OVERRIDES[fighter] = { ...(DISPLAY_OVERRIDES[fighter] || {}), ...(packet.display || {}), ...(packet.photos || {}) }; DISPLAY_OVERRIDES[fighter].packetProfileStats = { ...(DISPLAY_OVERRIDES[fighter].packetProfileStats || {}), ...(packet.profileStats || {}) }; DISPLAY_OVERRIDES[fighter].packetStatus = packet.status || {}; DISPLAY_OVERRIDES[fighter].repoLocations = packet.repoLocations || {}; }
+  function applyDisplay(){ if(typeof DISPLAY_OVERRIDES === 'undefined') return; DISPLAY_OVERRIDES[fighter] = { ...(DISPLAY_OVERRIDES[fighter] || {}), ...(packet.display || {}), ...(packet.photos || {}) }; if(packet.watchMoment?.url){ DISPLAY_OVERRIDES[fighter].watchUrl = packet.watchMoment.url; DISPLAY_OVERRIDES[fighter].watchLabel = packet.watchMoment.label || 'Watch Moment'; } DISPLAY_OVERRIDES[fighter].packetProfileStats = { ...(DISPLAY_OVERRIDES[fighter].packetProfileStats || {}), ...(packet.profileStats || {}) }; DISPLAY_OVERRIDES[fighter].packetStatus = packet.status || {}; DISPLAY_OVERRIDES[fighter].repoLocations = packet.repoLocations || {}; }
   function applyCompare(){ window.COMPARE_PROFILES = window.COMPARE_PROFILES || {}; window.COMPARE_PROFILES[fighter] = mergeCompareProfile(window.COMPARE_PROFILES[fighter], packet.compareSeasoning); if(typeof DISPLAY_OVERRIDES !== 'undefined'){ DISPLAY_OVERRIDES[fighter] = DISPLAY_OVERRIDES[fighter] || {}; DISPLAY_OVERRIDES[fighter].compareProfile = mergeCompareProfile(DISPLAY_OVERRIDES[fighter].compareProfile, window.COMPARE_PROFILES[fighter]); } }
   function registerPacket(){ window.UFC_FIGHTER_PACKETS = window.UFC_FIGHTER_PACKETS || {}; window.UFC_FIGHTER_PACKETS[fighter] = packet; const current = window.UFC_FIGHTER_PACKET_SYSTEM || {}; const fighters = Array.from(new Set([...(current.fighters || []), fighter])); const packetExtensions = Array.from(new Set([...(current.packetExtensions || []), VERSION])); window.UFC_FIGHTER_PACKET_SYSTEM = { ...current, version: current.version || VERSION, purpose: current.purpose || 'Central source for fighter-facing app content during migration.', fighters, packetExtensions, appliedAt: new Date().toISOString() }; }
   applyDisplay(); applyCompare(); registerPacket();
