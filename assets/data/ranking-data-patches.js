@@ -1,6 +1,6 @@
 // Lightweight post-load status hook.
 (function(){
-  const VERSION = 'ranking-data-patches-20260702ap-midboard-packets';
+  const VERSION = 'ranking-data-patches-20260702aq-dc-stipe-ilia-izzy-yan-packets';
   const SLUG_OVERRIDES = {
     'B.J. Penn':'bj-penn','BJ Penn':'bj-penn','Georges St-Pierre':'georges-st-pierre','T.J. Dillashaw':'tj-dillashaw','TJ Dillashaw':'tj-dillashaw','Junior dos Santos':'junior-dos-santos','Mauricio Rua':'mauricio-rua','Maurício Rua':'mauricio-rua','Zabit Magomedsharipov':'zabit-magomedsharipov'
   };
@@ -77,6 +77,11 @@
       {src:'assets/data/fighter-packets/kamaru-usman.js?v=fighter-packet-kamaru-usman-20260702a',attr:'data-fighter-packet-kamaru-usman'},
       {src:'assets/data/fighter-packets/jose-aldo.js?v=fighter-packet-jose-aldo-20260702a',attr:'data-fighter-packet-jose-aldo'},
       {src:'assets/data/fighter-packets/matt-hughes.js?v=fighter-packet-matt-hughes-20260702a',attr:'data-fighter-packet-matt-hughes'},
+      {src:'assets/data/fighter-packets/daniel-cormier.js?v=fighter-packet-daniel-cormier-20260702a',attr:'data-fighter-packet-daniel-cormier'},
+      {src:'assets/data/fighter-packets/stipe-miocic.js?v=fighter-packet-stipe-miocic-20260702a',attr:'data-fighter-packet-stipe-miocic'},
+      {src:'assets/data/fighter-packets/ilia-topuria.js?v=fighter-packet-ilia-topuria-20260702a',attr:'data-fighter-packet-ilia-topuria'},
+      {src:'assets/data/fighter-packets/israel-adesanya.js?v=fighter-packet-israel-adesanya-20260702a',attr:'data-fighter-packet-israel-adesanya'},
+      {src:'assets/data/fighter-packets/petr-yan.js?v=fighter-packet-petr-yan-20260702a',attr:'data-fighter-packet-petr-yan'},
       {src:'assets/compare-mode.js?v=special-matchups-20260630l',attr:'data-compare-mode'},
       {src:'assets/compare-engine-v1-5.js?v=compare-engine-v1-5-20260630b',attr:'data-compare-engine-v1-5'},
       {src:'assets/compare-copy-fixes-v1.js?v=compare-copy-fixes-v1-20260630a',attr:'data-compare-copy-fixes-v1'}
