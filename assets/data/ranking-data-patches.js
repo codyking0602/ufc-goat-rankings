@@ -1,10 +1,91 @@
 // Lightweight post-load status hook.
 (function(){
-  const VERSION = 'ranking-data-patches-20260702ay-all-watch-moments';
+  const VERSION = 'ranking-data-patches-20260702az-justin-gaethje-test-add';
   const SLUG_OVERRIDES = {
     'B.J. Penn':'bj-penn','BJ Penn':'bj-penn','Georges St-Pierre':'georges-st-pierre','T.J. Dillashaw':'tj-dillashaw','TJ Dillashaw':'tj-dillashaw','Junior dos Santos':'junior-dos-santos','Mauricio Rua':'mauricio-rua','Maurício Rua':'mauricio-rua','Zabit Magomedsharipov':'zabit-magomedsharipov'
   };
   let fallbackInstalled = false;
+
+  const DYNAMIC_FIGHTERS = [
+    {
+      boardRow: {
+        rank: 27,
+        fighter: 'Justin Gaethje',
+        totalScore: 31.2,
+        championship: 5.6,
+        opponentQuality: 11.6,
+        primeDominance: 18.3,
+        longevity: 8.1,
+        penalty: -12.4,
+        leaderboard: 'men',
+        gender: 'Men',
+        ufcRecord: '11-5',
+        primaryDivision: 'Lightweight',
+        secondaryDivision: '',
+        finishRatePct: 72.7,
+        activeEliteYears: 7.0,
+        timesFinishedPrime: 5,
+        primeRecord: '8-5 in title/elite window',
+        roundsWonPct: 57.5,
+        notes: 'Runtime test add. Modern lightweight strength helps the case, but major prime finish losses cap the GOAT score.'
+      },
+      profile: {
+        id: 'JG001',
+        fighter: 'Justin Gaethje',
+        gender: 'Men',
+        primaryDivision: 'Lightweight',
+        secondaryDivision: '',
+        scope: 'UFC',
+        ufcRecord: '11-5',
+        ufcWins: 11,
+        ufcLosses: 5,
+        scoredUfcFights: 16,
+        finishWins: 8,
+        finishRatePct: 72.7,
+        timesFinishedPrime: 5,
+        lossPenalty: -12.4,
+        activeEliteYears: 7.0,
+        primeStart: 'Tony Ferguson 2020',
+        primeEnd: 'active/title-level window',
+        notes: 'UFC-only. WSOF title is historical context only and is not scored.',
+        rank: 27,
+        totalScore: 31.2,
+        championship: 5.6,
+        opponentQuality: 11.6,
+        primeDominance: 18.3,
+        longevity: 8.1,
+        penalty: -12.4,
+        leaderboard: 'men',
+        title: {
+          normalTitleWins: 1.0,
+          interimTitleWins: 2.0,
+          vacantUndisputedWins: 0.0,
+          secondDivisionUndisputedWins: 0.0,
+          vacantSecondDivisionWins: 0.0,
+          adjustedTitleWins: 2.5,
+          notes: 'Starter estimate for app test. Total title fight wins = 3.'
+        },
+        opponents: [
+          { opponent: 'Tony Ferguson', date: '2020-05-09', division: 'Lightweight', context: 'Interim lightweight title win over elite contender', credit: 1.0, type: 'Full' },
+          { opponent: 'Dustin Poirier', date: '2023-07-29', division: 'Lightweight', context: 'Elite lightweight rematch win and BMF title moment', credit: 1.0, type: 'Full' },
+          { opponent: 'Michael Chandler', date: '2021-11-06', division: 'Lightweight', context: 'Ranked lightweight war against elite action fighter', credit: 0.8, type: 'Partial' },
+          { opponent: 'Rafael Fiziev', date: '2023-03-18', division: 'Lightweight', context: 'Modern ranked lightweight win', credit: 0.75, type: 'Partial' },
+          { opponent: 'Edson Barboza', date: '2019-03-30', division: 'Lightweight', context: 'Ranked lightweight knockout win', credit: 0.7, type: 'Partial' },
+          { opponent: 'Donald Cerrone', date: '2019-09-14', division: 'Lightweight', context: 'Veteran ranked-name UFC win', credit: 0.55, type: 'Partial' },
+          { opponent: 'Michael Johnson', date: '2017-07-07', division: 'Lightweight', context: 'Explosive UFC debut win', credit: 0.45, type: 'Partial' }
+        ],
+        rounds: [
+          { opponent: 'Tony Ferguson', method: 'TKO win', roundsWon: 4, roundsCounted: 5 },
+          { opponent: 'Dustin Poirier 2', method: 'KO win', roundsWon: 1, roundsCounted: 2 },
+          { opponent: 'Michael Chandler', method: 'Decision win', roundsWon: 2, roundsCounted: 3 },
+          { opponent: 'Rafael Fiziev', method: 'Decision win', roundsWon: 2, roundsCounted: 3 },
+          { opponent: 'Khabib Nurmagomedov', method: 'Submission loss', roundsWon: 0, roundsCounted: 2 },
+          { opponent: 'Charles Oliveira', method: 'Submission loss', roundsWon: 0, roundsCounted: 1 },
+          { opponent: 'Max Holloway', method: 'KO loss', roundsWon: 1, roundsCounted: 5 }
+        ]
+      }
+    }
+  ];
 
   function slugFor(name){
     if(SLUG_OVERRIDES[name]) return SLUG_OVERRIDES[name];
@@ -18,6 +99,34 @@
     (window.RANKING_DATA?.men||[]).forEach(push);
     (window.RANKING_DATA?.women||[]).forEach(push);
     return names;
+  }
+  function upsertByFighter(rows,row){
+    if(!Array.isArray(rows) || !row?.fighter) return;
+    const index=rows.findIndex(x=>x?.fighter===row.fighter);
+    if(index>=0){ rows[index]={...rows[index],...row}; return; }
+    rows.push(row);
+  }
+  function addCompareOption(name){
+    ['fighterA','fighterB'].forEach(id=>{
+      const select=document.getElementById(id);
+      if(!select || Array.from(select.options).some(o=>o.value===name)) return;
+      const option=document.createElement('option');
+      option.value=name;
+      option.textContent=name;
+      select.appendChild(option);
+    });
+  }
+  function applyDynamicFighterRows(){
+    if(!window.RANKING_DATA) return [];
+    const added=[];
+    DYNAMIC_FIGHTERS.forEach(item=>{
+      upsertByFighter(window.RANKING_DATA.men,item.boardRow);
+      upsertByFighter(window.RANKING_DATA.fighters,item.profile);
+      addCompareOption(item.boardRow.fighter);
+      added.push(item.boardRow.fighter);
+    });
+    window.UFC_DYNAMIC_FIGHTER_ROWS={version:VERSION,fighters:added,appliedAt:new Date().toISOString()};
+    return added;
   }
   function applyPhotoPathDefaults(){
     if(typeof DISPLAY_OVERRIDES==='undefined') return [];
@@ -61,10 +170,11 @@
   function refreshApp(){ if(typeof refresh==='function'){ try{ refresh(); }catch(e){} } setTimeout(scanBrokenImages,250); }
   function status(){
     installImageFallback();
+    const dynamicFighters=applyDynamicFighterRows();
     const photoDefaults=applyPhotoPathDefaults();
     const packetProfileStatsSynced=syncPacketProfileStats();
     refreshApp();
-    window.UFC_PHASE2_DATA_STATUS={version:VERSION,mode:'lightweight-status-hook',profileTemplateSystem:!!window.UFC_PROFILE_TEMPLATE_SYSTEM,fighterProfilePackages:!!window.UFC_FIGHTER_PROFILE_PACKAGES,fighterPackets:!!window.UFC_FIGHTER_PACKET_SYSTEM,watchMoments:!!window.UFC_WATCH_MOMENTS,homePolish:!!window.UFC_HOME_POLISH,divisionRankings:!!window.UFC_DIVISION_RANKINGS,appBranding:!!window.UFC_APP_BRANDING,compareNarrative:!!window.UFC_COMPARE_NARRATIVE_SYSTEM,compareVerdictClarity:!!window.UFC_COMPARE_VERDICT_CLARITY,compareNarrativeWatchdog:!!window.UFC_COMPARE_NARRATIVE_WATCHDOG,compareProfiles:typeof COMPARE_PROFILES!=='undefined',compareLedger:typeof COMPARE_FIGHT_LEDGER!=='undefined',packagedFighters:window.UFC_FIGHTER_PROFILE_PACKAGES?.fighters||[],packetFighters:window.UFC_FIGHTER_PACKET_SYSTEM?.fighters||[],watchMomentFighters:window.UFC_WATCH_MOMENTS?.fighters||[],packetProfileStatsSynced,photoDefaults,appliedAt:new Date().toISOString()};
+    window.UFC_PHASE2_DATA_STATUS={version:VERSION,mode:'lightweight-status-hook',profileTemplateSystem:!!window.UFC_PROFILE_TEMPLATE_SYSTEM,fighterProfilePackages:!!window.UFC_FIGHTER_PROFILE_PACKAGES,fighterPackets:!!window.UFC_FIGHTER_PACKET_SYSTEM,watchMoments:!!window.UFC_WATCH_MOMENTS,homePolish:!!window.UFC_HOME_POLISH,divisionRankings:!!window.UFC_DIVISION_RANKINGS,appBranding:!!window.UFC_APP_BRANDING,compareNarrative:!!window.UFC_COMPARE_NARRATIVE_SYSTEM,compareVerdictClarity:!!window.UFC_COMPARE_VERDICT_CLARITY,compareNarrativeWatchdog:!!window.UFC_COMPARE_NARRATIVE_WATCHDOG,compareProfiles:typeof COMPARE_PROFILES!=='undefined',compareLedger:typeof COMPARE_FIGHT_LEDGER!=='undefined',dynamicFighters,packagedFighters:window.UFC_FIGHTER_PROFILE_PACKAGES?.fighters||[],packetFighters:window.UFC_FIGHTER_PACKET_SYSTEM?.fighters||[],watchMomentFighters:window.UFC_WATCH_MOMENTS?.fighters||[],packetProfileStatsSynced,photoDefaults,appliedAt:new Date().toISOString()};
     document.documentElement.setAttribute('data-phase2-data-patch',VERSION);
   }
   function loadScriptOnce(src,attr,done){
@@ -104,6 +214,7 @@
       {src:'assets/data/fighter-packets/charles-oliveira.js?v=fighter-packet-charles-oliveira-20260702a',attr:'data-fighter-packet-charles-oliveira'},
       {src:'assets/data/fighter-packets/henry-cejudo.js?v=fighter-packet-henry-cejudo-20260702a',attr:'data-fighter-packet-henry-cejudo'},
       {src:'assets/data/fighter-packets/conor-mcgregor.js?v=fighter-packet-conor-mcgregor-20260702a',attr:'data-fighter-packet-conor-mcgregor'},
+      {src:'assets/data/fighter-packets/justin-gaethje.js?v=fighter-packet-justin-gaethje-20260702a',attr:'data-fighter-packet-justin-gaethje'},
       {src:'assets/data/fighter-packets/amanda-nunes.js?v=fighter-packet-amanda-nunes-20260702a',attr:'data-fighter-packet-amanda-nunes'},
       {src:'assets/data/fighter-packets/valentina-shevchenko.js?v=fighter-packet-valentina-shevchenko-20260702a',attr:'data-fighter-packet-valentina-shevchenko'},
       {src:'assets/data/fighter-packets/joanna-jedrzejczyk.js?v=fighter-packet-joanna-jedrzejczyk-20260702b',attr:'data-fighter-packet-joanna-jedrzejczyk'},
@@ -124,8 +235,9 @@
     if(window.UFC_PROFILE_TEMPLATE_SYSTEM){ loadPackages(); return; }
     loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260701a','data-profile-template-system',loadPackages);
   }
-  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Status hook, module loader, default fighter photo paths, compare verdict clarity loader, fighter packet loader, and fighter packet stat bridge',updated:'2026-07-02',version:VERSION},apply:status,slugFor,syncPacketProfileStats};
+  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Status hook, module loader, default fighter photo paths, compare verdict clarity loader, fighter packet loader, fighter packet stat bridge, and temporary new-fighter runtime add-on',updated:'2026-07-02',version:VERSION},apply:status,slugFor,syncPacketProfileStats,applyDynamicFighterRows};
   installImageFallback();
+  applyDynamicFighterRows();
   applyPhotoPathDefaults();
   syncPacketProfileStats();
   loadModules();
