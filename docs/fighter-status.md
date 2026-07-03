@@ -68,15 +68,15 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 | Charles Oliveira | Men #24 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Charles photos/watch | `assets/data/fighter-packets/charles-oliveira.js` |
 | Henry Cejudo | Men #24 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Henry photos/watch | `assets/data/fighter-packets/henry-cejudo.js` |
 | Conor McGregor | Men #26 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Conor photos/watch | `assets/data/fighter-packets/conor-mcgregor.js` |
-| Amanda Nunes | Women #1 | Compare strong, app polish incomplete | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | 🟡 | Add packet/profile/watch | Fighter packet system |
-| Valentina Shevchenko | Women #2 | Compare strong, app polish incomplete | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | 🟡 | Add packet/profile/watch | Fighter packet system |
-| Joanna Jedrzejczyk | Women #3 | Ranking only | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | 🟡 | Full packet needed | Fighter packet system |
-| Ronda Rousey | Women #4 | Ranking only | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | 🟡 | Full packet needed | Fighter packet system |
+| Amanda Nunes | Women #1 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Amanda photos/watch | `assets/data/fighter-packets/amanda-nunes.js` |
+| Valentina Shevchenko | Women #2 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Valentina photos/watch | `assets/data/fighter-packets/valentina-shevchenko.js` |
+| Joanna Jedrzejczyk | Women #3 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | Add Joanna photos/watch | `assets/data/fighter-packets/joanna-jedrzejczyk.js` |
+| Ronda Rousey | Women #4 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | Add Ronda photos/watch | `assets/data/fighter-packets/ronda-rousey.js` |
 
 ## Current priorities
 
-1. Live packet coverage now runs from Jon through Conor.
-2. Watch Moment links still needed for Cain, Merab, BJ, Alex Pereira, Chuck, Cruz, Francis, Charles, Henry, and Conor.
-3. Photos still needed for Cruz, Francis, Charles, Henry, and Conor.
-4. Final current-roster batch: Amanda, Valentina, Joanna, and Ronda.
+1. Every current ranked fighter now has a live packet.
+2. Watch Moment links still needed for Cain, Merab, BJ, Alex Pereira, Chuck, Cruz, Francis, Charles, Henry, Conor, Amanda, Valentina, Joanna, and Ronda.
+3. Photos still needed for Cruz, Francis, Charles, Henry, Conor, Amanda, Valentina, Joanna, and Ronda.
+4. Next cleanup should focus on photos, Watch Moments, and then testing Compare Mode pairings.
 5. Only add new fighters after the current roster has clean packets or intentional partial status.
