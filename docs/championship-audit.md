@@ -55,6 +55,10 @@ Cody locked these on 2026-07-03.
 | Petr Yan current title count | Locked at 2.65: Aldo vacant title 0.90 + Sandhagen interim 0.75 + recent normal title win 1.00. |
 | Justin Gaethje current title count | Locked at 2.50: Tony Ferguson interim 0.75 + Paddy Pimblett interim 0.75 + Ilia Topuria undisputed title 1.00. |
 | Dan Henderson UFC 17 tournament | Small old-era tournament credit of 0.50; not treated like a modern UFC title win. |
+| Amanda Nunes Cyborg second-division featherweight title | Full 1.25 because Cyborg was sitting champion. Thin WFW depth belongs outside Championship. |
+| Valentina Shevchenko vacant flyweight title | 0.90 vacant-title credit. Close Santos defense still counts normal 1.00. |
+| Ronda Rousey UFC debut/title defense | Counts as normal 1.00 title defense; Strikeforce title capture is not separately scored. |
+| Joanna Jedrzejczyk title reign | Six normal UFC strawweight title wins/defenses = 6.00. |
 
 ---
 
@@ -98,6 +102,26 @@ Cody locked these on 2026-07-03.
 
 ---
 
+## Final women’s Championship audit table
+
+| Fighter | Championship Index | Championship Score | Status |
+|---|---:|---:|---|
+| Amanda Nunes | 11.25 | 21.36 | Locked |
+| Valentina Shevchenko | 10.90 | 20.70 | Locked |
+| Ronda Rousey | 6.00 | 11.39 | Locked |
+| Joanna Jedrzejczyk | 6.00 | 11.39 | Locked |
+
+Women’s audit notes:
+
+- Amanda: 10 normal UFC title wins/defenses + Cyborg second-division sitting-champ featherweight title 1.25 = 11.25.
+- Valentina: vacant UFC flyweight title vs Joanna 0.90 + 10 normal flyweight title wins/defenses = 10.90.
+- Ronda: six UFC bantamweight title-fight wins/defenses = 6.00. She does not get extra credit for Strikeforce title capture because this is UFC-only.
+- Joanna: Esparza title capture + Penne, Letourneau, Gadelha 2, Kowalkiewicz, and Andrade defenses = 6.00.
+- Women’s featherweight thinness does not discount Amanda’s Cyborg title win in Championship. It belongs in Opponent Quality / Prime Dominance context.
+- Valentina’s close Taila Santos defense counts as normal 1.00 in Championship because official close title wins are not discounted here.
+
+---
+
 ## Key title breakdowns
 
 - Jon Jones: 13 normal + 1 interim 0.75 + 1 vacant undisputed 0.90 + 1 vacant second-division 1.15 = 15.80.
@@ -128,6 +152,10 @@ Cody locked these on 2026-07-03.
 - Francis: Stipe title win + Gane defense = 2.00.
 - Dustin: Max Holloway interim LW title = 0.75. BMF bouts and title losses do not add Championship credit.
 - Dan Henderson: UFC 17 tournament = 0.50. No UFC undisputed title wins.
+- Amanda: 10 normal + Cyborg second-division sitting-champ title 1.25 = 11.25.
+- Valentina: vacant flyweight title 0.90 + 10 normal flyweight title wins/defenses = 10.90.
+- Ronda: six normal UFC bantamweight title wins/defenses = 6.00.
+- Joanna: six normal UFC strawweight title wins/defenses = 6.00.
 
 ---
 
@@ -150,4 +178,6 @@ The correction module also re-sorts the men’s board by total raw score after a
 
 Men’s Championship audit: complete and locked.
 
-Remaining optional scope: run the same audit for the women’s board.
+Women’s Championship audit: complete and locked.
+
+No Championship score edits are currently indicated for the women’s board.
