@@ -57,12 +57,12 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 | Stipe Miocic | Men #14 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Stipe fix needed | `assets/data/fighter-packets/stipe-miocic.js` |
 | Ilia Topuria | Men #15 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Ilia fix needed | `assets/data/fighter-packets/ilia-topuria.js` |
 | Israel Adesanya | Men #15 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Izzy fix needed | `assets/data/fighter-packets/israel-adesanya.js` |
-| Cain Velasquez | Men #16 | Ranking only | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | 🟡 | Full packet needed | Fighter packet system |
-| Petr Yan | Men #16 | Packet live, Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | Add Petr Watch Moment link | `assets/data/fighter-packets/petr-yan.js` |
-| Merab Dvalishvili | Men #17 | Compare strong, app polish incomplete | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | 🟡 | Add packet/profile/watch | Fighter packet system |
-| B.J. Penn | Men #18 | Compare strong, app polish incomplete | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | 🟡 | Add packet/profile/watch | Fighter packet system |
-| Alex Pereira | Men #20 | Compare strong, app polish incomplete | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | 🟡 | Add packet/profile/watch | Fighter packet system |
-| Chuck Liddell | Men #21 | Compare strong, app polish incomplete | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | 🟡 | Add packet/profile/watch | Fighter packet system |
+| Cain Velasquez | Men #16 | Packet live, Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ | Add Cain Watch Moment link | `assets/data/fighter-packets/cain-velasquez.js` |
+| Petr Yan | Men #16 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Yan fix needed | `assets/data/fighter-packets/petr-yan.js` |
+| Merab Dvalishvili | Men #17 | Packet live, Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | Add Merab Watch Moment link | `assets/data/fighter-packets/merab-dvalishvili.js` |
+| B.J. Penn | Men #18 | Packet live, Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | Add BJ Watch Moment link | `assets/data/fighter-packets/bj-penn.js` |
+| Alex Pereira | Men #20 | Packet live, Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | Add Alex Pereira Watch Moment link | `assets/data/fighter-packets/alex-pereira.js` |
+| Chuck Liddell | Men #21 | Packet live, Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | Add Chuck Watch Moment link | `assets/data/fighter-packets/chuck-liddell.js` |
 | Dominick Cruz | Men #22 | Compare strong, app polish incomplete | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | 🟡 | Add packet/profile/watch | Fighter packet system |
 | Francis Ngannou | Men #23 | Compare strong, app polish incomplete | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | 🟡 | Add packet/profile/watch | Fighter packet system |
 | Charles Oliveira | Men #24 | Partial compare only | ❌ | ✅ | ❌ | ❌ | 🟡 | ✅ | ❌ | 🟡 | Full packet needed | Fighter packet system |
@@ -75,8 +75,8 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 
 ## Current priorities
 
-1. Top fifteen plus Petr Yan now have live packets: Jon, GSP, DJ, Anderson, Islam, Khabib, Volk, Randy, Max, Usman, Aldo, Hughes, DC, Stipe, Ilia, Izzy, and Yan.
-2. Petr Yan still needs a Cody-approved Watch Moment link.
-3. Next batch should be Cain, Merab, BJ, Alex Pereira, and Chuck.
-4. Then finish Dominick Cruz, Francis, Charles, Henry, Conor, Amanda, Valentina, Joanna, and Ronda.
+1. Live packet coverage now runs from Jon through Chuck, with Petr Yan fully complete after Cody supplied the Watch Moment link.
+2. Watch Moment links still needed for Cain, Merab, BJ, Alex Pereira, and Chuck.
+3. Next batch should be Dominick Cruz, Francis Ngannou, Charles Oliveira, Henry Cejudo, and Conor McGregor.
+4. Then finish Amanda, Valentina, Joanna, and Ronda.
 5. Only add new fighters after the current roster has clean packets or intentional partial status.
