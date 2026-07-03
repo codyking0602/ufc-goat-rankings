@@ -1,10 +1,10 @@
 // Justin Gaethje fighter packet extension.
 (function(){
-  const VERSION = 'fighter-packet-justin-gaethje-20260702b';
+  const VERSION = 'fighter-packet-justin-gaethje-20260702c';
   const fighter = 'Justin Gaethje';
 
   const packet = {
-    status: { stage: 'packet live; undisputed title update; photos and Watch Moment needed', lastUpdated: '2026-07-02', nextFix: 'Add Gaethje photos and Watch Moment link. Move raw row into ranking-data.js if permanent.' },
+    status: { stage: 'packet live; undisputed title update; Watch Moment added; photos needed', lastUpdated: '2026-07-02', nextFix: 'Add Gaethje photos. Move raw row into ranking-data.js if permanent.' },
     repoLocations: { scoreSource: 'assets/data/ranking-data-patches.js runtime add-on for first test fighter', centralPacket: 'assets/data/fighter-packets/justin-gaethje.js', displayFallback: 'assets/data/display-overrides.js', watchFallback: 'assets/js/watch-moments.js', photos: 'Add assets/fighters/justin-gaethje.webp and assets/fighters/justin-gaethje-thumb.webp when real files exist.' },
     display: {
       overallOvr: 86, allTimeRank: 22, divisionLabel: 'LW', resumeTag: 'Undisputed lightweight chaos case',
@@ -51,12 +51,13 @@
         fighters: ['Justin Gaethje', 'Max Holloway'], fights: 1, winner: 'Max Holloway', importance: 'major',
         summary: 'Holloway knocked out Gaethje in one of the signature UFC moments. Gaethje still has a strong lightweight résumé, but Max owns the direct result.'
       }
-    }
+    },
+    watchMoment: { url: 'https://youtube.com/shorts/2LxEazU0vuM?is=tHj1Dxylleh4yGG7', label: 'Watch Moment' }
   };
 
   function mergeLegacyStats(a,b){ return { ...(a || {}), ...(b || {}) }; }
   function mergeCompareProfile(a,b){ return { ...(a || {}), ...(b || {}), legacyStats: mergeLegacyStats((a || {}).legacyStats, (b || {}).legacyStats) }; }
-  function applyDisplay(){ if(typeof DISPLAY_OVERRIDES === 'undefined') return; DISPLAY_OVERRIDES[fighter] = { ...(DISPLAY_OVERRIDES[fighter] || {}), ...(packet.display || {}) }; DISPLAY_OVERRIDES[fighter].packetProfileStats = { ...(DISPLAY_OVERRIDES[fighter].packetProfileStats || {}), ...(packet.profileStats || {}) }; DISPLAY_OVERRIDES[fighter].packetStatus = packet.status || {}; DISPLAY_OVERRIDES[fighter].repoLocations = packet.repoLocations || {}; }
+  function applyDisplay(){ if(typeof DISPLAY_OVERRIDES === 'undefined') return; DISPLAY_OVERRIDES[fighter] = { ...(DISPLAY_OVERRIDES[fighter] || {}), ...(packet.display || {}) }; if(packet.watchMoment?.url){ DISPLAY_OVERRIDES[fighter].watchUrl = packet.watchMoment.url; DISPLAY_OVERRIDES[fighter].watchLabel = packet.watchMoment.label || 'Watch Moment'; } DISPLAY_OVERRIDES[fighter].packetProfileStats = { ...(DISPLAY_OVERRIDES[fighter].packetProfileStats || {}), ...(packet.profileStats || {}) }; DISPLAY_OVERRIDES[fighter].packetStatus = packet.status || {}; DISPLAY_OVERRIDES[fighter].repoLocations = packet.repoLocations || {}; }
   function applyCompare(){ window.COMPARE_PROFILES = window.COMPARE_PROFILES || {}; window.COMPARE_PROFILES[fighter] = mergeCompareProfile(window.COMPARE_PROFILES[fighter], packet.compareSeasoning); if(typeof DISPLAY_OVERRIDES !== 'undefined'){ DISPLAY_OVERRIDES[fighter] = DISPLAY_OVERRIDES[fighter] || {}; DISPLAY_OVERRIDES[fighter].compareProfile = mergeCompareProfile(DISPLAY_OVERRIDES[fighter].compareProfile, window.COMPARE_PROFILES[fighter]); } }
   function applyLedger(){ window.COMPARE_FIGHT_LEDGER = { ...(window.COMPARE_FIGHT_LEDGER || {}), ...(packet.fightLedger || {}) }; }
   function registerPacket(){ window.UFC_FIGHTER_PACKETS = window.UFC_FIGHTER_PACKETS || {}; window.UFC_FIGHTER_PACKETS[fighter] = packet; const current = window.UFC_FIGHTER_PACKET_SYSTEM || {}; const fighters = Array.from(new Set([...(current.fighters || []), fighter])); const packetExtensions = Array.from(new Set([...(current.packetExtensions || []), VERSION])); window.UFC_FIGHTER_PACKET_SYSTEM = { ...current, version: current.version || VERSION, purpose: 'Central source for fighter-facing app content during migration.', fighters, packetExtensions, appliedAt: new Date().toISOString() }; }
