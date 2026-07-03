@@ -1,6 +1,6 @@
 // Lightweight post-load status hook.
 (function(){
-  const VERSION = 'ranking-data-patches-20260702av-cain-merab-bj-watch-moments';
+  const VERSION = 'ranking-data-patches-20260702aw-packet-profile-stat-bridge';
   const SLUG_OVERRIDES = {
     'B.J. Penn':'bj-penn','BJ Penn':'bj-penn','Georges St-Pierre':'georges-st-pierre','T.J. Dillashaw':'tj-dillashaw','TJ Dillashaw':'tj-dillashaw','Junior dos Santos':'junior-dos-santos','Mauricio Rua':'mauricio-rua','Maurício Rua':'mauricio-rua','Zabit Magomedsharipov':'zabit-magomedsharipov'
   };
@@ -31,6 +31,17 @@
     window.UFC_PHOTO_PATH_DEFAULTS={version:VERSION,mapped};
     return mapped;
   }
+  function syncPacketProfileStats(){
+    if(typeof DISPLAY_OVERRIDES==='undefined') return [];
+    const synced=[];
+    Object.entries(DISPLAY_OVERRIDES).forEach(([fighter,override])=>{
+      if(!override?.packetProfileStats) return;
+      override.snapshotStats={...(override.snapshotStats||{}),...(override.packetProfileStats||{})};
+      synced.push(fighter);
+    });
+    window.UFC_PACKET_PROFILE_STAT_BRIDGE={version:VERSION,synced,appliedAt:new Date().toISOString()};
+    return synced;
+  }
   function fallbackImage(img){
     if(!img || img.dataset.ufcPhotoFallbackApplied) return;
     const src=img.getAttribute('src')||''; if(!src.includes('assets/fighters/')) return;
@@ -51,8 +62,9 @@
   function status(){
     installImageFallback();
     const photoDefaults=applyPhotoPathDefaults();
+    const packetProfileStatsSynced=syncPacketProfileStats();
     refreshApp();
-    window.UFC_PHASE2_DATA_STATUS={version:VERSION,mode:'lightweight-status-hook',profileTemplateSystem:!!window.UFC_PROFILE_TEMPLATE_SYSTEM,fighterProfilePackages:!!window.UFC_FIGHTER_PROFILE_PACKAGES,fighterPackets:!!window.UFC_FIGHTER_PACKET_SYSTEM,watchMoments:!!window.UFC_WATCH_MOMENTS,homePolish:!!window.UFC_HOME_POLISH,divisionRankings:!!window.UFC_DIVISION_RANKINGS,appBranding:!!window.UFC_APP_BRANDING,compareNarrative:!!window.UFC_COMPARE_NARRATIVE_SYSTEM,compareVerdictClarity:!!window.UFC_COMPARE_VERDICT_CLARITY,compareNarrativeWatchdog:!!window.UFC_COMPARE_NARRATIVE_WATCHDOG,compareProfiles:typeof COMPARE_PROFILES!=='undefined',compareLedger:typeof COMPARE_FIGHT_LEDGER!=='undefined',packagedFighters:window.UFC_FIGHTER_PROFILE_PACKAGES?.fighters||[],packetFighters:window.UFC_FIGHTER_PACKET_SYSTEM?.fighters||[],watchMomentFighters:window.UFC_WATCH_MOMENTS?.fighters||[],photoDefaults,appliedAt:new Date().toISOString()};
+    window.UFC_PHASE2_DATA_STATUS={version:VERSION,mode:'lightweight-status-hook',profileTemplateSystem:!!window.UFC_PROFILE_TEMPLATE_SYSTEM,fighterProfilePackages:!!window.UFC_FIGHTER_PROFILE_PACKAGES,fighterPackets:!!window.UFC_FIGHTER_PACKET_SYSTEM,watchMoments:!!window.UFC_WATCH_MOMENTS,homePolish:!!window.UFC_HOME_POLISH,divisionRankings:!!window.UFC_DIVISION_RANKINGS,appBranding:!!window.UFC_APP_BRANDING,compareNarrative:!!window.UFC_COMPARE_NARRATIVE_SYSTEM,compareVerdictClarity:!!window.UFC_COMPARE_VERDICT_CLARITY,compareNarrativeWatchdog:!!window.UFC_COMPARE_NARRATIVE_WATCHDOG,compareProfiles:typeof COMPARE_PROFILES!=='undefined',compareLedger:typeof COMPARE_FIGHT_LEDGER!=='undefined',packagedFighters:window.UFC_FIGHTER_PROFILE_PACKAGES?.fighters||[],packetFighters:window.UFC_FIGHTER_PACKET_SYSTEM?.fighters||[],watchMomentFighters:window.UFC_WATCH_MOMENTS?.fighters||[],packetProfileStatsSynced,photoDefaults,appliedAt:new Date().toISOString()};
     document.documentElement.setAttribute('data-phase2-data-patch',VERSION);
   }
   function loadScriptOnce(src,attr,done){
@@ -85,7 +97,7 @@
       {src:'assets/data/fighter-packets/cain-velasquez.js?v=fighter-packet-cain-velasquez-20260702b',attr:'data-fighter-packet-cain-velasquez'},
       {src:'assets/data/fighter-packets/merab-dvalishvili.js?v=fighter-packet-merab-dvalishvili-20260702b',attr:'data-fighter-packet-merab-dvalishvili'},
       {src:'assets/data/fighter-packets/bj-penn.js?v=fighter-packet-bj-penn-20260702b',attr:'data-fighter-packet-bj-penn'},
-      {src:'assets/data/fighter-packets/alex-pereira.js?v=fighter-packet-alex-pereira-20260702a',attr:'data-fighter-packet-alex-pereira'},
+      {src:'assets/data/fighter-packets/alex-pereira.js?v=fighter-packet-alex-pereira-20260702b',attr:'data-fighter-packet-alex-pereira'},
       {src:'assets/data/fighter-packets/chuck-liddell.js?v=fighter-packet-chuck-liddell-20260702a',attr:'data-fighter-packet-chuck-liddell'},
       {src:'assets/data/fighter-packets/dominick-cruz.js?v=fighter-packet-dominick-cruz-20260702a',attr:'data-fighter-packet-dominick-cruz'},
       {src:'assets/data/fighter-packets/francis-ngannou.js?v=fighter-packet-francis-ngannou-20260702a',attr:'data-fighter-packet-francis-ngannou'},
@@ -112,9 +124,10 @@
     if(window.UFC_PROFILE_TEMPLATE_SYSTEM){ loadPackages(); return; }
     loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260701a','data-profile-template-system',loadPackages);
   }
-  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Status hook, module loader, default fighter photo paths, compare verdict clarity loader, and fighter packet loader',updated:'2026-07-02',version:VERSION},apply:status,slugFor};
+  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Status hook, module loader, default fighter photo paths, compare verdict clarity loader, fighter packet loader, and fighter packet stat bridge',updated:'2026-07-02',version:VERSION},apply:status,slugFor,syncPacketProfileStats};
   installImageFallback();
   applyPhotoPathDefaults();
+  syncPacketProfileStats();
   loadModules();
   window.UFC_PHASE2_DATA_REFRESH=status;
 })();
