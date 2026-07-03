@@ -1,10 +1,10 @@
 // Ronda Rousey fighter packet extension.
 (function(){
-  const VERSION = 'fighter-packet-ronda-rousey-20260702a';
+  const VERSION = 'fighter-packet-ronda-rousey-20260702b';
   const fighter = 'Ronda Rousey';
   const packet = {
     status: { stage: 'packet live; photos and Watch Moment needed', lastUpdated: '2026-07-02', nextFix: 'Add Ronda photos and Watch Moment link.' },
-    repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/ronda-rousey.js' },
+    repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/ronda-rousey.js', compareFallback: 'assets/compare-coverage-pack-2.js' },
     display: {
       overallOvr: 85,
       allTimeRank: 4,
@@ -35,12 +35,22 @@
       primeSummary: 'Her prime was short, violent, and transformative, then ended sharply in two damaging losses.',
       titleStyle: 'Original Women’s UFC Champion', primeStyle: 'Short Armbar-Aura Prime',
       legacyStats: { ufcRecord: '6-2', titleFightWins: 6, beltsWon: 1, titleDefenses: 6, activeEliteYearsLabel: 'roughly 3 active elite years', primeNote: 'short transformative women’s bantamweight title run with a sharp ending' }
+    },
+    fightLedger: {
+      'amanda nunes|ronda rousey': {
+        fighters: ['Amanda Nunes', 'Ronda Rousey'],
+        fights: 1,
+        winner: 'Amanda Nunes',
+        importance: 'major',
+        summary: 'Nunes finished Rousey quickly in a UFC bantamweight title fight. It is a clean direct result and a symbolic passing-of-the-torch moment in women’s UFC history.'
+      }
     }
   };
   function mergeLegacyStats(a,b){ return { ...(a || {}), ...(b || {}) }; }
   function mergeCompareProfile(a,b){ return { ...(a || {}), ...(b || {}), legacyStats: mergeLegacyStats((a || {}).legacyStats, (b || {}).legacyStats) }; }
   function applyDisplay(){ if(typeof DISPLAY_OVERRIDES === 'undefined') return; DISPLAY_OVERRIDES[fighter] = { ...(DISPLAY_OVERRIDES[fighter] || {}), ...(packet.display || {}) }; DISPLAY_OVERRIDES[fighter].packetProfileStats = { ...(DISPLAY_OVERRIDES[fighter].packetProfileStats || {}), ...(packet.profileStats || {}) }; DISPLAY_OVERRIDES[fighter].packetStatus = packet.status || {}; DISPLAY_OVERRIDES[fighter].repoLocations = packet.repoLocations || {}; }
   function applyCompare(){ window.COMPARE_PROFILES = window.COMPARE_PROFILES || {}; window.COMPARE_PROFILES[fighter] = mergeCompareProfile(window.COMPARE_PROFILES[fighter], packet.compareSeasoning); if(typeof DISPLAY_OVERRIDES !== 'undefined'){ DISPLAY_OVERRIDES[fighter] = DISPLAY_OVERRIDES[fighter] || {}; DISPLAY_OVERRIDES[fighter].compareProfile = mergeCompareProfile(DISPLAY_OVERRIDES[fighter].compareProfile, window.COMPARE_PROFILES[fighter]); } }
+  function applyLedger(){ window.COMPARE_FIGHT_LEDGER = { ...(window.COMPARE_FIGHT_LEDGER || {}), ...(packet.fightLedger || {}) }; }
   function registerPacket(){ window.UFC_FIGHTER_PACKETS = window.UFC_FIGHTER_PACKETS || {}; window.UFC_FIGHTER_PACKETS[fighter] = packet; const current = window.UFC_FIGHTER_PACKET_SYSTEM || {}; const fighters = Array.from(new Set([...(current.fighters || []), fighter])); const packetExtensions = Array.from(new Set([...(current.packetExtensions || []), VERSION])); window.UFC_FIGHTER_PACKET_SYSTEM = { ...current, version: current.version || VERSION, purpose: 'Central source for fighter-facing app content during migration.', fighters, packetExtensions, appliedAt: new Date().toISOString() }; }
-  applyDisplay(); applyCompare(); registerPacket();
+  applyDisplay(); applyCompare(); applyLedger(); registerPacket();
 })();
