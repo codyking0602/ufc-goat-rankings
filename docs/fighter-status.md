@@ -1,6 +1,6 @@
 # UFC GOAT App Fighter Status
 
-Last updated: 2026-07-02
+Last updated: 2026-07-03
 
 This is the permanent tracker for fighter completion. Use this instead of chat spreadsheets.
 
@@ -26,7 +26,7 @@ Do not put fighter data back into `index.html`.
 
 | Need | Current location | Future target |
 |---|---|---|
-| Raw ranking score and UFC stat row | `assets/data/ranking-data.js` | Keep here until scoring model refactor |
+| Raw ranking score and UFC stat row | `assets/data/ranking-data.js` plus `assets/data/ranking-data-additions.js` for hand-added fighters | Fold additions into base table during next scoring-table rebuild |
 | Card/profile polish | `assets/data/display-overrides.js` | Fighter packet system |
 | Standard profile stats | `assets/js/fighter-profile-packages.js` | Replaced by fighter packet system as fighters migrate |
 | Compare seasoning | `assets/compare-data.js`, compare coverage packs, phase files | Fighter packet system |
@@ -63,7 +63,7 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 | B.J. Penn | Men #18 | Packet live, Watch Moment added | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No BJ Watch Moment fix needed | `assets/data/fighter-packets/bj-penn.js` |
 | Alex Pereira | Men #20 | Packet live, Watch Moment added, Gane loss updated | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Raw scoring table can be recalculated later | `assets/data/fighter-packets/alex-pereira.js` |
 | Chuck Liddell | Men #21 | Packet live, Watch Moment added | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Chuck Watch Moment fix needed | `assets/data/fighter-packets/chuck-liddell.js` |
-| Justin Gaethje | Men #22 | Test fighter live; undisputed title update; Watch Moment added; photos needed | ✅ | 🟡 runtime | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Gaethje photos and move raw row into `ranking-data.js` if permanent | `assets/data/ranking-data-patches.js` + `assets/data/fighter-packets/justin-gaethje.js` |
+| Justin Gaethje | Men #22 | Permanent hand-added fighter; Watch Moment added; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Gaethje photos | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/justin-gaethje.js` |
 | Dominick Cruz | Men #22 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Cruz photos | `assets/data/fighter-packets/dominick-cruz.js` |
 | Francis Ngannou | Men #23 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Francis photos | `assets/data/fighter-packets/francis-ngannou.js` |
 | Charles Oliveira | Men #24 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Charles photos | `assets/data/fighter-packets/charles-oliveira.js` |
@@ -76,7 +76,7 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 
 ## Current priorities
 
-1. Justin Gaethje is live as the first test fighter through a runtime row plus packet, now updated for undisputed UFC lightweight title value and Watch Moment.
+1. Justin Gaethje is now permanent through `assets/data/ranking-data-additions.js` plus his fighter packet.
 2. Photos still needed for Cruz, Francis, Charles, Henry, Conor, Justin Gaethje, Amanda, Valentina, Joanna, and Ronda.
-3. If Gaethje becomes permanent, move the runtime ranking/profile row into `assets/data/ranking-data.js` during the next scoring-table cleanup.
+3. During the next full scoring-table rebuild, fold `assets/data/ranking-data-additions.js` into `assets/data/ranking-data.js`.
 4. Next cleanup should focus on photos, then testing Compare Mode pairings.
