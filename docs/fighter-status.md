@@ -61,6 +61,7 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 | Petr Yan | Men #16 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Yan fix needed | `assets/data/fighter-packets/petr-yan.js` |
 | Merab Dvalishvili | Men #17 | Packet live, Watch Moment added | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Merab Watch Moment fix needed | `assets/data/fighter-packets/merab-dvalishvili.js` |
 | B.J. Penn | Men #18 | Packet live, Watch Moment added | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No BJ Watch Moment fix needed | `assets/data/fighter-packets/bj-penn.js` |
+| Dustin Poirier | Men #19 | Permanent hand-added fighter; packet live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Dustin photos; add Watch Moment only if Cody provides URL | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/dustin-poirier.js` |
 | Alex Pereira | Men #20 | Packet live, Watch Moment added, Gane loss updated | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Raw scoring table can be recalculated later | `assets/data/fighter-packets/alex-pereira.js` |
 | Chuck Liddell | Men #21 | Packet live, Watch Moment added | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Chuck Watch Moment fix needed | `assets/data/fighter-packets/chuck-liddell.js` |
 | Justin Gaethje | Men #22 | Permanent hand-added fighter; Watch Moment added; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Gaethje photos | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/justin-gaethje.js` |
@@ -77,7 +78,7 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 
 ## Current priorities
 
-1. Justin Gaethje and Frankie Edgar are permanent through `assets/data/ranking-data-additions.js` plus fighter packets.
-2. Photos still needed for Cruz, Francis, Charles, Henry, Conor, Justin Gaethje, Frankie Edgar, Amanda, Valentina, Joanna, and Ronda.
+1. Justin Gaethje, Frankie Edgar, and Dustin Poirier are permanent through `assets/data/ranking-data-additions.js` plus fighter packets.
+2. Photos still needed for Cruz, Francis, Charles, Henry, Conor, Justin Gaethje, Frankie Edgar, Dustin Poirier, Amanda, Valentina, Joanna, and Ronda.
 3. During the next full scoring-table rebuild, fold `assets/data/ranking-data-additions.js` into `assets/data/ranking-data.js`.
 4. Next cleanup should focus on photos, then testing Compare Mode pairings.
