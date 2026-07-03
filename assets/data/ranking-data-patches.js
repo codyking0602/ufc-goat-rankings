@@ -1,6 +1,6 @@
 // Lightweight post-load status hook.
 (function(){
-  const VERSION = 'ranking-data-patches-20260702am-anderson-packet';
+  const VERSION = 'ranking-data-patches-20260702an-khabib-packet';
   const SLUG_OVERRIDES = {
     'B.J. Penn':'bj-penn','BJ Penn':'bj-penn','Georges St-Pierre':'georges-st-pierre','T.J. Dillashaw':'tj-dillashaw','TJ Dillashaw':'tj-dillashaw','Junior dos Santos':'junior-dos-santos','Mauricio Rua':'mauricio-rua','Maurício Rua':'mauricio-rua','Zabit Magomedsharipov':'zabit-magomedsharipov'
   };
@@ -69,6 +69,7 @@
       {src:'assets/data/fighter-packets.js?v=fighter-packets-20260702a',attr:'data-fighter-packets'},
       {src:'assets/data/fighter-packets/demetrious-johnson.js?v=fighter-packet-demetrious-johnson-20260702a',attr:'data-fighter-packet-demetrious-johnson'},
       {src:'assets/data/fighter-packets/anderson-silva.js?v=fighter-packet-anderson-silva-20260702a',attr:'data-fighter-packet-anderson-silva'},
+      {src:'assets/data/fighter-packets/khabib-nurmagomedov.js?v=fighter-packet-khabib-nurmagomedov-20260702a',attr:'data-fighter-packet-khabib-nurmagomedov'},
       {src:'assets/compare-mode.js?v=special-matchups-20260630l',attr:'data-compare-mode'},
       {src:'assets/compare-engine-v1-5.js?v=compare-engine-v1-5-20260630b',attr:'data-compare-engine-v1-5'},
       {src:'assets/compare-copy-fixes-v1.js?v=compare-copy-fixes-v1-20260630a',attr:'data-compare-copy-fixes-v1'}
