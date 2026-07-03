@@ -44,9 +44,9 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 | Jon Jones | Men #1 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Jon fix needed | `assets/data/fighter-packets.js` |
 | Georges St-Pierre | Men #2 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No GSP fix needed | `assets/data/fighter-packets.js` |
 | Demetrious Johnson | Men #3 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No DJ fix needed | `assets/data/fighter-packets/demetrious-johnson.js` |
-| Anderson Silva | Men #4 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Move to Khabib | `assets/data/fighter-packets/anderson-silva.js` |
-| Islam Makhachev | Men #5 | Strong core, migrate later | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Move content into packet | Fighter packet system |
-| Khabib Nurmagomedov | Men #6 | Strong core, migrate next | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 🟡 | Move content into packet | Fighter packet system |
+| Anderson Silva | Men #4 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Anderson fix needed | `assets/data/fighter-packets/anderson-silva.js` |
+| Islam Makhachev | Men #5 | Strong core, migrate next | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Move content into packet | Fighter packet system |
+| Khabib Nurmagomedov | Men #6 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Move to Islam | `assets/data/fighter-packets/khabib-nurmagomedov.js` |
 | Alexander Volkanovski | Men #7 | Strong core, migrate later | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 🟡 | Move content into packet | Fighter packet system |
 | Randy Couture | Men #8 | Needs display polish | ❌ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | 🟡 | Add packet/display polish | Fighter packet system |
 | Max Holloway | Men #9 | Strong core, migrate later | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 🟡 | Move content into packet | Fighter packet system |
@@ -79,7 +79,8 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 2. GSP is complete in the packet system.
 3. DJ is complete in the packet system.
 4. Anderson is complete in the packet system.
-5. Migrate Khabib next.
-6. Then migrate Islam and Volk.
-7. After the top tier is stable, add display/profile/watch polish for the mid-board fighters.
-8. Only add new fighters after the current roster has clean packets or intentional partial status.
+5. Khabib is complete in the packet system.
+6. Migrate Islam next.
+7. Then migrate Volk.
+8. After the top tier is stable, add display/profile/watch polish for the mid-board fighters.
+9. Only add new fighters after the current roster has clean packets or intentional partial status.
