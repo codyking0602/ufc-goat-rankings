@@ -1,1 +1,0 @@
-GSP packet migration note.
