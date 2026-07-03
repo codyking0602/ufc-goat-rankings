@@ -1,6 +1,6 @@
 // Lightweight post-load status hook.
 (function(){
-  const VERSION = 'ranking-data-patches-20260702az-justin-gaethje-test-add';
+  const VERSION = 'ranking-data-patches-20260702ba-justin-gaethje-title-update';
   const SLUG_OVERRIDES = {
     'B.J. Penn':'bj-penn','BJ Penn':'bj-penn','Georges St-Pierre':'georges-st-pierre','T.J. Dillashaw':'tj-dillashaw','TJ Dillashaw':'tj-dillashaw','Junior dos Santos':'junior-dos-santos','Mauricio Rua':'mauricio-rua','Maurício Rua':'mauricio-rua','Zabit Magomedsharipov':'zabit-magomedsharipov'
   };
@@ -9,25 +9,25 @@
   const DYNAMIC_FIGHTERS = [
     {
       boardRow: {
-        rank: 27,
+        rank: 22,
         fighter: 'Justin Gaethje',
-        totalScore: 31.2,
-        championship: 5.6,
-        opponentQuality: 11.6,
-        primeDominance: 18.3,
+        totalScore: 36.3,
+        championship: 7.0,
+        opponentQuality: 13.2,
+        primeDominance: 18.0,
         longevity: 8.1,
-        penalty: -12.4,
+        penalty: -10.0,
         leaderboard: 'men',
         gender: 'Men',
-        ufcRecord: '11-5',
+        ufcRecord: '12-5',
         primaryDivision: 'Lightweight',
         secondaryDivision: '',
-        finishRatePct: 72.7,
+        finishRatePct: 75.0,
         activeEliteYears: 7.0,
         timesFinishedPrime: 5,
-        primeRecord: '8-5 in title/elite window',
-        roundsWonPct: 57.5,
-        notes: 'Runtime test add. Modern lightweight strength helps the case, but major prime finish losses cap the GOAT score.'
+        primeRecord: '9-5 in title/elite window',
+        roundsWonPct: 58.5,
+        notes: 'Runtime test add. Gaethje now gets undisputed lightweight title value, modern lightweight strength, and the locked -10 loss-penalty cap.'
       },
       profile: {
         id: 'JG001',
@@ -36,25 +36,25 @@
         primaryDivision: 'Lightweight',
         secondaryDivision: '',
         scope: 'UFC',
-        ufcRecord: '11-5',
-        ufcWins: 11,
+        ufcRecord: '12-5',
+        ufcWins: 12,
         ufcLosses: 5,
-        scoredUfcFights: 16,
-        finishWins: 8,
-        finishRatePct: 72.7,
+        scoredUfcFights: 17,
+        finishWins: 9,
+        finishRatePct: 75.0,
         timesFinishedPrime: 5,
-        lossPenalty: -12.4,
+        lossPenalty: -10.0,
         activeEliteYears: 7.0,
         primeStart: 'Tony Ferguson 2020',
         primeEnd: 'active/title-level window',
-        notes: 'UFC-only. WSOF title is historical context only and is not scored.',
-        rank: 27,
-        totalScore: 31.2,
-        championship: 5.6,
-        opponentQuality: 11.6,
-        primeDominance: 18.3,
+        notes: 'UFC-only. WSOF title is historical context only and is not scored. Loss penalty is capped at -10.',
+        rank: 22,
+        totalScore: 36.3,
+        championship: 7.0,
+        opponentQuality: 13.2,
+        primeDominance: 18.0,
         longevity: 8.1,
-        penalty: -12.4,
+        penalty: -10.0,
         leaderboard: 'men',
         title: {
           normalTitleWins: 1.0,
@@ -63,11 +63,13 @@
           secondDivisionUndisputedWins: 0.0,
           vacantSecondDivisionWins: 0.0,
           adjustedTitleWins: 2.5,
-          notes: 'Starter estimate for app test. Total title fight wins = 3.'
+          notes: 'Undisputed lightweight title win plus two interim/title-level wins. Total title fight wins = 3.'
         },
         opponents: [
+          { opponent: 'Ilia Topuria', date: '2026-06-14', division: 'Lightweight', context: 'Undisputed lightweight title win over reigning champion', credit: 1.2, type: 'Full' },
           { opponent: 'Tony Ferguson', date: '2020-05-09', division: 'Lightweight', context: 'Interim lightweight title win over elite contender', credit: 1.0, type: 'Full' },
           { opponent: 'Dustin Poirier', date: '2023-07-29', division: 'Lightweight', context: 'Elite lightweight rematch win and BMF title moment', credit: 1.0, type: 'Full' },
+          { opponent: 'Paddy Pimblett', date: '2026-01-24', division: 'Lightweight', context: 'Interim lightweight title win', credit: 0.8, type: 'Partial' },
           { opponent: 'Michael Chandler', date: '2021-11-06', division: 'Lightweight', context: 'Ranked lightweight war against elite action fighter', credit: 0.8, type: 'Partial' },
           { opponent: 'Rafael Fiziev', date: '2023-03-18', division: 'Lightweight', context: 'Modern ranked lightweight win', credit: 0.75, type: 'Partial' },
           { opponent: 'Edson Barboza', date: '2019-03-30', division: 'Lightweight', context: 'Ranked lightweight knockout win', credit: 0.7, type: 'Partial' },
@@ -75,6 +77,7 @@
           { opponent: 'Michael Johnson', date: '2017-07-07', division: 'Lightweight', context: 'Explosive UFC debut win', credit: 0.45, type: 'Partial' }
         ],
         rounds: [
+          { opponent: 'Ilia Topuria', method: 'KO win', roundsWon: 2, roundsCounted: 2 },
           { opponent: 'Tony Ferguson', method: 'TKO win', roundsWon: 4, roundsCounted: 5 },
           { opponent: 'Dustin Poirier 2', method: 'KO win', roundsWon: 1, roundsCounted: 2 },
           { opponent: 'Michael Chandler', method: 'Decision win', roundsWon: 2, roundsCounted: 3 },
@@ -125,6 +128,7 @@
       addCompareOption(item.boardRow.fighter);
       added.push(item.boardRow.fighter);
     });
+    window.RANKING_DATA.men.sort((a,b)=>Number(a.rank||999)-Number(b.rank||999) || Number(b.totalScore||0)-Number(a.totalScore||0));
     window.UFC_DYNAMIC_FIGHTER_ROWS={version:VERSION,fighters:added,appliedAt:new Date().toISOString()};
     return added;
   }
@@ -214,7 +218,7 @@
       {src:'assets/data/fighter-packets/charles-oliveira.js?v=fighter-packet-charles-oliveira-20260702a',attr:'data-fighter-packet-charles-oliveira'},
       {src:'assets/data/fighter-packets/henry-cejudo.js?v=fighter-packet-henry-cejudo-20260702a',attr:'data-fighter-packet-henry-cejudo'},
       {src:'assets/data/fighter-packets/conor-mcgregor.js?v=fighter-packet-conor-mcgregor-20260702a',attr:'data-fighter-packet-conor-mcgregor'},
-      {src:'assets/data/fighter-packets/justin-gaethje.js?v=fighter-packet-justin-gaethje-20260702a',attr:'data-fighter-packet-justin-gaethje'},
+      {src:'assets/data/fighter-packets/justin-gaethje.js?v=fighter-packet-justin-gaethje-20260702b',attr:'data-fighter-packet-justin-gaethje'},
       {src:'assets/data/fighter-packets/amanda-nunes.js?v=fighter-packet-amanda-nunes-20260702a',attr:'data-fighter-packet-amanda-nunes'},
       {src:'assets/data/fighter-packets/valentina-shevchenko.js?v=fighter-packet-valentina-shevchenko-20260702a',attr:'data-fighter-packet-valentina-shevchenko'},
       {src:'assets/data/fighter-packets/joanna-jedrzejczyk.js?v=fighter-packet-joanna-jedrzejczyk-20260702b',attr:'data-fighter-packet-joanna-jedrzejczyk'},
