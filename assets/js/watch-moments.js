@@ -1,7 +1,7 @@
 // Watch Moment links for fighter cards and profiles.
 // Keep links here as app-facing content, separate from scoring.
 (function(){
-  const VERSION = 'watch-moments-20260702c';
+  const VERSION = 'watch-moments-20260703a';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -33,6 +33,7 @@
     'Henry Cejudo': 'https://youtube.com/shorts/iqVU88zpDXw?is=NaDy1Ol5Kn1XlYzV',
     'Conor McGregor': 'https://youtube.com/shorts/eeHdLpBUmlU?is=rKzl28sGEKreaI2g',
     'Justin Gaethje': 'https://youtube.com/shorts/2LxEazU0vuM?is=tHj1Dxylleh4yGG7',
+    'Frankie Edgar': 'https://youtube.com/shorts/lLpRwEN3PJk?is=QVVQjKx_0gVmw-wO',
     'Amanda Nunes': 'https://youtu.be/t4wkBuFpoPs?is=CL7ge7FDuHQPrbMq',
     'Valentina Shevchenko': 'https://youtube.com/shorts/cucTCAAGTis?is=mf6p21fPtBheJuU8',
     'Joanna Jedrzejczyk': 'https://youtube.com/shorts/rqxlySX0WwA?is=qmc_JW12ecYdL3KT',
