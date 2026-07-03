@@ -1,6 +1,6 @@
 // Lightweight post-load status hook.
 (function(){
-  const VERSION = 'ranking-data-patches-20260702ar-cain-merab-bj-pereira-chuck-packets';
+  const VERSION = 'ranking-data-patches-20260702as-cruz-francis-charles-henry-conor-packets';
   const SLUG_OVERRIDES = {
     'B.J. Penn':'bj-penn','BJ Penn':'bj-penn','Georges St-Pierre':'georges-st-pierre','T.J. Dillashaw':'tj-dillashaw','TJ Dillashaw':'tj-dillashaw','Junior dos Santos':'junior-dos-santos','Mauricio Rua':'mauricio-rua','Maurício Rua':'mauricio-rua','Zabit Magomedsharipov':'zabit-magomedsharipov'
   };
@@ -87,6 +87,11 @@
       {src:'assets/data/fighter-packets/bj-penn.js?v=fighter-packet-bj-penn-20260702a',attr:'data-fighter-packet-bj-penn'},
       {src:'assets/data/fighter-packets/alex-pereira.js?v=fighter-packet-alex-pereira-20260702a',attr:'data-fighter-packet-alex-pereira'},
       {src:'assets/data/fighter-packets/chuck-liddell.js?v=fighter-packet-chuck-liddell-20260702a',attr:'data-fighter-packet-chuck-liddell'},
+      {src:'assets/data/fighter-packets/dominick-cruz.js?v=fighter-packet-dominick-cruz-20260702a',attr:'data-fighter-packet-dominick-cruz'},
+      {src:'assets/data/fighter-packets/francis-ngannou.js?v=fighter-packet-francis-ngannou-20260702a',attr:'data-fighter-packet-francis-ngannou'},
+      {src:'assets/data/fighter-packets/charles-oliveira.js?v=fighter-packet-charles-oliveira-20260702a',attr:'data-fighter-packet-charles-oliveira'},
+      {src:'assets/data/fighter-packets/henry-cejudo.js?v=fighter-packet-henry-cejudo-20260702a',attr:'data-fighter-packet-henry-cejudo'},
+      {src:'assets/data/fighter-packets/conor-mcgregor.js?v=fighter-packet-conor-mcgregor-20260702a',attr:'data-fighter-packet-conor-mcgregor'},
       {src:'assets/compare-mode.js?v=special-matchups-20260630l',attr:'data-compare-mode'},
       {src:'assets/compare-engine-v1-5.js?v=compare-engine-v1-5-20260630b',attr:'data-compare-engine-v1-5'},
       {src:'assets/compare-copy-fixes-v1.js?v=compare-copy-fixes-v1-20260630a',attr:'data-compare-copy-fixes-v1'}
