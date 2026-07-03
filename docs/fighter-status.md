@@ -63,11 +63,11 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 | B.J. Penn | Men #18 | Packet live, Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | Add BJ Watch Moment link | `assets/data/fighter-packets/bj-penn.js` |
 | Alex Pereira | Men #20 | Packet live, Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | Add Alex Pereira Watch Moment link | `assets/data/fighter-packets/alex-pereira.js` |
 | Chuck Liddell | Men #21 | Packet live, Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | Add Chuck Watch Moment link | `assets/data/fighter-packets/chuck-liddell.js` |
-| Dominick Cruz | Men #22 | Compare strong, app polish incomplete | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | 🟡 | Add packet/profile/watch | Fighter packet system |
-| Francis Ngannou | Men #23 | Compare strong, app polish incomplete | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | 🟡 | Add packet/profile/watch | Fighter packet system |
-| Charles Oliveira | Men #24 | Partial compare only | ❌ | ✅ | ❌ | ❌ | 🟡 | ✅ | ❌ | 🟡 | Full packet needed | Fighter packet system |
-| Henry Cejudo | Men #24 | Compare strong, app polish incomplete | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | 🟡 | Add packet/profile/watch | Fighter packet system |
-| Conor McGregor | Men #26 | Compare strong, app polish incomplete | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | 🟡 | Add packet/profile/watch | Fighter packet system |
+| Dominick Cruz | Men #22 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Cruz photos/watch | `assets/data/fighter-packets/dominick-cruz.js` |
+| Francis Ngannou | Men #23 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Francis photos/watch | `assets/data/fighter-packets/francis-ngannou.js` |
+| Charles Oliveira | Men #24 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Charles photos/watch | `assets/data/fighter-packets/charles-oliveira.js` |
+| Henry Cejudo | Men #24 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Henry photos/watch | `assets/data/fighter-packets/henry-cejudo.js` |
+| Conor McGregor | Men #26 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Conor photos/watch | `assets/data/fighter-packets/conor-mcgregor.js` |
 | Amanda Nunes | Women #1 | Compare strong, app polish incomplete | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | 🟡 | Add packet/profile/watch | Fighter packet system |
 | Valentina Shevchenko | Women #2 | Compare strong, app polish incomplete | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | 🟡 | Add packet/profile/watch | Fighter packet system |
 | Joanna Jedrzejczyk | Women #3 | Ranking only | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | 🟡 | Full packet needed | Fighter packet system |
@@ -75,8 +75,8 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 
 ## Current priorities
 
-1. Live packet coverage now runs from Jon through Chuck, with Petr Yan fully complete after Cody supplied the Watch Moment link.
-2. Watch Moment links still needed for Cain, Merab, BJ, Alex Pereira, and Chuck.
-3. Next batch should be Dominick Cruz, Francis Ngannou, Charles Oliveira, Henry Cejudo, and Conor McGregor.
-4. Then finish Amanda, Valentina, Joanna, and Ronda.
+1. Live packet coverage now runs from Jon through Conor.
+2. Watch Moment links still needed for Cain, Merab, BJ, Alex Pereira, Chuck, Cruz, Francis, Charles, Henry, and Conor.
+3. Photos still needed for Cruz, Francis, Charles, Henry, and Conor.
+4. Final current-roster batch: Amanda, Valentina, Joanna, and Ronda.
 5. Only add new fighters after the current roster has clean packets or intentional partial status.
