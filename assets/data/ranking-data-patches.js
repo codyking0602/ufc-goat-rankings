@@ -1,6 +1,6 @@
 // Lightweight post-load status hook.
 (function(){
-  const VERSION = 'ranking-data-patches-20260702aw-packet-profile-stat-bridge';
+  const VERSION = 'ranking-data-patches-20260702ax-alex-gane-loss-update';
   const SLUG_OVERRIDES = {
     'B.J. Penn':'bj-penn','BJ Penn':'bj-penn','Georges St-Pierre':'georges-st-pierre','T.J. Dillashaw':'tj-dillashaw','TJ Dillashaw':'tj-dillashaw','Junior dos Santos':'junior-dos-santos','Mauricio Rua':'mauricio-rua','Maurício Rua':'mauricio-rua','Zabit Magomedsharipov':'zabit-magomedsharipov'
   };
@@ -97,7 +97,7 @@
       {src:'assets/data/fighter-packets/cain-velasquez.js?v=fighter-packet-cain-velasquez-20260702b',attr:'data-fighter-packet-cain-velasquez'},
       {src:'assets/data/fighter-packets/merab-dvalishvili.js?v=fighter-packet-merab-dvalishvili-20260702b',attr:'data-fighter-packet-merab-dvalishvili'},
       {src:'assets/data/fighter-packets/bj-penn.js?v=fighter-packet-bj-penn-20260702b',attr:'data-fighter-packet-bj-penn'},
-      {src:'assets/data/fighter-packets/alex-pereira.js?v=fighter-packet-alex-pereira-20260702b',attr:'data-fighter-packet-alex-pereira'},
+      {src:'assets/data/fighter-packets/alex-pereira.js?v=fighter-packet-alex-pereira-20260702c',attr:'data-fighter-packet-alex-pereira'},
       {src:'assets/data/fighter-packets/chuck-liddell.js?v=fighter-packet-chuck-liddell-20260702a',attr:'data-fighter-packet-chuck-liddell'},
       {src:'assets/data/fighter-packets/dominick-cruz.js?v=fighter-packet-dominick-cruz-20260702a',attr:'data-fighter-packet-dominick-cruz'},
       {src:'assets/data/fighter-packets/francis-ngannou.js?v=fighter-packet-francis-ngannou-20260702a',attr:'data-fighter-packet-francis-ngannou'},
