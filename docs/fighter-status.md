@@ -63,7 +63,7 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 | B.J. Penn | Men #18 | Packet live, Watch Moment added | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No BJ Watch Moment fix needed | `assets/data/fighter-packets/bj-penn.js` |
 | Alex Pereira | Men #20 | Packet live, Watch Moment added, Gane loss updated | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Raw scoring table can be recalculated later | `assets/data/fighter-packets/alex-pereira.js` |
 | Chuck Liddell | Men #21 | Packet live, Watch Moment added | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Chuck Watch Moment fix needed | `assets/data/fighter-packets/chuck-liddell.js` |
-| Justin Gaethje | Men #22 | Test fighter live; undisputed title update; photos and Watch Moment needed | ✅ | 🟡 runtime | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Gaethje photos/watch and move raw row into `ranking-data.js` if permanent | `assets/data/ranking-data-patches.js` + `assets/data/fighter-packets/justin-gaethje.js` |
+| Justin Gaethje | Men #22 | Test fighter live; undisputed title update; Watch Moment added; photos needed | ✅ | 🟡 runtime | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Gaethje photos and move raw row into `ranking-data.js` if permanent | `assets/data/ranking-data-patches.js` + `assets/data/fighter-packets/justin-gaethje.js` |
 | Dominick Cruz | Men #22 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Cruz photos | `assets/data/fighter-packets/dominick-cruz.js` |
 | Francis Ngannou | Men #23 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Francis photos | `assets/data/fighter-packets/francis-ngannou.js` |
 | Charles Oliveira | Men #24 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Charles photos | `assets/data/fighter-packets/charles-oliveira.js` |
@@ -76,8 +76,7 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 
 ## Current priorities
 
-1. Justin Gaethje is live as the first test fighter through a runtime row plus packet, now updated for undisputed UFC lightweight title value.
-2. Watch Moment still needed for Justin Gaethje.
-3. Photos still needed for Cruz, Francis, Charles, Henry, Conor, Justin Gaethje, Amanda, Valentina, Joanna, and Ronda.
-4. If Gaethje becomes permanent, move the runtime ranking/profile row into `assets/data/ranking-data.js` during the next scoring-table cleanup.
-5. Next cleanup should focus on photos, then testing Compare Mode pairings.
+1. Justin Gaethje is live as the first test fighter through a runtime row plus packet, now updated for undisputed UFC lightweight title value and Watch Moment.
+2. Photos still needed for Cruz, Francis, Charles, Henry, Conor, Justin Gaethje, Amanda, Valentina, Joanna, and Ronda.
+3. If Gaethje becomes permanent, move the runtime ranking/profile row into `assets/data/ranking-data.js` during the next scoring-table cleanup.
+4. Next cleanup should focus on photos, then testing Compare Mode pairings.
