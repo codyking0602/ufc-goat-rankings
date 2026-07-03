@@ -1,6 +1,6 @@
 // Lightweight post-load status hook.
 (function(){
-  const VERSION = 'ranking-data-patches-20260702ag-framed-compare-cleanup';
+  const VERSION = 'ranking-data-patches-20260702ah-natural-compare-voice';
   const SLUG_OVERRIDES = {
     'B.J. Penn':'bj-penn','BJ Penn':'bj-penn','Georges St-Pierre':'georges-st-pierre','T.J. Dillashaw':'tj-dillashaw','TJ Dillashaw':'tj-dillashaw','Junior dos Santos':'junior-dos-santos','Mauricio Rua':'mauricio-rua','Maurício Rua':'mauricio-rua','Zabit Magomedsharipov':'zabit-magomedsharipov'
   };
@@ -71,7 +71,7 @@
       {src:'assets/compare-copy-fixes-v1.js?v=compare-copy-fixes-v1-20260630a',attr:'data-compare-copy-fixes-v1'}
     ];
     const loadCompareWatchdog=()=>loadScriptOnce('assets/js/compare-narrative-watchdog.js?v=compare-narrative-watchdog-20260702a','data-compare-narrative-watchdog',status);
-    const loadCompareNarrative=()=>loadScriptOnce('assets/js/compare-narrative-system.js?v=compare-narrative-system-20260702j','data-compare-narrative-system',loadCompareWatchdog);
+    const loadCompareNarrative=()=>loadScriptOnce('assets/js/compare-narrative-system.js?v=compare-narrative-system-20260702k','data-compare-narrative-system',loadCompareWatchdog);
     const loadCompareCore=()=>loadSequence(compareCoreScripts,loadCompareNarrative);
     const loadBranding=()=>loadScriptOnce('assets/js/app-branding.js?v=app-branding-20260702c','data-app-branding',loadCompareCore);
     const loadDivisionRankings=()=>loadScriptOnce('assets/js/division-rankings.js?v=division-rankings-20260702f','data-division-rankings',loadBranding);
@@ -81,7 +81,7 @@
     if(window.UFC_PROFILE_TEMPLATE_SYSTEM){ loadPackages(); return; }
     loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260701a','data-profile-template-system',loadPackages);
   }
-  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Status hook, module loader, default fighter photo paths, and framed compare cleanup loader',updated:'2026-07-02',version:VERSION},apply:status,slugFor};
+  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Status hook, module loader, default fighter photo paths, and natural compare voice loader',updated:'2026-07-02',version:VERSION},apply:status,slugFor};
   installImageFallback();
   applyPhotoPathDefaults();
   loadModules();
