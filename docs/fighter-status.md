@@ -53,12 +53,12 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 | Kamaru Usman | Men #10 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Usman fix needed | `assets/data/fighter-packets/kamaru-usman.js` |
 | Jose Aldo | Men #11 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Aldo fix needed | `assets/data/fighter-packets/jose-aldo.js` |
 | Matt Hughes | Men #12 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Hughes fix needed | `assets/data/fighter-packets/matt-hughes.js` |
-| Daniel Cormier | Men #13 | Needs display polish | ❌ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | 🟡 | Add packet/display polish | Fighter packet system |
-| Stipe Miocic | Men #14 | Needs display polish | ❌ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | 🟡 | Add packet/display polish | Fighter packet system |
-| Ilia Topuria | Men #15 | Needs display polish | ❌ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | 🟡 | Add packet/display polish | Fighter packet system |
-| Israel Adesanya | Men #15 | Needs display polish | ❌ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | 🟡 | Add packet/display polish | Fighter packet system |
+| Daniel Cormier | Men #13 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No DC fix needed | `assets/data/fighter-packets/daniel-cormier.js` |
+| Stipe Miocic | Men #14 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Stipe fix needed | `assets/data/fighter-packets/stipe-miocic.js` |
+| Ilia Topuria | Men #15 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Ilia fix needed | `assets/data/fighter-packets/ilia-topuria.js` |
+| Israel Adesanya | Men #15 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Izzy fix needed | `assets/data/fighter-packets/israel-adesanya.js` |
 | Cain Velasquez | Men #16 | Ranking only | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | 🟡 | Full packet needed | Fighter packet system |
-| Petr Yan | Men #16 | Compare/display strong, profile incomplete | ❌ | ✅ | ✅ | ❌ | ✅ | ✅ | ❌ | 🟡 | Add packet/profile/watch | Fighter packet system |
+| Petr Yan | Men #16 | Packet live, Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | Add Petr Watch Moment link | `assets/data/fighter-packets/petr-yan.js` |
 | Merab Dvalishvili | Men #17 | Compare strong, app polish incomplete | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | 🟡 | Add packet/profile/watch | Fighter packet system |
 | B.J. Penn | Men #18 | Compare strong, app polish incomplete | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | 🟡 | Add packet/profile/watch | Fighter packet system |
 | Alex Pereira | Men #20 | Compare strong, app polish incomplete | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ | ❌ | 🟡 | Add packet/profile/watch | Fighter packet system |
@@ -75,7 +75,8 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 
 ## Current priorities
 
-1. Top twelve are complete in the packet system: Jon, GSP, DJ, Anderson, Islam, Khabib, Volk, Randy, Max, Usman, Aldo, and Hughes.
-2. Next batch should be DC, Stipe, Ilia, Izzy, and Petr Yan.
-3. Then finish incomplete compare/profile/watch packets for the rest of the current roster.
-4. Only add new fighters after the current roster has clean packets or intentional partial status.
+1. Top fifteen plus Petr Yan now have live packets: Jon, GSP, DJ, Anderson, Islam, Khabib, Volk, Randy, Max, Usman, Aldo, Hughes, DC, Stipe, Ilia, Izzy, and Yan.
+2. Petr Yan still needs a Cody-approved Watch Moment link.
+3. Next batch should be Cain, Merab, BJ, Alex Pereira, and Chuck.
+4. Then finish Dominick Cruz, Francis, Charles, Henry, Conor, Amanda, Valentina, Joanna, and Ronda.
+5. Only add new fighters after the current roster has clean packets or intentional partial status.
