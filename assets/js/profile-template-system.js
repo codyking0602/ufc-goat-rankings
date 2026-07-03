@@ -1,8 +1,8 @@
 // Durable UFC profile template system.
-// Locks the approved Jon profile layout for all fighters without changing scoring data.
+// Locks the approved profile layout for all fighters without changing scoring data.
 (function(){
   const DATA = window.RANKING_DATA;
-  const VERSION = 'profile-template-system-20260701a';
+  const VERSION = 'profile-template-system-20260702b';
   if(!DATA || typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const CATEGORY_INFO_LIVE = [
@@ -39,6 +39,21 @@
     const n = Number(String(v).replace(/[^0-9.\-]/g,''));
     if(Number.isFinite(n)) return Number.isInteger(n) ? String(n) : String(Number(n.toFixed(1)));
     return String(v).replace(/\.$/,'');
+  };
+
+  function liveProfileFor(name){
+    return DATA.fighters?.find(f => f?.fighter === name) || {};
+  }
+  function liveBoardRowFor(name){
+    return DATA.men?.find(f => f?.fighter === name) || DATA.women?.find(f => f?.fighter === name) || {};
+  }
+  window.profileFor = function(row){
+    const name = row?.fighter || row;
+    return liveProfileFor(name);
+  };
+  window.fullRow = function(row){
+    const name = row?.fighter || row;
+    return { ...liveProfileFor(name), ...liveBoardRowFor(name), ...(typeof row === 'object' ? row : {fighter:name}) };
   };
 
   function applyJonPackage(){
@@ -106,6 +121,7 @@
   window.rowsTable = function(rows, cols, max=18){
     const labels = cols.map(c => c.label).join('|');
     const sorted = labels.includes('Opponent') && (labels.includes('Context') || labels.includes('Rounds Won')) ? sortOpponentRows(rows) : [...(rows || [])];
+    if(!sorted.length) return '<p class="meta evidence-empty">Evidence rows are still being added for this fighter.</p>';
     const body = sorted.slice(0,max).map(r => `<tr>${cols.map(c => `<td>${r[c.key] ?? ''}</td>`).join('')}</tr>`).join('');
     return `<table class="table"><thead><tr>${cols.map(c => `<th>${c.label}</th>`).join('')}</tr></thead><tbody>${body}</tbody></table>${sorted.length > max ? `<p class="meta">Showing first ${max} of ${sorted.length} rows.</p>`:''}`;
   };
@@ -138,6 +154,12 @@
     return `<article class="row clean-row fighter-row" data-fighter="${r.fighter}"><div class="rank">#${rankOverride || r.rank || '—'}</div>${rowPhotoClean(r)}<div class="row-main"><div class="name">${r.fighter}</div><div class="meta">${r.ufcRecord || ''} · ${r.primaryDivision || ''}${r.secondaryDivision ? ' / ' + r.secondaryDivision : ''}</div><div class="resume-tag">${tag}</div></div><div class="score"><strong>${overallOvr(r)}</strong><span class="meta">OVR</span></div></article>`;
   }
 
+  function assumptionList(override){
+    const rows = override.bigAssumptions || override.assumptions || [];
+    if(!Array.isArray(rows) || !rows.length) return '';
+    return `<div class="card"><h3>Big Assumptions</h3><ul class="judgment-list">${rows.map(item => Array.isArray(item) ? `<li><strong>${item[0]}:</strong> ${item[1]}</li>` : `<li>${item}</li>`).join('')}</ul></div>`;
+  }
+
   window.renderList = function(containerId, rows){
     const q = el('search').value.trim().toLowerCase();
     const div = el('divisionFilter').value;
@@ -163,12 +185,11 @@
     const rankLabel = override.allTimeRank || f.rank || '—';
     const photoUrl = override.photoUrl || '';
     const photoClass = photoUrl ? 'fighter-photo has-photo' : 'fighter-photo';
-    const overallTier = tierForOvr(overallOvr(f));
     const rankedSectionTitle = Number(rankLabel) === 1 ? 'Why Not Lower?' : 'Why Not Ranked Higher?';
     const rankedSectionBody = Number(rankLabel) === 1 ? `<p>${override.whyNotLower || 'The #1 case holds because the fighters below do not match the same full blend of title volume, elite wins, longevity, and clean loss context.'}</p>` : `<p>${override.whyNotHigher || 'The ranking is showing which inputs keep the resume from climbing higher.'}</p>`;
     const keyJudgments = override.keyJudgmentCalls ? `<ul class="judgment-list">${override.keyJudgmentCalls.map(([k,v])=>`<li><strong>${k}:</strong> ${v}</li>`).join('')}</ul>` : `<p>${f.notes || 'No extra judgment-call note entered yet.'}</p>`;
     const finalTakeaway = override.finalTakeaway || `${f.fighter}'s UFC-only case is built around the balance of title success, quality wins, dominance, longevity, and loss context.`;
-    el('fighterDetail').innerHTML = `<section class="profile-hero"><div class="${photoClass}">${photoUrl ? `<img src="${photoUrl}" alt="${f.fighter} profile photo" class="fighter-photo-img" style="object-position:${override.photoPosition || 'center top'}">` : `<div class="photo-initials">${fighterInitials(f.fighter)}</div>`}${override.photoNote ? `<div class="photo-note">${override.photoNote}</div>` : (!photoUrl ? `<div class="photo-note">Photo slot: use a licensed upper-half fighter crop, centered from head to waist.</div>` : '')}</div><div class="profile-summary"><div class="profile-topline"><span class="profile-pill gold">UFC All-Time Rank: #${rankLabel}</span><span class="profile-pill">${divisionLabel}</span><span class="profile-pill tier-overall">${overallTier.label} OVR</span></div><h2>${f.fighter}</h2><div class="profile-ovr-wrap"><div class="profile-ovr">${overallOvr(f)} <small>OVR</small></div><span class="tier-pill ${overallTier.cls}">${overallTier.label}</span></div><p class="profile-copy">${override.oneLiner || `${f.fighter}'s UFC resume is graded across championship success, quality wins, prime dominance, elite longevity, and loss context.`}</p></div></section><section class="profile-main-flow"><div class="card"><h3>Resume Snapshot</h3>${snapshotGrid(snapshotFor(f))}</div><div class="category-grid">${categoryCards(f)}</div><div id="categoryExplanation" class="category-explainer"><h3>Category Breakdown</h3><p>Tap any category to see what it means, what evidence matters, and why this fighter lands there.</p></div><div class="card"><h3>Why Ranked Here</h3><p>${override.whyRankedHere || `${f.fighter} ranks here based on the current UFC-only balance of championship success, quality wins, prime dominance, and active elite longevity.`}</p></div><div class="card"><h3>${rankedSectionTitle}</h3>${rankedSectionBody}</div><div class="card"><h3>Key Judgment Calls</h3>${keyJudgments}</div><div class="card"><h3>Final Takeaway</h3><p>${finalTakeaway}</p></div></section><section class="profile-deep-cuts"><div class="card"><h3>Title Context</h3><p>${title.notes || 'No title note entered.'}</p></div><div class="card"><h3>Quality Wins</h3>${rowsTable(opps,[{key:'opponent',label:'Opponent'},{key:'division',label:'Division'},{key:'context',label:'Context'}])}</div><div class="card"><h3>Rounds Won</h3>${rowsTable(rounds,[{key:'opponent',label:'Opponent'},{key:'method',label:'Result'},{key:'roundsWon',label:'Rounds Won'},{key:'roundsCounted',label:'Fight Rounds'}])}</div></section>`;
+    el('fighterDetail').innerHTML = `<section class="profile-hero"><div class="${photoClass}">${photoUrl ? `<img src="${photoUrl}" alt="${f.fighter} profile photo" class="fighter-photo-img" style="object-position:${override.photoPosition || 'center top'}">` : `<div class="photo-initials">${fighterInitials(f.fighter)}</div>`}${override.photoNote ? `<div class="photo-note">${override.photoNote}</div>` : (!photoUrl ? `<div class="photo-note">Photo slot: use a licensed upper-half fighter crop, centered from head to waist.</div>` : '')}</div><div class="profile-summary"><div class="profile-topline"><span class="profile-pill gold">UFC All-Time Rank: #${rankLabel}</span><span class="profile-pill">${divisionLabel}</span></div><h2>${f.fighter}</h2><div class="profile-ovr-wrap"><div class="profile-ovr">${overallOvr(f)} <small>OVR</small></div></div><p class="profile-copy">${override.oneLiner || `${f.fighter}'s UFC resume is graded across championship success, quality wins, prime dominance, elite longevity, and loss context.`}</p></div></section><section class="profile-main-flow"><div class="card"><h3>Resume Snapshot</h3>${snapshotGrid(snapshotFor(f))}</div><div class="category-grid">${categoryCards(f)}</div><div id="categoryExplanation" class="category-explainer"><h3>Category Breakdown</h3><p>Tap any category to see what it means, what evidence matters, and why this fighter lands there.</p></div><div class="card"><h3>Why Ranked Here</h3><p>${override.whyRankedHere || `${f.fighter} ranks here based on the current UFC-only balance of championship success, quality wins, prime dominance, and active elite longevity.`}</p></div><div class="card"><h3>${rankedSectionTitle}</h3>${rankedSectionBody}</div>${assumptionList(override)}<div class="card"><h3>Key Judgment Calls</h3>${keyJudgments}</div><div class="card"><h3>Final Takeaway</h3><p>${finalTakeaway}</p></div></section><section class="profile-deep-cuts"><div class="card"><h3>Title Context</h3><p>${title.notes || 'No title note entered.'}</p></div><div class="card"><h3>Quality Wins</h3>${rowsTable(opps,[{key:'opponent',label:'Opponent'},{key:'division',label:'Division'},{key:'context',label:'Context'}])}</div><div class="card"><h3>Rounds Won</h3>${rowsTable(rounds,[{key:'opponent',label:'Opponent'},{key:'method',label:'Result'},{key:'roundsWon',label:'Rounds Won'},{key:'roundsCounted',label:'Fight Rounds'}])}</div></section>`;
     el('drawer').classList.add('open');
     el('drawer').setAttribute('aria-hidden','false');
     const panel = document.querySelector('.drawer-panel');
