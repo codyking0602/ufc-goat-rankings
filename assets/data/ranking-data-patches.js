@@ -1,6 +1,6 @@
 // Lightweight post-load status hook.
 (function(){
-  const VERSION = 'ranking-data-patches-20260702bb-justin-gaethje-watch';
+  const VERSION = 'ranking-data-patches-20260702bc-profile-evidence-polish';
   const SLUG_OVERRIDES = {
     'B.J. Penn':'bj-penn','BJ Penn':'bj-penn','Georges St-Pierre':'georges-st-pierre','T.J. Dillashaw':'tj-dillashaw','TJ Dillashaw':'tj-dillashaw','Junior dos Santos':'junior-dos-santos','Mauricio Rua':'mauricio-rua','Maurício Rua':'mauricio-rua','Zabit Magomedsharipov':'zabit-magomedsharipov'
   };
@@ -27,7 +27,7 @@
         timesFinishedPrime: 5,
         primeRecord: '9-5 in title/elite window',
         roundsWonPct: 58.5,
-        notes: 'Runtime test add. Gaethje now gets undisputed lightweight title value, modern lightweight strength, and the locked -10 loss-penalty cap.'
+        notes: 'Runtime test add. Gaethje gets undisputed lightweight title value, modern lightweight strength, and the locked -10 loss-penalty cap.'
       },
       profile: {
         id: 'JG001',
@@ -70,21 +70,21 @@
           { opponent: 'Tony Ferguson', date: '2020-05-09', division: 'Lightweight', context: 'Interim lightweight title win over elite contender', credit: 1.0, type: 'Full' },
           { opponent: 'Dustin Poirier', date: '2023-07-29', division: 'Lightweight', context: 'Elite lightweight rematch win and BMF title moment', credit: 1.0, type: 'Full' },
           { opponent: 'Paddy Pimblett', date: '2026-01-24', division: 'Lightweight', context: 'Interim lightweight title win', credit: 0.8, type: 'Partial' },
-          { opponent: 'Michael Chandler', date: '2021-11-06', division: 'Lightweight', context: 'Ranked lightweight war against elite action fighter', credit: 0.8, type: 'Partial' },
+          { opponent: 'Michael Chandler', date: '2021-11-06', division: 'Lightweight', context: 'Ranked lightweight win', credit: 0.8, type: 'Partial' },
           { opponent: 'Rafael Fiziev', date: '2023-03-18', division: 'Lightweight', context: 'Modern ranked lightweight win', credit: 0.75, type: 'Partial' },
-          { opponent: 'Edson Barboza', date: '2019-03-30', division: 'Lightweight', context: 'Ranked lightweight knockout win', credit: 0.7, type: 'Partial' },
+          { opponent: 'Edson Barboza', date: '2019-03-30', division: 'Lightweight', context: 'Ranked lightweight win', credit: 0.7, type: 'Partial' },
           { opponent: 'Donald Cerrone', date: '2019-09-14', division: 'Lightweight', context: 'Veteran ranked-name UFC win', credit: 0.55, type: 'Partial' },
-          { opponent: 'Michael Johnson', date: '2017-07-07', division: 'Lightweight', context: 'Explosive UFC debut win', credit: 0.45, type: 'Partial' }
+          { opponent: 'Michael Johnson', date: '2017-07-07', division: 'Lightweight', context: 'UFC debut win', credit: 0.45, type: 'Partial' }
         ],
         rounds: [
-          { opponent: 'Ilia Topuria', method: 'KO win', roundsWon: 2, roundsCounted: 2 },
-          { opponent: 'Tony Ferguson', method: 'TKO win', roundsWon: 4, roundsCounted: 5 },
-          { opponent: 'Dustin Poirier 2', method: 'KO win', roundsWon: 1, roundsCounted: 2 },
+          { opponent: 'Ilia Topuria', method: 'Win', roundsWon: 2, roundsCounted: 2 },
+          { opponent: 'Tony Ferguson', method: 'Win', roundsWon: 4, roundsCounted: 5 },
+          { opponent: 'Dustin Poirier 2', method: 'Win', roundsWon: 1, roundsCounted: 2 },
           { opponent: 'Michael Chandler', method: 'Decision win', roundsWon: 2, roundsCounted: 3 },
           { opponent: 'Rafael Fiziev', method: 'Decision win', roundsWon: 2, roundsCounted: 3 },
-          { opponent: 'Khabib Nurmagomedov', method: 'Submission loss', roundsWon: 0, roundsCounted: 2 },
-          { opponent: 'Charles Oliveira', method: 'Submission loss', roundsWon: 0, roundsCounted: 1 },
-          { opponent: 'Max Holloway', method: 'KO loss', roundsWon: 1, roundsCounted: 5 }
+          { opponent: 'Khabib Nurmagomedov', method: 'Loss', roundsWon: 0, roundsCounted: 2 },
+          { opponent: 'Charles Oliveira', method: 'Loss', roundsWon: 0, roundsCounted: 1 },
+          { opponent: 'Max Holloway', method: 'Loss', roundsWon: 1, roundsCounted: 5 }
         ]
       }
     }
@@ -218,7 +218,7 @@
       {src:'assets/data/fighter-packets/charles-oliveira.js?v=fighter-packet-charles-oliveira-20260702a',attr:'data-fighter-packet-charles-oliveira'},
       {src:'assets/data/fighter-packets/henry-cejudo.js?v=fighter-packet-henry-cejudo-20260702a',attr:'data-fighter-packet-henry-cejudo'},
       {src:'assets/data/fighter-packets/conor-mcgregor.js?v=fighter-packet-conor-mcgregor-20260702a',attr:'data-fighter-packet-conor-mcgregor'},
-      {src:'assets/data/fighter-packets/justin-gaethje.js?v=fighter-packet-justin-gaethje-20260702c',attr:'data-fighter-packet-justin-gaethje'},
+      {src:'assets/data/fighter-packets/justin-gaethje.js?v=fighter-packet-justin-gaethje-20260702d',attr:'data-fighter-packet-justin-gaethje'},
       {src:'assets/data/fighter-packets/amanda-nunes.js?v=fighter-packet-amanda-nunes-20260702a',attr:'data-fighter-packet-amanda-nunes'},
       {src:'assets/data/fighter-packets/valentina-shevchenko.js?v=fighter-packet-valentina-shevchenko-20260702a',attr:'data-fighter-packet-valentina-shevchenko'},
       {src:'assets/data/fighter-packets/joanna-jedrzejczyk.js?v=fighter-packet-joanna-jedrzejczyk-20260702b',attr:'data-fighter-packet-joanna-jedrzejczyk'},
@@ -233,11 +233,11 @@
     const loadCompareCore=()=>loadSequence(compareCoreScripts,loadCompareNarrative);
     const loadBranding=()=>loadScriptOnce('assets/js/app-branding.js?v=app-branding-20260702c','data-app-branding',loadCompareCore);
     const loadDivisionRankings=()=>loadScriptOnce('assets/js/division-rankings.js?v=division-rankings-20260702f','data-division-rankings',loadBranding);
-    const loadHomePolish=()=>loadScriptOnce('assets/js/home-polish.js?v=home-polish-hybrid-preview-20260702a','data-home-polish',loadDivisionRankings);
+    const loadHomePolish=()=>loadScriptOnce('assets/js/home-polish.js?v=home-polish-hybrid-preview-20260702b','data-home-polish',loadDivisionRankings);
     const loadWatchMoments=()=>loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260702c','data-watch-moments',loadHomePolish);
     const loadPackages=()=>loadScriptOnce('assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260702a','data-fighter-profile-packages',loadWatchMoments);
     if(window.UFC_PROFILE_TEMPLATE_SYSTEM){ loadPackages(); return; }
-    loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260701a','data-profile-template-system',loadPackages);
+    loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260702b','data-profile-template-system',loadPackages);
   }
   window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Status hook, module loader, default fighter photo paths, compare verdict clarity loader, fighter packet loader, fighter packet stat bridge, and temporary new-fighter runtime add-on',updated:'2026-07-02',version:VERSION},apply:status,slugFor,syncPacketProfileStats,applyDynamicFighterRows};
   installImageFallback();
