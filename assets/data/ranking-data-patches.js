@@ -1,6 +1,6 @@
 // Lightweight post-load status hook.
 (function(){
-  const VERSION = 'ranking-data-patches-20260702at-women-packets';
+  const VERSION = 'ranking-data-patches-20260702au-women-ledger-packets';
   const SLUG_OVERRIDES = {
     'B.J. Penn':'bj-penn','BJ Penn':'bj-penn','Georges St-Pierre':'georges-st-pierre','T.J. Dillashaw':'tj-dillashaw','TJ Dillashaw':'tj-dillashaw','Junior dos Santos':'junior-dos-santos','Mauricio Rua':'mauricio-rua','Maurício Rua':'mauricio-rua','Zabit Magomedsharipov':'zabit-magomedsharipov'
   };
@@ -94,8 +94,8 @@
       {src:'assets/data/fighter-packets/conor-mcgregor.js?v=fighter-packet-conor-mcgregor-20260702a',attr:'data-fighter-packet-conor-mcgregor'},
       {src:'assets/data/fighter-packets/amanda-nunes.js?v=fighter-packet-amanda-nunes-20260702a',attr:'data-fighter-packet-amanda-nunes'},
       {src:'assets/data/fighter-packets/valentina-shevchenko.js?v=fighter-packet-valentina-shevchenko-20260702a',attr:'data-fighter-packet-valentina-shevchenko'},
-      {src:'assets/data/fighter-packets/joanna-jedrzejczyk.js?v=fighter-packet-joanna-jedrzejczyk-20260702a',attr:'data-fighter-packet-joanna-jedrzejczyk'},
-      {src:'assets/data/fighter-packets/ronda-rousey.js?v=fighter-packet-ronda-rousey-20260702a',attr:'data-fighter-packet-ronda-rousey'},
+      {src:'assets/data/fighter-packets/joanna-jedrzejczyk.js?v=fighter-packet-joanna-jedrzejczyk-20260702b',attr:'data-fighter-packet-joanna-jedrzejczyk'},
+      {src:'assets/data/fighter-packets/ronda-rousey.js?v=fighter-packet-ronda-rousey-20260702b',attr:'data-fighter-packet-ronda-rousey'},
       {src:'assets/compare-mode.js?v=special-matchups-20260630l',attr:'data-compare-mode'},
       {src:'assets/compare-engine-v1-5.js?v=compare-engine-v1-5-20260630b',attr:'data-compare-engine-v1-5'},
       {src:'assets/compare-copy-fixes-v1.js?v=compare-copy-fixes-v1-20260630a',attr:'data-compare-copy-fixes-v1'}
