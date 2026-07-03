@@ -1,10 +1,10 @@
 // Frankie Edgar fighter packet extension.
 (function(){
-  const VERSION = 'fighter-packet-frankie-edgar-20260703a';
+  const VERSION = 'fighter-packet-frankie-edgar-20260703b';
   const fighter = 'Frankie Edgar';
 
   const packet = {
-    status: { stage: 'permanent hand-added fighter; photos and Watch Moment needed', lastUpdated: '2026-07-03', nextFix: 'Add Frankie photos and Watch Moment link.' },
+    status: { stage: 'permanent hand-added fighter; Watch Moment added; photos needed', lastUpdated: '2026-07-03', nextFix: 'Add Frankie photos.' },
     repoLocations: { scoreSource: 'assets/data/ranking-data-additions.js', centralPacket: 'assets/data/fighter-packets/frankie-edgar.js', displayFallback: 'assets/data/display-overrides.js', watchFallback: 'assets/js/watch-moments.js', photos: 'Add assets/fighters/frankie-edgar.webp and assets/fighters/frankie-edgar-thumb.webp when real files exist.' },
     display: {
       overallOvr: 85,
@@ -56,12 +56,13 @@
       'frankie edgar|jose aldo': { fighters: ['Frankie Edgar', 'Jose Aldo'], fights: 2, winner: 'Jose Aldo', importance: 'major', summary: 'Aldo beat Edgar twice in featherweight title-level fights. Edgar’s second-act featherweight résumé is strong, but Aldo owns the direct championship results.' },
       'frankie edgar|max holloway': { fighters: ['Frankie Edgar', 'Max Holloway'], fights: 1, winner: 'Max Holloway', importance: 'major', summary: 'Holloway beat Edgar in a UFC featherweight title fight. Edgar brings longevity and title history, but Max owns the direct result.' },
       'charles oliveira|frankie edgar': { fighters: ['Charles Oliveira', 'Frankie Edgar'], fights: 1, winner: 'Frankie Edgar', importance: 'notable', summary: 'Edgar beat Oliveira before Oliveira’s lightweight title peak. It is useful quality-win context for Edgar, but not treated like beating champion Oliveira.' }
-    }
+    },
+    watchMoment: { url: 'https://youtube.com/shorts/lLpRwEN3PJk?is=QVVQjKx_0gVmw-wO', label: 'Watch Moment' }
   };
 
   function mergeLegacyStats(a,b){ return { ...(a || {}), ...(b || {}) }; }
   function mergeCompareProfile(a,b){ return { ...(a || {}), ...(b || {}), legacyStats: mergeLegacyStats((a || {}).legacyStats, (b || {}).legacyStats) }; }
-  function applyDisplay(){ if(typeof DISPLAY_OVERRIDES === 'undefined') return; DISPLAY_OVERRIDES[fighter] = { ...(DISPLAY_OVERRIDES[fighter] || {}), ...(packet.display || {}) }; DISPLAY_OVERRIDES[fighter].packetProfileStats = { ...(DISPLAY_OVERRIDES[fighter].packetProfileStats || {}), ...(packet.profileStats || {}) }; DISPLAY_OVERRIDES[fighter].packetStatus = packet.status || {}; DISPLAY_OVERRIDES[fighter].repoLocations = packet.repoLocations || {}; }
+  function applyDisplay(){ if(typeof DISPLAY_OVERRIDES === 'undefined') return; DISPLAY_OVERRIDES[fighter] = { ...(DISPLAY_OVERRIDES[fighter] || {}), ...(packet.display || {}) }; if(packet.watchMoment?.url){ DISPLAY_OVERRIDES[fighter].watchUrl = packet.watchMoment.url; DISPLAY_OVERRIDES[fighter].watchLabel = packet.watchMoment.label || 'Watch Moment'; } DISPLAY_OVERRIDES[fighter].packetProfileStats = { ...(DISPLAY_OVERRIDES[fighter].packetProfileStats || {}), ...(packet.profileStats || {}) }; DISPLAY_OVERRIDES[fighter].packetStatus = packet.status || {}; DISPLAY_OVERRIDES[fighter].repoLocations = packet.repoLocations || {}; }
   function applyCompare(){ window.COMPARE_PROFILES = window.COMPARE_PROFILES || {}; window.COMPARE_PROFILES[fighter] = mergeCompareProfile(window.COMPARE_PROFILES[fighter], packet.compareSeasoning); if(typeof DISPLAY_OVERRIDES !== 'undefined'){ DISPLAY_OVERRIDES[fighter] = DISPLAY_OVERRIDES[fighter] || {}; DISPLAY_OVERRIDES[fighter].compareProfile = mergeCompareProfile(DISPLAY_OVERRIDES[fighter].compareProfile, window.COMPARE_PROFILES[fighter]); } }
   function applyLedger(){ window.COMPARE_FIGHT_LEDGER = { ...(window.COMPARE_FIGHT_LEDGER || {}), ...(packet.fightLedger || {}) }; }
   function registerPacket(){ window.UFC_FIGHTER_PACKETS = window.UFC_FIGHTER_PACKETS || {}; window.UFC_FIGHTER_PACKETS[fighter] = packet; const current = window.UFC_FIGHTER_PACKET_SYSTEM || {}; const fighters = Array.from(new Set([...(current.fighters || []), fighter])); const packetExtensions = Array.from(new Set([...(current.packetExtensions || []), VERSION])); window.UFC_FIGHTER_PACKET_SYSTEM = { ...current, version: current.version || VERSION, purpose: 'Central source for fighter-facing app content during migration.', fighters, packetExtensions, appliedAt: new Date().toISOString() }; }
