@@ -37,9 +37,9 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 
 | Fighter | Board | Status | Packet | Ranking | Display | Profile stats | Compare seasoning | Ledger | Watch | Photos | Next fix | Main edit location |
 |---|---:|---|---|---|---|---|---|---|---|---|---|---|
-| Jon Jones | Men #1 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Move to GSP | `assets/data/fighter-packets.js` |
-| Georges St-Pierre | Men #2 | Strong core, migrate next | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Move content into packet | `assets/data/fighter-packets.js` |
-| Demetrious Johnson | Men #3 | Strong core, migrate later | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 🟡 | Move content into packet | `assets/data/fighter-packets.js` |
+| Jon Jones | Men #1 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Jon fix needed | `assets/data/fighter-packets.js` |
+| Georges St-Pierre | Men #2 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Move to DJ | `assets/data/fighter-packets.js` |
+| Demetrious Johnson | Men #3 | Strong core, migrate next | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 🟡 | Move content into packet | `assets/data/fighter-packets.js` |
 | Anderson Silva | Men #4 | Strong core, migrate later | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 🟡 | Move content into packet | `assets/data/fighter-packets.js` |
 | Islam Makhachev | Men #5 | Strong core, migrate later | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Move content into packet | `assets/data/fighter-packets.js` |
 | Khabib Nurmagomedov | Men #6 | Strong core, migrate later | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 🟡 | Move content into packet | `assets/data/fighter-packets.js` |
@@ -72,7 +72,8 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 ## Current priorities
 
 1. Jon is complete in the new packet system.
-2. Migrate GSP next because he is the cleanest counterargument to Jon.
-3. Then migrate DJ, Anderson, Khabib, Islam, and Volk.
-4. After the top tier is stable, add display/profile/watch polish for the mid-board fighters.
-5. Only add new fighters after the current roster has clean packets or intentional partial status.
+2. GSP is complete in the new packet system.
+3. Migrate DJ next.
+4. Then migrate Anderson, Khabib, Islam, and Volk.
+5. After the top tier is stable, add display/profile/watch polish for the mid-board fighters.
+6. Only add new fighters after the current roster has clean packets or intentional partial status.
