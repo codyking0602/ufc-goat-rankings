@@ -2,14 +2,14 @@
 // Goal: one obvious place for fighter-facing content going forward.
 // Scoring rows still live in assets/data/ranking-data.js until the scoring model is refactored.
 (function(){
-  const VERSION = 'fighter-packets-20260702a';
+  const VERSION = 'fighter-packets-20260702b';
 
   const FIGHTER_PACKETS = {
     'Jon Jones': {
       status: {
-        stage: 'pilot packet live',
+        stage: 'complete in packet system',
         lastUpdated: '2026-07-02',
-        nextFix: 'Decide whether to migrate profile stat packages into this packet system or keep fighter-profile-packages.js as the profile-stat source.'
+        nextFix: 'None for Jon. Migrate GSP next.'
       },
       repoLocations: {
         scoreSource: 'assets/data/ranking-data.js',

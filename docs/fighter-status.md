@@ -24,7 +24,7 @@ Do not put fighter data back into `index.html`.
 |---|---|---|
 | Raw ranking score and UFC stat row | `assets/data/ranking-data.js` | Keep here until scoring model refactor |
 | Card/profile polish | `assets/data/display-overrides.js` | `assets/data/fighter-packets.js` |
-| Standard profile stats | `assets/js/fighter-profile-packages.js` | Likely `assets/data/fighter-packets.js` |
+| Standard profile stats | `assets/js/fighter-profile-packages.js` | Replaced by `assets/data/fighter-packets.js` as fighters migrate |
 | Compare seasoning | `assets/compare-data.js`, compare coverage packs, phase files | `assets/data/fighter-packets.js` |
 | Direct fight/rivalry ledger | compare files only | Keep separate unless direct-rivalry system is refactored |
 | Watch Moment | `assets/js/watch-moments.js` | `assets/data/fighter-packets.js` |
@@ -37,7 +37,7 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 
 | Fighter | Board | Status | Packet | Ranking | Display | Profile stats | Compare seasoning | Ledger | Watch | Photos | Next fix | Main edit location |
 |---|---:|---|---|---|---|---|---|---|---|---|---|---|
-| Jon Jones | Men #1 | Pilot packet live | ✅ | ✅ | ✅ | 🟡 | ✅ | ✅ | ✅ | ✅ | Decide profile package future | `assets/data/fighter-packets.js` |
+| Jon Jones | Men #1 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Move to GSP | `assets/data/fighter-packets.js` |
 | Georges St-Pierre | Men #2 | Strong core, migrate next | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Move content into packet | `assets/data/fighter-packets.js` |
 | Demetrious Johnson | Men #3 | Strong core, migrate later | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 🟡 | Move content into packet | `assets/data/fighter-packets.js` |
 | Anderson Silva | Men #4 | Strong core, migrate later | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 🟡 | Move content into packet | `assets/data/fighter-packets.js` |
@@ -71,7 +71,7 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 
 ## Current priorities
 
-1. Use Jon as the pilot packet.
+1. Jon is complete in the new packet system.
 2. Migrate GSP next because he is the cleanest counterargument to Jon.
 3. Then migrate DJ, Anderson, Khabib, Islam, and Volk.
 4. After the top tier is stable, add display/profile/watch polish for the mid-board fighters.
