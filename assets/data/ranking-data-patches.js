@@ -1,6 +1,6 @@
 // Lightweight post-load status hook.
 (function(){
-  const VERSION = 'ranking-data-patches-20260702ai-compare-verdict-clarity';
+  const VERSION = 'ranking-data-patches-20260702aj-jon-compare-seasoning';
   const SLUG_OVERRIDES = {
     'B.J. Penn':'bj-penn','BJ Penn':'bj-penn','Georges St-Pierre':'georges-st-pierre','T.J. Dillashaw':'tj-dillashaw','TJ Dillashaw':'tj-dillashaw','Junior dos Santos':'junior-dos-santos','Mauricio Rua':'mauricio-rua','Maurício Rua':'mauricio-rua','Zabit Magomedsharipov':'zabit-magomedsharipov'
   };
@@ -52,7 +52,7 @@
     installImageFallback();
     const photoDefaults=applyPhotoPathDefaults();
     refreshApp();
-    window.UFC_PHASE2_DATA_STATUS={version:VERSION,mode:'lightweight-status-hook',profileTemplateSystem:!!window.UFC_PROFILE_TEMPLATE_SYSTEM,fighterProfilePackages:!!window.UFC_FIGHTER_PROFILE_PACKAGES,watchMoments:!!window.UFC_WATCH_MOMENTS,homePolish:!!window.UFC_HOME_POLISH,divisionRankings:!!window.UFC_DIVISION_RANKINGS,appBranding:!!window.UFC_APP_BRANDING,compareNarrative:!!window.UFC_COMPARE_NARRATIVE_SYSTEM,compareVerdictClarity:!!window.UFC_COMPARE_VERDICT_CLARITY,compareNarrativeWatchdog:!!window.UFC_COMPARE_NARRATIVE_WATCHDOG,compareProfiles:typeof COMPARE_PROFILES!=='undefined',compareLedger:typeof COMPARE_FIGHT_LEDGER!=='undefined',packagedFighters:window.UFC_FIGHTER_PROFILE_PACKAGES?.fighters||[],watchMomentFighters:window.UFC_WATCH_MOMENTS?.fighters||[],photoDefaults,appliedAt:new Date().toISOString()};
+    window.UFC_PHASE2_DATA_STATUS={version:VERSION,mode:'lightweight-status-hook',profileTemplateSystem:!!window.UFC_PROFILE_TEMPLATE_SYSTEM,fighterProfilePackages:!!window.UFC_FIGHTER_PROFILE_PACKAGES,watchMoments:!!window.UFC_WATCH_MOMENTS,homePolish:!!window.UFC_HOME_POLISH,divisionRankings:!!window.UFC_DIVISION_RANKINGS,appBranding:!!window.UFC_APP_BRANDING,compareNarrative:!!window.UFC_COMPARE_NARRATIVE_SYSTEM,compareVerdictClarity:!!window.UFC_COMPARE_VERDICT_CLARITY,compareNarrativeWatchdog:!!window.UFC_COMPARE_NARRATIVE_WATCHDOG,jonCompareSeasoning:!!window.UFC_JON_COMPARE_SEASONING,compareProfiles:typeof COMPARE_PROFILES!=='undefined',compareLedger:typeof COMPARE_FIGHT_LEDGER!=='undefined',packagedFighters:window.UFC_FIGHTER_PROFILE_PACKAGES?.fighters||[],watchMomentFighters:window.UFC_WATCH_MOMENTS?.fighters||[],photoDefaults,appliedAt:new Date().toISOString()};
     document.documentElement.setAttribute('data-phase2-data-patch',VERSION);
   }
   function loadScriptOnce(src,attr,done){
@@ -66,6 +66,7 @@
       {src:'assets/compare-coverage-pack-1.js?v=compare-coverage-pack-1-20260630a',attr:'data-compare-coverage-pack-1'},
       {src:'assets/compare-coverage-pack-2.js?v=compare-coverage-pack-2-20260630a',attr:'data-compare-coverage-pack-2'},
       {src:'assets/compare-phase2-yan.js?v=compare-phase2-yan-20260701b',attr:'data-compare-phase2-yan'},
+      {src:'assets/compare-seasoning-jon.js?v=compare-seasoning-jon-20260702a',attr:'data-compare-seasoning-jon'},
       {src:'assets/compare-mode.js?v=special-matchups-20260630l',attr:'data-compare-mode'},
       {src:'assets/compare-engine-v1-5.js?v=compare-engine-v1-5-20260630b',attr:'data-compare-engine-v1-5'},
       {src:'assets/compare-copy-fixes-v1.js?v=compare-copy-fixes-v1-20260630a',attr:'data-compare-copy-fixes-v1'}
@@ -82,7 +83,7 @@
     if(window.UFC_PROFILE_TEMPLATE_SYSTEM){ loadPackages(); return; }
     loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260701a','data-profile-template-system',loadPackages);
   }
-  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Status hook, module loader, default fighter photo paths, and compare verdict clarity loader',updated:'2026-07-02',version:VERSION},apply:status,slugFor};
+  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Status hook, module loader, default fighter photo paths, compare verdict clarity loader, and Jon compare seasoning loader',updated:'2026-07-02',version:VERSION},apply:status,slugFor};
   installImageFallback();
   applyPhotoPathDefaults();
   loadModules();
