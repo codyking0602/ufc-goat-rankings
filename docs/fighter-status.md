@@ -62,21 +62,20 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 | Merab Dvalishvili | Men #17 | Packet live, Watch Moment added | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Merab Watch Moment fix needed | `assets/data/fighter-packets/merab-dvalishvili.js` |
 | B.J. Penn | Men #18 | Packet live, Watch Moment added | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No BJ Watch Moment fix needed | `assets/data/fighter-packets/bj-penn.js` |
 | Alex Pereira | Men #20 | Packet live, Watch Moment added, Gane loss updated | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Raw scoring table can be recalculated later | `assets/data/fighter-packets/alex-pereira.js` |
-| Chuck Liddell | Men #21 | Packet live, Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | Add Chuck Watch Moment link | `assets/data/fighter-packets/chuck-liddell.js` |
-| Dominick Cruz | Men #22 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Cruz photos/watch | `assets/data/fighter-packets/dominick-cruz.js` |
-| Francis Ngannou | Men #23 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Francis photos/watch | `assets/data/fighter-packets/francis-ngannou.js` |
-| Charles Oliveira | Men #24 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Charles photos/watch | `assets/data/fighter-packets/charles-oliveira.js` |
-| Henry Cejudo | Men #24 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Henry photos/watch | `assets/data/fighter-packets/henry-cejudo.js` |
-| Conor McGregor | Men #26 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Conor photos/watch | `assets/data/fighter-packets/conor-mcgregor.js` |
-| Amanda Nunes | Women #1 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Amanda photos/watch | `assets/data/fighter-packets/amanda-nunes.js` |
-| Valentina Shevchenko | Women #2 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Valentina photos/watch | `assets/data/fighter-packets/valentina-shevchenko.js` |
-| Joanna Jedrzejczyk | Women #3 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Joanna photos/watch | `assets/data/fighter-packets/joanna-jedrzejczyk.js` |
-| Ronda Rousey | Women #4 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Ronda photos/watch | `assets/data/fighter-packets/ronda-rousey.js` |
+| Chuck Liddell | Men #21 | Packet live, Watch Moment added | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Chuck Watch Moment fix needed | `assets/data/fighter-packets/chuck-liddell.js` |
+| Dominick Cruz | Men #22 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Cruz photos | `assets/data/fighter-packets/dominick-cruz.js` |
+| Francis Ngannou | Men #23 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Francis photos | `assets/data/fighter-packets/francis-ngannou.js` |
+| Charles Oliveira | Men #24 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Charles photos | `assets/data/fighter-packets/charles-oliveira.js` |
+| Henry Cejudo | Men #24 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Henry photos | `assets/data/fighter-packets/henry-cejudo.js` |
+| Conor McGregor | Men #26 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Conor photos | `assets/data/fighter-packets/conor-mcgregor.js` |
+| Amanda Nunes | Women #1 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Amanda photos | `assets/data/fighter-packets/amanda-nunes.js` |
+| Valentina Shevchenko | Women #2 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Valentina photos | `assets/data/fighter-packets/valentina-shevchenko.js` |
+| Joanna Jedrzejczyk | Women #3 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Joanna photos | `assets/data/fighter-packets/joanna-jedrzejczyk.js` |
+| Ronda Rousey | Women #4 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Ronda photos | `assets/data/fighter-packets/ronda-rousey.js` |
 
 ## Current priorities
 
-1. Every current ranked fighter now has a live packet.
-2. Watch Moment links still needed for Chuck, Cruz, Francis, Charles, Henry, Conor, Amanda, Valentina, Joanna, and Ronda.
-3. Photos still needed for Cruz, Francis, Charles, Henry, Conor, Amanda, Valentina, Joanna, and Ronda.
-4. Next cleanup should focus on photos, Watch Moments, and then testing Compare Mode pairings.
-5. Only add new fighters after the current roster has clean packets or intentional partial status.
+1. Every current ranked fighter now has a live packet and Watch Moment.
+2. Photos still needed for Cruz, Francis, Charles, Henry, Conor, Amanda, Valentina, Joanna, and Ronda.
+3. Next cleanup should focus on photos, then testing Compare Mode pairings.
+4. Only add new fighters after the current roster has clean packets or intentional partial status.
