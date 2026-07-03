@@ -47,12 +47,12 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 | Anderson Silva | Men #4 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Anderson fix needed | `assets/data/fighter-packets/anderson-silva.js` |
 | Islam Makhachev | Men #5 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Islam fix needed | `assets/data/fighter-packets/islam-makhachev.js` |
 | Khabib Nurmagomedov | Men #6 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Khabib fix needed | `assets/data/fighter-packets/khabib-nurmagomedov.js` |
-| Alexander Volkanovski | Men #7 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Start mid-board cleanup | `assets/data/fighter-packets/alexander-volkanovski.js` |
-| Randy Couture | Men #8 | Needs display polish | ❌ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | 🟡 | Add packet/display polish | Fighter packet system |
-| Max Holloway | Men #9 | Strong core, migrate later | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 🟡 | Move content into packet | Fighter packet system |
-| Kamaru Usman | Men #10 | Needs display polish | ❌ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | 🟡 | Add packet/display polish | Fighter packet system |
-| Jose Aldo | Men #11 | Strong core, migrate later | ❌ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 🟡 | Move content into packet | Fighter packet system |
-| Matt Hughes | Men #12 | Needs display polish | ❌ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | 🟡 | Add packet/display polish | Fighter packet system |
+| Alexander Volkanovski | Men #7 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Volk fix needed | `assets/data/fighter-packets/alexander-volkanovski.js` |
+| Randy Couture | Men #8 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Randy fix needed | `assets/data/fighter-packets/randy-couture.js` |
+| Max Holloway | Men #9 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Max fix needed | `assets/data/fighter-packets/max-holloway.js` |
+| Kamaru Usman | Men #10 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Usman fix needed | `assets/data/fighter-packets/kamaru-usman.js` |
+| Jose Aldo | Men #11 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Aldo fix needed | `assets/data/fighter-packets/jose-aldo.js` |
+| Matt Hughes | Men #12 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Hughes fix needed | `assets/data/fighter-packets/matt-hughes.js` |
 | Daniel Cormier | Men #13 | Needs display polish | ❌ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | 🟡 | Add packet/display polish | Fighter packet system |
 | Stipe Miocic | Men #14 | Needs display polish | ❌ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | 🟡 | Add packet/display polish | Fighter packet system |
 | Ilia Topuria | Men #15 | Needs display polish | ❌ | ✅ | ❌ | ✅ | ✅ | ✅ | ✅ | 🟡 | Add packet/display polish | Fighter packet system |
@@ -75,7 +75,7 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 
 ## Current priorities
 
-1. Top seven are complete in the packet system: Jon, GSP, DJ, Anderson, Islam, Khabib, and Volk.
-2. Start mid-board cleanup next: Randy, Max, Usman, Aldo, Hughes, DC, Stipe, Ilia, Izzy.
+1. Top twelve are complete in the packet system: Jon, GSP, DJ, Anderson, Islam, Khabib, Volk, Randy, Max, Usman, Aldo, and Hughes.
+2. Next batch should be DC, Stipe, Ilia, Izzy, and Petr Yan.
 3. Then finish incomplete compare/profile/watch packets for the rest of the current roster.
 4. Only add new fighters after the current roster has clean packets or intentional partial status.
