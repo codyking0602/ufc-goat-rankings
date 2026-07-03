@@ -1,7 +1,7 @@
 // Championship audit score corrections.
 // Applies locked Championship Index formula corrections after base data and additions load.
 (function(){
-  const VERSION = 'championship-score-corrections-20260703a';
+  const VERSION = 'championship-score-corrections-20260703b';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
@@ -46,7 +46,13 @@
       championship: 4.75,
       totalScore: 34.05,
       adjustedTitleWins: 2.50,
-      titleNotes: 'Championship audit: locked working index remains 2.50 pending final title-count verification. BMF bouts do not add Championship credit.'
+      titleNotes: 'Championship audit: Tony Ferguson interim title = 0.75, Paddy Pimblett interim title = 0.75, Ilia Topuria undisputed lightweight title = 1.00. BMF bouts do not add Championship credit.'
+    },
+    'Dan Henderson': {
+      championship: 0.95,
+      totalScore: 25.65,
+      adjustedTitleWins: 0.50,
+      titleNotes: 'Championship audit: no UFC undisputed title wins. UFC 17 tournament gets small old-era tournament credit of 0.50, not modern title-win credit.'
     }
   };
 
