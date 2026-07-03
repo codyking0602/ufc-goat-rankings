@@ -70,8 +70,8 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 | Conor McGregor | Men #26 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Conor photos/watch | `assets/data/fighter-packets/conor-mcgregor.js` |
 | Amanda Nunes | Women #1 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Amanda photos/watch | `assets/data/fighter-packets/amanda-nunes.js` |
 | Valentina Shevchenko | Women #2 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Valentina photos/watch | `assets/data/fighter-packets/valentina-shevchenko.js` |
-| Joanna Jedrzejczyk | Women #3 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | Add Joanna photos/watch | `assets/data/fighter-packets/joanna-jedrzejczyk.js` |
-| Ronda Rousey | Women #4 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | Add Ronda photos/watch | `assets/data/fighter-packets/ronda-rousey.js` |
+| Joanna Jedrzejczyk | Women #3 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Joanna photos/watch | `assets/data/fighter-packets/joanna-jedrzejczyk.js` |
+| Ronda Rousey | Women #4 | Packet live, photos and Watch Moment needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Ronda photos/watch | `assets/data/fighter-packets/ronda-rousey.js` |
 
 ## Current priorities
 
