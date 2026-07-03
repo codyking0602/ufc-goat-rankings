@@ -1,11 +1,11 @@
 // Petr Yan fighter packet extension.
 (function(){
-  const VERSION = 'fighter-packet-petr-yan-20260702a';
+  const VERSION = 'fighter-packet-petr-yan-20260702b';
   const fighter = 'Petr Yan';
 
   const packet = {
-    status: { stage: 'packet live; watch moment needed', lastUpdated: '2026-07-02', nextFix: 'Add Petr Yan Watch Moment link when Cody picks one.' },
-    repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/petr-yan.js', displayFallback: 'assets/data/display-overrides.js', compareFallback: 'assets/compare-phase2-yan.js', profileStatsFallback: 'assets/data/ranking-data.js', photos: 'assets/fighters/petr-yan.webp and assets/fighters/petr-yan-thumb.webp' },
+    status: { stage: 'complete in packet system', lastUpdated: '2026-07-02', nextFix: 'None for Yan.' },
+    repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/petr-yan.js', displayFallback: 'assets/data/display-overrides.js', compareFallback: 'assets/compare-phase2-yan.js', profileStatsFallback: 'assets/data/ranking-data.js', watchFallback: 'assets/js/watch-moments.js', photos: 'assets/fighters/petr-yan.webp and assets/fighters/petr-yan-thumb.webp' },
     photos: { photoUrl: 'assets/fighters/petr-yan.webp', thumbUrl: 'assets/fighters/petr-yan-thumb.webp' },
     display: {
       overallOvr: 87, allTimeRank: 16, divisionLabel: 'BW', resumeTag: 'Modern bantamweight title case',
@@ -34,7 +34,8 @@
       primeSummary: 'His prime argument is built on round control and technical separation, with major rivalry context against Sterling and Merab.',
       titleStyle: 'Compact Modern Bantamweight Champion', primeStyle: 'Technical Round Control',
       legacyStats: { ufcRecord: '12-4', titleFightWins: 3, beltsWon: 1, titleDefenses: 0, activeEliteYearsLabel: 'roughly 6 active elite years', primeNote: 'modern bantamweight title window with strong round control and unusual DQ/Merab rivalry context' }
-    }
+    },
+    watchMoment: { url: 'https://youtube.com/shorts/WcKa_HG1CbA?is=CZxfIq317Q4sggsB', label: 'Watch Moment' }
   };
   function mergeLegacyStats(a,b){ return { ...(a || {}), ...(b || {}) }; }
   function mergeCompareProfile(a,b){ return { ...(a || {}), ...(b || {}), legacyStats: mergeLegacyStats((a || {}).legacyStats, (b || {}).legacyStats) }; }
