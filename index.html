@@ -13,10 +13,10 @@
   <nav class="tabs" aria-label="App sections"><button class="tab active" data-view="men">P4P</button><button class="tab" data-view="women">Women Only</button><button class="tab" data-view="division">By Division</button><button class="tab" data-view="compare">Compare</button><button class="tab" data-view="rules">Rules</button></nav>
   <main class="shell">
     <section class="toolbar"><input id="search" type="search" placeholder="Search fighter…" /><select id="divisionFilter"><option value="All">All divisions</option></select><button id="resetBtn" class="ghost">Reset</button></section>
-    <section id="men" class="view active-view"><div class="section-title"><h2>UFC All-Time P4P</h2><p>Main leaderboard for UFC all-time rankings.</p></div><div id="menStats" class="kpis"></div><div id="menList" class="leaderboard"></div></section>
-    <section id="women" class="view"><div class="section-title"><h2>Women — UFC All-Time</h2><p>Separate women's all-time UFC rankings.</p></div><div id="womenStats" class="kpis"></div><div id="womenList" class="leaderboard"></div></section>
-    <section id="division" class="view"><div class="section-title"><h2>Division Explorer</h2><p>Current MVP filters by fighter divisions using their current overall score. Division-only scoring will be a future module.</p></div><div id="divisionList" class="leaderboard"></div></section>
-    <section id="compare" class="view"><div class="section-title"><h2>Compare Fighters</h2><p>Pick two fighters and see category edges.</p></div><div class="compare-controls"><select id="fighterA"></select><select id="fighterB"></select></div><div id="compareResult" class="compare-grid"></div></section>
+    <section id="men" class="view active-view"><div class="section-title"><h2>All-Time P4P Board</h2><p>UFC-only accomplishments with adjusted OVR presentation for debate clarity.</p></div><div id="menKpis" class="kpis"></div><div id="menBoard" class="leaderboard"></div></section>
+    <section id="women" class="view"><div class="section-title"><h2>Women Only Board</h2><p>Separate women’s all-time list, using the same UFC-only category logic.</p></div><div id="womenKpis" class="kpis"></div><div id="womenBoard" class="leaderboard"></div></section>
+    <section id="division" class="view"><div class="section-title"><h2>Division Boards</h2><p>Top fighters by primary UFC division.</p></div><div id="divisionContent"></div></section>
+    <section id="compare" class="view"><div class="section-title"><h2>Compare Mode</h2><p>Pick any two fighters and see where the edge comes from.</p></div><div class="compare-controls"><select id="fighterA"></select><select id="fighterB"></select></div><div id="compareResult" class="compare-grid"></div></section>
     <section id="rules" class="view"><div class="section-title"><h2>Scoring Notes</h2><p>Simple explanations for how the rankings are shaped.</p></div><div id="rulesContent" class="rules-grid"></div></section>
   </main>
   <aside id="drawer" class="drawer" aria-hidden="true"><div class="drawer-panel"><button id="closeDrawer" class="close">×</button><div id="fighterDetail"></div></div></aside>
@@ -24,5 +24,6 @@
   <script src="assets/data/display-overrides.js?v=display-overrides-20260701e"></script>
   <script src="assets/js/app.js?v=app-20260701e"></script>
   <script src="assets/data/ranking-data-patches.js?v=live-template-jon-package-20260701e"></script>
+  <script src="assets/js/compare-generic-counter-polish.js?v=compare-generic-counter-polish-20260703a"></script>
 </body>
 </html>
