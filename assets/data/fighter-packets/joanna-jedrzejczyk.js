@@ -1,10 +1,10 @@
 // Joanna Jedrzejczyk fighter packet extension.
 (function(){
-  const VERSION = 'fighter-packet-joanna-jedrzejczyk-20260702a';
+  const VERSION = 'fighter-packet-joanna-jedrzejczyk-20260702b';
   const fighter = 'Joanna Jedrzejczyk';
   const packet = {
     status: { stage: 'packet live; photos and Watch Moment needed', lastUpdated: '2026-07-02', nextFix: 'Add Joanna photos and Watch Moment link.' },
-    repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/joanna-jedrzejczyk.js' },
+    repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/joanna-jedrzejczyk.js', compareFallback: 'assets/compare-coverage-pack-2.js' },
     display: {
       overallOvr: 86,
       allTimeRank: 3,
@@ -35,12 +35,22 @@
       primeSummary: 'Her prime was technical and volume-heavy, but the Rose losses sharply ended the clean title-control phase.',
       titleStyle: 'Strawweight Reign Standard', primeStyle: 'Technical Volume Prime',
       legacyStats: { ufcRecord: '10-5', titleFightWins: 6, beltsWon: 1, titleDefenses: 5, activeEliteYearsLabel: 'roughly 6 active elite years', primeNote: 'strawweight title prime built on striking volume and takedown defense' }
+    },
+    fightLedger: {
+      'joanna jedrzejczyk|valentina shevchenko': {
+        fighters: ['Joanna Jedrzejczyk', 'Valentina Shevchenko'],
+        fights: 1,
+        winner: 'Valentina Shevchenko',
+        importance: 'major',
+        summary: 'Valentina beat Joanna to win the UFC flyweight title. Joanna still owns the stronger strawweight-specific case, but Valentina owns the direct UFC championship result.'
+      }
     }
   };
   function mergeLegacyStats(a,b){ return { ...(a || {}), ...(b || {}) }; }
   function mergeCompareProfile(a,b){ return { ...(a || {}), ...(b || {}), legacyStats: mergeLegacyStats((a || {}).legacyStats, (b || {}).legacyStats) }; }
   function applyDisplay(){ if(typeof DISPLAY_OVERRIDES === 'undefined') return; DISPLAY_OVERRIDES[fighter] = { ...(DISPLAY_OVERRIDES[fighter] || {}), ...(packet.display || {}) }; DISPLAY_OVERRIDES[fighter].packetProfileStats = { ...(DISPLAY_OVERRIDES[fighter].packetProfileStats || {}), ...(packet.profileStats || {}) }; DISPLAY_OVERRIDES[fighter].packetStatus = packet.status || {}; DISPLAY_OVERRIDES[fighter].repoLocations = packet.repoLocations || {}; }
   function applyCompare(){ window.COMPARE_PROFILES = window.COMPARE_PROFILES || {}; window.COMPARE_PROFILES[fighter] = mergeCompareProfile(window.COMPARE_PROFILES[fighter], packet.compareSeasoning); if(typeof DISPLAY_OVERRIDES !== 'undefined'){ DISPLAY_OVERRIDES[fighter] = DISPLAY_OVERRIDES[fighter] || {}; DISPLAY_OVERRIDES[fighter].compareProfile = mergeCompareProfile(DISPLAY_OVERRIDES[fighter].compareProfile, window.COMPARE_PROFILES[fighter]); } }
+  function applyLedger(){ window.COMPARE_FIGHT_LEDGER = { ...(window.COMPARE_FIGHT_LEDGER || {}), ...(packet.fightLedger || {}) }; }
   function registerPacket(){ window.UFC_FIGHTER_PACKETS = window.UFC_FIGHTER_PACKETS || {}; window.UFC_FIGHTER_PACKETS[fighter] = packet; const current = window.UFC_FIGHTER_PACKET_SYSTEM || {}; const fighters = Array.from(new Set([...(current.fighters || []), fighter])); const packetExtensions = Array.from(new Set([...(current.packetExtensions || []), VERSION])); window.UFC_FIGHTER_PACKET_SYSTEM = { ...current, version: current.version || VERSION, purpose: 'Central source for fighter-facing app content during migration.', fighters, packetExtensions, appliedAt: new Date().toISOString() }; }
-  applyDisplay(); applyCompare(); registerPacket();
+  applyDisplay(); applyCompare(); applyLedger(); registerPacket();
 })();
