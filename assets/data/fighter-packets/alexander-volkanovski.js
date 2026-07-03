@@ -1,13 +1,13 @@
 // Alexander Volkanovski fighter packet extension.
 (function(){
-  const VERSION = 'fighter-packet-alexander-volkanovski-20260702a';
+  const VERSION = 'fighter-packet-alexander-volkanovski-20260703b';
   const fighter = 'Alexander Volkanovski';
 
   const packet = {
     status: {
       stage: 'complete in packet system',
-      lastUpdated: '2026-07-02',
-      nextFix: 'None for Volk. Start mid-board display/profile cleanup next.'
+      lastUpdated: '2026-07-03',
+      nextFix: 'Title-fight wins audited to literal UFC championship title-fight wins.'
     },
     repoLocations: {
       scoreSource: 'assets/data/ranking-data.js',
@@ -36,7 +36,7 @@
       },
       snapshot: [
         ['UFC Record', '15-3'],
-        ['UFC Title-Fight Wins', '8'],
+        ['UFC Title-Fight Wins', '6'],
         ['Championship Level', 'Modern Featherweight Standard'],
         ['Quality Wins', 'Top-End Featherweight Case'],
         ['Prime Record', 'Long Championship Prime'],
@@ -56,12 +56,12 @@
     },
     profileStats: {
       ufcRecord: '15-3',
-      titleFightWins: 8,
+      titleFightWins: 6,
       eliteWins: 9,
       primeRecord: '10-3',
       finishRatePct: 53.3,
       roundsWonPct: 76.5,
-      activeEliteYears: 5.72,
+      activeEliteYears: 6.7,
       timesFinishedPrime: 2,
       divisionStrengthContext: 'Modern featherweight strength helps his opponent-quality case.',
       lossContext: 'Islam losses receive reduced up-division elite-loss treatment; Topuria is the main prime-dominance drag.'
@@ -86,10 +86,10 @@
       bestArgument: 'Volk’s best argument is balance plus direct separation: title success, elite wins, Max trilogy control, and modern featherweight strength.',
       legacyStats: {
         ufcRecord: '15-3',
-        titleFightWins: 8,
+        titleFightWins: 6,
         beltsWon: 1,
         titleDefenses: 5,
-        activeEliteYearsLabel: 'roughly 6 active elite years',
+        activeEliteYearsLabel: 'roughly 7 active elite years',
         primeNote: 'clean modern featherweight prime built around Holloway trilogy separation, with Islam losses treated as up-division elite context'
       }
     },
