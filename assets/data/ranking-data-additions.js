@@ -1,6 +1,6 @@
 // Permanent ranking/profile additions layered onto the base ranking payload.
 (function(){
-  const VERSION = 'ranking-data-additions-20260703a-frankie-edgar';
+  const VERSION = 'ranking-data-additions-20260703b-dustin-poirier';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
@@ -134,6 +134,93 @@
           { opponent: 'Chad Mendes', method: 'KO win', roundsWon: 1, roundsCounted: 1 },
           { opponent: 'Max Holloway', method: 'Title loss', roundsWon: 1, roundsCounted: 5 },
           { opponent: 'Brian Ortega', method: 'KO loss', roundsWon: 0, roundsCounted: 1 }
+        ]
+      }
+    },
+    {
+      boardRow: {
+        rank: 19,
+        fighter: 'Dustin Poirier',
+        totalScore: 40.55,
+        championship: 4.75,
+        opponentQuality: 18.85,
+        primeDominance: 17.45,
+        longevity: 9.5,
+        penalty: -10.0,
+        leaderboard: 'men',
+        gender: 'Men',
+        ufcRecord: '22-9 (1 NC)',
+        primaryDivision: 'Lightweight',
+        secondaryDivision: 'Featherweight',
+        finishRatePct: 68.2,
+        activeEliteYears: 8.5,
+        timesFinishedPrime: 4,
+        primeRecord: '9-5 (1 NC) in title/elite LW window',
+        roundsWonPct: 56.5,
+        notes: 'Permanent hand-added row. UFC-only interim lightweight champion, elite lightweight win ledger, and capped loss-context ceiling.'
+      },
+      profile: {
+        id: 'DP001',
+        fighter: 'Dustin Poirier',
+        gender: 'Men',
+        primaryDivision: 'Lightweight',
+        secondaryDivision: 'Featherweight',
+        scope: 'UFC',
+        ufcRecord: '22-9 (1 NC)',
+        ufcWins: 22,
+        ufcLosses: 9,
+        ufcNoContests: 1,
+        scoredUfcFights: 32,
+        finishWins: 15,
+        finishRatePct: 68.2,
+        timesFinishedPrime: 4,
+        lossPenalty: -10.0,
+        activeEliteYears: 8.5,
+        primeStart: 'Anthony Pettis 2017 / Justin Gaethje 2018',
+        primeEnd: 'Max Holloway 2025 retirement fight',
+        notes: 'UFC-only. WEC and regional results are historical context only. BMF bouts are not scored as UFC title-fight wins. Loss penalty is capped at -10.',
+        rank: 19,
+        totalScore: 40.55,
+        championship: 4.75,
+        opponentQuality: 18.85,
+        primeDominance: 17.45,
+        longevity: 9.5,
+        penalty: -10.0,
+        leaderboard: 'men',
+        title: {
+          normalTitleWins: 0.0,
+          interimTitleWins: 1.0,
+          vacantUndisputedWins: 0.0,
+          secondDivisionUndisputedWins: 0.0,
+          vacantSecondDivisionWins: 0.0,
+          adjustedTitleWins: 1.0,
+          notes: 'Won the interim UFC lightweight title against Max Holloway at UFC 236. Undisputed title challenges to Khabib, Charles Oliveira, and Islam Makhachev are title-level context but not title wins.'
+        },
+        opponents: [
+          { opponent: 'Max Holloway', date: '2019-04-13', division: 'Lightweight', context: 'Interim lightweight title win over a prime all-time great', credit: 1.05, type: 'Full' },
+          { opponent: 'Conor McGregor', date: '2021-01-23', division: 'Lightweight', context: 'Elite lightweight rematch knockout', credit: 1.0, type: 'Full' },
+          { opponent: 'Justin Gaethje', date: '2018-04-14', division: 'Lightweight', context: 'Elite lightweight finish in a war', credit: 0.95, type: 'Full' },
+          { opponent: 'Eddie Alvarez', date: '2018-07-28', division: 'Lightweight', context: 'Former UFC lightweight champion finish', credit: 0.9, type: 'Full' },
+          { opponent: 'Michael Chandler', date: '2022-11-12', division: 'Lightweight', context: 'Elite lightweight submission win', credit: 0.85, type: 'Full' },
+          { opponent: 'Anthony Pettis', date: '2017-11-11', division: 'Lightweight', context: 'Former UFC lightweight champion win', credit: 0.8, type: 'Partial' },
+          { opponent: 'Dan Hooker', date: '2020-06-27', division: 'Lightweight', context: 'High-level lightweight five-round win', credit: 0.75, type: 'Partial' },
+          { opponent: 'Conor McGregor 2', date: '2021-07-10', division: 'Lightweight', context: 'Third McGregor fight; official win with injury finish context', credit: 0.7, type: 'Partial' },
+          { opponent: 'Benoit Saint Denis', date: '2024-03-09', division: 'Lightweight', context: 'Late-career ranked lightweight knockout', credit: 0.7, type: 'Partial' },
+          { opponent: 'Max Holloway 1', date: '2012-02-04', division: 'Featherweight', context: 'Early UFC win over future all-time great before Holloway prime', credit: 0.55, type: 'Partial' },
+          { opponent: 'Jim Miller', date: '2017-02-11', division: 'Lightweight', context: 'Durable veteran lightweight win', credit: 0.45, type: 'Partial' }
+        ],
+        rounds: [
+          { opponent: 'Max Holloway 2', method: 'Interim title decision win', roundsWon: 4, roundsCounted: 5 },
+          { opponent: 'Dan Hooker', method: 'Five-round decision win', roundsWon: 3, roundsCounted: 5 },
+          { opponent: 'Conor McGregor 2', method: 'KO win', roundsWon: 1, roundsCounted: 2 },
+          { opponent: 'Conor McGregor 3', method: 'TKO/injury win', roundsWon: 1, roundsCounted: 1 },
+          { opponent: 'Michael Chandler', method: 'Submission win', roundsWon: 2, roundsCounted: 3 },
+          { opponent: 'Justin Gaethje 1', method: 'TKO win', roundsWon: 2, roundsCounted: 4 },
+          { opponent: 'Khabib Nurmagomedov', method: 'Title loss', roundsWon: 0, roundsCounted: 3 },
+          { opponent: 'Charles Oliveira', method: 'Title loss', roundsWon: 1, roundsCounted: 3 },
+          { opponent: 'Justin Gaethje 2', method: 'KO loss', roundsWon: 1, roundsCounted: 2 },
+          { opponent: 'Islam Makhachev', method: 'Title loss', roundsWon: 1, roundsCounted: 5 },
+          { opponent: 'Max Holloway 3', method: 'Retirement-fight decision loss', roundsWon: 1, roundsCounted: 5 }
         ]
       }
     }
