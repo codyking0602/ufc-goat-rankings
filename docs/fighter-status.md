@@ -63,12 +63,12 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 | B.J. Penn | Men #18 | Packet live, Watch Moment added | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No BJ Watch Moment fix needed | `assets/data/fighter-packets/bj-penn.js` |
 | Alex Pereira | Men #20 | Packet live, Watch Moment added, Gane loss updated | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Raw scoring table can be recalculated later | `assets/data/fighter-packets/alex-pereira.js` |
 | Chuck Liddell | Men #21 | Packet live, Watch Moment added | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Chuck Watch Moment fix needed | `assets/data/fighter-packets/chuck-liddell.js` |
+| Justin Gaethje | Men #22 | Test fighter live; undisputed title update; photos and Watch Moment needed | ✅ | 🟡 runtime | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Gaethje photos/watch and move raw row into `ranking-data.js` if permanent | `assets/data/ranking-data-patches.js` + `assets/data/fighter-packets/justin-gaethje.js` |
 | Dominick Cruz | Men #22 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Cruz photos | `assets/data/fighter-packets/dominick-cruz.js` |
 | Francis Ngannou | Men #23 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Francis photos | `assets/data/fighter-packets/francis-ngannou.js` |
 | Charles Oliveira | Men #24 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Charles photos | `assets/data/fighter-packets/charles-oliveira.js` |
 | Henry Cejudo | Men #24 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Henry photos | `assets/data/fighter-packets/henry-cejudo.js` |
 | Conor McGregor | Men #26 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Conor photos | `assets/data/fighter-packets/conor-mcgregor.js` |
-| Justin Gaethje | Men #27 | Test fighter live; photos and Watch Moment needed | ✅ | 🟡 runtime | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Gaethje photos/watch and move raw row into `ranking-data.js` if permanent | `assets/data/ranking-data-patches.js` + `assets/data/fighter-packets/justin-gaethje.js` |
 | Amanda Nunes | Women #1 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Amanda photos | `assets/data/fighter-packets/amanda-nunes.js` |
 | Valentina Shevchenko | Women #2 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Valentina photos | `assets/data/fighter-packets/valentina-shevchenko.js` |
 | Joanna Jedrzejczyk | Women #3 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Joanna photos | `assets/data/fighter-packets/joanna-jedrzejczyk.js` |
@@ -76,7 +76,7 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 
 ## Current priorities
 
-1. Justin Gaethje is live as the first test fighter through a runtime row plus packet.
+1. Justin Gaethje is live as the first test fighter through a runtime row plus packet, now updated for undisputed UFC lightweight title value.
 2. Watch Moment still needed for Justin Gaethje.
 3. Photos still needed for Cruz, Francis, Charles, Henry, Conor, Justin Gaethje, Amanda, Valentina, Joanna, and Ronda.
 4. If Gaethje becomes permanent, move the runtime ranking/profile row into `assets/data/ranking-data.js` during the next scoring-table cleanup.
