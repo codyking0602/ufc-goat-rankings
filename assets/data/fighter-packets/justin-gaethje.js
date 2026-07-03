@@ -1,6 +1,6 @@
 // Justin Gaethje fighter packet extension.
 (function(){
-  const VERSION = 'fighter-packet-justin-gaethje-20260702c';
+  const VERSION = 'fighter-packet-justin-gaethje-20260702d';
   const fighter = 'Justin Gaethje';
 
   const packet = {
@@ -13,6 +13,13 @@
       snapshot: [ ['UFC Record', '12-5'], ['UFC Title-Fight Wins', '3'], ['Championship Level', 'Undisputed Lightweight Champion'], ['Quality Wins', 'Topuria, Ferguson, Poirier, Chandler'], ['Prime Record', 'Explosive but hittable prime'], ['Active Elite Years', '7.0 Elite Years'], ['Loss Context', 'Penalty capped at -10 despite heavy finish-loss stack'] ],
       whyRankedHere: 'Gaethje ranks here because the UFC-only case now has real championship weight: undisputed lightweight gold, two interim/title-level wins, and a modern lightweight win list built around Topuria, Ferguson, Poirier, Chandler, Fiziev, Barboza, Cerrone, and Johnson.',
       whyNotHigher: 'He does not rank higher because the loss context is still heavy even with the -10 cap. Gaethje has been finished in major prime fights, and one undisputed title win does not erase the Khabib, Oliveira, Max, Poirier, and Alvarez damage against cleaner all-time cases.',
+      bigAssumptions: [
+        ['Prime start', 'Tony Ferguson 2020 is treated as the clean title-level UFC breakout.'],
+        ['Title update', 'The Topuria win counts as undisputed UFC lightweight champion value.'],
+        ['Loss cap', 'Raw loss damage would exceed -10, but the locked model caps the visible penalty at -10.'],
+        ['Division strength', 'Modern lightweight gets strong credit, but that same schedule creates a brutal loss-context pile.'],
+        ['Non-UFC résumé', 'WSOF context is historical only and is not scored.']
+      ],
       keyJudgmentCalls: [ ['Undisputed title update', 'the Topuria win gives Gaethje real UFC champion value, not just action-fighter value.'], ['Loss cap', 'his raw loss damage would go past -10, but the model caps the visible penalty at -10.'], ['Modern lightweight depth', 'boosts the quality-wins case because this division is treated as one of the hardest UFC environments.'], ['Action style', 'makes the resume feel huge, but style points do not erase finish losses.'], ['Non-UFC résumé', 'WSOF context is historical only and is not scored.'] ],
       finalTakeaway: 'Gaethje is now more than the great action-resume test case: the undisputed title win gives him real UFC champion weight, but the loss cap is doing work because the finish-loss pile still keeps him outside the deeper GOAT tier.'
     },
