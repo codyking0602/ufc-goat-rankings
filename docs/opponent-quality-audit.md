@@ -47,266 +47,272 @@ Cody locked the simplified version on 2026-07-03.
 | Partial/name wins | Help the résumé, but should not drive the category by volume alone. |
 | Non-UFC wins | Excluded from score; context only. |
 
-## Current men’s Opponent Quality shape
+## Process correction
 
-This is the current men’s board sorted by Opponent Quality score before any Opponent Quality score edits.
+The first pass used summarized ledger tiers. That was useful for direction, but not strict enough to approve score edits.
 
-| OQ Rank | Fighter | Current Opponent Quality | Audit status |
-|---:|---|---:|---|
-| 1 | Georges St-Pierre | 25.00 | Benchmark / locked |
-| 2 | Max Holloway | 19.64 | First batch audited; likely slightly high |
-| 3 | Dustin Poirier | 18.85 | First batch audited; likely high |
-| 4 | Charles Oliveira | 17.85 | First batch audited; probably close/slightly high |
-| 5 | Jon Jones | 16.92 | First batch audited; close |
-| 6 | Alexander Volkanovski | 14.45 | First batch audited; likely low |
-| 7 | Matt Hughes | 14.21 | Old-era context review later |
-| 8 | Israel Adesanya | 14.05 | Later batch |
-| 9 | Aljamain Sterling | 13.90 | First batch audited; likely high |
-| 10 | Randy Couture | 13.71 | Old-era context review later |
-| 11 | Kamaru Usman | 13.63 | First batch audited; probably close/slightly low |
-| 12 | Jose Aldo | 13.42 | UFC-only treatment review later |
-| 13 | Justin Gaethje | 13.20 | Later batch |
-| 14 | Ilia Topuria | 13.10 | Later batch; app-timeline sensitive |
-| 14 | Petr Yan | 13.10 | Later batch |
-| 16 | Demetrious Johnson | 12.88 | Flyweight depth review later |
-| 17 | Frankie Edgar | 12.70 | Later batch |
-| 18 | B.J. Penn | 12.31 | Old-era / cross-division review later |
-| 19 | Anderson Silva | 12.20 | Middleweight-era review later |
-| 20 | Stipe Miocic | 11.85 | Later batch |
-| 21 | Merab Dvalishvili | 11.83 | Later batch |
-| 22 | T.J. Dillashaw | 10.65 | Later batch |
-| 23 | Daniel Cormier | 10.63 | Later batch |
-| 24 | Alex Pereira | 10.06 | Later batch |
-| 25 | Islam Makhachev | 9.80 | Later batch; may be low |
-| 26 | Cain Velasquez | 9.67 | Later batch |
-| 27 | Chuck Liddell | 9.51 | Later batch |
-| 28 | Francis Ngannou | 9.26 | Later batch |
-| 29 | Khabib Nurmagomedov | 8.99 | Later batch; may be low |
-| 30 | Dan Henderson | 8.70 | Later batch |
-| 31 | Conor McGregor | 8.63 | Later batch |
-| 32 | Henry Cejudo | 7.50 | Later batch |
-| 33 | Dominick Cruz | 6.25 | Later batch |
+Going forward, no Opponent Quality score change should go live until the fighter has a win-by-win UFC audit table.
 
 ---
 
-# Batch 1 audit — sensitive top group
-
-## 1. Georges St-Pierre
-
-Current Opponent Quality Score: 25.00.
-
-Simple ledger shape:
-
-| Credit tier | Wins |
-|---|---|
-| 1.25 sitting champ wins | Matt Hughes 2, Matt Serra 2, Michael Bisping |
-| 1.00 elite/top-5 wins | B.J. Penn 1, Matt Hughes 3, Josh Koscheck 1, Josh Koscheck 2, Jon Fitch, Thiago Alves, Dan Hardy, Carlos Condit, Jake Shields, Nick Diaz, Johny Hendricks |
-| 0.50 strong ranked/former champ wins | B.J. Penn 2, Sean Sherk, Frank Trigg, Jason Miller |
-
-Audit read:
-
-GSP should remain the current Opponent Quality benchmark. This category is exactly where his case is strongest: he repeatedly beat elite welterweights and added a second-division sitting-champion win.
-
-Call: lock at 25.00.
-
-## 2. Max Holloway
-
-Current Opponent Quality Score: 19.64.
-
-Simple ledger shape:
-
-| Credit tier | Wins |
-|---|---|
-| 1.25 sitting champ wins | Jose Aldo 1 |
-| 1.00 elite/top-5 wins | Jose Aldo 2, Brian Ortega, Calvin Kattar, Yair Rodriguez, Arnold Allen, Justin Gaethje, Cub Swanson |
-| 0.50 strong ranked/former champ wins | Anthony Pettis, Ricardo Lamas, Jeremy Stephens, Andre Fili / similar support |
-| 0.25 weird/context wins | Charles Oliveira injury-stoppage context / early-future-name style wins if used |
-
-Audit read:
-
-Max belongs extremely high. The concern is not whether he has a great win ledger; he clearly does. The concern is that 19.64 puts him very close to GSP despite GSP having more sitting-champion and repeated top-5 title-era wins.
-
-Recommendation: still elite, but likely trim slightly.
-
-Suggested range: 18.75-19.25.
-
-Working call: reduce slightly from 19.64 unless Cody wants to heavily reward Max's volume.
-
-## 3. Dustin Poirier
-
-Current Opponent Quality Score: 18.85.
-
-Simple ledger shape:
-
-| Credit tier | Wins |
-|---|---|
-| 1.25 sitting champ wins | None clean as sitting UFC champ wins |
-| 1.00 elite/top-5 wins | Max Holloway 2, Justin Gaethje 1, Eddie Alvarez 2, Conor McGregor 2, Conor McGregor 3, Michael Chandler |
-| 0.50 strong ranked/former champ wins | Anthony Pettis, Dan Hooker, Benoit Saint Denis, Jim Miller / similar support |
-| 0.25 name/future/context wins | Early Holloway 1, other early quality names if used |
-
-Audit read:
-
-Dustin has a monster quality-win ledger, especially at modern lightweight. But 18.85 is probably too close to Max and too close to GSP when he has fewer sitting-champion wins and more of the case is action-fight volume.
-
-Recommendation: keep very high, but lower modestly.
-
-Suggested range: 17.50-18.25.
-
-Working call: reduce from 18.85.
-
-## 4. Charles Oliveira
-
-Current Opponent Quality Score: 17.85.
-
-Simple ledger shape:
-
-| Credit tier | Wins |
-|---|---|
-| 1.25 sitting champ wins | None clean as sitting UFC champ wins under strict UFC title status |
-| 1.00 elite/top-5 wins | Michael Chandler, Dustin Poirier, Justin Gaethje, Beneil Dariush |
-| 0.50 strong ranked/former champ wins | Tony Ferguson, Kevin Lee, Jim Miller, Clay Guida, Jeremy Stephens / similar support |
-| 0.25 name/future/context wins | Earlier résumé support only |
-
-Audit read:
-
-Charles should score high because modern lightweight is brutal and his best wins are excellent. But his score should not be inflated by title context itself; that lives in Championship Resume. Opponent Quality is about the men he beat.
-
-Recommendation: close, maybe slightly high.
-
-Suggested range: 17.00-17.75.
-
-Working call: small reduction or keep near current if Cody wants modern LW rewarded strongly.
-
-## 5. Jon Jones
-
-Current Opponent Quality Score: 16.92.
-
-Simple ledger shape:
-
-| Credit tier | Wins |
-|---|---|
-| 1.25 sitting champ wins | Mauricio Rua |
-| 1.00 elite/top-5 wins | Ryan Bader, Rampage Jackson, Rashad Evans, Alexander Gustafsson, Daniel Cormier, Anthony Smith, Thiago Santos, Dominick Reyes, Ciryl Gane |
-| 0.50 strong ranked/former champ wins | Lyoto Machida, Glover Teixeira, Vitor Belfort, Chael Sonnen |
-| 0.25 name/context wins | Late Stipe Miocic |
-
-Audit read:
-
-Jon's number is lower than casual fans expect because this category is not Championship Resume. A lot of his biggest legacy value is already rewarded in Championship and Prime Dominance. Still, 16.92 looks about right under the simple table.
-
-Recommendation: keep near current.
-
-Suggested range: 16.75-17.25.
-
-Working call: keep 16.92.
-
-## 6. Alexander Volkanovski
-
-Current Opponent Quality Score: 14.45.
-
-Simple ledger shape:
-
-| Credit tier | Wins |
-|---|---|
-| 1.25 sitting champ wins | Max Holloway 1 |
-| 1.00 elite/top-5 wins | Jose Aldo, Chad Mendes, Max Holloway 2, Max Holloway 3, Brian Ortega, Yair Rodriguez, Diego Lopes |
-| 0.50 strong ranked/former champ wins | Korean Zombie, Darren Elkins / similar support |
-| 0.25 name/context wins | Earlier supporting wins only |
-
-Audit read:
-
-Volk looks a little low. He has a clean champion win over Max and repeated elite featherweight wins. His Islam losses do not help Opponent Quality because they are losses, but they also should not erase the strength of his actual UFC wins.
-
-Recommendation: raise modestly.
-
-Suggested range: 15.25-16.00.
-
-Working call: raise from 14.45.
-
-## 7. Aljamain Sterling
-
-Current Opponent Quality Score: 13.90.
-
-Simple ledger shape:
-
-| Credit tier | Wins |
-|---|---|
-| 1.25 sitting champ wins | None clean unless Yan rematch is treated as champion-level defense context rather than sitting-champ capture |
-| 1.00 elite/top-5 wins | Petr Yan rematch, Cory Sandhagen, Henry Cejudo |
-| 0.50 strong ranked/former champ wins | Pedro Munhoz, Jimmie Rivera, Calvin Kattar, Brian Ortega / similar support depending current app timeline |
-| 0.25-0.50 weird/context wins | T.J. Dillashaw injury-compromised title defense; Yan DQ should be low or zero for OQ |
-
-Audit read:
-
-Aljo is good, but 13.90 looks high under the simplified table. Championship already counts the official title wins. Opponent Quality should not over-credit the Yan DQ, injured TJ, or late featherweight extension.
-
-Recommendation: reduce.
-
-Suggested range: 12.75-13.25.
-
-Working call: reduce from 13.90.
-
-## 8. Kamaru Usman
-
-Current Opponent Quality Score: 13.63.
-
-Simple ledger shape:
-
-| Credit tier | Wins |
-|---|---|
-| 1.25 sitting champ wins | Tyron Woodley |
-| 1.00 elite/top-5 wins | Colby Covington 1, Colby Covington 2, Gilbert Burns, Rafael dos Anjos, Leon Edwards 1 |
-| 0.50 strong ranked/former champ wins | Demian Maia, Jorge Masvidal 1, Jorge Masvidal 2, Sean Strickland / similar support |
-| 0.25 name/context wins | Earlier supporting wins only |
-
-Audit read:
-
-Kamaru is probably a touch low. His top-end is not as deep as GSP's, but Woodley + Colby twice + Burns + RDA + Edwards is a strong UFC win ledger.
-
-Recommendation: keep close, maybe raise slightly.
-
-Suggested range: 13.75-14.25.
-
-Working call: slight raise from 13.63.
+# Batch 1A — actual UFC win-by-win audit
+
+Status: score changes are still paused. These tables are the audit base before final score corrections.
+
+## Georges St-Pierre — benchmark
+
+Current OQ: 25.00. Proposed: 25.00.
+
+| UFC win | Credit | Reason |
+|---|---:|---|
+| Karo Parisyan | 0.25 | early quality UFC win, not clean elite credit |
+| Jay Hieron | 0.00 | UFC win, not counted for quality tier |
+| Jason Miller | 0.50 | strong ranked/supporting WW win |
+| Frank Trigg | 0.50 | strong ranked/supporting WW win |
+| Sean Sherk | 0.50 | strong ranked/supporting WW win |
+| B.J. Penn 1 | 1.00 | elite/top-5 opponent |
+| Matt Hughes 2 | 1.25 | sitting UFC champion |
+| Josh Koscheck 1 | 1.00 | elite/top-5 opponent |
+| Matt Hughes 3 | 1.00 | elite/top-5/former champion still good |
+| Matt Serra 2 | 1.25 | sitting UFC champion |
+| Jon Fitch | 1.00 | elite/top-5 opponent |
+| B.J. Penn 2 | 0.50 | cross-division champion/elite, not full same-division credit |
+| Thiago Alves | 1.00 | elite/top-5 opponent |
+| Dan Hardy | 1.00 | title-level/top-5 contender by ranking logic |
+| Josh Koscheck 2 | 1.00 | elite/top-5 opponent |
+| Jake Shields | 1.00 | elite/top-5 opponent |
+| Carlos Condit | 1.00 | elite/top-5/interim champion opponent |
+| Nick Diaz | 1.00 | elite/top-5 opponent at the time |
+| Johny Hendricks | 1.00 | elite/top-5 opponent; close official win |
+| Michael Bisping | 1.25 | sitting UFC champion, second division |
+
+Audit read: GSP is the cleanest benchmark because he combines multiple sitting-champion wins with a long run of same-division elite wins. Keep 25.00.
+
+## Jon Jones
+
+Current OQ: 16.92. Proposed: 16.92.
+
+| UFC win | Credit | Reason |
+|---|---:|---|
+| Andre Gusmao | 0.00 | UFC win, no quality tier |
+| Stephan Bonnar | 0.25 | name/supporting early win |
+| Jake O'Brien | 0.00 | UFC win, no quality tier |
+| Brandon Vera | 0.25 | name/supporting early win |
+| Vladimir Matyushenko | 0.25 | name/supporting veteran win |
+| Ryan Bader | 1.00 | elite/top-5 contender |
+| Mauricio Rua | 1.25 | sitting UFC champion |
+| Rampage Jackson | 1.00 | elite/top-5/former champion still good |
+| Lyoto Machida | 0.50 | strong former champion/name win, not max tier in current table |
+| Rashad Evans | 1.00 | elite/top-5/former champion still good |
+| Vitor Belfort | 0.50 | strong name/former champion, cross-context |
+| Chael Sonnen | 0.25 | moved-up name-value/title challenger context |
+| Alexander Gustafsson 1 | 1.00 | elite/top-5 contender |
+| Glover Teixeira | 0.50 | strong ranked/future champion context, not full at-the-time elite credit in current table |
+| Daniel Cormier 1 | 1.00 | elite/top-5 opponent |
+| Ovince Saint Preux | 0.25 | interim-title context but not elite win tier |
+| Alexander Gustafsson 2 | 0.50 | strong former title challenger, diminished from first win |
+| Anthony Smith | 1.00 | title-level/top-5 challenger by current table |
+| Thiago Santos | 1.00 | title-level/top-5 challenger by current table |
+| Dominick Reyes | 1.00 | title-level/top-5 challenger by current table; close official win |
+| Ciryl Gane | 1.00 | elite heavyweight/title-level opponent |
+| Stipe Miocic | 0.25 | past-prime name-value former champion |
+
+Audit read: Jon has a strong win ledger, but his GOAT separation comes more from Championship Resume, Prime Dominance, and clean loss context than from being the pure Quality Wins benchmark. Keep 16.92.
+
+## Alexander Volkanovski
+
+Current OQ: 14.45. Proposed range: 15.25-16.00.
+
+| UFC win | Credit | Reason |
+|---|---:|---|
+| Yusuke Kasuya | 0.00 | UFC win, no quality tier |
+| Mizuto Hirota | 0.00 | UFC win, no quality tier |
+| Shane Young | 0.00 | UFC win, no quality tier |
+| Jeremy Kennedy | 0.00 | UFC win, no quality tier |
+| Darren Elkins | 0.50 | strong ranked/top-ten support win |
+| Chad Mendes | 0.50 | strong former title challenger, just below full elite credit in current row |
+| Jose Aldo | 1.00 | elite/top-5 former champion still good |
+| Max Holloway 1 | 1.25 | sitting UFC champion |
+| Max Holloway 2 | 1.00 | elite/top-5 opponent; close official win |
+| Brian Ortega | 1.00 | elite/top-5 title challenger |
+| Chan Sung Jung | 0.50 | strong ranked/former title challenger, not full top-five |
+| Max Holloway 3 | 1.00 | elite/top-5 opponent, dominant third win |
+| Yair Rodriguez | 1.00 | elite/top-5/interim champion opponent |
+| Diego Lopes 1 | 1.00 | top-five/vacant title opponent in current app timeline |
+| Diego Lopes 2 | 1.00 | top-five/title defense opponent in current app timeline |
+
+Audit read: Volk's current 14.45 looks low once written win-by-win. He has a sitting-champ win over Max plus multiple elite FW wins. Raise modestly.
+
+## Kamaru Usman
+
+Current OQ: 13.63. Proposed range: 13.75-14.25.
+
+| UFC win | Credit | Reason |
+|---|---:|---|
+| Hayder Hassan | 0.00 | UFC win, no quality tier |
+| Leon Edwards 1 | 0.25 | future champion before elite status |
+| Alexander Yakovlev | 0.00 | UFC win, no quality tier |
+| Warlley Alves | 0.00 | UFC win, no quality tier |
+| Sean Strickland | 0.25 | future champion before elite status, not elite WW at time |
+| Sergio Moraes | 0.00 | UFC win, no quality tier |
+| Emil Meek | 0.00 | UFC win, no quality tier |
+| Demian Maia | 0.50 | strong ranked/former title challenger |
+| Rafael dos Anjos | 1.00 | elite/top-5 welterweight at the time |
+| Tyron Woodley | 1.25 | sitting UFC champion |
+| Colby Covington 1 | 1.00 | elite/top-5 opponent |
+| Jorge Masvidal 1 | 1.00 | top-five/title challenger by ranking logic |
+| Gilbert Burns | 1.00 | elite/top-5 opponent |
+| Jorge Masvidal 2 | 1.00 | top-five/title challenger by ranking logic |
+| Colby Covington 2 | 1.00 | elite/top-5 opponent |
+| Joaquin Buckley | 1.00 | top-five win in current app timeline |
+
+Audit read: Kamaru is a touch low if Buckley is in the current scoring timeline and Masvidal remains full top-five credit. Slight raise is justified.
+
+## Max Holloway
+
+Current OQ: 19.64. Proposed range: 18.75-19.25.
+
+| UFC win | Credit | Reason |
+|---|---:|---|
+| Pat Schilling | 0.00 | UFC win, no quality tier |
+| Justin Lawrence | 0.00 | UFC win, no quality tier |
+| Leonard Garcia | 0.25 | name/supporting early win |
+| Will Chope | 0.00 | UFC win, no quality tier |
+| Andre Fili | 0.50 | strong ranked/support win |
+| Clay Collard | 0.00 | UFC win, no quality tier |
+| Akira Corassani | 0.00 | UFC win, no quality tier |
+| Cole Miller | 0.25 | name/supporting win |
+| Cub Swanson | 1.00 | elite/top-5 style FW contender win |
+| Charles Oliveira | 0.25 | injury/weird win context, not clean full credit |
+| Jeremy Stephens | 0.50 | strong ranked contender win |
+| Ricardo Lamas | 1.00 | elite/top-5/title-level contender |
+| Anthony Pettis | 0.50 | former champion/interim title context, not prime same-division champ credit |
+| Jose Aldo 1 | 1.25 | sitting UFC champion |
+| Jose Aldo 2 | 1.00 | elite/former champion still good |
+| Brian Ortega | 1.00 | elite/top-5 title challenger |
+| Frankie Edgar | 0.50 | former champion still good, but older/smaller context |
+| Calvin Kattar | 1.00 | elite/top-5 contender |
+| Yair Rodriguez | 1.00 | elite/top-5 contender |
+| Arnold Allen | 1.00 | elite/top-5 contender |
+| Chan Sung Jung | 0.25 | past-prime name-value win |
+| Justin Gaethje | 1.00 | elite lightweight/BMF title-level opponent |
+
+Audit read: Max still deserves one of the best Quality Wins scores on the board. Slight reduction is only because the ledger is volume-heavy compared with GSP's sitting-champ/top-five title-era depth.
+
+## Dustin Poirier
+
+Current OQ: 18.85. Proposed range: 17.50-18.25.
+
+| UFC win | Credit | Reason |
+|---|---:|---|
+| Josh Grispi | 0.00 | UFC win, no quality tier |
+| Jason Young | 0.00 | UFC win, no quality tier |
+| Pablo Garza | 0.00 | UFC win, no quality tier |
+| Max Holloway 1 | 0.25 | future elite before prime |
+| Jonathan Brookins | 0.00 | UFC win, no quality tier |
+| Diego Brandao | 0.25 | name/supporting win |
+| Akira Corassani | 0.00 | UFC win, no quality tier |
+| Carlos Diego Ferreira | 0.50 | strong ranked/supporting LW win |
+| Yancy Medeiros | 0.00 | UFC win, no quality tier |
+| Joe Duffy | 0.25 | strong name/supporting win |
+| Bobby Green | 0.25 | strong name/supporting win |
+| Jim Miller | 0.50 | strong veteran/former contender support win |
+| Anthony Pettis | 0.50 | former champion still relevant |
+| Justin Gaethje 1 | 1.00 | elite/top-5 lightweight win |
+| Eddie Alvarez | 1.00 | elite former champion still good |
+| Max Holloway 2 | 1.00 | elite/former champion moving up, interim-title context |
+| Dan Hooker | 0.50 | strong ranked lightweight win |
+| Conor McGregor 2 | 0.50 | former champion still dangerous/name-value win |
+| Conor McGregor 3 | 0.25 | weird/injury finish context, partial only |
+| Michael Chandler | 1.00 | elite/top-5 lightweight contender |
+| Benoit Saint Denis | 0.50 | strong ranked contender win |
+
+Audit read: Dustin has a great quality ledger, but it is lighter on clean sitting-champion wins. Keep high, but not Max/GSP high.
+
+## Charles Oliveira
+
+Current OQ: 17.85. Proposed range: 17.00-17.75.
+
+| UFC win | Credit | Reason |
+|---|---:|---|
+| Darren Elkins | 0.00 | UFC win, no quality tier at time |
+| Efrain Escudero | 0.00 | UFC win, no quality tier |
+| Jonathan Brookins | 0.00 | UFC win, no quality tier |
+| Eric Wisely | 0.00 | UFC win, no quality tier |
+| Andy Ogle | 0.00 | UFC win, no quality tier |
+| Hatsu Hioki | 0.25 | name/supporting win |
+| Jeremy Stephens | 0.50 | strong ranked/name win |
+| Nik Lentz 2 | 0.25 | supporting ranked-ish win |
+| Myles Jury | 0.25 | supporting ranked-ish win |
+| Will Brooks | 0.25 | name/context win, not UFC elite at time |
+| Clay Guida | 0.25 | veteran/name win |
+| Christos Giagos | 0.00 | UFC win, no quality tier |
+| Jim Miller 2 | 0.50 | strong veteran/former contender support win |
+| David Teymur | 0.50 | strong ranked/supporting lightweight win |
+| Nik Lentz 3 | 0.25 | supporting win |
+| Jared Gordon | 0.00 | UFC win, no quality tier |
+| Kevin Lee | 0.50 | strong ranked contender win |
+| Tony Ferguson | 0.50 | former interim champ/name still relevant but declining |
+| Michael Chandler | 1.00 | elite/top-5 title opponent |
+| Dustin Poirier | 1.00 | elite/top-5 lightweight win |
+| Justin Gaethje | 1.00 | elite/top-5 lightweight win, stripped-title context belongs in Championship not OQ |
+| Beneil Dariush | 1.00 | elite/top-5 lightweight win |
+
+Audit read: Charles is high because modern LW is strong and his best four wins are excellent. Slight trim only if partials were overstacked.
+
+## Aljamain Sterling
+
+Current OQ: 13.90. Proposed range: 12.75-13.25.
+
+| UFC win | Credit | Reason |
+|---|---:|---|
+| Cody Gibson | 0.00 | UFC win, no quality tier |
+| Takeya Mizugaki | 0.25 | name/supporting veteran win |
+| Johnny Eduardo | 0.00 | UFC win, no quality tier |
+| Augusto Mendes | 0.00 | UFC win, no quality tier |
+| Renan Barao | 0.25 | former champion, clearly declined |
+| Brett Johns | 0.50 | strong ranked/supporting BW win |
+| Cody Stamann | 0.50 | strong ranked/supporting BW win |
+| Jimmie Rivera | 0.50 | strong ranked contender win |
+| Pedro Munhoz | 0.50 | strong ranked contender win |
+| Cory Sandhagen | 1.00 | elite/top-5 bantamweight win |
+| Petr Yan 1 DQ | 0.25 | weird/DQ title win; not clean opponent-quality proof |
+| Petr Yan 2 | 1.00 | elite/top-5 bantamweight win |
+| T.J. Dillashaw | 0.25 | injury-compromised win |
+| Henry Cejudo | 1.00 | elite former two-division champion still credible |
+| Calvin Kattar | 0.50 | strong FW contender/name win |
+| Brian Ortega | 0.50 | strong former title challenger/name win in current app timeline |
+| Youssef Zalal / late supporting win | 0.25 | supporting contender context if included in current app timeline |
+
+Audit read: Aljo has a strong résumé, but 13.90 is high once weird wins are separated. The Yan rematch, Sandhagen, and Cejudo carry the case. DQ Yan and injured TJ should not add much.
 
 ---
 
-# Batch 1 recommended score calls
+# Batch 1A score-direction summary
 
-These are not yet applied live. They are the first-pass audit calls for Cody to approve before updating score tables.
+These are still not live score edits.
 
-| Fighter | Current OQ | Recommended OQ | Direction |
-|---|---:|---:|---|
-| Georges St-Pierre | 25.00 | 25.00 | Lock benchmark |
-| Jon Jones | 16.92 | 16.92 | Keep |
-| Max Holloway | 19.64 | 19.00 | Slight reduce |
-| Dustin Poirier | 18.85 | 18.00 | Reduce |
-| Charles Oliveira | 17.85 | 17.50 | Slight reduce |
-| Alexander Volkanovski | 14.45 | 15.50 | Raise |
-| Aljamain Sterling | 13.90 | 13.00 | Reduce |
-| Kamaru Usman | 13.63 | 14.00 | Slight raise |
+| Fighter | Current OQ | Direction after win-by-win |
+|---|---:|---|
+| Georges St-Pierre | 25.00 | Keep benchmark |
+| Jon Jones | 16.92 | Keep |
+| Alexander Volkanovski | 14.45 | Raise |
+| Kamaru Usman | 13.63 | Slight raise |
+| Max Holloway | 19.64 | Slight reduce / still elite |
+| Dustin Poirier | 18.85 | Reduce modestly |
+| Charles Oliveira | 17.85 | Keep close or slight reduce |
+| Aljamain Sterling | 13.90 | Reduce |
 
-## Batch 1 decisions requested
+## Next action before live changes
 
-1. Lock the simplified credit table as final for Opponent Quality.
-2. Approve Batch 1 recommended score calls.
-3. If approved, create an Opponent Quality correction module like the Championship correction module and re-sort by raw total.
+Cody should approve the win-by-win credit treatment for the weird/important fights:
 
-## Next Opponent Quality batch
+- Max vs Charles injury-stoppage win = 0.25?
+- Dustin vs Conor 3 injury finish = 0.25?
+- Charles over Gaethje stripped-title fight = still 1.00 OQ because Gaethje was elite?
+- Aljo Yan DQ = 0.25 OQ?
+- Aljo injured TJ = 0.25 OQ?
+- Jon Smith/Santos/Reyes = keep full 1.00 title-level opponent credit?
+- Kamaru Masvidal title fights = keep full 1.00 each under ranking logic?
 
-Batch 2 should audit the next sensitive group:
-
-- Matt Hughes
-- Israel Adesanya
-- Randy Couture
-- Jose Aldo
-- Justin Gaethje
-- Ilia Topuria
-- Petr Yan
-- Demetrious Johnson
-- Frankie Edgar
-- Khabib Nurmagomedov
-- Islam Makhachev
-
-Goal: finish the high-impact men’s board before touching lower-volume/respectability cases.
+Once those are locked, create `assets/data/opponent-quality-score-corrections.js` and re-sort by raw total.
