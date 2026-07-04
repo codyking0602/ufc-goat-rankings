@@ -30,6 +30,16 @@ Use title-prime only for the separate 5-point title-defense streak component.
 
 ---
 
+# Sample confidence rule
+
+Sample confidence is a Cody-lock field.
+
+The worksheet can show my recommended confidence score, but Cody makes the final call because this component is partly about how much trust the model should place in the prime sample.
+
+Cody locked Conor McGregor's sample confidence at **2.00 / 2**.
+
+---
+
 # Formula
 
 | Component | Max |
@@ -57,7 +67,7 @@ Use title-prime only for the separate 5-point title-defense streak component.
 | B.J. Penn | 16.27 | 18.00 | +1.73 | Better title-prime/finish credit, but messy record and finish losses cap. |
 | Dominick Cruz | 17.59 | 18.15 | +0.56 | 67.9% round share and title-control moments; low finish rate caps. |
 | Henry Cejudo | 18.05 | 16.75 | -1.30 | Two-division title wins matter elsewhere, but full prime has too many losses. |
-| Conor McGregor | 18.02 | 17.35 | -0.67 | Great finishing and division difficulty, but no defenses and two finished losses. |
+| Conor McGregor | 18.02 | 18.05 | +0.03 | Great finishing and division difficulty; Cody locked full sample confidence. |
 | Petr Yan | 21.43 | 16.15 | -5.28 | Snapshot 65.2% rounds is good, but no defense streak and 7-4 prime record cut him hard. |
 
 ---
@@ -71,8 +81,8 @@ Use title-prime only for the separate 5-point title-defense streak component.
 | 3 | Francis Ngannou | 19.70 |
 | 4 | Alex Pereira | 18.50 |
 | 5 | Dominick Cruz | 18.15 |
-| 6 | B.J. Penn | 18.00 |
-| 7 | Conor McGregor | 17.35 |
+| 6 | Conor McGregor | 18.05 |
+| 7 | B.J. Penn | 18.00 |
 | 8 | Henry Cejudo | 16.75 |
 | 9 | Randy Couture | 16.50 |
 | 10 | Petr Yan | 16.15 |
@@ -88,8 +98,8 @@ Use title-prime only for the separate 5-point title-defense streak component.
 | Francis Ngannou | Overeem 2017 - Gane 2022 | 7-2 | 11/20 = 55.0% | 3.35 | 1.75 | 4.75 | 2.50 | 1.35 | 1.55 | 19.70 |
 | Alex Pereira | Adesanya 1 2022 - Gane 2026 | 7-3 | 14/27 = 51.9% | 3.00 | 3.40 | 4.50 | 1.00 | 1.40 | 1.50 | 18.50 |
 | Dominick Cruz | Faber 2 2011 - Cejudo 2020 | 5-2 | 19/28 = 67.9% | 4.50 | 3.00 | 1.50 | 1.75 | 1.45 | 1.95 | 18.15 |
+| Conor McGregor | Poirier 1 2014 - Khabib 2018 | 6-2 | 12/19 = 63.2% | 4.10 | 0.50 | 4.60 | 1.00 | 1.85 | 2.00 | 18.05 |
 | B.J. Penn | Din Thomas 2001 - Nick Diaz 2011 | 11-7-2 | 36/61 = 59.0% | 3.65 | 3.40 | 4.20 | 0.00 | 1.65 | 2.00 | 18.00 |
-| Conor McGregor | Poirier 1 2014 - Khabib 2018 | 6-2 | 12/19 = 63.2% | 4.10 | 0.50 | 4.60 | 1.00 | 1.85 | 1.30 | 17.35 |
 | Henry Cejudo | Formiga 2015 - Merab 2024 | 6-5 | 19/31 = 61.3% | 3.90 | 2.25 | 3.10 | 1.25 | 1.35 | 1.70 | 16.75 |
 | Randy Couture | Maurice Smith 1997 - Nogueira 2009 | 9-7 | 31/47 = 66.0% | 4.40 | 2.80 | 3.55 | 0.00 | 1.25 | 2.00 | 16.50 |
 | Petr Yan | Title/elite BW window | 7-4 | Snapshot 65.2% | 4.30 | 0.75 | 1.70 | 2.50 | 1.65 | 1.65 | 16.15 |
@@ -118,13 +128,13 @@ Alex rises because his title/finish profile is better than the current Prime sco
 
 Cruz gets a slight bump. He has real title-control moments and solid round winning. He does not rise much because UFC-only removes WEC, his finish rate is low, and Garbrandt/Cejudo cap the full elite-prime window.
 
+## Conor McGregor
+
+Conor is a great short-prime explosion. Cody locked sample confidence at 2.00 because the sample is short but fully proven at the highest level. The formula rewards the finishes and FW/LW difficulty, but no UFC title defenses and two prime finished losses keep him around 18.
+
 ## B.J. Penn
 
 B.J. rises because the title-prime and finish profile deserve more respect than 16.27. The full elite-prime record is still messy, and finished losses to Hughes/GSP plus Edgar/Diaz context keep him from going higher.
-
-## Conor McGregor
-
-Conor remains a great short-prime explosion, not a long Prime Dominance case. The formula rewards the finishes and FW/LW difficulty, but no UFC title defenses and two prime finished losses keep him around 17.
 
 ## Henry Cejudo
 
