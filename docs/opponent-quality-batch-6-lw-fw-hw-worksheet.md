@@ -50,15 +50,41 @@ Opponent Quality credit is based on who the opponent was on fight night, not who
 
 Future accomplishments can be useful context, but they cannot be the reason a past win gets upgraded. A future champion only gets full credit if he was already title-level, elite-ranked, or championship-level at the time of the fight.
 
+## Top-five / title-level clarification
+
+Cody clarified during Batch 6: clear top-five or true title-level contender status on fight night should usually be 1.00 automatically. Use 0.75 for strong ranked/support-plus wins that are not clearly top-five/title-level, for former champs who are no longer near that level, or for weird context that keeps the win below full elite credit.
+
 ---
 
-# Batch 6 working ledgers
+# Cody calls locked for Batch 6
+
+| Call | Locked answer | Why |
+|---|---:|---|
+| Francis over Cain | 0.75 | Huge name, but not prime Cain on fight night. |
+| Francis over Rozenstruik | 0.75 | Undefeated/dangerous contender, but not full elite title-level. |
+| Francis over Gane | 1.00 | Interim champion/title challenger, but not undisputed sitting champ. |
+| Francis HW adjustment | 0.95 | Same heavyweight depth discount as Stipe/Cain. |
+| Charles result | Keep Batch 1B | Charles was already audited at 12.76 unless the ledger is reopened. |
+| Justin top-five/title-level LW cluster | 1.00 where top-five/title-level | Cody clarified top-five/title-level contenders should usually be automatic 1.00. Barboza, Fiziev, Chandler, and app-timeline Pimblett are treated as full 1.00 in this pass. |
+| Justin over app-timeline Topuria | 1.25 | Current scoring-table sitting champion win. |
+| Justin LW adjustment | 1.10 | Lightweight murderers' row bump. |
+| Frankie over Faber | 0.75 | Big name, but WEC greatness is context only. |
+| Frankie over Munhoz | 0.75 | Strong ranked bantamweight win. |
+| Frankie blended adjustment | 1.00 | LW/FW/BW blend, no full LW 1.10. |
+| Ilia over Mitchell / Emmett | 0.75 each | Strong featherweight wins, but not full title/champion wins. |
+| Ilia over Max | 1.00 | Elite former champion/top contender, not sitting champ in this scoring call. |
+| Ilia over app-timeline Charles | 1.25 | Cody call: full sitting-champ/title-level app-timeline credit. |
+| Ilia FW/LW adjustment | 1.05 | Modern FW/LW blend. |
+
+---
+
+# Batch 6 locked ledgers
 
 ## Francis Ngannou
 
 Current OQ: 9.26.
 
-| UFC win | Working credit | Reason |
+| UFC win | Locked credit | Reason |
 |---|---:|---|
 | Luis Henrique | 0.00 | UFC win, no quality tier |
 | Curtis Blaydes 1 | 0.25 | promising HW prospect at the time, not yet elite; not future-credit upgrade |
@@ -66,13 +92,13 @@ Current OQ: 9.26.
 | Anthony Hamilton | 0.25 | support win |
 | Andrei Arlovski | 0.50 | former UFC champion name, but not prime champ on fight night |
 | Curtis Blaydes 2 | 1.00 | elite/top heavyweight contender on fight night |
-| Cain Velasquez | 0.75 | former UFC champion name, but injury/layoff/late-career context keeps below full 1.00 |
+| Cain Velasquez | 0.75 | Cody call: former UFC champion name, but injury/layoff/late-career context keeps below full 1.00 |
 | Junior dos Santos | 1.00 | former UFC champion/top heavyweight contender on fight night |
-| Jairzinho Rozenstruik | 0.75 | undefeated strong contender, below full elite-title-challenger tier |
+| Jairzinho Rozenstruik | 0.75 | Cody call: undefeated strong contender, below full elite-title-challenger tier |
 | Stipe Miocic 2 | 1.25 | beat sitting UFC heavyweight champion |
-| Ciryl Gane | 1.00 | interim champion/top heavyweight title challenger, not sitting undisputed champ |
+| Ciryl Gane | 1.00 | Cody call: interim champion/top heavyweight title challenger, not sitting undisputed champ |
 
-Working math with 0.95 heavyweight adjustment:
+Locked math with 0.95 heavyweight adjustment:
 
 | Metric | Value |
 |---|---:|
@@ -85,22 +111,13 @@ Working math with 0.95 heavyweight adjustment:
 | Adjusted OQ index | 6.41 |
 | Formula OQ score | 10.26 |
 
-Cody calls needed:
-
-| Call | My lean | Why I’m asking |
-|---|---:|---|
-| Cain Velasquez | 0.75 | Huge name, but not prime Cain on fight night. Need to decide if former-champ name plus injury/layoff context stays middle-tier. |
-| Rozenstruik | 0.75 | Undefeated and dangerous, but not clearly elite champion-level. Need to decide if undefeated top contender gets 0.75 or full 1.00. |
-| Ciryl Gane | 1.00 | Interim champ/title challenger, but not undisputed sitting champ. Need to keep interim champion wins from automatically becoming 1.25. |
-| HW adjustment | 0.95 | Same depth discount used for Stipe/Cain. Need to confirm Francis gets same HW treatment. |
-
 ## Charles Oliveira
 
 Current OQ: 17.85.
 
-Batch 1B already audited Charles and produced a formula OQ of 12.76. This section repeats it here because Batch 6 is the lightweight/featherweight cleanup batch.
+Batch 1B already audited Charles and produced a formula OQ of 12.76. Cody said to keep that result in this pass.
 
-| UFC win | Working credit | Reason |
+| UFC win | Locked credit | Reason |
 |---|---:|---|
 | Darren Elkins | 0.00 | early UFC win, no quality tier |
 | Efrain Escudero | 0.00 | UFC win, no quality tier |
@@ -126,7 +143,7 @@ Batch 1B already audited Charles and produced a formula OQ of 12.76. This sectio
 | Justin Gaethje | 1.00 | stripped-title fight, Cody previously called full OQ credit |
 | Beneil Dariush | 1.00 | elite/top lightweight contender |
 
-Working math with 1.10 lightweight adjustment:
+Locked math with 1.10 lightweight adjustment:
 
 | Metric | Value |
 |---|---:|
@@ -139,60 +156,41 @@ Working math with 1.10 lightweight adjustment:
 | Adjusted OQ index | 7.98 |
 | Formula OQ score | 12.76 |
 
-Cody calls needed:
-
-| Call | My lean | Why I’m asking |
-|---|---:|---|
-| Keep Batch 1B Charles result? | yes | Charles was already audited. Current 17.85 looks too high under the new formula unless Cody wants to reopen the ledger. |
-| Tony Ferguson | 0.75 | Former interim champ/elite name, but post-prime slide had started. Need to keep it from becoming full 1.00 only because Tony's peak was great. |
-| Kevin Lee | 0.50 | Strong ranked-ish support win, not elite title-level. Need to avoid overcounting the name. |
-| Lightweight adjustment | 1.10 | Charles' best run was in the lightweight murderers' row. Need to keep the division bump consistent with Dustin/Gaethje. |
-
 ## Justin Gaethje
 
 Current OQ: 13.20.
 
-| UFC win | Working credit | Reason |
+| UFC win | Locked credit | Reason |
 |---|---:|---|
 | Michael Johnson | 0.50 | strong lightweight support win |
 | James Vick | 0.25 | support win |
-| Edson Barboza | 0.75 | strong/top lightweight contender, below full title-level tier |
+| Edson Barboza | 1.00 | Cody clarification: clear top-five/title-level contender credit should usually be 1.00 |
 | Donald Cerrone | 0.50 | former title challenger/name support win, late-career context |
 | Tony Ferguson | 1.00 | interim title win over elite/top lightweight contender |
-| Michael Chandler | 0.75 | former Bellator champ/high-action contender, but not UFC title-level on fight night |
-| Rafael Fiziev | 0.75 | strong/top lightweight contender |
+| Michael Chandler | 1.00 | Cody clarification: treated as top-five/title-level lightweight contender on fight night |
+| Rafael Fiziev | 1.00 | Cody clarification: treated as top-five/title-level lightweight contender on fight night |
 | Dustin Poirier 2 | 1.00 | elite former interim champion/top lightweight contender |
-| Paddy Pimblett current scoring-table interim title win | 0.75 | current scoring-table interim title value, but not elite proven top-five like Poirier/Tony |
-| Ilia Topuria current scoring-table undisputed title win | 1.25 | current scoring-table win over sitting UFC champion |
+| Paddy Pimblett current scoring-table interim title win | 1.00 | Cody clarification: current scoring-table top-five/title-level/interim context gets full 1.00 OQ |
+| Ilia Topuria current scoring-table undisputed title win | 1.25 | Cody call: current scoring-table win over sitting UFC champion |
 
-Working math with 1.10 lightweight adjustment:
+Locked math with 1.10 lightweight adjustment:
 
 | Metric | Value |
 |---|---:|
 | Quality wins count | 7 |
-| Discounted quality index | 6.25 |
+| Discounted quality index | 7.25 |
 | Raw support | 1.25 |
 | Support after 2.50 cap | 1.25 |
-| Base OQ index | 7.50 |
+| Base OQ index | 8.50 |
 | Division/era adjustment | 1.10 |
-| Adjusted OQ index | 8.25 |
-| Formula OQ score | 13.21 |
-
-Cody calls needed:
-
-| Call | My lean | Why I’m asking |
-|---|---:|---|
-| Barboza / Fiziev | 0.75 each | Both are strong ranked lightweight wins, but not title/champion-level. Need to decide if they are support-plus or full 1.00. |
-| Chandler | 0.75 | Big name and dangerous, but not a UFC title-level win at that exact time. Need fight-night credit discipline. |
-| Pimblett app-timeline interim win | 0.75 | Interim-title value, but opponent quality may not equal elite lightweight contender. Need to separate belt context from actual opponent quality. |
-| Topuria app-timeline title win | 1.25 | Sitting champ win in current scoring-table timeline. Need to confirm current app timeline should include it. |
-| Lightweight adjustment | 1.10 | Gaethje's best wins are in the lightweight murderers' row. This is why his formula lands almost exactly on current OQ. |
+| Adjusted OQ index | 9.35 |
+| Formula OQ score | 14.97 |
 
 ## Frankie Edgar
 
 Current OQ: 12.70.
 
-| UFC win | Working credit | Reason |
+| UFC win | Locked credit | Reason |
 |---|---:|---|
 | Tyson Griffin | 0.50 | strong lightweight support win |
 | Mark Bocek | 0.00 | UFC win, no quality tier |
@@ -205,13 +203,13 @@ Current OQ: 12.70.
 | Charles Oliveira | 0.25 | talented prospect on fight night, not future-champ credit |
 | B.J. Penn 3 | 0.25 | name/rivalry value, but late-career Penn |
 | Cub Swanson 1 | 1.00 | elite/top featherweight contender on fight night |
-| Urijah Faber | 0.75 | former WEC champion/name and top lower-weight contender, not UFC title holder |
+| Urijah Faber | 0.75 | Cody call: former WEC champion/name and top lower-weight contender, not UFC title holder |
 | Chad Mendes | 1.00 | elite/top featherweight contender |
 | Jeremy Stephens | 0.50 | strong featherweight support win |
 | Cub Swanson 2 | 0.50 | former top contender rematch, later context |
-| Pedro Munhoz | 0.75 | strong ranked bantamweight win late in career |
+| Pedro Munhoz | 0.75 | Cody call: strong ranked bantamweight win late in career |
 
-Working math with 1.00 blended LW/FW/BW adjustment:
+Locked math with 1.00 blended LW/FW/BW adjustment:
 
 | Metric | Value |
 |---|---:|
@@ -224,96 +222,61 @@ Working math with 1.00 blended LW/FW/BW adjustment:
 | Adjusted OQ index | 10.00 |
 | Formula OQ score | 16.01 |
 
-Cody calls needed:
-
-| Call | My lean | Why I’m asking |
-|---|---:|---|
-| B.J. Penn 1 / 2 | 1.25 / 1.00 | First was sitting champion, second was immediate former-champ rematch. Need to keep title context clean. |
-| Urijah Faber | 0.75 | Huge lower-weight name, but UFC-only and not a UFC champion. Need to decide how much WEC-earned reputation can affect a UFC win. |
-| Pedro Munhoz | 0.75 | Strong ranked BW win, but late-career Frankie. OQ scores opponent quality; age of Frankie matters elsewhere. |
-| Frankie blended division adjustment | 1.00 | He spans LW/FW/BW. Need to avoid giving full modern LW 1.10 while still respecting multi-division difficulty. |
-
 ## Ilia Topuria
 
 Current OQ: 13.10.
 
-| UFC win | Working credit | Reason |
+| UFC win | Locked credit | Reason |
 |---|---:|---|
 | Youssef Zalal | 0.25 | support/prospect win |
 | Damon Jackson | 0.25 | support win |
 | Ryan Hall | 0.25 | specialist/name support win |
 | Jai Herbert | 0.25 | lightweight support win |
-| Bryce Mitchell | 0.75 | strong/top featherweight contender |
-| Josh Emmett | 0.75 | former interim-title challenger/top featherweight contender |
+| Bryce Mitchell | 0.75 | Cody call: strong/top featherweight contender but not full title/champion win |
+| Josh Emmett | 0.75 | Cody call: former interim-title challenger/top featherweight contender, but not full 1.00 here |
 | Alexander Volkanovski | 1.25 | beat sitting UFC featherweight champion |
-| Max Holloway | 1.00 | elite former featherweight champion/top contender on fight night; adjust to 1.25 only if he was sitting champ in current timeline |
-| Charles Oliveira current scoring-table lightweight win | 1.00 | elite former lightweight champion/top contender in current scoring-table timeline |
+| Max Holloway | 1.00 | Cody call: elite former featherweight champion/top contender, not sitting champ in this scoring call |
+| Charles Oliveira current scoring-table lightweight win | 1.25 | Cody call: full app-timeline sitting-champ/title-level credit |
 
-Working math with 1.05 FW/LW adjustment:
+Locked math with 1.05 FW/LW adjustment:
 
 | Metric | Value |
 |---|---:|
 | Quality wins count | 5 |
-| Discounted quality index | 4.75 |
+| Discounted quality index | 5.00 |
 | Raw support | 1.00 |
 | Support after 2.50 cap | 1.00 |
-| Base OQ index | 5.75 |
+| Base OQ index | 6.00 |
 | Division/era adjustment | 1.05 |
-| Adjusted OQ index | 6.04 |
-| Formula OQ score | 9.67 |
-
-Cody calls needed:
-
-| Call | My lean | Why I’m asking |
-|---|---:|---|
-| Bryce Mitchell / Josh Emmett | 0.75 each | Strong top featherweight wins, but not full title-level/champion wins. Need to decide if either deserves 1.00. |
-| Max Holloway | 1.00 | Elite former champion/top contender. Need to know if current scoring-table timeline had Max as sitting champ; if yes, make 1.25. |
-| Charles Oliveira app-timeline win | 1.00 | Elite former lightweight champion/top contender. Need to confirm the current app timeline includes it as a Topuria win. |
-| Ilia division adjustment | 1.05 | Modern featherweight/LW blend. Need to avoid full LW 1.10 unless the lightweight title portion becomes the main case. |
-| Current OQ gap | review | Formula comes in well below current 13.10 unless additional current-timeline wins are missing or Max/Charles are upgraded. |
+| Adjusted OQ index | 6.30 |
+| Formula OQ score | 10.08 |
 
 ---
 
-# Batch 6 working formula summary
+# Batch 6 locked formula summary
 
 These are not live edits.
 
-| Fighter | Current OQ | Working formula OQ | Direction |
+| Fighter | Current OQ | Locked formula OQ | Direction |
 |---|---:|---:|---|
 | Francis Ngannou | 9.26 | 10.26 | Raise |
 | Charles Oliveira | 17.85 | 12.76 | Lower / already locked in Batch 1B |
-| Justin Gaethje | 13.20 | 13.21 | Basically exact |
+| Justin Gaethje | 13.20 | 14.97 | Raise |
 | Frankie Edgar | 12.70 | 16.01 | Raise a lot |
-| Ilia Topuria | 13.10 | 9.67 | Lower unless current-timeline wins/upgrades are missing |
+| Ilia Topuria | 13.10 | 10.08 | Lower unless more current-timeline wins are added/upgraded |
 
 # Main issue this batch exposes
 
-Justin is almost perfectly aligned with the new formula.
+Justin now rises because Cody clarified that clear top-five/title-level contenders should usually be 1.00, not 0.75.
 
 Charles still looks inflated under the new formula, consistent with the Batch 1B result.
 
 Frankie jumps because the formula gives real fight-night credit to B.J. Penn, Cub Swanson, Chad Mendes, Sean Sherk, Urijah Faber, and Pedro Munhoz.
 
-Ilia is the problem case in this batch. His current score assumes more OQ weight than the clean ledger gives unless the current scoring-table timeline has more wins or Max/Charles need higher credit.
+Ilia remains the problem case in this batch. Even after Charles is raised to 1.25, his clean formula is still below current 13.10 unless more current-timeline wins are added or Mitchell/Emmett/Max are upgraded.
 
-# Next Cody calls to lock Batch 6
+# Next step
 
-| # | Fighter | Call | My lean | Why I’m asking |
-|---:|---|---|---:|---|
-| 1 | Francis | Cain | 0.75 | Cain is a huge name, but on fight night he was returning from a long layoff and not prime Cain. Need to decide if this stays middle-tier instead of full elite. |
-| 2 | Francis | Rozenstruik | 0.75 | Undefeated and dangerous, but not clearly a proven elite/title-level heavyweight yet. This decides if undefeated contender hype reaches 1.00. |
-| 3 | Francis | Gane | 1.00 | Gane was interim champ/title challenger, but not undisputed sitting champion. This keeps interim/title-challenger wins below 1.25. |
-| 4 | Francis | HW adjustment | 0.95 | Keeps Francis consistent with Stipe/Cain: heavyweight prestige is real, but depth gets a small discount. |
-| 5 | Charles | Keep Batch 1B result | yes | Charles was already audited under the same formula. Current 17.85 looks high unless we reopen the entire ledger. |
-| 6 | Justin | Barboza/Fiziev/Chandler/Pimblett | 0.75 each | These are strong lightweight wins, but not all are true title-level/champion wins. This keeps Justin from getting inflated just because every name is dangerous. |
-| 7 | Justin | Topuria app-title win | 1.25 | If the current scoring table has Justin beating sitting champion Topuria, that is full sitting-champ OQ credit. |
-| 8 | Justin | LW adjustment | 1.10 | His best wins are in lightweight murderers' row, so this should match Dustin/Charles. |
-| 9 | Frankie | Faber | 0.75 | Huge lower-weight name, but WEC greatness is not scored directly. This decides how much non-UFC-earned reputation can boost a UFC win. |
-| 10 | Frankie | Munhoz | 0.75 | Munhoz was a strong ranked bantamweight. Frankie being old matters elsewhere; OQ is about the opponent's fight-night quality. |
-| 11 | Frankie | Blended division adjustment | 1.00 | Frankie spans LW/FW/BW. This avoids a full 1.10 lightweight bump while respecting multi-division difficulty. |
-| 12 | Ilia | Mitchell/Emmett | 0.75 each | Both are strong featherweight wins, but neither is a sitting champ or clear elite title-level win. Need to decide if either deserves 1.00. |
-| 13 | Ilia | Max Holloway | 1.00 unless sitting champ in current timeline | Max is elite former champ/top contender. If he was sitting champ in the current scoring-table timeline, this becomes 1.25. |
-| 14 | Ilia | Charles app-timeline win | 1.00 | Charles is elite former lightweight champ/top contender. Need to confirm this current-timeline win is included. |
-| 15 | Ilia | FW/LW adjustment | 1.05 | Modern FW/LW blend. Avoid full LW 1.10 unless lightweight becomes the main scored championship lane. |
+Batch 6 is now locked for the worksheet unless Cody revises Ilia's missing/upgraded wins or reopens Charles.
 
-After those are locked, continue with remaining cleanup: Amanda Nunes, Valentina Shevchenko, Joanna Jedrzejczyk, Ronda Rousey, and any remaining men not covered.
+Next cleanup batch: Amanda Nunes, Valentina Shevchenko, Joanna Jedrzejczyk, Ronda Rousey, and any remaining men not covered.
