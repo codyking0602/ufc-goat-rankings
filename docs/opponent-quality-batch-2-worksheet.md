@@ -48,6 +48,21 @@ Support win = 0.50 or 0.25.
 
 ---
 
+# Cody calls recorded so far
+
+| Call | Status |
+|---|---|
+| Khabib over Conor | Cody says 1.00. Locked unless revisited. |
+| Islam over Volkanovski 2 | Cody says yes, keep 1.25 despite short notice. Locked unless revisited. |
+| Islam over Dustin | Cody asked why 0.75. Not locked yet. |
+| Islam/Pereira future/current app timeline wins | Cody asked what this means. Not locked yet. |
+| DJ over Benavidez 1 | Cody says 1.00. Locked unless revisited. |
+| DJ flyweight adjustment | Cody says 0.85. Locked unless revisited. |
+| Aldo division adjustment | Cody says 1.00. Locked unless revisited. |
+| Pereira division adjustment | Cody says 0.98. Locked unless revisited. |
+
+---
+
 # Batch 2 working ledgers
 
 ## Khabib Nurmagomedov
@@ -66,7 +81,7 @@ Current OQ: 8.99.
 | Michael Johnson | 0.50 | top-ten/support win |
 | Edson Barboza | 1.00 | elite/top-5 lightweight win |
 | Al Iaquinta | 0.50 | vacant title opponent but short-notice/non-top-five context |
-| Conor McGregor | 1.00 | elite title-level/former two-division champion opponent |
+| Conor McGregor | 1.00 | Cody call: full elite title-level/former two-division champion opponent |
 | Dustin Poirier | 1.00 | interim champion/top-5 lightweight |
 | Justin Gaethje | 1.00 | interim champion/top-5 lightweight |
 
@@ -83,9 +98,8 @@ Working math:
 | Adjusted OQ index | 7.70 |
 | Formula OQ score | 12.32 |
 
-Cody calls needed:
+Remaining Cody calls needed:
 
-- Conor as full 1.00 or middle-tier 0.75?
 - Iaquinta vacant-title short-notice win: 0.50 okay?
 - Tibau/Tavares small support credit: keep 0.25 each or make 0.00?
 
@@ -108,12 +122,12 @@ Current OQ: 9.80.
 | Bobby Green | 0.25 | short-notice name/support win |
 | Charles Oliveira | 1.00 | elite former champion/vacant title opponent |
 | Alexander Volkanovski 1 | 1.25 | reigning champion/P4P elite moving up; already treated max in repo |
-| Alexander Volkanovski 2 | 1.25 | same opponent context; short notice handled outside OQ unless Cody discounts |
-| Dustin Poirier | 0.75 | championship-level former interim champ, ranked outside clean top-five by some sources |
+| Alexander Volkanovski 2 | 1.25 | Cody call: keep max champion/P4P credit despite short notice |
+| Dustin Poirier | 0.75 | Cody asked why. Working reason: former interim/title challenger but not clean top-five by some sources at the time. |
 | Renato Moicano | 0.50 | short-notice top-ten title challenger |
-| Jack Della Maddalena | 1.25 | sitting UFC welterweight champion in current app timeline |
+| Jack Della Maddalena | 1.25 | current app timeline includes this future/current sitting champion win; Cody asked what this means |
 
-Working math:
+Working math with Dustin at 0.75 and JDM included:
 
 | Metric | Value |
 |---|---:|
@@ -126,9 +140,8 @@ Working math:
 | Adjusted OQ index | 8.80 |
 | Formula OQ score | 14.08 |
 
-Cody calls needed:
+Remaining Cody calls needed:
 
-- Volk rematch on short notice: still full 1.25 OQ or lower to 1.00?
 - Dustin 2024: 0.75 middle-tier or full 1.00 title-level challenger?
 - JDM current app timeline: include as sitting champ 1.25, or hold until live timeline is finalized?
 - Moicano short-notice title defense: 0.50 or 0.25?
@@ -142,7 +155,7 @@ Current OQ: 12.88.
 | Kid Yamamoto | 0.00 | rank unclear; repo currently removed from scoring |
 | Miguel Torres | 0.75 | former WEC champion/top bantamweight name; not sitting UFC champ |
 | Ian McCall 2 | 1.00 | elite/top-5 flyweight rematch |
-| Joseph Benavidez 1 | 1.00 | inaugural/vacant title opponent; elite top contender, not sitting champ |
+| Joseph Benavidez 1 | 1.00 | Cody call: normal elite contender credit, not special 1.25 |
 | John Dodson 1 | 1.00 | elite/top-5 flyweight title challenger |
 | John Moraga | 0.50 | title challenger/support, not full elite by current table |
 | Joseph Benavidez 2 | 1.00 | elite/top-5 flyweight rematch |
@@ -155,7 +168,7 @@ Current OQ: 12.88.
 | Wilson Reis | 0.50 | title challenger/top-ten support |
 | Ray Borg | 1.00 | top-five/title challenger by repo logic |
 
-Working math:
+Working math with 0.85 flyweight adjustment:
 
 | Metric | Value |
 |---|---:|
@@ -168,11 +181,9 @@ Working math:
 | Adjusted OQ index | 8.71 |
 | Formula OQ score | 13.94 |
 
-Cody calls needed:
+Remaining Cody calls needed:
 
-- Joseph Benavidez 1: 1.00 or special 1.25 for best available inaugural contender?
 - Horiguchi: keep 0.50 or upgrade to 0.75 for future elite/championship-level quality?
-- Flyweight division adjustment: keep locked 0.85 or soften to 0.90?
 
 ## Jose Aldo
 
@@ -195,7 +206,7 @@ Current OQ: 13.42.
 | Marlon Vera | 0.25 | future contender/name support |
 | Jonathan Martinez | 0.25 | ranked-ish late-career support |
 
-Working math:
+Working math with Cody-called 1.00 division adjustment:
 
 | Metric | Value |
 |---|---:|
@@ -208,11 +219,10 @@ Working math:
 | Adjusted OQ index | 9.50 |
 | Formula OQ score | 15.21 |
 
-Cody calls needed:
+Remaining Cody calls needed:
 
 - Frankie Edgar 1: full 1.00 or middle-tier 0.75 because he was moving down from LW?
 - Jeremy Stephens: keep full 1.00 by FightMatrix #5, or lower to 0.75?
-- Aldo UFC-only FW/BW blended division adjustment: 1.00 or 1.05?
 
 ## Alex Pereira
 
@@ -229,9 +239,9 @@ Current OQ: 10.06.
 | Jamahal Hill | 1.00 | top-five former champion/title defense |
 | Jiri Prochazka 2 | 1.00 | top-five rematch/title defense |
 | Khalil Rountree Jr. | 0.50 | top-ten title challenger support |
-| Magomed Ankalaev 2 | 1.25 | sitting champion in current app timeline |
+| Magomed Ankalaev 2 | 1.25 | current app timeline includes this sitting champion win; Cody asked what this means |
 
-Working math:
+Working math with Cody-called 0.98 blended MW/LHW adjustment:
 
 | Metric | Value |
 |---|---:|
@@ -244,12 +254,11 @@ Working math:
 | Adjusted OQ index | 7.35 |
 | Formula OQ score | 11.77 |
 
-Cody calls needed:
+Remaining Cody calls needed:
 
 - Jiri 1 vacant title/former champ: 1.00 or 0.75?
 - Jan: full 1.00 or 0.75 because it was split/older? Closeness should normally be Prime Dominance, not OQ.
 - Ankalaev 2 current app timeline: include as 1.25 sitting champ or hold until live timeline is finalized?
-- Division adjustment: 0.98 blended MW/LHW, or 0.95 because most OQ value is LHW?
 
 ---
 
@@ -267,15 +276,15 @@ These are not live edits.
 
 # Next Cody calls to lock Batch 2
 
-Most important calls:
+Remaining important calls:
 
-1. Khabib: Conor 1.00 or 0.75?
-2. Islam: Volk 2 stays 1.25 despite short notice?
-3. Islam: Dustin 0.75 or 1.00?
-4. Islam/Pereira: include future/current app timeline wins like JDM and Ankalaev 2?
-5. DJ: Benavidez 1 special 1.25 or normal 1.00?
-6. DJ: flyweight adjustment stays 0.85 or moves to 0.90?
-7. Aldo: UFC-only division adjustment 1.00 or 1.05?
-8. Pereira: LHW/MW blend 0.98 or mostly LHW 0.95?
+1. Islam: Dustin 0.75 or 1.00?
+2. Islam/Pereira: include future/current app timeline wins like JDM and Ankalaev 2?
+3. DJ: Horiguchi 0.50 or 0.75?
+4. Aldo: Frankie Edgar 1 stays 1.00?
+5. Aldo: Jeremy Stephens 1.00 or 0.75?
+6. Pereira: Jiri 1 1.00 or 0.75?
+7. Pereira: Jan 1.00 or 0.75?
+8. Pereira: include Ankalaev 2 as 1.25?
 
 After those are locked, rerun Batch 2 and then continue to old-era Batch 3: Matt Hughes, Randy Couture, B.J. Penn, Chuck Liddell, Dan Henderson.
