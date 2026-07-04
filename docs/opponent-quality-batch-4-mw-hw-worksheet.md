@@ -52,13 +52,33 @@ Future accomplishments can be useful context, but they cannot be the reason a pa
 
 ---
 
-# Batch 4 working ledgers
+# Cody calls locked for Batch 4
+
+| Call | Locked answer | Why |
+|---|---:|---|
+| Anderson over Forrest Griffin | 1.00 | Recent former UFC LHW champ and still a major fight-night win. |
+| Anderson over Demian Maia / Yushin Okami | 0.75 each | Real title challengers/top MWs, but not Anderson's strongest elite wins. |
+| Anderson over Derek Brunson | 0.50 | Brunson was ranked/solid; controversy/late-career context belongs more in dominance/context. |
+| Anderson MW division adjustment | 0.95 | Keeps Anderson's weaker MW-era default while still giving him real OQ volume credit. |
+| Izzy over Derek Brunson | 0.75 | Serious ranked contender/major step-up, but not full elite/title-level. |
+| Izzy over Jared Cannonier | 1.00 | Cody condition: if Cannonier was top 5, make it 1.00. He was listed #2 in event listings. |
+| Izzy MW division adjustment | 1.00 | Modern MW gets no Anderson-era discount. |
+| Stipe over Mark Hunt / Andrei Arlovski | 1.00 each | Both were highly ranked/credible HW contenders on fight night. |
+| Stipe HW division adjustment | 0.95 | HW prestige stays high, but depth discount remains. |
+| DC over Frank Mir / Derrick Lewis | 0.75 each | Mir was meaningful former champ; Lewis was title challenger but context-limited. |
+| DC division adjustment | 0.98 | Blended LHW/HW résumé. |
+| Cain over Big Nog / Bigfoot 1 | Nog 1.00; Bigfoot 0.75 | Nog was elite former champ/top HW on fight night; Bigfoot had strong import/top-HW context but not full UFC elite. |
+| Cain HW division adjustment | 0.95 | Same HW depth discount as Stipe. |
+
+---
+
+# Batch 4 locked ledgers
 
 ## Anderson Silva
 
 Current OQ: 12.20.
 
-| UFC win | Working credit | Reason |
+| UFC win | Locked credit | Reason |
 |---|---:|---|
 | Chris Leben | 0.50 | strong undefeated UFC name at the time, but not elite contender credit |
 | Rich Franklin 1 | 1.25 | beat sitting UFC middleweight champion |
@@ -69,16 +89,16 @@ Current OQ: 12.20.
 | James Irvin | 0.25 | light heavyweight stay-busy/support win |
 | Patrick Cote | 0.50 | title challenger/support win, not full elite tier |
 | Thales Leites | 0.50 | title challenger/support win, not full elite tier |
-| Forrest Griffin | 1.00 | recent former UFC light heavyweight champion/top name at fight night |
-| Demian Maia | 0.75 | elite grappler/title challenger, but not full top-tier MW win |
+| Forrest Griffin | 1.00 | Cody call: recent former UFC LHW champion/top name at fight night |
+| Demian Maia | 0.75 | Cody call: elite grappler/title challenger, but not full top-tier MW win |
 | Chael Sonnen 1 | 1.00 | elite/top middleweight title challenger |
 | Vitor Belfort | 1.00 | elite former champion/top middleweight challenger |
-| Yushin Okami | 0.75 | strong top middleweight contender, below full elite tier |
+| Yushin Okami | 0.75 | Cody call: strong top middleweight contender, below full elite tier |
 | Chael Sonnen 2 | 1.00 | elite/top middleweight title challenger rematch |
 | Stephan Bonnar | 0.25 | name/support light heavyweight win, not elite credit |
-| Derek Brunson | 0.50 | ranked/strong MW support win; controversial/late-career context handled outside OQ |
+| Derek Brunson | 0.50 | Cody call: ranked/strong MW support win; controversy handled outside OQ |
 
-Working math:
+Locked math:
 
 | Metric | Value |
 |---|---:|
@@ -91,25 +111,16 @@ Working math:
 | Adjusted OQ index | 11.28 |
 | Formula OQ score | 18.06 |
 
-Cody calls needed:
-
-| Call | Why this matters |
-|---|---|
-| Forrest Griffin: 1.00 or 0.75? | Forrest was a recent former UFC LHW champ, but he was coming off losing the belt. This decides whether recent former champ status outside Anderson's division gets full elite OQ. |
-| Demian Maia / Yushin Okami: 0.75 or 1.00? | Both were real title challengers/top MWs, but not remembered as Anderson's strongest title wins. This decides whether title-challenger status alone reaches full elite credit. |
-| Derek Brunson: 0.50 or 0.25? | Brunson was a ranked/strong opponent, but the win was late-career and disputed. OQ normally scores opponent quality, while controversy should hit dominance/context. |
-| Anderson division adjustment: keep 0.95? | Anderson's MW era default is 0.95. This decides whether his volume of title wins can still jump his OQ despite a weaker division adjustment. |
-
 ## Israel Adesanya
 
 Current OQ: 14.05.
 
-| UFC win | Working credit | Reason |
+| UFC win | Locked credit | Reason |
 |---|---:|---|
 | Rob Wilkinson | 0.00 | UFC win, no quality tier |
 | Marvin Vettori 1 | 0.25 | future contender, but on fight night not yet elite; small support only |
 | Brad Tavares | 0.50 | strong ranked/support win |
-| Derek Brunson | 0.75 | strong contender/gatekeeper win, just below full elite tier |
+| Derek Brunson | 0.75 | Cody call: serious ranked contender/major step-up, below full elite tier |
 | Anderson Silva | 0.25 | legendary name, but well past prime on fight night |
 | Kelvin Gastelum | 1.00 | interim title fight/top contender, elite fight-night credit |
 | Robert Whittaker 1 | 1.25 | beat sitting UFC middleweight champion |
@@ -117,43 +128,35 @@ Current OQ: 14.05.
 | Paulo Costa | 1.00 | undefeated elite/top contender on fight night |
 | Marvin Vettori 2 | 1.00 | title challenger/top contender on fight night |
 | Robert Whittaker 2 | 1.00 | elite former champion/top contender rematch |
-| Jared Cannonier | 0.75 | title challenger/top contender, but not strongest elite tier |
+| Jared Cannonier | 1.00 | Cody call: top-5 condition met; event listing had Cannonier #2 |
 | Alex Pereira 2 | 1.25 | beat sitting UFC middleweight champion |
 
-Working math with 1.00 division adjustment:
+Locked math with 1.00 division adjustment:
 
 | Metric | Value |
 |---|---:|
 | Quality wins count | 9 |
-| Discounted quality index | 8.81 |
+| Discounted quality index | 9.06 |
 | Raw support | 1.00 |
 | Support after 2.50 cap | 1.00 |
-| Base OQ index | 9.81 |
+| Base OQ index | 10.06 |
 | Division/era adjustment | 1.00 |
-| Adjusted OQ index | 9.81 |
-| Formula OQ score | 15.71 |
-
-Cody calls needed:
-
-| Call | Why this matters |
-|---|---|
-| Brunson: 0.75 or 0.50? | Brunson was a strong ranked contender, but not championship-level. This decides whether high-end gatekeeper wins get middle-tier credit. |
-| Cannonier: 0.75 or 1.00? | Cannonier was a title challenger, but not usually treated as a top-tier MW win. This decides whether title challenger alone equals full 1.00. |
-| Izzy division adjustment: 1.00 or 0.95? | Anderson's MW default is 0.95, but Izzy's modern MW era may deserve 1.00. This decides whether we treat Izzy's era as deeper than Anderson's. |
+| Adjusted OQ index | 10.06 |
+| Formula OQ score | 16.11 |
 
 ## Stipe Miocic
 
 Current OQ: 11.85.
 
-| UFC win | Working credit | Reason |
+| UFC win | Locked credit | Reason |
 |---|---:|---|
 | Joey Beltran | 0.25 | tough veteran/support win |
 | Philip De Fries | 0.00 | UFC win, no quality tier |
 | Shane del Rosario | 0.00 | UFC win, no quality tier |
 | Gabriel Gonzaga | 0.50 | former title challenger/support win |
 | Fabio Maldonado | 0.25 | short-notice/support win |
-| Mark Hunt | 1.00 | top heavyweight contender/interim-title-level context on fight night |
-| Andrei Arlovski | 1.00 | elite/top heavyweight/former champion contender on fight night |
+| Mark Hunt | 1.00 | Cody call: top heavyweight contender/interim-title-level context on fight night |
+| Andrei Arlovski | 1.00 | Cody call: elite/top heavyweight/former champion contender on fight night |
 | Fabricio Werdum | 1.25 | beat sitting UFC heavyweight champion |
 | Alistair Overeem | 1.00 | elite/top heavyweight title challenger |
 | Junior dos Santos 2 | 1.00 | former UFC heavyweight champion/title challenger rematch |
@@ -161,7 +164,7 @@ Current OQ: 11.85.
 | Daniel Cormier 2 | 1.25 | beat sitting UFC heavyweight champion |
 | Daniel Cormier 3 | 1.00 | elite former champion trilogy win |
 
-Working math with 0.95 heavyweight adjustment:
+Locked math with 0.95 heavyweight adjustment:
 
 | Metric | Value |
 |---|---:|
@@ -174,21 +177,13 @@ Working math with 0.95 heavyweight adjustment:
 | Adjusted OQ index | 9.03 |
 | Formula OQ score | 14.45 |
 
-Cody calls needed:
-
-| Call | Why this matters |
-|---|---|
-| Mark Hunt: 1.00 or 0.75? | Hunt was high-ranked and coming off interim-title-level context, but stylistically/name-wise can be debated. This decides how much late-career heavyweight contender wins count. |
-| Arlovski: 1.00 or 0.75? | Arlovski was on a resurgence and highly ranked, but older. This decides whether age reduces OQ or stays in dominance/prime context. |
-| Heavyweight adjustment: keep 0.95? | Heavyweight has prestige but less depth. This decides whether Stipe's strong champion-win résumé is slightly discounted by division depth. |
-
 ## Daniel Cormier
 
 Current OQ: 10.63.
 
-| UFC win | Working credit | Reason |
+| UFC win | Locked credit | Reason |
 |---|---:|---|
-| Frank Mir | 0.75 | former UFC heavyweight champion, still meaningful but not prime champ |
+| Frank Mir | 0.75 | Cody call: former UFC heavyweight champion, still meaningful but not prime champ |
 | Roy Nelson | 0.50 | strong heavyweight support win |
 | Patrick Cummins | 0.00 | short-notice win, no quality tier |
 | Dan Henderson | 0.50 | legendary name, but older/smaller on fight night |
@@ -198,9 +193,9 @@ Current OQ: 10.63.
 | Anthony Johnson 2 | 1.00 | elite/top light heavyweight contender rematch |
 | Volkan Oezdemir | 0.75 | title challenger/top contender, below strongest elite tier |
 | Stipe Miocic 1 | 1.25 | beat sitting UFC heavyweight champion |
-| Derrick Lewis | 0.75 | title challenger/top heavyweight, but short-notice/context-limited |
+| Derrick Lewis | 0.75 | Cody call: title challenger/top heavyweight, but short-notice/context-limited |
 
-Working math with 0.98 blended LHW/HW adjustment:
+Locked math with 0.98 blended LHW/HW adjustment:
 
 | Metric | Value |
 |---|---:|
@@ -213,33 +208,25 @@ Working math with 0.98 blended LHW/HW adjustment:
 | Adjusted OQ index | 7.60 |
 | Formula OQ score | 12.16 |
 
-Cody calls needed:
-
-| Call | Why this matters |
-|---|---|
-| Frank Mir: 0.75 or 0.50? | Mir was a former UFC champ, but later in career. This decides how much former-champ value matters when the opponent is not at peak. |
-| Derrick Lewis: 0.75 or 0.50? | Lewis was a title challenger, but short-notice and not a full elite all-around contender. This decides whether title-shot context gets middle-tier credit. |
-| DC division adjustment: 0.98 or 0.95/1.00? | DC has one elite HW champion win and several strong LHW wins. This decides whether to treat his OQ as blended across HW/LHW or straight 1.00 for LHW strength. |
-
 ## Cain Velasquez
 
 Current OQ: 9.67.
 
-| UFC win | Working credit | Reason |
+| UFC win | Locked credit | Reason |
 |---|---:|---|
 | Brad Morris | 0.00 | UFC win, no quality tier |
 | Jake O'Brien | 0.00 | UFC win, no quality tier |
 | Denis Stojnic | 0.00 | UFC win, no quality tier |
 | Ben Rothwell | 0.50 | strong heavyweight support win |
-| Antonio Rodrigo Nogueira | 1.00 | elite former champion/top heavyweight on fight night |
+| Antonio Rodrigo Nogueira | 1.00 | Cody call: elite former champion/top heavyweight on fight night |
 | Brock Lesnar | 1.25 | beat sitting UFC heavyweight champion |
-| Antonio Silva 1 | 0.75 | strong Strikeforce import/top heavyweight contender context, not full elite UFC tier |
+| Antonio Silva 1 | 0.75 | Cody call: strong Strikeforce import/top heavyweight contender context, not full elite UFC tier |
 | Junior dos Santos 2 | 1.00 | elite UFC heavyweight champion/former champion rematch context |
 | Antonio Silva 2 | 1.00 | top heavyweight title challenger after earning the shot |
 | Junior dos Santos 3 | 1.00 | elite former champion trilogy win |
 | Travis Browne | 0.50 | strong heavyweight support win |
 
-Working math with 0.95 heavyweight adjustment:
+Locked math with 0.95 heavyweight adjustment:
 
 | Metric | Value |
 |---|---:|
@@ -252,50 +239,34 @@ Working math with 0.95 heavyweight adjustment:
 | Adjusted OQ index | 6.65 |
 | Formula OQ score | 10.64 |
 
-Cody calls needed:
-
-| Call | Why this matters |
-|---|---|
-| Nogueira: 1.00 or 0.75? | Big Nog was an elite former champion/top heavyweight, but aging. This decides whether fight-night ranking/status beats age decline in OQ. |
-| Bigfoot 1: 0.75 or 0.50? | Bigfoot had major heavyweight credibility but was not a clean UFC top-title win yet. This decides how much Strikeforce import quality counts once the win is inside UFC. |
-| Cain heavyweight adjustment: keep 0.95? | Cain's wins are high quality but low volume and heavyweight depth is thinner. This decides whether Cain's OQ gets the same HW discount as Stipe. |
-
 ---
 
-# Batch 4 working formula summary
+# Batch 4 locked formula summary
 
 These are not live edits.
 
-| Fighter | Current OQ | Working formula OQ | Direction |
+| Fighter | Current OQ | Locked formula OQ | Direction |
 |---|---:|---:|---|
 | Anderson Silva | 12.20 | 18.06 | Raise a lot |
-| Israel Adesanya | 14.05 | 15.71 | Raise |
+| Israel Adesanya | 14.05 | 16.11 | Raise |
 | Stipe Miocic | 11.85 | 14.45 | Raise |
 | Daniel Cormier | 10.63 | 12.16 | Raise |
 | Cain Velasquez | 9.67 | 10.64 | Slight raise |
 
+# What was checked after Cody's Cannonier condition
+
+Cody said Cannonier should be 1.00 if he was top 5. UFC 276 event listings had Cannonier as the #2 middleweight challenger, so Cannonier is locked at 1.00.
+
 # Main issue this batch exposes
 
-This batch tests whether middleweight title-defense volume should get more OQ respect under the new formula.
+This batch confirms Anderson's current OQ was probably too low. The new formula gives real credit to Franklin, Marquardt, Hendo, Forrest, Chael, Vitor, and Okami/Maia-level challengers while still applying the 0.95 MW-era adjustment.
 
-Anderson jumps hard because the formula now gives real credit to Franklin, Marquardt, Hendo, Forrest, Chael, Vitor, and Okami/Maia-level challengers instead of compressing his résumé too low.
-
-Izzy rises, but less dramatically, because his current score was already closer to the new formula.
+Izzy rises too, especially with Cannonier locked as a top-five 1.00 win, but Anderson's volume jump is bigger.
 
 Heavyweights rise modestly but stay controlled by the 0.95 division adjustment.
 
-# Next Cody calls to lock Batch 4
+# Next step
 
-Most important calls:
+Batch 4 is now locked for the worksheet unless Cody revises the Cannonier top-five condition or any MW/HW multiplier.
 
-1. Anderson: Forrest 1.00 or 0.75?
-2. Anderson: Maia/Okami 0.75 or 1.00?
-3. Anderson: Brunson 0.50 or 0.25?
-4. Izzy: Brunson 0.75 or 0.50?
-5. Izzy: Cannonier 0.75 or 1.00?
-6. Izzy: division adjustment 1.00 or 0.95?
-7. Stipe: Hunt/Arlovski full 1.00?
-8. DC: Mir 0.75? Lewis 0.75?
-9. Cain: Nogueira 1.00? Bigfoot 1 0.75?
-
-After those are locked, continue with Batch 5: Conor McGregor, Henry Cejudo, Dominick Cruz, Petr Yan, Merab Dvalishvili.
+Next batch: Conor McGregor, Henry Cejudo, Dominick Cruz, Petr Yan, Merab Dvalishvili.
