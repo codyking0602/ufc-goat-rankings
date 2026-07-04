@@ -87,11 +87,13 @@ Working math:
 
 Cody calls needed:
 
-- Hayato Sakurai: full 1.00 because of elite non-UFC/P4P context, or 0.75 because UFC-only score should be stricter?
-- Sean Sherk: full 1.00 or 0.75?
-- GSP 1: full 1.00 or 0.75 because GSP was not yet champion?
-- Matt Serra: 0.75 okay, or full 1.00 because he was recent UFC champion?
-- Hughes division/era adjustment: 1.00 or 1.05 with GSP-era WW strength?
+| Call | Why this matters |
+|---|---|
+| Hayato Sakurai: 1.00 or 0.75? | Sakurai was elite/P4P-level entering UFC, but the app is UFC-only. This decides how much non-UFC-earned reputation can affect credit for a UFC win. |
+| Sean Sherk: 1.00 or 0.75? | Sherk became a UFC champ and was a high-end lightweight, but the Hughes win came at welterweight before Sherk's title peak. This decides whether future-champ proof gets full elite credit. |
+| GSP 1: 1.00 or 0.75? | GSP was already a title-level contender but not yet prime champion GSP. This decides whether pre-title elite contenders get full elite credit. |
+| Matt Serra: 0.75 or 1.00? | Serra was a recent UFC champion, but not a long-term elite welterweight. This decides whether recent belt-holder status alone equals full elite OQ. |
+| Hughes division/era adjustment: 1.00 or 1.05? | Hughes sits near the GSP welterweight era but slightly before the deepest version of it. This decides whether his WW strength gets the same bump as GSP's era. |
 
 ## Randy Couture
 
@@ -130,10 +132,12 @@ Working math:
 
 Cody calls needed:
 
-- Vitor Belfort 1: full 1.00 or 0.75 because it was early/tournament-era?
-- Vitor Belfort 3: full 1.25 sitting champion credit, or discount because the belt came by cut stoppage over Randy?
-- Tim Sylvia: full 1.25 sitting champ credit? Working answer says yes.
-- Randy division/era adjustment: 0.95 blended old HW/LHW, or 1.00 because beating sitting champions across divisions should stand on its own?
+| Call | Why this matters |
+|---|---|
+| Vitor Belfort 1: 1.00 or 0.75? | Vitor was a major elite talent, but this was early/tournament-era UFC. This decides whether early-era tournament wins get modern full elite credit. |
+| Vitor Belfort 3: 1.25 or discount? | Vitor technically entered as sitting champion because Randy lost the belt on a cut stoppage. Full 1.25 treats the belt normally; discounting says the belt context was too weird to equal beating a clean champion. |
+| Tim Sylvia: keep 1.25? | Sylvia was sitting UFC heavyweight champion. This tests whether awkward style/public perception should matter. My lean: no, OQ should count him as full sitting champion. |
+| Randy division/era adjustment: 0.95 or 1.00? | Randy's formula jumps hard because he beat many sitting champs. The question is whether old HW/LHW depth should slightly reduce the final index, or whether champion wins stand on their own. |
 
 ## B.J. Penn
 
@@ -169,11 +173,13 @@ Working math:
 
 Cody calls needed:
 
-- Matt Serra: 0.75 or 0.50 because he was not yet champion?
-- Jens Pulver 2: 0.75 or 0.50 because Pulver was name/rivalry value but no longer UFC champ?
-- Joe Stevenson: full 1.00 title opponent or 0.75?
-- Matt Hughes 3: 0.50 or 0.25 because Hughes was older?
-- B.J. division/era adjustment: 1.00 or 1.05 because lightweight strength and cross-division challenge deserve a slight bump?
+| Call | Why this matters |
+|---|---|
+| Matt Serra: 0.75 or 0.50? | Serra became champion later, but at the time he was more strong contender than champion-level proof. This decides how much future achievement can upgrade a past win. |
+| Jens Pulver 2: 0.75 or 0.50? | Pulver was a former UFC champion and rivalry name, but not in prime UFC champion form. This decides whether rivalry/former-champ value deserves middle-tier credit. |
+| Joe Stevenson: 1.00 or 0.75? | It was a title fight, but Stevenson is not remembered as a top-tier title challenger. This decides whether all title opponents count as full elite or whether opponent strength overrides belt context. |
+| Matt Hughes 3: 0.50 or 0.25? | Hughes was an all-time great name, but older. This decides how much late-career name value should count. |
+| B.J. division/era adjustment: 1.00 or 1.05? | B.J. fought across LW/WW and beat a sitting WW champ, but UFC-only lightweight depth in his title era was not modern murderers' row. This decides whether his cross-division difficulty gets a bump. |
 
 ## Chuck Liddell
 
@@ -209,11 +215,13 @@ Working math:
 
 Cody calls needed:
 
-- Kevin Randleman: 1.00 or 0.75?
-- Vitor Belfort: 1.00 or 0.75?
-- Tito Ortiz 1: full 1.00 even though no belt was on line? Working answer says yes because it was prime/title-level.
-- Wanderlei Silva: 0.75 or 0.50 because UFC timing was late vs historical name value?
-- Chuck division/era adjustment: 1.00 or 0.95?
+| Call | Why this matters |
+|---|---|
+| Kevin Randleman: 1.00 or 0.75? | Randleman was a former UFC heavyweight champion, but Chuck beat him at LHW after the title peak. This decides how strongly former-champ heavyweight value transfers. |
+| Vitor Belfort: 1.00 or 0.75? | Vitor was elite but inconsistent. This decides whether elite talent/top contender status gets full credit even without sitting champ context. |
+| Tito Ortiz 1: keep 1.00? | No belt was on the line, but Tito was an elite former champion and top rivalry opponent. This decides whether non-title rivalry wins can equal title-level OQ. |
+| Wanderlei Silva: 0.75 or 0.50? | Historically huge name, but UFC-only timing was late and not PRIDE-prime scoring. This decides how much non-UFC legacy can matter once the win happens inside UFC. |
+| Chuck division/era adjustment: 1.00 or 0.95? | Chuck's best wins are elite UFC LHW names, but era depth may be weaker than modern divisions. This decides whether old LHW gets a small discount. |
 
 ## Dan Henderson
 
@@ -245,10 +253,12 @@ Working math:
 
 Cody calls needed:
 
-- Carlos Newton: 0.75 or full 1.00 because he became a UFC champion and it was a tournament final?
-- Bisping 1: full 1.00 or 0.75 because he was not champion yet?
-- Shogun 2: 0.75 or 0.50 because both were older?
-- Henderson division/era adjustment: 0.95 or 1.00?
+| Call | Why this matters |
+|---|---|
+| Carlos Newton: 0.75 or 1.00? | Newton became a UFC champion later and this was a tournament final, but he was not yet UFC champ. This decides whether future champion + tournament final reaches full elite credit. |
+| Bisping 1: 1.00 or 0.75? | Bisping later became UFC champion, but at the time he was a top contender, not champ. This decides whether future-champ contender wins can be full 1.00. |
+| Shogun 2: 0.75 or 0.50? | Shogun was a former champion, but both were older. This decides how much late-career rematches of legendary names count. |
+| Henderson division/era adjustment: 0.95 or 1.00? | Hendo's UFC résumé is split across divisions and eras, and much of his greatness is non-UFC. This decides whether strict UFC-only context slightly discounts the final OQ index. |
 
 ---
 
@@ -269,6 +279,16 @@ These are not live edits.
 The old-era champions get boosted hard by the current formula because sitting champion wins and title-level rivalry wins stack cleanly.
 
 That may be correct, but Cody needs to decide whether old-era UFC depth should stay at 1.00, drop to 0.95, or be handled fighter-by-fighter.
+
+# Why these Cody calls are necessary
+
+| Question type | Why it matters |
+|---|---|
+| Old-era title/champion credit | Sitting champion wins are worth 1.25, so old-era champions can jump fast if every belt win is treated the same as modern title wins. |
+| Future-champion credit | Fighters like Sherk, Serra, Newton, and Bisping later became champions. The call is whether the win gets credit for who they became, or only who they were that night. |
+| Non-UFC reputation | Sakurai and Wanderlei were historically elite, but the score is UFC-only. The question is how much their outside-UFC reputation can boost a UFC win. |
+| Late-career name value | Wins over Hughes, Shogun, Coleman, Royce, etc. matter historically, but should not be scored like prime elite wins. |
+| Division/era adjustment | The final multiplier prevents old-era or thinner-division résumés from being treated exactly like modern murderers' row divisions. |
 
 # Next Cody calls to lock Batch 3
 
