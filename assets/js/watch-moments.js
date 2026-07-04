@@ -1,7 +1,7 @@
 // Watch Moment links for fighter cards and profiles.
 // Keep links here as app-facing content, separate from scoring.
 (function(){
-  const VERSION = 'watch-moments-20260703a';
+  const VERSION = 'watch-moments-20260704a';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -21,10 +21,13 @@
     'Stipe Miocic': 'https://youtube.com/shorts/h_ThhOpI_dg?is=4Sr5Mcp01GkYxtrG',
     'Ilia Topuria': 'https://youtube.com/shorts/8HrxSwOoLZM?is=eygzt_4-hGWU87kL',
     'Israel Adesanya': 'https://youtube.com/shorts/CbvjjHBCUQM?is=J86x9mup7tQHDZS7',
+    'Aljamain Sterling': 'https://youtube.com/shorts/9u6oSybWX0o?is=vI7Sq1yLpVg-CsbN',
     'Petr Yan': 'https://youtube.com/shorts/WcKa_HG1CbA?is=CZxfIq317Q4sggsB',
     'Cain Velasquez': 'https://youtube.com/shorts/qF8yfMWdjgg?is=7q2cASkqgIQC9JVY',
     'Merab Dvalishvili': 'https://youtube.com/shorts/v8qciKt0g9Y?is=9I22lnhlQVqsQyQT',
     'B.J. Penn': 'https://youtube.com/shorts/FfBpWXo-EWo?is=4SrvWa7ntRkx5Bia',
+    'Dustin Poirier': 'https://youtube.com/shorts/pykcFJHon8I?is=WgBo2b7RTRqozCYU',
+    'T.J. Dillashaw': 'https://youtube.com/shorts/FiV10zxE8RY?is=S7az7vuBDbjIuIfJ',
     'Alex Pereira': 'https://youtube.com/shorts/rb-yUzZNAcQ?is=o8jclP4Z3MTHGH0x',
     'Chuck Liddell': 'https://youtube.com/shorts/yx_Phoyotj0?is=37ZCvF_fOG0d62BR',
     'Dominick Cruz': 'https://youtube.com/shorts/qtiyeEjlmNE?is=RFtIr9qAPjx98Ey5',
@@ -34,6 +37,7 @@
     'Conor McGregor': 'https://youtube.com/shorts/eeHdLpBUmlU?is=rKzl28sGEKreaI2g',
     'Justin Gaethje': 'https://youtube.com/shorts/2LxEazU0vuM?is=tHj1Dxylleh4yGG7',
     'Frankie Edgar': 'https://youtube.com/shorts/lLpRwEN3PJk?is=QVVQjKx_0gVmw-wO',
+    'Dan Henderson': 'https://youtube.com/shorts/dA2kztF7KpQ?is=wDxZ4DLlPA-C74uh',
     'Amanda Nunes': 'https://youtu.be/t4wkBuFpoPs?is=CL7ge7FDuHQPrbMq',
     'Valentina Shevchenko': 'https://youtube.com/shorts/cucTCAAGTis?is=mf6p21fPtBheJuU8',
     'Joanna Jedrzejczyk': 'https://youtube.com/shorts/rqxlySX0WwA?is=qmc_JW12ecYdL3KT',
