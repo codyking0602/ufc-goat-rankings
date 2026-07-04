@@ -1,6 +1,6 @@
 // Forces visible OVR/category values to derive from current scores, not stale display overrides.
 (function(){
-  const VERSION = 'score-derived-ovr-20260703b';
+  const VERSION = 'score-derived-ovr-20260703c';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
@@ -10,27 +10,34 @@
     const v = Number(f?.[key] ?? 0);
     return Number.isFinite(v) ? v : 0;
   }
-  function categoryRankFromScore(f,key){
+  function rankFromScore(f,key){
     const board = boardFor(f);
     const val = valueFor(f,key);
     return 1 + board.filter(x => valueFor(x,key) > val).length;
   }
+  function ratingFromRank(rank, boardLength){
+    if(!rank) return 55;
+    if(boardLength <= 1) return 99;
+    return clamp(Math.round(99 - ((rank - 1) / (boardLength - 1)) * 44), 55, 99);
+  }
+  function categoryRankFromScore(f,key){
+    return rankFromScore(f,key);
+  }
   function categoryOvrFromScore(f,key){
     const board = boardFor(f).filter(x => Number.isFinite(Number(x?.[key])));
-    if(!board.length) return 55;
-    if(board.length <= 1) return 99;
-    const rank = categoryRankFromScore(f,key);
-
-    // Category cards are rank ratings derived from category scores:
-    // score determines rank, rank determines visible category rating.
-    // This keeps a #3 category fighter looking elite instead of merely "great"
-    // when the category benchmark is unusually high.
-    return clamp(Math.round(99 - ((rank - 1) / (board.length - 1)) * 44), 55, 99);
+    return ratingFromRank(categoryRankFromScore(f,key), board.length);
+  }
+  function overallRankFromScore(f){
+    return rankFromScore(f,'totalScore');
   }
   function overallOvrFromScore(f){
-    const rows = (DATA.men || []).concat(DATA.women || []);
-    const max = Math.max(...rows.map(x => Number(x.totalScore || 0)), 1);
-    return clamp(Math.round(75 + (Number(f?.totalScore || 0) / max) * 24), 60, 99);
+    const board = boardFor(f).filter(x => Number.isFinite(Number(x?.totalScore)));
+
+    // Overall OVR is now rank-rated from raw total score:
+    // raw total score determines rank, rank determines visible OVR.
+    // This keeps the main leaderboard feeling like a UFC/2K rating product
+    // while preserving raw score as the actual ranking source of truth.
+    return ratingFromRank(overallRankFromScore(f), board.length);
   }
 
   window.overallOvr = overallOvrFromScore;
@@ -38,9 +45,9 @@
   window.categoryOvr = categoryOvrFromScore;
   window.UFC_SCORE_DERIVED_OVR = {
     version: VERSION,
-    mode: 'score-derived-rank-rated-categories',
+    mode: 'score-derived-rank-rated-overall-and-categories',
     ignoresDisplayOverrideOvr: true,
-    overall: '75 + totalScore/currentMaxTotalScore * 24, clamped 60-99',
+    overall: 'totalScore determines overall rank; overall rank determines visible OVR from 99 down to 55',
     categories: 'category score determines category rank; category rank determines visible category rating from 99 down to 55',
     appliedAt: new Date().toISOString()
   };
