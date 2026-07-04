@@ -2,7 +2,17 @@
 
 Last updated: 2026-07-03
 
-Purpose: start the second Opponent Quality audit batch using the locked Batch 1B formula. No live app score changes are approved from this worksheet.
+Purpose: start the next formula-only Opponent Quality pass after Batch 1B. No live app score changes are approved from this worksheet.
+
+Batch 2 focuses on fighters with usable current UFC win ledgers in the repo:
+
+- Khabib Nurmagomedov
+- Islam Makhachev
+- Demetrious Johnson
+- Jose Aldo
+- Alex Pereira
+
+Matt Hughes and Randy Couture are intentionally pushed to an old-era batch because their UFC-only opponent ledgers need more reconstruction before formula scoring.
 
 ## Locked formula carried forward
 
@@ -10,9 +20,9 @@ Purpose: start the second Opponent Quality audit batch using the locked Batch 1B
 Opponent Quality Score = 25 × Fighter Adjusted Opponent Quality Index ÷ Current Best Adjusted Opponent Quality Index
 ```
 
-Current benchmark from locked Batch 1B: Georges St-Pierre adjusted OQ index = 15.62 and OQ score = 25.00.
+Current benchmark from locked Batch 1B: Georges St-Pierre adjusted OQ index = 15.62, score = 25.00.
 
-## Locked scoring rules carried forward
+## Locked rules carried forward
 
 | Win type | Credit |
 |---|---:|
@@ -24,116 +34,248 @@ Current benchmark from locked Batch 1B: Georges St-Pierre adjusted OQ index = 15
 | Weird / injury / fluky win | Cody call, usually 0.00-0.50 |
 | Loss / no contest / draw | 0.00 |
 
-## Locked diminishing returns / support cap
+Diminishing returns:
 
 | Credit bucket | Treatment |
 |---|---|
 | First 8 quality wins, sorted by credit | 100% value |
 | Quality wins 9-12 | 75% value |
 | Quality wins after 12 | 50% value |
-| Support wins under 0.75 credit | Add normally, but support total is capped at 2.50 index points |
+| Support wins under 0.75 credit | Add normally, capped at 2.50 index points |
 
-Quality win = 0.75, 1.00, or 1.25 before diminishing returns.  
+Quality win = 0.75, 1.00, or 1.25.  
 Support win = 0.50 or 0.25.
 
 ---
 
-# Batch 2 fighters
+# Batch 2 working ledgers
 
-This batch is meant to test old-era treatment, flyweight strength, modern lightweight consistency, and app-timeline title updates.
+## Khabib Nurmagomedov
 
-| Fighter | Current OQ | Main audit issue |
+Current OQ: 8.99.
+
+| UFC win | Working credit | Reason |
 |---|---:|---|
-| Matt Hughes | 14.21 | Old-era WW quality and early UFC title context. |
-| Randy Couture | 13.71 | Old-era HW/LHW champion wins and era adjustment. |
-| Israel Adesanya | 14.05 | Strong title-run opponents, but MW era strength. |
-| Jose Aldo | 13.42 | UFC-only, WEC excluded, but deep UFC FW/BW résumé. |
-| Justin Gaethje | 13.20 | Modern LW strength plus current app-timeline title result. |
-| Petr Yan | 13.10 | Bantamweight quality, Sterling DQ, and current app timeline. |
-| Demetrious Johnson | 12.88 | Flyweight depth multiplier versus actual title-defense ledger. |
-| Frankie Edgar | 12.70 | UFC-only three-division quality wins but hand-added sparse ledger. |
-| Islam Makhachev | 9.80 | Likely low under modern LW/second-division timeline. |
-| Khabib Nurmagomedov | 8.99 | Short but elite modern LW win ledger. |
+| Kamal Shalorus | 0.00 | UFC win, no quality tier |
+| Gleison Tibau | 0.25 | tough veteran/context win, but not clean ranked credit |
+| Thiago Tavares | 0.25 | name/supporting early win |
+| Abel Trujillo | 0.00 | UFC win, no quality tier |
+| Pat Healy | 0.50 | strong ranked/supporting lightweight win |
+| Rafael dos Anjos | 1.00 | elite/top-5 lightweight at time |
+| Darrell Horcher | 0.00 | short-notice stay-busy win |
+| Michael Johnson | 0.50 | top-ten/support win |
+| Edson Barboza | 1.00 | elite/top-5 lightweight win |
+| Al Iaquinta | 0.50 | vacant title opponent but short-notice/non-top-five context |
+| Conor McGregor | 1.00 | elite title-level/former two-division champion opponent |
+| Dustin Poirier | 1.00 | interim champion/top-5 lightweight |
+| Justin Gaethje | 1.00 | interim champion/top-5 lightweight |
+
+Working math:
+
+| Metric | Value |
+|---|---:|
+| Quality wins count | 5 |
+| Discounted quality index | 5.00 |
+| Raw support | 2.00 |
+| Support after 2.50 cap | 2.00 |
+| Base OQ index | 7.00 |
+| Division/era adjustment | 1.10 |
+| Adjusted OQ index | 7.70 |
+| Formula OQ score | 12.32 |
+
+Cody calls needed:
+
+- Conor as full 1.00 or middle-tier 0.75?
+- Iaquinta vacant-title short-notice win: 0.50 okay?
+- Tibau/Tavares small support credit: keep 0.25 each or make 0.00?
+
+## Islam Makhachev
+
+Current OQ: 9.80.
+
+| UFC win | Working credit | Reason |
+|---|---:|---|
+| Leo Kuntz | 0.00 | UFC win, no quality tier |
+| Chris Wade | 0.00 | UFC win, no quality tier |
+| Nik Lentz | 0.25 | veteran/support win |
+| Gleison Tibau | 0.25 | veteran/support win |
+| Kajan Johnson | 0.00 | UFC win, no quality tier |
+| Arman Tsarukyan | 0.25 | future elite before prime/ranking status |
+| Davi Ramos | 0.00 | UFC win, no quality tier |
+| Drew Dober | 0.50 | strong supporting lightweight win |
+| Thiago Moises | 0.25 | support win |
+| Dan Hooker | 0.50 | top-ten short-notice/support win |
+| Bobby Green | 0.25 | short-notice name/support win |
+| Charles Oliveira | 1.00 | elite former champion/vacant title opponent |
+| Alexander Volkanovski 1 | 1.25 | reigning champion/P4P elite moving up; already treated max in repo |
+| Alexander Volkanovski 2 | 1.25 | same opponent context; short notice handled outside OQ unless Cody discounts |
+| Dustin Poirier | 0.75 | championship-level former interim champ, ranked outside clean top-five by some sources |
+| Renato Moicano | 0.50 | short-notice top-ten title challenger |
+| Jack Della Maddalena | 1.25 | sitting UFC welterweight champion in current app timeline |
+
+Working math:
+
+| Metric | Value |
+|---|---:|
+| Quality wins count | 5 |
+| Discounted quality index | 5.50 |
+| Raw support | 2.50 |
+| Support after 2.50 cap | 2.50 |
+| Base OQ index | 8.00 |
+| Division/era adjustment | 1.10 |
+| Adjusted OQ index | 8.80 |
+| Formula OQ score | 14.08 |
+
+Cody calls needed:
+
+- Volk rematch on short notice: still full 1.25 OQ or lower to 1.00?
+- Dustin 2024: 0.75 middle-tier or full 1.00 title-level challenger?
+- JDM current app timeline: include as sitting champ 1.25, or hold until live timeline is finalized?
+- Moicano short-notice title defense: 0.50 or 0.25?
+
+## Demetrious Johnson
+
+Current OQ: 12.88.
+
+| UFC win | Working credit | Reason |
+|---|---:|---|
+| Kid Yamamoto | 0.00 | rank unclear; repo currently removed from scoring |
+| Miguel Torres | 0.75 | former WEC champion/top bantamweight name; not sitting UFC champ |
+| Ian McCall 2 | 1.00 | elite/top-5 flyweight rematch |
+| Joseph Benavidez 1 | 1.00 | inaugural/vacant title opponent; elite top contender, not sitting champ |
+| John Dodson 1 | 1.00 | elite/top-5 flyweight title challenger |
+| John Moraga | 0.50 | title challenger/support, not full elite by current table |
+| Joseph Benavidez 2 | 1.00 | elite/top-5 flyweight rematch |
+| Ali Bagautinov | 0.50 | title challenger/support, not full elite by current table |
+| Chris Cariaso | 0.25 | lower-ranked title challenger support |
+| Kyoji Horiguchi | 0.50 | top-ten/future elite support unless Cody upgrades |
+| John Dodson 2 | 1.00 | elite/top-5 flyweight rematch |
+| Henry Cejudo 1 | 1.00 | elite/top-5 flyweight contender |
+| Tim Elliott | 0.50 | TUF title challenger support |
+| Wilson Reis | 0.50 | title challenger/top-ten support |
+| Ray Borg | 1.00 | top-five/title challenger by repo logic |
+
+Working math:
+
+| Metric | Value |
+|---|---:|
+| Quality wins count | 8 |
+| Discounted quality index | 7.75 |
+| Raw support | 2.75 |
+| Support after 2.50 cap | 2.50 |
+| Base OQ index | 10.25 |
+| Division/era adjustment | 0.85 |
+| Adjusted OQ index | 8.71 |
+| Formula OQ score | 13.94 |
+
+Cody calls needed:
+
+- Joseph Benavidez 1: 1.00 or special 1.25 for best available inaugural contender?
+- Horiguchi: keep 0.50 or upgrade to 0.75 for future elite/championship-level quality?
+- Flyweight division adjustment: keep locked 0.85 or soften to 0.90?
+
+## Jose Aldo
+
+Current OQ: 13.42.
+
+| UFC win | Working credit | Reason |
+|---|---:|---|
+| Mark Hominick | 0.50 | title challenger/top-ten support |
+| Kenny Florian | 1.00 | elite/top-5 title challenger |
+| Chad Mendes 1 | 1.00 | elite/top-5 title challenger |
+| Frankie Edgar 1 | 1.00 | elite former LW champion moving down; title-level opponent |
+| Chan Sung Jung | 0.50 | title challenger/support, not full top-five by current table |
+| Ricardo Lamas | 1.00 | elite/top-5 title challenger |
+| Chad Mendes 2 | 1.00 | elite/top-5 rematch |
+| Frankie Edgar 2 | 1.00 | elite/top-5 interim title opponent |
+| Jeremy Stephens | 1.00 | top-five post-title-run win by repo context |
+| Renato Moicano | 0.50 | top-ten support |
+| Pedro Munhoz | 0.50 | ranked bantamweight support |
+| Rob Font | 0.50 | ranked bantamweight support |
+| Marlon Vera | 0.25 | future contender/name support |
+| Jonathan Martinez | 0.25 | ranked-ish late-career support |
+
+Working math:
+
+| Metric | Value |
+|---|---:|
+| Quality wins count | 7 |
+| Discounted quality index | 7.00 |
+| Raw support | 3.00 |
+| Support after 2.50 cap | 2.50 |
+| Base OQ index | 9.50 |
+| Division/era adjustment | 1.00 |
+| Adjusted OQ index | 9.50 |
+| Formula OQ score | 15.21 |
+
+Cody calls needed:
+
+- Frankie Edgar 1: full 1.00 or middle-tier 0.75 because he was moving down from LW?
+- Jeremy Stephens: keep full 1.00 by FightMatrix #5, or lower to 0.75?
+- Aldo UFC-only FW/BW blended division adjustment: 1.00 or 1.05?
+
+## Alex Pereira
+
+Current OQ: 10.06.
+
+| UFC win | Working credit | Reason |
+|---|---:|---|
+| Andreas Michailidis | 0.00 | UFC win, no quality tier |
+| Bruno Silva | 0.00 | UFC win, no quality tier |
+| Sean Strickland | 0.50 | top-ten support at the time; future champ before champ status |
+| Israel Adesanya | 1.25 | sitting UFC middleweight champion |
+| Jan Blachowicz | 1.00 | elite/top-5 former champion at LHW |
+| Jiri Prochazka 1 | 1.00 | vacant title/former champion context |
+| Jamahal Hill | 1.00 | top-five former champion/title defense |
+| Jiri Prochazka 2 | 1.00 | top-five rematch/title defense |
+| Khalil Rountree Jr. | 0.50 | top-ten title challenger support |
+| Magomed Ankalaev 2 | 1.25 | sitting champion in current app timeline |
+
+Working math:
+
+| Metric | Value |
+|---|---:|
+| Quality wins count | 6 |
+| Discounted quality index | 6.50 |
+| Raw support | 1.00 |
+| Support after 2.50 cap | 1.00 |
+| Base OQ index | 7.50 |
+| Division/era adjustment | 0.98 |
+| Adjusted OQ index | 7.35 |
+| Formula OQ score | 11.77 |
+
+Cody calls needed:
+
+- Jiri 1 vacant title/former champ: 1.00 or 0.75?
+- Jan: full 1.00 or 0.75 because it was split/older? Closeness should normally be Prime Dominance, not OQ.
+- Ankalaev 2 current app timeline: include as 1.25 sitting champ or hold until live timeline is finalized?
+- Division adjustment: 0.98 blended MW/LHW, or 0.95 because most OQ value is LHW?
 
 ---
 
-# Cody calls needed before computed lock
+# Batch 2 working formula summary
 
-## A. Division / era adjustments
+These are not live edits.
 
-| Fighter | Working adjustment | Cody call needed |
-|---|---:|---|
-| Matt Hughes | 1.00 | Keep old WW neutral, or use 0.95 because era was thinner? |
-| Randy Couture | 0.95 | Old HW/LHW depth discount okay? |
-| Israel Adesanya | 0.95 | Anderson/Izzy MW era default discount okay? |
-| Jose Aldo | 1.05 | Modern-ish UFC featherweight strength okay, despite WEC excluded? |
-| Justin Gaethje | 1.10 | Modern lightweight murderers' row. |
-| Petr Yan | 1.00 | Modern bantamweight default. |
-| Demetrious Johnson | 0.85 | Flyweight default. Keep, or too harsh? |
-| Frankie Edgar | 1.00 | Mixed LW/FW/BW UFC résumé; neutral default. |
-| Islam Makhachev | 1.10 | Modern elite lightweight/second-division timeline. |
-| Khabib Nurmagomedov | 1.10 | Modern lightweight murderers' row. |
+| Fighter | Current OQ | Working formula OQ | Direction |
+|---|---:|---:|---|
+| Khabib Nurmagomedov | 8.99 | 12.32 | Raise |
+| Islam Makhachev | 9.80 | 14.08 | Raise |
+| Demetrious Johnson | 12.88 | 13.94 | Slight raise |
+| Jose Aldo | 13.42 | 15.21 | Raise |
+| Alex Pereira | 10.06 | 11.77 | Raise |
 
-## B. Middle-tier / edge-credit calls
+# Next Cody calls to lock Batch 2
 
-| Fighter | Fight / win | Working credit | Cody call needed |
-|---|---|---:|---|
-| Matt Hughes | Carlos Newton title win | 1.25 | Treat Newton as sitting champ full credit? |
-| Matt Hughes | Hayato Sakurai | 1.00 | Full elite WW credit? |
-| Matt Hughes | B.J. Penn 2 | 1.00 | Full elite revenge/title win credit? |
-| Matt Hughes | Royce Gracie | 0.25 | Name-value only okay? |
-| Randy Couture | Maurice Smith / Kevin Randleman / Tim Sylvia sitting champ wins | 1.25 each | Full champion credit despite old HW volatility? |
-| Randy Couture | Vitor Belfort, Pedro Rizzo, Chuck Liddell, Tito Ortiz, Gabriel Gonzaga | 0.75-1.00 | Needs old-era placement review. |
-| Israel Adesanya | Robert Whittaker 1 | 1.25 | Sitting champion full credit? |
-| Israel Adesanya | Alex Pereira 2 | 1.25 | Sitting champion full credit? |
-| Israel Adesanya | Costa/Vettori/Cannonier/Romero/Gastelum/Brunson | 0.75-1.00 | Decide which are full top-5 vs middle-tier. |
-| Jose Aldo | Frankie Edgar 1 | 1.00 or 1.25 | Former LW champ moving down; not sitting FW champ. |
-| Jose Aldo | Jeremy Stephens | 1.00 | Repo had FightMatrix #5; keep full? |
-| Jose Aldo | BW wins over Munhoz/Font/Vera/Martinez | 0.25-0.50 | How much should late BW resurgence help OQ? |
-| Justin Gaethje | Current app-timeline Topuria title win | 1.25 | If app timeline says undisputed title win over sitting champ/elite, should be max? |
-| Justin Gaethje | Chandler/Fiziev/Barboza | 0.75 | Middle-tier okay? |
-| Petr Yan | Jose Aldo vacant title win | 1.00 | Aldo was past FW prime but still title-level BW. Full or 0.75? |
-| Petr Yan | Cory Sandhagen interim title win | 1.00 | Full elite BW credit? |
-| Petr Yan | Current app-timeline new title win | 1.25 or 1.00 | Need exact opponent/timeline source before lock. |
-| Demetrious Johnson | Joseph Benavidez 1 | 1.25 | Best available inaugural title opponent; keep max? |
-| Demetrious Johnson | Miguel Torres | 0.75 | Former WEC champ/top BW name. Middle-tier okay? |
-| Demetrious Johnson | Horiguchi | 0.75 | Should Horiguchi be middle-tier instead of support? |
-| Frankie Edgar | B.J. Penn 1/2, Gray Maynard, Chad Mendes | 1.00/0.75 | Hand-added ledger needs expansion before lock. |
-| Islam Makhachev | Volk 1 and Volk 2 | 1.25 each | Prior Cody decision gave max P4P champ credit. Still locked? |
-| Islam Makhachev | JDM second-division title win | 1.25 | Current app timeline sitting WW champ. Keep max? |
-| Islam Makhachev | Dustin/Moicano/Hooker | 0.50-0.75 | Placement needed. |
-| Khabib Nurmagomedov | Conor McGregor | 1.00 | Full elite title-challenger credit, not sitting champ. |
-| Khabib Nurmagomedov | Iaquinta vacant-title opponent | 0.25 | Short-notice #11/title context partial okay? |
+Most important calls:
 
----
+1. Khabib: Conor 1.00 or 0.75?
+2. Islam: Volk 2 stays 1.25 despite short notice?
+3. Islam: Dustin 0.75 or 1.00?
+4. Islam/Pereira: include future/current app timeline wins like JDM and Ankalaev 2?
+5. DJ: Benavidez 1 special 1.25 or normal 1.00?
+6. DJ: flyweight adjustment stays 0.85 or moves to 0.90?
+7. Aldo: UFC-only division adjustment 1.00 or 1.05?
+8. Pereira: LHW/MW blend 0.98 or mostly LHW 0.95?
 
-# Batch 2 first-pass formula worksheet
-
-These numbers use working assumptions above. They are not locked until Cody confirms calls.
-
-| Fighter | Current OQ | Quality wins count | Discounted quality index | Raw support | Support after 2.50 cap | Base OQ index | Working div/era adj. | Adjusted OQ index | Formula OQ score |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| Matt Hughes | 14.21 | 8 | 7.75 | 1.25 | 1.25 | 9.00 | 1.00 | 9.00 | 14.40 |
-| Randy Couture | 13.71 | 10 | 9.00 | 1.00 | 1.00 | 10.00 | 0.95 | 9.50 | 15.20 |
-| Israel Adesanya | 14.05 | 9 | 8.25 | 0.75 | 0.75 | 9.00 | 0.95 | 8.55 | 13.69 |
-| Jose Aldo | 13.42 | 7 | 7.25 | 2.75 | 2.50 | 9.75 | 1.05 | 10.24 | 16.39 |
-| Justin Gaethje | 13.20 | 6 | 5.75 | 1.25 | 1.25 | 7.00 | 1.10 | 7.70 | 12.32 |
-| Petr Yan | 13.10 | 5 | 5.25 | 1.00 | 1.00 | 6.25 | 1.00 | 6.25 | 10.00 |
-| Demetrious Johnson | 12.88 | 9 | 8.56 | 2.00 | 2.00 | 10.56 | 0.85 | 8.98 | 14.37 |
-| Frankie Edgar | 12.70 | 4 | 3.75 | 2.50 | 2.50 | 6.25 | 1.00 | 6.25 | 10.00 |
-| Islam Makhachev | 9.80 | 6 | 6.25 | 1.25 | 1.25 | 7.50 | 1.10 | 8.25 | 13.21 |
-| Khabib Nurmagomedov | 8.99 | 5 | 5.00 | 0.75 | 0.75 | 5.75 | 1.10 | 6.33 | 10.13 |
-
-## What this first pass suggests
-
-- Jose Aldo jumps under UFC-only OQ because his UFC featherweight title run still has several strong wins even with WEC excluded.
-- Randy also jumps because old-era champion wins are being treated as full champion wins. Cody may want the 0.95 old-era adjustment, or even 0.90, to stop old HW volatility from over-crediting him.
-- DJ rises even with a 0.85 flyweight multiplier because his title-defense ledger is long and clean.
-- Islam rises because his current app timeline includes Volk x2 and JDM.
-- Khabib rises modestly, but not crazy, because his elite ledger is short even with modern LW strength.
-- Justin and Frankie need better expanded ledgers before any final lock because their current hand-added opponent arrays are too sparse.
-- Petr also needs exact current-timeline opponent details before final lock.
-
-## Next step
-
-Cody should review the calls above. After calls are locked, rerun this worksheet and then move to Batch 3.
+After those are locked, rerun Batch 2 and then continue to old-era Batch 3: Matt Hughes, Randy Couture, B.J. Penn, Chuck Liddell, Dan Henderson.
