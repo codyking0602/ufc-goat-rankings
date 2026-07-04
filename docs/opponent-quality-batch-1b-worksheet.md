@@ -43,18 +43,18 @@ Cody set the support cap at 2.50 on 2026-07-03.
 
 ### A. Weird-fight / edge-credit calls
 
-| Fight | Working credit | Cody call needed |
+| Fight | Working credit | Status / Cody call needed |
 |---|---:|---|
-| Max Holloway over Charles Oliveira injury stoppage | 0.25 | Keep small credit, or make 0.00? |
-| Dustin Poirier over Conor McGregor 3 injury finish | 0.25 | Keep small credit, or make 0.00? |
-| Charles Oliveira over Justin Gaethje stripped-title fight | 1.00 | Keep as full elite OQ win because Gaethje was elite? |
-| Aljamain Sterling over Petr Yan by DQ | 0.25 | Keep small weird-win credit, or make 0.00? |
-| Aljamain Sterling over injured T.J. Dillashaw | 0.25 | Keep small weird-win credit, or make 0.00/0.50? |
-| Jon Jones over Anthony Smith | 1.00 | Keep full title-level/top-5 credit, or lower to 0.75/0.50? |
-| Jon Jones over Thiago Santos | 1.00 | Keep full title-level/top-5 credit, or lower to 0.75/0.50? |
-| Jon Jones over Dominick Reyes | 1.00 | Keep full title-level/top-5 credit despite controversy, or lower? |
-| Kamaru Usman over Jorge Masvidal 1 | 1.00 | Keep full top-5/title-challenger credit, or lower to 0.75/0.50? |
-| Kamaru Usman over Jorge Masvidal 2 | 1.00 | Keep repeat full credit, or lower to 0.75/0.50? |
+| Max Holloway over Charles Oliveira injury stoppage | 0.25 | Needs final lock: small credit or 0.00? |
+| Dustin Poirier over Conor McGregor 3 injury finish | 0.25 | Needs final lock: small credit or 0.00? |
+| Charles Oliveira over Justin Gaethje stripped-title fight | 1.00 | Needs final lock: keep as full elite OQ win because Gaethje was elite? |
+| Aljamain Sterling over Petr Yan by DQ | 0.25 | Needs final lock: small credit or 0.00? |
+| Aljamain Sterling over injured T.J. Dillashaw | 1.00 | Cody call: full credit. Injury context belongs outside OQ. |
+| Jon Jones over Anthony Smith | 0.75 | Cody call: not reduced for dominance; simply middle-tier title-level opponent. |
+| Jon Jones over Thiago Santos | 1.00 | Cody call: keep full OQ; closeness belongs in Prime Dominance. |
+| Jon Jones over Dominick Reyes | 1.00 | Cody call: keep full OQ; controversy belongs in Prime Dominance. |
+| Kamaru Usman over Jorge Masvidal 1 | 1.00 | Needs final lock: full top-5/title-challenger credit? |
+| Kamaru Usman over Jorge Masvidal 2 | 1.00 | Current source says FightMatrix #4. Needs final lock if UFC-official ranking differed. |
 | Kamaru Usman over Joaquin Buckley | 1.00 | Include current app timeline top-5 win, or exclude/discount? |
 
 ### B. Middle-tier placement calls
@@ -64,7 +64,7 @@ These are the key 0.75 placements used in the working math. Cody should approve 
 | Fighter | 0.75 working-credit wins | Cody call needed |
 |---|---|---|
 | GSP | B.J. Penn 2 | Cross-division champion rematch at WW: 0.75 okay? |
-| Jon Jones | Lyoto Machida, Glover Teixeira, Alexander Gustafsson 2 | Keep at 0.75 instead of 0.50/1.00? |
+| Jon Jones | Lyoto Machida, Glover Teixeira, Alexander Gustafsson 2, Anthony Smith | Smith moved from 1.00 to 0.75 after Cody discussion. |
 | Volkanovski | Chad Mendes | Strong former title challenger: 0.75 okay? |
 | Kamaru Usman | Demian Maia | Strong former title challenger/top ranked: 0.75 okay? |
 | Max Holloway | Anthony Pettis, Frankie Edgar | Former champs still good but context-limited: 0.75 okay? |
@@ -94,33 +94,34 @@ Important: these are formula outputs using the working calls above. They are not
 | Fighter | Current OQ | Quality wins count | Discounted quality index | Raw support | Support after 2.50 cap | Base OQ index | Working div/era adj. | Adjusted OQ index | Formula OQ score |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | Georges St-Pierre | 25.00 | 15 | 13.13 | 1.75 | 1.75 | 14.88 | 1.05 | 15.62 | 25.00 |
-| Jon Jones | 16.92 | 13 | 11.25 | 2.00 | 2.00 | 13.25 | 1.00 | 13.25 | 21.20 |
+| Jon Jones | 16.92 | 13 | 11.06 | 2.00 | 2.00 | 13.06 | 1.00 | 13.06 | 20.90 |
 | Alexander Volkanovski | 14.45 | 9 | 8.81 | 1.00 | 1.00 | 9.81 | 1.05 | 10.30 | 16.48 |
 | Kamaru Usman | 13.63 | 9 | 8.81 | 0.50 | 0.50 | 9.31 | 1.00 | 9.31 | 14.90 |
 | Max Holloway | 19.64 | 11 | 10.13 | 2.00 | 2.00 | 12.13 | 1.05 | 12.73 | 20.37 |
 | Dustin Poirier | 18.85 | 7 | 6.00 | 2.75 | 2.50 | 8.50 | 1.10 | 9.35 | 14.96 |
 | Charles Oliveira | 17.85 | 5 | 4.75 | 3.50 | 2.50 | 7.25 | 1.10 | 7.98 | 12.76 |
-| Aljamain Sterling | 13.90 | 6 | 5.25 | 2.75 | 2.50 | 7.75 | 1.00 | 7.75 | 12.40 |
+| Aljamain Sterling | 13.90 | 7 | 6.25 | 2.50 | 2.50 | 8.75 | 1.00 | 8.75 | 14.00 |
 
 ## What this exposes after adding 0.75 and 2.50 support cap
 
 - GSP stays the benchmark.
-- Jon jumps because many title challengers still grade as 1.00 and several former champs now become 0.75.
+- Jon still jumps because many title challengers grade as 1.00 and several former champs now become 0.75, but Smith moving to 0.75 trims him slightly.
 - Max remains very high, which makes sense because he has both elite wins and volume.
 - Volk rises to a more reasonable Quality Wins range.
-- Kamaru rises modestly.
+- Kamaru rises modestly under the FightMatrix #4 Masvidal 2 assumption.
 - Dustin improves compared with the 2.00 support cap, but still lands below current score.
 - Charles improves slightly but still drops because his non-title-run wins remain mostly support wins.
-- Aljo improves slightly versus the 2.00 cap, but still drops if Yan DQ/TJ injury stay small.
+- Aljo rises after Cody called the injured T.J. Dillashaw win full OQ credit.
 
 ## Remaining decision point before live changes
 
-The support cap is now set at 2.50.
+The support cap is set at 2.50.
 
 Before final scores, Cody still needs to confirm:
 
-1. weird-fight credits,
+1. remaining weird-fight credits,
 2. 0.75 middle-tier placements,
-3. division/era adjustments.
+3. division/era adjustments,
+4. whether Masvidal 2 stays full 1.00 using FightMatrix #4 or should be lowered if Cody wants UFC-official ranking only.
 
 Then rerun Batch 1B and produce final computed OQ scores. Only after that should a live correction module be created.
