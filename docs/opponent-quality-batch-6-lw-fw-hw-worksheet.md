@@ -298,12 +298,22 @@ Ilia is the problem case in this batch. His current score assumes more OQ weight
 
 # Next Cody calls to lock Batch 6
 
-Most important calls:
-
-1. Francis: Cain 0.75? Rozenstruik 0.75? Gane 1.00? HW adjustment 0.95?
-2. Charles: keep Batch 1B result at 12.76, or reopen?
-3. Justin: Barboza/Fiziev/Chandler/Pimblett at 0.75? Topuria current-title win 1.25?
-4. Frankie: Faber 0.75? Munhoz 0.75? blended division adjustment 1.00?
-5. Ilia: Max 1.00 or 1.25? Charles app-timeline win included? Mitchell/Emmett 0.75 or 1.00?
+| # | Fighter | Call | My lean | Why I’m asking |
+|---:|---|---|---:|---|
+| 1 | Francis | Cain | 0.75 | Cain is a huge name, but on fight night he was returning from a long layoff and not prime Cain. Need to decide if this stays middle-tier instead of full elite. |
+| 2 | Francis | Rozenstruik | 0.75 | Undefeated and dangerous, but not clearly a proven elite/title-level heavyweight yet. This decides if undefeated contender hype reaches 1.00. |
+| 3 | Francis | Gane | 1.00 | Gane was interim champ/title challenger, but not undisputed sitting champion. This keeps interim/title-challenger wins below 1.25. |
+| 4 | Francis | HW adjustment | 0.95 | Keeps Francis consistent with Stipe/Cain: heavyweight prestige is real, but depth gets a small discount. |
+| 5 | Charles | Keep Batch 1B result | yes | Charles was already audited under the same formula. Current 17.85 looks high unless we reopen the entire ledger. |
+| 6 | Justin | Barboza/Fiziev/Chandler/Pimblett | 0.75 each | These are strong lightweight wins, but not all are true title-level/champion wins. This keeps Justin from getting inflated just because every name is dangerous. |
+| 7 | Justin | Topuria app-title win | 1.25 | If the current scoring table has Justin beating sitting champion Topuria, that is full sitting-champ OQ credit. |
+| 8 | Justin | LW adjustment | 1.10 | His best wins are in lightweight murderers' row, so this should match Dustin/Charles. |
+| 9 | Frankie | Faber | 0.75 | Huge lower-weight name, but WEC greatness is not scored directly. This decides how much non-UFC-earned reputation can boost a UFC win. |
+| 10 | Frankie | Munhoz | 0.75 | Munhoz was a strong ranked bantamweight. Frankie being old matters elsewhere; OQ is about the opponent's fight-night quality. |
+| 11 | Frankie | Blended division adjustment | 1.00 | Frankie spans LW/FW/BW. This avoids a full 1.10 lightweight bump while respecting multi-division difficulty. |
+| 12 | Ilia | Mitchell/Emmett | 0.75 each | Both are strong featherweight wins, but neither is a sitting champ or clear elite title-level win. Need to decide if either deserves 1.00. |
+| 13 | Ilia | Max Holloway | 1.00 unless sitting champ in current timeline | Max is elite former champ/top contender. If he was sitting champ in the current scoring-table timeline, this becomes 1.25. |
+| 14 | Ilia | Charles app-timeline win | 1.00 | Charles is elite former lightweight champ/top contender. Need to confirm this current-timeline win is included. |
+| 15 | Ilia | FW/LW adjustment | 1.05 | Modern FW/LW blend. Avoid full LW 1.10 unless lightweight becomes the main scored championship lane. |
 
 After those are locked, continue with remaining cleanup: Amanda Nunes, Valentina Shevchenko, Joanna Jedrzejczyk, Ronda Rousey, and any remaining men not covered.
