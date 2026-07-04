@@ -1,8 +1,8 @@
-# Prime Dominance Batch 1 Round-Row Finalized Pass
+# Prime Dominance Batch 1 Full Elite-Prime Round Pass
 
 Last updated: 2026-07-04
 
-Purpose: finish the Batch 1 round-control pass using stored `rounds` rows instead of placeholder round-control judgments.
+Purpose: redo Batch 1 using one consistent rule: **full UFC elite prime for everyone**.
 
 No live app score changes are approved from this worksheet.
 
@@ -15,17 +15,45 @@ Related docs:
 
 ---
 
-# Rule locked by Cody review
+# Locked rule after Cody review
 
-The Prime rounds-won component should be discernible from stored fight rows.
+Prime Dominance uses the fighter's **full UFC elite-prime window**.
+
+```text
+Prime Dominance = full elite prime
+not title-prime only
+not championship reign only
+```
+
+Use full elite-prime fights for:
+
+- prime record
+- prime rounds-won percentage
+- prime finish rate
+- prime losses / finished losses
+- sample confidence
+
+Use title-prime only for the separate title-defense streak component:
+
+```text
+Best consecutive UFC title-defense streak = its own 5-point component
+```
+
+This means Max does **not** get a title-prime-only round score, and Volk does **not** get Islam fights removed from the round denominator just because they were upward-division attempts. Those fights still happened inside their elite-prime windows. The special context belongs in the loss-safety component, not by hiding the rounds.
+
+---
+
+# Round-control scoring rule
+
+The Prime rounds-won component should be pulled from stored fight rows when detailed rows exist.
 
 ```text
 Prime rounds-won % = primeRoundsWon / primeRoundsCounted
 ```
 
-Use only fights inside the locked prime window.
+If detailed round rows do not exist but the profile snapshot already stores a rounds-won percentage, use the stored snapshot value as the current audited input and flag the missing detailed rows for later transparency.
 
-If a fighter does not yet have stored round rows, do not pretend the score is final. Keep the snapshot placeholder and flag that fighter for row completion.
+This matters for Amanda Nunes: the profile snapshot shows **74.0% rounds won**, so Amanda is **not missing a round number**. She is missing only the underlying detailed per-fight round rows.
 
 ---
 
@@ -40,39 +68,54 @@ If a fighter does not yet have stored round rows, do not pretend the score is fi
 | 50.0% - 59.9% | 2.50 - 3.74 |
 | Under 50.0% | below 2.50 |
 
-Working scores are rounded to clean app-model numbers, but the percentage is data-derived.
+Working scores are rounded to clean app-model numbers, but the percentage is data-derived or snapshot-derived.
 
 ---
 
-# Finalized Batch 1 round-row summary
+# Finalized Batch 1 round summary
 
-| Fighter | Prime rounds won | Prime rounds counted | Prime rounds-won % | Old round score | Final round score | Prime score impact |
-|---|---:|---:|---:|---:|---:|---:|
-| Jon Jones | 53 | 60 | 88.3% | 5.25 | 6.00 | +0.75 |
-| Georges St-Pierre | 57 | 66 | 86.4% | 5.75 | 6.00 | +0.25 |
-| Demetrious Johnson | 43 | 52 | 82.7% | 5.20 | 5.75 | +0.55 |
-| Anderson Silva | 27 | 39 | 69.2% | 4.35 | 4.65 | +0.30 |
-| Khabib Nurmagomedov | 23 | 25 | 92.0% | 6.00 | 6.00 | 0.00 |
-| Alexander Volkanovski | 37 | 48 | 77.1% | 5.05 | 5.25 | +0.20 |
-| Max Holloway | 50 | 84 | 59.5% | 4.65 | 3.70 | -0.95 |
-| Amanda Nunes | Not stored | Not stored | Not stored | 4.90 | 4.90 placeholder | 0.00 placeholder |
+| Fighter | Rounds source | Prime rounds won | Prime rounds counted | Prime rounds-won % | Old round score | Final round score | Prime score impact |
+|---|---|---:|---:|---:|---:|---:|---:|
+| Jon Jones | Detailed rows | 53 | 60 | 88.3% | 5.25 | 6.00 | +0.75 |
+| Georges St-Pierre | Detailed rows | 57 | 66 | 86.4% | 5.75 | 6.00 | +0.25 |
+| Demetrious Johnson | Detailed rows | 43 | 52 | 82.7% | 5.20 | 5.75 | +0.55 |
+| Anderson Silva | Detailed rows | 27 | 39 | 69.2% | 4.35 | 4.65 | +0.30 |
+| Khabib Nurmagomedov | Detailed rows | 23 | 25 | 92.0% | 6.00 | 6.00 | 0.00 |
+| Alexander Volkanovski | Detailed rows | 37 | 48 | 77.1% | 5.05 | 5.25 | +0.20 |
+| Max Holloway | Detailed rows | 50 | 84 | 59.5% | 4.65 | 3.70 | -0.95 |
+| Amanda Nunes | Snapshot value | Not stored | Not stored | 74.0% | 4.90 | 5.05 | +0.15 |
 
-Important: Amanda is not fully finalized because the base data does not currently include an Amanda profile with stored round rows. Her round score stays as the existing snapshot placeholder until those rows are added.
+Amanda note: the live/profile snapshot shows `Rounds Won: 74.0%`. That is enough for this batch's current calculation. Add detailed Amanda round rows later so the number is transparent fight-by-fight like the men.
 
 ---
 
-# Updated Batch 1 V2 Prime scores after exact round pass
+# Updated Batch 1 V2 Prime scores after full elite-prime round pass
 
-| Fighter | Prior V2 Prime | Final round-row V2 Prime | Change |
+| Fighter | Prior V2 Prime | Full elite-prime V2 Prime | Change |
 |---|---:|---:|---:|
 | Jon Jones | 27.20 | 27.95 | +0.75 |
 | Khabib Nurmagomedov | 27.50 | 27.50 | 0.00 |
 | Demetrious Johnson | 25.45 | 26.00 | +0.55 |
-| Amanda Nunes | 25.35 | 25.35 placeholder | 0.00 placeholder |
+| Amanda Nunes | 25.35 | 25.50 | +0.15 |
 | Georges St-Pierre | 24.15 | 24.40 | +0.25 |
 | Anderson Silva | 23.70 | 24.00 | +0.30 |
 | Alexander Volkanovski | 22.30 | 22.50 | +0.20 |
 | Max Holloway | 21.05 | 20.10 | -0.95 |
+
+---
+
+# Batch 1 ranking by updated Prime Dominance
+
+| Rank in batch | Fighter | Prime Dominance |
+|---:|---|---:|
+| 1 | Jon Jones | 27.95 |
+| 2 | Khabib Nurmagomedov | 27.50 |
+| 3 | Demetrious Johnson | 26.00 |
+| 4 | Amanda Nunes | 25.50 |
+| 5 | Georges St-Pierre | 24.40 |
+| 6 | Anderson Silva | 24.00 |
+| 7 | Alexander Volkanovski | 22.50 |
+| 8 | Max Holloway | 20.10 |
 
 ---
 
@@ -116,10 +159,10 @@ Round-control score = 6.00 / 6
 Updated Prime Dominance:
 
 ```text
-27.20 + 0.75 = 27.95
+27.95
 ```
 
-Note: this uses official scorecard logic for controversial decisions, including Santos/Reyes. The controversy is still visible in notes, but the round calculation follows the stored rows.
+Note: this uses stored official-scorecard logic for controversial decisions, including Santos/Reyes.
 
 ---
 
@@ -128,7 +171,7 @@ Note: this uses official scorecard logic for controversial decisions, including 
 Locked prime window:
 
 ```text
-Post-Hughes-loss prime through Bisping late-prime extension.
+Post-Hughes-loss elite prime through Bisping late-prime extension.
 Hughes 2004 remains pre-prime/early elite.
 Serra 2007 is the counted prime finished loss.
 ```
@@ -166,7 +209,7 @@ Round-control score = 6.00 / 6
 Updated Prime Dominance:
 
 ```text
-24.15 + 0.25 = 24.40
+24.40
 ```
 
 ---
@@ -208,7 +251,7 @@ Round-control score = 5.75 / 6
 Updated Prime Dominance:
 
 ```text
-25.45 + 0.55 = 26.00
+26.00
 ```
 
 ---
@@ -254,7 +297,7 @@ Round-control score = 4.65 / 6
 Updated Prime Dominance:
 
 ```text
-23.70 + 0.30 = 24.00
+24.00
 ```
 
 ---
@@ -289,7 +332,7 @@ Round-control score = 6.00 / 6
 Updated Prime Dominance:
 
 ```text
-27.50 unchanged
+27.50
 ```
 
 ---
@@ -300,7 +343,7 @@ Locked prime window:
 
 ```text
 Prime starts around Jose Aldo 2019.
-Islam losses are upward-division context.
+Islam losses are upward-division context, but they remain inside full elite-prime round-control math.
 Topuria is a prime loss, but not a hard prime end.
 Volk remains prime after Topuria unless later results prove decline.
 ```
@@ -331,10 +374,8 @@ Round-control score = 5.25 / 6
 Updated Prime Dominance:
 
 ```text
-22.30 + 0.20 = 22.50
+22.50
 ```
-
-Note: if Islam upward-division fights are excluded from the round-control denominator, Volk's round-control score would be higher. This version includes them as prime context but does not treat them as normal FW loss context.
 
 ---
 
@@ -343,9 +384,9 @@ Note: if Islam upward-division fights are excluded from the round-control denomi
 Locked prime treatment:
 
 ```text
-Title prime and elite prime are separate.
-Volk rivalry caps title-prime dominance.
-Elite prime continues after losing the belt.
+Full elite prime is used.
+Title-prime is only explanatory context for the title-defense streak component.
+The Volk rivalry caps title-defense dominance, but Max's elite prime continues after the belt.
 ```
 
 Round rows included:
@@ -383,48 +424,58 @@ Round-control score = 3.70 / 6
 Updated Prime Dominance:
 
 ```text
-21.05 - 0.95 = 20.10
+20.10
 ```
 
-Important note: Max is the fighter most affected by using the full long elite-prime window. If we score only his title-prime window, the round-control number is cleaner. If we score the full elite-prime window, the later Volk/Topuria/Oliveira-type losses drag the round-control component down.
+Important read: Max gets credit for a very long full elite-prime sample, but the same long window also includes the fights that drag down his round-control percentage. That is consistent with how we are treating everyone.
 
 ---
 
 ## Amanda Nunes
 
-Status:
+Locked prime treatment:
 
 ```text
-No stored Amanda profile/round rows found in the current base ranking data.
+True title-level/full elite prime starts around Valentina 1 / Tate and runs through Aldana.
+Use 7 total successful UFC title defenses across belts for title-defense streak scoring, with BW-only 5 noted.
+Pena 1 is a real prime/late-prime finished loss.
 ```
 
-Current treatment:
+Current snapshot input:
 
 | Field | Value |
 |---|---:|
-| Round-control score | 4.90 placeholder |
-| Prime score | 25.35 placeholder |
-| Status | Not finalized until Amanda round rows are added |
+| Prime rounds-won percentage | 74.0% |
+| Round-control score | 5.05 / 6 |
+| Source status | Stored profile snapshot; detailed per-fight rows still need to be added |
 
-Action needed:
+```text
+74.0% rounds won
+Round-control score = 5.05 / 6
+```
 
-- Add Amanda prime round rows before calling her Prime Dominance score fully finalized.
-- Until then, her Batch 1 Prime score is directionally useful but not data-final.
+Updated Prime Dominance:
+
+```text
+25.35 + 0.15 = 25.50
+```
+
+Important read: Amanda is not missing a rounds-won value. The missing piece is only the fight-by-fight detail behind the already displayed 74.0% snapshot.
 
 ---
 
 # Final Batch 1 status
 
-| Fighter | Round-row status | Prime score status |
-|---|---|---|
-| Jon Jones | Finalized from stored rows | Finalized worksheet value: 27.95 |
-| Georges St-Pierre | Finalized from stored rows | Finalized worksheet value: 24.40 |
-| Demetrious Johnson | Finalized from stored rows | Finalized worksheet value: 26.00 |
-| Anderson Silva | Finalized from stored rows | Finalized worksheet value: 24.00 |
-| Khabib Nurmagomedov | Finalized from stored rows | Finalized worksheet value: 27.50 |
-| Alexander Volkanovski | Finalized from stored rows | Finalized worksheet value: 22.50 |
-| Max Holloway | Finalized from stored rows | Finalized worksheet value: 20.10 |
-| Amanda Nunes | Missing stored round rows | Placeholder value: 25.35 |
+| Fighter | Round source status | Prime score status |
+|---|---|---:|
+| Jon Jones | Detailed rows finalized | 27.95 |
+| Khabib Nurmagomedov | Detailed rows finalized | 27.50 |
+| Demetrious Johnson | Detailed rows finalized | 26.00 |
+| Amanda Nunes | Snapshot finalized, detailed rows pending | 25.50 |
+| Georges St-Pierre | Detailed rows finalized | 24.40 |
+| Anderson Silva | Detailed rows finalized | 24.00 |
+| Alexander Volkanovski | Detailed rows finalized | 22.50 |
+| Max Holloway | Detailed rows finalized | 20.10 |
 
 # Recommendation
 
@@ -432,7 +483,6 @@ Do not make Prime Dominance live yet.
 
 Before live implementation:
 
-1. Add Amanda Nunes prime round rows.
-2. Decide whether Max's round-control component should use full elite-prime or title-prime only.
-3. Decide whether Volk's upward-division Islam fights should stay inside the round-control denominator or be shown separately.
-4. Then run Batch 2 under the same exact round-row rule.
+1. Add Amanda Nunes detailed prime round rows for transparency.
+2. Run Batch 2 under the same full elite-prime rule.
+3. Then build the Prime Dominance correction module only after the top board has enough coverage.
