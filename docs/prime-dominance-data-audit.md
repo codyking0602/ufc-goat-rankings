@@ -15,6 +15,7 @@ The main judgment calls should be:
 1. where each fighter's UFC prime starts
 2. where each fighter's UFC prime ends
 3. weird context handling
+4. the division/era strength context for that prime
 
 Everything else should come from stored snapshot/fight data.
 
@@ -34,6 +35,7 @@ These are the fields we should use or add.
 | `activeEliteYears` | yes/partial | Already used for Longevity; useful for sample confidence but should not double-count too heavily. |
 | `timesFinishedPrime` | yes/partial | Exists in many snapshot rows and should feed Prime loss safety. |
 | `bestConsecutiveTitleDefenseStreak` | missing | Needs to be added. This is a major Prime Dominance marker and is different from total title-fight wins. |
+| `primeDivisionStrengthScore` | missing | Needs to be added. Lightweight/WW/FW dominance should not be scored exactly like thinner divisions. |
 | `primeLosses` | missing/implicit | Should be structured instead of buried in text. |
 | `primeFinishedLosses` | mostly `timesFinishedPrime` | We can keep `timesFinishedPrime`, but `primeFinishedLosses` is clearer for formula use. |
 | `primeFightCount` | missing | Needed for sample confidence. Can derive from primeStart/primeEnd plus fight rows, but should be stored after audit. |
@@ -73,7 +75,8 @@ Key problems:
 3. `finishRatePct` often appears to be full UFC career finish rate, not necessarily prime-window finish rate.
 4. `primeRecord` is text, not structured data.
 5. `bestConsecutiveTitleDefenseStreak` is not stored yet.
-6. Prime losses and prime finished losses are not consistently structured.
+6. `primeDivisionStrengthScore` is not stored yet.
+7. Prime losses and prime finished losses are not consistently structured.
 
 ---
 
@@ -85,16 +88,18 @@ Prime Dominance should remain max 30.
 |---|---:|---|
 | Prime record score | 6 | `primeWins`, `primeLosses`, `primeDraws`, prime context notes |
 | Prime rounds-won score | 6 | `primeRoundsWonPct` or `primeRoundsWon` / `primeRoundsCounted` |
-| Consecutive title-defense dominance | 7 | `bestConsecutiveTitleDefenseStreak` |
+| Consecutive title-defense dominance | 5 | `bestConsecutiveTitleDefenseStreak` |
 | Prime finish/stoppage score | 5 | `primeFinishWins`, `primeFightCount`, `primeFinishRatePct` |
 | Prime loss safety score | 4 | `primeLosses`, `primeFinishedLosses`, weird loss context |
+| Division strength / prime difficulty | 2 | `primeDivisionStrengthScore`, division/era notes |
 | Prime sample confidence | 2 | `primeFightCount`, `activeEliteYears`, prime title/elite fight count |
 | **Total** | **30** | — |
 
 Why this formula is better:
 
 - Checkable from stored fields.
-- Rewards consecutive title defenses heavily.
+- Still rewards consecutive title defenses heavily, but does not bury short perfect primes like Khabib.
+- Adds a small division-strength component so dominating lightweight is not treated exactly the same as dominating flyweight or thin women's featherweight.
 - Rewards round control without overvaluing only finishers.
 - Penalizes prime finished losses without double-counting all post-prime losses.
 - Caps tiny samples without turning Prime Dominance into Longevity.
@@ -109,18 +114,20 @@ Add this object to profile rows/packets over time:
 primeSnapshot: {
   start: 'Rafael dos Anjos 2014',
   end: 'Justin Gaethje 2020',
-  record: '13-0',
-  wins: 13,
+  record: '8-0 elite-prime window; 13-0 full UFC context',
+  wins: 8,
   losses: 0,
   draws: 0,
   noContests: 0,
-  fightCount: 13,
-  finishWins: 8,
-  finishRatePct: 61.5,
+  fightCount: 8,
+  finishWins: 4,
+  finishRatePct: 50.0,
   roundsWon: 42,
   roundsCounted: 51,
   roundsWonPct: 82.4,
   bestConsecutiveTitleDefenseStreak: 3,
+  primeDivisionStrengthScore: 2.0,
+  primeDivisionStrengthNotes: 'Modern lightweight murderers row / 1.10-style division context.',
   primeLosses: 0,
   primeFinishedLosses: 0,
   timesFinishedPrime: 0,
@@ -131,9 +138,9 @@ primeSnapshot: {
 Board/profile rows can keep the simple public fields:
 
 ```js
-primeRecord: '13-0',
+primeRecord: '8-0 elite-prime window',
 roundsWonPct: 82.4,
-finishRatePct: 61.5,
+finishRatePct: 50.0,
 timesFinishedPrime: 0
 ```
 
@@ -182,18 +189,18 @@ primeRoundsWonPct = primeRoundsWon / primeRoundsCounted
 
 If not available, use audited snapshot value until fight-level round rows are filled.
 
-## 3. Consecutive title-defense dominance / 7
+## 3. Consecutive title-defense dominance / 5
 
 Use best consecutive UFC title-defense streak during the prime window.
 
 | Best consecutive UFC title defenses | Score |
 |---|---:|
-| 10+ | 7.00 |
-| 7-9 | 6.00-6.75 |
-| 4-6 | 4.75-5.75 |
-| 2-3 | 3.25-4.50 |
-| 1 | 1.75-2.75 |
-| 0 | 0.00-1.00 |
+| 10+ | 5.00 |
+| 7-9 | 4.50-4.85 |
+| 4-6 | 3.75-4.35 |
+| 2-3 | 2.50-3.40 |
+| 1 | 1.50-2.25 |
+| 0 | 0.00-0.75 |
 
 Rules:
 
@@ -215,7 +222,7 @@ Use prime-only finish rate when possible.
 | Low finisher but dominant controller | 1.50-2.75 |
 | Low finish / low separation | below 1.50 |
 
-Do not punish GSP/Khabib-style control too hard; they can recover points through rounds-won and title-defense streak.
+Do not punish GSP/Khabib-style control too hard; they can recover points through rounds-won, record, and title-defense streak.
 
 ## 5. Prime loss safety / 4
 
@@ -233,7 +240,26 @@ Floor: 0.
 
 This is different from the main Loss Penalty category. The main Penalty is resume punishment. This component asks whether prime dominance was visibly broken.
 
-## 6. Prime sample confidence / 2
+## 6. Division strength / prime difficulty / 2
+
+Use a small score, not a multiplier, to avoid double-counting Opponent Quality.
+
+| Division/era context | Score |
+|---|---:|
+| Lightweight murderers row / modern elite lightweight | 2.00 |
+| GSP welterweight / modern featherweight | 1.75-1.90 |
+| Strong modern bantamweight / strong LHW era | 1.50-1.75 |
+| Anderson middleweight / older heavyweight / solid but thinner divisions | 1.25-1.50 |
+| Demetrious Johnson flyweight | 1.00-1.20 |
+| Thin women's featherweight | 0.50-0.75 |
+
+Rules:
+
+- This should be a light correction, not the whole category.
+- OQ still handles the specific opponents.
+- Prime Dominance uses this to recognize that dominating certain divisions is structurally harder.
+
+## 7. Prime sample confidence / 2
 
 | Prime sample | Score |
 |---|---:|
@@ -256,10 +282,11 @@ For each fighter, do this before calculating Prime Dominance:
 4. Confirm `primeSnapshot.roundsWonPct` for only prime fights.
 5. Confirm `primeSnapshot.finishRatePct` for only prime wins/fights.
 6. Confirm `primeSnapshot.bestConsecutiveTitleDefenseStreak`.
-7. Confirm prime losses and `primeFinishedLosses`.
-8. Confirm weird context notes.
-9. Calculate Prime Dominance from the formula.
-10. Only then consider live correction module.
+7. Confirm `primeSnapshot.primeDivisionStrengthScore`.
+8. Confirm prime losses and `primeFinishedLosses`.
+9. Confirm weird context notes.
+10. Calculate Prime Dominance from the formula.
+11. Only then consider live correction module.
 
 ---
 
@@ -317,6 +344,7 @@ Each worksheet should include:
 - prime rounds-won calculation
 - prime finish-rate calculation
 - consecutive title-defense streak
+- division strength score
 - prime loss/finish context
 - calculated score
 
@@ -366,7 +394,8 @@ prime rounds won %
 consecutive title-defense streak
 prime finish rate
 prime loss / finished context
+division strength / prime difficulty
 prime sample confidence
 ```
 
-The only subjective parts should be where the prime starts/ends and how weird context is treated.
+The only subjective parts should be where the prime starts/ends, how weird context is treated, and which division-strength bucket applies.
