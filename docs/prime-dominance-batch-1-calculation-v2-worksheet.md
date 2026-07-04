@@ -7,6 +7,8 @@ Purpose: recalculate Batch 1 after Cody approved two formula changes:
 1. Drop consecutive title-defense dominance from 7 points to 5 points.
 2. Add a 2-point division strength / prime difficulty component.
 
+Important correction after Cody review: the prime rounds-won component should be calculated from stored `rounds` rows wherever available, not judged as a general profile. Khabib is the first corrected example in this worksheet.
+
 No live app score changes are approved from this worksheet.
 
 Related docs:
@@ -42,6 +44,37 @@ Why V2 is better:
 
 ---
 
+# Round-control scoring rule
+
+The `Prime rounds-won score / 6` must be calculated from stored round rows whenever possible.
+
+Required calculation:
+
+```text
+primeRoundsWonPct = primeRoundsWon / primeRoundsCounted
+```
+
+Then convert to points:
+
+| Prime rounds-won % | Round score / 6 |
+|---:|---:|
+| 85%+ | 6.00 |
+| 80-84.9% | 5.50-5.99 |
+| 70-79.9% | 4.75-5.49 |
+| 60-69.9% | 3.75-4.74 |
+| 50-59.9% | 2.50-3.74 |
+| Under 50% | below 2.50 |
+
+Working implementation rule:
+
+```text
+Use the exact `roundsWon` and `roundsCounted` totals inside the locked prime window.
+Use the table only to convert the calculated percentage into points.
+Do not hand-select a round-control score when round rows already exist.
+```
+
+---
+
 # Division strength guide
 
 | Division/era context | Score |
@@ -65,7 +98,7 @@ Why V2 is better:
 | Georges St-Pierre | 22.73 | 24.10 | 24.15 | +1.42 | 9-defense streak, elite round control, strong WW division score; Serra caps safety. |
 | Demetrious Johnson | 23.42 | 26.35 | 25.45 | +2.03 | 11-defense streak still huge, but flyweight division-strength score caps V2. |
 | Anderson Silva | 20.35 | 24.25 | 23.70 | +3.35 | 10-defense streak and historic finishing; MW strength and Weidman losses cap. |
-| Khabib Nurmagomedov | 28.82 | 26.45 | 27.40 | -1.42 | Perfect record/control/safety plus full LW difficulty; still capped by shorter 3-defense streak. |
+| Khabib Nurmagomedov | 28.82 | 26.45 | 27.50 | -1.32 | Exact prime rounds calculation gives him full 6.00 round-control credit; still capped by shorter 3-defense streak. |
 | Alexander Volkanovski | 16.74 | 21.55 | 22.30 | +5.56 | Modern FW division strength and 5-defense streak; Topuria/Islam safety context caps. |
 | Max Holloway | 17.85 | 20.10 | 21.05 | +3.20 | Modern FW strength, durability/sample, and volume; Volk rivalry/title-prime cap remains. |
 | Amanda Nunes | 23.79 | 25.35 | 25.35 | +1.56 | 7 cross-belt defenses and elite finishing; BW/FW blend and Pena finish cap. |
@@ -79,13 +112,13 @@ V2 component calculation:
 | Component | Score | Notes |
 |---|---:|---|
 | Prime record score / 6 | 6.00 | No real competitive prime loss; Hamill DQ excluded. |
-| Prime rounds-won score / 6 | 5.25 | Strong, but Gus 1, Santos, and Reyes cap round-control dominance. |
+| Prime rounds-won score / 6 | 5.25 | Placeholder until exact prime-window round total is recalculated from stored rows. Gus 1, Santos, and Reyes should be reflected through the actual round total. |
 | Consecutive title-defense dominance / 5 | 4.75 | Best streak = 8. Huge marker, but V2 max is 5. |
 | Prime finish/stoppage score / 5 | 3.65 | Real finish threat, but late LHW became more decision-heavy. |
 | Prime loss safety / 4 | 4.00 | Never finished; no competitive prime loss. |
 | Division strength / 2 | 1.65 | Strong LHW era plus HW extension, but not full LW/WW/FW difficulty. |
 | Prime sample confidence / 2 | 1.90 | Long elite title sample. |
-| **V2 Prime Dominance** | **27.20** | Essentially matches current. |
+| **V2 Prime Dominance** | **27.20** | Current placeholder until exact round total pass. |
 
 V2 read: Jon is still the long-prime benchmark, but close late fights prevent a 28.5+ score.
 
@@ -98,13 +131,13 @@ V2 component calculation:
 | Component | Score | Notes |
 |---|---:|---|
 | Prime record score / 6 | 5.35 | Serra is real prime loss; Hughes 2004 remains pre-prime/early elite. |
-| Prime rounds-won score / 6 | 5.75 | One of the best round-control profiles ever. |
+| Prime rounds-won score / 6 | 5.75 | Placeholder until exact prime-window round total is recalculated from stored rows. |
 | Consecutive title-defense dominance / 5 | 4.80 | Best WW streak = 9. Massive dominance marker. |
 | Prime finish/stoppage score / 5 | 2.35 | Lower post-Serra finish rate; control champion. |
 | Prime loss safety / 4 | 2.00 | Serra finished loss hits hard. |
 | Division strength / 2 | 1.90 | GSP-era WW gets near-full difficulty credit. |
 | Prime sample confidence / 2 | 2.00 | Long prime, Bisping included as late-prime extension. |
-| **V2 Prime Dominance** | **24.15** | Slightly above V1. |
+| **V2 Prime Dominance** | **24.15** | Current placeholder until exact round total pass. |
 
 V2 read: GSP gets more credit because WW difficulty matters and his defense streak remains huge, but Serra keeps him below the cleanest primes.
 
@@ -117,13 +150,13 @@ V2 component calculation:
 | Component | Score | Notes |
 |---|---:|---|
 | Prime record score / 6 | 5.40 | 12-1 with close Cejudo 2 loss included. |
-| Prime rounds-won score / 6 | 5.20 | Strong control/pace; not quite GSP/Khabib round-smothering. |
+| Prime rounds-won score / 6 | 5.20 | Placeholder until exact prime-window round total is recalculated from stored rows. |
 | Consecutive title-defense dominance / 5 | 5.00 | Best streak = 11, full title-defense credit. |
 | Prime finish/stoppage score / 5 | 3.75 | Strong finishing creativity in a smaller division. |
 | Prime loss safety / 4 | 3.25 | Cejudo 2 was close decision, no finish loss. |
 | Division strength / 2 | 1.10 | Flyweight gets capped by division-strength context. |
 | Prime sample confidence / 2 | 1.75 | Long title run, but division strength/sample context keeps below full 2. |
-| **V2 Prime Dominance** | **25.45** | Still elite, but no longer inflated by title streak alone. |
+| **V2 Prime Dominance** | **25.45** | Current placeholder until exact round total pass. |
 
 V2 read: DJ remains a monster Prime Dominance case, but flyweight difficulty keeps him below the top few peaks.
 
@@ -136,13 +169,13 @@ V2 component calculation:
 | Component | Score | Notes |
 |---|---:|---|
 | Prime record score / 6 | 4.65 | 16-2 with Weidman losses included as prime/late-prime cap events. |
-| Prime rounds-won score / 6 | 4.35 | Finish/aura dominance more than pure round control. |
+| Prime rounds-won score / 6 | 4.35 | Placeholder until exact prime-window round total is recalculated from stored rows. Anderson's Chael 1 and Weidman losses should flow through the actual round total. |
 | Consecutive title-defense dominance / 5 | 5.00 | Best streak = 10, full title-defense credit. |
 | Prime finish/stoppage score / 5 | 4.85 | Historic finishing/aura case. |
 | Prime loss safety / 4 | 1.55 | Weidman KO plus Weidman 2 weird injury TKO cap safety. |
 | Division strength / 2 | 1.45 | Anderson-era MW gets a moderate difficulty score, below LW/WW/modern FW. |
 | Prime sample confidence / 2 | 1.85 | Long title-prime sample. |
-| **V2 Prime Dominance** | **23.70** | Big raise from current, but not top-tier perfect because of MW strength + Weidman. |
+| **V2 Prime Dominance** | **23.70** | Current placeholder until exact round total pass. |
 
 V2 read: Anderson gets properly rewarded for 10 defenses and historic finishing, but the formula now clearly explains why he is below Khabib/Jon/DJ in Prime.
 
@@ -155,15 +188,34 @@ V2 component calculation:
 | Component | Score | Notes |
 |---|---:|---|
 | Prime record score / 6 | 6.00 | 8-0 elite-prime, 13-0 UFC context. |
-| Prime rounds-won score / 6 | 5.90 | One of the strongest control cases ever. |
+| Prime rounds-won score / 6 | 6.00 | Exact stored prime round total: 23 rounds won / 25 rounds counted = 92.0%, which maxes this component. |
 | Consecutive title-defense dominance / 5 | 3.40 | Best streak = 3. Still rewarded, but not enough to match 8-11 defense champions. |
 | Prime finish/stoppage score / 5 | 4.10 | 50% elite-prime finish rate plus heavy damage/control separation. |
 | Prime loss safety / 4 | 4.00 | No losses, no finished losses, rarely threatened. |
 | Division strength / 2 | 2.00 | Full lightweight murderers-row difficulty credit. |
 | Prime sample confidence / 2 | 2.00 | Shorter than some, but enough elite sample and perfect dominance for full confidence here. |
-| **V2 Prime Dominance** | **27.40** | Back near the top without pretending his defense streak equals DJ/GSP/Anderson. |
+| **V2 Prime Dominance** | **27.50** | Corrected from 27.40 because round-control score is now data-derived. |
 
-V2 read: This is the fix Cody asked for. Khabib is no longer buried by a 7-point title-defense category, and lightweight difficulty pushes him back toward the top.
+Khabib exact prime round calculation:
+
+| Fight | Rounds won | Rounds counted |
+|---|---:|---:|
+| Rafael dos Anjos | 3 | 3 |
+| Darrell Horcher | 2 | 2 |
+| Michael Johnson | 3 | 3 |
+| Edson Barboza | 3 | 3 |
+| Al Iaquinta | 5 | 5 |
+| Conor McGregor | 3 | 4 |
+| Dustin Poirier | 3 | 3 |
+| Justin Gaethje | 1 | 2 |
+| **Total** | **23** | **25** |
+
+```text
+23 / 25 = 92.0%
+Round-control score = 6.00 / 6
+```
+
+V2 read: This is the fix Cody called out. Khabib is not being manually granted a round-control score; the score comes directly from stored round rows.
 
 ---
 
@@ -174,13 +226,13 @@ V2 component calculation:
 | Component | Score | Notes |
 |---|---:|---|
 | Prime record score / 6 | 4.95 | Topuria same-division prime loss plus Islam upward-division context. |
-| Prime rounds-won score / 6 | 5.05 | Strong FW round control, capped by Max 2/Islam/Topuria context. |
+| Prime rounds-won score / 6 | 5.05 | Placeholder until exact prime-window round total is recalculated from stored rows. |
 | Consecutive title-defense dominance / 5 | 4.10 | Best FW streak = 5. Strong champion marker. |
 | Prime finish/stoppage score / 5 | 2.55 | Lower finish rate than the best finishers. |
 | Prime loss safety / 4 | 1.85 | Topuria finish loss plus Islam 2 upward-division finish context. |
 | Division strength / 2 | 1.85 | Modern FW gets strong division difficulty credit. |
 | Prime sample confidence / 2 | 1.95 | Strong FW title sample and still considered prime after Topuria unless proven otherwise. |
-| **V2 Prime Dominance** | **22.30** | Huge correction from current. |
+| **V2 Prime Dominance** | **22.30** | Current placeholder until exact round total pass. |
 
 V2 read: The current Prime score badly undersells Volk. He gets modern FW difficulty and a 5-defense streak, while still being capped by Topuria/Islam finish context.
 
@@ -193,13 +245,13 @@ V2 component calculation:
 | Component | Score | Notes |
 |---|---:|---|
 | Prime record score / 6 | 4.25 | Multiple elite losses, mostly to elite/top-tier opponents. |
-| Prime rounds-won score / 6 | 4.65 | High-volume round winner, capped by Volk rivalry and elite losses. |
+| Prime rounds-won score / 6 | 4.65 | Placeholder until exact prime-window round total is recalculated from stored rows. |
 | Consecutive title-defense dominance / 5 | 3.20 | Best streak = 3. Good, but below long-reign champions. |
 | Prime finish/stoppage score / 5 | 3.35 | Damage/volume stoppage threat, not historic one-shot finisher. |
 | Prime loss safety / 4 | 1.80 | Elite losses and title-prime cap; historically great durability helps but does not erase losses. |
 | Division strength / 2 | 1.85 | Modern FW strength credit. |
 | Prime sample confidence / 2 | 1.95 | Long elite prime; title prime and elite prime are separated. |
-| **V2 Prime Dominance** | **21.05** | Clear raise from current. |
+| **V2 Prime Dominance** | **21.05** | Current placeholder until exact round total pass. |
 
 V2 read: Max gets a much fairer score. The formula recognizes modern FW difficulty and long elite durability without ignoring that Volk capped his title-prime dominance.
 
@@ -212,13 +264,13 @@ V2 component calculation:
 | Component | Score | Notes |
 |---|---:|---|
 | Prime record score / 6 | 5.25 | Strong prime with one major Pena loss. |
-| Prime rounds-won score / 6 | 4.90 | Strong, but dominance was more damage/finish-based than GSP-style control. |
+| Prime rounds-won score / 6 | 4.90 | Placeholder until exact prime-window round total is recalculated from stored rows. |
 | Consecutive title-defense dominance / 5 | 4.65 | Cody locked 7 total successful title defenses across belts; BW-only 5 noted. |
 | Prime finish/stoppage score / 5 | 4.85 | Historic two-division finishing/damage case. |
 | Prime loss safety / 4 | 2.25 | Pena submission is a real prime/late-prime finished loss. |
 | Division strength / 2 | 1.45 | BW strong enough, FW thin; blended score. |
 | Prime sample confidence / 2 | 2.00 | Long two-division championship sample. |
-| **V2 Prime Dominance** | **25.35** | Same as V1 due to title-defense reduction being offset by division score. |
+| **V2 Prime Dominance** | **25.35** | Current placeholder until exact round total pass. |
 
 V2 read: Amanda stays elite but below the cleanest no-loss primes because Pena is a real finished loss and her FW context is thin.
 
@@ -228,7 +280,7 @@ V2 read: Amanda stays elite but below the cleanest no-loss primes because Pena i
 
 | Rank in batch | Fighter | V2 Prime |
 |---:|---|---:|
-| 1 | Khabib Nurmagomedov | 27.40 |
+| 1 | Khabib Nurmagomedov | 27.50 |
 | 2 | Jon Jones | 27.20 |
 | 3 | Demetrious Johnson | 25.45 |
 | 4 | Amanda Nunes | 25.35 |
@@ -252,13 +304,13 @@ The new shape makes sense:
 
 # Cody decision point
 
-This V2 formula is better than V1.
+This V2 formula is better than V1, but the round-control component must be data-derived.
 
 Recommended lock:
 
 ```text
 Prime record / 6
-Prime rounds won / 6
+Prime rounds won / 6, calculated from stored prime rounds
 Consecutive title-defense dominance / 5
 Prime finish/stoppage / 5
 Prime loss safety / 4
