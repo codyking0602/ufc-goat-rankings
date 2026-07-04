@@ -161,11 +161,15 @@ Locked math with 1.00 modern BW adjustment:
 | Adjusted OQ index | 5.40 |
 | Formula OQ score | 8.64 |
 
-## Petr Yan
+## Petr Yan audit
 
 Current OQ: 13.10.
 
-| UFC win | Locked credit | Reason |
+Audit finding: the previous Batch 5 working ledger missed Marcus McGhee. Yan's UFC win ledger in the current timeline should include Ishihara, Son, Douglas Silva de Andrade, Dodson, Rivera, Faber, Aldo, Sandhagen, Song, Deiveson Figueiredo, Marcus McGhee, and the app-timeline Merab title-rematch win.
+
+Losses/zero-credit outcomes in the same window: Sterling DQ loss, Sterling rematch loss, O'Malley official split-decision loss, and Merab first fight loss. The O'Malley decision can be noted for context, but OQ does not award win credit for official losses.
+
+| UFC win | Locked/audit credit | Reason |
 |---|---:|---|
 | Teruto Ishihara | 0.00 | UFC win, no quality tier |
 | Jin Soo Son | 0.00 | UFC win, no quality tier |
@@ -177,22 +181,23 @@ Current OQ: 13.10.
 | Cory Sandhagen | 1.00 | elite/top bantamweight interim title opponent |
 | Song Yadong | 0.75 | Cody okayed: strong ranked bantamweight contender, not moved to full 1.00 here |
 | Deiveson Figueiredo | 1.00 | Cody okayed: former UFC champion/top bantamweight contender at fight night |
+| Marcus McGhee | 0.50 | audited addition: strong rising bantamweight/support win after McGhee's UFC surge, but not full elite/top-five credit |
 | Merab Dvalishvili current scoring-table title rematch | 1.25 | Cody call: include current scoring-table Merab title-rematch/rivalry value |
 
-Locked math with 1.00 modern BW adjustment and current scoring-table Merab win included:
+Audited math with 1.00 modern BW adjustment and current scoring-table Merab win included:
 
 | Metric | Value |
 |---|---:|
 | Quality wins count | 6 |
 | Discounted quality index | 5.50 |
-| Raw support | 1.25 |
-| Support after 2.50 cap | 1.25 |
-| Base OQ index | 6.75 |
+| Raw support | 1.75 |
+| Support after 2.50 cap | 1.75 |
+| Base OQ index | 7.25 |
 | Division/era adjustment | 1.00 |
-| Adjusted OQ index | 6.75 |
-| Formula OQ score | 10.80 |
+| Adjusted OQ index | 7.25 |
+| Formula OQ score | 11.60 |
 
-Note: Yan still comes in below his current 13.10 even with Merab included. Before any live correction, review whether the current scoring-table timeline has another Yan win or whether current OQ was simply high.
+Audit conclusion: all known Yan UFC wins are now included. The missing McGhee win raises Yan from 10.80 to 11.60, but that is still below the current 13.10. Before live correction, either Yan's current OQ should come down, or Cody needs a specific justification to upgrade McGhee, Song, Aldo, or another win above the current locked tiers.
 
 ## Merab Dvalishvili
 
@@ -231,24 +236,24 @@ Locked math with 1.00 modern BW adjustment:
 
 These are not live edits.
 
-| Fighter | Current OQ | Locked formula OQ | Direction |
+| Fighter | Current OQ | Locked/audited formula OQ | Direction |
 |---|---:|---:|---|
 | Conor McGregor | 8.63 | 10.50 | Raise |
 | Henry Cejudo | 7.50 | 10.26 | Raise |
 | Dominick Cruz | 6.25 | 8.64 | Raise |
-| Petr Yan | 13.10 | 10.80 | Lower unless current scoring-table timeline has another quality win to include |
+| Petr Yan | 13.10 | 11.60 | Lower unless Cody upgrades specific wins |
 | Merab Dvalishvili | 11.83 | 11.60 | Basically flat/slight lower |
 
 # Main issue this batch exposes
 
 This batch confirms Conor, Cejudo, and Cruz were probably undercounted in OQ.
 
-Petr remains the problem case: even with current scoring-table Merab title-rematch value included, the clean formula still comes in below current OQ. Before pushing live corrections, review whether another app-timeline Yan quality win is missing or whether current OQ should come down.
+Petr remains the problem case: after adding McGhee and including the app-timeline Merab title-rematch value, the clean formula still comes in below current OQ. The current 13.10 likely needs to come down unless Cody wants to upgrade specific Yan wins.
 
 Merab lands almost exactly where current OQ already had him.
 
 # Next step
 
-Batch 5 is now locked for the worksheet unless Cody revises Cruz-DJ 1.15 special credit or adds/removes Yan current-timeline wins.
+Batch 5 is now locked for the worksheet unless Cody revises Cruz-DJ 1.15 special credit, upgrades McGhee/Song/Aldo, or adds/removes Yan current-timeline wins.
 
 Next batch: Francis Ngannou, Charles Oliveira, Justin Gaethje, Frankie Edgar, Ilia Topuria.
