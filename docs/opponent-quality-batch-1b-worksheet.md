@@ -26,17 +26,18 @@ Cody approved adding the 0.75 middle tier.
 
 ## Revised diminishing returns rule
 
-The 0.75 tier must be useful, so it is treated as a quality win, not as capped support.
+The 0.75 tier is treated as a quality win, not as capped support.
 
 | Credit bucket | Treatment |
 |---|---|
 | First 8 quality wins, sorted by credit | 100% value |
 | Quality wins 9-12 | 75% value |
 | Quality wins after 12 | 50% value |
-| Support wins under 0.75 credit | Add normally, but support total is capped at 2.00 index points |
+| Support wins under 0.75 credit | Add normally, but support total is capped at 2.50 index points |
 
 Quality win = 0.75, 1.00, or 1.25 before diminishing returns.  
-Support win = 0.50 or 0.25.
+Support win = 0.50 or 0.25.  
+Cody set the support cap at 2.50 on 2026-07-03.
 
 ## Required Cody calls before final scores
 
@@ -90,67 +91,36 @@ These are not automatic. Cody should approve or change them.
 
 Important: these are formula outputs using the working calls above. They are not final recommendations yet.
 
-| Fighter | Current OQ | Quality wins count | Discounted quality index | Raw support | Support after 2.00 cap | Base OQ index | Working div/era adj. | Adjusted OQ index | Formula OQ score |
+| Fighter | Current OQ | Quality wins count | Discounted quality index | Raw support | Support after 2.50 cap | Base OQ index | Working div/era adj. | Adjusted OQ index | Formula OQ score |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | Georges St-Pierre | 25.00 | 15 | 13.13 | 1.75 | 1.75 | 14.88 | 1.05 | 15.62 | 25.00 |
-| Jon Jones | 16.92 | 13 | 11.25 | 2.00 | 2.00 | 13.25 | 1.00 | 13.25 | 21.21 |
-| Alexander Volkanovski | 14.45 | 9 | 8.81 | 1.00 | 1.00 | 9.81 | 1.05 | 10.30 | 16.49 |
-| Kamaru Usman | 13.63 | 9 | 8.81 | 0.50 | 0.50 | 9.31 | 1.00 | 9.31 | 14.91 |
-| Max Holloway | 19.64 | 11 | 10.13 | 2.00 | 2.00 | 12.13 | 1.05 | 12.73 | 20.38 |
-| Dustin Poirier | 18.85 | 7 | 6.00 | 2.75 | 2.00 | 8.00 | 1.10 | 8.80 | 14.09 |
-| Charles Oliveira | 17.85 | 5 | 4.75 | 3.50 | 2.00 | 6.75 | 1.10 | 7.43 | 11.88 |
-| Aljamain Sterling | 13.90 | 6 | 5.25 | 2.75 | 2.00 | 7.25 | 1.00 | 7.25 | 11.60 |
+| Jon Jones | 16.92 | 13 | 11.25 | 2.00 | 2.00 | 13.25 | 1.00 | 13.25 | 21.20 |
+| Alexander Volkanovski | 14.45 | 9 | 8.81 | 1.00 | 1.00 | 9.81 | 1.05 | 10.30 | 16.48 |
+| Kamaru Usman | 13.63 | 9 | 8.81 | 0.50 | 0.50 | 9.31 | 1.00 | 9.31 | 14.90 |
+| Max Holloway | 19.64 | 11 | 10.13 | 2.00 | 2.00 | 12.13 | 1.05 | 12.73 | 20.37 |
+| Dustin Poirier | 18.85 | 7 | 6.00 | 2.75 | 2.50 | 8.50 | 1.10 | 9.35 | 14.96 |
+| Charles Oliveira | 17.85 | 5 | 4.75 | 3.50 | 2.50 | 7.25 | 1.10 | 7.98 | 12.76 |
+| Aljamain Sterling | 13.90 | 6 | 5.25 | 2.75 | 2.50 | 7.75 | 1.00 | 7.75 | 12.40 |
 
-## What this exposes after adding 0.75
-
-The middle tier helps, but it does not fully solve the Dustin/Charles problem under the current support cap.
+## What this exposes after adding 0.75 and 2.50 support cap
 
 - GSP stays the benchmark.
 - Jon jumps because many title challengers still grade as 1.00 and several former champs now become 0.75.
 - Max remains very high, which makes sense because he has both elite wins and volume.
 - Volk rises to a more reasonable Quality Wins range.
 - Kamaru rises modestly.
-- Dustin improves from the strict version but is still far below his current score.
-- Charles still drops hard because most of his non-title-run wins remain support wins and get capped.
-- Aljo drops, which may be correct if Yan DQ/TJ injury stay small.
+- Dustin improves compared with the 2.00 support cap, but still lands below current score.
+- Charles improves slightly but still drops because his non-title-run wins remain mostly support wins.
+- Aljo improves slightly versus the 2.00 cap, but still drops if Yan DQ/TJ injury stay small.
 
-## Decision point before rerun/live changes
+## Remaining decision point before live changes
 
-Before the next rerun, Cody needs to choose these broad rules:
+The support cap is now set at 2.50.
 
-### 1. Is support cap 2.00 too harsh?
-
-Current support cap: 2.00.
-
-Potential alternatives:
-
-| Support cap | Effect |
-|---:|---|
-| 2.00 | Very strict; prevents volume but hurts Dustin/Charles. |
-| 3.00 | Balanced; gives deep schedules more respect without letting support wins dominate. |
-| 4.00 | More volume-friendly; likely helps Max/Dustin/Charles a lot. |
-
-My current recommendation: move support cap from 2.00 to 3.00.
-
-### 2. Should 0.75 wins count as quality wins for diminishing returns?
-
-Working answer in this worksheet: yes.
-
-If no, the 0.75 tier gets capped too quickly and does not solve much.
-
-### 3. Should modern lightweight stay 1.10?
-
-Working answer: yes.
-
-Do not use division adjustment as a band-aid for every lightweight. Fix the base credit/cap first.
-
-## Next rerun after Cody calls
-
-After Cody confirms:
+Before final scores, Cody still needs to confirm:
 
 1. weird-fight credits,
 2. 0.75 middle-tier placements,
-3. support cap,
-4. division/era adjustments,
+3. division/era adjustments.
 
-then rerun Batch 1B and produce final computed OQ scores. Only after that should a live correction module be created.
+Then rerun Batch 1B and produce final computed OQ scores. Only after that should a live correction module be created.
