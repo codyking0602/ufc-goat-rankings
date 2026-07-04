@@ -2,7 +2,7 @@
 
 Last updated: 2026-07-03
 
-Purpose: make the Opponent Quality / Quality Wins category simple, reviewable, and less vibe-based. This is the audit trail before scoring-table edits are made.
+Purpose: make the Opponent Quality / Quality Wins category simple, reviewable, and formula-driven. This is the audit trail before scoring-table edits are made.
 
 ## Core rule
 
@@ -37,21 +37,47 @@ Cody locked the simplified version on 2026-07-03.
 | Weird / injury / fluky win | Cody call, usually 0.25-0.50 | Count the win, but do not pretend it was clean proof. |
 | Loss / no contest / draw | 0.00 | No win, no opponent-quality credit. |
 
+## Locked diminishing returns rule
+
+This category should reward repeated elite proof, but it cannot become a raw-volume contest.
+
+Use this simple diminishing-return step after assigning each UFC win its base credit:
+
+| Credit bucket | Treatment |
+|---|---|
+| First 8 elite wins, sorted by credit | 100% value |
+| Elite wins 9-12 | 75% value |
+| Elite wins after 12 | 50% value |
+| Support wins under 1.00 credit | Add normally, but support total is capped at 2.00 index points |
+
+Definition: an elite win is any win worth 1.00 or 1.25 before diminishing returns. Support wins are 0.50 or 0.25 wins.
+
 ## Locked simple context rules
 
 | Context | Locked treatment |
 |---|---|
-| Division strength | Can slightly bump or lower the final score, but do not create complicated per-win math. |
+| Division strength | Can slightly bump or lower the final index, but do not create complicated per-win math. Default band is usually 0.90-1.10. |
 | Close/controversial official win | Counts in Opponent Quality; dominance concerns move to Prime Dominance. |
-| Repeat elite wins | Count separately if the opponent was still elite at the time. |
-| Partial/name wins | Help the résumé, but should not drive the category by volume alone. |
+| Repeat elite wins | Count separately if the opponent was still elite at the time, then diminishing returns handles volume. |
+| Partial/name wins | Help the résumé, but the 2.00 support cap stops them from driving the category. |
 | Non-UFC wins | Excluded from score; context only. |
 
-## Process correction
+## Required scoring workflow
 
-The first pass used summarized ledger tiers. That was useful for direction, but not strict enough to approve score edits.
+No Opponent Quality score should be manually slotted.
 
-Going forward, no Opponent Quality score change should go live until the fighter has a win-by-win UFC audit table.
+Use this sequence:
+
+```text
+1. List every UFC win.
+2. Assign base credit using the locked table.
+3. Apply diminishing returns.
+4. Apply one broad division/era adjustment if needed.
+5. Produce Opponent Quality Index.
+6. Scale to 25 using the current benchmark.
+```
+
+Important: previous “recommended OQ ranges” were directional only and are no longer enough to approve score edits. Live changes require a computed index.
 
 ---
 
@@ -61,9 +87,9 @@ Status: score changes are still paused. These tables are the audit base before f
 
 ## Georges St-Pierre — benchmark
 
-Current OQ: 25.00. Proposed: 25.00.
+Current OQ: 25.00.
 
-| UFC win | Credit | Reason |
+| UFC win | Base credit | Reason |
 |---|---:|---|
 | Karo Parisyan | 0.25 | early quality UFC win, not clean elite credit |
 | Jay Hieron | 0.00 | UFC win, not counted for quality tier |
@@ -86,13 +112,13 @@ Current OQ: 25.00. Proposed: 25.00.
 | Johny Hendricks | 1.00 | elite/top-5 opponent; close official win |
 | Michael Bisping | 1.25 | sitting UFC champion, second division |
 
-Audit read: GSP is the cleanest benchmark because he combines multiple sitting-champion wins with a long run of same-division elite wins. Keep 25.00.
+Audit note: GSP remains the benchmark unless another fighter's computed index passes him.
 
 ## Jon Jones
 
-Current OQ: 16.92. Proposed: 16.92.
+Current OQ: 16.92.
 
-| UFC win | Credit | Reason |
+| UFC win | Base credit | Reason |
 |---|---:|---|
 | Andre Gusmao | 0.00 | UFC win, no quality tier |
 | Stephan Bonnar | 0.25 | name/supporting early win |
@@ -102,12 +128,12 @@ Current OQ: 16.92. Proposed: 16.92.
 | Ryan Bader | 1.00 | elite/top-5 contender |
 | Mauricio Rua | 1.25 | sitting UFC champion |
 | Rampage Jackson | 1.00 | elite/top-5/former champion still good |
-| Lyoto Machida | 0.50 | strong former champion/name win, not max tier in current table |
+| Lyoto Machida | 0.50 | strong former champion/name win, not max tier |
 | Rashad Evans | 1.00 | elite/top-5/former champion still good |
 | Vitor Belfort | 0.50 | strong name/former champion, cross-context |
 | Chael Sonnen | 0.25 | moved-up name-value/title challenger context |
 | Alexander Gustafsson 1 | 1.00 | elite/top-5 contender |
-| Glover Teixeira | 0.50 | strong ranked/future champion context, not full at-the-time elite credit in current table |
+| Glover Teixeira | 0.50 | strong ranked/future champion context, not full at-the-time elite credit |
 | Daniel Cormier 1 | 1.00 | elite/top-5 opponent |
 | Ovince Saint Preux | 0.25 | interim-title context but not elite win tier |
 | Alexander Gustafsson 2 | 0.50 | strong former title challenger, diminished from first win |
@@ -117,13 +143,13 @@ Current OQ: 16.92. Proposed: 16.92.
 | Ciryl Gane | 1.00 | elite heavyweight/title-level opponent |
 | Stipe Miocic | 0.25 | past-prime name-value former champion |
 
-Audit read: Jon has a strong win ledger, but his GOAT separation comes more from Championship Resume, Prime Dominance, and clean loss context than from being the pure Quality Wins benchmark. Keep 16.92.
+Audit note: Jon has a strong index, but diminishing returns should stop the long title-defense ledger from automatically becoming the category benchmark.
 
 ## Alexander Volkanovski
 
-Current OQ: 14.45. Proposed range: 15.25-16.00.
+Current OQ: 14.45.
 
-| UFC win | Credit | Reason |
+| UFC win | Base credit | Reason |
 |---|---:|---|
 | Yusuke Kasuya | 0.00 | UFC win, no quality tier |
 | Mizuto Hirota | 0.00 | UFC win, no quality tier |
@@ -141,13 +167,13 @@ Current OQ: 14.45. Proposed range: 15.25-16.00.
 | Diego Lopes 1 | 1.00 | top-five/vacant title opponent in current app timeline |
 | Diego Lopes 2 | 1.00 | top-five/title defense opponent in current app timeline |
 
-Audit read: Volk's current 14.45 looks low once written win-by-win. He has a sitting-champ win over Max plus multiple elite FW wins. Raise modestly.
+Audit note: Volk's computed index should be checked against Jon and Kamaru after diminishing returns, not manually raised.
 
 ## Kamaru Usman
 
-Current OQ: 13.63. Proposed range: 13.75-14.25.
+Current OQ: 13.63.
 
-| UFC win | Credit | Reason |
+| UFC win | Base credit | Reason |
 |---|---:|---|
 | Hayder Hassan | 0.00 | UFC win, no quality tier |
 | Leon Edwards 1 | 0.25 | future champion before elite status |
@@ -166,13 +192,13 @@ Current OQ: 13.63. Proposed range: 13.75-14.25.
 | Colby Covington 2 | 1.00 | elite/top-5 opponent |
 | Joaquin Buckley | 1.00 | top-five win in current app timeline |
 
-Audit read: Kamaru is a touch low if Buckley is in the current scoring timeline and Masvidal remains full top-five credit. Slight raise is justified.
+Audit note: Kamaru's computed index depends heavily on whether Masvidal title fights remain full top-five credit and whether Buckley is included in the current scoring timeline.
 
 ## Max Holloway
 
-Current OQ: 19.64. Proposed range: 18.75-19.25.
+Current OQ: 19.64.
 
-| UFC win | Credit | Reason |
+| UFC win | Base credit | Reason |
 |---|---:|---|
 | Pat Schilling | 0.00 | UFC win, no quality tier |
 | Justin Lawrence | 0.00 | UFC win, no quality tier |
@@ -197,13 +223,13 @@ Current OQ: 19.64. Proposed range: 18.75-19.25.
 | Chan Sung Jung | 0.25 | past-prime name-value win |
 | Justin Gaethje | 1.00 | elite lightweight/BMF title-level opponent |
 
-Audit read: Max still deserves one of the best Quality Wins scores on the board. Slight reduction is only because the ledger is volume-heavy compared with GSP's sitting-champ/top-five title-era depth.
+Audit note: Diminishing returns are critical for Max because his ledger is very deep. He should stay elite in this category, but the formula must decide how close he gets to GSP.
 
 ## Dustin Poirier
 
-Current OQ: 18.85. Proposed range: 17.50-18.25.
+Current OQ: 18.85.
 
-| UFC win | Credit | Reason |
+| UFC win | Base credit | Reason |
 |---|---:|---|
 | Josh Grispi | 0.00 | UFC win, no quality tier |
 | Jason Young | 0.00 | UFC win, no quality tier |
@@ -227,13 +253,13 @@ Current OQ: 18.85. Proposed range: 17.50-18.25.
 | Michael Chandler | 1.00 | elite/top-5 lightweight contender |
 | Benoit Saint Denis | 0.50 | strong ranked contender win |
 
-Audit read: Dustin has a great quality ledger, but it is lighter on clean sitting-champion wins. Keep high, but not Max/GSP high.
+Audit note: Dustin should be high, but support-win cap and diminishing returns prevent action-fight volume from becoming the whole category.
 
 ## Charles Oliveira
 
-Current OQ: 17.85. Proposed range: 17.00-17.75.
+Current OQ: 17.85.
 
-| UFC win | Credit | Reason |
+| UFC win | Base credit | Reason |
 |---|---:|---|
 | Darren Elkins | 0.00 | UFC win, no quality tier at time |
 | Efrain Escudero | 0.00 | UFC win, no quality tier |
@@ -258,13 +284,13 @@ Current OQ: 17.85. Proposed range: 17.00-17.75.
 | Justin Gaethje | 1.00 | elite/top-5 lightweight win, stripped-title context belongs in Championship not OQ |
 | Beneil Dariush | 1.00 | elite/top-5 lightweight win |
 
-Audit read: Charles is high because modern LW is strong and his best four wins are excellent. Slight trim only if partials were overstacked.
+Audit note: Charles has fewer elite wins than Max/GSP, but his best wins are excellent and modern lightweight strength can help final index.
 
 ## Aljamain Sterling
 
-Current OQ: 13.90. Proposed range: 12.75-13.25.
+Current OQ: 13.90.
 
-| UFC win | Credit | Reason |
+| UFC win | Base credit | Reason |
 |---|---:|---|
 | Cody Gibson | 0.00 | UFC win, no quality tier |
 | Takeya Mizugaki | 0.25 | name/supporting veteran win |
@@ -284,35 +310,24 @@ Current OQ: 13.90. Proposed range: 12.75-13.25.
 | Brian Ortega | 0.50 | strong former title challenger/name win in current app timeline |
 | Youssef Zalal / late supporting win | 0.25 | supporting contender context if included in current app timeline |
 
-Audit read: Aljo has a strong résumé, but 13.90 is high once weird wins are separated. The Yan rematch, Sandhagen, and Cejudo carry the case. DQ Yan and injured TJ should not add much.
+Audit note: Aljo's weird/context wins should not be allowed to inflate the score. The support cap handles much of this, but DQ Yan and injured TJ still need locked credit values.
 
 ---
 
-# Batch 1A score-direction summary
+# Batch 1A unresolved inputs before computed score
 
-These are still not live score edits.
+The formula is locked, but these exact base-credit inputs should be confirmed before calculating final indices:
 
-| Fighter | Current OQ | Direction after win-by-win |
+| Fight | Working credit | Question |
 |---|---:|---|
-| Georges St-Pierre | 25.00 | Keep benchmark |
-| Jon Jones | 16.92 | Keep |
-| Alexander Volkanovski | 14.45 | Raise |
-| Kamaru Usman | 13.63 | Slight raise |
-| Max Holloway | 19.64 | Slight reduce / still elite |
-| Dustin Poirier | 18.85 | Reduce modestly |
-| Charles Oliveira | 17.85 | Keep close or slight reduce |
-| Aljamain Sterling | 13.90 | Reduce |
+| Max over Charles injury-stoppage | 0.25 | Is this enough, or should it be 0.00 because it was not a clean win? |
+| Dustin over Conor 3 injury finish | 0.25 | Is partial credit okay, or should injury finish be 0.00? |
+| Charles over Gaethje stripped-title fight | 1.00 | Keep as elite Gaethje OQ win even though title context moved to Championship? |
+| Aljo over Yan by DQ | 0.25 | Count weird DQ title win as small OQ credit? |
+| Aljo over injured TJ | 0.25 | Count injury-compromised defense as small OQ credit? |
+| Jon over Smith/Santos/Reyes | 1.00 each | Keep all as full title-level/top-5 wins? |
+| Kamaru over Masvidal twice | 1.00 each | Keep full top-five/title-challenger credit by ranking logic? |
 
-## Next action before live changes
+# Next action
 
-Cody should approve the win-by-win credit treatment for the weird/important fights:
-
-- Max vs Charles injury-stoppage win = 0.25?
-- Dustin vs Conor 3 injury finish = 0.25?
-- Charles over Gaethje stripped-title fight = still 1.00 OQ because Gaethje was elite?
-- Aljo Yan DQ = 0.25 OQ?
-- Aljo injured TJ = 0.25 OQ?
-- Jon Smith/Santos/Reyes = keep full 1.00 title-level opponent credit?
-- Kamaru Masvidal title fights = keep full 1.00 each under ranking logic?
-
-Once those are locked, create `assets/data/opponent-quality-score-corrections.js` and re-sort by raw total.
+After the unresolved inputs are locked, calculate each fighter's Opponent Quality Index using the diminishing-return rule. Then scale the final Opponent Quality score to the benchmark and only then consider a live correction module.
