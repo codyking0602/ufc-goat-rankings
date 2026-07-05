@@ -202,9 +202,11 @@ Sample confidence was removed entirely.
 
 Batch 4 uses audited snapshot inputs where detailed fight-by-fight round rows are not yet stored. These values were already audited when those fighters were added.
 
+Ilia Topuria now uses the corrected runtime round-row cleanup: **10/15 prime rounds won = 66.7%**.
+
 | Fighter | Prior worksheet Prime | No-sample Prime | Change |
 |---|---:|---:|---:|
-| Ilia Topuria | 22.10 | 22.12 | +0.02 |
+| Ilia Topuria | 22.10 | 21.33 | -0.77 |
 | Valentina Shevchenko | 21.85 | 21.37 | -0.48 |
 | Ronda Rousey | 20.85 | 20.45 | -0.40 |
 | T.J. Dillashaw | 18.60 | 18.02 | -0.58 |
@@ -219,8 +221,8 @@ Batch 4 uses audited snapshot inputs where detailed fight-by-fight round rows ar
 
 | Fighter | Record / 7 | Rounds / 7 | Title / 5 | Finish / 5 | Safety / 4 | Division / 2 | New Prime |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| Ilia Topuria | 5.83 | 5.89 | 2.00 | 4.50 | 2.00 | 1.90 | 22.12 |
 | Valentina Shevchenko | 4.67 | 5.95 | 4.65 | 3.20 | 1.05 | 1.85 | 21.37 |
+| Ilia Topuria | 5.83 | 5.10 | 2.00 | 4.50 | 2.00 | 1.90 | 21.33 |
 | Ronda Rousey | 4.67 | 5.83 | 4.35 | 5.00 | 0.00 | 0.60 | 20.45 |
 | T.J. Dillashaw | 4.67 | 4.55 | 3.00 | 4.00 | 0.50 | 1.30 | 18.02 |
 | Joanna Jedrzejczyk | 4.67 | 5.19 | 4.10 | 2.10 | 0.50 | 1.20 | 17.76 |
@@ -244,10 +246,10 @@ Batch 4 uses audited snapshot inputs where detailed fight-by-fight round rows ar
 | 6 | Georges St-Pierre | 24.29 |
 | 7 | Anderson Silva | 23.70 |
 | 8 | Alexander Volkanovski | 22.25 |
-| 9 | Ilia Topuria | 22.12 |
-| 10 | Merab Dvalishvili | 22.02 |
-| 11 | Cain Velasquez | 21.42 |
-| 12 | Valentina Shevchenko | 21.37 |
+| 9 | Merab Dvalishvili | 22.02 |
+| 10 | Cain Velasquez | 21.42 |
+| 11 | Valentina Shevchenko | 21.37 |
+| 12 | Ilia Topuria | 21.33 |
 | 13 | Chuck Liddell | 21.20 |
 | 14 | Kamaru Usman | 21.18 |
 | 15 | Ronda Rousey | 20.45 |
@@ -295,11 +297,11 @@ The current repo has two valid Prime input styles:
 
 Both are acceptable for scoring. Detailed fight rows are better for transparency and future debugging, but lack of detailed rows does not mean the fighter was not audited.
 
-## Important cleanup flags before live implementation
+## Final cleanup status
 
-1. Treat audited snapshot round percentages as valid scoring inputs.
-2. Optionally add detailed round rows for snapshot-audited fighters later as a transparency upgrade.
-3. Fix or verify the Ilia/Gaethje round row before live implementation because the current row formatting looks malformed.
+1. Audited snapshot round percentages are valid scoring inputs.
+2. Detailed round rows for snapshot-audited fighters can be added later as a transparency upgrade.
+3. Ilia/Volk, Ilia/Max, and Ilia/Gaethje malformed round rows are corrected at runtime by `assets/data/prime-round-row-fixes.js`.
 4. The old sample-confidence lock doc is deprecated for scoring.
 
 ---
@@ -308,10 +310,8 @@ Both are acceptable for scoring. Detailed fight rows are better for transparency
 
 Use this no-sample formula going forward.
 
-Next steps:
+Next step:
 
-1. Cody reviews the new combined Prime order.
-2. Fix or verify the Ilia/Gaethje row.
-3. Build the Prime Dominance correction module after Cody approves the no-sample score shape.
+1. Build the Prime Dominance correction module after Cody approves the no-sample score shape.
 
 Do **not** require a full re-audit of snapshot-audited fighters before implementation.
