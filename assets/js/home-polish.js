@@ -1,6 +1,7 @@
 // Home screen polish: light background with dark card preview across all tabs and profiles.
 (function(){
-  const VERSION = 'home-polish-hybrid-preview-20260702b';
+  const VERSION = 'home-polish-hybrid-preview-20260705a';
+  let heroCountSyncTimer = null;
 
   function injectCss(){
     const existing = document.getElementById('home-polish-css');
@@ -27,7 +28,7 @@
       }
       .hero{
         position:relative;
-        padding:24px clamp(20px,5vw,72px) 20px !important;
+        padding:20px clamp(20px,5vw,72px) 16px !important;
         background:linear-gradient(135deg,rgba(255,255,255,.95),rgba(243,246,251,.92)) !important;
         border-bottom-color:#cbd5e1 !important;
         overflow:hidden;
@@ -43,19 +44,11 @@
       }
       .hero > *{position:relative;z-index:1}
       .eyebrow{color:#c2410c !important;letter-spacing:.18em !important;font-size:12px !important;margin-bottom:7px !important}
-      h1{font-size:clamp(38px,5.4vw,64px) !important;letter-spacing:-.045em !important;line-height:.96 !important;color:#111827 !important}
-      .subtitle{max-width:720px !important;color:#475569 !important;line-height:1.42 !important;margin:13px 0 0 !important;font-size:clamp(16px,2.3vw,21px)}
-      .hero-card{
-        min-width:112px !important;
-        width:auto !important;
-        padding:9px 13px !important;
-        border-color:rgba(249,115,22,.38) !important;
-        background:linear-gradient(135deg,#fff7ed,#ffffff 62%,#eef2f7) !important;
-        border-radius:14px !important;
-        box-shadow:0 10px 28px rgba(15,23,42,.10), inset 0 1px 0 rgba(255,255,255,.85) !important;
-      }
-      .hero-card span{font-size:25px !important;line-height:.94 !important;letter-spacing:-.04em !important;color:#111827 !important}
-      .hero-card small{display:block;color:#64748b !important;font-weight:850;text-transform:uppercase;letter-spacing:.12em;font-size:9px;margin-top:6px}
+      h1{font-size:clamp(37px,5.2vw,62px) !important;letter-spacing:-.045em !important;line-height:.96 !important;color:#111827 !important}
+      .subtitle{max-width:760px !important;color:#475569 !important;line-height:1.38 !important;margin:10px 0 0 !important;font-size:clamp(16px,2.25vw,21px)}
+      .subtitle-count{display:inline;font-weight:800;color:#111827;white-space:nowrap}
+      .subtitle-count strong{font-weight:950;color:#111827}
+      .hero-card{display:none !important}
       .tabs{background:rgba(248,250,252,.94) !important;border-bottom-color:#cbd5e1 !important;box-shadow:0 1px 0 rgba(15,23,42,.04)}
       .tab,.ghost{background:#ffffff !important;border-color:#cbd5e1 !important;color:#1f2937 !important;box-shadow:0 4px 14px rgba(15,23,42,.04)}
       .tab.active{background:#f97316 !important;border-color:#f97316 !important;color:#111827 !important;box-shadow:0 10px 24px rgba(249,115,22,.22) !important}
@@ -100,12 +93,9 @@
       .notice{background:#fffbeb !important;border-color:#facc15 !important;color:#92400e !important}
       .winner{color:#86efac !important}
       @media(max-width:900px){
-        .hero{padding:20px 16px 17px !important;gap:10px !important}
-        h1{font-size:37px !important;line-height:.98 !important}
-        .subtitle{font-size:17px !important;line-height:1.35 !important;margin-top:10px !important}
-        .hero-card{min-width:99px !important;padding:8px 11px !important;align-self:flex-start !important}
-        .hero-card span{font-size:24px !important}
-        .hero-card small{font-size:8.5px !important;margin-top:5px !important}
+        .hero{padding:16px 16px 14px !important;gap:8px !important}
+        h1{font-size:35px !important;line-height:.97 !important}
+        .subtitle{font-size:16.5px !important;line-height:1.32 !important;margin-top:8px !important}
         .tabs{padding-top:10px !important;padding-bottom:10px !important}
         .shell{padding-top:14px !important}
         .section-title{margin-bottom:12px !important}
@@ -114,17 +104,47 @@
     document.head.appendChild(style);
   }
 
+  function fighterCount(){
+    const names = new Set();
+    const push = fighter => {
+      const name = typeof fighter === 'string' ? fighter : fighter?.fighter;
+      if(name) names.add(name);
+    };
+    (window.RANKING_DATA?.fighters || []).forEach(push);
+    (window.RANKING_DATA?.men || []).forEach(push);
+    (window.RANKING_DATA?.women || []).forEach(push);
+    (window.UFC_RANKING_DATA_ADDITIONS?.fighters || []).forEach(push);
+    return names.size;
+  }
+
   function applyCopy(){
+    const oldHeroCard = document.querySelector('.hero-card');
+    if(oldHeroCard) oldHeroCard.remove();
+
     const subtitle = document.querySelector('.subtitle');
-    if(subtitle) subtitle.textContent = 'Fighter profiles, OVR ratings, category ranks, and head-to-head comparisons.';
-    const countLabel = document.querySelector('.hero-card small');
-    if(countLabel) countLabel.textContent = 'Fighters';
+    if(subtitle){
+      const count = fighterCount();
+      subtitle.innerHTML = `Fighter profiles, OVR ratings, category ranks, and head-to-head comparisons. <span class="subtitle-count"><strong id="fighterCount">${count || '—'}</strong> fighters ranked.</span>`;
+    }
+  }
+
+  function startHeroCountSync(){
+    if(heroCountSyncTimer) return;
+    const startedAt = Date.now();
+    heroCountSyncTimer = window.setInterval(() => {
+      applyCopy();
+      if(Date.now() - startedAt > 12000){
+        window.clearInterval(heroCountSyncTimer);
+        heroCountSyncTimer = null;
+      }
+    }, 500);
   }
 
   function apply(){
     injectCss();
     applyCopy();
-    window.UFC_HOME_POLISH = { version: VERSION, mode: 'hybrid-preview' };
+    startHeroCountSync();
+    window.UFC_HOME_POLISH = { version: VERSION, mode: 'hybrid-preview', refreshHero: applyCopy };
   }
 
   apply();
