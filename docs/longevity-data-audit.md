@@ -1,6 +1,6 @@
 # Longevity Data Audit
 
-Version: `longevity-data-audit-20260705h`  
+Version: `longevity-data-audit-20260705i`  
 Status: Batch 1, Batch 2, and Batch 3 evidence-first formula worksheets. Not live scoring.  
 Live app impact: None.
 
@@ -282,30 +282,24 @@ Important: the current `activeEliteYears` field is treated as the source input f
 | 10 | Justin Gaethje | 12.25 |
 | 11 | Stipe Miocic | 12.22 |
 | 12 | Demetrious Johnson | 12.13 |
-| 13 | Aljamain Sterling | 11.75 |
-| 14 | Daniel Cormier | 11.79 |
+| 13 | Daniel Cormier | 11.79 |
+| 14 | Aljamain Sterling | 11.75 |
 | 15 | Anderson Silva | 11.41 |
 | 16 | Cain Velasquez | 11.10 |
-| 17 | Alexander Volkanovski | 10.53 |
-| 18 | B.J. Penn | 10.50 |
-| 19 | Petr Yan | 10.48 |
-| 20 | Kamaru Usman | 10.03 |
-| 21 | Joanna Jedrzejczyk | 10.00 |
-| 22 | Dominick Cruz | 9.50 |
-| 22 | Chuck Liddell | 9.50 |
-| 24 | T.J. Dillashaw | 10.88 |
+| 17 | T.J. Dillashaw | 10.88 |
+| 18 | Alexander Volkanovski | 10.53 |
+| 19 | B.J. Penn | 10.50 |
+| 20 | Petr Yan | 10.48 |
+| 21 | Kamaru Usman | 10.03 |
+| 22 | Joanna Jedrzejczyk | 10.00 |
+| 23 | Dominick Cruz | 9.50 |
+| 23 | Chuck Liddell | 9.50 |
 | 25 | Khabib Nurmagomedov | 9.02 |
 | 26 | Islam Makhachev | 8.70 |
 | 27 | Charles Oliveira | 8.00 |
 | 28 | Henry Cejudo | 7.50 |
 | 29 | Conor McGregor | 5.25 |
 | 29 | Ronda Rousey | 5.25 |
-
-## Ranking Cleanup Notes
-
-The combined order needs a numeric sort pass before live implementation. The worksheet scores are the source of truth; rank numbers in the combined display should be regenerated after all batches are approved.
-
-Known sort correction from Batch 3: T.J. Dillashaw at 10.88 should appear above Cain/Volk/BJ/Yan/Usman/Joanna, not at rank 24.
 
 ## Why These Scores Now Make Sense
 
