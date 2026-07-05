@@ -1,8 +1,21 @@
 # Longevity Data Audit
 
-Version: `longevity-data-audit-20260705k`  
-Status: Batch 1, Batch 2, Batch 3, and sourced Batch 4 revised with UFC Career Staying Power. Not live scoring.  
+Version: `longevity-data-audit-20260705l`  
+Status: Active 37 fighters only, revised with UFC Career Staying Power. Not live scoring.  
 Live app impact: None.
+
+## Active 37 Scope
+
+This audit should only cover the fighters currently active in the app source.
+
+Current active source is:
+
+- 35 fighter packet extensions loaded by `assets/data/ranking-data-patches.js`
+- plus Jon Jones and Georges St-Pierre from `assets/data/fighter-packets.js`
+
+That equals 37 active fighters.
+
+Do not add non-active candidate names to this worksheet unless they are first added to the app source.
 
 ## Goal
 
@@ -216,39 +229,21 @@ Going forward, borderline late fights should be checked with Cody before scoring
 | Conor McGregor | 2014 Poirier; 2015 Mendes/Aldo; 2016 Diaz/Alvarez; 2018 Khabib; 2021 Poirier losses as context only | 3.38 | 1.50 | 0.00 | 0.25 | 5.13 | Star power is profile context, not Longevity. Normal UFC run bonus only. |
 | Ronda Rousey | 2013 Carmouche/Tate; 2014 McMann/Davis; 2015 Zingano/Correia/Holm; 2016 Nunes | 3.38 | 1.50 | 0.00 | 0.00 | 4.88 | Massive UFC impact, but short UFC fight count and short elite window. |
 
-## Batch 4 Source Status
-
-Sourced in current repo packets:
-
-- Ilia Topuria
-- Alex Pereira
-- Francis Ngannou
-- Matt Hughes
-- Merab Dvalishvili
-
-Not found in current repo source during this audit, so not scored yet:
-
-- Sean O'Malley
-- Leon Edwards
-- Belal Muhammad
-- Robert Whittaker
-- Tony Ferguson
-
-These unsourced fighters should get fighter packets or source rows before Longevity audit scoring.
-
 ## Batch 4 Revised Evidence Worksheet
 
 | Fighter | UFC elite proof years/events used | Active /9 | Spread /3 | Late /2 | Career /1 | Revised formula output | Notes |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | --- |
 | Matt Hughes | 2001 Newton title run; 2002 Sakurai/Newton; 2004 Penn/GSP title relevance; 2005 Trigg/Riggs; 2006 Gracie/Penn/GSP; 2007 Lytle/GSP/Alves title-level back end | 7.89 | 3.00 | 1.50 | 1.00 | 13.39 | Hughes is a major Longevity case: long early-WW title control, many UFC fights, and years as the division standard. Era strength belongs elsewhere, not as a full Longevity wipeout. |
+| Israel Adesanya | 2018 Tavares/Brunson rise; 2019 Gastelum interim/Whittaker title win; 2020 Romero/Costa; 2021 Vettori; 2022 Whittaker/Cannonier/Pereira; 2023 Pereira title regain/Strickland; 2024 DDP title relevance | 6.66 | 2.50 | 1.50 | 0.50 | 11.16 | Izzy has a strong active title-heavy middleweight window and a real Pereira title-regain proof point. Later losses keep late continuity from maxing out. |
+| Dan Henderson | 1998 UFC 17 tournament context; 2007 Rampage title unification; 2008 Anderson title fight; 2009 Franklin/Bisping; 2011 Shogun classic; 2014 Shogun rematch; 2016 Lombard/Bisping title-fight context | 6.30 | 2.00 | 0.50 | 0.50 | 9.30 | UFC-only Hendo gets credit for long UFC presence and elite-name relevance, but Pride/Strikeforce greatness is excluded and no UFC undisputed title win caps the case. |
 | Francis Ngannou | 2017 Overeem/Arlovski power rise; 2018 Stipe title fight/Lewis setback; 2019 Cain/JDS; 2020 Rozenstruik; 2021 Stipe title win; 2022 Gane defense | 4.95 | 2.50 | 1.50 | 0.25 | 9.20 | Ngannou has strong HW title-era spread and a real late improvement chapter after the Stipe/Lewis setbacks, but the UFC exit caps career staying power. |
 | Merab Dvalishvili | 2020 Dodson/Lopez rise; 2021 Moraes; 2022 Aldo; 2023 Yan; 2024 Cejudo/O'Malley; current-table Umar/title-defense context | 5.40 | 2.00 | 1.00 | 0.50 | 8.90 | Merab has useful active elite years and modern BW depth, but the title run is still building and not long enough for max spread. |
 | Alex Pereira | 2022 Strickland/Adesanya MW title win; 2023 Adesanya loss/Blachowicz/Jiri LHW title; 2024 Hill/Jiri/Rountree LHW defenses; current-table Gane HW risk context | 4.04 | 2.00 | 1.50 | 0.25 | 7.79 | Pereira gets real two-division late-continuity credit, but the UFC elite window is short and the career count is normal, not long. |
 | Ilia Topuria | 2022 Mitchell contender proof; 2023 Emmett; 2024 Volkanovski/Holloway title-level legend wins | 3.58 | 1.50 | 0.00 | 0.00 | 5.08 | Ilia's peak and quality wins are loud, but Longevity is intentionally low because the UFC elite window and fight count are still short. |
 
-## Combined Revised Output Order Through Sourced Batch 4
+## Active 37 Revised Output Order
 
-| Longevity rank in audited batches | Fighter | Revised Longevity /15 |
+| Longevity rank | Fighter | Revised Longevity /15 |
 | ---: | --- | ---: |
 | 1 | Max Holloway | 15.00 |
 | 1 | Frankie Edgar | 15.00 |
@@ -266,40 +261,40 @@ These unsourced fighters should get fighter packets or source rows before Longev
 | 14 | Aljamain Sterling | 11.73 |
 | 15 | Anderson Silva | 11.62 |
 | 16 | Daniel Cormier | 11.51 |
-| 17 | Francis Ngannou | 9.20 |
-| 18 | Merab Dvalishvili | 8.90 |
-| 19 | Alex Pereira | 7.79 |
-| 20 | Ilia Topuria | 5.08 |
-
-Note: the full combined table above shows Batch 4 placements only against the most relevant existing scores. The live correction file should do a full numeric sort across every approved fighter when implemented.
+| 17 | Israel Adesanya | 11.16 |
+| 18 | B.J. Penn | 10.80 |
+| 19 | Cain Velasquez | 10.79 |
+| 20 | T.J. Dillashaw | 10.64 |
+| 21 | Alexander Volkanovski | 10.28 |
+| 21 | Petr Yan | 10.28 |
+| 23 | Joanna Jedrzejczyk | 9.85 |
+| 24 | Kamaru Usman | 9.83 |
+| 25 | Chuck Liddell | 9.60 |
+| 26 | Dan Henderson | 9.30 |
+| 27 | Francis Ngannou | 9.20 |
+| 28 | Dominick Cruz | 9.15 |
+| 29 | Merab Dvalishvili | 8.90 |
+| 30 | Islam Makhachev | 8.63 |
+| 31 | Khabib Nurmagomedov | 8.57 |
+| 32 | Charles Oliveira | 8.50 |
+| 33 | Alex Pereira | 7.79 |
+| 34 | Henry Cejudo | 7.25 |
+| 35 | Conor McGregor | 5.13 |
+| 36 | Ilia Topuria | 5.08 |
+| 37 | Ronda Rousey | 4.88 |
 
 ## Main Impact of the Staying-Power Tweak
 
 - Long-career fighters get a small deserved bump without turning non-elite years into elite proof.
 - Charles Oliveira improves because his full UFC career is huge, even though his true elite-title window is shorter.
-- B.J. Penn and Chuck Liddell get a small correction for being long UFC fixtures, while their late losses still do not become positive elite relevance.
+- B.J. Penn, Chuck Liddell, and Dan Henderson get small corrections for being long UFC fixtures, while their late losses still do not become positive elite relevance.
 - Matt Hughes scores high because he combines a long UFC title-era run with a huge UFC fight count.
 - Khabib, Cejudo, Conor, Ronda, Ilia, and Pereira remain lower in Longevity because their UFC elite windows are compact.
 - Max and Frankie still max out because they combine elite relevance and huge UFC staying power.
 
-## Batch 5 Candidates
-
-After Batch 4 shape review, audit these next once source rows/packets are confirmed or added:
-
-- Sean O'Malley
-- Leon Edwards
-- Belal Muhammad
-- Robert Whittaker
-- Tony Ferguson
-- Benson Henderson
-- Renan Barao
-- Urijah Faber
-- Robbie Lawler
-- Holly Holm
-
 ## Approval Gate
 
-Do not create `assets/data/longevity-score-corrections.js` until Cody approves the revised Batch 1, Batch 2, Batch 3, and sourced Batch 4 score shape.
+Do not create `assets/data/longevity-score-corrections.js` until Cody approves the revised active-37 score shape.
 
 After approval:
 
