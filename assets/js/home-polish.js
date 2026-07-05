@@ -1,6 +1,6 @@
 // Home screen polish: light background with dark card preview across all tabs and profiles.
 (function(){
-  const VERSION = 'home-polish-hybrid-preview-20260705a';
+  const VERSION = 'home-polish-hybrid-preview-20260705b';
   let heroCountSyncTimer = null;
 
   function injectCss(){
@@ -68,7 +68,18 @@
       .card p strong,.card li strong{color:#f8faff !important}
       .profile-pill.tier-overall,.profile-ovr-wrap > .tier-pill{display:none !important}
       .row-photo{background:#111827 !important;color:#f8faff !important}
-      .resume-tag{background:rgba(250,204,21,.12) !important;border-color:rgba(250,204,21,.36) !important;color:#fde68a !important}
+      .row-main{min-width:0 !important}
+      .resume-tag{
+        display:inline-block !important;
+        max-width:100% !important;
+        overflow:visible !important;
+        text-overflow:clip !important;
+        white-space:normal !important;
+        line-height:1.16 !important;
+        background:rgba(250,204,21,.12) !important;
+        border-color:rgba(250,204,21,.36) !important;
+        color:#fde68a !important;
+      }
       .watch-moment-link{background:rgba(248,113,113,.15) !important;border-color:rgba(248,113,113,.52) !important;color:#fecaca !important}
       .watch-moment-link:hover{background:rgba(248,113,113,.22) !important;color:#fff !important}
       .kpis{display:none !important}
@@ -99,6 +110,9 @@
         .tabs{padding-top:10px !important;padding-bottom:10px !important}
         .shell{padding-top:14px !important}
         .section-title{margin-bottom:12px !important}
+        .row{grid-template-columns:34px 58px minmax(0,1fr) 64px !important}
+        .score{min-width:62px !important}
+        .resume-tag{font-size:10.5px !important;padding:5px 8px !important;margin-top:7px !important;letter-spacing:.01em !important}
       }
     `;
     document.head.appendChild(style);
