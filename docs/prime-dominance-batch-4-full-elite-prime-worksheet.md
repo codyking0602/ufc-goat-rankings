@@ -87,8 +87,20 @@ Do not treat `rounds: []` for those additions as missing audit work.
 
 ---
 
-# Remaining real cleanup
+# Final cleanup status
 
-The only hard cleanup flag from this batch is to fix or verify the malformed Ilia/Gaethje round row before building a live automated Prime module.
+The Ilia/Volkanovski, Ilia/Holloway, and Ilia/Gaethje malformed round rows are now corrected at runtime by:
 
-Everything else can use the audited snapshot inputs unless Cody reopens a fighter-specific audit.
+```text
+assets/data/prime-round-row-fixes.js
+```
+
+That module is loaded by:
+
+```text
+assets/data/ranking-data-patches.js
+```
+
+The row cleanup now reports in `window.UFC_PHASE2_DATA_STATUS.primeRoundRowFixesDetail`.
+
+No full re-audit is required for Batch 4 before building the Prime Dominance correction module.
