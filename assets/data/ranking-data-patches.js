@@ -1,6 +1,6 @@
 // Lightweight post-load status hook and module loader.
 (function(){
-  const VERSION = 'ranking-data-patches-20260705a-compact-hero-count';
+  const VERSION = 'ranking-data-patches-20260705b-tag-wrap';
   const SLUG_OVERRIDES = {
     'B.J. Penn':'bj-penn',
     'BJ Penn':'bj-penn',
@@ -258,7 +258,7 @@
     const loadCompareCore = () => loadSequence(compareCoreScripts,loadCompareNarrative);
     const loadBranding = () => loadScriptOnce('assets/js/app-branding.js?v=app-branding-20260702c','data-app-branding',loadCompareCore);
     const loadDivisionRankings = () => loadScriptOnce('assets/js/division-rankings.js?v=division-rankings-20260702f','data-division-rankings',loadBranding);
-    const loadHomePolish = () => loadScriptOnce('assets/js/home-polish.js?v=home-polish-hybrid-preview-20260705a','data-home-polish',loadDivisionRankings);
+    const loadHomePolish = () => loadScriptOnce('assets/js/home-polish.js?v=home-polish-hybrid-preview-20260705b','data-home-polish',loadDivisionRankings);
     const loadWatchMoments = () => loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260704a','data-watch-moments',loadHomePolish);
     const loadPackages = () => loadScriptOnce('assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260702a','data-fighter-profile-packages',loadWatchMoments);
 
@@ -271,7 +271,7 @@
 
   window.UFC_RANKING_DATA_PATCHES_V1 = {
     meta:{
-      purpose:'Status hook and module loader with championship, opponent quality, prime round row, prime dominance, OVR, profile, compare, watch-moment, and compact hero loaders',
+      purpose:'Status hook and module loader with championship, opponent quality, prime round row, prime dominance, OVR, profile, compare, watch-moment, compact hero, and mobile tag wrap loaders',
       updated:'2026-07-05',
       version:VERSION
     },
