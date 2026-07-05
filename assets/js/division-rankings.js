@@ -1,7 +1,7 @@
 // Division Rankings: men-only division boards with a first-pass division scoring model.
 (function(){
   const DATA = window.RANKING_DATA;
-  const VERSION = 'division-rankings-20260705a';
+  const VERSION = 'division-rankings-20260705b';
   if(!DATA || typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const DIVISION_ORDER = [
@@ -73,18 +73,21 @@
     const style = document.createElement('style');
     style.id = 'division-rankings-css';
     style.textContent = `
-      .division-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:12px}
-      .division-card{cursor:pointer;transition:.16s ease;overflow:hidden;color:#f8faff!important}
+      .division-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin-top:8px}
+      .division-card{cursor:pointer;transition:.16s ease;overflow:hidden;color:#f8faff!important;padding:13px 16px!important;border-radius:18px!important}
       .division-card:hover{transform:translateY(-1px);border-color:rgba(249,115,22,.72)!important}
-      .division-card h3{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:0 0 8px;font-size:18px;color:#f8faff!important}
-      .division-card h3 span{font-size:12px;font-weight:900;color:#facc15!important;text-transform:uppercase;letter-spacing:.08em}
+      .division-card h3{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:0 0 8px;font-size:20px;line-height:1.05;color:#f8faff!important}
+      .division-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+      .division-rank-pill{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;min-height:28px;padding:5px 10px;border-radius:12px;border:1px solid rgba(250,204,21,.22);background:linear-gradient(135deg,rgba(126,86,18,.96),rgba(88,62,15,.9));box-shadow:inset 0 1px 0 rgba(255,255,255,.08);font-size:12px;font-weight:950;color:#facc15!important;letter-spacing:.01em;white-space:nowrap}
       .division-card p,.division-card .meta{color:#c7d2e2!important}
       .division-card p strong{color:#f8faff!important}
-      .division-topline{display:grid;gap:6px;margin-top:10px}
-      .division-topline-row{display:flex;justify-content:flex-start;gap:10px;align-items:center;border-top:1px solid rgba(148,163,184,.28);padding-top:7px;font-size:13px;color:#c7d2e2!important}
+      .division-topline{display:grid;gap:0;margin-top:2px}
+      .division-topline-row{display:flex;justify-content:flex-start;gap:10px;align-items:center;border-top:1px solid rgba(148,163,184,.28);padding:7px 0;font-size:14px;line-height:1.18;color:#c7d2e2!important}
       .division-topline-row strong{font-weight:900;color:#f8faff!important}
+      .division-topline-row.is-top strong{color:#fff7d6!important}
+      .division-rank-num{color:#facc15!important;margin-right:3px}
       .division-row{grid-template-columns:54px 64px minmax(0,1fr)!important}
-      @media(max-width:900px){.division-row{grid-template-columns:34px 58px minmax(0,1fr)!important}}
+      @media(max-width:900px){.division-grid{gap:9px;margin-top:8px}.division-card{padding:11px 14px!important;border-radius:18px!important}.division-card h3{font-size:19px;margin-bottom:7px}.division-rank-pill{min-height:26px;padding:4px 9px;font-size:12px}.division-topline-row{padding:6px 0;font-size:14px}.division-row{grid-template-columns:34px 58px minmax(0,1fr)!important}}
     `;
     document.head.appendChild(style);
   }
@@ -181,9 +184,8 @@
     setDivisionHeading('UFC Division Boards', '');
     const cards = availableDivisions().map(division => {
       const rows = divisionRows(division);
-      const top = rows[0];
-      const topThree = rows.slice(0,3).map((f,i)=>`<div class="division-topline-row"><strong>#${i+1} ${f.fighter}</strong></div>`).join('');
-      return `<article class="card division-card" data-division-pick="${division}"><h3>${division}<span>${rows.length} loaded</span></h3><p class="meta">Current #1: <strong>${top ? top.fighter : '—'}</strong></p><div class="division-topline">${topThree}</div></article>`;
+      const topThree = rows.slice(0,3).map((f,i)=>`<div class="division-topline-row ${i === 0 ? 'is-top' : ''}"><strong><span class="division-rank-num">#${i+1}</span> ${f.fighter}</strong></div>`).join('');
+      return `<article class="card division-card" data-division-pick="${division}"><h3><span class="division-title">${division}</span><span class="division-rank-pill">${rows.length} Ranked</span></h3><div class="division-topline">${topThree}</div></article>`;
     }).join('');
     el('divisionList').innerHTML = `<div class="division-grid">${cards}</div>`;
     document.querySelectorAll('[data-division-pick]').forEach(card => card.addEventListener('click', () => {
