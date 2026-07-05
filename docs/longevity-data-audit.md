@@ -1,7 +1,7 @@
 # Longevity Data Audit
 
-Version: `longevity-data-audit-20260705d`  
-Status: Batch 1 formula worksheet filled from current repo source data. Not live scoring.  
+Version: `longevity-data-audit-20260705e`  
+Status: Batch 1 evidence-first formula worksheet. Not live scoring.  
 Live app impact: None.
 
 ## Goal
@@ -17,6 +17,21 @@ Prime Dominance already scores how dominant a fighter was while elite. Longevity
 ## Working Formula
 
 `Longevity / 15 = Active Elite Years / 10 + Elite Relevance Spread / 3 + Late Elite Continuity / 2`
+
+## How to Read the Worksheet
+
+Each fighter should be scored in this order:
+
+1. List the actual UFC elite proof years/events.
+2. Pull `activeEliteYears` from the current repo packet/source row.
+3. Convert active elite years into the `/10` score using the curve.
+4. Score elite relevance spread `/3` from the proof years/events.
+5. Score late elite continuity `/2` from actual post-checkpoint elite proof.
+6. Add the three sub-scores.
+
+Do not start with a desired final score.
+
+## Formula Rules
 
 ### 1. Active Elite Years / 10
 
@@ -64,15 +79,17 @@ Eligible proof points include:
 - Clear title eliminator or title-level contender wins
 - Meaningful second-division elite relevance
 
+Long inactive gaps cannot create max spread by themselves. A late title fight after a major layoff can show relevance, but it should not automatically turn a shorter active elite window into an 8+ year max spread.
+
 Scoring curve:
 
 | Spread profile | Score |
 | --- | ---: |
-| Elite/title-level proof across 8+ UFC calendar years | 3.00 |
-| Across 6-7 UFC calendar years | 2.50 |
-| Across 4-5 UFC calendar years | 2.00 |
-| Across 3 UFC calendar years | 1.50 |
-| Across 2 UFC calendar years | 1.00 |
+| Elite/title-level proof across 8+ UFC seasons with gap discipline | 3.00 |
+| Across 6-7 UFC seasons | 2.50 |
+| Across 4-5 UFC seasons | 2.00 |
+| Across 3 UFC seasons | 1.50 |
+| Across 2 UFC seasons | 1.00 |
 | One-year burst | 0.50 |
 | No real elite spread | 0.00 |
 
@@ -130,7 +147,7 @@ Fields used for Batch 1:
 - packet notes explaining division changes, late relevance, scope limits, and loss context
 - current legacy `longevity` value, for comparison only
 
-Important: the current `activeEliteYears` field is treated as the source input for the active-years component. The spread and late-continuity components are formula judgments based on title/top-five/title-level relevance over time.
+Important: the current `activeEliteYears` field is treated as the source input for the active-years component. The proof years/events explain the spread and late-continuity components.
 
 ## Batch 1 Source Data Snapshot
 
@@ -147,37 +164,20 @@ Important: the current `activeEliteYears` field is treated as the source input f
 | Daniel Cormier | `assets/data/fighter-packets/daniel-cormier.js` | 15-3, 1 NC | 6 | 9 | 7.05 | Compact UFC window; LHW/HW title relevance counts, Strikeforce does not. |
 | Alexander Volkanovski | `assets/data/fighter-packets/alexander-volkanovski.js` | 15-3 | 6 | 9 | 6.70 | Modern FW title run; Islam LW losses show relevance but are not wins and should not become major Longevity value. |
 
-## Batch 1: Longevity Anchors
+## Batch 1 Evidence Worksheet
 
-These fighters define the first formula pass before any live correction file exists.
-
-| Fighter | Why included | Main judgment call |
-| --- | --- | --- |
-| Jon Jones | Long UFC-only benchmark with LHW plus HW relevance | How much to cap long layoff before heavyweight return while still rewarding real HW title relevance |
-| Georges St-Pierre | Complete title-era longevity case plus MW return | Bisping return should count, but not as a full second long chapter |
-| Demetrious Johnson | Historic UFC title run; ONE excluded | UFC flyweight relevance only; no ONE extension |
-| Anderson Silva | Long reign with later decline | Keep title-era longevity high without rewarding post-prime losses |
-| Jose Aldo | UFC-only title relevance plus BW contender chapter | WEC excluded, but UFC BW late relevance should matter |
-| Max Holloway | Massive post-title elite contender relevance | Reward late elite continuity without letting losses become value |
-| Kamaru Usman | Strong title run, shorter overall elite window | Leon/Khamzat period should not add much unless current-table relevance supports it |
-| Stipe Miocic | Reclaimed HW title and stayed title-relevant | Heavyweight gaps and trilogy timing need gap-cap discipline |
-| Daniel Cormier | LHW/HW elite relevance across divisions | Reward HW title chapter but do not score Strikeforce or pre-UFC run |
-| Alexander Volkanovski | Modern FW title run plus LW attempts/current-table context | Islam losses can show relevance but should not become full longevity value by themselves |
-
-## Batch 1 Formula Worksheet
-
-| Fighter | Source activeEliteYears | Active-years score /10 | Elite relevance spread /3 | Late elite continuity /2 | Formula | Proposed Longevity /15 | Current legacy longevity | Calculation notes |
-| --- | ---: | ---: | ---: | ---: | --- | ---: | ---: | --- |
-| Max Holloway | 10.90 | 10.00 | 3.00 | 2.00 | 10.00 + 3.00 + 2.00 | 15.00 | 12.63 | Max active-years score, max spread, max late continuity. |
-| Jose Aldo | 9.43 | 9.57 | 3.00 | 2.00 | 9.57 + 3.00 + 2.00 | 14.57 | 12.00 | High active-years score plus max spread and max late continuity. |
-| Jon Jones | 10.82 | 10.00 | 3.00 | 1.50 | 10.00 + 3.00 + 1.50 | 14.50 | 14.57 | Max active years/spread; partial late chapter because HW return is real but short. |
-| Georges St-Pierre | 9.15 | 9.36 | 3.00 | 1.50 | 9.36 + 3.00 + 1.50 | 13.86 | 13.09 | Strong active years/spread; Bisping return earns partial late chapter. |
-| Stipe Miocic | 7.62 | 8.22 | 2.50 | 1.50 | 8.22 + 2.50 + 1.50 | 12.22 | 8.56 | HW title reclaim and Cormier trilogy add continuity; not a decade case. |
-| Demetrious Johnson | 6.84 | 7.63 | 3.00 | 1.50 | 7.63 + 3.00 + 1.50 | 12.13 | 10.05 | Max UFC title-era spread, but ONE excluded and title-defense volume belongs mostly in Championship. |
-| Daniel Cormier | 7.05 | 7.79 | 2.50 | 1.50 | 7.79 + 2.50 + 1.50 | 11.79 | 7.97 | Compact but dense UFC two-division title relevance. |
-| Anderson Silva | 7.21 | 7.91 | 3.00 | 0.50 | 7.91 + 3.00 + 0.50 | 11.41 | 10.37 | Max title-era spread; little positive post-title elite proof. |
-| Alexander Volkanovski | 6.70 | 7.53 | 2.50 | 0.50 | 7.53 + 2.50 + 0.50 | 10.53 | 8.95 | Strong FW window; Islam losses show relevance but are not wins. |
-| Kamaru Usman | 6.04 | 7.03 | 2.50 | 0.50 | 7.03 + 2.50 + 0.50 | 10.03 | 8.65 | Strong compact title window; limited positive late continuity. |
+| Fighter | UFC elite proof years/events used | ActiveEliteYears -> score /10 | Spread score /3 | Late continuity score /2 | Formula output | Notes |
+| --- | --- | ---: | ---: | ---: | ---: | --- |
+| Max Holloway | 2015 Cub Swanson/Charles Oliveira ascent; 2016 Lamas/Pettis interim title; 2017 Aldo title wins; 2018 Ortega title defense; 2019 Poirier LW interim title fight/Edgar; 2020 Volkanovski title rematch; 2021 Kattar/Yair; 2022 Volkanovski trilogy; 2023 Allen/Korean Zombie; 2024 Gaethje/Topuria relevance | 10.90 -> 10.00 | 3.00 | 2.00 | 10.00 + 3.00 + 2.00 = 15.00 | Max gets max Longevity because the evidence shows pre-title, title-era, and long post-title elite relevance. |
+| Jose Aldo | 2011 Hominick/Florian UFC title run; 2012 Mendes; 2013 Edgar/Korean Zombie; 2014 Lamas/Mendes; 2015 McGregor title fight; 2016 Edgar interim title; 2018 Stephens; 2019 Moicano; 2020 Yan title fight/Vera; 2021 Munhoz/Font; 2022 Merab contender relevance | 9.43 -> 9.57 | 3.00 | 2.00 | 9.57 + 3.00 + 2.00 = 14.57 | WEC is excluded, but the UFC evidence still shows long FW title relevance plus a real BW contender chapter. |
+| Jon Jones | 2011 Bader/Rua title breakthrough; 2012 Evans/Belfort; 2013 Sonnen/Gustafsson; 2014 Glover; 2015 Cormier; 2018 Gustafsson II; 2019 Smith/Santos; 2020 Reyes; 2023 Gane HW title; 2024 Stipe title relevance in current table | 10.82 -> 10.00 | 3.00 | 1.50 | 10.00 + 3.00 + 1.50 = 14.50 | Active years and spread max out. HW chapter is meaningful, but too short for full late-continuity credit. |
+| Georges St-Pierre | 2004 Hughes title fight; 2006 Penn/Hughes title win; 2007 Serra/Hughes; 2008 Serra/Fitch; 2009 Penn/Alves; 2010 Hardy/Koscheck; 2011 Shields; 2012 Condit; 2013 Diaz/Hendricks; 2017 Bisping MW title return | 9.15 -> 9.36 | 3.00 | 1.50 | 9.36 + 3.00 + 1.50 = 13.86 | Long WW proof plus MW return. Retirement gap is not counted as active elite time. |
+| Stipe Miocic | 2015 Hunt/Arlovski title climb; 2016 Werdum/Overeem title wins; 2017 dos Santos title defense; 2018 Ngannou/Cormier; 2019 Cormier rematch; 2020 Cormier trilogy win; 2021 Ngannou title fight; 2024 Jones title relevance in current table | 7.62 -> 8.22 | 2.50 | 1.50 | 8.22 + 2.50 + 1.50 = 12.22 | The Cormier title reclaim is real late continuity. Long layoff before Jones does not create max spread by itself. |
+| Demetrious Johnson | 2011 Cruz BW title fight; 2012 McCall/Benavidez flyweight title; 2013 Dodson/Moraga/Benavidez; 2014 Bagautinov/Cariaso; 2015 Horiguchi/Dodson; 2016 Cejudo/Elliott; 2017 Reis/Borg; 2018 Cejudo rematch | 6.84 -> 7.63 | 3.00 | 1.50 | 7.63 + 3.00 + 1.50 = 12.13 | UFC title-era spread maxes out. ONE does not extend the score. BW-to-FLW reset supports continuity. |
+| Daniel Cormier | 2013 Mir/Nelson UFC arrival; 2014 Hendo/Jones title relevance; 2015 Rumble/Gustafsson title wins; 2016 Anderson Silva short-notice elite context; 2017 Rumble/Jones NC title relevance; 2018 Oezdemir/Stipe/Lewis; 2019 Stipe rematch; 2020 Stipe trilogy | 7.05 -> 7.79 | 2.50 | 1.50 | 7.79 + 2.50 + 1.50 = 11.79 | Compact but dense UFC window. HW title chapter matters, but Strikeforce is not scored. |
+| Anderson Silva | 2006 Leben/Franklin title win; 2007 Lutter/Marquardt/Franklin; 2008 Henderson/Irvin/Cote; 2009 Leites/Griffin; 2010 Maia/Sonnen; 2011 Belfort/Okami; 2012 Sonnen/Bonnar; 2013 Weidman title fights | 7.21 -> 7.91 | 3.00 | 0.50 | 7.91 + 3.00 + 0.50 = 11.41 | Title-era spread maxes out. Late post-title UFC proof is limited, so late continuity stays low. |
+| Alexander Volkanovski | 2019 Aldo/Max title win; 2020 Max rematch; 2021 Ortega defense; 2022 Korean Zombie/Max trilogy; 2023 Islam LW title fight/Yair defense/Islam rematch; 2024 Topuria title relevance | 6.70 -> 7.53 | 2.50 | 0.50 | 7.53 + 2.50 + 0.50 = 10.53 | Strong FW title window. Islam losses show elite relevance but are not wins, so late continuity is limited. |
+| Kamaru Usman | 2018 Maia/RDA title climb; 2019 Woodley title win/Covington defense; 2020 Masvidal defense; 2021 Burns/Masvidal/Covington; 2022 Edwards title fights; 2023 Edwards/Khamzat back-end relevance | 6.04 -> 7.03 | 2.50 | 0.50 | 7.03 + 2.50 + 0.50 = 10.03 | Strong compact title window. Post-title period is elite matchmaking, but not enough positive proof for a bigger continuity score. |
 
 ## Batch 1 Formula Output Order
 
@@ -194,15 +194,14 @@ These fighters define the first formula pass before any live correction file exi
 | 9 | Alexander Volkanovski | 10.53 |
 | 10 | Kamaru Usman | 10.03 |
 
-## Batch 1 Formula Notes
+## Why These Scores Now Make Sense
 
-- Max at 15.00 follows the formula: max active-years score, max spread score, and max late-continuity score.
-- Aldo at 14.57 follows the formula: high active-years score, max spread score, and max late-continuity score.
-- Jones stays near-max, but not perfect, because the heavyweight return is real title relevance without being a long second active chapter.
-- GSP gets strong credit for the Bisping return, but not free active years during retirement.
-- DJ moves up because the UFC title-relevance spread is maxed, but he stays below the very top longevity band because ONE is excluded and Championship already captures title-defense volume.
-- Stipe and DC rise the most versus legacy because the old values undercounted heavyweight/title continuity and two-division title relevance.
-- Volk and Usman rise modestly. They have strong elite windows, but not Max/Aldo/Jones/GSP-level longevity.
+- The visible formula is doing the work: `active-years score + spread score + late-continuity score`.
+- The proof years/events explain why the spread score is 3.00, 2.50, etc.
+- The late-continuity score is no longer hidden. It is tied to a concrete checkpoint: post-title run, division move, title reclaim, or return from layoff.
+- Max and Aldo are protected because this category is specifically built to reward long elite relevance across phases.
+- DJ is strong but not artificially stretched by ONE or by double-counting title-defense volume.
+- Stipe and DC rise because the old legacy values undercounted their UFC title-level continuity.
 
 ## Batch 2 Candidates
 
