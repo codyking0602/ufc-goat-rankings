@@ -1,39 +1,39 @@
 // Ilia Topuria fighter packet extension.
 (function(){
-  const VERSION = 'fighter-packet-ilia-topuria-20260702a';
+  const VERSION = 'fighter-packet-ilia-topuria-20260705a';
   const fighter = 'Ilia Topuria';
 
   const packet = {
-    status: { stage: 'complete in packet system', lastUpdated: '2026-07-02', nextFix: 'None for Ilia. Continue current-roster packet cleanup.' },
+    status: { stage: 'complete in packet system; current-table Gaethje loss synced', lastUpdated: '2026-07-05', nextFix: 'None for Ilia. Current-table loss context now matches scoring.' },
     repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/ilia-topuria.js', displayFallback: 'assets/data/display-overrides.js', compareFallback: 'assets/compare-coverage-pack-2.js', profileStatsFallback: 'assets/js/fighter-profile-packages.js', watchFallback: 'assets/js/watch-moments.js', photos: 'assets/fighters/ilia-topuria.webp and assets/fighters/ilia-topuria-thumb.webp' },
     photos: { photoUrl: 'assets/fighters/ilia-topuria.webp', thumbUrl: 'assets/fighters/ilia-topuria-thumb.webp' },
     display: {
       overallOvr: 87, allTimeRank: 15, divisionLabel: 'FW / LW', resumeTag: 'New-era title takeover',
-      oneLiner: 'The new-era takeover case: unbeaten UFC run, massive featherweight legend wins, elite finishing threat, and a resume still building fast.',
+      oneLiner: 'The new-era takeover case: massive featherweight legend wins, elite finishing threat, and one current-table Gaethje loss adding the first real blemish.',
       categories: { championship: { ovr: 76, rank: 23 }, opponentQuality: { ovr: 86, rank: 10 }, primeDominance: { ovr: 94, rank: 4 }, longevity: { ovr: 70, rank: 35 } },
-      snapshot: [ ['UFC Record', '9-0'], ['UFC Title-Fight Wins', '2'], ['Championship Level', 'Young But Loud Title Case'], ['Quality Wins', 'Volk and Max Anchor the Case'], ['Prime Record', 'Unbeaten UFC Prime'], ['Active Elite Years', '3.2 Elite Years'], ['Loss Context', 'No UFC losses'] ],
-      whyRankedHere: 'Topuria ranks #15 because the high end is already enormous. Beating Volkanovski and Holloway gives him direct value against featherweight history, and his unbeaten UFC run gives the profile a real peak-dominance lane.',
-      whyNotHigher: 'He does not rank higher yet because the championship volume and active elite years are still early. The resume is loud, but it has not had time to become a long reign or deep all-time body of work.',
-      keyJudgmentCalls: [ ['Volkanovski and Holloway wins', 'carry huge featherweight historical value.'], ['Unbeaten UFC run', 'supports a strong peak-dominance score.'], ['Short sample', 'keeps longevity and championship volume below the long-reign champions.'], ['Current trajectory', 'his ceiling is very high, but the ranking still scores what has happened.'], ['Division context', 'modern featherweight strength helps the quality-win case.'] ],
-      finalTakeaway: 'Topuria is the fast-rising new-era case: huge high-end wins and elite peak signals already, with long-reign volume still needed before he can push the very top tier.'
+      snapshot: [ ['UFC Record', '9-1'], ['UFC Title-Fight Wins', '2'], ['Championship Level', 'Young But Loud Title Case'], ['Quality Wins', 'Volk and Max Anchor the Case'], ['Prime Record', '9-1 Current-Table Prime'], ['Active Elite Years', '3.2 Elite Years'], ['Loss Context', 'Gaethje loss adds first UFC blemish'] ],
+      whyRankedHere: 'Topuria ranks #15 because the high end is already enormous. Beating Volkanovski and Holloway gives him direct value against featherweight history, and his fast title rise gives the profile a real peak-dominance lane.',
+      whyNotHigher: 'He does not rank higher yet because the championship volume and active elite years are still early, and the current-table Gaethje loss adds the first real blemish. The resume is loud, but it has not had time to become a long reign or deep all-time body of work.',
+      keyJudgmentCalls: [ ['Volkanovski and Holloway wins', 'carry huge featherweight historical value.'], ['Gaethje loss', 'counts as the first UFC blemish and is handled as prime elite-loss context.'], ['Short sample', 'keeps longevity and championship volume below the long-reign champions.'], ['Current trajectory', 'his ceiling is very high, but the ranking still scores what has happened.'], ['Division context', 'modern featherweight strength helps the quality-win case.'] ],
+      finalTakeaway: 'Topuria is the fast-rising new-era case: huge high-end wins and elite peak signals already, with the Gaethje loss and short title volume keeping him below the long-reign greats for now.'
     },
-    profileStats: { ufcRecord: '9-0', titleFightWins: 2, eliteWins: 4, primeRecord: '9-0', finishRatePct: 66.7, roundsWonPct: 83.3, activeEliteYears: 3.18, timesFinishedPrime: 0, divisionStrengthContext: 'Modern featherweight strength helps, especially because the key wins directly touch featherweight history.', lossContext: 'No UFC losses, but the sample is still young.' },
+    profileStats: { ufcRecord: '9-1', titleFightWins: 2, eliteWins: 4, primeRecord: '9-1', finishRatePct: 66.7, roundsWonPct: 83.3, activeEliteYears: 3.18, timesFinishedPrime: 1, divisionStrengthContext: 'Modern featherweight strength helps, especially because the key wins directly touch featherweight history.', lossContext: 'Current-table Gaethje loss is counted as Topuria\'s first UFC blemish and prime elite-loss context.' },
     compareSeasoning: {
-      shortCase: 'Topuria is the new-era featherweight takeover case: unbeaten UFC run, wins over legends, title-level finishing power, and a resume that is already loud even while still building.',
+      shortCase: 'Topuria is the new-era featherweight takeover case: wins over legends, title-level finishing power, and a resume that is already loud even while still building.',
       peak: 'At his best, Topuria is boxing power, grappling threat, confidence, pressure, and finishing instincts. He does not just win; he changes the temperature of a division fast.',
-      resume: 'Topuria’s UFC case is still young, but the high end is already enormous because the Volkanovski and Holloway wins hit directly against featherweight history.',
+      resume: 'Topuria’s UFC case is still young, but the high end is already enormous because the Volkanovski and Holloway wins hit directly against featherweight history. The current-table Gaethje loss adds the first major blemish.',
       championship: 'The championship case is smaller than the long-reign champions, but the title wins carry massive name value and era-shift weight.',
-      opponentQuality: 'Volkanovski, Holloway, Emmett, Mitchell, Ryan Hall, and Jai Herbert give Topuria a fast-building quality-win case.',
+      opponentQuality: 'Volkanovski, Holloway, Emmett, Mitchell, Ryan Hall, and Jai Herbert give Topuria a fast-building quality-win case, with the Gaethje loss adding penalty context rather than win credit.',
       longevity: 'Longevity is the obvious gap. Topuria’s case is about peak and current title value, not years of proven elite volume yet.',
-      counter: 'The argument against Topuria is that he is still early. The top wins are huge, but he has not had time to build a long title reign.',
-      edge: 'Topuria wins comparisons when current peak value, unbeaten momentum, and direct wins over featherweight legends outweigh older fighters’ longer volume.',
+      counter: 'The argument against Topuria is that he is still early. The top wins are huge, but he has not had time to build a long title reign, and the Gaethje loss makes the case less clean.',
+      edge: 'Topuria wins comparisons when current peak value and direct wins over featherweight legends outweigh older fighters’ longer volume.',
       eliteCounter: true,
       signatureWins: 'Volkanovski, Holloway, Emmett, Mitchell, Ryan Hall, and Jai Herbert give Topuria a young but already serious featherweight resume.',
-      weakness: 'Longevity and title volume are the clear gaps; the all-time case is loud but still young.',
+      weakness: 'Longevity and title volume are the clear gaps, and the Gaethje loss removes the clean unbeaten UFC argument.',
       titleSummary: 'Topuria’s title case is not long yet, but beating Volkanovski and Holloway gives it rare high-end featherweight value.',
-      primeSummary: 'His prime is still building, which makes the ceiling exciting but keeps the all-time case less proven than the long-reign champions.',
+      primeSummary: 'His prime is still building, which makes the ceiling exciting but keeps the all-time case less proven than the long-reign champions. The Gaethje loss adds the first prime blemish.',
       titleStyle: 'New-Era Title Takeover', primeStyle: 'Still-Building Peak',
-      legacyStats: { ufcRecord: '9-0', titleFightWins: 2, beltsWon: 1, titleDefenses: 1, activeEliteYearsLabel: 'roughly 3 active elite years', primeNote: 'young but explosive title-level run built around direct wins over featherweight legends' }
+      legacyStats: { ufcRecord: '9-1', titleFightWins: 2, beltsWon: 1, titleDefenses: 1, activeEliteYearsLabel: 'roughly 3 active elite years', primeNote: 'young but explosive title-level run built around direct wins over featherweight legends, now with one current-table Gaethje loss' }
     },
     watchMoment: { url: 'https://youtube.com/shorts/8HrxSwOoLZM?is=eygzt_4-hGWU87kL', label: 'Watch Moment' }
   };
