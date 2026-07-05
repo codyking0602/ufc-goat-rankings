@@ -1,7 +1,7 @@
 # Penalty Data Audit
 
-Version: `penalty-data-audit-20260705a`  
-Status: Batch 1 worksheet only. Not live scoring.  
+Version: `penalty-data-audit-20260705b`  
+Status: Batch 1 and Batch 2 worksheets only. Not live scoring.  
 Live app impact: None.
 
 ## Active 37 Scope
@@ -84,27 +84,55 @@ These are the first fighters audited because Penalty is most likely to affect th
 | Anderson Silva | Weidman 1: prime champ/top-5 finish = -2.25; Weidman 2: prime/in-prime champ/top-5 finish = -2.25. Bisping/DC/Adesanya/Cannonier/Hall treated post-prime/context-heavy. | -4.50 | -4.50 | -4.50 | 0.00 | Current live penalty already fits the locked rule that Weidman losses count as in-prime while later losses are post-prime. |
 | Alexander Volkanovski | Islam 1: prime upward-division champ/top-5 decision = -0.75; Islam 2: prime upward-division champ/top-5 finish = -1.25; Topuria: prime champ/top-5 finish = -2.25. | -4.25 | -4.25 | -4.25 | 0.00 | Current live penalty already matches the locked upward-division Islam rule. |
 
-## Batch 1 Shape Read
+## Batch 2: Clean GOAT / Champion Core
 
-- The biggest immediate correction is Jose Aldo: `-6.75 -> -8.25`.
-- B.J. Penn also likely needs a harsher but not fully maxed penalty: `-8.50 -> -9.75`.
-- Dan Henderson may be slightly too harsh right now: `-5.50 -> -5.25`.
-- Anderson, Volk, Izzy, Max, Dustin, Justin, and Chuck already fit the current locked structure.
+| Fighter | Counted UFC losses | Raw penalty | Capped penalty | Current live penalty | Change vs current | Notes |
+| --- | --- | ---: | ---: | ---: | ---: | --- |
+| Jon Jones | Matt Hamill DQ not treated as a true competitive loss. Daniel Cormier no contest is not a scored loss. | 0.00 | 0.00 | 0.00 | 0.00 | Locked benchmark. No competitive UFC loss penalty. |
+| Georges St-Pierre | Hughes 2004: pre-prime champ/top-5 decision = -0.75; Serra 2007: prime non-elite finish = -4.75. | -5.50 | -5.50 | -6.25 | +0.75 | This is a correction candidate. Hughes was elite but pre-prime. Serra should hurt badly, but current score may be slightly too harsh. |
+| Demetrious Johnson | Cruz 2011: pre-prime champ/top-5 decision at bantamweight = -0.75; Cejudo 2018: prime champ/top-5 decision = -1.50. | -2.25 | -2.25 | -3.00 | +0.75 | DJ should be slightly cleaner than current. Cruz was before the flyweight title-prime, not a full prime-damage loss. |
+| Khabib Nurmagomedov | No UFC losses. | 0.00 | 0.00 | 0.00 | 0.00 | Locked clean UFC penalty case. |
+| Islam Makhachev | Adriano Martins 2015: pre-prime non-elite finish = -2.00. | -2.00 | -2.00 | -2.00 | 0.00 | Current live penalty already fits the locked rule. |
+| Randy Couture | Multiple prime/title-level finish losses and mixed old-era title losses push raw penalty beyond cap. Barnett/Rodriguez/Liddell/Brock are enough to justify the cap even if later losses are post-prime. | Below -10 | -10.00 | -10.00 | 0.00 | Current cap still makes sense. Randy's career value comes from Championship/Longevity, not clean penalty. |
+| Matt Hughes | Hallman 2000: pre-prime non-elite finish = -2.00; B.J. Penn 2004: prime champ/top-5 finish = -2.25; GSP 2006: prime champ/top-5 finish = -2.25; Alves 2008: late-prime top-5 finish = -2.25. Later Penn/Koscheck losses treated post-prime. | -8.75 | -8.75 | -10.00 | +1.25 | This is a correction candidate. Hughes should be punished, but current cap may overcount clearly post-prime late losses. |
+| Daniel Cormier | Jones 2015: prime champ/top-5 decision = -1.50; Stipe 2019: prime champ/top-5 finish = -2.25; Stipe 2020: prime/late-prime champ-top-5 decision = -1.50. Jones 2017 NC is not a scored loss. | -5.25 | -5.25 | -5.25 | 0.00 | Current live penalty fits the locked rules. |
+| Stipe Miocic | Struve 2012: pre-prime non-elite finish = -2.00; JDS 2014: prime champ/top-5 decision = -1.50; Cormier 2018: prime champ/top-5 finish = -2.25; Ngannou 2021: prime/late-prime champ-top-5 finish = -2.25. Jones late fight excluded per Cody. | -8.00 | -8.00 | -8.00 | 0.00 | Current live penalty fits the locked rules and Cody's Jones exclusion. |
+| Cain Velasquez | JDS 2011: prime champ/top-5 finish = -2.25; Werdum 2015: prime champ/top-5 finish = -2.25. Ngannou 2019 treated post-prime/injury-back-end context. | -4.50 | -4.50 | -4.50 | 0.00 | Current live penalty fits. Cain's issue is injuries/longevity more than penalty. |
+
+## Batch 1 + 2 Shape Read
+
+- Jose Aldo: `-6.75 -> -8.25` is the biggest ranking-relevant downgrade so far.
+- B.J. Penn: `-8.50 -> -9.75` also looks right if late collapse is excluded but prime losses are counted properly.
+- Georges St-Pierre: `-6.25 -> -5.50` looks cleaner under the locked rule because Hughes 2004 is pre-prime.
+- Demetrious Johnson: `-3.00 -> -2.25` looks cleaner because Cruz was pre-flyweight-prime.
+- Matt Hughes: `-10.00 -> -8.75` is a meaningful correction if late post-prime losses are excluded.
+- Dan Henderson: `-5.50 -> -5.25` is a small cleanup.
+- The rest of Batch 1 and Batch 2 mostly already fit the locked rules.
 
 ## Next Batch Candidates
 
 Audit these next:
 
-- Jon Jones
-- Georges St-Pierre
-- Demetrious Johnson
-- Khabib Nurmagomedov
-- Islam Makhachev
-- Randy Couture
-- Matt Hughes
-- Daniel Cormier
-- Stipe Miocic
-- Cain Velasquez
+- Kamaru Usman
+- Aljamain Sterling
+- T.J. Dillashaw
+- Petr Yan
+- Merab Dvalishvili
+- Charles Oliveira
+- Alex Pereira
+- Henry Cejudo
+- Conor McGregor
+- Ilia Topuria
+
+## Remaining After Next Batch
+
+- Frankie Edgar
+- Dominick Cruz
+- Francis Ngannou
+- Amanda Nunes
+- Valentina Shevchenko
+- Joanna Jedrzejczyk
+- Ronda Rousey
 
 ## Approval Gate
 
