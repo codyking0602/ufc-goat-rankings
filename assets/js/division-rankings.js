@@ -1,7 +1,7 @@
 // Division Rankings: men-only division boards with a first-pass division scoring model.
 (function(){
   const DATA = window.RANKING_DATA;
-  const VERSION = 'division-rankings-20260702f';
+  const VERSION = 'division-rankings-20260705a';
   if(!DATA || typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const DIVISION_ORDER = [
@@ -18,6 +18,7 @@
   // Division score = existing UFC resume components, reweighted for the selected weight class.
   // Resume factor controls how much of a fighter's all-time resume actually belongs in that division.
   // 1.00 = primary division resume. Lower factors = real but smaller crossover resume.
+  // Scores are used for ordering only; division boards intentionally do not display a second OVR/rating.
   const DIVISION_RESUME_FACTORS = {
     'Heavyweight': {
       'Daniel Cormier': 0.92,
@@ -80,9 +81,10 @@
       .division-card p,.division-card .meta{color:#c7d2e2!important}
       .division-card p strong{color:#f8faff!important}
       .division-topline{display:grid;gap:6px;margin-top:10px}
-      .division-topline-row{display:flex;justify-content:space-between;gap:10px;align-items:center;border-top:1px solid rgba(148,163,184,.28);padding-top:7px;font-size:13px;color:#c7d2e2!important}
+      .division-topline-row{display:flex;justify-content:flex-start;gap:10px;align-items:center;border-top:1px solid rgba(148,163,184,.28);padding-top:7px;font-size:13px;color:#c7d2e2!important}
       .division-topline-row strong{font-weight:900;color:#f8faff!important}
-      .division-topline-row span{color:#c7d2e2!important}
+      .division-row{grid-template-columns:54px 64px minmax(0,1fr)!important}
+      @media(max-width:900px){.division-row{grid-template-columns:34px 58px minmax(0,1fr)!important}}
     `;
     document.head.appendChild(style);
   }
@@ -133,7 +135,6 @@
     return {score, factor, title, quality, dominance, longevity, loss};
   }
   function divisionScore(f, division){ return divisionScoreParts(f, division).score; }
-  function divisionRating(f, division){ return clamp(Math.round(70 + divisionScore(f, division) * 0.29), 70, 99); }
   function divisionRows(division){
     return allRows()
       .filter(f => divisionMatch(f, division))
@@ -151,8 +152,7 @@
     return `${division} crossover`;
   }
   function rowHtml(f, i, division){
-    const rating = divisionRating(f, division);
-    return `<article class="row clean-row fighter-row division-row" data-fighter="${f.fighter}"><div class="rank">#${i + 1}</div>${thumb(f)}<div class="row-main"><div class="name">${f.fighter}</div><div class="meta">${f.ufcRecord || ''} · ${f.primaryDivision || ''}${f.secondaryDivision ? ' / ' + f.secondaryDivision : ''}</div><div class="resume-tag">${roleTag(f, division)}</div></div><div class="score"><strong>${rating}</strong><span class="meta">DIV</span></div></article>`;
+    return `<article class="row clean-row fighter-row division-row" data-fighter="${f.fighter}"><div class="rank">#${i + 1}</div>${thumb(f)}<div class="row-main"><div class="name">${f.fighter}</div><div class="meta">${f.ufcRecord || ''} · ${f.primaryDivision || ''}${f.secondaryDivision ? ' / ' + f.secondaryDivision : ''}</div><div class="resume-tag">${roleTag(f, division)}</div></div></article>`;
   }
   function setDivisionHeading(title, copy){
     const section = document.querySelector('#division .section-title');
@@ -182,7 +182,7 @@
     const cards = availableDivisions().map(division => {
       const rows = divisionRows(division);
       const top = rows[0];
-      const topThree = rows.slice(0,3).map((f,i)=>`<div class="division-topline-row"><strong>#${i+1} ${f.fighter}</strong><span>${divisionRating(f, division)} DIV</span></div>`).join('');
+      const topThree = rows.slice(0,3).map((f,i)=>`<div class="division-topline-row"><strong>#${i+1} ${f.fighter}</strong></div>`).join('');
       return `<article class="card division-card" data-division-pick="${division}"><h3>${division}<span>${rows.length} loaded</span></h3><p class="meta">Current #1: <strong>${top ? top.fighter : '—'}</strong></p><div class="division-topline">${topThree}</div></article>`;
     }).join('');
     el('divisionList').innerHTML = `<div class="division-grid">${cards}</div>`;
@@ -204,6 +204,6 @@
     el('divisionList').innerHTML = rows.map((r,i)=>rowHtml(r,i,division)).join('') || '<div class="notice">No fighters are loaded for this division yet.</div>';
     document.querySelectorAll(`#divisionList .fighter-row`).forEach(row => row.addEventListener('click', () => openFighter(row.dataset.fighter)));
   };
-  window.UFC_DIVISION_RANKINGS = { version: VERSION, mode: 'men-only-division-score-v1' };
+  window.UFC_DIVISION_RANKINGS = { version: VERSION, mode: 'men-only-division-rank-order-v1' };
   if(typeof window.renderDivision === 'function') window.renderDivision();
 })();
