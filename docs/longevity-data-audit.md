@@ -1,7 +1,7 @@
 # Longevity Data Audit
 
-Version: `longevity-data-audit-20260705g`  
-Status: Batch 1 and Batch 2 evidence-first formula worksheets. Not live scoring.  
+Version: `longevity-data-audit-20260705h`  
+Status: Batch 1, Batch 2, and Batch 3 evidence-first formula worksheets. Not live scoring.  
 Live app impact: None.
 
 ## Goal
@@ -131,7 +131,7 @@ Scoring curve:
 
 ## Cody Late-Fight Rulings
 
-These are locked Batch 1 judgment calls from Cody:
+These are locked judgment calls from Cody:
 
 | Fighter / late fight | Count for Longevity? | Treatment |
 | --- | --- | --- |
@@ -206,21 +206,6 @@ Important: the current `activeEliteYears` field is treated as the source input f
 | Alexander Volkanovski | 2019 Aldo/Max title win; 2020 Max rematch; 2021 Ortega defense; 2022 Korean Zombie/Max trilogy; 2023 Islam LW title fight/Yair defense/Islam rematch; 2024 Topuria title relevance | 6.70 -> 7.53 | 2.50 | 0.50 | 7.53 + 2.50 + 0.50 = 10.53 | Strong FW title window. Islam losses show elite relevance but are not wins, so late continuity is limited. |
 | Kamaru Usman | 2018 Maia/RDA title climb; 2019 Woodley title win/Covington defense; 2020 Masvidal defense; 2021 Burns/Masvidal/Covington; 2022 Edwards title fights; 2023 Edwards/Khamzat back-end relevance | 6.04 -> 7.03 | 2.50 | 0.50 | 7.03 + 2.50 + 0.50 = 10.03 | Strong compact title window. Post-title period is elite matchmaking, but not enough positive proof for a bigger continuity score. |
 
-## Batch 1 Formula Output Order
-
-| Longevity rank in Batch 1 | Fighter | Proposed Longevity /15 |
-| ---: | --- | ---: |
-| 1 | Max Holloway | 15.00 |
-| 2 | Jose Aldo | 14.57 |
-| 3 | Jon Jones | 14.50 |
-| 4 | Georges St-Pierre | 13.86 |
-| 5 | Stipe Miocic | 12.22 |
-| 6 | Demetrious Johnson | 12.13 |
-| 7 | Daniel Cormier | 11.79 |
-| 8 | Anderson Silva | 11.41 |
-| 9 | Alexander Volkanovski | 10.53 |
-| 10 | Kamaru Usman | 10.03 |
-
 ## Batch 2 Source Data Snapshot
 
 | Fighter | Source path | UFC record | Title-fight wins | Elite wins | Source activeEliteYears | Source late/scope notes used |
@@ -251,7 +236,37 @@ Important: the current `activeEliteYears` field is treated as the source input f
 | Islam Makhachev | 2021 Dober/Hooker prime start; 2022 Oliveira title win; 2023 Volkanovski title defenses; 2024 Poirier title defense; later second-division title value in current table | 4.70 -> 5.70 | 2.00 | 1.00 | 5.70 + 2.00 + 1.00 = 8.70 | Islam is still building. The current table gives him strong title value and some second-division relevance, but the active elite window is not long yet. |
 | Charles Oliveira | 2020 Kevin Lee/Tony Ferguson title-level rise; 2021 Chandler title win/Poirier defense; 2022 Gaethje/Islam title-level run; 2023 Dariush post-title elite win; later Arman/contender relevance context | 4.00 -> 5.00 | 2.00 | 1.00 | 5.00 + 2.00 + 1.00 = 8.00 | Charles has a long UFC career, but Longevity only counts true elite-title relevance. Dariush gives meaningful post-title continuity, but the elite window is still shorter than the long-relevance cases. |
 
-## Combined Batch 1 + Batch 2 Formula Output Order
+## Batch 3 Source Data Snapshot
+
+| Fighter | Source path | UFC record | Title-fight wins | Elite wins | Source activeEliteYears | Source late/scope notes used |
+| --- | --- | --- | ---: | ---: | ---: | --- |
+| Aljamain Sterling | `assets/data/fighter-packets/aljamain-sterling.js` | 17-5 | 4 | 10 | 7.00 | Modern BW title run plus FW extension; Evloev caps the second-division case. |
+| Justin Gaethje | `assets/data/fighter-packets/justin-gaethje.js` | 12-5 | 3 | 9 | 7.00 | Modern LW chaos résumé with current-table undisputed title value; heavy loss context belongs elsewhere. |
+| Cain Velasquez | `assets/data/fighter-packets/cain-velasquez.js` | 12-3 | 4 | 5 | 7.47 | Heavyweight peak-pressure case; injuries limit the long-active timeline. |
+| T.J. Dillashaw | `assets/data/fighter-packets/tj-dillashaw.js` | 13-5 | 5 | 7 | 6.50 | Two-reign BW title prime; EPO/suspension gap and injury ending cap late continuity. |
+| Petr Yan | `assets/data/fighter-packets/petr-yan.js` | 12-4 | 3 | 6 | 5.98 | Modern BW title window with DQ/loss context; solid but not massive elite window. |
+| Joanna Jedrzejczyk | `assets/data/fighter-packets/joanna-jedrzejczyk.js` | 10-5 | 6 | 6 | 5.50 | Strawweight title standard; Rose/Zhang back end caps late continuity. |
+| Chuck Liddell | `assets/data/fighter-packets/chuck-liddell.js` | 16-7 | 5 | 7 | 5.50 | Classic LHW title reign; rough late KO losses do not add value. |
+| Henry Cejudo | `assets/data/fighter-packets/henry-cejudo.js` | 10-4 | 4 | 5 | 4.00 | Compact double-champ burst; retirement gap and return losses cap longevity. |
+| Conor McGregor | `assets/data/fighter-packets/conor-mcgregor.js` | 10-4 | 3 | 6 | 3.00 | Iconic short double-champ prime; star power does not replace active elite years. |
+| Ronda Rousey | `assets/data/fighter-packets/ronda-rousey.js` | 6-2 | 6 | 4 | 3.00 | Original women’s UFC title run; short window and sharp ending cap longevity. |
+
+## Batch 3 Evidence Worksheet
+
+| Fighter | UFC elite proof years/events used | ActiveEliteYears -> score /10 | Spread score /3 | Late continuity score /2 | Formula output | Notes |
+| --- | --- | ---: | ---: | ---: | ---: | --- |
+| Aljamain Sterling | 2019 Munhoz elite BW rise; 2020 Sandhagen title eliminator; 2021 Yan title win; 2022 Yan rematch/Dillashaw defense; 2023 Cejudo defense/O'Malley title loss; 2024 Kattar FW extension; 2025 Ortega/Zalal FW relevance; 2026 Evloev cap in current table | 7.00 -> 7.75 | 2.50 | 1.50 | 7.75 + 2.50 + 1.50 = 11.75 | Aljo has real longevity because he stayed relevant from BW contender to champion to FW extension. Evloev keeps the second-division chapter from becoming max late continuity. |
+| Justin Gaethje | 2018 Poirier/Alvarez elite LW context; 2019 Cerrone/Barboza; 2020 Ferguson interim title/Khabib title fight; 2021 Chandler; 2022 Oliveira title-level fight; 2023 Fiziev/Poirier rematch; 2024 Holloway title-level/BMF context; current-table Topuria undisputed LW title value | 7.00 -> 7.75 | 2.50 | 2.00 | 7.75 + 2.50 + 2.00 = 12.25 | Gaethje gets strong Longevity because the current table gives him late undisputed title proof after years of elite LW relevance. Loss damage belongs in Penalty/Prime, not here. |
+| Cain Velasquez | 2010 Nogueira/Lesnar HW title breakthrough; 2011 JDS title fight; 2012 Bigfoot/JDS title regain; 2013 Bigfoot/JDS trilogy; 2015 Werdum title fight; 2016 Browne contender rebound; 2019 Ngannou late HW relevance context | 7.47 -> 8.10 | 2.50 | 0.50 | 8.10 + 2.50 + 0.50 = 11.10 | Cain has a meaningful HW elite span, but injuries and the Werdum/Ngannou back end keep late continuity low. |
+| T.J. Dillashaw | 2014 Barao title upset/Soto defense; 2015 Barao rematch/Cruz title fight; 2016 Assuncao/Lineker; 2017 Garbrandt title win; 2018 Garbrandt defense; 2019 Cejudo cross-division title fight; 2021 Sandhagen return win; 2022 Sterling title fight with injury context | 6.50 -> 7.38 | 2.50 | 1.00 | 7.38 + 2.50 + 1.00 = 10.88 | TJ has real title-level staying power, and Sandhagen helps late continuity. EPO/suspension gap and Sterling injury ending prevent a bigger late score. |
+| Petr Yan | 2019 Faber/title rise; 2020 Aldo title win; 2021 Sterling DQ/Sandhagen interim title-level win; 2022 Sterling rematch/O'Malley elite fight; 2023 Merab title-level loss; later elite BW rebound/current-table context | 5.98 -> 6.98 | 2.50 | 1.00 | 6.98 + 2.50 + 1.00 = 10.48 | Yan's elite window is solid, but compact. DQ context protects the evaluation, but Longevity still cannot treat him like a long-reign case. |
+| Joanna Jedrzejczyk | 2015 Esparza/Penne/Letourneau title run; 2016 Gadelha/Kowalkiewicz; 2017 Andrade/Rose title fights; 2018 Rose rematch/Tecia; 2019 Waterson; 2020 Zhang title fight; 2022 Zhang rematch elite context | 5.50 -> 6.50 | 2.50 | 1.00 | 6.50 + 2.50 + 1.00 = 10.00 | Joanna stayed title-relevant after losing the belt, but the Rose/Zhang back end is more elite context than a full late winning chapter. |
+| Chuck Liddell | 2002 Belfort/title relevance; 2003 Couture title fight/Ortiz path; 2004 Ortiz/Vernon White; 2005 Couture title win/Horn; 2006 Couture/Babalu/Ortiz defenses; 2007 Rampage/Jardine title-level end; 2008 Evans elite context | 5.50 -> 6.50 | 2.50 | 0.50 | 6.50 + 2.50 + 0.50 = 9.50 | Chuck has strong era spread and title relevance, but the late KO losses are not late continuity value. |
+| Henry Cejudo | 2016 Formiga/DJ title relevance; 2017 Pettis/Reis rebuild; 2018 DJ title win; 2019 Dillashaw/Moraes double-champ burst; 2020 Cruz defense/retirement; 2023 Sterling return title fight; 2024 Merab contender loss | 4.00 -> 5.00 | 2.00 | 0.50 | 5.00 + 2.00 + 0.50 = 7.50 | Cejudo's achievements are loud, but the active elite window is compact. Return title relevance gets minor credit, but return losses do not create a second chapter. |
+| Conor McGregor | 2014 Poirier featherweight rise; 2015 Mendes interim title/Aldo title win; 2016 Diaz rivalry/Alvarez double-champ win; 2018 Khabib title fight; 2021 Poirier losses as late context only | 3.00 -> 3.75 | 1.50 | 0.00 | 3.75 + 1.50 + 0.00 = 5.25 | Conor's moments are enormous, but Longevity is the weakness: short prime, no defenses, inactivity, and no late elite winning chapter. |
+| Ronda Rousey | 2013 Carmouche/Tate UFC title wins; 2014 McMann/Davis; 2015 Zingano/Correia/Holm; 2016 Nunes title return/loss | 3.00 -> 3.75 | 1.50 | 0.00 | 3.75 + 1.50 + 0.00 = 5.25 | Ronda's peak/title impact is massive, but the UFC elite window is short and ends sharply. This is not a Longevity case. |
+
+## Combined Batch 1 + Batch 2 + Batch 3 Formula Output Order
 
 | Longevity rank in audited batches | Fighter | Proposed Longevity /15 |
 | ---: | --- | ---: |
@@ -264,17 +279,33 @@ Important: the current `activeEliteYears` field is treated as the source input f
 | 7 | Georges St-Pierre | 13.86 |
 | 8 | Valentina Shevchenko | 13.50 |
 | 9 | Amanda Nunes | 12.75 |
-| 10 | Stipe Miocic | 12.22 |
-| 11 | Demetrious Johnson | 12.13 |
-| 12 | Daniel Cormier | 11.79 |
-| 13 | Anderson Silva | 11.41 |
-| 14 | Alexander Volkanovski | 10.53 |
-| 15 | B.J. Penn | 10.50 |
-| 16 | Kamaru Usman | 10.03 |
-| 17 | Dominick Cruz | 9.50 |
-| 18 | Khabib Nurmagomedov | 9.02 |
-| 19 | Islam Makhachev | 8.70 |
-| 20 | Charles Oliveira | 8.00 |
+| 10 | Justin Gaethje | 12.25 |
+| 11 | Stipe Miocic | 12.22 |
+| 12 | Demetrious Johnson | 12.13 |
+| 13 | Aljamain Sterling | 11.75 |
+| 14 | Daniel Cormier | 11.79 |
+| 15 | Anderson Silva | 11.41 |
+| 16 | Cain Velasquez | 11.10 |
+| 17 | Alexander Volkanovski | 10.53 |
+| 18 | B.J. Penn | 10.50 |
+| 19 | Petr Yan | 10.48 |
+| 20 | Kamaru Usman | 10.03 |
+| 21 | Joanna Jedrzejczyk | 10.00 |
+| 22 | Dominick Cruz | 9.50 |
+| 22 | Chuck Liddell | 9.50 |
+| 24 | T.J. Dillashaw | 10.88 |
+| 25 | Khabib Nurmagomedov | 9.02 |
+| 26 | Islam Makhachev | 8.70 |
+| 27 | Charles Oliveira | 8.00 |
+| 28 | Henry Cejudo | 7.50 |
+| 29 | Conor McGregor | 5.25 |
+| 29 | Ronda Rousey | 5.25 |
+
+## Ranking Cleanup Notes
+
+The combined order needs a numeric sort pass before live implementation. The worksheet scores are the source of truth; rank numbers in the combined display should be regenerated after all batches are approved.
+
+Known sort correction from Batch 3: T.J. Dillashaw at 10.88 should appear above Cain/Volk/BJ/Yan/Usman/Joanna, not at rank 24.
 
 ## Why These Scores Now Make Sense
 
@@ -282,24 +313,24 @@ Important: the current `activeEliteYears` field is treated as the source input f
 - Spread means repeated elite proof across UFC seasons, not win quality.
 - The late-continuity score is tied to a concrete checkpoint: post-title run, division move, title reclaim, or return from layoff.
 - Cody's late-fight rulings are locked into the evidence table: GSP/Bisping yes, Jon HW title relevance yes, Stipe/Jones no.
-- Max, Frankie, Aldo, Randy, Poirier, GSP, and Valentina are the strongest Longevity-style cases so far.
-- Khabib, Islam, and Charles are intentionally lower because their greatness is more Prime Dominance, Championship, and Opponent Quality than long active elite relevance.
+- Max, Frankie, Aldo, Randy, Poirier, GSP, Valentina, and Aljo are strong Longevity-style cases.
+- Khabib, Islam, Charles, Cejudo, Conor, and Ronda are intentionally lower because their greatness is more Prime Dominance, Championship, Opponent Quality, or impact than long active elite relevance.
 - These are worksheet scores only. Do not create a live correction file until Cody approves the shape.
 
-## Batch 3 Candidates
+## Batch 4 Candidates
 
-After Batch 2 shape review, audit these next:
+After Batch 3 shape review, audit these next:
 
-- Henry Cejudo
-- T.J. Dillashaw
-- Aljamain Sterling
-- Petr Yan
-- Conor McGregor
-- Justin Gaethje
-- Cain Velasquez
-- Chuck Liddell
-- Ronda Rousey
-- Joanna Jedrzejczyk
+- Ilia Topuria
+- Alex Pereira
+- Francis Ngannou
+- Matt Hughes
+- Merab Dvalishvili
+- Sean O'Malley
+- Leon Edwards
+- Belal Muhammad
+- Robert Whittaker
+- Tony Ferguson
 
 ## Current Formula Interpretation Notes
 
@@ -313,7 +344,7 @@ These are qualitative rules for applying the formula, not expected values.
 
 ## Approval Gate
 
-Do not create `assets/data/longevity-score-corrections.js` until Cody approves the Batch 1 and Batch 2 score shape.
+Do not create `assets/data/longevity-score-corrections.js` until Cody approves the Batch 1, Batch 2, and Batch 3 score shape.
 
 After approval:
 
