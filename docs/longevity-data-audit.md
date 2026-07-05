@@ -1,7 +1,7 @@
 # Longevity Data Audit
 
-Version: `longevity-data-audit-20260705f`  
-Status: Batch 1 evidence-first formula worksheet with Cody late-fight rulings. Not live scoring.  
+Version: `longevity-data-audit-20260705g`  
+Status: Batch 1 and Batch 2 evidence-first formula worksheets. Not live scoring.  
 Live app impact: None.
 
 ## Goal
@@ -17,6 +17,20 @@ Prime Dominance already scores how dominant a fighter was while elite. Longevity
 ## Working Formula
 
 `Longevity / 15 = Active Elite Years / 10 + Elite Relevance Spread / 3 + Late Elite Continuity / 2`
+
+## What Spread Means
+
+`Elite Relevance Spread / 3` means: how widely the fighter's elite proof is spread across UFC seasons.
+
+It is not asking whether the wins were better. That is Opponent Quality.
+
+It is asking whether the fighter kept showing title/top-five/title-level relevance across time.
+
+Simple examples:
+
+- A fighter with elite proof from 2015, 2016, 2017, 2018, 2021, 2023, and 2024 has strong spread.
+- A fighter with an amazing 2-3 year title peak has weaker spread, even if the peak was dominant.
+- A late title fight after a huge layoff can show relevance, but it should not automatically create max spread.
 
 ## How to Read the Worksheet
 
@@ -145,10 +159,11 @@ Going forward, borderline late fights should be checked with Cody before scoring
 Primary source files:
 
 - `assets/data/ranking-data.js`
+- `assets/data/ranking-data-additions.js`
 - `assets/data/fighter-packets.js`
 - `assets/data/fighter-packets/*.js`
 
-Fields used for Batch 1:
+Fields used:
 
 - `ufcRecord`
 - `titleFightWins`
@@ -206,30 +221,85 @@ Important: the current `activeEliteYears` field is treated as the source input f
 | 9 | Alexander Volkanovski | 10.53 |
 | 10 | Kamaru Usman | 10.03 |
 
+## Batch 2 Source Data Snapshot
+
+| Fighter | Source path | UFC record | Title-fight wins | Elite wins | Source activeEliteYears | Source late/scope notes used |
+| --- | --- | --- | ---: | ---: | ---: | --- |
+| Frankie Edgar | `assets/data/fighter-packets/frankie-edgar.js` | 18-11-1 | 3 | 9 | 10.00 | Lightweight title prime plus featherweight second act; late bantamweight losses mostly post-prime context. |
+| Randy Couture | `assets/data/fighter-packets/randy-couture.js` | 16-8 | 8 | 8 | 8.54 | Multiple veteran surges across heavyweight and light heavyweight; messy record but repeated title-level risk. |
+| Dustin Poirier | `assets/data/fighter-packets/dustin-poirier.js` | 22-9 (1 NC) | 1 | 11 | 8.50 | Long modern lightweight elite relevance; interim title, major wins, and late title-shot ceiling. |
+| Valentina Shevchenko | `assets/data/fighter-packets/valentina-shevchenko.js` | 14-4-1 | 9 | 10 | 8.00 | Long flyweight title reign plus bantamweight context and title-regain value. |
+| Amanda Nunes | `assets/data/fighter-packets/amanda-nunes.js` | 16-3 | 11 | 11 | 7.00 | Two-division women’s GOAT standard; Pena revenge protects late continuity. |
+| B.J. Penn | `assets/data/fighter-packets/bj-penn.js` | 12-13-2 | 5 | 7 | 6.00 | Two-division UFC champion; late-career collapse should not inflate longevity. |
+| Khabib Nurmagomedov | `assets/data/fighter-packets/khabib-nurmagomedov.js` | 13-0 | 4 | 5 | 6.02 | Unbeaten lightweight prime; elite window is compact and has no late second chapter. |
+| Dominick Cruz | `assets/data/fighter-packets/dominick-cruz.js` | 7-4 | 3 | 4 | 5.00 | WEC reign excluded; UFC case is brilliant but injury-fragmented. Dillashaw comeback matters. |
+| Islam Makhachev | `assets/data/fighter-packets/islam-makhachev.js` | 17-1 | 6 | 7 | 4.70 | Modern lightweight title run with later second-division value in current table; still building. |
+| Charles Oliveira | `assets/data/fighter-packets/charles-oliveira.js` | 22-10, 1 NC | 3 | 8 | 4.00 | Late-blooming lightweight title peak; long UFC career, shorter true elite-title window. |
+
+## Batch 2 Evidence Worksheet
+
+| Fighter | UFC elite proof years/events used | ActiveEliteYears -> score /10 | Spread score /3 | Late continuity score /2 | Formula output | Notes |
+| --- | --- | ---: | ---: | ---: | ---: | --- |
+| Frankie Edgar | 2010 Penn title win/defense; 2011 Maynard trilogy; 2012 Henderson title fights; 2013 Aldo title fight/Oliveira; 2014 Penn/Cub; 2015 Faber/Mendes; 2016 Aldo interim title fight; 2017 Yair; 2018 Ortega title eliminator; 2019 Holloway title fight | 10.00 -> 10.00 | 3.00 | 2.00 | 10.00 + 3.00 + 2.00 = 15.00 | Frankie is a pure Longevity monster: LW champ, FW contender chapter, and years of elite proof. Late BW losses should not inflate or erase the scored elite window. |
+| Randy Couture | 1997 early UFC title relevance; 2000 Randleman/Rizzo title run; 2001 Rizzo rematch; 2003 Liddell/Ortiz LHW title run; 2004 Belfort/Liddell title relevance; 2007 Sylvia/Gonzaga HW comeback; 2008 Lesnar title fight; 2010 Coleman late relevance context | 8.54 -> 8.91 | 3.00 | 2.00 | 8.91 + 3.00 + 2.00 = 13.91 | Randy gets huge Longevity credit because the proof is spread across eras and divisions. The record is messy, but that belongs more in penalty/prime than Longevity. |
+| Dustin Poirier | 2017 Pettis title-level LW climb; 2018 Gaethje/Alvarez; 2019 Holloway interim title/Khabib title fight; 2020 Hooker; 2021 McGregor wins/Charles title fight; 2022 Chandler; 2023 Gaethje BMF rematch; 2024 Saint Denis/Islam title fight; 2025 Holloway late elite context in current table | 8.50 -> 8.88 | 3.00 | 2.00 | 8.88 + 3.00 + 2.00 = 13.88 | Poirier has one of the best non-undisputed Longevity cases: long top lightweight relevance, elite wins, and repeated title-shot level proof. Missing undisputed gold is Championship, not Longevity. |
+| Valentina Shevchenko | 2015 Kaufman UFC arrival; 2016 Holm/Nunes title-level BW context; 2018 Joanna flyweight title win; 2019 Eye/Carmouche; 2020 Chookagian/Maia; 2021 Andrade/Murphy; 2022 Santos; 2023 Grasso title rivalry; 2024 Grasso title-regain context in current table | 8.00 -> 8.50 | 3.00 | 2.00 | 8.50 + 3.00 + 2.00 = 13.50 | Valentina scores high because she has long title relevance, cross-division context, and late title-regain proof after the Grasso setback. |
+| Amanda Nunes | 2013 de Randamie/Davis rise; 2015 McMann; 2016 Tate/Rousey title takeover; 2017 Shevchenko title defense; 2018 Pennington/Cyborg two-division proof; 2019 Holm/de Randamie; 2020 Spencer; 2021 Anderson/Pena; 2022 Pena revenge; 2023 Aldana | 7.00 -> 7.75 | 3.00 | 2.00 | 7.75 + 3.00 + 2.00 = 12.75 | Nunes gets max spread and continuity because the Pena revenge and two-division value keep the late chapter strong. Active years keep her below the longest longevity-only cases. |
+| B.J. Penn | 2001 Uno title tournament context; 2002 Pulver title fight; 2004 Hughes WW title upset; 2006 GSP/Hughes rivalry context; 2008 Stevenson/Sherk LW title wins; 2009 Florian/Sanchez title defenses; 2010 Edgar title fights | 6.00 -> 7.00 | 2.50 | 1.00 | 7.00 + 2.50 + 1.00 = 10.50 | BJ has real spread and two-division value, but the true elite window is not long enough to score like the top longevity cases. Late-career collapse adds no value. |
+| Khabib Nurmagomedov | 2014 Rafael dos Anjos elite breakthrough; 2017 Barboza contender proof; 2018 Iaquinta title win/McGregor title defense; 2019 Poirier title defense; 2020 Gaethje title defense | 6.02 -> 7.02 | 2.00 | 0.00 | 7.02 + 2.00 + 0.00 = 9.02 | Khabib is not a Longevity case. He has a clean unbeaten elite window, but it is compact and has no late second chapter. His ranking should be carried by Prime Dominance, not Longevity. |
+| Dominick Cruz | 2011 Faber/Demetrious Johnson UFC title wins; 2014 Mizugaki comeback; 2016 Dillashaw title comeback/Faber; 2020 Cejudo title fight; 2021 Kenney; 2022 Vera contender relevance | 5.00 -> 6.00 | 2.00 | 1.50 | 6.00 + 2.00 + 1.50 = 9.50 | Cruz gets real late-continuity credit for the Dillashaw comeback, but WEC is excluded and the injury gaps prevent a bigger active-years/spread score. |
+| Islam Makhachev | 2021 Dober/Hooker prime start; 2022 Oliveira title win; 2023 Volkanovski title defenses; 2024 Poirier title defense; later second-division title value in current table | 4.70 -> 5.70 | 2.00 | 1.00 | 5.70 + 2.00 + 1.00 = 8.70 | Islam is still building. The current table gives him strong title value and some second-division relevance, but the active elite window is not long yet. |
+| Charles Oliveira | 2020 Kevin Lee/Tony Ferguson title-level rise; 2021 Chandler title win/Poirier defense; 2022 Gaethje/Islam title-level run; 2023 Dariush post-title elite win; later Arman/contender relevance context | 4.00 -> 5.00 | 2.00 | 1.00 | 5.00 + 2.00 + 1.00 = 8.00 | Charles has a long UFC career, but Longevity only counts true elite-title relevance. Dariush gives meaningful post-title continuity, but the elite window is still shorter than the long-relevance cases. |
+
+## Combined Batch 1 + Batch 2 Formula Output Order
+
+| Longevity rank in audited batches | Fighter | Proposed Longevity /15 |
+| ---: | --- | ---: |
+| 1 | Max Holloway | 15.00 |
+| 1 | Frankie Edgar | 15.00 |
+| 3 | Jose Aldo | 14.57 |
+| 4 | Jon Jones | 14.50 |
+| 5 | Randy Couture | 13.91 |
+| 6 | Dustin Poirier | 13.88 |
+| 7 | Georges St-Pierre | 13.86 |
+| 8 | Valentina Shevchenko | 13.50 |
+| 9 | Amanda Nunes | 12.75 |
+| 10 | Stipe Miocic | 12.22 |
+| 11 | Demetrious Johnson | 12.13 |
+| 12 | Daniel Cormier | 11.79 |
+| 13 | Anderson Silva | 11.41 |
+| 14 | Alexander Volkanovski | 10.53 |
+| 15 | B.J. Penn | 10.50 |
+| 16 | Kamaru Usman | 10.03 |
+| 17 | Dominick Cruz | 9.50 |
+| 18 | Khabib Nurmagomedov | 9.02 |
+| 19 | Islam Makhachev | 8.70 |
+| 20 | Charles Oliveira | 8.00 |
+
 ## Why These Scores Now Make Sense
 
 - The visible formula is doing the work: `active-years score + spread score + late-continuity score`.
-- The proof years/events explain why the spread score is 3.00, 2.50, etc.
-- The late-continuity score is no longer hidden. It is tied to a concrete checkpoint: post-title run, division move, title reclaim, or return from layoff.
+- Spread means repeated elite proof across UFC seasons, not win quality.
+- The late-continuity score is tied to a concrete checkpoint: post-title run, division move, title reclaim, or return from layoff.
 - Cody's late-fight rulings are locked into the evidence table: GSP/Bisping yes, Jon HW title relevance yes, Stipe/Jones no.
-- Max and Aldo are protected because this category is specifically built to reward long elite relevance across phases.
-- DJ is strong but not artificially stretched by ONE or by double-counting title-defense volume.
-- Stipe and DC rise because the old legacy values undercounted their UFC title-level continuity.
+- Max, Frankie, Aldo, Randy, Poirier, GSP, and Valentina are the strongest Longevity-style cases so far.
+- Khabib, Islam, and Charles are intentionally lower because their greatness is more Prime Dominance, Championship, and Opponent Quality than long active elite relevance.
+- These are worksheet scores only. Do not create a live correction file until Cody approves the shape.
 
-## Batch 2 Candidates
+## Batch 3 Candidates
 
-After Batch 1 shape review, audit these next:
+After Batch 2 shape review, audit these next:
 
-- Khabib Nurmagomedov
-- Islam Makhachev
-- Amanda Nunes
-- Valentina Shevchenko
-- Charles Oliveira
-- Dustin Poirier
-- Frankie Edgar
-- Randy Couture
-- B.J. Penn
-- Dominick Cruz
+- Henry Cejudo
+- T.J. Dillashaw
+- Aljamain Sterling
+- Petr Yan
+- Conor McGregor
+- Justin Gaethje
+- Cain Velasquez
+- Chuck Liddell
+- Ronda Rousey
+- Joanna Jedrzejczyk
 
 ## Current Formula Interpretation Notes
 
@@ -237,13 +307,13 @@ These are qualitative rules for applying the formula, not expected values.
 
 - Khabib should not score high in Longevity. His greatness is carried by Championship, Opponent Quality, and Prime Dominance, not a long UFC elite timeline.
 - DJ should be strong, but not artificially forced into the very top if we are strict about UFC-only active years and avoid double-counting title-defense dominance.
-- Max and Aldo should be protected because late elite relevance is exactly what this category is supposed to recognize.
-- Cormier and Stipe should rise from the current legacy values if the audit properly credits UFC-only cross-division/title continuity.
+- Max, Frankie, Aldo, and Poirier should be protected because late elite relevance is exactly what this category is supposed to recognize.
+- Cormier, Stipe, and Randy should rise from older legacy-style values if the audit properly credits UFC-only cross-division/title continuity.
 - Current short-sample monsters like Ilia, Pereira, and Islam should be capped unless the app timeline intentionally extends their elite windows.
 
 ## Approval Gate
 
-Do not create `assets/data/longevity-score-corrections.js` until Cody approves the Batch 1 score shape.
+Do not create `assets/data/longevity-score-corrections.js` until Cody approves the Batch 1 and Batch 2 score shape.
 
 After approval:
 
