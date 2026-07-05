@@ -1,7 +1,7 @@
 # Penalty Data Audit
 
-Version: `penalty-data-audit-20260705b`  
-Status: Batch 1 and Batch 2 worksheets only. Not live scoring.  
+Version: `penalty-data-audit-20260705c`  
+Status: Batch 1, Batch 2, and Batch 3 worksheets only. Not live scoring.  
 Live app impact: None.
 
 ## Active 37 Scope
@@ -99,32 +99,37 @@ These are the first fighters audited because Penalty is most likely to affect th
 | Stipe Miocic | Struve 2012: pre-prime non-elite finish = -2.00; JDS 2014: prime champ/top-5 decision = -1.50; Cormier 2018: prime champ/top-5 finish = -2.25; Ngannou 2021: prime/late-prime champ-top-5 finish = -2.25. Jones late fight excluded per Cody. | -8.00 | -8.00 | -8.00 | 0.00 | Current live penalty fits the locked rules and Cody's Jones exclusion. |
 | Cain Velasquez | JDS 2011: prime champ/top-5 finish = -2.25; Werdum 2015: prime champ/top-5 finish = -2.25. Ngannou 2019 treated post-prime/injury-back-end context. | -4.50 | -4.50 | -4.50 | 0.00 | Current live penalty fits. Cain's issue is injuries/longevity more than penalty. |
 
-## Batch 1 + 2 Shape Read
+## Batch 3: Modern Active / Near-Active Core
+
+| Fighter | Counted UFC losses | Raw penalty | Capped penalty | Current live penalty | Change vs current | Notes |
+| --- | --- | ---: | ---: | ---: | ---: | --- |
+| Kamaru Usman | Edwards 2022: prime champ/top-5 finish = -2.25; Edwards 2023: prime champ/top-5 decision = -1.50; Khamzat 2023: prime upward-division elite decision = -0.75. | -4.50 | -4.50 | -4.50 | 0.00 | Current live penalty fits. The Khamzat middleweight loss gets reduced upward-division treatment. |
+| Aljamain Sterling | Caraway 2016: pre-prime non-elite decision = -1.25; Assuncao 2017: pre-prime top-5 decision = -0.75; Moraes 2017: pre-prime top-5 finish = -1.50; O'Malley 2023: prime champ/top-5 finish = -2.25; Evloev/current-table late FW elite decision = -1.50. | -7.25 | -7.25 | -6.25 | -1.00 | Correction candidate. If current-table Evloev counts as late elite proof, it should also count as a real late elite loss. |
+| T.J. Dillashaw | Dodson 2011: pre-prime non-elite finish = -2.00; Assuncao 2013: pre-prime top-5 decision = -0.75; Cruz 2016: prime champ/top-5 decision = -1.50; Cejudo 2019: prime champ/top-5 finish at flyweight = -2.25; Sterling 2022: late-prime/injury title finish context = -0.75. | -7.25 | -7.25 | -7.25 | 0.00 | Current live penalty fits if Sterling is discounted for the shoulder-injury context rather than treated as a normal clean finish loss. |
+| Petr Yan | Sterling DQ 2021: technical/non-competitive title loss context = -0.75; Sterling 2022: prime champ/top-5 decision = -1.50; O'Malley 2022: prime top-5 decision = -1.50; Merab 2023: prime champ/top-5 decision = -1.50. | -5.25 | -5.25 | -5.25 | 0.00 | Current live penalty fits. DQ is discounted but not ignored entirely because it officially changed the title/resume path. |
+| Merab Dvalishvili | Saenz 2017: pre-prime non-elite decision = -1.25; Simon 2018: pre-prime non-elite technical finish = -2.00; Yan/current-table rivalry loss: prime champ/top-5 decision = -1.50. | -4.75 | -4.75 | -4.75 | 0.00 | Current live penalty fits the packet's Yan split/rivalry context and 13-3 record. |
+| Charles Oliveira | Miller/Cerrone/Swanson/Edgar/Pettis/Felder/Islam/Arman/Topuria and other counted elite/non-elite losses push raw penalty beyond cap. | Below -10 | -10.00 | -10.00 | 0.00 | Current cap is correct. Charles is exactly why the cap exists: long career, big wins, but too many losses to leave uncapped. |
+| Alex Pereira | Adesanya 2023: prime champ/top-5 finish = -2.25; Ankalaev/current-table elite decision = -1.50; Gane current-table upward-division elite finish = -1.25. | -5.00 | -5.00 | -5.00 | 0.00 | Current live penalty fits the packet's Gane-loss update and reduced upward-division treatment. |
+| Henry Cejudo | Demetrious Johnson 2016: pre-prime champ/top-5 finish = -1.50; Benavidez 2016: pre-prime champ/top-5 decision = -0.75; Sterling 2023: return/title-level decision = -1.50; Merab 2024: late elite decision = -1.50. | -5.25 | -5.25 | -6.75 | +1.50 | Correction candidate. The first DJ loss was pre-prime, and the comeback losses should count, but not like a pile of prime collapses. |
+| Conor McGregor | Diaz 2016: prime non-elite finish = -4.75; Khabib 2018: prime champ/top-5 finish = -2.25. Poirier 2021 losses treated post-prime/back-end context for Penalty. | -7.00 | -7.00 | -7.00 | 0.00 | Current live penalty fits. Diaz is the harsh loss; Khabib is elite-title finish damage. |
+| Ilia Topuria | Source conflict: scoring row currently carries -2.25, but fighter packet says UFC Record 9-0 and Loss Context: No UFC losses. | 0.00 or -2.25 | Needs Cody call | -2.25 | TBD | Needs cleanup before live Penalty correction. If packet is source of truth, Ilia should be 0.00. If current-table Gaethje loss is intended, keep -2.25 and update packet/display copy. |
+
+## Batch 1 + 2 + 3 Shape Read
 
 - Jose Aldo: `-6.75 -> -8.25` is the biggest ranking-relevant downgrade so far.
 - B.J. Penn: `-8.50 -> -9.75` also looks right if late collapse is excluded but prime losses are counted properly.
 - Georges St-Pierre: `-6.25 -> -5.50` looks cleaner under the locked rule because Hughes 2004 is pre-prime.
 - Demetrious Johnson: `-3.00 -> -2.25` looks cleaner because Cruz was pre-flyweight-prime.
 - Matt Hughes: `-10.00 -> -8.75` is a meaningful correction if late post-prime losses are excluded.
+- Aljamain Sterling: `-6.25 -> -7.25` if current-table late FW elite loss is intended.
+- Henry Cejudo: `-6.75 -> -5.25` because early DJ/Benavidez losses were pre-prime and comeback losses should not be stacked like prime collapses.
 - Dan Henderson: `-5.50 -> -5.25` is a small cleanup.
-- The rest of Batch 1 and Batch 2 mostly already fit the locked rules.
+- Ilia Topuria has a source conflict: scoring row says `-2.25`, packet says no UFC losses.
+- The rest of Batches 1-3 mostly already fit the locked rules.
 
-## Next Batch Candidates
+## Remaining Batch Candidates
 
 Audit these next:
-
-- Kamaru Usman
-- Aljamain Sterling
-- T.J. Dillashaw
-- Petr Yan
-- Merab Dvalishvili
-- Charles Oliveira
-- Alex Pereira
-- Henry Cejudo
-- Conor McGregor
-- Ilia Topuria
-
-## Remaining After Next Batch
 
 - Frankie Edgar
 - Dominick Cruz
