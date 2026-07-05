@@ -12,8 +12,8 @@ Related docs:
 - `docs/prime-dominance-batch-1-round-row-finalized.md`
 - `docs/prime-dominance-batch-2-full-elite-prime-worksheet.md`
 - `docs/prime-dominance-batch-3-full-elite-prime-worksheet.md`
-- `docs/prime-dominance-batch-4-full-elite-prime-worksheet.md`
-- `docs/prime-dominance-sample-confidence-locks.md` — deprecated for scoring after this update
+- `docs/prime-dominance-batch-4-full-elite-prime-worksheet.md` — superseded for scoring by this no-sample sheet
+- `docs/prime-dominance-sample-confidence-locks.md` — deprecated for scoring after sample confidence was removed
 
 ---
 
@@ -58,6 +58,34 @@ Prime record / 7
 | Prime loss safety | 4 | Avoiding damaging prime losses / finished losses. |
 | Division strength / prime difficulty | 2 | Structural difficulty of the prime environment. |
 | **Total** | **30** | Clean Prime Dominance score. |
+
+---
+
+# Important data-source clarification
+
+Some fighters have detailed per-fight `rounds` rows in the repo. Other newer added fighters have audited snapshot fields instead, including:
+
+- `primeRecord`
+- `roundsWonPct`
+- `finishRatePct`
+- `activeEliteYears`
+- `timesFinishedPrime`
+
+Those audited snapshots are valid scoring inputs.
+
+They should not be described as missing data. They are simply less transparent than detailed fight-by-fight rows.
+
+Current snapshot-audited fighters in this pass include:
+
+- Justin Gaethje
+- Frankie Edgar
+- Dustin Poirier
+- Aljamain Sterling
+- T.J. Dillashaw
+- Dan Henderson
+- Petr Yan for the current batch pass
+
+Future detailed `rounds` rows would be a transparency upgrade, not a requirement to trust the existing audited snapshot numbers.
 
 ---
 
@@ -172,6 +200,8 @@ Sample confidence was removed entirely.
 
 # Batch 4 redo
 
+Batch 4 uses audited snapshot inputs where detailed fight-by-fight round rows are not yet stored. These values were already audited when those fighters were added.
+
 | Fighter | Prior worksheet Prime | No-sample Prime | Change |
 |---|---:|---:|---:|
 | Ilia Topuria | 22.10 | 22.12 | +0.02 |
@@ -256,34 +286,21 @@ This version is cleaner because short or messy samples are no longer punished th
 - Messiness goes to record, rounds, safety, and title-defense streak.
 - Division difficulty stays as the only small contextual adjustment inside Prime.
 
-## Who benefits most
+## Storage-format note
 
-The fighters with excellent win/round components and no need for a confidence judgment stay strong:
+The current repo has two valid Prime input styles:
 
-- Islam Makhachev
-- Jon Jones
-- Khabib Nurmagomedov
-- Demetrious Johnson
-- Amanda Nunes
+1. **Detailed fight rows** — transparent round-by-round source.
+2. **Audited snapshots** — already-reviewed values stored as public/profile fields.
 
-## Who drops because sample confidence had been propping them up
-
-Some long or messy résumé fighters drop because the model no longer gives extra points for simply having a scorable sample:
-
-- B.J. Penn
-- Randy Couture
-- Frankie Edgar
-- Dan Henderson
-- Max Holloway
-
-This is okay because Longevity will be their place to recover appropriate credit.
+Both are acceptable for scoring. Detailed fight rows are better for transparency and future debugging, but lack of detailed rows does not mean the fighter was not audited.
 
 ## Important cleanup flags before live implementation
 
-1. Batch 4 still has snapshot-based rows for Justin, Dustin, Frankie, Aljo, T.J., and Hendo.
-2. Ilia/Gaethje round row in base data still needs cleanup before live implementation.
-3. Amanda has snapshot round percentage but still needs detailed per-fight round rows for transparency.
-4. The old sample-confidence lock doc should be treated as deprecated for scoring.
+1. Treat audited snapshot round percentages as valid scoring inputs.
+2. Optionally add detailed round rows for snapshot-audited fighters later as a transparency upgrade.
+3. Fix or verify the Ilia/Gaethje round row before live implementation because the current row formatting looks malformed.
+4. The old sample-confidence lock doc is deprecated for scoring.
 
 ---
 
@@ -293,7 +310,8 @@ Use this no-sample formula going forward.
 
 Next steps:
 
-1. Cody reviews the new combined order.
-2. Add missing detailed round rows for snapshot fighters.
-3. Clean Ilia/Gaethje row.
-4. Build the Prime Dominance correction module after Cody approves the no-sample score shape.
+1. Cody reviews the new combined Prime order.
+2. Fix or verify the Ilia/Gaethje row.
+3. Build the Prime Dominance correction module after Cody approves the no-sample score shape.
+
+Do **not** require a full re-audit of snapshot-audited fighters before implementation.
