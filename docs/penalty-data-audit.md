@@ -1,7 +1,7 @@
 # Penalty Data Audit
 
-Version: `penalty-data-audit-20260705d`  
-Status: Batch 1, Batch 2, and Batch 3 worksheets only; Ilia packet conflict resolved. Not live scoring.  
+Version: `penalty-data-audit-20260705e`  
+Status: Active 37 worksheet complete. Not live scoring.  
 Live app impact: None.
 
 ## Active 37 Scope
@@ -114,30 +114,46 @@ These are the first fighters audited because Penalty is most likely to affect th
 | Conor McGregor | Diaz 2016: prime non-elite finish = -4.75; Khabib 2018: prime champ/top-5 finish = -2.25. Poirier 2021 losses treated post-prime/back-end context for Penalty. | -7.00 | -7.00 | -7.00 | 0.00 | Current live penalty fits. Diaz is the harsh loss; Khabib is elite-title finish damage. |
 | Ilia Topuria | Gaethje current-table loss: prime champ/top-5 finish = -2.25. | -2.25 | -2.25 | -2.25 | 0.00 | Resolved by Cody call: packet updated to 9-1 and Gaethje loss is intended current-table penalty context. |
 
-## Batch 1 + 2 + 3 Shape Read
+## Batch 4: Final Remaining Active Fighters
 
-- Jose Aldo: `-6.75 -> -8.25` is the biggest ranking-relevant downgrade so far.
-- B.J. Penn: `-8.50 -> -9.75` also looks right if late collapse is excluded but prime losses are counted properly.
-- Georges St-Pierre: `-6.25 -> -5.50` looks cleaner under the locked rule because Hughes 2004 is pre-prime.
-- Demetrious Johnson: `-3.00 -> -2.25` looks cleaner because Cruz was pre-flyweight-prime.
-- Matt Hughes: `-10.00 -> -8.75` is a meaningful correction if late post-prime losses are excluded.
-- Aljamain Sterling: `-6.25 -> -7.25` if current-table late FW elite loss is intended.
-- Henry Cejudo: `-6.75 -> -5.25` because early DJ/Benavidez losses were pre-prime and comeback losses should not be stacked like prime collapses.
-- Dan Henderson: `-5.50 -> -5.25` is a small cleanup.
-- Ilia Topuria conflict resolved: current-table Gaethje loss is intended, packet now says 9-1, and penalty stays `-2.25`.
-- The rest of Batches 1-3 mostly already fit the locked rules.
+| Fighter | Counted UFC losses | Raw penalty | Capped penalty | Current live penalty | Change vs current | Notes |
+| --- | --- | ---: | ---: | ---: | ---: | --- |
+| Frankie Edgar | Benson Henderson 1 and 2: prime champ/top-5 decisions = -3.00 total; Jose Aldo 2013 and 2016: prime champ/top-5 decisions = -3.00 total; Brian Ortega 2018: late-prime champ/top-5 finish = -2.25; Max Holloway 2019: late-prime champ/top-5 decision = -1.50. Later Korean Zombie, Sandhagen, Vera, and Gutierrez losses treated post-prime. | -9.75 | -9.75 | -10.00 | +0.25 | Tiny cleanup candidate. Frankie still carries heavy penalty, but not quite capped if the late bantamweight collapse is excluded. |
+| Dominick Cruz | Cody Garbrandt 2016: prime champ/top-5 decision = -1.50; Henry Cejudo 2020: late-prime/return title-level finish = -2.25. Marlon Vera 2022 treated post-prime. | -3.75 | -3.75 | -3.75 | 0.00 | Current live penalty fits. WEC losses are excluded from UFC-only scoring. |
+| Francis Ngannou | Stipe Miocic 2018: prime champ/top-5 decision = -1.50; Derrick Lewis 2018: prime non-elite/poor-performance decision = -4.00. | -5.50 | -5.50 | -5.50 | 0.00 | Current live penalty fits. Stipe is elite damage; Lewis is the harsher non-elite prime loss. |
+| Amanda Nunes | Cat Zingano 2014: pre-prime champ/top-5 finish = -1.50; Julianna Pena 2021: prime champ/top-5 finish = -2.25. | -3.75 | -3.75 | -3.75 | 0.00 | Current live penalty fits. Pena hurts, but the revenge win matters elsewhere and does not erase the loss. |
+| Valentina Shevchenko | Amanda Nunes 2016: pre-prime/up-division champ/top-5 decision = -0.75; Amanda Nunes 2017: prime champ/top-5 decision = -1.50; Alexa Grasso 2023: prime champ/top-5 finish = -2.25. Grasso draw is not a loss. | -4.50 | -4.50 | -4.50 | 0.00 | Current live penalty fits. First Nunes loss is lighter because it is before the flyweight title-prime and at bantamweight. |
+| Joanna Jedrzejczyk | Rose Namajunas 2017: prime champ/top-5 finish = -2.25; Rose Namajunas 2018: prime champ/top-5 decision = -1.50; Valentina Shevchenko 2018: prime upward-division champ/top-5 decision = -0.75; Zhang Weili 2020: prime/late-prime champ/top-5 decision = -1.50. Zhang 2022 treated post-prime. | -6.00 | -6.00 | -6.00 | 0.00 | Current live penalty fits exactly. |
+| Ronda Rousey | Holly Holm 2015: prime champ/top-5 finish = -2.25; Amanda Nunes 2016: prime champ/top-5 finish = -2.25. | -4.50 | -4.50 | -4.50 | 0.00 | Current live penalty fits. Short UFC career, but the two finished losses are enough for major penalty drag. |
 
-## Remaining Batch Candidates
+## Active 37 Shape Read
 
-Audit these next:
+Meaningful proposed corrections:
 
-- Frankie Edgar
-- Dominick Cruz
-- Francis Ngannou
-- Amanda Nunes
-- Valentina Shevchenko
-- Joanna Jedrzejczyk
-- Ronda Rousey
+- Jose Aldo: `-6.75 -> -8.25`
+- B.J. Penn: `-8.50 -> -9.75`
+- Georges St-Pierre: `-6.25 -> -5.50`
+- Demetrious Johnson: `-3.00 -> -2.25`
+- Matt Hughes: `-10.00 -> -8.75`
+- Aljamain Sterling: `-6.25 -> -7.25`
+- Henry Cejudo: `-6.75 -> -5.25`
+
+Small cleanup candidates:
+
+- Dan Henderson: `-5.50 -> -5.25`
+- Frankie Edgar: `-10.00 -> -9.75`
+
+Everything else mostly already fits the locked rules.
+
+## Overall Philosophy Check
+
+This Penalty pass fixes three types of problems:
+
+1. **Pre-prime losses were sometimes too harsh** — GSP, DJ, Cejudo.
+2. **Post-prime losses were sometimes overcounted** — Hughes, Frankie, Hendo.
+3. **Some long UFC-only cases needed more loss drag** — Aldo, B.J., Aljamain.
+
+It does not rewrite the model. It makes the loss context cleaner and more consistent with the locked rules.
 
 ## Approval Gate
 
