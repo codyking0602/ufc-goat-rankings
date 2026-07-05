@@ -2,45 +2,102 @@
 
 Last updated: 2026-07-04
 
-Purpose: pause fighter-opinion scoring and turn Prime Dominance into a checkable category that uses existing snapshot/fight-row fields wherever possible.
+Purpose: turn Prime Dominance into a checkable UFC-only category that uses stored fight rows or audited snapshot fields.
 
 No live score changes are approved from this document.
 
-## Cody direction
+---
 
-Prime Dominance should be calculated from data we can check, not guessed manually.
+# Cody direction
+
+Prime Dominance should be calculated from inputs we can check, not guessed manually.
 
 The main judgment calls should be:
 
 1. where each fighter's UFC prime starts
 2. where each fighter's UFC prime ends
 3. weird context handling
-4. the division/era strength context for that prime
+4. division/era strength context
 
-Everything else should come from stored snapshot/fight data.
+Everything else should come from stored fight rows or audited snapshot fields.
 
 ---
 
-# Prime Dominance source fields
+# Prime Dominance vs Longevity
 
-These are the fields we should use or add.
+Prime Dominance answers:
 
-| Field | Existing? | Source / note |
-|---|---|---|
-| `primeStart` | partial | Exists in profile rows for several fighters; blank for some base profiles. Needs to be completed for all scored fighters. |
-| `primeEnd` | partial | Exists in profile rows for several fighters; blank or vague for some active fighters. Needs to be completed/standardized. |
-| `primeRecord` | partial | Exists in several board rows/additions; not universal. Should be normalized as structured fields too. |
-| `roundsWonPct` | partial | Exists in several board rows/additions. Base profiles also have fight-level `rounds` arrays that can calculate this. |
-| `finishRatePct` | yes/partial | Exists in many profile/board rows, but must be prime-window finish rate, not always full UFC career finish rate. |
-| `activeEliteYears` | yes/partial | Already used for Longevity; useful for sample confidence but should not double-count too heavily. |
-| `timesFinishedPrime` | yes/partial | Exists in many snapshot rows and should feed Prime loss safety. |
-| `bestConsecutiveTitleDefenseStreak` | missing | Needs to be added. This is a major Prime Dominance marker and is different from total title-fight wins. |
-| `primeDivisionStrengthScore` | missing | Needs to be added. Lightweight/WW/FW dominance should not be scored exactly like thinner divisions. |
-| `primeLosses` | missing/implicit | Should be structured instead of buried in text. |
-| `primeFinishedLosses` | mostly `timesFinishedPrime` | We can keep `timesFinishedPrime`, but `primeFinishedLosses` is clearer for formula use. |
-| `primeFightCount` | missing | Needed for sample confidence. Can derive from primeStart/primeEnd plus fight rows, but should be stored after audit. |
-| `primeFinishWins` | missing | Needed to compute prime finish rate cleanly. Can derive from fight rows, but should be stored after audit. |
-| `primeRoundsWon` / `primeRoundsCounted` | missing structured | Can derive from `rounds` arrays where populated; should be stored after audit for transparency. |
+```text
+When this fighter was elite, how dominant were they?
+```
+
+Longevity answers:
+
+```text
+How long did this fighter keep proving elite UFC relevance?
+```
+
+Sample confidence was removed because it started blurring those two categories.
+
+---
+
+# Locked Prime Dominance formula
+
+```text
+Prime Dominance / 30 =
+Prime record / 7
++ Prime rounds won / 7
++ Consecutive title-defense dominance / 5
++ Prime finish/stoppage / 5
++ Prime loss safety / 4
++ Division strength / 2
+```
+
+| Component | Max points | Required input |
+|---|---:|---|
+| Prime record score | 7 | `primeWins`, `primeLosses`, `primeDraws`, prime context notes, or audited `primeRecord`. |
+| Prime rounds-won score | 7 | `primeRoundsWonPct` or `primeRoundsWon` / `primeRoundsCounted`; audited `roundsWonPct` is valid. |
+| Consecutive title-defense dominance | 5 | `bestConsecutiveTitleDefenseStreak`. |
+| Prime finish/stoppage score | 5 | `primeFinishWins`, `primeFightCount`, `primeFinishRatePct`, or audited `finishRatePct`. |
+| Prime loss safety score | 4 | `primeLosses`, `primeFinishedLosses`, `timesFinishedPrime`, weird loss context. |
+| Division strength / prime difficulty | 2 | `primeDivisionStrengthScore`, division/era notes. |
+| **Total** | **30** | — |
+
+---
+
+# Valid data-source tiers
+
+The repo currently has two valid Prime input styles.
+
+## 1. Detailed fight rows
+
+These use per-fight `rounds` arrays and can calculate:
+
+```text
+primeRoundsWonPct = primeRoundsWon / primeRoundsCounted
+```
+
+This is the most transparent source.
+
+## 2. Audited snapshot fields
+
+Some fighters were painstakingly audited when added, but the result was stored as snapshot/profile fields instead of fight-by-fight rows.
+
+Common audited snapshot fields:
+
+- `primeRecord`
+- `roundsWonPct`
+- `finishRatePct`
+- `activeEliteYears`
+- `timesFinishedPrime`
+- `primeStart`
+- `primeEnd`
+
+These are valid scoring inputs.
+
+Do not call them missing data. If a fighter has audited snapshot values but `rounds: []`, that means the detailed row layer is not populated yet. It does **not** mean the fighter was not audited.
+
+Detailed rows can be added later for transparency, debugging, and cleaner future recalculation.
 
 ---
 
@@ -58,51 +115,27 @@ The repo already has the right kind of snapshot fields in several places:
 - `primeStart`
 - `primeEnd`
 
-Examples from current data/additions:
+Examples:
 
-- Jon Jones has `finishRatePct`, `timesFinishedPrime`, `activeEliteYears`, `primeStart`, `primeEnd`, and category fields in the base profile row.
-- Petr Yan has `finishRatePct`, `activeEliteYears`, `timesFinishedPrime`, `primeRecord`, and `roundsWonPct` in the board row.
-- Hand-added fighters like Justin Gaethje, Frankie Edgar, Dustin Poirier, Aljamain Sterling, T.J. Dillashaw, and Dan Henderson already have `primeRecord`, `roundsWonPct`, `finishRatePct`, `activeEliteYears`, and `timesFinishedPrime` in additions.
+- Jon Jones and many base fighters have detailed `rounds` rows.
+- Hand-added fighters like Justin Gaethje, Frankie Edgar, Dustin Poirier, Aljamain Sterling, T.J. Dillashaw, and Dan Henderson have audited snapshot values in additions.
+- Those hand-added snapshot values should be trusted as the current audited input unless Cody reopens that fighter's audit.
 
-## What is incomplete
+## What still needs normalization
 
-The data is not yet consistent enough to calculate Prime Dominance safely for everyone.
+The data is not uniformly structured yet.
 
-Key problems:
+Key cleanup items:
 
-1. Some base fighters have blank `primeStart` / `primeEnd`.
-2. Some additions have `rounds: []`, meaning their rounds-won percentages are stored as snapshot values but not backed by fight-level round rows yet.
-3. `finishRatePct` often appears to be full UFC career finish rate, not necessarily prime-window finish rate.
-4. `primeRecord` is text, not structured data.
-5. `bestConsecutiveTitleDefenseStreak` is not stored yet.
-6. `primeDivisionStrengthScore` is not stored yet.
+1. Some base fighters have blank or vague `primeStart` / `primeEnd` fields.
+2. Some audited additions store `roundsWonPct` as a snapshot but do not have detailed fight rows yet.
+3. `finishRatePct` should be verified as prime-window finish rate when used for Prime Dominance.
+4. `primeRecord` is often text, not structured numeric fields.
+5. `bestConsecutiveTitleDefenseStreak` is not stored consistently.
+6. `primeDivisionStrengthScore` is not stored consistently.
 7. Prime losses and prime finished losses are not consistently structured.
 
----
-
-# Prime Dominance formula to use after data audit
-
-Prime Dominance should remain max 30.
-
-| Component | Max points | Required data |
-|---|---:|---|
-| Prime record score | 6 | `primeWins`, `primeLosses`, `primeDraws`, prime context notes |
-| Prime rounds-won score | 6 | `primeRoundsWonPct` or `primeRoundsWon` / `primeRoundsCounted` |
-| Consecutive title-defense dominance | 5 | `bestConsecutiveTitleDefenseStreak` |
-| Prime finish/stoppage score | 5 | `primeFinishWins`, `primeFightCount`, `primeFinishRatePct` |
-| Prime loss safety score | 4 | `primeLosses`, `primeFinishedLosses`, weird loss context |
-| Division strength / prime difficulty | 2 | `primeDivisionStrengthScore`, division/era notes |
-| Prime sample confidence | 2 | `primeFightCount`, `activeEliteYears`, prime title/elite fight count |
-| **Total** | **30** | — |
-
-Why this formula is better:
-
-- Checkable from stored fields.
-- Still rewards consecutive title defenses heavily, but does not bury short perfect primes like Khabib.
-- Adds a small division-strength component so dominating lightweight is not treated exactly the same as dominating flyweight or thin women's featherweight.
-- Rewards round control without overvaluing only finishers.
-- Penalizes prime finished losses without double-counting all post-prime losses.
-- Caps tiny samples without turning Prime Dominance into Longevity.
+These are standardization issues, not proof that the audit does not exist.
 
 ---
 
@@ -122,9 +155,9 @@ primeSnapshot: {
   fightCount: 8,
   finishWins: 4,
   finishRatePct: 50.0,
-  roundsWon: 42,
-  roundsCounted: 51,
-  roundsWonPct: 82.4,
+  roundsWon: 23,
+  roundsCounted: 25,
+  roundsWonPct: 92.0,
   bestConsecutiveTitleDefenseStreak: 3,
   primeDivisionStrengthScore: 2.0,
   primeDivisionStrengthNotes: 'Modern lightweight murderers row / 1.10-style division context.',
@@ -135,32 +168,36 @@ primeSnapshot: {
 }
 ```
 
-Board/profile rows can keep the simple public fields:
+Board/profile rows can keep simple public fields:
 
 ```js
 primeRecord: '8-0 elite-prime window',
-roundsWonPct: 82.4,
+roundsWonPct: 92.0,
 finishRatePct: 50.0,
 timesFinishedPrime: 0
 ```
 
-But the formula should read from `primeSnapshot` when available.
+Formula preference order:
+
+1. Use `primeSnapshot` when available.
+2. Else calculate from detailed `rounds` rows and structured fighter data.
+3. Else use audited board/profile snapshot fields.
 
 ---
 
 # Calculation rules
 
-## 1. Prime record score / 6
+## 1. Prime record score / 7
 
-Use structured prime record.
+Use structured prime record or audited `primeRecord`.
 
 | Prime result profile | Score |
 |---|---:|
-| Undefeated prime, no real competitive loss | 6.00 |
-| One prime elite/top-5 loss | 5.00-5.50 |
-| One prime non-elite loss | 4.00-4.75 |
-| Multiple prime losses | 2.50-4.50 |
-| Chaotic/mixed prime | below 3.50 |
+| Undefeated prime, no real competitive loss | 7.00 |
+| One prime elite/top-5 loss | 5.80-6.50 |
+| One prime non-elite loss | 4.75-5.75 |
+| Multiple prime losses | 3.00-5.25 |
+| Chaotic/mixed prime | below 4.00 |
 
 Notes:
 
@@ -168,26 +205,26 @@ Notes:
 - Volk's Islam losses are upward-division elite context, not a full same-division prime collapse.
 - Post-prime losses should not affect this score.
 
-## 2. Prime rounds-won score / 6
+## 2. Prime rounds-won score / 7
 
 Use prime-only rounds-won percentage.
 
 | Prime rounds won % | Score |
 |---|---:|
-| 85%+ | 6.00 |
-| 80-84.9% | 5.50-5.90 |
-| 70-79.9% | 4.75-5.50 |
-| 60-69.9% | 3.75-4.75 |
-| 50-59.9% | 2.50-3.75 |
-| Under 50% | below 2.50 |
+| 85%+ | 7.00 |
+| 80-84.9% | 6.40-6.90 |
+| 70-79.9% | 5.50-6.40 |
+| 60-69.9% | 4.35-5.50 |
+| 50-59.9% | 2.90-4.35 |
+| Under 50% | below 2.90 |
 
-If `rounds` rows are available, calculate:
+If detailed `rounds` rows are available, calculate:
 
 ```text
 primeRoundsWonPct = primeRoundsWon / primeRoundsCounted
 ```
 
-If not available, use audited snapshot value until fight-level round rows are filled.
+If detailed rows are not available, use the audited snapshot `roundsWonPct` until fight-level rows are added.
 
 ## 3. Consecutive title-defense dominance / 5
 
@@ -208,7 +245,7 @@ Rules:
 - This is not adjusted title wins.
 - This measures repeated dominance at the top.
 - Interim title defenses should be case-by-case, usually below undisputed defense streak value.
-- Second-division title wins do not automatically count as defenses, but can support sample confidence/elite dominance elsewhere.
+- Second-division title wins do not automatically count as defenses.
 
 ## 4. Prime finish/stoppage score / 5
 
@@ -256,146 +293,17 @@ Use a small score, not a multiplier, to avoid double-counting Opponent Quality.
 Rules:
 
 - This should be a light correction, not the whole category.
-- OQ still handles the specific opponents.
+- Opponent Quality still handles the specific opponents.
 - Prime Dominance uses this to recognize that dominating certain divisions is structurally harder.
 
-## 7. Prime sample confidence / 2
-
-| Prime sample | Score |
-|---|---:|
-| Long elite/title prime, high confidence | 2.00 |
-| Solid champion/elite contender prime | 1.50-1.90 |
-| Short but proven elite prime | 1.00-1.50 |
-| Tiny/active sample | under 1.00 |
-
-This is not Longevity. It only prevents tiny samples from scoring like decade-long primes.
-
 ---
 
-# Data audit checklist per fighter
+# Implementation note
 
-For each fighter, do this before calculating Prime Dominance:
+When the live Prime Dominance correction module is built:
 
-1. Define `primeSnapshot.start` and `primeSnapshot.end`.
-2. Confirm prime fight list.
-3. Confirm `primeSnapshot.record` and structured wins/losses/draws/NCs.
-4. Confirm `primeSnapshot.roundsWonPct` for only prime fights.
-5. Confirm `primeSnapshot.finishRatePct` for only prime wins/fights.
-6. Confirm `primeSnapshot.bestConsecutiveTitleDefenseStreak`.
-7. Confirm `primeSnapshot.primeDivisionStrengthScore`.
-8. Confirm prime losses and `primeFinishedLosses`.
-9. Confirm weird context notes.
-10. Calculate Prime Dominance from the formula.
-11. Only then consider live correction module.
-
----
-
-# First-pass data status by source
-
-## Base ranking-data.js
-
-Base profiles often have deep fight-level data and category fields. Jon Jones is the clear example: he has snapshot-level fields plus detailed `opponents` and `rounds` arrays.
-
-Action needed:
-
-- Use base `rounds` arrays to calculate prime rounds-won percentage where populated.
-- Fill blank `primeStart` / `primeEnd` where missing.
-- Add `primeSnapshot` object after each fighter is audited.
-
-## ranking-data-additions.js
-
-Hand-added fighters already have many snapshot fields but often lack fight-level round rows.
-
-Examples:
-
-- Justin Gaethje, Frankie Edgar, Dustin Poirier, Aljamain Sterling, T.J. Dillashaw, Dan Henderson all include prime-related snapshot fields.
-- Their `rounds` arrays are currently empty in additions, so their `roundsWonPct` must be treated as audited snapshot input until detailed round rows are added.
-
-Action needed:
-
-- Keep snapshot values for now.
-- Later add prime fight rows/round rows if we want full derivation from fight-level data.
-
-## Fighter packets / display overrides
-
-Packets and overrides are good for app-facing copy and snapshot display, but Prime Dominance should not be calculated from copy text.
-
-Action needed:
-
-- Store formula fields in ranking/profile data or in a dedicated data module, not only in display copy.
-
----
-
-# Recommended implementation plan
-
-## Step 1: Lock this formula and schema
-
-Do not change live Prime Dominance yet.
-
-## Step 2: Create batch prime data worksheets
-
-Use batches of 6-8 fighters.
-
-Each worksheet should include:
-
-- prime window
-- prime fight list
-- prime record
-- prime rounds-won calculation
-- prime finish-rate calculation
-- consecutive title-defense streak
-- division strength score
-- prime loss/finish context
-- calculated score
-
-## Step 3: Add `primeSnapshot` data in small batches
-
-For each fighter, add structured data only after the worksheet is approved.
-
-## Step 4: Build live prime dominance correction module
-
-Only after enough fighters are audited.
-
-Module should:
-
-- read `primeSnapshot`
-- calculate Prime Dominance
-- update `primeDominance`
-- recalculate total score
-- re-sort ranks
-- clear stale display overrides
-
----
-
-# Immediate next batch recommendation
-
-Start with a data batch, not score batch:
-
-1. Jon Jones
-2. Georges St-Pierre
-3. Demetrious Johnson
-4. Anderson Silva
-5. Khabib Nurmagomedov
-6. Alexander Volkanovski
-7. Max Holloway
-8. Amanda Nunes
-
-For each one, the next worksheet should show the actual prime fight list first, then calculate the fields.
-
-# Bottom line
-
-Cody's correction is right: we should not invent Prime Dominance numbers.
-
-Prime Dominance should be calculated from audited prime-window data:
-
-```text
-prime record
-prime rounds won %
-consecutive title-defense streak
-prime finish rate
-prime loss / finished context
-division strength / prime difficulty
-prime sample confidence
-```
-
-The only subjective parts should be where the prime starts/ends, how weird context is treated, and which division-strength bucket applies.
+1. Use the no-sample formula.
+2. Trust audited snapshot inputs where detailed rows are not stored yet.
+3. Do not require a full re-audit of snapshot-audited fighters.
+4. Add detailed fight rows later as a transparency upgrade, not as a prerequisite.
+5. Fix any malformed stored rows, especially the flagged Ilia/Gaethje round row, before relying on that row for automated calculation.
