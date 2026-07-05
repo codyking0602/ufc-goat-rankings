@@ -1,7 +1,7 @@
 # Penalty Data Audit
 
-Version: `penalty-data-audit-20260705c`  
-Status: Batch 1, Batch 2, and Batch 3 worksheets only. Not live scoring.  
+Version: `penalty-data-audit-20260705d`  
+Status: Batch 1, Batch 2, and Batch 3 worksheets only; Ilia packet conflict resolved. Not live scoring.  
 Live app impact: None.
 
 ## Active 37 Scope
@@ -112,7 +112,7 @@ These are the first fighters audited because Penalty is most likely to affect th
 | Alex Pereira | Adesanya 2023: prime champ/top-5 finish = -2.25; Ankalaev/current-table elite decision = -1.50; Gane current-table upward-division elite finish = -1.25. | -5.00 | -5.00 | -5.00 | 0.00 | Current live penalty fits the packet's Gane-loss update and reduced upward-division treatment. |
 | Henry Cejudo | Demetrious Johnson 2016: pre-prime champ/top-5 finish = -1.50; Benavidez 2016: pre-prime champ/top-5 decision = -0.75; Sterling 2023: return/title-level decision = -1.50; Merab 2024: late elite decision = -1.50. | -5.25 | -5.25 | -6.75 | +1.50 | Correction candidate. The first DJ loss was pre-prime, and the comeback losses should count, but not like a pile of prime collapses. |
 | Conor McGregor | Diaz 2016: prime non-elite finish = -4.75; Khabib 2018: prime champ/top-5 finish = -2.25. Poirier 2021 losses treated post-prime/back-end context for Penalty. | -7.00 | -7.00 | -7.00 | 0.00 | Current live penalty fits. Diaz is the harsh loss; Khabib is elite-title finish damage. |
-| Ilia Topuria | Source conflict: scoring row currently carries -2.25, but fighter packet says UFC Record 9-0 and Loss Context: No UFC losses. | 0.00 or -2.25 | Needs Cody call | -2.25 | TBD | Needs cleanup before live Penalty correction. If packet is source of truth, Ilia should be 0.00. If current-table Gaethje loss is intended, keep -2.25 and update packet/display copy. |
+| Ilia Topuria | Gaethje current-table loss: prime champ/top-5 finish = -2.25. | -2.25 | -2.25 | -2.25 | 0.00 | Resolved by Cody call: packet updated to 9-1 and Gaethje loss is intended current-table penalty context. |
 
 ## Batch 1 + 2 + 3 Shape Read
 
@@ -124,7 +124,7 @@ These are the first fighters audited because Penalty is most likely to affect th
 - Aljamain Sterling: `-6.25 -> -7.25` if current-table late FW elite loss is intended.
 - Henry Cejudo: `-6.75 -> -5.25` because early DJ/Benavidez losses were pre-prime and comeback losses should not be stacked like prime collapses.
 - Dan Henderson: `-5.50 -> -5.25` is a small cleanup.
-- Ilia Topuria has a source conflict: scoring row says `-2.25`, packet says no UFC losses.
+- Ilia Topuria conflict resolved: current-table Gaethje loss is intended, packet now says 9-1, and penalty stays `-2.25`.
 - The rest of Batches 1-3 mostly already fit the locked rules.
 
 ## Remaining Batch Candidates
