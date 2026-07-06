@@ -1,7 +1,7 @@
 // Watch Moment links for fighter cards and profiles.
 // Keep links here as app-facing content, separate from scoring and nickname/display-name polish.
 (function(){
-  const VERSION = 'watch-moments-20260706o-women-champ-batch';
+  const VERSION = 'watch-moments-20260706p-bisping';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -47,6 +47,7 @@
     'Sean Strickland': 'https://youtube.com/shorts/oOeeWkSuOIo?si=f2F9cDqI4ZOvPaKh',
     'Robert Whittaker': 'https://youtube.com/shorts/mmIGDqLaRVM?is=n7F_4C410g2bf3nm',
     "Sean O'Malley": 'https://youtube.com/shorts/Qelywtchvk8?is=C0v8L_ndxdC5BS9c',
+    'Michael Bisping': 'https://youtube.com/shorts/YqLi--j4cMA?is=S7b7jX4a5yrGhV02',
     'Dan Henderson': 'https://youtube.com/shorts/dA2kztF7KpQ?is=wDxZ4DLlPA-C74uh',
     'Amanda Nunes': 'https://youtu.be/t4wkBuFpoPs?is=CL7ge7FDuHQPrbMq',
     'Valentina Shevchenko': 'https://youtube.com/shorts/cucTCAAGTis?is=mf6p21fPtBheJuU8',
