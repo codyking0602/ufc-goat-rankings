@@ -1,7 +1,7 @@
 // Watch Moment links for fighter cards and profiles.
 // Keep links here as app-facing content, separate from scoring.
 (function(){
-  const VERSION = 'watch-moments-20260706a-sean-omalley';
+  const VERSION = 'watch-moments-20260706b-whittaker';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -38,6 +38,7 @@
     'Conor McGregor': 'https://youtube.com/shorts/eeHdLpBUmlU?is=rKzl28sGEKreaI2g',
     'Justin Gaethje': 'https://youtube.com/shorts/2LxEazU0vuM?is=tHj1Dxylleh4yGG7',
     'Frankie Edgar': 'https://youtube.com/shorts/lLpRwEN3PJk?is=QVVQjKx_0gVmw-wO',
+    'Robert Whittaker': 'https://youtube.com/shorts/mmIGDqLaRVM?is=n7F_4C410g2bf3nm',
     "Sean O'Malley": 'https://youtube.com/shorts/Qelywtchvk8?is=C0v8L_ndxdC5BS9c',
     'Dan Henderson': 'https://youtube.com/shorts/dA2kztF7KpQ?is=wDxZ4DLlPA-C74uh',
     'Amanda Nunes': 'https://youtu.be/t4wkBuFpoPs?is=CL7ge7FDuHQPrbMq',
