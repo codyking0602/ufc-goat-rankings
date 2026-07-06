@@ -1,7 +1,7 @@
 // Watch Moment links for fighter cards and profiles.
 // Keep links here as app-facing content, separate from scoring.
 (function(){
-  const VERSION = 'watch-moments-20260706f-khamzat-chimaev';
+  const VERSION = 'watch-moments-20260706g-deiveson-figueiredo';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -39,6 +39,7 @@
     'Conor McGregor': 'https://youtube.com/shorts/eeHdLpBUmlU?is=rKzl28sGEKreaI2g',
     'Justin Gaethje': 'https://youtube.com/shorts/2LxEazU0vuM?is=tHj1Dxylleh4yGG7',
     'Frankie Edgar': 'https://youtube.com/shorts/lLpRwEN3PJk?is=QVVQjKx_0gVmw-wO',
+    'Deiveson Figueiredo': 'https://youtube.com/shorts/SZqB9e5-Evs?si=95XRoS9BiLZ6jZnw',
     'Lyoto Machida': 'https://youtube.com/shorts/egQH6YZhYE8?is=dPiUxTvLAK3X4qu6',
     'Khamzat Chimaev': 'https://youtube.com/shorts/R8M89h0Y8qs?si=o2TK7J9c2YPcX3sy',
     'Sean Strickland': 'https://youtube.com/shorts/oOeeWkSuOIo?si=f2F9cDqI4ZOvPaKh',
