@@ -1,7 +1,7 @@
 // Central manifest for fighter packet modules.
 // Add new fighter packet files here instead of growing ranking-data-patches.js.
 (function(){
-  const VERSION='fighter-packet-manifest-20260706r-bisping';
+  const VERSION='fighter-packet-manifest-20260706s-tony-ferguson';
   const packets=[
     {slug:'demetrious-johnson',version:'20260702a'},
     {slug:'anderson-silva',version:'20260702a'},
@@ -25,6 +25,7 @@
     {slug:'merab-dvalishvili',version:'20260702b'},
     {slug:'bj-penn',version:'20260702b'},
     {slug:'dustin-poirier',version:'20260703a'},
+    {slug:'tony-ferguson',version:'20260706a'},
     {slug:'tj-dillashaw',version:'20260703a'},
     {slug:'alex-pereira',version:'20260702c'},
     {slug:'chuck-liddell',version:'20260702a'},
