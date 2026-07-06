@@ -1,7 +1,7 @@
 // Watch Moment links for fighter cards and profiles.
 // Keep links here as app-facing content, separate from scoring and nickname/display-name polish.
 (function(){
-  const VERSION = 'watch-moments-20260706p-bisping';
+  const VERSION = 'watch-moments-20260706q-tony-ferguson';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -29,6 +29,7 @@
     'Merab Dvalishvili': 'https://youtube.com/shorts/v8qciKt0g9Y?is=9I22lnhlQVqsQyQT',
     'B.J. Penn': 'https://youtube.com/shorts/FfBpWXo-EWo?is=4SrvWa7ntRkx5Bia',
     'Dustin Poirier': 'https://youtube.com/shorts/pykcFJHon8I?is=WgBo2b7RTRqozCYU',
+    'Tony Ferguson': 'https://youtube.com/shorts/kwNQdTKvQbY?is=yeoa3ANZBlAMfEpv',
     'T.J. Dillashaw': 'https://youtube.com/shorts/FiV10zxE8RY?is=S7az7vuBDbjIuIfJ',
     'Alex Pereira': 'https://youtube.com/shorts/rb-yUzZNAcQ?is=o8jclP4Z3MTHGH0x',
     'Chuck Liddell': 'https://youtube.com/shorts/yx_Phoyotj0?is=37ZCvF_fOG0d62BR',
