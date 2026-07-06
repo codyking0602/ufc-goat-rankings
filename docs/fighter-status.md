@@ -59,6 +59,7 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 | Charles Oliveira | Men #24 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Charles photos | `assets/data/fighter-packets/charles-oliveira.js` |
 | Henry Cejudo | Men #24 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Henry photos | `assets/data/fighter-packets/henry-cejudo.js` |
 | Frankie Edgar | Men #26 | Permanent hand-added fighter; Watch Moment added; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Frankie photos | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/frankie-edgar.js` |
+| Lyoto Machida | Men #27 | Permanent hand-added fighter; corrected Quality Wins cap; packet, rounds, ledger, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Machida photos; audit exact round-control rows next rebuild | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/lyoto-machida.js` |
 | Conor McGregor | Men #26 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Conor photos | `assets/data/fighter-packets/conor-mcgregor.js` |
 | Sean Strickland | Men #28 | Permanent hand-added fighter; Cody-reviewed Apex adjustment; packet, rounds, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Strickland photos; audit exact round-control rows next rebuild | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/sean-strickland.js` |
 | Robert Whittaker | Men #29 | Permanent hand-added fighter; Romero treatment approved; packet, rounds, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Whittaker photos; audit exact round-control rows next rebuild | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/robert-whittaker.js` |
@@ -71,7 +72,7 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 
 ## Current priorities
 
-1. Tyron Woodley, Sean Strickland, Robert Whittaker, and Sean O'Malley are permanent additions with dedicated fighter packets and round-control rows.
+1. Tyron Woodley, Lyoto Machida, Sean Strickland, Robert Whittaker, and Sean O'Malley are permanent additions with dedicated fighter packets and round-control rows.
 2. Dricus du Plessis is permanent and Cody-reviewed across Quality Wins, Apex Peak, and Prime Dominance.
 3. Photos remain missing until Cody uploads real files.
 4. During the next full scoring-table rebuild, fold `assets/data/ranking-data-additions.js` into `assets/data/ranking-data.js`.
