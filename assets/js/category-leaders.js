@@ -1,6 +1,6 @@
 // Adds a fluid Category Leaders tab tied to the current live category ratings.
 (function(){
-  const VERSION = 'category-leaders-20260705a';
+  const VERSION = 'category-leaders-20260705b';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
@@ -23,12 +23,16 @@
   function categoryInfo(key){ return CATEGORIES.find(c => c.key === key) || CATEGORIES[0]; }
   function allRows(board){ return board === 'women' ? (DATA.women || []) : (DATA.men || []); }
   function profileForName(name){ return (DATA.fighters || []).find(f => f.fighter === name) || {}; }
+  function overridesFor(name){
+    try { return typeof DISPLAY_OVERRIDES !== 'undefined' ? (DISPLAY_OVERRIDES[name] || {}) : {}; }
+    catch(e){ return {}; }
+  }
   function hydrate(row){
     if(typeof fullRow === 'function') return fullRow(row);
     return { ...profileForName(row.fighter), ...row };
   }
   function overallRank(f){
-    const overrideRank = window.DISPLAY_OVERRIDES?.[f.fighter]?.allTimeRank;
+    const overrideRank = overridesFor(f.fighter).allTimeRank;
     return overrideRank || f.rank || '—';
   }
   function overallRating(f){
@@ -60,18 +64,18 @@
     });
   }
   function fighterInitialsLocal(name){ return String(name||'').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase() || 'UFC'; }
-  function thumbFor(f){ return window.DISPLAY_OVERRIDES?.[f.fighter]?.thumbUrl || window.DISPLAY_OVERRIDES?.[f.fighter]?.photoUrl || ''; }
+  function thumbFor(f){ const o = overridesFor(f.fighter); return o.thumbUrl || o.photoUrl || ''; }
   function photoHtml(f){
     if(typeof rowPhoto === 'function') return rowPhoto(f);
     const url = thumbFor(f);
     return `<div class="row-photo">${url ? `<img src="${escapeAttr(url)}" alt="${escapeAttr(f.fighter)} profile photo">` : fighterInitialsLocal(f.fighter)}</div>`;
   }
   function pct(value){ return value === null || value === undefined || value === '' ? '—' : `${Number(value).toFixed(1)}%`; }
-  function fmt(value){ return value === null || value === undefined || value === '' ? '—' : Number(value).toFixed(2); }
+  function fmt(value){ return value === null || value === undefined || value === '' ? '—' : Number(value).toFixed(2).replace(/\.00$/, ''); }
   function sentence(value){ return String(value || '').split(/(?<=[.!?])\s+/).filter(Boolean)[0] || ''; }
   function titleWins(f){
     const notes = String(f?.title?.notes || '');
-    const match = notes.match(/Total title fight wins = ([0-9.]+)/);
+    const match = notes.match(/Total title fight wins =\s*([0-9]+(?:\.[0-9]+)?)/);
     return match ? match[1].replace(/\.0$/, '') : null;
   }
   function opponentNames(f){
@@ -86,47 +90,58 @@
   function contextFor(f,key){
     if(key === 'championship'){
       const wins = titleWins(f);
-      if(wins) return `${wins} UFC title-fight wins in the current title model.`;
+      if(wins) return `${wins} UFC title-fight wins.`;
       if(f?.title?.adjustedTitleWins) return `${Number(f.title.adjustedTitleWins).toFixed(1)} adjusted title-win credit.`;
-      return sentence(f?.title?.notes) || 'Championship score is pulled from the live title-resume rating.';
+      return sentence(f?.title?.notes) || 'Live title-resume rating.';
     }
     if(key === 'opponentQuality'){
       const names = opponentNames(f);
-      return names ? `Built around wins over ${names}.` : 'Quality-wins score is pulled from the live opponent-quality rating.';
+      return names ? `Key wins: ${names}.` : 'Live opponent-quality rating.';
     }
     if(key === 'primeDominance'){
       const pieces = [];
       if(f.primeRecord) pieces.push(f.primeRecord);
       if(f.finishRatePct !== undefined) pieces.push(`${pct(f.finishRatePct)} finish rate`);
       if(f.roundsWonPct !== undefined) pieces.push(`${pct(f.roundsWonPct)} rounds won`);
-      return pieces.join(' · ') || 'Prime-dominance score is pulled from the live dominance rating.';
+      return pieces.join(' · ') || 'Live prime-dominance rating.';
     }
-    if(key === 'longevity') return `${fmt(f.activeEliteYears)} active elite UFC years in the current model.`;
+    if(key === 'longevity') return `${fmt(f.activeEliteYears)} active elite UFC years.`;
     if(key === 'apexPeak'){
-      const audit = f.apexPeakAudit || window.DISPLAY_OVERRIDES?.[f.fighter]?.apexPeakAudit || {};
-      return audit.window ? `${audit.window}. ${sentence(audit.notes)}` : 'Apex Peak is pulled from the live 0-to-6 apex modifier.';
+      const audit = f.apexPeakAudit || overridesFor(f.fighter).apexPeakAudit || {};
+      return audit.window ? `${audit.window}.` : 'Live Apex Peak modifier.';
     }
     if(key === 'penalty'){
       if(typeof lossImpactText === 'function') return lossImpactText(f);
-      return rawFor(f,key) === 0 ? 'No meaningful UFC loss damage in the current model.' : 'Loss score reflects timing, opponent quality, finish context, and division context.';
+      return rawFor(f,key) === 0 ? 'No meaningful UFC loss damage.' : 'Loss timing, opponent quality, and finish context.';
     }
     return '';
   }
-  function valueText(f,key){
-    if(key === 'apexPeak') return `${ratingFor(f,key)}`;
-    return `${ratingFor(f,key)}`;
-  }
+  function valueText(f,key){ return `${ratingFor(f,key)}`; }
   function rawText(f,key){
-    if(key === 'apexPeak') return `Apex modifier: +${num(f.apexPeak).toFixed(2)} / +6.00`;
-    if(key === 'penalty') return `Raw loss context: ${num(f.penalty).toFixed(2)}`;
-    return `Raw category score: ${num(f[key]).toFixed(2)}`;
+    if(key === 'apexPeak') return `Apex +${num(f.apexPeak).toFixed(2)} / 6`;
+    if(key === 'penalty') return `Loss context ${num(f.penalty).toFixed(2)}`;
+    return `Raw ${num(f[key]).toFixed(2)}`;
   }
+  function boardLabel(){ return state.board === 'women' ? 'Women' : 'Men'; }
   function ensureStyles(){
     if(document.getElementById('category-leaders-style')) return;
     const style = document.createElement('style');
     style.id = 'category-leaders-style';
     style.textContent = `
-      .category-leader-shell{display:grid;gap:14px;margin-bottom:18px}.category-leader-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.category-leader-pill{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:10px 12px;border-radius:999px;cursor:pointer;font-weight:850}.category-leader-pill.active{background:var(--accent2);border-color:var(--accent2);color:#111827}.category-leader-board{min-width:170px}.category-leader-summary{border:1px solid rgba(250,204,21,.25);background:rgba(250,204,21,.07);border-radius:16px;padding:13px 14px;color:#fde68a;line-height:1.45}.category-leader-row{grid-template-columns:54px 64px minmax(0,1fr) 110px}.category-leader-context{margin-top:6px;color:var(--muted);font-size:12px;line-height:1.35}.category-leader-raw{display:inline-flex;margin-top:7px;border:1px solid rgba(255,255,255,.1);background:rgba(15,23,42,.62);color:#d1d5db;border-radius:999px;padding:5px 8px;font-size:11px;font-weight:800}@media(max-width:900px){.category-leader-controls{display:grid;grid-template-columns:1fr}.category-leader-pill,.category-leader-board{width:100%;min-width:0}.category-leader-row{grid-template-columns:34px 58px minmax(0,1fr) 74px}}`;
+      .category-leader-shell{display:grid;gap:14px;margin-bottom:18px}
+      .category-leader-controls{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;align-items:center}
+      .category-leader-pill{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:10px 12px;border-radius:999px;cursor:pointer;font-weight:850;line-height:1.1;min-height:42px}
+      .category-leader-pill.active{background:var(--accent2);border-color:var(--accent2);color:#111827}
+      .category-leader-board{grid-column:1/-1;justify-self:start;min-width:150px;max-width:190px;height:42px;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:999px;padding:0 14px;font-weight:850}
+      .category-leader-summary{border:1px solid rgba(250,204,21,.28);background:rgba(18,23,34,.94);border-radius:16px;padding:12px 14px;color:var(--text);line-height:1.38}
+      .category-leader-summary strong{color:var(--accent2)}
+      .category-leader-row{grid-template-columns:54px 64px minmax(0,1fr) 110px}
+      .category-leader-context{margin-top:6px;color:var(--muted);font-size:12px;line-height:1.35}
+      .category-leader-raw{display:inline-flex;margin-top:7px;border:1px solid rgba(255,255,255,.1);background:rgba(15,23,42,.62);color:#d1d5db;border-radius:999px;padding:5px 8px;font-size:11px;font-weight:800}
+      .category-leader-row .watch-moment-link{display:none!important}
+      @media(max-width:1100px){.category-leader-controls{grid-template-columns:repeat(3,minmax(0,1fr))}}
+      @media(max-width:900px){.category-leader-controls{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.category-leader-pill{width:100%;min-width:0;min-height:40px;padding:9px 10px;font-size:12px}.category-leader-board{grid-column:1/-1;width:100%;max-width:none;min-width:0}.category-leader-summary{font-size:13px;padding:11px 12px}.category-leader-row{grid-template-columns:34px 58px minmax(0,1fr) 74px}.category-leader-raw{white-space:normal;border-radius:14px}}
+    `;
     document.head.appendChild(style);
   }
   function ensureTab(){
@@ -151,8 +166,11 @@
       const section = document.createElement('section');
       section.id = 'categoryLeaders';
       section.className = 'view';
-      section.innerHTML = `<div class="section-title"><h2>Category Leaders</h2><p>Every scoring lane sorted 1-to-end from the current live ratings. No hardcoded leaderboard lists.</p></div><div id="categoryLeadersMount"></div>`;
+      section.innerHTML = `<div class="section-title"><h2>Category Leaders</h2><p>See who leads each UFC GOAT scoring category.</p></div><div id="categoryLeadersMount"></div>`;
       main.insertBefore(section, el('compare') || el('rules') || null);
+    } else {
+      const copy = el('categoryLeaders')?.querySelector('.section-title p');
+      if(copy) copy.textContent = 'See who leads each UFC GOAT scoring category.';
     }
   }
   function controlsHtml(){
@@ -160,8 +178,8 @@
       <div class="category-leader-controls" id="categoryLeaderControls">
         ${CATEGORIES.map(cat => `<button type="button" class="category-leader-pill ${cat.key === state.category ? 'active' : ''}" data-category-leader="${cat.key}">${cat.label}</button>`).join('')}
         <select id="categoryLeaderBoard" class="category-leader-board" aria-label="Category leaders board">
-          <option value="men" ${state.board === 'men' ? 'selected' : ''}>Men P4P</option>
-          <option value="women" ${state.board === 'women' ? 'selected' : ''}>Women Only</option>
+          <option value="men" ${state.board === 'men' ? 'selected' : ''}>Men</option>
+          <option value="women" ${state.board === 'women' ? 'selected' : ''}>Women</option>
         </select>
       </div>
       <div id="categoryLeaderSummary" class="category-leader-summary"></div>
@@ -173,30 +191,32 @@
     ensureTab();
     const mount = el('categoryLeadersMount');
     if(!mount) return;
-    if(!el('categoryLeaderList')) mount.innerHTML = controlsHtml();
+    if(!el('categoryLeaderList') || mount.dataset.categoryLeadersVersion !== VERSION){
+      mount.innerHTML = controlsHtml();
+      mount.dataset.categoryLeadersVersion = VERSION;
+    }
     const info = categoryInfo(state.category);
     document.querySelectorAll('[data-category-leader]').forEach(btn => btn.classList.toggle('active', btn.dataset.categoryLeader === state.category));
     const boardSelect = el('categoryLeaderBoard');
     if(boardSelect) boardSelect.value = state.board;
     const rows = sortRows(allRows(state.board), state.category, state.board);
     const summary = el('categoryLeaderSummary');
-    if(summary) summary.innerHTML = `<strong>${info.label}</strong> — ${info.description} Showing ${rows.length} ${state.board === 'women' ? 'women' : 'men'} from the current live rating table.`;
+    if(summary) summary.innerHTML = `<strong>${info.label} · ${boardLabel()}</strong><br>${info.description} Showing ${rows.length} fighters.`;
     const list = el('categoryLeaderList');
     if(!list) return;
-    list.innerHTML = rows.map((f,index) => {
-      const displayRank = index + 1;
-      const catRank = rankFor(f,state.category,state.board);
+    list.innerHTML = rows.map((f) => {
+      const displayRank = rankFor(f,state.category,state.board);
       const rating = valueText(f,state.category);
       const unit = info.unit;
       const divisions = `${f.primaryDivision || ''}${f.secondaryDivision ? ' / ' + f.secondaryDivision : ''}`;
-      return `<article class="row fighter-row category-leader-row" data-fighter="${escapeAttr(f.fighter)}">
-        <div class="rank">#${displayRank}</div>
+      return `<article class="row category-leader-row" data-fighter="${escapeAttr(f.fighter)}">
+        <div class="rank">#${displayRank || '—'}</div>
         ${photoHtml(f)}
         <div class="row-main">
           <div class="name">${escapeHtml(f.fighter)}</div>
           <div class="meta">Overall #${overallRank(f)} · ${escapeHtml(f.ufcRecord || '')}${divisions ? ` · ${escapeHtml(divisions)}` : ''}</div>
           <div class="category-leader-context">${escapeHtml(contextFor(f,state.category))}</div>
-          <div class="category-leader-raw">Category rank #${catRank || displayRank} · ${escapeHtml(rawText(f,state.category))}</div>
+          <div class="category-leader-raw">${escapeHtml(rawText(f,state.category))}</div>
         </div>
         <div class="score"><strong>${rating}</strong><span class="meta">${unit}</span></div>
       </article>`;
