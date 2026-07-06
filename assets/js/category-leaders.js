@@ -1,6 +1,6 @@
 // Adds a fluid Category Leaders tab tied to the current live category ratings.
 (function(){
-  const VERSION = 'category-leaders-20260705d';
+  const VERSION = 'category-leaders-20260706a';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
@@ -11,7 +11,7 @@
     { key: 'opponentQuality', label: 'Opponent Quality Wins', description: 'Who they beat, when they beat them, and how strong the division was.' },
     { key: 'primeDominance', label: 'Prime Dominance', description: 'How clearly they separated from opponents at their best.' },
     { key: 'longevity', label: 'Elite Longevity', description: 'Active elite UFC years, not simple calendar time.' },
-    { key: 'apexPeak', label: 'Apex Peak', description: 'Best-night / best-year proof, adjusted for opponent proof, separation, division strength, and aura.' },
+    { key: 'apexPeak', label: 'Apex Peak', description: 'Who looked most unbeatable at their absolute best — peak form, elite opponent proof, dominance, division strength, and aura.' },
     { key: 'penalty', label: 'Loss Context', description: 'How clean the UFC résumé is after timing, opponent quality, finish context, and division context.' }
   ];
 
