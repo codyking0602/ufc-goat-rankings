@@ -1,7 +1,7 @@
 // Opponent Quality audit score corrections.
 // Applies locked OQ worksheet corrections after base data, additions, packets, and Championship corrections load.
 (function(){
-  const VERSION = 'opponent-quality-score-corrections-20260705b';
+  const VERSION = 'opponent-quality-score-corrections-20260705c-dricus-oq';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
@@ -36,6 +36,7 @@
     'Stipe Miocic': { opponentQuality: 14.45, notes: 'Batch 4 locked with 0.95 heavyweight adjustment.' },
     'Daniel Cormier': { opponentQuality: 12.16, notes: 'Batch 4 locked with 0.98 blended LHW/HW adjustment.' },
     'Cain Velasquez': { opponentQuality: 10.64, notes: 'Batch 4 locked with 0.95 heavyweight adjustment.' },
+    'Dricus du Plessis': { opponentQuality: 12.60, notes: 'Cody-reviewed OQ adjustment: Whittaker 1.00, Adesanya 0.95, Strickland 0.90, Strickland 2 0.85, Brunson 0.65, Till 0.40. Strong top-end middleweight names, but short volume and close/chaotic title wins keep it below longer elite-win ledgers.' },
 
     // Batch 5 BW/star + Yan audit
     'Conor McGregor': { opponentQuality: 10.50, notes: 'Batch 5 locked with 1.05 FW/LW adjustment.' },
