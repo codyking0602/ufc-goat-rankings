@@ -1,7 +1,7 @@
 // Watch Moment links for fighter cards and profiles.
 // Keep links here as app-facing content, separate from scoring and nickname/display-name polish.
 (function(){
-  const VERSION = 'watch-moments-20260706n-dern-kayla';
+  const VERSION = 'watch-moments-20260706o-women-champ-batch';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -55,6 +55,11 @@
     'Miesha Tate': 'https://youtube.com/shorts/b9uD21LpKvY?si=J1e02C6oGjmLRfuk',
     'Mackenzie Dern': 'https://youtube.com/shorts/FpPeheMbWcY?si=kpbSu9dKQ_1ZrJnF',
     'Kayla Harrison': 'https://youtube.com/shorts/iwq5RYsEmj0?si=xNAgtq1-FjeI4ozO',
+    'Jessica Andrade': 'https://youtube.com/shorts/ifn-NLuFWi0?si=kjwT0ZO3k_kd4KX-',
+    'Alexa Grasso': 'https://youtube.com/shorts/JXqN4rvMty4?si=Lige5a6x4R4JlITd',
+    'Julianna Peña': 'https://youtube.com/shorts/l7vgw_69nvI?si=0PD-rPVHC9VbnoUE',
+    'Carla Esparza': 'https://youtube.com/shorts/haoZSXlndok?si=gPH4hX-eBK8U8G_I',
+    'Holly Holm': 'https://youtube.com/shorts/U_SlK5dA1Zw?si=M7W6XcHaTz4SlAMD',
     'Joanna Jedrzejczyk': 'https://youtube.com/shorts/rqxlySX0WwA?is=qmc_JW12ecYdL3KT',
     'Ronda Rousey': 'https://youtube.com/shorts/l4hilvKQgYc?is=diOKawJqeBkHdtcf'
   };
