@@ -1,6 +1,6 @@
 // Lightweight post-load status hook and module loader.
 (function(){
-  const VERSION='ranking-data-patches-20260705v-dricus-review';
+  const VERSION='ranking-data-patches-20260705w-dricus-round-control';
   const SLUG_OVERRIDES={'B.J. Penn':'bj-penn','BJ Penn':'bj-penn','Georges St-Pierre':'georges-st-pierre','T.J. Dillashaw':'tj-dillashaw','TJ Dillashaw':'tj-dillashaw','Junior dos Santos':'junior-dos-santos','Mauricio Rua':'mauricio-rua','Maurício Rua':'mauricio-rua','Zabit Magomedsharipov':'zabit-magomedsharipov'};
   const FALLBACK_PACKET_MANIFEST=[
     {slug:'demetrious-johnson',version:'20260702a'},
@@ -15,7 +15,7 @@
     {slug:'matt-hughes',version:'20260702a'},
     {slug:'daniel-cormier',version:'20260702a'},
     {slug:'stipe-miocic',version:'20260702a'},
-    {slug:'dricus-du-plessis',version:'20260705b-review'},
+    {slug:'dricus-du-plessis',version:'20260705c-round-control'},
     {slug:'ilia-topuria',version:'20260705a'},
     {slug:'israel-adesanya',version:'20260702a'},
     {slug:'aljamain-sterling',version:'20260703a'},
@@ -161,7 +161,7 @@
     const loadCompareWatchdog=()=>loadScriptOnce('assets/js/compare-narrative-watchdog.js?v=compare-narrative-watchdog-20260702a','data-compare-narrative-watchdog',status);
     const loadCompareNarrative=()=>loadScriptOnce('assets/js/compare-narrative-system.js?v=compare-narrative-system-20260703g','data-compare-narrative-system',loadCompareWatchdog);
     const loadCompareCore=()=>loadSequence(compareCoreScripts(),loadCompareNarrative);
-    const loadPacketManifest=()=>loadScriptOnce('assets/data/fighter-packet-manifest.js?v=fighter-packet-manifest-20260705c-dricus-review','data-fighter-packet-manifest',loadCompareCore);
+    const loadPacketManifest=()=>loadScriptOnce('assets/data/fighter-packet-manifest.js?v=fighter-packet-manifest-20260705d-dricus-round-control','data-fighter-packet-manifest',loadCompareCore);
     const loadBranding=()=>loadScriptOnce('assets/js/app-branding.js?v=app-branding-20260702c','data-app-branding',loadPacketManifest);
     const loadDivisionRankings=()=>loadScriptOnce('assets/js/division-rankings.js?v=division-rankings-20260705d-fluid-apex','data-division-rankings',loadBranding);
     const loadHomePolish=()=>loadScriptOnce('assets/js/home-polish.js?v=home-polish-hybrid-preview-20260705b','data-home-polish',loadDivisionRankings);
@@ -171,7 +171,7 @@
     loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260702b','data-profile-template-system',loadPackages);
   }
 
-  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Status hook and module loader with manifest-driven fighter packet loading, reviewed Dricus packet, Apex Peak, Watch Moment, and score weighting',updated:'2026-07-05',version:VERSION},apply:status,slugFor,syncPacketProfileStats,packetManifest};
+  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Status hook and module loader with Dricus round-control rows, reviewed packet, Apex Peak, Watch Moment, and score weighting',updated:'2026-07-05',version:VERSION},apply:status,slugFor,syncPacketProfileStats,packetManifest};
   installImageFallback();
   applyPhotoPathDefaults();
   syncPacketProfileStats();
