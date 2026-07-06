@@ -1,6 +1,6 @@
 // Lightweight post-load status hook and module loader.
 (function(){
-  const VERSION='ranking-data-patches-20260705u-dricus-cache';
+  const VERSION='ranking-data-patches-20260705v-dricus-review';
   const SLUG_OVERRIDES={'B.J. Penn':'bj-penn','BJ Penn':'bj-penn','Georges St-Pierre':'georges-st-pierre','T.J. Dillashaw':'tj-dillashaw','TJ Dillashaw':'tj-dillashaw','Junior dos Santos':'junior-dos-santos','Mauricio Rua':'mauricio-rua','Maurício Rua':'mauricio-rua','Zabit Magomedsharipov':'zabit-magomedsharipov'};
   const FALLBACK_PACKET_MANIFEST=[
     {slug:'demetrious-johnson',version:'20260702a'},
@@ -15,7 +15,7 @@
     {slug:'matt-hughes',version:'20260702a'},
     {slug:'daniel-cormier',version:'20260702a'},
     {slug:'stipe-miocic',version:'20260702a'},
-    {slug:'dricus-du-plessis',version:'20260705a'},
+    {slug:'dricus-du-plessis',version:'20260705b-review'},
     {slug:'ilia-topuria',version:'20260705a'},
     {slug:'israel-adesanya',version:'20260702a'},
     {slug:'aljamain-sterling',version:'20260703a'},
@@ -131,23 +131,47 @@
   function packet(slug,v){return{src:`assets/data/fighter-packets/${slug}.js?v=fighter-packet-${slug}-${v}`,attr:`data-fighter-packet-${slug}`};}
   function compareCoreScripts(){
     const packets=packetManifest().map(row=>packet(row.slug,row.version));
-    return [{src:'assets/data/ranking-data-additions.js?v=ranking-data-additions-20260705d-dricus',attr:'data-ranking-data-additions'},{src:'assets/data/fighter-packet-schema.js?v=fighter-packet-schema-20260703a',attr:'data-fighter-packet-schema'},{src:'assets/compare-data.js?v=compare-data-20260630a',attr:'data-compare-data'},{src:'assets/compare-coverage-pack-1.js?v=compare-coverage-pack-1-20260630a',attr:'data-compare-coverage-pack-1'},{src:'assets/compare-coverage-pack-2.js?v=compare-coverage-pack-2-20260630a',attr:'data-compare-coverage-pack-2'},{src:'assets/compare-phase2-yan.js?v=compare-phase2-yan-20260701b',attr:'data-compare-phase2-yan'},{src:'assets/data/fighter-packets.js?v=fighter-packets-20260702c',attr:'data-fighter-packets'},...packets,{src:'assets/data/prime-round-row-fixes.js?v=prime-round-row-fixes-20260704a',attr:'data-prime-round-row-fixes'},{src:'assets/data/championship-score-corrections.js?v=championship-score-corrections-20260703b',attr:'data-championship-score-corrections'},{src:'assets/data/opponent-quality-score-corrections.js?v=opponent-quality-score-corrections-20260705b',attr:'data-opponent-quality-score-corrections'},{src:'assets/data/prime-dominance-score-corrections.js?v=prime-dominance-score-corrections-20260705b',attr:'data-prime-dominance-score-corrections'},{src:'assets/data/longevity-score-corrections.js?v=longevity-score-corrections-20260705b',attr:'data-longevity-score-corrections'},{src:'assets/data/penalty-score-corrections.js?v=penalty-score-corrections-20260705a',attr:'data-penalty-score-corrections'},{src:'assets/data/apex-peak-score-corrections.js?v=apex-peak-score-corrections-20260705e',attr:'data-apex-peak-score-corrections'},{src:'assets/data/score-weighting.js?v=score-weighting-20260705b',attr:'data-score-weighting'},{src:'assets/js/score-derived-ovr.js?v=score-derived-ovr-20260703d',attr:'data-score-derived-ovr'},{src:'assets/js/apex-peak-category-card.js?v=apex-peak-category-card-20260705f',attr:'data-apex-peak-category-card'},{src:'assets/js/championship-label-polish.js?v=championship-label-polish-20260703a',attr:'data-championship-label-polish'},{src:'assets/data/compare-matchups.js?v=compare-matchups-20260703a',attr:'data-compare-matchups'},{src:'assets/compare-mode.js?v=special-matchups-20260630l',attr:'data-compare-mode'},{src:'assets/compare-engine-v1-5.js?v=compare-engine-v1-5-20260630b',attr:'data-compare-engine-v1-5'},{src:'assets/compare-copy-fixes-v1.js?v=compare-copy-fixes-v1-20260630a',attr:'data-compare-copy-fixes-v1'}];
+    return [
+      {src:'assets/data/ranking-data-additions.js?v=ranking-data-additions-20260705e-dricus-review',attr:'data-ranking-data-additions'},
+      {src:'assets/data/fighter-packet-schema.js?v=fighter-packet-schema-20260703a',attr:'data-fighter-packet-schema'},
+      {src:'assets/compare-data.js?v=compare-data-20260630a',attr:'data-compare-data'},
+      {src:'assets/compare-coverage-pack-1.js?v=compare-coverage-pack-1-20260630a',attr:'data-compare-coverage-pack-1'},
+      {src:'assets/compare-coverage-pack-2.js?v=compare-coverage-pack-2-20260630a',attr:'data-compare-coverage-pack-2'},
+      {src:'assets/compare-phase2-yan.js?v=compare-phase2-yan-20260701b',attr:'data-compare-phase2-yan'},
+      {src:'assets/data/fighter-packets.js?v=fighter-packets-20260702c',attr:'data-fighter-packets'},
+      ...packets,
+      {src:'assets/data/prime-round-row-fixes.js?v=prime-round-row-fixes-20260704a',attr:'data-prime-round-row-fixes'},
+      {src:'assets/data/championship-score-corrections.js?v=championship-score-corrections-20260703b',attr:'data-championship-score-corrections'},
+      {src:'assets/data/opponent-quality-score-corrections.js?v=opponent-quality-score-corrections-20260705b',attr:'data-opponent-quality-score-corrections'},
+      {src:'assets/data/prime-dominance-score-corrections.js?v=prime-dominance-score-corrections-20260705b',attr:'data-prime-dominance-score-corrections'},
+      {src:'assets/data/longevity-score-corrections.js?v=longevity-score-corrections-20260705b',attr:'data-longevity-score-corrections'},
+      {src:'assets/data/penalty-score-corrections.js?v=penalty-score-corrections-20260705a',attr:'data-penalty-score-corrections'},
+      {src:'assets/data/apex-peak-score-corrections.js?v=apex-peak-score-corrections-20260705f-dricus',attr:'data-apex-peak-score-corrections'},
+      {src:'assets/data/score-weighting.js?v=score-weighting-20260705b',attr:'data-score-weighting'},
+      {src:'assets/js/score-derived-ovr.js?v=score-derived-ovr-20260703d',attr:'data-score-derived-ovr'},
+      {src:'assets/js/apex-peak-category-card.js?v=apex-peak-category-card-20260705f',attr:'data-apex-peak-category-card'},
+      {src:'assets/js/championship-label-polish.js?v=championship-label-polish-20260703a',attr:'data-championship-label-polish'},
+      {src:'assets/data/compare-matchups.js?v=compare-matchups-20260703a',attr:'data-compare-matchups'},
+      {src:'assets/compare-mode.js?v=special-matchups-20260630l',attr:'data-compare-mode'},
+      {src:'assets/compare-engine-v1-5.js?v=compare-engine-v1-5-20260630b',attr:'data-compare-engine-v1-5'},
+      {src:'assets/compare-copy-fixes-v1.js?v=compare-copy-fixes-v1-20260630a',attr:'data-compare-copy-fixes-v1'}
+    ];
   }
   function loadModules(){
     const loadCompareWatchdog=()=>loadScriptOnce('assets/js/compare-narrative-watchdog.js?v=compare-narrative-watchdog-20260702a','data-compare-narrative-watchdog',status);
     const loadCompareNarrative=()=>loadScriptOnce('assets/js/compare-narrative-system.js?v=compare-narrative-system-20260703g','data-compare-narrative-system',loadCompareWatchdog);
     const loadCompareCore=()=>loadSequence(compareCoreScripts(),loadCompareNarrative);
-    const loadPacketManifest=()=>loadScriptOnce('assets/data/fighter-packet-manifest.js?v=fighter-packet-manifest-20260705b-dricus','data-fighter-packet-manifest',loadCompareCore);
+    const loadPacketManifest=()=>loadScriptOnce('assets/data/fighter-packet-manifest.js?v=fighter-packet-manifest-20260705c-dricus-review','data-fighter-packet-manifest',loadCompareCore);
     const loadBranding=()=>loadScriptOnce('assets/js/app-branding.js?v=app-branding-20260702c','data-app-branding',loadPacketManifest);
     const loadDivisionRankings=()=>loadScriptOnce('assets/js/division-rankings.js?v=division-rankings-20260705d-fluid-apex','data-division-rankings',loadBranding);
     const loadHomePolish=()=>loadScriptOnce('assets/js/home-polish.js?v=home-polish-hybrid-preview-20260705b','data-home-polish',loadDivisionRankings);
-    const loadWatchMoments=()=>loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260705a','data-watch-moments',loadHomePolish);
+    const loadWatchMoments=()=>loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260705b-dricus','data-watch-moments',loadHomePolish);
     const loadPackages=()=>loadScriptOnce('assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260702a','data-fighter-profile-packages',loadWatchMoments);
     if(window.UFC_PROFILE_TEMPLATE_SYSTEM){loadPackages();return;}
     loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260702b','data-profile-template-system',loadPackages);
   }
 
-  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Status hook and module loader with manifest-driven fighter packet loading, clean Category Leaders rows, fluid Apex-aware division rankings, visible Apex Peak rating card, and score weighting',updated:'2026-07-05',version:VERSION},apply:status,slugFor,syncPacketProfileStats,packetManifest};
+  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Status hook and module loader with manifest-driven fighter packet loading, reviewed Dricus packet, Apex Peak, Watch Moment, and score weighting',updated:'2026-07-05',version:VERSION},apply:status,slugFor,syncPacketProfileStats,packetManifest};
   installImageFallback();
   applyPhotoPathDefaults();
   syncPacketProfileStats();
