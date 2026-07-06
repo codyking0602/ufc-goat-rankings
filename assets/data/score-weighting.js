@@ -1,14 +1,14 @@
 // Overall score weighting layer.
-// Keeps category formulas intact, then applies Cody-approved GOAT weights to the final total.
+// Keeps category formulas intact, then applies Cody-approved GOAT weights plus Apex Peak to the final total.
 (function(){
-  const VERSION = 'score-weighting-20260705a';
+  const VERSION = 'score-weighting-20260705b-apex-peak';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
   const WEIGHTS = {
     championship: 35,
-    primeDominance: 27.5,
-    opponentQuality: 27.5,
+    primeDominance: 25,
+    opponentQuality: 25,
     longevity: 10
   };
   const BASE_MAX = {
@@ -17,7 +17,8 @@
     opponentQuality: 25,
     longevity: 15
   };
-  const PENALTY_MODE = 'Loss penalty remains a separate raw negative modifier after the weighted positive score.';
+  const APEX_MAX = 6;
+  const PENALTY_MODE = 'Apex Peak is a separate +0 to +6 modifier. Loss penalty remains a separate raw negative modifier after the weighted positive score.';
 
   function num(value){
     const n = Number(value || 0);
@@ -34,14 +35,16 @@
     const primeDominance = weightedComponent(row, 'primeDominance');
     const opponentQuality = weightedComponent(row, 'opponentQuality');
     const longevity = weightedComponent(row, 'longevity');
+    const apexPeak = num(row.apexPeak);
     const penalty = num(row.penalty);
-    const positiveScore = championship + primeDominance + opponentQuality + longevity;
+    const positiveScore = championship + primeDominance + opponentQuality + longevity + apexPeak;
     const totalScore = positiveScore + penalty;
     return {
       championship: round2(championship),
       primeDominance: round2(primeDominance),
       opponentQuality: round2(opponentQuality),
       longevity: round2(longevity),
+      apexPeak: round2(apexPeak),
       positiveScore: round2(positiveScore),
       penalty: round2(penalty),
       totalScore: round2(totalScore)
@@ -80,7 +83,7 @@
   });
 
   if(DATA.meta){
-    DATA.meta.scoringWeights = { version: VERSION, weights: WEIGHTS, baseMax: BASE_MAX, penaltyMode: PENALTY_MODE };
+    DATA.meta.scoringWeights = { version: VERSION, weights: WEIGHTS, baseMax: BASE_MAX, apexMax: APEX_MAX, penaltyMode: PENALTY_MODE };
   }
 
   if(typeof DISPLAY_OVERRIDES !== 'undefined'){
@@ -101,11 +104,12 @@
       target.insertAdjacentHTML('beforeend', `
         <div class="card"><h3>Overall Weighting</h3><table class="table"><tbody>
           <tr><td><strong>Title Reign</strong></td><td>35%</td></tr>
-          <tr><td><strong>Prime Dominance</strong></td><td>27.5%</td></tr>
-          <tr><td><strong>Quality Wins</strong></td><td>27.5%</td></tr>
+          <tr><td><strong>Prime Dominance</strong></td><td>25%</td></tr>
+          <tr><td><strong>Quality Wins</strong></td><td>25%</td></tr>
           <tr><td><strong>Elite Longevity</strong></td><td>10%</td></tr>
-          <tr><td><strong>Loss Context</strong></td><td>Separate modifier after the positive score.</td></tr>
-        </tbody></table><p class="meta">Category formulas stay intact; this layer only changes how they combine into the overall ranking.</p></div>
+          <tr><td><strong>Apex Peak</strong></td><td>+0 to +6 bonus for best-night / best-year proof.</td></tr>
+          <tr><td><strong>Loss Context</strong></td><td>Separate negative modifier after the positive score.</td></tr>
+        </tbody></table><p class="meta">Category formulas stay intact. Apex Peak adds controlled best-version credit; Loss Context stays separate.</p></div>
       `);
     };
   }
@@ -116,8 +120,9 @@
     version: VERSION,
     weights: WEIGHTS,
     baseMax: BASE_MAX,
+    apexMax: APEX_MAX,
     penaltyMode: PENALTY_MODE,
-    formula: 'championship/30*35 + primeDominance/30*27.5 + opponentQuality/25*27.5 + longevity/15*10 + penalty',
+    formula: 'championship/30*35 + primeDominance/30*25 + opponentQuality/25*25 + longevity/15*10 + apexPeak + penalty',
     appliedAt: new Date().toISOString()
   };
 
