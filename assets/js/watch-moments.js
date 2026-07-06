@@ -1,7 +1,7 @@
 // Watch Moment links for fighter cards and profiles.
 // Keep links here as app-facing content, separate from scoring.
 (function(){
-  const VERSION = 'watch-moments-20260706g-deiveson-figueiredo';
+  const VERSION = 'watch-moments-20260706h-tito-jds';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -32,6 +32,8 @@
     'T.J. Dillashaw': 'https://youtube.com/shorts/FiV10zxE8RY?is=S7az7vuBDbjIuIfJ',
     'Alex Pereira': 'https://youtube.com/shorts/rb-yUzZNAcQ?is=o8jclP4Z3MTHGH0x',
     'Chuck Liddell': 'https://youtube.com/shorts/yx_Phoyotj0?is=37ZCvF_fOG0d62BR',
+    'Tito Ortiz': 'https://youtube.com/shorts/oz2yVJTttC8?si=IPyqNy4AkugoWVfi',
+    'Junior dos Santos': 'https://youtube.com/shorts/Lj6I1i8V0-Y?si=SCGyTCBodnA4CkbE',
     'Dominick Cruz': 'https://youtube.com/shorts/qtiyeEjlmNE?is=RFtIr9qAPjx98Ey5',
     'Francis Ngannou': 'https://youtube.com/shorts/UlZTD5oOgpU?is=dxMm-lAXt6S8UnTo',
     'Charles Oliveira': 'https://youtube.com/shorts/uqC1O-BdcxU?is=ON5Q8K7zkTqHj9_T',
