@@ -23,6 +23,36 @@
   <script src="assets/data/ranking-data.js?v=ranking-data-20260701e"></script>
   <script src="assets/data/display-overrides.js?v=display-overrides-20260701e"></script>
   <script src="assets/js/app.js?v=app-20260701e"></script>
+  <script>
+  (function(){
+    const toolbar = document.querySelector('.toolbar');
+    const search = document.getElementById('search');
+    const divisionFilter = document.getElementById('divisionFilter');
+
+    function activeView(){
+      return document.querySelector('.tab.active')?.dataset.view || 'men';
+    }
+
+    function syncToolbar(){
+      const view = activeView();
+      const isLeaderboard = view === 'men' || view === 'women';
+      const isDivision = view === 'division';
+
+      if(toolbar) toolbar.style.display = (view === 'compare' || view === 'rules') ? 'none' : '';
+      if(search) search.style.display = isLeaderboard ? '' : 'none';
+      if(divisionFilter) divisionFilter.style.display = isDivision ? '' : 'none';
+
+      if(!isDivision && divisionFilter && divisionFilter.value !== 'All'){
+        divisionFilter.value = 'All';
+        if(typeof refresh === 'function') refresh();
+      }
+    }
+
+    document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', syncToolbar));
+    document.getElementById('resetBtn')?.addEventListener('click', syncToolbar);
+    syncToolbar();
+  })();
+  </script>
   <script src="assets/data/ranking-data-patches.js?v=ranking-data-patches-20260703f-stability-no-polish-observers"></script>
 </body>
 </html>
