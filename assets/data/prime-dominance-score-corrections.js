@@ -1,7 +1,7 @@
 // Prime Dominance no-sample-confidence score corrections.
 // Applies locked Prime Dominance worksheet corrections after base data, additions, packets, round-row fixes, Championship, and OQ corrections load.
 (function(){
-  const VERSION = 'prime-dominance-score-corrections-20260704a';
+  const VERSION = 'prime-dominance-score-corrections-20260705b';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
@@ -21,7 +21,7 @@
     'Cain Velasquez': { primeDominance: 21.42, notes: 'No-sample formula. Strong HW peak control/finishing, but injuries, losses, and shorter title-defense dominance cap the score.' },
     'Kamaru Usman': { primeDominance: 21.18, notes: 'No-sample formula. Strong WW title streak and round control, capped by Leon and late-prime loss context.' },
     'Matt Hughes': { primeDominance: 19.05, notes: 'No-sample formula. Old-era WW title volume and finishing, but full elite-prime losses and safety score cap heavily.' },
-    'Jose Aldo': { primeDominance: 18.78, notes: 'No-sample formula. UFC-only prime recognizes title-defense dominance but excludes WEC peak and includes Holloway loss context.' },
+    'Jose Aldo': { primeDominance: 17.00, notes: 'Rebalanced UFC-only prime. Title-defense skill still matters, but a 10-4 prime/late-prime window with McGregor KO, Holloway TKO twice, and Volkanovski decision should not grade like a top-10 all-time UFC prime.' },
     'Stipe Miocic': { primeDominance: 18.73, notes: 'No-sample formula. HW championship peak and finish profile, capped by prime losses and heavyweight division context.' },
     'Daniel Cormier': { primeDominance: 18.62, notes: 'No-sample formula. Strong LHW/HW elite-prime résumé, but Jones/Stipe round and loss context caps Prime Dominance.' },
     'Charles Oliveira': { primeDominance: 17.96, notes: 'No-sample formula. Dangerous modern LW finisher, but full elite-prime window includes Islam/Arman/Topuria caps and shorter title-defense streak.' },
