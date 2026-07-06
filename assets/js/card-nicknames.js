@@ -1,7 +1,7 @@
-// Display-name nicknames for fighters who are clearly known by one.
-// Keeps data keys unchanged. Does not touch resume-tag pills.
+// Profile-card display nicknames for fighters who are clearly known by one.
+// Keeps list/board rows clean and keeps data keys unchanged. Does not touch resume-tag pills.
 (function(){
-  const VERSION = 'card-nicknames-20260706g-rose';
+  const VERSION = 'card-nicknames-20260706h-profile-only';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const DISPLAY_NAMES = {
@@ -40,19 +40,6 @@
     if(RESUME_TAG_RESTORE[fighter]) DISPLAY_OVERRIDES[fighter].resumeTag = RESUME_TAG_RESTORE[fighter];
   });
 
-  function displayNameFor(name){ return DISPLAY_NAMES[name] || name; }
-
-  function applyRowDisplayNames(root){
-    const scope = root || document;
-    scope.querySelectorAll('.fighter-row[data-fighter]').forEach(row => {
-      const fighter = row.dataset.fighter;
-      const displayName = displayNameFor(fighter);
-      const nameEl = row.querySelector('.row-main .name');
-      if(nameEl && displayName !== fighter) nameEl.textContent = displayName;
-      row.querySelectorAll('.card-nickname-line').forEach(el => el.remove());
-    });
-  }
-
   function applyProfileDisplayName(){
     const detail = document.getElementById('fighterDetail');
     if(!detail) return;
@@ -62,51 +49,24 @@
     if(baseName) h2.textContent = DISPLAY_NAMES[baseName];
   }
 
-  const originalRenderList = window.renderList;
-  if(typeof originalRenderList === 'function' && !originalRenderList.__displayNameWrapped){
-    const wrappedRenderList = function(containerId, rows){
-      const result = originalRenderList.apply(this, arguments);
-      const container = document.getElementById(containerId);
-      if(container) applyRowDisplayNames(container);
-      return result;
-    };
-    wrappedRenderList.__displayNameWrapped = true;
-    window.renderList = wrappedRenderList;
-    try { renderList = wrappedRenderList; } catch(e) {}
-  }
-
-  const originalRenderDivision = window.renderDivision;
-  if(typeof originalRenderDivision === 'function' && !originalRenderDivision.__displayNameWrapped){
-    const wrappedRenderDivision = function(){
-      const result = originalRenderDivision.apply(this, arguments);
-      const container = document.getElementById('divisionList');
-      if(container) applyRowDisplayNames(container);
-      return result;
-    };
-    wrappedRenderDivision.__displayNameWrapped = true;
-    window.renderDivision = wrappedRenderDivision;
-    try { renderDivision = wrappedRenderDivision; } catch(e) {}
-  }
-
   const originalOpenFighter = window.openFighter;
-  if(typeof originalOpenFighter === 'function' && !originalOpenFighter.__displayNameWrapped){
+  if(typeof originalOpenFighter === 'function' && !originalOpenFighter.__profileDisplayNameWrapped){
     const wrappedOpenFighter = function(name){
       const result = originalOpenFighter.apply(this, arguments);
       applyProfileDisplayName();
       return result;
     };
-    wrappedOpenFighter.__displayNameWrapped = true;
+    wrappedOpenFighter.__profileDisplayNameWrapped = true;
     window.openFighter = wrappedOpenFighter;
     try { openFighter = wrappedOpenFighter; } catch(e) {}
   }
 
-  applyRowDisplayNames(document);
   applyProfileDisplayName();
 
   window.UFC_CARD_NICKNAMES = {
     version: VERSION,
     fighters: Object.keys(DISPLAY_NAMES),
     displayNames: DISPLAY_NAMES,
-    scope: 'display-name-not-pill'
+    scope: 'profile-display-name-only'
   };
 })();
