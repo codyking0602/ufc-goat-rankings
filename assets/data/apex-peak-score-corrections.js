@@ -1,7 +1,7 @@
 // Apex Peak bonus corrections.
 // Adds a controlled 0-to-6 best-night / best-year modifier before final score weighting.
 (function(){
-  const VERSION = 'apex-peak-score-corrections-20260705b';
+  const VERSION = 'apex-peak-score-corrections-20260705c';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
@@ -133,6 +133,78 @@
       window: 'Takeya Mizugaki 2014 through T.J. Dillashaw 2016',
       components: { peakStatus: 0.75, eliteOpponentProof: 0.75, separationDominance: 0.75, divisionStrength: 0.50, cleanApexAura: 0.50 },
       notes: 'UFC-only Cruz apex is the comeback/technical control version, not the full WEC-inclusive peak. Strong but capped by UFC-only volume and finish profile.'
+    },
+    'Ilia Topuria': {
+      apexPeak: 5.00,
+      window: 'Alexander Volkanovski 2024 through current lightweight title window',
+      components: { peakStatus: 1.25, eliteOpponentProof: 1.25, separationDominance: 1.25, divisionStrength: 0.75, cleanApexAura: 0.50 },
+      notes: 'Current-table monster apex: Volkanovski plus title-level lightweight proof creates a huge best-night case. Short sample keeps him below the completed mythic peaks for now.'
+    },
+    'Francis Ngannou': {
+      apexPeak: 4.25,
+      window: 'Jairzinho Rozenstruik 2020 through Ciryl Gane 2022',
+      components: { peakStatus: 1.00, eliteOpponentProof: 1.00, separationDominance: 1.25, divisionStrength: 0.50, cleanApexAura: 0.50 },
+      notes: 'Terrifying heavyweight apex with unmatched one-shot danger and improved title-fight proof. Heavyweight volatility and UFC exit/context keep it below the top apex tier.'
+    },
+    'Cain Velasquez': {
+      apexPeak: 4.00,
+      window: 'Brock Lesnar 2010 through Junior dos Santos III 2013',
+      components: { peakStatus: 1.00, eliteOpponentProof: 1.25, separationDominance: 1.00, divisionStrength: 0.50, cleanApexAura: 0.25 },
+      notes: 'High-level heavyweight apex with pace, pressure, and elite title proof. Injuries, heavyweight volatility, and limited clean longevity cap the aura score.'
+    },
+    'T.J. Dillashaw': {
+      apexPeak: 4.00,
+      window: 'Renan Barao 2014 through Cody Garbrandt II 2018',
+      components: { peakStatus: 1.00, eliteOpponentProof: 1.00, separationDominance: 1.25, divisionStrength: 0.50, cleanApexAura: 0.25 },
+      notes: 'Barao/Garbrandt apex was technically brilliant and violent. EPO context and later shoulder/injury end keep the clean-aura score low.'
+    },
+    'Petr Yan': {
+      apexPeak: 3.75,
+      window: 'Jose Aldo 2020 through Aljamain Sterling I 2021',
+      components: { peakStatus: 0.75, eliteOpponentProof: 1.00, separationDominance: 0.75, divisionStrength: 0.75, cleanApexAura: 0.50 },
+      notes: 'High-skill bantamweight apex with elite technical separation. Sterling rivalry and narrow later losses keep him from a higher best-alive score.'
+    },
+    'Aljamain Sterling': {
+      apexPeak: 3.75,
+      window: 'Petr Yan II 2022 through Henry Cejudo 2023',
+      components: { peakStatus: 0.75, eliteOpponentProof: 1.25, separationDominance: 0.50, divisionStrength: 0.75, cleanApexAura: 0.50 },
+      notes: 'Modern bantamweight title apex with Yan/Cejudo proof. Style, DQ/title context, and narrow scorecards limit separation but not opponent proof.'
+    },
+    'Dustin Poirier': {
+      apexPeak: 3.50,
+      window: 'Justin Gaethje 2018 through Conor McGregor II 2021',
+      components: { peakStatus: 0.50, eliteOpponentProof: 1.25, separationDominance: 0.50, divisionStrength: 1.00, cleanApexAura: 0.25 },
+      notes: 'Excellent lightweight apex résumé with Gaethje, Holloway, and McGregor proof. Title-fight losses and chaotic damage profile keep the best-alive/aura score modest.'
+    },
+    'B.J. Penn': {
+      apexPeak: 3.50,
+      window: 'Joe Stevenson 2008 through Diego Sanchez 2009',
+      components: { peakStatus: 1.00, eliteOpponentProof: 0.75, separationDominance: 0.75, divisionStrength: 0.50, cleanApexAura: 0.50 },
+      notes: 'UFC lightweight apex had real aura and dominance, but UFC-only opponent proof and the GSP welterweight ceiling keep it below the deepest modern peaks.'
+    },
+    'Chuck Liddell': {
+      apexPeak: 3.50,
+      window: 'Randy Couture II 2005 through Tito Ortiz II 2006',
+      components: { peakStatus: 0.75, eliteOpponentProof: 1.00, separationDominance: 0.75, divisionStrength: 0.50, cleanApexAura: 0.50 },
+      notes: 'Star-era light heavyweight apex with major title proof and knockout aura. Era/depth and later durability collapse cap the bonus.'
+    },
+    'Justin Gaethje': {
+      apexPeak: 3.25,
+      window: 'Tony Ferguson 2020 through Dustin Poirier II 2023',
+      components: { peakStatus: 0.50, eliteOpponentProof: 1.00, separationDominance: 0.50, divisionStrength: 1.00, cleanApexAura: 0.25 },
+      notes: 'Violent lightweight apex with Ferguson and Poirier proof in a brutal division. Khabib/Oliveira/Topuria title-level losses keep best-alive and aura scores limited.'
+    },
+    'Frankie Edgar': {
+      apexPeak: 3.25,
+      window: 'B.J. Penn 2010 through Gray Maynard III 2011',
+      components: { peakStatus: 0.75, eliteOpponentProof: 1.00, separationDominance: 0.50, divisionStrength: 0.50, cleanApexAura: 0.50 },
+      notes: 'Lightweight title apex with Penn/Maynard proof and great resilience. Close fights and limited one-night separation keep the apex moderate.'
+    },
+    'Dan Henderson': {
+      apexPeak: 2.50,
+      window: 'Michael Bisping 2009 through Mauricio Rua 2011',
+      components: { peakStatus: 0.25, eliteOpponentProof: 0.75, separationDominance: 0.75, divisionStrength: 0.50, cleanApexAura: 0.25 },
+      notes: 'UFC-only apex is built around violent signature moments, not a clean best-fighter-alive case. Pride/Strikeforce context remains outside the main scoring.'
     }
   };
 
@@ -154,7 +226,7 @@
       componentTotal,
       notes: c.notes,
       rubric: RUBRIC,
-      source: 'Apex Peak Batches 1-2 rubric',
+      source: 'Apex Peak Batches 1-3 rubric',
       version: VERSION
     };
   }
