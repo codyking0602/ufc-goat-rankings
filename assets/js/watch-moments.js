@@ -1,7 +1,7 @@
 // Watch Moment links for fighter cards and profiles.
 // Keep links here as app-facing content, separate from scoring.
 (function(){
-  const VERSION = 'watch-moments-20260705a';
+  const VERSION = 'watch-moments-20260705b-dricus';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -19,6 +19,7 @@
     'Matt Hughes': 'https://youtube.com/shorts/GmHGebqse1A?is=5ebbOhdaf9CEd8jN',
     'Daniel Cormier': 'https://youtube.com/shorts/seA_5VuSqFM?is=2bLCZ4sd8urFGiE8',
     'Stipe Miocic': 'https://youtube.com/shorts/h_ThhOpI_dg?is=4Sr5Mcp01GkYxtrG',
+    'Dricus du Plessis': 'https://youtube.com/shorts/ifsX-hgSzz4?is=NWgRwVVkTzsNBGVC',
     'Ilia Topuria': 'https://youtube.com/shorts/8HrxSwOoLZM?is=eygzt_4-hGWU87kL',
     'Israel Adesanya': 'https://youtube.com/shorts/CbvjjHBCUQM?is=J86x9mup7tQHDZS7',
     'Aljamain Sterling': 'https://youtube.com/shorts/9u6oSybWX0o?is=vI7Sq1yLpVg-CsbN',
