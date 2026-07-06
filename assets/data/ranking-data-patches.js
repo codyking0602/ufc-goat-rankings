@@ -1,6 +1,6 @@
 // Lightweight post-load status hook and module loader.
 (function(){
-  const VERSION='ranking-data-patches-20260706c-rounds-watch';
+  const VERSION='ranking-data-patches-20260706d-sean-strickland';
   const SLUG_OVERRIDES={'B.J. Penn':'bj-penn','BJ Penn':'bj-penn','Georges St-Pierre':'georges-st-pierre','T.J. Dillashaw':'tj-dillashaw','TJ Dillashaw':'tj-dillashaw','Junior dos Santos':'junior-dos-santos','Mauricio Rua':'mauricio-rua','Maurício Rua':'mauricio-rua','Zabit Magomedsharipov':'zabit-magomedsharipov',"Sean O'Malley":'sean-omalley'};
   const FALLBACK_PACKET_MANIFEST=[
     {slug:'demetrious-johnson',version:'20260702a'},{slug:'anderson-silva',version:'20260702a'},{slug:'khabib-nurmagomedov',version:'20260702a'},{slug:'islam-makhachev',version:'20260702a'},
@@ -10,8 +10,9 @@
     {slug:'petr-yan',version:'20260702b'},{slug:'cain-velasquez',version:'20260702b'},{slug:'merab-dvalishvili',version:'20260702b'},{slug:'bj-penn',version:'20260702b'},
     {slug:'dustin-poirier',version:'20260703a'},{slug:'tj-dillashaw',version:'20260703a'},{slug:'alex-pereira',version:'20260702c'},{slug:'chuck-liddell',version:'20260702a'},
     {slug:'dominick-cruz',version:'20260702a'},{slug:'francis-ngannou',version:'20260702a'},{slug:'charles-oliveira',version:'20260702a'},{slug:'henry-cejudo',version:'20260702a'},
-    {slug:'conor-mcgregor',version:'20260702a'},{slug:'justin-gaethje',version:'20260702d'},{slug:'frankie-edgar',version:'20260703b'},{slug:'robert-whittaker',version:'20260706b-round-control'},{slug:'sean-omalley',version:'20260706b-round-control'},
-    {slug:'dan-henderson',version:'20260703a'},{slug:'amanda-nunes',version:'20260702a'},{slug:'valentina-shevchenko',version:'20260702a'},{slug:'joanna-jedrzejczyk',version:'20260702b'},{slug:'ronda-rousey',version:'20260702b'}
+    {slug:'conor-mcgregor',version:'20260702a'},{slug:'justin-gaethje',version:'20260702d'},{slug:'frankie-edgar',version:'20260703b'},{slug:'sean-strickland',version:'20260706a'},
+    {slug:'robert-whittaker',version:'20260706b-round-control'},{slug:'sean-omalley',version:'20260706b-round-control'},{slug:'dan-henderson',version:'20260703a'},
+    {slug:'amanda-nunes',version:'20260702a'},{slug:'valentina-shevchenko',version:'20260702a'},{slug:'joanna-jedrzejczyk',version:'20260702b'},{slug:'ronda-rousey',version:'20260702b'}
   ];
   let fallbackInstalled=false;
   function slugFor(name){ if(SLUG_OVERRIDES[name]) return SLUG_OVERRIDES[name]; return String(name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/&/g,' and ').replace(/['’]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''); }
@@ -29,7 +30,7 @@
   function loadSequence(items,done){const next=i=>{if(i>=items.length){if(done)done();return;}loadScriptOnce(items[i].src,items[i].attr,()=>next(i+1));};next(0);}
   function packet(slug,v){return{src:`assets/data/fighter-packets/${slug}.js?v=fighter-packet-${slug}-${v}`,attr:`data-fighter-packet-${slug}`};}
   function compareCoreScripts(){ const packets=packetManifest().map(row=>packet(row.slug,row.version)); return [
-      {src:'assets/data/ranking-data-additions.js?v=ranking-data-additions-20260706b-robert-whittaker',attr:'data-ranking-data-additions'},
+      {src:'assets/data/ranking-data-additions.js?v=ranking-data-additions-20260706c-sean-strickland',attr:'data-ranking-data-additions'},
       {src:'assets/data/fighter-packet-schema.js?v=fighter-packet-schema-20260703a',attr:'data-fighter-packet-schema'},
       {src:'assets/compare-data.js?v=compare-data-20260630a',attr:'data-compare-data'},
       {src:'assets/compare-coverage-pack-1.js?v=compare-coverage-pack-1-20260630a',attr:'data-compare-coverage-pack-1'},
@@ -53,8 +54,8 @@
       {src:'assets/compare-engine-v1-5.js?v=compare-engine-v1-5-20260630b',attr:'data-compare-engine-v1-5'},
       {src:'assets/compare-copy-fixes-v1.js?v=compare-copy-fixes-v1-20260630a',attr:'data-compare-copy-fixes-v1'}
     ]; }
-  function loadModules(){ const loadCompareWatchdog=()=>loadScriptOnce('assets/js/compare-narrative-watchdog.js?v=compare-narrative-watchdog-20260702a','data-compare-narrative-watchdog',status); const loadCompareNarrative=()=>loadScriptOnce('assets/js/compare-narrative-system.js?v=compare-narrative-system-20260703g','data-compare-narrative-system',loadCompareWatchdog); const loadCompareCore=()=>loadSequence(compareCoreScripts(),loadCompareNarrative); const loadPacketManifest=()=>loadScriptOnce('assets/data/fighter-packet-manifest.js?v=fighter-packet-manifest-20260706c-round-control','data-fighter-packet-manifest',loadCompareCore); const loadBranding=()=>loadScriptOnce('assets/js/app-branding.js?v=app-branding-20260702c','data-app-branding',loadPacketManifest); const loadDivisionRankings=()=>loadScriptOnce('assets/js/division-rankings.js?v=division-rankings-20260705d-fluid-apex','data-division-rankings',loadBranding); const loadHomePolish=()=>loadScriptOnce('assets/js/home-polish.js?v=home-polish-hybrid-preview-20260705b','data-home-polish',loadDivisionRankings); const loadWatchMoments=()=>loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260706b-whittaker','data-watch-moments',loadHomePolish); const loadPackages=()=>loadScriptOnce('assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260702a','data-fighter-profile-packages',loadWatchMoments); if(window.UFC_PROFILE_TEMPLATE_SYSTEM){loadPackages();return;} loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260702b','data-profile-template-system',loadPackages); }
+  function loadModules(){ const loadCompareWatchdog=()=>loadScriptOnce('assets/js/compare-narrative-watchdog.js?v=compare-narrative-watchdog-20260702a','data-compare-narrative-watchdog',status); const loadCompareNarrative=()=>loadScriptOnce('assets/js/compare-narrative-system.js?v=compare-narrative-system-20260703g','data-compare-narrative-system',loadCompareWatchdog); const loadCompareCore=()=>loadSequence(compareCoreScripts(),loadCompareNarrative); const loadPacketManifest=()=>loadScriptOnce('assets/data/fighter-packet-manifest.js?v=fighter-packet-manifest-20260706d-sean-strickland','data-fighter-packet-manifest',loadCompareCore); const loadBranding=()=>loadScriptOnce('assets/js/app-branding.js?v=app-branding-20260702c','data-app-branding',loadPacketManifest); const loadDivisionRankings=()=>loadScriptOnce('assets/js/division-rankings.js?v=division-rankings-20260705d-fluid-apex','data-division-rankings',loadBranding); const loadHomePolish=()=>loadScriptOnce('assets/js/home-polish.js?v=home-polish-hybrid-preview-20260705b','data-home-polish',loadDivisionRankings); const loadWatchMoments=()=>loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260706c-sean-strickland','data-watch-moments',loadHomePolish); const loadPackages=()=>loadScriptOnce('assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260702a','data-fighter-profile-packages',loadWatchMoments); if(window.UFC_PROFILE_TEMPLATE_SYSTEM){loadPackages();return;} loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260702b','data-profile-template-system',loadPackages); }
 
-  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Status hook and module loader with Sean/Whittaker round-control rows and Whittaker Watch Moment',updated:'2026-07-06',version:VERSION},apply:status,slugFor,syncPacketProfileStats,packetManifest};
+  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Status hook and module loader with Sean Strickland permanent add, packet, round-control rows, and Watch Moment',updated:'2026-07-06',version:VERSION},apply:status,slugFor,syncPacketProfileStats,packetManifest};
   installImageFallback(); applyPhotoPathDefaults(); syncPacketProfileStats(); loadModules(); window.UFC_PHASE2_DATA_REFRESH=status;
 })();
