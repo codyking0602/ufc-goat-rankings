@@ -1,7 +1,7 @@
 // Profile-card display nicknames for fighters who are clearly known by one.
 // Keeps list/board rows clean and keeps data keys unchanged. Does not touch resume-tag pills.
 (function(){
-  const VERSION = 'card-nicknames-20260706h-profile-only';
+  const VERSION = 'card-nicknames-20260706i-miesha-tate';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const DISPLAY_NAMES = {
@@ -16,7 +16,8 @@
     'Tito Ortiz': 'Tito “The Huntington Beach Bad Boy” Ortiz',
     'Junior dos Santos': 'Junior “Cigano” dos Santos',
     'Zhang Weili': 'Zhang “Magnum” Weili',
-    'Rose Namajunas': '“Thug” Rose Namajunas'
+    'Rose Namajunas': '“Thug” Rose Namajunas',
+    'Miesha Tate': 'Miesha “Cupcake” Tate'
   };
 
   const RESUME_TAG_RESTORE = {
@@ -31,7 +32,8 @@
     'Tito Ortiz': 'Early UFC title-reign anchor',
     'Junior dos Santos': 'Heavyweight win-streak destroyer',
     'Zhang Weili': 'Two-reign strawweight force',
-    'Rose Namajunas': 'Two-reign strawweight giant killer'
+    'Rose Namajunas': 'Two-reign strawweight giant killer',
+    'Miesha Tate': 'Bantamweight title comeback'
   };
 
   Object.entries(DISPLAY_NAMES).forEach(([fighter, displayName]) => {
