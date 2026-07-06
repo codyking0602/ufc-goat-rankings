@@ -1,7 +1,7 @@
 // Display-name nicknames for fighters who are clearly known by one.
 // Keeps data keys unchanged. Does not touch resume-tag pills.
 (function(){
-  const VERSION = 'card-nicknames-20260706f-display-name';
+  const VERSION = 'card-nicknames-20260706g-rose';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const DISPLAY_NAMES = {
@@ -15,7 +15,8 @@
     'Deiveson Figueiredo': 'Deiveson “Deus da Guerra” Figueiredo',
     'Tito Ortiz': 'Tito “The Huntington Beach Bad Boy” Ortiz',
     'Junior dos Santos': 'Junior “Cigano” dos Santos',
-    'Zhang Weili': 'Zhang “Magnum” Weili'
+    'Zhang Weili': 'Zhang “Magnum” Weili',
+    'Rose Namajunas': '“Thug” Rose Namajunas'
   };
 
   const RESUME_TAG_RESTORE = {
@@ -29,7 +30,8 @@
     'Deiveson Figueiredo': 'Flyweight chaos champion',
     'Tito Ortiz': 'Early UFC title-reign anchor',
     'Junior dos Santos': 'Heavyweight win-streak destroyer',
-    'Zhang Weili': 'Two-reign strawweight force'
+    'Zhang Weili': 'Two-reign strawweight force',
+    'Rose Namajunas': 'Two-reign strawweight giant killer'
   };
 
   Object.entries(DISPLAY_NAMES).forEach(([fighter, displayName]) => {
