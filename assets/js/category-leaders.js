@@ -1,18 +1,18 @@
 // Adds a fluid Category Leaders tab tied to the current live category ratings.
 (function(){
-  const VERSION = 'category-leaders-20260705c';
+  const VERSION = 'category-leaders-20260705d';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
   const APEX_MAX = 6;
   const state = { category: 'championship', board: 'men' };
   const CATEGORIES = [
-    { key: 'championship', label: 'Championship Resume', unit: 'PCTL', description: 'UFC title-level accomplishment, weighted title wins, and championship control.' },
-    { key: 'opponentQuality', label: 'Opponent Quality Wins', unit: 'PCTL', description: 'Who they beat, when they beat them, and how strong the division was.' },
-    { key: 'primeDominance', label: 'Prime Dominance', unit: 'PCTL', description: 'How clearly they separated from opponents at their best.' },
-    { key: 'longevity', label: 'Elite Longevity', unit: 'PCTL', description: 'Active elite UFC years, not simple calendar time.' },
-    { key: 'apexPeak', label: 'Apex Peak', unit: 'Rating', description: 'Best-night / best-year proof, adjusted for opponent proof, separation, division strength, and aura.' },
-    { key: 'penalty', label: 'Loss Context', unit: 'PCTL', description: 'How clean the UFC résumé is after timing, opponent quality, finish context, and division context.' }
+    { key: 'championship', label: 'Championship Resume', description: 'UFC title-level accomplishment, weighted title wins, and championship control.' },
+    { key: 'opponentQuality', label: 'Opponent Quality Wins', description: 'Who they beat, when they beat them, and how strong the division was.' },
+    { key: 'primeDominance', label: 'Prime Dominance', description: 'How clearly they separated from opponents at their best.' },
+    { key: 'longevity', label: 'Elite Longevity', description: 'Active elite UFC years, not simple calendar time.' },
+    { key: 'apexPeak', label: 'Apex Peak', description: 'Best-night / best-year proof, adjusted for opponent proof, separation, division strength, and aura.' },
+    { key: 'penalty', label: 'Loss Context', description: 'How clean the UFC résumé is after timing, opponent quality, finish context, and division context.' }
   ];
 
   function el(id){ return document.getElementById(id); }
@@ -116,12 +116,6 @@
     }
     return '';
   }
-  function valueText(f,key){ return `${ratingFor(f,key)}`; }
-  function rawText(f,key){
-    if(key === 'apexPeak') return `Apex +${num(f.apexPeak).toFixed(2)} / 6`;
-    if(key === 'penalty') return `Loss context ${num(f.penalty).toFixed(2)}`;
-    return `Raw ${num(f[key]).toFixed(2)}`;
-  }
   function boardLabel(){ return state.board === 'women' ? 'Women' : 'Men'; }
   function ensureStyles(){
     if(document.getElementById('category-leaders-style')) return;
@@ -135,12 +129,11 @@
       .category-leader-board{grid-column:1/-1;justify-self:start;min-width:150px;max-width:190px;height:42px;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:999px;padding:0 14px;font-weight:850}
       .category-leader-summary{border:1px solid rgba(250,204,21,.28);background:rgba(18,23,34,.94);border-radius:16px;padding:12px 14px;color:var(--text);line-height:1.38}
       .category-leader-summary strong{color:var(--accent2)}
-      .category-leader-row{grid-template-columns:54px 64px minmax(0,1fr) 110px}
+      .category-leader-row{grid-template-columns:54px 64px minmax(0,1fr)}
       .category-leader-context{margin-top:6px;color:var(--muted);font-size:12px;line-height:1.35}
-      .category-leader-raw{display:inline-flex;margin-top:7px;border:1px solid rgba(255,255,255,.1);background:rgba(15,23,42,.62);color:#d1d5db;border-radius:999px;padding:5px 8px;font-size:11px;font-weight:800}
       .category-leader-row .watch-moment-link{display:none!important}
       @media(max-width:1100px){.category-leader-controls{grid-template-columns:repeat(3,minmax(0,1fr))}}
-      @media(max-width:900px){.category-leader-controls{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.category-leader-pill{width:100%;min-width:0;min-height:40px;padding:9px 10px;font-size:12px}.category-leader-board{grid-column:1/-1;width:100%;max-width:none;min-width:0}.category-leader-summary{font-size:13px;padding:11px 12px}.category-leader-row{grid-template-columns:34px 58px minmax(0,1fr) 74px}.category-leader-raw{white-space:normal;border-radius:14px}}
+      @media(max-width:900px){.category-leader-controls{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.category-leader-pill{width:100%;min-width:0;min-height:40px;padding:9px 10px;font-size:12px}.category-leader-board{grid-column:1/-1;width:100%;max-width:none;min-width:0}.category-leader-summary{font-size:13px;padding:11px 12px}.category-leader-row{grid-template-columns:34px 58px minmax(0,1fr)}}
     `;
     document.head.appendChild(style);
   }
@@ -206,8 +199,6 @@
     if(!list) return;
     list.innerHTML = rows.map((f) => {
       const displayRank = rankFor(f,state.category,state.board);
-      const rating = valueText(f,state.category);
-      const unit = info.unit;
       const divisions = `${f.primaryDivision || ''}${f.secondaryDivision ? ' / ' + f.secondaryDivision : ''}`;
       return `<article class="row category-leader-row" data-fighter="${escapeAttr(f.fighter)}">
         <div class="rank">#${displayRank || '—'}</div>
@@ -216,9 +207,7 @@
           <div class="name">${escapeHtml(f.fighter)}</div>
           <div class="meta">Overall #${overallRank(f)} · ${escapeHtml(f.ufcRecord || '')}${divisions ? ` · ${escapeHtml(divisions)}` : ''}</div>
           <div class="category-leader-context">${escapeHtml(contextFor(f,state.category))}</div>
-          <div class="category-leader-raw">${escapeHtml(rawText(f,state.category))}</div>
         </div>
-        <div class="score"><strong>${rating}</strong><span class="meta">${unit}</span></div>
       </article>`;
     }).join('') || '<div class="notice">No fighters are loaded for this category.</div>';
     list.querySelectorAll('.row').forEach(row => row.addEventListener('click', () => { if(typeof openFighter === 'function') openFighter(row.dataset.fighter); }));
