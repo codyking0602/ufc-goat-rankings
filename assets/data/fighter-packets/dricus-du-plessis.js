@@ -1,12 +1,26 @@
 // Dricus du Plessis fighter packet extension.
 (function(){
-  const VERSION = 'fighter-packet-dricus-du-plessis-20260705b-review';
+  const VERSION = 'fighter-packet-dricus-du-plessis-20260705c-round-control';
   const fighter = 'Dricus du Plessis';
 
+  const rounds = [
+    { opponent:'Markus Perez', date:'2020-10-11', method:'KO', roundEnded:1, roundsCounted:1, roundsWon:1, basis:'Round 1 finish counted as won', confidence:'High', notes:'' },
+    { opponent:'Trevin Giles', date:'2021-07-10', method:'TKO', roundEnded:2, roundsCounted:2, roundsWon:1, basis:'Finish round counted as won; prior round treated conservatively', confidence:'Low', notes:'Best-effort round-control row.' },
+    { opponent:'Brad Tavares', date:'2022-07-02', method:'Decision', roundEnded:3, roundsCounted:3, roundsWon:3, basis:'Decision scorecards / clear control estimate', confidence:'Medium', notes:'' },
+    { opponent:'Darren Till', date:'2022-12-10', method:'Submission', roundEnded:3, roundsCounted:3, roundsWon:2, basis:'Round 1 plus finish round counted', confidence:'Medium', notes:'Best-effort split because Till had mid-fight success.' },
+    { opponent:'Derek Brunson', date:'2023-03-04', method:'TKO', roundEnded:2, roundsCounted:2, roundsWon:1, basis:'Finish round counted as won; early grappling round treated conservatively', confidence:'Low', notes:'Best-effort round-control row.' },
+    { opponent:'Robert Whittaker', date:'2023-07-08', method:'TKO', roundEnded:2, roundsCounted:2, roundsWon:2, basis:'Finish round counted as won with strong prior-round work', confidence:'Medium', notes:'' },
+    { opponent:'Sean Strickland', date:'2024-01-20', method:'Split Decision', roundEnded:5, roundsCounted:5, roundsWon:3, basis:'Official split title scorecard result', confidence:'Medium', notes:'Close title fight; 3-of-5 treated as the scoring-side call.' },
+    { opponent:'Israel Adesanya', date:'2024-08-18', method:'Submission', roundEnded:4, roundsCounted:4, roundsWon:2, basis:'Finish round counted as won; earlier rounds split conservatively', confidence:'Medium', notes:'Best-effort row due competitive striking rounds.' },
+    { opponent:'Sean Strickland 2', date:'2025-02-09', method:'Decision', roundEnded:5, roundsCounted:5, roundsWon:4, basis:'Current-table title-defense result; clearer rematch win', confidence:'Low', notes:'Current-table / best-effort row until next full scoring rebuild.' },
+    { opponent:'Khamzat Chimaev', date:'2025-08-16', method:'Decision Loss', roundEnded:5, roundsCounted:5, roundsWon:0, basis:'Current-table title loss treated as elite decision loss', confidence:'Low', notes:'Current-table / best-effort row until next full scoring rebuild.' }
+  ];
+
   const packet = {
-    status: { stage: 'complete first-pass packet; reviewed against fighter-add workflow', lastUpdated: '2026-07-05', nextFix: 'Add real photos after Cody uploads source images; audit exact rounds-won percentage during next scoring-table rebuild.' },
+    status: { stage: 'complete first-pass packet; reviewed against fighter-add workflow; round-control rows added', lastUpdated: '2026-07-05', nextFix: 'Add real photos after Cody uploads source images; audit exact rounds-won percentage during next scoring-table rebuild.' },
     repoLocations: { scoreSource: 'assets/data/ranking-data-additions.js', centralPacket: 'assets/data/fighter-packets/dricus-du-plessis.js', apexPeak: 'assets/data/apex-peak-score-corrections.js', watchMoment: 'assets/js/watch-moments.js', tracker: 'docs/fighter-status.md', photos: 'No real photo files loaded yet; app should use initials fallback.' },
     photos: {},
+    rounds,
     display: {
       overallOvr: 88, allTimeRank: 13, divisionLabel: 'MW', resumeTag: 'Modern middleweight champion',
       oneLiner: 'The modern middleweight chaos champion: Whittaker, Adesanya, and Strickland wins, strong finishing threat, and only one elite decision loss in the UFC.',
@@ -14,7 +28,7 @@
       snapshot: [ ['UFC Record', '9-1'], ['UFC Title-Fight Wins', '3'], ['Apex Peak', '+3.50'], ['Quality Wins', 'Whittaker, Adesanya, Strickland x2'], ['Prime Record', '7-1 Elite Window'], ['Active Elite Years', '3.2 Elite Years'], ['Loss Context', 'Khamzat decision loss only'] ],
       whyRankedHere: 'Du Plessis ranks here because his UFC middleweight run got loud fast: Whittaker, Strickland, Adesanya, and Strickland again is a serious modern title-level win stack. The record is clean, the finishing threat is real, and the only UFC loss came to an elite champion-level opponent by decision.',
       whyNotHigher: 'He does not rank higher yet because the elite window is still short. He has strong championship value, but not the long title-fight volume, active elite years, or multi-era proof of the all-time names above him.',
-      bigAssumptions: [ ['Current-table scope', 'Uses the current scoring-table version where Dricus is 9-1 in the UFC with title wins over Strickland, Adesanya, and Strickland again, plus a Khamzat title loss.'], ['Apex window', 'Whittaker through Adesanya/Strickland II is treated as his best short UFC window.'], ['Middleweight strength', 'Modern middleweight gets respect but does not score like lightweight or GSP-era welterweight.'], ['Loss treatment', 'The Khamzat loss is a prime elite decision loss only, not a finish penalty.'] ],
+      bigAssumptions: [ ['Current-table scope', 'Uses the current scoring-table version where Dricus is 9-1 in the UFC with title wins over Strickland, Adesanya, and Strickland again, plus a Khamzat title loss.'], ['Apex window', 'Whittaker through Adesanya/Strickland II is treated as his best short UFC window.'], ['Middleweight strength', 'Modern middleweight gets respect but does not score like lightweight or GSP-era welterweight.'], ['Loss treatment', 'The Khamzat loss is a prime elite decision loss only, not a finish penalty.'], ['Round control', 'Round rows are best-effort and should be audited in the next full scoring-table rebuild.'] ],
       keyJudgmentCalls: [ ['Non-UFC titles', 'KSW and EFC accomplishments are historical context only, not scored.'], ['Whittaker win', 'treated as the prime-start signal because it proved elite middleweight level.'], ['Adesanya win', 'carries major champion-value credit because it came in a UFC title defense.'], ['Strickland rivalry', 'the two UFC title-fight wins give Dricus real direct separation.'], ['Khamzat loss', 'counts as a prime elite decision loss, with no finish add-on.'] ],
       apexPeakSummary: { score: 3.50, window: 'Robert Whittaker 2023 through Israel Adesanya 2024 / Sean Strickland II 2025', notes: 'Strong short-window title proof, but not a clean best-fighter-alive aura case.' },
       finalTakeaway: 'Du Plessis is already a real UFC-only middleweight legacy case: not long enough for the inner GOAT circle, but strong enough to sit with the modern champion tier because the high-end wins are loud.'
@@ -49,8 +63,9 @@
 
   function mergeLegacyStats(a,b){ return { ...(a || {}), ...(b || {}) }; }
   function mergeCompareProfile(a,b){ return { ...(a || {}), ...(b || {}), legacyStats: mergeLegacyStats((a || {}).legacyStats, (b || {}).legacyStats) }; }
+  function patchData(){ if(!window.RANKING_DATA) return; [...(window.RANKING_DATA.men || []), ...(window.RANKING_DATA.fighters || [])].forEach(row => { if(row?.fighter !== fighter) return; row.rounds = rounds; }); }
   function applyDisplay(){ if(typeof DISPLAY_OVERRIDES === 'undefined') return; DISPLAY_OVERRIDES[fighter] = { ...(DISPLAY_OVERRIDES[fighter] || {}), ...(packet.display || {}) }; if(packet.watchMoment?.url){ DISPLAY_OVERRIDES[fighter].watchUrl = packet.watchMoment.url; DISPLAY_OVERRIDES[fighter].watchLabel = packet.watchMoment.label || 'Watch Moment'; } DISPLAY_OVERRIDES[fighter].packetProfileStats = { ...(DISPLAY_OVERRIDES[fighter].packetProfileStats || {}), ...(packet.profileStats || {}) }; DISPLAY_OVERRIDES[fighter].packetStatus = packet.status || {}; DISPLAY_OVERRIDES[fighter].repoLocations = packet.repoLocations || {}; }
   function applyCompare(){ if(packet.compareSeasoning){ window.COMPARE_PROFILES = window.COMPARE_PROFILES || {}; window.COMPARE_PROFILES[fighter] = mergeCompareProfile(window.COMPARE_PROFILES[fighter], packet.compareSeasoning); if(typeof DISPLAY_OVERRIDES !== 'undefined'){ DISPLAY_OVERRIDES[fighter] = DISPLAY_OVERRIDES[fighter] || {}; DISPLAY_OVERRIDES[fighter].compareProfile = mergeCompareProfile(DISPLAY_OVERRIDES[fighter].compareProfile, window.COMPARE_PROFILES[fighter]); } } if(packet.fightLedger){ window.COMPARE_FIGHT_LEDGER = window.COMPARE_FIGHT_LEDGER || {}; Object.entries(packet.fightLedger).forEach(([key,value])=>{ window.COMPARE_FIGHT_LEDGER[key] = { ...(window.COMPARE_FIGHT_LEDGER[key] || {}), ...value }; }); } }
   function registerPacket(){ window.UFC_FIGHTER_PACKETS = window.UFC_FIGHTER_PACKETS || {}; window.UFC_FIGHTER_PACKETS[fighter] = packet; const current = window.UFC_FIGHTER_PACKET_SYSTEM || {}; const fighters = Array.from(new Set([...(current.fighters || []), fighter])); const packetExtensions = Array.from(new Set([...(current.packetExtensions || []), VERSION])); window.UFC_FIGHTER_PACKET_SYSTEM = { ...current, version: current.version || VERSION, purpose: current.purpose || 'Central source for fighter-facing app content during migration.', fighters, packetExtensions, appliedAt: new Date().toISOString() }; }
-  applyDisplay(); applyCompare(); registerPacket();
+  patchData(); applyDisplay(); applyCompare(); registerPacket();
 })();
