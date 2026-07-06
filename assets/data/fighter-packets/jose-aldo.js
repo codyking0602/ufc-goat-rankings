@@ -1,44 +1,44 @@
 // Jose Aldo fighter packet extension.
 (function(){
-  const VERSION = 'fighter-packet-jose-aldo-20260705a';
+  const VERSION = 'fighter-packet-jose-aldo-20260705b';
   const fighter = 'Jose Aldo';
 
   const packet = {
-    status: { stage: 'complete in packet system', lastUpdated: '2026-07-05', nextFix: 'Finish-loss display corrected to match Aldo prime/late-prime loss context.' },
+    status: { stage: 'complete in packet system', lastUpdated: '2026-07-05', nextFix: 'UFC-only ranking tone rebalanced after Aldo top-10 sanity pass.' },
     repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/jose-aldo.js', displayFallback: 'assets/data/display-overrides.js', compareFallback: 'assets/compare-data.js', profileStatsFallback: 'assets/js/fighter-profile-packages.js', watchFallback: 'assets/js/watch-moments.js', photos: 'assets/fighters/jose-aldo.webp and assets/fighters/jose-aldo-thumb.webp' },
     photos: { photoUrl: 'assets/fighters/jose-aldo.webp', thumbUrl: 'assets/fighters/jose-aldo-thumb.webp' },
     display: {
-      overallOvr: 88, allTimeRank: 11, divisionLabel: 'FW / BW', resumeTag: 'Longevity legend',
-      oneLiner: 'The longevity legend: an elite featherweight reign plus a late-career bantamweight resurgence that keeps his UFC case alive across eras.',
-      categories: { championship: { ovr: 84, rank: 8 }, opponentQuality: { ovr: 86, rank: 9 }, primeDominance: { ovr: 85, rank: 26 }, longevity: { ovr: 94, rank: 4 } },
-      snapshot: [ ['UFC Record', '14-9'], ['UFC Title-Fight Wins', '8 adjusted credit'], ['Championship Level', 'Historic Featherweight Champion'], ['Quality Wins', 'Deep Across Two Eras'], ['Prime Record', '10-4 prime/late-prime window'], ['Active Elite Years', '11.3 Elite Years'], ['Loss Context', 'McGregor + Holloway x2 finished losses; Volk decision damage'] ],
-      whyRankedHere: 'Aldo ranks #11 because the current scoring model rewards his long elite shelf life, strong title work, and years of quality wins. His resume stays relevant because he held up across multiple generations of contenders.',
-      whyNotHigher: 'The current scoring model is UFC-only, so his WEC era is not carrying him here. His later UFC losses and a lower prime-dominance score than the names above him keep him just outside the top ten.',
-      keyJudgmentCalls: [ ['UFC-only scope', 'means the all-time WEC case is context only, not scored directly.'], ['Longevity', 'is the clear strength of the Aldo profile and one of the best scores in this ranking.'], ['Interim title', 'the UFC 200 interim win adds partial championship credit.'], ['Loss context', 'McGregor and both Holloway losses are counted as finished losses in the prime/late-prime window; Volkanovski is counted as elite decision damage.'], ['Prime dominance', 'sits lower than fans may expect, which is why his total rank lands outside the top ten here.'] ],
-      finalTakeaway: 'Aldo is the longevity legend of this ranking: a great champion with a long shelf life, strong quality wins, and a UFC-only profile that still holds up near the top ten.'
+      overallOvr: 86, allTimeRank: 14, divisionLabel: 'FW / BW', resumeTag: 'Scope-affected legend',
+      oneLiner: 'A UFC-only legend with real title value and longevity, but not a clean top-10 case once WEC is excluded and the McGregor/Holloway/Volk damage is counted.',
+      categories: { championship: { ovr: 84, rank: 8 }, opponentQuality: { ovr: 83, rank: 14 }, primeDominance: { ovr: 82, rank: 22 }, longevity: { ovr: 88, rank: 12 } },
+      snapshot: [ ['UFC Record', '14-9'], ['UFC Title-Fight Wins', '8 adjusted credit'], ['Championship Level', 'Historic Featherweight Champion'], ['Quality Wins', 'Strong, not top-tier'], ['Prime Record', '10-4 prime/late-prime window'], ['Active Elite Years', '7.1 weighted elite years'], ['Loss Context', 'McGregor + Holloway x2 finished losses; Volk decision damage'] ],
+      whyRankedHere: 'Aldo ranks in the top-15 range because the UFC-only model still respects his title work, quality wins, and ability to stay relevant across featherweight and bantamweight. He is a real legend, but the app no longer treats him like a clean top-10 UFC-only résumé.',
+      whyNotHigher: 'The UFC-only boundary hurts him because his full historical peak includes WEC. Inside the UFC-only scoring window, the McGregor KO, Holloway TKO losses, Volkanovski loss, and uneven back half make him too damaged for the top ten.',
+      keyJudgmentCalls: [ ['UFC-only scope', 'means the all-time WEC case is context only, not scored directly.'], ['Title value', 'his UFC title defenses still matter, but inheriting the belt from the WEC transition is treated with some context.'], ['Loss context', 'McGregor and both Holloway losses are counted as finished losses in the prime/late-prime window; Volkanovski is counted as elite decision damage.'], ['Longevity', 'the bantamweight resurgence helps, but it no longer gets max-style elite continuity credit.'], ['Prime dominance', 'is strong historically, but the UFC-only version is not clean enough for top-10 treatment.'] ],
+      finalTakeaway: 'Aldo is a scope-affected legend: historically massive, still very strong in UFC-only scoring, but more believable around the top-14/top-15 range than as a top-10 UFC-only GOAT.'
     },
     profileStats: {
-      ufcRecord: '14-9', titleFightWins: 5, adjustedTitleWins: 8, eliteWins: 8, primeRecord: '10-4', finishRatePct: 50.0, roundsWonPct: 64.8, activeEliteYears: 9.43, timesFinishedPrime: 3,
+      ufcRecord: '14-9', titleFightWins: 5, adjustedTitleWins: 8, eliteWins: 8, primeRecord: '10-4', finishRatePct: 50.0, roundsWonPct: 64.8, activeEliteYears: 7.10, timesFinishedPrime: 3,
       divisionStrengthContext: 'UFC featherweight and bantamweight value is strong, but WEC greatness is historical context only.',
       lossContext: 'Prime/late-prime loss context: McGregor KO, Holloway TKO twice, and Volkanovski decision. Yan/Merab are treated as post-prime for penalty.'
     },
     compareSeasoning: {
-      shortCase: 'Aldo is one of the great featherweight legends: championship skill, elite longevity, and enough late-career bantamweight relevance to keep his ranking case alive.',
-      peak: 'At his best, Aldo was explosive, technical, and difficult to pressure cleanly. The takedown defense, leg kicks, boxing, and athleticism made him feel like a complete champion.',
-      resume: 'Aldo’s resume in this ranking is complicated but still strong. His WEC run is historical context, while the scored UFC portion still has enough title value, elite wins, and longevity to rank highly.',
+      shortCase: 'Aldo is a scope-affected UFC-only legend: strong title value, real longevity, and quality wins, but not the same case he has when WEC is included.',
+      peak: 'At his best historically, Aldo was explosive, technical, and difficult to pressure cleanly. In UFC-only scoring, that peak is partially outside the model, so the app grades him more conservatively.',
+      resume: 'Aldo’s resume in this ranking is strong but complicated. His WEC run is historical context, while the scored UFC portion still has title value and longevity but carries major McGregor/Holloway/Volk damage.',
       championship: 'His championship case is strong, but not fully captured by this model because part of his legendary reign happened before the UFC portion being scored.',
-      opponentQuality: 'Aldo’s UFC win list has real value: Edgar, Mendes, Korean Zombie, Lamas, Stephens, Moicano, Vera, and Font all help the case.',
-      longevity: 'Aldo’s longevity is a major strength. Even after losing the featherweight belt, he stayed relevant and made a serious run at bantamweight.',
-      counter: 'Aldo’s argument is historical greatness plus longevity. Even with the scoring boundary, he has more sustained elite relevance than many champions above and below him.',
-      edge: 'Aldo wins when the debate values long-term elite relevance, championship skill, and the ability to stay dangerous across eras and divisions.',
+      opponentQuality: 'Aldo’s UFC win list has real value: Edgar, Mendes, Korean Zombie, Lamas, Stephens, Moicano, Vera, and Font all help the case. It is strong, but not enough to make him a clean top-10 UFC-only résumé.',
+      longevity: 'Aldo’s longevity still helps, especially the bantamweight run, but it is no longer treated like max elite continuity after the post-title losses.',
+      counter: 'Aldo’s argument is historical greatness plus longevity. If WEC is included, his case jumps. In this UFC-only ranking, that context is respected but not scored directly.',
+      edge: 'Aldo wins debates when the opponent has weaker championship proof or less sustained elite relevance. He loses more often when the opponent has a cleaner UFC-only prime or stronger modern quality wins.',
       scope: 'Aldo’s WEC greatness matters historically, but this ranking only scores his UFC resume. That keeps the ranking consistent even if it underrates his full career legacy.',
       eliteCounter: true,
       signatureWins: 'Edgar, Mendes, Korean Zombie, Lamas, Stephens, Moicano, Vera, and Font give Aldo real scored value even with the WEC run treated as historical context.',
-      weakness: 'UFC-only scope limits his full historical case, and later losses keep the resume from looking as clean as his reputation.',
+      weakness: 'UFC-only scope limits his full historical case, and the McGregor/Holloway/Volk stretch keeps the résumé from looking like a top-10 UFC-only case.',
       titleSummary: 'Aldo’s UFC title case is strong but incomplete without historical context because part of his legendary reign happened in WEC before the scored UFC window.',
-      primeSummary: 'Aldo’s broader prime was long and legendary, while the scored UFC portion still shows elite featherweight title value and later bantamweight relevance.',
-      titleStyle: 'Scope-Affected Legend', primeStyle: 'Long Historical Prime',
-      legacyStats: { ufcRecord: '14-9', titleFightWins: 8, beltsWon: 1, titleDefenses: 7, activeEliteYearsLabel: 'roughly 9 active elite years in the scored window', primeNote: 'long broader featherweight prime, with UFC value continuing into his bantamweight run' }
+      primeSummary: 'Aldo’s broader prime was long and legendary, while the UFC-only scored version is damaged by three finished losses and the Volkanovski decision.',
+      titleStyle: 'Scope-Affected Legend', primeStyle: 'Damaged UFC-Only Prime',
+      legacyStats: { ufcRecord: '14-9', titleFightWins: 8, beltsWon: 1, titleDefenses: 7, activeEliteYearsLabel: 'roughly 7 weighted active elite years in the scored window', primeNote: 'long broader featherweight prime, but UFC-only scoring carries major McGregor/Holloway/Volk damage' }
     },
     watchMoment: { url: 'https://youtube.com/shorts/BC0MG13fz20?is=3YJEJvXqUfyAMg6W', label: 'Watch Moment' }
   };
@@ -50,7 +50,8 @@
     const visibleStats = {
       primeRecord: packet.profileStats.primeRecord,
       roundsWonPct: packet.profileStats.roundsWonPct,
-      timesFinishedPrime: packet.profileStats.timesFinishedPrime
+      timesFinishedPrime: packet.profileStats.timesFinishedPrime,
+      activeEliteYears: packet.profileStats.activeEliteYears
     };
     [...(data.fighters || []), ...(data.men || []), ...(data.women || [])]
       .filter(row => row?.fighter === fighter)
