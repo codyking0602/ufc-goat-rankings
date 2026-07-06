@@ -1,6 +1,6 @@
 // Lightweight post-load status hook and module loader.
 (function(){
-  const VERSION='ranking-data-patches-20260706ai-brock-lesnar';
+  const VERSION='ranking-data-patches-20260706aj-apex-peak-copy';
   const FALLBACK_PACKET_MANIFEST=[
     ['demetrious-johnson','20260702a'],['anderson-silva','20260702a'],['khabib-nurmagomedov','20260702a'],['islam-makhachev','20260702a'],
     ['alexander-volkanovski','20260703b'],['randy-couture','20260702a'],['max-holloway','20260703b'],['kamaru-usman','20260702a'],['jose-aldo','20260705b'],['matt-hughes','20260702a'],['daniel-cormier','20260702a'],['stipe-miocic','20260702a'],
@@ -43,7 +43,7 @@
     {src:'assets/data/apex-peak-score-corrections.js?v=apex-peak-score-corrections-20260706a-sean-whittaker',attr:'data-apex-peak-score-corrections'},
     {src:'assets/data/score-weighting.js?v=score-weighting-20260705b',attr:'data-score-weighting'},
     {src:'assets/js/score-derived-ovr.js?v=score-derived-ovr-20260703d',attr:'data-score-derived-ovr'},
-    {src:'assets/js/apex-peak-category-card.js?v=apex-peak-category-card-20260705f',attr:'data-apex-peak-category-card'},
+    {src:'assets/js/apex-peak-category-card.js?v=apex-peak-category-card-20260706a',attr:'data-apex-peak-category-card'},
     {src:'assets/js/championship-label-polish.js?v=championship-label-polish-20260703a',attr:'data-championship-label-polish'},
     {src:'assets/data/compare-matchups.js?v=compare-matchups-20260703a',attr:'data-compare-matchups'},
     {src:'assets/compare-mode.js?v=special-matchups-20260630l',attr:'data-compare-mode'},
@@ -52,6 +52,6 @@
     {src:'assets/data/plain-resume-copy-fixes.js?v=plain-resume-copy-fixes-20260706a',attr:'data-plain-resume-copy-fixes'}
   ];}
   function loadModules(){const loadCompareWatchdog=()=>loadScriptOnce('assets/js/compare-narrative-watchdog.js?v=compare-narrative-watchdog-20260702a','data-compare-narrative-watchdog',status);const loadCompareNarrative=()=>loadScriptOnce('assets/js/compare-narrative-system.js?v=compare-narrative-system-20260703g','data-compare-narrative-system',loadCompareWatchdog);const loadCompareCore=()=>loadSequence(compareCoreScripts(),loadCompareNarrative);const loadPacketManifest=()=>loadScriptOnce('assets/data/fighter-packet-manifest.js?v=fighter-packet-manifest-20260706u-brock-lesnar','data-fighter-packet-manifest',loadCompareCore);const loadBranding=()=>loadScriptOnce('assets/js/app-branding.js?v=app-branding-20260702c','data-app-branding',loadPacketManifest);const loadDivisionRankings=()=>loadScriptOnce('assets/js/division-rankings.js?v=division-rankings-20260705e-clean-leaderboard','data-division-rankings',loadBranding);const loadHomePolish=()=>loadScriptOnce('assets/js/home-polish.js?v=home-polish-hybrid-preview-20260705b','data-home-polish',loadDivisionRankings);const loadWatchMoments=()=>loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260706r-brock-lesnar','data-watch-moments',loadHomePolish);const loadPackages=()=>loadScriptOnce('assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260702a','data-fighter-profile-packages',loadWatchMoments);if(window.UFC_PROFILE_TEMPLATE_SYSTEM){loadPackages();return;}loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260702b','data-profile-template-system',loadPackages);}
-  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Brock Lesnar packet, nickname, Watch Moment cache bust',updated:'2026-07-06',version:VERSION},apply:status,slugFor,syncPacketProfileStats,packetManifest};
+  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Apex Peak category copy cache bust',updated:'2026-07-06',version:VERSION},apply:status,slugFor,syncPacketProfileStats,packetManifest};
   installImageFallback();applyPhotoPathDefaults();syncPacketProfileStats();loadModules();window.UFC_PHASE2_DATA_REFRESH=status;
 })();
