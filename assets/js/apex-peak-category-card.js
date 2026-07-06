@@ -1,6 +1,6 @@
 // Adds Apex Peak as a visible fighter-card category without touching the base app shell.
 (function(){
-  const VERSION = 'apex-peak-category-card-20260705b';
+  const VERSION = 'apex-peak-category-card-20260705c';
   const APEX_MAX = 6;
 
   function num(value){
@@ -69,6 +69,13 @@
       <p><strong>Why it ranks here:</strong> ${notes}</p>
     </div>`;
   }
+  function loadCategoryLeaders(){
+    if(document.querySelector('script[data-category-leaders]')) return;
+    const script = document.createElement('script');
+    script.src = 'assets/js/category-leaders.js?v=category-leaders-20260705a';
+    script.setAttribute('data-category-leaders','true');
+    document.body.appendChild(script);
+  }
 
   const previousCategoryCards = typeof categoryCards === 'function' ? categoryCards : null;
   if(previousCategoryCards){
@@ -96,10 +103,12 @@
     version: VERSION,
     max: APEX_MAX,
     mode: 'visible fighter-card rating and explainer',
+    categoryLeadersLoader: true,
     appliedAt: new Date().toISOString()
   };
 
   if(typeof refresh === 'function'){
     try { refresh(); } catch(e) {}
   }
+  loadCategoryLeaders();
 })();
