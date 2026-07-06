@@ -1,6 +1,6 @@
 // Lightweight post-load status hook and module loader.
 (function(){
-  const VERSION='ranking-data-patches-20260706ad-women-champ-batch';
+  const VERSION='ranking-data-patches-20260706ae-women-champ-display';
   const FALLBACK_PACKET_MANIFEST=[
     ['demetrious-johnson','20260702a'],['anderson-silva','20260702a'],['khabib-nurmagomedov','20260702a'],['islam-makhachev','20260702a'],
     ['alexander-volkanovski','20260703b'],['randy-couture','20260702a'],['max-holloway','20260703b'],['kamaru-usman','20260702a'],['jose-aldo','20260705b'],['matt-hughes','20260702a'],['daniel-cormier','20260702a'],['stipe-miocic','20260702a'],
@@ -35,7 +35,7 @@
     {src:'assets/js/card-nicknames.js?v=card-nicknames-20260706i-miesha-tate',attr:'data-card-nicknames'},
     {src:'assets/js/rank-fluidity-fixes.js?v=rank-fluidity-fixes-20260706b',attr:'data-rank-fluidity-fixes'},
     {src:'assets/data/prime-round-row-fixes.js?v=prime-round-row-fixes-20260704a',attr:'data-prime-round-row-fixes'},
-    {src:'assets/data/championship-score-corrections.js?v=championship-score-corrections-20260706c-zhang-calibration',attr:'data-championship-score-corrections'},
+    {src:'assets/data/championship-score-corrections.js?v=championship-score-corrections-20260706d-women-display-ranks',attr:'data-championship-score-corrections'},
     {src:'assets/data/opponent-quality-score-corrections.js?v=opponent-quality-score-corrections-20260705c-dricus-oq',attr:'data-opponent-quality-score-corrections'},
     {src:'assets/data/prime-dominance-score-corrections.js?v=prime-dominance-score-corrections-20260705c-dricus-195',attr:'data-prime-dominance-score-corrections'},
     {src:'assets/data/longevity-score-corrections.js?v=longevity-score-corrections-20260705b',attr:'data-longevity-score-corrections'},
@@ -52,6 +52,6 @@
     {src:'assets/data/plain-resume-copy-fixes.js?v=plain-resume-copy-fixes-20260706a',attr:'data-plain-resume-copy-fixes'}
   ];}
   function loadModules(){const loadCompareWatchdog=()=>loadScriptOnce('assets/js/compare-narrative-watchdog.js?v=compare-narrative-watchdog-20260702a','data-compare-narrative-watchdog',status);const loadCompareNarrative=()=>loadScriptOnce('assets/js/compare-narrative-system.js?v=compare-narrative-system-20260703g','data-compare-narrative-system',loadCompareWatchdog);const loadCompareCore=()=>loadSequence(compareCoreScripts(),loadCompareNarrative);const loadPacketManifest=()=>loadScriptOnce('assets/data/fighter-packet-manifest.js?v=fighter-packet-manifest-20260706q-women-champ-batch','data-fighter-packet-manifest',loadCompareCore);const loadBranding=()=>loadScriptOnce('assets/js/app-branding.js?v=app-branding-20260702c','data-app-branding',loadPacketManifest);const loadDivisionRankings=()=>loadScriptOnce('assets/js/division-rankings.js?v=division-rankings-20260705e-clean-leaderboard','data-division-rankings',loadBranding);const loadHomePolish=()=>loadScriptOnce('assets/js/home-polish.js?v=home-polish-hybrid-preview-20260705b','data-home-polish',loadDivisionRankings);const loadWatchMoments=()=>loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260706o-women-champ-batch','data-watch-moments',loadHomePolish);const loadPackages=()=>loadScriptOnce('assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260702a','data-fighter-profile-packages',loadWatchMoments);if(window.UFC_PROFILE_TEMPLATE_SYSTEM){loadPackages();return;}loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260702b','data-profile-template-system',loadPackages);}
-  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Women champion batch packets and Watch Moment cache bust',updated:'2026-07-06',version:VERSION},apply:status,slugFor,syncPacketProfileStats,packetManifest};
+  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Women championship category display rank fix and cache bust',updated:'2026-07-06',version:VERSION},apply:status,slugFor,syncPacketProfileStats,packetManifest};
   installImageFallback();applyPhotoPathDefaults();syncPacketProfileStats();loadModules();window.UFC_PHASE2_DATA_REFRESH=status;
 })();
