@@ -1,7 +1,7 @@
 // Watch Moment links for fighter cards and profiles.
 // Keep links here as app-facing content, separate from scoring and nickname/display-name polish.
 (function(){
-  const VERSION = 'watch-moments-20260706s-chael-sonnen';
+  const VERSION = 'watch-moments-20260706t-robbie-lawler';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -52,6 +52,7 @@
     'Michael Bisping': 'https://youtube.com/shorts/YqLi--j4cMA?is=S7b7jX4a5yrGhV02',
     'Dan Henderson': 'https://youtube.com/shorts/dA2kztF7KpQ?is=wDxZ4DLlPA-C74uh',
     'Chael Sonnen': 'https://youtube.com/shorts/feVMRUL1R9o?is=fQrfnJ4c8IMVu0k4',
+    'Robbie Lawler': 'https://youtu.be/GkBBqPkfGYg?is=aWsbqeDBGQmaJg4Q',
     'Amanda Nunes': 'https://youtu.be/t4wkBuFpoPs?is=CL7ge7FDuHQPrbMq',
     'Valentina Shevchenko': 'https://youtube.com/shorts/cucTCAAGTis?is=mf6p21fPtBheJuU8',
     'Zhang Weili': 'https://youtube.com/shorts/ZhdI2_I58YQ?is=TuRcxor17qZxSwUC',
