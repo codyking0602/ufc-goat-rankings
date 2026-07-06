@@ -1,6 +1,6 @@
 # UFC GOAT App Fighter Status
 
-Last updated: 2026-07-03
+Last updated: 2026-07-05
 
 This is the permanent tracker for fighter completion. Use this instead of chat spreadsheets.
 
@@ -53,6 +53,7 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 | Kamaru Usman | Men #10 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Usman fix needed | `assets/data/fighter-packets/kamaru-usman.js` |
 | Jose Aldo | Men #11 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Aldo fix needed | `assets/data/fighter-packets/jose-aldo.js` |
 | Matt Hughes | Men #12 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Hughes fix needed | `assets/data/fighter-packets/matt-hughes.js` |
+| Dricus du Plessis | Men #13 | Permanent hand-added fighter; packet live; Apex Peak and Watch Moment added; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Dricus photos after Cody uploads real files; audit round-control percentage next rebuild | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/dricus-du-plessis.js` |
 | Aljamain Sterling | Men #14 | Permanent hand-added fighter; packet live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Aljo photos; add Watch Moment only if Cody provides URL | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/aljamain-sterling.js` |
 | Daniel Cormier | Men #13 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No DC fix needed | `assets/data/fighter-packets/daniel-cormier.js` |
 | Stipe Miocic | Men #14 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Stipe fix needed | `assets/data/fighter-packets/stipe-miocic.js` |
@@ -81,7 +82,8 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 
 ## Current priorities
 
-1. Justin Gaethje, Frankie Edgar, Dustin Poirier, Aljamain Sterling, T.J. Dillashaw, and Dan Henderson are permanent through `assets/data/ranking-data-additions.js` plus fighter packets.
-2. Photos still needed for Cruz, Francis, Charles, Henry, Conor, Justin Gaethje, Frankie Edgar, Dustin Poirier, Aljamain Sterling, T.J. Dillashaw, Dan Henderson, Amanda, Valentina, Joanna, and Ronda.
-3. During the next full scoring-table rebuild, fold `assets/data/ranking-data-additions.js` into `assets/data/ranking-data.js`.
-4. Next cleanup should focus on photos, then testing Compare Mode pairings.
+1. Dricus du Plessis is permanent through `assets/data/ranking-data-additions.js`, scored for Apex Peak, and has a dedicated fighter packet plus Watch Moment.
+2. Justin Gaethje, Frankie Edgar, Dustin Poirier, Aljamain Sterling, T.J. Dillashaw, and Dan Henderson are permanent through `assets/data/ranking-data-additions.js` plus fighter packets.
+3. Photos still needed for Dricus, Cruz, Francis, Charles, Henry, Conor, Justin Gaethje, Frankie Edgar, Dustin Poirier, Aljamain Sterling, T.J. Dillashaw, Dan Henderson, Amanda, Valentina, Joanna, and Ronda.
+4. During the next full scoring-table rebuild, fold `assets/data/ranking-data-additions.js` into `assets/data/ranking-data.js`.
+5. Next cleanup should focus on photos, then testing Compare Mode pairings.
