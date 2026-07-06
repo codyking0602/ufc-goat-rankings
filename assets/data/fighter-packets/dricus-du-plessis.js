@@ -1,22 +1,25 @@
 // Dricus du Plessis fighter packet extension.
 (function(){
-  const VERSION = 'fighter-packet-dricus-du-plessis-20260705a';
+  const VERSION = 'fighter-packet-dricus-du-plessis-20260705b-review';
   const fighter = 'Dricus du Plessis';
 
   const packet = {
-    status: { stage: 'complete first-pass packet; UFC-only modern middleweight title case loaded', lastUpdated: '2026-07-05', nextFix: 'Audit round-control percentage and exact category ranks after the next scoring pass.' },
-    repoLocations: { scoreSource: 'assets/data/ranking-data-additions.js', centralPacket: 'assets/data/fighter-packets/dricus-du-plessis.js', displayFallback: 'packet display object', compareFallback: 'packet compareSeasoning', profileStatsFallback: 'packet profileStats', photos: 'No real photo files loaded yet; app should use initials fallback.' },
+    status: { stage: 'complete first-pass packet; reviewed against fighter-add workflow', lastUpdated: '2026-07-05', nextFix: 'Add real photos after Cody uploads source images; audit exact rounds-won percentage during next scoring-table rebuild.' },
+    repoLocations: { scoreSource: 'assets/data/ranking-data-additions.js', centralPacket: 'assets/data/fighter-packets/dricus-du-plessis.js', apexPeak: 'assets/data/apex-peak-score-corrections.js', watchMoment: 'assets/js/watch-moments.js', tracker: 'docs/fighter-status.md', photos: 'No real photo files loaded yet; app should use initials fallback.' },
+    photos: {},
     display: {
       overallOvr: 88, allTimeRank: 13, divisionLabel: 'MW', resumeTag: 'Modern middleweight champion',
       oneLiner: 'The modern middleweight chaos champion: Whittaker, Adesanya, and Strickland wins, strong finishing threat, and only one elite decision loss in the UFC.',
-      categories: { championship: { ovr: 82, rank: 16 }, opponentQuality: { ovr: 87, rank: 12 }, primeDominance: { ovr: 91, rank: 9 }, longevity: { ovr: 69, rank: 36 } },
-      snapshot: [ ['UFC Record', '9-1'], ['UFC Title-Fight Wins', '3'], ['Championship Level', 'Short but Real Title Reign'], ['Quality Wins', 'Whittaker, Adesanya, Strickland x2'], ['Prime Record', '7-1 Elite Window'], ['Active Elite Years', '3.2 Elite Years'], ['Loss Context', 'Khamzat decision loss only'] ],
+      categories: { championship: { ovr: 82, rank: 16 }, opponentQuality: { ovr: 87, rank: 12 }, primeDominance: { ovr: 91, rank: 9 }, longevity: { ovr: 69, rank: 36 }, apexPeak: { ovr: 79, rank: 22 }, penalty: { ovr: 91, rank: 8 } },
+      snapshot: [ ['UFC Record', '9-1'], ['UFC Title-Fight Wins', '3'], ['Apex Peak', '+3.50'], ['Quality Wins', 'Whittaker, Adesanya, Strickland x2'], ['Prime Record', '7-1 Elite Window'], ['Active Elite Years', '3.2 Elite Years'], ['Loss Context', 'Khamzat decision loss only'] ],
       whyRankedHere: 'Du Plessis ranks here because his UFC middleweight run got loud fast: Whittaker, Strickland, Adesanya, and Strickland again is a serious modern title-level win stack. The record is clean, the finishing threat is real, and the only UFC loss came to an elite champion-level opponent by decision.',
       whyNotHigher: 'He does not rank higher yet because the elite window is still short. He has strong championship value, but not the long title-fight volume, active elite years, or multi-era proof of the all-time names above him.',
+      bigAssumptions: [ ['Current-table scope', 'Uses the current scoring-table version where Dricus is 9-1 in the UFC with title wins over Strickland, Adesanya, and Strickland again, plus a Khamzat title loss.'], ['Apex window', 'Whittaker through Adesanya/Strickland II is treated as his best short UFC window.'], ['Middleweight strength', 'Modern middleweight gets respect but does not score like lightweight or GSP-era welterweight.'], ['Loss treatment', 'The Khamzat loss is a prime elite decision loss only, not a finish penalty.'] ],
       keyJudgmentCalls: [ ['Non-UFC titles', 'KSW and EFC accomplishments are historical context only, not scored.'], ['Whittaker win', 'treated as the prime-start signal because it proved elite middleweight level.'], ['Adesanya win', 'carries major champion-value credit because it came in a UFC title defense.'], ['Strickland rivalry', 'the two UFC title-fight wins give Dricus real direct separation.'], ['Khamzat loss', 'counts as a prime elite decision loss, with no finish add-on.'] ],
+      apexPeakSummary: { score: 3.50, window: 'Robert Whittaker 2023 through Israel Adesanya 2024 / Sean Strickland II 2025', notes: 'Strong short-window title proof, but not a clean best-fighter-alive aura case.' },
       finalTakeaway: 'Du Plessis is already a real UFC-only middleweight legacy case: not long enough for the inner GOAT circle, but strong enough to sit with the modern champion tier because the high-end wins are loud.'
     },
-    profileStats: { ufcRecord: '9-1', titleFightWins: 3, eliteWins: 4, primeRecord: '7-1 in title/elite middleweight window', finishRatePct: 66.7, roundsWonPct: 58.0, activeEliteYears: 3.15, timesFinishedPrime: 0, divisionStrengthContext: 'Modern middleweight is not scored like lightweight, but the Whittaker, Adesanya, and Strickland wins give the opponent-quality case real weight.', lossContext: 'The Khamzat Chimaev loss is counted as a prime elite decision loss, with no finish penalty.' },
+    profileStats: { ufcRecord: '9-1', titleFightWins: 3, eliteWins: 4, primeRecord: '7-1 in title/elite middleweight window', finishRatePct: 66.7, roundsWonPct: 58.0, activeEliteYears: 3.15, apexPeak: 3.50, timesFinishedPrime: 0, divisionStrengthContext: 'Modern middleweight is not scored like lightweight, but the Whittaker, Adesanya, and Strickland wins give the opponent-quality case real weight.', lossContext: 'The Khamzat Chimaev loss is counted as a prime elite decision loss, with no finish penalty.' },
     compareSeasoning: {
       shortCase: 'Dricus is the modern middleweight champion burst: a short UFC window, but a loud one built around Whittaker, Strickland, Adesanya, and Strickland again.',
       peak: 'At his best, Dricus is awkward pressure, durability, strength, scrambling, and finishing threat. He may not look clean round-to-round, but he forces elite middleweights into uncomfortable fights.',
@@ -31,6 +34,7 @@
       weakness: 'The weakness is time. His case is still short on title defenses, active elite years, and multi-era proof.',
       titleSummary: 'Three UFC title-fight wins make the title case legit, but still much shorter than the long-reign champions.',
       primeSummary: 'His prime window is still compact, but the peak win quality is already strong enough to matter in all-time debates.',
+      bestArgument: 'Dricus has a rare compact-resume argument: even without long longevity, the Whittaker, Adesanya, and Strickland title-level wins make the top end hard to dismiss.',
       titleStyle: 'Short Modern Title Reign', primeStyle: 'Compact Middleweight Burst',
       legacyStats: { ufcRecord: '9-1', titleFightWins: 3, beltsWon: 1, titleDefenses: 2, activeEliteYearsLabel: 'roughly 3 active elite years', primeNote: 'compact modern middleweight burst built around Whittaker, Adesanya, and Strickland title-fight wins' }
     },
