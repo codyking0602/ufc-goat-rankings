@@ -1,6 +1,6 @@
 // Lightweight post-load status hook and module loader.
 (function(){
-  const VERSION='ranking-data-patches-20260705x-dricus-oq-apex';
+  const VERSION='ranking-data-patches-20260705y-dricus-oq-apex-row';
   const SLUG_OVERRIDES={'B.J. Penn':'bj-penn','BJ Penn':'bj-penn','Georges St-Pierre':'georges-st-pierre','T.J. Dillashaw':'tj-dillashaw','TJ Dillashaw':'tj-dillashaw','Junior dos Santos':'junior-dos-santos','Mauricio Rua':'mauricio-rua','Maurício Rua':'mauricio-rua','Zabit Magomedsharipov':'zabit-magomedsharipov'};
   const FALLBACK_PACKET_MANIFEST=[
     {slug:'demetrious-johnson',version:'20260702a'},
@@ -132,7 +132,7 @@
   function compareCoreScripts(){
     const packets=packetManifest().map(row=>packet(row.slug,row.version));
     return [
-      {src:'assets/data/ranking-data-additions.js?v=ranking-data-additions-20260705e-dricus-review',attr:'data-ranking-data-additions'},
+      {src:'assets/data/ranking-data-additions.js?v=ranking-data-additions-20260705f-dricus-oq-apex',attr:'data-ranking-data-additions'},
       {src:'assets/data/fighter-packet-schema.js?v=fighter-packet-schema-20260703a',attr:'data-fighter-packet-schema'},
       {src:'assets/compare-data.js?v=compare-data-20260630a',attr:'data-compare-data'},
       {src:'assets/compare-coverage-pack-1.js?v=compare-coverage-pack-1-20260630a',attr:'data-compare-coverage-pack-1'},
@@ -171,7 +171,7 @@
     loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260702b','data-profile-template-system',loadPackages);
   }
 
-  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Status hook and module loader with Dricus Quality Wins/Apex adjustment, round-control rows, Watch Moment, and score weighting',updated:'2026-07-05',version:VERSION},apply:status,slugFor,syncPacketProfileStats,packetManifest};
+  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Status hook and module loader with Dricus permanent row, Quality Wins/Apex adjustment, round-control rows, Watch Moment, and score weighting',updated:'2026-07-05',version:VERSION},apply:status,slugFor,syncPacketProfileStats,packetManifest};
   installImageFallback();
   applyPhotoPathDefaults();
   syncPacketProfileStats();
