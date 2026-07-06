@@ -1,7 +1,7 @@
 // Watch Moment links for fighter cards and profiles.
 // Keep links here as app-facing content, separate from scoring and nickname/display-name polish.
 (function(){
-  const VERSION = 'watch-moments-20260706l-display-name-safe';
+  const VERSION = 'watch-moments-20260706m-miesha-tate';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -52,6 +52,7 @@
     'Valentina Shevchenko': 'https://youtube.com/shorts/cucTCAAGTis?is=mf6p21fPtBheJuU8',
     'Zhang Weili': 'https://youtube.com/shorts/ZhdI2_I58YQ?is=TuRcxor17qZxSwUC',
     'Rose Namajunas': 'https://youtube.com/shorts/BVqANFBGq7w?si=FYfcFp-j5hSIXn7b',
+    'Miesha Tate': 'https://youtube.com/shorts/b9uD21LpKvY?si=J1e02C6oGjmLRfuk',
     'Joanna Jedrzejczyk': 'https://youtube.com/shorts/rqxlySX0WwA?is=qmc_JW12ecYdL3KT',
     'Ronda Rousey': 'https://youtube.com/shorts/l4hilvKQgYc?is=diOKawJqeBkHdtcf'
   };
