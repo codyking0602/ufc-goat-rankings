@@ -1,6 +1,6 @@
 // Adds Apex Peak as a visible fighter-card category without touching the base app shell.
 (function(){
-  const VERSION = 'apex-peak-category-card-20260705c';
+  const VERSION = 'apex-peak-category-card-20260705d';
   const APEX_MAX = 6;
 
   function num(value){
@@ -72,7 +72,7 @@
   function loadCategoryLeaders(){
     if(document.querySelector('script[data-category-leaders]')) return;
     const script = document.createElement('script');
-    script.src = 'assets/js/category-leaders.js?v=category-leaders-20260705a';
+    script.src = 'assets/js/category-leaders.js?v=category-leaders-20260705b';
     script.setAttribute('data-category-leaders','true');
     document.body.appendChild(script);
   }
