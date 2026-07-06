@@ -1,7 +1,7 @@
-// Watch Moment links and card nickname polish for fighter cards and profiles.
-// Keep links and card-facing nicknames here as app-facing content, separate from scoring.
+// Watch Moment links for fighter cards and profiles.
+// Keep links here as app-facing content, separate from scoring and nickname/display-name polish.
 (function(){
-  const VERSION = 'watch-moments-20260706j-nicknames';
+  const VERSION = 'watch-moments-20260706k-rose-no-nicknames';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -51,34 +51,15 @@
     'Amanda Nunes': 'https://youtu.be/t4wkBuFpoPs?is=CL7ge7FDuHQPrbMq',
     'Valentina Shevchenko': 'https://youtube.com/shorts/cucTCAAGTis?is=mf6p21fPtBheJuU8',
     'Zhang Weili': 'https://youtube.com/shorts/ZhdI2_I58YQ?is=TuRcxor17qZxSwUC',
+    'Rose Namajunas': 'https://youtube.com/shorts/BVqANFBGq7w?si=FYfcFp-j5hSIXn7b',
     'Joanna Jedrzejczyk': 'https://youtube.com/shorts/rqxlySX0WwA?is=qmc_JW12ecYdL3KT',
     'Ronda Rousey': 'https://youtube.com/shorts/l4hilvKQgYc?is=diOKawJqeBkHdtcf'
-  };
-
-  const CARD_NICKNAMES = {
-    'Dricus du Plessis': 'Stillknocks',
-    'Tyron Woodley': 'The Chosen One',
-    'Sean Strickland': 'Tarzan',
-    'Robert Whittaker': 'The Reaper',
-    "Sean O'Malley": 'Sugar',
-    'Lyoto Machida': 'The Dragon',
-    'Khamzat Chimaev': 'Borz',
-    'Deiveson Figueiredo': 'Deus da Guerra',
-    'Tito Ortiz': 'The Huntington Beach Bad Boy',
-    'Junior dos Santos': 'Cigano',
-    'Zhang Weili': 'Magnum'
   };
 
   Object.entries(WATCH_MOMENTS).forEach(([fighter, url]) => {
     DISPLAY_OVERRIDES[fighter] = DISPLAY_OVERRIDES[fighter] || {};
     DISPLAY_OVERRIDES[fighter].watchUrl = url;
     DISPLAY_OVERRIDES[fighter].watchLabel = 'Watch Moment';
-  });
-
-  Object.entries(CARD_NICKNAMES).forEach(([fighter, nickname]) => {
-    DISPLAY_OVERRIDES[fighter] = DISPLAY_OVERRIDES[fighter] || {};
-    DISPLAY_OVERRIDES[fighter].nickname = nickname;
-    DISPLAY_OVERRIDES[fighter].resumeTag = `“${nickname}”`;
   });
 
   function injectCss(){
@@ -97,7 +78,7 @@
   function watchUrlFor(fighter){ return DISPLAY_OVERRIDES[fighter]?.watchUrl || WATCH_MOMENTS[fighter] || ''; }
   function addCardButtons(){ document.querySelectorAll('.fighter-row[data-fighter]:not(.category-leader-row)').forEach(row => { const fighter = row.dataset.fighter; const url = watchUrlFor(fighter); if(!url || row.querySelector('.watch-moment-link')) return; const target = row.querySelector('.row-main'); if(!target) return; const a = document.createElement('a'); a.className = 'watch-moment-link'; a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = '▶ Watch Moment'; a.addEventListener('click', e => e.stopPropagation()); target.appendChild(a); }); }
   function addProfileButton(){ const detail = document.getElementById('fighterDetail'); if(!detail || detail.querySelector('.profile-watch-moment')) return; const name = detail.querySelector('.profile-summary h2')?.textContent?.trim(); const url = watchUrlFor(name); if(!name || !url) return; const summary = detail.querySelector('.profile-summary'); if(!summary) return; const row = document.createElement('div'); row.className = 'profile-watch-row'; const a = document.createElement('a'); a.className = 'watch-moment-link profile-watch-moment'; a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = '▶ Watch Signature Moment'; a.addEventListener('click', e => e.stopPropagation()); row.appendChild(a); summary.appendChild(row); }
-  function apply(){ injectCss(); addCardButtons(); addProfileButton(); window.UFC_WATCH_MOMENTS = { version: VERSION, fighters: Object.keys(WATCH_MOMENTS), cardNicknames: CARD_NICKNAMES }; }
+  function apply(){ injectCss(); addCardButtons(); addProfileButton(); window.UFC_WATCH_MOMENTS = { version: VERSION, fighters: Object.keys(WATCH_MOMENTS) }; }
 
   const observer = new MutationObserver(apply);
   observer.observe(document.body, { childList: true, subtree: true });
