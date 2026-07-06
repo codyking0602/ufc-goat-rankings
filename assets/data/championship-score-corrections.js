@@ -1,7 +1,7 @@
 // Championship audit score corrections.
 // Applies locked Championship Index formula corrections after base data and additions load.
 (function(){
-  const VERSION = 'championship-score-corrections-20260703b';
+  const VERSION = 'championship-score-corrections-20260706c-zhang-calibration';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
@@ -53,6 +53,12 @@
       totalScore: 25.65,
       adjustedTitleWins: 0.50,
       titleNotes: 'Championship audit: no UFC undisputed title wins. UFC 17 tournament gets small old-era tournament credit of 0.50, not modern title-win credit.'
+    },
+    'Zhang Weili': {
+      championship: 15.60,
+      totalScore: 53.97,
+      adjustedTitleWins: 6.00,
+      titleNotes: 'Championship audit: Zhang has six UFC strawweight title-fight wins and two reigns, which is clearly elite and above normal strawweight title cases. It should not outrank Amanda Nunes or Valentina Shevchenko, who each have 11 UFC title-fight wins and stronger long-reign championship volume.'
     }
   };
 
