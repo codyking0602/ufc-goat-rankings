@@ -1,7 +1,7 @@
 // Apex Peak bonus corrections.
 // Adds a controlled 0-to-6 best-night / best-year modifier before final score weighting.
 (function(){
-  const VERSION = 'apex-peak-score-corrections-20260705d';
+  const VERSION = 'apex-peak-score-corrections-20260705e';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
@@ -57,9 +57,9 @@
     'Dan Henderson': c(2.50, 'Michael Bisping 2009 through Mauricio Rua 2011', 0.25, 0.75, 0.75, 0.50, 0.25, 'UFC-only apex is built around violent signature moments, not a clean best-fighter-alive case. Pride/Strikeforce context remains outside the main scoring.'),
     'Amanda Nunes': c(5.25, 'Ronda Rousey 2016 through Cris Cyborg 2018', 1.25, 1.50, 1.25, 0.50, 0.75, 'Women’s UFC apex benchmark: Rousey, Shevchenko, and Cyborg-level proof with violent separation. Division depth keeps the bonus just below the mythic men’s deepest-division peaks.'),
     'Valentina Shevchenko': c(4.50, 'Joanna Jedrzejczyk 2018 through Jessica Andrade 2021', 1.25, 1.00, 1.25, 0.25, 0.75, 'Elite flyweight apex with long stretch dominance and real no-answer aura. Women’s flyweight depth limits the division-strength component.'),
-    'Joanna Jedrzejczyk': c(4.25, 'Carla Esparza 2015 through Jessica Andrade 2017', 1.00, 1.00, 1.25, 0.50, 0.50, 'Strawweight striking apex with major separation and title-control aura. Lower finishing threat and later Rose/Zhang context keep it below the very top apex tier.'),
-    'Ronda Rousey': c(4.25, 'Miesha Tate II 2013 through Cat Zingano 2015', 1.25, 0.75, 1.25, 0.25, 0.75, 'Historic women’s bantamweight aura apex with unmatched speed-of-finish separation. Thin early division context keeps elite-opponent and division-strength scores capped.'),
-    'Merab Dvalishvili': c(4.25, 'Petr Yan 2023 through current bantamweight title window', 0.75, 1.25, 0.75, 1.00, 0.50, 'Modern bantamweight pressure apex with elite opponent proof and max division-strength credit. Limited finishing threat keeps separation below the violent apex cases.')
+    'Joanna Jedrzejczyk': c(4.00, 'Carla Esparza 2015 through Jessica Andrade 2017', 1.00, 1.00, 1.25, 0.50, 0.25, 'Strawweight striking apex with major separation and title-control proof. Lower finishing threat and later Rose/Zhang context cap the clean-aura score.'),
+    'Ronda Rousey': c(4.75, 'Miesha Tate II 2013 through Cat Zingano 2015', 1.50, 0.75, 1.25, 0.50, 0.75, 'Historic women’s bantamweight aura apex with unmatched speed-of-finish separation and a true best-alive claim for the women’s UFC field. Early division depth still caps elite-opponent proof.'),
+    'Merab Dvalishvili': c(4.00, 'Petr Yan 2023 through current bantamweight title window', 0.75, 1.25, 0.75, 0.75, 0.50, 'Modern bantamweight pressure apex with elite opponent proof. Division strength is strong but not maxed, and limited finishing threat keeps separation below the violent apex cases.')
   };
 
   function round2(value){
