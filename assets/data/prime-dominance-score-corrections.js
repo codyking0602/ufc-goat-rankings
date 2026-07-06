@@ -1,7 +1,7 @@
 // Prime Dominance no-sample-confidence score corrections.
 // Applies locked Prime Dominance worksheet corrections after base data, additions, packets, round-row fixes, Championship, and OQ corrections load.
 (function(){
-  const VERSION = 'prime-dominance-score-corrections-20260705b';
+  const VERSION = 'prime-dominance-score-corrections-20260705c-dricus-195';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
@@ -43,6 +43,7 @@
     'Valentina Shevchenko': { primeDominance: 21.37, notes: 'No-sample formula. Long flyweight title-prime and strong round control, capped by Nunes/Grasso context and women FLW strength.' },
     'Ilia Topuria': { primeDominance: 21.33, notes: 'No-sample formula with corrected runtime prime round rows: 10/15 = 66.7%. Huge active-prime peak, capped by Gaethje loss and still-building title volume.' },
     'Ronda Rousey': { primeDominance: 20.45, notes: 'No-sample formula. Historic finish/title-defense dominance, capped by Holm/Nunes finished losses and formative early WBW division strength.' },
+    'Dricus du Plessis': { primeDominance: 19.50, notes: 'Cody-reviewed Prime Dominance: strong 7-1 elite/title window, high finishing and durability credit, but capped for close/chaotic title fights, lower clean round-control, short reign, and Khamzat loss context.' },
     'T.J. Dillashaw': { primeDominance: 18.02, notes: 'No-sample formula. Strong BW title/finish case, capped by Cejudo/Sterling context and EPO/vacated-belt legacy context.' },
     'Joanna Jedrzejczyk': { primeDominance: 17.76, notes: 'No-sample formula. Five-defense SW reign and strong round volume, capped by Rose/Valentina/Weili loss context and low finish score.' },
     'Aljamain Sterling': { primeDominance: 17.72, notes: 'No-sample formula. Strong modern BW title run, capped by lower finish/separation profile and O\'Malley/elite loss context.' },
