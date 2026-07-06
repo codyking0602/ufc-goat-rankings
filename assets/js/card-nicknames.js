@@ -1,7 +1,7 @@
 // Profile-card display nicknames for fighters who are clearly known by one.
 // Keeps list/board rows clean and keeps data keys unchanged. Does not touch resume-tag pills.
 (function(){
-  const VERSION = 'card-nicknames-20260706l-brock-lesnar';
+  const VERSION = 'card-nicknames-20260706m-chael-sonnen';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const DISPLAY_NAMES = {
@@ -18,6 +18,7 @@
     'Michael Bisping': 'Michael “The Count” Bisping',
     'Tony Ferguson': 'Tony “El Cucuy” Ferguson',
     'Brock Lesnar': 'Brock “The Beast Incarnate” Lesnar',
+    'Chael Sonnen': 'Chael “The American Gangster” Sonnen',
     'Zhang Weili': 'Zhang “Magnum” Weili',
     'Rose Namajunas': '“Thug” Rose Namajunas',
     'Miesha Tate': 'Miesha “Cupcake” Tate'
@@ -37,6 +38,7 @@
     'Michael Bisping': 'Middleweight title shocker',
     'Tony Ferguson': 'Uncrowned lightweight terror',
     'Brock Lesnar': 'Short-window heavyweight champ',
+    'Chael Sonnen': 'Middleweight title agitator',
     'Zhang Weili': 'Two-reign strawweight force',
     'Rose Namajunas': 'Two-reign strawweight giant killer',
     'Miesha Tate': 'Bantamweight title comeback'
