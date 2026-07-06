@@ -1,6 +1,6 @@
 // Adds a fluid Category Leaders tab tied to the current live category ratings.
 (function(){
-  const VERSION = 'category-leaders-20260705b';
+  const VERSION = 'category-leaders-20260705c';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
@@ -166,11 +166,11 @@
       const section = document.createElement('section');
       section.id = 'categoryLeaders';
       section.className = 'view';
-      section.innerHTML = `<div class="section-title"><h2>Category Leaders</h2><p>See who leads each UFC GOAT scoring category.</p></div><div id="categoryLeadersMount"></div>`;
+      section.innerHTML = `<div class="section-title"><h2>Category Leaders</h2><p>See who leads each scoring category.</p></div><div id="categoryLeadersMount"></div>`;
       main.insertBefore(section, el('compare') || el('rules') || null);
     } else {
       const copy = el('categoryLeaders')?.querySelector('.section-title p');
-      if(copy) copy.textContent = 'See who leads each UFC GOAT scoring category.';
+      if(copy) copy.textContent = 'See who leads each scoring category.';
     }
   }
   function controlsHtml(){
