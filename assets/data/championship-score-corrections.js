@@ -1,7 +1,7 @@
 // Championship audit score corrections.
 // Applies locked Championship Index formula corrections after base data and additions load.
 (function(){
-  const VERSION = 'championship-score-corrections-20260706c-zhang-calibration';
+  const VERSION = 'championship-score-corrections-20260706d-women-display-ranks';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
@@ -62,6 +62,23 @@
     }
   };
 
+  const womenChampionshipDisplay = {
+    'Amanda Nunes': { rank: 1, ovr: 99 },
+    'Valentina Shevchenko': { rank: 2, ovr: 96 },
+    'Zhang Weili': { rank: 3, ovr: 93 },
+    'Joanna Jedrzejczyk': { rank: 4, ovr: 90 },
+    'Ronda Rousey': { rank: 5, ovr: 88 },
+    'Rose Namajunas': { rank: 6, ovr: 86 },
+    'Julianna Peña': { rank: 7, ovr: 82 },
+    'Carla Esparza': { rank: 8, ovr: 80 },
+    'Alexa Grasso': { rank: 9, ovr: 78 },
+    'Jessica Andrade': { rank: 10, ovr: 74 },
+    'Kayla Harrison': { rank: 11, ovr: 73 },
+    'Holly Holm': { rank: 12, ovr: 72 },
+    'Miesha Tate': { rank: 13, ovr: 71 },
+    'Mackenzie Dern': { rank: 14, ovr: 68 }
+  };
+
   function patchRow(row){
     if(!row || !corrections[row.fighter]) return;
     const c = corrections[row.fighter];
@@ -99,12 +116,22 @@
         delete DISPLAY_OVERRIDES[fighter].categories.championship;
       }
     });
+
+    Object.entries(womenChampionshipDisplay).forEach(([fighter, championship]) => {
+      DISPLAY_OVERRIDES[fighter] = DISPLAY_OVERRIDES[fighter] || {};
+      DISPLAY_OVERRIDES[fighter].categories = DISPLAY_OVERRIDES[fighter].categories || {};
+      DISPLAY_OVERRIDES[fighter].categories.championship = {
+        ...championship,
+        reason: 'Women’s Championship Resume display rank calibrated by UFC title-fight volume, adjusted title wins, defenses/reigns, and title-path context.'
+      };
+    });
   }
 
   window.UFC_CHAMPIONSHIP_SCORE_CORRECTIONS = {
     version: VERSION,
     fighters: Object.keys(corrections),
     corrections,
+    womenChampionshipDisplay,
     appliedAt: new Date().toISOString()
   };
 })();
