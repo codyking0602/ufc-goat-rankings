@@ -1,7 +1,7 @@
-// Division Rankings: men-only division boards with a first-pass division scoring model.
+// Division Rankings: explicit UFC-only division boards with formula fallback for future fighters.
 (function(){
   const DATA = window.RANKING_DATA;
-  const VERSION = 'division-rankings-20260705b';
+  const VERSION = 'division-rankings-20260705c-explicit-boards';
   if(!DATA || typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const DIVISION_ORDER = [
@@ -15,43 +15,87 @@
     'Flyweight'
   ];
 
-  // Division score = existing UFC resume components, reweighted for the selected weight class.
-  // Resume factor controls how much of a fighter's all-time resume actually belongs in that division.
-  // 1.00 = primary division resume. Lower factors = real but smaller crossover resume.
-  // Scores are used for ordering only; division boards intentionally do not display a second OVR/rating.
+  // These are division-only UFC boards, not filtered P4P rankings.
+  // Cross-division work is included only where that division resume is real enough to rank.
+  // Future added fighters not listed here still fall back into the board by division score.
+  const DIVISION_BOARDS = {
+    'Heavyweight': [
+      { fighter:'Stipe Miocic', tag:'HW benchmark resume' },
+      { fighter:'Cain Velasquez', tag:'Peak HW dominance' },
+      { fighter:'Randy Couture', tag:'Historic HW title résumé' },
+      { fighter:'Daniel Cormier', tag:'Short elite HW run' },
+      { fighter:'Francis Ngannou', tag:'HW peak threat' },
+      { fighter:'Jon Jones', tag:'Small HW sample' }
+    ],
+    'Light Heavyweight': [
+      { fighter:'Jon Jones', tag:'LHW benchmark resume' },
+      { fighter:'Daniel Cormier', tag:'Elite LHW résumé' },
+      { fighter:'Chuck Liddell', tag:'Classic LHW title era' },
+      { fighter:'Alex Pereira', tag:'Fast-rising LHW title run' },
+      { fighter:'Randy Couture', tag:'Real but split résumé' },
+      { fighter:'Dan Henderson', tag:'UFC-only LHW context' }
+    ],
+    'Middleweight': [
+      { fighter:'Anderson Silva', tag:'MW benchmark resume' },
+      { fighter:'Israel Adesanya', tag:'Modern MW title standard' },
+      { fighter:'Alex Pereira', tag:'Short elite MW run' },
+      { fighter:'Dan Henderson', tag:'UFC-only MW context' },
+      { fighter:'Georges St-Pierre', tag:'One-fight MW title case' }
+    ],
+    'Welterweight': [
+      { fighter:'Georges St-Pierre', tag:'WW benchmark resume' },
+      { fighter:'Kamaru Usman', tag:'Modern WW title standard' },
+      { fighter:'Matt Hughes', tag:'Classic WW title reign' },
+      { fighter:'B.J. Penn', tag:'Two-division title context' }
+    ],
+    'Lightweight': [
+      { fighter:'Islam Makhachev', tag:'Current LW scoring leader' },
+      { fighter:'Khabib Nurmagomedov', tag:'LW dominance benchmark' },
+      { fighter:'Charles Oliveira', tag:'Elite LW win ledger' },
+      { fighter:'B.J. Penn', tag:'Classic LW champion' },
+      { fighter:'Dustin Poirier', tag:'Elite LW résumé' },
+      { fighter:'Frankie Edgar', tag:'LW title reign' },
+      { fighter:'Max Holloway', tag:'LW crossover résumé' },
+      { fighter:'Justin Gaethje', tag:'Elite LW title résumé' },
+      { fighter:'Conor McGregor', tag:'LW title peak' },
+      { fighter:'Alexander Volkanovski', tag:'LW challenger context' }
+    ],
+    'Featherweight': [
+      { fighter:'Alexander Volkanovski', tag:'FW benchmark resume' },
+      { fighter:'Jose Aldo', tag:'UFC-only FW title résumé' },
+      { fighter:'Max Holloway', tag:'Elite FW title résumé' },
+      { fighter:'Ilia Topuria', tag:'Current FW title peak' },
+      { fighter:'Conor McGregor', tag:'FW title peak' },
+      { fighter:'Dustin Poirier', tag:'Early FW résumé' },
+      { fighter:'Frankie Edgar', tag:'FW contender résumé' },
+      { fighter:'Aljamain Sterling', tag:'FW extension' }
+    ],
+    'Bantamweight': [
+      { fighter:'Aljamain Sterling', tag:'BW title résumé leader' },
+      { fighter:'Dominick Cruz', tag:'UFC-only BW standard' },
+      { fighter:'T.J. Dillashaw', tag:'Two-time BW champion' },
+      { fighter:'Merab Dvalishvili', tag:'Modern BW title run' },
+      { fighter:'Petr Yan', tag:'Elite BW résumé' },
+      { fighter:'Henry Cejudo', tag:'BW title win context' },
+      { fighter:'Jose Aldo', tag:'Late BW contender run' },
+      { fighter:'Frankie Edgar', tag:'Late BW context' }
+    ],
+    'Flyweight': [
+      { fighter:'Demetrious Johnson', tag:'FLW benchmark resume' },
+      { fighter:'Henry Cejudo', tag:'FLW title/rivalry résumé' }
+    ]
+  };
+
+  // Used only for fighters not explicitly placed above.
   const DIVISION_RESUME_FACTORS = {
-    'Heavyweight': {
-      'Daniel Cormier': 0.92,
-      'Jon Jones': 0.58
-    },
-    'Light Heavyweight': {
-      'Randy Couture': 0.86,
-      'Anderson Silva': 0.35
-    },
-    'Middleweight': {
-      'Georges St-Pierre': 0.38,
-      'Alex Pereira': 0.82
-    },
-    'Welterweight': {
-      'B.J. Penn': 0.45,
-      'Islam Makhachev': 0.55
-    },
-    'Lightweight': {
-      'Max Holloway': 0.38,
-      'Conor McGregor': 0.75,
-      'Alexander Volkanovski': 0.30
-    },
-    'Featherweight': {
-      'Conor McGregor': 0.78,
-      'Jose Aldo': 1.00
-    },
-    'Bantamweight': {
-      'Jose Aldo': 0.55,
-      'Henry Cejudo': 0.72
-    },
-    'Flyweight': {
-      'Henry Cejudo': 0.78
-    }
+    'Heavyweight': { 'Daniel Cormier':0.92, 'Jon Jones':0.35 },
+    'Light Heavyweight': { 'Randy Couture':0.62, 'Anderson Silva':0.20, 'Dan Henderson':0.50 },
+    'Middleweight': { 'Georges St-Pierre':0.28, 'Alex Pereira':0.72, 'Dan Henderson':0.45 },
+    'Welterweight': { 'B.J. Penn':0.42, 'Islam Makhachev':0.25 },
+    'Lightweight': { 'Max Holloway':0.30, 'Conor McGregor':0.55, 'Alexander Volkanovski':0.18, 'Frankie Edgar':0.65 },
+    'Featherweight': { 'Conor McGregor':0.72, 'Jose Aldo':1.00, 'Frankie Edgar':0.50, 'Aljamain Sterling':0.22, 'Dustin Poirier':0.28 },
+    'Bantamweight': { 'Jose Aldo':0.42, 'Henry Cejudo':0.62, 'Frankie Edgar':0.15 },
+    'Flyweight': { 'Henry Cejudo':0.78, 'T.J. Dillashaw':0.05 }
   };
 
   const CANONICAL_DIVISIONS = {
@@ -64,7 +108,13 @@
     'bantamweight':'Bantamweight',
     'flyweight':'Flyweight',
     'lhw':'Light Heavyweight',
-    'hw':'Heavyweight'
+    'hw':'Heavyweight',
+    'mw':'Middleweight',
+    'ww':'Welterweight',
+    'lw':'Lightweight',
+    'fw':'Featherweight',
+    'bw':'Bantamweight',
+    'flw':'Flyweight'
   };
 
   function injectCss(){
@@ -96,6 +146,8 @@
   function canonicalDivisionName(s){ return CANONICAL_DIVISIONS[clean(s)] || String(s || '').trim(); }
   function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
   function fighterInitialsLocal(name){ return String(name || '').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase(); }
+  function boardFor(division){ return DIVISION_BOARDS[targetDivision(division)] || []; }
+  function boardEntry(fighter, division){ return boardFor(division).find(x => x.fighter === fighter); }
   function full(row){
     if(typeof fullRow === 'function') return fullRow(row);
     const profile = DATA.fighters.find(f => f.fighter === row.fighter) || {};
@@ -114,8 +166,9 @@
   function targetDivision(division){ return canonicalDivisionName(division); }
   function primaryMatch(f, division){ return canonicalDivisionName(f.primaryDivision) === targetDivision(division); }
   function resumeFactor(f, division){
+    if(boardEntry(f.fighter, division)) return 1;
     if(primaryMatch(f, division)) return 1;
-    const explicit = DIVISION_RESUME_FACTORS[division]?.[f.fighter];
+    const explicit = DIVISION_RESUME_FACTORS[targetDivision(division)]?.[f.fighter];
     if(typeof explicit === 'number') return explicit;
     return 0;
   }
@@ -124,9 +177,9 @@
     if(f.gender === 'Women') return false;
     const target = targetDivision(division);
     const ownsDivision = divisionsFor(f).some(d => d === target);
-    return ownsDivision && resumeFactor(f, division) > 0;
+    return ownsDivision && resumeFactor(f, target) > 0;
   }
-  function divisionScoreParts(f, division){
+  function fallbackScoreParts(f, division){
     const factor = resumeFactor(f, division);
     const title = clamp((Number(f.championship || 0) / 30) * 35, 0, 35);
     const quality = clamp((Number(f.opponentQuality || 0) / 25) * 30, 0, 30);
@@ -134,25 +187,37 @@
     const longevity = clamp((Number(f.longevity || 0) / 15) * 15, 0, 15);
     const loss = clamp((Number(f.penalty || 0) / 10) * 5, -5, 0);
     const base = title + quality + dominance + longevity + loss;
-    const score = clamp(base * factor, 0, 100);
-    return {score, factor, title, quality, dominance, longevity, loss};
+    return {score:clamp(base * factor, 0, 100), factor, title, quality, dominance, longevity, loss};
   }
-  function divisionScore(f, division){ return divisionScoreParts(f, division).score; }
+  function fallbackScore(f, division){ return fallbackScoreParts(f, division).score; }
   function divisionRows(division){
-    return allRows()
-      .filter(f => divisionMatch(f, division))
-      .sort((a,b) => divisionScore(b, division) - divisionScore(a, division) || Number(b.totalScore || 0) - Number(a.totalScore || 0));
+    const target = targetDivision(division);
+    if(division === 'All') return allRows().filter(f => f.gender !== 'Women');
+    const rows = allRows().filter(f => divisionMatch(f, target));
+    const explicit = boardFor(target)
+      .map((entry, index) => ({entry, index, row: rows.find(f => f.fighter === entry.fighter)}))
+      .filter(x => !!x.row)
+      .sort((a,b) => a.index - b.index)
+      .map(x => x.row);
+    const explicitNames = new Set(explicit.map(f => f.fighter));
+    const fallback = rows
+      .filter(f => !explicitNames.has(f.fighter))
+      .sort((a,b) => fallbackScore(b, target) - fallbackScore(a, target) || Number(b.totalScore || 0) - Number(a.totalScore || 0));
+    return [...explicit, ...fallback];
   }
   function thumb(f){
     const url = DISPLAY_OVERRIDES[f.fighter]?.thumbUrl || DISPLAY_OVERRIDES[f.fighter]?.photoUrl || '';
     return `<div class="row-photo">${url ? `<img src="${url}" alt="${f.fighter} thumbnail" loading="lazy">` : fighterInitialsLocal(f.fighter)}</div>`;
   }
   function roleTag(f, division){
+    const target = targetDivision(division);
+    const explicit = boardEntry(f.fighter, target);
+    if(explicit?.tag) return explicit.tag;
     if(division === 'All') return DISPLAY_OVERRIDES[f.fighter]?.resumeTag || 'Division profile';
-    const factor = resumeFactor(f, division);
-    if(primaryMatch(f, division)) return `${division} resume`;
-    if(factor >= .75) return `${division} title resume`;
-    return `${division} crossover`;
+    if(primaryMatch(f, target)) return `${target} resume`;
+    const factor = resumeFactor(f, target);
+    if(factor >= .65) return `${target} title resume`;
+    return `${target} crossover`;
   }
   function rowHtml(f, i, division){
     return `<article class="row clean-row fighter-row division-row" data-fighter="${f.fighter}"><div class="rank">#${i + 1}</div>${thumb(f)}<div class="row-main"><div class="name">${f.fighter}</div><div class="meta">${f.ufcRecord || ''} · ${f.primaryDivision || ''}${f.secondaryDivision ? ' / ' + f.secondaryDivision : ''}</div><div class="resume-tag">${roleTag(f, division)}</div></div></article>`;
@@ -168,20 +233,23 @@
   function availableDivisions(){ return DIVISION_ORDER.filter(d => divisionRows(d).length > 0); }
   function normalizeDivisionSelect(){
     const select = el('divisionFilter');
-    if(!select || select.dataset.menDivisionOrder === VERSION) return;
+    if(!select) return;
+    const divisions = availableDivisions();
+    const signature = `${VERSION}|${divisions.join('|')}|${allRows().length}`;
+    if(select.dataset.menDivisionOrder === signature) return;
     const current = select.value;
     select.innerHTML = '<option value="All">All divisions</option>';
-    availableDivisions().forEach(d => {
+    divisions.forEach(d => {
       const opt = document.createElement('option');
       opt.value = d;
       opt.textContent = d;
       select.appendChild(opt);
     });
-    select.value = DIVISION_ORDER.includes(current) ? current : 'All';
-    select.dataset.menDivisionOrder = VERSION;
+    select.value = divisions.includes(current) ? current : 'All';
+    select.dataset.menDivisionOrder = signature;
   }
   function renderDivisionHub(){
-    setDivisionHeading('UFC Division Boards', '');
+    setDivisionHeading('UFC Division Boards', 'Division-only rankings. A fighter’s P4P résumé does not automatically carry into every weight class.');
     const cards = availableDivisions().map(division => {
       const rows = divisionRows(division);
       const topThree = rows.slice(0,3).map((f,i)=>`<div class="division-topline-row ${i === 0 ? 'is-top' : ''}"><strong><span class="division-rank-num">#${i+1}</span> ${f.fighter}</strong></div>`).join('');
@@ -202,10 +270,10 @@
       return;
     }
     const rows = divisionRows(division);
-    setDivisionHeading(`${division} All-Time Rankings`, '');
+    setDivisionHeading(`${division} All-Time Rankings`, 'UFC-only division résumé. Cross-division achievements are context, not automatic ranking credit.');
     el('divisionList').innerHTML = rows.map((r,i)=>rowHtml(r,i,division)).join('') || '<div class="notice">No fighters are loaded for this division yet.</div>';
     document.querySelectorAll(`#divisionList .fighter-row`).forEach(row => row.addEventListener('click', () => openFighter(row.dataset.fighter)));
   };
-  window.UFC_DIVISION_RANKINGS = { version: VERSION, mode: 'men-only-division-rank-order-v1' };
+  window.UFC_DIVISION_RANKINGS = { version: VERSION, mode: 'explicit-ufc-division-boards-with-fallback', boards: DIVISION_BOARDS };
   if(typeof window.renderDivision === 'function') window.renderDivision();
 })();
