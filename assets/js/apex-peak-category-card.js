@@ -1,6 +1,6 @@
 // Adds Apex Peak as a visible fighter-card category without touching the base app shell.
 (function(){
-  const VERSION = 'apex-peak-category-card-20260705f';
+  const VERSION = 'apex-peak-category-card-20260706a';
   const APEX_MAX = 6;
 
   function num(value){
@@ -37,7 +37,7 @@
     return `<button type="button" class="category-card ${tier.cls}" data-category="apexPeak" aria-label="Explain Apex Peak rating for ${f.fighter}">
       <span class="category-label">Apex Peak</span>
       <strong>${rating} <span class="meta">Rating</span></strong>
-      <small>#${apexRank(f) || '—'} in category · Best-night / best-year proof</small>
+      <small>#${apexRank(f) || '—'} in category · Peak form + elite proof</small>
       <span class="tier-pill">${tier.label}</span>
       <div class="category-bar"><i style="width:${width}%"></i></div>
     </button>`;
@@ -62,7 +62,7 @@
     return `<div class="category-explainer ${tier.cls}">
       <div class="category-explainer-kicker">${tier.label} · #${apexRank(f) || '—'} in category</div>
       <h3>Apex Peak: ${rating} Rating</h3>
-      <p><strong>What it means:</strong> The best version of the fighter for one night or one short stretch, adjusted for opponent proof, separation, division strength, and how few answers opponents seemed to have.</p>
+      <p><strong>What it means:</strong> The best version of the fighter for one night or one short stretch — how unbeatable they looked, adjusted for elite opponent proof, dominance, division strength, and aura.</p>
       <div class="category-explainer-grid">
         ${items.map(([k,v])=>`<div class="category-explainer-item"><strong>${k}</strong><small>${v}</small></div>`).join('')}
       </div>
@@ -72,7 +72,7 @@
   function loadCategoryLeaders(){
     if(document.querySelector('script[data-category-leaders]')) return;
     const script = document.createElement('script');
-    script.src = 'assets/js/category-leaders.js?v=category-leaders-20260705d';
+    script.src = 'assets/js/category-leaders.js?v=category-leaders-20260706a';
     script.setAttribute('data-category-leaders','true');
     document.body.appendChild(script);
   }
