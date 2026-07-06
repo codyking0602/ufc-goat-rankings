@@ -1,16 +1,13 @@
 // Runtime rank fluidity fixes.
 // Keeps visible ranks tied to current sorted scores instead of packet hardcodes.
 (function(){
-  const VERSION = 'rank-fluidity-fixes-20260706a';
+  const VERSION = 'rank-fluidity-fixes-20260706b';
   const CATEGORY_KEYS = ['championship','opponentQuality','primeDominance','longevity','penalty','apexPeak'];
 
   function data(){ return window.RANKING_DATA || {}; }
   function profileFor(row){ return (data().fighters || []).find(x => x?.fighter === row?.fighter) || {}; }
-  function full(row){
-    if(!row) return {};
-    if(typeof window.fullRow === 'function') return window.fullRow(row);
-    return { ...profileFor(row), ...row };
-  }
+  function dynamicFullRow(row){ return row ? { ...profileFor(row), ...row } : {}; }
+  function full(row){ return dynamicFullRow(row); }
   function boardNameFor(f){ return f?.leaderboard === 'women' ? 'women' : 'men'; }
   function numeric(v){ const n = Number(v || 0); return Number.isFinite(n) ? n : 0; }
   function sortedBoard(boardName){
@@ -94,6 +91,9 @@
     return window.UFC_RANK_FLUIDITY;
   }
 
+  // Patch the stale app-level fullRow helper so packet-added profiles merge live profile details.
+  window.fullRow = dynamicFullRow;
+
   const originalRefresh = window.refresh;
   if(typeof originalRefresh === 'function' && !originalRefresh.__ufcRankFluidityWrapped){
     const wrapped = function(){
@@ -106,7 +106,7 @@
     window.refresh = wrapped;
   }
 
-  window.UFC_DYNAMIC_RANKS = { version: VERSION, apply: applyDynamicRanks, boardRank, categoryRank: categoryRankDynamic };
+  window.UFC_DYNAMIC_RANKS = { version: VERSION, apply: applyDynamicRanks, boardRank, categoryRank: categoryRankDynamic, fullRow: dynamicFullRow };
   applyDynamicRanks();
   if(typeof window.refresh === 'function') window.refresh();
 })();
