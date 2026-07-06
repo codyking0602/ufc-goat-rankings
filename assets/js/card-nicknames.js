@@ -1,7 +1,7 @@
 // Profile-card display nicknames for fighters who are clearly known by one.
 // Keeps list/board rows clean and keeps data keys unchanged. Does not touch resume-tag pills.
 (function(){
-  const VERSION = 'card-nicknames-20260706j-bisping';
+  const VERSION = 'card-nicknames-20260706k-tony-ferguson';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const DISPLAY_NAMES = {
@@ -16,6 +16,7 @@
     'Tito Ortiz': 'Tito “The Huntington Beach Bad Boy” Ortiz',
     'Junior dos Santos': 'Junior “Cigano” dos Santos',
     'Michael Bisping': 'Michael “The Count” Bisping',
+    'Tony Ferguson': 'Tony “El Cucuy” Ferguson',
     'Zhang Weili': 'Zhang “Magnum” Weili',
     'Rose Namajunas': '“Thug” Rose Namajunas',
     'Miesha Tate': 'Miesha “Cupcake” Tate'
@@ -33,6 +34,7 @@
     'Tito Ortiz': 'Early UFC title-reign anchor',
     'Junior dos Santos': 'Heavyweight win-streak destroyer',
     'Michael Bisping': 'Middleweight title shocker',
+    'Tony Ferguson': 'Uncrowned lightweight terror',
     'Zhang Weili': 'Two-reign strawweight force',
     'Rose Namajunas': 'Two-reign strawweight giant killer',
     'Miesha Tate': 'Bantamweight title comeback'
