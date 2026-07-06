@@ -1,7 +1,7 @@
 // Apex Peak bonus corrections.
 // Adds a controlled 0-to-6 best-night / best-year modifier before final score weighting.
 (function(){
-  const VERSION = 'apex-peak-score-corrections-20260705e';
+  const VERSION = 'apex-peak-score-corrections-20260705f-dricus';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
@@ -37,6 +37,7 @@
     'Alex Pereira': c(4.75, 'Jiri Prochazka 2023 through Jiri Prochazka II 2024', 1.00, 1.25, 1.25, 0.75, 0.50, 'Rare two-division title/finishing apex with terrifying one-night danger. Shorter UFC sample and mixed round-control profile keep it below the completed mythic peaks.'),
     'Kamaru Usman': c(4.50, 'Tyron Woodley 2019 through Jorge Masvidal II 2021', 1.25, 1.25, 1.00, 0.75, 0.25, 'Strong welterweight title apex with Woodley/Covington/Masvidal proof and real control. Later Edwards finish and less mythic aura keep him below GSP-style apex.'),
     'Daniel Cormier': c(4.25, 'Anthony Johnson 2015 through Stipe Miocic I 2018', 1.00, 1.25, 0.75, 0.75, 0.50, 'Double-champ apex and elite LHW/HW proof. Jones rivalry caps best-alive claim and separation versus the absolute apex tier.'),
+    'Dricus du Plessis': c(3.50, 'Robert Whittaker 2023 through Israel Adesanya 2024 / Sean Strickland II 2025', 0.75, 1.25, 0.75, 0.50, 0.25, 'Compact modern middleweight apex tied to the Whittaker breakthrough, Adesanya title defense, and Strickland rivalry separation. Short window, close fights, and the Khamzat loss cap best-alive/aura credit.'),
     'Charles Oliveira': c(4.00, 'Michael Chandler 2021 through Justin Gaethje 2022', 0.75, 1.25, 0.75, 1.00, 0.25, 'Modern lightweight apex with Chandler/Poirier/Gaethje proof and real finishing danger. Chaotic vulnerability keeps the aura/separation below cleaner peak cases.'),
     'Israel Adesanya': c(4.00, 'Robert Whittaker 2019 through Paulo Costa 2020', 1.00, 1.00, 1.00, 0.50, 0.50, 'Elite middleweight apex with Whittaker/Costa proof and clean striking separation. Middleweight depth and later matchup cracks keep it below the highest apex tier.'),
     'Henry Cejudo': c(4.00, 'Demetrious Johnson II 2018 through Dominick Cruz 2020', 1.00, 1.25, 0.75, 0.75, 0.25, 'Champ-champ apex with DJ, Dillashaw, Moraes, and Cruz title proof. Compact run and less clean dominance keep it from the mythic tier.'),
