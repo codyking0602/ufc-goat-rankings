@@ -1,7 +1,7 @@
 // Central manifest for fighter packet modules.
 // Add new fighter packet files here instead of growing ranking-data-patches.js.
 (function(){
-  const VERSION='fighter-packet-manifest-20260706p-dern-kayla';
+  const VERSION='fighter-packet-manifest-20260706q-women-champ-batch';
   const packets=[
     {slug:'demetrious-johnson',version:'20260702a'},
     {slug:'anderson-silva',version:'20260702a'},
@@ -51,6 +51,11 @@
     {slug:'miesha-tate',version:'20260706a'},
     {slug:'mackenzie-dern',version:'20260706a'},
     {slug:'kayla-harrison',version:'20260706a'},
+    {slug:'jessica-andrade',version:'20260706a'},
+    {slug:'alexa-grasso',version:'20260706a'},
+    {slug:'julianna-pena',version:'20260706a'},
+    {slug:'carla-esparza',version:'20260706a'},
+    {slug:'holly-holm',version:'20260706a'},
     {slug:'joanna-jedrzejczyk',version:'20260702b'},
     {slug:'ronda-rousey',version:'20260702b'}
   ];
