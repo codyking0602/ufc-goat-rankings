@@ -1,6 +1,6 @@
 // Lightweight post-load status hook and module loader.
 (function(){
-  const VERSION='ranking-data-patches-20260706n-zhang-weili';
+  const VERSION='ranking-data-patches-20260706o-rank-fluidity-b';
   const SLUG_OVERRIDES={'B.J. Penn':'bj-penn','BJ Penn':'bj-penn','Georges St-Pierre':'georges-st-pierre','T.J. Dillashaw':'tj-dillashaw','TJ Dillashaw':'tj-dillashaw','Junior dos Santos':'junior-dos-santos','Mauricio Rua':'mauricio-rua','Maurício Rua':'mauricio-rua','Zabit Magomedsharipov':'zabit-magomedsharipov',"Sean O'Malley":'sean-omalley'};
   const FALLBACK_PACKET_MANIFEST=[
     {slug:'demetrious-johnson',version:'20260702a'},{slug:'anderson-silva',version:'20260702a'},{slug:'khabib-nurmagomedov',version:'20260702a'},{slug:'islam-makhachev',version:'20260702a'},
@@ -38,7 +38,7 @@
       {src:'assets/compare-phase2-yan.js?v=compare-phase2-yan-20260701b',attr:'data-compare-phase2-yan'},
       {src:'assets/data/fighter-packets.js?v=fighter-packets-20260702c',attr:'data-fighter-packets'},
       ...packets,
-      {src:'assets/js/rank-fluidity-fixes.js?v=rank-fluidity-fixes-20260706a',attr:'data-rank-fluidity-fixes'},
+      {src:'assets/js/rank-fluidity-fixes.js?v=rank-fluidity-fixes-20260706b',attr:'data-rank-fluidity-fixes'},
       {src:'assets/data/prime-round-row-fixes.js?v=prime-round-row-fixes-20260704a',attr:'data-prime-round-row-fixes'},
       {src:'assets/data/championship-score-corrections.js?v=championship-score-corrections-20260703b',attr:'data-championship-score-corrections'},
       {src:'assets/data/opponent-quality-score-corrections.js?v=opponent-quality-score-corrections-20260705c-dricus-oq',attr:'data-opponent-quality-score-corrections'},
