@@ -74,12 +74,14 @@ Visible ranks are recalculated dynamically in the app from the current sorted bo
 | Amanda Nunes | Women #1 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Amanda photos | `assets/data/fighter-packets/amanda-nunes.js` |
 | Valentina Shevchenko | Women #2 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Valentina photos | `assets/data/fighter-packets/valentina-shevchenko.js` |
 | Zhang Weili | Women elite | Fighter-packet live add; two-reign strawweight case, win ledger, round-control rows, ledger, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Zhang photos; audit exact round-control rows next rebuild | `assets/data/fighter-packets/zhang-weili.js` |
+| Rose Namajunas | Women elite | Fighter-packet live add; two-reign strawweight case, win ledger, round-control rows, ledger, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Rose photos; audit exact round-control rows next rebuild | `assets/data/fighter-packets/rose-namajunas.js` |
+| Miesha Tate | Women depth | Fighter-packet live add; UFC bantamweight title case, win ledger, round-control rows, ledger, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Miesha photos; audit exact round-control rows next rebuild | `assets/data/fighter-packets/miesha-tate.js` |
 | Joanna Jedrzejczyk | Women #3 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Joanna photos | `assets/data/fighter-packets/joanna-jedrzejczyk.js` |
 | Ronda Rousey | Women #4 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Ronda photos | `assets/data/fighter-packets/ronda-rousey.js` |
 
 ## Current priorities
 
-1. Zhang Weili, Junior dos Santos, Tito Ortiz, Deiveson Figueiredo, Khamzat Chimaev, Tyron Woodley, Lyoto Machida, Sean Strickland, Robert Whittaker, and Sean O'Malley are live additions with dedicated fighter packets and round-control rows.
+1. Zhang Weili, Rose Namajunas, Miesha Tate, Junior dos Santos, Tito Ortiz, Deiveson Figueiredo, Khamzat Chimaev, Tyron Woodley, Lyoto Machida, Sean Strickland, Robert Whittaker, and Sean O'Malley are live additions with dedicated fighter packets and round-control rows.
 2. Dynamic visible ranks are now handled by `assets/js/rank-fluidity-fixes.js`; packet rank values should not be treated as the front-end source of truth.
 3. Dricus du Plessis is permanent and reviewed across Quality Wins, Apex Peak, and Prime Dominance.
 4. Photos remain missing until real files exist.
