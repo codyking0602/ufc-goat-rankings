@@ -1,6 +1,6 @@
 // Sean Strickland fighter packet extension.
 (function(){
-  const VERSION = 'fighter-packet-sean-strickland-20260706a';
+  const VERSION = 'fighter-packet-sean-strickland-20260706b';
   const fighter = 'Sean Strickland';
 
   const rounds = [
@@ -27,49 +27,26 @@
   ];
 
   const packet = {
-    status: { stage: 'complete first-pass packet; Cody approved category scores with Apex separation/aura reduction; round-control rows included', lastUpdated: '2026-07-06', nextFix: 'Add real photos after Cody uploads source images; audit exact round-control rows during next scoring-table rebuild.' },
+    status: { stage: 'complete first-pass packet; category scores include Apex separation/aura reduction; round-control rows included', lastUpdated: '2026-07-06', nextFix: 'Add real photos after source images are uploaded; audit exact round-control rows during next scoring-table rebuild.' },
     repoLocations: { scoreSource: 'assets/data/ranking-data-additions.js', centralPacket: 'assets/data/fighter-packets/sean-strickland.js', apexPeak: 'assets/data/apex-peak-score-corrections.js', watchMoment: 'assets/js/watch-moments.js', tracker: 'docs/fighter-status.md', photos: 'No real photo files loaded yet; app should use initials fallback.' },
     photos: {},
     rounds,
     display: {
       overallOvr: 84, allTimeRank: 28, divisionLabel: 'MW', resumeTag: 'Awkward middleweight title disruptor',
-      oneLiner: 'A pace-and-defense middleweight champion with a legendary Adesanya upset, current-table Khamzat proof, and a résumé capped by Dricus/Pereira loss context.',
+      oneLiner: 'A pace-and-defense middleweight champion with a legendary Adesanya upset, current-table Khamzat proof, and a resume capped by Dricus/Pereira loss context.',
       categories: { championship: { ovr: 78, rank: 23 }, opponentQuality: { ovr: 85, rank: 16 }, primeDominance: { ovr: 82, rank: 22 }, longevity: { ovr: 76, rank: 25 }, apexPeak: { ovr: 76, rank: 24 }, penalty: { ovr: 50, rank: 40 } },
       snapshot: [ ['UFC Record', '18-7'], ['UFC Title-Fight Wins', '2 adjusted'], ['Apex Peak', '+3.25'], ['Quality Wins', 'Adesanya, Khamzat, Imavov, Costa'], ['Prime Record', '9-4 Elite MW Window'], ['Prime Dominance', '16.90 / 30'], ['Rounds Won', '62.0%'], ['Loss Context', 'Capped at -10'] ],
-      whyRankedHere: 'Strickland ranks here because the top of the UFC middleweight résumé is loud: the Adesanya title upset is one of the best middleweight wins ever, the current-table Khamzat win adds elite title-level proof, and his pressure/defense style gives him real round-control value.',
+      whyRankedHere: 'Strickland ranks here because the top of the UFC middleweight resume is loud: the Adesanya title upset is one of the best middleweight wins ever, the current-table Khamzat win adds elite title-level proof, and his pressure/defense style gives him real round-control value.',
       whyNotHigher: 'He does not rank higher because there is no long defense streak, the finishing profile is low, Dricus has direct title-fight separation twice, and the loss ledger reaches the cap.',
-      bigAssumptions: [ ['Current-table scope', 'Uses the current scoring-table version where Strickland owns a title-level win over Khamzat. Without that, he drops several points.'], ['Apex adjustment', 'Cody reduced separation to 0.50 and aura to 0.25, bringing Apex Peak to +3.25.'], ['Round control', 'Round rows are included from the start so the Rounds Won section renders; they remain best-effort until a full rebuild.'], ['Loss cap', 'The loss ledger reaches the -10 cap because of early losses plus Pereira, Cannonier, and Dricus title-fight context.'] ],
+      bigAssumptions: [ ['Current-table scope', 'Uses the current scoring-table version where Strickland owns a title-level win over Khamzat. Without that, he drops several points.'], ['Apex adjustment', 'Separation is set at 0.50 and aura at 0.25, bringing Apex Peak to +3.25.'], ['Round control', 'Round rows are included from the start so the Rounds Won section renders; they remain best-effort until a full rebuild.'], ['Loss cap', 'The loss ledger reaches the -10 cap because of early losses plus Pereira, Cannonier, and Dricus title-fight context.'] ],
       keyJudgmentCalls: [ ['Adesanya win', 'Massive title and apex proof because it was a clean five-round title upset.'], ['Khamzat win', 'Counts as current-table title-level elite proof.'], ['Dricus rivalry', 'Dricus has the direct edge twice, so Strickland cannot climb into the higher champion tier yet.'], ['Pereira loss', 'Counts as a prime finished loss to a champion/top-five level opponent.'] ],
       apexPeakSummary: { score: 3.25, window: 'Israel Adesanya 2023 through Khamzat Chimaev current-table title win', components: { peakStatus: 0.75, eliteOpponentProof: 1.25, separationDominance: 0.50, divisionStrength: 0.50, cleanApexAura: 0.25 }, notes: 'Adesanya plus Khamzat proof gives a real apex, but Dricus losses cap separation and aura.' },
       primeDominanceSummary: { score: 16.90, notes: 'High round-control/pace value, low finish value, no defense streak, and heavy elite-loss context.' },
       finalTakeaway: 'Strickland is a weird but legit UFC-only champion case: better than the belt-count summary looks, but capped hard by direct rivalry losses and the -10 loss penalty.'
     },
     profileStats: { ufcRecord: '18-7', titleFightWins: 2, adjustedTitleWins: 2.0, eliteWins: 5, primeRecord: '9-4 in elite/title middleweight window', primeDominance: 16.90, finishRatePct: 33.3, roundsWonPct: 62.0, activeEliteYears: 5.75, apexPeak: 3.25, timesFinishedPrime: 1, divisionStrengthContext: 'Modern middleweight gets solid respect, but not max division-strength credit.', lossContext: 'Early WW losses, Pereira finished loss, Cannonier close decision, and Dricus title losses push him to the -10 cap.' },
-    compareSeasoning: {
-      shortCase: 'Strickland is the awkward champion disruptor: Adesanya upset, current-table Khamzat proof, high round-control style, and heavy loss-context drag.',
-      peak: 'At his best, Strickland wins by pressure, jab volume, defense, pace, and making elite strikers uncomfortable for five rounds.',
-      resume: 'The résumé top end is strong with Adesanya and Khamzat, then solid depth through Imavov, Costa, Hermansson, Allen, and Hall.',
-      championship: 'His championship case is real, but short. Big title wins, no defense streak, and Dricus rivalry cap.',
-      opponentQuality: 'Adesanya and Khamzat carry the top end; Whittaker has deeper volume, but Strickland has louder top-two wins in the current table.',
-      longevity: 'His UFC tenure is long, but the elite clock starts later around the Hall/Hermansson/Imavov rise.',
-      counter: 'The counterargument against Strickland is easy: not enough defenses, not enough finishes, and too many losses.',
-      edge: 'Strickland wins comparisons when title upset value and round-control style outweigh cleaner records or longer but less explosive résumés.',
-      eliteCounter: true,
-      signatureWins: 'Israel Adesanya, Khamzat Chimaev, Nassourdine Imavov, Paulo Costa, Jack Hermansson, Brendan Allen, Uriah Hall.',
-      weakness: 'Low finishing dominance, no long reign, Dricus rivalry, and capped loss penalty.',
-      titleSummary: 'UFC middleweight title win over Adesanya plus current-table Khamzat title-level credit; no defense streak.',
-      primeSummary: 'Good control prime, not a clean dominance prime.',
-      bestArgument: 'His best argument is that beating Adesanya cleanly, then adding Khamzat in the current table, gives him a louder top-end title résumé than most short-reign champions.',
-      titleStyle: 'Short Disruptor Title Case', primeStyle: 'Round-Control Pressure Prime',
-      legacyStats: { ufcRecord: '18-7', titleFightWins: 2, adjustedTitleWins: 2.0, beltsWon: 1, titleDefenses: 0, activeEliteYearsLabel: 'roughly 5.8 active elite years', primeNote: 'Adesanya/Khamzat title proof with Dricus/Pereira loss caps' }
-    },
-    fightLedger: {
-      'sean strickland|israel adesanya': { winner: 'Sean Strickland', summary: 'Strickland beat Adesanya cleanly over five rounds to win the UFC middleweight title, one of the strongest direct wins on his résumé.' },
-      'sean strickland|dricus du plessis': { winner: 'Dricus du Plessis', summary: 'Dricus beat Strickland twice in UFC title fights, giving Dricus direct rivalry separation.' },
-      'sean strickland|alex pereira': { winner: 'Alex Pereira', summary: 'Pereira knocked out Strickland, which is a major direct-fight and loss-context cap for Sean.' },
-      'sean strickland|jared cannonier': { winner: 'Jared Cannonier', summary: 'Cannonier beat Strickland by close split decision, so the ledger hurts Sean but carries close-fight context.' },
-      'sean strickland|khamzat chimaev': { winner: 'Sean Strickland', summary: 'Strickland owns the current-table title-level win over Khamzat, which is central to his higher score in this version.' }
-    },
+    compareSeasoning: { shortCase: 'Strickland is the awkward champion disruptor: Adesanya upset, current-table Khamzat proof, high round-control style, and heavy loss-context drag.', peak: 'At his best, Strickland wins by pressure, jab volume, defense, pace, and making elite strikers uncomfortable for five rounds.', resume: 'The resume top end is strong with Adesanya and Khamzat, then solid depth through Imavov, Costa, Hermansson, Allen, and Hall.', championship: 'His championship case is real, but short. Big title wins, no defense streak, and Dricus rivalry cap.', opponentQuality: 'Adesanya and Khamzat carry the top end; Whittaker has deeper volume, but Strickland has louder top-two wins in the current table.', longevity: 'His UFC tenure is long, but the elite clock starts later around the Hall/Hermansson/Imavov rise.', counter: 'The counterargument against Strickland is easy: not enough defenses, not enough finishes, and too many losses.', edge: 'Strickland wins comparisons when title upset value and round-control style outweigh cleaner records or longer but less explosive resumes.', eliteCounter: true, signatureWins: 'Israel Adesanya, Khamzat Chimaev, Nassourdine Imavov, Paulo Costa, Jack Hermansson, Brendan Allen, Uriah Hall.', weakness: 'Low finishing dominance, no long reign, Dricus rivalry, and capped loss penalty.', titleSummary: 'UFC middleweight title win over Adesanya plus current-table Khamzat title-level credit; no defense streak.', primeSummary: 'Good control prime, not a clean dominance prime.', bestArgument: 'His best argument is that beating Adesanya cleanly, then adding Khamzat in the current table, gives him a louder top-end title resume than most short-reign champions.', titleStyle: 'Short Disruptor Title Case', primeStyle: 'Round-Control Pressure Prime', legacyStats: { ufcRecord: '18-7', titleFightWins: 2, adjustedTitleWins: 2.0, beltsWon: 1, titleDefenses: 0, activeEliteYearsLabel: 'roughly 5.8 active elite years', primeNote: 'Adesanya/Khamzat title proof with Dricus/Pereira loss caps' } },
+    fightLedger: { 'sean strickland|israel adesanya': { winner: 'Sean Strickland', summary: 'Strickland beat Adesanya cleanly over five rounds to win the UFC middleweight title, one of the strongest direct wins on his resume.' }, 'sean strickland|dricus du plessis': { winner: 'Dricus du Plessis', summary: 'Dricus beat Strickland twice in UFC title fights, giving Dricus direct rivalry separation.' }, 'sean strickland|alex pereira': { winner: 'Alex Pereira', summary: 'Pereira knocked out Strickland, which is a major direct-fight and loss-context cap for Sean.' }, 'sean strickland|jared cannonier': { winner: 'Jared Cannonier', summary: 'Cannonier beat Strickland by close split decision, so the ledger hurts Sean but carries close-fight context.' }, 'sean strickland|khamzat chimaev': { winner: 'Sean Strickland', summary: 'Strickland owns the current-table title-level win over Khamzat, which is central to his higher score in this version.' } },
     watchMoment: { url: 'https://youtube.com/shorts/oOeeWkSuOIo?si=f2F9cDqI4ZOvPaKh', label: 'Watch Moment' }
   };
 
