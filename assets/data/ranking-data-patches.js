@@ -1,6 +1,6 @@
 // Lightweight post-load status hook and module loader.
 (function(){
-  const VERSION='ranking-data-patches-20260705p-aldo-rerank';
+  const VERSION='ranking-data-patches-20260705q-fluid-apex-division-rankings';
   const SLUG_OVERRIDES={'B.J. Penn':'bj-penn','BJ Penn':'bj-penn','Georges St-Pierre':'georges-st-pierre','T.J. Dillashaw':'tj-dillashaw','TJ Dillashaw':'tj-dillashaw','Junior dos Santos':'junior-dos-santos','Mauricio Rua':'mauricio-rua','Maurício Rua':'mauricio-rua','Zabit Magomedsharipov':'zabit-magomedsharipov'};
   let fallbackInstalled=false;
 
@@ -93,7 +93,7 @@
     const loadCompareNarrative=()=>loadScriptOnce('assets/js/compare-narrative-system.js?v=compare-narrative-system-20260703g','data-compare-narrative-system',loadCompareWatchdog);
     const loadCompareCore=()=>loadSequence(compareCoreScripts,loadCompareNarrative);
     const loadBranding=()=>loadScriptOnce('assets/js/app-branding.js?v=app-branding-20260702c','data-app-branding',loadCompareCore);
-    const loadDivisionRankings=()=>loadScriptOnce('assets/js/division-rankings.js?v=division-rankings-20260705c-explicit-boards','data-division-rankings',loadBranding);
+    const loadDivisionRankings=()=>loadScriptOnce('assets/js/division-rankings.js?v=division-rankings-20260705d-fluid-apex','data-division-rankings',loadBranding);
     const loadHomePolish=()=>loadScriptOnce('assets/js/home-polish.js?v=home-polish-hybrid-preview-20260705b','data-home-polish',loadDivisionRankings);
     const loadWatchMoments=()=>loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260704a','data-watch-moments',loadHomePolish);
     const loadPackages=()=>loadScriptOnce('assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260702a','data-fighter-profile-packages',loadWatchMoments);
@@ -101,7 +101,7 @@
     loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260702b','data-profile-template-system',loadPackages);
   }
 
-  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Status hook and module loader with explicit division boards, visible Apex Peak rating card, score weighting, and Aldo UFC-only rerank cache bust',updated:'2026-07-05',version:VERSION},apply:status,slugFor,syncPacketProfileStats};
+  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Status hook and module loader with fluid Apex-aware division rankings, visible Apex Peak rating card, score weighting, and Aldo UFC-only rerank cache bust',updated:'2026-07-05',version:VERSION},apply:status,slugFor,syncPacketProfileStats};
   installImageFallback();
   applyPhotoPathDefaults();
   syncPacketProfileStats();
