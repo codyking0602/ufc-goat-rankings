@@ -1,6 +1,6 @@
 // Lightweight post-load status hook and module loader.
 (function(){
-  const VERSION='ranking-data-patches-20260706u-nicknames-and-zhang-championship';
+  const VERSION='ranking-data-patches-20260706v-nicknames-off-pill';
   const FALLBACK_PACKET_MANIFEST=[
     ['demetrious-johnson','20260702a'],['anderson-silva','20260702a'],['khabib-nurmagomedov','20260702a'],['islam-makhachev','20260702a'],
     ['alexander-volkanovski','20260703b'],['randy-couture','20260702a'],['max-holloway','20260703b'],['kamaru-usman','20260702a'],['jose-aldo','20260705b'],['matt-hughes','20260702a'],['daniel-cormier','20260702a'],['stipe-miocic','20260702a'],
@@ -32,7 +32,7 @@
     {src:'assets/compare-phase2-yan.js?v=compare-phase2-yan-20260701b',attr:'data-compare-phase2-yan'},
     {src:'assets/data/fighter-packets.js?v=fighter-packets-20260702c',attr:'data-fighter-packets'},
     ...packets,
-    {src:'assets/js/card-nicknames.js?v=card-nicknames-20260706d-data-only',attr:'data-card-nicknames'},
+    {src:'assets/js/card-nicknames.js?v=card-nicknames-20260706e-card-text',attr:'data-card-nicknames'},
     {src:'assets/js/rank-fluidity-fixes.js?v=rank-fluidity-fixes-20260706b',attr:'data-rank-fluidity-fixes'},
     {src:'assets/data/prime-round-row-fixes.js?v=prime-round-row-fixes-20260704a',attr:'data-prime-round-row-fixes'},
     {src:'assets/data/championship-score-corrections.js?v=championship-score-corrections-20260706c-zhang-calibration',attr:'data-championship-score-corrections'},
@@ -52,6 +52,6 @@
     {src:'assets/data/plain-resume-copy-fixes.js?v=plain-resume-copy-fixes-20260706a',attr:'data-plain-resume-copy-fixes'}
   ];}
   function loadModules(){const loadCompareWatchdog=()=>loadScriptOnce('assets/js/compare-narrative-watchdog.js?v=compare-narrative-watchdog-20260702a','data-compare-narrative-watchdog',status);const loadCompareNarrative=()=>loadScriptOnce('assets/js/compare-narrative-system.js?v=compare-narrative-system-20260703g','data-compare-narrative-system',loadCompareWatchdog);const loadCompareCore=()=>loadSequence(compareCoreScripts(),loadCompareNarrative);const loadPacketManifest=()=>loadScriptOnce('assets/data/fighter-packet-manifest.js?v=fighter-packet-manifest-20260706m-zhang-weili','data-fighter-packet-manifest',loadCompareCore);const loadBranding=()=>loadScriptOnce('assets/js/app-branding.js?v=app-branding-20260702c','data-app-branding',loadPacketManifest);const loadDivisionRankings=()=>loadScriptOnce('assets/js/division-rankings.js?v=division-rankings-20260705e-clean-leaderboard','data-division-rankings',loadBranding);const loadHomePolish=()=>loadScriptOnce('assets/js/home-polish.js?v=home-polish-hybrid-preview-20260705b','data-home-polish',loadDivisionRankings);const loadWatchMoments=()=>loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260706j-nicknames','data-watch-moments',loadHomePolish);const loadPackages=()=>loadScriptOnce('assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260702a','data-fighter-profile-packages',loadWatchMoments);if(window.UFC_PROFILE_TEMPLATE_SYSTEM){loadPackages();return;}loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260702b','data-profile-template-system',loadPackages);}
-  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Data-only card nickname polish plus Zhang championship calibration below Nunes and Valentina',updated:'2026-07-06',version:VERSION},apply:status,slugFor,syncPacketProfileStats,packetManifest};
+  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Card nicknames now render as separate card text, not resume-tag pill; Zhang championship calibration preserved',updated:'2026-07-06',version:VERSION},apply:status,slugFor,syncPacketProfileStats,packetManifest};
   installImageFallback();applyPhotoPathDefaults();syncPacketProfileStats();loadModules();window.UFC_PHASE2_DATA_REFRESH=status;
 })();
