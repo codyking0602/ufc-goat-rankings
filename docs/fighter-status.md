@@ -59,8 +59,10 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 | Henry Cejudo | Men #24 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Henry photos | `assets/data/fighter-packets/henry-cejudo.js` |
 | Frankie Edgar | Men #25 | Permanent hand-added fighter; Watch Moment added; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Frankie photos | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/frankie-edgar.js` |
 | Conor McGregor | Men #26 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Conor photos | `assets/data/fighter-packets/conor-mcgregor.js` |
-| Sean O'Malley | Men #28 | Permanent hand-added fighter; Cody-reviewed Quality Wins; packet and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Sean photos; audit exact round-control rows next rebuild | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/sean-omalley.js` |
-| Dan Henderson | Men #27 | Permanent hand-added fighter; packet live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Hendo photos; add Watch Moment only if Cody provides URL | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/dan-henderson.js` |
+| Sean Strickland | Men #28 | Permanent hand-added fighter; Cody-reviewed Apex adjustment; packet, rounds, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Strickland photos; audit exact round-control rows next rebuild | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/sean-strickland.js` |
+| Robert Whittaker | Men #29 | Permanent hand-added fighter; Romero treatment approved; packet, rounds, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Whittaker photos; audit exact round-control rows next rebuild | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/robert-whittaker.js` |
+| Sean O'Malley | Men #30 | Permanent hand-added fighter; Cody-reviewed Quality Wins; packet, rounds, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Sean photos; audit exact round-control rows next rebuild | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/sean-omalley.js` |
+| Dan Henderson | Men #31 | Permanent hand-added fighter; packet live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Hendo photos; add Watch Moment only if Cody provides URL | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/dan-henderson.js` |
 | Amanda Nunes | Women #1 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Amanda photos | `assets/data/fighter-packets/amanda-nunes.js` |
 | Valentina Shevchenko | Women #2 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Valentina photos | `assets/data/fighter-packets/valentina-shevchenko.js` |
 | Joanna Jedrzejczyk | Women #3 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Joanna photos | `assets/data/fighter-packets/joanna-jedrzejczyk.js` |
@@ -68,7 +70,7 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 
 ## Current priorities
 
-1. Sean O'Malley is permanent through `assets/data/ranking-data-additions.js`, has a dedicated packet, direct fight ledger entries, and the provided Watch Moment link.
+1. Sean Strickland, Robert Whittaker, and Sean O'Malley are permanent additions with dedicated fighter packets and round-control rows.
 2. Dricus du Plessis is permanent and Cody-reviewed across Quality Wins, Apex Peak, and Prime Dominance.
 3. Photos remain missing until Cody uploads real files.
 4. During the next full scoring-table rebuild, fold `assets/data/ranking-data-additions.js` into `assets/data/ranking-data.js`.
