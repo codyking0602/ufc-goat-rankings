@@ -1,7 +1,7 @@
 // Watch Moment links for fighter cards and profiles.
 // Keep links here as app-facing content, separate from scoring and nickname/display-name polish.
 (function(){
-  const VERSION = 'watch-moments-20260706q-tony-ferguson';
+  const VERSION = 'watch-moments-20260706r-brock-lesnar';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -26,6 +26,7 @@
     'Aljamain Sterling': 'https://youtube.com/shorts/9u6oSybWX0o?is=vI7Sq1yLpVg-CsbN',
     'Petr Yan': 'https://youtube.com/shorts/WcKa_HG1CbA?is=CZxfIq317Q4sggsB',
     'Cain Velasquez': 'https://youtube.com/shorts/qF8yfMWdjgg?is=7q2cASkqgIQC9JVY',
+    'Brock Lesnar': 'https://youtube.com/shorts/F3Z32PDzObA?is=uzqAk5wbnG7dx9TS',
     'Merab Dvalishvili': 'https://youtube.com/shorts/v8qciKt0g9Y?is=9I22lnhlQVqsQyQT',
     'B.J. Penn': 'https://youtube.com/shorts/FfBpWXo-EWo?is=4SrvWa7ntRkx5Bia',
     'Dustin Poirier': 'https://youtube.com/shorts/pykcFJHon8I?is=WgBo2b7RTRqozCYU',
