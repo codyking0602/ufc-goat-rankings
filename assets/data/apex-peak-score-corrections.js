@@ -1,26 +1,12 @@
 // Apex Peak bonus corrections.
 // Adds a controlled 0-to-6 best-night / best-year modifier before final score weighting.
 (function(){
-  const VERSION = 'apex-peak-score-corrections-20260705g-dricus-apex-adjust';
+  const VERSION = 'apex-peak-score-corrections-20260706a-sean-whittaker';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
-  const RUBRIC = {
-    peakStatus: 1.50,
-    eliteOpponentProof: 1.50,
-    separationDominance: 1.25,
-    divisionStrength: 1.00,
-    cleanApexAura: 0.75
-  };
-
-  function c(apexPeak, window, peakStatus, eliteOpponentProof, separationDominance, divisionStrength, cleanApexAura, notes){
-    return {
-      apexPeak,
-      window,
-      components: { peakStatus, eliteOpponentProof, separationDominance, divisionStrength, cleanApexAura },
-      notes
-    };
-  }
+  const RUBRIC = { peakStatus: 1.50, eliteOpponentProof: 1.50, separationDominance: 1.25, divisionStrength: 1.00, cleanApexAura: 0.75 };
+  function c(apexPeak, window, peakStatus, eliteOpponentProof, separationDominance, divisionStrength, cleanApexAura, notes){ return { apexPeak, window, components: { peakStatus, eliteOpponentProof, separationDominance, divisionStrength, cleanApexAura }, notes }; }
 
   const corrections = {
     'Jon Jones': c(6.00, 'Shogun 2011 through Daniel Cormier 2015', 1.50, 1.50, 1.25, 1.00, 0.75, 'Mythic UFC apex: youngest champion, destroyed Shogun, then stacked elite LHW title wins with no real competitive loss in the apex window.'),
@@ -38,6 +24,8 @@
     'Kamaru Usman': c(4.50, 'Tyron Woodley 2019 through Jorge Masvidal II 2021', 1.25, 1.25, 1.00, 0.75, 0.25, 'Strong welterweight title apex with Woodley/Covington/Masvidal proof and real control. Later Edwards finish and less mythic aura keep him below GSP-style apex.'),
     'Daniel Cormier': c(4.25, 'Anthony Johnson 2015 through Stipe Miocic I 2018', 1.00, 1.25, 0.75, 0.75, 0.50, 'Double-champ apex and elite LHW/HW proof. Jones rivalry caps best-alive claim and separation versus the absolute apex tier.'),
     'Dricus du Plessis': c(2.50, 'Robert Whittaker 2023 through Israel Adesanya 2024 / Sean Strickland II 2025', 0.50, 1.00, 0.50, 0.50, 0.00, 'Adjusted Dricus apex: Whittaker, Adesanya, and Strickland title proof still matters, but peak status, separation, and clean-aura credit are reduced because the run is short, several key wins are close or chaotic, and the Khamzat loss removes clean apex aura.'),
+    'Robert Whittaker': c(3.25, 'Jacare Souza 2017 through Yoel Romero II 2018', 0.75, 1.00, 0.60, 0.60, 0.30, 'Legit middleweight apex: Jacare finish plus Romero proof. Capped because the Romero fights were wars, not clean separation, and Adesanya later clearly capped the best-alive claim.'),
+    'Sean O\'Malley': c(3.25, 'Aljamain Sterling 2023 through Marlon Vera II 2024', 0.75, 1.00, 0.75, 0.50, 0.25, 'Explosive bantamweight title apex: Aljo title KO plus dominant Vera defense. Merab matchups remove clean apex aura and cap the best-alive claim.'),
     'Charles Oliveira': c(4.00, 'Michael Chandler 2021 through Justin Gaethje 2022', 0.75, 1.25, 0.75, 1.00, 0.25, 'Modern lightweight apex with Chandler/Poirier/Gaethje proof and real finishing danger. Chaotic vulnerability keeps the aura/separation below cleaner peak cases.'),
     'Israel Adesanya': c(4.00, 'Robert Whittaker 2019 through Paulo Costa 2020', 1.00, 1.00, 1.00, 0.50, 0.50, 'Elite middleweight apex with Whittaker/Costa proof and clean striking separation. Middleweight depth and later matchup cracks keep it below the highest apex tier.'),
     'Henry Cejudo': c(4.00, 'Demetrious Johnson II 2018 through Dominick Cruz 2020', 1.00, 1.25, 0.75, 0.75, 0.25, 'Champ-champ apex with DJ, Dillashaw, Moraes, and Cruz title proof. Compact run and less clean dominance keep it from the mythic tier.'),
@@ -63,49 +51,10 @@
     'Merab Dvalishvili': c(4.00, 'Petr Yan 2023 through current bantamweight title window', 0.75, 1.25, 0.75, 0.75, 0.50, 'Modern bantamweight pressure apex with elite opponent proof. Division strength is strong but not maxed, and limited finishing threat keeps separation below the violent apex cases.')
   };
 
-  function round2(value){
-    return Math.round((Number(value || 0) + Number.EPSILON) * 100) / 100;
-  }
-  function sumComponents(components){
-    return round2(Object.values(components || {}).reduce((sum,value) => sum + Number(value || 0), 0));
-  }
-  function patchRow(row){
-    if(!row || !corrections[row.fighter]) return;
-    const fighterCorrection = corrections[row.fighter];
-    const componentTotal = sumComponents(fighterCorrection.components);
-    row.apexPeak = round2(fighterCorrection.apexPeak);
-    row.apexPeakAudit = {
-      score: row.apexPeak,
-      window: fighterCorrection.window,
-      components: fighterCorrection.components,
-      componentTotal,
-      notes: fighterCorrection.notes,
-      rubric: RUBRIC,
-      source: 'Apex Peak Batches 1-4 rubric',
-      version: VERSION
-    };
-  }
-
+  function round2(value){ return Math.round((Number(value || 0) + Number.EPSILON) * 100) / 100; }
+  function sumComponents(components){ return round2(Object.values(components || {}).reduce((sum,value) => sum + Number(value || 0), 0)); }
+  function patchRow(row){ if(!row || !corrections[row.fighter]) return; const fighterCorrection = corrections[row.fighter]; const componentTotal = sumComponents(fighterCorrection.components); row.apexPeak = round2(fighterCorrection.apexPeak); row.apexPeakAudit = { score: row.apexPeak, window: fighterCorrection.window, components: fighterCorrection.components, componentTotal, notes: fighterCorrection.notes, rubric: RUBRIC, source: 'Apex Peak rubric', version: VERSION }; }
   [...(DATA.men || []), ...(DATA.women || []), ...(DATA.fighters || [])].forEach(patchRow);
-
-  if(typeof DISPLAY_OVERRIDES !== 'undefined'){
-    Object.entries(corrections).forEach(([fighter,fighterCorrection]) => {
-      if(!DISPLAY_OVERRIDES[fighter]) return;
-      DISPLAY_OVERRIDES[fighter].apexPeakAudit = {
-        score: fighterCorrection.apexPeak,
-        window: fighterCorrection.window,
-        components: fighterCorrection.components,
-        notes: fighterCorrection.notes,
-        version: VERSION
-      };
-    });
-  }
-
-  window.UFC_APEX_PEAK_SCORE_CORRECTIONS = {
-    version: VERSION,
-    rubric: RUBRIC,
-    fighters: Object.keys(corrections),
-    corrections,
-    appliedAt: new Date().toISOString()
-  };
+  if(typeof DISPLAY_OVERRIDES !== 'undefined'){ Object.entries(corrections).forEach(([fighter,fighterCorrection]) => { if(!DISPLAY_OVERRIDES[fighter]) return; DISPLAY_OVERRIDES[fighter].apexPeakAudit = { score: fighterCorrection.apexPeak, window: fighterCorrection.window, components: fighterCorrection.components, notes: fighterCorrection.notes, version: VERSION }; }); }
+  window.UFC_APEX_PEAK_SCORE_CORRECTIONS = { version: VERSION, rubric: RUBRIC, fighters: Object.keys(corrections), corrections, appliedAt: new Date().toISOString() };
 })();
