@@ -24,6 +24,8 @@ Do not put fighter data back into `index.html`.
 
 Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 
+Visible ranks are recalculated dynamically in the app from the current sorted board. The Board column below is tracker context, not the front-end source of truth.
+
 | Fighter | Board | Status | Packet | Ranking | Display | Profile stats | Compare seasoning | Ledger | Watch | Photos | Next fix | Main edit location |
 |---|---:|---|---|---|---|---|---|---|---|---|---|---|
 | Jon Jones | Men #1 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Jon fix needed | `assets/data/fighter-packets.js` |
@@ -71,12 +73,14 @@ Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
 | Dan Henderson | Men #31 | Permanent hand-added fighter; packet live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Hendo photos; add Watch Moment only if URL is provided | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/dan-henderson.js` |
 | Amanda Nunes | Women #1 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Amanda photos | `assets/data/fighter-packets/amanda-nunes.js` |
 | Valentina Shevchenko | Women #2 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Valentina photos | `assets/data/fighter-packets/valentina-shevchenko.js` |
+| Zhang Weili | Women elite | Fighter-packet live add; two-reign strawweight case, win ledger, round-control rows, ledger, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Zhang photos; audit exact round-control rows next rebuild | `assets/data/fighter-packets/zhang-weili.js` |
 | Joanna Jedrzejczyk | Women #3 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Joanna photos | `assets/data/fighter-packets/joanna-jedrzejczyk.js` |
 | Ronda Rousey | Women #4 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Ronda photos | `assets/data/fighter-packets/ronda-rousey.js` |
 
 ## Current priorities
 
-1. Junior dos Santos, Tito Ortiz, Deiveson Figueiredo, Khamzat Chimaev, Tyron Woodley, Lyoto Machida, Sean Strickland, Robert Whittaker, and Sean O'Malley are live additions with dedicated fighter packets and round-control rows.
-2. Dricus du Plessis is permanent and reviewed across Quality Wins, Apex Peak, and Prime Dominance.
-3. Photos remain missing until real files exist.
-4. During the next full scoring-table rebuild, fold `assets/data/ranking-data-additions.js` and fighter-packet live adds into `assets/data/ranking-data.js`.
+1. Zhang Weili, Junior dos Santos, Tito Ortiz, Deiveson Figueiredo, Khamzat Chimaev, Tyron Woodley, Lyoto Machida, Sean Strickland, Robert Whittaker, and Sean O'Malley are live additions with dedicated fighter packets and round-control rows.
+2. Dynamic visible ranks are now handled by `assets/js/rank-fluidity-fixes.js`; packet rank values should not be treated as the front-end source of truth.
+3. Dricus du Plessis is permanent and reviewed across Quality Wins, Apex Peak, and Prime Dominance.
+4. Photos remain missing until real files exist.
+5. During the next full scoring-table rebuild, fold `assets/data/ranking-data-additions.js` and fighter-packet live adds into `assets/data/ranking-data.js`.
