@@ -1,12 +1,32 @@
 // Sean O'Malley fighter packet extension.
 (function(){
-  const VERSION = 'fighter-packet-sean-omalley-20260706a';
+  const VERSION = 'fighter-packet-sean-omalley-20260706b-round-control';
   const fighter = "Sean O'Malley";
 
+  const rounds = [
+    { opponent:'Terrion Ware', date:'2017-12-01', method:'Decision', roundEnded:3, roundsCounted:3, roundsWon:2, basis:'Best-effort early UFC decision row', confidence:'Low', notes:'Early pre-title row.' },
+    { opponent:'Andre Soukhamthath', date:'2018-03-03', method:'Decision', roundEnded:3, roundsCounted:3, roundsWon:2, basis:'Best-effort decision/control estimate', confidence:'Low', notes:'Early pre-title row.' },
+    { opponent:'Jose Alberto Quinonez', date:'2020-03-07', method:'TKO', roundEnded:1, roundsCounted:1, roundsWon:1, basis:'Round 1 finish counted as won', confidence:'High', notes:'' },
+    { opponent:'Eddie Wineland', date:'2020-06-06', method:'KO', roundEnded:1, roundsCounted:1, roundsWon:1, basis:'Round 1 finish counted as won', confidence:'High', notes:'' },
+    { opponent:'Marlon Vera', date:'2020-08-15', method:'TKO Loss', roundEnded:1, roundsCounted:1, roundsWon:0, basis:'Finished loss with injury/TKO context', confidence:'Medium', notes:'Counts in loss context but not treated like a clean skill-gap loss.' },
+    { opponent:'Thomas Almeida', date:'2021-03-27', method:'KO', roundEnded:3, roundsCounted:3, roundsWon:2, basis:'Best-effort finish/control split', confidence:'Medium', notes:'' },
+    { opponent:'Kris Moutinho', date:'2021-07-10', method:'TKO', roundEnded:3, roundsCounted:3, roundsWon:2, basis:'High-volume win; conservative round-control split', confidence:'Medium', notes:'' },
+    { opponent:'Raulian Paiva', date:'2021-12-11', method:'TKO', roundEnded:1, roundsCounted:1, roundsWon:1, basis:'Round 1 finish counted as won', confidence:'High', notes:'' },
+    { opponent:'Pedro Munhoz', date:'2022-07-02', method:'No Contest', roundEnded:2, roundsCounted:2, roundsWon:1, basis:'No-contest context; best-effort partial row', confidence:'Low', notes:'Context only; not meaningful win credit.' },
+    { opponent:'Petr Yan', date:'2022-10-22', method:'Split Decision', roundEnded:3, roundsCounted:3, roundsWon:2, basis:'Official split decision, with disputed-scorecard context', confidence:'Medium', notes:'Elite win but not clean round-control dominance.' },
+    { opponent:'Aljamain Sterling', date:'2023-08-19', method:'TKO', roundEnded:2, roundsCounted:2, roundsWon:1, basis:'Finish round counted; prior grappling round treated conservatively', confidence:'Medium', notes:'Title-winning KO.' },
+    { opponent:'Marlon Vera 2', date:'2024-03-09', method:'Decision', roundEnded:5, roundsCounted:5, roundsWon:5, basis:'Dominant title-defense decision', confidence:'High', notes:'' },
+    { opponent:'Merab Dvalishvili', date:'2024-09-14', method:'Decision Loss', roundEnded:5, roundsCounted:5, roundsWon:0, basis:'Control-heavy title loss', confidence:'Medium', notes:'Main round-control cap.' },
+    { opponent:'Merab Dvalishvili 2', date:'2025-06-07', method:'Submission Loss', roundEnded:2, roundsCounted:2, roundsWon:0, basis:'Finished title rematch loss', confidence:'Medium', notes:'Main loss-context cap.' },
+    { opponent:'Song Yadong', date:'2026-01-24', method:'Decision', roundEnded:5, roundsCounted:5, roundsWon:3, basis:'Current-table ranked decision win', confidence:'Low', notes:'Current-table / best-effort row until next full scoring rebuild.' },
+    { opponent:'Aiemann Zahabi', date:'2026-06-14', method:'KO', roundEnded:2, roundsCounted:2, roundsWon:1, basis:'Current-table rebound finish; conservative split', confidence:'Low', notes:'Current-table / best-effort row until next full scoring rebuild.' }
+  ];
+
   const packet = {
-    status: { stage: 'complete first-pass packet; Cody-reviewed Quality Wins before live add', lastUpdated: '2026-07-06', nextFix: 'Add real photos after Cody uploads source images; audit round-control rows during next scoring-table rebuild.' },
+    status: { stage: 'complete first-pass packet; Cody-reviewed Quality Wins; round-control rows added', lastUpdated: '2026-07-06', nextFix: 'Add real photos after Cody uploads source images; audit exact round-control rows during next scoring-table rebuild.' },
     repoLocations: { scoreSource: 'assets/data/ranking-data-additions.js', centralPacket: 'assets/data/fighter-packets/sean-omalley.js', apexPeak: 'assets/data/apex-peak-score-corrections.js', watchMoment: 'assets/js/watch-moments.js', tracker: 'docs/fighter-status.md', photos: 'No real photo files loaded yet; app should use initials fallback.' },
     photos: {},
+    rounds,
     display: {
       overallOvr: 84, allTimeRank: 28, divisionLabel: 'BW', resumeTag: 'Bantamweight champion burst',
       oneLiner: 'A precision-striking bantamweight champion with a huge Aljo title KO, a Vera title defense, and a résumé capped hard by Merab.',
@@ -14,45 +34,23 @@
       snapshot: [ ['UFC Record', '11-3 (1 NC)'], ['UFC Title-Fight Wins', '2'], ['Apex Peak', '+3.25'], ['Quality Wins', 'Aljo, Yan, Vera, Song'], ['Prime Record', '5-3 (1 NC) Elite Window'], ['Prime Dominance', '16.60 / 30'], ['Active Elite Years', '3.8 Elite Years'], ['Loss Context', 'Merab x2 cap'] ],
       whyRankedHere: "O'Malley ranks here because the top of the UFC résumé is real: he knocked out Aljamain Sterling to win the bantamweight title, defended against Marlon Vera, beat Petr Yan in a close elite fight, and added Song/Zahabi current-table rebound value.",
       whyNotHigher: "He does not rank higher yet because the reign was short, the elite-win list is not deep, and the two Merab losses sharply cap the title-prime and GOAT case.",
-      bigAssumptions: [ ['Current-table scope', 'Uses the current scoring-table version where O\'Malley has rebound wins over Song Yadong and Aiemann Zahabi after the Merab losses.'], ['Yan win', 'Counts as elite top-five credit, but slightly discounted because the decision was highly debated.'], ['Vera title defense', 'Gets near-full top-five title-defense credit after Cody clarified top-five wins should usually land near 1.00.'], ['Munhoz NC', 'No contest is context only, not meaningful win credit.'], ['Merab ceiling', 'The two Merab losses are the main cap on Prime Dominance, Apex Peak, and Loss Context.'] ],
+      bigAssumptions: [ ['Current-table scope', 'Uses the current scoring-table version where O\'Malley has rebound wins over Song Yadong and Aiemann Zahabi after the Merab losses.'], ['Yan win', 'Counts as elite top-five credit, but slightly discounted because the decision was highly debated.'], ['Vera title defense', 'Gets near-full top-five title-defense credit after Cody clarified top-five wins should usually land near 1.00.'], ['Munhoz NC', 'No contest is context only, not meaningful win credit.'], ['Merab ceiling', 'The two Merab losses are the main cap on Prime Dominance, Apex Peak, and Loss Context.'], ['Round control', 'Round rows are best-effort and should be audited in the next full scoring-table rebuild.'] ],
       keyJudgmentCalls: [ ['Aljo title KO', 'Receives a slight champion/title bump at 1.10 quality-win credit.'], ['Vera 1 loss', 'Counts, but with injury/TKO context rather than a clean skill-gap loss.'], ['Modern bantamweight', 'Gets solid division-strength respect, but not lightweight-level multiplier.'], ['Apex window', 'Aljamain Sterling 2023 through Marlon Vera 2 2024 is treated as his best short UFC window.'] ],
       apexPeakSummary: { score: 3.25, window: 'Aljamain Sterling 2023 through Marlon Vera 2 2024', notes: 'Explosive title KO plus dominant title defense, but Merab matchups remove clean apex aura.' },
       primeDominanceSummary: { score: 16.60, notes: 'Dangerous striking peak and real title burst, capped by short reign, moderate round-control profile, and Merab losses.' },
       finalTakeaway: "O'Malley is a real UFC-only champion case, not just a star case. But right now he belongs in the lower modern-champion tier, not near the long-reign bantamweight greats."
     },
     profileStats: { ufcRecord: '11-3 (1 NC)', titleFightWins: 2, eliteWins: 4, primeRecord: '5-3 (1 NC) in elite/title bantamweight window', primeDominance: 16.60, finishRatePct: 63.6, roundsWonPct: 57.0, activeEliteYears: 3.75, apexPeak: 3.25, timesFinishedPrime: 1, divisionStrengthContext: 'Modern bantamweight is strong, but Sean does not get lightweight-level division-strength credit.', lossContext: 'Vera 1, Merab decision, and Merab submission are the counted loss-context caps.' },
-    compareSeasoning: {
-      shortCase: "O'Malley is a short-burst bantamweight champion case: huge title KO, one defense, debated Yan win, and a star-level striking peak.",
-      peak: 'At his best, Sean is a long-range timing striker with real one-shot title-fight danger.',
-      resume: 'The résumé has a strong top end with Aljo, Yan, Vera, and Song, but it does not yet have deep elite volume.',
-      championship: 'Two UFC title-fight wins make the title case real, but the reign was short and Merab ended the run twice.',
-      opponentQuality: 'Aljo, Yan, Vera, and Song give him legitimate quality-win weight; the list falls off quickly after that.',
-      longevity: 'The elite window is still short. His UFC celebrity started earlier than his GOAT-level elite clock.',
-      counter: "O'Malley can win debates against longer but less explosive résumés because the Aljo KO and Vera defense are loud title moments.",
-      edge: "O'Malley wins comparisons when title-shot peak and high-end striking danger matter more than longevity.",
-      eliteCounter: false,
-      signatureWins: 'Aljamain Sterling, Petr Yan, Marlon Vera, Song Yadong, Aiemann Zahabi.',
-      weakness: 'Short reign, two Merab losses, and limited elite-win depth.',
-      titleSummary: 'One UFC bantamweight title win and one title defense.',
-      primeSummary: 'Dangerous and real, but not a clean long-control prime.',
-      bestArgument: 'The best argument is that beating Aljo for the belt, defending against Vera, and beating Yan gives Sean a stronger top-end résumé than his short reign suggests.',
-      titleStyle: 'Short Title Burst', primeStyle: 'Precision Striking Peak',
-      legacyStats: { ufcRecord: '11-3 (1 NC)', titleFightWins: 2, beltsWon: 1, titleDefenses: 1, activeEliteYearsLabel: 'roughly 3.8 active elite years', primeNote: 'short elite bantamweight title burst capped by Merab' }
-    },
-    fightLedger: {
-      "sean o'malley|aljamain sterling": { winner: "Sean O'Malley", summary: "O'Malley knocked out Sterling to win the UFC bantamweight title, giving Sean the direct head-to-head edge." },
-      "sean o'malley|petr yan": { winner: "Sean O'Malley", summary: "O'Malley beat Yan by split decision in a highly debated elite bantamweight fight, so the ledger helps Sean but should carry controversy context." },
-      "sean o'malley|marlon vera": { winner: 'Split rivalry', summary: "Vera won the first fight, but O'Malley dominated the UFC title rematch. For legacy scoring, Sean gets the title-defense edge while Vera keeps direct-loss context." },
-      "sean o'malley|merab dvalishvili": { winner: 'Merab Dvalishvili', summary: 'Merab beat Sean twice, including a finish in the rematch, which is the main cap on Sean’s UFC-only GOAT case.' },
-      "sean o'malley|song yadong": { winner: "Sean O'Malley", summary: "O'Malley beat Song by decision in the current scoring table, adding ranked bantamweight rebound value." }
-    },
+    compareSeasoning: { shortCase: "O'Malley is a short-burst bantamweight champion case: huge title KO, one defense, debated Yan win, and a star-level striking peak.", peak: 'At his best, Sean is a long-range timing striker with real one-shot title-fight danger.', resume: 'The résumé has a strong top end with Aljo, Yan, Vera, and Song, but it does not yet have deep elite volume.', championship: 'Two UFC title-fight wins make the title case real, but the reign was short and Merab ended the run twice.', opponentQuality: 'Aljo, Yan, Vera, and Song give him legitimate quality-win weight; the list falls off quickly after that.', longevity: 'The elite window is still short. His UFC celebrity started earlier than his GOAT-level elite clock.', counter: "O'Malley can win debates against longer but less explosive résumés because the Aljo KO and Vera defense are loud title moments.", edge: "O'Malley wins comparisons when title-shot peak and high-end striking danger matter more than longevity.", eliteCounter: false, signatureWins: 'Aljamain Sterling, Petr Yan, Marlon Vera, Song Yadong, Aiemann Zahabi.', weakness: 'Short reign, two Merab losses, and limited elite-win depth.', titleSummary: 'One UFC bantamweight title win and one title defense.', primeSummary: 'Dangerous and real, but not a clean long-control prime.', bestArgument: 'The best argument is that beating Aljo for the belt, defending against Vera, and beating Yan gives Sean a stronger top-end résumé than his short reign suggests.', titleStyle: 'Short Title Burst', primeStyle: 'Precision Striking Peak', legacyStats: { ufcRecord: '11-3 (1 NC)', titleFightWins: 2, beltsWon: 1, titleDefenses: 1, activeEliteYearsLabel: 'roughly 3.8 active elite years', primeNote: 'short elite bantamweight title burst capped by Merab' } },
+    fightLedger: { "sean o'malley|aljamain sterling": { winner: "Sean O'Malley", summary: "O'Malley knocked out Sterling to win the UFC bantamweight title, giving Sean the direct head-to-head edge." }, "sean o'malley|petr yan": { winner: "Sean O'Malley", summary: "O'Malley beat Yan by split decision in a highly debated elite bantamweight fight, so the ledger helps Sean but should carry controversy context." }, "sean o'malley|marlon vera": { winner: 'Split rivalry', summary: "Vera won the first fight, but O'Malley dominated the UFC title rematch. For legacy scoring, Sean gets the title-defense edge while Vera keeps direct-loss context." }, "sean o'malley|merab dvalishvili": { winner: 'Merab Dvalishvili', summary: 'Merab beat Sean twice, including a finish in the rematch, which is the main cap on Sean’s UFC-only GOAT case.' }, "sean o'malley|song yadong": { winner: "Sean O'Malley", summary: "O'Malley beat Song by decision in the current scoring table, adding ranked bantamweight rebound value." } },
     watchMoment: { url: 'https://youtube.com/shorts/Qelywtchvk8?is=C0v8L_ndxdC5BS9c', label: 'Watch Moment' }
   };
 
   function mergeLegacyStats(a,b){ return { ...(a || {}), ...(b || {}) }; }
   function mergeCompareProfile(a,b){ return { ...(a || {}), ...(b || {}), legacyStats: mergeLegacyStats((a || {}).legacyStats, (b || {}).legacyStats) }; }
+  function patchData(){ if(!window.RANKING_DATA) return; [...(window.RANKING_DATA.men || []), ...(window.RANKING_DATA.fighters || [])].forEach(row => { if(row?.fighter !== fighter) return; row.rounds = rounds; }); }
   function applyDisplay(){ if(typeof DISPLAY_OVERRIDES === 'undefined') return; DISPLAY_OVERRIDES[fighter] = { ...(DISPLAY_OVERRIDES[fighter] || {}), ...(packet.display || {}) }; if(packet.watchMoment?.url){ DISPLAY_OVERRIDES[fighter].watchUrl = packet.watchMoment.url; DISPLAY_OVERRIDES[fighter].watchLabel = packet.watchMoment.label || 'Watch Moment'; } DISPLAY_OVERRIDES[fighter].packetProfileStats = { ...(DISPLAY_OVERRIDES[fighter].packetProfileStats || {}), ...(packet.profileStats || {}) }; DISPLAY_OVERRIDES[fighter].packetStatus = packet.status || {}; DISPLAY_OVERRIDES[fighter].repoLocations = packet.repoLocations || {}; }
   function applyCompare(){ if(packet.compareSeasoning){ window.COMPARE_PROFILES = window.COMPARE_PROFILES || {}; window.COMPARE_PROFILES[fighter] = mergeCompareProfile(window.COMPARE_PROFILES[fighter], packet.compareSeasoning); if(typeof DISPLAY_OVERRIDES !== 'undefined'){ DISPLAY_OVERRIDES[fighter] = DISPLAY_OVERRIDES[fighter] || {}; DISPLAY_OVERRIDES[fighter].compareProfile = mergeCompareProfile(DISPLAY_OVERRIDES[fighter].compareProfile, window.COMPARE_PROFILES[fighter]); } } if(packet.fightLedger){ window.COMPARE_FIGHT_LEDGER = window.COMPARE_FIGHT_LEDGER || {}; Object.entries(packet.fightLedger).forEach(([key,value])=>{ window.COMPARE_FIGHT_LEDGER[key] = { ...(window.COMPARE_FIGHT_LEDGER[key] || {}), ...value }; }); } }
   function registerPacket(){ window.UFC_FIGHTER_PACKETS = window.UFC_FIGHTER_PACKETS || {}; window.UFC_FIGHTER_PACKETS[fighter] = packet; const current = window.UFC_FIGHTER_PACKET_SYSTEM || {}; const fighters = Array.from(new Set([...(current.fighters || []), fighter])); const packetExtensions = Array.from(new Set([...(current.packetExtensions || []), VERSION])); window.UFC_FIGHTER_PACKET_SYSTEM = { ...current, version: current.version || VERSION, purpose: current.purpose || 'Central source for fighter-facing app content during migration.', fighters, packetExtensions, appliedAt: new Date().toISOString() }; }
-  applyDisplay(); applyCompare(); registerPacket();
+  patchData(); applyDisplay(); applyCompare(); registerPacket();
 })();
