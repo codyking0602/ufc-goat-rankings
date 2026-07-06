@@ -1,7 +1,7 @@
 // Watch Moment links for fighter cards and profiles.
 // Keep links here as app-facing content, separate from scoring.
 (function(){
-  const VERSION = 'watch-moments-20260705b-dricus';
+  const VERSION = 'watch-moments-20260706a-sean-omalley';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -38,6 +38,7 @@
     'Conor McGregor': 'https://youtube.com/shorts/eeHdLpBUmlU?is=rKzl28sGEKreaI2g',
     'Justin Gaethje': 'https://youtube.com/shorts/2LxEazU0vuM?is=tHj1Dxylleh4yGG7',
     'Frankie Edgar': 'https://youtube.com/shorts/lLpRwEN3PJk?is=QVVQjKx_0gVmw-wO',
+    "Sean O'Malley": 'https://youtube.com/shorts/Qelywtchvk8?is=C0v8L_ndxdC5BS9c',
     'Dan Henderson': 'https://youtube.com/shorts/dA2kztF7KpQ?is=wDxZ4DLlPA-C74uh',
     'Amanda Nunes': 'https://youtu.be/t4wkBuFpoPs?is=CL7ge7FDuHQPrbMq',
     'Valentina Shevchenko': 'https://youtube.com/shorts/cucTCAAGTis?is=mf6p21fPtBheJuU8',
@@ -64,55 +65,10 @@
     document.head.appendChild(style);
   }
 
-  function watchUrlFor(fighter){
-    return DISPLAY_OVERRIDES[fighter]?.watchUrl || WATCH_MOMENTS[fighter] || '';
-  }
-
-  function addCardButtons(){
-    document.querySelectorAll('.fighter-row[data-fighter]:not(.category-leader-row)').forEach(row => {
-      const fighter = row.dataset.fighter;
-      const url = watchUrlFor(fighter);
-      if(!url || row.querySelector('.watch-moment-link')) return;
-      const target = row.querySelector('.row-main');
-      if(!target) return;
-      const a = document.createElement('a');
-      a.className = 'watch-moment-link';
-      a.href = url;
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-      a.textContent = '▶ Watch Moment';
-      a.addEventListener('click', e => e.stopPropagation());
-      target.appendChild(a);
-    });
-  }
-
-  function addProfileButton(){
-    const detail = document.getElementById('fighterDetail');
-    if(!detail || detail.querySelector('.profile-watch-moment')) return;
-    const name = detail.querySelector('.profile-summary h2')?.textContent?.trim();
-    const url = watchUrlFor(name);
-    if(!name || !url) return;
-    const summary = detail.querySelector('.profile-summary');
-    if(!summary) return;
-    const row = document.createElement('div');
-    row.className = 'profile-watch-row';
-    const a = document.createElement('a');
-    a.className = 'watch-moment-link profile-watch-moment';
-    a.href = url;
-    a.target = '_blank';
-    a.rel = 'noopener noreferrer';
-    a.textContent = '▶ Watch Signature Moment';
-    a.addEventListener('click', e => e.stopPropagation());
-    row.appendChild(a);
-    summary.appendChild(row);
-  }
-
-  function apply(){
-    injectCss();
-    addCardButtons();
-    addProfileButton();
-    window.UFC_WATCH_MOMENTS = { version: VERSION, fighters: Object.keys(WATCH_MOMENTS) };
-  }
+  function watchUrlFor(fighter){ return DISPLAY_OVERRIDES[fighter]?.watchUrl || WATCH_MOMENTS[fighter] || ''; }
+  function addCardButtons(){ document.querySelectorAll('.fighter-row[data-fighter]:not(.category-leader-row)').forEach(row => { const fighter = row.dataset.fighter; const url = watchUrlFor(fighter); if(!url || row.querySelector('.watch-moment-link')) return; const target = row.querySelector('.row-main'); if(!target) return; const a = document.createElement('a'); a.className = 'watch-moment-link'; a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = '▶ Watch Moment'; a.addEventListener('click', e => e.stopPropagation()); target.appendChild(a); }); }
+  function addProfileButton(){ const detail = document.getElementById('fighterDetail'); if(!detail || detail.querySelector('.profile-watch-moment')) return; const name = detail.querySelector('.profile-summary h2')?.textContent?.trim(); const url = watchUrlFor(name); if(!name || !url) return; const summary = detail.querySelector('.profile-summary'); if(!summary) return; const row = document.createElement('div'); row.className = 'profile-watch-row'; const a = document.createElement('a'); a.className = 'watch-moment-link profile-watch-moment'; a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = '▶ Watch Signature Moment'; a.addEventListener('click', e => e.stopPropagation()); row.appendChild(a); summary.appendChild(row); }
+  function apply(){ injectCss(); addCardButtons(); addProfileButton(); window.UFC_WATCH_MOMENTS = { version: VERSION, fighters: Object.keys(WATCH_MOMENTS) }; }
 
   const observer = new MutationObserver(apply);
   observer.observe(document.body, { childList: true, subtree: true });
