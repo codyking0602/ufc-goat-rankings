@@ -1,7 +1,7 @@
 // Watch Moment links for fighter cards and profiles.
 // Keep links here as app-facing content, separate from scoring.
 (function(){
-  const VERSION = 'watch-moments-20260704a';
+  const VERSION = 'watch-moments-20260705a';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -68,7 +68,7 @@
   }
 
   function addCardButtons(){
-    document.querySelectorAll('.fighter-row[data-fighter]').forEach(row => {
+    document.querySelectorAll('.fighter-row[data-fighter]:not(.category-leader-row)').forEach(row => {
       const fighter = row.dataset.fighter;
       const url = watchUrlFor(fighter);
       if(!url || row.querySelector('.watch-moment-link')) return;
