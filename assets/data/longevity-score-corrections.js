@@ -1,7 +1,7 @@
 // Longevity score corrections for active 37 fighters.
 // Applies Cody-approved revised Longevity formula after Prime Dominance corrections and before score-derived OVR.
 (function(){
-  const VERSION = 'longevity-score-corrections-20260705a';
+  const VERSION = 'longevity-score-corrections-20260705b';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
@@ -10,7 +10,7 @@
   const corrections = {
     'Max Holloway': { longevity: 15.00, active: 9.00, spread: 3.00, late: 2.00, career: 1.00, notes: 'Huge UFC fight count plus long elite/post-title relevance.' },
     'Frankie Edgar': { longevity: 15.00, active: 9.00, spread: 3.00, late: 2.00, career: 1.00, notes: 'Maxed because he has elite proof plus huge UFC fight count.' },
-    'Jose Aldo': { longevity: 14.36, active: 8.61, spread: 3.00, late: 2.00, career: 0.75, notes: 'WEC excluded, but UFC-only FW/BW relevance stays long.' },
+    'Jose Aldo': { longevity: 11.10, active: 7.10, spread: 2.50, late: 0.75, career: 0.75, notes: 'Rebalanced UFC-only: long relevance still matters, but the post-title/BW stretch is not treated like max elite continuity after the McGregor/Holloway/Volk damage.' },
     'Jon Jones': { longevity: 14.25, active: 9.00, spread: 3.00, late: 1.50, career: 0.75, notes: 'HW relevance counts per Cody, but not as a full second chapter.' },
     'Dustin Poirier': { longevity: 13.99, active: 7.99, spread: 3.00, late: 2.00, career: 1.00, notes: 'Staying-power tweak helps Dustin exactly as intended.' },
     'Randy Couture': { longevity: 13.77, active: 8.02, spread: 3.00, late: 2.00, career: 0.75, notes: 'Era-spanning UFC title relevance and long career.' },
