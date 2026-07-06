@@ -1,7 +1,7 @@
 // Opponent Quality audit score corrections.
 // Applies locked OQ worksheet corrections after base data, additions, packets, and Championship corrections load.
 (function(){
-  const VERSION = 'opponent-quality-score-corrections-20260704a';
+  const VERSION = 'opponent-quality-score-corrections-20260705b';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
@@ -20,7 +20,7 @@
     'Khabib Nurmagomedov': { opponentQuality: 12.32, notes: 'Batch 2 locked with lightweight 1.10 adjustment.' },
     'Islam Makhachev': { opponentQuality: 14.53, notes: 'Batch 2 locked with modern lightweight 1.10 adjustment and current-table JDM inclusion.' },
     'Demetrious Johnson': { opponentQuality: 13.94, notes: 'Batch 2 locked with flyweight 0.85 adjustment.' },
-    'Jose Aldo': { opponentQuality: 15.21, notes: 'Batch 2 locked with UFC-only Aldo treatment and 1.00 division adjustment.' },
+    'Jose Aldo': { opponentQuality: 13.50, notes: 'Rebalanced UFC-only Aldo treatment: Edgar/Mendes/Lamas/Stephens/Moicano/BW resurgence still score, but WEC greatness is context only and late partials no longer place him above Usman/Sterling-level UFC quality-win cases.' },
     'Alex Pereira': { opponentQuality: 11.77, notes: 'Batch 2 locked with 0.98 blended division adjustment.' },
 
     // Batch 3 old-era
