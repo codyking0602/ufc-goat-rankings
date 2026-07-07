@@ -1,3 +1,5 @@
+// Do not add new fighter data here.
+// LEGACY: fighter data has been migrated to assets/data/ranking-data.js.
 // Demetrious Johnson fighter packet extension.
 // Part of the central fighter-packet system; split into its own file to keep packets manageable as the roster grows.
 (function(){

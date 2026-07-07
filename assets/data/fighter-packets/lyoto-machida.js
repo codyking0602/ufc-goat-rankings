@@ -1,3 +1,5 @@
+// Do not add new fighter data here.
+// LEGACY: fighter data has been migrated to assets/data/ranking-data.js.
 // Lyoto Machida fighter packet extension.
 (function(){
   const VERSION = 'fighter-packet-lyoto-machida-20260706b-neutral-copy';

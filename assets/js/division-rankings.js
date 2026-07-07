@@ -17,7 +17,7 @@
 
   // Fluid scoring inputs mirror the live overall weighting layer:
   // Title Reign + Prime Dominance + Quality Wins + Elite Longevity + Apex Peak + Loss Context.
-  // Division guardrails control how much of a fighter's current résumé belongs in a given division.
+  // Division guardrails control how much of a fighter's current resume belongs in a given division.
   const SCORE_WEIGHTS = {
     championship: 35,
     primeDominance: 25,
@@ -33,31 +33,31 @@
 
   const DIVISION_GUARDRAILS = {
     'Heavyweight': {
-      'Stipe Miocic': { sample:1.00, modifier:1.05, tag:'HW benchmark résumé' },
+      'Stipe Miocic': { sample:1.00, modifier:1.05, tag:'HW benchmark resume' },
       'Cain Velasquez': { sample:1.00, modifier:1.06, tag:'Peak HW dominance' },
-      'Randy Couture': { sample:1.00, modifier:0.88, tag:'Historic HW title résumé' },
+      'Randy Couture': { sample:1.00, modifier:0.88, tag:'Historic HW title resume' },
       'Daniel Cormier': { sample:0.84, modifier:1.03, tag:'Short elite HW run' },
       'Francis Ngannou': { sample:1.00, modifier:1.00, tag:'HW peak threat' },
       'Jon Jones': { sample:0.32, modifier:1.00, tag:'Small HW sample' }
     },
     'Light Heavyweight': {
-      'Jon Jones': { sample:1.00, modifier:1.04, tag:'LHW benchmark résumé' },
-      'Daniel Cormier': { sample:0.90, modifier:1.02, tag:'Elite LHW résumé' },
+      'Jon Jones': { sample:1.00, modifier:1.04, tag:'LHW benchmark resume' },
+      'Daniel Cormier': { sample:0.90, modifier:1.02, tag:'Elite LHW resume' },
       'Chuck Liddell': { sample:1.00, modifier:1.04, tag:'Classic LHW title era' },
       'Alex Pereira': { sample:0.72, modifier:1.00, tag:'Fast-rising LHW title run' },
-      'Randy Couture': { sample:0.62, modifier:0.95, tag:'Real but split résumé' },
+      'Randy Couture': { sample:0.62, modifier:0.95, tag:'Real but split resume' },
       'Dan Henderson': { sample:0.52, modifier:0.95, tag:'UFC-only LHW context' },
       'Anderson Silva': { sample:0.18, modifier:0.90, tag:'LHW cameo context' }
     },
     'Middleweight': {
-      'Anderson Silva': { sample:1.00, modifier:1.03, tag:'MW benchmark résumé' },
+      'Anderson Silva': { sample:1.00, modifier:1.03, tag:'MW benchmark resume' },
       'Israel Adesanya': { sample:1.00, modifier:1.00, tag:'Modern MW title standard' },
       'Alex Pereira': { sample:0.68, modifier:1.00, tag:'Short elite MW run' },
       'Dan Henderson': { sample:0.45, modifier:0.95, tag:'UFC-only MW context' },
       'Georges St-Pierre': { sample:0.25, modifier:1.00, tag:'One-fight MW title case' }
     },
     'Welterweight': {
-      'Georges St-Pierre': { sample:1.00, modifier:1.03, tag:'WW benchmark résumé' },
+      'Georges St-Pierre': { sample:1.00, modifier:1.03, tag:'WW benchmark resume' },
       'Kamaru Usman': { sample:1.00, modifier:1.00, tag:'Modern WW title standard' },
       'Matt Hughes': { sample:1.00, modifier:1.00, tag:'Classic WW title reign' },
       'B.J. Penn': { sample:0.42, modifier:1.00, tag:'Two-division title context' }
@@ -67,37 +67,37 @@
       'Khabib Nurmagomedov': { sample:1.00, modifier:1.00, tag:'LW dominance benchmark' },
       'Charles Oliveira': { sample:1.00, modifier:1.00, tag:'Elite LW win ledger' },
       'B.J. Penn': { sample:0.82, modifier:1.00, tag:'Classic LW champion' },
-      'Dustin Poirier': { sample:0.94, modifier:1.00, tag:'Elite LW résumé' },
+      'Dustin Poirier': { sample:0.94, modifier:1.00, tag:'Elite LW resume' },
       'Frankie Edgar': { sample:0.72, modifier:1.00, tag:'LW title reign' },
-      'Max Holloway': { sample:0.30, modifier:1.00, tag:'LW crossover résumé' },
-      'Justin Gaethje': { sample:1.00, modifier:1.00, tag:'Elite LW title résumé' },
+      'Max Holloway': { sample:0.30, modifier:1.00, tag:'LW crossover resume' },
+      'Justin Gaethje': { sample:1.00, modifier:1.00, tag:'Elite LW title resume' },
       'Conor McGregor': { sample:0.55, modifier:1.00, tag:'LW title peak' },
       'Alexander Volkanovski': { sample:0.18, modifier:1.00, tag:'LW challenger context' },
       'Ilia Topuria': { sample:0.35, modifier:1.00, tag:'Current-table LW context' }
     },
     'Featherweight': {
-      'Alexander Volkanovski': { sample:1.00, modifier:1.03, tag:'FW benchmark résumé' },
-      'Jose Aldo': { sample:0.86, modifier:1.03, tag:'UFC-only FW title résumé' },
-      'Max Holloway': { sample:0.82, modifier:1.00, tag:'Elite FW title résumé' },
+      'Alexander Volkanovski': { sample:1.00, modifier:1.03, tag:'FW benchmark resume' },
+      'Jose Aldo': { sample:0.86, modifier:1.03, tag:'UFC-only FW title resume' },
+      'Max Holloway': { sample:0.82, modifier:1.00, tag:'Elite FW title resume' },
       'Ilia Topuria': { sample:0.82, modifier:1.00, tag:'Current FW title peak' },
       'Conor McGregor': { sample:0.72, modifier:1.00, tag:'FW title peak' },
-      'Dustin Poirier': { sample:0.25, modifier:1.00, tag:'Early FW résumé' },
-      'Frankie Edgar': { sample:0.42, modifier:1.00, tag:'FW contender résumé' },
+      'Dustin Poirier': { sample:0.25, modifier:1.00, tag:'Early FW resume' },
+      'Frankie Edgar': { sample:0.42, modifier:1.00, tag:'FW contender resume' },
       'Aljamain Sterling': { sample:0.22, modifier:1.00, tag:'FW extension' }
     },
     'Bantamweight': {
-      'Aljamain Sterling': { sample:0.92, modifier:1.03, tag:'BW title résumé leader' },
+      'Aljamain Sterling': { sample:0.92, modifier:1.03, tag:'BW title resume leader' },
       'Dominick Cruz': { sample:1.00, modifier:1.00, tag:'UFC-only BW standard' },
       'T.J. Dillashaw': { sample:0.95, modifier:0.98, tag:'Two-time BW champion' },
       'Merab Dvalishvili': { sample:1.00, modifier:1.00, tag:'Modern BW title run' },
-      'Petr Yan': { sample:1.00, modifier:1.00, tag:'Elite BW résumé' },
+      'Petr Yan': { sample:1.00, modifier:1.00, tag:'Elite BW resume' },
       'Henry Cejudo': { sample:0.62, modifier:1.00, tag:'BW title win context' },
       'Jose Aldo': { sample:0.35, modifier:1.00, tag:'Late BW contender run' },
       'Frankie Edgar': { sample:0.12, modifier:1.00, tag:'Late BW context' }
     },
     'Flyweight': {
-      'Demetrious Johnson': { sample:1.00, modifier:1.04, tag:'FLW benchmark résumé' },
-      'Henry Cejudo': { sample:0.78, modifier:1.00, tag:'FLW title/rivalry résumé' }
+      'Demetrious Johnson': { sample:1.00, modifier:1.04, tag:'FLW benchmark resume' },
+      'Henry Cejudo': { sample:0.78, modifier:1.00, tag:'FLW title/rivalry resume' }
     }
   };
 
@@ -119,7 +119,7 @@
       .division-leader-summary{border:1px solid rgba(250,204,21,.28);background:rgba(18,23,34,.94);border-radius:16px;padding:12px 14px;color:var(--text);line-height:1.38}
       .division-leader-summary strong{color:var(--accent2)}
       .division-row{grid-template-columns:54px 64px minmax(0,1fr)!important}
-      .division-row .resume-tag,.division-row .score,.division-row .division-score,.division-row .watch-moment-link{display:none!important}
+      .division-row .score,.division-row .division-score{display:none!important}
       .division-context{margin-top:6px;color:var(--muted);font-size:12px;line-height:1.35}
       @media(max-width:1100px){.division-leader-controls{grid-template-columns:repeat(3,minmax(0,1fr))}}
       @media(max-width:900px){.division-leader-controls{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.division-leader-pill{width:100%;min-width:0;min-height:40px;padding:9px 10px;font-size:12px}.division-leader-summary{font-size:13px;padding:11px 12px}.division-row{grid-template-columns:34px 58px minmax(0,1fr)!important}}
@@ -218,12 +218,21 @@
     const g = guardrail(f, target);
     if(g?.tag) return g.tag;
     if(division === 'All') return DISPLAY_OVERRIDES[f.fighter]?.resumeTag || 'Division profile';
-    if(primaryMatch(f, target)) return `${target} résumé`;
+    if(primaryMatch(f, target)) return `${target} resume`;
     return `${target} crossover`;
+  }
+  function watchUrlFor(f){
+    const override = DISPLAY_OVERRIDES[f.fighter] || {};
+    return override.watchUrl || override.watchMomentUrl || override.signatureMomentUrl || f.watchUrl || f.watchMomentUrl || f.signatureMomentUrl || f.display?.watchUrl || f.display?.watchMomentUrl || f.display?.signatureMomentUrl || f.watch?.url || '';
+  }
+  function watchPill(f){
+    if(typeof watchMomentPillHtml === 'function') return watchMomentPillHtml(f);
+    const url = watchUrlFor(f);
+    return url ? `<a class="watch-moment-pill" href="${url}" target="_blank" rel="noopener noreferrer" aria-label="Watch Signature Moment for ${f.fighter}">▶ Watch Signature Moment</a>` : '';
   }
   function rowHtml(f, division){
     const divisions = `${f.primaryDivision || ''}${f.secondaryDivision ? ' / ' + f.secondaryDivision : ''}`;
-    return `<article class="row fighter-row division-row" data-fighter="${f.fighter}"><div class="rank">#${divisionRank(f, division)}</div>${thumb(f)}<div class="row-main"><div class="name">${f.fighter}</div><div class="meta">Overall #${DISPLAY_OVERRIDES[f.fighter]?.allTimeRank || f.rank || '—'} · ${f.ufcRecord || ''}${divisions ? ' · ' + divisions : ''}</div><div class="division-context">${roleTag(f, division)}</div></div></article>`;
+    return `<article class="row fighter-row division-row" data-fighter="${f.fighter}"><div class="rank">#${divisionRank(f, division)}</div>${thumb(f)}<div class="row-main"><div class="name">${f.fighter}</div><div class="meta">Overall #${DISPLAY_OVERRIDES[f.fighter]?.allTimeRank || f.rank || '—'} · ${f.ufcRecord || ''}${divisions ? ' · ' + divisions : ''}</div><div class="division-context">${roleTag(f, division)}</div>${watchPill(f)}</div></article>`;
   }
   function setDivisionHeading(title, copy){
     const section = document.querySelector('#division .section-title');
@@ -258,8 +267,8 @@
     const selected = activeDivision === 'All' ? '' : activeDivision;
     const rows = selected ? divisionRows(selected) : [];
     const summary = selected
-      ? `<strong>${selected} · Men</strong><br>Top UFC résumés in this division. Showing ${rows.length} fighters.`
-      : `<strong>Pick a division</strong><br>See the top UFC résumés by weight class.`;
+      ? `<strong>${selected} · Men</strong><br>Top UFC resumes in this division. Showing ${rows.length} fighters.`
+      : `<strong>Pick a division</strong><br>See the top UFC resumes by weight class.`;
     el('divisionList').innerHTML = `<div class="division-leader-shell">${divisionControlsHtml(selected)}<div class="division-leader-summary">${summary}</div>${innerHtml || ''}</div>`;
     document.querySelectorAll('[data-division-pick]').forEach(card => card.addEventListener('click', () => {
       el('divisionFilter').value = card.dataset.divisionPick;
@@ -282,7 +291,7 @@
     setDivisionHeading(`${division} Rankings`, 'See the top fighters by division.');
     const list = `<div class="leaderboard">${rows.map(r=>rowHtml(r,division)).join('') || '<div class="notice">No fighters are loaded for this division yet.</div>'}</div>`;
     renderShell(division, list);
-    document.querySelectorAll(`#divisionList .fighter-row`).forEach(row => row.addEventListener('click', () => openFighter(row.dataset.fighter)));
+    document.querySelectorAll(`#divisionList .fighter-row`).forEach(row => row.addEventListener('click', event => { if(event.target.closest('a, button')) return; openFighter(row.dataset.fighter); }));
   };
   window.UFC_DIVISION_RANKINGS = { version: VERSION, mode: 'clean-fluid-division-score-with-apex-peak', weights: SCORE_WEIGHTS, baseMax: BASE_MAX, guardrails: DIVISION_GUARDRAILS, scoreParts: divisionScoreParts };
   if(typeof window.renderDivision === 'function') window.renderDivision();

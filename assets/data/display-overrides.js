@@ -1,3 +1,5 @@
+// Do not add new fighter data here.
+// LEGACY: fighter data has been migrated to assets/data/ranking-data.js.
 // Built from the embedded source payload by tools/split-display-overrides.py.
 // Long-term source target: edit this file directly once index.html is fully layout-only.
 const DISPLAY_OVERRIDES = {
