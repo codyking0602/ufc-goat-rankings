@@ -7,6 +7,7 @@
   function $(id){ return document.getElementById(id); }
   function data(){ return window.RANKING_DATA || {}; }
   function overrides(){ return window.DISPLAY_OVERRIDES || {}; }
+  function packets(){ return window.UFC_FIGHTER_PACKETS || {}; }
   function rows(){ return [...(data().men || []), ...(data().women || [])]; }
   function profiles(){ return data().fighters || []; }
   function profileMap(){ return Object.fromEntries(profiles().map(f => [f.fighter, f])); }
@@ -15,8 +16,9 @@
   function fmt(n, digits=2){ return (n === null || n === undefined || n === '' || !Number.isFinite(Number(n))) ? '—' : Number(n).toFixed(digits); }
   function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
   function overrideFor(f){ return overrides()[f.fighter] || {}; }
+  function packetFor(f){ return packets()[f.fighter] || {}; }
   function snapshotValue(f, labels){
-    const snap = overrideFor(f).snapshot || [];
+    const snap = overrideFor(f).snapshot || packetFor(f).display?.snapshot || [];
     const wanted = labels.map(label => String(label).toLowerCase());
     const found = snap.find(row => wanted.includes(String(row?.[0] || '').toLowerCase()));
     return found ? found[1] : undefined;
@@ -25,8 +27,26 @@
     const match = String(value ?? '').match(/-?\d+(?:\.\d+)?/);
     return match ? Number(match[0]) : undefined;
   }
+  function namedListCount(value){
+    const text = String(value ?? '').trim();
+    if(!text || /\d/.test(text)) return undefined;
+    const parts = text.split(/,| and /i).map(x => x.trim()).filter(Boolean);
+    let count = 0;
+    parts.forEach(part => {
+      const xMatch = part.match(/\bx\s*(\d+)\b/i);
+      count += xMatch ? Number(xMatch[1]) : 1;
+    });
+    return count || undefined;
+  }
 
   const FALLBACK_STATS = {
+    'Dricus du Plessis': {
+      ufcRecord: '9-1',
+      eliteWins: 4,
+      activeEliteYears: 3.15,
+      titleFightWins: 3,
+      oneLineFallback: 'Modern middleweight champion'
+    },
     'Henry Cejudo': {
       ufcRecord: '10-6',
       eliteWins: 5,
@@ -59,7 +79,7 @@
   }
   function rankFor(f){ return overrideFor(f).allTimeRank || f.rank || '—'; }
   function divisionFor(f){ return overrideFor(f).divisionLabel || [f.primaryDivision, f.secondaryDivision].filter(Boolean).join(' / ') || '—'; }
-  function statBridge(f){ return overrideFor(f).packetProfileStats || overrideFor(f).snapshotStats || {}; }
+  function statBridge(f){ return overrideFor(f).packetProfileStats || overrideFor(f).snapshotStats || packetFor(f).profileStats || {}; }
   function ufcRecord(f){ return f.ufcRecord || snapshotValue(f, ['UFC Record']) || '—'; }
   function titleFightWins(f){
     if(f.titleFightWins !== undefined) return f.titleFightWins;
@@ -82,7 +102,8 @@
     if(Array.isArray(f.opponents) && f.opponents.length) return f.opponents.filter(o => Number(o.credit || 0) >= 0.75).length || '—';
     const snap = snapshotValue(f, ['Elite Wins', 'Quality Wins']);
     const parsed = firstNumber(snap);
-    return parsed ?? snap ?? '—';
+    const countedNames = namedListCount(snap);
+    return parsed ?? countedNames ?? snap ?? '—';
   }
   function activeEliteYears(f){
     const stats = statBridge(f);
@@ -182,5 +203,5 @@
   }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install);
   else install();
-  window.UFC_OCTAGON_VERDICT_COMPARE_LAUNCHER = { render, version: '20260706g' };
+  window.UFC_OCTAGON_VERDICT_COMPARE_LAUNCHER = { render, version: '20260707a' };
 })();
