@@ -6,18 +6,6 @@ on:
       - main
     paths:
       - 'assets/data/ranking-data.js'
-      - 'assets/data/ranking-data-additions.js'
-      - 'assets/data/display-overrides.js'
-      - 'assets/data/fighter-packet-manifest.js'
-      - 'assets/data/fighter-packets/**'
-      - 'assets/data/prime-round-row-fixes.js'
-      - 'assets/data/championship-score-corrections.js'
-      - 'assets/data/opponent-quality-score-corrections.js'
-      - 'assets/data/prime-dominance-score-corrections.js'
-      - 'assets/data/longevity-score-corrections.js'
-      - 'assets/data/penalty-score-corrections.js'
-      - 'assets/data/apex-peak-score-corrections.js'
-      - 'assets/data/score-weighting.js'
       - 'assets/js/score-derived-ovr.js'
       - 'tools/build-octagon-verdict-data.js'
       - '.github/workflows/build-octagon-verdict-data.yml'
