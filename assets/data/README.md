@@ -1,57 +1,119 @@
 # Ranking data structure
 
-This folder is where ranking/profile data and patch layers live.
+This folder contains the canonical fighter data source and the generated/public data used by the app and Octagon Verdict.
 
-## Current Phase 2J structure
+## Current structure
 
-The app now uses real committed source files instead of a giant embedded data script in `index.html`.
-
-Current source split:
+The app now uses a one-file fighter data workflow.
 
 ```text
-assets/data/ranking-data.js        base fighter scores, stats, boards, and profile rows
-assets/data/display-overrides.js   app-facing OVR, profile/card polish, photo paths, one-liners
-assets/data/ranking-data-patches.js lightweight post-load status hook
-assets/js/app.js                   UI/rendering behavior
-index.html                         layout shell plus script tags
+assets/data/ranking-data.js          canonical fighter data source
+assets/data/ranking-data-patches.js  lightweight loader/status hook
+assets/data/octagon-verdict-data.json generated GPT/Octagon Verdict data feed
+assets/data/octagon-verdict/          generated GPT/Octagon Verdict export files
+assets/data/README.md                this folder guide
 ```
 
-## Files
+## Canonical source of truth
 
-### `ranking-data.js`
-
-Base ranking/profile payload.
-
-Use this for durable score/stat work such as fighter rows, all-time rank order, boards, UFC records, category scores, title context, opponent rows, round-control rows, and division metadata.
-
-GSP loss-context cleanup, Charles/Ilia score patches, and Petr Yan ranking/profile insertion now live here directly.
-
-### `display-overrides.js`
-
-App-facing profile/card polish.
-
-Use this for front-end OVR values, all-time rank labels, division labels, resume tags, photo paths, one-liners, category display ratings, profile snapshot rows, why-ranked-here copy, why-not-higher copy, key judgment calls, and final takeaways.
-
-Petr Yan profile/card polish now lives here directly.
-
-### `ranking-data-patches.js`
-
-Lightweight post-load status hook.
-
-This file no longer owns durable fighter mutations. Keep it only while the safe branch still benefits from a small status/refresh hook.
-
-## Rule for future chats
-
-Do not add large new fighter batches through `index.html`.
-
-Use the new structure:
+All fighter scoring, profile/display copy, Watch Moment URLs, compare copy, and direct fight ledger data should live in:
 
 ```text
-score/stat changes -> ranking-data.js
-profile/card polish -> display-overrides.js
-temporary safe hooks -> ranking-data-patches.js
-app behavior -> assets/js/app.js
-compare debates -> compare files
+assets/data/ranking-data.js
 ```
 
-Next cleanup target: either remove `ranking-data-patches.js` completely or keep it as a harmless status hook until final merge.
+Add or edit fighters there only.
+
+Do **not** add new fighter data to:
+
+```text
+assets/data/ranking-data-additions.js
+assets/data/display-overrides.js
+assets/data/fighter-packets/*.js
+assets/data/fighter-packet-manifest.js
+assets/data/fighter-packets.js
+assets/data/fighter-packet-schema.js
+assets/data/fighters.js
+assets/data/compare-profiles.js
+assets/data/compare-matchups.js
+assets/data/fight-ledger.js
+assets/data/*-score-corrections.js
+assets/data/score-weighting.js
+```
+
+Legacy files may still exist during cleanup for audit/history, but they are no longer the workflow.
+
+## `ranking-data.js`
+
+Permanent fighter source.
+
+Each fighter should include, when relevant:
+
+- identity: name, slug/id, gender, leaderboard, divisions, UFC record
+- scoring: total score, Championship, Quality Wins, Prime Dominance, Longevity, Apex Peak, Loss Context
+- resume snapshot stats: title-fight wins, adjusted title wins, elite/top-5 wins, prime record, finish rate, rounds won %, active elite years, times finished in prime
+- title context
+- quality wins / opponent ledger
+- prime and round-control details
+- loss-context notes
+- display copy: resume tag, one-liner, why ranked here, why not higher, final takeaway
+- Watch Moment URL
+- photo paths, only after real files exist
+- compare profile/copy
+- fight ledger, only for real direct fights or rivalries
+
+## Resume Snapshot rule
+
+Visible profile snapshot stats are real stats, not score fields.
+
+Do not map category scores into stat slots.
+
+```text
+Championship score        != UFC Title-Fight Wins
+Opponent Quality score    != Elite / Top-5 Wins
+Longevity score           != Active Elite Years
+Prime Dominance score     != Rounds Won %
+Loss Context score        != Times Finished in Prime
+```
+
+Example issue caught during cleanup: Julianna Peña showed `21.8` UFC Title-Fight Wins because a championship score was mapped into a stat slot. That must be corrected in the canonical fighter object during audit.
+
+## `ranking-data-patches.js`
+
+Current lightweight loader/status hook.
+
+This file should not own durable fighter data. It currently handles app module loading, cache-busting, photo fallback behavior, status globals, and temporary display cleanup while the app is being stabilized.
+
+Long-term cleanup target: move active loader behavior into a clearer app module and reduce or remove this file.
+
+## Octagon Verdict data feed
+
+These are generated/public files for the custom GPT / Octagon Verdict side:
+
+```text
+assets/data/octagon-verdict-data.json
+assets/data/octagon-verdict/
+```
+
+They are rebuilt by:
+
+```text
+tools/build-octagon-verdict-data.js
+.github/workflows/build-octagon-verdict-data.yml
+```
+
+The export should be rebuilt from the canonical `ranking-data.js` source.
+
+## Audit tracker
+
+Use this file for fighter audit status:
+
+```text
+docs/fighter-status.md
+```
+
+Fighters should be audited in small batches. Score updates are allowed during audit, but every score change should be intentional and easy to explain.
+
+## Future cleanup target
+
+Once verified that no active module depends on the legacy data files, remove old patch-stack files from this folder so the data directory only contains the canonical source, lightweight loader, GPT export, and documentation.
