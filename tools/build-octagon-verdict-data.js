@@ -125,6 +125,29 @@ function fighterRecord({ name, row, profile, display, compare, packet, group, ra
     notes: unique([profileStats.divisionStrengthContext, profileStats.lossContext, compare?.resume, compare?.championship, compare?.opponentQuality, packet?.display?.finalTakeaway].map(note => pickText(note, 120)), 4)
   });
 }
+function legacyFighter(f) {
+  return compact({
+    slug: f.slug,
+    name: f.name,
+    group: f.group,
+    rank: f.rank,
+    appOvr: f.appOvr,
+    totalScore: f.totalScore,
+    division: f.division,
+    tag: f.tag,
+    ufcRecord: f.ufcRecord,
+    titleFightWins: f.titleFightWins,
+    adjustedTitleWins: f.adjustedTitleWins,
+    eliteWins: f.eliteWins,
+    primeRecord: f.primeRecord,
+    roundsWonPct: f.roundsWonPct,
+    finishRatePct: f.finishRatePct,
+    activeEliteYears: f.activeEliteYears,
+    timesFinishedPrime: f.timesFinishedPrime,
+    lossPenalty: f.lossPenalty,
+    bestWins: f.bestWins
+  });
+}
 function buildSpecial(fightersByName) {
   const pair = (a, b, debate, split, notes = []) => {
     const fa = fightersByName.get(a); const fb = fightersByName.get(b);
@@ -164,7 +187,7 @@ function build() {
     avoid: ['Raw category point totals in normal answers', 'outside citations unless asked', 'Wikipedia/ESPN/UFC links unless asked', 'database/model language']
   };
   const index = { name: 'Octagon Verdict Index', version: new Date().toISOString().slice(0, 10), generatedAt: new Date().toISOString(), packetCount: manifest.packets?.length || 0, missingPackets, guidance, fighterCount: fighters.length, fighters: fighters.map(f => compact({ slug: f.slug, name: f.name, group: f.group, rank: f.rank, appOvr: f.appOvr, totalScore: f.totalScore, division: f.division, tag: f.tag })), specialMatchups: specialMatchups.map(m => compact({ pairKey: m.pairKey, fighters: m.fighters, slugs: m.slugs, defaultLean: m.defaultLean, margin: m.margin, coreDebate: m.coreDebate })) };
-  const legacyFeed = { name: 'Octagon Verdict Data', version: index.version, generatedAt: index.generatedAt, defaultScope: 'Judge UFC accomplishments by default. Only mention scope when it matters.', guidance, fighterCount: fighters.length, fighters, specialMatchups };
+  const legacyFeed = { name: 'Octagon Verdict Data', version: index.version, generatedAt: index.generatedAt, defaultScope: 'Judge UFC accomplishments by default. Only mention scope when it matters.', guidance, fighterCount: fighters.length, fighters: fighters.map(legacyFighter), specialMatchups };
   return { index, fighters, specialMatchups, legacyFeed };
 }
 function writeJson(filePath, data) { fs.mkdirSync(path.dirname(filePath), { recursive: true }); fs.writeFileSync(filePath, `${JSON.stringify(data)}\n`, 'utf8'); }
@@ -176,6 +199,6 @@ writeJson(path.join(dataDir, 'index.json'), index);
 for (const fighter of fighters) writeJson(path.join(fightersDir, `${fighter.slug}.json`), fighter);
 for (const matchup of specialMatchups) writeJson(path.join(matchupsDir, `${matchup.pairKey}.json`), matchup);
 writeJson(legacyPath, legacyFeed);
-console.log(`Built compact legacy feed with ${legacyFeed.fighterCount} fighters.`);
+console.log(`Built tiny legacy feed with ${legacyFeed.fighterCount} fighters.`);
 console.log(`Legacy size: ${fs.statSync(legacyPath).size} bytes.`);
 if (index.missingPackets.length) console.warn(`Missing packet files: ${index.missingPackets.join(', ')}`);
