@@ -473,15 +473,13 @@ function rowMatchesFilters(r, { applyDivision = true } = {}){
   return textHit && divHit;
 }
 
-function fighterRowHtml(r, rankOverride=null, tagOverride=null, options={}){
-  const showCategoryChips = options.showCategoryChips !== false;
-  const showWatchPill = options.showWatchPill !== false;
+function fighterRowHtml(r, rankOverride=null, tagOverride=null){
   return `<article class="row fighter-row" data-fighter="${r.fighter}">
     <div class="rank">#${rankOverride || r.rank || '—'}</div>
     ${rowPhoto(r)}
-    <div class="row-main"><div class="name">${r.fighter}</div><div class="meta">${r.ufcRecord || ''} · ${r.primaryDivision || ''}${r.secondaryDivision ? ' / ' + r.secondaryDivision : ''}</div><div class="resume-tag">${tagOverride || resumeTagFor(r)}</div>${showWatchPill ? watchMomentPillHtml(r) : ''}</div>
+    <div class="row-main"><div class="name">${r.fighter}</div><div class="meta">${r.ufcRecord || ''} · ${r.primaryDivision || ''}${r.secondaryDivision ? ' / ' + r.secondaryDivision : ''}</div><div class="resume-tag">${tagOverride || resumeTagFor(r)}</div></div>
     <div class="score">${overallOvr(r)} <span class="meta">OVR</span></div>
-    ${showCategoryChips ? categoryChipGrid(r) : ''}
+    ${categoryChipGrid(r)}
   </article>`;
 }
 
@@ -518,8 +516,8 @@ function openFighter(name){
   const photoUrl = override.photoUrl || f.display?.photoUrl || '';
   const photoStyle = '';
   const photoClass = photoUrl ? 'fighter-photo has-photo' : 'fighter-photo';
-  const watchUrl = watchMomentUrlFor(f);
-  const watchLabel = watchMomentLabelFor(f);
+  const watchUrl = override.watchUrl || f.display?.watchUrl || '';
+  const watchLabel = override.watchLabel || f.display?.watchLabel || 'Watch Signature Moment';
   const snapshot = override.snapshot || f.display?.snapshot || [
     ['UFC Record', f.ufcRecord || '—'],
     ['UFC All-Time Rank', `#${rankLabel}`],
@@ -587,8 +585,8 @@ function renderDivisionView(){
   const rows = APP_STATE.menRows
     .filter(f => rowMatchesFilters(f))
     .sort((a,b)=>scoreValue(b)-scoreValue(a));
-  el('divisionList').innerHTML = `<div class="notice">Division view uses the current UFC-only overall score, filtered by division.</div>` +
-    (rows.map((r,i)=>fighterRowHtml(r, i+1, div === 'All' ? resumeTagFor(r) : div + ' view', { showCategoryChips: false, showWatchPill: true })).join('') || '<div class="notice">No fighters match that filter.</div>');
+  el('divisionList').innerHTML = `<div class="notice">Prototype note: this is a division filter using the current P4P score. True division-only scoring will use division-specific fight rows next.</div>` +
+    (rows.map((r,i)=>fighterRowHtml(r, i+1, div === 'All' ? resumeTagFor(r) : div + ' view')).join('') || '<div class="notice">No fighters match that filter.</div>');
   markRendered('division');
 }
 
@@ -665,9 +663,8 @@ function populateControls(){
 }
 
 function handleFighterRowClick(event){
-  if(event.target.closest('a, button')) return;
   const row = event.target.closest('.fighter-row');
-  if(!row) return;
+  if(!row || event.target.closest('a,button')) return;
   openFighter(row.dataset.fighter);
 }
 
@@ -685,7 +682,6 @@ window.UFC_MARK_LISTS_DIRTY = markListsDirty;
 window.renderCompare = renderCompare;
 
 populateControls();
-installWatchMomentStyles();
 installDelegatedListeners();
 renderActiveView();
 
