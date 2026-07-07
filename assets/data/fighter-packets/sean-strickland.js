@@ -1,3 +1,5 @@
+// Do not add new fighter data here.
+// LEGACY: fighter data has been migrated to assets/data/ranking-data.js.
 // Sean Strickland fighter packet extension.
 (function(){
   const VERSION = 'fighter-packet-sean-strickland-20260706b';

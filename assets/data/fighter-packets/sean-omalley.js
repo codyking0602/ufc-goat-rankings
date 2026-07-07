@@ -1,3 +1,5 @@
+// Do not add new fighter data here.
+// LEGACY: fighter data has been migrated to assets/data/ranking-data.js.
 // Sean O'Malley fighter packet extension.
 (function(){
   const VERSION = 'fighter-packet-sean-omalley-20260706b-round-control';

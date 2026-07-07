@@ -1,3 +1,5 @@
+// Do not add new fighter data here.
+// LEGACY: fighter data has been migrated to assets/data/ranking-data.js.
 // Robert Whittaker fighter packet extension.
 (function(){
   const VERSION = 'fighter-packet-robert-whittaker-20260706b-round-control';
