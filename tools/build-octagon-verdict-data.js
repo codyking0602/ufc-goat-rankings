@@ -50,6 +50,32 @@ function snapshotValue(snapshot, label) {
   const row = snapshot.find(item => Array.isArray(item) && item[0] === label);
   return row ? row[1] : undefined;
 }
+function firstNumber(value) {
+  const match = String(value ?? '').match(/-?\d+(?:\.\d+)?/);
+  return match ? Number(match[0]) : undefined;
+}
+function namedListCount(value) {
+  const text = String(value ?? '').trim();
+  if (!text || /\d/.test(text)) return undefined;
+  const parts = text.split(/,| and /i).map(x => x.trim()).filter(Boolean);
+  let count = 0;
+  for (const part of parts) {
+    const xMatch = part.match(/\bx\s*(\d+)\b/i);
+    count += xMatch ? Number(xMatch[1]) : 1;
+  }
+  return count || undefined;
+}
+function eliteWinsFrom(profile, profileStats, row, display) {
+  if (profileStats?.eliteWins !== undefined) return profileStats.eliteWins;
+  if (row?.eliteWins !== undefined) return row.eliteWins;
+  if (profile?.eliteWins !== undefined) return profile.eliteWins;
+  if (Array.isArray(profile?.opponents) && profile.opponents.length) {
+    const count = profile.opponents.filter(o => Number(o?.credit || 0) >= 0.75).length;
+    if (count) return count;
+  }
+  const snap = snapshotValue(display?.snapshot, 'Elite Wins') ?? snapshotValue(display?.snapshot, 'Quality Wins');
+  return firstNumber(snap) ?? namedListCount(snap);
+}
 function titleFightWinsFrom(profile, profileStats, display) {
   const direct = value(profileStats?.titleFightWins ?? profile?.titleFightWins);
   if (direct !== undefined) return direct;
@@ -68,8 +94,25 @@ function adjustedTitleWinsFrom(profile, profileStats) {
 function rankedRows(rows) {
   return [...(rows || [])].filter(row => row?.fighter && Number.isFinite(Number(row.totalScore))).sort((a, b) => Number(b.totalScore || 0) - Number(a.totalScore || 0));
 }
+function makeMockElement() {
+  return {
+    value: '', textContent: '', innerHTML: '', style: {}, dataset: {},
+    classList: { add() {}, remove() {}, contains() { return false; } },
+    setAttribute() {}, appendChild() {}, remove() {}, prepend() {}, addEventListener() {}, querySelector() { return null; }, querySelectorAll() { return []; }
+  };
+}
 function makeContext() {
-  const sandbox = { console, window: {}, document: undefined, setTimeout: () => {}, clearTimeout: () => {}, Date, Math, Number, String, Boolean, Array, Object, JSON, RegExp, Map, Set };
+  const document = {
+    getElementById() { return null; },
+    querySelector() { return null; },
+    querySelectorAll() { return []; },
+    createElement() { return makeMockElement(); },
+    addEventListener() {},
+    documentElement: { setAttribute() {} },
+    head: { appendChild() {} },
+    body: { appendChild() {} }
+  };
+  const sandbox = { console, window: {}, document, setTimeout: () => {}, clearTimeout: () => {}, Date, Math, Number, String, Boolean, Array, Object, JSON, RegExp, Map, Set };
   sandbox.window = sandbox;
   return vm.createContext(sandbox);
 }
@@ -101,7 +144,7 @@ function fighterRecord({ name, row, profile, display, compare, packet, group, ra
     ufcRecord: value(profileStats.ufcRecord ?? row?.ufcRecord ?? profile?.ufcRecord ?? snapshotValue(display?.snapshot, 'UFC Record')),
     titleFightWins: value(titleFightWinsFrom(profile, profileStats, display)),
     adjustedTitleWins: value(adjustedTitleWinsFrom(profile, profileStats)),
-    eliteWins: value(profileStats.eliteWins),
+    eliteWins: value(eliteWinsFrom(profile, profileStats, row, display)),
     primeRecord: value(profileStats.primeRecord ?? row?.primeRecord ?? profile?.primeRecord ?? snapshotValue(display?.snapshot, 'Prime Record')),
     roundsWonPct: value(round(profileStats.roundsWonPct ?? row?.roundsWonPct ?? profile?.roundsWonPct)),
     finishRatePct: value(round(profileStats.finishRatePct ?? row?.finishRatePct ?? profile?.finishRatePct)),
