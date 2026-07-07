@@ -221,9 +221,18 @@
     if(primaryMatch(f, target)) return `${target} resume`;
     return `${target} crossover`;
   }
+  function watchUrlFor(f){
+    const override = DISPLAY_OVERRIDES[f.fighter] || {};
+    return override.watchUrl || override.watchMomentUrl || override.signatureMomentUrl || f.watchUrl || f.watchMomentUrl || f.signatureMomentUrl || f.display?.watchUrl || f.display?.watchMomentUrl || f.display?.signatureMomentUrl || f.watch?.url || '';
+  }
+  function watchPill(f){
+    if(typeof watchMomentPillHtml === 'function') return watchMomentPillHtml(f);
+    const url = watchUrlFor(f);
+    return url ? `<a class="watch-moment-pill" href="${url}" target="_blank" rel="noopener noreferrer" aria-label="Watch Signature Moment for ${f.fighter}">▶ Watch Signature Moment</a>` : '';
+  }
   function rowHtml(f, division){
     const divisions = `${f.primaryDivision || ''}${f.secondaryDivision ? ' / ' + f.secondaryDivision : ''}`;
-    return `<article class="row fighter-row division-row" data-fighter="${f.fighter}"><div class="rank">#${divisionRank(f, division)}</div>${thumb(f)}<div class="row-main"><div class="name">${f.fighter}</div><div class="meta">Overall #${DISPLAY_OVERRIDES[f.fighter]?.allTimeRank || f.rank || '—'} · ${f.ufcRecord || ''}${divisions ? ' · ' + divisions : ''}</div><div class="division-context">${roleTag(f, division)}</div></div></article>`;
+    return `<article class="row fighter-row division-row" data-fighter="${f.fighter}"><div class="rank">#${divisionRank(f, division)}</div>${thumb(f)}<div class="row-main"><div class="name">${f.fighter}</div><div class="meta">Overall #${DISPLAY_OVERRIDES[f.fighter]?.allTimeRank || f.rank || '—'} · ${f.ufcRecord || ''}${divisions ? ' · ' + divisions : ''}</div><div class="division-context">${roleTag(f, division)}</div>${watchPill(f)}</div></article>`;
   }
   function setDivisionHeading(title, copy){
     const section = document.querySelector('#division .section-title');
