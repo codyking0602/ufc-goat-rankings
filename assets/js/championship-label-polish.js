@@ -1,7 +1,7 @@
 // App-facing category label polish.
 // Keeps the underlying category key as `championship` but shows the clearer label users see.
 (function(){
-  const VERSION = 'championship-label-polish-20260707b-current-loss-ledgers';
+  const VERSION = 'championship-label-polish-20260707c-current-loss-ledgers-batch3';
   const FROM = 'Title Reign';
   const TO = 'Championship Resume';
   const DESC_FROM = 'Championship resume: title-fight wins, reign strength, and control of the division';
@@ -51,20 +51,87 @@
   window.UFC_CHAMPIONSHIP_LABEL_POLISH = { version: VERSION, from: FROM, to: TO, appliedAt: new Date().toISOString() };
 })();
 
-// Current-result loss ledgers loaded here because this module runs before scoring-engine.
+// Current-result and batch loss ledgers loaded here because this module runs before scoring-engine.
 (function(){
-  const VERSION = 'loss-context-ledgers-v2-20260707a-current-results';
+  const VERSION = 'loss-context-ledgers-v3-20260707a-expanded-batch';
+  const NORMAL = 'normal';
+  const NONE = 'none';
+  const REDUCED = 'reducedInjury';
   const LEDGERS = {
     'Ilia Topuria': [
-      { opponent:'Justin Gaethje', phase:'prime', opponentTier:'championTop5', finished:true, finishTreatment:'normal', counted:true, notes:'Recent lightweight title loss; prime same-division elite finish.' }
+      { opponent:'Justin Gaethje', phase:'prime', opponentTier:'championTop5', finished:true, finishTreatment:NORMAL, counted:true, notes:'Recent lightweight title loss; prime same-division elite finish.' }
     ],
     'Khamzat Chimaev': [
-      { opponent:'Sean Strickland', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:'none', counted:true, notes:'Recent middleweight title loss; prime elite decision.' }
+      { opponent:'Sean Strickland', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true, notes:'Recent middleweight title loss; prime elite decision.' }
     ],
     'Dricus du Plessis': [
-      { opponent:'Khamzat Chimaev', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:'none', counted:true, notes:'Middleweight title loss; prime elite decision.' }
+      { opponent:'Khamzat Chimaev', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true, notes:'Middleweight title loss; prime elite decision.' }
     ],
-    'Kayla Harrison': []
+    'Kayla Harrison': [],
+    'Rose Namajunas': [
+      { opponent:'Carla Esparza', phase:'prePrime', opponentTier:'championTop5', finished:true, finishTreatment:NORMAL, counted:true },
+      { opponent:'Karolina Kowalkiewicz', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true },
+      { opponent:'Jessica Andrade', phase:'prime', opponentTier:'championTop5', finished:true, finishTreatment:NORMAL, counted:true },
+      { opponent:'Carla Esparza', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true },
+      { opponent:'Manon Fiorot', phase:'prime', opponentTier:'championTop5', upwardDivision:true, finished:false, finishTreatment:NONE, counted:true },
+      { opponent:'Natalia Silva', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true, notes:'Counted as established flyweight loss.' }
+    ],
+    'Mackenzie Dern': [
+      { opponent:'Amanda Ribas', phase:'prePrime', opponentTier:'nonElite', finished:false, finishTreatment:NONE, counted:true },
+      { opponent:'Marina Rodriguez', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true },
+      { opponent:'Yan Xiaonan', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true },
+      { opponent:'Jessica Andrade', phase:'prime', opponentTier:'championTop5', finished:true, finishTreatment:NORMAL, counted:true },
+      { opponent:'Amanda Lemos', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true }
+    ],
+    'Julianna Peña': [
+      { opponent:'Valentina Shevchenko', phase:'prime', opponentTier:'championTop5', finished:true, finishTreatment:NORMAL, counted:true },
+      { opponent:'Germaine de Randamie', phase:'prime', opponentTier:'championTop5', finished:true, finishTreatment:NORMAL, counted:true },
+      { opponent:'Amanda Nunes', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true },
+      { opponent:'Kayla Harrison', phase:'prime', opponentTier:'championTop5', finished:true, finishTreatment:NORMAL, counted:true, notes:'Title loss to UFC champion.' }
+    ],
+    'Julianna Pena': [
+      { opponent:'Valentina Shevchenko', phase:'prime', opponentTier:'championTop5', finished:true, finishTreatment:NORMAL, counted:true },
+      { opponent:'Germaine de Randamie', phase:'prime', opponentTier:'championTop5', finished:true, finishTreatment:NORMAL, counted:true },
+      { opponent:'Amanda Nunes', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true },
+      { opponent:'Kayla Harrison', phase:'prime', opponentTier:'championTop5', finished:true, finishTreatment:NORMAL, counted:true, notes:'Title loss to UFC champion.' }
+    ],
+    'Alexa Grasso': [
+      { opponent:'Felice Herrig', phase:'prePrime', opponentTier:'nonElite', finished:false, finishTreatment:NONE, counted:true },
+      { opponent:'Tatiana Suarez', phase:'prePrime', opponentTier:'championTop5', finished:true, finishTreatment:NORMAL, counted:true },
+      { opponent:'Carla Esparza', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true },
+      { opponent:'Valentina Shevchenko', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true },
+      { opponent:'Natalia Silva', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true }
+    ],
+    "Sean O'Malley": [
+      { opponent:'Marlon Vera', phase:'prime', opponentTier:'nonElite', finished:true, finishTreatment:REDUCED, counted:true, penaltyOverride:-2.00, notes:'Weird injury loss; locked reduced treatment.' },
+      { opponent:'Merab Dvalishvili', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true }
+    ],
+    'Aljamain Sterling': [
+      { opponent:'Marlon Moraes', phase:'prePrime', opponentTier:'championTop5', finished:true, finishTreatment:NORMAL, counted:true },
+      { opponent:"Sean O'Malley", phase:'prime', opponentTier:'championTop5', finished:true, finishTreatment:NORMAL, counted:true },
+      { opponent:'Movsar Evloev', phase:'prime', opponentTier:'championTop5', upwardDivision:true, finished:false, finishTreatment:NONE, counted:true }
+    ],
+    'Petr Yan': [
+      { opponent:'Aljamain Sterling', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true, penaltyOverride:-0.75, notes:'DQ reduced treatment.' },
+      { opponent:'Aljamain Sterling', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true },
+      { opponent:"Sean O'Malley", phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true },
+      { opponent:'Merab Dvalishvili', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true }
+    ],
+    'Henry Cejudo': [
+      { opponent:'Demetrious Johnson', phase:'prePrime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true },
+      { opponent:'Joseph Benavidez', phase:'prePrime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true },
+      { opponent:'Aljamain Sterling', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true },
+      { opponent:'Merab Dvalishvili', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true }
+    ],
+    'Dominick Cruz': [
+      { opponent:'Cody Garbrandt', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true },
+      { opponent:'Henry Cejudo', phase:'prime', opponentTier:'championTop5', finished:true, finishTreatment:NORMAL, counted:true },
+      { opponent:'Marlon Vera', phase:'postPrime', opponentTier:'championTop5', finished:true, finishTreatment:NORMAL, counted:true }
+    ],
+    'Francis Ngannou': [
+      { opponent:'Stipe Miocic', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true },
+      { opponent:'Derrick Lewis', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true }
+    ]
   };
   function applyLedgers(){
     const rows = Array.isArray(window.RANKING_DATA?.fighters) ? window.RANKING_DATA.fighters : [];
