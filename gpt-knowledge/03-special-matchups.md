@@ -2,6 +2,8 @@
 
 Use these notes when the user asks for one of these exact debates. These notes should shape the answer, but the current fighter data file still controls exact ranks, scores, OVRs, and stats.
 
+General rule: do not discuss who would win in an actual fight unless the user specifically asks for fight-pick analysis. These matchups are greatness/resume comparisons, not fantasy fights.
+
 ## Khabib Nurmagomedov vs Islam Makhachev
 
 Core debate: clean dominance vs fuller current championship work.
@@ -54,7 +56,7 @@ If the user values clean record, avenged losses, or controversy context heavily,
 
 ## Kamaru Usman vs Max Holloway
 
-Core debate: better championship peak vs deeper overall resume.
+Core debate: better championship peak vs deeper overall case.
 
 Usman's best argument:
 - Stronger championship reign.
@@ -63,7 +65,7 @@ Usman's best argument:
 - Better round-to-round control at peak.
 
 Holloway's best argument:
-- Deeper overall resume.
+- Deeper overall case.
 - Elite longevity.
 - More quality-win volume across eras.
 - Stayed relevant through multiple featherweight/lightweight chapters.
@@ -82,7 +84,7 @@ Core debate: rivalry edge vs career volume.
 Volkanovski's best argument:
 - Direct rivalry edge over Holloway.
 - Strong modern featherweight title reign.
-- Better head-to-head case.
+- Better rivalry case.
 - Higher control and champion-authority argument at featherweight.
 
 Holloway's best argument:
@@ -93,7 +95,7 @@ Holloway's best argument:
 
 Default verdict direction:
 - Better rivalry case: Alexander Volkanovski.
-- Deeper long-run resume: Max Holloway.
+- Deeper long-run case: Max Holloway.
 - Greater overall case depends on current scores, but Volk's direct rivalry edge must be treated as a real swing point.
 
 ## Jose Aldo vs Dominick Cruz
@@ -121,11 +123,14 @@ Do not over-explain UFC-only. Say it naturally and move on.
 
 Core debate: heavyweight championship peak vs uncrowned lightweight streak.
 
+Do not mention who would win in an actual fight. Do not include a "better actual fighter head-to-head" line. This comparison should stay focused on the UFC greatness/ranking case.
+
 Francis' best argument:
 - Undisputed UFC heavyweight champion.
 - Beat Stipe Miocic for the belt.
 - Beat Ciryl Gane to defend/unify.
 - Major heavyweight wins and huge peak-danger aura.
+- Cleaner championship case than Tony.
 
 Tony's best argument:
 - 12-fight UFC win streak.
@@ -137,10 +142,15 @@ Tony's best argument:
 Default verdict direction:
 - Better championship case: Francis Ngannou.
 - Better lightweight streak/depth argument: Tony Ferguson.
-- Greater current scored case: use the current fighter data file.
+- Greater current UFC case: Francis Ngannou, narrowly, if the current fighter data file still has Francis ahead.
+
+Preferred final labels:
+- Better championship case: Francis Ngannou.
+- Better longevity/contender-run case: Tony Ferguson.
+- Greater UFC case: Francis Ngannou, narrowly.
 
 Important style note:
-Tony is in the data. Do not say he is missing if the current fighter data file is uploaded. Do not cite UFC Stats, Wikipedia, ESPN, or MMA Fighting. Use the uploaded knowledge.
+Tony is in the data. Do not say he is missing if the current fighter data file is uploaded. Do not cite UFC Stats, Wikipedia, ESPN, or MMA Fighting. Use the uploaded knowledge. Do not call it "greater UFC resume" if "greater UFC case" is more accurate.
 
 ## Amanda Nunes vs Valentina Shevchenko
 
@@ -165,7 +175,7 @@ Default verdict direction:
 
 ## Zhang Weili vs Rose Namajunas
 
-Core debate: overall championship strength vs direct head-to-head problem.
+Core debate: overall championship strength vs direct rivalry problem.
 
 Zhang's best argument:
 - Stronger current all-around championship case.
@@ -182,4 +192,4 @@ Default verdict direction:
 - Direct rivalry argument: Rose must get real credit.
 
 Important style note:
-Do not let Zhang's higher overall case erase Rose's head-to-head argument.
+Do not let Zhang's higher overall case erase Rose's direct rivalry argument.
