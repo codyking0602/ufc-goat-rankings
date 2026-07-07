@@ -411,6 +411,41 @@ function resumeTagFor(f){
   if (rank <= 30) return "Great UFC resume";
   return "UFC resume";
 }
+function watchMomentUrlFor(f){
+  const override = displayOverrideFor(f.fighter) || {};
+  return (
+    override.watchUrl ||
+    override.watchMomentUrl ||
+    override.signatureMomentUrl ||
+    f.watchUrl ||
+    f.watchMomentUrl ||
+    f.signatureMomentUrl ||
+    f.display?.watchUrl ||
+    f.display?.watchMomentUrl ||
+    f.display?.signatureMomentUrl ||
+    f.watch?.url ||
+    ''
+  );
+}
+function watchMomentLabelFor(f){ return 'Watch Signature Moment'; }
+function watchMomentPillHtml(f){
+  const url = watchMomentUrlFor(f);
+  if(!url) return '';
+  return `<a class="watch-moment-pill" href="${url}" target="_blank" rel="noopener noreferrer" aria-label="Watch Signature Moment for ${f.fighter}">▶ Watch Signature Moment</a>`;
+}
+function installWatchMomentStyles(){
+  if(document.getElementById('watch-moment-renderer-css')) return;
+  const style = document.createElement('style');
+  style.id = 'watch-moment-renderer-css';
+  style.textContent = `
+    .watch-moment-pill,.watch-moment-link{display:inline-flex;align-items:center;justify-content:center;width:fit-content;border:1px solid rgba(249,115,22,.48);background:rgba(249,115,22,.12);color:#fed7aa;border-radius:999px;font-weight:850;letter-spacing:.02em;text-decoration:none;line-height:1.1}
+    .watch-moment-pill:hover,.watch-moment-link:hover{border-color:rgba(249,115,22,.78);background:rgba(249,115,22,.2);color:#fff}
+    .watch-moment-pill{margin-top:.45rem;padding:.38rem .7rem;font-size:.78rem}
+    .profile-watch-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:1rem}
+    .profile-watch-moment{padding:.65rem 1rem;font-size:.9rem}
+  `;
+  document.head.appendChild(style);
+}
 function categoryChip(f, key){
   const info = CATEGORY_INFO.find(([k]) => k === key) || [key, key, ""];
   const label = info[1];
