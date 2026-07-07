@@ -1,6 +1,6 @@
 // Adds a fluid Category Leaders tab tied to the current live category ratings.
 (function(){
-  const VERSION = 'category-leaders-20260706a';
+  const VERSION = 'category-leaders-20260706b-championship-audit';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
@@ -46,16 +46,44 @@
     if(typeof categoryOvr === 'function') return categoryOvr(f,key);
     return num(f[key]);
   }
-  function rankFor(f,key,board){
-    if(key !== 'apexPeak' && typeof categoryRank === 'function') return categoryRank(f,key);
-    const val = num(f?.[key]);
-    return 1 + allRows(board).map(hydrate).filter(row => num(row?.[key]) > val).length;
-  }
   function rawFor(f,key){ return key === 'apexPeak' ? num(f.apexPeak) : num(f[key]); }
+  function localCategoryRank(f,key,board){
+    const val = rawFor(f,key);
+    return 1 + allRows(board).map(hydrate).filter(row => rawFor(row,key) > val).length;
+  }
+  function rankFor(f,key,board){ return localCategoryRank(f,key,board); }
+
+  function championshipAudit(f){
+    const title = f?.title || {};
+    const override = overridesFor(f?.fighter || '');
+    const snapshotStats = override.snapshotStats || override.packetProfileStats || {};
+    const notes = String(title.notes || '');
+    const noteMatch = notes.match(/(?:total\s+)?(?:ufc\s+)?title[-\s]*fight wins\s*=\s*([0-9]+(?:\.[0-9]+)?)/i);
+    const titleFightWins = num(snapshotStats.titleFightWins || title.titleFightWins || (noteMatch ? noteMatch[1] : 0));
+    const adjustedTitleWins = num(snapshotStats.adjustedTitleWins || title.adjustedTitleWins || 0);
+    const championshipScore = num(f?.championship);
+    return { championshipScore, adjustedTitleWins, titleFightWins };
+  }
+  function championshipContext(f){
+    const audit = championshipAudit(f);
+    const pieces = [`Championship score ${fmt(audit.championshipScore)}`];
+    if(audit.adjustedTitleWins) pieces.push(`${fmt(audit.adjustedTitleWins)} adjusted title-win credit`);
+    if(audit.titleFightWins) pieces.push(`${fmt(audit.titleFightWins)} UFC title-fight wins`);
+    const notes = sentence(f?.title?.notes);
+    return pieces.length ? `${pieces.join(' · ')}.` : (notes || 'Live title-resume rating.');
+  }
+  function championshipTieBreak(a,b){
+    const aa = championshipAudit(a), bb = championshipAudit(b);
+    return (bb.championshipScore - aa.championshipScore)
+      || (bb.adjustedTitleWins - aa.adjustedTitleWins)
+      || (bb.titleFightWins - aa.titleFightWins)
+      || (overallRating(b) - overallRating(a));
+  }
   function sortRows(rows,key,board){
     return rows.map(hydrate).sort((a,b) => {
       const ar = rankFor(a,key,board), br = rankFor(b,key,board);
       if(ar !== br) return ar - br;
+      if(key === 'championship') return championshipTieBreak(a,b);
       const ratingGap = ratingFor(b,key) - ratingFor(a,key);
       if(ratingGap) return ratingGap;
       const rawGap = rawFor(b,key) - rawFor(a,key);
@@ -73,11 +101,6 @@
   function pct(value){ return value === null || value === undefined || value === '' ? '—' : `${Number(value).toFixed(1)}%`; }
   function fmt(value){ return value === null || value === undefined || value === '' ? '—' : Number(value).toFixed(2).replace(/\.00$/, ''); }
   function sentence(value){ return String(value || '').split(/(?<=[.!?])\s+/).filter(Boolean)[0] || ''; }
-  function titleWins(f){
-    const notes = String(f?.title?.notes || '');
-    const match = notes.match(/Total title fight wins =\s*([0-9]+(?:\.[0-9]+)?)/);
-    return match ? match[1].replace(/\.0$/, '') : null;
-  }
   function opponentNames(f){
     const opps = Array.isArray(f.opponents) ? f.opponents : [];
     const picked = [];
@@ -88,12 +111,7 @@
     return picked.slice(0,4).join(', ');
   }
   function contextFor(f,key){
-    if(key === 'championship'){
-      const wins = titleWins(f);
-      if(wins) return `${wins} UFC title-fight wins.`;
-      if(f?.title?.adjustedTitleWins) return `${Number(f.title.adjustedTitleWins).toFixed(1)} adjusted title-win credit.`;
-      return sentence(f?.title?.notes) || 'Live title-resume rating.';
-    }
+    if(key === 'championship') return championshipContext(f);
     if(key === 'opponentQuality'){
       const names = opponentNames(f);
       return names ? `Key wins: ${names}.` : 'Live opponent-quality rating.';
@@ -108,7 +126,7 @@
     if(key === 'longevity') return `${fmt(f.activeEliteYears)} active elite UFC years.`;
     if(key === 'apexPeak'){
       const audit = f.apexPeakAudit || overridesFor(f.fighter).apexPeakAudit || {};
-      return audit.window ? `${audit.window}.` : 'Live Apex Peak modifier.';
+      return audit.window ? `${audit.window}.` : `Apex Peak modifier +${fmt(f.apexPeak || 0)}.`;
     }
     if(key === 'penalty'){
       if(typeof lossImpactText === 'function') return lossImpactText(f);
@@ -213,6 +231,8 @@
     list.querySelectorAll('.row').forEach(row => row.addEventListener('click', () => { if(typeof openFighter === 'function') openFighter(row.dataset.fighter); }));
   }
   function bind(){
+    if(window.__UFC_CATEGORY_LEADERS_BOUND__) return;
+    window.__UFC_CATEGORY_LEADERS_BOUND__ = true;
     document.addEventListener('click', event => {
       const btn = event.target.closest?.('[data-category-leader]');
       if(!btn) return;
@@ -235,5 +255,5 @@
     refresh = function(){ previousRefresh(); render(); };
   }
   render();
-  window.UFC_CATEGORY_LEADERS = { version: VERSION, categories: CATEGORIES.map(c => c.key), render, appliedAt: new Date().toISOString() };
+  window.UFC_CATEGORY_LEADERS = { version: VERSION, categories: CATEGORIES.map(c => c.key), render, championshipAudit, appliedAt: new Date().toISOString() };
 })();
