@@ -1,3 +1,5 @@
+// Do not add new fighter data here.
+// LEGACY: fighter data has been migrated to assets/data/ranking-data.js.
 // Stipe Miocic fighter packet extension.
 (function(){
   const VERSION = 'fighter-packet-stipe-miocic-20260702a';

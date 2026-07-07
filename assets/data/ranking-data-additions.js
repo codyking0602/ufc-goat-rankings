@@ -1,3 +1,5 @@
+// Do not add new fighter data here.
+// LEGACY: fighter data has been migrated to assets/data/ranking-data.js.
 // Permanent ranking/profile additions layered onto the base ranking payload.
 (function(){
   const VERSION = 'ranking-data-additions-20260706e-lyoto-machida';

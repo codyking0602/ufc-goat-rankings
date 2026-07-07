@@ -1,3 +1,5 @@
+// Do not add new fighter data here.
+// LEGACY: fighter data has been migrated to assets/data/ranking-data.js.
 // Dominick Cruz fighter packet extension.
 (function(){
   const VERSION = 'fighter-packet-dominick-cruz-20260702a';

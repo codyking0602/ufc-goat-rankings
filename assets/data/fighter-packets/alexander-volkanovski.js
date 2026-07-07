@@ -1,3 +1,5 @@
+// Do not add new fighter data here.
+// LEGACY: fighter data has been migrated to assets/data/ranking-data.js.
 // Alexander Volkanovski fighter packet extension.
 (function(){
   const VERSION = 'fighter-packet-alexander-volkanovski-20260703b';
