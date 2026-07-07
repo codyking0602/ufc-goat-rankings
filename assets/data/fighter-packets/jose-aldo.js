@@ -1,3 +1,5 @@
+// Do not add new fighter data here.
+// LEGACY: fighter data has been migrated to assets/data/ranking-data.js.
 // Jose Aldo fighter packet extension.
 (function(){
   const VERSION = 'fighter-packet-jose-aldo-20260705b';

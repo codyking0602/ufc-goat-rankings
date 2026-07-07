@@ -1,3 +1,5 @@
+// Do not add new fighter data here.
+// LEGACY: fighter data has been migrated to assets/data/ranking-data.js.
 // Central fighter app-content packets.
 // Goal: one obvious place for fighter-facing content going forward.
 // Scoring rows still live in assets/data/ranking-data.js until the scoring model is refactored.
