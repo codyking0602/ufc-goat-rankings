@@ -14,6 +14,17 @@
   function fullRow(name){ return { ...(profileMap()[name] || {}), ...rowFor(name), ...(FALLBACK_STATS[name] || {}), fighter: name }; }
   function fmt(n, digits=2){ return (n === null || n === undefined || n === '' || !Number.isFinite(Number(n))) ? '—' : Number(n).toFixed(digits); }
   function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
+  function overrideFor(f){ return overrides()[f.fighter] || {}; }
+  function snapshotValue(f, labels){
+    const snap = overrideFor(f).snapshot || [];
+    const wanted = labels.map(label => String(label).toLowerCase());
+    const found = snap.find(row => wanted.includes(String(row?.[0] || '').toLowerCase()));
+    return found ? found[1] : undefined;
+  }
+  function firstNumber(value){
+    const match = String(value ?? '').match(/-?\d+(?:\.\d+)?/);
+    return match ? Number(match[0]) : undefined;
+  }
 
   const FALLBACK_STATS = {
     'Henry Cejudo': {
@@ -41,14 +52,15 @@
   }
 
   function overallOvr(f){
-    const o = overrides()[f.fighter];
+    const o = overrideFor(f);
     if(o?.overallOvr) return o.overallOvr;
     const max = Math.max(...rows().map(x => Number(x.totalScore || 0)), 1);
     return clamp(Math.round(75 + ((Number(f.totalScore) || 0) / max) * 24), 60, 99);
   }
-  function rankFor(f){ return overrides()[f.fighter]?.allTimeRank || f.rank || '—'; }
-  function divisionFor(f){ return overrides()[f.fighter]?.divisionLabel || [f.primaryDivision, f.secondaryDivision].filter(Boolean).join(' / ') || '—'; }
-  function statBridge(f){ return overrides()[f.fighter]?.packetProfileStats || overrides()[f.fighter]?.snapshotStats || {}; }
+  function rankFor(f){ return overrideFor(f).allTimeRank || f.rank || '—'; }
+  function divisionFor(f){ return overrideFor(f).divisionLabel || [f.primaryDivision, f.secondaryDivision].filter(Boolean).join(' / ') || '—'; }
+  function statBridge(f){ return overrideFor(f).packetProfileStats || overrideFor(f).snapshotStats || {}; }
+  function ufcRecord(f){ return f.ufcRecord || snapshotValue(f, ['UFC Record']) || '—'; }
   function titleFightWins(f){
     if(f.titleFightWins !== undefined) return f.titleFightWins;
     const stats = statBridge(f);
@@ -58,17 +70,29 @@
     if(noteMatch) return Number(noteMatch[1]);
     if(title.adjustedTitleWins !== undefined) return title.adjustedTitleWins;
     const total = Number(title.normalTitleWins || 0) + Number(title.interimTitleWins || 0) + Number(title.vacantUndisputedWins || 0) + Number(title.secondDivisionUndisputedWins || 0) + Number(title.vacantSecondDivisionWins || 0);
-    return total || '—';
+    if(total) return total;
+    const snap = snapshotValue(f, ['UFC Title-Fight Wins', 'Title-Fight Wins', 'Title Wins']);
+    const parsed = firstNumber(snap);
+    return parsed ?? snap ?? '—';
   }
   function eliteWins(f){
     const stats = statBridge(f);
     if(stats.eliteWins !== undefined) return stats.eliteWins;
     if(f.eliteWins !== undefined) return f.eliteWins;
     if(Array.isArray(f.opponents) && f.opponents.length) return f.opponents.filter(o => Number(o.credit || 0) >= 0.75).length || '—';
-    return '—';
+    const snap = snapshotValue(f, ['Elite Wins', 'Quality Wins']);
+    const parsed = firstNumber(snap);
+    return parsed ?? snap ?? '—';
   }
-  function activeEliteYears(f){ const stats = statBridge(f); return stats.activeEliteYears ?? f.activeEliteYears; }
-  function oneLine(f){ return overrides()[f.fighter]?.resumeTag || overrides()[f.fighter]?.oneLiner || f.oneLineFallback || 'Current ranking case'; }
+  function activeEliteYears(f){
+    const stats = statBridge(f);
+    const direct = stats.activeEliteYears ?? f.activeEliteYears;
+    if(direct !== undefined && direct !== null && direct !== '') return direct;
+    const snap = snapshotValue(f, ['Active Elite Years', 'Elite Years']);
+    const parsed = firstNumber(snap);
+    return parsed ?? snap ?? '—';
+  }
+  function oneLine(f){ return overrideFor(f).resumeTag || overrideFor(f).oneLiner || f.oneLineFallback || 'Current ranking case'; }
 
   function copyText(text){
     if(navigator.clipboard?.writeText) return navigator.clipboard.writeText(text);
@@ -98,7 +122,7 @@
       <div class="ov-card-meta"><b>#${rankFor(f)}</b><span>${overallOvr(f)} OVR</span><span>${divisionFor(f)}</span></div>
       <p>${oneLine(f)}</p>
       <div class="ov-stat-grid">
-        <div><strong>${f.ufcRecord || '—'}</strong><small>UFC record</small></div>
+        <div><strong>${ufcRecord(f)}</strong><small>UFC record</small></div>
         <div><strong>${titleFightWins(f)}</strong><small>Title wins</small></div>
         <div><strong>${eliteWins(f)}</strong><small>Elite wins</small></div>
         <div><strong>${fmt(activeEliteYears(f), 2)}</strong><small>Elite years</small></div>
@@ -158,5 +182,5 @@
   }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install);
   else install();
-  window.UFC_OCTAGON_VERDICT_COMPARE_LAUNCHER = { render, version: '20260706f' };
+  window.UFC_OCTAGON_VERDICT_COMPARE_LAUNCHER = { render, version: '20260706g' };
 })();
