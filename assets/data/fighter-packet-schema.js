@@ -1,3 +1,5 @@
+// Do not add new fighter data here.
+// LEGACY: fighter data has been migrated to assets/data/ranking-data.js.
 // Locked Fighter Packet Schema
 // This is the checklist for every fighter-facing packet.
 // Scoring math stays in ranking-data.js; app-facing content lives in fighter packets.

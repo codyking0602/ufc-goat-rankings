@@ -1,3 +1,5 @@
+// Do not add new fighter data here.
+// LEGACY: fighter data has been migrated to assets/data/ranking-data.js.
 (function () {
   const PACK_PROFILES = {
     "Randy Couture": {

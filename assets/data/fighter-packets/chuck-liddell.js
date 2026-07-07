@@ -1,3 +1,5 @@
+// Do not add new fighter data here.
+// LEGACY: fighter data has been migrated to assets/data/ranking-data.js.
 // Chuck Liddell fighter packet extension.
 (function(){
   const VERSION = 'fighter-packet-chuck-liddell-20260702a';
