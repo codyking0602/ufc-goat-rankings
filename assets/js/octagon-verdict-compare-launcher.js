@@ -15,7 +15,6 @@
   function fmt(n, digits=2){ return (n === null || n === undefined || n === '' || !Number.isFinite(Number(n))) ? '—' : Number(n).toFixed(digits); }
   function pct(n){ return (n === null || n === undefined || n === '' || !Number.isFinite(Number(n))) ? '—' : `${Number(n).toFixed(1)}%`; }
   function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
-  function initials(name){ return String(name||'').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase() || 'UFC'; }
   function cleanOpponentName(name){ return String(name || '').replace(/\s+\d+$/, '').trim(); }
 
   function root(){
@@ -26,11 +25,8 @@
     node.className = 'ov-launcher';
     const result = $('compareResult');
     const controls = document.querySelector('#compare .compare-controls');
-    if(result && result.parentNode){
-      result.parentNode.insertBefore(node, result);
-    } else if(controls && controls.parentNode){
-      controls.parentNode.insertBefore(node, controls.nextSibling);
-    }
+    if(result && result.parentNode) result.parentNode.insertBefore(node, result);
+    else if(controls && controls.parentNode) controls.parentNode.insertBefore(node, controls.nextSibling);
     return node;
   }
 
@@ -42,7 +38,6 @@
   }
   function rankFor(f){ return overrides()[f.fighter]?.allTimeRank || f.rank || '—'; }
   function divisionFor(f){ return overrides()[f.fighter]?.divisionLabel || [f.primaryDivision, f.secondaryDivision].filter(Boolean).join(' / ') || '—'; }
-  function photoFor(f){ return overrides()[f.fighter]?.thumbUrl || overrides()[f.fighter]?.photoUrl || ''; }
   function statBridge(f){ return overrides()[f.fighter]?.packetProfileStats || overrides()[f.fighter]?.snapshotStats || {}; }
   function titleFightWins(f){
     const stats = statBridge(f);
@@ -57,7 +52,7 @@
   function primeRecord(f){ const stats = statBridge(f); return stats.primeRecord || f.primeRecord || f.primeUfcRecord || '—'; }
   function activeEliteYears(f){ const stats = statBridge(f); return stats.activeEliteYears ?? f.activeEliteYears; }
   function finishRate(f){ const stats = statBridge(f); return stats.finishRatePct ?? f.finishRatePct; }
-  function bestWins(f, count=4){
+  function bestWins(f, count=3){
     const opps = Array.isArray(f.opponents) ? [...f.opponents] : [];
     const picked = [];
     opps.sort((a,b)=>Number(b.credit||0)-Number(a.credit||0)).forEach(o => {
@@ -66,6 +61,7 @@
     });
     return picked.slice(0,count);
   }
+
   function matchupKey(a,b){ return [a,b].sort().join('::'); }
   function special(frame, swing, edges){ return { frame, swing, edges }; }
   const SPECIAL = {
@@ -75,20 +71,38 @@
     [matchupKey('Kamaru Usman','Max Holloway')]: special('Championship peak vs deeper overall case','Title reign authority vs quality-win volume',{'Kamaru Usman':'Champion dominance','Max Holloway':'Elite longevity'}),
     [matchupKey('Alexander Volkanovski','Max Holloway')]: special('Rivalry edge vs long-run volume','Direct rivalry resume results vs broader body of work',{'Alexander Volkanovski':'Direct rivalry case','Max Holloway':'Career depth'}),
     [matchupKey('Amanda Nunes','Valentina Shevchenko')]: special('Two-division finishing dominance vs technical longevity','Finishing peak vs long-form control',{'Amanda Nunes':'Bigger title case','Valentina Shevchenko':'Technical reign depth'}),
-    [matchupKey('Zhang Weili','Rose Namajunas')]: special('Overall championship strength vs direct rivalry problem','Board strength vs direct rivalry credit',{'Zhang Weili':'Sustained title strength','Rose Namajunas':'Direct rivalry wins'})
+    [matchupKey('Zhang Weili','Rose Namajunas')]: special('Overall championship strength vs direct rivalry problem','Board strength vs direct rivalry credit',{'Zhang Weili':'Sustained title strength','Rose Namajunas':'Direct rivalry wins'}),
+    [matchupKey('Ilia Topuria','Frankie Edgar')]: special('Title-level peak vs long-run contender depth','Current high-end peak against old-school longevity and multi-division volume',{'Ilia Topuria':'Peak / title-level dominance','Frankie Edgar':'Longevity / multi-division depth'})
   };
-  const CATEGORY_LABELS = { championship:'Championship case', opponentQuality:'Quality wins', primeDominance:'Prime dominance', longevity:'Elite longevity', penalty:'Loss context' };
-  function bestCategoryEdge(f,g){
-    const keys = ['championship','opponentQuality','primeDominance','longevity'];
-    const winner = keys.map(key => ({ key, gap: Number(f[key] || 0) - Number(g[key] || 0) })).sort((x,y)=>Math.abs(y.gap)-Math.abs(x.gap))[0];
-    return winner ? (CATEGORY_LABELS[winner.key] || 'Overall case') : 'Overall case';
+
+  const CATEGORY_LABELS = {
+    championship:'Championship case',
+    opponentQuality:'Quality wins',
+    primeDominance:'Prime dominance',
+    longevity:'Elite longevity'
+  };
+  function positiveCategoryEdge(f,g){
+    const keys = Object.keys(CATEGORY_LABELS);
+    const positives = keys.map(key => ({ key, gap: Number(f[key] || 0) - Number(g[key] || 0) })).filter(x => x.gap > 0.15).sort((x,y)=>y.gap-x.gap);
+    return positives[0] ? CATEGORY_LABELS[positives[0].key] : null;
+  }
+  function edgeFor(f,g){
+    const specialMatch = SPECIAL[matchupKey(f.fighter,g.fighter)];
+    if(specialMatch?.edges?.[f.fighter]) return specialMatch.edges[f.fighter];
+    const cat = positiveCategoryEdge(f,g);
+    if(cat) return cat;
+    const scoreGap = Number(f.totalScore || 0) - Number(g.totalScore || 0);
+    if(scoreGap > 0) return 'Overall board edge';
+    if(Number(f.finishRatePct || statBridge(f).finishRatePct || 0) > Number(g.finishRatePct || statBridge(g).finishRatePct || 0)) return 'Finishing upside';
+    return 'Counterargument case';
   }
   function debateFrame(a,b){
     const found = SPECIAL[matchupKey(a.fighter,b.fighter)];
-    if(found) return { frame: found.frame, swing: found.swing, aEdge: found.edges?.[a.fighter] || bestCategoryEdge(a,b), bEdge: found.edges?.[b.fighter] || bestCategoryEdge(b,a), special: true };
-    const aEdge = bestCategoryEdge(a,b);
-    const bEdge = bestCategoryEdge(b,a);
-    return { frame: aEdge === bEdge ? `${aEdge} and overall case separation` : `${aEdge} vs ${bEdge}`, aEdge, bEdge, swing: 'Current score gap, title work, quality wins, and loss context' };
+    if(found) return { frame: found.frame, swing: found.swing, aEdge: edgeFor(a,b), bEdge: edgeFor(b,a), special: true };
+    const aEdge = edgeFor(a,b);
+    const bEdge = edgeFor(b,a);
+    const frame = aEdge === bEdge ? 'Overall case separation' : `${aEdge} vs ${bEdge}`;
+    return { frame, aEdge, bEdge, swing: 'Title work, quality wins, prime dominance, longevity, and loss context' };
   }
   function leanText(a,b){
     const av = Number(a.totalScore || 0);
@@ -102,28 +116,7 @@
     return { name: leader.fighter, tone, gap: fmt(gap, 2) };
   }
   function oneLine(f){ return overrides()[f.fighter]?.resumeTag || overrides()[f.fighter]?.oneLiner || 'Current ranking case'; }
-  function fighterCard(f, sideLabel){
-    const wins = bestWins(f,4);
-    const photo = photoFor(f);
-    return `<article class="ov-card">
-      <div class="ov-card-photo">${photo ? `<img src="${photo}" alt="${f.fighter} profile photo">` : `<span>${initials(f.fighter)}</span>`}</div>
-      <div class="ov-card-body">
-        <div class="ov-kicker">${sideLabel}</div>
-        <h3>${f.fighter}</h3>
-        <div class="ov-card-meta"><b>#${rankFor(f)}</b><span>${overallOvr(f)} OVR</span><span>${divisionFor(f)}</span></div>
-        <p class="ov-one-line">${oneLine(f)}</p>
-        <div class="ov-stat-grid">
-          <div><strong>${f.ufcRecord || '—'}</strong><small>UFC record</small></div>
-          <div><strong>${titleFightWins(f)}</strong><small>Title wins</small></div>
-          <div><strong>${eliteWins(f)}</strong><small>Elite wins</small></div>
-          <div><strong>${fmt(activeEliteYears(f), 2)}</strong><small>Elite years</small></div>
-        </div>
-        <div class="ov-mini-line"><strong>Prime:</strong> ${primeRecord(f)}</div>
-        <div class="ov-mini-line"><strong>Finish:</strong> ${pct(finishRate(f))}</div>
-        ${wins.length ? `<div class="ov-wins"><strong>Key wins:</strong> ${wins.join(', ')}</div>` : ''}
-      </div>
-    </article>`;
-  }
+
   function copyText(text){
     if(navigator.clipboard?.writeText) return navigator.clipboard.writeText(text);
     const ta = document.createElement('textarea');
@@ -144,6 +137,28 @@
     node.classList.add('show');
     setTimeout(()=>node.classList.remove('show'), 1800);
   }
+
+  function fighterCard(f, sideLabel){
+    const wins = bestWins(f,3);
+    return `<article class="ov-card ov-context-card">
+      <div class="ov-card-top">
+        <div class="ov-kicker">${sideLabel}</div>
+        <h3>${f.fighter}</h3>
+        <div class="ov-card-meta"><b>#${rankFor(f)}</b><span>${overallOvr(f)} OVR</span><span>${divisionFor(f)}</span></div>
+      </div>
+      <p class="ov-one-line">${oneLine(f)}</p>
+      <div class="ov-stat-grid">
+        <div><strong>${f.ufcRecord || '—'}</strong><small>UFC record</small></div>
+        <div><strong>${titleFightWins(f)}</strong><small>Title wins</small></div>
+        <div><strong>${eliteWins(f)}</strong><small>Elite wins</small></div>
+        <div><strong>${fmt(activeEliteYears(f), 2)}</strong><small>Elite years</small></div>
+      </div>
+      <div class="ov-mini-line"><strong>Prime:</strong> ${primeRecord(f)}</div>
+      <div class="ov-mini-line"><strong>Finish:</strong> ${pct(finishRate(f))}</div>
+      ${wins.length ? `<div class="ov-wins"><strong>Key wins:</strong> ${wins.join(', ')}</div>` : ''}
+    </article>`;
+  }
+
   function render(){
     const node = root();
     const selA = $('fighterA');
@@ -161,40 +176,39 @@
     const lean = leanText(a,b);
     const matchup = `${a.fighter} vs ${b.fighter}`;
     node.innerHTML = `
-      <section class="ov-hero-card">
+      <section class="ov-dashboard">
         <p class="ov-eyebrow">Greatness comparison</p>
         <h2>${matchup}</h2>
-        <p>The cards show the board context; Octagon Verdict handles the full debate.</p>
+        <div class="ov-dashboard-grid">
+          <div><small>Current board lean</small><strong>${lean.name}${lean.tone ? `, ${lean.tone}` : ''}</strong></div>
+          <div><small>This debate comes down to</small><strong>${frame.frame}</strong></div>
+          <div><small>Swing point</small><strong>${frame.swing}</strong></div>
+        </div>
         <div class="ov-cta-row">
           <button type="button" class="ghost ov-copy-btn">Copy Matchup</button>
           <button type="button" class="ghost ov-open-btn">Open Octagon Verdict</button>
         </div>
       </section>
-      <section class="ov-matchup-grid">
+      <section class="ov-edge-row">
+        <div class="ov-edge"><small>${a.fighter} edge</small><strong>${frame.aEdge}</strong></div>
+        <div class="ov-edge"><small>${b.fighter} edge</small><strong>${frame.bEdge}</strong></div>
+      </section>
+      <section class="ov-context-grid">
         ${fighterCard(a,'Fighter A')}
-        <div class="ov-vs">VS</div>
         ${fighterCard(b,'Fighter B')}
-      </section>
-      <section class="ov-verdict-strip">
-        <div><small>Current board lean</small><strong>${lean.name}${lean.tone ? `, ${lean.tone}` : ''}</strong></div>
-        <div><small>This debate comes down to</small><strong>${frame.frame}</strong></div>
-        <div><small>Swing point</small><strong>${frame.swing}</strong></div>
-      </section>
-      <section class="ov-quick-case">
-        <div class="card"><h3>${a.fighter} edge</h3><p>${frame.aEdge || bestCategoryEdge(a,b)}</p></div>
-        <div class="card"><h3>${b.fighter} edge</h3><p>${frame.bEdge || bestCategoryEdge(b,a)}</p></div>
       </section>
     `;
     node.querySelector('.ov-copy-btn')?.addEventListener('click', () => { copyText(matchup).then(()=>toast(`Copied: ${matchup}`)); });
     node.querySelector('.ov-open-btn')?.addEventListener('click', () => { window.open(GPT_URL, '_blank', 'noopener,noreferrer'); });
     rendering = false;
   }
+
   function installStyles(){
     if(document.getElementById('octagon-verdict-compare-launcher-css')) return;
     const style = document.createElement('style');
     style.id = 'octagon-verdict-compare-launcher-css';
     style.textContent = `
-      #compare.active-view{overflow:visible!important;min-height:120vh}#compare.active-view #compareResult{display:none!important}#octagonVerdictLauncher{display:grid;gap:14px;padding-bottom:40px}.ov-launcher,.ov-launcher *{box-sizing:border-box}.ov-launcher h2,.ov-launcher h3,.ov-launcher strong,.ov-launcher b{color:#f8fafc!important}.ov-launcher p,.ov-launcher small,.ov-mini-line,.ov-wins{color:#cbd5e1!important}.ov-hero-card{border:1px solid rgba(250,204,21,.38);background:linear-gradient(135deg,rgba(249,115,22,.20),rgba(17,24,39,.96));border-radius:24px;padding:18px;box-shadow:0 22px 70px rgba(0,0,0,.18)}.ov-hero-card h2{margin:3px 0 6px;font-size:clamp(30px,4vw,52px);line-height:.96}.ov-eyebrow{color:#fde047!important;text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:900}.ov-cta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}.ov-cta-row .ghost{background:#fff!important;color:#111827!important;border-color:#e5e7eb!important}.ov-cta-row .ov-copy-btn{background:#f97316!important;border-color:#f97316!important}.ov-matchup-grid{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:14px;align-items:stretch}.ov-card{display:grid;grid-template-columns:112px minmax(0,1fr);gap:14px;border:1px solid rgba(148,163,184,.30);background:linear-gradient(180deg,#1f314d,#111827);border-radius:22px;padding:14px;min-width:0;overflow:hidden}.ov-card-photo{width:112px;min-height:146px;border-radius:18px;overflow:hidden;background:#0f172a;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:950;color:#f8fafc;border:1px solid rgba(255,255,255,.08)}.ov-card-photo img{width:100%;height:100%;object-fit:cover;object-position:center 10%;display:block}.ov-card-body h3{margin:2px 0 7px;font-size:26px;line-height:1}.ov-kicker{color:#fde047!important;font-weight:900;font-size:11px;text-transform:uppercase;letter-spacing:.12em}.ov-card-meta{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 10px}.ov-card-meta b,.ov-card-meta span{border:1px solid rgba(148,163,184,.35);border-radius:999px;padding:5px 8px;font-size:11px;color:#f8fafc!important;font-weight:900;background:rgba(15,23,42,.35)}.ov-card-meta b{background:rgba(250,204,21,.14);color:#fde68a!important;border-color:rgba(250,204,21,.35)}.ov-one-line{margin-bottom:10px!important}.ov-stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:10px 0}.ov-stat-grid div{border:1px solid rgba(148,163,184,.35);border-radius:12px;padding:8px;background:rgba(15,23,42,.52)}.ov-stat-grid strong,.ov-stat-grid small{display:block}.ov-stat-grid small{font-size:11px;margin-top:2px}.ov-vs{align-self:center;border:1px solid rgba(250,204,21,.36);background:rgba(250,204,21,.10);color:#fde68a;border-radius:999px;width:54px;height:54px;display:flex;align-items:center;justify-content:center;font-weight:950;letter-spacing:.08em}.ov-verdict-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.ov-verdict-strip div{border:1px solid rgba(148,163,184,.28);border-radius:18px;padding:14px;background:rgba(17,24,39,.92)}.ov-verdict-strip small{display:block;text-transform:uppercase;letter-spacing:.08em;font-weight:850;font-size:11px;margin-bottom:5px}.ov-verdict-strip strong{font-size:18px;line-height:1.15}.ov-quick-case{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.ov-quick-case .card{background:linear-gradient(180deg,#18243a,#111827)!important;border-color:rgba(148,163,184,.28)!important}.ov-quick-case .card h3{margin-top:0}.ov-quick-case .card p{margin-bottom:0}.ov-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(16px);background:#111827;border:1px solid rgba(250,204,21,.35);color:#fde68a;border-radius:999px;padding:10px 14px;font-weight:900;opacity:0;pointer-events:none;z-index:60;transition:.18s ease}.ov-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}@media(max-width:900px){#compare.active-view{min-height:140vh}.ov-hero-card{padding:16px}.ov-hero-card h2{font-size:31px}.ov-matchup-grid{grid-template-columns:1fr}.ov-vs{width:100%;height:auto;padding:8px}.ov-card{grid-template-columns:72px minmax(0,1fr);gap:12px;padding:12px;border-radius:20px}.ov-card-photo{width:72px;min-height:116px;border-radius:15px;font-size:24px}.ov-card-body h3{font-size:22px}.ov-card-meta{gap:5px}.ov-card-meta b,.ov-card-meta span{font-size:10px;padding:4px 7px}.ov-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.ov-stat-grid div{padding:7px}.ov-mini-line,.ov-wins{font-size:12px}.ov-verdict-strip,.ov-quick-case{grid-template-columns:1fr}.ov-cta-row .ghost{width:auto;min-width:0}}
+      #compare.active-view{overflow:visible!important;min-height:110vh}#compare.active-view #compareResult{display:none!important}#octagonVerdictLauncher{display:grid;gap:12px;padding-bottom:40px}.ov-launcher,.ov-launcher *{box-sizing:border-box}.ov-launcher h2,.ov-launcher h3,.ov-launcher strong,.ov-launcher b{color:#f8fafc!important}.ov-launcher p,.ov-launcher small,.ov-mini-line,.ov-wins{color:#cbd5e1!important}.ov-dashboard{border:1px solid rgba(250,204,21,.38);background:linear-gradient(135deg,rgba(249,115,22,.20),rgba(17,24,39,.96));border-radius:24px;padding:18px;box-shadow:0 22px 70px rgba(0,0,0,.18)}.ov-dashboard h2{margin:3px 0 14px;font-size:clamp(30px,4vw,52px);line-height:.96}.ov-eyebrow{color:#fde047!important;text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:900;margin:0}.ov-dashboard-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.ov-dashboard-grid div,.ov-edge,.ov-card{border:1px solid rgba(148,163,184,.30);background:rgba(15,23,42,.52);border-radius:16px;padding:12px}.ov-dashboard-grid small,.ov-edge small{display:block;text-transform:uppercase;letter-spacing:.08em;font-weight:850;font-size:11px;margin-bottom:5px}.ov-dashboard-grid strong{font-size:18px;line-height:1.12}.ov-cta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}.ov-cta-row .ghost{background:#fff!important;color:#111827!important;border-color:#e5e7eb!important}.ov-cta-row .ov-copy-btn{background:#f97316!important;border-color:#f97316!important}.ov-edge-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.ov-edge{background:linear-gradient(180deg,#1f314d,#111827)}.ov-edge strong{font-size:22px;line-height:1.12}.ov-context-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.ov-card{background:linear-gradient(180deg,#1f314d,#111827);overflow:hidden}.ov-card-top h3{margin:2px 0 7px;font-size:25px;line-height:1}.ov-kicker{color:#fde047!important;font-weight:900;font-size:11px;text-transform:uppercase;letter-spacing:.12em}.ov-card-meta{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 9px}.ov-card-meta b,.ov-card-meta span{border:1px solid rgba(148,163,184,.35);border-radius:999px;padding:5px 8px;font-size:11px;color:#f8fafc!important;font-weight:900;background:rgba(15,23,42,.35)}.ov-card-meta b{background:rgba(250,204,21,.14);color:#fde68a!important;border-color:rgba(250,204,21,.35)}.ov-one-line{margin:0 0 9px!important}.ov-stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:8px 0}.ov-stat-grid div{border:1px solid rgba(148,163,184,.35);border-radius:12px;padding:8px;background:rgba(15,23,42,.52)}.ov-stat-grid strong,.ov-stat-grid small{display:block}.ov-stat-grid small{font-size:11px;margin-top:2px}.ov-mini-line,.ov-wins{font-size:12px;line-height:1.35;margin-top:5px}.ov-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(16px);background:#111827;border:1px solid rgba(250,204,21,.35);color:#fde68a;border-radius:999px;padding:10px 14px;font-weight:900;opacity:0;pointer-events:none;z-index:60;transition:.18s ease}.ov-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}@media(max-width:900px){#compare.active-view{min-height:120vh}.ov-dashboard{padding:15px;border-radius:22px}.ov-dashboard h2{font-size:30px;margin-bottom:12px}.ov-dashboard-grid,.ov-edge-row,.ov-context-grid{grid-template-columns:1fr}.ov-dashboard-grid div{padding:11px}.ov-dashboard-grid strong{font-size:17px}.ov-edge strong{font-size:20px}.ov-card{padding:12px;border-radius:18px}.ov-card-top h3{font-size:22px}.ov-card-meta{gap:5px}.ov-card-meta b,.ov-card-meta span{font-size:10px;padding:4px 7px}.ov-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.ov-stat-grid div{padding:7px}.ov-mini-line,.ov-wins{font-size:12px}.ov-wins{display:none}.ov-cta-row .ghost{width:auto;min-width:0}}
     `;
     document.head.appendChild(style);
   }
@@ -209,5 +223,5 @@
   }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install);
   else install();
-  window.UFC_OCTAGON_VERDICT_COMPARE_LAUNCHER = { render, version: '20260706d' };
+  window.UFC_OCTAGON_VERDICT_COMPARE_LAUNCHER = { render, version: '20260706e' };
 })();
