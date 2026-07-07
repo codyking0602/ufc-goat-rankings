@@ -2,7 +2,6 @@
 // Replaces the old Compare Mode surface with a clean GPT matchup launcher.
 (function(){
   const GPT_URL = window.OCTAGON_VERDICT_GPT_URL || 'https://chatgpt.com/';
-  let lastSignature = '';
   let rendering = false;
 
   function $(id){ return document.getElementById(id); }
@@ -25,9 +24,7 @@
     return clamp(Math.round(75 + ((Number(f.totalScore) || 0) / max) * 24), 60, 99);
   }
   function rankFor(f){ return overrides()[f.fighter]?.allTimeRank || f.rank || '—'; }
-  function divisionFor(f){
-    return overrides()[f.fighter]?.divisionLabel || [f.primaryDivision, f.secondaryDivision].filter(Boolean).join(' / ') || '—';
-  }
+  function divisionFor(f){ return overrides()[f.fighter]?.divisionLabel || [f.primaryDivision, f.secondaryDivision].filter(Boolean).join(' / ') || '—'; }
   function photoFor(f){ return overrides()[f.fighter]?.thumbUrl || overrides()[f.fighter]?.photoUrl || ''; }
   function statBridge(f){ return overrides()[f.fighter]?.packetProfileStats || overrides()[f.fighter]?.snapshotStats || {}; }
   function titleFightWins(f){
@@ -39,23 +36,10 @@
     const total = Number(title.normalTitleWins || 0) + Number(title.interimTitleWins || 0) + Number(title.vacantUndisputedWins || 0) + Number(title.secondDivisionUndisputedWins || 0) + Number(title.vacantSecondDivisionWins || 0);
     return total || '—';
   }
-  function eliteWins(f){
-    const stats = statBridge(f);
-    if(stats.eliteWins !== undefined) return stats.eliteWins;
-    return f.eliteWins ?? '—';
-  }
-  function primeRecord(f){
-    const stats = statBridge(f);
-    return stats.primeRecord || f.primeRecord || f.primeUfcRecord || '—';
-  }
-  function activeEliteYears(f){
-    const stats = statBridge(f);
-    return stats.activeEliteYears ?? f.activeEliteYears;
-  }
-  function finishRate(f){
-    const stats = statBridge(f);
-    return stats.finishRatePct ?? f.finishRatePct;
-  }
+  function eliteWins(f){ const stats = statBridge(f); return stats.eliteWins !== undefined ? stats.eliteWins : (f.eliteWins ?? '—'); }
+  function primeRecord(f){ const stats = statBridge(f); return stats.primeRecord || f.primeRecord || f.primeUfcRecord || '—'; }
+  function activeEliteYears(f){ const stats = statBridge(f); return stats.activeEliteYears ?? f.activeEliteYears; }
+  function finishRate(f){ const stats = statBridge(f); return stats.finishRatePct ?? f.finishRatePct; }
   function bestWins(f, count=5){
     const opps = Array.isArray(f.opponents) ? [...f.opponents] : [];
     const picked = [];
@@ -66,71 +50,26 @@
     return picked.slice(0,count);
   }
   function matchupKey(a,b){ return [a,b].sort().join('::'); }
+  function special(frame, swing, edges){ return { frame, swing, edges }; }
   const SPECIAL = {
-    [matchupKey('Francis Ngannou','Tony Ferguson')]: {
-      frame: 'Championship peak vs lightweight streak depth',
-      aEdge: 'Championship case',
-      bEdge: 'Longevity / contender run',
-      swing: 'Official title peak vs deeper division grind'
-    },
-    [matchupKey('Khabib Nurmagomedov','Islam Makhachev')]: {
-      frame: 'Clean dominance vs growing championship volume',
-      aEdge: 'Cleaner peak',
-      bEdge: 'Title-fight volume',
-      swing: 'Undefeated aura vs fuller current title work'
-    },
-    [matchupKey('Jon Jones','Georges St-Pierre')]: {
-      frame: 'Bigger championship case vs cleaner all-time case',
-      aEdge: 'Championship scale',
-      bEdge: 'Cleaner resume',
-      swing: 'Volume and top-end value vs fewer debate complications'
-    },
-    [matchupKey('Kamaru Usman','Max Holloway')]: {
-      frame: 'Championship peak vs deeper overall case',
-      aEdge: 'Champion dominance',
-      bEdge: 'Elite longevity',
-      swing: 'Title reign authority vs quality-win volume'
-    },
-    [matchupKey('Alexander Volkanovski','Max Holloway')]: {
-      frame: 'Rivalry edge vs long-run volume',
-      aEdge: 'Direct rivalry case',
-      bEdge: 'Career depth',
-      swing: 'Head-to-head resume results vs broader body of work'
-    },
-    [matchupKey('Amanda Nunes','Valentina Shevchenko')]: {
-      frame: 'Two-division finishing dominance vs technical longevity',
-      aEdge: 'Bigger title case',
-      bEdge: 'Technical reign depth',
-      swing: 'Finishing peak vs long-form control'
-    },
-    [matchupKey('Zhang Weili','Rose Namajunas')]: {
-      frame: 'Overall championship strength vs direct rivalry problem',
-      aEdge: 'Sustained title strength',
-      bEdge: 'Direct rivalry wins',
-      swing: 'Board strength vs head-to-head credit'
-    }
+    [matchupKey('Francis Ngannou','Tony Ferguson')]: special('Championship peak vs lightweight streak depth','Official title peak vs deeper division grind',{'Francis Ngannou':'Championship case','Tony Ferguson':'Longevity / contender run'}),
+    [matchupKey('Khabib Nurmagomedov','Islam Makhachev')]: special('Clean dominance vs growing championship volume','Undefeated aura vs fuller current title work',{'Khabib Nurmagomedov':'Cleaner peak','Islam Makhachev':'Title-fight volume'}),
+    [matchupKey('Jon Jones','Georges St-Pierre')]: special('Bigger championship case vs cleaner all-time case','Volume and top-end value vs fewer debate complications',{'Jon Jones':'Championship scale','Georges St-Pierre':'Cleaner case'}),
+    [matchupKey('Kamaru Usman','Max Holloway')]: special('Championship peak vs deeper overall case','Title reign authority vs quality-win volume',{'Kamaru Usman':'Champion dominance','Max Holloway':'Elite longevity'}),
+    [matchupKey('Alexander Volkanovski','Max Holloway')]: special('Rivalry edge vs long-run volume','Direct rivalry resume results vs broader body of work',{'Alexander Volkanovski':'Direct rivalry case','Max Holloway':'Career depth'}),
+    [matchupKey('Amanda Nunes','Valentina Shevchenko')]: special('Two-division finishing dominance vs technical longevity','Finishing peak vs long-form control',{'Amanda Nunes':'Bigger title case','Valentina Shevchenko':'Technical reign depth'}),
+    [matchupKey('Zhang Weili','Rose Namajunas')]: special('Overall championship strength vs direct rivalry problem','Board strength vs direct rivalry credit',{'Zhang Weili':'Sustained title strength','Rose Namajunas':'Direct rivalry wins'})
   };
-  const CATEGORY_LABELS = {
-    championship: 'Championship case',
-    opponentQuality: 'Quality wins',
-    primeDominance: 'Prime dominance',
-    longevity: 'Elite longevity',
-    penalty: 'Loss context'
-  };
+  const CATEGORY_LABELS = { championship:'Championship case', opponentQuality:'Quality wins', primeDominance:'Prime dominance', longevity:'Elite longevity', penalty:'Loss context' };
   function bestCategoryEdge(f,g){
     const keys = ['championship','opponentQuality','primeDominance','longevity'];
-    const winner = keys
-      .map(key => ({ key, gap: Number(f[key] || 0) - Number(g[key] || 0) }))
-      .sort((x,y)=>Math.abs(y.gap)-Math.abs(x.gap))[0];
-    if(!winner) return 'Overall case';
-    return CATEGORY_LABELS[winner.key] || 'Overall case';
+    const winner = keys.map(key => ({ key, gap: Number(f[key] || 0) - Number(g[key] || 0) })).sort((x,y)=>Math.abs(y.gap)-Math.abs(x.gap))[0];
+    return winner ? (CATEGORY_LABELS[winner.key] || 'Overall case') : 'Overall case';
   }
   function debateFrame(a,b){
-    const special = SPECIAL[matchupKey(a.fighter,b.fighter)];
-    if(special){
-      const names = [a.fighter,b.fighter];
-      const specialNames = Object.keys(SPECIAL).find(k => k === matchupKey(a.fighter,b.fighter));
-      return { ...special, special: true };
+    const found = SPECIAL[matchupKey(a.fighter,b.fighter)];
+    if(found){
+      return { frame: found.frame, swing: found.swing, aEdge: found.edges?.[a.fighter] || bestCategoryEdge(a,b), bEdge: found.edges?.[b.fighter] || bestCategoryEdge(b,a), special: true };
     }
     const aEdge = bestCategoryEdge(a,b);
     const bEdge = bestCategoryEdge(b,a);
@@ -148,9 +87,7 @@
     else if(gap >= 5) tone = 'clearly';
     return { name: leader.fighter, tone, gap: fmt(gap, 2) };
   }
-  function oneLine(f){
-    return overrides()[f.fighter]?.resumeTag || overrides()[f.fighter]?.oneLiner || 'Current ranking case';
-  }
+  function oneLine(f){ return overrides()[f.fighter]?.resumeTag || overrides()[f.fighter]?.oneLiner || 'Current ranking case'; }
   function fighterCard(f, sideLabel){
     const wins = bestWins(f,4);
     const photo = photoFor(f);
@@ -188,11 +125,7 @@
   }
   function toast(message){
     let node = document.querySelector('.ov-toast');
-    if(!node){
-      node = document.createElement('div');
-      node.className = 'ov-toast';
-      document.body.appendChild(node);
-    }
+    if(!node){ node = document.createElement('div'); node.className = 'ov-toast'; document.body.appendChild(node); }
     node.textContent = message;
     node.classList.add('show');
     setTimeout(()=>node.classList.remove('show'), 1800);
@@ -205,26 +138,21 @@
     const a = fullRow(selA.value);
     const b = fullRow(selB.value);
     if(!a.fighter || !b.fighter) return;
-    const signature = `${a.fighter}::${b.fighter}`;
     if(rendering) return;
     rendering = true;
-    lastSignature = signature;
-
     const title = document.querySelector('#compare .section-title h2');
     const subtitle = document.querySelector('#compare .section-title p');
     if(title) title.textContent = 'Octagon Verdict';
     if(subtitle) subtitle.textContent = 'Pick two fighters. Copy the matchup. Settle the greatness case in the GPT.';
-
     const frame = debateFrame(a,b);
     const lean = leanText(a,b);
     const matchup = `${a.fighter} vs ${b.fighter}`;
-
     result.className = 'ov-launcher';
     result.innerHTML = `
       <section class="ov-hero-card">
         <p class="ov-eyebrow">Greatness comparison</p>
         <h2>${matchup}</h2>
-        <p>Built for the Octagon Verdict GPT. The app shows the board context; the GPT handles the full debate.</p>
+        <p>The cards show the board context; Octagon Verdict handles the full debate.</p>
         <div class="ov-cta-row">
           <button type="button" class="ghost ov-copy-btn">Copy Matchup</button>
           <button type="button" class="ghost ov-open-btn">Open Octagon Verdict</button>
@@ -236,31 +164,17 @@
         ${fighterCard(b,'Fighter B')}
       </section>
       <section class="ov-verdict-strip">
-        <div>
-          <small>Current board lean</small>
-          <strong>${lean.name}${lean.name !== 'Essentially even' ? `, ${lean.tone}` : ''}</strong>
-        </div>
-        <div>
-          <small>This debate comes down to</small>
-          <strong>${frame.frame}</strong>
-        </div>
-        <div>
-          <small>Swing point</small>
-          <strong>${frame.swing}</strong>
-        </div>
+        <div><small>Current board lean</small><strong>${lean.name}${lean.name !== 'Essentially even' ? `, ${lean.tone}` : ''}</strong></div>
+        <div><small>This debate comes down to</small><strong>${frame.frame}</strong></div>
+        <div><small>Swing point</small><strong>${frame.swing}</strong></div>
       </section>
       <section class="ov-quick-case">
         <div class="card"><h3>${a.fighter} edge</h3><p>${frame.aEdge || bestCategoryEdge(a,b)}</p></div>
         <div class="card"><h3>${b.fighter} edge</h3><p>${frame.bEdge || bestCategoryEdge(b,a)}</p></div>
       </section>
     `;
-
-    result.querySelector('.ov-copy-btn')?.addEventListener('click', () => {
-      copyText(matchup).then(()=>toast(`Copied: ${matchup}`));
-    });
-    result.querySelector('.ov-open-btn')?.addEventListener('click', () => {
-      window.open(GPT_URL, '_blank', 'noopener,noreferrer');
-    });
+    result.querySelector('.ov-copy-btn')?.addEventListener('click', () => { copyText(matchup).then(()=>toast(`Copied: ${matchup}`)); });
+    result.querySelector('.ov-open-btn')?.addEventListener('click', () => { window.open(GPT_URL, '_blank', 'noopener,noreferrer'); });
     rendering = false;
   }
   function installStyles(){
@@ -293,5 +207,5 @@
   }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install);
   else install();
-  window.UFC_OCTAGON_VERDICT_COMPARE_LAUNCHER = { render, version: '20260706a' };
+  window.UFC_OCTAGON_VERDICT_COMPARE_LAUNCHER = { render, version: '20260706b' };
 })();
