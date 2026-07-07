@@ -1,14 +1,18 @@
 #!/usr/bin/env node
 /*
- * Build a compact public Octagon Verdict GPT Action data feed from the same
- * files that power the app. Keep this small enough for GPT Actions.
+ * Build small public Octagon Verdict GPT Action files from the same data that
+ * powers the app. GPT Actions should pull the index, then only the two fighter
+ * files needed for a comparison.
  */
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 
 const root = path.resolve(__dirname, '..');
-const outPath = path.join(root, 'assets/data/octagon-verdict-data.json');
+const legacyPath = path.join(root, 'assets/data/octagon-verdict-data.json');
+const dataDir = path.join(root, 'assets/data/octagon-verdict');
+const fightersDir = path.join(dataDir, 'fighters');
+const matchupsDir = path.join(dataDir, 'matchups');
 
 function read(relPath) {
   return fs.readFileSync(path.join(root, relPath), 'utf8');
@@ -33,7 +37,7 @@ function value(v) {
   return v === undefined || v === null || v === '' ? undefined : v;
 }
 
-function pickText(v, max = 190) {
+function pickText(v, max = 220) {
   if (v === undefined || v === null) return undefined;
   const s = String(v).replace(/\s+/g, ' ').trim();
   if (!s) return undefined;
@@ -48,6 +52,10 @@ function slugify(name) {
     .replace(/^-+|-+$/g, '');
 }
 
+function pairKey(a, b) {
+  return [slugify(a), slugify(b)].sort().join('--');
+}
+
 function compact(obj) {
   return Object.fromEntries(
     Object.entries(obj).filter(([, v]) => {
@@ -59,8 +67,12 @@ function compact(obj) {
   );
 }
 
-function unique(values, max = 6) {
-  return Array.from(new Set((values || []).filter(Boolean).map(v => String(v).replace(/\s+/g, ' ').trim()).filter(Boolean))).slice(0, max);
+function unique(values, max = 8) {
+  return Array.from(new Set((values || [])
+    .filter(Boolean)
+    .map(v => String(v).replace(/\s+/g, ' ').trim())
+    .filter(Boolean)))
+    .slice(0, max);
 }
 
 function snapshotValue(snapshot, label) {
@@ -72,11 +84,13 @@ function snapshotValue(snapshot, label) {
 function titleFightWinsFrom(profile, profileStats, display) {
   const direct = value(profileStats?.titleFightWins ?? profile?.titleFightWins);
   if (direct !== undefined) return direct;
+
   const snap = snapshotValue(display?.snapshot, 'UFC Title-Fight Wins');
   if (snap !== undefined) {
     const match = String(snap).match(/\d+(?:\.\d+)?/);
     if (match) return Number(match[0]);
   }
+
   const title = profile?.title || {};
   const total = Number(title.normalTitleWins || 0)
     + Number(title.interimTitleWins || 0)
@@ -96,7 +110,7 @@ function rankedRows(rows) {
     .sort((a, b) => Number(b.totalScore || 0) - Number(a.totalScore || 0));
 }
 
-function context() {
+function makeContext() {
   const sandbox = {
     console,
     window: {},
@@ -120,7 +134,7 @@ function context() {
 }
 
 function load() {
-  const ctx = context();
+  const ctx = makeContext();
 
   runScript(ctx, 'assets/data/ranking-data.js');
   runScript(ctx, 'assets/data/display-overrides.js', 'window.DISPLAY_OVERRIDES = DISPLAY_OVERRIDES;');
@@ -146,8 +160,8 @@ function fighterRecord({ name, row, profile, display, compare, packet, group, ra
   const opponents = Array.isArray(profile?.opponents) ? profile.opponents : [];
   const bestWins = unique([
     compare?.signatureWins,
-    ...opponents.slice(0, 8).map(o => o?.opponent)
-  ], 8);
+    ...opponents.slice(0, 10).map(o => o?.opponent)
+  ], 10);
 
   return compact({
     slug: slugify(name),
@@ -157,8 +171,8 @@ function fighterRecord({ name, row, profile, display, compare, packet, group, ra
     appOvr: value(display?.overallOvr),
     totalScore: round(row?.totalScore ?? profile?.totalScore),
     division: value(display?.divisionLabel ?? row?.primaryDivision ?? profile?.primaryDivision),
-    tag: pickText(display?.resumeTag, 70),
-    oneLiner: pickText(display?.oneLiner, 170),
+    tag: pickText(display?.resumeTag, 80),
+    oneLiner: pickText(display?.oneLiner, 180),
     ufcRecord: value(profileStats.ufcRecord ?? row?.ufcRecord ?? profile?.ufcRecord ?? snapshotValue(display?.snapshot, 'UFC Record')),
     titleFightWins: value(titleFightWinsFrom(profile, profileStats, display)),
     adjustedTitleWins: value(adjustedTitleWinsFrom(profile, profileStats)),
@@ -177,11 +191,11 @@ function fighterRecord({ name, row, profile, display, compare, packet, group, ra
       apexPeak: round(row?.apexPeak ?? profile?.apexPeak),
       penalty: round(row?.penalty ?? profile?.penalty)
     }),
-    titleSummary: pickText(compare?.titleSummary ?? profile?.title?.notes, 150),
-    primeSummary: pickText(compare?.primeSummary, 150),
-    bestArgument: pickText(compare?.bestArgument ?? display?.whyRankedHere ?? packet?.display?.finalTakeaway, 180),
-    counter: pickText(compare?.counter ?? compare?.weakness ?? display?.whyNotHigher, 180),
-    edge: pickText(compare?.edge, 180),
+    titleSummary: pickText(compare?.titleSummary ?? profile?.title?.notes, 160),
+    primeSummary: pickText(compare?.primeSummary, 170),
+    bestArgument: pickText(compare?.bestArgument ?? display?.whyRankedHere ?? packet?.display?.finalTakeaway, 200),
+    counter: pickText(compare?.counter ?? compare?.weakness ?? display?.whyNotHigher, 200),
+    edge: pickText(compare?.edge, 200),
     bestWins,
     notes: unique([
       profileStats.divisionStrengthContext,
@@ -192,7 +206,7 @@ function fighterRecord({ name, row, profile, display, compare, packet, group, ra
       packet?.display?.finalTakeaway,
       row?.notes,
       profile?.notes
-    ].map(note => pickText(note, 160)), 5)
+    ].map(note => pickText(note, 170)), 6)
   });
 }
 
@@ -206,7 +220,16 @@ function buildSpecial(fightersByName) {
       lean = fa.totalScore === fb.totalScore ? 'Essentially even' : (fa.totalScore > fb.totalScore ? a : b);
       margin = round(Math.abs(fa.totalScore - fb.totalScore));
     }
-    return compact({ fighters: [a, b], defaultLean: lean, margin, coreDebate: debate, suggestedFinalSplit: split, notes });
+    return compact({
+      pairKey: pairKey(a, b),
+      fighters: [a, b],
+      slugs: [slugify(a), slugify(b)],
+      defaultLean: lean,
+      margin,
+      coreDebate: debate,
+      suggestedFinalSplit: split,
+      notes
+    });
   };
 
   return [
@@ -266,16 +289,23 @@ function build() {
     return a.rank - b.rank;
   });
 
-  return {
-    name: 'Octagon Verdict Data',
+  const specialMatchups = buildSpecial(fightersByName);
+
+  const index = {
+    name: 'Octagon Verdict Index',
     version: new Date().toISOString().slice(0, 10),
     generatedAt: new Date().toISOString(),
     source: 'Generated from ranking-data, display-overrides, fighter-packet manifest, and fighter packets.',
     packetCount: manifest.packets?.length || 0,
     missingPackets,
     defaultScope: 'Judge UFC accomplishments by default. Only mention the scope when it matters.',
+    actionWorkflow: [
+      'Call getOctagonVerdictIndex to find fighter slugs.',
+      'Call getOctagonVerdictFighter once for each fighter being compared.',
+      'If index.specialMatchups has the pairKey, call getOctagonVerdictMatchup.'
+    ],
     guidance: {
-      sourceOfTruth: 'Use this Action feed over uploaded Knowledge, memory, web browsing, or old scores.',
+      sourceOfTruth: 'Use these Action files over uploaded Knowledge, memory, web browsing, or old scores.',
       explainWith: ['UFC record', 'title-fight wins', 'adjusted title wins when useful', 'elite wins', 'prime record', 'rounds-won percentage', 'finish percentage', 'active elite years', 'loss context', 'rivalry/direct-fight context'],
       avoid: ['Raw category point totals in normal answers', 'outside citations unless asked', 'Wikipedia/ESPN/UFC links unless asked', 'database/model language', 'repeated UFC-only disclaimers']
     },
@@ -287,14 +317,63 @@ function build() {
       penalty: 'Loss-context drag.'
     },
     fighterCount: fighters.length,
-    fighters,
-    specialMatchups: buildSpecial(fightersByName)
+    fighters: fighters.map(f => compact({
+      slug: f.slug,
+      name: f.name,
+      group: f.group,
+      rank: f.rank,
+      appOvr: f.appOvr,
+      totalScore: f.totalScore,
+      division: f.division,
+      tag: f.tag
+    })),
+    specialMatchups: specialMatchups.map(m => compact({
+      pairKey: m.pairKey,
+      fighters: m.fighters,
+      slugs: m.slugs,
+      defaultLean: m.defaultLean,
+      margin: m.margin,
+      coreDebate: m.coreDebate
+    }))
   };
+
+  const legacyPointer = {
+    name: 'Octagon Verdict Data Pointer',
+    version: index.version,
+    generatedAt: index.generatedAt,
+    deprecated: 'Do not use this legacy all-in-one endpoint for comparisons.',
+    useInstead: {
+      index: '/assets/data/octagon-verdict/index.json',
+      fighter: '/assets/data/octagon-verdict/fighters/{slug}.json',
+      matchup: '/assets/data/octagon-verdict/matchups/{pairKey}.json'
+    },
+    guidance: index.guidance
+  };
+
+  return { index, fighters, specialMatchups, legacyPointer };
 }
 
-const payload = build();
-fs.mkdirSync(path.dirname(outPath), { recursive: true });
-fs.writeFileSync(outPath, `${JSON.stringify(payload)}\n`, 'utf8');
-console.log(`Built ${path.relative(root, outPath)} with ${payload.fighterCount} fighters.`);
-console.log(`Output size: ${fs.statSync(outPath).size} bytes.`);
-if (payload.missingPackets.length) console.warn(`Missing packet files: ${payload.missingPackets.join(', ')}`);
+function writeJson(filePath, data) {
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  fs.writeFileSync(filePath, `${JSON.stringify(data)}\n`, 'utf8');
+}
+
+const { index, fighters, specialMatchups, legacyPointer } = build();
+fs.rmSync(dataDir, { recursive: true, force: true });
+fs.mkdirSync(fightersDir, { recursive: true });
+fs.mkdirSync(matchupsDir, { recursive: true });
+
+writeJson(path.join(dataDir, 'index.json'), index);
+for (const fighter of fighters) {
+  writeJson(path.join(fightersDir, `${fighter.slug}.json`), fighter);
+}
+for (const matchup of specialMatchups) {
+  writeJson(path.join(matchupsDir, `${matchup.pairKey}.json`), matchup);
+}
+writeJson(legacyPath, legacyPointer);
+
+console.log(`Built Octagon Verdict index with ${index.fighterCount} fighters.`);
+console.log(`Index size: ${fs.statSync(path.join(dataDir, 'index.json')).size} bytes.`);
+console.log(`Fighter files: ${fighters.length}`);
+console.log(`Special matchup files: ${specialMatchups.length}`);
+if (index.missingPackets.length) console.warn(`Missing packet files: ${index.missingPackets.join(', ')}`);
