@@ -22,6 +22,17 @@
   function finiteRows(board,key){
     return (board || []).filter(x => Number.isFinite(Number(x?.[key])));
   }
+  function stripOverallOverrides(){
+    if(typeof DISPLAY_OVERRIDES === 'undefined') return 0;
+    let stripped = 0;
+    Object.values(DISPLAY_OVERRIDES).forEach(override => {
+      if(override && Object.prototype.hasOwnProperty.call(override, 'overallOvr')){
+        delete override.overallOvr;
+        stripped += 1;
+      }
+    });
+    return stripped;
+  }
   function rankFromScore(f,key){
     const board = boardFor(f);
     const val = valueFor(f,key);
@@ -61,6 +72,7 @@
     return ratingFromScore(valueFor(f,'totalScore'), boardFor(f), 'totalScore');
   }
 
+  const strippedOverallOverrides = stripOverallOverrides();
   window.overallOvr = overallOvrFromScore;
   window.categoryRank = categoryRankFromScore;
   window.categoryOvr = categoryOvrFromScore;
@@ -68,6 +80,7 @@
     version: VERSION,
     mode: 'score-derived-raw-score-overall-scale',
     ignoresDisplayOverrideOvr: true,
+    strippedOverallOverrides,
     overall: 'visible OVR is scaled from raw totalScore inside the active leaderboard: highest score = 99, lowest score = 82',
     categories: 'category score determines category rank; category rank determines visible category rating on compressed 75-99 category scale',
     floor: OVERALL_FLOOR,
