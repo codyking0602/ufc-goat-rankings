@@ -1,6 +1,6 @@
 // Forces visible OVR/category values to derive from current scores, not stale display overrides.
 (function(){
-  const VERSION = 'score-derived-ovr-20260707b-82-99-score-scale';
+  const VERSION = 'score-derived-ovr-20260707c-82-99-score-scale';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
