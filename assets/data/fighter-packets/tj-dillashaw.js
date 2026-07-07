@@ -1,3 +1,5 @@
+// Do not add new fighter data here.
+// LEGACY: fighter data has been migrated to assets/data/ranking-data.js.
 // T.J. Dillashaw fighter packet extension.
 (function(){
   const VERSION = 'fighter-packet-tj-dillashaw-20260703a';

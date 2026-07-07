@@ -1,3 +1,5 @@
+// Do not add new fighter data here.
+// LEGACY: fighter data has been migrated to assets/data/ranking-data.js.
 // Watch Moment links for fighter cards and profiles.
 // Keep links here as app-facing content, separate from scoring and nickname/display-name polish.
 (function(){

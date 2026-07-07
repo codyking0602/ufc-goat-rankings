@@ -1,3 +1,5 @@
+// Do not add new fighter data here.
+// LEGACY: fighter data has been migrated to assets/data/ranking-data.js.
 // Khabib Nurmagomedov fighter packet extension.
 (function(){
   const VERSION = 'fighter-packet-khabib-nurmagomedov-20260702a';

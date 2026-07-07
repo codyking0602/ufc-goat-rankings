@@ -1,3 +1,5 @@
+// Do not add new fighter data here.
+// LEGACY: fighter data has been migrated to assets/data/ranking-data.js.
 // Cain Velasquez fighter packet extension.
 (function(){
   const VERSION = 'fighter-packet-cain-velasquez-20260702b';

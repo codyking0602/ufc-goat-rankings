@@ -2,14 +2,8 @@
 // Long-term source target: edit this file directly once index.html is fully layout-only.
 
 const DATA = window.RANKING_DATA;
-const allProfiles = DATA.fighters;
-const menNames = new Set(DATA.men.map(d => d.fighter));
-const womenNames = new Set(DATA.women.map(d => d.fighter));
-const byName = Object.fromEntries(allProfiles.map(f => [f.fighter, f]));
-
-function fmt(n){ return (n === null || n === undefined || n === '') ? '—' : Number(n).toFixed(2); }
-function pct(n){ return (n === null || n === undefined || n === '') ? '—' : `${Number(n).toFixed(1)}%`; }
-function el(id){ return document.getElementById(id); }
+const CATEGORY_KEYS = ['championship', 'opponentQuality', 'primeDominance', 'longevity', 'penalty', 'apexPeak'];
+const DATA_FIGHTERS = Array.isArray(DATA?.fighters) ? DATA.fighters : [];
 
 const CATEGORY_INFO = [
   ["championship", "Title Reign", "Championship resume: title-fight wins, reign strength, and control of the division"],
@@ -18,34 +12,98 @@ const CATEGORY_INFO = [
   ["longevity", "Elite Longevity", "How long he stayed elite in the UFC, not just calendar span"],
   ["penalty", "Loss Context", "How much UFC losses actually hurt the resume after context"]
 ];
+
+const APP_STATE = buildAppState(DATA);
+const allProfiles = APP_STATE.fighters;
+const menNames = new Set(APP_STATE.menRows.map(d => d.fighter));
+const womenNames = new Set(APP_STATE.womenRows.map(d => d.fighter));
+const byName = Object.fromEntries(APP_STATE.fighters.map(f => [f.fighter, f]));
+window.UFC_APP_STATE = APP_STATE;
+
+function fmt(n){ return (n === null || n === undefined || n === '') ? '—' : Number(n).toFixed(2); }
+function pct(n){ return (n === null || n === undefined || n === '') ? '—' : `${Number(n).toFixed(1)}%`; }
+function el(id){ return document.getElementById(id); }
 function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
 function ordinal(n){ const s=["th","st","nd","rd"], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
-function overallOvr(f){
-  const o = DISPLAY_OVERRIDES[f.fighter];
-  if (o?.overallOvr) return o.overallOvr;
-  const max = Math.max(...DATA.men.concat(DATA.women).map(x=>x.totalScore||0), 1);
-  return clamp(Math.round(75 + ((f.totalScore || 0) / max) * 24), 60, 99);
-}
+function scoreValue(f){ const v = Number(f?.totalScore ?? 0); return Number.isFinite(v) ? v : 0; }
 function categoryValueForRank(f, key){
-  const v = Number(f?.[key] ?? 0);
+  const v = Number(f?.[key] ?? f?.scoring?.[key] ?? 0);
   return Number.isFinite(v) ? v : 0;
 }
-function categoryRank(f, key){
-  const o = DISPLAY_OVERRIDES[f.fighter]?.categories?.[key];
-  if (o?.rank) return o.rank;
-  const board = (f.leaderboard === "women" ? DATA.women : DATA.men).map(fullRow);
-  const val = categoryValueForRank(f, key);
-  return 1 + board.filter(x => categoryValueForRank(x, key) > val).length;
+function displayOverrideFor(name){ return (typeof DISPLAY_OVERRIDES !== 'undefined' && DISPLAY_OVERRIDES[name]) ? DISPLAY_OVERRIDES[name] : {}; }
+function boardForLeaderboard(leaderboard){ return APP_STATE.rowsByLeaderboard[leaderboard] || APP_STATE.rowsByLeaderboard.men || []; }
+
+function buildOverallOvrs(rows){
+  const scores = rows.map(scoreValue);
+  const maxScore = Math.max(...scores, 0);
+  const minScore = Math.min(...scores, maxScore);
+  return Object.fromEntries(rows.map(f => {
+    const score = scoreValue(f);
+    const normalized = maxScore === minScore ? 1 : (score - minScore) / (maxScore - minScore);
+    const ovr = Math.round(82 + normalized * 17);
+    return [f.fighter, clamp(ovr, 82, 99)];
+  }));
 }
-function categoryOvr(f, key){
-  const o = DISPLAY_OVERRIDES[f.fighter]?.categories?.[key];
-  if (o?.ovr) return o.ovr;
-  const board = f.leaderboard === "women" ? DATA.women : DATA.men;
-  const rank = categoryRank(f, key);
-  if (!rank) return 55;
-  if (board.length <= 1) return 99;
-  return clamp(Math.round(99 - ((rank - 1) / (board.length - 1)) * 44), 55, 99);
+
+function buildCategoryCaches(rowsByLeaderboard){
+  const categoryRanks = {};
+  const categoryOvrs = {};
+  Object.entries(rowsByLeaderboard).forEach(([leaderboard, rows]) => {
+    categoryRanks[leaderboard] = {};
+    categoryOvrs[leaderboard] = {};
+    CATEGORY_KEYS.forEach(key => {
+      categoryRanks[leaderboard][key] = {};
+      categoryOvrs[leaderboard][key] = {};
+      const sorted = [...rows].sort((a,b) => categoryValueForRank(b,key) - categoryValueForRank(a,key));
+      sorted.forEach((fighter, index) => {
+        const rank = 1 + sorted.filter(x => categoryValueForRank(x,key) > categoryValueForRank(fighter,key)).length;
+        const pctScore = sorted.length <= 1 ? 99 : clamp(Math.round(99 - ((rank - 1) / (sorted.length - 1)) * 44), 55, 99);
+        const overrideCategory = (typeof DISPLAY_OVERRIDES !== 'undefined' && DISPLAY_OVERRIDES[fighter.fighter]?.categories?.[key]) || {};
+        categoryRanks[leaderboard][key][fighter.fighter] = overrideCategory.rank || rank;
+        categoryOvrs[leaderboard][key][fighter.fighter] = overrideCategory.ovr || pctScore;
+      });
+    });
+  });
+  return { categoryRanks, categoryOvrs };
 }
+
+function deriveDivisions(fighters){
+  const divisions = new Set();
+  fighters.forEach(f => {
+    [f.primaryDivision, f.secondaryDivision].forEach(d => { if(d) divisions.add(d); });
+  });
+  return [...divisions].sort();
+}
+
+function buildAppState(data){
+  const fighters = [...(Array.isArray(data?.fighters) ? data.fighters : [])];
+  const fightersByName = new Map(fighters.map(f => [f.fighter, f]));
+  const fullRowsByName = new Map(fighters.map(f => [f.fighter, f]));
+  const rowsByLeaderboard = {
+    men: fighters.filter(f => f.leaderboard === 'men').sort((a,b)=>scoreValue(b)-scoreValue(a)),
+    women: fighters.filter(f => f.leaderboard === 'women').sort((a,b)=>scoreValue(b)-scoreValue(a))
+  };
+  const allBoardRows = [...rowsByLeaderboard.men, ...rowsByLeaderboard.women];
+  const { categoryRanks, categoryOvrs } = buildCategoryCaches(rowsByLeaderboard);
+  return {
+    fighters,
+    fightersByName,
+    menRows: rowsByLeaderboard.men,
+    womenRows: rowsByLeaderboard.women,
+    rowsByLeaderboard,
+    fullRowsByName,
+    categoryRanks,
+    categoryOvrs,
+    overallOvrs: buildOverallOvrs(allBoardRows),
+    divisions: Array.isArray(data?.divisions) && data.divisions.length ? data.divisions : deriveDivisions(fighters),
+    renderedViews: { men: false, women: false, divisions: false, compare: false, rules: false },
+    dirtyViews: { men: true, women: true, divisions: true, compare: true, rules: true }
+  };
+}
+
+function overallOvr(f){ return APP_STATE.overallOvrs[f?.fighter] ?? 82; }
+function categoryRank(f, key){ return APP_STATE.categoryRanks[f?.leaderboard || 'men']?.[key]?.[f?.fighter] || null; }
+function categoryOvr(f, key){ return APP_STATE.categoryOvrs[f?.leaderboard || 'men']?.[key]?.[f?.fighter] || 55; }
 function fighterInitials(name){ return name.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase(); }
 function tierForOvr(ovr){
   if (ovr >= 97) return {label:"Legendary", cls:"tier-legendary"};
@@ -303,16 +361,25 @@ function snapshotGrid(items){
 }
 
 
-function profileFor(row){ return byName[row.fighter] || {}; }
-function fullRow(row){ return { ...profileFor(row), ...row }; }
+function profileFor(row){ return APP_STATE.fightersByName.get(row.fighter) || {}; }
+function fullRow(row){ return APP_STATE.fullRowsByName.get(row.fighter) || profileFor(row) || row; }
+function activeViewName(){ return document.querySelector('.tab.active')?.dataset.view || 'men'; }
+function viewStateKey(viewName=activeViewName()){ return viewName === 'division' ? 'divisions' : viewName; }
+function markDirty(viewName){ APP_STATE.dirtyViews[viewStateKey(viewName)] = true; }
+function markListsDirty(){ markDirty('men'); markDirty('women'); markDirty('division'); }
+function markCompareDirty(){ markDirty('compare'); }
+function isDirty(viewName){ const key = viewStateKey(viewName); return !APP_STATE.renderedViews[key] || APP_STATE.dirtyViews[key]; }
+function markRendered(viewName){ const key = viewStateKey(viewName); APP_STATE.renderedViews[key] = true; APP_STATE.dirtyViews[key] = false; }
+function currentSearch(){ return (el('search')?.value || '').trim().toLowerCase(); }
+function currentDivision(){ return el('divisionFilter')?.value || 'All'; }
 
 function setKpis(id, rows){
-  const avg = rows.reduce((a,b)=>a + (b.totalScore||0),0) / Math.max(rows.length,1);
   const top = rows[0];
+  const avgOvr = Math.round(rows.reduce((sum,row)=>sum + overallOvr(row),0) / Math.max(rows.length,1));
   el(id).innerHTML = `
     <div class="kpi"><span>${rows.length}</span><small>fighters</small></div>
     <div class="kpi"><span>${top ? top.fighter : '—'}</span><small>current #1</small></div>
-    <div class="kpi"><span>${Math.round(rows.reduce((a,b)=>a + overallOvr(fullRow(b)),0) / Math.max(rows.length,1))}</span><small>average OVR</small></div>
+    <div class="kpi"><span>${avgOvr}</span><small>average OVR</small></div>
   `;
 }
 
@@ -329,20 +396,55 @@ function categoryMeter(f, key){
   </div>`;
 }
 
-function photoUrlFor(f){ return DISPLAY_OVERRIDES[f.fighter]?.photoUrl || ""; }
-function thumbUrlFor(f){ return DISPLAY_OVERRIDES[f.fighter]?.thumbUrl || photoUrlFor(f); }
+function photoUrlFor(f){ return displayOverrideFor(f.fighter)?.photoUrl || f.display?.photoUrl || ""; }
+function thumbUrlFor(f){ return displayOverrideFor(f.fighter)?.thumbUrl || f.display?.thumbUrl || photoUrlFor(f); }
 function rowPhoto(f){
   const url = thumbUrlFor(f);
   return `<div class="row-photo">${url ? `<img src="${url}" alt="${f.fighter} profile photo">` : fighterInitials(f.fighter)}</div>`;
 }
 function resumeTagFor(f){
-  const override = DISPLAY_OVERRIDES[f.fighter] || {};
+  const override = displayOverrideFor(f.fighter);
   if (override.resumeTag) return override.resumeTag;
   const rank = Number(override.allTimeRank || f.rank || 999);
   if (rank <= 5) return "Legendary UFC resume";
   if (rank <= 15) return "Elite UFC resume";
   if (rank <= 30) return "Great UFC resume";
   return "UFC resume";
+}
+function watchMomentUrlFor(f){
+  const override = displayOverrideFor(f.fighter) || {};
+  return (
+    override.watchUrl ||
+    override.watchMomentUrl ||
+    override.signatureMomentUrl ||
+    f.watchUrl ||
+    f.watchMomentUrl ||
+    f.signatureMomentUrl ||
+    f.display?.watchUrl ||
+    f.display?.watchMomentUrl ||
+    f.display?.signatureMomentUrl ||
+    f.watch?.url ||
+    ''
+  );
+}
+function watchMomentLabelFor(f){ return 'Watch Signature Moment'; }
+function watchMomentPillHtml(f){
+  const url = watchMomentUrlFor(f);
+  if(!url) return '';
+  return `<a class="watch-moment-pill" href="${url}" target="_blank" rel="noopener noreferrer" aria-label="Watch Signature Moment for ${f.fighter}">▶ Watch Signature Moment</a>`;
+}
+function installWatchMomentStyles(){
+  if(document.getElementById('watch-moment-renderer-css')) return;
+  const style = document.createElement('style');
+  style.id = 'watch-moment-renderer-css';
+  style.textContent = `
+    .watch-moment-pill,.watch-moment-link{display:inline-flex;align-items:center;justify-content:center;width:fit-content;border:1px solid rgba(249,115,22,.48);background:rgba(249,115,22,.12);color:#fed7aa;border-radius:999px;font-weight:850;letter-spacing:.02em;text-decoration:none;line-height:1.1}
+    .watch-moment-pill:hover,.watch-moment-link:hover{border-color:rgba(249,115,22,.78);background:rgba(249,115,22,.2);color:#fff}
+    .watch-moment-pill{margin-top:.45rem;padding:.38rem .7rem;font-size:.78rem}
+    .profile-watch-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:1rem}
+    .profile-watch-moment{padding:.65rem 1rem;font-size:.9rem}
+  `;
+  document.head.appendChild(style);
 }
 function categoryChip(f, key){
   const info = CATEGORY_INFO.find(([k]) => k === key) || [key, key, ""];
@@ -362,24 +464,30 @@ function categoryChipGrid(f){
   </div>`;
 }
 
+function rowMatchesFilters(r, { applyDivision = true } = {}){
+  const q = currentSearch();
+  const div = currentDivision();
+  const textHit = !q || r.fighter.toLowerCase().includes(q);
+  const divs = [r.primaryDivision, r.secondaryDivision].join(' ').toLowerCase();
+  const divHit = !applyDivision || div === 'All' || divs.includes(div.toLowerCase());
+  return textHit && divHit;
+}
+
+function fighterRowHtml(r, rankOverride=null, tagOverride=null, options={}){
+  const showCategoryChips = options.showCategoryChips !== false;
+  const showWatchPill = options.showWatchPill !== false;
+  return `<article class="row fighter-row" data-fighter="${r.fighter}">
+    <div class="rank">#${rankOverride || r.rank || '—'}</div>
+    ${rowPhoto(r)}
+    <div class="row-main"><div class="name">${r.fighter}</div><div class="meta">${r.ufcRecord || ''} · ${r.primaryDivision || ''}${r.secondaryDivision ? ' / ' + r.secondaryDivision : ''}</div><div class="resume-tag">${tagOverride || resumeTagFor(r)}</div>${showWatchPill ? watchMomentPillHtml(r) : ''}</div>
+    <div class="score">${overallOvr(r)} <span class="meta">OVR</span></div>
+    ${showCategoryChips ? categoryChipGrid(r) : ''}
+  </article>`;
+}
+
 function renderList(containerId, rows){
-  const q = el('search').value.trim().toLowerCase();
-  const div = el('divisionFilter').value;
-  let filtered = rows.map(fullRow).filter(r => {
-    const textHit = !q || r.fighter.toLowerCase().includes(q);
-    const divs = [r.primaryDivision, r.secondaryDivision].join(' ').toLowerCase();
-    const divHit = div === 'All' || divs.includes(div.toLowerCase());
-    return textHit && divHit;
-  });
-  el(containerId).innerHTML = filtered.map(r => `
-    <article class="row fighter-row" data-fighter="${r.fighter}">
-      <div class="rank">#${r.rank || '—'}</div>
-      ${rowPhoto(r)}
-      <div class="row-main"><div class="name">${r.fighter}</div><div class="meta">${r.ufcRecord || ''} · ${r.primaryDivision || ''}${r.secondaryDivision ? ' / ' + r.secondaryDivision : ''}</div><div class="resume-tag">${resumeTagFor(r)}</div></div>
-      <div class="score">${overallOvr(r)} <span class="meta">OVR</span></div>
-      ${categoryChipGrid(r)}
-    </article>`).join('') || '<div class="notice">No fighters match that filter.</div>';
-  document.querySelectorAll(`#${containerId} .row`).forEach(row => row.addEventListener('click', () => openFighter(row.dataset.fighter)));
+  const filtered = rows.filter(row => rowMatchesFilters(row));
+  el(containerId).innerHTML = filtered.map(r => fighterRowHtml(r)).join('') || '<div class="notice">No fighters match that filter.</div>';
 }
 
 function whyNotHigher(f){
@@ -399,18 +507,20 @@ function rowsTable(rows, cols, max=18){
 }
 
 function openFighter(name){
-  const f = fullRow((DATA.men.find(x=>x.fighter===name) || DATA.women.find(x=>x.fighter===name) || {fighter:name}));
-  const override = DISPLAY_OVERRIDES[f.fighter] || {};
+  const f = APP_STATE.fullRowsByName.get(name) || { fighter:name };
+  const override = displayOverrideFor(f.fighter);
   const title = f.title || {};
-  const opps = f.opponents || [];
+  const opps = f.opponents || f.qualityWins || [];
   const rounds = f.rounds || [];
   const reasons = whyNotHigher(f);
   const divisionLabel = override.divisionLabel || `${f.primaryDivision || ''}${f.secondaryDivision ? ' / ' + f.secondaryDivision : ''}`;
   const rankLabel = override.allTimeRank || f.rank || '—';
-  const photoUrl = override.photoUrl || '';
+  const photoUrl = override.photoUrl || f.display?.photoUrl || '';
   const photoStyle = '';
   const photoClass = photoUrl ? 'fighter-photo has-photo' : 'fighter-photo';
-  const snapshot = override.snapshot || [
+  const watchUrl = watchMomentUrlFor(f);
+  const watchLabel = watchMomentLabelFor(f);
+  const snapshot = override.snapshot || f.display?.snapshot || [
     ['UFC Record', f.ufcRecord || '—'],
     ['UFC All-Time Rank', `#${rankLabel}`],
     ['Finish Rate', pct(f.finishRatePct)],
@@ -435,16 +545,17 @@ function openFighter(name){
         <div class="profile-topline"><span class="profile-pill gold">UFC All-Time Rank: #${rankLabel}</span><span class="profile-pill">${divisionLabel}</span></div>
         <h2>${f.fighter}</h2>
         <div class="profile-ovr">${overallOvr(f)} <small>OVR</small></div>
-        <p class="profile-copy">${override.oneLiner || `${f.fighter}'s UFC resume is graded across championship success, quality wins, prime dominance, and longevity.`}</p>
+        <p class="profile-copy">${override.oneLiner || f.display?.oneLiner || `${f.fighter}'s UFC resume is graded across championship success, quality wins, prime dominance, and longevity.`}</p>
+        ${watchUrl ? `<div class="profile-watch-row"><a class="watch-moment-link profile-watch-moment" href="${watchUrl}" target="_blank" rel="noopener noreferrer">▶ ${watchLabel}</a></div>` : ''}
       </div>
     </section>
     <div class="category-grid">${categoryCards(f)}</div>
     <div id="categoryExplanation" class="category-explainer"><h3>Category Breakdown</h3><p>Tap any category to see what it means, what evidence matters, and why this fighter lands there.</p></div>
     <div class="card"><h3>Resume Snapshot</h3>${snapshotGrid(snapshot)}</div>
-    <div class="card"><h3>Why Ranked Here</h3><p>${override.whyRankedHere || `${f.fighter} ranks here based on the current balance of championship success, quality wins, prime dominance, and active elite longevity.`}</p></div>
+    <div class="card"><h3>Why Ranked Here</h3><p>${override.whyRankedHere || f.display?.whyRankedHere || `${f.fighter} ranks here based on the current balance of championship success, quality wins, prime dominance, and active elite longevity.`}</p></div>
     <div class="card"><h3>${rankedSectionTitle}</h3>${rankedSectionBody}</div>
     <div class="card"><h3>Key Judgment Calls</h3>${keyJudgments}</div>
-    ${override.finalTakeaway ? `<div class="card"><h3>Final Takeaway</h3><p>${override.finalTakeaway}</p></div>` : ''}
+    ${(override.finalTakeaway || f.display?.finalTakeaway) ? `<div class="card"><h3>Final Takeaway</h3><p>${override.finalTakeaway || f.display?.finalTakeaway}</p></div>` : ''}
     <div class="card"><h3>Title Context</h3><p>${title.notes || 'No title note entered.'}</p></div>
     <div class="card"><h3>Quality Wins</h3>${rowsTable(opps, [{key:'opponent',label:'Opponent'},{key:'division',label:'Division'},{key:'context',label:'Context'}])}</div>
     <div class="card"><h3>Round Control</h3>${rowsTable(rounds, [{key:'opponent',label:'Opponent'},{key:'method',label:'Result'},{key:'roundsWon',label:'Rounds Won'},{key:'roundsCounted',label:'Fight Rounds'}])}</div>
@@ -456,14 +567,29 @@ function openFighter(name){
   attachCategoryExplanations(f);
 }
 
-function renderDivision(){
-  const div = el('divisionFilter').value;
-  const rows = allProfiles.filter(f => f.gender === 'Men').map(f => fullRow(DATA.men.find(x=>x.fighter===f.fighter) || { fighter: f.fighter, totalScore: f.totalScore }))
-    .filter(f => div === 'All' || [f.primaryDivision, f.secondaryDivision].join(' ').toLowerCase().includes(div.toLowerCase()))
-    .sort((a,b)=>(b.totalScore||0)-(a.totalScore||0));
-  el('divisionList').innerHTML = `<div class="notice">Prototype note: this is a division filter using the current P4P score. True division-only scoring will use division-specific fight rows next.</div>`;
-  el('divisionList').innerHTML += rows.map((r,i)=>`<article class="row fighter-row" data-fighter="${r.fighter}"><div class="rank">#${i+1}</div>${rowPhoto(r)}<div class="row-main"><div class="name">${r.fighter}</div><div class="meta">${r.ufcRecord || ''} · ${r.primaryDivision || ''}${r.secondaryDivision ? ' / ' + r.secondaryDivision : ''}</div><div class="resume-tag">${div === 'All' ? resumeTagFor(r) : div + ' view'}</div></div><div class="score">${overallOvr(r)} <span class="meta">OVR</span></div>${categoryChipGrid(r)}</article>`).join('');
-  document.querySelectorAll(`#divisionList .row`).forEach(row => row.addEventListener('click', () => openFighter(row.dataset.fighter)));
+function renderMenView(){
+  if(!isDirty('men')) return;
+  renderList('menList', APP_STATE.menRows);
+  setKpis('menStats', APP_STATE.menRows.filter(row => rowMatchesFilters(row)));
+  markRendered('men');
+}
+
+function renderWomenView(){
+  if(!isDirty('women')) return;
+  renderList('womenList', APP_STATE.womenRows);
+  setKpis('womenStats', APP_STATE.womenRows.filter(row => rowMatchesFilters(row)));
+  markRendered('women');
+}
+
+function renderDivisionView(){
+  if(!isDirty('division')) return;
+  const div = currentDivision();
+  const rows = APP_STATE.menRows
+    .filter(f => rowMatchesFilters(f))
+    .sort((a,b)=>scoreValue(b)-scoreValue(a));
+  el('divisionList').innerHTML = `<div class="notice">Division view uses the current UFC-only overall score, filtered by division.</div>` +
+    (rows.map((r,i)=>fighterRowHtml(r, i+1, div === 'All' ? resumeTagFor(r) : div + ' view', { showCategoryChips: false, showWatchPill: true })).join('') || '<div class="notice">No fighters match that filter.</div>');
+  markRendered('division');
 }
 
 function renderCompare(){
@@ -475,8 +601,8 @@ function renderCompare(){
   const rows = cats.map(([key,label]) => {
     const av = key === 'overall' ? overallOvr(a) : categoryOvr(a, key);
     const bv = key === 'overall' ? overallOvr(b) : categoryOvr(b, key);
-    const ar = key === 'overall' ? (DISPLAY_OVERRIDES[a.fighter]?.allTimeRank || a.rank || '—') : categoryRank(a, key);
-    const br = key === 'overall' ? (DISPLAY_OVERRIDES[b.fighter]?.allTimeRank || b.rank || '—') : categoryRank(b, key);
+    const ar = key === 'overall' ? (displayOverrideFor(a.fighter)?.allTimeRank || a.rank || '—') : categoryRank(a, key);
+    const br = key === 'overall' ? (displayOverrideFor(b.fighter)?.allTimeRank || b.rank || '—') : categoryRank(b, key);
     const unit = key === 'overall' ? 'OVR' : 'PCTL';
     const aWin = av > bv;
     const bWin = bv > av;
@@ -488,8 +614,19 @@ function renderCompare(){
     <div class="card" style="grid-column:1/-1"><table class="table"><thead><tr><th>Category</th><th>${a.fighter}</th><th>${b.fighter}</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
-function renderRules(){
-  const divRows = DATA.divisionStrength.map(r=>`<tr><td>${r.divisionEra}</td><td>${r.multiplier ?? 'Varies'}</td><td>${r.rationale}</td></tr>`).join('');
+function renderCompareView(){
+  if(!isDirty('compare')) return;
+  if(typeof window.renderCompare === 'function' && window.renderCompare !== renderCompareView){
+    window.renderCompare();
+  } else {
+    renderCompare();
+  }
+  markRendered('compare');
+}
+
+function renderRulesView(){
+  if(!isDirty('rules')) return;
+  const divRows = (DATA.divisionStrength || []).map(r=>`<tr><td>${r.divisionEra}</td><td>${r.multiplier ?? 'Varies'}</td><td>${r.rationale}</td></tr>`).join('');
   el('rulesContent').innerHTML = `
     <div class="card"><h3>Visible Categories</h3><table class="table"><tbody>
       <tr><td><strong>Title Reign</strong></td><td>Title-level resume and how clearly the fighter ruled at championship level.</td></tr>
@@ -498,14 +635,24 @@ function renderRules(){
       <tr><td><strong>Elite Longevity</strong></td><td>Active elite years, not just calendar span.</td></tr>
       <tr><td><strong>Loss Context</strong></td><td>How much UFC losses actually hurt the resume after timing, opponent quality, finish context, and division context.</td></tr>
     </tbody></table></div>
-    <div class="card"><h3>Division Strength</h3><table class="table"><thead><tr><th>Division/Era</th><th>Multiplier</th><th>Rationale</th></tr></thead><tbody>${divRows}</tbody></table></div>
+    <div class="card"><h3>Division Strength</h3>${divRows ? `<table class="table"><thead><tr><th>Division/Era</th><th>Multiplier</th><th>Rationale</th></tr></thead><tbody>${divRows}</tbody></table>` : '<p>Division strength notes are sourced from the canonical ranking model and will appear here when present.</p>'}</div>
     <div class="card"><h3>Model Note</h3><p>Overall fighter score remains an OVR. Category cards are percentile-style scores so they read as category standing instead of mini-overalls.</p></div>
   `;
+  markRendered('rules');
+}
+
+function renderActiveView(){
+  const view = activeViewName();
+  if(view === 'men') renderMenView();
+  else if(view === 'women') renderWomenView();
+  else if(view === 'division') renderDivisionView();
+  else if(view === 'compare') renderCompareView();
+  else if(view === 'rules') renderRulesView();
 }
 
 function populateControls(){
   el('fighterCount').textContent = allProfiles.length;
-  DATA.divisions.forEach(d => {
+  APP_STATE.divisions.forEach(d => {
     const opt = document.createElement('option'); opt.value = d; opt.textContent = d; el('divisionFilter').appendChild(opt);
   });
   const names = allProfiles.map(f=>f.fighter).sort();
@@ -513,32 +660,45 @@ function populateControls(){
     const sel = el(id);
     names.forEach(n => { const o=document.createElement('option'); o.value=n; o.textContent=n; sel.appendChild(o); });
     sel.value = idx === 0 ? 'Jon Jones' : 'Georges St-Pierre';
-    sel.addEventListener('change', renderCompare);
+    sel.addEventListener('change', () => { markCompareDirty(); renderActiveView(); });
   });
 }
 
-function refresh(){
-  renderList('menList', DATA.men);
-  renderList('womenList', DATA.women);
-  setKpis('menStats', DATA.men);
-  setKpis('womenStats', DATA.women);
-  renderDivision();
-  renderCompare();
-  renderRules();
+function handleFighterRowClick(event){
+  if(event.target.closest('a, button')) return;
+  const row = event.target.closest('.fighter-row');
+  if(!row) return;
+  openFighter(row.dataset.fighter);
 }
 
-populateControls(); refresh();
+function installDelegatedListeners(){
+  ['menList','womenList','divisionList'].forEach(id => el(id)?.addEventListener('click', handleFighterRowClick));
+}
+
+function refresh(){ markDirty(activeViewName()); renderActiveView(); }
+window.refresh = refresh;
+window.renderActiveView = renderActiveView;
+window.UFC_RENDER_ACTIVE_VIEW = renderActiveView;
+window.UFC_MARK_DIRTY = markDirty;
+window.UFC_MARK_COMPARE_DIRTY = markCompareDirty;
+window.UFC_MARK_LISTS_DIRTY = markListsDirty;
+window.renderCompare = renderCompare;
+
+populateControls();
+installWatchMomentStyles();
+installDelegatedListeners();
+renderActiveView();
 
 document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', () => {
   document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active-view'));
   btn.classList.add('active');
   el(btn.dataset.view).classList.add('active-view');
-  refresh();
+  renderActiveView();
 }));
 
-el('search').addEventListener('input', refresh);
-el('divisionFilter').addEventListener('change', refresh);
-el('resetBtn').addEventListener('click', () => { el('search').value=''; el('divisionFilter').value='All'; refresh(); });
+el('search').addEventListener('input', () => { markListsDirty(); renderActiveView(); });
+el('divisionFilter').addEventListener('change', () => { markListsDirty(); renderActiveView(); });
+el('resetBtn').addEventListener('click', () => { el('search').value=''; el('divisionFilter').value='All'; markListsDirty(); renderActiveView(); });
 el('closeDrawer').addEventListener('click', () => { el('drawer').classList.remove('open'); el('drawer').setAttribute('aria-hidden','true'); });
 el('drawer').addEventListener('click', e => { if(e.target.id==='drawer') el('closeDrawer').click(); });
