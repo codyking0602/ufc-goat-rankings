@@ -1,7 +1,7 @@
 // Makes Loss Context the first formula-driven live category.
-// Uses loaded loss ledgers + scoring-engine calculator, then writes the capped result back to each fighter.
+// Uses loaded loss ledgers + scoring-engine calculator, then writes the capped result back to each fighter and board row.
 (function(){
-  const VERSION = 'loss-context-formula-live-20260707a';
+  const VERSION = 'loss-context-formula-live-20260707b-category-row-sync';
   const CAP = -10;
   function num(v,d=0){ const n=Number(v); return Number.isFinite(n)?n:d; }
   function round2(v){ return Math.round((num(v)+Number.EPSILON)*100)/100; }
@@ -13,6 +13,22 @@
   }
   function hasUsableLedger(f){
     return Array.isArray(f?.losses) || f?.lossContextNoLosses === true || f?.lossesVerified === true || f?.lossContext?.noCountedLosses === true;
+  }
+  function syncBoardRow(f, targetPenalty, nextTotal){
+    const boardName = f?.leaderboard === 'women' ? 'women' : 'men';
+    const boardRow = (window.RANKING_DATA?.[boardName] || []).find(row => row?.fighter === f?.fighter);
+    if(!boardRow) return null;
+    boardRow.penalty = targetPenalty;
+    boardRow.lossPenalty = targetPenalty;
+    boardRow.totalScore = nextTotal;
+    if(boardRow.scoring) boardRow.scoring.penalty = targetPenalty;
+    if(boardRow.weightedScoreBreakdown){
+      boardRow.weightedScoreBreakdown.penalty = targetPenalty;
+      boardRow.weightedScoreBreakdown.totalScore = nextTotal;
+    }
+    boardRow.lossContextFormulaDriven = true;
+    boardRow.lossContextFormulaVersion = VERSION;
+    return boardRow;
   }
   function writeFormulaPenalty(f, audit){
     if(!audit || !Number.isFinite(Number(audit.score))) return null;
@@ -32,6 +48,7 @@
       f.display.scoreSummary.lossContext = targetPenalty;
       f.display.scoreSummary.totalScore = nextTotal;
     }
+    syncBoardRow(f, targetPenalty, nextTotal);
     f.lossContextFormulaVersion = VERSION;
     f.lossContextFormulaDriven = true;
     f.lossContextFormulaWrite = { previous, positiveScore:positive, targetPenalty, rawPenalty:audit.rawScore, capped:audit.capped === true };
@@ -75,7 +92,7 @@
       .sort((a,b)=>Math.abs(num(b.lossPenaltyDelta))-Math.abs(num(a.lossPenaltyDelta)));
     engine.report = window.UFC_SCORING_ENGINE_REPORT;
     engine.lossContextReport = window.UFC_LOSS_CONTEXT_REPORT;
-    window.UFC_LOSS_CONTEXT_FORMULA_LIVE = { version:VERSION, cap:CAP, applied, appliedCount:applied.length, pending:false };
+    window.UFC_LOSS_CONTEXT_FORMULA_LIVE = { version:VERSION, cap:CAP, applied, appliedCount:applied.length, pending:false, boardRowsSynced:true };
     document.documentElement.setAttribute('data-loss-context-formula-live', VERSION);
     if(typeof refresh === 'function'){ try{ refresh(); }catch(e){} }
     if(window.UFC_DYNAMIC_RANKS?.apply) window.UFC_DYNAMIC_RANKS.apply();
