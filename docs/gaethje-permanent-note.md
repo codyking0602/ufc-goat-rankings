@@ -1,1 +1,0 @@
-Justin Gaethje permanent ranking data lives in assets/data/ranking-data-additions.js and fighter-facing content lives in assets/data/fighter-packets/justin-gaethje.js. Photos remain the only missing piece.
