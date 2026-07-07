@@ -1,8 +1,9 @@
 // UFC scoring engine foundation.
-// Shadow mode only: calculates model totals, normalizes profile snapshot display,
-// and keeps visible category UI aligned without changing canonical fighter scores yet.
+// Shadow mode: calculates model totals, normalizes profile snapshot display,
+// keeps visible category UI aligned, and enforces the locked loss-penalty cap.
 (function(){
-  const VERSION = 'scoring-engine-20260707b-loss-context-calculator';
+  const VERSION = 'scoring-engine-20260707c-loss-penalty-cap';
+  const LOSS_PENALTY_FLOOR = -10;
   const WEIGHTS = {
     championship: 35 / 30,
     primeDominance: 25 / 30,
@@ -20,7 +21,8 @@
     postPrime: 0,
     upwardChampionTop5: -0.75,
     upwardFinishAddon: -0.50,
-    upwardReducedInjuryFinishAddon: -0.25
+    upwardReducedInjuryFinishAddon: -0.25,
+    cap: LOSS_PENALTY_FLOOR
   };
   const CATEGORY_UI = [
     ['championship', 'Championship Resume', 'UFC title-level accomplishment: title-fight wins, reign strength, and control of the division'],
@@ -32,15 +34,11 @@
   ];
 
   function fighters(){ return Array.isArray(window.RANKING_DATA?.fighters) ? window.RANKING_DATA.fighters : []; }
-  function num(value, fallback=0){
-    const n = Number(value);
-    return Number.isFinite(n) ? n : fallback;
-  }
+  function num(value, fallback=0){ const n = Number(value); return Number.isFinite(n) ? n : fallback; }
   function round2(value){ return Math.round((num(value) + Number.EPSILON) * 100) / 100; }
   function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
-  function html(value){
-    return String(value ?? '').replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
-  }
+  function capLossPenalty(value){ return Math.max(LOSS_PENALTY_FLOOR, round2(num(value))); }
+  function html(value){ return String(value ?? '').replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch])); }
   function firstNumber(value){
     if(value === null || value === undefined || value === '') return null;
     if(Number.isFinite(Number(value))) return Number(value);
@@ -56,27 +54,37 @@
     if(['no','n','false','f'].includes(s)) return false;
     return false;
   }
-  function normalizedToken(value){
-    return String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'');
-  }
-  function categoryRaw(f,key){
-    return num(f?.[key] ?? f?.scoring?.[key] ?? 0);
-  }
+  function normalizedToken(value){ return String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,''); }
+  function categoryRaw(f,key){ return num(f?.[key] ?? f?.scoring?.[key] ?? 0); }
   function storedScore(f){ return num(f?.totalScore ?? 0); }
-  function storedPenalty(f){ return round2(num(f?.penalty ?? f?.lossPenalty ?? f?.scoring?.penalty ?? 0)); }
+  function storedPenalty(f){ return capLossPenalty(f?.penalty ?? f?.lossPenalty ?? f?.scoring?.penalty ?? 0); }
 
-  function lossPhase(loss){
-    const token = normalizedToken(loss?.phase ?? loss?.timing ?? loss?.careerPhase);
-    if(token.includes('post')) return 'postPrime';
-    if(token.includes('pre')) return 'prePrime';
-    if(token.includes('prime')) return 'prime';
-    return 'prime';
+  function weightedPositiveScore(f){
+    const direct = num(f?.weightedScoreBreakdown?.positiveScore, NaN);
+    if(Number.isFinite(direct)) return direct;
+    const rawPenalty = num(f?.penalty ?? f?.lossPenalty ?? f?.scoring?.penalty ?? 0);
+    return round2(num(f?.totalScore) - rawPenalty);
   }
-  function lossOpponentTier(loss){
-    const token = normalizedToken(loss?.opponentTier ?? loss?.tier ?? loss?.opponentQuality ?? loss?.opponentClass);
-    if(token.includes('champion') || token.includes('top5') || token.includes('topfive') || token.includes('elite')) return 'championTop5';
-    return 'nonElite';
+  function applyStoredLossPenaltyCap(f){
+    const current = num(f?.penalty ?? f?.lossPenalty ?? f?.scoring?.penalty ?? 0);
+    const capped = capLossPenalty(current);
+    if(current >= LOSS_PENALTY_FLOOR) return null;
+    const positive = weightedPositiveScore(f);
+    const nextTotal = round2(positive + capped);
+    const previous = { totalScore:f.totalScore, penalty:f.penalty, lossPenalty:f.lossPenalty };
+    f.penalty = capped;
+    f.lossPenalty = capped;
+    f.totalScore = nextTotal;
+    if(f.scoring) f.scoring.penalty = capped;
+    if(f.weightedScoreBreakdown){ f.weightedScoreBreakdown.penalty = capped; f.weightedScoreBreakdown.totalScore = nextTotal; }
+    if(f.display?.scoreSummary){ f.display.scoreSummary.lossContext = capped; f.display.scoreSummary.totalScore = nextTotal; }
+    f.lossPenaltyCapVersion = VERSION;
+    f.lossPenaltyCap = { previous, cappedPenalty:capped, positiveScore:positive, totalScore:nextTotal };
+    return { fighter:f.fighter, previous, next:{ totalScore:nextTotal, penalty:capped, lossPenalty:capped } };
   }
+
+  function lossPhase(loss){ const token = normalizedToken(loss?.phase ?? loss?.timing ?? loss?.careerPhase); if(token.includes('post')) return 'postPrime'; if(token.includes('pre')) return 'prePrime'; if(token.includes('prime')) return 'prime'; return 'prime'; }
+  function lossOpponentTier(loss){ const token = normalizedToken(loss?.opponentTier ?? loss?.tier ?? loss?.opponentQuality ?? loss?.opponentClass); if(token.includes('champion') || token.includes('top5') || token.includes('topfive') || token.includes('elite')) return 'championTop5'; return 'nonElite'; }
   function lossFinished(loss){
     if(loss?.finished !== undefined) return asBool(loss.finished);
     const token = normalizedToken([loss?.result, loss?.method, loss?.finishTreatment].filter(Boolean).join(' '));
@@ -95,28 +103,18 @@
     if(upward) return treatment === 'reducedInjury' ? LOSS_CONTEXT_RULES.upwardReducedInjuryFinishAddon : LOSS_CONTEXT_RULES.upwardFinishAddon;
     return treatment === 'reducedInjury' ? LOSS_CONTEXT_RULES.reducedInjuryFinishAddon : LOSS_CONTEXT_RULES.finishAddon;
   }
-  function lossRuleLabel(parts){
-    return parts.filter(Boolean).join(' + ');
-  }
+  function lossRuleLabel(parts){ return parts.filter(Boolean).join(' + '); }
   function calculateLossEntry(loss){
     const opponent = loss?.opponent || 'Unknown opponent';
-    if(loss?.counted === false){
-      return { opponent, base: 0, finishAddon: 0, total: 0, rule: 'Excluded / not a real competitive loss', phase: lossPhase(loss), opponentTier: lossOpponentTier(loss), upwardDivision: asBool(loss?.upwardDivision), finished: lossFinished(loss), counted: false, notes: loss?.notes || '' };
-    }
+    if(loss?.counted === false){ return { opponent, base: 0, finishAddon: 0, total: 0, rule: 'Excluded / not a real competitive loss', phase: lossPhase(loss), opponentTier: lossOpponentTier(loss), upwardDivision: asBool(loss?.upwardDivision), finished: lossFinished(loss), counted: false, notes: loss?.notes || '' }; }
     const override = firstNumber(loss?.penaltyOverride);
-    if(Number.isFinite(override)){
-      return { opponent, base: round2(override), finishAddon: 0, total: round2(override), rule: loss?.rule || 'Manual locked exception', phase: lossPhase(loss), opponentTier: lossOpponentTier(loss), upwardDivision: asBool(loss?.upwardDivision), finished: lossFinished(loss), counted: true, notes: loss?.notes || '' };
-    }
-
+    if(Number.isFinite(override)){ return { opponent, base: round2(override), finishAddon: 0, total: round2(override), rule: loss?.rule || 'Manual locked exception', phase: lossPhase(loss), opponentTier: lossOpponentTier(loss), upwardDivision: asBool(loss?.upwardDivision), finished: lossFinished(loss), counted: true, notes: loss?.notes || '' }; }
     const phase = lossPhase(loss);
     const opponentTier = lossOpponentTier(loss);
     const upwardDivision = asBool(loss?.upwardDivision);
     const finished = lossFinished(loss);
     const finishTreatment = lossFinishTreatment(loss);
-    let base = 0;
-    let finishAddon = 0;
-    let rule = '';
-
+    let base = 0, finishAddon = 0, rule = '';
     if(phase === 'postPrime'){
       rule = 'Post-prime loss';
     } else if(upwardDivision && opponentTier === 'championTop5'){
@@ -132,34 +130,19 @@
       finishAddon = finishAddonFor(loss, false);
       rule = lossRuleLabel([opponentTier === 'championTop5' ? 'Prime loss to champion/top-5' : 'Prime loss to non-elite', finished && finishTreatment === 'reducedInjury' ? 'reduced injury/technical finish' : finished ? 'finished' : 'decision']);
     }
-
-    return {
-      opponent,
-      date: loss?.date || '',
-      result: loss?.result || loss?.method || '',
-      phase,
-      opponentTier,
-      upwardDivision,
-      finished,
-      finishTreatment,
-      counted: true,
-      base: round2(base),
-      finishAddon: round2(finishAddon),
-      total: round2(base + finishAddon),
-      rule,
-      notes: loss?.notes || ''
-    };
+    return { opponent, date: loss?.date || '', result: loss?.result || loss?.method || '', phase, opponentTier, upwardDivision, finished, finishTreatment, counted: true, base: round2(base), finishAddon: round2(finishAddon), total: round2(base + finishAddon), rule, notes: loss?.notes || '' };
   }
   function calculateLossContext(f){
     const losses = Array.isArray(f?.losses) ? f.losses : [];
     const stored = storedPenalty(f);
-    if(!losses.length){
-      return { hasLedger: false, score: null, storedPenalty: stored, delta: null, status: 'missing-ledger', entries: [] };
-    }
+    const noLossesConfirmed = f?.lossContextNoLosses === true || f?.lossesVerified === true || f?.lossContext?.noCountedLosses === true;
+    if(!losses.length && noLossesConfirmed){ const delta = round2(0 - stored); return { hasLedger:true, score:0, rawScore:0, storedPenalty:stored, delta, status:Math.abs(delta)<0.01?'match':'review', entries:[] }; }
+    if(!losses.length){ return { hasLedger:false, score:null, rawScore:null, storedPenalty:stored, delta:null, status:'missing-ledger', entries:[] }; }
     const entries = losses.map(calculateLossEntry);
-    const score = round2(entries.reduce((sum,row)=>sum + num(row.total),0));
+    const rawScore = round2(entries.reduce((sum,row)=>sum + num(row.total),0));
+    const score = capLossPenalty(rawScore);
     const delta = round2(score - stored);
-    return { hasLedger: true, score, storedPenalty: stored, delta, status: Math.abs(delta) < 0.01 ? 'match' : 'review', entries };
+    return { hasLedger:true, score, rawScore, capped: rawScore < LOSS_PENALTY_FLOOR, storedPenalty:stored, delta, status:Math.abs(delta)<0.01?'match':'review', entries };
   }
 
   function calculateScore(f){
@@ -172,79 +155,26 @@
     const penalty = storedPenalty(f);
     const positiveScore = round2(championship + primeDominance + opponentQuality + longevity + apexPeak);
     const totalScore = round2(positiveScore + penalty);
-    return {
-      categories: {
-        championship: categoryRaw(f,'championship'),
-        opponentQuality: categoryRaw(f,'opponentQuality'),
-        primeDominance: categoryRaw(f,'primeDominance'),
-        longevity: categoryRaw(f,'longevity'),
-        apexPeak: categoryRaw(f,'apexPeak'),
-        penalty
-      },
-      weightedScoreBreakdown: { championship, primeDominance, opponentQuality, longevity, apexPeak, positiveScore, penalty, totalScore },
-      totalScore,
-      storedTotalScore: storedScore(f),
-      delta: round2(totalScore - storedScore(f)),
-      lossContextAudit,
-      calculatedLossPenalty: lossContextAudit.score,
-      storedLossPenalty: lossContextAudit.storedPenalty,
-      lossPenaltyDelta: lossContextAudit.delta,
-      lossContextStatus: lossContextAudit.status
-    };
+    return { categories:{ championship:categoryRaw(f,'championship'), opponentQuality:categoryRaw(f,'opponentQuality'), primeDominance:categoryRaw(f,'primeDominance'), longevity:categoryRaw(f,'longevity'), apexPeak:categoryRaw(f,'apexPeak'), penalty }, weightedScoreBreakdown:{ championship, primeDominance, opponentQuality, longevity, apexPeak, positiveScore, penalty, totalScore }, totalScore, storedTotalScore:storedScore(f), delta:round2(totalScore - storedScore(f)), lossContextAudit, calculatedLossPenalty:lossContextAudit.score, rawCalculatedLossPenalty:lossContextAudit.rawScore, storedLossPenalty:lossContextAudit.storedPenalty, lossPenaltyDelta:lossContextAudit.delta, lossContextStatus:lossContextAudit.status };
   }
 
   function titleFightWins(f){
-    const direct = [
-      f?.snapshot?.titleFightWins,
-      f?.titleFightWins,
-      f?.ufcTitleFightWins,
-      f?.resume?.titleFightWins,
-      f?.profileStats?.titleFightWins,
-      f?.title?.titleFightWins
-    ].map(firstNumber).find(v => Number.isFinite(v) && v >= 0 && v <= 25);
+    const direct = [f?.snapshot?.titleFightWins, f?.titleFightWins, f?.ufcTitleFightWins, f?.resume?.titleFightWins, f?.profileStats?.titleFightWins, f?.title?.titleFightWins].map(firstNumber).find(v => Number.isFinite(v) && v >= 0 && v <= 25);
     if(direct !== undefined) return direct;
     const title = f?.title || {};
-    const total = ['normalTitleWins','interimTitleWins','vacantUndisputedWins','secondDivisionUndisputedWins','vacantSecondDivisionWins']
-      .reduce((sum,key)=>sum + num(title[key]),0);
+    const total = ['normalTitleWins','interimTitleWins','vacantUndisputedWins','secondDivisionUndisputedWins','vacantSecondDivisionWins'].reduce((sum,key)=>sum + num(title[key]),0);
     if(total) return total;
     const noteMatch = String(title.notes || '').match(/(?:Total\s*)?title[-\s]?fight wins\s*=\s*([0-9.]+)/i);
     return noteMatch ? Number(noteMatch[1]) : null;
   }
-  function adjustedTitleWins(f){
-    const direct = [f?.snapshot?.adjustedTitleWins, f?.adjustedTitleWins, f?.resume?.adjustedTitleWins, f?.title?.adjustedTitleWins]
-      .map(firstNumber).find(v => Number.isFinite(v) && v >= 0 && v <= 30);
-    return direct ?? null;
-  }
-  function cleanOpponentName(name){
-    return String(name || '')
-      .replace(/\s+(?:I{1,3}|IV|V)$/i,'')
-      .replace(/\s+\d+$/,'')
-      .trim();
-  }
+  function adjustedTitleWins(f){ const direct = [f?.snapshot?.adjustedTitleWins, f?.adjustedTitleWins, f?.resume?.adjustedTitleWins, f?.title?.adjustedTitleWins].map(firstNumber).find(v => Number.isFinite(v) && v >= 0 && v <= 30); return direct ?? null; }
+  function cleanOpponentName(name){ return String(name || '').replace(/\s+(?:I{1,3}|IV|V)$/i,'').replace(/\s+\d+$/,'').trim(); }
   function derivedEliteWins(f){
-    const direct = [
-      f?.snapshot?.eliteTopFiveWins,
-      f?.eliteTopFiveWins,
-      f?.eliteWins,
-      f?.topFiveWins,
-      f?.resume?.eliteTopFiveWins,
-      f?.resume?.eliteWins,
-      f?.resume?.topFiveWins,
-      f?.profileStats?.eliteTopFiveWins,
-      f?.profileStats?.eliteWins,
-      f?.profileStats?.topFiveWins
-    ].map(firstNumber).find(v => Number.isFinite(v) && v > 0 && v < 50);
+    const direct = [f?.snapshot?.eliteTopFiveWins, f?.eliteTopFiveWins, f?.eliteWins, f?.topFiveWins, f?.resume?.eliteTopFiveWins, f?.resume?.eliteWins, f?.resume?.topFiveWins, f?.profileStats?.eliteTopFiveWins, f?.profileStats?.eliteWins, f?.profileStats?.topFiveWins].map(firstNumber).find(v => Number.isFinite(v) && v > 0 && v < 50);
     if(direct !== undefined) return direct;
     const wins = Array.isArray(f?.qualityWins) ? f.qualityWins : (Array.isArray(f?.opponents) ? f.opponents : []);
     const names = new Set();
-    wins.forEach(o => {
-      const credit = num(o?.credit ?? o?.value ?? 0);
-      const context = String([o?.context,o?.type,o?.notes,o?.note].filter(Boolean).join(' ')).toLowerCase();
-      if(credit >= 0.75 || /champion|top\s*-?\s*5|top-five|elite|p4p/.test(context)){
-        const name = cleanOpponentName(o?.opponent);
-        if(name) names.add(name);
-      }
-    });
+    wins.forEach(o => { const credit = num(o?.credit ?? o?.value ?? 0); const context = String([o?.context,o?.type,o?.notes,o?.note].filter(Boolean).join(' ')).toLowerCase(); if(credit >= 0.75 || /champion|top\s*-?\s*5|top-five|elite|p4p/.test(context)){ const name = cleanOpponentName(o?.opponent); if(name) names.add(name); } });
     return names.size || null;
   }
   function finishRate(f){ return [f?.snapshot?.finishRatePct, f?.resume?.finishRatePct, f?.finishRatePct].map(firstNumber).find(v => Number.isFinite(v)); }
@@ -255,152 +185,47 @@
   function fmtPct(value){ return Number.isFinite(value) ? `${Number(value).toFixed(1)}%` : '—'; }
   function fmtNum(value, digits=2){ return Number.isFinite(value) ? Number(value).toFixed(digits).replace(/\.00$/,'') : '—'; }
   function fmtYears(value){ return Number.isFinite(value) ? Number(value).toFixed(1).replace(/\.0$/,'') : '—'; }
-
   function snapshotItems(f){
-    const titleWins = titleFightWins(f);
-    const adjTitle = adjustedTitleWins(f);
-    const eliteWins = derivedEliteWins(f);
-    const finish = finishRate(f);
-    const rounds = roundsWonPct(f);
-    const years = activeEliteYears(f);
-    const finished = timesFinishedPrime(f);
-    return [
-      ['UFC Record', f?.snapshot?.ufcRecord || f?.resume?.ufcRecord || f?.ufcRecord || '—'],
-      ['UFC Title-Fight Wins', Number.isFinite(titleWins) ? String(titleWins).replace(/\.0$/,'') : '—'],
-      ['Adjusted Title Wins', Number.isFinite(adjTitle) ? Number(adjTitle).toFixed(2) : '—'],
-      ['Elite / Top-5 Wins', Number.isFinite(eliteWins) ? String(eliteWins).replace(/\.0$/,'') : '—'],
-      ['Prime Record', primeRecord(f) || '—'],
-      ['Finish Rate', fmtPct(finish)],
-      ['Rounds Won', fmtPct(rounds)],
-      ['Active Elite Years', fmtYears(years)],
-      ['Times Finished in Prime', Number.isFinite(finished) ? String(finished).replace(/\.0$/,'') : '—']
-    ];
+    const titleWins = titleFightWins(f), adjTitle = adjustedTitleWins(f), eliteWins = derivedEliteWins(f), finish = finishRate(f), rounds = roundsWonPct(f), years = activeEliteYears(f), finished = timesFinishedPrime(f);
+    return [['UFC Record', f?.snapshot?.ufcRecord || f?.resume?.ufcRecord || f?.ufcRecord || '—'], ['UFC Title-Fight Wins', Number.isFinite(titleWins) ? String(titleWins).replace(/\.0$/,'') : '—'], ['Adjusted Title Wins', Number.isFinite(adjTitle) ? Number(adjTitle).toFixed(2) : '—'], ['Elite / Top-5 Wins', Number.isFinite(eliteWins) ? String(eliteWins).replace(/\.0$/,'') : '—'], ['Prime Record', primeRecord(f) || '—'], ['Finish Rate', fmtPct(finish)], ['Rounds Won', fmtPct(rounds)], ['Active Elite Years', fmtYears(years)], ['Times Finished in Prime', Number.isFinite(finished) ? String(finished).replace(/\.0$/,'') : '—']];
   }
-  function snapshotGrid(items){
-    return `<div class="snapshot-grid">${items.map(([label,value])=>`<div class="snapshot-item"><strong>${html(value)}</strong><small>${html(label)}</small></div>`).join('')}</div>`;
-  }
-  function normalizeSnapshots(){
-    fighters().forEach(f => { f.modelSnapshot = snapshotItems(f); });
-  }
+  function snapshotGrid(items){ return `<div class="snapshot-grid">${items.map(([label,value])=>`<div class="snapshot-item"><strong>${html(value)}</strong><small>${html(label)}</small></div>`).join('')}</div>`; }
+  function normalizeSnapshots(){ fighters().forEach(f => { f.modelSnapshot = snapshotItems(f); }); }
   function normalizeScores(){
+    const capAdjustments = [];
     const rows = fighters();
     const report = rows.map(f => {
+      const capped = applyStoredLossPenaltyCap(f);
+      if(capped) capAdjustments.push(capped);
       const calc = calculateScore(f);
-      f.calculatedScore = calc;
-      f.modelScore = calc;
-      f.lossContextAudit = calc.lossContextAudit;
-      return {
-        fighter: f.fighter,
-        storedTotalScore: calc.storedTotalScore,
-        calculatedTotalScore: calc.totalScore,
-        delta: calc.delta,
-        storedLossPenalty: calc.storedLossPenalty,
-        calculatedLossPenalty: calc.calculatedLossPenalty,
-        lossPenaltyDelta: calc.lossPenaltyDelta,
-        lossContextStatus: calc.lossContextStatus
-      };
+      f.calculatedScore = calc; f.modelScore = calc; f.lossContextAudit = calc.lossContextAudit;
+      return { fighter:f.fighter, storedTotalScore:calc.storedTotalScore, calculatedTotalScore:calc.totalScore, delta:calc.delta, storedLossPenalty:calc.storedLossPenalty, calculatedLossPenalty:calc.calculatedLossPenalty, rawCalculatedLossPenalty:calc.rawCalculatedLossPenalty, lossPenaltyDelta:calc.lossPenaltyDelta, lossContextStatus:calc.lossContextStatus };
     });
+    window.UFC_LOSS_PENALTY_CAP = { version:VERSION, floor:LOSS_PENALTY_FLOOR, applied:capAdjustments };
     window.UFC_SCORING_ENGINE_REPORT = report.sort((a,b)=>Math.abs(b.delta)-Math.abs(a.delta));
-    window.UFC_LOSS_CONTEXT_REPORT = report
-      .filter(row => row.lossContextStatus !== 'missing-ledger' || row.calculatedLossPenalty !== null)
-      .sort((a,b)=>Math.abs(num(b.lossPenaltyDelta))-Math.abs(num(a.lossPenaltyDelta)));
+    window.UFC_LOSS_CONTEXT_REPORT = report.filter(row => row.lossContextStatus !== 'missing-ledger' || row.calculatedLossPenalty !== null).sort((a,b)=>Math.abs(num(b.lossPenaltyDelta))-Math.abs(num(a.lossPenaltyDelta)));
   }
 
-  function boardFor(f){
-    const data = window.RANKING_DATA || {};
-    return f?.leaderboard === 'women' ? (data.fighters || []).filter(x=>x.leaderboard==='women') : (data.fighters || []).filter(x=>x.leaderboard==='men');
-  }
-  function categoryContext(f, key){
-    const ratingScore = typeof categoryOvr === 'function' ? categoryOvr(f,key) : 55;
-    const rank = typeof categoryRank === 'function' ? categoryRank(f,key) : null;
-    const tier = typeof tierByCategoryRank === 'function' ? tierByCategoryRank(f,key) : (typeof tierForOvr === 'function' ? tierForOvr(ratingScore) : {label:'Rated',cls:'tier-average'});
-    const width = clamp(ratingScore,0,100);
-    return {ratingScore, rank, tier, width};
-  }
-  function apexExplanation(f){
-    const ctx = categoryContext(f,'apexPeak');
-    const audit = f?.apexPeakAudit || {};
-    const components = audit.components || {};
-    const score = categoryRaw(f,'apexPeak');
-    const items = [
-      ['Apex score', `+${score.toFixed(2)} / +6.00`],
-      ['Apex window', audit.window || 'Apex window not scored yet'],
-      ['Best-alive claim', `${num(components.peakStatus).toFixed(2)} / 1.50`],
-      ['Elite opponent proof', `${num(components.eliteOpponentProof).toFixed(2)} / 1.50`],
-      ['Separation / dominance', `${num(components.separationDominance).toFixed(2)} / 1.25`],
-      ['Division strength', `${num(components.divisionStrength).toFixed(2)} / 1.00`],
-      ['Clean apex / aura', `${num(components.cleanApexAura).toFixed(2)} / 0.75`]
-    ];
-    return `<div class="category-explainer ${ctx.tier.cls}"><div class="category-explainer-kicker">${ctx.tier.label} · #${ctx.rank || '—'} in category</div><h3>Apex Peak: ${ctx.ratingScore} Rating</h3><p><strong>What it means:</strong> The best version of the fighter for one night or one short stretch — peak form, elite proof, dominance, division strength, and aura.</p><div class="category-explainer-grid">${items.map(([k,v])=>`<div class="category-explainer-item"><strong>${html(k)}</strong><small>${html(v)}</small></div>`).join('')}</div><p><strong>Why it ranks here:</strong> ${html(audit.notes || 'Apex Peak needs a full input audit for this fighter.')}</p></div>`;
-  }
+  function categoryContext(f, key){ const ratingScore = typeof categoryOvr === 'function' ? categoryOvr(f,key) : 55; const rank = typeof categoryRank === 'function' ? categoryRank(f,key) : null; const tier = typeof tierByCategoryRank === 'function' ? tierByCategoryRank(f,key) : (typeof tierForOvr === 'function' ? tierForOvr(ratingScore) : {label:'Rated',cls:'tier-average'}); const width = clamp(ratingScore,0,100); return {ratingScore, rank, tier, width}; }
+  function apexExplanation(f){ const ctx = categoryContext(f,'apexPeak'); const audit = f?.apexPeakAudit || {}; const components = audit.components || {}; const score = categoryRaw(f,'apexPeak'); const items = [['Apex score', `+${score.toFixed(2)} / +6.00`], ['Apex window', audit.window || 'Apex window not scored yet'], ['Best-alive claim', `${num(components.peakStatus).toFixed(2)} / 1.50`], ['Elite opponent proof', `${num(components.eliteOpponentProof).toFixed(2)} / 1.50`], ['Separation / dominance', `${num(components.separationDominance).toFixed(2)} / 1.25`], ['Division strength', `${num(components.divisionStrength).toFixed(2)} / 1.00`], ['Clean apex / aura', `${num(components.cleanApexAura).toFixed(2)} / 0.75`]]; return `<div class="category-explainer ${ctx.tier.cls}"><div class="category-explainer-kicker">${ctx.tier.label} · #${ctx.rank || '—'} in category</div><h3>Apex Peak: ${ctx.ratingScore} Rating</h3><p><strong>What it means:</strong> The best version of the fighter for one night or one short stretch — peak form, elite proof, dominance, division strength, and aura.</p><div class="category-explainer-grid">${items.map(([k,v])=>`<div class="category-explainer-item"><strong>${html(k)}</strong><small>${html(v)}</small></div>`).join('')}</div><p><strong>Why it ranks here:</strong> ${html(audit.notes || 'Apex Peak needs a full input audit for this fighter.')}</p></div>`; }
   function installCategoryRenderers(){
     if(typeof categoryOvr !== 'function' || typeof categoryRank !== 'function') return;
     const previousExplanation = typeof categoryExplanation === 'function' ? categoryExplanation : null;
     window.UFC_CATEGORY_UI_INFO = CATEGORY_UI;
-    window.categoryCards = categoryCards = function(f){
-      return CATEGORY_UI.map(([key,label,description]) => {
-        const {ratingScore, rank, tier, width} = categoryContext(f,key);
-        return `<button type="button" class="category-card ${tier.cls}" data-category="${key}" aria-label="Explain ${html(label)} rating for ${html(f.fighter)}"><span class="category-label">${html(label)}</span><strong>${ratingScore} <span class="meta">Rating</span></strong><small>#${rank || '—'} in category · ${html(description)}</small><span class="tier-pill">${html(tier.label)}</span><div class="category-bar"><i style="width:${width}%"></i></div></button>`;
-      }).join('');
-    };
-    window.categoryChipGrid = categoryChipGrid = function(f){
-      return `<div class="category-chips">${CATEGORY_UI.map(([key,label]) => {
-        const {ratingScore, rank, tier} = categoryContext(f,key);
-        return `<div class="category-chip ${tier.cls}"><b>${html(label)}</b><span>${ratingScore} Rating · #${rank || '—'}</span><small>${html(tier.label)}</small></div>`;
-      }).join('')}</div>`;
-    };
-    window.categoryExplanation = categoryExplanation = function(f,key){
-      if(key === 'apexPeak') return apexExplanation(f);
-      return previousExplanation ? previousExplanation(f,key) : `<div class="category-explainer"><h3>${html(key)}</h3><p>Category explanation unavailable.</p></div>`;
-    };
+    window.categoryCards = categoryCards = function(f){ return CATEGORY_UI.map(([key,label,description]) => { const {ratingScore, rank, tier, width} = categoryContext(f,key); return `<button type="button" class="category-card ${tier.cls}" data-category="${key}" aria-label="Explain ${html(label)} rating for ${html(f.fighter)}"><span class="category-label">${html(label)}</span><strong>${ratingScore} <span class="meta">Rating</span></strong><small>#${rank || '—'} in category · ${html(description)}</small><span class="tier-pill">${html(tier.label)}</span><div class="category-bar"><i style="width:${width}%"></i></div></button>`; }).join(''); };
+    window.categoryChipGrid = categoryChipGrid = function(f){ return `<div class="category-chips">${CATEGORY_UI.map(([key,label]) => { const {ratingScore, rank, tier} = categoryContext(f,key); return `<div class="category-chip ${tier.cls}"><b>${html(label)}</b><span>${ratingScore} Rating · #${rank || '—'}</span><small>${html(tier.label)}</small></div>`; }).join('')}</div>`; };
+    window.categoryExplanation = categoryExplanation = function(f,key){ if(key === 'apexPeak') return apexExplanation(f); return previousExplanation ? previousExplanation(f,key) : `<div class="category-explainer"><h3>${html(key)}</h3><p>Category explanation unavailable.</p></div>`; };
   }
-
-  function activeProfileFighter(){
-    const detail = document.getElementById('fighterDetail');
-    const name = detail?.querySelector('.profile-summary h2')?.textContent?.trim();
-    if(!name) return null;
-    const norm = s => String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
-    const wanted = norm(name);
-    return fighters().find(f => norm(f.fighter) === wanted) || null;
-  }
-  function applyProfileSnapshot(){
-    const detail = document.getElementById('fighterDetail');
-    const f = activeProfileFighter();
-    if(!detail || !f) return;
-    const card = Array.from(detail.querySelectorAll('.card')).find(c => /^Resume Snapshot$/i.test(c.querySelector('h3')?.textContent?.trim() || ''));
-    if(!card) return;
-    const grid = card.querySelector('.snapshot-grid');
-    const next = snapshotGrid(snapshotItems(f));
-    if(grid) grid.outerHTML = next;
-    else card.insertAdjacentHTML('beforeend', next);
-  }
+  function activeProfileFighter(){ const detail = document.getElementById('fighterDetail'); const name = detail?.querySelector('.profile-summary h2')?.textContent?.trim(); if(!name) return null; const norm = s => String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim(); const wanted = norm(name); return fighters().find(f => norm(f.fighter) === wanted) || null; }
+  function applyProfileSnapshot(){ const detail = document.getElementById('fighterDetail'); const f = activeProfileFighter(); if(!detail || !f) return; const card = Array.from(detail.querySelectorAll('.card')).find(c => /^Resume Snapshot$/i.test(c.querySelector('h3')?.textContent?.trim() || '')); if(!card) return; const grid = card.querySelector('.snapshot-grid'); const next = snapshotGrid(snapshotItems(f)); if(grid) grid.outerHTML = next; else card.insertAdjacentHTML('beforeend', next); }
   function scheduleProfileSnapshot(){ requestAnimationFrame(applyProfileSnapshot); setTimeout(applyProfileSnapshot, 200); }
-
   function apply(){
-    normalizeScores();
-    normalizeSnapshots();
-    installCategoryRenderers();
-    scheduleProfileSnapshot();
-    window.UFC_SCORING_ENGINE = {
-      version: VERSION,
-      mode: 'shadow',
-      weights: WEIGHTS,
-      lossContextRules: LOSS_CONTEXT_RULES,
-      categories: CATEGORY_UI.map(([key,label])=>({key,label})),
-      calculateScore,
-      calculateLossContext,
-      calculateLossEntry,
-      snapshotItems,
-      report: window.UFC_SCORING_ENGINE_REPORT,
-      lossContextReport: window.UFC_LOSS_CONTEXT_REPORT
-    };
+    normalizeScores(); normalizeSnapshots(); installCategoryRenderers(); scheduleProfileSnapshot();
+    window.UFC_SCORING_ENGINE = { version:VERSION, mode:'shadow', weights:WEIGHTS, lossPenaltyFloor:LOSS_PENALTY_FLOOR, lossContextRules:LOSS_CONTEXT_RULES, categories:CATEGORY_UI.map(([key,label])=>({key,label})), calculateScore, calculateLossContext, calculateLossEntry, snapshotItems, report:window.UFC_SCORING_ENGINE_REPORT, lossContextReport:window.UFC_LOSS_CONTEXT_REPORT };
     document.documentElement.setAttribute('data-scoring-engine', VERSION);
   }
-
   apply();
-  if(typeof refresh === 'function'){
-    try{ refresh(); }catch(e){}
-  }
+  if(typeof refresh === 'function'){ try{ refresh(); }catch(e){} }
   document.addEventListener('click', () => setTimeout(applyProfileSnapshot, 0), true);
   document.addEventListener('change', () => setTimeout(applyProfileSnapshot, 0), true);
   document.addEventListener('input', () => setTimeout(applyProfileSnapshot, 0), true);
