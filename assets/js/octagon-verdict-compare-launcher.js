@@ -1,5 +1,5 @@
 // Octagon Verdict Compare Launcher
-// Replaces the old Compare Mode surface with a stable GPT matchup launcher.
+// Stable GPT matchup launcher for the Compare tab.
 (function(){
   const GPT_URL = window.OCTAGON_VERDICT_GPT_URL || 'https://chatgpt.com/g/g-6a4c40425d4881919ddebc7231bff09f-octagon-verdict';
   let rendering = false;
@@ -17,7 +17,22 @@
   function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
   function initials(name){ return String(name||'').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase() || 'UFC'; }
   function cleanOpponentName(name){ return String(name || '').replace(/\s+\d+$/, '').trim(); }
-  function activeCompare(){ return document.querySelector('.tab.active')?.dataset.view === 'compare'; }
+
+  function root(){
+    let node = $('octagonVerdictLauncher');
+    if(node) return node;
+    node = document.createElement('div');
+    node.id = 'octagonVerdictLauncher';
+    node.className = 'ov-launcher';
+    const result = $('compareResult');
+    const controls = document.querySelector('#compare .compare-controls');
+    if(result && result.parentNode){
+      result.parentNode.insertBefore(node, result);
+    } else if(controls && controls.parentNode){
+      controls.parentNode.insertBefore(node, controls.nextSibling);
+    }
+    return node;
+  }
 
   function overallOvr(f){
     const o = overrides()[f.fighter];
@@ -42,7 +57,7 @@
   function primeRecord(f){ const stats = statBridge(f); return stats.primeRecord || f.primeRecord || f.primeUfcRecord || '—'; }
   function activeEliteYears(f){ const stats = statBridge(f); return stats.activeEliteYears ?? f.activeEliteYears; }
   function finishRate(f){ const stats = statBridge(f); return stats.finishRatePct ?? f.finishRatePct; }
-  function bestWins(f, count=5){
+  function bestWins(f, count=4){
     const opps = Array.isArray(f.opponents) ? [...f.opponents] : [];
     const picked = [];
     opps.sort((a,b)=>Number(b.credit||0)-Number(a.credit||0)).forEach(o => {
@@ -73,13 +88,13 @@
     if(found) return { frame: found.frame, swing: found.swing, aEdge: found.edges?.[a.fighter] || bestCategoryEdge(a,b), bEdge: found.edges?.[b.fighter] || bestCategoryEdge(b,a), special: true };
     const aEdge = bestCategoryEdge(a,b);
     const bEdge = bestCategoryEdge(b,a);
-    return { frame: aEdge === bEdge ? `${aEdge} and overall resume separation` : `${aEdge} vs ${bEdge}`, aEdge, bEdge, swing: 'Current score gap, title work, quality wins, and loss context' };
+    return { frame: aEdge === bEdge ? `${aEdge} and overall case separation` : `${aEdge} vs ${bEdge}`, aEdge, bEdge, swing: 'Current score gap, title work, quality wins, and loss context' };
   }
   function leanText(a,b){
     const av = Number(a.totalScore || 0);
     const bv = Number(b.totalScore || 0);
     const gap = Math.abs(av-bv);
-    if(!Number.isFinite(av) || !Number.isFinite(bv) || av === bv) return { name: 'Essentially even', tone: 'coin flip', gap: '—' };
+    if(!Number.isFinite(av) || !Number.isFinite(bv) || av === bv) return { name: 'Essentially even', tone: '', gap: '—' };
     const leader = av > bv ? a : b;
     let tone = 'narrowly';
     if(gap >= 10) tone = 'strongly';
@@ -96,15 +111,15 @@
         <div class="ov-kicker">${sideLabel}</div>
         <h3>${f.fighter}</h3>
         <div class="ov-card-meta"><b>#${rankFor(f)}</b><span>${overallOvr(f)} OVR</span><span>${divisionFor(f)}</span></div>
-        <p>${oneLine(f)}</p>
+        <p class="ov-one-line">${oneLine(f)}</p>
         <div class="ov-stat-grid">
           <div><strong>${f.ufcRecord || '—'}</strong><small>UFC record</small></div>
-          <div><strong>${titleFightWins(f)}</strong><small>Title-fight wins</small></div>
+          <div><strong>${titleFightWins(f)}</strong><small>Title wins</small></div>
           <div><strong>${eliteWins(f)}</strong><small>Elite wins</small></div>
           <div><strong>${fmt(activeEliteYears(f), 2)}</strong><small>Elite years</small></div>
         </div>
         <div class="ov-mini-line"><strong>Prime:</strong> ${primeRecord(f)}</div>
-        <div class="ov-mini-line"><strong>Finish rate:</strong> ${pct(finishRate(f))}</div>
+        <div class="ov-mini-line"><strong>Finish:</strong> ${pct(finishRate(f))}</div>
         ${wins.length ? `<div class="ov-wins"><strong>Key wins:</strong> ${wins.join(', ')}</div>` : ''}
       </div>
     </article>`;
@@ -130,13 +145,13 @@
     setTimeout(()=>node.classList.remove('show'), 1800);
   }
   function render(){
-    const result = $('compareResult');
+    const node = root();
     const selA = $('fighterA');
     const selB = $('fighterB');
-    if(!result || !selA || !selB || !window.RANKING_DATA) return;
+    if(!node || !selA || !selB || !window.RANKING_DATA || rendering) return;
     const a = fullRow(selA.value);
     const b = fullRow(selB.value);
-    if(!a.fighter || !b.fighter || rendering) return;
+    if(!a.fighter || !b.fighter) return;
     rendering = true;
     const title = document.querySelector('#compare .section-title h2');
     const subtitle = document.querySelector('#compare .section-title p');
@@ -145,8 +160,7 @@
     const frame = debateFrame(a,b);
     const lean = leanText(a,b);
     const matchup = `${a.fighter} vs ${b.fighter}`;
-    result.className = 'ov-launcher';
-    result.innerHTML = `
+    node.innerHTML = `
       <section class="ov-hero-card">
         <p class="ov-eyebrow">Greatness comparison</p>
         <h2>${matchup}</h2>
@@ -162,7 +176,7 @@
         ${fighterCard(b,'Fighter B')}
       </section>
       <section class="ov-verdict-strip">
-        <div><small>Current board lean</small><strong>${lean.name}${lean.name !== 'Essentially even' ? `, ${lean.tone}` : ''}</strong></div>
+        <div><small>Current board lean</small><strong>${lean.name}${lean.tone ? `, ${lean.tone}` : ''}</strong></div>
         <div><small>This debate comes down to</small><strong>${frame.frame}</strong></div>
         <div><small>Swing point</small><strong>${frame.swing}</strong></div>
       </section>
@@ -171,8 +185,8 @@
         <div class="card"><h3>${b.fighter} edge</h3><p>${frame.bEdge || bestCategoryEdge(b,a)}</p></div>
       </section>
     `;
-    result.querySelector('.ov-copy-btn')?.addEventListener('click', () => { copyText(matchup).then(()=>toast(`Copied: ${matchup}`)); });
-    result.querySelector('.ov-open-btn')?.addEventListener('click', () => { window.open(GPT_URL, '_blank', 'noopener,noreferrer'); });
+    node.querySelector('.ov-copy-btn')?.addEventListener('click', () => { copyText(matchup).then(()=>toast(`Copied: ${matchup}`)); });
+    node.querySelector('.ov-open-btn')?.addEventListener('click', () => { window.open(GPT_URL, '_blank', 'noopener,noreferrer'); });
     rendering = false;
   }
   function installStyles(){
@@ -180,43 +194,20 @@
     const style = document.createElement('style');
     style.id = 'octagon-verdict-compare-launcher-css';
     style.textContent = `
-      #compare.active-view #compareResult:not(.ov-launcher){opacity:0;min-height:520px;pointer-events:none}.ov-launcher{display:grid;gap:14px}.ov-launcher,.ov-launcher *{box-sizing:border-box}.ov-launcher h2,.ov-launcher h3,.ov-launcher strong,.ov-launcher b{color:#f8fafc!important}.ov-launcher p,.ov-launcher small,.ov-mini-line,.ov-wins{color:#cbd5e1!important}.ov-hero-card{border:1px solid rgba(250,204,21,.38);background:linear-gradient(135deg,rgba(249,115,22,.20),rgba(17,24,39,.96));border-radius:24px;padding:18px;box-shadow:0 22px 70px rgba(0,0,0,.18)}.ov-hero-card h2{margin:3px 0 6px;font-size:clamp(30px,4vw,52px);line-height:.96}.ov-eyebrow{color:#fde047!important;text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:900}.ov-cta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}.ov-cta-row .ghost{background:#fff!important;color:#111827!important;border-color:#e5e7eb!important}.ov-cta-row .ov-copy-btn{background:#f97316!important;border-color:#f97316!important}.ov-matchup-grid{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:14px;align-items:stretch}.ov-card{display:grid;grid-template-columns:118px minmax(0,1fr);gap:14px;border:1px solid rgba(148,163,184,.30);background:linear-gradient(180deg,#1f314d,#111827);border-radius:22px;padding:14px;min-width:0;overflow:hidden}.ov-card-photo{width:118px;min-height:156px;border-radius:18px;overflow:hidden;background:#0f172a;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:950;color:#f8fafc;border:1px solid rgba(255,255,255,.08)}.ov-card-photo img{width:100%;height:100%;object-fit:cover;object-position:center 10%;display:block}.ov-card-body h3{margin:2px 0 7px;font-size:26px;line-height:1}.ov-kicker{color:#fde047!important;font-weight:900;font-size:11px;text-transform:uppercase;letter-spacing:.12em}.ov-card-meta{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 10px}.ov-card-meta b,.ov-card-meta span{border:1px solid rgba(148,163,184,.35);border-radius:999px;padding:5px 8px;font-size:11px;color:#f8fafc!important;font-weight:900;background:rgba(15,23,42,.35)}.ov-card-meta b{background:rgba(250,204,21,.14);color:#fde68a!important;border-color:rgba(250,204,21,.35)}.ov-stat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0}.ov-stat-grid div{border:1px solid rgba(148,163,184,.35);border-radius:12px;padding:8px;background:rgba(15,23,42,.52)}.ov-stat-grid strong,.ov-stat-grid small{display:block}.ov-stat-grid small{font-size:11px;margin-top:2px}.ov-vs{align-self:center;border:1px solid rgba(250,204,21,.36);background:rgba(250,204,21,.10);color:#fde68a;border-radius:999px;width:54px;height:54px;display:flex;align-items:center;justify-content:center;font-weight:950;letter-spacing:.08em}.ov-verdict-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.ov-verdict-strip div{border:1px solid rgba(148,163,184,.28);border-radius:18px;padding:14px;background:rgba(17,24,39,.92)}.ov-verdict-strip small{display:block;text-transform:uppercase;letter-spacing:.08em;font-weight:850;font-size:11px;margin-bottom:5px}.ov-verdict-strip strong{font-size:18px;line-height:1.15}.ov-quick-case{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.ov-quick-case .card{background:linear-gradient(180deg,#18243a,#111827)!important;border-color:rgba(148,163,184,.28)!important}.ov-quick-case .card h3{margin-top:0}.ov-quick-case .card p{margin-bottom:0}.ov-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(16px);background:#111827;border:1px solid rgba(250,204,21,.35);color:#fde68a;border-radius:999px;padding:10px 14px;font-weight:900;opacity:0;pointer-events:none;z-index:60;transition:.18s ease}.ov-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}@media(max-width:900px){.ov-matchup-grid{grid-template-columns:1fr}.ov-vs{width:100%;height:auto;padding:9px}.ov-card{grid-template-columns:86px minmax(0,1fr);padding:12px}.ov-card-photo{width:86px;min-height:118px;border-radius:15px}.ov-card-body h3{font-size:22px}.ov-verdict-strip,.ov-quick-case{grid-template-columns:1fr}.ov-stat-grid{grid-template-columns:1fr 1fr}.ov-cta-row .ghost{width:auto;min-width:0}}
+      #compare.active-view{overflow:visible!important;min-height:120vh}#compare.active-view #compareResult{display:none!important}#octagonVerdictLauncher{display:grid;gap:14px;padding-bottom:40px}.ov-launcher,.ov-launcher *{box-sizing:border-box}.ov-launcher h2,.ov-launcher h3,.ov-launcher strong,.ov-launcher b{color:#f8fafc!important}.ov-launcher p,.ov-launcher small,.ov-mini-line,.ov-wins{color:#cbd5e1!important}.ov-hero-card{border:1px solid rgba(250,204,21,.38);background:linear-gradient(135deg,rgba(249,115,22,.20),rgba(17,24,39,.96));border-radius:24px;padding:18px;box-shadow:0 22px 70px rgba(0,0,0,.18)}.ov-hero-card h2{margin:3px 0 6px;font-size:clamp(30px,4vw,52px);line-height:.96}.ov-eyebrow{color:#fde047!important;text-transform:uppercase;letter-spacing:.14em;font-size:12px;font-weight:900}.ov-cta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}.ov-cta-row .ghost{background:#fff!important;color:#111827!important;border-color:#e5e7eb!important}.ov-cta-row .ov-copy-btn{background:#f97316!important;border-color:#f97316!important}.ov-matchup-grid{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:14px;align-items:stretch}.ov-card{display:grid;grid-template-columns:112px minmax(0,1fr);gap:14px;border:1px solid rgba(148,163,184,.30);background:linear-gradient(180deg,#1f314d,#111827);border-radius:22px;padding:14px;min-width:0;overflow:hidden}.ov-card-photo{width:112px;min-height:146px;border-radius:18px;overflow:hidden;background:#0f172a;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:950;color:#f8fafc;border:1px solid rgba(255,255,255,.08)}.ov-card-photo img{width:100%;height:100%;object-fit:cover;object-position:center 10%;display:block}.ov-card-body h3{margin:2px 0 7px;font-size:26px;line-height:1}.ov-kicker{color:#fde047!important;font-weight:900;font-size:11px;text-transform:uppercase;letter-spacing:.12em}.ov-card-meta{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 10px}.ov-card-meta b,.ov-card-meta span{border:1px solid rgba(148,163,184,.35);border-radius:999px;padding:5px 8px;font-size:11px;color:#f8fafc!important;font-weight:900;background:rgba(15,23,42,.35)}.ov-card-meta b{background:rgba(250,204,21,.14);color:#fde68a!important;border-color:rgba(250,204,21,.35)}.ov-one-line{margin-bottom:10px!important}.ov-stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:10px 0}.ov-stat-grid div{border:1px solid rgba(148,163,184,.35);border-radius:12px;padding:8px;background:rgba(15,23,42,.52)}.ov-stat-grid strong,.ov-stat-grid small{display:block}.ov-stat-grid small{font-size:11px;margin-top:2px}.ov-vs{align-self:center;border:1px solid rgba(250,204,21,.36);background:rgba(250,204,21,.10);color:#fde68a;border-radius:999px;width:54px;height:54px;display:flex;align-items:center;justify-content:center;font-weight:950;letter-spacing:.08em}.ov-verdict-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.ov-verdict-strip div{border:1px solid rgba(148,163,184,.28);border-radius:18px;padding:14px;background:rgba(17,24,39,.92)}.ov-verdict-strip small{display:block;text-transform:uppercase;letter-spacing:.08em;font-weight:850;font-size:11px;margin-bottom:5px}.ov-verdict-strip strong{font-size:18px;line-height:1.15}.ov-quick-case{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.ov-quick-case .card{background:linear-gradient(180deg,#18243a,#111827)!important;border-color:rgba(148,163,184,.28)!important}.ov-quick-case .card h3{margin-top:0}.ov-quick-case .card p{margin-bottom:0}.ov-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(16px);background:#111827;border:1px solid rgba(250,204,21,.35);color:#fde68a;border-radius:999px;padding:10px 14px;font-weight:900;opacity:0;pointer-events:none;z-index:60;transition:.18s ease}.ov-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}@media(max-width:900px){#compare.active-view{min-height:140vh}.ov-hero-card{padding:16px}.ov-hero-card h2{font-size:31px}.ov-matchup-grid{grid-template-columns:1fr}.ov-vs{width:100%;height:auto;padding:8px}.ov-card{grid-template-columns:72px minmax(0,1fr);gap:12px;padding:12px;border-radius:20px}.ov-card-photo{width:72px;min-height:116px;border-radius:15px;font-size:24px}.ov-card-body h3{font-size:22px}.ov-card-meta{gap:5px}.ov-card-meta b,.ov-card-meta span{font-size:10px;padding:4px 7px}.ov-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.ov-stat-grid div{padding:7px}.ov-mini-line,.ov-wins{font-size:12px}.ov-verdict-strip,.ov-quick-case{grid-template-columns:1fr}.ov-cta-row .ghost{width:auto;min-width:0}}
     `;
     document.head.appendChild(style);
   }
-  function wrapRefresh(){
-    if(window.__OV_COMPARE_REFRESH_WRAPPED || typeof window.refresh !== 'function') return;
-    window.__OV_COMPARE_REFRESH_WRAPPED = true;
-    const original = window.refresh;
-    window.refresh = function(){
-      if(activeCompare()){
-        requestAnimationFrame(render);
-        return;
-      }
-      return original.apply(this, arguments);
-    };
-  }
   function install(){
     installStyles();
-    wrapRefresh();
     const controls = document.querySelector('.compare-controls');
     if(controls) controls.classList.add('ov-controls');
     ['fighterA','fighterB'].forEach(id => $(id)?.addEventListener('change', () => setTimeout(render, 0)));
-    document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', () => setTimeout(()=>{ wrapRefresh(); render(); }, 0)));
-    const result = $('compareResult');
-    if(result && !result.dataset.ovObserver){
-      result.dataset.ovObserver = 'true';
-      const observer = new MutationObserver(() => {
-        if(rendering) return;
-        const hasLauncher = result.classList.contains('ov-launcher') && result.querySelector('.ov-hero-card');
-        if(activeCompare() && !hasLauncher) requestAnimationFrame(render);
-      });
-      observer.observe(result, { childList: true, subtree: false });
-    }
+    document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', () => setTimeout(render, 0)));
     setTimeout(render, 50);
     setTimeout(render, 500);
   }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install);
   else install();
-  window.UFC_OCTAGON_VERDICT_COMPARE_LAUNCHER = { render, version: '20260706c' };
+  window.UFC_OCTAGON_VERDICT_COMPARE_LAUNCHER = { render, version: '20260706d' };
 })();
