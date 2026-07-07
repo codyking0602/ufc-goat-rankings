@@ -1,6 +1,6 @@
 // Lightweight post-load status hook and module loader.
 (function(){
-  const VERSION='ranking-data-patches-20260707o-loss-context-ledgers-v1';
+  const VERSION='ranking-data-patches-20260707p-loss-context-ledgers-score-writes';
   const SLUG_OVERRIDES={'B.J. Penn':'bj-penn','BJ Penn':'bj-penn','Georges St-Pierre':'georges-st-pierre','T.J. Dillashaw':'tj-dillashaw','TJ Dillashaw':'tj-dillashaw','Junior dos Santos':'junior-dos-santos',"Sean O'Malley":'sean-omalley','Julianna Peña':'julianna-pena','Julianna Pena':'julianna-pena'};
   function slugFor(name){return SLUG_OVERRIDES[name]||String(name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/&/g,' and ').replace(/['’]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
   function initials(name){return String(name||'').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'UFC';}
@@ -24,7 +24,7 @@
     {src:'assets/compare-engine-v1-5.js?v=compare-engine-v1-5-20260630b',attr:'data-compare-engine-v1-5'},
     {src:'assets/compare-copy-fixes-v1.js?v=compare-copy-fixes-v1-20260630a',attr:'data-compare-copy-fixes-v1'},
     {src:'assets/js/category-rating-tiers.js?v=category-rating-tiers-20260707a',attr:'data-category-rating-tiers'},
-    {src:'assets/data/loss-context-ledgers-v1.js?v=loss-context-ledgers-v1-20260707a-clean-batch',attr:'data-loss-context-ledgers-v1'},
+    {src:'assets/data/loss-context-ledgers-v1.js?v=loss-context-ledgers-v1-20260707b-score-writes',attr:'data-loss-context-ledgers-v1'},
     {src:'assets/js/scoring-engine.js?v=scoring-engine-20260707b-loss-context-calculator',attr:'data-scoring-engine'}
   ];}
   function loadModules(){const loadCompareWatchdog=()=>loadScriptOnce('assets/js/compare-narrative-watchdog.js?v=compare-narrative-watchdog-20260702a','data-compare-narrative-watchdog',status);const loadCompareNarrative=()=>loadScriptOnce('assets/js/compare-narrative-system.js?v=compare-narrative-system-20260703g','data-compare-narrative-system',loadCompareWatchdog);const loadCompareCore=()=>loadSequence(compareCoreScripts(),loadCompareNarrative);const loadBranding=()=>loadScriptOnce('assets/js/app-branding.js?v=app-branding-20260702c','data-app-branding',loadCompareCore);const loadDivisionRankings=()=>loadScriptOnce('assets/js/division-rankings.js?v=division-rankings-20260707g-canonical-photos-only','data-division-rankings',loadBranding);const loadHomePolish=()=>loadScriptOnce('assets/js/home-polish.js?v=home-polish-hybrid-preview-20260705b','data-home-polish',loadDivisionRankings);const loadPackages=()=>loadScriptOnce('assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260702a','data-fighter-profile-packages',loadHomePolish);if(window.UFC_PROFILE_TEMPLATE_SYSTEM){loadPackages();return;}loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260702b','data-profile-template-system',loadPackages);}
