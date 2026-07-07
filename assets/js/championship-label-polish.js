@@ -1,7 +1,6 @@
-// App-facing category label polish.
-// Keeps the underlying category key as `championship` but shows the clearer label users see.
+// App-facing category label polish + current loss-context batch inputs.
 (function(){
-  const VERSION = 'championship-label-polish-20260707c-current-loss-ledgers-batch3';
+  const VERSION = 'championship-label-polish-20260707d-loss-score-writes';
   const FROM = 'Title Reign';
   const TO = 'Championship Resume';
   const DESC_FROM = 'Championship resume: title-fight wins, reign strength, and control of the division';
@@ -12,16 +11,14 @@
     if(node.nodeValue.includes(FROM)) node.nodeValue = node.nodeValue.replaceAll(FROM, TO);
     if(node.nodeValue.includes(DESC_FROM)) node.nodeValue = node.nodeValue.replaceAll(DESC_FROM, DESC_TO);
   }
-
   function polishAttributes(el){
     ['aria-label','title'].forEach(attr => {
       const val = el.getAttribute?.(attr);
       if(!val) return;
-      let next = val.replaceAll(FROM, TO).replaceAll(DESC_FROM, DESC_TO);
+      const next = val.replaceAll(FROM, TO).replaceAll(DESC_FROM, DESC_TO);
       if(next !== val) el.setAttribute(attr, next);
     });
   }
-
   function walk(root){
     if(!root) return;
     if(root.nodeType === Node.TEXT_NODE){ replaceTextNode(root); return; }
@@ -34,12 +31,9 @@
       else if(node.nodeType === Node.ELEMENT_NODE) polishAttributes(node);
     }
   }
-
   function apply(){ walk(document.body); }
-
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', apply);
   else apply();
-
   const observer = new MutationObserver(mutations => {
     for(const mutation of mutations){
       mutation.addedNodes.forEach(walk);
@@ -47,13 +41,12 @@
     }
   });
   observer.observe(document.documentElement, { childList:true, subtree:true, characterData:true });
-
   window.UFC_CHAMPIONSHIP_LABEL_POLISH = { version: VERSION, from: FROM, to: TO, appliedAt: new Date().toISOString() };
 })();
 
-// Current-result and batch loss ledgers loaded here because this module runs before scoring-engine.
+// Current-result and expanded-batch loss ledgers loaded here because this module runs before scoring-engine.
 (function(){
-  const VERSION = 'loss-context-ledgers-v3-20260707a-expanded-batch';
+  const VERSION = 'loss-context-ledgers-v4-20260707a-score-writes';
   const NORMAL = 'normal';
   const NONE = 'none';
   const REDUCED = 'reducedInjury';
@@ -106,6 +99,10 @@
       { opponent:'Marlon Vera', phase:'prime', opponentTier:'nonElite', finished:true, finishTreatment:REDUCED, counted:true, penaltyOverride:-2.00, notes:'Weird injury loss; locked reduced treatment.' },
       { opponent:'Merab Dvalishvili', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true }
     ],
+    'Sean O’Malley': [
+      { opponent:'Marlon Vera', phase:'prime', opponentTier:'nonElite', finished:true, finishTreatment:REDUCED, counted:true, penaltyOverride:-2.00, notes:'Weird injury loss; locked reduced treatment.' },
+      { opponent:'Merab Dvalishvili', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true }
+    ],
     'Aljamain Sterling': [
       { opponent:'Marlon Moraes', phase:'prePrime', opponentTier:'championTop5', finished:true, finishTreatment:NORMAL, counted:true },
       { opponent:"Sean O'Malley", phase:'prime', opponentTier:'championTop5', finished:true, finishTreatment:NORMAL, counted:true },
@@ -133,9 +130,59 @@
       { opponent:'Derrick Lewis', phase:'prime', opponentTier:'championTop5', finished:false, finishTreatment:NONE, counted:true }
     ]
   };
+  const SCORE_WRITES = {
+    'Ilia Topuria': -2.25,
+    'Khamzat Chimaev': -1.50,
+    'Dricus du Plessis': -1.50,
+    'Kayla Harrison': 0,
+    'Rose Namajunas': -9.00,
+    'Mackenzie Dern': -8.00,
+    'Julianna Peña': -8.25,
+    'Julianna Pena': -8.25,
+    'Alexa Grasso': -7.25,
+    "Sean O'Malley": -3.50,
+    'Sean O’Malley': -3.50,
+    'Aljamain Sterling': -4.50,
+    'Petr Yan': -5.25,
+    'Henry Cejudo': -4.50,
+    'Dominick Cruz': -3.75,
+    'Francis Ngannou': -3.00
+  };
+  function num(value, fallback=0){
+    const n = Number(value);
+    return Number.isFinite(n) ? n : fallback;
+  }
+  function round2(value){ return Math.round((num(value) + Number.EPSILON) * 100) / 100; }
+  function storedPenalty(f){ return num(f?.penalty ?? f?.lossPenalty ?? f?.scoring?.penalty ?? 0); }
+  function positiveScore(f){
+    const direct = num(f?.weightedScoreBreakdown?.positiveScore, NaN);
+    if(Number.isFinite(direct)) return direct;
+    return round2(num(f?.totalScore) - storedPenalty(f));
+  }
+  function applyScoreWrite(f, targetPenalty){
+    const previous = { totalScore:f.totalScore, penalty:f.penalty, lossPenalty:f.lossPenalty };
+    const positive = positiveScore(f);
+    const nextTotal = round2(positive + targetPenalty);
+    f.penalty = targetPenalty;
+    f.lossPenalty = targetPenalty;
+    f.totalScore = nextTotal;
+    if(f.scoring) f.scoring.penalty = targetPenalty;
+    if(f.weightedScoreBreakdown){
+      f.weightedScoreBreakdown.penalty = targetPenalty;
+      f.weightedScoreBreakdown.totalScore = nextTotal;
+    }
+    if(f.display?.scoreSummary){
+      f.display.scoreSummary.lossContext = targetPenalty;
+      f.display.scoreSummary.totalScore = nextTotal;
+    }
+    f.lossContextScoreWriteVersion = VERSION;
+    f.lossContextScoreWrite = { previous, positiveScore:positive, targetPenalty, source:'expanded loss-context batch' };
+    return { fighter:f.fighter, previous, next:{ totalScore:nextTotal, penalty:targetPenalty, lossPenalty:targetPenalty } };
+  }
   function applyLedgers(){
     const rows = Array.isArray(window.RANKING_DATA?.fighters) ? window.RANKING_DATA.fighters : [];
     const applied = [];
+    const scoreWritesApplied = [];
     rows.forEach(f => {
       if(!f?.fighter) return;
       if(Object.prototype.hasOwnProperty.call(LEDGERS, f.fighter)){
@@ -144,9 +191,14 @@
         if(f.fighter === 'Kayla Harrison') f.lossContextNoLosses = true;
         applied.push(f.fighter);
       }
+      if(Object.prototype.hasOwnProperty.call(SCORE_WRITES, f.fighter)){
+        scoreWritesApplied.push(applyScoreWrite(f, SCORE_WRITES[f.fighter]));
+      }
     });
-    window.UFC_LOSS_CONTEXT_LEDGERS_V2 = { version: VERSION, applied, ledgers: LEDGERS };
+    window.UFC_LOSS_CONTEXT_LEDGERS_V2 = { version: VERSION, applied, scoreWritesApplied, ledgers: LEDGERS, scoreWrites: SCORE_WRITES };
+    window.UFC_LOSS_CONTEXT_SCORE_WRITES_V2 = { version: VERSION, applied: scoreWritesApplied, writes: SCORE_WRITES };
     document.documentElement.setAttribute('data-loss-context-ledgers-v2', VERSION);
+    document.documentElement.setAttribute('data-loss-context-score-writes-v2', VERSION);
   }
   applyLedgers();
 })();
