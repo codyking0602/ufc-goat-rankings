@@ -10,7 +10,11 @@
   const CATEGORY_CEILING = 99;
 
   function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
-  function boardFor(f){ return f?.leaderboard === 'women' ? (DATA.women || []) : (DATA.men || []); }
+  function isWomenFighter(f){
+    const name = f?.fighter;
+    return f?.leaderboard === 'women' || (name && (DATA.women || []).some(x => x.fighter === name));
+  }
+  function boardFor(f){ return isWomenFighter(f) ? (DATA.women || []) : (DATA.men || []); }
   function valueFor(f,key){
     const v = Number(f?.[key] ?? 0);
     return Number.isFinite(v) ? v : 0;
