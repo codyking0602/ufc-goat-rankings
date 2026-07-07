@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /*
- * Build the public Octagon Verdict GPT Action data feed from the same files
- * that power the app. This keeps the GPT feed synced with fighter packets.
+ * Build a compact public Octagon Verdict GPT Action data feed from the same
+ * files that power the app. Keep this small enough for GPT Actions.
  */
 const fs = require('fs');
 const path = require('path');
@@ -29,9 +29,15 @@ function round(value, digits = 2) {
   return Number(n.toFixed(digits));
 }
 
-function clean(value) {
-  if (value === undefined || value === null || value === '') return undefined;
-  return value;
+function value(v) {
+  return v === undefined || v === null || v === '' ? undefined : v;
+}
+
+function pickText(v, max = 190) {
+  if (v === undefined || v === null) return undefined;
+  const s = String(v).replace(/\s+/g, ' ').trim();
+  if (!s) return undefined;
+  return s.length > max ? `${s.slice(0, max - 1).trim()}…` : s;
 }
 
 function slugify(name) {
@@ -42,49 +48,35 @@ function slugify(name) {
     .replace(/^-+|-+$/g, '');
 }
 
-function compactObject(obj) {
+function compact(obj) {
   return Object.fromEntries(
-    Object.entries(obj).filter(([, value]) => {
-      if (value === undefined || value === null || value === '') return false;
-      if (Array.isArray(value) && value.length === 0) return false;
-      if (typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === 0) return false;
+    Object.entries(obj).filter(([, v]) => {
+      if (v === undefined || v === null || v === '') return false;
+      if (Array.isArray(v) && v.length === 0) return false;
+      if (typeof v === 'object' && !Array.isArray(v) && Object.keys(v).length === 0) return false;
       return true;
     })
   );
 }
 
-function uniqueStrings(values) {
-  return Array.from(new Set((values || []).filter(Boolean).map(String)));
+function unique(values, max = 6) {
+  return Array.from(new Set((values || []).filter(Boolean).map(v => String(v).replace(/\s+/g, ' ').trim()).filter(Boolean))).slice(0, max);
 }
 
-function parseSnapshot(snapshot) {
-  const out = {};
-  if (!Array.isArray(snapshot)) return out;
-  for (const pair of snapshot) {
-    if (!Array.isArray(pair) || pair.length < 2) continue;
-    const [label, value] = pair;
-    if (!label) continue;
-    out[String(label)] = value;
-  }
-  return out;
+function snapshotValue(snapshot, label) {
+  if (!Array.isArray(snapshot)) return undefined;
+  const row = snapshot.find(item => Array.isArray(item) && item[0] === label);
+  return row ? row[1] : undefined;
 }
 
-function numericRankedRows(rows) {
-  return [...(rows || [])]
-    .filter(row => row && row.fighter && Number.isFinite(Number(row.totalScore)))
-    .sort((a, b) => Number(b.totalScore || 0) - Number(a.totalScore || 0));
-}
-
-function titleFightWinsFrom(profile, profileStats, snapshot) {
-  const direct = clean(profileStats?.titleFightWins ?? profile?.titleFightWins);
+function titleFightWinsFrom(profile, profileStats, display) {
+  const direct = value(profileStats?.titleFightWins ?? profile?.titleFightWins);
   if (direct !== undefined) return direct;
-
-  const snapTitle = snapshot['UFC Title-Fight Wins'];
-  if (snapTitle !== undefined) {
-    const match = String(snapTitle).match(/\d+(?:\.\d+)?/);
+  const snap = snapshotValue(display?.snapshot, 'UFC Title-Fight Wins');
+  if (snap !== undefined) {
+    const match = String(snap).match(/\d+(?:\.\d+)?/);
     if (match) return Number(match[0]);
   }
-
   const title = profile?.title || {};
   const total = Number(title.normalTitleWins || 0)
     + Number(title.interimTitleWins || 0)
@@ -95,10 +87,16 @@ function titleFightWinsFrom(profile, profileStats, snapshot) {
 }
 
 function adjustedTitleWinsFrom(profile, profileStats) {
-  return clean(round(profileStats?.adjustedTitleWins ?? profile?.title?.adjustedTitleWins));
+  return value(round(profileStats?.adjustedTitleWins ?? profile?.title?.adjustedTitleWins));
 }
 
-function buildContext() {
+function rankedRows(rows) {
+  return [...(rows || [])]
+    .filter(row => row?.fighter && Number.isFinite(Number(row.totalScore)))
+    .sort((a, b) => Number(b.totalScore || 0) - Number(a.totalScore || 0));
+}
+
+function context() {
   const sandbox = {
     console,
     window: {},
@@ -117,18 +115,18 @@ function buildContext() {
     Map,
     Set
   };
-  sandbox.window = sandbox.window || {};
+  sandbox.window = sandbox;
   return vm.createContext(sandbox);
 }
 
-function loadAppData() {
-  const context = buildContext();
+function load() {
+  const ctx = context();
 
-  runScript(context, 'assets/data/ranking-data.js');
-  runScript(context, 'assets/data/display-overrides.js', 'window.DISPLAY_OVERRIDES = DISPLAY_OVERRIDES;');
-  runScript(context, 'assets/data/fighter-packet-manifest.js');
+  runScript(ctx, 'assets/data/ranking-data.js');
+  runScript(ctx, 'assets/data/display-overrides.js', 'window.DISPLAY_OVERRIDES = DISPLAY_OVERRIDES;');
+  runScript(ctx, 'assets/data/fighter-packet-manifest.js');
 
-  const manifest = context.window.UFC_FIGHTER_PACKET_MANIFEST || { packets: [] };
+  const manifest = ctx.window.UFC_FIGHTER_PACKET_MANIFEST || { packets: [] };
   const missingPackets = [];
 
   for (const packet of manifest.packets || []) {
@@ -137,188 +135,126 @@ function loadAppData() {
       missingPackets.push(packet.slug);
       continue;
     }
-    runScript(context, relPath);
+    runScript(ctx, relPath);
   }
 
-  return { context, manifest, missingPackets };
+  return { ctx, manifest, missingPackets };
 }
 
-function buildFighter({ name, boardRow, profile, display, compareProfile, packet, leaderboard, rank }) {
-  const snapshot = parseSnapshot(display?.snapshot);
+function fighterRecord({ name, row, profile, display, compare, packet, group, rank }) {
   const profileStats = display?.packetProfileStats || packet?.profileStats || {};
-  const title = profile?.title || {};
-  const opponentLedger = Array.isArray(profile?.opponents) ? profile.opponents : [];
+  const opponents = Array.isArray(profile?.opponents) ? profile.opponents : [];
+  const bestWins = unique([
+    compare?.signatureWins,
+    ...opponents.slice(0, 8).map(o => o?.opponent)
+  ], 8);
 
-  const categoryScores = compactObject({
-    championship: round(boardRow?.championship ?? profile?.championship),
-    opponentQuality: round(boardRow?.opponentQuality ?? profile?.opponentQuality),
-    primeDominance: round(boardRow?.primeDominance ?? profile?.primeDominance),
-    longevity: round(boardRow?.longevity ?? profile?.longevity),
-    apexPeak: round(boardRow?.apexPeak ?? profile?.apexPeak),
-    penalty: round(boardRow?.penalty ?? profile?.penalty)
-  });
-
-  const humanStats = compactObject({
-    ufcRecord: clean(profileStats.ufcRecord ?? profile?.ufcRecord ?? boardRow?.ufcRecord ?? snapshot['UFC Record']),
-    titleFightWins: clean(titleFightWinsFrom(profile, profileStats, snapshot)),
-    adjustedTitleWins: clean(adjustedTitleWinsFrom(profile, profileStats)),
-    eliteWins: clean(profileStats.eliteWins),
-    primeRecord: clean(profileStats.primeRecord ?? profile?.primeRecord ?? boardRow?.primeRecord ?? snapshot['Prime Record']),
-    roundsWonPct: clean(round(profileStats.roundsWonPct ?? profile?.roundsWonPct ?? boardRow?.roundsWonPct)),
-    finishRatePct: clean(round(profileStats.finishRatePct ?? profile?.finishRatePct ?? boardRow?.finishRatePct)),
-    activeEliteYears: clean(round(profileStats.activeEliteYears ?? profile?.activeEliteYears ?? boardRow?.activeEliteYears)),
-    timesFinishedPrime: clean(profileStats.timesFinishedPrime ?? profile?.timesFinishedPrime ?? boardRow?.timesFinishedPrime),
-    titleSummary: clean(compareProfile?.titleSummary ?? title.notes),
-    primeSummary: clean(compareProfile?.primeSummary),
-    lossContext: clean(profileStats.lossContext ?? profile?.notes ?? boardRow?.notes),
-    divisionStrengthContext: clean(profileStats.divisionStrengthContext),
-    signatureWins: clean(compareProfile?.signatureWins),
-    snapshot
-  });
-
-  const opponentHighlights = opponentLedger.slice(0, 14).map(item => compactObject({
-    opponent: item.opponent,
-    context: item.context,
-    credit: round(item.credit),
-    type: item.type,
-    notes: item.notes
-  }));
-
-  const strengths = uniqueStrings([
-    compareProfile?.edge,
-    compareProfile?.peak,
-    compareProfile?.championship,
-    compareProfile?.opponentQuality,
-    compareProfile?.longevity,
-    ...(packet?.display?.keyJudgmentCalls || []).map(pair => Array.isArray(pair) ? `${pair[0]}: ${pair[1]}` : pair),
-    display?.oneLiner
-  ]).slice(0, 8);
-
-  const weaknesses = uniqueStrings([
-    compareProfile?.weakness,
-    compareProfile?.counter,
-    display?.whyNotHigher,
-    display?.whyNotLower
-  ]).slice(0, 6);
-
-  const notes = uniqueStrings([
-    profile?.notes,
-    boardRow?.notes,
-    display?.finalTakeaway,
-    packet?.display?.finalTakeaway,
-    ...(packet?.display?.bigAssumptions || []).map(pair => Array.isArray(pair) ? `${pair[0]}: ${pair[1]}` : pair)
-  ]).slice(0, 10);
-
-  return compactObject({
+  return compact({
     slug: slugify(name),
     name,
-    group: leaderboard,
+    group,
     rank,
-    appOvr: clean(display?.overallOvr),
-    totalScore: round(boardRow?.totalScore ?? profile?.totalScore),
-    division: clean(display?.divisionLabel ?? profile?.primaryDivision ?? boardRow?.primaryDivision),
-    resumeTag: clean(display?.resumeTag),
-    oneLiner: clean(display?.oneLiner),
-    coreCase: clean(compareProfile?.shortCase ?? display?.finalTakeaway ?? display?.whyRankedHere ?? packet?.display?.finalTakeaway),
-    bestArgument: clean(compareProfile?.bestArgument),
-    categoryScores,
-    humanStats,
-    strengths,
-    weaknesses,
-    notes,
-    opponentHighlights,
-    comparisonAngles: uniqueStrings([
-      compareProfile?.titleStyle,
-      compareProfile?.primeStyle,
-      compareProfile?.edge,
-      profileStats?.divisionStrengthContext
-    ]).slice(0, 5)
+    appOvr: value(display?.overallOvr),
+    totalScore: round(row?.totalScore ?? profile?.totalScore),
+    division: value(display?.divisionLabel ?? row?.primaryDivision ?? profile?.primaryDivision),
+    tag: pickText(display?.resumeTag, 70),
+    oneLiner: pickText(display?.oneLiner, 170),
+    ufcRecord: value(profileStats.ufcRecord ?? row?.ufcRecord ?? profile?.ufcRecord ?? snapshotValue(display?.snapshot, 'UFC Record')),
+    titleFightWins: value(titleFightWinsFrom(profile, profileStats, display)),
+    adjustedTitleWins: value(adjustedTitleWinsFrom(profile, profileStats)),
+    eliteWins: value(profileStats.eliteWins),
+    primeRecord: value(profileStats.primeRecord ?? row?.primeRecord ?? profile?.primeRecord ?? snapshotValue(display?.snapshot, 'Prime Record')),
+    roundsWonPct: value(round(profileStats.roundsWonPct ?? row?.roundsWonPct ?? profile?.roundsWonPct)),
+    finishRatePct: value(round(profileStats.finishRatePct ?? row?.finishRatePct ?? profile?.finishRatePct)),
+    activeEliteYears: value(round(profileStats.activeEliteYears ?? row?.activeEliteYears ?? profile?.activeEliteYears)),
+    timesFinishedPrime: value(profileStats.timesFinishedPrime ?? row?.timesFinishedPrime ?? profile?.timesFinishedPrime),
+    lossPenalty: value(round(profileStats.lossPenalty ?? row?.penalty ?? profile?.penalty)),
+    categories: compact({
+      championship: round(row?.championship ?? profile?.championship),
+      opponentQuality: round(row?.opponentQuality ?? profile?.opponentQuality),
+      primeDominance: round(row?.primeDominance ?? profile?.primeDominance),
+      longevity: round(row?.longevity ?? profile?.longevity),
+      apexPeak: round(row?.apexPeak ?? profile?.apexPeak),
+      penalty: round(row?.penalty ?? profile?.penalty)
+    }),
+    titleSummary: pickText(compare?.titleSummary ?? profile?.title?.notes, 150),
+    primeSummary: pickText(compare?.primeSummary, 150),
+    bestArgument: pickText(compare?.bestArgument ?? display?.whyRankedHere ?? packet?.display?.finalTakeaway, 180),
+    counter: pickText(compare?.counter ?? compare?.weakness ?? display?.whyNotHigher, 180),
+    edge: pickText(compare?.edge, 180),
+    bestWins,
+    notes: unique([
+      profileStats.divisionStrengthContext,
+      profileStats.lossContext,
+      compare?.resume,
+      compare?.championship,
+      compare?.opponentQuality,
+      packet?.display?.finalTakeaway,
+      row?.notes,
+      profile?.notes
+    ].map(note => pickText(note, 160)), 5)
   });
 }
 
-function buildSpecialMatchups(fightersByName, fightLedger) {
-  const lookup = (name) => fightersByName.get(name);
-  const margin = (a, b) => {
-    const fa = lookup(a);
-    const fb = lookup(b);
-    if (!fa || !fb || !Number.isFinite(fa.totalScore) || !Number.isFinite(fb.totalScore)) return undefined;
-    return round(Math.abs(fa.totalScore - fb.totalScore));
+function buildSpecial(fightersByName) {
+  const pair = (a, b, debate, split, notes = []) => {
+    const fa = fightersByName.get(a);
+    const fb = fightersByName.get(b);
+    let lean;
+    let margin;
+    if (fa && fb && Number.isFinite(fa.totalScore) && Number.isFinite(fb.totalScore)) {
+      lean = fa.totalScore === fb.totalScore ? 'Essentially even' : (fa.totalScore > fb.totalScore ? a : b);
+      margin = round(Math.abs(fa.totalScore - fb.totalScore));
+    }
+    return compact({ fighters: [a, b], defaultLean: lean, margin, coreDebate: debate, suggestedFinalSplit: split, notes });
   };
 
-  const staticMatchups = [
-    {
-      fighters: ['Kamaru Usman', 'Max Holloway'],
-      coreDebate: 'Usman has the better championship reign and stronger peak control. Holloway has the deeper overall case because of elite longevity and quality-win volume.',
-      suggestedFinalSplit: { betterPeakChampion: 'Kamaru Usman', greaterOverallCase: 'Max Holloway, barely' },
-      notes: [
-        'Use title-fight wins, elite longevity, prime rounds-won percentage, and opponent-quality volume instead of raw category point totals.'
-      ]
-    },
-    {
-      fighters: ['Jon Jones', 'Georges St-Pierre'],
-      coreDebate: 'GSP is the cleaner case. Jones is the bigger case.',
-      suggestedFinalSplit: { cleanerCase: 'Georges St-Pierre', greaterOverallCase: 'Jon Jones' },
-      notes: [
-        'If the user heavily values clean record or controversy context, GSP becomes easier to defend.',
-        'The current board keeps Jones ahead because of championship volume and total top-end value.'
-      ]
-    },
-    {
-      fighters: ['Khabib Nurmagomedov', 'Islam Makhachev'],
-      coreDebate: 'Khabib has the cleaner peak. Islam has the fuller current championship and modern-depth case.',
-      suggestedFinalSplit: { cleanerPeak: 'Khabib Nurmagomedov', greaterCurrentCase: 'Islam Makhachev, barely' },
-      notes: [
-        'Avoid raw category point totals unless asked.',
-        'Use Khabib undefeated run and Islam title-fight volume as the plain-language swing points.'
-      ]
-    }
+  return [
+    pair(
+      'Kamaru Usman',
+      'Max Holloway',
+      'Usman has the better championship reign and stronger peak control. Holloway has the deeper overall case because of elite longevity and quality-win volume.',
+      { betterPeakChampion: 'Kamaru Usman', greaterOverallCase: 'Max Holloway, barely' },
+      ['Use title-fight wins, elite longevity, prime rounds-won percentage, and opponent-quality volume. Avoid raw category point totals.']
+    ),
+    pair(
+      'Jon Jones',
+      'Georges St-Pierre',
+      'GSP is the cleaner case. Jones is the bigger championship-volume and top-end case.',
+      { cleanerCase: 'Georges St-Pierre', greaterOverallCase: 'Jon Jones' },
+      ['If the user values clean record/controversy heavily, GSP has the easier counterargument.']
+    ),
+    pair(
+      'Khabib Nurmagomedov',
+      'Islam Makhachev',
+      'Khabib has the cleaner peak. Islam has the fuller current championship and modern-depth case.',
+      { cleanerPeak: 'Khabib Nurmagomedov', greaterCurrentCase: 'Islam Makhachev, barely' },
+      ['Use Khabib undefeated run and Islam title-fight volume as the plain-language swing points. Avoid raw category point totals.']
+    )
   ];
-
-  const dynamicLedger = Object.entries(fightLedger || {}).map(([key, item]) => compactObject({
-    key,
-    fighters: item.fighters,
-    winner: item.winner,
-    importance: item.importance,
-    summary: item.summary,
-    fights: item.fights
-  }));
-
-  return staticMatchups.map(matchup => {
-    const [a, b] = matchup.fighters;
-    const fa = lookup(a);
-    const fb = lookup(b);
-    let defaultLean;
-    if (fa && fb && Number.isFinite(fa.totalScore) && Number.isFinite(fb.totalScore)) {
-      defaultLean = fa.totalScore === fb.totalScore ? 'Essentially even' : (fa.totalScore > fb.totalScore ? a : b);
-    }
-    return compactObject({ ...matchup, defaultLean, margin: margin(a, b) });
-  }).concat(dynamicLedger);
 }
 
-function buildPayload() {
-  const { context, manifest, missingPackets } = loadAppData();
-  const rankingData = context.window.RANKING_DATA || {};
-  const displayOverrides = context.window.DISPLAY_OVERRIDES || {};
-  const packetsByName = context.window.UFC_FIGHTER_PACKETS || {};
-  const compareProfiles = context.window.COMPARE_PROFILES || {};
-  const fightLedger = context.window.COMPARE_FIGHT_LEDGER || {};
+function build() {
+  const { ctx, manifest, missingPackets } = load();
+  const rankingData = ctx.window.RANKING_DATA || {};
+  const displayOverrides = ctx.window.DISPLAY_OVERRIDES || {};
+  const packets = ctx.window.UFC_FIGHTER_PACKETS || {};
+  const compareProfiles = ctx.window.COMPARE_PROFILES || {};
 
-  const menRows = numericRankedRows(rankingData.men);
-  const womenRows = numericRankedRows(rankingData.women);
-  const profileByName = new Map((rankingData.fighters || []).map(profile => [profile.fighter, profile]));
+  const profiles = new Map((rankingData.fighters || []).map(profile => [profile.fighter, profile]));
   const fightersByName = new Map();
 
-  for (const [leaderboard, rows] of [['men', menRows], ['women', womenRows]]) {
+  for (const [group, rows] of [['men', rankedRows(rankingData.men)], ['women', rankedRows(rankingData.women)]]) {
     rows.forEach((row, index) => {
       const name = row.fighter;
-      const fighter = buildFighter({
+      const fighter = fighterRecord({
         name,
-        boardRow: row,
-        profile: profileByName.get(name),
+        row,
+        profile: profiles.get(name),
         display: displayOverrides[name] || {},
-        compareProfile: compareProfiles[name] || displayOverrides[name]?.compareProfile || {},
-        packet: packetsByName[name] || {},
-        leaderboard,
+        compare: compareProfiles[name] || displayOverrides[name]?.compareProfile || {},
+        packet: packets[name] || {},
+        group,
         rank: index + 1
       });
       fightersByName.set(name, fighter);
@@ -334,65 +270,31 @@ function buildPayload() {
     name: 'Octagon Verdict Data',
     version: new Date().toISOString().slice(0, 10),
     generatedAt: new Date().toISOString(),
-    generatedFrom: {
-      rankingData: 'assets/data/ranking-data.js',
-      displayOverrides: 'assets/data/display-overrides.js',
-      fighterPacketManifest: 'assets/data/fighter-packet-manifest.js',
-      packetCount: manifest.packets?.length || 0,
-      missingPackets
+    source: 'Generated from ranking-data, display-overrides, fighter-packet manifest, and fighter packets.',
+    packetCount: manifest.packets?.length || 0,
+    missingPackets,
+    defaultScope: 'Judge UFC accomplishments by default. Only mention the scope when it matters.',
+    guidance: {
+      sourceOfTruth: 'Use this Action feed over uploaded Knowledge, memory, web browsing, or old scores.',
+      explainWith: ['UFC record', 'title-fight wins', 'adjusted title wins when useful', 'elite wins', 'prime record', 'rounds-won percentage', 'finish percentage', 'active elite years', 'loss context', 'rivalry/direct-fight context'],
+      avoid: ['Raw category point totals in normal answers', 'outside citations unless asked', 'Wikipedia/ESPN/UFC links unless asked', 'database/model language', 'repeated UFC-only disclaimers']
     },
-    defaultScope: 'Judge UFC accomplishments by default. Only mention the scope when it actually matters.',
-    consumerGuidance: {
-      rawScoresAreBackend: true,
-      plainLanguageRule: 'Use total scores and category scores to decide the answer, but explain the answer with fan-friendly stats like title-fight wins, UFC record, elite wins, prime record, rounds-won percentage, active elite years, rivalry context, and loss context.',
-      avoidInNormalAnswers: [
-        'Raw category point totals like championship 11.68 vs 7.41',
-        'Footnotes or outside source citations unless asked',
-        'Repeated UFC-only disclaimers',
-        'Database/model language'
-      ]
-    },
-    writingStyle: {
-      voice: 'plain, scoring-aware, conversational, direct',
-      defaultFlow: [
-        'Start with a plain verdict.',
-        'Say if the comparison is close and who is ahead if useful.',
-        'Explain where Fighter A has the edge.',
-        'Explain where Fighter B has the edge.',
-        'Ask the right debate question for each side.',
-        'End with a clean final split.'
-      ],
-      avoid: [
-        'Do not mention Cody.',
-        'Do not sound like a database or algorithm.',
-        'Do not constantly say UFC-only.',
-        'Use resume, not résumé.',
-        'Do not use tables unless asked.'
-      ]
-    },
-    categoryDefinitions: {
-      championship: 'Title-level accomplishment, adjusted title wins, title-fight wins, and reign quality.',
+    categoriesMeaning: {
+      championship: 'Title-level accomplishment and reign quality.',
       opponentQuality: 'Quality and volume of elite wins.',
       primeDominance: 'Prime record, round-winning, finish threat, separation, durability, and control.',
-      longevity: 'Active elite years and how long the fighter stayed relevant at the top level.',
-      penalty: 'Loss-context drag based on timing, opponent quality, finish context, and division context.'
+      longevity: 'Active elite years at the top level.',
+      penalty: 'Loss-context drag.'
     },
     fighterCount: fighters.length,
-    leaderboards: {
-      men: menRows.map((row, index) => ({ rank: index + 1, name: row.fighter, totalScore: round(row.totalScore) })),
-      women: womenRows.map((row, index) => ({ rank: index + 1, name: row.fighter, totalScore: round(row.totalScore) }))
-    },
     fighters,
-    specialMatchups: buildSpecialMatchups(fightersByName, fightLedger)
+    specialMatchups: buildSpecial(fightersByName)
   };
 }
 
-const payload = buildPayload();
+const payload = build();
 fs.mkdirSync(path.dirname(outPath), { recursive: true });
-fs.writeFileSync(outPath, `${JSON.stringify(payload, null, 2)}\n`, 'utf8');
-
+fs.writeFileSync(outPath, `${JSON.stringify(payload)}\n`, 'utf8');
 console.log(`Built ${path.relative(root, outPath)} with ${payload.fighterCount} fighters.`);
-console.log(`Packet manifest count: ${payload.generatedFrom.packetCount}`);
-if (payload.generatedFrom.missingPackets.length) {
-  console.warn(`Missing packet files: ${payload.generatedFrom.missingPackets.join(', ')}`);
-}
+console.log(`Output size: ${fs.statSync(outPath).size} bytes.`);
+if (payload.missingPackets.length) console.warn(`Missing packet files: ${payload.missingPackets.join(', ')}`);
