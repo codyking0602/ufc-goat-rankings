@@ -1,7 +1,7 @@
 // Watch Moment links for fighter cards and profiles.
 // Keep links here as app-facing content, separate from scoring and nickname/display-name polish.
 (function(){
-  const VERSION = 'watch-moments-20260706t-signature-label';
+  const VERSION = 'watch-moments-20260706t-profile-signature';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -72,7 +72,7 @@
   Object.entries(WATCH_MOMENTS).forEach(([fighter, url]) => {
     DISPLAY_OVERRIDES[fighter] = DISPLAY_OVERRIDES[fighter] || {};
     DISPLAY_OVERRIDES[fighter].watchUrl = url;
-    DISPLAY_OVERRIDES[fighter].watchLabel = 'Watch Signature Moment';
+    DISPLAY_OVERRIDES[fighter].watchLabel = 'Watch Moment';
   });
 
   function injectCss(){
@@ -88,13 +88,24 @@
     document.head.appendChild(style);
   }
 
+  function normalizedName(label){
+    return String(label || '')
+      .replace(/“[^”]+”/g, '')
+      .replace(/"[^"]+"/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLowerCase();
+  }
   function baseNameFor(label){
     if(WATCH_MOMENTS[label]) return label;
-    const found = Object.keys(DISPLAY_OVERRIDES).find(name => DISPLAY_OVERRIDES[name]?.displayName === label);
-    return found || label;
+    const normalized = normalizedName(label);
+    const watchKey = Object.keys(WATCH_MOMENTS).find(name => normalizedName(name) === normalized);
+    if(watchKey) return watchKey;
+    const overrideKey = Object.keys(DISPLAY_OVERRIDES).find(name => normalizedName(name) === normalized || normalizedName(DISPLAY_OVERRIDES[name]?.displayName) === normalized);
+    return overrideKey || label;
   }
   function watchUrlFor(fighter){ const base = baseNameFor(fighter); return DISPLAY_OVERRIDES[base]?.watchUrl || WATCH_MOMENTS[base] || ''; }
-  function addCardButtons(){ document.querySelectorAll('.fighter-row[data-fighter]:not(.category-leader-row)').forEach(row => { const fighter = row.dataset.fighter; const url = watchUrlFor(fighter); if(!url || row.querySelector('.watch-moment-link')) return; const target = row.querySelector('.row-main'); if(!target) return; const a = document.createElement('a'); a.className = 'watch-moment-link'; a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = '▶ Watch Signature Moment'; a.addEventListener('click', e => e.stopPropagation()); target.appendChild(a); }); }
+  function addCardButtons(){ document.querySelectorAll('.fighter-row[data-fighter]:not(.category-leader-row)').forEach(row => { const fighter = row.dataset.fighter; const url = watchUrlFor(fighter); if(!url || row.querySelector('.watch-moment-link')) return; const target = row.querySelector('.row-main'); if(!target) return; const a = document.createElement('a'); a.className = 'watch-moment-link'; a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = '▶ Watch Moment'; a.addEventListener('click', e => e.stopPropagation()); target.appendChild(a); }); }
   function addProfileButton(){ const detail = document.getElementById('fighterDetail'); if(!detail || detail.querySelector('.profile-watch-moment')) return; const label = detail.querySelector('.profile-summary h2')?.textContent?.trim(); const url = watchUrlFor(label); if(!label || !url) return; const summary = detail.querySelector('.profile-summary'); if(!summary) return; const row = document.createElement('div'); row.className = 'profile-watch-row'; const a = document.createElement('a'); a.className = 'watch-moment-link profile-watch-moment'; a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = '▶ Watch Signature Moment'; a.addEventListener('click', e => e.stopPropagation()); row.appendChild(a); summary.appendChild(row); }
   function apply(){ injectCss(); addCardButtons(); addProfileButton(); window.UFC_WATCH_MOMENTS = { version: VERSION, fighters: Object.keys(WATCH_MOMENTS) }; }
 
