@@ -1,7 +1,7 @@
 // Profile-card display nicknames for fighters who are clearly known by one.
 // Keeps list/board rows clean and keeps data keys unchanged. Does not touch resume-tag pills.
 (function(){
-  const VERSION = 'card-nicknames-20260706n-robbie-lawler';
+  const VERSION = 'card-nicknames-20260707b-final-batch-loader';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const DISPLAY_NAMES = {
@@ -81,4 +81,13 @@
     displayNames: DISPLAY_NAMES,
     scope: 'profile-display-name-only'
   };
+})();
+
+(function(){
+  const src = 'assets/data/final-batch-scores.js?v=final-batch-scores-20260707a';
+  if(document.querySelector('script[data-final-batch-scores-loader]')) return;
+  const script = document.createElement('script');
+  script.src = src;
+  script.setAttribute('data-final-batch-scores-loader','true');
+  document.body.appendChild(script);
 })();
