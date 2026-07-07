@@ -1,125 +1,52 @@
 openapi: 3.1.0
 info:
-  title: Octagon Verdict Ranking Data
-  version: "1.0.0"
-  description: Public ranking data feed for Octagon Verdict fighter comparisons.
+  title: Octagon Verdict Data
+  version: "2.0.0"
 servers:
   - url: https://codyking0602.github.io/ufc-goat-rankings
 paths:
-  /assets/data/octagon-verdict-data.json:
+  /assets/data/octagon-verdict/index.json:
     get:
-      operationId: getOctagonVerdictData
-      summary: Get current fighter comparison data
-      description: Returns current fighter ranking data, scores, notes, writing guidance, and special matchup context for Octagon Verdict.
+      operationId: getOctagonVerdictIndex
+      summary: Get compact fighter index
       responses:
         "200":
-          description: Current Octagon Verdict fighter comparison data
+          description: Compact fighter index
           content:
             application/json:
               schema:
                 type: object
-                properties:
-                  name:
-                    type: string
-                  version:
-                    type: string
-                  source:
-                    type: string
-                  defaultScope:
-                    type: string
-                  writingStyle:
-                    type: object
-                    properties:
-                      voice:
-                        type: string
-                      defaultFlow:
-                        type: array
-                        items:
-                          type: string
-                      avoid:
-                        type: array
-                        items:
-                          type: string
-                  categoryDefinitions:
-                    type: object
-                    additionalProperties:
-                      type: string
-                  fighters:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        slug:
-                          type: string
-                        name:
-                          type: string
-                        group:
-                          type: string
-                        rank:
-                          type: number
-                        appOvr:
-                          type: number
-                        overallScore:
-                          type: number
-                        ufcRecord:
-                          type: string
-                        titleFightWins:
-                          type: number
-                        adjustedTitleWins:
-                          type: number
-                        primeRoundsWonPct:
-                          type: number
-                        activeEliteYears:
-                          type: number
-                        categoryScores:
-                          type: object
-                          properties:
-                            championship:
-                              type: number
-                            opponentQuality:
-                              type: number
-                            primeDominance:
-                              type: number
-                            longevity:
-                              type: number
-                            penalty:
-                              type: number
-                        coreCase:
-                          type: string
-                        strongestEdges:
-                          type: array
-                          items:
-                            type: string
-                        mainWeaknesses:
-                          type: array
-                          items:
-                            type: string
-                        notes:
-                          type: array
-                          items:
-                            type: string
-                        comparisonAngles:
-                          type: array
-                          items:
-                            type: string
-                  specialMatchups:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        fighters:
-                          type: array
-                          items:
-                            type: string
-                        defaultLean:
-                          type: string
-                        margin:
-                          type: number
-                        coreDebate:
-                          type: string
-                        suggestedFinalSplit:
-                          type: object
-                        notes:
-                          type: array
-                          items:
-                            type: string
+  /assets/data/octagon-verdict/fighters/{slug}.json:
+    get:
+      operationId: getOctagonVerdictFighter
+      summary: Get one fighter profile
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: One fighter profile
+          content:
+            application/json:
+              schema:
+                type: object
+  /assets/data/octagon-verdict/matchups/{pairKey}.json:
+    get:
+      operationId: getOctagonVerdictMatchup
+      summary: Get special matchup note
+      parameters:
+        - name: pairKey
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Special matchup note
+          content:
+            application/json:
+              schema:
+                type: object
