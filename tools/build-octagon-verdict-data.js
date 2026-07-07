@@ -24,7 +24,7 @@ function round(value, digits = 2) {
   return Number.isFinite(n) ? Number(n.toFixed(digits)) : undefined;
 }
 function value(v) { return v === undefined || v === null || v === '' ? undefined : v; }
-function pickText(v, max = 170) {
+function pickText(v, max = 120) {
   if (v === undefined || v === null) return undefined;
   const s = String(v).replace(/\s+/g, ' ').trim();
   if (!s) return undefined;
@@ -90,14 +90,13 @@ function load() {
 function fighterRecord({ name, row, profile, display, compare, packet, group, rank }) {
   const profileStats = display?.packetProfileStats || packet?.profileStats || {};
   const opponents = Array.isArray(profile?.opponents) ? profile.opponents : [];
-  const bestWins = unique([compare?.signatureWins, ...opponents.slice(0, 8).map(o => o?.opponent)], 8);
+  const bestWins = unique(opponents.slice(0, 6).map(o => o?.opponent), 6);
   return compact({
     slug: slugify(name), name, group, rank,
     appOvr: value(display?.overallOvr),
     totalScore: round(row?.totalScore ?? profile?.totalScore),
     division: value(display?.divisionLabel ?? row?.primaryDivision ?? profile?.primaryDivision),
-    tag: pickText(display?.resumeTag, 70),
-    oneLiner: pickText(display?.oneLiner, 140),
+    tag: pickText(display?.resumeTag, 60),
     ufcRecord: value(profileStats.ufcRecord ?? row?.ufcRecord ?? profile?.ufcRecord ?? snapshotValue(display?.snapshot, 'UFC Record')),
     titleFightWins: value(titleFightWinsFrom(profile, profileStats, display)),
     adjustedTitleWins: value(adjustedTitleWinsFrom(profile, profileStats)),
@@ -108,44 +107,17 @@ function fighterRecord({ name, row, profile, display, compare, packet, group, ra
     activeEliteYears: value(round(profileStats.activeEliteYears ?? row?.activeEliteYears ?? profile?.activeEliteYears)),
     timesFinishedPrime: value(profileStats.timesFinishedPrime ?? row?.timesFinishedPrime ?? profile?.timesFinishedPrime),
     lossPenalty: value(round(profileStats.lossPenalty ?? row?.penalty ?? profile?.penalty)),
-    categories: compact({
-      championship: round(row?.championship ?? profile?.championship),
-      opponentQuality: round(row?.opponentQuality ?? profile?.opponentQuality),
-      primeDominance: round(row?.primeDominance ?? profile?.primeDominance),
-      longevity: round(row?.longevity ?? profile?.longevity),
-      apexPeak: round(row?.apexPeak ?? profile?.apexPeak),
-      penalty: round(row?.penalty ?? profile?.penalty)
-    }),
-    titleSummary: pickText(compare?.titleSummary ?? profile?.title?.notes, 110),
-    primeSummary: pickText(compare?.primeSummary, 120),
-    bestArgument: pickText(compare?.bestArgument ?? display?.whyRankedHere ?? packet?.display?.finalTakeaway, 140),
-    counter: pickText(compare?.counter ?? compare?.weakness ?? display?.whyNotHigher, 140),
-    edge: pickText(compare?.edge, 140),
-    bestWins,
-    notes: unique([profileStats.divisionStrengthContext, profileStats.lossContext, compare?.resume, compare?.championship, compare?.opponentQuality, packet?.display?.finalTakeaway].map(note => pickText(note, 120)), 4)
+    bestWins
   });
 }
 function legacyFighter(f) {
   return compact({
-    slug: f.slug,
-    name: f.name,
-    group: f.group,
-    rank: f.rank,
-    appOvr: f.appOvr,
-    totalScore: f.totalScore,
-    division: f.division,
-    tag: f.tag,
-    ufcRecord: f.ufcRecord,
-    titleFightWins: f.titleFightWins,
-    adjustedTitleWins: f.adjustedTitleWins,
-    eliteWins: f.eliteWins,
-    primeRecord: f.primeRecord,
-    roundsWonPct: f.roundsWonPct,
-    finishRatePct: f.finishRatePct,
-    activeEliteYears: f.activeEliteYears,
-    timesFinishedPrime: f.timesFinishedPrime,
-    lossPenalty: f.lossPenalty,
-    bestWins: f.bestWins
+    slug: f.slug, name: f.name, group: f.group, rank: f.rank,
+    appOvr: f.appOvr, totalScore: f.totalScore, division: f.division, tag: f.tag,
+    ufcRecord: f.ufcRecord, titleFightWins: f.titleFightWins, adjustedTitleWins: f.adjustedTitleWins,
+    eliteWins: f.eliteWins, primeRecord: f.primeRecord, roundsWonPct: f.roundsWonPct,
+    finishRatePct: f.finishRatePct, activeEliteYears: f.activeEliteYears,
+    timesFinishedPrime: f.timesFinishedPrime, lossPenalty: f.lossPenalty, bestWins: f.bestWins
   });
 }
 function buildSpecial(fightersByName) {
