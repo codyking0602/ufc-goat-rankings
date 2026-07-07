@@ -1,7 +1,20 @@
-// Category rank-based tier labels + watch pill/profile restoration.
+// Category rank-based tier labels + watch pill/profile restoration + migrated profile-stat cleanup.
 // Categories display as ratings, while tier labels are tied to rank position in the category.
 (function(){
-  const VERSION = 'category-rating-tiers-watch-pill-20260707c';
+  const VERSION = 'category-rating-tiers-watch-pill-profile-stats-20260707d';
+
+  const PROFILE_STAT_FIXES = {
+    'Julianna Peña': {
+      titleFightWins: '2',
+      eliteTopFiveWins: '2',
+      note: 'Profile stat cleanup: visible title wins and elite wins corrected after migration mapped score values into stat slots.'
+    },
+    'Julianna Pena': {
+      titleFightWins: '2',
+      eliteTopFiveWins: '2',
+      note: 'Profile stat cleanup: visible title wins and elite wins corrected after migration mapped score values into stat slots.'
+    }
+  };
 
   function categoryBoardFor(f){
     const data = window.RANKING_DATA || {};
@@ -108,6 +121,7 @@
 
   function fighters(){ return Array.isArray(window.RANKING_DATA?.fighters) ? window.RANKING_DATA.fighters : []; }
   function normalizeName(name){ return String(name || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[“”"']/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim(); }
+  function fixForName(name){ return PROFILE_STAT_FIXES[name] || PROFILE_STAT_FIXES[String(name || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'')] || null; }
   function findFighter(name){
     const wanted = normalizeName(name);
     if(!wanted) return null;
@@ -174,6 +188,55 @@
     const anchor = summary.querySelector('.profile-copy') || summary.querySelector('.profile-ovr') || summary.querySelector('h2');
     if(html && anchor) anchor.insertAdjacentHTML('afterend', `<div class="profile-watch-row">${html}</div>`);
   }
+  function titleWinValueFromFighter(f){
+    if(!f) return null;
+    const direct = [f.titleFightWins, f.ufcTitleFightWins, f.resume?.titleFightWins, f.profileStats?.titleFightWins].find(v => v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v)) && Number(v) <= 20);
+    if(direct !== undefined) return String(direct).replace(/\.0$/, '');
+    const title = f.title || {};
+    const fields = ['normalTitleWins','interimTitleWins','vacantUndisputedWins','secondDivisionUndisputedWins','vacantSecondDivisionWins'];
+    const total = fields.reduce((sum,key)=>sum + Number(title[key] || 0), 0);
+    if(total) return String(total).replace(/\.0$/, '');
+    const noteMatch = String(title.notes || '').match(/Total title fight wins = ([0-9.]+)/i);
+    return noteMatch ? noteMatch[1].replace(/\.0$/, '') : null;
+  }
+  function eliteWinsValueFromFighter(f){
+    if(!f) return null;
+    const direct = [f.eliteWins, f.topFiveWins, f.resume?.eliteWins, f.resume?.topFiveWins, f.profileStats?.eliteWins, f.profileStats?.topFiveWins].find(v => v !== undefined && v !== null && v !== '' && Number.isFinite(Number(v)) && Number(v) < 50);
+    if(direct !== undefined && Number(direct) > 0) return String(direct).replace(/\.0$/, '');
+    const opps = Array.isArray(f.opponents) ? f.opponents : (Array.isArray(f.qualityWins) ? f.qualityWins : []);
+    const names = new Set();
+    opps.forEach(o => {
+      const credit = Number(o.credit || o.value || 0);
+      const context = String(o.context || o.notes || '').toLowerCase();
+      if(credit >= 0.75 || /champion|top 5|top-five|elite/.test(context)){
+        const name = String(o.opponent || '').replace(/\s+\d+$/, '').trim();
+        if(name) names.add(name);
+      }
+    });
+    return names.size ? String(names.size) : null;
+  }
+  function correctProfileSnapshotStats(){
+    const detail = document.getElementById('fighterDetail');
+    if(!detail) return;
+    const fighterName = detail.querySelector('.profile-summary h2')?.textContent?.trim();
+    const f = findFighter(fighterName);
+    const fix = fixForName(fighterName) || fixForName(f?.fighter);
+    detail.querySelectorAll('.snapshot-item').forEach(item => {
+      const label = item.querySelector('small')?.textContent?.trim() || '';
+      const valueNode = item.querySelector('strong');
+      if(!valueNode) return;
+      const currentText = valueNode.textContent.trim();
+      const currentNumber = Number(String(currentText).replace(/[^0-9.-]/g,''));
+      if(/title-fight wins/i.test(label)){
+        const derived = fix?.titleFightWins || titleWinValueFromFighter(f);
+        if(derived && (!Number.isFinite(currentNumber) || currentNumber > 12 || String(currentText).includes('.'))) valueNode.textContent = derived;
+      }
+      if(/elite|top-?5/i.test(label)){
+        const derived = fix?.eliteTopFiveWins || eliteWinsValueFromFighter(f);
+        if(derived && (!Number.isFinite(currentNumber) || currentNumber === 0 || String(currentText).includes('.'))) valueNode.textContent = derived;
+      }
+    });
+  }
   function renderRealDivisionBoard(){
     const active = document.querySelector('.tab.active')?.dataset.view;
     if(active === 'division' && typeof window.renderDivision === 'function'){
@@ -183,7 +246,9 @@
   function applyUx(){
     ensureLeaderboardWatchButtons();
     ensureProfileWatchButton();
+    correctProfileSnapshotStats();
     renderRealDivisionBoard();
+    window.UFC_PROFILE_STAT_CLEANUP = {version: VERSION, fixes: Object.keys(PROFILE_STAT_FIXES), mode: 'sanitizes visible profile stat slots that received score values during migration'};
     document.documentElement.setAttribute('data-category-percentile-tiers', VERSION);
   }
   let scheduled = false;
