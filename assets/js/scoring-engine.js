@@ -2,13 +2,25 @@
 // Shadow mode only: calculates model totals, normalizes profile snapshot display,
 // and keeps visible category UI aligned without changing canonical fighter scores yet.
 (function(){
-  const VERSION = 'scoring-engine-20260707a-shadow-snapshot-apex';
+  const VERSION = 'scoring-engine-20260707b-loss-context-calculator';
   const WEIGHTS = {
     championship: 35 / 30,
     primeDominance: 25 / 30,
     opponentQuality: 1,
     longevity: 10 / 15,
     apexPeak: 1
+  };
+  const LOSS_CONTEXT_RULES = {
+    prePrimeChampionTop5: -0.75,
+    prePrimeNonElite: -1.25,
+    primeChampionTop5: -1.50,
+    primeNonElite: -4.00,
+    finishAddon: -0.75,
+    reducedInjuryFinishAddon: -0.50,
+    postPrime: 0,
+    upwardChampionTop5: -0.75,
+    upwardFinishAddon: -0.50,
+    upwardReducedInjuryFinishAddon: -0.25
   };
   const CATEGORY_UI = [
     ['championship', 'Championship Resume', 'UFC title-level accomplishment: title-fight wins, reign strength, and control of the division'],
@@ -35,10 +47,120 @@
     const match = String(value).match(/-?\d+(?:\.\d+)?/);
     return match ? Number(match[0]) : null;
   }
+  function asBool(value){
+    if(value === true || value === false) return value;
+    if(value === 1 || value === '1') return true;
+    if(value === 0 || value === '0') return false;
+    const s = String(value ?? '').trim().toLowerCase();
+    if(['yes','y','true','t'].includes(s)) return true;
+    if(['no','n','false','f'].includes(s)) return false;
+    return false;
+  }
+  function normalizedToken(value){
+    return String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'');
+  }
   function categoryRaw(f,key){
     return num(f?.[key] ?? f?.scoring?.[key] ?? 0);
   }
   function storedScore(f){ return num(f?.totalScore ?? 0); }
+  function storedPenalty(f){ return round2(num(f?.penalty ?? f?.lossPenalty ?? f?.scoring?.penalty ?? 0)); }
+
+  function lossPhase(loss){
+    const token = normalizedToken(loss?.phase ?? loss?.timing ?? loss?.careerPhase);
+    if(token.includes('post')) return 'postPrime';
+    if(token.includes('pre')) return 'prePrime';
+    if(token.includes('prime')) return 'prime';
+    return 'prime';
+  }
+  function lossOpponentTier(loss){
+    const token = normalizedToken(loss?.opponentTier ?? loss?.tier ?? loss?.opponentQuality ?? loss?.opponentClass);
+    if(token.includes('champion') || token.includes('top5') || token.includes('topfive') || token.includes('elite')) return 'championTop5';
+    return 'nonElite';
+  }
+  function lossFinished(loss){
+    if(loss?.finished !== undefined) return asBool(loss.finished);
+    const token = normalizedToken([loss?.result, loss?.method, loss?.finishTreatment].filter(Boolean).join(' '));
+    return token.includes('ko') || token.includes('tko') || token.includes('submission') || token.includes('sub') || token.includes('finish');
+  }
+  function lossFinishTreatment(loss){
+    const token = normalizedToken(loss?.finishTreatment ?? loss?.finishContext ?? loss?.context);
+    if(token.includes('reduced') || token.includes('injury') || token.includes('technical')) return 'reducedInjury';
+    if(token.includes('none') || token.includes('noaddon') || token.includes('decision')) return 'none';
+    return lossFinished(loss) ? 'normal' : 'none';
+  }
+  function finishAddonFor(loss, upward=false){
+    if(!lossFinished(loss)) return 0;
+    const treatment = lossFinishTreatment(loss);
+    if(treatment === 'none') return 0;
+    if(upward) return treatment === 'reducedInjury' ? LOSS_CONTEXT_RULES.upwardReducedInjuryFinishAddon : LOSS_CONTEXT_RULES.upwardFinishAddon;
+    return treatment === 'reducedInjury' ? LOSS_CONTEXT_RULES.reducedInjuryFinishAddon : LOSS_CONTEXT_RULES.finishAddon;
+  }
+  function lossRuleLabel(parts){
+    return parts.filter(Boolean).join(' + ');
+  }
+  function calculateLossEntry(loss){
+    const opponent = loss?.opponent || 'Unknown opponent';
+    if(loss?.counted === false){
+      return { opponent, base: 0, finishAddon: 0, total: 0, rule: 'Excluded / not a real competitive loss', phase: lossPhase(loss), opponentTier: lossOpponentTier(loss), upwardDivision: asBool(loss?.upwardDivision), finished: lossFinished(loss), counted: false, notes: loss?.notes || '' };
+    }
+    const override = firstNumber(loss?.penaltyOverride);
+    if(Number.isFinite(override)){
+      return { opponent, base: round2(override), finishAddon: 0, total: round2(override), rule: loss?.rule || 'Manual locked exception', phase: lossPhase(loss), opponentTier: lossOpponentTier(loss), upwardDivision: asBool(loss?.upwardDivision), finished: lossFinished(loss), counted: true, notes: loss?.notes || '' };
+    }
+
+    const phase = lossPhase(loss);
+    const opponentTier = lossOpponentTier(loss);
+    const upwardDivision = asBool(loss?.upwardDivision);
+    const finished = lossFinished(loss);
+    const finishTreatment = lossFinishTreatment(loss);
+    let base = 0;
+    let finishAddon = 0;
+    let rule = '';
+
+    if(phase === 'postPrime'){
+      rule = 'Post-prime loss';
+    } else if(upwardDivision && opponentTier === 'championTop5'){
+      base = LOSS_CONTEXT_RULES.upwardChampionTop5;
+      finishAddon = finishAddonFor(loss, true);
+      rule = lossRuleLabel(['Prime upward-division loss to champion/top-5', finished && finishTreatment === 'reducedInjury' ? 'reduced injury/technical finish' : finished ? 'finished' : 'decision']);
+    } else if(phase === 'prePrime'){
+      base = opponentTier === 'championTop5' ? LOSS_CONTEXT_RULES.prePrimeChampionTop5 : LOSS_CONTEXT_RULES.prePrimeNonElite;
+      finishAddon = finishAddonFor(loss, false);
+      rule = lossRuleLabel([opponentTier === 'championTop5' ? 'Pre-prime loss to champion/top-5' : 'Pre-prime loss to non-elite', finished && finishTreatment === 'reducedInjury' ? 'reduced injury/technical finish' : finished ? 'finished' : 'decision']);
+    } else {
+      base = opponentTier === 'championTop5' ? LOSS_CONTEXT_RULES.primeChampionTop5 : LOSS_CONTEXT_RULES.primeNonElite;
+      finishAddon = finishAddonFor(loss, false);
+      rule = lossRuleLabel([opponentTier === 'championTop5' ? 'Prime loss to champion/top-5' : 'Prime loss to non-elite', finished && finishTreatment === 'reducedInjury' ? 'reduced injury/technical finish' : finished ? 'finished' : 'decision']);
+    }
+
+    return {
+      opponent,
+      date: loss?.date || '',
+      result: loss?.result || loss?.method || '',
+      phase,
+      opponentTier,
+      upwardDivision,
+      finished,
+      finishTreatment,
+      counted: true,
+      base: round2(base),
+      finishAddon: round2(finishAddon),
+      total: round2(base + finishAddon),
+      rule,
+      notes: loss?.notes || ''
+    };
+  }
+  function calculateLossContext(f){
+    const losses = Array.isArray(f?.losses) ? f.losses : [];
+    const stored = storedPenalty(f);
+    if(!losses.length){
+      return { hasLedger: false, score: null, storedPenalty: stored, delta: null, status: 'missing-ledger', entries: [] };
+    }
+    const entries = losses.map(calculateLossEntry);
+    const score = round2(entries.reduce((sum,row)=>sum + num(row.total),0));
+    const delta = round2(score - stored);
+    return { hasLedger: true, score, storedPenalty: stored, delta, status: Math.abs(delta) < 0.01 ? 'match' : 'review', entries };
+  }
 
   function calculateScore(f){
     const championship = round2(categoryRaw(f,'championship') * WEIGHTS.championship);
@@ -46,7 +168,8 @@
     const opponentQuality = round2(categoryRaw(f,'opponentQuality') * WEIGHTS.opponentQuality);
     const longevity = round2(categoryRaw(f,'longevity') * WEIGHTS.longevity);
     const apexPeak = round2(categoryRaw(f,'apexPeak') * WEIGHTS.apexPeak);
-    const penalty = round2(num(f?.penalty ?? f?.lossPenalty ?? f?.scoring?.penalty ?? 0));
+    const lossContextAudit = calculateLossContext(f);
+    const penalty = storedPenalty(f);
     const positiveScore = round2(championship + primeDominance + opponentQuality + longevity + apexPeak);
     const totalScore = round2(positiveScore + penalty);
     return {
@@ -61,7 +184,12 @@
       weightedScoreBreakdown: { championship, primeDominance, opponentQuality, longevity, apexPeak, positiveScore, penalty, totalScore },
       totalScore,
       storedTotalScore: storedScore(f),
-      delta: round2(totalScore - storedScore(f))
+      delta: round2(totalScore - storedScore(f)),
+      lossContextAudit,
+      calculatedLossPenalty: lossContextAudit.score,
+      storedLossPenalty: lossContextAudit.storedPenalty,
+      lossPenaltyDelta: lossContextAudit.delta,
+      lossContextStatus: lossContextAudit.status
     };
   }
 
@@ -160,9 +288,22 @@
       const calc = calculateScore(f);
       f.calculatedScore = calc;
       f.modelScore = calc;
-      return { fighter: f.fighter, storedTotalScore: calc.storedTotalScore, calculatedTotalScore: calc.totalScore, delta: calc.delta };
+      f.lossContextAudit = calc.lossContextAudit;
+      return {
+        fighter: f.fighter,
+        storedTotalScore: calc.storedTotalScore,
+        calculatedTotalScore: calc.totalScore,
+        delta: calc.delta,
+        storedLossPenalty: calc.storedLossPenalty,
+        calculatedLossPenalty: calc.calculatedLossPenalty,
+        lossPenaltyDelta: calc.lossPenaltyDelta,
+        lossContextStatus: calc.lossContextStatus
+      };
     });
     window.UFC_SCORING_ENGINE_REPORT = report.sort((a,b)=>Math.abs(b.delta)-Math.abs(a.delta));
+    window.UFC_LOSS_CONTEXT_REPORT = report
+      .filter(row => row.lossContextStatus !== 'missing-ledger' || row.calculatedLossPenalty !== null)
+      .sort((a,b)=>Math.abs(num(b.lossPenaltyDelta))-Math.abs(num(a.lossPenaltyDelta)));
   }
 
   function boardFor(f){
@@ -244,10 +385,14 @@
       version: VERSION,
       mode: 'shadow',
       weights: WEIGHTS,
+      lossContextRules: LOSS_CONTEXT_RULES,
       categories: CATEGORY_UI.map(([key,label])=>({key,label})),
       calculateScore,
+      calculateLossContext,
+      calculateLossEntry,
       snapshotItems,
-      report: window.UFC_SCORING_ENGINE_REPORT
+      report: window.UFC_SCORING_ENGINE_REPORT,
+      lossContextReport: window.UFC_LOSS_CONTEXT_REPORT
     };
     document.documentElement.setAttribute('data-scoring-engine', VERSION);
   }
