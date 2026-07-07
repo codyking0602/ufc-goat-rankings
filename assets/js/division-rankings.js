@@ -1,8 +1,9 @@
 // Division Rankings: clean UFC-only division boards with Apex Peak included.
 (function(){
   const DATA = window.RANKING_DATA;
-  const VERSION = 'division-rankings-20260705e-clean-leaderboard';
-  if(!DATA || typeof DISPLAY_OVERRIDES === 'undefined') return;
+  const DISPLAY = (typeof window.DISPLAY_OVERRIDES !== 'undefined' && window.DISPLAY_OVERRIDES) ? window.DISPLAY_OVERRIDES : {};
+  const VERSION = 'division-rankings-20260707f-canonical-photo-clicks';
+  if(!DATA) return;
 
   const DIVISION_ORDER = [
     'Heavyweight',
@@ -15,9 +16,6 @@
     'Flyweight'
   ];
 
-  // Fluid scoring inputs mirror the live overall weighting layer:
-  // Title Reign + Prime Dominance + Quality Wins + Elite Longevity + Apex Peak + Loss Context.
-  // Division guardrails control how much of a fighter's current resume belongs in a given division.
   const SCORE_WEIGHTS = {
     championship: 35,
     primeDominance: 25,
@@ -118,8 +116,10 @@
       .division-leader-pill.active{background:var(--accent2);border-color:var(--accent2);color:#111827}
       .division-leader-summary{border:1px solid rgba(250,204,21,.28);background:rgba(18,23,34,.94);border-radius:16px;padding:12px 14px;color:var(--text);line-height:1.38}
       .division-leader-summary strong{color:var(--accent2)}
-      .division-row{grid-template-columns:54px 64px minmax(0,1fr)!important}
+      .division-row{grid-template-columns:54px 64px minmax(0,1fr)!important;cursor:pointer}
       .division-row .score,.division-row .division-score,.division-row .watch-moment-pill,.division-row .watch-moment-link{display:none!important}
+      .division-row .row-photo{overflow:hidden}
+      .division-row .row-photo img{width:100%;height:100%;object-fit:cover;display:block}
       .division-context{margin-top:6px;color:var(--muted);font-size:12px;line-height:1.35}
       @media(max-width:1100px){.division-leader-controls{grid-template-columns:repeat(3,minmax(0,1fr))}}
       @media(max-width:900px){.division-leader-controls{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.division-leader-pill{width:100%;min-width:0;min-height:40px;padding:9px 10px;font-size:12px}.division-leader-summary{font-size:13px;padding:11px 12px}.division-row{grid-template-columns:34px 58px minmax(0,1fr)!important}}
@@ -133,16 +133,18 @@
   function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
   function num(value){ const n = Number(value || 0); return Number.isFinite(n) ? n : 0; }
   function fighterInitialsLocal(name){ return String(name || '').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase(); }
+  function slugFor(name){ return String(name || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/&/g,' and ').replace(/[\'’]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''); }
+  function displayFor(f){ return DISPLAY[f.fighter] || f.display || {}; }
   function full(row){
     if(typeof fullRow === 'function') return fullRow(row);
-    const profile = DATA.fighters.find(f => f.fighter === row.fighter) || {};
-    return {...profile, ...row};
+    const profile = (DATA.fighters || []).find(f => f.fighter === row.fighter) || {};
+    return {...profile, ...row, display: {...(profile.display || {}), ...(row.display || {})}};
   }
   function allRows(){
     const boards = [...(DATA.men || [])];
     const names = new Set(boards.map(r => r.fighter));
-    DATA.fighters.filter(f => f.gender === 'Men').forEach(f => names.add(f.fighter));
-    return [...names].map(name => full(boards.find(r => r.fighter === name) || {fighter:name})).filter(f => f.gender !== 'Women');
+    (DATA.fighters || []).filter(f => f.gender === 'Men' || f.leaderboard === 'men').forEach(f => names.add(f.fighter));
+    return [...names].map(name => full(boards.find(r => r.fighter === name) || {fighter:name})).filter(f => f.gender !== 'Women' && f.leaderboard !== 'women');
   }
   function divisionsFor(f){
     const raw = [f.primaryDivision, f.secondaryDivision, f.division, f.weightClass].filter(Boolean).join(' / ');
@@ -158,7 +160,7 @@
   }
   function divisionMatch(f, division){
     if(division === 'All') return true;
-    if(f.gender === 'Women') return false;
+    if(f.gender === 'Women' || f.leaderboard === 'women') return false;
     const target = targetDivision(division);
     const ownsDivision = divisionsFor(f).some(d => d === target);
     return ownsDivision && sampleShare(f, target) > 0;
@@ -200,7 +202,7 @@
   function divisionScore(f, division){ return divisionScoreParts(f, division).score; }
   function divisionRows(division){
     const target = targetDivision(division);
-    if(division === 'All') return allRows().filter(f => f.gender !== 'Women');
+    if(division === 'All') return allRows().filter(f => f.gender !== 'Women' && f.leaderboard !== 'women');
     return allRows()
       .filter(f => divisionMatch(f, target))
       .sort((a,b) => divisionScore(b, target) - divisionScore(a, target) || num(b.totalScore) - num(a.totalScore));
@@ -209,30 +211,37 @@
     const val = divisionScore(f, division);
     return 1 + divisionRows(division).filter(row => divisionScore(row, division) > val).length;
   }
+  function photoUrlFor(f){
+    const display = displayFor(f);
+    return display.thumbUrl || display.photoUrl || f.thumbUrl || f.photoUrl || f.display?.thumbUrl || f.display?.photoUrl || `assets/fighters/${slugFor(f.fighter)}-thumb.webp`;
+  }
   function thumb(f){
-    const url = DISPLAY_OVERRIDES[f.fighter]?.thumbUrl || DISPLAY_OVERRIDES[f.fighter]?.photoUrl || '';
-    return `<div class="row-photo">${url ? `<img src="${url}" alt="${f.fighter} thumbnail" loading="lazy">` : fighterInitialsLocal(f.fighter)}</div>`;
+    const url = photoUrlFor(f);
+    return `<div class="row-photo">${url ? `<img src="${url}" alt="${f.fighter} profile photo" loading="lazy">` : fighterInitialsLocal(f.fighter)}</div>`;
   }
   function roleTag(f, division){
     const target = targetDivision(division);
     const g = guardrail(f, target);
     if(g?.tag) return g.tag;
-    if(division === 'All') return DISPLAY_OVERRIDES[f.fighter]?.resumeTag || 'Division profile';
+    const display = displayFor(f);
+    if(division === 'All') return display.resumeTag || f.resumeTag || 'Division profile';
     if(primaryMatch(f, target)) return `${target} resume`;
     return `${target} crossover`;
   }
   function watchUrlFor(f){
-    const override = DISPLAY_OVERRIDES[f.fighter] || {};
-    return override.watchUrl || override.watchMomentUrl || override.signatureMomentUrl || f.watchUrl || f.watchMomentUrl || f.signatureMomentUrl || f.display?.watchUrl || f.display?.watchMomentUrl || f.display?.signatureMomentUrl || f.watch?.url || '';
+    const display = displayFor(f);
+    return display.watchUrl || display.watchMomentUrl || display.signatureMomentUrl || f.watchUrl || f.watchMomentUrl || f.signatureMomentUrl || f.watch?.url || '';
   }
   function watchPill(f){
     if(typeof watchMomentPillHtml === 'function') return watchMomentPillHtml(f);
     const url = watchUrlFor(f);
-    return url ? `<a class="watch-moment-pill" href="${url}" target="_blank" rel="noopener noreferrer" aria-label="Watch Signature Moment for ${f.fighter}">▶ Watch Signature Moment</a>` : '';
+    return url ? `<a class="watch-moment-pill" href="${url}" target="_blank" rel="noopener noreferrer" aria-label="Watch Signature Moment for ${f.fighter}">▶ Watch Moment</a>` : '';
   }
   function rowHtml(f, division){
+    const display = displayFor(f);
     const divisions = `${f.primaryDivision || ''}${f.secondaryDivision ? ' / ' + f.secondaryDivision : ''}`;
-    return `<article class="row fighter-row division-row" data-fighter="${f.fighter}"><div class="rank">#${divisionRank(f, division)}</div>${thumb(f)}<div class="row-main"><div class="name">${f.fighter}</div><div class="meta">Overall #${DISPLAY_OVERRIDES[f.fighter]?.allTimeRank || f.rank || '—'} · ${f.ufcRecord || ''}${divisions ? ' · ' + divisions : ''}</div><div class="division-context">${roleTag(f, division)}</div>${watchPill(f)}</div></article>`;
+    const overallRank = display.allTimeRank || f.rank || '—';
+    return `<article class="row fighter-row division-row" role="button" tabindex="0" data-fighter="${f.fighter}"><div class="rank">#${divisionRank(f, division)}</div>${thumb(f)}<div class="row-main"><div class="name">${f.fighter}</div><div class="meta">Overall #${overallRank} · ${f.ufcRecord || ''}${divisions ? ' · ' + divisions : ''}</div><div class="division-context">${roleTag(f, division)}</div>${watchPill(f)}</div></article>`;
   }
   function setDivisionHeading(title, copy){
     const section = document.querySelector('#division .section-title');
@@ -279,8 +288,31 @@
     setDivisionHeading('Division Boards', 'See the top fighters by division.');
     renderShell('All', '');
   }
+  function openDivisionFighter(name){
+    if(!name) return;
+    if(typeof window.openFighter === 'function') { window.openFighter(name); return; }
+    if(typeof openFighter === 'function') { openFighter(name); }
+  }
+  function installDivisionCardClicks(){
+    const list = el('divisionList');
+    if(!list || list.dataset.divisionClickHandler === VERSION) return;
+    list.dataset.divisionClickHandler = VERSION;
+    list.addEventListener('click', event => {
+      const row = event.target.closest('.division-row');
+      if(!row || event.target.closest('a, button')) return;
+      openDivisionFighter(row.dataset.fighter);
+    });
+    list.addEventListener('keydown', event => {
+      if(event.key !== 'Enter' && event.key !== ' ') return;
+      const row = event.target.closest('.division-row');
+      if(!row) return;
+      event.preventDefault();
+      openDivisionFighter(row.dataset.fighter);
+    });
+  }
   window.renderDivision = function(){
     injectCss();
+    installDivisionCardClicks();
     normalizeDivisionSelect();
     const division = el('divisionFilter').value;
     if(division === 'All'){
@@ -291,8 +323,7 @@
     setDivisionHeading(`${division} Rankings`, 'See the top fighters by division.');
     const list = `<div class="leaderboard">${rows.map(r=>rowHtml(r,division)).join('') || '<div class="notice">No fighters are loaded for this division yet.</div>'}</div>`;
     renderShell(division, list);
-    document.querySelectorAll(`#divisionList .fighter-row`).forEach(row => row.addEventListener('click', event => { if(event.target.closest('a, button')) return; openFighter(row.dataset.fighter); }));
   };
-  window.UFC_DIVISION_RANKINGS = { version: VERSION, mode: 'clean-fluid-division-score-with-apex-peak', weights: SCORE_WEIGHTS, baseMax: BASE_MAX, guardrails: DIVISION_GUARDRAILS, scoreParts: divisionScoreParts };
+  window.UFC_DIVISION_RANKINGS = { version: VERSION, mode: 'clean-fluid-division-score-with-apex-peak-canonical-photos-clicks', weights: SCORE_WEIGHTS, baseMax: BASE_MAX, guardrails: DIVISION_GUARDRAILS, scoreParts: divisionScoreParts };
   if(typeof window.renderDivision === 'function') window.renderDivision();
 })();
