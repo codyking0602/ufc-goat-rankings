@@ -1,7 +1,7 @@
 // Division Rankings: clean UFC-only division boards with Apex Peak included.
 (function(){
   const DATA = window.RANKING_DATA;
-  const VERSION = 'division-rankings-20260707g-canonical-photos-only';
+  const VERSION = 'division-rankings-20260707h-photo-stability';
   if(!DATA) return;
 
   const DIVISION_ORDER = ['Heavyweight','Light Heavyweight','Middleweight','Welterweight','Lightweight','Featherweight','Bantamweight','Flyweight'];
@@ -84,6 +84,8 @@
     'lhw':'Light Heavyweight','hw':'Heavyweight','mw':'Middleweight','ww':'Welterweight','lw':'Lightweight','fw':'Featherweight','bw':'Bantamweight','flw':'Flyweight'
   };
 
+  const SLUG_OVERRIDES = {'B.J. Penn':'bj-penn','BJ Penn':'bj-penn','Georges St-Pierre':'georges-st-pierre','T.J. Dillashaw':'tj-dillashaw','TJ Dillashaw':'tj-dillashaw','Junior dos Santos':'junior-dos-santos',"Sean O'Malley":'sean-omalley','Julianna Peña':'julianna-pena','Julianna Pena':'julianna-pena'};
+
   function injectCss(){
     const existing = document.getElementById('division-rankings-css');
     if(existing) existing.remove();
@@ -92,14 +94,14 @@
     style.textContent = `
       .division-leader-shell{display:grid;gap:14px;margin-bottom:18px}
       .division-leader-controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:center}
-      .division-leader-pill{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:10px 12px;border-radius:999px;cursor:pointer;font-weight:850;line-height:1.1;min-height:42px;text-align:center}
+      .division-leader-pill{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:10px 12px;border-radius:999px;cursor:pointer;font-weight:850;line-height:1.1;min-height:42px;text-align:center;touch-action:manipulation}
       .division-leader-pill.active{background:var(--accent2);border-color:var(--accent2);color:#111827}
       .division-leader-summary{border:1px solid rgba(250,204,21,.28);background:rgba(18,23,34,.94);border-radius:16px;padding:12px 14px;color:var(--text);line-height:1.38}
       .division-leader-summary strong{color:var(--accent2)}
       .division-row{grid-template-columns:54px 64px minmax(0,1fr)!important;cursor:pointer}
       .division-row .score,.division-row .division-score,.division-row .watch-moment-pill,.division-row .watch-moment-link{display:none!important}
-      .division-row .row-photo{overflow:hidden;display:flex;align-items:center;justify-content:center}
-      .division-row .row-photo img{width:100%;height:100%;object-fit:cover;display:block}
+      .division-row .row-photo{overflow:hidden;display:flex;align-items:center;justify-content:center;color:#cbd5e1;background:#0f172a}
+      .division-row .row-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 10%;display:block}
       .division-context{margin-top:6px;color:var(--muted);font-size:12px;line-height:1.35}
       @media(max-width:1100px){.division-leader-controls{grid-template-columns:repeat(3,minmax(0,1fr))}}
       @media(max-width:900px){.division-leader-controls{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.division-leader-pill{width:100%;min-width:0;min-height:40px;padding:9px 10px;font-size:12px}.division-leader-summary{font-size:13px;padding:11px 12px}.division-row{grid-template-columns:34px 58px minmax(0,1fr)!important}}
@@ -114,7 +116,9 @@
   function num(value){ const n = Number(value || 0); return Number.isFinite(n) ? n : 0; }
   function escapeHtml(s){ return String(s || '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
   function fighterInitialsLocal(name){ return String(name || '').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase(); }
-  function displayFor(f){ const display = (typeof window.DISPLAY_OVERRIDES !== 'undefined' && window.DISPLAY_OVERRIDES) ? window.DISPLAY_OVERRIDES : {}; return display[f.fighter] || f.display || {}; }
+  function slugFor(name){ return SLUG_OVERRIDES[name] || String(name || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/&/g,' and ').replace(/['’]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''); }
+  function canonicalThumbFor(f){ const slug = slugFor(f?.fighter); return slug ? `assets/fighters/${slug}-thumb.webp` : ''; }
+  function displayFor(f){ const display = (window.DISPLAY_OVERRIDES || {}); return display[f.fighter] || f.display || {}; }
   function full(row){
     if(typeof fullRow === 'function') return fullRow(row);
     const profile = (DATA.fighters || []).find(f => f.fighter === row.fighter) || {};
@@ -177,14 +181,14 @@
   function divisionRank(f, division){ const val = divisionScore(f, division); return 1 + divisionRows(division).filter(row => divisionScore(row, division) > val).length; }
   function photoUrlFor(f){
     const display = displayFor(f);
-    return display.thumbUrl || f.display?.thumbUrl || f.thumbUrl || display.photoUrl || f.display?.photoUrl || f.photoUrl || '';
+    return display.thumbUrl || f.display?.thumbUrl || f.thumbUrl || display.photoUrl || f.display?.photoUrl || f.photoUrl || canonicalThumbFor(f);
   }
   function thumb(f){
     const url = photoUrlFor(f);
     const initials = escapeHtml(fighterInitialsLocal(f.fighter));
     const name = escapeHtml(f.fighter);
     if(!url) return `<div class="row-photo">${initials}</div>`;
-    return `<div class="row-photo"><img src="${escapeHtml(url)}" alt="${name} profile photo" loading="lazy" onerror="this.parentElement.textContent='${initials}'"></div>`;
+    return `<div class="row-photo"><img src="${escapeHtml(url)}" alt="${name} profile photo" loading="lazy" decoding="async" onerror="this.remove();this.parentElement.textContent='${initials}'"></div>`;
   }
   function roleTag(f, division){
     const target = targetDivision(division);
@@ -210,6 +214,11 @@
     if(p) p.textContent = copy || '';
   }
   function availableDivisions(){ return DIVISION_ORDER.filter(d => divisionRows(d).length > 0); }
+  function markAppDivisionRendered(){
+    const state = window.UFC_APP_STATE;
+    if(state?.renderedViews) state.renderedViews.divisions = true;
+    if(state?.dirtyViews) state.dirtyViews.divisions = false;
+  }
   function normalizeDivisionSelect(){
     const select = el('divisionFilter');
     if(!select) return;
@@ -229,6 +238,7 @@
     const summary = selected ? `<strong>${selected} · Men</strong><br>Top UFC resumes in this division. Showing ${rows.length} fighters.` : `<strong>Pick a division</strong><br>See the top UFC resumes by weight class.`;
     el('divisionList').innerHTML = `<div class="division-leader-shell">${divisionControlsHtml(selected)}<div class="division-leader-summary">${summary}</div>${innerHtml || ''}</div>`;
     document.querySelectorAll('[data-division-pick]').forEach(card => card.addEventListener('click', () => { el('divisionFilter').value = card.dataset.divisionPick; window.renderDivision(); }));
+    markAppDivisionRendered();
   }
   function renderDivisionHub(){ setDivisionHeading('Division Boards', 'See the top fighters by division.'); renderShell('All', ''); }
   function openDivisionFighter(name){ if(!name) return; if(typeof window.openFighter === 'function') { window.openFighter(name); return; } if(typeof openFighter === 'function') openFighter(name); }
@@ -239,9 +249,16 @@
     list.addEventListener('click', event => { const row = event.target.closest('.division-row'); if(!row || event.target.closest('a, button')) return; openDivisionFighter(row.dataset.fighter); });
     list.addEventListener('keydown', event => { if(event.key !== 'Enter' && event.key !== ' ') return; const row = event.target.closest('.division-row'); if(!row) return; event.preventDefault(); openDivisionFighter(row.dataset.fighter); });
   }
+  function installTabRefresh(){
+    if(document.documentElement.dataset.divisionStableTabs === VERSION) return;
+    document.documentElement.dataset.divisionStableTabs = VERSION;
+    document.querySelectorAll('.tab[data-view="division"]').forEach(btn => btn.addEventListener('click', () => setTimeout(() => window.renderDivision(), 0)));
+    el('divisionFilter')?.addEventListener('change', () => setTimeout(() => window.renderDivision(), 0));
+  }
   window.renderDivision = function(){
     injectCss();
     installDivisionCardClicks();
+    installTabRefresh();
     normalizeDivisionSelect();
     const division = el('divisionFilter').value;
     if(division === 'All'){ renderDivisionHub(); return; }
@@ -250,6 +267,8 @@
     const list = `<div class="leaderboard">${rows.map(r=>rowHtml(r,division)).join('') || '<div class="notice">No fighters are loaded for this division yet.</div>'}</div>`;
     renderShell(division, list);
   };
-  window.UFC_DIVISION_RANKINGS = { version: VERSION, mode:'clean-fluid-division-score-with-apex-peak-canonical-photo-only', weights:SCORE_WEIGHTS, baseMax:BASE_MAX, guardrails:DIVISION_GUARDRAILS, scoreParts:divisionScoreParts };
-  if(typeof window.renderDivision === 'function') window.renderDivision();
+  window.UFC_DIVISION_RANKINGS = { version: VERSION, mode:'clean-fluid-division-score-with-apex-peak-photo-stable', weights:SCORE_WEIGHTS, baseMax:BASE_MAX, guardrails:DIVISION_GUARDRAILS, scoreParts:divisionScoreParts };
+  installTabRefresh();
+  if(document.querySelector('.tab.active')?.dataset.view === 'division') window.renderDivision();
+  else markAppDivisionRendered();
 })();
