@@ -1,8 +1,13 @@
 // Forces visible OVR/category values to derive from current scores, not stale display overrides.
 (function(){
-  const VERSION = 'score-derived-ovr-20260703d';
+  const VERSION = 'score-derived-ovr-20260707b-82-99-score-scale';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
+
+  const OVERALL_FLOOR = 82;
+  const OVERALL_CEILING = 99;
+  const CATEGORY_FLOOR = 75;
+  const CATEGORY_CEILING = 99;
 
   function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
   function boardFor(f){ return f?.leaderboard === 'women' ? (DATA.women || []) : (DATA.men || []); }
@@ -10,37 +15,46 @@
     const v = Number(f?.[key] ?? 0);
     return Number.isFinite(v) ? v : 0;
   }
+  function finiteRows(board,key){
+    return (board || []).filter(x => Number.isFinite(Number(x?.[key])));
+  }
   function rankFromScore(f,key){
     const board = boardFor(f);
     const val = valueFor(f,key);
     return 1 + board.filter(x => valueFor(x,key) > val).length;
   }
   function ratingFromRank(rank, boardLength){
-    if(!rank) return 75;
-    if(boardLength <= 1) return 99;
+    if(!rank) return CATEGORY_FLOOR;
+    if(boardLength <= 1) return CATEGORY_CEILING;
 
-    // This is a UFC GOAT board, not a full video-game roster.
-    // Keep the rating scale compressed so lower-ranked legends do not fall into 50s/60s.
-    // Raw score still determines rank. Rank determines the polished visible rating.
-    const floor = 75;
-    const ceiling = 99;
+    // Category cards stay compressed because they read as percentile-style category standing.
     const progress = 1 - ((rank - 1) / Math.max(boardLength - 1, 1));
     const curve = boardLength <= 5 ? 0.65 : 2;
-    return clamp(Math.round(floor + Math.pow(Math.max(progress, 0), curve) * (ceiling - floor)), floor, ceiling);
+    return clamp(Math.round(CATEGORY_FLOOR + Math.pow(Math.max(progress, 0), curve) * (CATEGORY_CEILING - CATEGORY_FLOOR)), CATEGORY_FLOOR, CATEGORY_CEILING);
+  }
+  function ratingFromScore(score, board, key){
+    const values = finiteRows(board, key).map(x => valueFor(x, key));
+    if(!values.length) return OVERALL_FLOOR;
+
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    if(max === min) return OVERALL_CEILING;
+
+    const normalized = (Number(score || 0) - min) / (max - min);
+    return clamp(Math.round(OVERALL_FLOOR + normalized * (OVERALL_CEILING - OVERALL_FLOOR)), OVERALL_FLOOR, OVERALL_CEILING);
   }
   function categoryRankFromScore(f,key){
     return rankFromScore(f,key);
   }
   function categoryOvrFromScore(f,key){
-    const board = boardFor(f).filter(x => Number.isFinite(Number(x?.[key])));
+    const board = finiteRows(boardFor(f), key);
     return ratingFromRank(categoryRankFromScore(f,key), board.length);
   }
   function overallRankFromScore(f){
     return rankFromScore(f,'totalScore');
   }
   function overallOvrFromScore(f){
-    const board = boardFor(f).filter(x => Number.isFinite(Number(x?.totalScore)));
-    return ratingFromRank(overallRankFromScore(f), board.length);
+    return ratingFromScore(valueFor(f,'totalScore'), boardFor(f), 'totalScore');
   }
 
   window.overallOvr = overallOvrFromScore;
@@ -48,10 +62,12 @@
   window.categoryOvr = categoryOvrFromScore;
   window.UFC_SCORE_DERIVED_OVR = {
     version: VERSION,
-    mode: 'score-derived-compressed-rank-ratings',
+    mode: 'score-derived-raw-score-overall-scale',
     ignoresDisplayOverrideOvr: true,
-    overall: 'totalScore determines overall rank; overall rank determines visible OVR on compressed 75-99 GOAT scale',
-    categories: 'category score determines category rank; category rank determines visible category rating on compressed 75-99 GOAT scale',
+    overall: 'visible OVR is scaled from raw totalScore inside the active leaderboard: highest score = 99, lowest score = 82',
+    categories: 'category score determines category rank; category rank determines visible category rating on compressed 75-99 category scale',
+    floor: OVERALL_FLOOR,
+    ceiling: OVERALL_CEILING,
     appliedAt: new Date().toISOString()
   };
 
