@@ -414,16 +414,16 @@ function resumeTagFor(f){
 function watchMomentUrlFor(f){
   const override = displayOverrideFor(f.fighter) || {};
   return (
-    override.watchUrl ||
-    override.watchMomentUrl ||
-    override.signatureMomentUrl ||
+    f.display?.watchUrl ||
     f.watchUrl ||
     f.watchMomentUrl ||
     f.signatureMomentUrl ||
-    f.display?.watchUrl ||
     f.display?.watchMomentUrl ||
     f.display?.signatureMomentUrl ||
     f.watch?.url ||
+    override.watchUrl ||
+    override.watchMomentUrl ||
+    override.signatureMomentUrl ||
     ''
   );
 }
@@ -473,21 +473,32 @@ function rowMatchesFilters(r, { applyDivision = true } = {}){
   return textHit && divHit;
 }
 
-function fighterRowHtml(r, rankOverride=null, tagOverride=null, options={}){
-  const showCategoryChips = options.showCategoryChips !== false;
-  const showWatchPill = options.showWatchPill !== false;
-  return `<article class="row fighter-row" data-fighter="${r.fighter}">
-    <div class="rank">#${rankOverride || r.rank || '—'}</div>
-    ${rowPhoto(r)}
-    <div class="row-main"><div class="name">${r.fighter}</div><div class="meta">${r.ufcRecord || ''} · ${r.primaryDivision || ''}${r.secondaryDivision ? ' / ' + r.secondaryDivision : ''}</div><div class="resume-tag">${tagOverride || resumeTagFor(r)}</div>${showWatchPill ? watchMomentPillHtml(r) : ''}</div>
-    <div class="score">${overallOvr(r)} <span class="meta">OVR</span></div>
-    ${showCategoryChips ? categoryChipGrid(r) : ''}
+function leaderboardFighterCardHtml(f){
+  return `<article class="row fighter-row leaderboard-fighter-card" data-fighter="${f.fighter}">
+    <div class="rank">#${f.rank || '—'}</div>
+    ${rowPhoto(f)}
+    <div class="row-main"><div class="name">${f.fighter}</div><div class="meta">${f.ufcRecord || ''} · ${f.primaryDivision || ''}${f.secondaryDivision ? ' / ' + f.secondaryDivision : ''}</div><div class="resume-tag">${resumeTagFor(f)}</div>${watchMomentPillHtml(f)}</div>
+    <div class="score">${overallOvr(f)} <span class="meta">OVR</span></div>
+    ${categoryChipGrid(f)}
   </article>`;
+}
+function divisionFighterCardHtml(f, divisionRank, selectedDivision){
+  const tag = selectedDivision === 'All' ? resumeTagFor(f) : `${selectedDivision} view`;
+  return `<article class="row fighter-row division-fighter-card" data-fighter="${f.fighter}">
+    <div class="rank">#${divisionRank || f.rank || '—'}</div>
+    ${rowPhoto(f)}
+    <div class="row-main"><div class="name">${f.fighter}</div><div class="meta">${f.ufcRecord || ''} · ${f.primaryDivision || ''}${f.secondaryDivision ? ' / ' + f.secondaryDivision : ''}</div><div class="division-context">${tag}</div></div>
+    <div class="score">${overallOvr(f)} <span class="meta">OVR</span></div>
+  </article>`;
+}
+function categoryLeaderCardHtml(f, category, rank){
+  const info = CATEGORY_INFO.find(([key]) => key === category) || [category, category, ''];
+  return `<article class="row fighter-row category-leader-row" data-fighter="${f.fighter}"><div class="rank">#${rank || categoryRank(f, category) || '—'}</div>${rowPhoto(f)}<div class="row-main"><div class="name">${f.fighter}</div><div class="meta">${info[1]} · ${categoryOvr(f, category)} PCTL</div><div class="division-context">${f.ufcRecord || ''} · ${f.primaryDivision || ''}</div></div></article>`;
 }
 
 function renderList(containerId, rows){
   const filtered = rows.filter(row => rowMatchesFilters(row));
-  el(containerId).innerHTML = filtered.map(r => fighterRowHtml(r)).join('') || '<div class="notice">No fighters match that filter.</div>';
+  el(containerId).innerHTML = filtered.map(r => leaderboardFighterCardHtml(r)).join('') || '<div class="notice">No fighters match that filter.</div>';
 }
 
 function whyNotHigher(f){
@@ -588,7 +599,7 @@ function renderDivisionView(){
     .filter(f => rowMatchesFilters(f))
     .sort((a,b)=>scoreValue(b)-scoreValue(a));
   el('divisionList').innerHTML = `<div class="notice">Division view uses the current UFC-only overall score, filtered by division.</div>` +
-    (rows.map((r,i)=>fighterRowHtml(r, i+1, div === 'All' ? resumeTagFor(r) : div + ' view', { showCategoryChips: false, showWatchPill: true })).join('') || '<div class="notice">No fighters match that filter.</div>');
+    (rows.map((r,i)=>divisionFighterCardHtml(r, i + 1, div)).join('') || '<div class="notice">No fighters match that filter.</div>');
   markRendered('division');
 }
 
