@@ -1,95 +1,197 @@
 # UFC GOAT App Fighter Status
 
-Last updated: 2026-07-06
+Last updated: 2026-07-07
 
-This is the permanent tracker for fighter completion. Use this instead of chat spreadsheets.
+This is the permanent tracker for fighter completion and score-audit status. Use this instead of chat spreadsheets.
 
-## New source-of-truth direction
+## Canonical source of truth
 
-Going forward, fighter-facing content should move into the fighter packet system:
-
-`assets/data/fighter-packets/<fighter-slug>.js`
-
-Scoring math still lives in:
+All fighter data now lives in:
 
 `assets/data/ranking-data.js`
 
-Permanent hand-added fighters live in:
+Do **not** add new fighter data to:
 
-`assets/data/ranking-data-additions.js`
+- `index.html`
+- `assets/data/ranking-data-additions.js`
+- `assets/data/display-overrides.js`
+- `assets/data/fighter-packets/*.js`
+- `assets/data/fighter-packet-manifest.js`
+- `assets/js/watch-moments.js`
+- compare pack files
+- correction/patch files
 
-Do not put fighter data back into `index.html`.
+Legacy files may still exist for audit/history, but they are not the workflow.
 
-## Fighter checklist
+## New fighter / audit workflow
 
-Legend: ✅ done, 🟡 partial, ❌ missing, ➡️ migrate later
+For every fighter, update only the canonical fighter object in `assets/data/ranking-data.js`.
 
-Visible ranks are recalculated dynamically in the app from the current sorted board. The Board column below is tracker context, not the front-end source of truth.
+Each fighter should be reviewed in small batches. It is okay to update scores during the audit, but every score change should be intentional and easy to explain.
 
-| Fighter | Board | Status | Packet | Ranking | Display | Profile stats | Compare seasoning | Ledger | Watch | Photos | Next fix | Main edit location |
-|---|---:|---|---|---|---|---|---|---|---|---|---|---|
-| Jon Jones | Men #1 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Jon fix needed | `assets/data/fighter-packets.js` |
-| Georges St-Pierre | Men #2 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No GSP fix needed | `assets/data/fighter-packets.js` |
-| Demetrious Johnson | Men #3 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No DJ fix needed | `assets/data/fighter-packets/demetrious-johnson.js` |
-| Anderson Silva | Men #4 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Anderson fix needed | `assets/data/fighter-packets/anderson-silva.js` |
-| Islam Makhachev | Men #5 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Islam fix needed | `assets/data/fighter-packets/islam-makhachev.js` |
-| Khabib Nurmagomedov | Men #6 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Khabib fix needed | `assets/data/fighter-packets/khabib-nurmagomedov.js` |
-| Alexander Volkanovski | Men #7 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Volk fix needed | `assets/data/fighter-packets/alexander-volkanovski.js` |
-| Randy Couture | Men #8 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Randy fix needed | `assets/data/fighter-packets/randy-couture.js` |
-| Max Holloway | Men #9 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Max fix needed | `assets/data/fighter-packets/max-holloway.js` |
-| Kamaru Usman | Men #10 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Usman fix needed | `assets/data/fighter-packets/kamaru-usman.js` |
-| Jose Aldo | Men #11 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Aldo fix needed | `assets/data/fighter-packets/jose-aldo.js` |
-| Matt Hughes | Men #12 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Hughes fix needed | `assets/data/fighter-packets/matt-hughes.js` |
-| Dricus du Plessis | Men #13 | Permanent hand-added fighter; OQ/Apex/Prime reviewed; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Dricus photos after real files exist | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/dricus-du-plessis.js` |
-| Tyron Woodley | Men #14 | Permanent hand-added fighter; prime extended through Burns; packet, rounds, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Woodley photos; audit exact round-control rows next rebuild | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/tyron-woodley.js` |
-| Aljamain Sterling | Men #15 | Permanent hand-added fighter; packet live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Aljo photos; add Watch Moment only if URL is provided | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/aljamain-sterling.js` |
-| Daniel Cormier | Men #13 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No DC fix needed | `assets/data/fighter-packets/daniel-cormier.js` |
-| Stipe Miocic | Men #14 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Stipe fix needed | `assets/data/fighter-packets/stipe-miocic.js` |
-| Ilia Topuria | Men #15 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Ilia fix needed | `assets/data/fighter-packets/ilia-topuria.js` |
-| Israel Adesanya | Men #15 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Izzy fix needed | `assets/data/fighter-packets/israel-adesanya.js` |
-| Cain Velasquez | Men #16 | Packet live, Watch Moment added | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | Add direct ledger only if needed | `assets/data/fighter-packets/cain-velasquez.js` |
-| Petr Yan | Men #16 | Complete in packet system | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Yan fix needed | `assets/data/fighter-packets/petr-yan.js` |
-| Merab Dvalishvili | Men #17 | Packet live, Watch Moment added | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Merab fix needed | `assets/data/fighter-packets/merab-dvalishvili.js` |
-| B.J. Penn | Men #18 | Packet live, Watch Moment added | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No BJ fix needed | `assets/data/fighter-packets/bj-penn.js` |
-| Dustin Poirier | Men #20 | Permanent hand-added fighter; packet live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Dustin photos | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/dustin-poirier.js` |
-| T.J. Dillashaw | Men #21 | Permanent hand-added fighter; packet live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add TJ photos | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/tj-dillashaw.js` |
-| Alex Pereira | Men #20 | Packet live, Watch Moment added, Gane loss updated | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Raw scoring table can be recalculated later | `assets/data/fighter-packets/alex-pereira.js` |
-| Chuck Liddell | Men #21 | Packet live, Watch Moment added | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | No Chuck fix needed | `assets/data/fighter-packets/chuck-liddell.js` |
-| Junior dos Santos | Men #21 | Fighter-packet live add; UFC heavyweight title case, win ledger, round-control rows, ledger, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add JDS photos; audit exact round-control rows next rebuild | `assets/data/fighter-packets/junior-dos-santos.js` |
-| Tito Ortiz | Men #21 | Fighter-packet live add; five-defense early UFC title reign with era/opponent-strength discount; packet, rounds, ledger, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Tito photos; audit exact round-control rows next rebuild | `assets/data/fighter-packets/tito-ortiz.js` |
-| Deiveson Figueiredo | Men #22 | Fighter-packet live add; draw-retainment and missed-weight title logic corrected; packet, rounds, ledger, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Deiveson photos; audit exact round-control rows next rebuild | `assets/data/fighter-packets/deiveson-figueiredo.js` |
-| Khamzat Chimaev | Men #23 | Fighter-packet live add; corrected title-win and Quality Wins caps; packet, rounds, ledger, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Khamzat photos; audit exact round-control rows next rebuild | `assets/data/fighter-packets/khamzat-chimaev.js` |
-| Justin Gaethje | Men #23 | Permanent hand-added fighter; Watch Moment added; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Gaethje photos | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/justin-gaethje.js` |
-| Dominick Cruz | Men #22 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Cruz photos | `assets/data/fighter-packets/dominick-cruz.js` |
-| Francis Ngannou | Men #23 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Francis photos | `assets/data/fighter-packets/francis-ngannou.js` |
-| Charles Oliveira | Men #24 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Charles photos | `assets/data/fighter-packets/charles-oliveira.js` |
-| Henry Cejudo | Men #24 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Henry photos | `assets/data/fighter-packets/henry-cejudo.js` |
-| Frankie Edgar | Men #26 | Permanent hand-added fighter; Watch Moment added; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Frankie photos | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/frankie-edgar.js` |
-| Lyoto Machida | Men #27 | Permanent hand-added fighter; corrected Quality Wins cap; packet, rounds, ledger, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Machida photos; audit exact round-control rows next rebuild | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/lyoto-machida.js` |
-| Conor McGregor | Men #26 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Conor photos | `assets/data/fighter-packets/conor-mcgregor.js` |
-| Sean Strickland | Men #28 | Permanent hand-added fighter; Apex adjustment reviewed; packet, rounds, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Strickland photos; audit exact round-control rows next rebuild | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/sean-strickland.js` |
-| Robert Whittaker | Men #29 | Permanent hand-added fighter; Romero treatment approved; packet, rounds, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Whittaker photos; audit exact round-control rows next rebuild | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/robert-whittaker.js` |
-| Sean O'Malley | Men #30 | Permanent hand-added fighter; Quality Wins reviewed; packet, rounds, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Sean photos; audit exact round-control rows next rebuild | `assets/data/fighter-packets/sean-omalley.js` |
-| Dan Henderson | Men #31 | Permanent hand-added fighter; packet live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | Add Hendo photos; add Watch Moment only if URL is provided | `assets/data/ranking-data-additions.js` + `assets/data/fighter-packets/dan-henderson.js` |
-| Amanda Nunes | Women #1 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Amanda photos | `assets/data/fighter-packets/amanda-nunes.js` |
-| Valentina Shevchenko | Women #2 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Valentina photos | `assets/data/fighter-packets/valentina-shevchenko.js` |
-| Zhang Weili | Women elite | Fighter-packet live add; two-reign strawweight case, win ledger, round-control rows, ledger, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Zhang photos; audit exact round-control rows next rebuild | `assets/data/fighter-packets/zhang-weili.js` |
-| Rose Namajunas | Women elite | Fighter-packet live add; two-reign strawweight case, win ledger, round-control rows, ledger, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Rose photos; audit exact round-control rows next rebuild | `assets/data/fighter-packets/rose-namajunas.js` |
-| Miesha Tate | Women depth | Fighter-packet live add; UFC bantamweight title case, win ledger, round-control rows, ledger, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Miesha photos; audit exact round-control rows next rebuild | `assets/data/fighter-packets/miesha-tate.js` |
-| Mackenzie Dern | Women current champ | Fighter-packet live add; vacant strawweight title case, corrected apex aura, win ledger, round-control rows, ledger, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Dern photos; audit exact round-control rows next rebuild | `assets/data/fighter-packets/mackenzie-dern.js` |
-| Kayla Harrison | Women current champ | Fighter-packet live add; bantamweight title case, short-window dominance, win ledger, round-control rows, ledger, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Kayla photos; audit exact round-control rows next rebuild | `assets/data/fighter-packets/kayla-harrison.js` |
-| Jessica Andrade | Women champion tier | Fighter-packet live add; strawweight title case, three-division win volume, ledger, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Andrade photos; audit exact round-control rows next rebuild | `assets/data/fighter-packets/jessica-andrade.js` |
-| Alexa Grasso | Women champion tier | Fighter-packet live add; flyweight title case, Valentina rivalry ledger, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Grasso photos; audit exact round-control rows next rebuild | `assets/data/fighter-packets/alexa-grasso.js` |
-| Julianna Peña | Women champion tier | Fighter-packet live add; Nunes upset title case, bantamweight ledger, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Peña photos; audit exact round-control rows next rebuild | `assets/data/fighter-packets/julianna-pena.js` |
-| Carla Esparza | Women champion tier | Fighter-packet live add; two-time strawweight champion case, Rose ledger, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Carla photos; audit exact round-control rows next rebuild | `assets/data/fighter-packets/carla-esparza.js` |
-| Holly Holm | Women champion tier | Fighter-packet live add; Ronda upset title case, title-loss ledger, and Watch Moment live; photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Holly photos; audit exact round-control rows next rebuild | `assets/data/fighter-packets/holly-holm.js` |
-| Joanna Jedrzejczyk | Women #3 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Joanna photos | `assets/data/fighter-packets/joanna-jedrzejczyk.js` |
-| Ronda Rousey | Women #4 | Packet live, Watch Moment added, photos needed | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | Add Ronda photos | `assets/data/fighter-packets/ronda-rousey.js` |
+Audit order for each fighter:
 
-## Current priorities
+1. **Identity / placement** — name, slug/id, gender, leaderboard, divisions, UFC record.
+2. **Scoring** — totalScore, Championship, Quality Wins, Prime Dominance, Longevity, Apex Peak, Loss Context.
+3. **Resume Snapshot** — visible stat boxes. These must be real stats, not category scores.
+4. **Title context** — actual title-fight wins, adjusted title wins, title losses/defenses, notes.
+5. **Quality wins** — elite/top-5 win count and opponent ledger.
+6. **Prime / rounds** — prime record, finish rate, rounds won %, active elite years, times finished in prime.
+7. **Loss context** — penalty matches locked loss rules and notes explain weird cases.
+8. **Display copy** — resume tag, one-liner, why ranked here, why not higher, final takeaway.
+9. **Watch Moment** — canonical URL exists and renders on P4P/Women card/profile.
+10. **Photos** — real `assets/fighters/<slug>-thumb.webp` and `assets/fighters/<slug>.webp` paths only after files exist.
+11. **Compare** — compare profile/copy exists.
+12. **Fight ledger** — only real direct fights/rivalries.
 
-1. Zhang Weili, Rose Namajunas, Miesha Tate, Mackenzie Dern, Kayla Harrison, Jessica Andrade, Alexa Grasso, Julianna Peña, Carla Esparza, Holly Holm, Junior dos Santos, Tito Ortiz, Deiveson Figueiredo, Khamzat Chimaev, Tyron Woodley, Lyoto Machida, Sean Strickland, Robert Whittaker, and Sean O'Malley are live additions with dedicated fighter packets and round-control rows.
-2. Dynamic visible ranks are now handled by `assets/js/rank-fluidity-fixes.js`; packet rank values should not be treated as the front-end source of truth.
-3. Dricus du Plessis is permanent and reviewed across Quality Wins, Apex Peak, and Prime Dominance.
-4. Photos remain missing until real files exist.
-5. During the next full scoring-table rebuild, fold `assets/data/ranking-data-additions.js` and fighter-packet live adds into `assets/data/ranking-data.js`.
+## Resume Snapshot contract
+
+These are display stats, not scoring fields:
+
+| Visible stat | Correct source | Do not use |
+|---|---|---|
+| UFC Record | actual UFC record | total score |
+| UFC Title-Fight Wins | actual UFC title-fight wins | Championship score |
+| Adjusted Title Wins | weighted title-win credit | title-fight wins if different |
+| Elite / Top-5 Wins | real elite/top-5 wins or approved quality-win count | Opponent Quality score |
+| Prime Record | approved UFC prime/elite window record | full career record unless same |
+| Finish Rate | real UFC/prime finish rate as approved | finish score |
+| Rounds Won | approved rounds-won % | round-control score |
+| Active Elite Years | approved active elite years | Longevity score |
+| Times Finished in Prime | counted prime finish losses | all late/post-prime finishes |
+
+Example issue caught: Julianna Peña showed `21.8` UFC Title-Fight Wins because a championship score was mapped into a visible stat slot. That is a data/display bug, not a scoring call.
+
+## Status legend
+
+- ✅ verified
+- 🟡 partial / needs review
+- ❌ missing or known wrong
+- ➡️ not needed / not applicable
+
+## Active audit batches
+
+### Batch 1 — newer women additions
+
+Priority because these were added recently and are most likely to have profile-stat mapping issues.
+
+| Fighter | Board | Scores | Snapshot | Title context | Quality wins | Prime/rounds | Loss context | Display | Watch | Photos | Compare | Ledger | Current issue / next step |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Zhang Weili | Women | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ✅ | ❌ | ✅ | ✅ | Audit visible stats vs canonical score fields. |
+| Rose Namajunas | Women | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ✅ | ❌ | ✅ | ✅ | Audit visible stats and title/quality-win math. |
+| Miesha Tate | Women | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ✅ | ❌ | ✅ | ✅ | Confirm UFC-only title/elite wins; WEC/non-UFC excluded. |
+| Holly Holm | Women | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ✅ | ❌ | ✅ | ✅ | Audit title upset credit, elite wins, and post-prime losses. |
+| Mackenzie Dern | Women | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ✅ | ❌ | ✅ | 🟡 | Audit if score/title status is still current and UFC-only. |
+| Kayla Harrison | Women | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ✅ | ❌ | ✅ | ✅ | Confirm UFC-only sample, title win, and active scoring. |
+| Jessica Andrade | Women | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ✅ | ❌ | ✅ | ✅ | Audit multi-division UFC value and loss context. |
+| Carla Esparza | Women | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ✅ | ❌ | ✅ | ✅ | Confirm actual title-fight wins/defenses and quality wins. |
+| Julianna Peña | Women | 🟡 | ✅ | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ✅ | ❌ | ✅ | ✅ | Snapshot patched: title wins 2, elite/top-5 wins 2. Needs canonical object cleanup and score review. |
+| Alexa Grasso | Women | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ✅ | ❌ | ✅ | ✅ | Audit draw/title credit, Shevchenko ledger, and current score. |
+
+### Batch 2 — newer men additions
+
+| Fighter | Board | Scores | Snapshot | Title context | Quality wins | Prime/rounds | Loss context | Display | Watch | Photos | Compare | Ledger | Current issue / next step |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Brock Lesnar | Men | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ✅ | ❌ | ✅ | ✅ | Audit short-window title case and loss penalty. |
+| Tony Ferguson | Men | 🟡 | 🟡 | ➡️ | 🟡 | 🟡 | 🟡 | ✅ | ✅ | ❌ | ✅ | ✅ | Audit interim/elite-win credit and prime-collapse treatment. |
+| Michael Bisping | Men | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ✅ | ❌ | ✅ | ✅ | Audit title win, defense/loss context, and elite wins. |
+| Chael Sonnen | Men | 🟡 | 🟡 | ➡️ | 🟡 | 🟡 | 🟡 | ✅ | ✅ | ❌ | ✅ | ✅ | Confirm bottom OVR anchor and title-loss/no-title context. |
+| Robbie Lawler | Men | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ✅ | ❌ | ✅ | ✅ | Audit title-fight record, Hendricks/MacDonald value, losses. |
+| Junior dos Santos | Men | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ✅ | ❌ | ✅ | ✅ | Audit round rows and exact elite-win count. |
+| Tito Ortiz | Men | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ✅ | ❌ | ✅ | ✅ | Audit early-era title volume and opponent-strength discount. |
+| Deiveson Figueiredo | Men | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ✅ | ❌ | ✅ | ✅ | Audit draw-retain/missed-weight title logic. |
+| Khamzat Chimaev | Men | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ✅ | ❌ | ✅ | 🟡 | Audit active sample, title credit, and quality-win cap. |
+
+### Batch 3 — requested score audits
+
+These should be reviewed after obvious profile-stat issues are cleaned up.
+
+| Fighter | Board | Scores | Snapshot | Title context | Quality wins | Prime/rounds | Loss context | Display | Watch | Photos | Compare | Ledger | Current issue / next step |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Matt Hughes | Men | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ✅ | ✅ | ✅ | ✅ | Full UFC-only score audit already started; review Quality Wins and longevity. |
+| Khabib Nurmagomedov | Men | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | Confirm championship vs dominance balance and no loss penalty. |
+| Conor McGregor | Men | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ✅ | ❌ | ✅ | ✅ | Audit peak/two-division title credit and loss context. |
+| Henry Cejudo | Men | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | 🟡 | ✅ | ✅ | ❌ | ✅ | ✅ | Audit title wins, DJ/TJ/Cruz value, and late losses. |
+
+## Full board audit backlog
+
+### Men
+
+| Fighter | Audit status | Notes |
+|---|---|---|
+| Jon Jones | 🟡 needs canonical verification | Benchmark, 99 OVR, Hamill DQ not treated as real competitive loss. |
+| Georges St-Pierre | 🟡 needs canonical verification | Confirm Hughes/Serra loss context and title-fight volume. |
+| Demetrious Johnson | 🟡 needs canonical verification | Confirm flyweight division-strength discount and UFC-only exclusion of ONE. |
+| Anderson Silva | 🟡 needs canonical verification | Confirm Weidman losses count in-prime; later losses post-prime. |
+| Islam Makhachev | 🟡 needs canonical verification | Prime starts around Drew Dober unless updated. |
+| Khabib Nurmagomedov | 🟡 in requested audit batch | No UFC loss penalty; lightweight strength high. |
+| Alexander Volkanovski | 🟡 needs canonical verification | Islam losses use upward-division elite-loss rule. |
+| Randy Couture | 🟡 needs canonical verification | Audit multi-era title value and loss context. |
+| Max Holloway | 🟡 needs canonical verification | Audit Volk trilogy, Aldo wins, featherweight longevity. |
+| Kamaru Usman | 🟡 needs canonical verification | Audit title defenses, Woodley/Colby/Masvidal/Burns wins. |
+| Jose Aldo | 🟡 needs canonical verification | UFC-only excludes WEC; historical context copy allowed. |
+| Matt Hughes | 🟡 in requested audit batch | Quality Wins/longevity likely need close review. |
+| Daniel Cormier | 🟡 needs canonical verification | Audit LHW/HW split, Jones losses, Stipe rivalry. |
+| Stipe Miocic | 🟡 needs canonical verification | Audit HW title volume and DC/Ngannou context. |
+| Dricus du Plessis | 🟡 needs canonical verification | Active champion; score may need current review. |
+| Tyron Woodley | 🟡 needs canonical verification | Audit prime extension and Burns/Usman losses. |
+| Ilia Topuria | 🟡 needs canonical verification | Active sample; score may move quickly. |
+| Israel Adesanya | 🟡 needs canonical verification | Audit Pereira/DDP/Strickland losses and MW title volume. |
+| Aljamain Sterling | 🟡 needs canonical verification | Audit controversial/valid title credits and BW depth. |
+| Petr Yan | 🟡 needs canonical verification | Audit close losses/DQ context. |
+| Cain Velasquez | 🟡 needs canonical verification | Audit short apex vs injuries/longevity. |
+| Merab Dvalishvili | 🟡 needs canonical verification | Active sample; audit title and elite-win pace. |
+| B.J. Penn | 🟡 needs canonical verification | UFC-only only; Pride/K-1/non-UFC context excluded. |
+| Alex Pereira | 🟡 needs canonical verification | Audit rapid two-division title value and Gane update if present. |
+| Chuck Liddell | 🟡 needs canonical verification | Audit early LHW era and late losses. |
+| Junior dos Santos | 🟡 in newer men batch | Profile stats and round rows need verification. |
+| Tito Ortiz | 🟡 in newer men batch | Early-era title volume/opponent discount. |
+| Deiveson Figueiredo | 🟡 in newer men batch | Draw/missed-weight title logic. |
+| Khamzat Chimaev | 🟡 in newer men batch | Active, small sample, title/quality cap. |
+| Dustin Poirier | 🟡 needs canonical verification | Audit no-undisputed-title but elite LW wins. |
+| T.J. Dillashaw | 🟡 needs canonical verification | Audit title volume and PED/layoff context if displayed. |
+| Justin Gaethje | 🟡 needs canonical verification | Audit interim value and elite losses. |
+| Dominick Cruz | 🟡 needs canonical verification | WEC excluded; UFC-only injury gaps. |
+| Francis Ngannou | 🟡 needs canonical verification | UFC-only short title run; no PFL/boxing scoring. |
+| Charles Oliveira | 🟡 needs canonical verification | Missed-weight title logic and elite LW wins. |
+| Henry Cejudo | 🟡 in requested audit batch | Title/elite wins and late losses. |
+| Frankie Edgar | 🟡 needs canonical verification | Audit LW title reign and multi-division longevity. |
+| Lyoto Machida | 🟡 needs canonical verification | Audit title credit and MW/LHW quality wins. |
+| Conor McGregor | 🟡 in requested audit batch | Two-division title credit, short elite window. |
+| Sean Strickland | 🟡 needs canonical verification | Audit title upset and score placement. |
+| Robert Whittaker | 🟡 needs canonical verification | Audit prime MW elite wins and Adesanya losses. |
+| Sean O'Malley | 🟡 needs canonical verification | Audit Yan/Sterling/Vera/Dvalishvili context. |
+| Dan Henderson | 🟡 needs canonical verification | UFC-only only; Pride excluded from score. |
+| Brock Lesnar | 🟡 in newer men batch | Short-window title case. |
+| Tony Ferguson | 🟡 in newer men batch | Interim/prime streak vs late losses. |
+| Michael Bisping | 🟡 in newer men batch | Title win and elite-win value. |
+| Chael Sonnen | 🟡 in newer men batch | Bottom anchor/near-title case. |
+| Robbie Lawler | 🟡 in newer men batch | Title-fight record and war-era losses. |
+
+### Women
+
+| Fighter | Audit status | Notes |
+|---|---|---|
+| Amanda Nunes | 🟡 needs canonical verification | Benchmark women case; audit title volume and quality wins. |
+| Valentina Shevchenko | 🟡 needs canonical verification | Audit flyweight dominance and Nunes/Grasso context. |
+| Joanna Jedrzejczyk | 🟡 needs canonical verification | Audit strawweight title reign and Zhang/Rose losses. |
+| Ronda Rousey | 🟡 needs canonical verification | Audit short dominance, title volume, late losses. |
+| Zhang Weili | 🟡 in newer women batch | Two-reign SW case. |
+| Rose Namajunas | 🟡 in newer women batch | Two-reign SW case and quality wins. |
+| Miesha Tate | 🟡 in newer women batch | UFC-only title case; Strikeforce excluded. |
+| Holly Holm | 🟡 in newer women batch | Nunes/Rousey context, losses. |
+| Mackenzie Dern | 🟡 in newer women batch | Current status and title score need review. |
+| Kayla Harrison | 🟡 in newer women batch | UFC-only sample; PFL excluded. |
+| Jessica Andrade | 🟡 in newer women batch | Multi-division UFC value. |
+| Carla Esparza | 🟡 in newer women batch | Two-time champ, title context. |
+| Julianna Peña | 🟡 in newer women batch | Snapshot patched; full canonical cleanup still needed. |
+| Alexa Grasso | 🟡 in newer women batch | Shevchenko win/draw/title-credit audit. |
+
+## Locked scoring reminders
+
+- UFC-only scoring.
+- No Pride, WEC, Strikeforce, Bellator, ONE, PFL, regional, or boxing scoring in the main ranking.
+- Non-UFC achievements may be mentioned only as context.
+- Jon Jones' Matt Hamill DQ is not treated like a real competitive loss.
+- Volkanovski's Islam losses use the upward-division elite-loss rule.
+- Score and snapshot can be updated together during audit, but every changed score needs a short explanation.
