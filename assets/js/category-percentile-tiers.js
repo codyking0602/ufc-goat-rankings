@@ -1,7 +1,7 @@
 // Percentile-based category tier labels.
 // Keeps category PCTL as the displayed number, but labels the tag by category rank position.
 (function(){
-  const VERSION = 'category-percentile-tiers-20260707a';
+  const VERSION = 'category-percentile-tiers-20260707b-slate-below-average';
 
   function categoryBoardFor(f){
     const data = window.RANKING_DATA || {};
@@ -9,6 +9,17 @@
     const men = data.men || [];
     const isWomen = f?.leaderboard === 'women' || women.some(row => row.fighter === f?.fighter);
     return isWomen ? women : men;
+  }
+
+  function installBelowAverageStyle(){
+    if(document.getElementById('ufc-category-percentile-tier-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'ufc-category-percentile-tier-styles';
+    style.textContent = `
+      :root{--tier-below-average:#64748b;}
+      .tier-below-average{--tier-color:var(--tier-below-average);}
+    `;
+    document.head.appendChild(style);
   }
 
   function tierByCategoryRank(f, key){
@@ -27,7 +38,7 @@
     if(rank <= greatCutoff) return {label:'Great', cls:'tier-great'};
     if(rank <= goodCutoff) return {label:'Good', cls:'tier-good'};
     if(rank <= averageCutoff) return {label:'Average', cls:'tier-average'};
-    return {label:'Below Average', cls:'tier-average'};
+    return {label:'Below Average', cls:'tier-below-average'};
   }
 
   function categoryTierContext(f, key){
@@ -40,6 +51,7 @@
 
   function install(){
     if(typeof CATEGORY_INFO === 'undefined' || typeof categoryOvr !== 'function' || typeof categoryRank !== 'function') return false;
+    installBelowAverageStyle();
 
     window.UFC_CATEGORY_PERCENTILE_TIERS = {
       version: VERSION,
@@ -51,6 +63,7 @@
         ['top 90%', 'Average'],
         ['bottom 10%', 'Below Average']
       ],
+      belowAverageColor: '#64748b',
       tierByCategoryRank
     };
 
