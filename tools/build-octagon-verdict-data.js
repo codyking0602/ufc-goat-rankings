@@ -76,6 +76,7 @@ function makeContext() {
 function load() {
   const ctx = makeContext();
   runScript(ctx, 'assets/data/ranking-data.js');
+  if (exists('assets/data/ranking-data-additions.js')) runScript(ctx, 'assets/data/ranking-data-additions.js');
   runScript(ctx, 'assets/data/display-overrides.js', 'window.DISPLAY_OVERRIDES = DISPLAY_OVERRIDES;');
   runScript(ctx, 'assets/data/fighter-packet-manifest.js');
   const manifest = ctx.window.UFC_FIGHTER_PACKET_MANIFEST || { packets: [] };
@@ -133,7 +134,8 @@ function buildSpecial(fightersByName) {
   return [
     pair('Kamaru Usman', 'Max Holloway', 'Usman has the better championship reign and stronger peak control. Holloway has the deeper overall case because of elite longevity and quality-win volume.', { betterPeakChampion: 'Kamaru Usman', greaterOverallCase: 'Max Holloway, barely' }, ['Avoid raw category point totals.']),
     pair('Jon Jones', 'Georges St-Pierre', 'GSP is the cleaner case. Jones is the bigger championship-volume and top-end case.', { cleanerCase: 'Georges St-Pierre', greaterOverallCase: 'Jon Jones' }, ['If clean record/controversy is weighted heavily, GSP has the easier counterargument.']),
-    pair('Khabib Nurmagomedov', 'Islam Makhachev', 'Khabib has the cleaner peak. Islam has the fuller current championship and modern-depth case.', { cleanerPeak: 'Khabib Nurmagomedov', greaterCurrentCase: 'Islam Makhachev, barely' }, ['Use Khabib undefeated run and Islam title-fight volume as the swing points.'])
+    pair('Khabib Nurmagomedov', 'Islam Makhachev', 'Khabib has the cleaner peak. Islam has the fuller current championship and modern-depth case.', { cleanerPeak: 'Khabib Nurmagomedov', greaterCurrentCase: 'Islam Makhachev, barely' }, ['Use Khabib undefeated run and Islam title-fight volume as the swing points.']),
+    pair('Jose Aldo', 'Lyoto Machida', 'Aldo has the deeper overall UFC case and scope-affected historical featherweight legacy. Machida has the short-reign champion apex and peak-aura counterargument.', { greaterUfcCase: 'Jose Aldo', betterApexAuraArgument: 'Lyoto Machida' }, ['Do not say Machida is missing if this feed is uploaded. WEC context helps Aldo historically, but is not scored directly.'])
   ];
 }
 function build() {
