@@ -4,6 +4,7 @@ window.UFC_MODULE_VERSIONS = {
   primeRoundControlAudit: "20260708c-batch-three",
   primeDominanceLedgers: "20260708j-round-audit-batch-two",
   primeDominanceShadowModel: "20260708a",
+  mattHughesConsistencyAudit: "20260708a",
   primeDominanceLivePromoter: "20260708c",
   primeDominanceCopyPolish: "20260708b",
   scoreWeighting: "20260708d-prime-dominance-data-restart-loader",
@@ -40,12 +41,18 @@ window.UFC_MODULE_VERSIONS = {
             'data-prime-dominance-shadow-model',
             function(){
               loadScript(
-                versions.primeDominanceLivePromoter ? 'assets/data/prime-dominance-live-promoter.js?v=prime-dominance-live-promoter-' + versions.primeDominanceLivePromoter : null,
-                'data-prime-dominance-live-promoter',
+                versions.mattHughesConsistencyAudit ? 'assets/data/matt-hughes-consistency-audit.js?v=matt-hughes-consistency-audit-' + versions.mattHughesConsistencyAudit : null,
+                'data-matt-hughes-consistency-audit',
                 function(){
                   loadScript(
-                    versions.primeDominanceCopyPolish ? 'assets/js/prime-dominance-copy-polish.js?v=prime-dominance-copy-polish-' + versions.primeDominanceCopyPolish : null,
-                    'data-prime-dominance-copy-polish'
+                    versions.primeDominanceLivePromoter ? 'assets/data/prime-dominance-live-promoter.js?v=prime-dominance-live-promoter-' + versions.primeDominanceLivePromoter : null,
+                    'data-prime-dominance-live-promoter',
+                    function(){
+                      loadScript(
+                        versions.primeDominanceCopyPolish ? 'assets/js/prime-dominance-copy-polish.js?v=prime-dominance-copy-polish-' + versions.primeDominanceCopyPolish : null,
+                        'data-prime-dominance-copy-polish'
+                      );
+                    }
                   );
                 }
               );
