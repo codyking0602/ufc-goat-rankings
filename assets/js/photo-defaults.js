@@ -1,6 +1,6 @@
 // Direct fighter photo defaults. One-pass only; no timers or tab rerender loops.
 (function(){
-  const VERSION = 'photo-defaults-20260707c-one-pass';
+  const VERSION = 'photo-defaults-20260707d-existing-img-fallback';
   const SLUG_OVERRIDES = {
     'B.J. Penn':'bj-penn',
     'BJ Penn':'bj-penn',
@@ -71,15 +71,18 @@
       const holder = row.querySelector('.row-photo');
       if(!name || !holder) return;
       const url = overrides[name]?.thumbUrl;
-      if(!url || holder.querySelector('img')) return;
-      holder.textContent = '';
-      const img = document.createElement('img');
+      if(!url) return;
+      let img = holder.querySelector('img');
+      if(!img){
+        holder.textContent = '';
+        img = document.createElement('img');
+        holder.appendChild(img);
+      }
       img.src = url;
       img.alt = `${name} profile photo`;
       img.loading = 'lazy';
       img.decoding = 'async';
       img.onerror = () => { img.remove(); holder.textContent = initials(name); };
-      holder.appendChild(img);
     });
   }
 
