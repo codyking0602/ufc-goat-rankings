@@ -1,26 +1,27 @@
 // Matt Hughes category consistency audit.
 // Aligns Prime Dominance, profile snapshot, and category notes around the locked title-prime window.
 (function(){
-  const VERSION = 'matt-hughes-consistency-audit-20260708a';
+  const VERSION = 'matt-hughes-consistency-audit-20260708b';
   const fighter = 'Matt Hughes';
-  const DATA = window.RANKING_DATA;
-  const base = window.UFC_PRIME_DOMINANCE_LEDGERS;
-  if(!DATA || !base || base.mattHughesConsistencyVersion === VERSION) return;
 
   function round(v){ return Math.round((Number(v || 0) + Number.EPSILON) * 100) / 100; }
   function recalc(row){
     return round(Number(row.championship || 0) + Number(row.opponentQuality || 0) + Number(row.primeDominance || 0) + Number(row.longevity || 0) + Number(row.penalty || 0));
   }
+  function data(){ return window.RANKING_DATA; }
+  function baseLedger(){ return window.UFC_PRIME_DOMINANCE_LEDGERS; }
   function rowsFor(name){
+    const DATA = data();
     const rows = [];
     const push = row => { if(row?.fighter === name) rows.push(row); };
-    (DATA.men || []).forEach(push);
-    (DATA.women || []).forEach(push);
-    (DATA.fighters || []).forEach(push);
+    (DATA?.men || []).forEach(push);
+    (DATA?.women || []).forEach(push);
+    (DATA?.fighters || []).forEach(push);
     return rows;
   }
   function rankBoards(){
-    [DATA.men, DATA.women].forEach(board => {
+    const DATA = data();
+    [DATA?.men, DATA?.women].forEach(board => {
       if(!Array.isArray(board)) return;
       board.sort((a,b) => Number(b.totalScore || 0) - Number(a.totalScore || 0) || String(a.fighter).localeCompare(String(b.fighter)));
       board.forEach((row, index) => { row.rank = index + 1; });
@@ -58,45 +59,67 @@
     ]
   };
 
-  const previousEntryFor = base.entryFor;
-  base.entryFor = function(name){
-    if(name === fighter) return entry;
-    return previousEntryFor ? previousEntryFor(name) : null;
-  };
-
-  const replaceInReport = report => {
+  function replaceInReport(report){
     const next = (Array.isArray(report) ? report : []).filter(row => row?.fighter !== fighter);
     next.push(entry);
     next.sort((a,b) => Number(b.total || 0) - Number(a.total || 0) || String(a.fighter).localeCompare(String(b.fighter)));
     return next;
-  };
-
-  base.report = replaceInReport(base.report);
-  base.leaders = base.report.slice(0,15);
-  base.mattHughesConsistencyVersion = VERSION;
-  base.mode = `${base.mode || 'prime-dominance'} + Hughes consistency audit`;
-
-  if(window.UFC_PRIME_DOMINANCE_SHADOW_MODEL){
-    window.UFC_PRIME_DOMINANCE_SHADOW_MODEL.report = replaceInReport(window.UFC_PRIME_DOMINANCE_SHADOW_MODEL.report || base.report);
-    window.UFC_PRIME_DOMINANCE_SHADOW_MODEL.mattHughesConsistency = entry;
   }
 
-  rowsFor(fighter).forEach(row => {
-    row.primeDominance = entry.total;
-    row.primeDominanceLiveAudit = entry;
-    row.primeDominanceShadowAudit = entry;
-    row.primeRecord = entry.primeRecord;
-    row.roundsWonPct = entry.roundControlPct;
-    row.primeFinishRatePct = entry.primeFinishRate;
-    row.primeRoundsWon = entry.roundControlAudit.roundsWon;
-    row.primeRoundsCounted = entry.roundControlAudit.roundsCounted;
-    row.primeFinishes = entry.primeFinishes;
-    row.primeFights = entry.primeFights;
-    row.totalScore = recalc(row);
-  });
-  rankBoards();
+  function installPrimeDominanceOverride(){
+    const base = baseLedger();
+    if(!base || !base.entryFor) return;
+    if(!base.__mattHughesOriginalEntryFor) base.__mattHughesOriginalEntryFor = base.entryFor;
+    base.entryFor = function(name){
+      if(name === fighter) return entry;
+      return base.__mattHughesOriginalEntryFor ? base.__mattHughesOriginalEntryFor(name) : null;
+    };
+    base.report = replaceInReport(base.report);
+    base.leaders = base.report.slice(0,15);
+    base.mattHughesConsistencyVersion = VERSION;
+    base.mode = `${base.mode || 'prime-dominance'} + Hughes consistency audit`;
+    if(window.UFC_PRIME_DOMINANCE_SHADOW_MODEL){
+      window.UFC_PRIME_DOMINANCE_SHADOW_MODEL.report = replaceInReport(window.UFC_PRIME_DOMINANCE_SHADOW_MODEL.report || base.report);
+      window.UFC_PRIME_DOMINANCE_SHADOW_MODEL.mattHughesConsistency = entry;
+    }
+  }
 
-  if(typeof DISPLAY_OVERRIDES !== 'undefined'){
+  function applyRows(){
+    rowsFor(fighter).forEach(row => {
+      row.primeDominance = entry.total;
+      row.primeDominanceLiveAudit = entry;
+      row.primeDominanceShadowAudit = entry;
+      row.primeRecord = entry.primeRecord;
+      row.roundsWonPct = entry.roundControlPct;
+      row.primeFinishRatePct = entry.primeFinishRate;
+      row.primeRoundsWon = entry.roundControlAudit.roundsWon;
+      row.primeRoundsCounted = entry.roundControlAudit.roundsCounted;
+      row.primeFinishes = entry.primeFinishes;
+      row.primeFights = entry.primeFights;
+      row.oqAudit = {
+        ...(row.oqAudit || {}),
+        score: Number(row.opponentQuality || row.oqAudit?.score || 16.41),
+        notes: 'No score change from Hughes prime-window update. Quality Wins already credits the wins that matter: GSP I, Penn II, Newton, Trigg, Sherk, and Royce; GSP II/GSP III are losses, not win credit.',
+        source: row.oqAudit?.source || 'Locked OQ worksheets + Hughes consistency audit',
+        version: VERSION
+      };
+      row.opponentQualityNotes = row.oqAudit.notes;
+      row.penalty = Number(row.penalty ?? row.lossPenalty ?? -8.75);
+      row.lossPenalty = row.penalty;
+      row.penaltyAudit = {
+        ...(row.penaltyAudit || {}),
+        score: row.penalty,
+        notes: 'Hallman is pre-prime damage; Penn I, GSP II, and GSP III are title-prime losses; Alves, Penn III, and Koscheck are post-prime for this pass.',
+        version: VERSION
+      };
+      row.penaltyNotes = row.penaltyAudit.notes;
+      row.totalScore = recalc(row);
+    });
+    rankBoards();
+  }
+
+  function applyDisplay(){
+    if(typeof DISPLAY_OVERRIDES === 'undefined') return;
     DISPLAY_OVERRIDES[fighter] = DISPLAY_OVERRIDES[fighter] || {};
     const o = DISPLAY_OVERRIDES[fighter];
     o.snapshotStats = {
@@ -129,10 +152,18 @@
     ];
   }
 
-  window.UFC_MATT_HUGHES_CATEGORY_CONSISTENCY = { version: VERSION, entry, appliedAt: new Date().toISOString() };
-  document.documentElement.setAttribute('data-matt-hughes-consistency-audit', VERSION);
-  if(window.UFC_PRIME_DOMINANCE_LIVE_PROMOTER?.apply) window.UFC_PRIME_DOMINANCE_LIVE_PROMOTER.apply();
-  if(typeof refresh === 'function'){
-    try { refresh(); } catch(e) {}
+  function apply(options = {}){
+    installPrimeDominanceOverride();
+    applyRows();
+    applyDisplay();
+    if(window.UFC_PRIME_DOMINANCE_LIVE_PROMOTER?.apply) window.UFC_PRIME_DOMINANCE_LIVE_PROMOTER.apply();
+    window.UFC_MATT_HUGHES_CATEGORY_CONSISTENCY = { version: VERSION, entry, apply, appliedAt: new Date().toISOString() };
+    document.documentElement.setAttribute('data-matt-hughes-consistency-audit', VERSION);
+    if(!options.silent && typeof refresh === 'function'){
+      try { refresh(); } catch(e) {}
+    }
   }
+
+  window.UFC_MATT_HUGHES_CATEGORY_CONSISTENCY = { version: VERSION, entry, apply };
+  apply();
 })();
