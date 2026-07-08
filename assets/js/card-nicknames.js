@@ -1,7 +1,7 @@
 // Profile-card display nicknames for fighters who are clearly known by one.
 // Keeps list/board rows clean and keeps data keys unchanged. Does not touch resume-tag pills.
 (function(){
-  const VERSION = 'card-nicknames-20260707b-final-batch-loader';
+  const VERSION = 'card-nicknames-20260707c-merab-yan-loader';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const DISPLAY_NAMES = {
@@ -84,10 +84,13 @@
 })();
 
 (function(){
-  const src = 'assets/data/final-batch-scores.js?v=final-batch-scores-20260707a';
-  if(document.querySelector('script[data-final-batch-scores-loader]')) return;
-  const script = document.createElement('script');
-  script.src = src;
-  script.setAttribute('data-final-batch-scores-loader','true');
-  document.body.appendChild(script);
+  function loadOnce(src, attr){
+    if(document.querySelector(`script[${attr}]`)) return;
+    const script = document.createElement('script');
+    script.src = src;
+    script.setAttribute(attr,'true');
+    document.body.appendChild(script);
+  }
+  loadOnce('assets/data/final-batch-scores.js?v=final-batch-scores-20260707a','data-final-batch-scores-loader');
+  loadOnce('assets/data/merab-yan-loss-context.js?v=merab-yan-loss-context-20260707a','data-merab-yan-loss-context-loader');
 })();
