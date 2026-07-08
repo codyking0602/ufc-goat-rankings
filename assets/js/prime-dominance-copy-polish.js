@@ -1,6 +1,6 @@
 // App-facing Prime Dominance copy polish.
 (function(){
-  const VERSION = 'prime-dominance-copy-polish-20260708a';
+  const VERSION = 'prime-dominance-copy-polish-20260708b';
 
   function entryFor(fighter){
     return window.UFC_PRIME_DOMINANCE_LEDGERS?.entryFor?.(fighter)
@@ -29,15 +29,6 @@
     return 'Finish threat review';
   }
 
-  function scoreLanding(entry){
-    const parts = [];
-    if(entry?.primeRecordScore !== undefined) parts.push(`record ${entry.primeRecordScore}/9`);
-    if(entry?.roundControlScore !== undefined) parts.push(`control ${entry.roundControlScore}/8`);
-    if(entry?.finishPressureScore !== undefined) parts.push(`finishes ${entry.finishPressureScore}/5`);
-    if(entry?.eliteStakesScore !== undefined) parts.push(`elite proof ${entry.eliteStakesScore}/8`);
-    return parts.length ? parts.join(' · ') : 'Built from prime record, control, finishes, and elite wins';
-  }
-
   function installCopy(){
     if(typeof CATEGORY_INFO !== 'undefined'){
       const prime = CATEGORY_INFO.find(([key]) => key === 'primeDominance');
@@ -56,8 +47,6 @@
           ['Prime record', shortRecord(entry)],
           ['Round control', roundControl(entry)],
           ['Finish pressure', finishPressure(entry)],
-          ['Elite-stage proof', 'Title wins, top-5 wins, champs, and division strength'],
-          ['Why the score lands here', scoreLanding(entry)],
           ['Dominance profile', entry.dominanceProfile || 'Prime dominance profile pending']
         ];
       };
