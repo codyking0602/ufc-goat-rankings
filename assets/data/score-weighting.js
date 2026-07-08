@@ -1,7 +1,7 @@
 // Overall score weighting layer.
 // Applies Cody-approved GOAT weights. Main categories are all treated as 30-point category scores.
 (function(){
-  const VERSION = 'score-weighting-20260708b-prime-windows-loader';
+  const VERSION = 'score-weighting-20260708c-prime-dominance-shadow-loader';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
@@ -118,16 +118,24 @@
     };
   }
 
-  function loadPrimeWindows(){
-    if(document.querySelector('script[data-prime-windows]')){
-      if(window.UFC_PRIME_WINDOWS?.apply) window.UFC_PRIME_WINDOWS.apply();
-      return;
-    }
+  function loadScriptOnce(src,attr,done){
+    if(document.querySelector(`script[${attr}]`)){ if(done)done(); return; }
     const script=document.createElement('script');
-    script.src='assets/data/prime-windows.js?v=prime-windows-20260708a';
-    script.setAttribute('data-prime-windows','true');
-    script.onload=()=>{ if(window.UFC_PRIME_WINDOWS?.apply) window.UFC_PRIME_WINDOWS.apply(); };
+    script.src=src;
+    script.setAttribute(attr,'true');
+    script.onload=()=>{ if(done)done(); };
     document.body.appendChild(script);
+  }
+  function loadPrimeDominanceShadow(){
+    loadScriptOnce('assets/data/prime-dominance-ledgers.js?v=prime-dominance-ledgers-20260708a','data-prime-dominance-ledgers',()=>{
+      if(window.UFC_PRIME_DOMINANCE_LEDGERS?.apply) window.UFC_PRIME_DOMINANCE_LEDGERS.apply();
+    });
+  }
+  function loadPrimeWindows(){
+    loadScriptOnce('assets/data/prime-windows.js?v=prime-windows-20260708a','data-prime-windows',()=>{
+      if(window.UFC_PRIME_WINDOWS?.apply) window.UFC_PRIME_WINDOWS.apply();
+      loadPrimeDominanceShadow();
+    });
   }
 
   installRulesWeightNote();
@@ -140,6 +148,7 @@
     legacyLongevityMax: LEGACY_LONGEVITY_MAX,
     penaltyMode: PENALTY_MODE,
     primeWindowsLoader: true,
+    primeDominanceShadowLoader: true,
     formula: 'championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + penalty',
     appliedAt: new Date().toISOString()
   };
