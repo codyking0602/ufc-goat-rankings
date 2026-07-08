@@ -4,7 +4,7 @@ window.UFC_MODULE_VERSIONS = {
   primeRoundControlAudit: "20260708c-batch-three",
   primeDominanceLedgers: "20260708j-round-audit-batch-two",
   primeDominanceShadowModel: "20260708a",
-  primeDominanceLivePromoter: "20260708a",
+  primeDominanceLivePromoter: "20260708b",
   scoreWeighting: "20260708d-prime-dominance-data-restart-loader",
   championshipResumeLive: "20260708e",
   opponentQualityLive: "20260708b"
