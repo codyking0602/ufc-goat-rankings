@@ -127,7 +127,7 @@
     document.body.appendChild(script);
   }
   function loadPrimeDominanceShadow(){
-    loadScriptOnce('assets/data/prime-dominance-ledgers.js?v=prime-dominance-ledgers-20260708a','data-prime-dominance-ledgers',()=>{
+    loadScriptOnce('assets/data/prime-dominance-ledgers.js?v=prime-dominance-ledgers-20260708b-data-restart','data-prime-dominance-ledgers',()=>{
       if(window.UFC_PRIME_DOMINANCE_LEDGERS?.apply) window.UFC_PRIME_DOMINANCE_LEDGERS.apply();
     });
   }
