@@ -1,24 +1,24 @@
 // Overall score weighting layer.
-// Keeps category formulas intact, then applies Cody-approved GOAT weights plus Apex Peak to the final total.
+// Applies Cody-approved GOAT weights. Main categories are all treated as 30-point category scores.
 (function(){
-  const VERSION = 'score-weighting-20260705b-apex-peak';
+  const VERSION = 'score-weighting-20260708a-35-275-275-10-30pt';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
   const WEIGHTS = {
     championship: 35,
-    primeDominance: 25,
-    opponentQuality: 25,
+    opponentQuality: 27.5,
+    primeDominance: 27.5,
     longevity: 10
   };
   const BASE_MAX = {
     championship: 30,
+    opponentQuality: 30,
     primeDominance: 30,
-    opponentQuality: 25,
-    longevity: 15
+    longevity: 30
   };
-  const APEX_MAX = 6;
-  const PENALTY_MODE = 'Apex Peak is a separate +0 to +6 modifier. Loss penalty remains a separate raw negative modifier after the weighted positive score.';
+  const LEGACY_LONGEVITY_MAX = 15;
+  const PENALTY_MODE = 'Loss penalty remains a separate raw negative modifier after the 100-point positive category score. Apex Peak is display-only and is not included in total score.';
 
   function num(value){
     const n = Number(value || 0);
@@ -27,31 +27,36 @@
   function round2(value){
     return Math.round((Number(value || 0) + Number.EPSILON) * 100) / 100;
   }
+  function categoryScore(row,key){
+    if(key === 'longevity'){
+      const raw = num(row.longevity);
+      if(row.longevityThirtyPoint === true || raw > LEGACY_LONGEVITY_MAX) return raw;
+      return (raw / LEGACY_LONGEVITY_MAX) * BASE_MAX.longevity;
+    }
+    return num(row[key]);
+  }
   function weightedComponent(row, key){
-    return (num(row[key]) / BASE_MAX[key]) * WEIGHTS[key];
+    return (categoryScore(row,key) / BASE_MAX[key]) * WEIGHTS[key];
   }
   function scoreBreakdown(row){
     const championship = weightedComponent(row, 'championship');
-    const primeDominance = weightedComponent(row, 'primeDominance');
     const opponentQuality = weightedComponent(row, 'opponentQuality');
+    const primeDominance = weightedComponent(row, 'primeDominance');
     const longevity = weightedComponent(row, 'longevity');
     const apexPeak = num(row.apexPeak);
     const penalty = num(row.penalty);
-    const positiveScore = championship + primeDominance + opponentQuality + longevity + apexPeak;
+    const positiveScore = championship + opponentQuality + primeDominance + longevity;
     const totalScore = positiveScore + penalty;
     return {
       championship: round2(championship),
-      primeDominance: round2(primeDominance),
       opponentQuality: round2(opponentQuality),
+      primeDominance: round2(primeDominance),
       longevity: round2(longevity),
       apexPeak: round2(apexPeak),
       positiveScore: round2(positiveScore),
       penalty: round2(penalty),
       totalScore: round2(totalScore)
     };
-  }
-  function recalcTotal(row){
-    return scoreBreakdown(row).totalScore;
   }
   function patchRow(row){
     if(!row) return;
@@ -83,7 +88,7 @@
   });
 
   if(DATA.meta){
-    DATA.meta.scoringWeights = { version: VERSION, weights: WEIGHTS, baseMax: BASE_MAX, apexMax: APEX_MAX, penaltyMode: PENALTY_MODE };
+    DATA.meta.scoringWeights = { version: VERSION, weights: WEIGHTS, baseMax: BASE_MAX, legacyLongevityMax: LEGACY_LONGEVITY_MAX, penaltyMode: PENALTY_MODE };
   }
 
   if(typeof DISPLAY_OVERRIDES !== 'undefined'){
@@ -103,13 +108,12 @@
       target.dataset.scoreWeightingVersion = VERSION;
       target.insertAdjacentHTML('beforeend', `
         <div class="card"><h3>Overall Weighting</h3><table class="table"><tbody>
-          <tr><td><strong>Title Reign</strong></td><td>35%</td></tr>
-          <tr><td><strong>Prime Dominance</strong></td><td>25%</td></tr>
-          <tr><td><strong>Quality Wins</strong></td><td>25%</td></tr>
+          <tr><td><strong>Championship Resume</strong></td><td>35%</td></tr>
+          <tr><td><strong>Quality Wins</strong></td><td>27.5%</td></tr>
+          <tr><td><strong>Prime Dominance</strong></td><td>27.5%</td></tr>
           <tr><td><strong>Elite Longevity</strong></td><td>10%</td></tr>
-          <tr><td><strong>Apex Peak</strong></td><td>+0 to +6 bonus for best-night / best-year proof.</td></tr>
           <tr><td><strong>Loss Context</strong></td><td>Separate negative modifier after the positive score.</td></tr>
-        </tbody></table><p class="meta">Category formulas stay intact. Apex Peak adds controlled best-version credit; Loss Context stays separate.</p></div>
+        </tbody></table><p class="meta">Each main category is treated as a 30-point score, then multiplied by its category weight. Apex Peak is shown on profiles but is not part of the total-score formula.</p></div>
       `);
     };
   }
@@ -120,9 +124,9 @@
     version: VERSION,
     weights: WEIGHTS,
     baseMax: BASE_MAX,
-    apexMax: APEX_MAX,
+    legacyLongevityMax: LEGACY_LONGEVITY_MAX,
     penaltyMode: PENALTY_MODE,
-    formula: 'championship/30*35 + primeDominance/30*25 + opponentQuality/25*25 + longevity/15*10 + apexPeak + penalty',
+    formula: 'championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + penalty',
     appliedAt: new Date().toISOString()
   };
 
