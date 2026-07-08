@@ -1,6 +1,6 @@
 // Prime Dominance shadow ledger. Data-input restart. No live score changes.
 (function(){
-  const VERSION='prime-dominance-ledgers-20260708b-data-restart';
+  const VERSION='prime-dominance-ledgers-20260708c-data-batch-two';
   const COMPONENTS={primeRecord:8,roundControl:7,separation:6,finishPressure:4,eliteStakes:5,total:30};
   const DEFINITION='Prime Dominance measures how clearly a fighter separated during their actual UFC prime window. Prime record, round control, and finish pressure are data-input driven; separation and elite-stakes validation are context scored.';
   const FINISH_SCALE=[{min:.75,score:4},{min:.60,score:3.5},{min:.45,score:3},{min:.30,score:2.25},{min:.15,score:1.5},{min:.01,score:.75},{min:0,score:0}];
@@ -16,7 +16,19 @@
     'Amanda Nunes':{primeRecord:'review',primeRecordScore:7,roundControlPct:78,primeFights:12,primeFinishes:8,separationScore:5.25,eliteStakesScore:5,profile:'Two-division finishing dominance with one major blemish avenged',status:'locked'},
     'Kamaru Usman':{primeRecord:'10-2',primeRecordScore:7,roundControlPct:82,primeFights:12,primeFinishes:3,separationScore:5,eliteStakesScore:4.75,profile:'Powerful welterweight control run stopped by Edwards',status:'review'},
     'Max Holloway':{primeRecord:'review',primeRecordScore:6.75,roundControlPct:80,primeFights:20,primeFinishes:7,separationScore:5,eliteStakesScore:3.75,profile:'Relentless featherweight volume and pace over a long elite window',status:'review'},
-    'Israel Adesanya':{primeRecord:'review',primeRecordScore:6.75,roundControlPct:82,primeFights:15,primeFinishes:4,separationScore:4.75,eliteStakesScore:5,profile:'Elite middleweight control with lower finish pressure',status:'review'}
+    'Israel Adesanya':{primeRecord:'review',primeRecordScore:6.75,roundControlPct:82,primeFights:15,primeFinishes:4,separationScore:4.75,eliteStakesScore:5,profile:'Elite middleweight control with lower finish pressure',status:'review'},
+    'Cain Velasquez':{primeRecord:'5-1',primeRecordScore:6.75,roundControlPct:80,primeFights:6,primeFinishes:5,separationScore:5.5,eliteStakesScore:4,profile:'Short heavyweight apex with crushing control and damage',status:'review'},
+    'Henry Cejudo':{primeRecord:'4-0',primeRecordScore:7.5,roundControlPct:73,primeFights:4,primeFinishes:3,separationScore:4.75,eliteStakesScore:4.25,profile:'Short two-division prime with huge elite-stakes wins',status:'review'},
+    'Daniel Cormier':{primeRecord:'8-2',primeRecordScore:6.75,roundControlPct:78,primeFights:10,primeFinishes:6,separationScore:5,eliteStakesScore:4.5,profile:'Two-division UFC prime with strong control and finishing',status:'review'},
+    'Stipe Miocic':{primeRecord:'7-2',primeRecordScore:6.75,roundControlPct:74,primeFights:9,primeFinishes:6,separationScore:5,eliteStakesScore:4.75,profile:'Heavyweight title-prime with high-end finish output',status:'review'},
+    'Alex Pereira':{primeRecord:'active',primeRecordScore:7,roundControlPct:70,primeFights:8,primeFinishes:6,separationScore:5,eliteStakesScore:4.25,profile:'Short two-division prime with elite knockout pressure',status:'review'},
+    'Conor McGregor':{primeRecord:'6-1',primeRecordScore:6.75,roundControlPct:70,primeFights:7,primeFinishes:5,separationScore:5.5,eliteStakesScore:4.25,profile:'Explosive short prime with rare featherweight-to-lightweight separation',status:'review'},
+    'Charles Oliveira':{primeRecord:'5-1',primeRecordScore:6.75,roundControlPct:70,primeFights:6,primeFinishes:4,separationScore:5.25,eliteStakesScore:4.25,profile:'Chaotic lightweight finishing prime with elite resistance',status:'review'},
+    'Valentina Shevchenko':{primeRecord:'review',primeRecordScore:7,roundControlPct:84,primeFights:15,primeFinishes:6,separationScore:5,eliteStakesScore:4.5,profile:'Technical flyweight control with late-rivalry resistance',status:'review'},
+    'Zhang Weili':{primeRecord:'active',primeRecordScore:6.5,roundControlPct:78,primeFights:8,primeFinishes:4,separationScore:5,eliteStakesScore:4,profile:'Explosive strawweight prime with dominant second-reign control',status:'review'},
+    'Dustin Poirier':{primeRecord:'review',primeRecordScore:6.5,roundControlPct:70,primeFights:11,primeFinishes:6,separationScore:4.75,eliteStakesScore:4.25,profile:'Deep lightweight prime with elite wins and title-loss ceiling',status:'review'},
+    'Justin Gaethje':{primeRecord:'active',primeRecordScore:6.25,roundControlPct:68,primeFights:10,primeFinishes:5,separationScore:4.75,eliteStakesScore:3.75,profile:'Violent lightweight prime with title-loss limits and huge finish pressure',status:'review'},
+    'Jose Aldo':{primeRecord:'UFC-only review',primeRecordScore:5.75,roundControlPct:72,primeFights:11,primeFinishes:2,separationScore:4.75,eliteStakesScore:4,profile:'UFC-only prime is strong but misses the WEC dominance peak',status:'review'}
   };
   function round(v){return Math.round((Number(v||0)+Number.EPSILON)*100)/100;}
   function finishRate(row){return row.primeFights?row.primeFinishes/row.primeFights:0;}
@@ -37,7 +49,7 @@
   const previousEvidence=typeof categoryEvidenceItems==='function'?categoryEvidenceItems:null;if(previousEvidence){categoryEvidenceItems=function(f,key){if(key==='primeDominance')return evidenceItems(f);return previousEvidence(f,key);};}
   const previousLogic=typeof categoryLogicSentence==='function'?categoryLogicSentence:null;if(previousLogic){categoryLogicSentence=function(f,key){if(key==='primeDominance')return DEFINITION;return previousLogic(f,key);};}
   const applied=apply();
-  window.UFC_PRIME_DOMINANCE_LEDGERS={version:VERSION,mode:'shadow-data-restart',components:COMPONENTS,definition:DEFINITION,finishScale:FINISH_SCALE,raw:RAW,report:report(),leaders:report().slice(0,15),entryFor,apply,applied,appliedAt:new Date().toISOString()};
+  window.UFC_PRIME_DOMINANCE_LEDGERS={version:VERSION,mode:'shadow-data-batch-two',components:COMPONENTS,definition:DEFINITION,finishScale:FINISH_SCALE,raw:RAW,report:report(),leaders:report().slice(0,15),entryFor,apply,applied,appliedAt:new Date().toISOString()};
   document.documentElement.setAttribute('data-prime-dominance-ledgers',VERSION);
   if(typeof refresh==='function'){try{refresh();}catch(e){}}
 })();
