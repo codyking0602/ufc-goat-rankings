@@ -1,6 +1,6 @@
 // Direct fighter photo defaults. One-pass photo hydration plus latest runtime fix loader.
 (function(){
-  const VERSION = 'photo-defaults-20260707f-livefix-loader';
+  const VERSION = 'photo-defaults-20260707g-profile-stats-loader';
   const SLUG_OVERRIDES = {
     'B.J. Penn':'bj-penn',
     'BJ Penn':'bj-penn',
@@ -100,6 +100,7 @@
 
   function loadLatestRuntimeFixes(){
     loadScript('assets/js/card-nicknames.js?v=card-nicknames-20260707f-snapshot-sanity-loader','data-card-nicknames-livefix');
+    loadScript('assets/data/profile-snapshot-stats.js?v=profile-snapshot-stats-20260707a','data-profile-snapshot-stats-livefix');
     loadScript('assets/js/loss-context-category-copy.js?v=loss-context-category-copy-20260707b-loss-profile-tags','data-loss-context-category-copy-livefix');
     loadScript('assets/js/profile-snapshot-sanity.js?v=profile-snapshot-sanity-20260707a','data-profile-snapshot-sanity-livefix');
   }
