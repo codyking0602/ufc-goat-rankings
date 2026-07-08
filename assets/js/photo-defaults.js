@@ -1,6 +1,6 @@
 // Direct fighter photo defaults. One-pass photo hydration plus latest runtime fix loader.
 (function(){
-  const VERSION = 'photo-defaults-20260707j-merab-loss-formula-fix';
+  const VERSION = 'photo-defaults-20260707k-merab-category-copy';
   const SLUG_OVERRIDES = {
     'B.J. Penn':'bj-penn',
     'BJ Penn':'bj-penn',
@@ -122,7 +122,7 @@
     loadScript('assets/js/card-nicknames.js?v=card-nicknames-20260707h-source-aware-profile-stats-loader','data-card-nicknames-livefix');
     loadScript('assets/data/profile-snapshot-stats.js?v=profile-snapshot-stats-20260707b-source-aware','data-profile-snapshot-stats-livefix');
     loadScript('assets/data/merab-loss-context-formula-fix.js?v=merab-loss-context-formula-fix-20260707a','data-merab-loss-context-formula-fix-livefix');
-    loadScript('assets/js/loss-context-category-copy.js?v=loss-context-category-copy-20260707b-loss-profile-tags','data-loss-context-category-copy-livefix');
+    loadScript('assets/js/loss-context-category-copy.js?v=loss-context-category-copy-20260707c-merab-formula-fix','data-loss-context-category-copy-livefix');
     loadScript('assets/js/profile-snapshot-sanity.js?v=profile-snapshot-sanity-20260707b-source-aware','data-profile-snapshot-sanity-livefix');
   }
 
