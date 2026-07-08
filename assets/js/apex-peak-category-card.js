@@ -1,6 +1,6 @@
 // Adds Apex Peak as a visible fighter-card category without touching the base app shell.
 (function(){
-  const VERSION = 'apex-peak-category-card-20260708a-category-leaders-live-prime';
+  const VERSION = 'apex-peak-category-card-20260708b-prime-row-polish';
   const APEX_MAX = 6;
 
   function num(value){
@@ -69,11 +69,22 @@
       <p><strong>Why it ranks here:</strong> ${notes}</p>
     </div>`;
   }
+  function loadPrimeRowPolish(){
+    if(document.querySelector('script[data-category-leaders-prime-row-polish]')) return;
+    const script = document.createElement('script');
+    script.src = 'assets/js/category-leaders-prime-row-polish.js?v=category-leaders-prime-row-polish-20260708a';
+    script.setAttribute('data-category-leaders-prime-row-polish','true');
+    document.body.appendChild(script);
+  }
   function loadCategoryLeaders(){
-    if(document.querySelector('script[data-category-leaders]')) return;
+    if(document.querySelector('script[data-category-leaders]')){
+      loadPrimeRowPolish();
+      return;
+    }
     const script = document.createElement('script');
     script.src = 'assets/js/category-leaders.js?v=category-leaders-20260708a-live-prime-dominance';
     script.setAttribute('data-category-leaders','true');
+    script.onload = loadPrimeRowPolish;
     document.body.appendChild(script);
   }
 
