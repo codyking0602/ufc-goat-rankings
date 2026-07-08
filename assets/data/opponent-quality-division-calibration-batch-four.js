@@ -1,7 +1,7 @@
 // Opponent Quality division calibration: batch-four group. Shadow-only.
 // Reverts hard-division trims. Keeps only approved Cejudo/Whittaker trims and boosts Izzy's Pereira II win.
 (function(){
-  const VERSION='opponent-quality-division-calibration-batch-four-20260708d-load-batch-five-cleanup';
+  const VERSION='opponent-quality-division-calibration-batch-four-20260708e-load-batch-six';
   const store=window.UFC_OPPONENT_QUALITY_LEDGERS;
   const RAW=store?.raw;
   if(!RAW)return;
@@ -30,7 +30,7 @@
   }
   P.forEach(patch);
   store.version=VERSION;
-  store.batchFourDivisionCalibration={version:VERSION,changes,appliedAt:new Date().toISOString(),note:'Only Cejudo and Whittaker trims remain; Izzy over Pereira II boosted to max credit. Batch five loads after this file.'};
+  store.batchFourDivisionCalibration={version:VERSION,changes,appliedAt:new Date().toISOString(),note:'Only Cejudo and Whittaker trims remain; Izzy over Pereira II boosted to max credit. Batch five and six load after this file.'};
   document.documentElement.setAttribute('data-opponent-quality-division-calibration-batch-four',VERSION);
-  loadScriptOnce('assets/data/opponent-quality-ledger-batch-five.js?v=opponent-quality-ledger-batch-five-20260708b','data-opponent-quality-ledger-batch-five');
+  loadScriptOnce('assets/data/opponent-quality-ledger-batch-five.js?v=opponent-quality-ledger-batch-five-20260708b','data-opponent-quality-ledger-batch-five',()=>loadScriptOnce('assets/data/opponent-quality-ledger-batch-six.js?v=opponent-quality-ledger-batch-six-20260708a','data-opponent-quality-ledger-batch-six'));
 })();
