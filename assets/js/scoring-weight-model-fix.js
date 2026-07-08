@@ -1,22 +1,22 @@
-// Enforce locked positive category weights: Championship 35%, Quality Wins 27.5%, Prime Dominance 27.5%, Longevity 10%.
-// Apex Peak remains a display/category discussion input, not an extra total-score bucket.
+// Enforce locked main category weights: Championship 35%, Quality Wins 27.5%, Prime Dominance 27.5%, Longevity 10%.
+// Apex Peak remains an extra assigned points category on top of the 100% main resume model.
 (function(){
-  const VERSION = 'scoring-weight-model-fix-20260707a';
+  const VERSION = 'scoring-weight-model-fix-20260707b-apex-extra';
   const LOSS_PENALTY_FLOOR = -10;
   const WEIGHTS = {
     championship: 35 / 30,
     opponentQuality: 27.5 / 30,
     primeDominance: 27.5 / 30,
     longevity: 10 / 15,
-    apexPeak: 0
+    apexPeak: 1
   };
   const MODEL = {
     championshipPct: 35,
     opponentQualityPct: 27.5,
     primeDominancePct: 27.5,
     longevityPct: 10,
-    apexPeakPct: 0,
-    note: 'Positive resume score is 35/27.5/27.5/10. Loss Context is a negative adjustment. Apex Peak is display-only unless explicitly restored.'
+    apexPeakPct: 'extra',
+    note: 'Main resume score is 35/27.5/27.5/10. Apex Peak is extra assigned points. Loss Context is a negative adjustment.'
   };
   function num(value, fallback=0){ const n = Number(value); return Number.isFinite(n) ? n : fallback; }
   function round2(value){ return Math.round((num(value) + Number.EPSILON) * 100) / 100; }
