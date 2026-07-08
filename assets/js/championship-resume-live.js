@@ -1,11 +1,10 @@
 // Championship Resume live apply layer.
 // Applies formula-driven Championship Resume scores from the ledger/shadow audit to live rows, snapshots, totals, and category leaders.
 (function(){
-  const VERSION='championship-resume-live-20260707a';
+  const VERSION='championship-resume-live-20260707b-profile-card-polish';
   const DATA=window.RANKING_DATA;
   const SHADOW=window.UFC_CHAMPIONSHIP_RESUME_SHADOW;
   if(!DATA||!SHADOW||!Array.isArray(SHADOW.report))return;
-
   const WEIGHTS={championship:35,primeDominance:25,opponentQuality:25,longevity:10};
   const BASE_MAX={championship:30,primeDominance:30,opponentQuality:25,longevity:15};
   function n(v,d=0){const x=Number(v);return Number.isFinite(x)?x:d;}
@@ -18,19 +17,10 @@
   function titleNote(report,score){return `Total title fight wins = ${report.titleFightWins}. Adjusted title-win credit = ${n(report.adjustedTitleCredit).toFixed(2)}. Championship Resume score = ${score.toFixed(2)}/30. Formula uses adjusted UFC title-win credit only; title losses do not add or subtract in this category.`;}
   function ensureOverride(name){if(typeof DISPLAY_OVERRIDES==='undefined')return null;DISPLAY_OVERRIDES[name]=DISPLAY_OVERRIDES[name]||{};DISPLAY_OVERRIDES[name].snapshotStats=DISPLAY_OVERRIDES[name].snapshotStats||{};DISPLAY_OVERRIDES[name].categories=DISPLAY_OVERRIDES[name].categories||{};delete DISPLAY_OVERRIDES[name].categories.championship;return DISPLAY_OVERRIDES[name];}
   function updateSnapshot(name,report,score){const o=ensureOverride(name);if(!o)return;o.snapshotStats.titleFightWins=report.titleFightWins;o.snapshotStats.adjustedTitleWins=r(report.adjustedTitleCredit);o.snapshotStats.championshipScore=score;const titleWinsValue=String(report.titleFightWins);const champValue=`${score.toFixed(2)}/30`;const adjustedValue=`${n(report.adjustedTitleCredit).toFixed(2)}`;const rows=Array.isArray(o.snapshot)?o.snapshot.slice():[];let sawTitle=false,sawChamp=false,sawAdjusted=false;const updated=rows.map(item=>{if(!Array.isArray(item)||item.length<2)return item;const label=String(item[0]||'');if(/title[-\s]*fight wins/i.test(label)){sawTitle=true;return[item[0],titleWinsValue];}if(/championship level|championship resume|title reign/i.test(label)){sawChamp=true;return[item[0],champValue];}if(/adjusted title/i.test(label)){sawAdjusted=true;return[item[0],adjustedValue];}return item;});if(!sawTitle)updated.push(['UFC Title-Fight Wins',titleWinsValue]);if(!sawChamp)updated.push(['Championship Resume',champValue]);if(!sawAdjusted)updated.push(['Adjusted Title Credit',adjustedValue]);o.snapshot=updated;}
-
+  function loadProfilePolish(){if(document.querySelector('script[data-championship-resume-profile-card]'))return;const script=document.createElement('script');script.src='assets/js/championship-resume-profile-card.js?v=championship-resume-profile-card-20260707a';script.setAttribute('data-championship-resume-profile-card','true');document.body.appendChild(script);}
   const liveRows=SHADOW.report.map(row=>({...row,championshipScore:championshipScore(row)}));
   const byName=new Map(liveRows.map(row=>[row.fighter,row]));
-  liveRows.forEach(report=>{
-    allRowsFor(report.fighter).forEach(row=>{
-      row.championship=report.championshipScore;
-      row.championshipResumeLive=true;
-      row.championshipResumeAudit={...row.championshipResumeAudit,...report,formulaScore:report.championshipScore,mode:'live'};
-      row.title={...(row.title||{}),titleFightWins:report.titleFightWins,adjustedTitleWins:r(report.adjustedTitleCredit),championshipScore:report.championshipScore,discountedWins:report.discountedWins,reviewStatus:report.reviewStatus,notes:titleNote(report,report.championshipScore)};
-    });
-    updateSnapshot(report.fighter,report,report.championshipScore);
-  });
-
+  liveRows.forEach(report=>{allRowsFor(report.fighter).forEach(row=>{row.championship=report.championshipScore;row.championshipResumeLive=true;row.championshipResumeAudit={...row.championshipResumeAudit,...report,formulaScore:report.championshipScore,mode:'live'};row.title={...(row.title||{}),titleFightWins:report.titleFightWins,adjustedTitleWins:r(report.adjustedTitleCredit),championshipScore:report.championshipScore,discountedWins:report.discountedWins,reviewStatus:report.reviewStatus,notes:titleNote(report,report.championshipScore)};});updateSnapshot(report.fighter,report,report.championshipScore);});
   [...(DATA.men||[]),...(DATA.women||[]),...(DATA.fighters||[])].forEach(row=>{if(!row)return;const b=breakdown(row);row.weightedScoreBreakdown=b;row.totalScore=b.totalScore;row.scoreWeightingVersion=VERSION;});
   sortBoard(DATA.men);sortBoard(DATA.women);
   const rankByFighter=new Map(boardRows().map(row=>[row.fighter,row.rank]));
@@ -41,6 +31,7 @@
   DATA.meta=DATA.meta||{};DATA.meta.championshipResumeLive={version:VERSION,benchmarkCredit:SHADOW.benchmarkCredit,sourceVersion:SHADOW.version,ledgerVersion:SHADOW.ledgerVersion,appliedAt:new Date().toISOString()};
   window.UFC_CHAMPIONSHIP_RESUME_LIVE={version:VERSION,mode:'live-category-apply',benchmarkCredit:SHADOW.benchmarkCredit,sourceVersion:SHADOW.version,ledgerVersion:SHADOW.ledgerVersion,fighters:liveRows.length,leaders:{men:(DATA.men||[]).slice().sort((a,b)=>n(b.championship)-n(a.championship)).slice(0,10).map(row=>({fighter:row.fighter,championship:row.championship,titleFightWins:byName.get(row.fighter)?.titleFightWins,adjustedTitleCredit:byName.get(row.fighter)?.adjustedTitleCredit})),women:(DATA.women||[]).slice().sort((a,b)=>n(b.championship)-n(a.championship)).slice(0,10).map(row=>({fighter:row.fighter,championship:row.championship,titleFightWins:byName.get(row.fighter)?.titleFightWins,adjustedTitleCredit:byName.get(row.fighter)?.adjustedTitleCredit}))},appliedAt:new Date().toISOString()};
   document.documentElement.setAttribute('data-championship-resume-live',VERSION);
+  loadProfilePolish();
   if(typeof refresh==='function'){try{refresh();}catch(e){}}
   if(window.UFC_CATEGORY_LEADERS?.render){try{window.UFC_CATEGORY_LEADERS.render();}catch(e){}}
 })();
