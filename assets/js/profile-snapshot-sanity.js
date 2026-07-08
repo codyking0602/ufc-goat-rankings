@@ -1,18 +1,31 @@
 // Global profile snapshot cleanup.
-// Keeps profile stats readable and rejects formula/category values that accidentally leak into the snapshot.
+// Renders dedicated profile/snapshot stats and rejects formula/category scores that leak into visible stats.
 (function(){
-  const VERSION='profile-snapshot-sanity-20260707a';
+  const VERSION='profile-snapshot-sanity-20260707b-source-aware';
   const MAX={titleWins:25,eliteWins:25,years:25,finishedPrime:20};
   function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-  function num(v){if(v===null||v===undefined||v==='')return null;const m=String(v).match(/-?\d+(?:\.\d+)?/);if(!m)return null;const n=Number(m[0]);return Number.isFinite(n)?n:null;}
+  function unwrap(v){return v&&typeof v==='object'&&Object.prototype.hasOwnProperty.call(v,'value')?v.value:v;}
+  function num(v){v=unwrap(v);if(v===null||v===undefined||v==='')return null;const m=String(v).match(/-?\d+(?:\.\d+)?/);if(!m)return null;const n=Number(m[0]);return Number.isFinite(n)?n:null;}
   function norm(s){return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();}
   function fighterRows(){return Array.isArray(window.RANKING_DATA?.fighters)?window.RANKING_DATA.fighters:[];}
   function boardRows(){return (window.RANKING_DATA?.men||[]).concat(window.RANKING_DATA?.women||[]);}
   function activeName(){const h=document.querySelector('#fighterDetail .profile-summary h2');return h?.textContent?.trim()||'';}
   function fighterFor(name){const wanted=norm(name);return fighterRows().find(f=>norm(f.fighter)===wanted)||boardRows().find(f=>norm(f.fighter)===wanted)||null;}
   function overridesFor(name){try{return window.DISPLAY_OVERRIDES?.[name]||{};}catch(e){return{};}}
-  function pick(f,keys){const o=overridesFor(f?.fighter||'');const pools=[o.snapshotStats,o.packetProfileStats,f?.snapshot,f?.resume,f?.profileStats,f];for(const pool of pools){if(!pool)continue;for(const key of keys){if(pool[key]!==undefined&&pool[key]!==null&&pool[key]!=='')return pool[key];}}return null;}
-  function validRecord(v){const s=String(v||'').trim();return /^\d+\s*-\s*\d+(?:\s*-\s*\d+)?(?:\s*,\s*\d+\s*NC)?$/i.test(s)?s.replace(/\s+/g,' '):null;}
+  function pick(f,keys){
+    const o=overridesFor(f?.fighter||'');
+    const pools=[o.snapshotStatValues,o.snapshotStats,o.packetProfileStats,f?.snapshotStatValues,f?.profileStats,f?.snapshotStats,f?.snapshot,f?.resume,f];
+    for(const pool of pools){
+      if(!pool)continue;
+      for(const key of keys){
+        if(pool[key]===undefined||pool[key]===null||pool[key]==='')continue;
+        const val=unwrap(pool[key]);
+        if(val!==undefined&&val!==null&&val!=='')return val;
+      }
+    }
+    return null;
+  }
+  function validRecord(v){v=unwrap(v);const s=String(v||'').trim();return /^\d+\s*-\s*\d+(?:\s*-\s*\d+)?(?:\s*,\s*\d+\s*NC)?$/i.test(s)?s.replace(/\s+/g,' '):null;}
   function fmtInt(v,max){const n=num(v);if(!Number.isFinite(n)||n<0||n>max)return null;return String(Math.round(n));}
   function fmtPct(v){const n=num(v);if(!Number.isFinite(n)||n<0||n>100)return null;return `${n.toFixed(1)}%`;}
   function fmtYears(v){const n=num(v);if(!Number.isFinite(n)||n<0||n>MAX.years)return null;return n.toFixed(1).replace(/\.0$/,'');}
@@ -33,7 +46,7 @@
     ['Times Finished in Prime',finishedPrime(f)||'—']
   ];}
   function grid(items){return `<div class="snapshot-grid ufc-snapshot-sane">${items.map(([label,value])=>`<div class="snapshot-item"><strong>${esc(value)}</strong><small>${esc(label)}</small></div>`).join('')}</div>`;}
-  function apply(){const detail=document.getElementById('fighterDetail');if(!detail)return;const f=fighterFor(activeName());if(!f)return;const card=Array.from(detail.querySelectorAll('.card')).find(c=>/^Resume Snapshot$/i.test(c.querySelector('h3')?.textContent?.trim()||''));if(!card)return;const existing=card.querySelector('.snapshot-grid');if(existing)existing.outerHTML=grid(snapshotItems(f));else card.insertAdjacentHTML('beforeend',grid(snapshotItems(f)));window.UFC_PROFILE_SNAPSHOT_SANITY={version:VERSION,fighter:f.fighter,items:snapshotItems(f)};}
+  function apply(){const detail=document.getElementById('fighterDetail');if(!detail)return;const f=fighterFor(activeName());if(!f)return;const card=Array.from(detail.querySelectorAll('.card')).find(c=>/^Resume Snapshot$/i.test(c.querySelector('h3')?.textContent?.trim()||''));if(!card)return;const items=snapshotItems(f);const existing=card.querySelector('.snapshot-grid');if(existing)existing.outerHTML=grid(items);else card.insertAdjacentHTML('beforeend',grid(items));window.UFC_PROFILE_SNAPSHOT_SANITY={version:VERSION,fighter:f.fighter,items,refresh:apply,sourceAware:true};}
   function style(){if(document.getElementById('profile-snapshot-sanity-style'))return;const css=document.createElement('style');css.id='profile-snapshot-sanity-style';css.textContent=`.snapshot-grid .snapshot-item,.category-explainer-grid .category-explainer-item{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:6px!important}.snapshot-grid .snapshot-item strong,.category-explainer-grid .category-explainer-item strong{display:block!important;line-height:1.05!important}.snapshot-grid .snapshot-item small,.category-explainer-grid .category-explainer-item small{display:block!important;line-height:1.25!important}.snapshot-grid .snapshot-item small{font-size:12px!important;color:var(--muted)!important}`;document.head.appendChild(css);}
   const run=()=>{style();apply();setTimeout(apply,200);setTimeout(apply,700);};
   document.addEventListener('click',()=>setTimeout(run,0),true);document.addEventListener('change',()=>setTimeout(run,0),true);
