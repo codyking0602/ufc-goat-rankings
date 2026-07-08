@@ -1,6 +1,6 @@
 // Opponent Quality shadow ledger batch five. Extends the shadow ledger only.
 (function(){
-  const VERSION='opponent-quality-ledger-batch-five-20260708a';
+  const VERSION='opponent-quality-ledger-batch-five-20260708b-cleanup';
   const store=window.UFC_OPPONENT_QUALITY_LEDGERS;
   if(!store||!store.raw)return;
   const RAW=store.raw;
@@ -46,8 +46,8 @@
       ['Caol Uno I',0.85,'Strong top-10 win','Elite early lightweight contender.','review'],
       ['Matt Serra',0.65,'Ranked / quality win','Quality lightweight/welterweight name and future champion.','review'],
       ['Duane Ludwig',0.45,'Solid resume win','Solid UFC win.','locked'],
-      ['Renzo Gracie',0.45,'Solid resume win','Legend name, but UFC/timing value limited.','review'],
       ['Din Thomas',0.45,'Solid resume win','Useful early UFC lightweight win.','locked'],
+      ['Renzo Gracie',0.00,'No UFC quality credit','Outside UFC; context only, not scored.','locked'],
       ['Takanori Gomi',0.00,'No UFC quality credit','Major win, but outside UFC and not scored in this app.','locked']
     ],
     'Frankie Edgar':[
@@ -61,7 +61,6 @@
       ['Cub Swanson I',0.85,'Strong top-10 win','Strong ranked featherweight contender.','locked'],
       ['Yair Rodriguez',0.85,'Strong top-10 win','Rising elite featherweight contender.','review'],
       ['Pedro Munhoz',0.85,'Strong top-10 win','Ranked bantamweight win late in career.','review'],
-      ['Gray Maynard I',0.65,'Ranked / quality win','Quality lightweight rival, draw/loss series context nearby.','review'],
       ['Jim Miller',0.65,'Ranked / quality win','Quality early lightweight win.','locked'],
       ['Jeremy Stephens',0.65,'Ranked / quality win','Dangerous featherweight contender.','locked'],
       ['Hermes Franca',0.45,'Solid resume win','Solid lightweight win.','locked'],
@@ -89,9 +88,9 @@
       ['Gleison Tibau',0.65,'Ranked / quality win','Quality lightweight veteran.','locked'],
       ['Lando Vannata',0.65,'Ranked / quality win','Short-notice dangerous win, prospect context.','review'],
       ['Abel Trujillo',0.45,'Solid resume win','Solid athletic lightweight win.','locked'],
+      ['Danny Castillo',0.45,'Solid resume win','Solid lightweight win; close-decision context.','review'],
       ['Yves Edwards',0.45,'Solid resume win','Veteran lightweight name, timing adjusted.','review'],
-      ['Ramsey Nijem',0.25,'Name-value / faded / unproven','Low-end UFC quality value.','locked'],
-      ['Danny Castillo',0.45,'Solid resume win','Solid lightweight win; close-decision context.','review']
+      ['Ramsey Nijem',0.25,'Name-value / faded / unproven','Low-end UFC quality value.','locked']
     ],
     'Aljamain Sterling':[
       ['Petr Yan II',1.25,'Champion-level win','Elite bantamweight champion-level opponent.','locked'],
@@ -131,15 +130,15 @@
     ],
     'T.J. Dillashaw':[
       ['Cody Garbrandt I',1.25,'Champion-level win','UFC bantamweight champion and elite title opponent.','locked'],
-      ['Cody Garbrandt II',1.00,'True top-5 win','Repeat win over former champion, less fresh but still elite quality.','review'],
       ['Renan Barao I',1.25,'Champion-level win','Elite bantamweight champion-level opponent.','locked'],
+      ['Cody Garbrandt II',1.00,'True top-5 win','Repeat win over former champion, less fresh but still elite quality.','review'],
       ['Renan Barao II',1.00,'True top-5 win','Repeat win over former champion, with decline/repeat context.','review'],
       ['Cory Sandhagen',1.00,'True top-5 win','Elite bantamweight contender; close decision context.','high-risk review'],
       ['John Lineker',0.85,'Strong top-10 win','Dangerous ranked bantamweight contender.','locked'],
       ['Raphael Assuncao II',0.85,'Strong top-10 win','Strong ranked bantamweight contender.','locked'],
       ['Mike Easton',0.45,'Solid resume win','Solid bantamweight win.','locked'],
       ['Vaughan Lee',0.25,'Name-value / faded / unproven','Low-end UFC quality value.','locked'],
-      ['Waldo Viera',0.10,'Minimal UFC quality credit','Minimal UFC quality value.','locked']
+      ['Walel Watson',0.10,'Minimal UFC quality credit','Minimal UFC quality value.','locked']
     ]
   });
   store.version=VERSION;
