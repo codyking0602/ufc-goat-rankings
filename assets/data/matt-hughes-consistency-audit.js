@@ -1,7 +1,7 @@
 // Matt Hughes category consistency audit.
 // Aligns Prime Dominance, profile snapshot, and category notes around the locked title-prime window.
 (function(){
-  const VERSION = 'matt-hughes-consistency-audit-20260708b';
+  const VERSION = 'matt-hughes-consistency-audit-20260708c';
   const fighter = 'Matt Hughes';
 
   function round(v){ return Math.round((Number(v || 0) + Number.EPSILON) * 100) / 100; }
@@ -164,6 +164,17 @@
     }
   }
 
+  function installRefreshHook(){
+    if(typeof refresh !== 'function' || refresh.__mattHughesConsistencyWrapped) return;
+    const oldRefresh = refresh;
+    refresh = function(){
+      apply({ silent: true });
+      return oldRefresh.apply(this, arguments);
+    };
+    refresh.__mattHughesConsistencyWrapped = true;
+  }
+
   window.UFC_MATT_HUGHES_CATEGORY_CONSISTENCY = { version: VERSION, entry, apply };
+  installRefreshHook();
   apply();
 })();
