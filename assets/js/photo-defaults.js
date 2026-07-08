@@ -1,6 +1,6 @@
-// Direct fighter photo defaults. One-pass photo hydration plus latest runtime fix loader.
+// Direct fighter photo defaults. Stable one-pass photo hydration only.
 (function(){
-  const VERSION = 'photo-defaults-20260707l-tj-thumb-restore';
+  const VERSION = 'photo-defaults-20260707m-stability-cleanup';
   const SLUG_OVERRIDES = {
     'B.J. Penn':'bj-penn',
     'BJ Penn':'bj-penn',
@@ -53,8 +53,8 @@
       if(!slug) return;
       const current = overrides[name] || {};
       const embedded = f.display || {};
-      const photoUrl = current.photoUrl || embedded.photoUrl || f.photoUrl || `assets/fighters/${slug}.webp`;
-      const thumbUrl = current.thumbUrl || embedded.thumbUrl || f.thumbUrl || `assets/fighters/${slug}-thumb.webp`;
+      const photoUrl = current.photoUrl || embedded.photoUrl || f.photoUrl || embedded.profileUrl || f.profileUrl || `assets/fighters/${slug}.webp`;
+      const thumbUrl = current.thumbUrl || embedded.thumbUrl || f.thumbUrl || embedded.thumbnailUrl || f.thumbnailUrl || embedded.cardPhotoUrl || f.cardPhotoUrl || `assets/fighters/${slug}-thumb.webp`;
       overrides[name] = { ...current, photoUrl, thumbUrl };
       mapped.push({ fighter:name, photoUrl, thumbUrl });
     });
@@ -63,7 +63,10 @@
     return mapped;
   }
 
-  function initials(name){ return String(name || '').split(/\s+/).filter(Boolean).slice(0,2).map(x => x[0]).join('').toUpperCase() || 'UFC'; }
+  function initials(name){
+    return String(name || '').split(/\s+/).filter(Boolean).slice(0,2).map(x => x[0]).join('').toUpperCase() || 'UFC';
+  }
+
   function hydrateExistingRows(){
     const overrides = ensureOverrides();
     document.querySelectorAll('.fighter-row[data-fighter], .row[data-fighter]').forEach(row => {
@@ -86,35 +89,18 @@
     });
   }
 
-  function loadScript(src, attr){
-    if(document.querySelector(`script[${attr}]`)) return;
-    const script = document.createElement('script');
-    script.src = src;
-    script.setAttribute(attr,'true');
-    document.body.appendChild(script);
-  }
-
-  function loadDivisionPhotoBridge(){
-    loadScript('assets/js/division-photo-fix.js?v=division-photo-fix-20260707a-shared-rowphoto','data-division-photo-fix');
-  }
-
-  function loadLatestRuntimeFixes(){
-    loadScript('assets/js/card-nicknames.js?v=card-nicknames-20260707h-source-aware-profile-stats-loader','data-card-nicknames-livefix');
-    loadScript('assets/data/profile-snapshot-stats.js?v=profile-snapshot-stats-20260707b-source-aware','data-profile-snapshot-stats-livefix');
-    loadScript('assets/data/merab-loss-context-formula-fix.js?v=merab-loss-context-formula-fix-20260707a','data-merab-loss-context-formula-fix-livefix');
-    loadScript('assets/js/loss-context-category-copy.js?v=loss-context-category-copy-20260707c-merab-formula-fix','data-loss-context-category-copy-livefix');
-    loadScript('assets/js/profile-snapshot-sanity.js?v=profile-snapshot-sanity-20260707b-source-aware','data-profile-snapshot-sanity-livefix');
+  function run(){
+    apply();
+    hydrateExistingRows();
   }
 
   apply();
   if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', () => { hydrateExistingRows(); loadDivisionPhotoBridge(); setTimeout(loadLatestRuntimeFixes, 900); setTimeout(loadLatestRuntimeFixes, 1800); }, { once:true });
+    document.addEventListener('DOMContentLoaded', run, { once:true });
   } else {
-    hydrateExistingRows();
-    loadDivisionPhotoBridge();
-    setTimeout(loadLatestRuntimeFixes, 900);
-    setTimeout(loadLatestRuntimeFixes, 1800);
+    run();
   }
 
-  window.UFC_PHOTO_DEFAULTS_APPLY = function(){ apply(); hydrateExistingRows(); };
+  window.UFC_PHOTO_DEFAULTS_APPLY = run;
+  window.UFC_PHOTO_DEFAULTS_SLUG_FOR = slugFor;
 })();
