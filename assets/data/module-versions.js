@@ -1,7 +1,7 @@
 // Central cache-bust versions for scoring/category modules.
 window.UFC_MODULE_VERSIONS = {
   primeWindows: "20260708a",
-  primeRoundControlAudit: "20260708b-batch-two",
+  primeRoundControlAudit: "20260708c-batch-three",
   primeDominanceLedgers: "20260708j-round-audit-batch-two",
   scoreWeighting: "20260708d-prime-dominance-data-restart-loader",
   championshipResumeLive: "20260708e",
