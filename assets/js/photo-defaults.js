@@ -1,6 +1,6 @@
 // Direct fighter photo defaults. One-pass photo hydration plus latest runtime fix loader.
 (function(){
-  const VERSION = 'photo-defaults-20260707h-source-aware-snapshot-loader';
+  const VERSION = 'photo-defaults-20260707i-tj-profile-fallback';
   const SLUG_OVERRIDES = {
     'B.J. Penn':'bj-penn',
     'BJ Penn':'bj-penn',
@@ -11,6 +11,16 @@
     "Sean O'Malley":'sean-omalley',
     'Julianna Peña':'julianna-pena',
     'Julianna Pena':'julianna-pena'
+  };
+  const PHOTO_PATH_OVERRIDES = {
+    'T.J. Dillashaw': {
+      photoUrl: 'assets/fighters/tj-dillashaw.webp',
+      thumbUrl: 'assets/fighters/tj-dillashaw.webp'
+    },
+    'TJ Dillashaw': {
+      photoUrl: 'assets/fighters/tj-dillashaw.webp',
+      thumbUrl: 'assets/fighters/tj-dillashaw.webp'
+    }
   };
 
   function slugFor(name){
@@ -53,8 +63,9 @@
       if(!slug) return;
       const current = overrides[name] || {};
       const embedded = f.display || {};
-      const photoUrl = current.photoUrl || embedded.photoUrl || f.photoUrl || `assets/fighters/${slug}.webp`;
-      const thumbUrl = current.thumbUrl || embedded.thumbUrl || f.thumbUrl || `assets/fighters/${slug}-thumb.webp`;
+      const forced = PHOTO_PATH_OVERRIDES[name] || {};
+      const photoUrl = forced.photoUrl || current.photoUrl || embedded.photoUrl || f.photoUrl || `assets/fighters/${slug}.webp`;
+      const thumbUrl = forced.thumbUrl || current.thumbUrl || embedded.thumbUrl || f.thumbUrl || `assets/fighters/${slug}-thumb.webp`;
       overrides[name] = { ...current, photoUrl, thumbUrl };
       mapped.push({ fighter:name, photoUrl, thumbUrl });
     });
@@ -82,7 +93,16 @@
       img.alt = `${name} profile photo`;
       img.loading = 'lazy';
       img.decoding = 'async';
-      img.onerror = () => { img.remove(); holder.textContent = initials(name); };
+      img.onerror = () => {
+        const profileUrl = overrides[name]?.photoUrl;
+        if(profileUrl && !img.dataset.triedProfileFallback && !String(img.getAttribute('src') || '').endsWith(profileUrl)){
+          img.dataset.triedProfileFallback = 'true';
+          img.src = profileUrl;
+          return;
+        }
+        img.remove();
+        holder.textContent = initials(name);
+      };
     });
   }
 
