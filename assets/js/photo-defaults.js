@@ -1,6 +1,6 @@
-// Direct fighter photo defaults. One-pass only; no timers or tab rerender loops.
+// Direct fighter photo defaults. One-pass photo hydration plus latest runtime fix loader.
 (function(){
-  const VERSION = 'photo-defaults-20260707e-load-division-photo-bridge';
+  const VERSION = 'photo-defaults-20260707f-livefix-loader';
   const SLUG_OVERRIDES = {
     'B.J. Penn':'bj-penn',
     'BJ Penn':'bj-penn',
@@ -86,20 +86,32 @@
     });
   }
 
-  function loadDivisionPhotoBridge(){
-    if(document.querySelector('script[data-division-photo-fix]')) return;
+  function loadScript(src, attr){
+    if(document.querySelector(`script[${attr}]`)) return;
     const script = document.createElement('script');
-    script.src = 'assets/js/division-photo-fix.js?v=division-photo-fix-20260707a-shared-rowphoto';
-    script.setAttribute('data-division-photo-fix','true');
+    script.src = src;
+    script.setAttribute(attr,'true');
     document.body.appendChild(script);
+  }
+
+  function loadDivisionPhotoBridge(){
+    loadScript('assets/js/division-photo-fix.js?v=division-photo-fix-20260707a-shared-rowphoto','data-division-photo-fix');
+  }
+
+  function loadLatestRuntimeFixes(){
+    loadScript('assets/js/card-nicknames.js?v=card-nicknames-20260707f-snapshot-sanity-loader','data-card-nicknames-livefix');
+    loadScript('assets/js/loss-context-category-copy.js?v=loss-context-category-copy-20260707b-loss-profile-tags','data-loss-context-category-copy-livefix');
+    loadScript('assets/js/profile-snapshot-sanity.js?v=profile-snapshot-sanity-20260707a','data-profile-snapshot-sanity-livefix');
   }
 
   apply();
   if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', () => { hydrateExistingRows(); loadDivisionPhotoBridge(); }, { once:true });
+    document.addEventListener('DOMContentLoaded', () => { hydrateExistingRows(); loadDivisionPhotoBridge(); setTimeout(loadLatestRuntimeFixes, 900); setTimeout(loadLatestRuntimeFixes, 1800); }, { once:true });
   } else {
     hydrateExistingRows();
     loadDivisionPhotoBridge();
+    setTimeout(loadLatestRuntimeFixes, 900);
+    setTimeout(loadLatestRuntimeFixes, 1800);
   }
 
   window.UFC_PHOTO_DEFAULTS_APPLY = function(){ apply(); hydrateExistingRows(); };
