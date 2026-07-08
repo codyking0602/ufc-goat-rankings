@@ -1,6 +1,6 @@
 // Promotes the audited Prime Dominance model into live category scores and GOAT totals.
 (function(){
-  const VERSION = 'prime-dominance-live-promoter-20260708b';
+  const VERSION = 'prime-dominance-live-promoter-20260708c';
   let applying = false;
 
   function applyPrimeDominanceLive(){
@@ -33,6 +33,21 @@
       if(board.length <= 1) return 99;
       return Math.max(55, Math.min(99, Math.round(99 - ((rank - 1) / (board.length - 1)) * 44)));
     }
+    function roundsWonText(entry){
+      const audit = entry?.roundControlAudit;
+      if(audit?.roundsWon !== undefined && audit?.roundsCounted !== undefined){
+        return `${audit.roundsWon}/${audit.roundsCounted} (${entry.roundControlPct}%)`;
+      }
+      if(entry?.roundControlPct !== undefined) return `${entry.roundControlPct}%`;
+      return '—';
+    }
+    function finishRateText(entry){
+      if(entry?.primeFinishes !== undefined && entry?.primeFights){
+        return `${entry.primeFinishRate}% (${entry.primeFinishes}/${entry.primeFights})`;
+      }
+      if(entry?.primeFinishRate !== undefined) return `${entry.primeFinishRate}%`;
+      return '—';
+    }
     function upsertProfileScore(row, entry){
       const profile = profileFor(row.fighter);
       if(!profile) return;
@@ -44,6 +59,14 @@
       profile.primeRecord = entry.primeRecord || profile.primeRecord;
       profile.roundsWonPct = entry.roundControlPct ?? profile.roundsWonPct;
       profile.primeFinishRatePct = entry.primeFinishRate ?? profile.primeFinishRatePct;
+      if(entry.roundControlAudit?.roundsWon !== undefined){
+        profile.primeRoundsWon = entry.roundControlAudit.roundsWon;
+        profile.primeRoundsCounted = entry.roundControlAudit.roundsCounted;
+      }
+      if(entry.primeFinishes !== undefined){
+        profile.primeFinishes = entry.primeFinishes;
+        profile.primeFights = entry.primeFights;
+      }
     }
     function snapshotFor(row, entry){
       const profile = profileFor(row.fighter) || row;
@@ -53,8 +76,8 @@
         ['GOAT Score', Number(row.totalScore || 0).toFixed(2)],
         ['Prime Dominance', `${Number(row.primeDominance || 0).toFixed(2)} / 30`],
         ['Prime Record', entry?.primeRecord || profile.primeRecord || '—'],
-        ['Round Control', entry?.roundControlPct !== undefined ? `${entry.roundControlPct}%` : '—'],
-        ['Prime Finish Rate', entry?.primeFinishRate !== undefined ? `${entry.primeFinishRate}%` : '—'],
+        ['Rounds Won', roundsWonText(entry)],
+        ['Prime Finish Rate', finishRateText(entry)],
         ['Active Elite Years', row.activeEliteYears !== undefined ? Number(row.activeEliteYears).toFixed(2) : (profile.activeEliteYears !== undefined ? Number(profile.activeEliteYears).toFixed(2) : '—')]
       ];
     }
@@ -95,8 +118,9 @@
             ...(o.snapshotStats || {}),
             primeDominance: row.primeDominance,
             primeDominanceLive: row.primeDominance,
-            primeFinishRate: `${entry.primeFinishRate}%`,
+            primeFinishRate: finishRateText(entry),
             roundControl: `${entry.roundControlPct}%`,
+            roundsWon: roundsWonText(entry),
             dominanceProfile: entry.dominanceProfile
           };
         }
