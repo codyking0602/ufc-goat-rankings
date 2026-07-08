@@ -1,7 +1,7 @@
 // Overall score weighting layer.
 // Applies Cody-approved GOAT weights. Main categories are all treated as 30-point category scores.
 (function(){
-  const VERSION = 'score-weighting-20260708a-35-275-275-10-30pt';
+  const VERSION = 'score-weighting-20260708b-prime-windows-loader';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
@@ -118,7 +118,20 @@
     };
   }
 
+  function loadPrimeWindows(){
+    if(document.querySelector('script[data-prime-windows]')){
+      if(window.UFC_PRIME_WINDOWS?.apply) window.UFC_PRIME_WINDOWS.apply();
+      return;
+    }
+    const script=document.createElement('script');
+    script.src='assets/data/prime-windows.js?v=prime-windows-20260708a';
+    script.setAttribute('data-prime-windows','true');
+    script.onload=()=>{ if(window.UFC_PRIME_WINDOWS?.apply) window.UFC_PRIME_WINDOWS.apply(); };
+    document.body.appendChild(script);
+  }
+
   installRulesWeightNote();
+  loadPrimeWindows();
 
   window.UFC_SCORE_WEIGHTING = {
     version: VERSION,
@@ -126,6 +139,7 @@
     baseMax: BASE_MAX,
     legacyLongevityMax: LEGACY_LONGEVITY_MAX,
     penaltyMode: PENALTY_MODE,
+    primeWindowsLoader: true,
     formula: 'championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + penalty',
     appliedAt: new Date().toISOString()
   };
