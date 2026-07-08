@@ -1,13 +1,14 @@
 // Opponent Quality live scoring layer.
 // Makes the completed ledger the live category source, recalculates totals, and re-ranks boards.
 (function(){
-  const VERSION='opponent-quality-live-20260708a-total-score-apply';
+  const VERSION='opponent-quality-live-20260708b-30pt-locked-weights';
   const DATA=window.RANKING_DATA;
   const AUDIT=window.UFC_OPPONENT_QUALITY_SHADOW_AUDIT;
   if(!DATA||!AUDIT||!Array.isArray(AUDIT.report))return;
 
-  const WEIGHTS={championship:35,primeDominance:25,opponentQuality:25,longevity:10};
-  const BASE_MAX={championship:30,primeDominance:30,opponentQuality:25,longevity:15};
+  const WEIGHTS={championship:35,opponentQuality:27.5,primeDominance:27.5,longevity:10};
+  const BASE_MAX={championship:30,opponentQuality:30,primeDominance:30,longevity:30};
+  const LEGACY_LONGEVITY_MAX=15;
   const DEFINITION='Opponent Quality rewards who you beat, when you beat them, and how strong the division was. Elite champions and true top contenders carry the most weight. Softer, faded, short-notice, or weird-context wins get capped.';
 
   function n(v,d=0){const x=Number(v);return Number.isFinite(x)?x:d;}
@@ -21,15 +22,23 @@
     (DATA.fighters||[]).forEach(push);
     return rows;
   }
+  function categoryScore(row,key){
+    if(key==='longevity'){
+      const raw=n(row.longevity);
+      if(row.longevityThirtyPoint===true||raw>LEGACY_LONGEVITY_MAX)return raw;
+      return (raw/LEGACY_LONGEVITY_MAX)*BASE_MAX.longevity;
+    }
+    return n(row[key]);
+  }
   function breakdown(row){
-    const championship=(n(row.championship)/BASE_MAX.championship)*WEIGHTS.championship;
-    const primeDominance=(n(row.primeDominance)/BASE_MAX.primeDominance)*WEIGHTS.primeDominance;
-    const opponentQuality=(n(row.opponentQuality)/BASE_MAX.opponentQuality)*WEIGHTS.opponentQuality;
-    const longevity=(n(row.longevity)/BASE_MAX.longevity)*WEIGHTS.longevity;
+    const championship=(categoryScore(row,'championship')/BASE_MAX.championship)*WEIGHTS.championship;
+    const opponentQuality=(categoryScore(row,'opponentQuality')/BASE_MAX.opponentQuality)*WEIGHTS.opponentQuality;
+    const primeDominance=(categoryScore(row,'primeDominance')/BASE_MAX.primeDominance)*WEIGHTS.primeDominance;
+    const longevity=(categoryScore(row,'longevity')/BASE_MAX.longevity)*WEIGHTS.longevity;
     const apexPeak=n(row.apexPeak);
     const penalty=n(row.penalty);
-    const positiveScore=championship+primeDominance+opponentQuality+longevity+apexPeak;
-    return {championship:r(championship),primeDominance:r(primeDominance),opponentQuality:r(opponentQuality),longevity:r(longevity),apexPeak:r(apexPeak),positiveScore:r(positiveScore),penalty:r(penalty),totalScore:r(positiveScore+penalty)};
+    const positiveScore=championship+opponentQuality+primeDominance+longevity;
+    return {championship:r(championship),opponentQuality:r(opponentQuality),primeDominance:r(primeDominance),longevity:r(longevity),apexPeak:r(apexPeak),positiveScore:r(positiveScore),penalty:r(penalty),totalScore:r(positiveScore+penalty)};
   }
   function sortBoard(board){
     if(!Array.isArray(board))return;
@@ -61,7 +70,7 @@
 
   const benchmark=Math.max(...AUDIT.report.map(row=>n(row.diminishedCredit)),1);
   const liveRows=AUDIT.report.map(row=>{
-    const liveScore=r(Math.min(25,Math.max(0,(n(row.diminishedCredit)/benchmark)*25)));
+    const liveScore=r(Math.min(30,Math.max(0,(n(row.diminishedCredit)/benchmark)*30)));
     return {...row,liveScore,categoryScore:liveScore,benchmarkCredit:benchmark};
   });
   const byName=new Map(liveRows.map(row=>[row.fighter,row]));
@@ -144,13 +153,14 @@
 
   DATA.meta=DATA.meta||{};
   DATA.meta.opponentQualityLive={version:VERSION,benchmarkCredit:benchmark,sourceVersion:AUDIT.version,appliedAt:new Date().toISOString()};
+  DATA.meta.scoringWeights={version:VERSION,weights:WEIGHTS,baseMax:BASE_MAX,legacyLongevityMax:LEGACY_LONGEVITY_MAX,formula:'championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + penalty'};
   window.UFC_OPPONENT_QUALITY_LIVE={
     version:VERSION,
     mode:'live-category-total-score-apply',
     benchmarkCredit:benchmark,
     sourceVersion:AUDIT.version,
     fighters:liveRows.length,
-    formula:'Live category score = diminished opponent-quality credit normalized to 25, using the current leader as the benchmark. Total scores recalculated.',
+    formula:'Live Quality Wins score = diminished opponent-quality credit normalized to 30, using the current leader as benchmark. Total scores use 35 / 27.5 / 27.5 / 10 weights.',
     leaders:liveRows.slice().sort((a,b)=>n(b.liveScore)-n(a.liveScore)||n(b.diminishedCredit)-n(a.diminishedCredit)).slice(0,20).map(row=>({fighter:row.fighter,liveScore:row.liveScore,diminishedCredit:row.diminishedCredit,elitePlusWins:row.elitePlusWins,topFivePlusWins:row.topFivePlusWins,winProfile:row.winProfile})),
     report:liveRows,
     appliedAt:new Date().toISOString()
