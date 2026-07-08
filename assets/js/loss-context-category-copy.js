@@ -1,11 +1,12 @@
 // Polishes Category Leaders copy for formula-live Loss Context.
 (function(){
-  const VERSION = 'loss-context-category-copy-20260707b-loss-profile-tags';
+  const VERSION = 'loss-context-category-copy-20260707c-merab-formula-fix';
   const SUMMARY = '<strong>Loss Context · {board}</strong><br>Ranks loss profiles by type: pre-prime, prime, post-prime, elite/upward-division, finish, and weird-result context. Showing {count} fighters.';
   const COPY_OVERRIDES = {
     'Jon Jones': 'Clean loss profile · Hamill DQ not treated as a real loss',
     'Khabib Nurmagomedov': 'Clean loss profile · No counted UFC losses',
-    'Charles Oliveira': 'Heavy loss context · Early finishes + prime elite losses'
+    'Charles Oliveira': 'Heavy loss context · Early finishes + prime elite losses',
+    'Merab Dvalishvili': 'Moderate loss context · Pre-prime losses + prime elite decision'
   };
   function activeBoardLabel(){
     const select = document.getElementById('categoryLeaderBoard');
@@ -40,27 +41,28 @@
     const hasPrime = entries.some(e => entryPhase(e) === 'prime' || entryPhase(e).includes('prime') && !entryPhase(e).includes('pre') && !entryPhase(e).includes('post'));
     const hasPost = entries.some(e => entryPhase(e).includes('post'));
     const hasFinish = entries.some(entryFinished);
+    const primeFinish = entries.some(e => (entryPhase(e) === 'prime' || entryPhase(e).includes('prime') && !entryPhase(e).includes('pre') && !entryPhase(e).includes('post')) && entryFinished(e));
     const hasUpward = entries.some(e => e?.upwardDivision === true);
     const hasNonElite = entries.some(e => entryTier(e).includes('non'));
-    const primeEliteCount = entries.filter(e => hasPrime && entryTier(e).includes('champion')).length;
     if(penalty <= -9.75){
       if(hasPre && hasPrime && hasFinish) return 'Heavy loss context · Early finishes + prime elite losses';
       return 'Heavy loss context · Repeated counted losses across prime';
     }
     if(penalty <= -7){
       if(hasNonElite && hasFinish) return 'Heavy loss context · Upset finishes + elite losses';
-      if(hasPrime && hasFinish) return 'Heavy loss context · Prime elite finishes';
+      if(primeFinish) return 'Heavy loss context · Prime elite finishes';
       return 'Heavy loss context · Multiple elite losses';
     }
     if(penalty <= -4){
-      if(hasPrime && hasNonElite && hasFinish) return 'Moderate loss context · Prime upset finish';
+      if(hasPrime && hasNonElite && primeFinish) return 'Moderate loss context · Prime upset finish';
       if(hasUpward) return 'Moderate loss context · Upward-division + elite losses';
-      if(hasPrime && hasFinish) return 'Moderate loss context · Prime elite finish loss';
+      if(primeFinish) return 'Moderate loss context · Prime elite finish loss';
+      if(hasPre && hasPrime) return 'Moderate loss context · Pre-prime losses + prime elite decision';
       return 'Moderate loss context · Multiple counted elite losses';
     }
     if(hasUpward) return 'Light loss context · Upward-division elite loss';
     if(hasPre && !hasPrime) return hasFinish ? 'Light loss context · Early finish before prime' : 'Light loss context · Early loss before prime';
-    if(hasPrime && !hasFinish) return entries.length > 1 ? 'Light loss context · Elite decision losses only' : 'Light loss context · Prime elite decision loss';
+    if(hasPrime && !primeFinish) return entries.length > 1 ? 'Light loss context · Elite decision losses only' : 'Light loss context · Prime elite decision loss';
     if(hasPost && !hasPrime && !hasPre) return 'Light loss context · Mostly post-prime losses';
     return 'Light loss context · Loss has timing or opponent context';
   }
@@ -88,7 +90,7 @@
       summary.innerHTML = SUMMARY.replace('{board}', activeBoardLabel()).replace('{count}', String(count));
       applyRowCopy();
     }
-    window.UFC_LOSS_CONTEXT_CATEGORY_COPY = { version:VERSION, appliedAt:new Date().toISOString(), charles:COPY_OVERRIDES['Charles Oliveira'] };
+    window.UFC_LOSS_CONTEXT_CATEGORY_COPY = { version:VERSION, appliedAt:new Date().toISOString(), merab:COPY_OVERRIDES['Merab Dvalishvili'], charles:COPY_OVERRIDES['Charles Oliveira'] };
     document.documentElement.setAttribute('data-loss-context-category-copy', VERSION);
   }
   function wrapRender(){
