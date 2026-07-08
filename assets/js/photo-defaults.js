@@ -1,6 +1,6 @@
 // Direct fighter photo defaults. One-pass only; no timers or tab rerender loops.
 (function(){
-  const VERSION = 'photo-defaults-20260707d-existing-img-fallback';
+  const VERSION = 'photo-defaults-20260707e-load-division-photo-bridge';
   const SLUG_OVERRIDES = {
     'B.J. Penn':'bj-penn',
     'BJ Penn':'bj-penn',
@@ -86,11 +86,20 @@
     });
   }
 
+  function loadDivisionPhotoBridge(){
+    if(document.querySelector('script[data-division-photo-fix]')) return;
+    const script = document.createElement('script');
+    script.src = 'assets/js/division-photo-fix.js?v=division-photo-fix-20260707a-shared-rowphoto';
+    script.setAttribute('data-division-photo-fix','true');
+    document.body.appendChild(script);
+  }
+
   apply();
   if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', hydrateExistingRows, { once:true });
+    document.addEventListener('DOMContentLoaded', () => { hydrateExistingRows(); loadDivisionPhotoBridge(); }, { once:true });
   } else {
     hydrateExistingRows();
+    loadDivisionPhotoBridge();
   }
 
   window.UFC_PHOTO_DEFAULTS_APPLY = function(){ apply(); hydrateExistingRows(); };
