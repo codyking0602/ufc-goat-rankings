@@ -1,7 +1,7 @@
 // Profile-card display nicknames for fighters who are clearly known by one.
 // Keeps list/board rows clean and keeps data keys unchanged. Does not touch resume-tag pills.
 (function(){
-  const VERSION = 'card-nicknames-20260707c-merab-yan-loader';
+  const VERSION = 'card-nicknames-20260707d-loss-context-boxes-loader';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const DISPLAY_NAMES = {
@@ -93,4 +93,5 @@
   }
   loadOnce('assets/data/final-batch-scores.js?v=final-batch-scores-20260707a','data-final-batch-scores-loader');
   loadOnce('assets/data/merab-yan-loss-context.js?v=merab-yan-loss-context-20260707a','data-merab-yan-loss-context-loader');
+  loadOnce('assets/js/loss-context-profile-boxes.js?v=loss-context-profile-boxes-20260707a','data-loss-context-profile-boxes-loader');
 })();
