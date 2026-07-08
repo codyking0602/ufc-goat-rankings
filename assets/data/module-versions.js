@@ -5,6 +5,7 @@ window.UFC_MODULE_VERSIONS = {
   primeDominanceLedgers: "20260708j-round-audit-batch-two",
   primeDominanceShadowModel: "20260708a",
   primeDominanceLivePromoter: "20260708b",
+  primeDominanceCopyPolish: "20260708a",
   scoreWeighting: "20260708d-prime-dominance-data-restart-loader",
   championshipResumeLive: "20260708e",
   opponentQualityLive: "20260708b"
@@ -40,7 +41,13 @@ window.UFC_MODULE_VERSIONS = {
             function(){
               loadScript(
                 versions.primeDominanceLivePromoter ? 'assets/data/prime-dominance-live-promoter.js?v=prime-dominance-live-promoter-' + versions.primeDominanceLivePromoter : null,
-                'data-prime-dominance-live-promoter'
+                'data-prime-dominance-live-promoter',
+                function(){
+                  loadScript(
+                    versions.primeDominanceCopyPolish ? 'assets/js/prime-dominance-copy-polish.js?v=prime-dominance-copy-polish-' + versions.primeDominanceCopyPolish : null,
+                    'data-prime-dominance-copy-polish'
+                  );
+                }
               );
             }
           );
