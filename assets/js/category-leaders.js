@@ -1,18 +1,18 @@
 // Adds a fluid Category Leaders tab tied to the current live category ratings.
 (function(){
-  const VERSION = 'category-leaders-20260706b-championship-audit';
+  const VERSION = 'category-leaders-20260708a-live-prime-dominance';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
   const APEX_MAX = 6;
-  const state = { category: 'championship', board: 'men' };
+  const state = { category: 'primeDominance', board: 'men' };
   const CATEGORIES = [
     { key: 'championship', label: 'Championship Resume', description: 'UFC title-level accomplishment, weighted title wins, and championship control.' },
     { key: 'opponentQuality', label: 'Opponent Quality Wins', description: 'Who they beat, when they beat them, and how strong the division was.' },
-    { key: 'primeDominance', label: 'Prime Dominance', description: 'How clearly they separated from opponents at their best.' },
+    { key: 'primeDominance', label: 'Prime Dominance', description: 'How overwhelming they were during their best UFC window.' },
     { key: 'longevity', label: 'Elite Longevity', description: 'Active elite UFC years, not simple calendar time.' },
-    { key: 'apexPeak', label: 'Apex Peak', description: 'Who looked most unbeatable at their absolute best — peak form, elite opponent proof, dominance, division strength, and aura.' },
-    { key: 'penalty', label: 'Loss Context', description: 'How clean the UFC résumé is after timing, opponent quality, finish context, and division context.' }
+    { key: 'apexPeak', label: 'Apex Peak', description: 'Who looked most unbeatable at their absolute best.' },
+    { key: 'penalty', label: 'Loss Context', description: 'How clean the UFC resume is after timing, opponent quality, finish context, and division context.' }
   ];
 
   function el(id){ return document.getElementById(id); }
@@ -23,35 +23,22 @@
   function categoryInfo(key){ return CATEGORIES.find(c => c.key === key) || CATEGORIES[0]; }
   function allRows(board){ return board === 'women' ? (DATA.women || []) : (DATA.men || []); }
   function profileForName(name){ return (DATA.fighters || []).find(f => f.fighter === name) || {}; }
-  function overridesFor(name){
-    try { return typeof DISPLAY_OVERRIDES !== 'undefined' ? (DISPLAY_OVERRIDES[name] || {}) : {}; }
-    catch(e){ return {}; }
-  }
-  function hydrate(row){
-    if(typeof fullRow === 'function') return fullRow(row);
-    return { ...profileForName(row.fighter), ...row };
-  }
-  function overallRank(f){
-    const overrideRank = overridesFor(f.fighter).allTimeRank;
-    return overrideRank || f.rank || '—';
-  }
+  function overridesFor(name){ try { return typeof DISPLAY_OVERRIDES !== 'undefined' ? (DISPLAY_OVERRIDES[name] || {}) : {}; } catch(e){ return {}; } }
+  function hydrate(row){ return typeof fullRow === 'function' ? fullRow(row) : { ...profileForName(row.fighter), ...row }; }
+  function overallRank(f){ return f.rank || overridesFor(f.fighter).allTimeRank || '—'; }
   function overallRating(f){
     if(typeof overallOvr === 'function') return overallOvr(f);
     const max = Math.max(...(DATA.men || []).concat(DATA.women || []).map(x => x.totalScore || 0), 1);
     return clamp(Math.round(75 + ((f.totalScore || 0) / max) * 24), 60, 99);
   }
   function apexRating(f){ return clamp(Math.round(55 + (num(f.apexPeak) / APEX_MAX) * 44), 55, 99); }
-  function ratingFor(f,key){
-    if(key === 'apexPeak') return apexRating(f);
-    if(typeof categoryOvr === 'function') return categoryOvr(f,key);
-    return num(f[key]);
-  }
+  function ratingFor(f,key){ if(key === 'apexPeak') return apexRating(f); if(typeof categoryOvr === 'function') return categoryOvr(f,key); return num(f[key]); }
   function rawFor(f,key){ return key === 'apexPeak' ? num(f.apexPeak) : num(f[key]); }
-  function localCategoryRank(f,key,board){
-    const val = rawFor(f,key);
-    return 1 + allRows(board).map(hydrate).filter(row => rawFor(row,key) > val).length;
-  }
+  function localCategoryRank(f,key,board){ const val = rawFor(f,key); return 1 + allRows(board).map(hydrate).filter(row => rawFor(row,key) > val).length; }
   function rankFor(f,key,board){ return localCategoryRank(f,key,board); }
+  function fmt(value){ return value === null || value === undefined || value === '' ? '—' : Number(value).toFixed(2).replace(/\.00$/, ''); }
+  function pct(value){ return value === null || value === undefined || value === '' ? '—' : `${Number(value).toFixed(1)}%`; }
+  function sentence(value){ return String(value || '').split(/(?<=[.!?])\s+/).filter(Boolean)[0] || ''; }
 
   function championshipAudit(f){
     const title = f?.title || {};
@@ -84,10 +71,10 @@
       const ar = rankFor(a,key,board), br = rankFor(b,key,board);
       if(ar !== br) return ar - br;
       if(key === 'championship') return championshipTieBreak(a,b);
-      const ratingGap = ratingFor(b,key) - ratingFor(a,key);
-      if(ratingGap) return ratingGap;
       const rawGap = rawFor(b,key) - rawFor(a,key);
       if(rawGap) return rawGap;
+      const ratingGap = ratingFor(b,key) - ratingFor(a,key);
+      if(ratingGap) return ratingGap;
       return overallRating(b) - overallRating(a);
     });
   }
@@ -98,9 +85,6 @@
     const url = thumbFor(f);
     return `<div class="row-photo">${url ? `<img src="${escapeAttr(url)}" alt="${escapeAttr(f.fighter)} profile photo">` : fighterInitialsLocal(f.fighter)}</div>`;
   }
-  function pct(value){ return value === null || value === undefined || value === '' ? '—' : `${Number(value).toFixed(1)}%`; }
-  function fmt(value){ return value === null || value === undefined || value === '' ? '—' : Number(value).toFixed(2).replace(/\.00$/, ''); }
-  function sentence(value){ return String(value || '').split(/(?<=[.!?])\s+/).filter(Boolean)[0] || ''; }
   function opponentNames(f){
     const opps = Array.isArray(f.opponents) ? f.opponents : [];
     const picked = [];
@@ -110,19 +94,29 @@
     });
     return picked.slice(0,4).join(', ');
   }
+  function primeAudit(f){ return f.primeDominanceLiveAudit || f.primeDominanceShadowAudit || null; }
+  function primeContext(f){
+    const audit = primeAudit(f);
+    const pieces = [];
+    const record = audit?.primeRecord || f.primeRecord;
+    if(record) pieces.push(record);
+    if(audit?.primeFinishRate !== undefined) pieces.push(`${pct(audit.primeFinishRate)} prime finish rate`);
+    else if(f.primeFinishRatePct !== undefined) pieces.push(`${pct(f.primeFinishRatePct)} prime finish rate`);
+    else if(f.finishRatePct !== undefined) pieces.push(`${pct(f.finishRatePct)} finish rate`);
+    if(audit?.roundControlAudit?.roundsWon !== undefined && audit?.roundControlAudit?.roundsCounted !== undefined){
+      pieces.push(`${audit.roundControlAudit.roundsWon}/${audit.roundControlAudit.roundsCounted} rounds won`);
+    } else if(f.roundsWonPct !== undefined) {
+      pieces.push(`${pct(f.roundsWonPct)} rounds won`);
+    }
+    return pieces.join(' · ') || 'Live prime-dominance rating.';
+  }
   function contextFor(f,key){
     if(key === 'championship') return championshipContext(f);
     if(key === 'opponentQuality'){
       const names = opponentNames(f);
       return names ? `Key wins: ${names}.` : 'Live opponent-quality rating.';
     }
-    if(key === 'primeDominance'){
-      const pieces = [];
-      if(f.primeRecord) pieces.push(f.primeRecord);
-      if(f.finishRatePct !== undefined) pieces.push(`${pct(f.finishRatePct)} finish rate`);
-      if(f.roundsWonPct !== undefined) pieces.push(`${pct(f.roundsWonPct)} rounds won`);
-      return pieces.join(' · ') || 'Live prime-dominance rating.';
-    }
+    if(key === 'primeDominance') return primeContext(f);
     if(key === 'longevity') return `${fmt(f.activeEliteYears)} active elite UFC years.`;
     if(key === 'apexPeak'){
       const audit = f.apexPeakAudit || overridesFor(f.fighter).apexPeakAudit || {};
@@ -159,20 +153,32 @@
     const nav = document.querySelector('.tabs');
     const main = document.querySelector('main.shell');
     if(!nav || !main) return;
-    if(!document.querySelector('[data-view="categoryLeaders"]')){
+    const oldStaticButton = nav.querySelector('[data-view="categories"]');
+    const categoryButtons = Array.from(nav.querySelectorAll('[data-view="categoryLeaders"]'));
+    const chosen = oldStaticButton || categoryButtons[0];
+    categoryButtons.forEach(btn => { if(btn !== chosen) btn.remove(); });
+    if(chosen){
+      chosen.dataset.view = 'categoryLeaders';
+      chosen.textContent = 'Category Leaders';
+      if(!chosen.__categoryLeadersBound){
+        chosen.__categoryLeadersBound = true;
+        chosen.addEventListener('click', () => {
+          document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
+          chosen.classList.add('active');
+          el('categoryLeaders')?.classList.add('active-view');
+          render();
+        });
+      }
+    } else {
       const btn = document.createElement('button');
       btn.className = 'tab';
       btn.dataset.view = 'categoryLeaders';
       btn.textContent = 'Category Leaders';
       nav.insertBefore(btn, nav.querySelector('[data-view="compare"]') || nav.querySelector('[data-view="rules"]') || null);
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active-view'));
-        btn.classList.add('active');
-        el('categoryLeaders')?.classList.add('active-view');
-        render();
-      });
     }
+    const oldStaticSection = el('categories');
+    if(oldStaticSection) oldStaticSection.remove();
     if(!el('categoryLeaders')){
       const section = document.createElement('section');
       section.id = 'categoryLeaders';
@@ -198,6 +204,7 @@
     </div>`;
   }
   function render(){
+    if(window.UFC_PRIME_DOMINANCE_LIVE_PROMOTER?.apply) window.UFC_PRIME_DOMINANCE_LIVE_PROMOTER.apply();
     ensureStyles();
     ensureTab();
     const mount = el('categoryLeadersMount');
