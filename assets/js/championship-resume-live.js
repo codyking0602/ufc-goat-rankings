@@ -1,18 +1,20 @@
 // Championship Resume live apply layer.
 // Applies formula-driven Championship Resume scores from the ledger/shadow audit to live rows, snapshots, totals, and category leaders.
 (function(){
-  const VERSION='championship-resume-live-20260708d-opponent-quality-live-loader';
+  const VERSION='championship-resume-live-20260708e-locked-weights';
   const DATA=window.RANKING_DATA;
   const SHADOW=window.UFC_CHAMPIONSHIP_RESUME_SHADOW;
   if(!DATA||!SHADOW||!Array.isArray(SHADOW.report))return;
-  const WEIGHTS={championship:35,primeDominance:25,opponentQuality:25,longevity:10};
-  const BASE_MAX={championship:30,primeDominance:30,opponentQuality:25,longevity:15};
+  const WEIGHTS={championship:35,opponentQuality:27.5,primeDominance:27.5,longevity:10};
+  const BASE_MAX={championship:30,opponentQuality:30,primeDominance:30,longevity:30};
+  const LEGACY_LONGEVITY_MAX=15;
   function n(v,d=0){const x=Number(v);return Number.isFinite(x)?x:d;}
   function r(v){return Math.round((n(v)+Number.EPSILON)*100)/100;}
+  function score(row,key){if(key==='longevity'){const raw=n(row.longevity);return row.longevityThirtyPoint===true||raw>LEGACY_LONGEVITY_MAX?raw:(raw/LEGACY_LONGEVITY_MAX)*30;}return n(row[key]);}
   function championshipScore(row){const benchmark=Math.max(n(SHADOW.benchmarkCredit,1),1);return r(Math.min(30,Math.max(0,(n(row.adjustedTitleCredit)/benchmark)*30)));}
   function boardRows(){return [...(DATA.men||[]),...(DATA.women||[])];}
   function allRowsFor(name){const rows=[];const push=row=>{if(row&&row.fighter===name)rows.push(row);};(DATA.men||[]).forEach(push);(DATA.women||[]).forEach(push);(DATA.fighters||[]).forEach(push);return rows;}
-  function breakdown(row){const championship=(n(row.championship)/BASE_MAX.championship)*WEIGHTS.championship;const primeDominance=(n(row.primeDominance)/BASE_MAX.primeDominance)*WEIGHTS.primeDominance;const opponentQuality=(n(row.opponentQuality)/BASE_MAX.opponentQuality)*WEIGHTS.opponentQuality;const longevity=(n(row.longevity)/BASE_MAX.longevity)*WEIGHTS.longevity;const apexPeak=n(row.apexPeak);const penalty=n(row.penalty);const positiveScore=championship+primeDominance+opponentQuality+longevity+apexPeak;return{championship:r(championship),primeDominance:r(primeDominance),opponentQuality:r(opponentQuality),longevity:r(longevity),apexPeak:r(apexPeak),positiveScore:r(positiveScore),penalty:r(penalty),totalScore:r(positiveScore+penalty)};}
+  function breakdown(row){const championship=(score(row,'championship')/BASE_MAX.championship)*WEIGHTS.championship;const opponentQuality=(score(row,'opponentQuality')/BASE_MAX.opponentQuality)*WEIGHTS.opponentQuality;const primeDominance=(score(row,'primeDominance')/BASE_MAX.primeDominance)*WEIGHTS.primeDominance;const longevity=(score(row,'longevity')/BASE_MAX.longevity)*WEIGHTS.longevity;const apexPeak=n(row.apexPeak);const penalty=n(row.penalty);const positiveScore=championship+opponentQuality+primeDominance+longevity;return{championship:r(championship),opponentQuality:r(opponentQuality),primeDominance:r(primeDominance),longevity:r(longevity),apexPeak:r(apexPeak),positiveScore:r(positiveScore),penalty:r(penalty),totalScore:r(positiveScore+penalty)};}
   function sortBoard(board){if(!Array.isArray(board))return;board.sort((a,b)=>n(b.totalScore)-n(a.totalScore));board.forEach((row,i)=>{row.rank=i+1;});}
   function titleNote(report,score){return `Total title fight wins = ${report.titleFightWins}. Adjusted title-win credit = ${n(report.adjustedTitleCredit).toFixed(2)}. Championship Resume score = ${score.toFixed(2)}/30. Formula uses adjusted UFC title-win credit only; title losses do not add or subtract in this category.`;}
   function ensureOverride(name){if(typeof DISPLAY_OVERRIDES==='undefined')return null;DISPLAY_OVERRIDES[name]=DISPLAY_OVERRIDES[name]||{};DISPLAY_OVERRIDES[name].snapshotStats=DISPLAY_OVERRIDES[name].snapshotStats||{};DISPLAY_OVERRIDES[name].categories=DISPLAY_OVERRIDES[name].categories||{};delete DISPLAY_OVERRIDES[name].categories.championship;return DISPLAY_OVERRIDES[name];}
