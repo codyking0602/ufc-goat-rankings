@@ -6,22 +6,25 @@
   <title>Loss Context Shadow Test V2</title>
   <style>
     body{margin:0;background:#050505;color:#f4f4f5;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}
-    main{max-width:1200px;margin:0 auto;padding:24px 14px 60px;}
+    main{max-width:1240px;margin:0 auto;padding:24px 14px 60px;}
     h1{margin:0 0 8px;font-size:28px;letter-spacing:-.03em;}
     .muted{color:#a1a1aa}.bar{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}.card{background:#18181b;border:1px solid #27272a;border-radius:14px;padding:12px;min-width:120px}.label{font-size:11px;color:#a1a1aa;text-transform:uppercase;letter-spacing:.08em}.value{font-size:22px;font-weight:900;margin-top:4px}
+    .note{border:1px solid #27272a;background:#101012;border-radius:14px;padding:12px;margin:12px 0;color:#d4d4d8;line-height:1.45}.note b{color:#fff}
     button,input{background:#18181b;color:#f4f4f5;border:1px solid #3f3f46;border-radius:12px;padding:10px 12px;font:inherit}button{font-weight:800}button.active{background:#f4f4f5;color:#09090b}input{min-width:220px}
-    table{width:100%;border-collapse:separate;border-spacing:0 8px}th{text-align:left;color:#a1a1aa;font-size:11px;text-transform:uppercase;letter-spacing:.08em;padding:0 10px}td{background:#18181b;border-top:1px solid #27272a;border-bottom:1px solid #27272a;padding:12px 10px;vertical-align:top}td:first-child{border-left:1px solid #27272a;border-radius:12px 0 0 12px;font-weight:900}td:last-child{border-right:1px solid #27272a;border-radius:0 12px 12px 0}.pill{display:inline-block;border-radius:999px;padding:4px 9px;font-size:11px;font-weight:900;text-transform:uppercase}.review{background:#451a03;color:#fed7aa}.match{background:#052e16;color:#bbf7d0}.bad{background:#450a0a;color:#fecaca}.pos{color:#bbf7d0;font-weight:900}.neg{color:#fecaca;font-weight:900}.events{max-width:420px;font-size:12px;line-height:1.4}.event{margin-bottom:6px}@media(max-width:800px){.events{display:none}th.eventsHead{display:none}}
+    table{width:100%;border-collapse:separate;border-spacing:0 8px}th{text-align:left;color:#a1a1aa;font-size:11px;text-transform:uppercase;letter-spacing:.08em;padding:0 10px}td{background:#18181b;border-top:1px solid #27272a;border-bottom:1px solid #27272a;padding:12px 10px;vertical-align:top}td:first-child{border-left:1px solid #27272a;border-radius:12px 0 0 12px;font-weight:900}td:last-child{border-right:1px solid #27272a;border-radius:0 12px 12px 0}.pill{display:inline-block;border-radius:999px;padding:4px 9px;font-size:11px;font-weight:900;text-transform:uppercase}.review{background:#451a03;color:#fed7aa}.clean,.match{background:#052e16;color:#bbf7d0}.bad{background:#450a0a;color:#fecaca}.pos{color:#bbf7d0;font-weight:900}.neg{color:#fecaca;font-weight:900}.events{max-width:420px;font-size:12px;line-height:1.4}.event{margin-bottom:6px}.reason{max-width:300px;color:#d4d4d8;font-size:12px;line-height:1.4}@media(max-width:850px){.events{display:none}th.eventsHead{display:none}.reason{min-width:220px}}
   </style>
 </head>
 <body>
 <main>
   <h1>Loss Context Shadow Test V2</h1>
   <div id="status" class="muted">Loading fresh scripts…</div>
+  <div class="note"><b>Read this page this way:</b> Legacy is the old app penalty and is informational only. Ledger estimate is the new locked-rule estimate. Clean means the ledger row is classifiable. Review means the ledger needs cleanup, usually grouped losses or missing phase/date detail.</div>
+  <div id="missing" class="note" style="display:none"></div>
   <div id="summary" class="bar"></div>
   <div class="bar">
     <button data-filter="review" class="active">Review</button>
     <button data-filter="all">All</button>
-    <button data-filter="match">Match</button>
+    <button data-filter="clean">Clean</button>
     <button data-filter="open">Open/current</button>
     <input id="search" placeholder="Search fighter…" />
   </div>
@@ -29,13 +32,14 @@
 </main>
 <script>
 (function(){
-  const PAGE_VERSION='loss-context-shadow-test-v2-20260709a-runtime-bust';
+  const PAGE_VERSION='loss-context-shadow-test-v2-20260709b-label-cleanup';
   const bust=Date.now();
   let filter='review';
   const status=document.getElementById('status');
   const summary=document.getElementById('summary');
   const table=document.getElementById('table');
   const search=document.getElementById('search');
+  const missing=document.getElementById('missing');
 
   function src(path){return `${path}${path.includes('?')?'&':'?'}fresh=${bust}`;}
   function load(path){return new Promise(resolve=>{const s=document.createElement('script');s.src=src(path);s.onload=()=>resolve(true);s.onerror=()=>resolve(false);document.body.appendChild(s);});}
@@ -51,20 +55,28 @@
   function fmt(v){return v===null||v===undefined?'—':v;}
   function dclass(v){const n=Number(v)||0;return n>0?'pos':n<0?'neg':'';}
   function eventHtml(e){return `<div class="event"><b>${e.label||'Event'}</b> <span class="muted">${e.date||''}</span><br><span class="muted">${e.sourceType} | ${e.phase} | ${e.quality} | est ${fmt(e.penaltyEstimate)}</span></div>`;}
+  function statusClass(status){return status==='clean'||status==='match'?'clean':'review';}
+  function cleanStatus(status){return status==='match'?'clean':status;}
   function render(){
     const cmp=window.UFC_LOSS_CONTEXT_SHADOW_COMPARE;
     if(!cmp){table.innerHTML='<div class="bad pill">Compare failed to load</div>';return;}
     const s=cmp.summary||{};
     status.textContent=`${PAGE_VERSION} | fresh=${bust} | adapter=${s.adapterVersion||'missing'} | era=${s.eraLedgerVersion||'missing'}`;
-    summary.innerHTML=[card('Total',s.total),card('Matches',s.matches),card('Review',s.review),card('Adapter',s.adapterLoaded?'Yes':'No'),card('Missing data',s.missingData)].join('');
+    summary.innerHTML=[card('Total',s.total),card('Clean',s.clean??s.matches),card('Review',s.review),card('Adapter',s.adapterLoaded?'Yes':'No'),card('Missing data',s.missingData)].join('');
+    if((cmp.missingData||[]).length){missing.style.display='block';missing.innerHTML=`<b>Missing data names:</b> ${(cmp.missingData||[]).join(', ')}`;}else{missing.style.display='none';}
     const q=(search.value||'').toLowerCase().trim();
     let rows=cmp.comparisons||[];
-    if(filter==='review')rows=rows.filter(r=>r.status!=='match');
-    if(filter==='match')rows=rows.filter(r=>r.status==='match');
+    if(filter==='review')rows=rows.filter(r=>r.status!=='clean'&&r.status!=='match');
+    if(filter==='clean')rows=rows.filter(r=>r.status==='clean'||r.status==='match');
     if(filter==='open')rows=rows.filter(r=>r.openCurrent);
     if(q)rows=rows.filter(r=>String(r.fighter||'').toLowerCase().includes(q));
-    rows=[...rows].sort((a,b)=>Math.abs(Number(b.delta)||0)-Math.abs(Number(a.delta)||0));
-    table.innerHTML=`<table><thead><tr><th>Fighter</th><th>Status</th><th>Live</th><th>Ledger</th><th>Delta</th><th>Window</th><th class="eventsHead">Events</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.fighter}</td><td><span class="pill ${r.status==='match'?'match':'review'}">${r.status}</span></td><td>${fmt(r.livePenalty)}</td><td>${fmt(r.adapterPenalty)}</td><td class="${dclass(r.delta)}">${fmt(r.delta)}</td><td><b>${r.window?.startLabel||'—'}</b> → <b>${r.window?.endLabel||'Open'}</b><br><span class="muted">${r.window?.endType||''}</span></td><td class="events">${(r.events||[]).slice(0,6).map(eventHtml).join('')||'<span class="muted">No ledger loss events</span>'}</td></tr>`).join('')}</tbody></table>`;
+    rows=[...rows].sort((a,b)=>{
+      const ar=(a.reviewReasons||[]).length?1:0;
+      const br=(b.reviewReasons||[]).length?1:0;
+      if(br!==ar)return br-ar;
+      return Math.abs(Number(b.legacyDelta??b.delta)||0)-Math.abs(Number(a.legacyDelta??a.delta)||0);
+    });
+    table.innerHTML=`<table><thead><tr><th>Fighter</th><th>Status</th><th>Legacy</th><th>Ledger estimate</th><th>Legacy Δ</th><th>Review reason</th><th>Window</th><th class="eventsHead">Events</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.fighter}</td><td><span class="pill ${statusClass(r.status)}">${cleanStatus(r.status)}</span></td><td>${fmt(r.legacyPenalty??r.livePenalty)}</td><td>${fmt(r.ledgerPenalty??r.adapterPenalty)}</td><td class="${dclass(r.legacyDelta??r.delta)}">${fmt(r.legacyDelta??r.delta)}</td><td class="reason">${r.reason||'—'}</td><td><b>${r.window?.startLabel||'—'}</b> → <b>${r.window?.endLabel||'Open'}</b><br><span class="muted">${r.window?.endType||''}</span></td><td class="events">${(r.events||[]).slice(0,6).map(eventHtml).join('')||'<span class="muted">No ledger loss events</span>'}</td></tr>`).join('')}</tbody></table>`;
   }
   document.querySelectorAll('button[data-filter]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('button[data-filter]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');filter=btn.dataset.filter;render();}));
   search.addEventListener('input',render);
