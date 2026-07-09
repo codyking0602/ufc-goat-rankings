@@ -7,12 +7,14 @@ window.UFC_MODULE_VERSIONS = {
   primeDominanceLivePromoter: "20260708c",
   primeDominanceCopyPolish: "20260708b",
   categoryPercentileTiers: "20260708b-live-prime-dominance-final",
-  scoreWeighting: "20260708d-prime-dominance-data-restart-loader",
+  scoreWeighting: "20260709a-apex-bonus-modifier",
   championshipResumeLive: "20260708e",
   opponentQualityLive: "20260708b",
   fighterEraLedgers: "20260709g-review-corrections",
   longevityShadowScorer: "20260709b-ledger-driven",
-  longevityLivePromoter: "20260709b-weighted-total-safe"
+  longevityLivePromoter: "20260709b-weighted-total-safe",
+  apexPeakCorrections: "20260706a-sean-whittaker",
+  apexPeakLiveBonus: "20260709a-positive-modifier"
 };
 
 (function(){
@@ -31,6 +33,12 @@ window.UFC_MODULE_VERSIONS = {
     document.body.appendChild(s);
   }
 
+  function runApexBonus(){
+    if(window.UFC_APEX_PEAK_LIVE_BONUS?.apply){
+      try{ window.UFC_APEX_PEAK_LIVE_BONUS.apply(); }catch(e){}
+    }
+  }
+
   function forceLivePrimePercentiles(delay, label){
     setTimeout(function(){
       const version = versions.categoryPercentileTiers || '20260708b-live-prime-dominance-final';
@@ -44,6 +52,7 @@ window.UFC_MODULE_VERSIONS = {
           if(window.UFC_LONGEVITY_LIVE_PROMOTER?.apply){
             try{ window.UFC_LONGEVITY_LIVE_PROMOTER.apply(); }catch(e){}
           }
+          runApexBonus();
           if(typeof refresh === 'function'){
             try{ refresh(); }catch(e){}
           }
@@ -68,6 +77,7 @@ window.UFC_MODULE_VERSIONS = {
                 if(window.UFC_LONGEVITY_LIVE_PROMOTER?.apply){
                   try{ window.UFC_LONGEVITY_LIVE_PROMOTER.apply(); }catch(e){}
                 }
+                runApexBonus();
                 if(typeof refresh === 'function'){
                   try{ refresh(); }catch(e){}
                 }
@@ -79,9 +89,34 @@ window.UFC_MODULE_VERSIONS = {
     );
   }
 
+  function loadApexLive(label){
+    loadScript(
+      versions.apexPeakCorrections ? 'assets/data/apex-peak-score-corrections.js?v=apex-peak-score-corrections-' + versions.apexPeakCorrections + '-' + label : null,
+      'data-apex-peak-score-corrections',
+      function(){
+        loadScript(
+          versions.apexPeakLiveBonus ? 'assets/data/apex-peak-live-bonus.js?v=apex-peak-live-bonus-' + versions.apexPeakLiveBonus + '-' + label : null,
+          'data-apex-peak-live-bonus',
+          function(){
+            runApexBonus();
+            if(typeof refresh === 'function'){
+              try{ refresh(); }catch(e){}
+            }
+          }
+        );
+      }
+    );
+  }
+
   function forceLongevityLive(delay, label){
     setTimeout(function(){
       loadLongevityLive(label);
+    }, delay);
+  }
+
+  function forceApexLive(delay, label){
+    setTimeout(function(){
+      loadApexLive(label);
     }, delay);
   }
 
@@ -128,4 +163,8 @@ window.UFC_MODULE_VERSIONS = {
   forceLongevityLive(1800, 'early');
   forceLongevityLive(3800, 'late');
   forceLongevityLive(6500, 'final');
+
+  forceApexLive(2400, 'early');
+  forceApexLive(5200, 'late');
+  forceApexLive(8200, 'final');
 })();
