@@ -6,7 +6,7 @@ window.UFC_MODULE_VERSIONS = {
   primeDominanceShadowModel: "20260708b-hughes-jon-core",
   primeDominanceLivePromoter: "20260708c",
   primeDominanceCopyPolish: "20260708b",
-  categoryPercentileTiers: "20260708a-live-prime-dominance",
+  categoryPercentileTiers: "20260708b-live-prime-dominance-final",
   scoreWeighting: "20260708d-prime-dominance-data-restart-loader",
   championshipResumeLive: "20260708e",
   opponentQualityLive: "20260708b"
@@ -26,6 +26,24 @@ window.UFC_MODULE_VERSIONS = {
     s.onload = function(){ if(done) done(); };
     s.onerror = function(){ if(done) done(); };
     document.body.appendChild(s);
+  }
+
+  function forceLivePrimePercentiles(delay, label){
+    setTimeout(function(){
+      const version = versions.categoryPercentileTiers || '20260708b-live-prime-dominance-final';
+      loadScript(
+        'assets/js/category-percentile-tiers.js?v=category-percentile-tiers-' + version + '-' + label,
+        'data-category-percentile-tiers-final-' + label,
+        function(){
+          if(window.UFC_PRIME_DOMINANCE_LIVE_PROMOTER?.apply){
+            try{ window.UFC_PRIME_DOMINANCE_LIVE_PROMOTER.apply(); }catch(e){}
+          }
+          if(typeof refresh === 'function'){
+            try{ refresh(); }catch(e){}
+          }
+        }
+      );
+    }, delay);
   }
 
   loadScript(
@@ -50,7 +68,12 @@ window.UFC_MODULE_VERSIONS = {
                     function(){
                       loadScript(
                         versions.categoryPercentileTiers ? 'assets/js/category-percentile-tiers.js?v=category-percentile-tiers-' + versions.categoryPercentileTiers : null,
-                        'data-category-percentile-tiers'
+                        'data-category-percentile-tiers',
+                        function(){
+                          forceLivePrimePercentiles(350, 'early');
+                          forceLivePrimePercentiles(1400, 'late');
+                          forceLivePrimePercentiles(2800, 'final');
+                        }
                       );
                     }
                   );
