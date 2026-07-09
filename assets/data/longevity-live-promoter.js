@@ -2,15 +2,32 @@
 // Promotes Era Ledger /30 Longevity shadow scores into live fighter rows.
 // Source of truth: fighter-era-ledgers.js via longevity-shadow-scorer.js.
 (function(){
-  const VERSION='longevity-live-promoter-20260709a-era-ledger-30pt';
+  const VERSION='longevity-live-promoter-20260709b-weighted-total-safe';
   const DATA=window.RANKING_DATA;
   const SHADOW=window.UFC_LONGEVITY_SHADOW_SCORER;
 
   function key(name){return String(name||'').trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');}
   function round2(value){const n=Number(value);return Number.isFinite(n)?Math.round(n*100)/100:0;}
+  function num(value){const n=Number(value||0);return Number.isFinite(n)?n:0;}
   function rows(){return [...(DATA?.men||[]),...(DATA?.women||[]),...(DATA?.fighters||[])].filter(row=>row&&row.fighter);}
   function shadowFor(fighter){return (SHADOW?.entryFor&&SHADOW.entryFor(fighter))||(SHADOW?.rows||[]).find(row=>key(row.fighter)===key(fighter))||null;}
-  function recalcLegacyTotal(row){return round2(Number(row.championship||0)+Number(row.opponentQuality||0)+Number(row.primeDominance||0)+Number(row.longevity||0)+Number(row.penalty||0));}
+  function weightedBreakdown(row){
+    const weights=window.UFC_SCORE_WEIGHTING?.weights||{championship:35,opponentQuality:27.5,primeDominance:27.5,longevity:10};
+    const baseMax=window.UFC_SCORE_WEIGHTING?.baseMax||{championship:30,opponentQuality:30,primeDominance:30,longevity:30};
+    const championship=(num(row.championship)/baseMax.championship)*weights.championship;
+    const opponentQuality=(num(row.opponentQuality)/baseMax.opponentQuality)*weights.opponentQuality;
+    const primeDominance=(num(row.primeDominance)/baseMax.primeDominance)*weights.primeDominance;
+    const longevity=(num(row.longevity)/baseMax.longevity)*weights.longevity;
+    const penalty=num(row.penalty);
+    const positiveScore=championship+opponentQuality+primeDominance+longevity;
+    return {championship:round2(championship),opponentQuality:round2(opponentQuality),primeDominance:round2(primeDominance),longevity:round2(longevity),apexPeak:round2(row.apexPeak),positiveScore:round2(positiveScore),penalty:round2(penalty),totalScore:round2(positiveScore+penalty)};
+  }
+  function recalcTotal(row){
+    const breakdown=weightedBreakdown(row);
+    row.weightedScoreBreakdown=breakdown;
+    row.totalScore=breakdown.totalScore;
+    return breakdown.totalScore;
+  }
 
   function apply(){
     if(!DATA||!SHADOW){
@@ -67,7 +84,7 @@
         notes:shadow.notes||[],
         appliedAt:new Date().toISOString()
       };
-      row.totalScore=recalcLegacyTotal(row);
+      recalcTotal(row);
       applied.push({fighter,legacyScore:legacy,raw30,weighted10,legacyDelta:round2(raw30-legacy),shadowRank:shadow.shadowRank||null});
     });
 
@@ -86,6 +103,7 @@
     const boardRows=[...(DATA.men||[]),...(DATA.women||[])];
     const rankByFighter=new Map(boardRows.map(row=>[key(row.fighter),row.rank]));
     const scoreByFighter=new Map(boardRows.map(row=>[key(row.fighter),row.totalScore]));
+    const breakdownByFighter=new Map(boardRows.map(row=>[key(row.fighter),row.weightedScoreBreakdown]));
     const longevityByFighter=new Map(boardRows.map(row=>[key(row.fighter),row.longevity]));
     const auditByFighter=new Map(boardRows.map(row=>[key(row.fighter),row.longevityAudit]));
 
@@ -93,6 +111,7 @@
       const k=key(profile.fighter);
       if(rankByFighter.has(k))profile.rank=rankByFighter.get(k);
       if(scoreByFighter.has(k))profile.totalScore=scoreByFighter.get(k);
+      if(breakdownByFighter.has(k))profile.weightedScoreBreakdown=breakdownByFighter.get(k);
       if(longevityByFighter.has(k)){
         profile.longevity=longevityByFighter.get(k);
         profile.longevityThirtyPoint=true;
@@ -137,6 +156,9 @@
     };
     window.UFC_LONGEVITY_LIVE_PROMOTER=status;
     document.documentElement.setAttribute('data-longevity-live-promoter',VERSION);
+    if(typeof refresh==='function'){
+      try{refresh();}catch(e){}
+    }
     return status;
   }
 
