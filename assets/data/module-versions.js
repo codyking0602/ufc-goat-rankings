@@ -9,7 +9,10 @@ window.UFC_MODULE_VERSIONS = {
   categoryPercentileTiers: "20260708b-live-prime-dominance-final",
   scoreWeighting: "20260708d-prime-dominance-data-restart-loader",
   championshipResumeLive: "20260708e",
-  opponentQualityLive: "20260708b"
+  opponentQualityLive: "20260708b",
+  fighterEraLedgers: "20260709g-review-corrections",
+  longevityShadowScorer: "20260709b-ledger-driven",
+  longevityLivePromoter: "20260709b-weighted-total-safe"
 };
 
 (function(){
@@ -38,11 +41,47 @@ window.UFC_MODULE_VERSIONS = {
           if(window.UFC_PRIME_DOMINANCE_LIVE_PROMOTER?.apply){
             try{ window.UFC_PRIME_DOMINANCE_LIVE_PROMOTER.apply(); }catch(e){}
           }
+          if(window.UFC_LONGEVITY_LIVE_PROMOTER?.apply){
+            try{ window.UFC_LONGEVITY_LIVE_PROMOTER.apply(); }catch(e){}
+          }
           if(typeof refresh === 'function'){
             try{ refresh(); }catch(e){}
           }
         }
       );
+    }, delay);
+  }
+
+  function loadLongevityLive(label){
+    loadScript(
+      versions.fighterEraLedgers ? 'assets/data/fighter-era-ledgers.js?v=fighter-era-ledgers-' + versions.fighterEraLedgers + '-' + label : null,
+      'data-fighter-era-ledgers',
+      function(){
+        loadScript(
+          versions.longevityShadowScorer ? 'assets/data/longevity-shadow-scorer.js?v=longevity-shadow-scorer-' + versions.longevityShadowScorer + '-' + label : null,
+          'data-longevity-shadow-scorer',
+          function(){
+            loadScript(
+              versions.longevityLivePromoter ? 'assets/data/longevity-live-promoter.js?v=longevity-live-promoter-' + versions.longevityLivePromoter + '-' + label : null,
+              'data-longevity-live-promoter',
+              function(){
+                if(window.UFC_LONGEVITY_LIVE_PROMOTER?.apply){
+                  try{ window.UFC_LONGEVITY_LIVE_PROMOTER.apply(); }catch(e){}
+                }
+                if(typeof refresh === 'function'){
+                  try{ refresh(); }catch(e){}
+                }
+              }
+            );
+          }
+        );
+      }
+    );
+  }
+
+  function forceLongevityLive(delay, label){
+    setTimeout(function(){
+      loadLongevityLive(label);
     }, delay);
   }
 
@@ -85,4 +124,8 @@ window.UFC_MODULE_VERSIONS = {
       );
     }
   );
+
+  forceLongevityLive(1800, 'early');
+  forceLongevityLive(3800, 'late');
+  forceLongevityLive(6500, 'final');
 })();
