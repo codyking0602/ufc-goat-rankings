@@ -52,7 +52,7 @@
 </main>
 <script>
 (function(){
-  const VERSION='loss-context-shadow-test-20260709a';
+  const VERSION='loss-context-shadow-test-20260709b-adapter-bust';
   const status=document.getElementById('status');
   const summary=document.getElementById('summary');
   const tableWrap=document.getElementById('tableWrap');
@@ -150,7 +150,7 @@
     await script('assets/data/ranking-data.js?v=loss-context-test-ranking-data');
     await loadPacketSystem();
     await script('assets/data/fighter-era-ledgers.js?v=loss-context-test-era-ledgers');
-    await script('assets/data/loss-context-ledger-adapter.js?v=loss-context-test-adapter');
+    await script('assets/data/loss-context-ledger-adapter.js?v=loss-context-test-adapter-20260709b');
     await script('assets/data/loss-context-shadow-compare.js?v=loss-context-test-compare');
     render();
   })();
