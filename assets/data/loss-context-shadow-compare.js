@@ -1,13 +1,13 @@
 // Loss Context Shadow Comparison.
-// Compares current RANKING_DATA penalty values against the ledger-adapter shadow estimate.
+// Reviews ledger-adapter output independently from legacy RANKING_DATA penalty values.
 // Does not mutate rankings, fighter rows, display overrides, or total scores.
 (function(){
-  const VERSION='loss-context-shadow-compare-20260709a';
+  const VERSION='loss-context-shadow-compare-20260709b-ledger-review';
   const data=window.RANKING_DATA;
   const adapter=window.UFC_LOSS_CONTEXT_LEDGER_ADAPTER;
 
   const STATUS={
-    MATCH:'match',
+    CLEAN:'clean',
     REVIEW:'review',
     MISSING:'missing',
     ADAPTER_MISSING:'adapter-missing',
@@ -34,39 +34,56 @@
     return rows;
   }
 
+  function reviewReasons(adapterRow){
+    const events=adapterRow?.events||[];
+    const reasons=[];
+    const lossEvents=events.filter(event=>event.isLoss);
+    const unknownEvents=events.filter(event=>event.isLoss&&(event.phase==='unknown'||event.penaltyEstimate===null));
+    const groupedEvents=events.filter(event=>String(event.label||'').includes('/')||/\btrilogy\b|\brun\b|\blosses\b/i.test(String(event.label||'')));
+
+    if(!adapterRow)reasons.push('No ledger adapter row.');
+    if(unknownEvents.length)reasons.push(`${unknownEvents.length} loss event(s) need explicit phase/date.`);
+    if(groupedEvents.length)reasons.push(`${groupedEvents.length} grouped event row(s) should be split before live promotion.`);
+    if(!events.length)reasons.push('No loss/context events listed. OK for undefeated/no-loss cases, review otherwise.');
+    if(lossEvents.length&&adapterRow.estimatedPenaltyTotal===0)reasons.push('Loss events exist but estimated penalty is zero; verify phase/post-prime handling.');
+    return reasons;
+  }
+
   function compareRow(row){
     const fighter=row.fighter;
-    const livePenalty=round2(row.penalty);
+    const legacyPenalty=round2(row.penalty);
     const adapterRow=adapter?.entryFor?adapter.entryFor(fighter):null;
 
     if(!adapter){
-      return {fighter,source:row.source,livePenalty,adapterPenalty:null,delta:null,status:STATUS.ADAPTER_MISSING,reason:'UFC_LOSS_CONTEXT_LEDGER_ADAPTER not loaded.'};
+      return {fighter,source:row.source,legacyPenalty,adapterPenalty:null,delta:null,status:STATUS.ADAPTER_MISSING,reason:'UFC_LOSS_CONTEXT_LEDGER_ADAPTER not loaded.'};
     }
     if(!adapterRow){
-      return {fighter,source:row.source,livePenalty,adapterPenalty:null,delta:null,status:STATUS.MISSING,reason:'No adapter row for fighter.'};
+      return {fighter,source:row.source,legacyPenalty,adapterPenalty:null,delta:null,status:STATUS.MISSING,reason:'No adapter row for fighter.'};
     }
 
     const adapterPenalty=round2(adapterRow.estimatedPenaltyTotal);
-    const delta=round2((adapterPenalty||0)-(livePenalty||0));
-    const absDelta=Math.abs(delta||0);
-    const unknownEvents=(adapterRow.events||[]).filter(event=>event.phase==='unknown'||event.penaltyEstimate===null);
+    const legacyDelta=round2((adapterPenalty||0)-(legacyPenalty||0));
+    const reasons=reviewReasons(adapterRow);
     const openCurrent=adapterRow.window?.end==null;
-    const status=absDelta<=0.01&&unknownEvents.length===0?STATUS.MATCH:STATUS.REVIEW;
-    const reason=status===STATUS.MATCH?'Current penalty matches ledger shadow estimate.':'Review delta and/or unclassified events before promotion.';
+    const status=reasons.length?STATUS.REVIEW:STATUS.CLEAN;
 
     return {
       fighter,
       source:row.source,
-      livePenalty,
+      legacyPenalty,
+      livePenalty:legacyPenalty,
       adapterPenalty,
-      delta,
+      ledgerPenalty:adapterPenalty,
+      delta:legacyDelta,
+      legacyDelta,
       status,
-      reason,
+      reason:reasons.join(' ')||'Ledger events are classifiable. Legacy penalty delta is informational only.',
+      reviewReasons:reasons,
       openCurrent,
       window:adapterRow.window,
       counts:adapterRow.counts,
       events:adapterRow.events,
-      unknownEvents
+      unknownEvents:(adapterRow.events||[]).filter(event=>event.isLoss&&(event.phase==='unknown'||event.penaltyEstimate===null))
     };
   }
 
@@ -76,33 +93,35 @@
   }
 
   const comparisons=fighterRows().map(compareRow);
-  const review=comparisons.filter(row=>row.status!==STATUS.MATCH);
-  const matches=comparisons.filter(row=>row.status===STATUS.MATCH);
+  const review=comparisons.filter(row=>row.status!==STATUS.CLEAN);
+  const clean=comparisons.filter(row=>row.status===STATUS.CLEAN);
   const missingData=missingFromData();
   const summary={
     total:comparisons.length,
-    matches:matches.length,
+    matches:clean.length,
+    clean:clean.length,
     review:review.length,
     missingData:missingData.length,
     adapterLoaded:!!adapter,
     adapterVersion:adapter?.version||null,
     eraLedgerVersion:adapter?.sourceEraLedgerVersion||window.UFC_FIGHTER_ERA_LEDGERS?.version||null,
     largestAbsoluteDeltas:[...comparisons]
-      .filter(row=>row.delta!==null)
-      .sort((a,b)=>Math.abs(b.delta)-Math.abs(a.delta))
+      .filter(row=>row.legacyDelta!==null)
+      .sort((a,b)=>Math.abs(b.legacyDelta)-Math.abs(a.legacyDelta))
       .slice(0,12)
-      .map(row=>({fighter:row.fighter,livePenalty:row.livePenalty,adapterPenalty:row.adapterPenalty,delta:row.delta,status:row.status}))
+      .map(row=>({fighter:row.fighter,legacyPenalty:row.legacyPenalty,ledgerPenalty:row.ledgerPenalty,legacyDelta:row.legacyDelta,status:row.status,reason:row.reason}))
   };
 
   function report(){
     return comparisons.map(row=>({
       fighter:row.fighter,
       source:row.source,
-      livePenalty:row.livePenalty,
-      adapterPenalty:row.adapterPenalty,
-      delta:row.delta,
+      legacyPenalty:row.legacyPenalty,
+      ledgerPenalty:row.ledgerPenalty,
+      legacyDelta:row.legacyDelta,
       status:row.status,
       reason:row.reason,
+      reviewReasons:row.reviewReasons,
       openCurrent:row.openCurrent,
       window:row.window,
       counts:row.counts,
@@ -119,7 +138,8 @@
     statusValues:STATUS,
     summary,
     comparisons,
-    matches,
+    matches:clean,
+    clean,
     review,
     missingData,
     report,
