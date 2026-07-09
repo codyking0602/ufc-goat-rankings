@@ -26,21 +26,45 @@ function overallOvr(f){
   const max = Math.max(...DATA.men.concat(DATA.women).map(x=>x.totalScore||0), 1);
   return clamp(Math.round(75 + ((f.totalScore || 0) / max) * 24), 60, 99);
 }
+function categoryBoardFor(f){
+  const women = DATA.women || [];
+  const men = DATA.men || [];
+  const isWomen = f?.leaderboard === 'women' || womenNames.has(f?.fighter) || women.some(row => row.fighter === f?.fighter);
+  return isWomen ? women : men;
+}
+function primeDominanceEntryFor(f){
+  if(!f?.fighter) return null;
+  return f.primeDominanceLiveAudit
+    || f.primeDominanceShadowAudit
+    || window.UFC_PRIME_DOMINANCE_LEDGERS?.entryFor?.(f.fighter)
+    || window.UFC_PRIME_DOMINANCE_SHADOW_MODEL?.report?.find(entry => entry.fighter === f.fighter)
+    || null;
+}
+function primeDominanceLiveValue(f){
+  const entry = primeDominanceEntryFor(f);
+  const value = Number(entry?.total ?? f?.primeDominance ?? 0);
+  return Number.isFinite(value) ? value : 0;
+}
 function categoryValueForRank(f, key){
+  if(key === 'primeDominance') return primeDominanceLiveValue(f);
   const v = Number(f?.[key] ?? 0);
   return Number.isFinite(v) ? v : 0;
 }
 function categoryRank(f, key){
-  const o = DISPLAY_OVERRIDES[f.fighter]?.categories?.[key];
-  if (o?.rank) return o.rank;
-  const board = (f.leaderboard === "women" ? DATA.women : DATA.men).map(fullRow);
+  if(key !== 'primeDominance'){
+    const o = DISPLAY_OVERRIDES[f.fighter]?.categories?.[key];
+    if (o?.rank) return o.rank;
+  }
+  const board = categoryBoardFor(f).map(fullRow);
   const val = categoryValueForRank(f, key);
   return 1 + board.filter(x => categoryValueForRank(x, key) > val).length;
 }
 function categoryOvr(f, key){
-  const o = DISPLAY_OVERRIDES[f.fighter]?.categories?.[key];
-  if (o?.ovr) return o.ovr;
-  const board = f.leaderboard === "women" ? DATA.women : DATA.men;
+  if(key !== 'primeDominance'){
+    const o = DISPLAY_OVERRIDES[f.fighter]?.categories?.[key];
+    if (o?.ovr) return o.ovr;
+  }
+  const board = categoryBoardFor(f);
   const rank = categoryRank(f, key);
   if (!rank) return 55;
   if (board.length <= 1) return 99;
