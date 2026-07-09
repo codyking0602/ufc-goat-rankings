@@ -32,14 +32,14 @@
 </main>
 <script>
 (function(){
-  const PAGE_VERSION='loss-context-era-bridge-page-20260709a';
-  const bust=Date.now();
+  const PAGE_VERSION='loss-context-era-bridge-page-20260709b-force-fixed-parser';
+  const bust=`${Date.now()}-bridge-b`;
   let filter='review';
   const status=document.getElementById('status');
   const summary=document.getElementById('summary');
   const table=document.getElementById('table');
   const search=document.getElementById('search');
-  function src(path){return `${path}${path.includes('?')?'&':'?'}fresh=${bust}`;}
+  function src(path){return `${path}${path.includes('?')?'&':'?'}v=${bust}`;}
   function load(path){return new Promise(resolve=>{const s=document.createElement('script');s.src=src(path);s.onload=()=>resolve(true);s.onerror=()=>resolve(false);document.body.appendChild(s);});}
   async function loadPackets(){
     await load('assets/data/ranking-data-additions.js');
@@ -59,7 +59,7 @@
     if(!bridge){table.innerHTML='<div class="bad pill">Bridge failed to load</div>';return;}
     const s=bridge.summary||{};
     status.textContent=`${PAGE_VERSION} | fresh=${bust} | bridge=${bridge.version||'missing'} | penalty=${s.penaltyVersion||'missing'} | era=${s.eraVersion||'missing'} | adapter=${s.adapterVersion||'missing'}`;
-    summary.innerHTML=[card('Total',s.total),card('Aligned',s.aligned),card('Review',s.review),card('Missing penalty',s.missingPenalty),card('Missing era',s.missingEra),card('Large delta',s.largeDelta)].join('');
+    summary.innerHTML=[card('Total',s.total),card('Aligned',s.aligned),card('Review',s.review),card('Missing penalty',s.missingPenalty),card('Missing era',s.missingEra),card('Missing era window',s.missingEraWindow),card('Large delta',s.largeDelta)].join('');
     const q=(search.value||'').toLowerCase().trim();
     let rows=bridge.rows||[];
     if(filter==='review')rows=rows.filter(r=>r.status==='review');
