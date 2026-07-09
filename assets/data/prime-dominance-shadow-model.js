@@ -1,7 +1,7 @@
 // Prime Dominance shadow model.
 // Live-candidate category data only. Does not recalculate total GOAT score.
 (function(){
-  const VERSION='prime-dominance-shadow-model-20260708a';
+  const VERSION='prime-dominance-shadow-model-20260708b-hughes-jon-core';
   const base=window.UFC_PRIME_DOMINANCE_LEDGERS;
   if(!base||!base.entryFor||base.tuningVersion===VERSION)return;
   const oldEntry=base.entryFor;
@@ -17,7 +17,7 @@
   const LOCKED_CALLS={
     batchTwo:['Ronda short-prime note only','DJ title-volume cap','Valentina full late-rivalry window'],
     batchThree:['Islam/JDM included','Izzy/Jan included','Conor/Nate I included','DC/Jones I included','Gaethje/Holloway included','short-prime note only'],
-    batchFour:['Penn/GSP II included','Petr late slide included','Francis Blaydes II to Gane','Hughes round-control estimate kept','Chuck prime ends at Quinton Jackson UFC loss','Ilia and Merab recent title losses included'],
+    batchFour:['Penn/GSP II included','Petr late slide included','Francis Blaydes II to Gane','Hughes prime now runs Newton through GSP III','Jon round-control source locked at 54/63','Chuck prime ends at Quinton Jackson UFC loss','Ilia and Merab recent title losses included'],
     batchFive:['Khamzat/Strickland title loss included','Machida prime ends at Weidman','full Moreno rivalry for Deiveson','Tito Couture and Chuck losses included','JDS Cain losses included','Bisping short late-career prime','Tony/Gaethje included','Brock/Cain included','Chael title losses included','Robbie/Woodley included'],
     batchSix:['Kayla small UFC sample note only','Rose Andrade/Esparza resistance included','Grasso full Shevchenko trilogy included','Peña Nunes upset high stakes but not dominance','Holm Rousey stakes spike but low consistency','Miesha Holm win and Ronda/Nunes losses included','Andrade multi-division chaos included','Carla low finish pressure stays down','Dern contender-threat profile only']
   };
@@ -26,8 +26,9 @@
     'Ronda Rousey':{titleFightWins:2,topFiveWins:.75,champFormerChampWins:.5,fiveRoundTitleStageSample:.5,divisionStrengthContext:.15}
   };
   const EXTRA_RAW={
+    'Jon Jones':{primeRecord:'16-0, 1 NC',primeWins:16,primeLosses:0,primeDraws:0,primeNCs:1,roundControlPct:85.71,roundsWon:54,roundsCounted:63,primeFights:17,primeFinishes:7,profile:'Longest elite control window with unmatched title-stage proof; round-control source locked at 54/63',status:'locked'},
     'Randy Couture':{primeRecord:'5-2',primeWins:5,primeLosses:2,primeDraws:0,primeNCs:0,roundControlPct:81.82,roundsWon:18,roundsCounted:22,primeFights:7,primeFinishes:3,profile:'Late-career two-division title-prime with high stakes but uneven dominance',status:'review'},
-    'Matt Hughes':{primeRecord:'10-1',primeWins:10,primeLosses:1,primeDraws:0,primeNCs:0,roundControlPct:84,roundsWon:21,roundsCounted:25,primeFights:11,primeFinishes:8,profile:'Classic welterweight control prime with one Penn interruption',status:'review'},
+    'Matt Hughes':{primeRecord:'12-3',primeWins:12,primeLosses:3,primeDraws:0,primeNCs:0,roundControlPct:75.76,roundsWon:25,roundsCounted:33,primeFights:15,primeFinishes:9,profile:'UFC title-prime from Carlos Newton through GSP III; Penn I, GSP II, and GSP III counted',status:'locked'},
     'B.J. Penn':{primeRecord:'6-2',primeWins:6,primeLosses:2,primeDraws:0,primeNCs:0,roundControlPct:75,roundsWon:18,roundsCounted:24,primeFights:8,primeFinishes:6,profile:'Explosive lightweight peak with GSP resistance included',status:'review'},
     'Ilia Topuria':{primeRecord:'4-1',primeWins:4,primeLosses:1,primeDraws:0,primeNCs:0,roundControlPct:81.25,roundsWon:13,roundsCounted:16,primeFights:5,primeFinishes:3,profile:'Short active championship burst with Gaethje title loss counted in prime',status:'review'},
     'Petr Yan':{primeRecord:'7-4',primeWins:7,primeLosses:4,primeDraws:0,primeNCs:0,roundControlPct:70.45,roundsWon:31,roundsCounted:44,primeFights:11,primeFinishes:2,profile:'Elite bantamweight boxing prime; includes the recent Merab title win',status:'review'},
@@ -103,7 +104,7 @@
     return {fighter,primeRecord:row.primeRecord,primeWins:row.primeWins,primeLosses:row.primeLosses,primeDraws:row.primeDraws,primeNCs:row.primeNCs,primeRecordPct:prPct,primeRecordScore:primeRecordScore(row),roundControlPct:row.roundControlPct,roundControlScore:rcScore,roundControlAudit:{fighter,roundsWon:row.roundsWon,roundsCounted:row.roundsCounted,roundControlPct:row.roundControlPct,status:row.status},primeFights:row.primeFights,primeFinishes:row.primeFinishes,primeFinishRate:finishRate,dominanceProfile:row.profile,status:row.status,version:VERSION};
   }
   function tunedEntryFor(fighter){
-    const entry=oldEntry(fighter)||rawEntryFor(fighter);if(!entry)return null;
+    const entry=rawEntryFor(fighter)||oldEntry(fighter);if(!entry)return null;
     const fs=finishScore(entry);const eb=eliteBreakdown(entry);
     const er=eliteRaw({...entry,eliteStakesBreakdown:eb});const es=eliteScore({...entry,eliteStakesBreakdown:eb});
     return {...entry,finishPressureScore:fs,eliteStakesBreakdown:eb,eliteStakesRawScore:er,eliteStakesScore:es,total:round(Number(entry.primeRecordScore||0)+Number(entry.roundControlScore||0)+fs+es),version:VERSION};
