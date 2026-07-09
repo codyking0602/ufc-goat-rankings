@@ -14,7 +14,7 @@ window.UFC_MODULE_VERSIONS = {
   longevityShadowScorer: "20260709b-ledger-driven",
   longevityLivePromoter: "20260709b-weighted-total-safe",
   apexPeakCorrections: "20260709b-full-roster",
-  apexPeakComponentAudit: "20260709a-matt-hughes-template",
+  apexPeakComponentAudit: "20260709b-batch-one-24mo",
   apexPeakLiveBonus: "20260709a-positive-modifier"
 };
 
