@@ -2,7 +2,7 @@
 // Shadow-only adapter that reads the shared Fighter Era Ledger and classifies loss/context events.
 // Does not mutate rankings, fighter rows, display overrides, or total scores.
 (function(){
-  const VERSION='loss-context-ledger-adapter-20260709a-shadow';
+  const VERSION='loss-context-ledger-adapter-20260709b-source-bucket-losses';
   const era=window.UFC_FIGHTER_ERA_LEDGERS;
 
   const RULES={
@@ -22,7 +22,8 @@
     notes:[
       'This adapter classifies events from the Era Ledger only.',
       'It does not replace live penalty scoring yet.',
-      'Penalty estimates are review helpers and should be compared to the existing penalty module before promotion.'
+      'Penalty estimates are review helpers and should be compared to the existing penalty module before promotion.',
+      'All unrecoveredLoss, recoveredLosses, upwardDivisionLosses, and postPrimeLosses rows are treated as losses unless explicitly marked draw/context.'
     ]
   };
 
@@ -55,8 +56,6 @@
     if(typeof event==='string')return event;
     return [event.label,event.type,event.phase,event.rule,event.recovery,event.notes].filter(Boolean).join(' ');
   }
-
-  function hasWord(text,pattern){return pattern.test(String(text||'').toLowerCase());}
 
   function phaseFromDate(ledger,date){
     const start=parseIsoDate(ledger?.window?.start);
@@ -91,9 +90,9 @@
   function isLossLike(sourceType,event){
     const t=textOf(event).toLowerCase();
     if(sourceType==='weirdResults')return false;
+    if(t.includes('draw')&&!t.includes('loss'))return false;
     if(/win context|retirement win|title fight win/.test(t)&&!t.includes('loss'))return false;
-    if(sourceType==='unrecoveredLoss'||sourceType==='postPrimeLosses'||sourceType==='upwardDivisionLosses')return true;
-    if(sourceType==='recoveredLosses')return t.includes('loss')||t.includes('finish')||t.includes('decision')||t.includes('submission')||t.includes('tko')||t.includes('ko');
+    if(['unrecoveredLoss','recoveredLosses','upwardDivisionLosses','postPrimeLosses'].includes(sourceType))return true;
     return t.includes('loss');
   }
 
