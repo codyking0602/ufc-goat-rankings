@@ -6,6 +6,7 @@ window.UFC_MODULE_VERSIONS={
   primeDominanceShadowModel:"20260708c-jon-elite-stakes",
   primeDominanceLivePromoter:"20260708c",
   primeDominanceCopyPolish:"20260708b",
+  liveScoreUi:"20260709a-peak-apex",
   categoryPercentileTiers:"20260709a-peak-apex",
   scoreWeighting:"20260709a-apex-bonus-modifier",
   championshipResumeLive:"20260708e",
@@ -35,6 +36,8 @@ window.UFC_MODULE_VERSIONS={
   function applyApex(){if(window.UFC_APEX_PEAK_LIVE_BONUS?.apply){try{window.UFC_APEX_PEAK_LIVE_BONUS.apply();}catch(e){}}}
   function finalRefresh(){applyPrime();applyLongevity();applyApex();refreshSafe();}
   function cache(path,name,label){return path+'?v='+name+'-'+label;}
+
+  load(v.liveScoreUi?'assets/js/live-score-ui.js?v=live-score-ui-'+v.liveScoreUi:null,'data-live-score-ui-peak-apex',refreshSafe);
 
   function loadLongevity(label){
     load(v.fighterEraLedgers?cache('assets/data/fighter-era-ledgers.js','fighter-era-ledgers-'+v.fighterEraLedgers,label):null,'data-fighter-era-ledgers',function(){
