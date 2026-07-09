@@ -2,13 +2,13 @@
 // Reviews ledger-adapter output independently from legacy RANKING_DATA penalty values.
 // Does not mutate rankings, fighter rows, display overrides, or total scores.
 (function(){
-  const VERSION='loss-context-shadow-compare-20260709c-cleanup-aware';
+  const VERSION='loss-context-shadow-compare-20260709d-normalize-names';
   const data=window.RANKING_DATA;
   const adapter=window.UFC_LOSS_CONTEXT_LEDGER_ADAPTER;
 
   const STATUS={CLEAN:'clean',REVIEW:'review',MISSING:'missing',ADAPTER_MISSING:'adapter-missing',DATA_MISSING:'data-missing'};
   function round2(value){const n=Number(value);return Number.isFinite(n)?Math.round(n*100)/100:null;}
-  function key(name){return String(name||'').trim().toLowerCase();}
+  function key(name){return String(name||'').trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');}
 
   function fighterRows(){
     const rows=[];
