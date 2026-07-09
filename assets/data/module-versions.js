@@ -6,6 +6,7 @@ window.UFC_MODULE_VERSIONS = {
   primeDominanceShadowModel: "20260708b-hughes-jon-core",
   primeDominanceLivePromoter: "20260708c",
   primeDominanceCopyPolish: "20260708b",
+  categoryPercentileTiers: "20260708a-live-prime-dominance",
   scoreWeighting: "20260708d-prime-dominance-data-restart-loader",
   championshipResumeLive: "20260708e",
   opponentQualityLive: "20260708b"
@@ -45,7 +46,13 @@ window.UFC_MODULE_VERSIONS = {
                 function(){
                   loadScript(
                     versions.primeDominanceCopyPolish ? 'assets/js/prime-dominance-copy-polish.js?v=prime-dominance-copy-polish-' + versions.primeDominanceCopyPolish : null,
-                    'data-prime-dominance-copy-polish'
+                    'data-prime-dominance-copy-polish',
+                    function(){
+                      loadScript(
+                        versions.categoryPercentileTiers ? 'assets/js/category-percentile-tiers.js?v=category-percentile-tiers-' + versions.categoryPercentileTiers : null,
+                        'data-category-percentile-tiers'
+                      );
+                    }
                   );
                 }
               );
