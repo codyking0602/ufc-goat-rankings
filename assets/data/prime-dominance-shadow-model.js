@@ -1,7 +1,7 @@
 // Prime Dominance shadow model.
 // Live-candidate category data only. Does not recalculate total GOAT score.
 (function(){
-  const VERSION='prime-dominance-shadow-model-20260708b-hughes-jon-core';
+  const VERSION='prime-dominance-shadow-model-20260708c-jon-elite-stakes';
   const base=window.UFC_PRIME_DOMINANCE_LEDGERS;
   if(!base||!base.entryFor||base.tuningVersion===VERSION)return;
   const oldEntry=base.entryFor;
@@ -58,6 +58,7 @@
     'Alexa Grasso':{primeRecord:'4-1-1',primeWins:4,primeLosses:1,primeDraws:1,primeNCs:0,roundControlPct:52.5,roundsWon:21,roundsCounted:40,primeFights:6,primeFinishes:1,profile:'Flyweight title-prime built on Shevchenko breakthrough and trilogy resistance',status:'locked'}
   };
   const EXTRA_ELITE={
+    'Jon Jones':{titleFightWins:2,topFiveWins:1.25,champFormerChampWins:1,fiveRoundTitleStageSample:.5,divisionStrengthContext:.25},
     'Randy Couture':{titleFightWins:2,topFiveWins:1,champFormerChampWins:.8,fiveRoundTitleStageSample:.35,divisionStrengthContext:.15},
     'Matt Hughes':{titleFightWins:2,topFiveWins:1.1,champFormerChampWins:.8,fiveRoundTitleStageSample:.5,divisionStrengthContext:.1},
     'B.J. Penn':{titleFightWins:1.25,topFiveWins:1.25,champFormerChampWins:1,fiveRoundTitleStageSample:.35,divisionStrengthContext:.25},
