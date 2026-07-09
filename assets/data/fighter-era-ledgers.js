@@ -2,7 +2,7 @@
 // Source of truth for elite-prime windows used by Prime Dominance, Longevity, Loss Penalty, and profile context.
 // Batch 1 only. No live score mutation.
 (function(){
-  const VERSION='fighter-era-ledgers-20260709a-batch-one';
+  const VERSION='fighter-era-ledgers-20260709b-longevity-inputs';
 
   const RULES={
     model:'single-window-elite-prime',
@@ -43,8 +43,11 @@
       },
       longevity:{
         gapCapMonths:18,
+        gapAdjustedMonths:126.1,
+        activeEliteYears:10.51,
         statusMultiplier:1.12,
         divisionMultiplier:0.99,
+        adjustmentNote:'Bader 2011 through Gane 2023 with long gaps capped. Ceiling applies after multipliers.',
         note:'Long title-level window; late LHW/HW context slightly compressed but still reaches the longevity ceiling.'
       },
       notes:'UFC-only GOAT benchmark. One continuous elite-prime window with inactivity handled by gap caps, not separate windows.'
@@ -71,8 +74,11 @@
       },
       longevity:{
         gapCapMonths:18,
+        gapAdjustedMonths:101.3,
+        activeEliteYears:8.44,
         statusMultiplier:1.15,
         divisionMultiplier:1.03,
+        adjustmentNote:'Hughes II through Bisping with retirement gap capped.',
         note:'Retirement gap is capped. Hughes II through Bisping remains one elite-prime window because the comeback proved championship form again.'
       },
       notes:'Serra stays inside the elite-prime window because GSP recovered to elite form immediately after.'
@@ -98,8 +104,11 @@
       },
       longevity:{
         gapCapMonths:18,
+        gapAdjustedMonths:90.0,
+        activeEliteYears:7.50,
         statusMultiplier:1.12,
         divisionMultiplier:0.98,
+        adjustmentNote:'Leben through Weidman II. Weidman I included because immediate title rematch kept him elite.',
         note:'Legendary dominance window, but shorter than the longest elite-prime cases and middleweight context is slightly compressed.'
       },
       notes:'Weidman II is the shared endpoint for Prime Dominance, Longevity, and Penalty phase logic.'
@@ -125,8 +134,11 @@
       },
       longevity:{
         gapCapMonths:18,
+        gapAdjustedMonths:77.0,
+        activeEliteYears:6.42,
         statusMultiplier:1.15,
         divisionMultiplier:0.95,
+        adjustmentNote:'McCall/Benavidez title run through Cejudo II. ONE excluded.',
         note:'Long title-level flyweight window with a light division-depth compression, not a full skill discount.'
       },
       notes:'UFC flyweight prime only. ONE accomplishments may be context, not scoring.'
@@ -150,8 +162,11 @@
       },
       longevity:{
         gapCapMonths:18,
+        gapAdjustedMonths:72.2,
+        activeEliteYears:6.02,
         statusMultiplier:1.08,
         divisionMultiplier:1.05,
+        adjustmentNote:'RDA through Gaethje. Shorter elite-prime window, no UFC losses.',
         note:'Shorter elite-prime window than the long-reign legends, but boosted by elite lightweight strength and no UFC loss.'
       },
       notes:'No UFC loss penalty. Lightweight strength matters, but Longevity should still reflect the shorter active elite window.'
@@ -181,8 +196,11 @@
       },
       longevity:{
         gapCapMonths:18,
+        gapAdjustedMonths:68.0,
+        activeEliteYears:5.67,
         statusMultiplier:1.12,
         divisionMultiplier:1.03,
+        adjustmentNote:'Aldo through current championship form. Open window; Topuria does not close it because elite form was re-proven.',
         note:'Modern featherweight strength and title-level status. Open window should update only when he suffers an unrecovered elite-prime loss or retires.'
       },
       notes:'Islam losses remain upward-division exceptions. Topuria is not currently the prime-ending loss because championship form was re-proven afterward.'
@@ -212,8 +230,11 @@
       },
       longevity:{
         gapCapMonths:18,
+        gapAdjustedMonths:135.7,
+        activeEliteYears:11.31,
         statusMultiplier:1.04,
         divisionMultiplier:1.01,
+        adjustmentNote:'Hominick through Merab. UFC-only, WEC excluded; elite relevance recovered after prior losses.',
         note:'UFC-only excludes WEC, but UFC featherweight title run plus bantamweight elite relevance gives a huge single elite-prime window.'
       },
       notes:'WEC is excluded from scoring. UFC elite-prime starts at Hominick and ends at Merab.'
@@ -241,8 +262,11 @@
       },
       longevity:{
         gapCapMonths:18,
+        gapAdjustedMonths:78.0,
+        activeEliteYears:6.50,
         statusMultiplier:1.02,
         divisionMultiplier:1.00,
+        adjustmentNote:'Faber II through Cejudo. Injury gaps capped; Vera excluded as post-prime.',
         note:'UFC-only window with WEC excluded. Injury gaps are capped, and Vera does not extend the elite-prime window.'
       },
       notes:'Cejudo is the shared endpoint. WEC reign excluded from scoring but can be mentioned as context.'
