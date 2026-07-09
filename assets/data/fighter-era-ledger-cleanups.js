@@ -2,7 +2,7 @@
 // Splits grouped loss/context rows into individual dated rows before shadow adapters read the ledger.
 // No live score mutation by itself; it only improves ledger event readability for QA/adapters.
 (function(){
-  const VERSION='fighter-era-ledger-cleanups-20260709a-split-grouped-losses';
+  const VERSION='fighter-era-ledger-cleanups-20260709b-clean-remaining-review-rows';
   const era=window.UFC_FIGHTER_ERA_LEDGERS;
   const ledgers=era?.ledgers;
   if(!ledgers){
@@ -25,10 +25,10 @@
 
   patch('Jose Aldo',{recoveredLosses:[
     {label:'Conor McGregor',date:'2015-12-12',phase:'prime elite finish loss',recovery:'Recovered with elite contender/title-relevant form.'},
-    {label:'Max Holloway I',date:'2017-06-03',phase:'prime elite finish loss',recovery:'Later bantamweight run re-proved elite relevance.'},
-    {label:'Max Holloway II',date:'2017-12-02',phase:'prime elite finish loss',recovery:'Later bantamweight run re-proved elite relevance.'},
-    {label:'Alexander Volkanovski',date:'2019-05-11',phase:'late-prime elite decision loss',recovery:'Bantamweight run re-proved elite contender form.'},
-    {label:'Petr Yan',date:'2020-07-12',phase:'elite-prime title loss',recovery:'Munhoz/Font wins kept him elite-relevant.'}
+    {label:'Max Holloway I',date:'2017-06-03',phase:'prime elite finish loss',recovery:'Later bantamweight form re-proved elite relevance.'},
+    {label:'Max Holloway II',date:'2017-12-02',phase:'prime elite finish loss',recovery:'Later bantamweight form re-proved elite relevance.'},
+    {label:'Alexander Volkanovski',date:'2019-05-11',phase:'late-prime elite decision loss',recovery:'Bantamweight form re-proved elite contender status.'},
+    {label:'Petr Yan',date:'2020-07-12',phase:'elite-prime title loss',recovery:'Munhoz and Font wins kept him elite-relevant.'}
   ]});
 
   patch('Max Holloway',{recoveredLosses:[
@@ -59,13 +59,40 @@
     {label:'Chuck Liddell III',date:'2006-02-04',phase:'prime elite finish loss',recovery:'Recovered by returning to heavyweight and winning the UFC title.'}
   ]});
 
+  patch('B.J. Penn',{postPrimeLosses:[
+    {label:'Nick Diaz',date:'2011-10-29',phase:'post-prime decision loss'},
+    {label:'Rory MacDonald',date:'2012-12-08',phase:'post-prime elite decision loss'},
+    {label:'Frankie Edgar III',date:'2014-07-06',phase:'post-prime finish loss'},
+    {label:'Yair Rodriguez',date:'2017-01-15',phase:'post-prime finish loss'},
+    {label:'Dennis Siver',date:'2017-06-25',phase:'post-prime decision loss'},
+    {label:'Ryan Hall',date:'2018-12-29',phase:'post-prime finish loss'},
+    {label:'Clay Guida',date:'2019-05-11',phase:'post-prime decision loss'}
+  ]});
+
   patch('Chuck Liddell',{recoveredLosses:[
-    {label:'Randy Couture I',date:'2003-06-06',phase:'pre-window elite finish loss',recovery:'Recovered in rivalry/title run.'}
+    {label:'Randy Couture I',date:'2003-06-06',phase:'pre-window elite finish loss',recovery:'Recovered in rivalry/title form.'}
   ],postPrimeLosses:[
     {label:'Keith Jardine',date:'2007-09-22',phase:'post-prime decision loss'},
     {label:'Rashad Evans',date:'2008-09-06',phase:'post-prime finish loss'},
     {label:'Mauricio Rua',date:'2009-04-18',phase:'post-prime finish loss'},
     {label:'Rich Franklin',date:'2010-06-12',phase:'post-prime finish loss'}
+  ]});
+
+  patch('Junior dos Santos',{postPrimeLosses:[
+    {label:'Alistair Overeem',date:'2015-12-19',phase:'post-prime elite finish loss'},
+    {label:'Stipe Miocic II',date:'2017-05-13',phase:'post-prime elite title finish loss'},
+    {label:'Francis Ngannou',date:'2019-06-29',phase:'post-prime elite finish loss'},
+    {label:'Curtis Blaydes',date:'2020-01-25',phase:'post-prime finish loss'},
+    {label:'Jairzinho Rozenstruik',date:'2020-08-15',phase:'post-prime finish loss'},
+    {label:'Ciryl Gane',date:'2020-12-12',phase:'post-prime finish loss'}
+  ]});
+
+  patch('Robbie Lawler',{postPrimeLosses:[
+    {label:'Rafael dos Anjos',date:'2017-12-16',phase:'post-prime elite decision loss'},
+    {label:'Ben Askren',date:'2019-03-02',phase:'post-prime technical submission loss'},
+    {label:'Colby Covington',date:'2019-08-03',phase:'post-prime elite decision loss'},
+    {label:'Neil Magny',date:'2020-08-29',phase:'post-prime decision loss'},
+    {label:'Bryan Barberena',date:'2022-07-02',phase:'post-prime finish loss'}
   ]});
 
   patch('Tony Ferguson',{postPrimeLosses:[
@@ -109,7 +136,7 @@
 
   patch('Deiveson Figueiredo',{recoveredLosses:[
     {label:'Brandon Moreno II',date:'2021-06-12',phase:'prime elite title finish loss',recovery:'Recovered by winning Moreno III.'},
-    {label:'Brandon Moreno IV',date:'2023-01-21',phase:'prime elite title finish loss',recovery:'Bantamweight run re-proved elite relevance.'}
+    {label:'Brandon Moreno IV',date:'2023-01-21',phase:'prime elite title finish loss',recovery:'Bantamweight form re-proved elite relevance.'}
   ]});
 
   patch('Tyron Woodley',{postPrimeLosses:[
@@ -124,9 +151,24 @@
     {label:'Dricus du Plessis',date:'2023-07-08',phase:'prime elite finish loss',recovery:'Returned with elite middleweight relevance.'}
   ]});
 
+  patch('Dan Henderson',{postPrimeLosses:[
+    {label:'Gegard Mousasi',date:'2015-01-24',phase:'post-prime finish loss'},
+    {label:'Vitor Belfort II',date:'2015-11-07',phase:'post-prime finish loss'},
+    {label:'Michael Bisping II',date:'2016-10-08',phase:'post-prime title decision loss'}
+  ]});
+
   patch('Zhang Weili',{recoveredLosses:[
     {label:'Rose Namajunas I',date:'2021-04-24',phase:'prime elite title finish loss',recovery:'Recovered with Joanna II and Esparza title win.'},
     {label:'Rose Namajunas II',date:'2021-11-06',phase:'prime elite title decision loss',recovery:'Recovered with Joanna II and Esparza title win.'}
+  ]});
+
+  patch('Rose Namajunas',{postPrimeLosses:[
+    {label:'Manon Fiorot',date:'2023-09-02',phase:'post-prime flyweight decision loss'}
+  ]});
+
+  patch('Miesha Tate',{postPrimeLosses:[
+    {label:'Ketlen Vieira',date:'2021-11-20',phase:'post-prime decision loss'},
+    {label:'Lauren Murphy',date:'2022-07-16',phase:'post-prime flyweight decision loss'}
   ]});
 
   patch('Mackenzie Dern',{recoveredLosses:[
