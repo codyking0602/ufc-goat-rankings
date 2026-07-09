@@ -14,6 +14,7 @@ window.UFC_MODULE_VERSIONS = {
   longevityShadowScorer: "20260709b-ledger-driven",
   longevityLivePromoter: "20260709b-weighted-total-safe",
   apexPeakCorrections: "20260709b-full-roster",
+  apexPeakComponentAudit: "20260709a-matt-hughes-template",
   apexPeakLiveBonus: "20260709a-positive-modifier"
 };
 
@@ -95,13 +96,19 @@ window.UFC_MODULE_VERSIONS = {
       'data-apex-peak-score-corrections',
       function(){
         loadScript(
-          versions.apexPeakLiveBonus ? 'assets/data/apex-peak-live-bonus.js?v=apex-peak-live-bonus-' + versions.apexPeakLiveBonus + '-' + label : null,
-          'data-apex-peak-live-bonus',
+          versions.apexPeakComponentAudit ? 'assets/data/apex-peak-component-audit.js?v=apex-peak-component-audit-' + versions.apexPeakComponentAudit + '-' + label : null,
+          'data-apex-peak-component-audit',
           function(){
-            runApexBonus();
-            if(typeof refresh === 'function'){
-              try{ refresh(); }catch(e){}
-            }
+            loadScript(
+              versions.apexPeakLiveBonus ? 'assets/data/apex-peak-live-bonus.js?v=apex-peak-live-bonus-' + versions.apexPeakLiveBonus + '-' + label : null,
+              'data-apex-peak-live-bonus',
+              function(){
+                runApexBonus();
+                if(typeof refresh === 'function'){
+                  try{ refresh(); }catch(e){}
+                }
+              }
+            );
           }
         );
       }
