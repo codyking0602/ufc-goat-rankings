@@ -6,7 +6,7 @@ window.UFC_MODULE_VERSIONS={
   primeDominanceShadowModel:"20260708c-jon-elite-stakes",
   primeDominanceLivePromoter:"20260708c",
   primeDominanceCopyPolish:"20260708b",
-  categoryPercentileTiers:"20260708b-live-prime-dominance-final",
+  categoryPercentileTiers:"20260709a-peak-apex",
   scoreWeighting:"20260709a-apex-bonus-modifier",
   championshipResumeLive:"20260708e",
   opponentQualityLive:"20260708b",
@@ -15,7 +15,7 @@ window.UFC_MODULE_VERSIONS={
   longevityLivePromoter:"20260709b-weighted-total-safe",
   apexPeakCorrections:"20260709b-full-roster",
   apexPeakComponentAudit:"20260709c-batch-one-review-adjustments",
-  apexPeakLiveBonus:"20260709a-positive-modifier"
+  apexPeakLiveBonus:"20260709b-locked-audit"
 };
 
 (function(){
