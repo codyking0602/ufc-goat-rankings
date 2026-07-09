@@ -1,7 +1,17 @@
 // Percentile-based category tier labels.
 // Keeps category PCTL as the displayed number, but labels the tag by category rank position.
 (function(){
-  const VERSION = 'category-percentile-tiers-20260708a-live-prime-dominance';
+  const VERSION = 'category-percentile-tiers-20260709a-peak-apex';
+
+  function ensurePeakApexCategory(){
+    if(typeof CATEGORY_INFO === 'undefined' || !Array.isArray(CATEGORY_INFO)) return;
+    const entry = ['apexPeak', 'Peak Apex', "The best two-win stretch of his UFC career—capturing performance, proof, and peak greatness"];
+    const existing = CATEGORY_INFO.find(item => item[0] === 'apexPeak');
+    if(existing){ existing[1] = entry[1]; existing[2] = entry[2]; return; }
+    const penaltyIndex = CATEGORY_INFO.findIndex(item => item[0] === 'penalty');
+    if(penaltyIndex >= 0) CATEGORY_INFO.splice(penaltyIndex, 0, entry);
+    else CATEGORY_INFO.push(entry);
+  }
 
   function categoryBoardFor(f){
     const data = window.RANKING_DATA || {};
@@ -41,11 +51,13 @@
     return Number.isFinite(value) ? value : 0;
   }
   function liveCategoryRank(f, key){
-    if(key !== 'primeDominance') return categoryRank(f, key);
-    ensurePrimeLive();
-    const board = categoryBoardFor(f);
-    const val = primeValue(f);
-    return 1 + board.filter(row => primeValue(row) > val).length;
+    if(key === 'primeDominance'){
+      ensurePrimeLive();
+      const board = categoryBoardFor(f);
+      const val = primeValue(f);
+      return 1 + board.filter(row => primeValue(row) > val).length;
+    }
+    return categoryRank(f, key);
   }
   function liveCategoryOvr(f, key){
     if(key !== 'primeDominance') return categoryOvr(f, key);
@@ -85,6 +97,7 @@
 
   function install(){
     if(typeof CATEGORY_INFO === 'undefined' || typeof categoryOvr !== 'function' || typeof categoryRank !== 'function') return false;
+    ensurePeakApexCategory();
     installBelowAverageStyle();
 
     window.UFC_CATEGORY_PERCENTILE_TIERS = {
@@ -99,12 +112,14 @@
       ],
       belowAverageColor: '#64748b',
       tierByCategoryRank,
-      livePrimeDominance: true
+      livePrimeDominance: true,
+      peakApex: true
     };
 
     window.tierByCategoryRank = tierByCategoryRank;
 
     categoryCards = function(f){
+      ensurePeakApexCategory();
       return CATEGORY_INFO.map(([key,label,description]) => {
         const {pctScore, rank, tier, width} = categoryTierContext(f, key);
         return `<button type="button" class="category-card ${tier.cls}" data-category="${key}" aria-label="Explain ${label} percentile for ${f.fighter}">
@@ -156,6 +171,7 @@
         ${categoryChip(f, 'opponentQuality')}
         ${categoryChip(f, 'primeDominance')}
         ${categoryChip(f, 'longevity')}
+        ${categoryChip(f, 'apexPeak')}
         ${categoryChip(f, 'penalty')}
       </div>`;
     };
