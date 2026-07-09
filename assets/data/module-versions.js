@@ -13,7 +13,7 @@ window.UFC_MODULE_VERSIONS = {
   fighterEraLedgers: "20260709g-review-corrections",
   longevityShadowScorer: "20260709b-ledger-driven",
   longevityLivePromoter: "20260709b-weighted-total-safe",
-  apexPeakCorrections: "20260706a-sean-whittaker",
+  apexPeakCorrections: "20260709b-full-roster",
   apexPeakLiveBonus: "20260709a-positive-modifier"
 };
 
