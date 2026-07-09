@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Loss Context Shadow Test</title>
+  <style>
+    :root{color-scheme:dark;background:#050505;color:#f4f4f5;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}
+    body{margin:0;background:radial-gradient(circle at top,#1b1b1f 0,#050505 48%,#000 100%);min-height:100vh;}
+    main{max-width:1280px;margin:0 auto;padding:28px 18px 60px;}
+    h1{margin:0 0 6px;font-size:30px;letter-spacing:-.03em;}
+    .sub{color:#a1a1aa;margin-bottom:22px;}
+    .cards{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin:20px 0;}
+    .card{border:1px solid #27272a;background:rgba(24,24,27,.78);border-radius:16px;padding:14px;box-shadow:0 12px 30px rgba(0,0,0,.25);}
+    .label{font-size:11px;text-transform:uppercase;color:#a1a1aa;letter-spacing:.12em;}
+    .value{font-size:24px;font-weight:800;margin-top:4px;}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0;align-items:center;}
+    button,input,select{background:#18181b;color:#f4f4f5;border:1px solid #3f3f46;border-radius:12px;padding:10px 12px;font:inherit;}
+    button{cursor:pointer;font-weight:700;}
+    button.active{background:#f4f4f5;color:#09090b;border-color:#f4f4f5;}
+    input{min-width:240px;}
+    table{width:100%;border-collapse:separate;border-spacing:0 8px;}
+    th{font-size:11px;color:#a1a1aa;text-transform:uppercase;letter-spacing:.08em;text-align:left;padding:0 10px 4px;white-space:nowrap;}
+    td{background:rgba(24,24,27,.78);border-top:1px solid #27272a;border-bottom:1px solid #27272a;padding:12px 10px;vertical-align:top;font-size:13px;}
+    td:first-child{border-left:1px solid #27272a;border-radius:12px 0 0 12px;font-weight:800;}
+    td:last-child{border-right:1px solid #27272a;border-radius:0 12px 12px 0;}
+    .pill{display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;border:1px solid #3f3f46;background:#27272a;color:#f4f4f5;}
+    .match{background:#052e16;border-color:#166534;color:#bbf7d0;}
+    .review{background:#451a03;border-color:#92400e;color:#fed7aa;}
+    .missing,.adapter-missing,.data-missing{background:#450a0a;border-color:#991b1b;color:#fecaca;}
+    .delta-neg{color:#fecaca;font-weight:900;}.delta-pos{color:#bbf7d0;font-weight:900;}.muted{color:#a1a1aa;}
+    .events{max-width:420px;color:#d4d4d8;line-height:1.45;}
+    .event{margin-bottom:6px;}.event b{color:#fff;}
+    .error{border:1px solid #991b1b;background:#450a0a;color:#fecaca;border-radius:16px;padding:14px;margin:16px 0;}
+    @media(max-width:900px){.cards{grid-template-columns:repeat(2,minmax(0,1fr));}table{font-size:12px;}.hide-sm{display:none;}}
+  </style>
+</head>
+<body>
+<main>
+  <h1>Loss Context Shadow Test</h1>
+  <div class="sub">Shadow-only QA page. Reads Era Ledger → Loss Context Adapter → Shadow Compare. Does not touch live scoring.</div>
+  <div id="status" class="sub">Loading scripts…</div>
+  <section id="summary" class="cards"></section>
+  <section class="toolbar">
+    <button data-filter="all" class="active">All</button>
+    <button data-filter="review">Review</button>
+    <button data-filter="match">Match</button>
+    <button data-filter="open">Open/current</button>
+    <input id="search" placeholder="Search fighter…" />
+  </section>
+  <section id="tableWrap"></section>
+</main>
+<script>
+(function(){
+  const VERSION='loss-context-shadow-test-20260709a';
+  const status=document.getElementById('status');
+  const summary=document.getElementById('summary');
+  const tableWrap=document.getElementById('tableWrap');
+  const search=document.getElementById('search');
+  let filter='all';
+
+  function script(src){
+    return new Promise(resolve=>{
+      const s=document.createElement('script');
+      s.src=src;
+      s.onload=()=>resolve({src,ok:true});
+      s.onerror=()=>resolve({src,ok:false});
+      document.body.appendChild(s);
+    });
+  }
+
+  async function loadPacketSystem(){
+    await script('assets/data/ranking-data-additions.js?v=loss-context-test-ranking-additions');
+    await script('assets/data/fighter-packet-schema.js?v=loss-context-test-packet-schema');
+    await script('assets/data/fighter-packets.js?v=loss-context-test-packets-core');
+    await script('assets/data/fighter-packet-manifest.js?v=loss-context-test-manifest');
+    const packets=window.UFC_FIGHTER_PACKET_MANIFEST?.packets||[];
+    for(const row of packets){
+      if(!row?.slug||!row?.version)continue;
+      await script(`assets/data/fighter-packets/${row.slug}.js?v=loss-context-test-${row.slug}-${row.version}`);
+    }
+  }
+
+  function fmt(value){return value===null||value===undefined?'—':value;}
+  function deltaClass(value){const n=Number(value)||0;return n<0?'delta-neg':n>0?'delta-pos':'';}
+  function card(label,value){return `<div class="card"><div class="label">${label}</div><div class="value">${fmt(value)}</div></div>`;}
+  function eventLine(event){
+    const tag=event.exception||event.phase||'event';
+    const estimate=event.penaltyEstimate===null?'—':event.penaltyEstimate;
+    return `<div class="event"><b>${event.label||'Event'}</b> <span class="muted">${event.date||''}</span><br><span class="muted">${tag} | ${event.quality||'unknown'} | est ${estimate}</span></div>`;
+  }
+
+  function render(){
+    const compare=window.UFC_LOSS_CONTEXT_SHADOW_COMPARE;
+    if(!compare){
+      tableWrap.innerHTML='<div class="error">Shadow compare did not load. Check console for script errors.</div>';
+      return;
+    }
+    const s=compare.summary||{};
+    status.textContent=`Loaded ${VERSION}. Adapter: ${s.adapterVersion||'missing'} | Era: ${s.eraLedgerVersion||'missing'}`;
+    summary.innerHTML=[
+      card('Total',s.total),
+      card('Matches',s.matches),
+      card('Review',s.review),
+      card('Missing data',s.missingData),
+      card('Adapter loaded',s.adapterLoaded?'Yes':'No'),
+      card('Largest deltas',s.largestAbsoluteDeltas?.length||0)
+    ].join('');
+
+    const q=(search.value||'').toLowerCase().trim();
+    let rows=compare.comparisons||[];
+    if(filter==='review')rows=rows.filter(r=>r.status!=='match');
+    if(filter==='match')rows=rows.filter(r=>r.status==='match');
+    if(filter==='open')rows=rows.filter(r=>r.openCurrent);
+    if(q)rows=rows.filter(r=>String(r.fighter||'').toLowerCase().includes(q));
+    rows=[...rows].sort((a,b)=>Math.abs(Number(b.delta)||0)-Math.abs(Number(a.delta)||0));
+
+    tableWrap.innerHTML=`
+      <table>
+        <thead><tr>
+          <th>Fighter</th><th>Status</th><th>Live</th><th>Ledger</th><th>Delta</th><th>Window</th><th class="hide-sm">Events</th>
+        </tr></thead>
+        <tbody>
+          ${rows.map(row=>`
+            <tr>
+              <td>${row.fighter}</td>
+              <td><span class="pill ${row.status}">${row.status}</span></td>
+              <td>${fmt(row.livePenalty)}</td>
+              <td>${fmt(row.adapterPenalty)}</td>
+              <td class="${deltaClass(row.delta)}">${fmt(row.delta)}</td>
+              <td><b>${row.window?.startLabel||'—'}</b> → <b>${row.window?.endLabel||'Open'}</b><br><span class="muted">${row.window?.endType||''}</span></td>
+              <td class="hide-sm events">${(row.events||[]).slice(0,5).map(eventLine).join('')||'<span class="muted">No ledger loss events</span>'}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  document.querySelectorAll('button[data-filter]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('button[data-filter]').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      filter=btn.dataset.filter;
+      render();
+    });
+  });
+  search.addEventListener('input',render);
+
+  (async function boot(){
+    await script('assets/data/ranking-data.js?v=loss-context-test-ranking-data');
+    await loadPacketSystem();
+    await script('assets/data/fighter-era-ledgers.js?v=loss-context-test-era-ledgers');
+    await script('assets/data/loss-context-ledger-adapter.js?v=loss-context-test-adapter');
+    await script('assets/data/loss-context-shadow-compare.js?v=loss-context-test-compare');
+    render();
+  })();
+})();
+</script>
+</body>
+</html>
