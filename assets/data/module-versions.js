@@ -3,7 +3,7 @@ window.UFC_MODULE_VERSIONS = {
   primeWindows: "20260708a",
   primeRoundControlAudit: "20260708d-jon-54-63",
   primeDominanceLedgers: "20260708j-round-audit-batch-two",
-  primeDominanceShadowModel: "20260708b-hughes-jon-core",
+  primeDominanceShadowModel: "20260708c-jon-elite-stakes",
   primeDominanceLivePromoter: "20260708c",
   primeDominanceCopyPolish: "20260708b",
   categoryPercentileTiers: "20260708b-live-prime-dominance-final",
