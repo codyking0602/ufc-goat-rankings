@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Loss Context Era Bridge V2</title>
+<style>
+body{margin:0;background:#050505;color:#f4f4f5;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{max-width:1320px;margin:0 auto;padding:24px 14px 60px}h1{margin:0 0 8px;font-size:30px}.muted{color:#a1a1aa}.bar{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}.card{background:#18181b;border:1px solid #27272a;border-radius:14px;padding:12px;min-width:130px}.label{font-size:11px;color:#a1a1aa;text-transform:uppercase;letter-spacing:.08em}.value{font-size:24px;font-weight:900;margin-top:4px}.note{border:1px solid #27272a;background:#101012;border-radius:14px;padding:12px;margin:12px 0;color:#d4d4d8;line-height:1.45}button,input{background:#18181b;color:#f4f4f5;border:1px solid #3f3f46;border-radius:12px;padding:10px 12px;font:inherit}button{font-weight:800}button.active{background:#f4f4f5;color:#09090b}input{min-width:220px}table{width:100%;border-collapse:separate;border-spacing:0 8px}th{text-align:left;color:#a1a1aa;font-size:11px;text-transform:uppercase;letter-spacing:.08em;padding:0 10px}td{background:#18181b;border-top:1px solid #27272a;border-bottom:1px solid #27272a;padding:12px 10px;vertical-align:top}td:first-child{border-left:1px solid #27272a;border-radius:12px 0 0 12px;font-weight:900}td:last-child{border-right:1px solid #27272a;border-radius:0 12px 12px 0}.pill{display:inline-block;border-radius:999px;padding:4px 9px;font-size:11px;font-weight:900;text-transform:uppercase}.review{background:#451a03;color:#fed7aa}.aligned{background:#052e16;color:#bbf7d0}.pos{color:#bbf7d0;font-weight:900}.neg{color:#fecaca;font-weight:900}.reason,.notes,.events{font-size:12px;line-height:1.4;color:#d4d4d8;max-width:390px}@media(max-width:900px){.events,.notes{display:none}th.eventsHead,th.notesHead{display:none}}
+</style>
+</head>
+<body>
+<main>
+<h1>Loss Context ↔ Era Ledger Bridge V2</h1>
+<div id="status" class="muted">Loading...</div>
+<div class="note"><b>Purpose:</b> QA only. This does not change scores. It compares current Loss Context notes/penalty to the Era Ledger window and flags review rows.</div>
+<div id="summary" class="bar"></div>
+<div class="bar"><button data-filter="review" class="active">Review</button><button data-filter="all">All</button><button data-filter="aligned">Aligned</button><button data-filter="missingPenalty">Missing penalty audit</button><button data-filter="delta">Large delta</button><input id="search" placeholder="Search fighter…" /></div>
+<div id="table"></div>
+</main>
+<script>
+(function(){
+const PAGE_VERSION='loss-context-era-bridge-v2-20260709a-inline-parser';
+const bust=Date.now()+'-v2';
+let filter='review';
+const status=document.getElementById('status'),summary=document.getElementById('summary'),table=document.getElementById('table'),search=document.getElementById('search');
+function src(path){return path+(path.includes('?')?'&':'?')+'v='+bust}
+function load(path){return new Promise(resolve=>{const s=document.createElement('script');s.src=src(path);s.onload=()=>resolve(true);s.onerror=()=>resolve(false);document.body.appendChild(s)})}
+async function loadPackets(){await load('assets/data/ranking-data-additions.js');await load('assets/data/fighter-packet-schema.js');await load('assets/data/fighter-packets.js');await load('assets/data/fighter-packet-manifest.js');const packets=window.UFC_FIGHTER_PACKET_MANIFEST?.packets||[];for(const row of packets){if(row?.slug)await load('assets/data/fighter-packets/'+row.slug+'.js')}}
+const norm=name=>String(name||'').trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
+const round2=v=>{const n=Number(v);return Number.isFinite(n)?Math.round(n*100)/100:null};
+function rows(){const out=[],seen=new Set();const push=row=>{const fighter=row?.fighter;if(!fighter||seen.has(norm(fighter)))return;seen.add(norm(fighter));out.push(row)};(window.RANKING_DATA?.fighters||[]).forEach(push);(window.RANKING_DATA?.men||[]).forEach(push);(window.RANKING_DATA?.women||[]).forEach(push);return out}
+function correctionFor(fighter){const c=window.UFC_PENALTY_SCORE_CORRECTIONS?.corrections||{};return c[fighter]||Object.entries(c).find(([name])=>norm(name)===norm(fighter))?.[1]||null}
+function eraFor(fighter){const era=window.UFC_FIGHTER_ERA_LEDGERS;if(!era)return null;return (era.entryFor&&era.entryFor(fighter))||era.ledgers?.[fighter]||Object.entries(era.ledgers||{}).find(([name])=>norm(name)===norm(fighter))?.[1]||null}
+function adapterFor(fighter){const a=window.UFC_LOSS_CONTEXT_LEDGER_ADAPTER;if(!a)return null;return (a.entryFor&&a.entryFor(fighter))||(a.rows||[]).find(row=>norm(row.fighter)===norm(fighter))||null}
+function win(entry){return entry?.elitePrimeWindow||entry?.window||null}
+function notes(c,row){return String(c?.notes||row?.penaltyNotes||row?.penaltyAudit?.notes||'')}
+function hasPostPrimeText(t){return /post[- ]prime|later .*post-prime|treated post-prime/i.test(String(t||''))}
+function eraEvents(entry){const ctx=entry?.lossContext||{},events=[];Object.entries(ctx).forEach(([bucket,value])=>{if(!Array.isArray(value))return;value.forEach(e=>{if(typeof e==='string')events.push({bucket,label:e});else if(e)events.push({bucket,label:e.label||e.opponent||bucket,date:e.date||'',phase:e.phase||e.type||e.rule||''})})});return events}
+function build(){return rows().map(row=>{const fighter=row.fighter,c=correctionFor(fighter),e=eraFor(fighter),a=adapterFor(fighter),w=win(e),current=round2(c?.penalty??row.penalty),est=round2(a?.estimatedPenaltyTotal),flags=[];if(!c)flags.push('No penalty correction/audit row found.');if(!e)flags.push('No Era Ledger row found.');if(e&&!w)flags.push('Era row found but window field unreadable.');if(!a)flags.push('No era-adapter row available.');if(c&&a&&current!==null&&est!==null&&Math.abs(est-current)>1.01)flags.push('Current Penalty and era-only estimate differ by '+round2(est-current)+'. Review cue only.');if(c&&w?.end==null&&hasPostPrimeText(notes(c,row)))flags.push('Penalty notes mention post-prime while Era Ledger is open/current. Verify intent.');return{fighter,status:flags.length?'review':'aligned',flags,currentPenalty:current,adapterPenalty:est,delta:current!==null&&est!==null?round2(est-current):null,penaltyNotes:notes(c,row),hasPenaltyCorrection:!!c,hasEraRow:!!e,eraWindow:w,eraLossEvents:eraEvents(e)}})}
+function card(label,value){return '<div class="card"><div class="label">'+label+'</div><div class="value">'+(value??'—')+'</div></div>'}
+function fmt(v){return v===null||v===undefined?'—':v}
+function dclass(v){const n=Number(v)||0;return n>0?'pos':n<0?'neg':''}
+function flagHtml(flags){return (flags||[]).map(f=>'<div>• '+f+'</div>').join('')||'—'}
+function eventHtml(e){return '<div><b>'+(e.label||'Event')+'</b> <span class="muted">'+(e.date||'')+'</span><br><span class="muted">'+(e.bucket||'')+(e.phase?' | '+e.phase:'')+'</span></div>'}
+function render(){const all=build();const s={total:all.length,aligned:all.filter(r=>r.status==='aligned').length,review:all.filter(r=>r.status==='review').length,missingPenalty:all.filter(r=>!r.hasPenaltyCorrection).length,missingEra:all.filter(r=>!r.hasEraRow).length,missingEraWindow:all.filter(r=>r.hasEraRow&&!r.eraWindow).length,largeDelta:all.filter(r=>r.delta!==null&&Math.abs(r.delta)>1.01).length};status.textContent=PAGE_VERSION+' | fresh='+bust+' | penalty='+(window.UFC_PENALTY_SCORE_CORRECTIONS?.version||'missing')+' | era='+(window.UFC_FIGHTER_ERA_LEDGERS?.version||'missing')+' | adapter='+(window.UFC_LOSS_CONTEXT_LEDGER_ADAPTER?.version||'missing');summary.innerHTML=[card('Total',s.total),card('Aligned',s.aligned),card('Review',s.review),card('Missing penalty',s.missingPenalty),card('Missing era',s.missingEra),card('Missing era window',s.missingEraWindow),card('Large delta',s.largeDelta)].join('');const q=(search.value||'').toLowerCase().trim();let display=all;if(filter==='review')display=display.filter(r=>r.status==='review');if(filter==='aligned')display=display.filter(r=>r.status==='aligned');if(filter==='missingPenalty')display=display.filter(r=>!r.hasPenaltyCorrection);if(filter==='delta')display=display.filter(r=>r.delta!==null&&Math.abs(r.delta)>1.01);if(q)display=display.filter(r=>String(r.fighter).toLowerCase().includes(q));display=[...display].sort((a,b)=>Math.abs(Number(b.delta)||0)-Math.abs(Number(a.delta)||0));table.innerHTML='<table><thead><tr><th>Fighter</th><th>Status</th><th>Current penalty</th><th>Era-only estimate</th><th>Delta</th><th>Flags</th><th>Era window</th><th class="notesHead">Penalty notes</th><th class="eventsHead">Era events</th></tr></thead><tbody>'+display.map(r=>'<tr><td>'+r.fighter+'</td><td><span class="pill '+r.status+'">'+r.status+'</span></td><td>'+fmt(r.currentPenalty)+'</td><td>'+fmt(r.adapterPenalty)+'</td><td class="'+dclass(r.delta)+'">'+fmt(r.delta)+'</td><td class="reason">'+flagHtml(r.flags)+'</td><td><b>'+(r.eraWindow?.startLabel||'—')+'</b> → <b>'+(r.eraWindow?.endLabel||'Open')+'</b><br><span class="muted">'+(r.eraWindow?.endType||'')+'</span></td><td class="notes">'+(r.penaltyNotes||'—')+'</td><td class="events">'+((r.eraLossEvents||[]).slice(0,6).map(eventHtml).join('')||'<span class="muted">No Era events</span>')+'</td></tr>').join('')+'</tbody></table>'}
+document.querySelectorAll('button[data-filter]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('button[data-filter]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');filter=btn.dataset.filter;render()}));search.addEventListener('input',render);
+(async function boot(){await load('assets/data/ranking-data.js');await loadPackets();await load('assets/data/penalty-score-corrections.js');await load('assets/data/fighter-era-ledgers.js');await load('assets/data/fighter-era-ledger-cleanups.js');await load('assets/data/fighter-era-ledger-cleanups-final.js');await load('assets/data/loss-context-ledger-adapter.js');render()})();
+})();
+</script>
+</body>
+</html>
