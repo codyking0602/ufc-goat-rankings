@@ -1,10 +1,9 @@
 // Central cache-bust versions for scoring/category modules.
 window.UFC_MODULE_VERSIONS = {
   primeWindows: "20260708a",
-  primeRoundControlAudit: "20260708c-batch-three",
+  primeRoundControlAudit: "20260708d-jon-54-63",
   primeDominanceLedgers: "20260708j-round-audit-batch-two",
-  primeDominanceShadowModel: "20260708a",
-  mattHughesConsistencyAudit: "20260708c",
+  primeDominanceShadowModel: "20260708b-hughes-jon-core",
   primeDominanceLivePromoter: "20260708c",
   primeDominanceCopyPolish: "20260708b",
   scoreWeighting: "20260708d-prime-dominance-data-restart-loader",
@@ -41,18 +40,12 @@ window.UFC_MODULE_VERSIONS = {
             'data-prime-dominance-shadow-model',
             function(){
               loadScript(
-                versions.mattHughesConsistencyAudit ? 'assets/data/matt-hughes-consistency-audit.js?v=matt-hughes-consistency-audit-' + versions.mattHughesConsistencyAudit : null,
-                'data-matt-hughes-consistency-audit',
+                versions.primeDominanceLivePromoter ? 'assets/data/prime-dominance-live-promoter.js?v=prime-dominance-live-promoter-' + versions.primeDominanceLivePromoter : null,
+                'data-prime-dominance-live-promoter',
                 function(){
                   loadScript(
-                    versions.primeDominanceLivePromoter ? 'assets/data/prime-dominance-live-promoter.js?v=prime-dominance-live-promoter-' + versions.primeDominanceLivePromoter : null,
-                    'data-prime-dominance-live-promoter',
-                    function(){
-                      loadScript(
-                        versions.primeDominanceCopyPolish ? 'assets/js/prime-dominance-copy-polish.js?v=prime-dominance-copy-polish-' + versions.primeDominanceCopyPolish : null,
-                        'data-prime-dominance-copy-polish'
-                      );
-                    }
+                    versions.primeDominanceCopyPolish ? 'assets/js/prime-dominance-copy-polish.js?v=prime-dominance-copy-polish-' + versions.primeDominanceCopyPolish : null,
+                    'data-prime-dominance-copy-polish'
                   );
                 }
               );
