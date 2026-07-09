@@ -2,7 +2,7 @@
 // Adds Peak Apex as a positive modifier after the 100-point base score.
 // Formula: weighted positive base + apexPeak + loss penalty.
 (function(){
-  const VERSION='apex-peak-live-bonus-20260709b-locked-audit';
+  const VERSION='apex-peak-live-bonus-20260709c-missing-row-fixes';
   const DATA=window.RANKING_DATA;
   const RUBRIC={twoPerformanceStrength:{label:'Two-performance strength',max:2},proof:{label:'Proof',max:1.75},bestFighterClaim:{label:'Best-fighter claim',max:1.25},aura:{label:'Aura',max:1},total:{label:'Peak Apex bonus',max:6}};
   const RULES={window:'Best two UFC wins within 24 months',totalMax:6,performances:'Two selected UFC wins are rated individually; their average maps into Two-performance strength.',noContests:'No contests do not count as Apex performances.',losses:'Losses are not selected as Apex performances, but can cap Best-Fighter Claim or Aura.'};
@@ -34,6 +34,8 @@
 ['T.J. Dillashaw','Renan Barao I 2014 + Cody Garbrandt II 2018','Renan Barao I',9.7,'Cody Garbrandt II',9.3,1.35,0.85,0.45,'Technically brilliant and violent bantamweight apex.'],
 ['Junior dos Santos','Fabricio Werdum 2008 + Cain Velasquez I 2011','Fabricio Werdum',9.0,'Cain Velasquez I',9.4,1.30,0.80,0.55,'Heavyweight boxing apex with Werdum/Cain proof.'],
 ['B.J. Penn','Joe Stevenson 2008 + Diego Sanchez 2009','Joe Stevenson',8.7,'Diego Sanchez',9.2,1.00,1.00,0.65,'Prime lightweight title aura and best-fighter argument.'],
+['Robbie Lawler','Johny Hendricks II 2014 + Rory MacDonald II 2015','Johny Hendricks II',8.8,'Rory MacDonald II',9.3,1.20,0.70,0.75,'Championship-level Lawler apex with Hendricks II and Rory II proof.'],
+['Deiveson Figueiredo','Joseph Benavidez II 2020 + Brandon Moreno I 2020','Joseph Benavidez II',9.4,'Brandon Moreno I',8.9,1.15,0.75,0.65,'Flyweight title apex built around Benavidez II and Moreno I.'],
 ['Tyron Woodley','Robbie Lawler 2016 + Darren Till 2018','Robbie Lawler',9.2,'Darren Till',9.0,1.20,0.90,0.45,'Welterweight champion apex with Lawler/Till proof.'],
 ['Aljamain Sterling','Petr Yan II 2022 + Henry Cejudo 2023','Petr Yan II',9.0,'Henry Cejudo',9.1,1.45,0.75,0.35,'Modern bantamweight title apex with Yan/Cejudo proof.'],
 ['Khamzat Chimaev','Gilbert Burns 2022 + Robert Whittaker 2024','Gilbert Burns',8.8,'Robert Whittaker',9.3,1.15,0.55,0.75,'Current-table contender apex with violent dominance.',1.90],
@@ -55,6 +57,7 @@
 ['Tito Ortiz','Wanderlei Silva 2000 + Evan Tanner 2001','Wanderlei Silva',8.8,'Evan Tanner',8.6,0.85,0.75,0.65,'Early UFC LHW title apex.'],
 ['Sean Strickland','Israel Adesanya 2023 + Nassourdine Imavov 2023','Israel Adesanya',9.7,'Nassourdine Imavov',8.3,1.05,0.45,0.55,'Izzy win gives real apex proof.'],
 ['Matt Hughes','Carlos Newton II 2002 + Frank Trigg II 2005','Carlos Newton II',7.3,'Frank Trigg II',7.2,0.85,0.85,0.65,'Old-era welterweight apex calibration row.'],
+['Jose Aldo','Frankie Edgar II 2016 + Jeremy Stephens 2018','Frankie Edgar II',9.2,'Jeremy Stephens',8.7,1.00,0.55,0.45,'UFC-only Aldo apex is strong, with WEC greatness left outside the score.'],
 ['Michael Bisping','Anderson Silva 2016 + Luke Rockhold II 2016','Anderson Silva',8.8,'Luke Rockhold II',9.4,1.05,0.45,0.45,'Late-career title apex with Anderson/Rockhold proof.'],
 ['Dan Henderson','Michael Bisping 2009 + Mauricio Rua I 2011','Michael Bisping',9.1,'Mauricio Rua I',9.0,0.95,0.35,0.65,'UFC-only apex built around violent signature moments.'],
 ['Miesha Tate','Sara McMann 2015 + Holly Holm 2016','Sara McMann',8.3,'Holly Holm',9.0,0.90,0.45,0.55,'Short UFC title apex with the Holm comeback win.'],
@@ -79,42 +82,20 @@
   }
   function applyLockedApex(){
     const patched=[];
-    [...(DATA?.men||[]),...(DATA?.women||[]),...(DATA?.fighters||[])].forEach(f=>{
-      const row=lockedMap.get(key(f?.fighter));if(!row)return;
-      const audit=lockedAudit(row);f.apexPeak=audit.score;f.apexPeakAudit=audit;patched.push(f.fighter);
-    });
+    [...(DATA?.men||[]),...(DATA?.women||[]),...(DATA?.fighters||[])].forEach(f=>{const row=lockedMap.get(key(f?.fighter));if(!row)return;const audit=lockedAudit(row);f.apexPeak=audit.score;f.apexPeakAudit=audit;patched.push(f.fighter);});
+    [...(DATA?.men||[]),...(DATA?.fighters||[])].forEach(f=>{if(key(f?.fighter)!=='dricus du plessis')return;f.apexPeakAudit={score:num(f.apexPeak),window:'Peak Apex review pending',performances:[],front:{proved:'Peak Apex review pending.',felt:'Peak Apex review pending.'},notes:'Peak Apex review pending.',source:'Peak Apex pending review display cleanup',version:VERSION};});
     if(typeof DISPLAY_OVERRIDES!=='undefined')LOCKED.forEach(row=>{DISPLAY_OVERRIDES[row[0]]=DISPLAY_OVERRIDES[row[0]]||{};DISPLAY_OVERRIDES[row[0]].apexPeakAudit=lockedAudit(row);});
     window.UFC_PEAK_APEX_LOCKED_AUDIT={version:VERSION,patched:[...new Set(patched)],fighters:LOCKED.map(row=>row[0]),rule:'Peak Apex = Two-performance strength + Proof + Best-fighter claim + Aura.',appliedAt:new Date().toISOString()};
   }
-  function categoryScore(row,category){
-    if(category==='longevity'){
-      const raw=num(row.longevity);
-      if(row.longevityThirtyPoint===true || raw>15) return raw;
-      return (raw/15)*30;
-    }
-    return num(row[category]);
-  }
-  function weightedBreakdown(row){
-    const championship=(categoryScore(row,'championship')/30)*35;
-    const opponentQuality=(categoryScore(row,'opponentQuality')/30)*27.5;
-    const primeDominance=(categoryScore(row,'primeDominance')/30)*27.5;
-    const longevity=(categoryScore(row,'longevity')/30)*10;
-    const apexPeak=num(row.apexPeak);
-    const penalty=num(row.penalty);
-    const positiveScore=championship+opponentQuality+primeDominance+longevity;
-    const modifierScore=apexPeak+penalty;
-    return {championship:round2(championship),opponentQuality:round2(opponentQuality),primeDominance:round2(primeDominance),longevity:round2(longevity),apexPeak:round2(apexPeak),apexPeakBonus:round2(apexPeak),positiveScore:round2(positiveScore),penalty:round2(penalty),modifierScore:round2(modifierScore),totalScore:round2(positiveScore+modifierScore)};
-  }
+  function categoryScore(row,category){if(category==='longevity'){const raw=num(row.longevity);if(row.longevityThirtyPoint===true || raw>15) return raw;return (raw/15)*30;}return num(row[category]);}
+  function weightedBreakdown(row){const championship=(categoryScore(row,'championship')/30)*35;const opponentQuality=(categoryScore(row,'opponentQuality')/30)*27.5;const primeDominance=(categoryScore(row,'primeDominance')/30)*27.5;const longevity=(categoryScore(row,'longevity')/30)*10;const apexPeak=num(row.apexPeak);const penalty=num(row.penalty);const positiveScore=championship+opponentQuality+primeDominance+longevity;const modifierScore=apexPeak+penalty;return {championship:round2(championship),opponentQuality:round2(opponentQuality),primeDominance:round2(primeDominance),longevity:round2(longevity),apexPeak:round2(apexPeak),apexPeakBonus:round2(apexPeak),positiveScore:round2(positiveScore),penalty:round2(penalty),modifierScore:round2(modifierScore),totalScore:round2(positiveScore+modifierScore)};}
   function boardRows(){return [...(DATA?.men||[]),...(DATA?.women||[])];}
   function allRows(){return [...boardRows(),...(DATA?.fighters||[])].filter(row=>row&&row.fighter);}
   function sortBoard(board){if(!Array.isArray(board))return;board.sort((a,b)=>num(b.totalScore)-num(a.totalScore)||String(a.fighter).localeCompare(String(b.fighter)));board.forEach((row,index)=>{row.rank=index+1;});}
   function apply(){
     if(!DATA){const status={version:VERSION,applied:false,error:'Missing RANKING_DATA',mutatesScores:true,apply};window.UFC_APEX_PEAK_LIVE_BONUS=status;return status;}
-    applyLockedApex();
-    const applied=[];
-    allRows().forEach(row=>{const breakdown=weightedBreakdown(row);row.weightedScoreBreakdown=breakdown;row.totalScore=breakdown.totalScore;row.apexPeakBonusLive=true;row.apexPeakBonusVersion=VERSION;applied.push({fighter:row.fighter,apexPeak:breakdown.apexPeak,totalScore:breakdown.totalScore});});
-    sortBoard(DATA.men);sortBoard(DATA.women);
-    const boards=boardRows();const rankByName=new Map(boards.map(row=>[key(row.fighter),row.rank]));const totalByName=new Map(boards.map(row=>[key(row.fighter),row.totalScore]));const breakdownByName=new Map(boards.map(row=>[key(row.fighter),row.weightedScoreBreakdown]));const apexByName=new Map(boards.map(row=>[key(row.fighter),row.apexPeak]));const auditByName=new Map(boards.map(row=>[key(row.fighter),row.apexPeakAudit]));
+    applyLockedApex();const applied=[];allRows().forEach(row=>{const breakdown=weightedBreakdown(row);row.weightedScoreBreakdown=breakdown;row.totalScore=breakdown.totalScore;row.apexPeakBonusLive=true;row.apexPeakBonusVersion=VERSION;applied.push({fighter:row.fighter,apexPeak:breakdown.apexPeak,totalScore:breakdown.totalScore});});
+    sortBoard(DATA.men);sortBoard(DATA.women);const boards=boardRows();const rankByName=new Map(boards.map(row=>[key(row.fighter),row.rank]));const totalByName=new Map(boards.map(row=>[key(row.fighter),row.totalScore]));const breakdownByName=new Map(boards.map(row=>[key(row.fighter),row.weightedScoreBreakdown]));const apexByName=new Map(boards.map(row=>[key(row.fighter),row.apexPeak]));const auditByName=new Map(boards.map(row=>[key(row.fighter),row.apexPeakAudit]));
     (DATA.fighters||[]).forEach(profile=>{const k=key(profile.fighter);if(rankByName.has(k))profile.rank=rankByName.get(k);if(totalByName.has(k))profile.totalScore=totalByName.get(k);if(breakdownByName.has(k))profile.weightedScoreBreakdown=breakdownByName.get(k);if(apexByName.has(k))profile.apexPeak=apexByName.get(k);if(auditByName.has(k))profile.apexPeakAudit=auditByName.get(k);profile.apexPeakBonusLive=true;profile.apexPeakBonusVersion=VERSION;});
     if(typeof DISPLAY_OVERRIDES!=='undefined'){boards.forEach(row=>{const override=DISPLAY_OVERRIDES[row.fighter];if(!override)return;override.allTimeRank=row.rank;if(Object.prototype.hasOwnProperty.call(override,'overallOvr'))delete override.overallOvr;});}
     if(DATA.meta){DATA.meta.apexPeakBonusLive=true;DATA.meta.apexPeakBonusVersion=VERSION;DATA.meta.apexPeakBonusFormula='championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty';}
