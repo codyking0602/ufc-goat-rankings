@@ -32,7 +32,7 @@
 </main>
 <script>
 (function(){
-  const PAGE_VERSION='loss-context-shadow-test-v2-20260709b-label-cleanup';
+  const PAGE_VERSION='loss-context-shadow-test-v2-20260709c-cleanup-pass';
   const bust=Date.now();
   let filter='review';
   const status=document.getElementById('status');
@@ -61,7 +61,7 @@
     const cmp=window.UFC_LOSS_CONTEXT_SHADOW_COMPARE;
     if(!cmp){table.innerHTML='<div class="bad pill">Compare failed to load</div>';return;}
     const s=cmp.summary||{};
-    status.textContent=`${PAGE_VERSION} | fresh=${bust} | adapter=${s.adapterVersion||'missing'} | era=${s.eraLedgerVersion||'missing'}`;
+    status.textContent=`${PAGE_VERSION} | fresh=${bust} | adapter=${s.adapterVersion||'missing'} | era=${s.eraLedgerVersion||'missing'} | cleanup=${s.cleanupVersion||'none'}`;
     summary.innerHTML=[card('Total',s.total),card('Clean',s.clean??s.matches),card('Review',s.review),card('Adapter',s.adapterLoaded?'Yes':'No'),card('Missing data',s.missingData)].join('');
     if((cmp.missingData||[]).length){missing.style.display='block';missing.innerHTML=`<b>Missing data names:</b> ${(cmp.missingData||[]).join(', ')}`;}else{missing.style.display='none';}
     const q=(search.value||'').toLowerCase().trim();
@@ -84,6 +84,7 @@
     await load('assets/data/ranking-data.js');
     await loadPackets();
     await load('assets/data/fighter-era-ledgers.js');
+    await load('assets/data/fighter-era-ledger-cleanups.js');
     await load('assets/data/loss-context-ledger-adapter.js');
     await load('assets/data/loss-context-shadow-compare.js');
     render();
