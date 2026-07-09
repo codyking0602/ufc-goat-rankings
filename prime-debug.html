@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Prime Dominance Debug</title>
+  <style>
+    body{margin:0;background:#0b0d12;color:#eef2ff;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;padding:20px;line-height:1.45}
+    h1{margin:0 0 8px;font-size:28px}.muted{color:#9ca3af}.card{border:1px solid #263244;background:#121722;border-radius:16px;padding:14px;margin:12px 0;overflow:auto}.bad{color:#fca5a5}.good{color:#86efac}.warn{color:#fde68a}pre{white-space:pre-wrap;font-size:13px;background:#06070a;border:1px solid #263244;border-radius:12px;padding:12px;overflow:auto}table{width:100%;border-collapse:collapse}td,th{border-bottom:1px solid #263244;padding:6px 8px;text-align:left;font-size:13px}th{color:#facc15}.pill{display:inline-flex;border:1px solid #263244;border-radius:999px;padding:4px 8px;margin:2px;color:#facc15}
+  </style>
+</head>
+<body>
+  <h1>Prime Dominance Runtime Debug</h1>
+  <p class="muted">This page shows what the browser actually has after the scoring loaders finish. It does not use the normal fighter card UI.</p>
+  <div id="status" class="card">Loading…</div>
+  <div id="debug"></div>
+
+  <script>function refresh(){}</script>
+  <script src="assets/data/ranking-data.js?v=ranking-data-prime-debug-1"></script>
+  <script src="assets/data/display-overrides.js?v=display-overrides-prime-debug-1"></script>
+  <script src="assets/data/module-versions.js?v=module-versions-prime-debug-707f854"></script>
+  <script src="assets/data/ranking-data-patches.js?v=ranking-data-patches-prime-debug-707f854"></script>
+  <script>
+    function num(v){ const n=Number(v); return Number.isFinite(n)?n:null; }
+    function entryForName(name){
+      const row=(window.RANKING_DATA?.men||[]).find(r=>r.fighter===name)||(window.RANKING_DATA?.women||[]).find(r=>r.fighter===name)||{};
+      return row.primeDominanceLiveAudit
+        || row.primeDominanceShadowAudit
+        || window.UFC_PRIME_DOMINANCE_LEDGERS?.entryFor?.(name)
+        || window.UFC_PRIME_DOMINANCE_SHADOW_MODEL?.report?.find(e=>e.fighter===name)
+        || null;
+    }
+    function primeValue(row){
+      const entry=entryForName(row.fighter);
+      return num(entry?.total) ?? num(row.primeDominance) ?? 0;
+    }
+    function renderDebug(){
+      const DATA=window.RANKING_DATA||{};
+      const row=(DATA.men||[]).find(r=>r.fighter==='Jon Jones')||{};
+      const profile=(DATA.fighters||[]).find(r=>r.fighter==='Jon Jones')||{};
+      const override=window.DISPLAY_OVERRIDES?.['Jon Jones']||{};
+      const entry=entryForName('Jon Jones');
+      const board=(DATA.men||[]).map(r=>({fighter:r.fighter,value:primeValue(r),rowPrime:r.primeDominance,entryTotal:entryForName(r.fighter)?.total ?? null})).sort((a,b)=>b.value-a.value||a.fighter.localeCompare(b.fighter));
+      const rank=1+board.filter(x=>x.value>primeValue(row)).length;
+      const ovr=board.length<=1?99:Math.max(55,Math.min(99,Math.round(99-((rank-1)/(board.length-1))*44)));
+      const topRows=board.slice(0,45).map((r,i)=>`<tr class="${r.fighter==='Jon Jones'?'warn':''}"><td>${i+1}</td><td>${r.fighter}</td><td>${r.value}</td><td>${r.rowPrime}</td><td>${r.entryTotal ?? ''}</td></tr>`).join('');
+      document.getElementById('status').innerHTML=`<b>Loaded.</b> Jon calculated rank: <span class="${rank<=10?'good':'bad'}">#${rank}</span> · calculated PCTL: <span class="${ovr>=90?'good':'bad'}">${ovr}</span>`;
+      document.getElementById('debug').innerHTML=`
+        <div class="card"><h2>Jon Runtime Values</h2>
+          <p><span class="pill">row.primeDominance: ${row.primeDominance}</span><span class="pill">entry.total: ${entry?.total ?? 'none'}</span><span class="pill">display override: ${JSON.stringify(override.categories?.primeDominance || null)}</span></p>
+          <pre>${JSON.stringify({
+            rowPrimeDominance: row.primeDominance,
+            rowLiveAuditTotal: row.primeDominanceLiveAudit?.total,
+            rowShadowAuditTotal: row.primeDominanceShadowAudit?.total,
+            profilePrimeDominance: profile.primeDominance,
+            profileLiveAuditTotal: profile.primeDominanceLiveAudit?.total,
+            profileShadowAuditTotal: profile.primeDominanceShadowAudit?.total,
+            displayOverridePrimeDominance: override.categories?.primeDominance || null,
+            forceLivePrimeCategory: window.UFC_FORCE_LIVE_PRIME_DOMINANCE_CATEGORY || null,
+            primeRoundAuditVersion: window.UFC_PRIME_ROUND_CONTROL_AUDIT?.version,
+            primeLedgerVersion: window.UFC_PRIME_DOMINANCE_LEDGERS?.version,
+            primeShadowVersion: window.UFC_PRIME_DOMINANCE_SHADOW_MODEL?.version,
+            primeLiveVersion: window.UFC_PRIME_DOMINANCE_LIVE_PROMOTER?.version,
+            primeScoreCorrectionVersion: window.UFC_PRIME_DOMINANCE_SCORE_CORRECTIONS?.version,
+            categoryPercentileTierVersion: window.UFC_CATEGORY_PERCENTILE_TIERS?.version
+          }, null, 2)}</pre>
+        </div>
+        <div class="card"><h2>Men Prime Dominance Board Runtime Values</h2><table><thead><tr><th>Rank</th><th>Fighter</th><th>Used value</th><th>Row prime</th><th>Audit total</th></tr></thead><tbody>${topRows}</tbody></table></div>
+      `;
+    }
+    setTimeout(renderDebug, 1000);
+    setTimeout(renderDebug, 3000);
+    setTimeout(renderDebug, 6000);
+  </script>
+</body>
+</html>
