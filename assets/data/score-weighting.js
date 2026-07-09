@@ -1,7 +1,7 @@
 // Overall score weighting layer.
 // Applies Cody-approved GOAT weights. Main categories are all treated as 30-point category scores.
 (function(){
-  const VERSION = 'score-weighting-20260708c-prime-dominance-shadow-loader';
+  const VERSION = 'score-weighting-20260709a-apex-bonus-modifier';
   const DATA = window.RANKING_DATA;
   if(!DATA) return;
 
@@ -18,7 +18,7 @@
     longevity: 30
   };
   const LEGACY_LONGEVITY_MAX = 15;
-  const PENALTY_MODE = 'Loss penalty remains a separate raw negative modifier after the 100-point positive category score. Apex Peak is display-only and is not included in total score.';
+  const MODIFIER_MODE = 'Apex Peak is a positive bonus modifier after the 100-point positive category score. Loss Context remains a separate negative modifier after the same base score.';
 
   function num(value){
     const n = Number(value || 0);
@@ -46,15 +46,18 @@
     const apexPeak = num(row.apexPeak);
     const penalty = num(row.penalty);
     const positiveScore = championship + opponentQuality + primeDominance + longevity;
-    const totalScore = positiveScore + penalty;
+    const modifierScore = apexPeak + penalty;
+    const totalScore = positiveScore + modifierScore;
     return {
       championship: round2(championship),
       opponentQuality: round2(opponentQuality),
       primeDominance: round2(primeDominance),
       longevity: round2(longevity),
       apexPeak: round2(apexPeak),
+      apexPeakBonus: round2(apexPeak),
       positiveScore: round2(positiveScore),
       penalty: round2(penalty),
+      modifierScore: round2(modifierScore),
       totalScore: round2(totalScore)
     };
   }
@@ -64,6 +67,7 @@
     row.totalScore = breakdown.totalScore;
     row.weightedScoreBreakdown = breakdown;
     row.scoreWeightingVersion = VERSION;
+    row.apexPeakBonusLive = true;
   }
   function sortBoard(board){
     if(!Array.isArray(board)) return;
@@ -85,16 +89,18 @@
     if(scoreByFighter.has(profile.fighter)) profile.totalScore = scoreByFighter.get(profile.fighter);
     if(breakdownByFighter.has(profile.fighter)) profile.weightedScoreBreakdown = breakdownByFighter.get(profile.fighter);
     profile.scoreWeightingVersion = VERSION;
+    profile.apexPeakBonusLive = true;
   });
 
   if(DATA.meta){
-    DATA.meta.scoringWeights = { version: VERSION, weights: WEIGHTS, baseMax: BASE_MAX, legacyLongevityMax: LEGACY_LONGEVITY_MAX, penaltyMode: PENALTY_MODE };
+    DATA.meta.scoringWeights = { version: VERSION, weights: WEIGHTS, baseMax: BASE_MAX, legacyLongevityMax: LEGACY_LONGEVITY_MAX, modifierMode: MODIFIER_MODE };
   }
 
   if(typeof DISPLAY_OVERRIDES !== 'undefined'){
     rankByFighter.forEach((rank,fighter) => {
       if(!DISPLAY_OVERRIDES[fighter]) return;
       DISPLAY_OVERRIDES[fighter].allTimeRank = rank;
+      if(Object.prototype.hasOwnProperty.call(DISPLAY_OVERRIDES[fighter], 'overallOvr')) delete DISPLAY_OVERRIDES[fighter].overallOvr;
     });
   }
 
@@ -112,8 +118,9 @@
           <tr><td><strong>Quality Wins</strong></td><td>27.5%</td></tr>
           <tr><td><strong>Prime Dominance</strong></td><td>27.5%</td></tr>
           <tr><td><strong>Elite Longevity</strong></td><td>10%</td></tr>
-          <tr><td><strong>Loss Context</strong></td><td>Separate negative modifier after the positive score.</td></tr>
-        </tbody></table><p class="meta">Each main category is treated as a 30-point score, then multiplied by its category weight. Apex Peak is shown on profiles but is not part of the total-score formula.</p></div>
+          <tr><td><strong>Apex Peak</strong></td><td>Positive bonus modifier after the 100-point base.</td></tr>
+          <tr><td><strong>Loss Context</strong></td><td>Negative modifier after the 100-point base.</td></tr>
+        </tbody></table><p class="meta">Each main category is treated as a 30-point score, then multiplied by its category weight. Apex Peak adds bonus points after the 100-point base. Loss Context subtracts points after the same base.</p></div>
       `);
     };
   }
@@ -146,10 +153,11 @@
     weights: WEIGHTS,
     baseMax: BASE_MAX,
     legacyLongevityMax: LEGACY_LONGEVITY_MAX,
-    penaltyMode: PENALTY_MODE,
+    modifierMode: MODIFIER_MODE,
     primeWindowsLoader: true,
     primeDominanceShadowLoader: true,
-    formula: 'championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + penalty',
+    apexPeakBonusLive: true,
+    formula: 'championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty',
     appliedAt: new Date().toISOString()
   };
 
