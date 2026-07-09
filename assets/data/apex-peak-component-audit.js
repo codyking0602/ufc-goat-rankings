@@ -2,7 +2,7 @@
 // Locked model: best two UFC wins within 24 months.
 // Total = Two-Performance Strength + Proof + Best-Fighter Claim + Aura.
 (function(){
-  const VERSION='apex-peak-component-audit-20260709b-batch-one-24mo';
+  const VERSION='apex-peak-component-audit-20260709c-batch-one-review-adjustments';
   const DATA=window.RANKING_DATA;
   if(!DATA) return;
 
@@ -66,8 +66,8 @@
         {label:'Ronda Rousey',date:'2016-12-30',rating:10.0,note:'Destroyed the original women’s UFC aura fighter.'},
         {label:'Cris Cyborg',date:'2018-12-29',rating:10.0,note:'Knocked out the most feared featherweight champion in under a minute.'}
       ],
-      {proof:1.75,bestFighterClaim:1.20,aura:1.00},
-      'Women’s UFC Apex benchmark. Two massive historical wins and violent separation; best-fighter claim is nearly maxed.'
+      {proof:1.75,bestFighterClaim:1.25,aura:1.00},
+      'Perfect women’s UFC Apex benchmark: Ronda and Cyborg back-to-back as historical proof, full best-fighter claim, and violent aura.'
     ),
     'Anderson Silva':entry(
       'Forrest Griffin 2009 + Vitor Belfort 2011',
@@ -93,8 +93,8 @@
         {label:'Jose Aldo',date:'2015-12-12',rating:10.0,note:'Thirteen-second knockout of the featherweight champion.'},
         {label:'Eddie Alvarez',date:'2016-11-12',rating:10.0,note:'Flawless two-division title performance against the lightweight champion.'}
       ],
-      {proof:1.75,bestFighterClaim:1.05,aura:0.95},
-      'One of the strongest two-performance Apex pairs ever. Diaz context caps the best-fighter claim, but the performances and aura are huge.'
+      {proof:1.75,bestFighterClaim:1.05,aura:1.00},
+      'One of the strongest two-performance Apex pairs ever. Diaz context caps the best-fighter claim, but Aldo plus Alvarez gets full aura credit.'
     ),
     'Islam Makhachev':entry(
       'Charles Oliveira 2022 + Dustin Poirier 2024',
@@ -102,8 +102,8 @@
         {label:'Charles Oliveira',date:'2022-10-22',rating:9.8,note:'Dominant title win over the hottest lightweight finisher in the world.'},
         {label:'Dustin Poirier',date:'2024-06-01',rating:9.4,note:'Elite title-defense proof against a proven lightweight great.'}
       ],
-      {proof:1.70,bestFighterClaim:1.15,aura:0.86},
-      'Modern lightweight Apex with elite proof and strong inevitability. Still a touch below the completed mythic Khabib/Jon tier.'
+      {proof:1.75,bestFighterClaim:1.15,aura:0.86},
+      'Modern lightweight Apex with max Proof because Oliveira plus Poirier is elite modern lightweight evidence. Still below the completed mythic tier on claim/aura.'
     ),
     'Alexander Volkanovski':entry(
       'Jose Aldo 2019 + Max Holloway I 2019',
@@ -120,17 +120,17 @@
         {label:'Kyoji Horiguchi',date:'2015-04-25',rating:9.3,note:'Late finish against a fast elite flyweight contender.'},
         {label:'Henry Cejudo I',date:'2016-04-23',rating:9.7,note:'Destroyed an Olympic-level challenger in one round.'}
       ],
-      {proof:1.30,bestFighterClaim:1.15,aura:0.92},
-      'Skill and separation were legendary. Flyweight opponent-proof discount keeps Proof below the deepest-division Apex leaders.'
+      {proof:1.30,bestFighterClaim:1.15,aura:0.80},
+      'Skill and separation were legendary. Flyweight opponent-proof discount keeps Proof below the deepest-division Apex leaders, and aura is capped below the scariest peak cases.'
     ),
     'Francis Ngannou':entry(
       'Stipe Miocic II 2021 + Ciryl Gane 2022',
       [
         {label:'Stipe Miocic II',date:'2021-03-27',rating:9.8,note:'Knocked out the best UFC heavyweight champion ever.'},
-        {label:'Ciryl Gane',date:'2022-01-22',rating:8.7,note:'Showed evolved title-fight problem-solving against an unbeaten technician.'}
+        {label:'Ciryl Gane',date:'2022-01-22',rating:9.2,note:'Showed evolved title-fight problem-solving against an unbeaten technician.'}
       ],
-      {proof:1.45,bestFighterClaim:1.05,aura:0.98},
-      'Terrifying heavyweight Apex. Stipe win is massive; Gane proof is strong but less dominant, keeping total below the mythic 6 group.'
+      {proof:1.60,bestFighterClaim:1.15,aura:1.00},
+      'Terrifying heavyweight Apex. Stipe is massive proof, Gane shows evolved title-fight problem-solving, and the aura is maxed for heavyweight danger.'
     ),
     'Matt Hughes':entry(
       'Carlos Newton II 2002 + Frank Trigg II 2005',
