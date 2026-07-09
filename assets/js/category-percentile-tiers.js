@@ -1,7 +1,7 @@
 // Percentile-based category tier labels.
 // Keeps category PCTL as the displayed number, but labels the tag by category rank position.
 (function(){
-  const VERSION = 'category-percentile-tiers-20260707b-slate-below-average';
+  const VERSION = 'category-percentile-tiers-20260708a-live-prime-dominance';
 
   function categoryBoardFor(f){
     const data = window.RANKING_DATA || {};
@@ -22,10 +22,44 @@
     document.head.appendChild(style);
   }
 
+  function ensurePrimeLive(){
+    if(window.UFC_PRIME_DOMINANCE_LIVE_PROMOTER?.apply){
+      try{ window.UFC_PRIME_DOMINANCE_LIVE_PROMOTER.apply(); }catch(e){}
+    }
+  }
+  function primeEntryFor(row){
+    if(!row?.fighter) return null;
+    return row.primeDominanceLiveAudit
+      || row.primeDominanceShadowAudit
+      || window.UFC_PRIME_DOMINANCE_LEDGERS?.entryFor?.(row.fighter)
+      || window.UFC_PRIME_DOMINANCE_SHADOW_MODEL?.report?.find(entry => entry.fighter === row.fighter)
+      || null;
+  }
+  function primeValue(row){
+    const entry = primeEntryFor(row);
+    const value = Number(entry?.total ?? row?.primeDominance ?? 0);
+    return Number.isFinite(value) ? value : 0;
+  }
+  function liveCategoryRank(f, key){
+    if(key !== 'primeDominance') return categoryRank(f, key);
+    ensurePrimeLive();
+    const board = categoryBoardFor(f);
+    const val = primeValue(f);
+    return 1 + board.filter(row => primeValue(row) > val).length;
+  }
+  function liveCategoryOvr(f, key){
+    if(key !== 'primeDominance') return categoryOvr(f, key);
+    const board = categoryBoardFor(f);
+    const rank = liveCategoryRank(f, key);
+    if(!rank) return 55;
+    if(board.length <= 1) return 99;
+    return Math.max(55, Math.min(99, Math.round(99 - ((rank - 1) / (board.length - 1)) * 44)));
+  }
+
   function tierByCategoryRank(f, key){
     const board = categoryBoardFor(f);
     const total = Math.max(board.length, 1);
-    const rank = Number(categoryRank(f, key) || total);
+    const rank = Number(liveCategoryRank(f, key) || total);
 
     const legendaryCutoff = Math.max(1, Math.ceil(total * 0.05));
     const eliteCutoff = Math.max(legendaryCutoff, Math.ceil(total * 0.20));
@@ -42,8 +76,8 @@
   }
 
   function categoryTierContext(f, key){
-    const pctScore = categoryOvr(f, key);
-    const rank = categoryRank(f, key);
+    const pctScore = liveCategoryOvr(f, key);
+    const rank = liveCategoryRank(f, key);
     const tier = tierByCategoryRank(f, key);
     const width = Math.max(0, Math.min(100, pctScore));
     return {pctScore, rank, tier, width};
@@ -64,7 +98,8 @@
         ['bottom 10%', 'Below Average']
       ],
       belowAverageColor: '#64748b',
-      tierByCategoryRank
+      tierByCategoryRank,
+      livePrimeDominance: true
     };
 
     window.tierByCategoryRank = tierByCategoryRank;
