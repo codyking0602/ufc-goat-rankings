@@ -14,7 +14,7 @@ window.UFC_MODULE_VERSIONS={
   opponentQualityLive:"20260710a-category-only",
   fighterEraLedgers:"20260709g-review-corrections",
   longevityShadowScorer:"20260709b-ledger-driven",
-  longevityLivePromoter:"20260709b-weighted-total-safe",
+  longevityLivePromoter:"20260710a-category-only",
   apexPeakCorrections:"20260709b-full-roster",
   apexPeakComponentAudit:"20260709c-batch-one-review-adjustments",
   apexPeakLiveBonus:"20260709c-missing-row-fixes"
