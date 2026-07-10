@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026-07-09 — Apex Peak Category-Only Checkpoint
+
+### Changed
+
+- `apex-peak-live-bonus.js` now writes only locked Apex Peak category values and audit metadata.
+- Preserved the full locked fighter table, all 61 completed audits, and Dricus du Plessis as the single pending review.
+- Removed Apex mutations of totals, weighted breakdowns, board ranks, profile overall scores, and numerical display overrides.
+- Removed the duplicate numerical Apex audit copy from runtime display overrides.
+- Apex now requests recalculation from `final-score-engine.js` after updating category values.
+- Standardized the promoter's active wording on “Apex Peak” while retaining the legacy global alias for compatibility.
+- Updated the Apex cache-bust version in `module-versions.js`.
+
+### Validation
+
+Fifth settled headless Chromium audit:
+
+- 62 roster fighters
+- 61 completed Apex Peak audits pass
+- Dricus du Plessis remains the single pending Apex row
+- 0 formula mismatches
+- 0 profile/leaderboard mismatches
+- 0 duplicate fighter names
+- 0 forbidden score-derived display overrides
+- category coverage unchanged
+- fighter totals, rankings, and men's top ten unchanged
+
+Permanent report:
+
+- `docs/audits/FIFTH_RUNTIME_AUDIT_APEX.md`
+
+No fighter category input, Apex component value, or selected Apex performance changed during this repair.
+
+### Next
+
+Neutralize the legacy general weighting layer as an overall-score owner and rerun the same settled audit.
+
 ## 2026-07-09 — Longevity Category-Only Checkpoint
 
 ### Changed
