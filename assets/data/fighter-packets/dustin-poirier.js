@@ -13,7 +13,7 @@
       resumeTag: 'Interim lightweight legend, title-shot ceiling',
       oneLiner: 'The best non-undisputed lightweight résumé in this range: elite wins everywhere, an interim belt, three undisputed title misses, and a capped loss profile keeping him out of the higher GOAT tier.',
       categories: { championship: { ovr: 74, rank: 29 }, opponentQuality: { ovr: 92, rank: 6 }, primeDominance: { ovr: 84, rank: 24 }, longevity: { ovr: 88, rank: 12 } },
-      snapshot: [ ['UFC Record', '22-9 (1 NC)'], ['UFC Title-Fight Wins', '1'], ['Championship Level', 'Interim Lightweight Champion'], ['Quality Wins', 'Holloway, McGregor, Gaethje, Alvarez, Chandler'], ['Prime Record', '9-5 (1 NC) title/elite LW window'], ['Active Elite Years', '8.5 Elite Years'], ['Loss Context', 'Penalty capped at -10; title losses are the ceiling'] ],
+      snapshot: [ ['UFC Record', '22-9 (1 NC)'], ['UFC Title-Fight Wins', '1'], ['Championship Level', 'Interim Lightweight Champion'], ['Quality Wins', 'Holloway, McGregor, Gaethje, Alvarez, Chandler'],  ['Active Elite Years', '8.5 Elite Years'], ['Loss Context', 'Penalty capped at -10; title losses are the ceiling'] ],
       whyRankedHere: 'Poirier ranks here because the UFC-only résumé is loaded: 22 UFC wins, an interim lightweight title, two UFC wins over Max Holloway, two over Conor McGregor, and major lightweight wins over Justin Gaethje, Eddie Alvarez, Michael Chandler, Anthony Pettis, Dan Hooker, Benoit Saint Denis, and Jim Miller.',
       whyNotHigher: 'He does not rank higher because he never won the undisputed UFC title, lost three undisputed lightweight title fights, and the Gaethje rematch plus Islam finish stack enough late elite damage that the -10 loss cap is doing real work.',
       bigAssumptions: [
@@ -33,7 +33,7 @@
       ],
       finalTakeaway: 'Poirier is the elite résumé-over-belt case: he has enough UFC wins and opponent quality to sit around the top 20, but the missing undisputed title and capped loss context keep him below the true champion-reign tier.'
     },
-    profileStats: { ufcRecord: '22-9 (1 NC)', titleFightWins: 1, eliteWins: 11, primeRecord: '9-5 (1 NC)', finishRatePct: 68.2, roundsWonPct: 56.5, activeEliteYears: 8.5, timesFinishedPrime: 4, divisionStrengthContext: 'Modern lightweight gets strong division-strength credit, and Poirier’s best wins came in one of the deepest UFC divisions.', lossContext: 'Loss penalty is capped at -10. Khabib, Charles Oliveira, Justin Gaethje 2, Islam Makhachev, and Max Holloway 3 create the main ceiling.' },
+    profileStats: { ufcRecord: '22-9 (1 NC)', titleFightWins: 1, eliteWins: 11,  finishRatePct: 68.2, roundsWonPct: 56.5, activeEliteYears: 8.5, timesFinishedPrime: 4, divisionStrengthContext: 'Modern lightweight gets strong division-strength credit, and Poirier’s best wins came in one of the deepest UFC divisions.', lossContext: 'Loss penalty is capped at -10. Khabib, Charles Oliveira, Justin Gaethje 2, Islam Makhachev, and Max Holloway 3 create the main ceiling.' },
     compareSeasoning: {
       shortCase: 'Poirier is the elite lightweight résumé case: one interim belt, a giant win ledger, brutal schedule strength, and no undisputed title to push him into the higher GOAT tier.',
       peak: 'At his best, Poirier was pressure boxing, southpaw counters, durability, pace, and opportunistic submissions. He was championship-level dangerous without becoming a dominant undisputed champion.',

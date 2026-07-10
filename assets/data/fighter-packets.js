@@ -40,7 +40,7 @@
           ['UFC Title-Fight Wins', '16'],
           ['Championship Level', 'All-Time Best'],
           ['Elite Wins', 'All-Time Best Tier'],
-          ['Prime Record', 'Essentially Unbeaten'],
+          
           ['Active Elite Years', 'Elite Longevity'],
           ['Loss Context', 'No true competitive loss']
         ],
@@ -138,7 +138,7 @@
           ['UFC Title-Fight Wins', '13'],
           ['Championship Level', 'All-Time Great'],
           ['Elite Wins', 'Best Quality Wins Case'],
-          ['Prime Record', 'Legendary Second Act'],
+          
           ['Active Elite Years', 'Long Championship Window'],
           ['Loss Context', 'Hughes and Serra losses were avenged decisively']
         ],
@@ -157,7 +157,7 @@
         ufcRecord: '20-2',
         titleFightWins: 13,
         eliteWins: 14,
-        primeRecord: '18-1',
+        
         finishRatePct: 36.4,
         roundsWonPct: 85.9,
         activeEliteYears: 9.15,

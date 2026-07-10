@@ -21,7 +21,7 @@
 
   const boardRow = {
     fighter, totalScore:60.85, championship:21.50, opponentQuality:10.45, primeDominance:23.00, longevity:8.70, apexPeak:4.85, penalty:-4.50,
-    leaderboard:'women', gender:'Women', ufcRecord:'10-3', primaryDivision:'Strawweight', secondaryDivision:'Flyweight', finishRatePct:40.0, activeEliteYears:6.0, timesFinishedPrime:1, primeRecord:'8-3 in UFC strawweight title/elite window', roundsWonPct:72.1,
+    leaderboard:'women', gender:'Women', ufcRecord:'10-3', primaryDivision:'Strawweight', secondaryDivision:'Flyweight', finishRatePct:40.0, activeEliteYears:6.0, timesFinishedPrime:1,  roundsWonPct:72.1,
     notes:'Permanent fighter-packet add. Two-time UFC strawweight champion with six title-fight wins, four defenses, a dominant second reign, and reduced upward-division treatment for the Valentina loss.'
   };
 
@@ -54,7 +54,7 @@
       overallOvr:90, divisionLabel:'SW / FLW', resumeTag:'Strawweight two-reign force',
       oneLiner:'A two-time UFC strawweight champion with six title-fight wins, a dominant second reign, elite Joanna/Andrade/Suarez proof, and Rose as the clear ceiling on the case.',
       categories:{ championship:{ovr:92}, opponentQuality:{ovr:88}, primeDominance:{ovr:92}, longevity:{ovr:86}, apexPeak:{ovr:90}, penalty:{ovr:86} },
-      snapshot:[ ['UFC Record','10-3'], ['UFC Title-Fight Wins','6 official / 6.00 adjusted'], ['Apex Peak','+4.85'], ['Quality Wins','Andrade, Joanna, Esparza, Suarez'], ['Prime Record','8-3 Title/Elite Window'], ['Prime Dominance','23.00 / 30'], ['Rounds Won','72.1% best-effort'], ['Loss Context','-4.50'] ],
+      snapshot:[ ['UFC Record','10-3'], ['UFC Title-Fight Wins','6 official / 6.00 adjusted'], ['Apex Peak','+4.85'], ['Quality Wins','Andrade, Joanna, Esparza, Suarez'],  ['Prime Dominance','23.00 / 30'], ['Rounds Won','72.1% best-effort'], ['Loss Context','-4.50'] ],
       whyRankedHere:'Zhang belongs in the elite women’s UFC tier because the title resume is serious: two strawweight reigns, six title-fight wins, four defenses, a dominant second reign, and direct wins over Joanna.',
       whyNotHigher:'She does not pass the top women’s benchmarks because Rose beat her twice in the heart of her title years, and the Valentina challenge did not create a two-division UFC title case. The second reign is elite, but the loss column keeps the ceiling clear.',
       bigAssumptions:[ ['Adjusted title wins','All six title-fight wins receive 1.00 adjusted credit; no single win is inflated above 1.00.'], ['Quality Wins cap','Andrade is the only 1.25 Quality Win because it is a reigning-champ title-win exception. Suarez and Joanna I are full 1.00, not above-cap bumps.'], ['Prime start','Prime starts with the Andrade title win. Earlier UFC wins support the resume but do not define the elite window.'], ['Valentina loss','Reduced upward-division elite-loss treatment applies because Zhang moved up to challenge an elite flyweight champion.'], ['Rose losses','Both Rose losses are counted prime damage and are the main ceiling on the case.'] ],
@@ -63,7 +63,7 @@
       primeDominanceSummary:{ score:23.00, components:{ primeRecord:5.25, primeRoundsWon:5.75, titleDefenseDominance:4.00, finishStoppageDominance:3.25, lossSafetyDurability:3.00, divisionStrength:1.75 }, notes:'Strong five-round control and improved grappling during the second reign, with Rose losses preventing a spotless dominance case.' },
       finalTakeaway:'Zhang is a high-end women’s UFC GOAT candidate: two reigns, six title-fight wins, real strawweight dominance, and enough loss context to sit below the Nunes/Valentina benchmark tier.'
     },
-    profileStats:{ ufcRecord:'10-3', titleFightWins:6, adjustedTitleWins:6.00, eliteWins:6, primeRecord:'8-3 in UFC strawweight title/elite window', primeDominance:23.00, finishRatePct:40.0, roundsWonPct:72.1, activeEliteYears:6.0, apexPeak:4.85, timesFinishedPrime:1, divisionStrengthContext:'Strawweight is treated as one of the stronger women’s UFC divisions, especially across Zhang’s title windows.', lossContext:'Rose I and Rose II are the counted prime damage. Valentina is reduced because it was an upward-division elite title challenge.' },
+    profileStats:{ ufcRecord:'10-3', titleFightWins:6, adjustedTitleWins:6.00, eliteWins:6,  primeDominance:23.00, finishRatePct:40.0, roundsWonPct:72.1, activeEliteYears:6.0, apexPeak:4.85, timesFinishedPrime:1, divisionStrengthContext:'Strawweight is treated as one of the stronger women’s UFC divisions, especially across Zhang’s title windows.', lossContext:'Rose I and Rose II are the counted prime damage. Valentina is reduced because it was an upward-division elite title challenge.' },
     compareSeasoning:{
       shortCase:'Zhang is the two-reign strawweight force: six UFC title-fight wins, direct Joanna separation, a dominant second reign, and strong Andrade/Esparza/Suarez proof.',
       peak:'At her best, Zhang was pace, strength, striking danger, clinch physicality, improved wrestling, and five-round control. The second reign showed the complete version.',

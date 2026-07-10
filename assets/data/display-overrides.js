@@ -20,7 +20,7 @@ const DISPLAY_OVERRIDES = {
       ["UFC Title-Fight Wins", "16"],
       ["Championship Level", "All-Time Best"],
       ["Elite Wins", "All-Time Best Tier"],
-      ["Prime Record", "Essentially Unbeaten"],
+      
       ["Active Elite Years", "Elite Longevity"],
       ["Loss Context", "No true competitive loss"]
     ],
@@ -55,7 +55,7 @@ const DISPLAY_OVERRIDES = {
       ["UFC Title-Fight Wins", "13"],
       ["Championship Level", "All-Time Great"],
       ["Elite Wins", "Best Quality Wins Case"],
-      ["Prime Record", "Legendary Second Act"],
+      
       ["Active Elite Years", "Long Championship Window"],
       ["Loss Context", "Hughes and Serra losses were avenged decisively"]
     ],
@@ -89,7 +89,7 @@ const DISPLAY_OVERRIDES = {
       ["UFC Title-Fight Wins", "12"],
       ["Championship Level", "Historic Flyweight Reign"],
       ["Elite Wins", "Strong but Division-Adjusted"],
-      ["Prime Record", "Long Dominant Champion Run"],
+      
       ["Active Elite Years", "Elite Championship Window"],
       ["Loss Context", "Cruz and Cejudo losses add context, not collapse"]
     ],
@@ -123,7 +123,7 @@ const DISPLAY_OVERRIDES = {
       ["UFC Title-Fight Wins", "11"],
       ["Championship Level", "Historic Middleweight Reign"],
       ["Elite Wins", "Strong but Division-Adjusted"],
-      ["Prime Record", "Legendary Peak Run"],
+      
       ["Active Elite Years", "Long Elite Window"],
       ["Loss Context", "Weidman losses count; later losses are treated as post-prime context"]
     ],
@@ -157,7 +157,7 @@ const DISPLAY_OVERRIDES = {
       ["UFC Title-Fight Wins", "4"],
       ["Championship Level", "Short but Elite Title Run"],
       ["Quality Wins", "Lightweight Champion Tier"],
-      ["Prime Record", "Unbeaten Prime Run"],
+      
       ["Active Elite Years", "6.0 Elite Years"],
       ["Loss Context", "No UFC losses"]
     ],
@@ -191,7 +191,7 @@ const DISPLAY_OVERRIDES = {
       ["UFC Title-Fight Wins", "6"],
       ["Championship Level", "Fast-Rising Champion Resume"],
       ["Quality Wins", "Modern Lightweight Elite"],
-      ["Prime Record", "Dominant Champion Stretch"],
+      
       ["Active Elite Years", "4.7 Elite Years"],
       ["Loss Context", "Only UFC loss came pre-prime"]
     ],
@@ -225,7 +225,7 @@ const DISPLAY_OVERRIDES = {
       ["UFC Title-Fight Wins", "8"],
       ["Championship Level", "Modern Featherweight Standard"],
       ["Quality Wins", "Top-End Featherweight Case"],
-      ["Prime Record", "Long Championship Prime"],
+      
       ["Active Elite Years", "6.7 Elite Years"],
       ["Loss Context", "Islam losses get reduced up-division treatment"]
     ],
@@ -259,7 +259,7 @@ const DISPLAY_OVERRIDES = {
       ["UFC Title-Fight Wins", "8"],
       ["Championship Level", "Historic Featherweight Champion"],
       ["Quality Wins", "Deep Across Two Eras"],
-      ["Prime Record", "Elite Title-Reign Window"],
+      
       ["Active Elite Years", "11.3 Elite Years"],
       ["Loss Context", "Later losses mostly sit outside the core prime case"]
     ],
@@ -293,7 +293,7 @@ const DISPLAY_OVERRIDES = {
       ["UFC Title-Fight Wins", "5"],
       ["Championship Level", "Great but Not Massive Belt Volume"],
       ["Quality Wins", "Second-Best Score in This Ranking"],
-      ["Prime Record", "Long High-Level Prime"],
+      
       ["Active Elite Years", "10.9 Elite Years"],
       ["Loss Context", "Many losses came to elite names and across long volume"]
     ],
@@ -353,10 +353,7 @@ DISPLAY_OVERRIDES["Petr Yan"] = {
       "Quality Wins",
       "Aldo and Sandhagen anchor the case"
     ],
-    [
-      "Prime Record",
-      "7-4 in title/elite window"
-    ],
+    
     [
       "Active Elite Years",
       "6.0 Elite Years"

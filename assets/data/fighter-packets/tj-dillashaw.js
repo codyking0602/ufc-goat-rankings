@@ -13,7 +13,7 @@
       resumeTag: 'Two-time bantamweight champion, tainted ceiling',
       oneLiner: 'A real bantamweight title monster with five UFC title-fight wins, huge finishes over Barao and Garbrandt, and an EPO suspension that keeps the legacy from feeling clean.',
       categories: { championship: { ovr: 86, rank: 13 }, opponentQuality: { ovr: 82, rank: 20 }, primeDominance: { ovr: 85, rank: 23 }, longevity: { ovr: 80, rank: 26 } },
-      snapshot: [ ['UFC Record', '13-5'], ['UFC Title-Fight Wins', '5'], ['Championship Level', 'Two-Time Bantamweight Champion'], ['Quality Wins', 'Barao, Garbrandt, Sandhagen, Assuncao'], ['Prime Record', '8-3 title/elite BW window'], ['Active Elite Years', '6.5 Elite Years'], ['Loss Context', 'Cruz, Cejudo, Sterling, plus EPO legacy context'] ],
+      snapshot: [ ['UFC Record', '13-5'], ['UFC Title-Fight Wins', '5'], ['Championship Level', 'Two-Time Bantamweight Champion'], ['Quality Wins', 'Barao, Garbrandt, Sandhagen, Assuncao'],  ['Active Elite Years', '6.5 Elite Years'], ['Loss Context', 'Cruz, Cejudo, Sterling, plus EPO legacy context'] ],
       whyRankedHere: 'Dillashaw ranks here because the UFC-only résumé has serious championship weight: two bantamweight title reigns, five UFC title-fight wins, title finishes over Renan Barao, Joe Soto, and Cody Garbrandt, plus elite wins over Cory Sandhagen, Raphael Assuncao, and John Lineker.',
       whyNotHigher: 'He does not rank higher because the résumé is permanently clouded by the EPO suspension and vacated belt, the Dominick Cruz loss cost him a cleaner reign, the Cejudo flyweight loss was ugly, and the Sterling fight ended with major shoulder-injury context.',
       bigAssumptions: [
@@ -32,7 +32,7 @@
       ],
       finalTakeaway: 'Dillashaw is a top-20-ish UFC-only case because five title-fight wins are hard to ignore. The problem is not talent or peak; it is the EPO cloud and the way the ending keeps the résumé from feeling clean.'
     },
-    profileStats: { ufcRecord: '13-5', titleFightWins: 5, eliteWins: 7, primeRecord: '8-3', finishRatePct: 61.5, roundsWonPct: 61.0, activeEliteYears: 6.5, timesFinishedPrime: 2, divisionStrengthContext: 'Modern bantamweight gets strong credit, especially for title wins over Barao and Garbrandt.', lossContext: 'Cruz and Assuncao are major competitive losses, Cejudo is reduced as a cross-division elite loss, and Sterling has shoulder-injury context.' },
+    profileStats: { ufcRecord: '13-5', titleFightWins: 5, eliteWins: 7,  finishRatePct: 61.5, roundsWonPct: 61.0, activeEliteYears: 6.5, timesFinishedPrime: 2, divisionStrengthContext: 'Modern bantamweight gets strong credit, especially for title wins over Barao and Garbrandt.', lossContext: 'Cruz and Assuncao are major competitive losses, Cejudo is reduced as a cross-division elite loss, and Sterling has shoulder-injury context.' },
     compareSeasoning: {
       shortCase: 'Dillashaw is the tainted bantamweight title résumé: two reigns, five title-fight wins, violent finishes, and a PED cloud that caps the GOAT argument.',
       peak: 'At his best, Dillashaw was movement, stance switching, pace, wrestling, and fight-ending combinations. The Barao and Garbrandt performances are elite championship peak proof.',

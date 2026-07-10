@@ -11,7 +11,7 @@
 
   const boardRow = {
     fighter, totalScore:33.66, championship:9.25, opponentQuality:2.60, primeDominance:17.70, longevity:2.50, apexPeak:3.85, penalty:0.00,
-    leaderboard:'women', gender:'Women', ufcRecord:'3-0', primaryDivision:'Bantamweight', secondaryDivision:'', finishRatePct:66.7, activeEliteYears:2.50, timesFinishedPrime:0, primeRecord:'3-0', roundsWonPct:85.7,
+    leaderboard:'women', gender:'Women', ufcRecord:'3-0', primaryDivision:'Bantamweight', secondaryDivision:'', finishRatePct:66.7, activeEliteYears:2.50, timesFinishedPrime:0,  roundsWonPct:85.7,
     notes:'Permanent fighter-packet add. Current UFC bantamweight champion with a perfect 3-0 UFC record, dominant grappling control, and a hard UFC-only volume cap.'
   };
 
@@ -37,7 +37,7 @@
       overallOvr:81, divisionLabel:'WBW', resumeTag:'Bantamweight title force',
       oneLiner:'A current UFC bantamweight champion with dominant grappling control and a perfect UFC record, but only three UFC fights keep the score capped.',
       categories:{ championship:{ovr:76}, opponentQuality:{ovr:65}, primeDominance:{ovr:82}, longevity:{ovr:55}, apexPeak:{ovr:80}, penalty:{ovr:99} },
-      snapshot:[ ['UFC Record','3-0'], ['UFC Title-Fight Wins','1 official / 1.00 adjusted'], ['Apex Peak','+3.85'], ['Quality Wins','Peña, Vieira, Holm'], ['Prime Record','3-0'], ['Prime Dominance','17.70 / 30'], ['Rounds Won','85.7% best-effort'], ['Loss Context','0.00'] ],
+      snapshot:[ ['UFC Record','3-0'], ['UFC Title-Fight Wins','1 official / 1.00 adjusted'], ['Apex Peak','+3.85'], ['Quality Wins','Peña, Vieira, Holm'],  ['Prime Dominance','17.70 / 30'], ['Rounds Won','85.7% best-effort'], ['Loss Context','0.00'] ],
       whyRankedHere:'Harrison scores as a real UFC champion because she beat Peña for the belt, dominated Holm, beat Vieira, and has no UFC loss penalty.',
       whyNotHigher:'The cap is pure UFC volume. She has only three UFC fights, one title-fight win, and zero defenses. PFL and Olympic greatness are context only and cannot carry the UFC-only score.',
       bigAssumptions:[ ['Adjusted title wins','Peña title win is 1.00 because it was a clean undisputed title win over the reigning champion.'], ['Quality Wins cap','Peña is 1.00. Vieira and Holm are 0.80 each; Holm is timing-discounted.'], ['Prime window','Prime starts immediately at Holly Holm because the UFC debut was title-relevant.'], ['Non-UFC exclusion','Olympic gold medals, PFL title runs, and Pacheco loss are context only, not scored.'], ['Nunes fight','Amanda Nunes is not scored because the fight has not happened.'], ['Photos','No photo paths until real files exist in assets/fighters/.'] ],
@@ -46,7 +46,7 @@
       primeDominanceSummary:{ score:17.70, components:{ primeRecord:4.00, primeRoundsWon:4.75, titleDefenseDominance:0.00, finishStoppageDominance:3.60, lossSafetyDurability:4.00, divisionStrength:1.35 }, notes:'Perfect UFC record and strong control create a high dominance score, but no title-defense stack keeps it from getting into long-reign territory.' },
       finalTakeaway:'Kayla is a dangerous current-champion UFC-only case: dominant and clean, but still waiting on the title-defense volume that would push her higher.'
     },
-    profileStats:{ ufcRecord:'3-0', titleFightWins:1, adjustedTitleWins:1.00, eliteWins:1, primeRecord:'3-0', primeDominance:17.70, finishRatePct:66.7, roundsWonPct:85.7, activeEliteYears:2.50, apexPeak:3.85, timesFinishedPrime:0, divisionStrengthContext:'Women’s bantamweight has historical importance, but the current UFC depth is not treated as max strength.', lossContext:'No UFC losses. Non-UFC losses and accomplishments are excluded from UFC-only scoring.' },
+    profileStats:{ ufcRecord:'3-0', titleFightWins:1, adjustedTitleWins:1.00, eliteWins:1,  primeDominance:17.70, finishRatePct:66.7, roundsWonPct:85.7, activeEliteYears:2.50, apexPeak:3.85, timesFinishedPrime:0, divisionStrengthContext:'Women’s bantamweight has historical importance, but the current UFC depth is not treated as max strength.', lossContext:'No UFC losses. Non-UFC losses and accomplishments are excluded from UFC-only scoring.' },
     compareSeasoning:{
       shortCase:'Harrison is the clean short-window champion case: dominant UFC grappling, a Peña title win, Holm/Vieira support, and no UFC losses.',
       peak:'At her best in the UFC, Harrison has looked physically overwhelming with top-control, judo entries, and submission threat.',

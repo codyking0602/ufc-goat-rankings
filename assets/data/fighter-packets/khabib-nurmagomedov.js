@@ -39,7 +39,7 @@
         ['UFC Title-Fight Wins', '4'],
         ['Championship Level', 'Short but Elite Title Run'],
         ['Quality Wins', 'Lightweight Champion Tier'],
-        ['Prime Record', 'Unbeaten Prime Run'],
+        
         ['Active Elite Years', '6.0 Elite Years'],
         ['Loss Context', 'No UFC losses']
       ],
@@ -58,7 +58,7 @@
       ufcRecord: '13-0',
       titleFightWins: 4,
       eliteWins: 5,
-      primeRecord: '8-0',
+      
       finishRatePct: 62.5,
       roundsWonPct: 94.7,
       activeEliteYears: 6.02,

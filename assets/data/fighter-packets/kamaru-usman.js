@@ -14,7 +14,7 @@
       oneLiner: 'The post-GSP welterweight champion case: dominant title control, elite round winning, and a focused but powerful championship peak.',
       categories: { championship: { ovr: 84, rank: 9 }, opponentQuality: { ovr: 86, rank: 8 }, primeDominance: { ovr: 91, rank: 7 }, longevity: { ovr: 85, rank: 16 } },
       snapshot: [
-        ['UFC Record', '16-3'], ['UFC Title-Fight Wins', '6'], ['Championship Level', 'Great Welterweight Reign'], ['Quality Wins', 'Modern Welterweight Elite'], ['Prime Record', 'Dominant Focused Prime'], ['Active Elite Years', '6.0 Elite Years'], ['Loss Context', 'Edwards finish damaged the back end']
+        ['UFC Record', '16-3'], ['UFC Title-Fight Wins', '6'], ['Championship Level', 'Great Welterweight Reign'], ['Quality Wins', 'Modern Welterweight Elite'],  ['Active Elite Years', '6.0 Elite Years'], ['Loss Context', 'Edwards finish damaged the back end']
       ],
       whyRankedHere: 'Usman ranks #10 because his welterweight title run had real champion authority. He paired elite round control with strong defenses and quality wins over the best contenders of his era.',
       whyNotHigher: 'He does not rank higher because his elite window is more compact than the long-volume cases, and the Edwards losses damaged the clean ending. His peak was elite, but the total UFC resume is not as broad as the names above him.',
@@ -24,7 +24,7 @@
       finalTakeaway: 'Usman is the focused modern welterweight champion case: high-end title control, strong elite wins, and a peak that was better than the total volume of his resume.'
     },
     profileStats: {
-      ufcRecord: '16-3', titleFightWins: 6, eliteWins: 8, primeRecord: '12-2', finishRatePct: 56.3, roundsWonPct: 78.1, activeEliteYears: 6.04, timesFinishedPrime: 1,
+      ufcRecord: '16-3', titleFightWins: 6, eliteWins: 8,  finishRatePct: 56.3, roundsWonPct: 78.1, activeEliteYears: 6.04, timesFinishedPrime: 1,
       divisionStrengthContext: 'Modern welterweight gives him strong quality-win value, though not quite GSP-level depth.',
       lossContext: 'The Edwards finish and rematch loss hurt the back end, but they came against elite opposition.'
     },

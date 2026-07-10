@@ -9,13 +9,13 @@
       overallOvr: 83, allTimeRank: 24, divisionLabel: 'FLW / BW', resumeTag: 'Compact double-champ burst',
       oneLiner: 'The compact achievement burst: flyweight gold, bantamweight gold, huge name wins, and a short window that limits total volume.',
       categories: { championship: { ovr: 78, rank: 19 }, opponentQuality: { ovr: 78, rank: 25 }, primeDominance: { ovr: 86, rank: 21 }, longevity: { ovr: 82, rank: 21 } },
-      snapshot: [ ['UFC Record', '10-4'], ['UFC Title-Fight Wins', '4'], ['Championship Level', 'Two-Division UFC Champion'], ['Quality Wins', 'DJ, Dillashaw, Moraes, Cruz'], ['Prime Record', 'Short Achievement Burst'], ['Active Elite Years', '4.0 Elite Years'], ['Loss Context', 'Short window and return losses cap the case'] ],
+      snapshot: [ ['UFC Record', '10-4'], ['UFC Title-Fight Wins', '4'], ['Championship Level', 'Two-Division UFC Champion'], ['Quality Wins', 'DJ, Dillashaw, Moraes, Cruz'],  ['Active Elite Years', '4.0 Elite Years'], ['Loss Context', 'Short window and return losses cap the case'] ],
       whyRankedHere: 'Cejudo ranks here because he packed major value into a short UFC window: flyweight title, bantamweight title, the Demetrious Johnson win, and a fast run through elite names.',
       whyNotHigher: 'He does not rank higher because the title window is short and the total UFC volume is limited. The achievements are loud, but the long-reign proof is not there.',
       keyJudgmentCalls: [ ['Double-champ value', 'a major part of the case.'], ['DJ win', 'huge high-end flyweight value, even with close-fight context.'], ['Dillashaw and Moraes wins', 'make the title burst feel historically loud.'], ['Retirement gap', 'limits active elite longevity.'], ['Return losses', 'add drag and make the case less clean.'] ],
       finalTakeaway: 'Cejudo is the compact double-champ case: one of the most efficient achievement bursts in UFC history, but too short to outrank deeper long-reign resumes.'
     },
-    profileStats: { ufcRecord: '10-4', titleFightWins: 4, eliteWins: 5, primeRecord: '6-2', finishRatePct: 40.0, roundsWonPct: 63.5, activeEliteYears: 4.0, timesFinishedPrime: 1, divisionStrengthContext: 'Two-division value matters, with flyweight context adjusted and bantamweight value treated strongly.', lossContext: 'Return losses and short title window cap the ranking despite loud peak achievements.' },
+    profileStats: { ufcRecord: '10-4', titleFightWins: 4, eliteWins: 5,  finishRatePct: 40.0, roundsWonPct: 63.5, activeEliteYears: 4.0, timesFinishedPrime: 1, divisionStrengthContext: 'Two-division value matters, with flyweight context adjusted and bantamweight value treated strongly.', lossContext: 'Return losses and short title window cap the ranking despite loud peak achievements.' },
     compareSeasoning: {
       shortCase: 'Cejudo is one of the best short-window legacy cases in the sport: flyweight champion, bantamweight champion, and a fighter who packed a lot of value into a compact UFC run.',
       peak: 'Cejudo’s peak was absurdly efficient: he beat Demetrious Johnson, finished T.J. Dillashaw, moved up, and won bantamweight gold against Marlon Moraes.',

@@ -2,7 +2,7 @@
 // Add each locked fighter snapshot and opponent display priority here.
 (function(){
   const DATA = window.RANKING_DATA;
-  const VERSION = 'fighter-profile-packages-20260702a';
+  const VERSION = 'fighter-profile-packages-20260710a-canonical-prime-record';
   if(!DATA || typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const PROFILE_PACKAGES = {
@@ -11,7 +11,7 @@
         ufcRecord: '20-2',
         titleFightWins: 13,
         eliteWins: 14,
-        primeRecord: '18-1',
+
         finishRatePct: 36.4,
         roundsWonPct: 85.9,
         activeEliteYears: 9.15,
@@ -44,7 +44,7 @@
         ufcRecord: '15-2-1',
         titleFightWins: 12,
         eliteWins: 8,
-        primeRecord: '13-2-1',
+
         finishRatePct: 43.8,
         roundsWonPct: 73.9,
         activeEliteYears: 6.84,
@@ -74,7 +74,7 @@
         ufcRecord: '17-7, 1 NC',
         titleFightWins: 11,
         eliteWins: 7,
-        primeRecord: '16-2',
+
         finishRatePct: 77.8,
         roundsWonPct: 69.2,
         activeEliteYears: 7.21,
@@ -106,7 +106,7 @@
         ufcRecord: '17-1',
         titleFightWins: 6,
         eliteWins: 7,
-        primeRecord: '9-0',
+
         finishRatePct: 75.0,
         roundsWonPct: 85.7,
         activeEliteYears: 4.7,
@@ -131,7 +131,7 @@
         ufcRecord: '13-0',
         titleFightWins: 4,
         eliteWins: 5,
-        primeRecord: '8-0',
+
         finishRatePct: 62.5,
         roundsWonPct: 94.7,
         activeEliteYears: 6.02,
@@ -157,7 +157,7 @@
         ufcRecord: '15-3',
         titleFightWins: 7,
         eliteWins: 9,
-        primeRecord: '10-3',
+
         finishRatePct: 53.3,
         roundsWonPct: 76.5,
         activeEliteYears: 5.72,
@@ -182,7 +182,7 @@
         ufcRecord: '16-8',
         titleFightWins: 8,
         eliteWins: 8,
-        primeRecord: '11-5',
+
         finishRatePct: 43.8,
         roundsWonPct: 66.7,
         activeEliteYears: 8.54,
@@ -208,7 +208,7 @@
         ufcRecord: '23-9',
         titleFightWins: 5,
         eliteWins: 9,
-        primeRecord: '11-5',
+
         finishRatePct: 52.2,
         roundsWonPct: 72.8,
         activeEliteYears: 8.31,
@@ -234,7 +234,7 @@
         ufcRecord: '16-3',
         titleFightWins: 6,
         eliteWins: 8,
-        primeRecord: '12-2',
+
         finishRatePct: 56.3,
         roundsWonPct: 78.1,
         activeEliteYears: 6.04,
@@ -259,7 +259,7 @@
         ufcRecord: '14-9',
         titleFightWins: 5,
         eliteWins: 8,
-        primeRecord: '10-4',
+
         finishRatePct: 50.0,
         roundsWonPct: 64.8,
         activeEliteYears: 9.43,
@@ -285,7 +285,7 @@
         ufcRecord: '18-7',
         titleFightWins: 9,
         eliteWins: 9,
-        primeRecord: '13-4',
+
         finishRatePct: 61.1,
         roundsWonPct: 70.6,
         activeEliteYears: 8.36,
@@ -311,7 +311,7 @@
         ufcRecord: '15-3, 1 NC',
         titleFightWins: 6,
         eliteWins: 9,
-        primeRecord: '12-3, 1 NC',
+
         finishRatePct: 53.3,
         roundsWonPct: 74.6,
         activeEliteYears: 7.05,
@@ -337,7 +337,7 @@
         ufcRecord: '15-5',
         titleFightWins: 6,
         eliteWins: 9,
-        primeRecord: '11-4',
+
         finishRatePct: 80.0,
         roundsWonPct: 68.4,
         activeEliteYears: 7.62,
@@ -363,7 +363,7 @@
         ufcRecord: '9-0',
         titleFightWins: 2,
         eliteWins: 4,
-        primeRecord: '9-0',
+
         finishRatePct: 66.7,
         roundsWonPct: 83.3,
         activeEliteYears: 3.18,
@@ -388,7 +388,7 @@
         ufcRecord: '14-5',
         titleFightWins: 7,
         eliteWins: 10,
-        primeRecord: '12-4',
+
         finishRatePct: 42.9,
         roundsWonPct: 72.9,
         activeEliteYears: 6.54,
@@ -425,7 +425,7 @@
     const stats = pack.stats || {};
     if(fighter){
       fighter.snapshotStats = {...stats};
-      fighter.primeRecord = stats.primeRecord;
+      
       fighter.roundsWonPct = stats.roundsWonPct;
       fighter.eliteWins = stats.eliteWins;
       fighter.timesFinishedPrime = stats.timesFinishedPrime;
@@ -453,7 +453,7 @@
         ['UFC Record', stats.ufcRecord || '—'],
         ['UFC Title-Fight Wins', String(stats.titleFightWins ?? '—')],
         ['Elite / Top-5 Wins', String(stats.eliteWins ?? '—')],
-        ['Prime Record', stats.primeRecord || '—'],
+
         ['Finish Rate', pctText(stats.finishRatePct)],
         ['Rounds Won', pctText(stats.roundsWonPct)],
         ['Active Elite Years', fmtText(stats.activeEliteYears)],
