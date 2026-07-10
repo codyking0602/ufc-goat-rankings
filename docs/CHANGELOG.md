@@ -1,5 +1,37 @@
 # Changelog
 
+## 2026-07-09 — Longevity Category-Only Checkpoint
+
+### Changed
+
+- `longevity-live-promoter.js` now writes only native `/30` Longevity values and Fighter Era Ledger audit metadata.
+- Removed Longevity mutations of totals, weighted breakdowns, board ranks, profile overall scores, and numerical display overrides.
+- Longevity now requests recalculation from `final-score-engine.js` after updating its category values.
+- Updated the Longevity cache-bust version in `module-versions.js`.
+
+### Validation
+
+Fourth settled headless Chromium audit:
+
+- 62 roster fighters
+- 62/62 Longevity audits live
+- 0 formula mismatches
+- 0 profile/leaderboard mismatches
+- 0 duplicate fighter names
+- 0 forbidden score-derived display overrides
+- category coverage unchanged
+- fighter totals, rankings, and top ten unchanged
+
+Permanent report:
+
+- `docs/audits/FOURTH_RUNTIME_AUDIT_LONGEVITY.md`
+
+No fighter category input or audit value changed during this repair.
+
+### Next
+
+Convert Apex Peak into a category-only writer and rerun the same settled audit.
+
 ## 2026-07-09 — Championship and Quality Category-Only Checkpoint
 
 ### Changed
