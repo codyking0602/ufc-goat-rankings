@@ -1,6 +1,7 @@
 const { chromium } = require('playwright');
 const fs = require('node:fs');
 const path = require('node:path');
+const vm = require('node:vm');
 
 const ROOT = process.cwd();
 const RECORD_RE = /^\d+-\d+(?:-\d+)?(?:,\s*\d+\s*NC)?$/;
@@ -10,6 +11,31 @@ const write = (file, content) => fs.writeFileSync(path.join(ROOT, file), content
 function replaceRequired(source, search, replacement, label) {
   if (!source.includes(search)) throw new Error(`Missing expected source for ${label}`);
   return source.replace(search, replacement);
+}
+
+function matchingBracket(source, start, open, close) {
+  let depth = 0;
+  let quote = null;
+  let escaped = false;
+  for (let index = start; index < source.length; index += 1) {
+    const ch = source[index];
+    if (quote) {
+      if (escaped) escaped = false;
+      else if (ch === '\\') escaped = true;
+      else if (ch === quote) quote = null;
+      continue;
+    }
+    if (ch === '"' || ch === "'" || ch === '`') {
+      quote = ch;
+      continue;
+    }
+    if (ch === open) depth += 1;
+    if (ch === close) {
+      depth -= 1;
+      if (depth === 0) return index;
+    }
+  }
+  throw new Error(`Unmatched ${open}${close} block`);
 }
 
 function stripPrimeRecordLiterals(source) {
@@ -40,16 +66,16 @@ function stripPrimeRecordLiterals(source) {
 
 function listJsFiles(dir) {
   if (!fs.existsSync(dir)) return [];
-  const out = [];
+  const files = [];
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
-    if (entry.isDirectory()) out.push(...listJsFiles(full));
-    else if (entry.isFile() && entry.name.endsWith('.js')) out.push(full);
+    if (entry.isDirectory()) files.push(...listJsFiles(full));
+    else if (entry.isFile() && entry.name.endsWith('.js')) files.push(full);
   }
-  return out;
+  return files;
 }
 
-async function captureResolvedPrimeRecords() {
+async function captureAuditedPrimeRecords() {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
   try {
@@ -58,14 +84,38 @@ async function captureResolvedPrimeRecords() {
       timeout: 60_000
     });
     await page.waitForFunction(
-      () => window.UFC_SCORING_PIPELINE?.status === 'ready' && window.UFC_CATEGORY_RATING_PRIME_RECORD_POLISH?.passed,
+      () => window.UFC_SCORING_PIPELINE?.status === 'ready' && window.UFC_PRIME_DOMINANCE_LEDGERS?.report?.length,
       { timeout: 90_000 }
     );
-    return await page.evaluate(() => window.UFC_CATEGORY_RATING_PRIME_RECORD_POLISH.rows.map(row => ({
-      fighter: row.fighter,
-      record: row.record,
-      context: row.context || null
-    })));
+    return await page.evaluate(() => {
+      const boardNames = [
+        ...(window.RANKING_DATA?.men || []),
+        ...(window.RANKING_DATA?.women || [])
+      ].map(row => row.fighter);
+      const entries = new Map(
+        (window.UFC_PRIME_DOMINANCE_LEDGERS?.report || []).map(entry => [entry.fighter, entry])
+      );
+      const format = entry => {
+        const wins = Number(entry?.primeWins);
+        const losses = Number(entry?.primeLosses);
+        const draws = Number(entry?.primeDraws || 0);
+        const noContests = Number(entry?.primeNCs || 0);
+        if (!Number.isFinite(wins) || !Number.isFinite(losses)) return null;
+        return `${wins}-${losses}${draws ? `-${draws}` : ''}${noContests ? `, ${noContests} NC` : ''}`;
+      };
+      return boardNames.map(fighter => {
+        const entry = entries.get(fighter) || null;
+        return {
+          fighter,
+          record: format(entry),
+          context: entry?.roundControlAudit?.window || window.UFC_PRIME_WINDOWS?.entryFor?.(fighter)?.label || null,
+          wins: entry?.primeWins,
+          losses: entry?.primeLosses,
+          draws: entry?.primeDraws || 0,
+          noContests: entry?.primeNCs || 0
+        };
+      });
+    });
   } finally {
     await browser.close();
   }
@@ -78,12 +128,16 @@ function canonicalizeRankingData(rows) {
 
   for (const row of rows) {
     if (!row?.fighter || !RECORD_RE.test(String(row.record || ''))) {
-      throw new Error(`Invalid resolved Prime Record: ${JSON.stringify(row)}`);
+      throw new Error(`Invalid audited Prime Record: ${JSON.stringify(row)}`);
     }
-    records[row.fighter] = { record: row.record };
-    if (row.context && String(row.context).trim() !== row.record) {
-      records[row.fighter].context = String(row.context).trim();
-    }
+    records[row.fighter] = {
+      record: row.record,
+      wins: Number(row.wins),
+      losses: Number(row.losses),
+      draws: Number(row.draws || 0),
+      noContests: Number(row.noContests || 0)
+    };
+    if (row.context) records[row.fighter].context = String(row.context).trim();
   }
 
   if (Object.keys(records).length !== 62) {
@@ -99,7 +153,7 @@ function canonicalizeRankingData(rows) {
   source = `${source.slice(0, closeIndex)},\n  "primeRecords": ${mapJson}${source.slice(closeIndex)}`;
   source = source.replace(
     '// UFC GOAT base ranking/profile payload.\n// Main score/stat source for fighter rankings.',
-    '// UFC GOAT canonical ranking/profile payload.\n// Prime Record source of truth: RANKING_DATA.primeRecords.'
+    '// UFC GOAT canonical ranking/profile payload.\n// Prime Record source of truth: RANKING_DATA.primeRecords, formatted from audited Prime Dominance counts.'
   );
   write(file, source);
 }
@@ -111,12 +165,48 @@ function cleanLegacyPrimeRecordWriters() {
     'assets/data/fighter-packets.js',
     ...listJsFiles(path.join(ROOT, 'assets/data/fighter-packets')).map(file => path.relative(ROOT, file))
   ]);
-
   for (const file of files) {
     const full = path.join(ROOT, file);
     if (!fs.existsSync(full)) continue;
     write(file, stripPrimeRecordLiterals(read(file)));
   }
+}
+
+function updatePrimeWindows() {
+  const file = 'assets/data/prime-windows.js';
+  let source = read(file);
+  const marker = 'const WINDOWS=';
+  const markerIndex = source.indexOf(marker);
+  const objectStart = source.indexOf('{', markerIndex);
+  const objectEnd = matchingBracket(source, objectStart, '{', '}');
+  const windows = vm.runInNewContext(`(${source.slice(objectStart, objectEnd + 1)})`);
+  const contextOnly = {};
+  for (const [fighter, row] of Object.entries(windows)) {
+    contextOnly[fighter] = [row[0], row[1], row[2], row[4] || row[3] || 'review'];
+  }
+  source = `${source.slice(0, markerIndex)}const WINDOWS=${JSON.stringify(contextOnly, null, 2)}${source.slice(objectEnd + 1)}`;
+  source = source.replace("const VERSION='prime-windows-20260708a';", "const VERSION='prime-windows-20260710b-context-only';");
+  source = replaceRequired(
+    source,
+    "function entryFor(fighter){const row=WINDOWS[fighter];return row?{fighter,start:row[0],end:row[1],label:row[2],primeRecord:row[3],status:row[4],version:VERSION}:null;}",
+    "function entryFor(fighter){const row=WINDOWS[fighter];return row?{fighter,start:row[0],end:row[1],label:row[2],status:row[3],version:VERSION}:null;}",
+    'context-only Prime Window entry'
+  );
+  source = source.replace(
+    /function apply\(\)\{[^\n]*\}/,
+    "function apply(){const applied=[];Object.keys(WINDOWS).forEach(fighter=>{const entry=entryFor(fighter);allRowsFor(fighter).forEach(row=>{row.primeWindow=entry;row.primeWindowLabel=entry.label;row.primeStart=entry.start;row.primeEnd=entry.end;row.primeWindowStatus=entry.status;});if(typeof DISPLAY_OVERRIDES!=='undefined'){DISPLAY_OVERRIDES[fighter]=DISPLAY_OVERRIDES[fighter]||{};DISPLAY_OVERRIDES[fighter].snapshotStats={...(DISPLAY_OVERRIDES[fighter].snapshotStats||{}),primeWindow:entry.label};}applied.push(fighter);});window.UFC_PRIME_WINDOWS_APPLIED={version:VERSION,count:applied.length,fighters:applied,appliedAt:new Date().toISOString()};return applied;}"
+  );
+  write(file, source);
+}
+
+function updatePrimeDominancePromoter() {
+  const file = 'assets/data/prime-dominance-live-promoter.js';
+  let source = read(file);
+  source = source.replace("const VERSION='prime-dominance-live-promoter-20260710a-category-only';", "const VERSION='prime-dominance-live-promoter-20260710b-canonical-prime-record';");
+  source = source.replace("      profile.primeRecord=entry.primeRecord||profile.primeRecord;\n", '');
+  source = source.replace("        ['Prime Record',entry?.primeRecord||profile.primeRecord||'—'],\n", '');
+  source = source.replace("        row.primeRecord=entry.primeRecord||row.primeRecord;\n", '');
+  write(file, source);
 }
 
 function updateProfileTemplate() {
@@ -184,6 +274,8 @@ function updateModuleBootstrap() {
   const file = 'assets/data/module-versions.js';
   let source = read(file);
   source = source.replace('scoringPipeline:"20260710m-prime-record-final-render"', 'scoringPipeline:"20260710n-canonical-prime-record"');
+  source = source.replace('primeWindows:"20260708a"', 'primeWindows:"20260710b-context-only"');
+  source = source.replace('primeDominanceLivePromoter:"20260710a-category-only"', 'primeDominanceLivePromoter:"20260710b-canonical-prime-record"');
   source = source.replace('categoryPercentileTiers:"20260710b-deterministic"', 'categoryPercentileTiers:"20260710c-rating-source"');
   source = source.replace(/,categoryRatingPrimeRecordPolish:"[^"]+",primeRecordFinalRender:"[^"]+"/, '');
   source = source.replace("VERSION='deterministic-scoring-pipeline-20260710m-prime-record-final-render'", "VERSION='deterministic-scoring-pipeline-20260710n-canonical-prime-record'");
@@ -234,13 +326,15 @@ function verifySourceCleanup() {
     if (/\b(?:primeRecord|primeUfcRecord|prime_record)\s*:\s*['"]/.test(source)) offenders.push(file);
     if (/\[\s*['"]Prime Record['"]\s*,/.test(source)) offenders.push(`${file}#snapshot`);
   }
-  if (offenders.length) throw new Error(`Prime Record writers remain: ${offenders.join(', ')}`);
+  if (offenders.length) throw new Error(`Prime Record profile writers remain: ${offenders.join(', ')}`);
 }
 
 (async () => {
-  const rows = await captureResolvedPrimeRecords();
+  const rows = await captureAuditedPrimeRecords();
   canonicalizeRankingData(rows);
   cleanLegacyPrimeRecordWriters();
+  updatePrimeWindows();
+  updatePrimeDominancePromoter();
   updateProfileTemplate();
   updateAppEvidence();
   updateCategoryRatings();
@@ -262,7 +356,7 @@ function verifySourceCleanup() {
     if (fs.existsSync(target)) fs.unlinkSync(target);
   }
 
-  console.log(`Canonicalized ${rows.length} Prime Records in RANKING_DATA.primeRecords and removed all legacy writers.`);
+  console.log(`Canonicalized ${rows.length} Prime Records from audited Prime Dominance counts and removed competing profile writers.`);
 })().catch(error => {
   console.error(error.stack || error);
   process.exit(1);
