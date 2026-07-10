@@ -1,0 +1,57 @@
+name: Six-Category Runtime Audit
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [fix/unified-six-category-pipeline]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  runtime-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm install --no-save playwright@1.52.0
+          npx playwright install --with-deps chromium
+
+      - name: Start static app server
+        run: |
+          python3 -m http.server 4173 > /tmp/ufc-audit-server.log 2>&1 &
+          echo $! > /tmp/ufc-audit-server.pid
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:4173/audit.html > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/ufc-audit-server.log
+          exit 1
+
+      - name: Run settled browser audit
+        run: node scripts/run-six-category-audit.mjs
+
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: six-category-runtime-audit
+          path: |
+            docs/audits/runtime-six-category-audit.json
+            docs/audits/runtime-six-category-audit.md
+          if-no-files-found: error
+          retention-days: 30
