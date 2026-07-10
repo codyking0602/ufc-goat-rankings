@@ -1,14 +1,15 @@
 // Opponent Quality shadow ledger batch six. Extends the shadow ledger only.
 (function(){
-  const VERSION='opponent-quality-ledger-batch-six-20260708a';
+  const VERSION='opponent-quality-ledger-batch-six-20260710b-dricus-omalley';
   const store=window.UFC_OPPONENT_QUALITY_LEDGERS;
   if(!store||!store.raw)return;
   const RAW=store.raw;
   Object.assign(RAW,{
-    'Dricus Du Plessis':[
+    'Dricus du Plessis':[
       ['Israel Adesanya',1.25,'Champion-level win','Elite UFC middleweight champion-level opponent.','locked'],
-      ['Robert Whittaker',1.25,'Champion-level win','Elite champion-level middleweight contender.','locked'],
-      ['Sean Strickland',1.25,'Champion-level win','UFC middleweight champion and elite title opponent.','locked'],
+      ['Sean Strickland I',1.25,'Champion-level win','Beat the reigning UFC middleweight champion to win the title.','locked'],
+      ['Robert Whittaker',1.00,'True top-5 win','Elite former champion and prime contender; Cody-approved at true top-five credit rather than max champion-level credit.','locked'],
+      ['Sean Strickland II',1.00,'True top-5 win','Clear title-defense rematch win over an elite former champion, with repeat-opponent context.','locked'],
       ['Derek Brunson',0.85,'Strong top-10 win','Strong ranked middleweight contender.','locked'],
       ['Darren Till',0.65,'Ranked / quality win','Ranked middleweight name with timing context.','review'],
       ['Brad Tavares',0.65,'Ranked / quality win','Quality middleweight veteran.','locked'],
@@ -124,14 +125,18 @@
       ['Court McGee',0.45,'Solid resume win','Solid UFC win.','locked'],
       ['Tom Breese',0.45,'Solid resume win','Solid UFC win.','locked']
     ],
-    'Sean O’Malley':[
-      ['Aljamain Sterling',1.25,'Champion-level win','UFC bantamweight champion and elite title opponent.','locked'],
-      ['Petr Yan',1.00,'True top-5 win','Elite former bantamweight champion; close decision context.','high-risk review'],
-      ['Marlon Vera II',0.85,'Strong top-10 win','Ranked bantamweight contender and rivalry win.','locked'],
+    "Sean O'Malley":[
+      ['Aljamain Sterling',1.25,'Champion-level win','Knocked out the reigning UFC bantamweight champion to win the title.','locked'],
+      ['Petr Yan',1.15,'Elite divisional win','Elite former champion; Cody-approved above standard top-five credit despite close decision context.','locked'],
+      ['Marlon Vera II',1.00,'True top-5 win','Dominant UFC title defense over a ranked rival.','locked'],
+      ['Song Yadong',0.85,'Strong top-10 win','Strong ranked bantamweight rebound win, with close-decision context.','review'],
+      ['Aiemann Zahabi',0.65,'Ranked / quality win','Ranked-quality rebound finish in the current app timeline.','review'],
       ['Raulian Paiva',0.45,'Solid resume win','Solid UFC bantamweight win.','locked'],
-      ['Thomas Almeida',0.45,'Solid resume win','Former prospect name, faded timing.','review'],
-      ['Eddie Wineland',0.45,'Solid resume win','Veteran bantamweight name, timing adjusted.','review'],
+      ['Thomas Almeida',0.25,'Name-value / faded / unproven','Former prospect name with faded timing.','review'],
+      ['Eddie Wineland',0.25,'Name-value / faded / unproven','Veteran name with a heavy timing discount.','review'],
+      ['Jose Alberto Quinonez',0.25,'Name-value / faded / unproven','Supporting UFC bantamweight win.','locked'],
       ['Andre Soukhamthath',0.25,'Name-value / faded / unproven','Low-end UFC quality value.','locked'],
+      ['Terrion Ware',0.10,'Minimal UFC quality credit','UFC debut win with minimal opponent-quality value.','locked'],
       ['Kris Moutinho',0.10,'Minimal UFC quality credit','Minimal UFC quality value.','locked']
     ],
     'Michael Bisping':[
@@ -169,7 +174,7 @@
     ]
   });
   store.version=VERSION;
-  store.mode='shadow-ledger-batch-six';
-  store.batchSixFighters=['Dricus Du Plessis','Tyron Woodley','Ilia Topuria','Brock Lesnar','Junior dos Santos','Dominick Cruz','Francis Ngannou','Deiveson Figueiredo','Khamzat Chimaev','Lyoto Machida','Sean Strickland','Sean O’Malley','Michael Bisping','Dan Henderson','Chael Sonnen'];
+  store.mode='shadow-ledger-batch-six-dricus-omalley-reviewed';
+  store.batchSixFighters=['Dricus du Plessis','Tyron Woodley','Ilia Topuria','Brock Lesnar','Junior dos Santos','Dominick Cruz','Francis Ngannou','Deiveson Figueiredo','Khamzat Chimaev','Lyoto Machida','Sean Strickland',"Sean O'Malley",'Michael Bisping','Dan Henderson','Chael Sonnen'];
   document.documentElement.setAttribute('data-opponent-quality-ledger-batch-six',VERSION);
 })();
