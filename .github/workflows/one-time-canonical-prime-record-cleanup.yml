@@ -40,7 +40,10 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          node scripts/one-time-canonical-prime-record-cleanup-v3.cjs 2>&1 | tee /tmp/canonical-prime-cleanup.log
+          {
+            node scripts/one-time-canonical-prime-record-cleanup-v3.cjs
+            node scripts/one-time-remove-runtime-prime-record-writers.cjs
+          } 2>&1 | tee /tmp/canonical-prime-cleanup.log
       - name: Upload cleanup log
         if: always()
         uses: actions/upload-artifact@v4
