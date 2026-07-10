@@ -1,6 +1,6 @@
 # Eighth Runtime Audit — Quality Wins: Chuck Liddell and Tito Ortiz
 
-Generated: July 9, 2026
+Generated: July 10, 2026
 
 Workflow: `Six-Category Runtime Audit`
 
@@ -9,13 +9,14 @@ Runtime: Headless Chromium using the deterministic single-pass scoring pipeline
 ## Changes Tested
 
 - Added canonical UFC-only Quality Wins ledgers for Chuck Liddell and Tito Ortiz.
-- Loaded the new ledger batch before the Quality Wins shadow audit and category-only live promoter.
-- Aligned the full upstream cache chain through Championship Resume, module versions, the prerequisite loader, and `index.html`.
-- Removed all temporary inspection and cache-update tooling after use.
+- Reviewed both ledgers after the initial automated checkpoint.
+- Lowered Chuck's supporting-win credits where the first pass was too generous.
+- Restored Tito's opponent credits to the previously reviewed packet calibration.
+- Aligned the complete Quality Wins cache chain after the revisions.
 
 No Championship Resume, Prime Dominance, Longevity, Apex Peak, or Loss Context input was changed.
 
-## Chuck Liddell Judgment Calls
+## Chuck Liddell — Reviewed Judgment Calls
 
 Chuck's UFC Quality Wins case is anchored by:
 
@@ -23,44 +24,63 @@ Chuck's UFC Quality Wins case is anchored by:
 - Randy Couture III — 1.25
 - Tito Ortiz I — 1.00
 - Tito Ortiz II — 1.00
-- Vitor Belfort — 1.00
+- Vitor Belfort — 0.85
 - Renato Sobral II — 0.85
 
-Additional meaningful UFC wins include Jeremy Horn II, Wanderlei Silva, Kevin Randleman, Renato Sobral I, Murilo Bustamante, Amar Suloev, Jeff Monson, and Vernon White.
+Reviewed supporting values:
 
-Locked scope decisions:
+- Jeremy Horn II — 0.65
+- Wanderlei Silva — 0.65
+- Kevin Randleman — 0.65
+- Renato Sobral I — 0.65
+- Murilo Bustamante — 0.65
+- Jeff Monson — 0.45
+- Amar Suloev — 0.25
+- Vernon White — 0.25
+- Paul Jones — 0.10
+- Noe Hernandez — 0.10
+
+Scope and calibration decisions:
 
 - Guy Mezger and Alistair Overeem are excluded because those wins occurred outside the UFC.
-- Tito II is capped below maximum because it was a repeat win with timing context.
-- Wanderlei is capped at strong top-10 credit because the UFC win came after his clearest non-UFC peak.
-- Older supporting names receive ranked, solid, or minimal credit rather than automatic legend-name inflation.
+- Tito II remains below maximum because it was a repeat win with timing context.
+- Wanderlei is capped because the UFC win came after his clearest non-UFC peak.
+- Older supporting names do not receive automatic top-ten credit from name value alone.
 
-## Tito Ortiz Judgment Calls
+The original first pass produced 22.66/30 and ranked Chuck eighth in Quality Wins. Review found that result too generous. The approved revision lowers him to a strong but more defensible position.
 
-Tito has no 1.25 win in this audit. His Quality Wins case is built on solid early light-heavyweight depth:
+## Tito Ortiz — Reviewed Judgment Calls
 
-- Vitor Belfort — 1.00
+Tito's ledger now matches the previously reviewed fighter-packet calibration:
+
+- Vitor Belfort — 0.90
 - Wanderlei Silva — 0.85
-- Forrest Griffin I — 0.85
-- Evan Tanner — 0.85
-- Vladimir Matyushenko — 0.85
-- Ryan Bader — 0.85
-- Ken Shamrock I — 0.65
+- Forrest Griffin I — 0.80
+- Ken Shamrock I — 0.75
+- Evan Tanner — 0.70
+- Vladimir Matyushenko — 0.65
+- Ryan Bader — 0.65
+- Patrick Cote — 0.45
+- Yuki Kondo — 0.40
+- Guy Mezger II — 0.40
+- Ken Shamrock II — 0.30
+- Ken Shamrock III — 0.25
+- Jerry Bohlander — 0.25
+- Elvis Sinosic — 0.25
+- Wes Albritton — 0.10
 
-Supporting UFC wins receive lower credit based on opponent strength, timing, and repeat context.
+Scope and calibration decisions:
 
-Locked scope decisions:
-
+- Tito has no 1.25 win in this audit.
 - Only UFC results are scored.
 - Wanderlei's later PRIDE greatness does not become extra UFC credit for Tito.
-- Ken Shamrock II and III are heavily timing- and repeat-discounted.
-- The Ryan Bader upset adds real Quality Wins value but does not restart Tito's prime.
+- The later Shamrock wins are heavily timing- and repeat-discounted.
+- The Bader upset adds real Quality Wins value but does not restart Tito's prime.
 
 ## Runtime Result
 
 - Roster fighters checked: 62
-- Quality Wins coverage before: 57 pass, 5 fail
-- Quality Wins coverage after: 59 pass, 3 fail
+- Quality Wins coverage: 59 pass, 3 fail
 - Formula mismatches: 0
 - Profile-to-leaderboard mismatches: 0
 - Duplicate leaderboard/profile names: 0
@@ -68,31 +88,33 @@ Locked scope decisions:
 - Overall-score ownership gate: PASS
 - Deterministic-initialization gate: PASS
 
-## Fighter Results
+## Reviewed Fighter Results
 
 ### Chuck Liddell
 
 ```text
-Quality Wins: 15.40 legacy fallback → 22.66 audited live
-Quality Wins rank: #8 among men
-Overall score: 46.11 → 52.76
-Overall rank: #27 → #17
+Quality Wins: 15.40 legacy fallback → 19.85 reviewed live
+Initial unreviewed pass: 22.66
+Quality Wins rank: #19 among men
+Overall score: 46.11 legacy → 50.18 reviewed
+Overall rank: #27 legacy → #19 reviewed
 ```
 
-The movement comes entirely from replacing the stale fallback with the normalized canonical ledger. No other category changed.
+The reviewed movement comes only from replacing the stale Quality Wins fallback. No other category changed.
 
 ### Tito Ortiz
 
 ```text
-Quality Wins: 7.95 legacy fallback → 15.81 audited live
-Quality Wins rank: #33 among men
-Overall score: 40.24 → 47.45
-Overall rank: #37 → #24
+Quality Wins: 7.95 legacy fallback → 14.45 reviewed live
+Initial unreviewed pass: 15.81
+Quality Wins rank: #38 among men
+Overall score: 40.24 legacy → 46.20 reviewed
+Overall rank: #37 legacy → #27 reviewed
 ```
 
-The movement comes entirely from replacing the stale fallback with the normalized canonical ledger. No other category changed.
+The reviewed movement comes only from replacing the stale Quality Wins fallback. No other category changed.
 
-## Category Coverage After This Batch
+## Category Coverage After Review
 
 | Category | Pass | Warn | Fail |
 |---|---:|---:|---:|
@@ -111,7 +133,7 @@ Remaining Quality Wins audits:
 
 ## Ranking Validation
 
-The men's top ten remained unchanged. Chuck and Tito moved only within the middle of the board, where their stale Quality Wins fallbacks had understated the completed UFC win ledgers.
+The men's top ten remained unchanged. Chuck and Tito moved only within the middle of the board.
 
 ## Next Batch
 
