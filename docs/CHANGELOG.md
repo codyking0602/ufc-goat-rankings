@@ -1,5 +1,42 @@
 # Changelog
 
+## 2026-07-09 — Final Score Ownership Checkpoint
+
+### Changed
+
+- `score-weighting.js` is now compatibility-only.
+- Preserved the locked weights, formula metadata, pure breakdown helper, Longevity legacy conversion, and Rules-page explanation.
+- Removed legacy weighting mutations of totals, weighted breakdowns, ranks, profile overall values, and numerical display overrides.
+- Removed duplicate Prime Windows and Prime Dominance loading from the legacy weighting layer.
+- Added a strict ownership gate to the headless Chromium audit.
+
+### Validation
+
+Sixth settled headless Chromium audit:
+
+- 62 roster fighters checked
+- final score engine present: `final-score-engine-20260710a`
+- all 62 leaderboard rows owned by the final engine
+- legacy weighting mode: `compatibility-only`
+- legacy weighting `mutatesScores`: false
+- duplicate Prime loaders: false
+- 0 rows with the wrong owner
+- 0 formula mismatches
+- 0 profile/leaderboard mismatches
+- 0 duplicate fighter names
+- 0 forbidden score-derived display overrides
+- category coverage, totals, and rankings unchanged
+
+Permanent report:
+
+- `docs/audits/SIXTH_RUNTIME_AUDIT_SCORE_OWNERSHIP.md`
+
+No fighter category input or audit value changed during this repair.
+
+### Next
+
+Replace delayed and repeated scoring-module loading with one deterministic initialization chain.
+
 ## 2026-07-09 — Apex Peak Category-Only Checkpoint
 
 ### Changed
@@ -32,10 +69,6 @@ Permanent report:
 
 No fighter category input, Apex component value, or selected Apex performance changed during this repair.
 
-### Next
-
-Neutralize the legacy general weighting layer as an overall-score owner and rerun the same settled audit.
-
 ## 2026-07-09 — Longevity Category-Only Checkpoint
 
 ### Changed
@@ -63,10 +96,6 @@ Permanent report:
 - `docs/audits/FOURTH_RUNTIME_AUDIT_LONGEVITY.md`
 
 No fighter category input or audit value changed during this repair.
-
-### Next
-
-Convert Apex Peak into a category-only writer and rerun the same settled audit.
 
 ## 2026-07-09 — Championship and Quality Category-Only Checkpoint
 
@@ -97,10 +126,6 @@ Permanent report:
 - `docs/audits/THIRD_RUNTIME_AUDIT_CHAMPIONSHIP_QUALITY.md`
 
 No fighter category input or audit value changed during this repair.
-
-### Next
-
-Convert Longevity into a category-only writer and rerun the same settled audit.
 
 ## 2026-07-09 — Canonical Final Score Engine Checkpoint
 
