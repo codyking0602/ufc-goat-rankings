@@ -1,7 +1,7 @@
 // Final Fighter Era Ledger Cleanup Patch.
-// Fixes the last shadow QA edge cases without changing live scores.
+// Fixes the last shared-window and loss-context QA edge cases before live promotion.
 (function(){
-  const VERSION='fighter-era-ledger-cleanups-final-20260709a-tito-post-prime';
+  const VERSION='fighter-era-ledger-cleanups-final-20260710b-frankie-maynard-cap';
   const era=window.UFC_FIGHTER_ERA_LEDGERS;
   const ledgers=era?.ledgers;
   if(!ledgers){
@@ -24,7 +24,27 @@
     {label:'Forrest Griffin III',date:'2012-07-07',phase:'post-prime decision loss'}
   ]});
 
+  const frankie=ledgers['Frankie Edgar'];
+  if(frankie){
+    const recovered=Array.isArray(frankie.lossContext?.recoveredLosses)?frankie.lossContext.recoveredLosses.slice():[];
+    if(!recovered.some(event=>String(event?.label||'').includes('Gray Maynard I'))){
+      recovered.unshift({
+        label:'Gray Maynard I',
+        date:'2008-04-02',
+        phase:'pre-prime non-elite decision loss',
+        recovery:'Rebounded into the Sean Sherk win and UFC lightweight title run.'
+      });
+    }
+    patch('Frankie Edgar',{recoveredLosses:recovered});
+  }
+
   era.cleanupFinalVersion=VERSION;
-  window.UFC_FIGHTER_ERA_LEDGER_CLEANUPS_FINAL={version:VERSION,patched:true,mutatesScores:false,appliedAt:new Date().toISOString()};
+  window.UFC_FIGHTER_ERA_LEDGER_CLEANUPS_FINAL={
+    version:VERSION,
+    patched:true,
+    fighters:['Tito Ortiz','Frankie Edgar'],
+    mutatesScores:false,
+    appliedAt:new Date().toISOString()
+  };
   document.documentElement.setAttribute('data-fighter-era-ledger-cleanups-final',VERSION);
 })();
