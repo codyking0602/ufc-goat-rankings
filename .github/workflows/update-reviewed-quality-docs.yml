@@ -1,9 +1,9 @@
 name: Update reviewed Quality Wins docs
 
 on:
-  push:
+  pull_request:
     branches:
-      - fix/unified-six-category-pipeline
+      - main
     paths:
       - .github/workflows/update-reviewed-quality-docs.yml
 
