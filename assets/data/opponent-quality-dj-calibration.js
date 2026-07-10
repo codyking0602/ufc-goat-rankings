@@ -1,6 +1,6 @@
 // DJ Opponent Quality division calibration. Loads the full Opponent Quality live chain after DJ calibration.
 (function(){
-  const VERSION='opponent-quality-dj-calibration-20260710b-reviewed';
+  const VERSION='opponent-quality-dj-calibration-20260710c-frankie-chain';
   const store=window.UFC_OPPONENT_QUALITY_LEDGERS;
   const rows=store?.raw?.['Demetrious Johnson'];
   if(!Array.isArray(rows))return;
@@ -9,19 +9,11 @@
     const row=rows.find(r=>Array.isArray(r)&&r[0]===opponent);
     if(!row)return;
     changes.push({opponent,from:row[1],to:credit});
-    row[1]=credit;
-    row[2]=label;
-    row[3]=note;
-    row[4]=status||row[4]||'review';
+    row[1]=credit;row[2]=label;row[3]=note;row[4]=status||row[4]||'review';
   }
   function loadScriptOnce(src,attr,done){
     if(document.querySelector(`script[${attr}]`)){if(done)done();return;}
-    const script=document.createElement('script');
-    script.src=src;
-    script.setAttribute(attr,'true');
-    script.onload=()=>{if(done)done();};
-    script.onerror=()=>{if(done)done();};
-    document.body.appendChild(script);
+    const script=document.createElement('script');script.src=src;script.setAttribute(attr,'true');script.onload=()=>{if(done)done();};script.onerror=()=>{if(done)done();};document.body.appendChild(script);
   }
   set('Henry Cejudo I',1.00,'True top-5 win','Future two-division UFC champion, but this was an earlier/pre-title Cejudo in a softer flyweight era.','review');
   set('Joseph Benavidez II',1.15,'Elite divisional win','Elite flyweight title challenger and divisional great; below 1.25 because of division-strength calibration.','locked');
@@ -33,5 +25,5 @@
   store.djCalibration={version:VERSION,changes,appliedAt:new Date().toISOString()};
   document.documentElement.setAttribute('data-opponent-quality-dj-calibration',VERSION);
   loadScriptOnce('assets/data/opponent-quality-division-calibration-base.js?v=opponent-quality-division-calibration-base-20260708b','data-opponent-quality-division-calibration-base',()=>
-    loadScriptOnce('assets/data/opponent-quality-division-calibration-batch-four.js?v=opponent-quality-division-calibration-batch-four-20260710c-reviewed','data-opponent-quality-division-calibration-batch-four'));
+    loadScriptOnce('assets/data/opponent-quality-division-calibration-batch-four.js?v=opponent-quality-division-calibration-batch-four-20260710g-frankie-audit','data-opponent-quality-division-calibration-batch-four'));
 })();
