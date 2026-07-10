@@ -1,8 +1,8 @@
 // Central cache-bust versions and deterministic scoring bootstrap.
-window.UFC_MODULE_VERSIONS={scoringPipeline:"20260710l-category-rating-prime-record-polish",finalScoreEngine:"20260710b-deterministic",primeWindows:"20260708a",primeRoundControlAudit:"20260708d-jon-54-63",primeDominanceLedgers:"20260708j-round-audit-batch-two",primeDominanceShadowModel:"20260708c-jon-elite-stakes",primeDominanceAuditBatchSeven:"20260710c-prime-final-batch",primeDominanceLivePromoter:"20260710a-category-only",primeDominanceCopyPolish:"20260708b",categoryPercentileTiers:"20260710b-deterministic",categoryRatingPrimeRecordPolish:"20260710c",scoreWeighting:"20260710a-compatibility-only",championshipResumeLive:"20260710d-fixed-benchmark",opponentQualityLive:"20260710c-fixed-benchmark",fighterEraLedgers:"20260709g-review-corrections",longevityShadowScorer:"20260709b-ledger-driven",longevityLivePromoter:"20260710a-category-only",apexPeakCorrections:"20260709b-full-roster",apexPeakComponentAudit:"20260709c-batch-one-review-adjustments",apexPeakLiveBonus:"20260710a-category-only",apexPeakDricusAudit:"20260710b-merab-zhang"};
+window.UFC_MODULE_VERSIONS={scoringPipeline:"20260710m-prime-record-final-render",finalScoreEngine:"20260710b-deterministic",primeWindows:"20260708a",primeRoundControlAudit:"20260708d-jon-54-63",primeDominanceLedgers:"20260708j-round-audit-batch-two",primeDominanceShadowModel:"20260708c-jon-elite-stakes",primeDominanceAuditBatchSeven:"20260710c-prime-final-batch",primeDominanceLivePromoter:"20260710a-category-only",primeDominanceCopyPolish:"20260708b",categoryPercentileTiers:"20260710b-deterministic",categoryRatingPrimeRecordPolish:"20260710c",primeRecordFinalRender:"20260710a",scoreWeighting:"20260710a-compatibility-only",championshipResumeLive:"20260710d-fixed-benchmark",opponentQualityLive:"20260710c-fixed-benchmark",fighterEraLedgers:"20260709g-review-corrections",longevityShadowScorer:"20260709b-ledger-driven",longevityLivePromoter:"20260710a-category-only",apexPeakCorrections:"20260709b-full-roster",apexPeakComponentAudit:"20260709c-batch-one-review-adjustments",apexPeakLiveBonus:"20260710a-category-only",apexPeakDricusAudit:"20260710b-merab-zhang"};
 (function(){
 'use strict';
-const v=window.UFC_MODULE_VERSIONS||{},VERSION='deterministic-scoring-pipeline-20260710l-category-rating-prime-record-polish';
+const v=window.UFC_MODULE_VERSIONS||{},VERSION='deterministic-scoring-pipeline-20260710m-prime-record-final-render';
 const state={version:VERSION,mode:'deterministic-single-pass',status:'waiting-for-patches',sequence:[],timerCount:0,repeatedLoadCount:0,finalScoreApplyCount:0,startedAt:new Date().toISOString(),completedAt:null,error:null};
 let qualityReadyResolved=false,resolveQualityReady;
 window.UFC_OPPONENT_QUALITY_READY=new Promise(resolve=>{resolveQualityReady=resolve;});
@@ -31,7 +31,7 @@ state.status='loading-apex';
 await loadStep('apex-corrections',cache('assets/data/apex-peak-score-corrections.js',`apex-peak-score-corrections-${v.apexPeakCorrections}`),'data-apex-peak-score-corrections');
 await loadStep('apex-component-audit',cache('assets/data/apex-peak-component-audit.js',`apex-peak-component-audit-${v.apexPeakComponentAudit}`),'data-apex-peak-component-audit');
 await loadStep('apex-live',cache('assets/data/apex-peak-live-bonus.js',`apex-peak-live-bonus-${v.apexPeakLiveBonus}`),'data-apex-peak-live-bonus');
-await loadStep('apex-dricus-audit',cache('assets/data/apex-peak-audit-dricus.js',`apex-peak-audit-dricus-${v.apexPeakDricusAudit}`),'data-apex-peak-audit-dricus');
+await loadStep('apex-dricus-audit',cache('assets/data/apex-peak-audit-dricus.js',`apex-peak-audit-dricus-${v.apexPeakDricusAudit}`),'data-apex-peak-dricus-audit');
 state.status='finalizing';
 await loadStep('final-score-engine',cache('assets/js/final-score-engine.js',`final-score-engine-${v.finalScoreEngine}`),'data-final-score-engine');
 if(!window.UFC_FINAL_SCORE_ENGINE?.apply)throw new Error('Final score engine did not load.');
@@ -40,6 +40,9 @@ await loadStep('category-percentile-tiers',cache('assets/js/category-percentile-
 await loadStep('category-rating-prime-record-polish',cache('assets/js/category-rating-prime-record-polish.js',`category-rating-prime-record-polish-${v.categoryRatingPrimeRecordPolish}`),'data-category-rating-prime-record-polish');
 const presentationAudit=window.UFC_CATEGORY_RATING_PRIME_RECORD_POLISH||null;state.presentationAudit=presentationAudit;
 if(!presentationAudit?.passed)throw new Error(`Category rating/Prime Record presentation audit failed: ${JSON.stringify(presentationAudit?.unresolved||[])}`);
+await loadStep('prime-record-final-render',cache('assets/js/prime-record-final-render.js',`prime-record-final-render-${v.primeRecordFinalRender}`),'data-prime-record-final-render');
+const primeRecordRenderAudit=window.UFC_PRIME_RECORD_FINAL_RENDER?.auditFighter?.('Holly Holm','5-5')||null;state.primeRecordRenderAudit=primeRecordRenderAudit;
+if(!primeRecordRenderAudit?.passed)throw new Error(`Visible Prime Record render audit failed: ${JSON.stringify(primeRecordRenderAudit)}`);
 renderOnce();record('ui:refreshed-once');
 state.status='ready';state.completedAt=new Date().toISOString();state.fighterCount=[...(window.RANKING_DATA?.men||[]),...(window.RANKING_DATA?.women||[])].length;document.documentElement.setAttribute('data-scoring-pipeline','ready');window.dispatchEvent(new CustomEvent('ufc-scoring-pipeline-ready',{detail:state}));return state;
 }catch(error){state.status='error';state.error=String(error?.stack||error?.message||error);state.completedAt=new Date().toISOString();document.documentElement.setAttribute('data-scoring-pipeline','error');window.dispatchEvent(new CustomEvent('ufc-scoring-pipeline-error',{detail:state}));throw error;}}
