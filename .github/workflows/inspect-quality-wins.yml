@@ -19,16 +19,38 @@ jobs:
           ref: fix/unified-six-category-pipeline
           fetch-depth: 1
 
-      - name: List Quality Wins files and source references
+      - name: Emit compact source inventory
         shell: bash
         run: |
-          echo '=== FILES ==='
-          find assets -type f | sort | grep -Ei 'opponent-quality|quality-win' || true
-          echo '=== CHUCK REFERENCES ==='
-          grep -RIn --exclude-dir=.git "Chuck Liddell" assets docs | head -200 || true
-          echo '=== TITO REFERENCES ==='
-          grep -RIn --exclude-dir=.git "Tito Ortiz" assets docs | head -200 || true
-          echo '=== LEDGER MUTATIONS ==='
-          grep -RIn --exclude-dir=.git -E 'UFC_OPPONENT_QUALITY_LEDGERS|\.raw\[|raw\s*=' assets | head -300 || true
-          echo '=== SHADOW/LIVE LOADERS ==='
-          grep -RIn --exclude-dir=.git -E 'opponent-quality-(ledgers|shadow-audit|live|division-calibration)' assets index.html | head -300 || true
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          roots = [Path('assets'), Path('docs')]
+          files = [str(p) for p in Path('assets').rglob('*') if p.is_file() and ('opponent-quality' in p.name.lower() or 'quality-win' in p.name.lower())]
+          matches = {'Chuck Liddell': [], 'Tito Ortiz': []}
+          loader_refs = []
+          ledger_refs = []
+          for root in roots:
+              for path in root.rglob('*'):
+                  if not path.is_file():
+                      continue
+                  try:
+                      text = path.read_text(encoding='utf-8')
+                  except Exception:
+                      continue
+                  for name in matches:
+                      if name in text:
+                          matches[name].append(str(path))
+                  if 'opponent-quality-' in text:
+                      loader_refs.append(str(path))
+                  if 'UFC_OPPONENT_QUALITY_LEDGERS' in text or '.raw[' in text:
+                      ledger_refs.append(str(path))
+          payload = {
+              'files': sorted(files),
+              'matches': {k: sorted(set(v)) for k, v in matches.items()},
+              'loaderRefs': sorted(set(loader_refs)),
+              'ledgerRefs': sorted(set(ledger_refs)),
+          }
+          print('INSPECTION_JSON=' + json.dumps(payload, separators=(',', ':')))
+          PY
