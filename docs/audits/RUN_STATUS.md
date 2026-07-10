@@ -5,6 +5,8 @@ Latest completed checkpoints:
 - `FOURTEENTH_RUNTIME_AUDIT_APEX_COMPLETE.md`
 - `FIFTEENTH_EFFECTIVE_WEIGHT_AUDIT.md`
 - `SIXTEENTH_RUNTIME_AUDIT_APEX_COMPONENTS_COMPLETE.md`
+- `SEVENTEENTH_PRIME_FIXED_ANCHOR_SIMULATION.md`
+- `EIGHTEENTH_CHAMPIONSHIP_FIXED_BENCHMARK.md`
 
 Current validated coverage:
 
@@ -27,13 +29,18 @@ Latest runtime gates:
 
 All five positive categories and all Apex component rows are fully audited for the current 62-fighter roster.
 
-The read-only effective-weight audit found that Championship Resume currently separates the roster more than its declared 35% weight, while Prime Dominance is materially compressed relative to its declared 27.5% weight. Quality Wins is close to target and Longevity is slightly stronger than its stated 10% weight.
+Calibration decisions:
 
-Before Loss Context is finalized:
+- Prime Dominance remains unchanged. Two fixed-anchor alternatives were rejected because they created significant fighter movement without restoring Prime close to its nominal 27.5% effective influence, and they over-concentrated future-roster separation in Elite Stakes.
+- Championship diminishing-return alternatives were rejected because they increased effective Championship separation and moved 25–29 fighters.
+- Championship now uses a locked 14.54 adjusted-title-credit benchmark rather than the current roster leader. This preserves every current score and makes the category stable when future fighters are added.
+- Effective-weight results are treated as descriptive monitoring, not a command to force uniform score distributions across an elite-selected roster.
 
-1. Review Prime component scaling, especially compressed Round Control and Elite Stakes and over-separating Finish Pressure.
-2. Rerun the effective-weight audit after any accepted Prime calibration.
-3. Review Championship normalization only if it remains materially over-influential after Prime separation is restored.
-4. Finalize and promote Loss Context after the positive-category influence is accepted.
+Next scoring phase:
 
-The generated JSON and Markdown reports are read-only and do not change fighter data, category values, ranks, or OVRs.
+1. Validate the Loss Context ledger against all 62 fighters.
+2. Resolve the current Sean O'Malley Loss Context failure and remaining warnings.
+3. Review major judgment calls and ranking movement before promoting Loss Context live.
+4. Run the complete deterministic audit after promotion.
+
+The generated simulation and audit reports do not mutate scores unless a separately approved live implementation is committed.
