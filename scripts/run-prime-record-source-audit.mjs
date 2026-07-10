@@ -2,6 +2,7 @@ import { chromium } from 'playwright';
 import { mkdir, writeFile } from 'node:fs/promises';
 
 const baseUrl = process.env.AUDIT_BASE_URL || 'http://127.0.0.1:4173';
+const recordRe = /^\d+-\d+(?:-\d+)?(?:,\s*\d+\s*NC)?$/;
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage();
 
@@ -16,12 +17,9 @@ try {
   );
 
   const report = await page.evaluate(() => {
-    const profiles = window.RANKING_DATA?.fighters || [];
-    const boardNames = [
-      ...(window.RANKING_DATA?.men || []),
-      ...(window.RANKING_DATA?.women || [])
-    ].map(row => row.fighter);
-    const canonical = new Map(profiles.map(row => [row.fighter, row.primeRecord]));
+    const data = window.RANKING_DATA || {};
+    const boardNames = [...(data.men || []), ...(data.women || [])].map(row => row.fighter);
+    const canonical = data.primeRecords || {};
     const rows = [];
 
     for (const fighter of boardNames) {
@@ -29,7 +27,7 @@ try {
       const tile = [...document.querySelectorAll('#fighterDetail .snapshot-item')]
         .find(item => item.querySelector('small')?.textContent.trim() === 'Prime Record');
       const visible = tile?.querySelector('strong')?.textContent.trim() || null;
-      const expected = canonical.get(fighter) || null;
+      const expected = canonical[fighter]?.record || null;
       rows.push({
         fighter,
         expected,
@@ -38,39 +36,47 @@ try {
       });
     }
 
-    const packetScripts = [...document.scripts]
-      .filter(script => [...script.attributes].some(attr => attr.name.startsWith('data-fighter-packet-')))
-      .map(script => script.src);
-
-    const overrideWriters = [];
-    const scan = (value, path = []) => {
-      if (!value || typeof value !== 'object') return;
-      if (Array.isArray(value)) {
-        value.forEach((item, index) => scan(item, [...path, index]));
-        return;
-      }
-      for (const [key, child] of Object.entries(value)) {
-        if (
-          (key === 'primeRecord' || key === 'primeUfcRecord' || key === 'prime_record') &&
-          typeof child === 'string'
-        ) {
-          overrideWriters.push([...path, key].join('.'));
+    const findStringWriters = (root, rootName) => {
+      const writers = [];
+      const scan = (value, path = []) => {
+        if (!value || typeof value !== 'object') return;
+        if (Array.isArray(value)) {
+          value.forEach((item, index) => scan(item, [...path, index]));
+          return;
         }
-        scan(child, [...path, key]);
-      }
+        for (const [key, child] of Object.entries(value)) {
+          if (
+            (key === 'primeRecord' || key === 'primeUfcRecord' || key === 'prime_record') &&
+            typeof child === 'string'
+          ) {
+            writers.push([...path, key].join('.'));
+          }
+          scan(child, [...path, key]);
+        }
+      };
+      scan(root || {}, [rootName]);
+      return writers;
     };
-    scan(window.DISPLAY_OVERRIDES || {}, ['DISPLAY_OVERRIDES']);
+
+    const displayOverrideWriters = findStringWriters(window.DISPLAY_OVERRIDES, 'DISPLAY_OVERRIDES');
+    const packetWriters = findStringWriters(window.UFC_FIGHTER_PACKETS, 'UFC_FIGHTER_PACKETS');
+    const rowWriters = [
+      ...findStringWriters(data.men, 'RANKING_DATA.men'),
+      ...findStringWriters(data.women, 'RANKING_DATA.women'),
+      ...findStringWriters(data.fighters, 'RANKING_DATA.fighters')
+    ];
 
     return {
       fighterCount: boardNames.length,
-      canonicalCount: canonical.size,
-      invalidCanonical: profiles
-        .filter(row => !/^\d+-\d+(?:-\d+)?(?:,\s*\d+\s*NC)?$/.test(String(row.primeRecord || '')))
-        .map(row => ({ fighter: row.fighter, primeRecord: row.primeRecord })),
+      canonicalCount: Object.keys(canonical).length,
+      invalidCanonical: Object.entries(canonical)
+        .filter(([, value]) => !/^\d+-\d+(?:-\d+)?(?:,\s*\d+\s*NC)?$/.test(String(value?.record || '')))
+        .map(([fighter, value]) => ({ fighter, primeRecord: value?.record || null })),
+      missingCanonical: boardNames.filter(fighter => !canonical[fighter]?.record),
       mismatches: rows.filter(row => !row.passed),
-      packetScripts,
-      packetRuntimeCount: Object.keys(window.UFC_FIGHTER_PACKETS || {}).length,
-      overrideWriters,
+      displayOverrideWriters,
+      packetWriters,
+      rowWriters,
       rows
     };
   });
@@ -79,10 +85,11 @@ try {
     report.fighterCount === 62 &&
     report.canonicalCount === 62 &&
     report.invalidCanonical.length === 0 &&
+    report.missingCanonical.length === 0 &&
     report.mismatches.length === 0 &&
-    report.packetScripts.length === 0 &&
-    report.packetRuntimeCount === 0 &&
-    report.overrideWriters.length === 0
+    report.displayOverrideWriters.length === 0 &&
+    report.packetWriters.length === 0 &&
+    report.rowWriters.length === 0
   );
 
   await mkdir('docs/audits', { recursive: true });
@@ -95,12 +102,13 @@ try {
     'docs/audits/runtime-prime-record-source-audit.md',
     `# Prime Record Source Audit\n\n` +
       `- Fighters: ${report.fighterCount}\n` +
-      `- Canonical records: ${report.canonicalCount}\n` +
+      `- Canonical map records: ${report.canonicalCount}\n` +
       `- Invalid canonical values: ${report.invalidCanonical.length}\n` +
+      `- Missing canonical values: ${report.missingCanonical.length}\n` +
       `- Visible tile mismatches: ${report.mismatches.length}\n` +
-      `- Loaded legacy packet scripts: ${report.packetScripts.length}\n` +
-      `- Runtime packet entries: ${report.packetRuntimeCount}\n` +
-      `- Display override writers: ${report.overrideWriters.length}\n` +
+      `- Display override writers: ${report.displayOverrideWriters.length}\n` +
+      `- Fighter packet writers: ${report.packetWriters.length}\n` +
+      `- Board/profile row writers: ${report.rowWriters.length}\n` +
       `- Result: ${report.passed ? 'PASS' : 'FAIL'}\n`,
     'utf8'
   );
@@ -108,10 +116,13 @@ try {
   console.log('PRIME_RECORD_SOURCE_AUDIT=' + JSON.stringify({
     passed: report.passed,
     fighters: report.fighterCount,
+    canonicalCount: report.canonicalCount,
     mismatches: report.mismatches.length,
     invalidCanonical: report.invalidCanonical.length,
-    packetScripts: report.packetScripts.length,
-    overrideWriters: report.overrideWriters.length
+    missingCanonical: report.missingCanonical.length,
+    displayOverrideWriters: report.displayOverrideWriters.length,
+    packetWriters: report.packetWriters.length,
+    rowWriters: report.rowWriters.length
   }));
 
   if (!report.passed) {
