@@ -2,7 +2,8 @@
 // Applies audited Quality Wins values and presentation evidence only.
 // Overall totals, ranks, and OVR are owned exclusively by final-score-engine.js.
 (function(){
-  const VERSION='opponent-quality-live-20260710b-ready-gate';
+  const VERSION='opponent-quality-live-20260710c-fixed-benchmark';
+  const LOCKED_BENCHMARK_CREDIT=14.10;
   const DATA=window.RANKING_DATA;
   const AUDIT=window.UFC_OPPONENT_QUALITY_SHADOW_AUDIT;
   if(!DATA||!AUDIT||!Array.isArray(AUDIT.report))return;
@@ -22,10 +23,11 @@
     return rows;
   }
 
-  const benchmark=Math.max(...AUDIT.report.map(row=>n(row.diminishedCredit)),1);
+  const sourceBenchmarkCredit=Math.max(...AUDIT.report.map(row=>n(row.diminishedCredit)),1);
+  const benchmark=LOCKED_BENCHMARK_CREDIT;
   const liveRows=AUDIT.report.map(row=>{
     const liveScore=r(Math.min(30,Math.max(0,(n(row.diminishedCredit)/benchmark)*30)));
-    return {...row,liveScore,categoryScore:liveScore,benchmarkCredit:benchmark};
+    return {...row,liveScore,categoryScore:liveScore,benchmarkCredit:benchmark,sourceBenchmarkCredit};
   });
   const byName=new Map(liveRows.map(row=>[row.fighter,row]));
 
@@ -70,16 +72,19 @@
   }
 
   DATA.meta=DATA.meta||{};
-  DATA.meta.opponentQualityLive={version:VERSION,mode:'category-only',benchmarkCredit:benchmark,sourceVersion:AUDIT.version,appliedAt:new Date().toISOString()};
+  DATA.meta.opponentQualityLive={version:VERSION,mode:'category-only',benchmarkCredit:benchmark,sourceBenchmarkCredit,benchmarkMode:'locked-constant',futureRosterStable:true,sourceVersion:AUDIT.version,appliedAt:new Date().toISOString()};
   window.UFC_OPPONENT_QUALITY_LIVE={
     version:VERSION,
     mode:'live-category-only',
     categoryOnly:true,
     mutatesOverall:false,
     benchmarkCredit:benchmark,
+    sourceBenchmarkCredit,
+    benchmarkMode:'locked-constant',
+    futureRosterStable:true,
     sourceVersion:AUDIT.version,
     fighters:liveRows.length,
-    formula:'Live Quality Wins score = diminished opponent-quality credit normalized to 30, using the current leader as benchmark.',
+    formula:'Live Quality Wins score = diminished opponent-quality credit normalized to 30 using the locked 14.10-credit historical benchmark.',
     leaders:liveRows.slice().sort((a,b)=>n(b.liveScore)-n(a.liveScore)||n(b.diminishedCredit)-n(a.diminishedCredit)).slice(0,20).map(row=>({fighter:row.fighter,liveScore:row.liveScore,diminishedCredit:row.diminishedCredit,elitePlusWins:row.elitePlusWins,topFivePlusWins:row.topFivePlusWins,winProfile:row.winProfile})),
     report:liveRows,
     appliedAt:new Date().toISOString()
@@ -88,7 +93,7 @@
   if(typeof refresh==='function'){try{refresh();}catch(e){}}
   if(window.UFC_CATEGORY_LEADERS?.render){try{window.UFC_CATEGORY_LEADERS.render();}catch(e){}}
 
-  const readyDetail={version:VERSION,fighters:liveRows.length,benchmarkCredit:benchmark};
+  const readyDetail={version:VERSION,fighters:liveRows.length,benchmarkCredit:benchmark,sourceBenchmarkCredit,benchmarkMode:'locked-constant',futureRosterStable:true};
   if(typeof window.UFC_RESOLVE_OPPONENT_QUALITY_READY==='function')window.UFC_RESOLVE_OPPONENT_QUALITY_READY(readyDetail);
   window.dispatchEvent(new CustomEvent('ufc-opponent-quality-ready',{detail:readyDetail}));
 })();
