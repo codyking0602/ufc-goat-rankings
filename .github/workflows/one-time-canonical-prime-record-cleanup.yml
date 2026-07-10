@@ -1,4 +1,4 @@
-# Branch trigger only. The trusted pull-request workflow lives on main and performs the migration.
+# Branch trigger only. Trusted migration log retry.
 name: One-Time Canonical Prime Record Cleanup
 
 on:
