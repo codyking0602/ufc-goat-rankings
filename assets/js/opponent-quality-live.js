@@ -2,7 +2,7 @@
 // Applies audited Quality Wins values and presentation evidence only.
 // Overall totals, ranks, and OVR are owned exclusively by final-score-engine.js.
 (function(){
-  const VERSION='opponent-quality-live-20260710a-category-only';
+  const VERSION='opponent-quality-live-20260710b-ready-gate';
   const DATA=window.RANKING_DATA;
   const AUDIT=window.UFC_OPPONENT_QUALITY_SHADOW_AUDIT;
   if(!DATA||!AUDIT||!Array.isArray(AUDIT.report))return;
@@ -20,10 +20,6 @@
     upsert('Elite+ / Top-5+ Wins',`${summary.elitePlusWins} / ${summary.topFivePlusWins}`,[/elite\s*wins/i,/quality\s*wins/i,/opponent\s*quality/i,/top[-\s]*5/i]);
     upsert('Win Profile',summary.winProfile||'Quality-wins profile loaded',[/win\s*profile/i,/resume\s*shape/i,/quality\s*type/i]);
     return rows;
-  }
-  function applyFinalScore(reason){
-    if(window.UFC_FINAL_SCORE_ENGINE?.apply){try{return window.UFC_FINAL_SCORE_ENGINE.apply(reason);}catch(e){}}
-    return null;
   }
 
   const benchmark=Math.max(...AUDIT.report.map(row=>n(row.diminishedCredit)),1);
@@ -89,7 +85,10 @@
     appliedAt:new Date().toISOString()
   };
   document.documentElement.setAttribute('data-opponent-quality-live',VERSION);
-  applyFinalScore('opponent-quality-category-update');
   if(typeof refresh==='function'){try{refresh();}catch(e){}}
   if(window.UFC_CATEGORY_LEADERS?.render){try{window.UFC_CATEGORY_LEADERS.render();}catch(e){}}
+
+  const readyDetail={version:VERSION,fighters:liveRows.length,benchmarkCredit:benchmark};
+  if(typeof window.UFC_RESOLVE_OPPONENT_QUALITY_READY==='function')window.UFC_RESOLVE_OPPONENT_QUALITY_READY(readyDetail);
+  window.dispatchEvent(new CustomEvent('ufc-opponent-quality-ready',{detail:readyDetail}));
 })();
