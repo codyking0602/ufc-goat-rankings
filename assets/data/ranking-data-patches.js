@@ -1,7 +1,7 @@
 // Lightweight prerequisite/data loader with an explicit readiness handoff.
 (function(){
   'use strict';
-  const VERSION='ranking-data-patches-20260710a-deterministic-handoff';
+  const VERSION='ranking-data-patches-20260710b-quality-batch-one';
   let readyResolved=false;
   let resolveReady;
   const readyPromise=new Promise(resolve=>{resolveReady=resolve;});
@@ -87,7 +87,7 @@
     {src:'assets/data/championship-resume-ledgers.js?v=championship-resume-ledgers-20260707a',attr:'data-championship-resume-ledgers'},
     {src:'assets/data/championship-resume-ledger-rule-locks.js?v=championship-resume-ledger-rule-locks-20260707b',attr:'data-championship-resume-ledger-rule-locks'},
     {src:'assets/js/championship-resume-shadow.js?v=championship-resume-shadow-20260707e',attr:'data-championship-resume-shadow'},
-    {src:'assets/js/championship-resume-live.js?v=championship-resume-live-20260710a-category-only',attr:'data-championship-resume-live'}
+    {src:'assets/js/championship-resume-live.js?v=championship-resume-live-20260710b-quality-batch-one',attr:'data-championship-resume-live'}
   ];}
   function loadModules(){
     const loadCompareWatchdog=()=>loadScriptOnce('assets/js/compare-narrative-watchdog.js?v=compare-narrative-watchdog-20260702a','data-compare-narrative-watchdog',completeLoad);
