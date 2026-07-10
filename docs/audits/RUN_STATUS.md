@@ -9,6 +9,7 @@ Latest completed checkpoints:
 - `EIGHTEENTH_CHAMPIONSHIP_FIXED_BENCHMARK.md`
 - `NINETEENTH_CHAMPIONSHIP_ANCHOR_REVIEW.md`
 - `TWENTIETH_QUALITY_WINS_ANCHOR_REVIEW.md`
+- `TWENTY_FIRST_PRIME_DOMINANCE_ANCHOR_REVIEW.md`
 
 Current validated coverage:
 
@@ -33,21 +34,22 @@ All five positive categories and all Apex component rows are fully audited for t
 
 Calibration decisions:
 
-- Prime Dominance remains unchanged pending its semantic-anchor review. Two earlier fixed-anchor alternatives were rejected because they created significant fighter movement without restoring Prime close to its nominal 27.5% effective influence, and they over-concentrated future-roster separation in Elite Stakes.
-- Championship diminishing-return alternatives were rejected because they increased effective Championship separation and moved 25–29 fighters.
 - Championship uses a locked 14.54 adjusted-title-credit benchmark rather than the current roster leader. This preserves every current score and makes the category stable when future fighters are added.
 - The Championship anchor review found that a champion-forward curve best matches the intended category meanings, but it remains shadow-only because it raises Championship's measured influence and cannot be finalized before the other positive categories receive the same semantic-anchor review.
 - Quality Wins already aligns cleanly with its proposed 0–30 accomplishment meanings. Its accepted fixed anchors are 2.35 credit = 5, 4.70 = 10, 7.05 = 15, 9.40 = 20, 11.75 = 25, and 14.10 = 30.
-- Quality Wins now uses a locked 14.10 diminished-credit benchmark rather than the current roster leader. The change caused zero current score, total, rank, or OVR movement and keeps Quality's measured all-roster influence at 26.13% versus its 27.5% formula weight.
-- Lower/middle-friendly and elite-gated Quality curves were rejected because they created movement without improving the category's meaning or overall balance.
+- Quality Wins uses a locked 14.10 diminished-credit benchmark rather than the current roster leader. The change caused zero current score, total, rank, or OVR movement and keeps Quality's measured all-roster influence at 26.13% versus its 27.5% formula weight.
+- Prime Dominance's current direct four-component sum is accepted as its semantic anchor scale. The component maximums remain Prime Record /9, Round Control /8, Finish Pressure /5, and Elite Stakes /8.
+- Prime's current real-fighter alignment is strong at the 15, 20, and 25 score levels. Applying a second conversion layer would make the category less transparent.
+- Prime remapping candidates were rejected. The full-spread option raised all-roster Prime influence from 17.99% to 23.60% but moved 35 board positions, reduced several legitimate elite primes by roughly three to four points, and still raised top-30 Prime influence only to 18.01%.
+- Prime's low measured influence is therefore treated as a full-system balance issue rather than proof that its accomplishment scale is wrong.
 - Effective-weight results are treated as descriptive monitoring, not a command to force uniform score distributions across an elite-selected roster.
 
 Next scoring phase:
 
-1. Build the Prime Dominance semantic-anchor review using the same 0–30 accomplishment framework.
-2. Separate total-score meaning from internal Prime component calibration and identify real-fighter examples at each score level.
-3. Review Longevity semantic anchors after Prime.
-4. Run a full category-balance simulation after Championship, Quality Wins, Prime Dominance, and Longevity all have accepted or provisional semantic anchor scales.
+1. Build the Longevity semantic-anchor review using the same 0–30 accomplishment framework.
+2. Test whether active elite years, gap caps, and any status/division adjustments produce intuitive real-fighter anchors.
+3. Run a full category-balance simulation after Championship, Quality Wins, Prime Dominance, and Longevity all have accepted or provisional semantic anchor scales.
+4. Decide whether the final system needs category-scale changes, headline-weight changes, or both.
 5. Finalize Loss Context only after the positive scoring model is approved.
 
 The generated simulation and audit reports do not mutate scores unless a separately approved live implementation is committed.
