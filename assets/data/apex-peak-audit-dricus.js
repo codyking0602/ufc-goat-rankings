@@ -1,8 +1,8 @@
-// Final Apex Peak audit: Dricus du Plessis.
-// Loads after the 61-fighter locked Apex promoter and before the final score engine.
+// Final Apex Peak audit rows: Dricus du Plessis, Merab Dvalishvili, and Zhang Weili.
+// Loads after the locked Apex promoter and before the final score engine.
 (function(){
   'use strict';
-  const VERSION='apex-peak-audit-dricus-20260710a';
+  const VERSION='apex-peak-audit-final-20260710b-merab-zhang';
   const DATA=window.RANKING_DATA;
   if(!DATA)return;
 
@@ -20,47 +20,85 @@
     noContests:'No contests do not count as Apex performances.',
     losses:'Losses are not selected as Apex performances, but can cap Best-fighter claim or Aura.'
   };
-  const audit={
-    score:4.55,
-    window:'Robert Whittaker 2023 + Israel Adesanya 2024',
-    performances:[
-      {label:'Robert Whittaker',date:'2023-07-08',rating:9.5,note:'Second-round finish of an elite former champion and established middleweight benchmark.'},
-      {label:'Israel Adesanya',date:'2024-08-18',rating:9.5,note:'Submitted an all-time middleweight champion in a UFC title defense.'}
-    ],
-    performanceAverage:9.5,
-    components:{twoPerformanceStrength:1.90,proof:1.50,bestFighterClaim:0.70,aura:0.45},
-    componentTotal:4.55,
-    notes:'Whittaker and Adesanya provide elite two-night proof. Close Strickland fights, a short reign, chaotic separation, and the Khamzat ceiling cap the best-fighter claim and aura.',
-    front:{
-      proved:'Finished Robert Whittaker and Israel Adesanya inside a 13-month championship rise.',
-      felt:'Dangerous and championship-level, but never untouchable or inevitable.'
+
+  const audits={
+    'Dricus du Plessis':{
+      score:4.55,
+      window:'Robert Whittaker 2023 + Israel Adesanya 2024',
+      performances:[
+        {label:'Robert Whittaker',date:'2023-07-08',rating:9.5,note:'Second-round finish of an elite former champion and established middleweight benchmark.'},
+        {label:'Israel Adesanya',date:'2024-08-18',rating:9.5,note:'Submitted an all-time middleweight champion in a UFC title defense.'}
+      ],
+      performanceAverage:9.5,
+      components:{twoPerformanceStrength:1.90,proof:1.50,bestFighterClaim:0.70,aura:0.45},
+      componentTotal:4.55,
+      notes:'Whittaker and Adesanya provide elite two-night proof. Close Strickland fights, a short reign, chaotic separation, and the Khamzat ceiling cap the best-fighter claim and aura.',
+      front:{
+        proved:'Finished Robert Whittaker and Israel Adesanya inside a 13-month championship rise.',
+        felt:'Dangerous and championship-level, but never untouchable or inevitable.'
+      }
     },
-    rubric:RUBRIC,
-    rules:RULES,
-    source:'Cody-approved locked Apex Peak audit',
-    version:VERSION
+    'Merab Dvalishvili':{
+      score:4.00,
+      window:"Sean O'Malley 2024 + Umar Nurmagomedov 2025",
+      performances:[
+        {label:"Sean O'Malley",date:'2024-09-14',rating:9.2,note:'Won the UFC bantamweight title by imposing pace, wrestling volume, and control over the champion.'},
+        {label:'Umar Nurmagomedov',date:'2025-01-18',rating:9.3,note:'Added elite modern-bantamweight title-defense proof against an unbeaten challenger.'}
+      ],
+      performanceAverage:9.25,
+      components:{twoPerformanceStrength:1.85,proof:1.30,bestFighterClaim:0.50,aura:0.35},
+      componentTotal:4.00,
+      notes:'O’Malley and Umar give Merab strong modern bantamweight proof. Low finish pressure, a newer reign, and the later Yan rivalry cap the best-fighter claim and aura.',
+      front:{
+        proved:'Beat the bantamweight champion and an unbeaten elite challenger with relentless pace and control.',
+        felt:'Exhausting and extremely difficult to solve, but not a mythic finishing-aura peak.'
+      }
+    },
+    'Zhang Weili':{
+      score:4.85,
+      window:'Amanda Lemos 2023 + Tatiana Suarez 2025',
+      performances:[
+        {label:'Amanda Lemos',date:'2023-08-19',rating:9.5,note:'Dominant five-round title defense showing complete striking, wrestling, and control.'},
+        {label:'Tatiana Suarez',date:'2025-02-08',rating:9.5,note:'Dominant defense over an unbeaten elite challenger and major grappling threat.'}
+      ],
+      performanceAverage:9.5,
+      components:{twoPerformanceStrength:1.90,proof:1.45,bestFighterClaim:0.90,aura:0.60},
+      componentTotal:4.85,
+      notes:'Lemos and Suarez capture the complete second-reign version of Zhang. The Rose losses and failed upward-division title challenge cap the clean best-fighter claim and aura.',
+      front:{
+        proved:'Dominated two dangerous title challengers with complete five-round control during her second reign.',
+        felt:'Like the clear best strawweight of the second reign, though not untouchable across her full title career.'
+      }
+    }
   };
 
   function key(name){return String(name||'').trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');}
+  function cloneAudit(audit){return {...audit,performances:audit.performances.map(item=>({...item})),components:{...audit.components},front:{...audit.front},rubric:RUBRIC,rules:RULES,source:'Cody-approved locked Apex Peak audit',version:VERSION};}
   function allRows(){return [...(DATA.men||[]),...(DATA.women||[]),...(DATA.fighters||[])].filter(row=>row&&row.fighter);}
+
+  const byKey=new Map(Object.entries(audits).map(([fighter,audit])=>[key(fighter),{fighter,audit}]));
   const patched=[];
   allRows().forEach(row=>{
-    if(key(row.fighter)!=='dricus du plessis')return;
+    const found=byKey.get(key(row.fighter));
+    if(!found)return;
+    const audit=cloneAudit(found.audit);
     row.apexPeak=audit.score;
-    row.apexPeakAudit={...audit,performances:audit.performances.map(item=>({...item})),components:{...audit.components}};
+    row.apexPeakAudit=audit;
     row.apexPeakBonusLive=true;
     row.apexPeakBonusVersion=VERSION;
     patched.push(row.fighter);
   });
 
   if(typeof DISPLAY_OVERRIDES!=='undefined'){
-    DISPLAY_OVERRIDES['Dricus du Plessis']=DISPLAY_OVERRIDES['Dricus du Plessis']||{};
-    DISPLAY_OVERRIDES['Dricus du Plessis'].apexPeakAudit={...audit,performances:audit.performances.map(item=>({...item})),components:{...audit.components}};
+    Object.entries(audits).forEach(([fighter,audit])=>{
+      DISPLAY_OVERRIDES[fighter]=DISPLAY_OVERRIDES[fighter]||{};
+      DISPLAY_OVERRIDES[fighter].apexPeakAudit=cloneAudit(audit);
+    });
   }
 
   const lockedAudit=window.UFC_APEX_PEAK_LOCKED_AUDIT||window.UFC_PEAK_APEX_LOCKED_AUDIT;
   if(lockedAudit){
-    lockedAudit.fighters=Array.from(new Set([...(lockedAudit.fighters||[]),'Dricus du Plessis']));
+    lockedAudit.fighters=Array.from(new Set([...(lockedAudit.fighters||[]),...Object.keys(audits)]));
     lockedAudit.patched=Array.from(new Set([...(lockedAudit.patched||[]),...patched]));
     lockedAudit.version=VERSION;
     lockedAudit.appliedAt=new Date().toISOString();
@@ -74,11 +112,13 @@
     ...prior,
     version:VERSION,
     pending:[],
-    lockedCount:Math.max(Number(prior.lockedCount||0)+1,62),
-    dricusAudit:audit,
+    lockedCount:62,
+    finalAudits:Object.fromEntries(Object.entries(audits).map(([fighter,audit])=>[fighter,cloneAudit(audit)])),
+    dricusAudit:cloneAudit(audits['Dricus du Plessis']),
     apexLeaders:boardRows.slice().sort((a,b)=>Number(b.apexPeak||0)-Number(a.apexPeak||0)||String(a.fighter).localeCompare(String(b.fighter))).slice(0,10).map(row=>({fighter:row.fighter,apexPeak:row.apexPeak})),
     appliedAt:new Date().toISOString()
   };
-  window.UFC_APEX_PEAK_DRICUS_AUDIT={version:VERSION,fighter:'Dricus du Plessis',audit,patched:[...new Set(patched)],appliedAt:new Date().toISOString()};
+  window.UFC_APEX_PEAK_FINAL_AUDIT={version:VERSION,audits:Object.fromEntries(Object.entries(audits).map(([fighter,audit])=>[fighter,cloneAudit(audit)])),patched:[...new Set(patched)],appliedAt:new Date().toISOString()};
+  window.UFC_APEX_PEAK_DRICUS_AUDIT={version:VERSION,fighter:'Dricus du Plessis',audit:cloneAudit(audits['Dricus du Plessis']),patched:patched.filter(name=>name==='Dricus du Plessis'),appliedAt:new Date().toISOString()};
   document.documentElement.setAttribute('data-apex-peak-audit-dricus',VERSION);
 })();
