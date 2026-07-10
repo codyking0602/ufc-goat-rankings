@@ -20,5 +20,12 @@ jobs:
           ref: fix/unified-six-category-pipeline
           fetch-depth: 1
 
-      - name: Emit compact source inventory
+      - name: Build source report
         run: python scripts/inspect-quality-wins.py
+
+      - name: Upload source report
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-wins-source-report
+          path: quality-wins-source-report.txt
+          if-no-files-found: error
