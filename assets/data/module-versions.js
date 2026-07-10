@@ -1,8 +1,8 @@
 // Central cache-bust versions and deterministic scoring bootstrap.
-window.UFC_MODULE_VERSIONS={scoringPipeline:"20260710o-frankie-five-step-audit",finalScoreEngine:"20260710b-deterministic",primeWindows:"20260710b-context-only",primeRoundControlAudit:"20260708d-jon-54-63",primeDominanceLedgers:"20260708j-round-audit-batch-two",primeDominanceShadowModel:"20260708c-jon-elite-stakes",primeDominanceAuditBatchSeven:"20260710d-frankie-full-window",primeDominanceLivePromoter:"20260710c-frankie-canonical-window",primeDominanceCopyPolish:"20260708b",categoryPercentileTiers:"20260710c-rating-source",scoreWeighting:"20260710a-compatibility-only",championshipResumeLive:"20260710d-fixed-benchmark",opponentQualityLive:"20260710c-fixed-benchmark",fighterEraLedgers:"20260709g-review-corrections",longevityShadowScorer:"20260710c-144-month-ceiling",longevityLivePromoter:"20260710b-144-month-ceiling",apexPeakCorrections:"20260709b-full-roster",apexPeakComponentAudit:"20260709c-batch-one-review-adjustments",apexPeakLiveBonus:"20260710a-category-only",apexPeakDricusAudit:"20260710b-merab-zhang"};
+window.UFC_MODULE_VERSIONS={scoringPipeline:"20260710p-roster-era-lock-audit",finalScoreEngine:"20260710b-deterministic",primeWindows:"20260710b-context-only",primeRoundControlAudit:"20260708d-jon-54-63",primeDominanceLedgers:"20260708j-round-audit-batch-two",primeDominanceShadowModel:"20260708c-jon-elite-stakes",primeDominanceAuditBatchSeven:"20260710d-frankie-full-window",primeDominanceLivePromoter:"20260710c-frankie-canonical-window",primeDominanceCopyPolish:"20260708b",categoryPercentileTiers:"20260710c-rating-source",scoreWeighting:"20260710a-compatibility-only",championshipResumeLive:"20260710d-fixed-benchmark",opponentQualityLive:"20260710c-fixed-benchmark",fighterEraLedgers:"20260709g-review-corrections",fighterEraWindowAudit:"20260710a-roster-lock",longevityShadowScorer:"20260710c-144-month-ceiling",longevityLivePromoter:"20260710b-144-month-ceiling",apexPeakCorrections:"20260709b-full-roster",apexPeakComponentAudit:"20260709c-batch-one-review-adjustments",apexPeakLiveBonus:"20260710a-category-only",apexPeakDricusAudit:"20260710b-merab-zhang"};
 (function(){
 'use strict';
-const v=window.UFC_MODULE_VERSIONS||{},VERSION='deterministic-scoring-pipeline-20260710o-frankie-five-step-audit';
+const v=window.UFC_MODULE_VERSIONS||{},VERSION='deterministic-scoring-pipeline-20260710p-roster-era-lock-audit';
 const state={version:VERSION,mode:'deterministic-single-pass',status:'waiting-for-patches',sequence:[],timerCount:0,repeatedLoadCount:0,finalScoreApplyCount:0,startedAt:new Date().toISOString(),completedAt:null,error:null};
 let qualityReadyResolved=false,resolveQualityReady;
 window.UFC_OPPONENT_QUALITY_READY=new Promise(resolve=>{resolveQualityReady=resolve;});
@@ -25,6 +25,8 @@ await loadStep('prime-live',cache('assets/data/prime-dominance-live-promoter.js'
 await loadStep('prime-copy',cache('assets/js/prime-dominance-copy-polish.js',`prime-dominance-copy-polish-${v.primeDominanceCopyPolish}`),'data-prime-dominance-copy-polish');
 state.status='loading-longevity';
 await loadStep('fighter-era-ledgers',cache('assets/data/fighter-era-ledgers.js',`fighter-era-ledgers-${v.fighterEraLedgers}`),'data-fighter-era-ledgers');
+await loadStep('fighter-era-window-audit',cache('assets/data/fighter-era-window-audit.js',`fighter-era-window-audit-${v.fighterEraWindowAudit}`),'data-fighter-era-window-audit');
+state.fighterEraWindowAudit=window.UFC_FIGHTER_ERA_WINDOW_AUDIT||null;
 await loadStep('longevity-shadow',cache('assets/data/longevity-shadow-scorer.js',`longevity-shadow-scorer-${v.longevityShadowScorer}`),'data-longevity-shadow-scorer');
 await loadStep('longevity-live',cache('assets/data/longevity-live-promoter.js',`longevity-live-promoter-${v.longevityLivePromoter}`),'data-longevity-live-promoter');
 state.status='loading-apex';
