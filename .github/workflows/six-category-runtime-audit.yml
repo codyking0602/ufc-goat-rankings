@@ -70,9 +70,20 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          node scripts/one-time-sync-prime-records-from-main.cjs
-          node scripts/run-prime-record-source-audit.mjs
-          node scripts/run-six-category-audit.mjs
+          {
+            node scripts/one-time-sync-prime-records-from-main.cjs
+            node scripts/run-prime-record-source-audit.mjs
+            node scripts/run-six-category-audit.mjs
+          } 2>&1 | tee /tmp/prime-record-migration.log
+
+      - name: Upload migration log
+        if: always() && steps.migration-guard.outputs.skip != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: prime-record-migration-log
+          path: /tmp/prime-record-migration.log
+          if-no-files-found: warn
+          retention-days: 7
 
       - name: Commit canonical record migration
         if: steps.migration-guard.outputs.skip != 'true'
