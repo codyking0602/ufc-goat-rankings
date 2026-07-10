@@ -6,87 +6,123 @@ Updated: July 9, 2026
 
 Consolidate the six audited categories into one deterministic scoring pipeline without losing or redoing fighter inputs.
 
-## Live Category Status
+## First Settled Runtime Audit
 
-| Category | Current source | Current status |
-|---|---|---|
-| Championship Resume | Championship title-win ledger and live layer | Live category value; promoter also recalculates totals |
-| Quality Wins | Opponent-quality ledger, calibrations, shadow audit, live layer | Live category value; promoter also recalculates totals |
-| Prime Dominance | Round-control audit, base ledger, shadow-model extensions, live promoter | Live for merged-report fighters; promoter uses an incorrect unweighted total formula |
-| Longevity | Fighter Era Ledger, shadow scorer, live promoter | Live native `/30`; promoter recalculates total without Apex |
-| Apex Peak | Locked fighter audits and live bonus promoter | Live positive modifier; currently acts as final total repair layer |
-| Loss Context | Fighter Era Ledger and adapter | Ledger is QA-only; live promoter is disabled; existing row penalties remain live |
+The branch-only headless Chromium audit completed successfully after all current delayed scoring timers ran.
 
-## Confirmed Integration Problems
+Results:
 
-1. Multiple category promoters write `totalScore`.
-2. Those promoters do not all use the same formula.
-3. Prime Dominance currently uses a raw unweighted category sum when it recalculates totals.
-4. Championship, Quality Wins, and Longevity total calculations omit Apex Peak.
-5. Apex Peak currently performs the most complete final calculation and repairs earlier totals.
-6. Score-changing modules are reapplied on delayed timers.
-7. Display overrides and promoters still contain score-derived ranks and OVR values.
-8. Loss Context's audited ledger is not promoted live.
-9. Legacy values in `ranking-data.js` can temporarily appear before live layers finish.
-10. There is no single 62-fighter completeness assertion for all six categories in production.
+- 62 roster fighters
+- 0 fully complete fighters
+- 53 locked-formula mismatches
+- 0 forbidden score-derived display overrides detected
+- 0 duplicate leaderboard/profile names
+- 0 profile-to-leaderboard mismatches
 
-## Safety Branch Progress
+Category coverage:
 
-Protected branch: `fix/unified-six-category-pipeline`
+| Category | Pass | Warn | Fail |
+|---|---:|---:|---:|
+| Championship Resume | 62 | 0 | 0 |
+| Quality Wins | 57 | 0 | 5 |
+| Prime Dominance | 53 | 0 | 9 |
+| Longevity | 62 | 0 | 0 |
+| Apex Peak | 61 | 1 | 0 |
+| Loss Context | 0 | 61 | 1 |
 
-Completed without changing fighter inputs or production behavior:
+Permanent findings summary:
 
-- project architecture documented
-- current integration state documented
-- consolidation roadmap documented
-- open issue tracker created
-- permanent changelog created
-- read-only six-category integrity engine added at `assets/data/six-category-integrity-audit.js`
-- standalone diagnostic dashboard added at `audit.html`
+- `docs/audits/FIRST_RUNTIME_AUDIT.md`
 
-The auditor checks every leaderboard fighter for:
+Workflow artifact contains the complete fighter-by-fighter JSON and Markdown reports.
 
-- Championship Resume live audit and row match
-- Quality Wins live audit and row match
-- Prime Dominance merged-report audit and row match
-- native `/30` Longevity audit and row match
-- completed Apex Peak audit and row match
-- Loss Context ledger/live status
-- exact locked-formula reconciliation
-- leaderboard/profile mismatches
-- duplicate fighter rows
-- forbidden score-derived fields inside display overrides
+## Confirmed Runtime Behavior
 
-The auditor is read-only. It exposes `window.UFC_SIX_CATEGORY_INTEGRITY_AUDIT` and does not mutate scores, ranks, OVRs, ledgers, or display data.
+For all 53 fighters with a merged Prime Dominance audit, the settled runtime total equals:
+
+```text
+championship + opponentQuality + primeDominance + longevity + penalty
+```
+
+That is the Prime promoter's incorrect raw-sum formula. It bypasses the locked weights and omits Apex Peak.
+
+Jon Jones example:
+
+```text
+Current settled total: 115.86
+Locked-formula total: 102.21
+```
+
+The nine fighters whose totals currently match the locked formula are exactly the fighters missing a merged Prime audit. The Prime promoter skips those rows, so another weighted scoring layer remains in place. They are not complete.
+
+## Preserved Category Work
+
+The runtime audit confirms that the fighter work remains present:
+
+- Championship Resume: 62/62 audited live rows
+- Longevity: 62/62 audited live rows
+- Quality Wins: 57/62 audited live rows
+- Prime Dominance: 53/62 audited live rows
+- Apex Peak: 61/62 completed audited rows
+- Loss Context adapter: 61/62 rows, not live
+
+## Missing Coverage
+
+Quality Wins live audits missing:
+
+- Chuck Liddell
+- Tito Ortiz
+- Dricus du Plessis
+- Sean O'Malley
+- Julianna Peña
+
+Merged Prime Dominance audits missing:
+
+- Frankie Edgar
+- T.J. Dillashaw
+- Tyron Woodley
+- Dricus du Plessis
+- Aljamain Sterling
+- Robert Whittaker
+- Sean O'Malley
+- Sean Strickland
+- Dan Henderson
+
+Apex Peak pending:
+
+- Dricus du Plessis
+
+Loss Context missing:
+
+- Sean O'Malley has no usable adapter entry
+- all 62 current penalties remain legacy-backed because the live promoter is disabled
 
 ## Current Safety Position
 
-- Production `main` remains the live source of truth.
-- Consolidation work stays on `fix/unified-six-category-pipeline` until validated.
-- No fighter score input has been changed during the architecture or audit-tooling phases.
+- Production `main` remains untouched.
+- Work remains on `fix/unified-six-category-pipeline`.
+- Draft PR #7 exists only as the branch audit/test harness and must not be merged yet.
+- No fighter category input has been changed during documentation or audit phases.
 - Existing ledgers and audits remain protected source data.
-- The diagnostic dashboard is isolated from normal app loading.
 
 ## Immediate Next Step
 
-Run the standalone audit dashboard against the fully settled scoring runtime and capture the first complete report.
+Build the central final score engine on the safety branch and make it the only owner of:
 
-The report must identify, fighter by fighter:
+- `totalScore`
+- `rawScore`
+- `weightedScoreBreakdown`
+- overall rank
+- score-derived OVR
 
-- pass, warning, or failure for each of the six categories
-- legacy-backed values
-- audit-to-row mismatches
-- formula mismatches
-- profile/leaderboard mismatches
-- score-derived display overrides
-
-After that report is reviewed, build the central final score engine. Do not change category inputs while resolving integration failures.
+Then remove total/rank/OVR mutation from the Prime promoter first and re-run the audit before modifying the other category promoters.
 
 ## Definition of Success
 
-- all leaderboard fighters covered by all six categories
+- 62/62 fighters covered by all six categories
 - zero silent legacy fallbacks
+- 62/62 totals match the locked formula within 0.01
 - one final score engine
 - zero category promoters writing totals or ranks
 - zero score-changing timers
-- scores, ranks, OVRs, profiles, categories, and Compare Mode all reading the same final rows
+- scores, ranks, OVRs, profiles, category boards, division boards, and Compare Mode all read the same final rows
