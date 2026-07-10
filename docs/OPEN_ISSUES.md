@@ -22,7 +22,7 @@ Production status: Not merged.
 
 Status: Resolved
 
-The scoring pipeline is now Promise-based and deterministic.
+The scoring pipeline is Promise-based and deterministic.
 
 Validated:
 
@@ -41,9 +41,17 @@ Permanent report:
 
 Production status: Not merged.
 
+### 3. Static loader cache alignment
+
+Status: Resolved
+
+`index.html`, `module-versions.js`, `ranking-data-patches.js`, and the Championship-to-Quality loader chain now use the current deterministic and Quality Wins batch versions.
+
+The normal Chromium audit passed after the Chuck/Tito cache alignment.
+
 ## Critical
 
-### 3. Loss Context ledger is not live
+### 4. Loss Context ledger is not live
 
 Status: Open
 
@@ -56,14 +64,14 @@ Remaining:
 - promote the reviewed ledger
 - rerun the deterministic full-roster audit
 
-### 4. Full-roster six-category coverage
+### 5. Full-roster six-category coverage
 
 Status: In Progress
 
 | Category | Pass | Warn | Fail |
 |---|---:|---:|---:|
 | Championship Resume | 62 | 0 | 0 |
-| Quality Wins | 57 | 0 | 5 |
+| Quality Wins | 59 | 0 | 3 |
 | Prime Dominance | 53 | 0 | 9 |
 | Longevity | 62 | 0 | 0 |
 | Apex Peak | 61 | 1 | 0 |
@@ -73,17 +81,26 @@ Target: 62/62 audited coverage and zero silent fallback.
 
 ## High Priority
 
-### 5. Quality Wins missing five live audits
+### 6. Quality Wins missing three live audits
 
-Status: Open
+Status: In Progress
+
+Completed in the first missing-coverage batch:
 
 - Chuck Liddell
 - Tito Ortiz
+
+Permanent report:
+
+- `docs/audits/EIGHTH_RUNTIME_AUDIT_QUALITY_CHUCK_TITO.md`
+
+Remaining:
+
 - Dricus du Plessis
 - Sean O'Malley
 - Julianna Peña
 
-### 6. Prime Dominance missing nine merged audits
+### 7. Prime Dominance missing nine merged audits
 
 Status: Open
 
@@ -97,27 +114,19 @@ Status: Open
 - Sean Strickland
 - Dan Henderson
 
-### 7. Apex Peak incomplete row
+### 8. Apex Peak incomplete row
 
 Status: Open
 
 Dricus du Plessis remains explicitly pending. The other 61 Apex audits pass.
 
-### 8. Legacy source values remain mixed with live values
+### 9. Legacy source values remain mixed with live values
 
 Status: Open
 
 `ranking-data.js` still contains older values that can exist before audited category layers apply.
 
 Target: preserve legacy values under explicit legacy fields and prohibit silent fallback after initialization.
-
-### 9. Production cache-bust references
-
-Status: Open before merge
-
-The static `index.html` query strings for `module-versions.js` and `ranking-data-patches.js` need final alignment.
-
-Fresh branch testing passes, but production should not rely on old browser cache keys.
 
 ## Review Items
 
