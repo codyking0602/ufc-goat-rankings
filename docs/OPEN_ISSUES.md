@@ -2,81 +2,63 @@
 
 ## Critical
 
-### 1. Multiple modules still write `totalScore`
+### 1. Legacy weighting layer still writes overall state
 
 Status: In Progress
 
-A canonical final score engine now exists and all 62 settled totals reconcile with the locked formula.
+A canonical final score engine exists and all 62 settled totals reconcile with the locked formula.
 
-Converted to category-only writers:
+Validated category-only writers:
 
 - Championship Resume
 - Quality Wins
 - Prime Dominance
 - Longevity
+- Apex Peak
 
 Still remaining:
 
-- Apex Peak promoter writes totals and ranks
-- general legacy weighting code can still write totals
+- the legacy general weighting layer can write `totalScore`, weighted breakdowns, ranks, and display rank fields
 
 Target: Only `final-score-engine.js` owns totals, ranks, weighted breakdowns, and score-derived OVR.
 
-### 2. Prime Dominance promoter uses incorrect overall math
+### 2. Category promoter ownership
 
 Status: Resolved on safety branch
 
-The Prime promoter no longer writes totals, ranks, OVRs, or category-rank overrides. Settled runtime audits report 0 formula mismatches across all 62 fighters.
+The five positive category promoters now write only their category values, audit metadata, and necessary presentation evidence. Settled Chromium audits report:
+
+- 0 formula mismatches
+- unchanged category coverage
+- unchanged fighter totals and rankings
+- 0 profile/leaderboard mismatches
+- 0 forbidden numerical display overrides
 
 Production status: Not merged.
 
-### 3. Championship and Quality promoters owned overall state
-
-Status: Resolved on safety branch
-
-Championship Resume and Quality Wins now write only their category values, audit metadata, and presentation evidence. They no longer write totals, ranks, weighted breakdowns, or numerical display overrides.
-
-Championship also no longer force-writes Prime category rank/OVR or runs delayed Prime rewrite timers.
-
-Production status: Not merged.
-
-### 4. Longevity promoter owned overall state
-
-Status: Resolved on safety branch
-
-Longevity now writes only native `/30` Longevity values and Fighter Era Ledger audit metadata. It no longer recalculates totals, reranks boards, copies overall state into profiles, or writes numerical display overrides.
-
-The fourth settled runtime audit preserved 62/62 Longevity coverage and reported 0 formula mismatches.
-
-Production status: Not merged.
-
-### 5. Loss Context ledger is not live
+### 3. Loss Context ledger is not live
 
 Status: Open
 
-The current live promoter remains disabled. Existing `penalty` values remain live while the Era Ledger adapter is QA-only.
+The live promoter remains disabled. Existing `penalty` values remain live while the Fighter Era Ledger adapter is QA-only.
 
-Target: Complete full UFC loss coverage and promote reviewed penalties.
+Target: Complete full UFC loss coverage, review all 62 totals, and promote the audited penalties.
 
-### 6. Score-changing timers
+### 4. Score-changing timers and repeated loaders
 
 Status: Open
 
-Longevity, Apex, category tiers, and refresh paths are still reapplied after page load. Longevity no longer owns overall scoring, but the repeated loading remains unnecessary technical debt.
+Longevity, Apex, category tiers, and refresh paths are still loaded or reapplied on delayed timers. The category writers no longer own overall scoring, but the repeated initialization remains unnecessary technical debt and can cause visible startup movement.
 
-The final score engine repairs the final settled state, but the loader is not yet deterministic.
-
-Target: One ordered initialization chain with no score-changing timers.
+Target: One deterministic ordered initialization chain with no score-changing timers.
 
 ## High Priority
 
-### 7. Full-roster six-category coverage gate
+### 5. Full-roster six-category coverage gate
 
 Status: In Progress
 
-The read-only auditor and headless Chromium workflow run successfully.
-
-Current coverage:
+Current settled coverage:
 
 | Category | Pass | Warn | Fail |
 |---|---:|---:|---:|
@@ -87,44 +69,35 @@ Current coverage:
 | Apex Peak | 61 | 1 | 0 |
 | Loss Context | 0 | 61 | 1 |
 
-Target: Make this audit a hard release gate with 62/62 coverage and 0 formula mismatches.
+Target: 62/62 audited coverage and 0 formula mismatches as a hard release gate.
 
-### 8. Score-derived display overrides
+### 6. Score-derived display overrides
 
 Status: Controlled on safety branch
 
-The final score engine strips numerical rank/OVR fields from runtime display overrides and calculates scores, ranks, and OVR from current fighter rows.
+The final score engine strips numerical rank/OVR fields from runtime display overrides. Apex no longer copies its numerical audit into display overrides.
 
-The settled audit reports 0 forbidden score-derived overrides.
+Current settled audit result: 0 forbidden score-derived overrides.
 
-Remaining: Remove obsolete writers from Apex and legacy modules.
+Remaining: remove numerical writes from the legacy weighting layer and any other compatibility code found during final ownership review.
 
-### 9. Category promoters omit Apex or use competing formulas
-
-Status: In Progress
-
-Championship, Quality Wins, Prime, and Longevity are clean. Remaining:
-
-- Apex Peak
-- legacy general weighting layer
-
-### 10. Legacy source values remain mixed with live values
+### 7. Legacy source values remain mixed with live values
 
 Status: Open
 
-`ranking-data.js` still contains older values that may appear before live category layers apply.
+`ranking-data.js` still contains older values that may temporarily appear before audited category layers apply.
 
-Target: Preserve legacy values explicitly but prohibit silent use after initialization.
+Target: Preserve legacy values under explicit legacy fields and prohibit silent fallback after initialization.
 
-### 11. Production cache-bust references
+### 8. Production cache-bust references
 
 Status: Open before merge
 
-`ranking-data-patches.js` still references the older Championship query-string version. Branch testing is correct, but the cache-bust reference must be updated before production merge.
+`ranking-data-patches.js` still references the older Championship query-string version. All final cache versions must be aligned before production merge.
 
 ## Missing Audit Coverage
 
-### 12. Quality Wins missing five live audits
+### 9. Quality Wins missing five live audits
 
 Status: Open
 
@@ -134,7 +107,7 @@ Status: Open
 - Sean O'Malley
 - Julianna Peña
 
-### 13. Prime Dominance missing nine merged audits
+### 10. Prime Dominance missing nine merged audits
 
 Status: Open
 
@@ -148,34 +121,34 @@ Status: Open
 - Sean Strickland
 - Dan Henderson
 
-### 14. Apex Peak incomplete row
+### 11. Apex Peak incomplete row
 
 Status: Open
 
-Dricus du Plessis remains explicitly pending.
+Dricus du Plessis remains explicitly pending. The other 61 Apex audits pass the settled runtime gate.
 
-### 15. Loss Context incomplete row
+### 12. Loss Context incomplete row
 
 Status: Open
 
-Sean O'Malley has no usable adapter entry. The other 61 adapter totals still require review before live promotion.
+Sean O'Malley has no usable adapter entry. The other 61 adapter totals still require fighter-by-fighter review before live promotion.
 
 ## Review Items
 
-### 16. Apex naming consistency
+### 13. Apex naming consistency
 
-Status: Open
+Status: Partially resolved
 
-Both “Apex Peak” and “Peak Apex” still appear. Standardize on “Apex Peak.”
+The category-only Apex promoter now uses “Apex Peak” and preserves the old global alias only for compatibility. Remaining files should be standardized during loader cleanup.
 
-### 17. Compare Mode source consistency
+### 14. Compare Mode source consistency
 
 Status: Not yet audited
 
 Target: Confirm Compare Mode reads canonical final rows and maintains no separate numerical score source.
 
-### 18. Division board source consistency
+### 15. Division board source consistency
 
 Status: Not yet audited
 
-Target: Confirm division rankings read canonical final rows after the unified score engine runs.
+Target: Confirm division rankings read canonical final rows after the unified final score engine runs.
