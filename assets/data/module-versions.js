@@ -1,6 +1,6 @@
 // Central cache-bust versions and deterministic scoring bootstrap.
 window.UFC_MODULE_VERSIONS={
-  scoringPipeline:"20260710a-deterministic",
+  scoringPipeline:"20260710b-quality-ready",
   finalScoreEngine:"20260710b-deterministic",
   primeWindows:"20260708a",
   primeRoundControlAudit:"20260708d-jon-54-63",
@@ -11,7 +11,7 @@ window.UFC_MODULE_VERSIONS={
   categoryPercentileTiers:"20260710b-deterministic",
   scoreWeighting:"20260710a-compatibility-only",
   championshipResumeLive:"20260710c-quality-revisions",
-  opponentQualityLive:"20260710a-category-only",
+  opponentQualityLive:"20260710b-ready-gate",
   fighterEraLedgers:"20260709g-review-corrections",
   longevityShadowScorer:"20260709b-ledger-driven",
   longevityLivePromoter:"20260710a-category-only",
@@ -23,7 +23,7 @@ window.UFC_MODULE_VERSIONS={
 (function(){
   'use strict';
   const v=window.UFC_MODULE_VERSIONS||{};
-  const VERSION='deterministic-scoring-pipeline-20260710a';
+  const VERSION='deterministic-scoring-pipeline-20260710b-quality-ready';
   const state={
     version:VERSION,
     mode:'deterministic-single-pass',
@@ -35,6 +35,16 @@ window.UFC_MODULE_VERSIONS={
     startedAt:new Date().toISOString(),
     completedAt:null,
     error:null
+  };
+
+  let qualityReadyResolved=false;
+  let resolveQualityReady;
+  window.UFC_OPPONENT_QUALITY_READY=new Promise(resolve=>{resolveQualityReady=resolve;});
+  window.UFC_RESOLVE_OPPONENT_QUALITY_READY=detail=>{
+    if(qualityReadyResolved)return;
+    qualityReadyResolved=true;
+    state.opponentQualityReadyDetail=detail||null;
+    resolveQualityReady(detail||null);
   };
 
   window.UFC_SCORING_PIPELINE=state;
@@ -71,13 +81,21 @@ window.UFC_MODULE_VERSIONS={
       window.addEventListener('ufc-ranking-data-patches-ready',event=>resolve(event.detail||window.UFC_PHASE2_DATA_STATUS||null),{once:true});
     });
   }
+  function opponentQualityReady(){
+    if(window.UFC_OPPONENT_QUALITY_LIVE)return Promise.resolve(window.UFC_OPPONENT_QUALITY_LIVE);
+    return window.UFC_OPPONENT_QUALITY_READY;
+  }
 
   async function run(){
     try{
       await patchesReady();
-      state.status='loading-prime';
       record('ranking-data-patches:ready');
 
+      state.status='waiting-for-quality';
+      await opponentQualityReady();
+      record('opponent-quality:ready');
+
+      state.status='loading-prime';
       await loadStep('prime-round-control',cache('assets/data/prime-round-control-audit.js',`prime-round-control-audit-${v.primeRoundControlAudit}`),'data-prime-round-control-audit');
       await loadStep('prime-ledgers',cache('assets/data/prime-dominance-ledgers.js',`prime-dominance-ledgers-${v.primeDominanceLedgers}`),'data-prime-dominance-ledgers');
       await loadStep('prime-shadow',cache('assets/data/prime-dominance-shadow-model.js',`prime-dominance-shadow-model-${v.primeDominanceShadowModel}`),'data-prime-dominance-shadow-model');
