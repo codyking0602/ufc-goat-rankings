@@ -1,8 +1,8 @@
 // Runtime Loss Context flagged-fighter queue.
-// Converts the 62-fighter mismatch audit into practical review batches.
+// Converts the 62-fighter mismatch audit into practical ledger-completion and score-review batches.
 (function(){
   'use strict';
-  const VERSION='loss-context-flagged-fighter-list-20260710a-priority-queue';
+  const VERSION='loss-context-flagged-fighter-list-20260710b-batch-two-priority-queue';
   const audit=window.UFC_LOSS_CONTEXT_MISMATCH_AUDIT;
   const DATA=window.RANKING_DATA;
 
@@ -44,8 +44,18 @@
     }))
     .sort((a,b)=>b.priority-a.priority||String(a.fighter).localeCompare(String(b.fighter)));
 
-  const completedBatchOne=['Robert Whittaker','Sean Strickland'];
-  const nextBatch=priorityQueue.filter(row=>!completedBatchOne.includes(row.fighter)).slice(0,5);
+  const completedBatches={
+    batchOne:['Robert Whittaker','Sean Strickland'],
+    batchTwo:['B.J. Penn','Tito Ortiz','Robbie Lawler','Charles Oliveira','Jessica Andrade']
+  };
+  const completedLedgerFighters=[...completedBatches.batchOne,...completedBatches.batchTwo];
+  const nextLedgerBatch=priorityQueue
+    .filter(row=>['needs-ledger-completion','missing-era-loss-entry'].includes(row.status)&&!completedLedgerFighters.includes(row.fighter))
+    .slice(0,5);
+  const nextScoreReview=priorityQueue
+    .filter(row=>row.status==='score-mismatch')
+    .slice(0,5);
+
   const report={
     version:VERSION,
     sourceAuditVersion:audit.version||null,
@@ -59,8 +69,11 @@
     ledgerCompletionFighters:ledgerCompletion.map(row=>row.fighter),
     scoreReviewFighters:scoreReview.map(row=>row.fighter),
     priorityQueue,
-    completedBatchOne,
-    nextBatch,
+    completedBatches,
+    completedLedgerFighters,
+    nextBatch:nextLedgerBatch,
+    nextLedgerBatch,
+    nextScoreReview,
     mutatesScores:false,
     mutatesPenalty:false,
     generatedAt:new Date().toISOString()
@@ -72,9 +85,10 @@
     flaggedCount:report.flaggedCount,
     ledgerCompletionCount:report.ledgerCompletionCount,
     scoreReviewCount:report.scoreReviewCount,
-    nextBatch:nextBatch.map(row=>row.fighter),
+    completedLedgerFighters:[...completedLedgerFighters],
+    nextBatch:nextLedgerBatch.map(row=>row.fighter),
     generatedAt:report.generatedAt
   };
   document.documentElement.setAttribute('data-loss-context-flagged-count',String(report.flaggedCount));
-  document.documentElement.setAttribute('data-loss-context-next-batch',nextBatch.map(row=>row.fighter).join('|'));
+  document.documentElement.setAttribute('data-loss-context-next-batch',nextLedgerBatch.map(row=>row.fighter).join('|'));
 })();
