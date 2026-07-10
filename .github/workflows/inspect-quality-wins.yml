@@ -21,36 +21,4 @@ jobs:
 
       - name: Emit compact source inventory
         shell: bash
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-
-          roots = [Path('assets'), Path('docs')]
-          files = [str(p) for p in Path('assets').rglob('*') if p.is_file() and ('opponent-quality' in p.name.lower() or 'quality-win' in p.name.lower())]
-          matches = {'Chuck Liddell': [], 'Tito Ortiz': []}
-          loader_refs = []
-          ledger_refs = []
-          for root in roots:
-              for path in root.rglob('*'):
-                  if not path.is_file():
-                      continue
-                  try:
-                      text = path.read_text(encoding='utf-8')
-                  except Exception:
-                      continue
-                  for name in matches:
-                      if name in text:
-                          matches[name].append(str(path))
-                  if 'opponent-quality-' in text:
-                      loader_refs.append(str(path))
-                  if 'UFC_OPPONENT_QUALITY_LEDGERS' in text or '.raw[' in text:
-                      ledger_refs.append(str(path))
-          payload = {
-              'files': sorted(files),
-              'matches': {k: sorted(set(v)) for k, v in matches.items()},
-              'loaderRefs': sorted(set(loader_refs)),
-              'ledgerRefs': sorted(set(ledger_refs)),
-          }
-          print('INSPECTION_JSON=' + json.dumps(payload, separators=(',', ':')))
-          PY
+        run: python -c "import json; from pathlib import Path; paths=[p for root in (Path('assets'),Path('docs')) for p in root.rglob('*') if p.is_file()]; read=lambda p: p.read_text(encoding='utf-8',errors='ignore'); payload={'files':sorted(str(p) for p in Path('assets').rglob('*') if p.is_file() and ('opponent-quality' in p.name.lower() or 'quality-win' in p.name.lower())),'matches':{n:sorted(str(p) for p in paths if n in read(p)) for n in ('Chuck Liddell','Tito Ortiz')},'loaderRefs':sorted(str(p) for p in paths if 'opponent-quality-' in read(p)),'ledgerRefs':sorted(str(p) for p in paths if 'UFC_OPPONENT_QUALITY_LEDGERS' in read(p) or '.raw[' in read(p))}; print('INSPECTION_JSON='+json.dumps(payload,separators=(',',':')))"
