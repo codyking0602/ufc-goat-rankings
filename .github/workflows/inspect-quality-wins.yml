@@ -1,9 +1,9 @@
 name: Inspect Quality Wins sources
 
 on:
-  push:
+  pull_request:
     branches:
-      - fix/unified-six-category-pipeline
+      - main
     paths:
       - .github/workflows/inspect-quality-wins.yml
 
