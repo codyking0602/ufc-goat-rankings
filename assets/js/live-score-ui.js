@@ -1,59 +1,51 @@
-// Live-score UI helpers for dynamic category ranks, Peak Apex, and six-category raw scoring.
+// Live-score UI helpers for dynamic category ranks, Apex Peak, and live six-category scoring.
 (function(){
   if(!window.RANKING_DATA) return;
   const DATA = window.RANKING_DATA;
 
-  const SCORE_WEIGHTS = {
-    championship: 35 / 30,
-    opponentQuality: 27.5 / 30,
-    primeDominance: 27.5 / 30,
-    longevity: 10 / 30
-  };
-
   function num(v){ const n = Number(v); return Number.isFinite(n) ? n : 0; }
-  function bounded(n,min,max){ return Math.max(min, Math.min(max, n)); }
+  function round2(v){ return Math.round((num(v) + Number.EPSILON) * 100) / 100; }
   function cleanKey(name){ return String(name || '').trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/\s+/g,' '); }
   function isWomenRow(f){ return f?.leaderboard === 'women' || (DATA.women || []).some(row => cleanKey(row.fighter) === cleanKey(f?.fighter)); }
   function boardFor(f){ return isWomenRow(f) ? (DATA.women || []) : (DATA.men || []); }
   function apexAuditFor(f){ return f?.apexPeakAudit || DISPLAY_OVERRIDES?.[f?.fighter]?.apexPeakAudit || null; }
-  function hasOwnScore(f, key){ return Object.prototype.hasOwnProperty.call(f || {}, key) && f[key] !== null && f[key] !== undefined && f[key] !== ''; }
-  function weightedBaseWithoutApex(f){
-    return num(f?.championship) * SCORE_WEIGHTS.championship
-      + num(f?.opponentQuality) * SCORE_WEIGHTS.opponentQuality
-      + num(f?.primeDominance) * SCORE_WEIGHTS.primeDominance
-      + num(f?.longevity) * SCORE_WEIGHTS.longevity
-      + num(f?.penalty);
+  function apexValue(f){ return num(f?.apexPeak ?? f?.apexPeakBonus ?? apexAuditFor(f)?.score); }
+  function baseScore(f){
+    return round2(
+      (num(f?.championship) / 30) * 35 +
+      (num(f?.opponentQuality) / 30) * 27.5 +
+      (num(f?.primeDominance) / 30) * 27.5 +
+      (num(f?.longevity) / 30) * 10
+    );
   }
-  function defaultApexPeak(f){
-    if(hasOwnScore(f, 'apexPeak')) return num(f.apexPeak);
-    if(hasOwnScore(f, 'apexPeakBonus')) return num(f.apexPeakBonus);
-    const auditScore = apexAuditFor(f)?.score;
-    if(auditScore !== null && auditScore !== undefined && auditScore !== '') return num(auditScore);
-
-    // Compatibility bridge: until every fighter has a hand-audited Apex Peak ledger,
-    // derive the bonus needed to move the old raw total onto the locked six-category formula.
-    // This keeps the current ranking shape stable while making the live total use:
-    // Champ /30 x35 + Quality /30 x27.5 + Prime /30 x27.5 + Longevity /30 x10 + Apex + Loss Context.
-    const legacyTotal = num(f?.totalScore);
-    const bridge = legacyTotal - weightedBaseWithoutApex(f);
-    return bounded(Number(bridge.toFixed(2)), 0, 10);
+  function liveTotal(f){ return round2(baseScore(f) + apexValue(f) + num(f?.penalty)); }
+  function rerank(rows){
+    rows.sort((a,b) => num(b.totalScore) - num(a.totalScore) || num(b.championship) - num(a.championship) || String(a.fighter).localeCompare(String(b.fighter)));
+    rows.forEach((f,i) => { f.rank = i + 1; });
   }
-  function applySixCategoryScore(f){
-    if(!f) return f;
-    const apex = defaultApexPeak(f);
-    const total = Number((weightedBaseWithoutApex(f) + apex).toFixed(2));
-    f.apexPeak = apex;
-    f.apexPeakBonus = apex;
-    f.rawScore = total;
-    f.totalScore = total;
-    return f;
+  function applySixCategoryScoring(){
+    const rows = [...(DATA.men || []), ...(DATA.women || []), ...(DATA.fighters || [])];
+    rows.forEach(f => {
+      if(!f || !f.fighter) return;
+      if(f.originalTotalScore === undefined) f.originalTotalScore = num(f.totalScore);
+      f.baseScore = baseScore(f);
+      f.apexPeak = apexValue(f);
+      f.apexPeakBonus = apexValue(f);
+      f.lossContext = num(f.penalty);
+      f.rawScore = liveTotal(f);
+      f.totalScore = f.rawScore;
+      f.scoreFormula = 'championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty';
+    });
+    rerank(DATA.men || []);
+    rerank(DATA.women || []);
+    window.UFC_SIX_CATEGORY_SCORE_MODEL = {
+      version: 'six-category-live-20260709b',
+      weights: { championship: 35, opponentQuality: 27.5, primeDominance: 27.5, longevity: 10, apexPeak: 'bonus', penalty: 'deduction' },
+      formula: 'Championship /30 × 35 + Quality Wins /30 × 27.5 + Prime Dominance /30 × 27.5 + Longevity /30 × 10 + Apex Peak + Loss Context',
+      appliedAt: new Date().toISOString(),
+      jonJones: (DATA.men || []).find(f => f.fighter === 'Jon Jones') || null
+    };
   }
-  function applyAllSixCategoryScores(){
-    (DATA.men || []).forEach(applySixCategoryScore);
-    (DATA.women || []).forEach(applySixCategoryScore);
-    (DATA.fighters || []).forEach(applySixCategoryScore);
-  }
-  function apexValue(f){ return defaultApexPeak(f); }
   function apexWinsText(f){
     const audit = apexAuditFor(f);
     const wins = (audit?.performances || []).map(p => `${p.label}${p.date ? ' ' + String(p.date).slice(0,4) : ''}`);
@@ -66,14 +58,14 @@
   function apexHowItFelt(f){
     const audit = apexAuditFor(f);
     if(audit?.front?.felt) return audit.front.felt;
-    const aura = num(audit?.components?.aura);
-    const claim = num(audit?.components?.bestFighterClaim);
-    if(aura >= .95) return 'Felt scary, iconic, and almost impossible to solve.';
-    if(claim >= 1.1) return 'Felt like a real best-in-the-world peak, even if not fully mythic.';
-    if(aura >= .65) return 'Felt dangerous, memorable, and clearly title-level.';
+    const aura = num(audit?.components?.aura ?? audit?.components?.cleanApexAura);
+    const claim = num(audit?.components?.bestFighterClaim ?? audit?.components?.peakStatus);
+    if(aura >= .70) return 'Felt scary, iconic, and almost impossible to solve.';
+    if(claim >= 1.10) return 'Felt like a real best-in-the-world peak, even if not fully mythic.';
+    if(aura >= .45) return 'Felt dangerous, memorable, and clearly title-level.';
     return 'Felt like a strong peak, but not one of the cleanest aura runs.';
   }
-  function ensurePeakApexCategory(){
+  function ensureApexCategory(){
     if(typeof CATEGORY_INFO === 'undefined' || !Array.isArray(CATEGORY_INFO)) return;
     const entry = ['apexPeak', 'Apex Peak', 'Best peak bonus: the highest UFC version of the fighter, added after the 100-point base score'];
     const existing = CATEGORY_INFO.find(item => item[0] === 'apexPeak');
@@ -83,23 +75,23 @@
     else CATEGORY_INFO.push(entry);
   }
 
-  applyAllSixCategoryScores();
-  ensurePeakApexCategory();
+  ensureApexCategory();
+  applySixCategoryScoring();
 
   if(typeof overallOvr === 'function'){
     overallOvr = function(f){
       const o = DISPLAY_OVERRIDES[f.fighter];
       if(o?.overallOvr) return o.overallOvr;
-      const max = Math.max(...DATA.men.concat(DATA.women).map(x => num(x.rawScore ?? x.totalScore)), 1);
-      return bounded(Math.round(75 + (num(f.rawScore ?? f.totalScore) / max) * 24), 60, 99);
+      const allRows = (DATA.men || []).concat(DATA.women || []);
+      const max = Math.max(...allRows.map(x => num(x.rawScore ?? x.totalScore)), 1);
+      return clamp(Math.round(75 + (num(f.rawScore ?? f.totalScore) / max) * 24), 60, 99);
     };
   }
 
   if(typeof categoryValueForRank === 'function'){
     categoryValueForRank = function(f, key){
       if(key === 'apexPeak') return apexValue(f);
-      const v = num(f?.[key]);
-      return Number.isFinite(v) ? v : 0;
+      return num(f?.[key]);
     };
   }
 
@@ -119,7 +111,7 @@
       const rank = categoryRank(f, key);
       if(!rank) return 55;
       if(board.length <= 1) return 99;
-      return bounded(Math.round(99 - ((rank - 1) / (board.length - 1)) * 44), 55, 99);
+      return clamp(Math.round(99 - ((rank - 1) / (board.length - 1)) * 44), 55, 99);
     };
   }
 
@@ -132,6 +124,19 @@
       if(rank <= 15) return 'Elite UFC resume';
       if(rank <= 30) return 'Great UFC resume';
       return 'UFC resume';
+    };
+  }
+
+  if(typeof categoryChipGrid === 'function'){
+    categoryChipGrid = function(f){
+      return `<div class="category-chips">
+        ${categoryChip(f, 'championship')}
+        ${categoryChip(f, 'opponentQuality')}
+        ${categoryChip(f, 'primeDominance')}
+        ${categoryChip(f, 'longevity')}
+        ${categoryChip(f, 'apexPeak')}
+        ${categoryChip(f, 'penalty')}
+      </div>`;
     };
   }
 
@@ -148,7 +153,7 @@
     categoryEvidenceItems = function(f, key){
       if(key === 'apexPeak'){
         return [
-          ['Apex bonus', Number(apexValue(f)).toFixed(2)],
+          ['Apex bonus', `+${Number(apexValue(f)).toFixed(2)}`],
           ['Apex wins', apexWinsText(f)],
           ['What it proved', apexWhatItProved(f)],
           ['How it felt', apexHowItFelt(f)]
@@ -174,7 +179,8 @@
   }
 
   window.renderCategories = function renderCategories(){
-    ensurePeakApexCategory();
+    ensureApexCategory();
+    applySixCategoryScoring();
     const target = document.getElementById('categoryBoardList');
     const select = document.getElementById('categoryBoardSelect');
     if(!target || !select) return;
@@ -207,14 +213,15 @@
   if(typeof openFighter === 'function'){
     const baseOpenFighter = openFighter;
     openFighter = function(name){
+      applySixCategoryScoring();
       baseOpenFighter(name);
       const f = fullRow((DATA.men.find(x=>x.fighter===name) || DATA.women.find(x=>x.fighter===name) || {fighter:name}));
-      if(document.getElementById('peakApexProfileCard')) return;
+      if(document.getElementById('apexPeakProfileCard')) return;
       const firstCard = document.querySelector('#fighterDetail .card');
       if(!firstCard) return;
       const card = document.createElement('div');
       card.className = 'card';
-      card.id = 'peakApexProfileCard';
+      card.id = 'apexPeakProfileCard';
       card.innerHTML = `<h3>Apex Peak</h3><p><strong>What it means:</strong> Apex Peak is a positive bonus added after the base score. It rewards the best UFC version of the fighter.</p>${snapshotGrid([
         ['Apex bonus', '+' + Number(apexValue(f)).toFixed(2)],
         ['Apex wins', apexWinsText(f)],
@@ -230,8 +237,11 @@
     renderRules = function(){
       baseRenderRules();
       const table = document.querySelector('#rulesContent .card table tbody');
-      if(table && !table.querySelector('[data-peak-apex-rule]')){
-        table.insertAdjacentHTML('beforeend', '<tr data-peak-apex-rule="true"><td><strong>Apex Peak</strong></td><td>Positive bonus after the 100-point base: Championship /30 x35 + Quality /30 x27.5 + Prime /30 x27.5 + Longevity /30 x10 + Apex Peak + Loss Context.</td></tr>');
+      if(table && !table.querySelector('[data-apex-peak-rule]')){
+        table.insertAdjacentHTML('beforeend', '<tr data-apex-peak-rule="true"><td><strong>Apex Peak</strong></td><td>Positive bonus after the 100-point base.</td></tr>');
+      }
+      if(table && !table.querySelector('[data-six-category-formula]')){
+        table.insertAdjacentHTML('beforeend', '<tr data-six-category-formula="true"><td><strong>Overall Formula</strong></td><td>Championship /30 × 35 + Quality Wins /30 × 27.5 + Prime Dominance /30 × 27.5 + Longevity /30 × 10 + Apex Peak + Loss Context.</td></tr>');
       }
     };
   }
@@ -239,8 +249,8 @@
   if(typeof refresh === 'function'){
     const oldRefresh = refresh;
     refresh = function(){
-      applyAllSixCategoryScores();
-      ensurePeakApexCategory();
+      ensureApexCategory();
+      applySixCategoryScoring();
       oldRefresh();
       initCategoryBoard();
       window.renderCategories();
@@ -250,5 +260,5 @@
   initCategoryBoard();
   if(typeof refresh === 'function') refresh();
   else window.renderCategories();
-  document.documentElement.setAttribute('data-six-category-score','20260709-live');
+  document.documentElement.setAttribute('data-six-category-score','20260709b-live-rerank');
 })();
