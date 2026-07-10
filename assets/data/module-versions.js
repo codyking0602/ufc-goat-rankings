@@ -17,7 +17,7 @@ window.UFC_MODULE_VERSIONS={
   longevityLivePromoter:"20260710a-category-only",
   apexPeakCorrections:"20260709b-full-roster",
   apexPeakComponentAudit:"20260709c-batch-one-review-adjustments",
-  apexPeakLiveBonus:"20260709c-missing-row-fixes"
+  apexPeakLiveBonus:"20260710a-category-only"
 };
 
 (function(){
