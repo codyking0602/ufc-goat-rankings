@@ -1,0 +1,4866 @@
+{
+  "version": "six-category-integrity-audit-20260709a",
+  "label": "github-actions-deterministic-runtime",
+  "generatedAt": "2026-07-10T17:08:49.857Z",
+  "mutatesScores": false,
+  "formula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty",
+  "weights": {
+    "championship": 35,
+    "opponentQuality": 27.5,
+    "primeDominance": 27.5,
+    "longevity": 10
+  },
+  "maximums": {
+    "championship": 30,
+    "opponentQuality": 30,
+    "primeDominance": 30,
+    "longevity": 30,
+    "apexPeak": 6
+  },
+  "modules": {
+    "rankingData": true,
+    "championshipResumeLive": true,
+    "opponentQualityLive": true,
+    "primeDominanceReport": true,
+    "primeDominanceLivePromoter": true,
+    "longevityShadow": true,
+    "longevityLivePromoter": true,
+    "apexPeakLiveBonus": true,
+    "lossContextAdapter": true,
+    "lossContextLivePromoter": true,
+    "scoreWeighting": true
+  },
+  "summary": {
+    "fighterCount": 62,
+    "menCount": 48,
+    "womenCount": 14,
+    "completeCount": 62,
+    "incompleteCount": 0,
+    "formulaMismatchCount": 0,
+    "forbiddenOverrideCount": 0,
+    "duplicateBoardNameCount": 0,
+    "duplicateProfileNameCount": 0,
+    "categories": {
+      "championship": {
+        "pass": 62,
+        "warning": 0,
+        "fail": 0
+      },
+      "opponentQuality": {
+        "pass": 62,
+        "warning": 0,
+        "fail": 0
+      },
+      "primeDominance": {
+        "pass": 62,
+        "warning": 0,
+        "fail": 0
+      },
+      "longevity": {
+        "pass": 62,
+        "warning": 0,
+        "fail": 0
+      },
+      "apexPeak": {
+        "pass": 62,
+        "warning": 0,
+        "fail": 0
+      },
+      "penalty": {
+        "pass": 62,
+        "warning": 0,
+        "fail": 0
+      }
+    },
+    "ownershipPass": true,
+    "deterministicInitializationPass": true
+  },
+  "duplicateBoardRows": [],
+  "duplicateProfileRows": [],
+  "fighters": [
+    {
+      "fighter": "Jon Jones",
+      "board": "men",
+      "rank": 1,
+      "values": {
+        "championship": 30,
+        "opponentQuality": 30,
+        "primeDominance": 25.86,
+        "longevity": 30,
+        "apexPeak": 6,
+        "penalty": 0,
+        "totalScore": 102.21
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 30,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 30,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 25.86,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 30,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 6,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": 0,
+          "estimated": 0,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 102.21,
+      "actualTotal": 102.21,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Georges St-Pierre",
+      "board": "men",
+      "rank": 2,
+      "values": {
+        "championship": 25.11,
+        "opponentQuality": 28.66,
+        "primeDominance": 24.42,
+        "longevity": 30,
+        "apexPeak": 5.56,
+        "penalty": -5.5,
+        "totalScore": 88.01
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 25.11,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 28.66,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 24.42,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 30,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 5.56,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -5.5,
+          "estimated": -5.5,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 88.01,
+      "actualTotal": 88.01,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Demetrious Johnson",
+      "board": "men",
+      "rank": 3,
+      "values": {
+        "championship": 21.87,
+        "opponentQuality": 21.81,
+        "primeDominance": 24.13,
+        "longevity": 21.03,
+        "apexPeak": 5.15,
+        "penalty": -2.25,
+        "totalScore": 77.54
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 21.87,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 21.81,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 24.13,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 21.03,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 5.15,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -2.25,
+          "estimated": -2.25,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 77.54,
+      "actualTotal": 77.54,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Anderson Silva",
+      "board": "men",
+      "rank": 4,
+      "values": {
+        "championship": 21.05,
+        "opponentQuality": 21.91,
+        "primeDominance": 25.08,
+        "longevity": 24.7,
+        "apexPeak": 5.8,
+        "penalty": -4.5,
+        "totalScore": 77.17
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 21.05,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 21.91,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 25.08,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 24.7,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 5.8,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -4.5,
+          "estimated": -4.5,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 77.17,
+      "actualTotal": 77.17,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Islam Makhachev",
+      "board": "men",
+      "rank": 5,
+      "values": {
+        "championship": 11.74,
+        "opponentQuality": 24.04,
+        "primeDominance": 26.54,
+        "longevity": 19.36,
+        "apexPeak": 5.68,
+        "penalty": -2,
+        "totalScore": 70.19
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 11.74,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 24.04,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 26.54,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 19.36,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 5.68,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -2,
+          "estimated": -2,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 70.19,
+      "actualTotal": 70.19,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Alexander Volkanovski",
+      "board": "men",
+      "rank": 6,
+      "values": {
+        "championship": 15.39,
+        "opponentQuality": 23.26,
+        "primeDominance": 22,
+        "longevity": 19.61,
+        "apexPeak": 5.34,
+        "penalty": -4.25,
+        "totalScore": 67.07
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 15.39,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 23.26,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 22,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 19.61,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 5.34,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -4.25,
+          "estimated": -4.25,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 67.07,
+      "actualTotal": 67.07,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Khabib Nurmagomedov",
+      "board": "men",
+      "rank": 7,
+      "values": {
+        "championship": 7.49,
+        "opponentQuality": 19.47,
+        "primeDominance": 28.12,
+        "longevity": 20.47,
+        "apexPeak": 6,
+        "penalty": 0,
+        "totalScore": 65.19
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 7.49,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 19.47,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 28.12,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 20.47,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 6,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": 0,
+          "estimated": 0,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 65.19,
+      "actualTotal": 65.19,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Jose Aldo",
+      "board": "men",
+      "rank": 8,
+      "values": {
+        "championship": 14.88,
+        "opponentQuality": 22.34,
+        "primeDominance": 22.65,
+        "longevity": 30,
+        "apexPeak": 3.79,
+        "penalty": -8.25,
+        "totalScore": 64.14
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 14.88,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 22.34,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 22.65,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 30,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 3.79,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -8.25,
+          "estimated": -8.25,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 64.14,
+      "actualTotal": 64.14,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Matt Hughes",
+      "board": "men",
+      "rank": 9,
+      "values": {
+        "championship": 17.33,
+        "opponentQuality": 20.49,
+        "primeDominance": 24.46,
+        "longevity": 21.11,
+        "apexPeak": 3.8,
+        "penalty": -8.75,
+        "totalScore": 63.51
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 17.33,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 20.49,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 24.46,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 21.11,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 3.8,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -8.75,
+          "estimated": -8.75,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 63.51,
+      "actualTotal": 63.51,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Kamaru Usman",
+      "board": "men",
+      "rank": 10,
+      "values": {
+        "championship": 11.45,
+        "opponentQuality": 22.77,
+        "primeDominance": 22.1,
+        "longevity": 16.89,
+        "apexPeak": 5.48,
+        "penalty": -4.5,
+        "totalScore": 61.1
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 11.45,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 22.77,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 22.1,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 16.89,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 5.48,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -4.5,
+          "estimated": -4.5,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 61.1,
+      "actualTotal": 61.1,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Stipe Miocic",
+      "board": "men",
+      "rank": 11,
+      "values": {
+        "championship": 11.97,
+        "opponentQuality": 21.06,
+        "primeDominance": 24.44,
+        "longevity": 18.61,
+        "apexPeak": 4.76,
+        "penalty": -8,
+        "totalScore": 58.64
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 11.97,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 21.06,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 24.44,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 18.61,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.76,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -8,
+          "estimated": -8,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 58.64,
+      "actualTotal": 58.64,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Israel Adesanya",
+      "board": "men",
+      "rank": 12,
+      "values": {
+        "championship": 13.31,
+        "opponentQuality": 22.04,
+        "primeDominance": 21.16,
+        "longevity": 15.74,
+        "apexPeak": 4.77,
+        "penalty": -6.75,
+        "totalScore": 58.4
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 13.31,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 22.04,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 21.16,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 15.74,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.77,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -6.75,
+          "estimated": -6.75,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 58.4,
+      "actualTotal": 58.4,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Daniel Cormier",
+      "board": "men",
+      "rank": 13,
+      "values": {
+        "championship": 11.86,
+        "opponentQuality": 17.34,
+        "primeDominance": 23.57,
+        "longevity": 20.92,
+        "apexPeak": 4.65,
+        "penalty": -5.25,
+        "totalScore": 57.71
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 11.86,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 17.34,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 23.57,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 20.92,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.65,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -5.25,
+          "estimated": -5.25,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 57.71,
+      "actualTotal": 57.71,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Alex Pereira",
+      "board": "men",
+      "rank": 14,
+      "values": {
+        "championship": 12.05,
+        "opponentQuality": 18.19,
+        "primeDominance": 23.66,
+        "longevity": 13.22,
+        "apexPeak": 5.53,
+        "penalty": -5,
+        "totalScore": 57.36
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 12.05,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 18.19,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 23.66,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 13.22,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 5.53,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -5,
+          "estimated": -5,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 57.36,
+      "actualTotal": 57.36,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Randy Couture",
+      "board": "men",
+      "rank": 15,
+      "values": {
+        "championship": 17.31,
+        "opponentQuality": 21.04,
+        "primeDominance": 21.86,
+        "longevity": 13.17,
+        "apexPeak": 3.37,
+        "penalty": -10,
+        "totalScore": 57.28
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 17.31,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 21.04,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 21.86,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 13.17,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 3.37,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -10,
+          "estimated": -10,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 57.28,
+      "actualTotal": 57.28,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Max Holloway",
+      "board": "men",
+      "rank": 16,
+      "values": {
+        "championship": 7.1,
+        "opponentQuality": 25.36,
+        "primeDominance": 21.24,
+        "longevity": 30,
+        "apexPeak": 4.74,
+        "penalty": -10,
+        "totalScore": 55.74
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 7.1,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 25.36,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 21.24,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 30,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.74,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -10,
+          "estimated": -10,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 55.74,
+      "actualTotal": 55.74,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Cain Velasquez",
+      "board": "men",
+      "rank": 17,
+      "values": {
+        "championship": 7.84,
+        "opponentQuality": 15.89,
+        "primeDominance": 25.51,
+        "longevity": 14.71,
+        "apexPeak": 4.25,
+        "penalty": -4.5,
+        "totalScore": 51.75
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 7.84,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 15.89,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 25.51,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 14.71,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.25,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -4.5,
+          "estimated": -4.5,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 51.75,
+      "actualTotal": 51.75,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "B.J. Penn",
+      "board": "men",
+      "rank": 18,
+      "values": {
+        "championship": 9.86,
+        "opponentQuality": 16.49,
+        "primeDominance": 23.81,
+        "longevity": 21.98,
+        "apexPeak": 4.44,
+        "penalty": -9.75,
+        "totalScore": 50.46
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 9.86,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 16.49,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 23.81,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 21.98,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.44,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -9.75,
+          "estimated": -9.75,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 50.46,
+      "actualTotal": 50.46,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Chuck Liddell",
+      "board": "men",
+      "rank": 19,
+      "values": {
+        "championship": 9.28,
+        "opponentQuality": 19.85,
+        "primeDominance": 24.9,
+        "longevity": 10.4,
+        "apexPeak": 4.87,
+        "penalty": -10,
+        "totalScore": 50.18
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 9.28,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 19.85,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 24.9,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 10.4,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.87,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -10,
+          "estimated": -10,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 50.18,
+      "actualTotal": 50.18,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "T.J. Dillashaw",
+      "board": "men",
+      "rank": 20,
+      "values": {
+        "championship": 9.59,
+        "opponentQuality": 16.15,
+        "primeDominance": 22.43,
+        "longevity": 15.09,
+        "apexPeak": 4.55,
+        "penalty": -7.25,
+        "totalScore": 48.88
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 9.59,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 16.15,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 22.43,
+          "auditVersion": "prime-dominance-audit-batch-seven-20260710c-prime-final-batch",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 15.09,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.55,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -7.25,
+          "estimated": -7.25,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 48.88,
+      "actualTotal": 48.88,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Frankie Edgar",
+      "board": "men",
+      "rank": 21,
+      "values": {
+        "championship": 5.88,
+        "opponentQuality": 22.09,
+        "primeDominance": 18.02,
+        "longevity": 30,
+        "apexPeak": 4.21,
+        "penalty": -9.75,
+        "totalScore": 48.09
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 5.88,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 22.09,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 18.02,
+          "auditVersion": "prime-dominance-audit-batch-seven-20260710c-prime-final-batch",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 30,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.21,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -9.75,
+          "estimated": -9.75,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 48.09,
+      "actualTotal": 48.09,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Ilia Topuria",
+      "board": "men",
+      "rank": 22,
+      "values": {
+        "championship": 6.27,
+        "opponentQuality": 12.3,
+        "primeDominance": 23.7,
+        "longevity": 12.08,
+        "apexPeak": 5.95,
+        "penalty": -2.25,
+        "totalScore": 48.04
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 6.27,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 12.3,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 23.7,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 12.08,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 5.95,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -2.25,
+          "estimated": -2.25,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 48.04,
+      "actualTotal": 48.04,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Henry Cejudo",
+      "board": "men",
+      "rank": 23,
+      "values": {
+        "championship": 7.51,
+        "opponentQuality": 14.04,
+        "primeDominance": 25.88,
+        "longevity": 10.53,
+        "apexPeak": 4.35,
+        "penalty": -5.25,
+        "totalScore": 47.97
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 7.51,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 14.04,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 25.88,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 10.53,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.35,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -5.25,
+          "estimated": -5.25,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 47.97,
+      "actualTotal": 47.97,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Charles Oliveira",
+      "board": "men",
+      "rank": 24,
+      "values": {
+        "championship": 3.63,
+        "opponentQuality": 22.06,
+        "primeDominance": 23.39,
+        "longevity": 22.16,
+        "apexPeak": 4.6,
+        "penalty": -10,
+        "totalScore": 47.88
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 3.63,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 22.06,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 23.39,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 22.16,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.6,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -10,
+          "estimated": -10,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 47.88,
+      "actualTotal": 47.88,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Junior dos Santos",
+      "board": "men",
+      "rank": 25,
+      "values": {
+        "championship": 3.82,
+        "opponentQuality": 20.06,
+        "primeDominance": 23.24,
+        "longevity": 15.5,
+        "apexPeak": 4.49,
+        "penalty": -6.1,
+        "totalScore": 47.7
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 3.82,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 20.06,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 23.24,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 15.5,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.49,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -6.1,
+          "estimated": -6.1,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 47.7,
+      "actualTotal": 47.7,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Conor McGregor",
+      "board": "men",
+      "rank": 26,
+      "values": {
+        "championship": 6.05,
+        "opponentQuality": 16.06,
+        "primeDominance": 24.14,
+        "longevity": 13.96,
+        "apexPeak": 5.8,
+        "penalty": -7,
+        "totalScore": 47.36
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 6.05,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 16.06,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 24.14,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 13.96,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 5.8,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -7,
+          "estimated": -7,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 47.36,
+      "actualTotal": 47.36,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Tyron Woodley",
+      "board": "men",
+      "rank": 27,
+      "values": {
+        "championship": 7.53,
+        "opponentQuality": 15.45,
+        "primeDominance": 20.17,
+        "longevity": 16.58,
+        "apexPeak": 4.37,
+        "penalty": -4.5,
+        "totalScore": 46.83
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 7.53,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 15.45,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 20.17,
+          "auditVersion": "prime-dominance-audit-batch-seven-20260710c-prime-final-batch",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 16.58,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.37,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -4.5,
+          "estimated": -4.5,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 46.83,
+      "actualTotal": 46.83,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Merab Dvalishvili",
+      "board": "men",
+      "rank": 28,
+      "values": {
+        "championship": 7.94,
+        "opponentQuality": 15.21,
+        "primeDominance": 20.45,
+        "longevity": 15.52,
+        "apexPeak": 4,
+        "penalty": -4.75,
+        "totalScore": 46.38
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 7.94,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 15.21,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 20.45,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 15.52,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4,
+          "auditVersion": "apex-peak-audit-final-20260710b-merab-zhang",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -4.75,
+          "estimated": -4.75,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 46.38,
+      "actualTotal": 46.38,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Tito Ortiz",
+      "board": "men",
+      "rank": 29,
+      "values": {
+        "championship": 10.54,
+        "opponentQuality": 14.45,
+        "primeDominance": 22.51,
+        "longevity": 12.85,
+        "apexPeak": 3.99,
+        "penalty": -8.25,
+        "totalScore": 46.2
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 10.54,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 14.45,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 22.51,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 12.85,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 3.99,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -8.25,
+          "estimated": -8.25,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 46.2,
+      "actualTotal": 46.2,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Francis Ngannou",
+      "board": "men",
+      "rank": 30,
+      "values": {
+        "championship": 3.92,
+        "opponentQuality": 15.83,
+        "primeDominance": 25.81,
+        "longevity": 9.82,
+        "apexPeak": 5.65,
+        "penalty": -5.5,
+        "totalScore": 46.17
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 3.92,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 15.83,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 25.81,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 9.82,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 5.65,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -5.5,
+          "estimated": -5.5,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 46.17,
+      "actualTotal": 46.17,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Dricus du Plessis",
+      "board": "men",
+      "rank": 31,
+      "values": {
+        "championship": 5.88,
+        "opponentQuality": 14.91,
+        "primeDominance": 20.27,
+        "longevity": 10.78,
+        "apexPeak": 4.55,
+        "penalty": -1.5,
+        "totalScore": 45.75
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 5.88,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 14.91,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 20.27,
+          "auditVersion": "prime-dominance-audit-batch-seven-20260710c-prime-final-batch",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 10.78,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.55,
+          "auditVersion": "apex-peak-audit-final-20260710b-merab-zhang",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -1.5,
+          "estimated": -1.5,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 45.75,
+      "actualTotal": 45.75,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Dominick Cruz",
+      "board": "men",
+      "rank": 32,
+      "values": {
+        "championship": 7.63,
+        "opponentQuality": 11.06,
+        "primeDominance": 20.02,
+        "longevity": 19.89,
+        "apexPeak": 4.25,
+        "penalty": -3.75,
+        "totalScore": 44.52
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 7.63,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 11.06,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 20.02,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 19.89,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.25,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -3.75,
+          "estimated": -3.75,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 44.52,
+      "actualTotal": 44.52,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Petr Yan",
+      "board": "men",
+      "rank": 33,
+      "values": {
+        "championship": 5.39,
+        "opponentQuality": 15.43,
+        "primeDominance": 18.37,
+        "longevity": 20.22,
+        "apexPeak": 4.15,
+        "penalty": -5.25,
+        "totalScore": 42.91
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 5.39,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 15.43,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 18.37,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 20.22,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.15,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -5.25,
+          "estimated": -5.25,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 42.91,
+      "actualTotal": 42.91,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Deiveson Figueiredo",
+      "board": "men",
+      "rank": 34,
+      "values": {
+        "championship": 5.57,
+        "opponentQuality": 16.38,
+        "primeDominance": 18.71,
+        "longevity": 14.47,
+        "apexPeak": 4.38,
+        "penalty": -5.25,
+        "totalScore": 42.62
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 5.57,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 16.38,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 18.71,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 14.47,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.38,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -5.25,
+          "estimated": -5.25,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 42.62,
+      "actualTotal": 42.62,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Khamzat Chimaev",
+      "board": "men",
+      "rank": 35,
+      "values": {
+        "championship": 1.96,
+        "opponentQuality": 13.85,
+        "primeDominance": 21.77,
+        "longevity": 13.27,
+        "apexPeak": 4.35,
+        "penalty": -1.5,
+        "totalScore": 42.21
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 1.96,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 13.85,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 21.77,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 13.27,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.35,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -1.5,
+          "estimated": -1.5,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 42.21,
+      "actualTotal": 42.21,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Dustin Poirier",
+      "board": "men",
+      "rank": 36,
+      "values": {
+        "championship": 1.46,
+        "opponentQuality": 23.49,
+        "primeDominance": 19.67,
+        "longevity": 19.66,
+        "apexPeak": 4.07,
+        "penalty": -10,
+        "totalScore": 41.89
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 1.46,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 23.49,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 19.67,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 19.66,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.07,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -10,
+          "estimated": -10,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 41.89,
+      "actualTotal": 41.89,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Aljamain Sterling",
+      "board": "men",
+      "rank": 37,
+      "values": {
+        "championship": 6.5,
+        "opponentQuality": 15.74,
+        "primeDominance": 20.68,
+        "longevity": 10.37,
+        "apexPeak": 4.36,
+        "penalty": -7.25,
+        "totalScore": 41.54
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 6.5,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 15.74,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 20.68,
+          "auditVersion": "prime-dominance-audit-batch-seven-20260710c-prime-final-batch",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 10.37,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.36,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -7.25,
+          "estimated": -7.25,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 41.54,
+      "actualTotal": 41.54,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Robbie Lawler",
+      "board": "men",
+      "rank": 38,
+      "values": {
+        "championship": 5.78,
+        "opponentQuality": 17.43,
+        "primeDominance": 20.52,
+        "longevity": 11.14,
+        "apexPeak": 4.46,
+        "penalty": -8.62,
+        "totalScore": 41.08
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 5.78,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 17.43,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 20.52,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 11.14,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.46,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -8.62,
+          "estimated": -8.62,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 41.08,
+      "actualTotal": 41.08,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Robert Whittaker",
+      "board": "men",
+      "rank": 39,
+      "values": {
+        "championship": 3.01,
+        "opponentQuality": 20,
+        "primeDominance": 17.52,
+        "longevity": 23.37,
+        "apexPeak": 4.1,
+        "penalty": -9.75,
+        "totalScore": 40.05
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 3.01,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 20,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 17.52,
+          "auditVersion": "prime-dominance-audit-batch-seven-20260710c-prime-final-batch",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 23.37,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.1,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -9.75,
+          "estimated": -9.75,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 40.05,
+      "actualTotal": 40.05,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Tony Ferguson",
+      "board": "men",
+      "rank": 40,
+      "values": {
+        "championship": 1.32,
+        "opponentQuality": 17.3,
+        "primeDominance": 21.85,
+        "longevity": 14.84,
+        "apexPeak": 4.19,
+        "penalty": -6.51,
+        "totalScore": 40.05
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 1.32,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 17.3,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 21.85,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 14.84,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.19,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -6.51,
+          "estimated": -6.51,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 40.05,
+      "actualTotal": 40.05,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Justin Gaethje",
+      "board": "men",
+      "rank": 41,
+      "values": {
+        "championship": 4.85,
+        "opponentQuality": 18.83,
+        "primeDominance": 19.23,
+        "longevity": 13.24,
+        "apexPeak": 4.09,
+        "penalty": -10,
+        "totalScore": 39.05
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 4.85,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 18.83,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 19.23,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 13.24,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.09,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -10,
+          "estimated": -10,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 39.05,
+      "actualTotal": 39.05,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Lyoto Machida",
+      "board": "men",
+      "rank": 42,
+      "values": {
+        "championship": 4.02,
+        "opponentQuality": 16.38,
+        "primeDominance": 19.46,
+        "longevity": 16.76,
+        "apexPeak": 4.64,
+        "penalty": -9,
+        "totalScore": 38.77
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 4.02,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 16.38,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 19.46,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 16.76,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.64,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -9,
+          "estimated": -9,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 38.77,
+      "actualTotal": 38.77,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Brock Lesnar",
+      "board": "men",
+      "rank": 43,
+      "values": {
+        "championship": 5.67,
+        "opponentQuality": 8.51,
+        "primeDominance": 22.72,
+        "longevity": 5.73,
+        "apexPeak": 4.18,
+        "penalty": -3.75,
+        "totalScore": 37.58
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 5.67,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 8.51,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 22.72,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 5.73,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.18,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -3.75,
+          "estimated": -3.75,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 37.58,
+      "actualTotal": 37.58,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Sean O'Malley",
+      "board": "men",
+      "rank": 44,
+      "values": {
+        "championship": 3.82,
+        "opponentQuality": 13.3,
+        "primeDominance": 18.15,
+        "longevity": 11.95,
+        "apexPeak": 4.06,
+        "penalty": -5.25,
+        "totalScore": 36.08
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 3.82,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 13.3,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 18.15,
+          "auditVersion": "prime-dominance-audit-batch-seven-20260710c-prime-final-batch",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 11.95,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.06,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -5.25,
+          "estimated": -5.25,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 36.08,
+      "actualTotal": 36.08,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Sean Strickland",
+      "board": "men",
+      "rank": 45,
+      "values": {
+        "championship": 4.13,
+        "opponentQuality": 15.32,
+        "primeDominance": 18.12,
+        "longevity": 8.75,
+        "apexPeak": 3.85,
+        "penalty": -10,
+        "totalScore": 32.24
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 4.13,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 15.32,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 18.12,
+          "auditVersion": "prime-dominance-audit-batch-seven-20260710c-prime-final-batch",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 8.75,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 3.85,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -10,
+          "estimated": -10,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 32.24,
+      "actualTotal": 32.24,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Michael Bisping",
+      "board": "men",
+      "rank": 46,
+      "values": {
+        "championship": 3.61,
+        "opponentQuality": 13.6,
+        "primeDominance": 19.92,
+        "longevity": 5.12,
+        "apexPeak": 3.77,
+        "penalty": -9.1,
+        "totalScore": 31.32
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 3.61,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 13.6,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 19.92,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 5.12,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 3.77,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -9.1,
+          "estimated": -9.1,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 31.32,
+      "actualTotal": 31.32,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Dan Henderson",
+      "board": "men",
+      "rank": 47,
+      "values": {
+        "championship": 0,
+        "opponentQuality": 10.62,
+        "primeDominance": 13.4,
+        "longevity": 14.02,
+        "apexPeak": 3.76,
+        "penalty": -5.25,
+        "totalScore": 25.2
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 0,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 10.62,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 13.4,
+          "auditVersion": "prime-dominance-audit-batch-seven-20260710c-prime-final-batch",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 14.02,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 3.76,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -5.25,
+          "estimated": -5.25,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 25.2,
+      "actualTotal": 25.2,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Chael Sonnen",
+      "board": "men",
+      "rank": 48,
+      "values": {
+        "championship": 0,
+        "opponentQuality": 9.87,
+        "primeDominance": 14.04,
+        "longevity": 9.27,
+        "apexPeak": 3.44,
+        "penalty": -7.5,
+        "totalScore": 20.95
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 0,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 9.87,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 14.04,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 9.27,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 3.44,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -7.5,
+          "estimated": -7.5,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 20.95,
+      "actualTotal": 20.95,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Amanda Nunes",
+      "board": "women",
+      "rank": 1,
+      "values": {
+        "championship": 20.74,
+        "opponentQuality": 24.6,
+        "primeDominance": 27.6,
+        "longevity": 23.39,
+        "apexPeak": 6,
+        "penalty": -3.75,
+        "totalScore": 82.09
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 20.74,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 24.6,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 27.6,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 23.39,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 6,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -3.75,
+          "estimated": -3.75,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 82.09,
+      "actualTotal": 82.09,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Valentina Shevchenko",
+      "board": "women",
+      "rank": 2,
+      "values": {
+        "championship": 20.74,
+        "opponentQuality": 21.81,
+        "primeDominance": 22.68,
+        "longevity": 30,
+        "apexPeak": 4.7,
+        "penalty": -4.5,
+        "totalScore": 75.18
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 20.74,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 21.81,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 22.68,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 30,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.7,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -4.5,
+          "estimated": -4.5,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 75.18,
+      "actualTotal": 75.18,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Zhang Weili",
+      "board": "women",
+      "rank": 3,
+      "values": {
+        "championship": 9.7,
+        "opponentQuality": 18.51,
+        "primeDominance": 22.22,
+        "longevity": 23.24,
+        "apexPeak": 4.85,
+        "penalty": -4.5,
+        "totalScore": 56.75
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 9.7,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 18.51,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 22.22,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 23.24,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.85,
+          "auditVersion": "apex-peak-audit-final-20260710b-merab-zhang",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -4.5,
+          "estimated": -4.5,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 56.75,
+      "actualTotal": 56.75,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Ronda Rousey",
+      "board": "women",
+      "rank": 4,
+      "values": {
+        "championship": 10.83,
+        "opponentQuality": 11.06,
+        "primeDominance": 28.24,
+        "longevity": 9.86,
+        "apexPeak": 5.2,
+        "penalty": -4.5,
+        "totalScore": 52.65
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 10.83,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 11.06,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 28.24,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 9.86,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 5.2,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -4.5,
+          "estimated": -4.5,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 52.65,
+      "actualTotal": 52.65,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Joanna Jedrzejczyk",
+      "board": "women",
+      "rank": 5,
+      "values": {
+        "championship": 11.24,
+        "opponentQuality": 16.62,
+        "primeDominance": 20.28,
+        "longevity": 16.3,
+        "apexPeak": 4.6,
+        "penalty": -6,
+        "totalScore": 50.97
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 11.24,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 16.62,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 20.28,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 16.3,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.6,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -6,
+          "estimated": -6,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 50.97,
+      "actualTotal": 50.97,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Rose Namajunas",
+      "board": "women",
+      "rank": 6,
+      "values": {
+        "championship": 8.05,
+        "opponentQuality": 17.55,
+        "primeDominance": 20.08,
+        "longevity": 14.58,
+        "apexPeak": 4.64,
+        "penalty": -6,
+        "totalScore": 47.39
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 8.05,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 17.55,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 20.08,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 14.58,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.64,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -6,
+          "estimated": -6,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 47.39,
+      "actualTotal": 47.39,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Jessica Andrade",
+      "board": "women",
+      "rank": 7,
+      "values": {
+        "championship": 1.96,
+        "opponentQuality": 18.23,
+        "primeDominance": 19.45,
+        "longevity": 16.39,
+        "apexPeak": 4.1,
+        "penalty": -7.5,
+        "totalScore": 38.89
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 1.96,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 18.23,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 19.45,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 16.39,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.1,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -7.5,
+          "estimated": -7.5,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 38.89,
+      "actualTotal": 38.89,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Kayla Harrison",
+      "board": "women",
+      "rank": 8,
+      "values": {
+        "championship": 2.06,
+        "opponentQuality": 4.57,
+        "primeDominance": 24.18,
+        "longevity": 6.61,
+        "apexPeak": 3.48,
+        "penalty": 0,
+        "totalScore": 34.44
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 2.06,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 4.57,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 24.18,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 6.61,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 3.48,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": 0,
+          "estimated": 0,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 34.44,
+      "actualTotal": 34.44,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Alexa Grasso",
+      "board": "women",
+      "rank": 9,
+      "values": {
+        "championship": 2.06,
+        "opponentQuality": 11.45,
+        "primeDominance": 18.67,
+        "longevity": 16.98,
+        "apexPeak": 4.08,
+        "penalty": -6.5,
+        "totalScore": 33.25
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 2.06,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 11.45,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 18.67,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 16.98,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.08,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -6.5,
+          "estimated": -6.5,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 33.25,
+      "actualTotal": 33.25,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Carla Esparza",
+      "board": "women",
+      "rank": 10,
+      "values": {
+        "championship": 3.43,
+        "opponentQuality": 13.96,
+        "primeDominance": 16.71,
+        "longevity": 12.75,
+        "apexPeak": 3.31,
+        "penalty": -8.25,
+        "totalScore": 31.43
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 3.43,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 13.96,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 16.71,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 12.75,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 3.31,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -8.25,
+          "estimated": -8.25,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 31.43,
+      "actualTotal": 31.43,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Julianna Peña",
+      "board": "women",
+      "rank": 11,
+      "values": {
+        "championship": 3.73,
+        "opponentQuality": 10.55,
+        "primeDominance": 17,
+        "longevity": 13.7,
+        "apexPeak": 4.02,
+        "penalty": -8,
+        "totalScore": 30.19
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 3.73,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 10.55,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 17,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 13.7,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.02,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -8,
+          "estimated": -8,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 30.19,
+      "actualTotal": 30.19,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Holly Holm",
+      "board": "women",
+      "rank": 12,
+      "values": {
+        "championship": 2.06,
+        "opponentQuality": 12.57,
+        "primeDominance": 15.45,
+        "longevity": 11,
+        "apexPeak": 4.2,
+        "penalty": -7.28,
+        "totalScore": 28.67
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 2.06,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 12.57,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 15.45,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 11,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 4.2,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -7.28,
+          "estimated": -7.28,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 28.67,
+      "actualTotal": 28.67,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Miesha Tate",
+      "board": "women",
+      "rank": 13,
+      "values": {
+        "championship": 1.96,
+        "opponentQuality": 11.04,
+        "primeDominance": 17.6,
+        "longevity": 4.21,
+        "apexPeak": 3.63,
+        "penalty": -5.25,
+        "totalScore": 28.32
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 1.96,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 11.04,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 17.6,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 4.21,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 3.63,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -5.25,
+          "estimated": -5.25,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 28.32,
+      "actualTotal": 28.32,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    },
+    {
+      "fighter": "Mackenzie Dern",
+      "board": "women",
+      "rank": 14,
+      "values": {
+        "championship": 1.77,
+        "opponentQuality": 11.62,
+        "primeDominance": 13.8,
+        "longevity": 17.82,
+        "apexPeak": 3.46,
+        "penalty": -9,
+        "totalScore": 25.77
+      },
+      "categories": {
+        "championship": {
+          "level": "pass",
+          "source": "championship-resume-ledger",
+          "details": "Live ledger value reached row.championship.",
+          "value": 1.77,
+          "auditVersion": "championship-resume-live-20260710d-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "opponentQuality": {
+          "level": "pass",
+          "source": "opponent-quality-ledger",
+          "details": "Live Quality Wins ledger value reached row.opponentQuality.",
+          "value": 11.62,
+          "auditVersion": "opponent-quality-live-20260710c-fixed-benchmark",
+          "valueMatchesAudit": true
+        },
+        "primeDominance": {
+          "level": "pass",
+          "source": "prime-dominance-merged-ledger",
+          "details": "Merged audited Prime Dominance value reached row.primeDominance.",
+          "value": 13.8,
+          "auditVersion": "prime-dominance-shadow-model-20260708c-jon-elite-stakes",
+          "valueMatchesAudit": true
+        },
+        "longevity": {
+          "level": "pass",
+          "source": "fighter-era-ledger",
+          "details": "Native /30 Longevity value reached row.longevity.",
+          "value": 17.82,
+          "auditVersion": "longevity-live-promoter-20260710a-category-only",
+          "valueMatchesAudit": true
+        },
+        "apexPeak": {
+          "level": "pass",
+          "source": "locked-apex-audit",
+          "details": "Audited Apex Peak value reached row.apexPeak.",
+          "value": 3.46,
+          "auditVersion": "apex-peak-live-bonus-20260710a-category-only",
+          "valueMatchesAudit": true,
+          "pending": false
+        },
+        "penalty": {
+          "level": "pass",
+          "source": "loss-context-ledger",
+          "details": "Audited Loss Context value reached row.penalty.",
+          "value": -9,
+          "estimated": -9,
+          "auditVersion": "loss-context-live-promoter-20260710a-locked-current-values",
+          "valueMatchesAudit": true
+        }
+      },
+      "expectedTotal": 25.77,
+      "actualTotal": 25.77,
+      "formulaDelta": 0,
+      "formulaPass": true,
+      "profilePresent": true,
+      "profileMismatches": [],
+      "forbiddenOverrideFields": [],
+      "categoryFailures": [],
+      "categoryWarnings": [],
+      "complete": true
+    }
+  ],
+  "incompleteFighters": [],
+  "formulaMismatches": [],
+  "forbiddenOverrides": [],
+  "passed": true,
+  "markdown": "# Six-Category Integrity Audit\n\nGenerated: 2026-07-10T17:08:49.857Z\nVersion: six-category-integrity-audit-20260709a\nRoster fighters: 62\nFully complete: 62\nIncomplete: 0\nFormula mismatches: 0\nForbidden score-derived overrides: 0\n\n| Fighter | Champ | Quality | Prime | Longevity | Apex | Loss | Formula | Profile | Overrides |\n|---|---|---|---|---|---|---|---|---|---|\n| Jon Jones | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Georges St-Pierre | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Demetrious Johnson | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Anderson Silva | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Islam Makhachev | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Alexander Volkanovski | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Khabib Nurmagomedov | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Jose Aldo | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Matt Hughes | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Kamaru Usman | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Stipe Miocic | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Israel Adesanya | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Daniel Cormier | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Alex Pereira | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Randy Couture | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Max Holloway | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Cain Velasquez | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| B.J. Penn | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Chuck Liddell | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| T.J. Dillashaw | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Frankie Edgar | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Ilia Topuria | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Henry Cejudo | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Charles Oliveira | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Junior dos Santos | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Conor McGregor | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Tyron Woodley | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Merab Dvalishvili | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Tito Ortiz | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Francis Ngannou | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Dricus du Plessis | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Dominick Cruz | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Petr Yan | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Deiveson Figueiredo | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Khamzat Chimaev | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Dustin Poirier | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Aljamain Sterling | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Robbie Lawler | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Robert Whittaker | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Tony Ferguson | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Justin Gaethje | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Lyoto Machida | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Brock Lesnar | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Sean O'Malley | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Sean Strickland | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Michael Bisping | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Dan Henderson | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Chael Sonnen | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Amanda Nunes | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Valentina Shevchenko | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Zhang Weili | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Ronda Rousey | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Joanna Jedrzejczyk | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Rose Namajunas | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Jessica Andrade | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Kayla Harrison | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Alexa Grasso | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Carla Esparza | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Julianna Peña | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Holly Holm | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Miesha Tate | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n| Mackenzie Dern | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS | PASS |\n\n## Notes\n\n- This report is read-only and does not change scores, ranks, OVRs, ledgers, or display data.\n- WARN means audited data exists but is not confirmed as the final live source.\n- FAIL means the audited source is missing, the row does not match it, or the locked formula does not reconcile.",
+  "ownership": {
+    "finalScoreEnginePresent": true,
+    "finalScoreEngineVersion": "final-score-engine-20260710b-deterministic",
+    "finalScoreApplyCount": 1,
+    "declaredOverallOwner": "final-score-engine.js",
+    "legacyWeightingPresent": true,
+    "legacyWeightingVersion": "score-weighting-20260710a-compatibility-only",
+    "legacyWeightingMode": "compatibility-only",
+    "legacyWeightingMutatesScores": false,
+    "legacyPrimeWindowsLoader": false,
+    "legacyPrimeDominanceLoader": false,
+    "fighterRowsChecked": 62,
+    "rowsWithWrongOwner": [],
+    "passed": true
+  },
+  "initialization": {
+    "pipelinePresent": true,
+    "pipelineVersion": "deterministic-scoring-pipeline-20260710n-canonical-prime-record",
+    "pipelineMode": "deterministic-single-pass",
+    "pipelineStatus": "ready",
+    "pipelineTimerCount": 0,
+    "pipelineRepeatedLoadCount": 0,
+    "pipelineFinalScoreApplyCount": 1,
+    "engineApplyCount": 1,
+    "refreshWrappedByEngine": false,
+    "categoryTiersMode": "read-only-after-scoring",
+    "categoryTiersMutateScores": false,
+    "categoryTiersReapplyPrime": false,
+    "scoringScriptCounts": {
+      "data-prime-round-control-audit": 1,
+      "data-prime-dominance-ledgers": 1,
+      "data-prime-dominance-shadow-model": 1,
+      "data-prime-dominance-live-promoter": 1,
+      "data-prime-dominance-copy-polish": 1,
+      "data-fighter-era-ledgers": 1,
+      "data-longevity-shadow-scorer": 1,
+      "data-longevity-live-promoter": 1,
+      "data-apex-peak-score-corrections": 1,
+      "data-apex-peak-component-audit": 1,
+      "data-apex-peak-live-bonus": 1,
+      "data-final-score-engine": 1,
+      "data-category-percentile-tiers": 1
+    },
+    "duplicateScoringScripts": [],
+    "sequence": [
+      "ranking-data-patches:ready",
+      "opponent-quality:ready",
+      "prime-round-control:loaded",
+      "prime-ledgers:loaded",
+      "prime-shadow:loaded",
+      "prime-audit-batch-seven:loaded",
+      "prime-live:loaded",
+      "prime-copy:loaded",
+      "fighter-era-ledgers:existing",
+      "longevity-shadow:loaded",
+      "longevity-live:loaded",
+      "apex-corrections:existing",
+      "apex-component-audit:loaded",
+      "apex-live:loaded",
+      "apex-dricus-audit:loaded",
+      "final-score-engine:loaded",
+      "final-score-engine:applied",
+      "category-percentile-tiers:loaded",
+      "ui:refreshed-once"
+    ],
+    "passed": true
+  }
+}

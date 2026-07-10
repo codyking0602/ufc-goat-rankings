@@ -40,7 +40,7 @@
         ['UFC Title-Fight Wins', '11'],
         ['Championship Level', 'Historic Middleweight Reign'],
         ['Elite Wins', 'Strong but Division-Adjusted'],
-        ['Prime Record', 'Legendary Peak Run'],
+        
         ['Active Elite Years', 'Long Elite Window'],
         ['Loss Context', 'Weidman losses count; later losses are treated as post-prime context']
       ],
@@ -59,7 +59,7 @@
       ufcRecord: '17-7, 1 NC',
       titleFightWins: 11,
       eliteWins: 7,
-      primeRecord: '16-2',
+      
       finishRatePct: 77.8,
       roundsWonPct: 69.2,
       activeEliteYears: 7.21,

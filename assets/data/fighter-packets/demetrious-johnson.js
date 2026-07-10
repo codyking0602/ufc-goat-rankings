@@ -40,7 +40,7 @@
         ['UFC Title-Fight Wins', '12'],
         ['Championship Level', 'Historic Flyweight Reign'],
         ['Elite Wins', 'Strong but Division-Adjusted'],
-        ['Prime Record', 'Long Dominant Champion Run'],
+        
         ['Active Elite Years', 'Elite Championship Window'],
         ['Loss Context', 'Cruz and Cejudo losses add context, not collapse']
       ],
@@ -59,7 +59,7 @@
       ufcRecord: '15-2-1',
       titleFightWins: 12,
       eliteWins: 8,
-      primeRecord: '13-2-1',
+      
       finishRatePct: 43.8,
       roundsWonPct: 73.9,
       activeEliteYears: 6.84,

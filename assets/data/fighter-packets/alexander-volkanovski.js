@@ -39,7 +39,7 @@
         ['UFC Title-Fight Wins', '6'],
         ['Championship Level', 'Modern Featherweight Standard'],
         ['Quality Wins', 'Top-End Featherweight Case'],
-        ['Prime Record', 'Long Championship Prime'],
+        
         ['Active Elite Years', '6.7 Elite Years'],
         ['Loss Context', 'Islam losses get reduced up-division treatment']
       ],
@@ -58,7 +58,7 @@
       ufcRecord: '15-3',
       titleFightWins: 6,
       eliteWins: 9,
-      primeRecord: '10-3',
+      
       finishRatePct: 53.3,
       roundsWonPct: 76.5,
       activeEliteYears: 6.7,

@@ -2,7 +2,7 @@
 // Locks the approved profile layout for all fighters without changing scoring data.
 (function(){
   const DATA = window.RANKING_DATA;
-  const VERSION = 'profile-template-system-20260705c';
+  const VERSION = 'profile-template-system-20260710a-canonical-prime-record';
   if(!DATA || typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const CATEGORY_INFO_LIVE = [
@@ -58,7 +58,6 @@
     ufcRecord:'22-1, 1 NC',
     titleFightWins:16,
     eliteWins:10,
-    primeRecord:'16-0, 1 NC',
     finishRatePct:52.2,
     roundsWonPct:90.4,
     activeEliteYears:10.82,
@@ -105,7 +104,6 @@
     const jon = DATA.fighters?.find(f => f.fighter === 'Jon Jones');
     if(jon){
       jon.snapshotStats = {...JON_STATS};
-      jon.primeRecord = JON_STATS.primeRecord;
       jon.roundsWonPct = JON_STATS.roundsWonPct;
       jon.eliteWins = JON_STATS.eliteWins;
       jon.timesFinishedPrime = JON_STATS.timesFinishedPrime;
@@ -126,7 +124,6 @@
         ['UFC Record', JON_STATS.ufcRecord],
         ['UFC Title-Fight Wins', String(JON_STATS.titleFightWins)],
         ['Elite / Top-5 Wins', String(JON_STATS.eliteWins)],
-        ['Prime Record', JON_STATS.primeRecord],
         ['Finish Rate', pctText(JON_STATS.finishRatePct)],
         ['Rounds Won', pctText(JON_STATS.roundsWonPct)],
         ['Active Elite Years', fmtText(JON_STATS.activeEliteYears)],
@@ -144,7 +141,7 @@
       ['UFC Record', stats.ufcRecord || f.ufcRecord || findSnap('UFC Record') || '—'],
       ['UFC Title-Fight Wins', numText(titleWins ?? findSnap('UFC Title-Fight Wins'))],
       ['Elite / Top-5 Wins', numText(stats.eliteWins ?? f.eliteWins ?? findSnap('Elite / Top-5 Wins') ?? findSnap('Elite Wins') ?? findSnap('Quality Wins'))],
-      ['Prime Record', stats.primeRecord || f.primeRecord || findSnap('Prime Record') || '—'],
+      ['Prime Record', DATA.primeRecords?.[f.fighter]?.record || '—'],
       ['Finish Rate', pctText(stats.finishRatePct ?? f.finishRatePct)],
       ['Rounds Won', pctText(stats.roundsWonPct ?? f.roundsWonPct)],
       ['Active Elite Years', fmtText(stats.activeEliteYears ?? f.activeEliteYears)],

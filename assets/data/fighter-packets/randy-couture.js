@@ -32,7 +32,7 @@
         ['UFC Title-Fight Wins', '8'],
         ['Championship Level', 'Two-Division UFC Champion'],
         ['Quality Wins', 'Era-Spanning Title Wins'],
-        ['Prime Record', 'Multiple Veteran Surges'],
+        
         ['Active Elite Years', '8.5 Elite Years'],
         ['Loss Context', 'Messy record, but constant title-risk context']
       ],
@@ -48,7 +48,7 @@
       finalTakeaway: 'Couture is the championship-chaos legend: not clean, not smooth, but too decorated across UFC title history to rank like a normal flawed contender.'
     },
     profileStats: {
-      ufcRecord: '16-8', titleFightWins: 8, eliteWins: 8, primeRecord: '11-5', finishRatePct: 43.8, roundsWonPct: 66.7, activeEliteYears: 8.54, timesFinishedPrime: 2,
+      ufcRecord: '16-8', titleFightWins: 8, eliteWins: 8,  finishRatePct: 43.8, roundsWonPct: 66.7, activeEliteYears: 8.54, timesFinishedPrime: 2,
       divisionStrengthContext: 'Heavyweight and light heavyweight era context matter because his value comes from repeated title-level risk.',
       lossContext: 'Losses are real drag, but many came in title or high-risk fights across divisions.'
     },

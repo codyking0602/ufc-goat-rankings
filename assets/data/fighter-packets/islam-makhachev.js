@@ -39,7 +39,7 @@
         ['UFC Title-Fight Wins', '6'],
         ['Championship Level', 'Fast-Rising Champion Resume'],
         ['Quality Wins', 'Modern Lightweight Elite'],
-        ['Prime Record', 'Dominant Champion Stretch'],
+        
         ['Active Elite Years', '4.7 Elite Years'],
         ['Loss Context', 'Only UFC loss came pre-prime']
       ],
@@ -58,7 +58,7 @@
       ufcRecord: '17-1',
       titleFightWins: 6,
       eliteWins: 7,
-      primeRecord: '9-0',
+      
       finishRatePct: 75.0,
       roundsWonPct: 85.7,
       activeEliteYears: 4.7,

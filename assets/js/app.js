@@ -156,7 +156,7 @@ function knownEliteWindow(f){
   return null;
 }
 function primeRecordText(f){
-  return f.primeRecord || f.primeUfcRecord || f.prime_record || null;
+  return DATA.primeRecords?.[f?.fighter]?.record || null;
 }
 function roundControlText(f){
   const candidates = [f.roundsWonPct, f.roundsWonPercentage, f.roundWinPct, f.roundsWonPercent];
@@ -202,8 +202,10 @@ function categoryEvidenceItems(f, key){
   } else if(key === 'primeDominance'){
     const window = knownEliteWindow(f);
     if(window) items.push(['Peak window', window]);
+    const canonicalPrime = DATA.primeRecords?.[f?.fighter] || {};
     const pr = primeRecordText(f);
     if(pr) items.push(['Prime UFC record', pr]);
+    if(canonicalPrime.context) items.push(['Prime window context', canonicalPrime.context]);
     items.push(['Finish rate', pct(f.finishRatePct)]);
     const rc = roundControlText(f);
     if(rc) items.push(['Round control', rc]);

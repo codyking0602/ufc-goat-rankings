@@ -11,14 +11,14 @@
       overallOvr: 87, allTimeRank: 12, divisionLabel: 'WW', resumeTag: 'Early welterweight standard',
       oneLiner: 'The early welterweight title-control case: real championship volume, physical dominance, and one of the defining reigns before the GSP era.',
       categories: { championship: { ovr: 87, rank: 6 }, opponentQuality: { ovr: 86, rank: 7 }, primeDominance: { ovr: 84, rank: 30 }, longevity: { ovr: 87, rank: 13 } },
-      snapshot: [ ['UFC Record', '18-7'], ['UFC Title-Fight Wins', '9'], ['Championship Level', 'Early Welterweight Standard'], ['Quality Wins', 'Strong Era Title Wins'], ['Prime Record', 'Physical Title-Reign Prime'], ['Active Elite Years', '8.4 Elite Years'], ['Loss Context', 'Era context helps, but losses still drag'] ],
+      snapshot: [ ['UFC Record', '18-7'], ['UFC Title-Fight Wins', '9'], ['Championship Level', 'Early Welterweight Standard'], ['Quality Wins', 'Strong Era Title Wins'],  ['Active Elite Years', '8.4 Elite Years'], ['Loss Context', 'Era context helps, but losses still drag'] ],
       whyRankedHere: 'Hughes ranks #12 because his UFC welterweight title volume is still meaningful. He spent years as the division standard, stacked title wins, and has enough important victories to remain a serious UFC-only GOAT case.',
       whyNotHigher: 'He does not rank higher because era strength, loss volume, and later separation by GSP cap the case. His championship weight is real, but the modern top-tier resumes are cleaner and deeper.',
       keyJudgmentCalls: [ ['Early era context', 'his run was historically huge, but the division was not as deep as later welterweight eras.'], ['GSP rivalry', 'a win over young GSP matters, but GSP ultimately took the all-time welterweight separation.'], ['Title volume', 'is the center of the Hughes case and the reason he remains high.'], ['Loss penalty', 'keeps him below cleaner champions with fewer damaging losses.'], ['UFC-only fit', 'his main value is already inside the UFC scoring boundary.'] ],
       finalTakeaway: 'Hughes is the early welterweight standard: title-heavy, physically dominant, historically important, and held back by era context and loss drag.'
     },
     profileStats: {
-      ufcRecord: '18-7', titleFightWins: 9, eliteWins: 9, primeRecord: '13-4', finishRatePct: 61.1, roundsWonPct: 70.6, activeEliteYears: 8.36, timesFinishedPrime: 2,
+      ufcRecord: '18-7', titleFightWins: 9, eliteWins: 9,  finishRatePct: 61.1, roundsWonPct: 70.6, activeEliteYears: 8.36, timesFinishedPrime: 2,
       divisionStrengthContext: 'Early welterweight title value is respected, but division depth is not treated like the later GSP era.',
       lossContext: 'Losses to elite names and later-career damage create real drag, especially once GSP separates himself.'
     },

@@ -13,7 +13,7 @@
       resumeTag: 'Lightweight champ, three-division grinder',
       oneLiner: 'The toughness-and-longevity case: UFC lightweight gold, legendary title fights, elite featherweight wins, and enough late-career losses to keep the ceiling capped.',
       categories: { championship: { ovr: 79, rank: 21 }, opponentQuality: { ovr: 86, rank: 12 }, primeDominance: { ovr: 82, rank: 28 }, longevity: { ovr: 90, rank: 8 } },
-      snapshot: [ ['UFC Record', '18-11-1'], ['UFC Title-Fight Wins', '3'], ['Championship Level', 'Former Lightweight Champion'], ['Quality Wins', 'Penn, Maynard, Mendes, Cub, Oliveira'], ['Prime Record', '9-6-1 title/elite window'], ['Active Elite Years', '10.0 Elite Years'], ['Loss Context', 'Penalty capped at -10; late losses mostly post-prime'] ],
+      snapshot: [ ['UFC Record', '18-11-1'], ['UFC Title-Fight Wins', '3'], ['Championship Level', 'Former Lightweight Champion'], ['Quality Wins', 'Penn, Maynard, Mendes, Cub, Oliveira'],  ['Active Elite Years', '10.0 Elite Years'], ['Loss Context', 'Penalty capped at -10; late losses mostly post-prime'] ],
       whyRankedHere: 'Edgar ranks here because his UFC-only résumé has real championship value, rare three-division relevance, and a deep quality-win ledger built around B.J. Penn, Gray Maynard, Chad Mendes, Cub Swanson, Charles Oliveira, Urijah Faber, Sean Sherk, Jeremy Stephens, and Tyson Griffin.',
       whyNotHigher: 'He does not rank higher because the official loss column is heavy, his title reign was not long enough to match the top champions, and his prime dominance is more about grit, pace, and durability than overwhelming separation.',
       bigAssumptions: [
@@ -32,7 +32,7 @@
       ],
       finalTakeaway: 'Edgar is a classic UFC-only résumé fighter: not a top-tier GOAT case, but a former lightweight champion with elite longevity, real quality wins, and one of the most respected toughness profiles in UFC history.'
     },
-    profileStats: { ufcRecord: '18-11-1', titleFightWins: 3, eliteWins: 9, primeRecord: '9-6-1', finishRatePct: 38.9, roundsWonPct: 56.0, activeEliteYears: 10.0, timesFinishedPrime: 2, divisionStrengthContext: 'Lightweight and featherweight both give Edgar meaningful division-strength credit.', lossContext: 'Loss penalty is capped at -10, with late bantamweight and late featherweight losses treated mostly as post-prime context.' },
+    profileStats: { ufcRecord: '18-11-1', titleFightWins: 3, eliteWins: 9,  finishRatePct: 38.9, roundsWonPct: 56.0, activeEliteYears: 10.0, timesFinishedPrime: 2, divisionStrengthContext: 'Lightweight and featherweight both give Edgar meaningful division-strength credit.', lossContext: 'Loss penalty is capped at -10, with late bantamweight and late featherweight losses treated mostly as post-prime context.' },
     compareSeasoning: {
       shortCase: 'Edgar is the lightweight champion and three-division longevity case: title wins, elite featherweight wins, legendary durability, and a loss column that keeps him below cleaner champions.',
       peak: 'At his best, Edgar was pace, wrestling, recovery, boxing volume, and absurd toughness. His peak was less destructive than the knockout artists, but extremely hard to separate from.',

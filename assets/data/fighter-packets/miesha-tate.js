@@ -22,7 +22,7 @@
 
   const boardRow = {
     fighter, totalScore:28.20, championship:8.50, opponentQuality:3.85, primeDominance:14.80, longevity:6.00, apexPeak:3.35, penalty:-5.25,
-    leaderboard:'women', gender:'Women', ufcRecord:'7-7', primaryDivision:'Bantamweight', secondaryDivision:'Flyweight', finishRatePct:42.9, activeEliteYears:6.00, timesFinishedPrime:1, primeRecord:'5-1', roundsWonPct:48.8,
+    leaderboard:'women', gender:'Women', ufcRecord:'7-7', primaryDivision:'Bantamweight', secondaryDivision:'Flyweight', finishRatePct:42.9, activeEliteYears:6.00, timesFinishedPrime:1,  roundsWonPct:48.8,
     notes:'Permanent fighter-packet add. Former UFC bantamweight champion with a legendary Holm title win, solid contender climb, short reign, and post-prime comeback losses carrying 0 loss-context penalty.'
   };
 
@@ -52,7 +52,7 @@
       overallOvr:78, divisionLabel:'WBW / WFLW', resumeTag:'Bantamweight title comeback',
       oneLiner:'A former UFC bantamweight champion whose UFC-only case is built on the legendary Holm comeback, a solid contender climb, and a short reign with no defenses.',
       categories:{ championship:{ovr:74}, opponentQuality:{ovr:68}, primeDominance:{ovr:77}, longevity:{ovr:70}, apexPeak:{ovr:78}, penalty:{ovr:73} },
-      snapshot:[ ['UFC Record','7-7'], ['UFC Title-Fight Wins','1 official / 1.00 adjusted'], ['Apex Peak','+3.35'], ['Quality Wins','Holm, McMann, Carmouche, Eye'], ['Prime Record','5-1'], ['Prime Dominance','14.80 / 30'], ['Rounds Won','48.8% best-effort'], ['Loss Context','-5.25'] ],
+      snapshot:[ ['UFC Record','7-7'], ['UFC Title-Fight Wins','1 official / 1.00 adjusted'], ['Apex Peak','+3.35'], ['Quality Wins','Holm, McMann, Carmouche, Eye'],  ['Prime Dominance','14.80 / 30'], ['Rounds Won','48.8% best-effort'], ['Loss Context','-5.25'] ],
       whyRankedHere:'Tate scores as a legitimate UFC champion because the Holm win was a real title-winning peak moment, and the Carmouche/McMann/Eye run gives the title climb enough support.',
       whyNotHigher:'The UFC-only case is thin after the Holm win. She has one title-fight win, zero defenses, limited elite UFC win depth, and three counted finish losses before the post-prime cutoff.',
       bigAssumptions:[ ['Adjusted title wins','Holm title win is 1.00. No title result gets boosted above 1.00.'], ['Quality Wins cap','Holm gets the rare 1.25 title-winning champion exception; every other win stays below 1.00.'], ['Prime start','Prime starts at Liz Carmouche in 2014, not the Cat/Rousey losses.'], ['Prime end','Prime ends with the Amanda Nunes title loss. Pennington and later comeback losses are post-prime.'], ['Strikeforce context','Strikeforce title and broader Rousey rivalry matter historically but are not scored in UFC-only rankings.'], ['Photos','No photo paths until real files exist in assets/fighters/.'] ],
@@ -61,7 +61,7 @@
       primeDominanceSummary:{ score:14.80, components:{ primeRecord:5.60, primeRoundsWon:3.45, titleDefenseDominance:0.00, finishStoppageDominance:1.85, lossSafetyDurability:2.30, divisionStrength:1.60 }, notes:'A 5-1 prime title climb gets real credit, but the round-control profile and no-defense reign keep dominance moderate.' },
       finalTakeaway:'Tate is a historically important women’s MMA figure, but in UFC-only scoring she is a one-great-title-win champion case rather than a deep-reign GOAT case.'
     },
-    profileStats:{ ufcRecord:'7-7', titleFightWins:1, adjustedTitleWins:1.00, eliteWins:1, primeRecord:'5-1', primeDominance:14.80, finishRatePct:42.9, roundsWonPct:48.8, activeEliteYears:6.00, apexPeak:3.35, timesFinishedPrime:1, divisionStrengthContext:'Women’s bantamweight was historically important during Tate’s UFC title climb, but the division depth is not treated as max-strength.', lossContext:'Cat Zingano and Ronda Rousey are pre-prime finished losses. Amanda Nunes is the counted prime title finish loss. Pennington, Vieira, Murphy, and Santos are post-prime/exit/comeback losses with 0 penalty.' },
+    profileStats:{ ufcRecord:'7-7', titleFightWins:1, adjustedTitleWins:1.00, eliteWins:1,  primeDominance:14.80, finishRatePct:42.9, roundsWonPct:48.8, activeEliteYears:6.00, apexPeak:3.35, timesFinishedPrime:1, divisionStrengthContext:'Women’s bantamweight was historically important during Tate’s UFC title climb, but the division depth is not treated as max-strength.', lossContext:'Cat Zingano and Ronda Rousey are pre-prime finished losses. Amanda Nunes is the counted prime title finish loss. Pennington, Vieira, Murphy, and Santos are post-prime/exit/comeback losses with 0 penalty.' },
     compareSeasoning:{
       shortCase:'Tate is the gritty UFC bantamweight champion case: one legendary Holm comeback title win, a real contender climb, and major historical importance around early women’s UFC.',
       peak:'At her best, Tate combined wrestling, toughness, late-fight grappling danger, and title-fight survival into one unforgettable Holm comeback.',

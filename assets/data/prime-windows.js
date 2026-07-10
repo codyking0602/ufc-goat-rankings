@@ -1,73 +1,383 @@
 // Shared UFC-only prime-window ledger. No score changes.
 (function(){
-  const VERSION='prime-windows-20260708a';
+  const VERSION='prime-windows-20260710b-context-only';
   const WINDOWS={
-    'Jon Jones':['Ryan Bader','Ciryl Gane','Bader 2011 → Gane 2023','16-0, 1 NC','locked'],
-    'Georges St-Pierre':['Matt Hughes II','Michael Bisping','Hughes II 2006 → Bisping 2017','14-1','locked'],
-    'Demetrious Johnson':['Joseph Benavidez I','Henry Cejudo II','Benavidez 2012 → Cejudo II 2018','12-1-1','locked'],
-    'Anderson Silva':['Chris Leben','Chris Weidman II','Leben 2006 → Weidman II 2013','16-2','locked'],
-    'Khabib Nurmagomedov':['Rafael dos Anjos','Justin Gaethje','RDA 2014 → Gaethje 2020','7-0','locked'],
-    'Islam Makhachev':['Drew Dober','active','Dober 2021 → active','active','locked'],
-    'Alexander Volkanovski':['Jose Aldo','active','Aldo 2019 → active','active','locked'],
-    'Jose Aldo':['Frankie Edgar II','Merab Dvalishvili','Edgar II 2016 → Merab 2022','review','review'],
-    'Max Holloway':['Cub Swanson','active','Swanson 2015 → active','review','review'],
-    'Kamaru Usman':['Rafael dos Anjos','Leon Edwards III','RDA 2018 → Edwards III 2023','10-2','review'],
-    'Daniel Cormier':['Dan Henderson','Stipe Miocic II','Henderson 2014 → Stipe II 2019','review','review'],
-    'Stipe Miocic':['Mark Hunt','Daniel Cormier III','Hunt 2015 → Cormier III 2020','review','review'],
-    'Randy Couture':['Maurice Smith','Tim Sylvia','Smith 1997 → Sylvia 2007','review','review'],
-    'Matt Hughes':['Carlos Newton II','B.J. Penn II','Newton II 2002 → Penn II 2006','review','review'],
-    'B.J. Penn':['Matt Hughes I','Diego Sanchez','Hughes I 2004 → Sanchez 2009','review','review'],
-    'Frankie Edgar':['B.J. Penn I','Chad Mendes','Penn I 2010 → Mendes 2015','review','review'],
-    'Conor McGregor':['Dustin Poirier I','Eddie Alvarez','Poirier I 2014 → Alvarez 2016','review','review'],
-    'Tony Ferguson':['Gleison Tibau','Anthony Pettis','Tibau 2015 → Pettis 2018','review','review'],
-    'Aljamain Sterling':['Petr Yan I','Henry Cejudo','Yan I 2021 → Cejudo 2023','review','review'],
-    'Petr Yan':['Urijah Faber','Sean O’Malley','Faber 2019 → O’Malley 2022','review','review'],
-    'Merab Dvalishvili':['Marlon Moraes','active','Moraes 2021 → active','active','review'],
-    'T.J. Dillashaw':['Renan Barao I','Cody Garbrandt II','Barao I 2014 → Garbrandt II 2018','review','review'],
-    'Henry Cejudo':['Demetrious Johnson II','Dominick Cruz','DJ II 2018 → Cruz 2020','review','review'],
-    'Dominick Cruz':['Urijah Faber II','T.J. Dillashaw','Faber II 2011 → Dillashaw 2016','review','review'],
-    'Deiveson Figueiredo':['Joseph Benavidez I','Brandon Moreno IV','Benavidez I 2020 → Moreno IV 2023','review','review'],
-    'Alex Pereira':['Sean Strickland','active','Strickland 2022 → active','active','review'],
-    'Israel Adesanya':['Brad Tavares','Alex Pereira II','Tavares 2018 → Pereira II 2023','review','review'],
-    'Robert Whittaker':['Derek Brunson','Paulo Costa','Brunson 2016 → Costa 2024','review','review'],
-    'Dricus Du Plessis':['Robert Whittaker','active','Whittaker 2023 → active','active','review'],
-    'Sean Strickland':['Nassourdine Imavov','active','Imavov 2023 → active','active','review'],
-    'Khamzat Chimaev':['Gilbert Burns','active','Burns 2022 → active','active','review'],
-    'Lyoto Machida':['Thiago Silva','Randy Couture','Thiago Silva 2009 → Couture 2011','review','review'],
-    'Michael Bisping':['Cung Le','Georges St-Pierre','Cung Le 2014 → GSP 2017','review','review'],
-    'Dan Henderson':['Michael Bisping I','Shogun Rua I','Bisping I 2009 → Shogun I 2011','review','review'],
-    'Chael Sonnen':['Yushin Okami','Michael Bisping','Okami 2009 → Bisping 2012','review','review'],
-    'Robbie Lawler':['Rory MacDonald I','Carlos Condit','Rory I 2013 → Condit 2016','review','review'],
-    'Tyron Woodley':['Robbie Lawler','Darren Till','Lawler 2016 → Till 2018','review','review'],
-    'Cain Velasquez':['Brock Lesnar','Junior dos Santos III','Lesnar 2010 → JDS III 2013','review','review'],
-    'Junior dos Santos':['Fabricio Werdum','Mark Hunt','Werdum 2008 → Hunt 2013','review','review'],
-    'Francis Ngannou':['Curtis Blaydes II','Ciryl Gane','Blaydes II 2018 → Gane 2022','review','review'],
-    'Brock Lesnar':['Heath Herring','Frank Mir II','Herring 2008 → Mir II 2009','review','review'],
-    'Charles Oliveira':['Tony Ferguson','Islam Makhachev','Ferguson 2020 → Islam 2022','review','review'],
-    'Dustin Poirier':['Anthony Pettis','Justin Gaethje II','Pettis 2017 → Gaethje II 2023','review','review'],
-    'Justin Gaethje':['James Vick','active','Vick 2018 → active','active','review'],
-    'Ilia Topuria':['Bryce Mitchell','active','Mitchell 2022 → active','active','review'],
-    "Sean O'Malley":['Petr Yan','active','Yan 2022 → active','active','review'],
-    'Chuck Liddell':['Tito Ortiz I','Wanderlei Silva','Ortiz I 2004 → Wanderlei 2007','review','review'],
-    'Tito Ortiz':['Wanderlei Silva','Ken Shamrock II','Wanderlei 2000 → Shamrock II 2002','review','review'],
-    'Amanda Nunes':['Miesha Tate','Irene Aldana','Tate 2016 → Aldana 2023','review','locked'],
-    'Valentina Shevchenko':['Holly Holm','Alexa Grasso III','Holm 2016 → Grasso III 2024','review','review'],
-    'Zhang Weili':['Jessica Andrade','active','Andrade 2019 → active','active','review'],
-    'Rose Namajunas':['Joanna Jedrzejczyk I','Zhang Weili II','Joanna I 2017 → Zhang II 2021','review','review'],
-    'Joanna Jedrzejczyk':['Carla Esparza','Rose Namajunas I','Esparza 2015 → Rose I 2017','review','review'],
-    'Ronda Rousey':['Liz Carmouche','Bethe Correia','Carmouche 2013 → Correia 2015','6-0','locked'],
-    'Miesha Tate':['Sara McMann','Holly Holm','McMann 2015 → Holm 2016','review','review'],
-    'Holly Holm':['Ronda Rousey','Germaine de Randamie','Rousey 2015 → GDR 2017','review','review'],
-    'Jessica Andrade':['Claudia Gadelha','Rose Namajunas II','Gadelha 2017 → Rose II 2020','review','review'],
-    'Carla Esparza':['Rose Namajunas II','Zhang Weili II','Rose II 2021 → Zhang II 2022','review','review'],
-    'Julianna Pena':['Sara McMann','Amanda Nunes I','McMann 2017 → Nunes I 2021','review','review'],
-    'Alexa Grasso':['Maycee Barber','active','Barber 2021 → active','active','review'],
-    'Mackenzie Dern':['Nina Nunes','active','Nina Nunes 2021 → active','active','review'],
-    'Kayla Harrison':['Holly Holm','active','Holm 2024 → active','active','review']
-  };
-  function entryFor(fighter){const row=WINDOWS[fighter];return row?{fighter,start:row[0],end:row[1],label:row[2],primeRecord:row[3],status:row[4],version:VERSION}:null;}
+  "Jon Jones": [
+    "Ryan Bader",
+    "Ciryl Gane",
+    "Bader 2011 → Gane 2023",
+    "locked"
+  ],
+  "Georges St-Pierre": [
+    "Matt Hughes II",
+    "Michael Bisping",
+    "Hughes II 2006 → Bisping 2017",
+    "locked"
+  ],
+  "Demetrious Johnson": [
+    "Joseph Benavidez I",
+    "Henry Cejudo II",
+    "Benavidez 2012 → Cejudo II 2018",
+    "locked"
+  ],
+  "Anderson Silva": [
+    "Chris Leben",
+    "Chris Weidman II",
+    "Leben 2006 → Weidman II 2013",
+    "locked"
+  ],
+  "Khabib Nurmagomedov": [
+    "Rafael dos Anjos",
+    "Justin Gaethje",
+    "RDA 2014 → Gaethje 2020",
+    "locked"
+  ],
+  "Islam Makhachev": [
+    "Drew Dober",
+    "active",
+    "Dober 2021 → active",
+    "locked"
+  ],
+  "Alexander Volkanovski": [
+    "Jose Aldo",
+    "active",
+    "Aldo 2019 → active",
+    "locked"
+  ],
+  "Jose Aldo": [
+    "Frankie Edgar II",
+    "Merab Dvalishvili",
+    "Edgar II 2016 → Merab 2022",
+    "review"
+  ],
+  "Max Holloway": [
+    "Cub Swanson",
+    "active",
+    "Swanson 2015 → active",
+    "review"
+  ],
+  "Kamaru Usman": [
+    "Rafael dos Anjos",
+    "Leon Edwards III",
+    "RDA 2018 → Edwards III 2023",
+    "review"
+  ],
+  "Daniel Cormier": [
+    "Dan Henderson",
+    "Stipe Miocic II",
+    "Henderson 2014 → Stipe II 2019",
+    "review"
+  ],
+  "Stipe Miocic": [
+    "Mark Hunt",
+    "Daniel Cormier III",
+    "Hunt 2015 → Cormier III 2020",
+    "review"
+  ],
+  "Randy Couture": [
+    "Maurice Smith",
+    "Tim Sylvia",
+    "Smith 1997 → Sylvia 2007",
+    "review"
+  ],
+  "Matt Hughes": [
+    "Carlos Newton II",
+    "B.J. Penn II",
+    "Newton II 2002 → Penn II 2006",
+    "review"
+  ],
+  "B.J. Penn": [
+    "Matt Hughes I",
+    "Diego Sanchez",
+    "Hughes I 2004 → Sanchez 2009",
+    "review"
+  ],
+  "Frankie Edgar": [
+    "B.J. Penn I",
+    "Chad Mendes",
+    "Penn I 2010 → Mendes 2015",
+    "review"
+  ],
+  "Conor McGregor": [
+    "Dustin Poirier I",
+    "Eddie Alvarez",
+    "Poirier I 2014 → Alvarez 2016",
+    "review"
+  ],
+  "Tony Ferguson": [
+    "Gleison Tibau",
+    "Anthony Pettis",
+    "Tibau 2015 → Pettis 2018",
+    "review"
+  ],
+  "Aljamain Sterling": [
+    "Petr Yan I",
+    "Henry Cejudo",
+    "Yan I 2021 → Cejudo 2023",
+    "review"
+  ],
+  "Petr Yan": [
+    "Urijah Faber",
+    "Sean O’Malley",
+    "Faber 2019 → O’Malley 2022",
+    "review"
+  ],
+  "Merab Dvalishvili": [
+    "Marlon Moraes",
+    "active",
+    "Moraes 2021 → active",
+    "review"
+  ],
+  "T.J. Dillashaw": [
+    "Renan Barao I",
+    "Cody Garbrandt II",
+    "Barao I 2014 → Garbrandt II 2018",
+    "review"
+  ],
+  "Henry Cejudo": [
+    "Demetrious Johnson II",
+    "Dominick Cruz",
+    "DJ II 2018 → Cruz 2020",
+    "review"
+  ],
+  "Dominick Cruz": [
+    "Urijah Faber II",
+    "T.J. Dillashaw",
+    "Faber II 2011 → Dillashaw 2016",
+    "review"
+  ],
+  "Deiveson Figueiredo": [
+    "Joseph Benavidez I",
+    "Brandon Moreno IV",
+    "Benavidez I 2020 → Moreno IV 2023",
+    "review"
+  ],
+  "Alex Pereira": [
+    "Sean Strickland",
+    "active",
+    "Strickland 2022 → active",
+    "review"
+  ],
+  "Israel Adesanya": [
+    "Brad Tavares",
+    "Alex Pereira II",
+    "Tavares 2018 → Pereira II 2023",
+    "review"
+  ],
+  "Robert Whittaker": [
+    "Derek Brunson",
+    "Paulo Costa",
+    "Brunson 2016 → Costa 2024",
+    "review"
+  ],
+  "Dricus Du Plessis": [
+    "Robert Whittaker",
+    "active",
+    "Whittaker 2023 → active",
+    "review"
+  ],
+  "Sean Strickland": [
+    "Nassourdine Imavov",
+    "active",
+    "Imavov 2023 → active",
+    "review"
+  ],
+  "Khamzat Chimaev": [
+    "Gilbert Burns",
+    "active",
+    "Burns 2022 → active",
+    "review"
+  ],
+  "Lyoto Machida": [
+    "Thiago Silva",
+    "Randy Couture",
+    "Thiago Silva 2009 → Couture 2011",
+    "review"
+  ],
+  "Michael Bisping": [
+    "Cung Le",
+    "Georges St-Pierre",
+    "Cung Le 2014 → GSP 2017",
+    "review"
+  ],
+  "Dan Henderson": [
+    "Michael Bisping I",
+    "Shogun Rua I",
+    "Bisping I 2009 → Shogun I 2011",
+    "review"
+  ],
+  "Chael Sonnen": [
+    "Yushin Okami",
+    "Michael Bisping",
+    "Okami 2009 → Bisping 2012",
+    "review"
+  ],
+  "Robbie Lawler": [
+    "Rory MacDonald I",
+    "Carlos Condit",
+    "Rory I 2013 → Condit 2016",
+    "review"
+  ],
+  "Tyron Woodley": [
+    "Robbie Lawler",
+    "Darren Till",
+    "Lawler 2016 → Till 2018",
+    "review"
+  ],
+  "Cain Velasquez": [
+    "Brock Lesnar",
+    "Junior dos Santos III",
+    "Lesnar 2010 → JDS III 2013",
+    "review"
+  ],
+  "Junior dos Santos": [
+    "Fabricio Werdum",
+    "Mark Hunt",
+    "Werdum 2008 → Hunt 2013",
+    "review"
+  ],
+  "Francis Ngannou": [
+    "Curtis Blaydes II",
+    "Ciryl Gane",
+    "Blaydes II 2018 → Gane 2022",
+    "review"
+  ],
+  "Brock Lesnar": [
+    "Heath Herring",
+    "Frank Mir II",
+    "Herring 2008 → Mir II 2009",
+    "review"
+  ],
+  "Charles Oliveira": [
+    "Tony Ferguson",
+    "Islam Makhachev",
+    "Ferguson 2020 → Islam 2022",
+    "review"
+  ],
+  "Dustin Poirier": [
+    "Anthony Pettis",
+    "Justin Gaethje II",
+    "Pettis 2017 → Gaethje II 2023",
+    "review"
+  ],
+  "Justin Gaethje": [
+    "James Vick",
+    "active",
+    "Vick 2018 → active",
+    "review"
+  ],
+  "Ilia Topuria": [
+    "Bryce Mitchell",
+    "active",
+    "Mitchell 2022 → active",
+    "review"
+  ],
+  "Sean O'Malley": [
+    "Petr Yan",
+    "active",
+    "Yan 2022 → active",
+    "review"
+  ],
+  "Chuck Liddell": [
+    "Tito Ortiz I",
+    "Wanderlei Silva",
+    "Ortiz I 2004 → Wanderlei 2007",
+    "review"
+  ],
+  "Tito Ortiz": [
+    "Wanderlei Silva",
+    "Ken Shamrock II",
+    "Wanderlei 2000 → Shamrock II 2002",
+    "review"
+  ],
+  "Amanda Nunes": [
+    "Miesha Tate",
+    "Irene Aldana",
+    "Tate 2016 → Aldana 2023",
+    "locked"
+  ],
+  "Valentina Shevchenko": [
+    "Holly Holm",
+    "Alexa Grasso III",
+    "Holm 2016 → Grasso III 2024",
+    "review"
+  ],
+  "Zhang Weili": [
+    "Jessica Andrade",
+    "active",
+    "Andrade 2019 → active",
+    "review"
+  ],
+  "Rose Namajunas": [
+    "Joanna Jedrzejczyk I",
+    "Zhang Weili II",
+    "Joanna I 2017 → Zhang II 2021",
+    "review"
+  ],
+  "Joanna Jedrzejczyk": [
+    "Carla Esparza",
+    "Rose Namajunas I",
+    "Esparza 2015 → Rose I 2017",
+    "review"
+  ],
+  "Ronda Rousey": [
+    "Liz Carmouche",
+    "Bethe Correia",
+    "Carmouche 2013 → Correia 2015",
+    "locked"
+  ],
+  "Miesha Tate": [
+    "Sara McMann",
+    "Holly Holm",
+    "McMann 2015 → Holm 2016",
+    "review"
+  ],
+  "Holly Holm": [
+    "Ronda Rousey",
+    "Germaine de Randamie",
+    "Rousey 2015 → GDR 2017",
+    "review"
+  ],
+  "Jessica Andrade": [
+    "Claudia Gadelha",
+    "Rose Namajunas II",
+    "Gadelha 2017 → Rose II 2020",
+    "review"
+  ],
+  "Carla Esparza": [
+    "Rose Namajunas II",
+    "Zhang Weili II",
+    "Rose II 2021 → Zhang II 2022",
+    "review"
+  ],
+  "Julianna Pena": [
+    "Sara McMann",
+    "Amanda Nunes I",
+    "McMann 2017 → Nunes I 2021",
+    "review"
+  ],
+  "Alexa Grasso": [
+    "Maycee Barber",
+    "active",
+    "Barber 2021 → active",
+    "review"
+  ],
+  "Mackenzie Dern": [
+    "Nina Nunes",
+    "active",
+    "Nina Nunes 2021 → active",
+    "review"
+  ],
+  "Kayla Harrison": [
+    "Holly Holm",
+    "active",
+    "Holm 2024 → active",
+    "review"
+  ]
+};
+  function entryFor(fighter){const row=WINDOWS[fighter];return row?{fighter,start:row[0],end:row[1],label:row[2],status:row[3],version:VERSION}:null;}
   function allRowsFor(name){const DATA=window.RANKING_DATA||{};const rows=[];const push=row=>{if(row&&row.fighter===name)rows.push(row);};(DATA.men||[]).forEach(push);(DATA.women||[]).forEach(push);(DATA.fighters||[]).forEach(push);return rows;}
-  function apply(){const applied=[];Object.keys(WINDOWS).forEach(fighter=>{const entry=entryFor(fighter);allRowsFor(fighter).forEach(row=>{row.primeWindow=entry;row.primeWindowLabel=entry.label;row.primeStart=entry.start;row.primeEnd=entry.end;row.primeWindowStatus=entry.status;if(!row.primeRecord||String(row.primeRecord).toLowerCase()==='review')row.primeRecord=entry.primeRecord;});if(typeof DISPLAY_OVERRIDES!=='undefined'){DISPLAY_OVERRIDES[fighter]=DISPLAY_OVERRIDES[fighter]||{};DISPLAY_OVERRIDES[fighter].snapshotStats={...(DISPLAY_OVERRIDES[fighter].snapshotStats||{}),primeWindow:entry.label,primeRecord:entry.primeRecord};}applied.push(fighter);});window.UFC_PRIME_WINDOWS_APPLIED={version:VERSION,count:applied.length,fighters:applied,appliedAt:new Date().toISOString()};return applied;}
+  function apply(){const applied=[];Object.keys(WINDOWS).forEach(fighter=>{const entry=entryFor(fighter);allRowsFor(fighter).forEach(row=>{row.primeWindow=entry;row.primeWindowLabel=entry.label;row.primeStart=entry.start;row.primeEnd=entry.end;row.primeWindowStatus=entry.status;});if(typeof DISPLAY_OVERRIDES!=='undefined'){DISPLAY_OVERRIDES[fighter]=DISPLAY_OVERRIDES[fighter]||{};DISPLAY_OVERRIDES[fighter].snapshotStats={...(DISPLAY_OVERRIDES[fighter].snapshotStats||{}),primeWindow:entry.label};}applied.push(fighter);});window.UFC_PRIME_WINDOWS_APPLIED={version:VERSION,count:applied.length,fighters:applied,appliedAt:new Date().toISOString()};return applied;}
   apply();
   window.UFC_PRIME_WINDOWS={version:VERSION,mode:'shared-prime-window-source',windows:WINDOWS,fighters:Object.keys(WINDOWS),entryFor,apply,appliedAt:new Date().toISOString()};
   document.documentElement.setAttribute('data-prime-windows',VERSION);

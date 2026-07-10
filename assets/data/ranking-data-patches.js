@@ -1,7 +1,7 @@
 // Lightweight prerequisite/data loader with an explicit readiness handoff.
 (function(){
   'use strict';
-  const VERSION='ranking-data-patches-20260710c-quality-revisions';
+  const VERSION='ranking-data-patches-20260710e-canonical-prime-record';
   let readyResolved=false;
   let resolveReady;
   const readyPromise=new Promise(resolve=>{resolveReady=resolve;});
@@ -21,7 +21,7 @@
   function initials(name){return String(name||'').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'UFC';}
   function fighterNames(){const names=[];const push=f=>{const n=typeof f==='string'?f:f?.fighter;if(n&&!names.includes(n))names.push(n);};(window.RANKING_DATA?.fighters||[]).forEach(push);(window.RANKING_DATA?.men||[]).forEach(push);(window.RANKING_DATA?.women||[]).forEach(push);return names;}
   function applyPhotoPathDefaults(){if(typeof DISPLAY_OVERRIDES==='undefined')return[];const mapped=[];fighterNames().forEach(name=>{const slug=slugFor(name);if(!slug)return;const current=DISPLAY_OVERRIDES[name]||{};DISPLAY_OVERRIDES[name]={...current,photoUrl:current.photoUrl||`assets/fighters/${slug}.webp`,thumbUrl:current.thumbUrl||`assets/fighters/${slug}-thumb.webp`};mapped.push({fighter:name,photoUrl:DISPLAY_OVERRIDES[name].photoUrl,thumbUrl:DISPLAY_OVERRIDES[name].thumbUrl});});window.UFC_PHOTO_PATH_DEFAULTS={version:VERSION,mapped};return mapped;}
-  function syncPacketProfileStats(){if(typeof DISPLAY_OVERRIDES==='undefined')return[];const synced=[];Object.entries(DISPLAY_OVERRIDES).forEach(([fighter,override])=>{if(!override?.packetProfileStats)return;override.snapshotStats={...(override.snapshotStats||{}),...(override.packetProfileStats||{})};synced.push(fighter);});window.UFC_PACKET_PROFILE_STAT_BRIDGE={version:VERSION,synced,appliedAt:new Date().toISOString()};return synced;}
+  function syncPacketProfileStats(){if(typeof DISPLAY_OVERRIDES==='undefined')return[];const synced=[];Object.entries(DISPLAY_OVERRIDES).forEach(([fighter,override])=>{if(!override?.packetProfileStats)return;const{primeRecord,primeUfcRecord,prime_record,primeRecordContext,primeWindowContext,...safeStats}=override.packetProfileStats||{};override.snapshotStats={...(override.snapshotStats||{}),...safeStats};synced.push(fighter);});window.UFC_PACKET_PROFILE_STAT_BRIDGE={version:VERSION,synced,primeRecordSource:'RANKING_DATA.primeRecords'};return synced;}
   function fallbackImage(img){if(!img||img.dataset.ufcPhotoFallbackApplied)return;const src=img.getAttribute('src')||'';if(!src.includes('assets/fighters/'))return;img.dataset.ufcPhotoFallbackApplied='true';const name=String(img.getAttribute('alt')||'').replace(/\s+profile photo$/i,'').replace(/\s+thumbnail$/i,'').trim();const parent=img.closest('.row-photo,.fighter-photo,.ov-card-photo');if(!parent)return;img.remove();if(parent.classList.contains('row-photo')||parent.classList.contains('ov-card-photo')){parent.textContent=initials(name);return;}parent.classList.remove('has-photo');if(!parent.querySelector('.photo-initials')){const fallback=document.createElement('div');fallback.className='photo-initials';fallback.textContent=initials(name);parent.prepend(fallback);}}
   function installImageFallback(){if(window.__UFC_PHOTO_FALLBACK_INSTALLED)return;window.__UFC_PHOTO_FALLBACK_INSTALLED=true;document.addEventListener('error',event=>{if(event.target?.tagName==='IMG')fallbackImage(event.target);},true);}
   function scanBrokenImages(){document.querySelectorAll('img[src*="assets/fighters/"]').forEach(img=>{if(img.complete&&img.naturalWidth===0)fallbackImage(img);});}
@@ -98,9 +98,9 @@
     const loadDivisionRankings=()=>loadScriptOnce('assets/js/division-rankings.js?v=division-rankings-20260705e-clean-leaderboard','data-division-rankings',loadBranding);
     const loadHomePolish=()=>loadScriptOnce('assets/js/home-polish.js?v=home-polish-hybrid-preview-20260705b','data-home-polish',loadDivisionRankings);
     const loadWatchMoments=()=>loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260706t-robbie-lawler','data-watch-moments',loadHomePolish);
-    const loadPackages=()=>loadScriptOnce('assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260702a','data-fighter-profile-packages',loadWatchMoments);
+    const loadPackages=()=>loadScriptOnce('assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260710a-canonical-prime-record','data-fighter-profile-packages',loadWatchMoments);
     if(window.UFC_PROFILE_TEMPLATE_SYSTEM){loadPackages();return;}
-    loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260702b','data-profile-template-system',loadPackages);
+    loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260710a-canonical-prime-record','data-profile-template-system',loadPackages);
   }
 
   window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Deterministic prerequisite/data loader',updated:'2026-07-10',version:VERSION},apply:status,ready:readyPromise,slugFor,syncPacketProfileStats,packetManifest};

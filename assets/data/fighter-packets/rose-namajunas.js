@@ -27,7 +27,7 @@
 
   const boardRow = {
     fighter, totalScore:41.25, championship:10.40, opponentQuality:8.90, primeDominance:18.75, longevity:8.60, apexPeak:4.85, penalty:-6.00,
-    leaderboard:'women', gender:'Women', ufcRecord:'12-7', primaryDivision:'Strawweight', secondaryDivision:'Flyweight', finishRatePct:33.3, activeEliteYears:6.3, timesFinishedPrime:1, primeRecord:'6-2', roundsWonPct:63.0,
+    leaderboard:'women', gender:'Women', ufcRecord:'12-7', primaryDivision:'Strawweight', secondaryDivision:'Flyweight', finishRatePct:33.3, activeEliteYears:6.3, timesFinishedPrime:1,  roundsWonPct:63.0,
     notes:'Permanent fighter-packet add. Two-time UFC strawweight champion with four title-fight wins, elite Joanna/Zhang quality wins, a 6-2 prime, and post-prime flyweight losses carrying 0 loss-context penalty.'
   };
 
@@ -62,7 +62,7 @@
       overallOvr:86, divisionLabel:'SW / FLW', resumeTag:'Two-reign strawweight giant killer',
       oneLiner:'A volatile but elite UFC-only case: two strawweight reigns, four title-fight wins, Joanna twice, Zhang twice, and a 6-2 prime capped by Andrade and Esparza damage.',
       categories:{ championship:{ovr:86}, opponentQuality:{ovr:88}, primeDominance:{ovr:85}, longevity:{ovr:85}, apexPeak:{ovr:90}, penalty:{ovr:82} },
-      snapshot:[ ['UFC Record','12-7'], ['UFC Title-Fight Wins','4 official / 4.00 adjusted'], ['Apex Peak','+4.85'], ['Quality Wins','Joanna x2, Zhang x2, Andrade'], ['Prime Record','6-2'], ['Prime Dominance','18.75 / 30'], ['Rounds Won','63.0% best-effort'], ['Loss Context','-6.00'] ],
+      snapshot:[ ['UFC Record','12-7'], ['UFC Title-Fight Wins','4 official / 4.00 adjusted'], ['Apex Peak','+4.85'], ['Quality Wins','Joanna x2, Zhang x2, Andrade'],  ['Prime Dominance','18.75 / 30'], ['Rounds Won','63.0% best-effort'], ['Loss Context','-6.00'] ],
       whyRankedHere:'Rose belongs in the high-end women’s UFC champion tier because the quality wins are enormous: Joanna twice, Zhang twice, Andrade, and two separate strawweight title wins.',
       whyNotHigher:'The case is capped by short title reigns and volatility. Four title-fight wins is strong, but not Amanda, Valentina, or Zhang title volume, and the Andrade finish plus Esparza rematch loss keep the prime from looking clean.',
       bigAssumptions:[ ['Prime record','Prime is 6-2: Waterson, Joanna I, Joanna II, Andrade II, Zhang I, Zhang II, with losses to Andrade I and Esparza II.'], ['Loss cutoff','Loss penalties stop after Carla Esparza II because the later flyweight losses are post-prime/upward-division phase.'], ['Quality Wins cap','Joanna I and Zhang I get rare 1.25 title-win exception credit. Joanna II, Zhang II, and Andrade II are full 1.00 wins, not above-cap bumps.'], ['Championship volume','Four adjusted title wins is strong but not long-reign volume.'], ['Photos','No photo paths until real files exist in assets/fighters/.'] ],
@@ -71,7 +71,7 @@
       primeDominanceSummary:{ score:18.75, components:{ primeRecord:5.00, primeRoundsWon:4.15, titleDefenseDominance:2.50, finishStoppageDominance:3.00, lossSafetyDurability:2.25, divisionStrength:1.85 }, notes:'A 6-2 prime with huge wins, but not a round-control machine and finished by Andrade during the core window.' },
       finalTakeaway:'Rose is one of the highest-variance women’s UFC GOAT cases: legendary quality wins and real title moments, balanced by short reigns and meaningful prime losses.'
     },
-    profileStats:{ ufcRecord:'12-7', titleFightWins:4, adjustedTitleWins:4.00, eliteWins:5, primeRecord:'6-2', primeDominance:18.75, finishRatePct:33.3, roundsWonPct:63.0, activeEliteYears:6.3, apexPeak:4.85, timesFinishedPrime:1, divisionStrengthContext:'Women’s strawweight is treated as one of the stronger women’s UFC divisions across Rose’s prime.', lossContext:'Carla Esparza I and Karolina are pre-prime damage. Andrade I and Carla Esparza II are prime damage. Fiorot, Blanchfield, and Silva are post-prime/upward-division and receive 0 loss-context penalty.' },
+    profileStats:{ ufcRecord:'12-7', titleFightWins:4, adjustedTitleWins:4.00, eliteWins:5,  primeDominance:18.75, finishRatePct:33.3, roundsWonPct:63.0, activeEliteYears:6.3, apexPeak:4.85, timesFinishedPrime:1, divisionStrengthContext:'Women’s strawweight is treated as one of the stronger women’s UFC divisions across Rose’s prime.', lossContext:'Carla Esparza I and Karolina are pre-prime damage. Andrade I and Carla Esparza II are prime damage. Fiorot, Blanchfield, and Silva are post-prime/upward-division and receive 0 loss-context penalty.' },
     compareSeasoning:{
       shortCase:'Rose is the giant-killer strawweight case: two title reigns, Joanna twice, Zhang twice, and one of the best women’s UFC quality-win clusters ever.',
       peak:'At her best, Rose had timing, movement, sudden finishing danger, and title-fight poise against historically great strawweights.',

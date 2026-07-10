@@ -14,7 +14,7 @@
       oneLiner: 'The volume case: relentless pace, elite quality wins, and one of the longest useful elite windows in the featherweight era.',
       categories: { championship: { ovr: 79, rank: 17 }, opponentQuality: { ovr: 93, rank: 2 }, primeDominance: { ovr: 88, rank: 17 }, longevity: { ovr: 95, rank: 3 } },
       snapshot: [
-        ['UFC Record', '23-9'], ['UFC Title-Fight Wins', '4'], ['Championship Level', 'Great but Not Massive Belt Volume'], ['Quality Wins', 'Second-Best Score in This Ranking'], ['Prime Record', 'Long High-Level Prime'], ['Active Elite Years', '10.9 Elite Years'], ['Loss Context', 'Many losses came to elite names and across long volume']
+        ['UFC Record', '23-9'], ['UFC Title-Fight Wins', '4'], ['Championship Level', 'Great but Not Massive Belt Volume'], ['Quality Wins', 'Second-Best Score in This Ranking'],  ['Active Elite Years', '10.9 Elite Years'], ['Loss Context', 'Many losses came to elite names and across long volume']
       ],
       whyRankedHere: 'Holloway ranks #9 because his quality-wins score and longevity score are both elite. Few fighters in this ranking have stacked as many meaningful UFC wins over as long a stretch.',
       whyNotHigher: 'He sits below the very top names because the current scoring model gives him less championship control and more resume drag from total losses. The volume is impressive, but the belt dominance is not on the level of the names above him.',
@@ -24,7 +24,7 @@
       finalTakeaway: 'Holloway is the volume-and-quality-wins monster of this ranking: one of the deepest win ledgers in the UFC, backed by real longevity, even without a top-tier championship score.'
     },
     profileStats: {
-      ufcRecord: '23-9', titleFightWins: 4, eliteWins: 9, primeRecord: '11-5', finishRatePct: 52.2, roundsWonPct: 72.8, activeEliteYears: 10.9, timesFinishedPrime: 1,
+      ufcRecord: '23-9', titleFightWins: 4, eliteWins: 9,  finishRatePct: 52.2, roundsWonPct: 72.8, activeEliteYears: 10.9, timesFinishedPrime: 1,
       divisionStrengthContext: 'Featherweight value is strong, and the lightweight moments add context without becoming the core case.',
       lossContext: 'Loss volume matters, but several losses came against elite opponents or across a long elite window.'
     },

@@ -1,7 +1,7 @@
 // Promotes the audited Prime Dominance model into live category rows only.
 // Overall totals, ranks, and OVR belong to final-score-engine.js.
 (function(){
-  const VERSION='prime-dominance-live-promoter-20260710a-category-only';
+  const VERSION='prime-dominance-live-promoter-20260710b-canonical-prime-record';
   let applying=false;
 
   function applyPrimeDominanceLive(){
@@ -35,7 +35,6 @@
       profile.primeDominance=row.primeDominance;
       profile.primeDominanceLiveAudit=entry;
       profile.primeDominanceShadowAudit=entry;
-      profile.primeRecord=entry.primeRecord||profile.primeRecord;
       profile.roundsWonPct=entry.roundControlPct??profile.roundsWonPct;
       profile.primeFinishRatePct=entry.primeFinishRate??profile.primeFinishRatePct;
       if(entry.roundControlAudit?.roundsWon!==undefined){
@@ -52,7 +51,6 @@
       return [
         ['UFC Record',profile.ufcRecord||row.ufcRecord||'—'],
         ['Prime Dominance',`${Number(row.primeDominance||0).toFixed(2)} / 30`],
-        ['Prime Record',entry?.primeRecord||profile.primeRecord||'—'],
         ['Rounds Won',roundsWonText(entry)],
         ['Prime Finish Rate',finishRateText(entry)],
         ['Active Elite Years',row.activeEliteYears!==undefined?Number(row.activeEliteYears).toFixed(2):(profile.activeEliteYears!==undefined?Number(profile.activeEliteYears).toFixed(2):'—')]
@@ -69,7 +67,6 @@
         row.primeDominance=round(entry.total);
         row.primeDominanceLiveAudit=entry;
         row.primeDominanceShadowAudit=entry;
-        row.primeRecord=entry.primeRecord||row.primeRecord;
         row.roundsWonPct=entry.roundControlPct??row.roundsWonPct;
         row.primeFinishRatePct=entry.primeFinishRate??row.primeFinishRatePct;
         upsertProfilePrime(row,entry);
