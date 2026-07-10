@@ -3,11 +3,13 @@
 (function(){
   'use strict';
 
-  const VERSION='category-rating-prime-record-polish-20260710b';
+  const VERSION='category-rating-prime-record-polish-20260710c';
   const DATA=window.RANKING_DATA;
   const OVERRIDES=window.DISPLAY_OVERRIDES||{};
   const EXPLICIT_PRIME_RECORDS={
-    'Michael Bisping':'7-4'
+    'Michael Bisping':'7-4',
+    'Dustin Poirier':'9-5, 1 NC',
+    'Justin Gaethje':'9-5'
   };
   const FORBIDDEN_TEXT_PARENTS=new Set(['SCRIPT','STYLE','NOSCRIPT','TEMPLATE']);
 
