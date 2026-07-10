@@ -2,7 +2,7 @@
 // Applies audited Championship Resume values and presentation evidence only.
 // Overall totals, ranks, and OVR are owned exclusively by final-score-engine.js.
 (function(){
-  const VERSION='championship-resume-live-20260710b-quality-batch-one';
+  const VERSION='championship-resume-live-20260710c-quality-revisions';
   const DATA=window.RANKING_DATA;
   const SHADOW=window.UFC_CHAMPIONSHIP_RESUME_SHADOW;
   if(!DATA||!SHADOW||!Array.isArray(SHADOW.report))return;
@@ -58,7 +58,7 @@
   function loadOpponentQualityShadow(){
     loadScriptOnce('assets/data/opponent-quality-ledgers.js?v=opponent-quality-ledgers-20260708d','data-opponent-quality-ledgers',()=>
       loadScriptOnce('assets/data/opponent-quality-ledger-batch-four.js?v=opponent-quality-ledger-batch-four-20260708a','data-opponent-quality-ledger-batch-four',()=>
-        loadScriptOnce('assets/data/opponent-quality-dj-calibration.js?v=opponent-quality-dj-calibration-20260710a-chuck-tito','data-opponent-quality-dj-calibration')));
+        loadScriptOnce('assets/data/opponent-quality-dj-calibration.js?v=opponent-quality-dj-calibration-20260710b-reviewed','data-opponent-quality-dj-calibration')));
   }
   function applyFinalScore(reason){
     if(window.UFC_FINAL_SCORE_ENGINE?.apply){try{return window.UFC_FINAL_SCORE_ENGINE.apply(reason);}catch(e){}}

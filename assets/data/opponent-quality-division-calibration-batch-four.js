@@ -1,7 +1,7 @@
 // Opponent Quality division calibration: batch-four group. Shadow-only.
 // Reverts hard-division trims. Keeps only approved Cejudo/Whittaker trims and boosts Izzy's Pereira II win.
 (function(){
-  const VERSION='opponent-quality-division-calibration-batch-four-20260710b-chuck-tito';
+  const VERSION='opponent-quality-division-calibration-batch-four-20260710c-reviewed';
   const store=window.UFC_OPPONENT_QUALITY_LEDGERS;
   const RAW=store?.raw;
   if(!RAW)return;
@@ -35,7 +35,7 @@
   loadScriptOnce('assets/data/opponent-quality-ledger-batch-five.js?v=opponent-quality-ledger-batch-five-20260708b','data-opponent-quality-ledger-batch-five',()=>
     loadScriptOnce('assets/data/opponent-quality-ledger-batch-six.js?v=opponent-quality-ledger-batch-six-20260708a','data-opponent-quality-ledger-batch-six',()=>
       loadScriptOnce('assets/data/opponent-quality-ledger-batch-seven.js?v=opponent-quality-ledger-batch-seven-20260708a','data-opponent-quality-ledger-batch-seven',()=>
-        loadScriptOnce('assets/data/opponent-quality-ledger-batch-eight.js?v=opponent-quality-ledger-batch-eight-20260710a-chuck-tito','data-opponent-quality-ledger-batch-eight',()=>
+        loadScriptOnce('assets/data/opponent-quality-ledger-batch-eight.js?v=opponent-quality-ledger-batch-eight-20260710b-reviewed','data-opponent-quality-ledger-batch-eight',()=>
           loadScriptOnce('assets/js/opponent-quality-shadow-audit.js?v=opponent-quality-shadow-audit-20260708b','data-opponent-quality-shadow-audit',()=>
             loadScriptOnce('assets/js/opponent-quality-live.js?v=opponent-quality-live-20260710a-category-only','data-opponent-quality-live'))))));
 })();
