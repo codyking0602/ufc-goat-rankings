@@ -37,7 +37,18 @@ jobs:
           cat /tmp/ufc-prime-cleanup-server.log
           exit 1
       - name: Canonicalize Prime Record source
-        run: node scripts/one-time-canonical-prime-record-cleanup.cjs
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/one-time-canonical-prime-record-cleanup.cjs 2>&1 | tee /tmp/canonical-prime-cleanup.log
+      - name: Upload cleanup log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-prime-cleanup-log
+          path: /tmp/canonical-prime-cleanup.log
+          if-no-files-found: warn
+          retention-days: 7
       - name: Validate cleaned runtime
         run: |
           node scripts/run-prime-record-source-audit.mjs
