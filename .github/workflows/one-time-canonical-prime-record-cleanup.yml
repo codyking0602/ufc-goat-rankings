@@ -43,6 +43,7 @@ jobs:
           {
             node scripts/one-time-canonical-prime-record-cleanup-v3.cjs
             node scripts/one-time-remove-runtime-prime-record-writers.cjs
+            node scripts/remove-direct-prime-record-writers.cjs
           } 2>&1 | tee /tmp/canonical-prime-cleanup.log
       - name: Upload cleanup log
         if: always()
@@ -74,7 +75,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git restore .github/workflows/one-time-canonical-prime-record-cleanup.yml || true
           git add -A
           git diff --cached --quiet && exit 0
           git commit -m "Canonicalize Prime Record source"
