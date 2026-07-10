@@ -31,6 +31,7 @@ Completed and runtime-validated:
 - strict overall-score ownership gate
 - one deterministic scoring initialization chain
 - strict deterministic-initialization gate
+- static loader cache alignment
 
 ## Locked Formula
 
@@ -102,25 +103,51 @@ Permanent report:
 
 - `docs/audits/SEVENTH_RUNTIME_AUDIT_DETERMINISTIC_INITIALIZATION.md`
 
+## Quality Wins Coverage Work
+
+### Chuck Liddell and Tito Ortiz
+
+The first missing-coverage batch is complete and validated.
+
+Chuck Liddell:
+
+```text
+Quality Wins: 15.40 legacy fallback → 22.66 audited live
+Quality Wins rank: #8 among men
+Overall score: 46.11 → 52.76
+Overall rank: #27 → #17
+```
+
+Tito Ortiz:
+
+```text
+Quality Wins: 7.95 legacy fallback → 15.81 audited live
+Quality Wins rank: #33 among men
+Overall score: 40.24 → 47.45
+Overall rank: #37 → #24
+```
+
+The movement came only from replacing stale Quality Wins fallbacks with normalized UFC-only ledgers. No other category changed.
+
+Permanent report:
+
+- `docs/audits/EIGHTH_RUNTIME_AUDIT_QUALITY_CHUCK_TITO.md`
+
 ## Current Category Coverage
 
 | Category | Pass | Warn | Fail |
 |---|---:|---:|---:|
 | Championship Resume | 62 | 0 | 0 |
-| Quality Wins | 57 | 0 | 5 |
+| Quality Wins | 59 | 0 | 3 |
 | Prime Dominance | 53 | 0 | 9 |
 | Longevity | 62 | 0 | 0 |
 | Apex Peak | 61 | 1 | 0 |
 | Loss Context | 0 | 61 | 1 |
 
-No fighter category values changed during the ownership or initialization repairs.
-
 ## Missing Coverage
 
 Quality Wins live audits missing:
 
-- Chuck Liddell
-- Tito Ortiz
 - Dricus du Plessis
 - Sean O'Malley
 - Julianna Peña
@@ -147,9 +174,9 @@ Loss Context:
 - the other 61 ledger totals remain QA-only
 - existing legacy `penalty` values remain live until the full review is complete
 
-## Rankings Preserved
+## Rankings
 
-The men's top ten remains:
+The men's top ten remains unchanged after the Chuck/Tito batch:
 
 1. Jon Jones — 102.21
 2. Georges St-Pierre — 88.01
@@ -164,18 +191,25 @@ The men's top ten remains:
 
 ## Production Cache Status
 
-The static `index.html` query strings now point to the deterministic `module-versions.js` bootstrap and the readiness-enabled `ranking-data-patches.js` loader. The normal Chromium audit passed after the cache-key update.
+The static and dynamic cache chain is aligned through:
+
+- `index.html`
+- `module-versions.js`
+- `ranking-data-patches.js`
+- `championship-resume-live.js`
+- the Quality Wins calibration and ledger chain
+
+The clean deterministic Chromium audit passed after alignment.
 
 ## Immediate Next Phase
 
-Complete missing audited category coverage in this order:
+Complete the remaining Quality Wins rows in small batches:
 
-1. five Quality Wins rows
-2. nine Prime Dominance rows
-3. Dricus du Plessis Apex Peak review
-4. all 62 Loss Context rows, including Sean O'Malley
+1. Dricus du Plessis and Sean O'Malley source reconciliation
+2. Julianna Peña ledger completion
+3. rerun the deterministic Chromium audit after each batch
 
-After each small batch, rerun the deterministic Chromium audit.
+Then continue to the nine missing Prime Dominance audits, Dricus' Apex Peak review, and Loss Context.
 
 ## Definition of Success
 
