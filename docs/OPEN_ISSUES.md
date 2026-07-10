@@ -13,10 +13,10 @@ Converted to category-only writers:
 - Championship Resume
 - Quality Wins
 - Prime Dominance
+- Longevity
 
 Still remaining:
 
-- Longevity promoter writes totals and ranks
 - Apex Peak promoter writes totals and ranks
 - general legacy weighting code can still write totals
 
@@ -40,7 +40,17 @@ Championship also no longer force-writes Prime category rank/OVR or runs delayed
 
 Production status: Not merged.
 
-### 4. Loss Context ledger is not live
+### 4. Longevity promoter owned overall state
+
+Status: Resolved on safety branch
+
+Longevity now writes only native `/30` Longevity values and Fighter Era Ledger audit metadata. It no longer recalculates totals, reranks boards, copies overall state into profiles, or writes numerical display overrides.
+
+The fourth settled runtime audit preserved 62/62 Longevity coverage and reported 0 formula mismatches.
+
+Production status: Not merged.
+
+### 5. Loss Context ledger is not live
 
 Status: Open
 
@@ -48,11 +58,11 @@ The current live promoter remains disabled. Existing `penalty` values remain liv
 
 Target: Complete full UFC loss coverage and promote reviewed penalties.
 
-### 5. Score-changing timers
+### 6. Score-changing timers
 
 Status: Open
 
-Longevity, Apex, category tiers, and refresh paths are still reapplied after page load.
+Longevity, Apex, category tiers, and refresh paths are still reapplied after page load. Longevity no longer owns overall scoring, but the repeated loading remains unnecessary technical debt.
 
 The final score engine repairs the final settled state, but the loader is not yet deterministic.
 
@@ -60,7 +70,7 @@ Target: One ordered initialization chain with no score-changing timers.
 
 ## High Priority
 
-### 6. Full-roster six-category coverage gate
+### 7. Full-roster six-category coverage gate
 
 Status: In Progress
 
@@ -79,7 +89,7 @@ Current coverage:
 
 Target: Make this audit a hard release gate with 62/62 coverage and 0 formula mismatches.
 
-### 7. Score-derived display overrides
+### 8. Score-derived display overrides
 
 Status: Controlled on safety branch
 
@@ -87,19 +97,18 @@ The final score engine strips numerical rank/OVR fields from runtime display ove
 
 The settled audit reports 0 forbidden score-derived overrides.
 
-Remaining: Remove obsolete writers from Longevity, Apex, and legacy modules.
+Remaining: Remove obsolete writers from Apex and legacy modules.
 
-### 8. Category promoters omit Apex or use competing formulas
+### 9. Category promoters omit Apex or use competing formulas
 
 Status: In Progress
 
-Championship, Quality Wins, and Prime are clean. Remaining:
+Championship, Quality Wins, Prime, and Longevity are clean. Remaining:
 
-- Longevity
 - Apex Peak
 - legacy general weighting layer
 
-### 9. Legacy source values remain mixed with live values
+### 10. Legacy source values remain mixed with live values
 
 Status: Open
 
@@ -107,7 +116,7 @@ Status: Open
 
 Target: Preserve legacy values explicitly but prohibit silent use after initialization.
 
-### 10. Production cache-bust references
+### 11. Production cache-bust references
 
 Status: Open before merge
 
@@ -115,7 +124,7 @@ Status: Open before merge
 
 ## Missing Audit Coverage
 
-### 11. Quality Wins missing five live audits
+### 12. Quality Wins missing five live audits
 
 Status: Open
 
@@ -125,7 +134,7 @@ Status: Open
 - Sean O'Malley
 - Julianna Peña
 
-### 12. Prime Dominance missing nine merged audits
+### 13. Prime Dominance missing nine merged audits
 
 Status: Open
 
@@ -139,13 +148,13 @@ Status: Open
 - Sean Strickland
 - Dan Henderson
 
-### 13. Apex Peak incomplete row
+### 14. Apex Peak incomplete row
 
 Status: Open
 
 Dricus du Plessis remains explicitly pending.
 
-### 14. Loss Context incomplete row
+### 15. Loss Context incomplete row
 
 Status: Open
 
@@ -153,19 +162,19 @@ Sean O'Malley has no usable adapter entry. The other 61 adapter totals still req
 
 ## Review Items
 
-### 15. Apex naming consistency
+### 16. Apex naming consistency
 
 Status: Open
 
 Both “Apex Peak” and “Peak Apex” still appear. Standardize on “Apex Peak.”
 
-### 16. Compare Mode source consistency
+### 17. Compare Mode source consistency
 
 Status: Not yet audited
 
 Target: Confirm Compare Mode reads canonical final rows and maintains no separate numerical score source.
 
-### 17. Division board source consistency
+### 18. Division board source consistency
 
 Status: Not yet audited
 
