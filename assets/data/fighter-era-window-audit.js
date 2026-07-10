@@ -1,11 +1,16 @@
-// Roster-wide canonical prime-window mismatch audit.
-// Review only: reports disagreements between the locked Fighter Era Ledger and Prime Dominance sources.
+// Roster-wide canonical Prime source and dependent-category mismatch audit.
+// Review only: reports disagreements without changing category scores.
 (function(){
-  const VERSION='fighter-era-window-audit-20260710a-roster-lock';
+  'use strict';
+  const VERSION='fighter-era-window-audit-20260710b-record-dependencies';
   const era=window.UFC_FIGHTER_ERA_LEDGERS;
   const DATA=window.RANKING_DATA||{};
+  const canonicalRecords=window.UFC_CANONICAL_PRIME_RECORDS;
   const primeLedgers=window.UFC_PRIME_DOMINANCE_LEDGERS;
   const roundAudit=window.UFC_PRIME_ROUND_CONTROL_AUDIT;
+  const longevity=window.UFC_LONGEVITY_SHADOW_SCORER;
+  const lossAdapter=window.UFC_LOSS_CONTEXT_LEDGER_ADAPTER;
+  const lossLive=window.UFC_LOSS_CONTEXT_LIVE_PROMOTER;
 
   if(!era?.entryFor){
     window.UFC_FIGHTER_ERA_WINDOW_AUDIT={version:VERSION,error:'Missing UFC_FIGHTER_ERA_LEDGERS',mutatesScores:false};
@@ -25,6 +30,7 @@
     Object.entries(ALIASES).forEach(([from,to])=>{text=text.replace(new RegExp(`\\b${from.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}\\b`,'g'),to);});
     return text.replace(/[’']/g,'').replace(/\b(19|20)\d{2}\b/g,' ').replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim();
   }
+  function normalizeRecord(value){return String(value||'').toUpperCase().replace(/\s+/g,'').replace(/,/g,'');}
   function tokens(value){return normalize(value).split(' ').filter(token=>token&&token.length>2&&!STOPWORDS.has(token));}
   function isOpen(value){const text=normalize(value);return !text||/(active|current|open)/.test(text);}
   function anchorsMatch(canonical,source){
@@ -68,9 +74,12 @@
     const endAligned=canonicalOpen?isOpen(source.end):anchorsMatch(canonical?.endLabel||canonical?.end,source.end);
     return {status:startAligned&&endAligned?'aligned':'conflict',startAligned,endAligned};
   }
-  function recordSourceStatus(primeEntry){
-    const source=normalize(primeEntry?.source||primeEntry?.version||'');
-    return source.includes('fighter era')||source.includes('fighter-era')?'derived-from-era':'independent-prime-input';
+  function lossWindowFor(fighter){
+    const entry=lossAdapter?.entryFor?.(fighter);
+    const w=entry?.window;
+    if(!w)return null;
+    if(typeof w==='string')return w;
+    return canonicalText(w);
   }
 
   const rosterNames=[...new Set([
@@ -82,11 +91,17 @@
   const rows=rosterNames.map(fighter=>{
     const ledger=era.entryFor(fighter);
     const canonical=ledger?.window||null;
+    const canonicalRecord=canonicalRecords?.entryFor?.(fighter)||DATA.primeRecords?.[fighter]||null;
     const primeEntry=primeEntryFor(fighter);
     const sourceWindow=sourceWindowFor(fighter,primeEntry);
     const comparison=windowStatus(canonical,sourceWindow);
-    const displayedRecord=primeEntry?.primeRecord||DATA.primeRecords?.[fighter]?.record||null;
-    const displayedRecordContext=DATA.primeRecords?.[fighter]?.context||null;
+    const primeRecord=primeEntry?.primeRecord||null;
+    const recordAligned=!!canonicalRecord?.record&&!!primeRecord&&normalizeRecord(canonicalRecord.record)===normalizeRecord(primeRecord);
+    const longevityEntry=longevity?.entryFor?.(fighter)||null;
+    const longevityPending=!!ledger?.longevity?.windowLockedPendingRecalculation;
+    const lossWindow=lossWindowFor(fighter);
+    const lossComparison=lossWindow?windowStatus(canonical,{...parseWindowText(lossWindow)}):{status:'missing-loss-window',startAligned:false,endAligned:false};
+    const lossWindowAligned=lossComparison.status==='aligned';
     return {
       fighter,
       canonicalWindow:canonicalText(canonical),
@@ -97,16 +112,27 @@
       canonicalOpen:!canonical?.end,
       canonicalLocked:!!canonical?.locked,
       canonicalLockVersion:canonical?.lockVersion||null,
+      canonicalPrimeRecord:canonicalRecord?.record||null,
+      canonicalPrimeRecordSource:canonicalRecord?.source||DATA.primeRecords?.[fighter]?.source||null,
+      primeDominancePrimeRecord:primeRecord,
+      primeRecordAligned:recordAligned,
+      primeRecordStatus:!canonicalRecord?.record?'missing-canonical-record':!primeRecord?'missing-prime-dominance-record':recordAligned?'aligned':'conflict',
       primeWindow:sourceWindow.text||null,
       primeWindowSource:sourceWindow.source,
       primeWindowStructured:sourceWindow.structured,
       startAligned:comparison.startAligned,
       endAligned:comparison.endAligned,
       status:comparison.status,
-      displayedPrimeRecord:displayedRecord,
-      displayedPrimeRecordContext,
-      primeRecordSourceStatus:recordSourceStatus(primeEntry),
       primeEntryPresent:!!primeEntry,
+      primeDominanceScoreRebuildRequired:!recordAligned||comparison.status!=='aligned'||!!canonicalRecord?.scoreRebuildRequired,
+      longevityWindow:longevityEntry?.rawWindowLabel||null,
+      longevityInputStatus:longevityPending?'pending-window-recalculation':longevityEntry?'era-ledger-aligned':'missing-longevity-entry',
+      longevityPending,
+      lossContextWindow:lossWindow,
+      lossContextWindowAligned:lossWindowAligned,
+      lossContextWindowStatus:lossComparison.status,
+      lossContextPenaltySource:lossLive?.launchMode==='locked-current-value'?'manual-locked-not-derived':'ledger-derived-or-missing',
+      lossContextRebuildRequired:lossLive?.launchMode==='locked-current-value'||!lossWindowAligned,
       dependentRebuildRequired:!!ledger?.windowDecision?.dependentRebuildRequired,
       windowDecision:ledger?.windowDecision?.decision||null
     };
@@ -115,8 +141,17 @@
   const counts=rows.reduce((acc,row)=>{acc[row.status]=(acc[row.status]||0)+1;return acc;},{});
   const conflicts=rows.filter(row=>row.status==='conflict');
   const incomplete=rows.filter(row=>row.status==='missing-prime-window');
-  const independentPrimeRecords=rows.filter(row=>row.primeRecordSourceStatus==='independent-prime-input');
+  const primeRecordConflicts=rows.filter(row=>row.primeRecordStatus==='conflict');
+  const missingPrimeRecords=rows.filter(row=>row.primeRecordStatus.startsWith('missing-'));
+  const primeDominanceRebuild=rows.filter(row=>row.primeDominanceScoreRebuildRequired);
+  const longevityPending=rows.filter(row=>row.longevityPending||row.longevityInputStatus==='missing-longevity-entry');
+  const lossContextRebuild=rows.filter(row=>row.lossContextRebuildRequired);
   const unlocked=rows.filter(row=>!row.canonicalLocked);
+  const dependentRebuildNames=[...new Set([
+    ...primeDominanceRebuild.map(row=>row.fighter),
+    ...longevityPending.map(row=>row.fighter),
+    ...lossContextRebuild.map(row=>row.fighter)
+  ])];
 
   function entryFor(fighter){return rows.find(row=>row.fighter===fighter)||null;}
   function report(){return rows.map(row=>({...row}));}
@@ -125,22 +160,36 @@
     version:VERSION,
     sourceEraLedgerVersion:era.version,
     sourceWindowLockVersion:window.UFC_FIGHTER_ERA_WINDOW_LOCK?.version||null,
+    sourceCanonicalPrimeRecordVersion:canonicalRecords?.version||null,
     fighterCount:rows.length,
     counts,
     rows,
     conflicts,
     incomplete,
-    independentPrimeRecords,
+    primeRecordConflicts,
+    missingPrimeRecords,
+    primeDominanceRebuild,
+    longevityPending,
+    lossContextRebuild,
+    dependentRebuildNames,
     unlocked,
     allCanonicalWindowsLocked:unlocked.length===0&&rows.length===Number(window.UFC_FIGHTER_ERA_WINDOW_LOCK?.fighterCount||rows.length),
+    allCanonicalPrimeRecordsPresent:missingPrimeRecords.length===0,
     mutatesScores:false,
     mutatesWindows:false,
     entryFor,
     report,
     appliedAt:new Date().toISOString()
   };
-  document.documentElement.setAttribute('data-fighter-era-window-audit',`${VERSION}-${conflicts.length}-conflicts-${incomplete.length}-incomplete`);
-  if(conflicts.length||incomplete.length){
-    console.warn('[UFC era-window audit]',{conflicts:conflicts.map(row=>row.fighter),incomplete:incomplete.map(row=>row.fighter)});
+  document.documentElement.setAttribute('data-fighter-era-window-audit',`${VERSION}-${conflicts.length}-window-${primeRecordConflicts.length}-record-${longevityPending.length}-longevity`);
+  if(conflicts.length||incomplete.length||primeRecordConflicts.length||missingPrimeRecords.length){
+    console.warn('[UFC canonical Prime dependency audit]',{
+      windowConflicts:conflicts.map(row=>row.fighter),
+      missingPrimeWindows:incomplete.map(row=>row.fighter),
+      primeRecordConflicts:primeRecordConflicts.map(row=>row.fighter),
+      missingPrimeRecords:missingPrimeRecords.map(row=>row.fighter),
+      longevityPending:longevityPending.map(row=>row.fighter),
+      lossContextRebuildCount:lossContextRebuild.length
+    });
   }
 })();
