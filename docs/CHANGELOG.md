@@ -1,5 +1,48 @@
 # Changelog
 
+## 2026-07-09 — Canonical Final Score Engine Checkpoint
+
+### Added
+
+- `assets/js/final-score-engine.js`
+- `docs/audits/SECOND_RUNTIME_AUDIT_FINAL_ENGINE.md`
+
+### Changed
+
+- Prime Dominance promoter now writes only Prime-related values and audit metadata.
+- Prime Dominance no longer writes totals, ranks, overall OVR, category OVR, or category rank.
+- Module bootstrap now routes current category passes through the final score engine.
+- Runtime numerical display overrides are stripped so current scores determine ranks and OVRs.
+
+### Locked formula
+
+```text
+Championship Resume / 30 × 35
++ Quality Wins / 30 × 27.5
++ Prime Dominance / 30 × 27.5
++ Longevity / 30 × 10
++ Apex Peak
++ Loss Context
+= Raw Score
+```
+
+### Validation
+
+Second settled headless Chromium audit:
+
+- 62 roster fighters
+- formula mismatches reduced from 53 to 0
+- 0 profile/leaderboard mismatches
+- 0 duplicate fighter names
+- 0 forbidden score-derived display overrides
+- category coverage unchanged
+
+No fighter category input or audit value changed during this repair.
+
+### Next
+
+Convert Championship Resume and Quality Wins promoters into category-only writers, then rerun the same settled audit.
+
 ## 2026-07-09 — Read-Only Six-Category Integrity Audit
 
 ### Added
@@ -29,10 +72,6 @@ The read-only auditor checks every leaderboard fighter for:
 - The auditor reports only and declares `mutatesScores: false`.
 - The dashboard is isolated from normal app loading on the safety branch.
 
-### Next
-
-Capture the first settled full-roster report and use it to define the exact integration fixes before adding the central score engine.
-
 ## 2026-07-09 — Six-Category Pipeline Consolidation Begins
 
 ### Added
@@ -50,7 +89,3 @@ Preserve Cody's fighter-by-fighter audit work while replacing the tangled scorin
 ### Live behavior
 
 No production scoring behavior changed in this documentation phase.
-
-### Next
-
-Build a non-mutating full-roster integrity auditor before changing any category promoter or overall calculation.
