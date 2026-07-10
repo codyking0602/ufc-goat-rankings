@@ -110,6 +110,12 @@ jobs:
           set -o pipefail
           node scripts/run-longevity-anchor-review.mjs 2>&1 | tee docs/audits/runtime-longevity-anchor-review-console.log
 
+      - name: Run four-category balance simulation
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/run-four-category-balance-simulation.mjs 2>&1 | tee docs/audits/runtime-four-category-balance-console.log
+
       - name: Upload audit report
         if: always()
         uses: actions/upload-artifact@v4
@@ -149,5 +155,8 @@ jobs:
             docs/audits/runtime-longevity-anchor-review.json
             docs/audits/runtime-longevity-anchor-review.md
             docs/audits/runtime-longevity-anchor-review-console.log
+            docs/audits/runtime-four-category-balance-simulation.json
+            docs/audits/runtime-four-category-balance-simulation.md
+            docs/audits/runtime-four-category-balance-console.log
           if-no-files-found: warn
           retention-days: 30
