@@ -1,7 +1,7 @@
 // Promotes the audited Prime Dominance model into live category rows only.
 // Overall totals, ranks, and OVR belong to final-score-engine.js.
 (function(){
-  const VERSION='prime-dominance-live-promoter-20260710c-frankie-canonical-window';
+  const VERSION='prime-dominance-live-promoter-20260710d-canonical-prime-source';
   let applying=false;
 
   function applyPrimeDominanceLive(){
@@ -9,21 +9,29 @@
     const DATA=window.RANKING_DATA;
     const base=window.UFC_PRIME_DOMINANCE_LEDGERS;
     const report=base?.report||window.UFC_PRIME_DOMINANCE_SHADOW_MODEL?.report||[];
+    const canonical=window.UFC_CANONICAL_PRIME_RECORDS;
     if(!DATA||!report.length)return null;
     applying=true;
 
     function round(value){return Math.round((Number(value||0)+Number.EPSILON)*100)/100;}
     function profileFor(name){return (DATA.fighters||[]).find(f=>f.fighter===name);}
-    function windowText(entry){return entry?.roundControlAudit?.window||entry?.primeWindow||'';}
+    function canonicalFor(name){return canonical?.entryFor?.(name)||null;}
+    function recordFor(name,entry){return canonicalFor(name)?.record||DATA.primeRecords?.[name]?.record||entry?.primeRecord||'—';}
+    function windowText(name,entry){return canonicalFor(name)?.context||DATA.primeRecords?.[name]?.context||entry?.roundControlAudit?.window||entry?.primeWindow||'';}
     function roundsWonText(entry){const audit=entry?.roundControlAudit;if(audit?.roundsWon!==undefined&&audit?.roundsCounted!==undefined)return `${audit.roundsWon}/${audit.roundsCounted} (${entry.roundControlPct}%)`;if(entry?.roundControlPct!==undefined)return `${entry.roundControlPct}%`;return '—';}
     function finishRateText(entry){if(entry?.primeFinishes!==undefined&&entry?.primeFights)return `${entry.primeFinishRate}% (${entry.primeFinishes}/${entry.primeFights})`;if(entry?.primeFinishRate!==undefined)return `${entry.primeFinishRate}%`;return '—';}
+    function recordMismatch(name,entry){const canonicalRecord=recordFor(name,entry);return !!canonicalRecord&&!!entry?.primeRecord&&String(canonicalRecord)!==String(entry.primeRecord);}
     function upsertProfilePrime(row,entry){
       const profile=profileFor(row.fighter);if(!profile)return;
+      const primeRecord=recordFor(row.fighter,entry);
+      const context=windowText(row.fighter,entry);
       profile.primeDominance=row.primeDominance;
       profile.primeDominanceLiveAudit=entry;
       profile.primeDominanceShadowAudit=entry;
-      profile.primeRecord=entry.primeRecord||profile.primeRecord;
-      profile.primeRecordContext=windowText(entry)||profile.primeRecordContext;
+      profile.primeRecord=primeRecord;
+      profile.primeRecordContext=context;
+      profile.primeDominanceRecordInput=entry.primeRecord||null;
+      profile.primeDominanceRebuildRequired=recordMismatch(row.fighter,entry)||!!canonicalFor(row.fighter)?.scoreRebuildRequired;
       profile.roundsWonPct=entry.roundControlPct??profile.roundsWonPct;
       profile.primeFinishRatePct=entry.primeFinishRate??profile.primeFinishRatePct;
       if(entry.roundControlAudit?.roundsWon!==undefined){profile.primeRoundsWon=entry.roundControlAudit.roundsWon;profile.primeRoundsCounted=entry.roundControlAudit.roundsCounted;}
@@ -33,7 +41,7 @@
       const profile=profileFor(row.fighter)||row;
       return [
         ['UFC Record',profile.ufcRecord||row.ufcRecord||'—'],
-        ['Prime Record',entry.primeRecord||profile.primeRecord||'—'],
+        ['Prime Record',recordFor(row.fighter,entry)],
         ['Prime Dominance',`${Number(row.primeDominance||0).toFixed(2)} / 30`],
         ['Rounds Won',roundsWonText(entry)],
         ['Prime Finish Rate',finishRateText(entry)],
@@ -44,28 +52,33 @@
     try{
       const entriesByName=Object.fromEntries(report.map(entry=>[entry.fighter,entry]));
       const liveRows=[...(DATA.men||[]),...(DATA.women||[])];
-      DATA.primeRecords=DATA.primeRecords||{};
+      const recordConflicts=[];
       liveRows.forEach(row=>{
         const entry=entriesByName[row.fighter];if(!entry)return;
+        const primeRecord=recordFor(row.fighter,entry);
+        const context=windowText(row.fighter,entry);
+        const mismatch=recordMismatch(row.fighter,entry);
         row.primeDominance=round(entry.total);
         row.primeDominanceLiveAudit=entry;
         row.primeDominanceShadowAudit=entry;
-        row.primeRecord=entry.primeRecord||row.primeRecord;
-        row.primeRecordContext=windowText(entry)||row.primeRecordContext;
+        row.primeRecord=primeRecord;
+        row.primeRecordContext=context;
+        row.primeDominanceRecordInput=entry.primeRecord||null;
+        row.primeDominanceRebuildRequired=mismatch||!!canonicalFor(row.fighter)?.scoreRebuildRequired;
         row.roundsWonPct=entry.roundControlPct??row.roundsWonPct;
         row.primeFinishRatePct=entry.primeFinishRate??row.primeFinishRatePct;
-        if(entry.primeRecord)DATA.primeRecords[row.fighter]={record:entry.primeRecord,context:windowText(entry)||''};
+        if(mismatch)recordConflicts.push(row.fighter);
         upsertProfilePrime(row,entry);
         if(typeof DISPLAY_OVERRIDES!=='undefined'){
           DISPLAY_OVERRIDES[row.fighter]=DISPLAY_OVERRIDES[row.fighter]||{};
           const override=DISPLAY_OVERRIDES[row.fighter];
           override.snapshot=snapshotFor(row,entry);
-          override.snapshotStats={...(override.snapshotStats||{}),primeRecord:entry.primeRecord,primeRecordContext:windowText(entry),primeDominance:row.primeDominance,primeDominanceLive:row.primeDominance,primeFinishRate:finishRateText(entry),roundControl:`${entry.roundControlPct}%`,roundsWon:roundsWonText(entry),dominanceProfile:entry.dominanceProfile};
+          override.snapshotStats={...(override.snapshotStats||{}),primeRecord,primeRecordContext:context,primeDominance:row.primeDominance,primeDominanceLive:row.primeDominance,primeFinishRate:finishRateText(entry),roundControl:`${entry.roundControlPct}%`,roundsWon:roundsWonText(entry),dominanceProfile:entry.dominanceProfile,primeDominanceRecordInput:entry.primeRecord||null,primeDominanceRebuildRequired:row.primeDominanceRebuildRequired};
         }
       });
 
       DATA.primeDominanceLiveVersion=VERSION;
-      const status={version:VERSION,applied:true,promoted:Object.keys(entriesByName),promotedCount:Object.keys(entriesByName).length,canonicalPrimeRecords:true,mutatesCategoryOnly:true,mutatesTotals:false,mutatesRanks:false,mutatesOvr:false,appliedAt:new Date().toISOString()};
+      const status={version:VERSION,applied:true,promoted:Object.keys(entriesByName),promotedCount:Object.keys(entriesByName).length,canonicalPrimeRecords:true,canonicalPrimeRecordVersion:canonical?.version||null,recordConflicts:[...new Set(recordConflicts)],recordConflictCount:new Set(recordConflicts).size,mutatesCategoryOnly:true,mutatesTotals:false,mutatesRanks:false,mutatesOvr:false,appliedAt:new Date().toISOString()};
       window.UFC_LIVE_SCORE_PROMOTION=status;
       window.UFC_PRIME_DOMINANCE_LIVE_PROMOTER.latest=status;
       document.documentElement.setAttribute('data-prime-dominance-live',VERSION);
