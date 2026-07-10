@@ -1,0 +1,68 @@
+name: One-Time Canonical Prime Record Cleanup
+
+on:
+  push:
+    branches: [cleanup/canonical-prime-records]
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: ${{ !contains(github.event.head_commit.message, 'Sync canonical Prime Records from main') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: cleanup/canonical-prime-records
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm install --no-save playwright@1.52.0
+          npx playwright install --with-deps chromium
+      - name: Check out current main worktree
+        run: git worktree add --detach /tmp/ufc-main origin/main
+      - name: Start branch and main servers
+        run: |
+          python3 -m http.server 4173 > /tmp/ufc-branch-server.log 2>&1 &
+          (cd /tmp/ufc-main && python3 -m http.server 4174 > /tmp/ufc-main-server.log 2>&1 &)
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:4173/index.html > /dev/null && curl --fail --silent http://127.0.0.1:4174/index.html > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/ufc-branch-server.log || true
+          cat /tmp/ufc-main-server.log || true
+          exit 1
+      - name: Sync approved records and validate
+        shell: bash
+        run: |
+          set -o pipefail
+          {
+            node scripts/one-time-sync-prime-records-from-main.cjs
+            node scripts/run-prime-record-source-audit.mjs
+            node scripts/run-six-category-audit.mjs
+          } 2>&1 | tee /tmp/approved-prime-sync.log
+      - name: Upload sync log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: approved-prime-sync-log
+          path: /tmp/approved-prime-sync.log
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Commit approved canonical records
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git restore .github/workflows/one-time-canonical-prime-record-cleanup.yml
+          git restore docs/audits || true
+          git clean -fd docs/audits package.json package-lock.json node_modules || true
+          git add -A
+          git diff --cached --quiet && exit 0
+          git commit -m "Sync canonical Prime Records from main"
+          git push origin HEAD:cleanup/canonical-prime-records
