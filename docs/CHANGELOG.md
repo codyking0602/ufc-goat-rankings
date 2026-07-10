@@ -1,5 +1,39 @@
 # Changelog
 
+## 2026-07-09 — Championship and Quality Category-Only Checkpoint
+
+### Changed
+
+- `championship-resume-live.js` now writes only Championship Resume values, audit metadata, title context, and presentation evidence.
+- Removed Championship mutations of totals, ranks, weighted breakdowns, and numerical display overrides.
+- Removed Championship's unrelated Prime category-rank/OVR writer and delayed Prime rewrite timers.
+- `opponent-quality-live.js` now writes only Quality Wins values, audit metadata, and presentation evidence.
+- Removed Quality Wins mutations of totals, ranks, weighted breakdowns, and numerical display overrides.
+- Both category writers now request recalculation from `final-score-engine.js`.
+- Updated the Quality Wins cache-bust loader to the category-only version.
+
+### Validation
+
+Third settled headless Chromium audit:
+
+- 62 roster fighters
+- 0 formula mismatches
+- 0 profile/leaderboard mismatches
+- 0 duplicate fighter names
+- 0 forbidden score-derived display overrides
+- category coverage unchanged
+- fighter totals and rankings unchanged
+
+Permanent report:
+
+- `docs/audits/THIRD_RUNTIME_AUDIT_CHAMPIONSHIP_QUALITY.md`
+
+No fighter category input or audit value changed during this repair.
+
+### Next
+
+Convert Longevity into a category-only writer and rerun the same settled audit.
+
 ## 2026-07-09 — Canonical Final Score Engine Checkpoint
 
 ### Added
@@ -38,10 +72,6 @@ Second settled headless Chromium audit:
 - category coverage unchanged
 
 No fighter category input or audit value changed during this repair.
-
-### Next
-
-Convert Championship Resume and Quality Wins promoters into category-only writers, then rerun the same settled audit.
 
 ## 2026-07-09 — Read-Only Six-Category Integrity Audit
 
