@@ -74,6 +74,12 @@ jobs:
           set -o pipefail
           node scripts/run-championship-anchor-review.mjs 2>&1 | tee docs/audits/runtime-championship-anchor-review-console.log
 
+      - name: Run Quality Wins anchor discovery
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/run-quality-anchor-discovery.mjs 2>&1 | tee docs/audits/runtime-quality-anchor-discovery-console.log
+
       - name: Upload audit report
         if: always()
         uses: actions/upload-artifact@v4
@@ -95,5 +101,8 @@ jobs:
             docs/audits/runtime-championship-anchor-review.json
             docs/audits/runtime-championship-anchor-review.md
             docs/audits/runtime-championship-anchor-review-console.log
+            docs/audits/runtime-quality-anchor-discovery.json
+            docs/audits/runtime-quality-anchor-discovery.md
+            docs/audits/runtime-quality-anchor-discovery-console.log
           if-no-files-found: warn
           retention-days: 30
