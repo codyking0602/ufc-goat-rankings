@@ -1,5 +1,5 @@
 // One-time branch-only migration: preserve the approved profile-facing Prime Records from current main.
-// Trusted workflow trigger: 2026-07-10b.
+// Trusted migration trigger: 2026-07-10c.
 const { chromium } = require('playwright');
 const fs = require('node:fs');
 const path = require('node:path');
