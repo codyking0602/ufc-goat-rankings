@@ -22,14 +22,14 @@ Production `main` remains untouched. Draft PR #7 is a test harness only and must
 - read-only six-category integrity auditor added
 - standalone audit dashboard added
 - branch-only headless Chromium audit workflow added
-- first settled full-roster audit captured
 - canonical final score engine added at `assets/js/final-score-engine.js`
 - Championship Resume converted to a category-only writer
 - Quality Wins converted to a category-only writer
 - Prime Dominance converted to a category-only writer
 - Longevity converted to a category-only writer
 - Apex Peak converted to a category-only writer
-- module bootstrap currently finishes category passes through the final score engine
+- legacy general weighting layer converted to compatibility-only
+- strict final-score ownership gate added to CI
 
 ## Consolidation Checkpoints
 
@@ -59,24 +59,35 @@ Report:
 
 ### Apex Peak
 
-The fifth settled audit confirmed:
-
-- 62 roster fighters
-- 61 completed Apex Peak audits still live
-- Dricus du Plessis remains the single pending Apex review
-- 0 formula mismatches
-- 0 forbidden score-derived display overrides
-- 0 duplicate leaderboard/profile names
-- 0 profile-to-leaderboard mismatches
-- fighter totals, rankings, and men's top ten unchanged
+The fifth settled audit preserved all 61 completed Apex audits, Dricus du Plessis' pending review, all totals, and all rankings.
 
 Report:
 
 - `docs/audits/FIFTH_RUNTIME_AUDIT_APEX.md`
 
+### Final Score Ownership
+
+The sixth settled audit proved:
+
+- `final-score-engine-20260710a` is present
+- all 62 leaderboard rows carry that final-engine owner version
+- the legacy weighting layer is `compatibility-only`
+- the legacy weighting layer reports `mutatesScores: false`
+- duplicate Prime Windows and Prime Dominance loaders are disabled in the weighting layer
+- 0 rows have the wrong overall owner
+- 0 formula mismatches
+- 0 forbidden numerical display overrides
+- 0 profile-to-leaderboard mismatches
+
+Report:
+
+- `docs/audits/SIXTH_RUNTIME_AUDIT_SCORE_OWNERSHIP.md`
+
 ## Final Score Ownership
 
-`final-score-engine.js` calculates:
+`assets/js/final-score-engine.js` is the only overall-score owner.
+
+It calculates:
 
 ```text
 Championship Resume / 30 × 35
@@ -97,6 +108,15 @@ It owns:
 - score-derived overall OVR
 - synchronized profile totals and ranks
 
+`assets/data/score-weighting.js` now exposes only:
+
+- locked weights and maximums
+- a pure compatibility breakdown helper
+- formula metadata
+- Rules-page weighting copy
+
+It does not mutate scores, ranks, profiles, OVRs, display overrides, or load Prime modules.
+
 ## Category Writer Status
 
 Category-only and validated:
@@ -107,11 +127,9 @@ Category-only and validated:
 - Longevity
 - Apex Peak
 
-Still able to write overall totals or ranks:
+Overall-score owner:
 
-- legacy general weighting layer
-
-Apex Peak now preserves the locked Apex table and fighter audits while no longer recalculating totals, sorting boards, copying overall values into profiles, or writing numerical display overrides.
+- final score engine only
 
 ## Current Category Coverage
 
@@ -124,7 +142,7 @@ Apex Peak now preserves the locked Apex table and fighter audits while no longer
 | Apex Peak | 61 | 1 | 0 |
 | Loss Context | 0 | 61 | 1 |
 
-The coverage counts remained unchanged throughout all consolidation checkpoints. No fighter category inputs were altered.
+The coverage counts remained unchanged throughout consolidation. No fighter category inputs were altered.
 
 ## Missing Coverage
 
@@ -159,21 +177,22 @@ Loss Context:
 
 ## Deployment Cache Note
 
-`ranking-data-patches.js` still references the older Championship query-string version. The branch runtime is correct, but this cache-bust reference must be updated before production merge.
+`ranking-data-patches.js` still contains older query-string versions for some now-clean modules, including Championship Resume and the legacy weighting layer. The branch runtime is correct in fresh testing, but all cache-bust references must be aligned before production merge.
 
 ## Immediate Next Step
 
-Neutralize the legacy general weighting layer as an overall-score owner while preserving any rules-copy and compatibility APIs still needed by the app.
+Replace the delayed and repeated scoring-module loaders with one deterministic initialization chain.
 
-Then rerun the settled Chromium audit. Required result:
+Required result:
 
+- no score-changing or category-reapply timers
+- categories load once in a defined order
+- final score engine runs once after the category sources are ready
 - 0 formula mismatches
-- unchanged category coverage
-- unchanged fighter totals and rankings
-- no profile or display-override regressions
-- `final-score-engine.js` as the only overall-score owner
+- unchanged category coverage, totals, rankings, profiles, and OVRs
+- ownership gate remains PASS
 
-After ownership is clean, complete missing category audits and Loss Context coverage before replacing the timer-based loader.
+After deterministic loading, complete missing category audits and Loss Context coverage.
 
 ## Definition of Success
 
