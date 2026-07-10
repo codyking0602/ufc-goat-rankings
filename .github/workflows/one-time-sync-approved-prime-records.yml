@@ -44,6 +44,7 @@ jobs:
           set -o pipefail
           {
             node scripts/one-time-sync-prime-records-from-main.cjs
+            node scripts/run-prime-record-source-audit.mjs
             node scripts/run-six-category-audit.mjs
           } 2>&1 | tee /tmp/approved-prime-sync.log
       - name: Upload sync log
@@ -59,7 +60,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git restore .github/workflows/one-time-sync-approved-prime-records.yml
-          git clean -fd package.json package-lock.json node_modules || true
+          git restore docs/audits || true
+          git clean -fd docs/audits package.json package-lock.json node_modules || true
           git add -A
           git diff --cached --quiet && exit 0
           git commit -m "Sync canonical Prime Records from main"
