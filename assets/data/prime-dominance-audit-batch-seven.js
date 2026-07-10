@@ -1,8 +1,8 @@
-// Prime Dominance audited batch seven: Frankie Edgar, T.J. Dillashaw, Tyron Woodley.
+// Prime Dominance audited batches seven and eight.
 // Extends the shadow model after the base calculation and before live category promotion.
 (function(){
   'use strict';
-  const VERSION='prime-dominance-audit-batch-seven-20260710a';
+  const VERSION='prime-dominance-audit-batch-seven-20260710b-prime-batch-two';
   const base=window.UFC_PRIME_DOMINANCE_LEDGERS;
   const model=window.UFC_PRIME_DOMINANCE_SHADOW_MODEL;
   if(!base||!Array.isArray(base.report)||!model)return;
@@ -45,6 +45,45 @@
       eliteStakesRawScore:4.95,eliteStakesScore:7.92,
       total:20.17,
       dominanceProfile:'Strong welterweight champion prime with major elite-stage proof, offset by inconsistent round control and the Usman/Burns ending.',
+      status:'locked',version:VERSION
+    },
+    'Dricus du Plessis':{
+      fighter:'Dricus du Plessis',
+      primeRecord:'4-1',primeWins:4,primeLosses:1,primeDraws:0,primeNCs:0,
+      primeRecordPct:80.0,primeRecordScore:7.2,
+      roundControlPct:52.38,roundControlScore:4.19,
+      roundControlAudit:{fighter:'Dricus du Plessis',roundsWon:11,roundsCounted:21,roundControlPct:52.38,status:'locked',source:'approved Whittaker-through-Khamzat fight ledger',window:'Robert Whittaker 2023 → Khamzat Chimaev 2025'},
+      primeFights:5,primeFinishes:2,primeFinishRate:40.0,finishPressureScore:2.0,
+      eliteStakesBreakdown:{titleFightWins:1.75,topFiveWins:1.25,champFormerChampWins:.75,fiveRoundTitleStageSample:.35,divisionStrengthContext:.2},
+      eliteStakesRawScore:4.3,eliteStakesScore:6.88,
+      total:20.27,
+      dominanceProfile:'Compact modern middleweight title burst with elite wins and real finishing threat, capped by close round control and the Khamzat title loss.',
+      status:'locked',version:VERSION
+    },
+    'Aljamain Sterling':{
+      fighter:'Aljamain Sterling',
+      primeRecord:'9-2',primeWins:9,primeLosses:2,primeDraws:0,primeNCs:0,
+      primeRecordPct:81.82,primeRecordScore:7.36,
+      roundControlPct:64.0,roundControlScore:5.12,
+      roundControlAudit:{fighter:'Aljamain Sterling',roundControlPct:64.0,status:'locked',source:'approved packet-level conservative input',window:'Pedro Munhoz 2019 → Youssef Zalal'},
+      primeFights:11,primeFinishes:2,primeFinishRate:18.18,finishPressureScore:1.0,
+      eliteStakesBreakdown:{titleFightWins:1.75,topFiveWins:1.25,champFormerChampWins:.75,fiveRoundTitleStageSample:.5,divisionStrengthContext:.25},
+      eliteStakesRawScore:4.5,eliteStakesScore:7.2,
+      total:20.68,
+      dominanceProfile:'Long modern bantamweight control prime with elite back-taking and title-stage proof, limited by low finish pressure and the O’Malley/Evloev losses.',
+      status:'locked',version:VERSION
+    },
+    'Robert Whittaker':{
+      fighter:'Robert Whittaker',
+      primeRecord:'10-4',primeWins:10,primeLosses:4,primeDraws:0,primeNCs:0,
+      primeRecordPct:71.43,primeRecordScore:6.43,
+      roundControlPct:58.14,roundControlScore:4.65,
+      roundControlAudit:{fighter:'Robert Whittaker',roundsWon:25,roundsCounted:43,roundControlPct:58.14,status:'locked',source:'approved Brunson-through-Khamzat fight ledger',window:'Derek Brunson 2016 → Khamzat Chimaev 2024'},
+      primeFights:14,primeFinishes:3,primeFinishRate:21.43,finishPressureScore:1.0,
+      eliteStakesBreakdown:{titleFightWins:.75,topFiveWins:1.25,champFormerChampWins:.5,fiveRoundTitleStageSample:.5,divisionStrengthContext:.4},
+      eliteStakesRawScore:3.4,eliteStakesScore:5.44,
+      total:17.52,
+      dominanceProfile:'Long elite middleweight contender prime with deep quality and five-round proof, capped by low finish pressure and four elite losses inside the window.',
       status:'locked',version:VERSION
     }
   };
