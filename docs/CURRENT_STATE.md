@@ -4,11 +4,9 @@ Updated: July 9, 2026
 
 ## Current Goal
 
-Consolidate the six audited categories into one deterministic scoring pipeline without losing or redoing fighter inputs.
+Finish full-roster six-category audit coverage now that scoring ownership and initialization are deterministic.
 
 ## Safety Branch
-
-Protected branch:
 
 ```text
 fix/unified-six-category-pipeline
@@ -16,78 +14,25 @@ fix/unified-six-category-pipeline
 
 Production `main` remains untouched. Draft PR #7 is a test harness only and must not be merged yet.
 
-## Completed Foundation
+## Architecture Status
 
-- architecture, roadmap, current state, open issues, and changelog documented
-- read-only six-category integrity auditor added
-- standalone audit dashboard added
-- branch-only headless Chromium audit workflow added
-- canonical final score engine added at `assets/js/final-score-engine.js`
-- Championship Resume converted to a category-only writer
-- Quality Wins converted to a category-only writer
-- Prime Dominance converted to a category-only writer
-- Longevity converted to a category-only writer
-- Apex Peak converted to a category-only writer
-- legacy general weighting layer converted to compatibility-only
-- strict final-score ownership gate added to CI
+Completed and runtime-validated:
 
-## Consolidation Checkpoints
+- permanent architecture, state, roadmap, issues, changelog, and audit records
+- read-only six-category integrity auditor
+- branch-only headless Chromium audit workflow
+- one canonical final score engine
+- Championship Resume category-only writer
+- Quality Wins category-only writer
+- Prime Dominance category-only writer
+- Longevity category-only writer
+- Apex Peak category-only writer
+- compatibility-only legacy weighting API
+- strict overall-score ownership gate
+- one deterministic scoring initialization chain
+- strict deterministic-initialization gate
 
-### Final Score Engine
-
-The second settled Chromium audit reduced formula mismatches from 53 to 0 across all 62 fighters.
-
-Report:
-
-- `docs/audits/SECOND_RUNTIME_AUDIT_FINAL_ENGINE.md`
-
-### Championship Resume and Quality Wins
-
-The third settled audit confirmed both categories could be separated from overall scoring without changing category values, totals, or ranks.
-
-Report:
-
-- `docs/audits/THIRD_RUNTIME_AUDIT_CHAMPIONSHIP_QUALITY.md`
-
-### Longevity
-
-The fourth settled audit confirmed all 62 Fighter Era Ledger Longevity audits remained live after removing Longevity's overall-score ownership.
-
-Report:
-
-- `docs/audits/FOURTH_RUNTIME_AUDIT_LONGEVITY.md`
-
-### Apex Peak
-
-The fifth settled audit preserved all 61 completed Apex audits, Dricus du Plessis' pending review, all totals, and all rankings.
-
-Report:
-
-- `docs/audits/FIFTH_RUNTIME_AUDIT_APEX.md`
-
-### Final Score Ownership
-
-The sixth settled audit proved:
-
-- `final-score-engine-20260710a` is present
-- all 62 leaderboard rows carry that final-engine owner version
-- the legacy weighting layer is `compatibility-only`
-- the legacy weighting layer reports `mutatesScores: false`
-- duplicate Prime Windows and Prime Dominance loaders are disabled in the weighting layer
-- 0 rows have the wrong overall owner
-- 0 formula mismatches
-- 0 forbidden numerical display overrides
-- 0 profile-to-leaderboard mismatches
-
-Report:
-
-- `docs/audits/SIXTH_RUNTIME_AUDIT_SCORE_OWNERSHIP.md`
-
-## Final Score Ownership
-
-`assets/js/final-score-engine.js` is the only overall-score owner.
-
-It calculates:
+## Locked Formula
 
 ```text
 Championship Resume / 30 × 35
@@ -99,7 +44,9 @@ Championship Resume / 30 × 35
 = Raw Score
 ```
 
-It owns:
+## Final Score Ownership
+
+Only `assets/js/final-score-engine.js` may write:
 
 - `rawScore`
 - `totalScore`
@@ -108,28 +55,52 @@ It owns:
 - score-derived overall OVR
 - synchronized profile totals and ranks
 
-`assets/data/score-weighting.js` now exposes only:
+Current engine:
 
-- locked weights and maximums
-- a pure compatibility breakdown helper
-- formula metadata
-- Rules-page weighting copy
+```text
+final-score-engine-20260710b-deterministic
+```
 
-It does not mutate scores, ranks, profiles, OVRs, display overrides, or load Prime modules.
+Current runtime proof:
 
-## Category Writer Status
+- engine apply count: 1
+- all 62 leaderboard rows owned by the final engine
+- 0 rows with the wrong owner
+- 0 formula mismatches
+- 0 profile/leaderboard mismatches
+- 0 forbidden numerical display overrides
 
-Category-only and validated:
+## Deterministic Initialization
 
-- Championship Resume
-- Quality Wins
-- Prime Dominance
-- Longevity
-- Apex Peak
+Current pipeline:
 
-Overall-score owner:
+```text
+deterministic-scoring-pipeline-20260710a
+```
 
-- final score engine only
+Ordered sequence:
+
+1. prerequisite/data loader completes
+2. Prime audit and category promoter load once
+3. Longevity audit and category promoter load once
+4. Apex audit and category promoter load once
+5. final score engine loads and applies once
+6. category percentile presentation installs once
+7. UI refreshes once
+
+Validated runtime properties:
+
+- scoring timers: 0
+- repeated scoring loads: 0
+- duplicate scoring scripts: 0
+- final score applies: 1
+- refresh wrapper: disabled
+- category tiers mutate scores: false
+- category tiers reapply Prime: false
+
+Permanent report:
+
+- `docs/audits/SEVENTH_RUNTIME_AUDIT_DETERMINISTIC_INITIALIZATION.md`
 
 ## Current Category Coverage
 
@@ -142,7 +113,7 @@ Overall-score owner:
 | Apex Peak | 61 | 1 | 0 |
 | Loss Context | 0 | 61 | 1 |
 
-The coverage counts remained unchanged throughout consolidation. No fighter category inputs were altered.
+No fighter category values changed during the ownership or initialization repairs.
 
 ## Missing Coverage
 
@@ -173,33 +144,46 @@ Apex Peak pending:
 Loss Context:
 
 - Sean O'Malley has no usable adapter entry
-- all current live penalties remain legacy-backed pending fighter-by-fighter review and promotion
+- the other 61 ledger totals remain QA-only
+- existing legacy `penalty` values remain live until the full review is complete
 
-## Deployment Cache Note
+## Rankings Preserved
 
-`ranking-data-patches.js` still contains older query-string versions for some now-clean modules, including Championship Resume and the legacy weighting layer. The branch runtime is correct in fresh testing, but all cache-bust references must be aligned before production merge.
+The men's top ten remains:
 
-## Immediate Next Step
+1. Jon Jones — 102.21
+2. Georges St-Pierre — 88.01
+3. Demetrious Johnson — 77.54
+4. Anderson Silva — 77.17
+5. Islam Makhachev — 70.19
+6. Alexander Volkanovski — 67.07
+7. Khabib Nurmagomedov — 65.19
+8. Jose Aldo — 64.14
+9. Matt Hughes — 63.51
+10. Kamaru Usman — 61.10
 
-Replace the delayed and repeated scoring-module loaders with one deterministic initialization chain.
+## Production Cache Note
 
-Required result:
+The static `index.html` query strings for `module-versions.js` and `ranking-data-patches.js` still need final cache-bust alignment before merge. Fresh branch runtime testing uses the correct files and passes.
 
-- no score-changing or category-reapply timers
-- categories load once in a defined order
-- final score engine runs once after the category sources are ready
-- 0 formula mismatches
-- unchanged category coverage, totals, rankings, profiles, and OVRs
-- ownership gate remains PASS
+## Immediate Next Phase
 
-After deterministic loading, complete missing category audits and Loss Context coverage.
+Complete missing audited category coverage in this order:
+
+1. five Quality Wins rows
+2. nine Prime Dominance rows
+3. Dricus du Plessis Apex Peak review
+4. all 62 Loss Context rows, including Sean O'Malley
+
+After each small batch, rerun the deterministic Chromium audit.
 
 ## Definition of Success
 
 - 62/62 fighters covered by all six categories
 - zero silent legacy fallbacks
 - 62/62 totals match the locked formula within 0.01
-- one final score engine
+- one final score owner
 - zero category promoters writing totals or ranks
 - zero score-changing timers
+- one deterministic initialization sequence
 - scores, ranks, OVRs, profiles, category boards, division boards, and Compare Mode all read the same final rows
