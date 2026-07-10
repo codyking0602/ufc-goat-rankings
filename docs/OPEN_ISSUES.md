@@ -2,13 +2,13 @@
 
 ## Critical
 
-### 1. Legacy weighting layer still writes overall state
+### 1. Overall score ownership
 
-Status: In Progress
+Status: Resolved on safety branch
 
-A canonical final score engine exists and all 62 settled totals reconcile with the locked formula.
+`assets/js/final-score-engine.js` is now the only overall-score owner.
 
-Validated category-only writers:
+The five positive category promoters are category-only:
 
 - Championship Resume
 - Quality Wins
@@ -16,27 +16,19 @@ Validated category-only writers:
 - Longevity
 - Apex Peak
 
-Still remaining:
+The legacy weighting layer is now compatibility-only and reports:
 
-- the legacy general weighting layer can write `totalScore`, weighted breakdowns, ranks, and display rank fields
+- `mutatesScores: false`
+- `mode: compatibility-only`
+- `overallOwner: final-score-engine.js`
+- duplicate Prime Windows loader: false
+- duplicate Prime Dominance loader: false
 
-Target: Only `final-score-engine.js` owns totals, ranks, weighted breakdowns, and score-derived OVR.
-
-### 2. Category promoter ownership
-
-Status: Resolved on safety branch
-
-The five positive category promoters now write only their category values, audit metadata, and necessary presentation evidence. Settled Chromium audits report:
-
-- 0 formula mismatches
-- unchanged category coverage
-- unchanged fighter totals and rankings
-- 0 profile/leaderboard mismatches
-- 0 forbidden numerical display overrides
+The strict settled-runtime ownership gate checked all 62 leaderboard rows and found 0 rows with the wrong owner.
 
 Production status: Not merged.
 
-### 3. Loss Context ledger is not live
+### 2. Loss Context ledger is not live
 
 Status: Open
 
@@ -44,17 +36,17 @@ The live promoter remains disabled. Existing `penalty` values remain live while 
 
 Target: Complete full UFC loss coverage, review all 62 totals, and promote the audited penalties.
 
-### 4. Score-changing timers and repeated loaders
+### 3. Score-changing timers and repeated loaders
 
 Status: Open
 
-Longevity, Apex, category tiers, and refresh paths are still loaded or reapplied on delayed timers. The category writers no longer own overall scoring, but the repeated initialization remains unnecessary technical debt and can cause visible startup movement.
+Longevity, Apex, category tiers, and refresh paths are still loaded or reapplied on delayed timers. The category writers no longer own overall scoring, but repeated initialization remains unnecessary technical debt and can cause visible startup movement.
 
 Target: One deterministic ordered initialization chain with no score-changing timers.
 
 ## High Priority
 
-### 5. Full-roster six-category coverage gate
+### 4. Full-roster six-category coverage gate
 
 Status: In Progress
 
@@ -69,19 +61,23 @@ Current settled coverage:
 | Apex Peak | 61 | 1 | 0 |
 | Loss Context | 0 | 61 | 1 |
 
-Target: 62/62 audited coverage and 0 formula mismatches as a hard release gate.
+Current infrastructure gates:
 
-### 6. Score-derived display overrides
+- locked formula mismatches must remain 0
+- final-score ownership must pass
+- every leaderboard row must carry the final-engine owner version
+
+Target: 62/62 audited coverage and zero silent fallback.
+
+### 5. Score-derived display overrides
 
 Status: Controlled on safety branch
 
-The final score engine strips numerical rank/OVR fields from runtime display overrides. Apex no longer copies its numerical audit into display overrides.
+The final score engine strips numerical rank/OVR fields from runtime display overrides. Category promoters and the legacy weighting layer no longer write numerical rank, OVR, total, or category score fields there.
 
 Current settled audit result: 0 forbidden score-derived overrides.
 
-Remaining: remove numerical writes from the legacy weighting layer and any other compatibility code found during final ownership review.
-
-### 7. Legacy source values remain mixed with live values
+### 6. Legacy source values remain mixed with live values
 
 Status: Open
 
@@ -89,15 +85,17 @@ Status: Open
 
 Target: Preserve legacy values under explicit legacy fields and prohibit silent fallback after initialization.
 
-### 8. Production cache-bust references
+### 7. Production cache-bust references
 
 Status: Open before merge
 
-`ranking-data-patches.js` still references the older Championship query-string version. All final cache versions must be aligned before production merge.
+`ranking-data-patches.js` still contains older query-string versions for some now-clean modules, including Championship Resume and the compatibility-only weighting layer.
+
+Target: align all final cache versions during deterministic-loader cleanup before production merge.
 
 ## Missing Audit Coverage
 
-### 9. Quality Wins missing five live audits
+### 8. Quality Wins missing five live audits
 
 Status: Open
 
@@ -107,7 +105,7 @@ Status: Open
 - Sean O'Malley
 - Julianna Peña
 
-### 10. Prime Dominance missing nine merged audits
+### 9. Prime Dominance missing nine merged audits
 
 Status: Open
 
@@ -121,13 +119,13 @@ Status: Open
 - Sean Strickland
 - Dan Henderson
 
-### 11. Apex Peak incomplete row
+### 10. Apex Peak incomplete row
 
 Status: Open
 
 Dricus du Plessis remains explicitly pending. The other 61 Apex audits pass the settled runtime gate.
 
-### 12. Loss Context incomplete row
+### 11. Loss Context incomplete row
 
 Status: Open
 
@@ -135,19 +133,19 @@ Sean O'Malley has no usable adapter entry. The other 61 adapter totals still req
 
 ## Review Items
 
-### 13. Apex naming consistency
+### 12. Apex naming consistency
 
 Status: Partially resolved
 
 The category-only Apex promoter now uses “Apex Peak” and preserves the old global alias only for compatibility. Remaining files should be standardized during loader cleanup.
 
-### 14. Compare Mode source consistency
+### 13. Compare Mode source consistency
 
 Status: Not yet audited
 
 Target: Confirm Compare Mode reads canonical final rows and maintains no separate numerical score source.
 
-### 15. Division board source consistency
+### 14. Division board source consistency
 
 Status: Not yet audited
 
