@@ -9,7 +9,7 @@ window.UFC_MODULE_VERSIONS={
   primeDominanceCopyPolish:"20260708b",
   liveScoreUi:"20260709a-peak-apex",
   categoryPercentileTiers:"20260709a-peak-apex",
-  scoreWeighting:"20260709a-apex-bonus-modifier",
+  scoreWeighting:"20260710a-compatibility-only",
   championshipResumeLive:"20260710a-category-only",
   opponentQualityLive:"20260710a-category-only",
   fighterEraLedgers:"20260709g-review-corrections",
