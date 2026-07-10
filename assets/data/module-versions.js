@@ -1,12 +1,12 @@
 // Central cache-bust versions and deterministic scoring bootstrap.
 window.UFC_MODULE_VERSIONS={
-  scoringPipeline:"20260710c-prime-batch-one",
+  scoringPipeline:"20260710d-prime-batch-two",
   finalScoreEngine:"20260710b-deterministic",
   primeWindows:"20260708a",
   primeRoundControlAudit:"20260708d-jon-54-63",
   primeDominanceLedgers:"20260708j-round-audit-batch-two",
   primeDominanceShadowModel:"20260708c-jon-elite-stakes",
-  primeDominanceAuditBatchSeven:"20260710a",
+  primeDominanceAuditBatchSeven:"20260710b-prime-batch-two",
   primeDominanceLivePromoter:"20260710a-category-only",
   primeDominanceCopyPolish:"20260708b",
   categoryPercentileTiers:"20260710b-deterministic",
@@ -24,7 +24,7 @@ window.UFC_MODULE_VERSIONS={
 (function(){
   'use strict';
   const v=window.UFC_MODULE_VERSIONS||{};
-  const VERSION='deterministic-scoring-pipeline-20260710c-prime-batch-one';
+  const VERSION='deterministic-scoring-pipeline-20260710d-prime-batch-two';
   const state={
     version:VERSION,
     mode:'deterministic-single-pass',
