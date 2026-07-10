@@ -2,16 +2,17 @@
 // Applies audited Championship Resume values and presentation evidence only.
 // Overall totals, ranks, and OVR are owned exclusively by final-score-engine.js.
 (function(){
-  const VERSION='championship-resume-live-20260710c-quality-revisions';
+  const VERSION='championship-resume-live-20260710d-fixed-benchmark';
+  const LOCKED_BENCHMARK_CREDIT=14.54;
   const DATA=window.RANKING_DATA;
   const SHADOW=window.UFC_CHAMPIONSHIP_RESUME_SHADOW;
   if(!DATA||!SHADOW||!Array.isArray(SHADOW.report))return;
 
   function n(v,d=0){const x=Number(v);return Number.isFinite(x)?x:d;}
   function r(v){return Math.round((n(v)+Number.EPSILON)*100)/100;}
-  function championshipScore(row){const benchmark=Math.max(n(SHADOW.benchmarkCredit,1),1);return r(Math.min(30,Math.max(0,(n(row.adjustedTitleCredit)/benchmark)*30)));}
+  function championshipScore(row){return r(Math.min(30,Math.max(0,(n(row.adjustedTitleCredit)/LOCKED_BENCHMARK_CREDIT)*30)));}
   function allRowsFor(name){const rows=[];const push=row=>{if(row&&row.fighter===name)rows.push(row);};(DATA.men||[]).forEach(push);(DATA.women||[]).forEach(push);(DATA.fighters||[]).forEach(push);return rows;}
-  function titleNote(report,score){return `Total title fight wins = ${report.titleFightWins}. Adjusted title-win credit = ${n(report.adjustedTitleCredit).toFixed(2)}. Championship Resume score = ${score.toFixed(2)}/30. Formula uses adjusted UFC title-win credit only; title losses do not add or subtract in this category.`;}
+  function titleNote(report,score){return `Total title fight wins = ${report.titleFightWins}. Adjusted title-win credit = ${n(report.adjustedTitleCredit).toFixed(2)}. Championship Resume score = ${score.toFixed(2)}/30. Formula uses adjusted UFC title-win credit against the locked 14.54-credit benchmark; title losses do not add or subtract in this category.`;}
   function ensureOverride(name){
     if(typeof DISPLAY_OVERRIDES==='undefined')return null;
     DISPLAY_OVERRIDES[name]=DISPLAY_OVERRIDES[name]||{};
@@ -71,20 +72,23 @@
     allRowsFor(report.fighter).forEach(row=>{
       row.championship=report.championshipScore;
       row.championshipResumeLive=true;
-      row.championshipResumeAudit={...row.championshipResumeAudit,...report,formulaScore:report.championshipScore,mode:'live',writerMode:'category-only',version:VERSION};
+      row.championshipResumeAudit={...row.championshipResumeAudit,...report,formulaScore:report.championshipScore,mode:'live',writerMode:'category-only',benchmarkMode:'locked-constant',benchmarkCredit:LOCKED_BENCHMARK_CREDIT,sourceBenchmarkCredit:n(SHADOW.benchmarkCredit),version:VERSION};
       row.title={...(row.title||{}),titleFightWins:report.titleFightWins,adjustedTitleWins:r(report.adjustedTitleCredit),championshipScore:report.championshipScore,discountedWins:report.discountedWins,reviewStatus:report.reviewStatus,notes:titleNote(report,report.championshipScore)};
     });
     updateSnapshot(report.fighter,report,report.championshipScore);
   });
 
   DATA.meta=DATA.meta||{};
-  DATA.meta.championshipResumeLive={version:VERSION,mode:'category-only',benchmarkCredit:SHADOW.benchmarkCredit,sourceVersion:SHADOW.version,ledgerVersion:SHADOW.ledgerVersion,appliedAt:new Date().toISOString()};
+  DATA.meta.championshipResumeLive={version:VERSION,mode:'category-only',benchmarkMode:'locked-constant',benchmarkCredit:LOCKED_BENCHMARK_CREDIT,sourceBenchmarkCredit:n(SHADOW.benchmarkCredit),sourceVersion:SHADOW.version,ledgerVersion:SHADOW.ledgerVersion,appliedAt:new Date().toISOString()};
   window.UFC_CHAMPIONSHIP_RESUME_LIVE={
     version:VERSION,
     mode:'live-category-only',
     categoryOnly:true,
     mutatesOverall:false,
-    benchmarkCredit:SHADOW.benchmarkCredit,
+    benchmarkMode:'locked-constant',
+    benchmarkCredit:LOCKED_BENCHMARK_CREDIT,
+    sourceBenchmarkCredit:n(SHADOW.benchmarkCredit),
+    futureRosterStable:true,
     sourceVersion:SHADOW.version,
     ledgerVersion:SHADOW.ledgerVersion,
     fighters:liveRows.length,
