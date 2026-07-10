@@ -1,8 +1,8 @@
 // Central cache-bust versions and deterministic scoring bootstrap.
-window.UFC_MODULE_VERSIONS={scoringPipeline:"20260710n-canonical-prime-record",finalScoreEngine:"20260710b-deterministic",primeWindows:"20260710b-context-only",primeRoundControlAudit:"20260708d-jon-54-63",primeDominanceLedgers:"20260708j-round-audit-batch-two",primeDominanceShadowModel:"20260708c-jon-elite-stakes",primeDominanceAuditBatchSeven:"20260710c-prime-final-batch",primeDominanceLivePromoter:"20260710b-canonical-prime-record",primeDominanceCopyPolish:"20260708b",categoryPercentileTiers:"20260710c-rating-source",scoreWeighting:"20260710a-compatibility-only",championshipResumeLive:"20260710d-fixed-benchmark",opponentQualityLive:"20260710c-fixed-benchmark",fighterEraLedgers:"20260709g-review-corrections",longevityShadowScorer:"20260709b-ledger-driven",longevityLivePromoter:"20260710a-category-only",apexPeakCorrections:"20260709b-full-roster",apexPeakComponentAudit:"20260709c-batch-one-review-adjustments",apexPeakLiveBonus:"20260710a-category-only",apexPeakDricusAudit:"20260710b-merab-zhang"};
+window.UFC_MODULE_VERSIONS={scoringPipeline:"20260710o-frankie-five-step-audit",finalScoreEngine:"20260710b-deterministic",primeWindows:"20260710b-context-only",primeRoundControlAudit:"20260708d-jon-54-63",primeDominanceLedgers:"20260708j-round-audit-batch-two",primeDominanceShadowModel:"20260708c-jon-elite-stakes",primeDominanceAuditBatchSeven:"20260710d-frankie-full-window",primeDominanceLivePromoter:"20260710c-frankie-canonical-window",primeDominanceCopyPolish:"20260708b",categoryPercentileTiers:"20260710c-rating-source",scoreWeighting:"20260710a-compatibility-only",championshipResumeLive:"20260710d-fixed-benchmark",opponentQualityLive:"20260710c-fixed-benchmark",fighterEraLedgers:"20260709g-review-corrections",longevityShadowScorer:"20260710c-144-month-ceiling",longevityLivePromoter:"20260710b-144-month-ceiling",apexPeakCorrections:"20260709b-full-roster",apexPeakComponentAudit:"20260709c-batch-one-review-adjustments",apexPeakLiveBonus:"20260710a-category-only",apexPeakDricusAudit:"20260710b-merab-zhang"};
 (function(){
 'use strict';
-const v=window.UFC_MODULE_VERSIONS||{},VERSION='deterministic-scoring-pipeline-20260710n-canonical-prime-record';
+const v=window.UFC_MODULE_VERSIONS||{},VERSION='deterministic-scoring-pipeline-20260710o-frankie-five-step-audit';
 const state={version:VERSION,mode:'deterministic-single-pass',status:'waiting-for-patches',sequence:[],timerCount:0,repeatedLoadCount:0,finalScoreApplyCount:0,startedAt:new Date().toISOString(),completedAt:null,error:null};
 let qualityReadyResolved=false,resolveQualityReady;
 window.UFC_OPPONENT_QUALITY_READY=new Promise(resolve=>{resolveQualityReady=resolve;});
@@ -31,7 +31,7 @@ state.status='loading-apex';
 await loadStep('apex-corrections',cache('assets/data/apex-peak-score-corrections.js',`apex-peak-score-corrections-${v.apexPeakCorrections}`),'data-apex-peak-score-corrections');
 await loadStep('apex-component-audit',cache('assets/data/apex-peak-component-audit.js',`apex-peak-component-audit-${v.apexPeakComponentAudit}`),'data-apex-peak-component-audit');
 await loadStep('apex-live',cache('assets/data/apex-peak-live-bonus.js',`apex-peak-live-bonus-${v.apexPeakLiveBonus}`),'data-apex-peak-live-bonus');
-await loadStep('apex-dricus-audit',cache('assets/data/apex-peak-audit-dricus.js',`apex-peak-audit-dricus-${v.apexPeakDricusAudit}`),'data-apex-peak-dricus-audit');
+await loadStep('apex-dricus-audit',cache('assets/data/apex-peak-audit-dricus.js',`apex-peak-audit-dricus-${v.apexPeakDricusAudit}`),'data-apex-peak-audit-dricus');
 state.status='finalizing';
 await loadStep('final-score-engine',cache('assets/js/final-score-engine.js',`final-score-engine-${v.finalScoreEngine}`),'data-final-score-engine');
 if(!window.UFC_FINAL_SCORE_ENGINE?.apply)throw new Error('Final score engine did not load.');
