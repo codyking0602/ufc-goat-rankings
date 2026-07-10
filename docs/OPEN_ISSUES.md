@@ -6,12 +6,16 @@
 
 Status: In Progress
 
-A canonical final score engine now exists and all 62 settled totals reconcile with the locked formula. Prime Dominance has been converted to a category-only writer.
+A canonical final score engine now exists and all 62 settled totals reconcile with the locked formula.
+
+Converted to category-only writers:
+
+- Championship Resume
+- Quality Wins
+- Prime Dominance
 
 Still remaining:
 
-- Championship Resume promoter writes totals and ranks
-- Quality Wins promoter writes totals and ranks
 - Longevity promoter writes totals and ranks
 - Apex Peak promoter writes totals and ranks
 - general legacy weighting code can still write totals
@@ -22,11 +26,21 @@ Target: Only `final-score-engine.js` owns totals, ranks, weighted breakdowns, an
 
 Status: Resolved on safety branch
 
-The Prime promoter no longer writes totals, ranks, OVRs, or category-rank overrides. The second settled runtime audit reported 0 formula mismatches across all 62 fighters.
+The Prime promoter no longer writes totals, ranks, OVRs, or category-rank overrides. Settled runtime audits report 0 formula mismatches across all 62 fighters.
 
 Production status: Not merged.
 
-### 3. Loss Context ledger is not live
+### 3. Championship and Quality promoters owned overall state
+
+Status: Resolved on safety branch
+
+Championship Resume and Quality Wins now write only their category values, audit metadata, and presentation evidence. They no longer write totals, ranks, weighted breakdowns, or numerical display overrides.
+
+Championship also no longer force-writes Prime category rank/OVR or runs delayed Prime rewrite timers.
+
+Production status: Not merged.
+
+### 4. Loss Context ledger is not live
 
 Status: Open
 
@@ -34,23 +48,23 @@ The current live promoter remains disabled. Existing `penalty` values remain liv
 
 Target: Complete full UFC loss coverage and promote reviewed penalties.
 
-### 4. Score-changing timers
+### 5. Score-changing timers
 
 Status: Open
 
-Prime, Longevity, Apex, category tiers, and refresh paths are still reapplied after page load.
+Longevity, Apex, category tiers, and refresh paths are still reapplied after page load.
 
-The final score engine now repairs the final settled state, but the loader is not yet deterministic.
+The final score engine repairs the final settled state, but the loader is not yet deterministic.
 
 Target: One ordered initialization chain with no score-changing timers.
 
 ## High Priority
 
-### 5. Full-roster six-category coverage gate
+### 6. Full-roster six-category coverage gate
 
 Status: In Progress
 
-The read-only auditor and headless Chromium workflow now run successfully.
+The read-only auditor and headless Chromium workflow run successfully.
 
 Current coverage:
 
@@ -65,7 +79,7 @@ Current coverage:
 
 Target: Make this audit a hard release gate with 62/62 coverage and 0 formula mismatches.
 
-### 6. Score-derived display overrides
+### 7. Score-derived display overrides
 
 Status: Controlled on safety branch
 
@@ -73,17 +87,19 @@ The final score engine strips numerical rank/OVR fields from runtime display ove
 
 The settled audit reports 0 forbidden score-derived overrides.
 
-Remaining: Remove obsolete writers from the remaining category promoters and legacy modules.
+Remaining: Remove obsolete writers from Longevity, Apex, and legacy modules.
 
-### 7. Category promoters omit Apex or use competing formulas
+### 8. Category promoters omit Apex or use competing formulas
 
 Status: In Progress
 
-The final score engine now repairs the settled total after category passes, and Prime has been cleaned.
+Championship, Quality Wins, and Prime are clean. Remaining:
 
-Remaining: Convert Championship, Quality Wins, Longevity, and Apex into category-only writers.
+- Longevity
+- Apex Peak
+- legacy general weighting layer
 
-### 8. Legacy source values remain mixed with live values
+### 9. Legacy source values remain mixed with live values
 
 Status: Open
 
@@ -91,9 +107,15 @@ Status: Open
 
 Target: Preserve legacy values explicitly but prohibit silent use after initialization.
 
+### 10. Production cache-bust references
+
+Status: Open before merge
+
+`ranking-data-patches.js` still references the older Championship query-string version. Branch testing is correct, but the cache-bust reference must be updated before production merge.
+
 ## Missing Audit Coverage
 
-### 9. Quality Wins missing five live audits
+### 11. Quality Wins missing five live audits
 
 Status: Open
 
@@ -103,7 +125,7 @@ Status: Open
 - Sean O'Malley
 - Julianna Peña
 
-### 10. Prime Dominance missing nine merged audits
+### 12. Prime Dominance missing nine merged audits
 
 Status: Open
 
@@ -117,13 +139,13 @@ Status: Open
 - Sean Strickland
 - Dan Henderson
 
-### 11. Apex Peak incomplete row
+### 13. Apex Peak incomplete row
 
 Status: Open
 
 Dricus du Plessis remains explicitly pending.
 
-### 12. Loss Context incomplete row
+### 14. Loss Context incomplete row
 
 Status: Open
 
@@ -131,19 +153,19 @@ Sean O'Malley has no usable adapter entry. The other 61 adapter totals still req
 
 ## Review Items
 
-### 13. Apex naming consistency
+### 15. Apex naming consistency
 
 Status: Open
 
 Both “Apex Peak” and “Peak Apex” still appear. Standardize on “Apex Peak.”
 
-### 14. Compare Mode source consistency
+### 16. Compare Mode source consistency
 
 Status: Not yet audited
 
 Target: Confirm Compare Mode reads canonical final rows and maintains no separate numerical score source.
 
-### 15. Division board source consistency
+### 17. Division board source consistency
 
 Status: Not yet audited
 
