@@ -1,0 +1,50 @@
+name: One-Time Canonical Prime Record Cleanup
+
+on:
+  push:
+    branches: [cleanup/canonical-prime-records]
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm install --no-save playwright@1.52.0
+          npx playwright install --with-deps chromium
+      - name: Start current app
+        run: |
+          python3 -m http.server 4173 > /tmp/ufc-prime-cleanup-server.log 2>&1 &
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:4173/index.html > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/ufc-prime-cleanup-server.log
+          exit 1
+      - name: Canonicalize Prime Record source
+        run: node scripts/one-time-canonical-prime-record-cleanup.cjs
+      - name: Validate cleaned runtime
+        run: |
+          node scripts/run-prime-record-source-audit.mjs
+          node scripts/run-six-category-audit.mjs
+      - name: Remove temporary npm files
+        run: git clean -fd package.json package-lock.json node_modules || true
+      - name: Commit generated cleanup
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet && exit 0
+          git commit -m "Canonicalize Prime Record source"
+          git push origin HEAD:cleanup/canonical-prime-records
