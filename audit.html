@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UFC Six-Category Integrity Audit</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0b0d12;--panel:#121722;--line:#263244;--text:#eef2ff;--muted:#9ca3af;--pass:#22c55e;--warn:#f59e0b;--fail:#ef4444}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+    header{padding:24px;border-bottom:1px solid var(--line);background:#0f131c;position:sticky;top:0;z-index:2}
+    h1,h2{margin:0 0 8px}p{margin:0;color:var(--muted)}main{padding:20px;display:grid;gap:18px}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;overflow:auto}
+    .summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.metric{background:#0e1420;border:1px solid var(--line);border-radius:12px;padding:12px}.metric strong{display:block;font-size:24px}.metric small{color:var(--muted)}
+    .pass{color:var(--pass)}.warning{color:var(--warn)}.fail{color:var(--fail)}
+    table{width:100%;border-collapse:collapse;font-size:13px;min-width:1000px}th,td{padding:9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{position:sticky;top:0;background:var(--panel)}
+    button{background:#1d2635;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px 12px;cursor:pointer;margin-right:8px}button:hover{border-color:#64748b}
+    iframe{width:1px;height:1px;position:absolute;left:-9999px;border:0}.status{font-weight:700}.details{max-width:420px;white-space:normal;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Six-Category Integrity Audit</h1>
+    <p>Read-only diagnostic dashboard. It does not change scores, ranks, OVRs, ledgers, or display data.</p>
+  </header>
+  <main>
+    <section class="card">
+      <h2>Audit status</h2>
+      <p id="status" class="status warning">Loading the current app and scoring modules…</p>
+      <div style="margin-top:14px">
+        <button id="rerun" type="button">Run audit now</button>
+        <button id="copyJson" type="button">Copy JSON</button>
+        <button id="copyMarkdown" type="button">Copy Markdown</button>
+      </div>
+    </section>
+    <section class="card"><div id="summary" class="summary"></div></section>
+    <section class="card">
+      <h2>Category coverage</h2>
+      <div id="categorySummary"></div>
+    </section>
+    <section class="card">
+      <h2>Fighter-by-fighter report</h2>
+      <table>
+        <thead><tr><th>Fighter</th><th>Board</th><th>Champ</th><th>Quality</th><th>Prime</th><th>Longevity</th><th>Apex</th><th>Loss</th><th>Formula</th><th>Profile</th><th>Overrides</th><th>Details</th></tr></thead>
+        <tbody id="rows"><tr><td colspan="12">Waiting for audit…</td></tr></tbody>
+      </table>
+    </section>
+  </main>
+  <iframe id="appFrame" src="index.html" title="Hidden app runtime"></iframe>
+  <script>
+    (function(){
+      const frame=document.getElementById('appFrame');
+      const statusEl=document.getElementById('status');
+      const summaryEl=document.getElementById('summary');
+      const categoryEl=document.getElementById('categorySummary');
+      const rowsEl=document.getElementById('rows');
+      let runtime=null;
+
+      function cls(level){return level==='pass'?'pass':level==='warning'?'warning':'fail';}
+      function label(level){return level==='pass'?'PASS':level==='warning'?'WARN':'FAIL';}
+      function metric(value,labelText,className=''){
+        return `<div class="metric"><strong class="${className}">${value}</strong><small>${labelText}</small></div>`;
+      }
+      function render(report){
+        if(!report||report.error){statusEl.className='status fail';statusEl.textContent=report?.error||'Audit report unavailable.';return;}
+        statusEl.className=`status ${report.passed?'pass':'warning'}`;
+        statusEl.textContent=report.passed?'All integrity checks passed.':'Issues found. No data was changed.';
+        const s=report.summary;
+        summaryEl.innerHTML=[
+          metric(s.fighterCount,'Roster fighters'),
+          metric(s.completeCount,'Fully complete',s.completeCount===s.fighterCount?'pass':'warning'),
+          metric(s.incompleteCount,'Incomplete',s.incompleteCount?'fail':'pass'),
+          metric(s.formulaMismatchCount,'Formula mismatches',s.formulaMismatchCount?'fail':'pass'),
+          metric(s.forbiddenOverrideCount,'Score-derived overrides',s.forbiddenOverrideCount?'fail':'pass'),
+          metric(s.duplicateBoardNameCount+s.duplicateProfileNameCount,'Duplicate-name groups',(s.duplicateBoardNameCount+s.duplicateProfileNameCount)?'fail':'pass')
+        ].join('');
+        const order=[['championship','Championship Resume'],['opponentQuality','Quality Wins'],['primeDominance','Prime Dominance'],['longevity','Longevity'],['apexPeak','Apex Peak'],['penalty','Loss Context']];
+        categoryEl.innerHTML=`<table><thead><tr><th>Category</th><th>Pass</th><th>Warn</th><th>Fail</th></tr></thead><tbody>${order.map(([key,name])=>{const c=s.categories[key];return `<tr><td>${name}</td><td class="pass">${c.pass}</td><td class="warning">${c.warning}</td><td class="fail">${c.fail}</td></tr>`;}).join('')}</tbody></table>`;
+        rowsEl.innerHTML=report.fighters.map(f=>{
+          const details=[];
+          if(f.categoryFailures.length)details.push(`Fails: ${f.categoryFailures.join(', ')}`);
+          if(f.categoryWarnings.length)details.push(`Warnings: ${f.categoryWarnings.join(', ')}`);
+          if(!f.formulaPass)details.push(`Formula expected ${f.expectedTotal}, actual ${f.actualTotal}, delta ${f.formulaDelta}`);
+          if(f.profileMismatches.length)details.push(`Profile: ${f.profileMismatches.join('; ')}`);
+          if(f.forbiddenOverrideFields.length)details.push(`Overrides: ${f.forbiddenOverrideFields.join(', ')}`);
+          return `<tr><td><strong>${f.fighter}</strong></td><td>${f.board}</td>${['championship','opponentQuality','primeDominance','longevity','apexPeak','penalty'].map(key=>`<td class="${cls(f.categories[key].level)}">${label(f.categories[key].level)}</td>`).join('')}<td class="${f.formulaPass?'pass':'fail'}">${f.formulaPass?'PASS':'FAIL'}</td><td class="${f.profileMismatches.length?'fail':'pass'}">${f.profileMismatches.length?'FAIL':'PASS'}</td><td class="${f.forbiddenOverrideFields.length?'fail':'pass'}">${f.forbiddenOverrideFields.length?'FAIL':'PASS'}</td><td class="details">${details.join('<br>')||'Complete'}</td></tr>`;
+        }).join('');
+      }
+      function report(){return runtime?.UFC_SIX_CATEGORY_INTEGRITY_AUDIT?.latest||null;}
+      function poll(){const current=report();if(current)render(current);}
+      frame.addEventListener('load',()=>{
+        runtime=frame.contentWindow;
+        const script=frame.contentDocument.createElement('script');
+        script.src='assets/data/six-category-integrity-audit.js?v=six-category-integrity-audit-20260709a';
+        script.setAttribute('data-six-category-integrity-audit','true');
+        frame.contentDocument.body.appendChild(script);
+        [1000,4000,7000,10500,13000].forEach(delay=>setTimeout(poll,delay));
+      });
+      document.getElementById('rerun').addEventListener('click',()=>{const audit=runtime?.UFC_SIX_CATEGORY_INTEGRITY_AUDIT;if(!audit)return;render(audit.run('dashboard-manual'));});
+      document.getElementById('copyJson').addEventListener('click',async()=>{const audit=runtime?.UFC_SIX_CATEGORY_INTEGRITY_AUDIT;if(!audit)return;await navigator.clipboard.writeText(audit.exportJson());statusEl.textContent='JSON copied to clipboard.';});
+      document.getElementById('copyMarkdown').addEventListener('click',async()=>{const audit=runtime?.UFC_SIX_CATEGORY_INTEGRITY_AUDIT;if(!audit)return;await navigator.clipboard.writeText(audit.exportMarkdown());statusEl.textContent='Markdown report copied to clipboard.';});
+    })();
+  </script>
+</body>
+</html>
