@@ -1,8 +1,8 @@
 // Central cache-bust versions and deterministic scoring bootstrap.
-window.UFC_MODULE_VERSIONS={scoringPipeline:"20260710s-longevity-window-rebuild",finalScoreEngine:"20260710b-deterministic",primeWindows:"20260710b-context-only",primeRoundControlAudit:"20260708d-jon-54-63",primeDominanceLedgers:"20260708j-round-audit-batch-two",primeDominanceShadowModel:"20260708c-jon-elite-stakes",primeDominanceAuditBatchSeven:"20260710d-frankie-full-window",primeDominanceAuditBatchTen:"20260710a-canonical-window-five",primeDominanceLivePromoter:"20260710d-canonical-prime-source",primeDominanceCopyPolish:"20260708b",categoryPercentileTiers:"20260710c-rating-source",scoreWeighting:"20260710a-compatibility-only",championshipResumeLive:"20260710d-fixed-benchmark",opponentQualityLive:"20260710c-fixed-benchmark",fighterEraLedgers:"20260709g-review-corrections",canonicalPrimeRecords:"20260710b-prime-ledger-recount",fighterEraWindowAudit:"20260710b-record-dependencies",longevityCanonicalRecalculation:"20260710a-ten-window-rebuild",longevityShadowScorer:"20260710c-144-month-ceiling",longevityLivePromoter:"20260710b-144-month-ceiling",apexPeakCorrections:"20260709b-full-roster",apexPeakComponentAudit:"20260709c-batch-one-review-adjustments",apexPeakLiveBonus:"20260710a-category-only",apexPeakDricusAudit:"20260710b-merab-zhang"};
+window.UFC_MODULE_VERSIONS={scoringPipeline:"20260710t-loss-context-audit",finalScoreEngine:"20260710b-deterministic",primeWindows:"20260710b-context-only",primeRoundControlAudit:"20260708d-jon-54-63",primeDominanceLedgers:"20260708j-round-audit-batch-two",primeDominanceShadowModel:"20260708c-jon-elite-stakes",primeDominanceAuditBatchSeven:"20260710d-frankie-full-window",primeDominanceAuditBatchTen:"20260710a-canonical-window-five",primeDominanceLivePromoter:"20260710d-canonical-prime-source",primeDominanceCopyPolish:"20260708b",categoryPercentileTiers:"20260710c-rating-source",scoreWeighting:"20260710a-compatibility-only",championshipResumeLive:"20260710d-fixed-benchmark",opponentQualityLive:"20260710c-fixed-benchmark",fighterEraLedgers:"20260709g-review-corrections",canonicalPrimeRecords:"20260710b-prime-ledger-recount",fighterEraWindowAudit:"20260710b-record-dependencies",lossContextMismatchAudit:"20260710a-roster-62",longevityCanonicalRecalculation:"20260710a-ten-window-rebuild",longevityShadowScorer:"20260710c-144-month-ceiling",longevityLivePromoter:"20260710b-144-month-ceiling",apexPeakCorrections:"20260709b-full-roster",apexPeakComponentAudit:"20260709c-batch-one-review-adjustments",apexPeakLiveBonus:"20260710a-category-only",apexPeakDricusAudit:"20260710b-merab-zhang"};
 (function(){
 'use strict';
-const v=window.UFC_MODULE_VERSIONS||{},VERSION='deterministic-scoring-pipeline-20260710s-longevity-window-rebuild';
+const v=window.UFC_MODULE_VERSIONS||{},VERSION='deterministic-scoring-pipeline-20260710t-loss-context-audit';
 const state={version:VERSION,mode:'deterministic-single-pass',status:'waiting-for-patches',sequence:[],timerCount:0,repeatedLoadCount:0,finalScoreApplyCount:0,startedAt:new Date().toISOString(),completedAt:null,error:null};
 let qualityReadyResolved=false,resolveQualityReady;
 window.UFC_OPPONENT_QUALITY_READY=new Promise(resolve=>{resolveQualityReady=resolve;});
@@ -16,6 +16,8 @@ function patchesReady(){if(window.UFC_RANKING_DATA_PATCHES_READY)return window.U
 function opponentQualityReady(){return window.UFC_OPPONENT_QUALITY_LIVE?Promise.resolve(window.UFC_OPPONENT_QUALITY_LIVE):window.UFC_OPPONENT_QUALITY_READY;}
 async function run(){try{
 await patchesReady();record('ranking-data-patches:ready');
+await loadStep('loss-context-mismatch-audit',cache('assets/data/loss-context-mismatch-audit.js',`loss-context-mismatch-audit-${v.lossContextMismatchAudit}`),'data-loss-context-mismatch-audit');
+state.lossContextMismatchAudit=window.UFC_LOSS_CONTEXT_MISMATCH_AUDIT||null;
 await loadStep('canonical-longevity-recalculation',cache('assets/data/longevity-canonical-recalculation.js',`longevity-canonical-recalculation-${v.longevityCanonicalRecalculation}`),'data-canonical-longevity-recalculation');
 state.canonicalLongevityRecalculation=window.UFC_CANONICAL_LONGEVITY_RECALCULATION||null;
 await loadStep('canonical-prime-records',cache('assets/data/canonical-prime-records.js',`canonical-prime-records-${v.canonicalPrimeRecords}`),'data-canonical-prime-records');
@@ -39,7 +41,7 @@ state.status='loading-apex';
 await loadStep('apex-corrections',cache('assets/data/apex-peak-score-corrections.js',`apex-peak-score-corrections-${v.apexPeakCorrections}`),'data-apex-peak-score-corrections');
 await loadStep('apex-component-audit',cache('assets/data/apex-peak-component-audit.js',`apex-peak-component-audit-${v.apexPeakComponentAudit}`),'data-apex-peak-component-audit');
 await loadStep('apex-live',cache('assets/data/apex-peak-live-bonus.js',`apex-peak-live-bonus-${v.apexPeakLiveBonus}`),'data-apex-peak-live-bonus');
-await loadStep('apex-dricus-audit',cache('assets/data/apex-peak-audit-dricus.js',`apex-peak-audit-dricus-${v.apexPeakDricusAudit}`),'data-apex-peak-audit-dricus');
+await loadStep('apex-dricus-audit',cache('assets/data/apex-peak-audit-dricus.js',`apex-peak-audit-dricus-${v.apexPeakDricusAudit}`),'data-apex-peak-dricus-audit');
 state.status='finalizing';
 await loadStep('final-score-engine',cache('assets/js/final-score-engine.js',`final-score-engine-${v.finalScoreEngine}`),'data-final-score-engine');
 if(!window.UFC_FINAL_SCORE_ENGINE?.apply)throw new Error('Final score engine did not load.');
