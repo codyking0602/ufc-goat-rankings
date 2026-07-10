@@ -182,3 +182,7 @@ try {
 } finally {
   await browser.close();
 }
+
+// Keep the canonical Prime Record source check inside the existing browser-audit entry point.
+// This avoids a separate workflow mutation while still making all 62 visible profile tiles a CI gate.
+await import('./run-prime-record-source-audit.mjs');
