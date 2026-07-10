@@ -1,56 +1,64 @@
 # Open Issues
 
-## Critical
+## Resolved on Safety Branch
 
 ### 1. Overall score ownership
 
-Status: Resolved on safety branch
+Status: Resolved
 
-`assets/js/final-score-engine.js` is now the only overall-score owner.
+`assets/js/final-score-engine.js` is the only overall-score owner.
 
-The five positive category promoters are category-only:
+Validated:
 
-- Championship Resume
-- Quality Wins
-- Prime Dominance
-- Longevity
-- Apex Peak
-
-The legacy weighting layer is now compatibility-only and reports:
-
-- `mutatesScores: false`
-- `mode: compatibility-only`
-- `overallOwner: final-score-engine.js`
-- duplicate Prime Windows loader: false
-- duplicate Prime Dominance loader: false
-
-The strict settled-runtime ownership gate checked all 62 leaderboard rows and found 0 rows with the wrong owner.
+- five positive category promoters are category-only
+- legacy weighting is compatibility-only
+- 62/62 leaderboard rows carry the final-engine owner
+- 0 formula mismatches
+- 0 forbidden numerical display overrides
 
 Production status: Not merged.
 
-### 2. Loss Context ledger is not live
+### 2. Score-changing timers and repeated loaders
+
+Status: Resolved
+
+The scoring pipeline is now Promise-based and deterministic.
+
+Validated:
+
+- scoring timers: 0
+- repeated scoring loads: 0
+- duplicate scoring scripts: 0
+- final engine applies once
+- UI refreshes once after scoring
+- final engine does not wrap `refresh`
+- category tiers do not reapply Prime
+- deterministic initialization gate: PASS
+
+Permanent report:
+
+- `docs/audits/SEVENTH_RUNTIME_AUDIT_DETERMINISTIC_INITIALIZATION.md`
+
+Production status: Not merged.
+
+## Critical
+
+### 3. Loss Context ledger is not live
 
 Status: Open
 
-The live promoter remains disabled. Existing `penalty` values remain live while the Fighter Era Ledger adapter is QA-only.
+Existing legacy `penalty` values remain live. The Fighter Era Ledger adapter is QA-only.
 
-Target: Complete full UFC loss coverage, review all 62 totals, and promote the audited penalties.
+Remaining:
 
-### 3. Score-changing timers and repeated loaders
+- add Sean O'Malley's missing adapter entry
+- review all 62 fighter totals against the locked loss rules
+- promote the reviewed ledger
+- rerun the deterministic full-roster audit
 
-Status: Open
-
-Longevity, Apex, category tiers, and refresh paths are still loaded or reapplied on delayed timers. The category writers no longer own overall scoring, but repeated initialization remains unnecessary technical debt and can cause visible startup movement.
-
-Target: One deterministic ordered initialization chain with no score-changing timers.
-
-## High Priority
-
-### 4. Full-roster six-category coverage gate
+### 4. Full-roster six-category coverage
 
 Status: In Progress
-
-Current settled coverage:
 
 | Category | Pass | Warn | Fail |
 |---|---:|---:|---:|
@@ -61,41 +69,11 @@ Current settled coverage:
 | Apex Peak | 61 | 1 | 0 |
 | Loss Context | 0 | 61 | 1 |
 
-Current infrastructure gates:
-
-- locked formula mismatches must remain 0
-- final-score ownership must pass
-- every leaderboard row must carry the final-engine owner version
-
 Target: 62/62 audited coverage and zero silent fallback.
 
-### 5. Score-derived display overrides
+## High Priority
 
-Status: Controlled on safety branch
-
-The final score engine strips numerical rank/OVR fields from runtime display overrides. Category promoters and the legacy weighting layer no longer write numerical rank, OVR, total, or category score fields there.
-
-Current settled audit result: 0 forbidden score-derived overrides.
-
-### 6. Legacy source values remain mixed with live values
-
-Status: Open
-
-`ranking-data.js` still contains older values that may temporarily appear before audited category layers apply.
-
-Target: Preserve legacy values under explicit legacy fields and prohibit silent fallback after initialization.
-
-### 7. Production cache-bust references
-
-Status: Open before merge
-
-`ranking-data-patches.js` still contains older query-string versions for some now-clean modules, including Championship Resume and the compatibility-only weighting layer.
-
-Target: align all final cache versions during deterministic-loader cleanup before production merge.
-
-## Missing Audit Coverage
-
-### 8. Quality Wins missing five live audits
+### 5. Quality Wins missing five live audits
 
 Status: Open
 
@@ -105,7 +83,7 @@ Status: Open
 - Sean O'Malley
 - Julianna Peña
 
-### 9. Prime Dominance missing nine merged audits
+### 6. Prime Dominance missing nine merged audits
 
 Status: Open
 
@@ -119,34 +97,44 @@ Status: Open
 - Sean Strickland
 - Dan Henderson
 
-### 10. Apex Peak incomplete row
+### 7. Apex Peak incomplete row
 
 Status: Open
 
-Dricus du Plessis remains explicitly pending. The other 61 Apex audits pass the settled runtime gate.
+Dricus du Plessis remains explicitly pending. The other 61 Apex audits pass.
 
-### 11. Loss Context incomplete row
+### 8. Legacy source values remain mixed with live values
 
 Status: Open
 
-Sean O'Malley has no usable adapter entry. The other 61 adapter totals still require fighter-by-fighter review before live promotion.
+`ranking-data.js` still contains older values that can exist before audited category layers apply.
+
+Target: preserve legacy values under explicit legacy fields and prohibit silent fallback after initialization.
+
+### 9. Production cache-bust references
+
+Status: Open before merge
+
+The static `index.html` query strings for `module-versions.js` and `ranking-data-patches.js` need final alignment.
+
+Fresh branch testing passes, but production should not rely on old browser cache keys.
 
 ## Review Items
 
+### 10. Compare Mode source consistency
+
+Status: Not yet audited
+
+Confirm Compare Mode reads canonical final rows and maintains no separate numerical score source.
+
+### 11. Division board source consistency
+
+Status: Not yet audited
+
+Confirm division rankings read canonical final rows after the deterministic pipeline completes.
+
 ### 12. Apex naming consistency
 
-Status: Partially resolved
+Status: Mostly resolved
 
-The category-only Apex promoter now uses “Apex Peak” and preserves the old global alias only for compatibility. Remaining files should be standardized during loader cleanup.
-
-### 13. Compare Mode source consistency
-
-Status: Not yet audited
-
-Target: Confirm Compare Mode reads canonical final rows and maintains no separate numerical score source.
-
-### 14. Division board source consistency
-
-Status: Not yet audited
-
-Target: Confirm division rankings read canonical final rows after the unified final score engine runs.
+Active scoring and tier modules use “Apex Peak.” Remaining legacy presentation references can be standardized during final cleanup.
