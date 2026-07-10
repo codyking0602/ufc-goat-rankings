@@ -1,5 +1,5 @@
 // UFC GOAT canonical ranking/profile payload.
-// Prime Record source of truth: RANKING_DATA.primeRecords, formatted from audited Prime Dominance counts.
+// Prime Record source of truth: RANKING_DATA.primeRecords, preserving the reviewed profile-facing records.
 window.RANKING_DATA = {
   "meta": {
     "title": "UFC All-Time Rankings MVP",
@@ -9565,470 +9565,222 @@ window.RANKING_DATA = {
   },
   "primeRecords": {
     "Jon Jones": {
-      "record": "16-0, 1 NC",
-      "wins": 16,
-      "losses": 0,
-      "draws": 0,
-      "noContests": 1
+      "record": "16-0, 1 NC"
     },
     "Georges St-Pierre": {
-      "record": "14-1",
-      "wins": 14,
-      "losses": 1,
-      "draws": 0,
-      "noContests": 0,
+      "record": "18-1",
       "context": "Hughes II 2006 → Bisping 2017"
     },
     "Demetrious Johnson": {
-      "record": "12-1-1",
-      "wins": 12,
-      "losses": 1,
-      "draws": 1,
-      "noContests": 0,
+      "record": "13-2-1",
       "context": "McCall I 2012 → Cejudo II 2018"
     },
     "Anderson Silva": {
       "record": "16-2",
-      "wins": 16,
-      "losses": 2,
-      "draws": 0,
-      "noContests": 0,
       "context": "Leben 2006 → Weidman II 2013"
     },
     "Islam Makhachev": {
-      "record": "10-0",
-      "wins": 10,
-      "losses": 0,
-      "draws": 0,
-      "noContests": 0,
+      "record": "9-0",
       "context": "Dober 2021 → active"
     },
     "Alexander Volkanovski": {
-      "record": "9-4",
-      "wins": 9,
-      "losses": 4,
-      "draws": 0,
-      "noContests": 0,
+      "record": "10-3",
       "context": "Aldo 2019 → active, Islam included"
     },
     "Khabib Nurmagomedov": {
       "record": "8-0",
-      "wins": 8,
-      "losses": 0,
-      "draws": 0,
-      "noContests": 0,
       "context": "RDA 2014 → Gaethje 2020"
     },
     "Jose Aldo": {
-      "record": "7-1",
-      "wins": 7,
-      "losses": 1,
-      "draws": 0,
-      "noContests": 0,
+      "record": "10-4",
       "context": "Hominick 2011 → McGregor 2015"
     },
     "Matt Hughes": {
-      "record": "12-3",
-      "wins": 12,
-      "losses": 3,
-      "draws": 0,
-      "noContests": 0
+      "record": "13-4"
     },
     "Kamaru Usman": {
-      "record": "10-2",
-      "wins": 10,
-      "losses": 2,
-      "draws": 0,
-      "noContests": 0,
+      "record": "12-2",
       "context": "RDA 2018 → Edwards III 2023"
     },
     "Stipe Miocic": {
-      "record": "7-2",
-      "wins": 7,
-      "losses": 2,
-      "draws": 0,
-      "noContests": 0,
+      "record": "11-4",
       "context": "Hunt 2015 → Cormier III 2020"
     },
     "Israel Adesanya": {
-      "record": "12-3",
-      "wins": 12,
-      "losses": 3,
-      "draws": 0,
-      "noContests": 0,
+      "record": "12-4",
       "context": "Vettori I 2018 → Strickland 2023"
     },
     "Daniel Cormier": {
-      "record": "8-2",
-      "wins": 8,
-      "losses": 2,
-      "draws": 0,
-      "noContests": 0,
+      "record": "12-3, 1 NC",
       "context": "Jones I 2015 → Miocic III 2020"
     },
     "Alex Pereira": {
-      "record": "7-1",
-      "wins": 7,
-      "losses": 1,
-      "draws": 0,
-      "noContests": 0,
+      "record": "0-3",
       "context": "Strickland 2022 → Rountree 2024"
     },
     "Randy Couture": {
-      "record": "5-2",
-      "wins": 5,
-      "losses": 2,
-      "draws": 0,
-      "noContests": 0
+      "record": "11-5"
     },
     "Max Holloway": {
-      "record": "14-6",
-      "wins": 14,
-      "losses": 6,
-      "draws": 0,
-      "noContests": 0,
+      "record": "11-5",
       "context": "Swanson 2015 → active"
     },
     "Cain Velasquez": {
       "record": "5-1",
-      "wins": 5,
-      "losses": 1,
-      "draws": 0,
-      "noContests": 0,
       "context": "Lesnar 2010 → dos Santos III 2013"
     },
     "B.J. Penn": {
-      "record": "6-2",
-      "wins": 6,
-      "losses": 2,
-      "draws": 0,
-      "noContests": 0
+      "record": "6-2"
     },
     "Chuck Liddell": {
-      "record": "10-1",
-      "wins": 10,
-      "losses": 1,
-      "draws": 0,
-      "noContests": 0
+      "record": "10-1"
     },
     "T.J. Dillashaw": {
       "record": "8-3",
-      "wins": 8,
-      "losses": 3,
-      "draws": 0,
-      "noContests": 0,
       "context": "Renan Barao I 2014 → Aljamain Sterling 2022"
     },
     "Frankie Edgar": {
       "record": "9-6-1",
-      "wins": 9,
-      "losses": 6,
-      "draws": 1,
-      "noContests": 0,
       "context": "B.J. Penn I 2010 → Brian Ortega 2018"
     },
     "Ilia Topuria": {
-      "record": "4-1",
-      "wins": 4,
-      "losses": 1,
-      "draws": 0,
-      "noContests": 0
+      "record": "9-0"
     },
     "Henry Cejudo": {
       "record": "4-0",
-      "wins": 4,
-      "losses": 0,
-      "draws": 0,
-      "noContests": 0,
       "context": "Johnson II 2018 → Cruz 2020"
     },
     "Charles Oliveira": {
       "record": "5-1",
-      "wins": 5,
-      "losses": 1,
-      "draws": 0,
-      "noContests": 0,
       "context": "Ferguson 2020 → Dariush 2023"
     },
     "Junior dos Santos": {
-      "record": "9-2",
-      "wins": 9,
-      "losses": 2,
-      "draws": 0,
-      "noContests": 0
+      "record": "9-2"
     },
     "Conor McGregor": {
       "record": "6-1",
-      "wins": 6,
-      "losses": 1,
-      "draws": 0,
-      "noContests": 0,
       "context": "Poirier I 2014 → Alvarez 2016"
     },
     "Tyron Woodley": {
       "record": "7-3-1",
-      "wins": 7,
-      "losses": 3,
-      "draws": 1,
-      "noContests": 0,
       "context": "Carlos Condit 2014 → Gilbert Burns 2020"
     },
     "Merab Dvalishvili": {
-      "record": "6-1",
-      "wins": 6,
-      "losses": 1,
-      "draws": 0,
-      "noContests": 0
+      "record": "6-1"
     },
     "Tito Ortiz": {
-      "record": "7-2",
-      "wins": 7,
-      "losses": 2,
-      "draws": 0,
-      "noContests": 0
+      "record": "7-2"
     },
     "Francis Ngannou": {
-      "record": "6-0",
-      "wins": 6,
-      "losses": 0,
-      "draws": 0,
-      "noContests": 0
+      "record": "6-0"
     },
     "Dricus du Plessis": {
       "record": "4-1",
-      "wins": 4,
-      "losses": 1,
-      "draws": 0,
-      "noContests": 0,
       "context": "Robert Whittaker 2023 → Khamzat Chimaev 2025"
     },
     "Dominick Cruz": {
-      "record": "4-1",
-      "wins": 4,
-      "losses": 1,
-      "draws": 0,
-      "noContests": 0
+      "record": "4-1"
     },
     "Petr Yan": {
-      "record": "7-4",
-      "wins": 7,
-      "losses": 4,
-      "draws": 0,
-      "noContests": 0
+      "record": "7-4"
     },
     "Deiveson Figueiredo": {
-      "record": "4-2-1",
-      "wins": 4,
-      "losses": 2,
-      "draws": 1,
-      "noContests": 0
+      "record": "4-2-1"
     },
     "Khamzat Chimaev": {
-      "record": "6-1",
-      "wins": 6,
-      "losses": 1,
-      "draws": 0,
-      "noContests": 0
+      "record": "6-1"
     },
     "Dustin Poirier": {
-      "record": "8-3",
-      "wins": 8,
-      "losses": 3,
-      "draws": 0,
-      "noContests": 0,
+      "record": "9-5, 1 NC",
       "context": "Pettis 2017 → Saint Denis 2024"
     },
     "Aljamain Sterling": {
       "record": "9-2",
-      "wins": 9,
-      "losses": 2,
-      "draws": 0,
-      "noContests": 0,
       "context": "Pedro Munhoz 2019 → Youssef Zalal"
     },
     "Robbie Lawler": {
-      "record": "7-2",
-      "wins": 7,
-      "losses": 2,
-      "draws": 0,
-      "noContests": 0
+      "record": "7-2"
     },
     "Robert Whittaker": {
       "record": "10-4",
-      "wins": 10,
-      "losses": 4,
-      "draws": 0,
-      "noContests": 0,
       "context": "Derek Brunson 2016 → Khamzat Chimaev 2024"
     },
     "Tony Ferguson": {
-      "record": "8-1",
-      "wins": 8,
-      "losses": 1,
-      "draws": 0,
-      "noContests": 0
+      "record": "8-1"
     },
     "Justin Gaethje": {
-      "record": "7-3",
-      "wins": 7,
-      "losses": 3,
-      "draws": 0,
-      "noContests": 0,
+      "record": "9-5",
       "context": "Vick 2018 → Holloway 2024"
     },
     "Lyoto Machida": {
-      "record": "8-4",
-      "wins": 8,
-      "losses": 4,
-      "draws": 0,
-      "noContests": 0
+      "record": "8-4"
     },
     "Brock Lesnar": {
-      "record": "4-1",
-      "wins": 4,
-      "losses": 1,
-      "draws": 0,
-      "noContests": 0
+      "record": "4-1"
     },
     "Sean O'Malley": {
       "record": "5-2",
-      "wins": 5,
-      "losses": 2,
-      "draws": 0,
-      "noContests": 0,
       "context": "Petr Yan 2022 → Aiemann Zahabi 2026"
     },
     "Sean Strickland": {
       "record": "7-4",
-      "wins": 7,
-      "losses": 4,
-      "draws": 0,
-      "noContests": 0,
       "context": "Uriah Hall 2021 → Khamzat Chimaev 2026"
     },
     "Michael Bisping": {
-      "record": "5-1",
-      "wins": 5,
-      "losses": 1,
-      "draws": 0,
-      "noContests": 0
+      "record": "7-4"
     },
     "Dan Henderson": {
       "record": "4-5",
-      "wins": 4,
-      "losses": 5,
-      "draws": 0,
-      "noContests": 0,
       "context": "Rich Franklin 2009 → Daniel Cormier 2014"
     },
     "Chael Sonnen": {
-      "record": "4-4",
-      "wins": 4,
-      "losses": 4,
-      "draws": 0,
-      "noContests": 0
+      "record": "4-4"
     },
     "Amanda Nunes": {
-      "record": "11-1",
-      "wins": 11,
-      "losses": 1,
-      "draws": 0,
-      "noContests": 0,
+      "record": "2-1",
       "context": "Tate 2016 → Aldana 2023"
     },
     "Valentina Shevchenko": {
-      "record": "12-2-1",
-      "wins": 12,
-      "losses": 2,
-      "draws": 1,
-      "noContests": 0,
+      "record": "3-2-1",
       "context": "Holm 2016 → Grasso III 2024"
     },
     "Zhang Weili": {
-      "record": "6-2",
-      "wins": 6,
-      "losses": 2,
-      "draws": 0,
-      "noContests": 0,
+      "record": "6-3",
       "context": "Andrade 2019 → Yan 2024"
     },
     "Ronda Rousey": {
       "record": "6-0",
-      "wins": 6,
-      "losses": 0,
-      "draws": 0,
-      "noContests": 0,
       "context": "Carmouche 2013 → Correia 2015"
     },
     "Joanna Jedrzejczyk": {
-      "record": "6-2",
-      "wins": 6,
-      "losses": 2,
-      "draws": 0,
-      "noContests": 0
+      "record": "6-2"
     },
     "Rose Namajunas": {
-      "record": "5-2",
-      "wins": 5,
-      "losses": 2,
-      "draws": 0,
-      "noContests": 0
+      "record": "5-2"
     },
     "Jessica Andrade": {
-      "record": "5-3",
-      "wins": 5,
-      "losses": 3,
-      "draws": 0,
-      "noContests": 0
+      "record": "5-3"
     },
     "Kayla Harrison": {
-      "record": "3-0",
-      "wins": 3,
-      "losses": 0,
-      "draws": 0,
-      "noContests": 0
+      "record": "3-0"
     },
     "Alexa Grasso": {
-      "record": "4-1-1",
-      "wins": 4,
-      "losses": 1,
-      "draws": 1,
-      "noContests": 0
+      "record": "4-1-1"
     },
     "Carla Esparza": {
-      "record": "5-3",
-      "wins": 5,
-      "losses": 3,
-      "draws": 0,
-      "noContests": 0
+      "record": "5-3"
     },
     "Julianna Peña": {
-      "record": "3-2",
-      "wins": 3,
-      "losses": 2,
-      "draws": 0,
-      "noContests": 0
+      "record": "3-2"
     },
     "Holly Holm": {
-      "record": "2-3",
-      "wins": 2,
-      "losses": 3,
-      "draws": 0,
-      "noContests": 0
+      "record": "5-5"
     },
     "Miesha Tate": {
-      "record": "5-2",
-      "wins": 5,
-      "losses": 2,
-      "draws": 0,
-      "noContests": 0
+      "record": "5-1"
     },
     "Mackenzie Dern": {
-      "record": "6-4",
-      "wins": 6,
-      "losses": 4,
-      "draws": 0,
-      "noContests": 0
+      "record": "6-4"
     }
   }
 };
