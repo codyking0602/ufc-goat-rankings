@@ -38,11 +38,18 @@ Target: One deterministic initialization chain.
 
 ### 5. No full-roster six-category coverage gate
 
-Status: Open
+Status: In Progress
 
-A missing audit entry can silently leave a fighter on a legacy value.
+A read-only audit engine and standalone dashboard now exist on `fix/unified-six-category-pipeline`:
 
-Target: Non-mutating integrity audit that identifies every missing or mismatched fighter/category pair.
+- `assets/data/six-category-integrity-audit.js`
+- `audit.html`
+
+The auditor checks all six category sources, row matches, formula reconciliation, profile mismatches, duplicates, and score-derived display overrides without mutating app data.
+
+Remaining: Run the settled runtime, capture the first full report, and classify every warning/failure before the central score engine is introduced.
+
+Target: A hard release gate that identifies every missing or mismatched fighter/category pair and prohibits silent legacy fallback.
 
 ### 6. Score-derived display overrides
 
@@ -50,7 +57,7 @@ Status: Open
 
 Some modules write overall OVR, overall rank, category OVR, or category rank into `DISPLAY_OVERRIDES`.
 
-Target: Presentation-only override contract and automated forbidden-field check.
+Target: Presentation-only override contract and automated forbidden-field check. The new integrity auditor now reports forbidden fields fighter by fighter.
 
 ### 7. Category promoters omit Apex in intermediate totals
 
