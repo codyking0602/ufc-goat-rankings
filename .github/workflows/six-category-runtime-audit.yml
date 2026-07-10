@@ -98,6 +98,18 @@ jobs:
           set -o pipefail
           node scripts/run-prime-anchor-review.mjs 2>&1 | tee docs/audits/runtime-prime-anchor-review-console.log
 
+      - name: Run Longevity anchor discovery
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/run-longevity-anchor-discovery.mjs 2>&1 | tee docs/audits/runtime-longevity-anchor-discovery-console.log
+
+      - name: Run Longevity anchor review
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/run-longevity-anchor-review.mjs 2>&1 | tee docs/audits/runtime-longevity-anchor-review-console.log
+
       - name: Upload audit report
         if: always()
         uses: actions/upload-artifact@v4
@@ -131,5 +143,11 @@ jobs:
             docs/audits/runtime-prime-anchor-review.json
             docs/audits/runtime-prime-anchor-review.md
             docs/audits/runtime-prime-anchor-review-console.log
+            docs/audits/runtime-longevity-anchor-discovery.json
+            docs/audits/runtime-longevity-anchor-discovery.md
+            docs/audits/runtime-longevity-anchor-discovery-console.log
+            docs/audits/runtime-longevity-anchor-review.json
+            docs/audits/runtime-longevity-anchor-review.md
+            docs/audits/runtime-longevity-anchor-review-console.log
           if-no-files-found: warn
           retention-days: 30
