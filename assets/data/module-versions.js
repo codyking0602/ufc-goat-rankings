@@ -1,83 +1,43 @@
-// Central cache-bust versions for scoring/category modules.
-window.UFC_MODULE_VERSIONS={
-  primeWindows:"20260708a",
-  primeRoundControlAudit:"20260708d-jon-54-63",
-  primeDominanceLedgers:"20260708j-round-audit-batch-two",
-  primeDominanceShadowModel:"20260708c-jon-elite-stakes",
-  primeDominanceLivePromoter:"20260708c",
-  primeDominanceCopyPolish:"20260708b",
-  liveScoreUi:"20260709a-peak-apex",
-  categoryPercentileTiers:"20260709a-peak-apex",
-  scoreWeighting:"20260709a-apex-bonus-modifier",
-  championshipResumeLive:"20260708e",
-  opponentQualityLive:"20260708b",
-  fighterEraLedgers:"20260709g-review-corrections",
-  longevityShadowScorer:"20260709b-ledger-driven",
-  longevityLivePromoter:"20260709b-weighted-total-safe",
-  apexPeakCorrections:"20260709b-full-roster",
-  apexPeakComponentAudit:"20260709c-batch-one-review-adjustments",
-  apexPeakLiveBonus:"20260709c-missing-row-fixes"
-};
-
+// Central cache-bust versions and deterministic scoring bootstrap.
+window.UFC_MODULE_VERSIONS={scoringPipeline:"20260710i-quality-fixed-benchmark",finalScoreEngine:"20260710b-deterministic",primeWindows:"20260708a",primeRoundControlAudit:"20260708d-jon-54-63",primeDominanceLedgers:"20260708j-round-audit-batch-two",primeDominanceShadowModel:"20260708c-jon-elite-stakes",primeDominanceAuditBatchSeven:"20260710c-prime-final-batch",primeDominanceLivePromoter:"20260710a-category-only",primeDominanceCopyPolish:"20260708b",categoryPercentileTiers:"20260710b-deterministic",scoreWeighting:"20260710a-compatibility-only",championshipResumeLive:"20260710d-fixed-benchmark",opponentQualityLive:"20260710c-fixed-benchmark",fighterEraLedgers:"20260709g-review-corrections",longevityShadowScorer:"20260709b-ledger-driven",longevityLivePromoter:"20260710a-category-only",apexPeakCorrections:"20260709b-full-roster",apexPeakComponentAudit:"20260709c-batch-one-review-adjustments",apexPeakLiveBonus:"20260710a-category-only",apexPeakDricusAudit:"20260710b-merab-zhang"};
 (function(){
-  const v=window.UFC_MODULE_VERSIONS||{};
-  function load(src,attr,done){
-    if(!src||document.querySelector('script['+attr+']')){if(done)done();return;}
-    const s=document.createElement('script');
-    s.src=src;
-    s.setAttribute(attr,'true');
-    s.onload=function(){if(done)done();};
-    s.onerror=function(){if(done)done();};
-    document.body.appendChild(s);
-  }
-  function refreshSafe(){if(typeof refresh==='function'){try{refresh();}catch(e){}}}
-  function applyPrime(){if(window.UFC_PRIME_DOMINANCE_LIVE_PROMOTER?.apply){try{window.UFC_PRIME_DOMINANCE_LIVE_PROMOTER.apply();}catch(e){}}}
-  function applyLongevity(){if(window.UFC_LONGEVITY_LIVE_PROMOTER?.apply){try{window.UFC_LONGEVITY_LIVE_PROMOTER.apply();}catch(e){}}}
-  function applyApex(){if(window.UFC_APEX_PEAK_LIVE_BONUS?.apply){try{window.UFC_APEX_PEAK_LIVE_BONUS.apply();}catch(e){}}}
-  function finalRefresh(){applyPrime();applyLongevity();applyApex();refreshSafe();}
-  function cache(path,name,label){return path+'?v='+name+'-'+label;}
-
-  load(v.liveScoreUi?'assets/js/live-score-ui.js?v=live-score-ui-'+v.liveScoreUi:null,'data-live-score-ui-peak-apex',refreshSafe);
-
-  function loadLongevity(label){
-    load(v.fighterEraLedgers?cache('assets/data/fighter-era-ledgers.js','fighter-era-ledgers-'+v.fighterEraLedgers,label):null,'data-fighter-era-ledgers',function(){
-      load(v.longevityShadowScorer?cache('assets/data/longevity-shadow-scorer.js','longevity-shadow-scorer-'+v.longevityShadowScorer,label):null,'data-longevity-shadow-scorer',function(){
-        load(v.longevityLivePromoter?cache('assets/data/longevity-live-promoter.js','longevity-live-promoter-'+v.longevityLivePromoter,label):null,'data-longevity-live-promoter',finalRefresh);
-      });
-    });
-  }
-  function loadApex(label){
-    load(v.apexPeakCorrections?cache('assets/data/apex-peak-score-corrections.js','apex-peak-score-corrections-'+v.apexPeakCorrections,label):null,'data-apex-peak-score-corrections',function(){
-      load(v.apexPeakComponentAudit?cache('assets/data/apex-peak-component-audit.js','apex-peak-component-audit-'+v.apexPeakComponentAudit,label):null,'data-apex-peak-component-audit',function(){
-        load(v.apexPeakLiveBonus?cache('assets/data/apex-peak-live-bonus.js','apex-peak-live-bonus-'+v.apexPeakLiveBonus,label):null,'data-apex-peak-live-bonus',finalRefresh);
-      });
-    });
-  }
-  function loadPrimePercentiles(delay,label){
-    setTimeout(function(){
-      load(v.categoryPercentileTiers?cache('assets/js/category-percentile-tiers.js','category-percentile-tiers-'+v.categoryPercentileTiers,label):null,'data-category-percentile-tiers-final-'+label,finalRefresh);
-    },delay);
-  }
-
-  load(v.primeRoundControlAudit?'assets/data/prime-round-control-audit.js?v=prime-round-control-audit-'+v.primeRoundControlAudit:null,'data-prime-round-control-audit',function(){
-    load(v.primeDominanceLedgers?'assets/data/prime-dominance-ledgers.js?v=prime-dominance-ledgers-'+v.primeDominanceLedgers:null,'data-prime-dominance-ledgers',function(){
-      load(v.primeDominanceShadowModel?'assets/data/prime-dominance-shadow-model.js?v=prime-dominance-shadow-model-'+v.primeDominanceShadowModel:null,'data-prime-dominance-shadow-model',function(){
-        load(v.primeDominanceLivePromoter?'assets/data/prime-dominance-live-promoter.js?v=prime-dominance-live-promoter-'+v.primeDominanceLivePromoter:null,'data-prime-dominance-live-promoter',function(){
-          load(v.primeDominanceCopyPolish?'assets/js/prime-dominance-copy-polish.js?v=prime-dominance-copy-polish-'+v.primeDominanceCopyPolish:null,'data-prime-dominance-copy-polish',function(){
-            load(v.categoryPercentileTiers?'assets/js/category-percentile-tiers.js?v=category-percentile-tiers-'+v.categoryPercentileTiers:null,'data-category-percentile-tiers',function(){
-              loadPrimePercentiles(350,'early');
-              loadPrimePercentiles(1400,'late');
-              loadPrimePercentiles(2800,'final');
-            });
-          });
-        });
-      });
-    });
-  });
-  setTimeout(function(){loadLongevity('early');},1800);
-  setTimeout(function(){loadLongevity('late');},3800);
-  setTimeout(function(){loadLongevity('final');},6500);
-  setTimeout(function(){loadApex('early');},2400);
-  setTimeout(function(){loadApex('late');},5200);
-  setTimeout(function(){loadApex('final');},8200);
+'use strict';
+const v=window.UFC_MODULE_VERSIONS||{},VERSION='deterministic-scoring-pipeline-20260710i-quality-fixed-benchmark';
+const state={version:VERSION,mode:'deterministic-single-pass',status:'waiting-for-patches',sequence:[],timerCount:0,repeatedLoadCount:0,finalScoreApplyCount:0,startedAt:new Date().toISOString(),completedAt:null,error:null};
+let qualityReadyResolved=false,resolveQualityReady;
+window.UFC_OPPONENT_QUALITY_READY=new Promise(resolve=>{resolveQualityReady=resolve;});
+window.UFC_RESOLVE_OPPONENT_QUALITY_READY=detail=>{if(qualityReadyResolved)return;qualityReadyResolved=true;state.opponentQualityReadyDetail=detail||null;resolveQualityReady(detail||null);};
+window.UFC_SCORING_PIPELINE=state;document.documentElement.setAttribute('data-scoring-pipeline','waiting');
+const cache=(path,name)=>`${path}?v=${name}`,record=label=>state.sequence.push(label);
+function load(src,attr){return new Promise(resolve=>{if(!src){resolve({src,skipped:true,reason:'missing-version'});return;}const existing=document.querySelector(`script[${attr}]`);if(existing){resolve({src,skipped:true,reason:'already-loaded'});return;}const script=document.createElement('script');script.src=src;script.setAttribute(attr,'true');script.onload=()=>resolve({src,skipped:false,loaded:true});script.onerror=()=>resolve({src,skipped:false,loaded:false,error:'load-failed'});document.body.appendChild(script);});}
+async function loadStep(label,src,attr){const result=await load(src,attr);record(`${label}:${result.skipped?'existing':result.loaded?'loaded':'failed'}`);return result;}
+function renderOnce(){if(typeof window.refresh==='function'){try{window.refresh();}catch(e){state.renderError=String(e?.message||e);}}}
+function patchesReady(){if(window.UFC_RANKING_DATA_PATCHES_READY)return window.UFC_RANKING_DATA_PATCHES_READY;return new Promise(resolve=>window.addEventListener('ufc-ranking-data-patches-ready',event=>resolve(event.detail||window.UFC_PHASE2_DATA_STATUS||null),{once:true}));}
+function opponentQualityReady(){return window.UFC_OPPONENT_QUALITY_LIVE?Promise.resolve(window.UFC_OPPONENT_QUALITY_LIVE):window.UFC_OPPONENT_QUALITY_READY;}
+async function run(){try{
+await patchesReady();record('ranking-data-patches:ready');state.status='waiting-for-quality';await opponentQualityReady();record('opponent-quality:ready');
+state.status='loading-prime';
+await loadStep('prime-round-control',cache('assets/data/prime-round-control-audit.js',`prime-round-control-audit-${v.primeRoundControlAudit}`),'data-prime-round-control-audit');
+await loadStep('prime-ledgers',cache('assets/data/prime-dominance-ledgers.js',`prime-dominance-ledgers-${v.primeDominanceLedgers}`),'data-prime-dominance-ledgers');
+await loadStep('prime-shadow',cache('assets/data/prime-dominance-shadow-model.js',`prime-dominance-shadow-model-${v.primeDominanceShadowModel}`),'data-prime-dominance-shadow-model');
+await loadStep('prime-audit-batch-seven',cache('assets/data/prime-dominance-audit-batch-seven.js',`prime-dominance-audit-batch-seven-${v.primeDominanceAuditBatchSeven}`),'data-prime-dominance-audit-batch-seven');
+await loadStep('prime-live',cache('assets/data/prime-dominance-live-promoter.js',`prime-dominance-live-promoter-${v.primeDominanceLivePromoter}`),'data-prime-dominance-live-promoter');
+await loadStep('prime-copy',cache('assets/js/prime-dominance-copy-polish.js',`prime-dominance-copy-polish-${v.primeDominanceCopyPolish}`),'data-prime-dominance-copy-polish');
+state.status='loading-longevity';
+await loadStep('fighter-era-ledgers',cache('assets/data/fighter-era-ledgers.js',`fighter-era-ledgers-${v.fighterEraLedgers}`),'data-fighter-era-ledgers');
+await loadStep('longevity-shadow',cache('assets/data/longevity-shadow-scorer.js',`longevity-shadow-scorer-${v.longevityShadowScorer}`),'data-longevity-shadow-scorer');
+await loadStep('longevity-live',cache('assets/data/longevity-live-promoter.js',`longevity-live-promoter-${v.longevityLivePromoter}`),'data-longevity-live-promoter');
+state.status='loading-apex';
+await loadStep('apex-corrections',cache('assets/data/apex-peak-score-corrections.js',`apex-peak-score-corrections-${v.apexPeakCorrections}`),'data-apex-peak-score-corrections');
+await loadStep('apex-component-audit',cache('assets/data/apex-peak-component-audit.js',`apex-peak-component-audit-${v.apexPeakComponentAudit}`),'data-apex-peak-component-audit');
+await loadStep('apex-live',cache('assets/data/apex-peak-live-bonus.js',`apex-peak-live-bonus-${v.apexPeakLiveBonus}`),'data-apex-peak-live-bonus');
+await loadStep('apex-dricus-audit',cache('assets/data/apex-peak-audit-dricus.js',`apex-peak-audit-dricus-${v.apexPeakDricusAudit}`),'data-apex-peak-audit-dricus');
+state.status='finalizing';
+await loadStep('final-score-engine',cache('assets/js/final-score-engine.js',`final-score-engine-${v.finalScoreEngine}`),'data-final-score-engine');
+if(!window.UFC_FINAL_SCORE_ENGINE?.apply)throw new Error('Final score engine did not load.');
+const finalResult=window.UFC_FINAL_SCORE_ENGINE.apply('deterministic-scoring-pipeline');state.finalScoreApplyCount=window.UFC_FINAL_SCORE_ENGINE.applyCount||0;state.finalScoreResult=finalResult||null;record('final-score-engine:applied');
+await loadStep('category-percentile-tiers',cache('assets/js/category-percentile-tiers.js',`category-percentile-tiers-${v.categoryPercentileTiers}`),'data-category-percentile-tiers');renderOnce();record('ui:refreshed-once');
+state.status='ready';state.completedAt=new Date().toISOString();state.fighterCount=[...(window.RANKING_DATA?.men||[]),...(window.RANKING_DATA?.women||[])].length;document.documentElement.setAttribute('data-scoring-pipeline','ready');window.dispatchEvent(new CustomEvent('ufc-scoring-pipeline-ready',{detail:state}));return state;
+}catch(error){state.status='error';state.error=String(error?.stack||error?.message||error);state.completedAt=new Date().toISOString();document.documentElement.setAttribute('data-scoring-pipeline','error');window.dispatchEvent(new CustomEvent('ufc-scoring-pipeline-error',{detail:state}));throw error;}}
+window.UFC_SCORING_PIPELINE_READY=run();
 })();

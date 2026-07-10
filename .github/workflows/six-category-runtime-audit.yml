@@ -1,0 +1,162 @@
+name: Six-Category Runtime Audit
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [fix/unified-six-category-pipeline]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  runtime-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm install --no-save playwright@1.52.0
+          npx playwright install --with-deps chromium
+
+      - name: Start static app server
+        run: |
+          python3 -m http.server 4173 > /tmp/ufc-audit-server.log 2>&1 &
+          echo $! > /tmp/ufc-audit-server.pid
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:4173/audit.html > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/ufc-audit-server.log
+          exit 1
+
+      - name: Run settled browser audit
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p docs/audits
+          node scripts/run-six-category-audit.mjs 2>&1 | tee docs/audits/runtime-audit-console.log
+
+      - name: Run effective-weight audit
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/run-effective-weight-audit.mjs 2>&1 | tee docs/audits/runtime-effective-weight-console.log
+
+      - name: Run Prime calibration simulation
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/run-prime-calibration-simulation.mjs 2>&1 | tee docs/audits/runtime-prime-calibration-console.log
+
+      - name: Run Championship normalization simulation
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/run-championship-normalization-simulation.mjs 2>&1 | tee docs/audits/runtime-championship-normalization-console.log
+
+      - name: Run Championship anchor review
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/run-championship-anchor-review.mjs 2>&1 | tee docs/audits/runtime-championship-anchor-review-console.log
+
+      - name: Run Quality Wins anchor discovery
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/run-quality-anchor-discovery.mjs 2>&1 | tee docs/audits/runtime-quality-anchor-discovery-console.log
+
+      - name: Run Quality Wins anchor review
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/run-quality-anchor-review.mjs 2>&1 | tee docs/audits/runtime-quality-anchor-review-console.log
+
+      - name: Run Prime Dominance anchor discovery
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/run-prime-anchor-discovery.mjs 2>&1 | tee docs/audits/runtime-prime-anchor-discovery-console.log
+
+      - name: Run Prime Dominance anchor review
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/run-prime-anchor-review.mjs 2>&1 | tee docs/audits/runtime-prime-anchor-review-console.log
+
+      - name: Run Longevity anchor discovery
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/run-longevity-anchor-discovery.mjs 2>&1 | tee docs/audits/runtime-longevity-anchor-discovery-console.log
+
+      - name: Run Longevity anchor review
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/run-longevity-anchor-review.mjs 2>&1 | tee docs/audits/runtime-longevity-anchor-review-console.log
+
+      - name: Run four-category balance simulation
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/run-four-category-balance-simulation.mjs 2>&1 | tee docs/audits/runtime-four-category-balance-console.log
+
+      - name: Upload audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: six-category-runtime-audit
+          path: |
+            docs/audits/runtime-six-category-audit.json
+            docs/audits/runtime-six-category-audit.md
+            docs/audits/runtime-audit-console.log
+            docs/audits/runtime-effective-weight-audit.json
+            docs/audits/runtime-effective-weight-audit.md
+            docs/audits/runtime-effective-weight-console.log
+            docs/audits/runtime-prime-calibration-simulation.json
+            docs/audits/runtime-prime-calibration-simulation.md
+            docs/audits/runtime-prime-calibration-console.log
+            docs/audits/runtime-championship-normalization-simulation.json
+            docs/audits/runtime-championship-normalization-simulation.md
+            docs/audits/runtime-championship-normalization-console.log
+            docs/audits/runtime-championship-anchor-review.json
+            docs/audits/runtime-championship-anchor-review.md
+            docs/audits/runtime-championship-anchor-review-console.log
+            docs/audits/runtime-quality-anchor-discovery.json
+            docs/audits/runtime-quality-anchor-discovery.md
+            docs/audits/runtime-quality-anchor-discovery-console.log
+            docs/audits/runtime-quality-anchor-review.json
+            docs/audits/runtime-quality-anchor-review.md
+            docs/audits/runtime-quality-anchor-review-console.log
+            docs/audits/runtime-prime-anchor-discovery.json
+            docs/audits/runtime-prime-anchor-discovery.md
+            docs/audits/runtime-prime-anchor-discovery-console.log
+            docs/audits/runtime-prime-anchor-review.json
+            docs/audits/runtime-prime-anchor-review.md
+            docs/audits/runtime-prime-anchor-review-console.log
+            docs/audits/runtime-longevity-anchor-discovery.json
+            docs/audits/runtime-longevity-anchor-discovery.md
+            docs/audits/runtime-longevity-anchor-discovery-console.log
+            docs/audits/runtime-longevity-anchor-review.json
+            docs/audits/runtime-longevity-anchor-review.md
+            docs/audits/runtime-longevity-anchor-review-console.log
+            docs/audits/runtime-four-category-balance-simulation.json
+            docs/audits/runtime-four-category-balance-simulation.md
+            docs/audits/runtime-four-category-balance-console.log
+          if-no-files-found: warn
+          retention-days: 30

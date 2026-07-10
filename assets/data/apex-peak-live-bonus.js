@@ -1,10 +1,9 @@
-// Peak Apex Live Bonus Promoter.
-// Adds Peak Apex as a positive modifier after the 100-point base score.
-// Formula: weighted positive base + apexPeak + loss penalty.
+// Apex Peak category-only live promoter.
+// Applies locked Apex Peak bonuses and audit metadata. Overall scoring is owned by final-score-engine.js.
 (function(){
-  const VERSION='apex-peak-live-bonus-20260709c-missing-row-fixes';
+  const VERSION='apex-peak-live-bonus-20260710a-category-only';
   const DATA=window.RANKING_DATA;
-  const RUBRIC={twoPerformanceStrength:{label:'Two-performance strength',max:2},proof:{label:'Proof',max:1.75},bestFighterClaim:{label:'Best-fighter claim',max:1.25},aura:{label:'Aura',max:1},total:{label:'Peak Apex bonus',max:6}};
+  const RUBRIC={twoPerformanceStrength:{label:'Two-performance strength',max:2},proof:{label:'Proof',max:1.75},bestFighterClaim:{label:'Best-fighter claim',max:1.25},aura:{label:'Aura',max:1},total:{label:'Apex Peak bonus',max:6}};
   const RULES={window:'Best two UFC wins within 24 months',totalMax:6,performances:'Two selected UFC wins are rated individually; their average maps into Two-performance strength.',noContests:'No contests do not count as Apex performances.',losses:'Losses are not selected as Apex performances, but can cap Best-Fighter Claim or Aura.'};
   const LOCKED=[
 ['Jon Jones','Shogun Rua 2011 + Lyoto Machida 2011','Shogun Rua',10,'Lyoto Machida',10,1.75,1.25,1.00,'Youngest champ, instant best-in-the-world aura.'],
@@ -67,41 +66,110 @@
 ['Randy Couture','Tim Sylvia 2007 + Gabriel Gonzaga 2007','Tim Sylvia',8.8,'Gabriel Gonzaga',8.4,0.75,0.45,0.45,'Great UFC title moments, modest apex bonus.'],
 ['Carla Esparza','Rose Namajunas I 2014 + Rose Namajunas II 2022','Rose Namajunas I',8.7,'Rose Namajunas II',8.4,0.85,0.45,0.30,'Two UFC title peaks with limited separation.']
   ];
+
   function key(name){return String(name||'').trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');}
   function num(value){const n=Number(value||0);return Number.isFinite(n)?n:0;}
   function round2(value){const n=Number(value);return Number.isFinite(n)?Math.round((n+Number.EPSILON)*100)/100:0;}
   function year(label){const m=String(label||'').match(/(19|20)\d{2}/);return m?m[0]:'';}
   function cleanLabel(label){return String(label||'').replace(/\s+(19|20)\d{2}$/,'').trim();}
+  function allRows(){return [...(DATA?.men||[]),...(DATA?.women||[]),...(DATA?.fighters||[])].filter(row=>row&&row.fighter);}
   const lockedMap=new Map(LOCKED.map(row=>[key(row[0]),row]));
+
   function lockedAudit(row){
     const avg=round2((num(row[3])+num(row[5]))/2);
     const two=row[10]!==undefined?round2(row[10]):round2((avg/10)*2);
-    const c={twoPerformanceStrength:two,proof:round2(row[6]),bestFighterClaim:round2(row[7]),aura:round2(row[8])};
-    const score=round2(c.twoPerformanceStrength+c.proof+c.bestFighterClaim+c.aura);
-    return {score,window:row[1],performances:[{label:cleanLabel(row[2]),date:year(row[1]),rating:row[3]},{label:cleanLabel(row[4]),date:year(row[1].split('+')[1]||row[1]),rating:row[5]}],performanceAverage:avg,components:c,componentTotal:score,notes:row[9],front:{proved:row[9],felt:c.aura>=.95?'Felt scary, iconic, and almost impossible to solve.':c.bestFighterClaim>=1.1?'Felt like a real best-in-the-world peak.':c.aura>=.65?'Felt dangerous, memorable, and clearly title-level.':'Strong peak, but not one of the cleanest aura runs.'},rubric:RUBRIC,rules:RULES,source:'Locked Peak Apex audit override',version:VERSION};
+    const components={twoPerformanceStrength:two,proof:round2(row[6]),bestFighterClaim:round2(row[7]),aura:round2(row[8])};
+    const score=round2(components.twoPerformanceStrength+components.proof+components.bestFighterClaim+components.aura);
+    return {
+      score,
+      window:row[1],
+      performances:[
+        {label:cleanLabel(row[2]),date:year(row[1]),rating:row[3]},
+        {label:cleanLabel(row[4]),date:year(row[1].split('+')[1]||row[1]),rating:row[5]}
+      ],
+      performanceAverage:avg,
+      components,
+      componentTotal:score,
+      notes:row[9],
+      front:{proved:row[9],felt:components.aura>=.95?'Felt scary, iconic, and almost impossible to solve.':components.bestFighterClaim>=1.1?'Felt like a real best-in-the-world peak.':components.aura>=.65?'Felt dangerous, memorable, and clearly title-level.':'Strong peak, but not one of the cleanest aura runs.'},
+      rubric:RUBRIC,
+      rules:RULES,
+      source:'Locked Apex Peak audit',
+      version:VERSION
+    };
   }
+
   function applyLockedApex(){
     const patched=[];
-    [...(DATA?.men||[]),...(DATA?.women||[]),...(DATA?.fighters||[])].forEach(f=>{const row=lockedMap.get(key(f?.fighter));if(!row)return;const audit=lockedAudit(row);f.apexPeak=audit.score;f.apexPeakAudit=audit;patched.push(f.fighter);});
-    [...(DATA?.men||[]),...(DATA?.fighters||[])].forEach(f=>{if(key(f?.fighter)!=='dricus du plessis')return;f.apexPeakAudit={score:num(f.apexPeak),window:'Peak Apex review pending',performances:[],front:{proved:'Peak Apex review pending.',felt:'Peak Apex review pending.'},notes:'Peak Apex review pending.',source:'Peak Apex pending review display cleanup',version:VERSION};});
-    if(typeof DISPLAY_OVERRIDES!=='undefined')LOCKED.forEach(row=>{DISPLAY_OVERRIDES[row[0]]=DISPLAY_OVERRIDES[row[0]]||{};DISPLAY_OVERRIDES[row[0]].apexPeakAudit=lockedAudit(row);});
-    window.UFC_PEAK_APEX_LOCKED_AUDIT={version:VERSION,patched:[...new Set(patched)],fighters:LOCKED.map(row=>row[0]),rule:'Peak Apex = Two-performance strength + Proof + Best-fighter claim + Aura.',appliedAt:new Date().toISOString()};
+    allRows().forEach(row=>{
+      const locked=lockedMap.get(key(row.fighter));
+      if(!locked)return;
+      const audit=lockedAudit(locked);
+      row.apexPeak=audit.score;
+      row.apexPeakAudit=audit;
+      row.apexPeakBonusLive=true;
+      row.apexPeakBonusVersion=VERSION;
+      patched.push(row.fighter);
+    });
+    allRows().forEach(row=>{
+      if(key(row.fighter)!=='dricus du plessis')return;
+      row.apexPeakAudit={
+        score:num(row.apexPeak),
+        window:'Apex Peak review pending',
+        performances:[],
+        front:{proved:'Apex Peak review pending.',felt:'Apex Peak review pending.'},
+        notes:'Apex Peak review pending.',
+        source:'Apex Peak pending review',
+        version:VERSION
+      };
+      row.apexPeakBonusLive=true;
+      row.apexPeakBonusVersion=VERSION;
+    });
+    const auditStatus={version:VERSION,patched:[...new Set(patched)],fighters:LOCKED.map(row=>row[0]),rule:'Apex Peak = Two-performance strength + Proof + Best-fighter claim + Aura.',appliedAt:new Date().toISOString()};
+    window.UFC_APEX_PEAK_LOCKED_AUDIT=auditStatus;
+    window.UFC_PEAK_APEX_LOCKED_AUDIT=auditStatus;
+    return auditStatus;
   }
-  function categoryScore(row,category){if(category==='longevity'){const raw=num(row.longevity);if(row.longevityThirtyPoint===true || raw>15) return raw;return (raw/15)*30;}return num(row[category]);}
-  function weightedBreakdown(row){const championship=(categoryScore(row,'championship')/30)*35;const opponentQuality=(categoryScore(row,'opponentQuality')/30)*27.5;const primeDominance=(categoryScore(row,'primeDominance')/30)*27.5;const longevity=(categoryScore(row,'longevity')/30)*10;const apexPeak=num(row.apexPeak);const penalty=num(row.penalty);const positiveScore=championship+opponentQuality+primeDominance+longevity;const modifierScore=apexPeak+penalty;return {championship:round2(championship),opponentQuality:round2(opponentQuality),primeDominance:round2(primeDominance),longevity:round2(longevity),apexPeak:round2(apexPeak),apexPeakBonus:round2(apexPeak),positiveScore:round2(positiveScore),penalty:round2(penalty),modifierScore:round2(modifierScore),totalScore:round2(positiveScore+modifierScore)};}
-  function boardRows(){return [...(DATA?.men||[]),...(DATA?.women||[])];}
-  function allRows(){return [...boardRows(),...(DATA?.fighters||[])].filter(row=>row&&row.fighter);}
-  function sortBoard(board){if(!Array.isArray(board))return;board.sort((a,b)=>num(b.totalScore)-num(a.totalScore)||String(a.fighter).localeCompare(String(b.fighter)));board.forEach((row,index)=>{row.rank=index+1;});}
+
   function apply(){
-    if(!DATA){const status={version:VERSION,applied:false,error:'Missing RANKING_DATA',mutatesScores:true,apply};window.UFC_APEX_PEAK_LIVE_BONUS=status;return status;}
-    applyLockedApex();const applied=[];allRows().forEach(row=>{const breakdown=weightedBreakdown(row);row.weightedScoreBreakdown=breakdown;row.totalScore=breakdown.totalScore;row.apexPeakBonusLive=true;row.apexPeakBonusVersion=VERSION;applied.push({fighter:row.fighter,apexPeak:breakdown.apexPeak,totalScore:breakdown.totalScore});});
-    sortBoard(DATA.men);sortBoard(DATA.women);const boards=boardRows();const rankByName=new Map(boards.map(row=>[key(row.fighter),row.rank]));const totalByName=new Map(boards.map(row=>[key(row.fighter),row.totalScore]));const breakdownByName=new Map(boards.map(row=>[key(row.fighter),row.weightedScoreBreakdown]));const apexByName=new Map(boards.map(row=>[key(row.fighter),row.apexPeak]));const auditByName=new Map(boards.map(row=>[key(row.fighter),row.apexPeakAudit]));
-    (DATA.fighters||[]).forEach(profile=>{const k=key(profile.fighter);if(rankByName.has(k))profile.rank=rankByName.get(k);if(totalByName.has(k))profile.totalScore=totalByName.get(k);if(breakdownByName.has(k))profile.weightedScoreBreakdown=breakdownByName.get(k);if(apexByName.has(k))profile.apexPeak=apexByName.get(k);if(auditByName.has(k))profile.apexPeakAudit=auditByName.get(k);profile.apexPeakBonusLive=true;profile.apexPeakBonusVersion=VERSION;});
-    if(typeof DISPLAY_OVERRIDES!=='undefined'){boards.forEach(row=>{const override=DISPLAY_OVERRIDES[row.fighter];if(!override)return;override.allTimeRank=row.rank;if(Object.prototype.hasOwnProperty.call(override,'overallOvr'))delete override.overallOvr;});}
-    if(DATA.meta){DATA.meta.apexPeakBonusLive=true;DATA.meta.apexPeakBonusVersion=VERSION;DATA.meta.apexPeakBonusFormula='championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty';}
-    const unique=[];const seen=new Set();applied.forEach(item=>{const k=key(item.fighter);if(seen.has(k))return;seen.add(k);unique.push(item);});
-    const status={version:VERSION,applied:true,appliedCount:unique.length,lockedAudit:true,topMen:(DATA.men||[]).slice(0,10).map(row=>({fighter:row.fighter,totalScore:row.totalScore,apexPeak:row.apexPeak,rank:row.rank})),topWomen:(DATA.women||[]).slice(0,10).map(row=>({fighter:row.fighter,totalScore:row.totalScore,apexPeak:row.apexPeak,rank:row.rank})),formula:'weighted positive base + apexPeak + penalty',mutatesScores:true,apply,appliedAt:new Date().toISOString()};
-    window.UFC_APEX_PEAK_LIVE_BONUS=status;document.documentElement.setAttribute('data-apex-peak-live-bonus',VERSION);if(typeof refresh==='function'){try{refresh();}catch(e){}}return status;
+    if(!DATA){
+      const status={version:VERSION,applied:false,error:'Missing RANKING_DATA',categoryOnly:true,mutatesCategoryScores:true,mutatesOverallScores:false,apply};
+      window.UFC_APEX_PEAK_LIVE_BONUS=status;
+      return status;
+    }
+
+    const auditStatus=applyLockedApex();
+    if(DATA.meta){
+      DATA.meta.apexPeakBonusLive=true;
+      DATA.meta.apexPeakBonusVersion=VERSION;
+      DATA.meta.apexPeakSource='locked-apex-peak-audit';
+      DATA.meta.apexPeakRule='Apex Peak adds after the 100-point weighted base.';
+    }
+
+    const finalScoreResult=window.UFC_FINAL_SCORE_ENGINE?.apply?.('apex-peak-category-update')||null;
+    const boardRows=[...(DATA.men||[]),...(DATA.women||[])];
+    const uniqueFighters=[...new Set(allRows().map(row=>row.fighter))];
+    const status={
+      version:VERSION,
+      applied:true,
+      appliedCount:uniqueFighters.length,
+      lockedAudit:true,
+      lockedCount:auditStatus.fighters.length,
+      pending:['Dricus du Plessis'],
+      categoryOnly:true,
+      mutatesCategoryScores:true,
+      mutatesOverallScores:false,
+      finalScoreEngineVersion:window.UFC_FINAL_SCORE_ENGINE?.version||null,
+      finalScoreResult,
+      apexLeaders:boardRows.slice().sort((a,b)=>num(b.apexPeak)-num(a.apexPeak)||String(a.fighter).localeCompare(String(b.fighter))).slice(0,10).map(row=>({fighter:row.fighter,apexPeak:row.apexPeak})),
+      apply,
+      appliedAt:new Date().toISOString()
+    };
+    window.UFC_APEX_PEAK_LIVE_BONUS=status;
+    document.documentElement.setAttribute('data-apex-peak-live-bonus',VERSION);
+    if(typeof refresh==='function'){try{refresh();}catch(e){}}
+    return status;
   }
+
   apply();
 })();
