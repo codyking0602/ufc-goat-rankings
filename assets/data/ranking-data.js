@@ -1,5 +1,5 @@
 // UFC GOAT canonical ranking/profile payload.
-// Prime Record source of truth: RANKING_DATA.primeRecords, preserving the reviewed profile-facing records.
+// Prime Record source of truth: RANKING_DATA.primeRecords, using audited prime-window fight counts with reviewed exceptions.
 window.RANKING_DATA = {
   "meta": {
     "title": "UFC All-Time Rankings MVP",
@@ -9568,11 +9568,11 @@ window.RANKING_DATA = {
       "record": "16-0, 1 NC"
     },
     "Georges St-Pierre": {
-      "record": "18-1",
+      "record": "14-1",
       "context": "Hughes II 2006 → Bisping 2017"
     },
     "Demetrious Johnson": {
-      "record": "13-2-1",
+      "record": "12-1-1",
       "context": "McCall I 2012 → Cejudo II 2018"
     },
     "Anderson Silva": {
@@ -9580,11 +9580,11 @@ window.RANKING_DATA = {
       "context": "Leben 2006 → Weidman II 2013"
     },
     "Islam Makhachev": {
-      "record": "9-0",
+      "record": "10-0",
       "context": "Dober 2021 → active"
     },
     "Alexander Volkanovski": {
-      "record": "10-3",
+      "record": "9-4",
       "context": "Aldo 2019 → active, Islam included"
     },
     "Khabib Nurmagomedov": {
@@ -9592,37 +9592,37 @@ window.RANKING_DATA = {
       "context": "RDA 2014 → Gaethje 2020"
     },
     "Jose Aldo": {
-      "record": "10-4",
+      "record": "7-1",
       "context": "Hominick 2011 → McGregor 2015"
     },
     "Matt Hughes": {
-      "record": "13-4"
+      "record": "12-3"
     },
     "Kamaru Usman": {
-      "record": "12-2",
+      "record": "10-2",
       "context": "RDA 2018 → Edwards III 2023"
     },
     "Stipe Miocic": {
-      "record": "11-4",
+      "record": "7-2",
       "context": "Hunt 2015 → Cormier III 2020"
     },
     "Israel Adesanya": {
-      "record": "12-4",
+      "record": "12-3",
       "context": "Vettori I 2018 → Strickland 2023"
     },
     "Daniel Cormier": {
-      "record": "12-3, 1 NC",
+      "record": "8-2",
       "context": "Jones I 2015 → Miocic III 2020"
     },
     "Alex Pereira": {
-      "record": "0-3",
+      "record": "7-1",
       "context": "Strickland 2022 → Rountree 2024"
     },
     "Randy Couture": {
-      "record": "11-5"
+      "record": "5-2"
     },
     "Max Holloway": {
-      "record": "11-5",
+      "record": "14-6",
       "context": "Swanson 2015 → active"
     },
     "Cain Velasquez": {
@@ -9644,7 +9644,7 @@ window.RANKING_DATA = {
       "context": "B.J. Penn I 2010 → Brian Ortega 2018"
     },
     "Ilia Topuria": {
-      "record": "9-0"
+      "record": "4-1"
     },
     "Henry Cejudo": {
       "record": "4-0",
@@ -9737,15 +9737,15 @@ window.RANKING_DATA = {
       "record": "4-4"
     },
     "Amanda Nunes": {
-      "record": "2-1",
+      "record": "11-1",
       "context": "Tate 2016 → Aldana 2023"
     },
     "Valentina Shevchenko": {
-      "record": "3-2-1",
+      "record": "12-2-1",
       "context": "Holm 2016 → Grasso III 2024"
     },
     "Zhang Weili": {
-      "record": "6-3",
+      "record": "6-2",
       "context": "Andrade 2019 → Yan 2024"
     },
     "Ronda Rousey": {
