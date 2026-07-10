@@ -1,5 +1,6 @@
 // One-time branch-only migration: preserve the approved profile-facing Prime Records from current main.
 // Uses the reviewed 62-fighter presentation report, then the branch audit verifies every visible tile.
+// Final trusted trigger: 2026-07-10c.
 const { chromium } = require('playwright');
 const fs = require('node:fs');
 const path = require('node:path');
