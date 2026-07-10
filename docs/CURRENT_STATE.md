@@ -27,6 +27,7 @@ Production `main` remains untouched. Draft PR #7 is a test harness only and must
 - Prime Dominance promoter converted to a category-only writer
 - Championship Resume promoter converted to a category-only writer
 - Quality Wins promoter converted to a category-only writer
+- Longevity promoter converted to a category-only writer
 - module bootstrap updated to finish current category passes through the final score engine
 
 ## Consolidation Checkpoints
@@ -43,19 +44,28 @@ Permanent report:
 
 The third settled Chromium audit validated the category-only conversions for Championship Resume and Quality Wins.
 
+Permanent report:
+
+- `docs/audits/THIRD_RUNTIME_AUDIT_CHAMPIONSHIP_QUALITY.md`
+
+### Longevity Checkpoint
+
+The fourth settled Chromium audit validated the Longevity category-only conversion.
+
 Results:
 
 - 62 roster fighters
 - 0 formula mismatches
+- 62/62 Longevity audits live
 - 0 forbidden score-derived display overrides
 - 0 duplicate leaderboard/profile names
 - 0 profile-to-leaderboard mismatches
 - category coverage unchanged
-- fighter totals and rankings unchanged
+- fighter totals, rankings, and top ten unchanged
 
 Permanent report:
 
-- `docs/audits/THIRD_RUNTIME_AUDIT_CHAMPIONSHIP_QUALITY.md`
+- `docs/audits/FOURTH_RUNTIME_AUDIT_LONGEVITY.md`
 
 ## Final Score Ownership
 
@@ -87,14 +97,14 @@ Category-only and validated:
 - Championship Resume
 - Quality Wins
 - Prime Dominance
+- Longevity
 
 Still able to write overall totals or ranks:
 
-- Longevity
 - Apex Peak
 - legacy general weighting layer
 
-Championship no longer writes Prime category rank/OVR or runs delayed Prime override timers.
+Championship no longer writes Prime category rank/OVR or runs delayed Prime override timers. Longevity no longer sorts boards, copies overall totals into profiles, or writes rank/audit data into display overrides.
 
 ## Current Category Coverage
 
@@ -146,7 +156,7 @@ Loss Context:
 
 ## Immediate Next Step
 
-Convert Longevity into a category-only writer and rerun the settled Chromium audit.
+Convert Apex Peak into a category-only writer and rerun the settled Chromium audit.
 
 Required checkpoint result:
 
@@ -155,7 +165,7 @@ Required checkpoint result:
 - unchanged expected totals and rankings
 - no profile or display-override regressions
 
-After Longevity, convert Apex Peak, then address the legacy general weighting layer. Missing category audits and Loss Context coverage come after category ownership is clean.
+After Apex Peak, address the legacy general weighting layer. Missing category audits and Loss Context coverage come after category ownership is clean.
 
 ## Definition of Success
 
