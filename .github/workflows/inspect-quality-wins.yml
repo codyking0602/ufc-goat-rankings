@@ -1,0 +1,34 @@
+name: Inspect Quality Wins sources
+
+on:
+  push:
+    branches:
+      - fix/unified-six-category-pipeline
+    paths:
+      - .github/workflows/inspect-quality-wins.yml
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/unified-six-category-pipeline
+          fetch-depth: 1
+
+      - name: List Quality Wins files and source references
+        shell: bash
+        run: |
+          echo '=== FILES ==='
+          find assets -type f | sort | grep -Ei 'opponent-quality|quality-win' || true
+          echo '=== CHUCK REFERENCES ==='
+          grep -RIn --exclude-dir=.git "Chuck Liddell" assets docs | head -200 || true
+          echo '=== TITO REFERENCES ==='
+          grep -RIn --exclude-dir=.git "Tito Ortiz" assets docs | head -200 || true
+          echo '=== LEDGER MUTATIONS ==='
+          grep -RIn --exclude-dir=.git -E 'UFC_OPPONENT_QUALITY_LEDGERS|\.raw\[|raw\s*=' assets | head -300 || true
+          echo '=== SHADOW/LIVE LOADERS ==='
+          grep -RIn --exclude-dir=.git -E 'opponent-quality-(ledgers|shadow-audit|live|division-calibration)' assets index.html | head -300 || true
