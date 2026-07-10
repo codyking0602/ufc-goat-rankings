@@ -50,6 +50,12 @@ jobs:
           mkdir -p docs/audits
           node scripts/run-six-category-audit.mjs 2>&1 | tee docs/audits/runtime-audit-console.log
 
+      - name: Audit canonical Prime Record source
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/run-prime-record-source-audit.mjs 2>&1 | tee docs/audits/runtime-prime-record-source-console.log
+
       - name: Run effective-weight audit
         shell: bash
         run: |
@@ -125,6 +131,9 @@ jobs:
             docs/audits/runtime-six-category-audit.json
             docs/audits/runtime-six-category-audit.md
             docs/audits/runtime-audit-console.log
+            docs/audits/runtime-prime-record-source-audit.json
+            docs/audits/runtime-prime-record-source-audit.md
+            docs/audits/runtime-prime-record-source-console.log
             docs/audits/runtime-effective-weight-audit.json
             docs/audits/runtime-effective-weight-audit.md
             docs/audits/runtime-effective-weight-console.log
