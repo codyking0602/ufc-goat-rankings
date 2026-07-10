@@ -1,8 +1,8 @@
-// Prime Dominance audited batches seven and eight.
+// Prime Dominance audited batches seven through nine.
 // Extends the shadow model after the base calculation and before live category promotion.
 (function(){
   'use strict';
-  const VERSION='prime-dominance-audit-batch-seven-20260710b-prime-batch-two';
+  const VERSION='prime-dominance-audit-batch-seven-20260710c-prime-final-batch';
   const base=window.UFC_PRIME_DOMINANCE_LEDGERS;
   const model=window.UFC_PRIME_DOMINANCE_SHADOW_MODEL;
   if(!base||!Array.isArray(base.report)||!model)return;
@@ -84,6 +84,45 @@
       eliteStakesRawScore:3.4,eliteStakesScore:5.44,
       total:17.52,
       dominanceProfile:'Long elite middleweight contender prime with deep quality and five-round proof, capped by low finish pressure and four elite losses inside the window.',
+      status:'locked',version:VERSION
+    },
+    "Sean O'Malley":{
+      fighter:"Sean O'Malley",
+      primeRecord:'5-2',primeWins:5,primeLosses:2,primeDraws:0,primeNCs:0,
+      primeRecordPct:71.43,primeRecordScore:6.43,
+      roundControlPct:50.0,roundControlScore:4.0,
+      roundControlAudit:{fighter:"Sean O'Malley",roundsWon:12,roundsCounted:24,roundControlPct:50.0,status:'locked',source:'approved Yan-through-Zahabi fight ledger',window:'Petr Yan 2022 → Aiemann Zahabi 2026'},
+      primeFights:7,primeFinishes:2,primeFinishRate:28.57,finishPressureScore:1.0,
+      eliteStakesBreakdown:{titleFightWins:1.5,topFiveWins:1.25,champFormerChampWins:.75,fiveRoundTitleStageSample:.45,divisionStrengthContext:.25},
+      eliteStakesRawScore:4.2,eliteStakesScore:6.72,
+      total:18.15,
+      dominanceProfile:'Short bantamweight title burst with real precision-striking danger and elite wins, sharply capped by two Merab losses and only moderate round control.',
+      status:'locked',version:VERSION
+    },
+    'Sean Strickland':{
+      fighter:'Sean Strickland',
+      primeRecord:'7-4',primeWins:7,primeLosses:4,primeDraws:0,primeNCs:0,
+      primeRecordPct:63.64,primeRecordScore:5.73,
+      roundControlPct:64.58,roundControlScore:5.17,
+      roundControlAudit:{fighter:'Sean Strickland',roundsWon:31,roundsCounted:48,roundControlPct:64.58,status:'locked',source:'approved Hall-through-Khamzat fight ledger',window:'Uriah Hall 2021 → Khamzat Chimaev 2026'},
+      primeFights:11,primeFinishes:1,primeFinishRate:9.09,finishPressureScore:.5,
+      eliteStakesBreakdown:{titleFightWins:1.5,topFiveWins:1.25,champFormerChampWins:.75,fiveRoundTitleStageSample:.45,divisionStrengthContext:.25},
+      eliteStakesRawScore:4.2,eliteStakesScore:6.72,
+      total:18.12,
+      dominanceProfile:'Pressure-and-defense middleweight prime with strong round control and elite title proof, limited by almost no finish pressure and four losses inside the window.',
+      status:'locked',version:VERSION
+    },
+    'Dan Henderson':{
+      fighter:'Dan Henderson',
+      primeRecord:'4-5',primeWins:4,primeLosses:5,primeDraws:0,primeNCs:0,
+      primeRecordPct:44.44,primeRecordScore:4.0,
+      roundControlPct:47.0,roundControlScore:3.76,
+      roundControlAudit:{fighter:'Dan Henderson',roundControlPct:47.0,status:'locked',source:'approved packet-level conservative input',window:'Rich Franklin 2009 → Daniel Cormier 2014'},
+      primeFights:9,primeFinishes:2,primeFinishRate:22.22,finishPressureScore:1.0,
+      eliteStakesBreakdown:{titleFightWins:0,topFiveWins:1.25,champFormerChampWins:.75,fiveRoundTitleStageSample:.5,divisionStrengthContext:.4},
+      eliteStakesRawScore:2.9,eliteStakesScore:4.64,
+      total:13.4,
+      dominanceProfile:'UFC-only veteran elite window with iconic wins but no UFC title victory, inconsistent control, and most championship greatness occurring outside the scoring scope.',
       status:'locked',version:VERSION
     }
   };
