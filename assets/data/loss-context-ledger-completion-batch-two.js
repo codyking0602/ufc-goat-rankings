@@ -70,9 +70,7 @@
         {label:'Neil Magny',date:'2020-08-29',type:'post-prime decision loss',method:'Decision'},
         {label:'Bryan Barberena',date:'2022-07-02',type:'post-prime finish loss',method:'TKO'}
       ],
-      weirdResults:[
-        {label:'Santiago Ponzinibbio scheduled bout',date:'2022-12-10',notes:'The bout did not occur and is excluded from the loss ledger.'}
-      ]
+      weirdResults:[]
     },
     'Charles Oliveira':{
       recoveredLosses:[
