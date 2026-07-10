@@ -1,5 +1,5 @@
 // One-time branch-only migration: preserve the approved profile-facing Prime Records from current main.
-// Trusted migration trigger: 2026-07-10c.
+// Uses the reviewed 62-fighter presentation report, then the branch audit verifies every visible tile.
 const { chromium } = require('playwright');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -43,25 +43,17 @@ async function captureApprovedMainRecords() {
       timeout: 60_000
     });
     await page.waitForFunction(
-      () => window.UFC_SCORING_PIPELINE?.status === 'ready' && typeof window.openFighter === 'function',
+      () => window.UFC_SCORING_PIPELINE?.status === 'ready' &&
+        window.UFC_CATEGORY_RATING_PRIME_RECORD_POLISH?.passed === true,
       { timeout: 90_000 }
     );
 
-    return await page.evaluate(() => {
-      const names = [
-        ...(window.RANKING_DATA?.men || []),
-        ...(window.RANKING_DATA?.women || [])
-      ].map(row => row.fighter);
-      return names.map(fighter => {
-        window.openFighter(fighter);
-        const tile = [...document.querySelectorAll('#fighterDetail .snapshot-item')]
-          .find(item => item.querySelector('small')?.textContent.trim() === 'Prime Record');
-        return {
-          fighter,
-          record: tile?.querySelector('strong')?.textContent.trim() || null
-        };
-      });
-    });
+    return await page.evaluate(() =>
+      window.UFC_CATEGORY_RATING_PRIME_RECORD_POLISH.rows.map(row => ({
+        fighter: row.fighter,
+        record: row.record
+      }))
+    );
   } finally {
     await browser.close();
   }
@@ -70,12 +62,12 @@ async function captureApprovedMainRecords() {
 (async () => {
   const captured = await captureApprovedMainRecords();
   if (captured.length !== 62) {
-    throw new Error(`Expected 62 current-main Prime Records; captured ${captured.length}`);
+    throw new Error(`Expected 62 approved Prime Records; captured ${captured.length}`);
   }
 
   const invalid = captured.filter(row => !row.fighter || !RECORD_RE.test(String(row.record || '')));
   if (invalid.length) {
-    throw new Error(`Invalid current-main Prime Records: ${JSON.stringify(invalid)}`);
+    throw new Error(`Invalid approved Prime Records: ${JSON.stringify(invalid)}`);
   }
 
   let source = fs.readFileSync(DATA_FILE, 'utf8');
@@ -104,7 +96,7 @@ async function captureApprovedMainRecords() {
   source = source.slice(0, objectStart) + mapJson + source.slice(objectEnd + 1);
   source = source.replace(
     '// Prime Record source of truth: RANKING_DATA.primeRecords, formatted from audited Prime Dominance counts.',
-    '// Prime Record source of truth: RANKING_DATA.primeRecords, preserving the approved profile-facing records from main.'
+    '// Prime Record source of truth: RANKING_DATA.primeRecords, preserving the approved profile-facing records.'
   );
   fs.writeFileSync(DATA_FILE, source, 'utf8');
 
@@ -124,7 +116,7 @@ async function captureApprovedMainRecords() {
   }
 
   fs.unlinkSync(__filename);
-  console.log(`Synced ${captured.length} approved profile-facing Prime Records from current main.`);
+  console.log(`Synced ${captured.length} approved profile-facing Prime Records.`);
 })().catch(error => {
   console.error(error.stack || error);
   process.exit(1);
