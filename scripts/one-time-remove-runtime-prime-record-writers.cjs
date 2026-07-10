@@ -25,7 +25,7 @@ for (const full of files) {
   const original = source;
 
   source = source.replace(
-    /(?:if\s*\([^;\n]*\)\s*)?(?:row|profile|jon|target)\.primeRecord\s*=\s*[^;]+;/g,
+    /(?:if\s*\([^;\n]*\)\s*)?(?:row|profile|fighter|jon|target)\.primeRecord\s*=\s*[^;]+;/g,
     ''
   );
   source = source.replace(
@@ -37,6 +37,23 @@ for (const full of files) {
     ''
   );
 
+  if (full.endsWith(path.join('assets', 'js', 'fighter-profile-packages.js'))) {
+    source = source.replace(/^\s*primeRecord:\s*'(?:\\.|[^'\\])*',?\s*$/gm, '');
+    source = source.replace(/^\s*primeRecord:\s*"(?:\\.|[^"\\])*",?\s*$/gm, '');
+    source = source.replace(/^\s*\['Prime Record',\s*stats\.primeRecord\s*\|\|\s*'—'\],?\s*$/gm, '');
+    source = source.replace(
+      "const VERSION = 'fighter-profile-packages-20260702a';",
+      "const VERSION = 'fighter-profile-packages-20260710a-canonical-prime-record';"
+    );
+  }
+
+  if (full.endsWith(path.join('assets', 'data', 'ranking-data-patches.js'))) {
+    source = source.replace(
+      'assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260702a',
+      'assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260710a-canonical-prime-record'
+    );
+  }
+
   if (source !== original) {
     fs.writeFileSync(full, source, 'utf8');
     changed.push(path.relative(ROOT, full));
@@ -46,12 +63,20 @@ for (const full of files) {
 const offenders = [];
 for (const full of files) {
   const source = fs.readFileSync(full, 'utf8');
-  if (/(?:row|profile|jon|target)\.primeRecord\s*=/.test(source)) {
+  if (/(?:row|profile|fighter|jon|target)\.primeRecord\s*=/.test(source)) {
     offenders.push(path.relative(ROOT, full));
   }
   if (/(?:snapshotStats|packetProfileStats)\.primeRecord\s*=/.test(source)) {
     offenders.push(path.relative(ROOT, full));
   }
+}
+
+const packageFile = path.join(ROOT, 'assets/js/fighter-profile-packages.js');
+if (/\bprimeRecord\s*:\s*['"]/.test(fs.readFileSync(packageFile, 'utf8'))) {
+  offenders.push('assets/js/fighter-profile-packages.js#data');
+}
+if (/\[\s*['"]Prime Record['"]\s*,/.test(fs.readFileSync(packageFile, 'utf8'))) {
+  offenders.push('assets/js/fighter-profile-packages.js#snapshot');
 }
 
 if (offenders.length) {
