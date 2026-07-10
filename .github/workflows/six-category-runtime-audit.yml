@@ -8,96 +8,9 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  prime-record-migration:
-    if: github.event_name == 'pull_request' && github.head_ref == 'cleanup/canonical-prime-records'
-    runs-on: ubuntu-latest
-    timeout-minutes: 25
-
-    steps:
-      - name: Check out cleanup branch
-        uses: actions/checkout@v4
-        with:
-          ref: cleanup/canonical-prime-records
-          fetch-depth: 0
-
-      - name: Skip completed migration
-        id: migration-guard
-        shell: bash
-        run: |
-          if [ ! -f scripts/one-time-sync-prime-records-from-main.cjs ]; then
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "skip=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Set up Node
-        if: steps.migration-guard.outputs.skip != 'true'
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install Playwright
-        if: steps.migration-guard.outputs.skip != 'true'
-        run: |
-          npm init -y
-          npm install --no-save playwright@1.52.0
-          npx playwright install --with-deps chromium
-
-      - name: Check out current main worktree
-        if: steps.migration-guard.outputs.skip != 'true'
-        run: git worktree add --detach /tmp/ufc-main origin/main
-
-      - name: Start branch and main servers
-        if: steps.migration-guard.outputs.skip != 'true'
-        run: |
-          python3 -m http.server 4173 > /tmp/ufc-branch-server.log 2>&1 &
-          (cd /tmp/ufc-main && python3 -m http.server 4174 > /tmp/ufc-main-server.log 2>&1 &)
-          for attempt in {1..30}; do
-            if curl --fail --silent http://127.0.0.1:4173/index.html > /dev/null && curl --fail --silent http://127.0.0.1:4174/index.html > /dev/null; then
-              exit 0
-            fi
-            sleep 1
-          done
-          cat /tmp/ufc-branch-server.log || true
-          cat /tmp/ufc-main-server.log || true
-          exit 1
-
-      - name: Sync approved records and validate
-        if: steps.migration-guard.outputs.skip != 'true'
-        shell: bash
-        run: |
-          set -o pipefail
-          {
-            node scripts/one-time-sync-prime-records-from-main.cjs
-            node scripts/run-prime-record-source-audit.mjs
-            node scripts/run-six-category-audit.mjs
-          } 2>&1 | tee /tmp/prime-record-migration.log
-
-      - name: Upload migration log
-        if: always() && steps.migration-guard.outputs.skip != 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: prime-record-migration-log
-          path: /tmp/prime-record-migration.log
-          if-no-files-found: warn
-          retention-days: 7
-
-      - name: Commit canonical record migration
-        if: steps.migration-guard.outputs.skip != 'true'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "4189826+github-actions[bot]@users.noreply.github.com"
-          git restore docs/audits || true
-          git clean -fd docs/audits package.json package-lock.json node_modules || true
-          git add assets/data/ranking-data.js
-          git add -u scripts/one-time-sync-prime-records-from-main.cjs
-          git diff --cached --quiet && exit 0
-          git commit -m "Sync canonical Prime Records from main"
-          git push origin HEAD:cleanup/canonical-prime-records
-
   runtime-audit:
     runs-on: ubuntu-latest
     timeout-minutes: 20
