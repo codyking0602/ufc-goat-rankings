@@ -1,5 +1,47 @@
 # Changelog
 
+## 2026-07-09 — Quality Wins Coverage: Chuck Liddell and Tito Ortiz
+
+### Added
+
+- `assets/data/opponent-quality-ledger-batch-eight.js`
+- canonical UFC-only Quality Wins ledgers for Chuck Liddell and Tito Ortiz
+- `docs/audits/EIGHTH_RUNTIME_AUDIT_QUALITY_CHUCK_TITO.md`
+
+### Changed
+
+- inserted the new batch before the Quality Wins shadow audit and category-only live promoter
+- aligned the Championship-to-Quality loader, module manifest, prerequisite loader, and `index.html` cache chain
+- removed temporary source-inspection and cache-alignment tooling after use
+
+### Judgment Calls
+
+- Chuck's ledger is anchored by Randy Couture twice, Tito Ortiz twice, and Vitor Belfort
+- Chuck's PRIDE wins over Guy Mezger and Alistair Overeem are excluded
+- Tito has no 1.25 win; his case is built on Vitor, Wanderlei, Forrest, Tanner, Matyushenko, Bader, and discounted supporting depth
+- later non-UFC greatness is not converted into extra UFC credit
+- repeat and faded-name wins receive timing discounts
+
+### Validation
+
+Eighth headless Chromium audit:
+
+- Quality Wins coverage improved from 57/62 to 59/62
+- Chuck Liddell: 22.66 Quality Wins, #8 men, overall #17
+- Tito Ortiz: 15.81 Quality Wins, #33 men, overall #24
+- 0 formula mismatches
+- ownership gate: PASS
+- deterministic initialization gate: PASS
+- 0 profile/leaderboard mismatches
+- 0 forbidden numerical display overrides
+- men's top ten unchanged
+
+No Championship Resume, Prime Dominance, Longevity, Apex Peak, or Loss Context input changed.
+
+### Next
+
+Reconcile and promote the existing Dricus du Plessis and Sean O'Malley Quality Wins ledger rows, then complete Julianna Peña.
+
 ## 2026-07-09 — Deterministic Initialization Checkpoint
 
 ### Changed
