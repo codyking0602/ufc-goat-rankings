@@ -2,7 +2,6 @@ import { chromium } from 'playwright';
 import { mkdir, writeFile } from 'node:fs/promises';
 
 const baseUrl = process.env.AUDIT_BASE_URL || 'http://127.0.0.1:4173';
-const recordRe = /^\d+-\d+(?:-\d+)?(?:,\s*\d+\s*NC)?$/;
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage();
 
@@ -21,6 +20,7 @@ try {
     const boardNames = [...(data.men || []), ...(data.women || [])].map(row => row.fighter);
     const canonical = data.primeRecords || {};
     const rows = [];
+    const keys = ['primeRecord', 'primeUfcRecord', 'prime_record'];
 
     for (const fighter of boardNames) {
       window.openFighter(fighter);
@@ -36,35 +36,47 @@ try {
       });
     }
 
-    const findStringWriters = (root, rootName) => {
-      const writers = [];
-      const scan = (value, path = []) => {
-        if (!value || typeof value !== 'object') return;
-        if (Array.isArray(value)) {
-          value.forEach((item, index) => scan(item, [...path, index]));
-          return;
-        }
-        for (const [key, child] of Object.entries(value)) {
-          if (
-            (key === 'primeRecord' || key === 'primeUfcRecord' || key === 'prime_record') &&
-            typeof child === 'string'
-          ) {
-            writers.push([...path, key].join('.'));
-          }
-          scan(child, [...path, key]);
-        }
-      };
-      scan(root || {}, [rootName]);
-      return writers;
+    const directWriters = (value, path) => {
+      if (!value || typeof value !== 'object') return [];
+      return keys
+        .filter(key => Object.prototype.hasOwnProperty.call(value, key) && typeof value[key] === 'string')
+        .map(key => `${path}.${key}`);
+    };
+    const snapshotWriters = (value, path) => {
+      if (!Array.isArray(value)) return [];
+      return value
+        .map((item, index) => Array.isArray(item) && item[0] === 'Prime Record' ? `${path}.${index}` : null)
+        .filter(Boolean);
     };
 
-    const displayOverrideWriters = findStringWriters(window.DISPLAY_OVERRIDES, 'DISPLAY_OVERRIDES');
-    const packetWriters = findStringWriters(window.UFC_FIGHTER_PACKETS, 'UFC_FIGHTER_PACKETS');
-    const rowWriters = [
-      ...findStringWriters(data.men, 'RANKING_DATA.men'),
-      ...findStringWriters(data.women, 'RANKING_DATA.women'),
-      ...findStringWriters(data.fighters, 'RANKING_DATA.fighters')
-    ];
+    const displayOverrideWriters = [];
+    for (const [fighter, override] of Object.entries(window.DISPLAY_OVERRIDES || {})) {
+      const base = `DISPLAY_OVERRIDES.${fighter}`;
+      displayOverrideWriters.push(...directWriters(override, base));
+      displayOverrideWriters.push(...directWriters(override?.snapshotStats, `${base}.snapshotStats`));
+      displayOverrideWriters.push(...directWriters(override?.packetProfileStats, `${base}.packetProfileStats`));
+      displayOverrideWriters.push(...snapshotWriters(override?.snapshot, `${base}.snapshot`));
+    }
+
+    const packetWriters = [];
+    for (const [fighter, packet] of Object.entries(window.UFC_FIGHTER_PACKETS || {})) {
+      const base = `UFC_FIGHTER_PACKETS.${fighter}`;
+      packetWriters.push(...directWriters(packet?.boardRow, `${base}.boardRow`));
+      packetWriters.push(...directWriters(packet?.profile, `${base}.profile`));
+      packetWriters.push(...directWriters(packet?.profileStats, `${base}.profileStats`));
+      packetWriters.push(...directWriters(packet?.display, `${base}.display`));
+      packetWriters.push(...directWriters(packet?.display?.snapshotStats, `${base}.display.snapshotStats`));
+      packetWriters.push(...snapshotWriters(packet?.display?.snapshot, `${base}.display.snapshot`));
+    }
+
+    const rowWriters = [];
+    for (const [label, collection] of [
+      ['RANKING_DATA.men', data.men || []],
+      ['RANKING_DATA.women', data.women || []],
+      ['RANKING_DATA.fighters', data.fighters || []]
+    ]) {
+      collection.forEach((row, index) => rowWriters.push(...directWriters(row, `${label}.${index}`)));
+    }
 
     return {
       fighterCount: boardNames.length,
@@ -109,6 +121,7 @@ try {
       `- Display override writers: ${report.displayOverrideWriters.length}\n` +
       `- Fighter packet writers: ${report.packetWriters.length}\n` +
       `- Board/profile row writers: ${report.rowWriters.length}\n` +
+      `- Internal Prime Dominance audit fields are evidence only and are not profile writers.\n` +
       `- Result: ${report.passed ? 'PASS' : 'FAIL'}\n`,
     'utf8'
   );
