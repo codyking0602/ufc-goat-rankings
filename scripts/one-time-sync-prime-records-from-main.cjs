@@ -1,3 +1,4 @@
+// One-time branch-only migration: preserve the approved profile-facing Prime Records from current main.
 const { chromium } = require('playwright');
 const fs = require('node:fs');
 const path = require('node:path');
