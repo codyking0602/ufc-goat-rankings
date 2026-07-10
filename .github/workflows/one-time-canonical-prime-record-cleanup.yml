@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   cleanup:
-    if: github.head_ref == 'cleanup/canonical-prime-records' || github.ref == 'refs/heads/cleanup/canonical-prime-records'
+    if: (github.head_ref == 'cleanup/canonical-prime-records' || github.ref == 'refs/heads/cleanup/canonical-prime-records') && (github.event_name == 'pull_request' || !contains(github.event.head_commit.message, 'Canonicalize Prime Record source'))
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -74,6 +74,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git restore .github/workflows/one-time-canonical-prime-record-cleanup.yml || true
           git add -A
           git diff --cached --quiet && exit 0
           git commit -m "Canonicalize Prime Record source"
