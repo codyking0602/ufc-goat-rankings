@@ -1,6 +1,6 @@
 # Current State
 
-Updated: July 9, 2026
+Updated: July 10, 2026
 
 ## Current Goal
 
@@ -107,27 +107,29 @@ Permanent report:
 
 ### Chuck Liddell and Tito Ortiz
 
-The first missing-coverage batch is complete and validated.
+The first missing-coverage batch is complete, reviewed, and validated.
 
 Chuck Liddell:
 
 ```text
-Quality Wins: 15.40 legacy fallback → 22.66 audited live
-Quality Wins rank: #8 among men
-Overall score: 46.11 → 52.76
-Overall rank: #27 → #17
+Quality Wins: 15.40 legacy fallback → 19.85 reviewed live
+Initial unreviewed pass: 22.66
+Quality Wins rank: #19 among men
+Overall score: 46.11 → 50.18
+Overall rank: #27 → #19
 ```
 
 Tito Ortiz:
 
 ```text
-Quality Wins: 7.95 legacy fallback → 15.81 audited live
-Quality Wins rank: #33 among men
-Overall score: 40.24 → 47.45
-Overall rank: #37 → #24
+Quality Wins: 7.95 legacy fallback → 14.45 reviewed live
+Initial unreviewed pass: 15.81
+Quality Wins rank: #38 among men
+Overall score: 40.24 → 46.20
+Overall rank: #37 → #27
 ```
 
-The movement came only from replacing stale Quality Wins fallbacks with normalized UFC-only ledgers. No other category changed.
+The first-pass credits were reviewed before approval. Chuck's supporting wins were reduced where the initial ledger was too generous, and Tito was restored to the previously reviewed fighter-packet calibration. No other category changed.
 
 Permanent report:
 
@@ -176,7 +178,7 @@ Loss Context:
 
 ## Rankings
 
-The men's top ten remains unchanged after the Chuck/Tito batch:
+The men's top ten remains unchanged after the reviewed Chuck/Tito batch:
 
 1. Jon Jones — 102.21
 2. Georges St-Pierre — 88.01
