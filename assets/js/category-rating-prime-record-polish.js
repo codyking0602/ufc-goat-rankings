@@ -3,12 +3,13 @@
 (function(){
   'use strict';
 
-  const VERSION='category-rating-prime-record-polish-20260710a';
+  const VERSION='category-rating-prime-record-polish-20260710b';
   const DATA=window.RANKING_DATA;
   const OVERRIDES=window.DISPLAY_OVERRIDES||{};
   const EXPLICIT_PRIME_RECORDS={
     'Michael Bisping':'7-4'
   };
+  const FORBIDDEN_TEXT_PARENTS=new Set(['SCRIPT','STYLE','NOSCRIPT','TEMPLATE']);
 
   function normalizeName(value){
     return String(value||'').trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
@@ -17,7 +18,7 @@
   function normalizePrimeRecord(value){
     const text=String(value??'').trim();
     if(!text||text==='—') return null;
-    const match=text.match(/(?:^|[^0-9])(\d+)\s*-\s*(\d+)(?:\s*-\s*(\d+))?(?:\s*,?\s*(\d+)\s*NC)?(?:$|[^0-9])/i);
+    const match=text.match(/(?:^|[^0-9])(\d+)\s*-\s*(\d+)(?:\s*-\s*(\d+))?(?:\s*[,;]?\s*\(?\s*(\d+)\s*NC\s*\)?)?/i);
     if(!match) return null;
     const wins=Number(match[1]);
     const losses=Number(match[2]);
@@ -37,9 +38,9 @@
     return {...profile,...board};
   }
 
-  function rawPrimeRecordFor(name,row){
+  function primeRecordCandidates(name,row){
     const override=OVERRIDES[name]||{};
-    const candidates=[
+    return [
       row?.snapshotStats?.primeRecord,
       override?.snapshotStats?.primeRecord,
       override?.packetProfileStats?.primeRecord,
@@ -47,8 +48,12 @@
       row?.primeUfcRecord,
       row?.prime_record,
       snapshotValue(override,'Prime Record')
-    ];
-    return candidates.find(value=>value!==null&&value!==undefined&&String(value).trim()!=='')??null;
+    ].filter(value=>value!==null&&value!==undefined&&String(value).trim()!=='');
+  }
+
+  function rawPrimeRecordFor(name,row){
+    const candidates=primeRecordCandidates(name,row);
+    return candidates.find(value=>normalizePrimeRecord(value))??candidates[0]??null;
   }
 
   function ledgerComputedRecord(name,row){
@@ -108,9 +113,14 @@
       .replace(/\bpercentile\b/gi,'rating');
   }
 
+  function allowedTextNode(node){
+    return Boolean(node&&node.parentElement&&!FORBIDDEN_TEXT_PARENTS.has(node.parentElement.tagName));
+  }
+
   function polishDom(root){
     if(!root) return;
-    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+    if(root.nodeType===Node.ELEMENT_NODE&&FORBIDDEN_TEXT_PARENTS.has(root.tagName)) return;
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:node=>allowedTextNode(node)?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT});
     const nodes=[];
     while(walker.nextNode()) nodes.push(walker.currentNode);
     nodes.forEach(node=>{
@@ -119,6 +129,7 @@
     });
     if(root.querySelectorAll){
       root.querySelectorAll('[aria-label],[title]').forEach(element=>{
+        if(FORBIDDEN_TEXT_PARENTS.has(element.tagName)) return;
         ['aria-label','title'].forEach(attr=>{
           const current=element.getAttribute(attr);
           if(current){const next=ratingLanguage(current);if(next!==current)element.setAttribute(attr,next);}
@@ -202,10 +213,10 @@
     polishDom(document.body);
     const observer=new MutationObserver(mutations=>{
       mutations.forEach(mutation=>mutation.addedNodes.forEach(node=>{
-        if(node.nodeType===Node.TEXT_NODE){
+        if(node.nodeType===Node.TEXT_NODE&&allowedTextNode(node)){
           const next=ratingLanguage(node.nodeValue);
           if(next!==node.nodeValue) node.nodeValue=next;
-        }else if(node.nodeType===Node.ELEMENT_NODE){
+        }else if(node.nodeType===Node.ELEMENT_NODE&&!FORBIDDEN_TEXT_PARENTS.has(node.tagName)){
           polishDom(node);
         }
       }));
