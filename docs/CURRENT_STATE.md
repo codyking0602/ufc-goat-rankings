@@ -162,9 +162,9 @@ The men's top ten remains:
 9. Matt Hughes — 63.51
 10. Kamaru Usman — 61.10
 
-## Production Cache Note
+## Production Cache Status
 
-The static `index.html` query strings for `module-versions.js` and `ranking-data-patches.js` still need final cache-bust alignment before merge. Fresh branch runtime testing uses the correct files and passes.
+The static `index.html` query strings now point to the deterministic `module-versions.js` bootstrap and the readiness-enabled `ranking-data-patches.js` loader. The normal Chromium audit passed after the cache-key update.
 
 ## Immediate Next Phase
 
