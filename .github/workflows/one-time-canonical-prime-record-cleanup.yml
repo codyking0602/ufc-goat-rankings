@@ -3,17 +3,21 @@ name: One-Time Canonical Prime Record Cleanup
 on:
   push:
     branches: [cleanup/canonical-prime-records]
+  pull_request:
+    branches: [main]
 
 permissions:
   contents: write
 
 jobs:
   cleanup:
+    if: github.head_ref == 'cleanup/canonical-prime-records' || github.ref == 'refs/heads/cleanup/canonical-prime-records'
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: cleanup/canonical-prime-records
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
