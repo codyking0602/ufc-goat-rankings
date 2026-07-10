@@ -25,26 +25,41 @@ Production `main` remains untouched. Draft PR #7 is a test harness only and must
 - first settled full-roster audit captured
 - canonical final score engine added at `assets/js/final-score-engine.js`
 - Prime Dominance promoter converted to a category-only writer
+- Championship Resume promoter converted to a category-only writer
+- Quality Wins promoter converted to a category-only writer
 - module bootstrap updated to finish current category passes through the final score engine
 
-## Final Score Engine Checkpoint
+## Consolidation Checkpoints
 
-The second settled Chromium audit completed after all current delayed scoring timers ran.
+### Final Score Engine Checkpoint
 
-Results:
-
-- 62 roster fighters
-- 53 formula mismatches before the repair
-- 0 formula mismatches after the repair
-- 0 forbidden score-derived display overrides
-- 0 duplicate leaderboard/profile names
-- 0 profile-to-leaderboard mismatches
+The second settled Chromium audit reduced formula mismatches from 53 to 0 across all 62 fighters.
 
 Permanent report:
 
 - `docs/audits/SECOND_RUNTIME_AUDIT_FINAL_ENGINE.md`
 
-The final score engine now calculates:
+### Championship and Quality Checkpoint
+
+The third settled Chromium audit validated the category-only conversions for Championship Resume and Quality Wins.
+
+Results:
+
+- 62 roster fighters
+- 0 formula mismatches
+- 0 forbidden score-derived display overrides
+- 0 duplicate leaderboard/profile names
+- 0 profile-to-leaderboard mismatches
+- category coverage unchanged
+- fighter totals and rankings unchanged
+
+Permanent report:
+
+- `docs/audits/THIRD_RUNTIME_AUDIT_CHAMPIONSHIP_QUALITY.md`
+
+## Final Score Ownership
+
+`final-score-engine.js` calculates:
 
 ```text
 Championship Resume / 30 × 35
@@ -56,7 +71,7 @@ Championship Resume / 30 × 35
 = Raw Score
 ```
 
-It writes:
+It owns:
 
 - `rawScore`
 - `totalScore`
@@ -65,20 +80,21 @@ It writes:
 - score-derived overall OVR
 - synchronized profile totals and ranks
 
-## Prime Dominance Promoter Status
+## Category Writer Status
 
-`prime-dominance-live-promoter.js` now writes only Prime-related values and audit metadata.
+Category-only and validated:
 
-It no longer writes:
+- Championship Resume
+- Quality Wins
+- Prime Dominance
 
-- `totalScore`
-- `rawScore`
-- board rank
-- overall OVR
-- category OVR
-- category rank
+Still able to write overall totals or ranks:
 
-It requests a recalculation from the final score engine after promoting Prime values.
+- Longevity
+- Apex Peak
+- legacy general weighting layer
+
+Championship no longer writes Prime category rank/OVR or runs delayed Prime override timers.
 
 ## Current Category Coverage
 
@@ -91,7 +107,7 @@ It requests a recalculation from the final score engine after promoting Prime va
 | Apex Peak | 61 | 1 | 0 |
 | Loss Context | 0 | 61 | 1 |
 
-The coverage counts remained unchanged during the final-score repair. This confirms no fighter inputs were altered.
+The coverage counts remained unchanged during all consolidation checkpoints. This confirms no fighter inputs were altered.
 
 ## Missing Coverage
 
@@ -124,22 +140,22 @@ Loss Context:
 - Sean O'Malley has no usable adapter entry
 - all current live penalties remain legacy-backed pending fighter-by-fighter review and promotion
 
+## Deployment Cache Note
+
+`ranking-data-patches.js` still references the older Championship query-string version. The branch runtime is correct, but this cache-bust reference must be updated before production merge.
+
 ## Immediate Next Step
 
-Convert the remaining score-mutating category promoters into category-only writers in small tested batches:
+Convert Longevity into a category-only writer and rerun the settled Chromium audit.
 
-1. Championship Resume and Quality Wins
-2. Longevity
-3. Apex Peak
-
-After each batch, rerun the settled Chromium audit. Required checkpoint result:
+Required checkpoint result:
 
 - 0 formula mismatches
 - unchanged category values and coverage
 - unchanged expected totals and rankings
 - no profile or display-override regressions
 
-After the promoters are clean, complete the missing category audits and Loss Context coverage before replacing the timer-based loader.
+After Longevity, convert Apex Peak, then address the legacy general weighting layer. Missing category audits and Loss Context coverage come after category ownership is clean.
 
 ## Definition of Success
 
