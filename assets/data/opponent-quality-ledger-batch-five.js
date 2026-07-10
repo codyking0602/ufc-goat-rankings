@@ -1,144 +1,54 @@
 // Opponent Quality shadow ledger batch five. Extends the shadow ledger only.
 (function(){
-  const VERSION='opponent-quality-ledger-batch-five-20260708b-cleanup';
+  const VERSION='opponent-quality-ledger-batch-five-20260710c-frankie-audit';
   const store=window.UFC_OPPONENT_QUALITY_LEDGERS;
   if(!store||!store.raw)return;
   const RAW=store.raw;
   Object.assign(RAW,{
     'Matt Hughes':[
-      ['Georges St-Pierre I',1.25,'Champion-level win','Early win over future all-time welterweight great.','review'],
-      ['B.J. Penn II',1.25,'Champion-level win','Elite champion-level opponent and former UFC champion.','locked'],
-      ['Frank Trigg II',1.00,'True top-5 win','Prime elite welterweight contender.','locked'],
-      ['Frank Trigg I',1.00,'True top-5 win','Strong ranked welterweight contender.','locked'],
-      ['Sean Sherk',1.00,'True top-5 win','Elite contender and future UFC champion.','locked'],
-      ['Royce Gracie',0.85,'Strong top-10 win','Historic name, heavily timing-adjusted but still meaningful.','review'],
-      ['Matt Serra',0.85,'Strong top-10 win','Future UFC champion, quality welterweight name.','review'],
-      ['Carlos Newton II',0.85,'Strong top-10 win','Former UFC champion rematch win.','locked'],
-      ['Carlos Newton I',0.65,'Ranked / quality win','Title win with weird finish context.','high-risk review'],
-      ['Joe Riggs',0.65,'Ranked / quality win','Quality welterweight win.','locked'],
-      ['Renzo Gracie',0.45,'Solid resume win','Legend name, but UFC timing limits value.','review'],
-      ['Chris Lytle',0.45,'Solid resume win','Durable veteran welterweight win.','locked'],
-      ['Hayato Sakurai',0.45,'Solid resume win','Strong name historically, UFC timing limits value.','review'],
-      ['Gil Castillo',0.25,'Name-value / faded / unproven','Low-end UFC quality value.','locked']
+      ['Georges St-Pierre I',1.25,'Champion-level win','Early win over future all-time welterweight great.','review'],['B.J. Penn II',1.25,'Champion-level win','Elite champion-level opponent and former UFC champion.','locked'],['Frank Trigg II',1.00,'True top-5 win','Prime elite welterweight contender.','locked'],['Frank Trigg I',1.00,'True top-5 win','Strong ranked welterweight contender.','locked'],['Sean Sherk',1.00,'True top-5 win','Elite contender and future UFC champion.','locked'],['Royce Gracie',0.85,'Strong top-10 win','Historic name, heavily timing-adjusted but still meaningful.','review'],['Matt Serra',0.85,'Strong top-10 win','Future UFC champion, quality welterweight name.','review'],['Carlos Newton II',0.85,'Strong top-10 win','Former UFC champion rematch win.','locked'],['Carlos Newton I',0.65,'Ranked / quality win','Title win with weird finish context.','high-risk review'],['Joe Riggs',0.65,'Ranked / quality win','Quality welterweight win.','locked'],['Renzo Gracie',0.45,'Solid resume win','Legend name, but UFC timing limits value.','review'],['Chris Lytle',0.45,'Solid resume win','Durable veteran welterweight win.','locked'],['Hayato Sakurai',0.45,'Solid resume win','Strong name historically, UFC timing limits value.','review'],['Gil Castillo',0.25,'Name-value / faded / unproven','Low-end UFC quality value.','locked']
     ],
     'Randy Couture':[
-      ['Chuck Liddell I',1.25,'Champion-level win','Elite light heavyweight champion-level opponent.','locked'],
-      ['Tito Ortiz',1.25,'Champion-level win','UFC light heavyweight champion and elite rival.','locked'],
-      ['Tim Sylvia',1.00,'True top-5 win','UFC heavyweight champion, but softer heavyweight-era context.','review'],
-      ['Vitor Belfort I',1.00,'True top-5 win','Elite young heavyweight/light-heavyweight talent.','review'],
-      ['Pedro Rizzo II',1.00,'True top-5 win','Elite heavyweight title challenger.','locked'],
-      ['Kevin Randleman',1.00,'True top-5 win','UFC heavyweight champion.','locked'],
-      ['Maurice Smith',1.00,'True top-5 win','UFC heavyweight champion.','review'],
-      ['Gabriel Gonzaga',0.85,'Strong top-10 win','Dangerous heavyweight contender after Cro Cop upset.','locked'],
-      ['Pedro Rizzo I',0.85,'Strong top-10 win','Elite contender, close first fight context.','review'],
-      ['Vitor Belfort III',0.65,'Ranked / quality win','Rubber match win with injury/cut rivalry context.','review'],
-      ['Brandon Vera',0.65,'Ranked / quality win','Ranked heavyweight/light-heavyweight name.','review'],
-      ['Jeremy Horn',0.45,'Solid resume win','Solid veteran win.','locked'],
-      ['James Toney',0.10,'Minimal UFC quality credit','Celebrity/specialist fight with minimal opponent-quality value.','locked']
+      ['Chuck Liddell I',1.25,'Champion-level win','Elite light heavyweight champion-level opponent.','locked'],['Tito Ortiz',1.25,'Champion-level win','UFC light heavyweight champion and elite rival.','locked'],['Tim Sylvia',1.00,'True top-5 win','UFC heavyweight champion, but softer heavyweight-era context.','review'],['Vitor Belfort I',1.00,'True top-5 win','Elite young heavyweight/light-heavyweight talent.','review'],['Pedro Rizzo II',1.00,'True top-5 win','Elite heavyweight title challenger.','locked'],['Kevin Randleman',1.00,'True top-5 win','UFC heavyweight champion.','locked'],['Maurice Smith',1.00,'True top-5 win','UFC heavyweight champion.','review'],['Gabriel Gonzaga',0.85,'Strong top-10 win','Dangerous heavyweight contender after Cro Cop upset.','locked'],['Pedro Rizzo I',0.85,'Strong top-10 win','Elite contender, close first fight context.','review'],['Vitor Belfort III',0.65,'Ranked / quality win','Rubber match win with injury/cut rivalry context.','review'],['Brandon Vera',0.65,'Ranked / quality win','Ranked heavyweight/light-heavyweight name.','review'],['Jeremy Horn',0.45,'Solid resume win','Solid veteran win.','locked'],['James Toney',0.10,'Minimal UFC quality credit','Celebrity/specialist fight with minimal opponent-quality value.','locked']
     ],
     'B.J. Penn':[
-      ['Matt Hughes I',1.25,'Champion-level win','Elite UFC welterweight champion and all-time great.','locked'],
-      ['Sean Sherk',1.00,'True top-5 win','Former UFC lightweight champion and top contender.','locked'],
-      ['Kenny Florian',1.00,'True top-5 win','Elite lightweight title challenger.','locked'],
-      ['Diego Sanchez',1.00,'True top-5 win','Top lightweight contender at the time.','locked'],
-      ['Jens Pulver II',0.85,'Strong top-10 win','Former UFC lightweight champion, timing-adjusted.','review'],
-      ['Joe Stevenson',0.85,'Strong top-10 win','Lightweight title opponent and ranked contender.','locked'],
-      ['Caol Uno I',0.85,'Strong top-10 win','Elite early lightweight contender.','review'],
-      ['Matt Serra',0.65,'Ranked / quality win','Quality lightweight/welterweight name and future champion.','review'],
-      ['Duane Ludwig',0.45,'Solid resume win','Solid UFC win.','locked'],
-      ['Din Thomas',0.45,'Solid resume win','Useful early UFC lightweight win.','locked'],
-      ['Renzo Gracie',0.00,'No UFC quality credit','Outside UFC; context only, not scored.','locked'],
-      ['Takanori Gomi',0.00,'No UFC quality credit','Major win, but outside UFC and not scored in this app.','locked']
+      ['Matt Hughes I',1.25,'Champion-level win','Elite UFC welterweight champion and all-time great.','locked'],['Sean Sherk',1.00,'True top-5 win','Former UFC lightweight champion and top contender.','locked'],['Kenny Florian',1.00,'True top-5 win','Elite lightweight title challenger.','locked'],['Diego Sanchez',1.00,'True top-5 win','Top lightweight contender at the time.','locked'],['Jens Pulver II',0.85,'Strong top-10 win','Former UFC lightweight champion, timing-adjusted.','review'],['Joe Stevenson',0.85,'Strong top-10 win','Lightweight title opponent and ranked contender.','locked'],['Caol Uno I',0.85,'Strong top-10 win','Elite early lightweight contender.','review'],['Matt Serra',0.65,'Ranked / quality win','Quality lightweight/welterweight name and future champion.','review'],['Duane Ludwig',0.45,'Solid resume win','Solid UFC win.','locked'],['Din Thomas',0.45,'Solid resume win','Useful early UFC lightweight win.','locked'],['Renzo Gracie',0.00,'No UFC quality credit','Outside UFC; context only, not scored.','locked'],['Takanori Gomi',0.00,'No UFC quality credit','Major win, but outside UFC and not scored in this app.','locked']
     ],
     'Frankie Edgar':[
-      ['B.J. Penn I',1.25,'Champion-level win','Beat elite UFC lightweight champion.','locked'],
-      ['B.J. Penn II',1.25,'Champion-level win','Immediate repeat over champion-level Penn.','locked'],
-      ['Urijah Faber',1.00,'True top-5 win','Elite lighter-weight legend and ranked contender.','review'],
-      ['Chad Mendes',1.00,'True top-5 win','Elite featherweight contender.','locked'],
-      ['Charles Oliveira',1.00,'True top-5 win','High-skill future champion, earlier version.','review'],
-      ['Gray Maynard III',1.00,'True top-5 win','Top lightweight rival and title challenger.','locked'],
-      ['Sean Sherk',0.85,'Strong top-10 win','Former UFC lightweight champion.','locked'],
-      ['Cub Swanson I',0.85,'Strong top-10 win','Strong ranked featherweight contender.','locked'],
-      ['Yair Rodriguez',0.85,'Strong top-10 win','Rising elite featherweight contender.','review'],
-      ['Pedro Munhoz',0.85,'Strong top-10 win','Ranked bantamweight win late in career.','review'],
-      ['Jim Miller',0.65,'Ranked / quality win','Quality early lightweight win.','locked'],
-      ['Jeremy Stephens',0.65,'Ranked / quality win','Dangerous featherweight contender.','locked'],
-      ['Hermes Franca',0.45,'Solid resume win','Solid lightweight win.','locked'],
-      ['Matt Veach',0.25,'Name-value / faded / unproven','Low-end UFC quality value.','locked']
+      ['B.J. Penn I',1.25,'Champion-level win','Won the UFC lightweight title from an elite reigning champion.','locked'],
+      ['B.J. Penn II',1.15,'Elite divisional win','Immediate dominant confirmation over the same champion-level opponent; slight repeat discount.','locked'],
+      ['Gray Maynard III',1.00,'True top-5 win','Elite lightweight rival and title challenger.','locked'],
+      ['Chad Mendes',1.00,'True top-5 win','Elite featherweight contender stopped in the first round.','locked'],
+      ['Cub Swanson I',1.00,'True top-5 win','High-end featherweight contender in a title-eliminator-level matchup.','locked'],
+      ['Sean Sherk',0.85,'Strong top-10 win','Former UFC lightweight champion and still a strong ranked opponent.','locked'],
+      ['Yair Rodriguez',0.85,'Strong top-10 win','Rising ranked featherweight contender at the time of the win.','locked'],
+      ['Pedro Munhoz',0.85,'Strong top-10 win','Highly ranked bantamweight win late in Edgar’s career; close split-decision context noted.','review'],
+      ['Jeremy Stephens',0.65,'Ranked / quality win','Dangerous ranked featherweight contender.','locked'],
+      ['Urijah Faber',0.65,'Ranked / quality win','Elite lighter-weight name, discounted for one-off featherweight timing.','review'],
+      ['Tyson Griffin',0.65,'Ranked / quality win','Excellent early lightweight win, but before either fighter had established title-level standing.','review'],
+      ['Cub Swanson II',0.45,'Solid resume win','Useful rematch win with later-career timing and less contender value than the first meeting.','review'],
+      ['Hermes Franca',0.45,'Solid resume win','Former title challenger name, but timing and layoff context limit the credit.','review'],
+      ['Charles Oliveira',0.45,'Solid resume win','Quality 2013 featherweight win; future championship success is not back-credited.','locked'],
+      ['Jim Miller',0.25,'Name-value / faded / unproven','Very early UFC version of Miller before he had established ranked value.','review'],
+      ['Matt Veach',0.10,'Minimal UFC quality credit','Comeback finish over a lightly proven UFC opponent.','locked']
     ],
     'Conor McGregor':[
-      ['Jose Aldo',1.25,'Champion-level win','Prime featherweight champion and all-time great.','locked'],
-      ['Eddie Alvarez',1.25,'Champion-level win','UFC lightweight champion.','locked'],
-      ['Max Holloway',1.00,'True top-5 win','Early win over future all-time featherweight great.','review'],
-      ['Chad Mendes',1.00,'True top-5 win','Elite featherweight contender on short notice.','review'],
-      ['Dustin Poirier I',0.85,'Strong top-10 win','Strong featherweight contender before later lightweight peak.','review'],
-      ['Nate Diaz II',0.85,'Strong top-10 win','High-level rivalry win at welterweight; not title-contender context.','review'],
-      ['Donald Cerrone',0.65,'Ranked / quality win','Big-name veteran with timing/fade context.','review'],
-      ['Dennis Siver',0.45,'Solid resume win','Solid featherweight win.','locked'],
-      ['Diego Brandao',0.45,'Solid resume win','Solid featherweight win.','locked'],
-      ['Marcus Brimage',0.25,'Name-value / faded / unproven','Early UFC win with limited quality value.','locked']
+      ['Jose Aldo',1.25,'Champion-level win','Prime featherweight champion and all-time great.','locked'],['Eddie Alvarez',1.25,'Champion-level win','UFC lightweight champion.','locked'],['Max Holloway',1.00,'True top-5 win','Early win over future all-time featherweight great.','review'],['Chad Mendes',1.00,'True top-5 win','Elite featherweight contender on short notice.','review'],['Dustin Poirier I',0.85,'Strong top-10 win','Strong featherweight contender before later lightweight peak.','review'],['Nate Diaz II',0.85,'Strong top-10 win','High-level rivalry win at welterweight; not title-contender context.','review'],['Donald Cerrone',0.65,'Ranked / quality win','Big-name veteran with timing/fade context.','review'],['Dennis Siver',0.45,'Solid resume win','Solid featherweight win.','locked'],['Diego Brandao',0.45,'Solid resume win','Solid featherweight win.','locked'],['Marcus Brimage',0.25,'Name-value / faded / unproven','Early UFC win with limited quality value.','locked']
     ],
     'Tony Ferguson':[
-      ['Rafael dos Anjos',1.25,'Champion-level win','Former UFC lightweight champion still elite.','locked'],
-      ['Anthony Pettis',1.00,'True top-5 win','Former UFC champion and dangerous lightweight name.','review'],
-      ['Edson Barboza',1.00,'True top-5 win','Elite lightweight contender in a deep division.','locked'],
-      ['Kevin Lee',1.00,'True top-5 win','Interim-title opponent and top lightweight contender.','review'],
-      ['Donald Cerrone',0.85,'Strong top-10 win','Ranked veteran contender, timing context.','review'],
-      ['Josh Thomson',0.85,'Strong top-10 win','Strong veteran lightweight contender.','review'],
-      ['Gleison Tibau',0.65,'Ranked / quality win','Quality lightweight veteran.','locked'],
-      ['Lando Vannata',0.65,'Ranked / quality win','Short-notice dangerous win, prospect context.','review'],
-      ['Abel Trujillo',0.45,'Solid resume win','Solid athletic lightweight win.','locked'],
-      ['Danny Castillo',0.45,'Solid resume win','Solid lightweight win; close-decision context.','review'],
-      ['Yves Edwards',0.45,'Solid resume win','Veteran lightweight name, timing adjusted.','review'],
-      ['Ramsey Nijem',0.25,'Name-value / faded / unproven','Low-end UFC quality value.','locked']
+      ['Rafael dos Anjos',1.25,'Champion-level win','Former UFC lightweight champion still elite.','locked'],['Anthony Pettis',1.00,'True top-5 win','Former UFC champion and dangerous lightweight name.','review'],['Edson Barboza',1.00,'True top-5 win','Elite lightweight contender in a deep division.','locked'],['Kevin Lee',1.00,'True top-5 win','Interim-title opponent and top lightweight contender.','review'],['Donald Cerrone',0.85,'Strong top-10 win','Ranked veteran contender, timing context.','review'],['Josh Thomson',0.85,'Strong top-10 win','Strong veteran lightweight contender.','review'],['Gleison Tibau',0.65,'Ranked / quality win','Quality lightweight veteran.','locked'],['Lando Vannata',0.65,'Ranked / quality win','Short-notice dangerous win, prospect context.','review'],['Abel Trujillo',0.45,'Solid resume win','Solid athletic lightweight win.','locked'],['Danny Castillo',0.45,'Solid resume win','Solid lightweight win; close-decision context.','review'],['Yves Edwards',0.45,'Solid resume win','Veteran lightweight name, timing adjusted.','review'],['Ramsey Nijem',0.25,'Name-value / faded / unproven','Low-end UFC quality value.','locked']
     ],
     'Aljamain Sterling':[
-      ['Petr Yan II',1.25,'Champion-level win','Elite bantamweight champion-level opponent.','locked'],
-      ['Henry Cejudo',1.25,'Champion-level win','Former two-division UFC champion returning, still elite.','review'],
-      ['Cory Sandhagen',1.00,'True top-5 win','Elite bantamweight contender.','locked'],
-      ['T.J. Dillashaw',0.85,'Strong top-10 win','Former champion, but injury context heavily noted.','high-risk review'],
-      ['Pedro Munhoz',0.85,'Strong top-10 win','Strong ranked bantamweight contender.','locked'],
-      ['Jimmie Rivera',0.85,'Strong top-10 win','Strong ranked bantamweight contender.','locked'],
-      ['Brett Johns',0.65,'Ranked / quality win','Quality bantamweight win.','locked'],
-      ['Renan Barao',0.45,'Solid resume win','Former champion name, but late-career timing.','review'],
-      ['Cody Stamann',0.45,'Solid resume win','Solid bantamweight win.','locked'],
-      ['Johnny Eduardo',0.25,'Name-value / faded / unproven','Low-end UFC quality value.','locked']
+      ['Petr Yan II',1.25,'Champion-level win','Elite bantamweight champion-level opponent.','locked'],['Henry Cejudo',1.25,'Champion-level win','Former two-division UFC champion returning, still elite.','review'],['Cory Sandhagen',1.00,'True top-5 win','Elite bantamweight contender.','locked'],['T.J. Dillashaw',0.85,'Strong top-10 win','Former champion, but injury context heavily noted.','high-risk review'],['Pedro Munhoz',0.85,'Strong top-10 win','Strong ranked bantamweight contender.','locked'],['Jimmie Rivera',0.85,'Strong top-10 win','Strong ranked bantamweight contender.','locked'],['Brett Johns',0.65,'Ranked / quality win','Quality bantamweight win.','locked'],['Renan Barao',0.45,'Solid resume win','Former champion name, but late-career timing.','review'],['Cody Stamann',0.45,'Solid resume win','Solid bantamweight win.','locked'],['Johnny Eduardo',0.25,'Name-value / faded / unproven','Low-end UFC quality value.','locked']
     ],
     'Petr Yan':[
-      ['Merab Dvalishvili',1.25,'Champion-level win','Elite bantamweight champion/title-level opponent in app timeline.','review'],
-      ['Jose Aldo',1.00,'True top-5 win','All-time featherweight great and elite bantamweight title opponent.','review'],
-      ['Cory Sandhagen',1.00,'True top-5 win','Elite bantamweight contender and interim-title opponent.','locked'],
-      ['Deiveson Figueiredo',1.00,'True top-5 win','Former flyweight champion and strong bantamweight contender.','review'],
-      ['Song Yadong',0.85,'Strong top-10 win','Strong ranked bantamweight contender.','locked'],
-      ['Urijah Faber',0.65,'Ranked / quality win','Legend name, late-career timing.','review'],
-      ['Jimmie Rivera',0.65,'Ranked / quality win','Quality ranked bantamweight win.','locked'],
-      ['John Dodson',0.65,'Ranked / quality win','Former flyweight title challenger and quality bantamweight.','review'],
-      ['Douglas Silva de Andrade',0.45,'Solid resume win','Solid UFC bantamweight win.','locked'],
-      ['Teruto Ishihara',0.25,'Name-value / faded / unproven','Low-end UFC quality value.','locked']
+      ['Merab Dvalishvili',1.25,'Champion-level win','Elite bantamweight champion/title-level opponent in app timeline.','review'],['Jose Aldo',1.00,'True top-5 win','All-time featherweight great and elite bantamweight title opponent.','review'],['Cory Sandhagen',1.00,'True top-5 win','Elite bantamweight contender and interim-title opponent.','locked'],['Deiveson Figueiredo',1.00,'True top-5 win','Former flyweight champion and strong bantamweight contender.','review'],['Song Yadong',0.85,'Strong top-10 win','Strong ranked bantamweight contender.','locked'],['Urijah Faber',0.65,'Ranked / quality win','Legend name, late-career timing.','review'],['Jimmie Rivera',0.65,'Ranked / quality win','Quality ranked bantamweight win.','locked'],['John Dodson',0.65,'Ranked / quality win','Former flyweight title challenger and quality bantamweight.','review'],['Douglas Silva de Andrade',0.45,'Solid resume win','Solid UFC bantamweight win.','locked'],['Teruto Ishihara',0.25,'Name-value / faded / unproven','Low-end UFC quality value.','locked']
     ],
     'Merab Dvalishvili':[
-      ['Sean O’Malley',1.25,'Champion-level win','UFC bantamweight champion and elite title opponent.','locked'],
-      ['Henry Cejudo',1.00,'True top-5 win','Former two-division UFC champion, post-prime but still elite name.','review'],
-      ['Petr Yan',1.00,'True top-5 win','Elite former bantamweight champion.','locked'],
-      ['Jose Aldo',1.00,'True top-5 win','All-time great and ranked bantamweight contender.','review'],
-      ['Marlon Moraes',0.85,'Strong top-10 win','Former title challenger, timing/fade context.','review'],
-      ['Pedro Munhoz',0.85,'Strong top-10 win','Strong ranked bantamweight contender.','locked'],
-      ['John Dodson',0.65,'Ranked / quality win','Quality bantamweight/flyweight contender name.','review'],
-      ['Casey Kenney',0.45,'Solid resume win','Solid bantamweight win.','locked'],
-      ['Gustavo Lopez',0.25,'Name-value / faded / unproven','Low-end UFC quality value.','locked'],
-      ['Terrion Ware',0.25,'Name-value / faded / unproven','Low-end UFC quality value.','locked']
+      ['Sean O’Malley',1.25,'Champion-level win','UFC bantamweight champion and elite title opponent.','locked'],['Henry Cejudo',1.00,'True top-5 win','Former two-division UFC champion, post-prime but still elite name.','review'],['Petr Yan',1.00,'True top-5 win','Elite former bantamweight champion.','locked'],['Jose Aldo',1.00,'True top-5 win','All-time great and ranked bantamweight contender.','review'],['Marlon Moraes',0.85,'Strong top-10 win','Former title challenger, timing/fade context.','review'],['Pedro Munhoz',0.85,'Strong top-10 win','Strong ranked bantamweight contender.','locked'],['John Dodson',0.65,'Ranked / quality win','Quality bantamweight/flyweight contender name.','review'],['Casey Kenney',0.45,'Solid resume win','Solid bantamweight win.','locked'],['Gustavo Lopez',0.25,'Name-value / faded / unproven','Low-end UFC quality value.','locked'],['Terrion Ware',0.25,'Name-value / faded / unproven','Low-end UFC quality value.','locked']
     ],
     'T.J. Dillashaw':[
-      ['Cody Garbrandt I',1.25,'Champion-level win','UFC bantamweight champion and elite title opponent.','locked'],
-      ['Renan Barao I',1.25,'Champion-level win','Elite bantamweight champion-level opponent.','locked'],
-      ['Cody Garbrandt II',1.00,'True top-5 win','Repeat win over former champion, less fresh but still elite quality.','review'],
-      ['Renan Barao II',1.00,'True top-5 win','Repeat win over former champion, with decline/repeat context.','review'],
-      ['Cory Sandhagen',1.00,'True top-5 win','Elite bantamweight contender; close decision context.','high-risk review'],
-      ['John Lineker',0.85,'Strong top-10 win','Dangerous ranked bantamweight contender.','locked'],
-      ['Raphael Assuncao II',0.85,'Strong top-10 win','Strong ranked bantamweight contender.','locked'],
-      ['Mike Easton',0.45,'Solid resume win','Solid bantamweight win.','locked'],
-      ['Vaughan Lee',0.25,'Name-value / faded / unproven','Low-end UFC quality value.','locked'],
-      ['Walel Watson',0.10,'Minimal UFC quality credit','Minimal UFC quality value.','locked']
+      ['Cody Garbrandt I',1.25,'Champion-level win','UFC bantamweight champion and elite title opponent.','locked'],['Renan Barao I',1.25,'Champion-level win','Elite bantamweight champion-level opponent.','locked'],['Cody Garbrandt II',1.00,'True top-5 win','Repeat win over former champion, less fresh but still elite quality.','review'],['Renan Barao II',1.00,'True top-5 win','Repeat win over former champion, with decline/repeat context.','review'],['Cory Sandhagen',1.00,'True top-5 win','Elite bantamweight contender; close decision context.','high-risk review'],['John Lineker',0.85,'Strong top-10 win','Dangerous ranked bantamweight contender.','locked'],['Raphael Assuncao II',0.85,'Strong top-10 win','Strong ranked bantamweight contender.','locked'],['Mike Easton',0.45,'Solid resume win','Solid bantamweight win.','locked'],['Vaughan Lee',0.25,'Name-value / faded / unproven','Low-end UFC quality value.','locked'],['Walel Watson',0.10,'Minimal UFC quality credit','Minimal UFC quality value.','locked']
     ]
   });
   store.version=VERSION;
