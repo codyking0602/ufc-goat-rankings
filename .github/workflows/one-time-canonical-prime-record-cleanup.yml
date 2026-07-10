@@ -50,9 +50,21 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
       - name: Validate cleaned runtime
+        shell: bash
         run: |
-          node scripts/run-prime-record-source-audit.mjs
-          node scripts/run-six-category-audit.mjs
+          set -o pipefail
+          {
+            node scripts/run-prime-record-source-audit.mjs
+            node scripts/run-six-category-audit.mjs
+          } 2>&1 | tee /tmp/canonical-prime-validation.log
+      - name: Upload validation log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-prime-validation-log
+          path: /tmp/canonical-prime-validation.log
+          if-no-files-found: warn
+          retention-days: 7
       - name: Remove temporary npm files
         run: git clean -fd package.json package-lock.json node_modules || true
       - name: Commit generated cleanup
