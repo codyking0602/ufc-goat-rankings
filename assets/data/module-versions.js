@@ -1,11 +1,12 @@
 // Central cache-bust versions and deterministic scoring bootstrap.
 window.UFC_MODULE_VERSIONS={
-  scoringPipeline:"20260710b-quality-ready",
+  scoringPipeline:"20260710c-prime-batch-one",
   finalScoreEngine:"20260710b-deterministic",
   primeWindows:"20260708a",
   primeRoundControlAudit:"20260708d-jon-54-63",
   primeDominanceLedgers:"20260708j-round-audit-batch-two",
   primeDominanceShadowModel:"20260708c-jon-elite-stakes",
+  primeDominanceAuditBatchSeven:"20260710a",
   primeDominanceLivePromoter:"20260710a-category-only",
   primeDominanceCopyPolish:"20260708b",
   categoryPercentileTiers:"20260710b-deterministic",
@@ -23,7 +24,7 @@ window.UFC_MODULE_VERSIONS={
 (function(){
   'use strict';
   const v=window.UFC_MODULE_VERSIONS||{};
-  const VERSION='deterministic-scoring-pipeline-20260710b-quality-ready';
+  const VERSION='deterministic-scoring-pipeline-20260710c-prime-batch-one';
   const state={
     version:VERSION,
     mode:'deterministic-single-pass',
@@ -99,6 +100,7 @@ window.UFC_MODULE_VERSIONS={
       await loadStep('prime-round-control',cache('assets/data/prime-round-control-audit.js',`prime-round-control-audit-${v.primeRoundControlAudit}`),'data-prime-round-control-audit');
       await loadStep('prime-ledgers',cache('assets/data/prime-dominance-ledgers.js',`prime-dominance-ledgers-${v.primeDominanceLedgers}`),'data-prime-dominance-ledgers');
       await loadStep('prime-shadow',cache('assets/data/prime-dominance-shadow-model.js',`prime-dominance-shadow-model-${v.primeDominanceShadowModel}`),'data-prime-dominance-shadow-model');
+      await loadStep('prime-audit-batch-seven',cache('assets/data/prime-dominance-audit-batch-seven.js',`prime-dominance-audit-batch-seven-${v.primeDominanceAuditBatchSeven}`),'data-prime-dominance-audit-batch-seven');
       await loadStep('prime-live',cache('assets/data/prime-dominance-live-promoter.js',`prime-dominance-live-promoter-${v.primeDominanceLivePromoter}`),'data-prime-dominance-live-promoter');
       await loadStep('prime-copy',cache('assets/js/prime-dominance-copy-polish.js',`prime-dominance-copy-polish-${v.primeDominanceCopyPolish}`),'data-prime-dominance-copy-polish');
 
