@@ -1,131 +1,139 @@
 # Changelog
 
+## 2026-07-09 — Deterministic Initialization Checkpoint
+
+### Changed
+
+- Replaced timer-based scoring startup in `module-versions.js` with one ordered Promise-based sequence.
+- Added an explicit readiness handoff from `ranking-data-patches.js`.
+- Removed repeated early/mid/late loading for Prime tiers, Longevity, and Apex Peak.
+- Removed score/rank reapplication from the prerequisite loader's status hook.
+- Changed `final-score-engine.js` to explicit single-pass mode.
+- Removed the final engine's automatic import-time calculation.
+- Removed the final engine's `refresh` wrapper.
+- Changed category percentile tiers into a read-only presentation layer.
+- Removed category-tier reapplication of Prime during rank lookups.
+- Removed duplicate category-tier and score-derived-OVR loading from the prerequisite chain.
+- Added a deterministic-initialization CI gate.
+
+### Validation
+
+Seventh headless Chromium audit:
+
+- 62 roster fighters
+- scoring timers: 0
+- repeated scoring loads: 0
+- duplicate scoring scripts: 0
+- final score engine apply count: 1
+- UI refresh count: 1
+- refresh wrapper: disabled
+- category tiers mutate scores: false
+- category tiers reapply Prime: false
+- deterministic initialization gate: PASS
+- ownership gate: PASS
+- 0 formula mismatches
+- 0 profile/leaderboard mismatches
+- 0 forbidden numerical display overrides
+- category coverage unchanged
+- fighter totals, rankings, and men's top ten unchanged
+
+Permanent report:
+
+- `docs/audits/SEVENTH_RUNTIME_AUDIT_DETERMINISTIC_INITIALIZATION.md`
+
+No fighter category input or audit value changed.
+
+### Next
+
+Complete the five missing Quality Wins audits, followed by the nine missing Prime Dominance audits.
+
 ## 2026-07-09 — Final Score Ownership Checkpoint
 
 ### Changed
 
-- `score-weighting.js` is now compatibility-only.
-- Preserved the locked weights, formula metadata, pure breakdown helper, Longevity legacy conversion, and Rules-page explanation.
-- Removed legacy weighting mutations of totals, weighted breakdowns, ranks, profile overall values, and numerical display overrides.
+- `score-weighting.js` became compatibility-only.
+- Preserved locked weights, formula metadata, pure breakdown helper, Longevity legacy conversion, and Rules-page copy.
+- Removed legacy mutations of totals, breakdowns, ranks, profile overall values, and numerical display overrides.
 - Removed duplicate Prime Windows and Prime Dominance loading from the legacy weighting layer.
-- Added a strict ownership gate to the headless Chromium audit.
+- Added a strict ownership gate to CI.
 
 ### Validation
 
-Sixth settled headless Chromium audit:
+Sixth headless Chromium audit:
 
-- 62 roster fighters checked
-- final score engine present: `final-score-engine-20260710a`
-- all 62 leaderboard rows owned by the final engine
+- 62/62 leaderboard rows owned by the final score engine
 - legacy weighting mode: `compatibility-only`
 - legacy weighting `mutatesScores`: false
 - duplicate Prime loaders: false
 - 0 rows with the wrong owner
 - 0 formula mismatches
-- 0 profile/leaderboard mismatches
-- 0 duplicate fighter names
-- 0 forbidden score-derived display overrides
 - category coverage, totals, and rankings unchanged
 
 Permanent report:
 
 - `docs/audits/SIXTH_RUNTIME_AUDIT_SCORE_OWNERSHIP.md`
 
-No fighter category input or audit value changed during this repair.
-
-### Next
-
-Replace delayed and repeated scoring-module loading with one deterministic initialization chain.
-
 ## 2026-07-09 — Apex Peak Category-Only Checkpoint
 
 ### Changed
 
-- `apex-peak-live-bonus.js` now writes only locked Apex Peak category values and audit metadata.
-- Preserved the full locked fighter table, all 61 completed audits, and Dricus du Plessis as the single pending review.
-- Removed Apex mutations of totals, weighted breakdowns, board ranks, profile overall scores, and numerical display overrides.
-- Removed the duplicate numerical Apex audit copy from runtime display overrides.
-- Apex now requests recalculation from `final-score-engine.js` after updating category values.
-- Standardized the promoter's active wording on “Apex Peak” while retaining the legacy global alias for compatibility.
-- Updated the Apex cache-bust version in `module-versions.js`.
+- `apex-peak-live-bonus.js` now writes only Apex Peak values and audit metadata.
+- Preserved all 61 completed audits and Dricus du Plessis as the single pending review.
+- Removed Apex mutations of totals, breakdowns, ranks, profile overall values, and numerical display overrides.
 
 ### Validation
 
-Fifth settled headless Chromium audit:
+Fifth headless Chromium audit:
 
-- 62 roster fighters
-- 61 completed Apex Peak audits pass
-- Dricus du Plessis remains the single pending Apex row
+- 61 completed Apex audits pass
+- Dricus remains pending
 - 0 formula mismatches
-- 0 profile/leaderboard mismatches
-- 0 duplicate fighter names
-- 0 forbidden score-derived display overrides
-- category coverage unchanged
-- fighter totals, rankings, and men's top ten unchanged
+- totals and rankings unchanged
 
 Permanent report:
 
 - `docs/audits/FIFTH_RUNTIME_AUDIT_APEX.md`
-
-No fighter category input, Apex component value, or selected Apex performance changed during this repair.
 
 ## 2026-07-09 — Longevity Category-Only Checkpoint
 
 ### Changed
 
 - `longevity-live-promoter.js` now writes only native `/30` Longevity values and Fighter Era Ledger audit metadata.
-- Removed Longevity mutations of totals, weighted breakdowns, board ranks, profile overall scores, and numerical display overrides.
-- Longevity now requests recalculation from `final-score-engine.js` after updating its category values.
-- Updated the Longevity cache-bust version in `module-versions.js`.
+- Removed Longevity mutations of totals, breakdowns, ranks, profile overall values, and numerical display overrides.
 
 ### Validation
 
-Fourth settled headless Chromium audit:
+Fourth headless Chromium audit:
 
-- 62 roster fighters
 - 62/62 Longevity audits live
 - 0 formula mismatches
-- 0 profile/leaderboard mismatches
-- 0 duplicate fighter names
-- 0 forbidden score-derived display overrides
-- category coverage unchanged
-- fighter totals, rankings, and top ten unchanged
+- totals and rankings unchanged
 
 Permanent report:
 
 - `docs/audits/FOURTH_RUNTIME_AUDIT_LONGEVITY.md`
 
-No fighter category input or audit value changed during this repair.
-
 ## 2026-07-09 — Championship and Quality Category-Only Checkpoint
 
 ### Changed
 
-- `championship-resume-live.js` now writes only Championship Resume values, audit metadata, title context, and presentation evidence.
-- Removed Championship mutations of totals, ranks, weighted breakdowns, and numerical display overrides.
-- Removed Championship's unrelated Prime category-rank/OVR writer and delayed Prime rewrite timers.
-- `opponent-quality-live.js` now writes only Quality Wins values, audit metadata, and presentation evidence.
-- Removed Quality Wins mutations of totals, ranks, weighted breakdowns, and numerical display overrides.
-- Both category writers now request recalculation from `final-score-engine.js`.
-- Updated the Quality Wins cache-bust loader to the category-only version.
+- Championship Resume now writes only Championship values, audit metadata, title context, and presentation evidence.
+- Quality Wins now writes only Quality values, audit metadata, and presentation evidence.
+- Removed total/rank/breakdown/display mutations from both.
+- Removed Championship's unrelated Prime rank/OVR rewrite timers.
 
 ### Validation
 
-Third settled headless Chromium audit:
+Third headless Chromium audit:
 
-- 62 roster fighters
+- 62 fighters
 - 0 formula mismatches
-- 0 profile/leaderboard mismatches
-- 0 duplicate fighter names
-- 0 forbidden score-derived display overrides
 - category coverage unchanged
-- fighter totals and rankings unchanged
+- totals and rankings unchanged
 
 Permanent report:
 
 - `docs/audits/THIRD_RUNTIME_AUDIT_CHAMPIONSHIP_QUALITY.md`
-
-No fighter category input or audit value changed during this repair.
 
 ## 2026-07-09 — Canonical Final Score Engine Checkpoint
 
@@ -136,12 +144,10 @@ No fighter category input or audit value changed during this repair.
 
 ### Changed
 
-- Prime Dominance promoter now writes only Prime-related values and audit metadata.
-- Prime Dominance no longer writes totals, ranks, overall OVR, category OVR, or category rank.
-- Module bootstrap now routes current category passes through the final score engine.
-- Runtime numerical display overrides are stripped so current scores determine ranks and OVRs.
+- Prime Dominance became category-only.
+- The final engine became the canonical owner of weighted totals, ranks, profile totals, and score-derived OVR.
 
-### Locked formula
+### Locked Formula
 
 ```text
 Championship Resume / 30 × 35
@@ -155,16 +161,12 @@ Championship Resume / 30 × 35
 
 ### Validation
 
-Second settled headless Chromium audit:
+Second headless Chromium audit:
 
-- 62 roster fighters
 - formula mismatches reduced from 53 to 0
 - 0 profile/leaderboard mismatches
-- 0 duplicate fighter names
 - 0 forbidden score-derived display overrides
 - category coverage unchanged
-
-No fighter category input or audit value changed during this repair.
 
 ## 2026-07-09 — Read-Only Six-Category Integrity Audit
 
@@ -172,28 +174,9 @@ No fighter category input or audit value changed during this repair.
 
 - `assets/data/six-category-integrity-audit.js`
 - `audit.html`
+- branch-only Chromium workflow
 
-### Audit coverage
-
-The read-only auditor checks every leaderboard fighter for:
-
-- live Championship Resume source and audit-to-row match
-- live Quality Wins source and audit-to-row match
-- merged Prime Dominance source and audit-to-row match
-- native `/30` Longevity source and audit-to-row match
-- completed Apex Peak source and audit-to-row match
-- Loss Context ledger and live/legacy status
-- exact locked-formula reconciliation
-- leaderboard/profile mismatches
-- duplicate fighter rows
-- score-derived fields inside display overrides
-
-### Safety
-
-- No fighter inputs were changed.
-- No scores, ranks, OVRs, or category values were changed.
-- The auditor reports only and declares `mutatesScores: false`.
-- The dashboard is isolated from normal app loading on the safety branch.
+The auditor checks source coverage, formula reconciliation, profile synchronization, duplicate rows, display override contamination, score ownership, and deterministic initialization.
 
 ## 2026-07-09 — Six-Category Pipeline Consolidation Begins
 
@@ -203,12 +186,6 @@ The read-only auditor checks every leaderboard fighter for:
 - `docs/CURRENT_STATE.md`
 - `docs/ROADMAP.md`
 - `docs/OPEN_ISSUES.md`
-- protected working branch: `fix/unified-six-category-pipeline`
+- protected branch `fix/unified-six-category-pipeline`
 
-### Purpose
-
-Preserve Cody's fighter-by-fighter audit work while replacing the tangled scoring orchestration with a deterministic six-category pipeline.
-
-### Live behavior
-
-No production scoring behavior changed in this documentation phase.
+Purpose: preserve Cody's fighter-by-fighter audits while replacing tangled runtime scoring with one auditable pipeline.
