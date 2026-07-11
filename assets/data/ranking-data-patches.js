@@ -1,7 +1,7 @@
 // Lightweight prerequisite/data loader with an explicit readiness handoff.
 (function(){
   'use strict';
-  const VERSION='ranking-data-patches-20260711p-profile-card-final-cleanup';
+  const VERSION='ranking-data-patches-20260711q-home-interaction-polish';
   let readyResolved=false;
   let resolveReady;
   const readyPromise=new Promise(resolve=>{resolveReady=resolve;});
@@ -97,8 +97,8 @@
     const loadPacketManifest=()=>loadScriptOnce('assets/data/fighter-packet-manifest.js?v=fighter-packet-manifest-20260710z-chuck-vitor-window','data-fighter-packet-manifest',loadCompareCore);
     const loadBranding=()=>loadScriptOnce('assets/js/app-branding.js?v=app-branding-20260702c','data-app-branding',loadPacketManifest);
     const loadDivisionRankings=()=>loadScriptOnce('assets/js/division-rankings.js?v=division-rankings-20260705e-clean-leaderboard','data-division-rankings',loadBranding);
-    const loadHomePolish=()=>loadScriptOnce('assets/js/home-polish.js?v=home-polish-hybrid-preview-20260705b','data-home-polish',loadDivisionRankings);
-    const loadWatchMoments=()=>loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260706t-robbie-lawler','data-watch-moments',loadHomePolish);
+    const loadHomePolish=()=>loadScriptOnce('assets/js/home-polish.js?v=home-polish-hybrid-preview-20260711c-tab-scroll-hint','data-home-polish',loadDivisionRankings);
+    const loadWatchMoments=()=>loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260711b-matched-card-pill','data-watch-moments',loadHomePolish);
     const loadPackages=()=>loadScriptOnce('assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260710a-canonical-prime-record','data-fighter-profile-packages',loadWatchMoments);
     if(window.UFC_PROFILE_TEMPLATE_SYSTEM){loadPackages();return;}
     loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260711c-compact-cards-snapshot','data-profile-template-system',loadPackages);
