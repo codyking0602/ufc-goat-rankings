@@ -1,6 +1,6 @@
 // Home screen polish: light background with dark card preview across all tabs and profiles.
 (function(){
-  const VERSION = 'home-polish-hybrid-preview-20260705b';
+  const VERSION = 'home-polish-hybrid-preview-20260711c-tab-scroll-hint';
   let heroCountSyncTimer = null;
 
   function injectCss(){
@@ -107,7 +107,26 @@
         .hero{padding:16px 16px 14px !important;gap:8px !important}
         h1{font-size:35px !important;line-height:.97 !important}
         .subtitle{font-size:16.5px !important;line-height:1.32 !important;margin-top:8px !important}
-        .tabs{padding-top:10px !important;padding-bottom:10px !important}
+        .tabs{padding-top:10px !important;padding-bottom:10px !important;scrollbar-width:none}
+        .tabs::-webkit-scrollbar{display:none}
+        .tabs::after{
+          content:"›";
+          position:sticky;
+          right:4px;
+          flex:0 0 30px;
+          align-self:stretch;
+          display:grid;
+          place-items:center;
+          margin-left:-18px;
+          padding-left:13px;
+          color:#334155;
+          font-size:25px;
+          font-weight:900;
+          line-height:1;
+          background:linear-gradient(90deg,rgba(248,250,252,0),rgba(248,250,252,.98) 52%);
+          pointer-events:none;
+          z-index:3;
+        }
         .shell{padding-top:14px !important}
         .section-title{margin-bottom:12px !important}
         .row{grid-template-columns:34px 58px minmax(0,1fr) 64px !important}
