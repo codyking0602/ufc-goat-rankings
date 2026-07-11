@@ -162,13 +162,13 @@ async function readRuntime() {
             stats.adjustedTitleWins
           ));
           const bestWins = Array.from(new Set((quality.bestWins || (profile.opponents || []).map(item => item.opponent)).filter(Boolean))).slice(0, 8);
-          const window = era.window || prime.primeWindow || {};
-          const windowLabel = first(window.startLabel || window.start, window.endLabel || window.end)
-            ? `${window.startLabel || window.start || 'Prime start'} → ${window.endLabel || window.end || 'Current elite form'}`
+          const primeWindow = era.window || prime.primeWindow || {};
+          const windowLabel = first(primeWindow.startLabel || primeWindow.start, primeWindow.endLabel || primeWindow.end)
+            ? `${primeWindow.startLabel || primeWindow.start || 'Prime start'} → ${primeWindow.endLabel || primeWindow.end || 'Current elite form'}`
             : undefined;
 
           fighters.push({
-            slug: name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/&/g, ' and ').replace(/[’']/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''),
+            slug: slugify(name),
             name,
             group,
             rank: finite(row.rank),
@@ -196,12 +196,12 @@ async function readRuntime() {
             titleWinLedger: titleLedgerFor(name),
             primeRecord,
             primeWindow: windowLabel,
-            primeWindowDetail: window && Object.keys(window).length ? {
-              start: window.start,
-              startLabel: window.startLabel,
-              end: window.end,
-              endLabel: window.endLabel,
-              endReason: cleanText(window.endReason, 300)
+            primeWindowDetail: primeWindow && Object.keys(primeWindow).length ? {
+              start: primeWindow.start,
+              startLabel: primeWindow.startLabel,
+              end: primeWindow.end,
+              endLabel: primeWindow.endLabel,
+              endReason: cleanText(primeWindow.endReason, 300)
             } : undefined,
             roundsWonPct: roundControl,
             finishRatePct: finishRate,
@@ -221,9 +221,9 @@ async function readRuntime() {
       const directMatchups = Object.values(directLedger).map(item => ({
         fighters: Array.isArray(item.fighters) ? item.fighters.slice(0, 2) : [],
         fights: finite(item.fights),
-        directWinner: item.winner,
+        headToHeadWinner: item.winner,
         importance: item.importance,
-        summary: cleanText(item.summary, 650)
+        headToHeadSummary: cleanText(item.summary, 650)
       })).filter(item => item.fighters.length === 2);
 
       return {
@@ -244,32 +244,72 @@ async function readRuntime() {
   }
 }
 
-function addCurrentLean(matchup, fightersByName) {
+function addScoreVerdict(matchup, fightersByName) {
   const [a, b] = matchup.fighters;
   const fighterA = fightersByName.get(a);
   const fighterB = fightersByName.get(b);
-  if (!fighterA || !fighterB) return compact({ ...matchup, pairKey: pairKey(a, b), slugs: [slugify(a), slugify(b)] });
+  const base = {
+    pairKey: pairKey(a, b),
+    fighters: [a, b],
+    slugs: [slugify(a), slugify(b)]
+  };
+  if (!fighterA || !fighterB) return compact({ ...base, dataStatus: 'missing-fighter-data' });
+
   const totalA = Number(fighterA.totalScore);
   const totalB = Number(fighterB.totalScore);
+  const tied = totalA === totalB;
+  const winner = tied ? undefined : (totalA > totalB ? fighterA : fighterB);
+  const loser = tied ? undefined : (totalA > totalB ? fighterB : fighterA);
+  const headToHead = compact({
+    seriesWinner: matchup.headToHeadWinner,
+    fights: matchup.fights,
+    importance: matchup.importance,
+    summary: matchup.headToHeadSummary,
+    contextOnly: true,
+    doesNotOverrideVerdict: true
+  });
+
   return compact({
-    ...matchup,
-    pairKey: pairKey(a, b),
-    slugs: [slugify(a), slugify(b)],
-    defaultLean: totalA === totalB ? 'Essentially even' : (totalA > totalB ? a : b),
-    margin: round(Math.abs(totalA - totalB))
+    ...base,
+    verdictRule: 'The higher totalScore is the comparison winner. Head-to-head results are context only and never override this verdict.',
+    verdictStatus: tied ? 'essentially-even' : 'decided-by-totalScore',
+    verdictWinner: winner?.name,
+    verdictLoser: loser?.name,
+    winnerScore: round(winner?.totalScore),
+    loserScore: round(loser?.totalScore),
+    winnerRank: winner?.rank,
+    loserRank: loser?.rank,
+    margin: round(Math.abs(totalA - totalB)),
+    headToHead
   });
 }
 
-function specialFrames(fightersByName) {
-  const pair = (a, b, coreDebate, debateLanes, notes = []) => addCurrentLean({ fighters: [a, b], coreDebate, debateLanes, notes }, fightersByName);
-  return [
-    pair('Jon Jones', 'Georges St-Pierre', 'GSP has the cleaner consistency and revenge-win argument. Jones has the larger championship-volume and multi-era case.', { cleanerCase: 'Georges St-Pierre', largerUfcResume: 'Jon Jones' }),
-    pair('Khabib Nurmagomedov', 'Islam Makhachev', 'Khabib owns the cleaner undefeated peak. Islam owns the larger current championship and modern-depth case.', { cleanerPeak: 'Khabib Nurmagomedov', largerCurrentResume: 'Islam Makhachev' }),
-    pair('Kamaru Usman', 'Max Holloway', 'Usman has the stronger championship reign and current overall score. Holloway has the longevity, durability, and quality-win-volume counterargument.', { championPeak: 'Kamaru Usman', volumeCounter: 'Max Holloway' }, ['The current score determines the verdict; do not reuse the old Max-over-Usman lean.']),
-    pair('Jose Aldo', 'Lyoto Machida', 'Aldo has the deeper UFC body of work and longevity. Machida owns the short-reign champion-apex counterargument.', { deeperUfcResume: 'Jose Aldo', apexCounter: 'Lyoto Machida' }),
-    pair('Amanda Nunes', 'Cris Cyborg', 'Nunes has the deeper two-division UFC championship resume and the direct knockout. Cyborg has the dominant compact-reign and aura counterargument.', { deeperUfcResume: 'Amanda Nunes', compactDominanceCounter: 'Cris Cyborg' }),
-    pair('Cris Cyborg', 'Holly Holm', 'Cyborg has the stronger UFC championship run and won their title fight. Holm owns the Rousey-upset and broader two-sport striking-legacy counterargument.', { strongerUfcTitleRun: 'Cris Cyborg', iconicUpsetCounter: 'Holly Holm' })
-  ];
+function validateVerdicts(matchups, fightersByName) {
+  const unsafeFields = ['defaultLean', 'directWinner'];
+  for (const matchup of matchups) {
+    for (const field of unsafeFields) {
+      if (Object.prototype.hasOwnProperty.call(matchup, field)) throw new Error(`Unsafe verdict field ${field} found in ${matchup.pairKey}.`);
+    }
+    const [a, b] = matchup.fighters;
+    const fighterA = fightersByName.get(a);
+    const fighterB = fightersByName.get(b);
+    if (!fighterA || !fighterB) throw new Error(`Missing fighter data for ${matchup.pairKey}.`);
+    const scoreA = Number(fighterA.totalScore);
+    const scoreB = Number(fighterB.totalScore);
+    if (scoreA === scoreB) {
+      if (matchup.verdictStatus !== 'essentially-even' || matchup.verdictWinner) {
+        throw new Error(`Tie verdict mismatch for ${matchup.pairKey}.`);
+      }
+      continue;
+    }
+    const expectedWinner = scoreA > scoreB ? a : b;
+    if (matchup.verdictWinner !== expectedWinner) {
+      throw new Error(`Verdict mismatch for ${matchup.pairKey}: expected ${expectedWinner}, received ${matchup.verdictWinner}.`);
+    }
+    if (matchup.headToHead?.doesNotOverrideVerdict !== true) {
+      throw new Error(`Head-to-head safeguard missing for ${matchup.pairKey}.`);
+    }
+  }
 }
 
 async function build() {
@@ -278,22 +318,21 @@ async function build() {
     .map(fighter => compact(fighter))
     .sort((a, b) => a.group !== b.group ? (a.group === 'men' ? -1 : 1) : Number(a.rank || 999) - Number(b.rank || 999));
   const fightersByName = new Map(fighters.map(fighter => [fighter.name, fighter]));
-  const direct = runtime.directMatchups
+  const matchups = runtime.directMatchups
     .filter(matchup => matchup.fighters.every(name => fightersByName.has(name)))
-    .map(matchup => addCurrentLean(matchup, fightersByName));
-  const specials = specialFrames(fightersByName);
-  const matchupMap = new Map(direct.map(matchup => [matchup.pairKey, matchup]));
-  for (const special of specials) matchupMap.set(special.pairKey, compact({ ...(matchupMap.get(special.pairKey) || {}), ...special }));
-  const matchups = [...matchupMap.values()].sort((a, b) => a.pairKey.localeCompare(b.pairKey));
+    .map(matchup => addScoreVerdict(matchup, fightersByName))
+    .sort((a, b) => a.pairKey.localeCompare(b.pairKey));
+  validateVerdicts(matchups, fightersByName);
 
   const generatedAt = new Date().toISOString();
   const guidance = {
-    sourceOfTruth: 'Use this live-runtime feed over uploaded memory, browsing, or old scores. The current totalScore determines the winner.',
+    sourceOfTruth: 'For every comparison, retrieve both fighter objects and compare totalScore numerically. The higher totalScore is the verdict winner.',
     scope: 'Judge UFC accomplishments by default. Non-UFC achievements may be mentioned only as context.',
-    verdictRule: 'Special matchup framing supplies debate lanes only. It may never override the current score order.',
+    verdictRule: 'Use verdictWinner exactly when a matchup object exists. headToHead.seriesWinner names only the real fight or series winner and never overrides verdictWinner.',
+    retrievalRule: 'Do not issue a verdict until both fighter records have been found. If either fighter is missing, say the data is incomplete.',
     explainWith: ['current rank and OVR', 'UFC record', 'title-fight wins and adjusted title credit', 'Elite+ and Top-5+ wins', 'prime record and rounds won', 'finish percentage', 'active elite years', 'Apex Peak', 'loss context'],
-    writingStyle: ['Start with the verdict', 'Give the losing fighter a real counterargument', 'Explain why the winner still wins', 'Separate better fighter from better UFC resume when relevant'],
-    avoid: ['raw formula narration in normal answers', 'database/model language', 'outside citations unless asked', 'treating special matchup copy as a locked verdict']
+    writingStyle: ['Start with verdictWinner', 'Give verdictLoser a real counterargument', 'Explain why verdictWinner still wins', 'Separate better fighter from better UFC resume when relevant'],
+    avoid: ['raw formula narration in normal answers', 'database/model language', 'outside citations unless asked', 'using a head-to-head winner as the comparison winner when totalScore says otherwise', 'mentioning Knowledge filenames']
   };
   const sourceVersions = compact({
     scoringPipeline: runtime.pipelineVersion,
@@ -312,9 +351,16 @@ async function build() {
       slug: fighter.slug, name: fighter.name, group: fighter.group, rank: fighter.rank,
       appOvr: fighter.appOvr, totalScore: fighter.totalScore, division: fighter.division, tag: fighter.tag
     })),
-    specialMatchups: specials.map(matchup => compact({
-      pairKey: matchup.pairKey, fighters: matchup.fighters, slugs: matchup.slugs,
-      defaultLean: matchup.defaultLean, margin: matchup.margin, coreDebate: matchup.coreDebate, debateLanes: matchup.debateLanes
+    directFightMatchups: matchups.map(matchup => compact({
+      pairKey: matchup.pairKey,
+      fighters: matchup.fighters,
+      slugs: matchup.slugs,
+      verdictWinner: matchup.verdictWinner,
+      verdictLoser: matchup.verdictLoser,
+      winnerScore: matchup.winnerScore,
+      loserScore: matchup.loserScore,
+      margin: matchup.margin,
+      headToHead: matchup.headToHead
     }))
   };
   const legacyFeed = {
@@ -327,8 +373,7 @@ async function build() {
     guidance,
     fighterCount: fighters.length,
     fighters,
-    specialMatchups: specials,
-    directFightMatchups: direct
+    directFightMatchups: matchups
   };
 
   fs.rmSync(dataDir, { recursive: true, force: true });
@@ -342,7 +387,7 @@ async function build() {
   const cyborg = fightersByName.get('Cris Cyborg');
   const jones = fightersByName.get('Jon Jones');
   const gsp = fightersByName.get('Georges St-Pierre');
-  console.log(`Built live-runtime Octagon Verdict feed with ${fighters.length} fighters and ${matchups.length} matchup files.`);
+  console.log(`Built live-runtime Octagon Verdict feed with ${fighters.length} fighters and ${matchups.length} direct-fight matchup files.`);
   console.log(`Jones: #${jones?.rank}, ${jones?.totalScore}, ${jones?.appOvr} OVR.`);
   console.log(`GSP: #${gsp?.rank}, ${gsp?.totalScore}, ${gsp?.appOvr} OVR.`);
   console.log(`Cyborg: #${cyborg?.rank}, ${cyborg?.totalScore}, ${cyborg?.appOvr} OVR.`);
