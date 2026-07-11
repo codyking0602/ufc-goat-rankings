@@ -1,9 +1,9 @@
 // Amanda Nunes fighter packet extension.
 (function(){
-  const VERSION = 'fighter-packet-amanda-nunes-20260702a';
+  const VERSION = 'fighter-packet-amanda-nunes-20260710b-ufc-record';
   const fighter = 'Amanda Nunes';
   const packet = {
-    status: { stage: 'packet live; photos and Watch Moment needed', lastUpdated: '2026-07-02', nextFix: 'Add Amanda photos and Watch Moment link.' },
+    status: { stage: 'packet live; UFC-only record corrected; photos and Watch Moment needed', lastUpdated: '2026-07-10', nextFix: 'Add Amanda photos and Watch Moment link.' },
     repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/amanda-nunes.js', compareFallback: 'assets/compare-coverage-pack-2.js' },
     display: {
       overallOvr: 94,
@@ -12,13 +12,13 @@
       resumeTag: 'Women’s UFC GOAT standard',
       oneLiner: 'The women’s UFC GOAT case: two-division champion, huge title-fight volume, legendary finishes, and the deepest women’s win list in this ranking.',
       categories: { championship: { ovr: 96, rank: 1 }, opponentQuality: { ovr: 94, rank: 1 }, primeDominance: { ovr: 93, rank: 1 }, longevity: { ovr: 91, rank: 2 } },
-      snapshot: [ ['UFC Record', '16-3'], ['UFC Title-Fight Wins', '11'], ['Championship Level', 'Two-Division Women’s GOAT'], ['Quality Wins', 'Deepest Women’s UFC Ledger'],  ['Active Elite Years', '7.0 Elite Years'], ['Loss Context', 'Pena upset matters, but revenge restored the case'] ],
+      snapshot: [ ['UFC Record', '16-2'], ['UFC Title-Fight Wins', '11'], ['Championship Level', 'Two-Division Women’s GOAT'], ['Quality Wins', 'Deepest Women’s UFC Ledger'],  ['Active Elite Years', '7.0 Elite Years'], ['Loss Context', 'Pena upset matters, but revenge restored the case'] ],
       whyRankedHere: 'Nunes ranks as the women’s #1 because her UFC resume has the cleanest separation: bantamweight title control, featherweight title value, the Cyborg knockout, the Rousey finish, Shevchenko rivalry value, and years of elite wins.',
       whyNotHigher: 'On the full app board, she does not pass the top men because this ranking keeps the men’s and women’s boards separate and does not pretend division depth is identical. Within the women’s board, she is the clear benchmark.',
       keyJudgmentCalls: [ ['Two-division value', 'bantamweight and featherweight gold drive the championship case.'], ['Cyborg knockout', 'one of the biggest single wins in women’s MMA history and a major UFC legacy moment.'], ['Shevchenko rivalry', 'direct edge over Valentina is central to the women’s GOAT separation.'], ['Pena upset', 'a real blemish, but the rematch win restores a lot of the damage.'], ['Featherweight depth', 'thin division context matters, but it does not erase the two-division value.'] ],
       finalTakeaway: 'Nunes is the women’s UFC GOAT standard: two belts, deep elite wins, violent title dominance, and direct separation over every major rival from her era.'
     },
-    profileStats: { ufcRecord: '16-3', titleFightWins: 11, eliteWins: 11,  finishRatePct: 81.3, roundsWonPct: 74.0, activeEliteYears: 7.0, timesFinishedPrime: 1, divisionStrengthContext: 'Bantamweight carries the core case; featherweight adds two-division title value with thin-depth context.', lossContext: 'The Pena upset is a real drag, but the rematch win protects the overall GOAT case.' },
+    profileStats: { ufcRecord: '16-2', titleFightWins: 11, eliteWins: 11,  finishRatePct: 81.3, roundsWonPct: 74.0, activeEliteYears: 7.0, timesFinishedPrime: 1, divisionStrengthContext: 'Bantamweight carries the core case; featherweight adds two-division title value with thin-depth context.', lossContext: 'The Pena upset is a real drag, but the rematch win protects the overall GOAT case.' },
     compareSeasoning: {
       shortCase: 'Nunes is the women’s GOAT standard: two-division champion, massive title-fight volume, legendary finishes, and wins over nearly every major name from her era.',
       peak: 'At her best, Nunes was power, athleticism, takedown defense, jiu-jitsu, confidence, and finishing danger. She could erase great fighters quickly or beat them over five rounds.',
@@ -34,7 +34,7 @@
       titleSummary: 'Nunes has the strongest women’s UFC title case: two belts, repeated defenses, a Cyborg knockout, and the Pena revenge win.',
       primeSummary: 'Her elite window was long, violent, and title-heavy, with enough two-division value to separate her from every other women’s case.',
       titleStyle: 'Women’s GOAT Two-Division Champion', primeStyle: 'Long Violent Title Prime',
-      legacyStats: { ufcRecord: '16-3', titleFightWins: 11, beltsWon: 2, titleDefenses: 7, activeEliteYearsLabel: 'roughly 7 active elite years', primeNote: 'long two-division title prime with the deepest women’s UFC win list' }
+      legacyStats: { ufcRecord: '16-2', titleFightWins: 11, beltsWon: 2, titleDefenses: 7, activeEliteYearsLabel: 'roughly 7 active elite years', primeNote: 'long two-division title prime with the deepest women’s UFC win list' }
     }
   };
   function mergeLegacyStats(a,b){ return { ...(a || {}), ...(b || {}) }; }
