@@ -2,13 +2,18 @@
 // This is the only module allowed to own overall totals, ranks, weighted breakdowns, and score-derived OVR.
 (function(){
   'use strict';
-  const VERSION='final-score-engine-20260710b-deterministic';
+  const VERSION='final-score-engine-20260711a-fixed-anchor-curve';
   const DATA=window.RANKING_DATA;
   const WEIGHTS={championship:35,opponentQuality:27.5,primeDominance:27.5,longevity:10};
   const MAX={championship:30,opponentQuality:30,primeDominance:30,longevity:30};
   const LEGACY_LONGEVITY_MAX=15;
   const OVERALL_FLOOR=82;
   const OVERALL_CEILING=99;
+  const OVERALL_CURVE=0.85;
+  const OVERALL_ANCHORS={
+    men:{floorScore:18.68,ceilingScore:101.92},
+    women:{floorScore:25.78,ceilingScore:80.79}
+  };
   const CATEGORY_FLOOR=75;
   const CATEGORY_CEILING=99;
   const FORMULA='championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty';
@@ -69,15 +74,17 @@
     const fighterKey=key(row?.fighter);
     return (DATA?.women||[]).some(item=>key(item.fighter)===fighterKey)?(DATA.women||[]):(DATA?.men||[]);
   }
+  function boardTypeFor(row){
+    return boardFor(row)===(DATA?.women||[])?'women':'men';
+  }
   function overallOvrFor(row){
-    const board=boardFor(row);
-    const values=board.map(item=>num(item.totalScore));
-    if(!values.length) return OVERALL_FLOOR;
-    const min=Math.min(...values);
-    const max=Math.max(...values);
-    if(max===min) return OVERALL_CEILING;
-    const normalized=(num(row?.totalScore)-min)/(max-min);
-    return clamp(Math.round(OVERALL_FLOOR+normalized*(OVERALL_CEILING-OVERALL_FLOOR)),OVERALL_FLOOR,OVERALL_CEILING);
+    const boardType=boardTypeFor(row);
+    const anchors=OVERALL_ANCHORS[boardType]||OVERALL_ANCHORS.men;
+    const range=anchors.ceilingScore-anchors.floorScore;
+    if(range<=0) return OVERALL_FLOOR;
+    const normalized=clamp((num(row?.totalScore)-anchors.floorScore)/range,0,1);
+    const curved=Math.pow(normalized,OVERALL_CURVE);
+    return clamp(Math.round(OVERALL_FLOOR+curved*(OVERALL_CEILING-OVERALL_FLOOR)),OVERALL_FLOOR,OVERALL_CEILING);
   }
   function categoryRankFor(row,category){
     const board=boardFor(row);
@@ -135,6 +142,10 @@
     formula:FORMULA,
     weights:WEIGHTS,
     max:MAX,
+    overallFloor:OVERALL_FLOOR,
+    overallCeiling:OVERALL_CEILING,
+    overallCurve:OVERALL_CURVE,
+    overallAnchors:OVERALL_ANCHORS,
     applyCount:0,
     scoreBreakdown,
     overallOvrFor,
@@ -159,7 +170,7 @@
       const strippedScoreOverrides=stripScoreDerivedOverrides();
       API.applyCount+=1;
       if(DATA.meta){
-        DATA.meta.finalScoreEngine={version:VERSION,owner:'final-score-engine.js',mode:'explicit-single-pass',formula:FORMULA,weights:WEIGHTS,max:MAX,applyCount:API.applyCount,appliedAt:new Date().toISOString()};
+        DATA.meta.finalScoreEngine={version:VERSION,owner:'final-score-engine.js',mode:'explicit-single-pass',formula:FORMULA,weights:WEIGHTS,max:MAX,overallFloor:OVERALL_FLOOR,overallCeiling:OVERALL_CEILING,overallCurve:OVERALL_CURVE,overallAnchors:OVERALL_ANCHORS,applyCount:API.applyCount,appliedAt:new Date().toISOString()};
       }
       DATA.finalScoreEngineVersion=VERSION;
       DATA.liveScoreMode='unified-final-score-engine';
@@ -174,6 +185,10 @@
         formula:FORMULA,
         fighterCount:boardRows().length,
         strippedScoreOverrides,
+        overallFloor:OVERALL_FLOOR,
+        overallCeiling:OVERALL_CEILING,
+        overallCurve:OVERALL_CURVE,
+        overallAnchors:OVERALL_ANCHORS,
         menTopFive:(DATA.men||[]).slice(0,5).map(row=>({fighter:row.fighter,rank:row.rank,totalScore:row.totalScore,overallOvr:row.overallOvr})),
         womenTopFive:(DATA.women||[]).slice(0,5).map(row=>({fighter:row.fighter,rank:row.rank,totalScore:row.totalScore,overallOvr:row.overallOvr})),
         appliedAt:new Date().toISOString()
