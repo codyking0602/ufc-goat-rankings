@@ -25,10 +25,22 @@ jobs:
       - name: Check out main
         uses: actions/checkout@v4
 
-      - name: Refresh production cache keys
+      - name: Refresh production cache keys and loader safety
         run: |
           sed -i 's/module-versions-20260710zd-loss-context-final-closure/module-versions-20260710ze-loss-context-canonical-production/g' index.html
           sed -i 's/ranking-data-patches-20260710j-loss-context-records/ranking-data-patches-20260710k-canonical-loss-context/g' index.html
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('assets/data/ranking-data-patches.js')
+          text = path.read_text()
+          marker = "function compareCoreScripts(){const packets=packetManifest().map(row=>packet(row.slug,row.version));return[\n"
+          safety = "    {src:'assets/js/refresh-safety.js?v=refresh-safety-20260710a-modular-containers',attr:'data-refresh-safety'},\n"
+          if safety not in text:
+              if marker not in text:
+                  raise SystemExit('Could not find compareCoreScripts insertion point.')
+              text = text.replace(marker, marker + safety, 1)
+              path.write_text(text)
+          PY
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -90,7 +102,7 @@ jobs:
           cp artifacts/js-syntax-audit.txt docs/js-syntax-audit.txt
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html docs/loss-context-runtime-report.json docs/loss-context-runtime-summary.json docs/js-syntax-audit.txt
+          git add index.html assets/data/ranking-data-patches.js docs/loss-context-runtime-report.json docs/loss-context-runtime-summary.json docs/js-syntax-audit.txt
           git commit -m 'Record canonical Loss Context runtime audit [skip ci]' || true
           git push
 
