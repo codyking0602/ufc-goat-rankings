@@ -1,7 +1,7 @@
-// Watch Moment links for fighter cards and profiles.
+// Watch Moment links for fighter cards and Signature Fight links for profiles.
 // Keep links here as app-facing content, separate from scoring and nickname/display-name polish.
 (function(){
-  const VERSION = 'watch-moments-20260711b-matched-card-pill';
+  const VERSION = 'watch-moments-20260711c-signature-fights-batch-one';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -29,7 +29,7 @@
     'Brock Lesnar': 'https://youtube.com/shorts/F3Z32PDzObA?is=uzqAk5wbnG7dx9TS',
     'Merab Dvalishvili': 'https://youtube.com/shorts/v8qciKt0g9Y?is=9I22lnhlQVqsQyQT',
     'B.J. Penn': 'https://youtube.com/shorts/FfBpWXo-EWo?is=4SrvWa7ntRkx5Bia',
-    'Dustin Poirier': 'https://youtube.com/shorts/pykcFJHon8I?is=WgBo2b7RTRqozCYU',
+    'Dustin Poirier': 'https://youtube.com/shorts/IhdiRCgysNo?is=TQ3t1VPYpkftSVRQ',
     'Tony Ferguson': 'https://youtube.com/shorts/kwNQdTKvQbY?is=yeoa3ANZBlAMfEpv',
     'T.J. Dillashaw': 'https://youtube.com/shorts/FiV10zxE8RY?is=S7az7vuBDbjIuIfJ',
     'Alex Pereira': 'https://youtube.com/shorts/rb-yUzZNAcQ?is=o8jclP4Z3MTHGH0x',
@@ -70,10 +70,30 @@
     'Ronda Rousey': 'https://youtube.com/shorts/l4hilvKQgYc?is=diOKawJqeBkHdtcf'
   };
 
+  const SIGNATURE_FIGHTS = {
+    'Jon Jones': 'https://youtu.be/ILOnZDCbmKM?is=YBFWXqGDjc9mpcjR',
+    'Georges St-Pierre': 'https://youtu.be/4BCLM2kLh9I?is=F6TfTvsJpzKshLPK',
+    'Demetrious Johnson': 'https://youtu.be/9LfHvnxk170?is=tYaKigfsNWM3-rEk',
+    'Anderson Silva': 'https://youtu.be/mWjv5lfe4eY?is=DwGlau_bq7PzxqVe',
+    'Islam Makhachev': 'https://youtu.be/h9oj6HEdZSI?is=1Fp-NwJ3VRAXCl56',
+    'Alexander Volkanovski': 'https://youtu.be/vE-Vu1EA94A?is=53qFtddjjQOFrkBF',
+    'Khabib Nurmagomedov': 'https://youtu.be/JuBBIJ7adjM?is=0QlHyjPjkzpsQGXL',
+    'Randy Couture': 'https://youtu.be/KsLneUSMF9A?is=xbM0ss9sbQg9Dv4I',
+    'Max Holloway': 'https://youtu.be/5oDsN9s9-yE?is=3pdZSWDbL4y_mzul',
+    'Kamaru Usman': 'https://youtu.be/IRUrK8BhjNE?is=1RKIKERb2j7zdgag',
+    'Dustin Poirier': 'https://youtu.be/m3N1WuErSlg?is=_jDLz8z8YOZmGC9q'
+  };
+
   Object.entries(WATCH_MOMENTS).forEach(([fighter, url]) => {
     DISPLAY_OVERRIDES[fighter] = DISPLAY_OVERRIDES[fighter] || {};
     DISPLAY_OVERRIDES[fighter].watchUrl = url;
     DISPLAY_OVERRIDES[fighter].watchLabel = 'Watch Moment';
+  });
+
+  Object.entries(SIGNATURE_FIGHTS).forEach(([fighter, url]) => {
+    DISPLAY_OVERRIDES[fighter] = DISPLAY_OVERRIDES[fighter] || {};
+    DISPLAY_OVERRIDES[fighter].signatureFightUrl = url;
+    DISPLAY_OVERRIDES[fighter].signatureFightLabel = 'Watch Signature Fight';
   });
 
   function injectCss(){
@@ -99,17 +119,20 @@
       .toLowerCase();
   }
   function baseNameFor(label){
-    if(WATCH_MOMENTS[label]) return label;
+    if(WATCH_MOMENTS[label] || SIGNATURE_FIGHTS[label]) return label;
     const normalized = normalizedName(label);
     const watchKey = Object.keys(WATCH_MOMENTS).find(name => normalizedName(name) === normalized);
     if(watchKey) return watchKey;
+    const signatureKey = Object.keys(SIGNATURE_FIGHTS).find(name => normalizedName(name) === normalized);
+    if(signatureKey) return signatureKey;
     const overrideKey = Object.keys(DISPLAY_OVERRIDES).find(name => normalizedName(name) === normalized || normalizedName(DISPLAY_OVERRIDES[name]?.displayName) === normalized);
     return overrideKey || label;
   }
   function watchUrlFor(fighter){ const base = baseNameFor(fighter); return DISPLAY_OVERRIDES[base]?.watchUrl || WATCH_MOMENTS[base] || ''; }
+  function signatureFightUrlFor(fighter){ const base = baseNameFor(fighter); return DISPLAY_OVERRIDES[base]?.signatureFightUrl || SIGNATURE_FIGHTS[base] || ''; }
   function addCardButtons(){ document.querySelectorAll('.fighter-row[data-fighter]:not(.category-leader-row)').forEach(row => { const fighter = row.dataset.fighter; const url = watchUrlFor(fighter); if(!url || row.querySelector('.watch-moment-link')) return; const target = row.querySelector('.row-main'); if(!target) return; const a = document.createElement('a'); a.className = 'watch-moment-link'; a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = '▶ Watch Moment'; a.addEventListener('click', e => e.stopPropagation()); target.appendChild(a); }); }
-  function addProfileButton(){ const detail = document.getElementById('fighterDetail'); if(!detail || detail.querySelector('.profile-watch-moment')) return; const label = detail.querySelector('.profile-summary h2')?.textContent?.trim(); const url = watchUrlFor(label); if(!label || !url) return; const summary = detail.querySelector('.profile-summary'); if(!summary) return; const row = document.createElement('div'); row.className = 'profile-watch-row'; const a = document.createElement('a'); a.className = 'watch-moment-link profile-watch-moment'; a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = '▶ Watch Signature Moment'; a.addEventListener('click', e => e.stopPropagation()); row.appendChild(a); summary.appendChild(row); }
-  function apply(){ injectCss(); addCardButtons(); addProfileButton(); window.UFC_WATCH_MOMENTS = { version: VERSION, fighters: Object.keys(WATCH_MOMENTS) }; }
+  function addProfileButton(){ const detail = document.getElementById('fighterDetail'); if(!detail || detail.querySelector('.profile-watch-moment')) return; const label = detail.querySelector('.profile-summary h2')?.textContent?.trim(); const url = signatureFightUrlFor(label); if(!label || !url) return; const summary = detail.querySelector('.profile-summary'); if(!summary) return; const row = document.createElement('div'); row.className = 'profile-watch-row'; const a = document.createElement('a'); a.className = 'watch-moment-link profile-watch-moment'; a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = '▶ Watch Signature Fight'; a.addEventListener('click', e => e.stopPropagation()); row.appendChild(a); summary.appendChild(row); }
+  function apply(){ injectCss(); addCardButtons(); addProfileButton(); window.UFC_WATCH_MOMENTS = { version: VERSION, fighters: Object.keys(WATCH_MOMENTS), signatureFightFighters: Object.keys(SIGNATURE_FIGHTS) }; }
 
   const observer = new MutationObserver(apply);
   observer.observe(document.body, { childList: true, subtree: true });
