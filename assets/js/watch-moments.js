@@ -1,7 +1,7 @@
 // Watch Moment links for fighter cards and Signature Fight links for profiles.
 // Keep links here as app-facing content, separate from scoring and nickname/display-name polish.
 (function(){
-  const VERSION = 'watch-moments-20260711h-signature-fights-batch-six';
+  const VERSION = 'watch-moments-20260711i-signature-fights-batch-seven';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -118,7 +118,22 @@
     'Michael Bisping': 'https://youtu.be/Ne2fSWUWv4U?is=LejcNbriCXqsO38n',
     'Dan Henderson': 'https://youtu.be/rLuppO32rUI?is=DdM4tdoZAMapoDRg',
     'Chael Sonnen': 'https://youtu.be/DpLaqnwFQEY?is=VUYzF8zQsZszQ4aj',
-    'Robbie Lawler': 'https://youtu.be/ocsu8P4-GS4?is=kQFibyNlGENs6-QK'
+    'Robbie Lawler': 'https://youtu.be/ocsu8P4-GS4?is=kQFibyNlGENs6-QK',
+    'Amanda Nunes': 'https://youtu.be/qwPBPiUzgag?is=pTBaihmA06TEDxKo',
+    'Valentina Shevchenko': 'https://youtu.be/bM9I7FEGZZA?is=JiQtLvizH4HgX5yE',
+    'Zhang Weili': 'https://youtu.be/i_AL3LLUnHY?is=n4qx06JN_inLPn64',
+    'Rose Namajunas': 'https://youtu.be/G2vSZhl6BFY?is=IYpvomkm6ZdY8fYg',
+    'Miesha Tate': 'https://youtu.be/4BWMHK_gnhA?t=661&is=en-jw61zn6lQ-wvD',
+    'Mackenzie Dern': 'https://youtu.be/Gnf14OGq9VY?is=AWeo4KKp08bB0v5k',
+    'Kayla Harrison': 'https://youtu.be/UUMlLth-4uQ?is=ZmRXsN5bIzaY1_rq',
+    'Jessica Andrade': 'https://youtu.be/nQIBZ2fjrMQ?is=_o9fLH0odv_P1miD',
+    'Alexa Grasso': 'https://youtu.be/P0U_W35_cJw?is=mRmw6BHCQGDfTygx',
+    'Julianna Peña': 'https://youtu.be/tB_Xg1LbMVQ?is=cMc6BXC1LV3u8rJa',
+    'Carla Esparza': 'https://youtu.be/jJeZ2wZv0YQ?is=QOK9v0B_kfqvZgqd',
+    'Holly Holm': 'https://youtu.be/3j7WaTd8bkQ?is=MPSWMNle4EFHa4Y0',
+    'Joanna Jedrzejczyk': 'https://youtu.be/cINJim4gWN4?is=Y9AgsjUAgh-5WYoQ',
+    'Ronda Rousey': 'https://youtu.be/tbKIVH8nY60?is=y5-Dat4Qb7IjqLe_',
+    'Cris Cyborg': 'https://youtu.be/VD6vOlDi6fQ?is=xk9UVu9Ei9tZeH_I'
   };
 
   Object.entries(WATCH_MOMENTS).forEach(([fighter, url]) => {
