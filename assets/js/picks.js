@@ -29,13 +29,44 @@
     return new Intl.DateTimeFormat('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(value));
   }
 
+  function formatLock(value){
+    if(!value) return 'TBD';
+    return new Intl.DateTimeFormat('en-US',{weekday:'short',hour:'numeric',minute:'2-digit'}).format(new Date(value));
+  }
+
+  function eventKicker(event){
+    if(event.status === 'live') return 'Live UFC event';
+    const eventDay = new Date(event.eventDate);
+    const today = new Date();
+    if(eventDay.toDateString() === today.toDateString()) return 'Tonight';
+    return `Upcoming ${event.eventType === 'numbered' ? 'numbered event' : 'fight night'}`;
+  }
+
+  function fighterInitials(name){
+    return String(name || '').split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase();
+  }
+
+  function fighterPhotoUrl(name,fight,side){
+    const eventPhoto = side === 'red' ? fight.redPhoto : fight.bluePhoto;
+    const pickPhoto = window.UFC_PICKS_PHOTOS?.[name];
+    const rosterPhoto = window.DISPLAY_OVERRIDES?.[name]?.thumbUrl || window.DISPLAY_OVERRIDES?.[name]?.photoUrl;
+    return eventPhoto || pickPhoto || rosterPhoto || '';
+  }
+
+  function fighterVisual(name,fight,side){
+    const url = fighterPhotoUrl(name,fight,side);
+    return `<span class="pick-fighter-photo">${url
+      ? `<img src="${safe(url)}" alt="" loading="lazy">`
+      : `<span>${safe(fighterInitials(name))}</span>`}</span>`;
+  }
+
   function toast(message){
     const node = $('picksToast');
     if(!node) return;
     node.textContent = message;
     node.classList.add('show');
     window.clearTimeout(toast.timer);
-    toast.timer = window.setTimeout(()=>node.classList.remove('show'),1500);
+    toast.timer = window.setTimeout(()=>node.classList.remove('show'),1600);
   }
 
   function status(message,type=''){
@@ -59,11 +90,21 @@
     return state.event?.fights.filter(fight => state.picks[fight.id]).length || 0;
   }
 
+  function preferredEvent(events,currentId){
+    return events.find(event=>event.id===currentId)
+      || events.find(event=>event.status==='live')
+      || events.find(event=>event.status==='upcoming')
+      || events[0]
+      || null;
+  }
+
   function renderEventSelector(){
     const select = $('picksEventSelect');
+    const wrap = $('picksEventPicker');
     if(!select) return;
     select.innerHTML = state.events.map(event => `<option value="${safe(event.id)}">${safe(event.name)}${event.subtitle ? `: ${safe(event.subtitle)}` : ''}</option>`).join('');
     if(state.event) select.value = state.event.id;
+    if(wrap) wrap.hidden = state.events.length <= 1;
   }
 
   function renderHero(){
@@ -71,9 +112,12 @@
     const target = $('picksEventHero');
     if(!target) return;
     if(!event){ target.innerHTML = '<div class="picks-empty">No upcoming UFC event has been loaded.</div>'; return; }
-    target.innerHTML = `<div class="picks-event-kicker">Upcoming ${event.eventType === 'numbered' ? 'numbered event' : 'fight night'}</div>
+    const live = event.status === 'live';
+    target.classList.toggle('is-live',live);
+    target.innerHTML = `
+      <div class="picks-event-kicker${live ? ' live' : ''}">${safe(eventKicker(event))}</div>
       <h3>${safe(event.name)}</h3>
-      <div class="name">${safe(event.subtitle || '')}</div>
+      <div class="picks-event-matchup">${safe(event.subtitle || '')}</div>
       <div class="picks-event-meta">
         <span class="picks-pill">${safe(formatDate(event.eventDate))}</span>
         <span class="picks-pill">${safe(event.location || 'Location TBD')}</span>
@@ -82,17 +126,89 @@
       </div>`;
   }
 
+  function copyRoomCode(){
+    if(!state.room) return;
+    navigator.clipboard?.writeText(state.room.code).then(()=>toast('Room code copied')).catch(()=>toast(state.room.code));
+  }
+
+  function switchRoom(){
+    state.room = null;
+    state.me = null;
+    state.members = [];
+    state.memberToken = null;
+    const url = new URL(window.location.href);
+    url.searchParams.delete('room');
+    history.replaceState(null,'',url.toString());
+    status('Enter a name to create or join a room.');
+    render();
+  }
+
   function renderRoom(){
     const banner = $('picksRoomBanner');
+    const setup = $('picksRoomSetup');
     const createButton = $('picksCreateRoom');
     const joinButton = $('picksJoinRoom');
     if(createButton) createButton.disabled = !supabaseReady || !state.event;
     if(joinButton) joinButton.disabled = !supabaseReady || !state.event;
+    if(setup) setup.hidden = Boolean(state.room);
     if(!banner) return;
-    if(!state.room){ banner.classList.remove('active'); banner.innerHTML=''; return; }
+    if(!state.room){
+      banner.classList.remove('active');
+      banner.innerHTML='';
+      return;
+    }
+    const playerCount = Math.max(state.members.length,1);
     banner.classList.add('active');
-    banner.innerHTML = `<div><strong>${safe(state.room.name || 'Fight Picks')}</strong><small>Room code: ${safe(state.room.code)}</small></div><button id="picksShareRoom" class="picks-secondary" type="button">Share Room</button>`;
+    banner.innerHTML = `
+      <div class="picks-room-copy">
+        <span class="picks-room-live">Room active</span>
+        <strong>${safe(state.room.name || 'Fight Picks')}</strong>
+        <div class="picks-room-meta">
+          <button id="picksCopyCode" class="picks-code" type="button" aria-label="Copy room code">${safe(state.room.code)}</button>
+          <span>${playerCount} player${playerCount === 1 ? '' : 's'} joined</span>
+        </div>
+      </div>
+      <div class="picks-room-actions">
+        <button id="picksShareRoom" class="picks-primary compact" type="button">Share</button>
+        <button id="picksSwitchRoom" class="picks-secondary compact" type="button">Switch</button>
+      </div>`;
     $('picksShareRoom')?.addEventListener('click',shareRoom);
+    $('picksCopyCode')?.addEventListener('click',copyRoomCode);
+    $('picksSwitchRoom')?.addEventListener('click',switchRoom);
+  }
+
+  function fightSectionClass(section){
+    return String(section || '').toLowerCase().replace(/[^a-z0-9]+/g,'-');
+  }
+
+  function renderFighterButton(fight,side,selected,locked){
+    const name = side === 'red' ? fight.red : fight.blue;
+    const resultClass = fight.winner ? (fight.winner === name ? ' correct' : ' wrong') : '';
+    const selectedClass = selected === name ? ' selected' : '';
+    return `<button class="pick-fighter${selectedClass}${resultClass}" type="button"
+      data-fight="${safe(fight.id)}" data-pick="${safe(name)}" aria-pressed="${selected === name ? 'true' : 'false'}" ${locked ? 'disabled' : ''}>
+      ${fighterVisual(name,fight,side)}
+      <span class="pick-fighter-name">${safe(name)}</span>
+      <span class="pick-selected-mark" aria-hidden="true">✓</span>
+    </button>`;
+  }
+
+  function renderProgress(){
+    const progress = $('picksProgress');
+    const event = state.event;
+    if(!progress || !event) return;
+    const count = selectedCount();
+    const pct = event.fights.length ? Math.round((count/event.fights.length)*100) : 0;
+    const selectedNames = event.fights.map(fight=>state.picks[fight.id]).filter(Boolean);
+    const visibleNames = selectedNames.slice(0,4);
+    const more = selectedNames.length-visibleNames.length;
+    progress.innerHTML = `
+      <div class="picks-progress-top">
+        <div><strong>${count}/${event.fights.length}</strong><span>picks made</span></div>
+        <b>${count === event.fights.length ? 'Card complete' : `${event.fights.length-count} remaining`}</b>
+      </div>
+      <div class="picks-progress-bar"><i style="width:${pct}%"></i></div>
+      <div class="picks-summary-chips">${visibleNames.map(name=>`<span>${safe(name)}</span>`).join('')}${more>0?`<span>+${more} more</span>`:''}</div>`;
   }
 
   function renderFights(){
@@ -100,34 +216,50 @@
     const event = state.event;
     if(!target) return;
     if(!event){ target.innerHTML='<div class="picks-empty">Add an event to start picking.</div>'; return; }
-    target.innerHTML = [...event.fights].sort((a,b)=>a.order-b.order).map(fight => {
+    target.innerHTML = [...event.fights].sort((a,b)=>a.order-b.order).map((fight,index) => {
       const selected = state.picks[fight.id];
       const locked = isLocked(fight);
-      const redClass = selected === fight.red ? ' selected' : '';
-      const blueClass = selected === fight.blue ? ' selected' : '';
-      const resultRed = fight.winner ? (fight.winner === fight.red ? ' correct' : ' wrong') : '';
-      const resultBlue = fight.winner ? (fight.winner === fight.blue ? ' correct' : ' wrong') : '';
-      return `<article class="pick-fight" data-fight="${safe(fight.id)}">
-        <div class="pick-fight-head"><strong>${safe(fight.cardSection)} · ${safe(fight.weightClass)}</strong><span>${locked ? 'Locked' : `Estimated lock ${safe(formatDate(fight.lockAt))}`}</span></div>
-        <div class="pick-matchup">
-          <button class="pick-fighter${redClass}${resultRed}" type="button" data-fight="${safe(fight.id)}" data-pick="${safe(fight.red)}" ${locked ? 'disabled' : ''}>${safe(fight.red)}</button>
-          <div class="pick-vs">VS</div>
-          <button class="pick-fighter${blueClass}${resultBlue}" type="button" data-fight="${safe(fight.id)}" data-pick="${safe(fight.blue)}" ${locked ? 'disabled' : ''}>${safe(fight.blue)}</button>
+      const sectionClass = fightSectionClass(fight.cardSection);
+      const footer = fight.winner
+        ? `Winner: ${safe(fight.winner)}`
+        : locked
+          ? 'This fight is locked.'
+          : selected
+            ? `Your pick: ${safe(selected)} · saved automatically`
+            : 'Pick one winner. Saves automatically.';
+      return `<article class="pick-fight section-${sectionClass}${fight.cardSection === 'Main Event' ? ' featured' : ''}" data-fight="${safe(fight.id)}">
+        <div class="pick-fight-head">
+          <div><span class="pick-fight-number">${String(index+1).padStart(2,'0')}</span><strong>${safe(fight.cardSection)} · ${safe(fight.weightClass)}</strong></div>
+          <span class="${locked ? 'locked' : ''}">${locked ? 'Locked' : `Locks ${safe(formatLock(fight.lockAt))}`}</span>
         </div>
-        <div class="pick-lock${locked ? ' locked' : ''}">${fight.winner ? `Winner: ${safe(fight.winner)}` : locked ? 'This fight is locked.' : 'Tap one fighter. Your pick saves automatically.'}</div>
+        <div class="pick-matchup">
+          ${renderFighterButton(fight,'red',selected,locked)}
+          <div class="pick-vs">VS</div>
+          ${renderFighterButton(fight,'blue',selected,locked)}
+        </div>
+        <div class="pick-lock${locked ? ' locked' : ''}${selected ? ' has-pick' : ''}">${footer}</div>
       </article>`;
     }).join('');
     target.querySelectorAll('.pick-fighter').forEach(button => button.addEventListener('click',()=>choose(button.dataset.fight,button.dataset.pick)));
-    const progress = $('picksProgress');
-    if(progress) progress.innerHTML = `<strong>${selectedCount()} / ${event.fights.length}</strong><span class="meta">picks made</span>`;
+    renderProgress();
   }
 
   function renderStandings(){
     const target = $('picksStandings');
+    const card = $('picksStandingsCard');
     if(!target) return;
-    if(!state.room){ target.innerHTML='<div class="picks-empty">Create or join a room to see your friend standings.</div>'; return; }
-    const members = [...state.members].sort((a,b)=>(b.score||0)-(a.score||0) || String(a.display_name).localeCompare(String(b.display_name)));
-    target.innerHTML = members.map((member,index)=>`<div class="picks-standing-row"><div class="picks-standing-rank">#${index+1}</div><div><strong>${safe(member.display_name)}${member.id === state.me?.id ? ' (You)' : ''}</strong><div class="meta">${member.picks_made || 0} picks made</div></div><strong>${member.score || 0}</strong></div>`).join('') || '<div class="picks-empty">No room members yet.</div>';
+    if(card) card.hidden = !state.room;
+    if(!state.room){
+      target.innerHTML='<div class="picks-empty">Create or join a room to see your friend standings.</div>';
+      return;
+    }
+    const members = [...state.members].sort((a,b)=>(b.score||0)-(a.score||0) || (b.picks_made||0)-(a.picks_made||0) || String(a.display_name).localeCompare(String(b.display_name)));
+    target.innerHTML = members.map((member,index)=>`
+      <div class="picks-standing-row">
+        <div class="picks-standing-rank">#${index+1}</div>
+        <div><strong>${safe(member.display_name)}${member.id === state.me?.id ? ' <span class="picks-you">You</span>' : ''}</strong><div class="meta">${member.picks_made || 0}/${state.event?.fights.length || 0} picks made</div></div>
+        <div class="picks-standing-score"><strong>${member.score || 0}</strong><small>PTS</small></div>
+      </div>`).join('') || '<div class="picks-empty">No room members yet.</div>';
   }
 
   function render(){
@@ -152,7 +284,7 @@
     state.saving.delete(fightId);
     if(error){ status(error.message || 'Could not save that pick.','bad'); toast('Pick not saved'); return; }
     status('Your picks save automatically.','good');
-    toast('Pick saved');
+    toast(`${fighter} selected`);
     await refreshRoom();
   }
 
@@ -165,7 +297,7 @@
 
   async function shareRoom(){
     if(!state.room) return;
-    const payload = {title:`${state.room.name || 'UFC Picks'} — ${state.room.code}`,text:`Join my UFC picks room: ${state.room.code}`,url:roomUrl(state.room.code)};
+    const payload = {title:`${state.room.name || 'UFC Picks'} — ${state.room.code}`,text:`Join my UFC picks room. Code: ${state.room.code}`,url:roomUrl(state.room.code)};
     try{
       if(navigator.share) await navigator.share(payload);
       else{ await navigator.clipboard.writeText(payload.url); toast('Room link copied'); }
@@ -185,8 +317,9 @@
     state.memberToken = data.member_token;
     localStorage.setItem(`ufc-picks:room:${state.room.code}`,state.memberToken);
     history.replaceState(null,'',roomUrl(state.room.code));
-    status('Room created. Share the link with your friends.','good');
+    status('Room created. Share it with your friends.','good');
     await refreshRoom();
+    $('picksRoomBanner')?.scrollIntoView({behavior:'smooth',block:'nearest'});
   }
 
   async function joinRoom(){
@@ -223,9 +356,9 @@
     if(!client) return;
     const {data,error} = await client.rpc('picks_public_events');
     if(error || !Array.isArray(data) || !data.length) return;
-    state.events = data;
     const current = state.event?.id;
-    state.event = state.events.find(event=>event.id===current) || state.events[0];
+    state.events = data;
+    state.event = preferredEvent(state.events,current);
     loadLocalPicks();
   }
 
@@ -244,8 +377,12 @@
   function bind(){
     $('picksEventSelect')?.addEventListener('change',event=>{
       state.event = state.events.find(item=>item.id===event.target.value) || state.events[0] || null;
-      state.room=null; state.me=null; state.members=[]; state.memberToken=null;
-      loadLocalPicks(); render();
+      state.room=null;
+      state.me=null;
+      state.members=[];
+      state.memberToken=null;
+      loadLocalPicks();
+      render();
     });
     $('picksCreateRoom')?.addEventListener('click',createRoom);
     $('picksJoinRoom')?.addEventListener('click',joinRoom);
