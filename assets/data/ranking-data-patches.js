@@ -55,7 +55,7 @@
   function loadSequence(items,done){const next=i=>{if(i>=items.length){if(done)done();return;}loadScriptOnce(items[i].src,items[i].attr,()=>next(i+1));};next(0);}
   function packet(slug,v){return{src:`assets/data/fighter-packets/${slug}.js?v=fighter-packet-${slug}-${v}`,attr:`data-fighter-packet-${slug}`};}
   function compareCoreScripts(){const packets=packetManifest().map(row=>packet(row.slug,row.version));return[
-    {src:'assets/js/refresh-safety.js?v=refresh-safety-20260710a-modular-containers',attr:'data-refresh-safety'},
+    {src:'assets/js/refresh-safety.js?v=refresh-safety-20260710b-optional-container-errors',attr:'data-refresh-safety'},
     {src:'assets/data/ranking-data-additions.js?v=ranking-data-additions-20260706e-lyoto-machida',attr:'data-ranking-data-additions'},
     {src:'assets/data/fighter-packet-schema.js?v=fighter-packet-schema-20260703a',attr:'data-fighter-packet-schema'},
     {src:'assets/compare-data.js?v=compare-data-20260630a',attr:'data-compare-data'},
