@@ -12,6 +12,7 @@
     me: null,
     members: [],
     picks: {},
+    underdogLockFightId: null,
     memberToken: null,
     saving: new Set()
   };
@@ -21,7 +22,7 @@
   const safe = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
 
   function isLocked(fight){
-    return Boolean(fight.winner) || Date.now() >= new Date(fight.lockAt).getTime();
+    return Boolean(fight.winner) || (fight.resultStatus && fight.resultStatus !== 'scheduled') || Date.now() >= new Date(fight.lockAt).getTime();
   }
 
   function formatDate(value){
@@ -32,6 +33,12 @@
   function formatLock(value){
     if(!value) return 'TBD';
     return new Intl.DateTimeFormat('en-US',{weekday:'short',hour:'numeric',minute:'2-digit'}).format(new Date(value));
+  }
+
+  function formatOdds(value){
+    const n = Number(value);
+    if(!Number.isFinite(n) || n === 0) return '';
+    return n > 0 ? `+${n}` : String(n);
   }
 
   function eventKicker(event){
@@ -60,6 +67,31 @@
       : `<span>${safe(fighterInitials(name))}</span>`}</span>`;
   }
 
+  function oddsFor(fight,side){
+    const value = side === 'red' ? fight.redOdds : fight.blueOdds;
+    return Number.isFinite(Number(value)) ? Number(value) : null;
+  }
+
+  function impliedProbability(americanOdds){
+    const odds = Number(americanOdds);
+    if(!Number.isFinite(odds) || odds === 0) return 0;
+    return odds < 0 ? (-odds)/((-odds)+100) : 100/(odds+100);
+  }
+
+  function favoriteSide(fight){
+    const red = oddsFor(fight,'red');
+    const blue = oddsFor(fight,'blue');
+    if(red === null || blue === null || red === blue) return null;
+    return impliedProbability(red) > impliedProbability(blue) ? 'red' : 'blue';
+  }
+
+  function isUnderdogSelection(fight,fighter){
+    if(!fight || !fighter) return false;
+    if(fighter === fight.red) return Number(fight.redOdds) > 0;
+    if(fighter === fight.blue) return Number(fight.blueOdds) > 0;
+    return false;
+  }
+
   function toast(message){
     const node = $('picksToast');
     if(!node) return;
@@ -80,14 +112,13 @@
     if(!state.event) return;
     try{ state.picks = JSON.parse(localStorage.getItem(storageKey('local-picks')) || '{}'); }
     catch(_error){ state.picks = {}; }
+    state.underdogLockFightId = localStorage.getItem(storageKey('underdog-lock')) || null;
   }
 
   function saveLocalPicks(){
     localStorage.setItem(storageKey('local-picks'),JSON.stringify(state.picks));
-  }
-
-  function selectedCount(){
-    return state.event?.fights.filter(fight => state.picks[fight.id]).length || 0;
+    if(state.underdogLockFightId) localStorage.setItem(storageKey('underdog-lock'),state.underdogLockFightId);
+    else localStorage.removeItem(storageKey('underdog-lock'));
   }
 
   function preferredEvent(events,currentId){
@@ -107,12 +138,25 @@
     if(wrap) wrap.hidden = state.events.length <= 1;
   }
 
+  function eventOddsMeta(event){
+    const fight = event?.fights?.find(item=>item.oddsSource || item.oddsUpdatedAt);
+    if(!fight) return null;
+    const parts = [];
+    if(fight.oddsSource) parts.push(fight.oddsSource);
+    if(fight.oddsUpdatedAt){
+      const updated = new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(fight.oddsUpdatedAt));
+      parts.push(`updated ${updated}`);
+    }
+    return parts.join(' · ');
+  }
+
   function renderHero(){
     const event = state.event;
     const target = $('picksEventHero');
     if(!target) return;
     if(!event){ target.innerHTML = '<div class="picks-empty">No upcoming UFC event has been loaded.</div>'; return; }
     const live = event.status === 'live';
+    const oddsMeta = eventOddsMeta(event);
     target.classList.toggle('is-live',live);
     target.innerHTML = `
       <div class="picks-event-kicker${live ? ' live' : ''}">${safe(eventKicker(event))}</div>
@@ -123,7 +167,8 @@
         <span class="picks-pill">${safe(event.location || 'Location TBD')}</span>
         <span class="picks-pill">${safe(event.cardRule || '')}</span>
         <span class="picks-pill">${event.fights.length} fights</span>
-      </div>`;
+      </div>
+      ${oddsMeta ? `<div class="picks-odds-source">Odds snapshot: ${safe(oddsMeta)} · for context only</div>` : ''}`;
   }
 
   function copyRoomCode(){
@@ -177,38 +222,142 @@
     $('picksSwitchRoom')?.addEventListener('click',switchRoom);
   }
 
-  function fightSectionClass(section){
-    return String(section || '').toLowerCase().replace(/[^a-z0-9]+/g,'-');
+  function normalizedSection(section){
+    const value = String(section || '').toLowerCase();
+    if(value.includes('main')) return 'Main Card';
+    if(value.includes('prelim') && !value.includes('early')) return 'Prelims';
+    return 'Early Prelims';
+  }
+
+  function sectionSlug(section){
+    return normalizedSection(section).toLowerCase().replace(/[^a-z0-9]+/g,'-');
   }
 
   function renderFighterButton(fight,side,selected,locked){
     const name = side === 'red' ? fight.red : fight.blue;
+    const odds = oddsFor(fight,side);
+    const favorite = favoriteSide(fight) === side;
     const resultClass = fight.winner ? (fight.winner === name ? ' correct' : ' wrong') : '';
     const selectedClass = selected === name ? ' selected' : '';
-    return `<button class="pick-fighter${selectedClass}${resultClass}" type="button"
+    const lockClass = state.underdogLockFightId === fight.id && selected === name ? ' underdog-locked' : '';
+    return `<button class="pick-fighter${selectedClass}${resultClass}${lockClass}" type="button"
       data-fight="${safe(fight.id)}" data-pick="${safe(name)}" aria-pressed="${selected === name ? 'true' : 'false'}" ${locked ? 'disabled' : ''}>
       ${fighterVisual(name,fight,side)}
       <span class="pick-fighter-name">${safe(name)}</span>
+      ${odds !== null ? `<span class="pick-fighter-odds">${safe(formatOdds(odds))}${favorite ? ' <b>FAV</b>' : ''}</span>` : ''}
       <span class="pick-selected-mark" aria-hidden="true">✓</span>
+      ${lockClass ? '<span class="pick-lock-badge">LOCK</span>' : ''}
     </button>`;
+  }
+
+  function visiblePickFor(member,fightId){
+    return (member.visible_picks || []).find(pick=>pick.fight_id===fightId) || null;
+  }
+
+  function renderGroupReveal(fight){
+    if(!isLocked(fight) || !state.room) return '';
+    const red = [];
+    const blue = [];
+    const missed = [];
+    state.members.forEach(member=>{
+      const pick = visiblePickFor(member,fight.id);
+      const label = `${member.display_name}${pick?.is_underdog_lock ? ' ★' : ''}`;
+      if(!pick) missed.push(member.display_name);
+      else if(pick.fighter_name === fight.red) red.push(label);
+      else if(pick.fighter_name === fight.blue) blue.push(label);
+      else missed.push(member.display_name);
+    });
+    const group = (name,names)=>`<div class="pick-reveal-side"><strong>${safe(name)} <span>${names.length}</span></strong><small>${names.length ? names.map(safe).join(', ') : 'No picks'}</small></div>`;
+    return `<div class="pick-reveal">
+      <div class="pick-reveal-title">Group picks revealed</div>
+      <div class="pick-reveal-grid">${group(fight.red,red)}${group(fight.blue,blue)}</div>
+      ${missed.length ? `<div class="pick-reveal-missed">No pick: ${missed.map(safe).join(', ')}</div>` : ''}
+    </div>`;
+  }
+
+  function renderUnderdogControl(fight,selected,locked){
+    if(locked || !selected || !isUnderdogSelection(fight,selected)) return '';
+    const active = state.underdogLockFightId === fight.id;
+    return `<button class="pick-underdog-action${active ? ' active' : ''}" type="button" data-underdog-lock="${safe(fight.id)}">
+      ${active ? '★ Underdog Lock active · +1 if correct' : state.underdogLockFightId ? 'Move Underdog Lock here' : 'Make this my Underdog Lock'}
+    </button>`;
+  }
+
+  function openFightStats(){
+    const event = state.event;
+    const open = event?.fights.filter(fight=>!isLocked(fight)) || [];
+    const picked = open.filter(fight=>state.picks[fight.id]).length;
+    return {open,picked,locked:(event?.fights.length || 0)-open.length};
   }
 
   function renderProgress(){
     const progress = $('picksProgress');
     const event = state.event;
     if(!progress || !event) return;
-    const count = selectedCount();
-    const pct = event.fights.length ? Math.round((count/event.fights.length)*100) : 0;
-    const selectedNames = event.fights.map(fight=>state.picks[fight.id]).filter(Boolean);
+    const stats = openFightStats();
+    const pct = stats.open.length ? Math.round((stats.picked/stats.open.length)*100) : 100;
+    const selectedNames = stats.open.map(fight=>state.picks[fight.id]).filter(Boolean);
     const visibleNames = selectedNames.slice(0,4);
     const more = selectedNames.length-visibleNames.length;
+    const lockFight = event.fights.find(fight=>fight.id===state.underdogLockFightId);
+    const lockName = lockFight ? state.picks[lockFight.id] : null;
     progress.innerHTML = `
       <div class="picks-progress-top">
-        <div><strong>${count}/${event.fights.length}</strong><span>picks made</span></div>
-        <b>${count === event.fights.length ? 'Card complete' : `${event.fights.length-count} remaining`}</b>
+        <div><strong>${stats.picked}/${stats.open.length}</strong><span>open fights picked</span></div>
+        <b>${stats.locked} locked</b>
       </div>
       <div class="picks-progress-bar"><i style="width:${pct}%"></i></div>
-      <div class="picks-summary-chips">${visibleNames.map(name=>`<span>${safe(name)}</span>`).join('')}${more>0?`<span>+${more} more</span>`:''}</div>`;
+      <div class="picks-progress-footer">
+        <div class="picks-summary-chips">${visibleNames.map(name=>`<span>${safe(name)}</span>`).join('')}${more>0?`<span>+${more} more</span>`:''}</div>
+        <div class="picks-lock-summary">${lockName ? `★ Underdog Lock: ${safe(lockName)}` : '★ Underdog Lock available'}</div>
+      </div>`;
+  }
+
+  function renderFightCard(fight,nextFightId){
+    const selected = state.picks[fight.id];
+    const locked = isLocked(fight);
+    const next = !locked && fight.id === nextFightId;
+    const sectionClass = sectionSlug(fight.cardSection);
+    const footer = fight.winner
+      ? `Winner: ${safe(fight.winner)}`
+      : locked
+        ? 'This fight is locked.'
+        : selected
+          ? `Your pick: ${safe(selected)} · saved automatically`
+          : 'Pick one winner. Saves automatically.';
+    return `<article class="pick-fight section-${sectionClass}${normalizedSection(fight.cardSection) === 'Main Card' ? ' main-card-fight' : ''}${fight.cardSection === 'Main Event' ? ' featured' : ''}${next ? ' next-to-lock' : ''}" data-fight="${safe(fight.id)}">
+      <div class="pick-fight-head">
+        <div><span class="pick-fight-number">${String(fight.order || '').padStart(2,'0')}</span><strong>${safe(fight.cardSection)} · ${safe(fight.weightClass)}</strong>${next ? '<em>NEXT TO LOCK</em>' : ''}</div>
+        <span class="${locked ? 'locked' : ''}">${locked ? (fight.winner ? 'Final' : 'Locked') : `Locks ${safe(formatLock(fight.lockAt))}`}</span>
+      </div>
+      <div class="pick-matchup">
+        ${renderFighterButton(fight,'red',selected,locked)}
+        <div class="pick-vs">VS</div>
+        ${renderFighterButton(fight,'blue',selected,locked)}
+      </div>
+      <div class="pick-lock${locked ? ' locked' : ''}${selected ? ' has-pick' : ''}">${footer}</div>
+      ${renderUnderdogControl(fight,selected,locked)}
+      ${renderGroupReveal(fight)}
+    </article>`;
+  }
+
+  function renderOpenFights(open,nextFightId){
+    if(!open.length) return '<div class="picks-empty">All fights are locked. Open the locked section below to follow group picks and results.</div>';
+    let lastSection = '';
+    return open.map(fight=>{
+      const section = normalizedSection(fight.cardSection);
+      const header = section !== lastSection ? `<div class="picks-section-heading"><span>${safe(section)}</span><b>${open.filter(item=>normalizedSection(item.cardSection)===section).length} open</b></div>` : '';
+      lastSection = section;
+      return header + renderFightCard(fight,nextFightId);
+    }).join('');
+  }
+
+  function renderLockedFights(locked,nextFightId){
+    if(!locked.length) return '';
+    return `<details class="picks-locked-section">
+      <summary><span>Locked fights</span><b>${locked.length}</b></summary>
+      <div class="picks-locked-list">${locked.map(fight=>renderFightCard(fight,nextFightId)).join('')}</div>
+    </details>`;
   }
 
   function renderFights(){
@@ -216,31 +365,13 @@
     const event = state.event;
     if(!target) return;
     if(!event){ target.innerHTML='<div class="picks-empty">Add an event to start picking.</div>'; return; }
-    target.innerHTML = [...event.fights].sort((a,b)=>a.order-b.order).map((fight,index) => {
-      const selected = state.picks[fight.id];
-      const locked = isLocked(fight);
-      const sectionClass = fightSectionClass(fight.cardSection);
-      const footer = fight.winner
-        ? `Winner: ${safe(fight.winner)}`
-        : locked
-          ? 'This fight is locked.'
-          : selected
-            ? `Your pick: ${safe(selected)} · saved automatically`
-            : 'Pick one winner. Saves automatically.';
-      return `<article class="pick-fight section-${sectionClass}${fight.cardSection === 'Main Event' ? ' featured' : ''}" data-fight="${safe(fight.id)}">
-        <div class="pick-fight-head">
-          <div><span class="pick-fight-number">${String(index+1).padStart(2,'0')}</span><strong>${safe(fight.cardSection)} · ${safe(fight.weightClass)}</strong></div>
-          <span class="${locked ? 'locked' : ''}">${locked ? 'Locked' : `Locks ${safe(formatLock(fight.lockAt))}`}</span>
-        </div>
-        <div class="pick-matchup">
-          ${renderFighterButton(fight,'red',selected,locked)}
-          <div class="pick-vs">VS</div>
-          ${renderFighterButton(fight,'blue',selected,locked)}
-        </div>
-        <div class="pick-lock${locked ? ' locked' : ''}${selected ? ' has-pick' : ''}">${footer}</div>
-      </article>`;
-    }).join('');
+    const sorted = [...event.fights].sort((a,b)=>new Date(a.lockAt)-new Date(b.lockAt) || (a.order||0)-(b.order||0));
+    const open = sorted.filter(fight=>!isLocked(fight));
+    const locked = sorted.filter(isLocked);
+    const nextFightId = open[0]?.id || null;
+    target.innerHTML = `<div class="picks-open-list">${renderOpenFights(open,nextFightId)}</div>${renderLockedFights(locked,nextFightId)}`;
     target.querySelectorAll('.pick-fighter').forEach(button => button.addEventListener('click',()=>choose(button.dataset.fight,button.dataset.pick)));
+    target.querySelectorAll('[data-underdog-lock]').forEach(button=>button.addEventListener('click',()=>setUnderdogLock(button.dataset.underdogLock)));
     renderProgress();
   }
 
@@ -253,11 +384,11 @@
       target.innerHTML='<div class="picks-empty">Create or join a room to see your friend standings.</div>';
       return;
     }
-    const members = [...state.members].sort((a,b)=>(b.score||0)-(a.score||0) || (b.picks_made||0)-(a.picks_made||0) || String(a.display_name).localeCompare(String(b.display_name)));
+    const members = [...state.members].sort((a,b)=>(b.score||0)-(a.score||0) || (b.correct||0)-(a.correct||0) || (b.picks_made||0)-(a.picks_made||0) || String(a.display_name).localeCompare(String(b.display_name)));
     target.innerHTML = members.map((member,index)=>`
       <div class="picks-standing-row">
         <div class="picks-standing-rank">#${index+1}</div>
-        <div><strong>${safe(member.display_name)}${member.id === state.me?.id ? ' <span class="picks-you">You</span>' : ''}</strong><div class="meta">${member.picks_made || 0}/${state.event?.fights.length || 0} picks made</div></div>
+        <div><strong>${safe(member.display_name)}${member.id === state.me?.id ? ' <span class="picks-you">You</span>' : ''}</strong><div class="meta">${member.correct || 0} correct · ${member.picks_made || 0} picks${member.upset_bonus ? ' · +1 lock bonus' : ''}</div></div>
         <div class="picks-standing-score"><strong>${member.score || 0}</strong><small>PTS</small></div>
       </div>`).join('') || '<div class="picks-empty">No room members yet.</div>';
   }
@@ -275,7 +406,9 @@
   async function choose(fightId,fighter){
     const fight = state.event?.fights.find(item=>item.id===fightId);
     if(!fight || isLocked(fight) || state.saving.has(fightId)) return;
+    const previous = state.picks[fightId];
     state.picks[fightId] = fighter;
+    if(previous && previous !== fighter && state.underdogLockFightId === fightId) state.underdogLockFightId = null;
     saveLocalPicks();
     renderFights();
     if(!state.room || !client || !state.memberToken){ toast('Pick saved on this device'); return; }
@@ -285,6 +418,21 @@
     if(error){ status(error.message || 'Could not save that pick.','bad'); toast('Pick not saved'); return; }
     status('Your picks save automatically.','good');
     toast(`${fighter} selected`);
+    await refreshRoom();
+  }
+
+  async function setUnderdogLock(fightId){
+    const fight = state.event?.fights.find(item=>item.id===fightId);
+    const fighter = state.picks[fightId];
+    if(!fight || isLocked(fight) || !isUnderdogSelection(fight,fighter)) return;
+    state.underdogLockFightId = fightId;
+    saveLocalPicks();
+    renderFights();
+    if(!state.room || !client || !state.memberToken){ toast('Underdog Lock saved on this device'); return; }
+    const {error} = await client.rpc('picks_set_underdog_lock',{p_room_code:state.room.code,p_member_token:state.memberToken,p_fight_id:fightId,p_fighter_name:fighter});
+    if(error){ status(error.message || 'Could not save the Underdog Lock.','bad'); toast('Lock not saved'); return; }
+    status('Underdog Lock saved. It is worth +1 if correct.','good');
+    toast(`${fighter} is your Underdog Lock`);
     await refreshRoom();
   }
 
@@ -348,7 +496,11 @@
     if(roomEvent && roomEvent.id !== state.event?.id){ state.event=roomEvent; loadLocalPicks(); }
     state.me = data.me;
     state.members = data.members || [];
-    if(data.my_picks) state.picks = Object.fromEntries(data.my_picks.map(pick=>[pick.fight_id,pick.fighter_name]));
+    if(data.my_picks){
+      state.picks = Object.fromEntries(data.my_picks.map(pick=>[pick.fight_id,pick.fighter_name]));
+      state.underdogLockFightId = data.my_picks.find(pick=>pick.is_underdog_lock)?.fight_id || null;
+      saveLocalPicks();
+    }
     render();
   }
 
