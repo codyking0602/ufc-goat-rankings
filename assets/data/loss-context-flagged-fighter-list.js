@@ -2,7 +2,7 @@
 // Converts the 62-fighter mismatch audit into practical ledger-completion and score-review batches.
 (function(){
   'use strict';
-  const VERSION='loss-context-flagged-fighter-list-20260710c-batch-three-priority-queue';
+  const VERSION='loss-context-flagged-fighter-list-20260710d-batch-four-priority-queue';
   const audit=window.UFC_LOSS_CONTEXT_MISMATCH_AUDIT;
   const DATA=window.RANKING_DATA;
 
@@ -47,7 +47,8 @@
   const completedBatches={
     batchOne:['Robert Whittaker','Sean Strickland'],
     batchTwo:['B.J. Penn','Tito Ortiz','Robbie Lawler','Charles Oliveira','Jessica Andrade'],
-    batchThree:['Frankie Edgar','Michael Bisping','Lyoto Machida','Matt Hughes','Chael Sonnen']
+    batchThree:['Frankie Edgar','Michael Bisping','Lyoto Machida','Matt Hughes','Chael Sonnen'],
+    batchFour:['Max Holloway','Tony Ferguson','Randy Couture','Dustin Poirier','Miesha Tate']
   };
   const completedLedgerFighters=Object.values(completedBatches).flat();
   const nextLedgerBatch=priorityQueue
