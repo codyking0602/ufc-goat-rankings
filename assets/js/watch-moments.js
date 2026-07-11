@@ -1,7 +1,7 @@
 // Watch Moment links for fighter cards and Signature Fight links for profiles.
 // Keep links here as app-facing content, separate from scoring and nickname/display-name polish.
 (function(){
-  const VERSION = 'watch-moments-20260711f-signature-fights-batch-four';
+  const VERSION = 'watch-moments-20260711g-signature-fights-batch-five';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -101,7 +101,16 @@
     'T.J. Dillashaw': 'https://youtu.be/xxROoFHRRd8?is=zUZGiVkLSrYCJQEO',
     'Alex Pereira': 'https://youtu.be/a8orgTRB9zA?is=zvdHIQSdKbY-kgxz',
     'Chuck Liddell': 'https://youtu.be/4g7YMHiQpf8?is=NYfyiSQTGxpzBQTT',
-    'Tito Ortiz': 'https://youtu.be/ZBNj8YBmzww?is=TfJb_wVvXgyVBrO6'
+    'Tito Ortiz': 'https://youtu.be/ZBNj8YBmzww?is=TfJb_wVvXgyVBrO6',
+    'Dominick Cruz': 'https://youtu.be/n_KzCRNlcjA?is=n2AH_YPeYsG-SMNq',
+    'Francis Ngannou': 'https://youtu.be/4Go5p7NWaiE?is=8BnCL81aC4u2greg',
+    'Charles Oliveira': 'https://youtu.be/Z-B99m_jqJs?is=eHglISzDShhwojtn',
+    'Henry Cejudo': 'https://youtu.be/Cpujg52kBU0?is=lA6FmsD5nZQYNLKr',
+    'Conor McGregor': 'https://youtu.be/YCE8TDYj7aU?is=I7P8Wc-PVWXMlIzr',
+    'Justin Gaethje': 'https://youtu.be/c_ZHlvDn4vM?is=2gEXV0uylOlRGzLU',
+    'Frankie Edgar': 'https://youtu.be/9jpBlAiA3BM?is=zHpZeVMxigNffl0x',
+    'Deiveson Figueiredo': 'https://youtu.be/OW_uA-X3HOg?is=8ya9VlZVXXDrXSNf',
+    'Khamzat Chimaev': 'https://youtu.be/P1Yl0iKipxs?is=3xlsp_uGjj6i2W07'
   };
 
   Object.entries(WATCH_MOMENTS).forEach(([fighter, url]) => {
