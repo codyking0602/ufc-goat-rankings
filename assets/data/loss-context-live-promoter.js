@@ -1,12 +1,12 @@
 // Loss Context Live Promoter.
-// Launch-safe promotion layer: preserves the current reviewed penalty values,
-// attaches complete audit metadata, and keeps the event ledger available as QA context.
+// Publishes the current live penalty values after canonical ledger score review.
 (function(){
   'use strict';
-  const VERSION='loss-context-live-promoter-20260710a-locked-current-values';
+  const VERSION='loss-context-live-promoter-20260710b-canonical-score-review';
   const DATA=window.RANKING_DATA;
   const adapter=window.UFC_LOSS_CONTEXT_LEDGER_ADAPTER;
   const corrections=window.UFC_PENALTY_SCORE_CORRECTIONS;
+  const scoreReview=window.UFC_LOSS_CONTEXT_SCORE_REVIEW;
   const RULES=corrections?.rules||'Locked loss penalty rules: pre-prime elite -0.75; pre-prime non-elite -1.25; prime elite -1.50; prime non-elite -4.00; counted finish extra -0.75; post-prime 0; upward-division elite -0.75; upward-division finish extra -0.50; cap -10.00.';
 
   function key(name){return String(name||'').trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');}
@@ -30,19 +30,26 @@
     boardRows().forEach(row=>{
       const score=round2(row.penalty);
       if(score===null){missingPenalty.push(row.fighter);return;}
-      const eventEntry=originalEntryFor?originalEntryFor(row.fighter):null;
+      const eventEntry=typeof adapter?.eventEntryFor==='function'?adapter.eventEntryFor(row.fighter):(originalEntryFor?originalEntryFor(row.fighter):null);
       const correction=corrections?.corrections?.[row.fighter]||null;
-      const notes=correction?.notes||row.penaltyAudit?.notes||row.penaltyNotes||'Current reviewed UFC Loss Context value retained for launch.';
-      const source=correction?'Cody-approved penalty worksheet':(row.penaltyAudit?.source||'Canonical fighter ranking row');
+      const reviewEntry=typeof scoreReview?.entryFor==='function'?scoreReview.entryFor(row.fighter):null;
+      const promotedByReview=reviewEntry&&Number.isFinite(Number(reviewEntry.promotedPenalty));
+      const reviewAudit=row.penaltyAudit?.source==='Canonical Loss Context ledger score review'?row.penaltyAudit:null;
+      const notes=reviewAudit?.notes||correction?.notes||row.penaltyAudit?.notes||row.penaltyNotes||'Current reviewed UFC Loss Context value retained for launch.';
+      const source=reviewAudit?.source||(correction?'Cody-approved penalty worksheet':(row.penaltyAudit?.source||'Canonical fighter ranking row'));
+      const launchMode=promotedByReview?'canonical-ledger-promoted':'locked-current-value';
       const audit={
         version:VERSION,
         score,
         rules:RULES,
         notes,
         source,
-        launchMode:'locked-current-value',
+        launchMode,
         mutatesPenalty:false,
-        eventLedgerRole:'supporting QA only',
+        eventLedgerRole:promotedByReview?'canonical scoring source':'supporting QA only',
+        scoreReviewVersion:scoreReview?.version||null,
+        priorScore:promotedByReview?round2(reviewEntry.priorPenalty):score,
+        scoreReviewDelta:promotedByReview?round2(reviewEntry.delta):0,
         eventLedgerVersion:adapter?.version||null,
         eventEstimatedPenaltyTotal:round2(eventEntry?.estimatedPenaltyTotal),
         eventLedgerEventCount:Array.isArray(eventEntry?.events)?eventEntry.events.length:0,
@@ -61,13 +68,15 @@
 
       launchRows.push({
         fighter:row.fighter,
-        status:'locked-live',
+        status:promotedByReview?'canonical-ledger-live':'locked-live',
         window:eventEntry?.window||null,
         events:Array.isArray(eventEntry?.events)?eventEntry.events:[],
         counts:eventEntry?.counts||null,
         eventEstimatedPenaltyTotal:round2(eventEntry?.estimatedPenaltyTotal),
         estimatedPenaltyTotal:score,
         lockedPenaltyTotal:score,
+        priorPenalty:promotedByReview?round2(reviewEntry.priorPenalty):score,
+        delta:promotedByReview?round2(reviewEntry.delta):0,
         source,
         notes,
         mutatesScores:false
@@ -77,27 +86,30 @@
     const launchByName=new Map(launchRows.map(row=>[key(row.fighter),row]));
     if(adapter){
       adapter.eventRows=eventRows;
-      adapter.eventEntryFor=originalEntryFor;
+      adapter.eventEntryFor=typeof adapter.eventEntryFor==='function'?adapter.eventEntryFor:originalEntryFor;
       adapter.launchRows=launchRows;
       adapter.launchEntryFor=fighter=>launchByName.get(key(fighter))||null;
       adapter.entryFor=fighter=>launchByName.get(key(fighter))||(originalEntryFor?originalEntryFor(fighter):null);
       adapter.report=()=>launchRows.map(row=>({...row,events:[...(row.events||[])]}));
-      adapter.mode='launch-locked-penalty-overlay';
+      adapter.mode='canonical-ledger-score-review-overlay';
       adapter.livePromoterVersion=VERSION;
     }
 
     const status={
       version:VERSION,
       applied:missingPenalty.length===0,
-      reason:missingPenalty.length?'Some fighters are missing a finite current penalty.':'Current reviewed Loss Context values promoted without changing any penalty.',
+      reason:missingPenalty.length?'Some fighters are missing a finite current penalty.':'Reviewed Loss Context values promoted for launch.',
       promotedCount:launchRows.length,
+      canonicalLedgerPromotedCount:launchRows.filter(row=>row.status==='canonical-ledger-live').length,
+      retainedCurrentCount:launchRows.filter(row=>row.status==='locked-live').length,
       missingPenalty,
       dataLoaded:true,
       adapterLoaded:!!adapter,
       adapterVersion:adapter?.version||null,
+      scoreReviewVersion:scoreReview?.version||null,
       eraLedgerVersion:adapter?.sourceEraLedgerVersion||window.UFC_FIGHTER_ERA_LEDGERS?.version||null,
       rules:RULES,
-      launchMode:'locked-current-value',
+      launchMode:'canonical-ledger-score-review-overlay',
       mutatesScores:false,
       mutatesPenalty:false,
       apply,
