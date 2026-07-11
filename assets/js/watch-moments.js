@@ -1,7 +1,7 @@
 // Watch Moment links for fighter cards and profiles.
 // Keep links here as app-facing content, separate from scoring and nickname/display-name polish.
 (function(){
-  const VERSION = 'watch-moments-20260711a-cris-cyborg';
+  const VERSION = 'watch-moments-20260711b-matched-card-pill';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -82,6 +82,7 @@
     style.id = 'watch-moments-css';
     style.textContent = `
       .watch-moment-link{display:inline-flex;align-items:center;justify-content:center;gap:6px;margin-top:7px;border:1px solid rgba(248,113,113,.35);background:rgba(248,113,113,.1);color:#fecaca;border-radius:999px;padding:5px 8px;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.04em;text-decoration:none;max-width:max-content}
+      .fighter-row .watch-moment-link{gap:4px;line-height:1.16;font-size:10.5px;padding:5px 8px;margin-top:7px;letter-spacing:.01em}
       .watch-moment-link:hover{border-color:rgba(248,113,113,.75);background:rgba(248,113,113,.18);color:#fff}
       .profile-watch-moment{margin-top:14px;padding:9px 12px;font-size:12px;border-color:rgba(248,113,113,.45);background:rgba(248,113,113,.12)}
       .profile-watch-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
