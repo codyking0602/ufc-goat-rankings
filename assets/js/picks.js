@@ -5,6 +5,7 @@
   const config = window.UFC_SUPABASE_CONFIG || {};
   const supabaseReady = Boolean(config.url && config.anonKey && window.supabase?.createClient);
   const client = supabaseReady ? window.supabase.createClient(config.url, config.anonKey) : null;
+  const roomParam = new URL(window.location.href).searchParams.get('room')?.trim().toUpperCase() || '';
   const state = {
     events: eventsFallback,
     event: eventsFallback[0] || null,
@@ -14,6 +15,8 @@
     picks: {},
     underdogLockFightId: null,
     memberToken: null,
+    adminToken: null,
+    setupMode: roomParam ? 'join' : 'create',
     saving: new Set()
   };
 
@@ -42,10 +45,10 @@
   }
 
   function eventKicker(event){
+    if(event.status === 'complete') return 'Completed UFC event';
     if(event.status === 'live') return 'Live UFC event';
     const eventDay = new Date(event.eventDate);
-    const today = new Date();
-    if(eventDay.toDateString() === today.toDateString()) return 'Tonight';
+    if(eventDay.toDateString() === new Date().toDateString()) return 'Tonight';
     return `Upcoming ${event.eventType === 'numbered' ? 'numbered event' : 'fight night'}`;
   }
 
@@ -98,7 +101,7 @@
     node.textContent = message;
     node.classList.add('show');
     window.clearTimeout(toast.timer);
-    toast.timer = window.setTimeout(()=>node.classList.remove('show'),1600);
+    toast.timer = window.setTimeout(()=>node.classList.remove('show'),1700);
   }
 
   function status(message,type=''){
@@ -127,6 +130,21 @@
       || events.find(event=>event.status==='upcoming')
       || events[0]
       || null;
+  }
+
+  function renderSetupMode(){
+    const create = state.setupMode === 'create';
+    $('picksModeCreate')?.classList.toggle('active',create);
+    $('picksModeJoin')?.classList.toggle('active',!create);
+    if($('picksRoomNameWrap')) $('picksRoomNameWrap').hidden = !create;
+    if($('picksRoomCodeWrap')) $('picksRoomCodeWrap').hidden = create;
+    if($('picksRoomSubmit')) $('picksRoomSubmit').textContent = create ? 'Create room' : 'Join room';
+  }
+
+  function setSetupMode(mode){
+    state.setupMode = mode === 'join' ? 'join' : 'create';
+    renderSetupMode();
+    if(state.setupMode === 'join') $('picksRoomCode')?.focus();
   }
 
   function renderEventSelector(){
@@ -171,9 +189,25 @@
       ${oddsMeta ? `<div class="picks-odds-source">Odds snapshot: ${safe(oddsMeta)} · for context only</div>` : ''}`;
   }
 
+  function roomUrl(code){
+    const url = new URL(window.location.href);
+    url.searchParams.set('room',code);
+    url.hash = 'picks';
+    return url.toString();
+  }
+
   function copyRoomCode(){
     if(!state.room) return;
     navigator.clipboard?.writeText(state.room.code).then(()=>toast('Room code copied')).catch(()=>toast(state.room.code));
+  }
+
+  async function shareRoom(){
+    if(!state.room) return;
+    const payload = {title:`${state.room.name || 'UFC Picks'} — ${state.room.code}`,text:`Join my UFC picks room. Your room code is ${state.room.code}.`,url:roomUrl(state.room.code)};
+    try{
+      if(navigator.share) await navigator.share(payload);
+      else{ await navigator.clipboard.writeText(payload.url); toast('Room link copied'); }
+    }catch(_error){}
   }
 
   function switchRoom(){
@@ -181,20 +215,18 @@
     state.me = null;
     state.members = [];
     state.memberToken = null;
+    state.adminToken = null;
     const url = new URL(window.location.href);
     url.searchParams.delete('room');
     history.replaceState(null,'',url.toString());
-    status('Enter a name to create or join a room.');
+    setSetupMode('create');
+    status('Start a new room or join your friends.');
     render();
   }
 
   function renderRoom(){
     const banner = $('picksRoomBanner');
     const setup = $('picksRoomSetup');
-    const createButton = $('picksCreateRoom');
-    const joinButton = $('picksJoinRoom');
-    if(createButton) createButton.disabled = !supabaseReady || !state.event;
-    if(joinButton) joinButton.disabled = !supabaseReady || !state.event;
     if(setup) setup.hidden = Boolean(state.room);
     if(!banner) return;
     if(!state.room){
@@ -206,20 +238,22 @@
     banner.classList.add('active');
     banner.innerHTML = `
       <div class="picks-room-copy">
-        <span class="picks-room-live">Room active</span>
-        <strong>${safe(state.room.name || 'Fight Picks')}</strong>
+        <span class="picks-room-live">You are in</span>
+        <strong>${safe(state.room.name || 'UFC Picks')}</strong>
         <div class="picks-room-meta">
           <button id="picksCopyCode" class="picks-code" type="button" aria-label="Copy room code">${safe(state.room.code)}</button>
           <span>${playerCount} player${playerCount === 1 ? '' : 's'} joined</span>
         </div>
       </div>
       <div class="picks-room-actions">
+        <button id="picksViewLive" class="picks-secondary compact" type="button">Live Picks</button>
         <button id="picksShareRoom" class="picks-primary compact" type="button">Share</button>
-        <button id="picksSwitchRoom" class="picks-secondary compact" type="button">Switch</button>
+        <button id="picksSwitchRoom" class="picks-secondary compact" type="button">Leave</button>
       </div>`;
     $('picksShareRoom')?.addEventListener('click',shareRoom);
     $('picksCopyCode')?.addEventListener('click',copyRoomCode);
     $('picksSwitchRoom')?.addEventListener('click',switchRoom);
+    $('picksViewLive')?.addEventListener('click',()=>$('picksLiveBoardCard')?.scrollIntoView({behavior:'smooth',block:'start'}));
   }
 
   function normalizedSection(section){
@@ -231,6 +265,14 @@
 
   function sectionSlug(section){
     return normalizedSection(section).toLowerCase().replace(/[^a-z0-9]+/g,'-');
+  }
+
+  function resultLabel(fight){
+    if(fight.resultStatus === 'complete' && fight.winner) return `${fight.winner} won`;
+    if(fight.resultStatus === 'draw') return 'Draw';
+    if(fight.resultStatus === 'no-contest') return 'No contest';
+    if(fight.resultStatus === 'cancelled') return 'Cancelled';
+    return isLocked(fight) ? 'Locked' : `Locks ${formatLock(fight.lockAt)}`;
   }
 
   function renderFighterButton(fight,side,selected,locked){
@@ -254,8 +296,7 @@
     return (member.visible_picks || []).find(pick=>pick.fight_id===fightId) || null;
   }
 
-  function renderGroupReveal(fight){
-    if(!isLocked(fight) || !state.room) return '';
+  function groupPicksForFight(fight){
     const red = [];
     const blue = [];
     const missed = [];
@@ -267,11 +308,17 @@
       else if(pick.fighter_name === fight.blue) blue.push(label);
       else missed.push(member.display_name);
     });
+    return {red,blue,missed};
+  }
+
+  function renderGroupReveal(fight){
+    if(!isLocked(fight) || !state.room) return '';
+    const picks = groupPicksForFight(fight);
     const group = (name,names)=>`<div class="pick-reveal-side"><strong>${safe(name)} <span>${names.length}</span></strong><small>${names.length ? names.map(safe).join(', ') : 'No picks'}</small></div>`;
     return `<div class="pick-reveal">
-      <div class="pick-reveal-title">Group picks revealed</div>
-      <div class="pick-reveal-grid">${group(fight.red,red)}${group(fight.blue,blue)}</div>
-      ${missed.length ? `<div class="pick-reveal-missed">No pick: ${missed.map(safe).join(', ')}</div>` : ''}
+      <div class="pick-reveal-title">Everyone's picks</div>
+      <div class="pick-reveal-grid">${group(fight.red,picks.red)}${group(fight.blue,picks.blue)}</div>
+      ${picks.missed.length ? `<div class="pick-reveal-missed">No pick: ${picks.missed.map(safe).join(', ')}</div>` : ''}
     </div>`;
   }
 
@@ -318,17 +365,18 @@
     const locked = isLocked(fight);
     const next = !locked && fight.id === nextFightId;
     const sectionClass = sectionSlug(fight.cardSection);
-    const footer = fight.winner
+    const footer = fight.resultStatus === 'complete' && fight.winner
       ? `Winner: ${safe(fight.winner)}`
-      : locked
-        ? 'This fight is locked.'
-        : selected
-          ? `Your pick: ${safe(selected)} · saved automatically`
-          : 'Pick one winner. Saves automatically.';
+      : fight.resultStatus === 'draw' ? 'Draw · no points awarded'
+      : fight.resultStatus === 'no-contest' ? 'No contest · no points awarded'
+      : fight.resultStatus === 'cancelled' ? 'Cancelled · no points awarded'
+      : locked ? 'Picks are locked. Everyone’s choices are now visible.'
+      : selected ? `Your pick: ${safe(selected)} · saved automatically`
+      : 'Pick one winner. Saves automatically.';
     return `<article class="pick-fight section-${sectionClass}${normalizedSection(fight.cardSection) === 'Main Card' ? ' main-card-fight' : ''}${fight.cardSection === 'Main Event' ? ' featured' : ''}${next ? ' next-to-lock' : ''}" data-fight="${safe(fight.id)}">
       <div class="pick-fight-head">
         <div><span class="pick-fight-number">${String(fight.order || '').padStart(2,'0')}</span><strong>${safe(fight.cardSection)} · ${safe(fight.weightClass)}</strong>${next ? '<em>NEXT TO LOCK</em>' : ''}</div>
-        <span class="${locked ? 'locked' : ''}">${locked ? (fight.winner ? 'Final' : 'Locked') : `Locks ${safe(formatLock(fight.lockAt))}`}</span>
+        <span class="${locked ? 'locked' : ''}">${safe(resultLabel(fight))}</span>
       </div>
       <div class="pick-matchup">
         ${renderFighterButton(fight,'red',selected,locked)}
@@ -342,7 +390,7 @@
   }
 
   function renderOpenFights(open,nextFightId){
-    if(!open.length) return '<div class="picks-empty">All fights are locked. Open the locked section below to follow group picks and results.</div>';
+    if(!open.length) return '<div class="picks-empty">All fights are locked. Follow everyone’s picks and results in Live Picks above.</div>';
     let lastSection = '';
     return open.map(fight=>{
       const section = normalizedSection(fight.cardSection);
@@ -354,7 +402,7 @@
 
   function renderLockedFights(locked,nextFightId){
     if(!locked.length) return '';
-    return `<details class="picks-locked-section">
+    return `<details id="picksLockedDetails" class="picks-locked-section">
       <summary><span>Locked fights</span><b>${locked.length}</b></summary>
       <div class="picks-locked-list">${locked.map(fight=>renderFightCard(fight,nextFightId)).join('')}</div>
     </details>`;
@@ -375,13 +423,38 @@
     renderProgress();
   }
 
+  function renderLiveBoard(){
+    const card = $('picksLiveBoardCard');
+    const target = $('picksLiveBoard');
+    if(!card || !target) return;
+    card.hidden = !state.room;
+    if(!state.room) return;
+    const locked = [...(state.event?.fights || [])].filter(isLocked).sort((a,b)=>new Date(b.lockAt)-new Date(a.lockAt));
+    if(!locked.length){
+      target.innerHTML = '<div class="picks-live-empty"><strong>No picks revealed yet</strong><span>Everyone’s exact choices appear here as soon as each fight locks.</span></div>';
+      return;
+    }
+    target.innerHTML = locked.map(fight=>{
+      const picks = groupPicksForFight(fight);
+      const winner = fight.resultStatus === 'complete' && fight.winner ? `<b>${safe(fight.winner)} won</b>` : `<b>${safe(resultLabel(fight))}</b>`;
+      return `<article class="picks-live-row">
+        <div class="picks-live-head"><div><span>${String(fight.order || '').padStart(2,'0')}</span><strong>${safe(fight.red)} vs. ${safe(fight.blue)}</strong></div>${winner}</div>
+        <div class="picks-live-sides">
+          <div class="${fight.winner === fight.red ? 'winner' : ''}"><strong>${safe(fight.red)} <span>${picks.red.length}</span></strong><small>${picks.red.length ? picks.red.map(safe).join(', ') : 'No picks'}</small></div>
+          <div class="${fight.winner === fight.blue ? 'winner' : ''}"><strong>${safe(fight.blue)} <span>${picks.blue.length}</span></strong><small>${picks.blue.length ? picks.blue.map(safe).join(', ') : 'No picks'}</small></div>
+        </div>
+        ${picks.missed.length ? `<div class="picks-live-missed">No pick: ${picks.missed.map(safe).join(', ')}</div>` : ''}
+      </article>`;
+    }).join('');
+  }
+
   function renderStandings(){
     const target = $('picksStandings');
     const card = $('picksStandingsCard');
     if(!target) return;
     if(card) card.hidden = !state.room;
     if(!state.room){
-      target.innerHTML='<div class="picks-empty">Create or join a room to see your friend standings.</div>';
+      target.innerHTML='<div class="picks-empty">Join a room to see standings.</div>';
       return;
     }
     const members = [...state.members].sort((a,b)=>(b.score||0)-(a.score||0) || (b.correct||0)-(a.correct||0) || (b.picks_made||0)-(a.picks_made||0) || String(a.display_name).localeCompare(String(b.display_name)));
@@ -393,12 +466,54 @@
       </div>`).join('') || '<div class="picks-empty">No room members yet.</div>';
   }
 
+  function adminChoiceValue(fight){
+    if(fight.resultStatus === 'complete' && fight.winner === fight.red) return 'red';
+    if(fight.resultStatus === 'complete' && fight.winner === fight.blue) return 'blue';
+    if(['draw','no-contest','cancelled'].includes(fight.resultStatus)) return fight.resultStatus;
+    return 'scheduled';
+  }
+
+  function renderAdmin(){
+    const card = $('picksAdminCard');
+    const target = $('picksAdminPanel');
+    if(!card || !target) return;
+    const isOwner = Boolean(state.room && state.adminToken);
+    card.hidden = !isOwner;
+    if(!isOwner) return;
+    const fights = [...(state.event?.fights || [])].sort((a,b)=>(a.order||0)-(b.order||0));
+    target.innerHTML = `
+      <div class="picks-admin-note">Only the device that created this room can see these controls.</div>
+      <div class="picks-admin-event-actions">
+        <span>Event status: <strong>${safe(state.event?.status || 'upcoming')}</strong></span>
+        <button type="button" data-admin-event="live">Set live</button>
+        <button type="button" data-admin-event="complete">Complete event</button>
+      </div>
+      <div class="picks-admin-fights">${fights.map(fight=>`
+        <div class="picks-admin-row">
+          <div><span>${String(fight.order || '').padStart(2,'0')}</span><strong>${safe(fight.red)} vs. ${safe(fight.blue)}</strong><small>${safe(resultLabel(fight))}</small></div>
+          <select data-admin-fight="${safe(fight.id)}">
+            <option value="scheduled" ${adminChoiceValue(fight)==='scheduled'?'selected':''}>Clear result</option>
+            <option value="red" ${adminChoiceValue(fight)==='red'?'selected':''}>${safe(fight.red)} won</option>
+            <option value="blue" ${adminChoiceValue(fight)==='blue'?'selected':''}>${safe(fight.blue)} won</option>
+            <option value="draw" ${adminChoiceValue(fight)==='draw'?'selected':''}>Draw</option>
+            <option value="no-contest" ${adminChoiceValue(fight)==='no-contest'?'selected':''}>No contest</option>
+            <option value="cancelled" ${adminChoiceValue(fight)==='cancelled'?'selected':''}>Cancelled</option>
+          </select>
+          <button type="button" data-admin-save="${safe(fight.id)}">Save</button>
+        </div>`).join('')}</div>`;
+    target.querySelectorAll('[data-admin-save]').forEach(button=>button.addEventListener('click',()=>saveAdminFight(button.dataset.adminSave)));
+    target.querySelectorAll('[data-admin-event]').forEach(button=>button.addEventListener('click',()=>saveAdminEvent(button.dataset.adminEvent)));
+  }
+
   function render(){
+    renderSetupMode();
     renderEventSelector();
     renderHero();
     renderRoom();
     renderFights();
+    renderLiveBoard();
     renderStandings();
+    renderAdmin();
     const note = $('picksSetupNote');
     if(note) note.hidden = supabaseReady;
   }
@@ -416,7 +531,6 @@
     const {error} = await client.rpc('picks_save_pick',{p_room_code:state.room.code,p_member_token:state.memberToken,p_fight_id:fightId,p_fighter_name:fighter});
     state.saving.delete(fightId);
     if(error){ status(error.message || 'Could not save that pick.','bad'); toast('Pick not saved'); return; }
-    status('Your picks save automatically.','good');
     toast(`${fighter} selected`);
     await refreshRoom();
   }
@@ -431,60 +545,88 @@
     if(!state.room || !client || !state.memberToken){ toast('Underdog Lock saved on this device'); return; }
     const {error} = await client.rpc('picks_set_underdog_lock',{p_room_code:state.room.code,p_member_token:state.memberToken,p_fight_id:fightId,p_fighter_name:fighter});
     if(error){ status(error.message || 'Could not save the Underdog Lock.','bad'); toast('Lock not saved'); return; }
-    status('Underdog Lock saved. It is worth +1 if correct.','good');
     toast(`${fighter} is your Underdog Lock`);
     await refreshRoom();
   }
 
-  function roomUrl(code){
-    const url = new URL(window.location.href);
-    url.searchParams.set('room',code);
-    url.hash = 'picks';
-    return url.toString();
-  }
-
-  async function shareRoom(){
-    if(!state.room) return;
-    const payload = {title:`${state.room.name || 'UFC Picks'} — ${state.room.code}`,text:`Join my UFC picks room. Code: ${state.room.code}`,url:roomUrl(state.room.code)};
-    try{
-      if(navigator.share) await navigator.share(payload);
-      else{ await navigator.clipboard.writeText(payload.url); toast('Room link copied'); }
-    }catch(_error){}
+  async function submitRoom(){
+    if(state.setupMode === 'join') await joinRoom();
+    else await createRoom();
   }
 
   async function createRoom(){
     const displayName = $('picksDisplayName')?.value.trim();
-    const roomName = $('picksRoomName')?.value.trim() || `${displayName || 'My'}'s Fight Picks`;
-    if(!displayName){ status('Enter your name first.','bad'); return; }
-    status('Creating room…');
+    const roomName = $('picksRoomName')?.value.trim() || `${displayName || 'My'}'s UFC Picks`;
+    if(!displayName){ status('Enter your display name first.','bad'); return; }
+    status('Creating your room…');
     const {data,error} = await client.rpc('picks_create_room',{p_event_id:state.event.id,p_display_name:displayName,p_room_name:roomName});
     if(error){ status(error.message || 'Could not create room.','bad'); return; }
     state.room = data.room;
     state.me = data.member;
-    localStorage.setItem('ufc-picks:display-name',displayName);
     state.memberToken = data.member_token;
+    state.adminToken = data.admin_token || null;
+    localStorage.setItem('ufc-picks:display-name',displayName);
     localStorage.setItem(`ufc-picks:room:${state.room.code}`,state.memberToken);
+    if(state.adminToken) localStorage.setItem(`ufc-picks:admin:${state.room.code}`,state.adminToken);
     history.replaceState(null,'',roomUrl(state.room.code));
-    status('Room created. Share it with your friends.','good');
     await refreshRoom();
+    toast('Room created — share it with your friends');
     $('picksRoomBanner')?.scrollIntoView({behavior:'smooth',block:'nearest'});
   }
 
   async function joinRoom(){
     const displayName = $('picksDisplayName')?.value.trim();
     const code = $('picksRoomCode')?.value.trim().toUpperCase();
-    if(!displayName || !code){ status('Enter your name and room code.','bad'); return; }
+    if(!displayName){ status('Enter your display name first.','bad'); return; }
+    if(!code){ status('Enter the six-character room code.','bad'); return; }
     status('Joining room…');
     const {data,error} = await client.rpc('picks_join_room',{p_room_code:code,p_display_name:displayName});
     if(error){ status(error.message || 'Could not join room.','bad'); return; }
     state.room = data.room;
     state.me = data.member;
-    localStorage.setItem('ufc-picks:display-name',displayName);
     state.memberToken = data.member_token;
+    state.adminToken = localStorage.getItem(`ufc-picks:admin:${state.room.code}`) || null;
+    localStorage.setItem('ufc-picks:display-name',displayName);
     localStorage.setItem(`ufc-picks:room:${state.room.code}`,state.memberToken);
     history.replaceState(null,'',roomUrl(state.room.code));
-    status('You are in. Tap your winners.','good');
     await refreshRoom();
+    toast('You are in — make your picks');
+  }
+
+  async function saveAdminFight(fightId){
+    if(!client || !state.room || !state.adminToken) return;
+    const fight = state.event?.fights.find(item=>item.id===fightId);
+    const select = document.querySelector(`[data-admin-fight="${CSS.escape(fightId)}"]`);
+    const choice = select?.value || 'scheduled';
+    let resultStatus = choice;
+    let winnerName = null;
+    if(choice === 'red'){ resultStatus='complete'; winnerName=fight.red; }
+    if(choice === 'blue'){ resultStatus='complete'; winnerName=fight.blue; }
+    toast('Saving result…');
+    const {error} = await client.rpc('picks_admin_set_fight_result',{
+      p_room_code:state.room.code,
+      p_admin_token:state.adminToken,
+      p_fight_id:fightId,
+      p_result_status:resultStatus,
+      p_winner_name:winnerName
+    });
+    if(error){ toast(error.message || 'Result not saved'); return; }
+    await loadBackendEvents();
+    await refreshRoom();
+    toast('Result posted');
+  }
+
+  async function saveAdminEvent(eventStatus){
+    if(!client || !state.room || !state.adminToken) return;
+    const {error} = await client.rpc('picks_admin_set_event_status',{
+      p_room_code:state.room.code,
+      p_admin_token:state.adminToken,
+      p_event_status:eventStatus
+    });
+    if(error){ toast(error.message || 'Event status not saved'); return; }
+    await loadBackendEvents();
+    await refreshRoom();
+    toast(eventStatus === 'complete' ? 'Event completed' : 'Event set live');
   }
 
   async function refreshRoom(){
@@ -492,8 +634,12 @@
     const {data,error} = await client.rpc('picks_room_snapshot',{p_room_code:state.room.code,p_member_token:state.memberToken});
     if(error){ status(error.message || 'Could not refresh room.','bad'); return; }
     state.room = data.room;
+    state.adminToken = state.adminToken || localStorage.getItem(`ufc-picks:admin:${state.room.code}`) || null;
     const roomEvent = state.events.find(event=>event.id===state.room.event_id);
-    if(roomEvent && roomEvent.id !== state.event?.id){ state.event=roomEvent; loadLocalPicks(); }
+    if(roomEvent){
+      if(roomEvent.id !== state.event?.id){ state.event=roomEvent; loadLocalPicks(); }
+      else state.event=roomEvent;
+    }
     state.me = data.me;
     state.members = data.members || [];
     if(data.my_picks){
@@ -515,14 +661,14 @@
   }
 
   async function resumeRoomFromUrl(){
-    if(!client) return;
-    const code = new URL(window.location.href).searchParams.get('room')?.trim().toUpperCase();
-    if(!code) return;
-    if($('picksRoomCode')) $('picksRoomCode').value=code;
-    const token = localStorage.getItem(`ufc-picks:room:${code}`);
-    if(!token){ status(`Enter your name to join room ${code}.`); return; }
-    state.room = {code};
+    if(!client || !roomParam) return;
+    if($('picksRoomCode')) $('picksRoomCode').value=roomParam;
+    setSetupMode('join');
+    const token = localStorage.getItem(`ufc-picks:room:${roomParam}`);
+    if(!token){ status(`Enter your name and tap Join room. The code is already filled in.`); return; }
+    state.room = {code:roomParam};
     state.memberToken = token;
+    state.adminToken = localStorage.getItem(`ufc-picks:admin:${roomParam}`) || null;
     await refreshRoom();
   }
 
@@ -533,26 +679,29 @@
       state.me=null;
       state.members=[];
       state.memberToken=null;
+      state.adminToken=null;
       loadLocalPicks();
       render();
     });
-    $('picksCreateRoom')?.addEventListener('click',createRoom);
-    $('picksJoinRoom')?.addEventListener('click',joinRoom);
+    $('picksModeCreate')?.addEventListener('click',()=>setSetupMode('create'));
+    $('picksModeJoin')?.addEventListener('click',()=>setSetupMode('join'));
+    $('picksRoomSubmit')?.addEventListener('click',submitRoom);
+    $('picksRoomCode')?.addEventListener('input',event=>{ event.target.value=event.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6); });
   }
 
   async function init(){
     if(!$('picks')) return;
-    const roomCode = new URL(window.location.href).searchParams.get('room');
-    if(window.location.hash === '#picks' || roomCode){ document.querySelector('.tab[data-view="picks"]')?.click(); }
+    if(window.location.hash === '#picks' || roomParam){ document.querySelector('.tab[data-view="picks"]')?.click(); }
     const savedName = localStorage.getItem('ufc-picks:display-name');
     if(savedName && $('picksDisplayName')) $('picksDisplayName').value=savedName;
+    if(roomParam && $('picksRoomCode')) $('picksRoomCode').value=roomParam;
     loadLocalPicks();
     bind();
     render();
     await loadBackendEvents();
     render();
     await resumeRoomFromUrl();
-    window.setInterval(()=>{ if(state.room) refreshRoom(); else renderFights(); },30000);
+    window.setInterval(()=>{ if(state.room) refreshRoom(); else renderFights(); },20000);
   }
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init,{once:true});
