@@ -25,21 +25,44 @@ jobs:
       - name: Check out main
         uses: actions/checkout@v4
 
-      - name: Refresh production cache keys and loader safety
+      - name: Refresh production sources and cache keys
         run: |
           sed -i 's/module-versions-20260710zd-loss-context-final-closure/module-versions-20260710ze-loss-context-canonical-production/g' index.html
           sed -i 's/ranking-data-patches-20260710j-loss-context-records/ranking-data-patches-20260710k-canonical-loss-context/g' index.html
           python3 - <<'PY'
           from pathlib import Path
-          path = Path('assets/data/ranking-data-patches.js')
-          text = path.read_text()
+
+          patches = Path('assets/data/ranking-data-patches.js')
+          text = patches.read_text()
           marker = "function compareCoreScripts(){const packets=packetManifest().map(row=>packet(row.slug,row.version));return[\n"
           safety = "    {src:'assets/js/refresh-safety.js?v=refresh-safety-20260710a-modular-containers',attr:'data-refresh-safety'},\n"
           if safety not in text:
               if marker not in text:
                   raise SystemExit('Could not find compareCoreScripts insertion point.')
               text = text.replace(marker, marker + safety, 1)
-              path.write_text(text)
+          text = text.replace("['robert-whittaker','20260706b-round-control']", "['robert-whittaker','20260710c-loss-context-record']")
+          patches.write_text(text)
+
+          live_score = Path('assets/js/live-score-ui.js')
+          text = live_score.read_text()
+          old = "Number(r.rawScore ?? r.totalScore || 0)"
+          new = "Number(r.rawScore ?? r.totalScore ?? 0)"
+          if old not in text and new not in text:
+              raise SystemExit('Could not find live-score-ui syntax target.')
+          live_score.write_text(text.replace(old, new))
+
+          whittaker = Path('assets/data/fighter-packets/robert-whittaker.js')
+          text = whittaker.read_text()
+          text = text.replace("fighter-packet-robert-whittaker-20260706b-round-control", "fighter-packet-robert-whittaker-20260710c-loss-context-record")
+          text = text.replace("{ opponent:'Court McGee', date:'2014-02-22'", "{ opponent:'Court McGee', date:'2013-08-28'")
+          text = text.replace("'16-6'", "'16-7'")
+          text = text.replace("complete first-pass packet; Cody approved Romero treatment; round-control rows added", "complete packet; Loss Context record reconciled; round-control rows added")
+          text = text.replace("lastUpdated: '2026-07-06'", "lastUpdated: '2026-07-10'")
+          whittaker.write_text(text)
+
+          manifest = Path('assets/data/fighter-packet-manifest.js')
+          text = manifest.read_text().replace("{slug:'robert-whittaker',version:'20260706b-round-control'}", "{slug:'robert-whittaker',version:'20260710c-loss-context-record'}")
+          manifest.write_text(text)
           PY
 
       - name: Set up Node
@@ -89,7 +112,7 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
-      - name: Publish runtime reports and cache keys
+      - name: Publish runtime reports and source fixes
         if: always()
         run: |
           if [ ! -f artifacts/loss-context-runtime-report.json ] || [ ! -f artifacts/loss-context-runtime-summary.json ]; then
@@ -102,8 +125,8 @@ jobs:
           cp artifacts/js-syntax-audit.txt docs/js-syntax-audit.txt
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html assets/data/ranking-data-patches.js docs/loss-context-runtime-report.json docs/loss-context-runtime-summary.json docs/js-syntax-audit.txt
-          git commit -m 'Record canonical Loss Context runtime audit [skip ci]' || true
+          git add index.html assets/data/ranking-data-patches.js assets/js/live-score-ui.js assets/data/fighter-packets/robert-whittaker.js assets/data/fighter-packet-manifest.js docs/loss-context-runtime-report.json docs/loss-context-runtime-summary.json docs/js-syntax-audit.txt
+          git commit -m 'Record clean canonical Loss Context runtime audit [skip ci]' || true
           git push
 
       - name: Enforce clean audits
