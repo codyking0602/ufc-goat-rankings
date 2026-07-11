@@ -249,7 +249,7 @@
       <div class="picks-room-actions">
         <button id="picksShareRoom" class="picks-primary compact" type="button">Share</button>
         <button id="picksViewRoomPicks" class="picks-secondary compact" type="button">Room Picks</button>
-        ${state.adminToken ? '<button id="picksOpenAdmin" class="picks-secondary compact" type="button">Results</button>' : ''}
+        ${state.adminToken && state.room.is_result_admin ? '<button id="picksOpenAdmin" class="picks-secondary compact" type="button">Results</button>' : ''}
         <button id="picksSwitchRoom" class="picks-secondary compact" type="button">Leave</button>
       </div>`;
     $('picksShareRoom')?.addEventListener('click',shareRoom);
@@ -432,7 +432,7 @@
     const panel=$('picksAdminPanel');
     const target=$('picksAdminContent');
     if(!panel || !target) return;
-    panel.hidden=!state.adminToken || !state.room;
+    panel.hidden=!state.adminToken || !state.room?.is_result_admin;
     if(panel.hidden) return;
     const event=state.event;
     target.innerHTML=`
