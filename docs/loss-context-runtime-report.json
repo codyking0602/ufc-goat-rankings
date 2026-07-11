@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-11T17:15:29.014Z",
+  "generatedAt": "2026-07-11T17:16:57.981Z",
   "baseUrl": "http://127.0.0.1:4173",
   "report": {
     "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -70,7 +70,7 @@
       "mutatesRecords": true,
       "mutatesPenalty": false,
       "mutatesScores": false,
-      "appliedAt": "2026-07-11T17:15:25.607Z",
+      "appliedAt": "2026-07-11T17:16:54.351Z",
       "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
     },
     "scoreReview": {
@@ -811,7 +811,7 @@
     ],
     "mutatesScores": false,
     "mutatesPenalty": false,
-    "generatedAt": "2026-07-11T17:15:27.641Z",
+    "generatedAt": "2026-07-11T17:16:56.541Z",
     "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
   },
   "pipeline": {
@@ -864,8 +864,8 @@
     "timerCount": 0,
     "repeatedLoadCount": 0,
     "finalScoreApplyCount": 1,
-    "startedAt": "2026-07-11T17:15:24.400Z",
-    "completedAt": "2026-07-11T17:15:27.910Z",
+    "startedAt": "2026-07-11T17:16:52.912Z",
+    "completedAt": "2026-07-11T17:16:56.843Z",
     "error": null,
     "canonicalFighterRegistryBase": {
       "applied": true,
@@ -1052,6 +1052,38 @@
         "lossContext": -2.25,
         "rawScore": 39.65,
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty",
+        "primeRecordContext": "Leslie Smith → Felicia Spencer",
+        "canonicalPrimeRecordAudit": {
+          "fighter": "Cris Cyborg",
+          "record": "6-1",
+          "context": "Leslie Smith → Felicia Spencer",
+          "counts": {
+            "wins": 6,
+            "losses": 1,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {
+            "start": "2016-05-14",
+            "startLabel": "Leslie Smith",
+            "end": "2019-07-27",
+            "endLabel": "Felicia Spencer",
+            "endType": "promotion_exit_win",
+            "endReason": "The Nunes loss did not end the window because Cyborg immediately re-proved elite UFC form against Spencer.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
+          },
+          "windowLocked": true,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260710c-chuck-vitor-window"
+        },
         "opponentQualityLive": true,
         "opponentQualityLiveAudit": {
           "fighter": "Cris Cyborg",
@@ -1152,38 +1184,6 @@
           "benchmarkCredit": 14.1,
           "sourceMode": "canonical-registry",
           "version": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
-        },
-        "primeRecordContext": "Leslie Smith → Felicia Spencer",
-        "canonicalPrimeRecordAudit": {
-          "fighter": "Cris Cyborg",
-          "record": "6-1",
-          "context": "Leslie Smith → Felicia Spencer",
-          "counts": {
-            "wins": 6,
-            "losses": 1,
-            "draws": 0,
-            "ncs": 0,
-            "parsed": true
-          },
-          "source": "RANKING_DATA.primeRecords reviewed value",
-          "reason": "Existing reviewed Prime Record retained under locked Era context.",
-          "eraWindow": {
-            "start": "2016-05-14",
-            "startLabel": "Leslie Smith",
-            "end": "2019-07-27",
-            "endLabel": "Felicia Spencer",
-            "endType": "promotion_exit_win",
-            "endReason": "The Nunes loss did not end the window because Cyborg immediately re-proved elite UFC form against Spencer.",
-            "canonical": true,
-            "locked": true,
-            "lockVersion": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
-          },
-          "windowLocked": true,
-          "recordOverridden": false,
-          "scoreRebuildRequired": false,
-          "scoreRebuildCompleted": false,
-          "scoreRebuildVersion": null,
-          "version": "canonical-prime-records-20260710c-chuck-vitor-window"
         },
         "primeDominanceShadowAudit": {
           "fighter": "Cris Cyborg",
@@ -1422,7 +1422,7 @@
             "Compact championship window with shallow-division compression.",
             "UFC-only window."
           ],
-          "appliedAt": "2026-07-11T17:15:27.088Z"
+          "appliedAt": "2026-07-11T17:16:55.953Z"
         },
         "apexPeakAudit": {
           "score": 4.6,
@@ -1774,6 +1774,37 @@
         "lossContext": -2.25,
         "rawScore": 39.65,
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty",
+        "canonicalPrimeRecordAudit": {
+          "fighter": "Cris Cyborg",
+          "record": "6-1",
+          "context": "Leslie Smith → Felicia Spencer",
+          "counts": {
+            "wins": 6,
+            "losses": 1,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {
+            "start": "2016-05-14",
+            "startLabel": "Leslie Smith",
+            "end": "2019-07-27",
+            "endLabel": "Felicia Spencer",
+            "endType": "promotion_exit_win",
+            "endReason": "The Nunes loss did not end the window because Cyborg immediately re-proved elite UFC form against Spencer.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
+          },
+          "windowLocked": true,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260710c-chuck-vitor-window"
+        },
         "opponentQualityLive": true,
         "opponentQualityLiveAudit": {
           "fighter": "Cris Cyborg",
@@ -1874,37 +1905,6 @@
           "benchmarkCredit": 14.1,
           "sourceMode": "canonical-registry",
           "version": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
-        },
-        "canonicalPrimeRecordAudit": {
-          "fighter": "Cris Cyborg",
-          "record": "6-1",
-          "context": "Leslie Smith → Felicia Spencer",
-          "counts": {
-            "wins": 6,
-            "losses": 1,
-            "draws": 0,
-            "ncs": 0,
-            "parsed": true
-          },
-          "source": "RANKING_DATA.primeRecords reviewed value",
-          "reason": "Existing reviewed Prime Record retained under locked Era context.",
-          "eraWindow": {
-            "start": "2016-05-14",
-            "startLabel": "Leslie Smith",
-            "end": "2019-07-27",
-            "endLabel": "Felicia Spencer",
-            "endType": "promotion_exit_win",
-            "endReason": "The Nunes loss did not end the window because Cyborg immediately re-proved elite UFC form against Spencer.",
-            "canonical": true,
-            "locked": true,
-            "lockVersion": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
-          },
-          "windowLocked": true,
-          "recordOverridden": false,
-          "scoreRebuildRequired": false,
-          "scoreRebuildCompleted": false,
-          "scoreRebuildVersion": null,
-          "version": "canonical-prime-records-20260710c-chuck-vitor-window"
         },
         "primeDominanceShadowAudit": {
           "fighter": "Cris Cyborg",
@@ -2142,7 +2142,7 @@
             "Compact championship window with shallow-division compression.",
             "UFC-only window."
           ],
-          "appliedAt": "2026-07-11T17:15:27.089Z"
+          "appliedAt": "2026-07-11T17:16:55.955Z"
         },
         "longevityLegacyScore": 7.78,
         "longevityRaw30": 7.78,
@@ -2260,7 +2260,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T17:15:25.569Z"
+      "appliedAt": "2026-07-11T17:16:54.270Z"
     },
     "lossContextCompletionBatchFour": {
       "version": "loss-context-ledger-completion-batch-four-20260710a-five-highest-missing",
@@ -2316,7 +2316,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T17:15:25.572Z"
+      "appliedAt": "2026-07-11T17:16:54.299Z"
     },
     "lossContextCompletionBatchFive": {
       "version": "loss-context-ledger-completion-batch-five-20260710b-chuck-vitor-window",
@@ -2409,7 +2409,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T17:15:25.575Z"
+      "appliedAt": "2026-07-11T17:16:54.303Z"
     },
     "lossContextCompletionBatchSix": {
       "version": "loss-context-ledger-completion-batch-six-20260710a-first-half-eighteen",
@@ -2597,7 +2597,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T17:15:25.579Z"
+      "appliedAt": "2026-07-11T17:16:54.312Z"
     },
     "lossContextCompletionBatchSeven": {
       "version": "loss-context-ledger-completion-batch-seven-20260710a-final-seventeen",
@@ -2756,7 +2756,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T17:15:25.584Z"
+      "appliedAt": "2026-07-11T17:16:54.318Z"
     },
     "approvedFighterAuditCorrections": {
       "version": "approved-fighter-audit-corrections-20260710a-tito-pereira-hughes-kayla",
@@ -2772,7 +2772,7 @@
       "opponentQualityCorrections": [
         "Kayla Harrison"
       ],
-      "appliedAt": "2026-07-11T17:15:25.587Z"
+      "appliedAt": "2026-07-11T17:16:54.322Z"
     },
     "lossContextCanonicalProduction": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -30045,7 +30045,7 @@
         ],
         "mode": "canonical-production",
         "mutatesScores": true,
-        "appliedAt": "2026-07-11T17:15:25.607Z"
+        "appliedAt": "2026-07-11T17:16:54.351Z"
       },
       "mismatchAudit": {
         "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -48912,7 +48912,7 @@
         "missingEraLossEntries": [],
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "appliedAt": "2026-07-11T17:15:25.607Z"
+        "appliedAt": "2026-07-11T17:16:54.351Z"
       },
       "scoreReview": {
         "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -51094,7 +51094,7 @@
         "mutatesPenalty": true,
         "mutatesScores": true,
         "finalScoreRecalculationOwner": "final-score-engine.js",
-        "appliedAt": "2026-07-11T17:15:25.607Z"
+        "appliedAt": "2026-07-11T17:16:54.351Z"
       },
       "appliedCompletionFixes": [
         "Robert Whittaker",
@@ -51154,7 +51154,7 @@
       ],
       "mutatesPenalty": true,
       "mutatesScores": true,
-      "appliedAt": "2026-07-11T17:15:25.607Z"
+      "appliedAt": "2026-07-11T17:16:54.351Z"
     },
     "lossContextScoreReview": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -53336,7 +53336,7 @@
       "mutatesPenalty": true,
       "mutatesScores": true,
       "finalScoreRecalculationOwner": "final-score-engine.js",
-      "appliedAt": "2026-07-11T17:15:25.607Z"
+      "appliedAt": "2026-07-11T17:16:54.351Z"
     },
     "lossContextMismatchAudit": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -72203,7 +72203,7 @@
       "missingEraLossEntries": [],
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T17:15:25.607Z"
+      "appliedAt": "2026-07-11T17:16:54.351Z"
     },
     "lossContextDynamicRosterTarget": {
       "version": "loss-context-dynamic-roster-target-20260710a",
@@ -72211,15 +72211,7 @@
       "expectedRosterCount": 63,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T17:15:25.868Z"
-    },
-    "opponentQualityReadyDetail": {
-      "version": "opponent-quality-live-20260710c-fixed-benchmark",
-      "fighters": 63,
-      "benchmarkCredit": 14.1,
-      "sourceBenchmarkCredit": 14.1,
-      "benchmarkMode": "locked-constant",
-      "futureRosterStable": true
+      "appliedAt": "2026-07-11T17:16:54.355Z"
     },
     "canonicalLongevityRecalculation": {
       "version": "longevity-canonical-recalculation-20260710b-eleven-window-rebuild",
@@ -72392,7 +72384,7 @@
       "correctsRandyBelfortDate": true,
       "mutatesEraLongevityInputs": true,
       "mutatesScores": false,
-      "appliedAt": "2026-07-11T17:15:26.132Z"
+      "appliedAt": "2026-07-11T17:16:54.364Z"
     },
     "canonicalPrimeRecords": {
       "version": "canonical-prime-records-20260710c-chuck-vitor-window",
@@ -74412,7 +74404,15 @@
       "allWindowsLocked": false,
       "mutatesScores": false,
       "mutatesPrimeRecordDisplay": true,
-      "appliedAt": "2026-07-11T17:15:26.148Z"
+      "appliedAt": "2026-07-11T17:16:54.637Z"
+    },
+    "opponentQualityReadyDetail": {
+      "version": "opponent-quality-live-20260710c-fixed-benchmark",
+      "fighters": 63,
+      "benchmarkCredit": 14.1,
+      "sourceBenchmarkCredit": 14.1,
+      "benchmarkMode": "locked-constant",
+      "futureRosterStable": true
     },
     "approvedOpponentQualityCorrection": {
       "applied": true,
@@ -74503,7 +74503,7 @@
         "winProfile": "Major signature win, thinner depth"
       },
       "version": "approved-fighter-audit-corrections-20260710a-tito-pereira-hughes-kayla",
-      "appliedAt": "2026-07-11T17:15:26.149Z"
+      "appliedAt": "2026-07-11T17:16:54.924Z"
     },
     "canonicalFighterRegistryOpponentQuality": {
       "applied": true,
@@ -74893,7 +74893,7 @@
           "version": "prime-dominance-audit-batch-eleven-20260710a-tito-pereira-hughes"
         }
       },
-      "appliedAt": "2026-07-11T17:15:26.612Z"
+      "appliedAt": "2026-07-11T17:16:55.435Z"
     },
     "canonicalFighterRegistryPrime": {
       "applied": true,
@@ -79410,7 +79410,7 @@
       "mutatesEliteStakes": false,
       "mutatesTotals": false,
       "finalScoreRecalculationOwner": "final-score-engine.js",
-      "appliedAt": "2026-07-11T17:15:26.615Z"
+      "appliedAt": "2026-07-11T17:16:55.440Z"
     },
     "fighterEraWindowAudit": {
       "version": "fighter-era-window-audit-20260710b-record-dependencies",
@@ -83481,7 +83481,7 @@
       "allCanonicalPrimeRecordsPresent": false,
       "mutatesScores": false,
       "mutatesWindows": false,
-      "appliedAt": "2026-07-11T17:15:27.346Z"
+      "appliedAt": "2026-07-11T17:16:56.241Z"
     },
     "canonicalFighterRegistryApex": {
       "applied": true,
@@ -83603,7 +83603,7 @@
           "overallOvr": 90
         }
       ],
-      "appliedAt": "2026-07-11T17:15:27.640Z"
+      "appliedAt": "2026-07-11T17:16:56.540Z"
     },
     "lossContextFinalReconciliation": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -83674,7 +83674,7 @@
         "mutatesRecords": true,
         "mutatesPenalty": false,
         "mutatesScores": false,
-        "appliedAt": "2026-07-11T17:15:25.607Z",
+        "appliedAt": "2026-07-11T17:16:54.351Z",
         "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
       },
       "scoreReview": {
@@ -84415,7 +84415,7 @@
       ],
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "generatedAt": "2026-07-11T17:15:27.641Z",
+      "generatedAt": "2026-07-11T17:16:56.541Z",
       "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
     },
     "canonicalFighterRegistryFinal": {
@@ -84603,6 +84603,38 @@
         "lossContext": -2.25,
         "rawScore": 39.65,
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty",
+        "primeRecordContext": "Leslie Smith → Felicia Spencer",
+        "canonicalPrimeRecordAudit": {
+          "fighter": "Cris Cyborg",
+          "record": "6-1",
+          "context": "Leslie Smith → Felicia Spencer",
+          "counts": {
+            "wins": 6,
+            "losses": 1,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {
+            "start": "2016-05-14",
+            "startLabel": "Leslie Smith",
+            "end": "2019-07-27",
+            "endLabel": "Felicia Spencer",
+            "endType": "promotion_exit_win",
+            "endReason": "The Nunes loss did not end the window because Cyborg immediately re-proved elite UFC form against Spencer.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
+          },
+          "windowLocked": true,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260710c-chuck-vitor-window"
+        },
         "opponentQualityLive": true,
         "opponentQualityLiveAudit": {
           "fighter": "Cris Cyborg",
@@ -84703,38 +84735,6 @@
           "benchmarkCredit": 14.1,
           "sourceMode": "canonical-registry",
           "version": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
-        },
-        "primeRecordContext": "Leslie Smith → Felicia Spencer",
-        "canonicalPrimeRecordAudit": {
-          "fighter": "Cris Cyborg",
-          "record": "6-1",
-          "context": "Leslie Smith → Felicia Spencer",
-          "counts": {
-            "wins": 6,
-            "losses": 1,
-            "draws": 0,
-            "ncs": 0,
-            "parsed": true
-          },
-          "source": "RANKING_DATA.primeRecords reviewed value",
-          "reason": "Existing reviewed Prime Record retained under locked Era context.",
-          "eraWindow": {
-            "start": "2016-05-14",
-            "startLabel": "Leslie Smith",
-            "end": "2019-07-27",
-            "endLabel": "Felicia Spencer",
-            "endType": "promotion_exit_win",
-            "endReason": "The Nunes loss did not end the window because Cyborg immediately re-proved elite UFC form against Spencer.",
-            "canonical": true,
-            "locked": true,
-            "lockVersion": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
-          },
-          "windowLocked": true,
-          "recordOverridden": false,
-          "scoreRebuildRequired": false,
-          "scoreRebuildCompleted": false,
-          "scoreRebuildVersion": null,
-          "version": "canonical-prime-records-20260710c-chuck-vitor-window"
         },
         "primeDominanceShadowAudit": {
           "fighter": "Cris Cyborg",
@@ -84973,7 +84973,7 @@
             "Compact championship window with shallow-division compression.",
             "UFC-only window."
           ],
-          "appliedAt": "2026-07-11T17:15:27.088Z"
+          "appliedAt": "2026-07-11T17:16:55.953Z"
         },
         "apexPeakAudit": {
           "score": 4.6,
@@ -85325,6 +85325,37 @@
         "lossContext": -2.25,
         "rawScore": 39.65,
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty",
+        "canonicalPrimeRecordAudit": {
+          "fighter": "Cris Cyborg",
+          "record": "6-1",
+          "context": "Leslie Smith → Felicia Spencer",
+          "counts": {
+            "wins": 6,
+            "losses": 1,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {
+            "start": "2016-05-14",
+            "startLabel": "Leslie Smith",
+            "end": "2019-07-27",
+            "endLabel": "Felicia Spencer",
+            "endType": "promotion_exit_win",
+            "endReason": "The Nunes loss did not end the window because Cyborg immediately re-proved elite UFC form against Spencer.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
+          },
+          "windowLocked": true,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260710c-chuck-vitor-window"
+        },
         "opponentQualityLive": true,
         "opponentQualityLiveAudit": {
           "fighter": "Cris Cyborg",
@@ -85425,37 +85456,6 @@
           "benchmarkCredit": 14.1,
           "sourceMode": "canonical-registry",
           "version": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
-        },
-        "canonicalPrimeRecordAudit": {
-          "fighter": "Cris Cyborg",
-          "record": "6-1",
-          "context": "Leslie Smith → Felicia Spencer",
-          "counts": {
-            "wins": 6,
-            "losses": 1,
-            "draws": 0,
-            "ncs": 0,
-            "parsed": true
-          },
-          "source": "RANKING_DATA.primeRecords reviewed value",
-          "reason": "Existing reviewed Prime Record retained under locked Era context.",
-          "eraWindow": {
-            "start": "2016-05-14",
-            "startLabel": "Leslie Smith",
-            "end": "2019-07-27",
-            "endLabel": "Felicia Spencer",
-            "endType": "promotion_exit_win",
-            "endReason": "The Nunes loss did not end the window because Cyborg immediately re-proved elite UFC form against Spencer.",
-            "canonical": true,
-            "locked": true,
-            "lockVersion": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
-          },
-          "windowLocked": true,
-          "recordOverridden": false,
-          "scoreRebuildRequired": false,
-          "scoreRebuildCompleted": false,
-          "scoreRebuildVersion": null,
-          "version": "canonical-prime-records-20260710c-chuck-vitor-window"
         },
         "primeDominanceShadowAudit": {
           "fighter": "Cris Cyborg",
@@ -85693,7 +85693,7 @@
             "Compact championship window with shallow-division compression.",
             "UFC-only window."
           ],
-          "appliedAt": "2026-07-11T17:15:27.089Z"
+          "appliedAt": "2026-07-11T17:16:55.955Z"
         },
         "longevityLegacyScore": 7.78,
         "longevityRaw30": 7.78,
@@ -87945,7 +87945,7 @@
     "mutatesPenalty": true,
     "mutatesScores": true,
     "finalScoreRecalculationOwner": "final-score-engine.js",
-    "appliedAt": "2026-07-11T17:15:25.607Z"
+    "appliedAt": "2026-07-11T17:16:54.351Z"
   },
   "postAudit": {
     "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -106812,7 +106812,7 @@
     "missingEraLossEntries": [],
     "mutatesScores": false,
     "mutatesPenalty": false,
-    "appliedAt": "2026-07-11T17:15:25.607Z"
+    "appliedAt": "2026-07-11T17:16:54.351Z"
   },
   "finalizer": {
     "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -106877,7 +106877,7 @@
     "mutatesRecords": true,
     "mutatesPenalty": false,
     "mutatesScores": false,
-    "appliedAt": "2026-07-11T17:15:25.607Z",
+    "appliedAt": "2026-07-11T17:16:54.351Z",
     "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
   },
   "menTop20": [
@@ -107282,7 +107282,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T17:15:25.572Z",
+        "completedAt": "2026-07-11T17:16:54.298Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -107392,7 +107392,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T17:15:25.583Z",
+        "completedAt": "2026-07-11T17:16:54.317Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -107585,7 +107585,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T17:15:24.919Z",
+        "completedAt": "2026-07-11T17:16:53.543Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -107719,7 +107719,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T17:15:25.579Z",
+        "completedAt": "2026-07-11T17:16:54.312Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -107853,7 +107853,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T17:15:25.579Z",
+        "completedAt": "2026-07-11T17:16:54.312Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -107951,7 +107951,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T17:15:25.583Z",
+        "completedAt": "2026-07-11T17:16:54.317Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -108095,7 +108095,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-11T17:15:24.916Z",
+        "completedAt": "2026-07-11T17:16:53.539Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -108240,7 +108240,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-11T17:15:24.916Z",
+        "completedAt": "2026-07-11T17:16:53.539Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -108410,7 +108410,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T17:15:25.574Z",
+        "completedAt": "2026-07-11T17:16:54.303Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -108520,7 +108520,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T17:15:25.583Z",
+        "completedAt": "2026-07-11T17:16:54.317Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -108642,7 +108642,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T17:15:25.583Z",
+        "completedAt": "2026-07-11T17:16:54.318Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
