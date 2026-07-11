@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>UFC All-Time Rankings</title>
   <link rel="stylesheet" href="assets/css/app.css?v=app-css-20260711a-picks" />
-  <link rel="stylesheet" href="assets/css/picks.css?v=picks-css-20260711d-room-admin" />
+  <link rel="stylesheet" href="assets/css/picks.css?v=picks-css-20260711c-live-gameplay" />
+  <link rel="stylesheet" href="assets/css/picks-room-admin.css?v=picks-room-admin-20260711a" />
 </head>
 <body>
   <header class="hero"><div><p class="eyebrow">UFC ranking engine</p><h1>UFC All-Time Rankings</h1><p class="subtitle">Clean UFC legacy rankings with OVR ratings, fighter profiles, category ranks, compare mode, and debate-ready explanations.</p></div><div class="hero-card"><span id="fighterCount">—</span><small>fighters entered</small></div></header>
@@ -24,29 +25,35 @@
         <div id="picksEventHero" class="picks-event-hero"></div>
         <div id="picksSetupNote" class="picks-setup-note">Local preview is active. Add the Supabase project URL and public anon key to enable real friend rooms across different phones.</div>
         <div id="picksRoomBanner" class="picks-room-banner"></div>
+
         <div id="picksRoomSetup" class="card picks-room-card">
-          <div class="picks-room-intro"><div><span>PLAY WITH FRIENDS</span><h3>Start a room or join one</h3></div><p>Only your display name is required.</p></div>
-          <label class="picks-label">Your display name<input id="picksDisplayName" maxlength="30" autocomplete="nickname" placeholder="Cody" /></label>
-          <div class="picks-room-choice" role="tablist" aria-label="Choose room action">
-            <button id="picksModeCreate" class="active" type="button">Start a room</button>
-            <button id="picksModeJoin" type="button">Join friends</button>
+          <div class="picks-mode-switch" role="tablist" aria-label="Room action">
+            <button id="picksCreateMode" class="active" type="button">Start a Room</button>
+            <button id="picksJoinMode" type="button">Join a Room</button>
           </div>
-          <label id="picksRoomNameWrap" class="picks-label picks-optional-field">Room name <span>optional</span><input id="picksRoomName" maxlength="40" placeholder="Cody's UFC Picks" /></label>
-          <label id="picksRoomCodeWrap" class="picks-label" hidden>Room code<input id="picksRoomCode" maxlength="6" autocapitalize="characters" inputmode="text" placeholder="ABC123" /></label>
-          <button id="picksRoomSubmit" class="picks-primary picks-room-submit" type="button">Create room</button>
+          <div id="picksRoomIntro" class="picks-room-intro">Start a room, then send one link to the group.</div>
+          <label class="picks-label">Your name<input id="picksDisplayName" maxlength="30" autocomplete="nickname" placeholder="Cody" /></label>
+          <div id="picksJoinFields" hidden>
+            <label class="picks-label">Room code<input id="picksRoomCode" maxlength="6" autocapitalize="characters" placeholder="ABC123" /></label>
+          </div>
+          <button id="picksRoomAction" class="picks-primary picks-room-action" type="button">Start Picks Room</button>
           <div id="picksStatus" class="picks-status">Friends’ exact picks stay hidden until each fight locks.</div>
         </div>
-        <div class="card picks-progress-card"><div id="picksProgress" class="picks-progress"></div></div>
-        <div id="picksLiveBoardCard" class="card picks-live-board-card" hidden>
-          <div class="picks-card-heading"><div><span>LIVE PICKS</span><h3>What everyone picked</h3></div><small>Names reveal when each fight locks.</small></div>
-          <div id="picksLiveBoard"></div>
+
+        <div id="picksRoomPicksCard" class="card picks-room-picks-card" hidden>
+          <div class="picks-card-head"><h3>Room Picks</h3><span id="picksRoomPicksCount">Waiting for first lock</span></div>
+          <p class="picks-card-subtitle">Everyone’s picks appear here as soon as each fight locks.</p>
+          <div id="picksRoomPicks" class="picks-room-picks-list"></div>
         </div>
+
+        <details id="picksAdminPanel" class="card picks-admin-card" hidden>
+          <summary>Manage Live Results <span>Room Owner</span></summary>
+          <div id="picksAdminContent" class="picks-admin-content"></div>
+        </details>
+
+        <div class="card picks-progress-card"><div id="picksProgress" class="picks-progress"></div></div>
         <div id="picksFightList" class="picks-fights"></div>
         <div id="picksStandingsCard" class="card picks-standings-card"><h3>Room Standings</h3><div id="picksStandings" class="picks-standings"></div></div>
-        <details id="picksAdminCard" class="card picks-admin-card" hidden>
-          <summary><span>Room owner controls</span><small>Post winners and manage the event</small></summary>
-          <div id="picksAdminPanel"></div>
-        </details>
       </div>
     </section>
     <section id="rules" class="view"><div class="section-title"><h2>Scoring Notes</h2><p>Simple explanations for how the rankings are shaped.</p></div><div id="rulesContent" class="rules-grid"></div></section>
