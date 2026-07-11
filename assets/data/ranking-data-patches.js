@@ -1,7 +1,7 @@
 // Lightweight prerequisite/data loader with an explicit readiness handoff.
 (function(){
   'use strict';
-  const VERSION='ranking-data-patches-20260710l-chuck-vitor-window';
+  const VERSION='ranking-data-patches-20260711m-octagon-verdict-cards';
   let readyResolved=false;
   let resolveReady;
   const readyPromise=new Promise(resolve=>{resolveReady=resolve;});
@@ -103,12 +103,12 @@
     loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260710a-canonical-prime-record','data-profile-template-system',loadPackages);
   }
 
-  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Deterministic prerequisite/data loader',updated:'2026-07-10',version:VERSION},apply:status,ready:readyPromise,slugFor,syncPacketProfileStats,packetManifest};
+  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Deterministic prerequisite/data loader',updated:'2026-07-11',version:VERSION},apply:status,ready:readyPromise,slugFor,syncPacketProfileStats,packetManifest};
   installImageFallback();
   applyPhotoPathDefaults();
   syncPacketProfileStats();
   loadModules();
   window.OCTAGON_VERDICT_GPT_URL='https://chatgpt.com/g/g-6a4c40425d4881919ddebc7231bff09f-octagon-verdict';
-  loadScriptOnce('assets/js/octagon-verdict-compare-launcher.js?v=octagon-verdict-compare-launcher-20260707a','data-octagon-verdict-compare-launcher',status);
+  loadScriptOnce('assets/js/octagon-verdict-compare-launcher.js?v=octagon-verdict-compare-launcher-20260711b-canonical-cards','data-octagon-verdict-compare-launcher',status);
   window.UFC_PHASE2_DATA_REFRESH=status;
 })();
