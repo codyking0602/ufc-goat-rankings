@@ -1,823 +1,15 @@
 {
-  "generatedAt": "2026-07-11T05:05:04.985Z",
+  "generatedAt": "2026-07-11T05:07:22.264Z",
   "baseUrl": "http://127.0.0.1:4173",
-  "report": {
-    "version": "loss-context-canonical-production-20260710a-runtime-closure",
-    "applied": true,
-    "complete": true,
-    "rosterTarget": 62,
-    "rosterLedgerCoverage": 62,
-    "ledgerFinalizer": {
-      "version": "loss-context-canonical-production-20260710a-runtime-closure",
-      "applied": true,
-      "rosterCount": 62,
-      "expectedRosterCount": 62,
-      "bucketRepairCount": 0,
-      "bucketRepairs": [],
-      "recordRepairCount": 3,
-      "recordRepairs": [
-        {
-          "fighter": "Valentina Shevchenko",
-          "from": "15-3-1",
-          "to": "14-3-1",
-          "surfaces": [
-            {
-              "surface": "RANKING_DATA.ufcRecord",
-              "from": "15-3-1",
-              "to": "14-3-1"
-            }
-          ]
-        },
-        {
-          "fighter": "Dan Henderson",
-          "from": "8-8",
-          "to": "8-9",
-          "surfaces": [
-            {
-              "surface": "RANKING_DATA.ufcRecord",
-              "from": "8-8",
-              "to": "8-9"
-            },
-            {
-              "surface": "RANKING_DATA.ufcRecord",
-              "from": "8-8",
-              "to": "8-9"
-            }
-          ]
-        },
-        {
-          "fighter": "Robert Whittaker",
-          "from": "16-6",
-          "to": "16-7",
-          "surfaces": [
-            {
-              "surface": "RANKING_DATA.ufcRecord",
-              "from": "16-6",
-              "to": "16-7"
-            },
-            {
-              "surface": "RANKING_DATA.ufcRecord",
-              "from": "16-6",
-              "to": "16-7"
-            }
-          ]
-        }
-      ],
-      "unresolvedCount": 0,
-      "unresolved": [],
-      "complete": true,
-      "mutatesEraLossEvents": true,
-      "mutatesRecords": true,
-      "mutatesPenalty": false,
-      "mutatesScores": false,
-      "appliedAt": "2026-07-11T05:05:01.781Z"
-    },
-    "scoreReview": {
-      "version": "loss-context-canonical-production-20260710a-runtime-closure",
-      "prePromotionScoreMismatchCount": 27,
-      "promotedCount": 27,
-      "unchangedCount": 35,
-      "blockedCount": 0,
-      "capAppliedCount": 5,
-      "promotedPenaltyChanges": [
-        {
-          "fighter": "Dan Henderson",
-          "priorPenalty": -5.5,
-          "promotedPenalty": -9.75,
-          "delta": -4.25,
-          "capApplied": false,
-          "lossEventCount": 9
-        },
-        {
-          "fighter": "Chuck Liddell",
-          "priorPenalty": -10,
-          "promotedPenalty": -6,
-          "delta": 4,
-          "capApplied": false,
-          "lossEventCount": 7
-        },
-        {
-          "fighter": "Francis Ngannou",
-          "priorPenalty": -5.5,
-          "promotedPenalty": -2,
-          "delta": 3.5,
-          "capApplied": false,
-          "lossEventCount": 2
-        },
-        {
-          "fighter": "Jose Aldo",
-          "priorPenalty": -6.75,
-          "promotedPenalty": -10,
-          "delta": -3.25,
-          "capApplied": true,
-          "lossEventCount": 9
-        },
-        {
-          "fighter": "Tony Ferguson",
-          "priorPenalty": -6.51,
-          "promotedPenalty": -3.5,
-          "delta": 3.01,
-          "capApplied": false,
-          "lossEventCount": 9
-        },
-        {
-          "fighter": "Henry Cejudo",
-          "priorPenalty": -6.75,
-          "promotedPenalty": -3.75,
-          "delta": 3,
-          "capApplied": false,
-          "lossEventCount": 6
-        },
-        {
-          "fighter": "Jessica Andrade",
-          "priorPenalty": -7.5,
-          "promotedPenalty": -10,
-          "delta": -2.5,
-          "capApplied": true,
-          "lossEventCount": 13
-        },
-        {
-          "fighter": "Junior dos Santos",
-          "priorPenalty": -6.1,
-          "promotedPenalty": -3.75,
-          "delta": 2.35,
-          "capApplied": false,
-          "lossEventCount": 8
-        },
-        {
-          "fighter": "Carla Esparza",
-          "priorPenalty": -8.25,
-          "promotedPenalty": -10,
-          "delta": -1.75,
-          "capApplied": true,
-          "lossEventCount": 6
-        },
-        {
-          "fighter": "Chael Sonnen",
-          "priorPenalty": -7.5,
-          "promotedPenalty": -9.25,
-          "delta": -1.75,
-          "capApplied": false,
-          "lossEventCount": 7
-        },
-        {
-          "fighter": "Holly Holm",
-          "priorPenalty": -7.28,
-          "promotedPenalty": -9,
-          "delta": -1.72,
-          "capApplied": false,
-          "lossEventCount": 7
-        },
-        {
-          "fighter": "Deiveson Figueiredo",
-          "priorPenalty": -5.25,
-          "promotedPenalty": -6.75,
-          "delta": -1.5,
-          "capApplied": false,
-          "lossEventCount": 7
-        },
-        {
-          "fighter": "Julianna Peña",
-          "priorPenalty": -8,
-          "promotedPenalty": -6.75,
-          "delta": 1.25,
-          "capApplied": false,
-          "lossEventCount": 4
-        },
-        {
-          "fighter": "Matt Hughes",
-          "priorPenalty": -10,
-          "promotedPenalty": -8.75,
-          "delta": 1.25,
-          "capApplied": false,
-          "lossEventCount": 7
-        },
-        {
-          "fighter": "Tito Ortiz",
-          "priorPenalty": -8.25,
-          "promotedPenalty": -9.5,
-          "delta": -1.25,
-          "capApplied": false,
-          "lossEventCount": 11
-        },
-        {
-          "fighter": "Aljamain Sterling",
-          "priorPenalty": -6.25,
-          "promotedPenalty": -7.25,
-          "delta": -1,
-          "capApplied": false,
-          "lossEventCount": 5
-        },
-        {
-          "fighter": "Mackenzie Dern",
-          "priorPenalty": -9,
-          "promotedPenalty": -8,
-          "delta": 1,
-          "capApplied": false,
-          "lossEventCount": 5
-        },
-        {
-          "fighter": "Michael Bisping",
-          "priorPenalty": -9.1,
-          "promotedPenalty": -10,
-          "delta": -0.9,
-          "capApplied": true,
-          "lossEventCount": 9
-        },
-        {
-          "fighter": "Demetrious Johnson",
-          "priorPenalty": -3,
-          "promotedPenalty": -2.25,
-          "delta": 0.75,
-          "capApplied": false,
-          "lossEventCount": 2
-        },
-        {
-          "fighter": "Kamaru Usman",
-          "priorPenalty": -4.5,
-          "promotedPenalty": -3.75,
-          "delta": 0.75,
-          "capApplied": false,
-          "lossEventCount": 3
-        },
-        {
-          "fighter": "Petr Yan",
-          "priorPenalty": -5.25,
-          "promotedPenalty": -4.5,
-          "delta": 0.75,
-          "capApplied": false,
-          "lossEventCount": 3
-        },
-        {
-          "fighter": "Stipe Miocic",
-          "priorPenalty": -8,
-          "promotedPenalty": -7.25,
-          "delta": 0.75,
-          "capApplied": false,
-          "lossEventCount": 5
-        },
-        {
-          "fighter": "Tyron Woodley",
-          "priorPenalty": -4.5,
-          "promotedPenalty": -3.75,
-          "delta": 0.75,
-          "capApplied": false,
-          "lossEventCount": 6
-        },
-        {
-          "fighter": "Robbie Lawler",
-          "priorPenalty": -8.62,
-          "promotedPenalty": -9.25,
-          "delta": -0.63,
-          "capApplied": false,
-          "lossEventCount": 10
-        },
-        {
-          "fighter": "Sean O'Malley",
-          "priorPenalty": -5.25,
-          "promotedPenalty": -5.75,
-          "delta": -0.5,
-          "capApplied": false,
-          "lossEventCount": 3
-        },
-        {
-          "fighter": "B.J. Penn",
-          "priorPenalty": -8.5,
-          "promotedPenalty": -8.75,
-          "delta": -0.25,
-          "capApplied": false,
-          "lossEventCount": 13
-        },
-        {
-          "fighter": "Robert Whittaker",
-          "priorPenalty": -9.75,
-          "promotedPenalty": -10,
-          "delta": -0.25,
-          "capApplied": true,
-          "lossEventCount": 7
-        }
-      ]
-    },
-    "postPromotionAudit": {
-      "version": "loss-context-canonical-production-20260710a-runtime-closure",
-      "cleanMatches": 62,
-      "exactScoreMatches": 62,
-      "remainingFlaggedCount": 0,
-      "remainingScoreMismatchCount": 0,
-      "remainingLedgerBlockCount": 0,
-      "missingLivePenaltyCount": 0,
-      "unresolvedRows": []
-    },
-    "rankingImpact": {
-      "changedPenaltyCount": 27,
-      "fightersWithRankMovement": 28,
-      "movement": [
-        {
-          "board": "men",
-          "fighter": "Francis Ngannou",
-          "currentRank": 22,
-          "currentTotal": 49.12,
-          "currentPenalty": -2,
-          "priorPenalty": -5.5,
-          "counterfactualTotal": 45.62,
-          "counterfactualRank": 29,
-          "rankMovement": 7
-        },
-        {
-          "board": "men",
-          "fighter": "Tony Ferguson",
-          "currentRank": 35,
-          "currentTotal": 42.24,
-          "currentPenalty": -3.5,
-          "priorPenalty": -6.51,
-          "counterfactualTotal": 39.23,
-          "counterfactualRank": 40,
-          "rankMovement": 5
-        },
-        {
-          "board": "men",
-          "fighter": "Henry Cejudo",
-          "currentRank": 23,
-          "currentTotal": 48.88,
-          "currentPenalty": -3.75,
-          "priorPenalty": -6.75,
-          "counterfactualTotal": 45.88,
-          "counterfactualRank": 28,
-          "rankMovement": 5
-        },
-        {
-          "board": "men",
-          "fighter": "Tito Ortiz",
-          "currentRank": 31,
-          "currentTotal": 44.66,
-          "currentPenalty": -9.5,
-          "priorPenalty": -8.25,
-          "counterfactualTotal": 45.91,
-          "counterfactualRank": 26,
-          "rankMovement": -5
-        },
-        {
-          "board": "men",
-          "fighter": "Deiveson Figueiredo",
-          "currentRank": 38,
-          "currentTotal": 40.31,
-          "currentPenalty": -6.75,
-          "priorPenalty": -5.25,
-          "counterfactualTotal": 41.81,
-          "counterfactualRank": 34,
-          "rankMovement": -4
-        },
-        {
-          "board": "men",
-          "fighter": "Robbie Lawler",
-          "currentRank": 40,
-          "currentTotal": 39.83,
-          "currentPenalty": -9.25,
-          "priorPenalty": -8.62,
-          "counterfactualTotal": 40.46,
-          "counterfactualRank": 37,
-          "rankMovement": -3
-        },
-        {
-          "board": "men",
-          "fighter": "Charles Oliveira",
-          "currentRank": 27,
-          "currentTotal": 46.65,
-          "currentPenalty": -10,
-          "priorPenalty": -10,
-          "counterfactualTotal": 46.65,
-          "counterfactualRank": 24,
-          "rankMovement": -3
-        },
-        {
-          "board": "men",
-          "fighter": "Conor McGregor",
-          "currentRank": 28,
-          "currentTotal": 46.58,
-          "currentPenalty": -7,
-          "priorPenalty": -7,
-          "counterfactualTotal": 46.58,
-          "counterfactualRank": 25,
-          "rankMovement": -3
-        },
-        {
-          "board": "men",
-          "fighter": "Frankie Edgar",
-          "currentRank": 24,
-          "currentTotal": 48.14,
-          "currentPenalty": -10,
-          "priorPenalty": -10,
-          "counterfactualTotal": 48.14,
-          "counterfactualRank": 21,
-          "rankMovement": -3
-        },
-        {
-          "board": "men",
-          "fighter": "Ilia Topuria",
-          "currentRank": 25,
-          "currentTotal": 47.37,
-          "currentPenalty": -2.25,
-          "priorPenalty": -2.25,
-          "counterfactualTotal": 47.37,
-          "counterfactualRank": 22,
-          "rankMovement": -3
-        },
-        {
-          "board": "men",
-          "fighter": "Chuck Liddell",
-          "currentRank": 16,
-          "currentTotal": 54.87,
-          "currentPenalty": -6,
-          "priorPenalty": -10,
-          "counterfactualTotal": 50.87,
-          "counterfactualRank": 18,
-          "rankMovement": 2
-        },
-        {
-          "board": "men",
-          "fighter": "Junior dos Santos",
-          "currentRank": 21,
-          "currentTotal": 49.19,
-          "currentPenalty": -3.75,
-          "priorPenalty": -6.1,
-          "counterfactualTotal": 46.84,
-          "counterfactualRank": 23,
-          "rankMovement": 2
-        },
-        {
-          "board": "women",
-          "fighter": "Carla Esparza",
-          "currentRank": 11,
-          "currentTotal": 28.97,
-          "currentPenalty": -10,
-          "priorPenalty": -8.25,
-          "counterfactualTotal": 30.72,
-          "counterfactualRank": 9,
-          "rankMovement": -2
-        },
-        {
-          "board": "women",
-          "fighter": "Julianna Peña",
-          "currentRank": 9,
-          "currentTotal": 30.68,
-          "currentPenalty": -6.75,
-          "priorPenalty": -8,
-          "counterfactualTotal": 29.43,
-          "counterfactualRank": 11,
-          "rankMovement": 2
-        },
-        {
-          "board": "men",
-          "fighter": "Dricus du Plessis",
-          "currentRank": 30,
-          "currentTotal": 45.15,
-          "currentPenalty": -1.5,
-          "priorPenalty": -1.5,
-          "counterfactualTotal": 45.15,
-          "counterfactualRank": 32,
-          "rankMovement": 2
-        },
-        {
-          "board": "men",
-          "fighter": "Jose Aldo",
-          "currentRank": 8,
-          "currentTotal": 62.29,
-          "currentPenalty": -10,
-          "priorPenalty": -6.75,
-          "counterfactualTotal": 65.54,
-          "counterfactualRank": 7,
-          "rankMovement": -1
-        },
-        {
-          "board": "men",
-          "fighter": "Matt Hughes",
-          "currentRank": 9,
-          "currentTotal": 62.12,
-          "currentPenalty": -8.75,
-          "priorPenalty": -10,
-          "counterfactualTotal": 60.87,
-          "counterfactualRank": 10,
-          "rankMovement": 1
-        },
-        {
-          "board": "men",
-          "fighter": "Aljamain Sterling",
-          "currentRank": 32,
-          "currentTotal": 44.46,
-          "currentPenalty": -7.25,
-          "priorPenalty": -6.25,
-          "counterfactualTotal": 45.46,
-          "counterfactualRank": 31,
-          "rankMovement": -1
-        },
-        {
-          "board": "men",
-          "fighter": "Demetrious Johnson",
-          "currentRank": 3,
-          "currentTotal": 76.37,
-          "currentPenalty": -2.25,
-          "priorPenalty": -3,
-          "counterfactualTotal": 75.62,
-          "counterfactualRank": 4,
-          "rankMovement": 1
-        },
-        {
-          "board": "men",
-          "fighter": "Petr Yan",
-          "currentRank": 34,
-          "currentTotal": 42.54,
-          "currentPenalty": -4.5,
-          "priorPenalty": -5.25,
-          "counterfactualTotal": 41.79,
-          "counterfactualRank": 35,
-          "rankMovement": 1
-        },
-        {
-          "board": "men",
-          "fighter": "Tyron Woodley",
-          "currentRank": 26,
-          "currentTotal": 46.66,
-          "currentPenalty": -3.75,
-          "priorPenalty": -4.5,
-          "counterfactualTotal": 45.91,
-          "counterfactualRank": 27,
-          "rankMovement": 1
-        },
-        {
-          "board": "men",
-          "fighter": "Alex Pereira",
-          "currentRank": 17,
-          "currentTotal": 54.48,
-          "currentPenalty": -5,
-          "priorPenalty": -5,
-          "counterfactualTotal": 54.48,
-          "counterfactualRank": 16,
-          "rankMovement": -1
-        },
-        {
-          "board": "men",
-          "fighter": "Anderson Silva",
-          "currentRank": 4,
-          "currentTotal": 75.79,
-          "currentPenalty": -4.5,
-          "priorPenalty": -4.5,
-          "counterfactualTotal": 75.79,
-          "counterfactualRank": 3,
-          "rankMovement": -1
-        },
-        {
-          "board": "men",
-          "fighter": "Cain Velasquez",
-          "currentRank": 18,
-          "currentTotal": 50.93,
-          "currentPenalty": -4.5,
-          "priorPenalty": -4.5,
-          "counterfactualTotal": 50.93,
-          "counterfactualRank": 17,
-          "rankMovement": -1
-        },
-        {
-          "board": "men",
-          "fighter": "Dustin Poirier",
-          "currentRank": 37,
-          "currentTotal": 40.35,
-          "currentPenalty": -10,
-          "priorPenalty": -10,
-          "counterfactualTotal": 40.35,
-          "counterfactualRank": 38,
-          "rankMovement": 1
-        },
-        {
-          "board": "men",
-          "fighter": "Khabib Nurmagomedov",
-          "currentRank": 7,
-          "currentTotal": 64.05,
-          "currentPenalty": 0,
-          "priorPenalty": 0,
-          "counterfactualTotal": 64.05,
-          "counterfactualRank": 8,
-          "rankMovement": 1
-        },
-        {
-          "board": "men",
-          "fighter": "Merab Dvalishvili",
-          "currentRank": 29,
-          "currentTotal": 45.52,
-          "currentPenalty": -4.75,
-          "priorPenalty": -4.75,
-          "counterfactualTotal": 45.52,
-          "counterfactualRank": 30,
-          "rankMovement": 1
-        },
-        {
-          "board": "men",
-          "fighter": "Randy Couture",
-          "currentRank": 10,
-          "currentTotal": 61.09,
-          "currentPenalty": -10,
-          "priorPenalty": -10,
-          "counterfactualTotal": 61.09,
-          "counterfactualRank": 9,
-          "rankMovement": -1
-        },
-        {
-          "board": "men",
-          "fighter": "Dan Henderson",
-          "currentRank": 47,
-          "currentTotal": 20.31,
-          "currentPenalty": -9.75,
-          "priorPenalty": -5.5,
-          "counterfactualTotal": 24.56,
-          "counterfactualRank": 47,
-          "rankMovement": 0
-        },
-        {
-          "board": "women",
-          "fighter": "Jessica Andrade",
-          "currentRank": 7,
-          "currentTotal": 35.48,
-          "currentPenalty": -10,
-          "priorPenalty": -7.5,
-          "counterfactualTotal": 37.98,
-          "counterfactualRank": 7,
-          "rankMovement": 0
-        },
-        {
-          "board": "men",
-          "fighter": "Chael Sonnen",
-          "currentRank": 48,
-          "currentTotal": 18.68,
-          "currentPenalty": -9.25,
-          "priorPenalty": -7.5,
-          "counterfactualTotal": 20.43,
-          "counterfactualRank": 48,
-          "rankMovement": 0
-        },
-        {
-          "board": "women",
-          "fighter": "Holly Holm",
-          "currentRank": 13,
-          "currentTotal": 26.34,
-          "currentPenalty": -9,
-          "priorPenalty": -7.28,
-          "counterfactualTotal": 28.06,
-          "counterfactualRank": 13,
-          "rankMovement": 0
-        },
-        {
-          "board": "women",
-          "fighter": "Mackenzie Dern",
-          "currentRank": 14,
-          "currentTotal": 25.78,
-          "currentPenalty": -8,
-          "priorPenalty": -9,
-          "counterfactualTotal": 24.78,
-          "counterfactualRank": 14,
-          "rankMovement": 0
-        },
-        {
-          "board": "men",
-          "fighter": "Michael Bisping",
-          "currentRank": 46,
-          "currentTotal": 30.13,
-          "currentPenalty": -10,
-          "priorPenalty": -9.1,
-          "counterfactualTotal": 31.03,
-          "counterfactualRank": 46,
-          "rankMovement": 0
-        },
-        {
-          "board": "men",
-          "fighter": "Kamaru Usman",
-          "currentRank": 11,
-          "currentTotal": 60.91,
-          "currentPenalty": -3.75,
-          "priorPenalty": -4.5,
-          "counterfactualTotal": 60.16,
-          "counterfactualRank": 11,
-          "rankMovement": 0
-        },
-        {
-          "board": "men",
-          "fighter": "Stipe Miocic",
-          "currentRank": 12,
-          "currentTotal": 58.35,
-          "currentPenalty": -7.25,
-          "priorPenalty": -8,
-          "counterfactualTotal": 57.6,
-          "counterfactualRank": 12,
-          "rankMovement": 0
-        },
-        {
-          "board": "men",
-          "fighter": "Sean O'Malley",
-          "currentRank": 44,
-          "currentTotal": 34.91,
-          "currentPenalty": -5.75,
-          "priorPenalty": -5.25,
-          "counterfactualTotal": 35.41,
-          "counterfactualRank": 44,
-          "rankMovement": 0
-        },
-        {
-          "board": "men",
-          "fighter": "B.J. Penn",
-          "currentRank": 20,
-          "currentTotal": 50.24,
-          "currentPenalty": -8.75,
-          "priorPenalty": -8.5,
-          "counterfactualTotal": 50.49,
-          "counterfactualRank": 20,
-          "rankMovement": 0
-        },
-        {
-          "board": "men",
-          "fighter": "Robert Whittaker",
-          "currentRank": 41,
-          "currentTotal": 38.85,
-          "currentPenalty": -10,
-          "priorPenalty": -9.75,
-          "counterfactualTotal": 39.1,
-          "counterfactualRank": 41,
-          "rankMovement": 0
-        }
-      ],
-      "counterfactualMethod": "Rebuild each final board using the prior penalty while holding every final positive category and Apex Peak value constant."
-    },
-    "queue": {
-      "version": "loss-context-canonical-production-20260710a-runtime-closure",
-      "flaggedCount": 0,
-      "nextLedgerBatchCount": 0,
-      "ledgerCoverageComplete": true
-    },
-    "finalScoreEngineVersion": "final-score-engine-20260710b-deterministic",
-    "warnings": [],
-    "appliedCompletionFixes": [
-      "Robert Whittaker",
-      "Sean Strickland",
-      "Sean O’Malley",
-      "Charles Oliveira",
-      "Israel Adesanya",
-      "Henry Cejudo"
-    ],
-    "recordRepairs": [
-      {
-        "fighter": "Valentina Shevchenko",
-        "from": "15-3-1",
-        "to": "14-3-1",
-        "surfaces": [
-          {
-            "surface": "RANKING_DATA.ufcRecord",
-            "from": "15-3-1",
-            "to": "14-3-1"
-          }
-        ]
-      },
-      {
-        "fighter": "Dan Henderson",
-        "from": "8-8",
-        "to": "8-9",
-        "surfaces": [
-          {
-            "surface": "RANKING_DATA.ufcRecord",
-            "from": "8-8",
-            "to": "8-9"
-          },
-          {
-            "surface": "RANKING_DATA.ufcRecord",
-            "from": "8-8",
-            "to": "8-9"
-          }
-        ]
-      },
-      {
-        "fighter": "Robert Whittaker",
-        "from": "16-6",
-        "to": "16-7",
-        "surfaces": [
-          {
-            "surface": "RANKING_DATA.ufcRecord",
-            "from": "16-6",
-            "to": "16-7"
-          },
-          {
-            "surface": "RANKING_DATA.ufcRecord",
-            "from": "16-6",
-            "to": "16-7"
-          }
-        ]
-      }
-    ],
-    "mutatesScores": false,
-    "mutatesPenalty": false,
-    "generatedAt": "2026-07-11T05:05:03.867Z"
-  },
+  "report": null,
   "pipeline": {
-    "version": "deterministic-scoring-pipeline-20260710zh-three-fight-prime-cap",
+    "version": "deterministic-scoring-pipeline-20260710zi-cris-cyborg",
     "mode": "deterministic-single-pass",
-    "status": "ready",
+    "status": "error",
     "sequence": [
       "ranking-data-patches:ready",
+      "canonical-fighter-registry:loaded",
+      "canonical-fighter-registry:base",
       "loss-context-batch-three:loaded",
       "loss-context-batch-four:loaded",
       "loss-context-batch-five:loaded",
@@ -829,12 +21,14 @@
       "canonical-prime-records:loaded",
       "opponent-quality:ready",
       "approved-opponent-quality:applied",
+      "canonical-fighter-registry:opponent-quality",
       "prime-round-control:loaded",
       "prime-ledgers:loaded",
       "prime-shadow:loaded",
       "prime-audit-batch-seven:loaded",
       "prime-audit-batch-ten:loaded",
       "prime-audit-batch-eleven:loaded",
+      "canonical-fighter-registry:prime",
       "prime-three-fight-cap:loaded",
       "prime-live:loaded",
       "prime-copy:loaded",
@@ -845,19 +39,1412 @@
       "apex-corrections:existing",
       "apex-component-audit:loaded",
       "apex-live:loaded",
-      "apex-dricus-audit:loaded",
-      "final-score-engine:loaded",
-      "final-score-engine:applied",
-      "loss-context-canonical-production:finalized",
-      "category-percentile-tiers:loaded",
-      "ui:refreshed-once"
+      "apex-dricus-audit:loaded"
     ],
     "timerCount": 0,
     "repeatedLoadCount": 0,
-    "finalScoreApplyCount": 1,
-    "startedAt": "2026-07-11T05:05:00.390Z",
-    "completedAt": "2026-07-11T05:05:04.160Z",
-    "error": null,
+    "finalScoreApplyCount": 0,
+    "startedAt": "2026-07-11T05:07:18.140Z",
+    "completedAt": "2026-07-11T05:07:21.483Z",
+    "error": "ReferenceError: apexPeakAudit is not defined\n    at Object.applyApexPeak (http://127.0.0.1:4173/assets/data/canonical-fighter-registry.js?v=canonical-fighter-registry-20260710a-cris-cyborg:274:182)\n    at run (http://127.0.0.1:4173/assets/data/module-versions.js?v=module-versions-20260710zf-chuck-vitor-window:1:12638)",
+    "canonicalFighterRegistryBase": {
+      "applied": true,
+      "fighter": "Cris Cyborg",
+      "boardRow": {
+        "fighter": "Cris Cyborg",
+        "totalScore": 39.66,
+        "championship": 4.81,
+        "opponentQuality": 8.62,
+        "primeDominance": 23.13,
+        "longevity": 7.78,
+        "longevityThirtyPoint": true,
+        "apexPeak": 4.6,
+        "penalty": -2.25,
+        "leaderboard": "women",
+        "gender": "Women",
+        "ufcRecord": "6-1",
+        "primaryDivision": "Featherweight",
+        "secondaryDivision": "Catchweight",
+        "finishRatePct": 66.7,
+        "activeEliteYears": 3.2,
+        "timesFinishedPrime": 1,
+        "primeRecord": "6-1",
+        "roundsWonPct": 81.25,
+        "notes": "UFC-only featherweight champion: three title-fight wins, two defenses, dominant 6-1 run, and one counted prime loss to Amanda Nunes.",
+        "championshipResumeLive": true,
+        "championshipFormulaDriven": true,
+        "championshipResumeAudit": {
+          "fighter": "Cris Cyborg",
+          "status": "direct-ledger",
+          "titleFightWins": 3,
+          "adjustedTitleCredit": 2.33,
+          "discountedWins": 3,
+          "reviewStatus": "locked",
+          "formulaScore": 4.81,
+          "wins": [
+            {
+              "index": 1,
+              "opponent": "Tonya Evinger",
+              "titleType": "vacantUndisputed",
+              "baseValue": 0.9,
+              "strength": 0.75,
+              "adjustedCredit": 0.68,
+              "reviewStatus": "locked",
+              "source": "canonicalFighterRegistry",
+              "notes": "Vacant UFC featherweight title win over a promotional newcomer moving up from bantamweight."
+            },
+            {
+              "index": 2,
+              "opponent": "Holly Holm",
+              "titleType": "normal",
+              "baseValue": 1,
+              "strength": 0.9,
+              "adjustedCredit": 0.9,
+              "reviewStatus": "locked",
+              "source": "canonicalFighterRegistry",
+              "notes": "Legitimate five-round defense over a former UFC champion and dangerous title challenger."
+            },
+            {
+              "index": 3,
+              "opponent": "Yana Kunitskaya",
+              "titleType": "normal",
+              "baseValue": 1,
+              "strength": 0.75,
+              "adjustedCredit": 0.75,
+              "reviewStatus": "locked",
+              "source": "canonicalFighterRegistry",
+              "notes": "Valid title defense with a shallow-division and promotional-debut opponent discount."
+            }
+          ]
+        },
+        "title": {
+          "titleFightWins": 3,
+          "normalTitleWins": 2,
+          "vacantUndisputedWins": 1,
+          "adjustedTitleWins": 2.33,
+          "championshipScore": 4.81,
+          "discountedWins": 3,
+          "reviewStatus": "locked",
+          "notes": "Total title fight wins = 3. Adjusted title-win credit = 2.33. Championship Resume score = 4.81/30."
+        },
+        "opponentQualityLegacy": 8.62,
+        "opponentQualityShadowScore": 4.05,
+        "opponentQualityShadowAudit": {
+          "fighter": "Cris Cyborg",
+          "rawCredit": 4.05,
+          "diminishedCredit": 4.05,
+          "maxCreditWins": 0,
+          "elitePlusWins": 0,
+          "topFivePlusWins": 1,
+          "rankedQualityWins": 4,
+          "bestWins": [
+            "Holly Holm",
+            "Felicia Spencer",
+            "Tonya Evinger",
+            "Yana Kunitskaya",
+            "Leslie Smith",
+            "Lina Lansberg"
+          ],
+          "reviewRows": [],
+          "highRiskRows": [],
+          "rows": [
+            {
+              "originalSlot": 1,
+              "opponent": "Holly Holm",
+              "credit": 1,
+              "tierLabel": "True top-5 win",
+              "context": "Former UFC champion and legitimate five-round featherweight title challenger.",
+              "reviewStatus": "locked",
+              "slot": 1,
+              "countedRate": 1,
+              "exactCountedCredit": 1,
+              "countedCredit": 1
+            },
+            {
+              "originalSlot": 2,
+              "opponent": "Felicia Spencer",
+              "credit": 0.85,
+              "tierLabel": "Strong top-10 win",
+              "context": "Unbeaten UFC contender who later challenged Amanda Nunes for the title.",
+              "reviewStatus": "locked",
+              "slot": 2,
+              "countedRate": 1,
+              "exactCountedCredit": 0.85,
+              "countedCredit": 0.85
+            },
+            {
+              "originalSlot": 3,
+              "opponent": "Tonya Evinger",
+              "credit": 0.65,
+              "tierLabel": "Ranked / quality win",
+              "context": "Experienced champion entering the UFC, discounted for divisional and debut context.",
+              "reviewStatus": "locked",
+              "slot": 3,
+              "countedRate": 1,
+              "exactCountedCredit": 0.65,
+              "countedCredit": 0.65
+            },
+            {
+              "originalSlot": 4,
+              "opponent": "Yana Kunitskaya",
+              "credit": 0.65,
+              "tierLabel": "Ranked / quality win",
+              "context": "Title challenger with meaningful ability, discounted for shallow-division and debut context.",
+              "reviewStatus": "locked",
+              "slot": 4,
+              "countedRate": 1,
+              "exactCountedCredit": 0.65,
+              "countedCredit": 0.65
+            },
+            {
+              "originalSlot": 5,
+              "opponent": "Leslie Smith",
+              "credit": 0.45,
+              "tierLabel": "Solid resume win",
+              "context": "Useful UFC debut win at a catchweight, below ranked championship quality.",
+              "reviewStatus": "locked",
+              "slot": 5,
+              "countedRate": 1,
+              "exactCountedCredit": 0.45,
+              "countedCredit": 0.45
+            },
+            {
+              "originalSlot": 6,
+              "opponent": "Lina Lansberg",
+              "credit": 0.45,
+              "tierLabel": "Solid resume win",
+              "context": "Solid UFC main-event win at a catchweight, below ranked championship quality.",
+              "reviewStatus": "locked",
+              "slot": 6,
+              "countedRate": 1,
+              "exactCountedCredit": 0.45,
+              "countedCredit": 0.45
+            }
+          ],
+          "board": "women",
+          "winProfile": "Solid FW win depth",
+          "liveScore": 8.62,
+          "categoryScore": 8.62,
+          "benchmarkCredit": 14.1,
+          "sourceBenchmarkCredit": 14.1,
+          "sourceMode": "canonical-registry",
+          "writerMode": "category-only",
+          "version": "canonical-fighter-registry-20260710a-cris-cyborg"
+        },
+        "elitePlusWins": 0,
+        "topFivePlusWins": 1,
+        "rankedQualityWins": 4,
+        "winProfile": "Solid FW win depth",
+        "rank": 7,
+        "originalTotalScore": 39.65,
+        "baseScore": 37.31,
+        "apexPeakBonus": 4.6,
+        "lossContext": -2.25,
+        "rawScore": 39.66,
+        "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty",
+        "primeRecordContext": "Leslie Smith → Felicia Spencer",
+        "canonicalPrimeRecordAudit": {
+          "fighter": "Cris Cyborg",
+          "record": "6-1",
+          "context": "Leslie Smith → Felicia Spencer",
+          "counts": {
+            "wins": 6,
+            "losses": 1,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {
+            "start": "2016-05-14",
+            "startLabel": "Leslie Smith",
+            "end": "2019-07-27",
+            "endLabel": "Felicia Spencer",
+            "endType": "promotion_exit_win",
+            "endReason": "Amanda Nunes did not end the prime because Cyborg immediately re-proved elite UFC form by beating unbeaten contender Felicia Spencer. Her UFC tenure then ended on a win.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "canonical-fighter-registry-20260710a-cris-cyborg"
+          },
+          "windowLocked": true,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260710c-chuck-vitor-window"
+        },
+        "opponentQualityLive": true,
+        "opponentQualityLiveAudit": {
+          "fighter": "Cris Cyborg",
+          "rawCredit": 4.05,
+          "diminishedCredit": 4.05,
+          "maxCreditWins": 0,
+          "elitePlusWins": 0,
+          "topFivePlusWins": 1,
+          "rankedQualityWins": 4,
+          "bestWins": [
+            "Holly Holm",
+            "Felicia Spencer",
+            "Tonya Evinger",
+            "Yana Kunitskaya",
+            "Leslie Smith",
+            "Lina Lansberg"
+          ],
+          "reviewRows": [],
+          "highRiskRows": [],
+          "rows": [
+            {
+              "originalSlot": 1,
+              "opponent": "Holly Holm",
+              "credit": 1,
+              "tierLabel": "True top-5 win",
+              "context": "Former UFC champion and legitimate five-round featherweight title challenger.",
+              "reviewStatus": "locked",
+              "slot": 1,
+              "countedRate": 1,
+              "exactCountedCredit": 1,
+              "countedCredit": 1
+            },
+            {
+              "originalSlot": 2,
+              "opponent": "Felicia Spencer",
+              "credit": 0.85,
+              "tierLabel": "Strong top-10 win",
+              "context": "Unbeaten UFC contender who later challenged Amanda Nunes for the title.",
+              "reviewStatus": "locked",
+              "slot": 2,
+              "countedRate": 1,
+              "exactCountedCredit": 0.85,
+              "countedCredit": 0.85
+            },
+            {
+              "originalSlot": 3,
+              "opponent": "Tonya Evinger",
+              "credit": 0.65,
+              "tierLabel": "Ranked / quality win",
+              "context": "Experienced champion entering the UFC, discounted for divisional and debut context.",
+              "reviewStatus": "locked",
+              "slot": 3,
+              "countedRate": 1,
+              "exactCountedCredit": 0.65,
+              "countedCredit": 0.65
+            },
+            {
+              "originalSlot": 4,
+              "opponent": "Yana Kunitskaya",
+              "credit": 0.65,
+              "tierLabel": "Ranked / quality win",
+              "context": "Title challenger with meaningful ability, discounted for shallow-division and debut context.",
+              "reviewStatus": "locked",
+              "slot": 4,
+              "countedRate": 1,
+              "exactCountedCredit": 0.65,
+              "countedCredit": 0.65
+            },
+            {
+              "originalSlot": 5,
+              "opponent": "Leslie Smith",
+              "credit": 0.45,
+              "tierLabel": "Solid resume win",
+              "context": "Useful UFC debut win at a catchweight, below ranked championship quality.",
+              "reviewStatus": "locked",
+              "slot": 5,
+              "countedRate": 1,
+              "exactCountedCredit": 0.45,
+              "countedCredit": 0.45
+            },
+            {
+              "originalSlot": 6,
+              "opponent": "Lina Lansberg",
+              "credit": 0.45,
+              "tierLabel": "Solid resume win",
+              "context": "Solid UFC main-event win at a catchweight, below ranked championship quality.",
+              "reviewStatus": "locked",
+              "slot": 6,
+              "countedRate": 1,
+              "exactCountedCredit": 0.45,
+              "countedCredit": 0.45
+            }
+          ],
+          "board": "women",
+          "winProfile": "Solid FW win depth",
+          "liveScore": 8.62,
+          "categoryScore": 8.62,
+          "benchmarkCredit": 14.1,
+          "sourceBenchmarkCredit": 14.1,
+          "sourceMode": "canonical-registry",
+          "writerMode": "category-only",
+          "version": "canonical-fighter-registry-20260710a-cris-cyborg"
+        },
+        "primeDominanceShadowAudit": {
+          "fighter": "Cris Cyborg",
+          "primeRecord": "6-1",
+          "primeWins": 6,
+          "primeLosses": 1,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 85.71,
+          "primeRecordScore": 7.71,
+          "roundControlPct": 81.25,
+          "roundControlScore": 6.5,
+          "roundControlAudit": {
+            "fighter": "Cris Cyborg",
+            "roundsWon": 13,
+            "roundsLost": 3,
+            "roundsCounted": 16,
+            "roundControlPct": 81.25,
+            "status": "locked",
+            "source": "Approved fight-by-fight UFC prime round ledger",
+            "window": "Leslie Smith 2016 → Felicia Spencer 2019",
+            "fights": [
+              [
+                "Leslie Smith",
+                1,
+                0,
+                "140-pound catchweight UFC debut."
+              ],
+              [
+                "Lina Lansberg",
+                2,
+                0,
+                "140-pound catchweight main event."
+              ],
+              [
+                "Tonya Evinger",
+                3,
+                0,
+                "Won the vacant UFC women’s featherweight title."
+              ],
+              [
+                "Holly Holm",
+                3,
+                2,
+                "Unanimous decision defense; two 48-47 cards support a conservative 3-2 round split."
+              ],
+              [
+                "Yana Kunitskaya",
+                1,
+                0,
+                "Second successful title defense."
+              ],
+              [
+                "Amanda Nunes",
+                0,
+                1,
+                "Prime elite title loss and only UFC defeat."
+              ],
+              [
+                "Felicia Spencer",
+                3,
+                0,
+                "Re-proved elite UFC form after the Nunes loss and ended UFC tenure on a win."
+              ]
+            ],
+            "version": "canonical-fighter-registry-20260710a-cris-cyborg"
+          },
+          "primeFights": 7,
+          "primeFinishes": 4,
+          "primeFinishRate": 57.14,
+          "finishPressureScore": 3,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.5,
+            "topFiveWins": 0.75,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.2
+          },
+          "eliteStakesRawScore": 3.7,
+          "eliteStakesScore": 5.92,
+          "total": 23.13,
+          "dominanceProfile": "Compact, destructive UFC featherweight championship prime with four finishes and dominant round control; the Nunes knockout is fully counted and shallow division depth caps elite-stakes validation.",
+          "status": "locked",
+          "primeWindow": {
+            "start": "2016-05-14",
+            "startLabel": "Leslie Smith",
+            "end": "2019-07-27",
+            "endLabel": "Felicia Spencer",
+            "endType": "promotion_exit_win",
+            "endReason": "Amanda Nunes did not end the prime because Cyborg immediately re-proved elite UFC form by beating unbeaten contender Felicia Spencer. Her UFC tenure then ended on a win.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "canonical-fighter-registry-20260710a-cris-cyborg"
+          },
+          "canonicalWindowRebuild": true,
+          "version": "canonical-fighter-registry-20260710a-cris-cyborg"
+        },
+        "primeFinishRatePct": 57.14,
+        "primeDominanceLiveAudit": {
+          "fighter": "Cris Cyborg",
+          "primeRecord": "6-1",
+          "primeWins": 6,
+          "primeLosses": 1,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 85.71,
+          "primeRecordScore": 7.71,
+          "roundControlPct": 81.25,
+          "roundControlScore": 6.5,
+          "roundControlAudit": {
+            "fighter": "Cris Cyborg",
+            "roundsWon": 13,
+            "roundsLost": 3,
+            "roundsCounted": 16,
+            "roundControlPct": 81.25,
+            "status": "locked",
+            "source": "Approved fight-by-fight UFC prime round ledger",
+            "window": "Leslie Smith 2016 → Felicia Spencer 2019",
+            "fights": [
+              [
+                "Leslie Smith",
+                1,
+                0,
+                "140-pound catchweight UFC debut."
+              ],
+              [
+                "Lina Lansberg",
+                2,
+                0,
+                "140-pound catchweight main event."
+              ],
+              [
+                "Tonya Evinger",
+                3,
+                0,
+                "Won the vacant UFC women’s featherweight title."
+              ],
+              [
+                "Holly Holm",
+                3,
+                2,
+                "Unanimous decision defense; two 48-47 cards support a conservative 3-2 round split."
+              ],
+              [
+                "Yana Kunitskaya",
+                1,
+                0,
+                "Second successful title defense."
+              ],
+              [
+                "Amanda Nunes",
+                0,
+                1,
+                "Prime elite title loss and only UFC defeat."
+              ],
+              [
+                "Felicia Spencer",
+                3,
+                0,
+                "Re-proved elite UFC form after the Nunes loss and ended UFC tenure on a win."
+              ]
+            ],
+            "version": "canonical-fighter-registry-20260710a-cris-cyborg"
+          },
+          "primeFights": 7,
+          "primeFinishes": 4,
+          "primeFinishRate": 57.14,
+          "finishPressureScore": 3,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.5,
+            "topFiveWins": 0.75,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.2
+          },
+          "eliteStakesRawScore": 3.7,
+          "eliteStakesScore": 5.92,
+          "total": 23.13,
+          "dominanceProfile": "Compact, destructive UFC featherweight championship prime with four finishes and dominant round control; the Nunes knockout is fully counted and shallow division depth caps elite-stakes validation.",
+          "status": "locked",
+          "primeWindow": {
+            "start": "2016-05-14",
+            "startLabel": "Leslie Smith",
+            "end": "2019-07-27",
+            "endLabel": "Felicia Spencer",
+            "endType": "promotion_exit_win",
+            "endReason": "Amanda Nunes did not end the prime because Cyborg immediately re-proved elite UFC form by beating unbeaten contender Felicia Spencer. Her UFC tenure then ended on a win.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "canonical-fighter-registry-20260710a-cris-cyborg"
+          },
+          "canonicalWindowRebuild": true,
+          "version": "canonical-fighter-registry-20260710a-cris-cyborg"
+        },
+        "primeDominanceRecordInput": "6-1",
+        "primeDominanceRebuildRequired": false,
+        "longevityLegacyScore": 7.78,
+        "longevityRaw30": 7.78,
+        "longevityWeighted10": 2.59,
+        "longevitySource": "fighter-era-ledger",
+        "longevityPromoterVersion": "longevity-live-promoter-20260710b-144-month-ceiling",
+        "longevityAudit": {
+          "version": "longevity-live-promoter-20260710b-144-month-ceiling",
+          "source": "fighter-era-ledgers via longevity-shadow-scorer",
+          "shadowVersion": "longevity-shadow-scorer-20260710c-144-month-ceiling",
+          "eraLedgerVersion": "fighter-era-ledgers-20260709g-review-corrections",
+          "formula": "score = min(30, (gapAdjustedMonths × statusMultiplier × divisionMultiplier) / 144 × 30)",
+          "raw30": 7.78,
+          "weighted10": 2.59,
+          "legacyScore": 7.78,
+          "legacyDelta": 0,
+          "shadowRank": 58,
+          "window": {
+            "start": "2016-05-14",
+            "startLabel": "Leslie Smith",
+            "end": "2019-07-27",
+            "endLabel": "Felicia Spencer",
+            "endType": "promotion_exit_win",
+            "endReason": "Amanda Nunes did not end the prime because Cyborg immediately re-proved elite UFC form by beating unbeaten contender Felicia Spencer. Her UFC tenure then ended on a win.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "canonical-fighter-registry-20260710a-cris-cyborg"
+          },
+          "rawWindowLabel": "Leslie Smith → Felicia Spencer",
+          "activeEliteYears": 3.2,
+          "gapAdjustedMonths": 38.4,
+          "gapCapMonths": 18,
+          "statusMultiplier": 1.08,
+          "divisionMultiplier": 0.9,
+          "countedEliteMonths": 37.32,
+          "ceilingApplied": false,
+          "endType": "promotion_exit_win",
+          "endReason": "Amanda Nunes did not end the prime because Cyborg immediately re-proved elite UFC form by beating unbeaten contender Felicia Spencer. Her UFC tenure then ended on a win.",
+          "notes": [
+            "Leslie Smith through Felicia Spencer. No elite-fight gap exceeded the universal 18-month cap.",
+            "Compact UFC featherweight championship window with shallow-division compression.",
+            "UFC-only window. Non-UFC titles and fights are excluded from scoring."
+          ],
+          "appliedAt": "2026-07-11T05:07:20.921Z"
+        },
+        "apexPeakAudit": {
+          "score": 4.6,
+          "window": "Tonya Evinger 2017 + Holly Holm 2017",
+          "performances": [
+            {
+              "label": "Tonya Evinger",
+              "date": "2017-07-29",
+              "rating": 8,
+              "note": "Dominant third-round finish to win the vacant UFC featherweight title."
+            },
+            {
+              "label": "Holly Holm",
+              "date": "2017-12-30",
+              "rating": 8.5,
+              "note": "Five-round title defense over a former UFC champion and dangerous striker."
+            }
+          ],
+          "performanceAverage": 8.25,
+          "components": {
+            "twoPerformanceStrength": 1.65,
+            "proof": 1.1,
+            "bestFighterClaim": 1,
+            "aura": 0.85
+          },
+          "componentTotal": 4.6,
+          "notes": "Real champion-level aura and proof, capped below the mythic tier by shallow featherweight depth and a two-win apex pair with only one elite UFC opponent.",
+          "rubric": {
+            "twoPerformanceStrength": {
+              "label": "Two-performance strength",
+              "max": 2
+            },
+            "proof": {
+              "label": "Proof",
+              "max": 1.75
+            },
+            "bestFighterClaim": {
+              "label": "Best-fighter claim",
+              "max": 1.25
+            },
+            "aura": {
+              "label": "Aura",
+              "max": 1
+            },
+            "total": {
+              "label": "Apex Peak bonus",
+              "max": 6
+            }
+          },
+          "rules": {
+            "window": "Best two UFC wins within 24 months",
+            "totalMax": 6
+          },
+          "source": "Approved Apex Peak audit",
+          "version": "canonical-fighter-registry-20260710a-cris-cyborg"
+        },
+        "apexPeakBonusLive": true,
+        "apexPeakBonusVersion": "canonical-fighter-registry-20260710a-cris-cyborg"
+      },
+      "profile": {
+        "id": "CYB001",
+        "fighter": "Cris Cyborg",
+        "gender": "Women",
+        "primaryDivision": "Featherweight",
+        "secondaryDivision": "Catchweight",
+        "scope": "UFC",
+        "ufcRecord": "6-1",
+        "ufcWins": 6,
+        "ufcLosses": 1,
+        "ufcNoContests": 0,
+        "ufcDraws": 0,
+        "scoredUfcFights": 7,
+        "finishWins": 4,
+        "finishRatePct": 66.7,
+        "timesFinishedPrime": 1,
+        "lossPenalty": -2.25,
+        "activeEliteYears": 3.2,
+        "primeStart": "Leslie Smith 2016",
+        "primeEnd": "Felicia Spencer 2019",
+        "rank": 7,
+        "totalScore": 39.66,
+        "championship": 4.81,
+        "opponentQuality": 8.62,
+        "primeDominance": 23.13,
+        "longevity": 7.78,
+        "longevityThirtyPoint": true,
+        "apexPeak": 4.6,
+        "penalty": -2.25,
+        "leaderboard": "women",
+        "primeRecord": "6-1",
+        "primeRecordContext": "Leslie Smith → Felicia Spencer",
+        "title": {
+          "normalTitleWins": 2,
+          "interimTitleWins": 0,
+          "vacantUndisputedWins": 1,
+          "secondDivisionUndisputedWins": 0,
+          "vacantSecondDivisionWins": 0,
+          "titleFightWins": 3,
+          "adjustedTitleWins": 2.33,
+          "notes": "Total title fight wins = 3. Adjusted title-win credit = 2.33. Championship Resume score = 4.81/30.",
+          "championshipScore": 4.81,
+          "discountedWins": 3,
+          "reviewStatus": "locked"
+        },
+        "opponents": [
+          {
+            "opponent": "Holly Holm",
+            "division": "Featherweight",
+            "context": "Former UFC champion and legitimate five-round featherweight title challenger.",
+            "credit": 1,
+            "type": "True top-5 win"
+          },
+          {
+            "opponent": "Felicia Spencer",
+            "division": "Featherweight",
+            "context": "Unbeaten UFC contender who later challenged Amanda Nunes for the title.",
+            "credit": 0.85,
+            "type": "Strong top-10 win"
+          },
+          {
+            "opponent": "Tonya Evinger",
+            "division": "Featherweight",
+            "context": "Experienced champion entering the UFC, discounted for divisional and debut context.",
+            "credit": 0.65,
+            "type": "Ranked / quality win"
+          },
+          {
+            "opponent": "Yana Kunitskaya",
+            "division": "Featherweight",
+            "context": "Title challenger with meaningful ability, discounted for shallow-division and debut context.",
+            "credit": 0.65,
+            "type": "Ranked / quality win"
+          },
+          {
+            "opponent": "Leslie Smith",
+            "division": "Featherweight",
+            "context": "Useful UFC debut win at a catchweight, below ranked championship quality.",
+            "credit": 0.45,
+            "type": "Solid resume win"
+          },
+          {
+            "opponent": "Lina Lansberg",
+            "division": "Featherweight",
+            "context": "Solid UFC main-event win at a catchweight, below ranked championship quality.",
+            "credit": 0.45,
+            "type": "Solid resume win"
+          }
+        ],
+        "rounds": [
+          {
+            "opponent": "Leslie Smith",
+            "date": "2016-05-14",
+            "method": "R1 TKO win",
+            "roundEnded": 1,
+            "roundsCounted": 1,
+            "roundsWon": 1,
+            "basis": "Round-one finish counted as won",
+            "confidence": "High",
+            "notes": "140-pound catchweight UFC debut."
+          },
+          {
+            "opponent": "Lina Lansberg",
+            "date": "2016-09-24",
+            "method": "R2 TKO win",
+            "roundEnded": 2,
+            "roundsCounted": 2,
+            "roundsWon": 2,
+            "basis": "Finish round and completed opening round counted as won",
+            "confidence": "High",
+            "notes": "140-pound catchweight main event."
+          },
+          {
+            "opponent": "Tonya Evinger",
+            "date": "2017-07-29",
+            "method": "R3 TKO win",
+            "roundEnded": 3,
+            "roundsCounted": 3,
+            "roundsWon": 3,
+            "basis": "Dominant vacant-title finish ledger",
+            "confidence": "High",
+            "notes": "Won the vacant UFC women’s featherweight title."
+          },
+          {
+            "opponent": "Holly Holm",
+            "date": "2017-12-30",
+            "method": "Decision win",
+            "roundEnded": 5,
+            "roundsCounted": 5,
+            "roundsWon": 3,
+            "basis": "Conservative consensus scorecard split",
+            "confidence": "Medium",
+            "notes": "Unanimous decision defense; two 48-47 cards support a conservative 3-2 round split."
+          },
+          {
+            "opponent": "Yana Kunitskaya",
+            "date": "2018-03-03",
+            "method": "R1 TKO win",
+            "roundEnded": 1,
+            "roundsCounted": 1,
+            "roundsWon": 1,
+            "basis": "Round-one finish counted as won",
+            "confidence": "High",
+            "notes": "Second successful title defense."
+          },
+          {
+            "opponent": "Amanda Nunes",
+            "date": "2018-12-29",
+            "method": "R1 KO loss",
+            "roundEnded": 1,
+            "roundsCounted": 1,
+            "roundsWon": 0,
+            "basis": "Round-one finish loss counted as lost",
+            "confidence": "High",
+            "notes": "Prime elite title loss and only UFC defeat."
+          },
+          {
+            "opponent": "Felicia Spencer",
+            "date": "2019-07-27",
+            "method": "Decision win",
+            "roundEnded": 3,
+            "roundsCounted": 3,
+            "roundsWon": 3,
+            "basis": "Official decision scorecards",
+            "confidence": "High",
+            "notes": "Re-proved elite UFC form after the Nunes loss and ended UFC tenure on a win."
+          }
+        ],
+        "notes": "UFC-only scoring. Strikeforce, Invicta, Bellator, PFL, and regional accomplishments are excluded from the main score.",
+        "championshipResumeLive": true,
+        "championshipFormulaDriven": true,
+        "championshipResumeAudit": {
+          "fighter": "Cris Cyborg",
+          "status": "direct-ledger",
+          "titleFightWins": 3,
+          "adjustedTitleCredit": 2.33,
+          "discountedWins": 3,
+          "reviewStatus": "locked",
+          "formulaScore": 4.81,
+          "wins": [
+            {
+              "index": 1,
+              "opponent": "Tonya Evinger",
+              "titleType": "vacantUndisputed",
+              "baseValue": 0.9,
+              "strength": 0.75,
+              "adjustedCredit": 0.68,
+              "reviewStatus": "locked",
+              "source": "canonicalFighterRegistry",
+              "notes": "Vacant UFC featherweight title win over a promotional newcomer moving up from bantamweight."
+            },
+            {
+              "index": 2,
+              "opponent": "Holly Holm",
+              "titleType": "normal",
+              "baseValue": 1,
+              "strength": 0.9,
+              "adjustedCredit": 0.9,
+              "reviewStatus": "locked",
+              "source": "canonicalFighterRegistry",
+              "notes": "Legitimate five-round defense over a former UFC champion and dangerous title challenger."
+            },
+            {
+              "index": 3,
+              "opponent": "Yana Kunitskaya",
+              "titleType": "normal",
+              "baseValue": 1,
+              "strength": 0.75,
+              "adjustedCredit": 0.75,
+              "reviewStatus": "locked",
+              "source": "canonicalFighterRegistry",
+              "notes": "Valid title defense with a shallow-division and promotional-debut opponent discount."
+            }
+          ]
+        },
+        "opponentQualityLegacy": 8.62,
+        "opponentQualityShadowScore": 4.05,
+        "opponentQualityShadowAudit": {
+          "fighter": "Cris Cyborg",
+          "rawCredit": 4.05,
+          "diminishedCredit": 4.05,
+          "maxCreditWins": 0,
+          "elitePlusWins": 0,
+          "topFivePlusWins": 1,
+          "rankedQualityWins": 4,
+          "bestWins": [
+            "Holly Holm",
+            "Felicia Spencer",
+            "Tonya Evinger",
+            "Yana Kunitskaya",
+            "Leslie Smith",
+            "Lina Lansberg"
+          ],
+          "reviewRows": [],
+          "highRiskRows": [],
+          "rows": [
+            {
+              "originalSlot": 1,
+              "opponent": "Holly Holm",
+              "credit": 1,
+              "tierLabel": "True top-5 win",
+              "context": "Former UFC champion and legitimate five-round featherweight title challenger.",
+              "reviewStatus": "locked",
+              "slot": 1,
+              "countedRate": 1,
+              "exactCountedCredit": 1,
+              "countedCredit": 1
+            },
+            {
+              "originalSlot": 2,
+              "opponent": "Felicia Spencer",
+              "credit": 0.85,
+              "tierLabel": "Strong top-10 win",
+              "context": "Unbeaten UFC contender who later challenged Amanda Nunes for the title.",
+              "reviewStatus": "locked",
+              "slot": 2,
+              "countedRate": 1,
+              "exactCountedCredit": 0.85,
+              "countedCredit": 0.85
+            },
+            {
+              "originalSlot": 3,
+              "opponent": "Tonya Evinger",
+              "credit": 0.65,
+              "tierLabel": "Ranked / quality win",
+              "context": "Experienced champion entering the UFC, discounted for divisional and debut context.",
+              "reviewStatus": "locked",
+              "slot": 3,
+              "countedRate": 1,
+              "exactCountedCredit": 0.65,
+              "countedCredit": 0.65
+            },
+            {
+              "originalSlot": 4,
+              "opponent": "Yana Kunitskaya",
+              "credit": 0.65,
+              "tierLabel": "Ranked / quality win",
+              "context": "Title challenger with meaningful ability, discounted for shallow-division and debut context.",
+              "reviewStatus": "locked",
+              "slot": 4,
+              "countedRate": 1,
+              "exactCountedCredit": 0.65,
+              "countedCredit": 0.65
+            },
+            {
+              "originalSlot": 5,
+              "opponent": "Leslie Smith",
+              "credit": 0.45,
+              "tierLabel": "Solid resume win",
+              "context": "Useful UFC debut win at a catchweight, below ranked championship quality.",
+              "reviewStatus": "locked",
+              "slot": 5,
+              "countedRate": 1,
+              "exactCountedCredit": 0.45,
+              "countedCredit": 0.45
+            },
+            {
+              "originalSlot": 6,
+              "opponent": "Lina Lansberg",
+              "credit": 0.45,
+              "tierLabel": "Solid resume win",
+              "context": "Solid UFC main-event win at a catchweight, below ranked championship quality.",
+              "reviewStatus": "locked",
+              "slot": 6,
+              "countedRate": 1,
+              "exactCountedCredit": 0.45,
+              "countedCredit": 0.45
+            }
+          ],
+          "board": "women",
+          "winProfile": "Solid FW win depth",
+          "liveScore": 8.62,
+          "categoryScore": 8.62,
+          "benchmarkCredit": 14.1,
+          "sourceBenchmarkCredit": 14.1,
+          "sourceMode": "canonical-registry",
+          "writerMode": "category-only",
+          "version": "canonical-fighter-registry-20260710a-cris-cyborg"
+        },
+        "elitePlusWins": 0,
+        "topFivePlusWins": 1,
+        "rankedQualityWins": 4,
+        "winProfile": "Solid FW win depth",
+        "originalTotalScore": 39.65,
+        "baseScore": 37.31,
+        "apexPeakBonus": 4.6,
+        "lossContext": -2.25,
+        "rawScore": 39.66,
+        "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty",
+        "canonicalPrimeRecordAudit": {
+          "fighter": "Cris Cyborg",
+          "record": "6-1",
+          "context": "Leslie Smith → Felicia Spencer",
+          "counts": {
+            "wins": 6,
+            "losses": 1,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {
+            "start": "2016-05-14",
+            "startLabel": "Leslie Smith",
+            "end": "2019-07-27",
+            "endLabel": "Felicia Spencer",
+            "endType": "promotion_exit_win",
+            "endReason": "Amanda Nunes did not end the prime because Cyborg immediately re-proved elite UFC form by beating unbeaten contender Felicia Spencer. Her UFC tenure then ended on a win.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "canonical-fighter-registry-20260710a-cris-cyborg"
+          },
+          "windowLocked": true,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260710c-chuck-vitor-window"
+        },
+        "opponentQualityLive": true,
+        "opponentQualityLiveAudit": {
+          "fighter": "Cris Cyborg",
+          "rawCredit": 4.05,
+          "diminishedCredit": 4.05,
+          "maxCreditWins": 0,
+          "elitePlusWins": 0,
+          "topFivePlusWins": 1,
+          "rankedQualityWins": 4,
+          "bestWins": [
+            "Holly Holm",
+            "Felicia Spencer",
+            "Tonya Evinger",
+            "Yana Kunitskaya",
+            "Leslie Smith",
+            "Lina Lansberg"
+          ],
+          "reviewRows": [],
+          "highRiskRows": [],
+          "rows": [
+            {
+              "originalSlot": 1,
+              "opponent": "Holly Holm",
+              "credit": 1,
+              "tierLabel": "True top-5 win",
+              "context": "Former UFC champion and legitimate five-round featherweight title challenger.",
+              "reviewStatus": "locked",
+              "slot": 1,
+              "countedRate": 1,
+              "exactCountedCredit": 1,
+              "countedCredit": 1
+            },
+            {
+              "originalSlot": 2,
+              "opponent": "Felicia Spencer",
+              "credit": 0.85,
+              "tierLabel": "Strong top-10 win",
+              "context": "Unbeaten UFC contender who later challenged Amanda Nunes for the title.",
+              "reviewStatus": "locked",
+              "slot": 2,
+              "countedRate": 1,
+              "exactCountedCredit": 0.85,
+              "countedCredit": 0.85
+            },
+            {
+              "originalSlot": 3,
+              "opponent": "Tonya Evinger",
+              "credit": 0.65,
+              "tierLabel": "Ranked / quality win",
+              "context": "Experienced champion entering the UFC, discounted for divisional and debut context.",
+              "reviewStatus": "locked",
+              "slot": 3,
+              "countedRate": 1,
+              "exactCountedCredit": 0.65,
+              "countedCredit": 0.65
+            },
+            {
+              "originalSlot": 4,
+              "opponent": "Yana Kunitskaya",
+              "credit": 0.65,
+              "tierLabel": "Ranked / quality win",
+              "context": "Title challenger with meaningful ability, discounted for shallow-division and debut context.",
+              "reviewStatus": "locked",
+              "slot": 4,
+              "countedRate": 1,
+              "exactCountedCredit": 0.65,
+              "countedCredit": 0.65
+            },
+            {
+              "originalSlot": 5,
+              "opponent": "Leslie Smith",
+              "credit": 0.45,
+              "tierLabel": "Solid resume win",
+              "context": "Useful UFC debut win at a catchweight, below ranked championship quality.",
+              "reviewStatus": "locked",
+              "slot": 5,
+              "countedRate": 1,
+              "exactCountedCredit": 0.45,
+              "countedCredit": 0.45
+            },
+            {
+              "originalSlot": 6,
+              "opponent": "Lina Lansberg",
+              "credit": 0.45,
+              "tierLabel": "Solid resume win",
+              "context": "Solid UFC main-event win at a catchweight, below ranked championship quality.",
+              "reviewStatus": "locked",
+              "slot": 6,
+              "countedRate": 1,
+              "exactCountedCredit": 0.45,
+              "countedCredit": 0.45
+            }
+          ],
+          "board": "women",
+          "winProfile": "Solid FW win depth",
+          "liveScore": 8.62,
+          "categoryScore": 8.62,
+          "benchmarkCredit": 14.1,
+          "sourceBenchmarkCredit": 14.1,
+          "sourceMode": "canonical-registry",
+          "writerMode": "category-only",
+          "version": "canonical-fighter-registry-20260710a-cris-cyborg"
+        },
+        "primeDominanceShadowAudit": {
+          "fighter": "Cris Cyborg",
+          "primeRecord": "6-1",
+          "primeWins": 6,
+          "primeLosses": 1,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 85.71,
+          "primeRecordScore": 7.71,
+          "roundControlPct": 81.25,
+          "roundControlScore": 6.5,
+          "roundControlAudit": {
+            "fighter": "Cris Cyborg",
+            "roundsWon": 13,
+            "roundsLost": 3,
+            "roundsCounted": 16,
+            "roundControlPct": 81.25,
+            "status": "locked",
+            "source": "Approved fight-by-fight UFC prime round ledger",
+            "window": "Leslie Smith 2016 → Felicia Spencer 2019",
+            "fights": [
+              [
+                "Leslie Smith",
+                1,
+                0,
+                "140-pound catchweight UFC debut."
+              ],
+              [
+                "Lina Lansberg",
+                2,
+                0,
+                "140-pound catchweight main event."
+              ],
+              [
+                "Tonya Evinger",
+                3,
+                0,
+                "Won the vacant UFC women’s featherweight title."
+              ],
+              [
+                "Holly Holm",
+                3,
+                2,
+                "Unanimous decision defense; two 48-47 cards support a conservative 3-2 round split."
+              ],
+              [
+                "Yana Kunitskaya",
+                1,
+                0,
+                "Second successful title defense."
+              ],
+              [
+                "Amanda Nunes",
+                0,
+                1,
+                "Prime elite title loss and only UFC defeat."
+              ],
+              [
+                "Felicia Spencer",
+                3,
+                0,
+                "Re-proved elite UFC form after the Nunes loss and ended UFC tenure on a win."
+              ]
+            ],
+            "version": "canonical-fighter-registry-20260710a-cris-cyborg"
+          },
+          "primeFights": 7,
+          "primeFinishes": 4,
+          "primeFinishRate": 57.14,
+          "finishPressureScore": 3,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.5,
+            "topFiveWins": 0.75,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.2
+          },
+          "eliteStakesRawScore": 3.7,
+          "eliteStakesScore": 5.92,
+          "total": 23.13,
+          "dominanceProfile": "Compact, destructive UFC featherweight championship prime with four finishes and dominant round control; the Nunes knockout is fully counted and shallow division depth caps elite-stakes validation.",
+          "status": "locked",
+          "primeWindow": {
+            "start": "2016-05-14",
+            "startLabel": "Leslie Smith",
+            "end": "2019-07-27",
+            "endLabel": "Felicia Spencer",
+            "endType": "promotion_exit_win",
+            "endReason": "Amanda Nunes did not end the prime because Cyborg immediately re-proved elite UFC form by beating unbeaten contender Felicia Spencer. Her UFC tenure then ended on a win.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "canonical-fighter-registry-20260710a-cris-cyborg"
+          },
+          "canonicalWindowRebuild": true,
+          "version": "canonical-fighter-registry-20260710a-cris-cyborg"
+        },
+        "roundsWonPct": 81.25,
+        "primeFinishRatePct": 57.14,
+        "primeDominanceLiveAudit": {
+          "fighter": "Cris Cyborg",
+          "primeRecord": "6-1",
+          "primeWins": 6,
+          "primeLosses": 1,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 85.71,
+          "primeRecordScore": 7.71,
+          "roundControlPct": 81.25,
+          "roundControlScore": 6.5,
+          "roundControlAudit": {
+            "fighter": "Cris Cyborg",
+            "roundsWon": 13,
+            "roundsLost": 3,
+            "roundsCounted": 16,
+            "roundControlPct": 81.25,
+            "status": "locked",
+            "source": "Approved fight-by-fight UFC prime round ledger",
+            "window": "Leslie Smith 2016 → Felicia Spencer 2019",
+            "fights": [
+              [
+                "Leslie Smith",
+                1,
+                0,
+                "140-pound catchweight UFC debut."
+              ],
+              [
+                "Lina Lansberg",
+                2,
+                0,
+                "140-pound catchweight main event."
+              ],
+              [
+                "Tonya Evinger",
+                3,
+                0,
+                "Won the vacant UFC women’s featherweight title."
+              ],
+              [
+                "Holly Holm",
+                3,
+                2,
+                "Unanimous decision defense; two 48-47 cards support a conservative 3-2 round split."
+              ],
+              [
+                "Yana Kunitskaya",
+                1,
+                0,
+                "Second successful title defense."
+              ],
+              [
+                "Amanda Nunes",
+                0,
+                1,
+                "Prime elite title loss and only UFC defeat."
+              ],
+              [
+                "Felicia Spencer",
+                3,
+                0,
+                "Re-proved elite UFC form after the Nunes loss and ended UFC tenure on a win."
+              ]
+            ],
+            "version": "canonical-fighter-registry-20260710a-cris-cyborg"
+          },
+          "primeFights": 7,
+          "primeFinishes": 4,
+          "primeFinishRate": 57.14,
+          "finishPressureScore": 3,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.5,
+            "topFiveWins": 0.75,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.2
+          },
+          "eliteStakesRawScore": 3.7,
+          "eliteStakesScore": 5.92,
+          "total": 23.13,
+          "dominanceProfile": "Compact, destructive UFC featherweight championship prime with four finishes and dominant round control; the Nunes knockout is fully counted and shallow division depth caps elite-stakes validation.",
+          "status": "locked",
+          "primeWindow": {
+            "start": "2016-05-14",
+            "startLabel": "Leslie Smith",
+            "end": "2019-07-27",
+            "endLabel": "Felicia Spencer",
+            "endType": "promotion_exit_win",
+            "endReason": "Amanda Nunes did not end the prime because Cyborg immediately re-proved elite UFC form by beating unbeaten contender Felicia Spencer. Her UFC tenure then ended on a win.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "canonical-fighter-registry-20260710a-cris-cyborg"
+          },
+          "canonicalWindowRebuild": true,
+          "version": "canonical-fighter-registry-20260710a-cris-cyborg"
+        },
+        "primeDominanceRecordInput": "6-1",
+        "primeDominanceRebuildRequired": false,
+        "primeRoundsWon": 13,
+        "primeRoundsCounted": 16,
+        "primeFinishes": 4,
+        "primeFights": 7,
+        "longevityAudit": {
+          "version": "longevity-live-promoter-20260710b-144-month-ceiling",
+          "source": "fighter-era-ledgers via longevity-shadow-scorer",
+          "shadowVersion": "longevity-shadow-scorer-20260710c-144-month-ceiling",
+          "eraLedgerVersion": "fighter-era-ledgers-20260709g-review-corrections",
+          "formula": "score = min(30, (gapAdjustedMonths × statusMultiplier × divisionMultiplier) / 144 × 30)",
+          "raw30": 7.78,
+          "weighted10": 2.59,
+          "legacyScore": 7.78,
+          "legacyDelta": 0,
+          "shadowRank": 58,
+          "window": {
+            "start": "2016-05-14",
+            "startLabel": "Leslie Smith",
+            "end": "2019-07-27",
+            "endLabel": "Felicia Spencer",
+            "endType": "promotion_exit_win",
+            "endReason": "Amanda Nunes did not end the prime because Cyborg immediately re-proved elite UFC form by beating unbeaten contender Felicia Spencer. Her UFC tenure then ended on a win.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "canonical-fighter-registry-20260710a-cris-cyborg"
+          },
+          "rawWindowLabel": "Leslie Smith → Felicia Spencer",
+          "activeEliteYears": 3.2,
+          "gapAdjustedMonths": 38.4,
+          "gapCapMonths": 18,
+          "statusMultiplier": 1.08,
+          "divisionMultiplier": 0.9,
+          "countedEliteMonths": 37.32,
+          "ceilingApplied": false,
+          "endType": "promotion_exit_win",
+          "endReason": "Amanda Nunes did not end the prime because Cyborg immediately re-proved elite UFC form by beating unbeaten contender Felicia Spencer. Her UFC tenure then ended on a win.",
+          "notes": [
+            "Leslie Smith through Felicia Spencer. No elite-fight gap exceeded the universal 18-month cap.",
+            "Compact UFC featherweight championship window with shallow-division compression.",
+            "UFC-only window. Non-UFC titles and fights are excluded from scoring."
+          ],
+          "appliedAt": "2026-07-11T05:07:20.923Z"
+        },
+        "longevityLegacyScore": 7.78,
+        "longevityRaw30": 7.78,
+        "longevityWeighted10": 2.59,
+        "longevitySource": "fighter-era-ledger",
+        "longevityPromoterVersion": "longevity-live-promoter-20260710b-144-month-ceiling",
+        "apexPeakAudit": {
+          "score": 4.6,
+          "window": "Tonya Evinger 2017 + Holly Holm 2017",
+          "performances": [
+            {
+              "label": "Tonya Evinger",
+              "date": "2017-07-29",
+              "rating": 8,
+              "note": "Dominant third-round finish to win the vacant UFC featherweight title."
+            },
+            {
+              "label": "Holly Holm",
+              "date": "2017-12-30",
+              "rating": 8.5,
+              "note": "Five-round title defense over a former UFC champion and dangerous striker."
+            }
+          ],
+          "performanceAverage": 8.25,
+          "components": {
+            "twoPerformanceStrength": 1.65,
+            "proof": 1.1,
+            "bestFighterClaim": 1,
+            "aura": 0.85
+          },
+          "componentTotal": 4.6,
+          "notes": "Real champion-level aura and proof, capped below the mythic tier by shallow featherweight depth and a two-win apex pair with only one elite UFC opponent.",
+          "rubric": {
+            "twoPerformanceStrength": {
+              "label": "Two-performance strength",
+              "max": 2
+            },
+            "proof": {
+              "label": "Proof",
+              "max": 1.75
+            },
+            "bestFighterClaim": {
+              "label": "Best-fighter claim",
+              "max": 1.25
+            },
+            "aura": {
+              "label": "Aura",
+              "max": 1
+            },
+            "total": {
+              "label": "Apex Peak bonus",
+              "max": 6
+            }
+          },
+          "rules": {
+            "window": "Best two UFC wins within 24 months",
+            "totalMax": 6
+          },
+          "source": "Approved Apex Peak audit",
+          "version": "canonical-fighter-registry-20260710a-cris-cyborg"
+        },
+        "apexPeakBonusLive": true,
+        "apexPeakBonusVersion": "canonical-fighter-registry-20260710a-cris-cyborg"
+      },
+      "eraLedgerRegistered": true,
+      "championshipLedgerRegistered": true,
+      "qualityLedgerRegistered": true,
+      "version": "canonical-fighter-registry-20260710a-cris-cyborg",
+      "appliedAt": "2026-07-11T05:07:19.340Z"
+    },
     "lossContextCompletionBatchThree": {
       "version": "loss-context-ledger-completion-batch-three-20260710a-five-veteran-ledgers",
       "batch": 3,
@@ -911,7 +1498,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T05:05:01.733Z"
+      "appliedAt": "2026-07-11T05:07:19.343Z"
     },
     "lossContextCompletionBatchFour": {
       "version": "loss-context-ledger-completion-batch-four-20260710a-five-highest-missing",
@@ -967,7 +1554,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T05:05:01.736Z"
+      "appliedAt": "2026-07-11T05:07:19.347Z"
     },
     "lossContextCompletionBatchFive": {
       "version": "loss-context-ledger-completion-batch-five-20260710b-chuck-vitor-window",
@@ -1060,7 +1647,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T05:05:01.740Z"
+      "appliedAt": "2026-07-11T05:07:19.352Z"
     },
     "lossContextCompletionBatchSix": {
       "version": "loss-context-ledger-completion-batch-six-20260710a-first-half-eighteen",
@@ -1248,7 +1835,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T05:05:01.744Z"
+      "appliedAt": "2026-07-11T05:07:19.357Z"
     },
     "lossContextCompletionBatchSeven": {
       "version": "loss-context-ledger-completion-batch-seven-20260710a-final-seventeen",
@@ -1407,7 +1994,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T05:05:01.750Z"
+      "appliedAt": "2026-07-11T05:07:19.361Z"
     },
     "approvedFighterAuditCorrections": {
       "version": "approved-fighter-audit-corrections-20260710a-tito-pereira-hughes-kayla",
@@ -1423,7 +2010,7 @@
       "opponentQualityCorrections": [
         "Kayla Harrison"
       ],
-      "appliedAt": "2026-07-11T05:05:01.755Z"
+      "appliedAt": "2026-07-11T05:07:19.365Z"
     },
     "lossContextCanonicalProduction": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -1518,7 +2105,8 @@
           "Miesha Tate",
           "Julianna Peña",
           "Mackenzie Dern",
-          "Holly Holm"
+          "Holly Holm",
+          "Cris Cyborg"
         ],
         "rows": [
           {
@@ -11131,6 +11719,58 @@
               "unknown": 0
             },
             "estimatedPenaltyTotal": -9,
+            "mutatesScores": false
+          },
+          {
+            "fighter": "Cris Cyborg",
+            "status": "locked",
+            "window": {
+              "start": "2016-05-14",
+              "startLabel": "Leslie Smith",
+              "end": "2019-07-27",
+              "endLabel": "Felicia Spencer",
+              "endType": "promotion_exit_win",
+              "endReason": "Amanda Nunes did not end the prime because Cyborg immediately re-proved elite UFC form by beating unbeaten contender Felicia Spencer. Her UFC tenure then ended on a win.",
+              "canonical": true,
+              "locked": true,
+              "lockVersion": "canonical-fighter-registry-20260710a-cris-cyborg"
+            },
+            "events": [
+              {
+                "fighter": "Cris Cyborg",
+                "sourceType": "recoveredLosses",
+                "label": "Amanda Nunes",
+                "date": "2018-12-29",
+                "phase": "prime",
+                "quality": "elite",
+                "finished": true,
+                "upwardDivision": false,
+                "isLoss": true,
+                "officialLoss": false,
+                "penaltyExempt": false,
+                "exception": null,
+                "raw": {
+                  "label": "Amanda Nunes",
+                  "date": "2018-12-29",
+                  "type": "prime elite title finish loss",
+                  "method": "KO",
+                  "recovery": "Returned to defeat unbeaten UFC contender Felicia Spencer."
+                },
+                "penaltyEstimate": -2.25,
+                "penaltyApplies": true
+              }
+            ],
+            "counts": {
+              "totalEvents": 1,
+              "lossEvents": 1,
+              "prePrime": 0,
+              "prime": 1,
+              "postPrime": 0,
+              "upwardDivision": 0,
+              "weirdContext": 0,
+              "unknown": 0
+            },
+            "estimatedPenaltyTotal": -2.25,
             "mutatesScores": false
           }
         ],
@@ -20746,6 +21386,58 @@
             },
             "estimatedPenaltyTotal": -9,
             "mutatesScores": false
+          },
+          {
+            "fighter": "Cris Cyborg",
+            "status": "locked",
+            "window": {
+              "start": "2016-05-14",
+              "startLabel": "Leslie Smith",
+              "end": "2019-07-27",
+              "endLabel": "Felicia Spencer",
+              "endType": "promotion_exit_win",
+              "endReason": "Amanda Nunes did not end the prime because Cyborg immediately re-proved elite UFC form by beating unbeaten contender Felicia Spencer. Her UFC tenure then ended on a win.",
+              "canonical": true,
+              "locked": true,
+              "lockVersion": "canonical-fighter-registry-20260710a-cris-cyborg"
+            },
+            "events": [
+              {
+                "fighter": "Cris Cyborg",
+                "sourceType": "recoveredLosses",
+                "label": "Amanda Nunes",
+                "date": "2018-12-29",
+                "phase": "prime",
+                "quality": "elite",
+                "finished": true,
+                "upwardDivision": false,
+                "isLoss": true,
+                "officialLoss": false,
+                "penaltyExempt": false,
+                "exception": null,
+                "raw": {
+                  "label": "Amanda Nunes",
+                  "date": "2018-12-29",
+                  "type": "prime elite title finish loss",
+                  "method": "KO",
+                  "recovery": "Returned to defeat unbeaten UFC contender Felicia Spencer."
+                },
+                "penaltyEstimate": -2.25,
+                "penaltyApplies": true
+              }
+            ],
+            "counts": {
+              "totalEvents": 1,
+              "lossEvents": 1,
+              "prePrime": 0,
+              "prime": 1,
+              "postPrime": 0,
+              "upwardDivision": 0,
+              "weirdContext": 0,
+              "unknown": 0
+            },
+            "estimatedPenaltyTotal": -2.25,
+            "mutatesScores": false
           }
         ],
         "events": [
@@ -28564,11 +29256,34 @@
             },
             "penaltyEstimate": 0,
             "penaltyApplies": false
+          },
+          {
+            "fighter": "Cris Cyborg",
+            "sourceType": "recoveredLosses",
+            "label": "Amanda Nunes",
+            "date": "2018-12-29",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "officialLoss": false,
+            "penaltyExempt": false,
+            "exception": null,
+            "raw": {
+              "label": "Amanda Nunes",
+              "date": "2018-12-29",
+              "type": "prime elite title finish loss",
+              "method": "KO",
+              "recovery": "Returned to defeat unbeaten UFC contender Felicia Spencer."
+            },
+            "penaltyEstimate": -2.25,
+            "penaltyApplies": true
           }
         ],
         "mode": "canonical-production",
         "mutatesScores": true,
-        "appliedAt": "2026-07-11T05:05:01.781Z"
+        "appliedAt": "2026-07-11T05:07:19.385Z"
       },
       "mismatchAudit": {
         "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -28587,9 +29302,9 @@
         },
         "cap": -10,
         "summary": {
-          "rosterCount": 62,
-          "exactScoreMatches": 35,
-          "cleanMatches": 35,
+          "rosterCount": 63,
+          "exactScoreMatches": 36,
+          "cleanMatches": 36,
           "scoreMismatches": 27,
           "needsLedgerCompletion": 0,
           "missingEraLossEntries": 0,
@@ -28599,7 +29314,7 @@
           "fightersWithUnknownPhase": 0,
           "fightersWithUnknownQuality": 0,
           "fightersWithUndatedLosses": 0,
-          "finalizedLedgerCoverage": 62
+          "finalizedLedgerCoverage": 63
         },
         "rows": [
           {
@@ -37965,6 +38680,54 @@
             ],
             "reviewReasons": [],
             "mutatesScores": false
+          },
+          {
+            "fighter": "Cris Cyborg",
+            "status": "match",
+            "ufcRecord": "6-1",
+            "officialUfcLosses": 1,
+            "officialLossExceptionCount": 0,
+            "effectiveExpectedLosses": 1,
+            "machineReadableLossEvents": 1,
+            "missingLossEvents": 0,
+            "excessLossEvents": 0,
+            "livePenalty": -2.25,
+            "rawLedgerEstimate": -2.25,
+            "cappedLedgerEstimate": -2.25,
+            "delta": 0,
+            "exactScoreMatch": true,
+            "ledgerFinalized": true,
+            "unknownPhase": 0,
+            "unknownQuality": 0,
+            "undatedLosses": 0,
+            "contradictionCount": 0,
+            "events": [
+              {
+                "fighter": "Cris Cyborg",
+                "sourceType": "recoveredLosses",
+                "label": "Amanda Nunes",
+                "date": "2018-12-29",
+                "phase": "prime",
+                "quality": "elite",
+                "finished": true,
+                "upwardDivision": false,
+                "isLoss": true,
+                "officialLoss": false,
+                "penaltyExempt": false,
+                "exception": null,
+                "raw": {
+                  "label": "Amanda Nunes",
+                  "date": "2018-12-29",
+                  "type": "prime elite title finish loss",
+                  "method": "KO",
+                  "recovery": "Returned to defeat unbeaten UFC contender Felicia Spencer."
+                },
+                "penaltyEstimate": -2.25,
+                "penaltyApplies": true
+              }
+            ],
+            "reviewReasons": [],
+            "mutatesScores": false
           }
         ],
         "cleanMatches": [
@@ -42459,6 +43222,54 @@
                 },
                 "penaltyEstimate": 0,
                 "penaltyApplies": false
+              }
+            ],
+            "reviewReasons": [],
+            "mutatesScores": false
+          },
+          {
+            "fighter": "Cris Cyborg",
+            "status": "match",
+            "ufcRecord": "6-1",
+            "officialUfcLosses": 1,
+            "officialLossExceptionCount": 0,
+            "effectiveExpectedLosses": 1,
+            "machineReadableLossEvents": 1,
+            "missingLossEvents": 0,
+            "excessLossEvents": 0,
+            "livePenalty": -2.25,
+            "rawLedgerEstimate": -2.25,
+            "cappedLedgerEstimate": -2.25,
+            "delta": 0,
+            "exactScoreMatch": true,
+            "ledgerFinalized": true,
+            "unknownPhase": 0,
+            "unknownQuality": 0,
+            "undatedLosses": 0,
+            "contradictionCount": 0,
+            "events": [
+              {
+                "fighter": "Cris Cyborg",
+                "sourceType": "recoveredLosses",
+                "label": "Amanda Nunes",
+                "date": "2018-12-29",
+                "phase": "prime",
+                "quality": "elite",
+                "finished": true,
+                "upwardDivision": false,
+                "isLoss": true,
+                "officialLoss": false,
+                "penaltyExempt": false,
+                "exception": null,
+                "raw": {
+                  "label": "Amanda Nunes",
+                  "date": "2018-12-29",
+                  "type": "prime elite title finish loss",
+                  "method": "KO",
+                  "recovery": "Returned to defeat unbeaten UFC contender Felicia Spencer."
+                },
+                "penaltyEstimate": -2.25,
+                "penaltyApplies": true
               }
             ],
             "reviewReasons": [],
@@ -47339,15 +48150,15 @@
         "missingEraLossEntries": [],
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "appliedAt": "2026-07-11T05:05:01.781Z"
+        "appliedAt": "2026-07-11T05:07:19.385Z"
       },
       "scoreReview": {
         "version": "loss-context-canonical-production-20260710a-runtime-closure",
         "applied": true,
-        "rosterCount": 62,
+        "rosterCount": 63,
         "prePromotionScoreMismatchCount": 27,
         "promotedCount": 27,
-        "unchangedCount": 35,
+        "unchangedCount": 36,
         "blockedCount": 0,
         "capAppliedCount": 5,
         "promoted": [
@@ -49498,6 +50309,11 @@
             "fighter": "Miesha Tate",
             "penalty": -5.25,
             "status": "already-matched"
+          },
+          {
+            "fighter": "Cris Cyborg",
+            "penalty": -2.25,
+            "status": "already-matched"
           }
         ],
         "blocked": [],
@@ -49516,7 +50332,7 @@
         "mutatesPenalty": true,
         "mutatesScores": true,
         "finalScoreRecalculationOwner": "final-score-engine.js",
-        "appliedAt": "2026-07-11T05:05:01.781Z"
+        "appliedAt": "2026-07-11T05:07:19.385Z"
       },
       "appliedCompletionFixes": [
         "Robert Whittaker",
@@ -49576,15 +50392,15 @@
       ],
       "mutatesPenalty": true,
       "mutatesScores": true,
-      "appliedAt": "2026-07-11T05:05:01.781Z"
+      "appliedAt": "2026-07-11T05:07:19.386Z"
     },
     "lossContextScoreReview": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
       "applied": true,
-      "rosterCount": 62,
+      "rosterCount": 63,
       "prePromotionScoreMismatchCount": 27,
       "promotedCount": 27,
-      "unchangedCount": 35,
+      "unchangedCount": 36,
       "blockedCount": 0,
       "capAppliedCount": 5,
       "promoted": [
@@ -51735,6 +52551,11 @@
           "fighter": "Miesha Tate",
           "penalty": -5.25,
           "status": "already-matched"
+        },
+        {
+          "fighter": "Cris Cyborg",
+          "penalty": -2.25,
+          "status": "already-matched"
         }
       ],
       "blocked": [],
@@ -51753,7 +52574,7 @@
       "mutatesPenalty": true,
       "mutatesScores": true,
       "finalScoreRecalculationOwner": "final-score-engine.js",
-      "appliedAt": "2026-07-11T05:05:01.781Z"
+      "appliedAt": "2026-07-11T05:07:19.385Z"
     },
     "lossContextMismatchAudit": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -51772,9 +52593,9 @@
       },
       "cap": -10,
       "summary": {
-        "rosterCount": 62,
-        "exactScoreMatches": 35,
-        "cleanMatches": 35,
+        "rosterCount": 63,
+        "exactScoreMatches": 36,
+        "cleanMatches": 36,
         "scoreMismatches": 27,
         "needsLedgerCompletion": 0,
         "missingEraLossEntries": 0,
@@ -51784,7 +52605,7 @@
         "fightersWithUnknownPhase": 0,
         "fightersWithUnknownQuality": 0,
         "fightersWithUndatedLosses": 0,
-        "finalizedLedgerCoverage": 62
+        "finalizedLedgerCoverage": 63
       },
       "rows": [
         {
@@ -61150,6 +61971,54 @@
           ],
           "reviewReasons": [],
           "mutatesScores": false
+        },
+        {
+          "fighter": "Cris Cyborg",
+          "status": "match",
+          "ufcRecord": "6-1",
+          "officialUfcLosses": 1,
+          "officialLossExceptionCount": 0,
+          "effectiveExpectedLosses": 1,
+          "machineReadableLossEvents": 1,
+          "missingLossEvents": 0,
+          "excessLossEvents": 0,
+          "livePenalty": -2.25,
+          "rawLedgerEstimate": -2.25,
+          "cappedLedgerEstimate": -2.25,
+          "delta": 0,
+          "exactScoreMatch": true,
+          "ledgerFinalized": true,
+          "unknownPhase": 0,
+          "unknownQuality": 0,
+          "undatedLosses": 0,
+          "contradictionCount": 0,
+          "events": [
+            {
+              "fighter": "Cris Cyborg",
+              "sourceType": "recoveredLosses",
+              "label": "Amanda Nunes",
+              "date": "2018-12-29",
+              "phase": "prime",
+              "quality": "elite",
+              "finished": true,
+              "upwardDivision": false,
+              "isLoss": true,
+              "officialLoss": false,
+              "penaltyExempt": false,
+              "exception": null,
+              "raw": {
+                "label": "Amanda Nunes",
+                "date": "2018-12-29",
+                "type": "prime elite title finish loss",
+                "method": "KO",
+                "recovery": "Returned to defeat unbeaten UFC contender Felicia Spencer."
+              },
+              "penaltyEstimate": -2.25,
+              "penaltyApplies": true
+            }
+          ],
+          "reviewReasons": [],
+          "mutatesScores": false
         }
       ],
       "cleanMatches": [
@@ -65644,6 +66513,54 @@
               },
               "penaltyEstimate": 0,
               "penaltyApplies": false
+            }
+          ],
+          "reviewReasons": [],
+          "mutatesScores": false
+        },
+        {
+          "fighter": "Cris Cyborg",
+          "status": "match",
+          "ufcRecord": "6-1",
+          "officialUfcLosses": 1,
+          "officialLossExceptionCount": 0,
+          "effectiveExpectedLosses": 1,
+          "machineReadableLossEvents": 1,
+          "missingLossEvents": 0,
+          "excessLossEvents": 0,
+          "livePenalty": -2.25,
+          "rawLedgerEstimate": -2.25,
+          "cappedLedgerEstimate": -2.25,
+          "delta": 0,
+          "exactScoreMatch": true,
+          "ledgerFinalized": true,
+          "unknownPhase": 0,
+          "unknownQuality": 0,
+          "undatedLosses": 0,
+          "contradictionCount": 0,
+          "events": [
+            {
+              "fighter": "Cris Cyborg",
+              "sourceType": "recoveredLosses",
+              "label": "Amanda Nunes",
+              "date": "2018-12-29",
+              "phase": "prime",
+              "quality": "elite",
+              "finished": true,
+              "upwardDivision": false,
+              "isLoss": true,
+              "officialLoss": false,
+              "penaltyExempt": false,
+              "exception": null,
+              "raw": {
+                "label": "Amanda Nunes",
+                "date": "2018-12-29",
+                "type": "prime elite title finish loss",
+                "method": "KO",
+                "recovery": "Returned to defeat unbeaten UFC contender Felicia Spencer."
+              },
+              "penaltyEstimate": -2.25,
+              "penaltyApplies": true
             }
           ],
           "reviewReasons": [],
@@ -70524,7 +71441,7 @@
       "missingEraLossEntries": [],
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T05:05:01.781Z"
+      "appliedAt": "2026-07-11T05:07:19.385Z"
     },
     "canonicalLongevityRecalculation": {
       "version": "longevity-canonical-recalculation-20260710b-eleven-window-rebuild",
@@ -70697,20 +71614,12 @@
       "correctsRandyBelfortDate": true,
       "mutatesEraLongevityInputs": true,
       "mutatesScores": false,
-      "appliedAt": "2026-07-11T05:05:02.042Z"
-    },
-    "opponentQualityReadyDetail": {
-      "version": "opponent-quality-live-20260710c-fixed-benchmark",
-      "fighters": 62,
-      "benchmarkCredit": 14.1,
-      "sourceBenchmarkCredit": 14.1,
-      "benchmarkMode": "locked-constant",
-      "futureRosterStable": true
+      "appliedAt": "2026-07-11T05:07:19.389Z"
     },
     "canonicalPrimeRecords": {
       "version": "canonical-prime-records-20260710c-chuck-vitor-window",
       "source": "Locked Fighter Era Ledger window + reviewed Prime Record count",
-      "fighterCount": 63,
+      "fighterCount": 64,
       "entries": [
         {
           "fighter": "Jon Jones",
@@ -72635,6 +73544,37 @@
           "version": "canonical-prime-records-20260710c-chuck-vitor-window"
         },
         {
+          "fighter": "Cris Cyborg",
+          "record": "6-1",
+          "context": "Leslie Smith → Felicia Spencer",
+          "counts": {
+            "wins": 6,
+            "losses": 1,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {
+            "start": "2016-05-14",
+            "startLabel": "Leslie Smith",
+            "end": "2019-07-27",
+            "endLabel": "Felicia Spencer",
+            "endType": "promotion_exit_win",
+            "endReason": "Amanda Nunes did not end the prime because Cyborg immediately re-proved elite UFC form by beating unbeaten contender Felicia Spencer. Her UFC tenure then ended on a win.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "canonical-fighter-registry-20260710a-cris-cyborg"
+          },
+          "windowLocked": true,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260710c-chuck-vitor-window"
+        },
+        {
           "fighter": "Sean O'Malley",
           "record": "5-2",
           "context": "Start → Current",
@@ -72694,7 +73634,15 @@
       "allWindowsLocked": false,
       "mutatesScores": false,
       "mutatesPrimeRecordDisplay": true,
-      "appliedAt": "2026-07-11T05:05:02.316Z"
+      "appliedAt": "2026-07-11T05:07:19.654Z"
+    },
+    "opponentQualityReadyDetail": {
+      "version": "opponent-quality-live-20260710c-fixed-benchmark",
+      "fighters": 63,
+      "benchmarkCredit": 14.1,
+      "sourceBenchmarkCredit": 14.1,
+      "benchmarkMode": "locked-constant",
+      "futureRosterStable": true
     },
     "approvedOpponentQualityCorrection": {
       "applied": true,
@@ -72785,7 +73733,111 @@
         "winProfile": "Major signature win, thinner depth"
       },
       "version": "approved-fighter-audit-corrections-20260710a-tito-pereira-hughes-kayla",
-      "appliedAt": "2026-07-11T05:05:02.317Z"
+      "appliedAt": "2026-07-11T05:07:19.919Z"
+    },
+    "canonicalFighterRegistryOpponentQuality": {
+      "applied": true,
+      "fighter": "Cris Cyborg",
+      "rawCredit": 4.05,
+      "diminishedCredit": 4.05,
+      "score": 8.62,
+      "summary": {
+        "fighter": "Cris Cyborg",
+        "rawCredit": 4.05,
+        "diminishedCredit": 4.05,
+        "maxCreditWins": 0,
+        "elitePlusWins": 0,
+        "topFivePlusWins": 1,
+        "rankedQualityWins": 4,
+        "bestWins": [
+          "Holly Holm",
+          "Felicia Spencer",
+          "Tonya Evinger",
+          "Yana Kunitskaya",
+          "Leslie Smith",
+          "Lina Lansberg"
+        ],
+        "reviewRows": [],
+        "highRiskRows": [],
+        "rows": [
+          {
+            "originalSlot": 1,
+            "opponent": "Holly Holm",
+            "credit": 1,
+            "tierLabel": "True top-5 win",
+            "context": "Former UFC champion and legitimate five-round featherweight title challenger.",
+            "reviewStatus": "locked",
+            "slot": 1,
+            "countedRate": 1,
+            "exactCountedCredit": 1,
+            "countedCredit": 1
+          },
+          {
+            "originalSlot": 2,
+            "opponent": "Felicia Spencer",
+            "credit": 0.85,
+            "tierLabel": "Strong top-10 win",
+            "context": "Unbeaten UFC contender who later challenged Amanda Nunes for the title.",
+            "reviewStatus": "locked",
+            "slot": 2,
+            "countedRate": 1,
+            "exactCountedCredit": 0.85,
+            "countedCredit": 0.85
+          },
+          {
+            "originalSlot": 3,
+            "opponent": "Tonya Evinger",
+            "credit": 0.65,
+            "tierLabel": "Ranked / quality win",
+            "context": "Experienced champion entering the UFC, discounted for divisional and debut context.",
+            "reviewStatus": "locked",
+            "slot": 3,
+            "countedRate": 1,
+            "exactCountedCredit": 0.65,
+            "countedCredit": 0.65
+          },
+          {
+            "originalSlot": 4,
+            "opponent": "Yana Kunitskaya",
+            "credit": 0.65,
+            "tierLabel": "Ranked / quality win",
+            "context": "Title challenger with meaningful ability, discounted for shallow-division and debut context.",
+            "reviewStatus": "locked",
+            "slot": 4,
+            "countedRate": 1,
+            "exactCountedCredit": 0.65,
+            "countedCredit": 0.65
+          },
+          {
+            "originalSlot": 5,
+            "opponent": "Leslie Smith",
+            "credit": 0.45,
+            "tierLabel": "Solid resume win",
+            "context": "Useful UFC debut win at a catchweight, below ranked championship quality.",
+            "reviewStatus": "locked",
+            "slot": 5,
+            "countedRate": 1,
+            "exactCountedCredit": 0.45,
+            "countedCredit": 0.45
+          },
+          {
+            "originalSlot": 6,
+            "opponent": "Lina Lansberg",
+            "credit": 0.45,
+            "tierLabel": "Solid resume win",
+            "context": "Solid UFC main-event win at a catchweight, below ranked championship quality.",
+            "reviewStatus": "locked",
+            "slot": 6,
+            "countedRate": 1,
+            "exactCountedCredit": 0.45,
+            "countedCredit": 0.45
+          }
+        ],
+        "board": "women",
+        "winProfile": "Solid FW win depth"
+      },
+      "version": "canonical-fighter-registry-20260710a-cris-cyborg",
+      "appliedAt": "2026-07-11T05:07:19.920Z"
     },
     "primeDominanceAuditBatchEleven": {
       "version": "prime-dominance-audit-batch-eleven-20260710a-tito-pereira-hughes",
@@ -73167,7 +74219,109 @@
           "version": "prime-dominance-audit-batch-eleven-20260710a-tito-pereira-hughes"
         }
       },
-      "appliedAt": "2026-07-11T05:05:02.777Z"
+      "appliedAt": "2026-07-11T05:07:20.395Z"
+    },
+    "canonicalFighterRegistryPrime": {
+      "applied": true,
+      "fighter": "Cris Cyborg",
+      "entry": {
+        "fighter": "Cris Cyborg",
+        "primeRecord": "6-1",
+        "primeWins": 6,
+        "primeLosses": 1,
+        "primeDraws": 0,
+        "primeNCs": 0,
+        "primeRecordPct": 85.71,
+        "primeRecordScore": 7.71,
+        "roundControlPct": 81.25,
+        "roundControlScore": 6.5,
+        "roundControlAudit": {
+          "fighter": "Cris Cyborg",
+          "roundsWon": 13,
+          "roundsLost": 3,
+          "roundsCounted": 16,
+          "roundControlPct": 81.25,
+          "status": "locked",
+          "source": "Approved fight-by-fight UFC prime round ledger",
+          "window": "Leslie Smith 2016 → Felicia Spencer 2019",
+          "fights": [
+            [
+              "Leslie Smith",
+              1,
+              0,
+              "140-pound catchweight UFC debut."
+            ],
+            [
+              "Lina Lansberg",
+              2,
+              0,
+              "140-pound catchweight main event."
+            ],
+            [
+              "Tonya Evinger",
+              3,
+              0,
+              "Won the vacant UFC women’s featherweight title."
+            ],
+            [
+              "Holly Holm",
+              3,
+              2,
+              "Unanimous decision defense; two 48-47 cards support a conservative 3-2 round split."
+            ],
+            [
+              "Yana Kunitskaya",
+              1,
+              0,
+              "Second successful title defense."
+            ],
+            [
+              "Amanda Nunes",
+              0,
+              1,
+              "Prime elite title loss and only UFC defeat."
+            ],
+            [
+              "Felicia Spencer",
+              3,
+              0,
+              "Re-proved elite UFC form after the Nunes loss and ended UFC tenure on a win."
+            ]
+          ],
+          "version": "canonical-fighter-registry-20260710a-cris-cyborg"
+        },
+        "primeFights": 7,
+        "primeFinishes": 4,
+        "primeFinishRate": 57.14,
+        "finishPressureScore": 3,
+        "eliteStakesBreakdown": {
+          "titleFightWins": 1.5,
+          "topFiveWins": 0.75,
+          "champFormerChampWins": 0.75,
+          "fiveRoundTitleStageSample": 0.5,
+          "divisionStrengthContext": 0.2
+        },
+        "eliteStakesRawScore": 3.7,
+        "eliteStakesScore": 5.92,
+        "total": 23.13,
+        "dominanceProfile": "Compact, destructive UFC featherweight championship prime with four finishes and dominant round control; the Nunes knockout is fully counted and shallow division depth caps elite-stakes validation.",
+        "status": "locked",
+        "primeWindow": {
+          "start": "2016-05-14",
+          "startLabel": "Leslie Smith",
+          "end": "2019-07-27",
+          "endLabel": "Felicia Spencer",
+          "endType": "promotion_exit_win",
+          "endReason": "Amanda Nunes did not end the prime because Cyborg immediately re-proved elite UFC form by beating unbeaten contender Felicia Spencer. Her UFC tenure then ended on a win.",
+          "canonical": true,
+          "locked": true,
+          "lockVersion": "canonical-fighter-registry-20260710a-cris-cyborg"
+        },
+        "canonicalWindowRebuild": true,
+        "version": "canonical-fighter-registry-20260710a-cris-cyborg"
+      },
+      "version": "canonical-fighter-registry-20260710a-cris-cyborg",
+      "appliedAt": "2026-07-11T05:07:20.396Z"
     },
     "primeDominanceThreeFightCap": {
       "version": "prime-dominance-three-fight-cap-20260710a",
@@ -74893,6 +76047,102 @@
           "eliteStakesRawScore": 3.9,
           "eliteStakesScore": 6.24,
           "total": 23.24
+        },
+        {
+          "fighter": "Cris Cyborg",
+          "primeRecord": "6-1",
+          "primeWins": 6,
+          "primeLosses": 1,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 85.71,
+          "primeRecordScore": 7.71,
+          "roundControlPct": 81.25,
+          "roundControlScore": 6.5,
+          "roundControlAudit": {
+            "fighter": "Cris Cyborg",
+            "roundsWon": 13,
+            "roundsLost": 3,
+            "roundsCounted": 16,
+            "roundControlPct": 81.25,
+            "status": "locked",
+            "source": "Approved fight-by-fight UFC prime round ledger",
+            "window": "Leslie Smith 2016 → Felicia Spencer 2019",
+            "fights": [
+              [
+                "Leslie Smith",
+                1,
+                0,
+                "140-pound catchweight UFC debut."
+              ],
+              [
+                "Lina Lansberg",
+                2,
+                0,
+                "140-pound catchweight main event."
+              ],
+              [
+                "Tonya Evinger",
+                3,
+                0,
+                "Won the vacant UFC women’s featherweight title."
+              ],
+              [
+                "Holly Holm",
+                3,
+                2,
+                "Unanimous decision defense; two 48-47 cards support a conservative 3-2 round split."
+              ],
+              [
+                "Yana Kunitskaya",
+                1,
+                0,
+                "Second successful title defense."
+              ],
+              [
+                "Amanda Nunes",
+                0,
+                1,
+                "Prime elite title loss and only UFC defeat."
+              ],
+              [
+                "Felicia Spencer",
+                3,
+                0,
+                "Re-proved elite UFC form after the Nunes loss and ended UFC tenure on a win."
+              ]
+            ],
+            "version": "canonical-fighter-registry-20260710a-cris-cyborg"
+          },
+          "primeFights": 7,
+          "primeFinishes": 4,
+          "primeFinishRate": 57.14,
+          "finishPressureScore": 3,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.5,
+            "topFiveWins": 0.75,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.2
+          },
+          "eliteStakesRawScore": 3.7,
+          "eliteStakesScore": 5.92,
+          "total": 23.13,
+          "dominanceProfile": "Compact, destructive UFC featherweight championship prime with four finishes and dominant round control; the Nunes knockout is fully counted and shallow division depth caps elite-stakes validation.",
+          "status": "locked",
+          "primeWindow": {
+            "start": "2016-05-14",
+            "startLabel": "Leslie Smith",
+            "end": "2019-07-27",
+            "endLabel": "Felicia Spencer",
+            "endType": "promotion_exit_win",
+            "endReason": "Amanda Nunes did not end the prime because Cyborg immediately re-proved elite UFC form by beating unbeaten contender Felicia Spencer. Her UFC tenure then ended on a win.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "canonical-fighter-registry-20260710a-cris-cyborg"
+          },
+          "canonicalWindowRebuild": true,
+          "version": "canonical-fighter-registry-20260710a-cris-cyborg"
         },
         {
           "fighter": "Brock Lesnar",
@@ -77487,16 +78737,16 @@
       "mutatesEliteStakes": false,
       "mutatesTotals": false,
       "finalScoreRecalculationOwner": "final-score-engine.js",
-      "appliedAt": "2026-07-11T05:05:02.780Z"
+      "appliedAt": "2026-07-11T05:07:20.402Z"
     },
     "fighterEraWindowAudit": {
       "version": "fighter-era-window-audit-20260710b-record-dependencies",
       "sourceEraLedgerVersion": "fighter-era-ledgers-20260709g-review-corrections",
       "sourceWindowLockVersion": "approved-fighter-audit-corrections-20260710a-tito-pereira-hughes-kayla",
       "sourceCanonicalPrimeRecordVersion": "canonical-prime-records-20260710c-chuck-vitor-window",
-      "fighterCount": 63,
+      "fighterCount": 64,
       "counts": {
-        "aligned": 48,
+        "aligned": 49,
         "conflict": 15
       },
       "rows": [
@@ -79609,6 +80859,40 @@
           "windowDecision": "confirmed-and-locked"
         },
         {
+          "fighter": "Cris Cyborg",
+          "canonicalWindow": "Leslie Smith → Felicia Spencer",
+          "canonicalStart": "2016-05-14",
+          "canonicalStartLabel": "Leslie Smith",
+          "canonicalEnd": "2019-07-27",
+          "canonicalEndLabel": "Felicia Spencer",
+          "canonicalOpen": false,
+          "canonicalLocked": true,
+          "canonicalLockVersion": "canonical-fighter-registry-20260710a-cris-cyborg",
+          "canonicalPrimeRecord": "6-1",
+          "canonicalPrimeRecordSource": "RANKING_DATA.primeRecords reviewed value",
+          "primeDominancePrimeRecord": "6-1",
+          "primeRecordAligned": true,
+          "primeRecordStatus": "aligned",
+          "primeWindow": "Leslie Smith → Felicia Spencer",
+          "primeWindowSource": "primeEntry.primeWindow",
+          "primeWindowStructured": true,
+          "startAligned": true,
+          "endAligned": true,
+          "status": "aligned",
+          "primeEntryPresent": true,
+          "primeDominanceScoreRebuildRequired": false,
+          "longevityWindow": "Leslie Smith → Felicia Spencer",
+          "longevityInputStatus": "era-ledger-aligned",
+          "longevityPending": false,
+          "lossContextWindow": "Leslie Smith → Felicia Spencer",
+          "lossContextWindowAligned": true,
+          "lossContextWindowStatus": "aligned",
+          "lossContextPenaltySource": "ledger-derived-or-missing",
+          "lossContextRebuildRequired": false,
+          "dependentRebuildRequired": false,
+          "windowDecision": null
+        },
+        {
           "fighter": "Sean O'Malley",
           "canonicalWindow": "— → Current",
           "canonicalStart": null,
@@ -81524,902 +82808,16 @@
       "allCanonicalPrimeRecordsPresent": false,
       "mutatesScores": false,
       "mutatesWindows": false,
-      "appliedAt": "2026-07-11T05:05:03.559Z"
-    },
-    "finalScoreResult": {
-      "version": "final-score-engine-20260710b-deterministic",
-      "applied": true,
-      "reason": "deterministic-scoring-pipeline",
-      "applyCount": 1,
-      "formula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty",
-      "fighterCount": 62,
-      "strippedScoreOverrides": 608,
-      "menTopFive": [
-        {
-          "fighter": "Jon Jones",
-          "rank": 1,
-          "totalScore": 101.92,
-          "overallOvr": 99
-        },
-        {
-          "fighter": "Georges St-Pierre",
-          "rank": 2,
-          "totalScore": 85.6,
-          "overallOvr": 96
-        },
-        {
-          "fighter": "Demetrious Johnson",
-          "rank": 3,
-          "totalScore": 76.37,
-          "overallOvr": 94
-        },
-        {
-          "fighter": "Anderson Silva",
-          "rank": 4,
-          "totalScore": 75.79,
-          "overallOvr": 94
-        },
-        {
-          "fighter": "Islam Makhachev",
-          "rank": 5,
-          "totalScore": 69.12,
-          "overallOvr": 92
-        }
-      ],
-      "womenTopFive": [
-        {
-          "fighter": "Amanda Nunes",
-          "rank": 1,
-          "totalScore": 80.79,
-          "overallOvr": 99
-        },
-        {
-          "fighter": "Valentina Shevchenko",
-          "rank": 2,
-          "totalScore": 74.05,
-          "overallOvr": 97
-        },
-        {
-          "fighter": "Zhang Weili",
-          "rank": 3,
-          "totalScore": 55.46,
-          "overallOvr": 91
-        },
-        {
-          "fighter": "Joanna Jedrzejczyk",
-          "rank": 4,
-          "totalScore": 50.07,
-          "overallOvr": 90
-        },
-        {
-          "fighter": "Ronda Rousey",
-          "rank": 5,
-          "totalScore": 48.34,
-          "overallOvr": 89
-        }
-      ],
-      "appliedAt": "2026-07-11T05:05:03.866Z"
-    },
-    "lossContextFinalReconciliation": {
-      "version": "loss-context-canonical-production-20260710a-runtime-closure",
-      "applied": true,
-      "complete": true,
-      "rosterTarget": 62,
-      "rosterLedgerCoverage": 62,
-      "ledgerFinalizer": {
-        "version": "loss-context-canonical-production-20260710a-runtime-closure",
-        "applied": true,
-        "rosterCount": 62,
-        "expectedRosterCount": 62,
-        "bucketRepairCount": 0,
-        "bucketRepairs": [],
-        "recordRepairCount": 3,
-        "recordRepairs": [
-          {
-            "fighter": "Valentina Shevchenko",
-            "from": "15-3-1",
-            "to": "14-3-1",
-            "surfaces": [
-              {
-                "surface": "RANKING_DATA.ufcRecord",
-                "from": "15-3-1",
-                "to": "14-3-1"
-              }
-            ]
-          },
-          {
-            "fighter": "Dan Henderson",
-            "from": "8-8",
-            "to": "8-9",
-            "surfaces": [
-              {
-                "surface": "RANKING_DATA.ufcRecord",
-                "from": "8-8",
-                "to": "8-9"
-              },
-              {
-                "surface": "RANKING_DATA.ufcRecord",
-                "from": "8-8",
-                "to": "8-9"
-              }
-            ]
-          },
-          {
-            "fighter": "Robert Whittaker",
-            "from": "16-6",
-            "to": "16-7",
-            "surfaces": [
-              {
-                "surface": "RANKING_DATA.ufcRecord",
-                "from": "16-6",
-                "to": "16-7"
-              },
-              {
-                "surface": "RANKING_DATA.ufcRecord",
-                "from": "16-6",
-                "to": "16-7"
-              }
-            ]
-          }
-        ],
-        "unresolvedCount": 0,
-        "unresolved": [],
-        "complete": true,
-        "mutatesEraLossEvents": true,
-        "mutatesRecords": true,
-        "mutatesPenalty": false,
-        "mutatesScores": false,
-        "appliedAt": "2026-07-11T05:05:01.781Z"
-      },
-      "scoreReview": {
-        "version": "loss-context-canonical-production-20260710a-runtime-closure",
-        "prePromotionScoreMismatchCount": 27,
-        "promotedCount": 27,
-        "unchangedCount": 35,
-        "blockedCount": 0,
-        "capAppliedCount": 5,
-        "promotedPenaltyChanges": [
-          {
-            "fighter": "Dan Henderson",
-            "priorPenalty": -5.5,
-            "promotedPenalty": -9.75,
-            "delta": -4.25,
-            "capApplied": false,
-            "lossEventCount": 9
-          },
-          {
-            "fighter": "Chuck Liddell",
-            "priorPenalty": -10,
-            "promotedPenalty": -6,
-            "delta": 4,
-            "capApplied": false,
-            "lossEventCount": 7
-          },
-          {
-            "fighter": "Francis Ngannou",
-            "priorPenalty": -5.5,
-            "promotedPenalty": -2,
-            "delta": 3.5,
-            "capApplied": false,
-            "lossEventCount": 2
-          },
-          {
-            "fighter": "Jose Aldo",
-            "priorPenalty": -6.75,
-            "promotedPenalty": -10,
-            "delta": -3.25,
-            "capApplied": true,
-            "lossEventCount": 9
-          },
-          {
-            "fighter": "Tony Ferguson",
-            "priorPenalty": -6.51,
-            "promotedPenalty": -3.5,
-            "delta": 3.01,
-            "capApplied": false,
-            "lossEventCount": 9
-          },
-          {
-            "fighter": "Henry Cejudo",
-            "priorPenalty": -6.75,
-            "promotedPenalty": -3.75,
-            "delta": 3,
-            "capApplied": false,
-            "lossEventCount": 6
-          },
-          {
-            "fighter": "Jessica Andrade",
-            "priorPenalty": -7.5,
-            "promotedPenalty": -10,
-            "delta": -2.5,
-            "capApplied": true,
-            "lossEventCount": 13
-          },
-          {
-            "fighter": "Junior dos Santos",
-            "priorPenalty": -6.1,
-            "promotedPenalty": -3.75,
-            "delta": 2.35,
-            "capApplied": false,
-            "lossEventCount": 8
-          },
-          {
-            "fighter": "Carla Esparza",
-            "priorPenalty": -8.25,
-            "promotedPenalty": -10,
-            "delta": -1.75,
-            "capApplied": true,
-            "lossEventCount": 6
-          },
-          {
-            "fighter": "Chael Sonnen",
-            "priorPenalty": -7.5,
-            "promotedPenalty": -9.25,
-            "delta": -1.75,
-            "capApplied": false,
-            "lossEventCount": 7
-          },
-          {
-            "fighter": "Holly Holm",
-            "priorPenalty": -7.28,
-            "promotedPenalty": -9,
-            "delta": -1.72,
-            "capApplied": false,
-            "lossEventCount": 7
-          },
-          {
-            "fighter": "Deiveson Figueiredo",
-            "priorPenalty": -5.25,
-            "promotedPenalty": -6.75,
-            "delta": -1.5,
-            "capApplied": false,
-            "lossEventCount": 7
-          },
-          {
-            "fighter": "Julianna Peña",
-            "priorPenalty": -8,
-            "promotedPenalty": -6.75,
-            "delta": 1.25,
-            "capApplied": false,
-            "lossEventCount": 4
-          },
-          {
-            "fighter": "Matt Hughes",
-            "priorPenalty": -10,
-            "promotedPenalty": -8.75,
-            "delta": 1.25,
-            "capApplied": false,
-            "lossEventCount": 7
-          },
-          {
-            "fighter": "Tito Ortiz",
-            "priorPenalty": -8.25,
-            "promotedPenalty": -9.5,
-            "delta": -1.25,
-            "capApplied": false,
-            "lossEventCount": 11
-          },
-          {
-            "fighter": "Aljamain Sterling",
-            "priorPenalty": -6.25,
-            "promotedPenalty": -7.25,
-            "delta": -1,
-            "capApplied": false,
-            "lossEventCount": 5
-          },
-          {
-            "fighter": "Mackenzie Dern",
-            "priorPenalty": -9,
-            "promotedPenalty": -8,
-            "delta": 1,
-            "capApplied": false,
-            "lossEventCount": 5
-          },
-          {
-            "fighter": "Michael Bisping",
-            "priorPenalty": -9.1,
-            "promotedPenalty": -10,
-            "delta": -0.9,
-            "capApplied": true,
-            "lossEventCount": 9
-          },
-          {
-            "fighter": "Demetrious Johnson",
-            "priorPenalty": -3,
-            "promotedPenalty": -2.25,
-            "delta": 0.75,
-            "capApplied": false,
-            "lossEventCount": 2
-          },
-          {
-            "fighter": "Kamaru Usman",
-            "priorPenalty": -4.5,
-            "promotedPenalty": -3.75,
-            "delta": 0.75,
-            "capApplied": false,
-            "lossEventCount": 3
-          },
-          {
-            "fighter": "Petr Yan",
-            "priorPenalty": -5.25,
-            "promotedPenalty": -4.5,
-            "delta": 0.75,
-            "capApplied": false,
-            "lossEventCount": 3
-          },
-          {
-            "fighter": "Stipe Miocic",
-            "priorPenalty": -8,
-            "promotedPenalty": -7.25,
-            "delta": 0.75,
-            "capApplied": false,
-            "lossEventCount": 5
-          },
-          {
-            "fighter": "Tyron Woodley",
-            "priorPenalty": -4.5,
-            "promotedPenalty": -3.75,
-            "delta": 0.75,
-            "capApplied": false,
-            "lossEventCount": 6
-          },
-          {
-            "fighter": "Robbie Lawler",
-            "priorPenalty": -8.62,
-            "promotedPenalty": -9.25,
-            "delta": -0.63,
-            "capApplied": false,
-            "lossEventCount": 10
-          },
-          {
-            "fighter": "Sean O'Malley",
-            "priorPenalty": -5.25,
-            "promotedPenalty": -5.75,
-            "delta": -0.5,
-            "capApplied": false,
-            "lossEventCount": 3
-          },
-          {
-            "fighter": "B.J. Penn",
-            "priorPenalty": -8.5,
-            "promotedPenalty": -8.75,
-            "delta": -0.25,
-            "capApplied": false,
-            "lossEventCount": 13
-          },
-          {
-            "fighter": "Robert Whittaker",
-            "priorPenalty": -9.75,
-            "promotedPenalty": -10,
-            "delta": -0.25,
-            "capApplied": true,
-            "lossEventCount": 7
-          }
-        ]
-      },
-      "postPromotionAudit": {
-        "version": "loss-context-canonical-production-20260710a-runtime-closure",
-        "cleanMatches": 62,
-        "exactScoreMatches": 62,
-        "remainingFlaggedCount": 0,
-        "remainingScoreMismatchCount": 0,
-        "remainingLedgerBlockCount": 0,
-        "missingLivePenaltyCount": 0,
-        "unresolvedRows": []
-      },
-      "rankingImpact": {
-        "changedPenaltyCount": 27,
-        "fightersWithRankMovement": 28,
-        "movement": [
-          {
-            "board": "men",
-            "fighter": "Francis Ngannou",
-            "currentRank": 22,
-            "currentTotal": 49.12,
-            "currentPenalty": -2,
-            "priorPenalty": -5.5,
-            "counterfactualTotal": 45.62,
-            "counterfactualRank": 29,
-            "rankMovement": 7
-          },
-          {
-            "board": "men",
-            "fighter": "Tony Ferguson",
-            "currentRank": 35,
-            "currentTotal": 42.24,
-            "currentPenalty": -3.5,
-            "priorPenalty": -6.51,
-            "counterfactualTotal": 39.23,
-            "counterfactualRank": 40,
-            "rankMovement": 5
-          },
-          {
-            "board": "men",
-            "fighter": "Henry Cejudo",
-            "currentRank": 23,
-            "currentTotal": 48.88,
-            "currentPenalty": -3.75,
-            "priorPenalty": -6.75,
-            "counterfactualTotal": 45.88,
-            "counterfactualRank": 28,
-            "rankMovement": 5
-          },
-          {
-            "board": "men",
-            "fighter": "Tito Ortiz",
-            "currentRank": 31,
-            "currentTotal": 44.66,
-            "currentPenalty": -9.5,
-            "priorPenalty": -8.25,
-            "counterfactualTotal": 45.91,
-            "counterfactualRank": 26,
-            "rankMovement": -5
-          },
-          {
-            "board": "men",
-            "fighter": "Deiveson Figueiredo",
-            "currentRank": 38,
-            "currentTotal": 40.31,
-            "currentPenalty": -6.75,
-            "priorPenalty": -5.25,
-            "counterfactualTotal": 41.81,
-            "counterfactualRank": 34,
-            "rankMovement": -4
-          },
-          {
-            "board": "men",
-            "fighter": "Robbie Lawler",
-            "currentRank": 40,
-            "currentTotal": 39.83,
-            "currentPenalty": -9.25,
-            "priorPenalty": -8.62,
-            "counterfactualTotal": 40.46,
-            "counterfactualRank": 37,
-            "rankMovement": -3
-          },
-          {
-            "board": "men",
-            "fighter": "Charles Oliveira",
-            "currentRank": 27,
-            "currentTotal": 46.65,
-            "currentPenalty": -10,
-            "priorPenalty": -10,
-            "counterfactualTotal": 46.65,
-            "counterfactualRank": 24,
-            "rankMovement": -3
-          },
-          {
-            "board": "men",
-            "fighter": "Conor McGregor",
-            "currentRank": 28,
-            "currentTotal": 46.58,
-            "currentPenalty": -7,
-            "priorPenalty": -7,
-            "counterfactualTotal": 46.58,
-            "counterfactualRank": 25,
-            "rankMovement": -3
-          },
-          {
-            "board": "men",
-            "fighter": "Frankie Edgar",
-            "currentRank": 24,
-            "currentTotal": 48.14,
-            "currentPenalty": -10,
-            "priorPenalty": -10,
-            "counterfactualTotal": 48.14,
-            "counterfactualRank": 21,
-            "rankMovement": -3
-          },
-          {
-            "board": "men",
-            "fighter": "Ilia Topuria",
-            "currentRank": 25,
-            "currentTotal": 47.37,
-            "currentPenalty": -2.25,
-            "priorPenalty": -2.25,
-            "counterfactualTotal": 47.37,
-            "counterfactualRank": 22,
-            "rankMovement": -3
-          },
-          {
-            "board": "men",
-            "fighter": "Chuck Liddell",
-            "currentRank": 16,
-            "currentTotal": 54.87,
-            "currentPenalty": -6,
-            "priorPenalty": -10,
-            "counterfactualTotal": 50.87,
-            "counterfactualRank": 18,
-            "rankMovement": 2
-          },
-          {
-            "board": "men",
-            "fighter": "Junior dos Santos",
-            "currentRank": 21,
-            "currentTotal": 49.19,
-            "currentPenalty": -3.75,
-            "priorPenalty": -6.1,
-            "counterfactualTotal": 46.84,
-            "counterfactualRank": 23,
-            "rankMovement": 2
-          },
-          {
-            "board": "women",
-            "fighter": "Carla Esparza",
-            "currentRank": 11,
-            "currentTotal": 28.97,
-            "currentPenalty": -10,
-            "priorPenalty": -8.25,
-            "counterfactualTotal": 30.72,
-            "counterfactualRank": 9,
-            "rankMovement": -2
-          },
-          {
-            "board": "women",
-            "fighter": "Julianna Peña",
-            "currentRank": 9,
-            "currentTotal": 30.68,
-            "currentPenalty": -6.75,
-            "priorPenalty": -8,
-            "counterfactualTotal": 29.43,
-            "counterfactualRank": 11,
-            "rankMovement": 2
-          },
-          {
-            "board": "men",
-            "fighter": "Dricus du Plessis",
-            "currentRank": 30,
-            "currentTotal": 45.15,
-            "currentPenalty": -1.5,
-            "priorPenalty": -1.5,
-            "counterfactualTotal": 45.15,
-            "counterfactualRank": 32,
-            "rankMovement": 2
-          },
-          {
-            "board": "men",
-            "fighter": "Jose Aldo",
-            "currentRank": 8,
-            "currentTotal": 62.29,
-            "currentPenalty": -10,
-            "priorPenalty": -6.75,
-            "counterfactualTotal": 65.54,
-            "counterfactualRank": 7,
-            "rankMovement": -1
-          },
-          {
-            "board": "men",
-            "fighter": "Matt Hughes",
-            "currentRank": 9,
-            "currentTotal": 62.12,
-            "currentPenalty": -8.75,
-            "priorPenalty": -10,
-            "counterfactualTotal": 60.87,
-            "counterfactualRank": 10,
-            "rankMovement": 1
-          },
-          {
-            "board": "men",
-            "fighter": "Aljamain Sterling",
-            "currentRank": 32,
-            "currentTotal": 44.46,
-            "currentPenalty": -7.25,
-            "priorPenalty": -6.25,
-            "counterfactualTotal": 45.46,
-            "counterfactualRank": 31,
-            "rankMovement": -1
-          },
-          {
-            "board": "men",
-            "fighter": "Demetrious Johnson",
-            "currentRank": 3,
-            "currentTotal": 76.37,
-            "currentPenalty": -2.25,
-            "priorPenalty": -3,
-            "counterfactualTotal": 75.62,
-            "counterfactualRank": 4,
-            "rankMovement": 1
-          },
-          {
-            "board": "men",
-            "fighter": "Petr Yan",
-            "currentRank": 34,
-            "currentTotal": 42.54,
-            "currentPenalty": -4.5,
-            "priorPenalty": -5.25,
-            "counterfactualTotal": 41.79,
-            "counterfactualRank": 35,
-            "rankMovement": 1
-          },
-          {
-            "board": "men",
-            "fighter": "Tyron Woodley",
-            "currentRank": 26,
-            "currentTotal": 46.66,
-            "currentPenalty": -3.75,
-            "priorPenalty": -4.5,
-            "counterfactualTotal": 45.91,
-            "counterfactualRank": 27,
-            "rankMovement": 1
-          },
-          {
-            "board": "men",
-            "fighter": "Alex Pereira",
-            "currentRank": 17,
-            "currentTotal": 54.48,
-            "currentPenalty": -5,
-            "priorPenalty": -5,
-            "counterfactualTotal": 54.48,
-            "counterfactualRank": 16,
-            "rankMovement": -1
-          },
-          {
-            "board": "men",
-            "fighter": "Anderson Silva",
-            "currentRank": 4,
-            "currentTotal": 75.79,
-            "currentPenalty": -4.5,
-            "priorPenalty": -4.5,
-            "counterfactualTotal": 75.79,
-            "counterfactualRank": 3,
-            "rankMovement": -1
-          },
-          {
-            "board": "men",
-            "fighter": "Cain Velasquez",
-            "currentRank": 18,
-            "currentTotal": 50.93,
-            "currentPenalty": -4.5,
-            "priorPenalty": -4.5,
-            "counterfactualTotal": 50.93,
-            "counterfactualRank": 17,
-            "rankMovement": -1
-          },
-          {
-            "board": "men",
-            "fighter": "Dustin Poirier",
-            "currentRank": 37,
-            "currentTotal": 40.35,
-            "currentPenalty": -10,
-            "priorPenalty": -10,
-            "counterfactualTotal": 40.35,
-            "counterfactualRank": 38,
-            "rankMovement": 1
-          },
-          {
-            "board": "men",
-            "fighter": "Khabib Nurmagomedov",
-            "currentRank": 7,
-            "currentTotal": 64.05,
-            "currentPenalty": 0,
-            "priorPenalty": 0,
-            "counterfactualTotal": 64.05,
-            "counterfactualRank": 8,
-            "rankMovement": 1
-          },
-          {
-            "board": "men",
-            "fighter": "Merab Dvalishvili",
-            "currentRank": 29,
-            "currentTotal": 45.52,
-            "currentPenalty": -4.75,
-            "priorPenalty": -4.75,
-            "counterfactualTotal": 45.52,
-            "counterfactualRank": 30,
-            "rankMovement": 1
-          },
-          {
-            "board": "men",
-            "fighter": "Randy Couture",
-            "currentRank": 10,
-            "currentTotal": 61.09,
-            "currentPenalty": -10,
-            "priorPenalty": -10,
-            "counterfactualTotal": 61.09,
-            "counterfactualRank": 9,
-            "rankMovement": -1
-          },
-          {
-            "board": "men",
-            "fighter": "Dan Henderson",
-            "currentRank": 47,
-            "currentTotal": 20.31,
-            "currentPenalty": -9.75,
-            "priorPenalty": -5.5,
-            "counterfactualTotal": 24.56,
-            "counterfactualRank": 47,
-            "rankMovement": 0
-          },
-          {
-            "board": "women",
-            "fighter": "Jessica Andrade",
-            "currentRank": 7,
-            "currentTotal": 35.48,
-            "currentPenalty": -10,
-            "priorPenalty": -7.5,
-            "counterfactualTotal": 37.98,
-            "counterfactualRank": 7,
-            "rankMovement": 0
-          },
-          {
-            "board": "men",
-            "fighter": "Chael Sonnen",
-            "currentRank": 48,
-            "currentTotal": 18.68,
-            "currentPenalty": -9.25,
-            "priorPenalty": -7.5,
-            "counterfactualTotal": 20.43,
-            "counterfactualRank": 48,
-            "rankMovement": 0
-          },
-          {
-            "board": "women",
-            "fighter": "Holly Holm",
-            "currentRank": 13,
-            "currentTotal": 26.34,
-            "currentPenalty": -9,
-            "priorPenalty": -7.28,
-            "counterfactualTotal": 28.06,
-            "counterfactualRank": 13,
-            "rankMovement": 0
-          },
-          {
-            "board": "women",
-            "fighter": "Mackenzie Dern",
-            "currentRank": 14,
-            "currentTotal": 25.78,
-            "currentPenalty": -8,
-            "priorPenalty": -9,
-            "counterfactualTotal": 24.78,
-            "counterfactualRank": 14,
-            "rankMovement": 0
-          },
-          {
-            "board": "men",
-            "fighter": "Michael Bisping",
-            "currentRank": 46,
-            "currentTotal": 30.13,
-            "currentPenalty": -10,
-            "priorPenalty": -9.1,
-            "counterfactualTotal": 31.03,
-            "counterfactualRank": 46,
-            "rankMovement": 0
-          },
-          {
-            "board": "men",
-            "fighter": "Kamaru Usman",
-            "currentRank": 11,
-            "currentTotal": 60.91,
-            "currentPenalty": -3.75,
-            "priorPenalty": -4.5,
-            "counterfactualTotal": 60.16,
-            "counterfactualRank": 11,
-            "rankMovement": 0
-          },
-          {
-            "board": "men",
-            "fighter": "Stipe Miocic",
-            "currentRank": 12,
-            "currentTotal": 58.35,
-            "currentPenalty": -7.25,
-            "priorPenalty": -8,
-            "counterfactualTotal": 57.6,
-            "counterfactualRank": 12,
-            "rankMovement": 0
-          },
-          {
-            "board": "men",
-            "fighter": "Sean O'Malley",
-            "currentRank": 44,
-            "currentTotal": 34.91,
-            "currentPenalty": -5.75,
-            "priorPenalty": -5.25,
-            "counterfactualTotal": 35.41,
-            "counterfactualRank": 44,
-            "rankMovement": 0
-          },
-          {
-            "board": "men",
-            "fighter": "B.J. Penn",
-            "currentRank": 20,
-            "currentTotal": 50.24,
-            "currentPenalty": -8.75,
-            "priorPenalty": -8.5,
-            "counterfactualTotal": 50.49,
-            "counterfactualRank": 20,
-            "rankMovement": 0
-          },
-          {
-            "board": "men",
-            "fighter": "Robert Whittaker",
-            "currentRank": 41,
-            "currentTotal": 38.85,
-            "currentPenalty": -10,
-            "priorPenalty": -9.75,
-            "counterfactualTotal": 39.1,
-            "counterfactualRank": 41,
-            "rankMovement": 0
-          }
-        ],
-        "counterfactualMethod": "Rebuild each final board using the prior penalty while holding every final positive category and Apex Peak value constant."
-      },
-      "queue": {
-        "version": "loss-context-canonical-production-20260710a-runtime-closure",
-        "flaggedCount": 0,
-        "nextLedgerBatchCount": 0,
-        "ledgerCoverageComplete": true
-      },
-      "finalScoreEngineVersion": "final-score-engine-20260710b-deterministic",
-      "warnings": [],
-      "appliedCompletionFixes": [
-        "Robert Whittaker",
-        "Sean Strickland",
-        "Sean O’Malley",
-        "Charles Oliveira",
-        "Israel Adesanya",
-        "Henry Cejudo"
-      ],
-      "recordRepairs": [
-        {
-          "fighter": "Valentina Shevchenko",
-          "from": "15-3-1",
-          "to": "14-3-1",
-          "surfaces": [
-            {
-              "surface": "RANKING_DATA.ufcRecord",
-              "from": "15-3-1",
-              "to": "14-3-1"
-            }
-          ]
-        },
-        {
-          "fighter": "Dan Henderson",
-          "from": "8-8",
-          "to": "8-9",
-          "surfaces": [
-            {
-              "surface": "RANKING_DATA.ufcRecord",
-              "from": "8-8",
-              "to": "8-9"
-            },
-            {
-              "surface": "RANKING_DATA.ufcRecord",
-              "from": "8-8",
-              "to": "8-9"
-            }
-          ]
-        },
-        {
-          "fighter": "Robert Whittaker",
-          "from": "16-6",
-          "to": "16-7",
-          "surfaces": [
-            {
-              "surface": "RANKING_DATA.ufcRecord",
-              "from": "16-6",
-              "to": "16-7"
-            },
-            {
-              "surface": "RANKING_DATA.ufcRecord",
-              "from": "16-6",
-              "to": "16-7"
-            }
-          ]
-        }
-      ],
-      "mutatesScores": false,
-      "mutatesPenalty": false,
-      "generatedAt": "2026-07-11T05:05:03.867Z"
-    },
-    "fighterCount": 62
+      "appliedAt": "2026-07-11T05:07:21.194Z"
+    }
   },
   "scoreReview": {
     "version": "loss-context-canonical-production-20260710a-runtime-closure",
     "applied": true,
-    "rosterCount": 62,
+    "rosterCount": 63,
     "prePromotionScoreMismatchCount": 27,
     "promotedCount": 27,
-    "unchangedCount": 35,
+    "unchangedCount": 36,
     "blockedCount": 0,
     "capAppliedCount": 5,
     "promoted": [
@@ -84570,6 +84968,11 @@
         "fighter": "Miesha Tate",
         "penalty": -5.25,
         "status": "already-matched"
+      },
+      {
+        "fighter": "Cris Cyborg",
+        "penalty": -2.25,
+        "status": "already-matched"
       }
     ],
     "blocked": [],
@@ -84588,7 +84991,7 @@
     "mutatesPenalty": true,
     "mutatesScores": true,
     "finalScoreRecalculationOwner": "final-score-engine.js",
-    "appliedAt": "2026-07-11T05:05:01.781Z"
+    "appliedAt": "2026-07-11T05:07:19.385Z"
   },
   "postAudit": {
     "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -84607,9 +85010,9 @@
     },
     "cap": -10,
     "summary": {
-      "rosterCount": 62,
-      "exactScoreMatches": 35,
-      "cleanMatches": 35,
+      "rosterCount": 63,
+      "exactScoreMatches": 36,
+      "cleanMatches": 36,
       "scoreMismatches": 27,
       "needsLedgerCompletion": 0,
       "missingEraLossEntries": 0,
@@ -84619,7 +85022,7 @@
       "fightersWithUnknownPhase": 0,
       "fightersWithUnknownQuality": 0,
       "fightersWithUndatedLosses": 0,
-      "finalizedLedgerCoverage": 62
+      "finalizedLedgerCoverage": 63
     },
     "rows": [
       {
@@ -93985,6 +94388,54 @@
         ],
         "reviewReasons": [],
         "mutatesScores": false
+      },
+      {
+        "fighter": "Cris Cyborg",
+        "status": "match",
+        "ufcRecord": "6-1",
+        "officialUfcLosses": 1,
+        "officialLossExceptionCount": 0,
+        "effectiveExpectedLosses": 1,
+        "machineReadableLossEvents": 1,
+        "missingLossEvents": 0,
+        "excessLossEvents": 0,
+        "livePenalty": -2.25,
+        "rawLedgerEstimate": -2.25,
+        "cappedLedgerEstimate": -2.25,
+        "delta": 0,
+        "exactScoreMatch": true,
+        "ledgerFinalized": true,
+        "unknownPhase": 0,
+        "unknownQuality": 0,
+        "undatedLosses": 0,
+        "contradictionCount": 0,
+        "events": [
+          {
+            "fighter": "Cris Cyborg",
+            "sourceType": "recoveredLosses",
+            "label": "Amanda Nunes",
+            "date": "2018-12-29",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "officialLoss": false,
+            "penaltyExempt": false,
+            "exception": null,
+            "raw": {
+              "label": "Amanda Nunes",
+              "date": "2018-12-29",
+              "type": "prime elite title finish loss",
+              "method": "KO",
+              "recovery": "Returned to defeat unbeaten UFC contender Felicia Spencer."
+            },
+            "penaltyEstimate": -2.25,
+            "penaltyApplies": true
+          }
+        ],
+        "reviewReasons": [],
+        "mutatesScores": false
       }
     ],
     "cleanMatches": [
@@ -98479,6 +98930,54 @@
             },
             "penaltyEstimate": 0,
             "penaltyApplies": false
+          }
+        ],
+        "reviewReasons": [],
+        "mutatesScores": false
+      },
+      {
+        "fighter": "Cris Cyborg",
+        "status": "match",
+        "ufcRecord": "6-1",
+        "officialUfcLosses": 1,
+        "officialLossExceptionCount": 0,
+        "effectiveExpectedLosses": 1,
+        "machineReadableLossEvents": 1,
+        "missingLossEvents": 0,
+        "excessLossEvents": 0,
+        "livePenalty": -2.25,
+        "rawLedgerEstimate": -2.25,
+        "cappedLedgerEstimate": -2.25,
+        "delta": 0,
+        "exactScoreMatch": true,
+        "ledgerFinalized": true,
+        "unknownPhase": 0,
+        "unknownQuality": 0,
+        "undatedLosses": 0,
+        "contradictionCount": 0,
+        "events": [
+          {
+            "fighter": "Cris Cyborg",
+            "sourceType": "recoveredLosses",
+            "label": "Amanda Nunes",
+            "date": "2018-12-29",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "officialLoss": false,
+            "penaltyExempt": false,
+            "exception": null,
+            "raw": {
+              "label": "Amanda Nunes",
+              "date": "2018-12-29",
+              "type": "prime elite title finish loss",
+              "method": "KO",
+              "recovery": "Returned to defeat unbeaten UFC contender Felicia Spencer."
+            },
+            "penaltyEstimate": -2.25,
+            "penaltyApplies": true
           }
         ],
         "reviewReasons": [],
@@ -103359,12 +103858,12 @@
     "missingEraLossEntries": [],
     "mutatesScores": false,
     "mutatesPenalty": false,
-    "appliedAt": "2026-07-11T05:05:01.781Z"
+    "appliedAt": "2026-07-11T05:07:19.385Z"
   },
   "finalizer": {
     "version": "loss-context-canonical-production-20260710a-runtime-closure",
     "applied": true,
-    "rosterCount": 62,
+    "rosterCount": 63,
     "expectedRosterCount": 62,
     "bucketRepairCount": 0,
     "bucketRepairs": [],
@@ -103419,153 +103918,133 @@
     ],
     "unresolvedCount": 0,
     "unresolved": [],
-    "complete": true,
+    "complete": false,
     "mutatesEraLossEvents": true,
     "mutatesRecords": true,
     "mutatesPenalty": false,
     "mutatesScores": false,
-    "appliedAt": "2026-07-11T05:05:01.781Z"
+    "appliedAt": "2026-07-11T05:07:19.386Z"
   },
   "menTop20": [
     {
       "rank": 1,
       "fighter": "Jon Jones",
       "totalScore": 101.92,
-      "penalty": 0,
-      "overallOvr": 99
+      "penalty": 0
     },
     {
       "rank": 2,
       "fighter": "Georges St-Pierre",
       "totalScore": 85.6,
-      "penalty": -6.25,
-      "overallOvr": 96
+      "penalty": -6.25
     },
     {
       "rank": 3,
       "fighter": "Demetrious Johnson",
       "totalScore": 76.37,
-      "penalty": -2.25,
-      "overallOvr": 94
+      "penalty": -2.25
     },
     {
       "rank": 4,
       "fighter": "Anderson Silva",
       "totalScore": 75.79,
-      "penalty": -4.5,
-      "overallOvr": 94
+      "penalty": -4.5
     },
     {
       "rank": 5,
       "fighter": "Islam Makhachev",
       "totalScore": 69.12,
-      "penalty": -2,
-      "overallOvr": 92
+      "penalty": -2
     },
     {
       "rank": 6,
       "fighter": "Alexander Volkanovski",
       "totalScore": 65.98,
-      "penalty": -4.25,
-      "overallOvr": 92
+      "penalty": -4.25
     },
     {
       "rank": 7,
       "fighter": "Khabib Nurmagomedov",
       "totalScore": 64.05,
-      "penalty": 0,
-      "overallOvr": 91
+      "penalty": 0
     },
     {
       "rank": 8,
       "fighter": "Jose Aldo",
       "totalScore": 62.29,
-      "penalty": -10,
-      "overallOvr": 91
+      "penalty": -10
     },
     {
       "rank": 9,
       "fighter": "Matt Hughes",
       "totalScore": 62.12,
-      "penalty": -8.75,
-      "overallOvr": 91
+      "penalty": -8.75
     },
     {
       "rank": 10,
       "fighter": "Randy Couture",
       "totalScore": 61.09,
-      "penalty": -10,
-      "overallOvr": 91
+      "penalty": -10
     },
     {
       "rank": 11,
       "fighter": "Kamaru Usman",
       "totalScore": 60.91,
-      "penalty": -3.75,
-      "overallOvr": 91
+      "penalty": -3.75
     },
     {
       "rank": 12,
       "fighter": "Stipe Miocic",
       "totalScore": 58.35,
-      "penalty": -7.25,
-      "overallOvr": 90
+      "penalty": -7.25
     },
     {
       "rank": 13,
       "fighter": "Daniel Cormier",
       "totalScore": 56.55,
-      "penalty": -5.25,
-      "overallOvr": 90
+      "penalty": -5.25
     },
     {
       "rank": 14,
       "fighter": "Israel Adesanya",
       "totalScore": 56.34,
-      "penalty": -6.75,
-      "overallOvr": 90
+      "penalty": -6.75
     },
     {
       "rank": 15,
       "fighter": "Max Holloway",
       "totalScore": 55.74,
-      "penalty": -10,
-      "overallOvr": 90
+      "penalty": -10
     },
     {
       "rank": 16,
       "fighter": "Chuck Liddell",
       "totalScore": 54.87,
-      "penalty": -6,
-      "overallOvr": 89
+      "penalty": -6
     },
     {
       "rank": 17,
       "fighter": "Alex Pereira",
       "totalScore": 54.48,
-      "penalty": -5,
-      "overallOvr": 89
+      "penalty": -5
     },
     {
       "rank": 18,
       "fighter": "Cain Velasquez",
       "totalScore": 50.93,
-      "penalty": -4.5,
-      "overallOvr": 89
+      "penalty": -4.5
     },
     {
       "rank": 19,
       "fighter": "T.J. Dillashaw",
       "totalScore": 50.51,
-      "penalty": -7.25,
-      "overallOvr": 89
+      "penalty": -7.25
     },
     {
       "rank": 20,
       "fighter": "B.J. Penn",
       "totalScore": 50.24,
-      "penalty": -8.75,
-      "overallOvr": 88
+      "penalty": -8.75
     }
   ],
   "womenBoard": [
@@ -103573,99 +104052,91 @@
       "rank": 1,
       "fighter": "Amanda Nunes",
       "totalScore": 80.79,
-      "penalty": -3.75,
-      "overallOvr": 99
+      "penalty": -3.75
     },
     {
       "rank": 2,
       "fighter": "Valentina Shevchenko",
       "totalScore": 74.05,
-      "penalty": -4.5,
-      "overallOvr": 97
+      "penalty": -4.5
     },
     {
       "rank": 3,
       "fighter": "Zhang Weili",
-      "totalScore": 55.46,
-      "penalty": -4.5,
-      "overallOvr": 91
+      "totalScore": 54.86,
+      "penalty": -4.5
     },
     {
       "rank": 4,
       "fighter": "Joanna Jedrzejczyk",
       "totalScore": 50.07,
-      "penalty": -6,
-      "overallOvr": 90
+      "penalty": -6
     },
     {
       "rank": 5,
       "fighter": "Ronda Rousey",
       "totalScore": 48.34,
-      "penalty": -4.5,
-      "overallOvr": 89
+      "penalty": -4.5
     },
     {
       "rank": 6,
       "fighter": "Rose Namajunas",
       "totalScore": 46.58,
-      "penalty": -6,
-      "overallOvr": 88
+      "penalty": -6
     },
     {
       "rank": 7,
-      "fighter": "Jessica Andrade",
-      "totalScore": 35.48,
-      "penalty": -10,
-      "overallOvr": 85
+      "fighter": "Cris Cyborg",
+      "totalScore": 39.66,
+      "penalty": -2.25
     },
     {
       "rank": 8,
-      "fighter": "Alexa Grasso",
-      "totalScore": 32.31,
-      "penalty": -6.5,
-      "overallOvr": 84
+      "fighter": "Jessica Andrade",
+      "totalScore": 35.48,
+      "penalty": -10
     },
     {
       "rank": 9,
-      "fighter": "Julianna Peña",
-      "totalScore": 30.68,
-      "penalty": -6.75,
-      "overallOvr": 84
+      "fighter": "Alexa Grasso",
+      "totalScore": 32.31,
+      "penalty": -6.5
     },
     {
       "rank": 10,
-      "fighter": "Kayla Harrison",
-      "totalScore": 30.17,
-      "penalty": 0,
-      "overallOvr": 83
+      "fighter": "Julianna Peña",
+      "totalScore": 30.68,
+      "penalty": -6.75
     },
     {
       "rank": 11,
-      "fighter": "Carla Esparza",
-      "totalScore": 28.97,
-      "penalty": -10,
-      "overallOvr": 83
+      "fighter": "Kayla Harrison",
+      "totalScore": 30.17,
+      "penalty": 0
     },
     {
       "rank": 12,
-      "fighter": "Miesha Tate",
-      "totalScore": 28.09,
-      "penalty": -5.25,
-      "overallOvr": 83
+      "fighter": "Carla Esparza",
+      "totalScore": 28.97,
+      "penalty": -10
     },
     {
       "rank": 13,
-      "fighter": "Holly Holm",
-      "totalScore": 26.34,
-      "penalty": -9,
-      "overallOvr": 82
+      "fighter": "Miesha Tate",
+      "totalScore": 28.09,
+      "penalty": -5.25
     },
     {
       "rank": 14,
+      "fighter": "Holly Holm",
+      "totalScore": 26.34,
+      "penalty": -9
+    },
+    {
+      "rank": 15,
       "fighter": "Mackenzie Dern",
       "totalScore": 25.78,
-      "penalty": -8,
-      "overallOvr": 82
+      "penalty": -8
     }
   ],
   "focusDiagnostics": [
@@ -103821,7 +104292,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T05:05:01.736Z",
+        "completedAt": "2026-07-11T05:07:19.347Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -103931,7 +104402,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T05:05:01.750Z",
+        "completedAt": "2026-07-11T05:07:19.361Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -104124,7 +104595,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T05:05:01.004Z",
+        "completedAt": "2026-07-11T05:07:18.654Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -104258,7 +104729,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T05:05:01.744Z",
+        "completedAt": "2026-07-11T05:07:19.357Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -104392,7 +104863,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T05:05:01.744Z",
+        "completedAt": "2026-07-11T05:07:19.357Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -104490,7 +104961,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T05:05:01.750Z",
+        "completedAt": "2026-07-11T05:07:19.361Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -104634,7 +105105,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-11T05:05:01.000Z",
+        "completedAt": "2026-07-11T05:07:18.648Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -104779,7 +105250,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-11T05:05:01.000Z",
+        "completedAt": "2026-07-11T05:07:18.648Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -104949,7 +105420,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T05:05:01.740Z",
+        "completedAt": "2026-07-11T05:07:19.352Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -105059,7 +105530,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T05:05:01.749Z",
+        "completedAt": "2026-07-11T05:07:19.361Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -105181,7 +105652,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T05:05:01.750Z",
+        "completedAt": "2026-07-11T05:07:19.361Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -105189,6 +105660,8 @@
   ],
   "browserDiagnostics": {
     "consoleErrors": [],
-    "pageErrors": []
+    "pageErrors": [
+      "ReferenceError: apexPeakAudit is not defined\n    at Object.applyApexPeak (http://127.0.0.1:4173/assets/data/canonical-fighter-registry.js?v=canonical-fighter-registry-20260710a-cris-cyborg:274:182)\n    at run (http://127.0.0.1:4173/assets/data/module-versions.js?v=module-versions-20260710zf-chuck-vitor-window:1:12638)"
+    ]
   }
 }
