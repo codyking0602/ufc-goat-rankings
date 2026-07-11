@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-07-11T01:29:55.261Z",
+  "generatedAt": "2026-07-11T01:38:50.602Z",
   "pipelineStatus": "ready",
   "pipelineError": null,
   "complete": false,
   "rosterLedgerCoverage": 61,
-  "promotedCount": 25,
+  "promotedCount": 27,
   "blockedCount": 1,
   "remainingFlaggedCount": 2,
   "remainingScoreMismatchCount": 0,
   "remainingLedgerBlockCount": 2,
   "missingLivePenaltyCount": 0,
-  "fightersWithRankMovement": 23,
+  "fightersWithRankMovement": 26,
   "ledgerFinalizer": {
     "version": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
     "complete": true,
@@ -145,9 +145,9 @@
     },
     {
       "fighter": "Dan Henderson",
-      "priorPenalty": -5.25,
+      "priorPenalty": -5.5,
       "promotedPenalty": -9.75,
-      "delta": -4.5,
+      "delta": -4.25,
       "capApplied": false,
       "lossEventCount": 9
     },
@@ -160,12 +160,28 @@
       "lossEventCount": 2
     },
     {
+      "fighter": "Jose Aldo",
+      "priorPenalty": -6.75,
+      "promotedPenalty": -10,
+      "delta": -3.25,
+      "capApplied": true,
+      "lossEventCount": 9
+    },
+    {
       "fighter": "Tony Ferguson",
       "priorPenalty": -6.51,
       "promotedPenalty": -3.5,
       "delta": 3.01,
       "capApplied": false,
       "lossEventCount": 9
+    },
+    {
+      "fighter": "Henry Cejudo",
+      "priorPenalty": -6.75,
+      "promotedPenalty": -3.75,
+      "delta": 3,
+      "capApplied": false,
+      "lossEventCount": 4
     },
     {
       "fighter": "Chael Sonnen",
@@ -200,14 +216,6 @@
       "lossEventCount": 6
     },
     {
-      "fighter": "Jose Aldo",
-      "priorPenalty": -8.25,
-      "promotedPenalty": -10,
-      "delta": -1.75,
-      "capApplied": true,
-      "lossEventCount": 9
-    },
-    {
       "fighter": "Holly Holm",
       "priorPenalty": -7.28,
       "promotedPenalty": -9,
@@ -224,14 +232,6 @@
       "lossEventCount": 7
     },
     {
-      "fighter": "Henry Cejudo",
-      "priorPenalty": -5.25,
-      "promotedPenalty": -3.75,
-      "delta": 1.5,
-      "capApplied": false,
-      "lossEventCount": 4
-    },
-    {
       "fighter": "Julianna Peña",
       "priorPenalty": -8,
       "promotedPenalty": -6.75,
@@ -240,12 +240,20 @@
       "lossEventCount": 4
     },
     {
-      "fighter": "B.J. Penn",
-      "priorPenalty": -9.75,
+      "fighter": "Matt Hughes",
+      "priorPenalty": -10,
       "promotedPenalty": -8.75,
-      "delta": 1,
+      "delta": 1.25,
       "capApplied": false,
-      "lossEventCount": 13
+      "lossEventCount": 7
+    },
+    {
+      "fighter": "Aljamain Sterling",
+      "priorPenalty": -6.25,
+      "promotedPenalty": -7.25,
+      "delta": -1,
+      "capApplied": false,
+      "lossEventCount": 5
     },
     {
       "fighter": "Mackenzie Dern",
@@ -280,10 +288,10 @@
       "lossEventCount": 9
     },
     {
-      "fighter": "Georges St-Pierre",
-      "priorPenalty": -5.5,
-      "promotedPenalty": -6.25,
-      "delta": -0.75,
+      "fighter": "Demetrious Johnson",
+      "priorPenalty": -3,
+      "promotedPenalty": -2.25,
+      "delta": 0.75,
       "capApplied": false,
       "lossEventCount": 2
     },
@@ -326,6 +334,14 @@
       "delta": -0.63,
       "capApplied": false,
       "lossEventCount": 10
+    },
+    {
+      "fighter": "B.J. Penn",
+      "priorPenalty": -8.5,
+      "promotedPenalty": -8.75,
+      "delta": -0.25,
+      "capApplied": false,
+      "lossEventCount": 13
     },
     {
       "fighter": "Robert Whittaker",
@@ -384,6 +400,17 @@
     },
     {
       "board": "men",
+      "fighter": "Henry Cejudo",
+      "currentRank": 23,
+      "currentTotal": 48.88,
+      "currentPenalty": -3.75,
+      "priorPenalty": -6.75,
+      "counterfactualTotal": 45.88,
+      "counterfactualRank": 27,
+      "rankMovement": 4
+    },
+    {
+      "board": "men",
       "fighter": "Deiveson Figueiredo",
       "currentRank": 38,
       "currentTotal": 40.31,
@@ -395,13 +422,13 @@
     },
     {
       "board": "men",
-      "fighter": "Junior dos Santos",
-      "currentRank": 21,
-      "currentTotal": 49.19,
-      "currentPenalty": -3.75,
-      "priorPenalty": -6.1,
-      "counterfactualTotal": 46.84,
-      "counterfactualRank": 24,
+      "fighter": "Chuck Liddell",
+      "currentRank": 17,
+      "currentTotal": 54.35,
+      "currentPenalty": -5.25,
+      "priorPenalty": -10,
+      "counterfactualTotal": 49.6,
+      "counterfactualRank": 20,
       "rankMovement": 3
     },
     {
@@ -417,6 +444,28 @@
     },
     {
       "board": "men",
+      "fighter": "Charles Oliveira",
+      "currentRank": 27,
+      "currentTotal": 46.65,
+      "currentPenalty": -10,
+      "priorPenalty": -10,
+      "counterfactualTotal": 46.65,
+      "counterfactualRank": 24,
+      "rankMovement": -3
+    },
+    {
+      "board": "men",
+      "fighter": "Conor McGregor",
+      "currentRank": 28,
+      "currentTotal": 46.58,
+      "currentPenalty": -7,
+      "priorPenalty": -7,
+      "counterfactualTotal": 46.58,
+      "counterfactualRank": 25,
+      "rankMovement": -3
+    },
+    {
+      "board": "men",
       "fighter": "Frankie Edgar",
       "currentRank": 24,
       "currentTotal": 48.14,
@@ -428,13 +477,35 @@
     },
     {
       "board": "men",
-      "fighter": "Chuck Liddell",
-      "currentRank": 17,
-      "currentTotal": 54.35,
-      "currentPenalty": -5.25,
-      "priorPenalty": -10,
-      "counterfactualTotal": 49.6,
-      "counterfactualRank": 19,
+      "fighter": "Ilia Topuria",
+      "currentRank": 25,
+      "currentTotal": 47.37,
+      "currentPenalty": -2.25,
+      "priorPenalty": -2.25,
+      "counterfactualTotal": 47.37,
+      "counterfactualRank": 22,
+      "rankMovement": -3
+    },
+    {
+      "board": "men",
+      "fighter": "Jose Aldo",
+      "currentRank": 9,
+      "currentTotal": 62.29,
+      "currentPenalty": -10,
+      "priorPenalty": -6.75,
+      "counterfactualTotal": 65.54,
+      "counterfactualRank": 7,
+      "rankMovement": -2
+    },
+    {
+      "board": "men",
+      "fighter": "Junior dos Santos",
+      "currentRank": 21,
+      "currentTotal": 49.19,
+      "currentPenalty": -3.75,
+      "priorPenalty": -6.1,
+      "counterfactualTotal": 46.84,
+      "counterfactualRank": 23,
       "rankMovement": 2
     },
     {
@@ -449,39 +520,6 @@
       "rankMovement": -2
     },
     {
-      "board": "men",
-      "fighter": "Charles Oliveira",
-      "currentRank": 27,
-      "currentTotal": 46.65,
-      "currentPenalty": -10,
-      "priorPenalty": -10,
-      "counterfactualTotal": 46.65,
-      "counterfactualRank": 25,
-      "rankMovement": -2
-    },
-    {
-      "board": "men",
-      "fighter": "Conor McGregor",
-      "currentRank": 28,
-      "currentTotal": 46.58,
-      "currentPenalty": -7,
-      "priorPenalty": -7,
-      "counterfactualTotal": 46.58,
-      "counterfactualRank": 26,
-      "rankMovement": -2
-    },
-    {
-      "board": "men",
-      "fighter": "Ilia Topuria",
-      "currentRank": 25,
-      "currentTotal": 47.37,
-      "currentPenalty": -2.25,
-      "priorPenalty": -2.25,
-      "counterfactualTotal": 47.37,
-      "counterfactualRank": 23,
-      "rankMovement": -2
-    },
-    {
       "board": "women",
       "fighter": "Carla Esparza",
       "currentRank": 11,
@@ -490,28 +528,6 @@
       "priorPenalty": -8.25,
       "counterfactualTotal": 30.72,
       "counterfactualRank": 10,
-      "rankMovement": -1
-    },
-    {
-      "board": "men",
-      "fighter": "Jose Aldo",
-      "currentRank": 9,
-      "currentTotal": 62.29,
-      "currentPenalty": -10,
-      "priorPenalty": -8.25,
-      "counterfactualTotal": 64.04,
-      "counterfactualRank": 8,
-      "rankMovement": -1
-    },
-    {
-      "board": "men",
-      "fighter": "Henry Cejudo",
-      "currentRank": 23,
-      "currentTotal": 48.88,
-      "currentPenalty": -3.75,
-      "priorPenalty": -5.25,
-      "counterfactualTotal": 47.38,
-      "counterfactualRank": 22,
       "rankMovement": -1
     },
     {
@@ -527,14 +543,25 @@
     },
     {
       "board": "men",
-      "fighter": "B.J. Penn",
-      "currentRank": 19,
-      "currentTotal": 50.24,
+      "fighter": "Matt Hughes",
+      "currentRank": 8,
+      "currentTotal": 62.34,
       "currentPenalty": -8.75,
-      "priorPenalty": -9.75,
-      "counterfactualTotal": 49.24,
-      "counterfactualRank": 20,
+      "priorPenalty": -10,
+      "counterfactualTotal": 61.09,
+      "counterfactualRank": 9,
       "rankMovement": 1
+    },
+    {
+      "board": "men",
+      "fighter": "Aljamain Sterling",
+      "currentRank": 32,
+      "currentTotal": 44.46,
+      "currentPenalty": -7.25,
+      "priorPenalty": -6.25,
+      "counterfactualTotal": 45.46,
+      "counterfactualRank": 31,
+      "rankMovement": -1
     },
     {
       "board": "men",
@@ -545,6 +572,17 @@
       "priorPenalty": -8.25,
       "counterfactualTotal": 45.49,
       "counterfactualRank": 30,
+      "rankMovement": 1
+    },
+    {
+      "board": "men",
+      "fighter": "Demetrious Johnson",
+      "currentRank": 3,
+      "currentTotal": 76.37,
+      "currentPenalty": -2.25,
+      "priorPenalty": -3,
+      "counterfactualTotal": 75.62,
+      "counterfactualRank": 4,
       "rankMovement": 1
     },
     {
@@ -560,14 +598,14 @@
     },
     {
       "board": "men",
-      "fighter": "Tyron Woodley",
-      "currentRank": 26,
-      "currentTotal": 46.66,
-      "currentPenalty": -3.75,
+      "fighter": "Anderson Silva",
+      "currentRank": 4,
+      "currentTotal": 75.79,
+      "currentPenalty": -4.5,
       "priorPenalty": -4.5,
-      "counterfactualTotal": 45.91,
-      "counterfactualRank": 27,
-      "rankMovement": 1
+      "counterfactualTotal": 75.79,
+      "counterfactualRank": 3,
+      "rankMovement": -1
     },
     {
       "board": "men",
@@ -582,6 +620,17 @@
     },
     {
       "board": "men",
+      "fighter": "Dricus du Plessis",
+      "currentRank": 31,
+      "currentTotal": 45.15,
+      "currentPenalty": -1.5,
+      "priorPenalty": -1.5,
+      "counterfactualTotal": 45.15,
+      "counterfactualRank": 32,
+      "rankMovement": 1
+    },
+    {
+      "board": "men",
       "fighter": "Dustin Poirier",
       "currentRank": 37,
       "currentTotal": 40.35,
@@ -593,13 +642,13 @@
     },
     {
       "board": "men",
-      "fighter": "Matt Hughes",
-      "currentRank": 8,
-      "currentTotal": 62.34,
-      "currentPenalty": -8.75,
-      "priorPenalty": -8.75,
-      "counterfactualTotal": 62.34,
-      "counterfactualRank": 9,
+      "fighter": "Khabib Nurmagomedov",
+      "currentRank": 7,
+      "currentTotal": 64.05,
+      "currentPenalty": 0,
+      "priorPenalty": 0,
+      "counterfactualTotal": 64.05,
+      "counterfactualRank": 8,
       "rankMovement": 1
     },
     {
@@ -619,8 +668,8 @@
       "currentRank": 47,
       "currentTotal": 20.31,
       "currentPenalty": -9.75,
-      "priorPenalty": -5.25,
-      "counterfactualTotal": 24.81,
+      "priorPenalty": -5.5,
+      "counterfactualTotal": 24.56,
       "counterfactualRank": 47,
       "rankMovement": 0
     },
@@ -681,17 +730,6 @@
     },
     {
       "board": "men",
-      "fighter": "Georges St-Pierre",
-      "currentRank": 2,
-      "currentTotal": 85.6,
-      "currentPenalty": -6.25,
-      "priorPenalty": -5.5,
-      "counterfactualTotal": 86.35,
-      "counterfactualRank": 2,
-      "rankMovement": 0
-    },
-    {
-      "board": "men",
       "fighter": "Kamaru Usman",
       "currentRank": 11,
       "currentTotal": 60.91,
@@ -710,6 +748,28 @@
       "priorPenalty": -8,
       "counterfactualTotal": 57.6,
       "counterfactualRank": 12,
+      "rankMovement": 0
+    },
+    {
+      "board": "men",
+      "fighter": "Tyron Woodley",
+      "currentRank": 26,
+      "currentTotal": 46.66,
+      "currentPenalty": -3.75,
+      "priorPenalty": -4.5,
+      "counterfactualTotal": 45.91,
+      "counterfactualRank": 26,
+      "rankMovement": 0
+    },
+    {
+      "board": "men",
+      "fighter": "B.J. Penn",
+      "currentRank": 19,
+      "currentTotal": 50.24,
+      "currentPenalty": -8.75,
+      "priorPenalty": -8.5,
+      "counterfactualTotal": 50.49,
+      "counterfactualRank": 19,
       "rankMovement": 0
     },
     {
@@ -1121,7 +1181,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:29:53.065Z",
+        "completedAt": "2026-07-11T01:38:49.009Z",
         "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
         "bucketReconciled": true,
         "scoredLossEvents": 8,
@@ -1188,7 +1248,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:29:53.078Z",
+        "completedAt": "2026-07-11T01:38:49.022Z",
         "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
         "bucketReconciled": true,
         "scoredLossEvents": 3,
@@ -1372,7 +1432,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:29:52.492Z",
+        "completedAt": "2026-07-11T01:38:48.616Z",
         "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
         "bucketReconciled": true,
         "scoredLossEvents": 10,
@@ -1497,7 +1557,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:29:53.074Z",
+        "completedAt": "2026-07-11T01:38:49.018Z",
         "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
         "bucketReconciled": true,
         "scoredLossEvents": 5,
@@ -1610,7 +1670,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:29:53.074Z",
+        "completedAt": "2026-07-11T01:38:49.018Z",
         "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
         "bucketReconciled": true,
         "scoredLossEvents": 4,
@@ -1711,7 +1771,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:29:53.078Z",
+        "completedAt": "2026-07-11T01:38:49.022Z",
         "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
         "bucketReconciled": true,
         "scoredLossEvents": 2,
@@ -1870,7 +1930,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-11T01:29:52.486Z",
+        "completedAt": "2026-07-11T01:38:48.610Z",
         "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
         "completeUfcLossLedger": true,
         "bucketReconciled": true,
@@ -2018,7 +2078,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-11T01:29:52.486Z",
+        "completedAt": "2026-07-11T01:38:48.610Z",
         "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
         "completeUfcLossLedger": true,
         "bucketReconciled": true,
@@ -2191,7 +2251,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:29:53.070Z",
+        "completedAt": "2026-07-11T01:38:49.015Z",
         "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
         "bucketReconciled": true,
         "scoredLossEvents": 9,
@@ -2304,7 +2364,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:29:53.078Z",
+        "completedAt": "2026-07-11T01:38:49.021Z",
         "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
         "bucketReconciled": true,
         "scoredLossEvents": 3,
@@ -2429,7 +2489,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:29:53.078Z",
+        "completedAt": "2026-07-11T01:38:49.022Z",
         "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
         "bucketReconciled": true,
         "scoredLossEvents": 3,
