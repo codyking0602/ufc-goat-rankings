@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='profile-card-ui-20260711a-canonical';
+  const VERSION='profile-card-ui-20260711b-canonical';
   const STYLE_VERSION='profile-card-css-20260711a-canonical';
   const CATEGORY_CARD_COPY={
     championship:'Title wins, reign strength, division control',
@@ -40,7 +40,8 @@
       if(!copy||!detail)return;
       const match=detail.textContent.match(/#([^\s]+)\s+in category/i);
       const rank=match?.[1]||'—';
-      detail.textContent=`#${rank} in category · ${copy}`;
+      const desired=`#${rank} in category · ${copy}`;
+      if(detail.textContent.trim()!==desired)detail.textContent=desired;
       detail.classList.add('category-context');
     });
   }
@@ -89,7 +90,8 @@
         if(!copy||!detail)return;
         const match=detail.textContent.match(/#([^\s]+)\s+in category/i);
         const rank=match?.[1]||'—';
-        detail.textContent=`#${rank} in category · ${copy}`;
+        const desired=`#${rank} in category · ${copy}`;
+        if(detail.textContent.trim()!==desired)detail.textContent=desired;
         detail.classList.add('category-context');
         card.setAttribute('aria-expanded','false');
       });
