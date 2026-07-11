@@ -1,7 +1,7 @@
 // Watch Moment links for fighter cards and Signature Fight links for profiles.
 // Keep links here as app-facing content, separate from scoring and nickname/display-name polish.
 (function(){
-  const VERSION = 'watch-moments-20260711g-signature-fights-batch-five';
+  const VERSION = 'watch-moments-20260711h-signature-fights-batch-six';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -110,7 +110,15 @@
     'Justin Gaethje': 'https://youtu.be/c_ZHlvDn4vM?is=2gEXV0uylOlRGzLU',
     'Frankie Edgar': 'https://youtu.be/9jpBlAiA3BM?is=zHpZeVMxigNffl0x',
     'Deiveson Figueiredo': 'https://youtu.be/OW_uA-X3HOg?is=8ya9VlZVXXDrXSNf',
-    'Khamzat Chimaev': 'https://youtu.be/P1Yl0iKipxs?is=3xlsp_uGjj6i2W07'
+    'Khamzat Chimaev': 'https://youtu.be/P1Yl0iKipxs?is=3xlsp_uGjj6i2W07',
+    'Lyoto Machida': 'https://youtu.be/P9IrK0Dflb4?is=5Lu2paN2r1OvY6Nk',
+    'Sean Strickland': 'https://youtu.be/VhuOa60BVy0?is=mW_KDjjwj4D179ON',
+    'Robert Whittaker': 'https://youtu.be/7CAkyfHMhhA?is=-CafmSWmneEDF7dK',
+    "Sean O'Malley": 'https://youtu.be/EDAt1j_mTCw?is=GFpQRutBy6Ibbvnx',
+    'Michael Bisping': 'https://youtu.be/Ne2fSWUWv4U?is=LejcNbriCXqsO38n',
+    'Dan Henderson': 'https://youtu.be/rLuppO32rUI?is=DdM4tdoZAMapoDRg',
+    'Chael Sonnen': 'https://youtu.be/DpLaqnwFQEY?is=VUYzF8zQsZszQ4aj',
+    'Robbie Lawler': 'https://youtu.be/ocsu8P4-GS4?is=kQFibyNlGENs6-QK'
   };
 
   Object.entries(WATCH_MOMENTS).forEach(([fighter, url]) => {
