@@ -1,11 +1,19 @@
 // App-facing category label and shared fighter-profile polish.
 // Keeps the underlying category key as `championship` while hardening the public profile shell.
 (function(){
-  const VERSION = 'championship-label-polish-20260711b-profile-edge-qa';
+  const VERSION = 'championship-label-polish-20260711c-compact-copy-contrast';
   const FROM = 'Title Reign';
   const TO = 'Championship Resume';
   const DESC_FROM = 'Championship resume: title-fight wins, reign strength, and control of the division';
-  const DESC_TO = 'Championship resume: UFC title-fight wins, adjusted title credit, and second-division title value';
+  const DESC_TO = 'Title wins, reign strength, division control';
+  const CATEGORY_CARD_COPY = {
+    championship: 'Title wins, reign strength, division control',
+    opponentQuality: 'Who they beat, when, and division strength',
+    primeDominance: 'Rounds, finishes, separation, durability',
+    longevity: 'Active elite UFC years, not calendar padding',
+    apexPeak: 'Best two-win stretch: performance, proof, peak',
+    penalty: 'Losses adjusted for timing, opponent, finish, division'
+  };
   const REPRESENTATIVE_FIGHTERS = [
     'Jon Jones',
     'Tyron Woodley',
@@ -32,6 +40,21 @@
     });
   }
 
+  function compactCategoryCards(root=document){
+    const cards = root.querySelectorAll?.('#fighterDetail .category-card') || [];
+    cards.forEach(card => {
+      const key = card.dataset.category;
+      const copy = CATEGORY_CARD_COPY[key];
+      const detail = card.querySelector('small');
+      if(!copy || !detail) return;
+      const match = detail.textContent.match(/#([^\s]+)\s+in category/i);
+      const rank = match?.[1] || '—';
+      const desired = `#${rank} in category · ${copy}`;
+      if(detail.textContent.trim() !== desired) detail.textContent = desired;
+      detail.classList.add('category-context');
+    });
+  }
+
   function walk(root){
     if(!root) return;
     if(root.nodeType === Node.TEXT_NODE){ replaceTextNode(root); return; }
@@ -43,6 +66,7 @@
       if(node.nodeType === Node.TEXT_NODE) replaceTextNode(node);
       else if(node.nodeType === Node.ELEMENT_NODE) polishAttributes(node);
     }
+    compactCategoryCards(root.nodeType === Node.DOCUMENT_NODE ? root : document);
   }
 
   function installProfileCss(){
@@ -54,13 +78,19 @@
       .snapshot-item{min-width:0}
       .category-card{display:flex;flex-direction:column;min-width:0}
       .category-card .category-label{min-height:2.35em}
+      .category-card .category-context{display:-webkit-box!important;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden!important;white-space:normal!important;overflow-wrap:normal!important;word-break:normal!important;line-height:1.28;min-height:3.84em}
       .category-card .tier-pill{align-self:flex-start}
       .category-card .category-bar{width:100%;margin-top:auto}
-      .close{width:44px;height:44px;display:grid;place-items:center;line-height:1;border:1px solid var(--line);border-radius:999px;background:rgba(15,20,32,.92);position:sticky;top:8px;z-index:12}
+      #categoryExplanation:empty{background:linear-gradient(180deg,#293a56,#1d2b42)!important;border-color:rgba(203,213,225,.38)!important;box-shadow:0 12px 30px rgba(2,6,23,.22)}
+      #categoryExplanation:empty::before{color:#f8fafc!important;text-shadow:0 1px 10px rgba(255,255,255,.08)}
+      #categoryExplanation:empty::after{color:#dbe4f0!important}
+      .close{width:44px;height:44px;display:grid;place-items:center;line-height:1;border:1px solid rgba(255,255,255,.42)!important;border-radius:999px;background:#263750!important;color:#fff!important;opacity:1!important;text-shadow:0 1px 8px rgba(255,255,255,.35);box-shadow:0 8px 22px rgba(2,6,23,.35);position:sticky;top:8px;z-index:12}
+      .close:hover,.close:focus-visible{background:#334966!important;border-color:rgba(255,255,255,.7)!important}
       @media(max-width:900px){
         .profile-summary h2{font-size:clamp(28px,8.5vw,34px);line-height:1}
         .category-card{min-height:176px}
         .category-card .category-label{min-height:2.4em}
+        .category-card .category-context{font-size:11px;min-height:3.84em}
       }
     `;
     document.head.appendChild(style);
@@ -81,6 +111,7 @@
     document.querySelectorAll('#fighterDetail .category-card').forEach(card => {
       if(!card.hasAttribute('aria-expanded')) card.setAttribute('aria-expanded','false');
     });
+    compactCategoryCards(document);
   }
 
   function apply(){
@@ -155,6 +186,7 @@
     version: VERSION,
     from: FROM,
     to: TO,
+    categoryCardCopy: CATEGORY_CARD_COPY,
     representativeFighters: REPRESENTATIVE_FIGHTERS,
     runRepresentativeAudit,
     appliedAt: new Date().toISOString()
