@@ -2,7 +2,7 @@
 // Normalizes loss-event buckets and reconciles UFC record loss counts to the completed canonical ledgers.
 (function(){
   'use strict';
-  const VERSION='loss-context-ledger-finalizer-20260710a-record-bucket-reconciliation';
+  const VERSION='loss-context-ledger-finalizer-20260710b-profile-record-resolution';
   const DATA=window.RANKING_DATA;
   const era=window.UFC_FIGHTER_ERA_LEDGERS;
   const ledgers=era?.ledgers;
@@ -54,6 +54,11 @@
     return String(text).replace(parsed.match,`${parsed.wins}-${losses}${parsed.tail}`);
   }
   function allDataRows(){return [...(DATA?.men||[]),...(DATA?.women||[]),...(DATA?.fighters||[])].filter(row=>row?.fighter);}
+  function fighterRows(fighter){const target=key(fighter);return allDataRows().filter(row=>key(row.fighter)===target);}
+  function recordFor(fighter){
+    const values=fighterRows(fighter).flatMap(row=>[row?.ufcRecord,row?.record,row?.ufc_record]);
+    return String(values.find(value=>typeof value==='string'&&parseRecord(value))||'');
+  }
   function patchSnapshot(snapshot,record){
     if(!Array.isArray(snapshot))return snapshot;
     return snapshot.map(item=>Array.isArray(item)&&String(item[0]).trim().toLowerCase()==='ufc record'?[item[0],record]:item);
@@ -112,9 +117,9 @@
     if(!ledger)return;
     const current=ledger.lossContext||{};
     let unrecovered=current.unrecoveredLoss?objectEvent(current.unrecoveredLoss):null;
-    let recovered=(current.recoveredLosses||[]).map(objectEvent);
-    let upwardRows=(current.upwardDivisionLosses||[]).map(objectEvent);
-    let post=(current.postPrimeLosses||[]).map(objectEvent);
+    const recovered=(current.recoveredLosses||[]).map(objectEvent);
+    const upwardRows=(current.upwardDivisionLosses||[]).map(objectEvent);
+    const post=(current.postPrimeLosses||[]).map(objectEvent);
     const weird=(current.weirdResults||[]).map(objectEvent);
 
     const repaired=[];
@@ -176,8 +181,7 @@
     ledger.lossContextCompletion.officialLossExceptions=officialExceptions;
     ledger.lossContextCompletion.expectedOfficialUfcLosses=expectedOfficialLosses;
 
-    const row=allDataRows().find(item=>key(item.fighter)===key(fighter));
-    const recordText=[row?.ufcRecord,row?.record,row?.ufc_record].find(value=>typeof value==='string'&&parseRecord(value));
+    const recordText=recordFor(fighter);
     if(!recordText){unresolved.push({fighter,reason:'No machine-readable UFC record string available.'});return;}
     const parsed=parseRecord(recordText);
     const canonicalRecord=replaceLossCount(recordText,expectedOfficialLosses);
