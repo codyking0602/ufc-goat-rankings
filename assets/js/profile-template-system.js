@@ -2,7 +2,7 @@
 // Locks the approved profile layout for all fighters without changing scoring data.
 (function(){
   const DATA = window.RANKING_DATA;
-  const VERSION = 'profile-template-system-20260711b-public-profile-shell';
+  const VERSION = 'profile-template-system-20260711c-compact-cards-snapshot';
   if(!DATA || typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const CATEGORY_INFO_LIVE = [
@@ -73,8 +73,8 @@
   };
 
   const cleanName = name => String(name || '').replace(/\s+\d+$/, '').trim();
-  const pctText = n => (n === null || n === undefined || n === '' || !Number.isFinite(Number(n))) ? '—' : `${Number(n).toFixed(1)}%`;
-  const fmtText = n => (n === null || n === undefined || n === '') ? '—' : (Number.isFinite(Number(n)) ? String(Number(Number(n).toFixed(2))) : String(n));
+  const pctText = n => (n === null || n === undefined || n === '' || !Number.isFinite(Number(n))) ? '—' : `${Math.round(Number(n))}%`;
+  const yearsText = n => (n === null || n === undefined || n === '' || !Number.isFinite(Number(n))) ? '—' : `${Number(n).toFixed(1)} YRS`;
   const numText = v => {
     if(v === null || v === undefined || v === '') return '—';
     const n = Number(String(v).replace(/[^0-9.\-]/g,''));
@@ -127,8 +127,8 @@
         ['Elite / Top-5 Wins', String(JON_STATS.eliteWins)],
         ['Finish Rate', pctText(JON_STATS.finishRatePct)],
         ['Rounds Won', pctText(JON_STATS.roundsWonPct)],
-        ['Active Elite Years', fmtText(JON_STATS.activeEliteYears)],
-        ['Times Finished in Prime', String(JON_STATS.timesFinishedPrime)]
+        ['Active Elite Years', yearsText(JON_STATS.activeEliteYears)],
+        ['Prime Stoppage Losses', String(JON_STATS.timesFinishedPrime)]
       ];
     }
   }
@@ -145,8 +145,8 @@
       ['Prime Record', DATA.primeRecords?.[f.fighter]?.record || '—'],
       ['Finish Rate', pctText(stats.finishRatePct ?? f.finishRatePct)],
       ['Rounds Won', pctText(stats.roundsWonPct ?? f.roundsWonPct)],
-      ['Active Elite Years', fmtText(stats.activeEliteYears ?? f.activeEliteYears)],
-      ['Times Finished in Prime', numText(stats.timesFinishedPrime ?? f.timesFinishedPrime ?? 0)]
+      ['Active Elite Years', yearsText(stats.activeEliteYears ?? f.activeEliteYears)],
+      ['Prime Stoppage Losses', numText(stats.timesFinishedPrime ?? f.timesFinishedPrime ?? findSnap('Prime Stoppage Losses') ?? findSnap('Times Finished in Prime') ?? 0)]
     ];
   }
 
@@ -170,12 +170,12 @@
   };
 
   window.categoryCards = function(f){
-    return CATEGORY_INFO_LIVE.map(([key,label,description]) => {
+    return CATEGORY_INFO_LIVE.map(([key,label]) => {
       const rating = categoryOvr(f,key);
       const rank = categoryRank(f,key);
       const tier = tierForOvr(rating);
       const width = Math.max(0, Math.min(100, rating));
-      return `<button type="button" class="category-card ${tier.cls}" data-category="${key}" aria-label="Explain ${label} rating for ${f.fighter}"><span class="category-label">${label}</span><strong>${rating} <span class="meta">Rating</span></strong><small>#${rank || '—'} in category · ${description}</small><span class="tier-pill">${tier.label}</span><div class="category-bar"><i style="width:${width}%"></i></div></button>`;
+      return `<button type="button" class="category-card ${tier.cls}" data-category="${key}" aria-label="Explain ${label} rating for ${f.fighter}"><span class="category-label">${label}</span><strong>${rating} <span class="meta">Rating</span></strong><small>#${rank || '—'} in category</small><span class="tier-pill">${tier.label}</span><div class="category-bar"><i style="width:${width}%"></i></div></button>`;
     }).join('');
   };
 
@@ -256,7 +256,7 @@
   applyJonPackage();
   window.UFC_PROFILE_TEMPLATE_SYSTEM = {
     version: VERSION,
-    snapshotLabels: ['UFC Record','UFC Title-Fight Wins','Elite / Top-5 Wins','Prime Record','Finish Rate','Rounds Won','Active Elite Years','Times Finished in Prime'],
+    snapshotLabels: ['UFC Record','UFC Title-Fight Wins','Elite / Top-5 Wins','Prime Record','Finish Rate','Rounds Won','Active Elite Years','Prime Stoppage Losses'],
     profileDisplayNames: PROFILE_DISPLAY_NAMES,
     publicProfileSections: ['Hero','Resume Snapshot','Category Cards','Why Ranked Here','Why Not Ranked Higher']
   };
