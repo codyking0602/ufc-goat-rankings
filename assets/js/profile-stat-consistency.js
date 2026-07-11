@@ -37,10 +37,9 @@
   }
 
   function bestPrimeFinishValue(name,row,override){
-    const ledgerValue=finishLossesFromLedger(name);
-    if(ledgerValue!==null)return ledgerValue;
     const packet=window.UFC_FIGHTER_PACKETS?.[name];
     const candidates=[
+      finishLossesFromLedger(name),
       row?.timesFinishedPrime,
       row?.snapshotStats?.timesFinishedPrime,
       override?.snapshotStats?.timesFinishedPrime,
@@ -54,7 +53,7 @@
     const next=Array.isArray(snapshot)?snapshot.map(item=>Array.isArray(item)?item.slice():item):[];
     const index=next.findIndex(item=>Array.isArray(item)&&patterns.some(pattern=>pattern.test(String(item[0]||''))));
     if(index>=0)next[index]=[label,String(value)];
-    else next.push([label,String(value)]);
+    else next.push([label,String(value)];
     return next;
   }
 
