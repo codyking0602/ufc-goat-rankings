@@ -67,6 +67,7 @@ async function readRuntime() {
 
       const finite = value => Number.isFinite(Number(value)) ? Number(value) : undefined;
       const first = (...values) => values.find(value => value !== undefined && value !== null && value !== '');
+      const runtimeSlugify = name => String(name || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/&/g, ' and ').replace(/[’']/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
       const cleanText = (value, max = 1000) => {
         if (value === undefined || value === null) return undefined;
         const text = String(value).replace(/\s+/g, ' ').trim();
@@ -168,7 +169,7 @@ async function readRuntime() {
             : undefined;
 
           fighters.push({
-            slug: slugify(name),
+            slug: runtimeSlugify(name),
             name,
             group,
             rank: finite(row.rank),
