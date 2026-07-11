@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-11T01:25:16.983Z",
+  "generatedAt": "2026-07-11T01:29:55.261Z",
   "baseUrl": "http://127.0.0.1:4173",
   "report": {
     "version": "loss-context-final-reconciliation-report-20260710a-runtime-closure",
@@ -755,7 +755,7 @@
     ],
     "mutatesScores": false,
     "mutatesPenalty": false,
-    "generatedAt": "2026-07-11T01:25:16.211Z"
+    "generatedAt": "2026-07-11T01:29:54.291Z"
   },
   "pipeline": {
     "version": "deterministic-scoring-pipeline-20260710zd-loss-context-final-closure",
@@ -802,8 +802,8 @@
     "timerCount": 0,
     "repeatedLoadCount": 0,
     "finalScoreApplyCount": 1,
-    "startedAt": "2026-07-11T01:25:14.353Z",
-    "completedAt": "2026-07-11T01:25:16.329Z",
+    "startedAt": "2026-07-11T01:29:51.936Z",
+    "completedAt": "2026-07-11T01:29:54.419Z",
     "error": null,
     "lossContextCompletionBatchThree": {
       "version": "loss-context-ledger-completion-batch-three-20260710a-five-veteran-ledgers",
@@ -858,7 +858,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T01:25:15.247Z"
+      "appliedAt": "2026-07-11T01:29:53.060Z"
     },
     "lossContextCompletionBatchFour": {
       "version": "loss-context-ledger-completion-batch-four-20260710a-five-highest-missing",
@@ -914,7 +914,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T01:25:15.250Z"
+      "appliedAt": "2026-07-11T01:29:53.065Z"
     },
     "lossContextCompletionBatchFive": {
       "version": "loss-context-ledger-completion-batch-five-20260710a-ten-veteran-ledgers",
@@ -1007,7 +1007,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T01:25:15.253Z"
+      "appliedAt": "2026-07-11T01:29:53.070Z"
     },
     "lossContextCompletionBatchSix": {
       "version": "loss-context-ledger-completion-batch-six-20260710a-first-half-eighteen",
@@ -1195,7 +1195,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T01:25:15.256Z"
+      "appliedAt": "2026-07-11T01:29:53.074Z"
     },
     "lossContextCompletionBatchSeven": {
       "version": "loss-context-ledger-completion-batch-seven-20260710a-final-seventeen",
@@ -1354,7 +1354,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T01:25:15.260Z"
+      "appliedAt": "2026-07-11T01:29:53.079Z"
     },
     "lossContextLedgerFinalizer": {
       "version": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
@@ -1486,7 +1486,7 @@
       "mutatesRecords": true,
       "mutatesPenalty": false,
       "mutatesScores": false,
-      "appliedAt": "2026-07-11T01:25:15.268Z"
+      "appliedAt": "2026-07-11T01:29:53.089Z"
     },
     "lossContextPrePromotionAudit": {
       "version": "loss-context-mismatch-audit-20260710c-exact-official-loss-reconciliation",
@@ -22096,7 +22096,7 @@
       "missingEraLossEntries": [],
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T01:25:15.279Z"
+      "appliedAt": "2026-07-11T01:29:53.104Z"
     },
     "lossContextScoreReview": {
       "version": "loss-context-score-review-20260710a-canonical-ledger-promotion",
@@ -24137,7 +24137,15 @@
       "mutatesPenalty": true,
       "mutatesScores": true,
       "finalScoreRecalculationOwner": "final-score-engine.js",
-      "appliedAt": "2026-07-11T01:25:15.284Z"
+      "appliedAt": "2026-07-11T01:29:53.266Z"
+    },
+    "opponentQualityReadyDetail": {
+      "version": "opponent-quality-live-20260710c-fixed-benchmark",
+      "fighters": 62,
+      "benchmarkCredit": 14.1,
+      "sourceBenchmarkCredit": 14.1,
+      "benchmarkMode": "locked-constant",
+      "futureRosterStable": true
     },
     "lossContextLive": {
       "version": "loss-context-live-promoter-20260710b-canonical-score-review",
@@ -24156,15 +24164,7 @@
       "launchMode": "canonical-ledger-score-review-overlay",
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T01:25:15.421Z"
-    },
-    "opponentQualityReadyDetail": {
-      "version": "opponent-quality-live-20260710c-fixed-benchmark",
-      "fighters": 62,
-      "benchmarkCredit": 14.1,
-      "sourceBenchmarkCredit": 14.1,
-      "benchmarkMode": "locked-constant",
-      "futureRosterStable": true
+      "appliedAt": "2026-07-11T01:29:53.455Z"
     },
     "lossContextMismatchAudit": {
       "version": "loss-context-mismatch-audit-20260710c-exact-official-loss-reconciliation",
@@ -44472,7 +44472,7 @@
       ],
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T01:25:15.577Z"
+      "appliedAt": "2026-07-11T01:29:53.465Z"
     },
     "lossContextFlaggedFighters": {
       "version": "loss-context-flagged-fighter-list-20260710g-batch-seven-complete-roster",
@@ -44682,7 +44682,7 @@
       "batchSize": 0,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "generatedAt": "2026-07-11T01:25:15.587Z"
+      "generatedAt": "2026-07-11T01:29:53.471Z"
     },
     "canonicalLongevityRecalculation": {
       "version": "longevity-canonical-recalculation-20260710a-ten-window-rebuild",
@@ -44841,7 +44841,7 @@
       "correctsRandyBelfortDate": true,
       "mutatesEraLongevityInputs": true,
       "mutatesScores": false,
-      "appliedAt": "2026-07-11T01:25:15.591Z"
+      "appliedAt": "2026-07-11T01:29:53.476Z"
     },
     "canonicalPrimeRecords": {
       "version": "canonical-prime-records-20260710b-prime-ledger-recount",
@@ -46825,7 +46825,7 @@
       "allWindowsLocked": false,
       "mutatesScores": false,
       "mutatesPrimeRecordDisplay": true,
-      "appliedAt": "2026-07-11T01:25:15.599Z"
+      "appliedAt": "2026-07-11T01:29:53.488Z"
     },
     "fighterEraWindowAudit": {
       "version": "fighter-era-window-audit-20260710b-record-dependencies",
@@ -50999,7 +50999,7 @@
       "allCanonicalPrimeRecordsPresent": false,
       "mutatesScores": false,
       "mutatesWindows": false,
-      "appliedAt": "2026-07-11T01:25:16.069Z"
+      "appliedAt": "2026-07-11T01:29:54.124Z"
     },
     "finalScoreResult": {
       "version": "final-score-engine-20260710b-deterministic",
@@ -51073,7 +51073,7 @@
           "overallOvr": 89
         }
       ],
-      "appliedAt": "2026-07-11T01:25:16.207Z"
+      "appliedAt": "2026-07-11T01:29:54.285Z"
     },
     "lossContextFinalReconciliation": {
       "version": "loss-context-final-reconciliation-report-20260710a-runtime-closure",
@@ -51829,7 +51829,7 @@
       ],
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "generatedAt": "2026-07-11T01:25:16.211Z"
+      "generatedAt": "2026-07-11T01:29:54.291Z"
     },
     "renderError": "Cannot set properties of null (setting 'innerHTML')",
     "fighterCount": 62
@@ -53873,7 +53873,7 @@
     "mutatesPenalty": true,
     "mutatesScores": true,
     "finalScoreRecalculationOwner": "final-score-engine.js",
-    "appliedAt": "2026-07-11T01:25:15.284Z"
+    "appliedAt": "2026-07-11T01:29:53.266Z"
   },
   "postAudit": {
     "version": "loss-context-mismatch-audit-20260710c-exact-official-loss-reconciliation",
@@ -74181,7 +74181,7 @@
     ],
     "mutatesScores": false,
     "mutatesPenalty": false,
-    "appliedAt": "2026-07-11T01:25:15.577Z"
+    "appliedAt": "2026-07-11T01:29:53.465Z"
   },
   "finalizer": {
     "version": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
@@ -74313,7 +74313,7 @@
     "mutatesRecords": true,
     "mutatesPenalty": false,
     "mutatesScores": false,
-    "appliedAt": "2026-07-11T01:25:15.268Z"
+    "appliedAt": "2026-07-11T01:29:53.089Z"
   },
   "menTop20": [
     {
@@ -74555,6 +74555,1478 @@
       "totalScore": 25.78,
       "penalty": -8,
       "overallOvr": 82
+    }
+  ],
+  "focusDiagnostics": [
+    {
+      "fighter": "Randy Couture",
+      "dataRows": [
+        {
+          "fighter": "Randy Couture",
+          "leaderboard": "men",
+          "ufcRecord": null,
+          "record": null,
+          "ufcLosses": null,
+          "penalty": -10,
+          "rank": 10
+        },
+        {
+          "fighter": "Randy Couture",
+          "leaderboard": "men",
+          "ufcRecord": "16-8",
+          "record": null,
+          "ufcLosses": 8,
+          "penalty": -10,
+          "rank": 10
+        }
+      ],
+      "packetRecord": "16-8",
+      "overrideRecord": "16-8",
+      "audit": {
+        "status": "needs-ledger-completion",
+        "ufcRecord": "16-8",
+        "officialUfcLosses": 8,
+        "officialLossExceptionCount": 1,
+        "effectiveExpectedLosses": 7,
+        "machineReadableLossEvents": 8,
+        "missingLossEvents": 0,
+        "excessLossEvents": 1,
+        "livePenalty": -10,
+        "cappedLedgerEstimate": -10,
+        "reviewReasons": [
+          "1 extra machine-readable loss event exceeds the reconciled UFC record."
+        ],
+        "events": [
+          {
+            "label": "Brock Lesnar",
+            "date": "2008-11-15",
+            "sourceType": "unrecoveredLoss",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -2.25
+          },
+          {
+            "label": "Josh Barnett",
+            "date": "2002-03-22",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": "weird/contextual",
+            "penaltyEstimate": 0
+          },
+          {
+            "label": "Ricco Rodriguez",
+            "date": "2002-09-27",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -2.25
+          },
+          {
+            "label": "Vitor Belfort II",
+            "date": "2004-01-31",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -2.25
+          },
+          {
+            "label": "Chuck Liddell II",
+            "date": "2005-04-16",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -2.25
+          },
+          {
+            "label": "Chuck Liddell III",
+            "date": "2006-02-04",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -2.25
+          },
+          {
+            "label": "Antonio Rodrigo Nogueira",
+            "date": "2009-08-29",
+            "sourceType": "postPrimeLosses",
+            "phase": "post-prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": 0
+          },
+          {
+            "label": "Lyoto Machida",
+            "date": "2011-04-30",
+            "sourceType": "postPrimeLosses",
+            "phase": "post-prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": 0
+          }
+        ]
+      },
+      "eraWindow": {
+        "start": "1997-10-17",
+        "startLabel": "Vitor Belfort I",
+        "end": "2008-11-15",
+        "endLabel": "Brock Lesnar",
+        "endType": "unrecovered_elite_loss",
+        "endReason": "Liddell losses were recovered by heavyweight title comeback. Brock closes late UFC elite-prime window.",
+        "canonical": true,
+        "locked": true,
+        "lockVersion": "fighter-era-ledger-cleanups-final-20260710c-roster-window-lock"
+      },
+      "completion": {
+        "version": "loss-context-ledger-completion-batch-four-20260710a-five-highest-missing",
+        "batch": 4,
+        "machineReadable": true,
+        "completeUfcLossLedger": true,
+        "source": "canonical Era window plus fighter packet and UFC fight-history audit",
+        "completedAt": "2026-07-11T01:29:53.065Z",
+        "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
+        "bucketReconciled": true,
+        "scoredLossEvents": 8,
+        "officialLossExceptions": 0,
+        "expectedOfficialUfcLosses": 8
+      }
+    },
+    {
+      "fighter": "Sean O'Malley",
+      "dataRows": [
+        {
+          "fighter": "Sean O'Malley",
+          "leaderboard": "men",
+          "ufcRecord": "11-3 (1 NC)",
+          "record": null,
+          "ufcLosses": null,
+          "penalty": -5.25,
+          "rank": 44
+        },
+        {
+          "fighter": "Sean O'Malley",
+          "leaderboard": "men",
+          "ufcRecord": "11-3 (1 NC)",
+          "record": null,
+          "ufcLosses": 3,
+          "penalty": -5.25,
+          "rank": 44
+        }
+      ],
+      "packetRecord": "11-3 (1 NC)",
+      "overrideRecord": "11-3 (1 NC)",
+      "audit": {
+        "status": "missing-era-loss-entry",
+        "ufcRecord": "11-3 (1 NC)",
+        "officialUfcLosses": 3,
+        "officialLossExceptionCount": 0,
+        "effectiveExpectedLosses": 3,
+        "machineReadableLossEvents": 0,
+        "missingLossEvents": 3,
+        "excessLossEvents": 0,
+        "livePenalty": -5.25,
+        "cappedLedgerEstimate": 0,
+        "reviewReasons": [
+          "Negative live penalty but no machine-readable loss events.",
+          "3 UFC loss events are missing after official DQ-loss allowance."
+        ],
+        "events": []
+      },
+      "eraWindow": {
+        "start": "2022-10-22",
+        "startLabel": "Petr Yan",
+        "end": null,
+        "endLabel": "Current elite form",
+        "endType": "open_current_elite",
+        "endReason": "Merab did not close the window because O’Malley fought afterward and remains current elite by Cody call.",
+        "canonical": true,
+        "locked": true,
+        "lockVersion": "fighter-era-ledger-cleanups-final-20260710c-roster-window-lock"
+      },
+      "completion": {
+        "version": "loss-context-ledger-completion-batch-seven-20260710a-final-seventeen",
+        "batch": 7,
+        "split": "remaining-second-half",
+        "machineReadable": true,
+        "completeUfcLossLedger": true,
+        "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
+        "completedAt": "2026-07-11T01:29:53.078Z",
+        "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
+        "bucketReconciled": true,
+        "scoredLossEvents": 3,
+        "officialLossExceptions": 0,
+        "expectedOfficialUfcLosses": 3
+      }
+    },
+    {
+      "fighter": "Charles Oliveira",
+      "dataRows": [
+        {
+          "fighter": "Charles Oliveira",
+          "leaderboard": "men",
+          "ufcRecord": null,
+          "record": null,
+          "ufcLosses": null,
+          "penalty": -10,
+          "rank": 27
+        },
+        {
+          "fighter": "Charles Oliveira",
+          "leaderboard": "men",
+          "ufcRecord": "25-10",
+          "record": null,
+          "ufcLosses": 10,
+          "penalty": -10,
+          "rank": 27
+        }
+      ],
+      "packetRecord": "25-10",
+      "overrideRecord": "25-10",
+      "audit": {
+        "status": "match",
+        "ufcRecord": "25-10",
+        "officialUfcLosses": 10,
+        "officialLossExceptionCount": 0,
+        "effectiveExpectedLosses": 10,
+        "machineReadableLossEvents": 10,
+        "missingLossEvents": 0,
+        "excessLossEvents": 0,
+        "livePenalty": -10,
+        "cappedLedgerEstimate": -10,
+        "reviewReasons": [],
+        "events": [
+          {
+            "label": "Jim Miller I",
+            "date": "2010-12-11",
+            "sourceType": "recoveredLosses",
+            "phase": "pre-prime",
+            "quality": "non-elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -2
+          },
+          {
+            "label": "Donald Cerrone",
+            "date": "2011-08-14",
+            "sourceType": "recoveredLosses",
+            "phase": "pre-prime",
+            "quality": "non-elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -2
+          },
+          {
+            "label": "Cub Swanson",
+            "date": "2012-09-22",
+            "sourceType": "recoveredLosses",
+            "phase": "pre-prime",
+            "quality": "non-elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -2
+          },
+          {
+            "label": "Frankie Edgar",
+            "date": "2013-07-06",
+            "sourceType": "recoveredLosses",
+            "phase": "pre-prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -0.75
+          },
+          {
+            "label": "Max Holloway",
+            "date": "2015-08-23",
+            "sourceType": "recoveredLosses",
+            "phase": "pre-prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -1.5
+          },
+          {
+            "label": "Anthony Pettis",
+            "date": "2016-08-27",
+            "sourceType": "recoveredLosses",
+            "phase": "pre-prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -1.5
+          },
+          {
+            "label": "Ricardo Lamas",
+            "date": "2016-11-05",
+            "sourceType": "recoveredLosses",
+            "phase": "pre-prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -1.5
+          },
+          {
+            "label": "Paul Felder",
+            "date": "2017-12-02",
+            "sourceType": "recoveredLosses",
+            "phase": "pre-prime",
+            "quality": "non-elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -2
+          },
+          {
+            "label": "Islam Makhachev",
+            "date": "2022-10-22",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -2.25
+          },
+          {
+            "label": "Arman Tsarukyan",
+            "date": "2024-04-13",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -1.5
+          }
+        ]
+      },
+      "eraWindow": {
+        "start": "2020-03-14",
+        "startLabel": "Kevin Lee",
+        "end": null,
+        "endLabel": "Current elite-prime form",
+        "endType": "open_current_title_level",
+        "endReason": "Islam and Arman do not close the window under Cody call; Charles remains prime/current.",
+        "canonical": true,
+        "locked": true,
+        "lockVersion": "fighter-era-ledger-cleanups-final-20260710c-roster-window-lock"
+      },
+      "completion": {
+        "version": "loss-context-ledger-completion-batch-two-20260710a-five-highest-priority",
+        "batch": 2,
+        "machineReadable": true,
+        "completeUfcLossLedger": true,
+        "source": "canonical Era window plus fighter packet and UFC fight-history audit",
+        "completedAt": "2026-07-11T01:29:52.492Z",
+        "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
+        "bucketReconciled": true,
+        "scoredLossEvents": 10,
+        "officialLossExceptions": 0,
+        "expectedOfficialUfcLosses": 10
+      }
+    },
+    {
+      "fighter": "Israel Adesanya",
+      "dataRows": [
+        {
+          "fighter": "Israel Adesanya",
+          "leaderboard": "men",
+          "ufcRecord": null,
+          "record": null,
+          "ufcLosses": null,
+          "penalty": -6.75,
+          "rank": 15
+        },
+        {
+          "fighter": "Israel Adesanya",
+          "leaderboard": "men",
+          "ufcRecord": "13-5",
+          "record": null,
+          "ufcLosses": 5,
+          "penalty": -6.75,
+          "rank": 15
+        }
+      ],
+      "packetRecord": "13-5",
+      "overrideRecord": "13-5",
+      "audit": {
+        "status": "match",
+        "ufcRecord": "13-5",
+        "officialUfcLosses": 5,
+        "officialLossExceptionCount": 0,
+        "effectiveExpectedLosses": 5,
+        "machineReadableLossEvents": 5,
+        "missingLossEvents": 0,
+        "excessLossEvents": 0,
+        "livePenalty": -6.75,
+        "cappedLedgerEstimate": -6.75,
+        "reviewReasons": [],
+        "events": [
+          {
+            "label": "Dricus du Plessis",
+            "date": "2024-08-17",
+            "sourceType": "unrecoveredLoss",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -2.25
+          },
+          {
+            "label": "Alex Pereira I",
+            "date": "2022-11-12",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -2.25
+          },
+          {
+            "label": "Sean Strickland",
+            "date": "2023-09-10",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -1.5
+          },
+          {
+            "label": "Jan Blachowicz",
+            "date": "2021-03-06",
+            "sourceType": "upwardDivisionLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": true,
+            "isLoss": true,
+            "exception": "upward-division",
+            "penaltyEstimate": -0.75
+          },
+          {
+            "label": "Nassourdine Imavov",
+            "date": "2025-02-01",
+            "sourceType": "postPrimeLosses",
+            "phase": "post-prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": 0
+          }
+        ]
+      },
+      "eraWindow": {
+        "start": "2019-04-13",
+        "startLabel": "Kelvin Gastelum",
+        "end": "2024-08-17",
+        "endLabel": "Dricus du Plessis",
+        "endType": "unrecovered_elite_loss",
+        "endReason": "Jan was upward-division, Pereira was avenged, and Strickland did not close it because Izzy returned to title-level. DDP is endpoint.",
+        "canonical": true,
+        "locked": true,
+        "lockVersion": "fighter-era-ledger-cleanups-final-20260710c-roster-window-lock"
+      },
+      "completion": {
+        "version": "loss-context-ledger-completion-batch-six-20260710a-first-half-eighteen",
+        "batch": 6,
+        "split": "remaining-first-half",
+        "machineReadable": true,
+        "completeUfcLossLedger": true,
+        "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
+        "completedAt": "2026-07-11T01:29:53.074Z",
+        "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
+        "bucketReconciled": true,
+        "scoredLossEvents": 5,
+        "officialLossExceptions": 0,
+        "expectedOfficialUfcLosses": 5
+      }
+    },
+    {
+      "fighter": "Henry Cejudo",
+      "dataRows": [
+        {
+          "fighter": "Henry Cejudo",
+          "leaderboard": "men",
+          "ufcRecord": null,
+          "record": null,
+          "ufcLosses": null,
+          "penalty": -3.75,
+          "rank": 23
+        },
+        {
+          "fighter": "Henry Cejudo",
+          "leaderboard": "men",
+          "ufcRecord": "10-4",
+          "record": null,
+          "ufcLosses": 4,
+          "penalty": -3.75,
+          "rank": 23
+        }
+      ],
+      "packetRecord": "10-4",
+      "overrideRecord": "10-4",
+      "audit": {
+        "status": "match",
+        "ufcRecord": "10-4",
+        "officialUfcLosses": 4,
+        "officialLossExceptionCount": 0,
+        "effectiveExpectedLosses": 4,
+        "machineReadableLossEvents": 4,
+        "missingLossEvents": 0,
+        "excessLossEvents": 0,
+        "livePenalty": -3.75,
+        "cappedLedgerEstimate": -3.75,
+        "reviewReasons": [],
+        "events": [
+          {
+            "label": "Aljamain Sterling",
+            "date": "2023-05-06",
+            "sourceType": "unrecoveredLoss",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -1.5
+          },
+          {
+            "label": "Demetrious Johnson I",
+            "date": "2016-04-23",
+            "sourceType": "recoveredLosses",
+            "phase": "pre-prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -1.5
+          },
+          {
+            "label": "Joseph Benavidez",
+            "date": "2016-12-03",
+            "sourceType": "recoveredLosses",
+            "phase": "pre-prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -0.75
+          },
+          {
+            "label": "Merab Dvalishvili",
+            "date": "2024-02-17",
+            "sourceType": "postPrimeLosses",
+            "phase": "post-prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": 0
+          }
+        ]
+      },
+      "eraWindow": {
+        "start": "2018-08-04",
+        "startLabel": "Demetrious Johnson II",
+        "end": "2023-05-06",
+        "endLabel": "Aljamain Sterling",
+        "endType": "unrecovered_comeback_title_loss",
+        "endReason": "DJ II starts prime. Retirement gap capped. Sterling comeback title loss closes it; Merab is post-prime/comeback context.",
+        "canonical": true,
+        "locked": true,
+        "lockVersion": "fighter-era-ledger-cleanups-final-20260710c-roster-window-lock"
+      },
+      "completion": {
+        "version": "loss-context-ledger-completion-batch-six-20260710a-first-half-eighteen",
+        "batch": 6,
+        "split": "remaining-first-half",
+        "machineReadable": true,
+        "completeUfcLossLedger": true,
+        "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
+        "completedAt": "2026-07-11T01:29:53.074Z",
+        "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
+        "bucketReconciled": true,
+        "scoredLossEvents": 4,
+        "officialLossExceptions": 0,
+        "expectedOfficialUfcLosses": 4
+      }
+    },
+    {
+      "fighter": "Amanda Nunes",
+      "dataRows": [
+        {
+          "fighter": "Amanda Nunes",
+          "leaderboard": "women",
+          "ufcRecord": null,
+          "record": null,
+          "ufcLosses": null,
+          "penalty": -3.75,
+          "rank": 1
+        },
+        {
+          "fighter": "Amanda Nunes",
+          "leaderboard": "women",
+          "ufcRecord": "16-3",
+          "record": null,
+          "ufcLosses": 3,
+          "penalty": -3.75,
+          "rank": 1
+        }
+      ],
+      "packetRecord": "16-3",
+      "overrideRecord": "16-3",
+      "audit": {
+        "status": "match",
+        "ufcRecord": "16-3",
+        "officialUfcLosses": 3,
+        "officialLossExceptionCount": 1,
+        "effectiveExpectedLosses": 2,
+        "machineReadableLossEvents": 2,
+        "missingLossEvents": 0,
+        "excessLossEvents": 0,
+        "livePenalty": -3.75,
+        "cappedLedgerEstimate": -3.75,
+        "reviewReasons": [],
+        "events": [
+          {
+            "label": "Cat Zingano",
+            "date": "2014-09-27",
+            "sourceType": "recoveredLosses",
+            "phase": "pre-prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -1.5
+          },
+          {
+            "label": "Julianna Peña I",
+            "date": "2021-12-11",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -2.25
+          },
+          {
+            "label": "Nunes app-record reconciliation",
+            "date": "2026-07-02",
+            "sourceType": "weirdResults",
+            "phase": "post-prime",
+            "quality": "unknown",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": false,
+            "exception": "weird/contextual",
+            "penaltyEstimate": null
+          }
+        ]
+      },
+      "eraWindow": {
+        "start": "2016-07-09",
+        "startLabel": "Miesha Tate",
+        "end": "2023-06-10",
+        "endLabel": "Irene Aldana",
+        "endType": "retirement_win",
+        "endReason": "Peña I did not end it because Nunes avenged it. Aldana retirement win closes prime on a win.",
+        "canonical": true,
+        "locked": true,
+        "lockVersion": "fighter-era-ledger-cleanups-final-20260710c-roster-window-lock"
+      },
+      "completion": {
+        "version": "loss-context-ledger-completion-batch-seven-20260710a-final-seventeen",
+        "batch": 7,
+        "split": "remaining-second-half",
+        "machineReadable": true,
+        "completeUfcLossLedger": true,
+        "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
+        "completedAt": "2026-07-11T01:29:53.078Z",
+        "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
+        "bucketReconciled": true,
+        "scoredLossEvents": 2,
+        "officialLossExceptions": 1,
+        "expectedOfficialUfcLosses": 3
+      }
+    },
+    {
+      "fighter": "Sean Strickland",
+      "dataRows": [
+        {
+          "fighter": "Sean Strickland",
+          "leaderboard": "men",
+          "ufcRecord": "18-8",
+          "record": null,
+          "ufcLosses": null,
+          "penalty": -10,
+          "rank": 45
+        },
+        {
+          "fighter": "Sean Strickland",
+          "leaderboard": "men",
+          "ufcRecord": "18-8",
+          "record": null,
+          "ufcLosses": 8,
+          "penalty": -10,
+          "rank": 45
+        }
+      ],
+      "packetRecord": "18-8",
+      "overrideRecord": "18-8",
+      "audit": {
+        "status": "match",
+        "ufcRecord": "18-8",
+        "officialUfcLosses": 8,
+        "officialLossExceptionCount": 0,
+        "effectiveExpectedLosses": 8,
+        "machineReadableLossEvents": 8,
+        "missingLossEvents": 0,
+        "excessLossEvents": 0,
+        "livePenalty": -10,
+        "cappedLedgerEstimate": -10,
+        "reviewReasons": [],
+        "events": [
+          {
+            "label": "Dricus du Plessis",
+            "date": "2024-01-20",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -1.5
+          },
+          {
+            "label": "Santiago Ponzinibbio",
+            "date": "2015-02-22",
+            "sourceType": "recoveredLosses",
+            "phase": "pre-prime",
+            "quality": "non-elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -1.25
+          },
+          {
+            "label": "Kamaru Usman",
+            "date": "2017-04-08",
+            "sourceType": "recoveredLosses",
+            "phase": "pre-prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -0.75
+          },
+          {
+            "label": "Elizeu Zaleski dos Santos",
+            "date": "2018-05-12",
+            "sourceType": "recoveredLosses",
+            "phase": "pre-prime",
+            "quality": "non-elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -2
+          },
+          {
+            "label": "Alex Pereira",
+            "date": "2022-07-02",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -2.25
+          },
+          {
+            "label": "Jared Cannonier",
+            "date": "2022-12-17",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -1.5
+          },
+          {
+            "label": "Dricus du Plessis I",
+            "date": "2024-01-20",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -1.5
+          },
+          {
+            "label": "Dricus du Plessis II",
+            "date": "2025-02-09",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -1.5
+          }
+        ]
+      },
+      "eraWindow": {
+        "start": "2021-07-31",
+        "startLabel": "Uriah Hall",
+        "end": null,
+        "endLabel": "Current elite form",
+        "endType": "open_current_elite",
+        "endReason": "Adesanya win starts elite/title-level window. DDP does not close it because Strickland remained elite-relevant.",
+        "canonical": true,
+        "locked": true,
+        "lockVersion": "fighter-era-ledger-cleanups-final-20260710c-roster-window-lock"
+      },
+      "completion": {
+        "version": "loss-context-ledger-completion-batch-one-20260710a-whittaker-strickland",
+        "batch": 1,
+        "machineReadable": true,
+        "source": "fighter packet audit plus canonical Era window review",
+        "completedAt": "2026-07-11T01:29:52.486Z",
+        "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
+        "completeUfcLossLedger": true,
+        "bucketReconciled": true,
+        "scoredLossEvents": 8,
+        "officialLossExceptions": 0,
+        "expectedOfficialUfcLosses": 8
+      }
+    },
+    {
+      "fighter": "Robert Whittaker",
+      "dataRows": [
+        {
+          "fighter": "Robert Whittaker",
+          "leaderboard": "men",
+          "ufcRecord": "16-7",
+          "record": null,
+          "ufcLosses": null,
+          "penalty": -10,
+          "rank": 41
+        },
+        {
+          "fighter": "Robert Whittaker",
+          "leaderboard": "men",
+          "ufcRecord": "16-7",
+          "record": null,
+          "ufcLosses": 7,
+          "penalty": -10,
+          "rank": 41
+        }
+      ],
+      "packetRecord": "16-7",
+      "overrideRecord": "16-7",
+      "audit": {
+        "status": "match",
+        "ufcRecord": "16-7",
+        "officialUfcLosses": 7,
+        "officialLossExceptionCount": 0,
+        "effectiveExpectedLosses": 7,
+        "machineReadableLossEvents": 7,
+        "missingLossEvents": 0,
+        "excessLossEvents": 0,
+        "livePenalty": -10,
+        "cappedLedgerEstimate": -10,
+        "reviewReasons": [],
+        "events": [
+          {
+            "label": "Khamzat Chimaev",
+            "date": "2024-10-26",
+            "sourceType": "unrecoveredLoss",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -2.25
+          },
+          {
+            "label": "Israel Adesanya I",
+            "date": "2019-10-06",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -2.25
+          },
+          {
+            "label": "Israel Adesanya II",
+            "date": "2022-02-12",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -1.5
+          },
+          {
+            "label": "Dricus du Plessis",
+            "date": "2023-07-08",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -2.25
+          },
+          {
+            "label": "Court McGee",
+            "date": "2013-08-28",
+            "sourceType": "recoveredLosses",
+            "phase": "pre-prime",
+            "quality": "non-elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -1.25
+          },
+          {
+            "label": "Stephen Thompson",
+            "date": "2014-02-22",
+            "sourceType": "recoveredLosses",
+            "phase": "pre-prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -1.5
+          },
+          {
+            "label": "Reinier de Ridder",
+            "date": "2025-07-26",
+            "sourceType": "postPrimeLosses",
+            "phase": "post-prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": 0
+          }
+        ]
+      },
+      "eraWindow": {
+        "start": "2016-11-27",
+        "startLabel": "Derek Brunson",
+        "end": "2024-10-26",
+        "endLabel": "Khamzat Chimaev",
+        "endType": "unrecovered_elite_loss",
+        "endReason": "Adesanya and DDP losses did not end window because Whittaker kept proving elite MW relevance. Khamzat closes it.",
+        "canonical": true,
+        "locked": true,
+        "lockVersion": "fighter-era-ledger-cleanups-final-20260710c-roster-window-lock"
+      },
+      "completion": {
+        "version": "loss-context-ledger-completion-batch-one-20260710a-whittaker-strickland",
+        "batch": 1,
+        "machineReadable": true,
+        "source": "fighter packet audit plus canonical Era window review",
+        "completedAt": "2026-07-11T01:29:52.486Z",
+        "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
+        "completeUfcLossLedger": true,
+        "bucketReconciled": true,
+        "scoredLossEvents": 7,
+        "officialLossExceptions": 0,
+        "expectedOfficialUfcLosses": 7
+      }
+    },
+    {
+      "fighter": "Dan Henderson",
+      "dataRows": [
+        {
+          "fighter": "Dan Henderson",
+          "leaderboard": "men",
+          "ufcRecord": "8-9",
+          "record": null,
+          "ufcLosses": null,
+          "penalty": -9.75,
+          "rank": 47
+        },
+        {
+          "fighter": "Dan Henderson",
+          "leaderboard": "men",
+          "ufcRecord": "8-9",
+          "record": null,
+          "ufcLosses": 9,
+          "penalty": -9.75,
+          "rank": 47
+        }
+      ],
+      "packetRecord": "8-9",
+      "overrideRecord": "8-9",
+      "audit": {
+        "status": "match",
+        "ufcRecord": "8-9",
+        "officialUfcLosses": 9,
+        "officialLossExceptionCount": 0,
+        "effectiveExpectedLosses": 9,
+        "machineReadableLossEvents": 9,
+        "missingLossEvents": 0,
+        "excessLossEvents": 0,
+        "livePenalty": -9.75,
+        "cappedLedgerEstimate": -9.75,
+        "reviewReasons": [],
+        "events": [
+          {
+            "label": "Daniel Cormier",
+            "date": "2014-05-24",
+            "sourceType": "unrecoveredLoss",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -2.25
+          },
+          {
+            "label": "Quinton Jackson",
+            "date": "2007-09-08",
+            "sourceType": "recoveredLosses",
+            "phase": "pre-prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -0.75
+          },
+          {
+            "label": "Anderson Silva",
+            "date": "2008-03-01",
+            "sourceType": "recoveredLosses",
+            "phase": "pre-prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -1.5
+          },
+          {
+            "label": "Lyoto Machida",
+            "date": "2013-02-23",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -1.5
+          },
+          {
+            "label": "Rashad Evans",
+            "date": "2013-06-15",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -1.5
+          },
+          {
+            "label": "Vitor Belfort II",
+            "date": "2013-11-09",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -2.25
+          },
+          {
+            "label": "Gegard Mousasi",
+            "date": "2015-01-24",
+            "sourceType": "postPrimeLosses",
+            "phase": "post-prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": 0
+          },
+          {
+            "label": "Vitor Belfort III",
+            "date": "2015-11-07",
+            "sourceType": "postPrimeLosses",
+            "phase": "post-prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": 0
+          },
+          {
+            "label": "Michael Bisping II",
+            "date": "2016-10-08",
+            "sourceType": "postPrimeLosses",
+            "phase": "post-prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": 0
+          }
+        ]
+      },
+      "eraWindow": {
+        "start": "2009-01-17",
+        "startLabel": "Rich Franklin",
+        "end": "2014-05-24",
+        "endLabel": "Daniel Cormier",
+        "endType": "unrecovered_elite_loss",
+        "endReason": "UFC-only excludes Pride. Bisping starts late UFC elite window; Cormier closes it.",
+        "canonical": true,
+        "locked": true,
+        "lockVersion": "fighter-era-ledger-cleanups-final-20260710c-roster-window-lock"
+      },
+      "completion": {
+        "version": "loss-context-ledger-completion-batch-five-20260710a-ten-veteran-ledgers",
+        "batch": 5,
+        "machineReadable": true,
+        "completeUfcLossLedger": true,
+        "source": "canonical Era window plus fighter packet and UFC fight-history audit",
+        "completedAt": "2026-07-11T01:29:53.070Z",
+        "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
+        "bucketReconciled": true,
+        "scoredLossEvents": 9,
+        "officialLossExceptions": 0,
+        "expectedOfficialUfcLosses": 9
+      }
+    },
+    {
+      "fighter": "Alex Pereira",
+      "dataRows": [
+        {
+          "fighter": "Alex Pereira",
+          "leaderboard": "men",
+          "ufcRecord": null,
+          "record": null,
+          "ufcLosses": null,
+          "penalty": -5,
+          "rank": 13
+        },
+        {
+          "fighter": "Alex Pereira",
+          "leaderboard": "men",
+          "ufcRecord": "10-3",
+          "record": null,
+          "ufcLosses": 3,
+          "penalty": -5,
+          "rank": 13
+        }
+      ],
+      "packetRecord": "10-3",
+      "overrideRecord": "10-3",
+      "audit": {
+        "status": "match",
+        "ufcRecord": "10-3",
+        "officialUfcLosses": 3,
+        "officialLossExceptionCount": 0,
+        "effectiveExpectedLosses": 3,
+        "machineReadableLossEvents": 3,
+        "missingLossEvents": 0,
+        "excessLossEvents": 0,
+        "livePenalty": -5,
+        "cappedLedgerEstimate": -5,
+        "reviewReasons": [],
+        "events": [
+          {
+            "label": "Israel Adesanya II",
+            "date": "2023-04-08",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -2.25
+          },
+          {
+            "label": "Magomed Ankalaev I",
+            "date": "2025-03-08",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -1.5
+          },
+          {
+            "label": "Ciryl Gane",
+            "date": "2026-06-14",
+            "sourceType": "upwardDivisionLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": true,
+            "isLoss": true,
+            "exception": "upward-division",
+            "penaltyEstimate": -1.25
+          },
+          {
+            "label": "Pereira app-record reconciliation",
+            "date": "2026-07-02",
+            "sourceType": "weirdResults",
+            "phase": "prime",
+            "quality": "unknown",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": false,
+            "exception": "weird/contextual",
+            "penaltyEstimate": null
+          }
+        ]
+      },
+      "eraWindow": {
+        "start": "2022-07-02",
+        "startLabel": "Sean Strickland",
+        "end": null,
+        "endLabel": "Current title-level form",
+        "endType": "open_current_title_level",
+        "endReason": "Adesanya finish loss was recovered immediately; current title-level form keeps window open.",
+        "canonical": true,
+        "locked": true,
+        "lockVersion": "fighter-era-ledger-cleanups-final-20260710c-roster-window-lock"
+      },
+      "completion": {
+        "version": "loss-context-ledger-completion-batch-seven-20260710a-final-seventeen",
+        "batch": 7,
+        "split": "remaining-second-half",
+        "machineReadable": true,
+        "completeUfcLossLedger": true,
+        "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
+        "completedAt": "2026-07-11T01:29:53.078Z",
+        "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
+        "bucketReconciled": true,
+        "scoredLossEvents": 3,
+        "officialLossExceptions": 0,
+        "expectedOfficialUfcLosses": 3
+      }
+    },
+    {
+      "fighter": "Valentina Shevchenko",
+      "dataRows": [
+        {
+          "fighter": "Valentina Shevchenko",
+          "leaderboard": "women",
+          "ufcRecord": null,
+          "record": null,
+          "ufcLosses": null,
+          "penalty": -4.5,
+          "rank": 2
+        },
+        {
+          "fighter": "Valentina Shevchenko",
+          "leaderboard": "women",
+          "ufcRecord": "15-3-1",
+          "record": null,
+          "ufcLosses": 3,
+          "penalty": -4.5,
+          "rank": 2
+        }
+      ],
+      "packetRecord": "14-3-1",
+      "overrideRecord": "14-3-1",
+      "audit": {
+        "status": "match",
+        "ufcRecord": "15-3-1",
+        "officialUfcLosses": 3,
+        "officialLossExceptionCount": 0,
+        "effectiveExpectedLosses": 3,
+        "machineReadableLossEvents": 3,
+        "missingLossEvents": 0,
+        "excessLossEvents": 0,
+        "livePenalty": -4.5,
+        "cappedLedgerEstimate": -4.5,
+        "reviewReasons": [],
+        "events": [
+          {
+            "label": "Amanda Nunes I",
+            "date": "2016-03-05",
+            "sourceType": "recoveredLosses",
+            "phase": "pre-prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -0.75
+          },
+          {
+            "label": "Amanda Nunes II",
+            "date": "2017-09-09",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -1.5
+          },
+          {
+            "label": "Alexa Grasso I",
+            "date": "2023-03-04",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -2.25
+          },
+          {
+            "label": "Shevchenko app-record reconciliation",
+            "date": "2026-07-02",
+            "sourceType": "weirdResults",
+            "phase": "prime",
+            "quality": "unknown",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": false,
+            "exception": "weird/contextual",
+            "penaltyEstimate": null
+          },
+          {
+            "label": "Alexa Grasso II draw",
+            "date": "2023-09-16",
+            "sourceType": "weirdResults",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": false,
+            "exception": "weird/contextual",
+            "penaltyEstimate": null
+          }
+        ]
+      },
+      "eraWindow": {
+        "start": "2016-07-23",
+        "startLabel": "Holly Holm",
+        "end": null,
+        "endLabel": "Current title-level form",
+        "endType": "open_current_title_level",
+        "endReason": "Nunes II did not end it because Shevchenko moved to flyweight and became champion. Grasso did not close it because she stayed title-level.",
+        "canonical": true,
+        "locked": true,
+        "lockVersion": "fighter-era-ledger-cleanups-final-20260710c-roster-window-lock"
+      },
+      "completion": {
+        "version": "loss-context-ledger-completion-batch-seven-20260710a-final-seventeen",
+        "batch": 7,
+        "split": "remaining-second-half",
+        "machineReadable": true,
+        "completeUfcLossLedger": true,
+        "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
+        "completedAt": "2026-07-11T01:29:53.078Z",
+        "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
+        "bucketReconciled": true,
+        "scoredLossEvents": 3,
+        "officialLossExceptions": 0,
+        "expectedOfficialUfcLosses": 3
+      }
     }
   ],
   "browserDiagnostics": {
