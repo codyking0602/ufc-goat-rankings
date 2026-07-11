@@ -1,7 +1,7 @@
 // Watch Moment links for fighter cards and Signature Fight links for profiles.
 // Keep links here as app-facing content, separate from scoring and nickname/display-name polish.
 (function(){
-  const VERSION = 'watch-moments-20260711d-signature-fights-batch-two';
+  const VERSION = 'watch-moments-20260711e-signature-fights-batch-three';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -87,6 +87,15 @@
     'Stipe Miocic': 'https://youtu.be/2yB-hp1OuKo?is=AaykrjmhihljMeKc',
     'Dricus du Plessis': 'https://youtu.be/jLTuhXQRMSg?is=RGX__HY_u-mRzr0F',
     'Tyron Woodley': 'https://youtu.be/knOFYm1it0k?is=U-dOgX681hEz_cPf',
+    'Ilia Topuria': 'https://youtu.be/nGcK0ilhu9c?is=VaKy-0-UQAad68t0',
+    'Israel Adesanya': 'https://youtu.be/vx3vs0p6TEs?is=jS0EkVTFsuUKhoZn',
+    'Aljamain Sterling': 'https://youtu.be/I6WajDmm3yk?is=eGkspFsY7CtEjyHo',
+    'Petr Yan': 'https://youtu.be/HscShxH_JtI?is=shXOQYq7ZBJ9Ij6z',
+    'Cain Velasquez': 'https://youtu.be/avpNktfdq_4?is=m3ah1k_z7OvWJKWl',
+    'Junior dos Santos': 'https://youtu.be/zj_IMcTmcNU?is=IrloHxxSgOE9Q_pR',
+    'Brock Lesnar': 'https://youtu.be/WD2-K7dsqYM?is=3Jn9ethtTZSoaFk5',
+    'Merab Dvalishvili': 'https://youtu.be/VazxJSDXUs4?is=k9w1Cx8ybdudP3qR',
+    'B.J. Penn': 'https://youtu.be/MQGf9p4YsOk?t=1122&is=6pFin0iSE-knCsaR',
     'Dustin Poirier': 'https://youtu.be/m3N1WuErSlg?is=_jDLz8z8YOZmGC9q'
   };
 
