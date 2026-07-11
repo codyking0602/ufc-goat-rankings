@@ -10,6 +10,10 @@ on:
       - '.github/workflows/runtime-scoring-audit.yml'
   workflow_dispatch:
 
+concurrency:
+  group: runtime-scoring-audit
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
@@ -20,6 +24,11 @@ jobs:
     steps:
       - name: Check out main
         uses: actions/checkout@v4
+
+      - name: Refresh production cache keys
+        run: |
+          sed -i 's/module-versions-20260710zd-loss-context-final-closure/module-versions-20260710ze-loss-context-canonical-production/g' index.html
+          sed -i 's/ranking-data-patches-20260710j-loss-context-records/ranking-data-patches-20260710k-canonical-loss-context/g' index.html
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -51,7 +60,7 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
-      - name: Publish runtime reports to main
+      - name: Publish runtime reports and cache keys
         if: always()
         run: |
           if [ ! -f artifacts/loss-context-runtime-report.json ] || [ ! -f artifacts/loss-context-runtime-summary.json ]; then
@@ -63,8 +72,8 @@ jobs:
           cp artifacts/loss-context-runtime-summary.json docs/loss-context-runtime-summary.json
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs/loss-context-runtime-report.json docs/loss-context-runtime-summary.json
-          git commit -m 'Record Loss Context runtime audit [skip ci]' || true
+          git add index.html docs/loss-context-runtime-report.json docs/loss-context-runtime-summary.json
+          git commit -m 'Record canonical Loss Context runtime audit [skip ci]' || true
           git push
 
       - name: Enforce clean runtime audit
