@@ -1,3 +1,4 @@
+// Runtime audit trigger: 2026-07-10 final closure verification.
 import { chromium } from 'playwright';
 import fs from 'node:fs/promises';
 import process from 'node:process';
