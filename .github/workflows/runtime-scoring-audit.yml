@@ -35,7 +35,9 @@ jobs:
           patches = Path('assets/data/ranking-data-patches.js')
           text = patches.read_text()
           marker = "function compareCoreScripts(){const packets=packetManifest().map(row=>packet(row.slug,row.version));return[\n"
-          safety = "    {src:'assets/js/refresh-safety.js?v=refresh-safety-20260710a-modular-containers',attr:'data-refresh-safety'},\n"
+          old_safety = "    {src:'assets/js/refresh-safety.js?v=refresh-safety-20260710a-modular-containers',attr:'data-refresh-safety'},\n"
+          safety = "    {src:'assets/js/refresh-safety.js?v=refresh-safety-20260710b-optional-container-errors',attr:'data-refresh-safety'},\n"
+          text = text.replace(old_safety, safety)
           if safety not in text:
               if marker not in text:
                   raise SystemExit('Could not find compareCoreScripts insertion point.')
