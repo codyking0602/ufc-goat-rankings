@@ -1,7 +1,7 @@
 // Watch Moment links for fighter cards and Signature Fight links for profiles.
 // Keep links here as app-facing content, separate from scoring and nickname/display-name polish.
 (function(){
-  const VERSION = 'watch-moments-20260711e-signature-fights-batch-three';
+  const VERSION = 'watch-moments-20260711f-signature-fights-batch-four';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -96,7 +96,12 @@
     'Brock Lesnar': 'https://youtu.be/WD2-K7dsqYM?is=3Jn9ethtTZSoaFk5',
     'Merab Dvalishvili': 'https://youtu.be/VazxJSDXUs4?is=k9w1Cx8ybdudP3qR',
     'B.J. Penn': 'https://youtu.be/MQGf9p4YsOk?t=1122&is=6pFin0iSE-knCsaR',
-    'Dustin Poirier': 'https://youtu.be/m3N1WuErSlg?is=_jDLz8z8YOZmGC9q'
+    'Dustin Poirier': 'https://youtu.be/m3N1WuErSlg?is=_jDLz8z8YOZmGC9q',
+    'Tony Ferguson': 'https://youtu.be/PzrI9PY8gw4?is=DxvbhDuWHC4j1j__',
+    'T.J. Dillashaw': 'https://youtu.be/xxROoFHRRd8?is=zUZGiVkLSrYCJQEO',
+    'Alex Pereira': 'https://youtu.be/a8orgTRB9zA?is=zvdHIQSdKbY-kgxz',
+    'Chuck Liddell': 'https://youtu.be/4g7YMHiQpf8?is=NYfyiSQTGxpzBQTT',
+    'Tito Ortiz': 'https://youtu.be/ZBNj8YBmzww?is=TfJb_wVvXgyVBrO6'
   };
 
   Object.entries(WATCH_MOMENTS).forEach(([fighter, url]) => {
