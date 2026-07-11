@@ -25,122 +25,6 @@ jobs:
       - name: Check out main
         uses: actions/checkout@v4
 
-      - name: Apply approved Chuck Liddell rebuild
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-
-          def replace_required(path_name, old, new):
-              path = Path(path_name)
-              text = path.read_text()
-              if old in text:
-                  text = text.replace(old, new)
-              elif new not in text:
-                  raise SystemExit(f'Could not find required target in {path_name}: {old[:120]}')
-              path.write_text(text)
-
-          replace_required('index.html','module-versions-20260710ze-loss-context-canonical-production','module-versions-20260710zf-chuck-vitor-window')
-          replace_required('index.html','ranking-data-patches-20260710k-canonical-loss-context','ranking-data-patches-20260710l-chuck-vitor-window')
-
-          patches = Path('assets/data/ranking-data-patches.js')
-          text = patches.read_text()
-          for old,new in {
-              'ranking-data-patches-20260710k-canonical-loss-context':'ranking-data-patches-20260710l-chuck-vitor-window',
-              'fighter-era-ledger-cleanups-final-20260710c-roster-window-lock':'fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window',
-              'fighter-packet-manifest-20260710y-canonical-loss-context':'fighter-packet-manifest-20260710z-chuck-vitor-window',
-              "['chuck-liddell','20260702a']":"['chuck-liddell','20260710b-chuck-vitor-window']"
-          }.items():
-              if old in text:text=text.replace(old,new)
-              elif new not in text:raise SystemExit(f'Could not find ranking-data-patches target: {old}')
-          patches.write_text(text)
-
-          module_versions = Path('assets/data/module-versions.js')
-          text = module_versions.read_text()
-          for old,new in {
-              '20260710ze-loss-context-canonical-production':'20260710zf-chuck-vitor-window',
-              '20260708c-jon-elite-stakes':'20260710d-chuck-vitor-window',
-              '20260710b-prime-ledger-recount':'20260710c-chuck-vitor-window',
-              '20260710a-ten-veteran-ledgers':'20260710b-chuck-vitor-window',
-              '20260710a-ten-window-rebuild':'20260710b-eleven-window-rebuild'
-          }.items():
-              if old in text:text=text.replace(old,new)
-              elif new not in text:raise SystemExit(f'Could not find module version target: {old}')
-          if 'fighterEraLedgerCleanupsFinal:' not in text:
-              marker='fighterEraLedgers:"20260709g-review-corrections",'
-              if marker not in text:raise SystemExit('Could not insert fighterEraLedgerCleanupsFinal version.')
-              text=text.replace(marker,marker+'fighterEraLedgerCleanupsFinal:"20260710d-chuck-vitor-window",',1)
-          module_versions.write_text(text)
-
-          cleanup = Path('assets/data/fighter-era-ledger-cleanups-final.js')
-          text = cleanup.read_text().replace('fighter-era-ledger-cleanups-final-20260710c-roster-window-lock','fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window')
-          chuck_block="""  patchWindow('Chuck Liddell',{start:'2002-06-22',startLabel:'Vitor Belfort'},\n  {\n    rationale:'The Vitor Belfort win begins Chuck’s connected elite light-heavyweight run. Randy Couture I and Quinton Jackson II are both counted prime losses.'\n  });\n"""
-          marker="  patchWindow('T.J. Dillashaw',{\n"
-          if chuck_block not in text:
-              if marker not in text:raise SystemExit('Could not insert Chuck Liddell window patch.')
-              text=text.replace(marker,chuck_block+marker,1)
-          old_list="const changedWindowFighters=['Dustin Poirier','Justin Gaethje','Israel Adesanya','Ronda Rousey','Randy Couture','T.J. Dillashaw','Aljamain Sterling','Sean Strickland','Robert Whittaker','Dan Henderson'];"
-          new_list="const changedWindowFighters=['Dustin Poirier','Justin Gaethje','Israel Adesanya','Ronda Rousey','Randy Couture','Chuck Liddell','T.J. Dillashaw','Aljamain Sterling','Sean Strickland','Robert Whittaker','Dan Henderson'];"
-          if old_list in text:text=text.replace(old_list,new_list)
-          elif new_list not in text:raise SystemExit('Could not update changedWindowFighters.')
-          cleanup.write_text(text)
-
-          longevity = Path('assets/data/longevity-canonical-recalculation.js')
-          text = longevity.read_text().replace('longevity-canonical-recalculation-20260710a-ten-window-rebuild','longevity-canonical-recalculation-20260710b-eleven-window-rebuild')
-          chuck_long="""    'Chuck Liddell':{\n      gapAdjustedMonths:59.1,\n      window:'Vitor Belfort → Quinton Jackson II',\n      note:'The full connected elite run now includes the Belfort and Sobral wins plus the Couture interim-title loss before the championship reign.'\n    },\n"""
-          marker="    'T.J. Dillashaw':{\n"
-          if chuck_long not in text:
-              if marker not in text:raise SystemExit('Could not insert Chuck Liddell longevity input.')
-              text=text.replace(marker,chuck_long+marker,1)
-          longevity.write_text(text)
-
-          canonical_prime = Path('assets/data/canonical-prime-records.js')
-          text = canonical_prime.read_text().replace('canonical-prime-records-20260710b-prime-ledger-recount','canonical-prime-records-20260710c-chuck-vitor-window').replace('prime-dominance-audit-batch-ten-20260710a-canonical-window-five','prime-dominance-shadow-model-20260710d-chuck-vitor-window')
-          chuck_record="    'Chuck Liddell':{record:'9-2',reason:'Vitor Belfort through Quinton Jackson II, inclusive; UFC fights only.'},\n"
-          marker="    'Randy Couture':{record:'11-6',reason:'Vitor Belfort I through Brock Lesnar, inclusive; UFC fights only.'}\n"
-          if chuck_record not in text:
-              if marker not in text:raise SystemExit('Could not insert Chuck Liddell canonical prime record.')
-              text=text.replace(marker,marker.rstrip('\n')+',\n'+chuck_record,1)
-          canonical_prime.write_text(text)
-
-          prime_shadow = Path('assets/data/prime-dominance-shadow-model.js')
-          text = prime_shadow.read_text().replace('prime-dominance-shadow-model-20260708c-jon-elite-stakes','prime-dominance-shadow-model-20260710d-chuck-vitor-window').replace("'Chuck prime ends at Quinton Jackson UFC loss'","'Chuck prime starts at Vitor Belfort and ends at Quinton Jackson UFC loss'")
-          old_raw="    'Chuck Liddell':{primeRecord:'10-1',primeWins:10,primeLosses:1,primeDraws:0,primeNCs:0,roundControlPct:80.95,roundsWon:17,roundsCounted:21,primeFights:11,primeFinishes:7,profile:'UFC-only title-prime now runs through the Quinton Jackson UFC loss',status:'review'},"
-          new_raw="    'Chuck Liddell':{primeRecord:'9-2',primeWins:9,primeLosses:2,primeDraws:0,primeNCs:0,roundControlPct:86.36,roundsWon:19,roundsCounted:22,primeFights:11,primeFinishes:8,profile:'Vitor Belfort through Quinton Jackson II: championship knockout run with the Couture interim-title loss fully counted',status:'locked'},"
-          if old_raw in text:text=text.replace(old_raw,new_raw)
-          elif new_raw not in text:raise SystemExit('Could not update Chuck Liddell Prime Dominance raw ledger.')
-          prime_shadow.write_text(text)
-
-          batch_five = Path('assets/data/loss-context-ledger-completion-batch-five.js')
-          text = batch_five.read_text().replace('loss-context-ledger-completion-batch-five-20260710a-ten-veteran-ledgers','loss-context-ledger-completion-batch-five-20260710b-chuck-vitor-window')
-          old_event="{label:'Randy Couture I',date:'2003-06-06',type:'pre-prime elite interim-title finish loss',method:'TKO',recovery:'Liddell later beat Couture twice and built his championship reign.'}"
-          new_event="{label:'Randy Couture I',date:'2003-06-06',type:'prime elite interim-title finish loss',method:'TKO',recovery:'Liddell later beat Couture twice and built his championship reign.'}"
-          if old_event in text:text=text.replace(old_event,new_event)
-          elif new_event not in text:raise SystemExit('Could not update Randy Couture I loss classification for Chuck.')
-          batch_five.write_text(text)
-
-          packet = Path('assets/data/fighter-packets/chuck-liddell.js')
-          text = packet.read_text()
-          for old,new in {
-              'fighter-packet-chuck-liddell-20260702a':'fighter-packet-chuck-liddell-20260710b-chuck-vitor-window',
-              "stage: 'packet live; Watch Moment needed', lastUpdated: '2026-07-02'":"stage: 'canonical Vitor-to-Rampage prime rebuilt; Watch Moment needed', lastUpdated: '2026-07-10'",
-              "['Active Elite Years', '5.5 Elite Years']":"['Active Elite Years', '4.93 Elite Years']",
-              "['Loss Context', 'Late knockout losses hurt the back half']":"['Loss Context', 'Couture and Rampage are the counted prime finishes']",
-              'roundsWonPct: 66.0, activeEliteYears: 5.5, timesFinishedPrime: 3':'roundsWonPct: 86.36, activeEliteYears: 4.93, timesFinishedPrime: 2',
-              "lossContext: 'Late knockout losses are a real drag and keep him below cleaner champion cases.'":"lossContext: 'Jeremy Horn is pre-prime; Randy Couture I and Quinton Jackson II are the two counted prime finish losses. The later knockout skid is post-prime context.'",
-              "primeSummary: 'His prime had huge knockout aura, but the ending was rough and keeps him below cleaner long-reign champions.'":"primeSummary: 'His UFC prime runs from the Vitor Belfort win through the Quinton Jackson title loss, with the Couture loss and the full championship knockout run included.'"
-          }.items():
-              if old in text:text=text.replace(old,new)
-              elif new not in text:raise SystemExit(f'Could not find Chuck packet target: {old}')
-          packet.write_text(text)
-
-          manifest = Path('assets/data/fighter-packet-manifest.js')
-          text = manifest.read_text().replace('fighter-packet-manifest-20260710y-canonical-loss-context','fighter-packet-manifest-20260710z-chuck-vitor-window')
-          old_row="{slug:'chuck-liddell',version:'20260702a'}";new_row="{slug:'chuck-liddell',version:'20260710b-chuck-vitor-window'}"
-          if old_row in text:text=text.replace(old_row,new_row)
-          elif new_row not in text:raise SystemExit('Could not update Chuck packet manifest version.')
-          manifest.write_text(text)
-          PY
-
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
@@ -188,7 +72,7 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
-      - name: Publish runtime reports and Chuck rebuild
+      - name: Publish runtime reports
         if: always()
         run: |
           if [ ! -f artifacts/loss-context-runtime-report.json ] || [ ! -f artifacts/loss-context-runtime-summary.json ]; then
@@ -201,8 +85,8 @@ jobs:
           cp artifacts/js-syntax-audit.txt docs/js-syntax-audit.txt
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html assets/data/fighter-era-ledger-cleanups-final.js assets/data/longevity-canonical-recalculation.js assets/data/canonical-prime-records.js assets/data/prime-dominance-shadow-model.js assets/data/loss-context-ledger-completion-batch-five.js assets/data/fighter-packets/chuck-liddell.js assets/data/fighter-packet-manifest.js assets/data/ranking-data-patches.js assets/data/module-versions.js docs/loss-context-runtime-report.json docs/loss-context-runtime-summary.json docs/js-syntax-audit.txt
-          git commit -m 'Rebuild Chuck Liddell from Vitor through Rampage [skip ci]' || true
+          git add docs/loss-context-runtime-report.json docs/loss-context-runtime-summary.json docs/js-syntax-audit.txt
+          git commit -m 'Record runtime scoring audit [skip ci]' || true
           git push
 
       - name: Enforce clean audits
