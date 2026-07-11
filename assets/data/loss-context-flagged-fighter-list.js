@@ -2,7 +2,7 @@
 // Converts the 62-fighter mismatch audit into practical ledger-completion and score-review batches.
 (function(){
   'use strict';
-  const VERSION='loss-context-flagged-fighter-list-20260710d-batch-four-priority-queue';
+  const VERSION='loss-context-flagged-fighter-list-20260710e-batch-five-priority-queue';
   const audit=window.UFC_LOSS_CONTEXT_MISMATCH_AUDIT;
   const DATA=window.RANKING_DATA;
 
@@ -48,15 +48,16 @@
     batchOne:['Robert Whittaker','Sean Strickland'],
     batchTwo:['B.J. Penn','Tito Ortiz','Robbie Lawler','Charles Oliveira','Jessica Andrade'],
     batchThree:['Frankie Edgar','Michael Bisping','Lyoto Machida','Matt Hughes','Chael Sonnen'],
-    batchFour:['Max Holloway','Tony Ferguson','Randy Couture','Dustin Poirier','Miesha Tate']
+    batchFour:['Max Holloway','Tony Ferguson','Randy Couture','Dustin Poirier','Miesha Tate'],
+    batchFive:['Anderson Silva','Chuck Liddell','Junior dos Santos','Dan Henderson','Joanna Jedrzejczyk','Carla Esparza','Dominick Cruz','Tyron Woodley','T.J. Dillashaw','Stipe Miocic']
   };
   const completedLedgerFighters=Object.values(completedBatches).flat();
   const nextLedgerBatch=priorityQueue
     .filter(row=>['needs-ledger-completion','missing-era-loss-entry'].includes(row.status)&&!completedLedgerFighters.includes(row.fighter))
-    .slice(0,5);
+    .slice(0,10);
   const nextScoreReview=priorityQueue
     .filter(row=>row.status==='score-mismatch')
-    .slice(0,5);
+    .slice(0,10);
 
   const report={
     version:VERSION,
@@ -76,6 +77,7 @@
     nextBatch:nextLedgerBatch,
     nextLedgerBatch,
     nextScoreReview,
+    batchSize:10,
     mutatesScores:false,
     mutatesPenalty:false,
     generatedAt:new Date().toISOString()
@@ -89,6 +91,7 @@
     scoreReviewCount:report.scoreReviewCount,
     completedLedgerFighters:[...completedLedgerFighters],
     nextBatch:nextLedgerBatch.map(row=>row.fighter),
+    batchSize:10,
     generatedAt:report.generatedAt
   };
   document.documentElement.setAttribute('data-loss-context-flagged-count',String(report.flaggedCount));
