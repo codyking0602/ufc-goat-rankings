@@ -1,7 +1,7 @@
 // Watch Moment links for fighter cards and profiles.
 // Keep links here as app-facing content, separate from scoring and nickname/display-name polish.
 (function(){
-  const VERSION = 'watch-moments-20260706t-profile-signature';
+  const VERSION = 'watch-moments-20260711a-cris-cyborg';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -54,6 +54,7 @@
     'Chael Sonnen': 'https://youtube.com/shorts/feVMRUL1R9o?is=fQrfnJ4c8IMVu0k4',
     'Robbie Lawler': 'https://youtu.be/GkBBqPkfGYg?is=aWsbqeDBGQmaJg4Q',
     'Amanda Nunes': 'https://youtu.be/t4wkBuFpoPs?is=CL7ge7FDuHQPrbMq',
+    'Cris Cyborg': 'https://youtu.be/QkLy3fUaGIE?is=3V5jMfq5SAyZSHR0',
     'Valentina Shevchenko': 'https://youtube.com/shorts/cucTCAAGTis?is=mf6p21fPtBheJuU8',
     'Zhang Weili': 'https://youtube.com/shorts/ZhdI2_I58YQ?is=TuRcxor17qZxSwUC',
     'Rose Namajunas': 'https://youtube.com/shorts/BVqANFBGq7w?si=FYfcFp-j5hSIXn7b',
