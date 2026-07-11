@@ -2,7 +2,7 @@
 // Locks the approved profile layout for all fighters without changing scoring data.
 (function(){
   const DATA = window.RANKING_DATA;
-  const VERSION = 'profile-template-system-20260711c-compact-cards-snapshot';
+  const VERSION = 'profile-template-system-20260711d-merge-profile-stats';
   if(!DATA || typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const CATEGORY_INFO_LIVE = [
@@ -134,8 +134,14 @@
   }
 
   function snapshotFor(f){
-    const stats = f.snapshotStats || DISPLAY_OVERRIDES[f.fighter]?.snapshotStats || {};
-    const overrideSnap = DISPLAY_OVERRIDES[f.fighter]?.snapshot || [];
+    const override = DISPLAY_OVERRIDES[f.fighter] || {};
+    const stats = {
+      ...(window.UFC_FIGHTER_PACKETS?.[f.fighter]?.profileStats || {}),
+      ...(override.packetProfileStats || {}),
+      ...(override.snapshotStats || {}),
+      ...(f.snapshotStats || {})
+    };
+    const overrideSnap = override.snapshot || [];
     const findSnap = label => overrideSnap.find(x => x[0] === label)?.[1];
     const titleWins = stats.titleFightWins ?? (typeof titleFightWinsFromNotes === 'function' ? titleFightWinsFromNotes(f.title || {}) : null);
     return [
