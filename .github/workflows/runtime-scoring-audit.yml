@@ -40,27 +40,30 @@ jobs:
           trap 'kill $SERVER_PID || true' EXIT
           node scripts/runtime-loss-context-audit.mjs
 
-      - name: Upload runtime report
+      - name: Upload runtime reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: loss-context-runtime-report
-          path: artifacts/loss-context-runtime-report.json
+          path: |
+            artifacts/loss-context-runtime-report.json
+            artifacts/loss-context-runtime-summary.json
           if-no-files-found: warn
           retention-days: 14
 
-      - name: Publish runtime report to main
+      - name: Publish runtime reports to main
         if: always()
         run: |
-          if [ ! -f artifacts/loss-context-runtime-report.json ]; then
-            echo 'Runtime report was not generated.'
+          if [ ! -f artifacts/loss-context-runtime-report.json ] || [ ! -f artifacts/loss-context-runtime-summary.json ]; then
+            echo 'Runtime reports were not generated.'
             exit 1
           fi
           mkdir -p docs
           cp artifacts/loss-context-runtime-report.json docs/loss-context-runtime-report.json
+          cp artifacts/loss-context-runtime-summary.json docs/loss-context-runtime-summary.json
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs/loss-context-runtime-report.json
+          git add docs/loss-context-runtime-report.json docs/loss-context-runtime-summary.json
           git commit -m 'Record Loss Context runtime audit [skip ci]' || true
           git push
 
