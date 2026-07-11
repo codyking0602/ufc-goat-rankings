@@ -1,0 +1,82 @@
+/* Canonical public fighter-profile presentation. */
+.profile-summary h2{
+  overflow-wrap:anywhere;
+  word-break:normal;
+  text-wrap:balance;
+}
+
+.snapshot-item{min-width:0}
+
+.category-card{
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+}
+
+.category-card .category-label{min-height:2.35em}
+
+.category-card .category-context{
+  display:-webkit-box!important;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:3;
+  overflow:hidden!important;
+  white-space:normal!important;
+  overflow-wrap:normal!important;
+  word-break:normal!important;
+  line-height:1.28;
+  min-height:3.84em;
+}
+
+.category-card .tier-pill{align-self:flex-start}
+.category-card .category-bar{width:100%;margin-top:auto}
+
+#categoryExplanation:empty{
+  background:linear-gradient(180deg,#293a56,#1d2b42)!important;
+  border-color:rgba(203,213,225,.38)!important;
+  box-shadow:0 12px 30px rgba(2,6,23,.22);
+}
+
+#categoryExplanation:empty::before{
+  color:#f8fafc!important;
+  text-shadow:0 1px 10px rgba(255,255,255,.08);
+}
+
+#categoryExplanation:empty::after{color:#dbe4f0!important}
+
+.close{
+  width:44px;
+  height:44px;
+  display:grid;
+  place-items:center;
+  line-height:1;
+  border:1px solid rgba(255,255,255,.42)!important;
+  border-radius:999px;
+  background:#263750!important;
+  color:#fff!important;
+  opacity:1!important;
+  text-shadow:0 1px 8px rgba(255,255,255,.35);
+  box-shadow:0 8px 22px rgba(2,6,23,.35);
+  position:sticky;
+  top:8px;
+  z-index:12;
+}
+
+.close:hover,
+.close:focus-visible{
+  background:#334966!important;
+  border-color:rgba(255,255,255,.7)!important;
+}
+
+@media(max-width:900px){
+  .profile-summary h2{
+    font-size:clamp(28px,8.5vw,34px);
+    line-height:1;
+  }
+
+  .category-card{min-height:176px}
+  .category-card .category-label{min-height:2.4em}
+  .category-card .category-context{
+    font-size:11px;
+    min-height:3.84em;
+  }
+}
