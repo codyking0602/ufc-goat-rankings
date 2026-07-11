@@ -1,7 +1,7 @@
 // Ensures optional app containers exist before late-loaded modules request a refresh.
 (function(){
   'use strict';
-  const VERSION='refresh-safety-20260710a-modular-containers';
+  const VERSION='refresh-safety-20260710b-optional-container-errors';
   const original=window.refresh;
   if(typeof original!=='function'){
     window.UFC_REFRESH_SAFETY={version:VERSION,applied:false,reason:'window.refresh was unavailable.'};
@@ -30,11 +30,24 @@
     return created;
   }
 
+  function optionalContainerError(error){
+    const message=String(error?.message||error||'');
+    return /Cannot set properties of null \(setting 'innerHTML'\)/.test(message)
+      ||/Cannot read properties of null/.test(message);
+  }
+
   function safeRefresh(){
     const created=ensureContainers();
-    const result=original.apply(this,arguments);
-    window.UFC_REFRESH_SAFETY.lastRefresh={created,refreshedAt:new Date().toISOString()};
-    return result;
+    try{
+      const result=original.apply(this,arguments);
+      window.UFC_REFRESH_SAFETY.lastRefresh={created,containedError:null,refreshedAt:new Date().toISOString()};
+      return result;
+    }catch(error){
+      if(!optionalContainerError(error))throw error;
+      const retryCreated=ensureContainers();
+      window.UFC_REFRESH_SAFETY.lastRefresh={created:[...created,...retryCreated],containedError:String(error?.message||error),refreshedAt:new Date().toISOString()};
+      return null;
+    }
   }
 
   window.refresh=safeRefresh;
