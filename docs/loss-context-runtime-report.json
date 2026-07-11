@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-11T03:57:14.684Z",
+  "generatedAt": "2026-07-11T04:27:52.336Z",
   "baseUrl": "http://127.0.0.1:4173",
   "report": {
     "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -70,7 +70,7 @@
       "mutatesRecords": true,
       "mutatesPenalty": false,
       "mutatesScores": false,
-      "appliedAt": "2026-07-11T03:57:11.036Z"
+      "appliedAt": "2026-07-11T04:27:49.134Z"
     },
     "scoreReview": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -310,7 +310,7 @@
     },
     "rankingImpact": {
       "changedPenaltyCount": 27,
-      "fightersWithRankMovement": 30,
+      "fightersWithRankMovement": 28,
       "movement": [
         {
           "board": "men",
@@ -445,6 +445,28 @@
           "rankMovement": 2
         },
         {
+          "board": "women",
+          "fighter": "Carla Esparza",
+          "currentRank": 11,
+          "currentTotal": 28.97,
+          "currentPenalty": -10,
+          "priorPenalty": -8.25,
+          "counterfactualTotal": 30.72,
+          "counterfactualRank": 9,
+          "rankMovement": -2
+        },
+        {
+          "board": "women",
+          "fighter": "Julianna Peña",
+          "currentRank": 9,
+          "currentTotal": 30.68,
+          "currentPenalty": -6.75,
+          "priorPenalty": -8,
+          "counterfactualTotal": 29.43,
+          "counterfactualRank": 11,
+          "rankMovement": 2
+        },
+        {
           "board": "men",
           "fighter": "Dricus du Plessis",
           "currentRank": 30,
@@ -465,39 +487,6 @@
           "counterfactualTotal": 65.54,
           "counterfactualRank": 7,
           "rankMovement": -1
-        },
-        {
-          "board": "women",
-          "fighter": "Jessica Andrade",
-          "currentRank": 8,
-          "currentTotal": 35.48,
-          "currentPenalty": -10,
-          "priorPenalty": -7.5,
-          "counterfactualTotal": 37.98,
-          "counterfactualRank": 7,
-          "rankMovement": -1
-        },
-        {
-          "board": "women",
-          "fighter": "Carla Esparza",
-          "currentRank": 11,
-          "currentTotal": 28.97,
-          "currentPenalty": -10,
-          "priorPenalty": -8.25,
-          "counterfactualTotal": 30.72,
-          "counterfactualRank": 10,
-          "rankMovement": -1
-        },
-        {
-          "board": "women",
-          "fighter": "Julianna Peña",
-          "currentRank": 10,
-          "currentTotal": 30.68,
-          "currentPenalty": -6.75,
-          "priorPenalty": -8,
-          "counterfactualTotal": 29.43,
-          "counterfactualRank": 11,
-          "rankMovement": 1
         },
         {
           "board": "men",
@@ -599,17 +588,6 @@
           "rankMovement": 1
         },
         {
-          "board": "women",
-          "fighter": "Kayla Harrison",
-          "currentRank": 7,
-          "currentTotal": 35.64,
-          "currentPenalty": 0,
-          "priorPenalty": 0,
-          "counterfactualTotal": 35.64,
-          "counterfactualRank": 8,
-          "rankMovement": 1
-        },
-        {
           "board": "men",
           "fighter": "Khabib Nurmagomedov",
           "currentRank": 7,
@@ -651,6 +629,17 @@
           "priorPenalty": -5.5,
           "counterfactualTotal": 24.56,
           "counterfactualRank": 47,
+          "rankMovement": 0
+        },
+        {
+          "board": "women",
+          "fighter": "Jessica Andrade",
+          "currentRank": 7,
+          "currentTotal": 35.48,
+          "currentPenalty": -10,
+          "priorPenalty": -7.5,
+          "counterfactualTotal": 37.98,
+          "counterfactualRank": 7,
           "rankMovement": 0
         },
         {
@@ -821,10 +810,10 @@
     ],
     "mutatesScores": false,
     "mutatesPenalty": false,
-    "generatedAt": "2026-07-11T03:57:13.452Z"
+    "generatedAt": "2026-07-11T04:27:51.249Z"
   },
   "pipeline": {
-    "version": "deterministic-scoring-pipeline-20260710zg-four-audit-corrections",
+    "version": "deterministic-scoring-pipeline-20260710zh-three-fight-prime-cap",
     "mode": "deterministic-single-pass",
     "status": "ready",
     "sequence": [
@@ -846,6 +835,7 @@
       "prime-audit-batch-seven:loaded",
       "prime-audit-batch-ten:loaded",
       "prime-audit-batch-eleven:loaded",
+      "prime-three-fight-cap:loaded",
       "prime-live:loaded",
       "prime-copy:loaded",
       "fighter-era-ledgers:existing",
@@ -865,8 +855,8 @@
     "timerCount": 0,
     "repeatedLoadCount": 0,
     "finalScoreApplyCount": 1,
-    "startedAt": "2026-07-11T03:57:09.716Z",
-    "completedAt": "2026-07-11T03:57:13.778Z",
+    "startedAt": "2026-07-11T04:27:47.957Z",
+    "completedAt": "2026-07-11T04:27:51.536Z",
     "error": null,
     "lossContextCompletionBatchThree": {
       "version": "loss-context-ledger-completion-batch-three-20260710a-five-veteran-ledgers",
@@ -921,7 +911,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T03:57:10.961Z"
+      "appliedAt": "2026-07-11T04:27:49.097Z"
     },
     "lossContextCompletionBatchFour": {
       "version": "loss-context-ledger-completion-batch-four-20260710a-five-highest-missing",
@@ -977,7 +967,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T03:57:10.990Z"
+      "appliedAt": "2026-07-11T04:27:49.101Z"
     },
     "lossContextCompletionBatchFive": {
       "version": "loss-context-ledger-completion-batch-five-20260710b-chuck-vitor-window",
@@ -1070,7 +1060,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T03:57:10.997Z"
+      "appliedAt": "2026-07-11T04:27:49.104Z"
     },
     "lossContextCompletionBatchSix": {
       "version": "loss-context-ledger-completion-batch-six-20260710a-first-half-eighteen",
@@ -1258,7 +1248,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T03:57:11.002Z"
+      "appliedAt": "2026-07-11T04:27:49.107Z"
     },
     "lossContextCompletionBatchSeven": {
       "version": "loss-context-ledger-completion-batch-seven-20260710a-final-seventeen",
@@ -1417,7 +1407,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T03:57:11.012Z"
+      "appliedAt": "2026-07-11T04:27:49.112Z"
     },
     "approvedFighterAuditCorrections": {
       "version": "approved-fighter-audit-corrections-20260710a-tito-pereira-hughes-kayla",
@@ -1433,7 +1423,7 @@
       "opponentQualityCorrections": [
         "Kayla Harrison"
       ],
-      "appliedAt": "2026-07-11T03:57:11.016Z"
+      "appliedAt": "2026-07-11T04:27:49.115Z"
     },
     "lossContextCanonicalProduction": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -28578,7 +28568,7 @@
         ],
         "mode": "canonical-production",
         "mutatesScores": true,
-        "appliedAt": "2026-07-11T03:57:11.036Z"
+        "appliedAt": "2026-07-11T04:27:49.134Z"
       },
       "mismatchAudit": {
         "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -47349,7 +47339,7 @@
         "missingEraLossEntries": [],
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "appliedAt": "2026-07-11T03:57:11.036Z"
+        "appliedAt": "2026-07-11T04:27:49.134Z"
       },
       "scoreReview": {
         "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -49526,7 +49516,7 @@
         "mutatesPenalty": true,
         "mutatesScores": true,
         "finalScoreRecalculationOwner": "final-score-engine.js",
-        "appliedAt": "2026-07-11T03:57:11.036Z"
+        "appliedAt": "2026-07-11T04:27:49.134Z"
       },
       "appliedCompletionFixes": [
         "Robert Whittaker",
@@ -49586,7 +49576,7 @@
       ],
       "mutatesPenalty": true,
       "mutatesScores": true,
-      "appliedAt": "2026-07-11T03:57:11.036Z"
+      "appliedAt": "2026-07-11T04:27:49.134Z"
     },
     "lossContextScoreReview": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -51763,7 +51753,7 @@
       "mutatesPenalty": true,
       "mutatesScores": true,
       "finalScoreRecalculationOwner": "final-score-engine.js",
-      "appliedAt": "2026-07-11T03:57:11.036Z"
+      "appliedAt": "2026-07-11T04:27:49.134Z"
     },
     "lossContextMismatchAudit": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -70534,7 +70524,7 @@
       "missingEraLossEntries": [],
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T03:57:11.036Z"
+      "appliedAt": "2026-07-11T04:27:49.134Z"
     },
     "canonicalLongevityRecalculation": {
       "version": "longevity-canonical-recalculation-20260710b-eleven-window-rebuild",
@@ -70707,7 +70697,7 @@
       "correctsRandyBelfortDate": true,
       "mutatesEraLongevityInputs": true,
       "mutatesScores": false,
-      "appliedAt": "2026-07-11T03:57:11.041Z"
+      "appliedAt": "2026-07-11T04:27:49.138Z"
     },
     "canonicalPrimeRecords": {
       "version": "canonical-prime-records-20260710c-chuck-vitor-window",
@@ -72696,7 +72686,7 @@
       "allWindowsLocked": false,
       "mutatesScores": false,
       "mutatesPrimeRecordDisplay": true,
-      "appliedAt": "2026-07-11T03:57:11.048Z"
+      "appliedAt": "2026-07-11T04:27:49.398Z"
     },
     "opponentQualityReadyDetail": {
       "version": "opponent-quality-live-20260710c-fixed-benchmark",
@@ -72795,7 +72785,7 @@
         "winProfile": "Major signature win, thinner depth"
       },
       "version": "approved-fighter-audit-corrections-20260710a-tito-pereira-hughes-kayla",
-      "appliedAt": "2026-07-11T03:57:11.618Z"
+      "appliedAt": "2026-07-11T04:27:49.670Z"
     },
     "primeDominanceAuditBatchEleven": {
       "version": "prime-dominance-audit-batch-eleven-20260710a-tito-pereira-hughes",
@@ -73177,7 +73167,4327 @@
           "version": "prime-dominance-audit-batch-eleven-20260710a-tito-pereira-hughes"
         }
       },
-      "appliedAt": "2026-07-11T03:57:12.121Z"
+      "appliedAt": "2026-07-11T04:27:50.159Z"
+    },
+    "primeDominanceThreeFightCap": {
+      "version": "prime-dominance-three-fight-cap-20260710a",
+      "applied": true,
+      "maxPrimeFights": 3,
+      "rateComponentMultiplier": 0.7,
+      "affected": [
+        "Kayla Harrison"
+      ],
+      "affectedCount": 1,
+      "entries": {
+        "Kayla Harrison": {
+          "fighter": "Kayla Harrison",
+          "primeRecord": "3-0",
+          "primeWins": 3,
+          "primeLosses": 0,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 100,
+          "primeRecordScore": 6.3,
+          "roundControlPct": 85.71,
+          "roundControlScore": 4.8,
+          "roundControlAudit": {
+            "fighter": "Kayla Harrison",
+            "roundsWon": 6,
+            "roundsCounted": 7,
+            "roundControlPct": 85.71,
+            "status": "locked"
+          },
+          "primeFights": 3,
+          "primeFinishes": 2,
+          "primeFinishRate": 66.67,
+          "dominanceProfile": "Small UFC-only sample with dominant grappling and title-level validation building Three-fight sample cap applies 70% weight to the rate-driven components while preserving full elite-stakes credit.",
+          "status": "locked",
+          "version": "prime-dominance-three-fight-cap-20260710a",
+          "finishPressureScore": 2.8,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 0.75,
+            "topFiveWins": 0.75,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.25,
+            "divisionStrengthContext": 0.2
+          },
+          "eliteStakesRawScore": 2.7,
+          "eliteStakesScore": 4.32,
+          "total": 18.22,
+          "uncappedPrimeRecordScore": 9,
+          "uncappedRoundControlScore": 6.86,
+          "uncappedFinishPressureScore": 4,
+          "uncappedRateScore": 19.86,
+          "adjustedRateScore": 13.9,
+          "uncappedTotal": 24.18,
+          "sampleAdjusted": true,
+          "sampleSizeAdjustment": {
+            "rule": "Three or fewer prime fights",
+            "primeFights": 3,
+            "maxPrimeFights": 3,
+            "rateComponentMultiplier": 0.7,
+            "rateComponents": [
+              "Prime Record",
+              "Round Control",
+              "Finish Pressure"
+            ],
+            "eliteStakesAdjusted": false,
+            "scoreReduction": 5.96,
+            "version": "prime-dominance-three-fight-cap-20260710a"
+          }
+        }
+      },
+      "report": [
+        {
+          "fighter": "Khabib Nurmagomedov",
+          "primeRecord": "8-0",
+          "primeWins": 8,
+          "primeLosses": 0,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 100,
+          "primeRecordScore": 9,
+          "roundControlPct": 96,
+          "roundControlScore": 7.68,
+          "roundControlAudit": {
+            "fighter": "Khabib Nurmagomedov",
+            "window": "RDA 2014 → Gaethje 2020",
+            "status": "locked",
+            "roundsWon": 24,
+            "roundsLost": 1,
+            "roundsCounted": 25,
+            "roundControlPct": 96,
+            "fights": [
+              [
+                "Rafael dos Anjos",
+                3,
+                0
+              ],
+              [
+                "Darrell Horcher",
+                2,
+                0
+              ],
+              [
+                "Michael Johnson",
+                3,
+                0
+              ],
+              [
+                "Edson Barboza",
+                3,
+                0
+              ],
+              [
+                "Al Iaquinta",
+                5,
+                0
+              ],
+              [
+                "Conor McGregor",
+                3,
+                1,
+                "McGregor R3"
+              ],
+              [
+                "Dustin Poirier",
+                3,
+                0
+              ],
+              [
+                "Justin Gaethje",
+                2,
+                0
+              ]
+            ],
+            "version": "prime-round-control-audit-20260708d-jon-54-63"
+          },
+          "primeFights": 8,
+          "primeFinishes": 5,
+          "primeFinishRate": 62.5,
+          "finishPressureScore": 4,
+          "eliteStakesRawScore": 4.65,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 2,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.4,
+            "divisionStrengthContext": 0.25,
+            "note": "Elite lightweight validation with full top-5/title-win credit, but not max champion-name or stage-volume credit."
+          },
+          "eliteStakesScore": 7.44,
+          "total": 28.12,
+          "labels": [
+            "8-0 (100% win rate)",
+            "96% round control",
+            "5/8 finishes (62.5%)",
+            "4.65/5 elite-stakes validation: title 2/2, top-5 1.25/1.25, champs 0.75/1, stage 0.4/0.5, division 0.25/0.25",
+            "Smothering lightweight control with no UFC loss"
+          ],
+          "dominanceProfile": "Smothering lightweight control with no UFC loss",
+          "status": "locked",
+          "primeWindow": null,
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window"
+        },
+        {
+          "fighter": "Amanda Nunes",
+          "primeRecord": "review",
+          "primeWins": 11,
+          "primeLosses": 1,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 91.67,
+          "primeRecordScore": 8.25,
+          "roundControlPct": 91.89,
+          "roundControlScore": 7.35,
+          "roundControlAudit": {
+            "fighter": "Amanda Nunes",
+            "window": "Tate 2016 → Aldana 2023",
+            "status": "review",
+            "roundsWon": 34,
+            "roundsLost": 3,
+            "roundsCounted": 37,
+            "roundControlPct": 91.89,
+            "fights": [
+              [
+                "Miesha Tate",
+                1,
+                0
+              ],
+              [
+                "Ronda Rousey",
+                1,
+                0
+              ],
+              [
+                "Valentina Shevchenko II",
+                3,
+                2,
+                "split official decision"
+              ],
+              [
+                "Raquel Pennington",
+                5,
+                0
+              ],
+              [
+                "Cris Cyborg",
+                1,
+                0
+              ],
+              [
+                "Holly Holm",
+                1,
+                0
+              ],
+              [
+                "Germaine de Randamie",
+                5,
+                0
+              ],
+              [
+                "Felicia Spencer",
+                5,
+                0
+              ],
+              [
+                "Megan Anderson",
+                1,
+                0
+              ],
+              [
+                "Julianna Pena I",
+                1,
+                1,
+                "finish loss"
+              ],
+              [
+                "Julianna Pena II",
+                5,
+                0
+              ],
+              [
+                "Irene Aldana",
+                5,
+                0
+              ]
+            ],
+            "version": "prime-round-control-audit-20260708d-jon-54-63"
+          },
+          "primeFights": 12,
+          "primeFinishes": 8,
+          "primeFinishRate": 66.67,
+          "finishPressureScore": 4,
+          "eliteStakesRawScore": 5,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 2,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 1,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.25,
+            "note": "Maxed two-division title-stage validation."
+          },
+          "eliteStakesScore": 8,
+          "total": 27.6,
+          "labels": [
+            "review (91.67% win rate)",
+            "91.89% round control",
+            "8/12 finishes (66.67%)",
+            "5/5 elite-stakes validation: title 2/2, top-5 1.25/1.25, champs 1/1, stage 0.5/0.5, division 0.25/0.25",
+            "Two-division finishing dominance with one major blemish avenged"
+          ],
+          "dominanceProfile": "Two-division finishing dominance with one major blemish avenged",
+          "status": "review",
+          "primeWindow": null,
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window"
+        },
+        {
+          "fighter": "Islam Makhachev",
+          "primeRecord": "active unbeaten prime",
+          "primeWins": 10,
+          "primeLosses": 0,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 100,
+          "primeRecordScore": 9,
+          "roundControlPct": 89.29,
+          "roundControlScore": 7.14,
+          "roundControlAudit": {
+            "fighter": "Islam Makhachev",
+            "window": "Dober 2021 → active",
+            "status": "review",
+            "roundsWon": 25,
+            "roundsLost": 3,
+            "roundsCounted": 28,
+            "roundControlPct": 89.29,
+            "fights": [
+              [
+                "Drew Dober",
+                3,
+                0
+              ],
+              [
+                "Thiago Moises",
+                4,
+                0
+              ],
+              [
+                "Dan Hooker",
+                1,
+                0
+              ],
+              [
+                "Bobby Green",
+                1,
+                0
+              ],
+              [
+                "Charles Oliveira",
+                2,
+                0
+              ],
+              [
+                "Alexander Volkanovski I",
+                3,
+                2
+              ],
+              [
+                "Alexander Volkanovski II",
+                1,
+                0
+              ],
+              [
+                "Dustin Poirier",
+                4,
+                1
+              ],
+              [
+                "Renato Moicano",
+                1,
+                0
+              ],
+              [
+                "Jack Della Maddalena",
+                5,
+                0,
+                "welterweight title win included in current app fight count"
+              ]
+            ],
+            "version": "prime-round-control-audit-20260708d-jon-54-63"
+          },
+          "primeFights": 10,
+          "primeFinishes": 6,
+          "primeFinishRate": 60,
+          "finishPressureScore": 4,
+          "eliteStakesRawScore": 4,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.5,
+            "topFiveWins": 1,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.25,
+            "note": "Modern lightweight strength is maxed, but title-win volume is still building."
+          },
+          "eliteStakesScore": 6.4,
+          "total": 26.54,
+          "labels": [
+            "active unbeaten prime (100% win rate)",
+            "89.29% round control",
+            "6/10 finishes (60%)",
+            "4/5 elite-stakes validation: title 1.5/2, top-5 1/1.25, champs 0.75/1, stage 0.5/0.5, division 0.25/0.25",
+            "Modern lightweight control monster, still adding elite-stakes volume"
+          ],
+          "dominanceProfile": "Modern lightweight control monster, still adding elite-stakes volume",
+          "status": "review",
+          "primeWindow": null,
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window"
+        },
+        {
+          "fighter": "Henry Cejudo",
+          "primeRecord": "4-0",
+          "primeWins": 4,
+          "primeLosses": 0,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 100,
+          "primeRecordScore": 9,
+          "roundControlPct": 72.73,
+          "roundControlScore": 5.82,
+          "roundControlAudit": {
+            "fighter": "Henry Cejudo",
+            "window": "Johnson II 2018 → Cruz 2020",
+            "status": "review",
+            "roundsWon": 8,
+            "roundsLost": 3,
+            "roundsCounted": 11,
+            "roundControlPct": 72.73,
+            "fights": [
+              [
+                "Demetrious Johnson II",
+                3,
+                2,
+                "split official decision"
+              ],
+              [
+                "T.J. Dillashaw",
+                1,
+                0
+              ],
+              [
+                "Marlon Moraes",
+                2,
+                1
+              ],
+              [
+                "Dominick Cruz",
+                2,
+                0
+              ]
+            ],
+            "version": "prime-round-control-audit-20260708d-jon-54-63"
+          },
+          "primeFights": 4,
+          "primeFinishes": 3,
+          "primeFinishRate": 75,
+          "finishPressureScore": 4.5,
+          "eliteStakesRawScore": 4.1,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.5,
+            "topFiveWins": 1,
+            "champFormerChampWins": 1,
+            "fiveRoundTitleStageSample": 0.35,
+            "divisionStrengthContext": 0.25,
+            "note": "Huge two-division stakes, limited by very short title-stage sample."
+          },
+          "eliteStakesScore": 6.56,
+          "total": 25.88,
+          "labels": [
+            "4-0 (100% win rate)",
+            "72.73% round control",
+            "3/4 finishes (75%)",
+            "4.1/5 elite-stakes validation: title 1.5/2, top-5 1/1.25, champs 1/1, stage 0.35/0.5, division 0.25/0.25",
+            "Short two-division prime with huge elite-stakes wins"
+          ],
+          "dominanceProfile": "Short two-division prime with huge elite-stakes wins",
+          "status": "review",
+          "primeWindow": null,
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window"
+        },
+        {
+          "fighter": "Jon Jones",
+          "primeRecord": "16-0, 1 NC",
+          "primeWins": 16,
+          "primeLosses": 0,
+          "primeDraws": 0,
+          "primeNCs": 1,
+          "primeRecordPct": 100,
+          "primeRecordScore": 9,
+          "roundControlPct": 85.71,
+          "roundControlScore": 6.86,
+          "roundControlAudit": {
+            "fighter": "Jon Jones",
+            "roundsWon": 54,
+            "roundsCounted": 63,
+            "roundControlPct": 85.71,
+            "status": "locked"
+          },
+          "primeFights": 17,
+          "primeFinishes": 7,
+          "primeFinishRate": 41.18,
+          "dominanceProfile": "Longest elite control window with unmatched title-stage proof; round-control source locked at 54/63",
+          "status": "locked",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 2,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 2,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 1,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.25
+          },
+          "eliteStakesRawScore": 5,
+          "eliteStakesScore": 8,
+          "total": 25.86
+        },
+        {
+          "fighter": "Francis Ngannou",
+          "primeRecord": "6-0",
+          "primeWins": 6,
+          "primeLosses": 0,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 100,
+          "primeRecordScore": 9,
+          "roundControlPct": 81.82,
+          "roundControlScore": 6.55,
+          "roundControlAudit": {
+            "fighter": "Francis Ngannou",
+            "roundsWon": 9,
+            "roundsCounted": 11,
+            "roundControlPct": 81.82,
+            "status": "review"
+          },
+          "primeFights": 6,
+          "primeFinishes": 5,
+          "primeFinishRate": 83.33,
+          "dominanceProfile": "Short heavyweight terror prime with Stipe rebound and Gane control",
+          "status": "review",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 4.5,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.25,
+            "topFiveWins": 1,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.35,
+            "divisionStrengthContext": 0.25
+          },
+          "eliteStakesRawScore": 3.6,
+          "eliteStakesScore": 5.76,
+          "total": 25.81
+        },
+        {
+          "fighter": "Cain Velasquez",
+          "primeRecord": "5-1",
+          "primeWins": 5,
+          "primeLosses": 1,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 83.33,
+          "primeRecordScore": 7.5,
+          "roundControlPct": 92.86,
+          "roundControlScore": 7.43,
+          "roundControlAudit": {
+            "fighter": "Cain Velasquez",
+            "window": "Lesnar 2010 → dos Santos III 2013",
+            "status": "review",
+            "roundsWon": 13,
+            "roundsLost": 1,
+            "roundsCounted": 14,
+            "roundControlPct": 92.86,
+            "fights": [
+              [
+                "Brock Lesnar",
+                1,
+                0
+              ],
+              [
+                "Junior dos Santos I",
+                0,
+                1
+              ],
+              [
+                "Antonio Silva I",
+                1,
+                0
+              ],
+              [
+                "Junior dos Santos II",
+                5,
+                0
+              ],
+              [
+                "Antonio Silva II",
+                1,
+                0
+              ],
+              [
+                "Junior dos Santos III",
+                5,
+                0
+              ]
+            ],
+            "version": "prime-round-control-audit-20260708d-jon-54-63"
+          },
+          "primeFights": 6,
+          "primeFinishes": 5,
+          "primeFinishRate": 83.33,
+          "finishPressureScore": 4.5,
+          "eliteStakesRawScore": 3.8,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.5,
+            "topFiveWins": 1,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.4,
+            "divisionStrengthContext": 0.15,
+            "note": "High heavyweight stakes, but short prime sample limits stage credit."
+          },
+          "eliteStakesScore": 6.08,
+          "total": 25.51,
+          "labels": [
+            "5-1 (83.33% win rate)",
+            "92.86% round control",
+            "5/6 finishes (83.33%)",
+            "3.8/5 elite-stakes validation: title 1.5/2, top-5 1/1.25, champs 0.75/1, stage 0.4/0.5, division 0.15/0.25",
+            "Short heavyweight apex with crushing control and damage"
+          ],
+          "dominanceProfile": "Short heavyweight apex with crushing control and damage",
+          "status": "review",
+          "primeWindow": null,
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window"
+        },
+        {
+          "fighter": "Anderson Silva",
+          "primeRecord": "16-2",
+          "primeWins": 16,
+          "primeLosses": 2,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 88.89,
+          "primeRecordScore": 8,
+          "roundControlPct": 69.23,
+          "roundControlScore": 5.54,
+          "roundControlAudit": {
+            "fighter": "Anderson Silva",
+            "window": "Leben 2006 → Weidman II 2013",
+            "status": "review",
+            "roundsWon": 27,
+            "roundsLost": 12,
+            "roundsCounted": 39,
+            "roundControlPct": 69.23,
+            "fights": [
+              [
+                "Chris Leben",
+                1,
+                0
+              ],
+              [
+                "Rich Franklin I",
+                1,
+                0
+              ],
+              [
+                "Travis Lutter",
+                1,
+                1,
+                "Lutter R1"
+              ],
+              [
+                "Nate Marquardt",
+                1,
+                0
+              ],
+              [
+                "Rich Franklin II",
+                2,
+                0
+              ],
+              [
+                "Dan Henderson",
+                1,
+                1,
+                "Henderson R1"
+              ],
+              [
+                "James Irvin",
+                1,
+                0
+              ],
+              [
+                "Patrick Cote",
+                3,
+                0
+              ],
+              [
+                "Thales Leites",
+                5,
+                0
+              ],
+              [
+                "Forrest Griffin",
+                1,
+                0
+              ],
+              [
+                "Demian Maia",
+                4,
+                1,
+                "official scorecards include resistance"
+              ],
+              [
+                "Chael Sonnen I",
+                1,
+                4
+              ],
+              [
+                "Vitor Belfort",
+                1,
+                0
+              ],
+              [
+                "Yushin Okami",
+                2,
+                0
+              ],
+              [
+                "Chael Sonnen II",
+                1,
+                1,
+                "Sonnen R1"
+              ],
+              [
+                "Stephan Bonnar",
+                1,
+                0
+              ],
+              [
+                "Chris Weidman I",
+                0,
+                2
+              ],
+              [
+                "Chris Weidman II",
+                0,
+                2
+              ]
+            ],
+            "version": "prime-round-control-audit-20260708d-jon-54-63"
+          },
+          "primeFights": 18,
+          "primeFinishes": 14,
+          "primeFinishRate": 77.78,
+          "finishPressureScore": 4.5,
+          "eliteStakesRawScore": 4.4,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 2,
+            "topFiveWins": 1,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.15,
+            "note": "Huge title-stage sample; middleweight depth/champion-name density keeps it below Jones/GSP max."
+          },
+          "eliteStakesScore": 7.04,
+          "total": 25.08,
+          "labels": [
+            "16-2 (88.89% win rate)",
+            "69.23% round control",
+            "14/18 finishes (77.78%)",
+            "4.4/5 elite-stakes validation: title 2/2, top-5 1/1.25, champs 0.75/1, stage 0.5/0.5, division 0.15/0.25",
+            "Best finish aura, with Sonnen/Weidman resistance now counted in the round audit"
+          ],
+          "dominanceProfile": "Best finish aura, with Sonnen/Weidman resistance now counted in the round audit",
+          "status": "review",
+          "primeWindow": null,
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window"
+        },
+        {
+          "fighter": "Chuck Liddell",
+          "primeRecord": "9-2",
+          "primeWins": 9,
+          "primeLosses": 2,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 81.82,
+          "primeRecordScore": 7.36,
+          "roundControlPct": 86.36,
+          "roundControlScore": 6.91,
+          "roundControlAudit": {
+            "fighter": "Chuck Liddell",
+            "roundsWon": 19,
+            "roundsCounted": 22,
+            "roundControlPct": 86.36,
+            "status": "locked"
+          },
+          "primeFights": 11,
+          "primeFinishes": 8,
+          "primeFinishRate": 72.73,
+          "dominanceProfile": "Vitor Belfort through Quinton Jackson II: championship knockout run with the Couture interim-title loss fully counted",
+          "status": "locked",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 4,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 2,
+            "topFiveWins": 0.8,
+            "champFormerChampWins": 0.5,
+            "fiveRoundTitleStageSample": 0.45,
+            "divisionStrengthContext": 0.15
+          },
+          "eliteStakesRawScore": 3.9,
+          "eliteStakesScore": 6.24,
+          "total": 24.51
+        },
+        {
+          "fighter": "Stipe Miocic",
+          "primeRecord": "7-2",
+          "primeWins": 7,
+          "primeLosses": 2,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 77.78,
+          "primeRecordScore": 7,
+          "roundControlPct": 75,
+          "roundControlScore": 6,
+          "roundControlAudit": {
+            "fighter": "Stipe Miocic",
+            "window": "Hunt 2015 → Cormier III 2020",
+            "status": "review",
+            "roundsWon": 18,
+            "roundsLost": 6,
+            "roundsCounted": 24,
+            "roundControlPct": 75,
+            "fights": [
+              [
+                "Mark Hunt",
+                5,
+                0
+              ],
+              [
+                "Andrei Arlovski",
+                1,
+                0
+              ],
+              [
+                "Fabricio Werdum",
+                1,
+                0
+              ],
+              [
+                "Alistair Overeem",
+                1,
+                0
+              ],
+              [
+                "Junior dos Santos II",
+                1,
+                0
+              ],
+              [
+                "Francis Ngannou I",
+                5,
+                0
+              ],
+              [
+                "Daniel Cormier I",
+                0,
+                1
+              ],
+              [
+                "Daniel Cormier II",
+                1,
+                3
+              ],
+              [
+                "Daniel Cormier III",
+                3,
+                2
+              ]
+            ],
+            "version": "prime-round-control-audit-20260708d-jon-54-63"
+          },
+          "primeFights": 9,
+          "primeFinishes": 6,
+          "primeFinishRate": 66.67,
+          "finishPressureScore": 4,
+          "eliteStakesRawScore": 4.65,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 2,
+            "topFiveWins": 1,
+            "champFormerChampWins": 1,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.15,
+            "note": "Great heavyweight title-stage proof; heavyweight depth context below max."
+          },
+          "eliteStakesScore": 7.44,
+          "total": 24.44,
+          "labels": [
+            "7-2 (77.78% win rate)",
+            "75% round control",
+            "6/9 finishes (66.67%)",
+            "4.65/5 elite-stakes validation: title 2/2, top-5 1/1.25, champs 1/1, stage 0.5/0.5, division 0.15/0.25",
+            "Heavyweight title-prime with high-end finish output"
+          ],
+          "dominanceProfile": "Heavyweight title-prime with high-end finish output",
+          "status": "review",
+          "primeWindow": null,
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window"
+        },
+        {
+          "fighter": "Georges St-Pierre",
+          "primeRecord": "14-1",
+          "primeWins": 14,
+          "primeLosses": 1,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 93.33,
+          "primeRecordScore": 8.4,
+          "roundControlPct": 87.72,
+          "roundControlScore": 7.02,
+          "roundControlAudit": {
+            "fighter": "Georges St-Pierre",
+            "window": "Hughes II 2006 → Bisping 2017",
+            "status": "locked",
+            "roundsWon": 50,
+            "roundsLost": 7,
+            "roundsCounted": 57,
+            "roundControlPct": 87.72,
+            "fights": [
+              [
+                "Matt Hughes II",
+                2,
+                0
+              ],
+              [
+                "Matt Serra I",
+                0,
+                1
+              ],
+              [
+                "Josh Koscheck I",
+                2,
+                1
+              ],
+              [
+                "Matt Hughes III",
+                2,
+                0
+              ],
+              [
+                "Matt Serra II",
+                2,
+                0
+              ],
+              [
+                "Jon Fitch",
+                5,
+                0
+              ],
+              [
+                "B.J. Penn II",
+                4,
+                0
+              ],
+              [
+                "Thiago Alves",
+                5,
+                0
+              ],
+              [
+                "Dan Hardy",
+                5,
+                0
+              ],
+              [
+                "Josh Koscheck II",
+                5,
+                0
+              ],
+              [
+                "Jake Shields",
+                3,
+                2,
+                "late-round resistance"
+              ],
+              [
+                "Carlos Condit",
+                5,
+                0,
+                "official consensus"
+              ],
+              [
+                "Nick Diaz",
+                5,
+                0
+              ],
+              [
+                "Johny Hendricks",
+                3,
+                2,
+                "controversial official decision"
+              ],
+              [
+                "Michael Bisping",
+                2,
+                1
+              ]
+            ],
+            "version": "prime-round-control-audit-20260708d-jon-54-63"
+          },
+          "primeFights": 15,
+          "primeFinishes": 4,
+          "primeFinishRate": 26.67,
+          "finishPressureScore": 1,
+          "eliteStakesRawScore": 5,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 2,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 1,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.25,
+            "note": "Maxed title-stage validation in a strong welterweight era."
+          },
+          "eliteStakesScore": 8,
+          "total": 24.42,
+          "labels": [
+            "14-1 (93.33% win rate)",
+            "87.72% round control",
+            "4/15 finishes (26.67%)",
+            "5/5 elite-stakes validation: title 2/2, top-5 1.25/1.25, champs 1/1, stage 0.5/0.5, division 0.25/0.25",
+            "Cleanest control champion of the modern UFC era"
+          ],
+          "dominanceProfile": "Cleanest control champion of the modern UFC era",
+          "status": "locked",
+          "primeWindow": null,
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window"
+        },
+        {
+          "fighter": "Matt Hughes",
+          "primeRecord": "13-3",
+          "primeWins": 13,
+          "primeLosses": 3,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 81.25,
+          "primeRecordScore": 7.31,
+          "roundControlPct": 71.43,
+          "roundControlScore": 5.71,
+          "roundControlAudit": {
+            "fighter": "Matt Hughes",
+            "roundsWon": 25,
+            "roundsLost": 10,
+            "roundsCounted": 35,
+            "roundControlPct": 71.43,
+            "status": "locked",
+            "source": "approved canonical-window fight ledger",
+            "window": "Carlos Newton I → Georges St-Pierre III",
+            "fights": [
+              [
+                "Carlos Newton I",
+                1,
+                1,
+                "chaotic title-winning finish; low-confidence round split"
+              ],
+              [
+                "Hayato Sakurai",
+                4,
+                0
+              ],
+              [
+                "Carlos Newton II",
+                4,
+                0
+              ],
+              [
+                "Gil Castillo",
+                1,
+                0
+              ],
+              [
+                "Sean Sherk",
+                4,
+                1
+              ],
+              [
+                "Frank Trigg I",
+                1,
+                0
+              ],
+              [
+                "B.J. Penn I",
+                0,
+                1
+              ],
+              [
+                "Renato Verissimo",
+                2,
+                1
+              ],
+              [
+                "Georges St-Pierre I",
+                1,
+                0
+              ],
+              [
+                "Frank Trigg II",
+                1,
+                0
+              ],
+              [
+                "Joe Riggs",
+                1,
+                0
+              ],
+              [
+                "Royce Gracie",
+                1,
+                0
+              ],
+              [
+                "B.J. Penn II",
+                1,
+                2
+              ],
+              [
+                "Georges St-Pierre II",
+                0,
+                2
+              ],
+              [
+                "Chris Lytle",
+                3,
+                0
+              ],
+              [
+                "Georges St-Pierre III",
+                0,
+                2
+              ]
+            ],
+            "version": "prime-dominance-audit-batch-eleven-20260710a-tito-pereira-hughes"
+          },
+          "primeFights": 16,
+          "primeFinishes": 10,
+          "primeFinishRate": 62.5,
+          "finishPressureScore": 4,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 2,
+            "topFiveWins": 1.1,
+            "champFormerChampWins": 0.8,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.1
+          },
+          "eliteStakesRawScore": 4.5,
+          "eliteStakesScore": 7.2,
+          "total": 24.22,
+          "dominanceProfile": "Long early-welterweight title prime beginning with the first Carlos Newton fight. The added title-winning finish corrects the record to 13-3 while preserving the Penn/GSP resistance.",
+          "status": "locked",
+          "primeWindow": {
+            "start": "2001-11-02",
+            "startLabel": "Carlos Newton I",
+            "end": "2007-12-29",
+            "endLabel": "Georges St-Pierre III",
+            "endType": "unrecovered_elite_loss",
+            "endReason": "Penn I and GSP II did not end it because Hughes stayed title-level. GSP III closes window.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "canonicalWindowRebuild": true,
+          "version": "prime-dominance-audit-batch-eleven-20260710a-tito-pereira-hughes"
+        },
+        {
+          "fighter": "Conor McGregor",
+          "primeRecord": "6-1",
+          "primeWins": 6,
+          "primeLosses": 1,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 85.71,
+          "primeRecordScore": 7.71,
+          "roundControlPct": 73.33,
+          "roundControlScore": 5.87,
+          "roundControlAudit": {
+            "fighter": "Conor McGregor",
+            "window": "Poirier I 2014 → Alvarez 2016",
+            "status": "review",
+            "roundsWon": 11,
+            "roundsLost": 4,
+            "roundsCounted": 15,
+            "roundControlPct": 73.33,
+            "fights": [
+              [
+                "Dustin Poirier I",
+                1,
+                0
+              ],
+              [
+                "Dennis Siver",
+                2,
+                0
+              ],
+              [
+                "Chad Mendes",
+                1,
+                1
+              ],
+              [
+                "Jose Aldo",
+                1,
+                0
+              ],
+              [
+                "Nate Diaz I",
+                1,
+                1
+              ],
+              [
+                "Nate Diaz II",
+                3,
+                2
+              ],
+              [
+                "Eddie Alvarez",
+                2,
+                0
+              ]
+            ],
+            "version": "prime-round-control-audit-20260708d-jon-54-63"
+          },
+          "primeFights": 7,
+          "primeFinishes": 5,
+          "primeFinishRate": 71.43,
+          "finishPressureScore": 4,
+          "eliteStakesRawScore": 4.1,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.5,
+            "topFiveWins": 1,
+            "champFormerChampWins": 1,
+            "fiveRoundTitleStageSample": 0.35,
+            "divisionStrengthContext": 0.25,
+            "note": "Rare two-division peak stakes, limited by short title-stage sample."
+          },
+          "eliteStakesScore": 6.56,
+          "total": 24.14,
+          "labels": [
+            "6-1 (85.71% win rate)",
+            "73.33% round control",
+            "5/7 finishes (71.43%)",
+            "4.1/5 elite-stakes validation: title 1.5/2, top-5 1/1.25, champs 1/1, stage 0.35/0.5, division 0.25/0.25",
+            "Explosive short prime with rare featherweight-to-lightweight separation"
+          ],
+          "dominanceProfile": "Explosive short prime with rare featherweight-to-lightweight separation",
+          "status": "review",
+          "primeWindow": null,
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window"
+        },
+        {
+          "fighter": "Demetrious Johnson",
+          "primeRecord": "12-1-1",
+          "primeWins": 12,
+          "primeLosses": 1,
+          "primeDraws": 1,
+          "primeNCs": 0,
+          "primeRecordPct": 89.29,
+          "primeRecordScore": 8.04,
+          "roundControlPct": 83.64,
+          "roundControlScore": 6.69,
+          "roundControlAudit": {
+            "fighter": "Demetrious Johnson",
+            "window": "McCall I 2012 → Cejudo II 2018",
+            "status": "review",
+            "roundsWon": 46,
+            "roundsLost": 9,
+            "roundsCounted": 55,
+            "roundControlPct": 83.64,
+            "fights": [
+              [
+                "Ian McCall I",
+                2,
+                1,
+                "draw included by actual rounds"
+              ],
+              [
+                "Joseph Benavidez I",
+                3,
+                2,
+                "split official decision"
+              ],
+              [
+                "John Dodson I",
+                3,
+                2
+              ],
+              [
+                "John Moraga",
+                5,
+                0
+              ],
+              [
+                "Joseph Benavidez II",
+                1,
+                0
+              ],
+              [
+                "Ali Bagautinov",
+                5,
+                0
+              ],
+              [
+                "Chris Cariaso",
+                2,
+                0
+              ],
+              [
+                "Kyoji Horiguchi",
+                5,
+                0
+              ],
+              [
+                "John Dodson II",
+                5,
+                0
+              ],
+              [
+                "Henry Cejudo I",
+                1,
+                0
+              ],
+              [
+                "Tim Elliott",
+                4,
+                1,
+                "Elliott R1"
+              ],
+              [
+                "Wilson Reis",
+                3,
+                0
+              ],
+              [
+                "Ray Borg",
+                5,
+                0
+              ],
+              [
+                "Henry Cejudo II",
+                2,
+                3,
+                "split official decision loss"
+              ]
+            ],
+            "version": "prime-round-control-audit-20260708d-jon-54-63"
+          },
+          "primeFights": 14,
+          "primeFinishes": 7,
+          "primeFinishRate": 50,
+          "finishPressureScore": 3,
+          "eliteStakesRawScore": 4,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.6,
+            "topFiveWins": 1.05,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.1
+          },
+          "eliteStakesScore": 6.4,
+          "total": 24.13,
+          "labels": [
+            "12-1-1 (89.29% win rate)",
+            "83.64% round control",
+            "7/14 finishes (50%)",
+            "4.4/5 elite-stakes validation: title 2/2, top-5 1.05/1.25, champs 0.75/1, stage 0.5/0.5, division 0.1/0.25",
+            "Complete flyweight control with elite title consistency"
+          ],
+          "dominanceProfile": "Complete flyweight control with elite title consistency",
+          "status": "review",
+          "primeWindow": null,
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window"
+        },
+        {
+          "fighter": "B.J. Penn",
+          "primeRecord": "6-2",
+          "primeWins": 6,
+          "primeLosses": 2,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 75,
+          "primeRecordScore": 6.75,
+          "roundControlPct": 75,
+          "roundControlScore": 6,
+          "roundControlAudit": {
+            "fighter": "B.J. Penn",
+            "roundsWon": 18,
+            "roundsCounted": 24,
+            "roundControlPct": 75,
+            "status": "review"
+          },
+          "primeFights": 8,
+          "primeFinishes": 6,
+          "primeFinishRate": 75,
+          "dominanceProfile": "Explosive lightweight peak with GSP resistance included",
+          "status": "review",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 4.5,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.25,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 1,
+            "fiveRoundTitleStageSample": 0.35,
+            "divisionStrengthContext": 0.25
+          },
+          "eliteStakesRawScore": 4.1,
+          "eliteStakesScore": 6.56,
+          "total": 23.81
+        },
+        {
+          "fighter": "Ilia Topuria",
+          "primeRecord": "4-1",
+          "primeWins": 4,
+          "primeLosses": 1,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 80,
+          "primeRecordScore": 7.2,
+          "roundControlPct": 81.25,
+          "roundControlScore": 6.5,
+          "roundControlAudit": {
+            "fighter": "Ilia Topuria",
+            "roundsWon": 13,
+            "roundsCounted": 16,
+            "roundControlPct": 81.25,
+            "status": "review"
+          },
+          "primeFights": 5,
+          "primeFinishes": 3,
+          "primeFinishRate": 60,
+          "dominanceProfile": "Short active championship burst with Gaethje title loss counted in prime",
+          "status": "review",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 4,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.25,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.25,
+            "divisionStrengthContext": 0.25
+          },
+          "eliteStakesRawScore": 3.75,
+          "eliteStakesScore": 6,
+          "total": 23.7
+        },
+        {
+          "fighter": "Daniel Cormier",
+          "primeRecord": "8-2",
+          "primeWins": 8,
+          "primeLosses": 2,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 80,
+          "primeRecordScore": 7.2,
+          "roundControlPct": 65.63,
+          "roundControlScore": 5.25,
+          "roundControlAudit": {
+            "fighter": "Daniel Cormier",
+            "window": "Jones I 2015 → Miocic III 2020",
+            "status": "review",
+            "roundsWon": 21,
+            "roundsLost": 11,
+            "roundsCounted": 32,
+            "roundControlPct": 65.63,
+            "fights": [
+              [
+                "Jon Jones I",
+                1,
+                4
+              ],
+              [
+                "Anthony Johnson I",
+                2,
+                1
+              ],
+              [
+                "Alexander Gustafsson",
+                3,
+                2,
+                "split official decision"
+              ],
+              [
+                "Anderson Silva",
+                3,
+                0
+              ],
+              [
+                "Anthony Johnson II",
+                2,
+                0
+              ],
+              [
+                "Volkan Oezdemir",
+                2,
+                0
+              ],
+              [
+                "Stipe Miocic I",
+                1,
+                0
+              ],
+              [
+                "Derrick Lewis",
+                2,
+                0
+              ],
+              [
+                "Stipe Miocic II",
+                3,
+                1,
+                "finish loss after early lead"
+              ],
+              [
+                "Stipe Miocic III",
+                2,
+                3
+              ]
+            ],
+            "version": "prime-round-control-audit-20260708d-jon-54-63"
+          },
+          "primeFights": 10,
+          "primeFinishes": 6,
+          "primeFinishRate": 60,
+          "finishPressureScore": 4,
+          "eliteStakesRawScore": 4.45,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.75,
+            "topFiveWins": 1,
+            "champFormerChampWins": 1,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.2,
+            "note": "Strong two-division validation, with Jones ceiling/context keeping it below max."
+          },
+          "eliteStakesScore": 7.12,
+          "total": 23.57,
+          "labels": [
+            "8-2 (80% win rate)",
+            "65.63% round control",
+            "6/10 finishes (60%)",
+            "4.45/5 elite-stakes validation: title 1.75/2, top-5 1/1.25, champs 1/1, stage 0.5/0.5, division 0.2/0.25",
+            "Two-division UFC prime with strong control and finishing"
+          ],
+          "dominanceProfile": "Two-division UFC prime with strong control and finishing",
+          "status": "review",
+          "primeWindow": null,
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window"
+        },
+        {
+          "fighter": "Charles Oliveira",
+          "primeRecord": "5-1",
+          "primeWins": 5,
+          "primeLosses": 1,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 83.33,
+          "primeRecordScore": 7.5,
+          "roundControlPct": 66.67,
+          "roundControlScore": 5.33,
+          "roundControlAudit": {
+            "fighter": "Charles Oliveira",
+            "window": "Ferguson 2020 → Dariush 2023",
+            "status": "review",
+            "roundsWon": 8,
+            "roundsLost": 4,
+            "roundsCounted": 12,
+            "roundControlPct": 66.67,
+            "fights": [
+              [
+                "Tony Ferguson",
+                3,
+                0
+              ],
+              [
+                "Michael Chandler",
+                1,
+                1
+              ],
+              [
+                "Dustin Poirier",
+                2,
+                1
+              ],
+              [
+                "Justin Gaethje",
+                1,
+                0
+              ],
+              [
+                "Islam Makhachev",
+                0,
+                2
+              ],
+              [
+                "Beneil Dariush",
+                1,
+                0
+              ]
+            ],
+            "version": "prime-round-control-audit-20260708d-jon-54-63"
+          },
+          "primeFights": 6,
+          "primeFinishes": 4,
+          "primeFinishRate": 66.67,
+          "finishPressureScore": 4,
+          "eliteStakesRawScore": 4.1,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.25,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 1,
+            "fiveRoundTitleStageSample": 0.35,
+            "divisionStrengthContext": 0.25,
+            "note": "Excellent lightweight stakes and names, but title-win/stage volume below max."
+          },
+          "eliteStakesScore": 6.56,
+          "total": 23.39,
+          "labels": [
+            "5-1 (83.33% win rate)",
+            "66.67% round control",
+            "4/6 finishes (66.67%)",
+            "4.1/5 elite-stakes validation: title 1.25/2, top-5 1.25/1.25, champs 1/1, stage 0.35/0.5, division 0.25/0.25",
+            "Chaotic lightweight finishing prime with elite resistance"
+          ],
+          "dominanceProfile": "Chaotic lightweight finishing prime with elite resistance",
+          "status": "review",
+          "primeWindow": null,
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window"
+        },
+        {
+          "fighter": "Ronda Rousey",
+          "primeRecord": "6-2",
+          "primeWins": 6,
+          "primeLosses": 2,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 75,
+          "primeRecordScore": 6.75,
+          "roundControlPct": 72.73,
+          "roundControlScore": 5.82,
+          "roundControlAudit": {
+            "fighter": "Ronda Rousey",
+            "roundsWon": 8,
+            "roundsLost": 3,
+            "roundsCounted": 11,
+            "roundControlPct": 72.73,
+            "status": "locked",
+            "source": "audited canonical-window fight ledger",
+            "window": "Liz Carmouche → Amanda Nunes",
+            "fights": [
+              [
+                "Liz Carmouche",
+                1,
+                0
+              ],
+              [
+                "Miesha Tate II",
+                3,
+                0
+              ],
+              [
+                "Sara McMann",
+                1,
+                0
+              ],
+              [
+                "Alexis Davis",
+                1,
+                0
+              ],
+              [
+                "Cat Zingano",
+                1,
+                0
+              ],
+              [
+                "Bethe Correia",
+                1,
+                0
+              ],
+              [
+                "Holly Holm",
+                0,
+                2
+              ],
+              [
+                "Amanda Nunes",
+                0,
+                1
+              ]
+            ]
+          },
+          "primeFights": 8,
+          "primeFinishes": 6,
+          "primeFinishRate": 75,
+          "finishPressureScore": 4.5,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 2,
+            "topFiveWins": 0.75,
+            "champFormerChampWins": 0.5,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.15
+          },
+          "eliteStakesRawScore": 3.9,
+          "eliteStakesScore": 6.24,
+          "total": 23.31,
+          "dominanceProfile": "Explosive UFC title prime with six straight finishes and overwhelming early separation, now correctly carrying the Holm and Nunes losses inside the same canonical window.",
+          "status": "locked",
+          "primeWindow": {
+            "start": "2013-02-23",
+            "startLabel": "Liz Carmouche",
+            "end": "2016-12-30",
+            "endLabel": "Amanda Nunes",
+            "endType": "unrecovered_elite_loss",
+            "endReason": "Holm did not end it alone because Rousey returned directly into another title fight. Nunes is endpoint.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "canonicalWindowRebuild": true,
+          "version": "prime-dominance-audit-batch-ten-20260710a-canonical-window-five"
+        },
+        {
+          "fighter": "Junior dos Santos",
+          "primeRecord": "9-2",
+          "primeWins": 9,
+          "primeLosses": 2,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 81.82,
+          "primeRecordScore": 7.36,
+          "roundControlPct": 70.45,
+          "roundControlScore": 5.64,
+          "roundControlAudit": {
+            "fighter": "Junior dos Santos",
+            "roundsWon": 31,
+            "roundsCounted": 44,
+            "roundControlPct": 70.45,
+            "status": "review"
+          },
+          "primeFights": 11,
+          "primeFinishes": 7,
+          "primeFinishRate": 63.64,
+          "dominanceProfile": "Heavyweight boxing prime with Cain trilogy damage fully counted",
+          "status": "review",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 4,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.5,
+            "topFiveWins": 1,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.15
+          },
+          "eliteStakesRawScore": 3.9,
+          "eliteStakesScore": 6.24,
+          "total": 23.24
+        },
+        {
+          "fighter": "Brock Lesnar",
+          "primeRecord": "4-1",
+          "primeWins": 4,
+          "primeLosses": 1,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 80,
+          "primeRecordScore": 7.2,
+          "roundControlPct": 75,
+          "roundControlScore": 6,
+          "roundControlAudit": {
+            "fighter": "Brock Lesnar",
+            "roundsWon": 12,
+            "roundsCounted": 16,
+            "roundControlPct": 75,
+            "status": "review"
+          },
+          "primeFights": 5,
+          "primeFinishes": 3,
+          "primeFinishRate": 60,
+          "dominanceProfile": "Short heavyweight title burst with Cain loss counted",
+          "status": "review",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 4,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.5,
+            "topFiveWins": 0.75,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.3,
+            "divisionStrengthContext": 0.15
+          },
+          "eliteStakesRawScore": 3.45,
+          "eliteStakesScore": 5.52,
+          "total": 22.72
+        },
+        {
+          "fighter": "Valentina Shevchenko",
+          "primeRecord": "review",
+          "primeWins": 12,
+          "primeLosses": 2,
+          "primeDraws": 1,
+          "primeNCs": 0,
+          "primeRecordPct": 83.33,
+          "primeRecordScore": 7.5,
+          "roundControlPct": 76.79,
+          "roundControlScore": 6.14,
+          "roundControlAudit": {
+            "fighter": "Valentina Shevchenko",
+            "window": "Holm 2016 → Grasso III 2024",
+            "status": "review",
+            "roundsWon": 43,
+            "roundsLost": 13,
+            "roundsCounted": 56,
+            "roundControlPct": 76.79,
+            "fights": [
+              [
+                "Holly Holm",
+                5,
+                0
+              ],
+              [
+                "Julianna Pena",
+                2,
+                0
+              ],
+              [
+                "Amanda Nunes II",
+                2,
+                3,
+                "split official decision loss"
+              ],
+              [
+                "Priscila Cachoeira",
+                2,
+                0
+              ],
+              [
+                "Joanna Jedrzejczyk",
+                5,
+                0
+              ],
+              [
+                "Jessica Eye",
+                2,
+                0
+              ],
+              [
+                "Liz Carmouche II",
+                0,
+                2,
+                "doctor stoppage loss"
+              ],
+              [
+                "Katlyn Chookagian",
+                3,
+                0
+              ],
+              [
+                "Jennifer Maia",
+                4,
+                1,
+                "Maia R2"
+              ],
+              [
+                "Jessica Andrade",
+                2,
+                0
+              ],
+              [
+                "Lauren Murphy",
+                4,
+                0
+              ],
+              [
+                "Taila Santos",
+                3,
+                2,
+                "split official decision"
+              ],
+              [
+                "Alexa Grasso I",
+                2,
+                2,
+                "finish loss"
+              ],
+              [
+                "Alexa Grasso II",
+                3,
+                2,
+                "draw included by actual rounds"
+              ],
+              [
+                "Alexa Grasso III",
+                4,
+                1
+              ]
+            ],
+            "version": "prime-round-control-audit-20260708d-jon-54-63"
+          },
+          "primeFights": 15,
+          "primeFinishes": 6,
+          "primeFinishRate": 40,
+          "finishPressureScore": 2,
+          "eliteStakesRawScore": 4.4,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 2,
+            "topFiveWins": 1,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.15,
+            "note": "Long title-stage sample, but flyweight division context below max."
+          },
+          "eliteStakesScore": 7.04,
+          "total": 22.68,
+          "labels": [
+            "review (83.33% win rate)",
+            "76.79% round control",
+            "6/15 finishes (40%)",
+            "4.4/5 elite-stakes validation: title 2/2, top-5 1/1.25, champs 0.75/1, stage 0.5/0.5, division 0.15/0.25",
+            "Technical flyweight control with late-rivalry resistance included"
+          ],
+          "dominanceProfile": "Technical flyweight control with late-rivalry resistance included",
+          "status": "review",
+          "primeWindow": null,
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window"
+        },
+        {
+          "fighter": "Jose Aldo",
+          "primeRecord": "UFC-only review",
+          "primeWins": 7,
+          "primeLosses": 1,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 87.5,
+          "primeRecordScore": 7.88,
+          "roundControlPct": 80.65,
+          "roundControlScore": 6.45,
+          "roundControlAudit": {
+            "fighter": "Jose Aldo",
+            "window": "Hominick 2011 → McGregor 2015",
+            "status": "locked",
+            "roundsWon": 25,
+            "roundsLost": 6,
+            "roundsCounted": 31,
+            "roundControlPct": 80.65,
+            "fights": [
+              [
+                "Mark Hominick",
+                4,
+                1
+              ],
+              [
+                "Kenny Florian",
+                4,
+                1
+              ],
+              [
+                "Chad Mendes I",
+                1,
+                0
+              ],
+              [
+                "Frankie Edgar I",
+                4,
+                1
+              ],
+              [
+                "Chan Sung Jung",
+                4,
+                0
+              ],
+              [
+                "Ricardo Lamas",
+                4,
+                1
+              ],
+              [
+                "Chad Mendes II",
+                4,
+                1
+              ],
+              [
+                "Conor McGregor",
+                0,
+                1
+              ]
+            ],
+            "version": "prime-round-control-audit-20260708d-jon-54-63"
+          },
+          "primeFights": 8,
+          "primeFinishes": 3,
+          "primeFinishRate": 37.5,
+          "finishPressureScore": 2,
+          "eliteStakesRawScore": 3.95,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.75,
+            "topFiveWins": 1,
+            "champFormerChampWins": 0.5,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.2,
+            "note": "UFC-only title-prime validation; WEC dominance remains excluded."
+          },
+          "eliteStakesScore": 6.32,
+          "total": 22.65,
+          "labels": [
+            "UFC-only review (87.5% win rate)",
+            "80.65% round control",
+            "3/8 finishes (37.5%)",
+            "3.95/5 elite-stakes validation: title 1.75/2, top-5 1/1.25, champs 0.5/1, stage 0.5/0.5, division 0.2/0.25",
+            "UFC title-prime from Hominick through McGregor, with WEC excluded"
+          ],
+          "dominanceProfile": "UFC title-prime from Hominick through McGregor, with WEC excluded",
+          "status": "locked-review",
+          "primeWindow": null,
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window"
+        },
+        {
+          "fighter": "T.J. Dillashaw",
+          "primeRecord": "8-3",
+          "primeWins": 8,
+          "primeLosses": 3,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 72.73,
+          "primeRecordScore": 6.55,
+          "roundControlPct": 61,
+          "roundControlScore": 4.88,
+          "roundControlAudit": {
+            "fighter": "T.J. Dillashaw",
+            "roundControlPct": 61,
+            "status": "locked",
+            "source": "approved packet-level conservative input",
+            "window": "Renan Barao I 2014 → Aljamain Sterling 2022"
+          },
+          "primeFights": 11,
+          "primeFinishes": 5,
+          "primeFinishRate": 45.45,
+          "finishPressureScore": 3,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 2,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 1,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.25
+          },
+          "eliteStakesRawScore": 5,
+          "eliteStakesScore": 8,
+          "total": 22.43,
+          "dominanceProfile": "Explosive two-reign bantamweight title prime with elite movement, finishing pressure, and max title-stage proof; PED history remains legacy context outside this category formula.",
+          "status": "locked",
+          "version": "prime-dominance-audit-batch-seven-20260710d-frankie-full-window"
+        },
+        {
+          "fighter": "Zhang Weili",
+          "primeRecord": "active",
+          "primeWins": 6,
+          "primeLosses": 2,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 75,
+          "primeRecordScore": 6.75,
+          "roundControlPct": 76.92,
+          "roundControlScore": 6.15,
+          "roundControlAudit": {
+            "fighter": "Zhang Weili",
+            "window": "Andrade 2019 → Yan 2024",
+            "status": "review",
+            "roundsWon": 20,
+            "roundsLost": 6,
+            "roundsCounted": 26,
+            "roundControlPct": 76.92,
+            "fights": [
+              [
+                "Jessica Andrade",
+                1,
+                0
+              ],
+              [
+                "Joanna Jedrzejczyk I",
+                3,
+                2,
+                "split-style close war scored by official result"
+              ],
+              [
+                "Rose Namajunas I",
+                0,
+                1
+              ],
+              [
+                "Rose Namajunas II",
+                2,
+                3,
+                "split official decision loss"
+              ],
+              [
+                "Joanna Jedrzejczyk II",
+                2,
+                0
+              ],
+              [
+                "Carla Esparza",
+                2,
+                0
+              ],
+              [
+                "Amanda Lemos",
+                5,
+                0
+              ],
+              [
+                "Yan Xiaonan",
+                5,
+                0
+              ]
+            ],
+            "version": "prime-round-control-audit-20260708d-jon-54-63"
+          },
+          "primeFights": 8,
+          "primeFinishes": 4,
+          "primeFinishRate": 50,
+          "finishPressureScore": 3,
+          "eliteStakesRawScore": 3.95,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.5,
+            "topFiveWins": 1,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.2,
+            "note": "Strong strawweight title-stage proof with second-reign validation."
+          },
+          "eliteStakesScore": 6.32,
+          "total": 22.22,
+          "labels": [
+            "active (75% win rate)",
+            "76.92% round control",
+            "4/8 finishes (50%)",
+            "3.95/5 elite-stakes validation: title 1.5/2, top-5 1/1.25, champs 0.75/1, stage 0.5/0.5, division 0.2/0.25",
+            "Explosive strawweight prime with dominant second-reign control"
+          ],
+          "dominanceProfile": "Explosive strawweight prime with dominant second-reign control",
+          "status": "review",
+          "primeWindow": null,
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window"
+        },
+        {
+          "fighter": "Kamaru Usman",
+          "primeRecord": "10-2",
+          "primeWins": 10,
+          "primeLosses": 2,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 83.33,
+          "primeRecordScore": 7.5,
+          "roundControlPct": 75,
+          "roundControlScore": 6,
+          "roundControlAudit": {
+            "fighter": "Kamaru Usman",
+            "window": "RDA 2018 → Edwards III 2023",
+            "status": "locked-review",
+            "roundsWon": 30,
+            "roundsLost": 10,
+            "roundsCounted": 40,
+            "roundControlPct": 75,
+            "fights": [
+              [
+                "Rafael dos Anjos",
+                5,
+                0
+              ],
+              [
+                "Tyron Woodley",
+                5,
+                0
+              ],
+              [
+                "Colby Covington I",
+                3,
+                2
+              ],
+              [
+                "Jorge Masvidal I",
+                5,
+                0
+              ],
+              [
+                "Gilbert Burns",
+                2,
+                1
+              ],
+              [
+                "Jorge Masvidal II",
+                2,
+                0
+              ],
+              [
+                "Colby Covington II",
+                3,
+                2
+              ],
+              [
+                "Leon Edwards II",
+                3,
+                2,
+                "finish loss after leading"
+              ],
+              [
+                "Leon Edwards III",
+                2,
+                3
+              ]
+            ],
+            "version": "prime-round-control-audit-20260708d-jon-54-63"
+          },
+          "primeFights": 12,
+          "primeFinishes": 3,
+          "primeFinishRate": 25,
+          "finishPressureScore": 1,
+          "eliteStakesRawScore": 4.75,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 2,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.25,
+            "note": "Full title/top-5/stage proof, just below max champion-name component."
+          },
+          "eliteStakesScore": 7.6,
+          "total": 22.1,
+          "labels": [
+            "10-2 (83.33% win rate)",
+            "75% round control",
+            "3/12 finishes (25%)",
+            "4.75/5 elite-stakes validation: title 2/2, top-5 1.25/1.25, champs 0.75/1, stage 0.5/0.5, division 0.25/0.25",
+            "Powerful welterweight control run with Edwards losses included"
+          ],
+          "dominanceProfile": "Powerful welterweight control run with Edwards losses included",
+          "status": "locked-review",
+          "primeWindow": null,
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window"
+        },
+        {
+          "fighter": "Alexander Volkanovski",
+          "primeRecord": "active elite prime",
+          "primeWins": 9,
+          "primeLosses": 4,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 69.23,
+          "primeRecordScore": 6.23,
+          "roundControlPct": 77.14,
+          "roundControlScore": 6.17,
+          "roundControlAudit": {
+            "fighter": "Alexander Volkanovski",
+            "window": "Aldo 2019 → active, Islam included",
+            "status": "locked-review",
+            "roundsWon": 27,
+            "roundsLost": 8,
+            "roundsCounted": 35,
+            "roundControlPct": 77.14,
+            "fights": [
+              [
+                "Jose Aldo",
+                3,
+                0
+              ],
+              [
+                "Chad Mendes",
+                2,
+                0
+              ],
+              [
+                "Max Holloway I",
+                4,
+                1
+              ],
+              [
+                "Max Holloway II",
+                3,
+                2,
+                "controversial official decision"
+              ],
+              [
+                "Brian Ortega",
+                5,
+                0
+              ],
+              [
+                "Chan Sung Jung",
+                4,
+                0
+              ],
+              [
+                "Islam Makhachev I",
+                2,
+                3,
+                "upward-division loss included"
+              ],
+              [
+                "Yair Rodriguez",
+                3,
+                0
+              ],
+              [
+                "Islam Makhachev II",
+                0,
+                1,
+                "upward-division finish loss"
+              ],
+              [
+                "Ilia Topuria",
+                1,
+                1,
+                "finish loss"
+              ]
+            ],
+            "version": "prime-round-control-audit-20260708d-jon-54-63"
+          },
+          "primeFights": 13,
+          "primeFinishes": 4,
+          "primeFinishRate": 30.77,
+          "finishPressureScore": 2,
+          "eliteStakesRawScore": 4.75,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 2,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.25,
+            "note": "Full featherweight title/top-5/stage proof, just short of max champion-name component."
+          },
+          "eliteStakesScore": 7.6,
+          "total": 22,
+          "labels": [
+            "active elite prime (69.23% win rate)",
+            "77.14% round control",
+            "4/13 finishes (30.77%)",
+            "4.75/5 elite-stakes validation: title 2/2, top-5 1.25/1.25, champs 0.75/1, stage 0.5/0.5, division 0.25/0.25",
+            "High-IQ featherweight control with Islam and Topuria resistance included"
+          ],
+          "dominanceProfile": "High-IQ featherweight control with Islam and Topuria resistance included",
+          "status": "locked-review",
+          "primeWindow": null,
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window"
+        },
+        {
+          "fighter": "Tony Ferguson",
+          "primeRecord": "8-1",
+          "primeWins": 8,
+          "primeLosses": 1,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 88.89,
+          "primeRecordScore": 8,
+          "roundControlPct": 68.57,
+          "roundControlScore": 5.49,
+          "roundControlAudit": {
+            "fighter": "Tony Ferguson",
+            "roundsWon": 24,
+            "roundsCounted": 35,
+            "roundControlPct": 68.57,
+            "status": "review"
+          },
+          "primeFights": 9,
+          "primeFinishes": 5,
+          "primeFinishRate": 55.56,
+          "dominanceProfile": "Chaotic lightweight win streak with Gaethje collapse counted",
+          "status": "review",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 3,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 0.75,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.35,
+            "divisionStrengthContext": 0.25
+          },
+          "eliteStakesRawScore": 3.35,
+          "eliteStakesScore": 5.36,
+          "total": 21.85
+        },
+        {
+          "fighter": "Khamzat Chimaev",
+          "primeRecord": "6-1",
+          "primeWins": 6,
+          "primeLosses": 1,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 85.71,
+          "primeRecordScore": 7.71,
+          "roundControlPct": 76.19,
+          "roundControlScore": 6.1,
+          "roundControlAudit": {
+            "fighter": "Khamzat Chimaev",
+            "roundsWon": 16,
+            "roundsCounted": 21,
+            "roundControlPct": 76.19,
+            "status": "review"
+          },
+          "primeFights": 7,
+          "primeFinishes": 4,
+          "primeFinishRate": 57.14,
+          "dominanceProfile": "Active control-heavy prime with Strickland title loss counted",
+          "status": "review",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 3,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 0.75,
+            "topFiveWins": 1,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.35,
+            "divisionStrengthContext": 0.25
+          },
+          "eliteStakesRawScore": 3.1,
+          "eliteStakesScore": 4.96,
+          "total": 21.77
+        },
+        {
+          "fighter": "Alex Pereira",
+          "primeRecord": "8-3",
+          "primeWins": 8,
+          "primeLosses": 3,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 72.73,
+          "primeRecordScore": 6.55,
+          "roundControlPct": 53.57,
+          "roundControlScore": 4.29,
+          "roundControlAudit": {
+            "fighter": "Alex Pereira",
+            "roundsWon": 15,
+            "roundsLost": 13,
+            "roundsCounted": 28,
+            "roundControlPct": 53.57,
+            "status": "locked",
+            "source": "approved canonical-window fight ledger",
+            "window": "Sean Strickland → Ciryl Gane",
+            "fights": [
+              [
+                "Sean Strickland",
+                1,
+                0
+              ],
+              [
+                "Israel Adesanya I",
+                2,
+                3,
+                "finish win after trailing"
+              ],
+              [
+                "Israel Adesanya II",
+                1,
+                1,
+                "finish loss"
+              ],
+              [
+                "Jan Blachowicz",
+                2,
+                1
+              ],
+              [
+                "Jiri Prochazka I",
+                1,
+                1
+              ],
+              [
+                "Jamahal Hill",
+                1,
+                0
+              ],
+              [
+                "Jiri Prochazka II",
+                2,
+                0
+              ],
+              [
+                "Khalil Rountree Jr.",
+                2,
+                2
+              ],
+              [
+                "Magomed Ankalaev I",
+                2,
+                3
+              ],
+              [
+                "Magomed Ankalaev II",
+                1,
+                0
+              ],
+              [
+                "Ciryl Gane",
+                0,
+                2,
+                "upward-division finish loss"
+              ]
+            ],
+            "version": "prime-dominance-audit-batch-eleven-20260710a-tito-pereira-hughes"
+          },
+          "primeFights": 11,
+          "primeFinishes": 7,
+          "primeFinishRate": 63.64,
+          "finishPressureScore": 4,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.5,
+            "topFiveWins": 1,
+            "champFormerChampWins": 1,
+            "fiveRoundTitleStageSample": 0.35,
+            "divisionStrengthContext": 0.2
+          },
+          "eliteStakesRawScore": 4.05,
+          "eliteStakesScore": 6.48,
+          "total": 21.32,
+          "dominanceProfile": "Explosive two-division championship prime with seven finishes, now fully carrying the Adesanya, Ankalaev, and Gane resistance inside the same canonical window.",
+          "status": "locked",
+          "primeWindow": {
+            "start": "2022-07-02",
+            "startLabel": "Sean Strickland",
+            "end": null,
+            "endLabel": "Current title-level form",
+            "endType": "open_current_title_level",
+            "endReason": "Adesanya finish loss was recovered immediately; current title-level form keeps window open.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "canonicalWindowRebuild": true,
+          "version": "prime-dominance-audit-batch-eleven-20260710a-tito-pereira-hughes"
+        },
+        {
+          "fighter": "Max Holloway",
+          "primeRecord": "review",
+          "primeWins": 14,
+          "primeLosses": 6,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 70,
+          "primeRecordScore": 6.3,
+          "roundControlPct": 76.81,
+          "roundControlScore": 6.14,
+          "roundControlAudit": {
+            "fighter": "Max Holloway",
+            "window": "Swanson 2015 → active",
+            "status": "locked-review",
+            "roundsWon": 53,
+            "roundsLost": 16,
+            "roundsCounted": 69,
+            "roundControlPct": 76.81,
+            "fights": [
+              [
+                "Cub Swanson",
+                3,
+                0
+              ],
+              [
+                "Charles Oliveira",
+                1,
+                0
+              ],
+              [
+                "Jeremy Stephens",
+                3,
+                0
+              ],
+              [
+                "Ricardo Lamas",
+                3,
+                0
+              ],
+              [
+                "Anthony Pettis",
+                3,
+                0
+              ],
+              [
+                "Jose Aldo I",
+                3,
+                0
+              ],
+              [
+                "Jose Aldo II",
+                3,
+                0
+              ],
+              [
+                "Brian Ortega",
+                4,
+                0
+              ],
+              [
+                "Dustin Poirier II",
+                1,
+                4
+              ],
+              [
+                "Frankie Edgar",
+                5,
+                0
+              ],
+              [
+                "Alexander Volkanovski I",
+                1,
+                4
+              ],
+              [
+                "Alexander Volkanovski II",
+                2,
+                3,
+                "controversial official decision"
+              ],
+              [
+                "Calvin Kattar",
+                5,
+                0
+              ],
+              [
+                "Yair Rodriguez",
+                3,
+                2
+              ],
+              [
+                "Arnold Allen",
+                4,
+                1
+              ],
+              [
+                "Chan Sung Jung",
+                3,
+                0
+              ],
+              [
+                "Justin Gaethje",
+                5,
+                0
+              ],
+              [
+                "Ilia Topuria",
+                1,
+                2,
+                "finish loss"
+              ]
+            ],
+            "version": "prime-round-control-audit-20260708d-jon-54-63"
+          },
+          "primeFights": 20,
+          "primeFinishes": 7,
+          "primeFinishRate": 35,
+          "finishPressureScore": 2,
+          "eliteStakesRawScore": 4.25,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.5,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.25,
+            "note": "Excellent featherweight stakes profile, but title-win volume below the max champions."
+          },
+          "eliteStakesScore": 6.8,
+          "total": 21.24,
+          "labels": [
+            "review (70% win rate)",
+            "76.81% round control",
+            "7/20 finishes (35%)",
+            "4.25/5 elite-stakes validation: title 1.5/2, top-5 1.25/1.25, champs 0.75/1, stage 0.5/0.5, division 0.25/0.25",
+            "Relentless featherweight volume with full active-window resistance included"
+          ],
+          "dominanceProfile": "Relentless featherweight volume with full active-window resistance included",
+          "status": "review",
+          "primeWindow": null,
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window"
+        },
+        {
+          "fighter": "Randy Couture",
+          "primeRecord": "11-6",
+          "primeWins": 11,
+          "primeLosses": 6,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 64.71,
+          "primeRecordScore": 5.82,
+          "roundControlPct": 75,
+          "roundControlScore": 6,
+          "roundControlAudit": {
+            "fighter": "Randy Couture",
+            "roundsWon": 36,
+            "roundsLost": 12,
+            "roundsCounted": 48,
+            "roundControlPct": 75,
+            "status": "locked",
+            "source": "audited canonical-window fight ledger",
+            "window": "Vitor Belfort I → Brock Lesnar",
+            "fights": [
+              [
+                "Vitor Belfort I",
+                1,
+                0
+              ],
+              [
+                "Maurice Smith",
+                1,
+                0,
+                "legacy single long regulation segment"
+              ],
+              [
+                "Kevin Randleman",
+                1,
+                2
+              ],
+              [
+                "Pedro Rizzo I",
+                3,
+                2
+              ],
+              [
+                "Pedro Rizzo II",
+                3,
+                0
+              ],
+              [
+                "Josh Barnett",
+                1,
+                1
+              ],
+              [
+                "Ricco Rodriguez",
+                3,
+                2
+              ],
+              [
+                "Chuck Liddell I",
+                3,
+                0
+              ],
+              [
+                "Tito Ortiz",
+                5,
+                0
+              ],
+              [
+                "Vitor Belfort II",
+                0,
+                1,
+                "cut stoppage"
+              ],
+              [
+                "Vitor Belfort III",
+                3,
+                0
+              ],
+              [
+                "Chuck Liddell II",
+                0,
+                1
+              ],
+              [
+                "Mike van Arsdale",
+                2,
+                1
+              ],
+              [
+                "Chuck Liddell III",
+                1,
+                1
+              ],
+              [
+                "Tim Sylvia",
+                5,
+                0
+              ],
+              [
+                "Gabriel Gonzaga",
+                3,
+                0
+              ],
+              [
+                "Brock Lesnar",
+                1,
+                1
+              ]
+            ]
+          },
+          "primeFights": 17,
+          "primeFinishes": 7,
+          "primeFinishRate": 41.18,
+          "finishPressureScore": 2,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 2,
+            "topFiveWins": 1,
+            "champFormerChampWins": 0.8,
+            "fiveRoundTitleStageSample": 0.35,
+            "divisionStrengthContext": 0.15
+          },
+          "eliteStakesRawScore": 4.3,
+          "eliteStakesScore": 6.88,
+          "total": 20.7,
+          "dominanceProfile": "Full UFC championship arc across heavyweight and light heavyweight: unusually strong round control and title-stage proof over a long interrupted span, balanced by six losses inside the locked prime window.",
+          "status": "locked",
+          "primeWindow": {
+            "start": "1997-10-17",
+            "startLabel": "Vitor Belfort I",
+            "end": "2008-11-15",
+            "endLabel": "Brock Lesnar",
+            "endType": "unrecovered_elite_loss",
+            "endReason": "Liddell losses were recovered by heavyweight title comeback. Brock closes late UFC elite-prime window.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "canonicalWindowRebuild": true,
+          "version": "prime-dominance-audit-batch-ten-20260710a-canonical-window-five"
+        },
+        {
+          "fighter": "Aljamain Sterling",
+          "primeRecord": "9-2",
+          "primeWins": 9,
+          "primeLosses": 2,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 81.82,
+          "primeRecordScore": 7.36,
+          "roundControlPct": 64,
+          "roundControlScore": 5.12,
+          "roundControlAudit": {
+            "fighter": "Aljamain Sterling",
+            "roundControlPct": 64,
+            "status": "locked",
+            "source": "approved packet-level conservative input",
+            "window": "Pedro Munhoz 2019 → Youssef Zalal"
+          },
+          "primeFights": 11,
+          "primeFinishes": 2,
+          "primeFinishRate": 18.18,
+          "finishPressureScore": 1,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.75,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.25
+          },
+          "eliteStakesRawScore": 4.5,
+          "eliteStakesScore": 7.2,
+          "total": 20.68,
+          "dominanceProfile": "Long modern bantamweight control prime with elite back-taking and title-stage proof, limited by low finish pressure and the O’Malley/Evloev losses.",
+          "status": "locked",
+          "version": "prime-dominance-audit-batch-seven-20260710d-frankie-full-window"
+        },
+        {
+          "fighter": "Robbie Lawler",
+          "primeRecord": "7-2",
+          "primeWins": 7,
+          "primeLosses": 2,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 77.78,
+          "primeRecordScore": 7,
+          "roundControlPct": 60,
+          "roundControlScore": 4.8,
+          "roundControlAudit": {
+            "fighter": "Robbie Lawler",
+            "roundsWon": 27,
+            "roundsCounted": 45,
+            "roundControlPct": 60,
+            "status": "review"
+          },
+          "primeFights": 9,
+          "primeFinishes": 4,
+          "primeFinishRate": 44.44,
+          "dominanceProfile": "Violent welterweight title prime; greatness came through wars, not clean control",
+          "status": "review",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 2,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.5,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.2
+          },
+          "eliteStakesRawScore": 4.2,
+          "eliteStakesScore": 6.72,
+          "total": 20.52
+        },
+        {
+          "fighter": "Merab Dvalishvili",
+          "primeRecord": "6-1",
+          "primeWins": 6,
+          "primeLosses": 1,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 85.71,
+          "primeRecordScore": 7.71,
+          "roundControlPct": 75,
+          "roundControlScore": 6,
+          "roundControlAudit": {
+            "fighter": "Merab Dvalishvili",
+            "roundsWon": 21,
+            "roundsCounted": 28,
+            "roundControlPct": 75,
+            "status": "review"
+          },
+          "primeFights": 7,
+          "primeFinishes": 1,
+          "primeFinishRate": 14.29,
+          "dominanceProfile": "Relentless bantamweight control run with Yan title loss counted in prime",
+          "status": "review",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 0.5,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.25,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.4,
+            "divisionStrengthContext": 0.25
+          },
+          "eliteStakesRawScore": 3.9,
+          "eliteStakesScore": 6.24,
+          "total": 20.45
+        },
+        {
+          "fighter": "Frankie Edgar",
+          "primeRecord": "13-7-1",
+          "primeWins": 13,
+          "primeLosses": 7,
+          "primeDraws": 1,
+          "primeNCs": 0,
+          "primeRecordPct": 64.29,
+          "primeRecordScore": 5.79,
+          "roundControlPct": 67.11,
+          "roundControlScore": 5.37,
+          "roundControlAudit": {
+            "fighter": "Frankie Edgar",
+            "roundsWon": 51,
+            "roundsLost": 25,
+            "roundsCounted": 76,
+            "roundControlPct": 67.11,
+            "status": "locked",
+            "source": "audited fight-by-fight prime round ledger",
+            "window": "Sean Sherk 2009 → Max Holloway 2019",
+            "fights": [
+              [
+                "Sean Sherk",
+                3,
+                0
+              ],
+              [
+                "Matt Veach",
+                2,
+                0
+              ],
+              [
+                "B.J. Penn I",
+                4,
+                1
+              ],
+              [
+                "B.J. Penn II",
+                5,
+                0
+              ],
+              [
+                "Gray Maynard II",
+                3,
+                2,
+                "draw included by actual rounds"
+              ],
+              [
+                "Gray Maynard III",
+                3,
+                1
+              ],
+              [
+                "Benson Henderson I",
+                2,
+                3
+              ],
+              [
+                "Benson Henderson II",
+                2,
+                3
+              ],
+              [
+                "Jose Aldo I",
+                1,
+                4
+              ],
+              [
+                "Charles Oliveira",
+                3,
+                0
+              ],
+              [
+                "B.J. Penn III",
+                3,
+                0
+              ],
+              [
+                "Cub Swanson I",
+                5,
+                0
+              ],
+              [
+                "Urijah Faber",
+                5,
+                0
+              ],
+              [
+                "Chad Mendes",
+                1,
+                0
+              ],
+              [
+                "Jose Aldo II",
+                1,
+                4
+              ],
+              [
+                "Jeremy Stephens",
+                3,
+                0
+              ],
+              [
+                "Yair Rodriguez",
+                2,
+                0
+              ],
+              [
+                "Brian Ortega",
+                0,
+                1,
+                "finish loss"
+              ],
+              [
+                "Cub Swanson II",
+                3,
+                0
+              ],
+              [
+                "Chan Sung Jung",
+                0,
+                1,
+                "finish loss"
+              ],
+              [
+                "Max Holloway",
+                0,
+                5
+              ]
+            ]
+          },
+          "primeFights": 21,
+          "primeFinishes": 6,
+          "primeFinishRate": 28.57,
+          "finishPressureScore": 2,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.75,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.25
+          },
+          "eliteStakesRawScore": 4.5,
+          "eliteStakesScore": 7.2,
+          "total": 20.36,
+          "dominanceProfile": "Exceptional decade-long lightweight-to-featherweight elite prime built on round-winning consistency, recovery, durability, and repeated title-stage relevance rather than overwhelming finish pressure.",
+          "status": "locked",
+          "version": "prime-dominance-audit-batch-seven-20260710d-frankie-full-window"
+        },
+        {
+          "fighter": "Joanna Jedrzejczyk",
+          "primeRecord": "6-2",
+          "primeWins": 6,
+          "primeLosses": 2,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 75,
+          "primeRecordScore": 6.75,
+          "roundControlPct": 80.65,
+          "roundControlScore": 6.45,
+          "roundControlAudit": {
+            "fighter": "Joanna Jedrzejczyk",
+            "roundsWon": 25,
+            "roundsCounted": 31,
+            "roundControlPct": 80.65,
+            "status": "review"
+          },
+          "primeFights": 8,
+          "primeFinishes": 2,
+          "primeFinishRate": 25,
+          "dominanceProfile": "Strawweight title-control prime with Rose losses included",
+          "status": "review",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 1,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 2,
+            "topFiveWins": 0.75,
+            "champFormerChampWins": 0.3,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.25
+          },
+          "eliteStakesRawScore": 3.8,
+          "eliteStakesScore": 6.08,
+          "total": 20.28
+        },
+        {
+          "fighter": "Tito Ortiz",
+          "primeRecord": "11-3",
+          "primeWins": 11,
+          "primeLosses": 3,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 78.57,
+          "primeRecordScore": 7.07,
+          "roundControlPct": 62.16,
+          "roundControlScore": 4.97,
+          "roundControlAudit": {
+            "fighter": "Tito Ortiz",
+            "roundsWon": 23,
+            "roundsLost": 14,
+            "roundsCounted": 37,
+            "roundControlPct": 62.16,
+            "status": "locked",
+            "source": "approved canonical-window fight ledger",
+            "window": "Wanderlei Silva → Chuck Liddell II",
+            "fights": [
+              [
+                "Wanderlei Silva",
+                4,
+                1
+              ],
+              [
+                "Yuki Kondo",
+                1,
+                0
+              ],
+              [
+                "Evan Tanner",
+                1,
+                0
+              ],
+              [
+                "Elvis Sinosic",
+                1,
+                0
+              ],
+              [
+                "Vladimir Matyushenko",
+                4,
+                1
+              ],
+              [
+                "Ken Shamrock I",
+                3,
+                0
+              ],
+              [
+                "Randy Couture",
+                0,
+                5
+              ],
+              [
+                "Chuck Liddell I",
+                0,
+                2
+              ],
+              [
+                "Patrick Cote",
+                3,
+                0
+              ],
+              [
+                "Vitor Belfort",
+                2,
+                1
+              ],
+              [
+                "Forrest Griffin I",
+                2,
+                1
+              ],
+              [
+                "Ken Shamrock II",
+                1,
+                0
+              ],
+              [
+                "Ken Shamrock III",
+                1,
+                0
+              ],
+              [
+                "Chuck Liddell II",
+                0,
+                3
+              ]
+            ],
+            "version": "prime-dominance-audit-batch-eleven-20260710a-tito-pereira-hughes"
+          },
+          "primeFights": 14,
+          "primeFinishes": 6,
+          "primeFinishRate": 42.86,
+          "finishPressureScore": 2,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 2,
+            "topFiveWins": 0.8,
+            "champFormerChampWins": 0.5,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.1
+          },
+          "eliteStakesRawScore": 3.9,
+          "eliteStakesScore": 6.24,
+          "total": 20.28,
+          "dominanceProfile": "Full early-UFC light-heavyweight title and recovery window. Championship volume remains strong, but Couture and both Liddell losses plus only moderate round control cap the dominance score.",
+          "status": "locked",
+          "primeWindow": {
+            "start": "2000-04-14",
+            "startLabel": "Wanderlei Silva",
+            "end": "2006-12-30",
+            "endLabel": "Chuck Liddell II",
+            "endType": "unrecovered_elite_loss",
+            "endReason": "Tito re-proved elite form after Chuck I with wins over Patrick Cote, Vitor Belfort, and Forrest Griffin before returning to a UFC title fight. Chuck II is the unrecovered endpoint.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "approved-fighter-audit-corrections-20260710a-tito-pereira-hughes-kayla"
+          },
+          "canonicalWindowRebuild": true,
+          "version": "prime-dominance-audit-batch-eleven-20260710a-tito-pereira-hughes"
+        },
+        {
+          "fighter": "Dricus du Plessis",
+          "primeRecord": "4-1",
+          "primeWins": 4,
+          "primeLosses": 1,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 80,
+          "primeRecordScore": 7.2,
+          "roundControlPct": 52.38,
+          "roundControlScore": 4.19,
+          "roundControlAudit": {
+            "fighter": "Dricus du Plessis",
+            "roundsWon": 11,
+            "roundsCounted": 21,
+            "roundControlPct": 52.38,
+            "status": "locked",
+            "source": "approved Whittaker-through-Khamzat fight ledger",
+            "window": "Robert Whittaker 2023 → Khamzat Chimaev 2025"
+          },
+          "primeFights": 5,
+          "primeFinishes": 2,
+          "primeFinishRate": 40,
+          "finishPressureScore": 2,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.75,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.35,
+            "divisionStrengthContext": 0.2
+          },
+          "eliteStakesRawScore": 4.3,
+          "eliteStakesScore": 6.88,
+          "total": 20.27,
+          "dominanceProfile": "Compact modern middleweight title burst with elite wins and real finishing threat, capped by close round control and the Khamzat title loss.",
+          "status": "locked",
+          "version": "prime-dominance-audit-batch-seven-20260710d-frankie-full-window"
+        },
+        {
+          "fighter": "Tyron Woodley",
+          "primeRecord": "7-3-1",
+          "primeWins": 7,
+          "primeLosses": 3,
+          "primeDraws": 1,
+          "primeNCs": 0,
+          "primeRecordPct": 68.18,
+          "primeRecordScore": 6.14,
+          "roundControlPct": 51.35,
+          "roundControlScore": 4.11,
+          "roundControlAudit": {
+            "fighter": "Tyron Woodley",
+            "roundsWon": 19,
+            "roundsCounted": 37,
+            "roundControlPct": 51.35,
+            "status": "locked",
+            "source": "approved Condit-through-Burns fight ledger",
+            "window": "Carlos Condit 2014 → Gilbert Burns 2020"
+          },
+          "primeFights": 11,
+          "primeFinishes": 4,
+          "primeFinishRate": 36.36,
+          "finishPressureScore": 2,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 2,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 1,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.2
+          },
+          "eliteStakesRawScore": 4.95,
+          "eliteStakesScore": 7.92,
+          "total": 20.17,
+          "dominanceProfile": "Strong welterweight champion prime with major elite-stage proof, offset by inconsistent round control and the Usman/Burns ending.",
+          "status": "locked",
+          "version": "prime-dominance-audit-batch-seven-20260710d-frankie-full-window"
+        },
+        {
+          "fighter": "Rose Namajunas",
+          "primeRecord": "5-2",
+          "primeWins": 5,
+          "primeLosses": 2,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 71.43,
+          "primeRecordScore": 6.43,
+          "roundControlPct": 59.09,
+          "roundControlScore": 4.73,
+          "roundControlAudit": {
+            "fighter": "Rose Namajunas",
+            "roundsWon": 13,
+            "roundsCounted": 22,
+            "roundControlPct": 59.09,
+            "status": "locked"
+          },
+          "primeFights": 7,
+          "primeFinishes": 2,
+          "primeFinishRate": 28.57,
+          "dominanceProfile": "Title-prime strawweight giant killer with Andrade and Esparza resistance counted",
+          "status": "locked",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 1,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 2,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 1,
+            "fiveRoundTitleStageSample": 0.45,
+            "divisionStrengthContext": 0.25
+          },
+          "eliteStakesRawScore": 4.95,
+          "eliteStakesScore": 7.92,
+          "total": 20.08
+        },
+        {
+          "fighter": "Dominick Cruz",
+          "primeRecord": "4-1",
+          "primeWins": 4,
+          "primeLosses": 1,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 80,
+          "primeRecordScore": 7.2,
+          "roundControlPct": 77.78,
+          "roundControlScore": 6.22,
+          "roundControlAudit": {
+            "fighter": "Dominick Cruz",
+            "roundsWon": 14,
+            "roundsCounted": 18,
+            "roundControlPct": 77.78,
+            "status": "review"
+          },
+          "primeFights": 5,
+          "primeFinishes": 1,
+          "primeFinishRate": 20,
+          "dominanceProfile": "UFC-only title prime with WEC reign excluded",
+          "status": "review",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 1,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.25,
+            "topFiveWins": 1,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.35,
+            "divisionStrengthContext": 0.15
+          },
+          "eliteStakesRawScore": 3.5,
+          "eliteStakesScore": 5.6,
+          "total": 20.02
+        },
+        {
+          "fighter": "Michael Bisping",
+          "primeRecord": "5-1",
+          "primeWins": 5,
+          "primeLosses": 1,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 83.33,
+          "primeRecordScore": 7.5,
+          "roundControlPct": 64.29,
+          "roundControlScore": 5.14,
+          "roundControlAudit": {
+            "fighter": "Michael Bisping",
+            "roundsWon": 18,
+            "roundsCounted": 28,
+            "roundControlPct": 64.29,
+            "status": "review"
+          },
+          "primeFights": 6,
+          "primeFinishes": 2,
+          "primeFinishRate": 33.33,
+          "dominanceProfile": "Late-career middleweight title peak built on grit more than clean dominance",
+          "status": "review",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 2,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.25,
+            "topFiveWins": 0.75,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.4,
+            "divisionStrengthContext": 0.15
+          },
+          "eliteStakesRawScore": 3.3,
+          "eliteStakesScore": 5.28,
+          "total": 19.92
+        },
+        {
+          "fighter": "Lyoto Machida",
+          "primeRecord": "8-4",
+          "primeWins": 8,
+          "primeLosses": 4,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 66.67,
+          "primeRecordScore": 6,
+          "roundControlPct": 70.21,
+          "roundControlScore": 5.62,
+          "roundControlAudit": {
+            "fighter": "Lyoto Machida",
+            "roundsWon": 33,
+            "roundsCounted": 47,
+            "roundControlPct": 70.21,
+            "status": "review"
+          },
+          "primeFights": 12,
+          "primeFinishes": 4,
+          "primeFinishRate": 33.33,
+          "dominanceProfile": "Technical light-heavyweight prime with Jones and Weidman resistance counted",
+          "status": "review",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 2,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.25,
+            "topFiveWins": 1,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.15
+          },
+          "eliteStakesRawScore": 3.65,
+          "eliteStakesScore": 5.84,
+          "total": 19.46
+        },
+        {
+          "fighter": "Jessica Andrade",
+          "primeRecord": "5-3",
+          "primeWins": 5,
+          "primeLosses": 3,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 62.5,
+          "primeRecordScore": 5.63,
+          "roundControlPct": 64.71,
+          "roundControlScore": 5.18,
+          "roundControlAudit": {
+            "fighter": "Jessica Andrade",
+            "roundsWon": 22,
+            "roundsCounted": 34,
+            "roundControlPct": 64.71,
+            "status": "locked"
+          },
+          "primeFights": 8,
+          "primeFinishes": 3,
+          "primeFinishRate": 37.5,
+          "dominanceProfile": "Explosive multi-division prime with elite wins and elite losses both counted",
+          "status": "locked",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 2,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.25,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 1,
+            "fiveRoundTitleStageSample": 0.45,
+            "divisionStrengthContext": 0.2
+          },
+          "eliteStakesRawScore": 4.15,
+          "eliteStakesScore": 6.64,
+          "total": 19.45
+        },
+        {
+          "fighter": "Israel Adesanya",
+          "primeRecord": "8-4",
+          "primeWins": 8,
+          "primeLosses": 4,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 66.67,
+          "primeRecordScore": 6,
+          "roundControlPct": 62,
+          "roundControlScore": 4.96,
+          "roundControlAudit": {
+            "fighter": "Israel Adesanya",
+            "roundsWon": 31,
+            "roundsLost": 19,
+            "roundsCounted": 50,
+            "roundControlPct": 62,
+            "status": "locked",
+            "source": "audited canonical-window fight ledger",
+            "window": "Kelvin Gastelum → Dricus du Plessis",
+            "fights": [
+              [
+                "Kelvin Gastelum",
+                4,
+                1
+              ],
+              [
+                "Robert Whittaker I",
+                2,
+                0
+              ],
+              [
+                "Yoel Romero",
+                3,
+                2
+              ],
+              [
+                "Paulo Costa",
+                2,
+                0
+              ],
+              [
+                "Jan Blachowicz",
+                2,
+                3,
+                "upward-division loss"
+              ],
+              [
+                "Marvin Vettori II",
+                5,
+                0
+              ],
+              [
+                "Robert Whittaker II",
+                3,
+                2
+              ],
+              [
+                "Jared Cannonier",
+                4,
+                1
+              ],
+              [
+                "Alex Pereira I",
+                3,
+                2,
+                "finish loss after leading"
+              ],
+              [
+                "Alex Pereira II",
+                1,
+                1
+              ],
+              [
+                "Sean Strickland",
+                1,
+                4
+              ],
+              [
+                "Dricus du Plessis",
+                1,
+                3,
+                "submission loss in round four"
+              ]
+            ]
+          },
+          "primeFights": 12,
+          "primeFinishes": 3,
+          "primeFinishRate": 25,
+          "finishPressureScore": 1,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 2,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.15
+          },
+          "eliteStakesRawScore": 4.65,
+          "eliteStakesScore": 7.44,
+          "total": 19.4,
+          "dominanceProfile": "Long middleweight title prime with excellent five-round proof and strong round control, but lower finish pressure and four elite losses inside the locked window.",
+          "status": "locked",
+          "primeWindow": {
+            "start": "2019-04-13",
+            "startLabel": "Kelvin Gastelum",
+            "end": "2024-08-17",
+            "endLabel": "Dricus du Plessis",
+            "endType": "unrecovered_elite_loss",
+            "endReason": "Jan was upward-division, Pereira was avenged, and Strickland did not close it because Izzy returned to title-level. DDP is endpoint.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "canonicalWindowRebuild": true,
+          "version": "prime-dominance-audit-batch-ten-20260710a-canonical-window-five"
+        },
+        {
+          "fighter": "Justin Gaethje",
+          "primeRecord": "7-3",
+          "primeWins": 7,
+          "primeLosses": 3,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 70,
+          "primeRecordScore": 6.3,
+          "roundControlPct": 54.17,
+          "roundControlScore": 4.33,
+          "roundControlAudit": {
+            "fighter": "Justin Gaethje",
+            "roundsWon": 13,
+            "roundsLost": 11,
+            "roundsCounted": 24,
+            "roundControlPct": 54.17,
+            "status": "locked",
+            "source": "audited canonical-window fight ledger",
+            "window": "James Vick → Max Holloway",
+            "fights": [
+              [
+                "James Vick",
+                1,
+                0
+              ],
+              [
+                "Edson Barboza",
+                1,
+                0
+              ],
+              [
+                "Donald Cerrone",
+                1,
+                0
+              ],
+              [
+                "Tony Ferguson",
+                5,
+                0
+              ],
+              [
+                "Khabib Nurmagomedov",
+                0,
+                2
+              ],
+              [
+                "Michael Chandler",
+                2,
+                1
+              ],
+              [
+                "Charles Oliveira",
+                0,
+                1
+              ],
+              [
+                "Rafael Fiziev",
+                2,
+                1
+              ],
+              [
+                "Dustin Poirier II",
+                1,
+                1
+              ],
+              [
+                "Max Holloway",
+                0,
+                5
+              ]
+            ]
+          },
+          "primeFights": 10,
+          "primeFinishes": 5,
+          "primeFinishRate": 50,
+          "finishPressureScore": 3,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 0.75,
+            "topFiveWins": 1,
+            "champFormerChampWins": 1,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.25
+          },
+          "eliteStakesRawScore": 3.5,
+          "eliteStakesScore": 5.6,
+          "total": 19.23,
+          "dominanceProfile": "Violent lightweight contender prime with five finishes and strong recovery wins, offset by three decisive elite losses and only modest round-by-round control.",
+          "status": "locked",
+          "primeWindow": {
+            "start": "2018-08-25",
+            "startLabel": "James Vick",
+            "end": "2024-04-13",
+            "endLabel": "Max Holloway",
+            "endType": "unrecovered_elite_loss",
+            "endReason": "Khabib and Oliveira did not end it because Gaethje recovered with elite wins. Holloway is endpoint.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "canonicalWindowRebuild": true,
+          "version": "prime-dominance-audit-batch-ten-20260710a-canonical-window-five"
+        },
+        {
+          "fighter": "Dustin Poirier",
+          "primeRecord": "8-4",
+          "primeWins": 8,
+          "primeLosses": 4,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 66.67,
+          "primeRecordScore": 6,
+          "roundControlPct": 48.65,
+          "roundControlScore": 3.89,
+          "roundControlAudit": {
+            "fighter": "Dustin Poirier",
+            "roundsWon": 18,
+            "roundsLost": 19,
+            "roundsCounted": 37,
+            "roundControlPct": 48.65,
+            "status": "locked",
+            "source": "audited canonical-window fight ledger",
+            "window": "Justin Gaethje I → Islam Makhachev",
+            "fights": [
+              [
+                "Justin Gaethje I",
+                3,
+                1
+              ],
+              [
+                "Eddie Alvarez II",
+                2,
+                0
+              ],
+              [
+                "Max Holloway II",
+                3,
+                2
+              ],
+              [
+                "Khabib Nurmagomedov",
+                0,
+                3
+              ],
+              [
+                "Dan Hooker",
+                3,
+                2
+              ],
+              [
+                "Conor McGregor II",
+                1,
+                1
+              ],
+              [
+                "Conor McGregor III",
+                1,
+                0,
+                "injury stoppage still counts as the winning finish round"
+              ],
+              [
+                "Charles Oliveira",
+                1,
+                2
+              ],
+              [
+                "Michael Chandler",
+                2,
+                1
+              ],
+              [
+                "Justin Gaethje II",
+                0,
+                2
+              ],
+              [
+                "Benoit Saint Denis",
+                1,
+                1
+              ],
+              [
+                "Islam Makhachev",
+                1,
+                4
+              ]
+            ]
+          },
+          "primeFights": 12,
+          "primeFinishes": 6,
+          "primeFinishRate": 50,
+          "finishPressureScore": 3,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 0.75,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 1,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.25
+          },
+          "eliteStakesRawScore": 3.75,
+          "eliteStakesScore": 6,
+          "total": 18.89,
+          "dominanceProfile": "Deep modern-lightweight prime with elite wins, repeated title-stage proof, and real recovery after championship losses; the Islam endpoint keeps the full late-prime resistance inside the score.",
+          "status": "locked",
+          "primeWindow": {
+            "start": "2018-04-14",
+            "startLabel": "Justin Gaethje I",
+            "end": "2024-06-01",
+            "endLabel": "Islam Makhachev",
+            "endType": "unrecovered_elite_loss",
+            "endReason": "Khabib and Oliveira did not end it because Poirier recovered with more elite wins/title fights. Islam is endpoint.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "canonicalWindowRebuild": true,
+          "version": "prime-dominance-audit-batch-ten-20260710a-canonical-window-five"
+        },
+        {
+          "fighter": "Deiveson Figueiredo",
+          "primeRecord": "4-2-1",
+          "primeWins": 4,
+          "primeLosses": 2,
+          "primeDraws": 1,
+          "primeNCs": 0,
+          "primeRecordPct": 64.29,
+          "primeRecordScore": 5.79,
+          "roundControlPct": 59.46,
+          "roundControlScore": 4.76,
+          "roundControlAudit": {
+            "fighter": "Deiveson Figueiredo",
+            "roundsWon": 22,
+            "roundsCounted": 37,
+            "roundControlPct": 59.46,
+            "status": "review"
+          },
+          "primeFights": 7,
+          "primeFinishes": 3,
+          "primeFinishRate": 42.86,
+          "dominanceProfile": "Flyweight title-war prime defined by Moreno rivalry volatility",
+          "status": "review",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 2,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.5,
+            "topFiveWins": 1,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.1
+          },
+          "eliteStakesRawScore": 3.85,
+          "eliteStakesScore": 6.16,
+          "total": 18.71
+        },
+        {
+          "fighter": "Alexa Grasso",
+          "primeRecord": "4-1-1",
+          "primeWins": 4,
+          "primeLosses": 1,
+          "primeDraws": 1,
+          "primeNCs": 0,
+          "primeRecordPct": 75,
+          "primeRecordScore": 6.75,
+          "roundControlPct": 52.5,
+          "roundControlScore": 4.2,
+          "roundControlAudit": {
+            "fighter": "Alexa Grasso",
+            "roundsWon": 21,
+            "roundsCounted": 40,
+            "roundControlPct": 52.5,
+            "status": "locked"
+          },
+          "primeFights": 6,
+          "primeFinishes": 1,
+          "primeFinishRate": 16.67,
+          "dominanceProfile": "Flyweight title-prime built on Shevchenko breakthrough and trilogy resistance",
+          "status": "locked",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 1,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.5,
+            "topFiveWins": 1,
+            "champFormerChampWins": 1,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.2
+          },
+          "eliteStakesRawScore": 4.2,
+          "eliteStakesScore": 6.72,
+          "total": 18.67
+        },
+        {
+          "fighter": "Petr Yan",
+          "primeRecord": "7-4",
+          "primeWins": 7,
+          "primeLosses": 4,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 63.64,
+          "primeRecordScore": 5.73,
+          "roundControlPct": 70.45,
+          "roundControlScore": 5.64,
+          "roundControlAudit": {
+            "fighter": "Petr Yan",
+            "roundsWon": 31,
+            "roundsCounted": 44,
+            "roundControlPct": 70.45,
+            "status": "review"
+          },
+          "primeFights": 11,
+          "primeFinishes": 2,
+          "primeFinishRate": 18.18,
+          "dominanceProfile": "Elite bantamweight boxing prime; includes the recent Merab title win",
+          "status": "review",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 1,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.25,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 0.5,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.25
+          },
+          "eliteStakesRawScore": 3.75,
+          "eliteStakesScore": 6,
+          "total": 18.37
+        },
+        {
+          "fighter": "Kayla Harrison",
+          "primeRecord": "3-0",
+          "primeWins": 3,
+          "primeLosses": 0,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 100,
+          "primeRecordScore": 6.3,
+          "roundControlPct": 85.71,
+          "roundControlScore": 4.8,
+          "roundControlAudit": {
+            "fighter": "Kayla Harrison",
+            "roundsWon": 6,
+            "roundsCounted": 7,
+            "roundControlPct": 85.71,
+            "status": "locked"
+          },
+          "primeFights": 3,
+          "primeFinishes": 2,
+          "primeFinishRate": 66.67,
+          "dominanceProfile": "Small UFC-only sample with dominant grappling and title-level validation building Three-fight sample cap applies 70% weight to the rate-driven components while preserving full elite-stakes credit.",
+          "status": "locked",
+          "version": "prime-dominance-three-fight-cap-20260710a",
+          "finishPressureScore": 2.8,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 0.75,
+            "topFiveWins": 0.75,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.25,
+            "divisionStrengthContext": 0.2
+          },
+          "eliteStakesRawScore": 2.7,
+          "eliteStakesScore": 4.32,
+          "total": 18.22,
+          "uncappedPrimeRecordScore": 9,
+          "uncappedRoundControlScore": 6.86,
+          "uncappedFinishPressureScore": 4,
+          "uncappedRateScore": 19.86,
+          "adjustedRateScore": 13.9,
+          "uncappedTotal": 24.18,
+          "sampleAdjusted": true,
+          "sampleSizeAdjustment": {
+            "rule": "Three or fewer prime fights",
+            "primeFights": 3,
+            "maxPrimeFights": 3,
+            "rateComponentMultiplier": 0.7,
+            "rateComponents": [
+              "Prime Record",
+              "Round Control",
+              "Finish Pressure"
+            ],
+            "eliteStakesAdjusted": false,
+            "scoreReduction": 5.96,
+            "version": "prime-dominance-three-fight-cap-20260710a"
+          }
+        },
+        {
+          "fighter": "Sean O'Malley",
+          "primeRecord": "5-2",
+          "primeWins": 5,
+          "primeLosses": 2,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 71.43,
+          "primeRecordScore": 6.43,
+          "roundControlPct": 50,
+          "roundControlScore": 4,
+          "roundControlAudit": {
+            "fighter": "Sean O'Malley",
+            "roundsWon": 12,
+            "roundsCounted": 24,
+            "roundControlPct": 50,
+            "status": "locked",
+            "source": "approved Yan-through-Zahabi fight ledger",
+            "window": "Petr Yan 2022 → Aiemann Zahabi 2026"
+          },
+          "primeFights": 7,
+          "primeFinishes": 2,
+          "primeFinishRate": 28.57,
+          "finishPressureScore": 1,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.5,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.45,
+            "divisionStrengthContext": 0.25
+          },
+          "eliteStakesRawScore": 4.2,
+          "eliteStakesScore": 6.72,
+          "total": 18.15,
+          "dominanceProfile": "Short bantamweight title burst with real precision-striking danger and elite wins, sharply capped by two Merab losses and only moderate round control.",
+          "status": "locked",
+          "version": "prime-dominance-audit-batch-seven-20260710d-frankie-full-window"
+        },
+        {
+          "fighter": "Sean Strickland",
+          "primeRecord": "7-4",
+          "primeWins": 7,
+          "primeLosses": 4,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 63.64,
+          "primeRecordScore": 5.73,
+          "roundControlPct": 64.58,
+          "roundControlScore": 5.17,
+          "roundControlAudit": {
+            "fighter": "Sean Strickland",
+            "roundsWon": 31,
+            "roundsCounted": 48,
+            "roundControlPct": 64.58,
+            "status": "locked",
+            "source": "approved Hall-through-Khamzat fight ledger",
+            "window": "Uriah Hall 2021 → Khamzat Chimaev 2026"
+          },
+          "primeFights": 11,
+          "primeFinishes": 1,
+          "primeFinishRate": 9.09,
+          "finishPressureScore": 0.5,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.5,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.45,
+            "divisionStrengthContext": 0.25
+          },
+          "eliteStakesRawScore": 4.2,
+          "eliteStakesScore": 6.72,
+          "total": 18.12,
+          "dominanceProfile": "Pressure-and-defense middleweight prime with strong round control and elite title proof, limited by almost no finish pressure and four losses inside the window.",
+          "status": "locked",
+          "version": "prime-dominance-audit-batch-seven-20260710d-frankie-full-window"
+        },
+        {
+          "fighter": "Miesha Tate",
+          "primeRecord": "5-2",
+          "primeWins": 5,
+          "primeLosses": 2,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 71.43,
+          "primeRecordScore": 6.43,
+          "roundControlPct": 62.07,
+          "roundControlScore": 4.97,
+          "roundControlAudit": {
+            "fighter": "Miesha Tate",
+            "roundsWon": 18,
+            "roundsCounted": 29,
+            "roundControlPct": 62.07,
+            "status": "locked"
+          },
+          "primeFights": 7,
+          "primeFinishes": 2,
+          "primeFinishRate": 28.57,
+          "dominanceProfile": "Bantamweight title-prime built on toughness, late swings, and Holm title finish",
+          "status": "locked",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 1,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.25,
+            "topFiveWins": 0.75,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.35,
+            "divisionStrengthContext": 0.15
+          },
+          "eliteStakesRawScore": 3.25,
+          "eliteStakesScore": 5.2,
+          "total": 17.6
+        },
+        {
+          "fighter": "Robert Whittaker",
+          "primeRecord": "10-4",
+          "primeWins": 10,
+          "primeLosses": 4,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 71.43,
+          "primeRecordScore": 6.43,
+          "roundControlPct": 58.14,
+          "roundControlScore": 4.65,
+          "roundControlAudit": {
+            "fighter": "Robert Whittaker",
+            "roundsWon": 25,
+            "roundsCounted": 43,
+            "roundControlPct": 58.14,
+            "status": "locked",
+            "source": "approved Brunson-through-Khamzat fight ledger",
+            "window": "Derek Brunson 2016 → Khamzat Chimaev 2024"
+          },
+          "primeFights": 14,
+          "primeFinishes": 3,
+          "primeFinishRate": 21.43,
+          "finishPressureScore": 1,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 0.75,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 0.5,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.4
+          },
+          "eliteStakesRawScore": 3.4,
+          "eliteStakesScore": 5.44,
+          "total": 17.52,
+          "dominanceProfile": "Long elite middleweight contender prime with deep quality and five-round proof, capped by low finish pressure and four elite losses inside the window.",
+          "status": "locked",
+          "version": "prime-dominance-audit-batch-seven-20260710d-frankie-full-window"
+        },
+        {
+          "fighter": "Julianna Peña",
+          "primeRecord": "3-2",
+          "primeWins": 3,
+          "primeLosses": 2,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 60,
+          "primeRecordScore": 5.4,
+          "roundControlPct": 50,
+          "roundControlScore": 4,
+          "roundControlAudit": {
+            "fighter": "Julianna Peña",
+            "roundsWon": 10,
+            "roundsCounted": 20,
+            "roundControlPct": 50,
+            "status": "locked"
+          },
+          "primeFights": 5,
+          "primeFinishes": 2,
+          "primeFinishRate": 40,
+          "dominanceProfile": "Nunes upset gives major stakes value, but dominance profile is volatile",
+          "status": "locked",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 2,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.25,
+            "topFiveWins": 0.75,
+            "champFormerChampWins": 1,
+            "fiveRoundTitleStageSample": 0.35,
+            "divisionStrengthContext": 0.15
+          },
+          "eliteStakesRawScore": 3.5,
+          "eliteStakesScore": 5.6,
+          "total": 17
+        },
+        {
+          "fighter": "Carla Esparza",
+          "primeRecord": "5-3",
+          "primeWins": 5,
+          "primeLosses": 3,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 62.5,
+          "primeRecordScore": 5.63,
+          "roundControlPct": 61.29,
+          "roundControlScore": 4.9,
+          "roundControlAudit": {
+            "fighter": "Carla Esparza",
+            "roundsWon": 19,
+            "roundsCounted": 31,
+            "roundControlPct": 61.29,
+            "status": "locked"
+          },
+          "primeFights": 8,
+          "primeFinishes": 1,
+          "primeFinishRate": 12.5,
+          "dominanceProfile": "UFC strawweight title résumé with low finish pressure and uneven control",
+          "status": "locked",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 0.5,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.5,
+            "topFiveWins": 0.8,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.35,
+            "divisionStrengthContext": 0.15
+          },
+          "eliteStakesRawScore": 3.55,
+          "eliteStakesScore": 5.68,
+          "total": 16.71
+        },
+        {
+          "fighter": "Holly Holm",
+          "primeRecord": "2-3",
+          "primeWins": 2,
+          "primeLosses": 3,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 40,
+          "primeRecordScore": 3.6,
+          "roundControlPct": 54.17,
+          "roundControlScore": 4.33,
+          "roundControlAudit": {
+            "fighter": "Holly Holm",
+            "roundsWon": 13,
+            "roundsCounted": 24,
+            "roundControlPct": 54.17,
+            "status": "locked"
+          },
+          "primeFights": 5,
+          "primeFinishes": 2,
+          "primeFinishRate": 40,
+          "dominanceProfile": "Rousey upset is massive, but title-prime consistency and control are uneven",
+          "status": "locked",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 2,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.25,
+            "topFiveWins": 0.75,
+            "champFormerChampWins": 1,
+            "fiveRoundTitleStageSample": 0.3,
+            "divisionStrengthContext": 0.15
+          },
+          "eliteStakesRawScore": 3.45,
+          "eliteStakesScore": 5.52,
+          "total": 15.45
+        },
+        {
+          "fighter": "Chael Sonnen",
+          "primeRecord": "4-4",
+          "primeWins": 4,
+          "primeLosses": 4,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 50,
+          "primeRecordScore": 4.5,
+          "roundControlPct": 60.71,
+          "roundControlScore": 4.86,
+          "roundControlAudit": {
+            "fighter": "Chael Sonnen",
+            "roundsWon": 17,
+            "roundsCounted": 28,
+            "roundControlPct": 60.71,
+            "status": "review"
+          },
+          "primeFights": 8,
+          "primeFinishes": 2,
+          "primeFinishRate": 25,
+          "dominanceProfile": "High-stakes contender prime with title losses and elite resistance counted",
+          "status": "review",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 1,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 0,
+            "topFiveWins": 1,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.4,
+            "divisionStrengthContext": 0.15
+          },
+          "eliteStakesRawScore": 2.3,
+          "eliteStakesScore": 3.68,
+          "total": 14.04
+        },
+        {
+          "fighter": "Mackenzie Dern",
+          "primeRecord": "6-4",
+          "primeWins": 6,
+          "primeLosses": 4,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 60,
+          "primeRecordScore": 5.4,
+          "roundControlPct": 55,
+          "roundControlScore": 4.4,
+          "roundControlAudit": {
+            "fighter": "Mackenzie Dern",
+            "roundsWon": 22,
+            "roundsCounted": 40,
+            "roundControlPct": 55,
+            "status": "locked"
+          },
+          "primeFights": 10,
+          "primeFinishes": 3,
+          "primeFinishRate": 30,
+          "dominanceProfile": "Submission-threat contender prime with limited round-to-round control",
+          "status": "locked",
+          "version": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "finishPressureScore": 2,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 0,
+            "topFiveWins": 0.65,
+            "champFormerChampWins": 0.25,
+            "fiveRoundTitleStageSample": 0.2,
+            "divisionStrengthContext": 0.15
+          },
+          "eliteStakesRawScore": 1.25,
+          "eliteStakesScore": 2,
+          "total": 13.8
+        },
+        {
+          "fighter": "Dan Henderson",
+          "primeRecord": "4-5",
+          "primeWins": 4,
+          "primeLosses": 5,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 44.44,
+          "primeRecordScore": 4,
+          "roundControlPct": 47,
+          "roundControlScore": 3.76,
+          "roundControlAudit": {
+            "fighter": "Dan Henderson",
+            "roundControlPct": 47,
+            "status": "locked",
+            "source": "approved packet-level conservative input",
+            "window": "Rich Franklin 2009 → Daniel Cormier 2014"
+          },
+          "primeFights": 9,
+          "primeFinishes": 2,
+          "primeFinishRate": 22.22,
+          "finishPressureScore": 1,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 0,
+            "topFiveWins": 1.25,
+            "champFormerChampWins": 0.75,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.4
+          },
+          "eliteStakesRawScore": 2.9,
+          "eliteStakesScore": 4.64,
+          "total": 13.4,
+          "dominanceProfile": "UFC-only veteran elite window with iconic wins but no UFC title victory, inconsistent control, and most championship greatness occurring outside the scoring scope.",
+          "status": "locked",
+          "version": "prime-dominance-audit-batch-seven-20260710d-frankie-full-window"
+        }
+      ],
+      "mutatesPrimeDominanceCategory": true,
+      "mutatesEliteStakes": false,
+      "mutatesTotals": false,
+      "finalScoreRecalculationOwner": "final-score-engine.js",
+      "appliedAt": "2026-07-11T04:27:50.165Z"
     },
     "fighterEraWindowAudit": {
       "version": "fighter-era-window-audit-20260710b-record-dependencies",
@@ -77214,7 +81524,7 @@
       "allCanonicalPrimeRecordsPresent": false,
       "mutatesScores": false,
       "mutatesWindows": false,
-      "appliedAt": "2026-07-11T03:57:13.047Z"
+      "appliedAt": "2026-07-11T04:27:50.941Z"
     },
     "finalScoreResult": {
       "version": "final-score-engine-20260710b-deterministic",
@@ -77288,7 +81598,7 @@
           "overallOvr": 89
         }
       ],
-      "appliedAt": "2026-07-11T03:57:13.449Z"
+      "appliedAt": "2026-07-11T04:27:51.248Z"
     },
     "lossContextFinalReconciliation": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -77359,7 +81669,7 @@
         "mutatesRecords": true,
         "mutatesPenalty": false,
         "mutatesScores": false,
-        "appliedAt": "2026-07-11T03:57:11.036Z"
+        "appliedAt": "2026-07-11T04:27:49.134Z"
       },
       "scoreReview": {
         "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -77599,7 +81909,7 @@
       },
       "rankingImpact": {
         "changedPenaltyCount": 27,
-        "fightersWithRankMovement": 30,
+        "fightersWithRankMovement": 28,
         "movement": [
           {
             "board": "men",
@@ -77734,6 +82044,28 @@
             "rankMovement": 2
           },
           {
+            "board": "women",
+            "fighter": "Carla Esparza",
+            "currentRank": 11,
+            "currentTotal": 28.97,
+            "currentPenalty": -10,
+            "priorPenalty": -8.25,
+            "counterfactualTotal": 30.72,
+            "counterfactualRank": 9,
+            "rankMovement": -2
+          },
+          {
+            "board": "women",
+            "fighter": "Julianna Peña",
+            "currentRank": 9,
+            "currentTotal": 30.68,
+            "currentPenalty": -6.75,
+            "priorPenalty": -8,
+            "counterfactualTotal": 29.43,
+            "counterfactualRank": 11,
+            "rankMovement": 2
+          },
+          {
             "board": "men",
             "fighter": "Dricus du Plessis",
             "currentRank": 30,
@@ -77754,39 +82086,6 @@
             "counterfactualTotal": 65.54,
             "counterfactualRank": 7,
             "rankMovement": -1
-          },
-          {
-            "board": "women",
-            "fighter": "Jessica Andrade",
-            "currentRank": 8,
-            "currentTotal": 35.48,
-            "currentPenalty": -10,
-            "priorPenalty": -7.5,
-            "counterfactualTotal": 37.98,
-            "counterfactualRank": 7,
-            "rankMovement": -1
-          },
-          {
-            "board": "women",
-            "fighter": "Carla Esparza",
-            "currentRank": 11,
-            "currentTotal": 28.97,
-            "currentPenalty": -10,
-            "priorPenalty": -8.25,
-            "counterfactualTotal": 30.72,
-            "counterfactualRank": 10,
-            "rankMovement": -1
-          },
-          {
-            "board": "women",
-            "fighter": "Julianna Peña",
-            "currentRank": 10,
-            "currentTotal": 30.68,
-            "currentPenalty": -6.75,
-            "priorPenalty": -8,
-            "counterfactualTotal": 29.43,
-            "counterfactualRank": 11,
-            "rankMovement": 1
           },
           {
             "board": "men",
@@ -77888,17 +82187,6 @@
             "rankMovement": 1
           },
           {
-            "board": "women",
-            "fighter": "Kayla Harrison",
-            "currentRank": 7,
-            "currentTotal": 35.64,
-            "currentPenalty": 0,
-            "priorPenalty": 0,
-            "counterfactualTotal": 35.64,
-            "counterfactualRank": 8,
-            "rankMovement": 1
-          },
-          {
             "board": "men",
             "fighter": "Khabib Nurmagomedov",
             "currentRank": 7,
@@ -77940,6 +82228,17 @@
             "priorPenalty": -5.5,
             "counterfactualTotal": 24.56,
             "counterfactualRank": 47,
+            "rankMovement": 0
+          },
+          {
+            "board": "women",
+            "fighter": "Jessica Andrade",
+            "currentRank": 7,
+            "currentTotal": 35.48,
+            "currentPenalty": -10,
+            "priorPenalty": -7.5,
+            "counterfactualTotal": 37.98,
+            "counterfactualRank": 7,
             "rankMovement": 0
           },
           {
@@ -78110,7 +82409,7 @@
       ],
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "generatedAt": "2026-07-11T03:57:13.452Z"
+      "generatedAt": "2026-07-11T04:27:51.249Z"
     },
     "fighterCount": 62
   },
@@ -80289,7 +84588,7 @@
     "mutatesPenalty": true,
     "mutatesScores": true,
     "finalScoreRecalculationOwner": "final-score-engine.js",
-    "appliedAt": "2026-07-11T03:57:11.036Z"
+    "appliedAt": "2026-07-11T04:27:49.134Z"
   },
   "postAudit": {
     "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -99060,7 +103359,7 @@
     "missingEraLossEntries": [],
     "mutatesScores": false,
     "mutatesPenalty": false,
-    "appliedAt": "2026-07-11T03:57:11.036Z"
+    "appliedAt": "2026-07-11T04:27:49.134Z"
   },
   "finalizer": {
     "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -99125,7 +103424,7 @@
     "mutatesRecords": true,
     "mutatesPenalty": false,
     "mutatesScores": false,
-    "appliedAt": "2026-07-11T03:57:11.036Z"
+    "appliedAt": "2026-07-11T04:27:49.134Z"
   },
   "menTop20": [
     {
@@ -99314,31 +103613,31 @@
     },
     {
       "rank": 7,
-      "fighter": "Kayla Harrison",
-      "totalScore": 35.64,
-      "penalty": 0,
-      "overallOvr": 85
-    },
-    {
-      "rank": 8,
       "fighter": "Jessica Andrade",
       "totalScore": 35.48,
       "penalty": -10,
       "overallOvr": 85
     },
     {
-      "rank": 9,
+      "rank": 8,
       "fighter": "Alexa Grasso",
       "totalScore": 32.31,
       "penalty": -6.5,
       "overallOvr": 84
     },
     {
-      "rank": 10,
+      "rank": 9,
       "fighter": "Julianna Peña",
       "totalScore": 30.68,
       "penalty": -6.75,
       "overallOvr": 84
+    },
+    {
+      "rank": 10,
+      "fighter": "Kayla Harrison",
+      "totalScore": 30.17,
+      "penalty": 0,
+      "overallOvr": 83
     },
     {
       "rank": 11,
@@ -99522,7 +103821,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T03:57:10.990Z",
+        "completedAt": "2026-07-11T04:27:49.101Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -99632,7 +103931,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T03:57:11.011Z",
+        "completedAt": "2026-07-11T04:27:49.111Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -99825,7 +104124,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T03:57:10.254Z",
+        "completedAt": "2026-07-11T04:27:48.439Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -99959,7 +104258,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T03:57:11.002Z",
+        "completedAt": "2026-07-11T04:27:49.107Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -100093,7 +104392,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T03:57:11.002Z",
+        "completedAt": "2026-07-11T04:27:49.107Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -100191,7 +104490,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T03:57:11.011Z",
+        "completedAt": "2026-07-11T04:27:49.111Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -100335,7 +104634,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-11T03:57:10.249Z",
+        "completedAt": "2026-07-11T04:27:48.436Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -100480,7 +104779,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-11T03:57:10.249Z",
+        "completedAt": "2026-07-11T04:27:48.436Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -100650,7 +104949,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T03:57:10.997Z",
+        "completedAt": "2026-07-11T04:27:49.104Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -100760,7 +105059,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T03:57:11.011Z",
+        "completedAt": "2026-07-11T04:27:49.111Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -100882,7 +105181,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T03:57:11.011Z",
+        "completedAt": "2026-07-11T04:27:49.111Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
