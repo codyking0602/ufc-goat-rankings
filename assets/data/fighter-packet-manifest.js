@@ -1,7 +1,7 @@
 // Central manifest for fighter packet modules.
 // Add new fighter packet files here instead of growing ranking-data-patches.js.
 (function(){
-  const VERSION='fighter-packet-manifest-20260710x-loss-context-records';
+  const VERSION='fighter-packet-manifest-20260710y-canonical-loss-context';
   const packets=[
     {slug:'demetrious-johnson',version:'20260702a'},
     {slug:'anderson-silva',version:'20260702a'},
@@ -18,7 +18,7 @@
     {slug:'dricus-du-plessis',version:'20260705e-prime-195'},
     {slug:'tyron-woodley',version:'20260706b'},
     {slug:'ilia-topuria',version:'20260705a'},
-    {slug:'israel-adesanya',version:'20260702a'},
+    {slug:'israel-adesanya',version:'20260710b-current-record'},
     {slug:'aljamain-sterling',version:'20260703a'},
     {slug:'petr-yan',version:'20260702b'},
     {slug:'cain-velasquez',version:'20260702b'},
@@ -34,8 +34,8 @@
     {slug:'junior-dos-santos',version:'20260706a'},
     {slug:'dominick-cruz',version:'20260702a'},
     {slug:'francis-ngannou',version:'20260702a'},
-    {slug:'charles-oliveira',version:'20260702a'},
-    {slug:'henry-cejudo',version:'20260702a'},
+    {slug:'charles-oliveira',version:'20260710b-current-record'},
+    {slug:'henry-cejudo',version:'20260710b-current-record'},
     {slug:'conor-mcgregor',version:'20260702a'},
     {slug:'justin-gaethje',version:'20260702d'},
     {slug:'frankie-edgar',version:'20260703b'},
@@ -46,7 +46,7 @@
     {slug:'robert-whittaker',version:'20260706b-round-control'},
     {slug:'sean-omalley',version:'20260706b-round-control'},
     {slug:'michael-bisping',version:'20260706a'},
-    {slug:'dan-henderson',version:'20260703a'},
+    {slug:'dan-henderson',version:'20260710b-ufc-record'},
     {slug:'chael-sonnen',version:'20260706a'},
     {slug:'robbie-lawler',version:'20260706a'},
     {slug:'amanda-nunes',version:'20260710b-ufc-record'},
