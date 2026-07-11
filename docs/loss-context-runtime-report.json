@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-11T23:04:42.394Z",
+  "generatedAt": "2026-07-11T23:31:36.910Z",
   "baseUrl": "http://127.0.0.1:4173",
   "report": {
     "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -70,7 +70,7 @@
       "mutatesRecords": true,
       "mutatesPenalty": false,
       "mutatesScores": false,
-      "appliedAt": "2026-07-11T23:04:38.498Z",
+      "appliedAt": "2026-07-11T23:31:33.142Z",
       "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
     },
     "scoreReview": {
@@ -811,7 +811,7 @@
     ],
     "mutatesScores": false,
     "mutatesPenalty": false,
-    "generatedAt": "2026-07-11T23:04:40.820Z",
+    "generatedAt": "2026-07-11T23:31:35.401Z",
     "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
   },
   "pipeline": {
@@ -864,8 +864,8 @@
     "timerCount": 0,
     "repeatedLoadCount": 0,
     "finalScoreApplyCount": 1,
-    "startedAt": "2026-07-11T23:04:37.087Z",
-    "completedAt": "2026-07-11T23:04:41.134Z",
+    "startedAt": "2026-07-11T23:31:31.685Z",
+    "completedAt": "2026-07-11T23:31:35.716Z",
     "error": null,
     "canonicalFighterRegistryBase": {
       "applied": true,
@@ -1422,7 +1422,7 @@
             "Compact championship window with shallow-division compression.",
             "UFC-only window."
           ],
-          "appliedAt": "2026-07-11T23:04:40.181Z"
+          "appliedAt": "2026-07-11T23:31:34.801Z"
         },
         "apexPeakAudit": {
           "score": 4.6,
@@ -2142,7 +2142,7 @@
             "Compact championship window with shallow-division compression.",
             "UFC-only window."
           ],
-          "appliedAt": "2026-07-11T23:04:40.183Z"
+          "appliedAt": "2026-07-11T23:31:34.804Z"
         },
         "longevityLegacyScore": 7.78,
         "longevityRaw30": 7.78,
@@ -2260,7 +2260,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T23:04:38.441Z"
+      "appliedAt": "2026-07-11T23:31:33.085Z"
     },
     "lossContextCompletionBatchFour": {
       "version": "loss-context-ledger-completion-batch-four-20260710a-five-highest-missing",
@@ -2316,7 +2316,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T23:04:38.448Z"
+      "appliedAt": "2026-07-11T23:31:33.089Z"
     },
     "lossContextCompletionBatchFive": {
       "version": "loss-context-ledger-completion-batch-five-20260710b-chuck-vitor-window",
@@ -2409,7 +2409,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T23:04:38.451Z"
+      "appliedAt": "2026-07-11T23:31:33.093Z"
     },
     "lossContextCompletionBatchSix": {
       "version": "loss-context-ledger-completion-batch-six-20260710a-first-half-eighteen",
@@ -2597,7 +2597,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T23:04:38.458Z"
+      "appliedAt": "2026-07-11T23:31:33.098Z"
     },
     "lossContextCompletionBatchSeven": {
       "version": "loss-context-ledger-completion-batch-seven-20260710a-final-seventeen",
@@ -2756,7 +2756,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T23:04:38.464Z"
+      "appliedAt": "2026-07-11T23:31:33.103Z"
     },
     "approvedFighterAuditCorrections": {
       "version": "approved-fighter-audit-corrections-20260710a-tito-pereira-hughes-kayla",
@@ -2772,7 +2772,7 @@
       "opponentQualityCorrections": [
         "Kayla Harrison"
       ],
-      "appliedAt": "2026-07-11T23:04:38.468Z"
+      "appliedAt": "2026-07-11T23:31:33.109Z"
     },
     "lossContextCanonicalProduction": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -30045,7 +30045,7 @@
         ],
         "mode": "canonical-production",
         "mutatesScores": true,
-        "appliedAt": "2026-07-11T23:04:38.497Z"
+        "appliedAt": "2026-07-11T23:31:33.142Z"
       },
       "mismatchAudit": {
         "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -48912,7 +48912,7 @@
         "missingEraLossEntries": [],
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "appliedAt": "2026-07-11T23:04:38.498Z"
+        "appliedAt": "2026-07-11T23:31:33.142Z"
       },
       "scoreReview": {
         "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -51094,7 +51094,7 @@
         "mutatesPenalty": true,
         "mutatesScores": true,
         "finalScoreRecalculationOwner": "final-score-engine.js",
-        "appliedAt": "2026-07-11T23:04:38.498Z"
+        "appliedAt": "2026-07-11T23:31:33.142Z"
       },
       "appliedCompletionFixes": [
         "Robert Whittaker",
@@ -51154,7 +51154,7 @@
       ],
       "mutatesPenalty": true,
       "mutatesScores": true,
-      "appliedAt": "2026-07-11T23:04:38.498Z"
+      "appliedAt": "2026-07-11T23:31:33.142Z"
     },
     "lossContextScoreReview": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -53336,7 +53336,7 @@
       "mutatesPenalty": true,
       "mutatesScores": true,
       "finalScoreRecalculationOwner": "final-score-engine.js",
-      "appliedAt": "2026-07-11T23:04:38.498Z"
+      "appliedAt": "2026-07-11T23:31:33.142Z"
     },
     "lossContextMismatchAudit": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -72203,7 +72203,7 @@
       "missingEraLossEntries": [],
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T23:04:38.498Z"
+      "appliedAt": "2026-07-11T23:31:33.142Z"
     },
     "lossContextDynamicRosterTarget": {
       "version": "loss-context-dynamic-roster-target-20260710a",
@@ -72211,7 +72211,7 @@
       "expectedRosterCount": 63,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T23:04:38.783Z"
+      "appliedAt": "2026-07-11T23:31:33.429Z"
     },
     "opponentQualityReadyDetail": {
       "version": "opponent-quality-live-20260710c-fixed-benchmark",
@@ -72392,7 +72392,7 @@
       "correctsRandyBelfortDate": true,
       "mutatesEraLongevityInputs": true,
       "mutatesScores": false,
-      "appliedAt": "2026-07-11T23:04:39.072Z"
+      "appliedAt": "2026-07-11T23:31:33.714Z"
     },
     "canonicalPrimeRecords": {
       "version": "canonical-prime-records-20260710c-chuck-vitor-window",
@@ -74412,7 +74412,7 @@
       "allWindowsLocked": false,
       "mutatesScores": false,
       "mutatesPrimeRecordDisplay": true,
-      "appliedAt": "2026-07-11T23:04:39.093Z"
+      "appliedAt": "2026-07-11T23:31:33.733Z"
     },
     "approvedOpponentQualityCorrection": {
       "applied": true,
@@ -74503,7 +74503,7 @@
         "winProfile": "Major signature win, thinner depth"
       },
       "version": "approved-fighter-audit-corrections-20260710a-tito-pereira-hughes-kayla",
-      "appliedAt": "2026-07-11T23:04:39.094Z"
+      "appliedAt": "2026-07-11T23:31:33.735Z"
     },
     "canonicalFighterRegistryOpponentQuality": {
       "applied": true,
@@ -74893,7 +74893,7 @@
           "version": "prime-dominance-audit-batch-eleven-20260710a-tito-pereira-hughes"
         }
       },
-      "appliedAt": "2026-07-11T23:04:39.606Z"
+      "appliedAt": "2026-07-11T23:31:34.246Z"
     },
     "canonicalFighterRegistryPrime": {
       "applied": true,
@@ -79410,7 +79410,7 @@
       "mutatesEliteStakes": false,
       "mutatesTotals": false,
       "finalScoreRecalculationOwner": "final-score-engine.js",
-      "appliedAt": "2026-07-11T23:04:39.610Z"
+      "appliedAt": "2026-07-11T23:31:34.252Z"
     },
     "fighterEraWindowAudit": {
       "version": "fighter-era-window-audit-20260710b-record-dependencies",
@@ -83481,7 +83481,7 @@
       "allCanonicalPrimeRecordsPresent": false,
       "mutatesScores": false,
       "mutatesWindows": false,
-      "appliedAt": "2026-07-11T23:04:40.483Z"
+      "appliedAt": "2026-07-11T23:31:35.089Z"
     },
     "canonicalFighterRegistryApex": {
       "applied": true,
@@ -83603,7 +83603,7 @@
           "overallOvr": 90
         }
       ],
-      "appliedAt": "2026-07-11T23:04:40.819Z"
+      "appliedAt": "2026-07-11T23:31:35.400Z"
     },
     "lossContextFinalReconciliation": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -83674,7 +83674,7 @@
         "mutatesRecords": true,
         "mutatesPenalty": false,
         "mutatesScores": false,
-        "appliedAt": "2026-07-11T23:04:38.498Z",
+        "appliedAt": "2026-07-11T23:31:33.142Z",
         "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
       },
       "scoreReview": {
@@ -84415,7 +84415,7 @@
       ],
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "generatedAt": "2026-07-11T23:04:40.820Z",
+      "generatedAt": "2026-07-11T23:31:35.401Z",
       "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
     },
     "canonicalFighterRegistryFinal": {
@@ -84973,7 +84973,7 @@
             "Compact championship window with shallow-division compression.",
             "UFC-only window."
           ],
-          "appliedAt": "2026-07-11T23:04:40.181Z"
+          "appliedAt": "2026-07-11T23:31:34.801Z"
         },
         "apexPeakAudit": {
           "score": 4.6,
@@ -85693,7 +85693,7 @@
             "Compact championship window with shallow-division compression.",
             "UFC-only window."
           ],
-          "appliedAt": "2026-07-11T23:04:40.183Z"
+          "appliedAt": "2026-07-11T23:31:34.804Z"
         },
         "longevityLegacyScore": 7.78,
         "longevityRaw30": 7.78,
@@ -87945,7 +87945,7 @@
     "mutatesPenalty": true,
     "mutatesScores": true,
     "finalScoreRecalculationOwner": "final-score-engine.js",
-    "appliedAt": "2026-07-11T23:04:38.498Z"
+    "appliedAt": "2026-07-11T23:31:33.142Z"
   },
   "postAudit": {
     "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -106812,7 +106812,7 @@
     "missingEraLossEntries": [],
     "mutatesScores": false,
     "mutatesPenalty": false,
-    "appliedAt": "2026-07-11T23:04:38.498Z"
+    "appliedAt": "2026-07-11T23:31:33.142Z"
   },
   "finalizer": {
     "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -106877,7 +106877,7 @@
     "mutatesRecords": true,
     "mutatesPenalty": false,
     "mutatesScores": false,
-    "appliedAt": "2026-07-11T23:04:38.498Z",
+    "appliedAt": "2026-07-11T23:31:33.142Z",
     "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
   },
   "menTop20": [
@@ -107282,7 +107282,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T23:04:38.448Z",
+        "completedAt": "2026-07-11T23:31:33.089Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -107392,7 +107392,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T23:04:38.464Z",
+        "completedAt": "2026-07-11T23:31:33.103Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -107585,7 +107585,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T23:04:37.707Z",
+        "completedAt": "2026-07-11T23:31:32.361Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -107719,7 +107719,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T23:04:38.458Z",
+        "completedAt": "2026-07-11T23:31:33.098Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -107853,7 +107853,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T23:04:38.458Z",
+        "completedAt": "2026-07-11T23:31:33.098Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -107951,7 +107951,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T23:04:38.464Z",
+        "completedAt": "2026-07-11T23:31:33.103Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -108095,7 +108095,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-11T23:04:37.703Z",
+        "completedAt": "2026-07-11T23:31:32.358Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -108240,7 +108240,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-11T23:04:37.703Z",
+        "completedAt": "2026-07-11T23:31:32.358Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -108410,7 +108410,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T23:04:38.451Z",
+        "completedAt": "2026-07-11T23:31:33.093Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -108520,7 +108520,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T23:04:38.464Z",
+        "completedAt": "2026-07-11T23:31:33.103Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -108642,7 +108642,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T23:04:38.464Z",
+        "completedAt": "2026-07-11T23:31:33.103Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
