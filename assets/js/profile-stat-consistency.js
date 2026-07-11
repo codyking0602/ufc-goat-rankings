@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='profile-stat-consistency-20260711a-ilia-title-prime-finish';
+  const VERSION='profile-stat-consistency-20260711b-ilia-title-prime-finish';
   const TITLE_WIN_KEYS=['normalTitleWins','interimTitleWins','vacantUndisputedWins','secondDivisionUndisputedWins','vacantSecondDivisionWins'];
   let applyCount=0;
 
@@ -53,7 +53,7 @@
     const next=Array.isArray(snapshot)?snapshot.map(item=>Array.isArray(item)?item.slice():item):[];
     const index=next.findIndex(item=>Array.isArray(item)&&patterns.some(pattern=>pattern.test(String(item[0]||''))));
     if(index>=0)next[index]=[label,String(value)];
-    else next.push([label,String(value)];
+    else next.push([label,String(value)]);
     return next;
   }
 
