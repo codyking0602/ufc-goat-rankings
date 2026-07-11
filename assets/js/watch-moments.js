@@ -1,7 +1,7 @@
 // Watch Moment links for fighter cards and Signature Fight links for profiles.
 // Keep links here as app-facing content, separate from scoring and nickname/display-name polish.
 (function(){
-  const VERSION = 'watch-moments-20260711c-signature-fights-batch-one';
+  const VERSION = 'watch-moments-20260711d-signature-fights-batch-two';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -81,6 +81,12 @@
     'Randy Couture': 'https://youtu.be/KsLneUSMF9A?is=xbM0ss9sbQg9Dv4I',
     'Max Holloway': 'https://youtu.be/5oDsN9s9-yE?is=3pdZSWDbL4y_mzul',
     'Kamaru Usman': 'https://youtu.be/IRUrK8BhjNE?is=1RKIKERb2j7zdgag',
+    'Jose Aldo': 'https://youtu.be/K63PJBKuA4U?is=DDLXv7eVTA8Bjewm',
+    'Matt Hughes': 'https://youtu.be/W7StRPCtF-E?is=W9q0sloxVcyJN5XW',
+    'Daniel Cormier': 'https://youtu.be/2a0Ul8hRyqk?is=CYsGZkWOUaXUK6lt',
+    'Stipe Miocic': 'https://youtu.be/2yB-hp1OuKo?is=AaykrjmhihljMeKc',
+    'Dricus du Plessis': 'https://youtu.be/jLTuhXQRMSg?is=RGX__HY_u-mRzr0F',
+    'Tyron Woodley': 'https://youtu.be/knOFYm1it0k?is=U-dOgX681hEz_cPf',
     'Dustin Poirier': 'https://youtu.be/m3N1WuErSlg?is=_jDLz8z8YOZmGC9q'
   };
 
