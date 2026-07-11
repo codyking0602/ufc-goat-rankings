@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-11T02:35:07.616Z",
+  "generatedAt": "2026-07-11T03:57:14.684Z",
   "pipelineStatus": "ready",
   "pipelineError": null,
   "complete": true,
@@ -10,7 +10,7 @@
   "remainingScoreMismatchCount": 0,
   "remainingLedgerBlockCount": 0,
   "missingLivePenaltyCount": 0,
-  "fightersWithRankMovement": 25,
+  "fightersWithRankMovement": 30,
   "ledgerFinalizer": {
     "version": "loss-context-canonical-production-20260710a-runtime-closure",
     "applied": true,
@@ -74,7 +74,7 @@
     "mutatesRecords": true,
     "mutatesPenalty": false,
     "mutatesScores": false,
-    "appliedAt": "2026-07-11T02:35:05.050Z"
+    "appliedAt": "2026-07-11T03:57:11.036Z"
   },
   "promotedPenaltyChanges": [
     {
@@ -190,6 +190,14 @@
       "lossEventCount": 7
     },
     {
+      "fighter": "Tito Ortiz",
+      "priorPenalty": -8.25,
+      "promotedPenalty": -9.5,
+      "delta": -1.25,
+      "capApplied": false,
+      "lossEventCount": 11
+    },
+    {
       "fighter": "Aljamain Sterling",
       "priorPenalty": -6.25,
       "promotedPenalty": -7.25,
@@ -204,14 +212,6 @@
       "delta": 1,
       "capApplied": false,
       "lossEventCount": 5
-    },
-    {
-      "fighter": "Tito Ortiz",
-      "priorPenalty": -8.25,
-      "promotedPenalty": -7.25,
-      "delta": 1,
-      "capApplied": false,
-      "lossEventCount": 11
     },
     {
       "fighter": "Michael Bisping",
@@ -304,8 +304,8 @@
       "currentPenalty": -2,
       "priorPenalty": -5.5,
       "counterfactualTotal": 45.62,
-      "counterfactualRank": 28,
-      "rankMovement": 6
+      "counterfactualRank": 29,
+      "rankMovement": 7
     },
     {
       "board": "men",
@@ -326,8 +326,19 @@
       "currentPenalty": -3.75,
       "priorPenalty": -6.75,
       "counterfactualTotal": 45.88,
-      "counterfactualRank": 27,
-      "rankMovement": 4
+      "counterfactualRank": 28,
+      "rankMovement": 5
+    },
+    {
+      "board": "men",
+      "fighter": "Tito Ortiz",
+      "currentRank": 31,
+      "currentTotal": 44.66,
+      "currentPenalty": -9.5,
+      "priorPenalty": -8.25,
+      "counterfactualTotal": 45.91,
+      "counterfactualRank": 26,
+      "rankMovement": -5
     },
     {
       "board": "men",
@@ -397,14 +408,14 @@
     },
     {
       "board": "men",
-      "fighter": "Jose Aldo",
-      "currentRank": 9,
-      "currentTotal": 62.29,
-      "currentPenalty": -10,
-      "priorPenalty": -6.75,
-      "counterfactualTotal": 65.54,
-      "counterfactualRank": 7,
-      "rankMovement": -2
+      "fighter": "Chuck Liddell",
+      "currentRank": 16,
+      "currentTotal": 54.87,
+      "currentPenalty": -6,
+      "priorPenalty": -10,
+      "counterfactualTotal": 50.87,
+      "counterfactualRank": 18,
+      "rankMovement": 2
     },
     {
       "board": "men",
@@ -419,14 +430,36 @@
     },
     {
       "board": "men",
-      "fighter": "Chuck Liddell",
-      "currentRank": 17,
-      "currentTotal": 54.87,
-      "currentPenalty": -6,
-      "priorPenalty": -10,
-      "counterfactualTotal": 50.87,
-      "counterfactualRank": 18,
-      "rankMovement": 1
+      "fighter": "Dricus du Plessis",
+      "currentRank": 30,
+      "currentTotal": 45.15,
+      "currentPenalty": -1.5,
+      "priorPenalty": -1.5,
+      "counterfactualTotal": 45.15,
+      "counterfactualRank": 32,
+      "rankMovement": 2
+    },
+    {
+      "board": "men",
+      "fighter": "Jose Aldo",
+      "currentRank": 8,
+      "currentTotal": 62.29,
+      "currentPenalty": -10,
+      "priorPenalty": -6.75,
+      "counterfactualTotal": 65.54,
+      "counterfactualRank": 7,
+      "rankMovement": -1
+    },
+    {
+      "board": "women",
+      "fighter": "Jessica Andrade",
+      "currentRank": 8,
+      "currentTotal": 35.48,
+      "currentPenalty": -10,
+      "priorPenalty": -7.5,
+      "counterfactualTotal": 37.98,
+      "counterfactualRank": 7,
+      "rankMovement": -1
     },
     {
       "board": "women",
@@ -453,12 +486,12 @@
     {
       "board": "men",
       "fighter": "Matt Hughes",
-      "currentRank": 8,
-      "currentTotal": 62.34,
+      "currentRank": 9,
+      "currentTotal": 62.12,
       "currentPenalty": -8.75,
       "priorPenalty": -10,
-      "counterfactualTotal": 61.09,
-      "counterfactualRank": 9,
+      "counterfactualTotal": 60.87,
+      "counterfactualRank": 10,
       "rankMovement": 1
     },
     {
@@ -471,17 +504,6 @@
       "counterfactualTotal": 45.46,
       "counterfactualRank": 31,
       "rankMovement": -1
-    },
-    {
-      "board": "men",
-      "fighter": "Tito Ortiz",
-      "currentRank": 29,
-      "currentTotal": 46.49,
-      "currentPenalty": -7.25,
-      "priorPenalty": -8.25,
-      "counterfactualTotal": 45.49,
-      "counterfactualRank": 30,
-      "rankMovement": 1
     },
     {
       "board": "men",
@@ -507,6 +529,28 @@
     },
     {
       "board": "men",
+      "fighter": "Tyron Woodley",
+      "currentRank": 26,
+      "currentTotal": 46.66,
+      "currentPenalty": -3.75,
+      "priorPenalty": -4.5,
+      "counterfactualTotal": 45.91,
+      "counterfactualRank": 27,
+      "rankMovement": 1
+    },
+    {
+      "board": "men",
+      "fighter": "Alex Pereira",
+      "currentRank": 17,
+      "currentTotal": 54.48,
+      "currentPenalty": -5,
+      "priorPenalty": -5,
+      "counterfactualTotal": 54.48,
+      "counterfactualRank": 16,
+      "rankMovement": -1
+    },
+    {
+      "board": "men",
       "fighter": "Anderson Silva",
       "currentRank": 4,
       "currentTotal": 75.79,
@@ -529,17 +573,6 @@
     },
     {
       "board": "men",
-      "fighter": "Dricus du Plessis",
-      "currentRank": 31,
-      "currentTotal": 45.15,
-      "currentPenalty": -1.5,
-      "priorPenalty": -1.5,
-      "counterfactualTotal": 45.15,
-      "counterfactualRank": 32,
-      "rankMovement": 1
-    },
-    {
-      "board": "men",
       "fighter": "Dustin Poirier",
       "currentRank": 37,
       "currentTotal": 40.35,
@@ -547,6 +580,17 @@
       "priorPenalty": -10,
       "counterfactualTotal": 40.35,
       "counterfactualRank": 38,
+      "rankMovement": 1
+    },
+    {
+      "board": "women",
+      "fighter": "Kayla Harrison",
+      "currentRank": 7,
+      "currentTotal": 35.64,
+      "currentPenalty": 0,
+      "priorPenalty": 0,
+      "counterfactualTotal": 35.64,
+      "counterfactualRank": 8,
       "rankMovement": 1
     },
     {
@@ -563,12 +607,23 @@
     {
       "board": "men",
       "fighter": "Merab Dvalishvili",
-      "currentRank": 30,
+      "currentRank": 29,
       "currentTotal": 45.52,
       "currentPenalty": -4.75,
       "priorPenalty": -4.75,
       "counterfactualTotal": 45.52,
-      "counterfactualRank": 29,
+      "counterfactualRank": 30,
+      "rankMovement": 1
+    },
+    {
+      "board": "men",
+      "fighter": "Randy Couture",
+      "currentRank": 10,
+      "currentTotal": 61.09,
+      "currentPenalty": -10,
+      "priorPenalty": -10,
+      "counterfactualTotal": 61.09,
+      "counterfactualRank": 9,
       "rankMovement": -1
     },
     {
@@ -580,17 +635,6 @@
       "priorPenalty": -5.5,
       "counterfactualTotal": 24.56,
       "counterfactualRank": 47,
-      "rankMovement": 0
-    },
-    {
-      "board": "women",
-      "fighter": "Jessica Andrade",
-      "currentRank": 7,
-      "currentTotal": 35.48,
-      "currentPenalty": -10,
-      "priorPenalty": -7.5,
-      "counterfactualTotal": 37.98,
-      "counterfactualRank": 7,
       "rankMovement": 0
     },
     {
@@ -657,17 +701,6 @@
       "priorPenalty": -8,
       "counterfactualTotal": 57.6,
       "counterfactualRank": 12,
-      "rankMovement": 0
-    },
-    {
-      "board": "men",
-      "fighter": "Tyron Woodley",
-      "currentRank": 26,
-      "currentTotal": 46.66,
-      "currentPenalty": -3.75,
-      "priorPenalty": -4.5,
-      "counterfactualTotal": 45.91,
-      "counterfactualRank": 26,
       "rankMovement": 0
     },
     {
@@ -756,16 +789,16 @@
     },
     {
       "rank": 8,
-      "fighter": "Matt Hughes",
-      "totalScore": 62.34,
-      "penalty": -8.75,
+      "fighter": "Jose Aldo",
+      "totalScore": 62.29,
+      "penalty": -10,
       "overallOvr": 91
     },
     {
       "rank": 9,
-      "fighter": "Jose Aldo",
-      "totalScore": 62.29,
-      "penalty": -10,
+      "fighter": "Matt Hughes",
+      "totalScore": 62.12,
+      "penalty": -8.75,
       "overallOvr": 91
     },
     {
@@ -791,37 +824,37 @@
     },
     {
       "rank": 13,
-      "fighter": "Alex Pereira",
-      "totalScore": 56.62,
-      "penalty": -5,
-      "overallOvr": 90
-    },
-    {
-      "rank": 14,
       "fighter": "Daniel Cormier",
       "totalScore": 56.55,
       "penalty": -5.25,
       "overallOvr": 90
     },
     {
-      "rank": 15,
+      "rank": 14,
       "fighter": "Israel Adesanya",
       "totalScore": 56.34,
       "penalty": -6.75,
       "overallOvr": 90
     },
     {
-      "rank": 16,
+      "rank": 15,
       "fighter": "Max Holloway",
       "totalScore": 55.74,
       "penalty": -10,
       "overallOvr": 90
     },
     {
-      "rank": 17,
+      "rank": 16,
       "fighter": "Chuck Liddell",
       "totalScore": 54.87,
       "penalty": -6,
+      "overallOvr": 89
+    },
+    {
+      "rank": 17,
+      "fighter": "Alex Pereira",
+      "totalScore": 54.48,
+      "penalty": -5,
       "overallOvr": 89
     },
     {
@@ -891,16 +924,16 @@
     },
     {
       "rank": 7,
-      "fighter": "Jessica Andrade",
-      "totalScore": 35.48,
-      "penalty": -10,
+      "fighter": "Kayla Harrison",
+      "totalScore": 35.64,
+      "penalty": 0,
       "overallOvr": 85
     },
     {
       "rank": 8,
-      "fighter": "Kayla Harrison",
-      "totalScore": 34.07,
-      "penalty": 0,
+      "fighter": "Jessica Andrade",
+      "totalScore": 35.48,
+      "penalty": -10,
       "overallOvr": 85
     },
     {
@@ -1099,7 +1132,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T02:35:05.003Z",
+        "completedAt": "2026-07-11T03:57:10.990Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -1209,7 +1242,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T02:35:05.032Z",
+        "completedAt": "2026-07-11T03:57:11.011Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -1402,7 +1435,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T02:35:04.468Z",
+        "completedAt": "2026-07-11T03:57:10.254Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -1417,7 +1450,7 @@
           "record": null,
           "ufcLosses": 6,
           "penalty": -6.75,
-          "rank": 15
+          "rank": 14
         },
         {
           "fighter": "Israel Adesanya",
@@ -1426,7 +1459,7 @@
           "record": null,
           "ufcLosses": 6,
           "penalty": -6.75,
-          "rank": 15
+          "rank": 14
         }
       ],
       "packetRecord": "13-6",
@@ -1536,7 +1569,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T02:35:05.026Z",
+        "completedAt": "2026-07-11T03:57:11.002Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -1670,7 +1703,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T02:35:05.026Z",
+        "completedAt": "2026-07-11T03:57:11.002Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -1768,7 +1801,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T02:35:05.032Z",
+        "completedAt": "2026-07-11T03:57:11.011Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -1912,7 +1945,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-11T02:35:04.465Z",
+        "completedAt": "2026-07-11T03:57:10.249Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -2057,7 +2090,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-11T02:35:04.465Z",
+        "completedAt": "2026-07-11T03:57:10.249Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -2227,7 +2260,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T02:35:05.020Z",
+        "completedAt": "2026-07-11T03:57:10.997Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -2242,7 +2275,7 @@
           "record": null,
           "ufcLosses": 3,
           "penalty": -5,
-          "rank": 13
+          "rank": 17
         },
         {
           "fighter": "Alex Pereira",
@@ -2251,7 +2284,7 @@
           "record": null,
           "ufcLosses": 3,
           "penalty": -5,
-          "rank": 13
+          "rank": 17
         }
       ],
       "packetRecord": "10-3",
@@ -2337,7 +2370,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T02:35:05.031Z",
+        "completedAt": "2026-07-11T03:57:11.011Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -2459,7 +2492,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T02:35:05.032Z",
+        "completedAt": "2026-07-11T03:57:11.011Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }

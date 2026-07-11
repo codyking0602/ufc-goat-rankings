@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-11T02:35:07.616Z",
+  "generatedAt": "2026-07-11T03:57:14.684Z",
   "baseUrl": "http://127.0.0.1:4173",
   "report": {
     "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -70,7 +70,7 @@
       "mutatesRecords": true,
       "mutatesPenalty": false,
       "mutatesScores": false,
-      "appliedAt": "2026-07-11T02:35:05.050Z"
+      "appliedAt": "2026-07-11T03:57:11.036Z"
     },
     "scoreReview": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -193,6 +193,14 @@
           "lossEventCount": 7
         },
         {
+          "fighter": "Tito Ortiz",
+          "priorPenalty": -8.25,
+          "promotedPenalty": -9.5,
+          "delta": -1.25,
+          "capApplied": false,
+          "lossEventCount": 11
+        },
+        {
           "fighter": "Aljamain Sterling",
           "priorPenalty": -6.25,
           "promotedPenalty": -7.25,
@@ -207,14 +215,6 @@
           "delta": 1,
           "capApplied": false,
           "lossEventCount": 5
-        },
-        {
-          "fighter": "Tito Ortiz",
-          "priorPenalty": -8.25,
-          "promotedPenalty": -7.25,
-          "delta": 1,
-          "capApplied": false,
-          "lossEventCount": 11
         },
         {
           "fighter": "Michael Bisping",
@@ -310,7 +310,7 @@
     },
     "rankingImpact": {
       "changedPenaltyCount": 27,
-      "fightersWithRankMovement": 25,
+      "fightersWithRankMovement": 30,
       "movement": [
         {
           "board": "men",
@@ -320,8 +320,8 @@
           "currentPenalty": -2,
           "priorPenalty": -5.5,
           "counterfactualTotal": 45.62,
-          "counterfactualRank": 28,
-          "rankMovement": 6
+          "counterfactualRank": 29,
+          "rankMovement": 7
         },
         {
           "board": "men",
@@ -342,8 +342,19 @@
           "currentPenalty": -3.75,
           "priorPenalty": -6.75,
           "counterfactualTotal": 45.88,
-          "counterfactualRank": 27,
-          "rankMovement": 4
+          "counterfactualRank": 28,
+          "rankMovement": 5
+        },
+        {
+          "board": "men",
+          "fighter": "Tito Ortiz",
+          "currentRank": 31,
+          "currentTotal": 44.66,
+          "currentPenalty": -9.5,
+          "priorPenalty": -8.25,
+          "counterfactualTotal": 45.91,
+          "counterfactualRank": 26,
+          "rankMovement": -5
         },
         {
           "board": "men",
@@ -413,14 +424,14 @@
         },
         {
           "board": "men",
-          "fighter": "Jose Aldo",
-          "currentRank": 9,
-          "currentTotal": 62.29,
-          "currentPenalty": -10,
-          "priorPenalty": -6.75,
-          "counterfactualTotal": 65.54,
-          "counterfactualRank": 7,
-          "rankMovement": -2
+          "fighter": "Chuck Liddell",
+          "currentRank": 16,
+          "currentTotal": 54.87,
+          "currentPenalty": -6,
+          "priorPenalty": -10,
+          "counterfactualTotal": 50.87,
+          "counterfactualRank": 18,
+          "rankMovement": 2
         },
         {
           "board": "men",
@@ -435,14 +446,36 @@
         },
         {
           "board": "men",
-          "fighter": "Chuck Liddell",
-          "currentRank": 17,
-          "currentTotal": 54.87,
-          "currentPenalty": -6,
-          "priorPenalty": -10,
-          "counterfactualTotal": 50.87,
-          "counterfactualRank": 18,
-          "rankMovement": 1
+          "fighter": "Dricus du Plessis",
+          "currentRank": 30,
+          "currentTotal": 45.15,
+          "currentPenalty": -1.5,
+          "priorPenalty": -1.5,
+          "counterfactualTotal": 45.15,
+          "counterfactualRank": 32,
+          "rankMovement": 2
+        },
+        {
+          "board": "men",
+          "fighter": "Jose Aldo",
+          "currentRank": 8,
+          "currentTotal": 62.29,
+          "currentPenalty": -10,
+          "priorPenalty": -6.75,
+          "counterfactualTotal": 65.54,
+          "counterfactualRank": 7,
+          "rankMovement": -1
+        },
+        {
+          "board": "women",
+          "fighter": "Jessica Andrade",
+          "currentRank": 8,
+          "currentTotal": 35.48,
+          "currentPenalty": -10,
+          "priorPenalty": -7.5,
+          "counterfactualTotal": 37.98,
+          "counterfactualRank": 7,
+          "rankMovement": -1
         },
         {
           "board": "women",
@@ -469,12 +502,12 @@
         {
           "board": "men",
           "fighter": "Matt Hughes",
-          "currentRank": 8,
-          "currentTotal": 62.34,
+          "currentRank": 9,
+          "currentTotal": 62.12,
           "currentPenalty": -8.75,
           "priorPenalty": -10,
-          "counterfactualTotal": 61.09,
-          "counterfactualRank": 9,
+          "counterfactualTotal": 60.87,
+          "counterfactualRank": 10,
           "rankMovement": 1
         },
         {
@@ -487,17 +520,6 @@
           "counterfactualTotal": 45.46,
           "counterfactualRank": 31,
           "rankMovement": -1
-        },
-        {
-          "board": "men",
-          "fighter": "Tito Ortiz",
-          "currentRank": 29,
-          "currentTotal": 46.49,
-          "currentPenalty": -7.25,
-          "priorPenalty": -8.25,
-          "counterfactualTotal": 45.49,
-          "counterfactualRank": 30,
-          "rankMovement": 1
         },
         {
           "board": "men",
@@ -523,6 +545,28 @@
         },
         {
           "board": "men",
+          "fighter": "Tyron Woodley",
+          "currentRank": 26,
+          "currentTotal": 46.66,
+          "currentPenalty": -3.75,
+          "priorPenalty": -4.5,
+          "counterfactualTotal": 45.91,
+          "counterfactualRank": 27,
+          "rankMovement": 1
+        },
+        {
+          "board": "men",
+          "fighter": "Alex Pereira",
+          "currentRank": 17,
+          "currentTotal": 54.48,
+          "currentPenalty": -5,
+          "priorPenalty": -5,
+          "counterfactualTotal": 54.48,
+          "counterfactualRank": 16,
+          "rankMovement": -1
+        },
+        {
+          "board": "men",
           "fighter": "Anderson Silva",
           "currentRank": 4,
           "currentTotal": 75.79,
@@ -545,17 +589,6 @@
         },
         {
           "board": "men",
-          "fighter": "Dricus du Plessis",
-          "currentRank": 31,
-          "currentTotal": 45.15,
-          "currentPenalty": -1.5,
-          "priorPenalty": -1.5,
-          "counterfactualTotal": 45.15,
-          "counterfactualRank": 32,
-          "rankMovement": 1
-        },
-        {
-          "board": "men",
           "fighter": "Dustin Poirier",
           "currentRank": 37,
           "currentTotal": 40.35,
@@ -563,6 +596,17 @@
           "priorPenalty": -10,
           "counterfactualTotal": 40.35,
           "counterfactualRank": 38,
+          "rankMovement": 1
+        },
+        {
+          "board": "women",
+          "fighter": "Kayla Harrison",
+          "currentRank": 7,
+          "currentTotal": 35.64,
+          "currentPenalty": 0,
+          "priorPenalty": 0,
+          "counterfactualTotal": 35.64,
+          "counterfactualRank": 8,
           "rankMovement": 1
         },
         {
@@ -579,12 +623,23 @@
         {
           "board": "men",
           "fighter": "Merab Dvalishvili",
-          "currentRank": 30,
+          "currentRank": 29,
           "currentTotal": 45.52,
           "currentPenalty": -4.75,
           "priorPenalty": -4.75,
           "counterfactualTotal": 45.52,
-          "counterfactualRank": 29,
+          "counterfactualRank": 30,
+          "rankMovement": 1
+        },
+        {
+          "board": "men",
+          "fighter": "Randy Couture",
+          "currentRank": 10,
+          "currentTotal": 61.09,
+          "currentPenalty": -10,
+          "priorPenalty": -10,
+          "counterfactualTotal": 61.09,
+          "counterfactualRank": 9,
           "rankMovement": -1
         },
         {
@@ -596,17 +651,6 @@
           "priorPenalty": -5.5,
           "counterfactualTotal": 24.56,
           "counterfactualRank": 47,
-          "rankMovement": 0
-        },
-        {
-          "board": "women",
-          "fighter": "Jessica Andrade",
-          "currentRank": 7,
-          "currentTotal": 35.48,
-          "currentPenalty": -10,
-          "priorPenalty": -7.5,
-          "counterfactualTotal": 37.98,
-          "counterfactualRank": 7,
           "rankMovement": 0
         },
         {
@@ -673,17 +717,6 @@
           "priorPenalty": -8,
           "counterfactualTotal": 57.6,
           "counterfactualRank": 12,
-          "rankMovement": 0
-        },
-        {
-          "board": "men",
-          "fighter": "Tyron Woodley",
-          "currentRank": 26,
-          "currentTotal": 46.66,
-          "currentPenalty": -3.75,
-          "priorPenalty": -4.5,
-          "counterfactualTotal": 45.91,
-          "counterfactualRank": 26,
           "rankMovement": 0
         },
         {
@@ -788,10 +821,10 @@
     ],
     "mutatesScores": false,
     "mutatesPenalty": false,
-    "generatedAt": "2026-07-11T02:35:06.711Z"
+    "generatedAt": "2026-07-11T03:57:13.452Z"
   },
   "pipeline": {
-    "version": "deterministic-scoring-pipeline-20260710zf-chuck-vitor-window",
+    "version": "deterministic-scoring-pipeline-20260710zg-four-audit-corrections",
     "mode": "deterministic-single-pass",
     "status": "ready",
     "sequence": [
@@ -801,15 +834,18 @@
       "loss-context-batch-five:loaded",
       "loss-context-batch-six:loaded",
       "loss-context-batch-seven:loaded",
+      "approved-fighter-audit-corrections:loaded",
       "loss-context-canonical-production:loaded",
       "canonical-longevity-recalculation:loaded",
       "canonical-prime-records:loaded",
       "opponent-quality:ready",
+      "approved-opponent-quality:applied",
       "prime-round-control:loaded",
       "prime-ledgers:loaded",
       "prime-shadow:loaded",
       "prime-audit-batch-seven:loaded",
       "prime-audit-batch-ten:loaded",
+      "prime-audit-batch-eleven:loaded",
       "prime-live:loaded",
       "prime-copy:loaded",
       "fighter-era-ledgers:existing",
@@ -829,8 +865,8 @@
     "timerCount": 0,
     "repeatedLoadCount": 0,
     "finalScoreApplyCount": 1,
-    "startedAt": "2026-07-11T02:35:04.049Z",
-    "completedAt": "2026-07-11T02:35:06.928Z",
+    "startedAt": "2026-07-11T03:57:09.716Z",
+    "completedAt": "2026-07-11T03:57:13.778Z",
     "error": null,
     "lossContextCompletionBatchThree": {
       "version": "loss-context-ledger-completion-batch-three-20260710a-five-veteran-ledgers",
@@ -885,7 +921,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T02:35:04.999Z"
+      "appliedAt": "2026-07-11T03:57:10.961Z"
     },
     "lossContextCompletionBatchFour": {
       "version": "loss-context-ledger-completion-batch-four-20260710a-five-highest-missing",
@@ -941,7 +977,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T02:35:05.003Z"
+      "appliedAt": "2026-07-11T03:57:10.990Z"
     },
     "lossContextCompletionBatchFive": {
       "version": "loss-context-ledger-completion-batch-five-20260710b-chuck-vitor-window",
@@ -1034,7 +1070,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T02:35:05.020Z"
+      "appliedAt": "2026-07-11T03:57:10.997Z"
     },
     "lossContextCompletionBatchSix": {
       "version": "loss-context-ledger-completion-batch-six-20260710a-first-half-eighteen",
@@ -1222,7 +1258,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T02:35:05.026Z"
+      "appliedAt": "2026-07-11T03:57:11.002Z"
     },
     "lossContextCompletionBatchSeven": {
       "version": "loss-context-ledger-completion-batch-seven-20260710a-final-seventeen",
@@ -1381,7 +1417,23 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T02:35:05.032Z"
+      "appliedAt": "2026-07-11T03:57:11.012Z"
+    },
+    "approvedFighterAuditCorrections": {
+      "version": "approved-fighter-audit-corrections-20260710a-tito-pereira-hughes-kayla",
+      "applied": true,
+      "eraCorrections": [
+        "Tito Ortiz"
+      ],
+      "primeRecordCorrections": [
+        "Tito Ortiz",
+        "Alex Pereira",
+        "Matt Hughes"
+      ],
+      "opponentQualityCorrections": [
+        "Kayla Harrison"
+      ],
+      "appliedAt": "2026-07-11T03:57:11.016Z"
     },
     "lossContextCanonicalProduction": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -5614,20 +5666,20 @@
             "window": {
               "start": "2000-04-14",
               "startLabel": "Wanderlei Silva",
-              "end": "2004-04-02",
-              "endLabel": "Chuck Liddell I",
+              "end": "2006-12-30",
+              "endLabel": "Chuck Liddell II",
               "endType": "unrecovered_elite_loss",
-              "endReason": "Couture does not close it alone because Chuck I remains elite rivalry/title-level endpoint. Chuck I closes.",
+              "endReason": "Tito re-proved elite form after Chuck I with wins over Patrick Cote, Vitor Belfort, and Forrest Griffin before returning to a UFC title fight. Chuck II is the unrecovered endpoint.",
               "canonical": true,
               "locked": true,
-              "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+              "lockVersion": "approved-fighter-audit-corrections-20260710a-tito-pereira-hughes-kayla"
             },
             "events": [
               {
                 "fighter": "Tito Ortiz",
                 "sourceType": "unrecoveredLoss",
-                "label": "Chuck Liddell I",
-                "date": "2004-04-02",
+                "label": "Chuck Liddell II",
+                "date": "2006-12-30",
                 "phase": "prime",
                 "quality": "elite",
                 "finished": true,
@@ -5637,9 +5689,9 @@
                 "penaltyExempt": false,
                 "exception": null,
                 "raw": {
-                  "label": "Chuck Liddell I",
-                  "date": "2004-04-02",
-                  "type": "prime elite finish loss",
+                  "label": "Chuck Liddell II",
+                  "date": "2006-12-30",
+                  "type": "prime elite title finish loss",
                   "method": "TKO",
                   "notes": "Canonical prime endpoint."
                 },
@@ -5710,17 +5762,17 @@
                   "date": "2003-09-26",
                   "type": "prime elite title decision loss",
                   "method": "Decision",
-                  "recovery": "Tito remained in an elite rivalry/title fight with Chuck Liddell."
+                  "recovery": "Tito remained elite and entered the Chuck Liddell rivalry/title path."
                 },
                 "penaltyEstimate": -1.5,
                 "penaltyApplies": true
               },
               {
                 "fighter": "Tito Ortiz",
-                "sourceType": "postPrimeLosses",
-                "label": "Chuck Liddell II",
-                "date": "2006-12-30",
-                "phase": "post-prime",
+                "sourceType": "recoveredLosses",
+                "label": "Chuck Liddell I",
+                "date": "2004-04-02",
+                "phase": "prime",
                 "quality": "elite",
                 "finished": true,
                 "upwardDivision": false,
@@ -5729,13 +5781,14 @@
                 "penaltyExempt": false,
                 "exception": null,
                 "raw": {
-                  "label": "Chuck Liddell II",
-                  "date": "2006-12-30",
-                  "type": "post-prime elite title finish loss",
-                  "method": "TKO"
+                  "label": "Chuck Liddell I",
+                  "date": "2004-04-02",
+                  "type": "prime elite finish loss",
+                  "method": "TKO",
+                  "recovery": "Tito rebounded with Cote, Belfort, Forrest Griffin, and another UFC title fight."
                 },
-                "penaltyEstimate": 0,
-                "penaltyApplies": false
+                "penaltyEstimate": -2.25,
+                "penaltyApplies": true
               },
               {
                 "fighter": "Tito Ortiz",
@@ -5874,13 +5927,13 @@
               "totalEvents": 11,
               "lossEvents": 11,
               "prePrime": 2,
-              "prime": 2,
-              "postPrime": 7,
+              "prime": 3,
+              "postPrime": 6,
               "upwardDivision": 0,
               "weirdContext": 0,
               "unknown": 0
             },
-            "estimatedPenaltyTotal": -7.25,
+            "estimatedPenaltyTotal": -9.5,
             "mutatesScores": false
           },
           {
@@ -15227,20 +15280,20 @@
             "window": {
               "start": "2000-04-14",
               "startLabel": "Wanderlei Silva",
-              "end": "2004-04-02",
-              "endLabel": "Chuck Liddell I",
+              "end": "2006-12-30",
+              "endLabel": "Chuck Liddell II",
               "endType": "unrecovered_elite_loss",
-              "endReason": "Couture does not close it alone because Chuck I remains elite rivalry/title-level endpoint. Chuck I closes.",
+              "endReason": "Tito re-proved elite form after Chuck I with wins over Patrick Cote, Vitor Belfort, and Forrest Griffin before returning to a UFC title fight. Chuck II is the unrecovered endpoint.",
               "canonical": true,
               "locked": true,
-              "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+              "lockVersion": "approved-fighter-audit-corrections-20260710a-tito-pereira-hughes-kayla"
             },
             "events": [
               {
                 "fighter": "Tito Ortiz",
                 "sourceType": "unrecoveredLoss",
-                "label": "Chuck Liddell I",
-                "date": "2004-04-02",
+                "label": "Chuck Liddell II",
+                "date": "2006-12-30",
                 "phase": "prime",
                 "quality": "elite",
                 "finished": true,
@@ -15250,9 +15303,9 @@
                 "penaltyExempt": false,
                 "exception": null,
                 "raw": {
-                  "label": "Chuck Liddell I",
-                  "date": "2004-04-02",
-                  "type": "prime elite finish loss",
+                  "label": "Chuck Liddell II",
+                  "date": "2006-12-30",
+                  "type": "prime elite title finish loss",
                   "method": "TKO",
                   "notes": "Canonical prime endpoint."
                 },
@@ -15323,17 +15376,17 @@
                   "date": "2003-09-26",
                   "type": "prime elite title decision loss",
                   "method": "Decision",
-                  "recovery": "Tito remained in an elite rivalry/title fight with Chuck Liddell."
+                  "recovery": "Tito remained elite and entered the Chuck Liddell rivalry/title path."
                 },
                 "penaltyEstimate": -1.5,
                 "penaltyApplies": true
               },
               {
                 "fighter": "Tito Ortiz",
-                "sourceType": "postPrimeLosses",
-                "label": "Chuck Liddell II",
-                "date": "2006-12-30",
-                "phase": "post-prime",
+                "sourceType": "recoveredLosses",
+                "label": "Chuck Liddell I",
+                "date": "2004-04-02",
+                "phase": "prime",
                 "quality": "elite",
                 "finished": true,
                 "upwardDivision": false,
@@ -15342,13 +15395,14 @@
                 "penaltyExempt": false,
                 "exception": null,
                 "raw": {
-                  "label": "Chuck Liddell II",
-                  "date": "2006-12-30",
-                  "type": "post-prime elite title finish loss",
-                  "method": "TKO"
+                  "label": "Chuck Liddell I",
+                  "date": "2004-04-02",
+                  "type": "prime elite finish loss",
+                  "method": "TKO",
+                  "recovery": "Tito rebounded with Cote, Belfort, Forrest Griffin, and another UFC title fight."
                 },
-                "penaltyEstimate": 0,
-                "penaltyApplies": false
+                "penaltyEstimate": -2.25,
+                "penaltyApplies": true
               },
               {
                 "fighter": "Tito Ortiz",
@@ -15487,13 +15541,13 @@
               "totalEvents": 11,
               "lossEvents": 11,
               "prePrime": 2,
-              "prime": 2,
-              "postPrime": 7,
+              "prime": 3,
+              "postPrime": 6,
               "upwardDivision": 0,
               "weirdContext": 0,
               "unknown": 0
             },
-            "estimatedPenaltyTotal": -7.25,
+            "estimatedPenaltyTotal": -9.5,
             "mutatesScores": false
           },
           {
@@ -23968,8 +24022,8 @@
           {
             "fighter": "Tito Ortiz",
             "sourceType": "unrecoveredLoss",
-            "label": "Chuck Liddell I",
-            "date": "2004-04-02",
+            "label": "Chuck Liddell II",
+            "date": "2006-12-30",
             "phase": "prime",
             "quality": "elite",
             "finished": true,
@@ -23979,9 +24033,9 @@
             "penaltyExempt": false,
             "exception": null,
             "raw": {
-              "label": "Chuck Liddell I",
-              "date": "2004-04-02",
-              "type": "prime elite finish loss",
+              "label": "Chuck Liddell II",
+              "date": "2006-12-30",
+              "type": "prime elite title finish loss",
               "method": "TKO",
               "notes": "Canonical prime endpoint."
             },
@@ -24052,17 +24106,17 @@
               "date": "2003-09-26",
               "type": "prime elite title decision loss",
               "method": "Decision",
-              "recovery": "Tito remained in an elite rivalry/title fight with Chuck Liddell."
+              "recovery": "Tito remained elite and entered the Chuck Liddell rivalry/title path."
             },
             "penaltyEstimate": -1.5,
             "penaltyApplies": true
           },
           {
             "fighter": "Tito Ortiz",
-            "sourceType": "postPrimeLosses",
-            "label": "Chuck Liddell II",
-            "date": "2006-12-30",
-            "phase": "post-prime",
+            "sourceType": "recoveredLosses",
+            "label": "Chuck Liddell I",
+            "date": "2004-04-02",
+            "phase": "prime",
             "quality": "elite",
             "finished": true,
             "upwardDivision": false,
@@ -24071,13 +24125,14 @@
             "penaltyExempt": false,
             "exception": null,
             "raw": {
-              "label": "Chuck Liddell II",
-              "date": "2006-12-30",
-              "type": "post-prime elite title finish loss",
-              "method": "TKO"
+              "label": "Chuck Liddell I",
+              "date": "2004-04-02",
+              "type": "prime elite finish loss",
+              "method": "TKO",
+              "recovery": "Tito rebounded with Cote, Belfort, Forrest Griffin, and another UFC title fight."
             },
-            "penaltyEstimate": 0,
-            "penaltyApplies": false
+            "penaltyEstimate": -2.25,
+            "penaltyApplies": true
           },
           {
             "fighter": "Tito Ortiz",
@@ -28523,7 +28578,7 @@
         ],
         "mode": "canonical-production",
         "mutatesScores": true,
-        "appliedAt": "2026-07-11T02:35:05.050Z"
+        "appliedAt": "2026-07-11T03:57:11.036Z"
       },
       "mismatchAudit": {
         "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -32577,9 +32632,9 @@
             "missingLossEvents": 0,
             "excessLossEvents": 0,
             "livePenalty": -8.25,
-            "rawLedgerEstimate": -7.25,
-            "cappedLedgerEstimate": -7.25,
-            "delta": 1,
+            "rawLedgerEstimate": -9.5,
+            "cappedLedgerEstimate": -9.5,
+            "delta": -1.25,
             "exactScoreMatch": false,
             "ledgerFinalized": true,
             "unknownPhase": 0,
@@ -32590,8 +32645,8 @@
               {
                 "fighter": "Tito Ortiz",
                 "sourceType": "unrecoveredLoss",
-                "label": "Chuck Liddell I",
-                "date": "2004-04-02",
+                "label": "Chuck Liddell II",
+                "date": "2006-12-30",
                 "phase": "prime",
                 "quality": "elite",
                 "finished": true,
@@ -32601,9 +32656,9 @@
                 "penaltyExempt": false,
                 "exception": null,
                 "raw": {
-                  "label": "Chuck Liddell I",
-                  "date": "2004-04-02",
-                  "type": "prime elite finish loss",
+                  "label": "Chuck Liddell II",
+                  "date": "2006-12-30",
+                  "type": "prime elite title finish loss",
                   "method": "TKO",
                   "notes": "Canonical prime endpoint."
                 },
@@ -32674,17 +32729,17 @@
                   "date": "2003-09-26",
                   "type": "prime elite title decision loss",
                   "method": "Decision",
-                  "recovery": "Tito remained in an elite rivalry/title fight with Chuck Liddell."
+                  "recovery": "Tito remained elite and entered the Chuck Liddell rivalry/title path."
                 },
                 "penaltyEstimate": -1.5,
                 "penaltyApplies": true
               },
               {
                 "fighter": "Tito Ortiz",
-                "sourceType": "postPrimeLosses",
-                "label": "Chuck Liddell II",
-                "date": "2006-12-30",
-                "phase": "post-prime",
+                "sourceType": "recoveredLosses",
+                "label": "Chuck Liddell I",
+                "date": "2004-04-02",
+                "phase": "prime",
                 "quality": "elite",
                 "finished": true,
                 "upwardDivision": false,
@@ -32693,13 +32748,14 @@
                 "penaltyExempt": false,
                 "exception": null,
                 "raw": {
-                  "label": "Chuck Liddell II",
-                  "date": "2006-12-30",
-                  "type": "post-prime elite title finish loss",
-                  "method": "TKO"
+                  "label": "Chuck Liddell I",
+                  "date": "2004-04-02",
+                  "type": "prime elite finish loss",
+                  "method": "TKO",
+                  "recovery": "Tito rebounded with Cote, Belfort, Forrest Griffin, and another UFC title fight."
                 },
-                "penaltyEstimate": 0,
-                "penaltyApplies": false
+                "penaltyEstimate": -2.25,
+                "penaltyApplies": true
               },
               {
                 "fighter": "Tito Ortiz",
@@ -44306,9 +44362,9 @@
             "missingLossEvents": 0,
             "excessLossEvents": 0,
             "livePenalty": -8.25,
-            "rawLedgerEstimate": -7.25,
-            "cappedLedgerEstimate": -7.25,
-            "delta": 1,
+            "rawLedgerEstimate": -9.5,
+            "cappedLedgerEstimate": -9.5,
+            "delta": -1.25,
             "exactScoreMatch": false,
             "ledgerFinalized": true,
             "unknownPhase": 0,
@@ -44319,8 +44375,8 @@
               {
                 "fighter": "Tito Ortiz",
                 "sourceType": "unrecoveredLoss",
-                "label": "Chuck Liddell I",
-                "date": "2004-04-02",
+                "label": "Chuck Liddell II",
+                "date": "2006-12-30",
                 "phase": "prime",
                 "quality": "elite",
                 "finished": true,
@@ -44330,9 +44386,9 @@
                 "penaltyExempt": false,
                 "exception": null,
                 "raw": {
-                  "label": "Chuck Liddell I",
-                  "date": "2004-04-02",
-                  "type": "prime elite finish loss",
+                  "label": "Chuck Liddell II",
+                  "date": "2006-12-30",
+                  "type": "prime elite title finish loss",
                   "method": "TKO",
                   "notes": "Canonical prime endpoint."
                 },
@@ -44403,17 +44459,17 @@
                   "date": "2003-09-26",
                   "type": "prime elite title decision loss",
                   "method": "Decision",
-                  "recovery": "Tito remained in an elite rivalry/title fight with Chuck Liddell."
+                  "recovery": "Tito remained elite and entered the Chuck Liddell rivalry/title path."
                 },
                 "penaltyEstimate": -1.5,
                 "penaltyApplies": true
               },
               {
                 "fighter": "Tito Ortiz",
-                "sourceType": "postPrimeLosses",
-                "label": "Chuck Liddell II",
-                "date": "2006-12-30",
-                "phase": "post-prime",
+                "sourceType": "recoveredLosses",
+                "label": "Chuck Liddell I",
+                "date": "2004-04-02",
+                "phase": "prime",
                 "quality": "elite",
                 "finished": true,
                 "upwardDivision": false,
@@ -44422,13 +44478,14 @@
                 "penaltyExempt": false,
                 "exception": null,
                 "raw": {
-                  "label": "Chuck Liddell II",
-                  "date": "2006-12-30",
-                  "type": "post-prime elite title finish loss",
-                  "method": "TKO"
+                  "label": "Chuck Liddell I",
+                  "date": "2004-04-02",
+                  "type": "prime elite finish loss",
+                  "method": "TKO",
+                  "recovery": "Tito rebounded with Cote, Belfort, Forrest Griffin, and another UFC title fight."
                 },
-                "penaltyEstimate": 0,
-                "penaltyApplies": false
+                "penaltyEstimate": -2.25,
+                "penaltyApplies": true
               },
               {
                 "fighter": "Tito Ortiz",
@@ -47292,7 +47349,7 @@
         "missingEraLossEntries": [],
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "appliedAt": "2026-07-11T02:35:05.050Z"
+        "appliedAt": "2026-07-11T03:57:11.036Z"
       },
       "scoreReview": {
         "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -48382,6 +48439,117 @@
             ]
           },
           {
+            "fighter": "Tito Ortiz",
+            "priorPenalty": -8.25,
+            "promotedPenalty": -9.5,
+            "delta": -1.25,
+            "rawLedgerEstimate": -9.5,
+            "cappedLedgerEstimate": -9.5,
+            "capApplied": false,
+            "lossEventCount": 11,
+            "lossEvents": [
+              {
+                "label": "Chuck Liddell II",
+                "date": "2006-12-30",
+                "phase": "prime",
+                "quality": "elite",
+                "finished": true,
+                "upwardDivision": false,
+                "penaltyEstimate": -2.25
+              },
+              {
+                "label": "Guy Mezger I",
+                "date": "1997-05-30",
+                "phase": "pre-prime",
+                "quality": "non-elite",
+                "finished": true,
+                "upwardDivision": false,
+                "penaltyEstimate": -2
+              },
+              {
+                "label": "Frank Shamrock",
+                "date": "1999-09-24",
+                "phase": "pre-prime",
+                "quality": "elite",
+                "finished": true,
+                "upwardDivision": false,
+                "penaltyEstimate": -1.5
+              },
+              {
+                "label": "Randy Couture",
+                "date": "2003-09-26",
+                "phase": "prime",
+                "quality": "elite",
+                "finished": false,
+                "upwardDivision": false,
+                "penaltyEstimate": -1.5
+              },
+              {
+                "label": "Chuck Liddell I",
+                "date": "2004-04-02",
+                "phase": "prime",
+                "quality": "elite",
+                "finished": true,
+                "upwardDivision": false,
+                "penaltyEstimate": -2.25
+              },
+              {
+                "label": "Lyoto Machida",
+                "date": "2008-05-24",
+                "phase": "post-prime",
+                "quality": "elite",
+                "finished": false,
+                "upwardDivision": false,
+                "penaltyEstimate": 0
+              },
+              {
+                "label": "Forrest Griffin II",
+                "date": "2009-11-21",
+                "phase": "post-prime",
+                "quality": "unknown",
+                "finished": false,
+                "upwardDivision": false,
+                "penaltyEstimate": 0
+              },
+              {
+                "label": "Matt Hamill",
+                "date": "2010-10-23",
+                "phase": "post-prime",
+                "quality": "unknown",
+                "finished": false,
+                "upwardDivision": false,
+                "penaltyEstimate": 0
+              },
+              {
+                "label": "Rashad Evans II",
+                "date": "2011-08-06",
+                "phase": "post-prime",
+                "quality": "elite",
+                "finished": true,
+                "upwardDivision": false,
+                "penaltyEstimate": 0
+              },
+              {
+                "label": "Antonio Rogerio Nogueira",
+                "date": "2011-12-10",
+                "phase": "post-prime",
+                "quality": "unknown",
+                "finished": true,
+                "upwardDivision": false,
+                "penaltyEstimate": 0
+              },
+              {
+                "label": "Forrest Griffin III",
+                "date": "2012-07-07",
+                "phase": "post-prime",
+                "quality": "unknown",
+                "finished": false,
+                "upwardDivision": false,
+                "penaltyEstimate": 0
+              }
+            ]
+          },
+          {
             "fighter": "Aljamain Sterling",
             "priorPenalty": -6.25,
             "promotedPenalty": -7.25,
@@ -48492,117 +48660,6 @@
                 "finished": false,
                 "upwardDivision": false,
                 "penaltyEstimate": -1.5
-              }
-            ]
-          },
-          {
-            "fighter": "Tito Ortiz",
-            "priorPenalty": -8.25,
-            "promotedPenalty": -7.25,
-            "delta": 1,
-            "rawLedgerEstimate": -7.25,
-            "cappedLedgerEstimate": -7.25,
-            "capApplied": false,
-            "lossEventCount": 11,
-            "lossEvents": [
-              {
-                "label": "Chuck Liddell I",
-                "date": "2004-04-02",
-                "phase": "prime",
-                "quality": "elite",
-                "finished": true,
-                "upwardDivision": false,
-                "penaltyEstimate": -2.25
-              },
-              {
-                "label": "Guy Mezger I",
-                "date": "1997-05-30",
-                "phase": "pre-prime",
-                "quality": "non-elite",
-                "finished": true,
-                "upwardDivision": false,
-                "penaltyEstimate": -2
-              },
-              {
-                "label": "Frank Shamrock",
-                "date": "1999-09-24",
-                "phase": "pre-prime",
-                "quality": "elite",
-                "finished": true,
-                "upwardDivision": false,
-                "penaltyEstimate": -1.5
-              },
-              {
-                "label": "Randy Couture",
-                "date": "2003-09-26",
-                "phase": "prime",
-                "quality": "elite",
-                "finished": false,
-                "upwardDivision": false,
-                "penaltyEstimate": -1.5
-              },
-              {
-                "label": "Chuck Liddell II",
-                "date": "2006-12-30",
-                "phase": "post-prime",
-                "quality": "elite",
-                "finished": true,
-                "upwardDivision": false,
-                "penaltyEstimate": 0
-              },
-              {
-                "label": "Lyoto Machida",
-                "date": "2008-05-24",
-                "phase": "post-prime",
-                "quality": "elite",
-                "finished": false,
-                "upwardDivision": false,
-                "penaltyEstimate": 0
-              },
-              {
-                "label": "Forrest Griffin II",
-                "date": "2009-11-21",
-                "phase": "post-prime",
-                "quality": "unknown",
-                "finished": false,
-                "upwardDivision": false,
-                "penaltyEstimate": 0
-              },
-              {
-                "label": "Matt Hamill",
-                "date": "2010-10-23",
-                "phase": "post-prime",
-                "quality": "unknown",
-                "finished": false,
-                "upwardDivision": false,
-                "penaltyEstimate": 0
-              },
-              {
-                "label": "Rashad Evans II",
-                "date": "2011-08-06",
-                "phase": "post-prime",
-                "quality": "elite",
-                "finished": true,
-                "upwardDivision": false,
-                "penaltyEstimate": 0
-              },
-              {
-                "label": "Antonio Rogerio Nogueira",
-                "date": "2011-12-10",
-                "phase": "post-prime",
-                "quality": "unknown",
-                "finished": true,
-                "upwardDivision": false,
-                "penaltyEstimate": 0
-              },
-              {
-                "label": "Forrest Griffin III",
-                "date": "2012-07-07",
-                "phase": "post-prime",
-                "quality": "unknown",
-                "finished": false,
-                "upwardDivision": false,
-                "penaltyEstimate": 0
               }
             ]
           },
@@ -49469,7 +49526,7 @@
         "mutatesPenalty": true,
         "mutatesScores": true,
         "finalScoreRecalculationOwner": "final-score-engine.js",
-        "appliedAt": "2026-07-11T02:35:05.050Z"
+        "appliedAt": "2026-07-11T03:57:11.036Z"
       },
       "appliedCompletionFixes": [
         "Robert Whittaker",
@@ -49529,7 +49586,7 @@
       ],
       "mutatesPenalty": true,
       "mutatesScores": true,
-      "appliedAt": "2026-07-11T02:35:05.050Z"
+      "appliedAt": "2026-07-11T03:57:11.036Z"
     },
     "lossContextScoreReview": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -50619,6 +50676,117 @@
           ]
         },
         {
+          "fighter": "Tito Ortiz",
+          "priorPenalty": -8.25,
+          "promotedPenalty": -9.5,
+          "delta": -1.25,
+          "rawLedgerEstimate": -9.5,
+          "cappedLedgerEstimate": -9.5,
+          "capApplied": false,
+          "lossEventCount": 11,
+          "lossEvents": [
+            {
+              "label": "Chuck Liddell II",
+              "date": "2006-12-30",
+              "phase": "prime",
+              "quality": "elite",
+              "finished": true,
+              "upwardDivision": false,
+              "penaltyEstimate": -2.25
+            },
+            {
+              "label": "Guy Mezger I",
+              "date": "1997-05-30",
+              "phase": "pre-prime",
+              "quality": "non-elite",
+              "finished": true,
+              "upwardDivision": false,
+              "penaltyEstimate": -2
+            },
+            {
+              "label": "Frank Shamrock",
+              "date": "1999-09-24",
+              "phase": "pre-prime",
+              "quality": "elite",
+              "finished": true,
+              "upwardDivision": false,
+              "penaltyEstimate": -1.5
+            },
+            {
+              "label": "Randy Couture",
+              "date": "2003-09-26",
+              "phase": "prime",
+              "quality": "elite",
+              "finished": false,
+              "upwardDivision": false,
+              "penaltyEstimate": -1.5
+            },
+            {
+              "label": "Chuck Liddell I",
+              "date": "2004-04-02",
+              "phase": "prime",
+              "quality": "elite",
+              "finished": true,
+              "upwardDivision": false,
+              "penaltyEstimate": -2.25
+            },
+            {
+              "label": "Lyoto Machida",
+              "date": "2008-05-24",
+              "phase": "post-prime",
+              "quality": "elite",
+              "finished": false,
+              "upwardDivision": false,
+              "penaltyEstimate": 0
+            },
+            {
+              "label": "Forrest Griffin II",
+              "date": "2009-11-21",
+              "phase": "post-prime",
+              "quality": "unknown",
+              "finished": false,
+              "upwardDivision": false,
+              "penaltyEstimate": 0
+            },
+            {
+              "label": "Matt Hamill",
+              "date": "2010-10-23",
+              "phase": "post-prime",
+              "quality": "unknown",
+              "finished": false,
+              "upwardDivision": false,
+              "penaltyEstimate": 0
+            },
+            {
+              "label": "Rashad Evans II",
+              "date": "2011-08-06",
+              "phase": "post-prime",
+              "quality": "elite",
+              "finished": true,
+              "upwardDivision": false,
+              "penaltyEstimate": 0
+            },
+            {
+              "label": "Antonio Rogerio Nogueira",
+              "date": "2011-12-10",
+              "phase": "post-prime",
+              "quality": "unknown",
+              "finished": true,
+              "upwardDivision": false,
+              "penaltyEstimate": 0
+            },
+            {
+              "label": "Forrest Griffin III",
+              "date": "2012-07-07",
+              "phase": "post-prime",
+              "quality": "unknown",
+              "finished": false,
+              "upwardDivision": false,
+              "penaltyEstimate": 0
+            }
+          ]
+        },
+        {
           "fighter": "Aljamain Sterling",
           "priorPenalty": -6.25,
           "promotedPenalty": -7.25,
@@ -50729,117 +50897,6 @@
               "finished": false,
               "upwardDivision": false,
               "penaltyEstimate": -1.5
-            }
-          ]
-        },
-        {
-          "fighter": "Tito Ortiz",
-          "priorPenalty": -8.25,
-          "promotedPenalty": -7.25,
-          "delta": 1,
-          "rawLedgerEstimate": -7.25,
-          "cappedLedgerEstimate": -7.25,
-          "capApplied": false,
-          "lossEventCount": 11,
-          "lossEvents": [
-            {
-              "label": "Chuck Liddell I",
-              "date": "2004-04-02",
-              "phase": "prime",
-              "quality": "elite",
-              "finished": true,
-              "upwardDivision": false,
-              "penaltyEstimate": -2.25
-            },
-            {
-              "label": "Guy Mezger I",
-              "date": "1997-05-30",
-              "phase": "pre-prime",
-              "quality": "non-elite",
-              "finished": true,
-              "upwardDivision": false,
-              "penaltyEstimate": -2
-            },
-            {
-              "label": "Frank Shamrock",
-              "date": "1999-09-24",
-              "phase": "pre-prime",
-              "quality": "elite",
-              "finished": true,
-              "upwardDivision": false,
-              "penaltyEstimate": -1.5
-            },
-            {
-              "label": "Randy Couture",
-              "date": "2003-09-26",
-              "phase": "prime",
-              "quality": "elite",
-              "finished": false,
-              "upwardDivision": false,
-              "penaltyEstimate": -1.5
-            },
-            {
-              "label": "Chuck Liddell II",
-              "date": "2006-12-30",
-              "phase": "post-prime",
-              "quality": "elite",
-              "finished": true,
-              "upwardDivision": false,
-              "penaltyEstimate": 0
-            },
-            {
-              "label": "Lyoto Machida",
-              "date": "2008-05-24",
-              "phase": "post-prime",
-              "quality": "elite",
-              "finished": false,
-              "upwardDivision": false,
-              "penaltyEstimate": 0
-            },
-            {
-              "label": "Forrest Griffin II",
-              "date": "2009-11-21",
-              "phase": "post-prime",
-              "quality": "unknown",
-              "finished": false,
-              "upwardDivision": false,
-              "penaltyEstimate": 0
-            },
-            {
-              "label": "Matt Hamill",
-              "date": "2010-10-23",
-              "phase": "post-prime",
-              "quality": "unknown",
-              "finished": false,
-              "upwardDivision": false,
-              "penaltyEstimate": 0
-            },
-            {
-              "label": "Rashad Evans II",
-              "date": "2011-08-06",
-              "phase": "post-prime",
-              "quality": "elite",
-              "finished": true,
-              "upwardDivision": false,
-              "penaltyEstimate": 0
-            },
-            {
-              "label": "Antonio Rogerio Nogueira",
-              "date": "2011-12-10",
-              "phase": "post-prime",
-              "quality": "unknown",
-              "finished": true,
-              "upwardDivision": false,
-              "penaltyEstimate": 0
-            },
-            {
-              "label": "Forrest Griffin III",
-              "date": "2012-07-07",
-              "phase": "post-prime",
-              "quality": "unknown",
-              "finished": false,
-              "upwardDivision": false,
-              "penaltyEstimate": 0
             }
           ]
         },
@@ -51706,7 +51763,7 @@
       "mutatesPenalty": true,
       "mutatesScores": true,
       "finalScoreRecalculationOwner": "final-score-engine.js",
-      "appliedAt": "2026-07-11T02:35:05.050Z"
+      "appliedAt": "2026-07-11T03:57:11.036Z"
     },
     "lossContextMismatchAudit": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -55760,9 +55817,9 @@
           "missingLossEvents": 0,
           "excessLossEvents": 0,
           "livePenalty": -8.25,
-          "rawLedgerEstimate": -7.25,
-          "cappedLedgerEstimate": -7.25,
-          "delta": 1,
+          "rawLedgerEstimate": -9.5,
+          "cappedLedgerEstimate": -9.5,
+          "delta": -1.25,
           "exactScoreMatch": false,
           "ledgerFinalized": true,
           "unknownPhase": 0,
@@ -55773,8 +55830,8 @@
             {
               "fighter": "Tito Ortiz",
               "sourceType": "unrecoveredLoss",
-              "label": "Chuck Liddell I",
-              "date": "2004-04-02",
+              "label": "Chuck Liddell II",
+              "date": "2006-12-30",
               "phase": "prime",
               "quality": "elite",
               "finished": true,
@@ -55784,9 +55841,9 @@
               "penaltyExempt": false,
               "exception": null,
               "raw": {
-                "label": "Chuck Liddell I",
-                "date": "2004-04-02",
-                "type": "prime elite finish loss",
+                "label": "Chuck Liddell II",
+                "date": "2006-12-30",
+                "type": "prime elite title finish loss",
                 "method": "TKO",
                 "notes": "Canonical prime endpoint."
               },
@@ -55857,17 +55914,17 @@
                 "date": "2003-09-26",
                 "type": "prime elite title decision loss",
                 "method": "Decision",
-                "recovery": "Tito remained in an elite rivalry/title fight with Chuck Liddell."
+                "recovery": "Tito remained elite and entered the Chuck Liddell rivalry/title path."
               },
               "penaltyEstimate": -1.5,
               "penaltyApplies": true
             },
             {
               "fighter": "Tito Ortiz",
-              "sourceType": "postPrimeLosses",
-              "label": "Chuck Liddell II",
-              "date": "2006-12-30",
-              "phase": "post-prime",
+              "sourceType": "recoveredLosses",
+              "label": "Chuck Liddell I",
+              "date": "2004-04-02",
+              "phase": "prime",
               "quality": "elite",
               "finished": true,
               "upwardDivision": false,
@@ -55876,13 +55933,14 @@
               "penaltyExempt": false,
               "exception": null,
               "raw": {
-                "label": "Chuck Liddell II",
-                "date": "2006-12-30",
-                "type": "post-prime elite title finish loss",
-                "method": "TKO"
+                "label": "Chuck Liddell I",
+                "date": "2004-04-02",
+                "type": "prime elite finish loss",
+                "method": "TKO",
+                "recovery": "Tito rebounded with Cote, Belfort, Forrest Griffin, and another UFC title fight."
               },
-              "penaltyEstimate": 0,
-              "penaltyApplies": false
+              "penaltyEstimate": -2.25,
+              "penaltyApplies": true
             },
             {
               "fighter": "Tito Ortiz",
@@ -67489,9 +67547,9 @@
           "missingLossEvents": 0,
           "excessLossEvents": 0,
           "livePenalty": -8.25,
-          "rawLedgerEstimate": -7.25,
-          "cappedLedgerEstimate": -7.25,
-          "delta": 1,
+          "rawLedgerEstimate": -9.5,
+          "cappedLedgerEstimate": -9.5,
+          "delta": -1.25,
           "exactScoreMatch": false,
           "ledgerFinalized": true,
           "unknownPhase": 0,
@@ -67502,8 +67560,8 @@
             {
               "fighter": "Tito Ortiz",
               "sourceType": "unrecoveredLoss",
-              "label": "Chuck Liddell I",
-              "date": "2004-04-02",
+              "label": "Chuck Liddell II",
+              "date": "2006-12-30",
               "phase": "prime",
               "quality": "elite",
               "finished": true,
@@ -67513,9 +67571,9 @@
               "penaltyExempt": false,
               "exception": null,
               "raw": {
-                "label": "Chuck Liddell I",
-                "date": "2004-04-02",
-                "type": "prime elite finish loss",
+                "label": "Chuck Liddell II",
+                "date": "2006-12-30",
+                "type": "prime elite title finish loss",
                 "method": "TKO",
                 "notes": "Canonical prime endpoint."
               },
@@ -67586,17 +67644,17 @@
                 "date": "2003-09-26",
                 "type": "prime elite title decision loss",
                 "method": "Decision",
-                "recovery": "Tito remained in an elite rivalry/title fight with Chuck Liddell."
+                "recovery": "Tito remained elite and entered the Chuck Liddell rivalry/title path."
               },
               "penaltyEstimate": -1.5,
               "penaltyApplies": true
             },
             {
               "fighter": "Tito Ortiz",
-              "sourceType": "postPrimeLosses",
-              "label": "Chuck Liddell II",
-              "date": "2006-12-30",
-              "phase": "post-prime",
+              "sourceType": "recoveredLosses",
+              "label": "Chuck Liddell I",
+              "date": "2004-04-02",
+              "phase": "prime",
               "quality": "elite",
               "finished": true,
               "upwardDivision": false,
@@ -67605,13 +67663,14 @@
               "penaltyExempt": false,
               "exception": null,
               "raw": {
-                "label": "Chuck Liddell II",
-                "date": "2006-12-30",
-                "type": "post-prime elite title finish loss",
-                "method": "TKO"
+                "label": "Chuck Liddell I",
+                "date": "2004-04-02",
+                "type": "prime elite finish loss",
+                "method": "TKO",
+                "recovery": "Tito rebounded with Cote, Belfort, Forrest Griffin, and another UFC title fight."
               },
-              "penaltyEstimate": 0,
-              "penaltyApplies": false
+              "penaltyEstimate": -2.25,
+              "penaltyApplies": true
             },
             {
               "fighter": "Tito Ortiz",
@@ -70475,7 +70534,7 @@
       "missingEraLossEntries": [],
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-11T02:35:05.050Z"
+      "appliedAt": "2026-07-11T03:57:11.036Z"
     },
     "canonicalLongevityRecalculation": {
       "version": "longevity-canonical-recalculation-20260710b-eleven-window-rebuild",
@@ -70648,7 +70707,7 @@
       "correctsRandyBelfortDate": true,
       "mutatesEraLongevityInputs": true,
       "mutatesScores": false,
-      "appliedAt": "2026-07-11T02:35:05.054Z"
+      "appliedAt": "2026-07-11T03:57:11.041Z"
     },
     "canonicalPrimeRecords": {
       "version": "canonical-prime-records-20260710c-chuck-vitor-window",
@@ -71184,11 +71243,11 @@
         },
         {
           "fighter": "Alex Pereira",
-          "record": "7-1",
+          "record": "8-3",
           "context": "Sean Strickland → Current title-level form",
           "counts": {
-            "wins": 7,
-            "losses": 1,
+            "wins": 8,
+            "losses": 3,
             "draws": 0,
             "ncs": 0,
             "parsed": true
@@ -71401,10 +71460,10 @@
         },
         {
           "fighter": "Matt Hughes",
-          "record": "12-3",
+          "record": "13-3",
           "context": "Carlos Newton I → Georges St-Pierre III",
           "counts": {
-            "wins": 12,
+            "wins": 13,
             "losses": 3,
             "draws": 0,
             "ncs": 0,
@@ -71525,11 +71584,11 @@
         },
         {
           "fighter": "Tito Ortiz",
-          "record": "7-2",
-          "context": "Wanderlei Silva → Chuck Liddell I",
+          "record": "11-3",
+          "context": "Wanderlei Silva → Chuck Liddell II",
           "counts": {
-            "wins": 7,
-            "losses": 2,
+            "wins": 11,
+            "losses": 3,
             "draws": 0,
             "ncs": 0,
             "parsed": true
@@ -71539,13 +71598,13 @@
           "eraWindow": {
             "start": "2000-04-14",
             "startLabel": "Wanderlei Silva",
-            "end": "2004-04-02",
-            "endLabel": "Chuck Liddell I",
+            "end": "2006-12-30",
+            "endLabel": "Chuck Liddell II",
             "endType": "unrecovered_elite_loss",
-            "endReason": "Couture does not close it alone because Chuck I remains elite rivalry/title-level endpoint. Chuck I closes.",
+            "endReason": "Tito re-proved elite form after Chuck I with wins over Patrick Cote, Vitor Belfort, and Forrest Griffin before returning to a UFC title fight. Chuck II is the unrecovered endpoint.",
             "canonical": true,
             "locked": true,
-            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+            "lockVersion": "approved-fighter-audit-corrections-20260710a-tito-pereira-hughes-kayla"
           },
           "windowLocked": true,
           "recordOverridden": false,
@@ -72637,7 +72696,7 @@
       "allWindowsLocked": false,
       "mutatesScores": false,
       "mutatesPrimeRecordDisplay": true,
-      "appliedAt": "2026-07-11T02:35:05.062Z"
+      "appliedAt": "2026-07-11T03:57:11.048Z"
     },
     "opponentQualityReadyDetail": {
       "version": "opponent-quality-live-20260710c-fixed-benchmark",
@@ -72647,15 +72706,488 @@
       "benchmarkMode": "locked-constant",
       "futureRosterStable": true
     },
+    "approvedOpponentQualityCorrection": {
+      "applied": true,
+      "fighter": "Kayla Harrison",
+      "removedOpponent": "Julia Avila",
+      "addedOpponent": "Julianna Peña",
+      "diminishedCredit": 2.95,
+      "liveScore": 6.28,
+      "summary": {
+        "fighter": "Kayla Harrison",
+        "rawCredit": 2.95,
+        "diminishedCredit": 2.95,
+        "maxCreditWins": 1,
+        "elitePlusWins": 1,
+        "topFivePlusWins": 1,
+        "rankedQualityWins": 3,
+        "bestWins": [
+          "Julianna Peña",
+          "Holly Holm",
+          "Ketlen Vieira"
+        ],
+        "reviewRows": [
+          {
+            "originalSlot": 1,
+            "opponent": "Holly Holm",
+            "credit": 0.85,
+            "tierLabel": "Strong top-10 win",
+            "context": "Former UFC champion name, late-career timing.",
+            "reviewStatus": "review",
+            "slot": 2,
+            "countedRate": 1,
+            "exactCountedCredit": 0.85,
+            "countedCredit": 0.85
+          },
+          {
+            "originalSlot": 2,
+            "opponent": "Ketlen Vieira",
+            "credit": 0.85,
+            "tierLabel": "Strong top-10 win",
+            "context": "Strong ranked bantamweight contender.",
+            "reviewStatus": "review",
+            "slot": 3,
+            "countedRate": 1,
+            "exactCountedCredit": 0.85,
+            "countedCredit": 0.85
+          }
+        ],
+        "highRiskRows": [],
+        "rows": [
+          {
+            "originalSlot": 3,
+            "opponent": "Julianna Peña",
+            "credit": 1.25,
+            "tierLabel": "Champion-level win",
+            "context": "Submitted the reigning UFC bantamweight champion to win the title.",
+            "reviewStatus": "locked",
+            "slot": 1,
+            "countedRate": 1,
+            "exactCountedCredit": 1.25,
+            "countedCredit": 1.25
+          },
+          {
+            "originalSlot": 1,
+            "opponent": "Holly Holm",
+            "credit": 0.85,
+            "tierLabel": "Strong top-10 win",
+            "context": "Former UFC champion name, late-career timing.",
+            "reviewStatus": "review",
+            "slot": 2,
+            "countedRate": 1,
+            "exactCountedCredit": 0.85,
+            "countedCredit": 0.85
+          },
+          {
+            "originalSlot": 2,
+            "opponent": "Ketlen Vieira",
+            "credit": 0.85,
+            "tierLabel": "Strong top-10 win",
+            "context": "Strong ranked bantamweight contender.",
+            "reviewStatus": "review",
+            "slot": 3,
+            "countedRate": 1,
+            "exactCountedCredit": 0.85,
+            "countedCredit": 0.85
+          }
+        ],
+        "board": "women",
+        "winProfile": "Major signature win, thinner depth"
+      },
+      "version": "approved-fighter-audit-corrections-20260710a-tito-pereira-hughes-kayla",
+      "appliedAt": "2026-07-11T03:57:11.618Z"
+    },
+    "primeDominanceAuditBatchEleven": {
+      "version": "prime-dominance-audit-batch-eleven-20260710a-tito-pereira-hughes",
+      "fighters": [
+        "Tito Ortiz",
+        "Alex Pereira",
+        "Matt Hughes"
+      ],
+      "entries": {
+        "Tito Ortiz": {
+          "fighter": "Tito Ortiz",
+          "primeRecord": "11-3",
+          "primeWins": 11,
+          "primeLosses": 3,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 78.57,
+          "primeRecordScore": 7.07,
+          "roundControlPct": 62.16,
+          "roundControlScore": 4.97,
+          "roundControlAudit": {
+            "fighter": "Tito Ortiz",
+            "roundsWon": 23,
+            "roundsLost": 14,
+            "roundsCounted": 37,
+            "roundControlPct": 62.16,
+            "status": "locked",
+            "source": "approved canonical-window fight ledger",
+            "window": "Wanderlei Silva → Chuck Liddell II",
+            "fights": [
+              [
+                "Wanderlei Silva",
+                4,
+                1
+              ],
+              [
+                "Yuki Kondo",
+                1,
+                0
+              ],
+              [
+                "Evan Tanner",
+                1,
+                0
+              ],
+              [
+                "Elvis Sinosic",
+                1,
+                0
+              ],
+              [
+                "Vladimir Matyushenko",
+                4,
+                1
+              ],
+              [
+                "Ken Shamrock I",
+                3,
+                0
+              ],
+              [
+                "Randy Couture",
+                0,
+                5
+              ],
+              [
+                "Chuck Liddell I",
+                0,
+                2
+              ],
+              [
+                "Patrick Cote",
+                3,
+                0
+              ],
+              [
+                "Vitor Belfort",
+                2,
+                1
+              ],
+              [
+                "Forrest Griffin I",
+                2,
+                1
+              ],
+              [
+                "Ken Shamrock II",
+                1,
+                0
+              ],
+              [
+                "Ken Shamrock III",
+                1,
+                0
+              ],
+              [
+                "Chuck Liddell II",
+                0,
+                3
+              ]
+            ],
+            "version": "prime-dominance-audit-batch-eleven-20260710a-tito-pereira-hughes"
+          },
+          "primeFights": 14,
+          "primeFinishes": 6,
+          "primeFinishRate": 42.86,
+          "finishPressureScore": 2,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 2,
+            "topFiveWins": 0.8,
+            "champFormerChampWins": 0.5,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.1
+          },
+          "eliteStakesRawScore": 3.9,
+          "eliteStakesScore": 6.24,
+          "total": 20.28,
+          "dominanceProfile": "Full early-UFC light-heavyweight title and recovery window. Championship volume remains strong, but Couture and both Liddell losses plus only moderate round control cap the dominance score.",
+          "status": "locked",
+          "primeWindow": {
+            "start": "2000-04-14",
+            "startLabel": "Wanderlei Silva",
+            "end": "2006-12-30",
+            "endLabel": "Chuck Liddell II",
+            "endType": "unrecovered_elite_loss",
+            "endReason": "Tito re-proved elite form after Chuck I with wins over Patrick Cote, Vitor Belfort, and Forrest Griffin before returning to a UFC title fight. Chuck II is the unrecovered endpoint.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "approved-fighter-audit-corrections-20260710a-tito-pereira-hughes-kayla"
+          },
+          "canonicalWindowRebuild": true,
+          "version": "prime-dominance-audit-batch-eleven-20260710a-tito-pereira-hughes"
+        },
+        "Alex Pereira": {
+          "fighter": "Alex Pereira",
+          "primeRecord": "8-3",
+          "primeWins": 8,
+          "primeLosses": 3,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 72.73,
+          "primeRecordScore": 6.55,
+          "roundControlPct": 53.57,
+          "roundControlScore": 4.29,
+          "roundControlAudit": {
+            "fighter": "Alex Pereira",
+            "roundsWon": 15,
+            "roundsLost": 13,
+            "roundsCounted": 28,
+            "roundControlPct": 53.57,
+            "status": "locked",
+            "source": "approved canonical-window fight ledger",
+            "window": "Sean Strickland → Ciryl Gane",
+            "fights": [
+              [
+                "Sean Strickland",
+                1,
+                0
+              ],
+              [
+                "Israel Adesanya I",
+                2,
+                3,
+                "finish win after trailing"
+              ],
+              [
+                "Israel Adesanya II",
+                1,
+                1,
+                "finish loss"
+              ],
+              [
+                "Jan Blachowicz",
+                2,
+                1
+              ],
+              [
+                "Jiri Prochazka I",
+                1,
+                1
+              ],
+              [
+                "Jamahal Hill",
+                1,
+                0
+              ],
+              [
+                "Jiri Prochazka II",
+                2,
+                0
+              ],
+              [
+                "Khalil Rountree Jr.",
+                2,
+                2
+              ],
+              [
+                "Magomed Ankalaev I",
+                2,
+                3
+              ],
+              [
+                "Magomed Ankalaev II",
+                1,
+                0
+              ],
+              [
+                "Ciryl Gane",
+                0,
+                2,
+                "upward-division finish loss"
+              ]
+            ],
+            "version": "prime-dominance-audit-batch-eleven-20260710a-tito-pereira-hughes"
+          },
+          "primeFights": 11,
+          "primeFinishes": 7,
+          "primeFinishRate": 63.64,
+          "finishPressureScore": 4,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 1.5,
+            "topFiveWins": 1,
+            "champFormerChampWins": 1,
+            "fiveRoundTitleStageSample": 0.35,
+            "divisionStrengthContext": 0.2
+          },
+          "eliteStakesRawScore": 4.05,
+          "eliteStakesScore": 6.48,
+          "total": 21.32,
+          "dominanceProfile": "Explosive two-division championship prime with seven finishes, now fully carrying the Adesanya, Ankalaev, and Gane resistance inside the same canonical window.",
+          "status": "locked",
+          "primeWindow": {
+            "start": "2022-07-02",
+            "startLabel": "Sean Strickland",
+            "end": null,
+            "endLabel": "Current title-level form",
+            "endType": "open_current_title_level",
+            "endReason": "Adesanya finish loss was recovered immediately; current title-level form keeps window open.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "canonicalWindowRebuild": true,
+          "version": "prime-dominance-audit-batch-eleven-20260710a-tito-pereira-hughes"
+        },
+        "Matt Hughes": {
+          "fighter": "Matt Hughes",
+          "primeRecord": "13-3",
+          "primeWins": 13,
+          "primeLosses": 3,
+          "primeDraws": 0,
+          "primeNCs": 0,
+          "primeRecordPct": 81.25,
+          "primeRecordScore": 7.31,
+          "roundControlPct": 71.43,
+          "roundControlScore": 5.71,
+          "roundControlAudit": {
+            "fighter": "Matt Hughes",
+            "roundsWon": 25,
+            "roundsLost": 10,
+            "roundsCounted": 35,
+            "roundControlPct": 71.43,
+            "status": "locked",
+            "source": "approved canonical-window fight ledger",
+            "window": "Carlos Newton I → Georges St-Pierre III",
+            "fights": [
+              [
+                "Carlos Newton I",
+                1,
+                1,
+                "chaotic title-winning finish; low-confidence round split"
+              ],
+              [
+                "Hayato Sakurai",
+                4,
+                0
+              ],
+              [
+                "Carlos Newton II",
+                4,
+                0
+              ],
+              [
+                "Gil Castillo",
+                1,
+                0
+              ],
+              [
+                "Sean Sherk",
+                4,
+                1
+              ],
+              [
+                "Frank Trigg I",
+                1,
+                0
+              ],
+              [
+                "B.J. Penn I",
+                0,
+                1
+              ],
+              [
+                "Renato Verissimo",
+                2,
+                1
+              ],
+              [
+                "Georges St-Pierre I",
+                1,
+                0
+              ],
+              [
+                "Frank Trigg II",
+                1,
+                0
+              ],
+              [
+                "Joe Riggs",
+                1,
+                0
+              ],
+              [
+                "Royce Gracie",
+                1,
+                0
+              ],
+              [
+                "B.J. Penn II",
+                1,
+                2
+              ],
+              [
+                "Georges St-Pierre II",
+                0,
+                2
+              ],
+              [
+                "Chris Lytle",
+                3,
+                0
+              ],
+              [
+                "Georges St-Pierre III",
+                0,
+                2
+              ]
+            ],
+            "version": "prime-dominance-audit-batch-eleven-20260710a-tito-pereira-hughes"
+          },
+          "primeFights": 16,
+          "primeFinishes": 10,
+          "primeFinishRate": 62.5,
+          "finishPressureScore": 4,
+          "eliteStakesBreakdown": {
+            "titleFightWins": 2,
+            "topFiveWins": 1.1,
+            "champFormerChampWins": 0.8,
+            "fiveRoundTitleStageSample": 0.5,
+            "divisionStrengthContext": 0.1
+          },
+          "eliteStakesRawScore": 4.5,
+          "eliteStakesScore": 7.2,
+          "total": 24.22,
+          "dominanceProfile": "Long early-welterweight title prime beginning with the first Carlos Newton fight. The added title-winning finish corrects the record to 13-3 while preserving the Penn/GSP resistance.",
+          "status": "locked",
+          "primeWindow": {
+            "start": "2001-11-02",
+            "startLabel": "Carlos Newton I",
+            "end": "2007-12-29",
+            "endLabel": "Georges St-Pierre III",
+            "endType": "unrecovered_elite_loss",
+            "endReason": "Penn I and GSP II did not end it because Hughes stayed title-level. GSP III closes window.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "canonicalWindowRebuild": true,
+          "version": "prime-dominance-audit-batch-eleven-20260710a-tito-pereira-hughes"
+        }
+      },
+      "appliedAt": "2026-07-11T03:57:12.121Z"
+    },
     "fighterEraWindowAudit": {
       "version": "fighter-era-window-audit-20260710b-record-dependencies",
       "sourceEraLedgerVersion": "fighter-era-ledgers-20260709g-review-corrections",
-      "sourceWindowLockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window",
+      "sourceWindowLockVersion": "approved-fighter-audit-corrections-20260710a-tito-pereira-hughes-kayla",
       "sourceCanonicalPrimeRecordVersion": "canonical-prime-records-20260710c-chuck-vitor-window",
       "fighterCount": 63,
       "counts": {
-        "aligned": 47,
-        "conflict": 16
+        "aligned": 48,
+        "conflict": 15
       },
       "rows": [
         {
@@ -73246,19 +73778,19 @@
           "canonicalOpen": true,
           "canonicalLocked": true,
           "canonicalLockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window",
-          "canonicalPrimeRecord": "7-1",
+          "canonicalPrimeRecord": "8-3",
           "canonicalPrimeRecordSource": "RANKING_DATA.primeRecords reviewed value",
-          "primeDominancePrimeRecord": "active",
-          "primeRecordAligned": false,
-          "primeRecordStatus": "conflict",
-          "primeWindow": "Strickland 2022 → Rountree 2024",
-          "primeWindowSource": "primeEntry.roundControlAudit.window",
-          "primeWindowStructured": false,
+          "primeDominancePrimeRecord": "8-3",
+          "primeRecordAligned": true,
+          "primeRecordStatus": "aligned",
+          "primeWindow": "Sean Strickland → Current title-level form",
+          "primeWindowSource": "primeEntry.primeWindow",
+          "primeWindowStructured": true,
           "startAligned": true,
-          "endAligned": false,
-          "status": "conflict",
+          "endAligned": true,
+          "status": "aligned",
           "primeEntryPresent": true,
-          "primeDominanceScoreRebuildRequired": true,
+          "primeDominanceScoreRebuildRequired": false,
           "longevityWindow": "Sean Strickland → Current title-level form",
           "longevityInputStatus": "era-ledger-aligned",
           "longevityPending": false,
@@ -73484,14 +74016,14 @@
           "canonicalOpen": false,
           "canonicalLocked": true,
           "canonicalLockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window",
-          "canonicalPrimeRecord": "12-3",
+          "canonicalPrimeRecord": "13-3",
           "canonicalPrimeRecordSource": "RANKING_DATA.primeRecords reviewed value",
-          "primeDominancePrimeRecord": "12-3",
+          "primeDominancePrimeRecord": "13-3",
           "primeRecordAligned": true,
           "primeRecordStatus": "aligned",
           "primeWindow": "Carlos Newton I → Georges St-Pierre III",
-          "primeWindowSource": "RANKING_DATA.primeRecords.context",
-          "primeWindowStructured": false,
+          "primeWindowSource": "primeEntry.primeWindow",
+          "primeWindowStructured": true,
           "startAligned": true,
           "endAligned": true,
           "status": "aligned",
@@ -73612,37 +74144,37 @@
         },
         {
           "fighter": "Tito Ortiz",
-          "canonicalWindow": "Wanderlei Silva → Chuck Liddell I",
+          "canonicalWindow": "Wanderlei Silva → Chuck Liddell II",
           "canonicalStart": "2000-04-14",
           "canonicalStartLabel": "Wanderlei Silva",
-          "canonicalEnd": "2004-04-02",
-          "canonicalEndLabel": "Chuck Liddell I",
+          "canonicalEnd": "2006-12-30",
+          "canonicalEndLabel": "Chuck Liddell II",
           "canonicalOpen": false,
           "canonicalLocked": true,
-          "canonicalLockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window",
-          "canonicalPrimeRecord": "7-2",
+          "canonicalLockVersion": "approved-fighter-audit-corrections-20260710a-tito-pereira-hughes-kayla",
+          "canonicalPrimeRecord": "11-3",
           "canonicalPrimeRecordSource": "RANKING_DATA.primeRecords reviewed value",
-          "primeDominancePrimeRecord": "7-2",
+          "primeDominancePrimeRecord": "11-3",
           "primeRecordAligned": true,
           "primeRecordStatus": "aligned",
-          "primeWindow": "Wanderlei Silva → Chuck Liddell I",
-          "primeWindowSource": "RANKING_DATA.primeRecords.context",
-          "primeWindowStructured": false,
+          "primeWindow": "Wanderlei Silva → Chuck Liddell II",
+          "primeWindowSource": "primeEntry.primeWindow",
+          "primeWindowStructured": true,
           "startAligned": true,
           "endAligned": true,
           "status": "aligned",
           "primeEntryPresent": true,
           "primeDominanceScoreRebuildRequired": false,
-          "longevityWindow": "Wanderlei Silva → Chuck Liddell I",
+          "longevityWindow": "Wanderlei Silva → Chuck Liddell II",
           "longevityInputStatus": "era-ledger-aligned",
           "longevityPending": false,
-          "lossContextWindow": "Wanderlei Silva → Chuck Liddell I",
+          "lossContextWindow": "Wanderlei Silva → Chuck Liddell II",
           "lossContextWindowAligned": true,
           "lossContextWindowStatus": "aligned",
           "lossContextPenaltySource": "ledger-derived-or-missing",
           "lossContextRebuildRequired": false,
           "dependentRebuildRequired": false,
-          "windowDecision": "confirmed-and-locked"
+          "windowDecision": "extended-and-locked"
         },
         {
           "fighter": "Cain Velasquez",
@@ -74973,40 +75505,6 @@
           "windowDecision": "confirmed-and-locked"
         },
         {
-          "fighter": "Alex Pereira",
-          "canonicalWindow": "Sean Strickland → Current title-level form",
-          "canonicalStart": "2022-07-02",
-          "canonicalStartLabel": "Sean Strickland",
-          "canonicalEnd": null,
-          "canonicalEndLabel": "Current title-level form",
-          "canonicalOpen": true,
-          "canonicalLocked": true,
-          "canonicalLockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window",
-          "canonicalPrimeRecord": "7-1",
-          "canonicalPrimeRecordSource": "RANKING_DATA.primeRecords reviewed value",
-          "primeDominancePrimeRecord": "active",
-          "primeRecordAligned": false,
-          "primeRecordStatus": "conflict",
-          "primeWindow": "Strickland 2022 → Rountree 2024",
-          "primeWindowSource": "primeEntry.roundControlAudit.window",
-          "primeWindowStructured": false,
-          "startAligned": true,
-          "endAligned": false,
-          "status": "conflict",
-          "primeEntryPresent": true,
-          "primeDominanceScoreRebuildRequired": true,
-          "longevityWindow": "Sean Strickland → Current title-level form",
-          "longevityInputStatus": "era-ledger-aligned",
-          "longevityPending": false,
-          "lossContextWindow": "Sean Strickland → Current title-level form",
-          "lossContextWindowAligned": true,
-          "lossContextWindowStatus": "aligned",
-          "lossContextPenaltySource": "ledger-derived-or-missing",
-          "lossContextRebuildRequired": false,
-          "dependentRebuildRequired": false,
-          "windowDecision": "confirmed-and-locked"
-        },
-        {
           "fighter": "Conor McGregor",
           "canonicalWindow": "Dustin Poirier I → Khabib Nurmagomedov",
           "canonicalStart": "2014-09-27",
@@ -75478,40 +75976,6 @@
           "longevityInputStatus": "era-ledger-aligned",
           "longevityPending": false,
           "lossContextWindow": "Drew Dober → Current title-level form",
-          "lossContextWindowAligned": true,
-          "lossContextWindowStatus": "aligned",
-          "lossContextPenaltySource": "ledger-derived-or-missing",
-          "lossContextRebuildRequired": false,
-          "dependentRebuildRequired": false,
-          "windowDecision": "confirmed-and-locked"
-        },
-        {
-          "fighter": "Alex Pereira",
-          "canonicalWindow": "Sean Strickland → Current title-level form",
-          "canonicalStart": "2022-07-02",
-          "canonicalStartLabel": "Sean Strickland",
-          "canonicalEnd": null,
-          "canonicalEndLabel": "Current title-level form",
-          "canonicalOpen": true,
-          "canonicalLocked": true,
-          "canonicalLockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window",
-          "canonicalPrimeRecord": "7-1",
-          "canonicalPrimeRecordSource": "RANKING_DATA.primeRecords reviewed value",
-          "primeDominancePrimeRecord": "active",
-          "primeRecordAligned": false,
-          "primeRecordStatus": "conflict",
-          "primeWindow": "Strickland 2022 → Rountree 2024",
-          "primeWindowSource": "primeEntry.roundControlAudit.window",
-          "primeWindowStructured": false,
-          "startAligned": true,
-          "endAligned": false,
-          "status": "conflict",
-          "primeEntryPresent": true,
-          "primeDominanceScoreRebuildRequired": true,
-          "longevityWindow": "Sean Strickland → Current title-level form",
-          "longevityInputStatus": "era-ledger-aligned",
-          "longevityPending": false,
-          "lossContextWindow": "Sean Strickland → Current title-level form",
           "lossContextWindowAligned": true,
           "lossContextWindowStatus": "aligned",
           "lossContextPenaltySource": "ledger-derived-or-missing",
@@ -76060,40 +76524,6 @@
           "longevityInputStatus": "era-ledger-aligned",
           "longevityPending": false,
           "lossContextWindow": "Kevin Lee → Current elite-prime form",
-          "lossContextWindowAligned": true,
-          "lossContextWindowStatus": "aligned",
-          "lossContextPenaltySource": "ledger-derived-or-missing",
-          "lossContextRebuildRequired": false,
-          "dependentRebuildRequired": false,
-          "windowDecision": "confirmed-and-locked"
-        },
-        {
-          "fighter": "Alex Pereira",
-          "canonicalWindow": "Sean Strickland → Current title-level form",
-          "canonicalStart": "2022-07-02",
-          "canonicalStartLabel": "Sean Strickland",
-          "canonicalEnd": null,
-          "canonicalEndLabel": "Current title-level form",
-          "canonicalOpen": true,
-          "canonicalLocked": true,
-          "canonicalLockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window",
-          "canonicalPrimeRecord": "7-1",
-          "canonicalPrimeRecordSource": "RANKING_DATA.primeRecords reviewed value",
-          "primeDominancePrimeRecord": "active",
-          "primeRecordAligned": false,
-          "primeRecordStatus": "conflict",
-          "primeWindow": "Strickland 2022 → Rountree 2024",
-          "primeWindowSource": "primeEntry.roundControlAudit.window",
-          "primeWindowStructured": false,
-          "startAligned": true,
-          "endAligned": false,
-          "status": "conflict",
-          "primeEntryPresent": true,
-          "primeDominanceScoreRebuildRequired": true,
-          "longevityWindow": "Sean Strickland → Current title-level form",
-          "longevityInputStatus": "era-ledger-aligned",
-          "longevityPending": false,
-          "lossContextWindow": "Sean Strickland → Current title-level form",
           "lossContextWindowAligned": true,
           "lossContextWindowStatus": "aligned",
           "lossContextPenaltySource": "ledger-derived-or-missing",
@@ -76727,7 +77157,6 @@
         "Stipe Miocic",
         "Islam Makhachev",
         "Charles Oliveira",
-        "Alex Pereira",
         "Conor McGregor",
         "Henry Cejudo",
         "Amanda Nunes",
@@ -76785,7 +77214,7 @@
       "allCanonicalPrimeRecordsPresent": false,
       "mutatesScores": false,
       "mutatesWindows": false,
-      "appliedAt": "2026-07-11T02:35:06.468Z"
+      "appliedAt": "2026-07-11T03:57:13.047Z"
     },
     "finalScoreResult": {
       "version": "final-score-engine-20260710b-deterministic",
@@ -76859,7 +77288,7 @@
           "overallOvr": 89
         }
       ],
-      "appliedAt": "2026-07-11T02:35:06.710Z"
+      "appliedAt": "2026-07-11T03:57:13.449Z"
     },
     "lossContextFinalReconciliation": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -76930,7 +77359,7 @@
         "mutatesRecords": true,
         "mutatesPenalty": false,
         "mutatesScores": false,
-        "appliedAt": "2026-07-11T02:35:05.050Z"
+        "appliedAt": "2026-07-11T03:57:11.036Z"
       },
       "scoreReview": {
         "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -77053,6 +77482,14 @@
             "lossEventCount": 7
           },
           {
+            "fighter": "Tito Ortiz",
+            "priorPenalty": -8.25,
+            "promotedPenalty": -9.5,
+            "delta": -1.25,
+            "capApplied": false,
+            "lossEventCount": 11
+          },
+          {
             "fighter": "Aljamain Sterling",
             "priorPenalty": -6.25,
             "promotedPenalty": -7.25,
@@ -77067,14 +77504,6 @@
             "delta": 1,
             "capApplied": false,
             "lossEventCount": 5
-          },
-          {
-            "fighter": "Tito Ortiz",
-            "priorPenalty": -8.25,
-            "promotedPenalty": -7.25,
-            "delta": 1,
-            "capApplied": false,
-            "lossEventCount": 11
           },
           {
             "fighter": "Michael Bisping",
@@ -77170,7 +77599,7 @@
       },
       "rankingImpact": {
         "changedPenaltyCount": 27,
-        "fightersWithRankMovement": 25,
+        "fightersWithRankMovement": 30,
         "movement": [
           {
             "board": "men",
@@ -77180,8 +77609,8 @@
             "currentPenalty": -2,
             "priorPenalty": -5.5,
             "counterfactualTotal": 45.62,
-            "counterfactualRank": 28,
-            "rankMovement": 6
+            "counterfactualRank": 29,
+            "rankMovement": 7
           },
           {
             "board": "men",
@@ -77202,8 +77631,19 @@
             "currentPenalty": -3.75,
             "priorPenalty": -6.75,
             "counterfactualTotal": 45.88,
-            "counterfactualRank": 27,
-            "rankMovement": 4
+            "counterfactualRank": 28,
+            "rankMovement": 5
+          },
+          {
+            "board": "men",
+            "fighter": "Tito Ortiz",
+            "currentRank": 31,
+            "currentTotal": 44.66,
+            "currentPenalty": -9.5,
+            "priorPenalty": -8.25,
+            "counterfactualTotal": 45.91,
+            "counterfactualRank": 26,
+            "rankMovement": -5
           },
           {
             "board": "men",
@@ -77273,14 +77713,14 @@
           },
           {
             "board": "men",
-            "fighter": "Jose Aldo",
-            "currentRank": 9,
-            "currentTotal": 62.29,
-            "currentPenalty": -10,
-            "priorPenalty": -6.75,
-            "counterfactualTotal": 65.54,
-            "counterfactualRank": 7,
-            "rankMovement": -2
+            "fighter": "Chuck Liddell",
+            "currentRank": 16,
+            "currentTotal": 54.87,
+            "currentPenalty": -6,
+            "priorPenalty": -10,
+            "counterfactualTotal": 50.87,
+            "counterfactualRank": 18,
+            "rankMovement": 2
           },
           {
             "board": "men",
@@ -77295,14 +77735,36 @@
           },
           {
             "board": "men",
-            "fighter": "Chuck Liddell",
-            "currentRank": 17,
-            "currentTotal": 54.87,
-            "currentPenalty": -6,
-            "priorPenalty": -10,
-            "counterfactualTotal": 50.87,
-            "counterfactualRank": 18,
-            "rankMovement": 1
+            "fighter": "Dricus du Plessis",
+            "currentRank": 30,
+            "currentTotal": 45.15,
+            "currentPenalty": -1.5,
+            "priorPenalty": -1.5,
+            "counterfactualTotal": 45.15,
+            "counterfactualRank": 32,
+            "rankMovement": 2
+          },
+          {
+            "board": "men",
+            "fighter": "Jose Aldo",
+            "currentRank": 8,
+            "currentTotal": 62.29,
+            "currentPenalty": -10,
+            "priorPenalty": -6.75,
+            "counterfactualTotal": 65.54,
+            "counterfactualRank": 7,
+            "rankMovement": -1
+          },
+          {
+            "board": "women",
+            "fighter": "Jessica Andrade",
+            "currentRank": 8,
+            "currentTotal": 35.48,
+            "currentPenalty": -10,
+            "priorPenalty": -7.5,
+            "counterfactualTotal": 37.98,
+            "counterfactualRank": 7,
+            "rankMovement": -1
           },
           {
             "board": "women",
@@ -77329,12 +77791,12 @@
           {
             "board": "men",
             "fighter": "Matt Hughes",
-            "currentRank": 8,
-            "currentTotal": 62.34,
+            "currentRank": 9,
+            "currentTotal": 62.12,
             "currentPenalty": -8.75,
             "priorPenalty": -10,
-            "counterfactualTotal": 61.09,
-            "counterfactualRank": 9,
+            "counterfactualTotal": 60.87,
+            "counterfactualRank": 10,
             "rankMovement": 1
           },
           {
@@ -77347,17 +77809,6 @@
             "counterfactualTotal": 45.46,
             "counterfactualRank": 31,
             "rankMovement": -1
-          },
-          {
-            "board": "men",
-            "fighter": "Tito Ortiz",
-            "currentRank": 29,
-            "currentTotal": 46.49,
-            "currentPenalty": -7.25,
-            "priorPenalty": -8.25,
-            "counterfactualTotal": 45.49,
-            "counterfactualRank": 30,
-            "rankMovement": 1
           },
           {
             "board": "men",
@@ -77383,6 +77834,28 @@
           },
           {
             "board": "men",
+            "fighter": "Tyron Woodley",
+            "currentRank": 26,
+            "currentTotal": 46.66,
+            "currentPenalty": -3.75,
+            "priorPenalty": -4.5,
+            "counterfactualTotal": 45.91,
+            "counterfactualRank": 27,
+            "rankMovement": 1
+          },
+          {
+            "board": "men",
+            "fighter": "Alex Pereira",
+            "currentRank": 17,
+            "currentTotal": 54.48,
+            "currentPenalty": -5,
+            "priorPenalty": -5,
+            "counterfactualTotal": 54.48,
+            "counterfactualRank": 16,
+            "rankMovement": -1
+          },
+          {
+            "board": "men",
             "fighter": "Anderson Silva",
             "currentRank": 4,
             "currentTotal": 75.79,
@@ -77405,17 +77878,6 @@
           },
           {
             "board": "men",
-            "fighter": "Dricus du Plessis",
-            "currentRank": 31,
-            "currentTotal": 45.15,
-            "currentPenalty": -1.5,
-            "priorPenalty": -1.5,
-            "counterfactualTotal": 45.15,
-            "counterfactualRank": 32,
-            "rankMovement": 1
-          },
-          {
-            "board": "men",
             "fighter": "Dustin Poirier",
             "currentRank": 37,
             "currentTotal": 40.35,
@@ -77423,6 +77885,17 @@
             "priorPenalty": -10,
             "counterfactualTotal": 40.35,
             "counterfactualRank": 38,
+            "rankMovement": 1
+          },
+          {
+            "board": "women",
+            "fighter": "Kayla Harrison",
+            "currentRank": 7,
+            "currentTotal": 35.64,
+            "currentPenalty": 0,
+            "priorPenalty": 0,
+            "counterfactualTotal": 35.64,
+            "counterfactualRank": 8,
             "rankMovement": 1
           },
           {
@@ -77439,12 +77912,23 @@
           {
             "board": "men",
             "fighter": "Merab Dvalishvili",
-            "currentRank": 30,
+            "currentRank": 29,
             "currentTotal": 45.52,
             "currentPenalty": -4.75,
             "priorPenalty": -4.75,
             "counterfactualTotal": 45.52,
-            "counterfactualRank": 29,
+            "counterfactualRank": 30,
+            "rankMovement": 1
+          },
+          {
+            "board": "men",
+            "fighter": "Randy Couture",
+            "currentRank": 10,
+            "currentTotal": 61.09,
+            "currentPenalty": -10,
+            "priorPenalty": -10,
+            "counterfactualTotal": 61.09,
+            "counterfactualRank": 9,
             "rankMovement": -1
           },
           {
@@ -77456,17 +77940,6 @@
             "priorPenalty": -5.5,
             "counterfactualTotal": 24.56,
             "counterfactualRank": 47,
-            "rankMovement": 0
-          },
-          {
-            "board": "women",
-            "fighter": "Jessica Andrade",
-            "currentRank": 7,
-            "currentTotal": 35.48,
-            "currentPenalty": -10,
-            "priorPenalty": -7.5,
-            "counterfactualTotal": 37.98,
-            "counterfactualRank": 7,
             "rankMovement": 0
           },
           {
@@ -77533,17 +78006,6 @@
             "priorPenalty": -8,
             "counterfactualTotal": 57.6,
             "counterfactualRank": 12,
-            "rankMovement": 0
-          },
-          {
-            "board": "men",
-            "fighter": "Tyron Woodley",
-            "currentRank": 26,
-            "currentTotal": 46.66,
-            "currentPenalty": -3.75,
-            "priorPenalty": -4.5,
-            "counterfactualTotal": 45.91,
-            "counterfactualRank": 26,
             "rankMovement": 0
           },
           {
@@ -77648,7 +78110,7 @@
       ],
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "generatedAt": "2026-07-11T02:35:06.711Z"
+      "generatedAt": "2026-07-11T03:57:13.452Z"
     },
     "fighterCount": 62
   },
@@ -78740,6 +79202,117 @@
         ]
       },
       {
+        "fighter": "Tito Ortiz",
+        "priorPenalty": -8.25,
+        "promotedPenalty": -9.5,
+        "delta": -1.25,
+        "rawLedgerEstimate": -9.5,
+        "cappedLedgerEstimate": -9.5,
+        "capApplied": false,
+        "lossEventCount": 11,
+        "lossEvents": [
+          {
+            "label": "Chuck Liddell II",
+            "date": "2006-12-30",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "penaltyEstimate": -2.25
+          },
+          {
+            "label": "Guy Mezger I",
+            "date": "1997-05-30",
+            "phase": "pre-prime",
+            "quality": "non-elite",
+            "finished": true,
+            "upwardDivision": false,
+            "penaltyEstimate": -2
+          },
+          {
+            "label": "Frank Shamrock",
+            "date": "1999-09-24",
+            "phase": "pre-prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "penaltyEstimate": -1.5
+          },
+          {
+            "label": "Randy Couture",
+            "date": "2003-09-26",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "penaltyEstimate": -1.5
+          },
+          {
+            "label": "Chuck Liddell I",
+            "date": "2004-04-02",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "penaltyEstimate": -2.25
+          },
+          {
+            "label": "Lyoto Machida",
+            "date": "2008-05-24",
+            "phase": "post-prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "penaltyEstimate": 0
+          },
+          {
+            "label": "Forrest Griffin II",
+            "date": "2009-11-21",
+            "phase": "post-prime",
+            "quality": "unknown",
+            "finished": false,
+            "upwardDivision": false,
+            "penaltyEstimate": 0
+          },
+          {
+            "label": "Matt Hamill",
+            "date": "2010-10-23",
+            "phase": "post-prime",
+            "quality": "unknown",
+            "finished": false,
+            "upwardDivision": false,
+            "penaltyEstimate": 0
+          },
+          {
+            "label": "Rashad Evans II",
+            "date": "2011-08-06",
+            "phase": "post-prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "penaltyEstimate": 0
+          },
+          {
+            "label": "Antonio Rogerio Nogueira",
+            "date": "2011-12-10",
+            "phase": "post-prime",
+            "quality": "unknown",
+            "finished": true,
+            "upwardDivision": false,
+            "penaltyEstimate": 0
+          },
+          {
+            "label": "Forrest Griffin III",
+            "date": "2012-07-07",
+            "phase": "post-prime",
+            "quality": "unknown",
+            "finished": false,
+            "upwardDivision": false,
+            "penaltyEstimate": 0
+          }
+        ]
+      },
+      {
         "fighter": "Aljamain Sterling",
         "priorPenalty": -6.25,
         "promotedPenalty": -7.25,
@@ -78850,117 +79423,6 @@
             "finished": false,
             "upwardDivision": false,
             "penaltyEstimate": -1.5
-          }
-        ]
-      },
-      {
-        "fighter": "Tito Ortiz",
-        "priorPenalty": -8.25,
-        "promotedPenalty": -7.25,
-        "delta": 1,
-        "rawLedgerEstimate": -7.25,
-        "cappedLedgerEstimate": -7.25,
-        "capApplied": false,
-        "lossEventCount": 11,
-        "lossEvents": [
-          {
-            "label": "Chuck Liddell I",
-            "date": "2004-04-02",
-            "phase": "prime",
-            "quality": "elite",
-            "finished": true,
-            "upwardDivision": false,
-            "penaltyEstimate": -2.25
-          },
-          {
-            "label": "Guy Mezger I",
-            "date": "1997-05-30",
-            "phase": "pre-prime",
-            "quality": "non-elite",
-            "finished": true,
-            "upwardDivision": false,
-            "penaltyEstimate": -2
-          },
-          {
-            "label": "Frank Shamrock",
-            "date": "1999-09-24",
-            "phase": "pre-prime",
-            "quality": "elite",
-            "finished": true,
-            "upwardDivision": false,
-            "penaltyEstimate": -1.5
-          },
-          {
-            "label": "Randy Couture",
-            "date": "2003-09-26",
-            "phase": "prime",
-            "quality": "elite",
-            "finished": false,
-            "upwardDivision": false,
-            "penaltyEstimate": -1.5
-          },
-          {
-            "label": "Chuck Liddell II",
-            "date": "2006-12-30",
-            "phase": "post-prime",
-            "quality": "elite",
-            "finished": true,
-            "upwardDivision": false,
-            "penaltyEstimate": 0
-          },
-          {
-            "label": "Lyoto Machida",
-            "date": "2008-05-24",
-            "phase": "post-prime",
-            "quality": "elite",
-            "finished": false,
-            "upwardDivision": false,
-            "penaltyEstimate": 0
-          },
-          {
-            "label": "Forrest Griffin II",
-            "date": "2009-11-21",
-            "phase": "post-prime",
-            "quality": "unknown",
-            "finished": false,
-            "upwardDivision": false,
-            "penaltyEstimate": 0
-          },
-          {
-            "label": "Matt Hamill",
-            "date": "2010-10-23",
-            "phase": "post-prime",
-            "quality": "unknown",
-            "finished": false,
-            "upwardDivision": false,
-            "penaltyEstimate": 0
-          },
-          {
-            "label": "Rashad Evans II",
-            "date": "2011-08-06",
-            "phase": "post-prime",
-            "quality": "elite",
-            "finished": true,
-            "upwardDivision": false,
-            "penaltyEstimate": 0
-          },
-          {
-            "label": "Antonio Rogerio Nogueira",
-            "date": "2011-12-10",
-            "phase": "post-prime",
-            "quality": "unknown",
-            "finished": true,
-            "upwardDivision": false,
-            "penaltyEstimate": 0
-          },
-          {
-            "label": "Forrest Griffin III",
-            "date": "2012-07-07",
-            "phase": "post-prime",
-            "quality": "unknown",
-            "finished": false,
-            "upwardDivision": false,
-            "penaltyEstimate": 0
           }
         ]
       },
@@ -79827,7 +80289,7 @@
     "mutatesPenalty": true,
     "mutatesScores": true,
     "finalScoreRecalculationOwner": "final-score-engine.js",
-    "appliedAt": "2026-07-11T02:35:05.050Z"
+    "appliedAt": "2026-07-11T03:57:11.036Z"
   },
   "postAudit": {
     "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -83881,9 +84343,9 @@
         "missingLossEvents": 0,
         "excessLossEvents": 0,
         "livePenalty": -8.25,
-        "rawLedgerEstimate": -7.25,
-        "cappedLedgerEstimate": -7.25,
-        "delta": 1,
+        "rawLedgerEstimate": -9.5,
+        "cappedLedgerEstimate": -9.5,
+        "delta": -1.25,
         "exactScoreMatch": false,
         "ledgerFinalized": true,
         "unknownPhase": 0,
@@ -83894,8 +84356,8 @@
           {
             "fighter": "Tito Ortiz",
             "sourceType": "unrecoveredLoss",
-            "label": "Chuck Liddell I",
-            "date": "2004-04-02",
+            "label": "Chuck Liddell II",
+            "date": "2006-12-30",
             "phase": "prime",
             "quality": "elite",
             "finished": true,
@@ -83905,9 +84367,9 @@
             "penaltyExempt": false,
             "exception": null,
             "raw": {
-              "label": "Chuck Liddell I",
-              "date": "2004-04-02",
-              "type": "prime elite finish loss",
+              "label": "Chuck Liddell II",
+              "date": "2006-12-30",
+              "type": "prime elite title finish loss",
               "method": "TKO",
               "notes": "Canonical prime endpoint."
             },
@@ -83978,17 +84440,17 @@
               "date": "2003-09-26",
               "type": "prime elite title decision loss",
               "method": "Decision",
-              "recovery": "Tito remained in an elite rivalry/title fight with Chuck Liddell."
+              "recovery": "Tito remained elite and entered the Chuck Liddell rivalry/title path."
             },
             "penaltyEstimate": -1.5,
             "penaltyApplies": true
           },
           {
             "fighter": "Tito Ortiz",
-            "sourceType": "postPrimeLosses",
-            "label": "Chuck Liddell II",
-            "date": "2006-12-30",
-            "phase": "post-prime",
+            "sourceType": "recoveredLosses",
+            "label": "Chuck Liddell I",
+            "date": "2004-04-02",
+            "phase": "prime",
             "quality": "elite",
             "finished": true,
             "upwardDivision": false,
@@ -83997,13 +84459,14 @@
             "penaltyExempt": false,
             "exception": null,
             "raw": {
-              "label": "Chuck Liddell II",
-              "date": "2006-12-30",
-              "type": "post-prime elite title finish loss",
-              "method": "TKO"
+              "label": "Chuck Liddell I",
+              "date": "2004-04-02",
+              "type": "prime elite finish loss",
+              "method": "TKO",
+              "recovery": "Tito rebounded with Cote, Belfort, Forrest Griffin, and another UFC title fight."
             },
-            "penaltyEstimate": 0,
-            "penaltyApplies": false
+            "penaltyEstimate": -2.25,
+            "penaltyApplies": true
           },
           {
             "fighter": "Tito Ortiz",
@@ -95610,9 +96073,9 @@
         "missingLossEvents": 0,
         "excessLossEvents": 0,
         "livePenalty": -8.25,
-        "rawLedgerEstimate": -7.25,
-        "cappedLedgerEstimate": -7.25,
-        "delta": 1,
+        "rawLedgerEstimate": -9.5,
+        "cappedLedgerEstimate": -9.5,
+        "delta": -1.25,
         "exactScoreMatch": false,
         "ledgerFinalized": true,
         "unknownPhase": 0,
@@ -95623,8 +96086,8 @@
           {
             "fighter": "Tito Ortiz",
             "sourceType": "unrecoveredLoss",
-            "label": "Chuck Liddell I",
-            "date": "2004-04-02",
+            "label": "Chuck Liddell II",
+            "date": "2006-12-30",
             "phase": "prime",
             "quality": "elite",
             "finished": true,
@@ -95634,9 +96097,9 @@
             "penaltyExempt": false,
             "exception": null,
             "raw": {
-              "label": "Chuck Liddell I",
-              "date": "2004-04-02",
-              "type": "prime elite finish loss",
+              "label": "Chuck Liddell II",
+              "date": "2006-12-30",
+              "type": "prime elite title finish loss",
               "method": "TKO",
               "notes": "Canonical prime endpoint."
             },
@@ -95707,17 +96170,17 @@
               "date": "2003-09-26",
               "type": "prime elite title decision loss",
               "method": "Decision",
-              "recovery": "Tito remained in an elite rivalry/title fight with Chuck Liddell."
+              "recovery": "Tito remained elite and entered the Chuck Liddell rivalry/title path."
             },
             "penaltyEstimate": -1.5,
             "penaltyApplies": true
           },
           {
             "fighter": "Tito Ortiz",
-            "sourceType": "postPrimeLosses",
-            "label": "Chuck Liddell II",
-            "date": "2006-12-30",
-            "phase": "post-prime",
+            "sourceType": "recoveredLosses",
+            "label": "Chuck Liddell I",
+            "date": "2004-04-02",
+            "phase": "prime",
             "quality": "elite",
             "finished": true,
             "upwardDivision": false,
@@ -95726,13 +96189,14 @@
             "penaltyExempt": false,
             "exception": null,
             "raw": {
-              "label": "Chuck Liddell II",
-              "date": "2006-12-30",
-              "type": "post-prime elite title finish loss",
-              "method": "TKO"
+              "label": "Chuck Liddell I",
+              "date": "2004-04-02",
+              "type": "prime elite finish loss",
+              "method": "TKO",
+              "recovery": "Tito rebounded with Cote, Belfort, Forrest Griffin, and another UFC title fight."
             },
-            "penaltyEstimate": 0,
-            "penaltyApplies": false
+            "penaltyEstimate": -2.25,
+            "penaltyApplies": true
           },
           {
             "fighter": "Tito Ortiz",
@@ -98596,7 +99060,7 @@
     "missingEraLossEntries": [],
     "mutatesScores": false,
     "mutatesPenalty": false,
-    "appliedAt": "2026-07-11T02:35:05.050Z"
+    "appliedAt": "2026-07-11T03:57:11.036Z"
   },
   "finalizer": {
     "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -98661,7 +99125,7 @@
     "mutatesRecords": true,
     "mutatesPenalty": false,
     "mutatesScores": false,
-    "appliedAt": "2026-07-11T02:35:05.050Z"
+    "appliedAt": "2026-07-11T03:57:11.036Z"
   },
   "menTop20": [
     {
@@ -98715,16 +99179,16 @@
     },
     {
       "rank": 8,
-      "fighter": "Matt Hughes",
-      "totalScore": 62.34,
-      "penalty": -8.75,
+      "fighter": "Jose Aldo",
+      "totalScore": 62.29,
+      "penalty": -10,
       "overallOvr": 91
     },
     {
       "rank": 9,
-      "fighter": "Jose Aldo",
-      "totalScore": 62.29,
-      "penalty": -10,
+      "fighter": "Matt Hughes",
+      "totalScore": 62.12,
+      "penalty": -8.75,
       "overallOvr": 91
     },
     {
@@ -98750,37 +99214,37 @@
     },
     {
       "rank": 13,
-      "fighter": "Alex Pereira",
-      "totalScore": 56.62,
-      "penalty": -5,
-      "overallOvr": 90
-    },
-    {
-      "rank": 14,
       "fighter": "Daniel Cormier",
       "totalScore": 56.55,
       "penalty": -5.25,
       "overallOvr": 90
     },
     {
-      "rank": 15,
+      "rank": 14,
       "fighter": "Israel Adesanya",
       "totalScore": 56.34,
       "penalty": -6.75,
       "overallOvr": 90
     },
     {
-      "rank": 16,
+      "rank": 15,
       "fighter": "Max Holloway",
       "totalScore": 55.74,
       "penalty": -10,
       "overallOvr": 90
     },
     {
-      "rank": 17,
+      "rank": 16,
       "fighter": "Chuck Liddell",
       "totalScore": 54.87,
       "penalty": -6,
+      "overallOvr": 89
+    },
+    {
+      "rank": 17,
+      "fighter": "Alex Pereira",
+      "totalScore": 54.48,
+      "penalty": -5,
       "overallOvr": 89
     },
     {
@@ -98850,16 +99314,16 @@
     },
     {
       "rank": 7,
-      "fighter": "Jessica Andrade",
-      "totalScore": 35.48,
-      "penalty": -10,
+      "fighter": "Kayla Harrison",
+      "totalScore": 35.64,
+      "penalty": 0,
       "overallOvr": 85
     },
     {
       "rank": 8,
-      "fighter": "Kayla Harrison",
-      "totalScore": 34.07,
-      "penalty": 0,
+      "fighter": "Jessica Andrade",
+      "totalScore": 35.48,
+      "penalty": -10,
       "overallOvr": 85
     },
     {
@@ -99058,7 +99522,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T02:35:05.003Z",
+        "completedAt": "2026-07-11T03:57:10.990Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -99168,7 +99632,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T02:35:05.032Z",
+        "completedAt": "2026-07-11T03:57:11.011Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -99361,7 +99825,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T02:35:04.468Z",
+        "completedAt": "2026-07-11T03:57:10.254Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -99376,7 +99840,7 @@
           "record": null,
           "ufcLosses": 6,
           "penalty": -6.75,
-          "rank": 15
+          "rank": 14
         },
         {
           "fighter": "Israel Adesanya",
@@ -99385,7 +99849,7 @@
           "record": null,
           "ufcLosses": 6,
           "penalty": -6.75,
-          "rank": 15
+          "rank": 14
         }
       ],
       "packetRecord": "13-6",
@@ -99495,7 +99959,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T02:35:05.026Z",
+        "completedAt": "2026-07-11T03:57:11.002Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -99629,7 +100093,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T02:35:05.026Z",
+        "completedAt": "2026-07-11T03:57:11.002Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -99727,7 +100191,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T02:35:05.032Z",
+        "completedAt": "2026-07-11T03:57:11.011Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -99871,7 +100335,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-11T02:35:04.465Z",
+        "completedAt": "2026-07-11T03:57:10.249Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -100016,7 +100480,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-11T02:35:04.465Z",
+        "completedAt": "2026-07-11T03:57:10.249Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -100186,7 +100650,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T02:35:05.020Z",
+        "completedAt": "2026-07-11T03:57:10.997Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -100201,7 +100665,7 @@
           "record": null,
           "ufcLosses": 3,
           "penalty": -5,
-          "rank": 13
+          "rank": 17
         },
         {
           "fighter": "Alex Pereira",
@@ -100210,7 +100674,7 @@
           "record": null,
           "ufcLosses": 3,
           "penalty": -5,
-          "rank": 13
+          "rank": 17
         }
       ],
       "packetRecord": "10-3",
@@ -100296,7 +100760,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T02:35:05.031Z",
+        "completedAt": "2026-07-11T03:57:11.011Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -100418,7 +100882,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T02:35:05.032Z",
+        "completedAt": "2026-07-11T03:57:11.011Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
