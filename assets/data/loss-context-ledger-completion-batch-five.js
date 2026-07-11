@@ -3,7 +3,7 @@
 // Does not change live penalties, totals, ranks, or OVR.
 (function(){
   'use strict';
-  const VERSION='loss-context-ledger-completion-batch-five-20260710a-ten-veteran-ledgers';
+  const VERSION='loss-context-ledger-completion-batch-five-20260710b-chuck-vitor-window';
   const era=window.UFC_FIGHTER_ERA_LEDGERS;
   const ledgers=era?.ledgers;
 
@@ -33,7 +33,7 @@
     'Chuck Liddell':{
       recoveredLosses:[
         {label:'Jeremy Horn I',date:'1999-03-05',type:'pre-prime elite finish loss',method:'Submission'},
-        {label:'Randy Couture I',date:'2003-06-06',type:'pre-prime elite interim-title finish loss',method:'TKO',recovery:'Liddell later beat Couture twice and built his championship reign.'}
+        {label:'Randy Couture I',date:'2003-06-06',type:'prime elite interim-title finish loss',method:'TKO',recovery:'Liddell later beat Couture twice and built his championship reign.'}
       ],
       upwardDivisionLosses:[],
       unrecoveredLoss:{label:'Quinton Jackson II',date:'2007-05-26',type:'prime elite title finish loss',method:'KO',notes:'Canonical prime endpoint.'},

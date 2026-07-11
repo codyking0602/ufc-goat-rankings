@@ -1,7 +1,7 @@
 // Central manifest for fighter packet modules.
 // Add new fighter packet files here instead of growing ranking-data-patches.js.
 (function(){
-  const VERSION='fighter-packet-manifest-20260710y-canonical-loss-context';
+  const VERSION='fighter-packet-manifest-20260710z-chuck-vitor-window';
   const packets=[
     {slug:'demetrious-johnson',version:'20260702a'},
     {slug:'anderson-silva',version:'20260702a'},
@@ -29,7 +29,7 @@
     {slug:'tony-ferguson',version:'20260706b'},
     {slug:'tj-dillashaw',version:'20260703a'},
     {slug:'alex-pereira',version:'20260710d-ufc-record'},
-    {slug:'chuck-liddell',version:'20260702a'},
+    {slug:'chuck-liddell',version:'20260710b-chuck-vitor-window'},
     {slug:'tito-ortiz',version:'20260706a'},
     {slug:'junior-dos-santos',version:'20260706a'},
     {slug:'dominick-cruz',version:'20260702a'},

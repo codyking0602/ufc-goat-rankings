@@ -1,7 +1,7 @@
 // Prime Dominance shadow model.
 // Live-candidate category data only. Does not recalculate total GOAT score.
 (function(){
-  const VERSION='prime-dominance-shadow-model-20260708c-jon-elite-stakes';
+  const VERSION='prime-dominance-shadow-model-20260710d-chuck-vitor-window';
   const base=window.UFC_PRIME_DOMINANCE_LEDGERS;
   if(!base||!base.entryFor||base.tuningVersion===VERSION)return;
   const oldEntry=base.entryFor;
@@ -17,7 +17,7 @@
   const LOCKED_CALLS={
     batchTwo:['Ronda short-prime note only','DJ title-volume cap','Valentina full late-rivalry window'],
     batchThree:['Islam/JDM included','Izzy/Jan included','Conor/Nate I included','DC/Jones I included','Gaethje/Holloway included','short-prime note only'],
-    batchFour:['Penn/GSP II included','Petr late slide included','Francis Blaydes II to Gane','Hughes prime now runs Newton through GSP III','Jon round-control source locked at 54/63','Chuck prime ends at Quinton Jackson UFC loss','Ilia and Merab recent title losses included'],
+    batchFour:['Penn/GSP II included','Petr late slide included','Francis Blaydes II to Gane','Hughes prime now runs Newton through GSP III','Jon round-control source locked at 54/63','Chuck prime starts at Vitor Belfort and ends at Quinton Jackson UFC loss','Ilia and Merab recent title losses included'],
     batchFive:['Khamzat/Strickland title loss included','Machida prime ends at Weidman','full Moreno rivalry for Deiveson','Tito Couture and Chuck losses included','JDS Cain losses included','Bisping short late-career prime','Tony/Gaethje included','Brock/Cain included','Chael title losses included','Robbie/Woodley included'],
     batchSix:['Kayla small UFC sample note only','Rose Andrade/Esparza resistance included','Grasso full Shevchenko trilogy included','Peña Nunes upset high stakes but not dominance','Holm Rousey stakes spike but low consistency','Miesha Holm win and Ronda/Nunes losses included','Andrade multi-division chaos included','Carla low finish pressure stays down','Dern contender-threat profile only']
   };
@@ -33,7 +33,7 @@
     'Ilia Topuria':{primeRecord:'4-1',primeWins:4,primeLosses:1,primeDraws:0,primeNCs:0,roundControlPct:81.25,roundsWon:13,roundsCounted:16,primeFights:5,primeFinishes:3,profile:'Short active championship burst with Gaethje title loss counted in prime',status:'review'},
     'Petr Yan':{primeRecord:'7-4',primeWins:7,primeLosses:4,primeDraws:0,primeNCs:0,roundControlPct:70.45,roundsWon:31,roundsCounted:44,primeFights:11,primeFinishes:2,profile:'Elite bantamweight boxing prime; includes the recent Merab title win',status:'review'},
     'Merab Dvalishvili':{primeRecord:'6-1',primeWins:6,primeLosses:1,primeDraws:0,primeNCs:0,roundControlPct:75,roundsWon:21,roundsCounted:28,primeFights:7,primeFinishes:1,profile:'Relentless bantamweight control run with Yan title loss counted in prime',status:'review'},
-    'Chuck Liddell':{primeRecord:'10-1',primeWins:10,primeLosses:1,primeDraws:0,primeNCs:0,roundControlPct:80.95,roundsWon:17,roundsCounted:21,primeFights:11,primeFinishes:7,profile:'UFC-only title-prime now runs through the Quinton Jackson UFC loss',status:'review'},
+    'Chuck Liddell':{primeRecord:'9-2',primeWins:9,primeLosses:2,primeDraws:0,primeNCs:0,roundControlPct:86.36,roundsWon:19,roundsCounted:22,primeFights:11,primeFinishes:8,profile:'Vitor Belfort through Quinton Jackson II: championship knockout run with the Couture interim-title loss fully counted',status:'locked'},
     'Dominick Cruz':{primeRecord:'4-1',primeWins:4,primeLosses:1,primeDraws:0,primeNCs:0,roundControlPct:77.78,roundsWon:14,roundsCounted:18,primeFights:5,primeFinishes:1,profile:'UFC-only title prime with WEC reign excluded',status:'review'},
     'Francis Ngannou':{primeRecord:'6-0',primeWins:6,primeLosses:0,primeDraws:0,primeNCs:0,roundControlPct:81.82,roundsWon:9,roundsCounted:11,primeFights:6,primeFinishes:5,profile:'Short heavyweight terror prime with Stipe rebound and Gane control',status:'review'},
     'Joanna Jedrzejczyk':{primeRecord:'6-2',primeWins:6,primeLosses:2,primeDraws:0,primeNCs:0,roundControlPct:80.65,roundsWon:25,roundsCounted:31,primeFights:8,primeFinishes:2,profile:'Strawweight title-control prime with Rose losses included',status:'review'},

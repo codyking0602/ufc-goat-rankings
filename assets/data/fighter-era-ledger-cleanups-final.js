@@ -1,7 +1,7 @@
 // Final Fighter Era Ledger Cleanup Patch.
 // Applies Cody-approved canonical prime-window locks before any dependent adapters run.
 (function(){
-  const VERSION='fighter-era-ledger-cleanups-final-20260710c-roster-window-lock';
+  const VERSION='fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window';
   const era=window.UFC_FIGHTER_ERA_LEDGERS;
   const ledgers=era?.ledgers;
   if(!ledgers){
@@ -72,6 +72,10 @@
   patchWindow('Randy Couture',{start:'1997-05-30',startLabel:'Vitor Belfort I'},{
     rationale:'The full UFC championship arc stays connected; long absences are handled by the 18-month gap cap.'
   });
+  patchWindow('Chuck Liddell',{start:'2002-06-22',startLabel:'Vitor Belfort'},
+  {
+    rationale:'The Vitor Belfort win begins Chuck’s connected elite light-heavyweight run. Randy Couture I and Quinton Jackson II are both counted prime losses.'
+  });
   patchWindow('T.J. Dillashaw',{
     end:'2022-10-22',
     endLabel:'Aljamain Sterling',
@@ -129,7 +133,7 @@
     matt.windowDecision={approved:true,approvedBy:'Cody',decision:'label-corrected-and-locked',rationale:'The 2001-11-02 date is Carlos Newton I, not Newton II.',version:VERSION,dependentRebuildRequired:false};
   }
 
-  const changedWindowFighters=['Dustin Poirier','Justin Gaethje','Israel Adesanya','Ronda Rousey','Randy Couture','T.J. Dillashaw','Aljamain Sterling','Sean Strickland','Robert Whittaker','Dan Henderson'];
+  const changedWindowFighters=['Dustin Poirier','Justin Gaethje','Israel Adesanya','Ronda Rousey','Randy Couture','Chuck Liddell','T.J. Dillashaw','Aljamain Sterling','Sean Strickland','Robert Whittaker','Dan Henderson'];
   const labelOnlyFighters=['Matt Hughes'];
   const roster=Object.keys(ledgers);
   roster.forEach(fighter=>{

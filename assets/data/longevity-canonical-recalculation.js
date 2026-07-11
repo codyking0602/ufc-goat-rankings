@@ -2,7 +2,7 @@
 // Updates Era Ledger inputs only; the existing shadow scorer and live promoter own the /30 category score.
 (function(){
   'use strict';
-  const VERSION='longevity-canonical-recalculation-20260710a-ten-window-rebuild';
+  const VERSION='longevity-canonical-recalculation-20260710b-eleven-window-rebuild';
   const AS_OF='2026-07-10';
   const GAP_CAP_MONTHS=18;
   const era=window.UFC_FIGHTER_ERA_LEDGERS;
@@ -39,6 +39,11 @@
       window:'Vitor Belfort I → Brock Lesnar',
       startCorrection:'1997-10-17',
       note:'The full UFC championship arc is connected, with every inactivity gap capped at 18 months.'
+    },
+    'Chuck Liddell':{
+      gapAdjustedMonths:59.1,
+      window:'Vitor Belfort → Quinton Jackson II',
+      note:'The full connected elite run now includes the Belfort and Sobral wins plus the Couture interim-title loss before the championship reign.'
     },
     'T.J. Dillashaw':{
       gapAdjustedMonths:88.8,

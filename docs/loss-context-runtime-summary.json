@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-11T01:48:11.455Z",
+  "generatedAt": "2026-07-11T02:32:34.788Z",
   "pipelineStatus": "ready",
   "pipelineError": null,
   "complete": true,
@@ -10,7 +10,7 @@
   "remainingScoreMismatchCount": 0,
   "remainingLedgerBlockCount": 0,
   "missingLivePenaltyCount": 0,
-  "fightersWithRankMovement": 27,
+  "fightersWithRankMovement": 25,
   "ledgerFinalizer": {
     "version": "loss-context-canonical-production-20260710a-runtime-closure",
     "applied": true,
@@ -74,17 +74,9 @@
     "mutatesRecords": true,
     "mutatesPenalty": false,
     "mutatesScores": false,
-    "appliedAt": "2026-07-11T01:48:08.325Z"
+    "appliedAt": "2026-07-11T02:32:31.641Z"
   },
   "promotedPenaltyChanges": [
-    {
-      "fighter": "Chuck Liddell",
-      "priorPenalty": -10,
-      "promotedPenalty": -5.25,
-      "delta": 4.75,
-      "capApplied": false,
-      "lossEventCount": 7
-    },
     {
       "fighter": "Dan Henderson",
       "priorPenalty": -5.5,
@@ -92,6 +84,14 @@
       "delta": -4.25,
       "capApplied": false,
       "lossEventCount": 9
+    },
+    {
+      "fighter": "Chuck Liddell",
+      "priorPenalty": -10,
+      "promotedPenalty": -6,
+      "delta": 4,
+      "capApplied": false,
+      "lossEventCount": 7
     },
     {
       "fighter": "Francis Ngannou",
@@ -342,17 +342,6 @@
     },
     {
       "board": "men",
-      "fighter": "Chuck Liddell",
-      "currentRank": 17,
-      "currentTotal": 54.35,
-      "currentPenalty": -5.25,
-      "priorPenalty": -10,
-      "counterfactualTotal": 49.6,
-      "counterfactualRank": 20,
-      "rankMovement": 3
-    },
-    {
-      "board": "men",
       "fighter": "Robbie Lawler",
       "currentRank": 40,
       "currentTotal": 39.83,
@@ -427,6 +416,17 @@
       "counterfactualTotal": 46.84,
       "counterfactualRank": 23,
       "rankMovement": 2
+    },
+    {
+      "board": "men",
+      "fighter": "Chuck Liddell",
+      "currentRank": 17,
+      "currentTotal": 54.87,
+      "currentPenalty": -6,
+      "priorPenalty": -10,
+      "counterfactualTotal": 50.87,
+      "counterfactualRank": 18,
+      "rankMovement": 1
     },
     {
       "board": "women",
@@ -507,17 +507,6 @@
     },
     {
       "board": "men",
-      "fighter": "B.J. Penn",
-      "currentRank": 20,
-      "currentTotal": 50.24,
-      "currentPenalty": -8.75,
-      "priorPenalty": -8.5,
-      "counterfactualTotal": 50.49,
-      "counterfactualRank": 19,
-      "rankMovement": -1
-    },
-    {
-      "board": "men",
       "fighter": "Anderson Silva",
       "currentRank": 4,
       "currentTotal": 75.79,
@@ -580,17 +569,6 @@
       "priorPenalty": -4.75,
       "counterfactualTotal": 45.52,
       "counterfactualRank": 29,
-      "rankMovement": -1
-    },
-    {
-      "board": "men",
-      "fighter": "T.J. Dillashaw",
-      "currentRank": 19,
-      "currentTotal": 50.51,
-      "currentPenalty": -7.25,
-      "priorPenalty": -7.25,
-      "counterfactualTotal": 50.51,
-      "counterfactualRank": 18,
       "rankMovement": -1
     },
     {
@@ -701,6 +679,17 @@
       "priorPenalty": -5.25,
       "counterfactualTotal": 35.41,
       "counterfactualRank": 44,
+      "rankMovement": 0
+    },
+    {
+      "board": "men",
+      "fighter": "B.J. Penn",
+      "currentRank": 20,
+      "currentTotal": 50.24,
+      "currentPenalty": -8.75,
+      "priorPenalty": -8.5,
+      "counterfactualTotal": 50.49,
+      "counterfactualRank": 20,
       "rankMovement": 0
     },
     {
@@ -831,8 +820,8 @@
     {
       "rank": 17,
       "fighter": "Chuck Liddell",
-      "totalScore": 54.35,
-      "penalty": -5.25,
+      "totalScore": 54.87,
+      "penalty": -6,
       "overallOvr": 89
     },
     {
@@ -1102,7 +1091,7 @@
         "endReason": "Liddell losses were recovered by heavyweight title comeback. Brock closes late UFC elite-prime window.",
         "canonical": true,
         "locked": true,
-        "lockVersion": "fighter-era-ledger-cleanups-final-20260710c-roster-window-lock"
+        "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
       },
       "completion": {
         "version": "loss-context-ledger-completion-batch-four-20260710a-five-highest-missing",
@@ -1110,7 +1099,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:48:08.294Z",
+        "completedAt": "2026-07-11T02:32:31.612Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -1211,7 +1200,7 @@
         "endReason": "Merab did not close the window because O’Malley fought afterward and remains current elite by Cody call.",
         "canonical": true,
         "locked": true,
-        "lockVersion": "fighter-era-ledger-cleanups-final-20260710c-roster-window-lock"
+        "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
       },
       "completion": {
         "version": "loss-context-ledger-completion-batch-seven-20260710a-final-seventeen",
@@ -1220,7 +1209,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:48:08.304Z",
+        "completedAt": "2026-07-11T02:32:31.621Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -1405,7 +1394,7 @@
         "endReason": "Islam and Arman do not close the window under Cody call; Charles remains prime/current.",
         "canonical": true,
         "locked": true,
-        "lockVersion": "fighter-era-ledger-cleanups-final-20260710c-roster-window-lock"
+        "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
       },
       "completion": {
         "version": "loss-context-ledger-completion-batch-two-20260710a-five-highest-priority",
@@ -1413,7 +1402,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:48:07.633Z",
+        "completedAt": "2026-07-11T02:32:30.938Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -1538,7 +1527,7 @@
         "endReason": "Jan was upward-division, Pereira was avenged, and Strickland did not close it because Izzy returned to title-level. DDP is endpoint.",
         "canonical": true,
         "locked": true,
-        "lockVersion": "fighter-era-ledger-cleanups-final-20260710c-roster-window-lock"
+        "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
       },
       "completion": {
         "version": "loss-context-ledger-completion-batch-six-20260710a-first-half-eighteen",
@@ -1547,7 +1536,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:48:08.301Z",
+        "completedAt": "2026-07-11T02:32:31.618Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -1672,7 +1661,7 @@
         "endReason": "DJ II starts prime. Retirement gap capped. Sterling comeback title loss closes it; Merab is post-prime/comeback context.",
         "canonical": true,
         "locked": true,
-        "lockVersion": "fighter-era-ledger-cleanups-final-20260710c-roster-window-lock"
+        "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
       },
       "completion": {
         "version": "loss-context-ledger-completion-batch-six-20260710a-first-half-eighteen",
@@ -1681,7 +1670,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:48:08.301Z",
+        "completedAt": "2026-07-11T02:32:31.618Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -1770,7 +1759,7 @@
         "endReason": "Peña I did not end it because Nunes avenged it. Aldana retirement win closes prime on a win.",
         "canonical": true,
         "locked": true,
-        "lockVersion": "fighter-era-ledger-cleanups-final-20260710c-roster-window-lock"
+        "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
       },
       "completion": {
         "version": "loss-context-ledger-completion-batch-seven-20260710a-final-seventeen",
@@ -1779,7 +1768,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:48:08.304Z",
+        "completedAt": "2026-07-11T02:32:31.621Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -1916,14 +1905,14 @@
         "endReason": "Adesanya win starts elite/title-level window. DDP does not close it because Strickland remained elite-relevant.",
         "canonical": true,
         "locked": true,
-        "lockVersion": "fighter-era-ledger-cleanups-final-20260710c-roster-window-lock"
+        "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
       },
       "completion": {
         "version": "loss-context-ledger-completion-batch-one-20260710a-whittaker-strickland",
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-11T01:48:07.630Z",
+        "completedAt": "2026-07-11T02:32:30.935Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -2061,14 +2050,14 @@
         "endReason": "Adesanya and DDP losses did not end window because Whittaker kept proving elite MW relevance. Khamzat closes it.",
         "canonical": true,
         "locked": true,
-        "lockVersion": "fighter-era-ledger-cleanups-final-20260710c-roster-window-lock"
+        "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
       },
       "completion": {
         "version": "loss-context-ledger-completion-batch-one-20260710a-whittaker-strickland",
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-11T01:48:07.630Z",
+        "completedAt": "2026-07-11T02:32:30.935Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -2230,15 +2219,15 @@
         "endReason": "UFC-only excludes Pride. Bisping starts late UFC elite window; Cormier closes it.",
         "canonical": true,
         "locked": true,
-        "lockVersion": "fighter-era-ledger-cleanups-final-20260710c-roster-window-lock"
+        "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
       },
       "completion": {
-        "version": "loss-context-ledger-completion-batch-five-20260710a-ten-veteran-ledgers",
+        "version": "loss-context-ledger-completion-batch-five-20260710b-chuck-vitor-window",
         "batch": 5,
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:48:08.297Z",
+        "completedAt": "2026-07-11T02:32:31.615Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -2339,7 +2328,7 @@
         "endReason": "Adesanya finish loss was recovered immediately; current title-level form keeps window open.",
         "canonical": true,
         "locked": true,
-        "lockVersion": "fighter-era-ledger-cleanups-final-20260710c-roster-window-lock"
+        "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
       },
       "completion": {
         "version": "loss-context-ledger-completion-batch-seven-20260710a-final-seventeen",
@@ -2348,7 +2337,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:48:08.304Z",
+        "completedAt": "2026-07-11T02:32:31.621Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -2461,7 +2450,7 @@
         "endReason": "Nunes II did not end it because Shevchenko moved to flyweight and became champion. Grasso did not close it because she stayed title-level.",
         "canonical": true,
         "locked": true,
-        "lockVersion": "fighter-era-ledger-cleanups-final-20260710c-roster-window-lock"
+        "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
       },
       "completion": {
         "version": "loss-context-ledger-completion-batch-seven-20260710a-final-seventeen",
@@ -2470,7 +2459,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:48:08.304Z",
+        "completedAt": "2026-07-11T02:32:31.621Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }

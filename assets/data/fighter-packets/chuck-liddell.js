@@ -1,23 +1,23 @@
 // Chuck Liddell fighter packet extension.
 (function(){
-  const VERSION = 'fighter-packet-chuck-liddell-20260702a';
+  const VERSION = 'fighter-packet-chuck-liddell-20260710b-chuck-vitor-window';
   const fighter = 'Chuck Liddell';
 
   const packet = {
-    status: { stage: 'packet live; Watch Moment needed', lastUpdated: '2026-07-02', nextFix: 'Add Chuck Watch Moment link when Cody picks one.' },
+    status: { stage: 'canonical Vitor-to-Rampage prime rebuilt; Watch Moment needed', lastUpdated: '2026-07-10', nextFix: 'Add Chuck Watch Moment link when Cody picks one.' },
     repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/chuck-liddell.js', displayFallback: 'assets/data/display-overrides.js', compareFallback: 'assets/compare-coverage-pack-1.js', photos: 'assets/fighters/chuck-liddell.webp and assets/fighters/chuck-liddell-thumb.webp' },
     photos: { photoUrl: 'assets/fighters/chuck-liddell.webp', thumbUrl: 'assets/fighters/chuck-liddell-thumb.webp' },
     display: {
       overallOvr: 84, allTimeRank: 21, divisionLabel: 'LHW', resumeTag: 'Classic LHW knockout aura',
       oneLiner: 'The classic light heavyweight star case: knockout aura, title defenses, Tito/Couture rivalry value, and a rough late-career ending.',
       categories: { championship: { ovr: 80, rank: 15 }, opponentQuality: { ovr: 80, rank: 21 }, primeDominance: { ovr: 87, rank: 19 }, longevity: { ovr: 84, rank: 18 } },
-      snapshot: [ ['UFC Record', '16-7'], ['UFC Title-Fight Wins', '5'], ['Championship Level', 'Classic LHW Champion'], ['Quality Wins', 'Tito and Couture Anchor the Case'],  ['Active Elite Years', '5.5 Elite Years'], ['Loss Context', 'Late knockout losses hurt the back half'] ],
+      snapshot: [ ['UFC Record', '16-7'], ['UFC Title-Fight Wins', '5'], ['Championship Level', 'Classic LHW Champion'], ['Quality Wins', 'Tito and Couture Anchor the Case'],  ['Active Elite Years', '4.93 Elite Years'], ['Loss Context', 'Couture and Rampage are the counted prime finishes'] ],
       whyRankedHere: 'Liddell ranks here because his light heavyweight title run and rivalry wins were central to the UFC’s breakout era. He had real championship volume, major star power, and a dangerous peak built around knockout threat.',
       whyNotHigher: 'He does not rank higher because later light heavyweight resumes are deeper and cleaner, and the late knockout losses drag the UFC-only profile hard.',
       keyJudgmentCalls: [ ['Era impact', 'matters as context, but the ranking still scores UFC resume value.'], ['Rivalry wins', 'Tito and Couture wins carry a large part of the case.'], ['Title defenses', 'give real championship value for his era.'], ['Late losses', 'hurt the record and durability perception.'], ['Opponent depth', 'is solid but not top-tier compared with Jones or modern deep divisions.'] ],
       finalTakeaway: 'Chuck is the classic UFC light heavyweight star: real title value and huge knockout aura, held back by a rough ending and deeper later-era resumes.'
     },
-    profileStats: { ufcRecord: '16-7', titleFightWins: 5, eliteWins: 7,  finishRatePct: 75.0, roundsWonPct: 66.0, activeEliteYears: 5.5, timesFinishedPrime: 3, divisionStrengthContext: 'Early-modern light heavyweight value is respected, but later LHW depth sets a higher all-time bar.', lossContext: 'Late knockout losses are a real drag and keep him below cleaner champion cases.' },
+    profileStats: { ufcRecord: '16-7', titleFightWins: 5, eliteWins: 7,  finishRatePct: 75.0, roundsWonPct: 86.36, activeEliteYears: 4.93, timesFinishedPrime: 2, divisionStrengthContext: 'Early-modern light heavyweight value is respected, but later LHW depth sets a higher all-time bar.', lossContext: 'Jeremy Horn is pre-prime; Randy Couture I and Quinton Jackson II are the two counted prime finish losses. The later knockout skid is post-prime context.' },
     compareSeasoning: {
       shortCase: 'Chuck is the classic light heavyweight champion case: knockout aura, title defenses, Tito and Couture rivalries, and one of the defining star runs of the early modern UFC.',
       peak: 'At his best, Chuck was sprawl-and-brawl pressure, knockout power, defensive wrestling, and the confidence to force dangerous exchanges.',
@@ -31,7 +31,7 @@
       signatureWins: 'Couture twice, Ortiz twice, Belfort, Sobral, Horn, Monson, and Mezger give Chuck a strong light heavyweight era resume.',
       weakness: 'The late knockout losses and later-era LHW depth keep him below the cleaner long-reign champions.',
       titleSummary: 'Chuck’s title case is a real light heavyweight reign with multiple defenses and major rivalry wins during the UFC breakout years.',
-      primeSummary: 'His prime had huge knockout aura, but the ending was rough and keeps him below cleaner long-reign champions.',
+      primeSummary: 'His UFC prime runs from the Vitor Belfort win through the Quinton Jackson title loss, with the Couture loss and the full championship knockout run included.',
       titleStyle: 'Classic Light Heavyweight Reign', primeStyle: 'Knockout Aura Prime',
       legacyStats: { ufcRecord: '16-7', titleFightWins: 5, beltsWon: 1, titleDefenses: 4, activeEliteYearsLabel: 'roughly 5 active elite years', primeNote: 'classic light heavyweight knockout prime with a rough post-prime ending' }
     }

@@ -1,7 +1,7 @@
 // Lightweight prerequisite/data loader with an explicit readiness handoff.
 (function(){
   'use strict';
-  const VERSION='ranking-data-patches-20260710k-canonical-loss-context';
+  const VERSION='ranking-data-patches-20260710l-chuck-vitor-window';
   let readyResolved=false;
   let resolveReady;
   const readyPromise=new Promise(resolve=>{resolveReady=resolve;});
@@ -11,7 +11,7 @@
     ['demetrious-johnson','20260702a'],['anderson-silva','20260702a'],['khabib-nurmagomedov','20260702a'],['islam-makhachev','20260702a'],
     ['alexander-volkanovski','20260703b'],['randy-couture','20260702a'],['max-holloway','20260703b'],['kamaru-usman','20260702a'],['jose-aldo','20260705b'],['matt-hughes','20260702a'],['daniel-cormier','20260702a'],['stipe-miocic','20260702a'],
     ['dricus-du-plessis','20260705e-prime-195'],['tyron-woodley','20260706b'],['ilia-topuria','20260705a'],['israel-adesanya','20260710b-current-record'],['aljamain-sterling','20260703a'],['petr-yan','20260702b'],['cain-velasquez','20260702b'],['brock-lesnar','20260706a'],['merab-dvalishvili','20260702b'],['bj-penn','20260702b'],
-    ['dustin-poirier','20260703a'],['tony-ferguson','20260706b'],['tj-dillashaw','20260703a'],['alex-pereira','20260710d-ufc-record'],['chuck-liddell','20260702a'],['tito-ortiz','20260706a'],['junior-dos-santos','20260706a'],['dominick-cruz','20260702a'],['francis-ngannou','20260702a'],['charles-oliveira','20260710b-current-record'],['henry-cejudo','20260710b-current-record'],
+    ['dustin-poirier','20260703a'],['tony-ferguson','20260706b'],['tj-dillashaw','20260703a'],['alex-pereira','20260710d-ufc-record'],['chuck-liddell','20260710b-chuck-vitor-window'],['tito-ortiz','20260706a'],['junior-dos-santos','20260706a'],['dominick-cruz','20260702a'],['francis-ngannou','20260702a'],['charles-oliveira','20260710b-current-record'],['henry-cejudo','20260710b-current-record'],
     ['conor-mcgregor','20260702a'],['justin-gaethje','20260702d'],['frankie-edgar','20260703b'],['deiveson-figueiredo','20260706a'],['khamzat-chimaev','20260706a'],['lyoto-machida','20260706b'],['sean-strickland','20260706a'],['robert-whittaker','20260710c-loss-context-record'],['sean-omalley','20260706b-round-control'],['michael-bisping','20260706a'],['dan-henderson','20260710b-ufc-record'],['chael-sonnen','20260706a'],['robbie-lawler','20260706a'],
     ['amanda-nunes','20260710b-ufc-record'],['valentina-shevchenko','20260710b-ufc-record'],['zhang-weili','20260706a'],['rose-namajunas','20260706a'],['miesha-tate','20260706a'],['mackenzie-dern','20260706a'],['kayla-harrison','20260706a'],['jessica-andrade','20260706a'],['alexa-grasso','20260706a'],['julianna-pena','20260706a'],['carla-esparza','20260706a'],['holly-holm','20260706a'],['joanna-jedrzejczyk','20260702b'],['ronda-rousey','20260702b']
   ];
@@ -72,7 +72,7 @@
     {src:'assets/data/longevity-score-corrections.js?v=longevity-score-corrections-20260705b',attr:'data-longevity-score-corrections'},
     {src:'assets/data/fighter-era-ledgers.js?v=fighter-era-ledgers-20260709g-review-corrections',attr:'data-fighter-era-ledgers'},
     {src:'assets/data/fighter-era-ledger-cleanups.js?v=fighter-era-ledger-cleanups-20260709b-clean-remaining-review-rows',attr:'data-fighter-era-ledger-cleanups'},
-    {src:'assets/data/fighter-era-ledger-cleanups-final.js?v=fighter-era-ledger-cleanups-final-20260710c-roster-window-lock',attr:'data-fighter-era-ledger-cleanups-final'},
+    {src:'assets/data/fighter-era-ledger-cleanups-final.js?v=fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window',attr:'data-fighter-era-ledger-cleanups-final'},
     {src:'assets/data/loss-context-ledger-completion-batch-one.js?v=loss-context-ledger-completion-batch-one-20260710a-whittaker-strickland',attr:'data-loss-context-ledger-completion-batch-one'},
     {src:'assets/data/loss-context-ledger-completion-batch-two.js?v=loss-context-ledger-completion-batch-two-20260710a-five-highest-priority',attr:'data-loss-context-ledger-completion-batch-two'},
     {src:'assets/data/apex-peak-score-corrections.js?v=apex-peak-score-corrections-20260706a-sean-whittaker',attr:'data-apex-peak-score-corrections'},
@@ -93,7 +93,7 @@
     const loadCompareWatchdog=()=>loadScriptOnce('assets/js/compare-narrative-watchdog.js?v=compare-narrative-watchdog-20260702a','data-compare-narrative-watchdog',completeLoad);
     const loadCompareNarrative=()=>loadScriptOnce('assets/js/compare-narrative-system.js?v=compare-narrative-system-20260703g','data-compare-narrative-system',loadCompareWatchdog);
     const loadCompareCore=()=>loadSequence(compareCoreScripts(),loadCompareNarrative);
-    const loadPacketManifest=()=>loadScriptOnce('assets/data/fighter-packet-manifest.js?v=fighter-packet-manifest-20260710y-canonical-loss-context','data-fighter-packet-manifest',loadCompareCore);
+    const loadPacketManifest=()=>loadScriptOnce('assets/data/fighter-packet-manifest.js?v=fighter-packet-manifest-20260710z-chuck-vitor-window','data-fighter-packet-manifest',loadCompareCore);
     const loadBranding=()=>loadScriptOnce('assets/js/app-branding.js?v=app-branding-20260702c','data-app-branding',loadPacketManifest);
     const loadDivisionRankings=()=>loadScriptOnce('assets/js/division-rankings.js?v=division-rankings-20260705e-clean-leaderboard','data-division-rankings',loadBranding);
     const loadHomePolish=()=>loadScriptOnce('assets/js/home-polish.js?v=home-polish-hybrid-preview-20260705b','data-home-polish',loadDivisionRankings);

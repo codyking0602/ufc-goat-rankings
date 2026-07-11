@@ -2,8 +2,8 @@
 // Rebuilds roster-facing Prime Record context without directly changing category scores.
 (function(){
   'use strict';
-  const VERSION='canonical-prime-records-20260710b-prime-ledger-recount';
-  const PRIME_REBUILD_VERSION='prime-dominance-audit-batch-ten-20260710a-canonical-window-five';
+  const VERSION='canonical-prime-records-20260710c-chuck-vitor-window';
+  const PRIME_REBUILD_VERSION='prime-dominance-shadow-model-20260710d-chuck-vitor-window';
   const DATA=window.RANKING_DATA;
   const era=window.UFC_FIGHTER_ERA_LEDGERS;
 
@@ -18,7 +18,8 @@
     'Justin Gaethje':{record:'7-3',reason:'James Vick through Max Holloway, inclusive.'},
     'Israel Adesanya':{record:'8-4',reason:'Kelvin Gastelum through Dricus du Plessis, inclusive.'},
     'Ronda Rousey':{record:'6-2',reason:'Liz Carmouche through Amanda Nunes, inclusive.'},
-    'Randy Couture':{record:'11-6',reason:'Vitor Belfort I through Brock Lesnar, inclusive; UFC fights only.'}
+    'Randy Couture':{record:'11-6',reason:'Vitor Belfort I through Brock Lesnar, inclusive; UFC fights only.'},
+    'Chuck Liddell':{record:'9-2',reason:'Vitor Belfort through Quinton Jackson II, inclusive; UFC fights only.'},
   };
 
   function key(name){return String(name||'').trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');}
