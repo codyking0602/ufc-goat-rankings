@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-11T10:26:42.454Z",
+  "generatedAt": "2026-07-11T10:52:39.094Z",
   "pipelineStatus": "ready",
   "pipelineError": null,
   "complete": true,
@@ -74,7 +74,7 @@
     "mutatesRecords": true,
     "mutatesPenalty": false,
     "mutatesScores": false,
-    "appliedAt": "2026-07-11T10:26:39.504Z",
+    "appliedAt": "2026-07-11T10:52:36.240Z",
     "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
   },
   "promotedPenaltyChanges": [
@@ -761,112 +761,112 @@
       "fighter": "Islam Makhachev",
       "totalScore": 69.12,
       "penalty": -2,
-      "overallOvr": 92
+      "overallOvr": 93
     },
     {
       "rank": 6,
       "fighter": "Alexander Volkanovski",
       "totalScore": 65.98,
       "penalty": -4.25,
-      "overallOvr": 92
+      "overallOvr": 93
     },
     {
       "rank": 7,
       "fighter": "Khabib Nurmagomedov",
       "totalScore": 64.05,
       "penalty": 0,
-      "overallOvr": 91
+      "overallOvr": 92
     },
     {
       "rank": 8,
       "fighter": "Jose Aldo",
       "totalScore": 62.29,
       "penalty": -10,
-      "overallOvr": 91
+      "overallOvr": 92
     },
     {
       "rank": 9,
       "fighter": "Matt Hughes",
       "totalScore": 62.12,
       "penalty": -8.75,
-      "overallOvr": 91
+      "overallOvr": 92
     },
     {
       "rank": 10,
       "fighter": "Randy Couture",
       "totalScore": 61.09,
       "penalty": -10,
-      "overallOvr": 91
+      "overallOvr": 92
     },
     {
       "rank": 11,
       "fighter": "Kamaru Usman",
       "totalScore": 60.91,
       "penalty": -3.75,
-      "overallOvr": 91
+      "overallOvr": 92
     },
     {
       "rank": 12,
       "fighter": "Stipe Miocic",
       "totalScore": 58.35,
       "penalty": -7.25,
-      "overallOvr": 90
+      "overallOvr": 91
     },
     {
       "rank": 13,
       "fighter": "Daniel Cormier",
       "totalScore": 56.55,
       "penalty": -5.25,
-      "overallOvr": 90
+      "overallOvr": 91
     },
     {
       "rank": 14,
       "fighter": "Israel Adesanya",
       "totalScore": 56.34,
       "penalty": -6.75,
-      "overallOvr": 90
+      "overallOvr": 91
     },
     {
       "rank": 15,
       "fighter": "Max Holloway",
       "totalScore": 55.74,
       "penalty": -10,
-      "overallOvr": 90
+      "overallOvr": 91
     },
     {
       "rank": 16,
       "fighter": "Chuck Liddell",
       "totalScore": 54.87,
       "penalty": -6,
-      "overallOvr": 89
+      "overallOvr": 90
     },
     {
       "rank": 17,
       "fighter": "Alex Pereira",
       "totalScore": 54.48,
       "penalty": -5,
-      "overallOvr": 89
+      "overallOvr": 90
     },
     {
       "rank": 18,
       "fighter": "Cain Velasquez",
       "totalScore": 50.93,
       "penalty": -4.5,
-      "overallOvr": 89
+      "overallOvr": 90
     },
     {
       "rank": 19,
       "fighter": "T.J. Dillashaw",
       "totalScore": 50.51,
       "penalty": -7.25,
-      "overallOvr": 89
+      "overallOvr": 90
     },
     {
       "rank": 20,
       "fighter": "B.J. Penn",
       "totalScore": 50.24,
       "penalty": -8.75,
-      "overallOvr": 88
+      "overallOvr": 89
     }
   ],
   "womenBoard": [
@@ -889,7 +889,7 @@
       "fighter": "Zhang Weili",
       "totalScore": 55.46,
       "penalty": -4.5,
-      "overallOvr": 91
+      "overallOvr": 92
     },
     {
       "rank": 4,
@@ -903,35 +903,35 @@
       "fighter": "Ronda Rousey",
       "totalScore": 48.34,
       "penalty": -4.5,
-      "overallOvr": 89
+      "overallOvr": 90
     },
     {
       "rank": 6,
       "fighter": "Rose Namajunas",
       "totalScore": 46.58,
       "penalty": -6,
-      "overallOvr": 88
+      "overallOvr": 89
     },
     {
       "rank": 7,
       "fighter": "Cris Cyborg",
       "totalScore": 39.65,
       "penalty": -2.25,
-      "overallOvr": 86
+      "overallOvr": 87
     },
     {
       "rank": 8,
       "fighter": "Jessica Andrade",
       "totalScore": 35.48,
       "penalty": -10,
-      "overallOvr": 85
+      "overallOvr": 86
     },
     {
       "rank": 9,
       "fighter": "Alexa Grasso",
       "totalScore": 32.31,
       "penalty": -6.5,
-      "overallOvr": 84
+      "overallOvr": 85
     },
     {
       "rank": 10,
@@ -945,14 +945,14 @@
       "fighter": "Kayla Harrison",
       "totalScore": 30.17,
       "penalty": 0,
-      "overallOvr": 83
+      "overallOvr": 84
     },
     {
       "rank": 12,
       "fighter": "Carla Esparza",
       "totalScore": 28.97,
       "penalty": -10,
-      "overallOvr": 83
+      "overallOvr": 84
     },
     {
       "rank": 13,
@@ -1129,7 +1129,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T10:26:39.219Z",
+        "completedAt": "2026-07-11T10:52:35.645Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -1239,7 +1239,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T10:26:39.230Z",
+        "completedAt": "2026-07-11T10:52:35.657Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -1432,7 +1432,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T10:26:38.550Z",
+        "completedAt": "2026-07-11T10:52:34.941Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -1566,7 +1566,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T10:26:39.227Z",
+        "completedAt": "2026-07-11T10:52:35.652Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -1700,7 +1700,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T10:26:39.227Z",
+        "completedAt": "2026-07-11T10:52:35.652Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -1798,7 +1798,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T10:26:39.230Z",
+        "completedAt": "2026-07-11T10:52:35.657Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -1942,7 +1942,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-11T10:26:38.546Z",
+        "completedAt": "2026-07-11T10:52:34.938Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -2087,7 +2087,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-11T10:26:38.546Z",
+        "completedAt": "2026-07-11T10:52:34.938Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -2257,7 +2257,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T10:26:39.223Z",
+        "completedAt": "2026-07-11T10:52:35.648Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -2367,7 +2367,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T10:26:39.230Z",
+        "completedAt": "2026-07-11T10:52:35.657Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -2489,7 +2489,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T10:26:39.231Z",
+        "completedAt": "2026-07-11T10:52:35.657Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
