@@ -3,12 +3,13 @@
 // Audit only: does not change penalties, category scores, totals, ranks, or OVR.
 (function(){
   'use strict';
-  const VERSION='loss-context-mismatch-audit-20260710a-roster-62';
+  const VERSION='loss-context-mismatch-audit-20260710c-exact-official-loss-reconciliation';
   const CAP=-10;
   const DATA=window.RANKING_DATA;
   const era=window.UFC_FIGHTER_ERA_LEDGERS;
   const adapter=window.UFC_LOSS_CONTEXT_LEDGER_ADAPTER;
   const corrections=window.UFC_PENALTY_SCORE_CORRECTIONS;
+  const finalizer=window.UFC_LOSS_CONTEXT_LEDGER_FINALIZER;
 
   function key(name){return String(name||'').trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');}
   function round2(value){const n=Number(value);return Number.isFinite(n)?Math.round((n+Number.EPSILON)*100)/100:null;}
@@ -28,6 +29,16 @@
     const target=key(fighter);
     const rows=adapter?.eventRows||adapter?.rows||[];
     return rows.find(row=>key(row?.fighter)===target)||null;
+  }
+  function eventText(event){
+    const raw=event?.raw||{};
+    return [event?.label,event?.sourceType,raw?.type,raw?.phase,raw?.rule,raw?.notes].filter(Boolean).join(' ').toLowerCase();
+  }
+  function officialLossException(event){
+    if(event?.sourceType!=='weirdResults'&&event?.exception!=='weird/contextual')return false;
+    const text=eventText(event);
+    if(/no contest|\bnc\b|contextual win|disqualification win|dq win/.test(text))return false;
+    return /official[^.]*loss|disqualification[^.]*loss|dq[^.]*loss|contextual loss/.test(text);
   }
   function sourceContradictions(events){
     return events.filter(event=>{
@@ -57,11 +68,12 @@
     const eventEntry=eventEntryFor(fighter);
     const events=Array.isArray(eventEntry?.events)?eventEntry.events:[];
     const lossEvents=events.filter(event=>event?.isLoss);
-    const weirdContextCount=events.filter(event=>event?.exception==='weird/contextual'||event?.sourceType==='weirdResults').length;
+    const officialLossExceptionCount=events.filter(officialLossException).length;
     const record=recordText(row,profile);
     const officialUfcLosses=parseLosses(record);
-    const effectiveExpectedLosses=officialUfcLosses===null?null:Math.max(0,officialUfcLosses-weirdContextCount);
+    const effectiveExpectedLosses=officialUfcLosses===null?null:Math.max(0,officialUfcLosses-officialLossExceptionCount);
     const missingLossEvents=effectiveExpectedLosses===null?null:Math.max(0,effectiveExpectedLosses-lossEvents.length);
+    const excessLossEvents=effectiveExpectedLosses===null?null:Math.max(0,lossEvents.length-effectiveExpectedLosses);
     const unknownPhase=lossEvents.filter(event=>event?.phase==='unknown').length;
     const unknownQuality=lossEvents.filter(event=>event?.quality==='unknown'&&event?.phase!=='post-prime'&&event?.exception!=='weird/contextual').length;
     const undatedLosses=lossEvents.filter(event=>!/^\d{4}-\d{2}-\d{2}$/.test(String(event?.date||''))).length;
@@ -73,7 +85,10 @@
     const correction=corrections?.corrections?.[fighter]||null;
     const notes=correction?.notes||row?.lossContextAudit?.notes||row?.penaltyNotes||'';
     const noEventCoverage=livePenalty<0&&lossEvents.length===0;
-    const incompleteCoverage=noEventCoverage||(missingLossEvents!==null&&missingLossEvents>0)||unknownPhase>0||unknownQuality>0||undatedLosses>0||contradictions.length>0;
+    const incompleteCoverage=noEventCoverage
+      ||(missingLossEvents!==null&&missingLossEvents>0)
+      ||(excessLossEvents!==null&&excessLossEvents>0)
+      ||unknownPhase>0||unknownQuality>0||undatedLosses>0||contradictions.length>0;
     let status='match';
     if(livePenalty===null)status='missing-live-penalty';
     else if(!eventEntry)status='missing-era-loss-entry';
@@ -81,7 +96,8 @@
     else if(Math.abs(delta||0)>0.01)status='score-mismatch';
     const reasons=[];
     if(noEventCoverage)reasons.push('Negative live penalty but no machine-readable loss events.');
-    if(missingLossEvents>0)reasons.push(`${missingLossEvents} UFC loss event${missingLossEvents===1?'':'s'} not represented after weird-result allowance.`);
+    if(missingLossEvents>0)reasons.push(`${missingLossEvents} UFC loss event${missingLossEvents===1?' is':'s are'} missing after official DQ-loss allowance.`);
+    if(excessLossEvents>0)reasons.push(`${excessLossEvents} extra machine-readable loss event${excessLossEvents===1?' exceeds':'s exceed'} the reconciled UFC record.`);
     if(unknownPhase)reasons.push(`${unknownPhase} loss event${unknownPhase===1?' has':'s have'} unknown phase.`);
     if(unknownQuality)reasons.push(`${unknownQuality} counted loss event${unknownQuality===1?' has':'s have'} unknown opponent quality.`);
     if(undatedLosses)reasons.push(`${undatedLosses} loss event${undatedLosses===1?' lacks':'s lack'} an ISO fight date.`);
@@ -93,9 +109,11 @@
       canonicalWindow:{...(era.entryFor?.(fighter)?.window||eventEntry?.window||{})},
       ufcRecord:record||null,
       officialUfcLosses,
+      officialLossExceptionCount,
       effectiveExpectedLosses,
       machineReadableLossEvents:lossEvents.length,
       missingLossEvents,
+      excessLossEvents,
       livePenalty,
       rawLedgerEstimate:rawEstimate,
       cappedLedgerEstimate:cappedEstimate,
@@ -103,6 +121,7 @@
       exactScoreMatch:delta!==null&&Math.abs(delta)<=0.01,
       correctionWorksheetEntry:!!correction,
       manualContextException:manualContext(notes),
+      ledgerFinalized:!!era.entryFor?.(fighter)?.lossContextCompletion?.finalizerVersion,
       notes,
       unknownPhase,
       unknownQuality,
@@ -125,10 +144,12 @@
     missingEraLossEntries:byStatus('missing-era-loss-entry').length,
     missingLivePenalties:byStatus('missing-live-penalty').length,
     fightersWithMissingLossEvents:rows.filter(row=>Number(row.missingLossEvents)>0).length,
+    fightersWithExcessLossEvents:rows.filter(row=>Number(row.excessLossEvents)>0).length,
     fightersWithUnknownPhase:rows.filter(row=>row.unknownPhase>0).length,
     fightersWithUnknownQuality:rows.filter(row=>row.unknownQuality>0).length,
     fightersWithUndatedLosses:rows.filter(row=>row.undatedLosses>0).length,
     fightersWithBucketContradictions:rows.filter(row=>row.contradictionCount>0).length,
+    finalizedLedgerCoverage:rows.filter(row=>row.ledgerFinalized).length,
     correctionWorksheetCoverage:rows.filter(row=>row.correctionWorksheetEntry).length,
     manualContextExceptions:rows.filter(row=>row.manualContextException).length
   };
@@ -138,6 +159,7 @@
     sourceEraLedgerVersion:era.version||null,
     sourceAdapterVersion:adapter.version||null,
     sourcePenaltyVersion:corrections?.version||null,
+    sourceFinalizerVersion:finalizer?.version||null,
     rules:adapter.rules?.lossPenaltyRules||null,
     cap:CAP,
     summary,
