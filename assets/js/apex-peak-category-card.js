@@ -1,6 +1,6 @@
 // Adds Apex Peak as a visible fighter-card category without touching the base app shell.
 (function(){
-  const VERSION = 'apex-peak-category-card-20260708b-prime-row-polish';
+  const VERSION = 'apex-peak-category-card-20260711c-compact-profile-card';
   const APEX_MAX = 6;
 
   function num(value){
@@ -37,7 +37,7 @@
     return `<button type="button" class="category-card ${tier.cls}" data-category="apexPeak" aria-label="Explain Apex Peak rating for ${f.fighter}">
       <span class="category-label">Apex Peak</span>
       <strong>${rating} <span class="meta">Rating</span></strong>
-      <small>#${apexRank(f) || '—'} in category · Peak form + elite proof</small>
+      <small>#${apexRank(f) || '—'} in category</small>
       <span class="tier-pill">${tier.label}</span>
       <div class="category-bar"><i style="width:${width}%"></i></div>
     </button>`;
