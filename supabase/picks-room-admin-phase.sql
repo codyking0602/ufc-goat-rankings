@@ -1,13 +1,16 @@
 -- Picks private room-owner results phase.
--- Run once in Supabase SQL Editor. Safe to rerun.
+-- Run after supabase/picks-live-gameplay-phase.sql.
+-- Safe to rerun in Supabase SQL Editor.
+
+-- Remove the earlier six-argument draft, if it exists.
+drop function if exists public.picks_admin_set_fight_result(text,text,text,text,text,integer);
 
 create or replace function public.picks_admin_set_fight_result(
   p_room_code text,
   p_admin_token text,
   p_fight_id text,
   p_result_status text,
-  p_winner_name text default null,
-  p_reopen_minutes integer default 15
+  p_winner_name text default null
 )
 returns jsonb
 language plpgsql
@@ -45,12 +48,7 @@ begin
 
   update public.pick_fights
   set result_status=p_result_status,
-      winner_name=case when p_result_status='complete' then p_winner_name else null end,
-      lock_at=case
-        when p_result_status='scheduled'
-          then greatest(lock_at,now()+make_interval(mins=>greatest(coalesce(p_reopen_minutes,15),1)))
-        else lock_at
-      end
+      winner_name=case when p_result_status='complete' then p_winner_name else null end
   where id=v_fight.id;
 
   if p_result_status<>'scheduled' then
@@ -102,7 +100,7 @@ begin
 end;
 $$;
 
--- Keep cancelled/void fights visible so room history remains understandable.
+-- Keep cancelled and void fights visible so the room can understand the full card.
 create or replace function public.picks_public_events()
 returns jsonb
 language sql
@@ -146,6 +144,6 @@ as $$
   ) visible_events;
 $$;
 
-grant execute on function public.picks_admin_set_fight_result(text,text,text,text,text,integer) to anon,authenticated;
+grant execute on function public.picks_admin_set_fight_result(text,text,text,text,text) to anon,authenticated;
 grant execute on function public.picks_admin_set_event_status(text,text,text) to anon,authenticated;
 grant execute on function public.picks_public_events() to anon,authenticated;
