@@ -1,47 +1,54 @@
 name: Build Octagon Verdict Data
 
 on:
+  workflow_run:
+    workflows:
+      - Runtime Scoring Audit
+    types:
+      - completed
   push:
     branches:
       - main
     paths:
-      - 'assets/data/ranking-data.js'
-      - 'assets/data/ranking-data-additions.js'
-      - 'assets/data/display-overrides.js'
-      - 'assets/data/fighter-packet-manifest.js'
-      - 'assets/data/fighter-packets/**'
-      - 'assets/data/prime-round-row-fixes.js'
-      - 'assets/data/championship-score-corrections.js'
-      - 'assets/data/opponent-quality-score-corrections.js'
-      - 'assets/data/prime-dominance-score-corrections.js'
-      - 'assets/data/longevity-score-corrections.js'
-      - 'assets/data/penalty-score-corrections.js'
-      - 'assets/data/apex-peak-score-corrections.js'
-      - 'assets/data/score-weighting.js'
-      - 'assets/js/score-derived-ovr.js'
       - 'tools/build-octagon-verdict-data.js'
       - '.github/workflows/build-octagon-verdict-data.yml'
   workflow_dispatch:
+
+concurrency:
+  group: build-octagon-verdict-data
+  cancel-in-progress: true
 
 permissions:
   contents: write
 
 jobs:
   build-data:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - name: Checkout repo
+      - name: Checkout current main
         uses: actions/checkout@v4
         with:
+          ref: main
           persist-credentials: true
 
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
-      - name: Build Octagon Verdict data feed
-        run: node tools/build-octagon-verdict-data.js
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Start app and build live-runtime feed
+        run: |
+          python3 -m http.server 4173 > /tmp/ufc-octagon-verdict-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          node tools/build-octagon-verdict-data.js
 
       - name: Commit generated data feed
         run: |
@@ -51,6 +58,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No Octagon Verdict data changes to commit."
           else
-            git commit -m "Rebuild Octagon Verdict data feed"
+            git commit -m "Rebuild Octagon Verdict data feed [skip ci]"
             git push
           fi
