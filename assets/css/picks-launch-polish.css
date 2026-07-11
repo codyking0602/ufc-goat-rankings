@@ -1,0 +1,38 @@
+/* Final low-risk launch polish for the UFC Picks tab. */
+.picks-progress-card{
+  background:#fff!important;
+  color:#172033!important;
+  border-color:#cbd5e1!important;
+}
+.picks-progress-card .picks-progress-top strong,
+.picks-progress-card .picks-progress-top span,
+.picks-progress-card .picks-progress-top b{
+  color:#172033!important;
+}
+.picks-progress-card .picks-progress-top span,
+.picks-progress-card .picks-progress-top b{
+  color:#64748b!important;
+}
+.picks-progress-card .picks-progress-bar{
+  background:#dbe3ed!important;
+}
+.main-card-fight .pick-fighter-photo{
+  width:56px;
+  height:56px;
+}
+.pick-fighter.selected .pick-fighter-photo{
+  box-shadow:0 0 0 2px rgba(249,115,22,.24),0 8px 18px rgba(15,23,42,.16);
+}
+.picks-room-action{
+  min-height:52px;
+}
+.picks-mode-switch button.active{
+  background:#f97316!important;
+  color:#111827!important;
+}
+@media(max-width:700px){
+  .main-card-fight .pick-fighter-photo{
+    width:52px;
+    height:52px;
+  }
+}
