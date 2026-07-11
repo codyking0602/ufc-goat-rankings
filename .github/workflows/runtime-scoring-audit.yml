@@ -1,0 +1,48 @@
+name: Runtime Scoring Audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'assets/**'
+      - 'scripts/runtime-loss-context-audit.mjs'
+      - '.github/workflows/runtime-scoring-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  loss-context-runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Run app and audit Loss Context
+        run: |
+          python3 -m http.server 4173 > /tmp/ufc-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          node scripts/runtime-loss-context-audit.mjs
+
+      - name: Upload runtime report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: loss-context-runtime-report
+          path: artifacts/loss-context-runtime-report.json
+          if-no-files-found: warn
+          retention-days: 14
