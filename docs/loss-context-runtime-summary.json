@@ -1,114 +1,34 @@
 {
-  "generatedAt": "2026-07-11T01:38:50.602Z",
+  "generatedAt": "2026-07-11T01:39:24.203Z",
   "pipelineStatus": "ready",
   "pipelineError": null,
-  "complete": false,
-  "rosterLedgerCoverage": 61,
+  "complete": true,
+  "rosterLedgerCoverage": 62,
   "promotedCount": 27,
-  "blockedCount": 1,
-  "remainingFlaggedCount": 2,
+  "blockedCount": 0,
+  "remainingFlaggedCount": 0,
   "remainingScoreMismatchCount": 0,
-  "remainingLedgerBlockCount": 2,
+  "remainingLedgerBlockCount": 0,
   "missingLivePenaltyCount": 0,
-  "fightersWithRankMovement": 26,
+  "fightersWithRankMovement": 27,
   "ledgerFinalizer": {
-    "version": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
-    "complete": true,
+    "version": "loss-context-canonical-production-20260710a-runtime-closure",
+    "applied": true,
+    "rosterCount": 62,
+    "expectedRosterCount": 62,
     "bucketRepairCount": 0,
-    "recordRepairCount": 7,
-    "unresolvedCount": 0,
+    "bucketRepairs": [],
+    "recordRepairCount": 3,
     "recordRepairs": [
       {
-        "fighter": "Charles Oliveira",
-        "from": "25-11",
-        "to": "25-10",
-        "scoredLosses": 10,
-        "officialLossExceptions": 0,
+        "fighter": "Valentina Shevchenko",
+        "from": "15-3-1",
+        "to": "14-3-1",
         "surfaces": [
           {
             "surface": "RANKING_DATA.ufcRecord",
-            "from": "25-11",
-            "to": "25-10"
-          }
-        ]
-      },
-      {
-        "fighter": "Israel Adesanya",
-        "from": "13-6",
-        "to": "13-5",
-        "scoredLosses": 5,
-        "officialLossExceptions": 0,
-        "surfaces": [
-          {
-            "surface": "RANKING_DATA.ufcRecord",
-            "from": "13-6",
-            "to": "13-5"
-          }
-        ]
-      },
-      {
-        "fighter": "Henry Cejudo",
-        "from": "10-6",
-        "to": "10-4",
-        "scoredLosses": 4,
-        "officialLossExceptions": 0,
-        "surfaces": [
-          {
-            "surface": "RANKING_DATA.ufcRecord",
-            "from": "10-6",
-            "to": "10-4"
-          }
-        ]
-      },
-      {
-        "fighter": "Amanda Nunes",
-        "from": "16-2",
-        "to": "16-3",
-        "scoredLosses": 2,
-        "officialLossExceptions": 1,
-        "surfaces": [
-          {
-            "surface": "RANKING_DATA.ufcRecord",
-            "from": "16-2",
-            "to": "16-3"
-          }
-        ]
-      },
-      {
-        "fighter": "Sean Strickland",
-        "from": "18-7",
-        "to": "18-8",
-        "scoredLosses": 8,
-        "officialLossExceptions": 0,
-        "surfaces": [
-          {
-            "surface": "RANKING_DATA.ufcRecord",
-            "from": "18-7",
-            "to": "18-8"
-          },
-          {
-            "surface": "RANKING_DATA.ufcRecord",
-            "from": "18-7",
-            "to": "18-8"
-          }
-        ]
-      },
-      {
-        "fighter": "Robert Whittaker",
-        "from": "16-6",
-        "to": "16-7",
-        "scoredLosses": 7,
-        "officialLossExceptions": 0,
-        "surfaces": [
-          {
-            "surface": "RANKING_DATA.ufcRecord",
-            "from": "16-6",
-            "to": "16-7"
-          },
-          {
-            "surface": "RANKING_DATA.ufcRecord",
-            "from": "16-6",
-            "to": "16-7"
+            "from": "15-3-1",
+            "to": "14-3-1"
           }
         ]
       },
@@ -116,8 +36,6 @@
         "fighter": "Dan Henderson",
         "from": "8-8",
         "to": "8-9",
-        "scoredLosses": 9,
-        "officialLossExceptions": 0,
         "surfaces": [
           {
             "surface": "RANKING_DATA.ufcRecord",
@@ -130,9 +48,33 @@
             "to": "8-9"
           }
         ]
+      },
+      {
+        "fighter": "Robert Whittaker",
+        "from": "16-6",
+        "to": "16-7",
+        "surfaces": [
+          {
+            "surface": "RANKING_DATA.ufcRecord",
+            "from": "16-6",
+            "to": "16-7"
+          },
+          {
+            "surface": "RANKING_DATA.ufcRecord",
+            "from": "16-6",
+            "to": "16-7"
+          }
+        ]
       }
     ],
-    "bucketRepairs": []
+    "unresolvedCount": 0,
+    "unresolved": [],
+    "complete": true,
+    "mutatesEraLossEvents": true,
+    "mutatesRecords": true,
+    "mutatesPenalty": false,
+    "mutatesScores": false,
+    "appliedAt": "2026-07-11T01:39:22.757Z"
   },
   "promotedPenaltyChanges": [
     {
@@ -181,15 +123,7 @@
       "promotedPenalty": -3.75,
       "delta": 3,
       "capApplied": false,
-      "lossEventCount": 4
-    },
-    {
-      "fighter": "Chael Sonnen",
-      "priorPenalty": -7.5,
-      "promotedPenalty": -10,
-      "delta": -2.5,
-      "capApplied": true,
-      "lossEventCount": 7
+      "lossEventCount": 6
     },
     {
       "fighter": "Jessica Andrade",
@@ -214,6 +148,14 @@
       "delta": -1.75,
       "capApplied": true,
       "lossEventCount": 6
+    },
+    {
+      "fighter": "Chael Sonnen",
+      "priorPenalty": -7.5,
+      "promotedPenalty": -9.25,
+      "delta": -1.75,
+      "capApplied": false,
+      "lossEventCount": 7
     },
     {
       "fighter": "Holly Holm",
@@ -260,14 +202,6 @@
       "priorPenalty": -9,
       "promotedPenalty": -8,
       "delta": 1,
-      "capApplied": false,
-      "lossEventCount": 5
-    },
-    {
-      "fighter": "T.J. Dillashaw",
-      "priorPenalty": -7.25,
-      "promotedPenalty": -8.25,
-      "delta": -1,
       "capApplied": false,
       "lossEventCount": 5
     },
@@ -336,6 +270,14 @@
       "lossEventCount": 10
     },
     {
+      "fighter": "Sean O'Malley",
+      "priorPenalty": -5.25,
+      "promotedPenalty": -5.75,
+      "delta": -0.5,
+      "capApplied": false,
+      "lossEventCount": 3
+    },
+    {
       "fighter": "B.J. Penn",
       "priorPenalty": -8.5,
       "promotedPenalty": -8.75,
@@ -352,29 +294,7 @@
       "lossEventCount": 7
     }
   ],
-  "unresolvedRows": [
-    {
-      "fighter": "Randy Couture",
-      "status": "needs-ledger-completion",
-      "livePenalty": -10,
-      "cappedLedgerEstimate": -10,
-      "delta": 0,
-      "reviewReasons": [
-        "1 extra machine-readable loss event exceeds the reconciled UFC record."
-      ]
-    },
-    {
-      "fighter": "Sean O'Malley",
-      "status": "missing-era-loss-entry",
-      "livePenalty": -5.25,
-      "cappedLedgerEstimate": 0,
-      "delta": 5.25,
-      "reviewReasons": [
-        "Negative live penalty but no machine-readable loss events.",
-        "3 UFC loss events are missing after official DQ-loss allowance."
-      ]
-    }
-  ],
+  "unresolvedRows": [],
   "rankingMovement": [
     {
       "board": "men",
@@ -509,17 +429,6 @@
       "rankMovement": 2
     },
     {
-      "board": "men",
-      "fighter": "T.J. Dillashaw",
-      "currentRank": 20,
-      "currentTotal": 49.51,
-      "currentPenalty": -8.25,
-      "priorPenalty": -7.25,
-      "counterfactualTotal": 50.51,
-      "counterfactualRank": 18,
-      "rankMovement": -2
-    },
-    {
       "board": "women",
       "fighter": "Carla Esparza",
       "currentRank": 11,
@@ -598,6 +507,17 @@
     },
     {
       "board": "men",
+      "fighter": "B.J. Penn",
+      "currentRank": 20,
+      "currentTotal": 50.24,
+      "currentPenalty": -8.75,
+      "priorPenalty": -8.5,
+      "counterfactualTotal": 50.49,
+      "counterfactualRank": 19,
+      "rankMovement": -1
+    },
+    {
+      "board": "men",
       "fighter": "Anderson Silva",
       "currentRank": 4,
       "currentTotal": 75.79,
@@ -664,6 +584,17 @@
     },
     {
       "board": "men",
+      "fighter": "T.J. Dillashaw",
+      "currentRank": 19,
+      "currentTotal": 50.51,
+      "currentPenalty": -7.25,
+      "priorPenalty": -7.25,
+      "counterfactualTotal": 50.51,
+      "counterfactualRank": 18,
+      "rankMovement": -1
+    },
+    {
+      "board": "men",
       "fighter": "Dan Henderson",
       "currentRank": 47,
       "currentTotal": 20.31,
@@ -671,17 +602,6 @@
       "priorPenalty": -5.5,
       "counterfactualTotal": 24.56,
       "counterfactualRank": 47,
-      "rankMovement": 0
-    },
-    {
-      "board": "men",
-      "fighter": "Chael Sonnen",
-      "currentRank": 48,
-      "currentTotal": 17.93,
-      "currentPenalty": -10,
-      "priorPenalty": -7.5,
-      "counterfactualTotal": 20.43,
-      "counterfactualRank": 48,
       "rankMovement": 0
     },
     {
@@ -693,6 +613,17 @@
       "priorPenalty": -7.5,
       "counterfactualTotal": 37.98,
       "counterfactualRank": 7,
+      "rankMovement": 0
+    },
+    {
+      "board": "men",
+      "fighter": "Chael Sonnen",
+      "currentRank": 48,
+      "currentTotal": 18.68,
+      "currentPenalty": -9.25,
+      "priorPenalty": -7.5,
+      "counterfactualTotal": 20.43,
+      "counterfactualRank": 48,
       "rankMovement": 0
     },
     {
@@ -763,13 +694,13 @@
     },
     {
       "board": "men",
-      "fighter": "B.J. Penn",
-      "currentRank": 19,
-      "currentTotal": 50.24,
-      "currentPenalty": -8.75,
-      "priorPenalty": -8.5,
-      "counterfactualTotal": 50.49,
-      "counterfactualRank": 19,
+      "fighter": "Sean O'Malley",
+      "currentRank": 44,
+      "currentTotal": 34.91,
+      "currentPenalty": -5.75,
+      "priorPenalty": -5.25,
+      "counterfactualTotal": 35.41,
+      "counterfactualRank": 44,
       "rankMovement": 0
     },
     {
@@ -913,16 +844,16 @@
     },
     {
       "rank": 19,
-      "fighter": "B.J. Penn",
-      "totalScore": 50.24,
-      "penalty": -8.75,
+      "fighter": "T.J. Dillashaw",
+      "totalScore": 50.51,
+      "penalty": -7.25,
       "overallOvr": 89
     },
     {
       "rank": 20,
-      "fighter": "T.J. Dillashaw",
-      "totalScore": 49.51,
-      "penalty": -8.25,
+      "fighter": "B.J. Penn",
+      "totalScore": 50.24,
+      "penalty": -8.75,
       "overallOvr": 88
     }
   ],
@@ -1052,19 +983,17 @@
       "packetRecord": "16-8",
       "overrideRecord": "16-8",
       "audit": {
-        "status": "needs-ledger-completion",
+        "status": "match",
         "ufcRecord": "16-8",
         "officialUfcLosses": 8,
-        "officialLossExceptionCount": 1,
-        "effectiveExpectedLosses": 7,
+        "officialLossExceptionCount": 0,
+        "effectiveExpectedLosses": 8,
         "machineReadableLossEvents": 8,
         "missingLossEvents": 0,
-        "excessLossEvents": 1,
+        "excessLossEvents": 0,
         "livePenalty": -10,
         "cappedLedgerEstimate": -10,
-        "reviewReasons": [
-          "1 extra machine-readable loss event exceeds the reconciled UFC record."
-        ],
+        "reviewReasons": [],
         "events": [
           {
             "label": "Brock Lesnar",
@@ -1087,8 +1016,8 @@
             "finished": true,
             "upwardDivision": false,
             "isLoss": true,
-            "exception": "weird/contextual",
-            "penaltyEstimate": 0
+            "exception": null,
+            "penaltyEstimate": -2.25
           },
           {
             "label": "Ricco Rodriguez",
@@ -1181,12 +1110,9 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:38:49.009Z",
-        "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
-        "bucketReconciled": true,
-        "scoredLossEvents": 8,
-        "officialLossExceptions": 0,
-        "expectedOfficialUfcLosses": 8
+        "completedAt": "2026-07-11T01:39:22.724Z",
+        "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
+        "bucketReconciled": true
       }
     },
     {
@@ -1197,8 +1123,8 @@
           "leaderboard": "men",
           "ufcRecord": "11-3 (1 NC)",
           "record": null,
-          "ufcLosses": null,
-          "penalty": -5.25,
+          "ufcLosses": 3,
+          "penalty": -5.75,
           "rank": 44
         },
         {
@@ -1207,28 +1133,74 @@
           "ufcRecord": "11-3 (1 NC)",
           "record": null,
           "ufcLosses": 3,
-          "penalty": -5.25,
+          "penalty": -5.75,
           "rank": 44
         }
       ],
       "packetRecord": "11-3 (1 NC)",
       "overrideRecord": "11-3 (1 NC)",
       "audit": {
-        "status": "missing-era-loss-entry",
+        "status": "score-mismatch",
         "ufcRecord": "11-3 (1 NC)",
         "officialUfcLosses": 3,
         "officialLossExceptionCount": 0,
         "effectiveExpectedLosses": 3,
-        "machineReadableLossEvents": 0,
-        "missingLossEvents": 3,
+        "machineReadableLossEvents": 3,
+        "missingLossEvents": 0,
         "excessLossEvents": 0,
         "livePenalty": -5.25,
-        "cappedLedgerEstimate": 0,
-        "reviewReasons": [
-          "Negative live penalty but no machine-readable loss events.",
-          "3 UFC loss events are missing after official DQ-loss allowance."
-        ],
-        "events": []
+        "cappedLedgerEstimate": -5.75,
+        "reviewReasons": [],
+        "events": [
+          {
+            "label": "Marlon Vera I",
+            "date": "2020-08-15",
+            "sourceType": "recoveredLosses",
+            "phase": "pre-prime",
+            "quality": "non-elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -2
+          },
+          {
+            "label": "Merab Dvalishvili I",
+            "date": "2024-09-14",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -1.5
+          },
+          {
+            "label": "Merab Dvalishvili II",
+            "date": "2025-06-07",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -2.25
+          },
+          {
+            "label": "Pedro Munhoz no contest",
+            "date": "2022-07-02",
+            "sourceType": "weirdResults",
+            "phase": "pre-prime",
+            "quality": "unknown",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": false,
+            "exception": "weird/contextual",
+            "penaltyEstimate": 0
+          }
+        ]
       },
       "eraWindow": {
         "start": "2022-10-22",
@@ -1248,12 +1220,9 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:38:49.022Z",
-        "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
-        "bucketReconciled": true,
-        "scoredLossEvents": 3,
-        "officialLossExceptions": 0,
-        "expectedOfficialUfcLosses": 3
+        "completedAt": "2026-07-11T01:39:22.738Z",
+        "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
+        "bucketReconciled": true
       }
     },
     {
@@ -1264,29 +1233,29 @@
           "leaderboard": "men",
           "ufcRecord": null,
           "record": null,
-          "ufcLosses": null,
+          "ufcLosses": 11,
           "penalty": -10,
           "rank": 27
         },
         {
           "fighter": "Charles Oliveira",
           "leaderboard": "men",
-          "ufcRecord": "25-10",
+          "ufcRecord": "25-11",
           "record": null,
-          "ufcLosses": 10,
+          "ufcLosses": 11,
           "penalty": -10,
           "rank": 27
         }
       ],
-      "packetRecord": "25-10",
-      "overrideRecord": "25-10",
+      "packetRecord": "25-11",
+      "overrideRecord": "25-11",
       "audit": {
         "status": "match",
-        "ufcRecord": "25-10",
-        "officialUfcLosses": 10,
+        "ufcRecord": "25-11",
+        "officialUfcLosses": 11,
         "officialLossExceptionCount": 0,
-        "effectiveExpectedLosses": 10,
-        "machineReadableLossEvents": 10,
+        "effectiveExpectedLosses": 11,
+        "machineReadableLossEvents": 11,
         "missingLossEvents": 0,
         "excessLossEvents": 0,
         "livePenalty": -10,
@@ -1412,6 +1381,18 @@
             "isLoss": true,
             "exception": null,
             "penaltyEstimate": -1.5
+          },
+          {
+            "label": "Ilia Topuria",
+            "date": "2025-06-28",
+            "sourceType": "recoveredLosses",
+            "phase": "prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -2.25
           }
         ]
       },
@@ -1432,12 +1413,9 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:38:48.616Z",
-        "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
-        "bucketReconciled": true,
-        "scoredLossEvents": 10,
-        "officialLossExceptions": 0,
-        "expectedOfficialUfcLosses": 10
+        "completedAt": "2026-07-11T01:39:22.326Z",
+        "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
+        "bucketReconciled": true
       }
     },
     {
@@ -1448,29 +1426,29 @@
           "leaderboard": "men",
           "ufcRecord": null,
           "record": null,
-          "ufcLosses": null,
+          "ufcLosses": 6,
           "penalty": -6.75,
           "rank": 15
         },
         {
           "fighter": "Israel Adesanya",
           "leaderboard": "men",
-          "ufcRecord": "13-5",
+          "ufcRecord": "13-6",
           "record": null,
-          "ufcLosses": 5,
+          "ufcLosses": 6,
           "penalty": -6.75,
           "rank": 15
         }
       ],
-      "packetRecord": "13-5",
-      "overrideRecord": "13-5",
+      "packetRecord": "13-6",
+      "overrideRecord": "13-6",
       "audit": {
         "status": "match",
-        "ufcRecord": "13-5",
-        "officialUfcLosses": 5,
+        "ufcRecord": "13-6",
+        "officialUfcLosses": 6,
         "officialLossExceptionCount": 0,
-        "effectiveExpectedLosses": 5,
-        "machineReadableLossEvents": 5,
+        "effectiveExpectedLosses": 6,
+        "machineReadableLossEvents": 6,
         "missingLossEvents": 0,
         "excessLossEvents": 0,
         "livePenalty": -6.75,
@@ -1536,6 +1514,18 @@
             "isLoss": true,
             "exception": null,
             "penaltyEstimate": 0
+          },
+          {
+            "label": "Joe Pyfer",
+            "date": "2026-03-28",
+            "sourceType": "postPrimeLosses",
+            "phase": "post-prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": 0
           }
         ]
       },
@@ -1557,12 +1547,9 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:38:49.018Z",
-        "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
-        "bucketReconciled": true,
-        "scoredLossEvents": 5,
-        "officialLossExceptions": 0,
-        "expectedOfficialUfcLosses": 5
+        "completedAt": "2026-07-11T01:39:22.734Z",
+        "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
+        "bucketReconciled": true
       }
     },
     {
@@ -1573,32 +1560,32 @@
           "leaderboard": "men",
           "ufcRecord": null,
           "record": null,
-          "ufcLosses": null,
+          "ufcLosses": 6,
           "penalty": -3.75,
           "rank": 23
         },
         {
           "fighter": "Henry Cejudo",
           "leaderboard": "men",
-          "ufcRecord": "10-4",
+          "ufcRecord": "10-6",
           "record": null,
-          "ufcLosses": 4,
+          "ufcLosses": 6,
           "penalty": -3.75,
           "rank": 23
         }
       ],
-      "packetRecord": "10-4",
-      "overrideRecord": "10-4",
+      "packetRecord": "10-6",
+      "overrideRecord": "10-6",
       "audit": {
-        "status": "match",
-        "ufcRecord": "10-4",
-        "officialUfcLosses": 4,
+        "status": "score-mismatch",
+        "ufcRecord": "10-6",
+        "officialUfcLosses": 6,
         "officialLossExceptionCount": 0,
-        "effectiveExpectedLosses": 4,
-        "machineReadableLossEvents": 4,
+        "effectiveExpectedLosses": 6,
+        "machineReadableLossEvents": 6,
         "missingLossEvents": 0,
         "excessLossEvents": 0,
-        "livePenalty": -3.75,
+        "livePenalty": -6.75,
         "cappedLedgerEstimate": -3.75,
         "reviewReasons": [],
         "events": [
@@ -1649,6 +1636,30 @@
             "isLoss": true,
             "exception": null,
             "penaltyEstimate": 0
+          },
+          {
+            "label": "Song Yadong",
+            "date": "2025-02-22",
+            "sourceType": "postPrimeLosses",
+            "phase": "post-prime",
+            "quality": "elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": 0
+          },
+          {
+            "label": "Payton Talbott",
+            "date": "2025-12-06",
+            "sourceType": "postPrimeLosses",
+            "phase": "post-prime",
+            "quality": "unknown",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": 0
           }
         ]
       },
@@ -1670,12 +1681,9 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:38:49.018Z",
-        "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
-        "bucketReconciled": true,
-        "scoredLossEvents": 4,
-        "officialLossExceptions": 0,
-        "expectedOfficialUfcLosses": 4
+        "completedAt": "2026-07-11T01:39:22.734Z",
+        "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
+        "bucketReconciled": true
       }
     },
     {
@@ -1686,27 +1694,27 @@
           "leaderboard": "women",
           "ufcRecord": null,
           "record": null,
-          "ufcLosses": null,
+          "ufcLosses": 2,
           "penalty": -3.75,
           "rank": 1
         },
         {
           "fighter": "Amanda Nunes",
           "leaderboard": "women",
-          "ufcRecord": "16-3",
+          "ufcRecord": "16-2",
           "record": null,
-          "ufcLosses": 3,
+          "ufcLosses": 2,
           "penalty": -3.75,
           "rank": 1
         }
       ],
-      "packetRecord": "16-3",
-      "overrideRecord": "16-3",
+      "packetRecord": "16-2",
+      "overrideRecord": "16-2",
       "audit": {
         "status": "match",
-        "ufcRecord": "16-3",
-        "officialUfcLosses": 3,
-        "officialLossExceptionCount": 1,
+        "ufcRecord": "16-2",
+        "officialUfcLosses": 2,
+        "officialLossExceptionCount": 0,
         "effectiveExpectedLosses": 2,
         "machineReadableLossEvents": 2,
         "missingLossEvents": 0,
@@ -1749,7 +1757,7 @@
             "upwardDivision": false,
             "isLoss": false,
             "exception": "weird/contextual",
-            "penaltyEstimate": null
+            "penaltyEstimate": 0
           }
         ]
       },
@@ -1771,12 +1779,9 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:38:49.022Z",
-        "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
-        "bucketReconciled": true,
-        "scoredLossEvents": 2,
-        "officialLossExceptions": 1,
-        "expectedOfficialUfcLosses": 3
+        "completedAt": "2026-07-11T01:39:22.738Z",
+        "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
+        "bucketReconciled": true
       }
     },
     {
@@ -1785,49 +1790,37 @@
         {
           "fighter": "Sean Strickland",
           "leaderboard": "men",
-          "ufcRecord": "18-8",
+          "ufcRecord": "18-7",
           "record": null,
-          "ufcLosses": null,
+          "ufcLosses": 7,
           "penalty": -10,
           "rank": 45
         },
         {
           "fighter": "Sean Strickland",
           "leaderboard": "men",
-          "ufcRecord": "18-8",
+          "ufcRecord": "18-7",
           "record": null,
-          "ufcLosses": 8,
+          "ufcLosses": 7,
           "penalty": -10,
           "rank": 45
         }
       ],
-      "packetRecord": "18-8",
-      "overrideRecord": "18-8",
+      "packetRecord": "18-7",
+      "overrideRecord": "18-7",
       "audit": {
         "status": "match",
-        "ufcRecord": "18-8",
-        "officialUfcLosses": 8,
+        "ufcRecord": "18-7",
+        "officialUfcLosses": 7,
         "officialLossExceptionCount": 0,
-        "effectiveExpectedLosses": 8,
-        "machineReadableLossEvents": 8,
+        "effectiveExpectedLosses": 7,
+        "machineReadableLossEvents": 7,
         "missingLossEvents": 0,
         "excessLossEvents": 0,
         "livePenalty": -10,
         "cappedLedgerEstimate": -10,
         "reviewReasons": [],
         "events": [
-          {
-            "label": "Dricus du Plessis",
-            "date": "2024-01-20",
-            "sourceType": "recoveredLosses",
-            "phase": "prime",
-            "quality": "elite",
-            "finished": false,
-            "upwardDivision": false,
-            "isLoss": true,
-            "exception": null,
-            "penaltyEstimate": -1.5
-          },
           {
             "label": "Santiago Ponzinibbio",
             "date": "2015-02-22",
@@ -1930,13 +1923,10 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-11T01:38:48.610Z",
-        "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
+        "completedAt": "2026-07-11T01:39:22.322Z",
+        "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
-        "bucketReconciled": true,
-        "scoredLossEvents": 8,
-        "officialLossExceptions": 0,
-        "expectedOfficialUfcLosses": 8
+        "bucketReconciled": true
       }
     },
     {
@@ -1947,7 +1937,7 @@
           "leaderboard": "men",
           "ufcRecord": "16-7",
           "record": null,
-          "ufcLosses": null,
+          "ufcLosses": 7,
           "penalty": -10,
           "rank": 41
         },
@@ -1964,7 +1954,7 @@
       "packetRecord": "16-7",
       "overrideRecord": "16-7",
       "audit": {
-        "status": "match",
+        "status": "score-mismatch",
         "ufcRecord": "16-7",
         "officialUfcLosses": 7,
         "officialLossExceptionCount": 0,
@@ -1972,7 +1962,7 @@
         "machineReadableLossEvents": 7,
         "missingLossEvents": 0,
         "excessLossEvents": 0,
-        "livePenalty": -10,
+        "livePenalty": -9.75,
         "cappedLedgerEstimate": -10,
         "reviewReasons": [],
         "events": [
@@ -1987,6 +1977,30 @@
             "isLoss": true,
             "exception": null,
             "penaltyEstimate": -2.25
+          },
+          {
+            "label": "Court McGee",
+            "date": "2013-08-28",
+            "sourceType": "recoveredLosses",
+            "phase": "pre-prime",
+            "quality": "non-elite",
+            "finished": false,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -1.25
+          },
+          {
+            "label": "Stephen Thompson",
+            "date": "2014-02-22",
+            "sourceType": "recoveredLosses",
+            "phase": "pre-prime",
+            "quality": "elite",
+            "finished": true,
+            "upwardDivision": false,
+            "isLoss": true,
+            "exception": null,
+            "penaltyEstimate": -1.5
           },
           {
             "label": "Israel Adesanya I",
@@ -2025,30 +2039,6 @@
             "penaltyEstimate": -2.25
           },
           {
-            "label": "Court McGee",
-            "date": "2013-08-28",
-            "sourceType": "recoveredLosses",
-            "phase": "pre-prime",
-            "quality": "non-elite",
-            "finished": false,
-            "upwardDivision": false,
-            "isLoss": true,
-            "exception": null,
-            "penaltyEstimate": -1.25
-          },
-          {
-            "label": "Stephen Thompson",
-            "date": "2014-02-22",
-            "sourceType": "recoveredLosses",
-            "phase": "pre-prime",
-            "quality": "elite",
-            "finished": true,
-            "upwardDivision": false,
-            "isLoss": true,
-            "exception": null,
-            "penaltyEstimate": -1.5
-          },
-          {
             "label": "Reinier de Ridder",
             "date": "2025-07-26",
             "sourceType": "postPrimeLosses",
@@ -2078,13 +2068,10 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-11T01:38:48.610Z",
-        "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
+        "completedAt": "2026-07-11T01:39:22.322Z",
+        "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
-        "bucketReconciled": true,
-        "scoredLossEvents": 7,
-        "officialLossExceptions": 0,
-        "expectedOfficialUfcLosses": 7
+        "bucketReconciled": true
       }
     },
     {
@@ -2095,7 +2082,7 @@
           "leaderboard": "men",
           "ufcRecord": "8-9",
           "record": null,
-          "ufcLosses": null,
+          "ufcLosses": 9,
           "penalty": -9.75,
           "rank": 47
         },
@@ -2112,7 +2099,7 @@
       "packetRecord": "8-9",
       "overrideRecord": "8-9",
       "audit": {
-        "status": "match",
+        "status": "score-mismatch",
         "ufcRecord": "8-9",
         "officialUfcLosses": 9,
         "officialLossExceptionCount": 0,
@@ -2120,7 +2107,7 @@
         "machineReadableLossEvents": 9,
         "missingLossEvents": 0,
         "excessLossEvents": 0,
-        "livePenalty": -9.75,
+        "livePenalty": -5.5,
         "cappedLedgerEstimate": -9.75,
         "reviewReasons": [],
         "events": [
@@ -2251,12 +2238,9 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:38:49.015Z",
-        "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
-        "bucketReconciled": true,
-        "scoredLossEvents": 9,
-        "officialLossExceptions": 0,
-        "expectedOfficialUfcLosses": 9
+        "completedAt": "2026-07-11T01:39:22.729Z",
+        "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
+        "bucketReconciled": true
       }
     },
     {
@@ -2267,7 +2251,7 @@
           "leaderboard": "men",
           "ufcRecord": null,
           "record": null,
-          "ufcLosses": null,
+          "ufcLosses": 3,
           "penalty": -5,
           "rank": 13
         },
@@ -2342,7 +2326,7 @@
             "upwardDivision": false,
             "isLoss": false,
             "exception": "weird/contextual",
-            "penaltyEstimate": null
+            "penaltyEstimate": 0
           }
         ]
       },
@@ -2364,12 +2348,9 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:38:49.021Z",
-        "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
-        "bucketReconciled": true,
-        "scoredLossEvents": 3,
-        "officialLossExceptions": 0,
-        "expectedOfficialUfcLosses": 3
+        "completedAt": "2026-07-11T01:39:22.738Z",
+        "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
+        "bucketReconciled": true
       }
     },
     {
@@ -2380,14 +2361,14 @@
           "leaderboard": "women",
           "ufcRecord": null,
           "record": null,
-          "ufcLosses": null,
+          "ufcLosses": 3,
           "penalty": -4.5,
           "rank": 2
         },
         {
           "fighter": "Valentina Shevchenko",
           "leaderboard": "women",
-          "ufcRecord": "15-3-1",
+          "ufcRecord": "14-3-1",
           "record": null,
           "ufcLosses": 3,
           "penalty": -4.5,
@@ -2398,7 +2379,7 @@
       "overrideRecord": "14-3-1",
       "audit": {
         "status": "match",
-        "ufcRecord": "15-3-1",
+        "ufcRecord": "14-3-1",
         "officialUfcLosses": 3,
         "officialLossExceptionCount": 0,
         "effectiveExpectedLosses": 3,
@@ -2451,11 +2432,11 @@
             "sourceType": "weirdResults",
             "phase": "prime",
             "quality": "unknown",
-            "finished": true,
+            "finished": false,
             "upwardDivision": false,
             "isLoss": false,
             "exception": "weird/contextual",
-            "penaltyEstimate": null
+            "penaltyEstimate": 0
           },
           {
             "label": "Alexa Grasso II draw",
@@ -2467,7 +2448,7 @@
             "upwardDivision": false,
             "isLoss": false,
             "exception": "weird/contextual",
-            "penaltyEstimate": null
+            "penaltyEstimate": 0
           }
         ]
       },
@@ -2489,12 +2470,9 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-11T01:38:49.022Z",
-        "finalizerVersion": "loss-context-ledger-finalizer-20260710b-profile-record-resolution",
-        "bucketReconciled": true,
-        "scoredLossEvents": 3,
-        "officialLossExceptions": 0,
-        "expectedOfficialUfcLosses": 3
+        "completedAt": "2026-07-11T01:39:22.738Z",
+        "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
+        "bucketReconciled": true
       }
     }
   ],
