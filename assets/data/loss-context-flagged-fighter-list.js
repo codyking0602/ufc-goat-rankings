@@ -2,7 +2,7 @@
 // Converts the 62-fighter mismatch audit into practical ledger-completion and score-review batches.
 (function(){
   'use strict';
-  const VERSION='loss-context-flagged-fighter-list-20260710f-batch-six-split-queue';
+  const VERSION='loss-context-flagged-fighter-list-20260710g-batch-seven-complete-roster';
   const audit=window.UFC_LOSS_CONTEXT_MISMATCH_AUDIT;
   const DATA=window.RANKING_DATA;
 
@@ -50,19 +50,17 @@
     batchThree:['Frankie Edgar','Michael Bisping','Lyoto Machida','Matt Hughes','Chael Sonnen'],
     batchFour:['Max Holloway','Tony Ferguson','Randy Couture','Dustin Poirier','Miesha Tate'],
     batchFive:['Anderson Silva','Chuck Liddell','Junior dos Santos','Dan Henderson','Joanna Jedrzejczyk','Carla Esparza','Dominick Cruz','Tyron Woodley','T.J. Dillashaw','Stipe Miocic'],
-    batchSix:['Jon Jones','Georges St-Pierre','Demetrious Johnson','Khabib Nurmagomedov','Islam Makhachev','Alexander Volkanovski','Jose Aldo','Kamaru Usman','Daniel Cormier','Dricus du Plessis','Israel Adesanya','Aljamain Sterling','Petr Yan','Cain Velasquez','Brock Lesnar','Francis Ngannou','Henry Cejudo','Conor McGregor']
-  };
-  const remainingSplit={
-    firstHalf:[...completedBatches.batchSix],
-    secondHalf:['Ilia Topuria','Merab Dvalishvili','Alex Pereira','Justin Gaethje','Deiveson Figueiredo','Khamzat Chimaev',"Sean O'Malley",'Amanda Nunes','Valentina Shevchenko','Zhang Weili','Rose Namajunas','Mackenzie Dern','Kayla Harrison','Alexa Grasso','Julianna Peña','Holly Holm','Ronda Rousey']
+    batchSix:['Jon Jones','Georges St-Pierre','Demetrious Johnson','Khabib Nurmagomedov','Islam Makhachev','Alexander Volkanovski','Jose Aldo','Kamaru Usman','Daniel Cormier','Dricus du Plessis','Israel Adesanya','Aljamain Sterling','Petr Yan','Cain Velasquez','Brock Lesnar','Francis Ngannou','Henry Cejudo','Conor McGregor'],
+    batchSeven:['Ilia Topuria','Merab Dvalishvili','Alex Pereira','Justin Gaethje','Deiveson Figueiredo','Khamzat Chimaev',"Sean O'Malley",'Amanda Nunes','Valentina Shevchenko','Zhang Weili','Rose Namajunas','Mackenzie Dern','Kayla Harrison','Alexa Grasso','Julianna Peña','Holly Holm','Ronda Rousey']
   };
   const completedLedgerFighters=Object.values(completedBatches).flat();
+  const completedSet=new Set(completedLedgerFighters.map(name=>String(name).replace(/[’‘`´]/g,"'").toLowerCase()));
   const nextLedgerBatch=priorityQueue
-    .filter(row=>['needs-ledger-completion','missing-era-loss-entry'].includes(row.status)&&!completedLedgerFighters.includes(row.fighter))
-    .slice(0,remainingSplit.secondHalf.length);
+    .filter(row=>['needs-ledger-completion','missing-era-loss-entry'].includes(row.status)&&!completedSet.has(String(row.fighter||'').replace(/[’‘`´]/g,"'").toLowerCase()));
   const nextScoreReview=priorityQueue
     .filter(row=>row.status==='score-mismatch')
     .slice(0,10);
+  const ledgerCoverageComplete=completedLedgerFighters.length===62&&nextLedgerBatch.length===0;
 
   const report={
     version:VERSION,
@@ -79,11 +77,13 @@
     priorityQueue,
     completedBatches,
     completedLedgerFighters,
-    remainingSplit,
+    completedLedgerCount:completedLedgerFighters.length,
+    rosterLedgerTarget:62,
+    ledgerCoverageComplete,
     nextBatch:nextLedgerBatch,
     nextLedgerBatch,
     nextScoreReview,
-    batchSize:remainingSplit.secondHalf.length,
+    batchSize:0,
     mutatesScores:false,
     mutatesPenalty:false,
     generatedAt:new Date().toISOString()
@@ -96,11 +96,14 @@
     ledgerCompletionCount:report.ledgerCompletionCount,
     scoreReviewCount:report.scoreReviewCount,
     completedLedgerFighters:[...completedLedgerFighters],
-    remainingSplit,
-    nextBatch:nextLedgerBatch.map(row=>row.fighter),
-    batchSize:report.batchSize,
+    completedLedgerCount:report.completedLedgerCount,
+    rosterLedgerTarget:report.rosterLedgerTarget,
+    ledgerCoverageComplete,
+    nextBatch:[],
+    batchSize:0,
     generatedAt:report.generatedAt
   };
   document.documentElement.setAttribute('data-loss-context-flagged-count',String(report.flaggedCount));
-  document.documentElement.setAttribute('data-loss-context-next-batch',nextLedgerBatch.map(row=>row.fighter).join('|'));
+  document.documentElement.setAttribute('data-loss-context-ledger-coverage',`${report.completedLedgerCount}/${report.rosterLedgerTarget}`);
+  document.documentElement.setAttribute('data-loss-context-next-batch','');
 })();
