@@ -1,7 +1,7 @@
 // Lightweight prerequisite/data loader with an explicit readiness handoff.
 (function(){
   'use strict';
-  const VERSION='ranking-data-patches-20260711m-octagon-verdict-cards';
+  const VERSION='ranking-data-patches-20260711n-profile-card-pass-two';
   let readyResolved=false;
   let resolveReady;
   const readyPromise=new Promise(resolve=>{resolveReady=resolve;});
@@ -77,7 +77,7 @@
     {src:'assets/data/loss-context-ledger-completion-batch-two.js?v=loss-context-ledger-completion-batch-two-20260710a-five-highest-priority',attr:'data-loss-context-ledger-completion-batch-two'},
     {src:'assets/data/apex-peak-score-corrections.js?v=apex-peak-score-corrections-20260706a-sean-whittaker',attr:'data-apex-peak-score-corrections'},
     {src:'assets/data/score-weighting.js?v=score-weighting-20260710a-compatibility-only',attr:'data-score-weighting'},
-    {src:'assets/js/apex-peak-category-card.js?v=apex-peak-category-card-20260708b-prime-row-polish',attr:'data-apex-peak-category-card'},
+    {src:'assets/js/apex-peak-category-card.js?v=apex-peak-category-card-20260711c-compact-profile-card',attr:'data-apex-peak-category-card'},
     {src:'assets/js/championship-label-polish.js?v=championship-label-polish-20260703a',attr:'data-championship-label-polish'},
     {src:'assets/data/compare-matchups.js?v=compare-matchups-20260703a',attr:'data-compare-matchups'},
     {src:'assets/compare-mode.js?v=special-matchups-20260630l',attr:'data-compare-mode'},
@@ -100,7 +100,7 @@
     const loadWatchMoments=()=>loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260706t-robbie-lawler','data-watch-moments',loadHomePolish);
     const loadPackages=()=>loadScriptOnce('assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260710a-canonical-prime-record','data-fighter-profile-packages',loadWatchMoments);
     if(window.UFC_PROFILE_TEMPLATE_SYSTEM){loadPackages();return;}
-    loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260710a-canonical-prime-record','data-profile-template-system',loadPackages);
+    loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260711c-compact-cards-snapshot','data-profile-template-system',loadPackages);
   }
 
   window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Deterministic prerequisite/data loader',updated:'2026-07-11',version:VERSION},apply:status,ready:readyPromise,slugFor,syncPacketProfileStats,packetManifest};
