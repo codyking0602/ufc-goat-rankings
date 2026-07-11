@@ -43,7 +43,7 @@
     {slug:'khamzat-chimaev',version:'20260706a'},
     {slug:'lyoto-machida',version:'20260706b'},
     {slug:'sean-strickland',version:'20260706a'},
-    {slug:'robert-whittaker',version:'20260706b-round-control'},
+    {slug:'robert-whittaker',version:'20260710c-loss-context-record'},
     {slug:'sean-omalley',version:'20260706b-round-control'},
     {slug:'michael-bisping',version:'20260706a'},
     {slug:'dan-henderson',version:'20260710b-ufc-record'},
