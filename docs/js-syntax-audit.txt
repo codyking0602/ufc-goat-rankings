@@ -1,0 +1,10 @@
+/home/runner/work/ufc-goat-rankings/ufc-goat-rankings/assets/js/live-score-ui.js:176
+      return `<div class="card"><h3>${label} · ${title}</h3><p class="meta">Positive peak bonus added after the 100-point base.</p><div class="leaderboard">${ranked.map((r,i) => `<article class="row fighter-row category-board-card" data-fighter="${r.fighter}"><div class="rank">#${i+1}</div>${rowPhoto(r)}<div class="row-main"><div class="name">${r.fighter}</div><div class="meta">Overall #${r.rank || '—'} · Raw ${Number(r.rawScore ?? r.totalScore || 0).toFixed(2)} · Apex +${Number(apexValue(r)).toFixed(2)}</div><div class="resume-tag">${apexWinsText(r)}</div></div><div class="score"><strong>${categoryOvr(r, key)}</strong><span class="meta">PCTL</span></div></article>`).join('')}</div></div>`;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                      ^^^^^^^^^^
+
+SyntaxError: missing ) after argument list
+    at wrapSafe (node:internal/modules/cjs/loader:1713:18)
+    at checkSyntax (node:internal/main/check_syntax:78:3)
+
+Node.js v22.23.1
+SYNTAX_FAILURE: assets/js/live-score-ui.js
