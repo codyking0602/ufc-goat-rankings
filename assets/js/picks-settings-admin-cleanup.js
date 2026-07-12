@@ -29,11 +29,13 @@
     const kicker=sectionHead?.querySelector('span');
     if(kicker) kicker.textContent='YOUR PROFILE';
 
+    const reminderTitle=profile.querySelector('.social-reminder-row label strong');
+    if(reminderTitle) reminderTitle.textContent='In-app reminder';
     const reminderCopy=profile.querySelector('.social-reminder-row label small');
-    if(reminderCopy) reminderCopy.textContent='Reminds you when you open the app near event time.';
+    if(reminderCopy) reminderCopy.textContent='Only works when the app is open near event time.';
 
     const calendar=profile.querySelector('#picksAddCalendar');
-    if(calendar) calendar.textContent='Add Event to Calendar';
+    if(calendar) calendar.textContent='Add Phone Reminders';
 
     let note=profile.querySelector('.picks-reminder-reliability');
     if(!note){
@@ -41,7 +43,7 @@
       note.className='picks-reminder-reliability';
       profile.querySelector('.social-reminder-row')?.insertAdjacentElement('afterend',note);
     }
-    if(note) note.textContent='Calendar is the reliable phone reminder. The in-app reminder only appears when the app is opened near event time.';
+    if(note) note.textContent='Adds calendar alerts eight hours and one hour before the card starts, even when the app is closed.';
   }
 
   function sectionLabel(section){
