@@ -5,7 +5,8 @@ const LOSS_CONTEXT_TAG='  <script src="assets/data/loss-context-hybrid-live.js?v
 const TAGS=[
   '  <script src="assets/data/division-era-depth-shadow.js?v=division-era-depth-shadow-20260712d-current-wfw-safe"></script>',
   '  <script src="assets/data/division-era-depth-audit.js?v=division-era-depth-judgment-review-20260712b-live-approved"></script>',
-  '  <script src="assets/data/division-era-depth-live.js?v=division-era-depth-live-20260712a"></script>'
+  '  <script src="assets/data/division-era-depth-live.js?v=division-era-depth-live-20260712a"></script>',
+  '  <script src="assets/data/division-era-depth-finalizer.js?v=division-era-depth-finalizer-20260712a"></script>'
 ];
 
 let html=await fs.readFile(INDEX_PATH,'utf8');
