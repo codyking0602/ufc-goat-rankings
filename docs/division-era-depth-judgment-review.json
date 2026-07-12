@@ -1,0 +1,1940 @@
+{
+  "version": "division-era-depth-judgment-review-20260712a",
+  "generatedAt": "2026-07-12T13:11:07.845Z",
+  "shadowVersion": "division-era-depth-shadow-20260712c-curved-candidate",
+  "mode": "judgment-review-shadow-only",
+  "mutatesLiveScores": false,
+  "formulaJudgment": {
+    "empiricalIndexApproved": true,
+    "curvedTranslationApproved": true,
+    "linearTranslationRejected": true,
+    "majorMoverJudgmentApproved": true,
+    "rationale": "The curved formula distinguishes truly thin early divisions from moderately older but already mature divisions. It avoids the linear model’s excessive -3 cap saturation."
+  },
+  "promotionDecision": {
+    "readyForLivePromotion": false,
+    "decision": "hold",
+    "summary": "Keep the curved model in shadow. Resolve WFW treatment and refresh the source before promotion.",
+    "blockers": [
+      {
+        "code": "wfw-sparse-baseline",
+        "severity": "critical",
+        "affectedFighters": [
+          "Amanda Nunes",
+          "Cris Cyborg",
+          "Holly Holm"
+        ],
+        "recommendation": "Do not use WFW samples in a live era-depth adjustment. Use non-WFW samples for mixed-division fighters and zero era adjustment for pure WFW cases."
+      },
+      {
+        "code": "source-freshness",
+        "severity": "critical",
+        "datasetEnd": "2025-04-12",
+        "modelDate": "2026-07-12",
+        "affectedOpenPrimes": [
+          "Islam Makhachev",
+          "Alexander Volkanovski",
+          "Max Holloway",
+          "Alex Pereira",
+          "Charles Oliveira",
+          "Aljamain Sterling",
+          "Merab Dvalishvili",
+          "Ilia Topuria",
+          "Dricus du Plessis",
+          "Petr Yan",
+          "Khamzat Chimaev",
+          "Sean Strickland",
+          "Sean O'Malley",
+          "Valentina Shevchenko",
+          "Zhang Weili",
+          "Alexa Grasso",
+          "Julianna Peña",
+          "Mackenzie Dern",
+          "Kayla Harrison"
+        ],
+        "recommendation": "Refresh the fight source through the current scoring date before live promotion."
+      }
+    ]
+  },
+  "coverage": {
+    "rosterCount": 63,
+    "reviewedCount": 63,
+    "approvedCount": 60,
+    "holdCount": 3,
+    "majorMoverCount": 3,
+    "heavyweightReviewCount": 8,
+    "wfwInfluencedCount": 3,
+    "openPrimeCount": 19,
+    "fallbackCount": 0
+  },
+  "majorMovers": [
+    {
+      "fighter": "Tito Ortiz",
+      "group": "men",
+      "currentRank": 25,
+      "curvedRank": 30,
+      "rankMovement": -5,
+      "currentTotal": 50.01,
+      "curvedTotal": 47.01,
+      "depthIndex": 0.75,
+      "curvedAdjustment": -3,
+      "primaryDivision": "LHW",
+      "sampledDivisions": [
+        "LHW"
+      ],
+      "matchedPrimeFightCount": 14,
+      "openPrime": false,
+      "status": "approved-major-mover",
+      "liveEligible": true,
+      "flags": [
+        "major-rank-mover"
+      ],
+      "judgment": "Approve major move. The full deduction is supported by both field size and contender-network concentration.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Junior dos Santos",
+      "group": "men",
+      "currentRank": 24,
+      "curvedRank": 28,
+      "rankMovement": -4,
+      "currentTotal": 50.12,
+      "curvedTotal": 48.35,
+      "depthIndex": 0.8242,
+      "curvedAdjustment": -1.77,
+      "primaryDivision": "HW",
+      "sampledDivisions": [
+        "HW"
+      ],
+      "matchedPrimeFightCount": 12,
+      "openPrime": false,
+      "status": "approved-major-mover",
+      "liveEligible": true,
+      "flags": [
+        "heavyweight-review",
+        "major-rank-mover"
+      ],
+      "judgment": "Approve major move. The adjustment is smaller than the early-era cap and appropriately distinguishes expansion-era heavyweight from modern heavyweight.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Matt Hughes",
+      "group": "men",
+      "currentRank": 8,
+      "curvedRank": 11,
+      "rankMovement": -3,
+      "currentTotal": 64.76,
+      "curvedTotal": 61.76,
+      "depthIndex": 0.75,
+      "curvedAdjustment": -3,
+      "primaryDivision": "WW",
+      "sampledDivisions": [
+        "WW"
+      ],
+      "matchedPrimeFightCount": 16,
+      "openPrime": false,
+      "status": "approved-major-mover",
+      "liveEligible": true,
+      "flags": [
+        "major-rank-mover"
+      ],
+      "judgment": "Approve major move. The active-pool and ranks-6–15 depth ratios both strongly validate a full early-era correction.",
+      "wfwExcludedScenario": null
+    }
+  ],
+  "heavyweightReview": [
+    {
+      "fighter": "Jon Jones",
+      "group": "men",
+      "currentRank": 1,
+      "curvedRank": 1,
+      "rankMovement": 0,
+      "currentTotal": 101.92,
+      "curvedTotal": 101.76,
+      "depthIndex": 0.9645,
+      "curvedAdjustment": -0.16,
+      "primaryDivision": "LHW",
+      "sampledDivisions": [
+        "LHW",
+        "HW"
+      ],
+      "matchedPrimeFightCount": 17,
+      "openPrime": false,
+      "status": "approved-heavyweight",
+      "liveEligible": true,
+      "flags": [
+        "heavyweight-review"
+      ],
+      "judgment": "Approve mixed-division output. Fight-level sampling prevents his late heavyweight appearance from rewriting his primarily light-heavyweight prime.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Stipe Miocic",
+      "group": "men",
+      "currentRank": 11,
+      "curvedRank": 10,
+      "rankMovement": 1,
+      "currentTotal": 61.84,
+      "curvedTotal": 61.77,
+      "depthIndex": 0.9803,
+      "curvedAdjustment": -0.07,
+      "primaryDivision": "HW",
+      "sampledDivisions": [
+        "HW"
+      ],
+      "matchedPrimeFightCount": 9,
+      "openPrime": false,
+      "status": "approved-heavyweight",
+      "liveEligible": true,
+      "flags": [
+        "heavyweight-review"
+      ],
+      "judgment": "Approve heavyweight output. Within-division normalization avoids punishing heavyweight merely for being shallower than lightweight.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Randy Couture",
+      "group": "men",
+      "currentRank": 13,
+      "curvedRank": 14,
+      "rankMovement": -1,
+      "currentTotal": 59.8,
+      "curvedTotal": 56.81,
+      "depthIndex": 0.7504,
+      "curvedAdjustment": -2.99,
+      "primaryDivision": "HW",
+      "sampledDivisions": [
+        "HW",
+        "LHW"
+      ],
+      "matchedPrimeFightCount": 17,
+      "openPrime": false,
+      "status": "approved-heavyweight",
+      "liveEligible": true,
+      "flags": [
+        "heavyweight-review"
+      ],
+      "judgment": "Approve heavyweight output. The early heavyweight/light-heavyweight ecosystem warrants a near-cap deduction.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Daniel Cormier",
+      "group": "men",
+      "currentRank": 16,
+      "curvedRank": 16,
+      "rankMovement": 0,
+      "currentTotal": 56.79,
+      "curvedTotal": 56.6,
+      "depthIndex": 0.9603,
+      "curvedAdjustment": -0.19,
+      "primaryDivision": "LHW",
+      "sampledDivisions": [
+        "LHW",
+        "HW"
+      ],
+      "matchedPrimeFightCount": 12,
+      "openPrime": false,
+      "status": "approved-heavyweight",
+      "liveEligible": true,
+      "flags": [
+        "heavyweight-review"
+      ],
+      "judgment": "Approve mixed-division output. LHW and HW are sampled by actual fight date rather than a single career label.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Cain Velasquez",
+      "group": "men",
+      "currentRank": 22,
+      "curvedRank": 22,
+      "rankMovement": 0,
+      "currentTotal": 52.14,
+      "curvedTotal": 50.82,
+      "depthIndex": 0.8556,
+      "curvedAdjustment": -1.32,
+      "primaryDivision": "HW",
+      "sampledDivisions": [
+        "HW"
+      ],
+      "matchedPrimeFightCount": 7,
+      "openPrime": false,
+      "status": "approved-heavyweight",
+      "liveEligible": true,
+      "flags": [
+        "heavyweight-review"
+      ],
+      "judgment": "Approve heavyweight output. The model produces a meaningful but non-cap adjustment for the early-2010s heavyweight field.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Junior dos Santos",
+      "group": "men",
+      "currentRank": 24,
+      "curvedRank": 28,
+      "rankMovement": -4,
+      "currentTotal": 50.12,
+      "curvedTotal": 48.35,
+      "depthIndex": 0.8242,
+      "curvedAdjustment": -1.77,
+      "primaryDivision": "HW",
+      "sampledDivisions": [
+        "HW"
+      ],
+      "matchedPrimeFightCount": 12,
+      "openPrime": false,
+      "status": "approved-major-mover",
+      "liveEligible": true,
+      "flags": [
+        "heavyweight-review",
+        "major-rank-mover"
+      ],
+      "judgment": "Approve major move. The adjustment is smaller than the early-era cap and appropriately distinguishes expansion-era heavyweight from modern heavyweight.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Francis Ngannou",
+      "group": "men",
+      "currentRank": 26,
+      "curvedRank": 24,
+      "rankMovement": 2,
+      "currentTotal": 49.69,
+      "curvedTotal": 49.66,
+      "depthIndex": 0.9872,
+      "curvedAdjustment": -0.03,
+      "primaryDivision": "HW",
+      "sampledDivisions": [
+        "HW"
+      ],
+      "matchedPrimeFightCount": 6,
+      "openPrime": false,
+      "status": "approved-heavyweight",
+      "liveEligible": true,
+      "flags": [
+        "heavyweight-review"
+      ],
+      "judgment": "Approve heavyweight output. His near-modern depth index correctly produces almost no adjustment.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Brock Lesnar",
+      "group": "men",
+      "currentRank": 45,
+      "curvedRank": 46,
+      "rankMovement": -1,
+      "currentTotal": 37.26,
+      "curvedTotal": 35.18,
+      "depthIndex": 0.8044,
+      "curvedAdjustment": -2.08,
+      "primaryDivision": "HW",
+      "sampledDivisions": [
+        "HW"
+      ],
+      "matchedPrimeFightCount": 4,
+      "openPrime": false,
+      "status": "approved-heavyweight",
+      "liveEligible": true,
+      "flags": [
+        "heavyweight-review"
+      ],
+      "judgment": "Approve heavyweight output. The large deduction reflects a smaller and less developed heavyweight ecosystem, not a skill judgment.",
+      "wfwExcludedScenario": null
+    }
+  ],
+  "womenFeatherweightReview": [
+    {
+      "fighter": "Amanda Nunes",
+      "group": "women",
+      "currentRank": 1,
+      "curvedRank": 1,
+      "rankMovement": 0,
+      "currentTotal": 82.03,
+      "curvedTotal": 81.06,
+      "depthIndex": 0.8819,
+      "curvedAdjustment": -0.97,
+      "primaryDivision": "BW",
+      "sampledDivisions": [
+        "WBW",
+        "WFW"
+      ],
+      "matchedPrimeFightCount": 12,
+      "openPrime": false,
+      "status": "hold-wfw-treatment",
+      "liveEligible": false,
+      "flags": [
+        "wfw-sparse-baseline"
+      ],
+      "judgment": "Hold WFW-influenced portion. Preserve bantamweight samples and exclude women’s-featherweight samples from any promoted era calculation.",
+      "wfwExcludedScenario": {
+        "usable": true,
+        "remainingSampleCount": 9,
+        "depthIndex": 0.9085,
+        "curvedAdjustment": -0.66,
+        "recommendation": "Use the non-WFW divisional samples if an era-depth adjustment is later promoted."
+      }
+    },
+    {
+      "fighter": "Cris Cyborg",
+      "group": "women",
+      "currentRank": 8,
+      "curvedRank": 9,
+      "rankMovement": -1,
+      "currentTotal": 38.69,
+      "curvedTotal": 35.69,
+      "depthIndex": 0.75,
+      "curvedAdjustment": -3,
+      "primaryDivision": "WFW",
+      "sampledDivisions": [
+        "WFW"
+      ],
+      "matchedPrimeFightCount": 7,
+      "openPrime": false,
+      "status": "hold-wfw-treatment",
+      "liveEligible": false,
+      "flags": [
+        "wfw-sparse-baseline"
+      ],
+      "judgment": "Hold current output. Women’s featherweight never had a viable ranks-6–15 ecosystem, so the current -3 is partly an empty-slot artifact.",
+      "wfwExcludedScenario": {
+        "usable": false,
+        "remainingSampleCount": 0,
+        "depthIndex": null,
+        "curvedAdjustment": 0,
+        "recommendation": "Use no era-depth adjustment until women’s featherweight has a viable depth baseline."
+      }
+    },
+    {
+      "fighter": "Holly Holm",
+      "group": "women",
+      "currentRank": 12,
+      "curvedRank": 14,
+      "rankMovement": -2,
+      "currentTotal": 30.59,
+      "curvedTotal": 28.39,
+      "depthIndex": 0.7965,
+      "curvedAdjustment": -2.2,
+      "primaryDivision": "WBW",
+      "sampledDivisions": [
+        "WBW",
+        "WFW"
+      ],
+      "matchedPrimeFightCount": 7,
+      "openPrime": false,
+      "status": "hold-wfw-treatment",
+      "liveEligible": false,
+      "flags": [
+        "wfw-sparse-baseline"
+      ],
+      "judgment": "Hold WFW-influenced portion. Recalculate from bantamweight samples rather than allowing the sparse WFW baseline to dominate.",
+      "wfwExcludedScenario": {
+        "usable": true,
+        "remainingSampleCount": 4,
+        "depthIndex": 0.8337,
+        "curvedAdjustment": -1.63,
+        "recommendation": "Use the non-WFW divisional samples if an era-depth adjustment is later promoted."
+      }
+    }
+  ],
+  "fighters": [
+    {
+      "fighter": "Jon Jones",
+      "group": "men",
+      "currentRank": 1,
+      "curvedRank": 1,
+      "rankMovement": 0,
+      "currentTotal": 101.92,
+      "curvedTotal": 101.76,
+      "depthIndex": 0.9645,
+      "curvedAdjustment": -0.16,
+      "primaryDivision": "LHW",
+      "sampledDivisions": [
+        "LHW",
+        "HW"
+      ],
+      "matchedPrimeFightCount": 17,
+      "openPrime": false,
+      "status": "approved-heavyweight",
+      "liveEligible": true,
+      "flags": [
+        "heavyweight-review"
+      ],
+      "judgment": "Approve mixed-division output. Fight-level sampling prevents his late heavyweight appearance from rewriting his primarily light-heavyweight prime.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Georges St-Pierre",
+      "group": "men",
+      "currentRank": 2,
+      "curvedRank": 2,
+      "rankMovement": 0,
+      "currentTotal": 88.07,
+      "curvedTotal": 86.37,
+      "depthIndex": 0.8288,
+      "curvedAdjustment": -1.7,
+      "primaryDivision": "WW",
+      "sampledDivisions": [
+        "WW",
+        "MW"
+      ],
+      "matchedPrimeFightCount": 15,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. A moderate era-depth deduction is supported, but the championship résumé remains comfortably second.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Anderson Silva",
+      "group": "men",
+      "currentRank": 3,
+      "curvedRank": 4,
+      "rankMovement": -1,
+      "currentTotal": 77.29,
+      "curvedTotal": 75.68,
+      "depthIndex": 0.8348,
+      "curvedAdjustment": -1.61,
+      "primaryDivision": "MW",
+      "sampledDivisions": [
+        "MW",
+        "LHW"
+      ],
+      "matchedPrimeFightCount": 18,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. The adjustment is material but not destructive; the DJ/Anderson ordering becomes legitimately close.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Demetrious Johnson",
+      "group": "men",
+      "currentRank": 4,
+      "curvedRank": 3,
+      "rankMovement": 1,
+      "currentTotal": 77.11,
+      "curvedTotal": 76.27,
+      "depthIndex": 0.8929,
+      "curvedAdjustment": -0.84,
+      "primaryDivision": "FLW",
+      "sampledDivisions": [
+        "FLW"
+      ],
+      "matchedPrimeFightCount": 14,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. The smaller deduction correctly reflects a later UFC era while still recognizing early flyweight maturity limits.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Islam Makhachev",
+      "group": "men",
+      "currentRank": 5,
+      "curvedRank": 5,
+      "rankMovement": 0,
+      "currentTotal": 69.14,
+      "curvedTotal": 69.06,
+      "depthIndex": 0.9768,
+      "curvedAdjustment": -0.08,
+      "primaryDivision": "LW",
+      "sampledDivisions": [
+        "LW"
+      ],
+      "matchedPrimeFightCount": 9,
+      "openPrime": true,
+      "status": "approved-with-caution",
+      "liveEligible": true,
+      "flags": [
+        "open-prime-source-cutoff"
+      ],
+      "judgment": "Approve with freshness caution. Refreshing the source through the current model date is required before live promotion.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Alexander Volkanovski",
+      "group": "men",
+      "currentRank": 6,
+      "curvedRank": 6,
+      "rankMovement": 0,
+      "currentTotal": 67.62,
+      "curvedTotal": 67.61,
+      "depthIndex": 0.9927,
+      "curvedAdjustment": -0.01,
+      "primaryDivision": "FW",
+      "sampledDivisions": [
+        "FW",
+        "LW"
+      ],
+      "matchedPrimeFightCount": 10,
+      "openPrime": true,
+      "status": "approved-with-caution",
+      "liveEligible": true,
+      "flags": [
+        "open-prime-source-cutoff"
+      ],
+      "judgment": "Approve with freshness caution. Open-prime terminal sampling is acceptable for shadow work, not final production.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Jose Aldo",
+      "group": "men",
+      "currentRank": 7,
+      "curvedRank": 7,
+      "rankMovement": 0,
+      "currentTotal": 67.14,
+      "curvedTotal": 66.25,
+      "depthIndex": 0.8889,
+      "curvedAdjustment": -0.89,
+      "primaryDivision": "FW",
+      "sampledDivisions": [
+        "FW",
+        "BW"
+      ],
+      "matchedPrimeFightCount": 20,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. The data supports only a modest era deduction; his remaining high placement is driven by UFC title volume and longevity, not an era bug.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Matt Hughes",
+      "group": "men",
+      "currentRank": 8,
+      "curvedRank": 11,
+      "rankMovement": -3,
+      "currentTotal": 64.76,
+      "curvedTotal": 61.76,
+      "depthIndex": 0.75,
+      "curvedAdjustment": -3,
+      "primaryDivision": "WW",
+      "sampledDivisions": [
+        "WW"
+      ],
+      "matchedPrimeFightCount": 16,
+      "openPrime": false,
+      "status": "approved-major-mover",
+      "liveEligible": true,
+      "flags": [
+        "major-rank-mover"
+      ],
+      "judgment": "Approve major move. The active-pool and ranks-6–15 depth ratios both strongly validate a full early-era correction.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Khabib Nurmagomedov",
+      "group": "men",
+      "currentRank": 9,
+      "curvedRank": 8,
+      "rankMovement": 1,
+      "currentTotal": 64.05,
+      "curvedTotal": 64.13,
+      "depthIndex": 1.004,
+      "curvedAdjustment": 0.08,
+      "primaryDivision": "LW",
+      "sampledDivisions": [
+        "LW"
+      ],
+      "matchedPrimeFightCount": 8,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Kamaru Usman",
+      "group": "men",
+      "currentRank": 10,
+      "curvedRank": 9,
+      "rankMovement": 1,
+      "currentTotal": 62.03,
+      "curvedTotal": 62.28,
+      "depthIndex": 1.0126,
+      "curvedAdjustment": 0.25,
+      "primaryDivision": "WW",
+      "sampledDivisions": [
+        "WW"
+      ],
+      "matchedPrimeFightCount": 10,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Stipe Miocic",
+      "group": "men",
+      "currentRank": 11,
+      "curvedRank": 10,
+      "rankMovement": 1,
+      "currentTotal": 61.84,
+      "curvedTotal": 61.77,
+      "depthIndex": 0.9803,
+      "curvedAdjustment": -0.07,
+      "primaryDivision": "HW",
+      "sampledDivisions": [
+        "HW"
+      ],
+      "matchedPrimeFightCount": 9,
+      "openPrime": false,
+      "status": "approved-heavyweight",
+      "liveEligible": true,
+      "flags": [
+        "heavyweight-review"
+      ],
+      "judgment": "Approve heavyweight output. Within-division normalization avoids punishing heavyweight merely for being shallower than lightweight.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Max Holloway",
+      "group": "men",
+      "currentRank": 12,
+      "curvedRank": 12,
+      "rankMovement": 0,
+      "currentTotal": 61.37,
+      "curvedTotal": 61.21,
+      "depthIndex": 0.9647,
+      "curvedAdjustment": -0.16,
+      "primaryDivision": "FW",
+      "sampledDivisions": [
+        "FW",
+        "LW"
+      ],
+      "matchedPrimeFightCount": 19,
+      "openPrime": true,
+      "status": "approved-with-caution",
+      "liveEligible": true,
+      "flags": [
+        "open-prime-source-cutoff"
+      ],
+      "judgment": "Approve for shadow use. Refresh the fight source before any live promotion.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Randy Couture",
+      "group": "men",
+      "currentRank": 13,
+      "curvedRank": 14,
+      "rankMovement": -1,
+      "currentTotal": 59.8,
+      "curvedTotal": 56.81,
+      "depthIndex": 0.7504,
+      "curvedAdjustment": -2.99,
+      "primaryDivision": "HW",
+      "sampledDivisions": [
+        "HW",
+        "LHW"
+      ],
+      "matchedPrimeFightCount": 17,
+      "openPrime": false,
+      "status": "approved-heavyweight",
+      "liveEligible": true,
+      "flags": [
+        "heavyweight-review"
+      ],
+      "judgment": "Approve heavyweight output. The early heavyweight/light-heavyweight ecosystem warrants a near-cap deduction.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Israel Adesanya",
+      "group": "men",
+      "currentRank": 14,
+      "curvedRank": 13,
+      "rankMovement": 1,
+      "currentTotal": 59.57,
+      "curvedTotal": 59.55,
+      "depthIndex": 0.9905,
+      "curvedAdjustment": -0.02,
+      "primaryDivision": "MW",
+      "sampledDivisions": [
+        "MW",
+        "LHW"
+      ],
+      "matchedPrimeFightCount": 12,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Chuck Liddell",
+      "group": "men",
+      "currentRank": 15,
+      "curvedRank": 17,
+      "rankMovement": -2,
+      "currentTotal": 57.62,
+      "curvedTotal": 54.68,
+      "depthIndex": 0.7532,
+      "curvedAdjustment": -2.94,
+      "primaryDivision": "LHW",
+      "sampledDivisions": [
+        "LHW"
+      ],
+      "matchedPrimeFightCount": 11,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. The near-cap deduction is consistent with the early light-heavyweight field without erasing the title résumé.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Daniel Cormier",
+      "group": "men",
+      "currentRank": 16,
+      "curvedRank": 16,
+      "rankMovement": 0,
+      "currentTotal": 56.79,
+      "curvedTotal": 56.6,
+      "depthIndex": 0.9603,
+      "curvedAdjustment": -0.19,
+      "primaryDivision": "LHW",
+      "sampledDivisions": [
+        "LHW",
+        "HW"
+      ],
+      "matchedPrimeFightCount": 12,
+      "openPrime": false,
+      "status": "approved-heavyweight",
+      "liveEligible": true,
+      "flags": [
+        "heavyweight-review"
+      ],
+      "judgment": "Approve mixed-division output. LHW and HW are sampled by actual fight date rather than a single career label.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Alex Pereira",
+      "group": "men",
+      "currentRank": 17,
+      "curvedRank": 15,
+      "rankMovement": 2,
+      "currentTotal": 56.54,
+      "curvedTotal": 56.7,
+      "depthIndex": 1.008,
+      "curvedAdjustment": 0.16,
+      "primaryDivision": "MW",
+      "sampledDivisions": [
+        "MW",
+        "LHW"
+      ],
+      "matchedPrimeFightCount": 9,
+      "openPrime": true,
+      "status": "approved-with-caution",
+      "liveEligible": true,
+      "flags": [
+        "open-prime-source-cutoff"
+      ],
+      "judgment": "Approve with freshness caution. The small modern adjustment is directionally sound, but the dataset cutoff misses part of the current title run.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "B.J. Penn",
+      "group": "men",
+      "currentRank": 18,
+      "curvedRank": 20,
+      "rankMovement": -2,
+      "currentTotal": 55.08,
+      "curvedTotal": 52.39,
+      "depthIndex": 0.7676,
+      "curvedAdjustment": -2.69,
+      "primaryDivision": "LW",
+      "sampledDivisions": [
+        "WW",
+        "LW"
+      ],
+      "matchedPrimeFightCount": 11,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "T.J. Dillashaw",
+      "group": "men",
+      "currentRank": 19,
+      "curvedRank": 18,
+      "rankMovement": 1,
+      "currentTotal": 54.52,
+      "curvedTotal": 53.36,
+      "depthIndex": 0.867,
+      "curvedAdjustment": -1.16,
+      "primaryDivision": "BW",
+      "sampledDivisions": [
+        "BW",
+        "FLW"
+      ],
+      "matchedPrimeFightCount": 11,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Frankie Edgar",
+      "group": "men",
+      "currentRank": 20,
+      "curvedRank": 21,
+      "rankMovement": -1,
+      "currentTotal": 53.63,
+      "curvedTotal": 52.34,
+      "depthIndex": 0.8576,
+      "curvedAdjustment": -1.29,
+      "primaryDivision": "LW",
+      "sampledDivisions": [
+        "LW",
+        "FW"
+      ],
+      "matchedPrimeFightCount": 20,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Charles Oliveira",
+      "group": "men",
+      "currentRank": 21,
+      "curvedRank": 19,
+      "rankMovement": 2,
+      "currentTotal": 53.38,
+      "curvedTotal": 53.31,
+      "depthIndex": 0.9789,
+      "curvedAdjustment": -0.07,
+      "primaryDivision": "LW",
+      "sampledDivisions": [
+        "LW"
+      ],
+      "matchedPrimeFightCount": 9,
+      "openPrime": true,
+      "status": "approved-with-caution",
+      "liveEligible": true,
+      "flags": [
+        "open-prime-source-cutoff"
+      ],
+      "judgment": "Approve for shadow use. Refresh the fight source before any live promotion.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Cain Velasquez",
+      "group": "men",
+      "currentRank": 22,
+      "curvedRank": 22,
+      "rankMovement": 0,
+      "currentTotal": 52.14,
+      "curvedTotal": 50.82,
+      "depthIndex": 0.8556,
+      "curvedAdjustment": -1.32,
+      "primaryDivision": "HW",
+      "sampledDivisions": [
+        "HW"
+      ],
+      "matchedPrimeFightCount": 7,
+      "openPrime": false,
+      "status": "approved-heavyweight",
+      "liveEligible": true,
+      "flags": [
+        "heavyweight-review"
+      ],
+      "judgment": "Approve heavyweight output. The model produces a meaningful but non-cap adjustment for the early-2010s heavyweight field.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Henry Cejudo",
+      "group": "men",
+      "currentRank": 23,
+      "curvedRank": 23,
+      "rankMovement": 0,
+      "currentTotal": 50.19,
+      "curvedTotal": 50.02,
+      "depthIndex": 0.9631,
+      "curvedAdjustment": -0.17,
+      "primaryDivision": "FLW",
+      "sampledDivisions": [
+        "FLW",
+        "BW"
+      ],
+      "matchedPrimeFightCount": 5,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Junior dos Santos",
+      "group": "men",
+      "currentRank": 24,
+      "curvedRank": 28,
+      "rankMovement": -4,
+      "currentTotal": 50.12,
+      "curvedTotal": 48.35,
+      "depthIndex": 0.8242,
+      "curvedAdjustment": -1.77,
+      "primaryDivision": "HW",
+      "sampledDivisions": [
+        "HW"
+      ],
+      "matchedPrimeFightCount": 12,
+      "openPrime": false,
+      "status": "approved-major-mover",
+      "liveEligible": true,
+      "flags": [
+        "heavyweight-review",
+        "major-rank-mover"
+      ],
+      "judgment": "Approve major move. The adjustment is smaller than the early-era cap and appropriately distinguishes expansion-era heavyweight from modern heavyweight.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Tito Ortiz",
+      "group": "men",
+      "currentRank": 25,
+      "curvedRank": 30,
+      "rankMovement": -5,
+      "currentTotal": 50.01,
+      "curvedTotal": 47.01,
+      "depthIndex": 0.75,
+      "curvedAdjustment": -3,
+      "primaryDivision": "LHW",
+      "sampledDivisions": [
+        "LHW"
+      ],
+      "matchedPrimeFightCount": 14,
+      "openPrime": false,
+      "status": "approved-major-mover",
+      "liveEligible": true,
+      "flags": [
+        "major-rank-mover"
+      ],
+      "judgment": "Approve major move. The full deduction is supported by both field size and contender-network concentration.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Francis Ngannou",
+      "group": "men",
+      "currentRank": 26,
+      "curvedRank": 24,
+      "rankMovement": 2,
+      "currentTotal": 49.69,
+      "curvedTotal": 49.66,
+      "depthIndex": 0.9872,
+      "curvedAdjustment": -0.03,
+      "primaryDivision": "HW",
+      "sampledDivisions": [
+        "HW"
+      ],
+      "matchedPrimeFightCount": 6,
+      "openPrime": false,
+      "status": "approved-heavyweight",
+      "liveEligible": true,
+      "flags": [
+        "heavyweight-review"
+      ],
+      "judgment": "Approve heavyweight output. His near-modern depth index correctly produces almost no adjustment.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Aljamain Sterling",
+      "group": "men",
+      "currentRank": 27,
+      "curvedRank": 25,
+      "rankMovement": 2,
+      "currentTotal": 48.84,
+      "curvedTotal": 48.81,
+      "depthIndex": 0.9895,
+      "curvedAdjustment": -0.03,
+      "primaryDivision": "BW",
+      "sampledDivisions": [
+        "BW",
+        "FW"
+      ],
+      "matchedPrimeFightCount": 9,
+      "openPrime": true,
+      "status": "approved-with-caution",
+      "liveEligible": true,
+      "flags": [
+        "open-prime-source-cutoff"
+      ],
+      "judgment": "Approve for shadow use. Refresh the fight source before any live promotion.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Conor McGregor",
+      "group": "men",
+      "currentRank": 28,
+      "curvedRank": 26,
+      "rankMovement": 2,
+      "currentTotal": 48.78,
+      "curvedTotal": 48.4,
+      "depthIndex": 0.9369,
+      "curvedAdjustment": -0.38,
+      "primaryDivision": "FW",
+      "sampledDivisions": [
+        "FW",
+        "WW",
+        "LW"
+      ],
+      "matchedPrimeFightCount": 8,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Tyron Woodley",
+      "group": "men",
+      "currentRank": 29,
+      "curvedRank": 27,
+      "rankMovement": 2,
+      "currentTotal": 48.16,
+      "curvedTotal": 48.37,
+      "depthIndex": 1.0107,
+      "curvedAdjustment": 0.21,
+      "primaryDivision": "WW",
+      "sampledDivisions": [
+        "WW"
+      ],
+      "matchedPrimeFightCount": 10,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Merab Dvalishvili",
+      "group": "men",
+      "currentRank": 30,
+      "curvedRank": 29,
+      "rankMovement": 1,
+      "currentTotal": 47.68,
+      "curvedTotal": 47.76,
+      "depthIndex": 1.0039,
+      "curvedAdjustment": 0.08,
+      "primaryDivision": "BW",
+      "sampledDivisions": [
+        "BW"
+      ],
+      "matchedPrimeFightCount": 6,
+      "openPrime": true,
+      "status": "approved-with-caution",
+      "liveEligible": true,
+      "flags": [
+        "open-prime-source-cutoff"
+      ],
+      "judgment": "Approve for shadow use. Refresh the fight source before any live promotion.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Dustin Poirier",
+      "group": "men",
+      "currentRank": 31,
+      "curvedRank": 31,
+      "rankMovement": 0,
+      "currentTotal": 46.96,
+      "curvedTotal": 46.93,
+      "depthIndex": 0.9896,
+      "curvedAdjustment": -0.03,
+      "primaryDivision": "LW",
+      "sampledDivisions": [
+        "LW"
+      ],
+      "matchedPrimeFightCount": 12,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Justin Gaethje",
+      "group": "men",
+      "currentRank": 32,
+      "curvedRank": 32,
+      "rankMovement": 0,
+      "currentTotal": 46.83,
+      "curvedTotal": 46.76,
+      "depthIndex": 0.9801,
+      "curvedAdjustment": -0.07,
+      "primaryDivision": "LW",
+      "sampledDivisions": [
+        "LW"
+      ],
+      "matchedPrimeFightCount": 10,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Ilia Topuria",
+      "group": "men",
+      "currentRank": 33,
+      "curvedRank": 33,
+      "rankMovement": 0,
+      "currentTotal": 46.21,
+      "curvedTotal": 46.21,
+      "depthIndex": 0.9986,
+      "curvedAdjustment": 0,
+      "primaryDivision": "FW",
+      "sampledDivisions": [
+        "FW"
+      ],
+      "matchedPrimeFightCount": 4,
+      "openPrime": true,
+      "status": "approved-with-caution",
+      "liveEligible": true,
+      "flags": [
+        "open-prime-source-cutoff"
+      ],
+      "judgment": "Approve with freshness caution. The structure is sound, but the external fight dataset does not include the latest 2025–2026 portion of his open prime.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Robbie Lawler",
+      "group": "men",
+      "currentRank": 34,
+      "curvedRank": 34,
+      "rankMovement": 0,
+      "currentTotal": 45.43,
+      "curvedTotal": 45.29,
+      "depthIndex": 0.9676,
+      "curvedAdjustment": -0.14,
+      "primaryDivision": "WW",
+      "sampledDivisions": [
+        "WW"
+      ],
+      "matchedPrimeFightCount": 10,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Robert Whittaker",
+      "group": "men",
+      "currentRank": 35,
+      "curvedRank": 35,
+      "rankMovement": 0,
+      "currentTotal": 45.1,
+      "curvedTotal": 45.09,
+      "depthIndex": 0.9928,
+      "curvedAdjustment": -0.01,
+      "primaryDivision": "MW",
+      "sampledDivisions": [
+        "MW"
+      ],
+      "matchedPrimeFightCount": 13,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Dricus du Plessis",
+      "group": "men",
+      "currentRank": 36,
+      "curvedRank": 36,
+      "rankMovement": 0,
+      "currentTotal": 44.7,
+      "curvedTotal": 45.01,
+      "depthIndex": 1.0157,
+      "curvedAdjustment": 0.31,
+      "primaryDivision": "MW",
+      "sampledDivisions": [
+        "MW"
+      ],
+      "matchedPrimeFightCount": 5,
+      "openPrime": true,
+      "status": "approved-with-caution",
+      "liveEligible": true,
+      "flags": [
+        "open-prime-source-cutoff"
+      ],
+      "judgment": "Approve for shadow use. Refresh the fight source before any live promotion.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Petr Yan",
+      "group": "men",
+      "currentRank": 37,
+      "curvedRank": 37,
+      "rankMovement": 0,
+      "currentTotal": 44.7,
+      "curvedTotal": 44.69,
+      "depthIndex": 0.9943,
+      "curvedAdjustment": -0.01,
+      "primaryDivision": "BW",
+      "sampledDivisions": [
+        "BW"
+      ],
+      "matchedPrimeFightCount": 9,
+      "openPrime": true,
+      "status": "approved-with-caution",
+      "liveEligible": true,
+      "flags": [
+        "open-prime-source-cutoff"
+      ],
+      "judgment": "Approve for shadow use. Refresh the fight source before any live promotion.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Tony Ferguson",
+      "group": "men",
+      "currentRank": 38,
+      "curvedRank": 38,
+      "rankMovement": 0,
+      "currentTotal": 43.69,
+      "curvedTotal": 43.95,
+      "depthIndex": 1.0131,
+      "curvedAdjustment": 0.26,
+      "primaryDivision": "LW",
+      "sampledDivisions": [
+        "LW"
+      ],
+      "matchedPrimeFightCount": 7,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Deiveson Figueiredo",
+      "group": "men",
+      "currentRank": 39,
+      "curvedRank": 39,
+      "rankMovement": 0,
+      "currentTotal": 43.31,
+      "curvedTotal": 43.21,
+      "depthIndex": 0.9735,
+      "curvedAdjustment": -0.1,
+      "primaryDivision": "FLW",
+      "sampledDivisions": [
+        "FLW",
+        "BW"
+      ],
+      "matchedPrimeFightCount": 11,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Lyoto Machida",
+      "group": "men",
+      "currentRank": 40,
+      "curvedRank": 40,
+      "rankMovement": 0,
+      "currentTotal": 42.59,
+      "curvedTotal": 42.3,
+      "depthIndex": 0.9475,
+      "curvedAdjustment": -0.29,
+      "primaryDivision": "LHW",
+      "sampledDivisions": [
+        "LHW",
+        "MW"
+      ],
+      "matchedPrimeFightCount": 13,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Dominick Cruz",
+      "group": "men",
+      "currentRank": 41,
+      "curvedRank": 43,
+      "rankMovement": -2,
+      "currentTotal": 41.79,
+      "curvedTotal": 40.28,
+      "depthIndex": 0.8415,
+      "curvedAdjustment": -1.51,
+      "primaryDivision": "BW",
+      "sampledDivisions": [
+        "BW"
+      ],
+      "matchedPrimeFightCount": 7,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Khamzat Chimaev",
+      "group": "men",
+      "currentRank": 42,
+      "curvedRank": 41,
+      "rankMovement": 1,
+      "currentTotal": 41.08,
+      "curvedTotal": 41.36,
+      "depthIndex": 1.014,
+      "curvedAdjustment": 0.28,
+      "primaryDivision": "MW",
+      "sampledDivisions": [
+        "WW",
+        "MW"
+      ],
+      "matchedPrimeFightCount": 4,
+      "openPrime": true,
+      "status": "approved-with-caution",
+      "liveEligible": true,
+      "flags": [
+        "open-prime-source-cutoff"
+      ],
+      "judgment": "Approve for shadow use. Refresh the fight source before any live promotion.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Sean Strickland",
+      "group": "men",
+      "currentRank": 43,
+      "curvedRank": 42,
+      "rankMovement": 1,
+      "currentTotal": 40.14,
+      "curvedTotal": 40.35,
+      "depthIndex": 1.0104,
+      "curvedAdjustment": 0.21,
+      "primaryDivision": "MW",
+      "sampledDivisions": [
+        "MW",
+        "LHW"
+      ],
+      "matchedPrimeFightCount": 10,
+      "openPrime": true,
+      "status": "approved-with-caution",
+      "liveEligible": true,
+      "flags": [
+        "open-prime-source-cutoff"
+      ],
+      "judgment": "Approve for shadow use. Refresh the fight source before any live promotion.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Sean O'Malley",
+      "group": "men",
+      "currentRank": 44,
+      "curvedRank": 45,
+      "rankMovement": -1,
+      "currentTotal": 37.3,
+      "curvedTotal": 37.23,
+      "depthIndex": 0.9792,
+      "curvedAdjustment": -0.07,
+      "primaryDivision": "BW",
+      "sampledDivisions": [
+        "BW"
+      ],
+      "matchedPrimeFightCount": 13,
+      "openPrime": true,
+      "status": "approved-with-caution",
+      "liveEligible": true,
+      "flags": [
+        "open-prime-source-cutoff"
+      ],
+      "judgment": "Approve for shadow use. Refresh the fight source before any live promotion.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Brock Lesnar",
+      "group": "men",
+      "currentRank": 45,
+      "curvedRank": 46,
+      "rankMovement": -1,
+      "currentTotal": 37.26,
+      "curvedTotal": 35.18,
+      "depthIndex": 0.8044,
+      "curvedAdjustment": -2.08,
+      "primaryDivision": "HW",
+      "sampledDivisions": [
+        "HW"
+      ],
+      "matchedPrimeFightCount": 4,
+      "openPrime": false,
+      "status": "approved-heavyweight",
+      "liveEligible": true,
+      "flags": [
+        "heavyweight-review"
+      ],
+      "judgment": "Approve heavyweight output. The large deduction reflects a smaller and less developed heavyweight ecosystem, not a skill judgment.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Michael Bisping",
+      "group": "men",
+      "currentRank": 46,
+      "curvedRank": 44,
+      "rankMovement": 2,
+      "currentTotal": 37.1,
+      "curvedTotal": 37.36,
+      "depthIndex": 1.013,
+      "curvedAdjustment": 0.26,
+      "primaryDivision": "MW",
+      "sampledDivisions": [
+        "MW"
+      ],
+      "matchedPrimeFightCount": 4,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Dan Henderson",
+      "group": "men",
+      "currentRank": 47,
+      "curvedRank": 47,
+      "rankMovement": 0,
+      "currentTotal": 25.37,
+      "curvedTotal": 24.78,
+      "depthIndex": 0.9155,
+      "curvedAdjustment": -0.59,
+      "primaryDivision": "MW",
+      "sampledDivisions": [
+        "LHW",
+        "MW"
+      ],
+      "matchedPrimeFightCount": 8,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Chael Sonnen",
+      "group": "men",
+      "currentRank": 48,
+      "curvedRank": 48,
+      "rankMovement": 0,
+      "currentTotal": 23.92,
+      "curvedTotal": 22.86,
+      "depthIndex": 0.8751,
+      "curvedAdjustment": -1.06,
+      "primaryDivision": "MW",
+      "sampledDivisions": [
+        "MW",
+        "LHW"
+      ],
+      "matchedPrimeFightCount": 6,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Amanda Nunes",
+      "group": "women",
+      "currentRank": 1,
+      "curvedRank": 1,
+      "rankMovement": 0,
+      "currentTotal": 82.03,
+      "curvedTotal": 81.06,
+      "depthIndex": 0.8819,
+      "curvedAdjustment": -0.97,
+      "primaryDivision": "BW",
+      "sampledDivisions": [
+        "WBW",
+        "WFW"
+      ],
+      "matchedPrimeFightCount": 12,
+      "openPrime": false,
+      "status": "hold-wfw-treatment",
+      "liveEligible": false,
+      "flags": [
+        "wfw-sparse-baseline"
+      ],
+      "judgment": "Hold WFW-influenced portion. Preserve bantamweight samples and exclude women’s-featherweight samples from any promoted era calculation.",
+      "wfwExcludedScenario": {
+        "usable": true,
+        "remainingSampleCount": 9,
+        "depthIndex": 0.9085,
+        "curvedAdjustment": -0.66,
+        "recommendation": "Use the non-WFW divisional samples if an era-depth adjustment is later promoted."
+      }
+    },
+    {
+      "fighter": "Valentina Shevchenko",
+      "group": "women",
+      "currentRank": 2,
+      "curvedRank": 2,
+      "rankMovement": 0,
+      "currentTotal": 75.92,
+      "curvedTotal": 75.45,
+      "depthIndex": 0.9269,
+      "curvedAdjustment": -0.47,
+      "primaryDivision": "FLW",
+      "sampledDivisions": [
+        "WBW",
+        "WFLW",
+        "FLW"
+      ],
+      "matchedPrimeFightCount": 15,
+      "openPrime": true,
+      "status": "approved-with-caution",
+      "liveEligible": true,
+      "flags": [
+        "open-prime-source-cutoff"
+      ],
+      "judgment": "Approve for shadow use. Refresh the fight source before any live promotion.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Zhang Weili",
+      "group": "women",
+      "currentRank": 3,
+      "curvedRank": 3,
+      "rankMovement": 0,
+      "currentTotal": 57.04,
+      "curvedTotal": 57.04,
+      "depthIndex": 0.9965,
+      "curvedAdjustment": 0,
+      "primaryDivision": "WSW",
+      "sampledDivisions": [
+        "WSW"
+      ],
+      "matchedPrimeFightCount": 9,
+      "openPrime": true,
+      "status": "approved-with-caution",
+      "liveEligible": true,
+      "flags": [
+        "open-prime-source-cutoff"
+      ],
+      "judgment": "Approve for shadow use. Refresh the fight source before any live promotion.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Joanna Jedrzejczyk",
+      "group": "women",
+      "currentRank": 4,
+      "curvedRank": 4,
+      "rankMovement": 0,
+      "currentTotal": 52.82,
+      "curvedTotal": 51.08,
+      "depthIndex": 0.8259,
+      "curvedAdjustment": -1.74,
+      "primaryDivision": "WSW",
+      "sampledDivisions": [
+        "WSW",
+        "WFLW"
+      ],
+      "matchedPrimeFightCount": 12,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Rose Namajunas",
+      "group": "women",
+      "currentRank": 5,
+      "curvedRank": 5,
+      "rankMovement": 0,
+      "currentTotal": 49.2,
+      "curvedTotal": 48.83,
+      "depthIndex": 0.9376,
+      "curvedAdjustment": -0.37,
+      "primaryDivision": "WSW",
+      "sampledDivisions": [
+        "WSW"
+      ],
+      "matchedPrimeFightCount": 7,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Ronda Rousey",
+      "group": "women",
+      "currentRank": 6,
+      "curvedRank": 6,
+      "rankMovement": 0,
+      "currentTotal": 48.9,
+      "curvedTotal": 46.49,
+      "depthIndex": 0.7838,
+      "curvedAdjustment": -2.41,
+      "primaryDivision": "BW",
+      "sampledDivisions": [
+        "WBW"
+      ],
+      "matchedPrimeFightCount": 8,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Jessica Andrade",
+      "group": "women",
+      "currentRank": 7,
+      "curvedRank": 7,
+      "rankMovement": 0,
+      "currentTotal": 40.94,
+      "curvedTotal": 40.79,
+      "depthIndex": 0.9667,
+      "curvedAdjustment": -0.15,
+      "primaryDivision": "WSW",
+      "sampledDivisions": [
+        "WSW",
+        "WFLW"
+      ],
+      "matchedPrimeFightCount": 12,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Cris Cyborg",
+      "group": "women",
+      "currentRank": 8,
+      "curvedRank": 9,
+      "rankMovement": -1,
+      "currentTotal": 38.69,
+      "curvedTotal": 35.69,
+      "depthIndex": 0.75,
+      "curvedAdjustment": -3,
+      "primaryDivision": "WFW",
+      "sampledDivisions": [
+        "WFW"
+      ],
+      "matchedPrimeFightCount": 7,
+      "openPrime": false,
+      "status": "hold-wfw-treatment",
+      "liveEligible": false,
+      "flags": [
+        "wfw-sparse-baseline"
+      ],
+      "judgment": "Hold current output. Women’s featherweight never had a viable ranks-6–15 ecosystem, so the current -3 is partly an empty-slot artifact.",
+      "wfwExcludedScenario": {
+        "usable": false,
+        "remainingSampleCount": 0,
+        "depthIndex": null,
+        "curvedAdjustment": 0,
+        "recommendation": "Use no era-depth adjustment until women’s featherweight has a viable depth baseline."
+      }
+    },
+    {
+      "fighter": "Alexa Grasso",
+      "group": "women",
+      "currentRank": 9,
+      "curvedRank": 8,
+      "rankMovement": 1,
+      "currentTotal": 36.01,
+      "curvedTotal": 36.62,
+      "depthIndex": 1.0305,
+      "curvedAdjustment": 0.61,
+      "primaryDivision": "FLW",
+      "sampledDivisions": [
+        "WFLW",
+        "FLW"
+      ],
+      "matchedPrimeFightCount": 6,
+      "openPrime": true,
+      "status": "approved-with-caution",
+      "liveEligible": true,
+      "flags": [
+        "open-prime-source-cutoff"
+      ],
+      "judgment": "Approve for shadow use. Refresh the fight source before any live promotion.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Julianna Peña",
+      "group": "women",
+      "currentRank": 10,
+      "curvedRank": 10,
+      "rankMovement": 0,
+      "currentTotal": 33.86,
+      "curvedTotal": 34.53,
+      "depthIndex": 1.0335,
+      "curvedAdjustment": 0.67,
+      "primaryDivision": "WBW",
+      "sampledDivisions": [
+        "WBW"
+      ],
+      "matchedPrimeFightCount": 3,
+      "openPrime": true,
+      "status": "approved-with-caution",
+      "liveEligible": true,
+      "flags": [
+        "open-prime-source-cutoff",
+        "low-prime-sample"
+      ],
+      "judgment": "Approve for shadow use. Refresh the fight source before any live promotion.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Carla Esparza",
+      "group": "women",
+      "currentRank": 11,
+      "curvedRank": 11,
+      "rankMovement": 0,
+      "currentTotal": 33.34,
+      "curvedTotal": 32.46,
+      "depthIndex": 0.8894,
+      "curvedAdjustment": -0.88,
+      "primaryDivision": "WSW",
+      "sampledDivisions": [
+        "WSW"
+      ],
+      "matchedPrimeFightCount": 15,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Holly Holm",
+      "group": "women",
+      "currentRank": 12,
+      "curvedRank": 14,
+      "rankMovement": -2,
+      "currentTotal": 30.59,
+      "curvedTotal": 28.39,
+      "depthIndex": 0.7965,
+      "curvedAdjustment": -2.2,
+      "primaryDivision": "WBW",
+      "sampledDivisions": [
+        "WBW",
+        "WFW"
+      ],
+      "matchedPrimeFightCount": 7,
+      "openPrime": false,
+      "status": "hold-wfw-treatment",
+      "liveEligible": false,
+      "flags": [
+        "wfw-sparse-baseline"
+      ],
+      "judgment": "Hold WFW-influenced portion. Recalculate from bantamweight samples rather than allowing the sparse WFW baseline to dominate.",
+      "wfwExcludedScenario": {
+        "usable": true,
+        "remainingSampleCount": 4,
+        "depthIndex": 0.8337,
+        "curvedAdjustment": -1.63,
+        "recommendation": "Use the non-WFW divisional samples if an era-depth adjustment is later promoted."
+      }
+    },
+    {
+      "fighter": "Mackenzie Dern",
+      "group": "women",
+      "currentRank": 13,
+      "curvedRank": 13,
+      "rankMovement": 0,
+      "currentTotal": 30.4,
+      "curvedTotal": 30.65,
+      "depthIndex": 1.0126,
+      "curvedAdjustment": 0.25,
+      "primaryDivision": "WSW",
+      "sampledDivisions": [
+        "WSW"
+      ],
+      "matchedPrimeFightCount": 9,
+      "openPrime": true,
+      "status": "approved-with-caution",
+      "liveEligible": true,
+      "flags": [
+        "open-prime-source-cutoff"
+      ],
+      "judgment": "Approve for shadow use. Refresh the fight source before any live promotion.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Kayla Harrison",
+      "group": "women",
+      "currentRank": 14,
+      "curvedRank": 12,
+      "rankMovement": 2,
+      "currentTotal": 30.17,
+      "curvedTotal": 30.89,
+      "depthIndex": 1.0361,
+      "curvedAdjustment": 0.72,
+      "primaryDivision": "WBW",
+      "sampledDivisions": [
+        "WBW"
+      ],
+      "matchedPrimeFightCount": 2,
+      "openPrime": true,
+      "status": "approved-with-caution",
+      "liveEligible": true,
+      "flags": [
+        "open-prime-source-cutoff",
+        "low-prime-sample"
+      ],
+      "judgment": "Approve with sample caution. The positive adjustment is capped and modest, but it is based on a very short UFC prime sample.",
+      "wfwExcludedScenario": null
+    },
+    {
+      "fighter": "Miesha Tate",
+      "group": "women",
+      "currentRank": 15,
+      "curvedRank": 15,
+      "rankMovement": 0,
+      "currentTotal": 29.67,
+      "curvedTotal": 27.44,
+      "depthIndex": 0.7946,
+      "curvedAdjustment": -2.23,
+      "primaryDivision": "WBW",
+      "sampledDivisions": [
+        "WBW"
+      ],
+      "matchedPrimeFightCount": 6,
+      "openPrime": false,
+      "status": "approved",
+      "liveEligible": true,
+      "flags": [],
+      "judgment": "Approve. Direction and magnitude are within the curved model’s intended range.",
+      "wfwExcludedScenario": null
+    }
+  ]
+}
