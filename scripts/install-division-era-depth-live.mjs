@@ -6,7 +6,7 @@ const MODULES=[
   ['assets/data/division-era-depth-shadow.js','division-era-depth-shadow-20260712d-current-wfw-safe'],
   ['assets/data/division-era-depth-audit.js','division-era-depth-judgment-review-20260712b-live-approved'],
   ['assets/data/division-era-depth-live.js','division-era-depth-live-20260712a'],
-  ['assets/data/division-era-depth-finalizer.js','division-era-depth-finalizer-20260712a']
+  ['assets/data/division-era-depth-finalizer.js','division-era-depth-finalizer-20260712b-canonical-engine']
 ];
 const TAGS=MODULES.map(([path,version])=>`  <script src="${path}?v=${version}"></script>`);
 const escapeRegex=value=>String(value).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
