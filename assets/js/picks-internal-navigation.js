@@ -78,16 +78,18 @@
   function extractProfile(){
     const social=document.getElementById('picksSocialCard');
     const profile=social?.querySelector('.social-profile');
-    if(!profile) return;
+    const settingsContent=document.getElementById('picksSettingsContent');
+    if(!profile || !settingsContent) return;
     let shell=document.getElementById('picksProfileShell');
     if(!shell){
       shell=document.createElement('section');
       shell.id='picksProfileShell';
       shell.className='picks-profile-shell';
+      settingsContent.appendChild(shell);
+    }else if(!shell.isConnected){
+      settingsContent.appendChild(shell);
     }
-    if(profile.parentElement!==shell){
-      shell.replaceChildren(profile);
-    }
+    if(profile.parentElement!==shell) shell.replaceChildren(profile);
   }
 
   function routeNode(id,route){
