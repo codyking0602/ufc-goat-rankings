@@ -71,10 +71,10 @@
       <div class="social-section-head"><div><span>YOUR PROFILE</span><h3>${safe(me.display_name || 'Player')}</h3></div><span class="social-avatar profile-avatar">${safe(emoji(me.avatar_key))}</span></div>
       <div class="social-avatar-picker" role="group" aria-label="Choose avatar">${Object.entries(AVATARS).map(([key,value])=>`<button type="button" data-social-avatar="${safe(key)}" class="${me.avatar_key===key?'active':''}" aria-label="${safe(key)} avatar">${safe(value)}</button>`).join('')}</div>
       <div class="social-reminder-row">
-        <label><input id="picksSocialReminder" type="checkbox" ${me.reminder_opt_in?'checked':''}><span><strong>Event reminder</strong><small>Reminds you when you open the app near event time.</small></span></label>
-        ${event ? `<button id="picksAddCalendar" type="button">Add Event to Calendar</button>` : '<span class="social-no-event">No upcoming event yet</span>'}
+        <label><input id="picksSocialReminder" type="checkbox" ${me.reminder_opt_in?'checked':''}><span><strong>In-app reminder</strong><small>Only works when the app is open near event time.</small></span></label>
+        ${event ? `<button id="picksAddCalendar" type="button">Add Phone Reminders</button>` : '<span class="social-no-event">No upcoming event yet</span>'}
       </div>
-      <p class="picks-reminder-reliability">Calendar is the reliable phone reminder. The in-app reminder only appears when the app is opened near event time.</p>
+      <p class="picks-reminder-reliability">Add Phone Reminders creates a calendar event with alerts eight hours and one hour before the card starts.</p>
     </section>`;
   }
 
@@ -127,12 +127,12 @@
     if(input.checked && 'Notification' in window && Notification.permission==='default'){
       try{
         const permission=await Notification.requestPermission();
-        if(permission==='denied') toast('Browser notifications are blocked; calendar reminders still work');
+        if(permission==='denied') toast('Browser notifications are blocked; phone reminders still work');
       }catch(_error){}
     }
     const {error}=await client.rpc('picks_social_update_profile',{p_group_code:state.code,p_member_token:state.token,p_avatar_key:avatar,p_reminder_opt_in:Boolean(input.checked)});
     if(error){ input.checked=!input.checked; toast(error.message || 'Reminder preference was not saved'); return; }
-    toast(input.checked ? 'Event reminder enabled' : 'Event reminder disabled');
+    toast(input.checked ? 'In-app reminder enabled' : 'In-app reminder disabled');
     await refresh(true);
   }
 
@@ -164,18 +164,30 @@
     if(!event) return;
     const start=new Date(event.event_date);
     const end=new Date(start.getTime()+6*60*60*1000);
+    const startLabel=formatDate(event.event_date,true);
     const url=new URL(window.location.href);
     url.searchParams.set('group',state.code);
     url.searchParams.set('picksView','event');
     url.hash='picks';
     const content=[
-      'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//UFC Picks//EN','BEGIN:VEVENT',
+      'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//UFC Picks//EN','CALSCALE:GREGORIAN','BEGIN:VEVENT',
       `UID:${escapeIcs(event.event_id)}@ufc-picks`,
       `DTSTAMP:${icsDate(new Date())}`,
       `DTSTART:${icsDate(start)}`,
       `DTEND:${icsDate(end)}`,
-      `SUMMARY:${escapeIcs(`${event.name} Picks`)}`,
+      `SUMMARY:${escapeIcs(`${event.name} — Make Picks`)}`,
       `DESCRIPTION:${escapeIcs(`Lock in your UFC picks: ${url.toString()}`)}`,
+      `URL:${escapeIcs(url.toString())}`,
+      'BEGIN:VALARM',
+      'TRIGGER:-PT8H',
+      'ACTION:DISPLAY',
+      `DESCRIPTION:${escapeIcs(`${event.name} is today. Make your UFC picks before ${startLabel}.`)}`,
+      'END:VALARM',
+      'BEGIN:VALARM',
+      'TRIGGER:-PT1H',
+      'ACTION:DISPLAY',
+      `DESCRIPTION:${escapeIcs(`${event.name} starts in one hour. Finalize your UFC picks now.`)}`,
+      'END:VALARM',
       'END:VEVENT','END:VCALENDAR'
     ].join('\r\n');
     const blob=new Blob([content],{type:'text/calendar;charset=utf-8'});
@@ -187,7 +199,7 @@
     const href=link.href;
     link.remove();
     setTimeout(()=>URL.revokeObjectURL(href),1000);
-    toast('Calendar reminder created');
+    toast('Phone reminders added');
   }
 
   async function refresh(force=false){
