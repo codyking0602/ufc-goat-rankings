@@ -2,7 +2,7 @@
 // This is the only module allowed to own overall totals, ranks, weighted breakdowns, and score-derived OVR.
 (function(){
   'use strict';
-  const VERSION='final-score-engine-20260712a-division-era-depth';
+  const VERSION='final-score-engine-20260712b-era-shadow-fallback';
   const DATA=window.RANKING_DATA;
   const WEIGHTS={championship:35,opponentQuality:27.5,primeDominance:27.5,longevity:10};
   const MAX={championship:30,opponentQuality:30,primeDominance:30,longevity:30};
@@ -23,6 +23,12 @@
   function round2(value){return Math.round((num(value)+Number.EPSILON)*100)/100;}
   function clamp(value,min,max){return Math.max(min,Math.min(max,value));}
   function key(name){return String(name||'').trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');}
+  const ERA_DEPTH_BY_FIGHTER=new Map((window.UFC_DIVISION_ERA_DEPTH_SHADOW?.fighters||[]).map(row=>[key(row?.fighter),row]));
+  function eraDepthAdjustmentFor(row){
+    const direct=row?.eraDepthAdjustment;
+    if(direct!==undefined&&direct!==null&&direct!==''&&Number.isFinite(Number(direct)))return Number(direct);
+    return num(ERA_DEPTH_BY_FIGHTER.get(key(row?.fighter))?.curvedAdjustment);
+  }
   function boardRows(){return [...(DATA?.men||[]),...(DATA?.women||[])].filter(row=>row&&row.fighter);}
   function allRows(){return [...boardRows(),...(DATA?.fighters||[])].filter(row=>row&&row.fighter);}
   function categoryScore(row,category){
@@ -38,7 +44,7 @@
     const longevity=(categoryScore(row,'longevity')/MAX.longevity)*WEIGHTS.longevity;
     const apexPeak=num(row?.apexPeak);
     const penalty=num(row?.penalty);
-    const eraDepthAdjustment=num(row?.eraDepthAdjustment);
+    const eraDepthAdjustment=eraDepthAdjustmentFor(row);
     const baseScore=championship+opponentQuality+primeDominance+longevity;
     const preEraDepthTotalScore=baseScore+apexPeak+penalty;
     const modifierScore=apexPeak+penalty+eraDepthAdjustment;
@@ -63,6 +69,7 @@
     if(!row) return;
     const breakdown=scoreBreakdown(row);
     row.weightedScoreBreakdown=breakdown;
+    row.eraDepthAdjustment=breakdown.eraDepthAdjustment;
     row.preEraDepthTotalScore=breakdown.preEraDepthTotalScore;
     row.rawScore=breakdown.totalScore;
     row.totalScore=breakdown.totalScore;
