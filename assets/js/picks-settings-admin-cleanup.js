@@ -12,11 +12,6 @@
     return Boolean(recap && !recap.hidden && recap.innerHTML.trim());
   }
 
-  function removeRetiredTools(){
-    document.getElementById('picksEventManagerCard')?.remove();
-    document.getElementById('picksAutomationCard')?.remove();
-  }
-
   function cleanProfile(){
     const shell=document.getElementById('picksProfileShell');
     const profile=shell?.querySelector('.social-profile');
@@ -186,7 +181,6 @@
     if(syncing) return;
     syncing=true;
     try{
-      removeRetiredTools();
       cleanProfile();
       cleanCommissioner();
       cleanAdmin();
