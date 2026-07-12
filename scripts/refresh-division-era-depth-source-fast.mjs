@@ -1,35 +1,122 @@
+import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 
-const HISTORICAL_SOURCE_URL='https://raw.githubusercontent.com/Yahlawat/UFC_Data_WEBSCRAPING/main/Data/wrangled_Data/wrangled_fight_details.csv';
-const UFCSTATS_EVENTS_URL='http://ufcstats.com/statistics/events/completed?page=all';
-const REQUIRED_COLUMNS=['fight_link','date','name_1','name_2','win_loss_1','win_loss_2','division'];
-const USER_AGENT='Mozilla/5.0 (compatible; UFCGoatRankingsDepth/2.2; +https://github.com/codyking0602/ufc-goat-rankings)';
+const SOURCE_REPOSITORY='komaksym/UFC-DataLab';
+const SOURCE_COMMIT='3268146c05211de9deab8b9b4c0bb4a954815f0b';
+const SOURCE_FILE='data/stats/stats_raw.csv';
+const SOURCE_URL=`https://raw.githubusercontent.com/${SOURCE_REPOSITORY}/${SOURCE_COMMIT}/${SOURCE_FILE}`;
+const REQUIRED=['red_fighter_name','blue_fighter_name','event_date','red_fighter_result','blue_fighter_result','bout_type','event_name','method','round','time'];
+const OUTPUT=['fight_link','date','name_1','name_2','win_loss_1','win_loss_2','division'];
+const USER_AGENT='ufc-goat-rankings-era-depth/3.1 (+https://github.com/codyking0602/ufc-goat-rankings)';
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 
-function decodeHtml(value){return String(value||'').replace(/&nbsp;/gi,' ').replace(/&amp;/gi,'&').replace(/&quot;/gi,'"').replace(/&#39;|&apos;/gi,"'").replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#(\d+);/g,(_,code)=>String.fromCodePoint(Number(code))).replace(/&#x([0-9a-f]+);/gi,(_,code)=>String.fromCodePoint(Number.parseInt(code,16)));}
-function textContent(html){return decodeHtml(String(html||'').replace(/<script\b[\s\S]*?<\/script>/gi,' ').replace(/<style\b[\s\S]*?<\/style>/gi,' ').replace(/<[^>]+>/g,' ')).replace(/\s+/g,' ').trim();}
-function attrValue(attrs,name){const match=String(attrs||'').match(new RegExp(`${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)')`,'i'));return decodeHtml(match?.[1]||match?.[2]||'');}
-function isoDate(value){const date=value instanceof Date?value:new Date(String(value||'').trim());return Number.isFinite(date.getTime())?date.toISOString().slice(0,10):null;}
-function csvCell(value){const text=String(value??'');return /[",\n\r]/.test(text)?`"${text.replace(/"/g,'""')}"`:text;}
+function parseDelimited(text){
+  const firstLine=String(text).split(/\r?\n/,1)[0]||'';
+  const delimiter=firstLine.includes(';')?';':',';
+  const rows=[];
+  let row=[];
+  let field='';
+  let quoted=false;
+  for(let index=0;index<text.length;index+=1){
+    const char=text[index];
+    if(quoted){
+      if(char==='"'){
+        if(text[index+1]==='"'){field+='"';index+=1;}
+        else quoted=false;
+      }else field+=char;
+    }else if(char==='"')quoted=true;
+    else if(char===delimiter){row.push(field);field='';}
+    else if(char==='\n'){row.push(field.replace(/\r$/,''));rows.push(row);row=[];field='';}
+    else field+=char;
+  }
+  if(field.length||row.length){row.push(field.replace(/\r$/,''));rows.push(row);}
+  return{delimiter,rows};
+}
 
-function parseCsv(text){const rows=[];let row=[];let field='';let quoted=false;for(let index=0;index<text.length;index+=1){const char=text[index];if(quoted){if(char==='"'){if(text[index+1]==='"'){field+='"';index+=1;}else quoted=false;}else field+=char;}else if(char==='"')quoted=true;else if(char===','){row.push(field);field='';}else if(char==='\n'){row.push(field.replace(/\r$/,''));rows.push(row);row=[];field='';}else field+=char;}if(field.length||row.length){row.push(field.replace(/\r$/,''));rows.push(row);}return rows;}
+function csvCell(value){
+  const text=String(value??'');
+  return /[",\n\r]/.test(text)?`"${text.replace(/"/g,'""')}"`:text;
+}
 
-async function fetchText(url,attempts=5){let lastError;for(let attempt=1;attempt<=attempts;attempt+=1){try{const response=await fetch(url,{redirect:'follow',headers:{'User-Agent':USER_AGENT,Accept:'text/html,text/csv;q=0.9,*/*;q=0.8'}});if(!response.ok)throw new Error(`${response.status} ${response.statusText}`);const text=await response.text();if(!text.trim())throw new Error('empty response');return text;}catch(error){lastError=error;if(attempt<attempts)await sleep(Math.min(8000,500*(2**(attempt-1))));}}throw new Error(`Failed to fetch ${url}: ${lastError?.message||lastError}`);}
+function isoDate(value){
+  const text=String(value||'').trim();
+  const dmy=text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if(dmy)return`${dmy[3]}-${dmy[2].padStart(2,'0')}-${dmy[1].padStart(2,'0')}`;
+  const date=new Date(text);
+  return Number.isFinite(date.getTime())?date.toISOString().slice(0,10):null;
+}
 
-function historicalRows(csvText){const parsed=parseCsv(csvText).filter(row=>row.some(cell=>String(cell||'').trim()));if(parsed.length<2)throw new Error('Historical depth source is empty.');const header=parsed.shift();const positions=Object.fromEntries(header.map((name,index)=>[String(name).trim(),index]));const missing=REQUIRED_COLUMNS.filter(name=>positions[name]===undefined);if(missing.length)throw new Error(`Historical depth source is missing: ${missing.join(', ')}`);return parsed.map(values=>Object.fromEntries(REQUIRED_COLUMNS.map(name=>[name,values[positions[name]]??'']))).filter(row=>row.fight_link&&isoDate(row.date)).map(row=>({...row,date:isoDate(row.date)}));}
+function result(value){
+  const marker=String(value||'').trim().toUpperCase();
+  if(['W','L','D','NC'].includes(marker))return marker;
+  if(['N/C','NO CONTEST','NO-CONTEST'].includes(marker))return'NC';
+  if(marker==='DRAW')return'D';
+  return'';
+}
 
-function completedEvents(html){const events=[];const seen=new Set();const pattern=/<tr\b([^>]*)class=(?:"[^"]*b-statistics__table-row[^"]*"|'[^']*b-statistics__table-row[^']*')([^>]*)>([\s\S]*?)<\/tr>/gi;let match;while((match=pattern.exec(html))){const attrs=`${match[1]||''} ${match[2]||''}`;const block=match[3];const anchor=block.match(/href=(?:"([^"]*\/event-details\/[^"]+)"|'([^']*\/event-details\/[^']+)')/i);const url=decodeHtml(anchor?.[1]||anchor?.[2]||attrValue(attrs,'data-link'));if(!url||!url.includes('/event-details/')||seen.has(url))continue;const dateMatch=block.match(/<span\b[^>]*class=(?:"[^"]*b-statistics__date[^"]*"|'[^']*b-statistics__date[^']*')[^>]*>([\s\S]*?)<\/span>/i);const date=isoDate(textContent(dateMatch?.[1]||''));if(!date)continue;seen.add(url);events.push({url,date});}if(!events.length)throw new Error('UFCStats completed-events page parsed zero completed events.');return events.sort((a,b)=>b.date.localeCompare(a.date));}
-function tagBlocks(html,tag){const blocks=[];const pattern=new RegExp(`<${tag}\\b[^>]*>([\\s\\S]*?)<\\/${tag}>`,'gi');let match;while((match=pattern.exec(html)))blocks.push(match[1]);return blocks;}
-function anchorTexts(html,needle=''){const rows=[];const pattern=/<a\b([^>]*)>([\s\S]*?)<\/a>/gi;let match;while((match=pattern.exec(html))){const href=attrValue(match[1],'href');if(needle&&!href.includes(needle))continue;const text=textContent(match[2]);if(text)rows.push({href,text});}return rows;}
+function fightId(row){
+  const identity=[row.event_date,row.event_name,row.red_fighter_name,row.blue_fighter_name,row.method,row.round,row.time]
+    .map(value=>String(value||'').trim()).join('|');
+  return`github://${SOURCE_REPOSITORY}/${SOURCE_COMMIT}/${crypto.createHash('sha256').update(identity).digest('hex').slice(0,24)}`;
+}
 
-function resultFromCell(cell){const text=textContent(cell).toUpperCase();if(/\bNC\b|NO CONTEST/.test(text))return['NC','NC'];if(/\bD\b|DRAW/.test(text))return['D','D'];const classText=String(cell||'').toLowerCase();if(classText.includes('b-flag_style_bordered'))return['D','D'];return['W','L'];}
+async function fetchText(url,attempts=5){
+  let lastError;
+  for(let attempt=1;attempt<=attempts;attempt+=1){
+    const controller=new AbortController();
+    const timeout=setTimeout(()=>controller.abort(),60_000);
+    try{
+      const response=await fetch(url,{redirect:'follow',signal:controller.signal,headers:{'User-Agent':USER_AGENT,Accept:'text/csv,text/plain;q=0.9,*/*;q=0.8','Cache-Control':'no-cache'}});
+      if(!response.ok)throw new Error(`${response.status} ${response.statusText}`);
+      const text=await response.text();
+      if(!text.trim())throw new Error('empty response');
+      return text;
+    }catch(error){
+      lastError=error;
+      if(attempt<attempts)await sleep(Math.min(8000,750*(2**(attempt-1))));
+    }finally{clearTimeout(timeout);}
+  }
+  throw new Error(`Failed to fetch ${url}: ${lastError?.message||lastError}`);
+}
 
-function parseEventFights(html,event){const fights=[];const pattern=/<tr\b([^>]*)class=(?:"[^"]*b-fight-details__table-row[^"]*"|'[^']*b-fight-details__table-row[^']*')([^>]*)>([\s\S]*?)<\/tr>/gi;let match;while((match=pattern.exec(html))){const attrs=`${match[1]||''} ${match[2]||''}`;const row=match[3];const cells=tagBlocks(row,'td');if(cells.length<7)continue;const fightLink=anchorTexts(cells[0],'/fight-details/')[0]?.href||attrValue(attrs,'data-link');const fighters=anchorTexts(cells[1],'/fighter-details/').slice(0,2);if(!fightLink||!fightLink.includes('/fight-details/')||fighters.length!==2)continue;const division=textContent(tagBlocks(cells[6],'p')[0]||cells[6]);const [result1,result2]=resultFromCell(cells[0]);fights.push({fight_link:fightLink,date:event.date,name_1:fighters[0].text,name_2:fighters[1].text,win_loss_1:result1,win_loss_2:result2,division,event_url:event.url});}if(!fights.length)throw new Error(`UFCStats event parsed zero fights: ${event.url}`);return fights;}
+function buildRows(text){
+  const parsed=parseDelimited(text);
+  const rows=parsed.rows.filter(row=>row.some(cell=>String(cell||'').trim()));
+  if(rows.length<2)throw new Error('UFC DataLab source is empty.');
+  const header=rows.shift().map(name=>String(name||'').replace(/^\uFEFF/,'').trim());
+  const positions=Object.fromEntries(header.map((name,index)=>[name,index]));
+  const missing=REQUIRED.filter(name=>positions[name]===undefined);
+  if(missing.length)throw new Error(`UFC DataLab source is missing columns: ${missing.join(', ')}. Delimiter=${JSON.stringify(parsed.delimiter)}; Header=${header.join(' | ')}`);
+  const output=[];
+  for(const values of rows){
+    const source=Object.fromEntries(header.map((name,index)=>[name,values[index]??'']));
+    const date=isoDate(source.event_date);
+    const name1=String(source.red_fighter_name||'').trim();
+    const name2=String(source.blue_fighter_name||'').trim();
+    const result1=result(source.red_fighter_result);
+    const result2=result(source.blue_fighter_result);
+    const division=String(source.bout_type||'').trim();
+    if(!date||!name1||!name2||!result1||!result2||!division)continue;
+    output.push({fight_link:fightId(source),date,name_1:name1,name_2:name2,win_loss_1:result1,win_loss_2:result2,division});
+  }
+  if(!output.length)throw new Error('UFC DataLab source produced zero usable fights.');
+  output.sort((a,b)=>a.date.localeCompare(b.date)||a.fight_link.localeCompare(b.fight_link));
+  return output;
+}
 
-async function mapConcurrent(items,concurrency,mapper){const output=new Array(items.length);let cursor=0;const workers=Array.from({length:Math.min(concurrency,Math.max(1,items.length))},async()=>{while(true){const index=cursor;cursor+=1;if(index>=items.length)return;output[index]=await mapper(items[index],index);}});await Promise.all(workers);return output;}
+export async function buildCurrentDepthCsv(options={}){
+  const modelDate=isoDate(options.modelDate||new Date().toISOString().slice(0,10));
+  const rows=buildRows(await fetchText(SOURCE_URL));
+  const datasetStart=rows[0]?.date||null;
+  const datasetEnd=rows.at(-1)?.date||null;
+  const ageDays=datasetEnd?(new Date(`${modelDate}T00:00:00Z`)-new Date(`${datasetEnd}T00:00:00Z`))/86_400_000:Number.POSITIVE_INFINITY;
+  const csv=[OUTPUT.join(','),...rows.map(row=>OUTPUT.map(name=>csvCell(row[name])).join(','))].join('\n')+'\n';
+  return{csv,metadata:{sourceUrl:SOURCE_URL,repository:SOURCE_REPOSITORY,sourceCommit:SOURCE_COMMIT,sourceFile:SOURCE_FILE,description:'Pinned UFCStats-derived all-bouts mirror including decisive fights, draws, and no contests.',datasetFightCount:rows.length,datasetStart,datasetEnd,modelDate,ageDays,sourceFresh:Number.isFinite(ageDays)&&ageDays>=0&&ageDays<=21,underlyingSource:'UFCStats'}};
+}
 
-async function scrapeNewRows(cutoffDate,modelDate){const eventsHtml=await fetchText(UFCSTATS_EVENTS_URL);const allEvents=completedEvents(eventsHtml);const events=allEvents.filter(event=>event.date>cutoffDate&&event.date<=modelDate);if(!events.length)return{events,fights:[],latestAvailable:allEvents[0]?.date||null};const cards=await mapConcurrent(events,5,async event=>parseEventFights(await fetchText(event.url),event));return{events,fights:cards.flat(),latestAvailable:allEvents[0]?.date||null};}
-
-export async function buildCurrentDepthCsv(options={}){const modelDate=isoDate(options.modelDate||new Date());const historicalText=await fetchText(options.historicalSourceUrl||HISTORICAL_SOURCE_URL);const baseRows=historicalRows(historicalText);const cutoffDate=baseRows.reduce((latest,row)=>row.date>latest?row.date:latest,'0000-00-00');const refresh=await scrapeNewRows(cutoffDate,modelDate);const byLink=new Map(baseRows.map(row=>[row.fight_link,row]));refresh.fights.forEach(row=>byLink.set(row.fight_link,Object.fromEntries(REQUIRED_COLUMNS.map(name=>[name,row[name]??'']))));const rows=[...byLink.values()].sort((a,b)=>a.date.localeCompare(b.date)||a.fight_link.localeCompare(b.fight_link));const csv=[REQUIRED_COLUMNS.join(','),...rows.map(row=>REQUIRED_COLUMNS.map(name=>csvCell(row[name])).join(','))].join('\n')+'\n';const datasetEnd=rows.at(-1)?.date||cutoffDate;const ageDays=(new Date(`${modelDate}T00:00:00Z`)-new Date(`${datasetEnd}T00:00:00Z`))/86400000;return{csv,metadata:{historicalSourceUrl:options.historicalSourceUrl||HISTORICAL_SOURCE_URL,liveSourceUrl:UFCSTATS_EVENTS_URL,historicalFightCount:baseRows.length,addedEventCount:refresh.events.length,addedFightCount:refresh.fights.length,datasetFightCount:rows.length,historicalCutoff:cutoffDate,latestAvailableEventDate:refresh.latestAvailable,datasetEnd,modelDate,ageDays,sourceFresh:datasetEnd>=modelDate||ageDays<=21}};}
-
-if(import.meta.url===`file://${process.argv[1]}`){const output=process.argv[2];const result=await buildCurrentDepthCsv({modelDate:process.env.UFC_MODEL_DATE||new Date()});if(output)await fs.writeFile(output,result.csv);console.log(JSON.stringify(result.metadata,null,2));}
+if(import.meta.url===`file://${process.argv[1]}`){
+  const output=process.argv[2];
+  const built=await buildCurrentDepthCsv({modelDate:process.env.UFC_MODEL_DATE||new Date()});
+  if(output)await fs.writeFile(output,built.csv);
+  console.log(JSON.stringify(built.metadata,null,2));
+}

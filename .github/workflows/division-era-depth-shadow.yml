@@ -8,7 +8,9 @@ on:
       - 'scripts/run-division-era-depth-shadow.mjs'
       - 'scripts/refresh-division-era-depth-source.mjs'
       - 'scripts/refresh-division-era-depth-source-fast.mjs'
+      - 'scripts/normalize-division-era-depth-source.mjs'
       - 'scripts/build-division-era-depth-judgment-review.mjs'
+      - 'scripts/validate-division-era-depth-promotion.mjs'
       - '.github/workflows/division-era-depth-shadow.yml'
   pull_request:
     branches: [main]
@@ -17,7 +19,9 @@ on:
       - 'scripts/run-division-era-depth-shadow.mjs'
       - 'scripts/refresh-division-era-depth-source.mjs'
       - 'scripts/refresh-division-era-depth-source-fast.mjs'
+      - 'scripts/normalize-division-era-depth-source.mjs'
       - 'scripts/build-division-era-depth-judgment-review.mjs'
+      - 'scripts/validate-division-era-depth-promotion.mjs'
       - '.github/workflows/division-era-depth-shadow.yml'
   workflow_dispatch:
 
@@ -48,17 +52,21 @@ jobs:
           node --check scripts/build-division-era-depth-shadow.mjs
           node --check scripts/refresh-division-era-depth-source.mjs
           node --check scripts/refresh-division-era-depth-source-fast.mjs
+          node --check scripts/normalize-division-era-depth-source.mjs
           node --check scripts/run-division-era-depth-shadow.mjs
           node --check scripts/build-division-era-depth-judgment-review.mjs
+          node --check scripts/validate-division-era-depth-promotion.mjs
 
       - name: Build current 63-fighter depth model
         env:
           UFC_MODEL_DATE: '2026-07-12'
         run: |
+          set -o pipefail
           mkdir -p artifacts docs
+          trap 'cp artifacts/division-era-depth-build.log docs/division-era-depth-build-diagnostics.txt 2>/dev/null || true' EXIT
           node scripts/run-division-era-depth-shadow.mjs 2>&1 | tee artifacts/division-era-depth-build.log
+          node scripts/normalize-division-era-depth-source.mjs 2>&1 | tee -a artifacts/division-era-depth-build.log
           node scripts/build-division-era-depth-judgment-review.mjs 2>&1 | tee -a artifacts/division-era-depth-build.log
-          cp artifacts/division-era-depth-build.log docs/division-era-depth-build-diagnostics.txt
 
       - name: Validate promotion contract
         run: node scripts/validate-division-era-depth-promotion.mjs
