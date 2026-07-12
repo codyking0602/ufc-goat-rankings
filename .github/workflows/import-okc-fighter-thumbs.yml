@@ -10,6 +10,8 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 concurrency:
   group: import-okc-fighter-thumbs
@@ -19,6 +21,9 @@ jobs:
   import:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout latest main
         uses: actions/checkout@v4
@@ -44,18 +49,67 @@ jobs:
           count=$(find assets/fighters -maxdepth 1 -type f \
             \( -name 'tabatha-ricci-thumb.webp' -o -name 'fatima-kline-thumb.webp' -o -name 'tommy-mcmillen-thumb.webp' -o -name 'alberto-montes-thumb.webp' -o -name 'chase-hooper-thumb.webp' -o -name 'mitch-ramirez-thumb.webp' -o -name 'jared-cannonier-thumb.webp' -o -name 'christian-leroy-duncan-thumb.webp' -o -name 'brad-tavares-thumb.webp' -o -name 'marc-andre-barriault-thumb.webp' \) | wc -l)
           echo "Official thumbnails present: $count"
-          test "$count" -ge 6
+          test "$count" -eq 10
 
-      - name: Commit imported thumbnails
+      - name: Finalize cache versions and smoke checks
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          index=Path('index.html')
+          text=index.read_text()
+          text=text.replace('20260712-picks-event-artwork-repaired','20260712-okc-official-fighter-thumbs')
+          text=text.replace('picks-photo-overrides-20260712b-okc-ddp-live','picks-photo-overrides-20260712c-okc-card')
+          text=text.replace('picks-mobile-polish-20260712b-event-art','picks-mobile-polish-20260712c-photo-fallback')
+          index.write_text(text)
+
+          smoke=Path('scripts/check-picks-ui.mjs')
+          check=smoke.read_text()
+          old="check(photos.includes('\"Dricus Du Plessis\": \"assets/fighters/dricus-du-plessis-thumb.webp\"'),'Dricus event-name photo mapping is missing');"
+          if old in check:
+            new="""const okcPhotoFiles=[
+            'tabatha-ricci','fatima-kline','tommy-mcmillen','alberto-montes','chase-hooper',
+            'mitch-ramirez','jared-cannonier','christian-leroy-duncan','brad-tavares','marc-andre-barriault'
+          ];
+          okcPhotoFiles.forEach(slug=>check(exists(`assets/fighters/${slug}-thumb.webp`),`Missing Oklahoma City thumbnail: ${slug}`));
+          check(photos.includes(\"OKC_PHOTO_VERSION='okc-card-20260712a'\"),'Oklahoma City thumbnail cache version is missing');
+          check(photos.includes('\"Dricus Du Plessis\": okcPhoto(\'dricus-du-plessis\')'),'Dricus event-name photo mapping is missing');
+          check(photos.includes('\"Kamaru Usman\": okcPhoto(\'kamaru-usman\')'),'Usman event-name photo mapping is missing');"""
+            check=check.replace(old,new)
+          marker="check(mobilePolishCss.includes('>.picks-event-meta') && mobilePolishCss.includes('background:#101827'),'Event details are not separated below the artwork');"
+          initials="check(mobilePolishCss.includes('.picks-photo-fallback[hidden]') && mobilePolishCss.includes(':has(>img)'),'Loaded fighter photos do not fully hide fallback initials');"
+          if initials not in check:
+            check=check.replace(marker,marker+'\n'+initials)
+          smoke.write_text(check)
+          PY
+          rm -f .github/workflows/finalize-okc-fighter-thumbs.yml
+
+      - name: Verify Picks UI
+        run: node scripts/check-picks-ui.mjs
+
+      - name: Commit official thumbnails and wiring
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/fighters/*-thumb.webp assets/fighters/okc-photo-import-report.json
-          if git diff --cached --quiet; then
-            echo "No thumbnail changes to commit."
-            exit 0
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "Finalize official Oklahoma City fighter thumbnails"
+            git pull --rebase origin main
+            git push origin main
+          else
+            echo "No source changes to commit."
           fi
-          git commit -m "Add official Oklahoma City fighter thumbnails"
-          git pull --rebase origin main
-          git push origin main
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
