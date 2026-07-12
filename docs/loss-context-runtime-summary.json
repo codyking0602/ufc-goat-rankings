@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-12T05:34:58.710Z",
+  "generatedAt": "2026-07-12T08:19:47.745Z",
   "pipelineStatus": "ready",
   "pipelineError": null,
   "complete": true,
@@ -75,7 +75,7 @@
     "mutatesRecords": true,
     "mutatesPenalty": false,
     "mutatesScores": false,
-    "appliedAt": "2026-07-12T05:34:53.559Z",
+    "appliedAt": "2026-07-12T08:19:41.759Z",
     "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
   },
   "promotedPenaltyChanges": [
@@ -665,10 +665,10 @@
       "board": "men",
       "fighter": "Kamaru Usman",
       "currentRank": 9,
-      "currentTotal": 60.91,
+      "currentTotal": 60.03,
       "currentPenalty": -3.75,
       "priorPenalty": -4.5,
-      "counterfactualTotal": 60.16,
+      "counterfactualTotal": 59.28,
       "counterfactualRank": 9,
       "rankMovement": 0
     },
@@ -676,10 +676,10 @@
       "board": "men",
       "fighter": "Stipe Miocic",
       "currentRank": 11,
-      "currentTotal": 58.35,
+      "currentTotal": 57.87,
       "currentPenalty": -7.25,
       "priorPenalty": -8,
-      "counterfactualTotal": 57.6,
+      "counterfactualTotal": 57.12,
       "counterfactualRank": 11,
       "rankMovement": 0
     },
@@ -5492,9 +5492,9 @@
           "currentPenalty": -2.39,
           "recommendedPenalty": -2.39,
           "projectedDelta": 0,
-          "currentTotal": 62.27,
-          "projectedTotal": 62.27,
-          "currentRank": 10,
+          "currentTotal": 61.39,
+          "projectedTotal": 61.39,
+          "currentRank": 11,
           "severity": 1.88,
           "severityMax": 3.5,
           "worstLosses": [
@@ -5542,7 +5542,7 @@
           "record": "16-3",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 10,
+          "projectedRank": 11,
           "rankMovement": 0
         },
         {
@@ -5972,9 +5972,9 @@
           "currentPenalty": -3.46,
           "recommendedPenalty": -3.46,
           "projectedDelta": 0,
-          "currentTotal": 62.14,
-          "projectedTotal": 62.14,
-          "currentRank": 11,
+          "currentTotal": 61.66,
+          "projectedTotal": 61.66,
+          "currentRank": 10,
           "severity": 2.25,
           "severityMax": 3.5,
           "worstLosses": [
@@ -6022,7 +6022,7 @@
           "record": "14-5",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 11,
+          "projectedRank": 10,
           "rankMovement": 0
         },
         {
@@ -6368,17 +6368,17 @@
           "overallOvr": 91
         },
         {
-          "fighter": "Kamaru Usman",
+          "fighter": "Stipe Miocic",
           "board": "men",
           "rank": 10,
-          "totalScore": 62.27,
+          "totalScore": 61.66,
           "overallOvr": 90
         },
         {
-          "fighter": "Stipe Miocic",
+          "fighter": "Kamaru Usman",
           "board": "men",
           "rank": 11,
-          "totalScore": 62.14,
+          "totalScore": 61.39,
           "overallOvr": 90
         },
         {
@@ -6406,8 +6406,8 @@
           "fighter": "Daniel Cormier",
           "board": "men",
           "rank": 15,
-          "totalScore": 58.79,
-          "overallOvr": 90
+          "totalScore": 58.3,
+          "overallOvr": 89
         },
         {
           "fighter": "Chuck Liddell",
@@ -7131,52 +7131,10 @@
           }
         },
         {
-          "fighter": "Kamaru Usman",
-          "board": "men",
-          "rank": 10,
-          "totalScore": 62.27,
-          "penalty": -2.39,
-          "overallOvr": 90,
-          "lossContextHybrid": {
-            "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
-            "judgmentLockVersion": "loss-context-hybrid-judgment-lock-20260711a",
-            "severity": 1.88,
-            "frequency": 0.66,
-            "hybridBase": 2.54,
-            "primeLossCount": 2,
-            "primeFinishCount": 1,
-            "primeVolumeFloor": 1.75,
-            "primeVolumeFloorApplied": false,
-            "throughPrimeUfcFights": 17,
-            "divisionMultiplier": 1.04,
-            "divisionDiscountPct": 0.06,
-            "divisionPointsSaved": 0.15,
-            "finalPenalty": -2.39,
-            "worstLosses": [
-              {
-                "label": "Leon Edwards II",
-                "date": "2022-08-20",
-                "phase": "prime",
-                "quality": "elite",
-                "finished": true,
-                "penalty": -2.25
-              },
-              {
-                "label": "Leon Edwards III",
-                "date": "2023-03-18",
-                "phase": "prime",
-                "quality": "elite",
-                "finished": false,
-                "penalty": -1.5
-              }
-            ]
-          }
-        },
-        {
           "fighter": "Stipe Miocic",
           "board": "men",
-          "rank": 11,
-          "totalScore": 62.14,
+          "rank": 10,
+          "totalScore": 61.66,
           "penalty": -3.46,
           "overallOvr": 90,
           "lossContextHybrid": {
@@ -7210,6 +7168,48 @@
                 "quality": "elite",
                 "finished": true,
                 "penalty": -2.25
+              }
+            ]
+          }
+        },
+        {
+          "fighter": "Kamaru Usman",
+          "board": "men",
+          "rank": 11,
+          "totalScore": 61.39,
+          "penalty": -2.39,
+          "overallOvr": 90,
+          "lossContextHybrid": {
+            "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
+            "judgmentLockVersion": "loss-context-hybrid-judgment-lock-20260711a",
+            "severity": 1.88,
+            "frequency": 0.66,
+            "hybridBase": 2.54,
+            "primeLossCount": 2,
+            "primeFinishCount": 1,
+            "primeVolumeFloor": 1.75,
+            "primeVolumeFloorApplied": false,
+            "throughPrimeUfcFights": 17,
+            "divisionMultiplier": 1.04,
+            "divisionDiscountPct": 0.06,
+            "divisionPointsSaved": 0.15,
+            "finalPenalty": -2.39,
+            "worstLosses": [
+              {
+                "label": "Leon Edwards II",
+                "date": "2022-08-20",
+                "phase": "prime",
+                "quality": "elite",
+                "finished": true,
+                "penalty": -2.25
+              },
+              {
+                "label": "Leon Edwards III",
+                "date": "2023-03-18",
+                "phase": "prime",
+                "quality": "elite",
+                "finished": false,
+                "penalty": -1.5
               }
             ]
           }
@@ -7344,9 +7344,9 @@
           "fighter": "Daniel Cormier",
           "board": "men",
           "rank": 15,
-          "totalScore": 58.79,
+          "totalScore": 58.3,
           "penalty": -3.01,
-          "overallOvr": 90,
+          "overallOvr": 89,
           "lossContextHybrid": {
             "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
             "judgmentLockVersion": "loss-context-hybrid-judgment-lock-20260711a",
@@ -9354,7 +9354,7 @@
       "mutatesScores": true,
       "mutatesRanks": true,
       "mutatesOvr": true,
-      "appliedAt": "2026-07-12T05:34:55.910Z"
+      "appliedAt": "2026-07-12T08:19:44.140Z"
     }
   },
   "liveConsistency": {
@@ -9363,22 +9363,86 @@
     "boardPenaltyMismatches": [],
     "profilePenaltyMismatchCount": 0,
     "profilePenaltyMismatches": [],
-    "overrideMismatchCount": 0,
-    "overrideMismatches": []
+    "overrideMismatchCount": 63,
+    "overrideMismatches": [
+      "Jon Jones",
+      "Georges St-Pierre",
+      "Anderson Silva",
+      "Demetrious Johnson",
+      "Islam Makhachev",
+      "Alexander Volkanovski",
+      "Jose Aldo",
+      "Matt Hughes",
+      "Khabib Nurmagomedov",
+      "Kamaru Usman",
+      "Stipe Miocic",
+      "Max Holloway",
+      "Randy Couture",
+      "Israel Adesanya",
+      "Chuck Liddell",
+      "Daniel Cormier",
+      "Alex Pereira",
+      "B.J. Penn",
+      "T.J. Dillashaw",
+      "Frankie Edgar",
+      "Charles Oliveira",
+      "Cain Velasquez",
+      "Henry Cejudo",
+      "Junior dos Santos",
+      "Tito Ortiz",
+      "Francis Ngannou",
+      "Aljamain Sterling",
+      "Conor McGregor",
+      "Tyron Woodley",
+      "Merab Dvalishvili",
+      "Dustin Poirier",
+      "Ilia Topuria",
+      "Justin Gaethje",
+      "Robbie Lawler",
+      "Robert Whittaker",
+      "Dricus du Plessis",
+      "Petr Yan",
+      "Tony Ferguson",
+      "Dominick Cruz",
+      "Deiveson Figueiredo",
+      "Lyoto Machida",
+      "Khamzat Chimaev",
+      "Sean Strickland",
+      "Sean O'Malley",
+      "Brock Lesnar",
+      "Michael Bisping",
+      "Dan Henderson",
+      "Chael Sonnen",
+      "Amanda Nunes",
+      "Valentina Shevchenko",
+      "Zhang Weili",
+      "Joanna Jedrzejczyk",
+      "Rose Namajunas",
+      "Ronda Rousey",
+      "Jessica Andrade",
+      "Cris Cyborg",
+      "Alexa Grasso",
+      "Julianna Peña",
+      "Carla Esparza",
+      "Holly Holm",
+      "Mackenzie Dern",
+      "Kayla Harrison",
+      "Miesha Tate"
+    ]
   },
   "profileSurface": {
     "rendered": true,
     "hasLiveLossContext": true,
     "hasRank": true,
     "hasOvr": true,
-    "text": "UFC ALL-TIME RANK: #33\nLW\nJustin “The Highlight” Gaethje\n87 OVR\n\nThe lightweight chaos case: undisputed UFC gold, two interim-title wins, elite action wins, and enough finish-loss damage to keep the GOAT case capped.\n\n▶ WATCH SIGNATURE FIGHT\nResume Snapshot\n12-5\nUFC Record\n3\nUFC Title-Fight Wins\n9\nElite / Top-5 Wins\n7-3\nPrime Record\n75%\nFinish Rate\n59%\nRounds Won\n5.6 YRS\nActive Elite Years\n5\nPrime Stoppage Losses\nChampionship Resume\n77 RATING\n#35 in category · Title wins, reign strength, division control\nAVERAGE\nQuality Wins\n84 RATING\n#19 in category · Who they beat, when, and division strength\nGREAT\nPrime Dominance\n76 RATING\n#39 in category · Rounds, finishes, separation, durability\nAVERAGE\nElite Longevity\n82 RATING\n#23 in category · Active elite UFC years, not calendar padding\nGOOD\nApex Peak\n88 RATING\n#13 in category · Best two-win stretch: performance, proof, peak\nGREAT\nLoss Context\n76 RATING\n#39 in category · Losses adjusted for timing, opponent, finish, division\nAVERAGE\nAVERAGE · #39 IN CATEGORY\nLoss Context: 76 rating\n\nWhat it means: Justin Gaethje's Loss Context combines worst-loss severity, counted loss burden per UFC fight through prime, a minimum burden for repeated prime losses, and strong-division relief. The live penalty is -3.93.\n\nFinal Loss Context\n-3.93\nWorst-loss severity\n2.25 from the two worst counted losses\nLoss frequency\n2.37 across 13 UFC fights through prime\nPrime-loss floor\n3.00 · not needed\nDivision relief\n15% · 0.69 points saved\nPost-prime treatment\nPost-prime fights and no contests are excluded.\nWhy Ranked Here\n\nGaethje ranks here because the UFC-only case now has real championship weight: undisputed lightweight gold, two interim/title-level wins, and a modern lightweight win list built around Topuria, Ferguson, Poirier, Chandler, Fiziev, Barboza, Cerrone, and Johnson.\n\nWhy Not Ranked Higher?\n\nHe does not rank higher because the loss context is still heavy after the context adjustment. Gaethje has been finished in major prime fights, and one undisputed title win does not erase the Khabib, Oliveira, Max, Poirier, and Alvarez damage against cleaner all-time cases."
+    "text": "UFC ALL-TIME RANK: #33\nLW\nJustin “The Highlight” Gaethje\n89 OVR\n\nThe lightweight chaos case: undisputed UFC gold, two interim-title wins, elite action wins, and enough finish-loss damage to keep the GOAT case capped.\n\n▶ WATCH SIGNATURE FIGHT\nResume Snapshot\n12-5\nUFC Record\n3\nUFC Title-Fight Wins\n9\nElite / Top-5 Wins\n7-3\nPrime Record\n75%\nFinish Rate\n59%\nRounds Won\n5.6 YRS\nActive Elite Years\n5\nPrime Stoppage Losses\nChampionship Resume\n77 RATING\n#35 in category · Title wins, reign strength, division control\nAVERAGE\nQuality Wins\n84 RATING\n#19 in category · Who they beat, when, and division strength\nGREAT\nPrime Dominance\n76 RATING\n#39 in category · Rounds, finishes, separation, durability\nAVERAGE\nElite Longevity\n82 RATING\n#23 in category · Active elite UFC years, not calendar padding\nGOOD\nApex Peak\n88 RATING\n#13 in category · Best two-win stretch: performance, proof, peak\nGREAT\nLoss Context\n76 RATING\n#39 in category · Losses adjusted for timing, opponent, finish, division\nAVERAGE\nAVERAGE · #39 IN CATEGORY\nLoss Context: 76 rating\n\nWhat it means: Justin Gaethje's Loss Context combines worst-loss severity, counted loss burden per UFC fight through prime, a minimum burden for repeated prime losses, and strong-division relief. The live penalty is -3.93.\n\nFinal Loss Context\n-3.93\nWorst-loss severity\n2.25 from the two worst counted losses\nLoss frequency\n2.37 across 13 UFC fights through prime\nPrime-loss floor\n3.00 · not needed\nDivision relief\n15% · 0.69 points saved\nPost-prime treatment\nPost-prime fights and no contests are excluded.\nWhy Ranked Here\n\nGaethje ranks here because the UFC-only case now has real championship weight: undisputed lightweight gold, two interim/title-level wins, and a modern lightweight win list built around Topuria, Ferguson, Poirier, Chandler, Fiziev, Barboza, Cerrone, and Johnson.\n\nWhy Not Ranked Higher?\n\nHe does not rank higher because the loss context is still heavy after the context adjustment. Gaethje has been finished in major prime fights, and one undisputed title win does not erase the Khabib, Oliveira, Max, Poirier, and Alvarez damage against cleaner all-time cases."
   },
   "compareSurface": {
     "rendered": true,
     "hasGaethje": true,
     "hasDricus": true,
     "hasLiveRanks": true,
-    "text": "\n      \n      #33 · 87 OVR\n      Justin Gaethje\n      12-5 · Lightweight\n    \n      \n      #36 · 87 OVR\n      Dricus du Plessis\n      9-1 · Middleweight\n    \n      \n        Justin Gaethje wins this comparison.\n        Dricus keeps debates interesting because the high-end wins are stronger than his total UFC time would suggest.Gaethje wins comparisons when modern lightweight strength, action-fight résumé, high-end win quality, and undisputed title value matter more than clean title reign length.Dricus du Plessis may win one version of the argument, but Justin Gaethje wins the full ranking comparison.\n        Final take: Justin Gaethje wins, barely. Dricus du Plessis has the strongest counterargument, but Justin Gaethje's total resume gives him the edge.\n      \n    "
+    "text": "\n      \n      #33 · 89 OVR\n      Justin Gaethje\n      12-5 · Lightweight\n    \n      \n      #36 · 88 OVR\n      Dricus du Plessis\n      9-1 · Middleweight\n    \n      \n        Justin Gaethje wins this comparison.\n        Dricus keeps debates interesting because the high-end wins are stronger than his total UFC time would suggest.Gaethje wins comparisons when modern lightweight strength, action-fight résumé, high-end win quality, and undisputed title value matter more than clean title reign length.Dricus du Plessis may win one version of the argument, but Justin Gaethje wins the full ranking comparison.\n        Final take: Justin Gaethje wins, barely. Dricus du Plessis has the strongest counterargument, but Justin Gaethje's total resume gives him the edge.\n      \n    "
   },
   "menTop20": [
     {
@@ -9393,133 +9457,133 @@
       "fighter": "Georges St-Pierre",
       "totalScore": 88.07,
       "penalty": -3.78,
-      "overallOvr": 96
+      "overallOvr": 97
     },
     {
       "rank": 3,
       "fighter": "Anderson Silva",
       "totalScore": 77.29,
       "penalty": -3,
-      "overallOvr": 94
+      "overallOvr": 95
     },
     {
       "rank": 4,
       "fighter": "Demetrious Johnson",
       "totalScore": 77.11,
       "penalty": -1.51,
-      "overallOvr": 94
+      "overallOvr": 95
     },
     {
       "rank": 5,
       "fighter": "Islam Makhachev",
       "totalScore": 69.14,
       "penalty": -1.98,
-      "overallOvr": 92
+      "overallOvr": 93
     },
     {
       "rank": 6,
       "fighter": "Alexander Volkanovski",
       "totalScore": 67.62,
       "penalty": -2.61,
-      "overallOvr": 92
+      "overallOvr": 93
     },
     {
       "rank": 7,
       "fighter": "Jose Aldo",
       "totalScore": 67.14,
       "penalty": -5.15,
-      "overallOvr": 91
+      "overallOvr": 93
     },
     {
       "rank": 8,
       "fighter": "Matt Hughes",
       "totalScore": 64.76,
       "penalty": -3.52,
-      "overallOvr": 91
+      "overallOvr": 92
     },
     {
       "rank": 9,
       "fighter": "Khabib Nurmagomedov",
       "totalScore": 64.05,
       "penalty": 0,
-      "overallOvr": 91
+      "overallOvr": 92
     },
     {
       "rank": 10,
       "fighter": "Kamaru Usman",
-      "totalScore": 62.27,
+      "totalScore": 62.03,
       "penalty": -2.39,
-      "overallOvr": 90
+      "overallOvr": 92
     },
     {
       "rank": 11,
       "fighter": "Stipe Miocic",
-      "totalScore": 62.14,
+      "totalScore": 61.84,
       "penalty": -3.46,
-      "overallOvr": 90
+      "overallOvr": 92
     },
     {
       "rank": 12,
       "fighter": "Max Holloway",
       "totalScore": 61.37,
       "penalty": -4.37,
-      "overallOvr": 90
+      "overallOvr": 92
     },
     {
       "rank": 13,
       "fighter": "Randy Couture",
       "totalScore": 59.8,
       "penalty": -5.25,
-      "overallOvr": 90
+      "overallOvr": 91
     },
     {
       "rank": 14,
       "fighter": "Israel Adesanya",
       "totalScore": 59.57,
       "penalty": -3.52,
-      "overallOvr": 90
+      "overallOvr": 91
     },
     {
       "rank": 15,
-      "fighter": "Daniel Cormier",
-      "totalScore": 58.79,
-      "penalty": -3.01,
-      "overallOvr": 90
-    },
-    {
-      "rank": 16,
       "fighter": "Chuck Liddell",
       "totalScore": 57.62,
       "penalty": -3.25,
-      "overallOvr": 89
+      "overallOvr": 91
+    },
+    {
+      "rank": 16,
+      "fighter": "Daniel Cormier",
+      "totalScore": 56.79,
+      "penalty": -3.01,
+      "overallOvr": 91
     },
     {
       "rank": 17,
       "fighter": "Alex Pereira",
       "totalScore": 56.54,
       "penalty": -2.94,
-      "overallOvr": 89
+      "overallOvr": 91
     },
     {
       "rank": 18,
       "fighter": "B.J. Penn",
       "totalScore": 55.08,
       "penalty": -3.91,
-      "overallOvr": 89
+      "overallOvr": 90
     },
     {
       "rank": 19,
       "fighter": "T.J. Dillashaw",
       "totalScore": 54.52,
       "penalty": -3.24,
-      "overallOvr": 89
+      "overallOvr": 90
     },
     {
       "rank": 20,
       "fighter": "Frankie Edgar",
       "totalScore": 53.63,
       "penalty": -4.51,
-      "overallOvr": 88
+      "overallOvr": 90
     }
   ],
   "womenBoard": [
@@ -9535,98 +9599,98 @@
       "fighter": "Valentina Shevchenko",
       "totalScore": 75.92,
       "penalty": -2.63,
-      "overallOvr": 97
+      "overallOvr": 98
     },
     {
       "rank": 3,
       "fighter": "Zhang Weili",
       "totalScore": 57.04,
       "penalty": -2.92,
-      "overallOvr": 91
+      "overallOvr": 93
     },
     {
       "rank": 4,
       "fighter": "Joanna Jedrzejczyk",
       "totalScore": 52.82,
       "penalty": -3.25,
-      "overallOvr": 90
+      "overallOvr": 91
     },
     {
       "rank": 5,
       "fighter": "Rose Namajunas",
       "totalScore": 49.2,
       "penalty": -3.38,
-      "overallOvr": 88
+      "overallOvr": 90
     },
     {
       "rank": 6,
       "fighter": "Ronda Rousey",
       "totalScore": 48.9,
       "penalty": -3.94,
-      "overallOvr": 88
+      "overallOvr": 90
     },
     {
       "rank": 7,
       "fighter": "Jessica Andrade",
       "totalScore": 40.94,
       "penalty": -4.54,
-      "overallOvr": 86
+      "overallOvr": 88
     },
     {
       "rank": 8,
       "fighter": "Cris Cyborg",
       "totalScore": 38.69,
       "penalty": -3.21,
-      "overallOvr": 85
+      "overallOvr": 87
     },
     {
       "rank": 9,
       "fighter": "Alexa Grasso",
       "totalScore": 36.01,
       "penalty": -2.8,
-      "overallOvr": 84
+      "overallOvr": 86
     },
     {
       "rank": 10,
       "fighter": "Julianna Peña",
       "totalScore": 33.86,
       "penalty": -3.57,
-      "overallOvr": 83
+      "overallOvr": 85
     },
     {
       "rank": 11,
       "fighter": "Carla Esparza",
       "totalScore": 33.34,
       "penalty": -5.63,
-      "overallOvr": 83
+      "overallOvr": 85
     },
     {
       "rank": 12,
       "fighter": "Holly Holm",
       "totalScore": 30.59,
       "penalty": -4.75,
-      "overallOvr": 82
+      "overallOvr": 84
     },
     {
       "rank": 13,
       "fighter": "Mackenzie Dern",
       "totalScore": 30.4,
       "penalty": -3.38,
-      "overallOvr": 82
+      "overallOvr": 84
     },
     {
       "rank": 14,
       "fighter": "Kayla Harrison",
       "totalScore": 30.17,
       "penalty": 0,
-      "overallOvr": 82
+      "overallOvr": 84
     },
     {
       "rank": 15,
       "fighter": "Miesha Tate",
       "totalScore": 29.21,
       "penalty": -4.13,
-      "overallOvr": 82
+      "overallOvr": 84
     }
   ],
   "focusDiagnostics": [
@@ -9641,7 +9705,7 @@
           "ufcLosses": null,
           "penalty": -1.95,
           "totalScore": 44.7,
-          "overallOvr": 87,
+          "overallOvr": 88,
           "rank": 36
         },
         {
@@ -9652,14 +9716,14 @@
           "ufcLosses": 1,
           "penalty": -1.95,
           "totalScore": 44.7,
-          "overallOvr": 87,
+          "overallOvr": 88,
           "rank": 36
         }
       ],
       "packetRecord": "9-1",
       "overrideRecord": "9-1",
       "displayRank": 36,
-      "displayOvr": 87,
+      "displayOvr": null,
       "audit": {
         "status": "match",
         "ufcRecord": "9-1",
@@ -9724,7 +9788,7 @@
         "penalty": -1.95,
         "totalScore": 44.7,
         "rank": 36,
-        "overallOvr": 87,
+        "overallOvr": 88,
         "lossContextHybrid": {
           "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
           "judgmentLockVersion": "loss-context-hybrid-judgment-lock-20260711a",
@@ -9770,7 +9834,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T05:34:53.532Z",
+        "completedAt": "2026-07-12T08:19:41.733Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -9786,7 +9850,7 @@
           "ufcLosses": null,
           "penalty": -3.93,
           "totalScore": 46.83,
-          "overallOvr": 87,
+          "overallOvr": 89,
           "rank": 33
         },
         {
@@ -9797,14 +9861,14 @@
           "ufcLosses": 5,
           "penalty": -3.93,
           "totalScore": 46.83,
-          "overallOvr": 87,
+          "overallOvr": 89,
           "rank": 33
         }
       ],
       "packetRecord": "12-5",
       "overrideRecord": "12-5",
       "displayRank": 33,
-      "displayOvr": 87,
+      "displayOvr": null,
       "audit": {
         "status": "match",
         "ufcRecord": "12-5",
@@ -9925,7 +9989,7 @@
         "penalty": -3.93,
         "totalScore": 46.83,
         "rank": 33,
-        "overallOvr": 87,
+        "overallOvr": 89,
         "lossContextHybrid": {
           "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
           "judgmentLockVersion": "loss-context-hybrid-judgment-lock-20260711a",
@@ -9979,7 +10043,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T05:34:53.536Z",
+        "completedAt": "2026-07-12T08:19:41.735Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -9995,7 +10059,7 @@
           "ufcLosses": null,
           "penalty": -5.25,
           "totalScore": 59.8,
-          "overallOvr": 90,
+          "overallOvr": 91,
           "rank": 13
         },
         {
@@ -10006,14 +10070,14 @@
           "ufcLosses": 8,
           "penalty": -5.25,
           "totalScore": 59.8,
-          "overallOvr": 90,
+          "overallOvr": 91,
           "rank": 13
         }
       ],
       "packetRecord": "16-8",
       "overrideRecord": "16-8",
       "displayRank": 13,
-      "displayOvr": 90,
+      "displayOvr": null,
       "audit": {
         "status": "match",
         "ufcRecord": "16-8",
@@ -10170,7 +10234,7 @@
         "penalty": -5.25,
         "totalScore": 59.8,
         "rank": 13,
-        "overallOvr": 90,
+        "overallOvr": 91,
         "lossContextHybrid": {
           "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
           "judgmentLockVersion": "loss-context-hybrid-judgment-lock-20260711a",
@@ -10223,7 +10287,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T05:34:53.526Z",
+        "completedAt": "2026-07-12T08:19:41.727Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -10239,7 +10303,7 @@
           "ufcLosses": 3,
           "penalty": -3.36,
           "totalScore": 37.3,
-          "overallOvr": 85,
+          "overallOvr": 87,
           "rank": 44
         },
         {
@@ -10250,14 +10314,14 @@
           "ufcLosses": 3,
           "penalty": -3.36,
           "totalScore": 37.3,
-          "overallOvr": 85,
+          "overallOvr": 87,
           "rank": 44
         }
       ],
       "packetRecord": "11-3 (1 NC)",
       "overrideRecord": "11-3 (1 NC)",
       "displayRank": 44,
-      "displayOvr": 85,
+      "displayOvr": null,
       "audit": {
         "status": "score-mismatch",
         "ufcRecord": "11-3 (1 NC)",
@@ -10366,7 +10430,7 @@
         "penalty": -3.36,
         "totalScore": 37.3,
         "rank": 44,
-        "overallOvr": 85,
+        "overallOvr": 87,
         "lossContextHybrid": {
           "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
           "judgmentLockVersion": "loss-context-hybrid-judgment-lock-20260711a",
@@ -10420,7 +10484,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T05:34:53.536Z",
+        "completedAt": "2026-07-12T08:19:41.736Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -10436,7 +10500,7 @@
           "ufcLosses": 11,
           "penalty": -3.27,
           "totalScore": 53.38,
-          "overallOvr": 88,
+          "overallOvr": 90,
           "rank": 21
         },
         {
@@ -10447,14 +10511,14 @@
           "ufcLosses": 11,
           "penalty": -3.27,
           "totalScore": 53.38,
-          "overallOvr": 88,
+          "overallOvr": 90,
           "rank": 21
         }
       ],
       "packetRecord": "25-11",
       "overrideRecord": "25-11",
       "displayRank": 21,
-      "displayOvr": 88,
+      "displayOvr": null,
       "audit": {
         "status": "match",
         "ufcRecord": "25-11",
@@ -10647,7 +10711,7 @@
         "penalty": -3.27,
         "totalScore": 53.38,
         "rank": 21,
-        "overallOvr": 88,
+        "overallOvr": 90,
         "lossContextHybrid": {
           "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
           "judgmentLockVersion": "loss-context-hybrid-judgment-lock-20260711a",
@@ -10700,7 +10764,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T05:34:52.858Z",
+        "completedAt": "2026-07-12T08:19:41.115Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -10716,7 +10780,7 @@
           "ufcLosses": 6,
           "penalty": -3.52,
           "totalScore": 59.57,
-          "overallOvr": 90,
+          "overallOvr": 91,
           "rank": 14
         },
         {
@@ -10727,14 +10791,14 @@
           "ufcLosses": 6,
           "penalty": -3.52,
           "totalScore": 59.57,
-          "overallOvr": 90,
+          "overallOvr": 91,
           "rank": 14
         }
       ],
       "packetRecord": "13-6",
       "overrideRecord": "13-6",
       "displayRank": 14,
-      "displayOvr": 90,
+      "displayOvr": null,
       "audit": {
         "status": "match",
         "ufcRecord": "13-6",
@@ -10867,7 +10931,7 @@
         "penalty": -3.52,
         "totalScore": 59.57,
         "rank": 14,
-        "overallOvr": 90,
+        "overallOvr": 91,
         "lossContextHybrid": {
           "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
           "judgmentLockVersion": "loss-context-hybrid-judgment-lock-20260711a",
@@ -10921,7 +10985,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T05:34:53.532Z",
+        "completedAt": "2026-07-12T08:19:41.733Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -10937,7 +11001,7 @@
           "ufcLosses": 6,
           "penalty": -2.44,
           "totalScore": 50.19,
-          "overallOvr": 88,
+          "overallOvr": 89,
           "rank": 23
         },
         {
@@ -10948,14 +11012,14 @@
           "ufcLosses": 6,
           "penalty": -2.44,
           "totalScore": 50.19,
-          "overallOvr": 88,
+          "overallOvr": 89,
           "rank": 23
         }
       ],
       "packetRecord": "10-6",
       "overrideRecord": "10-6",
       "displayRank": 23,
-      "displayOvr": 88,
+      "displayOvr": null,
       "audit": {
         "status": "score-mismatch",
         "ufcRecord": "10-6",
@@ -11088,7 +11152,7 @@
         "penalty": -2.44,
         "totalScore": 50.19,
         "rank": 23,
-        "overallOvr": 88,
+        "overallOvr": 89,
         "lossContextHybrid": {
           "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
           "judgmentLockVersion": "loss-context-hybrid-judgment-lock-20260711a",
@@ -11142,7 +11206,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T05:34:53.532Z",
+        "completedAt": "2026-07-12T08:19:41.733Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -11176,7 +11240,7 @@
       "packetRecord": "16-2",
       "overrideRecord": "16-2",
       "displayRank": 1,
-      "displayOvr": 99,
+      "displayOvr": null,
       "audit": {
         "status": "match",
         "ufcRecord": "16-2",
@@ -11327,7 +11391,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T05:34:53.536Z",
+        "completedAt": "2026-07-12T08:19:41.736Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -11343,7 +11407,7 @@
           "ufcLosses": 7,
           "penalty": -3.42,
           "totalScore": 40.14,
-          "overallOvr": 86,
+          "overallOvr": 87,
           "rank": 43
         },
         {
@@ -11354,14 +11418,14 @@
           "ufcLosses": 7,
           "penalty": -3.42,
           "totalScore": 40.14,
-          "overallOvr": 86,
+          "overallOvr": 87,
           "rank": 43
         }
       ],
       "packetRecord": "18-7",
       "overrideRecord": "18-7",
       "displayRank": 43,
-      "displayOvr": 86,
+      "displayOvr": null,
       "audit": {
         "status": "match",
         "ufcRecord": "18-7",
@@ -11506,7 +11570,7 @@
         "penalty": -3.42,
         "totalScore": 40.14,
         "rank": 43,
-        "overallOvr": 86,
+        "overallOvr": 87,
         "lossContextHybrid": {
           "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
           "judgmentLockVersion": "loss-context-hybrid-judgment-lock-20260711a",
@@ -11558,7 +11622,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-12T05:34:52.854Z",
+        "completedAt": "2026-07-12T08:19:41.113Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -11575,7 +11639,7 @@
           "ufcLosses": 7,
           "penalty": -3.75,
           "totalScore": 45.1,
-          "overallOvr": 87,
+          "overallOvr": 88,
           "rank": 35
         },
         {
@@ -11586,14 +11650,14 @@
           "ufcLosses": 7,
           "penalty": -3.75,
           "totalScore": 45.1,
-          "overallOvr": 87,
+          "overallOvr": 88,
           "rank": 35
         }
       ],
       "packetRecord": "16-7",
       "overrideRecord": "16-7",
       "displayRank": 35,
-      "displayOvr": 87,
+      "displayOvr": null,
       "audit": {
         "status": "score-mismatch",
         "ufcRecord": "16-7",
@@ -11738,7 +11802,7 @@
         "penalty": -3.75,
         "totalScore": 45.1,
         "rank": 35,
-        "overallOvr": 87,
+        "overallOvr": 88,
         "lossContextHybrid": {
           "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
           "judgmentLockVersion": "loss-context-hybrid-judgment-lock-20260711a",
@@ -11790,7 +11854,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-12T05:34:52.854Z",
+        "completedAt": "2026-07-12T08:19:41.113Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -11807,7 +11871,7 @@
           "ufcLosses": 9,
           "penalty": -4.69,
           "totalScore": 25.37,
-          "overallOvr": 82,
+          "overallOvr": 84,
           "rank": 47
         },
         {
@@ -11818,14 +11882,14 @@
           "ufcLosses": 9,
           "penalty": -4.69,
           "totalScore": 25.37,
-          "overallOvr": 82,
+          "overallOvr": 84,
           "rank": 47
         }
       ],
       "packetRecord": "8-9",
       "overrideRecord": "8-9",
       "displayRank": 47,
-      "displayOvr": 82,
+      "displayOvr": null,
       "audit": {
         "status": "score-mismatch",
         "ufcRecord": "8-9",
@@ -11994,7 +12058,7 @@
         "penalty": -4.69,
         "totalScore": 25.37,
         "rank": 47,
-        "overallOvr": 82,
+        "overallOvr": 84,
         "lossContextHybrid": {
           "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
           "judgmentLockVersion": "loss-context-hybrid-judgment-lock-20260711a",
@@ -12047,7 +12111,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T05:34:53.529Z",
+        "completedAt": "2026-07-12T08:19:41.729Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -12063,7 +12127,7 @@
           "ufcLosses": 3,
           "penalty": -2.94,
           "totalScore": 56.54,
-          "overallOvr": 89,
+          "overallOvr": 91,
           "rank": 17
         },
         {
@@ -12074,14 +12138,14 @@
           "ufcLosses": 3,
           "penalty": -2.94,
           "totalScore": 56.54,
-          "overallOvr": 89,
+          "overallOvr": 91,
           "rank": 17
         }
       ],
       "packetRecord": "10-3",
       "overrideRecord": "10-3",
       "displayRank": 17,
-      "displayOvr": 89,
+      "displayOvr": null,
       "audit": {
         "status": "match",
         "ufcRecord": "10-3",
@@ -12190,7 +12254,7 @@
         "penalty": -2.94,
         "totalScore": 56.54,
         "rank": 17,
-        "overallOvr": 89,
+        "overallOvr": 91,
         "lossContextHybrid": {
           "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
           "judgmentLockVersion": "loss-context-hybrid-judgment-lock-20260711a",
@@ -12244,7 +12308,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T05:34:53.536Z",
+        "completedAt": "2026-07-12T08:19:41.735Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -12260,7 +12324,7 @@
           "ufcLosses": 3,
           "penalty": -2.63,
           "totalScore": 75.92,
-          "overallOvr": 97,
+          "overallOvr": 98,
           "rank": 2
         },
         {
@@ -12271,14 +12335,14 @@
           "ufcLosses": 3,
           "penalty": -2.63,
           "totalScore": 75.92,
-          "overallOvr": 97,
+          "overallOvr": 98,
           "rank": 2
         }
       ],
       "packetRecord": "14-3-1",
       "overrideRecord": "14-3-1",
       "displayRank": 2,
-      "displayOvr": 97,
+      "displayOvr": null,
       "audit": {
         "status": "match",
         "ufcRecord": "14-3-1",
@@ -12399,7 +12463,7 @@
         "penalty": -2.63,
         "totalScore": 75.92,
         "rank": 2,
-        "overallOvr": 97,
+        "overallOvr": 98,
         "lossContextHybrid": {
           "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
           "judgmentLockVersion": "loss-context-hybrid-judgment-lock-20260711a",
@@ -12453,7 +12517,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T05:34:53.536Z",
+        "completedAt": "2026-07-12T08:19:41.736Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -12469,7 +12533,7 @@
           "ufcLosses": null,
           "penalty": -4.37,
           "totalScore": 61.37,
-          "overallOvr": 90,
+          "overallOvr": 92,
           "rank": 12
         },
         {
@@ -12480,14 +12544,14 @@
           "ufcLosses": 9,
           "penalty": -4.37,
           "totalScore": 61.37,
-          "overallOvr": 90,
+          "overallOvr": 92,
           "rank": 12
         }
       ],
       "packetRecord": "23-9",
       "overrideRecord": "23-9",
       "displayRank": 12,
-      "displayOvr": 90,
+      "displayOvr": null,
       "audit": {
         "status": "match",
         "ufcRecord": "23-9",
@@ -12656,7 +12720,7 @@
         "penalty": -4.37,
         "totalScore": 61.37,
         "rank": 12,
-        "overallOvr": 90,
+        "overallOvr": 92,
         "lossContextHybrid": {
           "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
           "judgmentLockVersion": "loss-context-hybrid-judgment-lock-20260711a",
@@ -12709,7 +12773,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T05:34:53.526Z",
+        "completedAt": "2026-07-12T08:19:41.727Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -12725,7 +12789,7 @@
           "ufcLosses": null,
           "penalty": -5.15,
           "totalScore": 67.14,
-          "overallOvr": 91,
+          "overallOvr": 93,
           "rank": 7
         },
         {
@@ -12736,14 +12800,14 @@
           "ufcLosses": 9,
           "penalty": -5.15,
           "totalScore": 67.14,
-          "overallOvr": 91,
+          "overallOvr": 93,
           "rank": 7
         }
       ],
       "packetRecord": "14-9",
       "overrideRecord": "14-9",
       "displayRank": 7,
-      "displayOvr": 91,
+      "displayOvr": null,
       "audit": {
         "status": "score-mismatch",
         "ufcRecord": "14-9",
@@ -12912,7 +12976,7 @@
         "penalty": -5.15,
         "totalScore": 67.14,
         "rank": 7,
-        "overallOvr": 91,
+        "overallOvr": 93,
         "lossContextHybrid": {
           "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
           "judgmentLockVersion": "loss-context-hybrid-judgment-lock-20260711a",
@@ -12966,7 +13030,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T05:34:53.532Z",
+        "completedAt": "2026-07-12T08:19:41.732Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -12982,7 +13046,7 @@
           "ufcLosses": null,
           "penalty": -3.78,
           "totalScore": 88.07,
-          "overallOvr": 96,
+          "overallOvr": 97,
           "rank": 2
         },
         {
@@ -12993,14 +13057,14 @@
           "ufcLosses": 2,
           "penalty": -3.78,
           "totalScore": 88.07,
-          "overallOvr": 96,
+          "overallOvr": 97,
           "rank": 2
         }
       ],
       "packetRecord": "20-2",
       "overrideRecord": "20-2",
       "displayRank": 2,
-      "displayOvr": 96,
+      "displayOvr": null,
       "audit": {
         "status": "match",
         "ufcRecord": "20-2",
@@ -13085,7 +13149,7 @@
         "penalty": -3.78,
         "totalScore": 88.07,
         "rank": 2,
-        "overallOvr": 96,
+        "overallOvr": 97,
         "lossContextHybrid": {
           "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
           "judgmentLockVersion": "loss-context-hybrid-judgment-lock-20260711a",
@@ -13139,7 +13203,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T05:34:53.532Z",
+        "completedAt": "2026-07-12T08:19:41.732Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -13155,7 +13219,7 @@
           "ufcLosses": null,
           "penalty": -3,
           "totalScore": 77.29,
-          "overallOvr": 94,
+          "overallOvr": 95,
           "rank": 3
         },
         {
@@ -13166,14 +13230,14 @@
           "ufcLosses": 7,
           "penalty": -3,
           "totalScore": 77.29,
-          "overallOvr": 94,
+          "overallOvr": 95,
           "rank": 3
         }
       ],
       "packetRecord": "17-7",
       "overrideRecord": "17-7",
       "displayRank": 3,
-      "displayOvr": 94,
+      "displayOvr": null,
       "audit": {
         "status": "match",
         "ufcRecord": "17-7",
@@ -13330,7 +13394,7 @@
         "penalty": -3,
         "totalScore": 77.29,
         "rank": 3,
-        "overallOvr": 94,
+        "overallOvr": 95,
         "lossContextHybrid": {
           "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
           "judgmentLockVersion": "loss-context-hybrid-judgment-lock-20260711a",
@@ -13383,7 +13447,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T05:34:53.529Z",
+        "completedAt": "2026-07-12T08:19:41.729Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -13417,7 +13481,7 @@
       "packetRecord": "22-1, 1 NC",
       "overrideRecord": "22-1, 1 NC",
       "displayRank": 1,
-      "displayOvr": 99,
+      "displayOvr": null,
       "audit": {
         "status": "match",
         "ufcRecord": "22-1, 1 NC",
@@ -13522,7 +13586,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T05:34:53.532Z",
+        "completedAt": "2026-07-12T08:19:41.732Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
