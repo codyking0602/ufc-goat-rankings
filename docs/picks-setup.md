@@ -16,6 +16,7 @@ Run these files in **Supabase → SQL Editor** in this order:
 8. `supabase/picks-commissioner-phase.sql`
 9. `supabase/picks-social-retention-phase.sql`
 10. `supabase/picks-correctness-cleanup-phase.sql`
+11. `supabase/picks-device-recovery-phase.sql`
 
 Then open **Project Settings → API** and copy the project URL and public publishable key into `assets/data/supabase-config.js`.
 
@@ -72,12 +73,29 @@ Every room becomes a permanent group after `picks-persistent-groups-phase.sql` r
 - Emoji avatar
 - Browser reminder preference
 - Add Event to Calendar
+- Device recovery key
 - Rename group
 - Season settings and new-season controls
 - Member removal
 - Commissioner transfer
+- Temporary member recovery codes for the commissioner
 
 The old Social Hub, winner graphics, season awards, activity feed, Event Manager interface, odds editor, and card-import interface are not part of the live app.
+
+## Identity and device recovery
+
+Run `picks-device-recovery-phase.sql`, then each member should open **Picks → Settings → Device Recovery** and create one private recovery key.
+
+- The saved key restores the same permanent profile on a replacement phone.
+- Picks, points, avatar, event history, and season standing remain attached to the profile.
+- Recovering rotates the member token, so the old device is signed out.
+- If the recovered member is the commissioner, commissioner access moves to the new device too.
+- A successful recovery generates a new recovery key and invalidates the old key.
+- Existing members without a saved key can ask the commissioner for a temporary 30-minute recovery code.
+- The commissioner creates that code inside **Settings → Members & Ownership**.
+- Recovery uses the permanent group link, the exact existing display name, and the recovery code.
+
+Recovery codes are stored only as hashes in Supabase. The plaintext key is shown only when it is created or rotated.
 
 ## Event maintenance
 
@@ -124,7 +142,7 @@ It checks:
 - Required Home, Event, Settings, standings, recap, and correction mount points
 - Cleanup-script loading order
 - Route restoration and keyboard navigation hooks
-- Profile and reminder persistence hooks
+- Profile, reminder, and recovery persistence hooks
 - Absence of the retired Event Manager, Social Hub, and Phase 11 frontend files
 
 Run the same check locally with:
