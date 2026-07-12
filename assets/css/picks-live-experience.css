@@ -1,0 +1,69 @@
+/* Phase 8: fast live-room feedback, pick splits, result clarity, and standings movement. */
+.picks-live-notices{position:sticky;top:72px;z-index:12;display:grid;gap:8px;pointer-events:none}
+.picks-live-notice{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;align-items:center;padding:12px 14px;border:1px solid rgba(255,255,255,.16);border-left:5px solid #f97316;border-radius:14px;background:rgba(15,23,42,.97);box-shadow:0 14px 36px rgba(0,0,0,.35);color:#f8fafc;pointer-events:auto;animation:picks-live-in .22s ease-out}
+.picks-live-notice.result{border-left-color:#22c55e}
+.picks-live-notice>span{grid-column:1;color:#fdba74;font-size:9px;font-weight:950;letter-spacing:.13em}
+.picks-live-notice.result>span{color:#86efac}
+.picks-live-notice>strong{grid-column:1;font-size:14px;line-height:1.15}
+.picks-live-notice>small{grid-column:1;color:#cbd5e1;font-size:10px;font-weight:700}
+.picks-live-notice>button{grid-column:2;grid-row:1/4;border:0;background:transparent;color:#e2e8f0;font-size:22px;cursor:pointer}
+.picks-live-notice.leaving{opacity:0;transform:translateY(-8px);transition:.24s ease}
+@keyframes picks-live-in{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+
+.picks-live-panel{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(220px,.85fr) auto;gap:16px;align-items:center;padding:15px 16px;border:1px solid #334155;border-left:5px solid #f97316;border-radius:18px;background:linear-gradient(135deg,#172033,#101827);box-shadow:0 12px 30px rgba(0,0,0,.22);color:#f8fafc}
+.picks-live-panel.waiting{border-left-color:#facc15}
+.picks-live-panel.final{border-left-color:#22c55e}
+.picks-live-copy{display:grid;gap:3px;min-width:0}
+.picks-live-copy>span{color:#fdba74;font-size:9px;font-weight:950;letter-spacing:.14em}
+.picks-live-panel.waiting .picks-live-copy>span{color:#fde047}
+.picks-live-panel.final .picks-live-copy>span{color:#86efac}
+.picks-live-copy>strong{font-size:18px;line-height:1.08;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.picks-live-copy>small{color:#cbd5e1;font-size:10px;font-weight:750;line-height:1.3}
+.picks-live-split{display:grid;grid-template-columns:1fr;gap:5px}
+.picks-live-split>div{display:flex;justify-content:space-between;gap:10px;color:#f8fafc;font-size:10px;font-weight:850}
+.picks-live-split>div:nth-of-type(2){order:3}
+.picks-live-split>i{position:relative;height:7px;border-radius:999px;background:#334155;overflow:hidden}
+.picks-live-split>i>em{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#ef4444,#f97316)}
+.picks-live-actions{display:grid;justify-items:end;gap:6px}
+.picks-live-actions small{color:#94a3b8;font-size:9px;font-weight:800;white-space:nowrap}
+.picks-live-actions button{border:1px solid #475569;border-radius:999px;background:#0f172a;color:#f8fafc;padding:7px 10px;font:inherit;font-size:10px;font-weight:900;cursor:pointer}
+
+.pick-fight.live-current-fight{border-color:#facc15!important;box-shadow:0 0 0 2px rgba(250,204,21,.18),0 18px 40px rgba(0,0,0,.18)!important}
+.pick-fight.live-current-fight .pick-fight-head:before{content:'CURRENT';display:inline-flex;margin-right:7px;border-radius:999px;background:#facc15;color:#111827;padding:3px 6px;font-size:8px;font-weight:950;letter-spacing:.08em}
+.pick-fight.live-final-card{border-color:#334155!important;background:linear-gradient(180deg,#172033,#111827)!important}
+.pick-fight.live-user-correct{border-left:5px solid #22c55e!important}
+.pick-fight.live-user-wrong{border-left:5px solid #ef4444!important}
+.pick-fight.live-void-card{border-left:5px solid #94a3b8!important}
+.pick-fighter.live-winner{border-color:#22c55e!important;background:linear-gradient(180deg,rgba(34,197,94,.23),rgba(22,101,52,.18))!important;opacity:1!important}
+.pick-fighter.live-loser{border-color:#7f1d1d!important;background:linear-gradient(180deg,rgba(127,29,29,.18),rgba(69,10,10,.14))!important;opacity:.62!important;filter:saturate(.72)}
+.pick-fighter.live-winner:after{content:'WINNER';position:absolute;top:7px;right:7px;border-radius:999px;background:#22c55e;color:#052e16;padding:3px 6px;font-size:7px;font-weight:950;letter-spacing:.08em}
+.pick-fighter.live-loser:after{content:'LOSS';position:absolute;top:7px;right:7px;border-radius:999px;background:#7f1d1d;color:#fee2e2;padding:3px 6px;font-size:7px;font-weight:950;letter-spacing:.08em}
+
+.live-pick-percent{display:grid;gap:3px;width:100%;margin-top:6px;padding-top:6px;border-top:1px solid rgba(148,163,184,.25);color:#f8fafc;text-align:left}
+.live-pick-percent>b{font-size:13px;line-height:1}
+.live-pick-percent>small{color:#cbd5e1;font-size:8px;font-weight:800}
+.live-pick-percent>i{height:4px;border-radius:999px;background:#334155;overflow:hidden}
+.live-pick-percent>i>em{display:block;height:100%;border-radius:inherit;background:#f97316}
+
+.picks-live-results-section{margin-top:8px;border:1px solid #334155;border-radius:14px;background:#111827;overflow:hidden}
+.picks-live-results-section>summary{display:flex;justify-content:space-between;align-items:center;padding:11px 13px;color:#f8fafc;cursor:pointer;font-size:12px;font-weight:900}
+.picks-live-results-section>summary b{display:inline-grid;place-items:center;min-width:25px;height:25px;border-radius:999px;background:#1e293b;color:#cbd5e1;font-size:10px}
+.picks-live-results-list{display:grid;gap:8px;padding:8px}
+.picks-locked-section>.picks-locked-list[hidden]{display:none!important}
+
+.picks-standing-rank{display:grid!important;justify-items:center;gap:2px}
+.picks-live-move{font-size:7px;font-weight:950;line-height:1}
+.picks-live-move.up{color:#22c55e}
+.picks-live-move.down{color:#ef4444}
+.picks-live-move.even{color:#64748b}
+.picks-standing-row.moved-up{box-shadow:inset 3px 0 #22c55e}
+.picks-standing-row.moved-down{box-shadow:inset 3px 0 #ef4444}
+
+@media(max-width:700px){
+  .picks-live-notices{top:61px}
+  .picks-live-panel{grid-template-columns:1fr;gap:11px;padding:13px 14px}
+  .picks-live-copy>strong{font-size:17px}
+  .picks-live-actions{grid-auto-flow:column;justify-content:space-between;align-items:center}
+  .picks-live-split{padding:8px 0;border-top:1px solid #334155;border-bottom:1px solid #334155}
+  .pick-fighter.live-winner:after,.pick-fighter.live-loser:after{top:5px;right:5px;font-size:6px;padding:3px 5px}
+}
