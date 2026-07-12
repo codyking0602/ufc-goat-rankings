@@ -1,4 +1,4 @@
-// Runtime audit trigger: 2026-07-10 final closure verification.
+// Runtime audit trigger: hybrid Loss Context full-roster verification.
 import { chromium } from 'playwright';
 import fs from 'node:fs/promises';
 import process from 'node:process';
@@ -30,6 +30,14 @@ try {
       // The pipeline state below carries the actionable error.
     }
 
+    const waitForHybridAudit = async () => {
+      const started = Date.now();
+      while (!window.UFC_LOSS_CONTEXT_HYBRID_AUDIT?.applied && Date.now() - started < 30_000) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
+    };
+    await waitForHybridAudit();
+
     const clone = value => JSON.parse(JSON.stringify(value ?? null));
     const key = name => String(name || '').trim().toLowerCase().replace(/[’‘`´]/g, "'").replace(/\s+/g, ' ');
     const report = clone(window.UFC_LOSS_CONTEXT_FINAL_RECONCILIATION);
@@ -37,6 +45,8 @@ try {
     const scoreReview = clone(window.UFC_LOSS_CONTEXT_SCORE_REVIEW);
     const postAudit = clone(window.UFC_LOSS_CONTEXT_MISMATCH_AUDIT);
     const finalizer = clone(window.UFC_LOSS_CONTEXT_LEDGER_FINALIZER);
+    const hybridShadow = clone(window.UFC_LOSS_CONTEXT_HYBRID_SHADOW);
+    const hybridAudit = clone(window.UFC_LOSS_CONTEXT_HYBRID_AUDIT);
     const men = (window.RANKING_DATA?.men || []).slice(0, 20).map(row => ({
       rank: row.rank,
       fighter: row.fighter,
@@ -52,9 +62,10 @@ try {
       overallOvr: row.overallOvr
     }));
     const focusNames = [
-      'Randy Couture', "Sean O'Malley", 'Charles Oliveira', 'Israel Adesanya',
+      'Dricus du Plessis', 'Justin Gaethje', 'Randy Couture', "Sean O'Malley", 'Charles Oliveira', 'Israel Adesanya',
       'Henry Cejudo', 'Amanda Nunes', 'Sean Strickland', 'Robert Whittaker',
-      'Dan Henderson', 'Alex Pereira', 'Valentina Shevchenko'
+      'Dan Henderson', 'Alex Pereira', 'Valentina Shevchenko', 'Max Holloway',
+      'Jose Aldo', 'Georges St-Pierre', 'Anderson Silva', 'Jon Jones'
     ];
     const allDataRows = [
       ...(window.RANKING_DATA?.men || []),
@@ -79,6 +90,9 @@ try {
       const auditRow = (window.UFC_LOSS_CONTEXT_MISMATCH_AUDIT?.rows || []).find(row => key(row?.fighter) === target) || null;
       const eraEntry = window.UFC_FIGHTER_ERA_LEDGERS?.entryFor?.(fighter)
         || Object.entries(window.UFC_FIGHTER_ERA_LEDGERS?.ledgers || {}).find(([name]) => key(name) === target)?.[1]
+        || null;
+      const hybridEntry = window.UFC_LOSS_CONTEXT_HYBRID_SHADOW?.entryFor?.(fighter)
+        || (window.UFC_LOSS_CONTEXT_HYBRID_SHADOW?.results || []).find(row => key(row?.fighter) === target)
         || null;
       return {
         fighter,
@@ -110,12 +124,32 @@ try {
             penaltyEstimate: event.penaltyEstimate
           }))
         } : null,
+        hybrid: hybridEntry ? {
+          status: hybridEntry.status,
+          currentPenalty: hybridEntry.currentPenalty,
+          recommendedPenalty: hybridEntry.recommendedPenalty,
+          projectedDelta: hybridEntry.projectedDelta,
+          severity: hybridEntry.severity,
+          frequency: hybridEntry.frequency,
+          preDivision: hybridEntry.preDivision,
+          divisionMultiplier: hybridEntry.divisionMultiplier,
+          divisionDiscountPct: hybridEntry.divisionDiscountPct,
+          divisionPointsSaved: hybridEntry.divisionPointsSaved,
+          exposure: hybridEntry.exposure,
+          exposureWindowEnd: hybridEntry.exposureWindowEnd,
+          excludedPostPrimeFightCount: hybridEntry.excludedPostPrimeFightCount,
+          eventCount: hybridEntry.eventCount,
+          worstLosses: hybridEntry.worstLosses,
+          projectedRank: hybridEntry.projectedRank,
+          rankMovement: hybridEntry.rankMovement,
+          blockers: hybridEntry.blockers
+        } : null,
         eraWindow: eraEntry?.window || null,
         completion: eraEntry?.lossContextCompletion || null
       };
     });
 
-    return { report, pipeline, scoreReview, postAudit, finalizer, menTop20: men, womenBoard: women, focusDiagnostics };
+    return { report, pipeline, scoreReview, postAudit, finalizer, hybridShadow, hybridAudit, menTop20: men, womenBoard: women, focusDiagnostics };
   });
 
   const payload = {
@@ -133,6 +167,7 @@ try {
     pipelineError: result.pipeline?.error ?? null,
     complete: result.report?.complete ?? false,
     rosterLedgerCoverage: result.report?.rosterLedgerCoverage ?? null,
+    rosterTarget: result.report?.rosterTarget ?? result.finalizer?.expectedRosterCount ?? null,
     promotedCount: result.report?.scoreReview?.promotedCount ?? null,
     blockedCount: result.report?.scoreReview?.blockedCount ?? null,
     remainingFlaggedCount: result.report?.postPromotionAudit?.remainingFlaggedCount ?? null,
@@ -144,6 +179,19 @@ try {
     promotedPenaltyChanges: result.report?.scoreReview?.promotedPenaltyChanges || [],
     unresolvedRows: result.report?.postPromotionAudit?.unresolvedRows || [],
     rankingMovement: result.report?.rankingImpact?.movement || [],
+    hybrid: {
+      applied: result.hybridAudit?.applied ?? false,
+      shadowVersion: result.hybridShadow?.version ?? null,
+      auditVersion: result.hybridAudit?.version ?? null,
+      summary: result.hybridAudit?.summary ?? null,
+      readyForLivePromotion: result.hybridAudit?.readyForLivePromotion ?? false,
+      criticalFlags: result.hybridAudit?.criticalFlags || [],
+      largestRelief: result.hybridAudit?.largestRelief || [],
+      harshestProjected: result.hybridAudit?.harshestProjected || [],
+      biggestRankMovers: result.hybridAudit?.biggestRankMovers || [],
+      spotlight: result.hybridAudit?.spotlight || [],
+      flags: result.hybridAudit?.flags || {}
+    },
     menTop20: result.menTop20,
     womenBoard: result.womenBoard,
     focusDiagnostics: result.focusDiagnostics,
@@ -156,21 +204,29 @@ try {
     pipelineStatus: summary.pipelineStatus,
     complete: summary.complete,
     rosterLedgerCoverage: summary.rosterLedgerCoverage,
+    rosterTarget: summary.rosterTarget,
     promotedCount: summary.promotedCount,
     blockedCount: summary.blockedCount,
     remainingFlaggedCount: summary.remainingFlaggedCount,
     fightersWithRankMovement: summary.fightersWithRankMovement,
+    hybridApplied: summary.hybrid.applied,
+    hybridCoverageComplete: summary.hybrid.summary?.coverageComplete ?? false,
+    hybridCriticalFlagCount: summary.hybrid.summary?.criticalFlagCount ?? null,
+    hybridReadyForLivePromotion: summary.hybrid.readyForLivePromotion,
     consoleErrorCount: consoleErrors.length,
     pageErrorCount: pageErrors.length
   }, null, 2));
-  console.log('UNRESOLVED_ROWS');
-  console.log(JSON.stringify(summary.unresolvedRows, null, 2));
+  console.log('HYBRID_CRITICAL_FLAGS');
+  console.log(JSON.stringify(summary.hybrid.criticalFlags, null, 2));
 
+  const expectedRoster = Number(summary.rosterTarget || summary.rosterLedgerCoverage || 0);
   const failed = result.pipeline?.status !== 'ready'
     || result.report?.complete !== true
-    || Number(result.report?.rosterLedgerCoverage || 0) !== 62
+    || Number(result.report?.rosterLedgerCoverage || 0) !== expectedRoster
     || Number(result.report?.scoreReview?.blockedCount || 0) !== 0
     || Number(result.report?.postPromotionAudit?.remainingFlaggedCount || 0) !== 0
+    || result.hybridAudit?.applied !== true
+    || result.hybridAudit?.summary?.coverageComplete !== true
     || pageErrors.length > 0;
 
   if (failed) process.exitCode = 1;
