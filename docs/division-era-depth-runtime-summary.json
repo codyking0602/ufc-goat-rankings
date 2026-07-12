@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-12T17:41:36.211Z",
+  "generatedAt": "2026-07-12T19:49:14.009Z",
   "pipelineStatus": "ready",
   "shadowVersion": "division-era-depth-shadow-20260712d-current-wfw-safe",
   "auditVersion": "division-era-depth-judgment-review-20260712b-live-approved",
@@ -95,7 +95,7 @@
         "overallOvr": 90
       }
     ],
-    "appliedAt": "2026-07-12T17:41:33.125Z"
+    "appliedAt": "2026-07-12T19:49:11.018Z"
   },
   "sixCategoryModelVersion": "six-category-live-20260712a-era-depth",
   "datasetEnd": "2026-06-27",
@@ -665,7 +665,24 @@
     "text": "\n      \n      #10 · 92 OVR\n      Matt Hughes\n      18-7 · Welterweight\n    \n      \n      #8 · 92 OVR\n      Khabib Nurmagomedov\n      13-0 · Lightweight\n    \n      \n        Khabib Nurmagomedov wins this comparison.\n        The knock on Hughes is era context. His welterweight run was historically huge, but the division was not as deep or modernized as later welterweight eras.Khabib wins when the debate rewards dominance, perfection, and how unbeatable a fighter looked at his best.Matt Hughes may win one version of the argument, but Khabib Nurmagomedov wins the full ranking comparison.\n        Final take: Khabib Nurmagomedov wins, barely. Matt Hughes has the strongest counterargument, but Khabib Nurmagomedov's total resume gives him the edge.\n      \n    "
   },
   "browserDiagnostics": {
-    "consoleErrors": [],
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 404 (File not found)",
+      "Failed to load resource: the server responded with a status of 404 (File not found)",
+      "Failed to load resource: the server responded with a status of 404 (File not found)",
+      "Failed to load resource: the server responded with a status of 404 (File not found)",
+      "Failed to load resource: the server responded with a status of 404 (File not found)",
+      "Failed to load resource: the server responded with a status of 404 (File not found)",
+      "Failed to load resource: the server responded with a status of 404 (File not found)",
+      "Failed to load resource: the server responded with a status of 404 (File not found)",
+      "Failed to load resource: the server responded with a status of 404 (File not found)",
+      "Failed to load resource: the server responded with a status of 404 (File not found)",
+      "Failed to load resource: the server responded with a status of 404 (File not found)",
+      "Failed to load resource: the server responded with a status of 404 (File not found)",
+      "Failed to load resource: the server responded with a status of 404 (File not found)",
+      "Failed to load resource: the server responded with a status of 404 (File not found)",
+      "Failed to load resource: the server responded with a status of 404 (File not found)",
+      "Failed to load resource: the server responded with a status of 404 (File not found)"
+    ],
     "pageErrors": []
   }
 }
