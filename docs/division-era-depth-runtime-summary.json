@@ -1,0 +1,586 @@
+{
+  "generatedAt": "2026-07-12T15:04:02.982Z",
+  "pipelineStatus": "ready",
+  "shadowVersion": "division-era-depth-shadow-20260712d-current-wfw-safe",
+  "auditVersion": "division-era-depth-judgment-review-20260712b-live-approved",
+  "liveVersion": "division-era-depth-live-20260712a",
+  "datasetEnd": "2026-06-27",
+  "sourceFresh": true,
+  "judgmentApproved": true,
+  "readyForLivePromotion": true,
+  "liveApplied": true,
+  "promotedCount": 63,
+  "liveMismatchCount": 0,
+  "consistency": {
+    "rosterCount": 63,
+    "shadowCount": 63,
+    "boardMismatchCount": 61,
+    "boardMismatches": [
+      "Jon Jones",
+      "Georges St-Pierre",
+      "Anderson Silva",
+      "Demetrious Johnson",
+      "Islam Makhachev",
+      "Alexander Volkanovski",
+      "Jose Aldo",
+      "Matt Hughes",
+      "Khabib Nurmagomedov",
+      "Kamaru Usman",
+      "Stipe Miocic",
+      "Max Holloway",
+      "Randy Couture",
+      "Israel Adesanya",
+      "Chuck Liddell",
+      "Daniel Cormier",
+      "Alex Pereira",
+      "B.J. Penn",
+      "T.J. Dillashaw",
+      "Frankie Edgar",
+      "Charles Oliveira",
+      "Cain Velasquez",
+      "Henry Cejudo",
+      "Junior dos Santos",
+      "Tito Ortiz",
+      "Francis Ngannou",
+      "Aljamain Sterling",
+      "Conor McGregor",
+      "Tyron Woodley",
+      "Merab Dvalishvili",
+      "Dustin Poirier",
+      "Justin Gaethje",
+      "Ilia Topuria",
+      "Robbie Lawler",
+      "Robert Whittaker",
+      "Dricus du Plessis",
+      "Petr Yan",
+      "Tony Ferguson",
+      "Deiveson Figueiredo",
+      "Lyoto Machida",
+      "Dominick Cruz",
+      "Khamzat Chimaev",
+      "Sean Strickland",
+      "Sean O'Malley",
+      "Brock Lesnar",
+      "Michael Bisping",
+      "Dan Henderson",
+      "Chael Sonnen",
+      "Amanda Nunes",
+      "Valentina Shevchenko",
+      "Zhang Weili",
+      "Joanna Jedrzejczyk",
+      "Rose Namajunas",
+      "Ronda Rousey",
+      "Jessica Andrade",
+      "Alexa Grasso",
+      "Julianna Peña",
+      "Carla Esparza",
+      "Holly Holm",
+      "Kayla Harrison",
+      "Miesha Tate"
+    ],
+    "profileMismatchCount": 0,
+    "profileMismatches": [],
+    "overrideMismatchCount": 0,
+    "overrideMismatches": []
+  },
+  "wfwSafety": {
+    "nunesExcludesWfw": true,
+    "cyborgNeutral": true,
+    "holmExcludesWfw": true
+  },
+  "anchors": [
+    {
+      "fighter": "Jon Jones",
+      "rank": 1,
+      "totalScore": 101.92,
+      "adjustment": -0.15,
+      "overallOvr": 99,
+      "depthIndex": 0.9668,
+      "sampledDivisions": [
+        "LHW",
+        "HW"
+      ],
+      "womenFeatherweightTreatment": null
+    },
+    {
+      "fighter": "Georges St-Pierre",
+      "rank": 2,
+      "totalScore": 88.07,
+      "adjustment": -1.73,
+      "overallOvr": 97,
+      "depthIndex": 0.8266,
+      "sampledDivisions": [
+        "WW",
+        "MW"
+      ],
+      "womenFeatherweightTreatment": null
+    },
+    {
+      "fighter": "Demetrious Johnson",
+      "rank": 4,
+      "totalScore": 77.11,
+      "adjustment": -1.23,
+      "overallOvr": 95,
+      "depthIndex": 0.8622,
+      "sampledDivisions": [
+        "FLW"
+      ],
+      "womenFeatherweightTreatment": null
+    },
+    {
+      "fighter": "Anderson Silva",
+      "rank": 3,
+      "totalScore": 77.29,
+      "adjustment": -1.67,
+      "overallOvr": 95,
+      "depthIndex": 0.8311,
+      "sampledDivisions": [
+        "MW",
+        "LHW"
+      ],
+      "womenFeatherweightTreatment": null
+    },
+    {
+      "fighter": "Islam Makhachev",
+      "rank": 5,
+      "totalScore": 69.14,
+      "adjustment": -0.08,
+      "overallOvr": 93,
+      "depthIndex": 0.9773,
+      "sampledDivisions": [
+        "LW",
+        "WW"
+      ],
+      "womenFeatherweightTreatment": null
+    },
+    {
+      "fighter": "Alexander Volkanovski",
+      "rank": 6,
+      "totalScore": 67.62,
+      "adjustment": -0.02,
+      "overallOvr": 93,
+      "depthIndex": 0.9909,
+      "sampledDivisions": [
+        "FW",
+        "LW"
+      ],
+      "womenFeatherweightTreatment": null
+    },
+    {
+      "fighter": "Jose Aldo",
+      "rank": 7,
+      "totalScore": 67.14,
+      "adjustment": -1.04,
+      "overallOvr": 93,
+      "depthIndex": 0.8769,
+      "sampledDivisions": [
+        "FW",
+        "BW"
+      ],
+      "womenFeatherweightTreatment": null
+    },
+    {
+      "fighter": "Khabib Nurmagomedov",
+      "rank": 9,
+      "totalScore": 64.05,
+      "adjustment": 0.09,
+      "overallOvr": 92,
+      "depthIndex": 1.0045,
+      "sampledDivisions": [
+        "LW"
+      ],
+      "womenFeatherweightTreatment": null
+    },
+    {
+      "fighter": "Kamaru Usman",
+      "rank": 10,
+      "totalScore": 62.03,
+      "adjustment": 0.27,
+      "overallOvr": 92,
+      "depthIndex": 1.0135,
+      "sampledDivisions": [
+        "WW"
+      ],
+      "womenFeatherweightTreatment": null
+    },
+    {
+      "fighter": "Stipe Miocic",
+      "rank": 11,
+      "totalScore": 61.84,
+      "adjustment": -0.17,
+      "overallOvr": 92,
+      "depthIndex": 0.9631,
+      "sampledDivisions": [
+        "HW"
+      ],
+      "womenFeatherweightTreatment": null
+    },
+    {
+      "fighter": "Matt Hughes",
+      "rank": 8,
+      "totalScore": 64.76,
+      "adjustment": -3,
+      "overallOvr": 92,
+      "depthIndex": 0.75,
+      "sampledDivisions": [
+        "WW"
+      ],
+      "womenFeatherweightTreatment": null
+    },
+    {
+      "fighter": "Junior dos Santos",
+      "rank": 24,
+      "totalScore": 50.12,
+      "adjustment": -1.98,
+      "overallOvr": 89,
+      "depthIndex": 0.8102,
+      "sampledDivisions": [
+        "HW"
+      ],
+      "womenFeatherweightTreatment": null
+    },
+    {
+      "fighter": "Tito Ortiz",
+      "rank": 25,
+      "totalScore": 50.01,
+      "adjustment": -3,
+      "overallOvr": 89,
+      "depthIndex": 0.75,
+      "sampledDivisions": [
+        "LHW"
+      ],
+      "womenFeatherweightTreatment": null
+    },
+    {
+      "fighter": "Amanda Nunes",
+      "rank": 1,
+      "totalScore": 82.03,
+      "adjustment": -0.96,
+      "overallOvr": 99,
+      "depthIndex": 0.8828,
+      "sampledDivisions": [
+        "WBW"
+      ],
+      "womenFeatherweightTreatment": {
+        "version": "division-era-depth-shadow-20260712d-current-wfw-safe",
+        "treatment": "mixed-career-non-wfw-only",
+        "excludedSampleCount": 3,
+        "retainedSampleCount": 9,
+        "originalDepthIndex": 0.8612,
+        "originalCurvedAdjustment": -1.24,
+        "finalDepthIndex": 0.8828,
+        "finalCurvedAdjustment": -0.96
+      }
+    },
+    {
+      "fighter": "Cris Cyborg",
+      "rank": 8,
+      "totalScore": 38.69,
+      "adjustment": 0,
+      "overallOvr": 87,
+      "depthIndex": 1,
+      "sampledDivisions": [],
+      "womenFeatherweightTreatment": {
+        "version": "division-era-depth-shadow-20260712d-current-wfw-safe",
+        "treatment": "pure-wfw-zero-adjustment",
+        "excludedSampleCount": 7,
+        "retainedSampleCount": 0,
+        "originalDepthIndex": 0.75,
+        "originalCurvedAdjustment": -3,
+        "finalDepthIndex": 1,
+        "finalCurvedAdjustment": 0
+      }
+    },
+    {
+      "fighter": "Holly Holm",
+      "rank": 12,
+      "totalScore": 30.59,
+      "adjustment": -2,
+      "overallOvr": 84,
+      "depthIndex": 0.8095,
+      "sampledDivisions": [
+        "WBW"
+      ],
+      "womenFeatherweightTreatment": {
+        "version": "division-era-depth-shadow-20260712d-current-wfw-safe",
+        "treatment": "mixed-career-non-wfw-only",
+        "excludedSampleCount": 3,
+        "retainedSampleCount": 4,
+        "originalDepthIndex": 0.783,
+        "originalCurvedAdjustment": -2.43,
+        "finalDepthIndex": 0.8095,
+        "finalCurvedAdjustment": -2
+      }
+    }
+  ],
+  "menTop20": [
+    {
+      "rank": 1,
+      "fighter": "Jon Jones",
+      "totalScore": 101.92,
+      "eraDepthAdjustment": -0.15,
+      "overallOvr": 99
+    },
+    {
+      "rank": 2,
+      "fighter": "Georges St-Pierre",
+      "totalScore": 88.07,
+      "eraDepthAdjustment": -1.73,
+      "overallOvr": 97
+    },
+    {
+      "rank": 3,
+      "fighter": "Anderson Silva",
+      "totalScore": 77.29,
+      "eraDepthAdjustment": -1.67,
+      "overallOvr": 95
+    },
+    {
+      "rank": 4,
+      "fighter": "Demetrious Johnson",
+      "totalScore": 77.11,
+      "eraDepthAdjustment": -1.23,
+      "overallOvr": 95
+    },
+    {
+      "rank": 5,
+      "fighter": "Islam Makhachev",
+      "totalScore": 69.14,
+      "eraDepthAdjustment": -0.08,
+      "overallOvr": 93
+    },
+    {
+      "rank": 6,
+      "fighter": "Alexander Volkanovski",
+      "totalScore": 67.62,
+      "eraDepthAdjustment": -0.02,
+      "overallOvr": 93
+    },
+    {
+      "rank": 7,
+      "fighter": "Jose Aldo",
+      "totalScore": 67.14,
+      "eraDepthAdjustment": -1.04,
+      "overallOvr": 93
+    },
+    {
+      "rank": 8,
+      "fighter": "Matt Hughes",
+      "totalScore": 64.76,
+      "eraDepthAdjustment": -3,
+      "overallOvr": 92
+    },
+    {
+      "rank": 9,
+      "fighter": "Khabib Nurmagomedov",
+      "totalScore": 64.05,
+      "eraDepthAdjustment": 0.09,
+      "overallOvr": 92
+    },
+    {
+      "rank": 10,
+      "fighter": "Kamaru Usman",
+      "totalScore": 62.03,
+      "eraDepthAdjustment": 0.27,
+      "overallOvr": 92
+    },
+    {
+      "rank": 11,
+      "fighter": "Stipe Miocic",
+      "totalScore": 61.84,
+      "eraDepthAdjustment": -0.17,
+      "overallOvr": 92
+    },
+    {
+      "rank": 12,
+      "fighter": "Max Holloway",
+      "totalScore": 61.37,
+      "eraDepthAdjustment": -0.21,
+      "overallOvr": 92
+    },
+    {
+      "rank": 13,
+      "fighter": "Randy Couture",
+      "totalScore": 59.8,
+      "eraDepthAdjustment": -3,
+      "overallOvr": 91
+    },
+    {
+      "rank": 14,
+      "fighter": "Israel Adesanya",
+      "totalScore": 59.57,
+      "eraDepthAdjustment": -0.05,
+      "overallOvr": 91
+    },
+    {
+      "rank": 15,
+      "fighter": "Chuck Liddell",
+      "totalScore": 57.62,
+      "eraDepthAdjustment": -2.94,
+      "overallOvr": 91
+    },
+    {
+      "rank": 16,
+      "fighter": "Daniel Cormier",
+      "totalScore": 56.79,
+      "eraDepthAdjustment": -0.22,
+      "overallOvr": 91
+    },
+    {
+      "rank": 17,
+      "fighter": "Alex Pereira",
+      "totalScore": 56.54,
+      "eraDepthAdjustment": 0.16,
+      "overallOvr": 91
+    },
+    {
+      "rank": 18,
+      "fighter": "B.J. Penn",
+      "totalScore": 55.08,
+      "eraDepthAdjustment": -2.71,
+      "overallOvr": 90
+    },
+    {
+      "rank": 19,
+      "fighter": "T.J. Dillashaw",
+      "totalScore": 54.52,
+      "eraDepthAdjustment": -1.33,
+      "overallOvr": 90
+    },
+    {
+      "rank": 20,
+      "fighter": "Frankie Edgar",
+      "totalScore": 53.63,
+      "eraDepthAdjustment": -1.41,
+      "overallOvr": 90
+    }
+  ],
+  "womenBoard": [
+    {
+      "rank": 1,
+      "fighter": "Amanda Nunes",
+      "totalScore": 82.03,
+      "eraDepthAdjustment": -0.96,
+      "overallOvr": 99
+    },
+    {
+      "rank": 2,
+      "fighter": "Valentina Shevchenko",
+      "totalScore": 75.92,
+      "eraDepthAdjustment": -0.53,
+      "overallOvr": 98
+    },
+    {
+      "rank": 3,
+      "fighter": "Zhang Weili",
+      "totalScore": 57.04,
+      "eraDepthAdjustment": -0.13,
+      "overallOvr": 93
+    },
+    {
+      "rank": 4,
+      "fighter": "Joanna Jedrzejczyk",
+      "totalScore": 52.82,
+      "eraDepthAdjustment": -2,
+      "overallOvr": 91
+    },
+    {
+      "rank": 5,
+      "fighter": "Rose Namajunas",
+      "totalScore": 49.2,
+      "eraDepthAdjustment": -0.74,
+      "overallOvr": 90
+    },
+    {
+      "rank": 6,
+      "fighter": "Ronda Rousey",
+      "totalScore": 48.9,
+      "eraDepthAdjustment": -2.57,
+      "overallOvr": 90
+    },
+    {
+      "rank": 7,
+      "fighter": "Jessica Andrade",
+      "totalScore": 40.94,
+      "eraDepthAdjustment": -0.35,
+      "overallOvr": 88
+    },
+    {
+      "rank": 8,
+      "fighter": "Cris Cyborg",
+      "totalScore": 38.69,
+      "eraDepthAdjustment": 0,
+      "overallOvr": 87
+    },
+    {
+      "rank": 9,
+      "fighter": "Alexa Grasso",
+      "totalScore": 36.01,
+      "eraDepthAdjustment": 0.18,
+      "overallOvr": 86
+    },
+    {
+      "rank": 10,
+      "fighter": "Julianna Peña",
+      "totalScore": 33.86,
+      "eraDepthAdjustment": 0.33,
+      "overallOvr": 85
+    },
+    {
+      "rank": 11,
+      "fighter": "Carla Esparza",
+      "totalScore": 33.34,
+      "eraDepthAdjustment": -1.22,
+      "overallOvr": 85
+    },
+    {
+      "rank": 12,
+      "fighter": "Holly Holm",
+      "totalScore": 30.59,
+      "eraDepthAdjustment": -2,
+      "overallOvr": 84
+    },
+    {
+      "rank": 13,
+      "fighter": "Mackenzie Dern",
+      "totalScore": 30.4,
+      "eraDepthAdjustment": 0,
+      "overallOvr": 84
+    },
+    {
+      "rank": 14,
+      "fighter": "Kayla Harrison",
+      "totalScore": 30.17,
+      "eraDepthAdjustment": 0.49,
+      "overallOvr": 84
+    },
+    {
+      "rank": 15,
+      "fighter": "Miesha Tate",
+      "totalScore": 29.67,
+      "eraDepthAdjustment": -2.46,
+      "overallOvr": 84
+    }
+  ],
+  "profileSurface": {
+    "rendered": true,
+    "hasEraCard": true,
+    "hasAdjustment": true,
+    "hasRank": true,
+    "hasOvr": true,
+    "text": "UFC ALL-TIME RANK: #8\nWW\nMatt Hughes\n92 OVR\n\nThe early welterweight title-control case: real championship volume, physical dominance, and one of the defining reigns before the GSP era.\n\n▶ WATCH SIGNATURE FIGHT\nResume Snapshot\n18-7\nUFC Record\n9\nUFC Title-Fight Wins\n9\nElite / Top-5 Wins\n13-3\nPrime Record\n61%\nFinish Rate\n71%\nRounds Won\n6.2 YRS\nActive Elite Years\n4\nPrime Stoppage Losses\nEra-depth adjustment\n\n-3.00 points from a 0.7500 division-era depth index across the fighter’s UFC prime.\n\nQualified active pool 0.55× · ranks 6–15 strength 0.56× · contender diversity 0.95×\n\nChampionship Resume\n95 RATING\n#5 in category · Title wins, reign strength, division control\nELITE\nQuality Wins\n83 RATING\n#21 in category · Who they beat, when, and division strength\nGREAT\nPrime Dominance\n88 RATING\n#14 in category · Rounds, finishes, separation, durability\nGREAT\nElite Longevity\n88 RATING\n#14 in category · Active elite UFC years, not calendar padding\nGREAT\nApex Peak\n75 RATING\n#43 in category · Best two-win stretch: performance, proof, peak\nAVERAGE\nLoss Context\n78 RATING\n#31 in category · Losses adjusted for timing, opponent, finish, division\nGOOD\nWhy Ranked Here\n\nHughes lands here because his UFC welterweight title volume is still meaningful. He spent years as the division standard, stacked title wins, and has enough important victories to remain a serious UFC-only GOAT case.\n\nWhy Not Ranked Higher?\n\nHe does not rank higher because era strength, loss volume, and later separation by GSP cap the case. His championship weight is real, but the modern top-tier resumes are cleaner and deeper."
+  },
+  "compareSurface": {
+    "rendered": true,
+    "hasHughes": true,
+    "hasKhabib": true,
+    "hasLiveRanks": true,
+    "text": "\n      \n      #8 · 92 OVR\n      Matt Hughes\n      18-7 · Welterweight\n    \n      \n      #9 · 92 OVR\n      Khabib Nurmagomedov\n      13-0 · Lightweight\n    \n      \n        Matt Hughes wins this comparison.\n        At his best, Khabib was the strongest control fighter in the sport. Everyone knew the game plan, and almost nobody had answers for it.Hughes has real championship depth: title-fight volume, sustained divisional control, and a long run as one of the sport’s defining champions.Khabib Nurmagomedov owns the peak lane, but Matt Hughes owns the overall resume lane.\n        Final take: Matt Hughes wins. Khabib Nurmagomedov has the better peak argument, but Matt Hughes has the stronger total GOAT case in this model.\n      \n    "
+  },
+  "browserDiagnostics": {
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 404 (File not found)"
+    ],
+    "pageErrors": []
+  }
+}
