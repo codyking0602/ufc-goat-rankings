@@ -2,7 +2,7 @@
 // This is the only module allowed to own overall totals, ranks, weighted breakdowns, and score-derived OVR.
 (function(){
   'use strict';
-  const VERSION='final-score-engine-20260711a-fixed-anchor-curve';
+  const VERSION='final-score-engine-20260712a-division-era-depth';
   const DATA=window.RANKING_DATA;
   const WEIGHTS={championship:35,opponentQuality:27.5,primeDominance:27.5,longevity:10};
   const MAX={championship:30,opponentQuality:30,primeDominance:30,longevity:30};
@@ -16,7 +16,7 @@
   };
   const CATEGORY_FLOOR=75;
   const CATEGORY_CEILING=99;
-  const FORMULA='championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty';
+  const FORMULA='championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment';
   let applying=false;
 
   function num(value){const n=Number(value??0);return Number.isFinite(n)?n:0;}
@@ -38,8 +38,10 @@
     const longevity=(categoryScore(row,'longevity')/MAX.longevity)*WEIGHTS.longevity;
     const apexPeak=num(row?.apexPeak);
     const penalty=num(row?.penalty);
+    const eraDepthAdjustment=num(row?.eraDepthAdjustment);
     const baseScore=championship+opponentQuality+primeDominance+longevity;
-    const modifierScore=apexPeak+penalty;
+    const preEraDepthTotalScore=baseScore+apexPeak+penalty;
+    const modifierScore=apexPeak+penalty+eraDepthAdjustment;
     const totalScore=baseScore+modifierScore;
     return {
       championship:round2(championship),
@@ -51,6 +53,8 @@
       apexPeak:round2(apexPeak),
       apexPeakBonus:round2(apexPeak),
       penalty:round2(penalty),
+      eraDepthAdjustment:round2(eraDepthAdjustment),
+      preEraDepthTotalScore:round2(preEraDepthTotalScore),
       modifierScore:round2(modifierScore),
       totalScore:round2(totalScore)
     };
@@ -59,6 +63,7 @@
     if(!row) return;
     const breakdown=scoreBreakdown(row);
     row.weightedScoreBreakdown=breakdown;
+    row.preEraDepthTotalScore=breakdown.preEraDepthTotalScore;
     row.rawScore=breakdown.totalScore;
     row.totalScore=breakdown.totalScore;
     row.finalScoreEngineVersion=VERSION;
