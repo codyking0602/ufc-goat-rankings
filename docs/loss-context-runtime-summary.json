@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-12T15:03:53.804Z",
+  "generatedAt": "2026-07-12T15:39:35.051Z",
   "pipelineStatus": "ready",
   "pipelineError": null,
   "complete": true,
@@ -75,7 +75,7 @@
     "mutatesRecords": true,
     "mutatesPenalty": false,
     "mutatesScores": false,
-    "appliedAt": "2026-07-12T15:03:46.494Z",
+    "appliedAt": "2026-07-12T15:39:27.269Z",
     "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
   },
   "promotedPenaltyChanges": [
@@ -771,9 +771,9 @@
         "currentPenalty": -2.94,
         "recommendedPenalty": -2.94,
         "projectedDelta": 0,
-        "currentTotal": 56.54,
-        "projectedTotal": 56.54,
-        "currentRank": 17,
+        "currentTotal": 56.7,
+        "projectedTotal": 56.7,
+        "currentRank": 16,
         "severity": 1.88,
         "severityMax": 3.5,
         "worstLosses": [
@@ -821,7 +821,7 @@
         "record": "10-3",
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "projectedRank": 17,
+        "projectedRank": 16,
         "rankMovement": 0
       },
       {
@@ -831,8 +831,8 @@
         "currentPenalty": -2.8,
         "recommendedPenalty": -2.8,
         "projectedDelta": 0,
-        "currentTotal": 36.01,
-        "projectedTotal": 36.01,
+        "currentTotal": 36.19,
+        "projectedTotal": 36.19,
         "currentRank": 9,
         "severity": 1.5,
         "severityMax": 3.5,
@@ -891,8 +891,8 @@
         "currentPenalty": -2.61,
         "recommendedPenalty": -2.61,
         "projectedDelta": 0,
-        "currentTotal": 67.62,
-        "projectedTotal": 67.62,
+        "currentTotal": 67.6,
+        "projectedTotal": 67.6,
         "currentRank": 6,
         "severity": 1.75,
         "severityMax": 3.5,
@@ -951,9 +951,9 @@
         "currentPenalty": -2.87,
         "recommendedPenalty": -2.87,
         "projectedDelta": 0,
-        "currentTotal": 48.84,
-        "projectedTotal": 48.84,
-        "currentRank": 27,
+        "currentTotal": 48.79,
+        "projectedTotal": 48.79,
+        "currentRank": 25,
         "severity": 1.88,
         "severityMax": 3.5,
         "worstLosses": [
@@ -1001,7 +1001,7 @@
         "record": "17-5",
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "projectedRank": 27,
+        "projectedRank": 25,
         "rankMovement": 0
       },
       {
@@ -1011,8 +1011,8 @@
         "currentPenalty": -2.51,
         "recommendedPenalty": -2.51,
         "projectedDelta": 0,
-        "currentTotal": 82.03,
-        "projectedTotal": 82.03,
+        "currentTotal": 81.07,
+        "projectedTotal": 81.07,
         "currentRank": 1,
         "severity": 1.88,
         "severityMax": 3.5,
@@ -1071,9 +1071,9 @@
         "currentPenalty": -3,
         "recommendedPenalty": -3,
         "projectedDelta": 0,
-        "currentTotal": 77.29,
-        "projectedTotal": 77.29,
-        "currentRank": 3,
+        "currentTotal": 75.62,
+        "projectedTotal": 75.62,
+        "currentRank": 4,
         "severity": 2.25,
         "severityMax": 3.5,
         "worstLosses": [
@@ -1121,7 +1121,7 @@
         "record": "17-7",
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "projectedRank": 3,
+        "projectedRank": 4,
         "rankMovement": 0
       },
       {
@@ -1131,9 +1131,9 @@
         "currentPenalty": -3.91,
         "recommendedPenalty": -3.91,
         "projectedDelta": 0,
-        "currentTotal": 55.08,
-        "projectedTotal": 55.08,
-        "currentRank": 18,
+        "currentTotal": 52.37,
+        "projectedTotal": 52.37,
+        "currentRank": 20,
         "severity": 1.88,
         "severityMax": 3.5,
         "worstLosses": [
@@ -1181,7 +1181,7 @@
         "record": "12-13-2",
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "projectedRank": 18,
+        "projectedRank": 20,
         "rankMovement": 0
       },
       {
@@ -1191,9 +1191,9 @@
         "currentPenalty": -3.76,
         "recommendedPenalty": -3.76,
         "projectedDelta": 0,
-        "currentTotal": 37.26,
-        "projectedTotal": 37.26,
-        "currentRank": 45,
+        "currentTotal": 35,
+        "projectedTotal": 35,
+        "currentRank": 46,
         "severity": 1.88,
         "severityMax": 3.5,
         "worstLosses": [
@@ -1241,7 +1241,7 @@
         "record": "4-3, 1 NC",
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "projectedRank": 45,
+        "projectedRank": 46,
         "rankMovement": 0
       },
       {
@@ -1251,8 +1251,8 @@
         "currentPenalty": -3.29,
         "recommendedPenalty": -3.29,
         "projectedDelta": 0,
-        "currentTotal": 52.14,
-        "projectedTotal": 52.14,
+        "currentTotal": 50.59,
+        "projectedTotal": 50.59,
         "currentRank": 22,
         "severity": 2.25,
         "severityMax": 3.5,
@@ -1311,8 +1311,8 @@
         "currentPenalty": -5.63,
         "recommendedPenalty": -5.63,
         "projectedDelta": 0,
-        "currentTotal": 33.34,
-        "projectedTotal": 33.34,
+        "currentTotal": 32.12,
+        "projectedTotal": 32.12,
         "currentRank": 11,
         "severity": 3.13,
         "severityMax": 3.5,
@@ -1371,8 +1371,8 @@
         "currentPenalty": -4.01,
         "recommendedPenalty": -4.01,
         "projectedDelta": 0,
-        "currentTotal": 23.92,
-        "projectedTotal": 23.92,
+        "currentTotal": 22.81,
+        "projectedTotal": 22.81,
         "currentRank": 48,
         "severity": 1.88,
         "severityMax": 3.5,
@@ -1431,9 +1431,9 @@
         "currentPenalty": -3.27,
         "recommendedPenalty": -3.27,
         "projectedDelta": 0,
-        "currentTotal": 53.38,
-        "projectedTotal": 53.38,
-        "currentRank": 21,
+        "currentTotal": 53.33,
+        "projectedTotal": 53.33,
+        "currentRank": 18,
         "severity": 2.25,
         "severityMax": 3.5,
         "worstLosses": [
@@ -1481,7 +1481,7 @@
         "record": "25-11",
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "projectedRank": 21,
+        "projectedRank": 18,
         "rankMovement": 0
       },
       {
@@ -1491,9 +1491,9 @@
         "currentPenalty": -3.25,
         "recommendedPenalty": -3.25,
         "projectedDelta": 0,
-        "currentTotal": 57.62,
-        "projectedTotal": 57.62,
-        "currentRank": 16,
+        "currentTotal": 54.68,
+        "projectedTotal": 54.68,
+        "currentRank": 17,
         "severity": 2.25,
         "severityMax": 3.5,
         "worstLosses": [
@@ -1541,7 +1541,7 @@
         "record": "16-7",
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "projectedRank": 16,
+        "projectedRank": 17,
         "rankMovement": 0
       },
       {
@@ -1551,9 +1551,9 @@
         "currentPenalty": -4.81,
         "recommendedPenalty": -4.81,
         "projectedDelta": 0,
-        "currentTotal": 48.78,
-        "projectedTotal": 48.78,
-        "currentRank": 28,
+        "currentTotal": 48.33,
+        "projectedTotal": 48.33,
+        "currentRank": 27,
         "severity": 3.5,
         "severityMax": 3.5,
         "worstLosses": [
@@ -1601,7 +1601,7 @@
         "record": "10-4",
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "projectedRank": 28,
+        "projectedRank": 27,
         "rankMovement": 0
       },
       {
@@ -1665,8 +1665,8 @@
         "currentPenalty": -5.63,
         "recommendedPenalty": -5.63,
         "projectedDelta": 0,
-        "currentTotal": 33.34,
-        "projectedTotal": 33.34,
+        "currentTotal": 32.12,
+        "projectedTotal": 32.12,
         "currentRank": 11,
         "severity": 3.13,
         "severityMax": 3.5,
@@ -1725,9 +1725,9 @@
         "currentPenalty": -5.25,
         "recommendedPenalty": -5.25,
         "projectedDelta": 0,
-        "currentTotal": 59.8,
-        "projectedTotal": 59.8,
-        "currentRank": 13,
+        "currentTotal": 56.8,
+        "projectedTotal": 56.8,
+        "currentRank": 15,
         "severity": 2.25,
         "severityMax": 3.5,
         "worstLosses": [
@@ -1775,7 +1775,7 @@
         "record": "16-8",
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "projectedRank": 13,
+        "projectedRank": 15,
         "rankMovement": 0
       },
       {
@@ -1785,8 +1785,8 @@
         "currentPenalty": -5.15,
         "recommendedPenalty": -5.15,
         "projectedDelta": 0,
-        "currentTotal": 67.14,
-        "projectedTotal": 67.14,
+        "currentTotal": 66.1,
+        "projectedTotal": 66.1,
         "currentRank": 7,
         "severity": 2.25,
         "severityMax": 3.5,
@@ -1845,9 +1845,9 @@
         "currentPenalty": -4.81,
         "recommendedPenalty": -4.81,
         "projectedDelta": 0,
-        "currentTotal": 48.78,
-        "projectedTotal": 48.78,
-        "currentRank": 28,
+        "currentTotal": 48.33,
+        "projectedTotal": 48.33,
+        "currentRank": 27,
         "severity": 3.5,
         "severityMax": 3.5,
         "worstLosses": [
@@ -1895,7 +1895,7 @@
         "record": "10-4",
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "projectedRank": 28,
+        "projectedRank": 27,
         "rankMovement": 0
       },
       {
@@ -1905,9 +1905,9 @@
         "currentPenalty": -4.75,
         "recommendedPenalty": -4.75,
         "projectedDelta": 0,
-        "currentTotal": 30.59,
-        "projectedTotal": 30.59,
-        "currentRank": 12,
+        "currentTotal": 28.59,
+        "projectedTotal": 28.59,
+        "currentRank": 14,
         "severity": 2.25,
         "severityMax": 3.5,
         "worstLosses": [
@@ -1955,7 +1955,7 @@
         "record": "8-7, 1 NC",
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "projectedRank": 12,
+        "projectedRank": 14,
         "rankMovement": 0
       },
       {
@@ -1965,8 +1965,8 @@
         "currentPenalty": -4.69,
         "recommendedPenalty": -4.69,
         "projectedDelta": 0,
-        "currentTotal": 25.37,
-        "projectedTotal": 25.37,
+        "currentTotal": 24.8,
+        "projectedTotal": 24.8,
         "currentRank": 47,
         "severity": 2.25,
         "severityMax": 3.5,
@@ -2025,8 +2025,8 @@
         "currentPenalty": -4.54,
         "recommendedPenalty": -4.54,
         "projectedDelta": 0,
-        "currentTotal": 40.94,
-        "projectedTotal": 40.94,
+        "currentTotal": 40.59,
+        "projectedTotal": 40.59,
         "currentRank": 7,
         "severity": 2.25,
         "severityMax": 3.5,
@@ -2085,9 +2085,9 @@
         "currentPenalty": -4.51,
         "recommendedPenalty": -4.51,
         "projectedDelta": 0,
-        "currentTotal": 53.63,
-        "projectedTotal": 53.63,
-        "currentRank": 20,
+        "currentTotal": 52.22,
+        "projectedTotal": 52.22,
+        "currentRank": 21,
         "severity": 1.88,
         "severityMax": 3.5,
         "worstLosses": [
@@ -2135,7 +2135,7 @@
         "record": "18-11-1",
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "projectedRank": 20,
+        "projectedRank": 21,
         "rankMovement": 0
       },
       {
@@ -2145,8 +2145,8 @@
         "currentPenalty": -4.37,
         "recommendedPenalty": -4.37,
         "projectedDelta": 0,
-        "currentTotal": 61.37,
-        "projectedTotal": 61.37,
+        "currentTotal": 61.16,
+        "projectedTotal": 61.16,
         "currentRank": 12,
         "severity": 2.13,
         "severityMax": 3.5,
@@ -2205,9 +2205,9 @@
         "currentPenalty": -4.25,
         "recommendedPenalty": -4.25,
         "projectedDelta": 0,
-        "currentTotal": 42.59,
-        "projectedTotal": 42.59,
-        "currentRank": 41,
+        "currentTotal": 42.31,
+        "projectedTotal": 42.31,
+        "currentRank": 40,
         "severity": 2.25,
         "severityMax": 3.5,
         "worstLosses": [
@@ -2255,7 +2255,7 @@
         "record": "16-8",
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "projectedRank": 41,
+        "projectedRank": 40,
         "rankMovement": 0
       },
       {
@@ -2265,9 +2265,9 @@
         "currentPenalty": -4.15,
         "recommendedPenalty": -4.15,
         "projectedDelta": 0,
-        "currentTotal": 50.01,
-        "projectedTotal": 50.01,
-        "currentRank": 25,
+        "currentTotal": 47.01,
+        "projectedTotal": 47.01,
+        "currentRank": 30,
         "severity": 2.25,
         "severityMax": 3.5,
         "worstLosses": [
@@ -2315,7 +2315,7 @@
         "record": "15-11-1",
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "projectedRank": 25,
+        "projectedRank": 30,
         "rankMovement": 0
       },
       {
@@ -2325,8 +2325,8 @@
         "currentPenalty": -4.13,
         "recommendedPenalty": -4.13,
         "projectedDelta": 0,
-        "currentTotal": 29.18,
-        "projectedTotal": 29.18,
+        "currentTotal": 26.72,
+        "projectedTotal": 26.72,
         "currentRank": 15,
         "severity": 1.88,
         "severityMax": 3.5,
@@ -2385,8 +2385,8 @@
         "currentPenalty": -4.01,
         "recommendedPenalty": -4.01,
         "projectedDelta": 0,
-        "currentTotal": 23.92,
-        "projectedTotal": 23.92,
+        "currentTotal": 22.81,
+        "projectedTotal": 22.81,
         "currentRank": 48,
         "severity": 1.88,
         "severityMax": 3.5,
@@ -2445,8 +2445,8 @@
         "currentPenalty": -3.94,
         "recommendedPenalty": -3.94,
         "projectedDelta": 0,
-        "currentTotal": 48.9,
-        "projectedTotal": 48.9,
+        "currentTotal": 46.33,
+        "projectedTotal": 46.33,
         "currentRank": 6,
         "severity": 2.25,
         "severityMax": 3.5,
@@ -2505,8 +2505,8 @@
         "currentPenalty": -3.93,
         "recommendedPenalty": -3.93,
         "projectedDelta": 0,
-        "currentTotal": 46.83,
-        "projectedTotal": 46.83,
+        "currentTotal": 46.77,
+        "projectedTotal": 46.77,
         "currentRank": 33,
         "severity": 2.25,
         "severityMax": 3.5,
@@ -2568,8 +2568,8 @@
         "currentPenalty": -1.95,
         "recommendedPenalty": -1.95,
         "projectedDelta": 0,
-        "currentTotal": 44.7,
-        "projectedTotal": 44.7,
+        "currentTotal": 44.97,
+        "projectedTotal": 44.97,
         "currentRank": 36,
         "severity": 1.5,
         "severityMax": 3.5,
@@ -2620,8 +2620,8 @@
         "currentPenalty": -3.93,
         "recommendedPenalty": -3.93,
         "projectedDelta": 0,
-        "currentTotal": 46.83,
-        "projectedTotal": 46.83,
+        "currentTotal": 46.77,
+        "projectedTotal": 46.77,
         "currentRank": 33,
         "severity": 2.25,
         "severityMax": 3.5,
@@ -2680,8 +2680,8 @@
         "currentPenalty": 0,
         "recommendedPenalty": 0,
         "projectedDelta": 0,
-        "currentTotal": 101.92,
-        "projectedTotal": 101.92,
+        "currentTotal": 101.77,
+        "projectedTotal": 101.77,
         "currentRank": 1,
         "severity": 0,
         "severityMax": 3.5,
@@ -2723,8 +2723,8 @@
         "currentPenalty": -3.78,
         "recommendedPenalty": -3.78,
         "projectedDelta": 0,
-        "currentTotal": 88.07,
-        "projectedTotal": 88.07,
+        "currentTotal": 86.34,
+        "projectedTotal": 86.34,
         "currentRank": 2,
         "severity": 3.13,
         "severityMax": 3.5,
@@ -2783,8 +2783,8 @@
         "currentPenalty": -4.37,
         "recommendedPenalty": -4.37,
         "projectedDelta": 0,
-        "currentTotal": 61.37,
-        "projectedTotal": 61.37,
+        "currentTotal": 61.16,
+        "projectedTotal": 61.16,
         "currentRank": 12,
         "severity": 2.13,
         "severityMax": 3.5,
@@ -2843,9 +2843,9 @@
         "currentPenalty": -3.27,
         "recommendedPenalty": -3.27,
         "projectedDelta": 0,
-        "currentTotal": 53.38,
-        "projectedTotal": 53.38,
-        "currentRank": 21,
+        "currentTotal": 53.33,
+        "projectedTotal": 53.33,
+        "currentRank": 18,
         "severity": 2.25,
         "severityMax": 3.5,
         "worstLosses": [
@@ -2893,7 +2893,7 @@
         "record": "25-11",
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "projectedRank": 21,
+        "projectedRank": 18,
         "rankMovement": 0
       },
       {
@@ -2903,9 +2903,9 @@
         "currentPenalty": -5.25,
         "recommendedPenalty": -5.25,
         "projectedDelta": 0,
-        "currentTotal": 59.8,
-        "projectedTotal": 59.8,
-        "currentRank": 13,
+        "currentTotal": 56.8,
+        "projectedTotal": 56.8,
+        "currentRank": 15,
         "severity": 2.25,
         "severityMax": 3.5,
         "worstLosses": [
@@ -2953,7 +2953,7 @@
         "record": "16-8",
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "projectedRank": 13,
+        "projectedRank": 15,
         "rankMovement": 0
       },
       {
@@ -2963,8 +2963,8 @@
         "currentPenalty": -5.15,
         "recommendedPenalty": -5.15,
         "projectedDelta": 0,
-        "currentTotal": 67.14,
-        "projectedTotal": 67.14,
+        "currentTotal": 66.1,
+        "projectedTotal": 66.1,
         "currentRank": 7,
         "severity": 2.25,
         "severityMax": 3.5,
@@ -3023,9 +3023,9 @@
         "currentPenalty": -3,
         "recommendedPenalty": -3,
         "projectedDelta": 0,
-        "currentTotal": 77.29,
-        "projectedTotal": 77.29,
-        "currentRank": 3,
+        "currentTotal": 75.62,
+        "projectedTotal": 75.62,
+        "currentRank": 4,
         "severity": 2.25,
         "severityMax": 3.5,
         "worstLosses": [
@@ -3073,7 +3073,7 @@
         "record": "17-7",
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "projectedRank": 3,
+        "projectedRank": 4,
         "rankMovement": 0
       },
       {
@@ -3083,9 +3083,9 @@
         "currentPenalty": 0,
         "recommendedPenalty": 0,
         "projectedDelta": 0,
-        "currentTotal": 64.05,
-        "projectedTotal": 64.05,
-        "currentRank": 9,
+        "currentTotal": 64.14,
+        "projectedTotal": 64.14,
+        "currentRank": 8,
         "severity": 0,
         "severityMax": 3.5,
         "worstLosses": [],
@@ -3116,7 +3116,7 @@
         "record": "13-0",
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "projectedRank": 9,
+        "projectedRank": 8,
         "rankMovement": 0
       }
     ],
@@ -3130,9 +3130,9 @@
           "currentPenalty": -4.81,
           "recommendedPenalty": -4.81,
           "projectedDelta": 0,
-          "currentTotal": 48.78,
-          "projectedTotal": 48.78,
-          "currentRank": 28,
+          "currentTotal": 48.33,
+          "projectedTotal": 48.33,
+          "currentRank": 27,
           "severity": 3.5,
           "severityMax": 3.5,
           "worstLosses": [
@@ -3180,7 +3180,7 @@
           "record": "10-4",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 28,
+          "projectedRank": 27,
           "rankMovement": 0
         }
       ],
@@ -3192,8 +3192,8 @@
           "currentPenalty": -5.63,
           "recommendedPenalty": -5.63,
           "projectedDelta": 0,
-          "currentTotal": 33.34,
-          "projectedTotal": 33.34,
+          "currentTotal": 32.12,
+          "projectedTotal": 32.12,
           "currentRank": 11,
           "severity": 3.13,
           "severityMax": 3.5,
@@ -3252,9 +3252,9 @@
           "currentPenalty": -4.75,
           "recommendedPenalty": -4.75,
           "projectedDelta": 0,
-          "currentTotal": 30.59,
-          "projectedTotal": 30.59,
-          "currentRank": 12,
+          "currentTotal": 28.59,
+          "projectedTotal": 28.59,
+          "currentRank": 14,
           "severity": 2.25,
           "severityMax": 3.5,
           "worstLosses": [
@@ -3302,7 +3302,7 @@
           "record": "8-7, 1 NC",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 12,
+          "projectedRank": 14,
           "rankMovement": 0
         }
       ],
@@ -3314,8 +3314,8 @@
           "currentPenalty": -2.61,
           "recommendedPenalty": -2.61,
           "projectedDelta": 0,
-          "currentTotal": 67.62,
-          "projectedTotal": 67.62,
+          "currentTotal": 67.6,
+          "projectedTotal": 67.6,
           "currentRank": 6,
           "severity": 1.75,
           "severityMax": 3.5,
@@ -3374,9 +3374,9 @@
           "currentPenalty": -3.91,
           "recommendedPenalty": -3.91,
           "projectedDelta": 0,
-          "currentTotal": 55.08,
-          "projectedTotal": 55.08,
-          "currentRank": 18,
+          "currentTotal": 52.37,
+          "projectedTotal": 52.37,
+          "currentRank": 20,
           "severity": 1.88,
           "severityMax": 3.5,
           "worstLosses": [
@@ -3424,7 +3424,7 @@
           "record": "12-13-2",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 18,
+          "projectedRank": 20,
           "rankMovement": 0
         },
         {
@@ -3434,8 +3434,8 @@
           "currentPenalty": -3.4,
           "recommendedPenalty": -3.4,
           "projectedDelta": 0,
-          "currentTotal": 46.96,
-          "projectedTotal": 46.96,
+          "currentTotal": 46.94,
+          "projectedTotal": 46.94,
           "currentRank": 31,
           "severity": 2.25,
           "severityMax": 3.5,
@@ -3494,9 +3494,9 @@
           "currentPenalty": -4.51,
           "recommendedPenalty": -4.51,
           "projectedDelta": 0,
-          "currentTotal": 53.63,
-          "projectedTotal": 53.63,
-          "currentRank": 20,
+          "currentTotal": 52.22,
+          "projectedTotal": 52.22,
+          "currentRank": 21,
           "severity": 1.88,
           "severityMax": 3.5,
           "worstLosses": [
@@ -3544,7 +3544,7 @@
           "record": "18-11-1",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 20,
+          "projectedRank": 21,
           "rankMovement": 0
         },
         {
@@ -3554,8 +3554,8 @@
           "currentPenalty": -3.25,
           "recommendedPenalty": -3.25,
           "projectedDelta": 0,
-          "currentTotal": 52.82,
-          "projectedTotal": 52.82,
+          "currentTotal": 50.82,
+          "projectedTotal": 50.82,
           "currentRank": 4,
           "severity": 1.88,
           "severityMax": 3.5,
@@ -3614,8 +3614,8 @@
           "currentPenalty": -5.15,
           "recommendedPenalty": -5.15,
           "projectedDelta": 0,
-          "currentTotal": 67.14,
-          "projectedTotal": 67.14,
+          "currentTotal": 66.1,
+          "projectedTotal": 66.1,
           "currentRank": 7,
           "severity": 2.25,
           "severityMax": 3.5,
@@ -3674,9 +3674,9 @@
           "currentPenalty": -4.25,
           "recommendedPenalty": -4.25,
           "projectedDelta": 0,
-          "currentTotal": 42.59,
-          "projectedTotal": 42.59,
-          "currentRank": 41,
+          "currentTotal": 42.31,
+          "projectedTotal": 42.31,
+          "currentRank": 40,
           "severity": 2.25,
           "severityMax": 3.5,
           "worstLosses": [
@@ -3724,7 +3724,7 @@
           "record": "16-8",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 41,
+          "projectedRank": 40,
           "rankMovement": 0
         },
         {
@@ -3734,8 +3734,8 @@
           "currentPenalty": -4.37,
           "recommendedPenalty": -4.37,
           "projectedDelta": 0,
-          "currentTotal": 61.37,
-          "projectedTotal": 61.37,
+          "currentTotal": 61.16,
+          "projectedTotal": 61.16,
           "currentRank": 12,
           "severity": 2.13,
           "severityMax": 3.5,
@@ -3794,9 +3794,9 @@
           "currentPenalty": -5.25,
           "recommendedPenalty": -5.25,
           "projectedDelta": 0,
-          "currentTotal": 59.8,
-          "projectedTotal": 59.8,
-          "currentRank": 13,
+          "currentTotal": 56.8,
+          "projectedTotal": 56.8,
+          "currentRank": 15,
           "severity": 2.25,
           "severityMax": 3.5,
           "worstLosses": [
@@ -3844,7 +3844,7 @@
           "record": "16-8",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 13,
+          "projectedRank": 15,
           "rankMovement": 0
         },
         {
@@ -3854,8 +3854,8 @@
           "currentPenalty": -3.75,
           "recommendedPenalty": -3.75,
           "projectedDelta": 0,
-          "currentTotal": 45.1,
-          "projectedTotal": 45.1,
+          "currentTotal": 45.06,
+          "projectedTotal": 45.06,
           "currentRank": 35,
           "severity": 2.25,
           "severityMax": 3.5,
@@ -3917,9 +3917,9 @@
           "currentPenalty": -3.27,
           "recommendedPenalty": -3.27,
           "projectedDelta": 0,
-          "currentTotal": 53.38,
-          "projectedTotal": 53.38,
-          "currentRank": 21,
+          "currentTotal": 53.33,
+          "projectedTotal": 53.33,
+          "currentRank": 18,
           "severity": 2.25,
           "severityMax": 3.5,
           "worstLosses": [
@@ -3967,7 +3967,7 @@
           "record": "25-11",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 21,
+          "projectedRank": 18,
           "rankMovement": 0
         },
         {
@@ -3977,8 +3977,8 @@
           "currentPenalty": -3.4,
           "recommendedPenalty": -3.4,
           "projectedDelta": 0,
-          "currentTotal": 46.96,
-          "projectedTotal": 46.96,
+          "currentTotal": 46.94,
+          "projectedTotal": 46.94,
           "currentRank": 31,
           "severity": 2.25,
           "severityMax": 3.5,
@@ -4037,8 +4037,8 @@
           "currentPenalty": -1.98,
           "recommendedPenalty": -1.98,
           "projectedDelta": 0,
-          "currentTotal": 69.14,
-          "projectedTotal": 69.14,
+          "currentTotal": 69.06,
+          "projectedTotal": 69.06,
           "currentRank": 5,
           "severity": 2,
           "severityMax": 3.5,
@@ -4089,8 +4089,8 @@
           "currentPenalty": -3.93,
           "recommendedPenalty": -3.93,
           "projectedDelta": 0,
-          "currentTotal": 46.83,
-          "projectedTotal": 46.83,
+          "currentTotal": 46.77,
+          "projectedTotal": 46.77,
           "currentRank": 33,
           "severity": 2.25,
           "severityMax": 3.5,
@@ -4149,8 +4149,8 @@
           "currentPenalty": -2.05,
           "recommendedPenalty": -2.05,
           "projectedDelta": 0,
-          "currentTotal": 43.69,
-          "projectedTotal": 43.69,
+          "currentTotal": 43.95,
+          "projectedTotal": 43.95,
           "currentRank": 38,
           "severity": 1.75,
           "severityMax": 3.5,
@@ -4215,9 +4215,9 @@
           "currentPenalty": 0,
           "recommendedPenalty": 0,
           "projectedDelta": 0,
-          "currentTotal": 30.17,
-          "projectedTotal": 30.17,
-          "currentRank": 14,
+          "currentTotal": 30.66,
+          "projectedTotal": 30.66,
+          "currentRank": 12,
           "severity": 0,
           "severityMax": 3.5,
           "worstLosses": [],
@@ -4248,7 +4248,7 @@
           "record": "3-0",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 14,
+          "projectedRank": 12,
           "rankMovement": 0
         }
       ],
@@ -4260,9 +4260,9 @@
           "currentPenalty": -3,
           "recommendedPenalty": -3,
           "projectedDelta": 0,
-          "currentTotal": 77.29,
-          "projectedTotal": 77.29,
-          "currentRank": 3,
+          "currentTotal": 75.62,
+          "projectedTotal": 75.62,
+          "currentRank": 4,
           "severity": 2.25,
           "severityMax": 3.5,
           "worstLosses": [
@@ -4310,7 +4310,7 @@
           "record": "17-7",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 3,
+          "projectedRank": 4,
           "rankMovement": 0
         },
         {
@@ -4320,9 +4320,9 @@
           "currentPenalty": -3.91,
           "recommendedPenalty": -3.91,
           "projectedDelta": 0,
-          "currentTotal": 55.08,
-          "projectedTotal": 55.08,
-          "currentRank": 18,
+          "currentTotal": 52.37,
+          "projectedTotal": 52.37,
+          "currentRank": 20,
           "severity": 1.88,
           "severityMax": 3.5,
           "worstLosses": [
@@ -4370,7 +4370,7 @@
           "record": "12-13-2",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 18,
+          "projectedRank": 20,
           "rankMovement": 0
         },
         {
@@ -4380,9 +4380,9 @@
           "currentPenalty": -3.76,
           "recommendedPenalty": -3.76,
           "projectedDelta": 0,
-          "currentTotal": 37.26,
-          "projectedTotal": 37.26,
-          "currentRank": 45,
+          "currentTotal": 35,
+          "projectedTotal": 35,
+          "currentRank": 46,
           "severity": 1.88,
           "severityMax": 3.5,
           "worstLosses": [
@@ -4430,7 +4430,7 @@
           "record": "4-3, 1 NC",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 45,
+          "projectedRank": 46,
           "rankMovement": 0
         },
         {
@@ -4440,8 +4440,8 @@
           "currentPenalty": -3.29,
           "recommendedPenalty": -3.29,
           "projectedDelta": 0,
-          "currentTotal": 52.14,
-          "projectedTotal": 52.14,
+          "currentTotal": 50.59,
+          "projectedTotal": 50.59,
           "currentRank": 22,
           "severity": 2.25,
           "severityMax": 3.5,
@@ -4500,8 +4500,8 @@
           "currentPenalty": -5.63,
           "recommendedPenalty": -5.63,
           "projectedDelta": 0,
-          "currentTotal": 33.34,
-          "projectedTotal": 33.34,
+          "currentTotal": 32.12,
+          "projectedTotal": 32.12,
           "currentRank": 11,
           "severity": 3.13,
           "severityMax": 3.5,
@@ -4560,9 +4560,9 @@
           "currentPenalty": -3.25,
           "recommendedPenalty": -3.25,
           "projectedDelta": 0,
-          "currentTotal": 57.62,
-          "projectedTotal": 57.62,
-          "currentRank": 16,
+          "currentTotal": 54.68,
+          "projectedTotal": 54.68,
+          "currentRank": 17,
           "severity": 2.25,
           "severityMax": 3.5,
           "worstLosses": [
@@ -4610,7 +4610,7 @@
           "record": "16-7",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 16,
+          "projectedRank": 17,
           "rankMovement": 0
         },
         {
@@ -4620,9 +4620,9 @@
           "currentPenalty": -4.81,
           "recommendedPenalty": -4.81,
           "projectedDelta": 0,
-          "currentTotal": 48.78,
-          "projectedTotal": 48.78,
-          "currentRank": 28,
+          "currentTotal": 48.33,
+          "projectedTotal": 48.33,
+          "currentRank": 27,
           "severity": 3.5,
           "severityMax": 3.5,
           "worstLosses": [
@@ -4670,7 +4670,7 @@
           "record": "10-4",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 28,
+          "projectedRank": 27,
           "rankMovement": 0
         },
         {
@@ -4680,8 +4680,8 @@
           "currentPenalty": -4.69,
           "recommendedPenalty": -4.69,
           "projectedDelta": 0,
-          "currentTotal": 25.37,
-          "projectedTotal": 25.37,
+          "currentTotal": 24.8,
+          "projectedTotal": 24.8,
           "currentRank": 47,
           "severity": 2.25,
           "severityMax": 3.5,
@@ -4740,9 +4740,9 @@
           "currentPenalty": -3.6,
           "recommendedPenalty": -3.6,
           "projectedDelta": 0,
-          "currentTotal": 43.46,
-          "projectedTotal": 43.46,
-          "currentRank": 40,
+          "currentTotal": 43.09,
+          "projectedTotal": 43.09,
+          "currentRank": 39,
           "severity": 2.25,
           "severityMax": 3.5,
           "worstLosses": [
@@ -4790,7 +4790,7 @@
           "record": "14-7-1",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 40,
+          "projectedRank": 39,
           "rankMovement": 0
         },
         {
@@ -4800,9 +4800,9 @@
           "currentPenalty": -3.49,
           "recommendedPenalty": -3.49,
           "projectedDelta": 0,
-          "currentTotal": 43.68,
-          "projectedTotal": 43.68,
-          "currentRank": 39,
+          "currentTotal": 42.07,
+          "projectedTotal": 42.07,
+          "currentRank": 41,
           "severity": 1.88,
           "severityMax": 3.5,
           "worstLosses": [
@@ -4850,7 +4850,7 @@
           "record": "7-3",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 39,
+          "projectedRank": 41,
           "rankMovement": 0
         },
         {
@@ -4860,8 +4860,8 @@
           "currentPenalty": -3.4,
           "recommendedPenalty": -3.4,
           "projectedDelta": 0,
-          "currentTotal": 46.96,
-          "projectedTotal": 46.96,
+          "currentTotal": 46.94,
+          "projectedTotal": 46.94,
           "currentRank": 31,
           "severity": 2.25,
           "severityMax": 3.5,
@@ -4920,9 +4920,9 @@
           "currentPenalty": -4.51,
           "recommendedPenalty": -4.51,
           "projectedDelta": 0,
-          "currentTotal": 53.63,
-          "projectedTotal": 53.63,
-          "currentRank": 20,
+          "currentTotal": 52.22,
+          "projectedTotal": 52.22,
+          "currentRank": 21,
           "severity": 1.88,
           "severityMax": 3.5,
           "worstLosses": [
@@ -4970,7 +4970,7 @@
           "record": "18-11-1",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 20,
+          "projectedRank": 21,
           "rankMovement": 0
         },
         {
@@ -4980,8 +4980,8 @@
           "currentPenalty": -2.44,
           "recommendedPenalty": -2.44,
           "projectedDelta": 0,
-          "currentTotal": 50.19,
-          "projectedTotal": 50.19,
+          "currentTotal": 49.81,
+          "projectedTotal": 49.81,
           "currentRank": 23,
           "severity": 1.5,
           "severityMax": 3.5,
@@ -5040,9 +5040,9 @@
           "currentPenalty": -4.75,
           "recommendedPenalty": -4.75,
           "projectedDelta": 0,
-          "currentTotal": 30.59,
-          "projectedTotal": 30.59,
-          "currentRank": 12,
+          "currentTotal": 28.59,
+          "projectedTotal": 28.59,
+          "currentRank": 14,
           "severity": 2.25,
           "severityMax": 3.5,
           "worstLosses": [
@@ -5090,7 +5090,7 @@
           "record": "8-7, 1 NC",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 12,
+          "projectedRank": 14,
           "rankMovement": 0
         },
         {
@@ -5100,9 +5100,9 @@
           "currentPenalty": -3.52,
           "recommendedPenalty": -3.52,
           "projectedDelta": 0,
-          "currentTotal": 59.57,
-          "projectedTotal": 59.57,
-          "currentRank": 14,
+          "currentTotal": 59.52,
+          "projectedTotal": 59.52,
+          "currentRank": 13,
           "severity": 2.25,
           "severityMax": 3.5,
           "worstLosses": [
@@ -5150,7 +5150,7 @@
           "record": "13-6",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 14,
+          "projectedRank": 13,
           "rankMovement": 0
         },
         {
@@ -5160,8 +5160,8 @@
           "currentPenalty": -4.54,
           "recommendedPenalty": -4.54,
           "projectedDelta": 0,
-          "currentTotal": 40.94,
-          "projectedTotal": 40.94,
+          "currentTotal": 40.59,
+          "projectedTotal": 40.59,
           "currentRank": 7,
           "severity": 2.25,
           "severityMax": 3.5,
@@ -5220,8 +5220,8 @@
           "currentPenalty": -3.25,
           "recommendedPenalty": -3.25,
           "projectedDelta": 0,
-          "currentTotal": 52.82,
-          "projectedTotal": 52.82,
+          "currentTotal": 50.82,
+          "projectedTotal": 50.82,
           "currentRank": 4,
           "severity": 1.88,
           "severityMax": 3.5,
@@ -5280,8 +5280,8 @@
           "currentPenalty": 0,
           "recommendedPenalty": 0,
           "projectedDelta": 0,
-          "currentTotal": 101.92,
-          "projectedTotal": 101.92,
+          "currentTotal": 101.77,
+          "projectedTotal": 101.77,
           "currentRank": 1,
           "severity": 0,
           "severityMax": 3.5,
@@ -5323,8 +5323,8 @@
           "currentPenalty": -5.15,
           "recommendedPenalty": -5.15,
           "projectedDelta": 0,
-          "currentTotal": 67.14,
-          "projectedTotal": 67.14,
+          "currentTotal": 66.1,
+          "projectedTotal": 66.1,
           "currentRank": 7,
           "severity": 2.25,
           "severityMax": 3.5,
@@ -5383,9 +5383,9 @@
           "currentPenalty": -2.82,
           "recommendedPenalty": -2.82,
           "projectedDelta": 0,
-          "currentTotal": 50.12,
-          "projectedTotal": 50.12,
-          "currentRank": 24,
+          "currentTotal": 48.14,
+          "projectedTotal": 48.14,
+          "currentRank": 28,
           "severity": 1.88,
           "severityMax": 3.5,
           "worstLosses": [
@@ -5433,7 +5433,7 @@
           "record": "15-8",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 24,
+          "projectedRank": 28,
           "rankMovement": 0
         },
         {
@@ -5443,8 +5443,8 @@
           "currentPenalty": -3.93,
           "recommendedPenalty": -3.93,
           "projectedDelta": 0,
-          "currentTotal": 46.83,
-          "projectedTotal": 46.83,
+          "currentTotal": 46.77,
+          "projectedTotal": 46.77,
           "currentRank": 33,
           "severity": 2.25,
           "severityMax": 3.5,
@@ -5503,9 +5503,9 @@
           "currentPenalty": -2.39,
           "recommendedPenalty": -2.39,
           "projectedDelta": 0,
-          "currentTotal": 61.39,
-          "projectedTotal": 61.39,
-          "currentRank": 11,
+          "currentTotal": 61.66,
+          "projectedTotal": 61.66,
+          "currentRank": 10,
           "severity": 1.88,
           "severityMax": 3.5,
           "worstLosses": [
@@ -5553,7 +5553,7 @@
           "record": "16-3",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 11,
+          "projectedRank": 10,
           "rankMovement": 0
         },
         {
@@ -5563,9 +5563,9 @@
           "currentPenalty": -4.25,
           "recommendedPenalty": -4.25,
           "projectedDelta": 0,
-          "currentTotal": 42.59,
-          "projectedTotal": 42.59,
-          "currentRank": 41,
+          "currentTotal": 42.31,
+          "projectedTotal": 42.31,
+          "currentRank": 40,
           "severity": 2.25,
           "severityMax": 3.5,
           "worstLosses": [
@@ -5613,7 +5613,7 @@
           "record": "16-8",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 41,
+          "projectedRank": 40,
           "rankMovement": 0
         },
         {
@@ -5623,9 +5623,9 @@
           "currentPenalty": -3.52,
           "recommendedPenalty": -3.52,
           "projectedDelta": 0,
-          "currentTotal": 64.76,
-          "projectedTotal": 64.76,
-          "currentRank": 8,
+          "currentTotal": 61.76,
+          "projectedTotal": 61.76,
+          "currentRank": 9,
           "severity": 2.25,
           "severityMax": 3.5,
           "worstLosses": [
@@ -5673,7 +5673,7 @@
           "record": "18-7",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 8,
+          "projectedRank": 9,
           "rankMovement": 0
         },
         {
@@ -5683,9 +5683,9 @@
           "currentPenalty": -3.03,
           "recommendedPenalty": -3.03,
           "projectedDelta": 0,
-          "currentTotal": 37.1,
-          "projectedTotal": 37.1,
-          "currentRank": 46,
+          "currentTotal": 37.21,
+          "projectedTotal": 37.21,
+          "currentRank": 44,
           "severity": 1.88,
           "severityMax": 3.5,
           "worstLosses": [
@@ -5733,7 +5733,7 @@
           "record": "20-9",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 46,
+          "projectedRank": 44,
           "rankMovement": 0
         },
         {
@@ -5743,8 +5743,8 @@
           "currentPenalty": -4.13,
           "recommendedPenalty": -4.13,
           "projectedDelta": 0,
-          "currentTotal": 29.18,
-          "projectedTotal": 29.18,
+          "currentTotal": 26.72,
+          "projectedTotal": 26.72,
           "currentRank": 15,
           "severity": 1.88,
           "severityMax": 3.5,
@@ -5803,9 +5803,9 @@
           "currentPenalty": -5.25,
           "recommendedPenalty": -5.25,
           "projectedDelta": 0,
-          "currentTotal": 59.8,
-          "projectedTotal": 59.8,
-          "currentRank": 13,
+          "currentTotal": 56.8,
+          "projectedTotal": 56.8,
+          "currentRank": 15,
           "severity": 2.25,
           "severityMax": 3.5,
           "worstLosses": [
@@ -5853,7 +5853,7 @@
           "record": "16-8",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 13,
+          "projectedRank": 15,
           "rankMovement": 0
         },
         {
@@ -5863,8 +5863,8 @@
           "currentPenalty": -3.65,
           "recommendedPenalty": -3.65,
           "projectedDelta": 0,
-          "currentTotal": 45.43,
-          "projectedTotal": 45.43,
+          "currentTotal": 45.29,
+          "projectedTotal": 45.29,
           "currentRank": 34,
           "severity": 2.13,
           "severityMax": 3.5,
@@ -5923,8 +5923,8 @@
           "currentPenalty": -3.38,
           "recommendedPenalty": -3.38,
           "projectedDelta": 0,
-          "currentTotal": 49.2,
-          "projectedTotal": 49.2,
+          "currentTotal": 48.46,
+          "projectedTotal": 48.46,
           "currentRank": 5,
           "severity": 1.88,
           "severityMax": 3.5,
@@ -5983,9 +5983,9 @@
           "currentPenalty": -3.46,
           "recommendedPenalty": -3.46,
           "projectedDelta": 0,
-          "currentTotal": 61.66,
-          "projectedTotal": 61.66,
-          "currentRank": 10,
+          "currentTotal": 61.49,
+          "projectedTotal": 61.49,
+          "currentRank": 11,
           "severity": 2.25,
           "severityMax": 3.5,
           "worstLosses": [
@@ -6033,7 +6033,7 @@
           "record": "14-5",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 10,
+          "projectedRank": 11,
           "rankMovement": 0
         },
         {
@@ -6043,8 +6043,8 @@
           "currentPenalty": -3.24,
           "recommendedPenalty": -3.24,
           "projectedDelta": 0,
-          "currentTotal": 54.52,
-          "projectedTotal": 54.52,
+          "currentTotal": 53.19,
+          "projectedTotal": 53.19,
           "currentRank": 19,
           "severity": 1.88,
           "severityMax": 3.5,
@@ -6103,9 +6103,9 @@
           "currentPenalty": -4.15,
           "recommendedPenalty": -4.15,
           "projectedDelta": 0,
-          "currentTotal": 50.01,
-          "projectedTotal": 50.01,
-          "currentRank": 25,
+          "currentTotal": 47.01,
+          "projectedTotal": 47.01,
+          "currentRank": 30,
           "severity": 2.25,
           "severityMax": 3.5,
           "worstLosses": [
@@ -6153,7 +6153,7 @@
           "record": "15-11-1",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 25,
+          "projectedRank": 30,
           "rankMovement": 0
         },
         {
@@ -6163,8 +6163,8 @@
           "currentPenalty": -2.05,
           "recommendedPenalty": -2.05,
           "projectedDelta": 0,
-          "currentTotal": 43.69,
-          "projectedTotal": 43.69,
+          "currentTotal": 43.95,
+          "projectedTotal": 43.95,
           "currentRank": 38,
           "severity": 1.75,
           "severityMax": 3.5,
@@ -6223,9 +6223,9 @@
           "currentPenalty": -2.25,
           "recommendedPenalty": -2.25,
           "projectedDelta": 0,
-          "currentTotal": 48.16,
-          "projectedTotal": 48.16,
-          "currentRank": 29,
+          "currentTotal": 48.37,
+          "projectedTotal": 48.37,
+          "currentRank": 26,
           "severity": 1.5,
           "severityMax": 3.5,
           "worstLosses": [
@@ -6273,7 +6273,7 @@
           "record": "9-6-1",
           "mutatesScores": false,
           "mutatesPenalty": false,
-          "projectedRank": 29,
+          "projectedRank": 26,
           "rankMovement": 0
         }
       ],
@@ -9365,7 +9365,7 @@
       "mutatesScores": true,
       "mutatesRanks": true,
       "mutatesOvr": true,
-      "appliedAt": "2026-07-12T15:03:48.686Z"
+      "appliedAt": "2026-07-12T15:39:29.550Z"
     }
   },
   "liveConsistency": {
@@ -9395,141 +9395,141 @@
     {
       "rank": 1,
       "fighter": "Jon Jones",
-      "totalScore": 101.92,
+      "totalScore": 101.77,
       "penalty": 0,
       "overallOvr": 99
     },
     {
       "rank": 2,
       "fighter": "Georges St-Pierre",
-      "totalScore": 88.07,
+      "totalScore": 86.34,
       "penalty": -3.78,
-      "overallOvr": 97
+      "overallOvr": 96
     },
     {
       "rank": 3,
-      "fighter": "Anderson Silva",
-      "totalScore": 77.29,
-      "penalty": -3,
-      "overallOvr": 95
+      "fighter": "Demetrious Johnson",
+      "totalScore": 75.88,
+      "penalty": -1.51,
+      "overallOvr": 94
     },
     {
       "rank": 4,
-      "fighter": "Demetrious Johnson",
-      "totalScore": 77.11,
-      "penalty": -1.51,
-      "overallOvr": 95
+      "fighter": "Anderson Silva",
+      "totalScore": 75.62,
+      "penalty": -3,
+      "overallOvr": 94
     },
     {
       "rank": 5,
       "fighter": "Islam Makhachev",
-      "totalScore": 69.14,
+      "totalScore": 69.06,
       "penalty": -1.98,
       "overallOvr": 93
     },
     {
       "rank": 6,
       "fighter": "Alexander Volkanovski",
-      "totalScore": 67.62,
+      "totalScore": 67.6,
       "penalty": -2.61,
       "overallOvr": 93
     },
     {
       "rank": 7,
       "fighter": "Jose Aldo",
-      "totalScore": 67.14,
+      "totalScore": 66.1,
       "penalty": -5.15,
       "overallOvr": 93
     },
     {
       "rank": 8,
-      "fighter": "Matt Hughes",
-      "totalScore": 64.76,
-      "penalty": -3.52,
-      "overallOvr": 92
-    },
-    {
-      "rank": 9,
       "fighter": "Khabib Nurmagomedov",
-      "totalScore": 64.05,
+      "totalScore": 64.14,
       "penalty": 0,
       "overallOvr": 92
     },
     {
-      "rank": 10,
+      "rank": 9,
       "fighter": "Kamaru Usman",
-      "totalScore": 62.03,
+      "totalScore": 62.3,
       "penalty": -2.39,
+      "overallOvr": 92
+    },
+    {
+      "rank": 10,
+      "fighter": "Matt Hughes",
+      "totalScore": 61.76,
+      "penalty": -3.52,
       "overallOvr": 92
     },
     {
       "rank": 11,
       "fighter": "Stipe Miocic",
-      "totalScore": 61.84,
+      "totalScore": 61.67,
       "penalty": -3.46,
       "overallOvr": 92
     },
     {
       "rank": 12,
       "fighter": "Max Holloway",
-      "totalScore": 61.37,
+      "totalScore": 61.16,
       "penalty": -4.37,
       "overallOvr": 92
     },
     {
       "rank": 13,
-      "fighter": "Randy Couture",
-      "totalScore": 59.8,
-      "penalty": -5.25,
-      "overallOvr": 91
-    },
-    {
-      "rank": 14,
       "fighter": "Israel Adesanya",
-      "totalScore": 59.57,
+      "totalScore": 59.52,
       "penalty": -3.52,
       "overallOvr": 91
     },
     {
+      "rank": 14,
+      "fighter": "Randy Couture",
+      "totalScore": 56.8,
+      "penalty": -5.25,
+      "overallOvr": 91
+    },
+    {
       "rank": 15,
-      "fighter": "Chuck Liddell",
-      "totalScore": 57.62,
-      "penalty": -3.25,
+      "fighter": "Alex Pereira",
+      "totalScore": 56.7,
+      "penalty": -2.94,
       "overallOvr": 91
     },
     {
       "rank": 16,
       "fighter": "Daniel Cormier",
-      "totalScore": 56.79,
+      "totalScore": 56.57,
       "penalty": -3.01,
       "overallOvr": 91
     },
     {
       "rank": 17,
-      "fighter": "Alex Pereira",
-      "totalScore": 56.54,
-      "penalty": -2.94,
-      "overallOvr": 91
+      "fighter": "Chuck Liddell",
+      "totalScore": 54.68,
+      "penalty": -3.25,
+      "overallOvr": 90
     },
     {
       "rank": 18,
-      "fighter": "B.J. Penn",
-      "totalScore": 55.08,
-      "penalty": -3.91,
+      "fighter": "Charles Oliveira",
+      "totalScore": 53.33,
+      "penalty": -3.27,
       "overallOvr": 90
     },
     {
       "rank": 19,
       "fighter": "T.J. Dillashaw",
-      "totalScore": 54.52,
+      "totalScore": 53.19,
       "penalty": -3.24,
       "overallOvr": 90
     },
     {
       "rank": 20,
-      "fighter": "Frankie Edgar",
-      "totalScore": 53.63,
-      "penalty": -4.51,
+      "fighter": "B.J. Penn",
+      "totalScore": 52.37,
+      "penalty": -3.91,
       "overallOvr": 90
     }
   ],
@@ -9537,49 +9537,49 @@
     {
       "rank": 1,
       "fighter": "Amanda Nunes",
-      "totalScore": 82.03,
+      "totalScore": 81.07,
       "penalty": -2.51,
       "overallOvr": 99
     },
     {
       "rank": 2,
       "fighter": "Valentina Shevchenko",
-      "totalScore": 75.92,
+      "totalScore": 75.39,
       "penalty": -2.63,
       "overallOvr": 98
     },
     {
       "rank": 3,
       "fighter": "Zhang Weili",
-      "totalScore": 57.04,
+      "totalScore": 56.91,
       "penalty": -2.92,
-      "overallOvr": 93
+      "overallOvr": 92
     },
     {
       "rank": 4,
       "fighter": "Joanna Jedrzejczyk",
-      "totalScore": 52.82,
+      "totalScore": 50.82,
       "penalty": -3.25,
       "overallOvr": 91
     },
     {
       "rank": 5,
       "fighter": "Rose Namajunas",
-      "totalScore": 49.2,
+      "totalScore": 48.46,
       "penalty": -3.38,
       "overallOvr": 90
     },
     {
       "rank": 6,
       "fighter": "Ronda Rousey",
-      "totalScore": 48.9,
+      "totalScore": 46.33,
       "penalty": -3.94,
-      "overallOvr": 90
+      "overallOvr": 89
     },
     {
       "rank": 7,
       "fighter": "Jessica Andrade",
-      "totalScore": 40.94,
+      "totalScore": 40.59,
       "penalty": -4.54,
       "overallOvr": 88
     },
@@ -9593,29 +9593,29 @@
     {
       "rank": 9,
       "fighter": "Alexa Grasso",
-      "totalScore": 36.01,
+      "totalScore": 36.19,
       "penalty": -2.8,
       "overallOvr": 86
     },
     {
       "rank": 10,
       "fighter": "Julianna Peña",
-      "totalScore": 33.86,
+      "totalScore": 34.19,
       "penalty": -3.57,
       "overallOvr": 85
     },
     {
       "rank": 11,
       "fighter": "Carla Esparza",
-      "totalScore": 33.34,
+      "totalScore": 32.12,
       "penalty": -5.63,
       "overallOvr": 85
     },
     {
       "rank": 12,
-      "fighter": "Holly Holm",
-      "totalScore": 30.59,
-      "penalty": -4.75,
+      "fighter": "Kayla Harrison",
+      "totalScore": 30.66,
+      "penalty": 0,
       "overallOvr": 84
     },
     {
@@ -9627,17 +9627,17 @@
     },
     {
       "rank": 14,
-      "fighter": "Kayla Harrison",
-      "totalScore": 30.17,
-      "penalty": 0,
-      "overallOvr": 84
+      "fighter": "Holly Holm",
+      "totalScore": 28.59,
+      "penalty": -4.75,
+      "overallOvr": 83
     },
     {
       "rank": 15,
       "fighter": "Miesha Tate",
-      "totalScore": 29.67,
+      "totalScore": 27.21,
       "penalty": -4.13,
-      "overallOvr": 84
+      "overallOvr": 83
     }
   ],
   "focusDiagnostics": [
@@ -9651,7 +9651,7 @@
           "record": null,
           "ufcLosses": null,
           "penalty": -1.95,
-          "totalScore": 44.7,
+          "totalScore": 44.97,
           "overallOvr": 88,
           "rank": 36
         },
@@ -9662,7 +9662,7 @@
           "record": null,
           "ufcLosses": 1,
           "penalty": -1.95,
-          "totalScore": 44.7,
+          "totalScore": 44.97,
           "overallOvr": 88,
           "rank": 36
         }
@@ -9733,7 +9733,7 @@
       },
       "live": {
         "penalty": -1.95,
-        "totalScore": 44.7,
+        "totalScore": 44.97,
         "rank": 36,
         "overallOvr": 88,
         "lossContextHybrid": {
@@ -9781,7 +9781,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T15:03:46.468Z",
+        "completedAt": "2026-07-12T15:39:27.240Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -9796,7 +9796,7 @@
           "record": null,
           "ufcLosses": null,
           "penalty": -3.93,
-          "totalScore": 46.83,
+          "totalScore": 46.77,
           "overallOvr": 89,
           "rank": 32
         },
@@ -9807,7 +9807,7 @@
           "record": null,
           "ufcLosses": 5,
           "penalty": -3.93,
-          "totalScore": 46.83,
+          "totalScore": 46.77,
           "overallOvr": 89,
           "rank": 32
         }
@@ -9934,7 +9934,7 @@
       },
       "live": {
         "penalty": -3.93,
-        "totalScore": 46.83,
+        "totalScore": 46.77,
         "rank": 32,
         "overallOvr": 89,
         "lossContextHybrid": {
@@ -9990,7 +9990,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T15:03:46.471Z",
+        "completedAt": "2026-07-12T15:39:27.244Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -10005,9 +10005,9 @@
           "record": null,
           "ufcLosses": null,
           "penalty": -5.25,
-          "totalScore": 59.8,
+          "totalScore": 56.8,
           "overallOvr": 91,
-          "rank": 13
+          "rank": 14
         },
         {
           "fighter": "Randy Couture",
@@ -10016,14 +10016,14 @@
           "record": null,
           "ufcLosses": 8,
           "penalty": -5.25,
-          "totalScore": 59.8,
+          "totalScore": 56.8,
           "overallOvr": 91,
-          "rank": 13
+          "rank": 14
         }
       ],
       "packetRecord": "16-8",
       "overrideRecord": "16-8",
-      "displayRank": 13,
+      "displayRank": 14,
       "displayOvr": 91,
       "audit": {
         "status": "match",
@@ -10174,13 +10174,13 @@
             "penalty": -2.25
           }
         ],
-        "projectedRank": 13,
+        "projectedRank": 15,
         "rankMovement": 0
       },
       "live": {
         "penalty": -5.25,
-        "totalScore": 59.8,
-        "rank": 13,
+        "totalScore": 56.8,
+        "rank": 14,
         "overallOvr": 91,
         "lossContextHybrid": {
           "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
@@ -10234,7 +10234,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T15:03:46.462Z",
+        "completedAt": "2026-07-12T15:39:27.233Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -10249,9 +10249,9 @@
           "record": null,
           "ufcLosses": 3,
           "penalty": -3.36,
-          "totalScore": 37.3,
+          "totalScore": 37.2,
           "overallOvr": 87,
-          "rank": 44
+          "rank": 45
         },
         {
           "fighter": "Sean O'Malley",
@@ -10260,14 +10260,14 @@
           "record": null,
           "ufcLosses": 3,
           "penalty": -3.36,
-          "totalScore": 37.3,
+          "totalScore": 37.2,
           "overallOvr": 87,
-          "rank": 44
+          "rank": 45
         }
       ],
       "packetRecord": "11-3 (1 NC)",
       "overrideRecord": "11-3 (1 NC)",
-      "displayRank": 44,
+      "displayRank": 45,
       "displayOvr": 87,
       "audit": {
         "status": "score-mismatch",
@@ -10370,13 +10370,13 @@
             "penalty": -2
           }
         ],
-        "projectedRank": 44,
+        "projectedRank": 45,
         "rankMovement": 0
       },
       "live": {
         "penalty": -3.36,
-        "totalScore": 37.3,
-        "rank": 44,
+        "totalScore": 37.2,
+        "rank": 45,
         "overallOvr": 87,
         "lossContextHybrid": {
           "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
@@ -10431,7 +10431,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T15:03:46.471Z",
+        "completedAt": "2026-07-12T15:39:27.244Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -10446,9 +10446,9 @@
           "record": null,
           "ufcLosses": 11,
           "penalty": -3.27,
-          "totalScore": 53.38,
+          "totalScore": 53.33,
           "overallOvr": 90,
-          "rank": 21
+          "rank": 18
         },
         {
           "fighter": "Charles Oliveira",
@@ -10457,14 +10457,14 @@
           "record": null,
           "ufcLosses": 11,
           "penalty": -3.27,
-          "totalScore": 53.38,
+          "totalScore": 53.33,
           "overallOvr": 90,
-          "rank": 21
+          "rank": 18
         }
       ],
       "packetRecord": "25-11",
       "overrideRecord": "25-11",
-      "displayRank": 21,
+      "displayRank": 18,
       "displayOvr": 90,
       "audit": {
         "status": "match",
@@ -10651,13 +10651,13 @@
             "penalty": -2.25
           }
         ],
-        "projectedRank": 21,
+        "projectedRank": 18,
         "rankMovement": 0
       },
       "live": {
         "penalty": -3.27,
-        "totalScore": 53.38,
-        "rank": 21,
+        "totalScore": 53.33,
+        "rank": 18,
         "overallOvr": 90,
         "lossContextHybrid": {
           "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
@@ -10711,7 +10711,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T15:03:45.751Z",
+        "completedAt": "2026-07-12T15:39:26.560Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -10726,9 +10726,9 @@
           "record": null,
           "ufcLosses": 6,
           "penalty": -3.52,
-          "totalScore": 59.57,
+          "totalScore": 59.52,
           "overallOvr": 91,
-          "rank": 14
+          "rank": 13
         },
         {
           "fighter": "Israel Adesanya",
@@ -10737,14 +10737,14 @@
           "record": null,
           "ufcLosses": 6,
           "penalty": -3.52,
-          "totalScore": 59.57,
+          "totalScore": 59.52,
           "overallOvr": 91,
-          "rank": 14
+          "rank": 13
         }
       ],
       "packetRecord": "13-6",
       "overrideRecord": "13-6",
-      "displayRank": 14,
+      "displayRank": 13,
       "displayOvr": 91,
       "audit": {
         "status": "match",
@@ -10871,13 +10871,13 @@
             "penalty": -2.25
           }
         ],
-        "projectedRank": 14,
+        "projectedRank": 13,
         "rankMovement": 0
       },
       "live": {
         "penalty": -3.52,
-        "totalScore": 59.57,
-        "rank": 14,
+        "totalScore": 59.52,
+        "rank": 13,
         "overallOvr": 91,
         "lossContextHybrid": {
           "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
@@ -10932,7 +10932,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T15:03:46.468Z",
+        "completedAt": "2026-07-12T15:39:27.240Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -10947,7 +10947,7 @@
           "record": null,
           "ufcLosses": 6,
           "penalty": -2.44,
-          "totalScore": 50.19,
+          "totalScore": 49.81,
           "overallOvr": 89,
           "rank": 23
         },
@@ -10958,7 +10958,7 @@
           "record": null,
           "ufcLosses": 6,
           "penalty": -2.44,
-          "totalScore": 50.19,
+          "totalScore": 49.81,
           "overallOvr": 89,
           "rank": 23
         }
@@ -11097,7 +11097,7 @@
       },
       "live": {
         "penalty": -2.44,
-        "totalScore": 50.19,
+        "totalScore": 49.81,
         "rank": 23,
         "overallOvr": 89,
         "lossContextHybrid": {
@@ -11153,7 +11153,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T15:03:46.468Z",
+        "completedAt": "2026-07-12T15:39:27.240Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -11168,7 +11168,7 @@
           "record": null,
           "ufcLosses": 2,
           "penalty": -2.51,
-          "totalScore": 82.03,
+          "totalScore": 81.07,
           "overallOvr": 99,
           "rank": 1
         },
@@ -11179,7 +11179,7 @@
           "record": null,
           "ufcLosses": 2,
           "penalty": -2.51,
-          "totalScore": 82.03,
+          "totalScore": 81.07,
           "overallOvr": 99,
           "rank": 1
         }
@@ -11282,7 +11282,7 @@
       },
       "live": {
         "penalty": -2.51,
-        "totalScore": 82.03,
+        "totalScore": 81.07,
         "rank": 1,
         "overallOvr": 99,
         "lossContextHybrid": {
@@ -11338,7 +11338,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T15:03:46.471Z",
+        "completedAt": "2026-07-12T15:39:27.244Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -11353,9 +11353,9 @@
           "record": null,
           "ufcLosses": 7,
           "penalty": -3.42,
-          "totalScore": 40.14,
+          "totalScore": 40.41,
           "overallOvr": 87,
-          "rank": 43
+          "rank": 42
         },
         {
           "fighter": "Sean Strickland",
@@ -11364,14 +11364,14 @@
           "record": null,
           "ufcLosses": 7,
           "penalty": -3.42,
-          "totalScore": 40.14,
+          "totalScore": 40.41,
           "overallOvr": 87,
-          "rank": 43
+          "rank": 42
         }
       ],
       "packetRecord": "18-7",
       "overrideRecord": "18-7",
-      "displayRank": 43,
+      "displayRank": 42,
       "displayOvr": 87,
       "audit": {
         "status": "match",
@@ -11515,8 +11515,8 @@
       },
       "live": {
         "penalty": -3.42,
-        "totalScore": 40.14,
-        "rank": 43,
+        "totalScore": 40.41,
+        "rank": 42,
         "overallOvr": 87,
         "lossContextHybrid": {
           "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
@@ -11569,7 +11569,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-12T15:03:45.746Z",
+        "completedAt": "2026-07-12T15:39:26.556Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -11585,7 +11585,7 @@
           "record": null,
           "ufcLosses": 7,
           "penalty": -3.75,
-          "totalScore": 45.1,
+          "totalScore": 45.06,
           "overallOvr": 88,
           "rank": 35
         },
@@ -11596,7 +11596,7 @@
           "record": null,
           "ufcLosses": 7,
           "penalty": -3.75,
-          "totalScore": 45.1,
+          "totalScore": 45.06,
           "overallOvr": 88,
           "rank": 35
         }
@@ -11747,7 +11747,7 @@
       },
       "live": {
         "penalty": -3.75,
-        "totalScore": 45.1,
+        "totalScore": 45.06,
         "rank": 35,
         "overallOvr": 88,
         "lossContextHybrid": {
@@ -11801,7 +11801,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-12T15:03:45.746Z",
+        "completedAt": "2026-07-12T15:39:26.556Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -11817,7 +11817,7 @@
           "record": null,
           "ufcLosses": 9,
           "penalty": -4.69,
-          "totalScore": 25.37,
+          "totalScore": 24.8,
           "overallOvr": 84,
           "rank": 47
         },
@@ -11828,7 +11828,7 @@
           "record": null,
           "ufcLosses": 9,
           "penalty": -4.69,
-          "totalScore": 25.37,
+          "totalScore": 24.8,
           "overallOvr": 84,
           "rank": 47
         }
@@ -12003,7 +12003,7 @@
       },
       "live": {
         "penalty": -4.69,
-        "totalScore": 25.37,
+        "totalScore": 24.8,
         "rank": 47,
         "overallOvr": 84,
         "lossContextHybrid": {
@@ -12058,7 +12058,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T15:03:46.464Z",
+        "completedAt": "2026-07-12T15:39:27.237Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -12073,9 +12073,9 @@
           "record": null,
           "ufcLosses": 3,
           "penalty": -2.94,
-          "totalScore": 56.54,
+          "totalScore": 56.7,
           "overallOvr": 91,
-          "rank": 17
+          "rank": 15
         },
         {
           "fighter": "Alex Pereira",
@@ -12084,14 +12084,14 @@
           "record": null,
           "ufcLosses": 3,
           "penalty": -2.94,
-          "totalScore": 56.54,
+          "totalScore": 56.7,
           "overallOvr": 91,
-          "rank": 17
+          "rank": 15
         }
       ],
       "packetRecord": "10-3",
       "overrideRecord": "10-3",
-      "displayRank": 17,
+      "displayRank": 15,
       "displayOvr": 91,
       "audit": {
         "status": "match",
@@ -12194,13 +12194,13 @@
             "penalty": -1.5
           }
         ],
-        "projectedRank": 17,
+        "projectedRank": 16,
         "rankMovement": 0
       },
       "live": {
         "penalty": -2.94,
-        "totalScore": 56.54,
-        "rank": 17,
+        "totalScore": 56.7,
+        "rank": 15,
         "overallOvr": 91,
         "lossContextHybrid": {
           "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
@@ -12255,7 +12255,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T15:03:46.471Z",
+        "completedAt": "2026-07-12T15:39:27.244Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -12270,7 +12270,7 @@
           "record": null,
           "ufcLosses": 3,
           "penalty": -2.63,
-          "totalScore": 75.92,
+          "totalScore": 75.39,
           "overallOvr": 98,
           "rank": 2
         },
@@ -12281,7 +12281,7 @@
           "record": null,
           "ufcLosses": 3,
           "penalty": -2.63,
-          "totalScore": 75.92,
+          "totalScore": 75.39,
           "overallOvr": 98,
           "rank": 2
         }
@@ -12408,7 +12408,7 @@
       },
       "live": {
         "penalty": -2.63,
-        "totalScore": 75.92,
+        "totalScore": 75.39,
         "rank": 2,
         "overallOvr": 98,
         "lossContextHybrid": {
@@ -12464,7 +12464,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T15:03:46.472Z",
+        "completedAt": "2026-07-12T15:39:27.244Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -12479,7 +12479,7 @@
           "record": null,
           "ufcLosses": null,
           "penalty": -4.37,
-          "totalScore": 61.37,
+          "totalScore": 61.16,
           "overallOvr": 92,
           "rank": 12
         },
@@ -12490,7 +12490,7 @@
           "record": null,
           "ufcLosses": 9,
           "penalty": -4.37,
-          "totalScore": 61.37,
+          "totalScore": 61.16,
           "overallOvr": 92,
           "rank": 12
         }
@@ -12665,7 +12665,7 @@
       },
       "live": {
         "penalty": -4.37,
-        "totalScore": 61.37,
+        "totalScore": 61.16,
         "rank": 12,
         "overallOvr": 92,
         "lossContextHybrid": {
@@ -12720,7 +12720,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T15:03:46.462Z",
+        "completedAt": "2026-07-12T15:39:27.233Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -12735,7 +12735,7 @@
           "record": null,
           "ufcLosses": null,
           "penalty": -5.15,
-          "totalScore": 67.14,
+          "totalScore": 66.1,
           "overallOvr": 93,
           "rank": 7
         },
@@ -12746,7 +12746,7 @@
           "record": null,
           "ufcLosses": 9,
           "penalty": -5.15,
-          "totalScore": 67.14,
+          "totalScore": 66.1,
           "overallOvr": 93,
           "rank": 7
         }
@@ -12921,7 +12921,7 @@
       },
       "live": {
         "penalty": -5.15,
-        "totalScore": 67.14,
+        "totalScore": 66.1,
         "rank": 7,
         "overallOvr": 93,
         "lossContextHybrid": {
@@ -12977,7 +12977,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T15:03:46.468Z",
+        "completedAt": "2026-07-12T15:39:27.240Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -12992,8 +12992,8 @@
           "record": null,
           "ufcLosses": null,
           "penalty": -3.78,
-          "totalScore": 88.07,
-          "overallOvr": 97,
+          "totalScore": 86.34,
+          "overallOvr": 96,
           "rank": 2
         },
         {
@@ -13003,15 +13003,15 @@
           "record": null,
           "ufcLosses": 2,
           "penalty": -3.78,
-          "totalScore": 88.07,
-          "overallOvr": 97,
+          "totalScore": 86.34,
+          "overallOvr": 96,
           "rank": 2
         }
       ],
       "packetRecord": "20-2",
       "overrideRecord": "20-2",
       "displayRank": 2,
-      "displayOvr": 97,
+      "displayOvr": 96,
       "audit": {
         "status": "match",
         "ufcRecord": "20-2",
@@ -13094,9 +13094,9 @@
       },
       "live": {
         "penalty": -3.78,
-        "totalScore": 88.07,
+        "totalScore": 86.34,
         "rank": 2,
-        "overallOvr": 97,
+        "overallOvr": 96,
         "lossContextHybrid": {
           "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
           "judgmentLockVersion": "loss-context-hybrid-judgment-lock-20260711a",
@@ -13150,7 +13150,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T15:03:46.468Z",
+        "completedAt": "2026-07-12T15:39:27.240Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -13165,9 +13165,9 @@
           "record": null,
           "ufcLosses": null,
           "penalty": -3,
-          "totalScore": 77.29,
-          "overallOvr": 95,
-          "rank": 3
+          "totalScore": 75.62,
+          "overallOvr": 94,
+          "rank": 4
         },
         {
           "fighter": "Anderson Silva",
@@ -13176,15 +13176,15 @@
           "record": null,
           "ufcLosses": 7,
           "penalty": -3,
-          "totalScore": 77.29,
-          "overallOvr": 95,
-          "rank": 3
+          "totalScore": 75.62,
+          "overallOvr": 94,
+          "rank": 4
         }
       ],
       "packetRecord": "17-7",
       "overrideRecord": "17-7",
-      "displayRank": 3,
-      "displayOvr": 95,
+      "displayRank": 4,
+      "displayOvr": 94,
       "audit": {
         "status": "match",
         "ufcRecord": "17-7",
@@ -13334,14 +13334,14 @@
             "penalty": -2.25
           }
         ],
-        "projectedRank": 3,
+        "projectedRank": 4,
         "rankMovement": 0
       },
       "live": {
         "penalty": -3,
-        "totalScore": 77.29,
-        "rank": 3,
-        "overallOvr": 95,
+        "totalScore": 75.62,
+        "rank": 4,
+        "overallOvr": 94,
         "lossContextHybrid": {
           "version": "loss-context-hybrid-live-20260711f-surface-ovr-sync",
           "judgmentLockVersion": "loss-context-hybrid-judgment-lock-20260711a",
@@ -13394,7 +13394,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T15:03:46.464Z",
+        "completedAt": "2026-07-12T15:39:27.237Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -13409,7 +13409,7 @@
           "record": null,
           "ufcLosses": null,
           "penalty": 0,
-          "totalScore": 101.92,
+          "totalScore": 101.77,
           "overallOvr": 99,
           "rank": 1
         },
@@ -13420,7 +13420,7 @@
           "record": null,
           "ufcLosses": 1,
           "penalty": 0,
-          "totalScore": 101.92,
+          "totalScore": 101.77,
           "overallOvr": 99,
           "rank": 1
         }
@@ -13494,7 +13494,7 @@
       },
       "live": {
         "penalty": 0,
-        "totalScore": 101.92,
+        "totalScore": 101.77,
         "rank": 1,
         "overallOvr": 99,
         "lossContextHybrid": {
@@ -13533,7 +13533,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T15:03:46.468Z",
+        "completedAt": "2026-07-12T15:39:27.240Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
