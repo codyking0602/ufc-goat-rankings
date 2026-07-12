@@ -4,15 +4,18 @@ The Picks tab works in local preview mode immediately. Real friend rooms need on
 
 ## One-time setup
 
-1. Create a Supabase project.
-2. Open **SQL Editor** and run `supabase/picks-schema.sql`.
-3. Run `supabase/picks-pgcrypto-fix.sql`.
-4. Run `supabase/picks-live-gameplay-phase.sql` to add odds, Underdog Locks, live reveals, and scoring fields.
-5. Open **Project Settings → API**.
-6. Copy the project URL and public publishable key into `assets/data/supabase-config.js`.
-7. Never place the service-role or secret key in the repository.
+Run these files in **Supabase → SQL Editor** in this order:
 
-All migration files are safe to rerun.
+1. `supabase/picks-schema.sql`
+2. `supabase/picks-pgcrypto-fix.sql`
+3. `supabase/picks-live-gameplay-phase.sql`
+4. `supabase/picks-room-admin-phase.sql`
+5. `supabase/picks-manual-lock-phase.sql`
+6. `supabase/picks-persistent-groups-phase.sql`
+
+Then open **Project Settings → API** and copy the project URL and public publishable key into `assets/data/supabase-config.js`.
+
+Never place the service-role or secret key in the repository. All migration files are designed to be safe to rerun.
 
 ## Scoring
 
@@ -22,6 +25,17 @@ All migration files are safe to rerun.
 - Incorrect Underdog Lock: no penalty.
 - Draws, no contests, and cancellations are void.
 - Individual friends' picks remain hidden until that fight locks.
+
+## Persistent groups
+
+Every Picks room becomes a permanent group after `picks-persistent-groups-phase.sql` runs.
+
+- The original room and all existing picks are preserved.
+- The group gets one stable share link.
+- Existing members carry into every new event automatically.
+- Each event keeps its own room standings and recap.
+- The group card tracks cumulative points, accuracy, event wins, and Underdog Lock bonuses.
+- The group owner can attach the next upcoming UFC event from the app after that event has been loaded into Supabase.
 
 ## Weekly event maintenance
 
@@ -35,5 +49,6 @@ Rules:
 - Store American moneyline odds in `red_odds` and `blue_odds` with `odds_source` and `odds_updated_at`.
 - Set `result_status` to `complete` and `winner_name` to the winner after the fight.
 - For draws, no contests, or cancellations, set the matching `result_status`; they do not award a point.
+- Once a new event is loaded with status `upcoming` or `live`, the group owner can add it from the permanent group panel.
 
 `assets/data/picks-events.js` is only the no-backend preview/fallback. Keep it aligned with the live event while testing.
