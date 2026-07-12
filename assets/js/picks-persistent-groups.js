@@ -97,19 +97,21 @@
     const members=snapshot.members || [];
     const events=snapshot.events || [];
     const available=snapshot.available_events || [];
+    const season=snapshot.season || {};
     const leader=members[0];
     card.hidden=false;
     card.querySelector('summary strong').textContent=snapshot.group.name;
-    card.querySelector('summary b').textContent=`${events.length} event${events.length===1?'':'s'} · ${leader ? `${leader.display_name} leads` : 'No leader yet'}`;
+    card.querySelector('summary b').textContent=`${season.name || 'Season'} · ${leader ? `${leader.display_name} leads` : 'No leader yet'}`;
 
     const options=available.map(event=>`<option value="${safe(event.id)}">${safe(event.name)}${event.subtitle?` · ${safe(event.subtitle)}`:''}</option>`).join('');
+    const scoring=`${season.correct_points || 1} point${Number(season.correct_points || 1)===1?'':'s'} per correct pick · +${season.underdog_bonus ?? 1} Underdog Lock`;
     target.innerHTML=`
       <div class="picks-group-top">
-        <div><span>PERMANENT GROUP</span><h3>Season Leaderboard</h3><p>The same members, one share link, and cumulative standings across every UFC event.</p></div>
+        <div><span>${safe((season.name || 'CURRENT SEASON').toUpperCase())}</span><h3>Season Leaderboard</h3><p>${safe(scoring)}. The same members and share link continue into every event.</p></div>
         <button id="picksShareGroup" type="button">Share group</button>
       </div>
       <div class="picks-group-members">${memberRows(members,snapshot.me?.id)}</div>
-      <div class="picks-group-section-head"><span>EVENTS</span><b>${events.length} played</b></div>
+      <div class="picks-group-section-head"><span>EVENTS</span><b>${events.length} this season</b></div>
       <div class="picks-group-events">${eventRows(events)}</div>
       ${snapshot.group.is_admin ? `<div class="picks-group-owner">
         <div><span>GROUP OWNER</span><strong>Add the next UFC event</strong><small>Everyone stays in the group automatically.</small></div>
@@ -124,6 +126,7 @@
   function renderIfChanged(snapshot){
     const signature=JSON.stringify({
       group:snapshot?.group,
+      season:snapshot?.season,
       me:snapshot?.me?.id,
       members:(snapshot?.members || []).map(member=>[member.id,member.points,member.correct,member.picks_made,member.event_wins,member.lock_bonus]),
       events:(snapshot?.events || []).map(event=>[event.event_id,event.room_code,event.status,event.is_active]),
