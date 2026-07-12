@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='loss-context-hybrid-live-20260711b-idempotent';
+  const VERSION='loss-context-hybrid-live-20260711c-profile-sync';
   const JUDGMENT_LOCK_VERSION='loss-context-hybrid-judgment-lock-20260711a';
   const OVR_MIN=82;
   const OVR_MAX=99;
@@ -107,7 +107,23 @@
     });
   }
 
+  function removeStaleLossCopy(){
+    if(!window.DISPLAY_OVERRIDES)return;
+    Object.values(window.DISPLAY_OVERRIDES).forEach(override=>{
+      if(!override)return;
+      ['oneLiner','whyRankedHere','whyNotHigher','whyNotLower','finalTakeaway'].forEach(field=>{
+        if(typeof override[field]!=='string')return;
+        override[field]=override[field]
+          .replace(/even with the -10 cap/gi,'after the context adjustment')
+          .replace(/the -10 cap/gi,'the previous additive cap')
+          .replace(/old -10 penalty/gi,'previous additive penalty')
+          .replace(/at -10 under the old system/gi,'under the previous additive system');
+      });
+    });
+  }
+
   function installLiveCopy(){
+    removeStaleLossCopy();
     if(window.__UFC_HYBRID_LOSS_CONTEXT_COPY_INSTALLED)return;
     window.__UFC_HYBRID_LOSS_CONTEXT_COPY_INSTALLED=true;
 
@@ -237,8 +253,12 @@
     return report.applied;
   }
 
-  if(apply())return;
+  if(apply()){
+    window.addEventListener('ufc-ranking-data-patches-ready',()=>apply(),{once:true});
+    return;
+  }
   window.UFC_LOSS_CONTEXT_HYBRID_LIVE={version:VERSION,applied:false,status:'waiting-for-judgment-approved-hybrid-audit',judgmentLockVersion:JUDGMENT_LOCK_VERSION,mutatesPenalty:true,mutatesScores:true,mutatesRanks:true,mutatesOvr:true};
   window.addEventListener('ufc-loss-context-hybrid-audit-ready',()=>apply(),{once:true});
   window.addEventListener('ufc-scoring-pipeline-ready',()=>apply(),{once:true});
+  window.addEventListener('ufc-ranking-data-patches-ready',()=>apply(),{once:true});
 })();
