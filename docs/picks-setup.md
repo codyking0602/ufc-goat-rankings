@@ -103,12 +103,50 @@ Event cards are maintained directly in the repository and Supabase rather than t
 
 For each new event:
 
-1. Confirm the official card, event date, bout order, sections, and odds.
+1. Confirm the official card, event date, bout order, and sections.
 2. Add or update the event in the maintained data workflow.
 3. Verify the room and picks on the live site.
-4. Update replacements or cancellations when the card changes.
+4. Let the daily odds workflow fill available moneylines.
+5. Update replacements or cancellations when the card changes.
 
 `picks-event-manager-phase.sql` remains in the migration sequence because later group and commissioner schema depends on that phase, but its retired front-end files have been removed.
+
+## Automated odds refresh
+
+The live Picks card can refresh UFC moneylines every 24 hours through `supabase/functions/refresh-ufc-odds/index.ts` and the **Refresh UFC Odds** GitHub Actions workflow.
+
+### Required repository secrets
+
+Open **GitHub → Settings → Secrets and variables → Actions** and add:
+
+- `SUPABASE_ACCESS_TOKEN` — a Supabase personal access token used only to deploy the Edge Function.
+- `THE_ODDS_API_KEY` — the private API key from The Odds API.
+- `ODDS_REFRESH_SECRET` — a long random secret shared only by the deploy and refresh workflows.
+
+Do not put any of these values in source files, browser JavaScript, workflow YAML, screenshots, or chat messages.
+
+### First deployment
+
+1. Open **Actions → Deploy UFC Odds Refresh**.
+2. Choose **Run workflow** on `main`.
+3. Confirm the deployment and test steps finish green.
+4. Open **Actions → Refresh UFC Odds** and run it once manually if another immediate refresh is needed.
+
+The deployment workflow stores `THE_ODDS_API_KEY` and `ODDS_REFRESH_SECRET` as Supabase Edge Function secrets, deploys the function with JWT verification disabled, protects it with the custom refresh secret, and performs one test refresh.
+
+### Daily behavior
+
+- **Refresh UFC Odds** runs daily at 12:17 UTC and can also be run manually.
+- The provider request is restricted to MMA head-to-head moneylines in the US region.
+- Only `upcoming` or `live` UFC events and `scheduled` fights are eligible.
+- Fighter pairs are matched after punctuation and accent normalization.
+- A line is saved only when both fighters have a valid moneyline from the same sportsbook.
+- Missing or unmatched provider data never clears the last valid odds already stored.
+- Resolved, cancelled, drawn, or completed fights are never overwritten.
+- The app says **Not all odds available yet** when only part of the card has posted lines.
+- When no lines are available, the app explains that the Underdog Lock is waiting on posted odds.
+
+The preferred sportsbook order is BetOnline, DraftKings, FanDuel, BetMGM, BetRivers, then Bovada. The function falls back to another available US sportsbook when none of those has both sides posted.
 
 ## Live event maintenance
 
@@ -142,7 +180,8 @@ It checks:
 - Required Home, Event, Settings, standings, recap, and correction mount points
 - Cleanup-script loading order
 - Route restoration and keyboard navigation hooks
-- Profile, reminder, and recovery persistence hooks
+- Profile, reminder, recovery, and automatic-odds hooks
+- Daily odds schedule and Edge Function deployment contract
 - Absence of the retired Event Manager, Social Hub, and Phase 11 frontend files
 
 Run the same check locally with:
