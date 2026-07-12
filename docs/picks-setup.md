@@ -13,12 +13,13 @@ Run these files in **Supabase → SQL Editor** in this order:
 5. `supabase/picks-manual-lock-phase.sql`
 6. `supabase/picks-persistent-groups-phase.sql`
 7. `supabase/picks-event-manager-phase.sql`
+8. `supabase/picks-commissioner-phase.sql`
 
 Then open **Project Settings → API** and copy the project URL and public publishable key into `assets/data/supabase-config.js`.
 
 Never place the service-role or secret key in the repository. All migration files are designed to be safe to rerun.
 
-## Scoring
+## Default scoring
 
 - Correct winner: 1 point.
 - One optional Underdog Lock per player and event.
@@ -26,6 +27,8 @@ Never place the service-role or secret key in the repository. All migration file
 - Incorrect Underdog Lock: no penalty.
 - Draws, no contests, and cancellations are void.
 - Individual friends' picks remain hidden until that fight locks.
+
+Commissioners can choose future-season point values after the commissioner migration runs. Scoring locks once the first pick is submitted in that season.
 
 ## Persistent groups
 
@@ -35,7 +38,7 @@ Every Picks room becomes a permanent group after `picks-persistent-groups-phase.
 - The group gets one stable share link.
 - Existing members carry into every new event automatically.
 - Each event keeps its own room standings and recap.
-- The group card tracks cumulative points, accuracy, event wins, and Underdog Lock bonuses.
+- The group card tracks cumulative points, accuracy, event wins, and Underdog Lock bonuses for the active season.
 - The group owner can attach the next UFC event without rebuilding the group.
 
 ## Event Manager
@@ -53,13 +56,28 @@ The owner can:
 
 Numbered UFC events should include the full scheduled card. Fight Nights should include the main card only.
 
+## Commissioner controls
+
+After `picks-commissioner-phase.sql` runs, the group owner gets a private **Commissioner** panel.
+
+The commissioner can:
+
+- Rename the permanent group.
+- Remove a member while preserving that member's historical picks and scores.
+- Transfer ownership with a one-time eight-character claim code.
+- Correct fight odds without changing submitted picks.
+- Reopen a completed event for result corrections.
+- Rename the active season and set its scoring before picks begin.
+- Start a new season while preserving every prior event and season.
+
+Starting a new season resets the visible season standings, not the underlying history. The same permanent group and members continue forward.
+
 ## Live event maintenance
 
 Once an event is published, Supabase remains the multiplayer source of truth.
 
 - Use the room-owner controls to lock or reopen fights.
 - Set winners, draws, no contests, and cancellations from **Manage Live Results**.
-- Each correct winner awards one point.
 - Draws, no contests, and cancellations remain void.
 - Completed events stay available through the room recap and Past Events archive.
 
