@@ -40,10 +40,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-        with:
-          show-progress: false
+      - name: Quiet checkout
+        env:
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+        run: git clone --quiet --depth 1 --branch "$BRANCH_NAME" "https://github.com/${GITHUB_REPOSITORY}.git" repo
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -51,9 +51,11 @@ jobs:
           node-version: '22'
 
       - name: Check Picks JavaScript syntax
+        working-directory: repo
         run: |
           find assets/js -maxdepth 1 -type f -name 'picks*.js' -print0 | xargs -0 -n1 node --check
           node --check scripts/check-picks-ui.mjs
 
       - name: Verify Picks UI contract
+        working-directory: repo
         run: node scripts/check-picks-ui.mjs
