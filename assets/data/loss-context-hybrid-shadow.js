@@ -1,10 +1,9 @@
 // Phase-one shadow model for the hybrid UFC Loss Context system.
-// Scores Dricus du Plessis and Justin Gaethje without mutating live penalties, totals, ranks, or OVR.
+// Scores the full UFC ranking board without mutating live penalties, totals, ranks, or OVR.
 (function(){
   'use strict';
 
-  const VERSION='loss-context-hybrid-shadow-20260711b-phase-one';
-  const TARGETS=['Dricus du Plessis','Justin Gaethje'];
+  const VERSION='loss-context-hybrid-shadow-20260711c-full-roster';
   const RULES={
     severityLossCount:2,
     severityMax:3.50,
@@ -29,17 +28,48 @@
     const ADAPTER=window.UFC_LOSS_CONTEXT_LEDGER_ADAPTER;
     if(!DATA||!ERA?.ledgers||!ADAPTER)return false;
 
-    function allRows(){return [...(DATA.men||[]),...(DATA.women||[]),...(DATA.fighters||[])].filter(row=>row?.fighter);}
-    function boardRowFor(fighter){const target=key(fighter);return [...(DATA.men||[]),...(DATA.women||[])].find(row=>key(row?.fighter)===target)||allRows().find(row=>key(row?.fighter)===target)||null;}
+    const boardGroups=[
+      {name:'men',rows:[...(DATA.men||[])]},
+      {name:'women',rows:[...(DATA.women||[])]}
+    ];
+    const uniqueBoardRows=[];
+    const seen=new Set();
+    boardGroups.forEach(group=>group.rows.forEach(row=>{
+      if(!row?.fighter)return;
+      const id=key(row.fighter);
+      if(seen.has(id))return;
+      seen.add(id);
+      uniqueBoardRows.push({...row,hybridBoard:group.name});
+    }));
+
     function ledgerFor(fighter){const target=key(fighter);return Object.entries(ERA.ledgers||{}).find(([name])=>key(name)===target)?.[1]||null;}
     function recordFor(row){return [row?.ufcRecord,row?.record,row?.ufc_record].map(parseRecord).find(Boolean)||null;}
 
-    function scoreFighter(fighter){
-      const row=boardRowFor(fighter);
+    function scoreFighter(row){
+      const fighter=row.fighter;
       const ledger=ledgerFor(fighter);
       const entry=ADAPTER.entryFor?.(fighter)||null;
       const record=recordFor(row);
-      const lossEvents=(entry?.events||[])
+      const blockers=[];
+      if(!ledger)blockers.push('missing-era-ledger');
+      if(!entry)blockers.push('missing-loss-adapter-entry');
+      if(!record)blockers.push('missing-ufc-record');
+
+      if(blockers.length){
+        return {
+          fighter,
+          board:row.hybridBoard,
+          status:'blocked',
+          blockers,
+          currentPenalty:round2(row?.penalty||0),
+          currentTotal:Number.isFinite(Number(row?.totalScore))?round2(row.totalScore):null,
+          currentRank:Number.isFinite(Number(row?.rank))?Number(row.rank):null,
+          mutatesScores:false,
+          mutatesPenalty:false
+        };
+      }
+
+      const lossEvents=(entry.events||[])
         .filter(event=>event?.isLoss&&Number(event?.penaltyEstimate)<0)
         .map(event=>({...event,penaltyMagnitude:Math.abs(Number(event.penaltyEstimate))}));
 
@@ -48,7 +78,7 @@
       const severityRaw=worstLosses.length?worstLosses.reduce((sum,event)=>sum+event.penaltyMagnitude,0)/worstLosses.length:0;
       const severity=round2(Math.min(RULES.severityMax,severityRaw));
       const rawLossBurden=round2(lossEvents.reduce((sum,event)=>sum+event.penaltyMagnitude,0));
-      const exposure=Math.max(1,Number(record?.fights||0));
+      const exposure=Math.max(1,Number(record.fights||0));
       const frequency=round2(Math.min(RULES.frequencyMax,(rawLossBurden/exposure)*RULES.frequencyScale));
       const preDivision=round2(Math.min(RULES.totalMax,severity+frequency));
 
@@ -64,11 +94,14 @@
 
       return {
         fighter,
+        board:row.hybridBoard,
+        status:'scored',
         currentPenalty,
         recommendedPenalty,
         projectedDelta,
         currentTotal:Number.isFinite(currentTotal)?round2(currentTotal):null,
         projectedTotal,
+        currentRank:Number.isFinite(Number(row?.rank))?Number(row.rank):null,
         severity,
         severityMax:RULES.severityMax,
         worstLosses:worstLosses.map(event=>({label:event.label,date:event.date,phase:event.phase,quality:event.quality,finished:event.finished,penalty:event.penaltyEstimate})),
@@ -82,22 +115,54 @@
         divisionPointsSaved:round2(preDivision-finalMagnitude),
         finalMagnitude,
         eventCount:lossEvents.length,
-        record:record?`${record.wins}-${record.losses}`:null,
+        record:`${record.wins}-${record.losses}`,
         mutatesScores:false,
         mutatesPenalty:false
       };
     }
 
-    const results=TARGETS.map(scoreFighter);
+    const results=uniqueBoardRows.map(scoreFighter);
+    const scored=results.filter(result=>result.status==='scored');
+    const blocked=results.filter(result=>result.status!=='scored');
     const byKey=new Map(results.map(result=>[key(result.fighter),result]));
+
+    boardGroups.forEach(group=>{
+      const projected=group.rows
+        .filter(row=>row?.fighter)
+        .map(row=>{
+          const result=byKey.get(key(row.fighter));
+          return {fighter:row.fighter,total:result?.status==='scored'&&Number.isFinite(result.projectedTotal)?result.projectedTotal:round2(row.totalScore||0)};
+        })
+        .sort((a,b)=>Number(b.total)-Number(a.total)||String(a.fighter).localeCompare(String(b.fighter)));
+      projected.forEach((item,index)=>{
+        const result=byKey.get(key(item.fighter));
+        if(!result||result.status!=='scored')return;
+        result.projectedRank=index+1;
+        result.rankMovement=Number.isFinite(result.currentRank)?result.currentRank-result.projectedRank:null;
+      });
+    });
+
+    const largestRelief=scored.slice().sort((a,b)=>Number(b.projectedDelta)-Number(a.projectedDelta)||String(a.fighter).localeCompare(String(b.fighter))).slice(0,15);
+    const harshestProjected=scored.slice().sort((a,b)=>Number(a.recommendedPenalty)-Number(b.recommendedPenalty)||String(a.fighter).localeCompare(String(b.fighter))).slice(0,15);
+    const biggestRankMovers=scored.filter(row=>Number.isFinite(row.rankMovement)&&row.rankMovement!==0).sort((a,b)=>Math.abs(b.rankMovement)-Math.abs(a.rankMovement)||Number(b.projectedDelta)-Number(a.projectedDelta)||String(a.fighter).localeCompare(String(b.fighter))).slice(0,20);
+
     const report={
       version:VERSION,
       applied:true,
       phase:1,
-      mode:'shadow-two-fighter-calibration',
-      fighters:TARGETS,
+      mode:'shadow-full-roster-calibration',
+      expectedRosterCount:uniqueBoardRows.length,
+      scoredCount:scored.length,
+      blockedCount:blocked.length,
+      coverageComplete:blocked.length===0&&scored.length===uniqueBoardRows.length,
+      fighters:uniqueBoardRows.map(row=>row.fighter),
       rules:RULES,
       results,
+      scored,
+      blocked,
+      largestRelief,
+      harshestProjected,
+      biggestRankMovers,
       entryFor:fighter=>byKey.get(key(fighter))||null,
       mutatesScores:false,
       mutatesPenalty:false,
@@ -105,8 +170,8 @@
     };
 
     window.UFC_LOSS_CONTEXT_HYBRID_SHADOW=report;
-    if(DATA.meta)DATA.meta.lossContextHybridShadow={version:VERSION,phase:1,fighters:TARGETS,mutatesScores:false,generatedAt:report.generatedAt};
-    document.documentElement.setAttribute('data-loss-context-hybrid-shadow',`${VERSION}-${results.length}`);
+    if(DATA.meta)DATA.meta.lossContextHybridShadow={version:VERSION,phase:1,expectedRosterCount:report.expectedRosterCount,scoredCount:report.scoredCount,blockedCount:report.blockedCount,coverageComplete:report.coverageComplete,mutatesScores:false,generatedAt:report.generatedAt};
+    document.documentElement.setAttribute('data-loss-context-hybrid-shadow',`${VERSION}-${report.scoredCount}-${report.blockedCount}`);
     window.dispatchEvent(new CustomEvent('ufc-loss-context-hybrid-shadow-ready',{detail:report}));
     return true;
   }
