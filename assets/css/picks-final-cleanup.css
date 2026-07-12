@@ -1,0 +1,58 @@
+/* Picks step 5: final simplification and mobile polish. */
+#picksSocialCard,#picksEventManagerCard,#picksAutomationCard{display:none!important}
+#picks .picks-shell,#picks .picks-route-content,#picks .picks-internal-view{min-width:0}
+#picksHomeContent,#picksEventContent,#picksSettingsContent{overflow:visible}
+#picksSettingsContent{gap:10px}
+#picksHistoryCard{margin:0}
+#picksProfileShell{margin:0}
+#picksCommissionerCard{margin:0}
+.picks-home-leaderboard .picks-group-member,.picks-standing-row,.picks-recap-row{min-width:0}
+.picks-home-leaderboard .picks-group-member>div,.picks-standing-row>div,.picks-recap-row>div{min-width:0}
+.picks-home-leaderboard .picks-group-member strong,.picks-standing-row strong,.picks-recap-row strong{overflow:hidden;text-overflow:ellipsis}
+.picks-final-results .pick-fight,.picks-room-picks-card .room-picks-fight{min-width:0}
+@media(max-width:700px){
+  #picks .section-title{margin-bottom:10px}
+  #picks .section-title h2{font-size:24px}
+  #picks .section-title p{font-size:11px;line-height:1.4}
+  #picks .picks-shell{gap:10px}
+  .picks-view-heading{display:none}
+  .picks-route-content{gap:10px}
+  .picks-home-compact{gap:10px}
+  .picks-home-group-header,.picks-home-current,.picks-home-leaderboard{padding:11px;border-radius:14px}
+  .picks-home-group-header>small{line-height:1.35}
+  .picks-home-leaderboard .picks-group-member{grid-template-columns:26px minmax(0,1fr) 44px;padding:8px}
+  .picks-home-leaderboard .picks-group-member small{white-space:normal}
+  .picks-home-profile{border-radius:13px;padding:10px}
+  #picksHistoryCard{border-radius:14px}
+  #picksHistoryCard>summary{padding:12px}
+  .picks-event-recap{border-radius:17px}
+  .picks-recap-board{padding:9px}
+  .picks-recap-row{grid-template-columns:24px minmax(0,1fr) 38px;padding:7px}
+  .picks-final-results,.picks-room-picks-card,.picks-admin-card{border-radius:14px}
+  .picks-final-results>summary,.picks-admin-card>summary{padding:12px}
+  .picks-room-picks-card .picks-card-head{gap:8px}
+  .picks-profile-shell,.picks-commissioner-card{border-radius:15px}
+  .picks-profile-clean-heading{padding:12px}
+  .picks-profile-clean>.social-profile{padding:10px}
+  .picks-commissioner-clean>summary{padding:12px}
+  .commissioner-clean-section>summary{padding:10px}
+}
+@media(max-width:420px){
+  .picks-internal-nav{top:58px;gap:4px;padding:4px}
+  .picks-internal-nav button{padding:9px 4px;font-size:10px}
+  .picks-home-group-header h3,.picks-home-section-head h3{font-size:16px}
+  .picks-home-current-event{padding:9px}
+  .picks-home-current-event strong{white-space:normal}
+  .picks-home-leaderboard .picks-group-member{grid-template-columns:24px minmax(0,1fr) 40px;gap:6px}
+  .picks-home-leaderboard .picks-group-member>b{font-size:16px}
+  .picks-home-profile{grid-template-columns:36px minmax(0,1fr) auto;gap:8px}
+  .picks-home-profile-avatar{width:36px;height:36px;font-size:19px}
+  .picks-recap-title-row h3{font-size:22px}
+  .picks-recap-stats{gap:5px}
+  .picks-recap-stats>div{padding:8px}
+  .picks-recap-actions{grid-template-columns:1fr}
+  .picks-admin-actions{grid-template-columns:1fr 1fr}
+  .picks-admin-actions button{min-width:0;white-space:normal}
+  .social-reminder-row{padding:10px}
+  .commissioner-rename{grid-template-columns:1fr}
+}
