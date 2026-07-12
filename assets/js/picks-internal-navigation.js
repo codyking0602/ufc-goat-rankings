@@ -24,33 +24,72 @@
   };
 
   function validRoute(value){
-    return ROUTES.includes(String(value || '').toLowerCase()) ? String(value).toLowerCase() : '';
+    const route=String(value || '').toLowerCase();
+    return ROUTES.includes(route) ? route : '';
+  }
+
+  function routeViewId(route){
+    return `picks${route[0].toUpperCase()+route.slice(1)}View`;
+  }
+
+  function routeContentId(route){
+    return `picks${route[0].toUpperCase()+route.slice(1)}Content`;
+  }
+
+  function focusRoute(route){
+    document.querySelector(`[data-picks-route="${route}"]`)?.focus();
+  }
+
+  function bindNavKeyboard(nav){
+    if(nav.dataset.keyboardBound) return;
+    nav.dataset.keyboardBound='true';
+    nav.addEventListener('keydown',event=>{
+      const current=event.target.closest?.('[data-picks-route]');
+      if(!current) return;
+      const index=ROUTES.indexOf(current.dataset.picksRoute);
+      let next=-1;
+      if(event.key==='ArrowRight') next=(index+1)%ROUTES.length;
+      if(event.key==='ArrowLeft') next=(index-1+ROUTES.length)%ROUTES.length;
+      if(event.key==='Home') next=0;
+      if(event.key==='End') next=ROUTES.length-1;
+      if(next<0) return;
+      event.preventDefault();
+      const route=ROUTES[next];
+      setRoute(route,{updateUrl:true,scroll:false});
+      focusRoute(route);
+    });
   }
 
   function ensureShell(){
     const shell=document.querySelector('#picks .picks-shell');
     if(!shell) return null;
 
-    if(!document.getElementById('picksInternalNav')){
-      const nav=document.createElement('nav');
+    let nav=document.getElementById('picksInternalNav');
+    if(!nav){
+      nav=document.createElement('nav');
       nav.id='picksInternalNav';
       nav.className='picks-internal-nav';
       nav.setAttribute('aria-label','Picks sections');
       nav.setAttribute('role','tablist');
-      nav.innerHTML=ROUTES.map(route=>`<button type="button" role="tab" data-picks-route="${route}" aria-controls="picks${route[0].toUpperCase()+route.slice(1)}View"><span>${routeConfig[route].label}</span><i aria-hidden="true"></i></button>`).join('');
+      nav.innerHTML=ROUTES.map(route=>{
+        const tabId=`picks${route[0].toUpperCase()+route.slice(1)}Tab`;
+        return `<button id="${tabId}" type="button" role="tab" data-picks-route="${route}" aria-controls="${routeViewId(route)}"><span>${routeConfig[route].label}</span><i aria-hidden="true"></i></button>`;
+      }).join('');
       shell.prepend(nav);
       nav.querySelectorAll('[data-picks-route]').forEach(button=>button.addEventListener('click',()=>setRoute(button.dataset.picksRoute,{updateUrl:true,scroll:true})));
     }
+    bindNavKeyboard(nav);
 
     ROUTES.forEach(route=>{
-      const viewId=`picks${route[0].toUpperCase()+route.slice(1)}View`;
+      const viewId=routeViewId(route);
       if(document.getElementById(viewId)) return;
       const view=document.createElement('section');
       view.id=viewId;
       view.className=`picks-internal-view picks-${route}-view`;
       view.dataset.picksView=route;
       view.setAttribute('role','tabpanel');
-      view.innerHTML=`<div class="picks-view-heading"><span>${routeConfig[route].kicker}</span><strong>${routeConfig[route].title}</strong></div><div id="picks${route[0].toUpperCase()+route.slice(1)}Content" class="picks-route-content"></div><div id="picks${route[0].toUpperCase()+route.slice(1)}Empty" class="picks-route-empty" hidden>${routeConfig[route].empty}${route==='home'?' <button type="button" data-open-event>Open Event</button>':''}</div>`;
+      view.setAttribute('aria-labelledby',`picks${route[0].toUpperCase()+route.slice(1)}Tab`);
+      view.innerHTML=`<div class="picks-view-heading"><span>${routeConfig[route].kicker}</span><strong>${routeConfig[route].title}</strong></div><div id="${routeContentId(route)}" class="picks-route-content"></div><div id="picks${route[0].toUpperCase()+route.slice(1)}Empty" class="picks-route-empty" hidden>${routeConfig[route].empty}${route==='home'?' <button type="button" data-open-event>Open Event</button>':''}</div>`;
       shell.appendChild(view);
       view.querySelector('[data-open-event]')?.addEventListener('click',()=>setRoute('event',{updateUrl:true,scroll:true}));
     });
@@ -62,12 +101,12 @@
 
   function routeNode(id,route){
     const node=document.getElementById(id);
-    const content=document.getElementById(`picks${route[0].toUpperCase()+route.slice(1)}Content`);
+    const content=document.getElementById(routeContentId(route));
     if(node && content && node.parentElement!==content) content.appendChild(node);
   }
 
   function orderContent(route){
-    const content=document.getElementById(`picks${route[0].toUpperCase()+route.slice(1)}Content`);
+    const content=document.getElementById(routeContentId(route));
     if(!content) return;
     const desired=routeIds[route].map(id=>document.getElementById(id)).filter(Boolean);
     const desiredIds=desired.map(node=>node.id).join('|');
@@ -75,14 +114,38 @@
     if(desiredIds!==currentIds) desired.forEach(node=>content.appendChild(node));
   }
 
+  function meaningfulNode(node){
+    if(!node || node.hidden || node.getAttribute('aria-hidden')==='true') return false;
+    const style=getComputedStyle(node);
+    if(style.display==='none' || style.visibility==='hidden') return false;
+    if(node.id==='picksHistoryCard') return Boolean(node.querySelector('.picks-history-row'));
+    if(node.id==='picksGroupCard') return Boolean(node.querySelector('#picksHomeCompact,.picks-group-member,.picks-group-event'));
+    if(node.id==='picksProfileShell') return Boolean(node.querySelector('.social-profile'));
+    if(node.id==='picksCommissionerCard') return Boolean(node.querySelector('#picksCommissionerContent')?.children.length);
+    if(node.id==='picksFightList') return Boolean(node.children.length);
+    if(node.id==='picksEventHero') return Boolean(node.textContent.trim());
+    return Boolean(node.textContent.trim() || node.childElementCount);
+  }
+
   function syncEmptyStates(){
     ROUTES.forEach(route=>{
-      const content=document.getElementById(`picks${route[0].toUpperCase()+route.slice(1)}Content`);
+      const content=document.getElementById(routeContentId(route));
       const empty=document.getElementById(`picks${route[0].toUpperCase()+route.slice(1)}Empty`);
       if(!content || !empty) return;
-      const visible=[...content.children].some(node=>!node.hidden && getComputedStyle(node).display!=='none');
-      empty.hidden=visible;
+      empty.hidden=[...content.children].some(meaningfulNode);
     });
+  }
+
+  function routeFromLocation({remember=true}={}){
+    const url=new URL(window.location.href);
+    const explicit=validRoute(url.searchParams.get(URL_KEY));
+    if(explicit) return explicit;
+    if(String(url.searchParams.get('room') || '').trim()) return 'event';
+    if(remember){
+      const stored=validRoute(sessionStorage.getItem(SESSION_KEY));
+      if(stored) return stored;
+    }
+    return 'home';
   }
 
   function routeExistingContent(){
@@ -93,20 +156,10 @@
       ROUTES.forEach(route=>routeIds[route].forEach(id=>routeNode(id,route)));
       ROUTES.forEach(orderContent);
       syncEmptyStates();
-      applyRoute(activeRoute || initialRoute(),false);
+      applyRoute(activeRoute || routeFromLocation(),false);
     }finally{
       routing=false;
     }
-  }
-
-  function initialRoute(){
-    const url=new URL(window.location.href);
-    const explicit=validRoute(url.searchParams.get(URL_KEY));
-    if(explicit) return explicit;
-    const room=String(url.searchParams.get('room') || '').trim();
-    if(room) return 'event';
-    const remembered=validRoute(sessionStorage.getItem(SESSION_KEY));
-    return remembered || 'home';
   }
 
   function applyRoute(route,scroll){
@@ -155,13 +208,22 @@
   }
 
   function start(){
-    activeRoute=initialRoute();
+    activeRoute=routeFromLocation();
     routeExistingContent();
     updateEventIndicator();
 
     document.addEventListener('click',event=>{
       if(isEventAction(event.target)) setRoute('event',{updateUrl:true,scroll:false});
     },true);
+
+    window.addEventListener('popstate',()=>{
+      const next=routeFromLocation({remember:false});
+      sessionStorage.setItem(SESSION_KEY,next);
+      applyRoute(next,false);
+      updateEventIndicator();
+    });
+
+    window.addEventListener('picks:profileupdated',()=>setTimeout(syncEmptyStates,0));
 
     const observer=new MutationObserver(()=>{
       clearTimeout(start.timer);
@@ -171,6 +233,8 @@
       },90);
     });
     observer.observe(document.getElementById('picks') || document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden','class']});
+
+    window.UFCPicksNavigation={setRoute,getRoute:()=>activeRoute,refresh:routeExistingContent};
   }
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start,{once:true});
