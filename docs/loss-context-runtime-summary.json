@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-12T03:02:41.968Z",
+  "generatedAt": "2026-07-12T03:04:36.087Z",
   "pipelineStatus": "ready",
   "pipelineError": null,
   "complete": true,
@@ -75,7 +75,7 @@
     "mutatesRecords": true,
     "mutatesPenalty": false,
     "mutatesScores": false,
-    "appliedAt": "2026-07-12T03:02:38.240Z",
+    "appliedAt": "2026-07-12T03:04:32.253Z",
     "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
   },
   "promotedPenaltyChanges": [
@@ -734,13 +734,13 @@
     "auditVersion": "loss-context-hybrid-audit-20260711b-canonical-exposure",
     "summary": {
       "rosterCount": 63,
-      "scoredCount": 62,
-      "blockedCount": 1,
-      "coverageComplete": false,
-      "exposureLedgerCoveredCount": 62,
-      "exposureLedgerBlockedCount": 1,
-      "exposureLedgerCoverageComplete": false,
-      "reliefCount": 54,
+      "scoredCount": 63,
+      "blockedCount": 0,
+      "coverageComplete": true,
+      "exposureLedgerCoveredCount": 63,
+      "exposureLedgerBlockedCount": 0,
+      "exposureLedgerCoverageComplete": true,
+      "reliefCount": 55,
       "harsherCount": 4,
       "unchangedCount": 4,
       "severityCapCount": 1,
@@ -751,19 +751,13 @@
       "majorRankMovementCount": 21,
       "lowExposureCount": 1,
       "postPrimeExclusionCount": 34,
-      "criticalFlagCount": 1,
+      "criticalFlagCount": 0,
       "averageCurrentPenalty": -6.06,
-      "averageRecommendedPenalty": -3.08,
-      "averageRelief": 3.46
+      "averageRecommendedPenalty": -3.09,
+      "averageRelief": 3.44
     },
-    "readyForLivePromotion": false,
-    "criticalFlags": [
-      {
-        "fighter": "Georges St-Pierre",
-        "type": "blocked",
-        "detail": "exposure-exceeds-current-scored-record"
-      }
-    ],
+    "readyForLivePromotion": true,
+    "criticalFlags": [],
     "largestRelief": [
       {
         "fighter": "Michael Bisping",
@@ -2253,6 +2247,61 @@
         "rankMovement": 4
       },
       {
+        "fighter": "Georges St-Pierre",
+        "board": "men",
+        "status": "scored",
+        "currentPenalty": -6.25,
+        "recommendedPenalty": -3.78,
+        "projectedDelta": 2.47,
+        "currentTotal": 85.6,
+        "projectedTotal": 88.07,
+        "currentRank": 2,
+        "severity": 3.13,
+        "severityMax": 3.5,
+        "worstLosses": [
+          {
+            "label": "Matt Serra",
+            "date": "2007-04-07",
+            "phase": "prime",
+            "quality": "non-elite",
+            "finished": true,
+            "penalty": -4.75
+          },
+          {
+            "label": "Matt Hughes I",
+            "date": "2004-10-22",
+            "phase": "pre-prime",
+            "quality": "elite",
+            "finished": true,
+            "penalty": -1.5
+          }
+        ],
+        "rawLossBurden": 6.25,
+        "exposure": 22,
+        "exposureSource": "audited-closed-window-count",
+        "exposureWindowEnd": "2017-11-04",
+        "exposureEndpointLabel": "Michael Bisping — 2017-11-04",
+        "exposureOpenWindow": false,
+        "currentScoredUfcFights": 22,
+        "excludedPostPrimeFightCount": 0,
+        "excludedPostPrimeFights": [],
+        "exposureAuditStatus": "ready",
+        "exposureAuditIssues": [],
+        "frequency": 0.85,
+        "frequencyMax": 2.5,
+        "preDivision": 3.98,
+        "divisionMultiplier": 1.03,
+        "divisionDiscountPct": 0.05,
+        "divisionPointsSaved": 0.2,
+        "finalMagnitude": 3.78,
+        "eventCount": 2,
+        "record": "20-2",
+        "mutatesScores": false,
+        "mutatesPenalty": false,
+        "projectedRank": 2,
+        "rankMovement": 0
+      },
+      {
         "fighter": "Brock Lesnar",
         "board": "men",
         "status": "scored",
@@ -2361,61 +2410,6 @@
         "mutatesPenalty": false,
         "projectedRank": 41,
         "rankMovement": 1
-      },
-      {
-        "fighter": "Robert Whittaker",
-        "board": "men",
-        "status": "scored",
-        "currentPenalty": -10,
-        "recommendedPenalty": -3.68,
-        "projectedDelta": 6.32,
-        "currentTotal": 38.85,
-        "projectedTotal": 45.17,
-        "currentRank": 41,
-        "severity": 2.25,
-        "severityMax": 3.5,
-        "worstLosses": [
-          {
-            "label": "Dricus du Plessis",
-            "date": "2023-07-08",
-            "phase": "prime",
-            "quality": "elite",
-            "finished": true,
-            "penalty": -2.25
-          },
-          {
-            "label": "Israel Adesanya I",
-            "date": "2019-10-06",
-            "phase": "prime",
-            "quality": "elite",
-            "finished": true,
-            "penalty": -2.25
-          }
-        ],
-        "rawLossBurden": 11,
-        "exposure": 23,
-        "exposureSource": "audited-closed-window-count",
-        "exposureWindowEnd": "2024-10-26",
-        "exposureEndpointLabel": "Khamzat Chimaev — 2024-10-26",
-        "exposureOpenWindow": false,
-        "currentScoredUfcFights": 23,
-        "excludedPostPrimeFightCount": 0,
-        "excludedPostPrimeFights": [],
-        "exposureAuditStatus": "ready",
-        "exposureAuditIssues": [],
-        "frequency": 1.43,
-        "frequencyMax": 2.5,
-        "preDivision": 3.68,
-        "divisionMultiplier": 0.98,
-        "divisionDiscountPct": 0,
-        "divisionPointsSaved": 0,
-        "finalMagnitude": 3.68,
-        "eventCount": 6,
-        "record": "16-7",
-        "mutatesScores": false,
-        "mutatesPenalty": false,
-        "projectedRank": 35,
-        "rankMovement": 6
       }
     ],
     "biggestRankMovers": [
@@ -3623,31 +3617,57 @@
       {
         "fighter": "Georges St-Pierre",
         "board": "men",
-        "status": "blocked",
-        "blockers": [
-          "exposure-exceeds-current-scored-record"
-        ],
+        "status": "scored",
         "currentPenalty": -6.25,
+        "recommendedPenalty": -3.78,
+        "projectedDelta": 2.47,
         "currentTotal": 85.6,
+        "projectedTotal": 88.07,
         "currentRank": 2,
-        "exposureAudit": {
-          "fighter": "Georges St-Pierre",
-          "status": "blocked",
-          "openWindow": false,
-          "throughPrimeUfcFights": 24,
-          "currentScoredUfcFights": 22,
-          "currentUfcRecord": "20-2",
-          "endpoint": "2017-11-04",
-          "endpointLabel": "Michael Bisping — 2017-11-04",
-          "source": "audited-closed-window-count",
-          "notes": null,
-          "issues": [
-            "exposure-exceeds-current-scored-record"
-          ],
-          "postPrimeFightCount": 0
-        },
+        "severity": 3.13,
+        "severityMax": 3.5,
+        "worstLosses": [
+          {
+            "label": "Matt Serra",
+            "date": "2007-04-07",
+            "phase": "prime",
+            "quality": "non-elite",
+            "finished": true,
+            "penalty": -4.75
+          },
+          {
+            "label": "Matt Hughes I",
+            "date": "2004-10-22",
+            "phase": "pre-prime",
+            "quality": "elite",
+            "finished": true,
+            "penalty": -1.5
+          }
+        ],
+        "rawLossBurden": 6.25,
+        "exposure": 22,
+        "exposureSource": "audited-closed-window-count",
+        "exposureWindowEnd": "2017-11-04",
+        "exposureEndpointLabel": "Michael Bisping — 2017-11-04",
+        "exposureOpenWindow": false,
+        "currentScoredUfcFights": 22,
+        "excludedPostPrimeFightCount": 0,
+        "excludedPostPrimeFights": [],
+        "exposureAuditStatus": "ready",
+        "exposureAuditIssues": [],
+        "frequency": 0.85,
+        "frequencyMax": 2.5,
+        "preDivision": 3.98,
+        "divisionMultiplier": 1.03,
+        "divisionDiscountPct": 0.05,
+        "divisionPointsSaved": 0.2,
+        "finalMagnitude": 3.78,
+        "eventCount": 2,
+        "record": "20-2",
         "mutatesScores": false,
-        "mutatesPenalty": false
+        "mutatesPenalty": false,
+        "projectedRank": 2,
+        "rankMovement": 0
       },
       {
         "fighter": "Max Holloway",
@@ -3964,37 +3984,7 @@
       }
     ],
     "flags": {
-      "blocked": [
-        {
-          "fighter": "Georges St-Pierre",
-          "board": "men",
-          "status": "blocked",
-          "blockers": [
-            "exposure-exceeds-current-scored-record"
-          ],
-          "currentPenalty": -6.25,
-          "currentTotal": 85.6,
-          "currentRank": 2,
-          "exposureAudit": {
-            "fighter": "Georges St-Pierre",
-            "status": "blocked",
-            "openWindow": false,
-            "throughPrimeUfcFights": 24,
-            "currentScoredUfcFights": 22,
-            "currentUfcRecord": "20-2",
-            "endpoint": "2017-11-04",
-            "endpointLabel": "Michael Bisping — 2017-11-04",
-            "source": "audited-closed-window-count",
-            "notes": null,
-            "issues": [
-              "exposure-exceeds-current-scored-record"
-            ],
-            "postPrimeFightCount": 0
-          },
-          "mutatesScores": false,
-          "mutatesPenalty": false
-        }
-      ],
+      "blocked": [],
       "severityCap": [
         {
           "fighter": "Conor McGregor",
@@ -7681,6 +7671,61 @@
           "mutatesPenalty": false,
           "projectedRank": 5,
           "rankMovement": 1
+        },
+        {
+          "fighter": "Georges St-Pierre",
+          "board": "men",
+          "status": "scored",
+          "currentPenalty": -6.25,
+          "recommendedPenalty": -3.78,
+          "projectedDelta": 2.47,
+          "currentTotal": 85.6,
+          "projectedTotal": 88.07,
+          "currentRank": 2,
+          "severity": 3.13,
+          "severityMax": 3.5,
+          "worstLosses": [
+            {
+              "label": "Matt Serra",
+              "date": "2007-04-07",
+              "phase": "prime",
+              "quality": "non-elite",
+              "finished": true,
+              "penalty": -4.75
+            },
+            {
+              "label": "Matt Hughes I",
+              "date": "2004-10-22",
+              "phase": "pre-prime",
+              "quality": "elite",
+              "finished": true,
+              "penalty": -1.5
+            }
+          ],
+          "rawLossBurden": 6.25,
+          "exposure": 22,
+          "exposureSource": "audited-closed-window-count",
+          "exposureWindowEnd": "2017-11-04",
+          "exposureEndpointLabel": "Michael Bisping — 2017-11-04",
+          "exposureOpenWindow": false,
+          "currentScoredUfcFights": 22,
+          "excludedPostPrimeFightCount": 0,
+          "excludedPostPrimeFights": [],
+          "exposureAuditStatus": "ready",
+          "exposureAuditIssues": [],
+          "frequency": 0.85,
+          "frequencyMax": 2.5,
+          "preDivision": 3.98,
+          "divisionMultiplier": 1.03,
+          "divisionDiscountPct": 0.05,
+          "divisionPointsSaved": 0.2,
+          "finalMagnitude": 3.78,
+          "eventCount": 2,
+          "record": "20-2",
+          "mutatesScores": false,
+          "mutatesPenalty": false,
+          "projectedRank": 2,
+          "rankMovement": 0
         },
         {
           "fighter": "Sean O'Malley",
@@ -11683,7 +11728,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T03:02:38.211Z",
+        "completedAt": "2026-07-12T03:04:32.223Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -11841,7 +11886,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T03:02:38.214Z",
+        "completedAt": "2026-07-12T03:04:32.228Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -12034,7 +12079,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T03:02:38.204Z",
+        "completedAt": "2026-07-12T03:04:32.216Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -12180,7 +12225,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T03:02:38.214Z",
+        "completedAt": "2026-07-12T03:04:32.228Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -12409,7 +12454,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T03:02:37.561Z",
+        "completedAt": "2026-07-12T03:04:31.539Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -12579,7 +12624,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T03:02:38.211Z",
+        "completedAt": "2026-07-12T03:04:32.223Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -12749,7 +12794,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T03:02:38.211Z",
+        "completedAt": "2026-07-12T03:04:32.223Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -12883,7 +12928,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T03:02:38.214Z",
+        "completedAt": "2026-07-12T03:04:32.228Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -13063,7 +13108,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-12T03:02:37.558Z",
+        "completedAt": "2026-07-12T03:04:31.536Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -13244,7 +13289,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-12T03:02:37.558Z",
+        "completedAt": "2026-07-12T03:04:31.536Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -13450,7 +13495,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T03:02:38.207Z",
+        "completedAt": "2026-07-12T03:04:32.219Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -13596,7 +13641,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T03:02:38.214Z",
+        "completedAt": "2026-07-12T03:04:32.228Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -13754,7 +13799,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T03:02:38.214Z",
+        "completedAt": "2026-07-12T03:04:32.228Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -13959,7 +14004,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T03:02:38.204Z",
+        "completedAt": "2026-07-12T03:04:32.216Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -14165,7 +14210,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T03:02:38.211Z",
+        "completedAt": "2026-07-12T03:04:32.223Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -14234,11 +14279,40 @@
         ]
       },
       "hybrid": {
-        "status": "blocked",
+        "status": "scored",
         "currentPenalty": -6.25,
-        "blockers": [
-          "exposure-exceeds-current-scored-record"
-        ]
+        "recommendedPenalty": -3.78,
+        "projectedDelta": 2.47,
+        "severity": 3.13,
+        "frequency": 0.85,
+        "preDivision": 3.98,
+        "divisionMultiplier": 1.03,
+        "divisionDiscountPct": 0.05,
+        "divisionPointsSaved": 0.2,
+        "exposure": 22,
+        "exposureWindowEnd": "2017-11-04",
+        "excludedPostPrimeFightCount": 0,
+        "eventCount": 2,
+        "worstLosses": [
+          {
+            "label": "Matt Serra",
+            "date": "2007-04-07",
+            "phase": "prime",
+            "quality": "non-elite",
+            "finished": true,
+            "penalty": -4.75
+          },
+          {
+            "label": "Matt Hughes I",
+            "date": "2004-10-22",
+            "phase": "pre-prime",
+            "quality": "elite",
+            "finished": true,
+            "penalty": -1.5
+          }
+        ],
+        "projectedRank": 2,
+        "rankMovement": 0
       },
       "eraWindow": {
         "start": "2006-11-18",
@@ -14258,7 +14332,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T03:02:38.211Z",
+        "completedAt": "2026-07-12T03:04:32.223Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -14451,7 +14525,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T03:02:38.207Z",
+        "completedAt": "2026-07-12T03:04:32.219Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -14556,7 +14630,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T03:02:38.211Z",
+        "completedAt": "2026-07-12T03:04:32.223Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
