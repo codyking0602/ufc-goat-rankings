@@ -139,11 +139,12 @@
 
   function fightRows(event){
     if(!event.fights?.length) return '<div class="event-manager-empty">No fights yet. Add the first matchup below.</div>';
-    return `<div class="event-manager-fight-list">${event.fights.map(fight=>`<article class="event-manager-fight-row">
+    const editable=['hidden','upcoming'].includes(event.status);
+    return `<div class="event-manager-fight-list">${event.fights.map(fight=>`<article class="event-manager-fight-row${editable?'':' read-only'}">
       <span class="event-manager-order">${String(fight.order).padStart(2,'0')}</span>
       <div class="event-manager-matchup"><strong>${safe(fight.red)} <em>vs.</em> ${safe(fight.blue)}</strong><small>${safe(fight.card_section)} · ${safe(fight.weight_class)} · Locks ${safe(formatDate(fight.lock_at))}</small></div>
       <div class="event-manager-odds"><span>${safe(odds(fight.red_odds))}</span><span>${safe(odds(fight.blue_odds))}</span></div>
-      <div class="event-manager-row-actions"><button type="button" data-edit-fight="${safe(fight.id)}">Edit</button><button type="button" class="danger" data-delete-fight="${safe(fight.id)}">Delete</button></div>
+      ${editable?`<div class="event-manager-row-actions"><button type="button" data-edit-fight="${safe(fight.id)}">Edit</button><button type="button" class="danger" data-delete-fight="${safe(fight.id)}">Delete</button></div>`:''}
     </article>`).join('')}</div>`;
   }
 
