@@ -1,0 +1,195 @@
+import { chromium } from 'playwright';
+import fs from 'node:fs/promises';
+import process from 'node:process';
+
+const baseUrl = process.env.UFC_APP_URL || 'http://127.0.0.1:4173';
+const outputPath = process.env.UFC_ERA_AUDIT_OUTPUT || 'artifacts/division-era-depth-runtime-report.json';
+const summaryPath = process.env.UFC_ERA_AUDIT_SUMMARY_OUTPUT || 'artifacts/division-era-depth-runtime-summary.json';
+
+await fs.mkdir('artifacts', { recursive: true });
+const browser = await chromium.launch({ headless: true });
+const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+const consoleErrors = [];
+const pageErrors = [];
+page.on('console', message => { if (message.type() === 'error') consoleErrors.push(message.text()); });
+page.on('pageerror', error => pageErrors.push(String(error?.stack || error)));
+
+try {
+  await page.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: 60_000 });
+  await page.waitForFunction(() => window.UFC_SCORING_PIPELINE?.status === 'ready' || window.UFC_SCORING_PIPELINE?.status === 'error', null, { timeout: 120_000 });
+  await page.waitForFunction(() => window.UFC_DIVISION_ERA_DEPTH_LIVE?.applied === true || window.UFC_DIVISION_ERA_DEPTH_LIVE?.status, null, { timeout: 120_000 });
+
+  const result = await page.evaluate(async () => {
+    const waitFor = async predicate => {
+      const started = Date.now();
+      while (!predicate() && Date.now() - started < 45_000) await new Promise(resolve => setTimeout(resolve, 50));
+    };
+    await waitFor(() => window.UFC_DIVISION_ERA_DEPTH_LIVE?.applied === true);
+
+    const clone = value => JSON.parse(JSON.stringify(value ?? null));
+    const key = name => String(name || '').trim().toLowerCase().replace(/[’‘`´]/g, "'").replace(/\s+/g, ' ');
+    const data = window.RANKING_DATA || {};
+    const shadow = clone(window.UFC_DIVISION_ERA_DEPTH_SHADOW);
+    const audit = clone(window.UFC_DIVISION_ERA_DEPTH_AUDIT);
+    const live = clone(window.UFC_DIVISION_ERA_DEPTH_LIVE);
+    const boards = [...(data.men || []), ...(data.women || [])];
+    const profiles = data.fighters || [];
+    const shadowByKey = new Map((window.UFC_DIVISION_ERA_DEPTH_SHADOW?.fighters || []).map(row => [key(row.fighter), row]));
+    const boardByKey = new Map(boards.map(row => [key(row.fighter), row]));
+
+    const boardMismatches = boards.filter(row => {
+      const expected = shadowByKey.get(key(row.fighter));
+      return !expected || Math.abs(Number(row.eraDepthAdjustment) - Number(expected.curvedAdjustment)) > 0.001 || Math.abs(Number(row.totalScore) - (Number(row.preEraDepthTotalScore) + Number(expected.curvedAdjustment))) > 0.001;
+    }).map(row => row.fighter);
+    const profileMismatches = profiles.filter(profile => {
+      const board = boardByKey.get(key(profile.fighter));
+      return board && (Math.abs(Number(profile.eraDepthAdjustment) - Number(board.eraDepthAdjustment)) > 0.001 || Number(profile.rank) !== Number(board.rank) || Number(profile.overallOvr) !== Number(board.overallOvr));
+    }).map(row => row.fighter);
+    const overrideMismatches = boards.filter(row => {
+      const override = window.DISPLAY_OVERRIDES?.[row.fighter] || {};
+      return Number(override.allTimeRank) !== Number(row.rank) || Number(override.overallOvr) !== Number(row.overallOvr) || Math.abs(Number(override.eraDepthAdjustment) - Number(row.eraDepthAdjustment)) > 0.001;
+    }).map(row => row.fighter);
+
+    const fighter = name => boardByKey.get(key(name)) || null;
+    const anchors = ['Jon Jones','Georges St-Pierre','Demetrious Johnson','Anderson Silva','Islam Makhachev','Alexander Volkanovski','Jose Aldo','Khabib Nurmagomedov','Kamaru Usman','Stipe Miocic','Matt Hughes','Junior dos Santos','Tito Ortiz','Amanda Nunes','Cris Cyborg','Holly Holm'].map(name => {
+      const row = fighter(name);
+      return row ? { fighter:name, rank:row.rank, totalScore:row.totalScore, adjustment:row.eraDepthAdjustment, overallOvr:row.overallOvr, depthIndex:row.divisionEraDepth?.depthIndex, sampledDivisions:row.divisionEraDepth?.sampledDivisions || [], womenFeatherweightTreatment:row.divisionEraDepth?.womenFeatherweightTreatment || null } : { fighter:name, missing:true };
+    });
+
+    const nunes = fighter('Amanda Nunes');
+    const cyborg = fighter('Cris Cyborg');
+    const holm = fighter('Holly Holm');
+    const wfwSafety = {
+      nunesExcludesWfw: !nunes?.divisionEraDepth?.sampledDivisions?.includes('WFW') && nunes?.divisionEraDepth?.womenFeatherweightTreatment?.treatment === 'mixed-career-non-wfw-only',
+      cyborgNeutral: Number(cyborg?.eraDepthAdjustment) === 0 && cyborg?.divisionEraDepth?.womenFeatherweightTreatment?.treatment === 'pure-wfw-zero-adjustment',
+      holmExcludesWfw: !holm?.divisionEraDepth?.sampledDivisions?.includes('WFW') && holm?.divisionEraDepth?.womenFeatherweightTreatment?.treatment === 'mixed-career-non-wfw-only'
+    };
+
+    let profileSurface = { rendered:false, hasEraCard:false, hasAdjustment:false, hasRank:false, hasOvr:false, text:'' };
+    if (typeof window.openFighter === 'function') {
+      window.openFighter('Matt Hughes');
+      await new Promise(resolve => setTimeout(resolve, 100));
+      const text = document.getElementById('fighterDetail')?.innerText || '';
+      const row = fighter('Matt Hughes');
+      profileSurface = {
+        rendered: text.includes('Matt Hughes'),
+        hasEraCard: text.includes('Era-depth adjustment') && text.includes('ranks 6–15 strength'),
+        hasAdjustment: text.includes(Number(row?.eraDepthAdjustment).toFixed(2)),
+        hasRank: text.includes(`#${row?.rank}`),
+        hasOvr: text.includes(`${row?.overallOvr}`),
+        text: text.slice(0, 3000)
+      };
+    }
+
+    let compareSurface = { rendered:false, hasHughes:false, hasKhabib:false, hasLiveRanks:false, text:'' };
+    if (document.getElementById('fighterA') && document.getElementById('fighterB') && typeof window.renderCompare === 'function') {
+      document.getElementById('fighterA').value = 'Matt Hughes';
+      document.getElementById('fighterB').value = 'Khabib Nurmagomedov';
+      window.renderCompare();
+      const text = document.getElementById('compareResult')?.innerText || '';
+      compareSurface = {
+        rendered: text.length > 0,
+        hasHughes: text.includes('Matt Hughes'),
+        hasKhabib: text.includes('Khabib Nurmagomedov'),
+        hasLiveRanks: text.includes(`#${fighter('Matt Hughes')?.rank}`) && text.includes(`#${fighter('Khabib Nurmagomedov')?.rank}`),
+        text: text.slice(0, 2500)
+      };
+    }
+
+    return {
+      pipeline: clone(window.UFC_SCORING_PIPELINE),
+      shadow,
+      audit,
+      live,
+      consistency: {
+        rosterCount: boards.length,
+        shadowCount: shadowByKey.size,
+        boardMismatchCount: boardMismatches.length,
+        boardMismatches,
+        profileMismatchCount: profileMismatches.length,
+        profileMismatches,
+        overrideMismatchCount: overrideMismatches.length,
+        overrideMismatches
+      },
+      wfwSafety,
+      anchors,
+      menTop20: (data.men || []).slice(0,20).map(row => ({rank:row.rank,fighter:row.fighter,totalScore:row.totalScore,eraDepthAdjustment:row.eraDepthAdjustment,overallOvr:row.overallOvr})),
+      womenBoard: (data.women || []).map(row => ({rank:row.rank,fighter:row.fighter,totalScore:row.totalScore,eraDepthAdjustment:row.eraDepthAdjustment,overallOvr:row.overallOvr})),
+      profileSurface,
+      compareSurface
+    };
+  });
+
+  const payload = { generatedAt:new Date().toISOString(), baseUrl, ...result, browserDiagnostics:{consoleErrors,pageErrors} };
+  await fs.writeFile(outputPath, `${JSON.stringify(payload, null, 2)}\n`, 'utf8');
+  const summary = {
+    generatedAt: payload.generatedAt,
+    pipelineStatus: result.pipeline?.status ?? null,
+    shadowVersion: result.shadow?.version ?? null,
+    auditVersion: result.audit?.version ?? null,
+    liveVersion: result.live?.version ?? null,
+    datasetEnd: result.shadow?.source?.datasetEnd ?? null,
+    sourceFresh: result.shadow?.source?.sourceFresh ?? false,
+    judgmentApproved: result.audit?.judgmentApproved ?? false,
+    readyForLivePromotion: result.audit?.readyForLivePromotion ?? false,
+    liveApplied: result.live?.applied ?? false,
+    promotedCount: result.live?.promotedCount ?? null,
+    liveMismatchCount: result.live?.mismatchCount ?? null,
+    consistency: result.consistency,
+    wfwSafety: result.wfwSafety,
+    anchors: result.anchors,
+    menTop20: result.menTop20,
+    womenBoard: result.womenBoard,
+    profileSurface: result.profileSurface,
+    compareSurface: result.compareSurface,
+    browserDiagnostics:{consoleErrors,pageErrors}
+  };
+  await fs.writeFile(summaryPath, `${JSON.stringify(summary, null, 2)}\n`, 'utf8');
+  console.log('DIVISION_ERA_DEPTH_RUNTIME_SUMMARY');
+  console.log(JSON.stringify({
+    datasetEnd:summary.datasetEnd,
+    sourceFresh:summary.sourceFresh,
+    judgmentApproved:summary.judgmentApproved,
+    liveApplied:summary.liveApplied,
+    promotedCount:summary.promotedCount,
+    liveMismatchCount:summary.liveMismatchCount,
+    boardMismatchCount:summary.consistency?.boardMismatchCount,
+    profileMismatchCount:summary.consistency?.profileMismatchCount,
+    overrideMismatchCount:summary.consistency?.overrideMismatchCount,
+    wfwSafety:summary.wfwSafety,
+    profileSurfacePassed:Boolean(summary.profileSurface?.rendered&&summary.profileSurface?.hasEraCard&&summary.profileSurface?.hasAdjustment&&summary.profileSurface?.hasRank&&summary.profileSurface?.hasOvr),
+    compareSurfacePassed:Boolean(summary.compareSurface?.rendered&&summary.compareSurface?.hasHughes&&summary.compareSurface?.hasKhabib&&summary.compareSurface?.hasLiveRanks),
+    consoleErrorCount:consoleErrors.length,
+    pageErrorCount:pageErrors.length
+  }, null, 2));
+
+  const failed = result.pipeline?.status !== 'ready'
+    || result.shadow?.promotionContract?.readyForJudgmentFinalization !== true
+    || result.shadow?.source?.sourceFresh !== true
+    || result.audit?.judgmentApproved !== true
+    || result.audit?.readyForLivePromotion !== true
+    || result.live?.applied !== true
+    || Number(result.live?.promotedCount || 0) !== 63
+    || Number(result.live?.mismatchCount || 0) !== 0
+    || Number(result.consistency?.rosterCount || 0) !== 63
+    || Number(result.consistency?.shadowCount || 0) !== 63
+    || Number(result.consistency?.boardMismatchCount || 0) !== 0
+    || Number(result.consistency?.profileMismatchCount || 0) !== 0
+    || Number(result.consistency?.overrideMismatchCount || 0) !== 0
+    || result.wfwSafety?.nunesExcludesWfw !== true
+    || result.wfwSafety?.cyborgNeutral !== true
+    || result.wfwSafety?.holmExcludesWfw !== true
+    || result.profileSurface?.rendered !== true
+    || result.profileSurface?.hasEraCard !== true
+    || result.profileSurface?.hasAdjustment !== true
+    || result.profileSurface?.hasRank !== true
+    || result.profileSurface?.hasOvr !== true
+    || result.compareSurface?.rendered !== true
+    || result.compareSurface?.hasHughes !== true
+    || result.compareSurface?.hasKhabib !== true
+    || result.compareSurface?.hasLiveRanks !== true
+    || pageErrors.length > 0;
+  if (failed) process.exitCode = 1;
+} finally {
+  await browser.close();
+}
