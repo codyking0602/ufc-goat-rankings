@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-07-12T15:39:44.919Z",
+  "generatedAt": "2026-07-12T16:17:14.678Z",
   "pipelineStatus": "ready",
   "shadowVersion": "division-era-depth-shadow-20260712d-current-wfw-safe",
   "auditVersion": "division-era-depth-judgment-review-20260712b-live-approved",
   "liveVersion": "division-era-depth-live-20260712a",
-  "finalizerVersion": "division-era-depth-finalizer-20260712b-canonical-engine",
+  "finalizerVersion": "division-era-depth-finalizer-20260712c-late-ready-sync",
   "finalizerStatus": "blocked",
   "finalizerApplied": false,
   "finalizedAfterPipeline": true,
@@ -13,7 +13,7 @@
   "finalScoreEngineLatest": {
     "version": "final-score-engine-20260712b-era-shadow-fallback",
     "applied": true,
-    "reason": "approved-six-fighter-audit-corrections",
+    "reason": "division-era-depth-finalizer-post-ui",
     "applyCount": 4,
     "formula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment",
     "fighterCount": 63,
@@ -95,7 +95,7 @@
         "overallOvr": 90
       }
     ],
-    "appliedAt": "2026-07-12T15:39:43.286Z"
+    "appliedAt": "2026-07-12T16:17:11.883Z"
   },
   "sixCategoryModelVersion": "six-category-live-20260712a-era-depth",
   "datasetEnd": "2026-06-27",
@@ -108,8 +108,12 @@
   "consistency": {
     "rosterCount": 63,
     "shadowCount": 63,
-    "boardMismatchCount": 0,
-    "boardMismatches": [],
+    "boardMismatchCount": 3,
+    "boardMismatches": [
+      "Jon Jones",
+      "Conor McGregor",
+      "Dustin Poirier"
+    ],
     "profileMismatchCount": 0,
     "profileMismatches": [],
     "overrideMismatchCount": 0,
@@ -124,7 +128,7 @@
     {
       "fighter": "Jon Jones",
       "rank": 1,
-      "totalScore": 101.77,
+      "totalScore": 101.76,
       "preEraDepthTotalScore": 101.92,
       "adjustment": -0.15,
       "overallOvr": 99,
@@ -366,7 +370,7 @@
       "rank": 1,
       "fighter": "Jon Jones",
       "preEraDepthTotalScore": 101.92,
-      "totalScore": 101.77,
+      "totalScore": 101.76,
       "eraDepthAdjustment": -0.15,
       "overallOvr": 99
     },
@@ -661,9 +665,7 @@
     "text": "\n      \n      #10 · 92 OVR\n      Matt Hughes\n      18-7 · Welterweight\n    \n      \n      #8 · 92 OVR\n      Khabib Nurmagomedov\n      13-0 · Lightweight\n    \n      \n        Khabib Nurmagomedov wins this comparison.\n        The knock on Hughes is era context. His welterweight run was historically huge, but the division was not as deep or modernized as later welterweight eras.Khabib wins when the debate rewards dominance, perfection, and how unbeatable a fighter looked at his best.Matt Hughes may win one version of the argument, but Khabib Nurmagomedov wins the full ranking comparison.\n        Final take: Khabib Nurmagomedov wins, barely. Matt Hughes has the strongest counterargument, but Khabib Nurmagomedov's total resume gives him the edge.\n      \n    "
   },
   "browserDiagnostics": {
-    "consoleErrors": [
-      "Failed to load resource: the server responded with a status of 404 (File not found)"
-    ],
+    "consoleErrors": [],
     "pageErrors": []
   }
 }
