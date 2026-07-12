@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-12T08:19:47.745Z",
+  "generatedAt": "2026-07-12T08:24:02.304Z",
   "pipelineStatus": "ready",
   "pipelineError": null,
   "complete": true,
@@ -75,7 +75,7 @@
     "mutatesRecords": true,
     "mutatesPenalty": false,
     "mutatesScores": false,
-    "appliedAt": "2026-07-12T08:19:41.759Z",
+    "appliedAt": "2026-07-12T08:23:56.363Z",
     "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
   },
   "promotedPenaltyChanges": [
@@ -9354,7 +9354,7 @@
       "mutatesScores": true,
       "mutatesRanks": true,
       "mutatesOvr": true,
-      "appliedAt": "2026-07-12T08:19:44.140Z"
+      "appliedAt": "2026-07-12T08:23:58.819Z"
     }
   },
   "liveConsistency": {
@@ -9363,72 +9363,8 @@
     "boardPenaltyMismatches": [],
     "profilePenaltyMismatchCount": 0,
     "profilePenaltyMismatches": [],
-    "overrideMismatchCount": 63,
-    "overrideMismatches": [
-      "Jon Jones",
-      "Georges St-Pierre",
-      "Anderson Silva",
-      "Demetrious Johnson",
-      "Islam Makhachev",
-      "Alexander Volkanovski",
-      "Jose Aldo",
-      "Matt Hughes",
-      "Khabib Nurmagomedov",
-      "Kamaru Usman",
-      "Stipe Miocic",
-      "Max Holloway",
-      "Randy Couture",
-      "Israel Adesanya",
-      "Chuck Liddell",
-      "Daniel Cormier",
-      "Alex Pereira",
-      "B.J. Penn",
-      "T.J. Dillashaw",
-      "Frankie Edgar",
-      "Charles Oliveira",
-      "Cain Velasquez",
-      "Henry Cejudo",
-      "Junior dos Santos",
-      "Tito Ortiz",
-      "Francis Ngannou",
-      "Aljamain Sterling",
-      "Conor McGregor",
-      "Tyron Woodley",
-      "Merab Dvalishvili",
-      "Dustin Poirier",
-      "Ilia Topuria",
-      "Justin Gaethje",
-      "Robbie Lawler",
-      "Robert Whittaker",
-      "Dricus du Plessis",
-      "Petr Yan",
-      "Tony Ferguson",
-      "Dominick Cruz",
-      "Deiveson Figueiredo",
-      "Lyoto Machida",
-      "Khamzat Chimaev",
-      "Sean Strickland",
-      "Sean O'Malley",
-      "Brock Lesnar",
-      "Michael Bisping",
-      "Dan Henderson",
-      "Chael Sonnen",
-      "Amanda Nunes",
-      "Valentina Shevchenko",
-      "Zhang Weili",
-      "Joanna Jedrzejczyk",
-      "Rose Namajunas",
-      "Ronda Rousey",
-      "Jessica Andrade",
-      "Cris Cyborg",
-      "Alexa Grasso",
-      "Julianna Peña",
-      "Carla Esparza",
-      "Holly Holm",
-      "Mackenzie Dern",
-      "Kayla Harrison",
-      "Miesha Tate"
-    ]
+    "overrideMismatchCount": 0,
+    "overrideMismatches": []
   },
   "profileSurface": {
     "rendered": true,
@@ -9723,7 +9659,7 @@
       "packetRecord": "9-1",
       "overrideRecord": "9-1",
       "displayRank": 36,
-      "displayOvr": null,
+      "displayOvr": 88,
       "audit": {
         "status": "match",
         "ufcRecord": "9-1",
@@ -9834,7 +9770,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T08:19:41.733Z",
+        "completedAt": "2026-07-12T08:23:56.338Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -9868,7 +9804,7 @@
       "packetRecord": "12-5",
       "overrideRecord": "12-5",
       "displayRank": 33,
-      "displayOvr": null,
+      "displayOvr": 89,
       "audit": {
         "status": "match",
         "ufcRecord": "12-5",
@@ -10043,7 +9979,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T08:19:41.735Z",
+        "completedAt": "2026-07-12T08:23:56.341Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -10077,7 +10013,7 @@
       "packetRecord": "16-8",
       "overrideRecord": "16-8",
       "displayRank": 13,
-      "displayOvr": null,
+      "displayOvr": 91,
       "audit": {
         "status": "match",
         "ufcRecord": "16-8",
@@ -10287,7 +10223,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T08:19:41.727Z",
+        "completedAt": "2026-07-12T08:23:56.332Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -10321,7 +10257,7 @@
       "packetRecord": "11-3 (1 NC)",
       "overrideRecord": "11-3 (1 NC)",
       "displayRank": 44,
-      "displayOvr": null,
+      "displayOvr": 87,
       "audit": {
         "status": "score-mismatch",
         "ufcRecord": "11-3 (1 NC)",
@@ -10484,7 +10420,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T08:19:41.736Z",
+        "completedAt": "2026-07-12T08:23:56.342Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -10518,7 +10454,7 @@
       "packetRecord": "25-11",
       "overrideRecord": "25-11",
       "displayRank": 21,
-      "displayOvr": null,
+      "displayOvr": 90,
       "audit": {
         "status": "match",
         "ufcRecord": "25-11",
@@ -10764,7 +10700,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T08:19:41.115Z",
+        "completedAt": "2026-07-12T08:23:55.743Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -10798,7 +10734,7 @@
       "packetRecord": "13-6",
       "overrideRecord": "13-6",
       "displayRank": 14,
-      "displayOvr": null,
+      "displayOvr": 91,
       "audit": {
         "status": "match",
         "ufcRecord": "13-6",
@@ -10985,7 +10921,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T08:19:41.733Z",
+        "completedAt": "2026-07-12T08:23:56.338Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -11019,7 +10955,7 @@
       "packetRecord": "10-6",
       "overrideRecord": "10-6",
       "displayRank": 23,
-      "displayOvr": null,
+      "displayOvr": 89,
       "audit": {
         "status": "score-mismatch",
         "ufcRecord": "10-6",
@@ -11206,7 +11142,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T08:19:41.733Z",
+        "completedAt": "2026-07-12T08:23:56.338Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -11240,7 +11176,7 @@
       "packetRecord": "16-2",
       "overrideRecord": "16-2",
       "displayRank": 1,
-      "displayOvr": null,
+      "displayOvr": 99,
       "audit": {
         "status": "match",
         "ufcRecord": "16-2",
@@ -11391,7 +11327,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T08:19:41.736Z",
+        "completedAt": "2026-07-12T08:23:56.342Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -11425,7 +11361,7 @@
       "packetRecord": "18-7",
       "overrideRecord": "18-7",
       "displayRank": 43,
-      "displayOvr": null,
+      "displayOvr": 87,
       "audit": {
         "status": "match",
         "ufcRecord": "18-7",
@@ -11622,7 +11558,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-12T08:19:41.113Z",
+        "completedAt": "2026-07-12T08:23:55.740Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -11657,7 +11593,7 @@
       "packetRecord": "16-7",
       "overrideRecord": "16-7",
       "displayRank": 35,
-      "displayOvr": null,
+      "displayOvr": 88,
       "audit": {
         "status": "score-mismatch",
         "ufcRecord": "16-7",
@@ -11854,7 +11790,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-12T08:19:41.113Z",
+        "completedAt": "2026-07-12T08:23:55.740Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -11889,7 +11825,7 @@
       "packetRecord": "8-9",
       "overrideRecord": "8-9",
       "displayRank": 47,
-      "displayOvr": null,
+      "displayOvr": 84,
       "audit": {
         "status": "score-mismatch",
         "ufcRecord": "8-9",
@@ -12111,7 +12047,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T08:19:41.729Z",
+        "completedAt": "2026-07-12T08:23:56.335Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -12145,7 +12081,7 @@
       "packetRecord": "10-3",
       "overrideRecord": "10-3",
       "displayRank": 17,
-      "displayOvr": null,
+      "displayOvr": 91,
       "audit": {
         "status": "match",
         "ufcRecord": "10-3",
@@ -12308,7 +12244,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T08:19:41.735Z",
+        "completedAt": "2026-07-12T08:23:56.341Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -12342,7 +12278,7 @@
       "packetRecord": "14-3-1",
       "overrideRecord": "14-3-1",
       "displayRank": 2,
-      "displayOvr": null,
+      "displayOvr": 98,
       "audit": {
         "status": "match",
         "ufcRecord": "14-3-1",
@@ -12517,7 +12453,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T08:19:41.736Z",
+        "completedAt": "2026-07-12T08:23:56.342Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -12551,7 +12487,7 @@
       "packetRecord": "23-9",
       "overrideRecord": "23-9",
       "displayRank": 12,
-      "displayOvr": null,
+      "displayOvr": 92,
       "audit": {
         "status": "match",
         "ufcRecord": "23-9",
@@ -12773,7 +12709,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T08:19:41.727Z",
+        "completedAt": "2026-07-12T08:23:56.332Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -12807,7 +12743,7 @@
       "packetRecord": "14-9",
       "overrideRecord": "14-9",
       "displayRank": 7,
-      "displayOvr": null,
+      "displayOvr": 93,
       "audit": {
         "status": "score-mismatch",
         "ufcRecord": "14-9",
@@ -13030,7 +12966,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T08:19:41.732Z",
+        "completedAt": "2026-07-12T08:23:56.338Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -13064,7 +13000,7 @@
       "packetRecord": "20-2",
       "overrideRecord": "20-2",
       "displayRank": 2,
-      "displayOvr": null,
+      "displayOvr": 97,
       "audit": {
         "status": "match",
         "ufcRecord": "20-2",
@@ -13203,7 +13139,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T08:19:41.732Z",
+        "completedAt": "2026-07-12T08:23:56.338Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -13237,7 +13173,7 @@
       "packetRecord": "17-7",
       "overrideRecord": "17-7",
       "displayRank": 3,
-      "displayOvr": null,
+      "displayOvr": 95,
       "audit": {
         "status": "match",
         "ufcRecord": "17-7",
@@ -13447,7 +13383,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T08:19:41.729Z",
+        "completedAt": "2026-07-12T08:23:56.335Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -13481,7 +13417,7 @@
       "packetRecord": "22-1, 1 NC",
       "overrideRecord": "22-1, 1 NC",
       "displayRank": 1,
-      "displayOvr": null,
+      "displayOvr": 99,
       "audit": {
         "status": "match",
         "ufcRecord": "22-1, 1 NC",
@@ -13586,7 +13522,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T08:19:41.732Z",
+        "completedAt": "2026-07-12T08:23:56.338Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
