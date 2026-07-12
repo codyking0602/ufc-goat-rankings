@@ -2,7 +2,7 @@
 // Replaces stale fight counts, round-control totals, and finish totals before live promotion.
 (function(){
   'use strict';
-  const VERSION='prime-dominance-audit-batch-ten-20260710a-canonical-window-five';
+  const VERSION='prime-dominance-audit-batch-ten-20260712a-couture-calibration';
   const base=window.UFC_PRIME_DOMINANCE_LEDGERS;
   const model=window.UFC_PRIME_DOMINANCE_SHADOW_MODEL;
   const era=window.UFC_FIGHTER_ERA_LEDGERS;
@@ -63,8 +63,8 @@
         ['Tito Ortiz',5,0],['Vitor Belfort II',0,1,'cut stoppage'],['Vitor Belfort III',3,0],['Chuck Liddell II',0,1],
         ['Mike van Arsdale',2,1],['Chuck Liddell III',1,1],['Tim Sylvia',5,0],['Gabriel Gonzaga',3,0],['Brock Lesnar',1,1]
       ],
-      eliteStakesBreakdown:{titleFightWins:2,topFiveWins:1,champFormerChampWins:.8,fiveRoundTitleStageSample:.35,divisionStrengthContext:.15},
-      dominanceProfile:'Full UFC championship arc across heavyweight and light heavyweight: unusually strong round control and title-stage proof over a long interrupted span, balanced by six losses inside the locked prime window.'
+      eliteStakesBreakdown:{titleFightWins:1.75,topFiveWins:.75,champFormerChampWins:.5,fiveRoundTitleStageSample:.25,divisionStrengthContext:.1},
+      dominanceProfile:'Full UFC championship arc across heavyweight and light heavyweight. The 11-6 record and real round control remain credited, while old-era title density and repeated championship access no longer create near-modern maximum elite-stakes validation.'
     }
   };
 
