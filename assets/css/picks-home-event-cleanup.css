@@ -1,0 +1,83 @@
+/* Picks step 3: compact Home and event-only organization. */
+.picks-group-card.picks-group-home-clean{display:block;border:0;background:transparent;box-shadow:none;overflow:visible}
+.picks-group-card.picks-group-home-clean>summary{display:none!important}
+.picks-group-card.picks-group-home-clean>.picks-group-content{display:block;padding:0;background:transparent}
+.picks-home-source-hidden{display:none!important}
+.picks-home-compact{display:grid;gap:12px}
+.picks-home-group-header,.picks-home-current,.picks-home-leaderboard{border:1px solid #cbd5e1;border-radius:18px;background:#fff;box-shadow:0 10px 26px rgba(15,23,42,.08);padding:14px;color:#172033}
+.picks-home-group-header{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 12px;align-items:center;background:linear-gradient(135deg,#172033,#223755);border-color:#334b69;color:#fff}
+.picks-home-group-header>div:first-child{display:grid;gap:3px;min-width:0}
+.picks-home-group-header span,.picks-home-section-head span{color:#fb923c;font-size:9px;font-weight:950;letter-spacing:.13em}
+.picks-home-group-header h3,.picks-home-section-head h3{margin:0;font-size:19px;line-height:1.05}
+.picks-home-group-header p{margin:0;color:#dbeafe;font-size:10px;font-weight:750}
+.picks-home-group-header>small{grid-column:1/-1;color:#cbd5e1;font-size:9px}
+.picks-home-share-slot button{border:1px solid #f97316;border-radius:10px;background:#f97316;color:#111827;padding:10px 13px;font:inherit;font-size:10px;font-weight:950;cursor:pointer;white-space:nowrap}
+.picks-home-section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+.picks-home-section-head>div{display:grid;gap:3px}
+.picks-home-section-head b{color:#64748b;font-size:9px;text-transform:uppercase;letter-spacing:.08em}
+.picks-home-current-slot{display:grid}
+.picks-home-current-event{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid #f97316;border-radius:13px;background:#fff7ed;padding:11px}
+.picks-home-current-event>div{display:grid;gap:3px;min-width:0}
+.picks-home-current-event span{color:#c2410c;font-size:8px;font-weight:950;letter-spacing:.08em;text-transform:uppercase}
+.picks-home-current-event strong{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.picks-home-current-event small{color:#64748b;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.picks-home-current-event button{border:1px solid #172033;border-radius:10px;background:#172033;color:#fff;padding:10px 12px;font:inherit;font-size:9px;font-weight:950;cursor:pointer;white-space:nowrap}
+.picks-home-no-event{display:grid;gap:3px;border:1px dashed #cbd5e1;border-radius:13px;background:#f8fafc;padding:15px;text-align:center}
+.picks-home-no-event strong{font-size:14px}
+.picks-home-no-event small{color:#64748b;font-size:10px}
+.picks-home-leaderboard>p{margin:-3px 0 11px;color:#64748b;font-size:10px;line-height:1.35}
+.picks-home-leaderboard .picks-group-members{gap:6px}
+.picks-home-profile{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;border:1px solid #334155;border-radius:15px;background:#111827;color:#fff;padding:11px 12px;font:inherit;text-align:left;cursor:pointer}
+.picks-home-profile-avatar{display:grid;place-items:center;width:42px;height:42px;border:1px solid #475569;border-radius:12px;background:#1e293b;font-size:21px}
+.picks-home-profile>div{display:grid;gap:2px}
+.picks-home-profile strong{font-size:12px}
+.picks-home-profile small{color:#cbd5e1;font-size:9px}
+.picks-home-profile>b{color:#fb923c;font-size:10px}
+#picksHistoryCard,#picksSocialCard{margin:0}
+#picksEventView.picks-final-event-clean #picksEventPicker,
+#picksEventView.picks-final-event-clean #picksEventHero,
+#picksEventView.picks-final-event-clean #picksSetupNote,
+#picksEventView.picks-final-event-clean #picksRoomBanner,
+#picksEventView.picks-final-event-clean #picksLiveNotices,
+#picksEventView.picks-final-event-clean #picksLivePanel,
+#picksEventView.picks-final-event-clean #picksRoomSetup,
+#picksEventView.picks-final-event-clean #picksProgressCard,
+#picksEventView.picks-final-event-clean #picksStandingsCard,
+#picksEventView.picks-final-event-clean #picksFightList>.picks-open-list{display:none!important}
+#picksEventView.picks-final-event-clean #picksEventContent{gap:12px}
+#picksEventView.picks-final-event-clean #picksEventRecap{order:1}
+#picksEventView.picks-final-event-clean #picksFightList{order:2}
+#picksEventView.picks-final-event-clean #picksRoomPicksCard{order:3}
+#picksEventView.picks-final-event-clean #picksAdminPanel{order:4}
+#picksEventView:not(.picks-final-event-clean) #picksEventPicker{order:1}
+#picksEventView:not(.picks-final-event-clean) #picksEventHero{order:2}
+#picksEventView:not(.picks-final-event-clean) #picksRoomBanner{order:3}
+#picksEventView:not(.picks-final-event-clean) #picksLivePanel{order:4}
+#picksEventView:not(.picks-final-event-clean) #picksProgressCard{order:5}
+#picksEventView:not(.picks-final-event-clean) #picksFightList{order:6}
+#picksEventView:not(.picks-final-event-clean) #picksStandingsCard{order:7}
+#picksEventView:not(.picks-final-event-clean) #picksRoomPicksCard{order:8}
+#picksEventView:not(.picks-final-event-clean) #picksAdminPanel{order:9}
+.picks-final-results{margin:0;border:1px solid #334155;border-radius:16px;background:#111827;overflow:hidden}
+.picks-final-results>summary{padding:14px 15px;color:#fff}
+.picks-final-results[open]>summary{border-bottom:1px solid #334155}
+.picks-final-results .picks-locked-list{padding:10px}
+#picksRoomPicksCard.picks-room-history-final{border-radius:16px}
+.picks-room-history-toggle{margin-left:auto;border:1px solid #cbd5e1;border-radius:999px;background:#f8fafc;color:#172033;padding:6px 9px;font:inherit;font-size:8px;font-weight:950;cursor:pointer}
+#picksRoomPicksCard.is-collapsed>.picks-card-subtitle,
+#picksRoomPicksCard.is-collapsed>#picksRoomPicks{display:none!important}
+#picksRoomPicksCard.is-collapsed .picks-card-head{margin-bottom:0}
+#picksRoomPicksCard .picks-card-head{align-items:center}
+#picksEventRecap .picks-recap-board-head h4{font-size:17px}
+@media(max-width:700px){
+  .picks-home-group-header{grid-template-columns:1fr}
+  .picks-home-share-slot button{width:100%}
+  .picks-home-current-event{grid-template-columns:1fr}
+  .picks-home-current-event button{width:100%}
+  .picks-home-group-header,.picks-home-current,.picks-home-leaderboard{padding:12px;border-radius:16px}
+  .picks-home-section-head h3,.picks-home-group-header h3{font-size:17px}
+}
+@media(max-width:390px){
+  .picks-home-profile{grid-template-columns:38px minmax(0,1fr) auto}
+  .picks-home-profile-avatar{width:38px;height:38px}
+}
