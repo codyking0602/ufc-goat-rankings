@@ -1,0 +1,92 @@
+name: Finalize Oklahoma City Fighter Thumbnails
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/finalize-okc-fighter-thumbs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  finalize-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout latest main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Update cache versions and smoke contract
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          index=Path('index.html')
+          text=index.read_text()
+          text=text.replace('20260712-picks-event-artwork-repaired','20260712-okc-official-fighter-thumbs')
+          text=text.replace('picks-photo-overrides-20260712b-okc-ddp-live','picks-photo-overrides-20260712c-okc-card')
+          text=text.replace('picks-mobile-polish-20260712b-event-art','picks-mobile-polish-20260712c-photo-fallback')
+          index.write_text(text)
+
+          smoke=Path('scripts/check-picks-ui.mjs')
+          check=smoke.read_text()
+          old="check(photos.includes('\"Dricus Du Plessis\": \"assets/fighters/dricus-du-plessis-thumb.webp\"'),'Dricus event-name photo mapping is missing');"
+          new="""const okcPhotoFiles=[
+            'tabatha-ricci','fatima-kline','tommy-mcmillen','alberto-montes','chase-hooper',
+            'mitch-ramirez','jared-cannonier','christian-leroy-duncan','brad-tavares','marc-andre-barriault'
+          ];
+          okcPhotoFiles.forEach(slug=>check(exists(`assets/fighters/${slug}-thumb.webp`),`Missing Oklahoma City thumbnail: ${slug}`));
+          check(photos.includes(\"OKC_PHOTO_VERSION='okc-card-20260712a'\"),'Oklahoma City thumbnail cache version is missing');
+          check(photos.includes('\"Dricus Du Plessis\": okcPhoto(\'dricus-du-plessis\')'),'Dricus event-name photo mapping is missing');
+          check(photos.includes('\"Kamaru Usman\": okcPhoto(\'kamaru-usman\')'),'Usman event-name photo mapping is missing');"""
+          if old not in check:
+            raise SystemExit('Expected old photo smoke check not found')
+          check=check.replace(old,new)
+          marker="check(mobilePolishCss.includes('>.picks-event-meta') && mobilePolishCss.includes('background:#101827'),'Event details are not separated below the artwork');"
+          addition=marker+"\ncheck(mobilePolishCss.includes('.picks-photo-fallback[hidden]') && mobilePolishCss.includes(':has(>img)'),'Loaded fighter photos do not fully hide fallback initials');"
+          if marker not in check:
+            raise SystemExit('Expected mobile CSS smoke marker not found')
+          check=check.replace(marker,addition)
+          smoke.write_text(check)
+          PY
+
+      - name: Verify Picks UI
+        run: node scripts/check-picks-ui.mjs
+
+      - name: Commit final photo wiring
+        shell: bash
+        run: |
+          rm -f .github/workflows/finalize-okc-fighter-thumbs.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Finalize official Oklahoma City fighter thumbnails"
+          git pull --rebase origin main
+          git push origin main
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
