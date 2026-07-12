@@ -3,28 +3,27 @@
 (function(){
   'use strict';
 
-  const VERSION='loss-context-hybrid-audit-20260711a-full-roster';
+  const VERSION='loss-context-hybrid-audit-20260711b-canonical-exposure';
   const THRESHOLDS={
     majorRelief:3.00,
     meaningfulRelief:1.50,
     harsherBy:0.75,
     majorRankMovement:3,
-    lowExposure:4,
-    exposureCoverageWarning:0.80
+    lowExposure:4
   };
 
   function round2(value){const n=Number(value||0);return Math.round((n+Number.EPSILON)*100)/100;}
   function abs(value){return Math.abs(Number(value||0));}
-  function key(name){return String(name||'').trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');}
 
   function run(){
     const shadow=window.UFC_LOSS_CONTEXT_HYBRID_SHADOW;
+    const exposureLedger=window.UFC_LOSS_CONTEXT_EXPOSURE_LEDGER;
     if(!shadow?.applied||!Array.isArray(shadow.results))return false;
 
     const scored=shadow.results.filter(row=>row.status==='scored');
     const blocked=shadow.results.filter(row=>row.status!=='scored');
-    const relief=scored.filter(row=>Number(row.projectedDelta)>0);
-    const harsher=scored.filter(row=>Number(row.projectedDelta)<0);
+    const relief=scored.filter(row=>Number(row.projectedDelta)>0.01);
+    const harsher=scored.filter(row=>Number(row.projectedDelta)<-0.01);
     const unchanged=scored.filter(row=>abs(row.projectedDelta)<=0.01);
 
     const flags={
@@ -39,13 +38,7 @@
       majorRankMovement:scored.filter(row=>abs(row.rankMovement)>=THRESHOLDS.majorRankMovement),
       lowExposure:scored.filter(row=>Number(row.exposure)<=THRESHOLDS.lowExposure),
       postPrimeExclusions:scored.filter(row=>Number(row.excludedPostPrimeFightCount)>0),
-      exposureCoverageWarnings:scored.filter(row=>{
-        const dated=Number(row.datedScoredFightCount||0);
-        const record=String(row.record||'').match(/(\d+)\s*[-–]\s*(\d+)/);
-        if(!record)return true;
-        const careerFights=Number(record[1])+Number(record[2]);
-        return careerFights>0&&dated/careerFights<THRESHOLDS.exposureCoverageWarning;
-      }),
+      exposureLedgerIssues:scored.filter(row=>row.exposureAuditStatus!=='ready'||(row.exposureAuditIssues||[]).length>0),
       zeroLossAnomalies:scored.filter(row=>Number(row.eventCount)===0&&Number(row.recommendedPenalty)!==0),
       lossPenaltyAnomalies:scored.filter(row=>Number(row.eventCount)>0&&Number(row.recommendedPenalty)===0)
     };
@@ -57,9 +50,9 @@
 
     const criticalFlags=[
       ...flags.blocked.map(row=>({fighter:row.fighter,type:'blocked',detail:(row.blockers||[]).join(', ')})),
+      ...flags.exposureLedgerIssues.map(row=>({fighter:row.fighter,type:'exposure-ledger-issue',detail:(row.exposureAuditIssues||[]).join(', ')})),
       ...flags.zeroLossAnomalies.map(row=>({fighter:row.fighter,type:'zero-loss-anomaly',detail:`${row.eventCount} losses but ${row.recommendedPenalty} penalty`})),
-      ...flags.lossPenaltyAnomalies.map(row=>({fighter:row.fighter,type:'loss-penalty-anomaly',detail:`${row.eventCount} losses but zero penalty`})),
-      ...flags.exposureCoverageWarnings.map(row=>({fighter:row.fighter,type:'exposure-coverage-warning',detail:`${row.datedScoredFightCount} dated profile fights vs ${row.record} UFC record`}))
+      ...flags.lossPenaltyAnomalies.map(row=>({fighter:row.fighter,type:'loss-penalty-anomaly',detail:`${row.eventCount} losses but zero penalty`}))
     ];
 
     const summary={
@@ -67,6 +60,9 @@
       scoredCount:scored.length,
       blockedCount:blocked.length,
       coverageComplete:shadow.coverageComplete===true,
+      exposureLedgerCoveredCount:exposureLedger?.coveredCount??null,
+      exposureLedgerBlockedCount:exposureLedger?.blockedCount??null,
+      exposureLedgerCoverageComplete:exposureLedger?.coverageComplete===true,
       reliefCount:relief.length,
       harsherCount:harsher.length,
       unchangedCount:unchanged.length,
@@ -88,8 +84,9 @@
       version:VERSION,
       applied:true,
       phase:2,
-      mode:'full-roster-shadow-audit',
+      mode:'full-roster-canonical-exposure-shadow-audit',
       sourceShadowVersion:shadow.version,
+      sourceExposureLedgerVersion:exposureLedger?.version||null,
       thresholds:THRESHOLDS,
       summary,
       flags,
@@ -99,7 +96,8 @@
       harshestProjected:shadow.harshestProjected||[],
       biggestRankMovers:shadow.biggestRankMovers||[],
       postPrimeExposureAudit:shadow.postPrimeExposureAudit||[],
-      readyForLivePromotion:summary.coverageComplete&&criticalFlags.length===0,
+      readyForLivePromotion:summary.coverageComplete&&summary.exposureLedgerCoverageComplete&&criticalFlags.length===0,
+      requiresJudgmentReview:true,
       mutatesScores:false,
       mutatesPenalty:false,
       generatedAt:new Date().toISOString()
@@ -111,8 +109,10 @@
         version:VERSION,
         phase:2,
         sourceShadowVersion:shadow.version,
+        sourceExposureLedgerVersion:exposureLedger?.version||null,
         summary,
         readyForLivePromotion:audit.readyForLivePromotion,
+        requiresJudgmentReview:true,
         mutatesScores:false,
         generatedAt:audit.generatedAt
       };
