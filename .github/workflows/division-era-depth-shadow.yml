@@ -12,6 +12,7 @@ on:
       - 'scripts/build-division-era-depth-judgment-review.mjs'
       - 'scripts/validate-division-era-depth-promotion.mjs'
       - 'scripts/install-division-era-depth-live.mjs'
+      - 'scripts/install-division-era-depth-final-score.mjs'
       - '.github/workflows/division-era-depth-shadow.yml'
   pull_request:
     branches: [main]
@@ -24,6 +25,7 @@ on:
       - 'scripts/build-division-era-depth-judgment-review.mjs'
       - 'scripts/validate-division-era-depth-promotion.mjs'
       - 'scripts/install-division-era-depth-live.mjs'
+      - 'scripts/install-division-era-depth-final-score.mjs'
       - '.github/workflows/division-era-depth-shadow.yml'
   workflow_dispatch:
 
@@ -49,6 +51,11 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Install canonical era depth scoring
+        run: |
+          node --check scripts/install-division-era-depth-final-score.mjs
+          node scripts/install-division-era-depth-final-score.mjs
+
       - name: Check JavaScript syntax
         run: |
           node --check scripts/build-division-era-depth-shadow.mjs
@@ -59,7 +66,11 @@ jobs:
           node --check scripts/build-division-era-depth-judgment-review.mjs
           node --check scripts/validate-division-era-depth-promotion.mjs
           node --check scripts/install-division-era-depth-live.mjs
+          node --check scripts/install-division-era-depth-final-score.mjs
           node --check assets/data/division-era-depth-live.js
+          node --check assets/data/division-era-depth-finalizer.js
+          node --check assets/js/final-score-engine.js
+          node --check assets/data/module-versions.js
 
       - name: Build current 63-fighter depth model
         env:
@@ -81,6 +92,9 @@ jobs:
           grep -q 'division-era-depth-shadow-20260712d-current-wfw-safe' index.html
           grep -q 'division-era-depth-judgment-review-20260712b-live-approved' index.html
           grep -q 'division-era-depth-live-20260712a' index.html
+          grep -q 'division-era-depth-finalizer-20260712a' index.html
+          grep -q "finalScoreEngine:'20260712a-division-era-depth'" assets/data/module-versions.js
+          grep -q '+ penalty + eraDepthAdjustment' assets/js/final-score-engine.js
 
       - name: Upload depth reports and diagnostics
         if: always()
@@ -89,6 +103,8 @@ jobs:
           name: division-era-depth
           path: |
             index.html
+            assets/data/module-versions.js
+            assets/js/final-score-engine.js
             assets/data/division-era-depth-shadow.js
             assets/data/division-era-depth-audit.js
             docs/division-era-depth-shadow-report.json
@@ -104,8 +120,8 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html assets/data/division-era-depth-shadow.js assets/data/division-era-depth-audit.js docs/division-era-depth-shadow-report.json docs/division-era-depth-judgment-review.json docs/division-era-depth-judgment-review.md docs/division-era-depth-build-diagnostics.txt
-          git commit -m 'Activate current Division Era Depth model' || exit 0
+          git add index.html assets/data/module-versions.js assets/js/final-score-engine.js assets/data/division-era-depth-shadow.js assets/data/division-era-depth-audit.js docs/division-era-depth-shadow-report.json docs/division-era-depth-judgment-review.json docs/division-era-depth-judgment-review.md docs/division-era-depth-build-diagnostics.txt
+          git commit -m 'Finalize Division Era Depth scoring integration' || exit 0
           for attempt in 1 2 3 4 5; do
             git pull --rebase origin main || { git rebase --abort || true; sleep $((attempt * 2)); continue; }
             if git push origin HEAD:main; then exit 0; fi
