@@ -1,6 +1,6 @@
 name: Runtime Scoring Audit
 
-# Includes the full-roster hybrid Loss Context shadow, audit, and judgment-review output.
+# Verifies the canonical scoring pipeline, live hybrid Loss Context, and live Division-Era Depth adjustment.
 on:
   push:
     branches: [main]
@@ -8,6 +8,7 @@ on:
       - 'index.html'
       - 'assets/**'
       - 'scripts/runtime-loss-context-audit.mjs'
+      - 'scripts/runtime-era-depth-audit.mjs'
       - '.github/workflows/runtime-scoring-audit.yml'
   workflow_dispatch:
 
@@ -19,9 +20,9 @@ permissions:
   contents: write
 
 jobs:
-  loss-context-runtime:
+  scoring-runtime:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - name: Check out main
         uses: actions/checkout@v4
@@ -52,7 +53,7 @@ jobs:
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps chromium
 
-      - name: Run app and audit Loss Context
+      - name: Run app and scoring audits
         id: runtime_audit
         continue-on-error: true
         run: |
@@ -60,16 +61,19 @@ jobs:
           SERVER_PID=$!
           trap 'kill $SERVER_PID || true' EXIT
           node scripts/runtime-loss-context-audit.mjs
+          node scripts/runtime-era-depth-audit.mjs
 
       - name: Upload runtime reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: loss-context-runtime-report
+          name: scoring-runtime-report
           path: |
             artifacts/loss-context-runtime-report.json
             artifacts/loss-context-runtime-summary.json
             artifacts/loss-context-hybrid-judgment-review.json
+            artifacts/division-era-depth-runtime-report.json
+            artifacts/division-era-depth-runtime-summary.json
             artifacts/js-syntax-audit.txt
           if-no-files-found: warn
           retention-days: 14
@@ -77,18 +81,29 @@ jobs:
       - name: Publish runtime reports
         if: always()
         run: |
-          if [ ! -f artifacts/loss-context-runtime-report.json ] || [ ! -f artifacts/loss-context-runtime-summary.json ] || [ ! -f artifacts/loss-context-hybrid-judgment-review.json ]; then
-            echo 'Runtime reports were not generated.'
-            exit 1
-          fi
+          REQUIRED=(
+            artifacts/loss-context-runtime-report.json
+            artifacts/loss-context-runtime-summary.json
+            artifacts/loss-context-hybrid-judgment-review.json
+            artifacts/division-era-depth-runtime-report.json
+            artifacts/division-era-depth-runtime-summary.json
+          )
+          for file in "${REQUIRED[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "Missing runtime report: $file"
+              exit 1
+            fi
+          done
           mkdir -p docs
           cp artifacts/loss-context-runtime-report.json docs/loss-context-runtime-report.json
           cp artifacts/loss-context-runtime-summary.json docs/loss-context-runtime-summary.json
           cp artifacts/loss-context-hybrid-judgment-review.json docs/loss-context-hybrid-judgment-review.json
+          cp artifacts/division-era-depth-runtime-report.json docs/division-era-depth-runtime-report.json
+          cp artifacts/division-era-depth-runtime-summary.json docs/division-era-depth-runtime-summary.json
           cp artifacts/js-syntax-audit.txt docs/js-syntax-audit.txt
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs/loss-context-runtime-report.json docs/loss-context-runtime-summary.json docs/loss-context-hybrid-judgment-review.json docs/js-syntax-audit.txt
+          git add docs/loss-context-runtime-report.json docs/loss-context-runtime-summary.json docs/loss-context-hybrid-judgment-review.json docs/division-era-depth-runtime-report.json docs/division-era-depth-runtime-summary.json docs/js-syntax-audit.txt
           git commit -m 'Record runtime scoring audit [skip ci]' || true
           git push
 
