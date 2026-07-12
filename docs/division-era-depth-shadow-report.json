@@ -1,6 +1,6 @@
 {
-  "version": "division-era-depth-shadow-20260712a-fight-network",
-  "generatedAt": "2026-07-12T12:44:38.194Z",
+  "version": "division-era-depth-shadow-20260712b-alias-complete",
+  "generatedAt": "2026-07-12T12:54:26.067Z",
   "mode": "shadow-only",
   "mutatesLiveScores": false,
   "source": {
@@ -173,11 +173,11 @@
   "summary": {
     "rosterCount": 63,
     "coverageCount": 63,
-    "fallbackCount": 3,
+    "fallbackCount": 0,
     "negativeAdjustmentCount": 49,
     "positiveAdjustmentCount": 14,
     "neutralAdjustmentCount": 0,
-    "averageDepthIndex": 0.9257,
+    "averageDepthIndex": 0.9259,
     "averageAdjustment": -1.35,
     "largestNegativeAdjustments": [
       {
@@ -313,16 +313,16 @@
         "shadowRank": 19,
         "rankMovement": -1,
         "currentTotal": 55.08,
-        "depthIndex": 0.75,
+        "depthIndex": 0.7676,
         "shadowAdjustment": -3,
         "shadowTotal": 52.08,
         "componentRatios": {
-          "qualifiedActivePool": 0.55,
-          "ranksSixToFifteenElo": 0.55,
-          "contenderDiversity": 0.8571
+          "qualifiedActivePool": 0.5822,
+          "ranksSixToFifteenElo": 0.6708,
+          "contenderDiversity": 1.0934
         },
-        "matchedPrimeFightCount": 0,
-        "fallback": true
+        "matchedPrimeFightCount": 11,
+        "fallback": false
       },
       {
         "fighter": "T.J. Dillashaw",
@@ -331,16 +331,16 @@
         "shadowRank": 20,
         "rankMovement": -1,
         "currentTotal": 54.52,
-        "depthIndex": 0.8679,
+        "depthIndex": 0.867,
         "shadowAdjustment": -3,
         "shadowTotal": 51.52,
         "componentRatios": {
-          "qualifiedActivePool": 0.7385,
-          "ranksSixToFifteenElo": 0.9213,
-          "contenderDiversity": 0.9286
+          "qualifiedActivePool": 0.772,
+          "ranksSixToFifteenElo": 0.8482,
+          "contenderDiversity": 1.0526
         },
-        "matchedPrimeFightCount": 0,
-        "fallback": true
+        "matchedPrimeFightCount": 11,
+        "fallback": false
       },
       {
         "fighter": "Frankie Edgar",
@@ -1140,7 +1140,9 @@
         "matchedPrimeFightCount": 14,
         "fallback": false
       }
-    ]
+    ],
+    "directMatchCoverageCount": 63,
+    "aliasResolutionComplete": true
   },
   "fighters": [
     {
@@ -4962,17 +4964,18 @@
       "openPrime": false,
       "primaryDivision": "LW",
       "sampledDivisions": [
+        "WW",
         "LW"
       ],
-      "matchedPrimeFightCount": 0,
-      "scoredSampleCount": 1,
-      "titleWeightedSampleCount": 0,
-      "fallback": true,
-      "depthIndex": 0.75,
+      "matchedPrimeFightCount": 11,
+      "scoredSampleCount": 11,
+      "titleWeightedSampleCount": 9,
+      "fallback": false,
+      "depthIndex": 0.7676,
       "componentRatios": {
-        "qualifiedActivePool": 0.55,
-        "ranksSixToFifteenElo": 0.55,
-        "contenderDiversity": 0.8571
+        "qualifiedActivePool": 0.5822,
+        "ranksSixToFifteenElo": 0.6708,
+        "contenderDiversity": 1.0934
       },
       "shadowAdjustment": -3,
       "sensitivityAdjustment": -2,
@@ -4980,7 +4983,49 @@
       "sensitivityTotal": 53.08,
       "samples": [
         {
-          "date": "2007-03-31",
+          "date": "2004-01-31",
+          "division": "WW",
+          "titleFight": true,
+          "weight": 1.5,
+          "depthIndex": 0.75,
+          "componentRatios": {
+            "qualifiedActivePool": 0.55,
+            "ranksSixToFifteenElo": 0.55,
+            "contenderDiversity": 0.8889
+          },
+          "snapshotQuarter": "2003-Q4",
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2006-03-04",
+          "division": "WW",
+          "titleFight": false,
+          "weight": 1,
+          "depthIndex": 0.75,
+          "componentRatios": {
+            "qualifiedActivePool": 0.55,
+            "ranksSixToFifteenElo": 0.55,
+            "contenderDiversity": 1.15
+          },
+          "snapshotQuarter": "2005-Q4",
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2006-09-23",
+          "division": "WW",
+          "titleFight": true,
+          "weight": 1.5,
+          "depthIndex": 0.75,
+          "componentRatios": {
+            "qualifiedActivePool": 0.55,
+            "ranksSixToFifteenElo": 0.5745,
+            "contenderDiversity": 1.15
+          },
+          "snapshotQuarter": "2006-Q2",
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2007-06-23",
           "division": "LW",
           "titleFight": false,
           "weight": 1,
@@ -4991,7 +5036,105 @@
             "contenderDiversity": 0.8571
           },
           "snapshotQuarter": "2007-Q1",
-          "source": "prime-midpoint-fallback"
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2008-01-19",
+          "division": "LW",
+          "titleFight": true,
+          "weight": 1.5,
+          "depthIndex": 0.75,
+          "componentRatios": {
+            "qualifiedActivePool": 0.55,
+            "ranksSixToFifteenElo": 0.6675,
+            "contenderDiversity": 1.0714
+          },
+          "snapshotQuarter": "2007-Q4",
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2008-05-24",
+          "division": "LW",
+          "titleFight": true,
+          "weight": 1.5,
+          "depthIndex": 0.75,
+          "componentRatios": {
+            "qualifiedActivePool": 0.55,
+            "ranksSixToFifteenElo": 0.6758,
+            "contenderDiversity": 1.1429
+          },
+          "snapshotQuarter": "2008-Q1",
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2009-01-31",
+          "division": "WW",
+          "titleFight": true,
+          "weight": 1.5,
+          "depthIndex": 0.7783,
+          "componentRatios": {
+            "qualifiedActivePool": 0.596,
+            "ranksSixToFifteenElo": 0.739,
+            "contenderDiversity": 1.15
+          },
+          "snapshotQuarter": "2008-Q4",
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2009-08-08",
+          "division": "LW",
+          "titleFight": true,
+          "weight": 1.5,
+          "depthIndex": 0.772,
+          "componentRatios": {
+            "qualifiedActivePool": 0.6195,
+            "ranksSixToFifteenElo": 0.7124,
+            "contenderDiversity": 1.15
+          },
+          "snapshotQuarter": "2009-Q2",
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2009-12-12",
+          "division": "LW",
+          "titleFight": true,
+          "weight": 1.5,
+          "depthIndex": 0.7798,
+          "componentRatios": {
+            "qualifiedActivePool": 0.6106,
+            "ranksSixToFifteenElo": 0.7333,
+            "contenderDiversity": 1.15
+          },
+          "snapshotQuarter": "2009-Q3",
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2010-04-10",
+          "division": "LW",
+          "titleFight": true,
+          "weight": 1.5,
+          "depthIndex": 0.8052,
+          "componentRatios": {
+            "qualifiedActivePool": 0.6283,
+            "ranksSixToFifteenElo": 0.7735,
+            "contenderDiversity": 1.15
+          },
+          "snapshotQuarter": "2010-Q1",
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2010-08-28",
+          "division": "LW",
+          "titleFight": true,
+          "weight": 1.5,
+          "depthIndex": 0.7962,
+          "componentRatios": {
+            "qualifiedActivePool": 0.6283,
+            "ranksSixToFifteenElo": 0.7725,
+            "contenderDiversity": 1.1071
+          },
+          "snapshotQuarter": "2010-Q2",
+          "source": "matched-prime-fight"
         }
       ],
       "shadowRank": 19,
@@ -5010,17 +5153,18 @@
       "openPrime": false,
       "primaryDivision": "BW",
       "sampledDivisions": [
-        "BW"
+        "BW",
+        "FLW"
       ],
-      "matchedPrimeFightCount": 0,
-      "scoredSampleCount": 1,
-      "titleWeightedSampleCount": 0,
-      "fallback": true,
-      "depthIndex": 0.8679,
+      "matchedPrimeFightCount": 11,
+      "scoredSampleCount": 11,
+      "titleWeightedSampleCount": 8,
+      "fallback": false,
+      "depthIndex": 0.867,
       "componentRatios": {
-        "qualifiedActivePool": 0.7385,
-        "ranksSixToFifteenElo": 0.9213,
-        "contenderDiversity": 0.9286
+        "qualifiedActivePool": 0.772,
+        "ranksSixToFifteenElo": 0.8482,
+        "contenderDiversity": 1.0526
       },
       "shadowAdjustment": -3,
       "sensitivityAdjustment": -2,
@@ -5028,10 +5172,108 @@
       "sensitivityTotal": 52.52,
       "samples": [
         {
-          "date": "2018-06-30",
+          "date": "2014-05-24",
+          "division": "BW",
+          "titleFight": true,
+          "weight": 1.5,
+          "depthIndex": 0.75,
+          "componentRatios": {
+            "qualifiedActivePool": 0.5538,
+            "ranksSixToFifteenElo": 0.6921,
+            "contenderDiversity": 1.15
+          },
+          "snapshotQuarter": "2014-Q1",
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2014-08-30",
+          "division": "BW",
+          "titleFight": true,
+          "weight": 1.5,
+          "depthIndex": 0.7613,
+          "componentRatios": {
+            "qualifiedActivePool": 0.5538,
+            "ranksSixToFifteenElo": 0.7303,
+            "contenderDiversity": 1.15
+          },
+          "snapshotQuarter": "2014-Q2",
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2015-07-25",
+          "division": "BW",
+          "titleFight": true,
+          "weight": 1.5,
+          "depthIndex": 0.8379,
+          "componentRatios": {
+            "qualifiedActivePool": 0.7795,
+            "ranksSixToFifteenElo": 0.7509,
+            "contenderDiversity": 1.1429
+          },
+          "snapshotQuarter": "2015-Q2",
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2016-01-17",
+          "division": "BW",
+          "titleFight": true,
+          "weight": 1.5,
+          "depthIndex": 0.8746,
+          "componentRatios": {
+            "qualifiedActivePool": 0.8103,
+            "ranksSixToFifteenElo": 0.806,
+            "contenderDiversity": 1.1429
+          },
+          "snapshotQuarter": "2015-Q4",
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2016-07-09",
           "division": "BW",
           "titleFight": false,
           "weight": 1,
+          "depthIndex": 0.859,
+          "componentRatios": {
+            "qualifiedActivePool": 0.7692,
+            "ranksSixToFifteenElo": 0.828,
+            "contenderDiversity": 1.0714
+          },
+          "snapshotQuarter": "2016-Q2",
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2016-12-30",
+          "division": "BW",
+          "titleFight": false,
+          "weight": 1,
+          "depthIndex": 0.8824,
+          "componentRatios": {
+            "qualifiedActivePool": 0.7385,
+            "ranksSixToFifteenElo": 0.8646,
+            "contenderDiversity": 1.1429
+          },
+          "snapshotQuarter": "2016-Q3",
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2017-11-04",
+          "division": "BW",
+          "titleFight": true,
+          "weight": 1.5,
+          "depthIndex": 0.8206,
+          "componentRatios": {
+            "qualifiedActivePool": 0.6359,
+            "ranksSixToFifteenElo": 0.8739,
+            "contenderDiversity": 0.9643
+          },
+          "snapshotQuarter": "2017-Q3",
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2018-08-04",
+          "division": "BW",
+          "titleFight": true,
+          "weight": 1.5,
           "depthIndex": 0.8679,
           "componentRatios": {
             "qualifiedActivePool": 0.7385,
@@ -5039,7 +5281,49 @@
             "contenderDiversity": 0.9286
           },
           "snapshotQuarter": "2018-Q2",
-          "source": "prime-midpoint-fallback"
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2019-01-19",
+          "division": "FLW",
+          "titleFight": true,
+          "weight": 1.5,
+          "depthIndex": 0.9544,
+          "componentRatios": {
+            "qualifiedActivePool": 0.961,
+            "ranksSixToFifteenElo": 0.9322,
+            "contenderDiversity": 1
+          },
+          "snapshotQuarter": "2018-Q4",
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2021-07-24",
+          "division": "BW",
+          "titleFight": false,
+          "weight": 1,
+          "depthIndex": 1.0011,
+          "componentRatios": {
+            "qualifiedActivePool": 1.0462,
+            "ranksSixToFifteenElo": 0.9459,
+            "contenderDiversity": 1.0714
+          },
+          "snapshotQuarter": "2021-Q2",
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2022-10-22",
+          "division": "BW",
+          "titleFight": true,
+          "weight": 1.5,
+          "depthIndex": 0.9748,
+          "componentRatios": {
+            "qualifiedActivePool": 0.9846,
+            "ranksSixToFifteenElo": 1.016,
+            "contenderDiversity": 0.8571
+          },
+          "snapshotQuarter": "2022-Q3",
+          "source": "matched-prime-fight"
         }
       ],
       "shadowRank": 20,
@@ -11088,14 +11372,14 @@
       "sampledDivisions": [
         "WFW"
       ],
-      "matchedPrimeFightCount": 0,
-      "scoredSampleCount": 1,
-      "titleWeightedSampleCount": 0,
-      "fallback": true,
+      "matchedPrimeFightCount": 7,
+      "scoredSampleCount": 7,
+      "titleWeightedSampleCount": 4,
+      "fallback": false,
       "depthIndex": 0.75,
       "componentRatios": {
-        "qualifiedActivePool": 0.55,
-        "ranksSixToFifteenElo": 0.55,
+        "qualifiedActivePool": 0.5877,
+        "ranksSixToFifteenElo": 0.5709,
         "contenderDiversity": 0.55
       },
       "shadowAdjustment": -3,
@@ -11104,7 +11388,7 @@
       "sensitivityTotal": 36.69,
       "samples": [
         {
-          "date": "2017-09-30",
+          "date": "2016-05-14",
           "division": "WFW",
           "titleFight": false,
           "weight": 1,
@@ -11114,8 +11398,92 @@
             "ranksSixToFifteenElo": 0.55,
             "contenderDiversity": 0.55
           },
+          "snapshotQuarter": "2016-Q1",
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2016-09-24",
+          "division": "WFW",
+          "titleFight": false,
+          "weight": 1,
+          "depthIndex": 0.75,
+          "componentRatios": {
+            "qualifiedActivePool": 0.55,
+            "ranksSixToFifteenElo": 0.55,
+            "contenderDiversity": 0.55
+          },
+          "snapshotQuarter": "2016-Q2",
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2017-07-29",
+          "division": "WFW",
+          "titleFight": true,
+          "weight": 1.5,
+          "depthIndex": 0.75,
+          "componentRatios": {
+            "qualifiedActivePool": 0.55,
+            "ranksSixToFifteenElo": 0.55,
+            "contenderDiversity": 0.55
+          },
+          "snapshotQuarter": "2017-Q2",
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2017-12-30",
+          "division": "WFW",
+          "titleFight": true,
+          "weight": 1.5,
+          "depthIndex": 0.75,
+          "componentRatios": {
+            "qualifiedActivePool": 0.55,
+            "ranksSixToFifteenElo": 0.55,
+            "contenderDiversity": 0.55
+          },
           "snapshotQuarter": "2017-Q3",
-          "source": "prime-midpoint-fallback"
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2018-03-03",
+          "division": "WFW",
+          "titleFight": true,
+          "weight": 1.5,
+          "depthIndex": 0.75,
+          "componentRatios": {
+            "qualifiedActivePool": 0.55,
+            "ranksSixToFifteenElo": 0.55,
+            "contenderDiversity": 0.55
+          },
+          "snapshotQuarter": "2017-Q4",
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2018-12-29",
+          "division": "WFW",
+          "titleFight": true,
+          "weight": 1.5,
+          "depthIndex": 0.75,
+          "componentRatios": {
+            "qualifiedActivePool": 0.55,
+            "ranksSixToFifteenElo": 0.55,
+            "contenderDiversity": 0.55
+          },
+          "snapshotQuarter": "2018-Q3",
+          "source": "matched-prime-fight"
+        },
+        {
+          "date": "2019-07-27",
+          "division": "WFW",
+          "titleFight": false,
+          "weight": 1,
+          "depthIndex": 0.75,
+          "componentRatios": {
+            "qualifiedActivePool": 0.8889,
+            "ranksSixToFifteenElo": 0.7379,
+            "contenderDiversity": 0.55
+          },
+          "snapshotQuarter": "2019-Q2",
+          "source": "matched-prime-fight"
         }
       ],
       "shadowRank": 9,
@@ -12091,5 +12459,15 @@
       "sensitivityRank": 15,
       "sensitivityRankMovement": 0
     }
-  ]
+  ],
+  "aliasResolution": {
+    "version": "division-era-depth-shadow-20260712b-alias-complete",
+    "applied": true,
+    "aliases": {
+      "B.J. Penn": "BJ Penn",
+      "T.J. Dillashaw": "TJ Dillashaw",
+      "Cris Cyborg": "Cristiane Justino"
+    },
+    "directMatchCoverageRequired": true
+  }
 }
