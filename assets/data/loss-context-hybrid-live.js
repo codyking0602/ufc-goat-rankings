@@ -1,12 +1,14 @@
 // Live promoter for the judgment-approved hybrid UFC Loss Context model.
-// Runs once after the complete app/profile/Compare module handoff.
+// Finalizes only after both the scoring audit and complete app module handoff are ready.
 (function(){
   'use strict';
 
-  const VERSION='loss-context-hybrid-live-20260711d-final-module-handoff';
+  const VERSION='loss-context-hybrid-live-20260711e-dual-ready-handoff';
   const LOCK='loss-context-hybrid-judgment-lock-20260711a';
   const OVR_MIN=82;
   const OVR_MAX=99;
+  let modulesReady=Boolean(window.UFC_PHASE2_DATA_STATUS);
+  let finalized=false;
 
   const key=name=>String(name||'').trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
   const num=value=>Number.isFinite(Number(value))?Number(value):0;
@@ -18,12 +20,7 @@
     return num(row?.apexPeak ?? row?.apexPeakBonus ?? row?.apexPeakAudit?.score ?? override?.apexPeakAudit?.score);
   }
   function base(row){
-    return round2(
-      num(row?.championship)/30*35+
-      num(row?.opponentQuality)/30*27.5+
-      num(row?.primeDominance)/30*27.5+
-      num(row?.longevity)/30*10
-    );
+    return round2(num(row?.championship)/30*35+num(row?.opponentQuality)/30*27.5+num(row?.primeDominance)/30*27.5+num(row?.longevity)/30*10);
   }
   function total(row){return round2(base(row)+apex(row)+num(row?.penalty));}
 
@@ -155,7 +152,7 @@
     const DATA=window.RANKING_DATA;
     const SHADOW=window.UFC_LOSS_CONTEXT_HYBRID_SHADOW;
     const AUDIT=window.UFC_LOSS_CONTEXT_HYBRID_AUDIT;
-    if(!DATA||!SHADOW?.applied||!AUDIT?.applied)return false;
+    if(!modulesReady||!DATA||!SHADOW?.applied||!AUDIT?.applied)return false;
     if(AUDIT.readyForLivePromotion!==true||AUDIT.judgmentApproved!==true||AUDIT.judgmentLockVersion!==LOCK)return false;
     if(!SHADOW.coverageComplete||Number(SHADOW.scoredCount)!==63||Number(SHADOW.blockedCount)!==0)return false;
 
@@ -228,12 +225,15 @@
     return report.applied;
   }
 
-  function finalize(){
-    if(apply())return;
-    window.UFC_LOSS_CONTEXT_HYBRID_LIVE={version:VERSION,applied:false,status:'blocked-at-final-module-handoff',judgmentLockVersion:LOCK};
+  function tryFinalize(){
+    if(finalized)return;
+    if(apply()){finalized=true;return;}
+    window.UFC_LOSS_CONTEXT_HYBRID_LIVE={version:VERSION,applied:false,status:modulesReady?'waiting-for-judgment-approved-audit':'waiting-for-final-module-handoff',judgmentLockVersion:LOCK};
   }
 
-  window.UFC_LOSS_CONTEXT_HYBRID_LIVE={version:VERSION,applied:false,status:'waiting-for-final-module-handoff',judgmentLockVersion:LOCK};
-  if(window.UFC_PHASE2_DATA_STATUS)finalize();
-  else window.addEventListener('ufc-ranking-data-patches-ready',finalize,{once:true});
+  window.UFC_LOSS_CONTEXT_HYBRID_LIVE={version:VERSION,applied:false,status:'waiting-for-both-ready-signals',judgmentLockVersion:LOCK};
+  window.addEventListener('ufc-ranking-data-patches-ready',()=>{modulesReady=true;tryFinalize();},{once:true});
+  window.addEventListener('ufc-loss-context-hybrid-audit-ready',tryFinalize,{once:true});
+  window.addEventListener('ufc-scoring-pipeline-ready',tryFinalize,{once:true});
+  tryFinalize();
 })();
