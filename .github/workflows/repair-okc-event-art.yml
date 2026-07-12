@@ -1,0 +1,63 @@
+name: Repair Oklahoma City Event Art
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.tmp/okc-art/READY'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  repair-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Rebuild event artwork
+        shell: bash
+        run: |
+          cat .tmp/okc-art/part-* | tr -d '\n\r ' | base64 --decode > assets/events/ufc-oklahoma-city-du-plessis-usman.webp
+          test "$(stat -c%s assets/events/ufc-oklahoma-city-du-plessis-usman.webp)" -eq 29600
+          test "$(head -c 4 assets/events/ufc-oklahoma-city-du-plessis-usman.webp)" = "RIFF"
+          test "$(dd if=assets/events/ufc-oklahoma-city-du-plessis-usman.webp bs=1 skip=8 count=4 status=none)" = "WEBP"
+
+      - name: Verify Picks UI
+        run: node scripts/check-picks-ui.mjs
+
+      - name: Commit repaired binary
+        shell: bash
+        run: |
+          rm -rf .tmp/okc-art
+          rm -f .github/workflows/repair-okc-event-art.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Repair Oklahoma City event artwork"
+          git push
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
