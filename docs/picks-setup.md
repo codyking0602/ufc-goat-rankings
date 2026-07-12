@@ -21,6 +21,8 @@ Then open **Project Settings → API** and copy the project URL and public publi
 
 Never place the service-role or secret key in the repository. All migration files are designed to be safe to rerun.
 
+`supabase/picks-event-automation-phase.sql` is retired and should not be run. The live app no longer includes a paste/import card workflow.
+
 ## Default scoring
 
 - Correct winner: 1 point.
@@ -28,92 +30,89 @@ Never place the service-role or secret key in the repository. All migration file
 - Correct Underdog Lock: 1 additional bonus point.
 - Incorrect Underdog Lock: no penalty.
 - Draws, no contests, cancellations, and unresolved fights are excluded from accuracy.
-- Individual friends' picks remain hidden until that fight locks.
+- Friends' exact picks remain hidden until that fight locks.
 
-Commissioners can choose future-season point values after the commissioner migration runs. Scoring locks once the first pick is submitted in that season.
+Commissioners can choose future-season point values. Scoring locks once the first pick is submitted in that season.
 
-## Persistent groups
+## Permanent groups
 
-Every Picks room becomes a permanent group after `picks-persistent-groups-phase.sql` runs.
+Every room becomes a permanent group after `picks-persistent-groups-phase.sql` runs.
 
-- The original room and all existing picks are preserved.
-- The group gets one stable share link.
-- Existing members carry into every new event automatically.
-- Each event keeps its own room standings and recap.
-- The group card tracks cumulative points, graded-pick accuracy, event wins, and Underdog Lock bonuses for the active season.
-- The group owner can attach the next UFC event without rebuilding the group.
+- The group uses one stable share link.
+- New members join by opening that link and entering their name.
+- Existing members carry into every future event.
+- New members begin with zero season points and do not receive retroactive picks.
+- Each event keeps its own standings, picks, results, and recap.
+- The Home view tracks cumulative season points, graded-pick accuracy, and event wins.
 
-## Event Manager
+## App structure
 
-After `picks-event-manager-phase.sql` runs, the permanent-group owner gets a private **Event Manager** panel inside Picks.
+### Home
 
-The owner can:
+- Group name and permanent share link
+- Current or next event
+- Season leaderboard
+- Past Events
+- Profile and reminder shortcut
 
-- Create a draft numbered event or Fight Night.
-- Enter the event date, headline matchup, and location.
-- Add, edit, reorder, or delete fights before picks are submitted.
-- Set each fight's card section, weight class, lock time, and American moneyline odds.
-- Publish the event and automatically carry the permanent group into its new room.
-- Reopen an upcoming event room directly from the manager.
+### Event
 
-Numbered UFC events should include the full scheduled card. Fight Nights should include the main card only.
+- Fight card and picks
+- Pick progress
+- Event standings
+- Locked room picks
+- Live results
+- Completed-event recap
+- Collapsible Fight Results
+- Collapsible Room Pick History
+- Owner-only Results & Corrections
 
-## Commissioner controls
+### Settings
 
-After `picks-commissioner-phase.sql` runs, the group owner gets a private **Commissioner** panel.
+- Emoji avatar
+- Browser reminder preference
+- Add Event to Calendar
+- Rename group
+- Season settings and new-season controls
+- Member removal
+- Commissioner transfer
 
-The commissioner can:
+The old Social Hub, winner graphics, season awards, activity feed, Event Manager interface, odds editor, and card-import interface are not part of the live app.
 
-- Rename the permanent group.
-- Remove a member while preserving that member's historical picks and scores.
-- Transfer ownership with a one-time eight-character claim code.
-- Correct fight odds without changing submitted picks.
-- Reopen a completed event for result corrections.
-- Rename the active season and set its scoring before picks begin.
-- Start a new season while preserving every prior event and season.
+## Event maintenance
 
-Starting a new season resets the visible season standings, not the underlying history. The same permanent group and members continue forward.
+Event cards are maintained directly in the repository and Supabase rather than through an owner-facing import screen.
 
-## Social and retention
+For each new event:
 
-After `picks-social-retention-phase.sql` runs, every member gets a compact **Social Hub**.
+1. Confirm the official card, event date, bout order, sections, and odds.
+2. Add or update the event in the maintained data workflow.
+3. Verify the room and picks on the live site.
+4. Update replacements or cancellations when the card changes.
 
-It includes:
-
-- Shareable event-winner and season-standings graphics.
-- Current correct-pick streaks and all-season best streaks.
-- Upset Hunter, Lock Master, and event-win awards.
-- Current-season trophy race and archived season champions.
-- Optional emoji avatars that appear beside standings names.
-- A group activity feed for joins, event launches, fight results, season changes, and commissioner changes.
-- An optional browser reminder preference and an **Add to calendar** file for the next event.
-
-Browser notifications are opportunistic and appear when the app is opened near event time. The calendar file is the reliable reminder outside the app.
-
-## Correctness cleanup
-
-After `picks-correctness-cleanup-phase.sql` runs:
-
-- Season accuracy uses graded fights only.
-- Cancelled, drawn, no-contest, and unresolved fights do not inflate the denominator.
-- An event cannot be completed while scheduled fights still need outcomes.
-- The owner can mark all unresolved fights cancelled and complete the event in one confirmed action.
-- Completed events stop being labeled as the current group event.
-- Groups move to the next linked upcoming/live event, or show no current event when none exists.
-
-## Optional card and odds automation
-
-`supabase/picks-event-automation-phase.sql` is optional and is **not required** for the normal maintained-card workflow. Do not run it unless the group owner intentionally wants the paste-and-import interface.
-
-When enabled, it supports pipe-delimited, tab-delimited, CSV-style, and simple `Fighter A vs Fighter B` card imports, plus bulk odds matching by fighter name.
+`picks-event-manager-phase.sql` remains in the migration sequence because later group and commissioner schema depends on that phase, but its front-end manager is intentionally not loaded.
 
 ## Live event maintenance
 
-Once an event is published, Supabase remains the multiplayer source of truth.
+Once an event is published, Supabase is the multiplayer source of truth.
 
-- Use the room-owner controls to lock or reopen fights.
-- Set winners, draws, no contests, and cancellations from **Manage Live Results**.
-- Draws, no contests, and cancellations remain void.
-- Completed events stay available through the room recap and Past Events archive.
+- Use the event's owner controls to lock or reopen fights.
+- Set winners, draws, no contests, and cancellations in **Results & Corrections**.
+- Completed events hide editing controls until **Enter Correction Mode** is selected.
+- An event cannot be completed while scheduled fights still need outcomes.
+- The owner can mark all unresolved fights cancelled and complete the event in one confirmed action.
+- Completed events remain available in Past Events and open directly to their recap.
+
+## Profile and reminders
+
+`picks-social-retention-phase.sql` now supports only the retained profile features:
+
+- Optional emoji avatars beside leaderboard and recap names
+- Browser reminder preference
+- Add-to-calendar file for the next event
+
+Browser notifications are opportunistic and only appear when the app is opened near event time. The calendar file is the reliable reminder outside the app.
+
+## Fallback data
 
 `assets/data/picks-events.js` is only the no-backend preview/fallback. Keep it aligned with the live event while testing.
