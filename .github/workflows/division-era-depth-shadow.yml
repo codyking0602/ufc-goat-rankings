@@ -6,7 +6,6 @@ on:
     paths:
       - 'scripts/build-division-era-depth-shadow.mjs'
       - 'scripts/run-division-era-depth-shadow.mjs'
-      - 'assets/data/octagon-verdict-data.json'
       - '.github/workflows/division-era-depth-shadow.yml'
   workflow_dispatch:
 
