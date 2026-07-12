@@ -8,34 +8,19 @@
   let routing=false;
 
   const routeConfig={
-    home:{
-      label:'Home',
-      kicker:'GROUP HOME',
-      title:'Season, group and history',
-      empty:'Your group home will appear here after you start or join a room.'
-    },
-    event:{
-      label:'Event',
-      kicker:'EVENT',
-      title:'Picks, results and recap',
-      empty:'Choose an event to start picking.'
-    },
-    settings:{
-      label:'Settings',
-      kicker:'SETTINGS',
-      title:'Profile and commissioner controls',
-      empty:'Profile and group controls appear after you join a permanent group.'
-    }
+    home:{label:'Home',kicker:'GROUP HOME',title:'Season, group and history',empty:'Your group home will appear here after you start or join a room.'},
+    event:{label:'Event',kicker:'EVENT',title:'Picks, results and recap',empty:'Choose an event to start picking.'},
+    settings:{label:'Settings',kicker:'SETTINGS',title:'Profile and commissioner controls',empty:'Profile and group controls appear after you join a permanent group.'}
   };
 
   const routeIds={
-    home:['picksGroupCard','picksHistoryCard','picksSocialCard'],
+    home:['picksGroupCard','picksHistoryCard'],
     event:[
       'picksEventPicker','picksEventHero','picksSetupNote','picksRoomBanner','picksLiveNotices',
       'picksLivePanel','picksEventRecap','picksRoomSetup','picksAdminPanel','picksProgressCard',
       'picksFightList','picksStandingsCard','picksRoomPicksCard'
     ],
-    settings:['picksProfileShell','picksCommissionerCard','picksEventManagerCard','picksAutomationCard']
+    settings:['picksProfileShell','picksCommissionerCard']
   };
 
   function validRoute(value){
@@ -75,23 +60,6 @@
     return shell;
   }
 
-  function extractProfile(){
-    const social=document.getElementById('picksSocialCard');
-    const profile=social?.querySelector('.social-profile');
-    const settingsContent=document.getElementById('picksSettingsContent');
-    if(!profile || !settingsContent) return;
-    let shell=document.getElementById('picksProfileShell');
-    if(!shell){
-      shell=document.createElement('section');
-      shell.id='picksProfileShell';
-      shell.className='picks-profile-shell';
-      settingsContent.appendChild(shell);
-    }else if(!shell.isConnected){
-      settingsContent.appendChild(shell);
-    }
-    if(profile.parentElement!==shell) shell.replaceChildren(profile);
-  }
-
   function routeNode(id,route){
     const node=document.getElementById(id);
     const content=document.getElementById(`picks${route[0].toUpperCase()+route.slice(1)}Content`);
@@ -122,7 +90,6 @@
     routing=true;
     try{
       if(!ensureShell()) return;
-      extractProfile();
       ROUTES.forEach(route=>routeIds[route].forEach(id=>routeNode(id,route)));
       ROUTES.forEach(orderContent);
       syncEmptyStates();
@@ -174,10 +141,10 @@
 
   function isEventAction(target){
     if(!target) return false;
-    if(target.closest('[data-group-room],[data-history-room],[data-admin-fight],#picksRoomAction,#picksCompleteEvent,#picksMarkEventLive,#picksSeeAllResults,#picksSeeAllRoomPicks,#picksJumpCurrent,#eventManagerOpenRoom,#eventManagerOpenPublished')) return true;
+    if(target.closest('[data-group-room],[data-history-room],[data-admin-fight],#picksRoomAction,#picksCompleteEvent,#picksMarkEventLive,#picksSeeAllResults,#picksSeeAllRoomPicks,#picksJumpCurrent')) return true;
     const button=target.closest('button,a');
     const text=String(button?.textContent || '').trim().toLowerCase();
-    return /^(open current|open recap|open event|open event room|open room|results|room picks|see fight results|see every room pick)/.test(text);
+    return /^(open current|open recap|open event|open room|results|room picks|see fight results|see every room pick)/.test(text);
   }
 
   function updateEventIndicator(){
