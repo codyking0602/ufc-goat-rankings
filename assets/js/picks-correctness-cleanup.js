@@ -63,12 +63,17 @@
     pendingContext=context;
     const modal=document.getElementById('picksCompletionGuard');
     const count=context.unresolved.length;
+    const alreadyComplete=context.event.status==='complete';
+    const title=document.getElementById('picksCompletionTitle');
     const copy=document.getElementById('picksCompletionCopy');
     const fights=document.getElementById('picksCompletionFights');
     const action=document.getElementById('picksCompletionVoid');
-    if(copy) copy.textContent=`${count} fight${count===1?'':'s'} still ${count===1?'needs':'need'} a result. Return to the results panel, or mark every unresolved fight cancelled and finish the event.`;
+    if(title) title.textContent=alreadyComplete ? 'Completed event needs cleanup' : 'Unresolved fights remain';
+    if(copy) copy.textContent=alreadyComplete
+      ? `${count} fight${count===1?' is':'s are'} still awaiting a result even though the event is final. Return to Results & Corrections, or mark every unresolved fight cancelled.`
+      : `${count} fight${count===1?'':'s'} still ${count===1?'needs':'need'} a result. Return to the results panel, or mark every unresolved fight cancelled and finish the event.`;
     if(fights) fights.innerHTML=context.unresolved.slice(0,6).map(fight=>`<div>${safe(fight.red)} <span>vs.</span> ${safe(fight.blue)}</div>`).join('')+(count>6?`<small>+${count-6} more</small>`:'');
-    if(action) action.textContent=`Mark ${count} Cancelled & Complete`;
+    if(action) action.textContent=alreadyComplete ? `Mark ${count} Cancelled` : `Mark ${count} Cancelled & Complete`;
     if(modal) modal.hidden=false;
     document.body.classList.add('picks-modal-open');
   }
@@ -78,9 +83,12 @@
     const token=adminToken(code);
     if(!code || !token) throw new Error('Room-owner access was not found on this device.');
 
+    const memberToken=localStorage.getItem(`ufc-picks:room:${code}`) || '';
+    if(!memberToken) throw new Error('Room access was not found on this device.');
+
     const [{data:events,error:eventError},{data:snapshot,error:snapshotError}]=await Promise.all([
       client.rpc('picks_public_events'),
-      client.rpc('picks_room_snapshot',{p_room_code:code,p_member_token:localStorage.getItem(`ufc-picks:room:${code}`) || ''})
+      client.rpc('picks_room_snapshot',{p_room_code:code,p_member_token:memberToken})
     ]);
     if(eventError) throw eventError;
     if(snapshotError) throw snapshotError;
@@ -139,7 +147,8 @@
         p_admin_token:pendingContext.token
       });
       if(error) throw error;
-      toast(`${data?.cancelled_count || pendingContext.unresolved.length} unresolved fight${(data?.cancelled_count || pendingContext.unresolved.length)===1?'':'s'} marked cancelled`);
+      const count=data?.cancelled_count ?? pendingContext.unresolved.length;
+      toast(`${count} unresolved fight${count===1?'':'s'} marked cancelled`);
       setTimeout(()=>window.location.reload(),500);
     }catch(error){
       toast(error?.message || 'The event could not be completed');
@@ -147,6 +156,17 @@
     }finally{
       busy=false;
     }
+  }
+
+  async function checkCompletedConsistency(){
+    try{
+      const context=await getCompletionContext();
+      if(context.event.status!=='complete' || !context.unresolved.length) return;
+      const key=`ufc-picks:completion-check:${context.event.id}`;
+      if(sessionStorage.getItem(key)) return;
+      sessionStorage.setItem(key,'1');
+      openModal(context);
+    }catch(_error){}
   }
 
   function polishLabels(){
@@ -180,6 +200,7 @@
     },true);
 
     polishLabels();
+    setTimeout(checkCompletedConsistency,1200);
     const observer=new MutationObserver(()=>{
       clearTimeout(start.timer);
       start.timer=setTimeout(polishLabels,80);
