@@ -72,11 +72,13 @@
       if(!actions || !sourceButton) return;
 
       const fightId=sourceButton.dataset.adminFight;
-      const oldReopen=actions.querySelector('[data-admin-status="scheduled"]');
-      if(oldReopen) oldReopen.remove();
-      actions.querySelector('.picks-admin-lock-button')?.remove();
-
       const locked=fightIsLocked(fightId);
+      const existing=actions.querySelector('.picks-admin-lock-button');
+      if(existing?.dataset.locked===String(locked)) return;
+
+      actions.querySelector('[data-admin-status="scheduled"]')?.remove();
+      existing?.remove();
+
       const button=document.createElement('button');
       button.type='button';
       button.className=`picks-admin-lock-button${locked ? ' is-reopen' : ''}`;
