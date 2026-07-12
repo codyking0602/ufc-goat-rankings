@@ -1,6 +1,6 @@
 name: Runtime Scoring Audit
 
-# Includes the full-roster hybrid Loss Context shadow and audit output.
+# Includes the full-roster hybrid Loss Context shadow, audit, and judgment-review output.
 on:
   push:
     branches: [main]
@@ -69,6 +69,7 @@ jobs:
           path: |
             artifacts/loss-context-runtime-report.json
             artifacts/loss-context-runtime-summary.json
+            artifacts/loss-context-hybrid-judgment-review.json
             artifacts/js-syntax-audit.txt
           if-no-files-found: warn
           retention-days: 14
@@ -76,17 +77,18 @@ jobs:
       - name: Publish runtime reports
         if: always()
         run: |
-          if [ ! -f artifacts/loss-context-runtime-report.json ] || [ ! -f artifacts/loss-context-runtime-summary.json ]; then
+          if [ ! -f artifacts/loss-context-runtime-report.json ] || [ ! -f artifacts/loss-context-runtime-summary.json ] || [ ! -f artifacts/loss-context-hybrid-judgment-review.json ]; then
             echo 'Runtime reports were not generated.'
             exit 1
           fi
           mkdir -p docs
           cp artifacts/loss-context-runtime-report.json docs/loss-context-runtime-report.json
           cp artifacts/loss-context-runtime-summary.json docs/loss-context-runtime-summary.json
+          cp artifacts/loss-context-hybrid-judgment-review.json docs/loss-context-hybrid-judgment-review.json
           cp artifacts/js-syntax-audit.txt docs/js-syntax-audit.txt
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs/loss-context-runtime-report.json docs/loss-context-runtime-summary.json docs/js-syntax-audit.txt
+          git add docs/loss-context-runtime-report.json docs/loss-context-runtime-summary.json docs/loss-context-hybrid-judgment-review.json docs/js-syntax-audit.txt
           git commit -m 'Record runtime scoring audit [skip ci]' || true
           git push
 
