@@ -3,10 +3,12 @@
 (function(){
   'use strict';
 
-  const VERSION='loss-context-hybrid-live-20260711a';
+  const VERSION='loss-context-hybrid-live-20260711b-idempotent';
   const JUDGMENT_LOCK_VERSION='loss-context-hybrid-judgment-lock-20260711a';
   const OVR_MIN=82;
   const OVR_MAX=99;
+  let lockedShadow=null;
+  let lockedAudit=null;
 
   function key(name){return String(name||'').trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');}
   function num(value){const n=Number(value);return Number.isFinite(n)?n:0;}
@@ -150,13 +152,16 @@
 
   function apply(){
     const DATA=window.RANKING_DATA;
-    const SHADOW=window.UFC_LOSS_CONTEXT_HYBRID_SHADOW;
-    const AUDIT=window.UFC_LOSS_CONTEXT_HYBRID_AUDIT;
+    const currentShadow=window.UFC_LOSS_CONTEXT_HYBRID_SHADOW;
+    const currentAudit=window.UFC_LOSS_CONTEXT_HYBRID_AUDIT;
+    const SHADOW=lockedShadow||currentShadow;
+    const AUDIT=lockedAudit||currentAudit;
     if(!DATA||!SHADOW?.applied||!AUDIT?.applied)return false;
     if(AUDIT.readyForLivePromotion!==true||AUDIT.judgmentApproved!==true||AUDIT.judgmentLockVersion!==JUDGMENT_LOCK_VERSION)return false;
     if(!SHADOW.coverageComplete||Number(SHADOW.scoredCount)!==63||Number(SHADOW.blockedCount)!==0)return false;
+    if(!lockedShadow){lockedShadow=SHADOW;lockedAudit=AUDIT;}
 
-    const resultByKey=new Map((SHADOW.scored||[]).map(result=>[key(result.fighter),result]));
+    const resultByKey=new Map((lockedShadow.scored||[]).map(result=>[key(result.fighter),result]));
     const boardRows=[...(DATA.men||[]),...(DATA.women||[])];
     const missing=boardRows.filter(row=>!resultByKey.has(key(row?.fighter))).map(row=>row?.fighter);
     if(missing.length)return false;
@@ -185,14 +190,14 @@
       version:VERSION,
       applied:mismatches.length===0,
       mode:'live-canonical-hybrid-loss-context',
-      sourceShadowVersion:SHADOW.version,
-      sourceAuditVersion:AUDIT.version,
+      sourceShadowVersion:lockedShadow.version,
+      sourceAuditVersion:lockedAudit.version,
       judgmentLockVersion:JUDGMENT_LOCK_VERSION,
       rosterCount:liveRows.length,
       promotedCount:liveRows.length,
       mismatchCount:mismatches.length,
       mismatches,
-      rules:SHADOW.rules,
+      rules:lockedShadow.rules,
       ovrScale:{min:OVR_MIN,max:OVR_MAX,method:'board min-max score normalization'},
       ovrRows,
       anchors:{
@@ -215,8 +220,12 @@
       appliedAt:new Date().toISOString()
     };
 
+    window.UFC_LOSS_CONTEXT_HYBRID_SHADOW=lockedShadow;
+    window.UFC_LOSS_CONTEXT_HYBRID_AUDIT=lockedAudit;
     window.UFC_LOSS_CONTEXT_HYBRID_LIVE=report;
     DATA.meta=DATA.meta||{};
+    DATA.meta.lossContextHybridShadow={...(DATA.meta.lossContextHybridShadow||{}),version:lockedShadow.version,scoredCount:lockedShadow.scoredCount,blockedCount:lockedShadow.blockedCount,coverageComplete:lockedShadow.coverageComplete,mutatesScores:false};
+    DATA.meta.lossContextHybridAudit={...(DATA.meta.lossContextHybridAudit||{}),version:lockedAudit.version,summary:lockedAudit.summary,judgmentApproved:true,judgmentLockVersion:JUDGMENT_LOCK_VERSION,readyForLivePromotion:true,requiresJudgmentReview:false,mutatesScores:false};
     DATA.meta.lossContextHybridLive={version:VERSION,judgmentLockVersion:JUDGMENT_LOCK_VERSION,rosterCount:report.rosterCount,promotedCount:report.promotedCount,mismatchCount:report.mismatchCount,applied:report.applied,appliedAt:report.appliedAt};
     document.documentElement.setAttribute('data-loss-context-hybrid-live',`${VERSION}-${report.promotedCount}-${report.mismatchCount}`);
 
