@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='loss-context-hybrid-live-20260711e-dual-ready-handoff';
+  const VERSION='loss-context-hybrid-live-20260711f-surface-ovr-sync';
   const LOCK='loss-context-hybrid-judgment-lock-20260711a';
   const OVR_MIN=82;
   const OVR_MAX=99;
@@ -91,6 +91,16 @@
     });
   }
 
+  function installOverallOvrResolver(DATA){
+    const resolver=function(f){
+      const fighterKey=key(f?.fighter);
+      const board=[...(DATA.men||[]),...(DATA.women||[])].find(row=>key(row?.fighter)===fighterKey);
+      return num(board?.overallOvr ?? window.DISPLAY_OVERRIDES?.[f?.fighter]?.overallOvr ?? f?.overallOvr ?? OVR_MIN);
+    };
+    window.overallOvr=resolver;
+    try{overallOvr=resolver;}catch(_){/* window assignment is enough when the binding is not writable. */}
+  }
+
   function cleanCopy(){
     Object.values(window.DISPLAY_OVERRIDES||{}).forEach(override=>{
       ['oneLiner','whyRankedHere','whyNotHigher','whyNotLower','finalTakeaway'].forEach(field=>{
@@ -170,6 +180,7 @@
 
     const ovrRows=[...assignOvrs(DATA,'men'),...assignOvrs(DATA,'women')];
     syncProfiles(DATA,[...(DATA.men||[]),...(DATA.women||[])]);
+    installOverallOvrResolver(DATA);
     installCopyHooks();
 
     const liveRows=[...(DATA.men||[]),...(DATA.women||[])];
