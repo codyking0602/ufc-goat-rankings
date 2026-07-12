@@ -1,7 +1,7 @@
 // Opponent Quality division calibration: batch-four group. Shadow-only.
 // Reverts hard-division trims. Keeps only approved Cejudo/Whittaker trims and boosts Izzy's Pereira II win.
 (function(){
-  const VERSION='opponent-quality-division-calibration-batch-four-20260710g-frankie-audit';
+  const VERSION='opponent-quality-division-calibration-batch-four-20260712a-old-era-calibration';
   const store=window.UFC_OPPONENT_QUALITY_LEDGERS;
   const RAW=store?.raw;
   if(!RAW)return;
@@ -25,9 +25,9 @@
   }
   P.forEach(patch);
   store.version=VERSION;
-  store.batchFourDivisionCalibration={version:VERSION,changes,appliedAt:new Date().toISOString(),note:'Only Cejudo and Whittaker trims remain; Izzy over Pereira II is boosted to max credit. Batches five through nine, shadow audit, then category-only 30-point live scoring load after this file.'};
+  store.batchFourDivisionCalibration={version:VERSION,changes,appliedAt:new Date().toISOString(),note:'Only Cejudo and Whittaker trims remain; Izzy over Pereira II is boosted to max credit. The next batch includes targeted Hughes and Couture old-era calibration.'};
   document.documentElement.setAttribute('data-opponent-quality-division-calibration-batch-four',VERSION);
-  loadScriptOnce('assets/data/opponent-quality-ledger-batch-five.js?v=opponent-quality-ledger-batch-five-20260710c-frankie-audit','data-opponent-quality-ledger-batch-five',()=>
+  loadScriptOnce('assets/data/opponent-quality-ledger-batch-five.js?v=opponent-quality-ledger-batch-five-20260712a-old-era-calibration','data-opponent-quality-ledger-batch-five',()=>
     loadScriptOnce('assets/data/opponent-quality-ledger-batch-six.js?v=opponent-quality-ledger-batch-six-20260710b-dricus-omalley','data-opponent-quality-ledger-batch-six',()=>
       loadScriptOnce('assets/data/opponent-quality-ledger-batch-seven.js?v=opponent-quality-ledger-batch-seven-20260708a','data-opponent-quality-ledger-batch-seven',()=>
         loadScriptOnce('assets/data/opponent-quality-ledger-batch-eight.js?v=opponent-quality-ledger-batch-eight-20260710b-reviewed','data-opponent-quality-ledger-batch-eight',()=>
