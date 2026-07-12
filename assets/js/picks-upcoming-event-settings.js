@@ -15,6 +15,10 @@
     return content?.querySelector('.picks-upcoming-event-section') || null;
   }
 
+  function setText(node,value){
+    if(node && node.textContent!==value) node.textContent=value;
+  }
+
   function createPanel(content){
     const panel=document.createElement('details');
     panel.className='commissioner-clean-section picks-upcoming-event-section';
@@ -40,15 +44,15 @@
     const button=owner.querySelector('#picksGroupAddEvent');
     const meta=panel.querySelector(':scope > summary > b');
 
-    owner.classList.remove('picks-home-source-hidden');
-    owner.removeAttribute('hidden');
-    if(label) label.textContent='UPCOMING EVENT';
-    if(title) title.textContent=eventName || 'No upcoming event ready';
-    if(copy) copy.textContent=eventName
+    if(owner.classList.contains('picks-home-source-hidden')) owner.classList.remove('picks-home-source-hidden');
+    if(owner.hasAttribute('hidden')) owner.removeAttribute('hidden');
+    setText(label,'UPCOMING EVENT');
+    setText(title,eventName || 'No upcoming event ready');
+    setText(copy,eventName
       ? 'Add this card to the current season. Every group member will see it automatically.'
-      : 'A new UFC card will appear here as soon as it is loaded.';
-    if(button) button.textContent='Add to Season';
-    if(meta) meta.textContent=eventName || 'Waiting for event';
+      : 'A new UFC card will appear here as soon as it is loaded.');
+    setText(button,'Add to Season');
+    setText(meta,eventName || 'Waiting for event');
   }
 
   function bindSelect(owner,panel){
@@ -78,7 +82,7 @@
       const owner=panel?.querySelector('.picks-group-owner');
       if(!panel || !owner) return;
 
-      panel.open=true;
+      if(!panel.open) panel.open=true;
       updateCopy(owner,panel);
       bindSelect(owner,panel);
     }finally{
