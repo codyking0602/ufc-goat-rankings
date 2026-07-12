@@ -25,6 +25,10 @@ const recoverySql=read('supabase/picks-device-recovery-phase.sql');
 const settingsCleanup=read('assets/js/picks-settings-admin-cleanup.js');
 const mobilePolish=read('assets/js/picks-mobile-polish.js');
 const mobilePolishCss=read('assets/css/picks-mobile-polish.css');
+const oddsCoverage=read('assets/js/picks-odds-coverage.js');
+const oddsFunction=read('supabase/functions/refresh-ufc-odds/index.ts');
+const oddsSchedule=read('.github/workflows/refresh-ufc-odds.yml');
+const oddsDeploy=read('.github/workflows/deploy-ufc-odds-refresh.yml');
 const events=read('assets/data/picks-events.js');
 const photos=read('assets/data/picks-photo-overrides.js');
 const setup=read('docs/picks-setup.md');
@@ -44,6 +48,7 @@ const requiredFiles=[
   'assets/js/picks-settings-admin-cleanup.js',
   'assets/js/picks-upcoming-event-settings.js',
   'assets/js/picks-mobile-polish.js',
+  'assets/js/picks-odds-coverage.js',
   'assets/data/picks-events.js',
   'assets/data/picks-photo-overrides.js',
   'assets/css/picks-device-recovery.css',
@@ -52,6 +57,10 @@ const requiredFiles=[
   'assets/css/picks-settings-admin-cleanup.css',
   'assets/css/picks-final-cleanup.css',
   'assets/css/picks-mobile-polish.css',
+  'assets/css/picks-odds-coverage.css',
+  'supabase/functions/refresh-ufc-odds/index.ts',
+  '.github/workflows/refresh-ufc-odds.yml',
+  '.github/workflows/deploy-ufc-odds-refresh.yml',
   'supabase/picks-device-recovery-phase.sql',
   'supabase/ufc-oklahoma-city-event.sql'
 ];
@@ -78,13 +87,15 @@ const requiredIndexRefs=[
   'assets/css/picks-final-cleanup.css',
   'assets/css/picks-device-recovery.css',
   'assets/css/picks-mobile-polish.css',
+  'assets/css/picks-odds-coverage.css',
   'assets/js/picks-social-retention.js',
   'assets/js/picks-internal-navigation.js',
   'assets/js/picks-home-event-cleanup.js',
   'assets/js/picks-settings-admin-cleanup.js',
   'assets/js/picks-upcoming-event-settings.js',
   'assets/js/picks-device-recovery.js',
-  'assets/js/picks-mobile-polish.js'
+  'assets/js/picks-mobile-polish.js',
+  'assets/js/picks-odds-coverage.js'
 ];
 requiredIndexRefs.forEach(relative=>check(index.includes(relative),`index.html does not load ${relative}`));
 
@@ -95,7 +106,8 @@ const scriptOrder=[
   'assets/js/picks-settings-admin-cleanup.js',
   'assets/js/picks-upcoming-event-settings.js',
   'assets/js/picks-device-recovery.js',
-  'assets/js/picks-mobile-polish.js'
+  'assets/js/picks-mobile-polish.js',
+  'assets/js/picks-odds-coverage.js'
 ].map(relative=>index.indexOf(relative));
 check(scriptOrder.every(position=>position>=0),'One or more Picks cleanup scripts are missing from index.html');
 check(scriptOrder.every((position,indexValue)=>indexValue===0 || position>scriptOrder[indexValue-1]),'Picks cleanup scripts are loaded in an unsafe order');
@@ -129,12 +141,23 @@ check(settingsCleanup.includes('Add Phone Reminders'),'Settings cleanup does not
 
 check(mobilePolish.includes('formatRemaining'),'Readable fight countdown formatter is missing');
 check(mobilePolish.includes('day${days===1') && mobilePolish.includes('hour${hours===1'),'Countdown does not support day/hour copy');
-check(mobilePolish.includes('fighterSlug') && mobilePolish.includes("-thumb.webp"),'Automatic fighter thumbnail path wiring is missing');
+check(mobilePolish.includes('fighterSlug') && mobilePolish.includes('-thumb.webp'),'Automatic fighter thumbnail path wiring is missing');
 check(mobilePolish.includes('picks-room-more'),'Compact room overflow menu is missing');
 check(mobilePolish.includes("inline:'center'"),'Mobile top-tab auto-centering is missing');
 check(mobilePolishCss.includes('position:relative!important') && mobilePolishCss.includes('top:auto!important'),'Picks internal navigation still overlays fight content on mobile');
 check(mobilePolishCss.includes('picks-room-banner-compact'),'Compact room banner styling is missing');
 check(mobilePolishCss.includes('scroll-snap-type:x proximity'),'Mobile top navigation scroll affordance is missing');
+
+check(oddsCoverage.includes('Not all odds available yet'),'Partial odds availability copy is missing');
+check(oddsCoverage.includes('Odds have not been posted yet'),'No-odds state is missing');
+check(oddsCoverage.includes('Underdog Lock waiting on posted odds'),'Underdog Lock no-odds state is missing');
+check(oddsFunction.includes('THE_ODDS_API_KEY') && oddsFunction.includes('ODDS_REFRESH_SECRET'),'Odds function secrets are missing');
+check(oddsFunction.includes('mma_mixed_martial_arts'),'Odds function is not restricted to MMA');
+check(oddsFunction.includes('red_odds') && oddsFunction.includes('blue_odds'),'Odds function does not update both fight lines');
+check(oddsFunction.includes('.eq("result_status", "scheduled")'),'Odds function can overwrite resolved fights');
+check(oddsSchedule.includes("cron: '17 12 * * *'"),'Daily odds refresh schedule is missing');
+check(oddsSchedule.includes('refresh-ufc-odds'),'Daily workflow does not invoke the odds function');
+check(oddsDeploy.includes('secrets set') && oddsDeploy.includes('--no-verify-jwt'),'Odds function deployment workflow is incomplete');
 
 check(events.includes("id: 'ufc-oklahoma-city-2026-07-18'"),'UFC Oklahoma City event is missing');
 check(events.includes("red:'Chase Hooper', blue:'Mitch Ramirez'"),'Current Oklahoma City main card is missing Hooper vs. Ramirez');
@@ -158,6 +181,8 @@ check(settingsCleanup.includes("label==='EVENT CONTROL'"),'Commissioner event-co
 check(setup.includes('picks-event-automation-phase.sql` is retired and should not be run'),'Setup guide does not clearly retire Phase 11');
 check(setup.includes('picks-device-recovery-phase.sql'),'Setup guide does not include the device recovery migration');
 check(setup.includes('Home') && setup.includes('Event') && setup.includes('Settings'),'Setup guide does not document the current Picks structure');
+check(setup.includes('THE_ODDS_API_KEY') && setup.includes('ODDS_REFRESH_SECRET'),'Setup guide does not document automated odds secrets');
+check(setup.includes('Refresh UFC Odds'),'Setup guide does not document the daily odds workflow');
 
 if(failures.length){
   console.error(`Picks UI smoke check failed with ${failures.length} issue${failures.length===1?'':'s'}:`);
@@ -165,4 +190,4 @@ if(failures.length){
   process.exit(1);
 }
 
-console.log(`Picks UI smoke check passed: ${assetRefs.length} local assets resolved, ${requiredFiles.length} required files present, current event, reminders, and mobile polish verified.`);
+console.log(`Picks UI smoke check passed: ${assetRefs.length} local assets resolved, ${requiredFiles.length} required files present, current event, reminders, mobile polish, and automated odds verified.`);
