@@ -13,7 +13,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: finalize-okc-fighter-thumbs
   cancel-in-progress: false
 
 jobs:
