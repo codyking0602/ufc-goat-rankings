@@ -9,7 +9,7 @@
   const GROUP_TOKEN_PREFIX='ufc-picks:group:';
   const ROOM_TOKEN_PREFIX='ufc-picks:room:';
   const ROOM_ADMIN_PREFIX='ufc-picks:admin:';
-  const state={groupCode:'',adminToken:'',events:[],selectedId:'',editingFightId:'',creating:false,loading:false};
+  const state={groupCode:'',adminToken:'',events:[],selectedId:'',editingFightId:'',creating:false,loading:false,signature:''};
 
   const safe=value=>String(value ?? '').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
   const normalize=value=>String(value || '').trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6);
@@ -193,12 +193,7 @@
     const drafts=state.events.filter(event=>event.status==='hidden').length;
     summary.textContent=drafts ? `${drafts} draft${drafts===1?'':'s'} · ${state.events.length} total` : `${state.events.length} managed event${state.events.length===1?'':'s'}`;
 
-    if(state.creating || !state.events.length){
-      target.innerHTML=createForm();
-      bindCreate();
-      return;
-    }
-
+    if(state.creating || !state.events.length){ target.innerHTML=createForm(); bindCreate(); return; }
     const event=selectedEvent();
     if(!event){ target.innerHTML=createForm(); bindCreate(); return; }
     target.innerHTML=`
@@ -350,12 +345,17 @@
     try{
       const {data,error}=await client.rpc('picks_admin_event_manager_snapshot',{p_group_code:state.groupCode,p_admin_token:state.adminToken});
       if(error || !data?.group) return;
-      state.events=data.events || [];
+      const nextEvents=data.events || [];
+      const nextSignature=JSON.stringify(nextEvents);
+      const card=document.getElementById('picksEventManagerCard');
+      const content=document.getElementById('picksEventManagerContent');
+      const shouldRender=force || nextSignature!==state.signature || card?.hidden || !content?.children.length;
+      state.signature=nextSignature;
+      state.events=nextEvents;
       if(!state.selectedId || !state.events.some(event=>event.id===state.selectedId)){
         state.selectedId=state.events.find(event=>event.status==='hidden')?.id || state.events.find(event=>event.status==='upcoming')?.id || state.events[0]?.id || '';
       }
-      if(force || document.getElementById('picksEventManagerCard')?.hidden || !document.getElementById('picksEventManagerContent')?.children.length) render();
-      else render();
+      if(shouldRender) render();
     }finally{
       state.loading=false;
     }
@@ -367,10 +367,10 @@
     const observer=new MutationObserver(()=>{
       ensureCard();
       window.clearTimeout(start.timer);
-      start.timer=window.setTimeout(refresh,250);
+      start.timer=window.setTimeout(()=>refresh(false),250);
     });
     observer.observe(document.getElementById('picks') || document.body,{childList:true,subtree:true});
-    window.setInterval(refresh,60000);
+    window.setInterval(()=>refresh(false),60000);
   }
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start,{once:true});
