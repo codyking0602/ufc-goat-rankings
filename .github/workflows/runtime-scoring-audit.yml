@@ -61,15 +61,30 @@ jobs:
           npm install --no-save playwright@1.55.0
           npx playwright install --with-deps chromium
 
-      - name: Run app and scoring audits
-        id: runtime_audit
-        continue-on-error: true
+      - name: Start local app
         run: |
           python3 -m http.server 4173 > /tmp/ufc-http.log 2>&1 &
-          SERVER_PID=$!
-          trap 'kill $SERVER_PID || true' EXIT
-          node scripts/runtime-loss-context-audit.mjs
-          node scripts/runtime-era-depth-audit.mjs
+          echo $! > /tmp/ufc-http.pid
+          for attempt in 1 2 3 4 5; do
+            curl -fsS http://127.0.0.1:4173/ >/dev/null && exit 0
+            sleep 1
+          done
+          cat /tmp/ufc-http.log
+          exit 1
+
+      - name: Run Loss Context audit
+        id: loss_context_audit
+        continue-on-error: true
+        run: node scripts/runtime-loss-context-audit.mjs
+
+      - name: Run Division Era Depth audit
+        id: era_depth_audit
+        continue-on-error: true
+        run: node scripts/runtime-era-depth-audit.mjs
+
+      - name: Stop local app
+        if: always()
+        run: kill "$(cat /tmp/ufc-http.pid)" || true
 
       - name: Upload runtime reports
         if: always()
@@ -83,6 +98,7 @@ jobs:
             artifacts/division-era-depth-runtime-report.json
             artifacts/division-era-depth-runtime-summary.json
             artifacts/js-syntax-audit.txt
+            /tmp/ufc-http.log
           if-no-files-found: warn
           retention-days: 14
 
@@ -116,5 +132,5 @@ jobs:
           git push
 
       - name: Enforce clean audits
-        if: steps.syntax_audit.outcome != 'success' || steps.runtime_audit.outcome != 'success'
+        if: steps.syntax_audit.outcome != 'success' || steps.loss_context_audit.outcome != 'success' || steps.era_depth_audit.outcome != 'success'
         run: exit 1
