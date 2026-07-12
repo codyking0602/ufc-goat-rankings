@@ -1,0 +1,49 @@
+/* Persistent UFC Picks group and cumulative season standings. */
+.picks-group-card{border:1px solid #35506f;border-radius:18px;background:linear-gradient(180deg,#1d2e46,#142136);overflow:hidden;box-shadow:0 12px 28px rgba(15,23,42,.16)}
+.picks-group-card>summary{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px;cursor:pointer;list-style:none;color:#f8fafc}
+.picks-group-card>summary::-webkit-details-marker{display:none}
+.picks-group-card>summary>div{display:grid;gap:3px;min-width:0}
+.picks-group-card>summary span{color:#fbbf24;font-size:9px;font-weight:950;letter-spacing:.13em}
+.picks-group-card>summary strong{font-size:17px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.picks-group-card>summary>b{color:#dbeafe;font-size:10px;text-align:right;white-space:nowrap}
+.picks-group-card[open]>summary{border-bottom:1px solid rgba(148,163,184,.22)}
+.picks-group-content{display:grid;gap:14px;padding:14px;background:#f8fafc;color:#172033}
+.picks-group-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.picks-group-top span,.picks-group-section-head span,.picks-group-owner span{color:#c2410c;font-size:9px;font-weight:950;letter-spacing:.11em}
+.picks-group-top h3{margin:3px 0 4px;font-size:19px;color:#172033}
+.picks-group-top p{margin:0;max-width:520px;color:#475569;font-size:11px;line-height:1.4}
+.picks-group-top button,.picks-group-event button,.picks-group-owner button{border:1px solid #cbd5e1;border-radius:10px;background:#172033;color:#fff;padding:9px 11px;font:inherit;font-size:10px;font-weight:900;cursor:pointer;white-space:nowrap}
+.picks-group-members{display:grid;gap:6px}
+.picks-group-member{display:grid;grid-template-columns:28px minmax(0,1fr) 48px;align-items:center;gap:8px;border:1px solid #dbe3ed;border-radius:11px;background:#fff;padding:8px 10px}
+.picks-group-member.leader{border-color:#f59e0b;background:#fffbeb}
+.picks-group-member>span{color:#f97316;font-size:12px;font-weight:950}
+.picks-group-member>div{display:grid;gap:3px;min-width:0}
+.picks-group-member strong{color:#172033;font-size:13px;line-height:1.05}
+.picks-group-member strong em{border-radius:999px;background:#ffedd5;color:#c2410c;padding:2px 5px;font-size:7px;font-style:normal;vertical-align:middle}
+.picks-group-member small{color:#475569;font-size:9px;line-height:1.25}
+.picks-group-member>b{display:grid;justify-items:end;color:#172033;font-size:18px;line-height:1}
+.picks-group-member>b small{color:#64748b;font-size:7px;letter-spacing:.1em}
+.picks-group-section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:2px}
+.picks-group-section-head b{color:#64748b;font-size:9px;text-transform:uppercase;letter-spacing:.08em}
+.picks-group-events{display:grid;gap:6px}
+.picks-group-event{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;border:1px solid #dbe3ed;border-radius:11px;background:#fff;padding:9px 10px}
+.picks-group-event.active{border-color:#f97316;background:#fff7ed}
+.picks-group-event>div{display:grid;gap:2px;min-width:0}
+.picks-group-event span{color:#c2410c;font-size:8px;font-weight:950;text-transform:uppercase;letter-spacing:.08em}
+.picks-group-event strong{color:#172033;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.picks-group-event small{color:#64748b;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.picks-group-owner{display:grid;grid-template-columns:minmax(0,1fr) minmax(170px,240px) auto;align-items:end;gap:9px;border:1px solid #fed7aa;border-radius:13px;background:#fff7ed;padding:11px}
+.picks-group-owner>div{display:grid;gap:2px}
+.picks-group-owner strong{color:#7c2d12;font-size:12px}
+.picks-group-owner small,.picks-group-owner p{color:#9a3412;font-size:9px;margin:0}
+.picks-group-owner select{width:100%;min-width:0;background:#fff;color:#172033;border-color:#fdba74}
+@media(max-width:700px){
+  .picks-group-card>summary{padding:12px 13px}
+  .picks-group-card>summary strong{font-size:15px}
+  .picks-group-card>summary>b{font-size:9px;white-space:normal;max-width:120px}
+  .picks-group-content{padding:11px;gap:11px}
+  .picks-group-top{display:grid}
+  .picks-group-top button{width:100%}
+  .picks-group-owner{grid-template-columns:1fr}
+  .picks-group-owner button{width:100%}
+}
