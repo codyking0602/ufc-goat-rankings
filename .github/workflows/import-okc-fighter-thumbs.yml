@@ -1,0 +1,61 @@
+name: Import Oklahoma City Fighter Thumbnails
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/import-okc-fighter-thumbs.mjs'
+      - '.github/workflows/import-okc-fighter-thumbs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: import-okc-fighter-thumbs
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout latest main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install image processor
+        run: npm install --no-save --no-package-lock sharp@0.34.3
+
+      - name: Import official UFC and ESPN thumbnails
+        run: node scripts/import-okc-fighter-thumbs.mjs
+
+      - name: Verify generated thumbnails
+        shell: bash
+        run: |
+          test -f assets/fighters/okc-photo-import-report.json
+          count=$(find assets/fighters -maxdepth 1 -type f \
+            \( -name 'tabatha-ricci-thumb.webp' -o -name 'fatima-kline-thumb.webp' -o -name 'tommy-mcmillen-thumb.webp' -o -name 'alberto-montes-thumb.webp' -o -name 'chase-hooper-thumb.webp' -o -name 'mitch-ramirez-thumb.webp' -o -name 'jared-cannonier-thumb.webp' -o -name 'christian-leroy-duncan-thumb.webp' -o -name 'brad-tavares-thumb.webp' -o -name 'marc-andre-barriault-thumb.webp' \) | wc -l)
+          echo "Official thumbnails present: $count"
+          test "$count" -ge 6
+
+      - name: Commit imported thumbnails
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/fighters/*-thumb.webp assets/fighters/okc-photo-import-report.json
+          if git diff --cached --quiet; then
+            echo "No thumbnail changes to commit."
+            exit 0
+          fi
+          git commit -m "Add official Oklahoma City fighter thumbnails"
+          git pull --rebase origin main
+          git push origin main
