@@ -1,5 +1,6 @@
 name: Runtime Scoring Audit
 
+# Includes the full-roster hybrid Loss Context shadow and audit output.
 on:
   push:
     branches: [main]
