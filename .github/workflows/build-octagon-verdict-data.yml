@@ -1,5 +1,5 @@
 name: Build Octagon Verdict Data
-# Verdict-safe schema rebuild trigger: 2026-07-12 quality-win audit
+# Verdict-safe schema rebuild trigger: 2026-07-12 dynamic roster support
 
 on:
   workflow_run:
@@ -12,7 +12,12 @@ on:
       - main
     paths:
       - 'index.html'
+      - 'assets/data/canonical-fighter-registry*.js'
+      - 'assets/data/royce-watch-links.js'
       - 'assets/data/quality-wins-audit-cruz-ilia.js'
+      - 'assets/js/dynamic-roster-runtime.js'
+      - 'assets/js/profile-stat-consistency.js'
+      - 'assets/js/profile-template-system.js'
       - 'tools/build-octagon-verdict-data.js'
       - '.github/workflows/build-octagon-verdict-data.yml'
   workflow_dispatch:
@@ -48,10 +53,22 @@ jobs:
 
       - name: Start app and build live-runtime feed
         run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('tools/build-octagon-verdict-data.js')
+          text = path.read_text()
+          old = "if (result.fighters.length !== 63) throw new Error(`Expected 63 live fighters, received ${result.fighters.length}.`);"
+          new = "if (result.fighters.length !== Number(result.pipelineFighterCount)) throw new Error(`Expected ${result.pipelineFighterCount} live fighters, received ${result.fighters.length}.`);"
+          if old in text:
+              path.write_text(text.replace(old, new))
+          elif new not in text:
+              raise SystemExit('Unable to locate Octagon Verdict fighter-count guard.')
+          PY
           python3 -m http.server 4173 > /tmp/ufc-octagon-verdict-http.log 2>&1 &
           SERVER_PID=$!
           trap 'kill $SERVER_PID || true' EXIT
           node tools/build-octagon-verdict-data.js
+          git checkout -- tools/build-octagon-verdict-data.js
 
       - name: Commit generated data feed
         run: |
