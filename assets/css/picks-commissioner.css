@@ -1,0 +1,89 @@
+/* Phase 9 commissioner controls. */
+.picks-commissioner-card{border:1px solid rgba(249,115,22,.32);border-radius:20px;background:linear-gradient(180deg,#151b28,#10151f);overflow:hidden;color:#f8fafc}
+.picks-commissioner-card>summary{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 17px;cursor:pointer;list-style:none}
+.picks-commissioner-card>summary::-webkit-details-marker{display:none}
+.picks-commissioner-card>summary>div{display:grid;gap:3px}
+.picks-commissioner-card>summary span,.commissioner-hero span,.commissioner-section-head span,.commissioner-season-history>span,.commissioner-claim>span{font-size:9px;font-weight:950;letter-spacing:.13em;color:#fb923c}
+.picks-commissioner-card>summary strong{font-size:19px;line-height:1}
+.picks-commissioner-card>summary>b{font-size:10px;color:#cbd5e1;text-align:right}
+.picks-commissioner-card[open]>summary{border-bottom:1px solid #2a3446}
+.picks-commissioner-content{display:grid;gap:10px;padding:12px}
+.commissioner-hero,.commissioner-section,.commissioner-claim{border:1px solid #2b3648;border-radius:15px;background:#171e2b;padding:14px}
+.commissioner-hero{display:flex;align-items:center;justify-content:space-between;gap:14px;background:linear-gradient(135deg,rgba(249,115,22,.17),rgba(23,30,43,.98) 48%)}
+.commissioner-hero h3,.commissioner-section h3,.commissioner-claim h3{margin:3px 0 0;color:#fff;font-size:20px;line-height:1.05}
+.commissioner-hero p,.commissioner-claim p{margin:5px 0 0;color:#cbd5e1;font-size:11px;line-height:1.35}
+.commissioner-rename{display:flex;gap:7px;min-width:min(340px,48%)}
+.commissioner-rename input,.commissioner-form-grid input,.commissioner-odds-row input,.commissioner-claim input,.commissioner-event-select select{width:100%;min-width:0;border:1px solid #475569;border-radius:9px;background:#0f1724;color:#fff;padding:9px 10px;font:inherit;font-size:12px}
+.commissioner-rename button,.commissioner-section button,.commissioner-claim button{border:1px solid #64748b;border-radius:9px;background:#253044;color:#f8fafc;padding:9px 11px;font:inherit;font-size:10px;font-weight:950;cursor:pointer;white-space:nowrap}
+.commissioner-rename button:hover,.commissioner-section button:hover,.commissioner-claim button:hover{border-color:#fb923c}
+.commissioner-section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.commissioner-section-head>b{border:1px solid #3a465a;border-radius:999px;padding:5px 8px;color:#cbd5e1;font-size:9px}
+.commissioner-form-grid{display:grid;grid-template-columns:minmax(0,1.5fr) repeat(2,minmax(110px,.55fr));gap:8px}
+.commissioner-form-grid label,.commissioner-event-select,.commissioner-odds-row label{display:grid;gap:5px;color:#cbd5e1;font-size:9px;font-weight:850}
+.commissioner-inline-actions{display:flex;align-items:center;gap:10px;margin-top:9px}
+.commissioner-inline-actions small{color:#94a3b8;font-size:9px;line-height:1.3}
+.commissioner-primary{background:#ea580c!important;border-color:#f97316!important;color:#fff!important}
+.commissioner-subpanel{margin-top:11px;border:1px solid #334155;border-radius:12px;background:#111824;overflow:hidden}
+.commissioner-subpanel>summary{padding:10px 12px;color:#e2e8f0;font-size:11px;font-weight:900;cursor:pointer}
+.commissioner-subpanel[open]>summary{border-bottom:1px solid #334155}
+.commissioner-subpanel>.commissioner-form-grid,.commissioner-subpanel>.commissioner-event-select{margin:10px 11px}
+.commissioner-subpanel>.commissioner-primary{margin:0 11px 10px}
+.commissioner-subpanel>p{margin:0 11px 11px;color:#94a3b8;font-size:9px}
+.commissioner-season-history{display:grid;gap:6px;margin-top:12px;padding-top:11px;border-top:1px solid #2d3748}
+.commissioner-season-history>div{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 9px;border-radius:9px;background:#111824}
+.commissioner-season-history strong{font-size:11px;color:#f8fafc}
+.commissioner-season-history small{font-size:9px;color:#94a3b8;text-align:right}
+.commissioner-members,.commissioner-events{display:grid;gap:6px}
+.commissioner-member,.commissioner-event{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;padding:9px 10px;border:1px solid #334155;border-radius:10px;background:#111824}
+.commissioner-member>div:first-child,.commissioner-event>div{display:grid;gap:2px;min-width:0}
+.commissioner-member strong,.commissioner-event strong{font-size:12px;color:#f8fafc;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.commissioner-member strong em{display:inline-flex;margin-left:5px;border-radius:999px;background:#f97316;color:#111827;padding:2px 5px;font-size:7px;font-style:normal}
+.commissioner-member small,.commissioner-event small{font-size:9px;color:#94a3b8}
+.commissioner-member>div:last-child{display:flex;gap:5px}
+.commissioner-member.inactive{opacity:.58}
+.commissioner-member button,.commissioner-event button{padding:6px 8px;font-size:8px}
+.commissioner-member button.danger{border-color:#7f1d1d;background:#3a171b;color:#fecaca}
+.commissioner-event>div>span{color:#fb923c;font-size:8px;font-weight:950;text-transform:uppercase;letter-spacing:.08em}
+.commissioner-event>b{font-size:9px;color:#94a3b8}
+.commissioner-transfer-code,.commissioner-transfer-pending{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:5px 12px;margin-top:10px;padding:11px;border:1px solid rgba(249,115,22,.45);border-radius:11px;background:rgba(249,115,22,.1)}
+.commissioner-transfer-code>span{font-size:8px;font-weight:950;letter-spacing:.1em;color:#fdba74}
+.commissioner-transfer-code>strong{grid-row:2;font-size:23px;letter-spacing:.12em;color:#fff}
+.commissioner-transfer-code>small,.commissioner-transfer-pending small{grid-row:3;color:#cbd5e1;font-size:9px}
+.commissioner-transfer-code>button{grid-column:2;grid-row:1/4}
+.commissioner-transfer-pending strong{font-size:11px}
+.commissioner-transfer-pending small{grid-column:1/-1}
+.commissioner-odds-list{display:grid;gap:6px;padding:0 10px 10px}
+.commissioner-odds-row{display:grid;grid-template-columns:minmax(170px,1fr) minmax(85px,.42fr) minmax(85px,.42fr) auto;align-items:end;gap:7px;padding:8px;border:1px solid #2e394a;border-radius:10px;background:#0d1420}
+.commissioner-odds-row>div{display:grid;grid-template-columns:24px minmax(0,1fr);gap:2px 6px;align-items:center}
+.commissioner-odds-row>div>span{grid-row:1/3;color:#fb923c;font-size:10px;font-weight:950}
+.commissioner-odds-row>div>strong{font-size:10px;color:#f8fafc;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.commissioner-odds-row>div>strong em{color:#64748b;font-style:normal}
+.commissioner-odds-row>div>small{font-size:8px;color:#94a3b8}
+.commissioner-odds-row input{padding:7px 8px;font-size:10px}
+.commissioner-odds-row>button{padding:8px 9px}
+.commissioner-empty{padding:16px;text-align:center;color:#94a3b8;font-size:11px}
+.commissioner-claim{background:linear-gradient(135deg,rgba(249,115,22,.18),#171e2b)}
+.commissioner-claim>div{display:flex;gap:7px;margin-top:11px}
+.commissioner-claim input{text-transform:uppercase;letter-spacing:.12em;font-weight:900}
+@media(max-width:700px){
+  .commissioner-hero{display:grid}
+  .commissioner-rename{width:100%;min-width:0}
+  .commissioner-form-grid{grid-template-columns:1fr 1fr}
+  .commissioner-form-grid label:first-child{grid-column:1/-1}
+  .commissioner-odds-row{grid-template-columns:1fr 1fr}
+  .commissioner-odds-row>div{grid-column:1/-1}
+  .commissioner-odds-row>button{grid-column:1/-1}
+  .commissioner-season-history>div{display:grid}
+  .commissioner-season-history small{text-align:left}
+}
+@media(max-width:420px){
+  .picks-commissioner-content{padding:8px}
+  .commissioner-hero,.commissioner-section,.commissioner-claim{padding:11px}
+  .commissioner-rename,.commissioner-claim>div{display:grid}
+  .commissioner-form-grid{grid-template-columns:1fr}
+  .commissioner-form-grid label:first-child{grid-column:auto}
+  .commissioner-member{grid-template-columns:1fr}
+  .commissioner-member>div:last-child{justify-content:flex-start}
+  .commissioner-transfer-code{grid-template-columns:1fr}
+  .commissioner-transfer-code>button{grid-column:1;grid-row:auto}
+}
