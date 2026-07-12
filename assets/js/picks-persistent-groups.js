@@ -15,23 +15,13 @@
 
   const safe=value=>String(value ?? '').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
   const normalize=value=>String(value || '').trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6);
-
-  function urlParam(name){
-    return normalize(new URL(window.location.href).searchParams.get(name));
-  }
-
-  function roomCode(){
-    return urlParam('room') || normalize(document.querySelector('#picksRoomBanner .picks-code')?.textContent);
-  }
-
-  function groupCode(){
-    return urlParam('group');
-  }
-
-  function groupToken(code){ return code ? localStorage.getItem(`${GROUP_TOKEN_PREFIX}${code}`) : null; }
-  function groupAdmin(code){ return code ? localStorage.getItem(`${GROUP_ADMIN_PREFIX}${code}`) : null; }
-  function roomToken(code){ return code ? localStorage.getItem(`${ROOM_TOKEN_PREFIX}${code}`) : null; }
-  function roomAdmin(code){ return code ? localStorage.getItem(`${ROOM_ADMIN_PREFIX}${code}`) : null; }
+  const urlParam=name=>normalize(new URL(window.location.href).searchParams.get(name));
+  const roomCode=()=>urlParam('room') || normalize(document.querySelector('#picksRoomBanner .picks-code')?.textContent);
+  const groupCode=()=>urlParam('group');
+  const groupToken=code=>code ? localStorage.getItem(`${GROUP_TOKEN_PREFIX}${code}`) : null;
+  const groupAdmin=code=>code ? localStorage.getItem(`${GROUP_ADMIN_PREFIX}${code}`) : null;
+  const roomToken=code=>code ? localStorage.getItem(`${ROOM_TOKEN_PREFIX}${code}`) : null;
+  const roomAdmin=code=>code ? localStorage.getItem(`${ROOM_ADMIN_PREFIX}${code}`) : null;
 
   function toast(message){
     const node=document.getElementById('picksToast');
@@ -45,6 +35,7 @@
   function groupUrl(code){
     const url=new URL(window.location.href);
     url.searchParams.delete('room');
+    url.searchParams.delete('event');
     url.searchParams.set('group',code);
     url.hash='picks';
     return url.toString();
@@ -90,7 +81,7 @@
     </div>`).join('');
   }
 
-  function eventRows(events,code){
+  function eventRows(events){
     return events.map(event=>`<div class="picks-group-event${event.is_active?' active':''}">
       <div><span>${safe(event.status)}</span><strong>${safe(event.name)}</strong><small>${safe(event.subtitle || '')}</small></div>
       <button type="button" data-group-room="${safe(event.room_code)}" data-group-event="${safe(event.event_id)}">${event.is_active?'Open current':'Open recap'}</button>
@@ -119,7 +110,7 @@
       </div>
       <div class="picks-group-members">${memberRows(members,snapshot.me?.id)}</div>
       <div class="picks-group-section-head"><span>EVENTS</span><b>${events.length} played</b></div>
-      <div class="picks-group-events">${eventRows(events,snapshot.group.code)}</div>
+      <div class="picks-group-events">${eventRows(events)}</div>
       ${snapshot.group.is_admin ? `<div class="picks-group-owner">
         <div><span>GROUP OWNER</span><strong>Add the next UFC event</strong><small>Everyone stays in the group automatically.</small></div>
         ${available.length ? `<select id="picksGroupEventSelect">${options}</select><button id="picksGroupAddEvent" type="button">Add event</button>` : '<p>No new upcoming event has been loaded yet.</p>'}
@@ -128,6 +119,19 @@
     document.getElementById('picksShareGroup')?.addEventListener('click',()=>shareGroup(snapshot.group));
     target.querySelectorAll('[data-group-room]').forEach(button=>button.addEventListener('click',()=>openRoom(snapshot.group.code,button.dataset.groupRoom,button.dataset.groupEvent)));
     document.getElementById('picksGroupAddEvent')?.addEventListener('click',()=>addEvent(snapshot.group.code));
+  }
+
+  function renderIfChanged(snapshot){
+    const signature=JSON.stringify({
+      group:snapshot?.group,
+      me:snapshot?.me?.id,
+      members:(snapshot?.members || []).map(member=>[member.id,member.points,member.correct,member.picks_made,member.event_wins,member.lock_bonus]),
+      events:(snapshot?.events || []).map(event=>[event.event_id,event.room_code,event.status,event.is_active]),
+      available:(snapshot?.available_events || []).map(event=>[event.id,event.status])
+    });
+    if(signature===lastSignature && document.getElementById('picksGroupContent')?.children.length) return;
+    lastSignature=signature;
+    render(snapshot);
   }
 
   async function shareGroup(group){
@@ -158,8 +162,7 @@
 
   async function loadSnapshot(code,token,admin){
     const {data,error}=await client.rpc('picks_group_snapshot',{p_group_code:code,p_member_token:token,p_admin_token:admin || null});
-    if(error) return null;
-    return data;
+    return error ? null : data;
   }
 
   async function resolveCurrentRoom(){
@@ -181,7 +184,7 @@
     }
 
     const snapshot=await loadSnapshot(code,token,admin);
-    if(snapshot) render(snapshot);
+    if(snapshot) renderIfChanged(snapshot);
     return true;
   }
 
@@ -221,9 +224,7 @@
     if(data.active_room?.code){
       localStorage.setItem(`${ROOM_TOKEN_PREFIX}${data.active_room.code}`,token);
       openRoom(code,data.active_room.code,data.active_room.event_id);
-    }else{
-      toast('You joined. The next event has not been added yet.');
-    }
+    }else toast('You joined. The next event has not been added yet.');
   }
 
   async function resolveGroupLink(){
@@ -241,7 +242,7 @@
       openRoom(code,snapshot.active_room.code,snapshot.active_room.event_id);
       return true;
     }
-    render(snapshot);
+    renderIfChanged(snapshot);
     return true;
   }
 
@@ -264,7 +265,7 @@
     const observer=new MutationObserver(()=>{
       ensureCard();
       window.clearTimeout(start.timer);
-      start.timer=window.setTimeout(refresh,180);
+      start.timer=window.setTimeout(refresh,220);
     });
     observer.observe(document.getElementById('picks') || document.body,{childList:true,subtree:true});
     window.setInterval(refresh,45000);
