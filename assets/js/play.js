@@ -7,17 +7,6 @@
   const panel = document.getElementById('play');
   if(!panel || !Array.isArray(DATA.men)) return;
 
-  const profileMap = Object.fromEntries((DATA.fighters || []).map(f => [f.fighter, f]));
-  const board = DATA.men
-    .map(row => ({ ...(profileMap[row.fighter] || {}), ...row }))
-    .filter(f => f && f.fighter)
-    .sort((a,b) => Number(a.rank || 999) - Number(b.rank || 999));
-  const byName = Object.fromEntries(board.map(f => [f.fighter, f]));
-  const officialRank = Object.fromEntries(board.map((f,i) => [
-    f.fighter,
-    Number(OVERRIDES[f.fighter]?.allTimeRank || f.rank || i + 1)
-  ]));
-
   const state = {
     mode: 'top10',
     top10: loadTop10(),
@@ -31,43 +20,73 @@
 
   function $(id){ return document.getElementById(id); }
   function esc(value){
-    return String(value ?? '').replace(/[&<>'\"]/g, ch => ({
-      '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '\"':'&quot;'
-    }[ch]));
+    return String(value ?? '').replace(/[&<>"']/g, char => ({
+      '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+    }[char]));
   }
-  function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
-  function photoFor(f){ return OVERRIDES[f.fighter]?.thumbUrl || OVERRIDES[f.fighter]?.photoUrl || ''; }
+  function clamp(value,min,max){ return Math.max(min, Math.min(max, value)); }
+  function key(value){ return String(value || '').trim().toLowerCase(); }
+
+  function liveRow(name){
+    const target = key(name);
+    return [...(DATA.men || []), ...(DATA.women || [])].find(row => key(row?.fighter) === target) || null;
+  }
+  function liveProfile(name){
+    const target = key(name);
+    return (DATA.fighters || []).find(row => key(row?.fighter) === target) || null;
+  }
+  function liveFighter(name){
+    return { ...(liveProfile(name) || {}), ...(liveRow(name) || {}), fighter:name };
+  }
+  function liveMenBoard(){
+    return (DATA.men || [])
+      .map(row => liveFighter(row.fighter))
+      .filter(fighter => fighter?.fighter)
+      .sort((a,b) => rankFor(a.fighter) - rankFor(b.fighter) || a.fighter.localeCompare(b.fighter));
+  }
+  function rankFor(name){
+    const live = Number(liveRow(name)?.rank);
+    if(Number.isFinite(live) && live > 0) return live;
+    const override = Number(OVERRIDES[name]?.allTimeRank);
+    if(Number.isFinite(override) && override > 0) return override;
+    return 999;
+  }
+  function photoFor(fighter){
+    return OVERRIDES[fighter.fighter]?.thumbUrl || OVERRIDES[fighter.fighter]?.photoUrl || '';
+  }
   function initials(name){
     return String(name || '').split(/\s+/).filter(Boolean).slice(0,2).map(part => part[0]).join('').toUpperCase();
   }
-  function rankFor(name){ return officialRank[name] || 999; }
+  function fighterPhoto(fighter, extraClass=''){
+    const url = photoFor(fighter);
+    return `<div class="play-fighter-photo ${extraClass}">${url
+      ? `<img src="${esc(url)}" alt="${esc(fighter.fighter)}">`
+      : `<span>${esc(initials(fighter.fighter))}</span>`}</div>`;
+  }
+  function fighterMeta(fighter){
+    const parts = [fighter.primaryDivision, fighter.ufcRecord].filter(Boolean);
+    return parts.join(' · ') || 'UFC resume';
+  }
+
   function saveTop10(){
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state.top10)); }
-    catch(_err){}
+    catch(_error){}
   }
   function loadTop10(){
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
       if(!Array.isArray(saved)) return [];
-      return saved.filter(name => typeof name === 'string' && byName[name]).slice(0,10);
-    } catch(_err){ return []; }
-  }
-  function fighterPhoto(f, extraClass=''){
-    const url = photoFor(f);
-    return `<div class="play-fighter-photo ${extraClass}">${url
-      ? `<img src="${esc(url)}" alt="${esc(f.fighter)}">`
-      : `<span>${esc(initials(f.fighter))}</span>`}</div>`;
-  }
-  function fighterMeta(f){
-    const parts = [f.primaryDivision, f.ufcRecord].filter(Boolean);
-    return parts.join(' · ') || 'UFC résumé';
+      const names = new Set((DATA.men || []).map(row => row.fighter));
+      return saved.filter(name => typeof name === 'string' && names.has(name)).slice(0,10);
+    } catch(_error){ return []; }
   }
 
   function setMode(mode){
     state.mode = mode;
-    document.querySelectorAll('[data-play-mode]').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.playMode === mode);
-      btn.setAttribute('aria-selected', String(btn.dataset.playMode === mode));
+    document.querySelectorAll('[data-play-mode]').forEach(button => {
+      const active = button.dataset.playMode === mode;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-selected', String(active));
     });
     $('playTop10Panel').hidden = mode !== 'top10';
     $('playBlindPanel').hidden = mode !== 'blind';
@@ -79,15 +98,15 @@
     if(!target) return;
     const query = state.query.trim().toLowerCase();
     const selected = new Set(state.top10);
-    const matches = board
-      .filter(f => !selected.has(f.fighter))
-      .filter(f => !query || f.fighter.toLowerCase().includes(query))
+    const matches = liveMenBoard()
+      .filter(fighter => !selected.has(fighter.fighter))
+      .filter(fighter => !query || fighter.fighter.toLowerCase().includes(query))
       .slice(0, query ? 12 : 8);
 
-    target.innerHTML = matches.length ? matches.map(f => `
-      <button class="play-search-result" type="button" data-add-fighter="${esc(f.fighter)}" ${state.top10.length >= 10 ? 'disabled' : ''}>
-        ${fighterPhoto(f, 'small')}
-        <span><strong>${esc(f.fighter)}</strong><small>${esc(fighterMeta(f))}</small></span>
+    target.innerHTML = matches.length ? matches.map(fighter => `
+      <button class="play-search-result" type="button" data-add-fighter="${esc(fighter.fighter)}" ${state.top10.length >= 10 ? 'disabled' : ''}>
+        ${fighterPhoto(fighter, 'small')}
+        <span><strong>${esc(fighter.fighter)}</strong><small>${esc(fighterMeta(fighter))}</small></span>
         <b>ADD</b>
       </button>`).join('') : `<div class="play-empty-mini">${state.top10.length >= 10 ? 'Your Top 10 is full.' : 'No fighters match that search.'}</div>`;
   }
@@ -102,6 +121,7 @@
 
   function renderTop10(){
     const list = $('playTop10List');
+    if(!list) return;
     const count = state.top10.length;
     $('playTop10Count').textContent = `${count}/10 selected`;
     $('playTop10ProgressFill').style.width = `${count * 10}%`;
@@ -112,11 +132,11 @@
       list.innerHTML = `<div class="play-empty-state"><strong>Your GOAT list starts here.</strong><span>Add ten fighters, then settle the order.</span></div>`;
     } else {
       list.innerHTML = state.top10.map((name,index) => {
-        const f = byName[name] || {fighter:name};
+        const fighter = liveFighter(name);
         return `<article class="play-rank-row" draggable="true" data-top10-index="${index}">
           <div class="play-rank-number">#${index + 1}</div>
-          ${fighterPhoto(f)}
-          <div class="play-rank-copy"><strong>${esc(name)}</strong><small>${esc(fighterMeta(f))}</small></div>
+          ${fighterPhoto(fighter)}
+          <div class="play-rank-copy"><strong>${esc(name)}</strong><small>${esc(fighterMeta(fighter))}</small></div>
           <div class="play-rank-actions" aria-label="Reorder ${esc(name)}">
             <button type="button" data-move="up" aria-label="Move ${esc(name)} up" ${index === 0 ? 'disabled' : ''}>↑</button>
             <button type="button" data-move="down" aria-label="Move ${esc(name)} down" ${index === count - 1 ? 'disabled' : ''}>↓</button>
@@ -133,36 +153,30 @@
   function comparisonData(){
     const rows = state.top10.map((name,index) => ({
       name,
-      userRank: index + 1,
-      modelRank: rankFor(name),
-      delta: rankFor(name) - (index + 1)
+      userRank:index + 1,
+      modelRank:rankFor(name),
+      delta:rankFor(name) - (index + 1)
     }));
     const biggest = [...rows].sort((a,b) => Math.abs(b.delta) - Math.abs(a.delta))[0];
-    const higher = [...rows].filter(r => r.delta > 0).sort((a,b) => b.delta - a.delta)[0];
-    const lower = [...rows].filter(r => r.delta < 0).sort((a,b) => a.delta - b.delta)[0];
-    const avgDiff = rows.reduce((sum,row) => sum + Math.abs(row.delta), 0) / Math.max(rows.length,1);
-    const agreement = clamp(Math.round(100 - avgDiff * 5), 0, 100);
+    const higher = [...rows].filter(row => row.delta > 0).sort((a,b) => b.delta - a.delta)[0];
+    const lower = [...rows].filter(row => row.delta < 0).sort((a,b) => a.delta - b.delta)[0];
+    const averageGap = rows.reduce((sum,row) => sum + Math.abs(row.delta), 0) / Math.max(rows.length,1);
+    const agreement = clamp(Math.round(100 - averageGap * 5), 0, 100);
     return {rows,biggest,higher,lower,agreement};
   }
-
   function disagreementText(row){
     if(!row) return 'Your list closely tracks the model.';
     if(row.delta > 0) return `You have ${row.name} ${row.delta} spot${row.delta === 1 ? '' : 's'} higher than the model.`;
     if(row.delta < 0) return `You have ${row.name} ${Math.abs(row.delta)} spot${Math.abs(row.delta) === 1 ? '' : 's'} lower than the model.`;
     return `You and the model agree exactly on ${row.name}.`;
   }
-
-  function renderComparison(){
+  function renderComparison(shouldScroll=true){
     if(state.top10.length !== 10) return;
     const result = comparisonData();
     const target = $('playTop10Result');
     target.hidden = false;
     target.innerHTML = `
-      <div class="play-result-hero">
-        <span>MODEL AGREEMENT</span>
-        <strong>${result.agreement}</strong>
-        <small>out of 100</small>
-      </div>
+      <div class="play-result-hero"><span>MODEL AGREEMENT</span><strong>${result.agreement}</strong><small>out of 100</small></div>
       <div class="play-insight-grid">
         <div><span>Biggest disagreement</span><strong>${esc(disagreementText(result.biggest))}</strong></div>
         <div><span>You are highest on</span><strong>${result.higher ? `${esc(result.higher.name)} · +${result.higher.delta}` : 'No fighter above the model'}</strong></div>
@@ -170,86 +184,83 @@
       </div>
       <div class="play-result-list">${result.rows.map(row => `
         <div><b>#${row.userRank}</b><span>${esc(row.name)}</span><small>Model #${row.modelRank}</small><em class="${row.delta > 0 ? 'up' : row.delta < 0 ? 'down' : ''}">${row.delta === 0 ? 'EVEN' : row.delta > 0 ? `+${row.delta}` : row.delta}</em></div>`).join('')}</div>`;
-    target.scrollIntoView({behavior:'smooth', block:'start'});
+    if(shouldScroll) target.scrollIntoView({behavior:'smooth', block:'start'});
   }
 
   function top10ShareText(){
     const result = comparisonData();
-    return `MY UFC GOAT TOP 10\n\n${state.top10.map((name,i) => `${i+1}. ${name}`).join('\n')}\n\nModel agreement: ${result.agreement}/100\nBiggest disagreement: ${disagreementText(result.biggest)}\n\nBuilt with UFC All-Time Rankings`;
+    return `MY UFC GOAT TOP 10\n\n${state.top10.map((name,index) => `${index + 1}. ${name}`).join('\n')}\n\nModel agreement: ${result.agreement}/100\nBiggest disagreement: ${disagreementText(result.biggest)}\n\nBuilt with UFC All-Time Rankings`;
   }
-
-  function wrapCanvasText(ctx,text,x,y,maxWidth,lineHeight,maxLines){
+  function wrapCanvasText(context,text,x,y,maxWidth,lineHeight,maxLines){
     const words = String(text).split(/\s+/);
     let line = '';
     let lines = 0;
     for(const word of words){
       const test = line ? `${line} ${word}` : word;
-      if(ctx.measureText(test).width > maxWidth && line){
-        ctx.fillText(line,x,y);
+      if(context.measureText(test).width > maxWidth && line){
+        context.fillText(line,x,y);
         y += lineHeight;
         lines += 1;
         line = word;
         if(lines >= maxLines - 1) break;
       } else line = test;
     }
-    if(line && lines < maxLines) ctx.fillText(line,x,y);
+    if(line && lines < maxLines) context.fillText(line,x,y);
   }
-
   function makeTop10Card(){
     const canvas = document.createElement('canvas');
     canvas.width = 1080;
     canvas.height = 1350;
-    const ctx = canvas.getContext('2d');
+    const context = canvas.getContext('2d');
     const result = comparisonData();
-    const gradient = ctx.createLinearGradient(0,0,1080,1350);
+    const gradient = context.createLinearGradient(0,0,1080,1350);
     gradient.addColorStop(0,'#171d2a');
     gradient.addColorStop(1,'#080a0f');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0,0,1080,1350);
-    ctx.fillStyle = '#f97316';
-    ctx.fillRect(0,0,22,1350);
-    ctx.fillStyle = '#facc15';
-    ctx.font = '800 28px system-ui, sans-serif';
-    ctx.fillText('UFC ALL-TIME RANKINGS',70,78);
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '950 68px system-ui, sans-serif';
-    ctx.fillText('MY UFC GOAT TOP 10',70,158);
-    ctx.fillStyle = '#cbd5e1';
-    ctx.font = '500 26px system-ui, sans-serif';
-    ctx.fillText(`MODEL AGREEMENT: ${result.agreement}/100`,72,210);
+    context.fillStyle = gradient;
+    context.fillRect(0,0,1080,1350);
+    context.fillStyle = '#f97316';
+    context.fillRect(0,0,22,1350);
+    context.fillStyle = '#facc15';
+    context.font = '800 28px system-ui, sans-serif';
+    context.fillText('UFC ALL-TIME RANKINGS',70,78);
+    context.fillStyle = '#ffffff';
+    context.font = '950 68px system-ui, sans-serif';
+    context.fillText('MY UFC GOAT TOP 10',70,158);
+    context.fillStyle = '#cbd5e1';
+    context.font = '500 26px system-ui, sans-serif';
+    context.fillText(`MODEL AGREEMENT: ${result.agreement}/100`,72,210);
 
     state.top10.forEach((name,index) => {
       const y = 285 + index * 82;
-      ctx.fillStyle = index < 3 ? '#facc15' : '#f97316';
-      ctx.font = '950 34px system-ui, sans-serif';
-      ctx.fillText(`#${index + 1}`,72,y);
-      ctx.fillStyle = '#ffffff';
-      ctx.font = '850 34px system-ui, sans-serif';
-      ctx.fillText(name,155,y);
-      ctx.fillStyle = '#cbd5e1';
-      ctx.font = '600 22px system-ui, sans-serif';
-      ctx.textAlign = 'right';
-      ctx.fillText(`MODEL #${rankFor(name)}`,1005,y);
-      ctx.textAlign = 'left';
-      ctx.strokeStyle = '#334155';
-      ctx.beginPath();
-      ctx.moveTo(72,y+28);
-      ctx.lineTo(1005,y+28);
-      ctx.stroke();
+      context.fillStyle = index < 3 ? '#facc15' : '#f97316';
+      context.font = '950 34px system-ui, sans-serif';
+      context.fillText(`#${index + 1}`,72,y);
+      context.fillStyle = '#ffffff';
+      context.font = '850 34px system-ui, sans-serif';
+      context.fillText(name,155,y);
+      context.fillStyle = '#cbd5e1';
+      context.font = '600 22px system-ui, sans-serif';
+      context.textAlign = 'right';
+      context.fillText(`MODEL #${rankFor(name)}`,1005,y);
+      context.textAlign = 'left';
+      context.strokeStyle = '#334155';
+      context.beginPath();
+      context.moveTo(72,y+28);
+      context.lineTo(1005,y+28);
+      context.stroke();
     });
 
-    ctx.fillStyle = '#facc15';
-    ctx.font = '800 22px system-ui, sans-serif';
-    ctx.fillText('BIGGEST DISAGREEMENT',72,1142);
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '750 30px system-ui, sans-serif';
-    wrapCanvasText(ctx, disagreementText(result.biggest), 72, 1190, 930, 40, 2);
-    ctx.fillStyle = '#94a3b8';
-    ctx.font = '600 22px system-ui, sans-serif';
-    ctx.fillText('codyking0602.github.io/ufc-goat-rankings',72,1300);
+    context.fillStyle = '#facc15';
+    context.font = '800 22px system-ui, sans-serif';
+    context.fillText('BIGGEST DISAGREEMENT',72,1142);
+    context.fillStyle = '#ffffff';
+    context.font = '750 30px system-ui, sans-serif';
+    wrapCanvasText(context, disagreementText(result.biggest), 72, 1190, 930, 40, 2);
+    context.fillStyle = '#94a3b8';
+    context.font = '600 22px system-ui, sans-serif';
+    context.fillText('codyking0602.github.io/ufc-goat-rankings',72,1300);
     return canvas;
   }
-
   async function shareTop10(){
     if(state.top10.length !== 10) return;
     const button = $('playShareBtn');
@@ -277,12 +288,12 @@
         setTimeout(() => { button.textContent = original; }, 1300);
         return;
       }
-    } catch(err){
-      if(err?.name !== 'AbortError'){
+    } catch(error){
+      if(error?.name !== 'AbortError'){
         try {
           await navigator.clipboard.writeText(top10ShareText());
           button.textContent = 'COPIED';
-        } catch(_copyErr){ button.textContent = 'SHARE FAILED'; }
+        } catch(_copyError){ button.textContent = 'SHARE FAILED'; }
         setTimeout(() => { button.textContent = original; }, 1300);
         return;
       }
@@ -291,89 +302,88 @@
     button.disabled = false;
   }
 
-  function numberFrom(obj,keys){
-    for(const key of keys){
-      const value = Number(obj?.[key]);
+  function numberFrom(object,keys){
+    for(const name of keys){
+      const value = Number(object?.[name]);
       if(Number.isFinite(value)) return value;
     }
     return null;
   }
-  function adjustedTitleWins(f){
-    const exact = numberFrom(f.title, ['adjustedTitleWins','adjustedTitleWinCredit']);
+  function adjustedTitleWins(fighter){
+    const exact = numberFrom(fighter.title, ['adjustedTitleWins','adjustedTitleWinCredit']);
     if(exact !== null) return exact.toFixed(1);
-    const titleWins = numberFrom(f.title, ['normalTitleWins']);
+    const titleWins = numberFrom(fighter.title, ['normalTitleWins']);
     return titleWins !== null ? titleWins.toFixed(1) : '—';
   }
-  function eliteWins(f){
-    const direct = numberFrom(f, ['topFiveWins','top5Wins','eliteWins','qualityWins']);
+  function eliteWins(fighter){
+    const direct = numberFrom(fighter, ['topFiveWins','top5Wins','eliteWins','qualityWins']);
     if(direct !== null) return String(direct).replace(/\.0$/,'');
-    const opponents = Array.isArray(f.opponents) ? f.opponents : [];
+    const opponents = Array.isArray(fighter.opponents) ? fighter.opponents : [];
     return opponents.length ? String(opponents.length) : '—';
   }
-  function primeRecord(f){ return DATA.primeRecords?.[f.fighter]?.record || f.primeRecord || '—'; }
-  function roundControl(f){
-    const direct = numberFrom(f,['roundsWonPct','roundsWonPercentage','roundWinPct','roundsWonPercent']);
+  function primeRecord(fighter){ return DATA.primeRecords?.[fighter.fighter]?.record || fighter.primeRecord || '—'; }
+  function roundControl(fighter){
+    const direct = numberFrom(fighter,['roundsWonPct','roundsWonPercentage','roundWinPct','roundsWonPercent']);
     if(direct !== null) return `${direct.toFixed(1)}%`;
-    const rounds = Array.isArray(f.rounds) ? f.rounds : [];
+    const rounds = Array.isArray(fighter.rounds) ? fighter.rounds : [];
     const won = rounds.reduce((sum,row) => sum + Number(row.roundsWon || 0),0);
     const total = rounds.reduce((sum,row) => sum + Number(row.roundsCounted || 0),0);
     return total ? `${((won / total) * 100).toFixed(1)}%` : '—';
   }
-  function lossContext(f){
-    const penalty = numberFrom(f,['penalty','lossPenalty']);
+  function lossContext(fighter){
+    const penalty = numberFrom(fighter,['penalty','lossPenalty']);
     if(penalty === null || penalty === 0) return 'Clean';
     if(penalty > -3) return 'Light damage';
     if(penalty > -7) return 'Moderate damage';
     return 'Heavy damage';
   }
-  function blindStats(f){
-    const finishRate = numberFrom(f,['finishRatePct']);
-    const eliteYears = numberFrom(f,['activeEliteYears']);
+  function blindStats(fighter){
+    const finishRate = numberFrom(fighter,['finishRatePct']);
+    const eliteYears = numberFrom(fighter,['activeEliteYears']);
     return [
-      ['Adjusted title wins', adjustedTitleWins(f)],
-      ['Elite wins', eliteWins(f)],
-      ['Prime UFC record', primeRecord(f)],
-      ['Rounds won', roundControl(f)],
+      ['Adjusted title wins', adjustedTitleWins(fighter)],
+      ['Elite wins', eliteWins(fighter)],
+      ['Prime UFC record', primeRecord(fighter)],
+      ['Rounds won', roundControl(fighter)],
       ['Finish rate', finishRate !== null ? `${finishRate.toFixed(1)}%` : '—'],
       ['Active elite years', eliteYears !== null ? eliteYears.toFixed(1) : '—'],
-      ['Loss context', lossContext(f)]
+      ['Loss context', lossContext(fighter)]
     ];
   }
 
   function pickBlindPair(){
-    const pool = board.filter(f => rankFor(f.fighter) <= Math.min(35,board.length));
-    let a,b,key;
-    for(let tries=0;tries<100;tries++){
-      a = pool[Math.floor(Math.random() * pool.length)];
-      const candidates = pool.filter(f => f.fighter !== a.fighter && Math.abs(rankFor(f.fighter) - rankFor(a.fighter)) <= 10);
-      b = candidates[Math.floor(Math.random() * candidates.length)] || pool[Math.floor(Math.random() * pool.length)];
-      key = [a.fighter,b.fighter].sort().join('|');
-      if(a.fighter !== b.fighter && key !== state.lastPairKey) break;
+    const board = liveMenBoard();
+    const pool = board.filter(fighter => rankFor(fighter.fighter) <= Math.min(35,board.length));
+    let fighterA;
+    let fighterB;
+    let pairKey = '';
+    for(let tries=0; tries<100; tries += 1){
+      fighterA = pool[Math.floor(Math.random() * pool.length)];
+      const candidates = pool.filter(fighter => fighter.fighter !== fighterA.fighter && Math.abs(rankFor(fighter.fighter) - rankFor(fighterA.fighter)) <= 10);
+      fighterB = candidates[Math.floor(Math.random() * candidates.length)] || pool[Math.floor(Math.random() * pool.length)];
+      pairKey = [fighterA.fighter,fighterB.fighter].sort().join('|');
+      if(fighterA.fighter !== fighterB.fighter && pairKey !== state.lastPairKey) break;
     }
-    state.lastPairKey = key;
-    return Math.random() > .5 ? [a,b] : [b,a];
+    state.lastPairKey = pairKey;
+    return Math.random() > .5 ? [fighterA,fighterB] : [fighterB,fighterA];
   }
-
   function renderBlind(){
     if(!state.blindPair) return;
-    const [a,b] = state.blindPair;
-    const aStats = blindStats(a);
-    const bStats = blindStats(b);
+    const [fighterA,fighterB] = state.blindPair.map(fighter => liveFighter(fighter.fighter));
+    state.blindPair = [fighterA,fighterB];
+    const statsA = blindStats(fighterA);
+    const statsB = blindStats(fighterB);
     $('blindScore').textContent = `${state.blindScore}-${state.blindRounds - state.blindScore}`;
     $('blindRound').textContent = `ROUND ${state.blindRounds + 1}`;
     $('blindMatchup').innerHTML = `
       <div class="blind-comparison-card">
         <div class="blind-compare-head">
           <div class="blind-identity blind-a"><span>FIGHTER A</span><div class="blind-silhouette">?</div></div>
-          <div class="blind-resume-label">RÉSUMÉ</div>
+          <div class="blind-resume-label">RESUME</div>
           <div class="blind-identity blind-b"><span>FIGHTER B</span><div class="blind-silhouette">?</div></div>
         </div>
         <div class="blind-compare-rows">
-          ${aStats.map(([label,aValue],index) => `<div class="blind-compare-row">
-            <strong>${esc(aValue)}</strong>
-            <span>${esc(label)}</span>
-            <strong>${esc(bStats[index][1])}</strong>
-          </div>`).join('')}
+          ${statsA.map(([label,value],index) => `<div class="blind-compare-row"><strong>${esc(value)}</strong><span>${esc(label)}</span><strong>${esc(statsB[index][1])}</strong></div>`).join('')}
         </div>
         <div class="blind-pick-row">
           <button class="blind-pick-button blind-pick-a" type="button" data-blind-choice="A">PICK A</button>
@@ -383,19 +393,17 @@
     $('blindReveal').hidden = true;
     state.blindChoice = null;
   }
-
   function nextBlindRound(){
     state.blindPair = pickBlindPair();
     renderBlind();
   }
-
   function revealBlind(choice){
     if(state.blindChoice || !state.blindPair) return;
     state.blindChoice = choice;
-    const [a,b] = state.blindPair;
-    const picked = choice === 'A' ? a : b;
-    const winner = rankFor(a.fighter) < rankFor(b.fighter) ? a : b;
-    const loser = winner.fighter === a.fighter ? b : a;
+    const [fighterA,fighterB] = state.blindPair.map(fighter => liveFighter(fighter.fighter));
+    const picked = choice === 'A' ? fighterA : fighterB;
+    const winner = rankFor(fighterA.fighter) < rankFor(fighterB.fighter) ? fighterA : fighterB;
+    const loser = winner.fighter === fighterA.fighter ? fighterB : fighterA;
     const correct = picked.fighter === winner.fighter;
     state.blindRounds += 1;
     if(correct) state.blindScore += 1;
@@ -410,21 +418,28 @@
         <p>${esc(winner.fighter)} is #${rankFor(winner.fighter)} in the UFC-only model. ${esc(loser.fighter)} is #${rankFor(loser.fighter)}.</p>
       </div>
       <div class="blind-reveal-grid">
-        ${[a,b].map((f,index) => `<div class="blind-reveal-fighter ${picked.fighter === f.fighter ? 'user-pick' : ''} ${winner.fighter === f.fighter ? 'model-winner' : ''}">
-          ${fighterPhoto(f,'reveal')}
+        ${[fighterA,fighterB].map((fighter,index) => `<div class="blind-reveal-fighter ${picked.fighter === fighter.fighter ? 'user-pick' : ''} ${winner.fighter === fighter.fighter ? 'model-winner' : ''}">
+          ${fighterPhoto(fighter,'reveal')}
           <span>FIGHTER ${index === 0 ? 'A' : 'B'}</span>
-          <strong>${esc(f.fighter)}</strong>
-          <small>Official UFC GOAT rank #${rankFor(f.fighter)}</small>
-          ${picked.fighter === f.fighter ? '<em>YOUR PICK</em>' : ''}
+          <strong>${esc(fighter.fighter)}</strong>
+          <small>Official UFC GOAT rank #${rankFor(fighter.fighter)}</small>
+          ${picked.fighter === fighter.fighter ? '<em>YOUR PICK</em>' : ''}
         </div>`).join('')}
       </div>
       <button id="blindNextBtn" class="play-primary" type="button">NEXT BLIND MATCHUP</button>`;
     reveal.scrollIntoView({behavior:'smooth', block:'nearest'});
   }
 
+  function refreshFromLiveScoring(){
+    const comparisonVisible = !$('playTop10Result')?.hidden;
+    renderTop10();
+    if(comparisonVisible && state.top10.length === 10) renderComparison(false);
+    if(state.mode === 'blind' && state.blindPair && !state.blindChoice) renderBlind();
+  }
+
   function wireEvents(){
-    document.querySelectorAll('[data-play-mode]').forEach(btn => {
-      btn.addEventListener('click', () => setMode(btn.dataset.playMode));
+    document.querySelectorAll('[data-play-mode]').forEach(button => {
+      button.addEventListener('click', () => setMode(button.dataset.playMode));
     });
     $('playFighterSearch')?.addEventListener('input', event => {
       state.query = event.target.value;
@@ -484,7 +499,7 @@
       saveTop10();
       renderTop10();
     });
-    $('playCompareBtn')?.addEventListener('click', renderComparison);
+    $('playCompareBtn')?.addEventListener('click', () => renderComparison(true));
     $('playShareBtn')?.addEventListener('click', shareTop10);
     $('blindMatchup')?.addEventListener('click', event => {
       const choice = event.target.closest('[data-blind-choice]');
@@ -493,6 +508,10 @@
     $('blindReveal')?.addEventListener('click', event => {
       if(event.target.closest('#blindNextBtn')) nextBlindRound();
     });
+
+    window.addEventListener('ufc-scoring-pipeline-ready', refreshFromLiveScoring);
+    window.addEventListener('ufc-division-era-depth-finalized', refreshFromLiveScoring);
+    window.setTimeout(refreshFromLiveScoring, 1400);
   }
 
   wireEvents();
