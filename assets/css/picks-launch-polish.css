@@ -30,6 +30,16 @@
   background:#f97316!important;
   color:#111827!important;
 }
+.picks-admin-actions .picks-admin-lock-button{
+  background:#f97316;
+  color:#111827;
+  border-color:#f97316;
+}
+.picks-admin-actions .picks-admin-lock-button.is-reopen{
+  background:#fff7ed;
+  color:#9a3412;
+  border-color:#fdba74;
+}
 @media(max-width:700px){
   .main-card-fight .pick-fighter-photo{
     width:52px;
