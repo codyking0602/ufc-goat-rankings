@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-12T21:17:09.334Z",
+  "generatedAt": "2026-07-12T21:30:15.038Z",
   "pipelineStatus": "ready",
   "shadowVersion": "division-era-depth-shadow-20260712d-current-wfw-safe",
   "auditVersion": "division-era-depth-judgment-review-20260712b-live-approved",
@@ -95,7 +95,7 @@
         "overallOvr": 90
       }
     ],
-    "appliedAt": "2026-07-12T21:17:06.272Z"
+    "appliedAt": "2026-07-12T21:30:12.053Z"
   },
   "sixCategoryModelVersion": "six-category-live-20260712a-era-depth",
   "datasetEnd": "2026-06-27",
