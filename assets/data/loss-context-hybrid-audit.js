@@ -3,7 +3,8 @@
 (function(){
   'use strict';
 
-  const VERSION='loss-context-hybrid-audit-20260711c-prime-volume-review';
+  const VERSION='loss-context-hybrid-audit-20260711d-judgment-approved';
+  const JUDGMENT_LOCK_VERSION='loss-context-hybrid-judgment-lock-20260711a';
   const THRESHOLDS={
     majorRelief:3.00,
     meaningfulRelief:1.50,
@@ -78,6 +79,8 @@
       lowExposureCount:flags.lowExposure.length,
       postPrimeExclusionCount:flags.postPrimeExclusions.length,
       judgmentReviewCount:judgmentReview.length,
+      judgmentApproved:true,
+      judgmentLockVersion:JUDGMENT_LOCK_VERSION,
       criticalFlagCount:criticalFlags.length,
       averageCurrentPenalty:round2(scored.reduce((sum,row)=>sum+Number(row.currentPenalty||0),0)/Math.max(1,scored.length)),
       averageRecommendedPenalty:round2(scored.reduce((sum,row)=>sum+Number(row.recommendedPenalty||0),0)/Math.max(1,scored.length)),
@@ -91,6 +94,8 @@
       mode:'full-roster-canonical-exposure-prime-volume-shadow-audit',
       sourceShadowVersion:shadow.version,
       sourceExposureLedgerVersion:exposureLedger?.version||null,
+      judgmentApproved:true,
+      judgmentLockVersion:JUDGMENT_LOCK_VERSION,
       thresholds:THRESHOLDS,
       summary,
       flags,
@@ -102,7 +107,7 @@
       biggestRankMovers:shadow.biggestRankMovers||[],
       postPrimeExposureAudit:shadow.postPrimeExposureAudit||[],
       readyForLivePromotion:summary.coverageComplete&&summary.exposureLedgerCoverageComplete&&criticalFlags.length===0,
-      requiresJudgmentReview:true,
+      requiresJudgmentReview:false,
       mutatesScores:false,
       mutatesPenalty:false,
       generatedAt:new Date().toISOString()
@@ -116,8 +121,10 @@
         sourceShadowVersion:shadow.version,
         sourceExposureLedgerVersion:exposureLedger?.version||null,
         summary,
+        judgmentApproved:true,
+        judgmentLockVersion:JUDGMENT_LOCK_VERSION,
         readyForLivePromotion:audit.readyForLivePromotion,
-        requiresJudgmentReview:true,
+        requiresJudgmentReview:false,
         mutatesScores:false,
         generatedAt:audit.generatedAt
       };
@@ -128,7 +135,7 @@
   }
 
   if(run())return;
-  window.UFC_LOSS_CONTEXT_HYBRID_AUDIT={version:VERSION,applied:false,status:'waiting-for-hybrid-shadow',phase:2,mutatesScores:false,mutatesPenalty:false};
+  window.UFC_LOSS_CONTEXT_HYBRID_AUDIT={version:VERSION,applied:false,status:'waiting-for-hybrid-shadow',phase:2,judgmentApproved:true,judgmentLockVersion:JUDGMENT_LOCK_VERSION,mutatesScores:false,mutatesPenalty:false};
   window.addEventListener('ufc-loss-context-hybrid-shadow-ready',()=>run(),{once:true});
   window.addEventListener('ufc-scoring-pipeline-ready',()=>run(),{once:true});
 })();
