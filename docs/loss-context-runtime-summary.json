@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-12T01:22:57.970Z",
+  "generatedAt": "2026-07-12T01:43:55.036Z",
   "pipelineStatus": "ready",
   "pipelineError": null,
   "complete": true,
@@ -74,7 +74,7 @@
     "mutatesRecords": true,
     "mutatesPenalty": false,
     "mutatesScores": false,
-    "appliedAt": "2026-07-12T01:22:54.321Z",
+    "appliedAt": "2026-07-12T01:43:51.430Z",
     "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
   },
   "promotedPenaltyChanges": [
@@ -332,6 +332,17 @@
     },
     {
       "board": "men",
+      "fighter": "Deiveson Figueiredo",
+      "currentRank": 39,
+      "currentTotal": 40.31,
+      "currentPenalty": -6.75,
+      "priorPenalty": -5.25,
+      "counterfactualTotal": 41.81,
+      "counterfactualRank": 34,
+      "rankMovement": -5
+    },
+    {
+      "board": "men",
       "fighter": "Tito Ortiz",
       "currentRank": 31,
       "currentTotal": 44.66,
@@ -340,28 +351,6 @@
       "counterfactualTotal": 45.91,
       "counterfactualRank": 26,
       "rankMovement": -5
-    },
-    {
-      "board": "men",
-      "fighter": "Deiveson Figueiredo",
-      "currentRank": 38,
-      "currentTotal": 40.31,
-      "currentPenalty": -6.75,
-      "priorPenalty": -5.25,
-      "counterfactualTotal": 41.81,
-      "counterfactualRank": 34,
-      "rankMovement": -4
-    },
-    {
-      "board": "men",
-      "fighter": "Robbie Lawler",
-      "currentRank": 40,
-      "currentTotal": 39.83,
-      "currentPenalty": -9.25,
-      "priorPenalty": -8.62,
-      "counterfactualTotal": 40.46,
-      "counterfactualRank": 37,
-      "rankMovement": -3
     },
     {
       "board": "men",
@@ -450,6 +439,17 @@
       "counterfactualTotal": 29.43,
       "counterfactualRank": 12,
       "rankMovement": 2
+    },
+    {
+      "board": "men",
+      "fighter": "Robbie Lawler",
+      "currentRank": 40,
+      "currentTotal": 39.83,
+      "currentPenalty": -9.25,
+      "priorPenalty": -8.62,
+      "counterfactualTotal": 40.46,
+      "counterfactualRank": 38,
+      "rankMovement": -2
     },
     {
       "board": "men",
@@ -564,12 +564,12 @@
     {
       "board": "men",
       "fighter": "Dustin Poirier",
-      "currentRank": 37,
+      "currentRank": 38,
       "currentTotal": 40.35,
       "currentPenalty": -10,
       "priorPenalty": -10,
       "counterfactualTotal": 40.35,
-      "counterfactualRank": 38,
+      "counterfactualRank": 39,
       "rankMovement": 1
     },
     {
@@ -1129,7 +1129,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T01:22:54.286Z",
+        "completedAt": "2026-07-12T01:43:51.388Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -1239,7 +1239,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T01:22:54.296Z",
+        "completedAt": "2026-07-12T01:43:51.404Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -1432,7 +1432,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T01:22:53.612Z",
+        "completedAt": "2026-07-12T01:43:50.670Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -1566,7 +1566,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T01:22:54.293Z",
+        "completedAt": "2026-07-12T01:43:51.399Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -1700,7 +1700,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T01:22:54.293Z",
+        "completedAt": "2026-07-12T01:43:51.399Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -1798,7 +1798,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T01:22:54.296Z",
+        "completedAt": "2026-07-12T01:43:51.404Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -1942,7 +1942,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-12T01:22:53.608Z",
+        "completedAt": "2026-07-12T01:43:50.665Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -2087,7 +2087,7 @@
         "batch": 1,
         "machineReadable": true,
         "source": "fighter packet audit plus canonical Era window review",
-        "completedAt": "2026-07-12T01:22:53.607Z",
+        "completedAt": "2026-07-12T01:43:50.665Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "completeUfcLossLedger": true,
         "bucketReconciled": true
@@ -2257,7 +2257,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T01:22:54.289Z",
+        "completedAt": "2026-07-12T01:43:51.391Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -2367,7 +2367,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T01:22:54.296Z",
+        "completedAt": "2026-07-12T01:43:51.404Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
@@ -2489,7 +2489,7 @@
         "machineReadable": true,
         "completeUfcLossLedger": true,
         "source": "canonical Era window plus current fighter packet and UFC fight-history audit",
-        "completedAt": "2026-07-12T01:22:54.296Z",
+        "completedAt": "2026-07-12T01:43:51.404Z",
         "canonicalProductionVersion": "loss-context-canonical-production-20260710a-runtime-closure",
         "bucketReconciled": true
       }
