@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="app-build" content="20260712-play-tab" />
+  <meta name="app-build" content="20260712-play-tab-launch" />
   <title>UFC All-Time Rankings</title>
   <link rel="stylesheet" href="assets/css/app.css?v=app-css-20260711a-picks" />
-  <link rel="stylesheet" href="assets/css/play.css?v=play-css-20260712a" />
+  <link rel="stylesheet" href="assets/css/play.css?v=play-css-20260712b-launch" />
   <link rel="stylesheet" href="assets/css/picks.css?v=picks-css-20260711c-live-gameplay" />
   <link rel="stylesheet" href="assets/css/picks-room-admin.css?v=picks-room-admin-20260711b" />
   <link rel="stylesheet" href="assets/css/picks-launch-polish.css?v=picks-launch-polish-20260711b-manual-lock" />
@@ -36,7 +36,50 @@
     <section id="division" class="view"><div class="section-title"><h2>Division Boards</h2><p>Top fighters by primary UFC division.</p></div><div id="divisionList"></div></section>
     <section id="categories" class="view"><div class="section-title"><h2>Category Leaders</h2><p>Sort the board by a specific scoring category. Raw score is model input; Rating is the app-facing category grade.</p></div><div class="compare-controls"><select id="categoryBoardSelect"></select></div><div id="categoryBoardList" class="rules-grid"></div></section>
     <section id="compare" class="view"><div class="section-title"><h2>Compare Mode</h2><p>Pick any two fighters and see where the edge comes from.</p></div><div class="compare-controls"><select id="fighterA"></select><select id="fighterB"></select></div><div id="compareResult" class="compare-grid"></div></section>
-    <section id="play" class="view"><div class="section-title"><h2>Play</h2><p>Build your UFC Top 10, test yourself with blind résumés, and see where your opinions break from the model.</p></div><div id="playApp" class="play-shell"></div></section>
+    <section id="play" class="view">
+      <div class="section-title"><h2>Play</h2><p>Build your own UFC GOAT list or test your résumé instincts without seeing the names.</p></div>
+      <div class="play-shell">
+        <div class="play-mode-switch" role="tablist" aria-label="Play modes">
+          <button type="button" class="active" data-play-mode="top10">Build Your Top 10</button>
+          <button type="button" data-play-mode="blind">Blind Résumé</button>
+        </div>
+        <section id="playTop10Panel" class="play-panel">
+          <div class="play-intro-card">
+            <div><h3>Build Your UFC Top 10</h3><p>Choose ten fighters, put them in order, then see exactly where you disagree with the official model.</p></div>
+            <div class="play-progress-wrap"><strong id="playTop10Count">0/10 selected</strong><div class="play-progress"><i id="playTop10ProgressFill"></i></div></div>
+          </div>
+          <div class="play-builder-grid">
+            <div class="play-list-card">
+              <div class="play-card-head"><h3>Your ranking</h3><span>Drag or use the arrows</span></div>
+              <div id="playTop10List" class="play-top10-list"></div>
+              <div class="play-builder-actions">
+                <button id="playCompareBtn" class="play-primary" type="button" disabled>COMPARE WITH MODEL</button>
+                <button id="playShareBtn" class="play-secondary" type="button" disabled>SHARE RESULTS CARD</button>
+                <button id="playResetTop10Btn" class="play-secondary" type="button">CLEAR</button>
+              </div>
+            </div>
+            <div class="play-add-card">
+              <div class="play-card-head"><h3>Add fighters</h3><span>Men’s UFC all-time board</span></div>
+              <input id="playFighterSearch" class="play-search-box" type="search" placeholder="Search fighter…" autocomplete="off" />
+              <div id="playFighterResults" class="play-search-results"></div>
+              <button id="playModelTop10Btn" class="play-secondary" type="button">START WITH MODEL TOP 10</button>
+              <p class="play-help">Your list saves automatically on this device.</p>
+            </div>
+          </div>
+          <div id="playTop10Result" class="play-result-card" hidden></div>
+        </section>
+        <section id="playBlindPanel" class="play-panel" hidden>
+          <div class="blind-stage">
+            <div class="blind-header">
+              <div><h3>Which UFC Résumé Ranks Higher?</h3><p>Pick the career before the names and photos are revealed.</p></div>
+              <div class="blind-scoreboard"><span id="blindRound">ROUND 1</span><span>SCORE <strong id="blindScore">0-0</strong></span></div>
+            </div>
+            <div id="blindMatchup" class="blind-matchup"></div>
+          </div>
+          <div id="blindReveal" class="blind-reveal" hidden></div>
+        </section>
+      </div>
+    </section>
     <section id="picks" class="view">
       <div class="section-title"><h2>UFC Picks</h2><p>Pick every fight, use one optional Underdog Lock, and compete across the season.</p></div>
       <div class="picks-shell">
@@ -44,7 +87,6 @@
         <div id="picksEventHero" class="picks-event-hero"></div>
         <div id="picksSetupNote" class="picks-setup-note">Local preview is active. Add the Supabase project URL and public anon key to enable real friend rooms across different phones.</div>
         <div id="picksRoomBanner" class="picks-room-banner"></div>
-
         <div id="picksRoomSetup" class="card picks-room-card">
           <div class="picks-mode-switch" role="tablist" aria-label="Room action">
             <button id="picksCreateMode" class="active" type="button">Start a Room</button>
@@ -58,16 +100,13 @@
           <button id="picksRoomAction" class="picks-primary picks-room-action" type="button">Start Picks Room</button>
           <div id="picksStatus" class="picks-status">Friends’ exact picks stay hidden until each fight locks.</div>
         </div>
-
         <details id="picksAdminPanel" class="card picks-admin-card" hidden>
           <summary>Manage Live Results <span>Room Owner</span></summary>
           <div id="picksAdminContent" class="picks-admin-content"></div>
         </details>
-
         <div class="card picks-progress-card"><div id="picksProgress" class="picks-progress"></div></div>
         <div id="picksFightList" class="picks-fights"></div>
         <div id="picksStandingsCard" class="card picks-standings-card"><h3>Room Standings</h3><div id="picksStandings" class="picks-standings"></div></div>
-
         <div id="picksRoomPicksCard" class="card picks-room-picks-card" hidden>
           <div class="picks-card-head"><h3>Room Picks</h3><span id="picksRoomPicksCount">Waiting for first lock</span></div>
           <p class="picks-card-subtitle">Everyone’s picks appear here as soon as each fight locks.</p>
@@ -121,7 +160,6 @@
   <script src="assets/data/quality-wins-audit-cruz-ilia.js?v=quality-wins-audit-cruz-ilia-20260712b-evidence-sync"></script>
   <script src="assets/js/profile-stat-consistency.js?v=profile-stat-consistency-20260711b-ilia-title-prime-finish"></script>
   <script src="assets/js/championship-label-polish.js?v=championship-label-polish-20260711c-compact-copy-contrast" data-championship-label-polish="true"></script>
-  <script src="assets/js/play.js?v=play-js-20260712a"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/data/picks-events.js?v=picks-events-20260712b-okc-live-deploy"></script>
   <script src="assets/data/picks-photo-overrides.js?v=picks-photo-overrides-20260712b-okc-ddp-live"></script>
@@ -145,5 +183,6 @@
   <script src="assets/js/picks-device-recovery.js?v=picks-device-recovery-20260712a"></script>
   <script src="assets/js/picks-mobile-polish.js?v=picks-mobile-polish-20260712d-photo-centering"></script>
   <script src="assets/js/picks-odds-coverage.js?v=picks-odds-coverage-20260712a"></script>
+  <script src="assets/js/play.js?v=play-js-20260712b-launch"></script>
 </body>
 </html>
