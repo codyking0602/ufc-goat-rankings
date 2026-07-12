@@ -1,6 +1,6 @@
 // Championship Resume rule locks. Shadow mode only; mutates ledger audit data after ledger load.
 (function(){
-  const VERSION='championship-resume-ledger-rule-locks-20260707b-recent-title-events';
+  const VERSION='championship-resume-ledger-rule-locks-20260712a-couture-calibration';
   const BASE={normal:1,interim:.75,vacantUndisputed:.9,secondDivisionUndisputed:1.25,vacantSecondDivision:1.15};
   const UPDATES=[
     ['Aljamain Sterling','Petr Yan',0.50,'high-risk review','DQ title win/weird title context; Cody locked DQ rule at 0.50.'],
@@ -16,7 +16,15 @@
     ['Demetrious Johnson','Chris Cariaso',0.75,'high-risk review','Clearly soft title opponent floor.'],
     ['Demetrious Johnson','Tim Elliott',0.75,'high-risk review','TUF/weird challenger context; soft/weird floor.'],
     ['Tito Ortiz','Elvis Sinosic',0.75,'high-risk review','Clearly softer title challenger floor.'],
-    ['Ronda Rousey','Bethe Correia',0.75,'high-risk review','Clearly soft title opponent floor.']
+    ['Ronda Rousey','Bethe Correia',0.75,'high-risk review','Clearly soft title opponent floor.'],
+    ['Randy Couture','Maurice Smith',0.75,'review','Historic title win, but shallow early-era title field receives a material opponent-strength discount.'],
+    ['Randy Couture','Kevin Randleman',0.85,'review','Legitimate champion win with old-era heavyweight depth calibration.'],
+    ['Randy Couture','Pedro Rizzo',0.85,'review','Strong title challenger, but below full modern elite-title value.'],
+    ['Randy Couture','Pedro Rizzo II',0.80,'review','Repeat title win with old-era and repeat-opponent calibration.'],
+    ['Randy Couture','Tito Ortiz',0.90,'review','Second-division title win remains highly valuable, with old-era depth calibration.'],
+    ['Randy Couture','Vitor Belfort',0.80,'review','Weird cut-loss rematch and old-era title context reduce the credit.'],
+    ['Randy Couture','Tim Sylvia',0.85,'review','Heavyweight title win remains strong, with softer-era opponent calibration.'],
+    ['Randy Couture','Gabriel Gonzaga',0.90,'locked','Strong heavyweight title defense over a dangerous contender.']
   ];
   const ADDITIONS=[
     ['Justin Gaethje','Paddy Pimblett','interim',0.85,'review','Recent-event add: UFC 324 interim lightweight title win. Counts as interim title credit only.'],
