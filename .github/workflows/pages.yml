@@ -1,6 +1,13 @@
 name: Deploy UFC GOAT Rankings
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - '*.html'
+      - 'assets/**'
+      - '.github/workflows/pages.yml'
   workflow_dispatch:
 
 permissions:
