@@ -161,11 +161,7 @@
   async function checkCompletedConsistency(){
     try{
       const context=await getCompletionContext();
-      if(context.event.status!=='complete' || !context.unresolved.length) return;
-      const key=`ufc-picks:completion-check:${context.event.id}`;
-      if(sessionStorage.getItem(key)) return;
-      sessionStorage.setItem(key,'1');
-      openModal(context);
+      if(context.event.status==='complete' && context.unresolved.length) openModal(context);
     }catch(_error){}
   }
 
