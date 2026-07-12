@@ -6,6 +6,7 @@ on:
     paths:
       - 'scripts/build-division-era-depth-shadow.mjs'
       - 'scripts/run-division-era-depth-shadow.mjs'
+      - 'scripts/refresh-division-era-depth-source.mjs'
       - 'scripts/build-division-era-depth-judgment-review.mjs'
       - '.github/workflows/division-era-depth-shadow.yml'
   workflow_dispatch:
@@ -20,7 +21,7 @@ permissions:
 jobs:
   build-shadow:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - name: Check out main
         uses: actions/checkout@v4
@@ -33,18 +34,20 @@ jobs:
       - name: Check generator syntax
         run: |
           node --check scripts/build-division-era-depth-shadow.mjs
+          node --check scripts/refresh-division-era-depth-source.mjs
           node --check scripts/run-division-era-depth-shadow.mjs
           node --check scripts/build-division-era-depth-judgment-review.mjs
 
-      - name: Build 63-fighter depth shadow
+      - name: Build current 63-fighter depth shadow
         run: node scripts/run-division-era-depth-shadow.mjs
 
-      - name: Build 63-fighter judgment review
+      - name: Build final 63-fighter judgment review
         run: node scripts/build-division-era-depth-judgment-review.mjs
 
-      - name: Validate generated shadow and judgment review
+      - name: Validate promotion contract
         run: |
           node --check assets/data/division-era-depth-shadow.js
+          node --check assets/data/division-era-depth-audit.js
           node - <<'NODE'
           const fs = require('fs');
           const report = JSON.parse(fs.readFileSync('docs/division-era-depth-shadow-report.json', 'utf8'));
@@ -53,29 +56,33 @@ jobs:
           if (report.summary.rosterCount !== 63 || report.summary.coverageCount !== 63) throw new Error('Full-roster coverage failed.');
           if (report.summary.directMatchCoverageCount !== 63 || report.summary.fallbackCount !== 0) throw new Error('Direct fight-history coverage failed.');
           if (report.summary.aliasResolutionComplete !== true) throw new Error('Alias resolution failed.');
-          if (review.mode !== 'judgment-review-shadow-only' || review.mutatesLiveScores !== false) throw new Error('Judgment review safety contract failed.');
-          if (review.coverage.rosterCount !== 63 || review.coverage.reviewedCount !== 63) throw new Error('Judgment review coverage failed.');
+          if (report.source.sourceFresh !== true || report.promotionContract.sourceFresh !== true) throw new Error(`Current source validation failed at ${report.source.datasetEnd}.`);
+          if (report.summary.womenFeatherweightTreatmentApplied !== true || report.summary.pureWomenFeatherweightZeroCount !== 1) throw new Error('WFW-safe treatment failed.');
+          if (report.promotionContract.womenFeatherweightSafe !== true || report.promotionContract.directMatchCoverageComplete !== true) throw new Error('Promotion contract is incomplete.');
+          if (review.mode !== 'judgment-review-ready-for-live' || review.mutatesLiveScores !== false) throw new Error('Judgment review contract failed.');
+          if (review.coverage.rosterCount !== 63 || review.coverage.reviewedCount !== 63 || review.coverage.holdCount !== 0) throw new Error('Judgment review coverage failed.');
           if (review.formulaJudgment.curvedTranslationApproved !== true || review.formulaJudgment.linearTranslationRejected !== true) throw new Error('Formula judgment is incomplete.');
-          if (review.coverage.majorMoverCount < 1 || review.formulaJudgment.majorMoverJudgmentApproved !== true) throw new Error('Major mover judgment failed.');
-          if (review.coverage.wfwInfluencedCount < 1 || review.promotionDecision.readyForLivePromotion !== false) throw new Error('Expected WFW/source promotion hold is missing.');
-          console.log(JSON.stringify({shadow: report.summary, judgment: review.coverage, promotionDecision: review.promotionDecision}, null, 2));
+          if (review.formulaJudgment.majorMoverJudgmentApproved !== true || review.formulaJudgment.womenFeatherweightTreatmentApproved !== true) throw new Error('Judgment approval failed.');
+          if (review.promotionDecision.readyForLivePromotion !== true || review.promotionDecision.blockers.length !== 0) throw new Error('Era-depth model is not approved for live promotion.');
+          console.log(JSON.stringify({shadow: report.summary, source: report.source, judgment: review.coverage, promotionDecision: review.promotionDecision}, null, 2));
           NODE
 
-      - name: Upload shadow and judgment reports
+      - name: Upload depth reports
         uses: actions/upload-artifact@v4
         with:
-          name: division-era-depth-shadow
+          name: division-era-depth
           path: |
             assets/data/division-era-depth-shadow.js
+            assets/data/division-era-depth-audit.js
             docs/division-era-depth-shadow-report.json
             docs/division-era-depth-judgment-review.json
             docs/division-era-depth-judgment-review.md
           retention-days: 30
 
-      - name: Publish generated shadow and judgment review
+      - name: Publish generated depth model and judgment review
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add assets/data/division-era-depth-shadow.js docs/division-era-depth-shadow-report.json docs/division-era-depth-judgment-review.json docs/division-era-depth-judgment-review.md
-          git commit -m 'Record division era depth judgment review [skip ci]' || true
+          git add assets/data/division-era-depth-shadow.js assets/data/division-era-depth-audit.js docs/division-era-depth-shadow-report.json docs/division-era-depth-judgment-review.json docs/division-era-depth-judgment-review.md
+          git commit -m 'Record current division era depth approval [skip ci]' || true
           git push
