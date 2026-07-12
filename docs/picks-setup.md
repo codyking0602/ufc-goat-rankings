@@ -12,6 +12,7 @@ Run these files in **Supabase → SQL Editor** in this order:
 4. `supabase/picks-room-admin-phase.sql`
 5. `supabase/picks-manual-lock-phase.sql`
 6. `supabase/picks-persistent-groups-phase.sql`
+7. `supabase/picks-event-manager-phase.sql`
 
 Then open **Project Settings → API** and copy the project URL and public publishable key into `assets/data/supabase-config.js`.
 
@@ -35,20 +36,31 @@ Every Picks room becomes a permanent group after `picks-persistent-groups-phase.
 - Existing members carry into every new event automatically.
 - Each event keeps its own room standings and recap.
 - The group card tracks cumulative points, accuracy, event wins, and Underdog Lock bonuses.
-- The group owner can attach the next upcoming UFC event from the app after that event has been loaded into Supabase.
+- The group owner can attach the next UFC event without rebuilding the group.
 
-## Weekly event maintenance
+## Event Manager
 
-Supabase is the multiplayer source of truth. Update `pick_events` and `pick_fights` in the Table Editor or SQL Editor.
+After `picks-event-manager-phase.sql` runs, the permanent-group owner gets a private **Event Manager** panel inside Picks.
 
-Rules:
+The owner can:
 
-- Numbered UFC events: load every scheduled fight.
-- UFC Fight Nights: load only the main card.
-- Each fight has its own `lock_at` timestamp.
-- Store American moneyline odds in `red_odds` and `blue_odds` with `odds_source` and `odds_updated_at`.
-- Set `result_status` to `complete` and `winner_name` to the winner after the fight.
-- For draws, no contests, or cancellations, set the matching `result_status`; they do not award a point.
-- Once a new event is loaded with status `upcoming` or `live`, the group owner can add it from the permanent group panel.
+- Create a draft numbered event or Fight Night.
+- Enter the event date, headline matchup, and location.
+- Add, edit, reorder, or delete fights before picks are submitted.
+- Set each fight's card section, weight class, lock time, and American moneyline odds.
+- Publish the event and automatically carry the permanent group into its new room.
+- Reopen an upcoming event room directly from the manager.
+
+Numbered UFC events should include the full scheduled card. Fight Nights should include the main card only.
+
+## Live event maintenance
+
+Once an event is published, Supabase remains the multiplayer source of truth.
+
+- Use the room-owner controls to lock or reopen fights.
+- Set winners, draws, no contests, and cancellations from **Manage Live Results**.
+- Each correct winner awards one point.
+- Draws, no contests, and cancellations remain void.
+- Completed events stay available through the room recap and Past Events archive.
 
 `assets/data/picks-events.js` is only the no-backend preview/fallback. Keep it aligned with the live event while testing.
