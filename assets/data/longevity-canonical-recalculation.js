@@ -2,8 +2,8 @@
 // Updates Era Ledger inputs only; the existing shadow scorer and live promoter own the /30 category score.
 (function(){
   'use strict';
-  const VERSION='longevity-canonical-recalculation-20260710b-eleven-window-rebuild';
-  const AS_OF='2026-07-10';
+  const VERSION='longevity-canonical-recalculation-20260712a-couture-status-calibration';
+  const AS_OF='2026-07-12';
   const GAP_CAP_MONTHS=18;
   const era=window.UFC_FIGHTER_ERA_LEDGERS;
   const ledgers=era?.ledgers;
@@ -36,9 +36,10 @@
     },
     'Randy Couture':{
       gapAdjustedMonths:128.7,
+      statusMultiplier:1.00,
       window:'Vitor Belfort I → Brock Lesnar',
       startCorrection:'1997-10-17',
-      note:'The full UFC championship arc is connected, with every inactivity gap capped at 18 months.'
+      note:'The full UFC championship arc is connected with every inactivity gap capped at 18 months. Status multiplier is neutral because the elite relevance was fragmented across multiple reigns rather than one sustained title window.'
     },
     'Chuck Liddell':{
       gapAdjustedMonths:59.1,
@@ -96,7 +97,7 @@
     }
 
     const previous={...(ledger.longevity||{})};
-    const statusMultiplier=Number(previous.statusMultiplier||1);
+    const statusMultiplier=Number.isFinite(Number(input.statusMultiplier))?Number(input.statusMultiplier):Number(previous.statusMultiplier||1);
     const divisionMultiplier=Number(previous.divisionMultiplier||1);
     const activeEliteYears=round2(Number(input.gapAdjustedMonths)/12);
     const preview=previewScore(input.gapAdjustedMonths,statusMultiplier,divisionMultiplier);
@@ -106,6 +107,7 @@
       gapCapMonths:GAP_CAP_MONTHS,
       gapAdjustedMonths:Number(input.gapAdjustedMonths),
       activeEliteYears,
+      statusMultiplier,
       adjustmentNote:`${input.window}. ${input.note}`,
       windowLockedPendingRecalculation:false,
       canonicalWindowRecalculated:true,
@@ -124,14 +126,15 @@
       countedEliteMonths:preview.countedEliteMonths,
       longevityScorePreview:preview.score,
       priorGapAdjustedMonths:Number(previous.gapAdjustedMonths||0),
-      priorActiveEliteYears:Number(previous.activeEliteYears||0)
+      priorActiveEliteYears:Number(previous.activeEliteYears||0),
+      priorStatusMultiplier:Number(previous.statusMultiplier||1)
     });
   });
 
   const stillPending=Object.keys(ledgers).filter(fighter=>!!ledgers[fighter]?.longevity?.windowLockedPendingRecalculation);
   window.UFC_CANONICAL_LONGEVITY_RECALCULATION={
     version:VERSION,
-    source:'Cody-approved canonical Fighter Era windows',
+    source:'Cody-approved canonical Fighter Era windows and old-era status calibration',
     asOf:AS_OF,
     gapCapMonths:GAP_CAP_MONTHS,
     formulaPreview:'score = min(30, (gapAdjustedMonths × statusMultiplier × divisionMultiplier) / 144 × 30)',
@@ -142,6 +145,7 @@
     stillPending,
     allChangedWindowsRecalculated:missing.length===0&&stillPending.length===0,
     correctsRandyBelfortDate:true,
+    calibratesRandyStatusMultiplier:true,
     mutatesEraLongevityInputs:true,
     mutatesScores:false,
     appliedAt:new Date().toISOString()
