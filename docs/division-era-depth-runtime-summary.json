@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-12T16:17:14.678Z",
+  "generatedAt": "2026-07-12T16:24:07.816Z",
   "pipelineStatus": "ready",
   "shadowVersion": "division-era-depth-shadow-20260712d-current-wfw-safe",
   "auditVersion": "division-era-depth-judgment-review-20260712b-live-approved",
@@ -14,7 +14,7 @@
     "version": "final-score-engine-20260712b-era-shadow-fallback",
     "applied": true,
     "reason": "division-era-depth-finalizer-post-ui",
-    "applyCount": 4,
+    "applyCount": 5,
     "formula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment",
     "fighterCount": 63,
     "strippedScoreOverrides": 504,
@@ -95,7 +95,7 @@
         "overallOvr": 90
       }
     ],
-    "appliedAt": "2026-07-12T16:17:11.883Z"
+    "appliedAt": "2026-07-12T16:24:04.844Z"
   },
   "sixCategoryModelVersion": "six-category-live-20260712a-era-depth",
   "datasetEnd": "2026-06-27",
@@ -276,7 +276,7 @@
     },
     {
       "fighter": "Junior dos Santos",
-      "rank": 28,
+      "rank": 29,
       "totalScore": 48.14,
       "preEraDepthTotalScore": 50.12,
       "adjustment": -1.98,
@@ -289,7 +289,7 @@
     },
     {
       "fighter": "Tito Ortiz",
-      "rank": 30,
+      "rank": 31,
       "totalScore": 47.01,
       "preEraDepthTotalScore": 50.01,
       "adjustment": -3,

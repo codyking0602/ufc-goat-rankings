@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-12T16:17:14.678Z",
+  "generatedAt": "2026-07-12T16:24:07.816Z",
   "baseUrl": "http://127.0.0.1:4173",
   "pipeline": {
     "version": "deterministic-scoring-pipeline-20260711a-cris-cyborg-photos",
@@ -51,8 +51,8 @@
     "timerCount": 0,
     "repeatedLoadCount": 0,
     "finalScoreApplyCount": 1,
-    "startedAt": "2026-07-12T16:17:04.415Z",
-    "completedAt": "2026-07-12T16:17:09.840Z",
+    "startedAt": "2026-07-12T16:23:56.243Z",
+    "completedAt": "2026-07-12T16:24:02.127Z",
     "error": null,
     "canonicalFighterRegistryBase": {
       "applied": true,
@@ -611,7 +611,7 @@
             "Compact championship window with shallow-division compression.",
             "UFC-only window."
           ],
-          "appliedAt": "2026-07-12T16:17:07.011Z"
+          "appliedAt": "2026-07-12T16:23:59.345Z"
         },
         "apexPeakAudit": {
           "score": 4.6,
@@ -1390,7 +1390,7 @@
             "Compact championship window with shallow-division compression.",
             "UFC-only window."
           ],
-          "appliedAt": "2026-07-12T16:17:07.012Z"
+          "appliedAt": "2026-07-12T16:23:59.347Z"
         },
         "longevityLegacyScore": 7.78,
         "longevityRaw30": 7.78,
@@ -1562,7 +1562,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-12T16:17:05.530Z"
+      "appliedAt": "2026-07-12T16:23:57.686Z"
     },
     "lossContextCompletionBatchFour": {
       "version": "loss-context-ledger-completion-batch-four-20260710a-five-highest-missing",
@@ -1618,7 +1618,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-12T16:17:05.535Z"
+      "appliedAt": "2026-07-12T16:23:57.689Z"
     },
     "lossContextCompletionBatchFive": {
       "version": "loss-context-ledger-completion-batch-five-20260710b-chuck-vitor-window",
@@ -1711,7 +1711,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-12T16:17:05.538Z"
+      "appliedAt": "2026-07-12T16:23:57.696Z"
     },
     "lossContextCompletionBatchSix": {
       "version": "loss-context-ledger-completion-batch-six-20260710a-first-half-eighteen",
@@ -1899,7 +1899,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-12T16:17:05.542Z"
+      "appliedAt": "2026-07-12T16:23:57.700Z"
     },
     "lossContextCompletionBatchSeven": {
       "version": "loss-context-ledger-completion-batch-seven-20260710a-final-seventeen",
@@ -2058,7 +2058,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-12T16:17:05.547Z"
+      "appliedAt": "2026-07-12T16:23:57.705Z"
     },
     "approvedFighterAuditCorrections": {
       "version": "approved-fighter-audit-corrections-20260712d-cruz-tate-ilia-deiveson",
@@ -2104,7 +2104,7 @@
         "Jessica Andrade"
       ],
       "masvidalCreditsChanged": false,
-      "appliedAt": "2026-07-12T16:17:05.555Z"
+      "appliedAt": "2026-07-12T16:23:57.711Z"
     },
     "lossContextCanonicalProduction": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -29377,7 +29377,7 @@
         ],
         "mode": "canonical-production",
         "mutatesScores": true,
-        "appliedAt": "2026-07-12T16:17:05.574Z"
+        "appliedAt": "2026-07-12T16:23:57.731Z"
       },
       "mismatchAudit": {
         "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -48244,7 +48244,7 @@
         "missingEraLossEntries": [],
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "appliedAt": "2026-07-12T16:17:05.575Z"
+        "appliedAt": "2026-07-12T16:23:57.731Z"
       },
       "scoreReview": {
         "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -50426,7 +50426,7 @@
         "mutatesPenalty": true,
         "mutatesScores": true,
         "finalScoreRecalculationOwner": "final-score-engine.js",
-        "appliedAt": "2026-07-12T16:17:05.575Z"
+        "appliedAt": "2026-07-12T16:23:57.731Z"
       },
       "appliedCompletionFixes": [
         "Robert Whittaker",
@@ -50486,7 +50486,7 @@
       ],
       "mutatesPenalty": true,
       "mutatesScores": true,
-      "appliedAt": "2026-07-12T16:17:05.575Z"
+      "appliedAt": "2026-07-12T16:23:57.731Z"
     },
     "lossContextScoreReview": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -52668,7 +52668,7 @@
       "mutatesPenalty": true,
       "mutatesScores": true,
       "finalScoreRecalculationOwner": "final-score-engine.js",
-      "appliedAt": "2026-07-12T16:17:05.575Z"
+      "appliedAt": "2026-07-12T16:23:57.731Z"
     },
     "lossContextMismatchAudit": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -71535,7 +71535,7 @@
       "missingEraLossEntries": [],
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-12T16:17:05.575Z"
+      "appliedAt": "2026-07-12T16:23:57.731Z"
     },
     "lossContextDynamicRosterTarget": {
       "version": "loss-context-dynamic-roster-target-20260710a",
@@ -71543,7 +71543,7 @@
       "expectedRosterCount": 63,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-12T16:17:05.829Z"
+      "appliedAt": "2026-07-12T16:23:58.009Z"
     },
     "opponentQualityReadyDetail": {
       "version": "opponent-quality-live-20260710c-fixed-benchmark",
@@ -71736,7 +71736,7 @@
       "calibratesRandyStatusMultiplier": true,
       "mutatesEraLongevityInputs": true,
       "mutatesScores": false,
-      "appliedAt": "2026-07-12T16:17:06.064Z"
+      "appliedAt": "2026-07-12T16:23:58.286Z"
     },
     "canonicalPrimeRecords": {
       "version": "canonical-prime-records-20260710c-chuck-vitor-window",
@@ -73756,7 +73756,7 @@
       "allWindowsLocked": false,
       "mutatesScores": false,
       "mutatesPrimeRecordDisplay": true,
-      "appliedAt": "2026-07-12T16:17:06.074Z"
+      "appliedAt": "2026-07-12T16:23:58.299Z"
     },
     "approvedOpponentQualityCorrection": {
       "applied": true,
@@ -74694,7 +74694,7 @@
       ],
       "masvidalCreditsChanged": false,
       "version": "approved-fighter-audit-corrections-20260712d-cruz-tate-ilia-deiveson",
-      "appliedAt": "2026-07-12T16:17:06.075Z"
+      "appliedAt": "2026-07-12T16:23:58.301Z"
     },
     "canonicalFighterRegistryOpponentQuality": {
       "applied": true,
@@ -75084,7 +75084,7 @@
           "version": "prime-dominance-audit-batch-eleven-20260712a-hughes-calibration"
         }
       },
-      "appliedAt": "2026-07-12T16:17:06.487Z"
+      "appliedAt": "2026-07-12T16:23:58.801Z"
     },
     "canonicalFighterRegistryPrime": {
       "applied": true,
@@ -79619,7 +79619,7 @@
       "mutatesEliteStakes": false,
       "mutatesTotals": false,
       "finalScoreRecalculationOwner": "final-score-engine.js",
-      "appliedAt": "2026-07-12T16:17:06.497Z"
+      "appliedAt": "2026-07-12T16:23:58.812Z"
     },
     "fighterEraWindowAudit": {
       "version": "fighter-era-window-audit-20260710b-record-dependencies",
@@ -83999,7 +83999,7 @@
       "allCanonicalPrimeRecordsPresent": false,
       "mutatesScores": false,
       "mutatesWindows": false,
-      "appliedAt": "2026-07-12T16:17:07.309Z"
+      "appliedAt": "2026-07-12T16:23:59.625Z"
     },
     "canonicalFighterRegistryApex": {
       "applied": true,
@@ -84121,7 +84121,7 @@
           "overallOvr": 90
         }
       ],
-      "appliedAt": "2026-07-12T16:17:07.660Z"
+      "appliedAt": "2026-07-12T16:23:59.950Z"
     },
     "lossContextFinalReconciliation": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -84192,7 +84192,7 @@
         "mutatesRecords": true,
         "mutatesPenalty": false,
         "mutatesScores": false,
-        "appliedAt": "2026-07-12T16:17:05.575Z",
+        "appliedAt": "2026-07-12T16:23:57.731Z",
         "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
       },
       "scoreReview": {
@@ -84933,7 +84933,7 @@
       ],
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "generatedAt": "2026-07-12T16:17:07.661Z",
+      "generatedAt": "2026-07-12T16:23:59.951Z",
       "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
     },
     "canonicalFighterRegistryFinal": {
@@ -85493,7 +85493,7 @@
             "Compact championship window with shallow-division compression.",
             "UFC-only window."
           ],
-          "appliedAt": "2026-07-12T16:17:07.011Z"
+          "appliedAt": "2026-07-12T16:23:59.345Z"
         },
         "apexPeakAudit": {
           "score": 4.6,
@@ -86272,7 +86272,7 @@
             "Compact championship window with shallow-division compression.",
             "UFC-only window."
           ],
-          "appliedAt": "2026-07-12T16:17:07.012Z"
+          "appliedAt": "2026-07-12T16:23:59.347Z"
         },
         "longevityLegacyScore": 7.78,
         "longevityRaw30": 7.78,
@@ -92543,9 +92543,38 @@
         }
       },
       {
-        "fighter": "Tyron Woodley",
+        "fighter": "Ilia Topuria",
         "board": "men",
         "rank": 26,
+        "preEraDepthTotalScore": 48.41,
+        "totalScore": 48.4,
+        "eraDepthAdjustment": -0.01,
+        "overallOvr": 89,
+        "divisionEraDepth": {
+          "version": "division-era-depth-finalizer-20260712c-late-ready-sync",
+          "sourceShadowVersion": "division-era-depth-shadow-20260712d-current-wfw-safe",
+          "depthIndex": 0.9945,
+          "adjustment": -0.01,
+          "componentRatios": {
+            "qualifiedActivePool": 0.9924,
+            "ranksSixToFifteenElo": 1.0161,
+            "contenderDiversity": 0.9601
+          },
+          "matchedPrimeFightCount": 6,
+          "sampledDivisions": [
+            "FW",
+            "LW"
+          ],
+          "primeStart": "2022-12-10",
+          "primeEnd": null,
+          "openPrime": true,
+          "womenFeatherweightTreatment": null
+        }
+      },
+      {
+        "fighter": "Tyron Woodley",
+        "board": "men",
+        "rank": 27,
         "preEraDepthTotalScore": 48.16,
         "totalScore": 48.37,
         "eraDepthAdjustment": 0.21,
@@ -92573,7 +92602,7 @@
       {
         "fighter": "Conor McGregor",
         "board": "men",
-        "rank": 27,
+        "rank": 28,
         "preEraDepthTotalScore": 48.77,
         "totalScore": 48.33,
         "eraDepthAdjustment": -0.45,
@@ -92603,7 +92632,7 @@
       {
         "fighter": "Junior dos Santos",
         "board": "men",
-        "rank": 28,
+        "rank": 29,
         "preEraDepthTotalScore": 50.12,
         "totalScore": 48.14,
         "eraDepthAdjustment": -1.98,
@@ -92631,7 +92660,7 @@
       {
         "fighter": "Merab Dvalishvili",
         "board": "men",
-        "rank": 29,
+        "rank": 30,
         "preEraDepthTotalScore": 47.68,
         "totalScore": 47.66,
         "eraDepthAdjustment": -0.02,
@@ -92659,7 +92688,7 @@
       {
         "fighter": "Tito Ortiz",
         "board": "men",
-        "rank": 30,
+        "rank": 31,
         "preEraDepthTotalScore": 50.01,
         "totalScore": 47.01,
         "eraDepthAdjustment": -3,
@@ -92687,7 +92716,7 @@
       {
         "fighter": "Dustin Poirier",
         "board": "men",
-        "rank": 31,
+        "rank": 32,
         "preEraDepthTotalScore": 46.96,
         "totalScore": 46.93,
         "eraDepthAdjustment": -0.02,
@@ -92715,7 +92744,7 @@
       {
         "fighter": "Justin Gaethje",
         "board": "men",
-        "rank": 32,
+        "rank": 33,
         "preEraDepthTotalScore": 46.83,
         "totalScore": 46.77,
         "eraDepthAdjustment": -0.06,
@@ -92737,35 +92766,6 @@
           "primeStart": "2018-08-25",
           "primeEnd": "2024-04-13",
           "openPrime": false,
-          "womenFeatherweightTreatment": null
-        }
-      },
-      {
-        "fighter": "Ilia Topuria",
-        "board": "men",
-        "rank": 33,
-        "preEraDepthTotalScore": 46.21,
-        "totalScore": 46.2,
-        "eraDepthAdjustment": -0.01,
-        "overallOvr": 89,
-        "divisionEraDepth": {
-          "version": "division-era-depth-finalizer-20260712c-late-ready-sync",
-          "sourceShadowVersion": "division-era-depth-shadow-20260712d-current-wfw-safe",
-          "depthIndex": 0.9945,
-          "adjustment": -0.01,
-          "componentRatios": {
-            "qualifiedActivePool": 0.9924,
-            "ranksSixToFifteenElo": 1.0161,
-            "contenderDiversity": 0.9601
-          },
-          "matchedPrimeFightCount": 6,
-          "sampledDivisions": [
-            "FW",
-            "LW"
-          ],
-          "primeStart": "2022-12-10",
-          "primeEnd": null,
-          "openPrime": true,
           "womenFeatherweightTreatment": null
         }
       },
@@ -92939,9 +92939,37 @@
         }
       },
       {
-        "fighter": "Lyoto Machida",
+        "fighter": "Dominick Cruz",
         "board": "men",
         "rank": 40,
+        "preEraDepthTotalScore": 44.21,
+        "totalScore": 42.6,
+        "eraDepthAdjustment": -1.61,
+        "overallOvr": 88,
+        "divisionEraDepth": {
+          "version": "division-era-depth-finalizer-20260712c-late-ready-sync",
+          "sourceShadowVersion": "division-era-depth-shadow-20260712d-current-wfw-safe",
+          "depthIndex": 0.8347,
+          "adjustment": -1.61,
+          "componentRatios": {
+            "qualifiedActivePool": 0.7045,
+            "ranksSixToFifteenElo": 0.7448,
+            "contenderDiversity": 0.9636
+          },
+          "matchedPrimeFightCount": 7,
+          "sampledDivisions": [
+            "BW"
+          ],
+          "primeStart": "2011-07-02",
+          "primeEnd": "2020-05-09",
+          "openPrime": false,
+          "womenFeatherweightTreatment": null
+        }
+      },
+      {
+        "fighter": "Lyoto Machida",
+        "board": "men",
+        "rank": 41,
         "preEraDepthTotalScore": 42.59,
         "totalScore": 42.31,
         "eraDepthAdjustment": -0.28,
@@ -92970,7 +92998,7 @@
       {
         "fighter": "Khamzat Chimaev",
         "board": "men",
-        "rank": 41,
+        "rank": 42,
         "preEraDepthTotalScore": 41.08,
         "totalScore": 41.5,
         "eraDepthAdjustment": 0.42,
@@ -92999,7 +93027,7 @@
       {
         "fighter": "Sean Strickland",
         "board": "men",
-        "rank": 42,
+        "rank": 43,
         "preEraDepthTotalScore": 40.14,
         "totalScore": 40.41,
         "eraDepthAdjustment": 0.27,
@@ -93022,34 +93050,6 @@
           "primeStart": "2021-07-31",
           "primeEnd": null,
           "openPrime": true,
-          "womenFeatherweightTreatment": null
-        }
-      },
-      {
-        "fighter": "Dominick Cruz",
-        "board": "men",
-        "rank": 43,
-        "preEraDepthTotalScore": 41.79,
-        "totalScore": 40.18,
-        "eraDepthAdjustment": -1.61,
-        "overallOvr": 87,
-        "divisionEraDepth": {
-          "version": "division-era-depth-finalizer-20260712c-late-ready-sync",
-          "sourceShadowVersion": "division-era-depth-shadow-20260712d-current-wfw-safe",
-          "depthIndex": 0.8347,
-          "adjustment": -1.61,
-          "componentRatios": {
-            "qualifiedActivePool": 0.7045,
-            "ranksSixToFifteenElo": 0.7448,
-            "contenderDiversity": 0.9636
-          },
-          "matchedPrimeFightCount": 7,
-          "sampledDivisions": [
-            "BW"
-          ],
-          "primeStart": "2011-07-02",
-          "primeEnd": "2020-05-09",
-          "openPrime": false,
           "womenFeatherweightTreatment": null
         }
       },
@@ -93650,12 +93650,12 @@
     "mutatesScores": true,
     "mutatesRanks": true,
     "mutatesOvr": true,
-    "appliedAt": "2026-07-12T16:17:08.536Z",
+    "appliedAt": "2026-07-12T16:24:00.772Z",
     "finalizedAfterPipeline": true,
     "finalizerVersion": "division-era-depth-finalizer-20260712c-late-ready-sync",
     "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-    "finalScoreEngineApplyCount": 4,
-    "finalizedAt": "2026-07-12T16:17:11.883Z"
+    "finalScoreEngineApplyCount": 5,
+    "finalizedAt": "2026-07-12T16:24:04.844Z"
   },
   "finalizer": {
     "version": "division-era-depth-finalizer-20260712c-late-ready-sync",
@@ -94974,9 +94974,38 @@
           }
         },
         {
-          "fighter": "Tyron Woodley",
+          "fighter": "Ilia Topuria",
           "board": "men",
           "rank": 26,
+          "preEraDepthTotalScore": 48.41,
+          "totalScore": 48.4,
+          "eraDepthAdjustment": -0.01,
+          "overallOvr": 89,
+          "divisionEraDepth": {
+            "version": "division-era-depth-finalizer-20260712c-late-ready-sync",
+            "sourceShadowVersion": "division-era-depth-shadow-20260712d-current-wfw-safe",
+            "depthIndex": 0.9945,
+            "adjustment": -0.01,
+            "componentRatios": {
+              "qualifiedActivePool": 0.9924,
+              "ranksSixToFifteenElo": 1.0161,
+              "contenderDiversity": 0.9601
+            },
+            "matchedPrimeFightCount": 6,
+            "sampledDivisions": [
+              "FW",
+              "LW"
+            ],
+            "primeStart": "2022-12-10",
+            "primeEnd": null,
+            "openPrime": true,
+            "womenFeatherweightTreatment": null
+          }
+        },
+        {
+          "fighter": "Tyron Woodley",
+          "board": "men",
+          "rank": 27,
           "preEraDepthTotalScore": 48.16,
           "totalScore": 48.37,
           "eraDepthAdjustment": 0.21,
@@ -95004,7 +95033,7 @@
         {
           "fighter": "Conor McGregor",
           "board": "men",
-          "rank": 27,
+          "rank": 28,
           "preEraDepthTotalScore": 48.77,
           "totalScore": 48.33,
           "eraDepthAdjustment": -0.45,
@@ -95034,7 +95063,7 @@
         {
           "fighter": "Junior dos Santos",
           "board": "men",
-          "rank": 28,
+          "rank": 29,
           "preEraDepthTotalScore": 50.12,
           "totalScore": 48.14,
           "eraDepthAdjustment": -1.98,
@@ -95062,7 +95091,7 @@
         {
           "fighter": "Merab Dvalishvili",
           "board": "men",
-          "rank": 29,
+          "rank": 30,
           "preEraDepthTotalScore": 47.68,
           "totalScore": 47.66,
           "eraDepthAdjustment": -0.02,
@@ -95090,7 +95119,7 @@
         {
           "fighter": "Tito Ortiz",
           "board": "men",
-          "rank": 30,
+          "rank": 31,
           "preEraDepthTotalScore": 50.01,
           "totalScore": 47.01,
           "eraDepthAdjustment": -3,
@@ -95118,7 +95147,7 @@
         {
           "fighter": "Dustin Poirier",
           "board": "men",
-          "rank": 31,
+          "rank": 32,
           "preEraDepthTotalScore": 46.96,
           "totalScore": 46.93,
           "eraDepthAdjustment": -0.02,
@@ -95146,7 +95175,7 @@
         {
           "fighter": "Justin Gaethje",
           "board": "men",
-          "rank": 32,
+          "rank": 33,
           "preEraDepthTotalScore": 46.83,
           "totalScore": 46.77,
           "eraDepthAdjustment": -0.06,
@@ -95168,35 +95197,6 @@
             "primeStart": "2018-08-25",
             "primeEnd": "2024-04-13",
             "openPrime": false,
-            "womenFeatherweightTreatment": null
-          }
-        },
-        {
-          "fighter": "Ilia Topuria",
-          "board": "men",
-          "rank": 33,
-          "preEraDepthTotalScore": 46.21,
-          "totalScore": 46.2,
-          "eraDepthAdjustment": -0.01,
-          "overallOvr": 89,
-          "divisionEraDepth": {
-            "version": "division-era-depth-finalizer-20260712c-late-ready-sync",
-            "sourceShadowVersion": "division-era-depth-shadow-20260712d-current-wfw-safe",
-            "depthIndex": 0.9945,
-            "adjustment": -0.01,
-            "componentRatios": {
-              "qualifiedActivePool": 0.9924,
-              "ranksSixToFifteenElo": 1.0161,
-              "contenderDiversity": 0.9601
-            },
-            "matchedPrimeFightCount": 6,
-            "sampledDivisions": [
-              "FW",
-              "LW"
-            ],
-            "primeStart": "2022-12-10",
-            "primeEnd": null,
-            "openPrime": true,
             "womenFeatherweightTreatment": null
           }
         },
@@ -95370,9 +95370,37 @@
           }
         },
         {
-          "fighter": "Lyoto Machida",
+          "fighter": "Dominick Cruz",
           "board": "men",
           "rank": 40,
+          "preEraDepthTotalScore": 44.21,
+          "totalScore": 42.6,
+          "eraDepthAdjustment": -1.61,
+          "overallOvr": 88,
+          "divisionEraDepth": {
+            "version": "division-era-depth-finalizer-20260712c-late-ready-sync",
+            "sourceShadowVersion": "division-era-depth-shadow-20260712d-current-wfw-safe",
+            "depthIndex": 0.8347,
+            "adjustment": -1.61,
+            "componentRatios": {
+              "qualifiedActivePool": 0.7045,
+              "ranksSixToFifteenElo": 0.7448,
+              "contenderDiversity": 0.9636
+            },
+            "matchedPrimeFightCount": 7,
+            "sampledDivisions": [
+              "BW"
+            ],
+            "primeStart": "2011-07-02",
+            "primeEnd": "2020-05-09",
+            "openPrime": false,
+            "womenFeatherweightTreatment": null
+          }
+        },
+        {
+          "fighter": "Lyoto Machida",
+          "board": "men",
+          "rank": 41,
           "preEraDepthTotalScore": 42.59,
           "totalScore": 42.31,
           "eraDepthAdjustment": -0.28,
@@ -95401,7 +95429,7 @@
         {
           "fighter": "Khamzat Chimaev",
           "board": "men",
-          "rank": 41,
+          "rank": 42,
           "preEraDepthTotalScore": 41.08,
           "totalScore": 41.5,
           "eraDepthAdjustment": 0.42,
@@ -95430,7 +95458,7 @@
         {
           "fighter": "Sean Strickland",
           "board": "men",
-          "rank": 42,
+          "rank": 43,
           "preEraDepthTotalScore": 40.14,
           "totalScore": 40.41,
           "eraDepthAdjustment": 0.27,
@@ -95453,34 +95481,6 @@
             "primeStart": "2021-07-31",
             "primeEnd": null,
             "openPrime": true,
-            "womenFeatherweightTreatment": null
-          }
-        },
-        {
-          "fighter": "Dominick Cruz",
-          "board": "men",
-          "rank": 43,
-          "preEraDepthTotalScore": 41.79,
-          "totalScore": 40.18,
-          "eraDepthAdjustment": -1.61,
-          "overallOvr": 87,
-          "divisionEraDepth": {
-            "version": "division-era-depth-finalizer-20260712c-late-ready-sync",
-            "sourceShadowVersion": "division-era-depth-shadow-20260712d-current-wfw-safe",
-            "depthIndex": 0.8347,
-            "adjustment": -1.61,
-            "componentRatios": {
-              "qualifiedActivePool": 0.7045,
-              "ranksSixToFifteenElo": 0.7448,
-              "contenderDiversity": 0.9636
-            },
-            "matchedPrimeFightCount": 7,
-            "sampledDivisions": [
-              "BW"
-            ],
-            "primeStart": "2011-07-02",
-            "primeEnd": "2020-05-09",
-            "openPrime": false,
             "womenFeatherweightTreatment": null
           }
         },
@@ -96081,14 +96081,14 @@
       "mutatesScores": true,
       "mutatesRanks": true,
       "mutatesOvr": true,
-      "appliedAt": "2026-07-12T16:17:08.536Z",
+      "appliedAt": "2026-07-12T16:24:00.772Z",
       "finalizedAfterPipeline": true,
       "finalizerVersion": "division-era-depth-finalizer-20260712c-late-ready-sync",
       "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-      "finalScoreEngineApplyCount": 4,
-      "finalizedAt": "2026-07-12T16:17:11.883Z"
+      "finalScoreEngineApplyCount": 5,
+      "finalizedAt": "2026-07-12T16:24:04.844Z"
     },
-    "appliedAt": "2026-07-12T16:17:11.884Z"
+    "appliedAt": "2026-07-12T16:24:04.845Z"
   },
   "finalScoreEngine": {
     "version": "final-score-engine-20260712b-era-shadow-fallback",
@@ -96120,12 +96120,12 @@
         "ceilingScore": 80.79
       }
     },
-    "applyCount": 4,
+    "applyCount": 5,
     "latest": {
       "version": "final-score-engine-20260712b-era-shadow-fallback",
       "applied": true,
       "reason": "division-era-depth-finalizer-post-ui",
-      "applyCount": 4,
+      "applyCount": 5,
       "formula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment",
       "fighterCount": 63,
       "strippedScoreOverrides": 504,
@@ -96206,7 +96206,7 @@
           "overallOvr": 90
         }
       ],
-      "appliedAt": "2026-07-12T16:17:11.883Z"
+      "appliedAt": "2026-07-12T16:24:04.844Z"
     }
   },
   "sixCategoryModel": {
@@ -96221,7 +96221,7 @@
       "eraDepthAdjustment": "post-base modifier"
     },
     "formula": "Championship /30 × 35 + Quality Wins /30 × 27.5 + Prime Dominance /30 × 27.5 + Longevity /30 × 10 + Apex Peak + Loss Context + Division-Era Depth",
-    "appliedAt": "2026-07-12T16:17:11.882Z",
+    "appliedAt": "2026-07-12T16:24:04.843Z",
     "jonJones": {
       "rank": 1,
       "fighter": "Jon Jones",
@@ -96286,7 +96286,7 @@
           "Long title-level window; late LHW/HW context slightly compressed but still reaches the longevity ceiling.",
           "UFC-only GOAT benchmark."
         ],
-        "appliedAt": "2026-07-12T16:17:07.009Z"
+        "appliedAt": "2026-07-12T16:23:59.342Z"
       },
       "apexPeakAudit": {
         "score": 6,
@@ -97867,7 +97867,7 @@
     },
     {
       "fighter": "Junior dos Santos",
-      "rank": 28,
+      "rank": 29,
       "totalScore": 48.14,
       "preEraDepthTotalScore": 50.12,
       "adjustment": -1.98,
@@ -97880,7 +97880,7 @@
     },
     {
       "fighter": "Tito Ortiz",
-      "rank": 30,
+      "rank": 31,
       "totalScore": 47.01,
       "preEraDepthTotalScore": 50.01,
       "adjustment": -3,
