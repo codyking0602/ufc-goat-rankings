@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='loss-context-hybrid-audit-20260711b-canonical-exposure';
+  const VERSION='loss-context-hybrid-audit-20260711c-prime-volume-review';
   const THRESHOLDS={
     majorRelief:3.00,
     meaningfulRelief:1.50,
@@ -30,6 +30,7 @@
       blocked,
       severityCap:scored.filter(row=>Number(row.severity)>=Number(row.severityMax)-0.01),
       frequencyCap:scored.filter(row=>Number(row.frequency)>=Number(row.frequencyMax)-0.01),
+      primeVolumeFloorApplied:scored.filter(row=>row.primeVolumeFloorApplied===true),
       totalCap:scored.filter(row=>Number(row.preDivision)>=Number(shadow.rules?.totalMax||6)-0.01),
       maxDivisionDiscount:scored.filter(row=>Number(row.divisionDiscountPct)>=Number(shadow.rules?.divisionDiscountMax||0.15)-0.001),
       majorRelief:scored.filter(row=>Number(row.projectedDelta)>=THRESHOLDS.majorRelief),
@@ -47,6 +48,7 @@
 
     const spotlightNames=['Dricus du Plessis','Justin Gaethje','Jon Jones','Georges St-Pierre','Max Holloway','Charles Oliveira','Randy Couture','Jose Aldo','Anderson Silva','Khabib Nurmagomedov'];
     const spotlight=spotlightNames.map(name=>shadow.entryFor?.(name)).filter(Boolean);
+    const judgmentReview=(shadow.biggestRankMovers||[]).slice(0,15);
 
     const criticalFlags=[
       ...flags.blocked.map(row=>({fighter:row.fighter,type:'blocked',detail:(row.blockers||[]).join(', ')})),
@@ -68,12 +70,14 @@
       unchangedCount:unchanged.length,
       severityCapCount:flags.severityCap.length,
       frequencyCapCount:flags.frequencyCap.length,
+      primeVolumeFloorAppliedCount:flags.primeVolumeFloorApplied.length,
       totalCapCount:flags.totalCap.length,
       maxDivisionDiscountCount:flags.maxDivisionDiscount.length,
       majorReliefCount:flags.majorRelief.length,
       majorRankMovementCount:flags.majorRankMovement.length,
       lowExposureCount:flags.lowExposure.length,
       postPrimeExclusionCount:flags.postPrimeExclusions.length,
+      judgmentReviewCount:judgmentReview.length,
       criticalFlagCount:criticalFlags.length,
       averageCurrentPenalty:round2(scored.reduce((sum,row)=>sum+Number(row.currentPenalty||0),0)/Math.max(1,scored.length)),
       averageRecommendedPenalty:round2(scored.reduce((sum,row)=>sum+Number(row.recommendedPenalty||0),0)/Math.max(1,scored.length)),
@@ -84,7 +88,7 @@
       version:VERSION,
       applied:true,
       phase:2,
-      mode:'full-roster-canonical-exposure-shadow-audit',
+      mode:'full-roster-canonical-exposure-prime-volume-shadow-audit',
       sourceShadowVersion:shadow.version,
       sourceExposureLedgerVersion:exposureLedger?.version||null,
       thresholds:THRESHOLDS,
@@ -92,6 +96,7 @@
       flags,
       criticalFlags,
       spotlight,
+      judgmentReview,
       largestRelief:shadow.largestRelief||[],
       harshestProjected:shadow.harshestProjected||[],
       biggestRankMovers:shadow.biggestRankMovers||[],
