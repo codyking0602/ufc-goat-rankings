@@ -9,5 +9,8 @@ window.UFC_PICKS_PHOTOS = {
   "Lone'er Kavanagh": "assets/fighters/loneer-kavanagh-thumb.webp",
   "King Green": "assets/fighters/king-green-thumb.webp",
   "Terrance McKinney": "assets/fighters/terrance-mckinney-thumb.webp",
-  "Nikita Krylov": "assets/fighters/nikita-krylov-thumb.webp"
+  "Nikita Krylov": "assets/fighters/nikita-krylov-thumb.webp",
+  "Dricus Du Plessis": "assets/fighters/dricus-du-plessis-thumb.webp",
+  "Dricus du Plessis": "assets/fighters/dricus-du-plessis-thumb.webp",
+  "Kamaru Usman": "assets/fighters/kamaru-usman-thumb.webp"
 };

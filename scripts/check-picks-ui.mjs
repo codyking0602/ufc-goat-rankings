@@ -8,7 +8,9 @@ const exists=relative=>fs.existsSync(path.join(root,relative));
 const failures=[];
 
 function check(condition,message){
-  if(!condition) failures.push(message);
+  if(condition) return;
+  failures.push(message);
+  console.error(`CHECK FAILED: ${message}`);
 }
 
 function requireFile(relative){
@@ -21,6 +23,8 @@ const profile=read('assets/js/picks-social-retention.js');
 const recovery=read('assets/js/picks-device-recovery.js');
 const recoverySql=read('supabase/picks-device-recovery-phase.sql');
 const settingsCleanup=read('assets/js/picks-settings-admin-cleanup.js');
+const events=read('assets/data/picks-events.js');
+const photos=read('assets/data/picks-photo-overrides.js');
 const setup=read('docs/picks-setup.md');
 
 const requiredFiles=[
@@ -36,12 +40,15 @@ const requiredFiles=[
   'assets/js/picks-internal-navigation.js',
   'assets/js/picks-home-event-cleanup.js',
   'assets/js/picks-settings-admin-cleanup.js',
+  'assets/data/picks-events.js',
+  'assets/data/picks-photo-overrides.js',
   'assets/css/picks-device-recovery.css',
   'assets/css/picks-internal-navigation.css',
   'assets/css/picks-home-event-cleanup.css',
   'assets/css/picks-settings-admin-cleanup.css',
   'assets/css/picks-final-cleanup.css',
-  'supabase/picks-device-recovery-phase.sql'
+  'supabase/picks-device-recovery-phase.sql',
+  'supabase/ufc-oklahoma-city-event.sql'
 ];
 requiredFiles.forEach(requireFile);
 
@@ -107,6 +114,13 @@ retiredSocialSymbols.forEach(symbol=>check(!profile.includes(symbol),`Retired So
 check(profile.includes('profileMarkup'),'Profile settings renderer is missing');
 check(profile.includes('picks_social_update_profile'),'Profile persistence RPC is missing');
 check(profile.includes('picksAddCalendar'),'Calendar reminder support is missing');
+check(profile.includes("'TRIGGER:-PT8H'") && profile.includes("'TRIGGER:-PT1H'"),'Fight-day calendar alerts are missing');
+check(settingsCleanup.includes('Add Phone Reminders'),'Settings cleanup does not preserve the phone-reminder label');
+
+check(events.includes("id: 'ufc-oklahoma-city-2026-07-18'"),'UFC Oklahoma City event is missing');
+check(events.includes("red:'Chase Hooper', blue:'Mitch Ramirez'"),'Current Oklahoma City main card is missing Hooper vs. Ramirez');
+check(!events.includes('okc-tavares-barriault'),'Stale Oklahoma City main-card bout remains');
+check(photos.includes('"Dricus Du Plessis": "assets/fighters/dricus-du-plessis-thumb.webp"'),'Dricus event-name photo mapping is missing');
 
 check(recovery.includes('picks_member_recovery_status'),'Recovery status RPC hook is missing');
 check(recovery.includes('picks_member_generate_recovery_key'),'Recovery key creation hook is missing');
@@ -132,4 +146,4 @@ if(failures.length){
   process.exit(1);
 }
 
-console.log(`Picks UI smoke check passed: ${assetRefs.length} local assets resolved, ${requiredFiles.length} required files present, retired interfaces absent, device recovery protected.`);
+console.log(`Picks UI smoke check passed: ${assetRefs.length} local assets resolved, ${requiredFiles.length} required files present, current event and phone reminders verified.`);
