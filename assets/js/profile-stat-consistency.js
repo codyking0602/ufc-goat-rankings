@@ -3,8 +3,8 @@
 (function(){
   'use strict';
 
-  const VERSION='profile-stat-consistency-20260711b-ilia-title-prime-finish';
-  const TITLE_WIN_KEYS=['normalTitleWins','interimTitleWins','vacantUndisputedWins','secondDivisionUndisputedWins','vacantSecondDivisionWins'];
+  const VERSION='profile-stat-consistency-20260712c-tournament-titles';
+  const TITLE_WIN_KEYS=['normalTitleWins','interimTitleWins','vacantUndisputedWins','secondDivisionUndisputedWins','vacantSecondDivisionWins','tournamentWins'];
   let applyCount=0;
 
   const numberOrNull=value=>{
@@ -15,6 +15,8 @@
 
   function titleFightWinsFromTitle(title){
     if(!title||typeof title!=='object')return null;
+    const direct=numberOrNull(title.titleFightWins);
+    if(direct!==null)return direct;
     const values=TITLE_WIN_KEYS.map(key=>numberOrNull(title[key])).filter(value=>value!==null);
     if(!values.length)return null;
     return values.reduce((sum,value)=>sum+value,0);
@@ -85,7 +87,7 @@
       override.packetProfileStats={...(override.packetProfileStats||{}),...stats};
       let snapshot=override.snapshot||[];
       if(canonicalRecord)snapshot=setSnapshot(snapshot,'UFC Record',canonicalRecord,[/^ufc record$/i]);
-      if(titleWins!==null)snapshot=setSnapshot(snapshot,'UFC Title-Fight Wins',titleWins,[/ufc title[- ]fight wins/i,/title[- ]fight wins/i]);
+      if(titleWins!==null)snapshot=setSnapshot(snapshot,'UFC Title-Fight Wins',titleWins,[/ufc title[- ]fight wins/i,/title[- ]fight wins/i,/ufc tournament wins/i]);
       snapshot=setSnapshot(snapshot,'Prime Stoppage Losses',primeStoppageLosses,[/prime stoppage losses/i,/times finished in prime/i,/finished at peak/i]);
       override.snapshot=snapshot;
     }
@@ -95,7 +97,7 @@
       packet.display=packet.display||{};
       let snapshot=packet.display.snapshot||[];
       if(canonicalRecord)snapshot=setSnapshot(snapshot,'UFC Record',canonicalRecord,[/^ufc record$/i]);
-      if(titleWins!==null)snapshot=setSnapshot(snapshot,'UFC Title-Fight Wins',titleWins,[/ufc title[- ]fight wins/i,/title[- ]fight wins/i]);
+      if(titleWins!==null)snapshot=setSnapshot(snapshot,'UFC Title-Fight Wins',titleWins,[/ufc title[- ]fight wins/i,/title[- ]fight wins/i,/ufc tournament wins/i]);
       snapshot=setSnapshot(snapshot,'Prime Stoppage Losses',primeStoppageLosses,[/prime stoppage losses/i,/times finished in prime/i,/finished at peak/i]);
       packet.display.snapshot=snapshot;
       packet.compareSeasoning=packet.compareSeasoning||{};
@@ -127,6 +129,7 @@
       add('vacantUndisputedWins','vacant-title win');
       add('secondDivisionUndisputedWins','second-division title win');
       add('vacantSecondDivisionWins','vacant second-division title win');
+      add('tournamentWins','tournament wins');
       return parts.length?parts.join(' · '):'No UFC title wins loaded';
     };
   }
@@ -138,9 +141,10 @@
     const results=names.map(applyFighter);
     applyCount+=1;
     const ilia=results.find(result=>result.fighter==='Ilia Topuria')||null;
-    const state={version:VERSION,applied:true,applyCount,fighterCount:results.length,results,ilia,iliaPassed:ilia?.ufcRecord==='9-1'&&Number(ilia?.titleFightWins)===3&&Number(ilia?.primeStoppageLosses)===1,mutatesScores:false,appliedAt:new Date().toISOString()};
+    const royce=results.find(result=>result.fighter==='Royce Gracie')||null;
+    const state={version:VERSION,applied:true,applyCount,fighterCount:results.length,results,ilia,royce,iliaPassed:ilia?.ufcRecord==='9-1'&&Number(ilia?.titleFightWins)===3&&Number(ilia?.primeStoppageLosses)===1,roycePassed:!royce||Number(royce?.titleFightWins)===3,mutatesScores:false,appliedAt:new Date().toISOString()};
     window.UFC_PROFILE_STAT_CONSISTENCY=state;
-    document.documentElement.setAttribute('data-profile-stat-consistency',`${VERSION}-${state.iliaPassed?'passed':'review'}`);
+    document.documentElement.setAttribute('data-profile-stat-consistency',`${VERSION}-${state.iliaPassed&&state.roycePassed?'passed':'review'}`);
     if(typeof window.refresh==='function')window.refresh();
     return state;
   }
