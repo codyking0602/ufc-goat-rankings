@@ -1,6 +1,6 @@
 {
-  "version": "division-era-depth-shadow-20260712b-alias-complete",
-  "generatedAt": "2026-07-12T12:54:26.067Z",
+  "version": "division-era-depth-shadow-20260712c-curved-candidate",
+  "generatedAt": "2026-07-12T12:57:27.435Z",
   "mode": "shadow-only",
   "mutatesLiveScores": false,
   "source": {
@@ -46,7 +46,14 @@
       "The external fight dataset may end before the app’s latest 2026 results; open primes therefore receive the latest available modern snapshot.",
       "Elo is a depth proxy, not a claim that athletes from one era were inherently more skilled.",
       "The output is shadow-only and must not mutate live category scores, ranks, or OVRs."
-    ]
+    ],
+    "curvedCandidate": {
+      "status": "candidate-shadow-only",
+      "purpose": "Translate the empirical depth index without flattening every moderately older era at the same maximum penalty.",
+      "negativeFormula": "-3 × ((1.00 - depthIndex) / 0.25)^1.5, capped at -3",
+      "positiveFormula": "(depthIndex - 1.00) × 20, capped at +0.75",
+      "interpretation": "A 0.75 index receives the full -3; a moderate 0.89 index receives about -0.9 instead of the same -3."
+    }
   },
   "baselines": {
     "HW": {
@@ -1142,7 +1149,975 @@
       }
     ],
     "directMatchCoverageCount": 63,
-    "aliasResolutionComplete": true
+    "aliasResolutionComplete": true,
+    "curvedCandidate": {
+      "averageAdjustment": -0.68,
+      "negativeAdjustmentCount": 47,
+      "positiveAdjustmentCount": 14,
+      "neutralAdjustmentCount": 2,
+      "largestNegativeAdjustments": [
+        {
+          "fighter": "Matt Hughes",
+          "group": "men",
+          "currentRank": 8,
+          "curvedRank": 11,
+          "curvedRankMovement": -3,
+          "currentTotal": 64.76,
+          "depthIndex": 0.75,
+          "curvedAdjustment": -3,
+          "curvedTotal": 61.76,
+          "componentRatios": {
+            "qualifiedActivePool": 0.5518,
+            "ranksSixToFifteenElo": 0.5659,
+            "contenderDiversity": 0.9325
+          },
+          "matchedPrimeFightCount": 16,
+          "fallback": false
+        },
+        {
+          "fighter": "Cris Cyborg",
+          "group": "women",
+          "currentRank": 8,
+          "curvedRank": 9,
+          "curvedRankMovement": -1,
+          "currentTotal": 38.69,
+          "depthIndex": 0.75,
+          "curvedAdjustment": -3,
+          "curvedTotal": 35.69,
+          "componentRatios": {
+            "qualifiedActivePool": 0.5877,
+            "ranksSixToFifteenElo": 0.5709,
+            "contenderDiversity": 0.55
+          },
+          "matchedPrimeFightCount": 7,
+          "fallback": false
+        },
+        {
+          "fighter": "Tito Ortiz",
+          "group": "men",
+          "currentRank": 25,
+          "curvedRank": 30,
+          "curvedRankMovement": -5,
+          "currentTotal": 50.01,
+          "depthIndex": 0.75,
+          "curvedAdjustment": -3,
+          "curvedTotal": 47.01,
+          "componentRatios": {
+            "qualifiedActivePool": 0.55,
+            "ranksSixToFifteenElo": 0.5749,
+            "contenderDiversity": 0.7029
+          },
+          "matchedPrimeFightCount": 14,
+          "fallback": false
+        },
+        {
+          "fighter": "Randy Couture",
+          "group": "men",
+          "currentRank": 13,
+          "curvedRank": 14,
+          "curvedRankMovement": -1,
+          "currentTotal": 59.8,
+          "depthIndex": 0.7504,
+          "curvedAdjustment": -2.99,
+          "curvedTotal": 56.81,
+          "componentRatios": {
+            "qualifiedActivePool": 0.5522,
+            "ranksSixToFifteenElo": 0.5806,
+            "contenderDiversity": 0.9162
+          },
+          "matchedPrimeFightCount": 17,
+          "fallback": false
+        },
+        {
+          "fighter": "Chuck Liddell",
+          "group": "men",
+          "currentRank": 15,
+          "curvedRank": 17,
+          "curvedRankMovement": -2,
+          "currentTotal": 57.62,
+          "depthIndex": 0.7532,
+          "curvedAdjustment": -2.94,
+          "curvedTotal": 54.68,
+          "componentRatios": {
+            "qualifiedActivePool": 0.5502,
+            "ranksSixToFifteenElo": 0.5967,
+            "contenderDiversity": 0.824
+          },
+          "matchedPrimeFightCount": 11,
+          "fallback": false
+        },
+        {
+          "fighter": "B.J. Penn",
+          "group": "men",
+          "currentRank": 18,
+          "curvedRank": 20,
+          "curvedRankMovement": -2,
+          "currentTotal": 55.08,
+          "depthIndex": 0.7676,
+          "curvedAdjustment": -2.69,
+          "curvedTotal": 52.39,
+          "componentRatios": {
+            "qualifiedActivePool": 0.5822,
+            "ranksSixToFifteenElo": 0.6708,
+            "contenderDiversity": 1.0934
+          },
+          "matchedPrimeFightCount": 11,
+          "fallback": false
+        },
+        {
+          "fighter": "Ronda Rousey",
+          "group": "women",
+          "currentRank": 6,
+          "curvedRank": 6,
+          "curvedRankMovement": 0,
+          "currentTotal": 48.9,
+          "depthIndex": 0.7838,
+          "curvedAdjustment": -2.41,
+          "curvedTotal": 46.49,
+          "componentRatios": {
+            "qualifiedActivePool": 0.6573,
+            "ranksSixToFifteenElo": 0.6528,
+            "contenderDiversity": 0.7399
+          },
+          "matchedPrimeFightCount": 8,
+          "fallback": false
+        },
+        {
+          "fighter": "Miesha Tate",
+          "group": "women",
+          "currentRank": 15,
+          "curvedRank": 15,
+          "curvedRankMovement": 0,
+          "currentTotal": 29.67,
+          "depthIndex": 0.7946,
+          "curvedAdjustment": -2.23,
+          "curvedTotal": 27.44,
+          "componentRatios": {
+            "qualifiedActivePool": 0.6949,
+            "ranksSixToFifteenElo": 0.6977,
+            "contenderDiversity": 0.8313
+          },
+          "matchedPrimeFightCount": 6,
+          "fallback": false
+        },
+        {
+          "fighter": "Holly Holm",
+          "group": "women",
+          "currentRank": 12,
+          "curvedRank": 14,
+          "curvedRankMovement": -2,
+          "currentTotal": 30.59,
+          "depthIndex": 0.7965,
+          "curvedAdjustment": -2.2,
+          "curvedTotal": 28.39,
+          "componentRatios": {
+            "qualifiedActivePool": 0.6709,
+            "ranksSixToFifteenElo": 0.6944,
+            "contenderDiversity": 0.7957
+          },
+          "matchedPrimeFightCount": 7,
+          "fallback": false
+        },
+        {
+          "fighter": "Brock Lesnar",
+          "group": "men",
+          "currentRank": 45,
+          "curvedRank": 46,
+          "curvedRankMovement": -1,
+          "currentTotal": 37.26,
+          "depthIndex": 0.8044,
+          "curvedAdjustment": -2.08,
+          "curvedTotal": 35.18,
+          "componentRatios": {
+            "qualifiedActivePool": 0.6527,
+            "ranksSixToFifteenElo": 0.7547,
+            "contenderDiversity": 1.15
+          },
+          "matchedPrimeFightCount": 4,
+          "fallback": false
+        },
+        {
+          "fighter": "Junior dos Santos",
+          "group": "men",
+          "currentRank": 24,
+          "curvedRank": 28,
+          "curvedRankMovement": -4,
+          "currentTotal": 50.12,
+          "depthIndex": 0.8242,
+          "curvedAdjustment": -1.77,
+          "curvedTotal": 48.35,
+          "componentRatios": {
+            "qualifiedActivePool": 0.6803,
+            "ranksSixToFifteenElo": 0.8078,
+            "contenderDiversity": 1.0793
+          },
+          "matchedPrimeFightCount": 12,
+          "fallback": false
+        },
+        {
+          "fighter": "Joanna Jedrzejczyk",
+          "group": "women",
+          "currentRank": 4,
+          "curvedRank": 4,
+          "curvedRankMovement": 0,
+          "currentTotal": 52.82,
+          "depthIndex": 0.8259,
+          "curvedAdjustment": -1.74,
+          "curvedTotal": 51.08,
+          "componentRatios": {
+            "qualifiedActivePool": 0.7349,
+            "ranksSixToFifteenElo": 0.7266,
+            "contenderDiversity": 0.8886
+          },
+          "matchedPrimeFightCount": 12,
+          "fallback": false
+        },
+        {
+          "fighter": "Georges St-Pierre",
+          "group": "men",
+          "currentRank": 2,
+          "curvedRank": 2,
+          "curvedRankMovement": 0,
+          "currentTotal": 88.07,
+          "depthIndex": 0.8288,
+          "curvedAdjustment": -1.7,
+          "curvedTotal": 86.37,
+          "componentRatios": {
+            "qualifiedActivePool": 0.6907,
+            "ranksSixToFifteenElo": 0.7692,
+            "contenderDiversity": 1.1318
+          },
+          "matchedPrimeFightCount": 15,
+          "fallback": false
+        },
+        {
+          "fighter": "Anderson Silva",
+          "group": "men",
+          "currentRank": 3,
+          "curvedRank": 4,
+          "curvedRankMovement": -1,
+          "currentTotal": 77.29,
+          "depthIndex": 0.8348,
+          "curvedAdjustment": -1.61,
+          "curvedTotal": 75.68,
+          "componentRatios": {
+            "qualifiedActivePool": 0.6797,
+            "ranksSixToFifteenElo": 0.7967,
+            "contenderDiversity": 1.1407
+          },
+          "matchedPrimeFightCount": 18,
+          "fallback": false
+        },
+        {
+          "fighter": "Dominick Cruz",
+          "group": "men",
+          "currentRank": 41,
+          "curvedRank": 43,
+          "curvedRankMovement": -2,
+          "currentTotal": 41.79,
+          "depthIndex": 0.8415,
+          "curvedAdjustment": -1.51,
+          "curvedTotal": 40.28,
+          "componentRatios": {
+            "qualifiedActivePool": 0.7173,
+            "ranksSixToFifteenElo": 0.7506,
+            "contenderDiversity": 0.9636
+          },
+          "matchedPrimeFightCount": 7,
+          "fallback": false
+        }
+      ],
+      "largestPositiveAdjustments": [
+        {
+          "fighter": "Kayla Harrison",
+          "group": "women",
+          "currentRank": 14,
+          "curvedRank": 12,
+          "curvedRankMovement": 2,
+          "currentTotal": 30.17,
+          "depthIndex": 1.0361,
+          "curvedAdjustment": 0.72,
+          "curvedTotal": 30.89,
+          "componentRatios": {
+            "qualifiedActivePool": 1.0882,
+            "ranksSixToFifteenElo": 1.0059,
+            "contenderDiversity": 1.0898
+          },
+          "matchedPrimeFightCount": 2,
+          "fallback": false
+        },
+        {
+          "fighter": "Julianna Peña",
+          "group": "women",
+          "currentRank": 10,
+          "curvedRank": 10,
+          "curvedRankMovement": 0,
+          "currentTotal": 33.86,
+          "depthIndex": 1.0335,
+          "curvedAdjustment": 0.67,
+          "curvedTotal": 34.53,
+          "componentRatios": {
+            "qualifiedActivePool": 1.0615,
+            "ranksSixToFifteenElo": 1.0256,
+            "contenderDiversity": 1.042
+          },
+          "matchedPrimeFightCount": 3,
+          "fallback": false
+        },
+        {
+          "fighter": "Alexa Grasso",
+          "group": "women",
+          "currentRank": 9,
+          "curvedRank": 8,
+          "curvedRankMovement": 1,
+          "currentTotal": 36.01,
+          "depthIndex": 1.0305,
+          "curvedAdjustment": 0.61,
+          "curvedTotal": 36.62,
+          "componentRatios": {
+            "qualifiedActivePool": 1.0688,
+            "ranksSixToFifteenElo": 1.027,
+            "contenderDiversity": 1.0185
+          },
+          "matchedPrimeFightCount": 6,
+          "fallback": false
+        },
+        {
+          "fighter": "Dricus du Plessis",
+          "group": "men",
+          "currentRank": 36,
+          "curvedRank": 36,
+          "curvedRankMovement": 0,
+          "currentTotal": 44.7,
+          "depthIndex": 1.0157,
+          "curvedAdjustment": 0.31,
+          "curvedTotal": 45.01,
+          "componentRatios": {
+            "qualifiedActivePool": 1.0274,
+            "ranksSixToFifteenElo": 1.0267,
+            "contenderDiversity": 0.9707
+          },
+          "matchedPrimeFightCount": 5,
+          "fallback": false
+        },
+        {
+          "fighter": "Khamzat Chimaev",
+          "group": "men",
+          "currentRank": 42,
+          "curvedRank": 41,
+          "curvedRankMovement": 1,
+          "currentTotal": 41.08,
+          "depthIndex": 1.014,
+          "curvedAdjustment": 0.28,
+          "curvedTotal": 41.36,
+          "componentRatios": {
+            "qualifiedActivePool": 1.0072,
+            "ranksSixToFifteenElo": 1.0301,
+            "contenderDiversity": 0.984
+          },
+          "matchedPrimeFightCount": 4,
+          "fallback": false
+        },
+        {
+          "fighter": "Tony Ferguson",
+          "group": "men",
+          "currentRank": 38,
+          "curvedRank": 38,
+          "curvedRankMovement": 0,
+          "currentTotal": 43.69,
+          "depthIndex": 1.0131,
+          "curvedAdjustment": 0.26,
+          "curvedTotal": 43.95,
+          "componentRatios": {
+            "qualifiedActivePool": 1.0844,
+            "ranksSixToFifteenElo": 0.9774,
+            "contenderDiversity": 0.9955
+          },
+          "matchedPrimeFightCount": 7,
+          "fallback": false
+        },
+        {
+          "fighter": "Michael Bisping",
+          "group": "men",
+          "currentRank": 46,
+          "curvedRank": 44,
+          "curvedRankMovement": 2,
+          "currentTotal": 37.1,
+          "depthIndex": 1.013,
+          "curvedAdjustment": 0.26,
+          "curvedTotal": 37.36,
+          "componentRatios": {
+            "qualifiedActivePool": 1.029,
+            "ranksSixToFifteenElo": 0.9487,
+            "contenderDiversity": 1.15
+          },
+          "matchedPrimeFightCount": 4,
+          "fallback": false
+        },
+        {
+          "fighter": "Kamaru Usman",
+          "group": "men",
+          "currentRank": 10,
+          "curvedRank": 9,
+          "curvedRankMovement": 1,
+          "currentTotal": 62.03,
+          "depthIndex": 1.0126,
+          "curvedAdjustment": 0.25,
+          "curvedTotal": 62.28,
+          "componentRatios": {
+            "qualifiedActivePool": 1.057,
+            "ranksSixToFifteenElo": 0.9892,
+            "contenderDiversity": 1.0238
+          },
+          "matchedPrimeFightCount": 10,
+          "fallback": false
+        },
+        {
+          "fighter": "Mackenzie Dern",
+          "group": "women",
+          "currentRank": 13,
+          "curvedRank": 13,
+          "curvedRankMovement": 0,
+          "currentTotal": 30.4,
+          "depthIndex": 1.0126,
+          "curvedAdjustment": 0.25,
+          "curvedTotal": 30.65,
+          "componentRatios": {
+            "qualifiedActivePool": 1.0429,
+            "ranksSixToFifteenElo": 1.0388,
+            "contenderDiversity": 0.968
+          },
+          "matchedPrimeFightCount": 9,
+          "fallback": false
+        },
+        {
+          "fighter": "Tyron Woodley",
+          "group": "men",
+          "currentRank": 29,
+          "curvedRank": 27,
+          "curvedRankMovement": 2,
+          "currentTotal": 48.16,
+          "depthIndex": 1.0107,
+          "curvedAdjustment": 0.21,
+          "curvedTotal": 48.37,
+          "componentRatios": {
+            "qualifiedActivePool": 1.1345,
+            "ranksSixToFifteenElo": 0.9263,
+            "contenderDiversity": 1.0527
+          },
+          "matchedPrimeFightCount": 10,
+          "fallback": false
+        }
+      ],
+      "largestRankMovers": [
+        {
+          "fighter": "Tito Ortiz",
+          "group": "men",
+          "currentRank": 25,
+          "curvedRank": 30,
+          "curvedRankMovement": -5,
+          "currentTotal": 50.01,
+          "depthIndex": 0.75,
+          "curvedAdjustment": -3,
+          "curvedTotal": 47.01,
+          "componentRatios": {
+            "qualifiedActivePool": 0.55,
+            "ranksSixToFifteenElo": 0.5749,
+            "contenderDiversity": 0.7029
+          },
+          "matchedPrimeFightCount": 14,
+          "fallback": false
+        },
+        {
+          "fighter": "Junior dos Santos",
+          "group": "men",
+          "currentRank": 24,
+          "curvedRank": 28,
+          "curvedRankMovement": -4,
+          "currentTotal": 50.12,
+          "depthIndex": 0.8242,
+          "curvedAdjustment": -1.77,
+          "curvedTotal": 48.35,
+          "componentRatios": {
+            "qualifiedActivePool": 0.6803,
+            "ranksSixToFifteenElo": 0.8078,
+            "contenderDiversity": 1.0793
+          },
+          "matchedPrimeFightCount": 12,
+          "fallback": false
+        },
+        {
+          "fighter": "Matt Hughes",
+          "group": "men",
+          "currentRank": 8,
+          "curvedRank": 11,
+          "curvedRankMovement": -3,
+          "currentTotal": 64.76,
+          "depthIndex": 0.75,
+          "curvedAdjustment": -3,
+          "curvedTotal": 61.76,
+          "componentRatios": {
+            "qualifiedActivePool": 0.5518,
+            "ranksSixToFifteenElo": 0.5659,
+            "contenderDiversity": 0.9325
+          },
+          "matchedPrimeFightCount": 16,
+          "fallback": false
+        },
+        {
+          "fighter": "Holly Holm",
+          "group": "women",
+          "currentRank": 12,
+          "curvedRank": 14,
+          "curvedRankMovement": -2,
+          "currentTotal": 30.59,
+          "depthIndex": 0.7965,
+          "curvedAdjustment": -2.2,
+          "curvedTotal": 28.39,
+          "componentRatios": {
+            "qualifiedActivePool": 0.6709,
+            "ranksSixToFifteenElo": 0.6944,
+            "contenderDiversity": 0.7957
+          },
+          "matchedPrimeFightCount": 7,
+          "fallback": false
+        },
+        {
+          "fighter": "Kayla Harrison",
+          "group": "women",
+          "currentRank": 14,
+          "curvedRank": 12,
+          "curvedRankMovement": 2,
+          "currentTotal": 30.17,
+          "depthIndex": 1.0361,
+          "curvedAdjustment": 0.72,
+          "curvedTotal": 30.89,
+          "componentRatios": {
+            "qualifiedActivePool": 1.0882,
+            "ranksSixToFifteenElo": 1.0059,
+            "contenderDiversity": 1.0898
+          },
+          "matchedPrimeFightCount": 2,
+          "fallback": false
+        },
+        {
+          "fighter": "Chuck Liddell",
+          "group": "men",
+          "currentRank": 15,
+          "curvedRank": 17,
+          "curvedRankMovement": -2,
+          "currentTotal": 57.62,
+          "depthIndex": 0.7532,
+          "curvedAdjustment": -2.94,
+          "curvedTotal": 54.68,
+          "componentRatios": {
+            "qualifiedActivePool": 0.5502,
+            "ranksSixToFifteenElo": 0.5967,
+            "contenderDiversity": 0.824
+          },
+          "matchedPrimeFightCount": 11,
+          "fallback": false
+        },
+        {
+          "fighter": "Alex Pereira",
+          "group": "men",
+          "currentRank": 17,
+          "curvedRank": 15,
+          "curvedRankMovement": 2,
+          "currentTotal": 56.54,
+          "depthIndex": 1.008,
+          "curvedAdjustment": 0.16,
+          "curvedTotal": 56.7,
+          "componentRatios": {
+            "qualifiedActivePool": 0.9919,
+            "ranksSixToFifteenElo": 1.0229,
+            "contenderDiversity": 0.9946
+          },
+          "matchedPrimeFightCount": 9,
+          "fallback": false
+        },
+        {
+          "fighter": "B.J. Penn",
+          "group": "men",
+          "currentRank": 18,
+          "curvedRank": 20,
+          "curvedRankMovement": -2,
+          "currentTotal": 55.08,
+          "depthIndex": 0.7676,
+          "curvedAdjustment": -2.69,
+          "curvedTotal": 52.39,
+          "componentRatios": {
+            "qualifiedActivePool": 0.5822,
+            "ranksSixToFifteenElo": 0.6708,
+            "contenderDiversity": 1.0934
+          },
+          "matchedPrimeFightCount": 11,
+          "fallback": false
+        },
+        {
+          "fighter": "Charles Oliveira",
+          "group": "men",
+          "currentRank": 21,
+          "curvedRank": 19,
+          "curvedRankMovement": 2,
+          "currentTotal": 53.38,
+          "depthIndex": 0.9789,
+          "curvedAdjustment": -0.07,
+          "curvedTotal": 53.31,
+          "componentRatios": {
+            "qualifiedActivePool": 0.9538,
+            "ranksSixToFifteenElo": 0.9967,
+            "contenderDiversity": 0.9721
+          },
+          "matchedPrimeFightCount": 9,
+          "fallback": false
+        },
+        {
+          "fighter": "Francis Ngannou",
+          "group": "men",
+          "currentRank": 26,
+          "curvedRank": 24,
+          "curvedRankMovement": 2,
+          "currentTotal": 49.69,
+          "depthIndex": 0.9872,
+          "curvedAdjustment": -0.03,
+          "curvedTotal": 49.66,
+          "componentRatios": {
+            "qualifiedActivePool": 0.9939,
+            "ranksSixToFifteenElo": 0.9895,
+            "contenderDiversity": 1.0057
+          },
+          "matchedPrimeFightCount": 6,
+          "fallback": false
+        },
+        {
+          "fighter": "Aljamain Sterling",
+          "group": "men",
+          "currentRank": 27,
+          "curvedRank": 25,
+          "curvedRankMovement": 2,
+          "currentTotal": 48.84,
+          "depthIndex": 0.9895,
+          "curvedAdjustment": -0.03,
+          "curvedTotal": 48.81,
+          "componentRatios": {
+            "qualifiedActivePool": 0.98,
+            "ranksSixToFifteenElo": 0.9894,
+            "contenderDiversity": 1.004
+          },
+          "matchedPrimeFightCount": 9,
+          "fallback": false
+        },
+        {
+          "fighter": "Conor McGregor",
+          "group": "men",
+          "currentRank": 28,
+          "curvedRank": 26,
+          "curvedRankMovement": 2,
+          "currentTotal": 48.78,
+          "depthIndex": 0.9369,
+          "curvedAdjustment": -0.38,
+          "curvedTotal": 48.4,
+          "componentRatios": {
+            "qualifiedActivePool": 0.9666,
+            "ranksSixToFifteenElo": 0.8754,
+            "contenderDiversity": 1.0461
+          },
+          "matchedPrimeFightCount": 8,
+          "fallback": false
+        },
+        {
+          "fighter": "Tyron Woodley",
+          "group": "men",
+          "currentRank": 29,
+          "curvedRank": 27,
+          "curvedRankMovement": 2,
+          "currentTotal": 48.16,
+          "depthIndex": 1.0107,
+          "curvedAdjustment": 0.21,
+          "curvedTotal": 48.37,
+          "componentRatios": {
+            "qualifiedActivePool": 1.1345,
+            "ranksSixToFifteenElo": 0.9263,
+            "contenderDiversity": 1.0527
+          },
+          "matchedPrimeFightCount": 10,
+          "fallback": false
+        },
+        {
+          "fighter": "Dominick Cruz",
+          "group": "men",
+          "currentRank": 41,
+          "curvedRank": 43,
+          "curvedRankMovement": -2,
+          "currentTotal": 41.79,
+          "depthIndex": 0.8415,
+          "curvedAdjustment": -1.51,
+          "curvedTotal": 40.28,
+          "componentRatios": {
+            "qualifiedActivePool": 0.7173,
+            "ranksSixToFifteenElo": 0.7506,
+            "contenderDiversity": 0.9636
+          },
+          "matchedPrimeFightCount": 7,
+          "fallback": false
+        },
+        {
+          "fighter": "Michael Bisping",
+          "group": "men",
+          "currentRank": 46,
+          "curvedRank": 44,
+          "curvedRankMovement": 2,
+          "currentTotal": 37.1,
+          "depthIndex": 1.013,
+          "curvedAdjustment": 0.26,
+          "curvedTotal": 37.36,
+          "componentRatios": {
+            "qualifiedActivePool": 1.029,
+            "ranksSixToFifteenElo": 0.9487,
+            "contenderDiversity": 1.15
+          },
+          "matchedPrimeFightCount": 4,
+          "fallback": false
+        },
+        {
+          "fighter": "Anderson Silva",
+          "group": "men",
+          "currentRank": 3,
+          "curvedRank": 4,
+          "curvedRankMovement": -1,
+          "currentTotal": 77.29,
+          "depthIndex": 0.8348,
+          "curvedAdjustment": -1.61,
+          "curvedTotal": 75.68,
+          "componentRatios": {
+            "qualifiedActivePool": 0.6797,
+            "ranksSixToFifteenElo": 0.7967,
+            "contenderDiversity": 1.1407
+          },
+          "matchedPrimeFightCount": 18,
+          "fallback": false
+        },
+        {
+          "fighter": "Demetrious Johnson",
+          "group": "men",
+          "currentRank": 4,
+          "curvedRank": 3,
+          "curvedRankMovement": 1,
+          "currentTotal": 77.11,
+          "depthIndex": 0.8929,
+          "curvedAdjustment": -0.84,
+          "curvedTotal": 76.27,
+          "componentRatios": {
+            "qualifiedActivePool": 0.8736,
+            "ranksSixToFifteenElo": 0.7726,
+            "contenderDiversity": 0.8986
+          },
+          "matchedPrimeFightCount": 14,
+          "fallback": false
+        },
+        {
+          "fighter": "Cris Cyborg",
+          "group": "women",
+          "currentRank": 8,
+          "curvedRank": 9,
+          "curvedRankMovement": -1,
+          "currentTotal": 38.69,
+          "depthIndex": 0.75,
+          "curvedAdjustment": -3,
+          "curvedTotal": 35.69,
+          "componentRatios": {
+            "qualifiedActivePool": 0.5877,
+            "ranksSixToFifteenElo": 0.5709,
+            "contenderDiversity": 0.55
+          },
+          "matchedPrimeFightCount": 7,
+          "fallback": false
+        },
+        {
+          "fighter": "Khabib Nurmagomedov",
+          "group": "men",
+          "currentRank": 9,
+          "curvedRank": 8,
+          "curvedRankMovement": 1,
+          "currentTotal": 64.05,
+          "depthIndex": 1.004,
+          "curvedAdjustment": 0.08,
+          "curvedTotal": 64.13,
+          "componentRatios": {
+            "qualifiedActivePool": 1.0583,
+            "ranksSixToFifteenElo": 0.9752,
+            "contenderDiversity": 0.9946
+          },
+          "matchedPrimeFightCount": 8,
+          "fallback": false
+        },
+        {
+          "fighter": "Alexa Grasso",
+          "group": "women",
+          "currentRank": 9,
+          "curvedRank": 8,
+          "curvedRankMovement": 1,
+          "currentTotal": 36.01,
+          "depthIndex": 1.0305,
+          "curvedAdjustment": 0.61,
+          "curvedTotal": 36.62,
+          "componentRatios": {
+            "qualifiedActivePool": 1.0688,
+            "ranksSixToFifteenElo": 1.027,
+            "contenderDiversity": 1.0185
+          },
+          "matchedPrimeFightCount": 6,
+          "fallback": false
+        }
+      ],
+      "concernGroup": [
+        {
+          "fighter": "Georges St-Pierre",
+          "group": "men",
+          "currentRank": 2,
+          "curvedRank": 2,
+          "curvedRankMovement": 0,
+          "currentTotal": 88.07,
+          "depthIndex": 0.8288,
+          "curvedAdjustment": -1.7,
+          "curvedTotal": 86.37,
+          "componentRatios": {
+            "qualifiedActivePool": 0.6907,
+            "ranksSixToFifteenElo": 0.7692,
+            "contenderDiversity": 1.1318
+          },
+          "matchedPrimeFightCount": 15,
+          "fallback": false
+        },
+        {
+          "fighter": "Anderson Silva",
+          "group": "men",
+          "currentRank": 3,
+          "curvedRank": 4,
+          "curvedRankMovement": -1,
+          "currentTotal": 77.29,
+          "depthIndex": 0.8348,
+          "curvedAdjustment": -1.61,
+          "curvedTotal": 75.68,
+          "componentRatios": {
+            "qualifiedActivePool": 0.6797,
+            "ranksSixToFifteenElo": 0.7967,
+            "contenderDiversity": 1.1407
+          },
+          "matchedPrimeFightCount": 18,
+          "fallback": false
+        },
+        {
+          "fighter": "Demetrious Johnson",
+          "group": "men",
+          "currentRank": 4,
+          "curvedRank": 3,
+          "curvedRankMovement": 1,
+          "currentTotal": 77.11,
+          "depthIndex": 0.8929,
+          "curvedAdjustment": -0.84,
+          "curvedTotal": 76.27,
+          "componentRatios": {
+            "qualifiedActivePool": 0.8736,
+            "ranksSixToFifteenElo": 0.7726,
+            "contenderDiversity": 0.8986
+          },
+          "matchedPrimeFightCount": 14,
+          "fallback": false
+        },
+        {
+          "fighter": "Jose Aldo",
+          "group": "men",
+          "currentRank": 7,
+          "curvedRank": 7,
+          "curvedRankMovement": 0,
+          "currentTotal": 67.14,
+          "depthIndex": 0.8889,
+          "curvedAdjustment": -0.89,
+          "curvedTotal": 66.25,
+          "componentRatios": {
+            "qualifiedActivePool": 0.821,
+            "ranksSixToFifteenElo": 0.814,
+            "contenderDiversity": 1.0557
+          },
+          "matchedPrimeFightCount": 20,
+          "fallback": false
+        },
+        {
+          "fighter": "Matt Hughes",
+          "group": "men",
+          "currentRank": 8,
+          "curvedRank": 11,
+          "curvedRankMovement": -3,
+          "currentTotal": 64.76,
+          "depthIndex": 0.75,
+          "curvedAdjustment": -3,
+          "curvedTotal": 61.76,
+          "componentRatios": {
+            "qualifiedActivePool": 0.5518,
+            "ranksSixToFifteenElo": 0.5659,
+            "contenderDiversity": 0.9325
+          },
+          "matchedPrimeFightCount": 16,
+          "fallback": false
+        },
+        {
+          "fighter": "Chuck Liddell",
+          "group": "men",
+          "currentRank": 15,
+          "curvedRank": 17,
+          "curvedRankMovement": -2,
+          "currentTotal": 57.62,
+          "depthIndex": 0.7532,
+          "curvedAdjustment": -2.94,
+          "curvedTotal": 54.68,
+          "componentRatios": {
+            "qualifiedActivePool": 0.5502,
+            "ranksSixToFifteenElo": 0.5967,
+            "contenderDiversity": 0.824
+          },
+          "matchedPrimeFightCount": 11,
+          "fallback": false
+        },
+        {
+          "fighter": "Junior dos Santos",
+          "group": "men",
+          "currentRank": 24,
+          "curvedRank": 28,
+          "curvedRankMovement": -4,
+          "currentTotal": 50.12,
+          "depthIndex": 0.8242,
+          "curvedAdjustment": -1.77,
+          "curvedTotal": 48.35,
+          "componentRatios": {
+            "qualifiedActivePool": 0.6803,
+            "ranksSixToFifteenElo": 0.8078,
+            "contenderDiversity": 1.0793
+          },
+          "matchedPrimeFightCount": 12,
+          "fallback": false
+        },
+        {
+          "fighter": "Tito Ortiz",
+          "group": "men",
+          "currentRank": 25,
+          "curvedRank": 30,
+          "curvedRankMovement": -5,
+          "currentTotal": 50.01,
+          "depthIndex": 0.75,
+          "curvedAdjustment": -3,
+          "curvedTotal": 47.01,
+          "componentRatios": {
+            "qualifiedActivePool": 0.55,
+            "ranksSixToFifteenElo": 0.5749,
+            "contenderDiversity": 0.7029
+          },
+          "matchedPrimeFightCount": 14,
+          "fallback": false
+        }
+      ]
+    }
   },
   "fighters": [
     {
@@ -1416,7 +2391,11 @@
       "shadowRank": 1,
       "rankMovement": 0,
       "sensitivityRank": 1,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -0.16,
+      "curvedTotal": 101.76,
+      "curvedRank": 1,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Georges St-Pierre",
@@ -1661,7 +2640,11 @@
       "shadowRank": 2,
       "rankMovement": 0,
       "sensitivityRank": 2,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -1.7,
+      "curvedTotal": 86.37,
+      "curvedRank": 2,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Anderson Silva",
@@ -1948,7 +2931,11 @@
       "shadowRank": 3,
       "rankMovement": 0,
       "sensitivityRank": 3,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -1.61,
+      "curvedTotal": 75.68,
+      "curvedRank": 4,
+      "curvedRankMovement": -1
     },
     {
       "fighter": "Demetrious Johnson",
@@ -2178,7 +3165,11 @@
       "shadowRank": 4,
       "rankMovement": 0,
       "sensitivityRank": 4,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -0.84,
+      "curvedTotal": 76.27,
+      "curvedRank": 3,
+      "curvedRankMovement": 1
     },
     {
       "fighter": "Islam Makhachev",
@@ -2352,7 +3343,11 @@
       "shadowRank": 5,
       "rankMovement": 0,
       "sensitivityRank": 5,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -0.08,
+      "curvedTotal": 69.06,
+      "curvedRank": 5,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Alexander Volkanovski",
@@ -2541,7 +3536,11 @@
       "shadowRank": 6,
       "rankMovement": 0,
       "sensitivityRank": 6,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -0.01,
+      "curvedTotal": 67.61,
+      "curvedRank": 6,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Jose Aldo",
@@ -2856,7 +3855,11 @@
       "shadowRank": 8,
       "rankMovement": -1,
       "sensitivityRank": 7,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -0.89,
+      "curvedTotal": 66.25,
+      "curvedRank": 7,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Matt Hughes",
@@ -3114,7 +4117,11 @@
       "shadowRank": 10,
       "rankMovement": -2,
       "sensitivityRank": 9,
-      "sensitivityRankMovement": -1
+      "sensitivityRankMovement": -1,
+      "curvedAdjustment": -3,
+      "curvedTotal": 61.76,
+      "curvedRank": 11,
+      "curvedRankMovement": -3
     },
     {
       "fighter": "Khabib Nurmagomedov",
@@ -3260,7 +4267,11 @@
       "shadowRank": 7,
       "rankMovement": 2,
       "sensitivityRank": 8,
-      "sensitivityRankMovement": 1
+      "sensitivityRankMovement": 1,
+      "curvedAdjustment": 0.08,
+      "curvedTotal": 64.13,
+      "curvedRank": 8,
+      "curvedRankMovement": 1
     },
     {
       "fighter": "Kamaru Usman",
@@ -3434,7 +4445,11 @@
       "shadowRank": 9,
       "rankMovement": 1,
       "sensitivityRank": 10,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": 0.25,
+      "curvedTotal": 62.28,
+      "curvedRank": 9,
+      "curvedRankMovement": 1
     },
     {
       "fighter": "Stipe Miocic",
@@ -3594,7 +4609,11 @@
       "shadowRank": 11,
       "rankMovement": 0,
       "sensitivityRank": 11,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -0.07,
+      "curvedTotal": 61.77,
+      "curvedRank": 10,
+      "curvedRankMovement": 1
     },
     {
       "fighter": "Max Holloway",
@@ -3909,7 +4928,11 @@
       "shadowRank": 12,
       "rankMovement": 0,
       "sensitivityRank": 12,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -0.16,
+      "curvedTotal": 61.21,
+      "curvedRank": 12,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Randy Couture",
@@ -4182,7 +5205,11 @@
       "shadowRank": 14,
       "rankMovement": -1,
       "sensitivityRank": 14,
-      "sensitivityRankMovement": -1
+      "sensitivityRankMovement": -1,
+      "curvedAdjustment": -2.99,
+      "curvedTotal": 56.81,
+      "curvedRank": 14,
+      "curvedRankMovement": -1
     },
     {
       "fighter": "Israel Adesanya",
@@ -4385,7 +5412,11 @@
       "shadowRank": 13,
       "rankMovement": 1,
       "sensitivityRank": 13,
-      "sensitivityRankMovement": 1
+      "sensitivityRankMovement": 1,
+      "curvedAdjustment": -0.02,
+      "curvedTotal": 59.55,
+      "curvedRank": 13,
+      "curvedRankMovement": 1
     },
     {
       "fighter": "Chuck Liddell",
@@ -4573,7 +5604,11 @@
       "shadowRank": 17,
       "rankMovement": -2,
       "sensitivityRank": 17,
-      "sensitivityRankMovement": -2
+      "sensitivityRankMovement": -2,
+      "curvedAdjustment": -2.94,
+      "curvedTotal": 54.68,
+      "curvedRank": 17,
+      "curvedRankMovement": -2
     },
     {
       "fighter": "Daniel Cormier",
@@ -4776,7 +5811,11 @@
       "shadowRank": 16,
       "rankMovement": 0,
       "sensitivityRank": 16,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -0.19,
+      "curvedTotal": 56.6,
+      "curvedRank": 16,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Alex Pereira",
@@ -4951,7 +5990,11 @@
       "shadowRank": 15,
       "rankMovement": 2,
       "sensitivityRank": 15,
-      "sensitivityRankMovement": 2
+      "sensitivityRankMovement": 2,
+      "curvedAdjustment": 0.16,
+      "curvedTotal": 56.7,
+      "curvedRank": 15,
+      "curvedRankMovement": 2
     },
     {
       "fighter": "B.J. Penn",
@@ -5140,7 +6183,11 @@
       "shadowRank": 19,
       "rankMovement": -1,
       "sensitivityRank": 18,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -2.69,
+      "curvedTotal": 52.39,
+      "curvedRank": 20,
+      "curvedRankMovement": -2
     },
     {
       "fighter": "T.J. Dillashaw",
@@ -5329,7 +6376,11 @@
       "shadowRank": 20,
       "rankMovement": -1,
       "sensitivityRank": 20,
-      "sensitivityRankMovement": -1
+      "sensitivityRankMovement": -1,
+      "curvedAdjustment": -1.16,
+      "curvedTotal": 53.36,
+      "curvedRank": 18,
+      "curvedRankMovement": 1
     },
     {
       "fighter": "Frankie Edgar",
@@ -5644,7 +6695,11 @@
       "shadowRank": 21,
       "rankMovement": -1,
       "sensitivityRank": 21,
-      "sensitivityRankMovement": -1
+      "sensitivityRankMovement": -1,
+      "curvedAdjustment": -1.29,
+      "curvedTotal": 52.34,
+      "curvedRank": 21,
+      "curvedRankMovement": -1
     },
     {
       "fighter": "Charles Oliveira",
@@ -5818,7 +6873,11 @@
       "shadowRank": 18,
       "rankMovement": 3,
       "sensitivityRank": 19,
-      "sensitivityRankMovement": 2
+      "sensitivityRankMovement": 2,
+      "curvedAdjustment": -0.07,
+      "curvedTotal": 53.31,
+      "curvedRank": 19,
+      "curvedRankMovement": 2
     },
     {
       "fighter": "Cain Velasquez",
@@ -5950,7 +7009,11 @@
       "shadowRank": 23,
       "rankMovement": -1,
       "sensitivityRank": 22,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -1.32,
+      "curvedTotal": 50.82,
+      "curvedRank": 22,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Henry Cejudo",
@@ -6055,7 +7118,11 @@
       "shadowRank": 24,
       "rankMovement": -1,
       "sensitivityRank": 23,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -0.17,
+      "curvedTotal": 50.02,
+      "curvedRank": 23,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Junior dos Santos",
@@ -6257,7 +7324,11 @@
       "shadowRank": 28,
       "rankMovement": -4,
       "sensitivityRank": 27,
-      "sensitivityRankMovement": -3
+      "sensitivityRankMovement": -3,
+      "curvedAdjustment": -1.77,
+      "curvedTotal": 48.35,
+      "curvedRank": 28,
+      "curvedRankMovement": -4
     },
     {
       "fighter": "Tito Ortiz",
@@ -6487,7 +7558,11 @@
       "shadowRank": 29,
       "rankMovement": -4,
       "sensitivityRank": 28,
-      "sensitivityRankMovement": -3
+      "sensitivityRankMovement": -3,
+      "curvedAdjustment": -3,
+      "curvedTotal": 47.01,
+      "curvedRank": 30,
+      "curvedRankMovement": -5
     },
     {
       "fighter": "Francis Ngannou",
@@ -6605,7 +7680,11 @@
       "shadowRank": 22,
       "rankMovement": 4,
       "sensitivityRank": 24,
-      "sensitivityRankMovement": 2
+      "sensitivityRankMovement": 2,
+      "curvedAdjustment": -0.03,
+      "curvedTotal": 49.66,
+      "curvedRank": 24,
+      "curvedRankMovement": 2
     },
     {
       "fighter": "Aljamain Sterling",
@@ -6780,7 +7859,11 @@
       "shadowRank": 25,
       "rankMovement": 2,
       "sensitivityRank": 25,
-      "sensitivityRankMovement": 2
+      "sensitivityRankMovement": 2,
+      "curvedAdjustment": -0.03,
+      "curvedTotal": 48.81,
+      "curvedRank": 25,
+      "curvedRankMovement": 2
     },
     {
       "fighter": "Conor McGregor",
@@ -6928,7 +8011,11 @@
       "shadowRank": 30,
       "rankMovement": -2,
       "sensitivityRank": 30,
-      "sensitivityRankMovement": -2
+      "sensitivityRankMovement": -2,
+      "curvedAdjustment": -0.38,
+      "curvedTotal": 48.4,
+      "curvedRank": 26,
+      "curvedRankMovement": 2
     },
     {
       "fighter": "Tyron Woodley",
@@ -7102,7 +8189,11 @@
       "shadowRank": 26,
       "rankMovement": 3,
       "sensitivityRank": 26,
-      "sensitivityRankMovement": 3
+      "sensitivityRankMovement": 3,
+      "curvedAdjustment": 0.21,
+      "curvedTotal": 48.37,
+      "curvedRank": 27,
+      "curvedRankMovement": 2
     },
     {
       "fighter": "Merab Dvalishvili",
@@ -7234,7 +8325,11 @@
       "shadowRank": 27,
       "rankMovement": 3,
       "sensitivityRank": 29,
-      "sensitivityRankMovement": 1
+      "sensitivityRankMovement": 1,
+      "curvedAdjustment": 0.08,
+      "curvedTotal": 47.76,
+      "curvedRank": 29,
+      "curvedRankMovement": 1
     },
     {
       "fighter": "Dustin Poirier",
@@ -7436,7 +8531,11 @@
       "shadowRank": 31,
       "rankMovement": 0,
       "sensitivityRank": 31,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -0.03,
+      "curvedTotal": 46.93,
+      "curvedRank": 31,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Justin Gaethje",
@@ -7610,7 +8709,11 @@
       "shadowRank": 32,
       "rankMovement": 0,
       "sensitivityRank": 32,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -0.07,
+      "curvedTotal": 46.76,
+      "curvedRank": 32,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Ilia Topuria",
@@ -7714,7 +8817,11 @@
       "shadowRank": 33,
       "rankMovement": 0,
       "sensitivityRank": 33,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": 0,
+      "curvedTotal": 46.21,
+      "curvedRank": 33,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Robbie Lawler",
@@ -7888,7 +8995,11 @@
       "shadowRank": 37,
       "rankMovement": -3,
       "sensitivityRank": 36,
-      "sensitivityRankMovement": -2
+      "sensitivityRankMovement": -2,
+      "curvedAdjustment": -0.14,
+      "curvedTotal": 45.29,
+      "curvedRank": 34,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Robert Whittaker",
@@ -8104,7 +9215,11 @@
       "shadowRank": 35,
       "rankMovement": 0,
       "sensitivityRank": 35,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -0.01,
+      "curvedTotal": 45.09,
+      "curvedRank": 35,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Dricus du Plessis",
@@ -8222,7 +9337,11 @@
       "shadowRank": 34,
       "rankMovement": 2,
       "sensitivityRank": 34,
-      "sensitivityRankMovement": 2
+      "sensitivityRankMovement": 2,
+      "curvedAdjustment": 0.31,
+      "curvedTotal": 45.01,
+      "curvedRank": 36,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Petr Yan",
@@ -8396,7 +9515,11 @@
       "shadowRank": 36,
       "rankMovement": 1,
       "sensitivityRank": 37,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -0.01,
+      "curvedTotal": 44.69,
+      "curvedRank": 37,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Tony Ferguson",
@@ -8528,7 +9651,11 @@
       "shadowRank": 38,
       "rankMovement": 0,
       "sensitivityRank": 38,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": 0.26,
+      "curvedTotal": 43.95,
+      "curvedRank": 38,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Deiveson Figueiredo",
@@ -8717,7 +9844,11 @@
       "shadowRank": 39,
       "rankMovement": 0,
       "sensitivityRank": 39,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -0.1,
+      "curvedTotal": 43.21,
+      "curvedRank": 39,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Lyoto Machida",
@@ -8934,7 +10065,11 @@
       "shadowRank": 41,
       "rankMovement": -1,
       "sensitivityRank": 40,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -0.29,
+      "curvedTotal": 42.3,
+      "curvedRank": 40,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Dominick Cruz",
@@ -9066,7 +10201,11 @@
       "shadowRank": 43,
       "rankMovement": -2,
       "sensitivityRank": 43,
-      "sensitivityRankMovement": -2
+      "sensitivityRankMovement": -2,
+      "curvedAdjustment": -1.51,
+      "curvedTotal": 40.28,
+      "curvedRank": 43,
+      "curvedRankMovement": -2
     },
     {
       "fighter": "Khamzat Chimaev",
@@ -9171,7 +10310,11 @@
       "shadowRank": 40,
       "rankMovement": 2,
       "sensitivityRank": 41,
-      "sensitivityRankMovement": 1
+      "sensitivityRankMovement": 1,
+      "curvedAdjustment": 0.28,
+      "curvedTotal": 41.36,
+      "curvedRank": 41,
+      "curvedRankMovement": 1
     },
     {
       "fighter": "Sean Strickland",
@@ -9360,7 +10503,11 @@
       "shadowRank": 42,
       "rankMovement": 1,
       "sensitivityRank": 42,
-      "sensitivityRankMovement": 1
+      "sensitivityRankMovement": 1,
+      "curvedAdjustment": 0.21,
+      "curvedTotal": 40.35,
+      "curvedRank": 42,
+      "curvedRankMovement": 1
     },
     {
       "fighter": "Sean O'Malley",
@@ -9590,7 +10737,11 @@
       "shadowRank": 45,
       "rankMovement": -1,
       "sensitivityRank": 45,
-      "sensitivityRankMovement": -1
+      "sensitivityRankMovement": -1,
+      "curvedAdjustment": -0.07,
+      "curvedTotal": 37.23,
+      "curvedRank": 45,
+      "curvedRankMovement": -1
     },
     {
       "fighter": "Brock Lesnar",
@@ -9680,7 +10831,11 @@
       "shadowRank": 46,
       "rankMovement": -1,
       "sensitivityRank": 46,
-      "sensitivityRankMovement": -1
+      "sensitivityRankMovement": -1,
+      "curvedAdjustment": -2.08,
+      "curvedTotal": 35.18,
+      "curvedRank": 46,
+      "curvedRankMovement": -1
     },
     {
       "fighter": "Michael Bisping",
@@ -9770,7 +10925,11 @@
       "shadowRank": 44,
       "rankMovement": 2,
       "sensitivityRank": 44,
-      "sensitivityRankMovement": 2
+      "sensitivityRankMovement": 2,
+      "curvedAdjustment": 0.26,
+      "curvedTotal": 37.36,
+      "curvedRank": 44,
+      "curvedRankMovement": 2
     },
     {
       "fighter": "Dan Henderson",
@@ -9917,7 +11076,11 @@
       "shadowRank": 47,
       "rankMovement": 0,
       "sensitivityRank": 47,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -0.59,
+      "curvedTotal": 24.78,
+      "curvedRank": 47,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Chael Sonnen",
@@ -10036,7 +11199,11 @@
       "shadowRank": 48,
       "rankMovement": 0,
       "sensitivityRank": 48,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -1.06,
+      "curvedTotal": 22.86,
+      "curvedRank": 48,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Amanda Nunes",
@@ -10239,7 +11406,11 @@
       "shadowRank": 1,
       "rankMovement": 0,
       "sensitivityRank": 1,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -0.97,
+      "curvedTotal": 81.06,
+      "curvedRank": 1,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Valentina Shevchenko",
@@ -10499,7 +11670,11 @@
       "shadowRank": 2,
       "rankMovement": 0,
       "sensitivityRank": 2,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -0.47,
+      "curvedTotal": 75.45,
+      "curvedRank": 2,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Zhang Weili",
@@ -10673,7 +11848,11 @@
       "shadowRank": 3,
       "rankMovement": 0,
       "sensitivityRank": 3,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": 0,
+      "curvedTotal": 57.04,
+      "curvedRank": 3,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Joanna Jedrzejczyk",
@@ -10876,7 +12055,11 @@
       "shadowRank": 4,
       "rankMovement": 0,
       "sensitivityRank": 4,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -1.74,
+      "curvedTotal": 51.08,
+      "curvedRank": 4,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Rose Namajunas",
@@ -11008,7 +12191,11 @@
       "shadowRank": 5,
       "rankMovement": 0,
       "sensitivityRank": 5,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -0.37,
+      "curvedTotal": 48.83,
+      "curvedRank": 5,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Ronda Rousey",
@@ -11154,7 +12341,11 @@
       "shadowRank": 6,
       "rankMovement": 0,
       "sensitivityRank": 6,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -2.41,
+      "curvedTotal": 46.49,
+      "curvedRank": 6,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Jessica Andrade",
@@ -11357,7 +12548,11 @@
       "shadowRank": 7,
       "rankMovement": 0,
       "sensitivityRank": 7,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -0.15,
+      "curvedTotal": 40.79,
+      "curvedRank": 7,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Cris Cyborg",
@@ -11489,7 +12684,11 @@
       "shadowRank": 9,
       "rankMovement": -1,
       "sensitivityRank": 8,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -3,
+      "curvedTotal": 35.69,
+      "curvedRank": 9,
+      "curvedRankMovement": -1
     },
     {
       "fighter": "Alexa Grasso",
@@ -11622,7 +12821,11 @@
       "shadowRank": 8,
       "rankMovement": 1,
       "sensitivityRank": 9,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": 0.61,
+      "curvedTotal": 36.62,
+      "curvedRank": 8,
+      "curvedRankMovement": 1
     },
     {
       "fighter": "Julianna Peña",
@@ -11712,7 +12915,11 @@
       "shadowRank": 10,
       "rankMovement": 0,
       "sensitivityRank": 10,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": 0.67,
+      "curvedTotal": 34.53,
+      "curvedRank": 10,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Carla Esparza",
@@ -11956,7 +13163,11 @@
       "shadowRank": 13,
       "rankMovement": -2,
       "sensitivityRank": 11,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -0.88,
+      "curvedTotal": 32.46,
+      "curvedRank": 11,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Holly Holm",
@@ -12089,7 +13300,11 @@
       "shadowRank": 14,
       "rankMovement": -2,
       "sensitivityRank": 14,
-      "sensitivityRankMovement": -2
+      "sensitivityRankMovement": -2,
+      "curvedAdjustment": -2.2,
+      "curvedTotal": 28.39,
+      "curvedRank": 14,
+      "curvedRankMovement": -2
     },
     {
       "fighter": "Mackenzie Dern",
@@ -12263,7 +13478,11 @@
       "shadowRank": 12,
       "rankMovement": 1,
       "sensitivityRank": 13,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": 0.25,
+      "curvedTotal": 30.65,
+      "curvedRank": 13,
+      "curvedRankMovement": 0
     },
     {
       "fighter": "Kayla Harrison",
@@ -12339,7 +13558,11 @@
       "shadowRank": 11,
       "rankMovement": 3,
       "sensitivityRank": 12,
-      "sensitivityRankMovement": 2
+      "sensitivityRankMovement": 2,
+      "curvedAdjustment": 0.72,
+      "curvedTotal": 30.89,
+      "curvedRank": 12,
+      "curvedRankMovement": 2
     },
     {
       "fighter": "Miesha Tate",
@@ -12457,11 +13680,15 @@
       "shadowRank": 15,
       "rankMovement": 0,
       "sensitivityRank": 15,
-      "sensitivityRankMovement": 0
+      "sensitivityRankMovement": 0,
+      "curvedAdjustment": -2.23,
+      "curvedTotal": 27.44,
+      "curvedRank": 15,
+      "curvedRankMovement": 0
     }
   ],
   "aliasResolution": {
-    "version": "division-era-depth-shadow-20260712b-alias-complete",
+    "version": "division-era-depth-shadow-20260712c-curved-candidate",
     "applied": true,
     "aliases": {
       "B.J. Penn": "BJ Penn",
