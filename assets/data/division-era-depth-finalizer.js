@@ -1,22 +1,34 @@
-// Final post-pipeline application of the approved Division-Era Depth adjustment.
+// Final post-pipeline verification and synchronization for the approved Division-Era Depth adjustment.
 (function(){
   'use strict';
 
-  const VERSION='division-era-depth-finalizer-20260712a';
+  const VERSION='division-era-depth-finalizer-20260712b-canonical-engine';
   const EXPECTED_SHADOW='division-era-depth-shadow-20260712d-current-wfw-safe';
   const EXPECTED_AUDIT='division-era-depth-judgment-review-20260712b-live-approved';
-  const OVR_MIN=82;
-  const OVR_MAX=99;
   let finalized=false;
 
   const key=name=>String(name||'').trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
   const num=value=>Number.isFinite(Number(value))?Number(value):0;
   const round2=value=>Math.round((num(value)+Number.EPSILON)*100)/100;
-  const clamp=(value,min,max)=>Math.max(min,Math.min(max,value));
 
-  function rerank(rows){
-    rows.sort((a,b)=>num(b.totalScore)-num(a.totalScore)||num(b.championship)-num(a.championship)||String(a.fighter||'').localeCompare(String(b.fighter||'')));
-    rows.forEach((row,index)=>{row.rank=index+1;});
+  function attachDepth(row,result){
+    const adjustment=round2(result.curvedAdjustment);
+    row.eraDepthAdjustment=adjustment;
+    row.divisionEraDepth={
+      version:VERSION,
+      sourceShadowVersion:EXPECTED_SHADOW,
+      depthIndex:result.depthIndex,
+      adjustment,
+      componentRatios:result.componentRatios||{},
+      matchedPrimeFightCount:result.matchedPrimeFightCount,
+      sampledDivisions:result.sampledDivisions||[],
+      primeStart:result.primeStart||null,
+      primeEnd:result.primeEnd||null,
+      openPrime:Boolean(result.openPrime),
+      womenFeatherweightTreatment:result.womenFeatherweightTreatment||null
+    };
+    const formula=String(row.scoreFormula||'championship + opponentQuality + primeDominance + longevity + apexPeak + lossContext');
+    row.scoreFormula=formula.includes('eraDepthAdjustment')?formula:`${formula} + eraDepthAdjustment`;
   }
 
   function syncProfiles(data,boards){
@@ -24,39 +36,27 @@
     (data.fighters||[]).forEach(profile=>{
       const board=byKey.get(key(profile?.fighter));
       if(!board)return;
-      ['eraDepthAdjustment','divisionEraDepth','preEraDepthTotalScore','rawScore','totalScore','rank','scoreFormula','overallOvr'].forEach(field=>{
+      [
+        'eraDepthAdjustment','divisionEraDepth','preEraDepthTotalScore','weightedScoreBreakdown',
+        'rawScore','totalScore','rank','scoreFormula','overallOvr','finalScoreEngineVersion','overallScoreOwner'
+      ].forEach(field=>{
         if(board[field]!==undefined)profile[field]=board[field];
       });
     });
   }
 
-  function assignOvrs(data,boardName){
-    const rows=data[boardName]||[];
-    if(!rows.length)return;
-    const scores=rows.map(row=>num(row.totalScore));
-    const high=Math.max(...scores);
-    const low=Math.min(...scores);
-    const span=Math.max(high-low,0.01);
-    rows.forEach(row=>{
-      row.overallOvr=clamp(Math.round(OVR_MIN+(num(row.totalScore)-low)/span*(OVR_MAX-OVR_MIN)),OVR_MIN,OVR_MAX);
-      window.DISPLAY_OVERRIDES=window.DISPLAY_OVERRIDES||{};
-      const override=window.DISPLAY_OVERRIDES[row.fighter]=window.DISPLAY_OVERRIDES[row.fighter]||{};
-      override.overallOvr=row.overallOvr;
-      override.allTimeRank=row.rank;
-      override.rankLabel=`${boardName==='women'?'Women':'Men'} #${row.rank}`;
-      override.eraDepthAdjustment=row.eraDepthAdjustment;
-      override.divisionEraDepth=row.divisionEraDepth;
-    });
-  }
-
-  function installOvrResolver(data){
-    const resolver=f=>{
-      const target=key(f?.fighter);
-      const board=[...(data.men||[]),...(data.women||[])].find(row=>key(row?.fighter)===target);
-      return num(board?.overallOvr??window.DISPLAY_OVERRIDES?.[f?.fighter]?.overallOvr??f?.overallOvr??OVR_MIN);
-    };
-    window.overallOvr=resolver;
-    try{overallOvr=resolver;}catch(_){/* Global binding may be read-only. */}
+  function syncOverrides(data){
+    window.DISPLAY_OVERRIDES=window.DISPLAY_OVERRIDES||{};
+    for(const [boardName,rows] of [['men',data.men||[]],['women',data.women||[]]]){
+      rows.forEach(row=>{
+        const override=window.DISPLAY_OVERRIDES[row.fighter]=window.DISPLAY_OVERRIDES[row.fighter]||{};
+        override.overallOvr=row.overallOvr;
+        override.allTimeRank=row.rank;
+        override.rankLabel=`${boardName==='women'?'Women':'Men'} #${row.rank}`;
+        override.eraDepthAdjustment=row.eraDepthAdjustment;
+        override.divisionEraDepth=row.divisionEraDepth;
+      });
+    }
   }
 
   function apply(){
@@ -64,51 +64,40 @@
     const data=window.RANKING_DATA;
     const shadow=window.UFC_DIVISION_ERA_DEPTH_SHADOW;
     const audit=window.UFC_DIVISION_ERA_DEPTH_AUDIT;
-    if(window.UFC_SCORING_PIPELINE?.status!=='ready'||!data||shadow?.version!==EXPECTED_SHADOW||audit?.version!==EXPECTED_AUDIT)return false;
+    const engine=window.UFC_FINAL_SCORE_ENGINE;
+    if(window.UFC_SCORING_PIPELINE?.status!=='ready'||!data||!engine?.apply)return false;
+    if(shadow?.version!==EXPECTED_SHADOW||audit?.version!==EXPECTED_AUDIT)return false;
     if(audit.readyForLivePromotion!==true||audit.judgmentApproved!==true||shadow.promotionContract?.readyForJudgmentFinalization!==true)return false;
 
     const expected=new Map((shadow.fighters||[]).map(result=>[key(result.fighter),result]));
     const boards=[...(data.men||[]),...(data.women||[])];
     if(boards.length!==63||expected.size!==63||boards.some(row=>!expected.has(key(row?.fighter))))return false;
 
-    boards.forEach(row=>{
-      const result=expected.get(key(row.fighter));
-      const base=round2(result.currentTotal);
-      const adjustment=round2(result.curvedAdjustment);
-      row.preEraDepthTotalScore=base;
-      row.eraDepthAdjustment=adjustment;
-      row.totalScore=round2(base+adjustment);
-      row.rawScore=row.totalScore;
-      row.divisionEraDepth={
-        version:VERSION,
-        sourceShadowVersion:EXPECTED_SHADOW,
-        depthIndex:result.depthIndex,
-        adjustment,
-        componentRatios:result.componentRatios||{},
-        matchedPrimeFightCount:result.matchedPrimeFightCount,
-        sampledDivisions:result.sampledDivisions||[],
-        primeStart:result.primeStart||null,
-        primeEnd:result.primeEnd||null,
-        openPrime:Boolean(result.openPrime),
-        womenFeatherweightTreatment:result.womenFeatherweightTreatment||null
-      };
-      const formula=String(row.scoreFormula||'championship + opponentQuality + primeDominance + longevity + apexPeak + lossContext');
-      row.scoreFormula=formula.includes('divisionEraDepth')?formula:`${formula} + divisionEraDepth`;
+    boards.forEach(row=>attachDepth(row,expected.get(key(row.fighter))));
+    (data.fighters||[]).forEach(profile=>{
+      const result=expected.get(key(profile?.fighter));
+      if(result)attachDepth(profile,result);
     });
 
-    rerank(data.men||[]);
-    rerank(data.women||[]);
+    const engineResult=engine.apply('division-era-depth-finalizer');
+    if(!engineResult?.applied)return false;
     syncProfiles(data,[...(data.men||[]),...(data.women||[])]);
-    assignOvrs(data,'men');
-    assignOvrs(data,'women');
+    syncOverrides(data);
+
+    if(typeof window.refresh==='function')window.refresh();
+    if(typeof window.renderCategories==='function')window.renderCategories();
+
+    // The live UI scorer is allowed to rerender totals, but it must preserve the same canonical formula.
+    const postUiEngineResult=engine.apply('division-era-depth-finalizer-post-ui');
+    if(!postUiEngineResult?.applied)return false;
     syncProfiles(data,[...(data.men||[]),...(data.women||[])]);
-    installOvrResolver(data);
+    syncOverrides(data);
 
     const liveRows=[...(data.men||[]),...(data.women||[])];
     const mismatches=liveRows.filter(row=>{
       const result=expected.get(key(row.fighter));
       return Math.abs(num(row.eraDepthAdjustment)-num(result?.curvedAdjustment))>0.001
-        || Math.abs(num(row.totalScore)-(num(result?.currentTotal)+num(result?.curvedAdjustment)))>0.001;
+        || Math.abs(num(row.totalScore)-(num(row.preEraDepthTotalScore)+num(result?.curvedAdjustment)))>0.001;
     }).map(row=>row.fighter);
 
     const previous=window.UFC_DIVISION_ERA_DEPTH_LIVE||{};
@@ -118,18 +107,39 @@
       applied:mismatches.length===0,
       finalizedAfterPipeline:true,
       finalizerVersion:VERSION,
+      finalScoreEngineVersion:engine.version||null,
+      finalScoreEngineApplyCount:engine.applyCount||null,
       promotedCount:liveRows.length,
       mismatchCount:mismatches.length,
       mismatches,
-      results:liveRows.map(row=>({fighter:row.fighter,board:(data.women||[]).includes(row)?'women':'men',rank:row.rank,totalScore:row.totalScore,eraDepthAdjustment:row.eraDepthAdjustment,overallOvr:row.overallOvr,divisionEraDepth:row.divisionEraDepth})),
+      results:liveRows.map(row=>({
+        fighter:row.fighter,
+        board:(data.women||[]).includes(row)?'women':'men',
+        rank:row.rank,
+        preEraDepthTotalScore:row.preEraDepthTotalScore,
+        totalScore:row.totalScore,
+        eraDepthAdjustment:row.eraDepthAdjustment,
+        overallOvr:row.overallOvr,
+        divisionEraDepth:row.divisionEraDepth
+      })),
       finalizedAt:new Date().toISOString()
     };
     window.UFC_DIVISION_ERA_DEPTH_LIVE=report;
     data.meta=data.meta||{};
-    data.meta.divisionEraDepthLive={...(data.meta.divisionEraDepthLive||{}),version:report.version,finalizerVersion:VERSION,sourceDatasetEnd:shadow.source?.datasetEnd,rosterCount:63,promotedCount:63,mismatchCount:report.mismatchCount,applied:report.applied,finalizedAfterPipeline:true,appliedAt:report.finalizedAt};
-    document.documentElement.setAttribute('data-division-era-depth-live',`${report.version}-final-63-${report.mismatchCount}`);
-    if(typeof window.refresh==='function')window.refresh();
-    if(typeof window.renderCategories==='function')window.renderCategories();
+    data.meta.divisionEraDepthLive={
+      ...(data.meta.divisionEraDepthLive||{}),
+      version:report.version,
+      finalizerVersion:VERSION,
+      finalScoreEngineVersion:report.finalScoreEngineVersion,
+      sourceDatasetEnd:shadow.source?.datasetEnd,
+      rosterCount:63,
+      promotedCount:63,
+      mismatchCount:report.mismatchCount,
+      applied:report.applied,
+      finalizedAfterPipeline:true,
+      appliedAt:report.finalizedAt
+    };
+    document.documentElement.setAttribute('data-division-era-depth-live',`${report.version}-canonical-63-${report.mismatchCount}`);
     if(window.UFC_HOME_POLISH?.refreshHero)window.UFC_HOME_POLISH.refreshHero();
     if(window.UFC_OCTAGON_VERDICT_COMPARE_LAUNCHER?.render)window.UFC_OCTAGON_VERDICT_COMPARE_LAUNCHER.render();
     finalized=report.applied;
@@ -137,13 +147,18 @@
     return finalized;
   }
 
-  window.UFC_DIVISION_ERA_DEPTH_FINALIZER={version:VERSION,applied:false,status:'waiting-for-scoring-pipeline'};
-  window.addEventListener('ufc-scoring-pipeline-ready',()=>{
+  function finalizeState(){
     const applied=apply();
-    window.UFC_DIVISION_ERA_DEPTH_FINALIZER={version:VERSION,applied,status:applied?'ready':'blocked',live:window.UFC_DIVISION_ERA_DEPTH_LIVE||null,appliedAt:new Date().toISOString()};
-  },{once:true});
-  if(window.UFC_SCORING_PIPELINE?.status==='ready'){
-    const applied=apply();
-    window.UFC_DIVISION_ERA_DEPTH_FINALIZER={version:VERSION,applied,status:applied?'ready':'blocked',live:window.UFC_DIVISION_ERA_DEPTH_LIVE||null,appliedAt:new Date().toISOString()};
+    window.UFC_DIVISION_ERA_DEPTH_FINALIZER={
+      version:VERSION,
+      applied,
+      status:applied?'ready':'blocked',
+      live:window.UFC_DIVISION_ERA_DEPTH_LIVE||null,
+      appliedAt:new Date().toISOString()
+    };
   }
+
+  window.UFC_DIVISION_ERA_DEPTH_FINALIZER={version:VERSION,applied:false,status:'waiting-for-scoring-pipeline'};
+  window.addEventListener('ufc-scoring-pipeline-ready',finalizeState,{once:true});
+  if(window.UFC_SCORING_PIPELINE?.status==='ready')finalizeState();
 })();
