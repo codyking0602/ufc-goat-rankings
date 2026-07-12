@@ -16,10 +16,7 @@
 .pick-fighter-photo{position:relative;overflow:hidden}
 .pick-fighter-photo .picks-photo-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:17px;font-weight:950}
 .pick-fighter-photo .picks-photo-fallback[hidden],.pick-fighter-photo:has(>img) .picks-photo-fallback{display:none!important;opacity:0!important;visibility:hidden!important}
-.pick-fighter-photo img{position:relative;z-index:1;transform-origin:center}
-.pick-fighter[data-pick="Tommy McMillen"] .pick-fighter-photo img{transform:translateX(-6%) scale(1.08)}
-.pick-fighter[data-pick="Alberto Montes"] .pick-fighter-photo img{transform:translateX(7%) scale(1.08)}
-.pick-fighter[data-pick="Jared Cannonier"] .pick-fighter-photo img{transform:translate(15%,-3%) scale(1.1)}
+.pick-fighter-photo img{position:relative;z-index:1;display:block}
 .pick-fighter-photo.photo-missing .picks-photo-fallback{display:flex!important;opacity:1!important;visibility:visible!important}
 .picks-event-hero.has-event-art{display:block;padding:0;background:#101827}
 .picks-event-hero.has-event-art::after{display:none}
