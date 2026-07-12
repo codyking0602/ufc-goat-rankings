@@ -1,2 +1,3 @@
 Post-finalizer observable browser audit trigger.
-Canonical final score engine now includes eraDepthAdjustment.
+Canonical final score engine includes eraDepthAdjustment.
+Final cache-busted canonical-engine and UI-alignment verification.
