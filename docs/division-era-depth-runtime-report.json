@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-12T21:09:04.645Z",
+  "generatedAt": "2026-07-12T21:17:09.334Z",
   "baseUrl": "http://127.0.0.1:4173",
   "pipeline": {
     "version": "deterministic-scoring-pipeline-20260711a-cris-cyborg-photos",
@@ -51,8 +51,8 @@
     "timerCount": 0,
     "repeatedLoadCount": 0,
     "finalScoreApplyCount": 1,
-    "startedAt": "2026-07-12T21:08:55.281Z",
-    "completedAt": "2026-07-12T21:09:00.140Z",
+    "startedAt": "2026-07-12T21:16:57.275Z",
+    "completedAt": "2026-07-12T21:17:03.410Z",
     "error": null,
     "canonicalFighterRegistryBase": {
       "applied": true,
@@ -611,7 +611,7 @@
             "Compact championship window with shallow-division compression.",
             "UFC-only window."
           ],
-          "appliedAt": "2026-07-12T21:08:57.738Z"
+          "appliedAt": "2026-07-12T21:17:00.500Z"
         },
         "apexPeakAudit": {
           "score": 4.6,
@@ -1390,7 +1390,7 @@
             "Compact championship window with shallow-division compression.",
             "UFC-only window."
           ],
-          "appliedAt": "2026-07-12T21:08:57.740Z"
+          "appliedAt": "2026-07-12T21:17:00.503Z"
         },
         "longevityLegacyScore": 7.78,
         "longevityRaw30": 7.78,
@@ -1562,7 +1562,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-12T21:08:56.373Z"
+      "appliedAt": "2026-07-12T21:16:58.726Z"
     },
     "lossContextCompletionBatchFour": {
       "version": "loss-context-ledger-completion-batch-four-20260710a-five-highest-missing",
@@ -1618,7 +1618,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-12T21:08:56.376Z"
+      "appliedAt": "2026-07-12T21:16:58.729Z"
     },
     "lossContextCompletionBatchFive": {
       "version": "loss-context-ledger-completion-batch-five-20260710b-chuck-vitor-window",
@@ -1711,7 +1711,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-12T21:08:56.381Z"
+      "appliedAt": "2026-07-12T21:16:58.736Z"
     },
     "lossContextCompletionBatchSix": {
       "version": "loss-context-ledger-completion-batch-six-20260710a-first-half-eighteen",
@@ -1899,7 +1899,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-12T21:08:56.385Z"
+      "appliedAt": "2026-07-12T21:16:58.741Z"
     },
     "lossContextCompletionBatchSeven": {
       "version": "loss-context-ledger-completion-batch-seven-20260710a-final-seventeen",
@@ -2058,7 +2058,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-12T21:08:56.389Z"
+      "appliedAt": "2026-07-12T21:16:58.746Z"
     },
     "approvedFighterAuditCorrections": {
       "version": "approved-fighter-audit-corrections-20260712d-cruz-tate-ilia-deiveson",
@@ -2104,7 +2104,7 @@
         "Jessica Andrade"
       ],
       "masvidalCreditsChanged": false,
-      "appliedAt": "2026-07-12T21:08:56.394Z"
+      "appliedAt": "2026-07-12T21:16:58.752Z"
     },
     "lossContextCanonicalProduction": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -29377,7 +29377,7 @@
         ],
         "mode": "canonical-production",
         "mutatesScores": true,
-        "appliedAt": "2026-07-12T21:08:56.416Z"
+        "appliedAt": "2026-07-12T21:16:58.776Z"
       },
       "mismatchAudit": {
         "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -48244,7 +48244,7 @@
         "missingEraLossEntries": [],
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "appliedAt": "2026-07-12T21:08:56.416Z"
+        "appliedAt": "2026-07-12T21:16:58.776Z"
       },
       "scoreReview": {
         "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -50426,7 +50426,7 @@
         "mutatesPenalty": true,
         "mutatesScores": true,
         "finalScoreRecalculationOwner": "final-score-engine.js",
-        "appliedAt": "2026-07-12T21:08:56.416Z"
+        "appliedAt": "2026-07-12T21:16:58.776Z"
       },
       "appliedCompletionFixes": [
         "Robert Whittaker",
@@ -50486,7 +50486,7 @@
       ],
       "mutatesPenalty": true,
       "mutatesScores": true,
-      "appliedAt": "2026-07-12T21:08:56.416Z"
+      "appliedAt": "2026-07-12T21:16:58.776Z"
     },
     "lossContextScoreReview": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -52668,7 +52668,7 @@
       "mutatesPenalty": true,
       "mutatesScores": true,
       "finalScoreRecalculationOwner": "final-score-engine.js",
-      "appliedAt": "2026-07-12T21:08:56.416Z"
+      "appliedAt": "2026-07-12T21:16:58.776Z"
     },
     "lossContextMismatchAudit": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -71535,7 +71535,7 @@
       "missingEraLossEntries": [],
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-12T21:08:56.416Z"
+      "appliedAt": "2026-07-12T21:16:58.776Z"
     },
     "lossContextDynamicRosterTarget": {
       "version": "loss-context-dynamic-roster-target-20260710a",
@@ -71543,7 +71543,7 @@
       "expectedRosterCount": 63,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-12T21:08:56.626Z"
+      "appliedAt": "2026-07-12T21:16:59.057Z"
     },
     "opponentQualityReadyDetail": {
       "version": "opponent-quality-live-20260710c-fixed-benchmark",
@@ -71736,7 +71736,7 @@
       "calibratesRandyStatusMultiplier": true,
       "mutatesEraLongevityInputs": true,
       "mutatesScores": false,
-      "appliedAt": "2026-07-12T21:08:56.842Z"
+      "appliedAt": "2026-07-12T21:16:59.364Z"
     },
     "canonicalPrimeRecords": {
       "version": "canonical-prime-records-20260710c-chuck-vitor-window",
@@ -73756,7 +73756,7 @@
       "allWindowsLocked": false,
       "mutatesScores": false,
       "mutatesPrimeRecordDisplay": true,
-      "appliedAt": "2026-07-12T21:08:56.856Z"
+      "appliedAt": "2026-07-12T21:16:59.382Z"
     },
     "approvedOpponentQualityCorrection": {
       "applied": true,
@@ -74694,7 +74694,7 @@
       ],
       "masvidalCreditsChanged": false,
       "version": "approved-fighter-audit-corrections-20260712d-cruz-tate-ilia-deiveson",
-      "appliedAt": "2026-07-12T21:08:56.857Z"
+      "appliedAt": "2026-07-12T21:16:59.384Z"
     },
     "canonicalFighterRegistryOpponentQuality": {
       "applied": true,
@@ -75084,7 +75084,7 @@
           "version": "prime-dominance-audit-batch-eleven-20260712a-hughes-calibration"
         }
       },
-      "appliedAt": "2026-07-12T21:08:57.254Z"
+      "appliedAt": "2026-07-12T21:16:59.929Z"
     },
     "canonicalFighterRegistryPrime": {
       "applied": true,
@@ -79619,7 +79619,7 @@
       "mutatesEliteStakes": false,
       "mutatesTotals": false,
       "finalScoreRecalculationOwner": "final-score-engine.js",
-      "appliedAt": "2026-07-12T21:08:57.261Z"
+      "appliedAt": "2026-07-12T21:16:59.935Z"
     },
     "fighterEraWindowAudit": {
       "version": "fighter-era-window-audit-20260710b-record-dependencies",
@@ -83999,7 +83999,7 @@
       "allCanonicalPrimeRecordsPresent": false,
       "mutatesScores": false,
       "mutatesWindows": false,
-      "appliedAt": "2026-07-12T21:08:58.010Z"
+      "appliedAt": "2026-07-12T21:17:00.796Z"
     },
     "canonicalFighterRegistryApex": {
       "applied": true,
@@ -84121,7 +84121,7 @@
           "overallOvr": 90
         }
       ],
-      "appliedAt": "2026-07-12T21:08:58.326Z"
+      "appliedAt": "2026-07-12T21:17:01.131Z"
     },
     "lossContextFinalReconciliation": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -84192,7 +84192,7 @@
         "mutatesRecords": true,
         "mutatesPenalty": false,
         "mutatesScores": false,
-        "appliedAt": "2026-07-12T21:08:56.416Z",
+        "appliedAt": "2026-07-12T21:16:58.776Z",
         "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
       },
       "scoreReview": {
@@ -84933,7 +84933,7 @@
       ],
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "generatedAt": "2026-07-12T21:08:58.326Z",
+      "generatedAt": "2026-07-12T21:17:01.132Z",
       "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
     },
     "canonicalFighterRegistryFinal": {
@@ -85493,7 +85493,7 @@
             "Compact championship window with shallow-division compression.",
             "UFC-only window."
           ],
-          "appliedAt": "2026-07-12T21:08:57.738Z"
+          "appliedAt": "2026-07-12T21:17:00.500Z"
         },
         "apexPeakAudit": {
           "score": 4.6,
@@ -86272,7 +86272,7 @@
             "Compact championship window with shallow-division compression.",
             "UFC-only window."
           ],
-          "appliedAt": "2026-07-12T21:08:57.740Z"
+          "appliedAt": "2026-07-12T21:17:00.503Z"
         },
         "longevityLegacyScore": 7.78,
         "longevityRaw30": 7.78,
@@ -93650,12 +93650,12 @@
     "mutatesScores": true,
     "mutatesRanks": true,
     "mutatesOvr": true,
-    "appliedAt": "2026-07-12T21:08:59.076Z",
+    "appliedAt": "2026-07-12T21:17:01.982Z",
     "finalizedAfterPipeline": true,
     "finalizerVersion": "division-era-depth-finalizer-20260712c-late-ready-sync",
     "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
     "finalScoreEngineApplyCount": 5,
-    "finalizedAt": "2026-07-12T21:09:02.385Z"
+    "finalizedAt": "2026-07-12T21:17:06.273Z"
   },
   "finalizer": {
     "version": "division-era-depth-finalizer-20260712c-late-ready-sync",
@@ -96081,14 +96081,14 @@
       "mutatesScores": true,
       "mutatesRanks": true,
       "mutatesOvr": true,
-      "appliedAt": "2026-07-12T21:08:59.076Z",
+      "appliedAt": "2026-07-12T21:17:01.982Z",
       "finalizedAfterPipeline": true,
       "finalizerVersion": "division-era-depth-finalizer-20260712c-late-ready-sync",
       "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
       "finalScoreEngineApplyCount": 5,
-      "finalizedAt": "2026-07-12T21:09:02.385Z"
+      "finalizedAt": "2026-07-12T21:17:06.273Z"
     },
-    "appliedAt": "2026-07-12T21:09:02.386Z"
+    "appliedAt": "2026-07-12T21:17:06.274Z"
   },
   "finalScoreEngine": {
     "version": "final-score-engine-20260712b-era-shadow-fallback",
@@ -96206,7 +96206,7 @@
           "overallOvr": 90
         }
       ],
-      "appliedAt": "2026-07-12T21:09:02.385Z"
+      "appliedAt": "2026-07-12T21:17:06.272Z"
     }
   },
   "sixCategoryModel": {
@@ -96221,7 +96221,7 @@
       "eraDepthAdjustment": "post-base modifier"
     },
     "formula": "Championship /30 × 35 + Quality Wins /30 × 27.5 + Prime Dominance /30 × 27.5 + Longevity /30 × 10 + Apex Peak + Loss Context + Division-Era Depth",
-    "appliedAt": "2026-07-12T21:09:02.384Z",
+    "appliedAt": "2026-07-12T21:17:06.272Z",
     "jonJones": {
       "rank": 1,
       "fighter": "Jon Jones",
@@ -96286,7 +96286,7 @@
           "Long title-level window; late LHW/HW context slightly compressed but still reaches the longevity ceiling.",
           "UFC-only GOAT benchmark."
         ],
-        "appliedAt": "2026-07-12T21:08:57.736Z"
+        "appliedAt": "2026-07-12T21:17:00.498Z"
       },
       "apexPeakAudit": {
         "score": 6,
