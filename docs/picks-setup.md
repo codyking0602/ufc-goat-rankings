@@ -15,7 +15,7 @@ Run these files in **Supabase → SQL Editor** in this order:
 7. `supabase/picks-event-manager-phase.sql`
 8. `supabase/picks-commissioner-phase.sql`
 9. `supabase/picks-social-retention-phase.sql`
-10. `supabase/picks-event-automation-phase.sql`
+10. `supabase/picks-correctness-cleanup-phase.sql`
 
 Then open **Project Settings → API** and copy the project URL and public publishable key into `assets/data/supabase-config.js`.
 
@@ -27,7 +27,7 @@ Never place the service-role or secret key in the repository. All migration file
 - One optional Underdog Lock per player and event.
 - Correct Underdog Lock: 1 additional bonus point.
 - Incorrect Underdog Lock: no penalty.
-- Draws, no contests, and cancellations are void.
+- Draws, no contests, cancellations, and unresolved fights are excluded from accuracy.
 - Individual friends' picks remain hidden until that fight locks.
 
 Commissioners can choose future-season point values after the commissioner migration runs. Scoring locks once the first pick is submitted in that season.
@@ -40,7 +40,7 @@ Every Picks room becomes a permanent group after `picks-persistent-groups-phase.
 - The group gets one stable share link.
 - Existing members carry into every new event automatically.
 - Each event keeps its own room standings and recap.
-- The group card tracks cumulative points, accuracy, event wins, and Underdog Lock bonuses for the active season.
+- The group card tracks cumulative points, graded-pick accuracy, event wins, and Underdog Lock bonuses for the active season.
 - The group owner can attach the next UFC event without rebuilding the group.
 
 ## Event Manager
@@ -90,28 +90,22 @@ It includes:
 
 Browser notifications are opportunistic and appear when the app is opened near event time. The calendar file is the reliable reminder outside the app.
 
-## Card and odds automation
+## Correctness cleanup
 
-After `picks-event-automation-phase.sql` runs, the group owner gets a private **Card Automation** panel beside the Event Manager.
+After `picks-correctness-cleanup-phase.sql` runs:
 
-The no-subscription workflow is:
+- Season accuracy uses graded fights only.
+- Cancelled, drawn, no-contest, and unresolved fights do not inflate the denominator.
+- An event cannot be completed while scheduled fights still need outcomes.
+- The owner can mark all unresolved fights cancelled and complete the event in one confirmed action.
+- Completed events stop being labeled as the current group event.
+- Groups move to the next linked upcoming/live event, or show no current event when none exists.
 
-1. Create the draft event in Event Manager.
-2. Paste the full card into Card Automation.
-3. Let the app infer bout order, sections, estimated lock times, and American odds.
-4. Review additions, replacements, reordered fights, lock changes, and missing fights.
-5. Apply the card in one transaction.
-6. Paste the card again later to detect cancellations or matchup changes before publishing.
+## Optional card and odds automation
 
-Supported card formats include pipe-delimited, tab-delimited, CSV-style, and simple `Fighter A vs Fighter B` lines. The canonical template is:
+`supabase/picks-event-automation-phase.sql` is optional and is **not required** for the normal maintained-card workflow. Do not run it unless the group owner intentionally wants the paste-and-import interface.
 
-```text
-1 | Early Prelims | Flyweight | Fighter A | Fighter B | -150 | +130
-2 | Prelims | Lightweight | Fighter C | Fighter D | +120 | -140
-3 | Main Event | Welterweight | Fighter E | Fighter F | -110 | -110
-```
-
-Bulk odds can be pasted as paired lines or one fighter per line. Matchups are resolved by fighter names. Missing fights are never silently removed: the preview shows them first, and the owner chooses whether to keep them or void them as cancellations when submitted picks already exist.
+When enabled, it supports pipe-delimited, tab-delimited, CSV-style, and simple `Fighter A vs Fighter B` card imports, plus bulk odds matching by fighter name.
 
 ## Live event maintenance
 
