@@ -1,0 +1,5 @@
+/* Partial odds coverage for live UFC Picks cards. */
+.picks-odds-source.picks-odds-complete{color:#bbf7d0}
+.picks-odds-source.picks-odds-partial{color:#fde68a}
+.picks-odds-source.picks-odds-empty{color:#cbd5e1}
+.picks-odds-source .picks-odds-availability{font-weight:900}
