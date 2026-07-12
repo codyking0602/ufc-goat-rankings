@@ -1,0 +1,49 @@
+name: Picks UI Smoke
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'assets/js/picks*.js'
+      - 'assets/css/picks*.css'
+      - 'docs/picks-setup.md'
+      - 'scripts/check-picks-ui.mjs'
+      - '.github/workflows/picks-ui-smoke.yml'
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'assets/js/picks*.js'
+      - 'assets/css/picks*.css'
+      - 'docs/picks-setup.md'
+      - 'scripts/check-picks-ui.mjs'
+      - '.github/workflows/picks-ui-smoke.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: picks-ui-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Check Picks JavaScript syntax
+        run: |
+          find assets/js -maxdepth 1 -type f -name 'picks*.js' -print0 | xargs -0 -n1 node --check
+          node --check scripts/check-picks-ui.mjs
+
+      - name: Verify Picks UI contract
+        run: node scripts/check-picks-ui.mjs
