@@ -31,24 +31,50 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Check generator syntax
+      - name: Run current depth build with diagnostics
+        id: depth_build
+        continue-on-error: true
+        env:
+          UFC_MODEL_DATE: '2026-07-12'
         run: |
-          node --check scripts/build-division-era-depth-shadow.mjs
-          node --check scripts/refresh-division-era-depth-source.mjs
-          node --check scripts/run-division-era-depth-shadow.mjs
-          node --check scripts/build-division-era-depth-judgment-review.mjs
-
-      - name: Build current 63-fighter depth shadow
-        run: node scripts/run-division-era-depth-shadow.mjs
-
-      - name: Build final 63-fighter judgment review
-        run: node scripts/build-division-era-depth-judgment-review.mjs
+          mkdir -p artifacts docs
+          set +e
+          {
+            echo '=== JavaScript syntax ==='
+            node --check scripts/build-division-era-depth-shadow.mjs
+            node --check scripts/refresh-division-era-depth-source.mjs
+            node --check scripts/run-division-era-depth-shadow.mjs
+            node --check scripts/build-division-era-depth-judgment-review.mjs
+            SYNTAX_STATUS=$?
+            echo "syntax_status=$SYNTAX_STATUS"
+            if [ "$SYNTAX_STATUS" -ne 0 ]; then exit "$SYNTAX_STATUS"; fi
+            echo '=== Current source and shadow build ==='
+            node scripts/run-division-era-depth-shadow.mjs
+            SHADOW_STATUS=$?
+            echo "shadow_status=$SHADOW_STATUS"
+            if [ "$SHADOW_STATUS" -ne 0 ]; then exit "$SHADOW_STATUS"; fi
+            echo '=== Final judgment review ==='
+            node scripts/build-division-era-depth-judgment-review.mjs
+            REVIEW_STATUS=$?
+            echo "review_status=$REVIEW_STATUS"
+            exit "$REVIEW_STATUS"
+          } > artifacts/division-era-depth-build.log 2>&1
+          STATUS=$?
+          cp artifacts/division-era-depth-build.log docs/division-era-depth-build-diagnostics.txt
+          echo "status=$STATUS" >> "$GITHUB_OUTPUT"
+          cat artifacts/division-era-depth-build.log
+          exit "$STATUS"
 
       - name: Validate promotion contract
+        id: depth_validation
+        if: steps.depth_build.outcome == 'success'
+        continue-on-error: true
         run: |
-          node --check assets/data/division-era-depth-shadow.js
-          node --check assets/data/division-era-depth-audit.js
-          node - <<'NODE'
+          set +e
+          {
+            node --check assets/data/division-era-depth-shadow.js
+            node --check assets/data/division-era-depth-audit.js
+            node - <<'NODE'
           const fs = require('fs');
           const report = JSON.parse(fs.readFileSync('docs/division-era-depth-shadow-report.json', 'utf8'));
           const review = JSON.parse(fs.readFileSync('docs/division-era-depth-judgment-review.json', 'utf8'));
@@ -66,8 +92,17 @@ jobs:
           if (review.promotionDecision.readyForLivePromotion !== true || review.promotionDecision.blockers.length !== 0) throw new Error('Era-depth model is not approved for live promotion.');
           console.log(JSON.stringify({shadow: report.summary, source: report.source, judgment: review.coverage, promotionDecision: review.promotionDecision}, null, 2));
           NODE
+            VALIDATE_STATUS=$?
+            echo "validation_status=$VALIDATE_STATUS"
+            exit "$VALIDATE_STATUS"
+          } >> artifacts/division-era-depth-build.log 2>&1
+          STATUS=$?
+          cp artifacts/division-era-depth-build.log docs/division-era-depth-build-diagnostics.txt
+          cat artifacts/division-era-depth-build.log
+          exit "$STATUS"
 
-      - name: Upload depth reports
+      - name: Upload depth reports and diagnostics
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: division-era-depth
@@ -77,12 +112,25 @@ jobs:
             docs/division-era-depth-shadow-report.json
             docs/division-era-depth-judgment-review.json
             docs/division-era-depth-judgment-review.md
+            docs/division-era-depth-build-diagnostics.txt
+            artifacts/division-era-depth-build.log
+          if-no-files-found: warn
           retention-days: 30
 
-      - name: Publish generated depth model and judgment review
+      - name: Publish generated depth files or diagnostics
+        if: always()
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add assets/data/division-era-depth-shadow.js assets/data/division-era-depth-audit.js docs/division-era-depth-shadow-report.json docs/division-era-depth-judgment-review.json docs/division-era-depth-judgment-review.md
-          git commit -m 'Record current division era depth approval [skip ci]' || true
+          git add -f docs/division-era-depth-build-diagnostics.txt
+          if [ "${{ steps.depth_build.outcome }}" = "success" ] && [ "${{ steps.depth_validation.outcome }}" = "success" ]; then
+            git add assets/data/division-era-depth-shadow.js assets/data/division-era-depth-audit.js docs/division-era-depth-shadow-report.json docs/division-era-depth-judgment-review.json docs/division-era-depth-judgment-review.md
+            git commit -m 'Record current division era depth approval [skip ci]' || true
+          else
+            git commit -m 'Record division era depth build failure [skip ci]' || true
+          fi
           git push
+
+      - name: Enforce clean depth build
+        if: steps.depth_build.outcome != 'success' || steps.depth_validation.outcome != 'success'
+        run: exit 1
