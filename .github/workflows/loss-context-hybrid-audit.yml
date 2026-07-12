@@ -1,0 +1,45 @@
+name: Loss Context Hybrid Audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'assets/data/loss-context-hybrid-shadow.js'
+      - 'assets/data/loss-context-hybrid-audit.js'
+      - 'assets/data/loss-context-canonical-production.js'
+      - 'assets/data/fighter-era-ledgers.js'
+      - 'assets/data/ranking-data.js'
+      - 'assets/data/ranking-data-patches.js'
+      - 'assets/data/fighter-packets/**'
+      - 'scripts/run-loss-context-hybrid-audit.mjs'
+      - '.github/workflows/loss-context-hybrid-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install headless DOM
+        run: npm install --no-save jsdom@24
+      - name: Run full-roster hybrid audit
+        run: node scripts/run-loss-context-hybrid-audit.mjs
+      - name: Commit generated audit output
+        run: |
+          if git diff --quiet -- docs/loss-context-hybrid-audit-output.json; then
+            echo "Audit output unchanged."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/loss-context-hybrid-audit-output.json
+          git commit -m "Update Loss Context hybrid audit output"
+          git push
