@@ -10,13 +10,16 @@
     return String(value || '').trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6);
   }
 
-  function roomCodeFromUrl(value){
+  function paramFromUrl(name,value){
     try{
-      return normalizeCode(new URL(value || window.location.href,window.location.href).searchParams.get('room'));
+      return normalizeCode(new URL(value || window.location.href,window.location.href).searchParams.get(name));
     }catch(_error){
       return '';
     }
   }
+
+  function roomCodeFromUrl(value){ return paramFromUrl('room',value); }
+  function groupCodeFromUrl(value){ return paramFromUrl('group',value); }
 
   function roomTokenExists(code){
     return Boolean(code && localStorage.getItem(`${ROOM_TOKEN_PREFIX}${code}`));
@@ -58,7 +61,7 @@
       const nextCode=url == null ? previousCode : roomCodeFromUrl(url);
       const result=original.apply(this,arguments);
       if(nextCode) rememberRoom(nextCode);
-      else if(previousCode) leaveActiveRoom();
+      else if(previousCode && !groupCodeFromUrl(url || window.location.href)) leaveActiveRoom();
       return result;
     };
   }
@@ -71,6 +74,9 @@
     rememberRoom(currentCode);
     return;
   }
+
+  // A permanent group link decides which event room should open.
+  if(groupCodeFromUrl(window.location.href)) return;
 
   if(localStorage.getItem(AUTO_RESTORE_DISABLED_KEY)==='1') return;
 
