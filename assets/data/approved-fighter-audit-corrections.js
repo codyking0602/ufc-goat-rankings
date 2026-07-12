@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='approved-fighter-audit-corrections-20260712b-usman-stipe-dc';
+  const VERSION='approved-fighter-audit-corrections-20260712c-display-sync';
   const DATA=window.RANKING_DATA;
   const ERA=window.UFC_FIGHTER_ERA_LEDGERS;
   const ERA_LEDGERS=ERA?.ledgers;
@@ -219,6 +219,18 @@
     model.report=ledgers.report;
     window.__UFC_USMAN_STIPE_DC_PRIME_CORRECTION_APPLIED=true;
     const finalScoreResult=window.UFC_FINAL_SCORE_ENGINE?.apply?.('approved-usman-stipe-dc-audit-corrections')||null;
+    const overrides=displayOverrides();
+    if(overrides){
+      [...(DATA.men||[]),...(DATA.women||[])].forEach(row=>{
+        if(!row?.fighter)return;
+        overrides[row.fighter]=overrides[row.fighter]||{};
+        overrides[row.fighter].allTimeRank=row.rank;
+        overrides[row.fighter].rank=row.rank;
+        overrides[row.fighter].overallOvr=row.overallOvr;
+        overrides[row.fighter].totalScore=row.totalScore;
+        overrides[row.fighter].rawScore=row.rawScore;
+      });
+    }
     if(typeof window.refresh==='function'){try{window.refresh();}catch(error){}}
     const result={applied:true,fighters:Object.keys(corrections),results,finalScoreResult,version:VERSION,appliedAt:new Date().toISOString()};
     window.UFC_APPROVED_PRIME_DOMINANCE_CORRECTIONS=result;
