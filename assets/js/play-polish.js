@@ -29,11 +29,11 @@
   function hideBuilderModelRanks(){
     play.querySelectorAll('.play-rank-copy small').forEach(node => {
       const cleaned = divisionOnly(node.textContent);
-      if(cleaned) node.textContent = cleaned;
+      if(cleaned && cleaned !== node.textContent.trim()) node.textContent = cleaned;
     });
     play.querySelectorAll('.play-search-result span small').forEach(node => {
       const cleaned = divisionOnly(node.textContent);
-      if(cleaned) node.textContent = cleaned;
+      if(cleaned && cleaned !== node.textContent.trim()) node.textContent = cleaned;
     });
   }
 
@@ -58,7 +58,7 @@
 
   function polishBlindMatchup(){
     const target = document.getElementById('blindMatchup');
-    if(!target || target.dataset.playPolished === 'true') return;
+    if(!target) return;
     const cards = [...target.querySelectorAll('.blind-fighter-card')];
     if(cards.length !== 2) return;
 
