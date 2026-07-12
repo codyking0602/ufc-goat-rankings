@@ -46,7 +46,7 @@ try {
       const expected = shadowByKey.get(key(row.fighter));
       return !expected
         || Math.abs(Number(row.eraDepthAdjustment) - Number(expected.curvedAdjustment)) > 0.001
-        || Math.abs(Number(row.totalScore) - (Number(expected.currentTotal) + Number(expected.curvedAdjustment))) > 0.001;
+        || Math.abs(Number(row.totalScore) - (Number(row.preEraDepthTotalScore) + Number(expected.curvedAdjustment))) > 0.001;
     }).map(row => row.fighter);
     const profileMismatches = profiles.filter(profile => {
       const board = boardByKey.get(key(profile.fighter));
