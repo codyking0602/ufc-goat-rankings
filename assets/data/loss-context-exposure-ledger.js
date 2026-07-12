@@ -4,7 +4,7 @@
 (function(){
   'use strict';
 
-  const VERSION='loss-context-exposure-ledger-20260711a-full-roster';
+  const VERSION='loss-context-exposure-ledger-20260711b-record-row-resolution';
   const DATA=window.RANKING_DATA;
 
   const CLOSED_WINDOW_COUNTS={
@@ -65,13 +65,16 @@
   }
   function allRows(){return [...(DATA?.men||[]),...(DATA?.women||[]),...(DATA?.fighters||[])].filter(row=>row?.fighter);}
   function boardRows(){return [...(DATA?.men||[]),...(DATA?.women||[])].filter(row=>row?.fighter);}
-  function rowFor(fighter){const target=key(fighter);return allRows().find(row=>key(row.fighter)===target)||null;}
+  function rowsFor(fighter){const target=key(fighter);return allRows().filter(row=>key(row.fighter)===target);}
   function recordFor(fighter){
-    const row=rowFor(fighter);
     const target=key(fighter);
     const packet=Object.entries(window.UFC_FIGHTER_PACKETS||{}).find(([name])=>key(name)===target)?.[1];
     const override=typeof DISPLAY_OVERRIDES!=='undefined'?Object.entries(DISPLAY_OVERRIDES||{}).find(([name])=>key(name)===target)?.[1]:null;
-    const candidates=[row?.ufcRecord,row?.record,row?.ufc_record,packet?.profileStats?.ufcRecord,packet?.boardRow?.ufcRecord,packet?.profile?.ufcRecord,override?.packetProfileStats?.ufcRecord,override?.snapshotStats?.ufcRecord];
+    const candidates=[
+      ...rowsFor(fighter).flatMap(row=>[row?.ufcRecord,row?.record,row?.ufc_record]),
+      packet?.profileStats?.ufcRecord,packet?.boardRow?.ufcRecord,packet?.profile?.ufcRecord,
+      override?.packetProfileStats?.ufcRecord,override?.snapshotStats?.ufcRecord
+    ];
     const value=candidates.find(item=>parseRecord(item));
     return value?{text:String(value),...parseRecord(value)}:null;
   }
@@ -91,7 +94,7 @@
       const explicit=Object.entries(CLOSED_WINDOW_COUNTS).find(([name])=>key(name)===key(fighter))?.[1]||null;
       let exposure=null;
       let source=null;
-      let endpoint=era?.window?.end||null;
+      const endpoint=era?.window?.end||null;
       let notes=null;
 
       if(openWindow&&record){
