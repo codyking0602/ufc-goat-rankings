@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 
 const HISTORICAL_SOURCE_URL = 'https://raw.githubusercontent.com/Yahlawat/UFC_Data_WEBSCRAPING/main/Data/wrangled_Data/wrangled_fight_details.csv';
 const UFCSTATS_EVENTS_URL = 'http://ufcstats.com/statistics/events/completed?page=all';
-const USER_AGENT = 'ufc-goat-rankings-era-depth/2.0 (+https://github.com/codyking0602/ufc-goat-rankings)';
+const USER_AGENT = 'Mozilla/5.0 (compatible; UFCGoatRankingsDepth/2.1; +https://github.com/codyking0602/ufc-goat-rankings)';
 const REQUIRED_COLUMNS = ['fight_link', 'date', 'name_1', 'name_2', 'win_loss_1', 'win_loss_2', 'division'];
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -78,6 +78,11 @@ function isoDate(value) {
   return date.toISOString().slice(0, 10);
 }
 
+function attrValue(attrs, name) {
+  const match = String(attrs || '').match(new RegExp(`${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)')`, 'i'));
+  return decodeHtml(match?.[1] || match?.[2] || '');
+}
+
 async function fetchText(url, attempts = 5) {
   let lastError;
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
@@ -87,7 +92,9 @@ async function fetchText(url, attempts = 5) {
         headers: { 'User-Agent': USER_AGENT, Accept: 'text/html,text/csv;q=0.9,*/*;q=0.8' }
       });
       if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
-      return await response.text();
+      const text = await response.text();
+      if (!text.trim()) throw new Error('empty response');
+      return text;
     } catch (error) {
       lastError = error;
       if (attempt < attempts) await sleep(Math.min(8000, 500 * (2 ** (attempt - 1))));
@@ -111,20 +118,21 @@ function historicalRows(csvText) {
 function completedEvents(html) {
   const events = [];
   const seen = new Set();
-  const rowPattern = /<tr\b[^>]*class=(?:"[^"]*b-statistics__table-row[^"]*"|'[^']*b-statistics__table-row[^']*')[^>]*>([\s\S]*?)<\/tr>/gi;
+  const rowPattern = /<tr\b([^>]*)class=(?:"[^"]*b-statistics__table-row[^"]*"|'[^']*b-statistics__table-row[^']*')([^>]*)>([\s\S]*?)<\/tr>/gi;
   let match;
   while ((match = rowPattern.exec(html))) {
-    const block = match[1];
-    const linkMatch = block.match(/href=(?:"([^"]*\/event-details\/[^"]+)"|'([^']*\/event-details\/[^']+)')/i);
-    if (!linkMatch) continue;
-    const url = decodeHtml(linkMatch[1] || linkMatch[2]);
-    if (seen.has(url)) continue;
+    const attrs = `${match[1] || ''} ${match[2] || ''}`;
+    const block = match[3];
+    const anchorMatch = block.match(/href=(?:"([^"]*\/event-details\/[^"]+)"|'([^']*\/event-details\/[^']+)')/i);
+    const url = decodeHtml(anchorMatch?.[1] || anchorMatch?.[2] || attrValue(attrs, 'data-link'));
+    if (!url || !url.includes('/event-details/') || seen.has(url)) continue;
     const dateMatch = block.match(/<span\b[^>]*class=(?:"[^"]*b-statistics__date[^"]*"|'[^']*b-statistics__date[^']*')[^>]*>([\s\S]*?)<\/span>/i);
     const date = isoDate(textContent(dateMatch?.[1] || ''));
     if (!date) continue;
     seen.add(url);
     events.push({ url, date });
   }
+  if (!events.length) throw new Error('UFCStats completed-events page parsed zero completed events.');
   return events.sort((a, b) => b.date.localeCompare(a.date));
 }
 
@@ -141,9 +149,7 @@ function anchorTexts(html, hrefNeedle = '') {
   const pattern = /<a\b([^>]*)>([\s\S]*?)<\/a>/gi;
   let match;
   while ((match = pattern.exec(html))) {
-    const attrs = match[1];
-    const hrefMatch = attrs.match(/href=(?:"([^"]+)"|'([^']+)')/i);
-    const href = decodeHtml(hrefMatch?.[1] || hrefMatch?.[2] || '');
+    const href = attrValue(match[1], 'href');
     if (hrefNeedle && !href.includes(hrefNeedle)) continue;
     const text = textContent(match[2]);
     if (text) rows.push({ href, text });
@@ -153,22 +159,24 @@ function anchorTexts(html, hrefNeedle = '') {
 
 function parseEventFights(html, event) {
   const fights = [];
-  const rowPattern = /<tr\b[^>]*class=(?:"[^"]*b-fight-details__table-row[^"]*"|'[^']*b-fight-details__table-row[^']*')[^>]*>([\s\S]*?)<\/tr>/gi;
+  const rowPattern = /<tr\b([^>]*)class=(?:"[^"]*b-fight-details__table-row[^"]*"|'[^']*b-fight-details__table-row[^']*')([^>]*)>([\s\S]*?)<\/tr>/gi;
   let match;
   while ((match = rowPattern.exec(html))) {
-    const row = match[1];
+    const attrs = `${match[1] || ''} ${match[2] || ''}`;
+    const row = match[3];
     const cells = tagBlocks(row, 'td');
     if (cells.length < 7) continue;
-    const fightAnchor = anchorTexts(cells[0], '/fight-details/')[0];
+    const cellFightAnchor = anchorTexts(cells[0], '/fight-details/')[0];
+    const fightLink = cellFightAnchor?.href || attrValue(attrs, 'data-link');
     const fighterAnchors = anchorTexts(cells[1], '/fighter-details/').slice(0, 2);
-    if (!fightAnchor?.href || fighterAnchors.length !== 2) continue;
+    if (!fightLink || !fightLink.includes('/fight-details/') || fighterAnchors.length !== 2) continue;
     const division = textContent(tagBlocks(cells[6], 'p')[0] || cells[6]);
     const resultTokens = tagBlocks(cells[0], 'p').map(textContent).map(value => value.toUpperCase()).filter(Boolean);
     let results = ['W', 'L'];
     if (resultTokens.some(value => value.includes('NC'))) results = ['NC', 'NC'];
     else if (resultTokens.some(value => value === 'D' || value.includes('DRAW'))) results = ['D', 'D'];
     fights.push({
-      fight_link: fightAnchor.href,
+      fight_link: fightLink,
       date: event.date,
       name_1: fighterAnchors[0].text,
       name_2: fighterAnchors[1].text,
@@ -178,6 +186,7 @@ function parseEventFights(html, event) {
       event_url: event.url
     });
   }
+  if (!fights.length) throw new Error(`UFCStats event parsed zero fights: ${event.url}`);
   return fights;
 }
 
@@ -197,7 +206,7 @@ function fightDetailMeta(html) {
 async function mapConcurrent(items, concurrency, mapper) {
   const output = new Array(items.length);
   let cursor = 0;
-  const workers = Array.from({ length: Math.min(concurrency, items.length) }, async () => {
+  const workers = Array.from({ length: Math.min(concurrency, Math.max(1, items.length)) }, async () => {
     while (true) {
       const index = cursor;
       cursor += 1;
@@ -211,13 +220,18 @@ async function mapConcurrent(items, concurrency, mapper) {
 
 async function scrapeNewRows(cutoffDate, modelDate) {
   const eventsHtml = await fetchText(UFCSTATS_EVENTS_URL);
-  const events = completedEvents(eventsHtml).filter(event => event.date > cutoffDate && event.date <= modelDate);
-  const cards = await mapConcurrent(events, 5, async event => {
+  const allEvents = completedEvents(eventsHtml);
+  const events = allEvents.filter(event => event.date > cutoffDate && event.date <= modelDate);
+  if (!events.length) {
+    const latestAvailable = allEvents[0]?.date || null;
+    return { events, fights: [], latestAvailable };
+  }
+  const cards = await mapConcurrent(events, 4, async event => {
     const html = await fetchText(event.url);
     return parseEventFights(html, event);
   });
   const fights = cards.flat();
-  const enriched = await mapConcurrent(fights, 8, async fight => {
+  const enriched = await mapConcurrent(fights, 6, async fight => {
     try {
       const html = await fetchText(fight.fight_link, 4);
       const meta = fightDetailMeta(html);
@@ -233,7 +247,7 @@ async function scrapeNewRows(cutoffDate, modelDate) {
       return fight;
     }
   });
-  return { events, fights: enriched };
+  return { events, fights: enriched, latestAvailable: allEvents[0]?.date || null };
 }
 
 export async function buildCurrentDepthCsv(options = {}) {
@@ -247,6 +261,7 @@ export async function buildCurrentDepthCsv(options = {}) {
   const rows = [...byLink.values()].sort((a, b) => a.date.localeCompare(b.date) || a.fight_link.localeCompare(b.fight_link));
   const csv = [REQUIRED_COLUMNS.join(','), ...rows.map(row => REQUIRED_COLUMNS.map(name => csvCell(row[name])).join(','))].join('\n') + '\n';
   const datasetEnd = rows.at(-1)?.date || cutoffDate;
+  const ageDays = (new Date(`${modelDate}T00:00:00Z`) - new Date(`${datasetEnd}T00:00:00Z`)) / 86400000;
   return {
     csv,
     metadata: {
@@ -257,9 +272,11 @@ export async function buildCurrentDepthCsv(options = {}) {
       addedFightCount: refresh.fights.length,
       datasetFightCount: rows.length,
       historicalCutoff: cutoffDate,
+      latestAvailableEventDate: refresh.latestAvailable,
       datasetEnd,
       modelDate,
-      sourceFresh: datasetEnd >= modelDate || (new Date(`${modelDate}T00:00:00Z`) - new Date(`${datasetEnd}T00:00:00Z`)) / 86400000 <= 21
+      ageDays,
+      sourceFresh: datasetEnd >= modelDate || ageDays <= 21
     }
   };
 }
