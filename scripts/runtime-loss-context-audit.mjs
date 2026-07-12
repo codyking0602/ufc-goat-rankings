@@ -6,6 +6,7 @@ import process from 'node:process';
 const baseUrl = process.env.UFC_APP_URL || 'http://127.0.0.1:4173';
 const outputPath = process.env.UFC_AUDIT_OUTPUT || 'artifacts/loss-context-runtime-report.json';
 const summaryPath = process.env.UFC_AUDIT_SUMMARY_OUTPUT || 'artifacts/loss-context-runtime-summary.json';
+const judgmentPath = process.env.UFC_AUDIT_JUDGMENT_OUTPUT || 'artifacts/loss-context-hybrid-judgment-review.json';
 
 await fs.mkdir('artifacts', { recursive: true });
 
@@ -131,6 +132,11 @@ try {
           projectedDelta: hybridEntry.projectedDelta,
           severity: hybridEntry.severity,
           frequency: hybridEntry.frequency,
+          hybridBase: hybridEntry.hybridBase,
+          primeLossCount: hybridEntry.primeLossCount,
+          primeFinishCount: hybridEntry.primeFinishCount,
+          primeVolumeFloor: hybridEntry.primeVolumeFloor,
+          primeVolumeFloorApplied: hybridEntry.primeVolumeFloorApplied,
           preDivision: hybridEntry.preDivision,
           divisionMultiplier: hybridEntry.divisionMultiplier,
           divisionDiscountPct: hybridEntry.divisionDiscountPct,
@@ -161,6 +167,43 @@ try {
 
   await fs.writeFile(outputPath, `${JSON.stringify(payload, null, 2)}\n`, 'utf8');
 
+  const compactJudgmentRows = (result.hybridAudit?.judgmentReview || []).map(row => ({
+    fighter: row.fighter,
+    board: row.board,
+    currentRank: row.currentRank,
+    projectedRank: row.projectedRank,
+    rankMovement: row.rankMovement,
+    currentPenalty: row.currentPenalty,
+    recommendedPenalty: row.recommendedPenalty,
+    projectedDelta: row.projectedDelta,
+    currentTotal: row.currentTotal,
+    projectedTotal: row.projectedTotal,
+    severity: row.severity,
+    frequency: row.frequency,
+    hybridBase: row.hybridBase,
+    primeLossCount: row.primeLossCount,
+    primeFinishCount: row.primeFinishCount,
+    primeVolumeFloor: row.primeVolumeFloor,
+    primeVolumeFloorApplied: row.primeVolumeFloorApplied,
+    exposure: row.exposure,
+    divisionMultiplier: row.divisionMultiplier,
+    divisionDiscountPct: row.divisionDiscountPct,
+    divisionPointsSaved: row.divisionPointsSaved,
+    worstLosses: row.worstLosses || []
+  }));
+
+  const judgmentReview = {
+    generatedAt: payload.generatedAt,
+    shadowVersion: result.hybridShadow?.version ?? null,
+    auditVersion: result.hybridAudit?.version ?? null,
+    readyForLivePromotion: result.hybridAudit?.readyForLivePromotion ?? false,
+    criticalFlags: result.hybridAudit?.criticalFlags || [],
+    summary: result.hybridAudit?.summary ?? null,
+    rules: result.hybridShadow?.rules ?? null,
+    fighters: compactJudgmentRows
+  };
+  await fs.writeFile(judgmentPath, `${JSON.stringify(judgmentReview, null, 2)}\n`, 'utf8');
+
   const summary = {
     generatedAt: payload.generatedAt,
     pipelineStatus: result.pipeline?.status ?? null,
@@ -186,6 +229,7 @@ try {
       summary: result.hybridAudit?.summary ?? null,
       readyForLivePromotion: result.hybridAudit?.readyForLivePromotion ?? false,
       criticalFlags: result.hybridAudit?.criticalFlags || [],
+      judgmentReview: compactJudgmentRows,
       largestRelief: result.hybridAudit?.largestRelief || [],
       harshestProjected: result.hybridAudit?.harshestProjected || [],
       biggestRankMovers: result.hybridAudit?.biggestRankMovers || [],
@@ -212,6 +256,7 @@ try {
     hybridApplied: summary.hybrid.applied,
     hybridCoverageComplete: summary.hybrid.summary?.coverageComplete ?? false,
     hybridCriticalFlagCount: summary.hybrid.summary?.criticalFlagCount ?? null,
+    hybridJudgmentReviewCount: compactJudgmentRows.length,
     hybridReadyForLivePromotion: summary.hybrid.readyForLivePromotion,
     consoleErrorCount: consoleErrors.length,
     pageErrorCount: pageErrors.length
