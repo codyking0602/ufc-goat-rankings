@@ -1,0 +1,53 @@
+/* Completed-event recap: compact, high-contrast and revisit-friendly. */
+.picks-event-recap{display:grid;gap:12px;border:1px solid rgba(249,115,22,.58);border-radius:24px;padding:16px;background:linear-gradient(150deg,#1b2a40 0%,#111b2c 62%,#2a1b13 100%);box-shadow:0 18px 44px rgba(15,23,42,.18);overflow:hidden}
+.picks-event-recap[hidden]{display:none!important}
+.picks-recap-hero{display:grid;gap:12px}
+.picks-recap-kicker{color:#facc15;font-size:11px;font-weight:950;letter-spacing:.16em;text-transform:uppercase}
+.picks-recap-title-row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.picks-recap-title-row h3{margin:0;color:#fff;font-size:clamp(24px,5vw,38px);line-height:1;letter-spacing:-.035em}
+.picks-recap-title-row p{margin:6px 0 0;color:#d7e0ec;font-size:13px;font-weight:750}
+.picks-recap-title-row>span{border:1px solid rgba(255,255,255,.18);border-radius:999px;background:rgba(255,255,255,.08);padding:7px 9px;color:#fff;font-size:9px;font-weight:900;white-space:nowrap;text-transform:uppercase;letter-spacing:.07em}
+.picks-recap-champion{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 14px;border:1px solid rgba(250,204,21,.34);border-radius:18px;background:linear-gradient(135deg,rgba(250,204,21,.16),rgba(249,115,22,.12));padding:14px}
+.picks-recap-champion>span{grid-column:1/-1;color:#fde68a;font-size:9px;font-weight:950;letter-spacing:.13em;text-transform:uppercase}
+.picks-recap-champion>strong{align-self:end;color:#fff;font-size:23px;line-height:1.05}
+.picks-recap-champion>b{align-self:end;color:#facc15;font-size:20px;white-space:nowrap}
+.picks-recap-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.picks-recap-stats>div{display:grid;gap:2px;border:1px solid rgba(255,255,255,.14);border-radius:12px;background:rgba(255,255,255,.065);padding:9px}
+.picks-recap-stats strong{color:#fff;font-size:18px;line-height:1}
+.picks-recap-stats span{color:#cbd5e1;font-size:8px;font-weight:850;line-height:1.15;text-transform:uppercase;letter-spacing:.05em}
+.picks-recap-awards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.picks-recap-award{display:grid;gap:3px;border:1px solid rgba(255,255,255,.13);border-radius:13px;background:rgba(4,10,20,.34);padding:10px}
+.picks-recap-award>span{color:#fb923c;font-size:8px;font-weight:950;letter-spacing:.1em;text-transform:uppercase}
+.picks-recap-award>strong{color:#fff;font-size:12px;line-height:1.15}
+.picks-recap-award>small{color:#cbd5e1;font-size:9px;line-height:1.25}
+.picks-recap-board{border:1px solid #dbe3ed;border-radius:17px;background:#fff;padding:12px}
+.picks-recap-board-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.picks-recap-board-head span{color:#ea580c;font-size:8px;font-weight:950;letter-spacing:.11em}
+.picks-recap-board-head h4{margin:2px 0 0;color:#172033;font-size:17px}
+.picks-recap-board-head button,.picks-recap-actions button{border:1px solid #cbd5e1;border-radius:999px;background:#f8fafc;color:#172033;padding:7px 10px;font:inherit;font-size:9px;font-weight:950;cursor:pointer}
+.picks-recap-rows{display:grid;gap:5px}
+.picks-recap-row{display:grid;grid-template-columns:25px minmax(0,1fr) 42px;gap:8px;align-items:center;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc;padding:7px 8px}
+.picks-recap-row.champion{border-color:#fdba74;background:#fff7ed}
+.picks-recap-place{color:#f97316;font-size:12px;font-weight:950;text-align:center}
+.picks-recap-row>div{min-width:0}
+.picks-recap-row>div strong{display:block;color:#172033;font-size:13px;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.picks-recap-row>div strong em{border-radius:999px;background:#ffedd5;color:#c2410c;padding:2px 4px;font-style:normal;font-size:7px;vertical-align:middle}
+.picks-recap-row>div>small{display:block;margin-top:3px;color:#475569;font-size:8px;font-weight:750;line-height:1.2}
+.picks-recap-row>b{display:grid;justify-items:end;color:#172033;font-size:17px;line-height:.9}
+.picks-recap-row>b small{color:#64748b;font-size:7px;letter-spacing:.08em}
+.picks-recap-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.picks-recap-actions button{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.09);color:#fff;border-radius:11px;padding:10px}
+#picksEventHero.is-complete{border-color:rgba(34,197,94,.55);background:radial-gradient(circle at 92% 8%,rgba(34,197,94,.24),transparent 34%),linear-gradient(135deg,#182233 0%,#111827 72%)}
+#picksEventHero.is-complete .picks-event-kicker{color:#86efac}
+@media(max-width:700px){
+  .picks-event-recap{padding:13px;border-radius:20px}
+  .picks-recap-title-row{display:grid}
+  .picks-recap-title-row>span{justify-self:start}
+  .picks-recap-champion>strong{font-size:20px}
+  .picks-recap-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .picks-recap-awards{grid-template-columns:1fr 1fr}
+}
+@media(max-width:390px){
+  .picks-recap-awards{grid-template-columns:1fr}
+  .picks-recap-actions{grid-template-columns:1fr}
+}
