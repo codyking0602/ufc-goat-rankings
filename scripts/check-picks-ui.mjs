@@ -23,6 +23,8 @@ const profile=read('assets/js/picks-social-retention.js');
 const recovery=read('assets/js/picks-device-recovery.js');
 const recoverySql=read('supabase/picks-device-recovery-phase.sql');
 const settingsCleanup=read('assets/js/picks-settings-admin-cleanup.js');
+const mobilePolish=read('assets/js/picks-mobile-polish.js');
+const mobilePolishCss=read('assets/css/picks-mobile-polish.css');
 const events=read('assets/data/picks-events.js');
 const photos=read('assets/data/picks-photo-overrides.js');
 const setup=read('docs/picks-setup.md');
@@ -40,6 +42,8 @@ const requiredFiles=[
   'assets/js/picks-internal-navigation.js',
   'assets/js/picks-home-event-cleanup.js',
   'assets/js/picks-settings-admin-cleanup.js',
+  'assets/js/picks-upcoming-event-settings.js',
+  'assets/js/picks-mobile-polish.js',
   'assets/data/picks-events.js',
   'assets/data/picks-photo-overrides.js',
   'assets/css/picks-device-recovery.css',
@@ -47,6 +51,7 @@ const requiredFiles=[
   'assets/css/picks-home-event-cleanup.css',
   'assets/css/picks-settings-admin-cleanup.css',
   'assets/css/picks-final-cleanup.css',
+  'assets/css/picks-mobile-polish.css',
   'supabase/picks-device-recovery-phase.sql',
   'supabase/ufc-oklahoma-city-event.sql'
 ];
@@ -72,11 +77,14 @@ for(const retired of retiredFiles){
 const requiredIndexRefs=[
   'assets/css/picks-final-cleanup.css',
   'assets/css/picks-device-recovery.css',
+  'assets/css/picks-mobile-polish.css',
   'assets/js/picks-social-retention.js',
   'assets/js/picks-internal-navigation.js',
   'assets/js/picks-home-event-cleanup.js',
   'assets/js/picks-settings-admin-cleanup.js',
-  'assets/js/picks-device-recovery.js'
+  'assets/js/picks-upcoming-event-settings.js',
+  'assets/js/picks-device-recovery.js',
+  'assets/js/picks-mobile-polish.js'
 ];
 requiredIndexRefs.forEach(relative=>check(index.includes(relative),`index.html does not load ${relative}`));
 
@@ -85,7 +93,9 @@ const scriptOrder=[
   'assets/js/picks-internal-navigation.js',
   'assets/js/picks-home-event-cleanup.js',
   'assets/js/picks-settings-admin-cleanup.js',
-  'assets/js/picks-device-recovery.js'
+  'assets/js/picks-upcoming-event-settings.js',
+  'assets/js/picks-device-recovery.js',
+  'assets/js/picks-mobile-polish.js'
 ].map(relative=>index.indexOf(relative));
 check(scriptOrder.every(position=>position>=0),'One or more Picks cleanup scripts are missing from index.html');
 check(scriptOrder.every((position,indexValue)=>indexValue===0 || position>scriptOrder[indexValue-1]),'Picks cleanup scripts are loaded in an unsafe order');
@@ -117,6 +127,15 @@ check(profile.includes('picksAddCalendar'),'Calendar reminder support is missing
 check(profile.includes("'TRIGGER:-PT8H'") && profile.includes("'TRIGGER:-PT1H'"),'Fight-day calendar alerts are missing');
 check(settingsCleanup.includes('Add Phone Reminders'),'Settings cleanup does not preserve the phone-reminder label');
 
+check(mobilePolish.includes('formatRemaining'),'Readable fight countdown formatter is missing');
+check(mobilePolish.includes('day${days===1') && mobilePolish.includes('hour${hours===1'),'Countdown does not support day/hour copy');
+check(mobilePolish.includes('fighterSlug') && mobilePolish.includes("-thumb.webp"),'Automatic fighter thumbnail path wiring is missing');
+check(mobilePolish.includes('picks-room-more'),'Compact room overflow menu is missing');
+check(mobilePolish.includes("inline:'center'"),'Mobile top-tab auto-centering is missing');
+check(mobilePolishCss.includes('position:relative!important') && mobilePolishCss.includes('top:auto!important'),'Picks internal navigation still overlays fight content on mobile');
+check(mobilePolishCss.includes('picks-room-banner-compact'),'Compact room banner styling is missing');
+check(mobilePolishCss.includes('scroll-snap-type:x proximity'),'Mobile top navigation scroll affordance is missing');
+
 check(events.includes("id: 'ufc-oklahoma-city-2026-07-18'"),'UFC Oklahoma City event is missing');
 check(events.includes("red:'Chase Hooper', blue:'Mitch Ramirez'"),'Current Oklahoma City main card is missing Hooper vs. Ramirez');
 check(!events.includes('okc-tavares-barriault'),'Stale Oklahoma City main-card bout remains');
@@ -146,4 +165,4 @@ if(failures.length){
   process.exit(1);
 }
 
-console.log(`Picks UI smoke check passed: ${assetRefs.length} local assets resolved, ${requiredFiles.length} required files present, current event and phone reminders verified.`);
+console.log(`Picks UI smoke check passed: ${assetRefs.length} local assets resolved, ${requiredFiles.length} required files present, current event, reminders, and mobile polish verified.`);
