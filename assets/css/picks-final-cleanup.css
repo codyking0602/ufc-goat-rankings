@@ -1,11 +1,11 @@
 /* Picks step 5: final simplification and mobile polish. */
-#picksSocialCard,#picksEventManagerCard,#picksAutomationCard{display:none!important}
 #picks .picks-shell,#picks .picks-route-content,#picks .picks-internal-view{min-width:0}
 #picksHomeContent,#picksEventContent,#picksSettingsContent{overflow:visible}
 #picksSettingsContent{gap:10px}
 #picksHistoryCard{margin:0}
 #picksProfileShell{margin:0}
 #picksCommissionerCard{margin:0}
+.picks-internal-nav button:focus-visible,.picks-route-empty button:focus-visible,.picks-home-profile:focus-visible{outline:3px solid rgba(249,115,22,.42);outline-offset:2px}
 .picks-home-leaderboard .picks-group-member,.picks-standing-row,.picks-recap-row{min-width:0}
 .picks-home-leaderboard .picks-group-member>div,.picks-standing-row>div,.picks-recap-row>div{min-width:0}
 .picks-home-leaderboard .picks-group-member strong,.picks-standing-row strong,.picks-recap-row strong{overflow:hidden;text-overflow:ellipsis}
