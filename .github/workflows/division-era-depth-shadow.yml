@@ -93,7 +93,8 @@ jobs:
           grep -q 'division-era-depth-judgment-review-20260712b-live-approved' index.html
           grep -q 'division-era-depth-live-20260712a' index.html
           grep -q 'division-era-depth-finalizer-20260712a' index.html
-          grep -q "finalScoreEngine:'20260712a-division-era-depth'" assets/data/module-versions.js
+          grep -q "finalScoreEngine:'20260712b-era-shadow-fallback'" assets/data/module-versions.js
+          grep -q 'function eraDepthAdjustmentFor(row)' assets/js/final-score-engine.js
           grep -q '+ penalty + eraDepthAdjustment' assets/js/final-score-engine.js
 
       - name: Upload depth reports and diagnostics
