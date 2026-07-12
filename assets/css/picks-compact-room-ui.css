@@ -48,6 +48,101 @@
 .room-picks-grid small{margin-top:3px!important;font-size:8px!important;line-height:1.25}
 .room-picks-missed{margin-top:5px!important;font-size:8px!important}
 
+/* Explicit high-contrast treatment for dark UFC-style panels. */
+#picks .picks-admin-card,
+#picks .picks-progress-card,
+#picks .picks-standings-card{
+  background:linear-gradient(180deg,#22324a,#142033)!important;
+  border-color:#4b607d!important;
+  color:#f8fafc!important;
+}
+
+#picks .picks-admin-card>summary,
+#picks .picks-admin-card>summary::after,
+#picks .picks-progress-card,
+#picks .picks-progress-card *,
+#picks .picks-standings-card>h3{
+  opacity:1!important;
+}
+
+#picks .picks-admin-card>summary{
+  color:#f8fafc!important;
+  font-weight:950!important;
+}
+
+#picks .picks-admin-card>summary span{
+  background:#fff1dc!important;
+  color:#b73f07!important;
+  border:1px solid #ffd7a8!important;
+}
+
+#picks .picks-admin-card>summary::after{
+  color:#dbeafe!important;
+}
+
+#picks .picks-progress-top strong{
+  color:#ffffff!important;
+  text-shadow:0 1px 0 rgba(0,0,0,.2);
+}
+
+#picks .picks-progress-top span,
+#picks .picks-progress-top b{
+  color:#d7e1ee!important;
+  font-weight:850!important;
+}
+
+#picks .picks-progress-bar{
+  background:#d8e2ee!important;
+}
+
+#picks .picks-summary-chips span{
+  background:#ffffff!important;
+  border-color:#d4deea!important;
+  color:#2f4057!important;
+  font-weight:900!important;
+}
+
+#picks .picks-lock-summary{
+  color:#ff9a4a!important;
+  font-weight:950!important;
+  text-shadow:0 1px 0 rgba(0,0,0,.2);
+}
+
+#picks .picks-standings-card>h3{
+  color:#ffffff!important;
+}
+
+#picks .picks-standing-row{
+  background:#f8fafc!important;
+  border-color:#d8e1ec!important;
+}
+
+#picks .picks-standing-row strong,
+#picks .picks-standing-score strong{
+  color:#172033!important;
+}
+
+#picks .picks-standing-rank{
+  color:#f97316!important;
+  font-weight:950!important;
+}
+
+#picks .picks-standing-row .meta,
+#picks .picks-standing-score small{
+  color:#526276!important;
+  font-weight:800!important;
+}
+
+#picks .picks-you{
+  background:#fff0df!important;
+  color:#b84008!important;
+}
+
+#picks .picks-admin-note{
+  background:#fff7ed!important;
+  color:#9a3412!important;
+}
+
 @media(max-width:700px){
   .picks-room-picks-head{display:flex!important;align-items:flex-start!important}
   .picks-room-picks-head .picks-card-subtitle{max-width:210px}
