@@ -10,10 +10,18 @@ on:
       - 'scripts/runtime-loss-context-audit.mjs'
       - 'scripts/runtime-era-depth-audit.mjs'
       - '.github/workflows/runtime-scoring-audit.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'assets/**'
+      - 'scripts/runtime-loss-context-audit.mjs'
+      - 'scripts/runtime-era-depth-audit.mjs'
+      - '.github/workflows/runtime-scoring-audit.yml'
   workflow_dispatch:
 
 concurrency:
-  group: runtime-scoring-audit
+  group: runtime-scoring-audit-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -24,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Check out main
+      - name: Check out current ref
         uses: actions/checkout@v4
 
       - name: Set up Node
@@ -79,7 +87,7 @@ jobs:
           retention-days: 14
 
       - name: Publish runtime reports
-        if: always()
+        if: github.event_name == 'push' && always()
         run: |
           REQUIRED=(
             artifacts/loss-context-runtime-report.json
