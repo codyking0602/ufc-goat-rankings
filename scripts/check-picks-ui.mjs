@@ -31,6 +31,7 @@ const oddsSchedule=read('.github/workflows/refresh-ufc-odds.yml');
 const oddsDeploy=read('.github/workflows/deploy-ufc-odds-refresh.yml');
 const events=read('assets/data/picks-events.js');
 const photos=read('assets/data/picks-photo-overrides.js');
+const eventVisuals=read('assets/data/picks-event-visuals.js');
 const setup=read('docs/picks-setup.md');
 
 const requiredFiles=[
@@ -51,6 +52,8 @@ const requiredFiles=[
   'assets/js/picks-odds-coverage.js',
   'assets/data/picks-events.js',
   'assets/data/picks-photo-overrides.js',
+  'assets/data/picks-event-visuals.js',
+  'assets/events/ufc-oklahoma-city-du-plessis-usman.webp',
   'assets/css/picks-device-recovery.css',
   'assets/css/picks-internal-navigation.css',
   'assets/css/picks-home-event-cleanup.css',
@@ -88,6 +91,7 @@ const requiredIndexRefs=[
   'assets/css/picks-device-recovery.css',
   'assets/css/picks-mobile-polish.css',
   'assets/css/picks-odds-coverage.css',
+  'assets/data/picks-event-visuals.js',
   'assets/js/picks-social-retention.js',
   'assets/js/picks-internal-navigation.js',
   'assets/js/picks-home-event-cleanup.js',
@@ -144,9 +148,12 @@ check(mobilePolish.includes('day${days===1') && mobilePolish.includes('hour${hou
 check(mobilePolish.includes('fighterSlug') && mobilePolish.includes('-thumb.webp'),'Automatic fighter thumbnail path wiring is missing');
 check(mobilePolish.includes('picks-room-more'),'Compact room overflow menu is missing');
 check(mobilePolish.includes("inline:'center'"),'Mobile top-tab auto-centering is missing');
+check(mobilePolish.includes('applyEventArtwork') && mobilePolish.includes('UFC_PICKS_EVENT_VISUALS'),'Event artwork renderer is missing');
 check(mobilePolishCss.includes('position:relative!important') && mobilePolishCss.includes('top:auto!important'),'Picks internal navigation still overlays fight content on mobile');
 check(mobilePolishCss.includes('picks-room-banner-compact'),'Compact room banner styling is missing');
 check(mobilePolishCss.includes('scroll-snap-type:x proximity'),'Mobile top navigation scroll affordance is missing');
+check(mobilePolishCss.includes('picks-event-hero.has-event-art') && mobilePolishCss.includes('picks-event-art'),'Event artwork styling is missing');
+check(mobilePolishCss.includes('>.picks-event-meta') && mobilePolishCss.includes('background:#101827'),'Event details are not separated below the artwork');
 
 check(oddsCoverage.includes('Not all odds available yet'),'Partial odds availability copy is missing');
 check(oddsCoverage.includes('Odds have not been posted yet'),'No-odds state is missing');
@@ -163,6 +170,7 @@ check(events.includes("id: 'ufc-oklahoma-city-2026-07-18'"),'UFC Oklahoma City e
 check(events.includes("red:'Chase Hooper', blue:'Mitch Ramirez'"),'Current Oklahoma City main card is missing Hooper vs. Ramirez');
 check(!events.includes('okc-tavares-barriault'),'Stale Oklahoma City main-card bout remains');
 check(photos.includes('"Dricus Du Plessis": "assets/fighters/dricus-du-plessis-thumb.webp"'),'Dricus event-name photo mapping is missing');
+check(eventVisuals.includes("'ufc-oklahoma-city-2026-07-18'") && eventVisuals.includes('ufc-oklahoma-city-du-plessis-usman.webp'),'Oklahoma City event artwork mapping is missing');
 
 check(recovery.includes('picks_member_recovery_status'),'Recovery status RPC hook is missing');
 check(recovery.includes('picks_member_generate_recovery_key'),'Recovery key creation hook is missing');
@@ -190,4 +198,4 @@ if(failures.length){
   process.exit(1);
 }
 
-console.log(`Picks UI smoke check passed: ${assetRefs.length} local assets resolved, ${requiredFiles.length} required files present, current event, reminders, mobile polish, and automated odds verified.`);
+console.log(`Picks UI smoke check passed: ${assetRefs.length} local assets resolved, ${requiredFiles.length} required files present, current event, artwork, reminders, mobile polish, and automated odds verified.`);
