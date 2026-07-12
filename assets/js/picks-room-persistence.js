@@ -4,6 +4,7 @@
   const LAST_ROOM_KEY='ufc-picks:last-room';
   const ROOM_TOKEN_PREFIX='ufc-picks:room:';
   const ADMIN_TOKEN_PREFIX='ufc-picks:admin:';
+  const AUTO_RESTORE_DISABLED_KEY='ufc-picks:auto-restore-disabled';
 
   function normalizeCode(value){
     return String(value || '').trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6);
@@ -23,15 +24,14 @@
 
   function rememberRoom(code){
     const normalized=normalizeCode(code);
-    if(normalized && roomTokenExists(normalized)) localStorage.setItem(LAST_ROOM_KEY,normalized);
+    if(!normalized || !roomTokenExists(normalized)) return;
+    localStorage.setItem(LAST_ROOM_KEY,normalized);
+    localStorage.removeItem(AUTO_RESTORE_DISABLED_KEY);
   }
 
-  function forgetRoom(code){
-    const normalized=normalizeCode(code);
+  function leaveActiveRoom(){
     localStorage.removeItem(LAST_ROOM_KEY);
-    if(!normalized) return;
-    localStorage.removeItem(`${ROOM_TOKEN_PREFIX}${normalized}`);
-    localStorage.removeItem(`${ADMIN_TOKEN_PREFIX}${normalized}`);
+    localStorage.setItem(AUTO_RESTORE_DISABLED_KEY,'1');
   }
 
   function discoverStoredRoom(){
@@ -58,7 +58,7 @@
       const nextCode=url == null ? previousCode : roomCodeFromUrl(url);
       const result=original.apply(this,arguments);
       if(nextCode) rememberRoom(nextCode);
-      else if(previousCode) forgetRoom(previousCode);
+      else if(previousCode) leaveActiveRoom();
       return result;
     };
   }
@@ -71,6 +71,8 @@
     rememberRoom(currentCode);
     return;
   }
+
+  if(localStorage.getItem(AUTO_RESTORE_DISABLED_KEY)==='1') return;
 
   const savedCode=discoverStoredRoom();
   if(!savedCode) return;
