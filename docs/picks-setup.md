@@ -15,6 +15,7 @@ Run these files in **Supabase → SQL Editor** in this order:
 7. `supabase/picks-event-manager-phase.sql`
 8. `supabase/picks-commissioner-phase.sql`
 9. `supabase/picks-social-retention-phase.sql`
+10. `supabase/picks-event-automation-phase.sql`
 
 Then open **Project Settings → API** and copy the project URL and public publishable key into `assets/data/supabase-config.js`.
 
@@ -88,6 +89,29 @@ It includes:
 - An optional browser reminder preference and an **Add to calendar** file for the next event.
 
 Browser notifications are opportunistic and appear when the app is opened near event time. The calendar file is the reliable reminder outside the app.
+
+## Card and odds automation
+
+After `picks-event-automation-phase.sql` runs, the group owner gets a private **Card Automation** panel beside the Event Manager.
+
+The no-subscription workflow is:
+
+1. Create the draft event in Event Manager.
+2. Paste the full card into Card Automation.
+3. Let the app infer bout order, sections, estimated lock times, and American odds.
+4. Review additions, replacements, reordered fights, lock changes, and missing fights.
+5. Apply the card in one transaction.
+6. Paste the card again later to detect cancellations or matchup changes before publishing.
+
+Supported card formats include pipe-delimited, tab-delimited, CSV-style, and simple `Fighter A vs Fighter B` lines. The canonical template is:
+
+```text
+1 | Early Prelims | Flyweight | Fighter A | Fighter B | -150 | +130
+2 | Prelims | Lightweight | Fighter C | Fighter D | +120 | -140
+3 | Main Event | Welterweight | Fighter E | Fighter F | -110 | -110
+```
+
+Bulk odds can be pasted as paired lines or one fighter per line. Matchups are resolved by fighter names. Missing fights are never silently removed: the preview shows them first, and the owner chooses whether to keep them or void them as cancellations when submitted picks already exist.
 
 ## Live event maintenance
 
