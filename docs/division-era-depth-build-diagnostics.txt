@@ -1,0 +1,352 @@
+{
+  "version": "division-era-depth-shadow-20260712a-fight-network",
+  "rosterCount": 63,
+  "coverageCount": 63,
+  "fallbackCount": 0,
+  "datasetFightCount": 8737,
+  "datasetEnd": "2026-06-27",
+  "concernGroup": [
+    {
+      "fighter": "Matt Hughes",
+      "group": "men",
+      "currentRank": 8,
+      "shadowRank": 10,
+      "rankMovement": -2,
+      "currentTotal": 64.76,
+      "depthIndex": 0.75,
+      "shadowAdjustment": -3,
+      "shadowTotal": 61.76,
+      "componentRatios": {
+        "qualifiedActivePool": 0.5522,
+        "ranksSixToFifteenElo": 0.5631,
+        "contenderDiversity": 0.9502
+      },
+      "matchedPrimeFightCount": 16,
+      "fallback": false
+    },
+    {
+      "fighter": "Jose Aldo",
+      "group": "men",
+      "currentRank": 7,
+      "shadowRank": 8,
+      "rankMovement": -1,
+      "currentTotal": 67.14,
+      "depthIndex": 0.8769,
+      "shadowAdjustment": -3,
+      "shadowTotal": 64.14,
+      "componentRatios": {
+        "qualifiedActivePool": 0.791,
+        "ranksSixToFifteenElo": 0.8078,
+        "contenderDiversity": 1.0557
+      },
+      "matchedPrimeFightCount": 20,
+      "fallback": false
+    },
+    {
+      "fighter": "Junior dos Santos",
+      "group": "men",
+      "currentRank": 24,
+      "shadowRank": 28,
+      "rankMovement": -4,
+      "currentTotal": 50.12,
+      "depthIndex": 0.8102,
+      "shadowAdjustment": -3,
+      "shadowTotal": 47.12,
+      "componentRatios": {
+        "qualifiedActivePool": 0.6684,
+        "ranksSixToFifteenElo": 0.7847,
+        "contenderDiversity": 1.0793
+      },
+      "matchedPrimeFightCount": 12,
+      "fallback": false
+    },
+    {
+      "fighter": "Chuck Liddell",
+      "group": "men",
+      "currentRank": 15,
+      "shadowRank": 17,
+      "rankMovement": -2,
+      "currentTotal": 57.62,
+      "depthIndex": 0.7535,
+      "shadowAdjustment": -3,
+      "shadowTotal": 54.62,
+      "componentRatios": {
+        "qualifiedActivePool": 0.5512,
+        "ranksSixToFifteenElo": 0.5963,
+        "contenderDiversity": 0.824
+      },
+      "matchedPrimeFightCount": 11,
+      "fallback": false
+    },
+    {
+      "fighter": "Tito Ortiz",
+      "group": "men",
+      "currentRank": 25,
+      "shadowRank": 29,
+      "rankMovement": -4,
+      "currentTotal": 50.01,
+      "depthIndex": 0.75,
+      "shadowAdjustment": -3,
+      "shadowTotal": 47.01,
+      "componentRatios": {
+        "qualifiedActivePool": 0.55,
+        "ranksSixToFifteenElo": 0.5746,
+        "contenderDiversity": 0.7029
+      },
+      "matchedPrimeFightCount": 14,
+      "fallback": false
+    },
+    {
+      "fighter": "Georges St-Pierre",
+      "group": "men",
+      "currentRank": 2,
+      "shadowRank": 2,
+      "rankMovement": 0,
+      "currentTotal": 88.07,
+      "depthIndex": 0.8266,
+      "shadowAdjustment": -3,
+      "shadowTotal": 85.07,
+      "componentRatios": {
+        "qualifiedActivePool": 0.6946,
+        "ranksSixToFifteenElo": 0.7559,
+        "contenderDiversity": 1.1371
+      },
+      "matchedPrimeFightCount": 15,
+      "fallback": false
+    },
+    {
+      "fighter": "Anderson Silva",
+      "group": "men",
+      "currentRank": 3,
+      "shadowRank": 3,
+      "rankMovement": 0,
+      "currentTotal": 77.29,
+      "depthIndex": 0.8311,
+      "shadowAdjustment": -3,
+      "shadowTotal": 74.29,
+      "componentRatios": {
+        "qualifiedActivePool": 0.6722,
+        "ranksSixToFifteenElo": 0.7935,
+        "contenderDiversity": 1.1407
+      },
+      "matchedPrimeFightCount": 18,
+      "fallback": false
+    },
+    {
+      "fighter": "Demetrious Johnson",
+      "group": "men",
+      "currentRank": 4,
+      "shadowRank": 4,
+      "rankMovement": 0,
+      "currentTotal": 77.11,
+      "depthIndex": 0.8622,
+      "shadowAdjustment": -3,
+      "shadowTotal": 74.11,
+      "componentRatios": {
+        "qualifiedActivePool": 0.778,
+        "ranksSixToFifteenElo": 0.7604,
+        "contenderDiversity": 0.9154
+      },
+      "matchedPrimeFightCount": 14,
+      "fallback": false
+    }
+  ]
+}
+{
+  "version": "division-era-depth-shadow-20260712d-current-wfw-safe",
+  "rosterCount": 63,
+  "coverageCount": 63,
+  "directMatchCoverageCount": 63,
+  "fallbackCount": 0,
+  "datasetEnd": "2026-06-27",
+  "sourceFresh": true,
+  "womenFeatherweightTreatment": {
+    "status": "locked-live-safe",
+    "rule": "Women’s featherweight samples are excluded because the division never maintained a viable ranks-6–15 baseline. Mixed careers use non-WFW samples; pure WFW careers receive a zero era-depth adjustment.",
+    "affectedFighters": [
+      "Amanda Nunes",
+      "Cris Cyborg",
+      "Holly Holm"
+    ]
+  },
+  "concernGroup": [
+    {
+      "fighter": "Georges St-Pierre",
+      "group": "men",
+      "currentRank": 2,
+      "curvedRank": 2,
+      "curvedRankMovement": 0,
+      "currentTotal": 88.07,
+      "depthIndex": 0.8266,
+      "curvedAdjustment": -1.73,
+      "curvedTotal": 86.34,
+      "componentRatios": {
+        "qualifiedActivePool": 0.6946,
+        "ranksSixToFifteenElo": 0.7559,
+        "contenderDiversity": 1.1371
+      },
+      "matchedPrimeFightCount": 15,
+      "fallback": false,
+      "womenFeatherweightTreatment": null
+    },
+    {
+      "fighter": "Anderson Silva",
+      "group": "men",
+      "currentRank": 3,
+      "curvedRank": 4,
+      "curvedRankMovement": -1,
+      "currentTotal": 77.29,
+      "depthIndex": 0.8311,
+      "curvedAdjustment": -1.67,
+      "curvedTotal": 75.62,
+      "componentRatios": {
+        "qualifiedActivePool": 0.6722,
+        "ranksSixToFifteenElo": 0.7935,
+        "contenderDiversity": 1.1407
+      },
+      "matchedPrimeFightCount": 18,
+      "fallback": false,
+      "womenFeatherweightTreatment": null
+    },
+    {
+      "fighter": "Demetrious Johnson",
+      "group": "men",
+      "currentRank": 4,
+      "curvedRank": 3,
+      "curvedRankMovement": 1,
+      "currentTotal": 77.11,
+      "depthIndex": 0.8622,
+      "curvedAdjustment": -1.23,
+      "curvedTotal": 75.88,
+      "componentRatios": {
+        "qualifiedActivePool": 0.778,
+        "ranksSixToFifteenElo": 0.7604,
+        "contenderDiversity": 0.9154
+      },
+      "matchedPrimeFightCount": 14,
+      "fallback": false,
+      "womenFeatherweightTreatment": null
+    },
+    {
+      "fighter": "Jose Aldo",
+      "group": "men",
+      "currentRank": 7,
+      "curvedRank": 7,
+      "curvedRankMovement": 0,
+      "currentTotal": 67.14,
+      "depthIndex": 0.8769,
+      "curvedAdjustment": -1.04,
+      "curvedTotal": 66.1,
+      "componentRatios": {
+        "qualifiedActivePool": 0.791,
+        "ranksSixToFifteenElo": 0.8078,
+        "contenderDiversity": 1.0557
+      },
+      "matchedPrimeFightCount": 20,
+      "fallback": false,
+      "womenFeatherweightTreatment": null
+    },
+    {
+      "fighter": "Matt Hughes",
+      "group": "men",
+      "currentRank": 8,
+      "curvedRank": 10,
+      "curvedRankMovement": -2,
+      "currentTotal": 64.76,
+      "depthIndex": 0.75,
+      "curvedAdjustment": -3,
+      "curvedTotal": 61.76,
+      "componentRatios": {
+        "qualifiedActivePool": 0.5522,
+        "ranksSixToFifteenElo": 0.5631,
+        "contenderDiversity": 0.9502
+      },
+      "matchedPrimeFightCount": 16,
+      "fallback": false,
+      "womenFeatherweightTreatment": null
+    },
+    {
+      "fighter": "Chuck Liddell",
+      "group": "men",
+      "currentRank": 15,
+      "curvedRank": 17,
+      "curvedRankMovement": -2,
+      "currentTotal": 57.62,
+      "depthIndex": 0.7535,
+      "curvedAdjustment": -2.94,
+      "curvedTotal": 54.68,
+      "componentRatios": {
+        "qualifiedActivePool": 0.5512,
+        "ranksSixToFifteenElo": 0.5963,
+        "contenderDiversity": 0.824
+      },
+      "matchedPrimeFightCount": 11,
+      "fallback": false,
+      "womenFeatherweightTreatment": null
+    },
+    {
+      "fighter": "Junior dos Santos",
+      "group": "men",
+      "currentRank": 24,
+      "curvedRank": 28,
+      "curvedRankMovement": -4,
+      "currentTotal": 50.12,
+      "depthIndex": 0.8102,
+      "curvedAdjustment": -1.98,
+      "curvedTotal": 48.14,
+      "componentRatios": {
+        "qualifiedActivePool": 0.6684,
+        "ranksSixToFifteenElo": 0.7847,
+        "contenderDiversity": 1.0793
+      },
+      "matchedPrimeFightCount": 12,
+      "fallback": false,
+      "womenFeatherweightTreatment": null
+    },
+    {
+      "fighter": "Tito Ortiz",
+      "group": "men",
+      "currentRank": 25,
+      "curvedRank": 30,
+      "curvedRankMovement": -5,
+      "currentTotal": 50.01,
+      "depthIndex": 0.75,
+      "curvedAdjustment": -3,
+      "curvedTotal": 47.01,
+      "componentRatios": {
+        "qualifiedActivePool": 0.55,
+        "ranksSixToFifteenElo": 0.5746,
+        "contenderDiversity": 0.7029
+      },
+      "matchedPrimeFightCount": 14,
+      "fallback": false,
+      "womenFeatherweightTreatment": null
+    }
+  ]
+}
+{
+  "url": "https://raw.githubusercontent.com/komaksym/UFC-DataLab/3268146c05211de9deab8b9b4c0bb4a954815f0b/data/stats/stats_raw.csv",
+  "repository": "komaksym/UFC-DataLab",
+  "commit": "3268146c05211de9deab8b9b4c0bb4a954815f0b",
+  "file": "data/stats/stats_raw.csv",
+  "description": "Pinned UFCStats-derived all-bouts mirror including decisive fights, draws, and no contests.",
+  "underlyingSource": "UFCStats",
+  "updateLabel": "Datasets refreshed through 2026-06-27",
+  "datasetFightCount": 8737,
+  "datasetStart": "1994-03-11",
+  "datasetEnd": "2026-06-27",
+  "modelDate": "2026-07-12",
+  "sourceFresh": true
+}
+{
+  "version": "division-era-depth-judgment-review-20260712b-live-approved",
+  "reviewedCount": 63,
+  "approvedCount": 63,
+  "holdCount": 0,
+  "majorMoverCount": 4,
+  "heavyweightReviewCount": 9,
+  "wfwTreatedCount": 3,
+  "datasetEnd": "2026-06-27",
+  "readyForLivePromotion": true,
+  "blockers": []
+}
