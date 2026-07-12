@@ -3,18 +3,22 @@
 (function(){
   'use strict';
 
-  const VERSION='loss-context-hybrid-shadow-20260711e-canonical-exposure-ledger';
+  const VERSION='loss-context-hybrid-shadow-20260711f-prime-volume-floor';
   const RULES={
     severityLossCount:2,
     severityMax:3.50,
     frequencyMax:2.50,
     frequencyScale:3.00,
+    primeLossFloorPerLoss:0.75,
+    primeFinishFloorExtra:0.25,
+    primeVolumeFloorMax:5.25,
     totalMax:6.00,
     divisionDiscountScale:1.50,
     divisionDiscountMax:0.15,
     divisionDiscountFloor:1.00,
     exposureSource:'canonical Loss Context through-prime UFC exposure ledger',
     exposureRule:'Frequency uses every scored UFC fight before or during the canonical prime window. Post-prime fights and no contests are excluded.',
+    primeVolumeRule:'Repeated prime losses create a minimum loss-context burden so a long career cannot fully dilute five or six prime losses. Prime finishes add extra floor weight.',
     divisionRule:'Strong-division credit reduces the entire hybrid penalty; weak divisions receive no extra punishment.'
   };
 
@@ -81,7 +85,17 @@
       const rawLossBurden=round2(lossEvents.reduce((sum,event)=>sum+event.penaltyMagnitude,0));
       const exposure=Math.max(1,Number(exposureEntry.throughPrimeUfcFights||0));
       const frequency=round2(Math.min(RULES.frequencyMax,(rawLossBurden/exposure)*RULES.frequencyScale));
-      const preDivision=round2(Math.min(RULES.totalMax,severity+frequency));
+      const hybridBase=round2(severity+frequency);
+
+      const primeLossEvents=lossEvents.filter(event=>String(event?.phase||'').toLowerCase()==='prime');
+      const primeLossCount=primeLossEvents.length;
+      const primeFinishCount=primeLossEvents.filter(event=>event?.finished===true).length;
+      const primeVolumeFloor=round2(Math.min(
+        RULES.primeVolumeFloorMax,
+        (primeLossCount*RULES.primeLossFloorPerLoss)+(primeFinishCount*RULES.primeFinishFloorExtra)
+      ));
+      const primeVolumeFloorApplied=primeVolumeFloor>hybridBase+0.01;
+      const preDivision=round2(Math.min(RULES.totalMax,Math.max(hybridBase,primeVolumeFloor)));
 
       const divisionMultiplier=Number(ledger?.longevity?.divisionMultiplier||1);
       const divisionDiscountPct=round2(clamp((divisionMultiplier-RULES.divisionDiscountFloor)*RULES.divisionDiscountScale,0,RULES.divisionDiscountMax));
@@ -119,6 +133,11 @@
         exposureAuditIssues:exposureEntry.issues||[],
         frequency,
         frequencyMax:RULES.frequencyMax,
+        hybridBase,
+        primeLossCount,
+        primeFinishCount,
+        primeVolumeFloor,
+        primeVolumeFloorApplied,
         preDivision,
         divisionMultiplier:round2(divisionMultiplier),
         divisionDiscountPct,
@@ -161,7 +180,7 @@
       version:VERSION,
       applied:true,
       phase:1,
-      mode:'shadow-full-roster-canonical-through-prime-exposure',
+      mode:'shadow-full-roster-canonical-through-prime-exposure-with-prime-volume-floor',
       sourceExposureLedgerVersion:EXPOSURE.version,
       expectedRosterCount:uniqueBoardRows.length,
       scoredCount:scored.length,
@@ -184,7 +203,7 @@
     };
 
     window.UFC_LOSS_CONTEXT_HYBRID_SHADOW=report;
-    if(DATA.meta)DATA.meta.lossContextHybridShadow={version:VERSION,phase:1,sourceExposureLedgerVersion:EXPOSURE.version,expectedRosterCount:report.expectedRosterCount,scoredCount:report.scoredCount,blockedCount:report.blockedCount,coverageComplete:report.coverageComplete,exposureRule:RULES.exposureRule,mutatesScores:false,generatedAt:report.generatedAt};
+    if(DATA.meta)DATA.meta.lossContextHybridShadow={version:VERSION,phase:1,sourceExposureLedgerVersion:EXPOSURE.version,expectedRosterCount:report.expectedRosterCount,scoredCount:report.scoredCount,blockedCount:report.blockedCount,coverageComplete:report.coverageComplete,exposureRule:RULES.exposureRule,primeVolumeRule:RULES.primeVolumeRule,mutatesScores:false,generatedAt:report.generatedAt};
     document.documentElement.setAttribute('data-loss-context-hybrid-shadow',`${VERSION}-${report.scoredCount}-${report.blockedCount}`);
     window.dispatchEvent(new CustomEvent('ufc-loss-context-hybrid-shadow-ready',{detail:report}));
     return true;
