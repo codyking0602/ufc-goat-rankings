@@ -7,6 +7,7 @@
   const client=window.supabase.createClient(config.url,config.anonKey);
   const GROUP_TOKEN_PREFIX='ufc-picks:group:';
   const GROUP_ADMIN_PREFIX='ufc-picks:group-admin:';
+  const ROOM_TOKEN_PREFIX='ufc-picks:room:';
   const ROOM_ADMIN_PREFIX='ufc-picks:admin:';
   const state={code:'',adminToken:'',memberToken:'',snapshot:null,claimStatus:null,transferInfo:null,oddsEventId:'',loading:false,lastSignature:''};
 
@@ -129,7 +130,7 @@
   function eventSection(){
     const events=state.snapshot?.events || [];
     const selected=events.find(event=>event.event_id===state.oddsEventId) || events[0] || null;
-    if(selected && !state.oddsEventId) state.oddsEventId=selected.event_id;
+    if(selected && (!state.oddsEventId || !events.some(event=>event.event_id===state.oddsEventId))) state.oddsEventId=selected.event_id;
     const options=events.map(event=>`<option value="${safe(event.event_id)}" ${selected?.event_id===event.event_id?'selected':''}>${safe(event.name)} · ${safe(event.status)}</option>`).join('');
     return `<section class="commissioner-section">
       <div class="commissioner-section-head"><div><span>EVENT CONTROL</span><h3>Corrections & Reopening</h3></div><b>${events.length} total</b></div>
@@ -176,7 +177,7 @@
     const summary=document.getElementById('picksCommissionerSummary');
     if(!card || !target) return;
     card.hidden=!state.claimStatus?.pending;
-    if(card.hidden) return;
+    if(card.hidden){ target.innerHTML=''; return; }
     card.open=true;
     summary.textContent='Ownership waiting';
     target.innerHTML=`<section class="commissioner-claim"><span>OWNERSHIP TRANSFER</span><h3>You were selected as commissioner</h3><p>Enter the eight-character code the current commissioner sent you.</p><div><input id="commissionerClaimCode" maxlength="8" autocapitalize="characters" placeholder="AB12CD34"><button id="commissionerClaimOwnership" type="button">Claim Commissioner Role</button></div></section>`;
@@ -258,7 +259,21 @@
     if(!window.confirm(`Reopen ${name} for result corrections? Existing results and picks stay intact.`)) return;
     const result=await rpc('picks_commissioner_reopen_event',{p_group_code:state.code,p_admin_token:state.adminToken,p_event_id:id});
     if(result.error) return;
+    const roomCode=normalize(result.data?.room_code);
     toast(`${name} reopened`);
+    if(roomCode){
+      if(state.memberToken) localStorage.setItem(`${ROOM_TOKEN_PREFIX}${roomCode}`,state.memberToken);
+      localStorage.setItem(`${ROOM_ADMIN_PREFIX}${roomCode}`,state.adminToken);
+      localStorage.setItem('ufc-picks:last-room',roomCode);
+      localStorage.removeItem('ufc-picks:auto-restore-disabled');
+      const url=new URL(window.location.href);
+      url.searchParams.set('group',state.code);
+      url.searchParams.set('room',roomCode);
+      url.searchParams.set('event',id);
+      url.hash='picks';
+      window.setTimeout(()=>window.location.assign(url.toString()),350);
+      return;
+    }
     await refresh(true);
   }
 
@@ -302,14 +317,15 @@
       if(state.adminToken){
         const {data,error}=await client.rpc('picks_commissioner_snapshot',{p_group_code:state.code,p_admin_token:state.adminToken});
         if(error || !data?.group) return;
-        const signature=JSON.stringify(data);
+        const signature=`owner:${JSON.stringify(data)}`;
         state.snapshot=data;
         state.claimStatus=null;
         if(force || signature!==state.lastSignature){ state.lastSignature=signature; renderOwner(); }
       }else if(state.memberToken){
         const {data}=await client.rpc('picks_commissioner_transfer_status',{p_group_code:state.code,p_member_token:state.memberToken});
+        const signature=`claim:${JSON.stringify(data || {})}`;
         state.claimStatus=data || {pending:false};
-        renderClaim();
+        if(force || signature!==state.lastSignature){ state.lastSignature=signature; renderClaim(); }
       }
     }finally{
       state.loading=false;
