@@ -1,3 +1,4 @@
+// Post-finalizer trigger-only audit touch.
 import { chromium } from 'playwright';
 import fs from 'node:fs/promises';
 import process from 'node:process';
