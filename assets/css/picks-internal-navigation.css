@@ -1,0 +1,33 @@
+/* Picks step 2: internal Home / Event / Settings shell. */
+.picks-internal-nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;border:1px solid #cbd5e1;border-radius:16px;background:#eef2f7;padding:5px;box-shadow:0 8px 22px rgba(15,23,42,.08)}
+.picks-internal-nav button{position:relative;display:flex;align-items:center;justify-content:center;gap:7px;min-width:0;border:0;border-radius:11px;background:transparent;color:#475569;padding:11px 8px;font:inherit;font-size:12px;font-weight:900;cursor:pointer;transition:background .16s ease,color .16s ease,box-shadow .16s ease}
+.picks-internal-nav button i{display:none;width:6px;height:6px;border-radius:999px;background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.16)}
+.picks-internal-nav button.has-room i{display:block}
+.picks-internal-nav button.active{background:#f97316;color:#111827;box-shadow:0 6px 16px rgba(249,115,22,.25)}
+.picks-internal-nav button.active i{background:#14532d;box-shadow:none}
+.picks-internal-view{display:grid;gap:12px;min-width:0}
+.picks-internal-view[hidden]{display:none!important}
+.picks-view-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:2px 3px 0}
+.picks-view-heading span{color:#ea580c;font-size:9px;font-weight:950;letter-spacing:.14em}
+.picks-view-heading strong{color:#334155;font-size:11px;text-align:right}
+.picks-route-content{display:grid;gap:13px;min-width:0}
+.picks-route-empty{border:1px dashed #cbd5e1;border-radius:15px;background:rgba(255,255,255,.72);padding:18px;color:#64748b;font-size:12px;font-weight:750;line-height:1.45;text-align:center}
+.picks-route-empty[hidden]{display:none!important}
+.picks-route-empty button{display:block;width:100%;margin-top:12px;border:1px solid #f97316;border-radius:10px;background:#f97316;color:#111827;padding:10px;font:inherit;font-size:10px;font-weight:950;cursor:pointer}
+.picks-profile-shell{display:grid;gap:0;border:1px solid #334155;border-radius:18px;background:#0d1119;overflow:hidden}
+.picks-profile-shell>.social-profile{border:0;border-radius:0;margin:0}
+#picksHomeContent>#picksSocialCard .social-profile{display:none!important}
+#picks[data-picks-active-view="home"] #picksHomeView,
+#picks[data-picks-active-view="event"] #picksEventView,
+#picks[data-picks-active-view="settings"] #picksSettingsView{animation:picks-view-enter .16s ease-out}
+@keyframes picks-view-enter{from{opacity:.35;transform:translateY(3px)}to{opacity:1;transform:none}}
+@media(max-width:700px){
+  .picks-internal-nav{position:sticky;top:66px;z-index:18;border-radius:14px;box-shadow:0 10px 24px rgba(15,23,42,.12)}
+  .picks-internal-nav button{padding:10px 6px;font-size:11px}
+  .picks-view-heading{padding-inline:2px}
+  .picks-view-heading strong{font-size:10px}
+}
+@media(max-width:390px){
+  .picks-internal-nav button{font-size:10px}
+  .picks-view-heading strong{max-width:62%;line-height:1.2}
+}
