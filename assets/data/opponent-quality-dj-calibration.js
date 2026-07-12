@@ -1,6 +1,6 @@
 // DJ Opponent Quality division calibration. Loads the full Opponent Quality live chain after DJ calibration.
 (function(){
-  const VERSION='opponent-quality-dj-calibration-20260710c-frankie-chain';
+  const VERSION='opponent-quality-dj-calibration-20260712a-old-era-chain';
   const store=window.UFC_OPPONENT_QUALITY_LEDGERS;
   const rows=store?.raw?.['Demetrious Johnson'];
   if(!Array.isArray(rows))return;
@@ -25,5 +25,5 @@
   store.djCalibration={version:VERSION,changes,appliedAt:new Date().toISOString()};
   document.documentElement.setAttribute('data-opponent-quality-dj-calibration',VERSION);
   loadScriptOnce('assets/data/opponent-quality-division-calibration-base.js?v=opponent-quality-division-calibration-base-20260708b','data-opponent-quality-division-calibration-base',()=>
-    loadScriptOnce('assets/data/opponent-quality-division-calibration-batch-four.js?v=opponent-quality-division-calibration-batch-four-20260710g-frankie-audit','data-opponent-quality-division-calibration-batch-four'));
+    loadScriptOnce('assets/data/opponent-quality-division-calibration-batch-four.js?v=opponent-quality-division-calibration-batch-four-20260712a-old-era-calibration','data-opponent-quality-division-calibration-batch-four'));
 })();
