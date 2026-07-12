@@ -2,7 +2,7 @@
 (function(){
   'use strict';
 
-  const VERSION='division-era-depth-finalizer-20260712b-canonical-engine';
+  const VERSION='division-era-depth-finalizer-20260712c-late-ready-sync';
   const EXPECTED_SHADOW='division-era-depth-shadow-20260712d-current-wfw-safe';
   const EXPECTED_AUDIT='division-era-depth-judgment-review-20260712b-live-approved';
   let finalized=false;
@@ -87,7 +87,6 @@
     if(typeof window.refresh==='function')window.refresh();
     if(typeof window.renderCategories==='function')window.renderCategories();
 
-    // The live UI scorer is allowed to rerender totals, but it must preserve the same canonical formula.
     const postUiEngineResult=engine.apply('division-era-depth-finalizer-post-ui');
     if(!postUiEngineResult?.applied)return false;
     syncProfiles(data,[...(data.men||[]),...(data.women||[])]);
@@ -158,7 +157,15 @@
     };
   }
 
+  function scheduleFinalization(){
+    [0,50,250,1000].forEach(delay=>{
+      setTimeout(()=>{
+        if(!finalized)finalizeState();
+      },delay);
+    });
+  }
+
   window.UFC_DIVISION_ERA_DEPTH_FINALIZER={version:VERSION,applied:false,status:'waiting-for-scoring-pipeline'};
-  window.addEventListener('ufc-scoring-pipeline-ready',finalizeState,{once:true});
-  if(window.UFC_SCORING_PIPELINE?.status==='ready')finalizeState();
+  window.addEventListener('ufc-scoring-pipeline-ready',scheduleFinalization,{once:true});
+  if(window.UFC_SCORING_PIPELINE?.status==='ready')scheduleFinalization();
 })();
