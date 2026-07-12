@@ -10,7 +10,11 @@ const REPORT_PATH = path.join(ROOT, 'docs/division-era-depth-shadow-report.json'
 const RUNTIME_PATH = path.join(ROOT, 'assets/data/division-era-depth-shadow.js');
 const GENERATOR_PATH = path.join(ROOT, 'scripts/build-division-era-depth-shadow.mjs');
 const OLD_VERSION = 'division-era-depth-shadow-20260712a-fight-network';
-const VERSION = 'division-era-depth-shadow-20260712b-alias-complete';
+const VERSION = 'division-era-depth-shadow-20260712c-curved-candidate';
+const CURVE_FULL_GAP = 0.25;
+const CURVE_EXPONENT = 1.5;
+const CURVE_NEGATIVE_CAP = -3;
+const CURVE_POSITIVE_CAP = 0.75;
 
 const ALIASES = new Map([
   ['B.J. Penn', 'BJ Penn'],
@@ -19,12 +23,125 @@ const ALIASES = new Map([
 ]);
 const RESTORE = new Map([...ALIASES.entries()].map(([canonical, dataset]) => [dataset, canonical]));
 
+const round = (value, digits = 2) => {
+  const factor = 10 ** digits;
+  return Math.round((Number(value || 0) + Number.EPSILON) * factor) / factor;
+};
+const mean = values => {
+  const clean = values.map(Number).filter(Number.isFinite);
+  return clean.length ? clean.reduce((sum, value) => sum + value, 0) / clean.length : 0;
+};
+
 function replaceAllAliases(text) {
   let output = String(text);
   for (const [dataset, canonical] of RESTORE) {
     output = output.replaceAll(`\"${dataset}\"`, `\"${canonical}\"`);
   }
   return output.replaceAll(OLD_VERSION, VERSION);
+}
+
+function curvedAdjustment(depthIndex) {
+  const depth = Number(depthIndex || 0);
+  if (depth < 1) {
+    const gapRatio = Math.max(0, (1 - depth) / CURVE_FULL_GAP);
+    return round(Math.max(CURVE_NEGATIVE_CAP, -3 * (gapRatio ** CURVE_EXPONENT)), 2);
+  }
+  return round(Math.min(CURVE_POSITIVE_CAP, (depth - 1) * 20), 2);
+}
+
+function compact(row) {
+  return {
+    fighter: row.fighter,
+    group: row.group,
+    currentRank: row.currentRank,
+    curvedRank: row.curvedRank,
+    curvedRankMovement: row.curvedRankMovement,
+    currentTotal: row.currentTotal,
+    depthIndex: row.depthIndex,
+    curvedAdjustment: row.curvedAdjustment,
+    curvedTotal: row.curvedTotal,
+    componentRatios: row.componentRatios,
+    matchedPrimeFightCount: row.matchedPrimeFightCount,
+    fallback: row.fallback
+  };
+}
+
+function addCurvedScenario(report) {
+  for (const row of report.fighters || []) {
+    row.curvedAdjustment = curvedAdjustment(row.depthIndex);
+    row.curvedTotal = round(Number(row.currentTotal || 0) + row.curvedAdjustment, 2);
+  }
+  for (const group of ['men', 'women']) {
+    const board = (report.fighters || [])
+      .filter(row => row.group === group)
+      .sort((a, b) => b.curvedTotal - a.curvedTotal || a.fighter.localeCompare(b.fighter));
+    board.forEach((row, index) => {
+      row.curvedRank = index + 1;
+      row.curvedRankMovement = Number(row.currentRank || 0) - row.curvedRank;
+    });
+  }
+  const concernNames = new Set((report.summary?.concernGroup || []).map(row => row.fighter));
+  const byNegative = [...report.fighters].sort((a, b) => a.curvedAdjustment - b.curvedAdjustment || a.currentRank - b.currentRank);
+  const byPositive = [...report.fighters].sort((a, b) => b.curvedAdjustment - a.curvedAdjustment || a.currentRank - b.currentRank);
+  const byMovement = [...report.fighters].sort((a, b) => Math.abs(b.curvedRankMovement) - Math.abs(a.curvedRankMovement) || a.currentRank - b.currentRank);
+  report.methodology.curvedCandidate = {
+    status: 'candidate-shadow-only',
+    purpose: 'Translate the empirical depth index without flattening every moderately older era at the same maximum penalty.',
+    negativeFormula: `-3 × ((1.00 - depthIndex) / ${CURVE_FULL_GAP})^${CURVE_EXPONENT}, capped at ${CURVE_NEGATIVE_CAP}`,
+    positiveFormula: `(depthIndex - 1.00) × 20, capped at +${CURVE_POSITIVE_CAP}`,
+    interpretation: 'A 0.75 index receives the full -3; a moderate 0.89 index receives about -0.9 instead of the same -3.'
+  };
+  report.summary.curvedCandidate = {
+    averageAdjustment: round(mean(report.fighters.map(row => row.curvedAdjustment)), 2),
+    negativeAdjustmentCount: report.fighters.filter(row => row.curvedAdjustment < 0).length,
+    positiveAdjustmentCount: report.fighters.filter(row => row.curvedAdjustment > 0).length,
+    neutralAdjustmentCount: report.fighters.filter(row => row.curvedAdjustment === 0).length,
+    largestNegativeAdjustments: byNegative.slice(0, 15).map(compact),
+    largestPositiveAdjustments: byPositive.slice(0, 10).map(compact),
+    largestRankMovers: byMovement.slice(0, 20).map(compact),
+    concernGroup: report.fighters.filter(row => concernNames.has(row.fighter)).map(compact)
+  };
+}
+
+function runtimeFromReport(report) {
+  return {
+    version: report.version,
+    generatedAt: report.generatedAt,
+    mode: report.mode,
+    mutatesLiveScores: false,
+    source: report.source,
+    methodology: report.methodology,
+    baselines: report.baselines,
+    summary: report.summary,
+    aliasResolution: report.aliasResolution,
+    fighters: (report.fighters || []).map(row => ({
+      fighter: row.fighter,
+      group: row.group,
+      currentRank: row.currentRank,
+      currentOvr: row.currentOvr,
+      currentTotal: row.currentTotal,
+      shadowRank: row.shadowRank,
+      rankMovement: row.rankMovement,
+      shadowTotal: row.shadowTotal,
+      depthIndex: row.depthIndex,
+      shadowAdjustment: row.shadowAdjustment,
+      sensitivityRank: row.sensitivityRank,
+      sensitivityRankMovement: row.sensitivityRankMovement,
+      sensitivityAdjustment: row.sensitivityAdjustment,
+      curvedRank: row.curvedRank,
+      curvedRankMovement: row.curvedRankMovement,
+      curvedAdjustment: row.curvedAdjustment,
+      curvedTotal: row.curvedTotal,
+      componentRatios: row.componentRatios,
+      matchedPrimeFightCount: row.matchedPrimeFightCount,
+      scoredSampleCount: row.scoredSampleCount,
+      fallback: row.fallback,
+      sampledDivisions: row.sampledDivisions,
+      primeStart: row.primeStart,
+      primeEnd: row.primeEnd,
+      openPrime: row.openPrime
+    }))
+  };
 }
 
 async function main() {
@@ -66,10 +183,13 @@ async function main() {
     if (restored.summary.rosterCount !== 63 || fallbacks.length) {
       throw new Error(`Alias-complete depth coverage failed: ${63 - fallbacks.length}/63 direct matches; ${fallbacks.map(row => row.fighter).join(', ')}`);
     }
+
+    addCurvedScenario(restored);
     await fs.writeFile(REPORT_PATH, `${JSON.stringify(restored, null, 2)}\n`);
 
-    const runtimeText = await fs.readFile(RUNTIME_PATH, 'utf8');
-    await fs.writeFile(RUNTIME_PATH, replaceAllAliases(runtimeText));
+    const runtime = runtimeFromReport(restored);
+    const runtimeText = `// Full-roster Division-Era Depth Index. Shadow only; never mutates live scores.\n(function(){\n  'use strict';\n  const SHADOW=${JSON.stringify(runtime)};\n  window.UFC_DIVISION_ERA_DEPTH_SHADOW=SHADOW;\n  document.documentElement.setAttribute('data-division-era-depth-shadow',SHADOW.version);\n  window.dispatchEvent(new CustomEvent('ufc-division-era-depth-shadow-ready',{detail:SHADOW}));\n})();\n`;
+    await fs.writeFile(RUNTIME_PATH, runtimeText);
 
     console.log(JSON.stringify({
       version: VERSION,
@@ -77,7 +197,7 @@ async function main() {
       coverageCount: restored.summary.coverageCount,
       directMatchCoverageCount: restored.summary.directMatchCoverageCount,
       fallbackCount: restored.summary.fallbackCount,
-      concernGroup: restored.summary.concernGroup
+      concernGroup: restored.summary.curvedCandidate.concernGroup
     }, null, 2));
   } finally {
     await fs.writeFile(FEED_PATH, originalFeedText);
