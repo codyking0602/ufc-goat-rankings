@@ -7,6 +7,7 @@
   const client=window.supabase.createClient(config.url,config.anonKey);
   const GROUP_TOKEN_PREFIX='ufc-picks:group:';
   const state={code:'',token:'',snapshot:null,loading:false,lastSignature:''};
+
   const AVATARS={
     gloves:'🥊',crown:'👑',belt:'🏆',fire:'🔥',lightning:'⚡',wolf:'🐺',
     eagle:'🦅',lion:'🦁',shark:'🦈',skull:'💀',star:'⭐',target:'🎯'
@@ -45,13 +46,13 @@
   function ensureProfileShell(){
     let shell=document.getElementById('picksProfileShell');
     if(shell) return shell;
-    const host=document.getElementById('picksSettingsContent') || document.querySelector('#picks .picks-shell');
-    if(!host) return null;
+    const picksShell=document.querySelector('#picks .picks-shell');
+    if(!picksShell) return null;
     shell=document.createElement('section');
     shell.id='picksProfileShell';
     shell.className='picks-profile-shell';
     shell.hidden=true;
-    host.appendChild(shell);
+    picksShell.appendChild(shell);
     return shell;
   }
 
@@ -67,12 +68,13 @@
     const me=snapshot.me || {};
     const event=snapshot.upcoming_event;
     return `<section class="social-section social-profile">
-      <div class="social-section-head"><div><span>YOUR PROFILE</span><h3>${safe(me.display_name || 'Player')}</h3></div><span class="social-avatar profile-avatar" title="${safe(me.display_name || '')}">${safe(emoji(me.avatar_key))}</span></div>
+      <div class="social-section-head"><div><span>YOUR PROFILE</span><h3>${safe(me.display_name || 'Player')}</h3></div><span class="social-avatar profile-avatar">${safe(emoji(me.avatar_key))}</span></div>
       <div class="social-avatar-picker" role="group" aria-label="Choose avatar">${Object.entries(AVATARS).map(([key,value])=>`<button type="button" data-social-avatar="${safe(key)}" class="${me.avatar_key===key?'active':''}" aria-label="${safe(key)} avatar">${safe(value)}</button>`).join('')}</div>
       <div class="social-reminder-row">
-        <label><input id="picksSocialReminder" type="checkbox" ${me.reminder_opt_in?'checked':''}><span><strong>Event reminder</strong><small>Show a browser reminder when you open the app near event time.</small></span></label>
-        ${event ? `<button id="picksAddCalendar" type="button">Add ${safe(event.name)} to calendar</button>` : '<span class="social-no-event">No upcoming event yet</span>'}
+        <label><input id="picksSocialReminder" type="checkbox" ${me.reminder_opt_in?'checked':''}><span><strong>Event reminder</strong><small>Reminds you when you open the app near event time.</small></span></label>
+        ${event ? `<button id="picksAddCalendar" type="button">Add Event to Calendar</button>` : '<span class="social-no-event">No upcoming event yet</span>'}
       </div>
+      <p class="picks-reminder-reliability">Calendar is the reliable phone reminder. The in-app reminder only appears when the app is opened near event time.</p>
     </section>`;
   }
 
@@ -84,19 +86,22 @@
     bind(snapshot);
     decorateExistingRows(snapshot);
     maybeNotify(snapshot);
-    window.dispatchEvent(new CustomEvent('picks:profileupdated',{detail:{avatar_key:snapshot.me?.avatar_key || 'gloves',reminder_opt_in:Boolean(snapshot.me?.reminder_opt_in)}}));
+    window.dispatchEvent(new CustomEvent('picks:profileupdated',{detail:{avatar:emoji(snapshot.me?.avatar_key),reminder:Boolean(snapshot.me?.reminder_opt_in)}}));
   }
 
   function decorateExistingRows(snapshot){
-    const members=snapshot.members || [];
+    const members=snapshot?.members || [];
     document.querySelectorAll('.picks-group-member strong,.picks-standing-row strong,.picks-recap-row strong').forEach(node=>{
-      const text=node.textContent.trim();
-      const member=members.find(item=>text.startsWith(item.display_name));
       const existing=node.querySelector('.social-inline-avatar');
+      const text=String(node.textContent || '').trim();
+      const member=members.find(item=>text.startsWith(item.display_name));
       if(!member){ existing?.remove(); return; }
-      const icon=emoji(member.avatar_key);
-      if(existing){ existing.textContent=icon; return; }
-      node.insertAdjacentHTML('afterbegin',`<span class="social-inline-avatar">${safe(icon)}</span>`);
+      const value=emoji(member.avatar_key);
+      if(existing){
+        if(existing.textContent!==value) existing.textContent=value;
+        return;
+      }
+      node.insertAdjacentHTML('afterbegin',`<span class="social-inline-avatar">${safe(value)}</span>`);
     });
   }
 
@@ -160,8 +165,7 @@
     const end=new Date(start.getTime()+6*60*60*1000);
     const url=new URL(window.location.href);
     url.searchParams.set('group',state.code);
-    url.searchParams.delete('room');
-    url.searchParams.set('picksView','home');
+    url.searchParams.set('picksView','event');
     url.hash='picks';
     const content=[
       'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//UFC Picks//EN','BEGIN:VEVENT',
@@ -179,27 +183,24 @@
     link.download=`${event.event_id || 'ufc-picks'}.ics`;
     document.body.appendChild(link);
     link.click();
-    const objectUrl=link.href;
+    const href=link.href;
     link.remove();
-    setTimeout(()=>URL.revokeObjectURL(objectUrl),1000);
+    setTimeout(()=>URL.revokeObjectURL(href),1000);
     toast('Calendar reminder created');
   }
 
   async function refresh(force=false){
     if(state.loading) return;
+    const shell=ensureProfileShell();
     const next=context();
-    if(!next.code || !next.token){
-      const shell=document.getElementById('picksProfileShell');
-      if(shell) shell.hidden=true;
-      return;
-    }
+    if(!next.code || !next.token){ if(shell) shell.hidden=true; return; }
     state.code=next.code;
     state.token=next.token;
     state.loading=true;
     try{
       const {data,error}=await client.rpc('picks_social_snapshot',{p_group_code:state.code,p_member_token:state.token});
-      if(error || !data?.group) return;
-      const signature=JSON.stringify({me:data.me,members:(data.members || []).map(member=>[member.id,member.display_name,member.avatar_key]),upcoming_event:data.upcoming_event});
+      if(error || !data?.group){ if(shell) shell.hidden=true; return; }
+      const signature=JSON.stringify({me:data.me,upcoming_event:data.upcoming_event,members:(data.members || []).map(member=>[member.id,member.display_name,member.avatar_key])});
       state.snapshot=data;
       if(force || signature!==state.lastSignature){ state.lastSignature=signature; render(data); }
       else decorateExistingRows(data);
@@ -212,11 +213,10 @@
     ensureProfileShell();
     refresh();
     const observer=new MutationObserver(()=>{
-      clearTimeout(start.timer);
-      start.timer=setTimeout(()=>refresh(),220);
+      ensureProfileShell();
+      if(state.snapshot) decorateExistingRows(state.snapshot);
     });
     observer.observe(document.getElementById('picks') || document.body,{childList:true,subtree:true});
-    window.addEventListener('picks:routechange',()=>setTimeout(()=>refresh(),60));
     window.setInterval(()=>refresh(),30000);
   }
 
