@@ -7,6 +7,9 @@ on:
       - 'index.html'
       - 'assets/js/picks*.js'
       - 'assets/css/picks*.css'
+      - 'assets/data/picks-events.js'
+      - 'assets/data/picks-photo-overrides.js'
+      - 'supabase/*-event.sql'
       - 'supabase/picks-device-recovery-phase.sql'
       - 'docs/picks-setup.md'
       - 'scripts/check-picks-ui.mjs'
@@ -16,6 +19,9 @@ on:
       - 'index.html'
       - 'assets/js/picks*.js'
       - 'assets/css/picks*.css'
+      - 'assets/data/picks-events.js'
+      - 'assets/data/picks-photo-overrides.js'
+      - 'supabase/*-event.sql'
       - 'supabase/picks-device-recovery-phase.sql'
       - 'docs/picks-setup.md'
       - 'scripts/check-picks-ui.mjs'
@@ -36,6 +42,8 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          show-progress: false
 
       - name: Set up Node
         uses: actions/setup-node@v4
