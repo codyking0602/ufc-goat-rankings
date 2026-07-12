@@ -1,8 +1,8 @@
-// Final Apex Peak audit rows: Dricus du Plessis, Merab Dvalishvili, and Zhang Weili.
+// Final Apex Peak audit rows: Dricus du Plessis, Justin Gaethje, Merab Dvalishvili, and Zhang Weili.
 // Loads after the locked Apex promoter and before the final score engine.
 (function(){
   'use strict';
-  const VERSION='apex-peak-audit-final-20260710b-merab-zhang';
+  const VERSION='apex-peak-audit-final-20260711a-gaethje-topuria';
   const DATA=window.RANKING_DATA;
   if(!DATA)return;
 
@@ -36,6 +36,22 @@
       front:{
         proved:'Finished Robert Whittaker and Israel Adesanya inside a 13-month championship rise.',
         felt:'Dangerous and championship-level, but never untouchable or inevitable.'
+      }
+    },
+    'Justin Gaethje':{
+      score:4.95,
+      window:'Paddy Pimblett 2026 + Ilia Topuria 2026',
+      performances:[
+        {label:'Paddy Pimblett',date:'2026-01-24',rating:8.5,note:'Won a five-round interim-title fight by unanimous decision, adding current title-level proof.'},
+        {label:'Ilia Topuria',date:'2026-06-14',rating:10.0,note:'Forced a corner stoppage against an undefeated two-division champion and pound-for-pound benchmark to unify the lightweight title.'}
+      ],
+      performanceAverage:9.25,
+      components:{twoPerformanceStrength:1.85,proof:1.60,bestFighterClaim:0.85,aura:0.65},
+      componentTotal:4.95,
+      notes:'Topuria is a maximum-level Apex win: an undefeated two-division champion and pound-for-pound benchmark broken in a title unification fight. Paddy adds legitimate interim-title proof, but his lower opponent standing and Gaethje’s historically hittable style keep this below the mythic six-point tier.',
+      front:{
+        proved:'Won interim gold over Paddy, then broke and stopped undefeated champion Ilia Topuria five months later.',
+        felt:'Like the ultimate veteran breakthrough—violent, resilient, and capable of beating the best, though never untouchable.'
       }
     },
     'Merab Dvalishvili':{
@@ -115,10 +131,12 @@
     lockedCount:62,
     finalAudits:Object.fromEntries(Object.entries(audits).map(([fighter,audit])=>[fighter,cloneAudit(audit)])),
     dricusAudit:cloneAudit(audits['Dricus du Plessis']),
+    gaethjeAudit:cloneAudit(audits['Justin Gaethje']),
     apexLeaders:boardRows.slice().sort((a,b)=>Number(b.apexPeak||0)-Number(a.apexPeak||0)||String(a.fighter).localeCompare(String(b.fighter))).slice(0,10).map(row=>({fighter:row.fighter,apexPeak:row.apexPeak})),
     appliedAt:new Date().toISOString()
   };
   window.UFC_APEX_PEAK_FINAL_AUDIT={version:VERSION,audits:Object.fromEntries(Object.entries(audits).map(([fighter,audit])=>[fighter,cloneAudit(audit)])),patched:[...new Set(patched)],appliedAt:new Date().toISOString()};
   window.UFC_APEX_PEAK_DRICUS_AUDIT={version:VERSION,fighter:'Dricus du Plessis',audit:cloneAudit(audits['Dricus du Plessis']),patched:patched.filter(name=>name==='Dricus du Plessis'),appliedAt:new Date().toISOString()};
+  window.UFC_APEX_PEAK_GAETHJE_AUDIT={version:VERSION,fighter:'Justin Gaethje',audit:cloneAudit(audits['Justin Gaethje']),patched:patched.filter(name=>name==='Justin Gaethje'),appliedAt:new Date().toISOString()};
   document.documentElement.setAttribute('data-apex-peak-audit-dricus',VERSION);
 })();
