@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="assets/css/picks.css?v=picks-css-20260711c-live-gameplay" />
   <link rel="stylesheet" href="assets/css/picks-room-admin.css?v=picks-room-admin-20260711b" />
   <link rel="stylesheet" href="assets/css/picks-launch-polish.css?v=picks-launch-polish-20260711b-manual-lock" />
-  <link rel="stylesheet" href="assets/css/picks-compact-room-ui.css?v=picks-compact-room-ui-20260711a" />
+  <link rel="stylesheet" href="assets/css/picks-compact-room-ui.css?v=picks-compact-room-ui-20260711b-contrast" />
 </head>
 <body>
   <header class="hero"><div><p class="eyebrow">UFC ranking engine</p><h1>UFC All-Time Rankings</h1><p class="subtitle">Clean UFC legacy rankings with OVR ratings, fighter profiles, category ranks, compare mode, and debate-ready explanations.</p></div><div class="hero-card"><span id="fighterCount">—</span><small>fighters entered</small></div></header>
@@ -51,11 +51,9 @@
         <div id="picksFightList" class="picks-fights"></div>
         <div id="picksStandingsCard" class="card picks-standings-card"><h3>Room Standings</h3><div id="picksStandings" class="picks-standings"></div></div>
 
-        <div id="picksRoomPicksCard" class="card picks-room-picks-card picks-room-picks-compact" hidden>
-          <div class="picks-card-head picks-room-picks-head">
-            <div><h3>Room Picks</h3><p class="picks-card-subtitle">Latest locked fights first. Expand only when you want the full board.</p></div>
-            <div class="picks-room-picks-controls"><span id="picksRoomPicksCount">Waiting for first lock</span><button id="picksRoomPicksToggle" class="picks-room-picks-toggle" type="button" hidden>View all</button></div>
-          </div>
+        <div id="picksRoomPicksCard" class="card picks-room-picks-card" hidden>
+          <div class="picks-card-head"><h3>Room Picks</h3><span id="picksRoomPicksCount">Waiting for first lock</span></div>
+          <p class="picks-card-subtitle">Everyone’s picks appear here as soon as each fight locks.</p>
           <div id="picksRoomPicks" class="picks-room-picks-list"></div>
         </div>
       </div>
@@ -101,8 +99,8 @@
   <script src="assets/data/picks-photo-overrides.js?v=picks-photo-overrides-20260711c"></script>
   <script src="assets/data/supabase-config.js?v=supabase-config-20260711a"></script>
   <script src="assets/js/picks.js?v=picks-js-20260711e-room-admin"></script>
-  <script src="assets/js/picks-compact-room-ui.js?v=picks-compact-room-ui-20260711a"></script>
   <script src="assets/js/picks-manual-lock.js?v=picks-manual-lock-20260711b"></script>
   <script src="assets/js/picks-room-persistence.js?v=picks-room-persistence-20260711a"></script>
+  <script src="assets/js/picks-room-compact.js?v=picks-room-compact-20260711a"></script>
 </body>
 </html>
