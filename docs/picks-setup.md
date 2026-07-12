@@ -90,7 +90,7 @@ For each new event:
 3. Verify the room and picks on the live site.
 4. Update replacements or cancellations when the card changes.
 
-`picks-event-manager-phase.sql` remains in the migration sequence because later group and commissioner schema depends on that phase, but its front-end manager is intentionally not loaded.
+`picks-event-manager-phase.sql` remains in the migration sequence because later group and commissioner schema depends on that phase, but its retired front-end files have been removed.
 
 ## Live event maintenance
 
@@ -112,6 +112,26 @@ Once an event is published, Supabase is the multiplayer source of truth.
 - Add-to-calendar file for the next event
 
 Browser notifications are opportunistic and only appear when the app is opened near event time. The calendar file is the reliable reminder outside the app.
+
+## Reliability checks
+
+The `Picks UI Smoke` GitHub Actions workflow runs whenever the Picks interface changes.
+
+It checks:
+
+- JavaScript syntax for every `picks*.js` file
+- Every local CSS and JavaScript asset referenced by `index.html`
+- Required Home, Event, Settings, standings, recap, and correction mount points
+- Cleanup-script loading order
+- Route restoration and keyboard navigation hooks
+- Profile and reminder persistence hooks
+- Absence of the retired Event Manager, Social Hub, and Phase 11 frontend files
+
+Run the same check locally with:
+
+```bash
+node scripts/check-picks-ui.mjs
+```
 
 ## Fallback data
 
