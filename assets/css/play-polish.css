@@ -27,7 +27,7 @@
 #play .play-result-list small,
 #play .play-insight-grid span{color:#cbd5e1!important}
 
-.play-intro-card{padding:14px 16px;border-radius:18px;gap:14px}
+.play-intro-card{padding:14px 16px;border-radius:18px;gap:14px;background:radial-gradient(circle at 92% 8%,rgba(249,115,22,.24),transparent 34%),linear-gradient(135deg,#202a3b,#111827)!important;border-color:rgba(249,115,22,.48)!important}
 .play-intro-card h3{font-size:22px}
 .play-intro-card p{font-size:13px;line-height:1.35;margin-top:4px}
 .play-progress-wrap{min-width:175px}
