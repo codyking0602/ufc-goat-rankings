@@ -1,5 +1,5 @@
 name: Build Octagon Verdict Data
-# Verdict-safe schema rebuild trigger: 2026-07-11
+# Verdict-safe schema rebuild trigger: 2026-07-12 quality-win audit
 
 on:
   workflow_run:
@@ -11,6 +11,8 @@ on:
     branches:
       - main
     paths:
+      - 'index.html'
+      - 'assets/data/quality-wins-audit-cruz-ilia.js'
       - 'tools/build-octagon-verdict-data.js'
       - '.github/workflows/build-octagon-verdict-data.yml'
   workflow_dispatch:
