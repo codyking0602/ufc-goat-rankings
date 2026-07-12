@@ -1,4 +1,4 @@
-// Post-finalizer trigger-only audit touch.
+// Observable live Division-Era Depth browser audit.
 import { chromium } from 'playwright';
 import fs from 'node:fs/promises';
 import process from 'node:process';
@@ -18,21 +18,22 @@ page.on('pageerror', error => pageErrors.push(String(error?.stack || error)));
 try {
   await page.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: 60_000 });
   await page.waitForFunction(() => window.UFC_SCORING_PIPELINE?.status === 'ready' || window.UFC_SCORING_PIPELINE?.status === 'error', null, { timeout: 120_000 });
-  await page.waitForFunction(() => window.UFC_DIVISION_ERA_DEPTH_LIVE?.applied === true || window.UFC_DIVISION_ERA_DEPTH_LIVE?.status, null, { timeout: 120_000 });
+  await page.waitForFunction(() => {
+    const finalizerStatus = window.UFC_DIVISION_ERA_DEPTH_FINALIZER?.status;
+    return window.UFC_DIVISION_ERA_DEPTH_LIVE?.applied === true
+      || finalizerStatus === 'ready'
+      || finalizerStatus === 'blocked'
+      || window.UFC_SCORING_PIPELINE?.status === 'error';
+  }, null, { timeout: 120_000 });
 
   const result = await page.evaluate(async () => {
-    const waitFor = async predicate => {
-      const started = Date.now();
-      while (!predicate() && Date.now() - started < 45_000) await new Promise(resolve => setTimeout(resolve, 50));
-    };
-    await waitFor(() => window.UFC_DIVISION_ERA_DEPTH_LIVE?.applied === true);
-
     const clone = value => JSON.parse(JSON.stringify(value ?? null));
     const key = name => String(name || '').trim().toLowerCase().replace(/[’‘`´]/g, "'").replace(/\s+/g, ' ');
     const data = window.RANKING_DATA || {};
     const shadow = clone(window.UFC_DIVISION_ERA_DEPTH_SHADOW);
     const audit = clone(window.UFC_DIVISION_ERA_DEPTH_AUDIT);
     const live = clone(window.UFC_DIVISION_ERA_DEPTH_LIVE);
+    const finalizer = clone(window.UFC_DIVISION_ERA_DEPTH_FINALIZER);
     const boards = [...(data.men || []), ...(data.women || [])];
     const profiles = data.fighters || [];
     const shadowByKey = new Map((window.UFC_DIVISION_ERA_DEPTH_SHADOW?.fighters || []).map(row => [key(row.fighter), row]));
@@ -40,8 +41,16 @@ try {
 
     const boardMismatches = boards.filter(row => {
       const expected = shadowByKey.get(key(row.fighter));
-      return !expected || Math.abs(Number(row.eraDepthAdjustment) - Number(expected.curvedAdjustment)) > 0.001 || Math.abs(Number(row.totalScore) - (Number(row.preEraDepthTotalScore) + Number(expected.curvedAdjustment))) > 0.001;
-    }).map(row => row.fighter);
+      return !expected
+        || Math.abs(Number(row.eraDepthAdjustment) - Number(expected.curvedAdjustment)) > 0.001
+        || Math.abs(Number(row.totalScore) - (Number(row.preEraDepthTotalScore) + Number(expected.curvedAdjustment))) > 0.001;
+    }).map(row => ({
+      fighter: row.fighter,
+      totalScore: row.totalScore,
+      preEraDepthTotalScore: row.preEraDepthTotalScore,
+      liveAdjustment: row.eraDepthAdjustment,
+      expectedAdjustment: shadowByKey.get(key(row.fighter))?.curvedAdjustment
+    }));
     const profileMismatches = profiles.filter(profile => {
       const board = boardByKey.get(key(profile.fighter));
       return board && (Math.abs(Number(profile.eraDepthAdjustment) - Number(board.eraDepthAdjustment)) > 0.001 || Number(profile.rank) !== Number(board.rank) || Number(profile.overallOvr) !== Number(board.overallOvr));
@@ -54,7 +63,7 @@ try {
     const fighter = name => boardByKey.get(key(name)) || null;
     const anchors = ['Jon Jones','Georges St-Pierre','Demetrious Johnson','Anderson Silva','Islam Makhachev','Alexander Volkanovski','Jose Aldo','Khabib Nurmagomedov','Kamaru Usman','Stipe Miocic','Matt Hughes','Junior dos Santos','Tito Ortiz','Amanda Nunes','Cris Cyborg','Holly Holm'].map(name => {
       const row = fighter(name);
-      return row ? { fighter:name, rank:row.rank, totalScore:row.totalScore, adjustment:row.eraDepthAdjustment, overallOvr:row.overallOvr, depthIndex:row.divisionEraDepth?.depthIndex, sampledDivisions:row.divisionEraDepth?.sampledDivisions || [], womenFeatherweightTreatment:row.divisionEraDepth?.womenFeatherweightTreatment || null } : { fighter:name, missing:true };
+      return row ? { fighter:name, rank:row.rank, totalScore:row.totalScore, preEraDepthTotalScore:row.preEraDepthTotalScore, adjustment:row.eraDepthAdjustment, overallOvr:row.overallOvr, depthIndex:row.divisionEraDepth?.depthIndex, sampledDivisions:row.divisionEraDepth?.sampledDivisions || [], womenFeatherweightTreatment:row.divisionEraDepth?.womenFeatherweightTreatment || null } : { fighter:name, missing:true };
     });
 
     const nunes = fighter('Amanda Nunes');
@@ -102,6 +111,8 @@ try {
       shadow,
       audit,
       live,
+      finalizer,
+      finalScoreEngine: clone(window.UFC_FINAL_SCORE_ENGINE),
       consistency: {
         rosterCount: boards.length,
         shadowCount: shadowByKey.size,
@@ -114,8 +125,8 @@ try {
       },
       wfwSafety,
       anchors,
-      menTop20: (data.men || []).slice(0,20).map(row => ({rank:row.rank,fighter:row.fighter,totalScore:row.totalScore,eraDepthAdjustment:row.eraDepthAdjustment,overallOvr:row.overallOvr})),
-      womenBoard: (data.women || []).map(row => ({rank:row.rank,fighter:row.fighter,totalScore:row.totalScore,eraDepthAdjustment:row.eraDepthAdjustment,overallOvr:row.overallOvr})),
+      menTop20: (data.men || []).slice(0,20).map(row => ({rank:row.rank,fighter:row.fighter,totalScore:row.totalScore,preEraDepthTotalScore:row.preEraDepthTotalScore,eraDepthAdjustment:row.eraDepthAdjustment,overallOvr:row.overallOvr})),
+      womenBoard: (data.women || []).map(row => ({rank:row.rank,fighter:row.fighter,totalScore:row.totalScore,preEraDepthTotalScore:row.preEraDepthTotalScore,eraDepthAdjustment:row.eraDepthAdjustment,overallOvr:row.overallOvr})),
       profileSurface,
       compareSurface
     };
@@ -126,9 +137,14 @@ try {
   const summary = {
     generatedAt: payload.generatedAt,
     pipelineStatus: result.pipeline?.status ?? null,
+    pipelineError: result.pipeline?.error ?? null,
     shadowVersion: result.shadow?.version ?? null,
     auditVersion: result.audit?.version ?? null,
     liveVersion: result.live?.version ?? null,
+    finalizerVersion: result.finalizer?.version ?? null,
+    finalizerStatus: result.finalizer?.status ?? null,
+    finalizerApplied: result.finalizer?.applied ?? false,
+    finalScoreEngineVersion: result.finalScoreEngine?.version ?? null,
     datasetEnd: result.shadow?.source?.datasetEnd ?? null,
     sourceFresh: result.shadow?.source?.sourceFresh ?? false,
     judgmentApproved: result.audit?.judgmentApproved ?? false,
@@ -136,6 +152,7 @@ try {
     liveApplied: result.live?.applied ?? false,
     promotedCount: result.live?.promotedCount ?? null,
     liveMismatchCount: result.live?.mismatchCount ?? null,
+    liveMismatches: result.live?.mismatches || [],
     consistency: result.consistency,
     wfwSafety: result.wfwSafety,
     anchors: result.anchors,
@@ -148,6 +165,11 @@ try {
   await fs.writeFile(summaryPath, `${JSON.stringify(summary, null, 2)}\n`, 'utf8');
   console.log('DIVISION_ERA_DEPTH_RUNTIME_SUMMARY');
   console.log(JSON.stringify({
+    pipelineStatus:summary.pipelineStatus,
+    pipelineError:summary.pipelineError,
+    finalizerStatus:summary.finalizerStatus,
+    finalizerApplied:summary.finalizerApplied,
+    finalScoreEngineVersion:summary.finalScoreEngineVersion,
     datasetEnd:summary.datasetEnd,
     sourceFresh:summary.sourceFresh,
     judgmentApproved:summary.judgmentApproved,
@@ -169,6 +191,7 @@ try {
     || result.shadow?.source?.sourceFresh !== true
     || result.audit?.judgmentApproved !== true
     || result.audit?.readyForLivePromotion !== true
+    || result.finalizer?.applied !== true
     || result.live?.applied !== true
     || Number(result.live?.promotedCount || 0) !== 63
     || Number(result.live?.mismatchCount || 0) !== 0
@@ -191,6 +214,21 @@ try {
     || result.compareSurface?.hasLiveRanks !== true
     || pageErrors.length > 0;
   if (failed) process.exitCode = 1;
+} catch (error) {
+  const diagnostic = await page.evaluate(() => ({
+    pipeline: window.UFC_SCORING_PIPELINE || null,
+    shadow: window.UFC_DIVISION_ERA_DEPTH_SHADOW || null,
+    audit: window.UFC_DIVISION_ERA_DEPTH_AUDIT || null,
+    live: window.UFC_DIVISION_ERA_DEPTH_LIVE || null,
+    finalizer: window.UFC_DIVISION_ERA_DEPTH_FINALIZER || null,
+    finalScoreEngine: window.UFC_FINAL_SCORE_ENGINE || null,
+    htmlAttributes: Object.fromEntries([...document.documentElement.attributes].map(attribute => [attribute.name, attribute.value]))
+  })).catch(() => null);
+  const failure = { generatedAt:new Date().toISOString(), baseUrl, error:String(error?.stack || error), diagnostic, browserDiagnostics:{consoleErrors,pageErrors} };
+  await fs.writeFile(outputPath, `${JSON.stringify(failure, null, 2)}\n`, 'utf8');
+  await fs.writeFile(summaryPath, `${JSON.stringify(failure, null, 2)}\n`, 'utf8');
+  console.error(error?.stack || error);
+  process.exitCode = 1;
 } finally {
   await browser.close();
 }
