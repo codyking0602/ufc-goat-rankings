@@ -4,12 +4,12 @@
 (function(){
   'use strict';
 
-  const VERSION='loss-context-exposure-ledger-20260711b-record-row-resolution';
+  const VERSION='loss-context-exposure-ledger-20260711c-gsp-ufc-count';
   const DATA=window.RANKING_DATA;
 
   const CLOSED_WINDOW_COUNTS={
     'Jon Jones':{throughPrimeUfcFights:22,endpoint:'Ciryl Gane — 2023-03-04'},
-    'Georges St-Pierre':{throughPrimeUfcFights:24,endpoint:'Michael Bisping — 2017-11-04'},
+    'Georges St-Pierre':{throughPrimeUfcFights:22,endpoint:'Michael Bisping — 2017-11-04'},
     'Anderson Silva':{throughPrimeUfcFights:18,endpoint:'Chris Weidman II — 2013-12-28'},
     'Demetrious Johnson':{throughPrimeUfcFights:18,endpoint:'Henry Cejudo II — 2018-08-04',notes:'Includes the Ian McCall draw; no contests excluded.'},
     'Khabib Nurmagomedov':{throughPrimeUfcFights:13,endpoint:'Justin Gaethje — 2020-10-24'},
