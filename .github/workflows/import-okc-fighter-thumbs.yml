@@ -10,8 +10,6 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 concurrency:
   group: import-okc-fighter-thumbs
@@ -21,9 +19,6 @@ jobs:
   import:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout latest main
         uses: actions/checkout@v4
@@ -83,7 +78,6 @@ jobs:
             check=check.replace(marker,marker+'\n'+initials)
           smoke.write_text(check)
           PY
-          rm -f .github/workflows/finalize-okc-fighter-thumbs.yml
 
       - name: Verify Picks UI
         run: node scripts/check-picks-ui.mjs
@@ -101,15 +95,3 @@ jobs:
           else
             echo "No source changes to commit."
           fi
-
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: '.'
-
-      - name: Deploy Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
