@@ -18,7 +18,7 @@
       (num(f?.longevity) / 30) * 10
     );
   }
-  function liveTotal(f){ return round2(baseScore(f) + apexValue(f) + num(f?.penalty)); }
+  function liveTotal(f){ return round2(baseScore(f) + apexValue(f) + num(f?.penalty) + num(f?.eraDepthAdjustment)); }
   function rerank(rows){
     rows.sort((a,b) => num(b.totalScore) - num(a.totalScore) || num(b.championship) - num(a.championship) || String(a.fighter).localeCompare(String(b.fighter)));
     rows.forEach((f,i) => { f.rank = i + 1; });
@@ -32,16 +32,18 @@
       f.apexPeak = apexValue(f);
       f.apexPeakBonus = apexValue(f);
       f.lossContext = num(f.penalty);
+      f.eraDepthAdjustment = num(f.eraDepthAdjustment);
       f.rawScore = liveTotal(f);
       f.totalScore = f.rawScore;
-      f.scoreFormula = 'championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty';
+      f.preEraDepthTotalScore = round2(f.rawScore - f.eraDepthAdjustment);
+      f.scoreFormula = 'championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment';
     });
     rerank(DATA.men || []);
     rerank(DATA.women || []);
     window.UFC_SIX_CATEGORY_SCORE_MODEL = {
-      version: 'six-category-live-20260709b',
-      weights: { championship: 35, opponentQuality: 27.5, primeDominance: 27.5, longevity: 10, apexPeak: 'bonus', penalty: 'deduction' },
-      formula: 'Championship /30 × 35 + Quality Wins /30 × 27.5 + Prime Dominance /30 × 27.5 + Longevity /30 × 10 + Apex Peak + Loss Context',
+      version: 'six-category-live-20260712a-era-depth',
+      weights: { championship: 35, opponentQuality: 27.5, primeDominance: 27.5, longevity: 10, apexPeak: 'bonus', penalty: 'deduction', eraDepthAdjustment: 'post-base modifier' },
+      formula: 'Championship /30 × 35 + Quality Wins /30 × 27.5 + Prime Dominance /30 × 27.5 + Longevity /30 × 10 + Apex Peak + Loss Context + Division-Era Depth',
       appliedAt: new Date().toISOString(),
       jonJones: (DATA.men || []).find(f => f.fighter === 'Jon Jones') || null
     };
