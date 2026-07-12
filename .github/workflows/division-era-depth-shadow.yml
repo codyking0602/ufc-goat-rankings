@@ -13,6 +13,7 @@ on:
       - 'scripts/validate-division-era-depth-promotion.mjs'
       - 'scripts/install-division-era-depth-live.mjs'
       - 'scripts/install-division-era-depth-final-score.mjs'
+      - 'scripts/install-division-era-depth-live-ui.mjs'
       - '.github/workflows/division-era-depth-shadow.yml'
   pull_request:
     branches: [main]
@@ -26,6 +27,7 @@ on:
       - 'scripts/validate-division-era-depth-promotion.mjs'
       - 'scripts/install-division-era-depth-live.mjs'
       - 'scripts/install-division-era-depth-final-score.mjs'
+      - 'scripts/install-division-era-depth-live-ui.mjs'
       - '.github/workflows/division-era-depth-shadow.yml'
   workflow_dispatch:
 
@@ -55,6 +57,8 @@ jobs:
         run: |
           node --check scripts/install-division-era-depth-final-score.mjs
           node scripts/install-division-era-depth-final-score.mjs
+          node --check scripts/install-division-era-depth-live-ui.mjs
+          node scripts/install-division-era-depth-live-ui.mjs
 
       - name: Check JavaScript syntax
         run: |
@@ -67,9 +71,11 @@ jobs:
           node --check scripts/validate-division-era-depth-promotion.mjs
           node --check scripts/install-division-era-depth-live.mjs
           node --check scripts/install-division-era-depth-final-score.mjs
+          node --check scripts/install-division-era-depth-live-ui.mjs
           node --check assets/data/division-era-depth-live.js
           node --check assets/data/division-era-depth-finalizer.js
           node --check assets/js/final-score-engine.js
+          node --check assets/js/live-score-ui.js
           node --check assets/data/module-versions.js
 
       - name: Build current 63-fighter depth model
@@ -92,10 +98,12 @@ jobs:
           grep -q 'division-era-depth-shadow-20260712d-current-wfw-safe' index.html
           grep -q 'division-era-depth-judgment-review-20260712b-live-approved' index.html
           grep -q 'division-era-depth-live-20260712a' index.html
-          grep -q 'division-era-depth-finalizer-20260712a' index.html
+          grep -q 'division-era-depth-finalizer-20260712b-canonical-engine' index.html
+          grep -q 'live-score-ui-20260712a-era-depth' index.html
           grep -q "finalScoreEngine:'20260712b-era-shadow-fallback'" assets/data/module-versions.js
           grep -q 'function eraDepthAdjustmentFor(row)' assets/js/final-score-engine.js
           grep -q '+ penalty + eraDepthAdjustment' assets/js/final-score-engine.js
+          grep -q 'num(f?.penalty) + num(f?.eraDepthAdjustment)' assets/js/live-score-ui.js
 
       - name: Upload depth reports and diagnostics
         if: always()
@@ -106,6 +114,7 @@ jobs:
             index.html
             assets/data/module-versions.js
             assets/js/final-score-engine.js
+            assets/js/live-score-ui.js
             assets/data/division-era-depth-shadow.js
             assets/data/division-era-depth-audit.js
             docs/division-era-depth-shadow-report.json
@@ -121,7 +130,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html assets/data/module-versions.js assets/js/final-score-engine.js assets/data/division-era-depth-shadow.js assets/data/division-era-depth-audit.js docs/division-era-depth-shadow-report.json docs/division-era-depth-judgment-review.json docs/division-era-depth-judgment-review.md docs/division-era-depth-build-diagnostics.txt
+          git add index.html assets/data/module-versions.js assets/js/final-score-engine.js assets/js/live-score-ui.js assets/data/division-era-depth-shadow.js assets/data/division-era-depth-audit.js docs/division-era-depth-shadow-report.json docs/division-era-depth-judgment-review.json docs/division-era-depth-judgment-review.md docs/division-era-depth-build-diagnostics.txt
           git commit -m 'Finalize Division Era Depth scoring integration' || exit 0
           for attempt in 1 2 3 4 5; do
             git pull --rebase origin main || { git rebase --abort || true; sleep $((attempt * 2)); continue; }
