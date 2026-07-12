@@ -14,6 +14,7 @@ Run these files in **Supabase → SQL Editor** in this order:
 6. `supabase/picks-persistent-groups-phase.sql`
 7. `supabase/picks-event-manager-phase.sql`
 8. `supabase/picks-commissioner-phase.sql`
+9. `supabase/picks-social-retention-phase.sql`
 
 Then open **Project Settings → API** and copy the project URL and public publishable key into `assets/data/supabase-config.js`.
 
@@ -71,6 +72,22 @@ The commissioner can:
 - Start a new season while preserving every prior event and season.
 
 Starting a new season resets the visible season standings, not the underlying history. The same permanent group and members continue forward.
+
+## Social and retention
+
+After `picks-social-retention-phase.sql` runs, every member gets a compact **Social Hub**.
+
+It includes:
+
+- Shareable event-winner and season-standings graphics.
+- Current correct-pick streaks and all-season best streaks.
+- Upset Hunter, Lock Master, and event-win awards.
+- Current-season trophy race and archived season champions.
+- Optional emoji avatars that appear beside standings names.
+- A group activity feed for joins, event launches, fight results, season changes, and commissioner changes.
+- An optional browser reminder preference and an **Add to calendar** file for the next event.
+
+Browser notifications are opportunistic and appear when the app is opened near event time. The calendar file is the reliable reminder outside the app.
 
 ## Live event maintenance
 
