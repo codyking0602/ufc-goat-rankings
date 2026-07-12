@@ -16,22 +16,27 @@ page.on('pageerror', error => pageErrors.push(String(error?.stack || error)));
 
 try {
   await page.goto(baseUrl, { waitUntil: 'domcontentloaded', timeout: 60_000 });
-  await page.waitForFunction(() => window.UFC_SCORING_PIPELINE?.status === 'ready' || window.UFC_SCORING_PIPELINE?.status === 'error', null, { timeout: 120_000 });
-  await page.waitForFunction(() => window.UFC_DIVISION_ERA_DEPTH_LIVE?.applied === true || window.UFC_DIVISION_ERA_DEPTH_LIVE?.status, null, { timeout: 120_000 });
+  await page.waitForFunction(
+    () => window.UFC_SCORING_PIPELINE?.status === 'ready' || window.UFC_SCORING_PIPELINE?.status === 'error',
+    null,
+    { timeout: 120_000 }
+  );
+  await page.waitForFunction(
+    () => window.UFC_DIVISION_ERA_DEPTH_FINALIZER?.applied === true
+      && window.UFC_DIVISION_ERA_DEPTH_LIVE?.applied === true
+      && window.UFC_DIVISION_ERA_DEPTH_LIVE?.finalizedAfterPipeline === true,
+    null,
+    { timeout: 120_000 }
+  );
 
   const result = await page.evaluate(async () => {
-    const waitFor = async predicate => {
-      const started = Date.now();
-      while (!predicate() && Date.now() - started < 45_000) await new Promise(resolve => setTimeout(resolve, 50));
-    };
-    await waitFor(() => window.UFC_DIVISION_ERA_DEPTH_LIVE?.applied === true);
-
     const clone = value => JSON.parse(JSON.stringify(value ?? null));
     const key = name => String(name || '').trim().toLowerCase().replace(/[’‘`´]/g, "'").replace(/\s+/g, ' ');
     const data = window.RANKING_DATA || {};
     const shadow = clone(window.UFC_DIVISION_ERA_DEPTH_SHADOW);
     const audit = clone(window.UFC_DIVISION_ERA_DEPTH_AUDIT);
     const live = clone(window.UFC_DIVISION_ERA_DEPTH_LIVE);
+    const finalizer = clone(window.UFC_DIVISION_ERA_DEPTH_FINALIZER);
     const boards = [...(data.men || []), ...(data.women || [])];
     const profiles = data.fighters || [];
     const shadowByKey = new Map((window.UFC_DIVISION_ERA_DEPTH_SHADOW?.fighters || []).map(row => [key(row.fighter), row]));
@@ -39,30 +44,55 @@ try {
 
     const boardMismatches = boards.filter(row => {
       const expected = shadowByKey.get(key(row.fighter));
-      return !expected || Math.abs(Number(row.eraDepthAdjustment) - Number(expected.curvedAdjustment)) > 0.001 || Math.abs(Number(row.totalScore) - (Number(row.preEraDepthTotalScore) + Number(expected.curvedAdjustment))) > 0.001;
+      return !expected
+        || Math.abs(Number(row.eraDepthAdjustment) - Number(expected.curvedAdjustment)) > 0.001
+        || Math.abs(Number(row.totalScore) - (Number(expected.currentTotal) + Number(expected.curvedAdjustment))) > 0.001;
     }).map(row => row.fighter);
     const profileMismatches = profiles.filter(profile => {
       const board = boardByKey.get(key(profile.fighter));
-      return board && (Math.abs(Number(profile.eraDepthAdjustment) - Number(board.eraDepthAdjustment)) > 0.001 || Number(profile.rank) !== Number(board.rank) || Number(profile.overallOvr) !== Number(board.overallOvr));
+      return board && (
+        Math.abs(Number(profile.eraDepthAdjustment) - Number(board.eraDepthAdjustment)) > 0.001
+        || Number(profile.rank) !== Number(board.rank)
+        || Number(profile.overallOvr) !== Number(board.overallOvr)
+        || Math.abs(Number(profile.totalScore) - Number(board.totalScore)) > 0.001
+      );
     }).map(row => row.fighter);
     const overrideMismatches = boards.filter(row => {
       const override = window.DISPLAY_OVERRIDES?.[row.fighter] || {};
-      return Number(override.allTimeRank) !== Number(row.rank) || Number(override.overallOvr) !== Number(row.overallOvr) || Math.abs(Number(override.eraDepthAdjustment) - Number(row.eraDepthAdjustment)) > 0.001;
+      return Number(override.allTimeRank) !== Number(row.rank)
+        || Number(override.overallOvr) !== Number(row.overallOvr)
+        || Math.abs(Number(override.eraDepthAdjustment) - Number(row.eraDepthAdjustment)) > 0.001;
     }).map(row => row.fighter);
 
     const fighter = name => boardByKey.get(key(name)) || null;
-    const anchors = ['Jon Jones','Georges St-Pierre','Demetrious Johnson','Anderson Silva','Islam Makhachev','Alexander Volkanovski','Jose Aldo','Khabib Nurmagomedov','Kamaru Usman','Stipe Miocic','Matt Hughes','Junior dos Santos','Tito Ortiz','Amanda Nunes','Cris Cyborg','Holly Holm'].map(name => {
+    const anchors = [
+      'Jon Jones','Georges St-Pierre','Demetrious Johnson','Anderson Silva','Islam Makhachev','Alexander Volkanovski',
+      'Jose Aldo','Khabib Nurmagomedov','Kamaru Usman','Stipe Miocic','Matt Hughes','Junior dos Santos','Tito Ortiz',
+      'Amanda Nunes','Cris Cyborg','Holly Holm'
+    ].map(name => {
       const row = fighter(name);
-      return row ? { fighter:name, rank:row.rank, totalScore:row.totalScore, adjustment:row.eraDepthAdjustment, overallOvr:row.overallOvr, depthIndex:row.divisionEraDepth?.depthIndex, sampledDivisions:row.divisionEraDepth?.sampledDivisions || [], womenFeatherweightTreatment:row.divisionEraDepth?.womenFeatherweightTreatment || null } : { fighter:name, missing:true };
+      return row ? {
+        fighter: name,
+        rank: row.rank,
+        totalScore: row.totalScore,
+        adjustment: row.eraDepthAdjustment,
+        overallOvr: row.overallOvr,
+        depthIndex: row.divisionEraDepth?.depthIndex,
+        sampledDivisions: row.divisionEraDepth?.sampledDivisions || [],
+        womenFeatherweightTreatment: row.divisionEraDepth?.womenFeatherweightTreatment || null
+      } : { fighter: name, missing: true };
     });
 
     const nunes = fighter('Amanda Nunes');
     const cyborg = fighter('Cris Cyborg');
     const holm = fighter('Holly Holm');
     const wfwSafety = {
-      nunesExcludesWfw: !nunes?.divisionEraDepth?.sampledDivisions?.includes('WFW') && nunes?.divisionEraDepth?.womenFeatherweightTreatment?.treatment === 'mixed-career-non-wfw-only',
-      cyborgNeutral: Number(cyborg?.eraDepthAdjustment) === 0 && cyborg?.divisionEraDepth?.womenFeatherweightTreatment?.treatment === 'pure-wfw-zero-adjustment',
-      holmExcludesWfw: !holm?.divisionEraDepth?.sampledDivisions?.includes('WFW') && holm?.divisionEraDepth?.womenFeatherweightTreatment?.treatment === 'mixed-career-non-wfw-only'
+      nunesExcludesWfw: !nunes?.divisionEraDepth?.sampledDivisions?.includes('WFW')
+        && nunes?.divisionEraDepth?.womenFeatherweightTreatment?.treatment === 'mixed-career-non-wfw-only',
+      cyborgNeutral: Number(cyborg?.eraDepthAdjustment) === 0
+        && cyborg?.divisionEraDepth?.womenFeatherweightTreatment?.treatment === 'pure-wfw-zero-adjustment',
+      holmExcludesWfw: !holm?.divisionEraDepth?.sampledDivisions?.includes('WFW')
+        && holm?.divisionEraDepth?.womenFeatherweightTreatment?.treatment === 'mixed-career-non-wfw-only'
     };
 
     let profileSurface = { rendered:false, hasEraCard:false, hasAdjustment:false, hasRank:false, hasOvr:false, text:'' };
@@ -101,6 +131,7 @@ try {
       shadow,
       audit,
       live,
+      finalizer,
       consistency: {
         rosterCount: boards.length,
         shadowCount: shadowByKey.size,
@@ -113,8 +144,12 @@ try {
       },
       wfwSafety,
       anchors,
-      menTop20: (data.men || []).slice(0,20).map(row => ({rank:row.rank,fighter:row.fighter,totalScore:row.totalScore,eraDepthAdjustment:row.eraDepthAdjustment,overallOvr:row.overallOvr})),
-      womenBoard: (data.women || []).map(row => ({rank:row.rank,fighter:row.fighter,totalScore:row.totalScore,eraDepthAdjustment:row.eraDepthAdjustment,overallOvr:row.overallOvr})),
+      menTop20: (data.men || []).slice(0,20).map(row => ({
+        rank:row.rank,fighter:row.fighter,totalScore:row.totalScore,eraDepthAdjustment:row.eraDepthAdjustment,overallOvr:row.overallOvr
+      })),
+      womenBoard: (data.women || []).map(row => ({
+        rank:row.rank,fighter:row.fighter,totalScore:row.totalScore,eraDepthAdjustment:row.eraDepthAdjustment,overallOvr:row.overallOvr
+      })),
       profileSurface,
       compareSurface
     };
@@ -128,6 +163,9 @@ try {
     shadowVersion: result.shadow?.version ?? null,
     auditVersion: result.audit?.version ?? null,
     liveVersion: result.live?.version ?? null,
+    finalizerVersion: result.finalizer?.version ?? null,
+    finalizerApplied: result.finalizer?.applied ?? false,
+    finalizedAfterPipeline: result.live?.finalizedAfterPipeline ?? false,
     datasetEnd: result.shadow?.source?.datasetEnd ?? null,
     sourceFresh: result.shadow?.source?.sourceFresh ?? false,
     judgmentApproved: result.audit?.judgmentApproved ?? false,
@@ -151,6 +189,8 @@ try {
     sourceFresh:summary.sourceFresh,
     judgmentApproved:summary.judgmentApproved,
     liveApplied:summary.liveApplied,
+    finalizerApplied:summary.finalizerApplied,
+    finalizedAfterPipeline:summary.finalizedAfterPipeline,
     promotedCount:summary.promotedCount,
     liveMismatchCount:summary.liveMismatchCount,
     boardMismatchCount:summary.consistency?.boardMismatchCount,
@@ -168,6 +208,8 @@ try {
     || result.shadow?.source?.sourceFresh !== true
     || result.audit?.judgmentApproved !== true
     || result.audit?.readyForLivePromotion !== true
+    || result.finalizer?.applied !== true
+    || result.live?.finalizedAfterPipeline !== true
     || result.live?.applied !== true
     || Number(result.live?.promotedCount || 0) !== 63
     || Number(result.live?.mismatchCount || 0) !== 0
