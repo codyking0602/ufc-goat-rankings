@@ -93,7 +93,8 @@
     const members=snapshot?.members || [];
     document.querySelectorAll('.picks-group-member strong,.picks-standing-row strong,.picks-recap-row strong').forEach(node=>{
       const existing=node.querySelector('.social-inline-avatar');
-      const text=String(node.textContent || '').trim();
+      const fullText=String(node.textContent || '').trim();
+      const text=existing ? fullText.slice(String(existing.textContent || '').length).trim() : fullText;
       const member=members.find(item=>text.startsWith(item.display_name));
       if(!member){ existing?.remove(); return; }
       const value=emoji(member.avatar_key);
