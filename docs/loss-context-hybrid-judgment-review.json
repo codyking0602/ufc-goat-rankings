@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-07-12T03:20:10.232Z",
+  "generatedAt": "2026-07-12T03:28:07.462Z",
   "shadowVersion": "loss-context-hybrid-shadow-20260711f-prime-volume-floor",
-  "auditVersion": "loss-context-hybrid-audit-20260711c-prime-volume-review",
+  "auditVersion": "loss-context-hybrid-audit-20260711d-judgment-approved",
   "readyForLivePromotion": true,
   "criticalFlags": [],
   "summary": {
@@ -25,6 +25,8 @@
     "lowExposureCount": 1,
     "postPrimeExclusionCount": 34,
     "judgmentReviewCount": 15,
+    "judgmentApproved": true,
+    "judgmentLockVersion": "loss-context-hybrid-judgment-lock-20260711a",
     "criticalFlagCount": 0,
     "averageCurrentPenalty": -6.06,
     "averageRecommendedPenalty": -3.19,
