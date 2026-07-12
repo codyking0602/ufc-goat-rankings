@@ -18,6 +18,8 @@ function requireFile(relative){
 const index=read('index.html');
 const nav=read('assets/js/picks-internal-navigation.js');
 const profile=read('assets/js/picks-social-retention.js');
+const recovery=read('assets/js/picks-device-recovery.js');
+const recoverySql=read('supabase/picks-device-recovery-phase.sql');
 const settingsCleanup=read('assets/js/picks-settings-admin-cleanup.js');
 const setup=read('docs/picks-setup.md');
 
@@ -29,14 +31,17 @@ const requiredFiles=[
   'assets/js/picks-live-experience.js',
   'assets/js/picks-commissioner.js',
   'assets/js/picks-social-retention.js',
+  'assets/js/picks-device-recovery.js',
   'assets/js/picks-correctness-cleanup.js',
   'assets/js/picks-internal-navigation.js',
   'assets/js/picks-home-event-cleanup.js',
   'assets/js/picks-settings-admin-cleanup.js',
+  'assets/css/picks-device-recovery.css',
   'assets/css/picks-internal-navigation.css',
   'assets/css/picks-home-event-cleanup.css',
   'assets/css/picks-settings-admin-cleanup.css',
-  'assets/css/picks-final-cleanup.css'
+  'assets/css/picks-final-cleanup.css',
+  'supabase/picks-device-recovery-phase.sql'
 ];
 requiredFiles.forEach(requireFile);
 
@@ -59,10 +64,12 @@ for(const retired of retiredFiles){
 
 const requiredIndexRefs=[
   'assets/css/picks-final-cleanup.css',
+  'assets/css/picks-device-recovery.css',
   'assets/js/picks-social-retention.js',
   'assets/js/picks-internal-navigation.js',
   'assets/js/picks-home-event-cleanup.js',
-  'assets/js/picks-settings-admin-cleanup.js'
+  'assets/js/picks-settings-admin-cleanup.js',
+  'assets/js/picks-device-recovery.js'
 ];
 requiredIndexRefs.forEach(relative=>check(index.includes(relative),`index.html does not load ${relative}`));
 
@@ -70,7 +77,8 @@ const scriptOrder=[
   'assets/js/picks-social-retention.js',
   'assets/js/picks-internal-navigation.js',
   'assets/js/picks-home-event-cleanup.js',
-  'assets/js/picks-settings-admin-cleanup.js'
+  'assets/js/picks-settings-admin-cleanup.js',
+  'assets/js/picks-device-recovery.js'
 ].map(relative=>index.indexOf(relative));
 check(scriptOrder.every(position=>position>=0),'One or more Picks cleanup scripts are missing from index.html');
 check(scriptOrder.every((position,indexValue)=>indexValue===0 || position>scriptOrder[indexValue-1]),'Picks cleanup scripts are loaded in an unsafe order');
@@ -100,11 +108,22 @@ check(profile.includes('profileMarkup'),'Profile settings renderer is missing');
 check(profile.includes('picks_social_update_profile'),'Profile persistence RPC is missing');
 check(profile.includes('picksAddCalendar'),'Calendar reminder support is missing');
 
+check(recovery.includes('picks_member_recovery_status'),'Recovery status RPC hook is missing');
+check(recovery.includes('picks_member_generate_recovery_key'),'Recovery key creation hook is missing');
+check(recovery.includes('picks_member_recover'),'New-device profile recovery hook is missing');
+check(recovery.includes('picks_commissioner_issue_member_recovery'),'Commissioner recovery-code hook is missing');
+check(recovery.includes('Profile recovered'),'Recovery completion flow is missing');
+check(recoverySql.includes('recovery_key_hash'),'Recovery key hash storage is missing');
+check(recoverySql.includes('last_recovered_at'),'Recovery audit timestamp is missing');
+check(recoverySql.includes('update public.pick_room_members'),'Room-token rotation is missing');
+check(recoverySql.includes('update public.pick_rooms'),'Commissioner-token rotation is missing');
+
 check(!settingsCleanup.includes('removeRetiredTools'),'Runtime retired-tool removal hook still exists');
 check(settingsCleanup.includes('Enter Correction Mode'),'Completed-event correction gate is missing');
 check(settingsCleanup.includes("label==='EVENT CONTROL'"),'Commissioner event-control fallback filter is missing');
 
 check(setup.includes('picks-event-automation-phase.sql` is retired and should not be run'),'Setup guide does not clearly retire Phase 11');
+check(setup.includes('picks-device-recovery-phase.sql'),'Setup guide does not include the device recovery migration');
 check(setup.includes('Home') && setup.includes('Event') && setup.includes('Settings'),'Setup guide does not document the current Picks structure');
 
 if(failures.length){
@@ -113,4 +132,4 @@ if(failures.length){
   process.exit(1);
 }
 
-console.log(`Picks UI smoke check passed: ${assetRefs.length} local assets resolved, ${requiredFiles.length} required files present, retired interfaces absent.`);
+console.log(`Picks UI smoke check passed: ${assetRefs.length} local assets resolved, ${requiredFiles.length} required files present, retired interfaces absent, device recovery protected.`);
