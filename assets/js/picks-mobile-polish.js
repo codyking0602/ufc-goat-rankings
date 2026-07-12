@@ -4,6 +4,34 @@
   let syncing=false;
   const mobileLabels={men:'P4P',women:'Women',division:'Divisions',categories:'Categories',compare:'Compare',picks:'Picks',rules:'Rules'};
 
+  function applyEventArtwork(){
+    const hero=document.getElementById('picksEventHero');
+    const eventId=document.getElementById('picksEventSelect')?.value || '';
+    const visual=window.UFC_PICKS_EVENT_VISUALS?.[eventId];
+    if(!hero) return;
+
+    const current=hero.querySelector(':scope > .picks-event-art');
+    if(!visual?.hero){
+      current?.remove();
+      hero.classList.remove('has-event-art');
+      delete hero.dataset.eventArtId;
+      return;
+    }
+
+    hero.classList.add('has-event-art');
+    if(current && hero.dataset.eventArtId===eventId && current.getAttribute('src')===visual.hero) return;
+    current?.remove();
+
+    const image=document.createElement('img');
+    image.className='picks-event-art';
+    image.src=visual.hero;
+    image.alt=visual.alt || '';
+    image.loading='eager';
+    image.decoding='async';
+    hero.prepend(image);
+    hero.dataset.eventArtId=eventId;
+  }
+
   function initials(name){
     return String(name || '').split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase();
   }
@@ -168,6 +196,7 @@
     if(syncing) return;
     syncing=true;
     try{
+      applyEventArtwork();
       compactRoomBanner();
       polishCountdown();
       wireFightPhotos();
