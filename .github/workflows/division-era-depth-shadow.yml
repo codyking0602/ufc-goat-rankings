@@ -11,6 +11,7 @@ on:
       - 'scripts/normalize-division-era-depth-source.mjs'
       - 'scripts/build-division-era-depth-judgment-review.mjs'
       - 'scripts/validate-division-era-depth-promotion.mjs'
+      - 'scripts/install-division-era-depth-live.mjs'
       - '.github/workflows/division-era-depth-shadow.yml'
   pull_request:
     branches: [main]
@@ -22,6 +23,7 @@ on:
       - 'scripts/normalize-division-era-depth-source.mjs'
       - 'scripts/build-division-era-depth-judgment-review.mjs'
       - 'scripts/validate-division-era-depth-promotion.mjs'
+      - 'scripts/install-division-era-depth-live.mjs'
       - '.github/workflows/division-era-depth-shadow.yml'
   workflow_dispatch:
 
@@ -56,6 +58,8 @@ jobs:
           node --check scripts/run-division-era-depth-shadow.mjs
           node --check scripts/build-division-era-depth-judgment-review.mjs
           node --check scripts/validate-division-era-depth-promotion.mjs
+          node --check scripts/install-division-era-depth-live.mjs
+          node --check assets/data/division-era-depth-live.js
 
       - name: Build current 63-fighter depth model
         env:
@@ -71,12 +75,20 @@ jobs:
       - name: Validate promotion contract
         run: node scripts/validate-division-era-depth-promotion.mjs
 
+      - name: Install live era depth scripts
+        run: |
+          node scripts/install-division-era-depth-live.mjs
+          grep -q 'division-era-depth-shadow-20260712d-current-wfw-safe' index.html
+          grep -q 'division-era-depth-judgment-review-20260712b-live-approved' index.html
+          grep -q 'division-era-depth-live-20260712a' index.html
+
       - name: Upload depth reports and diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: division-era-depth
           path: |
+            index.html
             assets/data/division-era-depth-shadow.js
             assets/data/division-era-depth-audit.js
             docs/division-era-depth-shadow-report.json
@@ -87,13 +99,13 @@ jobs:
           if-no-files-found: warn
           retention-days: 30
 
-      - name: Publish approved generated files
+      - name: Publish approved generated files and activation
         if: github.event_name == 'push' && success()
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add assets/data/division-era-depth-shadow.js assets/data/division-era-depth-audit.js docs/division-era-depth-shadow-report.json docs/division-era-depth-judgment-review.json docs/division-era-depth-judgment-review.md docs/division-era-depth-build-diagnostics.txt
-          git commit -m 'Record current division era depth approval [skip ci]' || exit 0
+          git add index.html assets/data/division-era-depth-shadow.js assets/data/division-era-depth-audit.js docs/division-era-depth-shadow-report.json docs/division-era-depth-judgment-review.json docs/division-era-depth-judgment-review.md docs/division-era-depth-build-diagnostics.txt
+          git commit -m 'Activate current Division Era Depth model' || exit 0
           for attempt in 1 2 3 4 5; do
             git pull --rebase origin main || { git rebase --abort || true; sleep $((attempt * 2)); continue; }
             if git push origin HEAD:main; then exit 0; fi
