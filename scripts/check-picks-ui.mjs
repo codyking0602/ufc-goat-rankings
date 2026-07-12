@@ -69,6 +69,12 @@ const requiredFiles=[
 ];
 requiredFiles.forEach(requireFile);
 
+const okcPhotoFiles=[
+  'tabatha-ricci','fatima-kline','tommy-mcmillen','alberto-montes','chase-hooper',
+  'mitch-ramirez','jared-cannonier','christian-leroy-duncan','brad-tavares','marc-andre-barriault'
+];
+okcPhotoFiles.forEach(slug=>requireFile(`assets/fighters/${slug}-thumb.webp`));
+
 const retiredFiles=[
   'assets/js/picks-event-manager.js',
   'assets/css/picks-event-manager.css',
@@ -154,6 +160,7 @@ check(mobilePolishCss.includes('picks-room-banner-compact'),'Compact room banner
 check(mobilePolishCss.includes('scroll-snap-type:x proximity'),'Mobile top navigation scroll affordance is missing');
 check(mobilePolishCss.includes('picks-event-hero.has-event-art') && mobilePolishCss.includes('picks-event-art'),'Event artwork styling is missing');
 check(mobilePolishCss.includes('>.picks-event-meta') && mobilePolishCss.includes('background:#101827'),'Event details are not separated below the artwork');
+check(mobilePolishCss.includes('.picks-photo-fallback[hidden]') && mobilePolishCss.includes(':has(>img)'),'Loaded fighter photos do not fully hide fallback initials');
 
 check(oddsCoverage.includes('Not all odds available yet'),'Partial odds availability copy is missing');
 check(oddsCoverage.includes('Odds have not been posted yet'),'No-odds state is missing');
@@ -169,7 +176,13 @@ check(oddsDeploy.includes('secrets set') && oddsDeploy.includes('--no-verify-jwt
 check(events.includes("id: 'ufc-oklahoma-city-2026-07-18'"),'UFC Oklahoma City event is missing');
 check(events.includes("red:'Chase Hooper', blue:'Mitch Ramirez'"),'Current Oklahoma City main card is missing Hooper vs. Ramirez');
 check(!events.includes('okc-tavares-barriault'),'Stale Oklahoma City main-card bout remains');
-check(photos.includes('"Dricus Du Plessis": "assets/fighters/dricus-du-plessis-thumb.webp"'),'Dricus event-name photo mapping is missing');
+check(photos.includes("OKC_PHOTO_VERSION='okc-card-20260712a'"),'Oklahoma City thumbnail cache version is missing');
+check(photos.includes('"Dricus Du Plessis": okcPhoto(\'dricus-du-plessis\')'),'Dricus event-name photo mapping is missing');
+check(photos.includes('"Kamaru Usman": okcPhoto(\'kamaru-usman\')'),'Usman event-name photo mapping is missing');
+for(const fighter of ['Tabatha Ricci','Fatima Kline','Tommy McMillen','Alberto Montes','Chase Hooper','Mitch Ramirez','Jared Cannonier','Christian Leroy Duncan','Brad Tavares']){
+  check(photos.includes(`"${fighter}": okcPhoto(`),`Official Picks photo mapping is missing for ${fighter}`);
+}
+check(photos.includes('"Marc-André Barriault": okcPhoto(\'marc-andre-barriault\')'),'Official Picks photo mapping is missing for Marc-André Barriault');
 check(eventVisuals.includes("'ufc-oklahoma-city-2026-07-18'") && eventVisuals.includes('ufc-oklahoma-city-du-plessis-usman.webp'),'Oklahoma City event artwork mapping is missing');
 
 check(recovery.includes('picks_member_recovery_status'),'Recovery status RPC hook is missing');
@@ -198,4 +211,4 @@ if(failures.length){
   process.exit(1);
 }
 
-console.log(`Picks UI smoke check passed: ${assetRefs.length} local assets resolved, ${requiredFiles.length} required files present, current event, artwork, reminders, mobile polish, and automated odds verified.`);
+console.log(`Picks UI smoke check passed: ${assetRefs.length} local assets resolved, ${requiredFiles.length} required files present, 10 official Oklahoma City fighter thumbnails, artwork, reminders, mobile polish, and automated odds verified.`);
