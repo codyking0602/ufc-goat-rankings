@@ -1,7 +1,7 @@
 // App-facing Royce links/stats plus the canonical late-registry bridge.
 (function(){
   'use strict';
-  const VERSION='royce-app-links-stats-20260712i-batch-eight-canonical';
+  const VERSION='royce-app-links-stats-20260712j-batch-eight-prime-sync';
   if(typeof DISPLAY_OVERRIDES==='undefined') return;
 
   const fighter='Royce Gracie';
@@ -25,6 +25,37 @@
     if(compare) compare.legacyStats={...(compare.legacyStats||{}),...qualityStats};
     return qualityStats;
   }
+
+  function syncBatchPrimeRecords(){
+    const data=window.RANKING_DATA;
+    const fighters=window.UFC_BATCH_EIGHT_FIGHTER_DATA;
+    if(!data||!Array.isArray(fighters)) return [];
+    data.primeRecords=data.primeRecords||{};
+    const synced=[];
+    fighters.forEach(row=>{
+      const parts=String(row.prime||'').split('-').map(Number);
+      data.primeRecords[row.name]={
+        record:row.prime,
+        context:`${row.primeStartLabel} → ${row.primeEndLabel}`,
+        wins:parts[0]||0,
+        losses:parts[1]||0,
+        draws:parts[2]||0,
+        ncs:0,
+        source:'Canonical batch-eight UFC-only prime record',
+        sourceVersion:VERSION,
+        eraWindowLocked:true,
+        primeDominanceRebuildVersion:VERSION
+      };
+      [...(data.men||[]),...(data.fighters||[])].forEach(fighterRow=>{
+        if(fighterRow?.fighter!==row.name) return;
+        fighterRow.primeRecord=row.prime;
+      });
+      synced.push(row.name);
+    });
+    window.UFC_BATCH_EIGHT_PRIME_RECORD_SYNC={version:VERSION,fighters:synced,applied:true};
+    return synced;
+  }
+
   function writeScript(src,attribute){
     if(document.querySelector(`script[${attribute}]`)) return;
     document.write(`<script src="${src}" ${attribute}="true"><\/script>`);
@@ -38,8 +69,8 @@
     });
   }
   function loadBatchEightRegistry(){
-    const dataSrc='assets/data/canonical-fighter-registry-batch-eight-data.js?v=canonical-fighter-registry-batch-eight-data-20260712c';
-    const registrySrc='assets/data/canonical-fighter-registry-batch-eight.js?v=canonical-fighter-registry-batch-eight-20260712c-canonical-audit';
+    const dataSrc='assets/data/canonical-fighter-registry-batch-eight-data.js?v=canonical-fighter-registry-batch-eight-data-20260712e-final-records';
+    const registrySrc='assets/data/canonical-fighter-registry-batch-eight.js?v=canonical-fighter-registry-batch-eight-20260712d-final-handoffs';
     const photoSrc='assets/data/canonical-fighter-registry-batch-eight-photos.js?v=batch-eight-photos-20260712b';
     if(document.readyState==='loading'&&document.currentScript){
       if(!window.UFC_BATCH_EIGHT_FIGHTER_REGISTRY){writeScript(dataSrc,'data-batch-eight-fighter-data');writeScript(registrySrc,'data-batch-eight-fighter-registry');}
@@ -53,8 +84,23 @@
   }
 
   applyQualityStats();
+  syncBatchPrimeRecords();
   loadBatchEightRegistry();
-  window.addEventListener('ufc-scoring-pipeline-ready',applyQualityStats,{once:true});
-  window.UFC_ROYCE_WATCH_LINKS={version:VERSION,fighter,watchUrl:override.watchUrl,signatureFightUrl:override.signatureFightUrl,qualityStats,batchEightCanonicalRegistryLoader:true,batchEightPhotoLoader:true,applied:true};
+  window.addEventListener('ufc-scoring-pipeline-ready',()=>{
+    syncBatchPrimeRecords();
+    applyQualityStats();
+  },{once:true});
+
+  window.UFC_ROYCE_WATCH_LINKS={
+    version:VERSION,
+    fighter,
+    watchUrl:override.watchUrl,
+    signatureFightUrl:override.signatureFightUrl,
+    qualityStats,
+    batchEightCanonicalRegistryLoader:true,
+    batchEightPhotoLoader:true,
+    batchEightPrimeRecordSync:true,
+    applied:true
+  };
   document.documentElement.setAttribute('data-royce-watch-links',VERSION);
 })();
