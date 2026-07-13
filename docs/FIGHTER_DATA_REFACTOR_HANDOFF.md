@@ -7,9 +7,8 @@ Last updated: 2026-07-13
 - Repository: `codyking0602/ufc-goat-rankings`
 - Working branch: `agent/fighter-data-phase-1`
 - Draft PR: `#39 — Start canonical fighter data ownership refactor`
-- Consolidated batch-three code/test head: `9440a4e9947a7f96f21235661bd15ce713c91ebe`
-- Temporary split fighter files and diagnostic scripts were removed after consolidation.
-- Always fetch the latest branch and compare it with `main` before editing because automated feed commits may advance either ref.
+- Latest fully validated batch-four code head before documentation refresh: `47cdf00a9aa546a2d5eadd0054ab4eaddeb01dc2`
+- Always fetch the latest branch and compare it with `main` before editing because automated Octagon Verdict feed commits may advance either ref.
 
 ## Permanent architecture
 
@@ -30,7 +29,7 @@ Expected values may eventually remain only as non-authoritative regression warni
 
 Phase 1 remains evidence-only. Canonical records load in browser and CI diagnostics but do not write into `RANKING_DATA`.
 
-No live category score, total, rank, OVR, leaderboard position, snapshot, profile stat, or Compare Mode value changed during any migration batch. Exact tests load sentinel live data and require it to remain byte-for-byte unchanged.
+No live category score, total, rank, OVR, leaderboard position, snapshot, profile stat, or Compare Mode value changed during any completed migration batch. Exact tests load sentinel live data and require it to remain byte-for-byte unchanged.
 
 ## Current canonical coverage
 
@@ -47,15 +46,23 @@ No live category score, total, rank, OVR, leaderboard position, snapshot, profil
 | Rashad Evans | 23 | 14-8-1 | 9-3 | 6.00 |
 | Mauricio “Shogun” Rua | 24 | 11-12-1 | 3-3 | 2.59 |
 | Forrest Griffin | 15 | 10-5 | 4-3 | 3.93 |
+| Jon Jones | 24 | 22-1, 1 NC | 16-0, 1 NC | 10.51 |
+| Georges St-Pierre | 22 | 20-2 | 14-1 | 8.44 |
+| Demetrious Johnson | 18 | 15-2-1 | 13-1 | 6.15 |
+| Anderson Silva | 25 | 17-7, 1 NC | 16-2 | 7.50 |
+| Islam Makhachev | 18 | 17-1 | 10-0 | 5.35 |
+| Khabib Nurmagomedov | 13 | 13-0 | 8-0 | 6.02 |
+| Alexander Volkanovski | 18 | 15-3 | 9-3 | 7.17 |
 
-- Canonical fighters: **11 of 73 identities — 15.07%**
-- Canonical UFC fight rows: **242**
+- Canonical fighters: **18 of 73 identities — 24.66%**
+- Canonical UFC fight rows: **380**
 - Charles ledger: **37 rows**
 - Batch two: **102 rows**
 - Batch three: **103 rows**
+- Batch four: **138 rows**
 - Latest ownership-browser capture: **0 browser errors**
 
-See `docs/fighter-data-ownership-baseline.md` for the complete ownership report.
+See `docs/fighter-data-ownership-baseline.md` for the ownership report.
 
 ## Canonical files
 
@@ -70,6 +77,7 @@ Completed migrations:
 - `assets/data/canonical-fighter-facts-batch-one.js`
 - `assets/data/canonical-fighter-facts-batch-two.js`
 - `assets/data/canonical-fighter-facts-batch-three.js`
+- `assets/data/canonical-fighter-facts-batch-four.js`
 
 Exact tests:
 
@@ -77,87 +85,111 @@ Exact tests:
 - `scripts/test-canonical-fighter-facts-batch-one.mjs`
 - `scripts/test-canonical-fighter-facts-five-person-batch.mjs`
 - `scripts/test-canonical-fighter-facts-five-person-batch-three.mjs`
+- `scripts/test-canonical-fighter-facts-seven-person-batch-four.mjs`
 
-`assets/data/ranking-data-patches.js` loads batch two and the single consolidated batch-three file before resolving `UFC_RANKING_DATA_PATCHES_READY`, preventing browser audits from capturing a partially loaded registry.
+Dedicated batch-four workflow:
 
-## Batch-three reconciliation
+- `.github/workflows/canonical-batch-four.yml`
 
-### Fabricio Werdum
+`assets/data/ranking-data-patches.js` loads batches two, three, and four before resolving `UFC_RANKING_DATA_PATCHES_READY`, preventing browser audits from capturing a partially loaded registry.
 
-- Complete UFC ledger: **18 bouts**
-- UFC record: **12-6**
-- Finishes: **8 — 66.67%**
-- Official title-fight wins: **2**
-- Adjusted title credit: **1.65**
-- Prime: **9-3**, Roy Nelson through Alexander Volkov
-- Prime stoppage losses: **2**
-- Reviewed prime rounds: **26-7 — 78.79%**
-- Active elite years: **6.11**
-- PRIDE, Strikeforce, PFL, and the Fedor win are excluded
+## Batch-four reconciliation
 
-### Glover Teixeira
-
-- Complete UFC ledger: **23 bouts**
-- UFC record: **16-7**
-- Finishes: **13 — 81.25%**
-- Official title-fight wins: **1**
-- Adjusted title credit: **1.00**
-- Prime: **12-6**, Ryan Bader through Jiří Procházka
-- Prime stoppage losses: **3**
-- Reviewed prime rounds: **27-22 — 55.10%**
-- Active elite years: **8.77**
-- Jamahal Hill remains post-prime
-
-### Rashad Evans
-
-- Complete UFC ledger: **23 bouts**
-- UFC record: **14-8-1**
-- Finishes: **6 — 42.86%**
-- Official title-fight wins: **1**
-- Adjusted title credit: **0.90**
-- Prime: **9-3**, Michael Bisping through Chael Sonnen
-- Prime stoppage losses: **1**
-- Reviewed prime rounds: **21-14 — 60.00%**
-- Active elite years: **6.00**
-- TUF exhibition bouts are excluded
-
-### Mauricio “Shogun” Rua
+### Jon Jones
 
 - Complete UFC ledger: **24 bouts**
-- UFC-only record: **11-12-1**
-- Finishes: **8 — 72.73%**
-- Official title-fight wins: **1**
-- Adjusted title credit: **0.95**
-- UFC prime: **3-3**, Chuck Liddell through Dan Henderson I
-- Prime stoppage losses: **1**
-- Reviewed prime rounds: **8-8 — 50.00%**
-- Active elite years: **2.59**
-- PRIDE is fully excluded from scoring
-- Machida I remains an official loss while the reviewed round ledger favors Shogun 3-2
+- Official UFC record: **22-1, 1 NC**
+- Scoring record: **22-0**
+- Hamill remains an official DQ but is a non-competitive technical exception
+- Cormier II remains a no contest
+- Official title-fight wins: **16**
+- Adjusted title credit: **15.80**
+- Prime: **16-0, 1 NC**, Ryan Bader through Ciryl Gane
+- Reviewed prime rounds: **52-8 — 86.67%**
+- Active elite years: **10.51**
+- Stipe is outside the locked prime window
 
-### Forrest Griffin
+### Georges St-Pierre
 
-- Complete UFC ledger: **15 bouts**
-- UFC record: **10-5**
-- Finishes: **3 — 30.00%**
-- Official title-fight wins: **1**
-- Adjusted title credit: **0.95**
-- Prime: **4-3**, Shogun I through Shogun II
-- Prime stoppage losses: **3**
-- Reviewed prime rounds: **12-7 — 63.16%**
-- Active elite years: **3.93**
-- The TUF 1 Finale is his first official UFC bout but is not a UFC title fight
+- Complete UFC ledger: **22 bouts**
+- UFC record: **20-2**
+- Official title-fight wins: **13**
+- Adjusted title credit: **13.00**
+- Prime: **14-1**, Matt Hughes II through Michael Bisping
+- Serra remains the one prime finish loss; Hughes I is pre-prime
+- Reviewed prime rounds: **49-8 — 85.96%**
+- Active elite years: **8.44**
+
+### Demetrious Johnson
+
+- Complete UFC ledger: **18 bouts**
+- UFC record: **15-2-1**
+- Official title-fight wins: **12**
+- Adjusted title credit: **11.90**
+- Prime: **13-1**, Ian McCall II through Henry Cejudo II
+- Reviewed prime rounds: **45-10 — 81.82%**
+- Active elite years: **6.15**
+- WEC and ONE Championship are fully excluded
+
+### Anderson Silva
+
+- Complete UFC ledger: **25 bouts**
+- Official UFC record: **17-7, 1 NC**
+- Scoring record: **17-7**
+- Finishes: **14 — 82.35%**
+- Official title-fight wins: **11**
+- Prime: **16-2**, Chris Leben through Weidman II
+- Both Weidman losses remain prime stoppage losses
+- Reviewed prime rounds: **28-11 — 71.79%**
+- All later losses are post-prime
+
+### Islam Makhachev
+
+- Complete UFC ledger: **18 bouts**
+- UFC record: **17-1**
+- Prime: **10-0**, beginning with Drew Dober
+- Official title-fight wins: **6**
+- Adjusted title credit: **6.15**
+- Reviewed prime rounds: **25-3 — 89.29%**
+- Active elite years: **5.35**
+- Jack Della Maddalena is included as the November 2025 second-division title win
+- The future Ian Machado Garry defense is excluded
+
+### Khabib Nurmagomedov
+
+- Complete UFC ledger: **13 bouts**
+- UFC record: **13-0**
+- Finishes: **7 — 53.85%**
+- Prime: **8-0**, Rafael dos Anjos through Justin Gaethje
+- Official title-fight wins: **4**
+- Adjusted title credit: **3.90**
+- Reviewed prime rounds: **23-2 — 92.00%**
+- No UFC loss penalty
+
+### Alexander Volkanovski
+
+- Complete UFC ledger: **18 bouts**
+- UFC record: **15-3**
+- Finishes: **5 — 33.33%**, correcting stale presentation data
+- Prime: **9-3**, beginning with Jose Aldo and remaining open
+- Official title-fight wins: **8**
+- Adjusted title credit: **7.90**
+- Reviewed prime rounds: **36-12 — 75.00%**
+- Active elite years: **7.17**
+- Both Islam losses use the upward-division elite-loss exception
+- Topuria remains a home-division prime finish loss
 
 ## Validation
 
-Passed on the consolidated implementation lineage:
+Passed on code head `47cdf00a9aa546a2d5eadd0054ab4eaddeb01dc2`:
 
 - canonical schema contract
 - Charles 37-fight derivation test
 - batch-two 102-fight derivation test
-- consolidated batch-three 103-fight derivation test
+- batch-three 103-fight derivation test
+- batch-four 138-fight derivation test
 - exact per-fighter bout-count assertions
-- eleven-record registry audit
+- eighteen-record registry audit
 - live score/rank/OVR/snapshot non-mutation assertion
 - Fighter Data Ownership Baseline with zero browser errors
 - Runtime Scoring Snapshot
@@ -183,24 +215,32 @@ Known unrelated existing CI debt:
 - [x] Rashad Evans
 - [x] Mauricio “Shogun” Rua
 - [x] Forrest Griffin
-- [ ] Migrate the current top-five leaderboard batch
-- [ ] Continue five-fighter batches until every ranked fighter has a canonical record
+- [x] Jon Jones
+- [x] Georges St-Pierre
+- [x] Demetrious Johnson
+- [x] Anderson Silva
+- [x] Islam Makhachev
+- [x] Khabib Nurmagomedov
+- [x] Alexander Volkanovski
+- [ ] Continue seven-fighter batches until every ranked fighter has a canonical record
 - [ ] Generate snapshots exclusively from canonical calculations
 - [ ] Remove measurable-stat ownership from packets and display overrides
 - [ ] Remove expected rank, total, and OVR from live authority
 
 ## Resume prompt
 
-> Continue the fighter-data refactor in `codyking0602/ufc-goat-rankings`. Read `docs/FIGHTER_DATA_REFACTOR_HANDOFF.md` and `docs/fighter-data-ownership-baseline.md` first. Continue on `agent/fighter-data-phase-1` unless the handoff says it merged. Fetch and compare latest `main` before editing because automated commits may advance it. Preserve all eleven completed canonical ledgers. Work in five-fighter batches. Never store rank, total, OVR, expected values, calculated aggregates, or hand-written snapshot stats in canonical fighter records. Keep migrations evidence-only until the calculated live pipeline is deliberately connected.
+> Continue the fighter-data refactor in `codyking0602/ufc-goat-rankings`. Read `docs/FIGHTER_DATA_REFACTOR_HANDOFF.md` and `docs/fighter-data-ownership-baseline.md` first. Continue on `agent/fighter-data-phase-1` unless the handoff says it merged. Fetch and compare latest `main` before editing because automated feed commits may advance it. Preserve all eighteen completed canonical ledgers. Work in seven-fighter batches. Never store rank, total, OVR, expected values, calculated aggregates, or hand-written snapshot stats in canonical fighter records. Keep migrations evidence-only until the calculated live pipeline is deliberately connected.
 
 ## Exact next task
 
-Create the next five-fighter canonical ledger batch for the current top five:
+Create the next seven-fighter canonical ledger batch for:
 
-1. Jon Jones
-2. Georges St-Pierre
-3. Demetrious Johnson
-4. Anderson Silva
-5. Islam Makhachev
+1. Randy Couture
+2. Max Holloway
+3. Kamaru Usman
+4. Jose Aldo
+5. Matt Hughes
+6. Daniel Cormier
+7. Stipe Miocic
 
-Use the consolidated batch-three pattern: complete UFC-only histories, validate every record before registration, add exact bout-count and derivation assertions, preserve Jones’s Hamill technical context, exclude Demetrious Johnson’s ONE career, keep Anderson’s Weidman losses inside prime, use Islam’s Drew Dober prime start, load the batch before the readiness handoff, and leave every live score, rank, OVR, snapshot, profile, and Compare Mode value untouched.
+Use the consolidated batch-four pattern: complete UFC-only histories, validate every record before registration, add exact bout-count and derivation assertions, keep WEC/Strikeforce/PRIDE achievements outside scoring, preserve reviewed prime and loss-context decisions, load the batch before the readiness handoff, and leave every live score, rank, OVR, snapshot, profile, and Compare Mode value untouched.
