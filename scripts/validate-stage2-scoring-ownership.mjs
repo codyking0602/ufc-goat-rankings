@@ -9,8 +9,8 @@ try{
  page.on('console',m=>{if(m.type()==='error')consoleErrors.push(m.text());});
  page.on('pageerror',e=>errors.push(e?.stack||e?.message||String(e)));
  await page.goto(url,{waitUntil:'domcontentloaded',timeout:60000});
- await page.waitForFunction(()=>window.UFC_SCORING_PIPELINE?.status==='ready'&&Number(window.UFC_SCORING_OWNERSHIP_CONTRACT?.attemptCount||0)>=1,null,{timeout:60000,polling:100});
- await page.waitForTimeout(4000);
+ await page.waitForFunction(()=>window.UFC_SCORING_PIPELINE?.status==='ready'&&window.UFC_SCORING_OWNERSHIP_CONTRACT?.applied===true,null,{timeout:60000,polling:100});
+ await page.waitForTimeout(500);
  const report=await page.evaluate(()=>{
   const data=window.RANKING_DATA;
   const canonical=window.UFC_CANONICAL_SCORING_RECORDS;
@@ -33,5 +33,5 @@ try{
  await fs.mkdir('docs',{recursive:true});
  await fs.writeFile('docs/stage2-scoring-ownership-report.json',JSON.stringify(report,null,2)+'\n');
  console.log('STAGE2_OWNERSHIP='+JSON.stringify(report));
- if(!report.contract?.applied||report.rosterCount!==72||report.mismatches.length||report.errors.length||report.contract?.wrongOwnerCount||report.contract?.displayOverrideViolationCount||report.contract?.compareScoreViolationCount||report.contract?.missingLossContextDetailCount||report.contract?.missingEraDepthDetailCount)process.exitCode=1;
+ if(!report.contract?.applied||report.contract?.settled!==true||report.rosterCount!==72||report.mismatches.length||report.errors.length||report.contract?.wrongOwnerCount||report.contract?.displayOverrideViolationCount||report.contract?.compareScoreViolationCount||report.contract?.missingLossContextDetailCount||report.contract?.missingEraDepthDetailCount)process.exitCode=1;
 }finally{await browser.close();}
