@@ -2,7 +2,7 @@
 
 > Phase 1 diagnostic. Ownership failures are expected until migration is complete; capture or derivation failure is not.
 
-Latest verified browser capture: **2026-07-13**, after canonical batch four.
+Latest verified browser capture: **2026-07-13**, after canonical batch five.
 
 - Audit version: `fighter-data-ownership-audit-20260713c-identity-inventory`
 - Roster identities found: **73**
@@ -11,8 +11,8 @@ Latest verified browser capture: **2026-07-13**, after canonical batch four.
 - Fighter packets loaded: **62**
 - Display overrides: **73**
 - Canonical scoring records: **72**
-- Canonical fighter-fact records: **18** (**24.66%** coverage)
-- Canonical UFC fight rows: **380**
+- Canonical fighter-fact records: **28** (**38.36%** coverage)
+- Canonical UFC fight rows: **582**
 - Orphan identities: **1**
 - Duplicate fact fields: **521** across **72** fighters
 - Conflicting fact fields: **80** across **28** fighters
@@ -44,18 +44,31 @@ Latest verified browser capture: **2026-07-13**, after canonical batch four.
 | Islam Makhachev | 18 | 17-1 | 10-0 | 5.35 | Passed | No |
 | Khabib Nurmagomedov | 13 | 13-0 | 8-0 | 6.02 | Passed | No |
 | Alexander Volkanovski | 18 | 15-3 | 9-3 | 7.17 | Passed | No |
+| Randy Couture | 24 | 16-8 | 6-3 | 4.22 | Passed | No |
+| Max Holloway | 33 | 24-9 | 16-6 | 11.24 | Passed | No |
+| Kamaru Usman | 19 | 16-3 | 8-3 | 7.47 | Passed | No |
+| Jose Aldo | 23 | 14-9 | 8-3 | 6.59 | Passed | No |
+| Matt Hughes | 25 | 18-7 | 13-3 | 6.15 | Passed | No |
+| Daniel Cormier | 15 | 11-3, 1 NC | 7-3, 1 NC | 5.62 | Passed | No |
+| Stipe Miocic | 19 | 14-5 | 8-3 | 6.29 | Passed | No |
+| Ilia Topuria | 10 | 9-1 | 4-1 | 3.05 | Passed | No |
+| Israel Adesanya | 19 | 13-6 | 8-4 | 5.35 | Passed | No |
+| Cain Velasquez | 15 | 12-3 | 6-2 | 5.16 | Passed | No |
 
-Batch two contains **102 UFC bouts**. Batch three contains **103 UFC bouts**. Batch four contains **138 UFC bouts**. Together with Charles, Phase 1 holds **380 complete UFC fight rows**.
+Batch two contains **102 UFC bouts**. Batch three contains **103 UFC bouts**. Batch four contains **138 UFC bouts**. Batch five contains **202 UFC bouts**. Together with Charles, Phase 1 holds **582 complete UFC fight rows**.
 
-## Batch-four highlights
+## Batch-five highlights
 
-- **Jon Jones:** official 22-1, 1 NC; scoring 22-0. Hamill is an explicit non-competitive technical exception, Cormier II remains a no contest, and Stipe is post-prime.
-- **Georges St-Pierre:** Hughes I is pre-prime; Serra is the one prime finish loss and remains inside the recovered prime window.
-- **Demetrious Johnson:** UFC-only 15-2-1; WEC and ONE Championship are excluded.
-- **Anderson Silva:** proper official record is 17-7, 1 NC. Both Weidman losses remain prime stoppage losses; later losses are post-prime.
-- **Islam Makhachev:** includes the November 2025 welterweight title win over Jack Della Maddalena. The future Garry defense is excluded.
-- **Khabib Nurmagomedov:** complete 13-0 UFC ledger with seven derived finishes and no UFC loss penalty.
-- **Alexander Volkanovski:** complete 15-3 ledger with five UFC finishes, correcting stale presentation data. Both Islam losses use the upward-division exception; Topuria remains a home-division prime finish loss.
+- **Randy Couture:** UFC 13 tournament wins count as UFC wins but not official title-fight wins. He derives nine official title-fight wins.
+- **Max Holloway:** complete 24-9 UFC record through UFC 329. BMF fights remain outside UFC divisional title scoring.
+- **Kamaru Usman:** complete 16-3 record through Buckley. Future Dricus du Plessis fight is excluded.
+- **Jose Aldo:** UFC-only 14-9. WEC fights and title accomplishments remain fully excluded.
+- **Matt Hughes:** 18-7 UFC record. Joe Riggs missed weight, so that bout remains non-title.
+- **Daniel Cormier:** UFC-only 11-3, 1 NC. Strikeforce achievements are excluded and Jones II remains a no contest.
+- **Stipe Miocic:** Jones is post-prime after the long layoff.
+- **Ilia Topuria:** 9-1 with Gaethje recorded as a prime stoppage loss.
+- **Israel Adesanya:** 13-6; Imavov and Pyfer are post-prime.
+- **Cain Velasquez:** 12-3 with a 6-2 prime and two prime stoppage losses.
 
 ## Orphan identity
 
