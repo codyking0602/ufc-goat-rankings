@@ -39,6 +39,16 @@ assert.deepEqual(JSON.parse(JSON.stringify(batch.fighters)),[
 ]);
 assert.equal(batch.recordCount,5);
 assert.equal(batch.fightCount,102);
+const expectedFightCounts={
+  'Benson Henderson':14,
+  'Vitor Belfort':26,
+  'Deiveson Figueiredo':22,
+  'Frankie Edgar':30,
+  'Dominick Cruz':10
+};
+for(const [fighter,count] of Object.entries(expectedFightCounts)){
+  assert.equal(api.get(fighter)?.fights?.length,count,`${fighter} complete UFC bout count`);
+}
 assert.equal(api.count(),6,'Charles plus the five-person batch should produce six canonical records');
 assert.equal(JSON.stringify(context.window.RANKING_DATA),before,'canonical ledgers must not mutate live score, rank, OVR, snapshot, or profile data');
 
