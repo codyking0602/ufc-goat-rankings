@@ -8,6 +8,7 @@ Last updated: 2026-07-13
 - Branch base: `f81a9a58c5c0e0aa6be2dc9e02a1c757b21c2ae6`
 - Latest fighter implementation commit: `78df2e2cf0211d2ffd12f5dbe2452c43925a6b7e`
 - Latest runtime wiring commit: `2c85987863ec3f2d228c7b7989288927954afb6b`
+- Latest baseline documentation commit before this handoff update: `985a70136173f1e891771c118f93c1b064a647f5`
 
 ## Permanent architecture
 
