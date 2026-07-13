@@ -2,7 +2,7 @@
 // Rebuilds roster-facing Prime Record context without directly changing category scores.
 (function(){
   'use strict';
-  const VERSION='canonical-prime-records-20260710c-chuck-vitor-window';
+  const VERSION='canonical-prime-records-20260713b-mirror-sync';
   const PRIME_REBUILD_VERSION='prime-dominance-shadow-model-20260710d-chuck-vitor-window';
   const DATA=window.RANKING_DATA;
   const era=window.UFC_FIGHTER_ERA_LEDGERS;
@@ -24,12 +24,27 @@
 
   function key(name){return String(name||'').trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');}
   function rosterNames(){
-    return [...new Set([
-      ...(era.names?era.names():Object.keys(era.ledgers||{})),
+    const ordered=[
       ...(DATA.men||[]).map(row=>row?.fighter),
       ...(DATA.women||[]).map(row=>row?.fighter),
-      ...(DATA.fighters||[]).map(row=>row?.fighter)
-    ].filter(Boolean))];
+      ...(DATA.fighters||[]).map(row=>row?.fighter),
+      ...(era.names?era.names():Object.keys(era.ledgers||{}))
+    ].filter(Boolean);
+    const seen=new Set();
+    return ordered.filter(name=>{const id=key(name);if(!id||seen.has(id))return false;seen.add(id);return true;});
+  }
+  function normalizePrimeRecordAliases(names){
+    const canonicalByKey=new Map(names.map(name=>[key(name),name]));
+    Object.keys(DATA.primeRecords||{}).forEach(alias=>{
+      const canonicalName=canonicalByKey.get(key(alias));
+      if(!canonicalName||canonicalName===alias)return;
+      const aliasEntry=DATA.primeRecords[alias]||{};
+      const canonicalEntry=DATA.primeRecords[canonicalName]||{};
+      const merged={...aliasEntry,...canonicalEntry};
+      if(!canonicalEntry.record&&aliasEntry.record)merged.record=aliasEntry.record;
+      DATA.primeRecords[canonicalName]=merged;
+      delete DATA.primeRecords[alias];
+    });
   }
   function allRowsFor(name){
     const target=key(name),rows=[];
@@ -38,6 +53,14 @@
     (DATA.women||[]).forEach(push);
     (DATA.fighters||[]).forEach(push);
     return rows;
+  }
+  function packetFor(name){
+    const target=key(name);
+    return Object.entries(window.UFC_FIGHTER_PACKETS||{}).find(([fighter])=>key(fighter)===target)?.[1]||null;
+  }
+  function syncSnapshot(snapshot,record){
+    if(!Array.isArray(snapshot))return snapshot;
+    return snapshot.map(item=>Array.isArray(item)&&item[0]==='Prime Record'?[item[0],record]:item);
   }
   function windowText(ledger){
     const w=ledger?.window||{};
@@ -61,7 +84,9 @@
   }
 
   DATA.primeRecords=DATA.primeRecords||{};
-  const entries=rosterNames().map(fighter=>{
+  const names=rosterNames();
+  normalizePrimeRecordAliases(names);
+  const entries=names.map(fighter=>{
     const ledger=era.entryFor(fighter);
     const chosen=sourceRecordFor(fighter);
     const context=windowText(ledger);
@@ -88,6 +113,12 @@
       if(rebuilt){row.primeDominanceRebuildRequired=false;row.primeDominanceRebuildVersion=PRIME_REBUILD_VERSION;}
     });
 
+    const packet=packetFor(fighter);
+    if(packet){
+      packet.profileStats={...(packet.profileStats||{}),primeRecord:entry.record,primeRecordContext:entry.context};
+      if(packet.display?.snapshot)packet.display.snapshot=syncSnapshot(packet.display.snapshot,entry.record);
+    }
+
     if(typeof DISPLAY_OVERRIDES!=='undefined'){
       DISPLAY_OVERRIDES[fighter]=DISPLAY_OVERRIDES[fighter]||{};
       const override=DISPLAY_OVERRIDES[fighter];
@@ -95,6 +126,11 @@
         ...(override.snapshotStats||{}),primeRecord:entry.record,primeRecordContext:entry.context,
         canonicalPrimeRecordSource:entry.source,primeDominanceRebuildVersion:entry.scoreRebuildVersion
       };
+      override.packetProfileStats={
+        ...(override.packetProfileStats||{}),primeRecord:entry.record,primeRecordContext:entry.context,
+        canonicalPrimeRecordSource:entry.source
+      };
+      if(override.snapshot)override.snapshot=syncSnapshot(override.snapshot,entry.record);
     }
     return entry;
   });
@@ -108,7 +144,7 @@
     entries,entryFor,report,approvedRecordOverrides:APPROVED_RECORD_OVERRIDES,
     changedRecordFighters:Object.keys(APPROVED_RECORD_OVERRIDES),primeRebuildVersion:PRIME_REBUILD_VERSION,
     allWindowsLocked:entries.every(entry=>entry.windowLocked),mutatesScores:false,mutatesPrimeRecordDisplay:true,
-    appliedAt:new Date().toISOString()
+    normalizedRosterKeys:true,mirrorsSynchronized:true,appliedAt:new Date().toISOString()
   };
   document.documentElement.setAttribute('data-canonical-prime-records',`${VERSION}-${entries.length}`);
 })();
