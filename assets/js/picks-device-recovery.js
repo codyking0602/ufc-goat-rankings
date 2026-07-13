@@ -11,7 +11,6 @@
   const ROOM_ADMIN_PREFIX='ufc-picks:admin:';
   let statusLoading=false;
   let statusSignature='';
-  let recoveryMode=false;
 
   const safe=value=>String(value ?? '').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
   const normalize=value=>String(value || '').trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6);
@@ -162,44 +161,52 @@
   function inviteContext(){
     const url=new URL(window.location.href);
     const code=normalize(url.searchParams.get('group'));
-    return {code,hasRoom:Boolean(normalize(url.searchParams.get('room'))),hasToken:Boolean(groupToken(code))};
+    return {code,hasRoom:Boolean(normalize(url.searchParams.get('room')))};
   }
 
-  function setRecoveryMode(open){
-    recoveryMode=Boolean(open);
-    const action=document.getElementById('picksRoomAction');
-    const panel=document.getElementById('picksInviteRecoveryPanel');
-    const toggle=document.getElementById('picksInviteRecoveryToggle');
-    if(action) action.hidden=recoveryMode;
-    if(panel) panel.hidden=!recoveryMode;
-    if(toggle) toggle.textContent=recoveryMode ? 'Back to room setup' : 'Recover Existing Profile';
-    if(recoveryMode) document.getElementById('picksRecoveryGroupCode')?.focus();
+  function recoveryHost(){
+    return document.getElementById('picksHomeContent')
+      || document.getElementById('picksSettingsContent')
+      || document.getElementById('picksRoomSetup')
+      || document.querySelector('#picks .picks-shell');
   }
 
   function ensureInviteRecovery(){
     const context=inviteContext();
-    const setup=document.getElementById('picksRoomSetup');
-    if(context.hasRoom || context.hasToken || !setup || setup.hidden){
-      document.getElementById('picksInviteRecovery')?.remove();
-      recoveryMode=false;
+    const current=groupCode();
+    const hasAccess=Boolean(current && groupToken(current));
+    const existing=document.getElementById('picksInviteRecovery');
+    if(hasAccess){
+      existing?.remove();
       return;
     }
-    if(document.getElementById('picksInviteRecovery')) return;
-    const savedName=localStorage.getItem('ufc-picks:display-name') || document.getElementById('picksDisplayName')?.value || '';
-    const wrap=document.createElement('div');
-    wrap.id='picksInviteRecovery';
-    wrap.className='picks-invite-recovery';
-    wrap.innerHTML=`<button id="picksInviteRecoveryToggle" type="button">Recover Existing Profile</button>
-      <div id="picksInviteRecoveryPanel" class="picks-invite-recovery-panel" hidden>
-        <label>Group code<input id="picksRecoveryGroupCode" maxlength="6" autocapitalize="characters" autocomplete="off" placeholder="ABC123" value="${safe(context.code)}"></label>
-        <label>Existing display name<input id="picksRecoveryDisplayName" maxlength="30" autocomplete="nickname" placeholder="Shane" value="${safe(savedName)}"></label>
-        <label>Recovery key or commissioner code<input id="picksRecoveryCode" maxlength="14" autocapitalize="characters" autocomplete="off" placeholder="AB12-CD34-EF56"></label>
-        <p>Enter the exact name already shown on the group leaderboard.</p>
-        <button id="picksRecoverProfile" type="button">Recover Existing Profile</button>
-      </div>`;
-    document.getElementById('picksRoomAction')?.insertAdjacentElement('afterend',wrap);
-    document.getElementById('picksInviteRecoveryToggle')?.addEventListener('click',()=>setRecoveryMode(!recoveryMode));
-    document.getElementById('picksRecoverProfile')?.addEventListener('click',recoverProfile);
+
+    const host=recoveryHost();
+    if(!host) return;
+
+    let card=existing;
+    if(!card){
+      const savedName=localStorage.getItem('ufc-picks:display-name') || document.getElementById('picksDisplayName')?.value || '';
+      card=document.createElement('details');
+      card.id='picksInviteRecovery';
+      card.className='picks-recovery-card picks-recovery-entry';
+      card.open=true;
+      card.innerHTML=`<summary><div><span>RETURNING MEMBER</span><strong>Recover Existing Profile</strong></div><b>Enter details</b></summary>
+        <div class="picks-recovery-content">
+          <div id="picksInviteRecoveryPanel" class="picks-invite-recovery-panel">
+            <label>Group code<input id="picksRecoveryGroupCode" maxlength="6" autocapitalize="characters" autocomplete="off" placeholder="ABC123" value="${safe(context.code)}"></label>
+            <label>Existing display name<input id="picksRecoveryDisplayName" maxlength="30" autocomplete="nickname" placeholder="Shane" value="${safe(savedName)}"></label>
+            <label>Recovery key or commissioner code<input id="picksRecoveryCode" maxlength="14" autocapitalize="characters" autocomplete="off" placeholder="AB12-CD34-EF56"></label>
+            <p>Use the exact name already shown on the group leaderboard.</p>
+            <button id="picksRecoverProfile" type="button">Recover Existing Profile</button>
+          </div>
+        </div>`;
+      document.getElementById('picksRecoverProfile')?.addEventListener('click',recoverProfile);
+    }
+
+    if(card.parentElement!==host) host.prepend(card);
+    const groupInput=document.getElementById('picksRecoveryGroupCode');
+    if(groupInput && !groupInput.value && context.code) groupInput.value=context.code;
   }
 
   function storeRecoveredAccess(data){
@@ -277,6 +284,14 @@
     });
   }
 
+  function decorateGroupCode(){
+    const code=groupCode();
+    const label=document.querySelector('#picksGroupCard > summary span');
+    if(!code || !label) return;
+    label.textContent=`UFC PICKS GROUP · CODE ${code}`;
+    label.title=`Group code ${code}`;
+  }
+
   async function issueCommissionerCode(button){
     const code=groupCode();
     const admin=groupAdmin(code);
@@ -301,6 +316,7 @@
     ensureSettingsCard();
     refreshStatus();
     decorateCommissioner();
+    decorateGroupCode();
   }
 
   function start(){
