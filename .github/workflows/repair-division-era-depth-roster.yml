@@ -1,0 +1,61 @@
+name: Repair Division Era Depth Roster
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/repair-division-era-depth-roster.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: repair-division-era-depth-roster
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Apply permanent roster-dynamic repair
+        run: |
+          node --check scripts/repair-division-era-depth-roster.mjs
+          node scripts/repair-division-era-depth-roster.mjs
+          node --check scripts/build-division-era-depth-shadow.mjs
+          node --check scripts/run-division-era-depth-shadow.mjs
+          node --check scripts/build-division-era-depth-judgment-review.mjs
+          node --check scripts/validate-division-era-depth-promotion.mjs
+          node --check scripts/runtime-era-depth-audit.mjs
+          node --check assets/data/division-era-depth-live.js
+          node --check assets/data/division-era-depth-finalizer.js
+          node --check scripts/install-division-era-depth-live.mjs
+
+      - name: Remove one-time repair files
+        run: |
+          rm scripts/repair-division-era-depth-roster.mjs
+          rm .github/workflows/repair-division-era-depth-roster.yml
+
+      - name: Commit permanent repair
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Make Division Era Depth full-roster dynamic'
+          for attempt in 1 2 3 4 5; do
+            git pull --rebase origin main || { git rebase --abort || true; sleep $((attempt * 2)); continue; }
+            if git push origin HEAD:main; then exit 0; fi
+            sleep $((attempt * 2))
+          done
+          exit 1
