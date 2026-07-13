@@ -1,7 +1,7 @@
 // Lightweight prerequisite/data loader with an explicit readiness handoff.
 (function(){
   'use strict';
-  const VERSION='ranking-data-patches-20260713aa-canonical-eleven-fighters';
+  const VERSION='ranking-data-patches-20260713ab-consolidated-batch-three';
   let readyResolved=false;
   let resolveReady;
   const readyPromise=new Promise(resolve=>{resolveReady=resolve;});
@@ -49,12 +49,7 @@
   function packet(slug,v){return{src:`assets/data/fighter-packets/${slug}.js?v=fighter-packet-${slug}-${v}-stage3-presentation-only`,attr:`data-fighter-packet-${slug}`};}
   function compareCoreScripts(){const packets=packetManifest().map(row=>packet(row.slug,row.version));return[
     {src:'assets/data/canonical-fighter-facts-batch-two.js?v=canonical-fighter-facts-batch-two-20260713a-five-fighter-ledgers',attr:'data-canonical-fighter-facts-batch-two'},
-    {src:'assets/data/canonical-fighter-facts-batch-three-werdum.js?v=canonical-fighter-facts-batch-three-20260713a',attr:'data-canonical-fighter-facts-batch-three-werdum'},
-    {src:'assets/data/canonical-fighter-facts-batch-three-glover.js?v=canonical-fighter-facts-batch-three-20260713a',attr:'data-canonical-fighter-facts-batch-three-glover'},
-    {src:'assets/data/canonical-fighter-facts-batch-three-rashad.js?v=canonical-fighter-facts-batch-three-20260713a',attr:'data-canonical-fighter-facts-batch-three-rashad'},
-    {src:'assets/data/canonical-fighter-facts-batch-three-shogun.js?v=canonical-fighter-facts-batch-three-20260713a',attr:'data-canonical-fighter-facts-batch-three-shogun'},
-    {src:'assets/data/canonical-fighter-facts-batch-three-forrest.js?v=canonical-fighter-facts-batch-three-20260713a',attr:'data-canonical-fighter-facts-batch-three-forrest'},
-    {src:'assets/data/canonical-fighter-facts-batch-three.js?v=canonical-fighter-facts-batch-three-20260713a-five-retired-legends',attr:'data-canonical-fighter-facts-batch-three'},
+    {src:'assets/data/canonical-fighter-facts-batch-three.js?v=canonical-fighter-facts-batch-three-20260713b-compact-103',attr:'data-canonical-fighter-facts-batch-three'},
     {src:'assets/js/refresh-safety.js?v=refresh-safety-20260710b-optional-container-errors',attr:'data-refresh-safety'},
     {src:'assets/data/ranking-data-additions.js?v=ranking-data-additions-20260706e-lyoto-machida',attr:'data-ranking-data-additions'},
     {src:'assets/data/fighter-packet-schema.js?v=fighter-packet-schema-20260703a',attr:'data-fighter-packet-schema'},
