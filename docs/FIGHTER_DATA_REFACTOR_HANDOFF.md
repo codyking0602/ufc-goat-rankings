@@ -13,8 +13,9 @@ Last updated: 2026-07-13
 - Exact bout-count guard: `1afc3350ffcc68a6f937155642a6e9a0f7199cae`
 - Latest-main sync merge: `8824b6572fabcd67332359b16c7365d2fda687dd`
 - Synced main SHA: `dc715594613fea3cd0911a249f125381b7e2a43d`
+- Post-sync validated head: `0a3b49dc1f22935391710d90dfc1445897009bf6`
 
-The branch was refreshed through GitHub’s tested merge trees without force-pushing. At this checkpoint it is **zero commits behind `main`**.
+The branch was refreshed through GitHub’s tested merge trees without force-pushing. It was verified at **zero commits behind `main`**, and the complete post-sync canonical/scoring workflow suite passed.
 
 ## Permanent architecture
 
@@ -66,9 +67,9 @@ See `docs/fighter-data-ownership-baseline.md`.
 
 `assets/data/ranking-data-patches.js` loads batch two before resolving `UFC_RANKING_DATA_PATCHES_READY`.
 
-## Validation
+## Post-sync validation
 
-Passed on the completed five-fighter implementation:
+Passed on `0a3b49dc1f22935391710d90dfc1445897009bf6`:
 
 - canonical schema contract
 - Charles 37-fight derivation test
@@ -81,8 +82,6 @@ Passed on the completed five-fighter implementation:
 - Runtime Scoring Audit
 - Six-Category Runtime Audit
 - zero browser errors
-
-The latest-main sync must run the same workflow suite again before another migration batch begins.
 
 Known unrelated CI debt:
 
@@ -99,7 +98,7 @@ Known unrelated CI debt:
 - [x] Frankie Edgar
 - [x] Dominick Cruz
 - [x] Sync Phase 1 work onto latest `main`
-- [ ] Confirm post-sync workflow suite
+- [x] Confirm post-sync workflow suite
 - [ ] Next five-fighter batch
 - [ ] Continue until all ranked fighters have canonical records
 - [ ] Generate snapshots only from canonical calculations
@@ -112,7 +111,7 @@ Known unrelated CI debt:
 
 ## Exact next task
 
-Confirm the post-sync workflows on the current branch head. Then create the next five-fighter canonical ledger batch for:
+Create the next five-fighter canonical ledger batch for:
 
 1. Fabricio Werdum
 2. Glover Teixeira
