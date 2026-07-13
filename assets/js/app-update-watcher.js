@@ -78,20 +78,39 @@
   }
 
   function installButton(){
-    const tabs = document.querySelector('.tabs');
-    if(!tabs || document.getElementById('manualRefreshBtn')) return;
+    if(document.getElementById('manualRefreshBtn')) return;
 
     const style = document.createElement('style');
     style.textContent = `
-      #manualRefreshBtn{white-space:nowrap;border:1px solid rgba(249,115,22,.62);background:rgba(249,115,22,.12);color:#fed7aa}
-      #manualRefreshBtn:active{transform:translateY(1px)}
-      #manualRefreshBtn.refreshing{opacity:.7;pointer-events:none}
+      #manualRefreshBtn{
+        position:fixed;
+        z-index:100000;
+        top:max(12px,env(safe-area-inset-top));
+        right:max(12px,env(safe-area-inset-right));
+        min-height:40px;
+        padding:9px 13px;
+        border:1px solid rgba(249,115,22,.72);
+        border-radius:999px;
+        background:rgba(10,13,19,.9);
+        box-shadow:0 10px 30px rgba(0,0,0,.34);
+        color:#fed7aa;
+        font:800 .78rem/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+        letter-spacing:.02em;
+        white-space:nowrap;
+        backdrop-filter:blur(12px);
+        -webkit-backdrop-filter:blur(12px);
+        cursor:pointer;
+      }
+      #manualRefreshBtn:active{transform:translateY(1px) scale(.98)}
+      #manualRefreshBtn.refreshing{opacity:.72;pointer-events:none}
+      @media (max-width:520px){
+        #manualRefreshBtn{min-height:38px;padding:8px 11px;font-size:.72rem}
+      }
     `;
     document.head.appendChild(style);
 
     const button = document.createElement('button');
     button.id = 'manualRefreshBtn';
-    button.className = 'tab';
     button.type = 'button';
     button.textContent = '↻ Refresh';
     button.setAttribute('aria-label','Refresh app for the latest updates');
@@ -103,7 +122,7 @@
       url.searchParams.set('__manual_refresh',String(Date.now()));
       window.location.replace(url.toString());
     });
-    tabs.appendChild(button);
+    document.body.appendChild(button);
   }
 
   LEGACY_KEYS.forEach(key => {
