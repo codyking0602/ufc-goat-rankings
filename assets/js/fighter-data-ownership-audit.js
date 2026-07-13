@@ -189,9 +189,7 @@
   }
 
   const report=audit();
-  window.UFC_FIGHTER_DATA_OWNERSHIP_AUDIT={version:VERSION,audit,latest:report};
-  DATA.meta=DATA.meta||{};
-  DATA.meta.fighterDataOwnershipPhase1={
+  const summary={
     version:VERSION,
     mode:'diagnostic-only',
     canonicalFactRecordCount:report.canonicalFactRecordCount,
@@ -201,6 +199,7 @@
     presentationViolationCount:report.presentationOwnershipViolations.length,
     runtimeExpectedValueLocks:report.runtimeExpectedValueLocks
   };
+  window.UFC_FIGHTER_DATA_OWNERSHIP_AUDIT={version:VERSION,audit,latest:report,summary};
   document.documentElement.setAttribute('data-fighter-data-ownership-audit',VERSION);
-  console.info('[UFC fighter-data Phase 1 baseline]',DATA.meta.fighterDataOwnershipPhase1);
+  console.info('[UFC fighter-data Phase 1 baseline]',summary);
 })();
