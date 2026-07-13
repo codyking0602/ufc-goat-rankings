@@ -29,12 +29,15 @@
     if(direct!==undefined&&direct!==null&&direct!==''&&Number.isFinite(Number(direct)))return Number(direct);
     return num(ERA_DEPTH_BY_FIGHTER.get(key(row?.fighter))?.curvedAdjustment);
   }
+  function modifierReportsReady(){
+    return window.UFC_LOSS_CONTEXT_HYBRID_LIVE?.applied===true&&window.UFC_DIVISION_ERA_DEPTH_LIVE?.applied===true;
+  }
   function boardRows(){return [...(DATA?.men||[]),...(DATA?.women||[])].filter(row=>row&&row.fighter);}
   function allRows(){return [...boardRows(),...(DATA?.fighters||[])].filter(row=>row&&row.fighter);}
   function categoryScore(row,category){
     const raw=num(row?.[category]);
-    if(category!=='longevity') return raw;
-    if(row?.longevityThirtyPoint===true||raw>LEGACY_LONGEVITY_MAX) return raw;
+    if(category!=='longevity')return raw;
+    if(row?.longevityThirtyPoint===true||raw>LEGACY_LONGEVITY_MAX)return raw;
     return (raw/LEGACY_LONGEVITY_MAX)*MAX.longevity;
   }
   function scoreBreakdown(row){
@@ -66,34 +69,35 @@
     };
   }
   function patchScore(row){
-    if(!row) return;
+    if(!row)return;
     const breakdown=scoreBreakdown(row);
     row.weightedScoreBreakdown=breakdown;
+    row.baseScore=breakdown.baseScore;
+    row.apexPeakBonus=breakdown.apexPeakBonus;
     row.eraDepthAdjustment=breakdown.eraDepthAdjustment;
     row.preEraDepthTotalScore=breakdown.preEraDepthTotalScore;
     row.rawScore=breakdown.totalScore;
     row.totalScore=breakdown.totalScore;
+    row.scoreFormula=FORMULA;
     row.finalScoreEngineVersion=VERSION;
     row.overallScoreOwner='final-score-engine.js';
   }
   function sortBoard(board){
-    if(!Array.isArray(board)) return;
+    if(!Array.isArray(board))return;
     board.sort((a,b)=>num(b.totalScore)-num(a.totalScore)||String(a.fighter).localeCompare(String(b.fighter)));
     board.forEach((row,index)=>{row.rank=index+1;});
   }
   function boardFor(row){
-    if(row?.leaderboard==='women') return DATA?.women||[];
+    if(row?.leaderboard==='women')return DATA?.women||[];
     const fighterKey=key(row?.fighter);
     return (DATA?.women||[]).some(item=>key(item.fighter)===fighterKey)?(DATA.women||[]):(DATA?.men||[]);
   }
-  function boardTypeFor(row){
-    return boardFor(row)===(DATA?.women||[])?'women':'men';
-  }
+  function boardTypeFor(row){return boardFor(row)===(DATA?.women||[])?'women':'men';}
   function overallOvrFor(row){
     const boardType=boardTypeFor(row);
     const anchors=OVERALL_ANCHORS[boardType]||OVERALL_ANCHORS.men;
     const range=anchors.ceilingScore-anchors.floorScore;
-    if(range<=0) return OVERALL_FLOOR;
+    if(range<=0)return OVERALL_FLOOR;
     const normalized=clamp((num(row?.totalScore)-anchors.floorScore)/range,0,1);
     const curved=Math.pow(normalized,OVERALL_CURVE);
     return clamp(Math.round(OVERALL_FLOOR+curved*(OVERALL_CEILING-OVERALL_FLOOR)),OVERALL_FLOOR,OVERALL_CEILING);
@@ -105,7 +109,7 @@
   }
   function categoryOvrFor(row,category){
     const board=boardFor(row);
-    if(board.length<=1) return CATEGORY_CEILING;
+    if(board.length<=1)return CATEGORY_CEILING;
     const rank=categoryRankFor(row,category);
     const progress=1-((rank-1)/Math.max(board.length-1,1));
     const curve=board.length<=5?0.65:2;
@@ -115,29 +119,25 @@
     const byFighter=new Map(boardRows().map(row=>[key(row.fighter),row]));
     (DATA?.fighters||[]).forEach(profile=>{
       const live=byFighter.get(key(profile.fighter));
-      if(!live) return;
-      profile.rank=live.rank;
-      profile.rawScore=live.rawScore;
-      profile.totalScore=live.totalScore;
-      profile.weightedScoreBreakdown=live.weightedScoreBreakdown;
-      profile.overallOvr=live.overallOvr;
-      profile.finalScoreEngineVersion=VERSION;
-      profile.overallScoreOwner='final-score-engine.js';
+      if(!live)return;
+      ['rank','baseScore','apexPeakBonus','eraDepthAdjustment','preEraDepthTotalScore','rawScore','totalScore','weightedScoreBreakdown','overallOvr','scoreFormula','finalScoreEngineVersion','overallScoreOwner'].forEach(field=>{
+        if(live[field]!==undefined)profile[field]=live[field];
+      });
     });
   }
   function applyOverallOvr(){boardRows().forEach(row=>{row.overallOvr=overallOvrFor(row);});}
   function stripScoreDerivedOverrides(){
-    if(typeof window.DISPLAY_OVERRIDES==='undefined'&&typeof DISPLAY_OVERRIDES==='undefined') return 0;
+    if(typeof window.DISPLAY_OVERRIDES==='undefined'&&typeof DISPLAY_OVERRIDES==='undefined')return 0;
     const overrides=window.DISPLAY_OVERRIDES||DISPLAY_OVERRIDES;
     let stripped=0;
     Object.values(overrides||{}).forEach(override=>{
-      if(!override||typeof override!=='object') return;
-      ['overallOvr','allTimeRank','totalScore','rawScore','rank'].forEach(field=>{
+      if(!override||typeof override!=='object')return;
+      ['overallOvr','allTimeRank','rankLabel','totalScore','rawScore','rank','baseScore','penalty','lossPenalty','lossContext','eraDepthAdjustment','lossContextHybrid','divisionEraDepth'].forEach(field=>{
         if(Object.prototype.hasOwnProperty.call(override,field)){delete override[field];stripped+=1;}
       });
       if(override.categories&&typeof override.categories==='object'){
         Object.values(override.categories).forEach(category=>{
-          if(!category||typeof category!=='object') return;
+          if(!category||typeof category!=='object')return;
           ['ovr','rank','score','value'].forEach(field=>{
             if(Object.prototype.hasOwnProperty.call(category,field)){delete category[field];stripped+=1;}
           });
@@ -150,7 +150,7 @@
   const API={
     version:VERSION,
     overallOwner:'final-score-engine.js',
-    mode:'explicit-single-pass',
+    mode:'explicit-single-final-pass',
     formula:FORMULA,
     weights:WEIGHTS,
     max:MAX,
@@ -159,6 +159,7 @@
     overallCurve:OVERALL_CURVE,
     overallAnchors:OVERALL_ANCHORS,
     applyCount:0,
+    deferredCount:0,
     scoreBreakdown,
     overallOvrFor,
     categoryRankFor,
@@ -167,9 +168,15 @@
   };
 
   function apply(reason='manual'){
-    if(applying) return API.latest||null;
+    if(applying)return API.latest||null;
     if(!DATA){
       API.latest={version:VERSION,applied:false,error:'Missing RANKING_DATA',reason,appliedAt:new Date().toISOString()};
+      return API.latest;
+    }
+    if(reason==='deterministic-scoring-pipeline'&&!modifierReportsReady()){
+      API.deferredCount+=1;
+      API.latest={version:VERSION,applied:true,deferred:true,reason,applyCount:API.applyCount,deferredCount:API.deferredCount,waitingFor:['loss-context-hybrid-live','division-era-depth-live'],appliedAt:new Date().toISOString()};
+      document.documentElement.setAttribute('data-final-score-engine-deferred',VERSION);
       return API.latest;
     }
     applying=true;
@@ -182,7 +189,7 @@
       const strippedScoreOverrides=stripScoreDerivedOverrides();
       API.applyCount+=1;
       if(DATA.meta){
-        DATA.meta.finalScoreEngine={version:VERSION,owner:'final-score-engine.js',mode:'explicit-single-pass',formula:FORMULA,weights:WEIGHTS,max:MAX,overallFloor:OVERALL_FLOOR,overallCeiling:OVERALL_CEILING,overallCurve:OVERALL_CURVE,overallAnchors:OVERALL_ANCHORS,applyCount:API.applyCount,appliedAt:new Date().toISOString()};
+        DATA.meta.finalScoreEngine={version:VERSION,owner:'final-score-engine.js',mode:'explicit-single-final-pass',formula:FORMULA,weights:WEIGHTS,max:MAX,overallFloor:OVERALL_FLOOR,overallCeiling:OVERALL_CEILING,overallCurve:OVERALL_CURVE,overallAnchors:OVERALL_ANCHORS,applyCount:API.applyCount,deferredCount:API.deferredCount,appliedAt:new Date().toISOString()};
       }
       DATA.finalScoreEngineVersion=VERSION;
       DATA.liveScoreMode='unified-final-score-engine';
@@ -192,8 +199,10 @@
       API.latest={
         version:VERSION,
         applied:true,
+        deferred:false,
         reason,
         applyCount:API.applyCount,
+        deferredCount:API.deferredCount,
         formula:FORMULA,
         fighterCount:boardRows().length,
         strippedScoreOverrides,
@@ -206,6 +215,7 @@
         appliedAt:new Date().toISOString()
       };
       document.documentElement.setAttribute('data-final-score-engine',VERSION);
+      document.documentElement.removeAttribute('data-final-score-engine-deferred');
       return API.latest;
     }finally{
       applying=false;
