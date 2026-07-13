@@ -1,0 +1,151 @@
+name: Deploy Picks Tiered Scoring
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy-picks-tiered-scoring.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      PROJECT_REF: hdkjwezaswhisxupxydc
+      SUPABASE_ANON_KEY: sb_publishable_thQI0qVmK_zOMjlmSiITww_MgWO-RNi
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check required secret
+        shell: bash
+        run: |
+          test -n "$SUPABASE_ACCESS_TOKEN" || { echo "Missing SUPABASE_ACCESS_TOKEN"; exit 1; }
+
+      - name: Wire scoring assets and freeze locked odds
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          index_path=Path('index.html')
+          index=index_path.read_text()
+          index=re.sub(
+              r'<meta name="app-build" content="[^"]+" />',
+              '<meta name="app-build" content="20260713-picks-tiered-scoring" />',
+              index,
+              count=1,
+          )
+          index=index.replace(
+              '  <link rel="stylesheet" href="assets/css/picks-odds-coverage.css?v=picks-odds-coverage-20260712a" />',
+              '  <link rel="stylesheet" href="assets/css/picks-odds-coverage.css?v=picks-odds-coverage-20260712a" />\n  <link rel="stylesheet" href="assets/css/picks-tiered-scoring.css?v=picks-tiered-scoring-20260713a" />',
+          )
+          index=index.replace(
+              'assets/js/picks-scoring-copy.js?v=picks-scoring-copy-20260712a',
+              'assets/js/picks-scoring-copy.js?v=picks-scoring-copy-20260713b-tiered',
+          )
+          index=index.replace(
+              '  <script src="assets/js/picks-internal-navigation.js?v=picks-internal-navigation-20260713a-home-onboarding"></script>',
+              '  <script src="assets/js/picks-internal-navigation.js?v=picks-internal-navigation-20260713a-home-onboarding"></script>\n  <script src="assets/js/picks-tiered-scoring.js?v=picks-tiered-scoring-20260713a"></script>',
+          )
+          index_path.write_text(index)
+
+          edge_path=Path('supabase/functions/refresh-ufc-odds/index.ts')
+          edge=edge_path.read_text()
+          edge=edge.replace(
+              '.in("event_id", eventIds)\n    .eq("result_status", "scheduled");',
+              '.in("event_id", eventIds)\n    .eq("result_status", "scheduled")\n    .gt("lock_at", new Date().toISOString());',
+          )
+          edge=edge.replace(
+              '.eq("id", item.fight.id)\n      .eq("result_status", "scheduled");',
+              '.eq("id", item.fight.id)\n      .eq("result_status", "scheduled")\n      .gt("lock_at", new Date().toISOString());',
+          )
+          edge_path.write_text(edge)
+
+          setup_path=Path('docs/picks-setup.md')
+          setup=setup_path.read_text()
+          setup=setup.replace(
+              '13. `supabase/picks-archive-admin-phase.sql`',
+              '13. `supabase/picks-archive-admin-phase.sql`\n14. `supabase/picks-member-merge-phase.sql`\n15. `supabase/picks-tiered-scoring-phase.sql`',
+          )
+          setup=re.sub(
+              r'## Default scoring\n\n(?:- .*\n)+',
+              '## Default scoring\n\n- Correct winner: 4 points from UFC Oklahoma City forward.\n- One optional Underdog Lock per player and event.\n- Correct Lock bonus: +1 at +100–149, +2 at +150–199, +3 at +200–249, +4 at +250–299, +5 at +300–349, +6 at +350–399, and +7 at +400 or higher.\n- Incorrect Underdog Lock: no penalty.\n- UFC 329 keeps its original scoring and is not recalculated.\n- Draws, no contests, cancellations, and unresolved fights are excluded from accuracy.\n- Friends\' exact picks remain hidden until that fight locks.\n\n',
+              setup,
+              count=1,
+          )
+          setup_path.write_text(setup)
+          PY
+
+      - name: Validate frontend and migration
+        shell: bash
+        run: |
+          node --check assets/js/picks-tiered-scoring.js
+          node --check assets/js/picks-scoring-copy.js
+          node scripts/check-picks-ui.mjs
+          grep -q 'picks-tiered-scoring.js' index.html
+          grep -q 'picks-tiered-scoring.css' index.html
+          grep -q 'scoring_version' supabase/picks-tiered-scoring-phase.sql
+          grep -q 'gt("lock_at"' supabase/functions/refresh-ufc-odds/index.ts
+
+      - name: Apply Picks migrations
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          files=[
+              'supabase/picks-member-pin-phase.sql',
+              'supabase/picks-archive-admin-phase.sql',
+              'supabase/picks-member-merge-phase.sql',
+              'supabase/picks-tiered-scoring-phase.sql',
+          ]
+          sql='\n\n'.join(Path(name).read_text() for name in files)
+          Path('/tmp/picks-tiered-scoring.json').write_text(json.dumps({'query':sql}))
+          PY
+          curl --fail-with-body --retry 2 \
+            --request POST \
+            --header "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" \
+            --header "Content-Type: application/json" \
+            --data-binary @/tmp/picks-tiered-scoring.json \
+            "https://api.supabase.com/v1/projects/$PROJECT_REF/database/query"
+
+      - name: Deploy odds refresh with lock freeze
+        shell: bash
+        run: |
+          npx --yes supabase@latest functions deploy refresh-ufc-odds \
+            --project-ref "$PROJECT_REF" \
+            --no-verify-jwt
+
+      - name: Verify live scoring payload
+        shell: bash
+        run: |
+          curl --fail-with-body --retry 2 \
+            --request POST \
+            --header "apikey: $SUPABASE_ANON_KEY" \
+            --header "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            --header "Content-Type: application/json" \
+            --data '{}' \
+            --output /tmp/picks-events.json \
+            "https://$PROJECT_REF.supabase.co/rest/v1/rpc/picks_public_events"
+          grep -q '"scoringVersion":"tiered-v1"' /tmp/picks-events.json
+          grep -q '"correctPickPoints":4' /tmp/picks-events.json
+          grep -q 'ufc-oklahoma-city-2026-07-18' /tmp/picks-events.json
+
+      - name: Record deployment
+        shell: bash
+        run: |
+          printf 'Tiered Picks scoring deployed from %s\n' "$GITHUB_SHA" > supabase/picks-tiered-scoring-deployed.txt
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html assets/js/picks-scoring-copy.js assets/js/picks-tiered-scoring.js assets/css/picks-tiered-scoring.css supabase/picks-tiered-scoring-phase.sql supabase/picks-member-merge-phase.sql supabase/functions/refresh-ufc-odds/index.ts supabase/picks-tiered-scoring-deployed.txt docs/picks-setup.md
+          git commit -m 'Activate tiered Picks scoring [skip ci]' || exit 0
+          git push origin HEAD:main
