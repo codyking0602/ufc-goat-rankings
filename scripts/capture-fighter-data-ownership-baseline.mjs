@@ -38,9 +38,11 @@ try{
   const conflicts=[...(report.report.conflictingFactFields||[])].sort((a,b)=>a.fighter.localeCompare(b.fighter)||a.field.localeCompare(b.field));
   const duplicates=[...(report.report.duplicatedFactFields||[])].sort((a,b)=>a.fighter.localeCompare(b.fighter)||a.field.localeCompare(b.field));
   const presentation=[...(report.report.presentationOwnershipViolations||[])].sort((a,b)=>a.fighter.localeCompare(b.fighter)||a.source.localeCompare(b.source)||a.field.localeCompare(b.field));
+  const orphans=[...(report.report.orphanIdentities||[])].sort((a,b)=>a.fighter.localeCompare(b.fighter));
   report.report.conflictingFactFields=conflicts;
   report.report.duplicatedFactFields=duplicates;
   report.report.presentationOwnershipViolations=presentation;
+  report.report.orphanIdentities=orphans;
   report.captureDiagnostics={browserErrorCount:browserErrors.length,browserErrors:browserErrors.slice(0,50)};
   report.analysis={
     conflictFighterCount:new Set(conflicts.map(row=>row.fighter)).size,
@@ -64,6 +66,7 @@ try{
   const knownNames=new Set(['Charles Oliveira','Benson Henderson','Vitor Belfort','Deiveson Figueiredo']);
   const knownConflicts=conflicts.filter(row=>knownNames.has(row.fighter));
   const knownLines=knownConflicts.length?knownConflicts.map(row=>`- **${row.fighter} — ${row.field}:** ${row.values.map(group=>`${JSON.stringify(group.value)} [${group.sources.join(', ')}]`).join(' vs ')}`):['- None captured.'];
+  const orphanLines=orphans.length?orphans.map(row=>`- **${row.fighter}:** ${row.sources.join(', ')}`):['- None.'];
   const markdown=[
     '# Fighter Data Ownership Baseline','',
     '> Phase 1 diagnostic. A failing ownership result is expected until migration is complete; capture failure is not.','',
@@ -76,6 +79,7 @@ try{
     `- Display overrides: **${report.summary.displayOverrideCount}**`,
     `- Canonical scoring records: **${report.summary.canonicalScoringRecordCount}**`,
     `- Canonical fighter-fact records: **${report.summary.canonicalFactRecordCount}** (${report.summary.canonicalCoveragePct}%)`,
+    `- Orphan identities: **${report.summary.orphanIdentityCount??orphans.length}**`,
     `- Duplicate fact fields: **${report.summary.duplicateCount}** across **${report.analysis.duplicateFighterCount}** fighters`,
     `- Conflicting fact fields: **${report.summary.conflictCount}** across **${report.analysis.conflictFighterCount}** fighters`,
     `- Presentation ownership violations: **${report.summary.presentationViolationCount}** across **${report.analysis.presentationViolationFighterCount}** fighters`,
@@ -83,6 +87,7 @@ try{
     `- Runtime expected-total locks: **${locks.expectedTotalScore??0}**`,
     `- Runtime expected-OVR locks: **${locks.expectedOverallOvr??0}**`,
     `- Browser errors: **${report.captureDiagnostics.browserErrorCount}**`,'',
+    '## Orphan identities','',...orphanLines,'',
     '## Conflicts by field','',...table(report.analysis.conflictsByField),'',
     '## Duplicate ownership by field','',...table(report.analysis.duplicatesByField),'',
     '## Presentation violations by source','',...table(report.analysis.presentationViolationsBySource,'Source','Count'),'',
@@ -90,6 +95,7 @@ try{
     '## Interpretation','',
     '- Duplicate ownership means the same measurable fact exists in more than one place, even when the values currently agree.',
     '- A conflict means those duplicate sources disagree.',
+    '- Agreement across duplicate sources does not prove the shared value is factually correct; evidence audits still matter.',
     '- Expected rank, total, and OVR counts confirm runtime locks that must be removed in Phase 4.',
     '- Canonical coverage begins at zero intentionally and increases only as fighters are fully reconciled.',''
   ].join('\n');
