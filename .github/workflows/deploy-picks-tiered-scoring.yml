@@ -133,17 +133,40 @@ jobs:
       - name: Verify live scoring payload
         shell: bash
         run: |
-          curl --fail-with-body --retry 2 \
-            --request POST \
-            --header "apikey: $SUPABASE_ANON_KEY" \
-            --header "Authorization: Bearer $SUPABASE_ANON_KEY" \
-            --header "Content-Type: application/json" \
-            --data '{}' \
-            --output /tmp/picks-events.json \
-            "https://$PROJECT_REF.supabase.co/rest/v1/rpc/picks_public_events"
-          grep -q '"scoringVersion":"tiered-v1"' /tmp/picks-events.json
-          grep -q '"correctPickPoints":4' /tmp/picks-events.json
-          grep -q 'ufc-oklahoma-city-2026-07-18' /tmp/picks-events.json
+          verified=false
+          for attempt in 1 2 3 4 5; do
+            curl --fail-with-body --retry 2 \
+              --request POST \
+              --header "apikey: $SUPABASE_ANON_KEY" \
+              --header "Authorization: Bearer $SUPABASE_ANON_KEY" \
+              --header "Content-Type: application/json" \
+              --data '{}' \
+              --output /tmp/picks-events.json \
+              "https://$PROJECT_REF.supabase.co/rest/v1/rpc/picks_public_events"
+            if python - <<'PY'
+          import json
+          from pathlib import Path
+          payload=json.loads(Path('/tmp/picks-events.json').read_text())
+          if isinstance(payload,str):
+              payload=json.loads(payload)
+          if isinstance(payload,dict):
+              payload=payload.get('picks_public_events') or payload.get('data') or payload.get('result') or []
+          event=next((item for item in payload if item.get('id')=='ufc-oklahoma-city-2026-07-18'),None)
+          assert event, 'Oklahoma City event missing'
+          assert event.get('scoringVersion')=='tiered-v1', event
+          assert int(event.get('correctPickPoints',0))==4, event
+          print(json.dumps({'event':event.get('id'),'scoringVersion':event.get('scoringVersion'),'correctPickPoints':event.get('correctPickPoints')}))
+          PY
+            then
+              verified=true
+              break
+            fi
+            sleep 3
+          done
+          if [ "$verified" != true ]; then
+            cat /tmp/picks-events.json
+            exit 1
+          fi
 
       - name: Record deployment
         shell: bash
@@ -155,4 +178,4 @@ jobs:
           git commit -m 'Activate tiered Picks scoring [skip ci]' || exit 0
           git push origin HEAD:main
 
-# pull-request trigger
+# robust pull-request trigger
