@@ -1,5 +1,7 @@
 name: Stage 2 Scoring Ownership
 
+# Diagnostic PR trigger for visible workflow logs.
+
 on:
   push:
     branches: [main, agent/stage-2-scoring-ownership]
