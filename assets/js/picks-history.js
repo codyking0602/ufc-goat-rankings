@@ -6,6 +6,9 @@
 
   const client=window.supabase.createClient(config.url,config.anonKey);
   const ROOM_TOKEN_PREFIX='ufc-picks:room:';
+  const ROOM_ADMIN_PREFIX='ufc-picks:admin:';
+  const GROUP_TOKEN_PREFIX='ufc-picks:group:';
+  const GROUP_ADMIN_PREFIX='ufc-picks:group-admin:';
   const LAST_ROOM_KEY='ufc-picks:last-room';
   let loading=false;
   let lastSignature='';
@@ -26,6 +29,20 @@
       if(code && token) rooms.push({code,token});
     }
     return rooms;
+  }
+
+  function storedGroupCode(){
+    const direct=normalizeCode(new URL(window.location.href).searchParams.get('group'));
+    if(direct) return direct;
+    const codes=[];
+    for(let index=0;index<localStorage.length;index+=1){
+      const key=localStorage.key(index) || '';
+      if(!key.startsWith(GROUP_TOKEN_PREFIX) || !localStorage.getItem(key)) continue;
+      const code=normalizeCode(key.slice(GROUP_TOKEN_PREFIX.length));
+      if(code) codes.push(code);
+    }
+    const unique=[...new Set(codes)];
+    return unique.length===1 ? unique[0] : '';
   }
 
   function isComplete(event){
@@ -75,13 +92,24 @@
     hero.insertAdjacentElement('afterend',card);
   }
 
-  function openRoom(code){
+  function openRoom(code,eventId){
     const normalized=normalizeCode(code);
     if(!normalized) return;
+    const group=storedGroupCode();
+    if(group){
+      const groupToken=localStorage.getItem(`${GROUP_TOKEN_PREFIX}${group}`);
+      const groupAdmin=localStorage.getItem(`${GROUP_ADMIN_PREFIX}${group}`);
+      if(groupToken) localStorage.setItem(`${ROOM_TOKEN_PREFIX}${normalized}`,groupToken);
+      if(groupAdmin) localStorage.setItem(`${ROOM_ADMIN_PREFIX}${normalized}`,groupAdmin);
+    }
     localStorage.setItem(LAST_ROOM_KEY,normalized);
     localStorage.removeItem('ufc-picks:auto-restore-disabled');
     const url=new URL(window.location.href);
+    if(group) url.searchParams.set('group',group);
     url.searchParams.set('room',normalized);
+    if(eventId) url.searchParams.set('event',eventId);
+    url.searchParams.set('archive','1');
+    url.searchParams.set('picksView','event');
     url.hash='picks';
     window.location.assign(url.toString());
   }
@@ -97,13 +125,15 @@
     count.textContent=`${items.length} saved`;
     if(!items.length){ target.innerHTML=''; return; }
 
-    const currentCode=normalizeCode(new URL(window.location.href).searchParams.get('room'));
+    const currentUrl=new URL(window.location.href);
+    const currentCode=normalizeCode(currentUrl.searchParams.get('room'));
+    const archiveMode=currentUrl.searchParams.get('archive')==='1';
     target.innerHTML=items.map(item=>{
       const championNames=item.champions.map(member=>member.display_name).join(' & ') || 'No winner';
       const myLine=item.myPlace
         ? `You finished #${item.myPlace} · ${item.me?.score||0} pts · ${item.me?.correct||0} correct`
         : 'Your result is available in the room';
-      const viewing=item.code===currentCode;
+      const viewing=archiveMode && item.code===currentCode;
       return `<article class="picks-history-row${viewing?' current':''}">
         <div class="picks-history-main">
           <span>${safe(formatDate(item.event.eventDate))}</span>
@@ -115,11 +145,11 @@
           <strong>${safe(championNames)}</strong>
           <small>${safe(myLine)}</small>
         </div>
-        <button type="button" data-history-room="${safe(item.code)}" ${viewing?'disabled':''}>${viewing?'Viewing':'Open recap'}</button>
+        <button type="button" data-history-room="${safe(item.code)}" data-history-event="${safe(item.event.id)}" ${viewing?'disabled':''}>${viewing?'Viewing':'Open recap'}</button>
       </article>`;
     }).join('');
 
-    target.querySelectorAll('[data-history-room]').forEach(button=>button.addEventListener('click',()=>openRoom(button.dataset.historyRoom)));
+    target.querySelectorAll('[data-history-room]').forEach(button=>button.addEventListener('click',()=>openRoom(button.dataset.historyRoom,button.dataset.historyEvent)));
   }
 
   async function refresh(){
