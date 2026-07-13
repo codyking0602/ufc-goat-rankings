@@ -16,12 +16,12 @@
   const routeIds={
     home:['picksGroupCard','picksHistoryCard'],
     event:[
-      'picksEventPicker','picksEventHero','picksSetupNote','picksRoomBanner','picksLiveNotices',
-      'picksLivePanel','picksEventRecap','picksRoomSetup','picksAdminPanel','picksProgressCard',
-      'picksFightList','picksStandingsCard','picksRoomPicksCard'
+      'picksEventPicker','picksEventHero','picksRoomBanner','picksLiveNotices','picksLivePanel',
+      'picksEventRecap','picksAdminPanel','picksProgressCard','picksFightList','picksStandingsCard','picksRoomPicksCard'
     ],
     settings:['picksProfileShell','picksCommissionerCard']
   };
+  routeIds.home=['picksRoomSetup','picksSetupNote',...routeIds.home];
 
   function validRoute(value){
     const route=String(value || '').toLowerCase();
