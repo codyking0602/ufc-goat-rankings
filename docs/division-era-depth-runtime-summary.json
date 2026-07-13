@@ -1,123 +1,39 @@
 {
-  "generatedAt": "2026-07-12T21:51:48.360Z",
+  "generatedAt": "2026-07-13T16:42:48.959Z",
   "pipelineStatus": "ready",
-  "shadowVersion": "division-era-depth-shadow-20260712d-current-wfw-safe",
-  "auditVersion": "division-era-depth-judgment-review-20260712b-live-approved",
-  "liveVersion": "division-era-depth-live-20260712a",
-  "finalizerVersion": "division-era-depth-finalizer-20260712c-late-ready-sync",
-  "finalizerStatus": "blocked",
+  "ownershipApplied": true,
+  "shadowVersion": "division-era-depth-shadow-20260712e-roster-72",
+  "auditVersion": "division-era-depth-judgment-review-20260712c-roster-72",
+  "liveVersion": "division-era-depth-live-20260713c-evidence-only",
+  "finalizerVersion": null,
   "finalizerApplied": false,
-  "finalizedAfterPipeline": true,
-  "finalizationObserved": false,
-  "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-  "finalScoreEngineLatest": {
-    "version": "final-score-engine-20260712b-era-shadow-fallback",
-    "applied": true,
-    "reason": "division-era-depth-finalizer-post-ui",
-    "applyCount": 5,
-    "formula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment",
-    "fighterCount": 63,
-    "strippedScoreOverrides": 504,
-    "overallFloor": 82,
-    "overallCeiling": 99,
-    "overallCurve": 0.85,
-    "overallAnchors": {
-      "men": {
-        "floorScore": 18.68,
-        "ceilingScore": 101.92
-      },
-      "women": {
-        "floorScore": 25.78,
-        "ceilingScore": 80.79
-      }
-    },
-    "menTopFive": [
-      {
-        "fighter": "Jon Jones",
-        "rank": 1,
-        "totalScore": 101.76,
-        "overallOvr": 99
-      },
-      {
-        "fighter": "Georges St-Pierre",
-        "rank": 2,
-        "totalScore": 86.34,
-        "overallOvr": 96
-      },
-      {
-        "fighter": "Demetrious Johnson",
-        "rank": 3,
-        "totalScore": 75.88,
-        "overallOvr": 94
-      },
-      {
-        "fighter": "Anderson Silva",
-        "rank": 4,
-        "totalScore": 75.62,
-        "overallOvr": 94
-      },
-      {
-        "fighter": "Islam Makhachev",
-        "rank": 5,
-        "totalScore": 69.06,
-        "overallOvr": 93
-      }
-    ],
-    "womenTopFive": [
-      {
-        "fighter": "Amanda Nunes",
-        "rank": 1,
-        "totalScore": 81.07,
-        "overallOvr": 99
-      },
-      {
-        "fighter": "Valentina Shevchenko",
-        "rank": 2,
-        "totalScore": 75.39,
-        "overallOvr": 98
-      },
-      {
-        "fighter": "Zhang Weili",
-        "rank": 3,
-        "totalScore": 56.91,
-        "overallOvr": 92
-      },
-      {
-        "fighter": "Joanna Jedrzejczyk",
-        "rank": 4,
-        "totalScore": 50.82,
-        "overallOvr": 91
-      },
-      {
-        "fighter": "Rose Namajunas",
-        "rank": 5,
-        "totalScore": 48.46,
-        "overallOvr": 90
-      }
-    ],
-    "appliedAt": "2026-07-12T21:51:45.360Z"
-  },
-  "sixCategoryModelVersion": "six-category-live-20260712a-era-depth",
+  "finalizerRole": "informational-legacy-module",
+  "engineVersion": "scoring-engine-20260713c-finalizer-only",
+  "engineApplyCount": 1,
   "datasetEnd": "2026-06-27",
   "sourceFresh": true,
   "judgmentApproved": true,
   "readyForLivePromotion": true,
-  "liveApplied": false,
-  "promotedCount": 63,
-  "liveMismatchCount": 3,
+  "liveApplied": true,
+  "promotedCount": 72,
+  "liveMismatchCount": 0,
   "consistency": {
-    "rosterCount": 63,
-    "shadowCount": 63,
-    "boardMismatchCount": 3,
-    "boardMismatches": [
-      "Jon Jones",
-      "Conor McGregor",
-      "Dustin Poirier"
-    ],
+    "rosterCount": 72,
+    "shadowCount": 72,
+    "canonicalMismatchCount": 0,
+    "canonicalMismatches": [],
+    "evidenceMismatchCount": 0,
+    "evidenceMismatches": [],
+    "formulaMismatchCount": 0,
+    "formulaMismatches": [],
     "profileMismatchCount": 0,
     "profileMismatches": [],
-    "overrideMismatchCount": 0,
-    "overrideMismatches": []
+    "missingDetailCount": 0,
+    "missingDetail": [],
+    "overrideViolationCount": 0,
+    "overrideViolations": [],
+    "wrongOwnerCount": 0,
+    "wrongOwners": []
   },
   "wfwSafety": {
     "nunesExcludesWfw": true,
@@ -128,7 +44,7 @@
     {
       "fighter": "Jon Jones",
       "rank": 1,
-      "totalScore": 101.76,
+      "totalScore": 101.77,
       "preEraDepthTotalScore": 101.92,
       "adjustment": -0.15,
       "overallOvr": 99,
@@ -276,7 +192,7 @@
     },
     {
       "fighter": "Junior dos Santos",
-      "rank": 29,
+      "rank": 31,
       "totalScore": 48.14,
       "preEraDepthTotalScore": 50.12,
       "adjustment": -1.98,
@@ -289,7 +205,7 @@
     },
     {
       "fighter": "Tito Ortiz",
-      "rank": 31,
+      "rank": 34,
       "totalScore": 47.01,
       "preEraDepthTotalScore": 50.01,
       "adjustment": -3,
@@ -312,7 +228,7 @@
         "WBW"
       ],
       "womenFeatherweightTreatment": {
-        "version": "division-era-depth-shadow-20260712d-current-wfw-safe",
+        "version": "division-era-depth-shadow-20260712e-roster-72",
         "treatment": "mixed-career-non-wfw-only",
         "excludedSampleCount": 3,
         "retainedSampleCount": 9,
@@ -332,7 +248,7 @@
       "depthIndex": 1,
       "sampledDivisions": [],
       "womenFeatherweightTreatment": {
-        "version": "division-era-depth-shadow-20260712d-current-wfw-safe",
+        "version": "division-era-depth-shadow-20260712e-roster-72",
         "treatment": "pure-wfw-zero-adjustment",
         "excludedSampleCount": 7,
         "retainedSampleCount": 0,
@@ -354,7 +270,7 @@
         "WBW"
       ],
       "womenFeatherweightTreatment": {
-        "version": "division-era-depth-shadow-20260712d-current-wfw-safe",
+        "version": "division-era-depth-shadow-20260712e-roster-72",
         "treatment": "mixed-career-non-wfw-only",
         "excludedSampleCount": 3,
         "retainedSampleCount": 4,
@@ -365,297 +281,12 @@
       }
     }
   ],
-  "menTop20": [
-    {
-      "rank": 1,
-      "fighter": "Jon Jones",
-      "preEraDepthTotalScore": 101.92,
-      "totalScore": 101.76,
-      "eraDepthAdjustment": -0.15,
-      "overallOvr": 99
-    },
-    {
-      "rank": 2,
-      "fighter": "Georges St-Pierre",
-      "preEraDepthTotalScore": 88.07,
-      "totalScore": 86.34,
-      "eraDepthAdjustment": -1.73,
-      "overallOvr": 96
-    },
-    {
-      "rank": 3,
-      "fighter": "Demetrious Johnson",
-      "preEraDepthTotalScore": 77.11,
-      "totalScore": 75.88,
-      "eraDepthAdjustment": -1.23,
-      "overallOvr": 94
-    },
-    {
-      "rank": 4,
-      "fighter": "Anderson Silva",
-      "preEraDepthTotalScore": 77.29,
-      "totalScore": 75.62,
-      "eraDepthAdjustment": -1.67,
-      "overallOvr": 94
-    },
-    {
-      "rank": 5,
-      "fighter": "Islam Makhachev",
-      "preEraDepthTotalScore": 69.14,
-      "totalScore": 69.06,
-      "eraDepthAdjustment": -0.08,
-      "overallOvr": 93
-    },
-    {
-      "rank": 6,
-      "fighter": "Alexander Volkanovski",
-      "preEraDepthTotalScore": 67.62,
-      "totalScore": 67.6,
-      "eraDepthAdjustment": -0.02,
-      "overallOvr": 93
-    },
-    {
-      "rank": 7,
-      "fighter": "Jose Aldo",
-      "preEraDepthTotalScore": 67.14,
-      "totalScore": 66.1,
-      "eraDepthAdjustment": -1.04,
-      "overallOvr": 93
-    },
-    {
-      "rank": 8,
-      "fighter": "Khabib Nurmagomedov",
-      "preEraDepthTotalScore": 64.05,
-      "totalScore": 64.14,
-      "eraDepthAdjustment": 0.09,
-      "overallOvr": 92
-    },
-    {
-      "rank": 9,
-      "fighter": "Kamaru Usman",
-      "preEraDepthTotalScore": 62.03,
-      "totalScore": 62.3,
-      "eraDepthAdjustment": 0.27,
-      "overallOvr": 92
-    },
-    {
-      "rank": 10,
-      "fighter": "Matt Hughes",
-      "preEraDepthTotalScore": 64.76,
-      "totalScore": 61.76,
-      "eraDepthAdjustment": -3,
-      "overallOvr": 92
-    },
-    {
-      "rank": 11,
-      "fighter": "Stipe Miocic",
-      "preEraDepthTotalScore": 61.84,
-      "totalScore": 61.67,
-      "eraDepthAdjustment": -0.17,
-      "overallOvr": 92
-    },
-    {
-      "rank": 12,
-      "fighter": "Max Holloway",
-      "preEraDepthTotalScore": 61.37,
-      "totalScore": 61.16,
-      "eraDepthAdjustment": -0.21,
-      "overallOvr": 92
-    },
-    {
-      "rank": 13,
-      "fighter": "Israel Adesanya",
-      "preEraDepthTotalScore": 59.57,
-      "totalScore": 59.52,
-      "eraDepthAdjustment": -0.05,
-      "overallOvr": 91
-    },
-    {
-      "rank": 14,
-      "fighter": "Randy Couture",
-      "preEraDepthTotalScore": 59.8,
-      "totalScore": 56.8,
-      "eraDepthAdjustment": -3,
-      "overallOvr": 91
-    },
-    {
-      "rank": 15,
-      "fighter": "Alex Pereira",
-      "preEraDepthTotalScore": 56.54,
-      "totalScore": 56.7,
-      "eraDepthAdjustment": 0.16,
-      "overallOvr": 91
-    },
-    {
-      "rank": 16,
-      "fighter": "Daniel Cormier",
-      "preEraDepthTotalScore": 56.79,
-      "totalScore": 56.57,
-      "eraDepthAdjustment": -0.22,
-      "overallOvr": 91
-    },
-    {
-      "rank": 17,
-      "fighter": "Chuck Liddell",
-      "preEraDepthTotalScore": 57.62,
-      "totalScore": 54.68,
-      "eraDepthAdjustment": -2.94,
-      "overallOvr": 90
-    },
-    {
-      "rank": 18,
-      "fighter": "Charles Oliveira",
-      "preEraDepthTotalScore": 53.38,
-      "totalScore": 53.33,
-      "eraDepthAdjustment": -0.05,
-      "overallOvr": 90
-    },
-    {
-      "rank": 19,
-      "fighter": "T.J. Dillashaw",
-      "preEraDepthTotalScore": 54.52,
-      "totalScore": 53.19,
-      "eraDepthAdjustment": -1.33,
-      "overallOvr": 90
-    },
-    {
-      "rank": 20,
-      "fighter": "B.J. Penn",
-      "preEraDepthTotalScore": 55.08,
-      "totalScore": 52.37,
-      "eraDepthAdjustment": -2.71,
-      "overallOvr": 90
-    }
-  ],
-  "womenBoard": [
-    {
-      "rank": 1,
-      "fighter": "Amanda Nunes",
-      "preEraDepthTotalScore": 82.03,
-      "totalScore": 81.07,
-      "eraDepthAdjustment": -0.96,
-      "overallOvr": 99
-    },
-    {
-      "rank": 2,
-      "fighter": "Valentina Shevchenko",
-      "preEraDepthTotalScore": 75.92,
-      "totalScore": 75.39,
-      "eraDepthAdjustment": -0.53,
-      "overallOvr": 98
-    },
-    {
-      "rank": 3,
-      "fighter": "Zhang Weili",
-      "preEraDepthTotalScore": 57.04,
-      "totalScore": 56.91,
-      "eraDepthAdjustment": -0.13,
-      "overallOvr": 92
-    },
-    {
-      "rank": 4,
-      "fighter": "Joanna Jedrzejczyk",
-      "preEraDepthTotalScore": 52.82,
-      "totalScore": 50.82,
-      "eraDepthAdjustment": -2,
-      "overallOvr": 91
-    },
-    {
-      "rank": 5,
-      "fighter": "Rose Namajunas",
-      "preEraDepthTotalScore": 49.2,
-      "totalScore": 48.46,
-      "eraDepthAdjustment": -0.74,
-      "overallOvr": 90
-    },
-    {
-      "rank": 6,
-      "fighter": "Ronda Rousey",
-      "preEraDepthTotalScore": 48.9,
-      "totalScore": 46.33,
-      "eraDepthAdjustment": -2.57,
-      "overallOvr": 89
-    },
-    {
-      "rank": 7,
-      "fighter": "Jessica Andrade",
-      "preEraDepthTotalScore": 40.94,
-      "totalScore": 40.59,
-      "eraDepthAdjustment": -0.35,
-      "overallOvr": 88
-    },
-    {
-      "rank": 8,
-      "fighter": "Cris Cyborg",
-      "preEraDepthTotalScore": 38.69,
-      "totalScore": 38.69,
-      "eraDepthAdjustment": 0,
-      "overallOvr": 87
-    },
-    {
-      "rank": 9,
-      "fighter": "Alexa Grasso",
-      "preEraDepthTotalScore": 36.01,
-      "totalScore": 36.19,
-      "eraDepthAdjustment": 0.18,
-      "overallOvr": 86
-    },
-    {
-      "rank": 10,
-      "fighter": "Julianna Peña",
-      "preEraDepthTotalScore": 33.86,
-      "totalScore": 34.19,
-      "eraDepthAdjustment": 0.33,
-      "overallOvr": 85
-    },
-    {
-      "rank": 11,
-      "fighter": "Carla Esparza",
-      "preEraDepthTotalScore": 33.34,
-      "totalScore": 32.12,
-      "eraDepthAdjustment": -1.22,
-      "overallOvr": 85
-    },
-    {
-      "rank": 12,
-      "fighter": "Kayla Harrison",
-      "preEraDepthTotalScore": 30.17,
-      "totalScore": 30.66,
-      "eraDepthAdjustment": 0.49,
-      "overallOvr": 84
-    },
-    {
-      "rank": 13,
-      "fighter": "Mackenzie Dern",
-      "preEraDepthTotalScore": 30.4,
-      "totalScore": 30.4,
-      "eraDepthAdjustment": 0,
-      "overallOvr": 84
-    },
-    {
-      "rank": 14,
-      "fighter": "Holly Holm",
-      "preEraDepthTotalScore": 30.59,
-      "totalScore": 28.59,
-      "eraDepthAdjustment": -2,
-      "overallOvr": 83
-    },
-    {
-      "rank": 15,
-      "fighter": "Miesha Tate",
-      "preEraDepthTotalScore": 29.67,
-      "totalScore": 27.21,
-      "eraDepthAdjustment": -2.46,
-      "overallOvr": 83
-    }
-  ],
   "profileSurface": {
     "rendered": true,
-    "hasEraCard": true,
-    "hasAdjustment": true,
+    "eraCardHidden": true,
     "hasRank": true,
     "hasOvr": true,
-    "text": "UFC ALL-TIME RANK: #10\nWW\nMatt Hughes\n92 OVR\n\nThe early welterweight title-control case: real championship volume, physical dominance, and one of the defining reigns before the GSP era.\n\n▶ WATCH SIGNATURE FIGHT\nResume Snapshot\n18-7\nUFC Record\n9\nUFC Title-Fight Wins\n9\nElite / Top-5 Wins\n13-3\nPrime Record\n61%\nFinish Rate\n71%\nRounds Won\n6.2 YRS\nActive Elite Years\n4\nPrime Stoppage Losses\nEra-depth adjustment\n\n-3.00 points from a 0.7500 division-era depth index across the fighter’s UFC prime.\n\nQualified active pool 0.55× · ranks 6–15 strength 0.56× · contender diversity 0.95×\n\nChampionship Resume\n95 RATING\n#5 in category · Title wins, reign strength, division control\nELITE\nQuality Wins\n83 RATING\n#21 in category · Who they beat, when, and division strength\nGREAT\nPrime Dominance\n88 RATING\n#14 in category · Rounds, finishes, separation, durability\nGREAT\nElite Longevity\n88 RATING\n#14 in category · Active elite UFC years, not calendar padding\nGREAT\nApex Peak\n75 RATING\n#43 in category · Best two-win stretch: performance, proof, peak\nAVERAGE\nLoss Context\n78 RATING\n#31 in category · Losses adjusted for timing, opponent, finish, division\nGOOD\nWhy Ranked Here\n\nHughes lands here because his UFC welterweight title volume is still meaningful. He spent years as the division standard, stacked title wins, and has enough important victories to remain a serious UFC-only GOAT case.\n\nWhy Not Ranked Higher?\n\nHe does not rank higher because era strength, loss volume, and later separation by GSP cap the case. His championship weight is real, but the modern top-tier resumes are cleaner and deeper."
+    "text": "UFC ALL-TIME RANK: #10\nWW\nMatt Hughes\n92 OVR\n\nThe early welterweight title-control case: real championship volume, physical dominance, and one of the defining reigns before the GSP era.\n\n▶ WATCH SIGNATURE FIGHT\nResume Snapshot\n18-7\nUFC Record\n9\nUFC Title-Fight Wins\n9\nElite / Top-5 Wins\n13-3\nPrime Record\n61%\nFinish Rate\n71%\nRounds Won\n8.4 YRS\nActive Elite Years\n2\nPrime Stoppage Losses\nChampionship Resume\n96 RATING\n#5 in category · Title wins, reign strength, division control\nELITE\nQuality Wins\n83 RATING\n#25 in category · Who they beat, when, and division strength\nGREAT\nPrime Dominance\n88 RATING\n#16 in category · Rounds, finishes, separation, durability\nGREAT\nElite Longevity\n89 RATING\n#15 in category · Active elite UFC years, not calendar padding\nGREAT\nApex Peak\n75 RATING\n#52 in category · Best two-win stretch: performance, proof, peak\nBELOW AVERAGE\nLoss Context\n79 RATING\n#34 in category · Losses adjusted for timing, opponent, finish, division\nGOOD\nWhy Ranked Here\n\nHughes ranks #12 because his UFC welterweight title volume is still meaningful. He spent years as the division standard, stacked title wins, and has enough important victories to remain a serious UFC-only GOAT case.\n\nWhy Not Ranked Higher?\n\nHe does not rank higher because era strength, loss volume, and later separation by GSP cap the case. His championship weight is real, but the modern top-tier resumes are cleaner and deeper."
   },
   "compareSurface": {
     "rendered": true,
