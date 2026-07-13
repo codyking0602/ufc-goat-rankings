@@ -1,0 +1,174 @@
+{
+  "version": "scoring-architecture-contract-20260713a",
+  "expectedRosterCount": 72,
+  "canonical": {
+    "path": "assets/data/canonical-scoring-records.js",
+    "global": "UFC_CANONICAL_SCORING_RECORDS",
+    "version": "canonical-scoring-records-20260713a-stage2",
+    "sourceSha": "ad6de49cab8db327871e219ba418e369e1895a21a622b598b0cfd46bce2f3887"
+  },
+  "engine": {
+    "path": "assets/js/scoring-engine.js",
+    "global": "UFC_SCORING_ENGINE",
+    "aliasGlobal": "UFC_FINAL_SCORE_ENGINE",
+    "version": "scoring-engine-20260713c-finalizer-only",
+    "authorizedApplyReason": "stage3-scoring-ownership-finalizer",
+    "expectedApplyCount": 1,
+    "formula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment",
+    "weights": {
+      "championship": 35,
+      "opponentQuality": 27.5,
+      "primeDominance": 27.5,
+      "longevity": 10
+    },
+    "max": {
+      "championship": 30,
+      "opponentQuality": 30,
+      "primeDominance": 30,
+      "longevity": 30
+    },
+    "scoreInputFields": [
+      "championship",
+      "opponentQuality",
+      "primeDominance",
+      "longevity",
+      "apexPeak",
+      "penalty",
+      "eraDepthAdjustment"
+    ]
+  },
+  "finalizer": {
+    "path": "assets/js/scoring-ownership-finalizer.js",
+    "global": "UFC_SCORING_OWNERSHIP_CONTRACT",
+    "version": "scoring-ownership-finalizer-20260713f-no-legacy-repair",
+    "expectedMode": "single-authority-copy-boundary-no-legacy-repair"
+  },
+  "pipeline": {
+    "path": "assets/data/module-versions.js",
+    "global": "UFC_SCORING_PIPELINE",
+    "expectedMode": "deterministic-evidence-prerequisite-pipeline",
+    "expectedFinalScoreApplyCount": 0
+  },
+  "evidenceProviders": [
+    {
+      "path": "assets/data/loss-context-hybrid-live.js",
+      "global": "UFC_LOSS_CONTEXT_HYBRID_LIVE",
+      "expectedRole": "evidence-and-detail-provider",
+      "expectedMutationFlags": {
+        "mutatesScores": false,
+        "mutatesPenalty": false
+      }
+    },
+    {
+      "path": "assets/data/division-era-depth-live.js",
+      "global": "UFC_DIVISION_ERA_DEPTH_LIVE",
+      "expectedRole": "evidence-and-detail-provider",
+      "expectedMutationFlags": {
+        "mutatesScores": false,
+        "mutatesAdjustment": false
+      }
+    }
+  ],
+  "presentation": {
+    "displayOverridesPath": "assets/data/display-overrides.js",
+    "fighterPacketsDirectory": "assets/data/fighter-packets",
+    "forbiddenDirectFields": [
+      "overallOvr",
+      "allTimeRank",
+      "rankLabel",
+      "totalScore",
+      "rawScore",
+      "rank",
+      "championship",
+      "opponentQuality",
+      "primeDominance",
+      "longevity",
+      "apexPeak",
+      "penalty",
+      "lossPenalty",
+      "lossContext",
+      "eraDepthAdjustment",
+      "baseScore",
+      "preEraDepthTotalScore",
+      "apexPeakBonus",
+      "lossContextHybrid",
+      "divisionEraDepth"
+    ],
+    "forbiddenNestedFields": [
+      "overallOvr",
+      "allTimeRank",
+      "rankLabel",
+      "totalScore",
+      "rawScore",
+      "rank",
+      "championship",
+      "opponentQuality",
+      "primeDominance",
+      "longevity",
+      "apexPeak",
+      "penalty",
+      "lossPenalty",
+      "lossContext",
+      "eraDepthAdjustment",
+      "baseScore",
+      "preEraDepthTotalScore",
+      "apexPeakBonus",
+      "lossContextHybrid",
+      "divisionEraDepth",
+      "championshipScore",
+      "opponentQualityScore",
+      "primeDominanceScore",
+      "longevityScore"
+    ],
+    "forbiddenCategoryFields": [
+      "ovr",
+      "rank",
+      "score",
+      "value"
+    ],
+    "fighterPacketForbiddenDisplayFields": [
+      "overallOvr",
+      "allTimeRank",
+      "rankLabel",
+      "categories",
+      "totalScore",
+      "rawScore",
+      "rank"
+    ]
+  },
+  "requiredScriptOrder": [
+    "assets/data/canonical-scoring-records.js",
+    "assets/data/module-versions.js",
+    "assets/data/loss-context-hybrid-live.js",
+    "assets/data/division-era-depth-live.js",
+    "assets/js/scoring-engine.js",
+    "assets/js/scoring-ownership-finalizer.js",
+    "assets/data/ranking-data-patches.js"
+  ],
+  "deletedLegacyFiles": [
+    "assets/js/final-score-engine.js",
+    "assets/js/rank-fluidity-fixes.js",
+    "assets/data/division-era-depth-finalizer.js",
+    "assets/data/championship-score-corrections.js",
+    "assets/data/opponent-quality-score-corrections.js",
+    "assets/data/longevity-score-corrections.js"
+  ],
+  "forbiddenLegacyReferences": [
+    "final-score-engine.js",
+    "rank-fluidity-fixes.js",
+    "division-era-depth-finalizer.js",
+    "championship-score-corrections.js",
+    "opponent-quality-score-corrections.js",
+    "longevity-score-corrections.js",
+    "dynamic-roster-scoring-repair"
+  ],
+  "forbiddenRuntimeGlobals": [
+    "UFC_DYNAMIC_ROSTER_SCORING_REPAIR",
+    "UFC_DIVISION_ERA_DEPTH_FINALIZER"
+  ],
+  "supersededGuardrailFiles": [
+    ".github/workflows/stage3-scoring-cleanup.yml",
+    "scripts/run-stage3-scoring-cleanup.mjs",
+    "scripts/validate-stage3-scoring-cleanup.mjs"
+  ]
+}
