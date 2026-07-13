@@ -38,15 +38,15 @@ Latest verified browser capture: **2026-07-13**, after canonical batch three.
 | Mauricio “Shogun” Rua | 24 | 11-12-1 | 3-3 | 2.59 | Passed | No |
 | Forrest Griffin | 15 | 10-5 | 4-3 | 3.93 | Passed | No |
 
-Batch two contains **102 UFC bouts**. Batch three contains **103 UFC bouts**. Together with Charles, Phase 1 holds **242 complete UFC fight rows**.
+Batch two contains **102 UFC bouts**. Compact batch three contains **103 UFC bouts**. Together with Charles, Phase 1 holds **242 complete UFC fight rows**.
 
 ## Batch-three reconciliation highlights
 
-- **Fabricio Werdum:** 12-6 UFC record, eight finishes, two official title-fight wins, 1.65 adjusted title credit, 9-3 prime, 23-10 reviewed prime rounds, and 6.11 active elite years. PRIDE, Strikeforce, PFL, and the Fedor win are excluded.
-- **Glover Teixeira:** 16-7, thirteen finishes, one official title-fight win, 12-6 prime, 32-17 reviewed prime rounds, and 8.77 active elite years. Jamahal Hill is post-prime.
-- **Rashad Evans:** 14-8-1, six finishes, one official title-fight win, 9-3 prime, 22-13 reviewed prime rounds, and 6.00 active elite years. TUF exhibition bouts are excluded.
-- **Mauricio “Shogun” Rua:** 11-12-1 UFC-only record, eight finishes, one official title-fight win, 3-3 UFC prime, 8-8 reviewed prime rounds, and 2.59 active elite years. PRIDE is fully excluded.
-- **Forrest Griffin:** 10-5, three finishes, one official title-fight win, 4-3 prime, 12-7 reviewed prime rounds, and 3.93 active elite years. The TUF 1 win is a tournament achievement, not an official UFC title fight.
+- **Fabricio Werdum:** 12-6 UFC record, eight finishes, two official title-fight wins, 1.65 adjusted title credit, 9-3 prime, **26-7 reviewed prime rounds (78.79%)**, and 6.11 active elite years. PRIDE, Strikeforce, PFL, and the Fedor win are excluded.
+- **Glover Teixeira:** 16-7, thirteen finishes, one official title-fight win, 12-6 prime, **27-22 reviewed prime rounds (55.10%)**, and 8.77 active elite years. Jamahal Hill is post-prime.
+- **Rashad Evans:** 14-8-1, six finishes, one official title-fight win, 9-3 prime, **21-14 reviewed prime rounds (60.00%)**, and 6.00 active elite years. TUF exhibition bouts are excluded.
+- **Mauricio “Shogun” Rua:** 11-12-1 UFC-only record, eight finishes, one official title-fight win, 3-3 UFC prime, **8-8 reviewed prime rounds (50.00%)**, and 2.59 active elite years. PRIDE is fully excluded.
+- **Forrest Griffin:** 10-5, three finishes, one official title-fight win, 4-3 prime, **12-7 reviewed prime rounds (63.16%)**, and 3.93 active elite years. The TUF 1 win is a tournament achievement, not an official UFC title fight.
 
 ## Orphan identity
 
