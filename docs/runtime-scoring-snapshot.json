@@ -1,10 +1,10 @@
 {
   "schemaVersion": "ufc-runtime-scoring-snapshot-v1",
   "captureMode": "post-pipeline-browser-runtime",
-  "capturedAt": "2026-07-13T13:05:54.370Z",
+  "capturedAt": "2026-07-13T14:41:12.141Z",
   "source": {
     "url": "http://127.0.0.1:4173/index.html?runtime-scoring-snapshot=1",
-    "appBuild": "20260713-stage2-scoring-ownership-b",
+    "appBuild": "20260713-stage2-scoring-ownership-final",
     "moduleVersions": {
       "scoringPipeline": "20260711a-cris-cyborg-photos",
       "finalScoreEngine": "20260712b-era-shadow-fallback",
@@ -26,7 +26,7 @@
       "fighterEraLedgerCleanupsFinal": "20260710d-chuck-vitor-window",
       "approvedFighterAuditCorrections": "20260712d-cruz-tate-ilia-deiveson",
       "canonicalFighterRegistry": "20260711c-cris-cyborg-photos",
-      "canonicalPrimeRecords": "20260710c-chuck-vitor-window",
+      "canonicalPrimeRecords": "20260713b-mirror-sync",
       "fighterEraWindowAudit": "20260710b-record-dependencies",
       "lossContextCanonicalProduction": "20260710a-runtime-closure",
       "lossContextDynamicRosterTarget": "20260710a-dynamic-board-count",
@@ -49,7 +49,7 @@
     "dynamicRosterRepair": {
       "version": "dynamic-roster-scoring-repair-20260712a",
       "applied": true,
-      "applyCount": 5,
+      "applyCount": 6,
       "rosterCount": 72,
       "scoreMismatches": []
     },

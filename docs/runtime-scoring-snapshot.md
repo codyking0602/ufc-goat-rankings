@@ -2,7 +2,7 @@
 
 > Generated from the fully initialized browser runtime. This is a parity baseline, not a scoring source.
 
-- Captured: 2026-07-13T13:05:54.370Z
+- Captured: 2026-07-13T14:41:12.141Z
 - Status: **clean**
 - Fighters: **72** (57 men, 15 women)
 - Fighter data SHA-256: `2c5277e19d34747a20ad74d5297b57213ccd4dce538dde489f56f92d167b3db4`
