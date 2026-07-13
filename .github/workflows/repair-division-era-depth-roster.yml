@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: repair-division-era-depth-roster
@@ -56,6 +56,14 @@ jobs:
             assets/data/division-era-depth-live.js
             assets/data/division-era-depth-finalizer.js
             scripts/install-division-era-depth-live.mjs
-            .github/workflows/division-era-depth-shadow.yml
           if-no-files-found: error
           retention-days: 1
+
+      - name: Publish verified repair branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -C agent/era-depth-permanent-repair-output
+          git add scripts/build-division-era-depth-shadow.mjs scripts/run-division-era-depth-shadow.mjs scripts/build-division-era-depth-judgment-review.mjs scripts/validate-division-era-depth-promotion.mjs scripts/runtime-era-depth-audit.mjs assets/data/division-era-depth-live.js assets/data/division-era-depth-finalizer.js scripts/install-division-era-depth-live.mjs
+          git commit -m 'Make Division Era Depth full-roster dynamic'
+          git push --force origin HEAD:refs/heads/agent/era-depth-permanent-repair-output
