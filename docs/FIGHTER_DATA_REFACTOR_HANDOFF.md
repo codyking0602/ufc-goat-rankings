@@ -16,7 +16,7 @@ Last updated: 2026-07-13
 
 ## Required branch sync before more migration
 
-Current `main` advanced during the long Phase 1 batch. At this checkpoint the feature branch is **52 commits ahead and 14 commits behind `main`**, and PR #39 is reported non-mergeable.
+Current `main` advanced during the long Phase 1 batch. At this checkpoint the feature branch is **52 commits ahead and 14 commits behind `main`**. GitHub currently reports PR #39 as mergeable, but the base is stale and should be refreshed before more migration work.
 
 Before adding another fighter batch:
 
@@ -121,7 +121,7 @@ Known unrelated CI debt:
 
 ## Exact next task
 
-First refresh the Phase 1 work onto current `main` and restore a mergeable draft PR without losing the six completed canonical ledgers or their tests.
+First refresh the Phase 1 work onto current `main` without losing the six completed canonical ledgers or their tests, then confirm the draft PR remains mergeable and all workflows pass.
 
 After the sync passes all workflows, create the next five-fighter canonical ledger batch for:
 
