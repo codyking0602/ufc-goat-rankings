@@ -11,7 +11,8 @@ async function replaceInFile(path,replacements){
 }
 
 await replaceInFile('index.html',[
-  ['assets/data/display-overrides.js?v=display-overrides-20260710a-prime-record-clean','assets/data/display-overrides.js?v=display-overrides-20260713b-stage3-presentation-only']
+  ['assets/data/display-overrides.js?v=display-overrides-20260710a-prime-record-clean','assets/data/display-overrides.js?v=display-overrides-20260713b-stage3-presentation-only'],
+  ['assets/data/ranking-data-patches.js?v=ranking-data-patches-20260713x-stage3-loader-clean','assets/data/ranking-data-patches.js?v=ranking-data-patches-20260713y-stage3-clean-packets']
 ]);
 
 await replaceInFile('assets/data/ranking-data-patches.js',[
