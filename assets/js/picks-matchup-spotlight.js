@@ -25,7 +25,8 @@
         stance:'Switch',
         edges:['Wrestling control','Jab and fundamentals','Championship experience']
       },
-      clipUrl:''
+      clipUrl:'https://youtu.be/Ro0fEZyft_A',
+      clipLabel:'Watch Fight Spotlight'
     }
   };
 
@@ -70,12 +71,13 @@
   }
 
   function renderSpotlight(data){
+    const clipLabel=data.clipLabel || 'Watch Fight Spotlight';
     return `<div class="picks-spotlight-hero">
       <div class="picks-spotlight-kicker">${safe(data.kicker)}</div>
       <div class="picks-spotlight-fighters">${fighterHero(data.red,'red')}<div class="picks-spotlight-vs">VS</div>${fighterHero(data.blue,'blue')}</div>
     </div>
     <div class="picks-spotlight-body">
-      <section class="picks-spotlight-preview"><span>FIGHT PREVIEW</span><p>${safe(data.preview)}</p>${data.clipUrl ? `<a href="${safe(data.clipUrl)}" target="_blank" rel="noopener noreferrer">Watch recent fight clip ↗</a>` : ''}</section>
+      <section class="picks-spotlight-preview"><span>FIGHT PREVIEW</span><p>${safe(data.preview)}</p>${data.clipUrl ? `<a href="${safe(data.clipUrl)}" target="_blank" rel="noopener noreferrer">${safe(clipLabel)} ↗</a>` : ''}</section>
       <section class="picks-spotlight-section"><div class="picks-spotlight-section-title"><span>TALE OF THE TAPE</span></div><div class="picks-spotlight-tale">
         ${taleRow('Age',data.red.age,data.blue.age)}
         ${taleRow('Height',data.red.height,data.blue.height)}
