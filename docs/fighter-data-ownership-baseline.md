@@ -28,7 +28,7 @@ Latest verified browser capture: 2026-07-13 after the Charles Oliveira and five-
 | Charles Oliveira | Audited | Yes — 37 bouts | Passed | No |
 | Benson Henderson | Audited | Yes — 14 bouts | Passed | No |
 | Vitor Belfort | Audited | Yes — 26 bouts | Passed | No |
-| Deiveson Figueiredo | Audited | Yes — 23 bouts | Passed | No |
+| Deiveson Figueiredo | Audited | Yes — 22 bouts | Passed | No |
 | Frankie Edgar | Audited | Yes — 30 bouts | Passed | No |
 | Dominick Cruz | Audited | Yes — 10 bouts | Passed | No |
 
@@ -36,10 +36,10 @@ The five-person batch contains **102 UFC bouts**. Together with Charles, Phase 1
 
 ## Five-person batch reconciliation highlights
 
-- **Benson Henderson:** 11-3 UFC record, four official title-fight wins, 3.65 adjusted title credit, 10-3 prime, and 4.29 active elite years.
-- **Vitor Belfort:** 15-10 with one no contest, one official UFC title-fight win, and a separate UFC 12 tournament achievement that does not count as an official title fight.
-- **Deiveson Figueiredo:** complete current UFC record derives as **14-7-1**; Song Yadong is correctly recorded as a May 30, 2026 second-round guillotine loss. Benavidez I gives no title-win credit because Figueiredo missed championship weight.
-- **Frankie Edgar:** 18-11-1 UFC record, 13-6-1 prime, three official title-fight wins, and 10.18 capped active elite years.
+- **Benson Henderson:** 11-3 UFC record, four official title-fight wins, 3.65 adjusted title credit, 10-3 prime, 67.35% reviewed prime round control, and 4.29 active elite years.
+- **Vitor Belfort:** 15-10 with one no contest, one official UFC title-fight win, a separate UFC 12 tournament achievement, a 7-3 prime, and 64.29% reviewed prime round control.
+- **Deiveson Figueiredo:** complete current UFC record derives as **14-7-1**; Song Yadong is recorded as a May 30, 2026 second-round submission loss. Benavidez I gives no title-win credit because Figueiredo missed championship weight.
+- **Frankie Edgar:** 18-11-1 UFC record, 13-6-1 prime, three official title-fight wins, 68.0% reviewed prime round control, and 10.18 capped active elite years.
 - **Dominick Cruz:** WEC is fully excluded, including WEC 53. His UFC-only Faber II-to-Cejudo window derives **5.51** active elite years under the locked 18-month gap cap, not the legacy handwritten 6.5.
 
 ## Orphan identities
