@@ -91,6 +91,15 @@ jobs:
           UFC_APP_URL: http://127.0.0.1:4173/index.html?runtime-scoring-snapshot=1
         run: node scripts/capture-runtime-scoring-snapshot.mjs
 
+      - name: Enforce Stage 1 fighter parity
+        if: github.event_name == 'pull_request'
+        run: |
+          expected='ad6de49cab8db327871e219ba418e369e1895a21a622b598b0cfd46bce2f3887'
+          actual=$(node -p "require('./docs/runtime-scoring-snapshot.json').fighterDataSha256")
+          echo "Stage 1 expected: $expected"
+          echo "Current runtime:  $actual"
+          test "$actual" = "$expected"
+
       - name: Upload snapshot and diagnostics
         if: always()
         uses: actions/upload-artifact@v4
