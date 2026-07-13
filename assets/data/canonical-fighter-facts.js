@@ -4,7 +4,7 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-fighter-facts-20260713b-ledger-schema';
+  const VERSION='canonical-fighter-facts-20260713c-audited-rounds';
   const MODEL_AS_OF_DATE='2026-07-13';
   const VALID_STATUSES=new Set(['draft','audited','live']);
   const REVIEW_STATUSES=new Set(['locked','review','high-risk-review']);
@@ -13,27 +13,28 @@
   const METHOD_CATEGORIES=new Set(['ko-tko','submission','doctor-stoppage','decision','dq','no-contest','draw','other']);
   const DIVISION_CONTEXTS=new Set(['home','upward','downward','catchweight']);
   const CHAMPION_STATUSES=new Set(['reigning-champion','interim-champion','former-champion','title-challenger','contender','unranked','unknown']);
+  const ROUND_STATUSES=new Set(['audited','not-audited']);
   const FINISH_METHODS=new Set(['ko-tko','submission','doctor-stoppage']);
 
   const QUALITY_TIERS=Object.freeze({
     'champion-level':{credit:1.25,elite:true,topFive:true,ranked:true},
-    'top-five':{credit:1.00,elite:false,topFive:true,ranked:true},
+    'top-five':{credit:1,elite:false,topFive:true,ranked:true},
     'top-ten':{credit:.85,elite:false,topFive:false,ranked:true},
-    'ranked':{credit:.65,elite:false,topFive:false,ranked:true},
-    'solid':{credit:.45,elite:false,topFive:false,ranked:false},
+    ranked:{credit:.65,elite:false,topFive:false,ranked:true},
+    solid:{credit:.45,elite:false,topFive:false,ranked:false},
     'name-value':{credit:.25,elite:false,topFive:false,ranked:false},
-    'minimal':{credit:.10,elite:false,topFive:false,ranked:false},
-    'none':{credit:0,elite:false,topFive:false,ranked:false}
+    minimal:{credit:.1,elite:false,topFive:false,ranked:false},
+    none:{credit:0,elite:false,topFive:false,ranked:false}
   });
 
   const CHAMPIONSHIP_TYPES=Object.freeze({
-    'none':{baseCredit:0,officialTitleFight:false},
-    'normal':{baseCredit:1,officialTitleFight:true},
-    'interim':{baseCredit:.75,officialTitleFight:true},
+    none:{baseCredit:0,officialTitleFight:false},
+    normal:{baseCredit:1,officialTitleFight:true},
+    interim:{baseCredit:.75,officialTitleFight:true},
     'vacant-undisputed':{baseCredit:.9,officialTitleFight:true},
     'second-division-undisputed':{baseCredit:1.25,officialTitleFight:true},
     'vacant-second-division':{baseCredit:1.15,officialTitleFight:true},
-    'tournament':{baseCredit:0,officialTitleFight:false},
+    tournament:{baseCredit:0,officialTitleFight:false},
     'retention-draw':{baseCredit:0,officialTitleFight:true}
   });
 
@@ -59,8 +60,7 @@
   ];
 
   const records=new Map();
-  const key=value=>String(value||'').trim().toLowerCase().normalize('NFD')
-    .replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
+  const key=value=>String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
   const clone=value=>value===undefined?undefined:JSON.parse(JSON.stringify(value));
   const valueAt=(obj,path)=>path.split('.').reduce((value,part)=>value?.[part],obj);
   const finite=value=>Number.isFinite(Number(value));
@@ -88,6 +88,23 @@
     if(!REVIEW_STATUSES.has(value))errors.push(`${path} must be locked, review, or high-risk-review.`);
   }
 
+  function validateRounds(rounds,path,record,errors){
+    if(!rounds||!ROUND_STATUSES.has(rounds.status)){
+      errors.push(`${path}.status must be audited or not-audited.`);
+      return;
+    }
+    if(rounds.status==='audited'){
+      ['won','lost','drawn'].forEach(field=>{
+        if(!finite(rounds[field])||Number(rounds[field])<0)errors.push(`${path}.${field} must be a non-negative number when rounds are audited.`);
+      });
+      validateReviewStatus(rounds.reviewStatus,`${path}.reviewStatus`,errors,record.status!=='draft');
+      return;
+    }
+    ['won','lost','drawn','reviewStatus'].forEach(field=>{
+      if(rounds[field]!==undefined&&rounds[field]!==null&&rounds[field]!=='')errors.push(`${path}.${field} must be omitted while rounds are not-audited.`);
+    });
+  }
+
   function validateFight(fight,index,record,seenIds,errors){
     const path=`fights[${index}]`;
     if(!String(fight?.id||'').trim())errors.push(`${path}.id is required.`);
@@ -101,19 +118,13 @@
     if(!OFFICIAL_RESULTS.has(fight?.officialResult))errors.push(`${path}.officialResult is invalid.`);
     if(!SCORING_DISPOSITIONS.has(fight?.scoringDisposition))errors.push(`${path}.scoringDisposition is invalid.`);
 
-    const expectedDisposition={win:'count-win',loss:'count-loss',draw:'count-draw','no-contest':'excluded-no-contest'}[fight?.officialResult];
-    if(fight?.scoringDisposition!=='technical-exception'&&expectedDisposition&&fight?.scoringDisposition!==expectedDisposition){
-      errors.push(`${path}.scoringDisposition does not match officialResult.`);
-    }
+    const expected={win:'count-win',loss:'count-loss',draw:'count-draw','no-contest':'excluded-no-contest'}[fight?.officialResult];
+    if(fight?.scoringDisposition!=='technical-exception'&&expected&&fight?.scoringDisposition!==expected)errors.push(`${path}.scoringDisposition does not match officialResult.`);
     if(fight?.scoringDisposition==='technical-exception'&&!String(fight?.technicalExceptionNote||'').trim())errors.push(`${path}.technicalExceptionNote is required for technical exceptions.`);
 
     if(!METHOD_CATEGORIES.has(fight?.method?.category))errors.push(`${path}.method.category is invalid.`);
     if(fight?.method?.round!==undefined&&(!Number.isInteger(fight.method.round)||fight.method.round<1||fight.method.round>fight.scheduledRounds))errors.push(`${path}.method.round is invalid.`);
-
-    ['won','lost','drawn'].forEach(field=>{
-      if(!finite(fight?.rounds?.[field])||Number(fight.rounds[field])<0)errors.push(`${path}.rounds.${field} must be a non-negative number.`);
-    });
-    validateReviewStatus(fight?.rounds?.reviewStatus,`${path}.rounds.reviewStatus`,errors,record.status!=='draft');
+    validateRounds(fight?.rounds,`${path}.rounds`,record,errors);
 
     const quality=fight?.opponentContext;
     if(!quality||!Object.prototype.hasOwnProperty.call(QUALITY_TIERS,quality.qualityTier))errors.push(`${path}.opponentContext.qualityTier is invalid.`);
@@ -140,6 +151,13 @@
     }
   }
 
+  function phaseIndexes(record){
+    const fights=record?.fights||[];
+    const start=fights.findIndex(fight=>fight.id===record?.primeWindow?.startFightId);
+    const end=record?.primeWindow?.open?fights.length-1:fights.findIndex(fight=>fight.id===record?.primeWindow?.endFightId);
+    return {start,end};
+  }
+
   function validate(record){
     const errors=[];
     if(!record||typeof record!=='object')return {valid:false,errors:['Record must be an object.']};
@@ -150,7 +168,8 @@
     const derived=findDerivedFields(record);
     if(derived.length)errors.push(`Derived score/aggregate fields are forbidden: ${derived.join(', ')}`);
 
-    if(record.status==='audited'||record.status==='live'){
+    const audited=record.status==='audited'||record.status==='live';
+    if(audited){
       REQUIRED_AUDITED_PATHS.forEach(path=>{
         const value=valueAt(record,path);
         if(value===undefined||value===null||value==='')errors.push(`${path} is required for ${record.status} records.`);
@@ -168,7 +187,7 @@
     validateReviewStatus(record?.primeWindow?.reviewStatus,'primeWindow.reviewStatus',errors,record.status!=='draft');
 
     const fights=Array.isArray(record.fights)?record.fights:[];
-    if((record.status==='audited'||record.status==='live')&&!fights.length)errors.push(`fights must contain the complete UFC ledger for ${record.status} records.`);
+    if(audited&&!fights.length)errors.push(`fights must contain the complete UFC ledger for ${record.status} records.`);
     const seenIds=new Set();
     fights.forEach((fight,index)=>validateFight(fight,index,record,seenIds,errors));
     for(let index=1;index<fights.length;index+=1){
@@ -185,10 +204,13 @@
       else if(!fightIds.has(endId))errors.push('primeWindow.endFightId must exist in fights.');
     }
     if(record?.primeWindow?.open===true&&endId)errors.push('primeWindow.endFightId must be empty when the prime window is open.');
-    if(startId&&endId){
-      const startIndex=fights.findIndex(fight=>fight.id===startId);
-      const endIndex=fights.findIndex(fight=>fight.id===endId);
-      if(startIndex>endIndex)errors.push('primeWindow.startFightId cannot occur after endFightId.');
+
+    const {start,end}=phaseIndexes(record);
+    if(startId&&endId&&start>end)errors.push('primeWindow.startFightId cannot occur after endFightId.');
+    if(audited&&start>=0&&end>=start){
+      fights.slice(start,end+1).forEach((fight,offset)=>{
+        if(fight?.rounds?.status!=='audited')errors.push(`fights[${start+offset}].rounds must be audited because the fight is inside the prime window.`);
+      });
     }
 
     const segments=record?.divisionStrength?.segments||[];
@@ -201,13 +223,6 @@
     });
 
     return {valid:errors.length===0,errors};
-  }
-
-  function phaseIndexes(record){
-    const fights=record?.fights||[];
-    const start=fights.findIndex(fight=>fight.id===record?.primeWindow?.startFightId);
-    const end=record?.primeWindow?.open?fights.length-1:fights.findIndex(fight=>fight.id===record?.primeWindow?.endFightId);
-    return {start,end};
   }
 
   function dispositionCounts(fights){
@@ -243,7 +258,7 @@
     for(let index=1;index<dates.length;index+=1)days+=Math.min((dates[index]-dates[index-1])/86_400_000,capDays);
     if(record?.primeWindow?.open){
       const asOf=Date.parse(`${MODEL_AS_OF_DATE}T00:00:00Z`);
-      if(asOf>dates[dates.length-1])days+=Math.min((asOf-dates[dates.length-1])/86_400_000,capDays);
+      if(asOf>dates.at(-1))days+=Math.min((asOf-dates.at(-1))/86_400_000,capDays);
     }
     return round2(days/365.25);
   }
@@ -266,14 +281,26 @@
     const primeFinishWins=primeFights.filter(fight=>fight.scoringDisposition==='count-win'&&FINISH_METHODS.has(fight?.method?.category)).length;
     const primeStoppageLosses=primeFights.filter(fight=>fight.scoringDisposition==='count-loss'&&FINISH_METHODS.has(fight?.method?.category)).length;
     const rounds=primeFights.reduce((totals,fight)=>{
-      totals.won+=Number(fight?.rounds?.won||0);
-      totals.lost+=Number(fight?.rounds?.lost||0);
-      totals.drawn+=Number(fight?.rounds?.drawn||0);
+      if(fight?.rounds?.status!=='audited')return totals;
+      totals.won+=Number(fight.rounds.won||0);
+      totals.lost+=Number(fight.rounds.lost||0);
+      totals.drawn+=Number(fight.rounds.drawn||0);
       return totals;
     },{won:0,lost:0,drawn:0});
     const roundTotal=rounds.won+rounds.lost+rounds.drawn;
-    const titleRows=fights.map(fight=>({fightId:fight.id,credit:round2(championshipCredit(fight)),officialTitleFight:Boolean(CHAMPIONSHIP_TYPES[fight?.championshipContext?.type]?.officialTitleFight),eligible:fight?.championshipContext?.fighterEligible!==false,result:fight.scoringDisposition}));
-    const qualityWins=fights.filter(fight=>fight.scoringDisposition==='count-win').map(fight=>({fightId:fight.id,opponent:fight.opponent,tier:fight?.opponentContext?.qualityTier||'none',credit:QUALITY_TIERS[fight?.opponentContext?.qualityTier]?.credit||0}));
+    const titleRows=fights.map(fight=>({
+      fightId:fight.id,
+      credit:round2(championshipCredit(fight)),
+      officialTitleFight:Boolean(CHAMPIONSHIP_TYPES[fight?.championshipContext?.type]?.officialTitleFight),
+      eligible:fight?.championshipContext?.fighterEligible!==false,
+      result:fight.scoringDisposition
+    }));
+    const qualityWins=fights.filter(fight=>fight.scoringDisposition==='count-win').map(fight=>({
+      fightId:fight.id,
+      opponent:fight.opponent,
+      tier:fight?.opponentContext?.qualityTier||'none',
+      credit:QUALITY_TIERS[fight?.opponentContext?.qualityTier]?.credit||0
+    }));
     const throughPrime=end>=0?fights.slice(0,end+1):[];
     const exposure=dispositionCounts(throughPrime);
 
@@ -316,7 +343,19 @@
       },
       lossExposure:{
         throughPrimeUfcFights:exposure.wins+exposure.losses+exposure.draws,
-        countedLosses:fights.filter(fight=>fight.scoringDisposition==='count-loss').map(fight=>({fightId:fight.id,phase:(()=>{const index=fights.indexOf(fight);return index<start?'pre-prime':index<=end?'prime':'post-prime';})(),opponentTier:fight?.opponentContext?.qualityTier||'none',divisionContext:fight?.lossClassification?.divisionContext||'home',finished:FINISH_METHODS.has(fight?.method?.category),competitive:fight?.lossClassification?.competitive!==false,overrideRule:fight?.lossClassification?.overrideRule||null}))
+        countedLosses:fights.filter(fight=>fight.scoringDisposition==='count-loss').map((fight,index)=>{
+          const fightIndex=fights.indexOf(fight);
+          return {
+            fightId:fight.id,
+            phase:fightIndex<start?'pre-prime':fightIndex<=end?'prime':'post-prime',
+            opponentTier:fight?.opponentContext?.qualityTier||'none',
+            divisionContext:fight?.lossClassification?.divisionContext||'home',
+            finished:FINISH_METHODS.has(fight?.method?.category),
+            competitive:fight?.lossClassification?.competitive!==false,
+            overrideRule:fight?.lossClassification?.overrideRule||null,
+            index
+          };
+        })
       }
     };
   }
@@ -385,7 +424,8 @@
       scoringDispositions:Array.from(SCORING_DISPOSITIONS),
       methodCategories:Array.from(METHOD_CATEGORIES),
       divisionContexts:Array.from(DIVISION_CONTEXTS),
-      championStatuses:Array.from(CHAMPION_STATUSES)
+      championStatuses:Array.from(CHAMPION_STATUSES),
+      roundStatuses:Array.from(ROUND_STATUSES)
     },
     derivedOnlyFields:Array.from(DERIVED_ONLY_FIELDS),
     requiredAuditedPaths:REQUIRED_AUDITED_PATHS.slice(),
