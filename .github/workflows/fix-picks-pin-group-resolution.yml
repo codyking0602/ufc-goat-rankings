@@ -1,0 +1,68 @@
+name: Fix Picks PIN Group Resolution
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-picks-pin-group-resolution.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fix stale URL group resolution
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          js_path = Path('assets/js/picks-member-pin.js')
+          js = js_path.read_text()
+          old = """  function resolveCode(){
+    const url=new URL(window.location.href);
+    return normalizeCode(url.searchParams.get('group'))
+      || (storedCodes(GROUP_TOKEN_PREFIX).length===1 ? storedCodes(GROUP_TOKEN_PREFIX)[0] : '');
+  }
+"""
+          new = """  function resolveCode(){
+    const url=new URL(window.location.href);
+    const urlCode=normalizeCode(url.searchParams.get('group'));
+    const tokenCodes=storedCodes(GROUP_TOKEN_PREFIX);
+    const adminCodes=storedCodes(GROUP_ADMIN_PREFIX);
+
+    if(urlCode && (memberToken(urlCode) || adminToken(urlCode))) return urlCode;
+    if(tokenCodes.length===1) return tokenCodes[0];
+    if(adminCodes.length===1) return adminCodes[0];
+    return urlCode;
+  }
+"""
+          if old not in js and new not in js:
+              raise SystemExit('Expected resolveCode block was not found.')
+          js_path.write_text(js.replace(old, new))
+
+          index_path = Path('index.html')
+          index = index_path.read_text()
+          old_version = 'picks-member-pin-20260712a'
+          new_version = 'picks-member-pin-20260713b-group-resolution'
+          if old_version not in index and new_version not in index:
+              raise SystemExit('Expected PIN asset version was not found.')
+          index_path.write_text(index.replace(old_version, new_version))
+          PY
+      - name: Validate PIN JavaScript
+        run: node --check assets/js/picks-member-pin.js
+      - name: Commit fix
+        run: |
+          if git diff --quiet -- assets/js/picks-member-pin.js index.html; then
+            echo 'PIN group resolution already fixed.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/js/picks-member-pin.js index.html
+          git commit -m 'Fix Picks PIN group resolution'
+          git push
