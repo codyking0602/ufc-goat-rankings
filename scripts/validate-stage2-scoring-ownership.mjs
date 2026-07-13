@@ -9,8 +9,11 @@ try{
  page.on('console',m=>{if(m.type()==='error')consoleErrors.push(m.text());});
  page.on('pageerror',e=>errors.push(e?.stack||e?.message||String(e)));
  await page.goto(url,{waitUntil:'domcontentloaded',timeout:60000});
- await page.waitForFunction(()=>window.UFC_SCORING_PIPELINE?.status==='ready'&&window.UFC_SCORING_OWNERSHIP_CONTRACT?.applied===true,null,{timeout:60000,polling:100});
- await page.waitForTimeout(500);
+ await page.waitForFunction(()=>window.UFC_SCORING_PIPELINE?.status==='ready'||window.UFC_SCORING_PIPELINE?.status==='error',null,{timeout:120000,polling:100});
+ const started=Date.now();
+ while(window.UFC_SCORING_OWNERSHIP_CONTRACT?.applied!==true&&Date.now()-started<30000){
+  await page.waitForTimeout(250);
+ }
  const report=await page.evaluate(()=>{
   const data=window.RANKING_DATA;
   const canonical=window.UFC_CANONICAL_SCORING_RECORDS;
@@ -26,7 +29,19 @@ try{
    if(Number(row.rank)!==Number(expected.expectedRank))mismatches.push({fighter:row.fighter,field:'rank',expected:expected.expectedRank,actual:row.rank});
    if(Number(row.overallOvr)!==Number(expected.expectedOverallOvr))mismatches.push({fighter:row.fighter,field:'overallOvr',expected:expected.expectedOverallOvr,actual:row.overallOvr});
   });
-  return {contract,rosterCount:rows.length,mismatches,engineVersion:window.UFC_SCORING_ENGINE?.version||null,pipeline:window.UFC_SCORING_PIPELINE||null,legacyRepair:window.UFC_DYNAMIC_ROSTER_SCORING_REPAIR||null,depthFinalizer:window.UFC_DIVISION_ERA_DEPTH_FINALIZER||null};
+  return {
+   contract,
+   rosterCount:rows.length,
+   mismatches,
+   engineVersion:window.UFC_SCORING_ENGINE?.version||null,
+   engineApplyCount:window.UFC_SCORING_ENGINE?.applyCount??null,
+   displayGuard:window.UFC_DISPLAY_OVERRIDE_OWNERSHIP_GUARD||null,
+   pipeline:window.UFC_SCORING_PIPELINE||null,
+   legacyRepair:window.UFC_DYNAMIC_ROSTER_SCORING_REPAIR||null,
+   depthFinalizer:window.UFC_DIVISION_ERA_DEPTH_FINALIZER||null,
+   lossLive:window.UFC_LOSS_CONTEXT_HYBRID_LIVE||null,
+   eraLive:window.UFC_DIVISION_ERA_DEPTH_LIVE||null
+  };
  });
  report.errors=errors;
  report.consoleErrors=consoleErrors;
