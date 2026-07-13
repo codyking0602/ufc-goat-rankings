@@ -1,7 +1,7 @@
 // App-facing Royce links/stats plus the synchronous late-registry bridge.
 (function(){
   'use strict';
-  const VERSION='royce-app-links-stats-20260712c-batch-eight-loader';
+  const VERSION='royce-app-links-stats-20260712d-batch-eight-audit-loader';
   if(typeof DISPLAY_OVERRIDES==='undefined') return;
 
   const fighter='Royce Gracie';
@@ -31,28 +31,44 @@
     return qualityStats;
   }
 
+  function writeScript(src,attribute){
+    if(document.querySelector(`script[${attribute}]`)) return;
+    document.write(`<script src="${src}" ${attribute}="true"><\/script>`);
+  }
+  function appendScript(src,attribute){
+    return new Promise(resolve=>{
+      if(document.querySelector(`script[${attribute}]`)){resolve();return;}
+      const script=document.createElement('script');
+      script.src=src;
+      script.async=false;
+      script.setAttribute(attribute,'true');
+      script.onload=resolve;
+      script.onerror=resolve;
+      document.head.appendChild(script);
+    });
+  }
   function loadBatchEightRegistry(){
-    if(window.UFC_BATCH_EIGHT_FIGHTER_REGISTRY) return;
-    const dataSrc='assets/data/canonical-fighter-registry-batch-eight-data.js?v=canonical-fighter-registry-batch-eight-data-20260712a';
+    const dataSrc='assets/data/canonical-fighter-registry-batch-eight-data.js?v=canonical-fighter-registry-batch-eight-data-20260712b';
     const registrySrc='assets/data/canonical-fighter-registry-batch-eight.js?v=canonical-fighter-registry-batch-eight-20260712a';
+    const auditDataSrc='assets/data/canonical-fighter-registry-batch-eight-audit-data-patch.js?v=batch-eight-audit-data-patch-20260712b';
+    const auditFixSrc='assets/data/canonical-fighter-registry-batch-eight-audit-fixes.js?v=batch-eight-audit-fixes-20260712b';
     if(document.readyState==='loading'&&document.currentScript){
-      document.write(`<script src="${dataSrc}" data-batch-eight-fighter-data="true"><\/script>`);
-      document.write(`<script src="${registrySrc}" data-batch-eight-fighter-registry="true"><\/script>`);
+      if(!window.UFC_BATCH_EIGHT_FIGHTER_REGISTRY){
+        writeScript(dataSrc,'data-batch-eight-fighter-data');
+        writeScript(registrySrc,'data-batch-eight-fighter-registry');
+      }
+      writeScript(auditDataSrc,'data-batch-eight-audit-data');
+      writeScript(auditFixSrc,'data-batch-eight-audit-fixes');
       return;
     }
-    if(document.querySelector('script[data-batch-eight-fighter-registry]')) return;
-    const dataScript=document.createElement('script');
-    dataScript.src=dataSrc;
-    dataScript.async=false;
-    dataScript.setAttribute('data-batch-eight-fighter-data','true');
-    dataScript.onload=()=>{
-      const registryScript=document.createElement('script');
-      registryScript.src=registrySrc;
-      registryScript.async=false;
-      registryScript.setAttribute('data-batch-eight-fighter-registry','true');
-      document.head.appendChild(registryScript);
-    };
-    document.head.appendChild(dataScript);
+    (async()=>{
+      if(!window.UFC_BATCH_EIGHT_FIGHTER_REGISTRY){
+        await appendScript(dataSrc,'data-batch-eight-fighter-data');
+        await appendScript(registrySrc,'data-batch-eight-fighter-registry');
+      }
+      await appendScript(auditDataSrc,'data-batch-eight-audit-data');
+      await appendScript(auditFixSrc,'data-batch-eight-audit-fixes');
+    })();
   }
 
   applyQualityStats();
@@ -66,6 +82,7 @@
     signatureFightUrl:override.signatureFightUrl,
     qualityStats,
     batchEightRegistryLoader:true,
+    batchEightAuditLoader:true,
     applied:true
   };
   document.documentElement.setAttribute('data-royce-watch-links',VERSION);
