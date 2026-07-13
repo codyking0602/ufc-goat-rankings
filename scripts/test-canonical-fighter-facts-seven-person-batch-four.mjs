@@ -72,7 +72,7 @@ const hamill=jones.fights.find(fight=>fight.opponent==='Matt Hamill');
 assert.equal(hamill.scoringDisposition,'technical-exception');
 assert.equal(hamill.lossClassification.competitive,false);
 assert.equal(api.deriveFor('Jon Jones').lossExposure.countedLosses.length,0,'Hamill DQ must not become a counted competitive loss');
-assert.equal(api.deriveFor('Jon Jones').lossExposure.throughPrimeUfcFights,16,'Jones through-prime exposure excludes the Cormier no contest');
+assert.equal(api.deriveFor('Jon Jones').lossExposure.throughPrimeUfcFights,21,'Jones exposure through the prime endpoint includes pre-prime scored UFC bouts while excluding Hamill and the Cormier no contest');
 assert.equal(api.deriveFor('Jon Jones').lossExposure.countedLosses.some(row=>row.fightId.includes('stipe-miocic')),false);
 
 const gspLosses=api.deriveFor('Georges St-Pierre').lossExposure.countedLosses;
