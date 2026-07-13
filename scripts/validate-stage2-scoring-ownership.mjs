@@ -8,6 +8,15 @@ try{
  const consoleErrors=[];
  page.on('console',m=>{if(m.type()==='error')consoleErrors.push(m.text());});
  page.on('pageerror',e=>errors.push(e?.stack||e?.message||String(e)));
+ await page.addInitScript(()=>{
+  const original=Node.prototype.appendChild;
+  Node.prototype.appendChild=function(node){
+   if(node?.tagName==='SCRIPT'&&String(node.src||'').includes('canonical-prime-records')){
+    window.__UFC_CANONICAL_PRIME_LOADER_TRACE={src:node.src,outerHTML:node.outerHTML,stack:String(new Error('canonical-prime-record-loader').stack||'')};
+   }
+   return original.call(this,node);
+  };
+ });
  await page.goto(url,{waitUntil:'domcontentloaded',timeout:60000});
  await page.waitForFunction(()=>window.UFC_SCORING_PIPELINE?.status==='ready'||window.UFC_SCORING_PIPELINE?.status==='error',null,{timeout:120000,polling:100});
  await page.waitForFunction(()=>window.UFC_SCORING_OWNERSHIP_CONTRACT?.applied===true,null,{timeout:30000,polling:100}).catch(()=>{});
@@ -65,6 +74,7 @@ try{
    engineVersion:window.UFC_SCORING_ENGINE?.version||null,
    engineApplyCount:window.UFC_SCORING_ENGINE?.applyCount??null,
    displayGuard:guard?{version:guard.version,installed:guard.installed,role:guard.role,protectedCount:guard.protectedCount,forbiddenDirectCount:guard.forbiddenDirect?.length||0,forbiddenNestedCount:guard.forbiddenNested?.length||0,forbiddenCategoryCount:guard.forbiddenCategory?.length||0}:null,
+   canonicalPrimeLoaderTrace:window.__UFC_CANONICAL_PRIME_LOADER_TRACE||null,
    pipeline:{version:window.UFC_SCORING_PIPELINE?.version||null,status:window.UFC_SCORING_PIPELINE?.status||null,mode:window.UFC_SCORING_PIPELINE?.mode||null},
    legacyRepair:legacyRepair?{version:legacyRepair.version,applied:legacyRepair.applied===true,status:legacyRepair.status||null,applyCount:legacyRepair.applyCount??null,rosterCount:legacyRepair.rosterCount??null,scoreMismatchCount:(legacyRepair.scoreMismatches||[]).length}:null,
    depthFinalizer:depthFinalizer?{version:depthFinalizer.version,applied:depthFinalizer.applied===true,status:depthFinalizer.status||null,applyCount:depthFinalizer.applyCount??null,rosterCount:depthFinalizer.rosterCount??null}:null,
