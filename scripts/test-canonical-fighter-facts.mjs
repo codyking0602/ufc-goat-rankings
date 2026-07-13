@@ -18,7 +18,7 @@ const fight=(overrides={})=>({
   officialResult:'win',
   scoringDisposition:'count-win',
   method:{category:'ko-tko',round:1,detail:'Punches'},
-  rounds:{won:1,lost:0,drawn:0,reviewStatus:'locked'},
+  rounds:{status:'audited',won:1,lost:0,drawn:0,reviewStatus:'locked'},
   opponentContext:{qualityTier:'champion-level',championStatus:'reigning-champion',reviewStatus:'locked',note:'Test classification.'},
   championshipContext:{type:'normal',fighterEligible:true,opponentStrength:1,reviewStatus:'locked',note:'Test title win.'},
   ...overrides
@@ -42,7 +42,7 @@ const validRecord=()=>({
       scoringDisposition:'technical-exception',
       technicalExceptionNote:'Official DQ loss excluded from competitive scoring.',
       method:{category:'dq',round:1,detail:'Disqualification'},
-      rounds:{won:1,lost:0,drawn:0,reviewStatus:'locked'},
+      rounds:{status:'not-audited'},
       opponentContext:{qualityTier:'top-ten',championStatus:'contender',reviewStatus:'locked'},
       championshipContext:{type:'none'},
       lossClassification:{divisionContext:'home',competitive:false,reviewStatus:'locked',note:'Not a competitive defeat.'}
@@ -58,7 +58,7 @@ const validRecord=()=>({
       officialResult:'loss',
       scoringDisposition:'count-loss',
       method:{category:'submission',round:2,detail:'Rear-naked choke'},
-      rounds:{won:0,lost:2,drawn:0,reviewStatus:'locked'},
+      rounds:{status:'audited',won:0,lost:2,drawn:0,reviewStatus:'locked'},
       opponentContext:{qualityTier:'top-five',championStatus:'title-challenger',reviewStatus:'locked'},
       championshipContext:{type:'none'},
       lossClassification:{divisionContext:'home',competitive:true,reviewStatus:'locked',note:'Prime elite loss.'}
@@ -112,6 +112,18 @@ badPrimeEnd.primeWindow.endFightId='missing-fight';
 const badPrimeValidation=api.validate(badPrimeEnd);
 assert.equal(badPrimeValidation.valid,false);
 assert.ok(badPrimeValidation.errors.some(error=>error.includes('endFightId must exist')));
+
+const unauditedPrimeRounds=validRecord();
+unauditedPrimeRounds.fights[1].rounds={status:'not-audited'};
+const roundValidation=api.validate(unauditedPrimeRounds);
+assert.equal(roundValidation.valid,false);
+assert.ok(roundValidation.errors.some(error=>error.includes('inside the prime window')));
+
+const fakeUnauditedTotals=validRecord();
+fakeUnauditedTotals.fights[0].rounds={status:'not-audited',won:0,lost:0,drawn:0};
+const fakeTotalsValidation=api.validate(fakeUnauditedTotals);
+assert.equal(fakeTotalsValidation.valid,false);
+assert.ok(fakeTotalsValidation.errors.some(error=>error.includes('must be omitted while rounds are not-audited')));
 
 const missingTechnicalNote=validRecord();
 delete missingTechnicalNote.fights[0].technicalExceptionNote;
