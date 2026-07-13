@@ -1,13 +1,14 @@
 // App-facing Royce links/stats plus the synchronous late-registry bridge.
 (function(){
   'use strict';
-  const VERSION='royce-app-links-stats-20260712g-batch-eight-stat-lock';
+  const VERSION='royce-app-links-stats-20260712h-batch-eight-final-audit';
   if(typeof DISPLAY_OVERRIDES==='undefined') return;
 
   const fighter='Royce Gracie';
   const qualityStats={
     eliteWins:2,
     elitePlusWins:2,
+    topFiveWins:2,
     topFivePlusWins:2,
     rankedQualityWins:7
   };
@@ -27,7 +28,7 @@
       row.snapshotStats={...(row.snapshotStats||{}),...qualityStats};
     });
     const compare=window.COMPARE_PROFILES?.[fighter];
-    if(compare) compare.legacyStats={...(compare.legacyStats||{}),eliteWins:2,elitePlusWins:2,topFivePlusWins:2};
+    if(compare) compare.legacyStats={...(compare.legacyStats||{}),eliteWins:2,elitePlusWins:2,topFiveWins:2,topFivePlusWins:2};
     return qualityStats;
   }
 
@@ -50,8 +51,8 @@
   function loadBatchEightRegistry(){
     const dataSrc='assets/data/canonical-fighter-registry-batch-eight-data.js?v=canonical-fighter-registry-batch-eight-data-20260712b';
     const registrySrc='assets/data/canonical-fighter-registry-batch-eight.js?v=canonical-fighter-registry-batch-eight-20260712a';
-    const auditDataSrc='assets/data/canonical-fighter-registry-batch-eight-audit-data-patch.js?v=batch-eight-audit-data-patch-20260712b';
-    const auditFixSrc='assets/data/canonical-fighter-registry-batch-eight-audit-fixes.js?v=batch-eight-audit-fixes-20260712b';
+    const auditDataSrc='assets/data/canonical-fighter-registry-batch-eight-audit-data-patch.js?v=batch-eight-audit-data-patch-20260712c';
+    const auditFixSrc='assets/data/canonical-fighter-registry-batch-eight-audit-fixes.js?v=batch-eight-audit-fixes-20260712c';
     const photoSrc='assets/data/canonical-fighter-registry-batch-eight-photos.js?v=batch-eight-photos-20260712b';
     const lateStatSrc='assets/data/canonical-fighter-registry-batch-eight-late-stat-lock.js?v=batch-eight-late-stat-lock-20260712a';
     if(document.readyState==='loading'&&document.currentScript){
