@@ -2,7 +2,7 @@
 (function(){
   'use strict';
 
-  const VERSION='quality-wins-audit-cruz-ilia-20260712b-evidence-sync';
+  const VERSION='quality-wins-audit-cruz-ilia-20260713a-category-only';
   let applied=false;
   let attempts=0;
 
@@ -76,8 +76,7 @@
       topFivePlusWins:summary.topFivePlusWins,
       rankedQualityWins:summary.rankedQualityWins,
       bestQualityWins:(summary.bestWins||[]).slice(0,6).join(', '),
-      winProfile:summary.winProfile,
-      opponentQualityScore:liveScore
+      winProfile:summary.winProfile
     };
     if(target.categories?.opponentQuality)delete target.categories.opponentQuality;
     const packet=window.UFC_FIGHTER_PACKETS?.[fighter];
@@ -140,19 +139,6 @@
     patchDisplay(fighter,summary,liveScore);
     return {fighter,liveScore,rawCredit:summary.rawCredit,diminishedCredit:summary.diminishedCredit,bestWins:summary.bestWins||[],elitePlusWins:summary.elitePlusWins,topFivePlusWins:summary.topFivePlusWins,rankedQualityWins:summary.rankedQualityWins};
   }
-  function syncRanksAndOverrides(){
-    const overrides=displayOverrides();
-    if(!overrides)return;
-    [...(window.RANKING_DATA?.men||[]),...(window.RANKING_DATA?.women||[])].forEach(row=>{
-      if(!row?.fighter)return;
-      overrides[row.fighter]=overrides[row.fighter]||{};
-      overrides[row.fighter].allTimeRank=row.rank;
-      overrides[row.fighter].rank=row.rank;
-      overrides[row.fighter].overallOvr=row.overallOvr;
-      overrides[row.fighter].totalScore=row.totalScore;
-      overrides[row.fighter].rawScore=row.rawScore;
-    });
-  }
   function apply(){
     if(applied)return window.UFC_QUALITY_WINS_AUDIT_CRUZ_ILIA;
     attempts+=1;
@@ -179,8 +165,6 @@
     if(data.meta?.opponentQualityLive)data.meta.opponentQualityLive.approvedQualityWinsAuditVersion=VERSION;
     installEvidenceOverride(shadow);
 
-    const finalScoreResult=window.UFC_FINAL_SCORE_ENGINE?.apply?.('quality-wins-audit-cruz-ilia')||null;
-    syncRanksAndOverrides();
     if(typeof window.refresh==='function'){try{window.refresh();}catch(error){}}
 
     applied=true;
@@ -189,7 +173,7 @@
       'Ilia Topuria':{liveScore:14.71,elitePlusWins:3,topFivePlusWins:4,rankedQualityWins:5}
     };
     const validation=results.map(row=>({fighter:row.fighter,expected:expected[row.fighter],actual:{liveScore:row.liveScore,elitePlusWins:row.elitePlusWins,topFivePlusWins:row.topFivePlusWins,rankedQualityWins:row.rankedQualityWins},passed:Math.abs(row.liveScore-expected[row.fighter].liveScore)<0.001&&row.elitePlusWins===expected[row.fighter].elitePlusWins&&row.topFivePlusWins===expected[row.fighter].topFivePlusWins&&row.rankedQualityWins===expected[row.fighter].rankedQualityWins}));
-    const result={version:VERSION,applied:true,attempts,changes,results,validation,validationPassed:validation.every(row=>row.passed),finalScoreResult,appliedAt:new Date().toISOString()};
+    const result={version:VERSION,applied:true,attempts,changes,results,validation,validationPassed:validation.every(row=>row.passed),appliedAt:new Date().toISOString()};
     window.UFC_QUALITY_WINS_AUDIT_CRUZ_ILIA=result;
     document.documentElement.setAttribute('data-quality-wins-audit-cruz-ilia',VERSION);
     return result;

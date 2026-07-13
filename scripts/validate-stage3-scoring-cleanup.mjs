@@ -186,6 +186,10 @@ try{
     ||runtime.rosterCount!==72
     ||runtime.mismatches.length>0
     ||runtime.engineApplyCount!==1
+    ||Number(runtime.engineRejectedApplyCount||0)!==0
+    ||runtime.engineApplyAttempts.length!==1
+    ||runtime.engineApplyAttempts[0]?.reason!=='stage3-scoring-ownership-finalizer'
+    ||runtime.engineApplyAttempts[0]?.accepted!==true
     ||runtime.finalEngineAliasIsCanonical!==true
     ||runtime.legacyGlobals.dynamicRosterRepair!==false
     ||runtime.legacyGlobals.eraDepthFinalizer!==false

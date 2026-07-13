@@ -1,7 +1,7 @@
 // Apex Peak category-only live promoter.
 // Applies locked Apex Peak bonuses and audit metadata. Overall scoring is owned by final-score-engine.js.
 (function(){
-  const VERSION='apex-peak-live-bonus-20260710a-category-only';
+  const VERSION='apex-peak-live-bonus-20260713a-category-only';
   const DATA=window.RANKING_DATA;
   const RUBRIC={twoPerformanceStrength:{label:'Two-performance strength',max:2},proof:{label:'Proof',max:1.75},bestFighterClaim:{label:'Best-fighter claim',max:1.25},aura:{label:'Aura',max:1},total:{label:'Apex Peak bonus',max:6}};
   const RULES={window:'Best two UFC wins within 24 months',totalMax:6,performances:'Two selected UFC wins are rated individually; their average maps into Two-performance strength.',noContests:'No contests do not count as Apex performances.',losses:'Losses are not selected as Apex performances, but can cap Best-Fighter Claim or Aura.'};
@@ -146,7 +146,6 @@
       DATA.meta.apexPeakRule='Apex Peak adds after the 100-point weighted base.';
     }
 
-    const finalScoreResult=window.UFC_FINAL_SCORE_ENGINE?.apply?.('apex-peak-category-update')||null;
     const boardRows=[...(DATA.men||[]),...(DATA.women||[])];
     const uniqueFighters=[...new Set(allRows().map(row=>row.fighter))];
     const status={
@@ -159,8 +158,6 @@
       categoryOnly:true,
       mutatesCategoryScores:true,
       mutatesOverallScores:false,
-      finalScoreEngineVersion:window.UFC_FINAL_SCORE_ENGINE?.version||null,
-      finalScoreResult,
       apexLeaders:boardRows.slice().sort((a,b)=>num(b.apexPeak)-num(a.apexPeak)||String(a.fighter).localeCompare(String(b.fighter))).slice(0,10).map(row=>({fighter:row.fighter,apexPeak:row.apexPeak})),
       apply,
       appliedAt:new Date().toISOString()

@@ -8,7 +8,7 @@ window.UFC_MODULE_VERSIONS={
   primeDominanceAuditBatchTen:'20260710a-canonical-window-five',
   primeDominanceAuditBatchEleven:'20260710a-tito-pereira-hughes',
   primeDominanceThreeFightCap:'20260710a-rate-components-70pct',
-  primeDominanceLivePromoter:'20260710d-canonical-prime-source',
+  primeDominanceLivePromoter:'20260713a-category-only',
   primeDominanceCopyPolish:'20260708b',
   categoryPercentileTiers:'20260710c-rating-source',
   scoreWeighting:'20260710a-compatibility-only',
@@ -16,7 +16,7 @@ window.UFC_MODULE_VERSIONS={
   opponentQualityLive:'20260710c-fixed-benchmark',
   fighterEraLedgers:'20260709g-review-corrections',
   fighterEraLedgerCleanupsFinal:'20260710d-chuck-vitor-window',
-  approvedFighterAuditCorrections:'20260710a-tito-pereira-hughes-kayla',
+  approvedFighterAuditCorrections:'20260713e-no-score-finalize',
   canonicalFighterRegistry:'20260711c-cris-cyborg-photos',
   canonicalPrimeRecords:'20260713b-mirror-sync',
   fighterEraWindowAudit:'20260710b-record-dependencies',
@@ -29,10 +29,10 @@ window.UFC_MODULE_VERSIONS={
   lossContextCompletionBatchSeven:'20260710a-final-seventeen',
   longevityCanonicalRecalculation:'20260710b-eleven-window-rebuild',
   longevityShadowScorer:'20260710c-144-month-ceiling',
-  longevityLivePromoter:'20260710b-144-month-ceiling',
+  longevityLivePromoter:'20260713a-category-only',
   apexPeakCorrections:'20260709b-full-roster',
   apexPeakComponentAudit:'20260709c-batch-one-review-adjustments',
-  apexPeakLiveBonus:'20260710a-category-only',
+  apexPeakLiveBonus:'20260713a-category-only',
   apexPeakDricusAudit:'20260710b-merab-zhang'
 };
 

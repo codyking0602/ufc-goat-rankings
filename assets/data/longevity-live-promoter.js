@@ -2,7 +2,7 @@
 // Promotes Era Ledger /30 Longevity scores and audit metadata only.
 // Overall totals, ranks, weighted breakdowns, and OVR belong to final-score-engine.js.
 (function(){
-  const VERSION='longevity-live-promoter-20260710b-144-month-ceiling';
+  const VERSION='longevity-live-promoter-20260713a-category-only';
   const DATA=window.RANKING_DATA;
   const SHADOW=window.UFC_LONGEVITY_SHADOW_SCORER;
   let applying=false;
@@ -62,7 +62,7 @@
         if(typeof DISPLAY_OVERRIDES!=='undefined'){
           DISPLAY_OVERRIDES[fighter]=DISPLAY_OVERRIDES[fighter]||{};
           const override=DISPLAY_OVERRIDES[fighter];
-          override.snapshotStats={...(override.snapshotStats||{}),activeEliteYears:round2(shadow.activeEliteYears),longevityScore:raw30};
+          override.snapshotStats={...(override.snapshotStats||{}),activeEliteYears:round2(shadow.activeEliteYears)};
         }
         applied.push({fighter,legacyScore:legacy,raw30,weighted10,legacyDelta:round2(raw30-legacy),shadowRank:shadow.shadowRank||null});
       });
@@ -78,7 +78,6 @@
       const status={version:VERSION,applied:true,appliedCount:unique.length,missing,changed:unique.filter(item=>Math.abs(item.legacyDelta)>0.01),shadowVersion:SHADOW.version||null,eraLedgerVersion:SHADOW.sourceEraLedgerVersion||window.UFC_FIGHTER_ERA_LEDGERS?.version||null,formula:SHADOW.formula||null,maxMonths:SHADOW.maxMonths||144,writesCategory:true,mutatesOverallScores:false,categoryOnly:true,apply,appliedAt:new Date().toISOString()};
       window.UFC_LONGEVITY_LIVE_PROMOTER=status;
       document.documentElement.setAttribute('data-longevity-live-promoter',VERSION);
-      if(window.UFC_FINAL_SCORE_ENGINE?.apply){try{window.UFC_FINAL_SCORE_ENGINE.apply('longevity-category-update');}catch(e){}}
       if(typeof refresh==='function'){try{refresh();}catch(e){}}
       return status;
     }finally{applying=false;}
