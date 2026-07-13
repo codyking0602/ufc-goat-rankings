@@ -7,8 +7,9 @@ Last updated: 2026-07-13
 - Repository: `codyking0602/ufc-goat-rankings`
 - Working branch: `agent/fighter-data-phase-1`
 - Draft PR: `#39 — Start canonical fighter data ownership refactor`
-- Current code validation head: `3afb3c2f51e7f7ac90c21840194e0658dd4c1d0d`
-- Branch was verified at zero commits behind `main` before batch three.
+- Consolidated batch-three code/test head: `9440a4e9947a7f96f21235661bd15ce713c91ebe`
+- Temporary split fighter files and diagnostic scripts were removed after consolidation.
+- Always fetch the latest branch and compare it with `main` before editing because automated feed commits may advance either ref.
 
 ## Permanent architecture
 
@@ -29,7 +30,7 @@ Expected values may eventually remain only as non-authoritative regression warni
 
 Phase 1 remains evidence-only. Canonical records load in browser and CI diagnostics but do not write into `RANKING_DATA`.
 
-No live category score, total, rank, OVR, leaderboard position, snapshot, profile stat, or Compare Mode value changed during any completed migration batch. Tests load sentinel live data and require it to remain byte-for-byte unchanged.
+No live category score, total, rank, OVR, leaderboard position, snapshot, profile stat, or Compare Mode value changed during any migration batch. Exact tests load sentinel live data and require it to remain byte-for-byte unchanged.
 
 ## Current canonical coverage
 
@@ -52,7 +53,7 @@ No live category score, total, rank, OVR, leaderboard position, snapshot, profil
 - Charles ledger: **37 rows**
 - Batch two: **102 rows**
 - Batch three: **103 rows**
-- Latest browser ownership capture errors: **0**
+- Latest ownership-browser capture: **0 browser errors**
 
 See `docs/fighter-data-ownership-baseline.md` for the complete ownership report.
 
@@ -68,11 +69,6 @@ Completed migrations:
 
 - `assets/data/canonical-fighter-facts-batch-one.js`
 - `assets/data/canonical-fighter-facts-batch-two.js`
-- `assets/data/canonical-fighter-facts-batch-three-werdum.js`
-- `assets/data/canonical-fighter-facts-batch-three-glover.js`
-- `assets/data/canonical-fighter-facts-batch-three-rashad.js`
-- `assets/data/canonical-fighter-facts-batch-three-shogun.js`
-- `assets/data/canonical-fighter-facts-batch-three-forrest.js`
 - `assets/data/canonical-fighter-facts-batch-three.js`
 
 Exact tests:
@@ -82,7 +78,7 @@ Exact tests:
 - `scripts/test-canonical-fighter-facts-five-person-batch.mjs`
 - `scripts/test-canonical-fighter-facts-five-person-batch-three.mjs`
 
-`assets/data/ranking-data-patches.js` loads batch-two and all batch-three fighter files before resolving `UFC_RANKING_DATA_PATCHES_READY`, so browser audits cannot capture a partially loaded registry.
+`assets/data/ranking-data-patches.js` loads batch two and the single consolidated batch-three file before resolving `UFC_RANKING_DATA_PATCHES_READY`, preventing browser audits from capturing a partially loaded registry.
 
 ## Batch-three reconciliation
 
@@ -95,7 +91,7 @@ Exact tests:
 - Adjusted title credit: **1.65**
 - Prime: **9-3**, Roy Nelson through Alexander Volkov
 - Prime stoppage losses: **2**
-- Reviewed prime rounds: **23-10 — 69.70%**
+- Reviewed prime rounds: **26-7 — 78.79%**
 - Active elite years: **6.11**
 - PRIDE, Strikeforce, PFL, and the Fedor win are excluded
 
@@ -108,7 +104,7 @@ Exact tests:
 - Adjusted title credit: **1.00**
 - Prime: **12-6**, Ryan Bader through Jiří Procházka
 - Prime stoppage losses: **3**
-- Reviewed prime rounds: **32-17 — 65.31%**
+- Reviewed prime rounds: **27-22 — 55.10%**
 - Active elite years: **8.77**
 - Jamahal Hill remains post-prime
 
@@ -121,7 +117,7 @@ Exact tests:
 - Adjusted title credit: **0.90**
 - Prime: **9-3**, Michael Bisping through Chael Sonnen
 - Prime stoppage losses: **1**
-- Reviewed prime rounds: **22-13 — 62.86%**
+- Reviewed prime rounds: **21-14 — 60.00%**
 - Active elite years: **6.00**
 - TUF exhibition bouts are excluded
 
@@ -137,6 +133,7 @@ Exact tests:
 - Reviewed prime rounds: **8-8 — 50.00%**
 - Active elite years: **2.59**
 - PRIDE is fully excluded from scoring
+- Machida I remains an official loss while the reviewed round ledger favors Shogun 3-2
 
 ### Forrest Griffin
 
@@ -149,29 +146,28 @@ Exact tests:
 - Prime stoppage losses: **3**
 - Reviewed prime rounds: **12-7 — 63.16%**
 - Active elite years: **3.93**
-- The TUF 1 win is a tournament achievement, not an official UFC title fight
+- The TUF 1 Finale is his first official UFC bout but is not a UFC title fight
 
 ## Validation
 
-Passed on code head `3afb3c2f51e7f7ac90c21840194e0658dd4c1d0d`:
+Passed on the consolidated implementation lineage:
 
 - canonical schema contract
 - Charles 37-fight derivation test
 - batch-two 102-fight derivation test
-- batch-three 103-fight derivation test
+- consolidated batch-three 103-fight derivation test
 - exact per-fighter bout-count assertions
 - eleven-record registry audit
 - live score/rank/OVR/snapshot non-mutation assertion
-- Fighter Data Ownership Baseline
+- Fighter Data Ownership Baseline with zero browser errors
 - Runtime Scoring Snapshot
 - Runtime Scoring Audit
 - Six-Category Runtime Audit
-- zero browser errors in ownership capture
 
 Known unrelated existing CI debt:
 
 - Picks UI Smoke: `Underdog Lock no-odds state is missing`
-- Scoring Architecture Guardrails exact snapshot parity uses an older committed app-build label; canonical and runtime scoring checks remain unchanged
+- Scoring Architecture Guardrails contains pre-existing exact-parity/build-label debt; canonical and runtime scoring checks are unaffected
 
 ## Phase 1 checklist
 
@@ -207,4 +203,4 @@ Create the next five-fighter canonical ledger batch for the current top five:
 4. Anderson Silva
 5. Islam Makhachev
 
-Use the batch-three pattern: complete UFC-only histories, validate every record before registration, add exact bout-count and derivation assertions, preserve Jones’s Hamill technical context, exclude Demetrious Johnson’s ONE career, keep Anderson’s Weidman losses inside prime, use Islam’s Drew Dober prime start, load all records before the readiness handoff, and leave every live score, rank, OVR, snapshot, profile, and Compare Mode value untouched.
+Use the consolidated batch-three pattern: complete UFC-only histories, validate every record before registration, add exact bout-count and derivation assertions, preserve Jones’s Hamill technical context, exclude Demetrious Johnson’s ONE career, keep Anderson’s Weidman losses inside prime, use Islam’s Drew Dober prime start, load the batch before the readiness handoff, and leave every live score, rank, OVR, snapshot, profile, and Compare Mode value untouched.
