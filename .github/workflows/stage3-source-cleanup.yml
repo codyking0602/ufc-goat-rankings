@@ -1,10 +1,10 @@
-name: Stage 3 Source Cleanup
+name: Stage 3 Cache Cleanup
 
 on:
   push:
     branches: [agent/stage3-remove-legacy-scoring]
     paths:
-      - 'scripts/stage3-source-cleanup.mjs'
+      - 'scripts/stage3-cache-bust.mjs'
       - '.github/workflows/stage3-source-cleanup.yml'
 
 permissions:
@@ -12,9 +12,9 @@ permissions:
 
 jobs:
   migrate:
-    if: ${{ !contains(github.event.head_commit.message, '[stage3 cleanup]') }}
+    if: ${{ !contains(github.event.head_commit.message, '[stage3 cache]') }}
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - name: Check out branch
         uses: actions/checkout@v4
@@ -26,27 +26,19 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Install parser
-        run: npm install --no-save acorn@8
-
-      - name: Apply Stage 3 source cleanup
-        run: node scripts/stage3-source-cleanup.mjs
+      - name: Apply Stage 3 cache keys
+        run: node scripts/stage3-cache-bust.mjs
 
       - name: Validate JavaScript syntax
         run: |
           node --check assets/data/display-overrides.js
           node --check assets/data/ranking-data-patches.js
-          node --check assets/data/loss-context-exposure-ledger.js
-          node --check assets/data/loss-context-hybrid-live.js
-          node --check assets/data/division-era-depth-live.js
-          node --check assets/data/module-versions.js
-          node --check assets/js/scoring-ownership-finalizer.js
           find assets/data/fighter-packets -type f -name '*.js' -print0 | xargs -0 -n1 node --check
 
-      - name: Commit generated cleanup
+      - name: Commit cache keys
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html assets/data/display-overrides.js assets/data/ranking-data-patches.js assets/data/fighter-packets docs/stage3-source-cleanup.json
-          git commit -m 'Apply Stage 3 source cleanup [stage3 cleanup]' || exit 0
+          git add index.html assets/data/ranking-data-patches.js
+          git commit -m 'Apply Stage 3 cache keys [stage3 cache]' || exit 0
           git push origin HEAD:agent/stage3-remove-legacy-scoring
