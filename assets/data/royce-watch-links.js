@@ -1,7 +1,7 @@
 // App-facing watch links/stats plus the canonical late-registry bridge.
 (function(){
   'use strict';
-  const VERSION='royce-app-links-stats-20260713a-batch-eight-watch-links';
+  const VERSION='royce-app-links-stats-20260713b-seven-signature-fights';
   if(typeof DISPLAY_OVERRIDES==='undefined') return;
 
   const fighter='Royce Gracie';
@@ -17,21 +17,15 @@
   const WATCH_LINKS={
     'Benson Henderson':{
       signatureFightUrl:'https://www.youtube.com/watch?v=P65mAfnAFhk',
-      signatureFightLabel:'Watch Signature Fight',
-      watchUrl:'https://mmajunkie.usatoday.com/2014/06/video-watch-benson-hendersons-ufc-144-title-win-over-frankie-edgar-in-japan',
-      watchLabel:'Watch Moment'
+      signatureFightLabel:'Watch Signature Fight'
     },
     'Glover Teixeira':{
       signatureFightUrl:'https://www.youtube.com/watch?v=dAsCS4R0cuE',
-      signatureFightLabel:'Watch Signature Fight',
-      watchUrl:'https://talksport.com/sport/mma/1938671/anthony-smith-teeth-fall-out-ufc-303/',
-      watchLabel:'Watch Moment'
+      signatureFightLabel:'Watch Signature Fight'
     },
     'Mauricio "Shogun" Rua':{
       signatureFightUrl:'https://www.ufc.com/video/46241',
-      signatureFightLabel:'Watch Signature Fight',
-      watchUrl:'https://www.youtube.com/watch?v=rLuppO32rUI',
-      watchLabel:'Watch Moment'
+      signatureFightLabel:'Watch Signature Fight'
     },
     'Frank Shamrock':{
       signatureFightUrl:'https://www.youtube.com/watch?v=obS1W3kHGvk',
@@ -43,15 +37,11 @@
     },
     'Rashad Evans':{
       signatureFightUrl:'https://www.ufc.com/video/46244',
-      signatureFightLabel:'Watch Signature Fight',
-      watchUrl:'https://www.youtube.com/watch?v=YzJjSBV5jsg',
-      watchLabel:'Watch Moment'
+      signatureFightLabel:'Watch Signature Fight'
     },
     'Vitor Belfort':{
       signatureFightUrl:'https://www.youtube.com/watch?v=St35ub7lmNg',
-      signatureFightLabel:'Watch Signature Fight',
-      watchUrl:'https://www.youtube.com/watch?v=nSfnaeXcZp4',
-      watchLabel:'Watch Moment'
+      signatureFightLabel:'Watch Signature Fight'
     }
   };
 
