@@ -9,10 +9,8 @@
   }
 
   function apply(){
-    document.querySelectorAll('#picks .pick-underdog-action').forEach(node=>cleanText(node,[['+1 if correct','bonus if correct']]));
     document.querySelectorAll('#picks .picks-standing-row .meta').forEach(node=>cleanText(node,[[' · +1 lock bonus',' · lock bonus']]));
     document.querySelectorAll('#picks .picks-recap-row small').forEach(node=>cleanText(node,[[' · +1 lock',' · lock bonus']]));
-    cleanText(document.getElementById('picksStatus'),[['It is worth +1 if correct.','It earns the season bonus if correct.']]);
   }
 
   function start(){
