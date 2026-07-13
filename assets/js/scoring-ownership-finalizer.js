@@ -1,12 +1,14 @@
-// Stage 2 scoring ownership finalizer.
-// Enforces a copy-only display boundary and gives the canonical scoring engine sole score authority.
+// Stage 3 scoring ownership coordinator.
+// Enforces a copy-only display boundary and applies the canonical scoring engine once
+// after all prerequisite and modifier evidence is ready.
 (function(){
   'use strict';
-  const VERSION='scoring-ownership-finalizer-20260713e-evidence-ready';
+
+  const VERSION='scoring-ownership-finalizer-20260713f-no-legacy-repair';
   const EXPECTED_ROSTER=72;
   const STARTED_AT=Date.now();
-  const MIN_SETTLE_MS=10000;
-  const HARD_STOP_MS=22000;
+  const MIN_SETTLE_MS=2000;
+  const HARD_STOP_MS=12000;
   const SCORE_FIELDS=['championship','opponentQuality','primeDominance','longevity','apexPeak','penalty','eraDepthAdjustment','totalScore','rawScore','rank','overallOvr'];
   const DISPLAY_SCORE_FIELDS=[
     ...SCORE_FIELDS,'allTimeRank','rankLabel','baseScore','preEraDepthTotalScore',
@@ -60,8 +62,7 @@
     const proxy=new Proxy(target,{
       set(object,property,next){object[property]=wrapFlatObject(next,CATEGORY_SCORE_SET);return true;},
       defineProperty(object,property,descriptor){
-        const next={...descriptor,value:wrapFlatObject(descriptor?.value,CATEGORY_SCORE_SET)};
-        Object.defineProperty(object,property,next);
+        Object.defineProperty(object,property,{...descriptor,value:wrapFlatObject(descriptor?.value,CATEGORY_SCORE_SET)});
         return true;
       }
     });
@@ -177,6 +178,11 @@
     });
     return rows;
   }
+  function stripCompareScoreFields(){
+    let stripped=0;
+    Object.values(window.COMPARE_PROFILES||{}).forEach(profile=>{stripped+=stripFields(profile,DISPLAY_SCORE_FIELDS);});
+    return stripped;
+  }
   function compareScoreViolations(){
     const rows=[];
     Object.entries(window.COMPARE_PROFILES||{}).forEach(([fighter,profile])=>{
@@ -196,11 +202,6 @@
     });
     return mismatches;
   }
-  function stripCompareScoreFields(){
-    let stripped=0;
-    Object.values(window.COMPARE_PROFILES||{}).forEach(profile=>{stripped+=stripFields(profile,DISPLAY_SCORE_FIELDS);});
-    return stripped;
-  }
   function annotateEvidenceModules(){
     const loss=window.UFC_LOSS_CONTEXT_HYBRID_LIVE;
     if(loss){loss.authoritativeScoreOwner='scoring-engine.js';loss.runtimeRole='evidence-and-detail-provider';loss.authoritativeScoreWrites=false;loss.scoringOwnershipFinalizerVersion=VERSION;}
@@ -212,38 +213,54 @@
     window.UFC_SCORING_OWNERSHIP_CONTRACT={version:VERSION,applied:false,status,attemptCount,elapsedMs,minimumSettleMs:MIN_SETTLE_MS,displayBoundary:installDisplayBoundary(),readiness};
     document.documentElement.setAttribute('data-scoring-ownership-contract',`${VERSION}-${status}`);
   }
+
   function finalize(){
     if(finalized)return true;
     attemptCount+=1;
     installDisplayBoundary();
+
     const data=window.RANKING_DATA;
     const engine=window.UFC_SCORING_ENGINE;
     const canonical=window.UFC_CANONICAL_SCORING_RECORDS;
-    const legacyRepair=window.UFC_DYNAMIC_ROSTER_SCORING_REPAIR;
-    const depthFinalizer=window.UFC_DIVISION_ERA_DEPTH_FINALIZER;
+    const lossLive=window.UFC_LOSS_CONTEXT_HYBRID_LIVE;
+    const eraLive=window.UFC_DIVISION_ERA_DEPTH_LIVE;
     const pipelineReady=window.UFC_SCORING_PIPELINE?.status==='ready';
     const elapsedMs=Date.now()-STARTED_AT;
     const boardRows=boards(data);
     const missingLossContextDetail=boardRows.filter(row=>!row.lossContextHybrid).map(row=>row.fighter);
     const missingEraDepthDetail=boardRows.filter(row=>!row.divisionEraDepth).map(row=>row.fighter);
-    const evidenceReady=legacyRepair?.applied===true&&boardRows.length===EXPECTED_ROSTER&&missingLossContextDetail.length===0&&missingEraDepthDetail.length===0;
+    const evidenceReady=lossLive?.applied===true&&eraLive?.applied===true&&boardRows.length===EXPECTED_ROSTER&&missingLossContextDetail.length===0&&missingEraDepthDetail.length===0;
+
     if(!data||!engine?.apply||!canonical||!pipelineReady||!evidenceReady){
       publishWaiting('waiting',{
-        data:Boolean(data),engine:Boolean(engine?.apply),canonical:Boolean(canonical),pipelineReady,
-        dynamicRosterEvidence:Boolean(legacyRepair?.applied),depthFinalizerInformational:Boolean(depthFinalizer?.applied),
-        rosterCount:boardRows.length,missingLossContextDetailCount:missingLossContextDetail.length,missingEraDepthDetailCount:missingEraDepthDetail.length
+        data:Boolean(data),
+        engine:Boolean(engine?.apply),
+        canonical:Boolean(canonical),
+        pipelineReady,
+        lossContextEvidence:Boolean(lossLive?.applied),
+        eraDepthEvidence:Boolean(eraLive?.applied),
+        rosterCount:boardRows.length,
+        missingLossContextDetailCount:missingLossContextDetail.length,
+        missingEraDepthDetailCount:missingEraDepthDetail.length
       });
       return false;
     }
     if(elapsedMs<MIN_SETTLE_MS){
-      publishWaiting('settling',{data:true,engine:true,canonical:true,pipelineReady:true,dynamicRosterEvidence:true,rosterCount:boardRows.length,missingLossContextDetailCount:0,missingEraDepthDetailCount:0});
+      publishWaiting('settling',{
+        data:true,engine:true,canonical:true,pipelineReady:true,
+        lossContextEvidence:true,eraDepthEvidence:true,
+        rosterCount:boardRows.length,
+        missingLossContextDetailCount:0,
+        missingEraDepthDetailCount:0
+      });
       return false;
     }
     if(!engineApplied){
-      engineResult=engine.apply('stage2-scoring-ownership-finalizer');
+      engineResult=engine.apply('stage3-scoring-ownership-finalizer');
       engineApplied=true;
       window.UFC_FINAL_SCORE_ENGINE=engine;
     }
+
     annotateEvidenceModules();
     const strippedDisplayFields=stripDisplayScoreFields();
     const strippedCompareFields=stripCompareScoreFields();
@@ -253,25 +270,80 @@
     const compareViolations=compareScoreViolations();
     const wrongOwners=boardRows.filter(row=>row.scoreInputOwner!=='scoring-engine.js'||row.overallScoreOwner!=='scoring-engine.js').map(row=>({fighter:row.fighter,scoreInputOwner:row.scoreInputOwner,overallScoreOwner:row.overallScoreOwner}));
     const rosterCount=boardRows.length;
-    const clean=Boolean(engineResult?.applied)&&rosterCount===EXPECTED_ROSTER&&engineParity.passed&&profiles.length===0&&displayViolations.length===0&&compareViolations.length===0&&wrongOwners.length===0&&missingLossContextDetail.length===0&&missingEraDepthDetail.length===0;
+    const clean=Boolean(engineResult?.applied)
+      &&rosterCount===EXPECTED_ROSTER
+      &&engineParity.passed
+      &&profiles.length===0
+      &&displayViolations.length===0
+      &&compareViolations.length===0
+      &&wrongOwners.length===0
+      &&missingLossContextDetail.length===0
+      &&missingEraDepthDetail.length===0;
+
     const report={
-      version:VERSION,applied:clean,status:clean?'clean':'blocked',attemptCount,elapsedMs,minimumSettleMs:MIN_SETTLE_MS,settled:true,
-      mode:'single-authority-copy-boundary',rosterCount,expectedRosterCount:EXPECTED_ROSTER,
-      owners:{canonicalScoreInputs:'assets/data/canonical-scoring-records.js',categoryScores:'assets/js/scoring-engine.js',modifiers:'assets/js/scoring-engine.js',totals:'assets/js/scoring-engine.js',ranks:'assets/js/scoring-engine.js',ovr:'assets/js/scoring-engine.js',profileScoreSync:'assets/js/scoring-engine.js',displayOverrides:'copy-only-guarded',compareProfiles:'narrative-only',lossContext:'evidence-and-detail-provider',divisionEraDepth:'evidence-and-detail-provider'},
-      canonicalScoringRecordsVersion:canonical.version,canonicalSourceSha:canonical.sourceFighterDataSha256,
-      finalScoreEngineVersion:engine.version,finalScoreEngineApplyCount:engine.applyCount,engineApplyResult:engineResult||null,engineParity,
-      displayBoundary:installDisplayBoundary(),profileMismatchCount:profiles.length,profileMismatches:profiles,
-      displayOverrideViolationCount:displayViolations.length,displayOverrideViolations:displayViolations,
-      compareScoreViolationCount:compareViolations.length,compareScoreViolations:compareViolations,
-      strippedDisplayFields,strippedCompareFields,
-      missingLossContextDetailCount:missingLossContextDetail.length,missingLossContextDetail,
-      missingEraDepthDetailCount:missingEraDepthDetail.length,missingEraDepthDetail,
-      wrongOwnerCount:wrongOwners.length,wrongOwners,
-      legacyModules:{dynamicRosterRepairVersion:legacyRepair?.version||null,divisionEraDepthFinalizerVersion:depthFinalizer?.version||null,retainedForEvidenceParity:true,scoreAuthority:false,depthFinalizerReadinessRequired:false},
+      version:VERSION,
+      applied:clean,
+      status:clean?'clean':'blocked',
+      attemptCount,
+      elapsedMs,
+      minimumSettleMs:MIN_SETTLE_MS,
+      settled:true,
+      mode:'single-authority-copy-boundary-no-legacy-repair',
+      rosterCount,
+      expectedRosterCount:EXPECTED_ROSTER,
+      owners:{
+        canonicalScoreInputs:'assets/data/canonical-scoring-records.js',
+        categoryScores:'assets/js/scoring-engine.js',
+        modifiers:'assets/js/scoring-engine.js',
+        totals:'assets/js/scoring-engine.js',
+        ranks:'assets/js/scoring-engine.js',
+        ovr:'assets/js/scoring-engine.js',
+        profileScoreSync:'assets/js/scoring-engine.js',
+        displayOverrides:'copy-only-guarded',
+        compareProfiles:'narrative-only',
+        lossContext:'evidence-and-detail-provider',
+        divisionEraDepth:'evidence-and-detail-provider'
+      },
+      canonicalScoringRecordsVersion:canonical.version,
+      canonicalSourceSha:canonical.sourceFighterDataSha256,
+      finalScoreEngineVersion:engine.version,
+      finalScoreEngineApplyCount:engine.applyCount,
+      engineApplyResult:engineResult||null,
+      engineParity,
+      displayBoundary:installDisplayBoundary(),
+      profileMismatchCount:profiles.length,
+      profileMismatches:profiles,
+      displayOverrideViolationCount:displayViolations.length,
+      displayOverrideViolations:displayViolations,
+      compareScoreViolationCount:compareViolations.length,
+      compareScoreViolations:compareViolations,
+      strippedDisplayFields,
+      strippedCompareFields,
+      missingLossContextDetailCount:missingLossContextDetail.length,
+      missingLossContextDetail,
+      missingEraDepthDetailCount:missingEraDepthDetail.length,
+      missingEraDepthDetail,
+      wrongOwnerCount:wrongOwners.length,
+      wrongOwners,
+      removedLegacyScoreLayers:[
+        'dynamic-roster-scoring-repair',
+        'division-era-depth-finalizer',
+        'legacy-final-score-engine'
+      ],
       appliedAt:new Date().toISOString()
     };
+
     data.meta=data.meta||{};
-    data.meta.scoringOwnershipContract={version:VERSION,applied:clean,status:report.status,owners:report.owners,canonicalSourceSha:report.canonicalSourceSha,finalScoreEngineVersion:report.finalScoreEngineVersion,appliedAt:report.appliedAt};
+    data.meta.scoringOwnershipContract={
+      version:VERSION,
+      applied:clean,
+      status:report.status,
+      owners:report.owners,
+      canonicalSourceSha:report.canonicalSourceSha,
+      finalScoreEngineVersion:report.finalScoreEngineVersion,
+      removedLegacyScoreLayers:report.removedLegacyScoreLayers,
+      appliedAt:report.appliedAt
+    };
     window.UFC_SCORING_OWNERSHIP_CONTRACT=report;
     document.documentElement.setAttribute('data-scoring-ownership-contract',`${VERSION}-${report.status}-${rosterCount}`);
     if(clean)window.dispatchEvent(new CustomEvent('ufc-scoring-ownership-ready',{detail:report}));
@@ -282,8 +354,8 @@
   function attempt(){if(finalize()&&intervalId){clearInterval(intervalId);intervalId=null;}}
 
   installDisplayBoundary();
-  ['ufc-scoring-pipeline-ready','ufc-dynamic-roster-scoring-repaired','ufc-division-era-depth-finalized','ufc-ranking-data-patches-ready'].forEach(eventName=>window.addEventListener(eventName,attempt));
-  [0,100,500,1500,3000,5000,7500,9000,10000,11000,13000,16000].forEach(delay=>setTimeout(attempt,delay));
+  ['ufc-scoring-pipeline-ready','ufc-loss-context-hybrid-live-ready','ufc-division-era-depth-live-ready','ufc-ranking-data-patches-ready'].forEach(eventName=>window.addEventListener(eventName,attempt));
+  [0,100,500,1000,2000,2500,3500,5000,7500,10000].forEach(delay=>setTimeout(attempt,delay));
   intervalId=setInterval(attempt,500);
   setTimeout(()=>{attempt();if(intervalId){clearInterval(intervalId);intervalId=null;}},HARD_STOP_MS);
   window.UFC_SCORING_OWNERSHIP_CONTRACT={version:VERSION,applied:false,status:'waiting',attemptCount:0,elapsedMs:0,minimumSettleMs:MIN_SETTLE_MS,displayBoundary:installDisplayBoundary()};
