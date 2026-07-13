@@ -10,7 +10,7 @@ on:
       - 'assets/data/canonical-fighter-facts.js'
       - 'assets/data/canonical-fighter-facts-batch-one.js'
       - 'assets/data/canonical-fighter-facts-batch-two.js'
-      - 'assets/data/canonical-fighter-facts-batch-three*.js'
+      - 'assets/data/canonical-fighter-facts-batch-three.js'
       - 'assets/data/canonical-scoring-records.js'
       - 'assets/data/ranking-data-patches.js'
       - 'assets/data/fighter-packets/**'
@@ -49,11 +49,6 @@ jobs:
           node --check assets/data/canonical-fighter-facts.js
           node --check assets/data/canonical-fighter-facts-batch-one.js
           node --check assets/data/canonical-fighter-facts-batch-two.js
-          node --check assets/data/canonical-fighter-facts-batch-three-werdum.js
-          node --check assets/data/canonical-fighter-facts-batch-three-glover.js
-          node --check assets/data/canonical-fighter-facts-batch-three-rashad.js
-          node --check assets/data/canonical-fighter-facts-batch-three-shogun.js
-          node --check assets/data/canonical-fighter-facts-batch-three-forrest.js
           node --check assets/data/canonical-fighter-facts-batch-three.js
           node --check assets/data/ranking-data-patches.js
           node --check assets/js/fighter-data-ownership-audit.js
