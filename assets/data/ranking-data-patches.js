@@ -1,7 +1,7 @@
 // Lightweight prerequisite/data loader with an explicit readiness handoff.
 (function(){
   'use strict';
-  const VERSION='ranking-data-patches-20260711w-profile-stat-merge';
+  const VERSION='ranking-data-patches-20260712x-eight-legends';
   let readyResolved=false;
   let resolveReady;
   const readyPromise=new Promise(resolve=>{resolveReady=resolve;});
@@ -100,11 +100,12 @@
     const loadHomePolish=()=>loadScriptOnce('assets/js/home-polish.js?v=home-polish-hybrid-preview-20260711c-tab-scroll-hint','data-home-polish',loadDivisionRankings);
     const loadWatchMoments=()=>loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260711i-signature-fights-batch-seven','data-watch-moments',loadHomePolish);
     const loadPackages=()=>loadScriptOnce('assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260710a-canonical-prime-record','data-fighter-profile-packages',loadWatchMoments);
-    if(window.UFC_PROFILE_TEMPLATE_SYSTEM){loadPackages();return;}
-    loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260711d-merge-profile-stats','data-profile-template-system',loadPackages);
+    const loadEightLegends=()=>loadScriptOnce('assets/data/canonical-fighter-registry-eight-legends.js?v=canonical-fighter-registry-eight-legends-20260712a','data-canonical-fighter-registry-eight-legends',loadPackages);
+    if(window.UFC_PROFILE_TEMPLATE_SYSTEM){loadEightLegends();return;}
+    loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260711d-merge-profile-stats','data-profile-template-system',loadEightLegends);
   }
 
-  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Deterministic prerequisite/data loader',updated:'2026-07-11',version:VERSION},apply:status,ready:readyPromise,slugFor,syncPacketProfileStats,packetManifest};
+  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Deterministic prerequisite/data loader',updated:'2026-07-12',version:VERSION},apply:status,ready:readyPromise,slugFor,syncPacketProfileStats,packetManifest};
   installImageFallback();
   applyPhotoPathDefaults();
   syncPacketProfileStats();
