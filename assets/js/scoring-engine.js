@@ -3,7 +3,7 @@
 // overall totals, ranks, weighted breakdowns, and score-derived OVR.
 (function(){
   'use strict';
-  const VERSION='scoring-engine-20260713b-single-owner';
+  const VERSION='scoring-engine-20260713c-finalizer-only';
   const DATA=window.RANKING_DATA;
   const CANONICAL=window.UFC_CANONICAL_SCORING_RECORDS;
   const WEIGHTS={championship:35,opponentQuality:27.5,primeDominance:27.5,longevity:10};
@@ -21,6 +21,8 @@
   const CATEGORY_CEILING=99;
   const FORMULA='championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment';
   let applying=false;
+  const AUTHORIZED_APPLY_REASON='stage3-scoring-ownership-finalizer';
+  const APPLY_ATTEMPTS=[];
 
   function num(value){const n=Number(value??0);return Number.isFinite(n)?n:0;}
   function round2(value){return Math.round((num(value)+Number.EPSILON)*100)/100;}
@@ -198,6 +200,9 @@
     overallCurve:OVERALL_CURVE,
     overallAnchors:OVERALL_ANCHORS,
     applyCount:0,
+    rejectedApplyCount:0,
+    authorizedApplyReason:AUTHORIZED_APPLY_REASON,
+    applyAttempts:APPLY_ATTEMPTS,
     scoreBreakdown,
     overallOvrFor,
     categoryRankFor,
@@ -207,6 +212,15 @@
   };
 
   function apply(reason='manual'){
+    const accepted=reason===AUTHORIZED_APPLY_REASON;
+    const attempt={reason,accepted,at:new Date().toISOString()};
+    APPLY_ATTEMPTS.push(attempt);
+    if(!accepted){
+      API.rejectedApplyCount+=1;
+      API.latestRejected={version:VERSION,applied:false,skipped:true,reason,error:`Only ${AUTHORIZED_APPLY_REASON} may apply canonical scores.`,attemptedAt:attempt.at};
+      return API.latestRejected;
+    }
+    if(API.applyCount>0)return API.latest||null;
     if(applying)return API.latest||null;
     if(!DATA||!CANONICAL){
       API.latest={version:VERSION,applied:false,error:!DATA?'Missing RANKING_DATA':'Missing UFC_CANONICAL_SCORING_RECORDS',reason,appliedAt:new Date().toISOString()};

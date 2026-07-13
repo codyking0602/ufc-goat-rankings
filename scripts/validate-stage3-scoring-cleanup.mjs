@@ -162,6 +162,8 @@ try{
       mismatches,
       engineVersion:engine?.version||null,
       engineApplyCount:engine?.applyCount??null,
+      engineRejectedApplyCount:engine?.rejectedApplyCount??null,
+      engineApplyAttempts:(engine?.applyAttempts||[]).map(attempt=>({...attempt})),
       finalEngineAliasIsCanonical:window.UFC_FINAL_SCORE_ENGINE===engine,
       legacyGlobals:{dynamicRosterRepair:typeof window.UFC_DYNAMIC_ROSTER_SCORING_REPAIR!=='undefined',eraDepthFinalizer:typeof window.UFC_DIVISION_ERA_DEPTH_FINALIZER!=='undefined'},
       lossEvidence:{version:lossLive.version||null,applied:lossLive.applied===true,mode:lossLive.mode||null,rosterCount:lossLive.rosterCount??null,mismatchCount:lossLive.mismatchCount??null,mutatesScores:lossLive.mutatesScores??null,mutatesPenalty:lossLive.mutatesPenalty??null},
