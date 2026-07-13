@@ -217,7 +217,7 @@ async function staticAudit(){
     &&forbiddenPresent.length===0
     &&forbiddenReferences.length===0
     &&engineDefinitionFiles.length===1&&engineDefinitionFiles[0]===contract.engine.path
-    &&aliasDefinitionFiles.length===1&&aliasDefinitionFiles[0]===contract.engine.path
+    &&JSON.stringify([...aliasDefinitionFiles].sort())===JSON.stringify([...(contract.engine.aliasDefinitionPaths||[])].sort())
     &&directGlobalApplyFiles.length===0
     &&suspiciousLocalEngineApplyFiles.length===0
     &&sourceContract.canonicalSourceSha===contract.canonical.sourceSha
