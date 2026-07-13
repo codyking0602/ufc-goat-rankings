@@ -1,0 +1,1 @@
+Finalize Picks scoring clarity deployment trigger.
