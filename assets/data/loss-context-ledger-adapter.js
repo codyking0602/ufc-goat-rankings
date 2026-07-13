@@ -2,7 +2,7 @@
 // Shadow-only adapter that reads the shared Fighter Era Ledger and classifies loss/context events.
 // Does not mutate rankings, fighter rows, display overrides, or total scores.
 (function(){
-  const VERSION='loss-context-ledger-adapter-20260709b-source-bucket-losses';
+  const VERSION='loss-context-ledger-adapter-20260712c-dynamic-roster';
   const era=window.UFC_FIGHTER_ERA_LEDGERS;
 
   const RULES={
@@ -37,6 +37,7 @@
     return;
   }
 
+  function key(name){return String(name||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');}
   function parseIsoDate(value){
     const text=String(value||'').trim();
     const match=text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -206,10 +207,29 @@
   const rows=fighters.map(buildRow).filter(Boolean);
   const events=rows.flatMap(row=>row.events);
 
-  function entryFor(fighter){return rows.find(row=>row.fighter===fighter)||null;}
+  function entryFor(fighter){
+    const target=key(fighter);
+    let row=rows.find(item=>key(item.fighter)===target)||null;
+    if(row)return row;
+
+    // Canonical fighter registries may extend the roster after this adapter first loads.
+    // Build and cache the missing row on demand instead of freezing the original roster.
+    row=buildRow(fighter);
+    if(!row)return null;
+    rows.push(row);
+    events.push(...row.events);
+    if(!fighters.some(name=>key(name)===target))fighters.push(row.fighter);
+    return row;
+  }
+
+  function refresh(){
+    const names=era.names?era.names():Object.keys(era.ledgers||{});
+    names.forEach(entryFor);
+    return {fighterCount:fighters.length,rowCount:rows.length,eventCount:events.length};
+  }
   function eventsFor(fighter){return entryFor(fighter)?.events||[];}
   function phaseFor(fighter,date){const ledger=era.entryFor(fighter);return phaseFromDate(ledger,date);}
-  function report(){return rows.map(row=>({...row,events:row.events.map(event=>({...event}))}));}
+  function report(){refresh();return rows.map(row=>({...row,events:row.events.map(event=>({...event}))}));}
 
   window.UFC_LOSS_CONTEXT_LEDGER_ADAPTER={
     version:VERSION,
@@ -221,10 +241,16 @@
     entryFor,
     eventsFor,
     phaseFor,
+    refresh,
     report,
     mutatesScores:false,
     appliedAt:new Date().toISOString()
   };
+
+  window.addEventListener('ufc-scoring-pipeline-ready',refresh);
+  window.addEventListener('ufc-ranking-data-patches-ready',refresh);
+  setTimeout(refresh,0);
+  setTimeout(refresh,500);
 
   document.documentElement.setAttribute('data-loss-context-ledger-adapter',VERSION);
 })();
