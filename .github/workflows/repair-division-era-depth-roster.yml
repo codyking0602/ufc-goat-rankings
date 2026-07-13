@@ -1,10 +1,6 @@
 name: Repair Division Era Depth Roster
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/repair-division-era-depth-roster.yml'
   pull_request:
     branches: [main]
     paths:
@@ -12,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: repair-division-era-depth-roster
@@ -47,22 +43,19 @@ jobs:
           node --check assets/data/division-era-depth-finalizer.js
           node --check scripts/install-division-era-depth-live.mjs
 
-      - name: Remove one-time repair files
-        run: |
-          rm scripts/repair-division-era-depth-roster.mjs
-          rm .github/workflows/repair-division-era-depth-roster.yml
-          rm -f .github/era-depth-repair-trigger.txt
-          rm -f .github/era-depth-repair-trigger-2.txt
-
-      - name: Commit permanent repair to main
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A
-          git commit -m 'Make Division Era Depth full-roster dynamic'
-          for attempt in 1 2 3 4 5; do
-            git pull --rebase origin main || { git rebase --abort || true; sleep $((attempt * 2)); continue; }
-            if git push origin HEAD:main; then exit 0; fi
-            sleep $((attempt * 2))
-          done
-          exit 1
+      - name: Upload verified permanent repair
+        uses: actions/upload-artifact@v4
+        with:
+          name: full-roster-era-depth-repair
+          path: |
+            scripts/build-division-era-depth-shadow.mjs
+            scripts/run-division-era-depth-shadow.mjs
+            scripts/build-division-era-depth-judgment-review.mjs
+            scripts/validate-division-era-depth-promotion.mjs
+            scripts/runtime-era-depth-audit.mjs
+            assets/data/division-era-depth-live.js
+            assets/data/division-era-depth-finalizer.js
+            scripts/install-division-era-depth-live.mjs
+            .github/workflows/division-era-depth-shadow.yml
+          if-no-files-found: error
+          retention-days: 1
