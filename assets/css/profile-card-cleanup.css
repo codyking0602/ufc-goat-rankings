@@ -1,6 +1,16 @@
-/* App-facing profile cleanup and fighter thumbnail framing. */
+/* App-facing profile cleanup, Blind Resume copy, and fighter thumbnail framing. */
 [data-era-depth-profile="true"] {
   display: none !important;
+}
+
+#playBlindPanel .blind-header > div:first-child > p {
+  font-size: 0;
+}
+
+#playBlindPanel .blind-header > div:first-child > p::after {
+  content: "Pick who ranks higher without seeing the names.";
+  font-size: 0.95rem;
+  line-height: 1.45;
 }
 
 img[src*="frank-shamrock-thumb.webp"] {
