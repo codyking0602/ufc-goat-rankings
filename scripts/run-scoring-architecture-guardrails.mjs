@@ -1,9 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const reportPath=path.resolve('docs/stage3-scoring-cleanup-report.json');
+const reportPath=path.resolve('docs/scoring-architecture-guardrails-report.json');
 try{
-  await import('./validate-stage3-scoring-cleanup.mjs');
+  await import('./validate-scoring-architecture.mjs');
 }catch(error){
   fs.mkdirSync(path.dirname(reportPath),{recursive:true});
   fs.writeFileSync(reportPath,`${JSON.stringify({
