@@ -41,6 +41,16 @@ jobs:
           PY
           node --check scripts/repair-division-era-depth-roster.mjs
           node scripts/repair-division-era-depth-roster.mjs
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('scripts/run-division-era-depth-shadow.mjs')
+          s=p.read_text()
+          old='output = output.replaceAll(`\\"${dataset}\\"`, `\\"${canonical}\\"`);'
+          new='output = output.replaceAll(JSON.stringify(dataset), JSON.stringify(canonical));'
+          if old not in s and new not in s:
+              raise SystemExit('Alias replacement source drifted')
+          p.write_text(s.replace(old,new))
+          PY
           node --check scripts/build-division-era-depth-shadow.mjs
           node --check scripts/run-division-era-depth-shadow.mjs
           node --check scripts/build-division-era-depth-judgment-review.mjs
@@ -72,5 +82,5 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git switch -C agent/era-depth-permanent-repair-output
           git add scripts/build-division-era-depth-shadow.mjs scripts/run-division-era-depth-shadow.mjs scripts/build-division-era-depth-judgment-review.mjs scripts/validate-division-era-depth-promotion.mjs scripts/runtime-era-depth-audit.mjs assets/data/division-era-depth-live.js assets/data/division-era-depth-finalizer.js scripts/install-division-era-depth-live.mjs
-          git commit -m 'Make Division Era Depth full-roster dynamic'
+          git commit -m 'Fix full-roster Era Depth alias serialization'
           git push --force origin HEAD:refs/heads/agent/era-depth-permanent-repair-output
