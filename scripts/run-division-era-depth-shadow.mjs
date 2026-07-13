@@ -12,7 +12,7 @@ const REPORT_PATH = path.join(ROOT, 'docs/division-era-depth-shadow-report.json'
 const RUNTIME_PATH = path.join(ROOT, 'assets/data/division-era-depth-shadow.js');
 const GENERATOR_PATH = path.join(ROOT, 'scripts/build-division-era-depth-shadow.mjs');
 const OLD_VERSION = 'division-era-depth-shadow-20260712a-fight-network';
-const VERSION = 'division-era-depth-shadow-20260712d-current-wfw-safe';
+const VERSION = 'division-era-depth-shadow-20260712e-roster-72';
 const CURVE_FULL_GAP = 0.25;
 const CURVE_EXPONENT = 1.5;
 const CURVE_NEGATIVE_CAP = -3;
@@ -27,7 +27,8 @@ const SENSITIVITY_CEILING = 0.75;
 const ALIASES = new Map([
   ['B.J. Penn', 'BJ Penn'],
   ['T.J. Dillashaw', 'TJ Dillashaw'],
-  ['Cris Cyborg', 'Cristiane Justino']
+  ['Cris Cyborg', 'Cristiane Justino'],
+  ['Mauricio "Shogun" Rua', 'Mauricio Rua']
 ]);
 const RESTORE = new Map([...ALIASES.entries()].map(([canonical, dataset]) => [dataset, canonical]));
 
@@ -265,6 +266,7 @@ async function runGenerator(csv, sourceUrl) {
 async function main() {
   const originalFeedText = await fs.readFile(FEED_PATH, 'utf8');
   const feed = JSON.parse(originalFeedText);
+  const expectedRosterCount = (feed.fighters || []).length;
   let changed = 0;
   for (const fighter of feed.fighters || []) {
     const alias = ALIASES.get(fighter.name);
@@ -314,8 +316,8 @@ async function main() {
     restored.summary.fallbackCount = fallbacks.length;
     restored.summary.directMatchCoverageCount = restored.fighters.length - fallbacks.length;
     restored.summary.aliasResolutionComplete = fallbacks.length === 0;
-    if (restored.summary.rosterCount !== 63 || fallbacks.length) {
-      throw new Error(`Alias-complete depth coverage failed: ${63 - fallbacks.length}/63 direct matches; ${fallbacks.map(row => row.fighter).join(', ')}`);
+    if (restored.summary.rosterCount !== expectedRosterCount || fallbacks.length) {
+      throw new Error(`Alias-complete depth coverage failed: ${expectedRosterCount - fallbacks.length}/${expectedRosterCount} direct matches; ${fallbacks.map(row => row.fighter).join(', ')}`);
     }
 
     applyWomenFeatherweightTreatment(restored);
@@ -327,9 +329,9 @@ async function main() {
       linearTranslationRejected: true,
       sourceFresh: refreshed.metadata.sourceFresh,
       womenFeatherweightSafe: restored.summary.womenFeatherweightTreatmentApplied === true && restored.summary.pureWomenFeatherweightZeroCount === 1,
-      directMatchCoverageComplete: restored.summary.directMatchCoverageCount === 63 && restored.summary.fallbackCount === 0,
+      directMatchCoverageComplete: restored.summary.directMatchCoverageCount === expectedRosterCount && restored.summary.fallbackCount === 0,
       rosterCount: restored.summary.rosterCount,
-      readyForJudgmentFinalization: refreshed.metadata.sourceFresh && restored.summary.womenFeatherweightTreatmentApplied === true && restored.summary.directMatchCoverageCount === 63
+      readyForJudgmentFinalization: refreshed.metadata.sourceFresh && restored.summary.womenFeatherweightTreatmentApplied === true && restored.summary.directMatchCoverageCount === expectedRosterCount
     };
     restored.generatedAt = new Date().toISOString();
     await fs.writeFile(REPORT_PATH, `${JSON.stringify(restored, null, 2)}\n`);

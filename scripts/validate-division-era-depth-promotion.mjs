@@ -2,11 +2,13 @@ import fs from 'node:fs/promises';
 
 const report = JSON.parse(await fs.readFile('docs/division-era-depth-shadow-report.json', 'utf8'));
 const review = JSON.parse(await fs.readFile('docs/division-era-depth-judgment-review.json', 'utf8'));
+const feed = JSON.parse(await fs.readFile('assets/data/octagon-verdict-data.json', 'utf8'));
+const expectedRosterCount = (feed.fighters || []).length;
 
 const checks = {
   shadowSafe: report.mode === 'shadow-only' && report.mutatesLiveScores === false,
-  rosterComplete: report.summary?.rosterCount === 63 && report.summary?.coverageCount === 63,
-  directCoverageComplete: report.summary?.directMatchCoverageCount === 63 && report.summary?.fallbackCount === 0,
+  rosterComplete: report.summary?.rosterCount === expectedRosterCount && report.summary?.coverageCount === expectedRosterCount,
+  directCoverageComplete: report.summary?.directMatchCoverageCount === expectedRosterCount && report.summary?.fallbackCount === 0,
   aliasesComplete: report.summary?.aliasResolutionComplete === true,
   sourceFresh: report.source?.sourceFresh === true && report.promotionContract?.sourceFresh === true,
   womenFeatherweightSafe: report.summary?.womenFeatherweightTreatmentApplied === true
@@ -15,8 +17,8 @@ const checks = {
   promotionContractComplete: report.promotionContract?.directMatchCoverageComplete === true
     && report.promotionContract?.readyForJudgmentFinalization === true,
   judgmentSafe: review.mode === 'judgment-review-ready-for-live' && review.mutatesLiveScores === false,
-  judgmentCoverageComplete: review.coverage?.rosterCount === 63
-    && review.coverage?.reviewedCount === 63
+  judgmentCoverageComplete: review.coverage?.rosterCount === expectedRosterCount
+    && review.coverage?.reviewedCount === expectedRosterCount
     && review.coverage?.holdCount === 0,
   curvedApproved: review.formulaJudgment?.curvedTranslationApproved === true
     && review.formulaJudgment?.linearTranslationRejected === true,
