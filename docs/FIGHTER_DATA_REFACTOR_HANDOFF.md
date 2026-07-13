@@ -7,8 +7,9 @@ Last updated: 2026-07-13
 - Repository: `codyking0602/ufc-goat-rankings`
 - Working branch: `agent/fighter-data-phase-1`
 - Draft PR: `#39 — Start canonical fighter data ownership refactor`
-- Latest verified batch-five runtime head before this documentation commit: `e6deb21537ca049fc7cbdaa59be659c19f216c00`
-- Always fetch the latest branch and compare it with `main` before editing because automated Octagon Verdict feed commits may advance either ref.
+- Verified batch-five runtime head: `e6deb21537ca049fc7cbdaa59be659c19f216c00`
+- Latest documentation head at handoff close: `093e7e3c2ccbe4fdb935bab06fd507e80cdbfb91`
+- Always fetch the latest branch and compare it with `main` before editing. Automated Octagon Verdict feed commits and watch-link updates can advance `main` independently.
 
 ## Permanent architecture
 
@@ -32,6 +33,15 @@ Phase 1 remains evidence-only. Canonical records load in browser and CI diagnost
 No live category score, total, rank, OVR, leaderboard position, snapshot, profile stat, or Compare Mode value changed during any completed migration batch. Exact tests load sentinel live data and require it to remain byte-for-byte unchanged.
 
 ## Current canonical coverage
+
+- Canonical fighters: **28 of 73 identities — 38.36%**
+- Canonical UFC fight rows: **582**
+- Charles ledger: **37 rows**
+- Batch two: **102 rows**
+- Batch three: **103 rows**
+- Batch four: **138 rows**
+- Batch five: **202 rows**
+- Latest ownership-browser capture: **0 browser errors**
 
 | Fighter | UFC bouts | Official UFC record | Prime | Active elite years |
 |---|---:|---:|---:|---:|
@@ -64,17 +74,6 @@ No live category score, total, rank, OVR, leaderboard position, snapshot, profil
 | Israel Adesanya | 19 | 13-6 | 8-4 | 5.35 |
 | Cain Velasquez | 15 | 12-3 | 6-2 | 5.16 |
 
-- Canonical fighters: **28 of 73 identities — 38.36%**
-- Canonical UFC fight rows: **582**
-- Charles ledger: **37 rows**
-- Batch two: **102 rows**
-- Batch three: **103 rows**
-- Batch four: **138 rows**
-- Batch five: **202 rows**
-- Latest ownership-browser capture: **0 browser errors**
-
-See `docs/fighter-data-ownership-baseline.md` for the ownership report.
-
 ## Canonical files
 
 Core:
@@ -83,7 +82,7 @@ Core:
 - `assets/js/fighter-data-ownership-audit.js`
 - `.github/workflows/fighter-data-ownership-baseline.yml`
 
-Completed migrations:
+Completed migration sources:
 
 - `assets/data/canonical-fighter-facts-batch-one.js`
 - `assets/data/canonical-fighter-facts-batch-two.js`
@@ -107,108 +106,43 @@ Dedicated workflows:
 
 `assets/data/ranking-data-patches.js` loads batches two through five before resolving `UFC_RANKING_DATA_PATCHES_READY`, preventing browser audits from capturing a partially loaded registry.
 
-## Batch-five reconciliation
+## Batch-five decisions
 
-### Randy Couture
-
-- Complete UFC ledger: **24 bouts**, official **16-8**
-- UFC 13 tournament wins count as UFC wins but not official title-fight wins
-- Official title-fight wins: **9**; adjusted title credit: **8.75**
-- Prime: **6-3**, Chuck Liddell I through Gabriel Gonzaga
-- Reviewed prime rounds: **21-5 — 80.77%**
-
-### Max Holloway
-
-- Complete UFC ledger through UFC 329: **33 bouts**, official **24-9**
-- UFC 329 Conor McGregor injury TKO is included
-- BMF fights remain outside UFC divisional title scoring
-- Official title-fight wins: **5**; adjusted title credit: **4.75**
-- Prime remains open: **16-6**
-- Reviewed prime rounds: **50-35 — 58.82%**
-
-### Kamaru Usman
-
-- Complete UFC ledger: **19 bouts**, official **16-3**
-- Prime remains open: **8-3**
-- Official title-fight wins: **6**
-- Reviewed prime rounds: **34-14 — 70.83%**
-- Future Dricus du Plessis fight is excluded
-
-### Jose Aldo
-
-- UFC-only ledger: **23 bouts**, official **14-9**
-- Every WEC fight and title accomplishment is excluded
-- Official title-fight wins: **8**; adjusted title credit: **7.75**
-- Prime: **8-3**, Mark Hominick through Holloway II
-- Reviewed prime rounds: **29-13 — 69.05%**
-
-### Matt Hughes
-
-- Complete UFC ledger: **25 bouts**, official **18-7**
-- Official title-fight wins: **9**; adjusted title credit: **8.90**
-- Joe Riggs missed weight, so that win remains non-title
-- Prime: **13-3**, Carlos Newton I through GSP III
-- Reviewed prime rounds: **28-7 — 80.00%**
-
-### Daniel Cormier
-
-- UFC-only ledger: **15 bouts**, official **11-3, 1 NC**
-- Strikeforce fights and achievements are excluded
-- Jones II remains an official no contest
-- Official title-fight wins: **6**; adjusted title credit: **6.15**
-- Prime: **7-3, 1 NC**
-- Reviewed prime rounds: **19-13 — 59.38%**
-
-### Stipe Miocic
-
-- Complete UFC ledger: **19 bouts**, official **14-5**
-- Prime: **8-3**, JDS I through Ngannou II
-- Jones is post-prime
-- Official title-fight wins: **6**
-- Reviewed prime rounds: **22-9 — 70.97%**
-
-### Ilia Topuria
-
-- Complete UFC ledger: **10 bouts**, official **9-1**
-- Prime remains open: **4-1**
-- Gaethje is a prime stoppage loss
-- Official title-fight wins: **3**; adjusted title credit: **3.15**
-- Reviewed prime rounds: **10-5 — 66.67%**
-
-### Israel Adesanya
-
-- Complete UFC ledger through Joe Pyfer: **19 bouts**, official **13-6**
-- Prime closes with the Dricus title loss: **8-4**
-- Imavov and Pyfer are post-prime
-- Official title-fight wins: **8**; adjusted title credit: **7.75**
-- Reviewed prime rounds: **30-20 — 60.00%**
-
-### Cain Velasquez
-
-- Complete UFC ledger: **15 bouts**, official **12-3**
-- Prime: **6-2**, Nogueira through Werdum
-- Official title-fight wins: **4**
-- Reviewed prime rounds: **15-3 — 83.33%**
+- **Randy Couture:** 24 UFC bouts, 16-8. UFC 13 tournament wins count as UFC wins but not official title-fight wins. Nine official title-fight wins; 8.75 adjusted.
+- **Max Holloway:** 33 UFC bouts, 24-9 through UFC 329. BMF fights remain outside UFC divisional title scoring. Prime remains open at 16-6.
+- **Kamaru Usman:** 19 UFC bouts, 16-3. Prime remains open at 8-3. Future Dricus du Plessis fight is excluded.
+- **Jose Aldo:** UFC-only 23-bout ledger, 14-9. Every WEC fight and title accomplishment is excluded.
+- **Matt Hughes:** 25 UFC bouts, 18-7. Joe Riggs missed weight, so that win remains non-title.
+- **Daniel Cormier:** UFC-only 15-bout ledger, 11-3, 1 NC. Strikeforce is excluded and Jones II remains a no contest.
+- **Stipe Miocic:** 19 UFC bouts, 14-5. Prime ends with Ngannou II; Jones is post-prime.
+- **Ilia Topuria:** 10 UFC bouts, 9-1. Prime remains open at 4-1; Gaethje is a prime stoppage loss.
+- **Israel Adesanya:** 19 UFC bouts, 13-6. Prime closes with Dricus; Imavov and Pyfer are post-prime.
+- **Cain Velasquez:** 15 UFC bouts, 12-3. Prime is 6-2 from Nogueira through Werdum.
 
 ## Validation
 
-Passed on batch-five runtime head `e6deb21537ca049fc7cbdaa59be659c19f216c00`:
+All relevant checks passed on the final batch-five implementation:
 
 - canonical schema contract
-- all prior batch derivation tests
-- dedicated 202-fight ten-fighter derivation test
-- exact per-fighter bout-count assertions
+- Charles 37-fight test
+- batch-two 102-fight test
+- batch-three 103-fight test
+- batch-four 138-fight test
+- batch-five 202-fight test
+- exact per-fighter bout-count and derivation assertions
 - twenty-eight-record registry audit
 - live score/rank/OVR/snapshot non-mutation assertion
 - Fighter Data Ownership Baseline with zero browser errors
 - Runtime Scoring Snapshot
-
-Runtime Scoring Audit and Six-Category Runtime Audit were still completing when this handoff was written; check the latest branch workflows before editing.
+- Runtime Scoring Audit
+- Six-Category Runtime Audit, including settled browser, effective-weight, Prime, Championship, Quality Wins, Longevity, and four-category balance checks
 
 Known unrelated existing CI debt:
 
 - Picks UI Smoke: `Underdog Lock no-odds state is missing`
 - Scoring Architecture Guardrails contains pre-existing exact-parity/build-label debt; canonical and runtime scoring checks are unaffected
+
+At handoff close, the fighter-data branch was **behind `main` by nine unrelated commits**: recurring Octagon Verdict feed rebuilds plus user watch-link updates. Sync latest `main` before the next migration batch, then rerun the canonical and browser gates.
 
 ## Phase 1 checklist
 
@@ -221,7 +155,7 @@ Known unrelated existing CI debt:
 
 ## Resume prompt
 
-> Continue the fighter-data refactor in `codyking0602/ufc-goat-rankings`. Read `docs/FIGHTER_DATA_REFACTOR_HANDOFF.md` and `docs/fighter-data-ownership-baseline.md` first. Continue on `agent/fighter-data-phase-1` unless the handoff says it merged. Fetch and compare latest `main` before editing because automated feed commits may advance it. Preserve all 28 completed canonical ledgers. Work in ten-fighter batches. Never store rank, total, OVR, expected values, calculated aggregates, or hand-written snapshot stats in canonical fighter records. Keep migrations evidence-only until the calculated live pipeline is deliberately connected.
+> Continue the fighter-data refactor in `codyking0602/ufc-goat-rankings`. Read `docs/FIGHTER_DATA_REFACTOR_HANDOFF.md` and `docs/fighter-data-ownership-baseline.md` first. Continue on `agent/fighter-data-phase-1` unless the handoff says it merged. Sync latest `main` before editing because the branch was nine unrelated feed/watch-link commits behind at the last handoff. Preserve all 28 completed canonical ledgers. Work in ten-fighter batches. Never store rank, total, OVR, expected values, calculated aggregates, or hand-written snapshot stats in canonical fighter records. Keep migrations evidence-only until the calculated live pipeline is deliberately connected.
 
 ## Exact next task
 
