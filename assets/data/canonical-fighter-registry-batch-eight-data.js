@@ -29,8 +29,8 @@ window.UFC_BATCH_EIGHT_FIGHTER_DATA=[
 {
  name:'Glover Teixeira',record:'16-7',div:'Light Heavyweight',label:'LHW',mult:1,status:1.08,gapMonths:105.3,
  c:[2.05,19.2,20.5,23.69,4.8,-10,0],titles:1,adj:1,elite:3,top5:5,ranked:12,
- prime:'11-6',primeStart:'2013-09-04',primeStartLabel:'Ryan Bader',primeEnd:'2022-06-12',primeEndLabel:'Jiri Prochazka',years:8.77,
- finish:81.25,primeFinish:52.94,rounds:67,stopped:3,
+ prime:'12-6',primeStart:'2013-09-04',primeStartLabel:'Ryan Bader',primeEnd:'2022-06-12',primeEndLabel:'Jiri Prochazka',years:8.77,
+ finish:81.25,primeFinish:55.56,rounds:67,stopped:3,
  apexWins:['Thiago Santos','Jan Blachowicz'],
  wins:['Jan Blachowicz','Thiago Santos','Anthony Smith','Nikita Krylov','Rashad Evans','Ryan Bader','Ovince Saint Preux','Quinton Jackson','Jared Cannonier','Misha Cirkunov','Karl Roberson','Ion Cutelaba','James Te Huna','Patrick Cummins','Fabio Maldonado','Kyle Kingsbury'],
  titleWins:[['Jan Blachowicz',1]],
@@ -42,7 +42,7 @@ window.UFC_BATCH_EIGHT_FIGHTER_DATA=[
 {
  name:'Frank Shamrock',record:'5-0',div:'Light Heavyweight',label:'LHW',mult:.85,status:1.08,gapMonths:21.1,
  c:[8.05,11.2,25.2,4.18,5.4,0,-2.5],titles:5,adj:3.9,elite:2,top5:3,ranked:5,
- prime:'5-0',primeStart:'1997-12-21',primeStartLabel:'Kevin Jackson',primeEnd:'1999-09-24',primeEndLabel:'Tito Ortiz',years:1.76,
+ prime:'5-0',primeStart:'1997-12-21',primeStartLabel:'Kevin Jackson',primeEnd:'1999-09-24',primeEndLabel:'Tito Ortiz',years:1.76,primeEndWin:true,
  finish:100,primeFinish:100,rounds:90,stopped:0,
  apexWins:['Kevin Jackson','Tito Ortiz'],wins:['Tito Ortiz','Kevin Jackson','Jeremy Horn','Igor Zinoviev','John Lober'],
  titleWins:[['Kevin Jackson',.75],['Igor Zinoviev',.75],['Jeremy Horn',.8],['John Lober',.65],['Tito Ortiz',.95]],losses:[],
