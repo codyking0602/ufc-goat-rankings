@@ -6,9 +6,10 @@ Last updated: 2026-07-13
 - Working branch: `agent/fighter-data-phase-1`
 - Draft PR: `#39 — Start canonical fighter data ownership refactor`
 - Branch base: `f81a9a58c5c0e0aa6be2dc9e02a1c757b21c2ae6`
-- Charles fighter implementation: `78df2e2cf0211d2ffd12f5dbe2452c43925a6b7e`
-- Charles runtime wiring/cache key: `2c85987863ec3f2d228c7b7989288927954afb6b`
-- Baseline documentation: `985a70136173f1e891771c118f93c1b064a647f5`
+- Five-fighter ledger commit: `9aa64b7f61a9758b6b8a9b6f27da79d13a779247`
+- Five-fighter test commit: `e46935891132614372b61723424c651a619430a1`
+- Shadow-runtime loader commit: `a2a6deca07a12c177101a6e90c1071274d0a2a96`
+- CI enforcement commit: `f57e600d20b6f218d4188ad1e102a8ad2cd2eb4b`
 
 ## Permanent architecture
 
@@ -18,27 +19,41 @@ Live runtime must never be controlled by expected rank, expected total, expected
 
 ## Safety state
 
-Phase 1 remains evidence-only. Canonical records are loaded for diagnostics but do not write into `RANKING_DATA`.
+Phase 1 remains evidence-only. Canonical records are loaded into the browser shadow runtime but do not write into `RANKING_DATA`.
 
-No live category score, total, rank, OVR, leaderboard row, snapshot, or profile value changed during the Charles migration. The dedicated test proves the sentinel live data remains unchanged.
+No live category score, total, rank, OVR, leaderboard row, snapshot, profile value, or current placement changed during either migration batch. Dedicated tests prove sentinel live data remains byte-for-byte unchanged.
 
 ## Ownership baseline
+
+Latest successful fully loaded browser capture:
 
 - 72 board rows and 72 profile rows
 - 62 fighter packets and 73 display overrides
 - 72 canonical scoring records
-- 1 canonical fighter-fact record — 1.37% coverage
+- **6 canonical fighter-fact records — 8.22% coverage**
 - 521 duplicate fact fields
 - 80 conflicts
 - 1,566 measurable fields still owned by presentation files
 - 72 locks each for expected rank, total, and OVR
+- zero browser errors
 - one orphan identity: Leon Edwards in `display-overrides.js` only
 
 See `docs/fighter-data-ownership-baseline.md`.
 
 ## Canonical ledger contract
 
-`assets/data/canonical-fighter-facts.js` owns chronological UFC fight evidence and reviewed classifications: official result, separate scoring disposition, method, opponent tier, title context and eligibility, loss classification, prime boundaries, prime rounds, longevity context, division strength, and source coverage.
+`assets/data/canonical-fighter-facts.js` owns chronological UFC fight evidence and reviewed classifications:
+
+- official result and separate scoring disposition
+- method and result context
+- opponent-quality tier
+- title context, eligibility, and reviewed title credit input
+- loss classification and division context
+- prime start/end boundaries
+- audited prime rounds
+- longevity gap cap and status multiplier
+- division-strength segments
+- evidence coverage and verification date
 
 It rejects stored aggregates and outputs including UFC record, finish rate, title totals, quality totals, prime record, rounds percentage, active elite years, loss exposure, category scores, total, rank, OVR, and all expected-value fields.
 
@@ -48,82 +63,147 @@ It rejects stored aggregates and outputs including UFC record, finish rate, titl
 - [x] Build and enforce canonical ledger schema.
 - [x] Add full-roster ownership baseline.
 - [x] Migrate Charles Oliveira.
-- [ ] Migrate Benson Henderson.
-- [ ] Migrate Vitor Belfort.
-- [ ] Migrate Deiveson Figueiredo.
-- [ ] Generate first-batch snapshot stats exclusively from canonical records.
-- [ ] Expand migration across all ranked fighters in small batches.
+- [x] Migrate Benson Henderson.
+- [x] Migrate Vitor Belfort.
+- [x] Migrate Deiveson Figueiredo.
+- [x] Migrate Frankie Edgar.
+- [x] Migrate Dominick Cruz.
+- [ ] Migrate the next five-fighter batch.
+- [ ] Continue five-fighter batches until every ranked fighter has a canonical record.
+- [ ] Generate snapshots exclusively from canonical records.
+- [ ] Remove factual/stat ownership from packets and display overrides.
+- [ ] Remove expected-rank, expected-total, and expected-OVR runtime control.
 
-## Charles Oliveira — completed
+## Files added for the five-person batch
 
-Files:
+- `assets/data/canonical-fighter-facts-batch-two.js`
+- `scripts/test-canonical-fighter-facts-five-person-batch.mjs`
 
-- `assets/data/canonical-fighter-facts-batch-one.js`
-- `scripts/test-canonical-fighter-facts-batch-one.mjs`
+`assets/data/ranking-data-patches.js` now loads batch two before resolving `UFC_RANKING_DATA_PATCHES_READY`, so browser audits cannot run against a partially loaded canonical registry.
 
-Derived from 37 UFC bouts through UFC 326:
+The ownership workflow now syntax-checks and runs the five-person derivation test before launching the browser capture.
 
-- official record: **25-11, 1 NC**
-- scoring record: **25-11**
-- finish wins/rate: **21 / 84.0%**
-- official UFC title-fight wins: **2**
-- adjusted eligible title credit: **1.76**
-- Gaethje title bout recorded with Oliveira ineligible after the weight miss; zero title-win credit
-- Holloway II/BMF excluded from UFC championship scoring
-- open prime begins with Kevin Lee
-- prime record: **9-3**
-- prime finishes: **6 of 12**
-- prime stoppage losses: **2** — Islam and Topuria
-- Arman is the third prime loss by decision
-- prime rounds: **22-9**, or **70.97%**
+## Canonical coverage
+
+### Charles Oliveira — 37 UFC bouts
+
+- official: **25-11, 1 NC**
+- scoring: **25-11**
+- finishes: **21 / 84.0%**
+- official title-fight wins: **2**
+- adjusted title credit: **1.76**
+- prime: **9-3**, open from Kevin Lee
+- prime rounds: **22-9 / 70.97%**
+- prime stoppage losses: **2**
 - active elite years: **6.33**
-- through-prime exposure: **36 scored fights**
-- loss phases: **8 pre-prime, 3 prime, 0 post-prime**
 
-Reviewed calls:
+### Benson Henderson — 14 UFC bouts
 
-- Kevin Lee rounds 2-1 Oliveira
-- Chandler II rounds 4-1 Oliveira
-- Gamrot rounds 2-0 Oliveira
-- Holloway I is an official counted loss but flagged as non-standard competitive evidence because of the neck-injury stoppage
-- opponent tiers remain reviewed model judgments
+- official/scoring: **11-3**
+- finishes: **2 / 18.18%**
+- official title-fight wins: **4**
+- adjusted title credit: **3.65**
+- prime: **10-3**
+- prime rounds: **33-16 / 67.35%**
+- prime stoppage losses: **2**
+- active elite years: **4.29**
 
-The final classification pass corrected Jim Miller to contender status and Topuria to former-champion status at UFC 317. These labels do not change the derived totals.
+Close decisions remain explicitly reviewed, including Edgar II, Melendez, Thomson, and Masvidal.
+
+### Vitor Belfort — 26 UFC bouts
+
+- official: **15-10, 1 NC**
+- scoring: **15-10**
+- finishes: **14 / 93.33%**
+- official UFC title-fight wins: **1**
+- adjusted title/tournament credit: **1.10**
+- prime: **7-3**
+- prime rounds: **9-5 / 64.29%**
+- prime stoppage losses: **3**
+- active elite years: **6.10**
+
+The Scott Ferrozzo UFC 12 tournament win receives reviewed tournament credit but is not counted as an official UFC title-fight win. PRIDE and all other non-UFC fights are excluded.
+
+### Deiveson Figueiredo — 23 UFC bouts
+
+- official/scoring: **14-7-1**
+- finishes: **8 / 57.14%**
+- official title-fight wins: **3**
+- adjusted title credit: **2.75**
+- prime: **7-3-1**, Benavidez I through Petr Yan
+- prime rounds: **17-15-1 / 53.03%**
+- prime stoppage losses: **2**
+- active elite years: **4.73**
+
+Corrections locked:
+
+- Benavidez I gives no title-win credit because Figueiredo missed championship weight.
+- Song Yadong is May 30, 2026, submission loss, guillotine, round 2 at 4:42.
+- Sandhagen, Umar, and Song are post-prime under the locked Petr Yan endpoint.
+
+### Frankie Edgar — 30 UFC bouts
+
+- official/scoring: **18-11-1**
+- finishes: **7 / 38.89%**
+- official title-fight wins: **3**
+- adjusted title credit: **2.80**
+- prime: **13-6-1**, Sean Sherk through Max Holloway
+- prime rounds: **51-24 / 68.00%**
+- prime stoppage losses: **1**
+- active elite years: **10.18**
+
+The Gray Maynard II draw and controversial Penn/Henderson decisions retain reviewed scorecard context.
+
+### Dominick Cruz — 10 UFC bouts
+
+- official/scoring: **7-3**
+- finishes: **1 / 14.29%**
+- official UFC title-fight wins: **4**
+- adjusted title credit: **3.80**
+- prime: **5-2**, Faber II through Cejudo
+- prime rounds: **19-9 / 67.86%**
+- prime stoppage losses: **1**
+- active elite years: **5.51**
+
+All WEC bouts are excluded, including WEC 53. The prior handwritten 6.5 active-elite-years value cannot be produced by the UFC-only prime window and locked 18-month gap cap; canonical calculation is 5.51.
 
 ## Validation
 
-Passed:
+Passed on the five-person batch commit:
 
 - canonical schema test
 - Charles 37-fight derivation test
+- five-person 102-fight derivation test
+- six-record registry audit
+- live score/rank/OVR/snapshot non-mutation assertion
 - Fighter Data Ownership Baseline capture with zero browser errors
 - Runtime Scoring Snapshot
 - Runtime Scoring Audit
-- live score/rank/OVR non-mutation assertion
 
 Known unrelated CI debt:
 
 - Picks UI Smoke: `Underdog Lock no-odds state is missing`
-- Scoring Architecture Guardrails exact snapshot parity uses an older committed app-build label than current main; scoring data is unchanged
+- Scoring Architecture Guardrails exact snapshot parity uses an older committed app-build label than current main; fighter scoring data is unchanged
 
-## Remaining first batch
+## Judgment/status notes
 
-### Benson Henderson
-
-Build the complete UFC ledger. Keep placement untouched. Derive the correct top-five total and review close decisions including Edgar II, Melendez, and Thomson.
-
-### Vitor Belfort
-
-Build the complete UFC-only ledger. Recalculate Opponent Quality from evidence, distinguish the UFC tournament win from the official title-fight win, and keep Pride excluded.
-
-### Deiveson Figueiredo
-
-Build the complete UFC ledger. Correct Song Yadong, derive the 7-3-1 prime through Petr Yan, derive two prime stoppage losses, and correct through-prime exposure.
+- Close decision round allocations are reviewed best-effort evidence, not claimed as unquestionable official facts.
+- Opponent-quality tiers are reviewed model judgments.
+- The canonical system preserves official results separately from model treatment.
+- Duplicate/conflict totals remain unchanged because Phase 1 has not yet deleted or replaced legacy presentation-owned values.
 
 ## Resume prompt
 
-> Continue the fighter-data refactor in `codyking0602/ufc-goat-rankings`. Read `docs/FIGHTER_DATA_REFACTOR_HANDOFF.md` and `docs/fighter-data-ownership-baseline.md` first. Continue on `agent/fighter-data-phase-1` unless the handoff says it merged. Fetch latest branch state before editing. Continue from the first unchecked Phase 1 fighter. Never store rank, total, OVR, expected values, calculated aggregates, or hand-written snapshot stats in canonical fighter records.
+> Continue the fighter-data refactor in `codyking0602/ufc-goat-rankings`. Read `docs/FIGHTER_DATA_REFACTOR_HANDOFF.md` and `docs/fighter-data-ownership-baseline.md` first. Continue on `agent/fighter-data-phase-1` unless the handoff says it merged. Fetch latest branch state before editing. Continue from the exact next task. Use five-fighter migration batches. Never store rank, total, OVR, expected values, calculated aggregates, or hand-written snapshot stats in canonical fighter records.
 
 ## Exact next task
 
-Migrate **Benson Henderson** as the second complete audited canonical UFC ledger. Verify every UFC bout, title context, opponent-quality tier, prime boundary, prime rounds, loss classification, and UFC-only treatment. Leave his current live score, rank, OVR, and snapshot untouched.
+Create the next five-fighter canonical ledger batch for:
+
+1. Fabricio Werdum
+2. Glover Teixeira
+3. Rashad Evans
+4. Mauricio “Shogun” Rua
+5. Forrest Griffin
+
+Use the same pattern as batch two: complete UFC-only fight histories, all records validated before registration, independent exact derivation assertions, no live data mutation, browser-ready loading before the readiness handoff, and updated ownership coverage documentation.
