@@ -19,6 +19,8 @@ Run these files in **Supabase → SQL Editor** in this order:
 11. `supabase/picks-device-recovery-phase.sql`
 12. `supabase/picks-member-pin-phase.sql`
 13. `supabase/picks-archive-admin-phase.sql`
+14. `supabase/picks-member-merge-phase.sql`
+15. `supabase/picks-tiered-scoring-phase.sql`
 
 Then open **Project Settings → API** and copy the project URL and public publishable key into `assets/data/supabase-config.js`.
 
@@ -28,12 +30,14 @@ Never place the service-role or secret key in the repository. All migration file
 
 ## Default scoring
 
-- Correct winner: 1 point.
+- Correct winner: 4 points from UFC Oklahoma City forward.
 - One optional Underdog Lock per player and event.
-- Correct Underdog Lock: 1 additional bonus point.
+- Correct Lock bonus: +1 at +100–149, +2 at +150–199, +3 at +200–249, +4 at +250–299, +5 at +300–349, +6 at +350–399, and +7 at +400 or higher.
 - Incorrect Underdog Lock: no penalty.
+- UFC 329 keeps its original scoring and is not recalculated.
 - Draws, no contests, cancellations, and unresolved fights are excluded from accuracy.
 - Friends' exact picks remain hidden until that fight locks.
+
 
 Commissioners can choose future-season point values. Scoring locks once the first pick is submitted in that season, but the season name remains editable.
 

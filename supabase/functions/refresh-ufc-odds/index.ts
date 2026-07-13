@@ -122,7 +122,8 @@ Deno.serve(async (request) => {
     .from("pick_fights")
     .select("id,event_id,red_name,blue_name,lock_at,result_status,red_odds,blue_odds")
     .in("event_id", eventIds)
-    .eq("result_status", "scheduled");
+    .eq("result_status", "scheduled")
+    .gt("lock_at", new Date().toISOString());
   if (fightsError) return json(500, { error: "Could not load UFC fights", detail: fightsError.message });
 
   const endpoint = new URL(`https://api.the-odds-api.com/v4/sports/${SPORT_KEY}/odds/`);
@@ -182,7 +183,8 @@ Deno.serve(async (request) => {
         odds_updated_at: item.line.updatedAt,
       })
       .eq("id", item.fight.id)
-      .eq("result_status", "scheduled");
+      .eq("result_status", "scheduled")
+      .gt("lock_at", new Date().toISOString());
 
     if (error) failures.push({ fightId: item.fight.id, error: error.message });
     else updated += 1;
