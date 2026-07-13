@@ -1,0 +1,47 @@
+ismatches=[];\n  rows.forEach(row=>{\n   const expected=canonical?.entryFor?.(row.fighter);\n   if(!expected){mismatches.push({fighter:row.fighter,field:'missing-canonical'});return;}\n   fields.forEach(field=>{if(Math.abs(Number(row[field])-Number(expected[field]))>.001)mismatches.push({fighter:row.fighter,field,expected:expected[field],actual:row[field]});});\n   if(Math.abs(Number(row.totalScore)-Number(expected.expectedTotalScore))>.011)mismatches.push({fighter:row.fighter,field:'totalScore',expected:expected.expectedTotalScore,actual:row.totalScore});\n   if(Number(row.rank)!==Number(expected.expectedRank))mismatches.push({fighter:row.fighter,field:'rank',expected:expected.expectedRank,actual:row.rank});\n   if(Number(row.overallOvr)!==Number(expected.expectedOverallOvr))mismatches.push({fighter:row.fighter,field:'overallOvr',expected:expected.expectedOverallOvr,actual:row.overallOvr});\n  });\n  return {contract,rosterCount:rows.length,mismatches,engineVersion:window.UFC_SCORING_ENGINE?.version||null};\n });\n report.errors=errors;\n console.log('STAGE2_OWNERSHIP='+JSON.stringify(report));\n if(report.rosterCount!==72||report.mismatches.length||report.errors.length||report.contract?.wrongOwnerCount||report.contract?.displayOverrideViolationCount||report.contract?.compareScoreViolationCount)process.exitCode=1;\n}finally{await browser.close();}\n";
+
+const snapshot=JSON.parse(await read('docs/runtime-scoring-snapshot.json'));
+const records=Object.fromEntries(snapshot.fighters.map(f=>[f.fighter,{
+ board:f.board,
+ championship:f.scores.championship,
+ opponentQuality:f.scores.opponentQuality,
+ primeDominance:f.scores.primeDominance,
+ longevity:f.scores.longevity,
+ apexPeak:f.scores.apexPeak,
+ penalty:f.scores.lossContext,
+ eraDepthAdjustment:f.scores.eraDepthAdjustment,
+ expectedTotalScore:f.scores.totalScore,
+ expectedRank:f.rank,
+ expectedOverallOvr:f.overallOvr
+}]));
+const canonical=[
+'// Canonical post-audit scoring inputs for Stage 2 ownership consolidation.',
+'// Generated from docs/runtime-scoring-snapshot.json. This file freezes parity while legacy evidence modules are simplified.',
+'(function(){',
+"  'use strict';",
+"  const VERSION='canonical-scoring-records-20260713a-stage2';",
+`  const SOURCE_SHA=${JSON.stringify(snapshot.fighterDataSha256)};`,
+`  const RECORDS=${JSON.stringify(records)};`,
+`  const key=name=>String(name||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘\`´]/g,"'").replace(/\s+/g,' ');`,
+`  const byKey=new Map(Object.entries(RECORDS).map(([fighter,row])=>[key(fighter),{fighter,...row}]));`,
+`  window.UFC_CANONICAL_SCORING_RECORDS={version:VERSION,source:'docs/runtime-scoring-snapshot.json',sourceFighterDataSha256:SOURCE_SHA,rosterCount:byKey.size,records:RECORDS,entryFor:fighter=>byKey.get(key(fighter))||null,fighters:()=>Array.from(byKey.values()).map(row=>row.fighter),mutatesScores:false,role:'canonical score-input parity lock'};`,
+"  document.documentElement.setAttribute('data-canonical-scoring-records',VERSION+'-'+byKey.size);",
+'})();',
+''
+].join('\n');
+await write('assets/data/canonical-scoring-records.js',canonical);
+await write('assets/js/scoring-engine.js',scoringEngine);
+await write('assets/js/scoring-ownership-finalizer.js',ownershipFinalizer);
+await write('scripts/validate-stage2-scoring-ownership.mjs',validator);
+
+let index=await read('index.html');
+index=index.replace(/<meta name="app-build" content="[^"]+" \/>/,'<meta name="app-build" content="20260713-stage2-scoring-ownership" />');
+if(!index.includes('canonical-scoring-records.js')){
+ index=index.replace(/  <script src="assets\/data\/module-versions\.js[^\n]+\n/,'  <script src="assets/data/canonical-scoring-records.js?v=canonical-scoring-records-20260713a-stage2"></script>\n$&');
+}
+index=index.replace(/assets\/data\/module-versions\.js\?v=[^"]+/,'assets/data/module-versions.js?v=module-versions-20260713a-stage2');
+if(!index.includes('assets/js/scoring-engine.js')){
+ index=index.replace(/  <script src="assets\/js\/profile-stat-consistency\.js[^\n]+\n/,'$&  <script src="assets/js/scoring-engine.js?v=scoring-engine-20260713a-single-owner"></script>\n  <script src="assets/js/scoring-ownership-finalizer.js?v=scoring-ownership-finalizer-20260713a-stage2"></script>\n');
+}
+await write('index.html',index);
+console.log('Installed Stage 2 scoring ownership for '+Object.keys(records).length+' fighters.');
