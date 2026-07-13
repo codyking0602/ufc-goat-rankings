@@ -11,8 +11,8 @@ Last updated: 2026-07-13
 - Five-fighter test: `e46935891132614372b61723424c651a619430a1`
 - CI enforcement: `f57e600d20b6f218d4188ad1e102a8ad2cd2eb4b`
 - Exact bout-count guard: `1afc3350ffcc68a6f937155642a6e9a0f7199cae`
-- Latest-main sync merge: `8824b6572fabcd67332359b16c7365d2fda687dd`
-- Synced main SHA: `dc715594613fea3cd0911a249f125381b7e2a43d`
+- Latest-main sync merge: `9140a788e9e2713cff157d9adf9d17d87b425f04`
+- Synced main SHA: `d0b43ef8c7cf3ef568b8574168594db897c6df8f`
 - Post-sync validated head: `0a3b49dc1f22935391710d90dfc1445897009bf6`
 
 The branch was refreshed through GitHub’s tested merge trees without force-pushing. It was verified at **zero commits behind `main`**, and the complete post-sync canonical/scoring workflow suite passed.
