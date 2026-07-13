@@ -1,1 +1,1 @@
-Trigger the one-time full-roster Division-Era Depth repair. Idempotent output branch run.
+Trigger the one-time full-roster Division-Era Depth repair. Fix Shogun JSON alias.
