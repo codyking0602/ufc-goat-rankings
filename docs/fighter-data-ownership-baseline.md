@@ -1,8 +1,8 @@
 # Fighter Data Ownership Baseline
 
-> Phase 1 diagnostic. A failing ownership result is expected until migration is complete; capture failure is not.
+> Phase 1 diagnostic. Ownership failures are expected until migration is complete; capture or derivation failure is not.
 
-Latest verified browser capture: 2026-07-13 after the Charles Oliveira and five-fighter ledger migrations.
+Latest verified browser capture: **2026-07-13**, after canonical batch three.
 
 - Audit version: `fighter-data-ownership-audit-20260713c-identity-inventory`
 - Roster identities found: **73**
@@ -11,7 +11,8 @@ Latest verified browser capture: 2026-07-13 after the Charles Oliveira and five-
 - Fighter packets loaded: **62**
 - Display overrides: **73**
 - Canonical scoring records: **72**
-- Canonical fighter-fact records: **6** (**8.22%** coverage)
+- Canonical fighter-fact records: **11** (**15.07%** coverage)
+- Canonical UFC fight rows: **242**
 - Orphan identities: **1**
 - Duplicate fact fields: **521** across **72** fighters
 - Conflicting fact fields: **80** across **28** fighters
@@ -23,28 +24,33 @@ Latest verified browser capture: 2026-07-13 after the Charles Oliveira and five-
 
 ## Canonical migration coverage
 
-| Fighter | Status | Complete UFC ledger | Derived-output test | Live scoring mutated |
-|---|---|---:|---:|---:|
-| Charles Oliveira | Audited | Yes — 37 bouts | Passed | No |
-| Benson Henderson | Audited | Yes — 14 bouts | Passed | No |
-| Vitor Belfort | Audited | Yes — 26 bouts | Passed | No |
-| Deiveson Figueiredo | Audited | Yes — 22 bouts | Passed | No |
-| Frankie Edgar | Audited | Yes — 30 bouts | Passed | No |
-| Dominick Cruz | Audited | Yes — 10 bouts | Passed | No |
+| Fighter | UFC bouts | Official UFC record | Prime record | Active elite years | Exact derivation test | Live data mutated |
+|---|---:|---:|---:|---:|---:|---:|
+| Charles Oliveira | 37 | 25-11, 1 NC | 9-3 | 6.33 | Passed | No |
+| Benson Henderson | 14 | 11-3 | 10-3 | 4.29 | Passed | No |
+| Vitor Belfort | 26 | 15-10, 1 NC | 7-3 | 6.10 | Passed | No |
+| Deiveson Figueiredo | 22 | 14-7-1 | 7-3-1 | 4.73 | Passed | No |
+| Frankie Edgar | 30 | 18-11-1 | 13-6-1 | 10.18 | Passed | No |
+| Dominick Cruz | 10 | 7-3 | 5-2 | 5.51 | Passed | No |
+| Fabricio Werdum | 18 | 12-6 | 9-3 | 6.11 | Passed | No |
+| Glover Teixeira | 23 | 16-7 | 12-6 | 8.77 | Passed | No |
+| Rashad Evans | 23 | 14-8-1 | 9-3 | 6.00 | Passed | No |
+| Mauricio “Shogun” Rua | 24 | 11-12-1 | 3-3 | 2.59 | Passed | No |
+| Forrest Griffin | 15 | 10-5 | 4-3 | 3.93 | Passed | No |
 
-The five-person batch contains **102 UFC bouts**. Together with Charles, Phase 1 now holds **139 audited UFC fight rows**.
+Batch two contains **102 UFC bouts**. Batch three contains **103 UFC bouts**. Together with Charles, Phase 1 holds **242 complete UFC fight rows**.
 
-## Five-person batch reconciliation highlights
+## Batch-three reconciliation highlights
 
-- **Benson Henderson:** 11-3 UFC record, four official title-fight wins, 3.65 adjusted title credit, 10-3 prime, 67.35% reviewed prime round control, and 4.29 active elite years.
-- **Vitor Belfort:** 15-10 with one no contest, one official UFC title-fight win, a separate UFC 12 tournament achievement, a 7-3 prime, and 64.29% reviewed prime round control.
-- **Deiveson Figueiredo:** complete current UFC record derives as **14-7-1**; Song Yadong is recorded as a May 30, 2026 second-round submission loss. Benavidez I gives no title-win credit because Figueiredo missed championship weight.
-- **Frankie Edgar:** 18-11-1 UFC record, 13-6-1 prime, three official title-fight wins, 68.0% reviewed prime round control, and 10.18 capped active elite years.
-- **Dominick Cruz:** WEC is fully excluded, including WEC 53. His UFC-only Faber II-to-Cejudo window derives **5.51** active elite years under the locked 18-month gap cap, not the legacy handwritten 6.5.
+- **Fabricio Werdum:** 12-6 UFC record, eight finishes, two official title-fight wins, 1.65 adjusted title credit, 9-3 prime, 23-10 reviewed prime rounds, and 6.11 active elite years. PRIDE, Strikeforce, PFL, and the Fedor win are excluded.
+- **Glover Teixeira:** 16-7, thirteen finishes, one official title-fight win, 12-6 prime, 32-17 reviewed prime rounds, and 8.77 active elite years. Jamahal Hill is post-prime.
+- **Rashad Evans:** 14-8-1, six finishes, one official title-fight win, 9-3 prime, 22-13 reviewed prime rounds, and 6.00 active elite years. TUF exhibition bouts are excluded.
+- **Mauricio “Shogun” Rua:** 11-12-1 UFC-only record, eight finishes, one official title-fight win, 3-3 UFC prime, 8-8 reviewed prime rounds, and 2.59 active elite years. PRIDE is fully excluded.
+- **Forrest Griffin:** 10-5, three finishes, one official title-fight win, 4-3 prime, 12-7 reviewed prime rounds, and 3.93 active elite years. The TUF 1 win is a tournament achievement, not an official UFC title fight.
 
-## Orphan identities
+## Orphan identity
 
-- **Leon Edwards:** display override only
+- **Leon Edwards:** exists in `display-overrides.js` only.
 
 ## Conflicts by field
 
@@ -81,26 +87,14 @@ The five-person batch contains **102 UFC bouts**. Together with Charles, Phase 1
 | Display override packet stats | 506 |
 | Fighter packet display | 4 |
 
-## Legacy conflicts remain visible by design
-
-Canonical records now derive the reconciled values, but legacy board, profile, packet, and override sources remain temporarily because Phase 1 must not alter the live app before generated snapshots and calculated scoring are ready.
-
-Examples:
-
-- Charles Oliveira’s canonical finish rate is **84.0%**, while legacy sources still contain **40%** and **86.4%**.
-- Deiveson Figueiredo’s canonical UFC record is **14-7-1**, while older copied sources may show a different record.
-- Dominick Cruz’s canonical capped longevity is **5.51 years**, while a legacy display value still shows **6.5**.
-- Vitor Belfort’s canonical ledger separates one official UFC title-fight win from his UFC 12 tournament win.
-
-The unchanged duplicate/conflict totals are expected at this stage: Phase 1 adds authoritative evidence without yet deleting or replacing the old presentation-owned copies.
-
 ## Interpretation
 
-- Duplicate ownership means the same measurable fact exists in more than one place, even when values agree.
-- A conflict means duplicate sources disagree.
-- Agreement does not prove a copied value is correct.
-- Canonical records currently coexist with legacy sources for diagnostics only; canonical data is not yet driving live profiles or scores.
-- Expected rank, total, and OVR counts confirm runtime locks that must be removed in Phase 4.
-- Coverage increases only after a fighter has a complete reconciled UFC ledger and passing derivation test.
+Canonical records currently coexist with legacy board, profile, packet, and override values for diagnostics only. They do not drive the live app yet.
 
-The complete machine-readable report is generated and uploaded by the **Fighter Data Ownership Baseline** workflow.
+- Duplicate ownership means a measurable fact exists in more than one location, even if the values agree.
+- A conflict means those duplicate sources disagree.
+- Agreement does not prove a copied value is correct.
+- Expected rank, total, and OVR remain runtime locks that must be removed before the calculated system becomes live authority.
+- Phase 1 coverage increases only after a fighter has a complete UFC-only ledger and passing exact derivation test.
+
+The complete machine-readable report is regenerated and uploaded by the **Fighter Data Ownership Baseline** workflow.
