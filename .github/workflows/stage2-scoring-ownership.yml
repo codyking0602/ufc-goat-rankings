@@ -1,11 +1,11 @@
 name: Stage 2 Scoring Ownership
 
-# Bootstrap trigger after the workflow was introduced on main.
 on:
   push:
     branches: [main, agent/stage-2-scoring-ownership]
     paths:
       - 'scripts/stage2-fragments/**'
+      - 'scripts/stage2-installer-b64/**'
       - '.github/workflows/stage2-scoring-ownership.yml'
   pull_request:
     branches: [main]
@@ -16,6 +16,7 @@ on:
       - 'assets/js/scoring-ownership-finalizer.js'
       - 'scripts/validate-stage2-scoring-ownership.mjs'
       - 'scripts/stage2-fragments/**'
+      - 'scripts/stage2-installer-b64/**'
       - '.github/workflows/stage2-scoring-ownership.yml'
   workflow_dispatch:
 
@@ -44,7 +45,7 @@ jobs:
 
       - name: Rebuild installer and generate Stage 2 files
         run: |
-          cat scripts/stage2-fragments/part-*.txt > scripts/install-stage2-scoring-ownership.mjs
+          cat scripts/stage2-installer-b64/part-*.b64 | base64 -d | gzip -d > scripts/install-stage2-scoring-ownership.mjs
           node --check scripts/install-stage2-scoring-ownership.mjs
           node scripts/install-stage2-scoring-ownership.mjs
           node --check assets/data/canonical-scoring-records.js
