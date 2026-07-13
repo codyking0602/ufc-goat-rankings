@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='profile-stat-consistency-20260712c-tournament-titles';
+  const VERSION='profile-stat-consistency-20260712d-prime-phase-finish-count';
   const TITLE_WIN_KEYS=['normalTitleWins','interimTitleWins','vacantUndisputedWins','secondDivisionUndisputedWins','vacantSecondDivisionWins','tournamentWins'];
   let applyCount=0;
 
@@ -25,6 +25,7 @@
   function isPrimeFinishLoss(loss){
     if(!loss)return false;
     const text=[loss.type,loss.phase,loss.method,loss.notes].filter(Boolean).join(' ').toLowerCase();
+    if(/pre[- ]prime|post[- ]prime/.test(text))return false;
     return /finish|stoppage|\bko\b|\btko\b|submission|technical submission/.test(text);
   }
 
@@ -40,15 +41,16 @@
 
   function bestPrimeFinishValue(name,row,override){
     const packet=window.UFC_FIGHTER_PACKETS?.[name];
-    const candidates=[
-      finishLossesFromLedger(name),
+    const explicit=[
       row?.timesFinishedPrime,
+      row?.primeStoppageLosses,
       row?.snapshotStats?.timesFinishedPrime,
       override?.snapshotStats?.timesFinishedPrime,
       override?.packetProfileStats?.timesFinishedPrime,
       packet?.profileStats?.timesFinishedPrime
     ].map(numberOrNull).filter(value=>value!==null);
-    return candidates.length?Math.max(...candidates):0;
+    if(explicit.length)return explicit[0];
+    return numberOrNull(finishLossesFromLedger(name))??0;
   }
 
   function setSnapshot(snapshot,label,value,patterns){
@@ -76,10 +78,12 @@
     if(canonicalRecord)stats.ufcRecord=canonicalRecord;
     if(titleWins!==null)stats.titleFightWins=titleWins;
     stats.timesFinishedPrime=primeStoppageLosses;
+    stats.primeStoppageLosses=primeStoppageLosses;
 
     rows.forEach(row=>{
       row.snapshotStats={...(row.snapshotStats||{}),...stats};
       row.timesFinishedPrime=primeStoppageLosses;
+      row.primeStoppageLosses=primeStoppageLosses;
     });
 
     if(typeof DISPLAY_OVERRIDES!=='undefined'){
@@ -105,7 +109,7 @@
     }
 
     const compare=window.COMPARE_PROFILES?.[name];
-    if(compare&&titleWins!==null)compare.legacyStats={...(compare.legacyStats||{}),titleFightWins:titleWins};
+    if(compare)compare.legacyStats={...(compare.legacyStats||{}),...(titleWins!==null?{titleFightWins:titleWins}:{}),timesFinishedPrime:primeStoppageLosses,primeStoppageLosses};
 
     return{fighter:name,ufcRecord:canonicalRecord,titleFightWins:titleWins,primeStoppageLosses};
   }
