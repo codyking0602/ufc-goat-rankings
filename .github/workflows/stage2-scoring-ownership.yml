@@ -2,7 +2,7 @@ name: Stage 2 Scoring Ownership
 
 on:
   push:
-    branches: [agent/stage-2-scoring-ownership]
+    branches: [main, agent/stage-2-scoring-ownership]
     paths:
       - 'scripts/stage2-fragments/**'
       - '.github/workflows/stage2-scoring-ownership.yml'
@@ -81,7 +81,7 @@ jobs:
           retention-days: 30
 
       - name: Commit generated Stage 2 files
-        if: success()
+        if: github.event_name == 'push' && success()
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
