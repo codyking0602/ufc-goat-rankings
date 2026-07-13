@@ -2,9 +2,9 @@
 (function(){
   'use strict';
 
-  const VERSION='division-era-depth-live-20260712a';
-  const SHADOW_VERSION='division-era-depth-shadow-20260712d-current-wfw-safe';
-  const AUDIT_VERSION='division-era-depth-judgment-review-20260712b-live-approved';
+  const VERSION='division-era-depth-live-20260712b-roster-dynamic';
+  const SHADOW_VERSION='division-era-depth-shadow-20260712e-roster-72';
+  const AUDIT_VERSION='division-era-depth-judgment-review-20260712c-roster-72';
   const OVR_MIN=82;
   const OVR_MAX=99;
   let modulesReady=Boolean(window.UFC_PHASE2_DATA_STATUS);
@@ -149,7 +149,7 @@
 
     const expected=new Map((SHADOW.fighters||[]).map(result=>[key(result.fighter),result]));
     const rows=[...(DATA.men||[]),...(DATA.women||[])];
-    if(rows.length!==63||expected.size!==63||rows.some(row=>!expected.has(key(row?.fighter))))return false;
+    if(!rows.length||expected.size!==rows.length||Number(AUDIT.rosterCount)!==rows.length||rows.some(row=>!expected.has(key(row?.fighter))))return false;
 
     rows.forEach(row=>promoteRow(row,expected.get(key(row.fighter))));
     rerank(DATA.men||[]);
@@ -207,8 +207,8 @@
 
     window.UFC_DIVISION_ERA_DEPTH_LIVE=report;
     DATA.meta=DATA.meta||{};
-    DATA.meta.divisionEraDepthLive={version:VERSION,sourceShadowVersion:SHADOW.version,sourceAuditVersion:AUDIT.version,sourceDatasetEnd:report.sourceDatasetEnd,rosterCount:63,promotedCount:63,mismatchCount:report.mismatchCount,applied:report.applied,appliedAt:report.appliedAt};
-    document.documentElement.setAttribute('data-division-era-depth-live',`${VERSION}-63-${report.mismatchCount}`);
+    DATA.meta.divisionEraDepthLive={version:VERSION,sourceShadowVersion:SHADOW.version,sourceAuditVersion:AUDIT.version,sourceDatasetEnd:report.sourceDatasetEnd,rosterCount:liveRows.length,promotedCount:liveRows.length,mismatchCount:report.mismatchCount,applied:report.applied,appliedAt:report.appliedAt};
+    document.documentElement.setAttribute('data-division-era-depth-live',`${VERSION}-${liveRows.length}-${report.mismatchCount}`);
     if(typeof window.refresh==='function')window.refresh();
     if(typeof window.renderCategories==='function')window.renderCategories();
     if(window.UFC_HOME_POLISH?.refreshHero)window.UFC_HOME_POLISH.refreshHero();

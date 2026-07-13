@@ -187,10 +187,10 @@ try{
     ||result.finalizer?.applied!==true
     ||result.live?.finalizedAfterPipeline!==true
     ||result.live?.applied!==true
-    ||Number(result.live?.promotedCount||0)!==63
+    ||Number(result.live?.promotedCount||0)!==Number(result.consistency?.rosterCount||0)
     ||Number(result.live?.mismatchCount||0)!==0
-    ||Number(result.consistency?.rosterCount||0)!==63
-    ||Number(result.consistency?.shadowCount||0)!==63
+    ||Number(result.consistency?.rosterCount||0)<1
+    ||Number(result.consistency?.shadowCount||0)!==Number(result.consistency?.rosterCount||0)
     ||Number(result.consistency?.boardMismatchCount||0)!==0
     ||Number(result.consistency?.profileMismatchCount||0)!==0
     ||Number(result.consistency?.overrideMismatchCount||0)!==0

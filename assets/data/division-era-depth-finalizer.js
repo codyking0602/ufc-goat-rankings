@@ -2,9 +2,9 @@
 (function(){
   'use strict';
 
-  const VERSION='division-era-depth-finalizer-20260712c-late-ready-sync';
-  const EXPECTED_SHADOW='division-era-depth-shadow-20260712d-current-wfw-safe';
-  const EXPECTED_AUDIT='division-era-depth-judgment-review-20260712b-live-approved';
+  const VERSION='division-era-depth-finalizer-20260712d-roster-dynamic';
+  const EXPECTED_SHADOW='division-era-depth-shadow-20260712e-roster-72';
+  const EXPECTED_AUDIT='division-era-depth-judgment-review-20260712c-roster-72';
   let finalized=false;
 
   const key=name=>String(name||'').trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
@@ -71,7 +71,7 @@
 
     const expected=new Map((shadow.fighters||[]).map(result=>[key(result.fighter),result]));
     const boards=[...(data.men||[]),...(data.women||[])];
-    if(boards.length!==63||expected.size!==63||boards.some(row=>!expected.has(key(row?.fighter))))return false;
+    if(!boards.length||expected.size!==boards.length||Number(audit.rosterCount)!==boards.length||boards.some(row=>!expected.has(key(row?.fighter))))return false;
 
     boards.forEach(row=>attachDepth(row,expected.get(key(row.fighter))));
     (data.fighters||[]).forEach(profile=>{
@@ -131,14 +131,14 @@
       finalizerVersion:VERSION,
       finalScoreEngineVersion:report.finalScoreEngineVersion,
       sourceDatasetEnd:shadow.source?.datasetEnd,
-      rosterCount:63,
-      promotedCount:63,
+      rosterCount:liveRows.length,
+      promotedCount:liveRows.length,
       mismatchCount:report.mismatchCount,
       applied:report.applied,
       finalizedAfterPipeline:true,
       appliedAt:report.finalizedAt
     };
-    document.documentElement.setAttribute('data-division-era-depth-live',`${report.version}-canonical-63-${report.mismatchCount}`);
+    document.documentElement.setAttribute('data-division-era-depth-live',`${report.version}-canonical-${liveRows.length}-${report.mismatchCount}`);
     if(window.UFC_HOME_POLISH?.refreshHero)window.UFC_HOME_POLISH.refreshHero();
     if(window.UFC_OCTAGON_VERDICT_COMPARE_LAUNCHER?.render)window.UFC_OCTAGON_VERDICT_COMPARE_LAUNCHER.render();
     finalized=report.applied;

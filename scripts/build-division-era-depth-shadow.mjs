@@ -490,6 +490,7 @@ function compactFighter(row) {
 async function main() {
   const feedPath = path.join(ROOT, 'assets/data/octagon-verdict-data.json');
   const feed = JSON.parse(await fs.readFile(feedPath, 'utf8'));
+  const expectedRosterCount = (feed.fighters || []).length;
   const csvText = await downloadSource();
   const fights = buildFightRows(csvText);
   const snapshotBuild = buildSnapshots(fights);
@@ -534,7 +535,7 @@ async function main() {
     summary: summarize(fighters),
     fighters
   };
-  if (report.summary.rosterCount !== 63 || report.summary.coverageCount !== 63) {
+  if (report.summary.rosterCount !== expectedRosterCount || report.summary.coverageCount !== expectedRosterCount) {
     throw new Error(`Depth shadow coverage failure: ${report.summary.coverageCount}/${report.summary.rosterCount}.`);
   }
   const docsDir = path.join(ROOT, 'docs');

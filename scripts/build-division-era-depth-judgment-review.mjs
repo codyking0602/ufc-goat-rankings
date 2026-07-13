@@ -5,10 +5,11 @@ import { fileURLToPath } from 'node:url';
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..');
 const REPORT_PATH = path.join(ROOT, 'docs/division-era-depth-shadow-report.json');
+const FEED_PATH = path.join(ROOT, 'assets/data/octagon-verdict-data.json');
 const JSON_PATH = path.join(ROOT, 'docs/division-era-depth-judgment-review.json');
 const MARKDOWN_PATH = path.join(ROOT, 'docs/division-era-depth-judgment-review.md');
 const RUNTIME_PATH = path.join(ROOT, 'assets/data/division-era-depth-audit.js');
-const VERSION = 'division-era-depth-judgment-review-20260712b-live-approved';
+const VERSION = 'division-era-depth-judgment-review-20260712c-roster-72';
 
 const round = (value, digits = 2) => {
   const factor = 10 ** digits;
@@ -100,9 +101,11 @@ function table(rows) {
 
 async function main() {
   const report = JSON.parse(await fs.readFile(REPORT_PATH, 'utf8'));
+  const feed = JSON.parse(await fs.readFile(FEED_PATH, 'utf8'));
+  const expectedRosterCount = (feed.fighters || []).length;
   if (report.mode !== 'shadow-only' || report.mutatesLiveScores !== false) throw new Error('Depth source is not shadow-safe.');
-  if (report.summary?.rosterCount !== 63 || report.summary?.directMatchCoverageCount !== 63 || report.summary?.fallbackCount !== 0) {
-    throw new Error('Depth source does not have clean 63-fighter direct coverage.');
+  if (report.summary?.rosterCount !== expectedRosterCount || report.summary?.directMatchCoverageCount !== expectedRosterCount || report.summary?.fallbackCount !== 0) {
+    throw new Error(`Depth source does not have clean ${expectedRosterCount}-fighter direct coverage.`);
   }
   if (!report.methodology?.curvedCandidate || report.promotionContract?.curvedTranslationApproved !== true) {
     throw new Error('Curved depth candidate is missing or not approved.');
@@ -122,7 +125,7 @@ async function main() {
     blockers.push({ code: 'source-freshness', severity: 'critical', datasetEnd: report.source?.datasetEnd, modelDate: report.source?.modelDate, recommendation: 'Refresh completed UFCStats events through the current scoring period.' });
   }
   if (report.promotionContract?.directMatchCoverageComplete !== true) {
-    blockers.push({ code: 'coverage', severity: 'critical', recommendation: 'Restore direct fight-history coverage for all 63 fighters.' });
+    blockers.push({ code: 'coverage', severity: 'critical', recommendation: `Restore direct fight-history coverage for all ${expectedRosterCount} fighters.` });
   }
 
   const readyForLivePromotion = blockers.length === 0;
@@ -145,7 +148,7 @@ async function main() {
       readyForLivePromotion,
       decision: readyForLivePromotion ? 'approve' : 'hold',
       summary: readyForLivePromotion
-        ? 'The curved Division-Era Depth adjustment is approved for live implementation across all 63 fighters.'
+        ? `The curved Division-Era Depth adjustment is approved for live implementation across all ${expectedRosterCount} fighters.`
         : 'Keep the model in shadow until the remaining blockers are resolved.',
       blockers
     },
@@ -183,7 +186,7 @@ async function main() {
     `Heavyweight passes because every era is normalized against modern heavyweight rather than against naturally deeper lighter divisions.\n\n` +
     `## Women’s Featherweight Review\n\n${table(wfwTreated)}\n\n` +
     `All three WFW-influenced rows now follow the locked exclusion rule and are live-eligible.\n\n` +
-    `## Full 63-Fighter Review\n\n${table(fighters)}\n`;
+    `## Full ${expectedRosterCount}-Fighter Review\n\n${table(fighters)}\n`;
 
   const runtime = {
     version: VERSION,
