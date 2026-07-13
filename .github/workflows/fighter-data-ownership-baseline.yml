@@ -12,6 +12,7 @@ on:
       - 'assets/data/fighter-packets/**'
       - 'assets/js/fighter-data-ownership-audit.js'
       - 'assets/js/profile-stat-consistency.js'
+      - 'scripts/test-canonical-fighter-facts.mjs'
       - 'scripts/capture-fighter-data-ownership-baseline.mjs'
       - '.github/workflows/fighter-data-ownership-baseline.yml'
   workflow_dispatch:
@@ -40,7 +41,11 @@ jobs:
         run: |
           node --check assets/data/canonical-fighter-facts.js
           node --check assets/js/fighter-data-ownership-audit.js
+          node --check scripts/test-canonical-fighter-facts.mjs
           node --check scripts/capture-fighter-data-ownership-baseline.mjs
+
+      - name: Enforce canonical fighter ledger contract
+        run: node scripts/test-canonical-fighter-facts.mjs
 
       - name: Install browser audit dependencies
         run: |
