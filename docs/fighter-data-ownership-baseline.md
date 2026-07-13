@@ -68,19 +68,21 @@ Latest verified browser capture: 2026-07-13 after Charles Oliveira migration.
 
 ## Charles Oliveira legacy conflicts still visible
 
-The canonical record now derives the reconciled values, but legacy board/profile/packet sources have not been removed yet because Phase 1 must not change the live app before generated snapshots are ready.
+The canonical record derives the reconciled values, but legacy board/profile/packet sources remain temporarily because Phase 1 must not alter the live app before generated snapshots are ready.
 
 - Active elite years: legacy **5.23 / 4.0** versus canonical **6.33**
 - Finish rate: legacy **40% / 86.4%** versus canonical **84.0%**
 - Times finished in prime: legacy **0 / 3** versus canonical **2**
 - Title-fight wins: legacy **2 / 3** versus canonical **2**
-- Prime record is now canonically derived as **9-3**
+- Prime record: canonical **9-3**
+
+The final Charles classification pass also corrects Jim Miller to contender status and Ilia Topuria to former-champion status at UFC 317. These contextual labels do not change the derived totals above.
 
 ## Interpretation
 
-- Duplicate ownership means the same measurable fact exists in more than one place, even when the values currently agree.
+- Duplicate ownership means the same measurable fact exists in more than one place, even when values agree.
 - A conflict means duplicate sources disagree.
-- Agreement across duplicate sources does not prove the value is factually correct.
+- Agreement does not prove a copied value is correct.
 - Canonical records currently coexist with legacy sources for diagnostics only; canonical data is not yet driving live profiles or scores.
 - Expected rank, total, and OVR counts confirm runtime locks that must be removed in Phase 4.
 - Coverage increases only after a fighter has a complete reconciled UFC ledger and passing derivation test.
