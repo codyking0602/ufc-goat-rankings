@@ -20,7 +20,6 @@ on:
       - 'scripts/test-canonical-fighter-facts-batch-one.mjs'
       - 'scripts/test-canonical-fighter-facts-five-person-batch.mjs'
       - 'scripts/test-canonical-fighter-facts-five-person-batch-three.mjs'
-      - 'scripts/diagnose-canonical-fighter-facts-batch-three.mjs'
       - 'scripts/capture-fighter-data-ownership-baseline.mjs'
       - '.github/workflows/fighter-data-ownership-baseline.yml'
   workflow_dispatch:
@@ -57,7 +56,6 @@ jobs:
           node --check scripts/test-canonical-fighter-facts-batch-one.mjs
           node --check scripts/test-canonical-fighter-facts-five-person-batch.mjs
           node --check scripts/test-canonical-fighter-facts-five-person-batch-three.mjs
-          node --check scripts/diagnose-canonical-fighter-facts-batch-three.mjs
           node --check scripts/capture-fighter-data-ownership-baseline.mjs
 
       - name: Enforce canonical fighter ledger contract
@@ -68,9 +66,6 @@ jobs:
 
       - name: Verify first five-fighter canonical ledger batch
         run: node scripts/test-canonical-fighter-facts-five-person-batch.mjs
-
-      - name: Capture compact batch-three diagnostic
-        run: node scripts/diagnose-canonical-fighter-facts-batch-three.mjs
 
       - name: Verify second five-fighter canonical ledger batch
         run: node scripts/test-canonical-fighter-facts-five-person-batch-three.mjs
@@ -101,7 +96,6 @@ jobs:
           path: |
             docs/fighter-data-ownership-baseline.json
             docs/fighter-data-ownership-baseline.md
-            docs/canonical-fighter-facts-batch-three-diagnostic.json
             /tmp/ufc-fighter-data-baseline-server.log
           if-no-files-found: warn
           retention-days: 30
