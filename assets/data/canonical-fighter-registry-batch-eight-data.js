@@ -2,11 +2,11 @@
 window.UFC_BATCH_EIGHT_FIGHTER_DATA=[
 {
  name:'Benson Henderson',record:'11-3',div:'Lightweight',div2:'Welterweight',label:'LW / WW',mult:1.10,status:1.08,gapMonths:51.48,
- c:[7.55,18.4,22,12.75,4.6,-6,0],titles:4,adj:3.65,elite:4,top5:5,ranked:10,
+ c:[7.55,18.4,22,12.75,4.6,-6,0],titles:4,adj:3.65,elite:3,top5:7,ranked:10,
  prime:'10-3',primeStart:'2011-08-14',primeStartLabel:'Jim Miller',primeEnd:'2015-11-28',primeEndLabel:'Jorge Masvidal',years:4.29,primeEndWin:true,
  finish:18.18,primeFinish:15.38,rounds:68,stopped:2,
  apexWins:['Frankie Edgar','Nate Diaz'],
- wins:['Frankie Edgar','Frankie Edgar II','Nate Diaz','Gilbert Melendez','Jim Miller','Josh Thomson','Clay Guida','Jorge Masvidal','Rustam Khabilov','Brandon Thatch','Mark Bocek'],
+ wins:['Frankie Edgar','Frankie Edgar II','Gilbert Melendez','Nate Diaz','Jim Miller','Clay Guida','Josh Thomson','Rustam Khabilov','Brandon Thatch','Jorge Masvidal'],
  titleWins:[['Frankie Edgar',1],['Frankie Edgar II',.9],['Nate Diaz',.9],['Gilbert Melendez',.85]],
  losses:[['Anthony Pettis','prime elite title finish loss','2013-08-31'],['Rafael dos Anjos','prime elite finish loss','2014-08-23'],['Donald Cerrone','prime elite decision loss','2015-01-18']],
  tag:'Three-defense lightweight champion',one:'Four UFC title-fight wins and an 11-3 record in a loaded lightweight era, capped by low finish volume and three counted prime losses.',
@@ -15,11 +15,11 @@ window.UFC_BATCH_EIGHT_FIGHTER_DATA=[
 },
 {
  name:'Fabricio Werdum',record:'12-6',div:'Heavyweight',label:'HW',mult:.98,status:1.08,gapMonths:73.47,
- c:[3.4,20.2,21.9,16.18,5.2,-8.25,0],titles:2,adj:1.65,elite:3,top5:5,ranked:10,
+ c:[3.4,20.2,21.9,16.18,5.2,-8.25,0],titles:2,adj:1.65,elite:1,top5:3,ranked:9,
  prime:'9-3',primeStart:'2012-02-04',primeStartLabel:'Roy Nelson',primeEnd:'2018-03-17',primeEndLabel:'Alexander Volkov',years:6.12,
  finish:66.67,primeFinish:41.67,rounds:69,stopped:2,
  apexWins:['Mark Hunt','Cain Velasquez'],
- wins:['Cain Velasquez','Mark Hunt','Antonio Rodrigo Nogueira','Travis Browne','Roy Nelson','Marcin Tybura','Alexander Gustafsson','Walt Harris','Mike Russow','Gabriel Gonzaga','Brandon Vera','Travis Browne II'],
+ wins:['Cain Velasquez','Mark Hunt','Travis Browne','Antonio Rodrigo Nogueira','Roy Nelson','Marcin Tybura','Mike Russow','Gabriel Gonzaga','Travis Browne II'],
  titleWins:[['Mark Hunt',.65],['Cain Velasquez',1]],
  losses:[['Andrei Arlovski','pre-prime elite decision loss','2007-04-21'],['Junior dos Santos','pre-prime elite finish loss','2008-10-25'],['Stipe Miocic','prime elite title finish loss','2016-05-14'],['Alistair Overeem','prime elite decision loss','2017-07-08'],['Alexander Volkov','prime elite finish loss','2018-03-17'],['Aleksei Oleinik','post-prime decision loss','2020-05-09']],
  tag:'Cain-submitting heavyweight champion',one:'A 12-6 UFC heavyweight with interim and undisputed title wins, a signature Cain submission, and a complete six-loss ledger.',
@@ -28,11 +28,11 @@ window.UFC_BATCH_EIGHT_FIGHTER_DATA=[
 },
 {
  name:'Glover Teixeira',record:'16-7',div:'Light Heavyweight',label:'LHW',mult:1,status:1.08,gapMonths:105.3,
- c:[2.05,19.2,20.5,23.69,4.8,-10,0],titles:1,adj:1,elite:3,top5:5,ranked:12,
+ c:[2.05,19.2,20.5,23.69,4.8,-10,0],titles:1,adj:1,elite:1,top5:3,ranked:10,
  prime:'12-6',primeStart:'2013-09-04',primeStartLabel:'Ryan Bader',primeEnd:'2022-06-12',primeEndLabel:'Jiri Prochazka',years:8.77,
  finish:81.25,primeFinish:55.56,rounds:67,stopped:3,
  apexWins:['Thiago Santos','Jan Blachowicz'],
- wins:['Jan Blachowicz','Thiago Santos','Anthony Smith','Nikita Krylov','Rashad Evans','Ryan Bader','Ovince Saint Preux','Quinton Jackson','Jared Cannonier','Misha Cirkunov','Karl Roberson','Ion Cutelaba','James Te Huna','Patrick Cummins','Fabio Maldonado','Kyle Kingsbury'],
+ wins:['Jan Blachowicz','Thiago Santos','Anthony Smith','Ryan Bader','Ovince Saint Preux','Rashad Evans','Quinton Jackson','Nikita Krylov','Misha Cirkunov','Ion Cutelaba'],
  titleWins:[['Jan Blachowicz',1]],
  losses:[['Jon Jones','prime elite title decision loss','2014-04-26'],['Phil Davis','prime elite decision loss','2014-10-25'],['Anthony Johnson','prime elite finish loss','2016-08-20'],['Alexander Gustafsson','prime elite finish loss','2017-05-28'],['Corey Anderson','prime non-elite decision loss','2018-07-22'],['Jiri Prochazka','prime elite title finish loss','2022-06-12'],['Jamahal Hill','post-prime elite title decision loss','2023-01-21']],
  tag:'Late-career LHW champion',one:'Sixteen UFC wins, thirteen finishes, a title at 42, and nearly nine active elite years, balanced by the maximum Loss Context cap.',
@@ -41,10 +41,10 @@ window.UFC_BATCH_EIGHT_FIGHTER_DATA=[
 },
 {
  name:'Frank Shamrock',record:'5-0',div:'Light Heavyweight',label:'LHW',mult:.85,status:1.08,gapMonths:21.1,
- c:[8.05,11.2,25.2,4.18,5.4,0,-2.5],titles:5,adj:3.9,elite:2,top5:3,ranked:5,
+ c:[8.05,11.2,25.2,4.18,5.4,0,-2.5],titles:5,adj:3.9,elite:1,top5:2,ranked:4,
  prime:'5-0',primeStart:'1997-12-21',primeStartLabel:'Kevin Jackson',primeEnd:'1999-09-24',primeEndLabel:'Tito Ortiz',years:1.76,primeEndWin:true,
  finish:100,primeFinish:100,rounds:90,stopped:0,
- apexWins:['Kevin Jackson','Tito Ortiz'],wins:['Tito Ortiz','Kevin Jackson','Jeremy Horn','Igor Zinoviev','John Lober'],
+ apexWins:['Kevin Jackson','Tito Ortiz'],wins:['Tito Ortiz','Jeremy Horn','Kevin Jackson','Igor Zinoviev'],
  titleWins:[['Kevin Jackson',.75],['Igor Zinoviev',.75],['Jeremy Horn',.8],['John Lober',.65],['Tito Ortiz',.95]],losses:[],
  tag:'Unbeaten four-defense pioneer',one:'An unbeaten 5-0 UFC champion with five finishes and four defenses, heavily capped by late-1990s depth and a short UFC window.',
  why:'Shamrock finished every UFC opponent, won the inaugural 200-pound title, defended it four times, and closed with a signature win over Tito Ortiz.',
@@ -52,11 +52,11 @@ window.UFC_BATCH_EIGHT_FIGHTER_DATA=[
 },
 {
  name:'Rashad Evans',record:'14-8-1',div:'Light Heavyweight',div2:'Middleweight',label:'LHW / MW',mult:1,status:1.08,gapMonths:72,
- c:[1.85,19,22,16.2,5,-7.75,0],titles:1,adj:.9,elite:4,top5:6,ranked:10,
+ c:[1.85,19,22,16.2,5,-7.75,0],titles:1,adj:.9,elite:2,top5:5,ranked:9,
  prime:'9-3',primeStart:'2007-11-17',primeStartLabel:'Michael Bisping',primeEnd:'2013-11-16',primeEndLabel:'Chael Sonnen',years:6,primeEndWin:true,
  finish:42.86,primeFinish:33.33,rounds:77,stopped:1,
  apexWins:['Chuck Liddell','Forrest Griffin'],
- wins:['Forrest Griffin','Chuck Liddell','Quinton Jackson','Phil Davis','Tito Ortiz','Michael Bisping','Dan Henderson','Chael Sonnen','Thiago Silva','Stephan Bonnar','Sean Salmon','Jason Lambert','Sam Hoger','Brad Imes'],
+ wins:['Forrest Griffin','Quinton Jackson','Chuck Liddell','Phil Davis','Dan Henderson','Thiago Silva','Tito Ortiz','Michael Bisping','Chael Sonnen'],
  titleWins:[['Forrest Griffin',.9]],
  losses:[['Lyoto Machida','prime elite title finish loss','2009-05-23'],['Jon Jones','prime elite title decision loss','2012-04-21'],['Antonio Rogerio Nogueira','prime non-elite decision loss','2013-02-02'],['Ryan Bader','post-prime elite decision loss','2015-10-03'],['Glover Teixeira','post-prime elite finish loss','2016-04-16'],['Dan Kelly','post-prime decision loss','2017-03-04'],['Sam Alvey','post-prime decision loss','2017-08-05'],['Anthony Smith','post-prime finish loss','2018-06-09']],
  weirdResults:[['Tito Ortiz draw','pre-prime draw','2007-07-07']],
@@ -66,11 +66,11 @@ window.UFC_BATCH_EIGHT_FIGHTER_DATA=[
 },
 {
  name:'Vitor Belfort',record:'15-10, 1 NC',div:'Middleweight',div2:'Light Heavyweight',label:'MW / LHW / HW',mult:.97,status:1.08,gapMonths:65.02,
- c:[2.3,21,21.9,14.6,5.3,-10,-.75],titles:2,adj:1.1,elite:5,top5:7,ranked:12,
+ c:[2.3,21,21.9,14.6,5.3,-10,-.75],titles:2,adj:1.1,elite:1,top5:4,ranked:8,
  prime:'7-3',primeStart:'2009-09-19',primeStartLabel:'Rich Franklin',primeEnd:'2015-11-07',primeEndLabel:'Dan Henderson III',years:6.09,primeEndWin:true,
  finish:93.33,primeFinish:70,rounds:62,stopped:3,
  apexWins:['Michael Bisping','Luke Rockhold'],
- wins:['Luke Rockhold','Michael Bisping','Rich Franklin','Dan Henderson II','Dan Henderson III','Wanderlei Silva','Randy Couture','Anthony Johnson','Yoshihiro Akiyama','Nate Marquardt','Marvin Eastman','Tank Abbott','Joe Charles','Scott Ferrozzo','Tra Telligman'],
+ wins:['Luke Rockhold','Michael Bisping','Rich Franklin','Wanderlei Silva','Dan Henderson II','Randy Couture','Anthony Johnson','Yoshihiro Akiyama'],
  titleWins:[['Scott Ferrozzo',.65],['Randy Couture',.45]],
  losses:[['Randy Couture I','pre-prime elite finish loss','1997-10-17'],['Chuck Liddell','pre-prime elite decision loss','2002-06-22'],['Randy Couture III','pre-prime elite title finish loss','2004-08-21'],['Tito Ortiz','pre-prime elite decision loss','2005-02-05'],['Anderson Silva','prime elite title finish loss','2011-02-05'],['Jon Jones','prime upward-division elite title finish loss','2012-09-22'],['Chris Weidman','prime elite title finish loss','2015-05-23'],['Jacare Souza','post-prime elite finish loss','2016-05-14'],['Gegard Mousasi','post-prime elite finish loss','2016-10-08'],['Lyoto Machida','post-prime elite finish loss','2018-05-12']],
  weirdResults:[['Kelvin Gastelum','post-prime no contest after overturned loss','2017-03-11']],
@@ -80,11 +80,11 @@ window.UFC_BATCH_EIGHT_FIGHTER_DATA=[
 },
 {
  name:'Mauricio "Shogun" Rua',record:'11-12-1',div:'Light Heavyweight',label:'LHW',mult:1,status:1.08,gapMonths:18.89,
- c:[1.95,16,18.7,6.8,4.8,-6.75,0],titles:1,adj:.95,elite:3,top5:4,ranked:9,
+ c:[1.95,16,18.7,6.8,4.8,-6.75,0],titles:1,adj:.95,elite:1,top5:1,ranked:7,
  prime:'3-3',primeStart:'2009-04-18',primeStartLabel:'Chuck Liddell',primeEnd:'2011-11-19',primeEndLabel:'Dan Henderson I',years:2.59,
  finish:72.73,primeFinish:50,rounds:53,stopped:1,
  apexWins:['Chuck Liddell','Lyoto Machida'],
- wins:['Lyoto Machida','Chuck Liddell','Forrest Griffin','Antonio Rogerio Nogueira I','Antonio Rogerio Nogueira II','Corey Anderson','Mark Coleman','Brandon Vera','James Te Huna','Gian Villante','Tyson Pedro'],
+ wins:['Lyoto Machida','Chuck Liddell','Forrest Griffin','Antonio Rogerio Nogueira I','Corey Anderson','James Te Huna','Brandon Vera'],
  titleWins:[['Lyoto Machida',.95]],
  losses:[['Forrest Griffin I','pre-prime elite finish loss','2007-09-22'],['Lyoto Machida I','prime elite title decision loss','2009-10-24'],['Jon Jones','prime elite title finish loss','2011-03-19'],['Dan Henderson I','prime elite decision loss','2011-11-19'],['Alexander Gustafsson','post-prime elite decision loss','2012-12-08'],['Chael Sonnen','post-prime finish loss','2013-08-17'],['Dan Henderson II','post-prime elite finish loss','2014-03-23'],['Ovince Saint Preux I','post-prime finish loss','2014-11-08'],['Anthony Smith','post-prime finish loss','2018-07-22'],['Paul Craig II','post-prime finish loss','2020-11-21'],['Ovince Saint Preux II','post-prime decision loss','2022-05-07'],['Ihor Potieria','post-prime finish loss','2023-01-21']],
  weirdResults:[['Paul Craig I draw','post-prime draw','2019-11-16']],
@@ -94,11 +94,11 @@ window.UFC_BATCH_EIGHT_FIGHTER_DATA=[
 },
 {
  name:'Forrest Griffin',record:'10-5',div:'Light Heavyweight',label:'LHW',mult:1,status:1.05,gapMonths:40.5,
- c:[1.95,17.5,18.5,8.86,5.1,-9.5,0],titles:1,adj:.95,elite:2,top5:4,ranked:7,
+ c:[1.95,17.5,18.5,8.86,5.1,-9.5,0],titles:1,adj:.95,elite:2,top5:2,ranked:4,
  prime:'4-3',primeStart:'2007-09-22',primeStartLabel:'Mauricio Rua I',primeEnd:'2011-08-27',primeEndLabel:'Mauricio Rua II',years:3.93,
  finish:30,primeFinish:14.29,rounds:61,stopped:3,
  apexWins:['Mauricio Rua','Quinton Jackson'],
- wins:['Mauricio Rua','Quinton Jackson','Rich Franklin','Tito Ortiz II','Tito Ortiz III','Stephan Bonnar I','Stephan Bonnar II','Hector Ramirez','Elvis Sinosic','Bill Mahood'],
+ wins:['Mauricio Rua','Quinton Jackson','Rich Franklin','Tito Ortiz II'],
  titleWins:[['Quinton Jackson',.95]],
  losses:[['Tito Ortiz I','pre-prime elite decision loss','2006-04-15'],['Keith Jardine','pre-prime non-elite finish loss','2006-12-30'],['Rashad Evans','prime elite title finish loss','2008-12-27'],['Anderson Silva','prime elite finish loss','2009-08-08'],['Mauricio Rua II','prime elite finish loss','2011-08-27']],
  tag:'TUF icon and LHW champion',one:'A 10-5 UFC champion with defining wins over Shogun and Rampage, balanced by no successful defense and three prime stoppage losses.',
@@ -106,3 +106,30 @@ window.UFC_BATCH_EIGHT_FIGHTER_DATA=[
  whyNot:'He never defended the title, finished only three UFC victories, and suffered five penalized losses before or during the counted prime.'
 }
 ];
+
+// Keep the profile snapshot explicit: Elite+ count first, cumulative Top-5+ count second.
+(function(){
+  'use strict';
+  const fighters=window.UFC_BATCH_EIGHT_FIGHTER_DATA||[];
+  const key=value=>String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
+  function sync(){
+    const overrides=window.DISPLAY_OVERRIDES||(typeof DISPLAY_OVERRIDES!=='undefined'?DISPLAY_OVERRIDES:null);
+    fighters.forEach(fighter=>{
+      const label=`${fighter.elite} / ${fighter.top5}`;
+      const stats={eliteWins:fighter.elite,elitePlusWins:fighter.elite,topFiveWins:fighter.top5,topFivePlusWins:fighter.top5,rankedQualityWins:fighter.ranked};
+      [...(window.RANKING_DATA?.men||[]),...(window.RANKING_DATA?.fighters||[])].filter(row=>key(row?.fighter)===key(fighter.name)).forEach(row=>Object.assign(row,stats));
+      const override=overrides?.[fighter.name];
+      if(override){
+        override.snapshot=(override.snapshot||[]).map(item=>String(item?.[0]||'').toLowerCase().includes('elite / top-5')?[item[0],label]:item);
+        override.snapshotStats={...(override.snapshotStats||{}),...stats};
+        override.packetProfileStats={...(override.packetProfileStats||{}),...stats};
+      }
+      const compare=window.COMPARE_PROFILES?.[fighter.name];
+      if(compare) compare.legacyStats={...(compare.legacyStats||{}),...stats};
+    });
+  }
+  window.addEventListener('ufc-scoring-pipeline-ready',sync);
+  window.addEventListener('ufc-ranking-data-patches-ready',sync);
+  setTimeout(sync,0);
+  setTimeout(sync,800);
+})();
