@@ -1,0 +1,90 @@
+name: Stage 2 Scoring Ownership
+
+on:
+  push:
+    branches: [main, agent/stage-2-scoring-ownership]
+    paths:
+      - 'scripts/stage2-fragments/**'
+      - '.github/workflows/stage2-scoring-ownership.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'assets/data/canonical-scoring-records.js'
+      - 'assets/js/scoring-engine.js'
+      - 'assets/js/scoring-ownership-finalizer.js'
+      - 'scripts/validate-stage2-scoring-ownership.mjs'
+      - 'scripts/stage2-fragments/**'
+      - '.github/workflows/stage2-scoring-ownership.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: stage2-scoring-ownership-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  install-and-validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out current ref
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Rebuild installer and generate Stage 2 files
+        run: |
+          cat scripts/stage2-fragments/part-*.txt > scripts/install-stage2-scoring-ownership.mjs
+          node --check scripts/install-stage2-scoring-ownership.mjs
+          node scripts/install-stage2-scoring-ownership.mjs
+          node --check assets/data/canonical-scoring-records.js
+          node --check assets/js/scoring-engine.js
+          node --check assets/js/scoring-ownership-finalizer.js
+          node --check scripts/validate-stage2-scoring-ownership.mjs
+
+      - name: Install headless browser
+        run: |
+          npm install --no-save --package-lock=false playwright@1.54.1
+          npx playwright install --with-deps chromium
+
+      - name: Start local app
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/ufc-stage2-server.log 2>&1 &
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            if curl --fail --silent http://127.0.0.1:4173/index.html > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/ufc-stage2-server.log
+          exit 1
+
+      - name: Validate single-owner runtime parity
+        run: node scripts/validate-stage2-scoring-ownership.mjs
+
+      - name: Upload validation diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage2-scoring-ownership
+          path: |
+            docs/stage2-scoring-ownership-report.json
+            /tmp/ufc-stage2-server.log
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Commit generated Stage 2 files
+        if: github.event_name == 'push' && success()
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html assets/data/canonical-scoring-records.js assets/js/scoring-engine.js assets/js/scoring-ownership-finalizer.js scripts/install-stage2-scoring-ownership.mjs scripts/validate-stage2-scoring-ownership.mjs
+          git commit -m 'Install Stage 2 scoring ownership [skip ci]' || exit 0
+          git push origin HEAD:${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
