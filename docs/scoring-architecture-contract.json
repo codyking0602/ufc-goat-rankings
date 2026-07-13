@@ -1,5 +1,5 @@
 {
-  "version": "scoring-architecture-contract-20260713a",
+  "version": "scoring-architecture-contract-20260713b",
   "expectedRosterCount": 72,
   "canonical": {
     "path": "assets/data/canonical-scoring-records.js",
@@ -11,6 +11,10 @@
     "path": "assets/js/scoring-engine.js",
     "global": "UFC_SCORING_ENGINE",
     "aliasGlobal": "UFC_FINAL_SCORE_ENGINE",
+    "aliasDefinitionPaths": [
+      "assets/js/scoring-engine.js",
+      "assets/js/scoring-ownership-finalizer.js"
+    ],
     "version": "scoring-engine-20260713c-finalizer-only",
     "authorizedApplyReason": "stage3-scoring-ownership-finalizer",
     "expectedApplyCount": 1,
