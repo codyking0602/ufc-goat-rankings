@@ -11,7 +11,7 @@ Last updated: 2026-07-13
 - Shadow-runtime loader commit: `a2a6deca07a12c177101a6e90c1071274d0a2a96`
 - CI enforcement commit: `f57e600d20b6f218d4188ad1e102a8ad2cd2eb4b`
 - Coverage documentation commit: `2adb396e9bac813026f0b815de975307efb9f9fc`
-- Latest durable checkpoint before this update: `4ec3ecd62ca272573c96c0fae3a30f504982711f`
+- Latest durable checkpoint before this update: `68be9c9ee6d8775293037684081729cea63ab148`
 
 ## Permanent architecture
 
