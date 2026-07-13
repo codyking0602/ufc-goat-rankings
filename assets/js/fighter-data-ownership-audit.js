@@ -2,7 +2,7 @@
 (function(){
   'use strict';
 
-  const VERSION='fighter-data-ownership-audit-20260713b-ready-aware';
+  const VERSION='fighter-data-ownership-audit-20260713c-identity-inventory';
   const key=value=>String(value||'').trim().toLowerCase().normalize('NFD')
     .replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
   const comparable=value=>{
@@ -131,19 +131,27 @@
     const profileRows=(data.fighters||[]).filter(row=>row?.fighter);
     const boards=new Map(boardRows.map(row=>[key(row.fighter),row]));
     const profiles=new Map(profileRows.map(row=>[key(row.fighter),row]));
-    const names=new Map();
-    [
-      ...boardRows.map(row=>row.fighter),
-      ...profileRows.map(row=>row.fighter),
-      ...Object.keys(packets),
-      ...Object.keys(overrides),
-      ...(scoring.fighters?.()||[]),
-      ...(facts?.list?.()||[]).map(row=>row.fighter)
-    ].forEach(name=>{if(name&&!names.has(key(name)))names.set(key(name),name);});
+    const identities=new Map();
+    const addIdentity=(name,source)=>{
+      if(!name)return;
+      const id=key(name);
+      if(!identities.has(id))identities.set(id,{key:id,name,sources:new Set()});
+      identities.get(id).sources.add(source);
+    };
+    boardRows.forEach(row=>addIdentity(row.fighter,'board'));
+    profileRows.forEach(row=>addIdentity(row.fighter,'profile'));
+    Object.keys(packets).forEach(name=>addIdentity(name,'fighterPacket'));
+    Object.keys(overrides).forEach(name=>addIdentity(name,'displayOverride'));
+    (scoring.fighters?.()||[]).forEach(name=>addIdentity(name,'canonicalScoring'));
+    (facts?.list?.()||[]).forEach(row=>addIdentity(row.fighter,'canonicalFacts'));
+    const identityInventory=Array.from(identities.values()).map(row=>({key:row.key,fighter:row.name,sources:Array.from(row.sources).sort()})).sort((a,b)=>a.fighter.localeCompare(b.fighter));
+    const orphanIdentities=identityInventory.filter(row=>!row.sources.includes('board')&&!row.sources.includes('profile')&&!row.sources.includes('canonicalScoring'));
 
     const conflicts=[];
     const duplicated=[];
-    names.forEach((name,id)=>{
+    identityInventory.forEach(identity=>{
+      const name=identity.fighter;
+      const id=identity.key;
       const context={
         data,
         name,
@@ -177,7 +185,7 @@
     };
     const presentationViolations=collectPresentationViolations(packets,overrides);
     const canonicalCount=facts?.count?.()||0;
-    const rosterCount=names.size;
+    const rosterCount=identityInventory.length;
 
     return {
       version:VERSION,
@@ -191,11 +199,13 @@
       canonicalScoringRecordCount:scoreRows.length,
       canonicalFactRecordCount:canonicalCount,
       canonicalCoveragePct:rosterCount?Number(((canonicalCount/rosterCount)*100).toFixed(2)):0,
+      identityInventory,
+      orphanIdentities,
       duplicatedFactFields:duplicated,
       conflictingFactFields:conflicts,
       presentationOwnershipViolations:presentationViolations,
       runtimeExpectedValueLocks:runtimeLocks,
-      passed:conflicts.length===0&&presentationViolations.length===0&&Object.values(runtimeLocks).every(value=>value===0)&&canonicalCount===rosterCount
+      passed:orphanIdentities.length===0&&conflicts.length===0&&presentationViolations.length===0&&Object.values(runtimeLocks).every(value=>value===0)&&canonicalCount===boardRows.length
     };
   }
 
@@ -211,6 +221,7 @@
       canonicalScoringRecordCount:report.canonicalScoringRecordCount,
       canonicalFactRecordCount:report.canonicalFactRecordCount,
       canonicalCoveragePct:report.canonicalCoveragePct,
+      orphanIdentityCount:report.orphanIdentities.length,
       conflictCount:report.conflictingFactFields.length,
       duplicateCount:report.duplicatedFactFields.length,
       presentationViolationCount:report.presentationOwnershipViolations.length,
