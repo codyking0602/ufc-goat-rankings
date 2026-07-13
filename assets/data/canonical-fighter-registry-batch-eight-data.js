@@ -3,7 +3,7 @@ window.UFC_BATCH_EIGHT_FIGHTER_DATA=[
 {
  name:'Benson Henderson',record:'11-3',div:'Lightweight',div2:'Welterweight',label:'LW / WW',mult:1.10,status:1.08,gapMonths:51.48,
  c:[7.55,18.4,22,12.75,4.6,-6,0],titles:4,adj:3.65,elite:4,top5:5,ranked:10,
- prime:'10-3',primeStart:'2011-08-14',primeStartLabel:'Jim Miller',primeEnd:'2015-11-28',primeEndLabel:'Jorge Masvidal',years:4.29,
+ prime:'10-3',primeStart:'2011-08-14',primeStartLabel:'Jim Miller',primeEnd:'2015-11-28',primeEndLabel:'Jorge Masvidal',years:4.29,primeEndWin:true,
  finish:18.18,primeFinish:15.38,rounds:68,stopped:2,
  apexWins:['Frankie Edgar','Nate Diaz'],
  wins:['Frankie Edgar','Frankie Edgar II','Nate Diaz','Gilbert Melendez','Jim Miller','Josh Thomson','Clay Guida','Jorge Masvidal','Rustam Khabilov','Brandon Thatch','Mark Bocek'],
@@ -29,8 +29,8 @@ window.UFC_BATCH_EIGHT_FIGHTER_DATA=[
 {
  name:'Glover Teixeira',record:'16-7',div:'Light Heavyweight',label:'LHW',mult:1,status:1.08,gapMonths:105.3,
  c:[2.05,19.2,20.5,23.69,4.8,-10,0],titles:1,adj:1,elite:3,top5:5,ranked:12,
- prime:'12-6',primeStart:'2013-09-04',primeStartLabel:'Ryan Bader',primeEnd:'2022-06-12',primeEndLabel:'Jiri Prochazka',years:8.77,
- finish:81.25,primeFinish:55.56,rounds:67,stopped:3,
+ prime:'11-6',primeStart:'2013-09-04',primeStartLabel:'Ryan Bader',primeEnd:'2022-06-12',primeEndLabel:'Jiri Prochazka',years:8.77,
+ finish:81.25,primeFinish:52.94,rounds:67,stopped:3,
  apexWins:['Thiago Santos','Jan Blachowicz'],
  wins:['Jan Blachowicz','Thiago Santos','Anthony Smith','Nikita Krylov','Rashad Evans','Ryan Bader','Ovince Saint Preux','Quinton Jackson','Jared Cannonier','Misha Cirkunov','Karl Roberson','Ion Cutelaba','James Te Huna','Patrick Cummins','Fabio Maldonado','Kyle Kingsbury'],
  titleWins:[['Jan Blachowicz',1]],
@@ -53,7 +53,7 @@ window.UFC_BATCH_EIGHT_FIGHTER_DATA=[
 {
  name:'Rashad Evans',record:'14-8-1',div:'Light Heavyweight',div2:'Middleweight',label:'LHW / MW',mult:1,status:1.08,gapMonths:72,
  c:[1.85,19,22,16.2,5,-7.75,0],titles:1,adj:.9,elite:4,top5:6,ranked:10,
- prime:'9-3',primeStart:'2007-11-17',primeStartLabel:'Michael Bisping',primeEnd:'2013-11-16',primeEndLabel:'Chael Sonnen',years:6,
+ prime:'9-3',primeStart:'2007-11-17',primeStartLabel:'Michael Bisping',primeEnd:'2013-11-16',primeEndLabel:'Chael Sonnen',years:6,primeEndWin:true,
  finish:42.86,primeFinish:33.33,rounds:77,stopped:1,
  apexWins:['Chuck Liddell','Forrest Griffin'],
  wins:['Forrest Griffin','Chuck Liddell','Quinton Jackson','Phil Davis','Tito Ortiz','Michael Bisping','Dan Henderson','Chael Sonnen','Thiago Silva','Stephan Bonnar','Sean Salmon','Jason Lambert','Sam Hoger','Brad Imes'],
@@ -67,7 +67,7 @@ window.UFC_BATCH_EIGHT_FIGHTER_DATA=[
 {
  name:'Vitor Belfort',record:'15-10, 1 NC',div:'Middleweight',div2:'Light Heavyweight',label:'MW / LHW / HW',mult:.97,status:1.08,gapMonths:65.02,
  c:[2.3,21,21.9,14.6,5.3,-10,-.75],titles:2,adj:1.1,elite:5,top5:7,ranked:12,
- prime:'7-3',primeStart:'2009-09-19',primeStartLabel:'Rich Franklin',primeEnd:'2015-11-07',primeEndLabel:'Dan Henderson III',years:6.09,
+ prime:'7-3',primeStart:'2009-09-19',primeStartLabel:'Rich Franklin',primeEnd:'2015-11-07',primeEndLabel:'Dan Henderson III',years:6.09,primeEndWin:true,
  finish:93.33,primeFinish:70,rounds:62,stopped:3,
  apexWins:['Michael Bisping','Luke Rockhold'],
  wins:['Luke Rockhold','Michael Bisping','Rich Franklin','Dan Henderson II','Dan Henderson III','Wanderlei Silva','Randy Couture','Anthony Johnson','Yoshihiro Akiyama','Nate Marquardt','Marvin Eastman','Tank Abbott','Joe Charles','Scott Ferrozzo','Tra Telligman'],
