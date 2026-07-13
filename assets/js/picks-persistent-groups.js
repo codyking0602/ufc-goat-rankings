@@ -15,9 +15,11 @@
 
   const safe=value=>String(value ?? '').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
   const normalize=value=>String(value || '').trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6);
-  const urlParam=name=>normalize(new URL(window.location.href).searchParams.get(name));
+  const currentUrl=()=>new URL(window.location.href);
+  const urlParam=name=>normalize(currentUrl().searchParams.get(name));
   const roomCode=()=>urlParam('room') || normalize(document.querySelector('#picksRoomBanner .picks-code')?.textContent);
   const groupCode=()=>urlParam('group');
+  const archiveMode=()=>currentUrl().searchParams.get('archive')==='1';
   const groupToken=code=>code ? localStorage.getItem(`${GROUP_TOKEN_PREFIX}${code}`) : null;
   const groupAdmin=code=>code ? localStorage.getItem(`${GROUP_ADMIN_PREFIX}${code}`) : null;
   const roomToken=code=>code ? localStorage.getItem(`${ROOM_TOKEN_PREFIX}${code}`) : null;
@@ -33,15 +35,16 @@
   }
 
   function groupUrl(code){
-    const url=new URL(window.location.href);
+    const url=currentUrl();
     url.searchParams.delete('room');
     url.searchParams.delete('event');
+    url.searchParams.delete('archive');
     url.searchParams.set('group',code);
     url.hash='picks';
     return url.toString();
   }
 
-  function openRoom(group,room,eventId){
+  function openRoom(group,room,eventId,options={}){
     if(!group || !room) return;
     const token=groupToken(group);
     const admin=groupAdmin(group);
@@ -49,10 +52,13 @@
     if(admin) localStorage.setItem(`${ROOM_ADMIN_PREFIX}${room}`,admin);
     localStorage.setItem('ufc-picks:last-room',room);
     localStorage.removeItem('ufc-picks:auto-restore-disabled');
-    const url=new URL(window.location.href);
+    const url=currentUrl();
     url.searchParams.set('group',group);
     url.searchParams.set('room',room);
     if(eventId) url.searchParams.set('event',eventId);
+    else url.searchParams.delete('event');
+    if(options.archive) url.searchParams.set('archive','1');
+    else url.searchParams.delete('archive');
     url.hash='picks';
     window.location.assign(url.toString());
   }
@@ -84,7 +90,7 @@
   function eventRows(events){
     return events.map(event=>`<div class="picks-group-event${event.is_active?' active':''}">
       <div><span>${safe(event.status)}</span><strong>${safe(event.name)}</strong><small>${safe(event.subtitle || '')}</small></div>
-      <button type="button" data-group-room="${safe(event.room_code)}" data-group-event="${safe(event.event_id)}">${event.is_active?'Open current':'Open recap'}</button>
+      <button type="button" data-group-room="${safe(event.room_code)}" data-group-event="${safe(event.event_id)}" data-group-archive="${event.is_active?'0':'1'}">${event.is_active?'Open current':'Open recap'}</button>
     </div>`).join('');
   }
 
@@ -119,7 +125,12 @@
       </div>` : ''}`;
 
     document.getElementById('picksShareGroup')?.addEventListener('click',()=>shareGroup(snapshot.group));
-    target.querySelectorAll('[data-group-room]').forEach(button=>button.addEventListener('click',()=>openRoom(snapshot.group.code,button.dataset.groupRoom,button.dataset.groupEvent)));
+    target.querySelectorAll('[data-group-room]').forEach(button=>button.addEventListener('click',()=>openRoom(
+      snapshot.group.code,
+      button.dataset.groupRoom,
+      button.dataset.groupEvent,
+      {archive:button.dataset.groupArchive==='1'}
+    )));
     document.getElementById('picksGroupAddEvent')?.addEventListener('click',()=>addEvent(snapshot.group.code));
   }
 
@@ -180,13 +191,18 @@
     localStorage.setItem(`${GROUP_TOKEN_PREFIX}${code}`,token);
     if(admin) localStorage.setItem(`${GROUP_ADMIN_PREFIX}${code}`,admin);
 
-    const url=new URL(window.location.href);
+    const url=currentUrl();
     if(url.searchParams.get('group')!==code){
       url.searchParams.set('group',code);
       history.replaceState(null,'',url.toString());
     }
 
     const snapshot=await loadSnapshot(code,token,admin);
+    const activeRoom=normalize(snapshot?.active_room?.code);
+    if(activeRoom && activeRoom!==room && !archiveMode()){
+      openRoom(code,activeRoom,snapshot.active_room.event_id);
+      return true;
+    }
     if(snapshot) renderIfChanged(snapshot);
     return true;
   }
