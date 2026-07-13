@@ -14,7 +14,7 @@
     if(document.querySelector('link[data-picks-tiered-scoring]')) return;
     const link=document.createElement('link');
     link.rel='stylesheet';
-    link.href='assets/css/picks-tiered-scoring.css?v=picks-tiered-scoring-20260713a';
+    link.href='assets/css/picks-tiered-scoring.css?v=picks-tiered-scoring-20260713b-clarity';
     link.dataset.picksTieredScoring='true';
     document.head.appendChild(link);
   }
@@ -94,8 +94,9 @@
     const markup=`
       <div class="picks-tiered-head">
         <div><span>SCORING</span><strong>Correct pick <b>+4</b></strong></div>
-        <small>One Underdog Lock · bonus only when correct</small>
+        <small>Choose 1 underdog as your Lock. Its odds set the bonus.</small>
       </div>
+      <div class="picks-tiered-lock-label"><span>Underdog Lock bonus by odds</span><small>Bonus only if that underdog wins</small></div>
       <div class="picks-tiered-levels" aria-label="Underdog Lock bonus levels">
         <span><b>+100–149</b><em>+1</em></span>
         <span><b>+150–199</b><em>+2</em></span>
@@ -105,9 +106,9 @@
         <span><b>+350–399</b><em>+6</em></span>
         <span><b>+400+</b><em>+7</em></span>
       </div>`;
-    if(card.dataset.version!=='tiered-v1'){
+    if(card.dataset.version!=='tiered-v1-clarity'){
       card.innerHTML=markup;
-      card.dataset.version='tiered-v1';
+      card.dataset.version='tiered-v1-clarity';
     }
   }
 
@@ -136,7 +137,7 @@
         ? `★ Underdog Lock active · +${bonus} if correct`
         : moving
           ? `Move Underdog Lock here · +${bonus} if correct`
-          : `★ Underdog Lock · +${bonus} if correct`;
+          : `★ Lock this underdog · +${bonus} if correct`;
       if(action.textContent!==value) action.textContent=value;
     });
 
@@ -156,7 +157,7 @@
   function decorateHome(){
     const copy=document.querySelector('#picksGroupContent .picks-group-top p');
     if(!copy) return;
-    const value='Current scoring: 4 points per correct pick · Underdog Lock +1 to +7 by odds. The same group continues every event.';
+    const value='Current scoring: 4 points per correct pick · lock 1 underdog for a +1 to +7 bonus based on its odds. The same group continues every event.';
     if(copy.textContent!==value) copy.textContent=value;
   }
 
