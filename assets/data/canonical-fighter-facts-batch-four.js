@@ -16,7 +16,7 @@ function fight(row,primary){
  const method=METHOD[methodCode]; if(!method)fail(`Unknown method code ${methodCode}.`);
  const rounds=opt.r?{status:'audited',won:opt.r[0],lost:opt.r[1],drawn:opt.r[2]||0,reviewStatus:opt.r[3]||'review',note:opt.r[4]||'Reviewed fight-by-fight round allocation.'}:{status:'not-audited'};
  const title=opt.t?{type:opt.t[0],fighterEligible:opt.t.length>2?opt.t[2]:true,manualCredit:opt.t.length>1?opt.t[1]:undefined,reviewStatus:opt.v||'locked'}:{type:'none'};
- const item={id:`${date}-${slug(opponent)}`,date,opponent,event,division:opt.d||primary,scheduledRounds:opt.s||3,officialResult:result[0],scoringDisposition:opt.z||result[1],method:{category:method,round},rounds,opponentContext:{qualityTier:opt.q||'solid',championStatus:opt.c||'contender',reviewStatus:opt.v||'locked'},championshipContext:title};
+ const item={id:`${date}-${slug(opponent)}`,date,opponent,event,division:opt.d||primary,scheduledRounds:Math.max(opt.s||3,round),officialResult:result[0],scoringDisposition:opt.z||result[1],method:{category:method,round},rounds,opponentContext:{qualityTier:opt.q||'solid',championStatus:opt.c||'contender',reviewStatus:opt.v||'locked'},championshipContext:title};
  if(resultCode==='L'||opt.z==='technical-exception'){
    const loss=opt.l||['home','locked',true];
    item.lossClassification={divisionContext:loss[0]||'home',competitive:loss.length>2?loss[2]:true,reviewStatus:loss[1]||'locked',note:opt.n||'Counted UFC loss.'};
