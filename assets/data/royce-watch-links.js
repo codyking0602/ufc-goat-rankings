@@ -1,7 +1,7 @@
 // App-facing watch links/stats plus the canonical late-registry bridge.
 (function(){
   'use strict';
-  const VERSION='royce-app-links-stats-20260713b-seven-signature-fights';
+  const VERSION='royce-app-links-stats-20260713c-user-watch-links';
   if(typeof DISPLAY_OVERRIDES==='undefined') return;
 
   const fighter='Royce Gracie';
@@ -17,7 +17,9 @@
   const WATCH_LINKS={
     'Benson Henderson':{
       signatureFightUrl:'https://www.youtube.com/watch?v=P65mAfnAFhk',
-      signatureFightLabel:'Watch Signature Fight'
+      signatureFightLabel:'Watch Signature Fight',
+      watchUrl:'https://youtube.com/shorts/ZAhtyftLDFM?is=CW0y_Eq4kDAXaN8b',
+      watchLabel:'Watch Moment'
     },
     'Glover Teixeira':{
       signatureFightUrl:'https://www.youtube.com/watch?v=dAsCS4R0cuE',
@@ -36,12 +38,16 @@
       signatureFightLabel:'Watch Signature Fight'
     },
     'Rashad Evans':{
-      signatureFightUrl:'https://www.ufc.com/video/46244',
-      signatureFightLabel:'Watch Signature Fight'
+      signatureFightUrl:'https://youtu.be/YzJjSBV5jsg?is=F9l9dmmcWV30K4Bj',
+      signatureFightLabel:'Watch Signature Fight',
+      watchUrl:'https://youtube.com/shorts/1WKvEuvMXQs?is=h4BR1iaH5xE2siI1',
+      watchLabel:'Watch Moment'
     },
     'Vitor Belfort':{
       signatureFightUrl:'https://www.youtube.com/watch?v=St35ub7lmNg',
-      signatureFightLabel:'Watch Signature Fight'
+      signatureFightLabel:'Watch Signature Fight',
+      watchUrl:'https://youtube.com/shorts/Egqw0YGlkV0?is=2HmxpxhvOy_-xXyy',
+      watchLabel:'Watch Moment'
     }
   };
 
