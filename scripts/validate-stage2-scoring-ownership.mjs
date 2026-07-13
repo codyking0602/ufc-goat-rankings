@@ -10,10 +10,7 @@ try{
  page.on('pageerror',e=>errors.push(e?.stack||e?.message||String(e)));
  await page.goto(url,{waitUntil:'domcontentloaded',timeout:60000});
  await page.waitForFunction(()=>window.UFC_SCORING_PIPELINE?.status==='ready'||window.UFC_SCORING_PIPELINE?.status==='error',null,{timeout:120000,polling:100});
- const started=Date.now();
- while(window.UFC_SCORING_OWNERSHIP_CONTRACT?.applied!==true&&Date.now()-started<30000){
-  await page.waitForTimeout(250);
- }
+ await page.waitForFunction(()=>window.UFC_SCORING_OWNERSHIP_CONTRACT?.applied===true,null,{timeout:30000,polling:100}).catch(()=>{});
  const report=await page.evaluate(()=>{
   const data=window.RANKING_DATA;
   const canonical=window.UFC_CANONICAL_SCORING_RECORDS;
