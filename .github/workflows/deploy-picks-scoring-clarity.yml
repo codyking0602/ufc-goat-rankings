@@ -1,0 +1,70 @@
+name: Deploy Picks Scoring Clarity
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy-picks-scoring-clarity.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Bump Picks clarity assets
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path=Path('index.html')
+          text=path.read_text()
+          text=re.sub(
+              r'<meta name="app-build" content="[^"]+" />',
+              '<meta name="app-build" content="20260713-picks-scoring-clarity" />',
+              text,
+              count=1,
+          )
+          text=text.replace(
+              'assets/css/picks-tiered-scoring.css?v=picks-tiered-scoring-20260713a',
+              'assets/css/picks-tiered-scoring.css?v=picks-tiered-scoring-20260713b-clarity',
+          )
+          text=text.replace(
+              'assets/js/picks-tiered-scoring.js?v=picks-tiered-scoring-20260713a',
+              'assets/js/picks-tiered-scoring.js?v=picks-tiered-scoring-20260713b-clarity',
+          )
+          text=text.replace(
+              'assets/js/picks-odds-coverage.js?v=picks-odds-coverage-20260712a',
+              'assets/js/picks-odds-coverage.js?v=picks-odds-coverage-20260713b-lock-copy',
+          )
+          path.write_text(text)
+          PY
+
+      - name: Validate Picks clarity
+        shell: bash
+        run: |
+          node --check assets/js/picks-tiered-scoring.js
+          node --check assets/js/picks-odds-coverage.js
+          grep -q 'Choose 1 underdog as your Lock' assets/js/picks-tiered-scoring.js
+          grep -q 'Choose 1 Underdog Lock' assets/js/picks-odds-coverage.js
+          grep -q 'picks-live-panel.upcoming' assets/css/picks-tiered-scoring.css
+          grep -q 'picks-scoring-clarity' index.html
+
+      - name: Commit live cache bump
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git commit -m 'Ship Picks scoring clarity cleanup [skip ci]' || exit 0
+          git push origin HEAD:main
