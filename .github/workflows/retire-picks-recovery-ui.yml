@@ -81,11 +81,6 @@ jobs:
           checker = checker.replace("  'assets/css/picks-device-recovery.css',\n", "")
           checker = checker.replace("  'assets/js/picks-device-recovery.js',\n", "")
           checker = checker.replace(
-              "  'assets/css/picks-final-cleanup.css',\n",
-              "  'assets/css/picks-final-cleanup.css',\n  'assets/css/picks-member-pin.css',\n  'assets/css/picks-archive-admin.css',\n",
-              1,
-          )
-          checker = checker.replace(
               "  'assets/js/picks-upcoming-event-settings.js',\n  'assets/js/picks-mobile-polish.js',",
               "  'assets/js/picks-upcoming-event-settings.js',\n  'assets/js/picks-member-pin.js',\n  'assets/js/picks-archive-admin.js',\n  'assets/js/picks-mobile-polish.js',",
           )
@@ -130,3 +125,5 @@ jobs:
           git add -A index.html assets/js assets/css scripts/check-picks-ui.mjs .github/workflows/retire-picks-recovery-ui.yml
           git commit -m 'Fully retire Picks recovery frontend' || exit 0
           git push origin HEAD:main
+
+# trigger: 20260713b
