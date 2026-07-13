@@ -15,10 +15,9 @@ try{
   await page.waitForTimeout(250);
  }
  const report=await page.evaluate(()=>{
-  const clone=value=>JSON.parse(JSON.stringify(value??null));
   const data=window.RANKING_DATA;
   const canonical=window.UFC_CANONICAL_SCORING_RECORDS;
-  const contract=window.UFC_SCORING_OWNERSHIP_CONTRACT;
+  const contract=window.UFC_SCORING_OWNERSHIP_CONTRACT||{};
   const rows=[...(data?.men||[]),...(data?.women||[])];
   const fields=['championship','opponentQuality','primeDominance','longevity','apexPeak','penalty','eraDepthAdjustment'];
   const mismatches=[];
@@ -35,18 +34,45 @@ try{
   const depthFinalizer=window.UFC_DIVISION_ERA_DEPTH_FINALIZER;
   const lossLive=window.UFC_LOSS_CONTEXT_HYBRID_LIVE;
   const eraLive=window.UFC_DIVISION_ERA_DEPTH_LIVE;
+  const readiness=contract.readiness||{};
   return {
-   contract:clone(contract),
+   contract:{
+    version:contract.version||null,
+    applied:contract.applied===true,
+    status:contract.status||null,
+    settled:contract.settled===true,
+    attemptCount:contract.attemptCount??null,
+    elapsedMs:contract.elapsedMs??null,
+    rosterCount:contract.rosterCount??null,
+    expectedRosterCount:contract.expectedRosterCount??null,
+    profileMismatchCount:contract.profileMismatchCount??null,
+    displayOverrideViolationCount:contract.displayOverrideViolationCount??null,
+    compareScoreViolationCount:contract.compareScoreViolationCount??null,
+    missingLossContextDetailCount:contract.missingLossContextDetailCount??readiness.missingLossContextDetailCount??null,
+    missingEraDepthDetailCount:contract.missingEraDepthDetailCount??readiness.missingEraDepthDetailCount??null,
+    wrongOwnerCount:contract.wrongOwnerCount??null,
+    readiness:{
+     data:readiness.data??null,
+     engine:readiness.engine??null,
+     canonical:readiness.canonical??null,
+     pipelineReady:readiness.pipelineReady??null,
+     dynamicRosterEvidence:readiness.dynamicRosterEvidence??null,
+     depthFinalizerInformational:readiness.depthFinalizerInformational??null,
+     rosterCount:readiness.rosterCount??null,
+     missingLossContextDetailCount:readiness.missingLossContextDetailCount??null,
+     missingEraDepthDetailCount:readiness.missingEraDepthDetailCount??null
+    }
+   },
    rosterCount:rows.length,
    mismatches,
    engineVersion:window.UFC_SCORING_ENGINE?.version||null,
    engineApplyCount:window.UFC_SCORING_ENGINE?.applyCount??null,
    displayGuard:guard?{version:guard.version,installed:guard.installed,role:guard.role,protectedCount:guard.protectedCount,forbiddenDirectCount:guard.forbiddenDirect?.length||0,forbiddenNestedCount:guard.forbiddenNested?.length||0,forbiddenCategoryCount:guard.forbiddenCategory?.length||0}:null,
-   pipeline:clone(window.UFC_SCORING_PIPELINE),
-   legacyRepair:legacyRepair?{version:legacyRepair.version,applied:legacyRepair.applied,status:legacyRepair.status,applyCount:legacyRepair.applyCount,rosterCount:legacyRepair.rosterCount,scoreMismatches:legacyRepair.scoreMismatches||[]}:null,
-   depthFinalizer:depthFinalizer?{version:depthFinalizer.version,applied:depthFinalizer.applied,status:depthFinalizer.status,applyCount:depthFinalizer.applyCount,rosterCount:depthFinalizer.rosterCount}:null,
-   lossLive:lossLive?{version:lossLive.version,applied:lossLive.applied,status:lossLive.status,rosterCount:lossLive.rosterCount,mismatchCount:lossLive.mismatchCount}:null,
-   eraLive:eraLive?{version:eraLive.version,applied:eraLive.applied,status:eraLive.status,rosterCount:eraLive.rosterCount,mismatchCount:eraLive.mismatchCount}:null
+   pipeline:{version:window.UFC_SCORING_PIPELINE?.version||null,status:window.UFC_SCORING_PIPELINE?.status||null,mode:window.UFC_SCORING_PIPELINE?.mode||null},
+   legacyRepair:legacyRepair?{version:legacyRepair.version,applied:legacyRepair.applied===true,status:legacyRepair.status||null,applyCount:legacyRepair.applyCount??null,rosterCount:legacyRepair.rosterCount??null,scoreMismatchCount:(legacyRepair.scoreMismatches||[]).length}:null,
+   depthFinalizer:depthFinalizer?{version:depthFinalizer.version,applied:depthFinalizer.applied===true,status:depthFinalizer.status||null,applyCount:depthFinalizer.applyCount??null,rosterCount:depthFinalizer.rosterCount??null}:null,
+   lossLive:lossLive?{version:lossLive.version,applied:lossLive.applied===true,status:lossLive.status||null,rosterCount:lossLive.rosterCount??null,mismatchCount:lossLive.mismatchCount??null}:null,
+   eraLive:eraLive?{version:eraLive.version,applied:eraLive.applied===true,status:eraLive.status||null,rosterCount:eraLive.rosterCount??null,mismatchCount:eraLive.mismatchCount??null}:null
   };
  });
  report.errors=errors;
