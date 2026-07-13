@@ -17,7 +17,7 @@ page.on('pageerror',error=>pageErrors.push(String(error?.stack||error)));
 
 try{
   await page.goto(baseUrl,{waitUntil:'domcontentloaded',timeout:60_000});
-  await page.waitForFunction(()=>window.UFC_SCORING_PIPELINE?.status==='ready'&&window.UFC_DIVISION_ERA_DEPTH_LIVE?.applied===true&&window.UFC_DIVISION_ERA_DEPTH_FINALIZER?.applied===true&&window.UFC_SCORING_OWNERSHIP_CONTRACT?.applied===true,null,{timeout:120_000,polling:100});
+  await page.waitForFunction(()=>window.UFC_SCORING_PIPELINE?.status==='ready'&&window.UFC_DIVISION_ERA_DEPTH_LIVE?.applied===true&&window.UFC_SCORING_OWNERSHIP_CONTRACT?.applied===true,null,{timeout:120_000,polling:100});
   await page.waitForTimeout(500);
 
   const result=await page.evaluate(async()=>{
@@ -109,7 +109,7 @@ try{
   });
 
   const payload={generatedAt:new Date().toISOString(),baseUrl,...result,browserDiagnostics:{consoleErrors,pageErrors}};
-  const summary={generatedAt:payload.generatedAt,pipelineStatus:result.pipeline?.status??null,ownershipApplied:result.ownershipContract?.applied??false,shadowVersion:result.shadow?.version??null,auditVersion:result.audit?.version??null,liveVersion:result.live?.version??null,finalizerVersion:result.finalizer?.version??null,finalizerApplied:result.finalizer?.applied??false,engineVersion:result.engine?.version??null,engineApplyCount:result.engine?.applyCount??null,datasetEnd:result.shadow?.source?.datasetEnd??null,sourceFresh:result.shadow?.source?.sourceFresh??false,judgmentApproved:result.audit?.judgmentApproved??false,readyForLivePromotion:result.audit?.readyForLivePromotion??false,liveApplied:result.live?.applied??false,promotedCount:result.live?.promotedCount??null,liveMismatchCount:result.live?.mismatchCount??null,consistency:result.consistency,wfwSafety:result.wfwSafety,anchors:result.anchors,profileSurface:result.profileSurface,compareSurface:result.compareSurface,browserDiagnostics:{consoleErrors,pageErrors}};
+  const summary={generatedAt:payload.generatedAt,pipelineStatus:result.pipeline?.status??null,ownershipApplied:result.ownershipContract?.applied??false,shadowVersion:result.shadow?.version??null,auditVersion:result.audit?.version??null,liveVersion:result.live?.version??null,finalizerVersion:result.finalizer?.version??null,finalizerApplied:result.finalizer?.applied??false,finalizerRole:'informational-legacy-module',engineVersion:result.engine?.version??null,engineApplyCount:result.engine?.applyCount??null,datasetEnd:result.shadow?.source?.datasetEnd??null,sourceFresh:result.shadow?.source?.sourceFresh??false,judgmentApproved:result.audit?.judgmentApproved??false,readyForLivePromotion:result.audit?.readyForLivePromotion??false,liveApplied:result.live?.applied??false,promotedCount:result.live?.promotedCount??null,liveMismatchCount:result.live?.mismatchCount??null,consistency:result.consistency,wfwSafety:result.wfwSafety,anchors:result.anchors,profileSurface:result.profileSurface,compareSurface:result.compareSurface,browserDiagnostics:{consoleErrors,pageErrors}};
   await fs.writeFile(outputPath,`${JSON.stringify(payload,null,2)}\n`,'utf8');
   await fs.writeFile(summaryPath,`${JSON.stringify(summary,null,2)}\n`,'utf8');
   console.log('DIVISION_ERA_DEPTH_RUNTIME_SUMMARY');
@@ -121,7 +121,6 @@ try{
     ||result.shadow?.source?.sourceFresh!==true
     ||result.audit?.judgmentApproved!==true
     ||result.audit?.readyForLivePromotion!==true
-    ||result.finalizer?.applied!==true
     ||result.live?.applied!==true
     ||Number(result.live?.promotedCount||0)!==Number(result.consistency?.rosterCount||0)
     ||Number(result.live?.mismatchCount||0)!==0
