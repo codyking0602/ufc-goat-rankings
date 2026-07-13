@@ -78,33 +78,32 @@
   }
 
   function installButton(){
-    if(document.getElementById('manualRefreshBtn')) return;
+    const hero = document.querySelector('.hero');
+    if(!hero || document.getElementById('manualRefreshBtn')) return;
 
     const style = document.createElement('style');
     style.textContent = `
       #manualRefreshBtn{
-        position:fixed;
-        z-index:100000;
-        top:max(12px,env(safe-area-inset-top));
-        right:max(12px,env(safe-area-inset-right));
+        position:static;
+        z-index:1;
+        flex:0 0 auto;
+        align-self:flex-start;
         min-height:40px;
         padding:9px 13px;
         border:1px solid rgba(249,115,22,.72);
         border-radius:999px;
         background:rgba(10,13,19,.9);
-        box-shadow:0 10px 30px rgba(0,0,0,.34);
+        box-shadow:0 10px 30px rgba(0,0,0,.24);
         color:#fed7aa;
         font:800 .78rem/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
         letter-spacing:.02em;
         white-space:nowrap;
-        backdrop-filter:blur(12px);
-        -webkit-backdrop-filter:blur(12px);
         cursor:pointer;
       }
       #manualRefreshBtn:active{transform:translateY(1px) scale(.98)}
       #manualRefreshBtn.refreshing{opacity:.72;pointer-events:none}
-      @media (max-width:520px){
-        #manualRefreshBtn{min-height:38px;padding:8px 11px;font-size:.72rem}
+      @media (max-width:900px){
+        #manualRefreshBtn{order:-1;align-self:flex-end;min-height:38px;padding:8px 11px;font-size:.72rem}
       }
     `;
     document.head.appendChild(style);
@@ -122,7 +121,7 @@
       url.searchParams.set('__manual_refresh',String(Date.now()));
       window.location.replace(url.toString());
     });
-    document.body.appendChild(button);
+    hero.appendChild(button);
   }
 
   LEGACY_KEYS.forEach(key => {
