@@ -1,5 +1,6 @@
 name: Stage 2 Scoring Ownership
 
+# Direct-source parity gate for the permanent Stage 2 architecture.
 on:
   pull_request:
     branches: [main]
