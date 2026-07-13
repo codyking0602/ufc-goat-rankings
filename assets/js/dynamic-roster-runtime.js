@@ -2,9 +2,12 @@
 (function(){
   'use strict';
 
-  const VERSION='dynamic-roster-runtime-20260712a';
+  const VERSION='dynamic-roster-runtime-20260713a-score-owner-clean';
   const DATA=window.RANKING_DATA;
   if(!DATA) return;
+
+  const SCORE_OVERRIDE_FIELDS=['overallOvr','allTimeRank','rankLabel','totalScore','rawScore','rank','baseScore','penalty','lossPenalty','lossContext','eraDepthAdjustment','lossContextHybrid','divisionEraDepth'];
+  const CATEGORY_OVERRIDE_FIELDS=['ovr','rank','score','value'];
 
   function key(value){
     return String(value||'').trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
@@ -70,6 +73,23 @@
     }
   }
 
+  function stripScoreDerivedOverrides(){
+    let stripped=0;
+    Object.values(window.DISPLAY_OVERRIDES||{}).forEach(override=>{
+      if(!override||typeof override!=='object')return;
+      SCORE_OVERRIDE_FIELDS.forEach(field=>{
+        if(Object.prototype.hasOwnProperty.call(override,field)){delete override[field];stripped+=1;}
+      });
+      Object.values(override.categories||{}).forEach(value=>{
+        if(!value||typeof value!=='object')return;
+        CATEGORY_OVERRIDE_FIELDS.forEach(field=>{
+          if(Object.prototype.hasOwnProperty.call(value,field)){delete value[field];stripped+=1;}
+        });
+      });
+    });
+    return stripped;
+  }
+
   function sync(reason='manual'){
     syncFighterCount();
     syncDivisionFilter();
@@ -79,9 +99,11 @@
     if(typeof window.refresh==='function'){
       try{window.refresh();}catch(error){window.UFC_DYNAMIC_ROSTER_RENDER_ERROR=String(error?.message||error);}
     }
+    const strippedScoreOverrideFields=stripScoreDerivedOverrides();
     const state={
       version:VERSION,reason,fighterCount:(DATA.fighters||[]).length,
       menCount:(DATA.men||[]).length,womenCount:(DATA.women||[]).length,
+      strippedScoreOverrideFields,
       syncedAt:new Date().toISOString()
     };
     window.UFC_DYNAMIC_ROSTER_RUNTIME.latest=state;
@@ -89,9 +111,10 @@
     return state;
   }
 
-  const API={version:VERSION,sync,latest:null};
+  const API={version:VERSION,sync,stripScoreDerivedOverrides,latest:null};
   window.UFC_DYNAMIC_ROSTER_RUNTIME=API;
 
   window.addEventListener('ufc-scoring-pipeline-ready',()=>sync('scoring-pipeline-ready'),{once:true});
+  window.addEventListener('ufc-scoring-runtime-coordinator-ready',()=>sync('scoring-runtime-coordinator-ready'),{once:true});
   if(document.documentElement.getAttribute('data-scoring-pipeline')==='ready') sync('already-ready');
 })();
