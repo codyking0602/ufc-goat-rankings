@@ -17,26 +17,21 @@ page.on('pageerror',error=>pageErrors.push(String(error?.stack||error)));
 try{
   await page.goto(baseUrl,{waitUntil:'domcontentloaded',timeout:60_000});
   await page.waitForFunction(
-    ()=>window.UFC_SCORING_PIPELINE?.status==='ready'||window.UFC_SCORING_PIPELINE?.status==='error',
+    ()=>window.UFC_SCORING_RUNTIME_COORDINATOR?.applied===true||window.UFC_SCORING_PIPELINE?.status==='error',
     null,
-    {timeout:120_000}
+    {timeout:120_000,polling:100}
   );
+  await page.waitForTimeout(300);
 
   const result=await page.evaluate(async()=>{
-    const started=Date.now();
-    while(
-      window.UFC_DIVISION_ERA_DEPTH_FINALIZER?.applied!==true
-      && window.UFC_DIVISION_ERA_DEPTH_FINALIZER?.status!=='blocked'
-      && Date.now()-started<10_000
-    )await new Promise(resolve=>setTimeout(resolve,50));
-
     const clone=value=>JSON.parse(JSON.stringify(value??null));
-    const key=name=>String(name||'').trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
+    const key=name=>String(name||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
     const data=window.RANKING_DATA||{};
     const shadow=clone(window.UFC_DIVISION_ERA_DEPTH_SHADOW);
     const audit=clone(window.UFC_DIVISION_ERA_DEPTH_AUDIT);
     const live=clone(window.UFC_DIVISION_ERA_DEPTH_LIVE);
     const finalizer=clone(window.UFC_DIVISION_ERA_DEPTH_FINALIZER);
+    const coordinator=clone(window.UFC_SCORING_RUNTIME_COORDINATOR);
     const finalScoreEngine=clone(window.UFC_FINAL_SCORE_ENGINE);
     const sixCategoryModel=clone(window.UFC_SIX_CATEGORY_SCORE_MODEL);
     const boards=[...(data.men||[]),...(data.women||[])];
@@ -52,33 +47,35 @@ try{
     }).map(row=>row.fighter);
     const profileMismatches=profiles.filter(profile=>{
       const board=boardByKey.get(key(profile.fighter));
-      return board&&(
+      return !board||(
         Math.abs(Number(profile.eraDepthAdjustment)-Number(board.eraDepthAdjustment))>0.001
         ||Number(profile.rank)!==Number(board.rank)
         ||Number(profile.overallOvr)!==Number(board.overallOvr)
         ||Math.abs(Number(profile.totalScore)-Number(board.totalScore))>0.001
       );
     }).map(row=>row.fighter);
-    const overrideMismatches=boards.filter(row=>{
-      const override=window.DISPLAY_OVERRIDES?.[row.fighter]||{};
-      return Number(override.allTimeRank)!==Number(row.rank)
-        ||Number(override.overallOvr)!==Number(row.overallOvr)
-        ||Math.abs(Number(override.eraDepthAdjustment)-Number(row.eraDepthAdjustment))>0.001;
-    }).map(row=>row.fighter);
+
+    const forbiddenOverrideFields=[];
+    Object.entries(window.DISPLAY_OVERRIDES||{}).forEach(([fighter,override])=>{
+      if(!override||typeof override!=='object')return;
+      ['overallOvr','allTimeRank','rankLabel','totalScore','rawScore','rank','baseScore','penalty','lossPenalty','lossContext','eraDepthAdjustment','lossContextHybrid','divisionEraDepth'].forEach(field=>{
+        if(Object.prototype.hasOwnProperty.call(override,field))forbiddenOverrideFields.push({fighter,field});
+      });
+      Object.entries(override.categories||{}).forEach(([category,value])=>{
+        if(!value||typeof value!=='object')return;
+        ['ovr','rank','score','value'].forEach(field=>{
+          if(Object.prototype.hasOwnProperty.call(value,field))forbiddenOverrideFields.push({fighter,field:`categories.${category}.${field}`});
+        });
+      });
+    });
+
+    const ownershipMismatches=boards.filter(row=>row.overallScoreOwner!=='final-score-engine.js'||row.finalScoreEngineVersion!==window.UFC_FINAL_SCORE_ENGINE?.version).map(row=>row.fighter);
 
     const fighter=name=>boardByKey.get(key(name))||null;
-    const anchorNames=[
-      'Jon Jones','Georges St-Pierre','Demetrious Johnson','Anderson Silva','Islam Makhachev','Alexander Volkanovski',
-      'Jose Aldo','Khabib Nurmagomedov','Kamaru Usman','Stipe Miocic','Matt Hughes','Junior dos Santos','Tito Ortiz',
-      'Amanda Nunes','Cris Cyborg','Holly Holm'
-    ];
+    const anchorNames=['Jon Jones','Georges St-Pierre','Demetrious Johnson','Anderson Silva','Islam Makhachev','Alexander Volkanovski','Jose Aldo','Khabib Nurmagomedov','Kamaru Usman','Stipe Miocic','Matt Hughes','Junior dos Santos','Tito Ortiz','Amanda Nunes','Cris Cyborg','Holly Holm'];
     const anchors=anchorNames.map(name=>{
       const row=fighter(name);
-      return row?{
-        fighter:name,rank:row.rank,totalScore:row.totalScore,preEraDepthTotalScore:row.preEraDepthTotalScore,
-        adjustment:row.eraDepthAdjustment,overallOvr:row.overallOvr,depthIndex:row.divisionEraDepth?.depthIndex,
-        sampledDivisions:row.divisionEraDepth?.sampledDivisions||[],womenFeatherweightTreatment:row.divisionEraDepth?.womenFeatherweightTreatment||null
-      }:{fighter:name,missing:true};
+      return row?{fighter:name,rank:row.rank,totalScore:row.totalScore,preEraDepthTotalScore:row.preEraDepthTotalScore,adjustment:row.eraDepthAdjustment,overallOvr:row.overallOvr,depthIndex:row.divisionEraDepth?.depthIndex,sampledDivisions:row.divisionEraDepth?.sampledDivisions||[],womenFeatherweightTreatment:row.divisionEraDepth?.womenFeatherweightTreatment||null}:{fighter:name,missing:true};
     });
 
     const nunes=fighter('Amanda Nunes');
@@ -90,20 +87,14 @@ try{
       holmExcludesWfw:!holm?.divisionEraDepth?.sampledDivisions?.includes('WFW')&&holm?.divisionEraDepth?.womenFeatherweightTreatment?.treatment==='mixed-career-non-wfw-only'
     };
 
-    let profileSurface={rendered:false,hasEraCard:false,hasAdjustment:false,hasRank:false,hasOvr:false,text:''};
+    let profileSurface={rendered:false,eraCardHidden:false,hasRank:false,hasOvr:false,text:''};
     if(typeof window.openFighter==='function'){
       window.openFighter('Matt Hughes');
       await new Promise(resolve=>setTimeout(resolve,100));
       const text=document.getElementById('fighterDetail')?.innerText||'';
       const row=fighter('Matt Hughes');
-      profileSurface={
-        rendered:text.includes('Matt Hughes'),
-        hasEraCard:text.includes('Era-depth adjustment')&&text.includes('ranks 6–15 strength'),
-        hasAdjustment:text.includes(Number(row?.eraDepthAdjustment).toFixed(2)),
-        hasRank:text.includes(`#${row?.rank}`),
-        hasOvr:text.includes(`${row?.overallOvr}`),
-        text:text.slice(0,3000)
-      };
+      const hasEraCopy=text.includes('Era-depth adjustment')||text.includes('ranks 6–15 strength')||text.includes(Number(row?.eraDepthAdjustment).toFixed(2));
+      profileSurface={rendered:text.includes('Matt Hughes'),eraCardHidden:!hasEraCopy,hasRank:text.includes(`#${row?.rank}`),hasOvr:text.includes(`${row?.overallOvr}`),text:text.slice(0,3000)};
     }
 
     let compareSurface={rendered:false,hasHughes:false,hasKhabib:false,hasLiveRanks:false,text:''};
@@ -112,23 +103,18 @@ try{
       document.getElementById('fighterB').value='Khabib Nurmagomedov';
       window.renderCompare();
       const text=document.getElementById('compareResult')?.innerText||'';
-      compareSurface={
-        rendered:text.length>0,
-        hasHughes:text.includes('Matt Hughes'),
-        hasKhabib:text.includes('Khabib Nurmagomedov'),
-        hasLiveRanks:text.includes(`#${fighter('Matt Hughes')?.rank}`)&&text.includes(`#${fighter('Khabib Nurmagomedov')?.rank}`),
-        text:text.slice(0,2500)
-      };
+      compareSurface={rendered:text.length>0,hasHughes:text.includes('Matt Hughes'),hasKhabib:text.includes('Khabib Nurmagomedov'),hasLiveRanks:text.includes(`#${fighter('Matt Hughes')?.rank}`)&&text.includes(`#${fighter('Khabib Nurmagomedov')?.rank}`),text:text.slice(0,2500)};
     }
 
     return{
-      pipeline:clone(window.UFC_SCORING_PIPELINE),shadow,audit,live,finalizer,finalScoreEngine,sixCategoryModel,
-      finalizationObserved:finalizer?.applied===true&&live?.finalizedAfterPipeline===true,
+      pipeline:clone(window.UFC_SCORING_PIPELINE),shadow,audit,live,finalizer,coordinator,finalScoreEngine,sixCategoryModel,
+      finalizationObserved:coordinator?.applied===true&&finalizer?.applied===true&&live?.finalizedAfterPipeline===true,
       consistency:{
         rosterCount:boards.length,shadowCount:shadowByKey.size,
         boardMismatchCount:boardMismatches.length,boardMismatches,
         profileMismatchCount:profileMismatches.length,profileMismatches,
-        overrideMismatchCount:overrideMismatches.length,overrideMismatches
+        ownershipMismatchCount:ownershipMismatches.length,ownershipMismatches,
+        forbiddenOverrideFieldCount:forbiddenOverrideFields.length,forbiddenOverrideFields
       },
       wfwSafety,anchors,
       menTop20:(data.men||[]).slice(0,20).map(row=>({rank:row.rank,fighter:row.fighter,preEraDepthTotalScore:row.preEraDepthTotalScore,totalScore:row.totalScore,eraDepthAdjustment:row.eraDepthAdjustment,overallOvr:row.overallOvr})),
@@ -142,6 +128,8 @@ try{
   const summary={
     generatedAt:payload.generatedAt,
     pipelineStatus:result.pipeline?.status??null,
+    coordinatorVersion:result.coordinator?.version??null,
+    coordinatorApplied:result.coordinator?.applied??false,
     shadowVersion:result.shadow?.version??null,
     auditVersion:result.audit?.version??null,
     liveVersion:result.live?.version??null,
@@ -151,7 +139,7 @@ try{
     finalizedAfterPipeline:result.live?.finalizedAfterPipeline??false,
     finalizationObserved:result.finalizationObserved,
     finalScoreEngineVersion:result.finalScoreEngine?.version??null,
-    finalScoreEngineLatest:result.finalScoreEngine?.latest??null,
+    finalScoreApplyCount:result.finalScoreEngine?.applyCount??null,
     sixCategoryModelVersion:result.sixCategoryModel?.version??null,
     datasetEnd:result.shadow?.source?.datasetEnd??null,
     sourceFresh:result.shadow?.source?.sourceFresh??false,
@@ -169,17 +157,19 @@ try{
   console.log('DIVISION_ERA_DEPTH_RUNTIME_SUMMARY');
   console.log(JSON.stringify({
     datasetEnd:summary.datasetEnd,sourceFresh:summary.sourceFresh,judgmentApproved:summary.judgmentApproved,
-    finalizerStatus:summary.finalizerStatus,finalizerApplied:summary.finalizerApplied,finalizedAfterPipeline:summary.finalizedAfterPipeline,
-    finalScoreEngineVersion:summary.finalScoreEngineVersion,sixCategoryModelVersion:summary.sixCategoryModelVersion,
+    coordinatorApplied:summary.coordinatorApplied,finalizerStatus:summary.finalizerStatus,finalizerApplied:summary.finalizerApplied,finalizedAfterPipeline:summary.finalizedAfterPipeline,
+    finalScoreEngineVersion:summary.finalScoreEngineVersion,finalScoreApplyCount:summary.finalScoreApplyCount,
     liveApplied:summary.liveApplied,promotedCount:summary.promotedCount,liveMismatchCount:summary.liveMismatchCount,
     boardMismatchCount:summary.consistency?.boardMismatchCount,profileMismatchCount:summary.consistency?.profileMismatchCount,
-    overrideMismatchCount:summary.consistency?.overrideMismatchCount,wfwSafety:summary.wfwSafety,
-    profileSurfacePassed:Boolean(summary.profileSurface?.rendered&&summary.profileSurface?.hasEraCard&&summary.profileSurface?.hasAdjustment&&summary.profileSurface?.hasRank&&summary.profileSurface?.hasOvr),
+    ownershipMismatchCount:summary.consistency?.ownershipMismatchCount,forbiddenOverrideFieldCount:summary.consistency?.forbiddenOverrideFieldCount,wfwSafety:summary.wfwSafety,
+    profileSurfacePassed:Boolean(summary.profileSurface?.rendered&&summary.profileSurface?.eraCardHidden&&summary.profileSurface?.hasRank&&summary.profileSurface?.hasOvr),
     compareSurfacePassed:Boolean(summary.compareSurface?.rendered&&summary.compareSurface?.hasHughes&&summary.compareSurface?.hasKhabib&&summary.compareSurface?.hasLiveRanks),
     consoleErrorCount:consoleErrors.length,pageErrorCount:pageErrors.length
   },null,2));
 
   const failed=result.pipeline?.status!=='ready'
+    ||result.coordinator?.applied!==true
+    ||Number(result.finalScoreEngine?.applyCount||0)!==1
     ||result.shadow?.promotionContract?.readyForJudgmentFinalization!==true
     ||result.shadow?.source?.sourceFresh!==true
     ||result.audit?.judgmentApproved!==true
@@ -193,13 +183,13 @@ try{
     ||Number(result.consistency?.shadowCount||0)!==Number(result.consistency?.rosterCount||0)
     ||Number(result.consistency?.boardMismatchCount||0)!==0
     ||Number(result.consistency?.profileMismatchCount||0)!==0
-    ||Number(result.consistency?.overrideMismatchCount||0)!==0
+    ||Number(result.consistency?.ownershipMismatchCount||0)!==0
+    ||Number(result.consistency?.forbiddenOverrideFieldCount||0)!==0
     ||result.wfwSafety?.nunesExcludesWfw!==true
     ||result.wfwSafety?.cyborgNeutral!==true
     ||result.wfwSafety?.holmExcludesWfw!==true
     ||result.profileSurface?.rendered!==true
-    ||result.profileSurface?.hasEraCard!==true
-    ||result.profileSurface?.hasAdjustment!==true
+    ||result.profileSurface?.eraCardHidden!==true
     ||result.profileSurface?.hasRank!==true
     ||result.profileSurface?.hasOvr!==true
     ||result.compareSurface?.rendered!==true
