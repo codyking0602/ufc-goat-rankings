@@ -78,7 +78,7 @@ jobs:
           node --check assets/js/live-score-ui.js
           node --check assets/data/module-versions.js
 
-      - name: Build current 63-fighter depth model
+      - name: Build current full-roster depth model
         env:
           UFC_MODEL_DATE: '2026-07-12'
         run: |
@@ -95,10 +95,10 @@ jobs:
       - name: Install live era depth scripts
         run: |
           node scripts/install-division-era-depth-live.mjs
-          grep -q 'division-era-depth-shadow-20260712d-current-wfw-safe' index.html
-          grep -q 'division-era-depth-judgment-review-20260712b-live-approved' index.html
-          grep -q 'division-era-depth-live-20260712a' index.html
-          grep -q 'division-era-depth-finalizer-20260712b-canonical-engine' index.html
+          grep -q 'division-era-depth-shadow-20260712e-roster-72' index.html
+          grep -q 'division-era-depth-judgment-review-20260712c-roster-72' index.html
+          grep -q 'division-era-depth-live-20260712b-roster-dynamic' index.html
+          grep -q 'division-era-depth-finalizer-20260712d-roster-dynamic' index.html
           grep -q 'live-score-ui-20260712a-era-depth' index.html
           grep -q "finalScoreEngine:'20260712b-era-shadow-fallback'" assets/data/module-versions.js
           grep -q 'function eraDepthAdjustmentFor(row)' assets/js/final-score-engine.js
