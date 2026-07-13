@@ -45,7 +45,7 @@ const mean = values => {
 function replaceAllAliases(text) {
   let output = String(text);
   for (const [dataset, canonical] of RESTORE) {
-    output = output.replaceAll(`\"${dataset}\"`, `\"${canonical}\"`);
+    output = output.replaceAll(JSON.stringify(dataset), JSON.stringify(canonical));
   }
   return output.replaceAll(OLD_VERSION, VERSION);
 }
