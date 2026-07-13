@@ -2,7 +2,7 @@
 
 > Phase 1 diagnostic. Ownership failures are expected until migration is complete; capture or derivation failure is not.
 
-Latest verified browser capture: **2026-07-13**, after consolidated canonical batch three.
+Latest verified browser capture: **2026-07-13**, after canonical batch four.
 
 - Audit version: `fighter-data-ownership-audit-20260713c-identity-inventory`
 - Roster identities found: **73**
@@ -11,8 +11,8 @@ Latest verified browser capture: **2026-07-13**, after consolidated canonical ba
 - Fighter packets loaded: **62**
 - Display overrides: **73**
 - Canonical scoring records: **72**
-- Canonical fighter-fact records: **11** (**15.07%** coverage)
-- Canonical UFC fight rows: **242**
+- Canonical fighter-fact records: **18** (**24.66%** coverage)
+- Canonical UFC fight rows: **380**
 - Orphan identities: **1**
 - Duplicate fact fields: **521** across **72** fighters
 - Conflicting fact fields: **80** across **28** fighters
@@ -37,16 +37,25 @@ Latest verified browser capture: **2026-07-13**, after consolidated canonical ba
 | Rashad Evans | 23 | 14-8-1 | 9-3 | 6.00 | Passed | No |
 | Mauricio “Shogun” Rua | 24 | 11-12-1 | 3-3 | 2.59 | Passed | No |
 | Forrest Griffin | 15 | 10-5 | 4-3 | 3.93 | Passed | No |
+| Jon Jones | 24 | 22-1, 1 NC | 16-0, 1 NC | 10.51 | Passed | No |
+| Georges St-Pierre | 22 | 20-2 | 14-1 | 8.44 | Passed | No |
+| Demetrious Johnson | 18 | 15-2-1 | 13-1 | 6.15 | Passed | No |
+| Anderson Silva | 25 | 17-7, 1 NC | 16-2 | 7.50 | Passed | No |
+| Islam Makhachev | 18 | 17-1 | 10-0 | 5.35 | Passed | No |
+| Khabib Nurmagomedov | 13 | 13-0 | 8-0 | 6.02 | Passed | No |
+| Alexander Volkanovski | 18 | 15-3 | 9-3 | 7.17 | Passed | No |
 
-Batch two contains **102 UFC bouts**. Consolidated batch three contains **103 UFC bouts**. Together with Charles, Phase 1 holds **242 complete UFC fight rows**.
+Batch two contains **102 UFC bouts**. Batch three contains **103 UFC bouts**. Batch four contains **138 UFC bouts**. Together with Charles, Phase 1 holds **380 complete UFC fight rows**.
 
-## Consolidated batch-three highlights
+## Batch-four highlights
 
-- **Fabricio Werdum:** 12-6 UFC record, eight finishes, two official title-fight wins, 1.65 adjusted title credit, 9-3 prime, **26-7 reviewed prime rounds (78.79%)**, and 6.11 active elite years. PRIDE, Strikeforce, PFL, and the Fedor win are excluded.
-- **Glover Teixeira:** 16-7, thirteen finishes, one official title-fight win, 12-6 prime, **27-22 reviewed prime rounds (55.10%)**, and 8.77 active elite years. Jamahal Hill is post-prime.
-- **Rashad Evans:** 14-8-1, six finishes, one official title-fight win, 9-3 prime, **21-14 reviewed prime rounds (60.00%)**, and 6.00 active elite years. TUF exhibition bouts are excluded.
-- **Mauricio “Shogun” Rua:** 11-12-1 UFC-only record, eight finishes, one official title-fight win, 3-3 UFC prime, **8-8 reviewed prime rounds (50.00%)**, and 2.59 active elite years. PRIDE is fully excluded. Machida I remains an official loss despite the reviewed 3-2 round allocation favoring Shogun.
-- **Forrest Griffin:** 10-5, three finishes, one official title-fight win, 4-3 prime, **12-7 reviewed prime rounds (63.16%)**, and 3.93 active elite years. The TUF 1 Finale is his first official UFC bout but not a UFC title fight.
+- **Jon Jones:** official 22-1, 1 NC; scoring 22-0. Hamill is an explicit non-competitive technical exception, Cormier II remains a no contest, and Stipe is post-prime.
+- **Georges St-Pierre:** Hughes I is pre-prime; Serra is the one prime finish loss and remains inside the recovered prime window.
+- **Demetrious Johnson:** UFC-only 15-2-1; WEC and ONE Championship are excluded.
+- **Anderson Silva:** proper official record is 17-7, 1 NC. Both Weidman losses remain prime stoppage losses; later losses are post-prime.
+- **Islam Makhachev:** includes the November 2025 welterweight title win over Jack Della Maddalena. The future Garry defense is excluded.
+- **Khabib Nurmagomedov:** complete 13-0 UFC ledger with seven derived finishes and no UFC loss penalty.
+- **Alexander Volkanovski:** complete 15-3 ledger with five UFC finishes, correcting stale presentation data. Both Islam losses use the upward-division exception; Topuria remains a home-division prime finish loss.
 
 ## Orphan identity
 
