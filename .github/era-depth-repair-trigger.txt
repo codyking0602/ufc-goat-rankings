@@ -1,1 +1,1 @@
-Trigger the one-time full-roster Division-Era Depth repair. Publish verified output branch.
+Trigger the one-time full-roster Division-Era Depth repair. Idempotent output branch run.
