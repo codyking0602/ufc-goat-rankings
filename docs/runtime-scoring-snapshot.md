@@ -2,11 +2,11 @@
 
 > Generated from the fully initialized browser runtime. This is a parity baseline, not a scoring source.
 
-- Captured: 2026-07-13T11:59:29.798Z
+- Captured: 2026-07-13T13:05:54.370Z
 - Status: **clean**
 - Fighters: **72** (57 men, 15 women)
-- Fighter data SHA-256: `ad6de49cab8db327871e219ba418e369e1895a21a622b598b0cfd46bce2f3887`
-- Final score engine: `final-score-engine-20260712b-era-shadow-fallback`
+- Fighter data SHA-256: `2c5277e19d34747a20ad74d5297b57213ccd4dce538dde489f56f92d167b3db4`
+- Final score engine: `scoring-engine-20260713b-single-owner`
 - Loss Context: `loss-context-hybrid-live-dynamic-roster-20260712a`
 - Era Depth: `division-era-depth-live-dynamic-roster-20260712a`
 

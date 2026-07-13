@@ -1,10 +1,10 @@
 {
   "schemaVersion": "ufc-runtime-scoring-snapshot-v1",
   "captureMode": "post-pipeline-browser-runtime",
-  "capturedAt": "2026-07-13T11:59:29.798Z",
+  "capturedAt": "2026-07-13T13:05:54.370Z",
   "source": {
     "url": "http://127.0.0.1:4173/index.html?runtime-scoring-snapshot=1",
-    "appBuild": "20260713-profile-cleanup-frank-zoom",
+    "appBuild": "20260713-stage2-scoring-ownership-b",
     "moduleVersions": {
       "scoringPipeline": "20260711a-cris-cyborg-photos",
       "finalScoreEngine": "20260712b-era-shadow-fallback",
@@ -44,12 +44,12 @@
       "apexPeakDricusAudit": "20260710b-merab-zhang"
     },
     "finalScoreEngine": {
-      "version": "final-score-engine-20260712b-era-shadow-fallback"
+      "version": "scoring-engine-20260713b-single-owner"
     },
     "dynamicRosterRepair": {
       "version": "dynamic-roster-scoring-repair-20260712a",
       "applied": true,
-      "applyCount": 10,
+      "applyCount": 5,
       "rosterCount": 72,
       "scoreMismatches": []
     },
@@ -206,7 +206,10 @@
         "eraDepthAdjustment": -0.15,
         "preEraDepthTotalScore": 101.92,
         "modifierScore": 5.85,
-        "totalScore": 101.76
+        "totalScore": 101.76,
+        "computedTotalScore": 101.76,
+        "parityLockedTotalScore": 101.77,
+        "parityDelta": 0.01
       },
       "apexPeakAudit": {
         "score": 6,
@@ -269,8 +272,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -392,7 +395,10 @@
         "eraDepthAdjustment": -1.73,
         "preEraDepthTotalScore": 88.07,
         "modifierScore": 0.05,
-        "totalScore": 86.34
+        "totalScore": 86.34,
+        "computedTotalScore": 86.34,
+        "parityLockedTotalScore": 86.34,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 5.56,
@@ -455,8 +461,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -577,7 +583,10 @@
         "eraDepthAdjustment": -1.23,
         "preEraDepthTotalScore": 77.11,
         "modifierScore": 2.41,
-        "totalScore": 75.88
+        "totalScore": 75.88,
+        "computedTotalScore": 75.88,
+        "parityLockedTotalScore": 75.88,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 5.15,
@@ -640,8 +649,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -763,7 +772,10 @@
         "eraDepthAdjustment": -1.67,
         "preEraDepthTotalScore": 77.29,
         "modifierScore": 1.13,
-        "totalScore": 75.62
+        "totalScore": 75.62,
+        "computedTotalScore": 75.62,
+        "parityLockedTotalScore": 75.62,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 5.8,
@@ -826,8 +838,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -941,7 +953,10 @@
         "eraDepthAdjustment": -0.08,
         "preEraDepthTotalScore": 69.14,
         "modifierScore": 3.62,
-        "totalScore": 69.06
+        "totalScore": 69.06,
+        "computedTotalScore": 69.06,
+        "parityLockedTotalScore": 69.06,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 5.68,
@@ -1004,8 +1019,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -1127,7 +1142,10 @@
         "eraDepthAdjustment": -0.02,
         "preEraDepthTotalScore": 67.62,
         "modifierScore": 2.71,
-        "totalScore": 67.6
+        "totalScore": 67.6,
+        "computedTotalScore": 67.6,
+        "parityLockedTotalScore": 67.6,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 5.34,
@@ -1190,8 +1208,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -1313,7 +1331,10 @@
         "eraDepthAdjustment": -1.04,
         "preEraDepthTotalScore": 67.14,
         "modifierScore": -2.4,
-        "totalScore": 66.1
+        "totalScore": 66.1,
+        "computedTotalScore": 66.1,
+        "parityLockedTotalScore": 66.1,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 3.79,
@@ -1376,8 +1397,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -1481,7 +1502,10 @@
         "eraDepthAdjustment": 0.09,
         "preEraDepthTotalScore": 64.05,
         "modifierScore": 6.09,
-        "totalScore": 64.14
+        "totalScore": 64.14,
+        "computedTotalScore": 64.14,
+        "parityLockedTotalScore": 64.14,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 6,
@@ -1544,8 +1568,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -1666,7 +1690,10 @@
         "eraDepthAdjustment": 0.27,
         "preEraDepthTotalScore": 62.03,
         "modifierScore": 3.36,
-        "totalScore": 62.3
+        "totalScore": 62.3,
+        "computedTotalScore": 62.3,
+        "parityLockedTotalScore": 62.3,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 5.48,
@@ -1729,8 +1756,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -1851,7 +1878,10 @@
         "eraDepthAdjustment": -3,
         "preEraDepthTotalScore": 64.76,
         "modifierScore": -2.72,
-        "totalScore": 61.76
+        "totalScore": 61.76,
+        "computedTotalScore": 61.76,
+        "parityLockedTotalScore": 61.76,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 3.8,
@@ -1914,8 +1944,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -2036,7 +2066,10 @@
         "eraDepthAdjustment": -0.17,
         "preEraDepthTotalScore": 61.84,
         "modifierScore": 1.13,
-        "totalScore": 61.67
+        "totalScore": 61.67,
+        "computedTotalScore": 61.67,
+        "parityLockedTotalScore": 61.67,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.76,
@@ -2099,8 +2132,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -2222,7 +2255,10 @@
         "eraDepthAdjustment": -0.21,
         "preEraDepthTotalScore": 61.37,
         "modifierScore": 0.16,
-        "totalScore": 61.16
+        "totalScore": 61.16,
+        "computedTotalScore": 61.16,
+        "parityLockedTotalScore": 61.16,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.74,
@@ -2285,8 +2321,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -2408,7 +2444,10 @@
         "eraDepthAdjustment": -0.05,
         "preEraDepthTotalScore": 59.57,
         "modifierScore": 1.2,
-        "totalScore": 59.52
+        "totalScore": 59.52,
+        "computedTotalScore": 59.52,
+        "parityLockedTotalScore": 59.52,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.77,
@@ -2471,8 +2510,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -2594,7 +2633,10 @@
         "eraDepthAdjustment": -3,
         "preEraDepthTotalScore": 59.8,
         "modifierScore": -4.88,
-        "totalScore": 56.8
+        "totalScore": 56.8,
+        "computedTotalScore": 56.8,
+        "parityLockedTotalScore": 56.8,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 3.37,
@@ -2657,8 +2699,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -2781,7 +2823,10 @@
         "eraDepthAdjustment": 0.16,
         "preEraDepthTotalScore": 56.54,
         "modifierScore": 2.75,
-        "totalScore": 56.7
+        "totalScore": 56.7,
+        "computedTotalScore": 56.7,
+        "parityLockedTotalScore": 56.7,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 5.53,
@@ -2844,8 +2889,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -2967,7 +3012,10 @@
         "eraDepthAdjustment": -0.22,
         "preEraDepthTotalScore": 56.79,
         "modifierScore": 1.42,
-        "totalScore": 56.57
+        "totalScore": 56.57,
+        "computedTotalScore": 56.57,
+        "parityLockedTotalScore": 56.57,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.65,
@@ -3030,8 +3078,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -3152,7 +3200,10 @@
         "eraDepthAdjustment": -2.94,
         "preEraDepthTotalScore": 57.62,
         "modifierScore": -1.32,
-        "totalScore": 54.68
+        "totalScore": 54.68,
+        "computedTotalScore": 54.68,
+        "parityLockedTotalScore": 54.68,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.87,
@@ -3215,8 +3266,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -3337,7 +3388,10 @@
         "eraDepthAdjustment": -0.05,
         "preEraDepthTotalScore": 53.38,
         "modifierScore": 1.28,
-        "totalScore": 53.33
+        "totalScore": 53.33,
+        "computedTotalScore": 53.33,
+        "parityLockedTotalScore": 53.33,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.6,
@@ -3400,8 +3454,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -3523,7 +3577,10 @@
         "eraDepthAdjustment": -1.33,
         "preEraDepthTotalScore": 54.52,
         "modifierScore": -0.02,
-        "totalScore": 53.19
+        "totalScore": 53.19,
+        "computedTotalScore": 53.19,
+        "parityLockedTotalScore": 53.19,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.55,
@@ -3586,8 +3643,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -3709,7 +3766,10 @@
         "eraDepthAdjustment": -2.71,
         "preEraDepthTotalScore": 55.08,
         "modifierScore": -2.18,
-        "totalScore": 52.37
+        "totalScore": 52.37,
+        "computedTotalScore": 52.37,
+        "parityLockedTotalScore": 52.37,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.44,
@@ -3772,8 +3832,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -3895,7 +3955,10 @@
         "eraDepthAdjustment": -1.41,
         "preEraDepthTotalScore": 53.63,
         "modifierScore": -1.71,
-        "totalScore": 52.22
+        "totalScore": 52.22,
+        "computedTotalScore": 52.22,
+        "parityLockedTotalScore": 52.22,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.21,
@@ -3958,8 +4021,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -4081,7 +4144,10 @@
         "eraDepthAdjustment": -0.78,
         "preEraDepthTotalScore": 51.68,
         "modifierScore": 0.81,
-        "totalScore": 50.9
+        "totalScore": 50.9,
+        "computedTotalScore": 50.9,
+        "parityLockedTotalScore": 50.9,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.6,
@@ -4103,8 +4169,8 @@
         "version": "canonical-fighter-registry-batch-eight-20260712d-final-handoffs"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -4225,7 +4291,10 @@
         "eraDepthAdjustment": -1.55,
         "preEraDepthTotalScore": 52.14,
         "modifierScore": -0.59,
-        "totalScore": 50.59
+        "totalScore": 50.59,
+        "computedTotalScore": 50.59,
+        "parityLockedTotalScore": 50.59,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.25,
@@ -4288,8 +4357,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -4411,7 +4480,10 @@
         "eraDepthAdjustment": -0.38,
         "preEraDepthTotalScore": 50.19,
         "modifierScore": 1.53,
-        "totalScore": 49.81
+        "totalScore": 49.81,
+        "computedTotalScore": 49.81,
+        "parityLockedTotalScore": 49.81,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.35,
@@ -4474,8 +4546,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -4596,7 +4668,10 @@
         "eraDepthAdjustment": -0.09,
         "preEraDepthTotalScore": 49.69,
         "modifierScore": 4.13,
-        "totalScore": 49.6
+        "totalScore": 49.6,
+        "computedTotalScore": 49.6,
+        "parityLockedTotalScore": 49.6,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 5.65,
@@ -4659,8 +4734,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -4782,7 +4857,10 @@
         "eraDepthAdjustment": -0.05,
         "preEraDepthTotalScore": 48.84,
         "modifierScore": 1.44,
-        "totalScore": 48.79
+        "totalScore": 48.79,
+        "computedTotalScore": 48.79,
+        "parityLockedTotalScore": 48.79,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.36,
@@ -4845,8 +4923,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -4967,7 +5045,10 @@
         "eraDepthAdjustment": -0.83,
         "preEraDepthTotalScore": 49.36,
         "modifierScore": 0.57,
-        "totalScore": 48.53
+        "totalScore": 48.53,
+        "computedTotalScore": 48.53,
+        "parityLockedTotalScore": 48.53,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 5.2,
@@ -4989,8 +5070,8 @@
         "version": "canonical-fighter-registry-batch-eight-20260712d-final-handoffs"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -5104,7 +5185,10 @@
         "eraDepthAdjustment": -0.01,
         "preEraDepthTotalScore": 48.41,
         "modifierScore": 3.19,
-        "totalScore": 48.4
+        "totalScore": 48.4,
+        "computedTotalScore": 48.4,
+        "parityLockedTotalScore": 48.4,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 5.95,
@@ -5167,8 +5251,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -5289,7 +5373,10 @@
         "eraDepthAdjustment": 0.21,
         "preEraDepthTotalScore": 48.16,
         "modifierScore": 2.33,
-        "totalScore": 48.37
+        "totalScore": 48.37,
+        "computedTotalScore": 48.37,
+        "parityLockedTotalScore": 48.37,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.37,
@@ -5352,8 +5439,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -5476,7 +5563,10 @@
         "eraDepthAdjustment": -0.45,
         "preEraDepthTotalScore": 48.77,
         "modifierScore": 0.54,
-        "totalScore": 48.33
+        "totalScore": 48.33,
+        "computedTotalScore": 48.33,
+        "parityLockedTotalScore": 48.33,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 5.8,
@@ -5539,8 +5629,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -5661,7 +5751,10 @@
         "eraDepthAdjustment": -1.98,
         "preEraDepthTotalScore": 50.12,
         "modifierScore": -0.31,
-        "totalScore": 48.14
+        "totalScore": 48.14,
+        "computedTotalScore": 48.14,
+        "parityLockedTotalScore": 48.14,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.49,
@@ -5724,8 +5817,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -5847,7 +5940,10 @@
         "eraDepthAdjustment": -0.66,
         "preEraDepthTotalScore": 48.33,
         "modifierScore": 0.93,
-        "totalScore": 47.67
+        "totalScore": 47.67,
+        "computedTotalScore": 47.67,
+        "parityLockedTotalScore": 47.67,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 5.3,
@@ -5869,8 +5965,8 @@
         "version": "canonical-fighter-registry-batch-eight-20260712d-final-handoffs"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -5991,7 +6087,10 @@
         "eraDepthAdjustment": -0.02,
         "preEraDepthTotalScore": 47.68,
         "modifierScore": 1.39,
-        "totalScore": 47.66
+        "totalScore": 47.66,
+        "computedTotalScore": 47.66,
+        "parityLockedTotalScore": 47.66,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4,
@@ -6056,8 +6155,8 @@
         "version": "apex-peak-audit-final-20260711a-gaethje-topuria"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -6178,7 +6277,10 @@
         "eraDepthAdjustment": -3,
         "preEraDepthTotalScore": 50.01,
         "modifierScore": -3.16,
-        "totalScore": 47.01
+        "totalScore": 47.01,
+        "computedTotalScore": 47.01,
+        "parityLockedTotalScore": 47.01,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 3.99,
@@ -6241,8 +6343,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -6363,7 +6465,10 @@
         "eraDepthAdjustment": -0.02,
         "preEraDepthTotalScore": 46.96,
         "modifierScore": 0.65,
-        "totalScore": 46.93
+        "totalScore": 46.93,
+        "computedTotalScore": 46.93,
+        "parityLockedTotalScore": 46.94,
+        "parityDelta": 0.01
       },
       "apexPeakAudit": {
         "score": 4.07,
@@ -6426,8 +6531,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -6548,7 +6653,10 @@
         "eraDepthAdjustment": -0.06,
         "preEraDepthTotalScore": 46.83,
         "modifierScore": 0.96,
-        "totalScore": 46.77
+        "totalScore": 46.77,
+        "computedTotalScore": 46.77,
+        "parityLockedTotalScore": 46.77,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.95,
@@ -6613,8 +6721,8 @@
         "version": "apex-peak-audit-final-20260711a-gaethje-topuria"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -6735,7 +6843,10 @@
         "eraDepthAdjustment": -0.12,
         "preEraDepthTotalScore": 46.23,
         "modifierScore": -0.57,
-        "totalScore": 46.11
+        "totalScore": 46.11,
+        "computedTotalScore": 46.11,
+        "parityLockedTotalScore": 46.11,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.8,
@@ -6757,8 +6868,8 @@
         "version": "canonical-fighter-registry-batch-eight-20260712d-final-handoffs"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -6879,7 +6990,10 @@
         "eraDepthAdjustment": -0.14,
         "preEraDepthTotalScore": 45.43,
         "modifierScore": 0.67,
-        "totalScore": 45.29
+        "totalScore": 45.29,
+        "computedTotalScore": 45.29,
+        "parityLockedTotalScore": 45.29,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.46,
@@ -6942,8 +7056,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -7064,7 +7178,10 @@
         "eraDepthAdjustment": -0.52,
         "preEraDepthTotalScore": 45.72,
         "modifierScore": 0.06,
-        "totalScore": 45.2
+        "totalScore": 45.2,
+        "computedTotalScore": 45.2,
+        "parityLockedTotalScore": 45.2,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 5,
@@ -7086,8 +7203,8 @@
         "version": "canonical-fighter-registry-batch-eight-20260712d-final-handoffs"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -7208,7 +7325,10 @@
         "eraDepthAdjustment": -0.04,
         "preEraDepthTotalScore": 45.1,
         "modifierScore": 0.31,
-        "totalScore": 45.06
+        "totalScore": 45.06,
+        "computedTotalScore": 45.06,
+        "parityLockedTotalScore": 45.06,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.1,
@@ -7271,8 +7391,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -7385,7 +7505,10 @@
         "eraDepthAdjustment": 0.27,
         "preEraDepthTotalScore": 44.7,
         "modifierScore": 2.87,
-        "totalScore": 44.97
+        "totalScore": 44.97,
+        "computedTotalScore": 44.97,
+        "parityLockedTotalScore": 44.97,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.55,
@@ -7450,8 +7573,8 @@
         "version": "apex-peak-audit-final-20260711a-gaethje-topuria"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -7572,7 +7695,10 @@
         "eraDepthAdjustment": -0.04,
         "preEraDepthTotalScore": 44.7,
         "modifierScore": 1.77,
-        "totalScore": 44.66
+        "totalScore": 44.66,
+        "computedTotalScore": 44.66,
+        "parityLockedTotalScore": 44.66,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.15,
@@ -7635,8 +7761,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -7740,7 +7866,10 @@
         "eraDepthAdjustment": -3,
         "preEraDepthTotalScore": 47.35,
         "modifierScore": 2.4,
-        "totalScore": 44.35
+        "totalScore": 44.35,
+        "computedTotalScore": 44.35,
+        "parityLockedTotalScore": 44.35,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 5.4,
@@ -7762,8 +7891,8 @@
         "version": "canonical-fighter-registry-batch-eight-20260712d-final-handoffs"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -7884,7 +8013,10 @@
         "eraDepthAdjustment": 0.26,
         "preEraDepthTotalScore": 43.69,
         "modifierScore": 2.4,
-        "totalScore": 43.95
+        "totalScore": 43.95,
+        "computedTotalScore": 43.95,
+        "parityLockedTotalScore": 43.95,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.19,
@@ -7947,8 +8079,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -8070,7 +8202,10 @@
         "eraDepthAdjustment": -0.37,
         "preEraDepthTotalScore": 43.31,
         "modifierScore": 0.41,
-        "totalScore": 42.94
+        "totalScore": 42.94,
+        "computedTotalScore": 42.94,
+        "parityLockedTotalScore": 42.94,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.38,
@@ -8133,8 +8268,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -8255,7 +8390,10 @@
         "eraDepthAdjustment": -1.61,
         "preEraDepthTotalScore": 44.21,
         "modifierScore": -0.85,
-        "totalScore": 42.6
+        "totalScore": 42.6,
+        "computedTotalScore": 42.6,
+        "parityLockedTotalScore": 42.6,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.25,
@@ -8318,8 +8456,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -8441,7 +8579,10 @@
         "eraDepthAdjustment": -0.28,
         "preEraDepthTotalScore": 42.59,
         "modifierScore": 0.11,
-        "totalScore": 42.31
+        "totalScore": 42.31,
+        "computedTotalScore": 42.31,
+        "parityLockedTotalScore": 42.31,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.64,
@@ -8504,8 +8645,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -8619,7 +8760,10 @@
         "eraDepthAdjustment": 0.42,
         "preEraDepthTotalScore": 41.08,
         "modifierScore": 2.88,
-        "totalScore": 41.5
+        "totalScore": 41.5,
+        "computedTotalScore": 41.5,
+        "parityLockedTotalScore": 41.5,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.35,
@@ -8682,8 +8826,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -8805,7 +8949,10 @@
         "eraDepthAdjustment": 0.27,
         "preEraDepthTotalScore": 40.14,
         "modifierScore": 0.7,
-        "totalScore": 40.41
+        "totalScore": 40.41,
+        "computedTotalScore": 40.41,
+        "parityLockedTotalScore": 40.41,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 3.85,
@@ -8868,8 +9015,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -8973,7 +9120,10 @@
         "eraDepthAdjustment": -3,
         "preEraDepthTotalScore": 42.88,
         "modifierScore": 2.4,
-        "totalScore": 39.88
+        "totalScore": 39.88,
+        "computedTotalScore": 39.88,
+        "parityLockedTotalScore": 39.88,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 5.4,
@@ -9005,8 +9155,8 @@
         "version": "canonical-fighter-registry-royce-gracie-20260712a"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -9127,7 +9277,10 @@
         "eraDepthAdjustment": -0.62,
         "preEraDepthTotalScore": 39.04,
         "modifierScore": 0.19,
-        "totalScore": 38.42
+        "totalScore": 38.42,
+        "computedTotalScore": 38.42,
+        "parityLockedTotalScore": 38.42,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 5.1,
@@ -9149,8 +9302,8 @@
         "version": "canonical-fighter-registry-batch-eight-20260712d-final-handoffs"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -9271,7 +9424,10 @@
         "eraDepthAdjustment": 0.11,
         "preEraDepthTotalScore": 37.1,
         "modifierScore": 0.85,
-        "totalScore": 37.21
+        "totalScore": 37.21,
+        "computedTotalScore": 37.21,
+        "parityLockedTotalScore": 37.21,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 3.77,
@@ -9334,8 +9490,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -9456,7 +9612,10 @@
         "eraDepthAdjustment": -0.1,
         "preEraDepthTotalScore": 37.3,
         "modifierScore": 0.6,
-        "totalScore": 37.2
+        "totalScore": 37.2,
+        "computedTotalScore": 37.2,
+        "parityLockedTotalScore": 37.2,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.06,
@@ -9519,8 +9678,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -9641,7 +9800,10 @@
         "eraDepthAdjustment": -0.17,
         "preEraDepthTotalScore": 35.92,
         "modifierScore": 0.25,
-        "totalScore": 35.75
+        "totalScore": 35.75,
+        "computedTotalScore": 35.75,
+        "parityLockedTotalScore": 35.75,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.8,
@@ -9663,8 +9825,8 @@
         "version": "canonical-fighter-registry-batch-eight-20260712d-final-handoffs"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -9785,7 +9947,10 @@
         "eraDepthAdjustment": -2.26,
         "preEraDepthTotalScore": 37.26,
         "modifierScore": -1.84,
-        "totalScore": 35
+        "totalScore": 35,
+        "computedTotalScore": 35,
+        "parityLockedTotalScore": 35,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.18,
@@ -9848,8 +10013,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -9971,7 +10136,10 @@
         "eraDepthAdjustment": -0.57,
         "preEraDepthTotalScore": 25.37,
         "modifierScore": -1.5,
-        "totalScore": 24.8
+        "totalScore": 24.8,
+        "computedTotalScore": 24.8,
+        "parityLockedTotalScore": 24.8,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 3.76,
@@ -10034,8 +10202,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -10157,7 +10325,10 @@
         "eraDepthAdjustment": -1.11,
         "preEraDepthTotalScore": 23.92,
         "modifierScore": -1.68,
-        "totalScore": 22.81
+        "totalScore": 22.81,
+        "computedTotalScore": 22.81,
+        "parityLockedTotalScore": 22.81,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 3.44,
@@ -10220,8 +10391,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -10351,7 +10522,10 @@
         "eraDepthAdjustment": -0.96,
         "preEraDepthTotalScore": 82.03,
         "modifierScore": 2.53,
-        "totalScore": 81.07
+        "totalScore": 81.07,
+        "computedTotalScore": 81.07,
+        "parityLockedTotalScore": 81.07,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 6,
@@ -10414,8 +10588,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -10538,7 +10712,10 @@
         "eraDepthAdjustment": -0.53,
         "preEraDepthTotalScore": 75.92,
         "modifierScore": 1.54,
-        "totalScore": 75.39
+        "totalScore": 75.39,
+        "computedTotalScore": 75.39,
+        "parityLockedTotalScore": 75.39,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.7,
@@ -10601,8 +10778,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -10724,7 +10901,10 @@
         "eraDepthAdjustment": -0.13,
         "preEraDepthTotalScore": 57.04,
         "modifierScore": 1.8,
-        "totalScore": 56.91
+        "totalScore": 56.91,
+        "computedTotalScore": 56.91,
+        "parityLockedTotalScore": 56.91,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.85,
@@ -10789,8 +10969,8 @@
         "version": "apex-peak-audit-final-20260711a-gaethje-topuria"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -10912,7 +11092,10 @@
         "eraDepthAdjustment": -2,
         "preEraDepthTotalScore": 52.82,
         "modifierScore": -0.65,
-        "totalScore": 50.82
+        "totalScore": 50.82,
+        "computedTotalScore": 50.82,
+        "parityLockedTotalScore": 50.82,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.6,
@@ -10975,8 +11158,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -11097,7 +11280,10 @@
         "eraDepthAdjustment": -0.74,
         "preEraDepthTotalScore": 49.2,
         "modifierScore": 0.52,
-        "totalScore": 48.46
+        "totalScore": 48.46,
+        "computedTotalScore": 48.46,
+        "parityLockedTotalScore": 48.46,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.64,
@@ -11160,8 +11346,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -11282,7 +11468,10 @@
         "eraDepthAdjustment": -2.57,
         "preEraDepthTotalScore": 48.9,
         "modifierScore": -1.31,
-        "totalScore": 46.33
+        "totalScore": 46.33,
+        "computedTotalScore": 46.33,
+        "parityLockedTotalScore": 46.33,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 5.2,
@@ -11345,8 +11534,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -11468,7 +11657,10 @@
         "eraDepthAdjustment": -0.35,
         "preEraDepthTotalScore": 40.94,
         "modifierScore": -0.79,
-        "totalScore": 40.59
+        "totalScore": 40.59,
+        "computedTotalScore": 40.59,
+        "parityLockedTotalScore": 40.59,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.1,
@@ -11531,8 +11723,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -11652,7 +11844,10 @@
         "eraDepthAdjustment": 0,
         "preEraDepthTotalScore": 38.69,
         "modifierScore": 1.39,
-        "totalScore": 38.69
+        "totalScore": 38.69,
+        "computedTotalScore": 38.69,
+        "parityLockedTotalScore": 38.69,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.6,
@@ -11684,8 +11879,8 @@
         "version": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -11807,7 +12002,10 @@
         "eraDepthAdjustment": 0.18,
         "preEraDepthTotalScore": 36.01,
         "modifierScore": 1.46,
-        "totalScore": 36.19
+        "totalScore": 36.19,
+        "computedTotalScore": 36.19,
+        "parityLockedTotalScore": 36.19,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.08,
@@ -11870,8 +12068,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -11992,7 +12190,10 @@
         "eraDepthAdjustment": 0.33,
         "preEraDepthTotalScore": 33.86,
         "modifierScore": 0.78,
-        "totalScore": 34.19
+        "totalScore": 34.19,
+        "computedTotalScore": 34.19,
+        "parityLockedTotalScore": 34.19,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.02,
@@ -12055,8 +12256,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -12177,7 +12378,10 @@
         "eraDepthAdjustment": -1.22,
         "preEraDepthTotalScore": 33.34,
         "modifierScore": -3.54,
-        "totalScore": 32.12
+        "totalScore": 32.12,
+        "computedTotalScore": 32.12,
+        "parityLockedTotalScore": 32.12,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 3.31,
@@ -12240,8 +12444,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -12345,7 +12549,10 @@
         "eraDepthAdjustment": 0.49,
         "preEraDepthTotalScore": 30.17,
         "modifierScore": 3.97,
-        "totalScore": 30.66
+        "totalScore": 30.66,
+        "computedTotalScore": 30.66,
+        "parityLockedTotalScore": 30.66,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 3.48,
@@ -12408,8 +12615,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -12530,7 +12737,10 @@
         "eraDepthAdjustment": 0,
         "preEraDepthTotalScore": 30.4,
         "modifierScore": 0.08,
-        "totalScore": 30.4
+        "totalScore": 30.4,
+        "computedTotalScore": 30.4,
+        "parityLockedTotalScore": 30.4,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 3.46,
@@ -12593,8 +12803,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -12724,7 +12934,10 @@
         "eraDepthAdjustment": -2,
         "preEraDepthTotalScore": 30.59,
         "modifierScore": -2.55,
-        "totalScore": 28.59
+        "totalScore": 28.59,
+        "computedTotalScore": 28.59,
+        "parityLockedTotalScore": 28.59,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 4.2,
@@ -12787,8 +13000,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -12909,7 +13122,10 @@
         "eraDepthAdjustment": -2.46,
         "preEraDepthTotalScore": 29.67,
         "modifierScore": -2.96,
-        "totalScore": 27.21
+        "totalScore": 27.21,
+        "computedTotalScore": 27.21,
+        "parityLockedTotalScore": 27.21,
+        "parityDelta": 0
       },
       "apexPeakAudit": {
         "score": 3.63,
@@ -12972,8 +13188,8 @@
         "version": "apex-peak-live-bonus-20260710a-category-only"
       },
       "ownership": {
-        "finalScoreEngineVersion": "final-score-engine-20260712b-era-shadow-fallback",
-        "overallScoreOwner": "final-score-engine.js",
+        "finalScoreEngineVersion": "scoring-engine-20260713b-single-owner",
+        "overallScoreOwner": "scoring-engine.js",
         "scoreFormula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment"
       },
       "parity": {
@@ -13005,5 +13221,5 @@
       "Failed to load resource: the server responded with a status of 404 (File not found)"
     ]
   },
-  "fighterDataSha256": "ad6de49cab8db327871e219ba418e369e1895a21a622b598b0cfd46bce2f3887"
+  "fighterDataSha256": "2c5277e19d34747a20ad74d5297b57213ccd4dce538dde489f56f92d167b3db4"
 }
