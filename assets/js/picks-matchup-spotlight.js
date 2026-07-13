@@ -37,7 +37,7 @@
     if(document.querySelector('link[data-picks-matchup-spotlight]')) return;
     const link=document.createElement('link');
     link.rel='stylesheet';
-    link.href='assets/css/picks-matchup-spotlight.css?v=picks-matchup-spotlight-20260713a';
+    link.href='assets/css/picks-matchup-spotlight.css?v=picks-matchup-spotlight-20260713b-contrast';
     link.dataset.picksMatchupSpotlight='true';
     document.head.appendChild(link);
   }
