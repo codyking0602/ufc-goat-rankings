@@ -1,7 +1,7 @@
 // Lightweight prerequisite/data loader with an explicit readiness handoff.
 (function(){
   'use strict';
-  const VERSION='ranking-data-patches-20260713x-stage3-loader-clean';
+  const VERSION='ranking-data-patches-20260713y-stage3-clean-packets';
   let readyResolved=false;
   let resolveReady;
   const readyPromise=new Promise(resolve=>{resolveReady=resolve;});
@@ -53,7 +53,7 @@
   }
   function loadScriptOnce(src,attr,done){if(document.querySelector(`script[${attr}]`)){if(done)done();return;}const script=document.createElement('script');script.src=src;script.setAttribute(attr,'true');script.onload=()=>{if(done)done();};script.onerror=()=>{if(done)done();};document.body.appendChild(script);}
   function loadSequence(items,done){const next=i=>{if(i>=items.length){if(done)done();return;}loadScriptOnce(items[i].src,items[i].attr,()=>next(i+1));};next(0);}
-  function packet(slug,v){return{src:`assets/data/fighter-packets/${slug}.js?v=fighter-packet-${slug}-${v}`,attr:`data-fighter-packet-${slug}`};}
+  function packet(slug,v){return{src:`assets/data/fighter-packets/${slug}.js?v=fighter-packet-${slug}-${v}-stage3-presentation-only`,attr:`data-fighter-packet-${slug}`};}
   function compareCoreScripts(){const packets=packetManifest().map(row=>packet(row.slug,row.version));return[
     {src:'assets/js/refresh-safety.js?v=refresh-safety-20260710b-optional-container-errors',attr:'data-refresh-safety'},
     {src:'assets/data/ranking-data-additions.js?v=ranking-data-additions-20260706e-lyoto-machida',attr:'data-ranking-data-additions'},
