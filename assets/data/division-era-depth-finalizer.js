@@ -48,22 +48,41 @@
   const COMPAT_REPAIR_VERSION='dynamic-roster-scoring-repair-20260712a';
   const COMPAT_LOSS_VERSION='loss-context-hybrid-live-dynamic-roster-20260712a';
   const COMPAT_DEPTH_VERSION='division-era-depth-live-dynamic-roster-20260712a';
+  const SCORE_OVERRIDE_FIELDS=['overallOvr','allTimeRank','rankLabel','totalScore','rawScore','rank','baseScore','penalty','lossPenalty','lossContext','eraDepthAdjustment','lossContextHybrid','divisionEraDepth'];
+  const CATEGORY_OVERRIDE_FIELDS=['ovr','rank','score','value'];
   let finalized=false;
 
   const key=name=>String(name||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
   const num=value=>Number.isFinite(Number(value))?Number(value):0;
   function rows(data){return [...(data?.men||[]),...(data?.women||[])].filter(row=>row?.fighter);}
 
+  function stripScoreDerivedOverrides(){
+    let stripped=0;
+    Object.values(window.DISPLAY_OVERRIDES||{}).forEach(override=>{
+      if(!override||typeof override!=='object')return;
+      SCORE_OVERRIDE_FIELDS.forEach(field=>{
+        if(Object.prototype.hasOwnProperty.call(override,field)){delete override[field];stripped+=1;}
+      });
+      Object.values(override.categories||{}).forEach(value=>{
+        if(!value||typeof value!=='object')return;
+        CATEGORY_OVERRIDE_FIELDS.forEach(field=>{
+          if(Object.prototype.hasOwnProperty.call(value,field)){delete value[field];stripped+=1;}
+        });
+      });
+    });
+    return stripped;
+  }
+
   function scoreDerivedOverrideFields(){
     const issues=[];
     Object.entries(window.DISPLAY_OVERRIDES||{}).forEach(([fighter,override])=>{
       if(!override||typeof override!=='object')return;
-      ['overallOvr','allTimeRank','rankLabel','totalScore','rawScore','rank','baseScore','penalty','lossPenalty','lossContext','eraDepthAdjustment','lossContextHybrid','divisionEraDepth'].forEach(field=>{
+      SCORE_OVERRIDE_FIELDS.forEach(field=>{
         if(Object.prototype.hasOwnProperty.call(override,field))issues.push({fighter,field});
       });
       Object.entries(override.categories||{}).forEach(([category,value])=>{
         if(!value||typeof value!=='object')return;
-        ['ovr','rank','score','value'].forEach(field=>{
+        CATEGORY_OVERRIDE_FIELDS.forEach(field=>{
           if(Object.prototype.hasOwnProperty.call(value,field))issues.push({fighter,field:`categories.${category}.${field}`});
         });
       });
@@ -135,6 +154,14 @@
     pipeline.runtimeCoordinatorVersion=VERSION;
     if(Array.isArray(pipeline.sequence)&&!pipeline.sequence.includes('runtime-coordinator:final-score-engine-applied'))pipeline.sequence.push('runtime-coordinator:final-score-engine-applied');
 
+    completeLiveReports(data,boardRows);
+
+    if(typeof window.refresh==='function')window.refresh();
+    if(typeof window.renderCategories==='function')window.renderCategories();
+    if(window.UFC_HOME_POLISH?.refreshHero)window.UFC_HOME_POLISH.refreshHero();
+    if(window.UFC_OCTAGON_VERDICT_COMPARE_LAUNCHER?.render)window.UFC_OCTAGON_VERDICT_COMPARE_LAUNCHER.render();
+    const postRenderStrippedOverrideFields=stripScoreDerivedOverrides();
+
     const scoreMismatches=boardRows.filter(row=>Math.abs(num(row.totalScore)-num(engine.scoreBreakdown(row).totalScore))>0.011).map(row=>row.fighter);
     const ownershipMismatches=boardRows.filter(row=>row.overallScoreOwner!=='final-score-engine.js'||row.finalScoreEngineVersion!==engine.version).map(row=>row.fighter);
     const overrideIssues=scoreDerivedOverrideFields();
@@ -146,8 +173,6 @@
     const gaethje=byKey.get(key('Justin Gaethje'))||null;
     const dricus=byKey.get(key('Dricus du Plessis'))||null;
     const applied=scoreMismatches.length===0&&ownershipMismatches.length===0&&overrideIssues.length===0&&rankIssues.length===0&&engine.applyCount===1;
-
-    completeLiveReports(data,boardRows);
 
     const compatibilityReport={
       version:COMPAT_REPAIR_VERSION,
@@ -164,6 +189,7 @@
       ownershipMismatches,
       overrideIssues,
       rankIssues,
+      postRenderStrippedOverrideFields,
       anchors:{
         justinGaethje:gaethje?{rank:gaethje.rank,totalScore:gaethje.totalScore,penalty:gaethje.penalty,eraDepthAdjustment:gaethje.eraDepthAdjustment,overallOvr:gaethje.overallOvr}:null,
         dricusDuPlessis:dricus?{rank:dricus.rank,totalScore:dricus.totalScore,penalty:dricus.penalty,eraDepthAdjustment:dricus.eraDepthAdjustment,overallOvr:dricus.overallOvr}:null
@@ -188,6 +214,7 @@
       scoreMismatches,
       ownershipMismatches,
       scoreDerivedOverrideIssues:overrideIssues,
+      postRenderStrippedOverrideFields,
       rankIssues,
       compatibilityRepairVersion:COMPAT_REPAIR_VERSION,
       finalizedAt:new Date().toISOString()
@@ -204,11 +231,6 @@
     document.documentElement.setAttribute('data-dynamic-roster-scoring-repair',`${COMPAT_REPAIR_VERSION}-${boardRows.length}-${applied?'ready':'mismatch'}`);
     document.documentElement.setAttribute('data-loss-context-hybrid-live',`${COMPAT_LOSS_VERSION}-${boardRows.length}-${loss.mismatchCount||0}`);
     document.documentElement.setAttribute('data-division-era-depth-live',`${COMPAT_DEPTH_VERSION}-${boardRows.length}-${depth.mismatchCount||0}`);
-
-    if(typeof window.refresh==='function')window.refresh();
-    if(typeof window.renderCategories==='function')window.renderCategories();
-    if(window.UFC_HOME_POLISH?.refreshHero)window.UFC_HOME_POLISH.refreshHero();
-    if(window.UFC_OCTAGON_VERDICT_COMPARE_LAUNCHER?.render)window.UFC_OCTAGON_VERDICT_COMPARE_LAUNCHER.render();
 
     finalized=applied;
     window.dispatchEvent(new CustomEvent('ufc-scoring-runtime-coordinator-ready',{detail:report}));
