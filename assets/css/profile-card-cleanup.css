@@ -1,0 +1,9 @@
+/* App-facing profile cleanup and fighter thumbnail framing. */
+[data-era-depth-profile="true"] {
+  display: none !important;
+}
+
+img[src*="frank-shamrock-thumb.webp"] {
+  transform: scale(1.1);
+  transform-origin: center center;
+}
