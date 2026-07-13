@@ -156,7 +156,7 @@
   function loadDynamicRosterRuntime(){
     if(document.querySelector('script[data-dynamic-roster-runtime]'))return;
     const script=document.createElement('script');
-    script.src='assets/js/dynamic-roster-runtime.js?v=dynamic-roster-runtime-20260712a';
+    script.src='assets/js/dynamic-roster-runtime.js?v=dynamic-roster-runtime-20260713a-score-owner-clean';
     script.setAttribute('data-dynamic-roster-runtime','true');
     document.body.appendChild(script);
   }
