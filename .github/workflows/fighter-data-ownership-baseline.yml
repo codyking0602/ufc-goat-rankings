@@ -1,0 +1,94 @@
+name: Fighter Data Ownership Baseline
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'assets/data/ranking-data.js'
+      - 'assets/data/display-overrides.js'
+      - 'assets/data/canonical-fighter-facts.js'
+      - 'assets/data/canonical-fighter-facts-batch-one.js'
+      - 'assets/data/canonical-fighter-facts-batch-two.js'
+      - 'assets/data/canonical-scoring-records.js'
+      - 'assets/data/ranking-data-patches.js'
+      - 'assets/data/fighter-packets/**'
+      - 'assets/js/fighter-data-ownership-audit.js'
+      - 'assets/js/profile-stat-consistency.js'
+      - 'scripts/test-canonical-fighter-facts.mjs'
+      - 'scripts/test-canonical-fighter-facts-batch-one.mjs'
+      - 'scripts/test-canonical-fighter-facts-five-person-batch.mjs'
+      - 'scripts/capture-fighter-data-ownership-baseline.mjs'
+      - '.github/workflows/fighter-data-ownership-baseline.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fighter-data-ownership-baseline-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  capture-baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out current ref
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Check audit syntax
+        run: |
+          node --check assets/data/canonical-fighter-facts.js
+          node --check assets/data/canonical-fighter-facts-batch-one.js
+          node --check assets/data/canonical-fighter-facts-batch-two.js
+          node --check assets/data/ranking-data-patches.js
+          node --check assets/js/fighter-data-ownership-audit.js
+          node --check scripts/test-canonical-fighter-facts.mjs
+          node --check scripts/test-canonical-fighter-facts-batch-one.mjs
+          node --check scripts/test-canonical-fighter-facts-five-person-batch.mjs
+          node --check scripts/capture-fighter-data-ownership-baseline.mjs
+
+      - name: Enforce canonical fighter ledger contract
+        run: node scripts/test-canonical-fighter-facts.mjs
+
+      - name: Verify Charles Oliveira canonical ledger
+        run: node scripts/test-canonical-fighter-facts-batch-one.mjs
+
+      - name: Verify five-fighter canonical ledger batch
+        run: node scripts/test-canonical-fighter-facts-five-person-batch.mjs
+
+      - name: Install browser audit dependencies
+        run: |
+          npm install --no-save --package-lock=false playwright@1.54.1
+          npx playwright install --with-deps chromium
+
+      - name: Start local app
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/ufc-fighter-data-baseline-server.log 2>&1 &
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            if curl --fail --silent http://127.0.0.1:4173/index.html > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/ufc-fighter-data-baseline-server.log
+          exit 1
+
+      - name: Capture ownership baseline
+        run: node scripts/capture-fighter-data-ownership-baseline.mjs
+
+      - name: Upload ownership baseline
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fighter-data-ownership-baseline
+          path: |
+            docs/fighter-data-ownership-baseline.json
+            docs/fighter-data-ownership-baseline.md
+            /tmp/ufc-fighter-data-baseline-server.log
+          if-no-files-found: warn
+          retention-days: 30
