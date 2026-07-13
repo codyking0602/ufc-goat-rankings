@@ -2,7 +2,7 @@
 // Enforces a copy-only display boundary and gives the canonical scoring engine sole score authority.
 (function(){
   'use strict';
-  const VERSION='scoring-ownership-finalizer-20260713d-display-boundary';
+  const VERSION='scoring-ownership-finalizer-20260713e-evidence-ready';
   const EXPECTED_ROSTER=72;
   const STARTED_AT=Date.now();
   const MIN_SETTLE_MS=10000;
@@ -223,13 +223,20 @@
     const depthFinalizer=window.UFC_DIVISION_ERA_DEPTH_FINALIZER;
     const pipelineReady=window.UFC_SCORING_PIPELINE?.status==='ready';
     const elapsedMs=Date.now()-STARTED_AT;
-    const legacyReady=legacyRepair?.applied===true&&depthFinalizer?.applied===true;
-    if(!data||!engine?.apply||!canonical||!pipelineReady||!legacyReady){
-      publishWaiting('waiting',{data:Boolean(data),engine:Boolean(engine?.apply),canonical:Boolean(canonical),pipelineReady,legacyRepair:Boolean(legacyRepair?.applied),depthFinalizer:Boolean(depthFinalizer?.applied)});
+    const boardRows=boards(data);
+    const missingLossContextDetail=boardRows.filter(row=>!row.lossContextHybrid).map(row=>row.fighter);
+    const missingEraDepthDetail=boardRows.filter(row=>!row.divisionEraDepth).map(row=>row.fighter);
+    const evidenceReady=legacyRepair?.applied===true&&boardRows.length===EXPECTED_ROSTER&&missingLossContextDetail.length===0&&missingEraDepthDetail.length===0;
+    if(!data||!engine?.apply||!canonical||!pipelineReady||!evidenceReady){
+      publishWaiting('waiting',{
+        data:Boolean(data),engine:Boolean(engine?.apply),canonical:Boolean(canonical),pipelineReady,
+        dynamicRosterEvidence:Boolean(legacyRepair?.applied),depthFinalizerInformational:Boolean(depthFinalizer?.applied),
+        rosterCount:boardRows.length,missingLossContextDetailCount:missingLossContextDetail.length,missingEraDepthDetailCount:missingEraDepthDetail.length
+      });
       return false;
     }
     if(elapsedMs<MIN_SETTLE_MS){
-      publishWaiting('settling',{data:true,engine:true,canonical:true,pipelineReady:true,legacyRepair:true,depthFinalizer:true});
+      publishWaiting('settling',{data:true,engine:true,canonical:true,pipelineReady:true,dynamicRosterEvidence:true,rosterCount:boardRows.length,missingLossContextDetailCount:0,missingEraDepthDetailCount:0});
       return false;
     }
     if(!engineApplied){
@@ -240,14 +247,11 @@
     annotateEvidenceModules();
     const strippedDisplayFields=stripDisplayScoreFields();
     const strippedCompareFields=stripCompareScoreFields();
-    const boardRows=boards(data);
     const engineParity=engine.parityReport?.()||{passed:false,mismatches:[{field:'missing-engine-parity-report'}],missingCanonical:[]};
     const profiles=profileMismatches(data);
     const displayViolations=displayOverrideViolations();
     const compareViolations=compareScoreViolations();
     const wrongOwners=boardRows.filter(row=>row.scoreInputOwner!=='scoring-engine.js'||row.overallScoreOwner!=='scoring-engine.js').map(row=>({fighter:row.fighter,scoreInputOwner:row.scoreInputOwner,overallScoreOwner:row.overallScoreOwner}));
-    const missingLossContextDetail=boardRows.filter(row=>!row.lossContextHybrid).map(row=>row.fighter);
-    const missingEraDepthDetail=boardRows.filter(row=>!row.divisionEraDepth).map(row=>row.fighter);
     const rosterCount=boardRows.length;
     const clean=Boolean(engineResult?.applied)&&rosterCount===EXPECTED_ROSTER&&engineParity.passed&&profiles.length===0&&displayViolations.length===0&&compareViolations.length===0&&wrongOwners.length===0&&missingLossContextDetail.length===0&&missingEraDepthDetail.length===0;
     const report={
@@ -263,7 +267,7 @@
       missingLossContextDetailCount:missingLossContextDetail.length,missingLossContextDetail,
       missingEraDepthDetailCount:missingEraDepthDetail.length,missingEraDepthDetail,
       wrongOwnerCount:wrongOwners.length,wrongOwners,
-      legacyModules:{dynamicRosterRepairVersion:legacyRepair?.version||null,divisionEraDepthFinalizerVersion:depthFinalizer?.version||null,retainedForEvidenceParity:true,scoreAuthority:false},
+      legacyModules:{dynamicRosterRepairVersion:legacyRepair?.version||null,divisionEraDepthFinalizerVersion:depthFinalizer?.version||null,retainedForEvidenceParity:true,scoreAuthority:false,depthFinalizerReadinessRequired:false},
       appliedAt:new Date().toISOString()
     };
     data.meta=data.meta||{};
