@@ -48,10 +48,7 @@
   function isArchive(){ return url().searchParams.get('archive')==='1'; }
 
   function hideRetiredRecovery(){
-    ['picksRecoveryCard','picksInviteRecovery'].forEach(id=>{
-      const node=document.getElementById(id);
-      if(node && !node.hidden) node.hidden=true;
-    });
+    // The legacy recovery script remains loaded for backward compatibility; CSS retires its UI.
   }
 
   function syncRoomSetup(){
@@ -318,7 +315,10 @@
     document.querySelectorAll('.commissioner-pin-button').forEach(button=>{ if(button.textContent!=='Set / Reset PIN') button.textContent='Set / Reset PIN'; });
     const modal=document.getElementById('picksCommissionerPinModal');
     const heading=modal?.querySelector('h3');
-    if(heading) heading.textContent=heading.textContent.replace(/^Set PIN for /,'Set / Reset PIN for ');
+    if(heading){
+      const next=heading.textContent.replace(/^Set PIN for /,'Set / Reset PIN for ');
+      if(next!==heading.textContent) heading.textContent=next;
+    }
   }
 
   async function loadAdminSnapshot(force=false){
