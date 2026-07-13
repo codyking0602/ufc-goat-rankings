@@ -154,3 +154,5 @@ jobs:
           git add index.html assets/js/picks-scoring-copy.js assets/js/picks-tiered-scoring.js assets/css/picks-tiered-scoring.css supabase/picks-tiered-scoring-phase.sql supabase/picks-member-merge-phase.sql supabase/functions/refresh-ufc-odds/index.ts supabase/picks-tiered-scoring-deployed.txt docs/picks-setup.md
           git commit -m 'Activate tiered Picks scoring [skip ci]' || exit 0
           git push origin HEAD:main
+
+# pull-request trigger
