@@ -11,7 +11,7 @@ Last updated: 2026-07-13
 - Shadow-runtime loader commit: `a2a6deca07a12c177101a6e90c1071274d0a2a96`
 - CI enforcement commit: `f57e600d20b6f218d4188ad1e102a8ad2cd2eb4b`
 - Coverage documentation commit: `2adb396e9bac813026f0b815de975307efb9f9fc`
-- Latest handoff checkpoint before this update: `5a8b7af50ba31a1391fcc775fb0ffe2a897004b7`
+- Durable handoff checkpoint: `619d05a8d83fcd0e90f452ff8b361af1e491cf29`
 
 ## Permanent architecture
 
