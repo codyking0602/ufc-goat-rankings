@@ -1,5 +1,6 @@
 name: Stage 2 Scoring Ownership
 
+# Bootstrap trigger after the workflow was introduced on main.
 on:
   push:
     branches: [main, agent/stage-2-scoring-ownership]
