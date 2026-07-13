@@ -23,9 +23,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Check out repair ref
+      - name: Check out main
         uses: actions/checkout@v4
         with:
+          ref: main
           fetch-depth: 0
 
       - name: Set up Node
@@ -51,6 +52,7 @@ jobs:
           rm scripts/repair-division-era-depth-roster.mjs
           rm .github/workflows/repair-division-era-depth-roster.yml
           rm -f .github/era-depth-repair-trigger.txt
+          rm -f .github/era-depth-repair-trigger-2.txt
 
       - name: Commit permanent repair to main
         run: |
