@@ -1,5 +1,46 @@
 // Canonical runtime scoring coordinator.
 // Loss Context and Era Depth own only their modifiers; final-score-engine.js owns totals, ranks, breakdowns, and OVR.
+(function installFinalScoreOwnershipGuard(){
+  'use strict';
+  const GUARD_VERSION='final-score-ownership-guard-20260713a';
+  let engineValue=window.UFC_FINAL_SCORE_ENGINE;
+
+  function correctionsReady(){
+    return window.UFC_APPROVED_PRIME_DOMINANCE_CORRECTIONS?.applied===true&&window.UFC_QUALITY_WINS_AUDIT_CRUZ_ILIA?.applied===true;
+  }
+  function notify(){
+    setTimeout(()=>window.dispatchEvent(new CustomEvent('ufc-scoring-category-corrections-ready',{detail:{version:GUARD_VERSION,ready:correctionsReady()}})),0);
+  }
+  function wrap(engine){
+    if(!engine?.apply||engine.__singleOwnerGuardVersion===GUARD_VERSION)return engine;
+    const original=engine.apply.bind(engine);
+    engine.apply=function(reason='manual'){
+      if(reason==='scoring-runtime-coordinator'&&correctionsReady())return original(reason);
+      engine.deferredCount=Number(engine.deferredCount||0)+1;
+      const result={version:engine.version,applied:true,deferred:true,reason,applyCount:engine.applyCount||0,deferredCount:engine.deferredCount,owner:'final-score-engine.js',waitingFor:correctionsReady()?['scoring-runtime-coordinator']:['approved-prime-corrections','quality-wins-audit'],appliedAt:new Date().toISOString()};
+      engine.latest=result;
+      notify();
+      return result;
+    };
+    engine.__singleOwnerGuardVersion=GUARD_VERSION;
+    engine.__unguardedApply=original;
+    return engine;
+  }
+
+  try{
+    Object.defineProperty(window,'UFC_FINAL_SCORE_ENGINE',{
+      configurable:true,
+      enumerable:true,
+      get(){return engineValue;},
+      set(value){engineValue=wrap(value);}
+    });
+    if(engineValue)engineValue=wrap(engineValue);
+    window.UFC_FINAL_SCORE_OWNERSHIP_GUARD={version:GUARD_VERSION,installed:true,overallOwner:'final-score-engine.js',coordinatorReason:'scoring-runtime-coordinator'};
+  }catch(error){
+    window.UFC_FINAL_SCORE_OWNERSHIP_GUARD={version:GUARD_VERSION,installed:false,error:String(error?.message||error)};
+  }
+})();
+
 (function(){
   'use strict';
 
@@ -78,7 +119,9 @@
     const pipeline=window.UFC_SCORING_PIPELINE;
     const loss=window.UFC_LOSS_CONTEXT_HYBRID_LIVE;
     const depth=window.UFC_DIVISION_ERA_DEPTH_LIVE;
-    if(!data||!engine?.apply||pipeline?.status!=='ready'||loss?.applied!==true||depth?.applied!==true)return false;
+    const primeCorrections=window.UFC_APPROVED_PRIME_DOMINANCE_CORRECTIONS;
+    const qualityCorrections=window.UFC_QUALITY_WINS_AUDIT_CRUZ_ILIA;
+    if(!data||!engine?.apply||pipeline?.status!=='ready'||loss?.applied!==true||depth?.applied!==true||primeCorrections?.applied!==true||qualityCorrections?.applied!==true)return false;
 
     const boardRows=rows(data);
     if(!boardRows.length||Number(loss.rosterCount)!==boardRows.length||Number(depth.rosterCount)!==boardRows.length)return false;
@@ -176,11 +219,11 @@
 
   function attempt(){
     if(finalize())return;
-    window.UFC_SCORING_RUNTIME_COORDINATOR={version:VERSION,applied:false,status:'waiting-for-pipeline-and-modifiers'};
+    window.UFC_SCORING_RUNTIME_COORDINATOR={version:VERSION,applied:false,status:'waiting-for-pipeline-modifiers-and-category-corrections'};
   }
 
-  window.UFC_SCORING_RUNTIME_COORDINATOR={version:VERSION,applied:false,status:'waiting-for-pipeline-and-modifiers'};
-  window.UFC_DIVISION_ERA_DEPTH_FINALIZER={version:VERSION,applied:false,status:'waiting-for-pipeline-and-modifiers'};
-  ['ufc-scoring-pipeline-ready','ufc-loss-context-hybrid-live-ready','ufc-division-era-depth-live-ready'].forEach(eventName=>window.addEventListener(eventName,attempt));
-  [0,50,250,750,1500,3000].forEach(delay=>setTimeout(attempt,delay));
+  window.UFC_SCORING_RUNTIME_COORDINATOR={version:VERSION,applied:false,status:'waiting-for-pipeline-modifiers-and-category-corrections'};
+  window.UFC_DIVISION_ERA_DEPTH_FINALIZER={version:VERSION,applied:false,status:'waiting-for-pipeline-modifiers-and-category-corrections'};
+  ['ufc-scoring-pipeline-ready','ufc-loss-context-hybrid-live-ready','ufc-division-era-depth-live-ready','ufc-scoring-category-corrections-ready'].forEach(eventName=>window.addEventListener(eventName,attempt));
+  [0,50,250,750,1500,3000,5000,8000].forEach(delay=>setTimeout(attempt,delay));
 })();
