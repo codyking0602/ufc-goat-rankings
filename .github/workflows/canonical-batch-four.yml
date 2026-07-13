@@ -9,6 +9,7 @@ on:
       - 'assets/data/canonical-fighter-facts-batch-two.js'
       - 'assets/data/canonical-fighter-facts-batch-three.js'
       - 'assets/data/canonical-fighter-facts-batch-four.js'
+      - 'scripts/capture-canonical-batch-four.mjs'
       - 'scripts/test-canonical-fighter-facts-seven-person-batch-four.mjs'
       - '.github/workflows/canonical-batch-four.yml'
   workflow_dispatch:
@@ -28,6 +29,17 @@ jobs:
       - name: Check syntax
         run: |
           node --check assets/data/canonical-fighter-facts-batch-four.js
+          node --check scripts/capture-canonical-batch-four.mjs
           node --check scripts/test-canonical-fighter-facts-seven-person-batch-four.mjs
+      - name: Capture top-seven derivations
+        run: node scripts/capture-canonical-batch-four.mjs
       - name: Verify 138-fight top-seven ledger
         run: node scripts/test-canonical-fighter-facts-seven-person-batch-four.mjs
+      - name: Upload top-seven diagnostic
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-top-seven-diagnostic
+          path: docs/canonical-batch-four-diagnostic.json
+          if-no-files-found: error
+          retention-days: 30
