@@ -1,6 +1,6 @@
 name: Stage 2 Scoring Ownership
 
-# Diagnostic PR trigger for visible workflow logs.
+# Diagnostic PR trigger with generated-file diagnostics.
 
 on:
   push:
@@ -47,13 +47,23 @@ jobs:
 
       - name: Rebuild installer and generate Stage 2 files
         run: |
-          cat scripts/stage2-installer-b64/part-*.b64 | base64 -d | gzip -d > scripts/install-stage2-scoring-ownership.mjs
-          node --check scripts/install-stage2-scoring-ownership.mjs
-          node scripts/install-stage2-scoring-ownership.mjs
-          node --check assets/data/canonical-scoring-records.js
-          node --check assets/js/scoring-engine.js
-          node --check assets/js/scoring-ownership-finalizer.js
-          node --check scripts/validate-stage2-scoring-ownership.mjs
+          set -o pipefail
+          {
+            cat scripts/stage2-installer-b64/part-*.b64 | base64 -d | gzip -d > scripts/install-stage2-scoring-ownership.mjs
+            node --check scripts/install-stage2-scoring-ownership.mjs
+            node scripts/install-stage2-scoring-ownership.mjs
+            python3 - <<'PY'
+          from pathlib import Path
+          path = Path('scripts/validate-stage2-scoring-ownership.mjs')
+          text = path.read_text()
+          text = text.replace("JSON.stringify(report,null,2)+'\n');", "JSON.stringify(report,null,2)+'\\n');")
+          path.write_text(text)
+          PY
+            node --check assets/data/canonical-scoring-records.js
+            node --check assets/js/scoring-engine.js
+            node --check assets/js/scoring-ownership-finalizer.js
+            node --check scripts/validate-stage2-scoring-ownership.mjs
+          } 2>&1 | tee /tmp/stage2-build.log
 
       - name: Install headless browser
         run: |
@@ -80,7 +90,13 @@ jobs:
           name: stage2-scoring-ownership
           path: |
             docs/stage2-scoring-ownership-report.json
+            /tmp/stage2-build.log
             /tmp/ufc-stage2-server.log
+            scripts/install-stage2-scoring-ownership.mjs
+            assets/data/canonical-scoring-records.js
+            assets/js/scoring-engine.js
+            assets/js/scoring-ownership-finalizer.js
+            scripts/validate-stage2-scoring-ownership.mjs
           if-no-files-found: warn
           retention-days: 30
 
