@@ -16,8 +16,8 @@ window.UFC_BATCH_EIGHT_FIGHTER_DATA=[
 {
  name:'Fabricio Werdum',record:'12-6',div:'Heavyweight',label:'HW',mult:.98,status:1.08,gapMonths:73.4,
  c:[4,19,22,16.18,5.2,-8.25,0],titles:2,adj:1.85,elite:4,top5:6,ranked:10,
- prime:'8-3',primeStart:'2012-02-04',primeStartLabel:'Roy Nelson',primeEnd:'2018-03-17',primeEndLabel:'Alexander Volkov',years:6.12,
- finish:66.67,primeFinish:36.36,rounds:69,stopped:2,
+ prime:'9-3',primeStart:'2012-02-04',primeStartLabel:'Roy Nelson',primeEnd:'2018-03-17',primeEndLabel:'Alexander Volkov',years:6.12,
+ finish:66.67,primeFinish:41.67,rounds:69,stopped:2,
  apexWins:['Mark Hunt','Cain Velasquez'],
  wins:['Cain Velasquez','Antonio Rodrigo Nogueira','Mark Hunt','Travis Browne','Roy Nelson','Alexander Gustafsson','Marcin Tybura','Walt Harris','Gabriel Gonzaga','Brandon Vera'],
  titleWins:[['Mark Hunt',.75],['Cain Velasquez',1.1]],
@@ -30,7 +30,7 @@ window.UFC_BATCH_EIGHT_FIGHTER_DATA=[
  name:'Glover Teixeira',record:'16-7',div:'Light Heavyweight',label:'LHW',mult:1,status:1.08,gapMonths:105.3,
  c:[2.2,16.5,21,23.69,4.6,-10,0],titles:1,adj:1,elite:4,top5:6,ranked:12,
  prime:'12-6',primeStart:'2013-09-04',primeStartLabel:'Ryan Bader',primeEnd:'2022-06-12',primeEndLabel:'Jiri Prochazka',years:8.77,
- finish:81.25,primeFinish:50,rounds:67,stopped:3,
+ finish:81.25,primeFinish:55.56,rounds:67,stopped:3,
  apexWins:['Thiago Santos','Jan Blachowicz'],
  wins:['Jan Blachowicz','Thiago Santos','Anthony Smith','Ryan Bader','Ovince Saint Preux','Rashad Evans','Nikita Krylov','Jared Cannonier','Misha Cirkunov','Ion Cutelaba','Karl Roberson','Patrick Cummins'],
  titleWins:[['Jan Blachowicz',1]],
@@ -93,10 +93,10 @@ window.UFC_BATCH_EIGHT_FIGHTER_DATA=[
  whyNot:'He never defended the title, his elite UFC window was short, and his legendary PRIDE résumé is historical context only.'
 },
 {
- name:'Forrest Griffin',record:'9-5',div:'Light Heavyweight',label:'LHW',mult:1,status:1.05,gapMonths:47.2,
+ name:'Forrest Griffin',record:'10-5',div:'Light Heavyweight',label:'LHW',mult:1,status:1.05,gapMonths:47.2,
  c:[2.2,14.5,20,10.33,4.5,-9.5,0],titles:1,adj:1,elite:3,top5:4,ranked:7,
  prime:'4-3',primeStart:'2007-09-22',primeStartLabel:'Mauricio Rua I',primeEnd:'2011-08-27',primeEndLabel:'Mauricio Rua II',years:3.93,
- finish:44.44,primeFinish:14.29,rounds:57,stopped:3,
+ finish:30,primeFinish:14.29,rounds:57,stopped:3,
  apexWins:['Mauricio Rua','Quinton Jackson'],
  wins:['Mauricio Rua','Quinton Jackson','Rich Franklin','Tito Ortiz','Tito Ortiz II','Stephan Bonnar','Hector Ramirez'],
  titleWins:[['Quinton Jackson',1]],
