@@ -17,6 +17,8 @@ Run these files in **Supabase → SQL Editor** in this order:
 9. `supabase/picks-social-retention-phase.sql`
 10. `supabase/picks-correctness-cleanup-phase.sql`
 11. `supabase/picks-device-recovery-phase.sql`
+12. `supabase/picks-member-pin-phase.sql`
+13. `supabase/picks-archive-admin-phase.sql`
 
 Then open **Project Settings → API** and copy the project URL and public publishable key into `assets/data/supabase-config.js`.
 
@@ -33,7 +35,7 @@ Never place the service-role or secret key in the repository. All migration file
 - Draws, no contests, cancellations, and unresolved fights are excluded from accuracy.
 - Friends' exact picks remain hidden until that fight locks.
 
-Commissioners can choose future-season point values. Scoring locks once the first pick is submitted in that season.
+Commissioners can choose future-season point values. Scoring locks once the first pick is submitted in that season, but the season name remains editable.
 
 ## Permanent groups
 
@@ -50,6 +52,7 @@ Every room becomes a permanent group after `picks-persistent-groups-phase.sql` r
 
 ### Home
 
+- Start or Join Room for users who are not already in a group
 - Group name and permanent share link
 - Current or next event
 - Season leaderboard
@@ -63,39 +66,38 @@ Every room becomes a permanent group after `picks-persistent-groups-phase.sql` r
 - Event standings
 - Locked room picks
 - Live results
-- Completed-event recap
+- Dedicated archived-event recap
+- Final fight-by-fight pick map
 - Collapsible Fight Results
 - Collapsible Room Pick History
-- Owner-only Results & Corrections
+- Commissioner result corrections
+- Commissioner member-pick and Underdog Lock corrections
 
 ### Settings
 
 - Emoji avatar
 - Browser reminder preference
 - Add Event to Calendar
-- Device recovery key
+- Member PIN setup and change controls
 - Rename group
 - Season settings and new-season controls
-- Member removal
+- Member rename and removal
+- Commissioner Set / Reset PIN controls
 - Commissioner transfer
-- Temporary member recovery codes for the commissioner
 
-The old Social Hub, winner graphics, season awards, activity feed, Event Manager interface, odds editor, and card-import interface are not part of the live app.
+The old Social Hub, winner graphics, season awards, activity feed, Event Manager interface, odds editor, card-import interface, and Device Recovery interface are not part of the live app.
 
-## Identity and device recovery
+## Identity and member PIN
 
-Run `picks-device-recovery-phase.sql`, then each member should open **Picks → Settings → Device Recovery** and create one private recovery key.
+Run `picks-member-pin-phase.sql`, then each member should create a PIN in **Picks → Settings → Member PIN**.
 
-- The saved key restores the same permanent profile on a replacement phone.
-- Picks, points, avatar, event history, and season standing remain attached to the profile.
-- Recovering rotates the member token, so the old device is signed out.
-- If the recovered member is the commissioner, commissioner access moves to the new device too.
-- A successful recovery generates a new recovery key and invalidates the old key.
-- Existing members without a saved key can ask the commissioner for a temporary 30-minute recovery code.
-- The commissioner creates that code inside **Settings → Members & Ownership**.
-- Recovery uses the permanent group link, the exact existing display name, and the recovery code.
+- A member can sign in on another device with the permanent group or room code, exact display name, and PIN.
+- Picks, points, avatar, event history, and season standing remain attached to the same permanent profile.
+- The commissioner can set or reset a member PIN from **Settings → Members & Ownership**.
+- The commissioner can rename a member without breaking that member's saved picks or history.
+- PINs are stored only as hashes in Supabase.
 
-Recovery codes are stored only as hashes in Supabase. The plaintext key is shown only when it is created or rotated.
+`picks-device-recovery-phase.sql` remains in the migration sequence for existing installations, but its old recovery-key interface is retired in favor of member PIN sign-in.
 
 ## Event maintenance
 
@@ -155,9 +157,11 @@ Once an event is published, Supabase is the multiplayer source of truth.
 - Use the event's owner controls to lock or reopen fights.
 - Set winners, draws, no contests, and cancellations in **Results & Corrections**.
 - Completed events hide editing controls until **Enter Correction Mode** is selected.
+- Correction Mode also exposes each member's saved pick and Underdog Lock for that event.
 - An event cannot be completed while scheduled fights still need outcomes.
 - The owner can mark all unresolved fights cancelled and complete the event in one confirmed action.
-- Completed events remain available in Past Events and open directly to their recap.
+- Completed events remain available in Past Events and open directly to their archived recap.
+- Use **Return to Current Event** to leave an archived event without losing the permanent group.
 
 ## Profile and reminders
 
@@ -180,7 +184,7 @@ It checks:
 - Required Home, Event, Settings, standings, recap, and correction mount points
 - Cleanup-script loading order
 - Route restoration and keyboard navigation hooks
-- Profile, reminder, recovery, and automatic-odds hooks
+- Profile, reminder, PIN, archive-admin, and automatic-odds hooks
 - Daily odds schedule and Edge Function deployment contract
 - Absence of the retired Event Manager, Social Hub, and Phase 11 frontend files
 
