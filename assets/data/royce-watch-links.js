@@ -1,7 +1,7 @@
 // App-facing Royce links/stats plus the synchronous late-registry bridge.
 (function(){
   'use strict';
-  const VERSION='royce-app-links-stats-20260712e-batch-eight-photo-loader';
+  const VERSION='royce-app-links-stats-20260712f-batch-eight-photo-map';
   if(typeof DISPLAY_OVERRIDES==='undefined') return;
 
   const fighter='Royce Gracie';
@@ -52,7 +52,7 @@
     const registrySrc='assets/data/canonical-fighter-registry-batch-eight.js?v=canonical-fighter-registry-batch-eight-20260712a';
     const auditDataSrc='assets/data/canonical-fighter-registry-batch-eight-audit-data-patch.js?v=batch-eight-audit-data-patch-20260712b';
     const auditFixSrc='assets/data/canonical-fighter-registry-batch-eight-audit-fixes.js?v=batch-eight-audit-fixes-20260712b';
-    const photoSrc='assets/data/canonical-fighter-registry-batch-eight-photos.js?v=batch-eight-photos-20260712a';
+    const photoSrc='assets/data/canonical-fighter-registry-batch-eight-photos.js?v=batch-eight-photos-20260712b';
     if(document.readyState==='loading'&&document.currentScript){
       if(!window.UFC_BATCH_EIGHT_FIGHTER_REGISTRY){
         writeScript(dataSrc,'data-batch-eight-fighter-data');
