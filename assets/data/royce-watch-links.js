@@ -1,7 +1,7 @@
 // App-facing Royce links/stats plus the canonical late-registry bridge.
 (function(){
   'use strict';
-  const VERSION='royce-app-links-stats-20260712j-batch-eight-prime-sync';
+  const VERSION='royce-app-links-stats-20260712k-batch-eight-audit-sync';
   if(typeof DISPLAY_OVERRIDES==='undefined') return;
 
   const fighter='Royce Gracie';
@@ -69,9 +69,9 @@
     });
   }
   function loadBatchEightRegistry(){
-    const dataSrc='assets/data/canonical-fighter-registry-batch-eight-data.js?v=canonical-fighter-registry-batch-eight-data-20260712e-final-records';
+    const dataSrc='assets/data/canonical-fighter-registry-batch-eight-data.js?v=canonical-fighter-registry-batch-eight-data-20260712h-quality-audit';
     const registrySrc='assets/data/canonical-fighter-registry-batch-eight.js?v=canonical-fighter-registry-batch-eight-20260712d-final-handoffs';
-    const photoSrc='assets/data/canonical-fighter-registry-batch-eight-photos.js?v=batch-eight-photos-20260712b';
+    const photoSrc='assets/data/canonical-fighter-registry-batch-eight-photos.js?v=batch-eight-photos-20260712c-unified-thumbs';
     if(document.readyState==='loading'&&document.currentScript){
       if(!window.UFC_BATCH_EIGHT_FIGHTER_REGISTRY){writeScript(dataSrc,'data-batch-eight-fighter-data');writeScript(registrySrc,'data-batch-eight-fighter-registry');}
       writeScript(photoSrc,'data-batch-eight-photos');
