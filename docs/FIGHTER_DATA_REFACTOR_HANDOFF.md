@@ -6,15 +6,15 @@ Last updated: 2026-07-13
 - Working branch: `agent/fighter-data-phase-1`
 - Draft PR: `#39 — Start canonical fighter data ownership refactor`
 - Branch base: `f81a9a58c5c0e0aa6be2dc9e02a1c757b21c2ae6`
-- Latest fighter implementation commit: `78df2e2cf0211d2ffd12f5dbe2452c43925a6b7e`
-- Latest runtime wiring commit: `2c85987863ec3f2d228c7b7989288927954afb6b`
-- Latest baseline documentation commit before this handoff update: `985a70136173f1e891771c118f93c1b064a647f5`
+- Charles fighter implementation: `78df2e2cf0211d2ffd12f5dbe2452c43925a6b7e`
+- Charles runtime wiring/cache key: `2c85987863ec3f2d228c7b7989288927954afb6b`
+- Baseline documentation: `985a70136173f1e891771c118f93c1b064a647f5`
 
 ## Permanent architecture
 
 `canonical UFC fight ledger + reviewed classifications → calculated categories → modifiers → calculated total → calculated sort → calculated rank → calculated OVR → generated snapshot/profile`
 
-Live runtime must never be controlled by `expectedRank`, `expectedTotalScore`, `expectedOverallOvr`, hand-written snapshot stats, or measurable stats/scores inside presentation files.
+Live runtime must never be controlled by expected rank, expected total, expected OVR, hand-written snapshot stats, or measurable stats/scores inside presentation files.
 
 ## Safety state
 
@@ -23,8 +23,6 @@ Phase 1 remains evidence-only. Canonical records are loaded for diagnostics but 
 No live category score, total, rank, OVR, leaderboard row, snapshot, or profile value changed during the Charles migration. The dedicated test proves the sentinel live data remains unchanged.
 
 ## Ownership baseline
-
-Current browser baseline:
 
 - 72 board rows and 72 profile rows
 - 62 fighter packets and 73 display overrides
@@ -90,11 +88,11 @@ Reviewed calls:
 - Holloway I is an official counted loss but flagged as non-standard competitive evidence because of the neck-injury stoppage
 - opponent tiers remain reviewed model judgments
 
-Commit `78df2e2cf0211d2ffd12f5dbe2452c43925a6b7e` corrected Jim Miller to contender status and Topuria to former-champion status at UFC 317. Commit `2c85987863ec3f2d228c7b7989288927954afb6b` refreshed the browser cache key for that corrected ledger.
+The final classification pass corrected Jim Miller to contender status and Topuria to former-champion status at UFC 317. These labels do not change the derived totals.
 
 ## Validation
 
-Passed on the Charles implementation:
+Passed:
 
 - canonical schema test
 - Charles 37-fight derivation test
