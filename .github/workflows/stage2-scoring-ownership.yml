@@ -1,12 +1,6 @@
 name: Stage 2 Scoring Ownership
 
 on:
-  push:
-    branches: [main, agent/stage-2-scoring-ownership]
-    paths:
-      - 'scripts/stage2-fragments/**'
-      - 'scripts/stage2-installer-b64/**'
-      - '.github/workflows/stage2-scoring-ownership.yml'
   pull_request:
     branches: [main]
     paths:
@@ -15,64 +9,44 @@ on:
       - 'assets/js/scoring-engine.js'
       - 'assets/js/scoring-ownership-finalizer.js'
       - 'scripts/validate-stage2-scoring-ownership.mjs'
-      - 'scripts/stage2-fragments/**'
-      - 'scripts/stage2-installer-b64/**'
+      - '.github/workflows/stage2-scoring-ownership.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'assets/data/canonical-scoring-records.js'
+      - 'assets/js/scoring-engine.js'
+      - 'assets/js/scoring-ownership-finalizer.js'
+      - 'scripts/validate-stage2-scoring-ownership.mjs'
       - '.github/workflows/stage2-scoring-ownership.yml'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: stage2-scoring-ownership-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  install-and-validate:
+  validate-ownership:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - name: Check out current ref
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
 
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: '22'
 
-      - name: Rebuild installer and generate Stage 2 files
+      - name: Check Stage 2 source syntax
         run: |
-          set -o pipefail
-          {
-            cat scripts/stage2-installer-b64/part-*.b64 | base64 -d | gzip -d > scripts/install-stage2-scoring-ownership.mjs
-            node --check scripts/install-stage2-scoring-ownership.mjs
-            node scripts/install-stage2-scoring-ownership.mjs
-            python3 - <<'PY'
-          from pathlib import Path
-
-          validator = Path('scripts/validate-stage2-scoring-ownership.mjs')
-          text = validator.read_text()
-          text = text.replace("JSON.stringify(report,null,2)+'\n');", "JSON.stringify(report,null,2)+'\\n');")
-          text = text.replace("const errors=[];\n page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});", "const errors=[];\n const consoleErrors=[];\n page.on('console',m=>{if(m.type()==='error')consoleErrors.push(m.text());});")
-          text = text.replace("report.errors=errors;", "report.errors=errors;\n report.consoleErrors=consoleErrors;")
-          validator.write_text(text)
-
-          finalizer = Path('assets/js/scoring-ownership-finalizer.js')
-          text = finalizer.read_text()
-          text = text.replace("const engine=window.UFC_FINAL_SCORE_ENGINE;", "const engine=window.UFC_SCORING_ENGINE;")
-          text = text.replace("let attemptCount=0;", "let attemptCount=0;\n  let stableRuns=0;")
-          text = text.replace("const result=engine.apply('stage2-scoring-ownership-finalizer');\n    annotateEvidenceModules();", "const result=engine.apply('stage2-scoring-ownership-finalizer');\n    window.UFC_FINAL_SCORE_ENGINE=engine;\n    annotateEvidenceModules();")
-          text = text.replace("finalized=applied;\n    return applied;", "stableRuns=applied?stableRuns+1:0;\n    finalized=stableRuns>=3;\n    return finalized;")
-          finalizer.write_text(text)
-          PY
-            node --check assets/data/canonical-scoring-records.js
-            node --check assets/js/scoring-engine.js
-            node --check assets/js/scoring-ownership-finalizer.js
-            node --check scripts/validate-stage2-scoring-ownership.mjs
-          } 2>&1 | tee /tmp/stage2-build.log
+          node --check assets/data/canonical-scoring-records.js
+          node --check assets/js/scoring-engine.js
+          node --check assets/js/scoring-ownership-finalizer.js
+          node --check scripts/validate-stage2-scoring-ownership.mjs
 
       - name: Install headless browser
         run: |
@@ -89,30 +63,16 @@ jobs:
           cat /tmp/ufc-stage2-server.log
           exit 1
 
-      - name: Validate single-owner runtime parity
+      - name: Validate 72-fighter single-owner parity
         run: node scripts/validate-stage2-scoring-ownership.mjs
 
-      - name: Upload validation diagnostics
+      - name: Upload ownership report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: stage2-scoring-ownership
           path: |
             docs/stage2-scoring-ownership-report.json
-            /tmp/stage2-build.log
             /tmp/ufc-stage2-server.log
-            assets/data/canonical-scoring-records.js
-            assets/js/scoring-engine.js
-            assets/js/scoring-ownership-finalizer.js
-            scripts/validate-stage2-scoring-ownership.mjs
           if-no-files-found: warn
           retention-days: 30
-
-      - name: Commit validated Stage 2 files
-        if: success()
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html assets/data/canonical-scoring-records.js assets/js/scoring-engine.js assets/js/scoring-ownership-finalizer.js scripts/validate-stage2-scoring-ownership.mjs
-          git commit -m 'Install Stage 2 scoring ownership [skip ci]' || exit 0
-          git push origin HEAD:${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
