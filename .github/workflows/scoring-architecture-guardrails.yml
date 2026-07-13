@@ -1,0 +1,89 @@
+name: Scoring Architecture Guardrails
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'assets/**/*.js'
+      - 'docs/scoring-architecture-contract.json'
+      - 'docs/runtime-scoring-snapshot.json'
+      - 'docs/runtime-scoring-snapshot.md'
+      - 'scripts/**scoring**.mjs'
+      - '.github/workflows/scoring-architecture-guardrails.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'assets/**/*.js'
+      - 'docs/scoring-architecture-contract.json'
+      - 'docs/runtime-scoring-snapshot.json'
+      - 'docs/runtime-scoring-snapshot.md'
+      - 'scripts/**scoring**.mjs'
+      - '.github/workflows/scoring-architecture-guardrails.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: scoring-architecture-guardrails-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  enforce-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out current ref
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Check production and guardrail syntax
+        run: |
+          node --check scripts/run-scoring-architecture-guardrails.mjs
+          node --check scripts/validate-scoring-architecture.mjs
+          node --check scripts/capture-runtime-scoring-snapshot.mjs
+          find assets -type f -name '*.js' -print0 | xargs -0 -n1 node --check
+          node -e "JSON.parse(require('fs').readFileSync('docs/scoring-architecture-contract.json','utf8'))"
+
+      - name: Install browser audit dependencies
+        run: |
+          npm install --no-save --package-lock=false playwright@1.54.1 acorn@8
+          npx playwright install --with-deps chromium
+
+      - name: Start local app
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/ufc-scoring-guardrails-server.log 2>&1 &
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            if curl --fail --silent http://127.0.0.1:4173/index.html > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/ufc-scoring-guardrails-server.log
+          exit 1
+
+      - name: Enforce source ownership and runtime contract
+        run: node scripts/run-scoring-architecture-guardrails.mjs
+
+      - name: Regenerate exact runtime snapshot
+        run: node scripts/capture-runtime-scoring-snapshot.mjs
+
+      - name: Require committed snapshot parity
+        run: git diff --exit-code -- docs/runtime-scoring-snapshot.json docs/runtime-scoring-snapshot.md
+
+      - name: Upload guardrail reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scoring-architecture-guardrails
+          path: |
+            docs/scoring-architecture-guardrails-report.json
+            docs/runtime-scoring-snapshot.json
+            docs/runtime-scoring-snapshot.md
+            /tmp/ufc-scoring-guardrails-server.log
+          if-no-files-found: warn
+          retention-days: 30
