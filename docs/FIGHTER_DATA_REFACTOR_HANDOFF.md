@@ -4,6 +4,23 @@ Last updated: 2026-07-13
 Working branch: `agent/fighter-data-phase-1`
 Base commit: `f81a9a58c5c0e0aa6be2dc9e02a1c757b21c2ae6`
 
+
+## Current branch state
+
+- Draft PR: `#39 — Start canonical fighter data ownership refactor`
+- Latest implementation commit before this handoff update: `dc881372ee28c529a5f852db93d8c350d044a27b`
+- Branch is based on current `main` commit `f81a9a58c5c0e0aa6be2dc9e02a1c757b21c2ae6`.
+- Changed files: `canonical-fighter-facts.js`, `fighter-data-ownership-audit.js`, this handoff, and two diagnostic script tags in `index.html`.
+- No fighter score, rank, OVR, category value, snapshot value, or existing fighter record has been changed.
+
+Checks completed:
+
+- JavaScript syntax checks passed for both new modules.
+- Registry smoke test accepted a complete audited record.
+- Registry smoke test rejected a record containing a derived `rank` field.
+- Branch comparison showed four changed files, 485 additions, zero deletions, and exactly two added lines in `index.html`.
+- GitHub Actions started for Picks UI Smoke, Six-Category Runtime Audit, Runtime Scoring Snapshot, Scoring Architecture Guardrails, and Runtime Scoring Audit.
+
 ## Goal
 
 Eliminate preventable audit errors by giving every UFC fighter fact and reviewed judgment call exactly one authoritative owner. Debatable judgment calls will remain debatable; stale records, contradictory snapshots, frozen ranks, and duplicate numeric ownership will not.
