@@ -1,26 +1,21 @@
-// Final audited UFC records, complete loss ledgers, prime metrics, and direct-fight context for the eight-fighter batch.
+// Final audited UFC records, loss ledgers, prime metrics, era windows, and direct-fight context for the eight-fighter batch.
 (function(){
   'use strict';
   const BASE=window.UFC_CANONICAL_FIGHTER_REGISTRY;
   const DATA=window.RANKING_DATA;
   const F=window.UFC_BATCH_EIGHT_FIGHTER_DATA;
-  const VERSION='canonical-fighter-registry-batch-eight-audit-fixes-20260712c-final-record-recount';
+  const VERSION='canonical-fighter-registry-batch-eight-audit-fixes-20260712d-era-entry-lock';
   if(!BASE||!DATA||!Array.isArray(F)) return;
 
   const key=value=>String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
-  const names=new Set(F.map(f=>key(f.name)));
-  const overrides=()=>window.DISPLAY_OVERRIDES||(typeof DISPLAY_OVERRIDES!=='undefined'?DISPLAY_OVERRIDES:null);
-  const rowsFor=name=>[...(DATA.men||[]),...(DATA.fighters||[])].filter(row=>key(row?.fighter)===key(name));
   const round2=value=>Math.round((Number(value||0)+Number.EPSILON)*100)/100;
+  const rowsFor=name=>[...(DATA.men||[]),...(DATA.fighters||[])].filter(row=>key(row?.fighter)===key(name));
+  const fighterFor=name=>F.find(f=>key(f.name)===key(name))||null;
+  const overrides=()=>window.DISPLAY_OVERRIDES||(typeof DISPLAY_OVERRIDES!=='undefined'?DISPLAY_OVERRIDES:null);
 
-  function methodFor(type){
-    const text=String(type||'').toLowerCase();
-    if(text.includes('finish')) return 'Finish';
-    if(text.includes('decision')) return 'Decision';
-    return undefined;
-  }
   function event(row){
-    return {label:row[0],opponent:row[0],type:row[1],date:row[2],method:methodFor(row[1])};
+    const type=String(row?.[1]||'');
+    return {label:row?.[0],opponent:row?.[0],type,date:row?.[2],method:type.includes('finish')?'Finish':type.includes('decision')?'Decision':undefined};
   }
   function eraFor(f){
     const losses=(f.losses||[]).slice().sort((a,b)=>String(a[2]||'').localeCompare(String(b[2]||'')));
@@ -28,12 +23,9 @@
     const upward=losses.filter(row=>row[1].includes('upward-division'));
     const post=losses.filter(row=>row[1].includes('post-prime'));
     const prime=losses.filter(row=>row[1].includes('prime')&&!row[1].includes('pre-prime')&&!row[1].includes('post-prime')&&!row[1].includes('upward-division'));
-    const unrecovered=prime.length?event(prime[prime.length-1]):null;
-    const recovered=[...pre,...prime.slice(0,-1)].map(event);
     const statusMultiplier=1;
     const divisionMultiplier=Number(f.mult||1);
-    const longevityScore=Number(f.c?.[3]||0);
-    const gapAdjustedMonths=divisionMultiplier>0?round2((longevityScore/30)*144/statusMultiplier/divisionMultiplier):round2(Number(f.years||0)*12);
+    const gapAdjustedMonths=divisionMultiplier>0?round2((Number(f.c?.[3]||0)/30)*144/statusMultiplier/divisionMultiplier):round2(Number(f.years||0)*12);
     return {
       status:'locked',
       window:{
@@ -41,32 +33,32 @@
         endReason:'Canonical UFC-only prime endpoint for this fighter audit.',canonical:true,locked:true,lockVersion:VERSION
       },
       lossContext:{
-        unrecoveredLoss:unrecovered,recoveredLosses:recovered,upwardDivisionLosses:upward.map(event),
-        postPrimeLosses:post.map(event),weirdResults:(f.weirdResults||[]).map(event)
+        unrecoveredLoss:prime.length?event(prime[prime.length-1]):null,
+        recoveredLosses:[...pre,...prime.slice(0,-1)].map(event),
+        upwardDivisionLosses:upward.map(event),postPrimeLosses:post.map(event),
+        weirdResults:(f.weirdResults||[]).map(event)
       },
       longevity:{
         gapCapMonths:18,gapAdjustedMonths,activeEliteYears:Number(f.years||0),statusMultiplier,divisionMultiplier,
-        adjustmentNote:'Active elite UFC years only; gaps capped at 18 months.',
-        note:'Final audited batch-eight longevity input.',canonicalWindowRecalculated:true,
-        canonicalWindowRecalculationVersion:VERSION,calculationAsOf:'2026-07-12'
+        adjustmentNote:'Active elite UFC years only; gaps capped at 18 months.',note:'Final audited batch-eight longevity input.',
+        canonicalWindowRecalculated:true,canonicalWindowRecalculationVersion:VERSION,calculationAsOf:'2026-07-12'
       },
       divisionStrengthContext:`${f.label} multiplier ${divisionMultiplier.toFixed(2)}.`,
       lossContextCompletion:{version:VERSION,machineReadable:true,completeUfcLossLedger:true,bucketReconciled:true,source:`${f.name} audited UFC-only ledger`}
     };
   }
   function primeAuditFor(f,prior={}){
-    const era=eraFor(f);
     const primeWins=Number(f.primeWins??String(f.prime||'').split('-')[0]||0);
     const primeLosses=Number(f.primeLosses??String(f.prime||'').split('-')[1]||0);
     const primeDraws=Number(f.primeDraws||0);
     const primeFights=primeWins+primeLosses+primeDraws;
     const primeFinishes=Number(f.primeFinishes||0);
     const primeFinishRate=Number(f.primeFinish??(primeFights?round2(primeFinishes/primeFights*100):0));
-    const recordPct=primeFights?round2((primeWins+primeDraws*.5)/primeFights*100):0;
     return {
       ...prior,fighter:f.name,primeRecord:f.prime,primeWins,primeLosses,primeDraws,primeNCs:0,
-      primeRecordPct:recordPct,roundControlPct:Number(f.rounds||0),primeFights,primeFinishes,primeFinishRate,
-      total:Number(f.c?.[2]||0),primeWindow:{...era.window},
+      primeRecordPct:primeFights?round2((primeWins+primeDraws*.5)/primeFights*100):0,
+      roundControlPct:Number(f.rounds||0),primeFights,primeFinishes,primeFinishRate,total:Number(f.c?.[2]||0),
+      primeWindow:{...eraFor(f).window},
       roundControlAudit:{
         ...(prior.roundControlAudit||{}),fighter:f.name,roundControlPct:Number(f.rounds||0),status:'locked',
         source:'Audited UFC fight-level control estimate',window:`${f.primeStartLabel} → ${f.primeEndLabel}`,version:VERSION
@@ -76,8 +68,7 @@
   }
   function setFight(a,b,fights,winner,summary,importance='major'){
     window.COMPARE_FIGHT_LEDGER=window.COMPARE_FIGHT_LEDGER||{};
-    const pair=[key(a),key(b)].sort().join('|');
-    window.COMPARE_FIGHT_LEDGER[pair]={fighters:[a,b],fights,winner,importance,summary};
+    window.COMPARE_FIGHT_LEDGER[[key(a),key(b)].sort().join('|')]={fighters:[a,b],fights,winner,importance,summary};
   }
   function patchDirectFightLedger(){
     setFight('Benson Henderson','Frankie Edgar',2,'Benson Henderson','Henderson won both UFC lightweight title fights, although the rematch remains debated.');
@@ -100,28 +91,52 @@
     setFight('Rashad Evans','Jon Jones',1,'Jon Jones','Jones beat former teammate Evans by five-round decision in a title defense.');
     setFight('Rashad Evans','Chuck Liddell',1,'Rashad Evans','Evans knocked Liddell out with a defining right hand.');
     setFight('Rashad Evans','Tito Ortiz',2,'Rashad Evans','Their first bout was a draw after a point deduction; Rashad stopped Tito in the rematch.');
-    return true;
+  }
+  function patchEraStore(){
+    const store=window.UFC_FIGHTER_ERA_LEDGERS;
+    if(!store) return;
+    F.forEach(f=>{store.ledgers=store.ledgers||{};store.ledgers[f.name]=eraFor(f);});
+    store.fighters=Array.from(new Set([...(store.fighters||[]),...F.map(f=>f.name)]));
+    const previous=store.entryFor;
+    if(!store.__batchEightFinalEraEntryLock){
+      store.entryFor=name=>{const fighter=fighterFor(name);return fighter?eraFor(fighter):(typeof previous==='function'?previous(name):store.ledgers?.[name]||null);};
+      store.__batchEightFinalEraEntryLock=true;
+    }
+  }
+  function patchPrimeStore(){
+    const store=window.UFC_PRIME_DOMINANCE_LEDGERS;
+    if(!store) return;
+    const previous=store.entryFor;
+    if(!store.__batchEightFinalPrimeEntryLock){
+      store.entryFor=name=>{const fighter=fighterFor(name);return fighter?primeAuditFor(fighter,rowsFor(fighter.name)[0]?.primeDominanceLiveAudit||{}):(typeof previous==='function'?previous(name):null);};
+      store.__batchEightFinalPrimeEntryLock=true;
+    }
+    store.report=Array.isArray(store.report)?store.report:[];
+    F.forEach(f=>{
+      const audit=primeAuditFor(f,rowsFor(f.name)[0]?.primeDominanceLiveAudit||{});
+      const index=store.report.findIndex(row=>key(row?.fighter)===key(f.name));
+      if(index<0)store.report.push(audit);else store.report[index]=audit;
+    });
+    store.report.sort((a,b)=>Number(b.total||0)-Number(a.total||0));
+    store.leaders=store.report.slice(0,15);
   }
   function applyRows(){
-    const store=overrides();
+    const displayStore=overrides();
     F.forEach(f=>{
-      const era=eraFor(f);
-      const primeAudit=primeAuditFor(f,rowsFor(f.name)[0]?.primeDominanceLiveAudit||rowsFor(f.name)[0]?.primeDominanceShadowAudit||{});
+      const audit=primeAuditFor(f,rowsFor(f.name)[0]?.primeDominanceLiveAudit||rowsFor(f.name)[0]?.primeDominanceShadowAudit||{});
       rowsFor(f.name).forEach(row=>{
         row.ufcRecord=f.record;row.primeRecord=f.prime;row.finishRatePct=f.finish;row.roundsWonPct=f.rounds;
         row.activeEliteYears=f.years;row.timesFinishedPrime=f.stopped;row.primeStoppageLosses=f.stopped;
         row.eliteWins=f.elite;row.elitePlusWins=f.elite;row.topFiveWins=f.top5;row.topFivePlusWins=f.top5;
-        row.rankedQualityWins=f.ranked;row.primeDominanceLiveAudit=primeAudit;row.primeDominanceShadowAudit=primeAudit;
+        row.rankedQualityWins=f.ranked;row.primeDominanceLiveAudit=audit;row.primeDominanceShadowAudit=audit;
       });
       DATA.primeRecords=DATA.primeRecords||{};
       DATA.primeRecords[f.name]={
-        record:f.prime,context:`${f.primeStartLabel} → ${f.primeEndLabel}`,
-        wins:primeAudit.primeWins,losses:primeAudit.primeLosses,draws:primeAudit.primeDraws,ncs:0,
-        source:'Audited UFC-only prime record',sourceVersion:VERSION,eraWindowLocked:true,primeDominanceRebuildVersion:VERSION
+        record:f.prime,context:`${f.primeStartLabel} → ${f.primeEndLabel}`,wins:audit.primeWins,losses:audit.primeLosses,
+        draws:audit.primeDraws,ncs:0,source:'Audited UFC-only prime record',sourceVersion:VERSION,
+        eraWindowLocked:true,primeDominanceRebuildVersion:VERSION
       };
-      const eraStore=window.UFC_FIGHTER_ERA_LEDGERS;
-      if(eraStore?.ledgers){eraStore.ledgers[f.name]=era;eraStore.fighters=Array.from(new Set([...(eraStore.fighters||[]),f.name]));}
-      const display=store?.[f.name];
+      const display=displayStore?.[f.name];
       if(display){
         const stats={
           ufcRecord:f.record,primeRecord:f.prime,finishRatePct:f.finish,roundsWonPct:f.rounds,activeEliteYears:f.years,
@@ -142,25 +157,8 @@
         primeStoppageLosses:f.stopped,eliteWins:f.elite,elitePlusWins:f.elite,topFiveWins:f.top5,topFivePlusWins:f.top5
       };
     });
-    patchDirectFightLedger();
+    patchEraStore();patchDirectFightLedger();
     return true;
-  }
-  function patchPrimeStore(){
-    const store=window.UFC_PRIME_DOMINANCE_LEDGERS;
-    if(!store) return;
-    const map=new Map(F.map(f=>[key(f.name),primeAuditFor(f,rowsFor(f.name)[0]?.primeDominanceLiveAudit||{})]));
-    const old=store.entryFor;
-    if(!store.__batchEightFinalAudit){
-      store.entryFor=name=>map.get(key(name))||(typeof old==='function'?old(name):null);
-      store.__batchEightFinalAudit=true;
-    }
-    store.report=Array.isArray(store.report)?store.report:[];
-    for(const audit of map.values()){
-      const index=store.report.findIndex(row=>key(row?.fighter)===key(audit.fighter));
-      if(index<0)store.report.push(audit);else store.report[index]=audit;
-    }
-    store.report.sort((a,b)=>Number(b.total||0)-Number(a.total||0));
-    store.leaders=store.report.slice(0,15);
   }
   function rerank(){
     DATA.men.sort((a,b)=>Number(b.totalScore||0)-Number(a.totalScore||0)||String(a.fighter).localeCompare(String(b.fighter)));
@@ -172,7 +170,7 @@
   }
 
   applyRows();
-  window.UFC_BATCH_EIGHT_AUDIT_FIXES={version:VERSION,fighters:F.map(f=>f.name),apply:applyRows,eraFor,primeAuditFor,patchDirectFightLedger,names:[...names],applied:true};
+  window.UFC_BATCH_EIGHT_AUDIT_FIXES={version:VERSION,fighters:F.map(f=>f.name),apply:applyRows,eraFor,primeAuditFor,patchDirectFightLedger,patchEraStore,applied:true};
   window.UFC_CANONICAL_FIGHTER_REGISTRY={
     ...BASE,version:`${BASE.version}+${VERSION}`,fighters:Array.from(new Set([...(BASE.fighters||[]),...F.map(f=>f.name)])),
     registerBase(){return result('registerBase',BASE.registerBase());},
