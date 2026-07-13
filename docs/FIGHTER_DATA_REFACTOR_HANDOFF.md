@@ -14,6 +14,20 @@ Last updated: 2026-07-13
 - Exact bout-count guard: `1afc3350ffcc68a6f937155642a6e9a0f7199cae`
 - Corrected coverage docs: `c2bfcf9023ca30ff4aecc3aa318ca52d249b23ad`
 
+## Required branch sync before more migration
+
+Current `main` advanced during the long Phase 1 batch. At this checkpoint the feature branch is **52 commits ahead and 14 commits behind `main`**, and PR #39 is reported non-mergeable.
+
+Before adding another fighter batch:
+
+1. Refresh the work onto latest `main`.
+2. Preserve all canonical additions and tests.
+3. Reconcile current-main changes in `index.html` and `assets/data/ranking-data-patches.js` rather than overwriting them.
+4. Re-run the complete ownership and scoring workflow suite.
+5. Update this handoff with the new branch/PR state.
+
+Do not continue new fighter records on the stale base.
+
 ## Permanent architecture
 
 `canonical UFC fight ledger + reviewed classifications → calculated categories → modifiers → calculated total → calculated sort → calculated rank → calculated OVR → generated snapshot/profile`
@@ -66,7 +80,7 @@ See `docs/fighter-data-ownership-baseline.md`.
 
 ## Validation
 
-Passed:
+Passed on the completed five-fighter implementation:
 
 - canonical schema contract
 - Charles 37-fight derivation test
@@ -94,6 +108,7 @@ Known unrelated CI debt:
 - [x] Deiveson Figueiredo
 - [x] Frankie Edgar
 - [x] Dominick Cruz
+- [ ] Sync Phase 1 work onto latest `main`
 - [ ] Next five-fighter batch
 - [ ] Continue until all ranked fighters have canonical records
 - [ ] Generate snapshots only from canonical calculations
@@ -102,11 +117,13 @@ Known unrelated CI debt:
 
 ## Resume prompt
 
-> Continue the fighter-data refactor in `codyking0602/ufc-goat-rankings`. Read `docs/FIGHTER_DATA_REFACTOR_HANDOFF.md` and `docs/fighter-data-ownership-baseline.md` first. Continue on `agent/fighter-data-phase-1` unless the handoff says it merged. Fetch latest branch state before editing. Work in five-fighter batches. Never store rank, total, OVR, expected values, calculated aggregates, or hand-written snapshot stats in canonical fighter records. Keep migrations evidence-only until the calculated live pipeline is deliberately connected.
+> Continue the fighter-data refactor in `codyking0602/ufc-goat-rankings`. Read `docs/FIGHTER_DATA_REFACTOR_HANDOFF.md` and `docs/fighter-data-ownership-baseline.md` first. The current Phase 1 branch may be behind `main`; compare refs and resolve the branch sync before adding fighters. Preserve the six completed canonical ledgers. Work in five-fighter batches. Never store rank, total, OVR, expected values, calculated aggregates, or hand-written snapshot stats in canonical fighter records. Keep migrations evidence-only until the calculated live pipeline is deliberately connected.
 
 ## Exact next task
 
-Create the next five-fighter canonical ledger batch for:
+First refresh the Phase 1 work onto current `main` and restore a mergeable draft PR without losing the six completed canonical ledgers or their tests.
+
+After the sync passes all workflows, create the next five-fighter canonical ledger batch for:
 
 1. Fabricio Werdum
 2. Glover Teixeira
