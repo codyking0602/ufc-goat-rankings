@@ -1,1 +1,1 @@
-Trigger the one-time full-roster Division-Era Depth repair. Export verified artifact.
+Trigger the one-time full-roster Division-Era Depth repair. Publish verified output branch.
