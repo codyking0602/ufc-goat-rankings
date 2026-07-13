@@ -1,1 +1,1 @@
-Trigger the one-time full-roster Division-Era Depth repair.
+Trigger the one-time full-roster Division-Era Depth repair. Retry after checkout fix.
