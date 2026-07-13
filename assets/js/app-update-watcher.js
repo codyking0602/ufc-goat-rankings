@@ -3,11 +3,10 @@
 
   const CHECK_INTERVAL_MS = 30000;
   const RESTORE_KEY = 'ufc-goat-update-restore-v1';
-  const TARGET_SIGNATURE_KEY = 'ufc-goat-update-target-v1';
   const PROTECTED_VIEWS = new Set(['play','picks']);
 
-  let currentSignature = signatureFromDocument(document);
-  let pendingSignature = '';
+  const currentBuild = document.querySelector('meta[name="app-build"]')?.getAttribute('content') || '';
+  let pendingBuild = '';
   let updatePending = false;
   let checking = false;
   let reloading = false;
@@ -16,27 +15,12 @@
     return document.querySelector('.tab.active')?.dataset.view || 'men';
   }
 
-  function isProtectedView(){
-    return PROTECTED_VIEWS.has(activeView());
+  function isProtectedView(view=activeView()){
+    return PROTECTED_VIEWS.has(view);
   }
 
-  function normalizeAssetUrl(value,base){
-    if(!value) return '';
-    try {
-      const url = new URL(value,base);
-      if(url.origin !== window.location.origin) return '';
-      return `${url.pathname}${url.search}`;
-    } catch(_error){
-      return '';
-    }
-  }
-
-  function signatureFromDocument(doc,base=window.location.href){
-    const build = doc.querySelector('meta[name="app-build"]')?.getAttribute('content') || '';
-    const assets = [...doc.querySelectorAll('script[src],link[rel="stylesheet"][href]')]
-      .map(node => normalizeAssetUrl(node.getAttribute('src') || node.getAttribute('href'),base))
-      .filter(Boolean);
-    return JSON.stringify({build,assets});
+  function buildFromDocument(doc){
+    return doc.querySelector('meta[name="app-build"]')?.getAttribute('content') || '';
   }
 
   function installNotice(){
@@ -61,7 +45,7 @@
     document.body.appendChild(notice);
   }
 
-  function showNotice(mode){
+  function showNotice(mode,view=activeView()){
     installNotice();
     const notice = document.getElementById('ufcUpdateNotice');
     const title = notice.querySelector('strong');
@@ -72,17 +56,17 @@
       title.textContent = 'Updating app…';
       copy.textContent = 'Loading the newest rankings and features.';
     } else {
-      const viewLabel = activeView() === 'picks' ? 'Picks' : 'Play';
+      const viewLabel = view === 'picks' ? 'Picks' : 'Play';
       title.textContent = 'Update ready';
       copy.textContent = `Your ${viewLabel} session is safe. The app will refresh when you leave this tab.`;
     }
     requestAnimationFrame(() => notice.classList.add('show'));
   }
 
-  function captureRestoreState(){
+  function captureRestoreState(viewOverride=''){
     const drawer = document.getElementById('drawer');
     const state = {
-      activeView: activeView(),
+      activeView: viewOverride || activeView(),
       search: document.getElementById('search')?.value || '',
       division: document.getElementById('divisionFilter')?.value || 'All',
       fighterA: document.getElementById('fighterA')?.value || '',
@@ -119,7 +103,8 @@
       try { window.refresh(); } catch(_error){}
     }
 
-    const tab = document.querySelector(`.tab[data-view="${CSS.escape(state.activeView || 'men')}"]`);
+    const safeView = isProtectedView(state.activeView) ? 'men' : (state.activeView || 'men');
+    const tab = document.querySelector(`.tab[data-view="${safeView}"]`);
     if(tab) tab.click();
 
     if(state.category){
@@ -145,22 +130,22 @@
     window.location.replace(url.toString());
   }
 
-  function applyUpdate(){
-    if(reloading || !updatePending || isProtectedView() || document.visibilityState === 'hidden') return;
+  function applyUpdate(viewOverride=''){
+    const targetView = viewOverride || activeView();
+    if(reloading || !updatePending || isProtectedView(targetView) || document.visibilityState === 'hidden') return;
     reloading = true;
-    captureRestoreState();
-    try { sessionStorage.setItem(TARGET_SIGNATURE_KEY,pendingSignature); }
-    catch(_error){}
-    showNotice('updating');
+    captureRestoreState(targetView);
+    showNotice('updating',targetView);
     window.setTimeout(forceReload,350);
   }
 
-  function queueUpdate(signature){
-    if(!signature || signature === currentSignature) return;
-    pendingSignature = signature;
+  function queueUpdate(build){
+    if(!build || build === currentBuild) return;
+    pendingBuild = build;
     updatePending = true;
-    if(isProtectedView()) showNotice('deferred');
-    else applyUpdate();
+    const view = activeView();
+    if(isProtectedView(view)) showNotice('deferred',view);
+    else applyUpdate(view);
   }
 
   async function checkForUpdate(){
@@ -177,7 +162,7 @@
       if(!response.ok) return;
       const html = await response.text();
       const remote = new DOMParser().parseFromString(html,'text/html');
-      queueUpdate(signatureFromDocument(remote,url.toString()));
+      queueUpdate(buildFromDocument(remote));
     } catch(_error){
       // Quietly retry on the next interval or foreground event.
     } finally {
@@ -185,24 +170,19 @@
     }
   }
 
-  function handleSafeBoundary(){
-    if(updatePending){
-      if(isProtectedView()) showNotice('deferred');
-      else applyUpdate();
-    }
+  function handleSafeBoundary(viewOverride=''){
+    if(!updatePending) return;
+    const targetView = viewOverride || activeView();
+    if(isProtectedView(targetView)) showNotice('deferred',targetView);
+    else applyUpdate(targetView);
   }
 
   cleanUpdateParameter();
   installNotice();
   restoreState();
 
-  try {
-    const target = sessionStorage.getItem(TARGET_SIGNATURE_KEY);
-    if(target && target === currentSignature) sessionStorage.removeItem(TARGET_SIGNATURE_KEY);
-  } catch(_error){}
-
   document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click',() => window.setTimeout(handleSafeBoundary,0));
+    tab.addEventListener('click',() => window.setTimeout(() => handleSafeBoundary(tab.dataset.view || ''),0));
   });
   document.addEventListener('visibilitychange',() => {
     if(document.visibilityState !== 'visible') return;
