@@ -1,7 +1,7 @@
-// App-facing Royce links/stats plus the canonical late-registry bridge.
+// App-facing watch links/stats plus the canonical late-registry bridge.
 (function(){
   'use strict';
-  const VERSION='royce-app-links-stats-20260712k-batch-eight-audit-sync';
+  const VERSION='royce-app-links-stats-20260713a-batch-eight-watch-links';
   if(typeof DISPLAY_OVERRIDES==='undefined') return;
 
   const fighter='Royce Gracie';
@@ -13,6 +13,57 @@
   override.signatureFightLabel='Watch Signature Fight';
   override.snapshotStats={...(override.snapshotStats||{}),...qualityStats};
   override.packetProfileStats={...(override.packetProfileStats||{}),...qualityStats};
+
+  const WATCH_LINKS={
+    'Benson Henderson':{
+      signatureFightUrl:'https://www.youtube.com/watch?v=P65mAfnAFhk',
+      signatureFightLabel:'Watch Signature Fight',
+      watchUrl:'https://mmajunkie.usatoday.com/2014/06/video-watch-benson-hendersons-ufc-144-title-win-over-frankie-edgar-in-japan',
+      watchLabel:'Watch Moment'
+    },
+    'Glover Teixeira':{
+      signatureFightUrl:'https://www.youtube.com/watch?v=dAsCS4R0cuE',
+      signatureFightLabel:'Watch Signature Fight',
+      watchUrl:'https://talksport.com/sport/mma/1938671/anthony-smith-teeth-fall-out-ufc-303/',
+      watchLabel:'Watch Moment'
+    },
+    'Mauricio "Shogun" Rua':{
+      signatureFightUrl:'https://www.ufc.com/video/46241',
+      signatureFightLabel:'Watch Signature Fight',
+      watchUrl:'https://www.youtube.com/watch?v=rLuppO32rUI',
+      watchLabel:'Watch Moment'
+    },
+    'Frank Shamrock':{
+      signatureFightUrl:'https://www.youtube.com/watch?v=obS1W3kHGvk',
+      signatureFightLabel:'Watch Signature Fight'
+    },
+    'Forrest Griffin':{
+      signatureFightUrl:'https://www.ufc.com/video/125116',
+      signatureFightLabel:'Watch Signature Fight'
+    },
+    'Rashad Evans':{
+      signatureFightUrl:'https://www.ufc.com/video/46244',
+      signatureFightLabel:'Watch Signature Fight',
+      watchUrl:'https://www.youtube.com/watch?v=YzJjSBV5jsg',
+      watchLabel:'Watch Moment'
+    },
+    'Vitor Belfort':{
+      signatureFightUrl:'https://www.youtube.com/watch?v=St35ub7lmNg',
+      signatureFightLabel:'Watch Signature Fight',
+      watchUrl:'https://www.youtube.com/watch?v=nSfnaeXcZp4',
+      watchLabel:'Watch Moment'
+    }
+  };
+
+  function applyWatchLinks(){
+    const applied=[];
+    Object.entries(WATCH_LINKS).forEach(([name,links])=>{
+      const target=DISPLAY_OVERRIDES[name]=DISPLAY_OVERRIDES[name]||{};
+      Object.assign(target,links);
+      applied.push(name);
+    });
+    return applied;
+  }
 
   function applyQualityStats(){
     const data=window.RANKING_DATA||{};
@@ -80,16 +131,22 @@
     (async()=>{
       if(!window.UFC_BATCH_EIGHT_FIGHTER_REGISTRY){await appendScript(dataSrc,'data-batch-eight-fighter-data');await appendScript(registrySrc,'data-batch-eight-fighter-registry');}
       await appendScript(photoSrc,'data-batch-eight-photos');
+      applyWatchLinks();
     })();
   }
 
+  applyWatchLinks();
   applyQualityStats();
   syncBatchPrimeRecords();
   loadBatchEightRegistry();
   window.addEventListener('ufc-scoring-pipeline-ready',()=>{
     syncBatchPrimeRecords();
     applyQualityStats();
+    applyWatchLinks();
   },{once:true});
+  window.addEventListener('ufc-ranking-data-patches-ready',applyWatchLinks);
+  setTimeout(applyWatchLinks,0);
+  setTimeout(applyWatchLinks,800);
 
   window.UFC_ROYCE_WATCH_LINKS={
     version:VERSION,
@@ -97,6 +154,8 @@
     watchUrl:override.watchUrl,
     signatureFightUrl:override.signatureFightUrl,
     qualityStats,
+    batchWatchLinks:WATCH_LINKS,
+    batchWatchFighters:Object.keys(WATCH_LINKS),
     batchEightCanonicalRegistryLoader:true,
     batchEightPhotoLoader:true,
     batchEightPrimeRecordSync:true,
