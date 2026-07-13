@@ -41,14 +41,14 @@ window.UFC_BATCH_EIGHT_FIGHTER_DATA=[
 },
 {
  name:'Frank Shamrock',record:'5-0',div:'Light Heavyweight',label:'LHW',mult:.85,status:1.08,gapMonths:21.1,
- c:[8.05,11.2,25.2,4.18,5.4,0,-2.5],titles:5,adj:3.9,elite:1,top5:2,ranked:4,
+ c:[6.2,11.2,25.2,4.18,5.4,0,-3.25],titles:5,adj:3,elite:1,top5:2,ranked:4,
  prime:'5-0',primeStart:'1997-12-21',primeStartLabel:'Kevin Jackson',primeEnd:'1999-09-24',primeEndLabel:'Tito Ortiz',years:1.76,primeEndWin:true,
  finish:100,primeFinish:100,rounds:90,stopped:0,
  apexWins:['Kevin Jackson','Tito Ortiz'],wins:['Tito Ortiz','Jeremy Horn','Kevin Jackson','Igor Zinoviev'],
- titleWins:[['Kevin Jackson',.75],['Igor Zinoviev',.75],['Jeremy Horn',.8],['John Lober',.65],['Tito Ortiz',.95]],losses:[],
- tag:'Unbeaten four-defense pioneer',one:'An unbeaten 5-0 UFC champion with five finishes and four defenses, heavily capped by late-1990s depth and a short UFC window.',
+ titleWins:[['Kevin Jackson',.55],['Igor Zinoviev',.5],['Jeremy Horn',.65],['John Lober',.4],['Tito Ortiz',.9]],losses:[],
+ tag:'Unbeaten four-defense pioneer',one:'An unbeaten 5-0 UFC champion with five finishes and four defenses, firmly capped by the developing late-1990s field and a five-fight UFC sample.',
  why:'Shamrock finished every UFC opponent, won the inaugural 200-pound title, defended it four times, and closed with a signature win over Tito Ortiz.',
- whyNot:'The entire UFC resume is five fights in a developing era. Pancrase, WEC, Strikeforce, and other non-UFC achievements are excluded.'
+ whyNot:'The entire UFC resume is five fights in a developing era. His five title wins receive 3.00 adjusted credit plus a direct -3.25 era-depth correction. Pancrase, WEC, Strikeforce, and other non-UFC achievements are excluded.'
 },
 {
  name:'Rashad Evans',record:'14-8-1',div:'Light Heavyweight',div2:'Middleweight',label:'LHW / MW',mult:1,status:1.08,gapMonths:72,
