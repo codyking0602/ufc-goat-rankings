@@ -8,9 +8,8 @@
     repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/chuck-liddell.js', displayFallback: 'assets/data/display-overrides.js', compareFallback: 'assets/compare-coverage-pack-1.js', photos: 'assets/fighters/chuck-liddell.webp and assets/fighters/chuck-liddell-thumb.webp' },
     photos: { photoUrl: 'assets/fighters/chuck-liddell.webp', thumbUrl: 'assets/fighters/chuck-liddell-thumb.webp' },
     display: {
-      overallOvr: 84, allTimeRank: 21, divisionLabel: 'LHW', resumeTag: 'Classic LHW knockout aura',
+      divisionLabel: 'LHW', resumeTag: 'Classic LHW knockout aura',
       oneLiner: 'The classic light heavyweight star case: knockout aura, title defenses, Tito/Couture rivalry value, and a rough late-career ending.',
-      categories: { championship: { ovr: 80, rank: 15 }, opponentQuality: { ovr: 80, rank: 21 }, primeDominance: { ovr: 87, rank: 19 }, longevity: { ovr: 84, rank: 18 } },
       snapshot: [ ['UFC Record', '16-7'], ['UFC Title-Fight Wins', '5'], ['Championship Level', 'Classic LHW Champion'], ['Quality Wins', 'Tito and Couture Anchor the Case'],  ['Active Elite Years', '4.93 Elite Years'], ['Loss Context', 'Couture and Rampage are the counted prime finishes'] ],
       whyRankedHere: 'Liddell ranks here because his light heavyweight title run and rivalry wins were central to the UFC’s breakout era. He had real championship volume, major star power, and a dangerous peak built around knockout threat.',
       whyNotHigher: 'He does not rank higher because later light heavyweight resumes are deeper and cleaner, and the late knockout losses drag the UFC-only profile hard.',

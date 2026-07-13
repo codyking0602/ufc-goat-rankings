@@ -8,9 +8,8 @@
     repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/matt-hughes.js', displayFallback: 'assets/data/display-overrides.js', compareFallback: 'assets/compare-data.js', profileStatsFallback: 'assets/js/fighter-profile-packages.js', watchFallback: 'assets/js/watch-moments.js', photos: 'assets/fighters/matt-hughes.webp and assets/fighters/matt-hughes-thumb.webp' },
     photos: { photoUrl: 'assets/fighters/matt-hughes.webp', thumbUrl: 'assets/fighters/matt-hughes-thumb.webp' },
     display: {
-      overallOvr: 87, allTimeRank: 12, divisionLabel: 'WW', resumeTag: 'Early welterweight standard',
+      divisionLabel: 'WW', resumeTag: 'Early welterweight standard',
       oneLiner: 'The early welterweight title-control case: real championship volume, physical dominance, and one of the defining reigns before the GSP era.',
-      categories: { championship: { ovr: 87, rank: 6 }, opponentQuality: { ovr: 86, rank: 7 }, primeDominance: { ovr: 84, rank: 30 }, longevity: { ovr: 87, rank: 13 } },
       snapshot: [ ['UFC Record', '18-7'], ['UFC Title-Fight Wins', '9'], ['Championship Level', 'Early Welterweight Standard'], ['Quality Wins', 'Strong Era Title Wins'],  ['Active Elite Years', '8.4 Elite Years'], ['Loss Context', 'Era context helps, but losses still drag'] ],
       whyRankedHere: 'Hughes ranks #12 because his UFC welterweight title volume is still meaningful. He spent years as the division standard, stacked title wins, and has enough important victories to remain a serious UFC-only GOAT case.',
       whyNotHigher: 'He does not rank higher because era strength, loss volume, and later separation by GSP cap the case. His championship weight is real, but the modern top-tier resumes are cleaner and deeper.',

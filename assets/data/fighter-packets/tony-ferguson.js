@@ -59,9 +59,8 @@
     repoLocations:{scoreSource:'assets/data/fighter-packets/tony-ferguson.js',centralPacket:'assets/data/fighter-packets/tony-ferguson.js',watchMoment:'assets/js/watch-moments.js',nickname:'assets/js/card-nicknames.js',tracker:'docs/fighter-status.md',photos:'No real photo files loaded yet; app should use initials fallback.'},
     photos:{},rounds,boardRow,profile,
     display:{
-      overallOvr:82,divisionLabel:'LW / WW',resumeTag:'Uncrowned lightweight terror',
+      divisionLabel:'LW / WW',resumeTag:'Uncrowned lightweight terror',
       oneLiner:'A 12-fight-streak lightweight nightmare with interim-title value and elite prime dominance, capped by no undisputed belt and a brutal late-career collapse.',
-      categories:{championship:{ovr:59},opponentQuality:{ovr:83},primeDominance:{ovr:86},longevity:{ovr:78},apexPeak:{ovr:91},penalty:{ovr:68}},
       snapshot:[['UFC Record','15-9'],['UFC Title-Fight Wins','1 interim title win'],['Apex Peak','+4.85'],['Quality Wins','RDA, Barboza, Lee, Pettis'],['Prime Window','Tibau/Thomson 2015 → Gaethje 2020'],['Prime Dominance','20.85 / 30'],['Loss Context','-6.51']],
       whyRankedHere:'Ferguson lands here because the 12-fight UFC win streak, interim title, and brutal lightweight schedule make his prime impossible to ignore.',
       whyNotHigher:'He does not rank higher because he never won the undisputed UFC lightweight title, never defended a UFC belt, and the Gaethje fight ended his run toward the top of the division.',

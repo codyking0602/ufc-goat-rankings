@@ -1,7 +1,7 @@
 // Promotes the audited Prime Dominance model into live category rows only.
 // Overall totals, ranks, and OVR belong to final-score-engine.js.
 (function(){
-  const VERSION='prime-dominance-live-promoter-20260710d-canonical-prime-source';
+  const VERSION='prime-dominance-live-promoter-20260713a-category-only';
   let applying=false;
 
   function applyPrimeDominanceLive(){
@@ -73,7 +73,7 @@
           DISPLAY_OVERRIDES[row.fighter]=DISPLAY_OVERRIDES[row.fighter]||{};
           const override=DISPLAY_OVERRIDES[row.fighter];
           override.snapshot=snapshotFor(row,entry);
-          override.snapshotStats={...(override.snapshotStats||{}),primeRecord,primeRecordContext:context,primeDominance:row.primeDominance,primeDominanceLive:row.primeDominance,primeFinishRate:finishRateText(entry),roundControl:`${entry.roundControlPct}%`,roundsWon:roundsWonText(entry),dominanceProfile:entry.dominanceProfile,primeDominanceRecordInput:entry.primeRecord||null,primeDominanceRebuildRequired:row.primeDominanceRebuildRequired};
+          override.snapshotStats={...(override.snapshotStats||{}),primeRecord,primeRecordContext:context,primeFinishRate:finishRateText(entry),roundControl:`${entry.roundControlPct}%`,roundsWon:roundsWonText(entry),dominanceProfile:entry.dominanceProfile,primeDominanceRecordInput:entry.primeRecord||null,primeDominanceRebuildRequired:row.primeDominanceRebuildRequired};
         }
       });
 
@@ -89,6 +89,5 @@
   const API={version:VERSION,apply:applyPrimeDominanceLive,latest:null};
   window.UFC_PRIME_DOMINANCE_LIVE_PROMOTER=API;
   applyPrimeDominanceLive();
-  if(window.UFC_FINAL_SCORE_ENGINE?.apply)window.UFC_FINAL_SCORE_ENGINE.apply('prime-dominance-promoted');
   if(typeof refresh==='function'){try{refresh();}catch(e){}}
 })();

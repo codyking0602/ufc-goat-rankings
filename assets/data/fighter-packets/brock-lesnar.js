@@ -38,9 +38,8 @@
     repoLocations:{scoreSource:'assets/data/fighter-packets/brock-lesnar.js',centralPacket:'assets/data/fighter-packets/brock-lesnar.js',watchMoment:'assets/js/watch-moments.js',nickname:'assets/js/card-nicknames.js',tracker:'docs/fighter-status.md',photos:'No real photo files loaded yet; app should use initials fallback.'},
     photos:{},rounds,boardRow,profile,
     display:{
-      overallOvr:79,divisionLabel:'HW',resumeTag:'Short-window heavyweight champ',
+      divisionLabel:'HW',resumeTag:'Short-window heavyweight champ',
       oneLiner:'A massive short-window UFC heavyweight champion whose title run was real, explosive, and historically important, but capped by tiny sample size and a brief elite window.',
-      categories:{championship:{ovr:78},opponentQuality:{ovr:68},primeDominance:{ovr:74},longevity:{ovr:55},apexPeak:{ovr:87},penalty:{ovr:76}},
       snapshot:[['UFC Record','4-3, 1 NC'],['UFC Title-Fight Wins','3'],['Apex Peak','+4.60'],['Quality Wins','Couture, Mir, Carwin'],['Prime Window','Couture 2008 → Cain 2010'],['Prime Dominance','14.35 / 30'],['Loss Context','-3.75']],
       whyRankedHere:'Lesnar lands here because his UFC heavyweight title run was real: he beat Couture, smashed Mir in the rematch, and survived Carwin to defend the belt.',
       whyNotHigher:'He does not rank higher because the elite UFC sample is tiny, the title reign was short, Cain ended the run quickly, and the later Overeem/Hunt chapter does not add résumé depth.',

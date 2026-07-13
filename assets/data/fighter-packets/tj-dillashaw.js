@@ -7,12 +7,9 @@
     status: { stage: 'permanent hand-added fighter; packet live; photos needed', lastUpdated: '2026-07-03', nextFix: 'Add T.J. Dillashaw photos. Add Watch Moment only if Cody provides a URL.' },
     repoLocations: { scoreSource: 'assets/data/ranking-data-additions.js', centralPacket: 'assets/data/fighter-packets/tj-dillashaw.js', displayFallback: 'assets/data/display-overrides.js', watchFallback: 'assets/js/watch-moments.js', photos: 'Add assets/fighters/tj-dillashaw.webp and assets/fighters/tj-dillashaw-thumb.webp when real files exist.' },
     display: {
-      overallOvr: 86,
-      allTimeRank: 20,
       divisionLabel: 'BW / FLW',
       resumeTag: 'Two-time bantamweight champion, tainted ceiling',
       oneLiner: 'A real bantamweight title monster with five UFC title-fight wins, huge finishes over Barao and Garbrandt, and an EPO suspension that keeps the legacy from feeling clean.',
-      categories: { championship: { ovr: 86, rank: 13 }, opponentQuality: { ovr: 82, rank: 20 }, primeDominance: { ovr: 85, rank: 23 }, longevity: { ovr: 80, rank: 26 } },
       snapshot: [ ['UFC Record', '13-5'], ['UFC Title-Fight Wins', '5'], ['Championship Level', 'Two-Time Bantamweight Champion'], ['Quality Wins', 'Barao, Garbrandt, Sandhagen, Assuncao'],  ['Active Elite Years', '6.5 Elite Years'], ['Loss Context', 'Cruz, Cejudo, Sterling, plus EPO legacy context'] ],
       whyRankedHere: 'Dillashaw ranks here because the UFC-only résumé has serious championship weight: two bantamweight title reigns, five UFC title-fight wins, title finishes over Renan Barao, Joe Soto, and Cody Garbrandt, plus elite wins over Cory Sandhagen, Raphael Assuncao, and John Lineker.',
       whyNotHigher: 'He does not rank higher because the résumé is permanently clouded by the EPO suspension and vacated belt, the Dominick Cruz loss cost him a cleaner reign, the Cejudo flyweight loss was ugly, and the Sterling fight ended with major shoulder-injury context.',

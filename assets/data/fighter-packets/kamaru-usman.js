@@ -10,9 +10,8 @@
     },
     photos: { photoUrl: 'assets/fighters/kamaru-usman.webp', thumbUrl: 'assets/fighters/kamaru-usman-thumb.webp' },
     display: {
-      overallOvr: 88, allTimeRank: 10, divisionLabel: 'WW / MW', resumeTag: 'Modern welterweight title authority',
+      divisionLabel: 'WW / MW', resumeTag: 'Modern welterweight title authority',
       oneLiner: 'The post-GSP welterweight champion case: dominant title control, elite round winning, and a focused but powerful championship peak.',
-      categories: { championship: { ovr: 84, rank: 9 }, opponentQuality: { ovr: 86, rank: 8 }, primeDominance: { ovr: 91, rank: 7 }, longevity: { ovr: 85, rank: 16 } },
       snapshot: [
         ['UFC Record', '16-3'], ['UFC Title-Fight Wins', '6'], ['Championship Level', 'Great Welterweight Reign'], ['Quality Wins', 'Modern Welterweight Elite'],  ['Active Elite Years', '6.0 Elite Years'], ['Loss Context', 'Edwards finish damaged the back end']
       ],

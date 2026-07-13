@@ -28,9 +28,8 @@
     photos: {},
     rounds,
     display: {
-      overallOvr: 84, allTimeRank: 28, divisionLabel: 'BW', resumeTag: 'Bantamweight champion burst',
+      divisionLabel: 'BW', resumeTag: 'Bantamweight champion burst',
       oneLiner: 'A precision-striking bantamweight champion with a huge Aljo title KO, a Vera title defense, and a résumé capped hard by Merab.',
-      categories: { championship: { ovr: 75, rank: 25 }, opponentQuality: { ovr: 81, rank: 22 }, primeDominance: { ovr: 82, rank: 23 }, longevity: { ovr: 70, rank: 34 }, apexPeak: { ovr: 76, rank: 24 }, penalty: { ovr: 73, rank: 29 } },
       snapshot: [ ['UFC Record', '11-3 (1 NC)'], ['UFC Title-Fight Wins', '2'], ['Apex Peak', '+3.25'], ['Quality Wins', 'Aljo, Yan, Vera, Song'],  ['Prime Dominance', '16.60 / 30'], ['Active Elite Years', '3.8 Elite Years'], ['Loss Context', 'Merab x2 cap'] ],
       whyRankedHere: "O'Malley ranks here because the top of the UFC résumé is real: he knocked out Aljamain Sterling to win the bantamweight title, defended against Marlon Vera, beat Petr Yan in a close elite fight, and added Song/Zahabi current-table rebound value.",
       whyNotHigher: "He does not rank higher yet because the reign was short, the elite-win list is not deep, and the two Merab losses sharply cap the title-prime and GOAT case.",

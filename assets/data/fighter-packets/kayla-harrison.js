@@ -34,9 +34,8 @@
     boardRow,
     profile,
     display:{
-      overallOvr:81, divisionLabel:'WBW', resumeTag:'Bantamweight title force',
+      divisionLabel:'WBW', resumeTag:'Bantamweight title force',
       oneLiner:'A current UFC bantamweight champion with dominant grappling control and a perfect UFC record, but only three UFC fights keep the score capped.',
-      categories:{ championship:{ovr:76}, opponentQuality:{ovr:65}, primeDominance:{ovr:82}, longevity:{ovr:55}, apexPeak:{ovr:80}, penalty:{ovr:99} },
       snapshot:[ ['UFC Record','3-0'], ['UFC Title-Fight Wins','1 official / 1.00 adjusted'], ['Apex Peak','+3.85'], ['Quality Wins','Peña, Vieira, Holm'],  ['Prime Dominance','17.70 / 30'], ['Rounds Won','85.7% best-effort'], ['Loss Context','0.00'] ],
       whyRankedHere:'Harrison scores as a real UFC champion because she beat Peña for the belt, dominated Holm, beat Vieira, and has no UFC loss penalty.',
       whyNotHigher:'The cap is pure UFC volume. She has only three UFC fights, one title-fight win, and zero defenses. PFL and Olympic greatness are context only and cannot carry the UFC-only score.',

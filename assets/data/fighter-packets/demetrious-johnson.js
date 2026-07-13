@@ -24,17 +24,9 @@
       thumbUrl: 'assets/fighters/demetrious-johnson-thumb.webp'
     },
     display: {
-      overallOvr: 93,
-      allTimeRank: 3,
       divisionLabel: 'FLW',
       resumeTag: 'Flyweight standard',
       oneLiner: 'The defining UFC flyweight champion: historic title control, elite technical dominance, and one of the cleanest prime skill sets in the sport.',
-      categories: {
-        championship: { ovr: 92, rank: 3 },
-        opponentQuality: { ovr: 85, rank: 11 },
-        primeDominance: { ovr: 94, rank: 4 },
-        longevity: { ovr: 90, rank: 8 }
-      },
       snapshot: [
         ['UFC Record', '15-2-1'],
         ['UFC Title-Fight Wins', '12'],

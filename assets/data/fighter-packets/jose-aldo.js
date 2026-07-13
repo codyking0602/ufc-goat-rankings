@@ -8,9 +8,8 @@
     repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/jose-aldo.js', displayFallback: 'assets/data/display-overrides.js', compareFallback: 'assets/compare-data.js', profileStatsFallback: 'assets/js/fighter-profile-packages.js', watchFallback: 'assets/js/watch-moments.js', photos: 'assets/fighters/jose-aldo.webp and assets/fighters/jose-aldo-thumb.webp' },
     photos: { photoUrl: 'assets/fighters/jose-aldo.webp', thumbUrl: 'assets/fighters/jose-aldo-thumb.webp' },
     display: {
-      overallOvr: 86, allTimeRank: 14, divisionLabel: 'FW / BW', resumeTag: 'Scope-affected legend',
+      divisionLabel: 'FW / BW', resumeTag: 'Scope-affected legend',
       oneLiner: 'A UFC-only legend with real title value and longevity, but not a clean top-10 case once WEC is excluded and the McGregor/Holloway/Volk damage is counted.',
-      categories: { championship: { ovr: 84, rank: 8 }, opponentQuality: { ovr: 83, rank: 14 }, primeDominance: { ovr: 82, rank: 22 }, longevity: { ovr: 88, rank: 12 } },
       snapshot: [ ['UFC Record', '14-9'], ['UFC Title-Fight Wins', '8 adjusted credit'], ['Championship Level', 'Historic Featherweight Champion'], ['Quality Wins', 'Strong, not top-tier'],  ['Active Elite Years', '7.1 weighted elite years'], ['Loss Context', 'McGregor + Holloway x2 finished losses; Volk decision damage'] ],
       whyRankedHere: 'Aldo ranks in the top-15 range because the UFC-only model still respects his title work, quality wins, and ability to stay relevant across featherweight and bantamweight. He is a real legend, but the app no longer treats him like a clean top-10 UFC-only résumé.',
       whyNotHigher: 'The UFC-only boundary hurts him because his full historical peak includes WEC. Inside the UFC-only scoring window, the McGregor KO, Holloway TKO losses, Volkanovski loss, and uneven back half make him too damaged for the top ten.',

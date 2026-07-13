@@ -62,9 +62,8 @@
     photos:{},
     rounds,
     display:{
-      overallOvr:86, allTimeRank:22, divisionLabel:'FLW / BW', resumeTag:'Two-time flyweight king',
+      divisionLabel:'FLW / BW', resumeTag:'Two-time flyweight king',
       oneLiner:'A violent two-time UFC flyweight champion with real Moreno-rivalry title value, elite Pantoja/Benavidez wins, and useful bantamweight depth.',
-      categories:{ championship:{ovr:78,rank:22}, opponentQuality:{ovr:72,rank:28}, primeDominance:{ovr:81,rank:24}, longevity:{ovr:71,rank:30}, apexPeak:{ovr:83,rank:18}, penalty:{ovr:74,rank:28} },
       snapshot:[ ['UFC Record','14-7-1'], ['UFC Title-Fight Wins','3 official / 3.25 adjusted'], ['Apex Peak','+4.00'], ['Quality Wins','Moreno, Benavidez, Pantoja, Perez'],  ['Prime Dominance','18.60 / 30'], ['Rounds Won','55.7% best-effort'], ['Loss Context','-5.25'] ],
       whyRankedHere:'Figueiredo ranks here because he has real championship meat: three UFC flyweight title-fight wins, a draw-retainment credit, a violent title peak, and enough quality wins to separate him from thin-title cases.',
       whyNotHigher:'He does not rank higher because the reign was short, flyweight gets a division-strength discount, the Moreno rivalry includes two damaging title losses, and the late bantamweight run adds respect without becoming prime GOAT longevity.',

@@ -45,9 +45,8 @@
     photos: {},
     rounds,
     display: {
-      overallOvr: 86, allTimeRank: 23, divisionLabel: 'MW / WW', resumeTag: 'Short elite-title monster',
+      divisionLabel: 'MW / WW', resumeTag: 'Short elite-title monster',
       oneLiner: 'A short but explosive UFC-only case: DDP title value, Whittaker/Burns elite proof, scary dominance, and one Strickland title-loss cap.',
-      categories: { championship: { ovr: 69, rank: 31 }, opponentQuality: { ovr: 67, rank: 35 }, primeDominance: { ovr: 91, rank: 8 }, longevity: { ovr: 66, rank: 36 }, apexPeak: { ovr: 87, rank: 12 }, penalty: { ovr: 92, rank: 7 } },
       snapshot: [ ['UFC Record', '9-1'], ['UFC Title-Fight Wins', '1 official / 1.0 adjusted'], ['Apex Peak', '+4.75'], ['Quality Wins', 'DDP, Whittaker, Burns, Usman'],  ['Prime Dominance', '22.00 / 30'], ['Rounds Won', '69.6% best-effort'], ['Loss Context', '-1.50'] ],
       whyRankedHere: 'Chimaev ranks here because the peak is loud: a current-table UFC title win, elite wins over Whittaker and Burns, a strong Usman result, and one of the most dominant grappling profiles in this tier.',
       whyNotHigher: 'He does not rank higher because the UFC-only resume is still short: one title-fight win, no defenses, a short elite clock, and the Strickland title loss breaks the clean undefeated-aura version of the case.',

@@ -59,9 +59,8 @@
     boardRow,
     profile,
     display:{
-      overallOvr:86, divisionLabel:'SW / FLW', resumeTag:'Two-reign strawweight giant killer',
+      divisionLabel:'SW / FLW', resumeTag:'Two-reign strawweight giant killer',
       oneLiner:'A volatile but elite UFC-only case: two strawweight reigns, four title-fight wins, Joanna twice, Zhang twice, and a 6-2 prime capped by Andrade and Esparza damage.',
-      categories:{ championship:{ovr:86}, opponentQuality:{ovr:88}, primeDominance:{ovr:85}, longevity:{ovr:85}, apexPeak:{ovr:90}, penalty:{ovr:82} },
       snapshot:[ ['UFC Record','12-7'], ['UFC Title-Fight Wins','4 official / 4.00 adjusted'], ['Apex Peak','+4.85'], ['Quality Wins','Joanna x2, Zhang x2, Andrade'],  ['Prime Dominance','18.75 / 30'], ['Rounds Won','63.0% best-effort'], ['Loss Context','-6.00'] ],
       whyRankedHere:'Rose belongs in the high-end women’s UFC champion tier because the quality wins are enormous: Joanna twice, Zhang twice, Andrade, and two separate strawweight title wins.',
       whyNotHigher:'The case is capped by short title reigns and volatility. Four title-fight wins is strong, but not Amanda, Valentina, or Zhang title volume, and the Andrade finish plus Esparza rematch loss keep the prime from looking clean.',

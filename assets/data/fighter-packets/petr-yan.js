@@ -8,9 +8,8 @@
     repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/petr-yan.js', displayFallback: 'assets/data/display-overrides.js', compareFallback: 'assets/compare-phase2-yan.js', profileStatsFallback: 'assets/data/ranking-data.js', watchFallback: 'assets/js/watch-moments.js', photos: 'assets/fighters/petr-yan.webp and assets/fighters/petr-yan-thumb.webp' },
     photos: { photoUrl: 'assets/fighters/petr-yan.webp', thumbUrl: 'assets/fighters/petr-yan-thumb.webp' },
     display: {
-      overallOvr: 87, allTimeRank: 16, divisionLabel: 'BW', resumeTag: 'Modern bantamweight title case',
+      divisionLabel: 'BW', resumeTag: 'Modern bantamweight title case',
       oneLiner: 'A modern bantamweight title case with elite skill, strong round control, and unusual DQ context that needs more nuance than a normal loss.',
-      categories: { championship: { ovr: 78, rank: 20 }, opponentQuality: { ovr: 86, rank: 10 }, primeDominance: { ovr: 91, rank: 8 }, longevity: { ovr: 82, rank: 20 } },
       snapshot: [ ['UFC Record', '12-4'], ['UFC Title-Fight Wins', '2 adjusted title-win credit'], ['Championship Level', 'Former Bantamweight Champion'], ['Quality Wins', 'Aldo and Sandhagen anchor the case'],  ['Active Elite Years', '6.0 Elite Years'], ['Loss Context', 'Sterling DQ and elite-loss context need nuance'] ],
       whyRankedHere: 'Yan ranks here because his UFC-only case has real bantamweight title value, strong elite-round control, and enough quality-win/context credit to belong in the all-time conversation rather than being hidden by the messy Sterling rivalry.',
       whyNotHigher: 'He does not climb higher because the championship volume is limited and the official loss column is heavy for an all-time case, even when several losses have strong context.',

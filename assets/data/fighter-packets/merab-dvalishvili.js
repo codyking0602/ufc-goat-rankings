@@ -8,9 +8,8 @@
     repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/merab-dvalishvili.js', displayFallback: 'assets/data/display-overrides.js', compareFallback: 'assets/compare-coverage-pack-2.js and assets/compare-phase2-yan.js', watchFallback: 'assets/data/fighter-packets/merab-dvalishvili.js', photos: 'assets/fighters/merab-dvalishvili.webp and assets/fighters/merab-dvalishvili-thumb.webp' },
     photos: { photoUrl: 'assets/fighters/merab-dvalishvili.webp', thumbUrl: 'assets/fighters/merab-dvalishvili-thumb.webp' },
     display: {
-      overallOvr: 86, allTimeRank: 17, divisionLabel: 'BW', resumeTag: 'Modern bantamweight pace case',
+      divisionLabel: 'BW', resumeTag: 'Modern bantamweight pace case',
       oneLiner: 'The modern bantamweight pace engine: relentless pressure, elite contender depth, and a title case built in one of the sport’s toughest divisions.',
-      categories: { championship: { ovr: 77, rank: 22 }, opponentQuality: { ovr: 84, rank: 13 }, primeDominance: { ovr: 92, rank: 6 }, longevity: { ovr: 80, rank: 24 } },
       snapshot: [ ['UFC Record', '13-3'], ['UFC Title-Fight Wins', '3'], ['Championship Level', 'Modern Bantamweight Champion'], ['Quality Wins', 'Deep Modern 135 Ledger'],  ['Active Elite Years', '5.0 Elite Years'], ['Loss Context', 'Yan rivalry split adds nuance'] ],
       whyRankedHere: 'Merab ranks here because his modern bantamweight run has serious depth. The pace, wrestling volume, and quality wins in a strong division give him one of the best active-era cases outside the top tier.',
       whyNotHigher: 'He does not rank higher because the title run is still newer than the long-reign champions, and the Yan rematch/split rivalry keeps the case from being cleanly separated.',

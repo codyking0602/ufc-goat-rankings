@@ -8,9 +8,8 @@
     repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/daniel-cormier.js', displayFallback: 'assets/data/display-overrides.js', compareFallback: 'assets/compare-coverage-pack-1.js', profileStatsFallback: 'assets/js/fighter-profile-packages.js', watchFallback: 'assets/js/watch-moments.js', photos: 'assets/fighters/daniel-cormier.webp and assets/fighters/daniel-cormier-thumb.webp' },
     photos: { photoUrl: 'assets/fighters/daniel-cormier.webp', thumbUrl: 'assets/fighters/daniel-cormier-thumb.webp' },
     display: {
-      overallOvr: 87, allTimeRank: 13, divisionLabel: 'LHW / HW', resumeTag: 'Compact two-division champion',
+      divisionLabel: 'LHW / HW', resumeTag: 'Compact two-division champion',
       oneLiner: 'The compact two-division champion case: heavyweight gold, light heavyweight gold, elite wins, and rivalry ceilings against Jones and Stipe.',
-      categories: { championship: { ovr: 83, rank: 11 }, opponentQuality: { ovr: 84, rank: 12 }, primeDominance: { ovr: 90, rank: 9 }, longevity: { ovr: 82, rank: 21 } },
       snapshot: [ ['UFC Record', '15-3, 1 NC'], ['UFC Title-Fight Wins', '6'], ['Championship Level', 'Two-Division UFC Champion'], ['Quality Wins', 'Dense Title-Level Resume'],  ['Active Elite Years', '7.1 Elite Years'], ['Loss Context', 'Jones and Stipe rivalry ceilings cap the case'] ],
       whyRankedHere: 'Cormier ranks #13 because his UFC resume is compact but elite: two-division champion, strong title-fight wins, and high-level wins at both light heavyweight and heavyweight.',
       whyNotHigher: 'He does not rank higher because direct rivalry separation blocks him. Jones clearly caps the light heavyweight case, Stipe won the heavyweight trilogy, and the UFC window is not as long as the deeper resumes above him.',

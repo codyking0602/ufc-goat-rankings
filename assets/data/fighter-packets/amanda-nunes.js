@@ -6,12 +6,9 @@
     status: { stage: 'packet live; UFC-only record corrected; photos and Watch Moment needed', lastUpdated: '2026-07-10', nextFix: 'Add Amanda photos and Watch Moment link.' },
     repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/amanda-nunes.js', compareFallback: 'assets/compare-coverage-pack-2.js' },
     display: {
-      overallOvr: 94,
-      allTimeRank: 1,
       divisionLabel: 'BW / FW',
       resumeTag: 'Women’s UFC GOAT standard',
       oneLiner: 'The women’s UFC GOAT case: two-division champion, huge title-fight volume, legendary finishes, and the deepest women’s win list in this ranking.',
-      categories: { championship: { ovr: 96, rank: 1 }, opponentQuality: { ovr: 94, rank: 1 }, primeDominance: { ovr: 93, rank: 1 }, longevity: { ovr: 91, rank: 2 } },
       snapshot: [ ['UFC Record', '16-2'], ['UFC Title-Fight Wins', '11'], ['Championship Level', 'Two-Division Women’s GOAT'], ['Quality Wins', 'Deepest Women’s UFC Ledger'],  ['Active Elite Years', '7.0 Elite Years'], ['Loss Context', 'Pena upset matters, but revenge restored the case'] ],
       whyRankedHere: 'Nunes ranks as the women’s #1 because her UFC resume has the cleanest separation: bantamweight title control, featherweight title value, the Cyborg knockout, the Rousey finish, Shevchenko rivalry value, and years of elite wins.',
       whyNotHigher: 'On the full app board, she does not pass the top men because this ranking keeps the men’s and women’s boards separate and does not pretend division depth is identical. Within the women’s board, she is the clear benchmark.',

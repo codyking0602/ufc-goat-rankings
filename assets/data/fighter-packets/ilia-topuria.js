@@ -8,9 +8,8 @@
     repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/ilia-topuria.js', displayFallback: 'assets/data/display-overrides.js', compareFallback: 'assets/compare-coverage-pack-2.js', profileStatsFallback: 'assets/js/fighter-profile-packages.js', watchFallback: 'assets/js/watch-moments.js', photos: 'assets/fighters/ilia-topuria.webp and assets/fighters/ilia-topuria-thumb.webp' },
     photos: { photoUrl: 'assets/fighters/ilia-topuria.webp', thumbUrl: 'assets/fighters/ilia-topuria-thumb.webp' },
     display: {
-      overallOvr: 87, allTimeRank: 15, divisionLabel: 'FW / LW', resumeTag: 'New-era title takeover',
+      divisionLabel: 'FW / LW', resumeTag: 'New-era title takeover',
       oneLiner: 'The new-era takeover case: massive featherweight legend wins, elite finishing threat, and one current-table Gaethje loss adding the first real blemish.',
-      categories: { championship: { ovr: 76, rank: 23 }, opponentQuality: { ovr: 86, rank: 10 }, primeDominance: { ovr: 94, rank: 4 }, longevity: { ovr: 70, rank: 35 } },
       snapshot: [ ['UFC Record', '9-1'], ['UFC Title-Fight Wins', '2'], ['Championship Level', 'Young But Loud Title Case'], ['Quality Wins', 'Volk and Max Anchor the Case'],  ['Active Elite Years', '3.2 Elite Years'], ['Loss Context', 'Gaethje loss adds first UFC blemish'] ],
       whyRankedHere: 'Topuria ranks #15 because the high end is already enormous. Beating Volkanovski and Holloway gives him direct value against featherweight history, and his fast title rise gives the profile a real peak-dominance lane.',
       whyNotHigher: 'He does not rank higher yet because the championship volume and active elite years are still early, and the current-table Gaethje loss adds the first real blemish. The resume is loud, but it has not had time to become a long reign or deep all-time body of work.',

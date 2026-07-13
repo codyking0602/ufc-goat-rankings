@@ -51,9 +51,8 @@
     boardRow,
     profile,
     display:{
-      overallOvr:90, divisionLabel:'SW / FLW', resumeTag:'Strawweight two-reign force',
+      divisionLabel:'SW / FLW', resumeTag:'Strawweight two-reign force',
       oneLiner:'A two-time UFC strawweight champion with six title-fight wins, a dominant second reign, elite Joanna/Andrade/Suarez proof, and Rose as the clear ceiling on the case.',
-      categories:{ championship:{ovr:92}, opponentQuality:{ovr:88}, primeDominance:{ovr:92}, longevity:{ovr:86}, apexPeak:{ovr:90}, penalty:{ovr:86} },
       snapshot:[ ['UFC Record','10-3'], ['UFC Title-Fight Wins','6 official / 6.00 adjusted'], ['Apex Peak','+4.85'], ['Quality Wins','Andrade, Joanna, Esparza, Suarez'],  ['Prime Dominance','23.00 / 30'], ['Rounds Won','72.1% best-effort'], ['Loss Context','-4.50'] ],
       whyRankedHere:'Zhang belongs in the elite women’s UFC tier because the title resume is serious: two strawweight reigns, six title-fight wins, four defenses, a dominant second reign, and direct wins over Joanna.',
       whyNotHigher:'She does not pass the top women’s benchmarks because Rose beat her twice in the heart of her title years, and the Valentina challenge did not create a two-division UFC title case. The second reign is elite, but the loss column keeps the ceiling clear.',

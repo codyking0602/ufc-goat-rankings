@@ -49,9 +49,8 @@
     boardRow,
     profile,
     display:{
-      overallOvr:78, divisionLabel:'WBW / WFLW', resumeTag:'Bantamweight title comeback',
+      divisionLabel:'WBW / WFLW', resumeTag:'Bantamweight title comeback',
       oneLiner:'A former UFC bantamweight champion whose UFC-only case is built on the legendary Holm comeback, a solid contender climb, and a short reign with no defenses.',
-      categories:{ championship:{ovr:74}, opponentQuality:{ovr:68}, primeDominance:{ovr:77}, longevity:{ovr:70}, apexPeak:{ovr:78}, penalty:{ovr:73} },
       snapshot:[ ['UFC Record','7-7'], ['UFC Title-Fight Wins','1 official / 1.00 adjusted'], ['Apex Peak','+3.35'], ['Quality Wins','Holm, McMann, Carmouche, Eye'],  ['Prime Dominance','14.80 / 30'], ['Rounds Won','48.8% best-effort'], ['Loss Context','-5.25'] ],
       whyRankedHere:'Tate scores as a legitimate UFC champion because the Holm win was a real title-winning peak moment, and the Carmouche/McMann/Eye run gives the title climb enough support.',
       whyNotHigher:'The UFC-only case is thin after the Holm win. She has one title-fight win, zero defenses, limited elite UFC win depth, and three counted finish losses before the post-prime cutoff.',

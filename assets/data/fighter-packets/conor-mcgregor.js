@@ -6,9 +6,8 @@
     status: { stage: 'packet live; photos and Watch Moment needed', lastUpdated: '2026-07-02', nextFix: 'Add Conor photos and Watch Moment link.' },
     repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/conor-mcgregor.js', compareFallback: 'assets/compare-data.js' },
     display: {
-      overallOvr: 82, allTimeRank: 26, divisionLabel: 'FW / LW / WW', resumeTag: 'Compact double-champ star',
+      divisionLabel: 'FW / LW / WW', resumeTag: 'Compact double-champ star',
       oneLiner: 'The iconic-moment case: Aldo in 13 seconds, Alvarez double-champ masterclass, unmatched UFC star power, and a short prime window.',
-      categories: { championship: { ovr: 74, rank: 28 }, opponentQuality: { ovr: 80, rank: 22 }, primeDominance: { ovr: 86, rank: 22 }, longevity: { ovr: 77, rank: 30 } },
       snapshot: [ ['UFC Record', '10-4'], ['UFC Title-Fight Wins', '3'], ['Championship Level', 'First Simultaneous Double Champ'], ['Quality Wins', 'Aldo and Alvarez Anchor the Case'],  ['Active Elite Years', '3.0 Elite Years'], ['Loss Context', 'No defenses and later losses cap the resume'] ],
       whyRankedHere: 'McGregor ranks here because his best UFC moments are enormous. The Aldo knockout, Alvarez masterclass, Mendes win, Holloway win, and Poirier early win make his peak impact impossible to ignore.',
       whyNotHigher: 'He does not rank higher because the long-term UFC body of work is short. No title defenses, inactivity, and later losses keep the scoring honest even though the cultural impact is unmatched.',

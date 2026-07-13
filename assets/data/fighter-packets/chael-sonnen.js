@@ -47,9 +47,8 @@
     repoLocations:{scoreSource:'assets/data/fighter-packets/chael-sonnen.js',centralPacket:'assets/data/fighter-packets/chael-sonnen.js',watchMoment:'assets/js/watch-moments.js',nickname:'assets/js/card-nicknames.js',tracker:'docs/fighter-status.md',photos:'No real photo files loaded yet; app should use initials fallback.'},
     photos:{},rounds,boardRow,profile,
     display:{
-      overallOvr:75,divisionLabel:'MW / LHW',resumeTag:'Middleweight title agitator',
+      divisionLabel:'MW / LHW',resumeTag:'Middleweight title agitator',
       oneLiner:'A relentless UFC title challenger whose wrestling pressure and Anderson Silva rivalry made him unforgettable, but zero title wins cap the résumé hard.',
-      categories:{championship:{ovr:45},opponentQuality:{ovr:71},primeDominance:{ovr:80},longevity:{ovr:69},apexPeak:{ovr:82},penalty:{ovr:65}},
       snapshot:[['UFC Record','6-7'],['UFC Title-Fight Wins','0'],['Apex Peak','+3.95'],['Quality Wins','Bisping, Marquardt, Okami, Stann'],['Prime Window','Dan Miller 2009 → Anderson II 2012'],['Prime Dominance','17.25 / 30'],['Loss Context','-7.50']],
       whyRankedHere:'Sonnen lands here because his middleweight contender run was real: Okami, Marquardt, Stann, and Bisping gave him one of the strongest no-belt cases in this tier.',
       whyNotHigher:'He does not rank higher because he never won a UFC title, lost all three UFC title fights, and the biggest moments of his UFC career still ended as losses.',

@@ -8,9 +8,8 @@
     repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/alex-pereira.js', displayFallback: 'assets/data/display-overrides.js', compareFallback: 'assets/compare-coverage-pack-2.js', watchFallback: 'assets/data/fighter-packets/alex-pereira.js', photos: 'assets/fighters/alex-pereira.webp and assets/fighters/alex-pereira-thumb.webp' },
     photos: { photoUrl: 'assets/fighters/alex-pereira.webp', thumbUrl: 'assets/fighters/alex-pereira-thumb.webp' },
     display: {
-      overallOvr: 85, allTimeRank: 20, divisionLabel: 'MW / LHW / HW', resumeTag: 'Fast two-division knockout case',
+      divisionLabel: 'MW / LHW / HW', resumeTag: 'Fast two-division knockout case',
       oneLiner: 'The fast-climb knockout case: middleweight gold, light heavyweight gold, huge title moments, and a heavyweight swing that added risk to a short UFC prime.',
-      categories: { championship: { ovr: 84, rank: 10 }, opponentQuality: { ovr: 82, rank: 16 }, primeDominance: { ovr: 81, rank: 32 }, longevity: { ovr: 78, rank: 28 } },
       snapshot: [ ['UFC Record', '10-3'], ['UFC Title-Fight Wins', '5'], ['Championship Level', 'Two-Division UFC Champion'], ['Quality Wins', 'Compact High-Impact Win List'],  ['Active Elite Years', '3.6 Elite Years'], ['Loss Context', 'Adesanya and Gane finish losses cap the case'] ],
       whyRankedHere: 'Pereira ranks here because his UFC case is short but extremely loud: two-division champion value, major knockout moments, and high-end wins packed into a very small window.',
       whyNotHigher: 'He does not rank higher because the active elite window is still short compared with the long-reign resumes, and the Adesanya and Gane finish losses now give the profile more prime-loss drag. The peak impact is massive, but the total UFC sample is not deep or clean enough yet.',

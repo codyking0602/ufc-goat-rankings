@@ -5,7 +5,7 @@
   const BASE = window.UFC_CANONICAL_FIGHTER_REGISTRY;
   const DATA = window.RANKING_DATA;
   const FIGHTERS = window.UFC_BATCH_EIGHT_FIGHTER_DATA;
-  const VERSION = 'canonical-fighter-registry-batch-eight-20260712d-final-handoffs';
+  const VERSION = 'canonical-fighter-registry-batch-eight-20260713a-no-score-finalize';
 
   if (!BASE || !DATA || !Array.isArray(FIGHTERS) || FIGHTERS.length !== 8) {
     console.error('Batch-eight registry prerequisites missing.');
@@ -63,14 +63,6 @@
     if (index < 0) report.push(row);
     else report[index] = row;
     if (sorter) report.sort(sorter);
-  }
-
-  function rerank() {
-    DATA.men.sort((a, b) =>
-      Number(b.totalScore || 0) - Number(a.totalScore || 0) ||
-      String(a.fighter).localeCompare(String(b.fighter))
-    );
-    DATA.men.forEach((row, index) => { row.rank = index + 1; });
   }
 
   function parseRecord(record) {
@@ -387,10 +379,7 @@
       roundsWonPct: fighter.rounds,
       activeEliteYears: fighter.years,
       timesFinishedPrime: fighter.stopped,
-      primeStoppageLosses: fighter.stopped,
-      apexPeak: fighter.c[4],
-      lossContext: fighter.c[5],
-      eraDepthAdjustment: fighter.c[6]
+      primeStoppageLosses: fighter.stopped
     };
 
     return {
@@ -543,8 +532,6 @@
     installTitleAndQualityLedgers();
     registerFightLedger();
     applyChampionship();
-    rerank();
-
     return {
       applied: true,
       fighters: NAMES,
@@ -703,10 +690,6 @@
         eraDepthAdjustment: fighter.c[6]
       }));
     });
-
-    if (window.UFC_FINAL_SCORE_ENGINE?.apply) window.UFC_FINAL_SCORE_ENGINE.apply('batch-eight-canonical-finalize');
-    rerank();
-    window.UFC_DYNAMIC_ROSTER_RUNTIME?.sync?.('batch-eight-canonical-finalize');
 
     return {
       applied: true,

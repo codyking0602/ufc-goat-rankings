@@ -16,17 +16,9 @@
     },
     photos: { photoUrl: 'assets/fighters/randy-couture.webp', thumbUrl: 'assets/fighters/randy-couture-thumb.webp' },
     display: {
-      overallOvr: 88,
-      allTimeRank: 8,
       divisionLabel: 'HW / LHW',
       resumeTag: 'Two-division chaos champion',
       oneLiner: 'The old-school championship chaos case: heavyweight gold, light heavyweight gold, huge title moments, and a messy record built from constant risk.',
-      categories: {
-        championship: { ovr: 88, rank: 5 },
-        opponentQuality: { ovr: 86, rank: 8 },
-        primeDominance: { ovr: 84, rank: 28 },
-        longevity: { ovr: 91, rank: 6 }
-      },
       snapshot: [
         ['UFC Record', '16-8'],
         ['UFC Title-Fight Wins', '8'],

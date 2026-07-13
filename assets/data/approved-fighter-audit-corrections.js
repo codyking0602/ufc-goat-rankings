@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='approved-fighter-audit-corrections-20260712d-cruz-tate-ilia-deiveson';
+  const VERSION='approved-fighter-audit-corrections-20260713e-no-score-finalize';
   const DATA=window.RANKING_DATA;
   const ERA=window.UFC_FIGHTER_ERA_LEDGERS;
   const ERA_LEDGERS=ERA?.ledgers;
@@ -139,7 +139,7 @@
     patchDisplay(fighter,{snapshotStats:{primeRecord:input.record,primeRecordContext:input.reason}});
   });
 
-  patchDisplay('Tito Ortiz',{snapshotStats:{activeEliteYears:6.71,roundsWonPct:62.16,lossContextScore:-9.5},replacements:[['Active Elite Years','6.7 Elite Years',[/active elite years/i,/elite years/i]],['Rounds Won','62.2% best-effort',[/rounds won/i,/round control/i]],['Loss Context','-9.50',[/loss context/i,/penalty/i]]]});
+  patchDisplay('Tito Ortiz',{snapshotStats:{activeEliteYears:6.71,roundsWonPct:62.16},replacements:[['Active Elite Years','6.7 Elite Years',[/active elite years/i,/elite years/i]],['Rounds Won','62.2% best-effort',[/rounds won/i,/round control/i]],['Loss Context','-9.50',[/loss context/i,/penalty/i]]]});
   patchDisplay('Alex Pereira',{snapshotStats:{activeEliteYears:4,roundsWonPct:53.57},replacements:[['Active Elite Years','4.0 Elite Years',[/active elite years/i,/elite years/i]]]});
   patchDisplay('Matt Hughes',{snapshotStats:{roundsWonPct:71.43}});
   patchDisplay('Dominick Cruz',{snapshotStats:{titleFightWins:4,primeRecord:'5-2',activeEliteYears:6.5,roundsWonPct:67.86},replacements:[['UFC Title-Fight Wins','4',[/title[-\s]*fight wins/i]],['Active Elite Years','6.5 Elite Years',[/active elite years/i,/elite years/i]],['Rounds Won','67.9% best-effort',[/rounds won/i,/round control/i]],['Loss Context','Two counted elite prime losses; injuries are handled in Longevity',[/loss context/i,/penalty/i]]],fields:{whyNotHigher:'He does not rank higher because this is UFC-only, the WEC reign is excluded, and injury gaps limit active elite years. Garbrandt and Cejudo are counted inside the UFC prime window.'},compare:{longevity:'Cruz stayed title-relevant over a long calendar span, but capped injury gaps limit active elite years.',weakness:'The WEC/UFC scoring boundary and injury-fragmented active years keep the résumé below deeper UFC title runs.'}});
@@ -147,7 +147,7 @@
   patchDisplay('Ilia Topuria',{snapshotStats:{primeRecord:'5-1',activeEliteYears:3.58,roundsWonPct:80.95},replacements:[['Active Elite Years','3.6 Elite Years',[/active elite years/i,/elite years/i]],['Rounds Won','81.0% best-effort',[/rounds won/i,/round control/i]]]});
   patchDisplay('Deiveson Figueiredo',{snapshotStats:{primeRecord:'7-3-1',activeEliteYears:4.73,roundsWonPct:53.03},replacements:[['Active Elite Years','4.7 Elite Years',[/active elite years/i,/elite years/i]],['Rounds Won','53.0% best-effort',[/rounds won/i,/round control/i]],['Loss Context','Petr Yan is the counted late-prime endpoint',[/loss context/i,/penalty/i]]]});
   patchDisplay('B.J. Penn',{fields:{oneLiner:'The brilliant-but-messy skill case: two-division UFC gold, the Hughes upset, and an elite peak limited by counted prime losses and a shorter elite window than the longest-reign legends.',whyNotHigher:'He does not rank higher because his counted pre-prime and prime losses, uneven prime results, and shorter elite window trail the cleaner long-reign champions. Post-prime losses are context only under the current model.'},compare:{shortCase:'B.J. Penn is the skill-and-two-division legacy case: lightweight dominance, the Hughes welterweight upset, and an uneven prime that trails cleaner long-reign champions.',resume:'Penn’s UFC case has enormous highs. The current model does not punish the post-prime collapse; his ceiling comes from counted prime resistance and limited sustained elite volume.',longevity:'Penn’s true elite window was strong but shorter than the decade-level cases. Later fights are post-prime context, not additional Loss Context damage.',weakness:'Counted prime losses and limited sustained elite volume keep the ranking below cleaner champions.'}});
-  patchDisplay('Jessica Andrade',{snapshotStats:{activeEliteYears:5.41,apexPeak:3.25},replacements:[['Active Elite Years','5.4 Elite Years',[/active elite years/i,/elite years/i]],['Apex Peak','+3.25',[/apex peak/i]]],fields:{oneLiner:'A former UFC strawweight champion with deep win volume, cross-division relevance, and a messy but legitimate UFC-only résumé.'}});
+  patchDisplay('Jessica Andrade',{snapshotStats:{activeEliteYears:5.41},replacements:[['Active Elite Years','5.4 Elite Years',[/active elite years/i,/elite years/i]],['Apex Peak','+3.25',[/apex peak/i]]],fields:{oneLiner:'A former UFC strawweight champion with deep win volume, cross-division relevance, and a messy but legitimate UFC-only résumé.'}});
 
   patchPacket('Dominick Cruz',{profileStats:{titleFightWins:4,primeRecord:'5-2',activeEliteYears:6.5,roundsWonPct:67.86,lossContext:'Garbrandt and Cejudo are counted prime elite losses. Injury gaps reduce Longevity rather than adding Loss Context damage.'},display:{whyNotHigher:'He does not rank higher because this is UFC-only, the WEC reign is excluded, and injury gaps limit active elite years. Garbrandt and Cejudo are counted inside the UFC prime window.'},compare:{longevity:'Cruz stayed title-relevant over a long calendar span, but capped injury gaps limit active elite years.',weakness:'The WEC/UFC scoring boundary and injury-fragmented active years keep the résumé below deeper UFC title runs.'}});
   patchPacket('Miesha Tate',{profileStats:{primeRecord:'5-1',activeEliteYears:2.23,roundsWonPct:55.56},compare:{primeSummary:'5-1 UFC prime from Liz Carmouche through Amanda Nunes, built around the Holm title win.'}});
@@ -277,28 +277,15 @@
         row.primeDominanceLiveAudit={...entry,sourceMode:'approved-canonical-correction',version:VERSION};
       });
       DATA.primeRecords[fighter]={...(DATA.primeRecords[fighter]||{}),record:input.record,source:'Cody-approved canonical fight-window recount',sourceVersion:VERSION,approvedReason:input.reason};
-      patchDisplay(fighter,{snapshotStats:{primeRecord:input.record,roundsWonPct:roundControlPct,primeDominanceShadow:total,primeFinishRate:`${round2(finishRate*100)}%`,primeRecordContext:input.reason},replacements:[['Rounds Won',`${roundControlPct.toFixed(1)}% best-effort`,[/rounds won/i,/round control/i]]]});
+      patchDisplay(fighter,{snapshotStats:{primeRecord:input.record,roundsWonPct:roundControlPct,primeFinishRate:`${round2(finishRate*100)}%`,primeRecordContext:input.reason},replacements:[['Rounds Won',`${roundControlPct.toFixed(1)}% best-effort`,[/rounds won/i,/round control/i]]]});
       results.push({fighter,primeRecord:input.record,primeDominance:total,primeRecordScore:recordScore,roundControlPct,finishPressureScore:pressureScore});
     });
     ledgers.report.sort((a,b)=>Number(b.total||0)-Number(a.total||0)||String(a.fighter).localeCompare(String(b.fighter)));
     ledgers.leaders=ledgers.report.slice(0,15);
     model.report=ledgers.report;
     window.__UFC_APPROVED_PRIME_CORRECTION_VERSION=VERSION;
-    const finalScoreResult=window.UFC_FINAL_SCORE_ENGINE?.apply?.('approved-six-fighter-audit-corrections')||null;
-    const overrides=displayOverrides();
-    if(overrides){
-      [...(DATA.men||[]),...(DATA.women||[])].forEach(row=>{
-        if(!row?.fighter)return;
-        overrides[row.fighter]=overrides[row.fighter]||{};
-        overrides[row.fighter].allTimeRank=row.rank;
-        overrides[row.fighter].rank=row.rank;
-        overrides[row.fighter].overallOvr=row.overallOvr;
-        overrides[row.fighter].totalScore=row.totalScore;
-        overrides[row.fighter].rawScore=row.rawScore;
-      });
-    }
     if(typeof window.refresh==='function'){try{window.refresh();}catch(error){}}
-    const result={applied:true,fighters:Object.keys(corrections),results,finalScoreResult,version:VERSION,appliedAt:new Date().toISOString()};
+    const result={applied:true,fighters:Object.keys(corrections),results,version:VERSION,appliedAt:new Date().toISOString()};
     window.UFC_APPROVED_PRIME_DOMINANCE_CORRECTIONS=result;
     document.documentElement.setAttribute('data-approved-prime-dominance-corrections',VERSION);
     return result;

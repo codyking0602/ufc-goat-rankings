@@ -23,17 +23,9 @@
       thumbUrl: 'assets/fighters/islam-makhachev-thumb.webp'
     },
     display: {
-      overallOvr: 90,
-      allTimeRank: 5,
       divisionLabel: 'LW / WW',
       resumeTag: 'Modern lightweight standard',
       oneLiner: 'The modern lightweight control case: elite finishing efficiency, high-end prime dominance, and a title run that keeps getting stronger.',
-      categories: {
-        championship: { ovr: 81, rank: 10 },
-        opponentQuality: { ovr: 81, rank: 18 },
-        primeDominance: { ovr: 98, rank: 2 },
-        longevity: { ovr: 88, rank: 11 }
-      },
       snapshot: [
         ['UFC Record', '17-1'],
         ['UFC Title-Fight Wins', '6'],

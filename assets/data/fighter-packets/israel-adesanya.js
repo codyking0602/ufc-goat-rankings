@@ -8,9 +8,8 @@
     repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/israel-adesanya.js', displayFallback: 'assets/data/display-overrides.js', compareFallback: 'assets/compare-coverage-pack-1.js', profileStatsFallback: 'assets/js/fighter-profile-packages.js', watchFallback: 'assets/js/watch-moments.js', photos: 'assets/fighters/israel-adesanya.webp and assets/fighters/israel-adesanya-thumb.webp' },
     photos: { photoUrl: 'assets/fighters/israel-adesanya.webp', thumbUrl: 'assets/fighters/israel-adesanya-thumb.webp' },
     display: {
-      overallOvr: 87, allTimeRank: 15, divisionLabel: 'MW / LHW', resumeTag: 'Modern middleweight title volume',
+      divisionLabel: 'MW / LHW', resumeTag: 'Modern middleweight title volume',
       oneLiner: 'The modern middleweight title-volume case: elite striking, repeated defenses, a title regain, and one of the deepest active title windows of his era.',
-      categories: { championship: { ovr: 85, rank: 7 }, opponentQuality: { ovr: 87, rank: 5 }, primeDominance: { ovr: 84, rank: 27 }, longevity: { ovr: 82, rank: 22 } },
       snapshot: [ ['UFC Record', '13-6'], ['UFC Title-Fight Wins', '7'], ['Championship Level', 'Modern Middleweight Standard'], ['Quality Wins', 'Deep Modern MW Ledger'],  ['Active Elite Years', '6.5 Elite Years'], ['Loss Context', 'Pereira, Strickland, and DDP losses drag the case'] ],
       whyRankedHere: 'Adesanya ranks here because his middleweight championship volume is real: title win, repeated defenses, a title regain, and a deep list of modern contenders.',
       whyNotHigher: 'He does not rank higher because the later losses make the case less clean, and the Pereira/Strickland/DDP stretch creates prime-dominance drag. The title volume is excellent, but the resume is not as clean as the names above him.',

@@ -7,12 +7,9 @@
     status: { stage: 'permanent hand-added fighter; packet live; photos needed', lastUpdated: '2026-07-03', nextFix: 'Add Aljamain Sterling photos. Add Watch Moment only if Cody provides a URL.' },
     repoLocations: { scoreSource: 'assets/data/ranking-data-additions.js', centralPacket: 'assets/data/fighter-packets/aljamain-sterling.js', displayFallback: 'assets/data/display-overrides.js', watchFallback: 'assets/js/watch-moments.js', photos: 'Add assets/fighters/aljamain-sterling.webp and assets/fighters/aljamain-sterling-thumb.webp when real files exist.' },
     display: {
-      overallOvr: 88,
-      allTimeRank: 14,
       divisionLabel: 'BW / FW',
       resumeTag: 'Modern bantamweight title résumé case',
       oneLiner: 'The awkward-but-real bantamweight résumé case: four UFC title-fight wins, wins over Yan, Cejudo, Sandhagen, and late featherweight relevance, with DQ/injury context keeping the debate spicy.',
-      categories: { championship: { ovr: 84, rank: 17 }, opponentQuality: { ovr: 88, rank: 10 }, primeDominance: { ovr: 86, rank: 20 }, longevity: { ovr: 84, rank: 18 } },
       snapshot: [ ['UFC Record', '17-5'], ['UFC Title-Fight Wins', '4'], ['Championship Level', 'Former Bantamweight Champion'], ['Quality Wins', 'Yan, Cejudo, Sandhagen, Dillashaw'],  ['Active Elite Years', '7.0 Elite Years'], ['Loss Context', 'O’Malley finish and Evloev loss cap the ceiling'] ],
       whyRankedHere: 'Sterling ranks here because the UFC-only case is bigger than the jokes around the DQ title win. He has four bantamweight title-fight wins, a real rematch win over Petr Yan, a title defense over Henry Cejudo, an elite Sandhagen submission, and useful featherweight extension wins over Calvin Kattar, Brian Ortega, and Youssef Zalal.',
       whyNotHigher: 'He does not rank higher because the championship résumé needs context. The first Yan title win came by DQ, the Dillashaw defense had major shoulder-injury context, and the Sean O’Malley finish plus Movsar Evloev loss keep him below cleaner all-time champions.',

@@ -6,9 +6,8 @@
     status: { stage: 'packet live; current UFC record reconciled; photos and Watch Moment needed', lastUpdated: '2026-07-10', nextFix: 'Add Henry photos and Watch Moment link.' },
     repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/henry-cejudo.js', compareFallback: 'assets/compare-data.js' },
     display: {
-      overallOvr: 83, allTimeRank: 24, divisionLabel: 'FLW / BW', resumeTag: 'Compact double-champ burst',
+      divisionLabel: 'FLW / BW', resumeTag: 'Compact double-champ burst',
       oneLiner: 'The compact achievement burst: flyweight gold, bantamweight gold, huge name wins, and a short window that limits total volume.',
-      categories: { championship: { ovr: 78, rank: 19 }, opponentQuality: { ovr: 78, rank: 25 }, primeDominance: { ovr: 86, rank: 21 }, longevity: { ovr: 82, rank: 21 } },
       snapshot: [ ['UFC Record', '10-6'], ['UFC Title-Fight Wins', '4'], ['Championship Level', 'Two-Division UFC Champion'], ['Quality Wins', 'DJ, Dillashaw, Moraes, Cruz'],  ['Active Elite Years', '4.0 Elite Years'], ['Loss Context', 'Short window and return losses cap the case'] ],
       whyRankedHere: 'Cejudo ranks here because he packed major value into a short UFC window: flyweight title, bantamweight title, the Demetrious Johnson win, and a fast run through elite names.',
       whyNotHigher: 'He does not rank higher because the title window is short and the total UFC volume is limited. The achievements are loud, but the long-reign proof is not there.',

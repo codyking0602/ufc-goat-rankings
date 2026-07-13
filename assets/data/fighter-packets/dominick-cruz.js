@@ -6,9 +6,8 @@
     status: { stage: 'packet live; photos and Watch Moment needed', lastUpdated: '2026-07-02', nextFix: 'Add Cruz photos and Watch Moment link.' },
     repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/dominick-cruz.js', compareFallback: 'assets/compare-data.js' },
     display: {
-      overallOvr: 84, allTimeRank: 22, divisionLabel: 'BW', resumeTag: 'Injury-fragmented champion',
+      divisionLabel: 'BW', resumeTag: 'Injury-fragmented champion',
       oneLiner: 'The movement genius case: brilliant bantamweight skill, a legendary comeback, and a UFC-only resume capped by injuries and long gaps.',
-      categories: { championship: { ovr: 77, rank: 21 }, opponentQuality: { ovr: 76, rank: 30 }, primeDominance: { ovr: 85, rank: 25 }, longevity: { ovr: 82, rank: 22 } },
       snapshot: [ ['UFC Record', '7-4'], ['UFC Title-Fight Wins', '3'], ['Championship Level', 'Fragmented UFC Champion'], ['Quality Wins', 'Dillashaw and DJ Anchor the Case'],  ['Active Elite Years', '5.0 Elite Years'], ['Loss Context', 'Injuries and late losses cap the case'] ],
       whyRankedHere: 'Cruz ranks here because his best UFC work is brilliant. The Demetrious Johnson win, the Dillashaw comeback, and his unique championship style give him a real all-time bantamweight case inside the UFC scoring boundary.',
       whyNotHigher: 'He does not rank higher because this is UFC-only and active elite years matter more than calendar legacy. The WEC reign is historical context only, and the injuries created too many gaps to score like a long uninterrupted UFC reign.',

@@ -68,9 +68,8 @@
     photos:{},
     rounds,
     display:{
-      overallOvr:86, allTimeRank:21, divisionLabel:'LHW', resumeTag:'Early UFC title king',
+      divisionLabel:'LHW', resumeTag:'Early UFC title king',
       oneLiner:'A five-defense early UFC light heavyweight king with real title volume, huge star aura, and a ceiling capped by era strength plus Randy/Chuck losses.',
-      categories:{ championship:{ovr:82,rank:18}, opponentQuality:{ovr:71,rank:30}, primeDominance:{ovr:80,rank:25}, longevity:{ovr:72,rank:28}, apexPeak:{ovr:81,rank:22}, penalty:{ovr:65,rank:35} },
       snapshot:[ ['UFC Record','15-11-1'], ['UFC Title-Fight Wins','6 official / 5.20 adjusted'], ['Apex Peak','+3.75'], ['Quality Wins','Vitor, Wanderlei, Forrest, Shamrock'],  ['Prime Dominance','18.25 / 30'], ['Rounds Won','57.8% best-effort'], ['Loss Context','-8.25'] ],
       whyRankedHere:'Ortiz ranks here because five UFC title defenses are too much championship volume to bury. Even after early-era discounts, his title reign gives him more championship meat than most short-window champions.',
       whyNotHigher:'He does not rank higher because the defense slate is not as strong as later elite reigns, the early light heavyweight division gets a depth discount, and the prime losses to Randy Couture and Chuck Liddell clearly cap the best-light-heavyweight claim.',

@@ -56,9 +56,8 @@
     repoLocations:{scoreSource:'assets/data/fighter-packets/michael-bisping.js',centralPacket:'assets/data/fighter-packets/michael-bisping.js',watchMoment:'assets/js/watch-moments.js',nickname:'assets/js/card-nicknames.js',tracker:'docs/fighter-status.md',photos:'No real photo files loaded yet; app should use initials fallback.'},
     photos:{},rounds,boardRow,profile,
     display:{
-      overallOvr:82,divisionLabel:'MW / LHW',resumeTag:'Middleweight title shocker',
+      divisionLabel:'MW / LHW',resumeTag:'Middleweight title shocker',
       oneLiner:'A grit-and-volume UFC legend whose Rockhold upset and long middleweight résumé make him a real champion case, even without a dominant reign.',
-      categories:{championship:{ovr:78},opponentQuality:{ovr:76},primeDominance:{ovr:79},longevity:{ovr:85},apexPeak:{ovr:80},penalty:{ovr:61}},
       snapshot:[['UFC Record','20-9'],['UFC Title-Fight Wins','2 official / 1.75 adjusted'],['Apex Peak','+3.35'],['Quality Wins','Rockhold, Anderson, Hendo, Stann'],['Prime Window','Stann 2012 → GSP 2017'],['Prime Dominance','16.40 / 30'],['Rounds Won','55.5% best-effort'],['Loss Context','-9.10']],
       whyRankedHere:'Bisping scores as a real UFC champion case because he beat Rockhold for the belt, defended once, beat Anderson, and stacked one of the longest relevant middleweight runs in UFC history.',
       whyNotHigher:'He does not rank higher because the reign was short, the Henderson defense is discounted, he did not clear the Yoel/Jacare/Whittaker contender line, and the GSP title loss counts as a prime finish loss.',

@@ -23,17 +23,9 @@
       thumbUrl: 'assets/fighters/alexander-volkanovski-thumb.webp'
     },
     display: {
-      overallOvr: 89,
-      allTimeRank: 7,
       divisionLabel: 'FW / LW',
       resumeTag: 'All-around featherweight case',
       oneLiner: 'The complete featherweight champion case: title consistency, strong quality wins, and one of the deepest modern resumes in the sport.',
-      categories: {
-        championship: { ovr: 84, rank: 7 },
-        opponentQuality: { ovr: 87, rank: 4 },
-        primeDominance: { ovr: 87, rank: 22 },
-        longevity: { ovr: 88, rank: 12 }
-      },
       snapshot: [
         ['UFC Record', '15-3'],
         ['UFC Title-Fight Wins', '6'],

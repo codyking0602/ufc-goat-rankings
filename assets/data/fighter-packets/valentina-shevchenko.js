@@ -6,12 +6,9 @@
     status: { stage: 'packet live; UFC-only record corrected; photos and Watch Moment needed', lastUpdated: '2026-07-10', nextFix: 'Add Valentina photos and Watch Moment link.' },
     repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/valentina-shevchenko.js', compareFallback: 'assets/compare-coverage-pack-2.js' },
     display: {
-      overallOvr: 93,
-      allTimeRank: 2,
       divisionLabel: 'FLW / BW',
       resumeTag: 'Technical flyweight standard',
       oneLiner: 'The clean technical champion case: long flyweight reign, elite skill, strong opponent quality, and direct rivalry context behind Nunes.',
-      categories: { championship: { ovr: 94, rank: 2 }, opponentQuality: { ovr: 93, rank: 2 }, primeDominance: { ovr: 91, rank: 2 }, longevity: { ovr: 92, rank: 1 } },
       snapshot: [ ['UFC Record', '14-3-1'], ['UFC Title-Fight Wins', '9'], ['Championship Level', 'Long Flyweight Reign'], ['Quality Wins', 'Deep Cross-Division Ledger'],  ['Active Elite Years', '8.0 Elite Years'], ['Loss Context', 'Nunes rivalry and Grasso stretch cap the case'] ],
       whyRankedHere: 'Valentina ranks women’s #2 because her UFC flyweight reign was long, technical, and consistent. She also has meaningful bantamweight context, strong opponent quality, and years of title-level control.',
       whyNotHigher: 'She does not pass Nunes because Nunes owns the direct rivalry edge and the stronger two-division title case. Valentina’s flyweight reign is excellent, but Nunes has the cleaner women’s GOAT separation.',

@@ -7,12 +7,9 @@
     status: { stage: 'permanent hand-added fighter; packet live; UFC record corrected; photos needed', lastUpdated: '2026-07-10', nextFix: 'Add Dan Henderson photos. Add Watch Moment only if Cody provides a URL.' },
     repoLocations: { scoreSource: 'assets/data/ranking-data-additions.js', centralPacket: 'assets/data/fighter-packets/dan-henderson.js', displayFallback: 'assets/data/display-overrides.js', watchFallback: 'assets/js/watch-moments.js', photos: 'Add assets/fighters/dan-henderson.webp and assets/fighters/dan-henderson-thumb.webp when real files exist.' },
     display: {
-      overallOvr: 82,
-      allTimeRank: 27,
       divisionLabel: 'MW / LHW',
       resumeTag: 'All-time MMA legend, UFC-only cap',
       oneLiner: 'A true all-time MMA legend whose UFC-only score is much harsher: great Shogun/Bisping/Franklin moments, no UFC title wins, and most of the historic aura living outside this scoring scope.',
-      categories: { championship: { ovr: 68, rank: 40 }, opponentQuality: { ovr: 78, rank: 27 }, primeDominance: { ovr: 78, rank: 35 }, longevity: { ovr: 81, rank: 24 } },
       snapshot: [ ['UFC Record', '8-9'], ['UFC Title-Fight Wins', '0'], ['Championship Level', 'UFC 17 tournament context only'], ['Quality Wins', 'Shogun, Bisping, Franklin, Lombard'],  ['Active Elite Years', '6.0 Elite Years'], ['Loss Context', 'Most late UFC losses are post-prime/context-heavy'] ],
       whyRankedHere: 'Henderson ranks here because UFC-only still gives him real value: the Shogun classic, the Bisping knockout, the Franklin win, the Lombard knockout, old-era UFC 17 tournament context, and a long stretch of elite-name fights across middleweight and light heavyweight.',
       whyNotHigher: 'He does not rank higher because this ranking does not score Pride, Strikeforce, Rings, or the broader all-time MMA résumé. In the UFC alone, Hendo went 8-9, never won an undisputed UFC title, and lost UFC title-level fights to Anderson Silva, Quinton Jackson, Daniel Cormier, and Michael Bisping.',

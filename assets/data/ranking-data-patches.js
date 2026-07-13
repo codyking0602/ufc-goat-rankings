@@ -1,7 +1,7 @@
 // Lightweight prerequisite/data loader with an explicit readiness handoff.
 (function(){
   'use strict';
-  const VERSION='ranking-data-patches-20260711w-profile-stat-merge';
+  const VERSION='ranking-data-patches-20260713y-stage3-clean-packets';
   let readyResolved=false;
   let resolveReady;
   const readyPromise=new Promise(resolve=>{resolveReady=resolve;});
@@ -53,7 +53,7 @@
   }
   function loadScriptOnce(src,attr,done){if(document.querySelector(`script[${attr}]`)){if(done)done();return;}const script=document.createElement('script');script.src=src;script.setAttribute(attr,'true');script.onload=()=>{if(done)done();};script.onerror=()=>{if(done)done();};document.body.appendChild(script);}
   function loadSequence(items,done){const next=i=>{if(i>=items.length){if(done)done();return;}loadScriptOnce(items[i].src,items[i].attr,()=>next(i+1));};next(0);}
-  function packet(slug,v){return{src:`assets/data/fighter-packets/${slug}.js?v=fighter-packet-${slug}-${v}`,attr:`data-fighter-packet-${slug}`};}
+  function packet(slug,v){return{src:`assets/data/fighter-packets/${slug}.js?v=fighter-packet-${slug}-${v}-stage3-presentation-only`,attr:`data-fighter-packet-${slug}`};}
   function compareCoreScripts(){const packets=packetManifest().map(row=>packet(row.slug,row.version));return[
     {src:'assets/js/refresh-safety.js?v=refresh-safety-20260710b-optional-container-errors',attr:'data-refresh-safety'},
     {src:'assets/data/ranking-data-additions.js?v=ranking-data-additions-20260706e-lyoto-machida',attr:'data-ranking-data-additions'},
@@ -65,17 +65,12 @@
     {src:'assets/data/fighter-packets.js?v=fighter-packets-20260702c',attr:'data-fighter-packets'},
     ...packets,
     {src:'assets/js/card-nicknames.js?v=card-nicknames-20260706n-robbie-lawler',attr:'data-card-nicknames'},
-    {src:'assets/js/rank-fluidity-fixes.js?v=rank-fluidity-fixes-20260706b',attr:'data-rank-fluidity-fixes'},
     {src:'assets/data/prime-round-row-fixes.js?v=prime-round-row-fixes-20260704a',attr:'data-prime-round-row-fixes'},
-    {src:'assets/data/championship-score-corrections.js?v=championship-score-corrections-20260706d-women-display-ranks',attr:'data-championship-score-corrections'},
-    {src:'assets/data/opponent-quality-score-corrections.js?v=opponent-quality-score-corrections-20260705c-dricus-oq',attr:'data-opponent-quality-score-corrections'},
-    {src:'assets/data/longevity-score-corrections.js?v=longevity-score-corrections-20260705b',attr:'data-longevity-score-corrections'},
     {src:'assets/data/fighter-era-ledgers.js?v=fighter-era-ledgers-20260709g-review-corrections',attr:'data-fighter-era-ledgers'},
     {src:'assets/data/fighter-era-ledger-cleanups.js?v=fighter-era-ledger-cleanups-20260709b-clean-remaining-review-rows',attr:'data-fighter-era-ledger-cleanups'},
     {src:'assets/data/fighter-era-ledger-cleanups-final.js?v=fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window',attr:'data-fighter-era-ledger-cleanups-final'},
     {src:'assets/data/loss-context-ledger-completion-batch-one.js?v=loss-context-ledger-completion-batch-one-20260710a-whittaker-strickland',attr:'data-loss-context-ledger-completion-batch-one'},
     {src:'assets/data/loss-context-ledger-completion-batch-two.js?v=loss-context-ledger-completion-batch-two-20260710a-five-highest-priority',attr:'data-loss-context-ledger-completion-batch-two'},
-    {src:'assets/data/apex-peak-score-corrections.js?v=apex-peak-score-corrections-20260706a-sean-whittaker',attr:'data-apex-peak-score-corrections'},
     {src:'assets/data/score-weighting.js?v=score-weighting-20260710a-compatibility-only',attr:'data-score-weighting'},
     {src:'assets/js/apex-peak-category-card.js?v=apex-peak-category-card-20260711c-compact-profile-card',attr:'data-apex-peak-category-card'},
     {src:'assets/js/championship-label-polish.js?v=championship-label-polish-20260711d-label-only',attr:'data-championship-label-polish'},
@@ -88,7 +83,7 @@
     {src:'assets/data/championship-resume-ledgers.js?v=championship-resume-ledgers-20260707a',attr:'data-championship-resume-ledgers'},
     {src:'assets/data/championship-resume-ledger-rule-locks.js?v=championship-resume-ledger-rule-locks-20260707b',attr:'data-championship-resume-ledger-rule-locks'},
     {src:'assets/js/championship-resume-shadow.js?v=championship-resume-shadow-20260707e',attr:'data-championship-resume-shadow'},
-    {src:'assets/js/championship-resume-live.js?v=championship-resume-live-20260710e-frankie-quality-chain',attr:'data-championship-resume-live'}
+    {src:'assets/js/championship-resume-live.js?v=championship-resume-live-20260713a-category-only',attr:'data-championship-resume-live'}
   ];}
   function loadModules(){
     const loadCompareWatchdog=()=>loadScriptOnce('assets/js/compare-narrative-watchdog.js?v=compare-narrative-watchdog-20260702a','data-compare-narrative-watchdog',completeLoad);
