@@ -9,24 +9,12 @@ Last updated: 2026-07-13
 - Draft PR: `#39 — Start canonical fighter data ownership refactor`
 - Five-fighter ledger: `9aa64b7f61a9758b6b8a9b6f27da79d13a779247`
 - Five-fighter test: `e46935891132614372b61723424c651a619430a1`
-- Runtime loader: `a2a6deca07a12c177101a6e90c1071274d0a2a96`
 - CI enforcement: `f57e600d20b6f218d4188ad1e102a8ad2cd2eb4b`
 - Exact bout-count guard: `1afc3350ffcc68a6f937155642a6e9a0f7199cae`
-- Corrected coverage docs: `c2bfcf9023ca30ff4aecc3aa318ca52d249b23ad`
+- Latest-main sync merge: `8824b6572fabcd67332359b16c7365d2fda687dd`
+- Synced main SHA: `dc715594613fea3cd0911a249f125381b7e2a43d`
 
-## Required branch sync before more migration
-
-Current `main` advanced during the long Phase 1 batch. At this checkpoint the feature branch is **52 commits ahead and 14 commits behind `main`**. GitHub currently reports PR #39 as mergeable, but the base is stale and should be refreshed before more migration work.
-
-Before adding another fighter batch:
-
-1. Refresh the work onto latest `main`.
-2. Preserve all canonical additions and tests.
-3. Reconcile current-main changes in `index.html` and `assets/data/ranking-data-patches.js` rather than overwriting them.
-4. Re-run the complete ownership and scoring workflow suite.
-5. Update this handoff with the new branch/PR state.
-
-Do not continue new fighter records on the stale base.
+The branch was refreshed through GitHub’s tested merge trees without force-pushing. At this checkpoint it is **zero commits behind `main`**.
 
 ## Permanent architecture
 
@@ -94,6 +82,8 @@ Passed on the completed five-fighter implementation:
 - Six-Category Runtime Audit
 - zero browser errors
 
+The latest-main sync must run the same workflow suite again before another migration batch begins.
+
 Known unrelated CI debt:
 
 - Picks UI Smoke: `Underdog Lock no-odds state is missing`
@@ -108,7 +98,8 @@ Known unrelated CI debt:
 - [x] Deiveson Figueiredo
 - [x] Frankie Edgar
 - [x] Dominick Cruz
-- [ ] Sync Phase 1 work onto latest `main`
+- [x] Sync Phase 1 work onto latest `main`
+- [ ] Confirm post-sync workflow suite
 - [ ] Next five-fighter batch
 - [ ] Continue until all ranked fighters have canonical records
 - [ ] Generate snapshots only from canonical calculations
@@ -117,13 +108,11 @@ Known unrelated CI debt:
 
 ## Resume prompt
 
-> Continue the fighter-data refactor in `codyking0602/ufc-goat-rankings`. Read `docs/FIGHTER_DATA_REFACTOR_HANDOFF.md` and `docs/fighter-data-ownership-baseline.md` first. The current Phase 1 branch may be behind `main`; compare refs and resolve the branch sync before adding fighters. Preserve the six completed canonical ledgers. Work in five-fighter batches. Never store rank, total, OVR, expected values, calculated aggregates, or hand-written snapshot stats in canonical fighter records. Keep migrations evidence-only until the calculated live pipeline is deliberately connected.
+> Continue the fighter-data refactor in `codyking0602/ufc-goat-rankings`. Read `docs/FIGHTER_DATA_REFACTOR_HANDOFF.md` and `docs/fighter-data-ownership-baseline.md` first. Continue on `agent/fighter-data-phase-1` unless the handoff says it merged. Fetch and compare latest `main` before editing because automated commits may advance it. Preserve the six completed canonical ledgers. Work in five-fighter batches. Never store rank, total, OVR, expected values, calculated aggregates, or hand-written snapshot stats in canonical fighter records. Keep migrations evidence-only until the calculated live pipeline is deliberately connected.
 
 ## Exact next task
 
-First refresh the Phase 1 work onto current `main` without losing the six completed canonical ledgers or their tests, then confirm the draft PR remains mergeable and all workflows pass.
-
-After the sync passes all workflows, create the next five-fighter canonical ledger batch for:
+Confirm the post-sync workflows on the current branch head. Then create the next five-fighter canonical ledger batch for:
 
 1. Fabricio Werdum
 2. Glover Teixeira
