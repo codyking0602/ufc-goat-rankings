@@ -172,26 +172,29 @@
     const toggle=document.getElementById('picksInviteRecoveryToggle');
     if(action) action.hidden=recoveryMode;
     if(panel) panel.hidden=!recoveryMode;
-    if(toggle) toggle.textContent=recoveryMode ? 'Join as a new member instead' : 'Already a member? Recover your profile';
-    if(recoveryMode) document.getElementById('picksRecoveryCode')?.focus();
+    if(toggle) toggle.textContent=recoveryMode ? 'Back to room setup' : 'Recover Existing Profile';
+    if(recoveryMode) document.getElementById('picksRecoveryGroupCode')?.focus();
   }
 
   function ensureInviteRecovery(){
     const context=inviteContext();
     const setup=document.getElementById('picksRoomSetup');
-    if(!context.code || context.hasRoom || context.hasToken || !setup || setup.hidden){
+    if(context.hasRoom || context.hasToken || !setup || setup.hidden){
       document.getElementById('picksInviteRecovery')?.remove();
       recoveryMode=false;
       return;
     }
     if(document.getElementById('picksInviteRecovery')) return;
+    const savedName=localStorage.getItem('ufc-picks:display-name') || document.getElementById('picksDisplayName')?.value || '';
     const wrap=document.createElement('div');
     wrap.id='picksInviteRecovery';
     wrap.className='picks-invite-recovery';
-    wrap.innerHTML=`<button id="picksInviteRecoveryToggle" type="button">Already a member? Recover your profile</button>
+    wrap.innerHTML=`<button id="picksInviteRecoveryToggle" type="button">Recover Existing Profile</button>
       <div id="picksInviteRecoveryPanel" class="picks-invite-recovery-panel" hidden>
+        <label>Group code<input id="picksRecoveryGroupCode" maxlength="6" autocapitalize="characters" autocomplete="off" placeholder="ABC123" value="${safe(context.code)}"></label>
+        <label>Existing display name<input id="picksRecoveryDisplayName" maxlength="30" autocomplete="nickname" placeholder="Shane" value="${safe(savedName)}"></label>
         <label>Recovery key or commissioner code<input id="picksRecoveryCode" maxlength="14" autocapitalize="characters" autocomplete="off" placeholder="AB12-CD34-EF56"></label>
-        <p>Use the same display name already on the leaderboard.</p>
+        <p>Enter the exact name already shown on the group leaderboard.</p>
         <button id="picksRecoverProfile" type="button">Recover Existing Profile</button>
       </div>`;
     document.getElementById('picksRoomAction')?.insertAdjacentElement('afterend',wrap);
@@ -217,14 +220,16 @@
 
   async function recoverProfile(){
     const context=inviteContext();
-    const name=document.getElementById('picksDisplayName')?.value.trim();
+    const group=normalize(document.getElementById('picksRecoveryGroupCode')?.value || context.code);
+    const name=document.getElementById('picksRecoveryDisplayName')?.value.trim() || document.getElementById('picksDisplayName')?.value.trim();
     const code=normalizeRecovery(document.getElementById('picksRecoveryCode')?.value);
     const button=document.getElementById('picksRecoverProfile');
+    if(group.length!==6){ toast('Enter the 6-character group code.'); return; }
     if(!name){ toast('Enter the exact name already in the group.'); return; }
     if(code.length!==12){ toast('Enter the 12-character recovery code.'); return; }
     const original=button?.textContent;
     if(button){ button.disabled=true; button.textContent='Recovering…'; }
-    const {data,error}=await client.rpc('picks_member_recover',{p_group_code:context.code,p_display_name:name,p_recovery_code:code});
+    const {data,error}=await client.rpc('picks_member_recover',{p_group_code:group,p_display_name:name,p_recovery_code:code});
     if(button){ button.disabled=false; button.textContent=original || 'Recover Existing Profile'; }
     if(error){ toast(friendlyError(error,'Profile could not be recovered.')); return; }
     storeRecoveredAccess(data);
@@ -286,7 +291,7 @@
     presentKey({
       title:`Recovery code for ${data.display_name}`,
       key:data.recovery_code,
-      copy:'Send this code privately. They must use the permanent group link, their exact display name, and this code within 30 minutes.',
+      copy:'Send this code privately. They can open the saved app, tap Recover Existing Profile, and enter the group code, their exact display name, and this code within 30 minutes.',
       note:'Using it moves their profile to the new device and invalidates access on the old device.'
     });
   }
