@@ -2,9 +2,20 @@
 // Converts the settled legacy pipeline into a single-authority runtime without changing scores.
 (function(){
   'use strict';
-  const VERSION='scoring-ownership-finalizer-20260713b-stage2';
+  const VERSION='scoring-ownership-finalizer-20260713c-settled-runtime';
   const EXPECTED_ROSTER=72;
+  const STARTED_AT=Date.now();
+  const MIN_SETTLE_MS=10000;
+  const HARD_STOP_MS=18000;
   const SCORE_FIELDS=['championship','opponentQuality','primeDominance','longevity','apexPeak','penalty','eraDepthAdjustment','totalScore','rawScore','rank','overallOvr'];
+  const DISPLAY_SCORE_FIELDS=[
+    ...SCORE_FIELDS,'allTimeRank','rankLabel','baseScore','preEraDepthTotalScore',
+    'lossPenalty','lossContext','apexPeakBonus','lossContextHybrid','divisionEraDepth'
+  ];
+  const NESTED_SCORE_FIELDS=[
+    ...DISPLAY_SCORE_FIELDS,'championshipScore','opponentQualityScore','primeDominanceScore','longevityScore'
+  ];
+  const CATEGORY_SCORE_FIELDS=['ovr','rank','score','value'];
   let finalized=false;
   let intervalId=null;
   let attemptCount=0;
@@ -12,21 +23,47 @@
 
   const key=name=>String(name||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
   const num=value=>Number.isFinite(Number(value))?Number(value):0;
-  const round2=value=>Math.round((num(value)+Number.EPSILON)*100)/100;
   const boards=data=>[...(data?.men||[]),...(data?.women||[])].filter(row=>row?.fighter);
+
+  function stripFields(target,fields){
+    if(!target||typeof target!=='object')return 0;
+    let stripped=0;
+    fields.forEach(field=>{
+      if(Object.prototype.hasOwnProperty.call(target,field)){
+        delete target[field];
+        stripped+=1;
+      }
+    });
+    return stripped;
+  }
+
+  function stripDisplayScoreFields(){
+    let stripped=0;
+    Object.values(window.DISPLAY_OVERRIDES||{}).forEach(override=>{
+      if(!override||typeof override!=='object')return;
+      stripped+=stripFields(override,DISPLAY_SCORE_FIELDS);
+      ['snapshotStats','packetProfileStats'].forEach(container=>{stripped+=stripFields(override[container],NESTED_SCORE_FIELDS);});
+      Object.values(override.categories||{}).forEach(category=>{stripped+=stripFields(category,CATEGORY_SCORE_FIELDS);});
+    });
+    return stripped;
+  }
 
   function displayOverrideViolations(){
     const rows=[];
     Object.entries(window.DISPLAY_OVERRIDES||{}).forEach(([fighter,override])=>{
       if(!override||typeof override!=='object')return;
-      const direct=SCORE_FIELDS.filter(field=>Object.prototype.hasOwnProperty.call(override,field));
-      const nested=[];
+      const fields=[];
+      DISPLAY_SCORE_FIELDS.forEach(field=>{if(Object.prototype.hasOwnProperty.call(override,field))fields.push(field);});
       ['snapshotStats','packetProfileStats'].forEach(container=>{
         const target=override[container];
         if(!target||typeof target!=='object')return;
-        SCORE_FIELDS.forEach(field=>{if(Object.prototype.hasOwnProperty.call(target,field))nested.push(`${container}.${field}`);});
+        NESTED_SCORE_FIELDS.forEach(field=>{if(Object.prototype.hasOwnProperty.call(target,field))fields.push(`${container}.${field}`);});
       });
-      if(direct.length||nested.length)rows.push({fighter,fields:[...direct,...nested]});
+      Object.entries(override.categories||{}).forEach(([category,value])=>{
+        if(!value||typeof value!=='object')return;
+        CATEGORY_SCORE_FIELDS.forEach(field=>{if(Object.prototype.hasOwnProperty.call(value,field))fields.push(`categories.${category}.${field}`);});
+      });
+      if(fields.length)rows.push({fighter,fields});
     });
     return rows;
   }
@@ -35,7 +72,7 @@
     const rows=[];
     Object.entries(window.COMPARE_PROFILES||{}).forEach(([fighter,profile])=>{
       if(!profile||typeof profile!=='object')return;
-      const fields=SCORE_FIELDS.filter(field=>Object.prototype.hasOwnProperty.call(profile,field));
+      const fields=DISPLAY_SCORE_FIELDS.filter(field=>Object.prototype.hasOwnProperty.call(profile,field));
       if(fields.length)rows.push({fighter,fields});
     });
     return rows;
@@ -56,10 +93,7 @@
 
   function stripCompareScoreFields(){
     let stripped=0;
-    Object.values(window.COMPARE_PROFILES||{}).forEach(profile=>{
-      if(!profile||typeof profile!=='object')return;
-      SCORE_FIELDS.forEach(field=>{if(Object.prototype.hasOwnProperty.call(profile,field)){delete profile[field];stripped+=1;}});
-    });
+    Object.values(window.COMPARE_PROFILES||{}).forEach(profile=>{stripped+=stripFields(profile,DISPLAY_SCORE_FIELDS);});
     return stripped;
   }
 
@@ -89,14 +123,16 @@
     const legacyRepair=window.UFC_DYNAMIC_ROSTER_SCORING_REPAIR;
     const depthFinalizer=window.UFC_DIVISION_ERA_DEPTH_FINALIZER;
     const pipelineReady=window.UFC_SCORING_PIPELINE?.status==='ready';
+    const elapsedMs=Date.now()-STARTED_AT;
     if(!data||!engine?.apply||!canonical||!pipelineReady){
-      window.UFC_SCORING_OWNERSHIP_CONTRACT={version:VERSION,applied:false,status:'waiting',attemptCount,readiness:{data:Boolean(data),engine:Boolean(engine?.apply),canonical:Boolean(canonical),pipelineReady}};
+      window.UFC_SCORING_OWNERSHIP_CONTRACT={version:VERSION,applied:false,status:'waiting',attemptCount,elapsedMs,minimumSettleMs:MIN_SETTLE_MS,readiness:{data:Boolean(data),engine:Boolean(engine?.apply),canonical:Boolean(canonical),pipelineReady}};
       return false;
     }
 
     const result=engine.apply('stage2-scoring-ownership-finalizer');
     window.UFC_FINAL_SCORE_ENGINE=engine;
     annotateEvidenceModules();
+    const strippedDisplayFields=stripDisplayScoreFields();
     const strippedCompareFields=stripCompareScoreFields();
 
     const boardRows=boards(data);
@@ -108,14 +144,19 @@
     const missingLossContextDetail=boardRows.filter(row=>!row.lossContextHybrid).map(row=>row.fighter);
     const missingEraDepthDetail=boardRows.filter(row=>!row.divisionEraDepth).map(row=>row.fighter);
     const rosterCount=boardRows.length;
-    const applied=Boolean(result?.applied)&&rosterCount===EXPECTED_ROSTER&&engineParity.passed&&profiles.length===0&&displayViolations.length===0&&compareViolations.length===0&&wrongOwners.length===0&&missingLossContextDetail.length===0&&missingEraDepthDetail.length===0;
+    const clean=Boolean(result?.applied)&&rosterCount===EXPECTED_ROSTER&&engineParity.passed&&profiles.length===0&&displayViolations.length===0&&compareViolations.length===0&&wrongOwners.length===0&&missingLossContextDetail.length===0&&missingEraDepthDetail.length===0;
+    const settled=elapsedMs>=MIN_SETTLE_MS;
+    const applied=clean&&settled;
 
     const report={
       version:VERSION,
       applied,
-      status:applied?'clean':'blocked',
+      status:!clean?'blocked':settled?'clean':'settling',
       attemptCount,
-      mode:'single-authority-post-pipeline',
+      elapsedMs,
+      minimumSettleMs:MIN_SETTLE_MS,
+      settled,
+      mode:'single-authority-settled-runtime',
       rosterCount,
       expectedRosterCount:EXPECTED_ROSTER,
       owners:{
@@ -143,6 +184,7 @@
       displayOverrideViolations:displayViolations,
       compareScoreViolationCount:compareViolations.length,
       compareScoreViolations:compareViolations,
+      strippedDisplayFields,
       strippedCompareFields,
       missingLossContextDetailCount:missingLossContextDetail.length,
       missingLossContextDetail,
@@ -163,16 +205,17 @@
     data.meta.scoringOwnershipContract={
       version:VERSION,
       applied,
+      status:report.status,
       owners:report.owners,
       canonicalSourceSha:report.canonicalSourceSha,
       finalScoreEngineVersion:report.finalScoreEngineVersion,
       appliedAt:report.appliedAt
     };
     window.UFC_SCORING_OWNERSHIP_CONTRACT=report;
-    document.documentElement.setAttribute('data-scoring-ownership-contract',`${VERSION}-${applied?'clean':'blocked'}-${rosterCount}`);
-    window.dispatchEvent(new CustomEvent('ufc-scoring-ownership-ready',{detail:report}));
+    document.documentElement.setAttribute('data-scoring-ownership-contract',`${VERSION}-${report.status}-${rosterCount}`);
+    if(applied)window.dispatchEvent(new CustomEvent('ufc-scoring-ownership-ready',{detail:report}));
     stableRuns=applied?stableRuns+1:0;
-    finalized=stableRuns>=3;
+    finalized=stableRuns>=2;
     return finalized;
   }
 
@@ -184,13 +227,15 @@
     'ufc-scoring-pipeline-ready',
     'ufc-dynamic-roster-scoring-repaired',
     'ufc-division-era-depth-finalized',
-    'ufc-final-score-engine-applied',
     'ufc-ranking-data-patches-ready'
   ].forEach(eventName=>window.addEventListener(eventName,attempt));
 
-  [0,100,500,1500,3000,5000,7500,9000].forEach(delay=>setTimeout(attempt,delay));
+  [0,100,500,1500,3000,5000,7500,9000,10000,11000].forEach(delay=>setTimeout(attempt,delay));
   intervalId=setInterval(attempt,500);
-  setTimeout(()=>{if(intervalId){clearInterval(intervalId);intervalId=null;}},12000);
+  setTimeout(()=>{
+    attempt();
+    if(intervalId){clearInterval(intervalId);intervalId=null;}
+  },HARD_STOP_MS);
 
-  window.UFC_SCORING_OWNERSHIP_CONTRACT={version:VERSION,applied:false,status:'waiting',attemptCount:0};
+  window.UFC_SCORING_OWNERSHIP_CONTRACT={version:VERSION,applied:false,status:'waiting',attemptCount:0,elapsedMs:0,minimumSettleMs:MIN_SETTLE_MS};
 })();
