@@ -2,7 +2,7 @@
 
 > Phase 1 diagnostic. A failing ownership result is expected until migration is complete; capture failure is not.
 
-Latest verified browser capture: 2026-07-13 after Charles Oliveira migration.
+Latest verified browser capture: 2026-07-13 after the Charles Oliveira and five-fighter ledger migrations.
 
 - Audit version: `fighter-data-ownership-audit-20260713c-identity-inventory`
 - Roster identities found: **73**
@@ -11,7 +11,7 @@ Latest verified browser capture: 2026-07-13 after Charles Oliveira migration.
 - Fighter packets loaded: **62**
 - Display overrides: **73**
 - Canonical scoring records: **72**
-- Canonical fighter-fact records: **1** (**1.37%** coverage)
+- Canonical fighter-fact records: **6** (**8.22%** coverage)
 - Orphan identities: **1**
 - Duplicate fact fields: **521** across **72** fighters
 - Conflicting fact fields: **80** across **28** fighters
@@ -26,6 +26,21 @@ Latest verified browser capture: 2026-07-13 after Charles Oliveira migration.
 | Fighter | Status | Complete UFC ledger | Derived-output test | Live scoring mutated |
 |---|---|---:|---:|---:|
 | Charles Oliveira | Audited | Yes — 37 bouts | Passed | No |
+| Benson Henderson | Audited | Yes — 14 bouts | Passed | No |
+| Vitor Belfort | Audited | Yes — 26 bouts | Passed | No |
+| Deiveson Figueiredo | Audited | Yes — 23 bouts | Passed | No |
+| Frankie Edgar | Audited | Yes — 30 bouts | Passed | No |
+| Dominick Cruz | Audited | Yes — 10 bouts | Passed | No |
+
+The five-person batch contains **102 UFC bouts**. Together with Charles, Phase 1 now holds **139 audited UFC fight rows**.
+
+## Five-person batch reconciliation highlights
+
+- **Benson Henderson:** 11-3 UFC record, four official title-fight wins, 3.65 adjusted title credit, 10-3 prime, and 4.29 active elite years.
+- **Vitor Belfort:** 15-10 with one no contest, one official UFC title-fight win, and a separate UFC 12 tournament achievement that does not count as an official title fight.
+- **Deiveson Figueiredo:** complete current UFC record derives as **14-7-1**; Song Yadong is correctly recorded as a May 30, 2026 second-round guillotine loss. Benavidez I gives no title-win credit because Figueiredo missed championship weight.
+- **Frankie Edgar:** 18-11-1 UFC record, 13-6-1 prime, three official title-fight wins, and 10.18 capped active elite years.
+- **Dominick Cruz:** WEC is fully excluded, including WEC 53. His UFC-only Faber II-to-Cejudo window derives **5.51** active elite years under the locked 18-month gap cap, not the legacy handwritten 6.5.
 
 ## Orphan identities
 
@@ -66,17 +81,18 @@ Latest verified browser capture: 2026-07-13 after Charles Oliveira migration.
 | Display override packet stats | 506 |
 | Fighter packet display | 4 |
 
-## Charles Oliveira legacy conflicts still visible
+## Legacy conflicts remain visible by design
 
-The canonical record derives the reconciled values, but legacy board/profile/packet sources remain temporarily because Phase 1 must not alter the live app before generated snapshots are ready.
+Canonical records now derive the reconciled values, but legacy board, profile, packet, and override sources remain temporarily because Phase 1 must not alter the live app before generated snapshots and calculated scoring are ready.
 
-- Active elite years: legacy **5.23 / 4.0** versus canonical **6.33**
-- Finish rate: legacy **40% / 86.4%** versus canonical **84.0%**
-- Times finished in prime: legacy **0 / 3** versus canonical **2**
-- Title-fight wins: legacy **2 / 3** versus canonical **2**
-- Prime record: canonical **9-3**
+Examples:
 
-The final Charles classification pass also corrects Jim Miller to contender status and Ilia Topuria to former-champion status at UFC 317. These contextual labels do not change the derived totals above.
+- Charles Oliveira’s canonical finish rate is **84.0%**, while legacy sources still contain **40%** and **86.4%**.
+- Deiveson Figueiredo’s canonical UFC record is **14-7-1**, while older copied sources may show a different record.
+- Dominick Cruz’s canonical capped longevity is **5.51 years**, while a legacy display value still shows **6.5**.
+- Vitor Belfort’s canonical ledger separates one official UFC title-fight win from his UFC 12 tournament win.
+
+The unchanged duplicate/conflict totals are expected at this stage: Phase 1 adds authoritative evidence without yet deleting or replacing the old presentation-owned copies.
 
 ## Interpretation
 
