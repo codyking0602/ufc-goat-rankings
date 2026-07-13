@@ -24,7 +24,14 @@
   function clamp(value,min,max){return Math.max(min,Math.min(max,value));}
   function key(name){return String(name||'').trim().toLowerCase().replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');}
   const ERA_DEPTH_BY_FIGHTER=new Map((window.UFC_DIVISION_ERA_DEPTH_SHADOW?.fighters||[]).map(row=>[key(row?.fighter),row]));
+  function lossContextPenaltyFor(row){
+    const detail=row?.lossContextHybrid?.finalPenalty;
+    if(detail!==undefined&&detail!==null&&detail!==''&&Number.isFinite(Number(detail)))return Number(detail);
+    return num(row?.penalty);
+  }
   function eraDepthAdjustmentFor(row){
+    const detail=row?.divisionEraDepth?.adjustment;
+    if(detail!==undefined&&detail!==null&&detail!==''&&Number.isFinite(Number(detail)))return Number(detail);
     const direct=row?.eraDepthAdjustment;
     if(direct!==undefined&&direct!==null&&direct!==''&&Number.isFinite(Number(direct)))return Number(direct);
     return num(ERA_DEPTH_BY_FIGHTER.get(key(row?.fighter))?.curvedAdjustment);
@@ -46,7 +53,7 @@
     const primeDominance=(categoryScore(row,'primeDominance')/MAX.primeDominance)*WEIGHTS.primeDominance;
     const longevity=(categoryScore(row,'longevity')/MAX.longevity)*WEIGHTS.longevity;
     const apexPeak=num(row?.apexPeak);
-    const penalty=num(row?.penalty);
+    const penalty=lossContextPenaltyFor(row);
     const eraDepthAdjustment=eraDepthAdjustmentFor(row);
     const baseScore=championship+opponentQuality+primeDominance+longevity;
     const preEraDepthTotalScore=baseScore+apexPeak+penalty;
@@ -74,6 +81,9 @@
     row.weightedScoreBreakdown=breakdown;
     row.baseScore=breakdown.baseScore;
     row.apexPeakBonus=breakdown.apexPeakBonus;
+    row.penalty=breakdown.penalty;
+    row.lossPenalty=breakdown.penalty;
+    row.lossContext=breakdown.penalty;
     row.eraDepthAdjustment=breakdown.eraDepthAdjustment;
     row.preEraDepthTotalScore=breakdown.preEraDepthTotalScore;
     row.rawScore=breakdown.totalScore;
@@ -120,7 +130,7 @@
     (DATA?.fighters||[]).forEach(profile=>{
       const live=byFighter.get(key(profile.fighter));
       if(!live)return;
-      ['rank','baseScore','apexPeakBonus','eraDepthAdjustment','preEraDepthTotalScore','rawScore','totalScore','weightedScoreBreakdown','overallOvr','scoreFormula','finalScoreEngineVersion','overallScoreOwner'].forEach(field=>{
+      ['rank','baseScore','apexPeakBonus','penalty','lossPenalty','lossContext','eraDepthAdjustment','preEraDepthTotalScore','rawScore','totalScore','weightedScoreBreakdown','overallOvr','scoreFormula','finalScoreEngineVersion','overallScoreOwner'].forEach(field=>{
         if(live[field]!==undefined)profile[field]=live[field];
       });
     });
