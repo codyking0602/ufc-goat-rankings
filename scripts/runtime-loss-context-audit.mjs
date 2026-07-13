@@ -1,4 +1,4 @@
-// Runtime audit for live hybrid Loss Context under the Stage 2 single-owner scoring architecture.
+// Runtime audit for live hybrid Loss Context under the Stage 3 evidence-only scoring architecture.
 import { chromium } from 'playwright';
 import fs from 'node:fs/promises';
 import process from 'node:process';
@@ -72,7 +72,7 @@ try{
       const lossRating=window.UFC_SCORING_ENGINE?.categoryOvrFor?.(row,'penalty')??window.categoryOvr?.(row,'penalty')??null;
       profileSurface={
         rendered:text.includes('Justin Gaethje'),
-        hasLiveLossContext:text.includes('Loss Context')&&text.includes('How losses affect it')&&(lossRating===null||text.includes(String(lossRating))),
+        hasLiveLossContext:text.includes('Loss Context')&&(text.includes('What it means')||text.includes('How losses affect it'))&&(lossRating===null||text.includes(String(lossRating))),
         hasRank:text.includes(`#${row?.rank}`),
         hasOvr:text.includes(`${row?.overallOvr}`),
         lossRating,
