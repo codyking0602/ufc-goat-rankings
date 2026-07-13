@@ -138,3 +138,5 @@ jobs:
             sleep $((attempt * 2))
           done
           exit 1
+
+# Diagnostic trigger only. Do not merge this branch.
