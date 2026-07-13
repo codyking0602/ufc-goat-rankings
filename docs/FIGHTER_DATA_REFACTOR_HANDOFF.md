@@ -10,6 +10,7 @@ Last updated: 2026-07-13
 - Five-fighter test commit: `e46935891132614372b61723424c651a619430a1`
 - Shadow-runtime loader commit: `a2a6deca07a12c177101a6e90c1071274d0a2a96`
 - CI enforcement commit: `f57e600d20b6f218d4188ad1e102a8ad2cd2eb4b`
+- Coverage documentation commit: `2adb396e9bac813026f0b815de975307efb9f9fc`
 
 ## Permanent architecture
 
