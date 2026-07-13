@@ -70,7 +70,7 @@ assert.equal(werdum.championship.adjustedTitleWins,1.65,'Werdum title credit sho
 assert.equal(api.deriveFor('Glover Teixeira').championship.titleFightWins,1,'Jan should be Glover’s only UFC title-fight win');
 assert.equal(api.deriveFor('Rashad Evans').prime.recordText,'9-3','Rashad prime should run from Bisping through Sonnen');
 const shogunRecord=api.get('Mauricio "Shogun" Rua');
-for(const excluded of ['Quinton Jackson','Antônio Rogério Nogueira','Alistair Overeem','Ricardo Arona'])assert.equal(shogunRecord.fights.some(fight=>fight.opponent===excluded),false,`${excluded} is PRIDE-only for Shogun and must stay outside the UFC ledger`);
+for(const excluded of ['Quinton Jackson','Alistair Overeem','Ricardo Arona','Kevin Randleman'])assert.equal(shogunRecord.fights.some(fight=>fight.opponent===excluded),false,`${excluded} is PRIDE-only for Shogun and must stay outside the UFC ledger`);
 const machidaOne=shogunRecord.fights.find(fight=>fight.id==='2009-10-24-lyoto-machida');
 assert.equal(machidaOne?.officialResult,'loss','official Machida I result remains a loss');
 assert.equal(machidaOne?.rounds?.won,3,'reviewed round evidence can favor Shogun while preserving the official loss');
