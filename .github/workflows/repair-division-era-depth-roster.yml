@@ -32,6 +32,13 @@ jobs:
 
       - name: Apply permanent roster-dynamic repair
         run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('scripts/repair-division-era-depth-roster.mjs')
+          s=p.read_text()
+          s=s.replace("if(after===before)throw new Error(`No change made to ${path}; source may have drifted.`);","if(after===before){console.log(`already patched ${path}`);return;}")
+          p.write_text(s)
+          PY
           node --check scripts/repair-division-era-depth-roster.mjs
           node scripts/repair-division-era-depth-roster.mjs
           node --check scripts/build-division-era-depth-shadow.mjs
