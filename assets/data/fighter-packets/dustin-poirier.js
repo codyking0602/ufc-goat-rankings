@@ -7,12 +7,9 @@
     status: { stage: 'permanent hand-added fighter; packet live; photos needed', lastUpdated: '2026-07-03', nextFix: 'Add Dustin Poirier photos. Add Watch Moment only if Cody provides a URL.' },
     repoLocations: { scoreSource: 'assets/data/ranking-data-additions.js', centralPacket: 'assets/data/fighter-packets/dustin-poirier.js', displayFallback: 'assets/data/display-overrides.js', watchFallback: 'assets/js/watch-moments.js', photos: 'Add assets/fighters/dustin-poirier.webp and assets/fighters/dustin-poirier-thumb.webp when real files exist.' },
     display: {
-      overallOvr: 87,
-      allTimeRank: 19,
       divisionLabel: 'LW / FW',
       resumeTag: 'Interim lightweight legend, title-shot ceiling',
       oneLiner: 'The best non-undisputed lightweight résumé in this range: elite wins everywhere, an interim belt, three undisputed title misses, and a capped loss profile keeping him out of the higher GOAT tier.',
-      categories: { championship: { ovr: 74, rank: 29 }, opponentQuality: { ovr: 92, rank: 6 }, primeDominance: { ovr: 84, rank: 24 }, longevity: { ovr: 88, rank: 12 } },
       snapshot: [ ['UFC Record', '22-9 (1 NC)'], ['UFC Title-Fight Wins', '1'], ['Championship Level', 'Interim Lightweight Champion'], ['Quality Wins', 'Holloway, McGregor, Gaethje, Alvarez, Chandler'],  ['Active Elite Years', '8.5 Elite Years'], ['Loss Context', 'Penalty capped at -10; title losses are the ceiling'] ],
       whyRankedHere: 'Poirier ranks here because the UFC-only résumé is loaded: 22 UFC wins, an interim lightweight title, two UFC wins over Max Holloway, two over Conor McGregor, and major lightweight wins over Justin Gaethje, Eddie Alvarez, Michael Chandler, Anthony Pettis, Dan Hooker, Benoit Saint Denis, and Jim Miller.',
       whyNotHigher: 'He does not rank higher because he never won the undisputed UFC title, lost three undisputed lightweight title fights, and the Gaethje rematch plus Islam finish stack enough late elite damage that the -10 loss cap is doing real work.',

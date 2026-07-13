@@ -8,9 +8,8 @@
     repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/bj-penn.js', displayFallback: 'assets/data/display-overrides.js', compareFallback: 'assets/compare-coverage-pack-1.js', watchFallback: 'assets/data/fighter-packets/bj-penn.js', photos: 'assets/fighters/bj-penn.webp and assets/fighters/bj-penn-thumb.webp' },
     photos: { photoUrl: 'assets/fighters/bj-penn.webp', thumbUrl: 'assets/fighters/bj-penn-thumb.webp' },
     display: {
-      overallOvr: 85, allTimeRank: 18, divisionLabel: 'LW / WW', resumeTag: 'Two-division skill legend',
+      divisionLabel: 'LW / WW', resumeTag: 'Two-division skill legend',
       oneLiner: 'The brilliant-but-messy skill case: lightweight gold, the Hughes welterweight upset, elite talent, and a late record collapse that drags the resume down.',
-      categories: { championship: { ovr: 80, rank: 16 }, opponentQuality: { ovr: 84, rank: 14 }, primeDominance: { ovr: 82, rank: 32 }, longevity: { ovr: 86, rank: 14 } },
       snapshot: [ ['UFC Record', '12-13-2'], ['UFC Title-Fight Wins', '5'], ['Championship Level', 'Two-Division UFC Champion'], ['Quality Wins', 'Hughes and LW Title Run'],  ['Active Elite Years', '6.0 Elite Years'], ['Loss Context', 'Late-career collapse heavily damages record'] ],
       whyRankedHere: 'Penn ranks here because the high-end UFC case is still real: lightweight champion, welterweight champion, the Hughes upset, and a peak skill set that was ahead of its time.',
       whyNotHigher: 'He does not rank higher because the late-career record collapse is too damaging, and the active elite window is not deep enough to offset the loss drag against cleaner champions.',

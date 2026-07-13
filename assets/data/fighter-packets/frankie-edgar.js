@@ -7,12 +7,9 @@
     status: { stage: 'permanent hand-added fighter; Watch Moment added; photos needed', lastUpdated: '2026-07-03', nextFix: 'Add Frankie photos.' },
     repoLocations: { scoreSource: 'assets/data/ranking-data-additions.js', centralPacket: 'assets/data/fighter-packets/frankie-edgar.js', displayFallback: 'assets/data/display-overrides.js', watchFallback: 'assets/js/watch-moments.js', photos: 'Add assets/fighters/frankie-edgar.webp and assets/fighters/frankie-edgar-thumb.webp when real files exist.' },
     display: {
-      overallOvr: 85,
-      allTimeRank: 25,
       divisionLabel: 'LW / FW / BW',
       resumeTag: 'Lightweight champ, three-division grinder',
       oneLiner: 'The toughness-and-longevity case: UFC lightweight gold, legendary title fights, elite featherweight wins, and enough late-career losses to keep the ceiling capped.',
-      categories: { championship: { ovr: 79, rank: 21 }, opponentQuality: { ovr: 86, rank: 12 }, primeDominance: { ovr: 82, rank: 28 }, longevity: { ovr: 90, rank: 8 } },
       snapshot: [ ['UFC Record', '18-11-1'], ['UFC Title-Fight Wins', '3'], ['Championship Level', 'Former Lightweight Champion'], ['Quality Wins', 'Penn, Maynard, Mendes, Cub, Oliveira'],  ['Active Elite Years', '10.0 Elite Years'], ['Loss Context', 'Penalty capped at -10; late losses mostly post-prime'] ],
       whyRankedHere: 'Edgar ranks here because his UFC-only résumé has real championship value, rare three-division relevance, and a deep quality-win ledger built around B.J. Penn, Gray Maynard, Chad Mendes, Cub Swanson, Charles Oliveira, Urijah Faber, Sean Sherk, Jeremy Stephens, and Tyson Griffin.',
       whyNotHigher: 'He does not rank higher because the official loss column is heavy, his title reign was not long enough to match the top champions, and his prime dominance is more about grit, pace, and durability than overwhelming separation.',

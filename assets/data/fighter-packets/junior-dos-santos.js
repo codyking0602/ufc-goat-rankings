@@ -64,9 +64,8 @@
     photos:{},
     rounds,
     display:{
-      overallOvr:86, allTimeRank:21, divisionLabel:'HW', resumeTag:'Heavyweight knockout king',
+      divisionLabel:'HW', resumeTag:'Heavyweight knockout king',
       oneLiner:'A UFC heavyweight champion with a historic nine-fight rise, elite Cain/Werdum/Stipe wins, and a ceiling capped by the Cain rematches.',
-      categories:{ championship:{ovr:76,rank:26}, opponentQuality:{ovr:75,rank:24}, primeDominance:{ovr:82,rank:22}, longevity:{ovr:73,rank:27}, apexPeak:{ovr:84,rank:17}, penalty:{ovr:72,rank:30} },
       snapshot:[ ['UFC Record','15-8'], ['UFC Title-Fight Wins','2 official / 1.85 adjusted'], ['Apex Peak','+4.35'], ['Quality Wins','Cain, Werdum, Stipe, Mir'],  ['Prime Dominance','19.20 / 30'], ['Rounds Won','60.2% best-effort'], ['Loss Context','-6.10'] ],
       whyRankedHere:'Dos Santos ranks here because the heavyweight win ledger is excellent: Cain, Werdum, Stipe, Mir, Carwin, Hunt, Lewis, Rothwell, Nelson, and more. He has enough championship value and peak danger to clear most thin-title cases.',
       whyNotHigher:'He does not rank higher because the reign was short, he only has one defense, and Cain clearly won the rivalry with two damaging title-fight losses. The late-career losses are mostly post-prime, but they do not add value either.',

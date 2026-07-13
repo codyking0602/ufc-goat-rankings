@@ -8,9 +8,8 @@
     repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/cain-velasquez.js', displayFallback: 'assets/data/display-overrides.js', watchFallback: 'assets/data/fighter-packets/cain-velasquez.js', photos: 'assets/fighters/cain-velasquez.webp and assets/fighters/cain-velasquez-thumb.webp' },
     photos: { photoUrl: 'assets/fighters/cain-velasquez.webp', thumbUrl: 'assets/fighters/cain-velasquez-thumb.webp' },
     display: {
-      overallOvr: 87, allTimeRank: 16, divisionLabel: 'HW', resumeTag: 'Heavyweight peak-dominance case',
+      divisionLabel: 'HW', resumeTag: 'Heavyweight peak-dominance case',
       oneLiner: 'The heavyweight pressure machine: elite pace, wrestling, cardio, and one of the best primes in UFC heavyweight history.',
-      categories: { championship: { ovr: 76, rank: 24 }, opponentQuality: { ovr: 82, rank: 17 }, primeDominance: { ovr: 93, rank: 5 }, longevity: { ovr: 84, rank: 17 } },
       snapshot: [ ['UFC Record', '12-3'], ['UFC Title-Fight Wins', '4'], ['Championship Level', 'Heavyweight Champion Peak'], ['Quality Wins', 'JDS and Bigfoot Anchor the Case'],  ['Active Elite Years', '7.5 Elite Years'], ['Loss Context', 'Werdum/JDS losses and injuries cap the resume'] ],
       whyRankedHere: 'Cain ranks here because his prime dominance at heavyweight was exceptional. His pace, wrestling pressure, and cardio made him one of the most overwhelming heavyweights ever during his best window.',
       whyNotHigher: 'He does not rank higher because the UFC resume is thin compared with the deeper champions. Injuries, limited title volume, and key losses to dos Santos and Werdum keep his all-time case below Stipe and the broader top tier.',

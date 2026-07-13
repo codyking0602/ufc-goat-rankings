@@ -32,9 +32,8 @@
     photos: {},
     rounds,
     display: {
-      overallOvr: 84, allTimeRank: 28, divisionLabel: 'MW', resumeTag: 'Awkward middleweight title disruptor',
+      divisionLabel: 'MW', resumeTag: 'Awkward middleweight title disruptor',
       oneLiner: 'A pace-and-defense middleweight champion with a legendary Adesanya upset, current-table Khamzat proof, and a resume capped by Dricus/Pereira loss context.',
-      categories: { championship: { ovr: 78, rank: 23 }, opponentQuality: { ovr: 85, rank: 16 }, primeDominance: { ovr: 82, rank: 22 }, longevity: { ovr: 76, rank: 25 }, apexPeak: { ovr: 76, rank: 24 }, penalty: { ovr: 50, rank: 40 } },
       snapshot: [ ['UFC Record', '18-7'], ['UFC Title-Fight Wins', '2 adjusted'], ['Apex Peak', '+3.25'], ['Quality Wins', 'Adesanya, Khamzat, Imavov, Costa'],  ['Prime Dominance', '16.90 / 30'], ['Rounds Won', '62.0%'], ['Loss Context', 'Capped at -10'] ],
       whyRankedHere: 'Strickland ranks here because the top of the UFC middleweight resume is loud: the Adesanya title upset is one of the best middleweight wins ever, the current-table Khamzat win adds elite title-level proof, and his pressure/defense style gives him real round-control value.',
       whyNotHigher: 'He does not rank higher because there is no long defense streak, the finishing profile is low, Dricus has direct title-fight separation twice, and the loss ledger reaches the cap.',

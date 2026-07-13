@@ -6,12 +6,9 @@
     status: { stage: 'packet live; photos and Watch Moment needed', lastUpdated: '2026-07-02', nextFix: 'Add Joanna photos and Watch Moment link.' },
     repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/joanna-jedrzejczyk.js', compareFallback: 'assets/compare-coverage-pack-2.js' },
     display: {
-      overallOvr: 86,
-      allTimeRank: 3,
       divisionLabel: 'SW',
       resumeTag: 'Strawweight title standard',
       oneLiner: 'The strawweight standard: long title control, elite striking volume, and one of the cleanest technical champion runs in women’s UFC history.',
-      categories: { championship: { ovr: 85, rank: 3 }, opponentQuality: { ovr: 82, rank: 4 }, primeDominance: { ovr: 89, rank: 3 }, longevity: { ovr: 84, rank: 4 } },
       snapshot: [ ['UFC Record', '10-5'], ['UFC Title-Fight Wins', '6'], ['Championship Level', 'Historic Strawweight Champion'], ['Quality Wins', 'Early Strawweight Elite'],  ['Active Elite Years', '5.5 Elite Years'], ['Loss Context', 'Rose and Zhang losses cap the back end'] ],
       whyRankedHere: 'Joanna ranks women’s #3 because her strawweight reign was historically important and technically dominant. Her title defenses, pace, takedown defense, and striking output made her the early standard for the division.',
       whyNotHigher: 'She does not pass Nunes or Valentina because she has less two-division value, less total title-fight separation, and the Rose/Zhang stretch damaged the back end of the case.',

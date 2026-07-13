@@ -6,12 +6,9 @@
     status: { stage: 'packet live; photos and Watch Moment needed', lastUpdated: '2026-07-02', nextFix: 'Add Ronda photos and Watch Moment link.' },
     repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/ronda-rousey.js', compareFallback: 'assets/compare-coverage-pack-2.js' },
     display: {
-      overallOvr: 85,
-      allTimeRank: 4,
       divisionLabel: 'BW',
       resumeTag: 'Original women’s UFC superstar',
       oneLiner: 'The original women’s UFC superstar case: historic bantamweight title dominance, instant finishes, mainstream impact, and a sharp ending that caps the score.',
-      categories: { championship: { ovr: 84, rank: 4 }, opponentQuality: { ovr: 76, rank: 6 }, primeDominance: { ovr: 91, rank: 2 }, longevity: { ovr: 76, rank: 6 } },
       snapshot: [ ['UFC Record', '6-2'], ['UFC Title-Fight Wins', '6'], ['Championship Level', 'Original Women’s BW Champion'], ['Quality Wins', 'Early Bantamweight Elite'],  ['Active Elite Years', '3.0 Elite Years'], ['Loss Context', 'Holm and Nunes losses ended the case sharply'] ],
       whyRankedHere: 'Rousey ranks women’s #4 because her UFC peak mattered enormously. She was the original women’s UFC champion, defended repeatedly, and finished fights in a way that made her feel almost inevitable during the early run.',
       whyNotHigher: 'She does not rank higher because the run was short and the ending was severe. The Holm and Nunes losses damaged the aura, and the later women’s champions built deeper UFC resumes.',

@@ -22,9 +22,8 @@
     photos: {},
     rounds,
     display: {
-      overallOvr: 87, allTimeRank: 13, divisionLabel: 'MW', resumeTag: 'Modern middleweight champion',
+      divisionLabel: 'MW', resumeTag: 'Modern middleweight champion',
       oneLiner: 'The modern middleweight chaos champion: Whittaker, Adesanya, and Strickland wins, strong finishing threat, and only one elite decision loss in the UFC.',
-      categories: { championship: { ovr: 82, rank: 16 }, opponentQuality: { ovr: 84, rank: 17 }, primeDominance: { ovr: 87, rank: 15 }, longevity: { ovr: 69, rank: 36 }, apexPeak: { ovr: 70, rank: 28 }, penalty: { ovr: 91, rank: 8 } },
       snapshot: [ ['UFC Record', '9-1'], ['UFC Title-Fight Wins', '3'], ['Apex Peak', '+4.55'], ['Quality Wins', 'Whittaker, Adesanya, Strickland x2'],  ['Prime Dominance', '20.27 / 30'], ['Active Elite Years', '3.2 Elite Years'], ['Loss Context', 'Khamzat decision loss only'] ],
       whyRankedHere: 'Du Plessis ranks here because his UFC middleweight run got loud fast: Whittaker, Strickland, Adesanya, and Strickland again is a serious modern title-level win stack. The record is clean, the finishing threat is real, and the only UFC loss came to an elite champion-level opponent by decision.',
       whyNotHigher: 'He does not rank higher yet because the elite window is still short. He has strong championship value, but not the long title-fight volume, clean round-control dominance, active elite years, clean apex aura, or multi-era proof of the all-time names above him.',

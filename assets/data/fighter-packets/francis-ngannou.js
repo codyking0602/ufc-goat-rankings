@@ -6,9 +6,8 @@
     status: { stage: 'packet live; photos and Watch Moment needed', lastUpdated: '2026-07-02', nextFix: 'Add Ngannou photos and Watch Moment link.' },
     repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/francis-ngannou.js', compareFallback: 'assets/compare-coverage-pack-2.js' },
     display: {
-      overallOvr: 84, allTimeRank: 23, divisionLabel: 'HW', resumeTag: 'Heavyweight power champion',
+      divisionLabel: 'HW', resumeTag: 'Heavyweight power champion',
       oneLiner: 'The heavyweight terror case: historic power, Stipe title value, Gane defense value, and a UFC run capped before long-reign volume.',
-      categories: { championship: { ovr: 72, rank: 30 }, opponentQuality: { ovr: 82, rank: 18 }, primeDominance: { ovr: 92, rank: 5 }, longevity: { ovr: 80, rank: 25 } },
       snapshot: [ ['UFC Record', '11-2'], ['UFC Title-Fight Wins', '2'], ['Championship Level', 'Heavyweight Champion'], ['Quality Wins', 'Stipe and Gane Anchor the Case'],  ['Active Elite Years', '4.5 Elite Years'], ['Loss Context', 'Stipe/Lewis losses and UFC exit limit volume'] ],
       whyRankedHere: 'Ngannou ranks here because his peak danger and heavyweight title wins are massive. The Stipe knockout and Gane defense give him real championship value, while his finishing threat makes the prime-dominance case unusually strong.',
       whyNotHigher: 'He does not rank higher because the UFC title volume is short. The exit from the UFC capped the long-reign case, and Stipe still has the stronger full UFC heavyweight resume.',

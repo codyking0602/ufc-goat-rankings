@@ -36,9 +36,8 @@
     photos: {},
     rounds,
     display: {
-      overallOvr: 85, allTimeRank: 27, divisionLabel: 'LHW / MW', resumeTag: 'Short-reign champion apex',
+      divisionLabel: 'LHW / MW', resumeTag: 'Short-reign champion apex',
       oneLiner: 'The Machida Era was short, but real: UFC light heavyweight gold, a scary apex, and elite wins across LHW and MW — capped by a short reign and loud prime losses.',
-      categories: { championship: { ovr: 75, rank: 27 }, opponentQuality: { ovr: 73, rank: 32 }, primeDominance: { ovr: 84, rank: 19 }, longevity: { ovr: 80, rank: 22 }, apexPeak: { ovr: 84, rank: 16 }, penalty: { ovr: 61, rank: 35 } },
       snapshot: [ ['UFC Record', '16-8'], ['UFC Title-Fight Wins', '2 official / 1.65 adjusted'], ['Apex Peak', '+4.25'], ['Quality Wins', 'Rashad, Shogun, Mousasi, Bader, Hendo'],  ['Prime Dominance', '18.30 / 30'], ['Rounds Won', '58.7% best-effort'], ['Loss Context', '-9.00'] ],
       whyRankedHere: 'Machida ranks here because his UFC-only case has real championship value, a memorable best-in-the-world window, and enough elite wins to sit above most non-champion or thin-title cases.',
       whyNotHigher: 'He does not rank higher because the title reign was short, the Shogun defense is discounted for controversy, and Shogun, Rampage, Jones, Davis, and Weidman create a heavy prime-loss profile.',

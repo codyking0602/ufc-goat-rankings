@@ -10,9 +10,8 @@
     },
     photos: { photoUrl: 'assets/fighters/max-holloway.webp', thumbUrl: 'assets/fighters/max-holloway-thumb.webp' },
     display: {
-      overallOvr: 88, allTimeRank: 9, divisionLabel: 'FW / LW', resumeTag: 'Volume and quality wins',
+      divisionLabel: 'FW / LW', resumeTag: 'Volume and quality wins',
       oneLiner: 'The volume case: relentless pace, elite quality wins, and one of the longest useful elite windows in the featherweight era.',
-      categories: { championship: { ovr: 79, rank: 17 }, opponentQuality: { ovr: 93, rank: 2 }, primeDominance: { ovr: 88, rank: 17 }, longevity: { ovr: 95, rank: 3 } },
       snapshot: [
         ['UFC Record', '23-9'], ['UFC Title-Fight Wins', '4'], ['Championship Level', 'Great but Not Massive Belt Volume'], ['Quality Wins', 'Second-Best Score in This Ranking'],  ['Active Elite Years', '10.9 Elite Years'], ['Loss Context', 'Many losses came to elite names and across long volume']
       ],

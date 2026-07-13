@@ -28,9 +28,8 @@
     photos: {},
     rounds,
     display: {
-      overallOvr: 86, allTimeRank: 19, divisionLabel: 'WW', resumeTag: 'Welterweight title reign',
+      divisionLabel: 'WW', resumeTag: 'Welterweight title reign',
       oneLiner: 'A real UFC welterweight champion case: Lawler, Wonderboy, Maia, and Till title value, with Burns included as the end of the prime window.',
-      categories: { championship: { ovr: 86, rank: 13 }, opponentQuality: { ovr: 82, rank: 21 }, primeDominance: { ovr: 82, rank: 23 }, longevity: { ovr: 78, rank: 23 }, apexPeak: { ovr: 80, rank: 20 }, penalty: { ovr: 83, rank: 18 } },
       snapshot: [ ['UFC Record', '9-6-1'], ['UFC Title-Fight Wins', '4'], ['Apex Peak', '+3.75'], ['Quality Wins', 'Lawler, Wonderboy, Maia, Till'],  ['Prime Dominance', '16.20 / 30'], ['Rounds Won', '48.0%'], ['Loss Context', '-4.50'] ],
       whyRankedHere: 'Woodley ranks here because his UFC-only title resume is stronger than casual memory usually gives it credit for: he won the welterweight belt and added multiple title-level results before the Usman/Burns ending.',
       whyNotHigher: 'He does not rank higher because the resume depth falls off after the title names, the round-control profile was inconsistent, and Usman plus Burns clearly end the prime window.',

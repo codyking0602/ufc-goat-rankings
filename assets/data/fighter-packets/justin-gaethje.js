@@ -7,9 +7,8 @@
     status: { stage: 'packet live; undisputed title update; Watch Moment added; photos needed', lastUpdated: '2026-07-02', nextFix: 'Add Gaethje photos. Move raw row into ranking-data.js if permanent.' },
     repoLocations: { scoreSource: 'assets/data/ranking-data-patches.js runtime add-on for first test fighter', centralPacket: 'assets/data/fighter-packets/justin-gaethje.js', displayFallback: 'assets/data/display-overrides.js', watchFallback: 'assets/js/watch-moments.js', photos: 'Add assets/fighters/justin-gaethje.webp and assets/fighters/justin-gaethje-thumb.webp when real files exist.' },
     display: {
-      overallOvr: 86, allTimeRank: 22, divisionLabel: 'LW', resumeTag: 'Undisputed lightweight chaos case',
+      divisionLabel: 'LW', resumeTag: 'Undisputed lightweight chaos case',
       oneLiner: 'The lightweight chaos case: undisputed UFC gold, two interim-title wins, elite action wins, and enough finish-loss damage to keep the GOAT case capped.',
-      categories: { championship: { ovr: 81, rank: 19 }, opponentQuality: { ovr: 87, rank: 11 }, primeDominance: { ovr: 84, rank: 26 }, longevity: { ovr: 83, rank: 21 } },
       snapshot: [ ['UFC Record', '12-5'], ['UFC Title-Fight Wins', '3'], ['Championship Level', 'Undisputed Lightweight Champion'], ['Quality Wins', 'Topuria, Ferguson, Poirier, Chandler'],  ['Active Elite Years', '7.0 Elite Years'], ['Loss Context', 'Penalty capped at -10 despite heavy finish-loss stack'] ],
       whyRankedHere: 'Gaethje ranks here because the UFC-only case now has real championship weight: undisputed lightweight gold, two interim/title-level wins, and a modern lightweight win list built around Topuria, Ferguson, Poirier, Chandler, Fiziev, Barboza, Cerrone, and Johnson.',
       whyNotHigher: 'He does not rank higher because the loss context is still heavy even with the -10 cap. Gaethje has been finished in major prime fights, and one undisputed title win does not erase the Khabib, Oliveira, Max, Poirier, and Alvarez damage against cleaner all-time cases.',

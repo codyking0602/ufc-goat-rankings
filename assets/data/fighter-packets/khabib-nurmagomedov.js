@@ -23,17 +23,9 @@
       thumbUrl: 'assets/fighters/khabib-nurmagomedov-thumb.webp'
     },
     display: {
-      overallOvr: 90,
-      allTimeRank: 6,
       divisionLabel: 'LW',
       resumeTag: 'Prime dominance case',
       oneLiner: 'The cleanest prime run at lightweight: unbeaten in the UFC, overwhelming round control, and the strongest dominance case in this ranking.',
-      categories: {
-        championship: { ovr: 77, rank: 22 },
-        opponentQuality: { ovr: 80, rank: 22 },
-        primeDominance: { ovr: 99, rank: 1 },
-        longevity: { ovr: 91, rank: 7 }
-      },
       snapshot: [
         ['UFC Record', '13-0'],
         ['UFC Title-Fight Wins', '4'],

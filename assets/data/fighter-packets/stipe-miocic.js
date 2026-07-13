@@ -8,9 +8,8 @@
     repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/stipe-miocic.js', displayFallback: 'assets/data/display-overrides.js', compareFallback: 'assets/compare-coverage-pack-1.js', profileStatsFallback: 'assets/js/fighter-profile-packages.js', watchFallback: 'assets/js/watch-moments.js', photos: 'assets/fighters/stipe-miocic.webp and assets/fighters/stipe-miocic-thumb.webp' },
     photos: { photoUrl: 'assets/fighters/stipe-miocic.webp', thumbUrl: 'assets/fighters/stipe-miocic-thumb.webp' },
     display: {
-      overallOvr: 87, allTimeRank: 14, divisionLabel: 'HW', resumeTag: 'UFC heavyweight standard',
+      divisionLabel: 'HW', resumeTag: 'UFC heavyweight standard',
       oneLiner: 'The strongest UFC heavyweight resume case: title defenses, champion wins, Ngannou value, and trilogy separation over Cormier.',
-      categories: { championship: { ovr: 83, rank: 12 }, opponentQuality: { ovr: 85, rank: 11 }, primeDominance: { ovr: 90, rank: 6 }, longevity: { ovr: 84, rank: 18 } },
       snapshot: [ ['UFC Record', '15-5'], ['UFC Title-Fight Wins', '6'], ['Championship Level', 'UFC Heavyweight Standard'], ['Quality Wins', 'Best Heavyweight Win Stack'],  ['Active Elite Years', '7.6 Elite Years'], ['Loss Context', 'Heavyweight volatility and late Jones loss matter'] ],
       whyRankedHere: 'Stipe ranks #14 because he has the strongest UFC heavyweight resume: heavyweight title wins, major defenses, champion-level opponent quality, and the Cormier trilogy edge.',
       whyNotHigher: 'He does not rank higher because heavyweight depth and volatility cap the score compared with lighter divisions, and the loss column is real. The Jones loss also keeps the back end from feeling clean.',

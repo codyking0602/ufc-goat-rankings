@@ -55,9 +55,8 @@
     boardRow,
     profile,
     display:{
-      overallOvr:78, divisionLabel:'SW', resumeTag:'Submission champ climb',
+      divisionLabel:'SW', resumeTag:'Submission champ climb',
       oneLiner:'A current UFC strawweight champion with elite submission danger and real title value, but a volatile contender ledger keeps the UFC-only score grounded.',
-      categories:{ championship:{ovr:73}, opponentQuality:{ovr:71}, primeDominance:{ovr:78}, longevity:{ovr:74}, apexPeak:{ovr:77}, penalty:{ovr:62} },
       snapshot:[ ['UFC Record','11-5'], ['UFC Title-Fight Wins','1 official / 0.90 adjusted'], ['Apex Peak','+3.40'], ['Quality Wins','Jandiroba x2, Ribas, Torres'],  ['Prime Dominance','15.20 / 30'], ['Rounds Won','53.5% best-effort'], ['Loss Context','-9.00'] ],
       whyRankedHere:'Dern scores as a legitimate UFC champion because the Jandiroba title win, submission threat, and long strawweight relevance give her a real UFC-only case.',
       whyNotHigher:'The score is capped by a vacant-title path, no defenses yet, no reigning-champion win, and repeated prime contender losses to Marina Rodriguez, Yan Xiaonan, Jessica Andrade, and Amanda Lemos.',

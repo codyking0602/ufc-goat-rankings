@@ -63,9 +63,8 @@
     repoLocations:{scoreSource:'assets/data/fighter-packets/robbie-lawler.js',centralPacket:'assets/data/fighter-packets/robbie-lawler.js',watchMoment:'assets/js/watch-moments.js',nickname:'assets/js/card-nicknames.js',tracker:'docs/fighter-status.md',photos:'No real photo files loaded yet; app should use initials fallback.'},
     photos:{},rounds,boardRow,profile,
     display:{
-      overallOvr:80,divisionLabel:'WW / MW',resumeTag:'Ruthless title-war champion',
+      divisionLabel:'WW / MW',resumeTag:'Ruthless title-war champion',
       oneLiner:'A Hall of Fame welterweight champion whose comeback title run delivered all-time violence and real defenses, capped by close decisions and a short reign.',
-      categories:{championship:{ovr:79},opponentQuality:{ovr:77},primeDominance:{ovr:77},longevity:{ovr:73},apexPeak:{ovr:83},penalty:{ovr:64}},
       snapshot:[['UFC Record','14-10, 1 NC'],['UFC Title-Fight Wins','3'],['Apex Peak','+4.00'],['Quality Wins','Rory, Hendricks, Condit, Brown'],['Prime Window','Koscheck 2013 → Woodley 2016'],['Prime Dominance','15.95 / 30'],['Loss Context','-8.62']],
       whyRankedHere:'Lawler lands here because his UFC comeback title run was real: he beat Hendricks for the belt, finished Rory in an all-time defense, and officially defended again against Condit.',
       whyNotHigher:'He does not rank higher because the reign was short, several title fights were razor-close, and Woodley ended the champion run quickly and violently.',

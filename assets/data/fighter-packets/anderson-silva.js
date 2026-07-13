@@ -24,17 +24,9 @@
       thumbUrl: 'assets/fighters/anderson-silva-thumb.webp'
     },
     display: {
-      overallOvr: 91,
-      allTimeRank: 4,
       divisionLabel: 'MW',
       resumeTag: 'Peak aura standard',
       oneLiner: 'The peak-aura case: historic middleweight title control, terrifying finishing dominance, and one of the most iconic prime runs in UFC history.',
-      categories: {
-        championship: { ovr: 90, rank: 4 },
-        opponentQuality: { ovr: 84, rank: 13 },
-        primeDominance: { ovr: 90, rank: 10 },
-        longevity: { ovr: 91, rank: 6 }
-      },
       snapshot: [
         ['UFC Record', '17-7, 1 NC'],
         ['UFC Title-Fight Wins', '11'],

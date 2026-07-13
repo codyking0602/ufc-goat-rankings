@@ -6,9 +6,8 @@
     status: { stage: 'packet live; current UFC record reconciled; photos and Watch Moment needed', lastUpdated: '2026-07-10', nextFix: 'Add Charles photos and Watch Moment link.' },
     repoLocations: { scoreSource: 'assets/data/ranking-data.js', centralPacket: 'assets/data/fighter-packets/charles-oliveira.js', compareFallback: 'assets/compare-data.js' },
     display: {
-      overallOvr: 84, allTimeRank: 24, divisionLabel: 'LW', resumeTag: 'Late-blooming finish king',
+      divisionLabel: 'LW', resumeTag: 'Late-blooming finish king',
       oneLiner: 'The late-blooming lightweight chaos case: elite finishing value, huge quality wins, and a messy record that keeps the score volatile.',
-      categories: { championship: { ovr: 74, rank: 27 }, opponentQuality: { ovr: 91, rank: 3 }, primeDominance: { ovr: 92, rank: 6 }, longevity: { ovr: 78, rank: 27 } },
       snapshot: [ ['UFC Record', '25-11'], ['UFC Title-Fight Wins', '3'], ['Championship Level', 'Short Lightweight Champion Run'], ['Quality Wins', 'Elite Lightweight Finish Ledger'],  ['Active Elite Years', '4.0 Elite Years'], ['Loss Context', 'Early and prime losses create major drag'] ],
       whyRankedHere: 'Oliveira ranks here because his high-end lightweight run is impossible to ignore. Chandler, Poirier, Gaethje, Dariush, Ferguson, and Lee give him one of the most dangerous quality-win ledgers in the ranking.',
       whyNotHigher: 'He does not rank higher because the loss penalty is heavy and the title reign was short. The highs are elite, but the full UFC resume is messier than the cleaner champion cases.',

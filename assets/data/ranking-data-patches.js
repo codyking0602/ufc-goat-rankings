@@ -1,7 +1,7 @@
 // Lightweight prerequisite/data loader with an explicit readiness handoff.
 (function(){
   'use strict';
-  const VERSION='ranking-data-patches-20260711w-profile-stat-merge';
+  const VERSION='ranking-data-patches-20260713x-stage3-loader-clean';
   let readyResolved=false;
   let resolveReady;
   const readyPromise=new Promise(resolve=>{resolveReady=resolve;});
@@ -65,17 +65,12 @@
     {src:'assets/data/fighter-packets.js?v=fighter-packets-20260702c',attr:'data-fighter-packets'},
     ...packets,
     {src:'assets/js/card-nicknames.js?v=card-nicknames-20260706n-robbie-lawler',attr:'data-card-nicknames'},
-    {src:'assets/js/rank-fluidity-fixes.js?v=rank-fluidity-fixes-20260706b',attr:'data-rank-fluidity-fixes'},
     {src:'assets/data/prime-round-row-fixes.js?v=prime-round-row-fixes-20260704a',attr:'data-prime-round-row-fixes'},
-    {src:'assets/data/championship-score-corrections.js?v=championship-score-corrections-20260706d-women-display-ranks',attr:'data-championship-score-corrections'},
-    {src:'assets/data/opponent-quality-score-corrections.js?v=opponent-quality-score-corrections-20260705c-dricus-oq',attr:'data-opponent-quality-score-corrections'},
-    {src:'assets/data/longevity-score-corrections.js?v=longevity-score-corrections-20260705b',attr:'data-longevity-score-corrections'},
     {src:'assets/data/fighter-era-ledgers.js?v=fighter-era-ledgers-20260709g-review-corrections',attr:'data-fighter-era-ledgers'},
     {src:'assets/data/fighter-era-ledger-cleanups.js?v=fighter-era-ledger-cleanups-20260709b-clean-remaining-review-rows',attr:'data-fighter-era-ledger-cleanups'},
     {src:'assets/data/fighter-era-ledger-cleanups-final.js?v=fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window',attr:'data-fighter-era-ledger-cleanups-final'},
     {src:'assets/data/loss-context-ledger-completion-batch-one.js?v=loss-context-ledger-completion-batch-one-20260710a-whittaker-strickland',attr:'data-loss-context-ledger-completion-batch-one'},
     {src:'assets/data/loss-context-ledger-completion-batch-two.js?v=loss-context-ledger-completion-batch-two-20260710a-five-highest-priority',attr:'data-loss-context-ledger-completion-batch-two'},
-    {src:'assets/data/apex-peak-score-corrections.js?v=apex-peak-score-corrections-20260706a-sean-whittaker',attr:'data-apex-peak-score-corrections'},
     {src:'assets/data/score-weighting.js?v=score-weighting-20260710a-compatibility-only',attr:'data-score-weighting'},
     {src:'assets/js/apex-peak-category-card.js?v=apex-peak-category-card-20260711c-compact-profile-card',attr:'data-apex-peak-category-card'},
     {src:'assets/js/championship-label-polish.js?v=championship-label-polish-20260711d-label-only',attr:'data-championship-label-polish'},

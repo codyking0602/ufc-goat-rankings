@@ -34,9 +34,8 @@
     photos: {},
     rounds,
     display: {
-      overallOvr: 84, allTimeRank: 28, divisionLabel: 'MW', resumeTag: 'Middleweight champion contender king',
+      divisionLabel: 'MW', resumeTag: 'Middleweight champion contender king',
       oneLiner: 'A former middleweight champion with elite résumé depth, Romero-war proof, and long contender relevance — capped by no defense streak and several elite finish losses.',
-      categories: { championship: { ovr: 70, rank: 30 }, opponentQuality: { ovr: 86, rank: 15 }, primeDominance: { ovr: 81, rank: 24 }, longevity: { ovr: 85, rank: 13 }, apexPeak: { ovr: 76, rank: 24 }, penalty: { ovr: 55, rank: 39 } },
       snapshot: [ ['UFC Record', '16-7'], ['UFC Title-Fight Wins', '1 official / 1.5 adjusted'], ['Apex Peak', '+3.25'], ['Quality Wins', 'Romero x2, Jacare, Cannonier'],  ['Prime Dominance', '16.40 / 30'], ['Active Elite Years', '8.5 Elite Years'], ['Loss Context', 'Elite finish losses cap'] ],
       whyRankedHere: 'Whittaker ranks here because his UFC-only résumé has rare middleweight depth: Romero twice, Jacare, Cannonier, Costa, Vettori, Brunson, Till, Gastelum, and years of elite relevance after winning UFC gold.',
       whyNotHigher: 'He does not rank higher because his championship case is light for an all-time champion: no official defense streak, Adesanya clearly capped the title era, and later Dricus/Khamzat finish losses hurt the prime-dominance and loss-context side.',
