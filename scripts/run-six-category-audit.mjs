@@ -1,188 +1,120 @@
 import { chromium } from 'playwright';
 import { mkdir, writeFile } from 'node:fs/promises';
 
-const baseUrl = process.env.AUDIT_BASE_URL || 'http://127.0.0.1:4173';
-const browser = await chromium.launch({ headless: true });
-const page = await browser.newPage();
+const baseUrl=process.env.AUDIT_BASE_URL||'http://127.0.0.1:4173';
+const browser=await chromium.launch({headless:true});
+const page=await browser.newPage({viewport:{width:1440,height:1200}});
+const consoleErrors=[];
+const pageErrors=[];
+page.on('console',message=>{if(message.type()==='error')consoleErrors.push(message.text());});
+page.on('pageerror',error=>pageErrors.push(String(error?.stack||error)));
 
-page.on('console', message => console.log(`[browser:${message.type()}] ${message.text()}`));
-page.on('pageerror', error => console.error(`[browser:error] ${error.stack || error.message}`));
+try{
+  await page.goto(`${baseUrl}/index.html?six-category-audit=1`,{waitUntil:'domcontentloaded',timeout:60_000});
+  await page.waitForFunction(()=>window.UFC_SCORING_PIPELINE?.status==='ready'&&window.UFC_SCORING_OWNERSHIP_CONTRACT?.applied===true,null,{timeout:120_000,polling:100});
+  await page.waitForTimeout(500);
 
-try {
-  await page.goto(`${baseUrl}/audit.html`, {
-    waitUntil: 'domcontentloaded',
-    timeout: 60_000
+  const report=await page.evaluate(()=>{
+    const data=window.RANKING_DATA||{};
+    const engine=window.UFC_SCORING_ENGINE||window.UFC_FINAL_SCORE_ENGINE||null;
+    const canonical=window.UFC_CANONICAL_SCORING_RECORDS||null;
+    const contract=window.UFC_SCORING_OWNERSHIP_CONTRACT||null;
+    const rows=[...(data.men||[]),...(data.women||[])];
+    const profiles=data.fighters||[];
+    const key=name=>String(name||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
+    const num=value=>Number.isFinite(Number(value))?Number(value):0;
+    const scoreFields=['championship','opponentQuality','primeDominance','longevity','apexPeak','penalty','eraDepthAdjustment'];
+    const parityFields=[...scoreFields,'totalScore','rank','overallOvr'];
+    const byProfile=new Map(profiles.map(row=>[key(row?.fighter),row]));
+    const mismatches=[];
+    const profileMismatches=[];
+
+    rows.forEach(row=>{
+      const expected=canonical?.entryFor?.(row.fighter)||null;
+      if(!expected){mismatches.push({fighter:row.fighter,field:'missing-canonical'});return;}
+      scoreFields.forEach(field=>{
+        if(Math.abs(num(row[field])-num(expected[field]))>0.001)mismatches.push({fighter:row.fighter,field,expected:expected[field],actual:row[field]});
+      });
+      if(Math.abs(num(row.totalScore)-num(expected.expectedTotalScore))>0.011)mismatches.push({fighter:row.fighter,field:'totalScore',expected:expected.expectedTotalScore,actual:row.totalScore});
+      if(num(row.rank)!==num(expected.expectedRank))mismatches.push({fighter:row.fighter,field:'rank',expected:expected.expectedRank,actual:row.rank});
+      if(num(row.overallOvr)!==num(expected.expectedOverallOvr))mismatches.push({fighter:row.fighter,field:'overallOvr',expected:expected.expectedOverallOvr,actual:row.overallOvr});
+      const formulaTotal=engine?.scoreBreakdown?.(row)?.totalScore;
+      if(!Number.isFinite(Number(formulaTotal))||Math.abs(num(row.totalScore)-num(formulaTotal))>0.011)mismatches.push({fighter:row.fighter,field:'formula-total',expected:formulaTotal,actual:row.totalScore});
+
+      const profile=byProfile.get(key(row.fighter));
+      if(!profile){profileMismatches.push({fighter:row.fighter,field:'missing-profile'});return;}
+      parityFields.forEach(field=>{
+        if(Math.abs(num(profile[field])-num(row[field]))>0.001)profileMismatches.push({fighter:row.fighter,field,board:row[field],profile:profile[field]});
+      });
+    });
+
+    const overrideViolations=[];
+    const overrideFields=[...scoreFields,'totalScore','rawScore','baseScore','preEraDepthTotalScore','rank','allTimeRank','overallOvr','lossContextHybrid','divisionEraDepth'];
+    Object.entries(window.DISPLAY_OVERRIDES||{}).forEach(([fighter,override])=>{
+      if(!override||typeof override!=='object')return;
+      overrideFields.forEach(field=>{if(Object.prototype.hasOwnProperty.call(override,field))overrideViolations.push({fighter,field});});
+      ['snapshotStats','packetProfileStats'].forEach(container=>{
+        const value=override[container];
+        if(!value||typeof value!=='object')return;
+        overrideFields.forEach(field=>{if(Object.prototype.hasOwnProperty.call(value,field))overrideViolations.push({fighter,field:`${container}.${field}`});});
+      });
+      Object.entries(override.categories||{}).forEach(([category,value])=>{
+        if(!value||typeof value!=='object')return;
+        ['ovr','rank','score','value'].forEach(field=>{if(Object.prototype.hasOwnProperty.call(value,field))overrideViolations.push({fighter,field:`categories.${category}.${field}`});});
+      });
+    });
+
+    const compareViolations=[];
+    Object.entries(window.COMPARE_PROFILES||{}).forEach(([fighter,profile])=>{
+      if(!profile||typeof profile!=='object')return;
+      overrideFields.forEach(field=>{if(Object.prototype.hasOwnProperty.call(profile,field))compareViolations.push({fighter,field});});
+    });
+
+    const wrongOwners=rows.filter(row=>row.scoreInputOwner!=='scoring-engine.js'||row.overallScoreOwner!=='scoring-engine.js'||row.finalScoreEngineVersion!==engine?.version).map(row=>({fighter:row.fighter,scoreInputOwner:row.scoreInputOwner,overallScoreOwner:row.overallScoreOwner,engineVersion:row.finalScoreEngineVersion}));
+    const summary={
+      fighterCount:rows.length,
+      menCount:(data.men||[]).length,
+      womenCount:(data.women||[]).length,
+      canonicalCount:canonical?.fighterCount??null,
+      mismatchCount:mismatches.length,
+      profileMismatchCount:profileMismatches.length,
+      scoreDerivedOverrideFieldCount:overrideViolations.length,
+      compareScoreViolationCount:compareViolations.length,
+      wrongOwnerCount:wrongOwners.length,
+      ownershipContractApplied:contract?.applied===true,
+      engineVersion:engine?.version||null,
+      engineApplyCount:engine?.applyCount??null,
+      canonicalVersion:canonical?.version||null,
+      canonicalSourceSha:canonical?.sourceFighterDataSha256||null,
+      formula:engine?.formula||null
+    };
+    const passed=Boolean(contract?.applied)&&rows.length===72&&mismatches.length===0&&profileMismatches.length===0&&overrideViolations.length===0&&compareViolations.length===0&&wrongOwners.length===0&&Number(contract?.displayOverrideViolationCount||0)===0&&Number(contract?.compareScoreViolationCount||0)===0&&Number(contract?.wrongOwnerCount||0)===0;
+    return {version:'six-category-runtime-audit-20260713c-stage2-owner',generatedAt:new Date().toISOString(),passed,stageTwoPassed:passed,summary,mismatches,profileMismatches,overrideViolations,compareViolations,wrongOwners,contract,menTop10:(data.men||[]).slice(0,10).map(row=>({rank:row.rank,fighter:row.fighter,totalScore:row.totalScore,overallOvr:row.overallOvr})),womenTop10:(data.women||[]).slice(0,10).map(row=>({rank:row.rank,fighter:row.fighter,totalScore:row.totalScore,overallOvr:row.overallOvr}))};
   });
 
-  await page.waitForFunction(() => {
-    const frame = document.getElementById('appFrame');
-    const win = frame?.contentWindow;
-    return Boolean(
-      win?.UFC_SCORING_PIPELINE?.status === 'ready' &&
-      win?.UFC_SIX_CATEGORY_INTEGRITY_AUDIT
-    );
-  }, { timeout: 90_000 });
-
-  const payload = await page.evaluate(() => {
-    const frame = document.getElementById('appFrame');
-    const win = frame?.contentWindow;
-    const audit = win?.UFC_SIX_CATEGORY_INTEGRITY_AUDIT;
-    if (!audit || !win) return null;
-
-    const report = audit.run('github-actions-deterministic-runtime');
-    const engine = win.UFC_FINAL_SCORE_ENGINE || null;
-    const weighting = win.UFC_SCORE_WEIGHTING || null;
-    const pipeline = win.UFC_SCORING_PIPELINE || null;
-    const tiers = win.UFC_CATEGORY_PERCENTILE_TIERS || null;
-    const boardRows = [
-      ...(win.RANKING_DATA?.men || []),
-      ...(win.RANKING_DATA?.women || [])
-    ];
-    const rowsWithWrongOwner = boardRows
-      .filter(row => row?.finalScoreEngineVersion !== engine?.version || row?.overallScoreOwner !== 'final-score-engine.js')
-      .map(row => ({
-        fighter: row?.fighter,
-        expectedOwnerVersion: engine?.version || null,
-        actualOwnerVersion: row?.finalScoreEngineVersion || null,
-        actualOwner: row?.overallScoreOwner || null
-      }));
-
-    const scoringAttrs = [
-      'data-prime-round-control-audit',
-      'data-prime-dominance-ledgers',
-      'data-prime-dominance-shadow-model',
-      'data-prime-dominance-live-promoter',
-      'data-prime-dominance-copy-polish',
-      'data-fighter-era-ledgers',
-      'data-longevity-shadow-scorer',
-      'data-longevity-live-promoter',
-      'data-apex-peak-score-corrections',
-      'data-apex-peak-component-audit',
-      'data-apex-peak-live-bonus',
-      'data-final-score-engine',
-      'data-category-percentile-tiers'
-    ];
-    const scoringScriptCounts = Object.fromEntries(
-      scoringAttrs.map(attr => [attr, win.document.querySelectorAll(`script[${attr}]`).length])
-    );
-    const duplicateScoringScripts = Object.entries(scoringScriptCounts)
-      .filter(([, count]) => count > 1)
-      .map(([attr, count]) => ({ attr, count }));
-
-    const ownership = {
-      finalScoreEnginePresent: Boolean(engine),
-      finalScoreEngineVersion: engine?.version || null,
-      finalScoreApplyCount: engine?.applyCount ?? null,
-      declaredOverallOwner: weighting?.overallOwner || null,
-      legacyWeightingPresent: Boolean(weighting),
-      legacyWeightingVersion: weighting?.version || null,
-      legacyWeightingMode: weighting?.mode || null,
-      legacyWeightingMutatesScores: weighting?.mutatesScores,
-      legacyPrimeWindowsLoader: weighting?.primeWindowsLoader,
-      legacyPrimeDominanceLoader: weighting?.primeDominanceShadowLoader,
-      fighterRowsChecked: boardRows.length,
-      rowsWithWrongOwner,
-      passed: Boolean(
-        engine &&
-        weighting &&
-        weighting.mutatesScores === false &&
-        weighting.mode === 'compatibility-only' &&
-        weighting.overallOwner === 'final-score-engine.js' &&
-        weighting.primeWindowsLoader === false &&
-        weighting.primeDominanceShadowLoader === false &&
-        rowsWithWrongOwner.length === 0
-      )
-    };
-
-    const initialization = {
-      pipelinePresent: Boolean(pipeline),
-      pipelineVersion: pipeline?.version || null,
-      pipelineMode: pipeline?.mode || null,
-      pipelineStatus: pipeline?.status || null,
-      pipelineTimerCount: pipeline?.timerCount ?? null,
-      pipelineRepeatedLoadCount: pipeline?.repeatedLoadCount ?? null,
-      pipelineFinalScoreApplyCount: pipeline?.finalScoreApplyCount ?? null,
-      engineApplyCount: engine?.applyCount ?? null,
-      refreshWrappedByEngine: Boolean(win.refresh?.__finalScoreEngineWrapped),
-      categoryTiersMode: tiers?.mode || null,
-      categoryTiersMutateScores: tiers?.mutatesScores,
-      categoryTiersReapplyPrime: tiers?.reappliesPrime,
-      scoringScriptCounts,
-      duplicateScoringScripts,
-      sequence: pipeline?.sequence || [],
-      passed: Boolean(
-        pipeline?.status === 'ready' &&
-        pipeline?.mode === 'deterministic-single-pass' &&
-        pipeline?.timerCount === 0 &&
-        pipeline?.repeatedLoadCount === 0 &&
-        pipeline?.finalScoreApplyCount === 1 &&
-        engine?.applyCount === 1 &&
-        !win.refresh?.__finalScoreEngineWrapped &&
-        tiers?.mutatesScores === false &&
-        tiers?.reappliesPrime === false &&
-        duplicateScoringScripts.length === 0
-      )
-    };
-
-    report.ownership = ownership;
-    report.initialization = initialization;
-    report.summary.ownershipPass = ownership.passed;
-    report.summary.deterministicInitializationPass = initialization.passed;
-    const markdown = `${audit.exportMarkdown()}\n\n## Overall Score Ownership\n\n` +
-      `- Final score engine: ${ownership.finalScoreEngineVersion || 'missing'}\n` +
-      `- Final score apply count: ${String(ownership.finalScoreApplyCount)}\n` +
-      `- Legacy weighting mode: ${ownership.legacyWeightingMode || 'missing'}\n` +
-      `- Fighter rows with a non-final owner: ${ownership.rowsWithWrongOwner.length}\n` +
-      `- Ownership gate: ${ownership.passed ? 'PASS' : 'FAIL'}\n\n` +
-      `## Deterministic Initialization\n\n` +
-      `- Pipeline: ${initialization.pipelineVersion || 'missing'}\n` +
-      `- Mode: ${initialization.pipelineMode || 'missing'}\n` +
-      `- Status: ${initialization.pipelineStatus || 'missing'}\n` +
-      `- Scoring timers: ${String(initialization.pipelineTimerCount)}\n` +
-      `- Final score applies: ${String(initialization.engineApplyCount)}\n` +
-      `- Duplicate scoring scripts: ${initialization.duplicateScoringScripts.length}\n` +
-      `- Tier layer reapplies Prime: ${String(initialization.categoryTiersReapplyPrime)}\n` +
-      `- Deterministic initialization gate: ${initialization.passed ? 'PASS' : 'FAIL'}\n`;
-
-    return {
-      report,
-      json: JSON.stringify(report, null, 2),
-      markdown
-    };
-  });
-
-  if (!payload?.report) {
-    throw new Error('Six-category integrity report was not available after deterministic initialization.');
-  }
-
-  await mkdir('docs/audits', { recursive: true });
-  await writeFile('docs/audits/runtime-six-category-audit.json', `${payload.json}\n`, 'utf8');
-  await writeFile('docs/audits/runtime-six-category-audit.md', `${payload.markdown}\n`, 'utf8');
-
-  const summary = payload.report.summary || {};
-  console.log('AUDIT_SUMMARY=' + JSON.stringify(summary));
-  console.log(`AUDIT_PASSED=${Boolean(payload.report.passed)}`);
-  console.log(`AUDIT_FIGHTERS=${summary.fighterCount ?? 'unknown'}`);
-  console.log(`AUDIT_COMPLETE=${summary.completeCount ?? 'unknown'}`);
-  console.log(`AUDIT_INCOMPLETE=${summary.incompleteCount ?? 'unknown'}`);
-  console.log(`AUDIT_FORMULA_MISMATCHES=${summary.formulaMismatchCount ?? 'unknown'}`);
-  console.log(`AUDIT_FORBIDDEN_OVERRIDES=${summary.forbiddenOverrideCount ?? 'unknown'}`);
-  console.log(`AUDIT_OWNERSHIP_PASS=${Boolean(summary.ownershipPass)}`);
-  console.log(`AUDIT_DETERMINISTIC_INIT_PASS=${Boolean(summary.deterministicInitializationPass)}`);
-
-  if (!payload.report.ownership?.passed) {
-    throw new Error(`Overall score ownership gate failed: ${JSON.stringify(payload.report.ownership)}`);
-  }
-  if (!payload.report.initialization?.passed) {
-    throw new Error(`Deterministic initialization gate failed: ${JSON.stringify(payload.report.initialization)}`);
-  }
-  if ((summary.formulaMismatchCount ?? 1) !== 0) {
-    throw new Error(`Locked-formula regression detected: ${summary.formulaMismatchCount} mismatches.`);
-  }
-} finally {
+  report.browserDiagnostics={consoleErrors,pageErrors};
+  const markdown=[
+    '# Six-Category Runtime Audit','',
+    `- Result: **${report.passed?'PASS':'FAIL'}**`,
+    `- Fighters: **${report.summary.fighterCount}**`,
+    `- Canonical/category/total/rank/OVR mismatches: **${report.summary.mismatchCount}**`,
+    `- Board/profile mismatches: **${report.summary.profileMismatchCount}**`,
+    `- Score-derived display override fields: **${report.summary.scoreDerivedOverrideFieldCount}**`,
+    `- Compare score fields: **${report.summary.compareScoreViolationCount}**`,
+    `- Wrong score owners: **${report.summary.wrongOwnerCount}**`,
+    `- Engine: \`${report.summary.engineVersion}\``,
+    `- Canonical source SHA: \`${report.summary.canonicalSourceSha}\``,
+    '',
+    'The audit validates the current Stage 2 owner directly. Legacy category modules remain evidence providers and are not treated as final score owners.',''
+  ].join('\n');
+  await mkdir('docs/audits',{recursive:true});
+  await writeFile('docs/audits/runtime-six-category-audit.json',`${JSON.stringify(report,null,2)}\n`,'utf8');
+  await writeFile('docs/audits/runtime-six-category-audit.md',`${markdown}\n`,'utf8');
+  console.log('AUDIT_SUMMARY='+JSON.stringify(report.summary));
+  console.log(`AUDIT_STAGE_TWO_PASSED=${report.passed}`);
+  if(!report.passed||pageErrors.length)throw new Error(`Stage 2 six-category audit failed: ${JSON.stringify({summary:report.summary,pageErrors})}`);
+}finally{
   await browser.close();
 }
 
-// Keep the canonical Prime Record source check inside the existing browser-audit entry point.
-// This avoids a separate workflow mutation while still making all 62 visible profile tiles a CI gate.
 await import('./run-prime-record-source-audit.mjs');
