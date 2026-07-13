@@ -201,7 +201,7 @@
             <button id="picksRecoverProfile" type="button">Recover Existing Profile</button>
           </div>
         </div>`;
-      document.getElementById('picksRecoverProfile')?.addEventListener('click',recoverProfile);
+      card.querySelector('#picksRecoverProfile')?.addEventListener('click',recoverProfile);
     }
 
     if(card.parentElement!==host) host.prepend(card);
