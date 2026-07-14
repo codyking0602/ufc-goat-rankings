@@ -6,10 +6,25 @@ _Last updated: 2026-07-14_
 
 - Branch: `agent/fighter-data-phase-1`
 - Draft PR: #39
-- Mode: **Cody-approved formula, shadow only**
+- Formula: **Cody-approved**
+- Mode: **shadow only**
 - Live ranking payload changed: **No**
+- Clean audit: **Passed**
 
-The previous separation/durability candidate has been retired. Prime Dominance is being reconstructed with one shared prime source and an objective four-component formula. The formula is approved, but no score is promoted to the live app until Cody explicitly requests promotion.
+The previous separation/durability candidate has been retired. Prime Dominance now uses one shared prime source and an objective four-component formula. The formula is approved, but the reconstructed board remains under calibration review and is not promoted to the live app.
+
+## Successful audit
+
+The clean read-only workflow passed with:
+
+- 72 of 72 fighter prime windows resolved through the shared Fighter Era Ledger
+- 714 scored prime fights
+- 609 elite-stage prime fights
+- 0 missing prime round rows
+- 0 missing elite-stage round rows
+- no mutation of live scores, rankings, OVRs, profiles, or Compare Mode
+
+The audit also found 32 fighter-local prime-window definitions that differ from the shared ledger. Those local windows are treated as drift evidence only and cannot override the shared source.
 
 ## Shared prime source
 
@@ -23,7 +38,7 @@ Prime Dominance must not create or extend its own fighter window. The same share
 - prime-sensitive Opponent Quality context
 - profile prime labels
 
-Fighter-local windows in other audit files are comparison evidence only. The reconstruction reports any drift and always follows the Fighter Era Ledger.
+The shared ledger now covers the full canonical roster. It also corrects Julianna Peña’s start from the nonexistent Miesha Tate matchup to the Amanda Nunes title upset on December 11, 2021.
 
 ## Approved formula
 
@@ -45,7 +60,7 @@ A counted prime fight is **elite-stage** when either:
 1. it is an official UFC title fight, or
 2. the opponent is already tagged `champion-level` or `top-five` in the canonical opponent ledger.
 
-This reuses existing reviewed facts rather than creating a new subjective “dominant performance” label.
+This reuses existing reviewed facts rather than creating a new subjective dominant-performance label.
 
 ### Elite-stage volume — 3 points
 
@@ -61,7 +76,37 @@ This portion is result-neutral. A fighter receives validation for repeatedly com
 | Elite-stage round control | 1.5 |
 | Elite-stage finish pressure | 0.5 |
 
-A loss can still earn performance credit through rounds won. This distinguishes a competitive five-round elite loss from being completely outclassed without relying on a subjective separation tag.
+A loss can still earn performance credit through rounds won. This distinguishes a competitive elite loss from being completely outclassed without relying on a subjective separation tag.
+
+## Current shadow board
+
+| Rank | Fighter | Prime Dominance |
+|---:|---|---:|
+| 1 | Royce Gracie | 29.08 |
+| 2 | Frank Shamrock | 28.88 |
+| 3 | Islam Makhachev | 27.38 |
+| 4 | Khabib Nurmagomedov | 27.13 |
+| 5 | Kayla Harrison | 26.96 |
+| 6 | Chuck Liddell | 26.94 |
+| 7 | Francis Ngannou | 26.76 |
+| 8 | Jon Jones | 26.35 |
+| 9 | Amanda Nunes | 25.70 |
+| 10 | Anderson Silva | 25.10 |
+
+Key reviewed outputs:
+
+- Jose Aldo: **17.44**, shared prime **Mark Hominick through Merab Dvalishvili**, prime record **13-7**
+- Kamaru Usman: **21.82**, shared prime **Demian Maia through Leon Edwards III**, prime record **8-2**
+
+## Calibration warning before live promotion
+
+The approved formula is mechanically clean, but the current board exposes a short-sample issue:
+
+- Kayla Harrison scores **26.96 from three UFC prime fights** and ranks fifth.
+- Frank Shamrock scores **28.88 from five UFC prime fights** and ranks second.
+- Royce Gracie scores **29.08** and ranks first because his early UFC prime was nearly perfect by record, rounds, and finishes.
+
+No silent adjustment has been made. Any additional sample-size control or component rebalancing would be a new model decision requiring Cody’s approval.
 
 ## Controlled overlap
 
