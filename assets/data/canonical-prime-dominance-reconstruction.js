@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-prime-dominance-reconstruction-20260714c-full-score-sample-lock';
+  const VERSION='canonical-prime-dominance-reconstruction-20260714d-tournament-compression-density-floor';
   const EXCLUDED_FIGHTERS=new Set(['Leon Edwards']);
   const CATEGORY_MAX=30;
   const COMPONENT_MAX=Object.freeze({
@@ -23,6 +23,8 @@
   const PRIME_SAMPLE_MIN=.70;
   const PRIME_SAMPLE_STEP=.05;
   const PRIME_SAMPLE_FULL_FIGHTS=7;
+  const ELITE_DENSITY_MIN_SAMPLES=4;
+  const ELITE_DENSITY_SAMPLE_FLOOR=.90;
   const ELITE_QUALITY_TIERS=new Set(['champion-level','top-five']);
   const FINISH_METHODS=new Set(['ko-tko','submission','doctor-stoppage']);
   const FINISH_SCALE=Object.freeze([
@@ -110,16 +112,85 @@
     return round2((FINISH_SCALE.find(row=>normalized>=row.min)||FINISH_SCALE.at(-1)).score);
   }
 
-  function primeSampleMultiplier(scoredFightCount){
-    const fights=Math.max(0,Number(scoredFightCount||0));
-    if(!fights)return 0;
-    return round2(clamp(PRIME_SAMPLE_MIN+((fights-1)*PRIME_SAMPLE_STEP),PRIME_SAMPLE_MIN,1));
+  function primeSampleMultiplier(effectiveSampleCount){
+    const samples=Math.max(0,Number(effectiveSampleCount||0));
+    if(!samples)return 0;
+    return round2(clamp(PRIME_SAMPLE_MIN+((samples-1)*PRIME_SAMPLE_STEP),PRIME_SAMPLE_MIN,1));
+  }
+
+  function opponentIsElite(fight){
+    return ELITE_QUALITY_TIERS.has(fight?.opponentContext?.qualityTier||'none');
   }
 
   function isEliteStageFight(fight){
     const titleType=fight?.championshipContext?.type||'none';
-    const qualityTier=fight?.opponentContext?.qualityTier||'none';
-    return titleType!=='none'||ELITE_QUALITY_TIERS.has(qualityTier);
+    return titleType!=='none'||opponentIsElite(fight);
+  }
+
+  function isTournamentFight(fight){
+    return (fight?.championshipContext?.type||'none')==='tournament';
+  }
+
+  function groupByDate(fights){
+    const groups=[];
+    const byDate=new Map();
+    fights.forEach((fight,index)=>{
+      const key=String(fight?.date||fight?.id||`fight-${index}`);
+      let group=byDate.get(key);
+      if(!group){
+        group={date:fight?.date||null,fights:[]};
+        byDate.set(key,group);
+        groups.push(group);
+      }
+      group.fights.push(fight);
+    });
+    return groups;
+  }
+
+  function effectivePrimeSamples(scoredPrimeFights){
+    const samples=[];
+    groupByDate(scoredPrimeFights).forEach(group=>{
+      const tournament=group.fights.some(isTournamentFight);
+      if(tournament){
+        samples.push({date:group.date,type:'tournament-event',tournament:true,fights:group.fights});
+        return;
+      }
+      group.fights.forEach(fight=>samples.push({date:fight?.date||group.date,type:'single-fight',tournament:false,fights:[fight]}));
+    });
+    return samples;
+  }
+
+  function densityEliteFight(fight){
+    const titleType=fight?.championshipContext?.type||'none';
+    return titleType!=='none'&&titleType!=='tournament'||opponentIsElite(fight);
+  }
+
+  function sampleProfile(scoredPrimeFights){
+    const samples=effectivePrimeSamples(scoredPrimeFights).map(sample=>({
+      ...sample,
+      densityElite:!sample.tournament&&sample.fights.some(densityEliteFight)
+    }));
+    let currentRun=0;
+    let longestEliteRun=0;
+    samples.forEach(sample=>{
+      currentRun=sample.densityElite?currentRun+1:0;
+      longestEliteRun=Math.max(longestEliteRun,currentRun);
+    });
+    const baseMultiplier=primeSampleMultiplier(samples.length);
+    const densityFloorEligible=longestEliteRun>=ELITE_DENSITY_MIN_SAMPLES;
+    const multiplier=round2(densityFloorEligible?Math.max(baseMultiplier,ELITE_DENSITY_SAMPLE_FLOOR):baseMultiplier);
+    return {
+      samples,
+      effectiveSampleCount:samples.length,
+      tournamentEventCount:samples.filter(sample=>sample.tournament).length,
+      tournamentBoutCount:samples.filter(sample=>sample.tournament).reduce((sum,sample)=>sum+sample.fights.length,0),
+      compressedTournamentBoutCount:samples.filter(sample=>sample.tournament).reduce((sum,sample)=>sum+Math.max(0,sample.fights.length-1),0),
+      longestConsecutiveEliteSamples:longestEliteRun,
+      densityFloorEligible,
+      densityFloorApplied:multiplier>baseMultiplier+.001,
+      baseMultiplier,
+      multiplier
+    };
   }
 
   function roundTotalsFor(fights){
@@ -135,51 +206,96 @@
     },{won:0,lost:0,drawn:0,missing:[]});
   }
 
+  function weightedRoundTotals(entries){
+    return entries.reduce((totals,entry)=>{
+      const fight=entry.fight;
+      const credit=Number(entry.credit||0);
+      if(fight?.rounds?.status!=='audited'){
+        totals.missing.push({fightId:fight?.id||null,opponent:fight?.opponent||null});
+        return totals;
+      }
+      totals.won+=Number(fight.rounds.won||0)*credit;
+      totals.lost+=Number(fight.rounds.lost||0)*credit;
+      totals.drawn+=Number(fight.rounds.drawn||0)*credit;
+      return totals;
+    },{won:0,lost:0,drawn:0,missing:[]});
+  }
+
   function roundControlRate(totals){
     const counted=Number(totals?.won||0)+Number(totals?.lost||0)+Number(totals?.drawn||0);
     return counted?(Number(totals?.won||0)+(Number(totals?.drawn||0)*.5))/counted:0;
   }
 
-  function eliteValidation(scoredPrimeFights){
-    const fights=scoredPrimeFights.filter(isEliteStageFight);
-    const wins=fights.filter(fight=>fight.scoringDisposition==='count-win');
-    const draws=fights.filter(fight=>fight.scoringDisposition==='count-draw');
-    const count=fights.length;
-    const resultRate=count?(wins.length+(draws.length*.5))/count:0;
-    const rounds=roundTotalsFor(fights);
+  function tournamentValidationEntries(sample){
+    const fights=sample.fights||[];
+    if(fights.length<2){
+      const fight=fights[0];
+      return fight&&opponentIsElite(fight)?[{fight,credit:1,stage:'elite-single-tournament-bout',sampleDate:sample.date}]:[];
+    }
+    const final=fights.at(-1);
+    const semifinal=fights.at(-2);
+    return [
+      {fight:final,credit:1,stage:'tournament-final',sampleDate:sample.date},
+      {fight:semifinal,credit:.5,stage:'tournament-semifinal',sampleDate:sample.date}
+    ];
+  }
+
+  function eliteValidation(scoredPrimeFights,profile){
+    const samples=profile?.samples||effectivePrimeSamples(scoredPrimeFights);
+    const entries=[];
+    samples.forEach(sample=>{
+      if(sample.tournament){
+        entries.push(...tournamentValidationEntries(sample));
+        return;
+      }
+      sample.fights.filter(isEliteStageFight).forEach(fight=>entries.push({fight,credit:1,stage:'standard-elite-stage',sampleDate:sample.date}));
+    });
+    const volumeUnits=entries.reduce((sum,entry)=>sum+Number(entry.credit||0),0);
+    const weightedWins=entries.filter(entry=>entry.fight.scoringDisposition==='count-win').reduce((sum,entry)=>sum+entry.credit,0);
+    const weightedDraws=entries.filter(entry=>entry.fight.scoringDisposition==='count-draw').reduce((sum,entry)=>sum+entry.credit,0);
+    const resultRate=volumeUnits?(weightedWins+(weightedDraws*.5))/volumeUnits:0;
+    const rounds=weightedRoundTotals(entries);
     const roundRate=roundControlRate(rounds);
-    const finishWins=wins.filter(fight=>FINISH_METHODS.has(fight?.method?.category)).length;
-    const finishRate=count?finishWins/count:0;
-    const volume=round2(clamp((count/ELITE_VOLUME_FULL_SAMPLE)*ELITE_VALIDATION_MAX.volume,0,ELITE_VALIDATION_MAX.volume));
+    const finishUnits=entries.filter(entry=>entry.fight.scoringDisposition==='count-win'&&FINISH_METHODS.has(entry.fight?.method?.category)).reduce((sum,entry)=>sum+entry.credit,0);
+    const finishRate=volumeUnits?finishUnits/volumeUnits:0;
+    const volume=round2(clamp((volumeUnits/ELITE_VOLUME_FULL_SAMPLE)*ELITE_VALIDATION_MAX.volume,0,ELITE_VALIDATION_MAX.volume));
     const resultScore=round2(resultRate*ELITE_VALIDATION_MAX.result);
     const roundScore=round2(roundRate*ELITE_VALIDATION_MAX.roundControl);
     const finishScore=round2(finishRate*ELITE_VALIDATION_MAX.finishPressure);
     const performance=round2(clamp(resultScore+roundScore+finishScore,0,ELITE_VALIDATION_MAX.performance));
     const score=round2(clamp(volume+performance,0,COMPONENT_MAX.eliteLevelValidation));
     return {
-      fightCount:count,
-      wins:wins.length,
-      losses:fights.filter(fight=>fight.scoringDisposition==='count-loss').length,
-      draws:draws.length,
+      fightCount:entries.length,
+      eventCount:new Set(entries.map(entry=>entry.sampleDate||entry.fight?.date||entry.fight?.id)).size,
+      volumeUnits:round2(volumeUnits),
+      tournamentEventCount:samples.filter(sample=>sample.tournament).length,
+      wins:entries.filter(entry=>entry.fight.scoringDisposition==='count-win').length,
+      losses:entries.filter(entry=>entry.fight.scoringDisposition==='count-loss').length,
+      draws:entries.filter(entry=>entry.fight.scoringDisposition==='count-draw').length,
+      weightedWins:round2(weightedWins),
+      weightedDraws:round2(weightedDraws),
       resultRate:round2(resultRate*100),
       roundsWon:round2(rounds.won),
       roundsLost:round2(rounds.lost),
       roundsDrawn:round2(rounds.drawn),
       roundControlRate:round2(roundRate*100),
-      finishWins,
+      finishWins:entries.filter(entry=>entry.fight.scoringDisposition==='count-win'&&FINISH_METHODS.has(entry.fight?.method?.category)).length,
+      finishUnits:round2(finishUnits),
       finishRate:round2(finishRate*100),
       missingRoundRows:rounds.missing,
       volumeScore:volume,
       performanceScore:performance,
       performanceBreakdown:{result:resultScore,roundControl:roundScore,finishPressure:finishScore},
       score,
-      fights:fights.map(fight=>({
-        fightId:fight.id,
-        date:fight.date,
-        opponent:fight.opponent,
-        result:fight.scoringDisposition,
-        qualityTier:fight?.opponentContext?.qualityTier||null,
-        championshipType:fight?.championshipContext?.type||'none'
+      fights:entries.map(entry=>({
+        fightId:entry.fight.id,
+        date:entry.fight.date,
+        opponent:entry.fight.opponent,
+        result:entry.fight.scoringDisposition,
+        qualityTier:entry.fight?.opponentContext?.qualityTier||null,
+        championshipType:entry.fight?.championshipContext?.type||'none',
+        validationCredit:entry.credit,
+        validationStage:entry.stage
       }))
     };
   }
@@ -219,7 +335,9 @@
     const finishWins=wins.filter(fight=>FINISH_METHODS.has(fight?.method?.category)).length;
     const stoppageLosses=losses.filter(fight=>FINISH_METHODS.has(fight?.method?.category)).length;
     const finishPressureRate=scoredFightCount?finishWins/scoredFightCount:0;
-    const elite=eliteValidation(scored);
+    const sample=sampleProfile(scored);
+    const elite=eliteValidation(scored,sample);
+    const validationByFight=new Map(elite.fights.map(row=>[row.fightId,row]));
 
     const components={
       primeRecord:round2(recordPct*COMPONENT_MAX.primeRecord),
@@ -228,7 +346,7 @@
       eliteLevelValidation:elite.score
     };
     const rawScore=round2(clamp(Object.values(components).reduce((sum,value)=>sum+Number(value||0),0),0,CATEGORY_MAX));
-    const sampleMultiplier=primeSampleMultiplier(scoredFightCount);
+    const sampleMultiplier=sample.multiplier;
     const score=round2(clamp(rawScore*sampleMultiplier,0,CATEGORY_MAX));
     const factWindow=canonicalFactWindow(record);
     const eraOpen=!era?.window?.end;
@@ -253,6 +371,10 @@
       eraLedgerDrift:eraDrift,
       primeFightCount:primeFights.length,
       scoredFightCount,
+      effectivePrimeSampleCount:sample.effectiveSampleCount,
+      tournamentEventCount:sample.tournamentEventCount,
+      tournamentBoutCount:sample.tournamentBoutCount,
+      compressedTournamentBoutCount:sample.compressedTournamentBoutCount,
       wins:wins.length,
       losses:losses.length,
       draws:draws.length,
@@ -273,24 +395,40 @@
       eliteLevelValidation:elite,
       components,
       rawScore,
+      baseSampleMultiplier:sample.baseMultiplier,
       sampleMultiplier,
       samplePercent:round2(sampleMultiplier*100),
+      longestConsecutiveEliteSamples:sample.longestConsecutiveEliteSamples,
+      eliteDensityFloorEligible:sample.densityFloorEligible,
+      eliteDensityFloorApplied:sample.densityFloorApplied,
       score,
-      primeFights:primeFights.map(fight=>({
-        fightId:fight.id,
-        date:fight.date,
-        opponent:fight.opponent,
-        result:fight.scoringDisposition,
-        method:fight?.method?.category||null,
-        qualityTier:fight?.opponentContext?.qualityTier||null,
-        championshipType:fight?.championshipContext?.type||'none',
-        eliteStage:isEliteStageFight(fight),
-        rounds:fight?.rounds?.status==='audited'?{
-          won:Number(fight.rounds.won||0),
-          lost:Number(fight.rounds.lost||0),
-          drawn:Number(fight.rounds.drawn||0)
-        }:null
-      }))
+      primeSamples:sample.samples.map(row=>({
+        date:row.date,
+        type:row.type,
+        tournament:row.tournament,
+        densityElite:row.densityElite,
+        fightIds:row.fights.map(fight=>fight.id)
+      })),
+      primeFights:primeFights.map(fight=>{
+        const validation=validationByFight.get(fight.id)||null;
+        return {
+          fightId:fight.id,
+          date:fight.date,
+          opponent:fight.opponent,
+          result:fight.scoringDisposition,
+          method:fight?.method?.category||null,
+          qualityTier:fight?.opponentContext?.qualityTier||null,
+          championshipType:fight?.championshipContext?.type||'none',
+          eliteStage:Boolean(validation),
+          eliteValidationCredit:validation?.validationCredit||0,
+          eliteValidationStage:validation?.validationStage||null,
+          rounds:fight?.rounds?.status==='audited'?{
+            won:Number(fight.rounds.won||0),
+            lost:Number(fight.rounds.lost||0),
+            drawn:Number(fight.rounds.drawn||0)
+          }:null
+        };
+      })
     };
   }
 
@@ -346,10 +484,16 @@
       if(legacy&&Number.isFinite(legacyDifference)&&Math.abs(legacyDifference)>.01){
         issues.push({classification:'factual correction',reason:`Shared-era inputs reproduce ${legacyCanonical.toFixed(2)}/30 under the former 8-point elite-stakes formula versus the frozen ${currentScore.toFixed(2)}/30 control (${legacyDifference>0?'+':''}${legacyDifference.toFixed(2)}).`});
       }
+      if(stats.tournamentEventCount){
+        issues.push({classification:'Cody-approved structural rule; shadow only',reason:`Tournament-event compression keeps all ${stats.tournamentBoutCount} scored tournament bouts in record, round-control, and finish calculations but counts them as ${stats.tournamentEventCount} event samples and caps elite validation at 1.5 units per completed multi-bout tournament event.`});
+      }
+      if(stats.eliteDensityFloorApplied){
+        issues.push({classification:'Cody-approved structural rule; shadow only',reason:`Four consecutive non-tournament elite/title-stage prime samples raise the prime-sample multiplier from ${(stats.baseSampleMultiplier*100).toFixed(0)}% to the approved 90% championship-density floor.`});
+      }
       if(Number.isFinite(difference)&&Math.abs(difference)>.01){
         issues.push({
           classification:'Cody-approved model change; shadow only',
-          reason:`The approved 9/9/5/7 Prime Dominance formula produces a ${stats.rawScore.toFixed(2)}/30 raw score, then applies the locked ${stats.samplePercent.toFixed(0)}% prime-sample multiplier for ${stats.scoredFightCount} counted prime fights, resulting in ${stats.score.toFixed(2)}/30 versus the frozen ${currentScore.toFixed(2)}/30 control (${difference>0?'+':''}${difference.toFixed(2)}).`
+          reason:`The approved 9/9/5/7 Prime Dominance formula produces a ${stats.rawScore.toFixed(2)}/30 raw score, then applies the locked ${stats.samplePercent.toFixed(0)}% prime-sample multiplier for ${stats.effectivePrimeSampleCount} effective prime samples (${stats.scoredFightCount} scored bouts), resulting in ${stats.score.toFixed(2)}/30 versus the frozen ${currentScore.toFixed(2)}/30 control (${difference>0?'+':''}${difference.toFixed(2)}).`
         });
       }
 
@@ -361,7 +505,7 @@
         difference,
         legacyCanonicalScore:legacyCanonical,
         legacyDifference,
-        classification:'Cody-approved model formula and sample lock; shadow only',
+        classification:'Cody-approved model formula, tournament compression, and elite-density sample lock; shadow only',
         currentControlSource:'canonical-scoring-records',
         primeWindowSource:'fighter-era-ledgers',
         legacyJudgmentSource:legacy?'prime-dominance-ledgers + prime-dominance-shadow-model':'frozen score only',
@@ -381,7 +525,7 @@
     const meaningful=fighters.filter(row=>Number.isFinite(row.difference)&&Math.abs(row.difference)>=.25);
     const report={
       version:VERSION,
-      status:'shadow-reconstruction-cody-approved-formula-and-sample-lock-not-live',
+      status:'shadow-reconstruction-cody-approved-structural-rules-not-live',
       applied:true,
       mode:'diagnostic-only-no-live-promotion',
       fighterCount:fighters.length,
@@ -392,9 +536,14 @@
       eraLedgerCoverage:fighters.filter(row=>row.stats.windowValid).length,
       eraLedgerDriftCount:fighters.filter(row=>row.stats.eraLedgerDrift).length,
       scoredPrimeFightCount:fighters.reduce((sum,row)=>sum+row.stats.scoredFightCount,0),
+      effectivePrimeSampleCount:fighters.reduce((sum,row)=>sum+row.stats.effectivePrimeSampleCount,0),
+      tournamentEventCount:fighters.reduce((sum,row)=>sum+row.stats.tournamentEventCount,0),
+      compressedTournamentBoutCount:fighters.reduce((sum,row)=>sum+row.stats.compressedTournamentBoutCount,0),
+      eliteDensityFloorAppliedCount:fighters.filter(row=>row.stats.eliteDensityFloorApplied).length,
       primeRoundRowCount:fighters.reduce((sum,row)=>sum+row.stats.primeFights.filter(fight=>fight.result==='count-win'||fight.result==='count-loss'||fight.result==='count-draw').length,0),
       missingPrimeRoundRowCount:fighters.reduce((sum,row)=>sum+row.stats.missingRoundRows.length,0),
       eliteStageFightCount:fighters.reduce((sum,row)=>sum+row.stats.eliteLevelValidation.fightCount,0),
+      eliteValidationVolumeUnits:round2(fighters.reduce((sum,row)=>sum+row.stats.eliteLevelValidation.volumeUnits,0)),
       missingEliteStageRoundRowCount:fighters.reduce((sum,row)=>sum+row.stats.eliteLevelValidation.missingRoundRows.length,0),
       exactFrozenControlParityCount:exact.length,
       meaningfulDeltaCount:meaningful.length,
@@ -404,18 +553,27 @@
       issueCount:fighters.reduce((sum,row)=>sum+row.issues.length,0),
       componentMaxima:COMPONENT_MAX,
       eliteValidationMaxima:ELITE_VALIDATION_MAX,
-      primeSampleRule:{minimum:PRIME_SAMPLE_MIN,stepPerFight:PRIME_SAMPLE_STEP,fullAtFights:PRIME_SAMPLE_FULL_FIGHTS},
+      primeSampleRule:{
+        minimum:PRIME_SAMPLE_MIN,
+        stepPerEffectiveSample:PRIME_SAMPLE_STEP,
+        fullAtEffectiveSamples:PRIME_SAMPLE_FULL_FIGHTS,
+        eliteDensityMinimumConsecutiveSamples:ELITE_DENSITY_MIN_SAMPLES,
+        eliteDensityFloor:ELITE_DENSITY_SAMPLE_FLOOR,
+        tournamentEventsExcludedFromDensityFloor:true
+      },
       sampleDiscountedFighterCount:fighters.filter(row=>row.stats.sampleMultiplier<1).length,
       categoryMax:CATEGORY_MAX,
-      formula:'[Prime Record (9) + Round Control (9) + Finish Pressure (5) + Elite-Level Validation (7)] × Prime Sample Percentage',
+      formula:'[Prime Record (9) + Round Control (9) + Finish Pressure (5) + Elite-Level Validation (7)] × Effective Prime Sample Percentage',
       methodology:{
-        primeRecord:'(prime wins + 0.5 × prime draws) ÷ scored prime fights × 9',
-        roundControl:'(rounds won + 0.5 × drawn rounds) ÷ audited counted prime rounds × 9',
-        finishPressure:'tiered finish wins ÷ scored prime fights, worth 0.5–5 points',
-        eliteStageDefinition:'A counted prime fight is elite-stage when it is a UFC title fight or the opponent is already tagged champion-level/Top-5 in the canonical opponent ledger.',
-        eliteStageVolume:'elite-stage counted prime fights ÷ 8 × 3, capped at 3; result-neutral so elite losses still add validation',
-        eliteStagePerformance:'up to 4 points: elite result rate × 2, elite round-control rate × 1.5, elite finish rate × 0.5',
-        primeSamplePercentage:'70% at one counted prime fight, plus 5 percentage points per additional counted prime fight, capped at 100% from seven fights onward; applied to the full 30-point raw score',
+        primeRecord:'Every counted prime bout remains in (prime wins + 0.5 × prime draws) ÷ scored prime bouts × 9.',
+        roundControl:'Every audited counted prime round remains in (rounds won + 0.5 × drawn rounds) ÷ counted prime rounds × 9.',
+        finishPressure:'Every counted prime bout remains in the tiered finish-wins rate, worth 0.5–5 points.',
+        eliteStageDefinition:'Standard fights qualify when they are UFC title fights or the opponent is already tagged champion-level/Top-5. Tournament opening rounds do not qualify merely because the event used a tournament format.',
+        tournamentEliteValidation:'A completed same-day tournament event contributes at most 1.0 elite-volume unit for the final/deepest bout and 0.5 for the semifinal/preceding bout. Earlier same-day tournament rounds receive no elite-validation volume.',
+        eliteStageVolume:'Credited elite-validation units ÷ 8 × 3, capped at 3; result-neutral so credited elite losses still add validation.',
+        eliteStagePerformance:'Up to 4 points using validation-credit-weighted result rate × 2, round-control rate × 1.5, and finish rate × 0.5.',
+        primeSamplePercentage:'70% at one effective prime sample, plus 5 percentage points per additional effective sample, capped at 100% from seven samples onward. Multiple same-day tournament bouts count as one event sample.',
+        eliteDensityFloor:'At least four consecutive non-tournament elite/title-stage prime samples receive a minimum 90% sample multiplier. Tournament events cannot trigger this floor.',
         primeWindow:'Fighter Era Ledger start/end dates are the sole phase source. Fighter-local category windows are audit comparisons only.'
       },
       controlledOverlap:'Elite-Level Validation uses existing title and opponent-tier tags only to identify the level of the test. Championship and Opponent Quality still own accomplishment and win-quality resume credit.',
