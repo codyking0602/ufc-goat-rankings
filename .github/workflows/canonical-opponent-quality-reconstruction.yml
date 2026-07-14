@@ -10,7 +10,8 @@ on:
       - 'assets/data/opponent-quality-ledgers.js'
       - 'assets/data/canonical-opponent-quality-approved-judgments.js'
       - 'assets/data/canonical-opponent-quality-reconstruction.js'
-      - 'scripts/test-canonical-opponent-quality-reconstruction.mjs'
+      - 'assets/data/canonical-leon-final-category-completions.js'
+      - 'scripts/test-canonical-opponent-quality-full-roster.mjs'
       - '.github/workflows/canonical-opponent-quality-reconstruction.yml'
   workflow_dispatch:
 
@@ -31,9 +32,10 @@ jobs:
           node --check assets/data/canonical-fighter-facts-opponent-quality-corrections.js
           node --check assets/data/canonical-opponent-quality-approved-judgments.js
           node --check assets/data/canonical-opponent-quality-reconstruction.js
-          node --check scripts/test-canonical-opponent-quality-reconstruction.mjs
-      - name: Reconstruct 72-fighter approved Opponent Quality audit
-        run: node scripts/test-canonical-opponent-quality-reconstruction.mjs > /tmp/canonical-opponent-quality-reconstruction.log 2>&1
+          node --check assets/data/canonical-leon-final-category-completions.js
+          node --check scripts/test-canonical-opponent-quality-full-roster.mjs
+      - name: Reconstruct 73-fighter approved Opponent Quality audit
+        run: node scripts/test-canonical-opponent-quality-full-roster.mjs > /tmp/canonical-opponent-quality-reconstruction.log 2>&1
       - name: Upload Opponent Quality reconstruction report
         if: always()
         uses: actions/upload-artifact@v4
