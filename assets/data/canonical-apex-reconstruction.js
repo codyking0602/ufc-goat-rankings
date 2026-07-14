@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-apex-reconstruction-20260714b-null-safe-audit';
+  const VERSION='canonical-apex-reconstruction-20260714c-all-row-surfaces';
   const RULES=Object.freeze({
     window:'Best two UFC wins within 24 months',
     totalMax:6.00,
@@ -19,7 +19,7 @@
   const key=value=>String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/[“”\"]/g,'').replace(/[^a-z0-9' ]+/g,' ').replace(/\s+/g,' ').trim();
   const round2=value=>Math.round((Number(value||0)+Number.EPSILON)*100)/100;
   const validDate=value=>/^\d{4}-\d{2}-\d{2}$/.test(String(value||''));
-  const boardRows=()=>[...(window.RANKING_DATA?.men||[]),...(window.RANKING_DATA?.women||[])].filter(row=>row?.fighter);
+  const allRows=()=>[...(window.RANKING_DATA?.men||[]),...(window.RANKING_DATA?.women||[]),...(window.RANKING_DATA?.fighters||[])].filter(row=>row?.fighter);
 
   const ALIASES=new Map(Object.entries({
     'shogun rua':'mauricio rua',
@@ -57,7 +57,7 @@
 
   function auditFor(fighter){
     const target=key(fighter);
-    const row=boardRows().find(item=>key(item.fighter)===target)||null;
+    const row=allRows().find(item=>key(item.fighter)===target&&item.apexPeakAudit)||null;
     return row?.apexPeakAudit||null;
   }
 
