@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-14T01:28:50.387Z",
+  "generatedAt": "2026-07-14T01:46:53.136Z",
   "baseUrl": "http://127.0.0.1:4173",
   "pipeline": {
     "version": "deterministic-evidence-pipeline-20260713b-stage3",
@@ -51,8 +51,8 @@
     "finalScoreApplyCount": 0,
     "scoreAuthority": "assets/js/scoring-engine.js",
     "scoreApplicationDeferred": true,
-    "startedAt": "2026-07-14T01:28:41.888Z",
-    "completedAt": "2026-07-14T01:28:46.834Z",
+    "startedAt": "2026-07-14T01:46:41.903Z",
+    "completedAt": "2026-07-14T01:46:48.369Z",
     "error": null,
     "canonicalFighterRegistryBase": {
       "applied": true,
@@ -661,7 +661,7 @@
                 "Compact championship window with shallow-division compression.",
                 "UFC-only window."
               ],
-              "appliedAt": "2026-07-14T01:28:45.777Z"
+              "appliedAt": "2026-07-14T01:46:46.923Z"
             },
             "apexPeakAudit": {
               "score": 4.6,
@@ -1448,7 +1448,7 @@
                 "Compact championship window with shallow-division compression.",
                 "UFC-only window."
               ],
-              "appliedAt": "2026-07-14T01:28:45.780Z"
+              "appliedAt": "2026-07-14T01:46:46.929Z"
             },
             "longevityLegacyScore": 7.78,
             "longevityRaw30": 7.78,
@@ -2196,7 +2196,7 @@
                 "Tournament-champion status boost is offset by a major embryonic-era division multiplier.",
                 "UFC-only tournament-era window."
               ],
-              "appliedAt": "2026-07-14T01:28:45.776Z"
+              "appliedAt": "2026-07-14T01:46:46.920Z"
             },
             "apexPeakAudit": {
               "score": 5.4,
@@ -3145,7 +3145,7 @@
                 "Tournament-champion status boost is offset by a major embryonic-era division multiplier.",
                 "UFC-only tournament-era window."
               ],
-              "appliedAt": "2026-07-14T01:28:45.780Z"
+              "appliedAt": "2026-07-14T01:46:46.929Z"
             },
             "longevityLegacyScore": 2.84,
             "longevityRaw30": 2.83,
@@ -3319,7 +3319,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-14T01:28:43.264Z"
+      "appliedAt": "2026-07-14T01:46:43.513Z"
     },
     "lossContextCompletionBatchFour": {
       "version": "loss-context-ledger-completion-batch-four-20260710a-five-highest-missing",
@@ -3375,7 +3375,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-14T01:28:43.275Z"
+      "appliedAt": "2026-07-14T01:46:43.518Z"
     },
     "lossContextCompletionBatchFive": {
       "version": "loss-context-ledger-completion-batch-five-20260710b-chuck-vitor-window",
@@ -3468,7 +3468,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-14T01:28:43.282Z"
+      "appliedAt": "2026-07-14T01:46:43.528Z"
     },
     "lossContextCompletionBatchSix": {
       "version": "loss-context-ledger-completion-batch-six-20260710a-first-half-eighteen",
@@ -3656,7 +3656,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-14T01:28:43.286Z"
+      "appliedAt": "2026-07-14T01:46:43.531Z"
     },
     "lossContextCompletionBatchSeven": {
       "version": "loss-context-ledger-completion-batch-seven-20260710a-final-seventeen",
@@ -3815,7 +3815,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-14T01:28:43.291Z"
+      "appliedAt": "2026-07-14T01:46:43.536Z"
     },
     "approvedFighterAuditCorrections": {
       "version": "approved-fighter-audit-corrections-20260713e-no-score-finalize",
@@ -3861,7 +3861,7 @@
         "Jessica Andrade"
       ],
       "masvidalCreditsChanged": false,
-      "appliedAt": "2026-07-14T01:28:43.300Z"
+      "appliedAt": "2026-07-14T01:46:43.541Z"
     },
     "lossContextCanonicalProduction": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -35515,7 +35515,7 @@
         ],
         "mode": "canonical-production",
         "mutatesScores": true,
-        "appliedAt": "2026-07-14T01:28:43.318Z"
+        "appliedAt": "2026-07-14T01:46:43.565Z"
       },
       "mismatchAudit": {
         "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -57398,7 +57398,7 @@
         "missingEraLossEntries": [],
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "appliedAt": "2026-07-14T01:28:43.318Z"
+        "appliedAt": "2026-07-14T01:46:43.565Z"
       },
       "scoreReview": {
         "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -59625,7 +59625,7 @@
         "mutatesPenalty": true,
         "mutatesScores": true,
         "finalScoreRecalculationOwner": "final-score-engine.js",
-        "appliedAt": "2026-07-14T01:28:43.318Z"
+        "appliedAt": "2026-07-14T01:46:43.565Z"
       },
       "appliedCompletionFixes": [
         "Robert Whittaker",
@@ -59685,7 +59685,7 @@
       ],
       "mutatesPenalty": true,
       "mutatesScores": true,
-      "appliedAt": "2026-07-14T01:28:43.318Z"
+      "appliedAt": "2026-07-14T01:46:43.565Z"
     },
     "lossContextScoreReview": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -61912,7 +61912,7 @@
       "mutatesPenalty": true,
       "mutatesScores": true,
       "finalScoreRecalculationOwner": "final-score-engine.js",
-      "appliedAt": "2026-07-14T01:28:43.318Z"
+      "appliedAt": "2026-07-14T01:46:43.565Z"
     },
     "lossContextMismatchAudit": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -83795,7 +83795,7 @@
       "missingEraLossEntries": [],
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-14T01:28:43.318Z"
+      "appliedAt": "2026-07-14T01:46:43.565Z"
     },
     "lossContextDynamicRosterTarget": {
       "version": "loss-context-dynamic-roster-target-20260710a",
@@ -83803,15 +83803,7 @@
       "expectedRosterCount": 72,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-14T01:28:43.898Z"
-    },
-    "opponentQualityReadyDetail": {
-      "version": "opponent-quality-live-20260710c-fixed-benchmark",
-      "fighters": 72,
-      "benchmarkCredit": 14.1,
-      "sourceBenchmarkCredit": 14.1,
-      "benchmarkMode": "locked-constant",
-      "futureRosterStable": true
+      "appliedAt": "2026-07-14T01:46:43.570Z"
     },
     "canonicalLongevityRecalculation": {
       "version": "longevity-canonical-recalculation-20260712a-couture-status-calibration",
@@ -83996,7 +83988,15 @@
       "calibratesRandyStatusMultiplier": true,
       "mutatesEraLongevityInputs": true,
       "mutatesScores": false,
-      "appliedAt": "2026-07-14T01:28:44.463Z"
+      "appliedAt": "2026-07-14T01:46:44.342Z"
+    },
+    "opponentQualityReadyDetail": {
+      "version": "opponent-quality-live-20260710c-fixed-benchmark",
+      "fighters": 72,
+      "benchmarkCredit": 14.1,
+      "sourceBenchmarkCredit": 14.1,
+      "benchmarkMode": "locked-constant",
+      "futureRosterStable": true
     },
     "canonicalPrimeRecords": {
       "version": "canonical-prime-records-20260713b-mirror-sync",
@@ -86266,7 +86266,7 @@
       "mutatesPrimeRecordDisplay": true,
       "normalizedRosterKeys": true,
       "mirrorsSynchronized": true,
-      "appliedAt": "2026-07-14T01:28:44.491Z"
+      "appliedAt": "2026-07-14T01:46:45.128Z"
     },
     "approvedOpponentQualityCorrection": {
       "applied": true,
@@ -87204,7 +87204,7 @@
       ],
       "masvidalCreditsChanged": false,
       "version": "approved-fighter-audit-corrections-20260713e-no-score-finalize",
-      "appliedAt": "2026-07-14T01:28:44.492Z"
+      "appliedAt": "2026-07-14T01:46:45.130Z"
     },
     "canonicalFighterRegistryOpponentQuality": {
       "applied": true,
@@ -87644,7 +87644,7 @@
           "version": "prime-dominance-audit-batch-eleven-20260712a-hughes-calibration"
         }
       },
-      "appliedAt": "2026-07-14T01:28:45.126Z"
+      "appliedAt": "2026-07-14T01:46:46.039Z"
     },
     "canonicalFighterRegistryPrime": {
       "applied": true,
@@ -92824,7 +92824,7 @@
       "mutatesEliteStakes": false,
       "mutatesTotals": false,
       "finalScoreRecalculationOwner": "final-score-engine.js",
-      "appliedAt": "2026-07-14T01:28:45.134Z"
+      "appliedAt": "2026-07-14T01:46:46.047Z"
     },
     "fighterEraWindowAudit": {
       "version": "fighter-era-window-audit-20260710b-record-dependencies",
@@ -97546,7 +97546,7 @@
       "allCanonicalPrimeRecordsPresent": false,
       "mutatesScores": false,
       "mutatesWindows": false,
-      "appliedAt": "2026-07-14T01:28:46.104Z"
+      "appliedAt": "2026-07-14T01:46:47.376Z"
     },
     "canonicalFighterRegistryApex": {
       "applied": true,
@@ -97729,7 +97729,7 @@
         "mutatesRecords": true,
         "mutatesPenalty": false,
         "mutatesScores": false,
-        "appliedAt": "2026-07-14T01:28:43.318Z",
+        "appliedAt": "2026-07-14T01:46:43.565Z",
         "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
       },
       "scoreReview": {
@@ -98492,7 +98492,7 @@
       ],
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "generatedAt": "2026-07-14T01:28:46.469Z",
+      "generatedAt": "2026-07-14T01:46:47.871Z",
       "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
     },
     "canonicalFighterRegistryFinal": {
@@ -99102,7 +99102,7 @@
                 "Compact championship window with shallow-division compression.",
                 "UFC-only window."
               ],
-              "appliedAt": "2026-07-14T01:28:45.777Z"
+              "appliedAt": "2026-07-14T01:46:46.923Z"
             },
             "apexPeakAudit": {
               "score": 4.6,
@@ -99889,7 +99889,7 @@
                 "Compact championship window with shallow-division compression.",
                 "UFC-only window."
               ],
-              "appliedAt": "2026-07-14T01:28:45.780Z"
+              "appliedAt": "2026-07-14T01:46:46.929Z"
             },
             "longevityLegacyScore": 7.78,
             "longevityRaw30": 7.78,
@@ -100642,7 +100642,7 @@
                 "Tournament-champion status boost is offset by a major embryonic-era division multiplier.",
                 "UFC-only tournament-era window."
               ],
-              "appliedAt": "2026-07-14T01:28:45.776Z"
+              "appliedAt": "2026-07-14T01:46:46.920Z"
             },
             "apexPeakAudit": {
               "score": 5.4,
@@ -101591,7 +101591,7 @@
                 "Tournament-champion status boost is offset by a major embryonic-era division multiplier.",
                 "UFC-only tournament-era window."
               ],
-              "appliedAt": "2026-07-14T01:28:45.780Z"
+              "appliedAt": "2026-07-14T01:46:46.929Z"
             },
             "longevityLegacyScore": 2.84,
             "longevityRaw30": 2.83,
@@ -108848,7 +108848,7 @@
     "mutatesRanks": false,
     "mutatesOvr": false,
     "scoreAuthority": "assets/js/scoring-engine.js",
-    "appliedAt": "2026-07-14T01:28:44.479Z",
+    "appliedAt": "2026-07-14T01:46:45.110Z",
     "authoritativeScoreOwner": "scoring-engine.js",
     "runtimeRole": "evidence-and-detail-provider",
     "authoritativeScoreWrites": false,
@@ -108859,8 +108859,8 @@
     "version": "scoring-ownership-finalizer-20260713f-no-legacy-repair",
     "applied": true,
     "status": "clean",
-    "attemptCount": 20,
-    "elapsedMs": 7204,
+    "attemptCount": 23,
+    "elapsedMs": 9667,
     "minimumSettleMs": 2000,
     "settled": true,
     "mode": "single-authority-copy-boundary-no-legacy-repair",
@@ -108962,7 +108962,7 @@
           "overallOvr": 90
         }
       ],
-      "appliedAt": "2026-07-14T01:28:46.849Z"
+      "appliedAt": "2026-07-14T01:46:48.388Z"
     },
     "engineParity": {
       "missingCanonical": [],
@@ -108992,7 +108992,7 @@
       "division-era-depth-finalizer",
       "legacy-final-score-engine"
     ],
-    "appliedAt": "2026-07-14T01:28:49.098Z"
+    "appliedAt": "2026-07-14T01:46:51.577Z"
   },
   "engine": {
     "version": "scoring-engine-20260713c-finalizer-only",
@@ -109043,7 +109043,7 @@
       {
         "reason": "stage3-scoring-ownership-finalizer",
         "accepted": true,
-        "at": "2026-07-14T01:28:46.844Z"
+        "at": "2026-07-14T01:46:48.382Z"
       }
     ],
     "latest": {
@@ -109125,7 +109125,7 @@
           "overallOvr": 90
         }
       ],
-      "appliedAt": "2026-07-14T01:28:46.849Z"
+      "appliedAt": "2026-07-14T01:46:48.388Z"
     }
   },
   "consistency": {
