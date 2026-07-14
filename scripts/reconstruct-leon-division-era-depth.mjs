@@ -22,7 +22,7 @@ const ALIASES=new Map([
   ['Mauricio "Shogun" Rua','Mauricio Rua']
 ]);
 const RESTORE=new Map([...ALIASES].map(([canonical,source])=>[source,canonical]));
-const FACT_FILES=[
+const CONTEXT_FILES=[
   'assets/data/ranking-data.js',
   'assets/data/canonical-fighter-facts.js',
   'assets/data/canonical-fighter-facts-batch-one.js',
@@ -42,7 +42,10 @@ const FACT_FILES=[
   'assets/data/canonical-fighter-facts-batch-nine-data-c.js',
   'assets/data/canonical-fighter-facts-batch-nine.js',
   'assets/data/canonical-fighter-facts-approved-corrections.js',
-  'assets/data/canonical-fighter-facts-opponent-quality-corrections.js'
+  'assets/data/canonical-fighter-facts-opponent-quality-corrections.js',
+  'assets/data/fighter-era-ledgers.js',
+  'assets/data/fighter-era-ledger-approved-longevity-resolutions.js',
+  'assets/data/fighter-era-ledger-approved-loss-context-resolutions.js'
 ];
 
 const round=(value,digits=4)=>{const factor=10**digits;return Math.round((Number(value||0)+Number.EPSILON)*factor)/factor;};
@@ -59,13 +62,13 @@ function curvedAdjustment(depthIndex){
   return round(Math.min(.75,Math.max(-3,value)),2);
 }
 
-async function loadCanonicalFacts(){
+async function loadCanonicalContext(){
   class CustomEvent{constructor(type,options={}){this.type=type;this.detail=options.detail;}}
   const document={documentElement:{setAttribute(){}},querySelector(){return null;},querySelectorAll(){return[];}};
   const window={dispatchEvent(){return true;}};
   const context=vm.createContext({window,document,CustomEvent,console,Date,JSON,Map,Set,Object,Array,Number,String,Math,RegExp,Error,Boolean,Promise});
-  for(const relative of FACT_FILES)vm.runInContext(await fs.readFile(path.join(ROOT,relative),'utf8'),context,{filename:relative});
-  return context.window.UFC_CANONICAL_FIGHTER_FACTS;
+  for(const relative of CONTEXT_FILES)vm.runInContext(await fs.readFile(path.join(ROOT,relative),'utf8'),context,{filename:relative});
+  return {facts:context.window.UFC_CANONICAL_FIGHTER_FACTS,eras:context.window.UFC_FIGHTER_ERA_LEDGERS};
 }
 
 async function loadShadow(){
@@ -94,13 +97,17 @@ function runGenerator(sourceUrl){
 }
 
 async function main(){
-  const facts=await loadCanonicalFacts();
+  const {facts,eras}=await loadCanonicalContext();
   const leon=facts?.get?.('Leon Edwards');
+  const leonEra=eras?.entryFor?.('Leon Edwards')||eras?.ledgers?.['Leon Edwards']||null;
   assert.ok(leon,'Leon Edwards canonical record is required.');
-  const startFight=leon.fights.find(fight=>fight.id===leon.primeWindow.startFightId);
-  const endFight=leon.primeWindow.open?null:leon.fights.find(fight=>fight.id===leon.primeWindow.endFightId);
-  assert.ok(startFight?.date,'Leon prime start fight/date is required.');
-  if(!leon.primeWindow.open)assert.ok(endFight?.date,'Leon closed prime end fight/date is required.');
+  assert.ok(leonEra?.window?.start&&leonEra?.window?.end,'Leon Edwards approved shared Era Ledger window is required.');
+  assert.equal(leonEra.window.start,'2019-07-20');
+  assert.equal(leonEra.window.end,'2025-03-22');
+  const startFight=leon.fights.find(fight=>fight.date===leonEra.window.start&&key(fight.opponent)===key(leonEra.window.startLabel));
+  const endFight=leon.fights.find(fight=>fight.date===leonEra.window.end&&key(fight.opponent)===key(leonEra.window.endLabel));
+  assert.ok(startFight,'Leon shared era start must match the canonical RDA fight.');
+  assert.ok(endFight,'Leon shared era end must match the canonical Sean Brady fight.');
 
   const originalFeedText=await fs.readFile(FEED_PATH,'utf8');
   const originalShadowText=await fs.readFile(SHADOW_PATH,'utf8');
@@ -118,8 +125,8 @@ async function main(){
     appOvr:0,
     totalScore:0,
     division:divisionCode(leon.identity?.primaryDivision)||'WW',
-    primeWindowDetail:{start:startFight.date,end:endFight?.date||null},
-    primeWindow:`${startFight.date} → ${endFight?.date||'Open'}`
+    primeWindowDetail:{start:leonEra.window.start,end:leonEra.window.end},
+    primeWindow:`${leonEra.window.start} → ${leonEra.window.end}`
   });
 
   const built=await buildCurrentDepthCsv({modelDate:MODEL_DATE});
@@ -152,13 +159,15 @@ async function main(){
     const leonRow=generatedMap.get(key('Leon Edwards'));
     assert.ok(leonRow,'Generator must produce Leon Edwards.');
     const output={
-      version:'leon-division-era-depth-reconstruction-20260714a',
+      version:'leon-division-era-depth-reconstruction-20260714b-shared-era-window',
       classification:'factual-completion',
       shadowOnly:true,
+      phaseSource:'fighter-era-ledgers',
       source:built.metadata,
       frozenShadowVersion:existingShadow.version,
       parity:{checked:69,excludedWfw:[...WFW_SAFE],mismatchCount:0},
-      canonicalPrime:{startFightId:leon.primeWindow.startFightId,startDate:startFight.date,endFightId:leon.primeWindow.endFightId||null,endDate:endFight?.date||null,open:Boolean(leon.primeWindow.open),primaryDivision:leon.identity?.primaryDivision||null},
+      sharedEra:{startFightId:startFight.id,startDate:leonEra.window.start,endFightId:endFight.id,endDate:leonEra.window.end,open:false,startLabel:leonEra.window.startLabel,endLabel:leonEra.window.endLabel,endType:leonEra.window.endType,primaryDivision:leon.identity?.primaryDivision||null},
+      fighterLocalPrime:{startFightId:leon.primeWindow.startFightId,endFightId:leon.primeWindow.endFightId||null,open:Boolean(leon.primeWindow.open),controlsScore:false},
       leon:{
         fighter:'Leon Edwards',
         group:leonRow.group,
