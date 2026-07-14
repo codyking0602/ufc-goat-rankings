@@ -20,6 +20,10 @@ on:
       - 'assets/data/canonical-fighter-facts-batch-eight-data-a.js'
       - 'assets/data/canonical-fighter-facts-batch-eight-data-b.js'
       - 'assets/data/canonical-fighter-facts-batch-eight.js'
+      - 'assets/data/canonical-fighter-facts-batch-nine-data-a.js'
+      - 'assets/data/canonical-fighter-facts-batch-nine-data-b.js'
+      - 'assets/data/canonical-fighter-facts-batch-nine-data-c.js'
+      - 'assets/data/canonical-fighter-facts-batch-nine.js'
       - 'assets/data/canonical-scoring-records.js'
       - 'assets/data/ranking-data-patches.js'
       - 'assets/data/fighter-packets/**'
@@ -34,6 +38,7 @@ on:
       - 'scripts/test-canonical-fighter-facts-ten-person-batch-six.mjs'
       - 'scripts/test-canonical-fighter-facts-ten-person-batch-seven.mjs'
       - 'scripts/test-canonical-fighter-facts-ten-person-batch-eight.mjs'
+      - 'scripts/test-canonical-fighter-facts-fifteen-woman-batch-nine.mjs'
       - 'scripts/capture-fighter-data-ownership-baseline.mjs'
       - '.github/workflows/fighter-data-ownership-baseline.yml'
   workflow_dispatch:
@@ -73,6 +78,10 @@ jobs:
           node --check assets/data/canonical-fighter-facts-batch-eight-data-a.js
           node --check assets/data/canonical-fighter-facts-batch-eight-data-b.js
           node --check assets/data/canonical-fighter-facts-batch-eight.js
+          node --check assets/data/canonical-fighter-facts-batch-nine-data-a.js
+          node --check assets/data/canonical-fighter-facts-batch-nine-data-b.js
+          node --check assets/data/canonical-fighter-facts-batch-nine-data-c.js
+          node --check assets/data/canonical-fighter-facts-batch-nine.js
           node --check assets/data/ranking-data-patches.js
           node --check assets/js/fighter-data-ownership-audit.js
           node --check scripts/test-canonical-fighter-facts.mjs
@@ -84,6 +93,7 @@ jobs:
           node --check scripts/test-canonical-fighter-facts-ten-person-batch-six.mjs
           node --check scripts/test-canonical-fighter-facts-ten-person-batch-seven.mjs
           node --check scripts/test-canonical-fighter-facts-ten-person-batch-eight.mjs
+          node --check scripts/test-canonical-fighter-facts-fifteen-woman-batch-nine.mjs
           node --check scripts/capture-fighter-data-ownership-baseline.mjs
 
       - name: Enforce canonical fighter ledger contract
@@ -112,6 +122,9 @@ jobs:
 
       - name: Verify ten-fighter canonical ledger batch eight
         run: node scripts/test-canonical-fighter-facts-ten-person-batch-eight.mjs
+
+      - name: Verify fifteen-woman canonical ledger batch nine
+        run: node scripts/test-canonical-fighter-facts-fifteen-woman-batch-nine.mjs
 
       - name: Install browser audit dependencies
         run: |

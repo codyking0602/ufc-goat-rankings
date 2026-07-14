@@ -1,7 +1,7 @@
 // Lightweight prerequisite/data loader with an explicit readiness handoff.
 (function(){
   'use strict';
-  const VERSION='ranking-data-patches-20260713ag-canonical-fifty-eight-fighters';
+  const VERSION='ranking-data-patches-20260713ah-canonical-seventy-three-fighters';
   let readyResolved=false;
   let resolveReady;
   const readyPromise=new Promise(resolve=>{resolveReady=resolve;});
@@ -39,6 +39,7 @@
       canonicalFighterFactsBatchSix:window.UFC_CANONICAL_FIGHTER_FACTS_BATCH_SIX||null,
       canonicalFighterFactsBatchSeven:window.UFC_CANONICAL_FIGHTER_FACTS_BATCH_SEVEN||null,
       canonicalFighterFactsBatchEight:window.UFC_CANONICAL_FIGHTER_FACTS_BATCH_EIGHT||null,
+      canonicalFighterFactsBatchNine:window.UFC_CANONICAL_FIGHTER_FACTS_BATCH_NINE||null,
       primeWindows:window.UFC_PRIME_WINDOWS||null,primeDominanceShadow:window.UFC_PRIME_DOMINANCE_SHADOW_MODEL||null,primeDominanceLive:window.UFC_PRIME_DOMINANCE_LIVE_PROMOTER||null,primeDominanceLegacyCorrections:window.UFC_PRIME_DOMINANCE_SCORE_CORRECTIONS||null,
       fighterEraLedgers:window.UFC_FIGHTER_ERA_LEDGERS||null,fighterEraLedgerCleanups:window.UFC_FIGHTER_ERA_LEDGER_CLEANUPS||null,fighterEraLedgerCleanupsFinal:window.UFC_FIGHTER_ERA_LEDGER_CLEANUPS_FINAL||null,fighterEraWindowLock:window.UFC_FIGHTER_ERA_WINDOW_LOCK||null,fighterEraWindowAudit:window.UFC_FIGHTER_ERA_WINDOW_AUDIT||null,
       lossContextCompletionBatchOne:window.UFC_LOSS_CONTEXT_LEDGER_COMPLETION_BATCH_ONE||null,lossContextCompletionBatchTwo:window.UFC_LOSS_CONTEXT_LEDGER_COMPLETION_BATCH_TWO||null,lossContextCanonicalProduction:window.UFC_LOSS_CONTEXT_CANONICAL_PRODUCTION||null,
@@ -67,6 +68,10 @@
     {src:'assets/data/canonical-fighter-facts-batch-eight-data-a.js?v=canonical-fighter-facts-batch-eight-data-a-20260713a',attr:'data-canonical-fighter-facts-batch-eight-data-a'},
     {src:'assets/data/canonical-fighter-facts-batch-eight-data-b.js?v=canonical-fighter-facts-batch-eight-data-b-20260713a',attr:'data-canonical-fighter-facts-batch-eight-data-b'},
     {src:'assets/data/canonical-fighter-facts-batch-eight.js?v=canonical-fighter-facts-batch-eight-20260713a-ten-fighters-176',attr:'data-canonical-fighter-facts-batch-eight'},
+    {src:'assets/data/canonical-fighter-facts-batch-nine-data-a.js?v=canonical-fighter-facts-batch-nine-data-a-20260713a',attr:'data-canonical-fighter-facts-batch-nine-data-a'},
+    {src:'assets/data/canonical-fighter-facts-batch-nine-data-b.js?v=canonical-fighter-facts-batch-nine-data-b-20260713a',attr:'data-canonical-fighter-facts-batch-nine-data-b'},
+    {src:'assets/data/canonical-fighter-facts-batch-nine-data-c.js?v=canonical-fighter-facts-batch-nine-data-c-20260713a',attr:'data-canonical-fighter-facts-batch-nine-data-c'},
+    {src:'assets/data/canonical-fighter-facts-batch-nine.js?v=canonical-fighter-facts-batch-nine-20260713a-fifteen-women-220',attr:'data-canonical-fighter-facts-batch-nine'},
     {src:'assets/js/refresh-safety.js?v=refresh-safety-20260710b-optional-container-errors',attr:'data-refresh-safety'},
     {src:'assets/data/ranking-data-additions.js?v=ranking-data-additions-20260706e-lyoto-machida',attr:'data-ranking-data-additions'},
     {src:'assets/data/fighter-packet-schema.js?v=fighter-packet-schema-20260703a',attr:'data-fighter-packet-schema'},
