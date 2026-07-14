@@ -158,11 +158,10 @@
     });
     const summary = document.getElementById('categoryLeaderSummary');
     const activeApex = document.querySelector('[data-category-leader="apexPeak"].active');
-    if(summary && activeApex && summary.dataset.apexCopyVersion !== VERSION){
+    if(summary && activeApex && !/Best two UFC performances within a two-year window/i.test(summary.textContent)){
       const strong = summary.querySelector('strong')?.outerHTML || '<strong>Apex Peak</strong>';
       const countMatch = summary.textContent.match(/Showing\s+\d+\s+fighters\.?/i);
       summary.innerHTML = `${strong}<br>Best two UFC performances within a two-year window — who looked most unbeatable at their absolute best. ${countMatch?.[0] || ''}`;
-      summary.dataset.apexCopyVersion = VERSION;
     }
   }
 
