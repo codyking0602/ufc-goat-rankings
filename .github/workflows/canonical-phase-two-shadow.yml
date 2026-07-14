@@ -39,15 +39,52 @@ jobs:
         run: node scripts/test-canonical-phase-two-shadow.mjs > /tmp/canonical-phase-two-shadow.log 2>&1
       - name: Enforce UFC-only ranking-shape locks
         run: node scripts/test-canonical-phase-two-shape-lock.mjs >> /tmp/canonical-phase-two-shadow.log 2>&1
-      - name: Append ranking-shape review
+      - name: Append full ranking review
         run: |
           node - <<'NODE' >> /tmp/canonical-phase-two-shadow.log
           const fs=require('node:fs');
           const report=JSON.parse(fs.readFileSync('docs/canonical-phase-two-shadow.json','utf8'));
-          const names=['Jon Jones','Georges St-Pierre','Demetrious Johnson','Anderson Silva','Islam Makhachev','Khabib Nurmagomedov','Alexander Volkanovski','Jose Aldo','Max Holloway','Kamaru Usman','Matt Hughes','Randy Couture','Chuck Liddell','Frank Shamrock','Charles Oliveira','Ilia Topuria'];
-          const rows=[...report.boards.men,...report.boards.women];
-          console.log('PHASE_TWO_RANKING_SHAPE_REVIEW');
-          console.log(JSON.stringify(names.map(name=>{const row=rows.find(item=>item.fighter===name);return row?{fighter:name,rank:row.rank,totalScore:row.totalScore,overallOvr:row.overallOvr,categories:row.categories,apexPeak:row.apexPeak,penalty:row.loss.penalty,rawPenalty:row.loss.rawPenalty,eraDepthAdjustment:row.eraDepthAdjustment,upwardEliteLossCount:row.prime.upwardEliteLossCount,topFiveWins:row.profileStats.topFiveWins,titleFightWins:row.profileStats.titleFightWins,primeRecord:row.profileStats.primeRecord,activeEliteYears:row.profileStats.activeEliteYears}:null;}),null,2));
+          const compact=row=>({
+            rank:row.rank,
+            fighter:row.fighter,
+            totalScore:row.totalScore,
+            overallOvr:row.overallOvr,
+            championship:row.categories.championship,
+            opponentQuality:row.categories.opponentQuality,
+            primeDominance:row.categories.primeDominance,
+            longevity:row.categories.longevity,
+            apexPeak:row.apexPeak,
+            penalty:row.loss.penalty,
+            rawPenalty:row.loss.rawPenalty,
+            eraDepthAdjustment:row.eraDepthAdjustment,
+            topFiveWins:row.profileStats.topFiveWins,
+            titleFightWins:row.profileStats.titleFightWins,
+            primeRecord:row.profileStats.primeRecord,
+            activeEliteYears:row.profileStats.activeEliteYears,
+            roundsWonPct:row.profileStats.roundsWonPct,
+            finishRatePct:row.profileStats.finishRatePct
+          });
+          const all=[...report.boards.men,...report.boards.women];
+          console.log('PHASE_TWO_FULL_MEN_BOARD');
+          console.log(JSON.stringify(report.boards.men.map(compact),null,2));
+          console.log('PHASE_TWO_FULL_WOMEN_BOARD');
+          console.log(JSON.stringify(report.boards.women.map(compact),null,2));
+          const flags=[];
+          all.forEach(row=>{
+            const reasons=[];
+            if(row.categories.championship>=29.5)reasons.push('championship-cap');
+            if(row.categories.opponentQuality>=29.5)reasons.push('opponent-quality-cap');
+            if(row.categories.primeDominance>=29.5)reasons.push('prime-cap');
+            if(row.categories.longevity>=29.5)reasons.push('longevity-cap');
+            if(row.apexPeak>=5.95)reasons.push('apex-cap');
+            if(row.loss.rawPenalty<=-10&&row.loss.penalty>-4)reasons.push('heavy-raw-loss-burden-compressed');
+            if(Number(row.profileStats.topFiveWins||0)<=2&&row.rank<=25)reasons.push('top-25-with-two-or-fewer-top-five-wins');
+            if(Number(row.profileStats.titleFightWins||0)<=1&&row.rank<=20)reasons.push('top-20-with-one-or-fewer-title-wins');
+            if(Number(row.prime?.scoredFights||0)<=5&&row.rank<=25)reasons.push('top-25-small-prime-sample');
+            if(reasons.length)flags.push({...compact(row),reasons});
+          });
+          console.log('PHASE_TWO_MODEL_REVIEW_FLAGS');
+          console.log(JSON.stringify(flags,null,2));
           NODE
       - name: Upload Phase 2 shadow report
         if: always()
