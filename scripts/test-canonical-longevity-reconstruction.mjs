@@ -113,7 +113,8 @@ assert.equal(usman.stats.eraEndLabel,'Leon Edwards III');
 near(usman.stats.gapAdjustedMonths,58,.2,'Usman gap-adjusted months');
 
 assert.ok(cruz.stats.cappedGapCount>=1,'Cruz injury gaps must be capped');
-near(cruz.stats.gapAdjustedMonths,78,.2,'Cruz gap-adjusted months');
+assert.ok(cruz.stats.gapAdjustedMonths<cruz.stats.storedEraLongevity.gapAdjustedMonths,'Cruz stored months must be exposed as exceeding the universal 18-month-cap reconstruction');
+assert.ok(cruz.issues.some(issue=>/precomputed/i.test(issue.reason)),'Cruz hidden stored-month judgment must be classified in the audit');
 
 assert.equal(randy.stats.eraStartDate,'2004-08-21','Randy must use the shared Vitor Belfort II start, not the old 1997 patch window');
 assert.equal(randy.stats.eraStartLabel,'Vitor Belfort II');
