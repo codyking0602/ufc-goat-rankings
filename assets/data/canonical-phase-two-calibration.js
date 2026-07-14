@@ -4,7 +4,7 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-phase-two-calibration-20260714d-full-board-review';
+  const VERSION='canonical-phase-two-calibration-20260714e-reviewed-apex-confidence';
   const WEIGHTS={championship:30,opponentQuality:24,primeDominance:30,longevity:16};
   const CATEGORY_MAX=30;
   const PERFECT_PRIME_APEX_BONUS=1.95;
@@ -119,7 +119,8 @@
     const championshipRunBonus=perfectPrime&&Number(row?.championship?.primeTitleFightWins||0)>=3?.25:0;
     const finishAuraBonus=finishPressure>=.65?.20:0;
     const secondDivisionBonus=crossDivisionApexBonus(record);
-    const apexPeak=round2(clamp(((apexIndex*6)+(perfectPrime?PERFECT_PRIME_APEX_BONUS:0)+championshipRunBonus+finishAuraBonus+secondDivisionBonus)*apexSampleConfidence,0,6));
+    const rawApexPeak=(apexIndex*6)+(perfectPrime?PERFECT_PRIME_APEX_BONUS:0)+championshipRunBonus+finishAuraBonus+secondDivisionBonus;
+    const apexPeak=round2(clamp(rawApexPeak,0,6)*apexSampleConfidence);
 
     return {
       ...row.prime,
@@ -131,6 +132,7 @@
       adjustedDurability:round2(durability),
       upwardEliteLossCount,
       secondDivisionApexBonus:secondDivisionBonus,
+      rawApexPeak:round2(rawApexPeak),
       sampleFightStrength:confidence.fightStrength,
       sampleYearStrength:confidence.yearStrength,
       resumeSampleStrength:confidence.resumeStrength,
@@ -241,7 +243,7 @@
         perfectPrimeApexBonus:PERFECT_PRIME_APEX_BONUS,
         upwardElitePrimeWeight:UPWARD_ELITE_PRIME_WEIGHT,
         secondDivisionApexBonus:{undisputed:.50,vacant:.30},
-        sampleConfidence:{fightTarget:8,eliteYearTarget:4,fightWeight:.65,eliteYearWeight:.35,openPrimeFloor:.82,closedPrimeFloor:.75},
+        sampleConfidence:{fightTarget:8,eliteYearTarget:4,fightWeight:.65,eliteYearWeight:.35,openPrimeFloor:.82,closedPrimeFloor:.75,apexAppliedAfterCap:true},
         overallOvrCurve:OVR.curve,
         eraDepthAdjustment:'approved curved Division-Era Depth evidence, hidden from the profile card'
       },
