@@ -93,6 +93,7 @@ for(const snapshotRow of runtimeSnapshot.fighters){
 }
 await load('assets/data/canonical-apex-reconstruction.js');
 for(const file of eraDepth)await load(file);
+await load('assets/data/canonical-leon-final-category-completions.js');
 
 const liveBefore=JSON.stringify(context.window.RANKING_DATA);
 await load('assets/data/canonical-final-score-reconstruction.js');
@@ -100,9 +101,9 @@ const report=context.window.UFC_CANONICAL_FINAL_SCORE_RECONSTRUCTION;
 
 assert.equal(report?.applied,true,'Final-score reconstruction should calculate');
 assert.equal(report.fighterCount,73);
-assert.equal(report.completeCategoryInputCount,72);
-assert.equal(report.blockedFighterCount,1);
-assert.deepEqual(JSON.parse(JSON.stringify(report.blockedFighters)),[{fighter:'Leon Edwards',missingInputs:['championship','opponentQuality','primeDominance']}]);
+assert.equal(report.completeCategoryInputCount,73);
+assert.equal(report.blockedFighterCount,0);
+assert.deepEqual(JSON.parse(JSON.stringify(report.blockedFighters)),[]);
 assert.equal(report.frozenFormulaControlCount,72);
 assert.equal(report.frozenFormulaMismatchCount,0,'The frozen total must be reproduced by the historical 35/27.5/27.5/10 formula plus Apex, Loss Penalty, and Era Depth');
 assert.equal(report.frozenFormulaParityCount,72);
@@ -117,21 +118,27 @@ assert.equal(report.mutatesRanks,false);
 assert.equal(report.mutatesOvr,false);
 
 for(const candidate of Object.values(report.candidateReports)){
-  assert.equal(candidate.completeFighterCount,72);
-  assert.equal(candidate.blockedFighterCount,1);
+  assert.equal(candidate.completeFighterCount,73);
+  assert.equal(candidate.blockedFighterCount,0);
   assert.equal(candidate.controlledComparisonCount,72);
   assert.equal(candidate.menTopFifteen.length,15);
   assert.ok(candidate.womenTopTen.length>=4);
 }
 
 const leon=report.entryFor('Leon Edwards');
+assert.equal(leon.status,'complete');
+assert.deepEqual(JSON.parse(JSON.stringify(leon.missingInputs)),[]);
+assert.equal(leon.scores.championship,5.98);
+assert.equal(leon.scores.opponentQuality,21.01);
+assert.equal(leon.scores.primeDominance,16.40);
 assert.equal(leon.scores.longevity!==null,true);
 assert.equal(leon.scores.apex!==null,true);
 assert.equal(leon.scores.penalty!==null,true);
 assert.equal(leon.scores.eraDepth,0.06);
-assert.equal(leon.scores.championship,null);
-assert.equal(leon.scores.opponentQuality,null);
-assert.equal(leon.scores.primeDominance,null);
+const historicalLeon=report.candidateReports.historicalFinalEngine.rows.find(row=>row.fighter==='Leon Edwards');
+assert.ok(historicalLeon);
+assert.equal(historicalLeon.totalScore,48.15);
+assert.ok(Number.isInteger(historicalLeon.calculatedRank));
 
 const clean=value=>JSON.parse(JSON.stringify(value,(key,nested)=>typeof nested==='function'?undefined:nested));
 await fs.mkdir('docs',{recursive:true});
@@ -140,6 +147,7 @@ await fs.writeFile('docs/canonical-final-score-reconstruction.json',`${JSON.stri
 const candidateSections=Object.entries(report.candidateReports).flatMap(([name,candidate])=>[
   `## ${name}`,'',
   `- Weights: Championship **${candidate.weights.championship}**, Opponent Quality **${candidate.weights.opponentQuality}**, Prime Dominance **${candidate.weights.primeDominance}**, Longevity **${candidate.weights.longevity}**`,
+  `- Complete ranked fighters: **${candidate.completeFighterCount}**`,
   `- Mean absolute delta from frozen total: **${candidate.meanAbsoluteTotalDelta.toFixed(2)}**`,
   `- Exact frozen-rank matches: **${candidate.exactFrozenRankMatchCount}/${candidate.controlledComparisonCount}**`,'',
   '| Rank | Fighter | Calculated | Frozen | Delta |',
@@ -148,17 +156,25 @@ const candidateSections=Object.entries(report.candidateReports).flatMap(([name,c
   ''
 ]);
 const markdown=[
-  '# Canonical Final Score Reconstruction — Initial Audit','',
+  '# Canonical Final Score Reconstruction — Complete 73-Fighter Audit','',
   `- Fighters audited: **${report.fighterCount}**`,
   `- Complete locked-category inputs: **${report.completeCategoryInputCount}**`,
   `- Blocked fighters: **${report.blockedFighterCount}**`,
   `- Frozen total formula parity: **${report.frozenFormulaParityCount}/${report.frozenFormulaControlCount}**`,
+  `- Leon Edwards historical-baseline total: **${historicalLeon.totalScore.toFixed(2)}**`,
+  `- Leon Edwards historical-baseline rank: **#${historicalLeon.calculatedRank}**`,
   `- Live ranking payload changed: **${report.liveDataUnchanged?'No':'Yes'}**`,'',
   '## Recovered frozen total formula','',
   `**${report.frozenFormula}**`,'',
   'This proves how the current frozen control total was generated. It includes Apex, Loss Penalty, and Division-Era Depth and serves as the migration baseline—not automatic approval of the final post-refactor weighting choice.','',
+  '## Leon Edwards approved completion','',
+  '- Championship: **5.98**',
+  '- Opponent Quality: **21.01**',
+  '- Prime Dominance: **16.40**',
+  `- Historical-weight total: **${historicalLeon.totalScore.toFixed(2)}**`,
+  `- Historical-weight rank: **#${historicalLeon.calculatedRank}**`,'',
   '## Blocking category gaps','',
-  ...report.blockedFighters.map(row=>`- **${row.fighter}:** ${row.missingInputs.join(', ')}`),'',
+  '**None. All 73 fighters now have complete category inputs.**','',
   ...candidateSections,
   '## Promotion status','',
   '- Final weight decision: **required**',
@@ -177,6 +193,6 @@ console.log(JSON.stringify({
   frozenFormulaParityCount:report.frozenFormulaParityCount,
   frozenFormulaControlCount:report.frozenFormulaControlCount,
   candidates:Object.fromEntries(Object.entries(report.candidateReports).map(([name,row])=>[name,{weights:row.weights,meanAbsoluteTotalDelta:row.meanAbsoluteTotalDelta,exactFrozenRankMatchCount:row.exactFrozenRankMatchCount,menTopFifteen:row.menTopFifteen,womenTopTen:row.womenTopTen,biggestRankMovers:row.biggestRankMovers.slice(0,10)}])),
-  leon:{scores:leon.scores,missingInputs:leon.missingInputs},
+  leon:{scores:leon.scores,totalScore:historicalLeon.totalScore,calculatedRank:historicalLeon.calculatedRank},
   liveDataUnchanged:report.liveDataUnchanged
 },null,2));
