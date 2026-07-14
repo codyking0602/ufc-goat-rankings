@@ -42,7 +42,7 @@ const report=context.window.UFC_CANONICAL_DIVISION_ERA_DEPTH_RECONSTRUCTION;
 assert.equal(report?.applied,true,'Division-Era Depth reconstruction should calculate');
 assert.equal(report.fighterCount,73,'All 73 canonical fighters must be audited');
 assert.equal(report.sourceShadowVersion,'division-era-depth-shadow-20260712e-roster-72');
-assert.equal(report.approvedResolutionVersion,'canonical-division-era-depth-approved-resolutions-20260714a-leon');
+assert.equal(report.approvedResolutionVersion,'canonical-division-era-depth-approved-resolutions-20260714b-leon-shared-era');
 assert.equal(report.shadowCoverageCount,73,'All 73 fighters must have empirical era-depth coverage');
 assert.equal(report.canonicalControlCoverageCount,73,'All 73 fighters must have an approved control');
 assert.equal(report.frozenControlCoverageCount,72,'The frozen runtime controls remain unchanged at 72');
@@ -62,6 +62,7 @@ assert.equal(report.rules.range.min,-3);
 assert.equal(report.rules.range.max,0.75);
 assert.deepEqual(JSON.parse(JSON.stringify(report.rules.componentWeights)),{qualifiedActivePool:0.3,ranksSixToFifteenElo:0.5,contenderDiversity:0.2});
 assert.match(report.rules.divisionStrengthSeparation,/never multiplied/i);
+assert.match(report.rules.phaseSource,/shared Fighter Era Ledger/i);
 
 for(const row of report.fighters.filter(row=>row.shadowAdjustment!==null)){
   assert.ok(row.shadowAdjustment>=-3&&row.shadowAdjustment<=0.75,`${row.fighter} adjustment must stay within range`);
@@ -71,22 +72,23 @@ for(const row of report.fighters.filter(row=>row.shadowAdjustment!==null)){
 
 const leon=report.entryFor('Leon Edwards');
 assert.equal(leon?.status,'clean');
-assert.equal(leon.depthIndexPrecise,1.0008);
+assert.equal(leon.depthIndexPrecise,1.0032);
 assert.equal(leon.depthIndex,1);
-assert.equal(leon.shadowAdjustment,0.02);
-assert.equal(leon.recomputedAdjustment,0.02);
-assert.equal(leon.canonicalAdjustment,0.02);
+assert.equal(leon.shadowAdjustment,0.06);
+assert.equal(leon.recomputedAdjustment,0.06);
+assert.equal(leon.canonicalAdjustment,0.06);
 assert.equal(leon.controlProvenance,'approved-factual-completion');
 assert.equal(leon.resolutionApplied,true);
+assert.equal(leon.phaseSource,'fighter-era-ledgers');
 assert.equal(leon.judgmentClassification,'factual-completion');
 assert.equal(leon.approvalStatus,'cody-approved');
 assert.deepEqual(JSON.parse(JSON.stringify(leon.sampledDivisions)),['WW']);
-assert.equal(leon.matchedPrimeFightCount,7);
-assert.equal(leon.scoredSampleCount,7);
+assert.equal(leon.matchedPrimeFightCount,8);
+assert.equal(leon.scoredSampleCount,8);
 assert.equal(leon.titleWeightedSampleCount,4);
-assert.deepEqual(JSON.parse(JSON.stringify(leon.componentRatios)),{qualifiedActivePool:1.0102,ranksSixToFifteenElo:0.9894,contenderDiversity:1.015});
+assert.deepEqual(JSON.parse(JSON.stringify(leon.componentRatios)),{qualifiedActivePool:1.0071,ranksSixToFifteenElo:0.9952,contenderDiversity:1.0173});
 assert.equal(leon.primeStart,'2019-07-20');
-assert.equal(leon.primeEnd,'2024-07-27');
+assert.equal(leon.primeEnd,'2025-03-22');
 assert.equal(leon.openPrime,false);
 
 const clean=value=>JSON.parse(JSON.stringify(value,(key,nested)=>typeof nested==='function'?undefined:nested));
@@ -108,17 +110,18 @@ const markdown=[
   `- Review queue: **${report.reviewQueueCount}**`,
   `- Live ranking payload changed: **${report.liveDataUnchanged?'No':'Yes'}**`,'',
   '## Leon Edwards factual completion','',
-  `- Canonical prime: **${leon.primeStart} through ${leon.primeEnd}**`,
+  `- Shared Fighter Era Ledger window: **${leon.primeStart} through ${leon.primeEnd}**`,
   `- Sampled UFC welterweight fights: **${leon.matchedPrimeFightCount}**`,
   `- Title-weighted samples: **${leon.titleWeightedSampleCount}**`,
   `- Depth index: **${leon.depthIndexPrecise.toFixed(4)}**`,
   `- Component ratios: pool **${leon.componentRatios.qualifiedActivePool.toFixed(4)}**, ranks 6–15 Elo **${leon.componentRatios.ranksSixToFifteenElo.toFixed(4)}**, contender diversity **${leon.componentRatios.contenderDiversity.toFixed(4)}**`,
   `- Approved curved adjustment: **+${leon.shadowAdjustment.toFixed(2)}**`,
-  '- Classification: **factual completion**. The existing approved empirical model was applied without changing its source, weights, curve, or division-strength treatment.','',
+  '- Classification: **factual completion**. The existing empirical model was applied with the approved shared phase window and without changing its source, weights, curve, or division-strength treatment.','',
   '## Locked mechanics','',
   `**${report.formula}**`,'',
   '- Era depth is normalized within each division and time period.',
   '- Canonical division-strength keys remain separate context and are not multiplied into this adjustment.',
+  '- Approved factual completions use the shared Fighter Era Ledger as the phase source.',
   '- Women’s featherweight samples are excluded because the division lacks a viable ranks-6–15 baseline.','',
   '## Review queue','',
   report.reviewQueue.length?'| Fighter | Status | Issues |\n|---|---|---|\n'+report.reviewQueue.map(row=>`| ${row.fighter} | ${row.status} | ${row.issues.join('; ')} |`).join('\n'):'**None.**','',
