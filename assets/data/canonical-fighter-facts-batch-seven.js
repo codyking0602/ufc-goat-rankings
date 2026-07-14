@@ -2,7 +2,7 @@
 // Evidence only. Never mutates live scores, totals, rank, OVR, snapshots, profiles, or Compare Mode.
 (function(){
 'use strict';
-const VERSION='canonical-fighter-facts-batch-seven-20260713a-ten-fighters-199';
+const VERSION='canonical-fighter-facts-batch-seven-20260713b-ten-fighters-199';
 const API=window.UFC_CANONICAL_FIGHTER_FACTS;
 const fail=(error,details=[])=>{window.UFC_CANONICAL_FIGHTER_FACTS_BATCH_SEVEN={version:VERSION,applied:false,error:String(error||'Unknown batch error.'),details,mutatesRankingData:false};throw new Error(`[${VERSION}] ${error}`);};
 if(!API)fail('UFC_CANONICAL_FIGHTER_FACTS is not loaded.');
@@ -37,7 +37,7 @@ function buildFight(row,primaryDivision){
   const roundParts=roundText?roundText.split(',').map(Number):null;
   const fight={
     id:`${date}-${slug(opponent)}`,date,opponent,event,
-    division:options.d||primaryDivision,scheduledRounds:Number(options.s||3),
+    division:options.d||primaryDivision,scheduledRounds:Math.max(Number(options.s||3),Number(methodRound)),
     officialResult,scoringDisposition,method:{category:methodCategory,round:Number(methodRound)},
     rounds:roundParts?{status:'audited',won:roundParts[0],lost:roundParts[1],drawn:roundParts[2]||0,reviewStatus,note:'Reviewed fight-by-fight round allocation.'}:{status:'not-audited'},
     opponentContext:{qualityTier:QUALITY[qualityCode],championStatus:options.c||'contender',reviewStatus},
