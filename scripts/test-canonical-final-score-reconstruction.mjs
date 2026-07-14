@@ -104,7 +104,7 @@ assert.equal(report.completeCategoryInputCount,72);
 assert.equal(report.blockedFighterCount,1);
 assert.deepEqual(JSON.parse(JSON.stringify(report.blockedFighters)),[{fighter:'Leon Edwards',missingInputs:['championship','opponentQuality','primeDominance']}]);
 assert.equal(report.frozenFormulaControlCount,72);
-assert.equal(report.frozenFormulaMismatchCount,0,'The frozen total must be explained by the legacy four-category-plus-penalty formula');
+assert.equal(report.frozenFormulaMismatchCount,0,'The frozen total must be reproduced by the historical 35/27.5/27.5/10 formula plus Apex, Loss Penalty, and Era Depth');
 assert.equal(report.frozenFormulaParityCount,72);
 assert.equal(report.finalWeightDecisionRequired,true);
 assert.equal(report.ovrCalculationDeferred,true);
@@ -156,7 +156,7 @@ const markdown=[
   `- Live ranking payload changed: **${report.liveDataUnchanged?'No':'Yes'}**`,'',
   '## Recovered frozen total formula','',
   `**${report.frozenFormula}**`,'',
-  'This proves the current frozen leaderboard total excludes Apex and Division-Era Depth. It is an audit fact, not a recommendation for the final formula.','',
+  'This proves how the current frozen control total was generated. It includes Apex, Loss Penalty, and Division-Era Depth and serves as the migration baseline—not automatic approval of the final post-refactor weighting choice.','',
   '## Blocking category gaps','',
   ...report.blockedFighters.map(row=>`- **${row.fighter}:** ${row.missingInputs.join(', ')}`),'',
   ...candidateSections,
