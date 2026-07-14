@@ -40,14 +40,16 @@ const resolutions=context.window.UFC_CANONICAL_CHAMPIONSHIP_APPROVED_RESOLUTIONS
 const facts=context.window.UFC_CANONICAL_FIGHTER_FACTS;
 assert.equal(report?.applied,true,'Championship reconstruction should calculate successfully');
 assert.equal(resolutions?.applied,true,'Approved resolutions should apply successfully');
-assert.equal(report.fighterCount,72,'Leon Edwards is excluded from the Championship audit');
-assert.deepEqual(report.excludedFighters,['Leon Edwards']);
-assert.equal(report.entryFor('Leon Edwards'),null,'Leon must not appear in the Championship audit');
+assert.equal(report.fighterCount,73,'All 73 fighters must appear in the Championship audit');
+assert.deepEqual(report.excludedFighters,[]);
+assert.ok(report.entryFor('Leon Edwards'),'Leon must appear after Cody approval');
 assert.equal(report.canonicalControlCoverage,72);
-assert.equal(report.exactParityCount,72);
+assert.equal(report.effectiveControlCoverage,73);
+assert.equal(report.exactParityCount,73);
+assert.equal(report.frozenExactParityCount,72);
 assert.equal(report.controlledDifferenceCount,0);
 assert.equal(report.unresolvedControlCount,0);
-assert.equal(report.approvedScoreCorrectionCount,3);
+assert.equal(report.approvedScoreCorrectionCount,4);
 assert.equal(report.pendingCanonicalJudgmentCount,0);
 assert.equal(report.unmatchedLegacyRowCount,0);
 assert.equal(report.titleTypeConflictCount,0);
@@ -96,14 +98,28 @@ assert.equal(zhang.reconstructedScore,11.66);
 assert.equal(zhang.adjustedTitleCredit,5.65);
 assert.equal(suarez.finalAdjustedCredit,.95);
 
+const leon=report.entryFor('Leon Edwards');
+assert.equal(leon.currentScore,5.98);
+assert.equal(leon.reconstructedScore,5.98);
+assert.equal(leon.adjustedTitleCredit,2.9);
+assert.equal(leon.titleFightWins,3);
+assert.equal(leon.championshipAccomplishmentRows,3);
+assert.equal(leon.pendingJudgmentRows.length,0);
+assert.equal(leon.controlSource,'cody-approved-factual-completion');
+assert.equal(leon.inputs.find(row=>row.date==='2022-08-20').finalAdjustedCredit,1);
+assert.equal(leon.inputs.find(row=>row.date==='2023-03-18').finalAdjustedCredit,.95);
+assert.equal(leon.inputs.find(row=>row.date==='2023-12-16').finalAdjustedCredit,.95);
+assert.deepEqual(JSON.parse(JSON.stringify(report.leonApproval)),{fighter:'Leon Edwards',adjustedTitleCredit:2.9,championshipScore:5.98,titleFightWins:3,approvedBy:'Cody',approvedAt:'2026-07-14'});
+
 const clean=value=>JSON.parse(JSON.stringify(value,(key,nested)=>typeof nested==='function'?undefined:nested));
 await fs.mkdir('docs',{recursive:true});
 await fs.writeFile('docs/canonical-championship-reconstruction.json',`${JSON.stringify(clean(report),null,2)}\n`,'utf8');
 const markdown=[
   '# Canonical Championship Reconstruction — Approved Review Complete','',
   `- Fighters in Championship audit: **${report.fighterCount}**`,
-  `- Excluded from this audit: **${report.excludedFighters.join(', ')}**`,
-  `- Exact approved-score parity: **${report.exactParityCount}/${report.canonicalControlCoverage}**`,
+  `- Frozen runtime controls: **${report.canonicalControlCoverage}**`,
+  `- Effective approved controls: **${report.effectiveControlCoverage}**`,
+  `- Exact approved-score parity: **${report.exactParityCount}/${report.effectiveControlCoverage}**`,
   `- Remaining Championship conflicts: **${report.remainingConflictCount}**`,
   `- Pending title judgments: **${report.pendingCanonicalJudgmentCount}**`,
   `- Unmatched legacy rows: **${report.unmatchedLegacyRowCount}**`,
@@ -115,8 +131,9 @@ const markdown=[
   '| Robert Whittaker | Romero II: 0.75 special-context credit; not an official title-fight win | 3.01 |',
   '| Israel Adesanya | Gastelum interim win: 0.71 credit | 14.98 |',
   '| Max Holloway | Frankie Edgar defense: 0.90 credit | 8.95 |',
-  '| Zhang Weili | Tatiana Suarez defense: 0.95 credit | 11.66 |','',
-  'All eight reviewed Championship conflicts are resolved. The ten aggregate-recovery notices are provenance notes, not unresolved scoring conflicts.',''
+  '| Zhang Weili | Tatiana Suarez defense: 0.95 credit | 11.66 |',
+  '| Leon Edwards | Usman II 1.00; Usman III 0.95; Covington 0.95 | 5.98 |','',
+  'All reviewed Championship conflicts are resolved. The aggregate-recovery notices are provenance notes, not unresolved scoring conflicts.',''
 ].join('\n');
 await fs.writeFile('docs/canonical-championship-reconstruction.md',markdown,'utf8');
 
@@ -125,11 +142,13 @@ console.log(JSON.stringify({
   version:report.version,
   fighterCount:report.fighterCount,
   excludedFighters:report.excludedFighters,
+  canonicalControlCoverage:report.canonicalControlCoverage,
+  effectiveControlCoverage:report.effectiveControlCoverage,
   exactParityCount:report.exactParityCount,
   remainingConflictCount:report.remainingConflictCount,
   pendingCanonicalJudgmentCount:report.pendingCanonicalJudgmentCount,
   unmatchedLegacyRowCount:report.unmatchedLegacyRowCount,
   titleTypeConflictCount:report.titleTypeConflictCount,
-  scores:{whittaker:whittaker.currentScore,israel:israel.currentScore,max:max.currentScore,zhang:zhang.currentScore},
+  scores:{whittaker:whittaker.currentScore,israel:israel.currentScore,max:max.currentScore,zhang:zhang.currentScore,leon:leon.currentScore},
   liveDataUnchanged:report.liveDataUnchanged
 },null,2));
