@@ -210,8 +210,8 @@
       }
       if(Number.isFinite(difference)&&Math.abs(difference)>.01){
         issues.push({
-          classification:'cody-approved-model-change',
-          reason:`The approved clean Prime Dominance formula calculates ${stats.score.toFixed(2)}/30 versus the frozen ${currentScore.toFixed(2)}/30 control (${difference>0?'+':''}${difference.toFixed(2)}). The former 8-point elite-stakes block is removed to avoid Championship, Opponent Quality, and Division-Era Depth double counting; competitive separation and durability replace it.`
+          classification:'proposed model change requiring Cody approval',
+          reason:`The candidate clean Prime Dominance formula calculates ${stats.score.toFixed(2)}/30 versus the frozen ${currentScore.toFixed(2)}/30 control (${difference>0?'+':''}${difference.toFixed(2)}). The former 8-point elite-stakes block is removed to avoid Championship, Opponent Quality, and Division-Era Depth double counting; competitive separation and durability replace it.`
         });
       }
 
@@ -223,7 +223,7 @@
         difference,
         legacyCanonicalScore:legacyCanonical,
         legacyDifference,
-        classification:'cody-approved-model-change',
+        classification:'proposed model change requiring Cody approval',
         currentControlSource:'canonical-scoring-records',
         legacyJudgmentSource:legacy?'prime-dominance-ledgers + prime-dominance-shadow-model':'frozen score only',
         removedLegacyEliteStakes:legacy?{
@@ -242,7 +242,7 @@
     const meaningful=fighters.filter(row=>Number.isFinite(row.difference)&&Math.abs(row.difference)>=.25);
     const report={
       version:VERSION,
-      status:'shadow-reconstruction-cody-approved-clean-formula',
+      status:'shadow-reconstruction-candidate-clean-formula-pending-cody-review',
       applied:true,
       mode:'diagnostic-only-no-live-promotion',
       fighterCount:fighters.length,
