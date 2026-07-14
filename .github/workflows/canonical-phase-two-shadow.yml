@@ -7,6 +7,8 @@ on:
       - 'assets/data/canonical-fighter-facts.js'
       - 'assets/data/canonical-fighter-facts-batch-*.js'
       - 'assets/data/canonical-phase-two-shadow.js'
+      - 'assets/data/canonical-phase-two-calibration.js'
+      - 'assets/data/division-era-depth-shadow.js'
       - 'assets/data/canonical-scoring-records.js'
       - 'assets/data/ranking-data.js'
       - 'scripts/test-canonical-phase-two-shadow.mjs'
@@ -28,9 +30,10 @@ jobs:
       - name: Check syntax
         run: |
           node --check assets/data/canonical-phase-two-shadow.js
+          node --check assets/data/canonical-phase-two-calibration.js
           node --check assets/data/canonical-fighter-facts-batch-nine.js
           node --check scripts/test-canonical-phase-two-shadow.mjs
-      - name: Calculate all 73 fighters from canonical ledgers
+      - name: Calculate and calibrate all 73 fighters
         run: node scripts/test-canonical-phase-two-shadow.mjs > /tmp/canonical-phase-two-shadow.log 2>&1
       - name: Append ranking-shape review
         run: |
@@ -40,7 +43,7 @@ jobs:
           const names=['Jon Jones','Georges St-Pierre','Demetrious Johnson','Anderson Silva','Islam Makhachev','Khabib Nurmagomedov','Alexander Volkanovski','Jose Aldo','Max Holloway','Kamaru Usman','Matt Hughes','Randy Couture','Chuck Liddell','Frank Shamrock','Charles Oliveira','Ilia Topuria'];
           const rows=[...report.boards.men,...report.boards.women];
           console.log('PHASE_TWO_RANKING_SHAPE_REVIEW');
-          console.log(JSON.stringify(names.map(name=>{const row=rows.find(item=>item.fighter===name);return row?{fighter:name,rank:row.rank,totalScore:row.totalScore,overallOvr:row.overallOvr,categories:row.categories,apexPeak:row.apexPeak,penalty:row.loss.penalty,rawPenalty:row.loss.rawPenalty,topFiveWins:row.profileStats.topFiveWins,titleFightWins:row.profileStats.titleFightWins,primeRecord:row.profileStats.primeRecord,activeEliteYears:row.profileStats.activeEliteYears}:null;}),null,2));
+          console.log(JSON.stringify(names.map(name=>{const row=rows.find(item=>item.fighter===name);return row?{fighter:name,rank:row.rank,totalScore:row.totalScore,overallOvr:row.overallOvr,categories:row.categories,apexPeak:row.apexPeak,penalty:row.loss.penalty,rawPenalty:row.loss.rawPenalty,eraDepthAdjustment:row.eraDepthAdjustment,upwardEliteLossCount:row.prime.upwardEliteLossCount,topFiveWins:row.profileStats.topFiveWins,titleFightWins:row.profileStats.titleFightWins,primeRecord:row.profileStats.primeRecord,activeEliteYears:row.profileStats.activeEliteYears}:null;}),null,2));
           NODE
       - name: Upload Phase 2 shadow report
         if: always()
