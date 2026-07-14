@@ -1,0 +1,46 @@
+name: Canonical Prime Dominance Reconstruction
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'assets/data/canonical-fighter-facts*.js'
+      - 'assets/data/canonical-scoring-records.js'
+      - 'assets/data/prime-windows.js'
+      - 'assets/data/prime-round-control-audit.js'
+      - 'assets/data/prime-dominance-ledgers.js'
+      - 'assets/data/prime-dominance-shadow-model.js'
+      - 'assets/data/canonical-prime-dominance-reconstruction.js'
+      - 'scripts/test-canonical-prime-dominance-reconstruction.mjs'
+      - '.github/workflows/canonical-prime-dominance-reconstruction.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reconstruct-approved-prime-dominance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check syntax
+        run: |
+          node --check assets/data/canonical-prime-dominance-reconstruction.js
+          node --check scripts/test-canonical-prime-dominance-reconstruction.mjs
+      - name: Reconstruct 72-fighter approved Prime Dominance audit
+        run: node scripts/test-canonical-prime-dominance-reconstruction.mjs > /tmp/canonical-prime-dominance-reconstruction.log 2>&1
+      - name: Upload Prime Dominance reconstruction report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-prime-dominance-reconstruction-report
+          path: |
+            /tmp/canonical-prime-dominance-reconstruction.log
+            docs/canonical-prime-dominance-reconstruction.json
+            docs/canonical-prime-dominance-reconstruction.md
+          if-no-files-found: warn
+          retention-days: 30
