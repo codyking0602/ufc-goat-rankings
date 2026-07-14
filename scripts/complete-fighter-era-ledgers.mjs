@@ -19,15 +19,17 @@ const completions=`    'Royce Gracie':E('locked','1993-11-12','Art Jimmerson','1
 `;
 
 const completionNames=['Royce Gracie','Frank Shamrock','Cris Cyborg','Fabricio Werdum','Vitor Belfort','Rashad Evans','Glover Teixeira','Benson Henderson','Mauricio "Shogun" Rua','Forrest Griffin'];
-if(completionNames.some(name=>source.includes(`    '${name}':E(`)))throw new Error('One or more completion entries already exist; migration should no longer run.');
-source=source.replace(insertAfter,insertAfter+completions);
+const presence=completionNames.map(name=>source.includes(`    '${name}':E(`));
+if(presence.some(Boolean)&&!presence.every(Boolean))throw new Error('Fighter Era Ledger completion is only partially applied.');
+if(!presence.every(Boolean))source=source.replace(insertAfter,insertAfter+completions);
 
 const oldPena="    'Julianna Peña':E('locked-current','2021-11-20','Miesha Tate',null,'Current title-level form','open_current_title_level','Tate win and Nunes upset begin title-level window. Nunes II does not close it because Peña remains title-relevant/current.'";
 const newPena="    'Julianna Peña':E('locked-current','2021-12-11','Amanda Nunes I',null,'Current title-level form','open_current_title_level','The Nunes upset begins the title-level window. Nunes II and later title-level losses do not automatically close it while Peña remains relevant.'";
-if(!source.includes(oldPena))throw new Error('Could not find the incorrect Julianna Peña boundary.');
-source=source.replace(oldPena,newPena);
+if(source.includes(oldPena))source=source.replace(oldPena,newPena);
+else if(!source.includes(newPena))throw new Error('Could not resolve the Julianna Peña boundary.');
+
 source=source.replace("const VERSION='fighter-era-ledgers-20260709g-review-corrections';","const VERSION='fighter-era-ledgers-20260714h-full-72-coverage';");
 source=source.replace('// Full current roster coverage. No live score mutation.','// Full canonical roster coverage. No live score mutation.');
 
 await fs.writeFile(path,source,'utf8');
-console.log(`Completed shared Fighter Era Ledger with ${completionNames.length} entries and corrected Julianna Peña.`);
+console.log(`Shared Fighter Era Ledger ready: ${completionNames.length} completion entries and corrected Julianna Peña boundary.`);
