@@ -2,7 +2,7 @@
 // Evidence only. Never mutates live scores, totals, rank, OVR, snapshots, profiles, or Compare Mode.
 (function(){
 'use strict';
-const VERSION='canonical-fighter-facts-batch-nine-20260713a-fifteen-women-220';
+const VERSION='canonical-fighter-facts-batch-nine-20260713b-fifteen-women-220-phase2-loader';
 const API=window.UFC_CANONICAL_FIGHTER_FACTS;
 const fail=(error,details=[])=>{window.UFC_CANONICAL_FIGHTER_FACTS_BATCH_NINE={version:VERSION,applied:false,error:String(error||'Unknown batch error.'),details,mutatesRankingData:false};throw new Error(`[${VERSION}] ${error}`);};
 if(!API)fail('UFC_CANONICAL_FIGHTER_FACTS is not loaded.');
@@ -70,4 +70,10 @@ const fightCount=records.reduce((sum,record)=>sum+record.fights.length,0);
 if(fighters.length!==15||fightCount!==220)fail(`Expected 15 fighters and 220 fights; received ${fighters.length} fighters and ${fightCount} fights.`);
 window.UFC_CANONICAL_FIGHTER_FACTS_BATCH_NINE={version:VERSION,applied:true,recordCount:fighters.length,fightCount,fighters,derived:Object.fromEntries(fighters.map(fighter=>[fighter,API.deriveFor(fighter)])),mutatesRankingData:false};
 document.documentElement.setAttribute('data-canonical-fighter-facts-batch-nine',VERSION);
+if(typeof document?.createElement==='function'&&document.body&&!document.querySelector?.('[data-canonical-phase-two-shadow]')){
+  const script=document.createElement('script');
+  script.src='assets/data/canonical-phase-two-shadow.js?v=canonical-phase-two-shadow-20260713a-calculated-73';
+  script.setAttribute('data-canonical-phase-two-shadow','true');
+  document.body.appendChild(script);
+}
 })();
