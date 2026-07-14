@@ -124,7 +124,17 @@ for(const row of report.nineFormerHiddenOverrides){
   assert.equal(row.scoreSource,'calculated-complete-ledger');
 }
 const royce=report.entryFor('Royce Gracie');
+const hughes=report.entryFor('Matt Hughes');
 assert.equal(royce.fighterAdjustment,0,'Royce must not receive the old hidden early-era compression');
+assert.equal(royce.reconstructedScore,9.55,'Royce must land through explicit at-the-time opponent credits');
+assert.equal(royce.diminishedCredit,4.4875);
+assert.equal(royce.inputs.find(row=>row.opponent==='Ken Shamrock')?.finalCredit,1);
+assert.equal(royce.inputs.find(row=>row.opponent==='Keith Hackney')?.finalCredit,.10);
+assert.equal(hughes.reconstructedScore,18.51,'Hughes must retain elite wins while softer and faded wins are discounted');
+assert.equal(hughes.diminishedCredit,8.70);
+assert.equal(hughes.inputs.find(row=>row.opponent==='Georges St-Pierre')?.finalCredit,1);
+assert.equal(hughes.inputs.find(row=>row.opponent==='Matt Serra')?.finalCredit,.45);
+assert.equal(hughes.inputs.find(row=>row.opponent==='Royce Gracie')?.finalCredit,.10);
 
 for(const fighter of report.fighters){
   assert.equal(fighter.canonicalWinCount,fighter.inputCount,`${fighter.fighter} has incomplete Opponent Quality coverage`);

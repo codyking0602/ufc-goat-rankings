@@ -116,6 +116,7 @@ const historicalLeon=find('historicalFinalEngine','Leon Edwards');
 const approvedLeon=find('approvedFinalEngine','Leon Edwards');
 const cejudo=find('approvedFinalEngine','Henry Cejudo');
 const royce=find('approvedFinalEngine','Royce Gracie');
+const hughes=find('approvedFinalEngine','Matt Hughes');
 const khabib=find('approvedFinalEngine','Khabib Nurmagomedov');
 assert.equal(historicalLeon.totalScore,48.15);
 assert.equal(approvedLeon.totalScore,47.77);
@@ -123,8 +124,14 @@ assert.equal(cejudo.scores.primeDominance,22.52);
 assert.equal(cejudo.scores.longevity,4.77);
 assert.equal(cejudo.scores.penalty,-1.69);
 assert.equal(royce.scores.primeDominance,25.12);
-assert.ok(royce.calculatedRank>23);
-assert.ok(khabib.calculatedRank<=8);
+assert.equal(royce.scores.opponentQuality,9.55);
+assert.equal(royce.totalScore,42.17);
+assert.equal(royce.calculatedRank,50);
+assert.equal(hughes.scores.opponentQuality,18.51);
+assert.equal(hughes.scores.apex,4.20);
+assert.equal(hughes.totalScore,63.70);
+assert.equal(hughes.calculatedRank,8);
+assert.ok(khabib.calculatedRank<=7);
 
 const clean=value=>JSON.parse(JSON.stringify(value,(nestedKey,nested)=>typeof nested==='function'?undefined:nested));
 await fs.mkdir('docs',{recursive:true});
@@ -136,7 +143,8 @@ await fs.writeFile('docs/canonical-final-score-reconstruction.md',[
   `- Approved mean absolute total delta: **${report.approvedReport.meanAbsoluteTotalDelta.toFixed(2)}**`,
   `- Approved exact frozen-rank matches: **${report.approvedReport.exactFrozenRankMatchCount}/${report.approvedReport.controlledComparisonCount}**`,
   `- Cejudo: Prime **${cejudo.scores.primeDominance.toFixed(2)}**, rank **#${cejudo.calculatedRank}**`,
-  `- Royce: Prime **${royce.scores.primeDominance.toFixed(2)}**, rank **#${royce.calculatedRank}**`,
+  `- Royce: OQ **${royce.scores.opponentQuality.toFixed(2)}**, Prime **${royce.scores.primeDominance.toFixed(2)}**, rank **#${royce.calculatedRank}**`,
+  `- Hughes: OQ **${hughes.scores.opponentQuality.toFixed(2)}**, Apex **${hughes.scores.apex.toFixed(2)}**, rank **#${hughes.calculatedRank}**`,
   `- Khabib: rank **#${khabib.calculatedRank}**`,
   `- Leon: total **${approvedLeon.totalScore.toFixed(2)}**, rank **#${approvedLeon.calculatedRank}**`,
   '- Final weights approved; OVR reconstruction remains pending.',
@@ -155,7 +163,8 @@ console.log(JSON.stringify({
   biggestRankMovers:report.approvedReport.biggestRankMovers.slice(0,15),
   spotlight:{
     cejudo:{primeDominance:cejudo.scores.primeDominance,totalScore:cejudo.totalScore,rank:cejudo.calculatedRank},
-    royce:{primeDominance:royce.scores.primeDominance,totalScore:royce.totalScore,rank:royce.calculatedRank},
+    royce:{opponentQuality:royce.scores.opponentQuality,primeDominance:royce.scores.primeDominance,totalScore:royce.totalScore,rank:royce.calculatedRank},
+    hughes:{opponentQuality:hughes.scores.opponentQuality,apex:hughes.scores.apex,totalScore:hughes.totalScore,rank:hughes.calculatedRank},
     khabib:{totalScore:khabib.totalScore,rank:khabib.calculatedRank},
     leon:{totalScore:approvedLeon.totalScore,rank:approvedLeon.calculatedRank}
   },

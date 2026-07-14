@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-final-score-reconstruction-20260714d-approved-prime-tilt';
+  const VERSION='canonical-final-score-reconstruction-20260714e-royce-hughes-input-calibration';
   const CATEGORY_MAX=30;
   const APPROVED_CANDIDATE='approvedFinalEngine';
   const CANDIDATES=Object.freeze({

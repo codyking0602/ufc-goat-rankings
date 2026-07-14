@@ -64,7 +64,7 @@ const expected={
   'Alexa Grasso':{score:4.50,current:4.08,difference:0.42,pair:['2022-10-15-viviane-araujo','2023-03-04-valentina-shevchenko'],components:[1.85,1.30,0.70,0.65]},
   'Dustin Poirier':{score:4.94,current:4.07,difference:0.87,pair:['2018-04-14-justin-gaethje','2019-04-13-max-holloway'],components:[1.89,1.55,0.75,0.75]},
   'Julianna Peña':{score:4.65,current:4.02,difference:0.63,pair:['2021-01-24-sara-mcmann','2021-12-11-amanda-nunes'],components:[1.85,1.25,0.75,0.80]},
-  'Matt Hughes':{score:5.39,current:3.80,difference:1.59,pair:['2004-10-22-georges-st-pierre','2005-04-16-frank-trigg'],components:[1.89,1.50,1.10,0.90]},
+  'Matt Hughes':{score:4.20,current:3.80,difference:0.40,pair:['2004-10-22-georges-st-pierre','2005-04-16-frank-trigg'],components:[1.70,1.30,0.70,0.50]},
   'Jose Aldo':{score:4.96,current:3.79,difference:1.17,pair:['2013-02-02-frankie-edgar','2014-10-25-chad-mendes'],components:[1.91,1.55,1.00,0.50]},
   'Dan Henderson':{score:4.47,current:3.76,difference:0.71,pair:['2009-01-17-rich-franklin','2009-07-11-michael-bisping'],components:[1.82,1.20,0.55,0.90]},
   'Mackenzie Dern':{score:4.10,current:3.46,difference:0.64,pair:['2025-01-11-amanda-ribas','2025-10-25-virna-jandiroba'],components:[1.80,1.10,0.60,0.60]},

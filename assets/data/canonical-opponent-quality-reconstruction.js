@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-opponent-quality-reconstruction-20260714a-approved-review';
+  const VERSION='canonical-opponent-quality-reconstruction-20260714b-royce-hughes-inputs';
   const CATEGORY_MAX=30;
   const LOCKED_BENCHMARK_CREDIT=14.10;
   const RETURNS=Object.freeze([[1,6,1],[7,12,.75],[13,18,.50],[19,999,.25]]);

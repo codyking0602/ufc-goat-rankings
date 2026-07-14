@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-opponent-quality-approved-judgments-20260714a';
+  const VERSION='canonical-opponent-quality-approved-judgments-20260714b-royce-hughes-inputs';
   const EXCLUDED_FIGHTERS=['Leon Edwards'];
   const CREDIT_SCALE=Object.freeze({
     'champion-level':1.25,
@@ -38,6 +38,30 @@
   add('Henry Cejudo','Dominick Cruz','ranked',.65,'All-time name, but long-layoff and timing context.');
   add('Robert Whittaker','Paulo Costa','top-ten',.85,'Former challenger and strong contender, but not a true Top-5 win in this timing context.');
   add('Robert Whittaker','Darren Till','ranked',.65,'Ranked contender; close tactical win and timing context.');
+
+  // Cody-approved fighter-specific timing corrections. These change fight inputs only; no score or rank is written.
+  // Royce is graded by the opponent's established UFC value at the time, without later-name back-credit.
+  add('Royce Gracie','Ken Shamrock','top-five',1,'Elite UFC 1 tournament opponent, but not yet an established UFC champion; no later-career back-credit.');
+  add('Royce Gracie','Dan Severn','top-five',1,'Elite UFC 4 tournament finalist with real championship-level danger, held below champion-level because the UFC hierarchy was not yet established.');
+  add('Royce Gracie','Gerard Gordeau','ranked',.65,'Credible UFC 1 finalist and combat-sport veteran, but not a modern Top-10-equivalent win.');
+  add('Royce Gracie','Patrick Smith','solid',.45,'UFC 2 finalist and dangerous specialist, but limited established UFC quality at the time.');
+  add('Royce Gracie','Remco Pardoel','solid',.45,'Legitimate tournament semifinalist with useful early-UFC value, not ranked-equivalent depth.');
+  add('Royce Gracie','Jason DeLucia','solid',.45,'Experienced early tournament opponent with useful but non-ranked UFC value.');
+  add('Royce Gracie','Kimo Leopoldo','name-value',.25,'Dangerous and physically imposing, but essentially unproven in UFC terms entering the fight.');
+  add('Royce Gracie','Keith Hackney','minimal',.10,'Memorable early-UFC name, but one novelty-style UFC win did not establish meaningful opponent-quality proof.');
+  add('Royce Gracie','Art Jimmerson','minimal',.10,'UFC debutant with essentially no established mixed-rules opponent-quality proof.');
+  add('Royce Gracie','Minoki Ichihara','minimal',.10,'UFC debutant with minimal established UFC opponent-quality proof.');
+  add('Royce Gracie','Ron van Clief','minimal',.10,'Historic martial-arts name, but age and lack of established UFC value sharply limit credit.');
+
+  // Hughes keeps the elite wins; softer, repeat, and faded wins are graded more conservatively.
+  add('Matt Hughes','Frank Trigg','top-ten',.85,'Elite repeat challenger, discounted slightly on the second win because the first Trigg victory already carries the primary Top-5 proof.',{occurrence:2});
+  add('Matt Hughes','Joe Riggs','solid',.45,'Late-replacement title opponent who missed weight; useful win but not ranked-quality proof.');
+  add('Matt Hughes','Matt Serra','solid',.45,'Former champion name, but age, timing, and a limited post-title run keep the 2009 win below ranked-quality credit.');
+  add('Matt Hughes','Valeri Ignatov','name-value',.25,'Early UFC tournament win with limited established opponent-quality value.');
+  add('Matt Hughes','Marcelo Aguiar','name-value',.25,'Early UFC win with limited established opponent-quality value.');
+  add('Matt Hughes','Renzo Gracie','minimal',.10,'Legendary name, but age, inactivity, and UFC timing leave minimal opponent-quality value.');
+  add('Matt Hughes','Royce Gracie','minimal',.10,'Historic name, but age and an eleven-year layoff leave minimal opponent-quality value in 2006.');
+  add('Matt Hughes','Gil Castillo','minimal',.10,'Low-end UFC quality win with limited contender relevance.');
 
   // Approved Cruz and Topuria corrections.
   add('Dominick Cruz','T.J. Dillashaw','champion-level',1.25,'Beat the reigning UFC bantamweight champion after a long injury layoff.');
@@ -77,8 +101,8 @@
     ['Charles Oliveira','Mateusz Gamrot','top-ten',.85,'Strong ranked lightweight win in the approved app timeline.'],
     ['Charles Oliveira','Max Holloway','champion-level',1.25,'Champion-level opponent in the approved app timeline.'],
     ['Justin Gaethje','Rafael Fiziev','top-ten',.85,'Strong ranked lightweight rematch win.',2],
-    ['Matt Hughes','Renato Verissimo','top-ten',.85,'Strong welterweight contender.'],
-    ['Matt Hughes','Ricardo Almeida','top-ten',.85,'Strong ranked welterweight win.'],
+    ['Matt Hughes','Renato Verissimo','ranked',.65,'Ranked-quality welterweight contender, but a brief UFC run does not support Top-10 credit.'],
+    ['Matt Hughes','Ricardo Almeida','solid',.45,'Useful late-career welterweight win, but age and division timing keep it below ranked-quality credit.'],
     ['B.J. Penn','Matt Hughes','top-five',1,'Elite former champion rematch win.',2],
     ['B.J. Penn','Duane Ludwig','solid',.45,'Official UFC 42 win; useful but not ranked-quality proof.'],
     ['Frankie Edgar','Spencer Fisher','top-ten',.85,'Strong ranked lightweight win.'],
