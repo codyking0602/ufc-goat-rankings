@@ -1,0 +1,32 @@
+// Cody-approved Apex Peak judgment inputs, final review batch.
+// Shadow-only: extends the canonical approved judgment registry without touching live scores or ranking data.
+(function(){
+  'use strict';
+
+  const prior=window.UFC_CANONICAL_APEX_APPROVED_JUDGMENTS;
+  if(!prior?.rows)throw new Error('Approved Apex batches one and two must load before batch three.');
+  const VERSION='canonical-apex-approved-judgments-20260714c-batch-three';
+  const WINDOW='Best two UFC wins within 24 months';
+  const rows=[...prior.rows];
+  const add=(fighter,classification,decision,window,score,first,second,components,notes)=>rows.push({
+    fighter,classification,correctionTypes:[classification],decision,
+    audit:{version:VERSION,window,modelWindow:WINDOW,score,performances:[first,second],components:{twoPerformanceStrength:components[0],proof:components[1],bestFighterClaim:components[2],aura:components[3]},classification,approvalStatus:'cody-approved',notes,provenance:'Cody-approved canonical Apex judgment batch three'}
+  });
+
+  add('Alexa Grasso','factual-correction','Replace the slightly noncompliant Barber/Shevchenko span with Viviane Araujo and Valentina Shevchenko I.','Viviane Araujo (2022-10-15) + Valentina Shevchenko I (2023-03-04)',4.50,{fightId:'2022-10-15-viviane-araujo',label:'Viviane Araujo',date:'2022-10-15',rating:8.7},{fightId:'2023-03-04-valentina-shevchenko',label:'Valentina Shevchenko',date:'2023-03-04',rating:9.8},[1.85,1.30,0.70,0.65],'A strong five-round contender win followed by the championship submission creates a compliant, title-winning Apex.');
+  add('Dustin Poirier','factual-correction','Replace the noncompliant Gaethje/Conor span with Justin Gaethje I and Max Holloway II.','Justin Gaethje I (2018-04-14) + Max Holloway II (2019-04-13)',4.94,{fightId:'2018-04-14-justin-gaethje',label:'Justin Gaethje',date:'2018-04-14',rating:9.3},{fightId:'2019-04-13-max-holloway',label:'Max Holloway',date:'2019-04-13',rating:9.6},[1.89,1.55,0.75,0.75],'Two elite wins inside one year, capped by the interim lightweight title, provide exceptional Proof without a sustained best-fighter claim.');
+  add('Julianna Peña','factual-correction','Replace the noncompliant Cat Zingano/Amanda Nunes span with Sara McMann and Amanda Nunes I.','Sara McMann (2021-01-24) + Amanda Nunes I (2021-12-11)',4.65,{fightId:'2021-01-24-sara-mcmann',label:'Sara McMann',date:'2021-01-24',rating:8.5},{fightId:'2021-12-11-amanda-nunes',label:'Amanda Nunes',date:'2021-12-11',rating:10.0},[1.85,1.25,0.75,0.80],'The all-time upset supplies major Proof and Aura, while the immediate one-sided rematch loss limits Claim.');
+  add('Matt Hughes','factual-correction','Replace the noncompliant Newton/Trigg span with Georges St-Pierre I and Frank Trigg II.','Georges St-Pierre I (2004-10-22) + Frank Trigg II (2005-04-16)',5.39,{fightId:'2004-10-22-georges-st-pierre',label:'Georges St-Pierre',date:'2004-10-22',rating:9.4},{fightId:'2005-04-16-frank-trigg',label:'Frank Trigg',date:'2005-04-16',rating:9.5},[1.89,1.50,1.10,0.90],'A championship win over GSP followed by the legendary Trigg comeback creates a true all-time welterweight Apex.');
+  add('Jose Aldo','factual-correction','Replace the slightly noncompliant Edgar II/Stephens span with Frankie Edgar I and Chad Mendes II. Aura is intentionally capped at 0.50.','Frankie Edgar I (2013-02-02) + Chad Mendes II (2014-10-25)',4.96,{fightId:'2013-02-02-frankie-edgar',label:'Frankie Edgar',date:'2013-02-02',rating:9.4},{fightId:'2014-10-25-chad-mendes',label:'Chad Mendes',date:'2014-10-25',rating:9.7},[1.91,1.55,1.00,0.50],'Two elite UFC title wins establish excellent Proof and a real best-fighter claim, while the Aura score stays conservative and WEC remains excluded.');
+  add('Dan Henderson','factual-correction','Replace the noncompliant Bisping/Shogun span with Rich Franklin and Michael Bisping.','Rich Franklin (2009-01-17) + Michael Bisping (2009-07-11)',4.47,{fightId:'2009-01-17-rich-franklin',label:'Rich Franklin',date:'2009-01-17',rating:8.7},{fightId:'2009-07-11-michael-bisping',label:'Michael Bisping',date:'2009-07-11',rating:9.5},[1.82,1.20,0.55,0.90],'The Bisping knockout creates elite Aura, but the UFC-only run never established Henderson as the clear best fighter in a division.');
+  add('Mackenzie Dern','factual-correction','Replace the noncompliant Nina Nunes/Virna II span with Amanda Ribas II and Virna Jandiroba II.','Amanda Ribas II (2025-01-11) + Virna Jandiroba II (2025-10-25)',4.10,{fightId:'2025-01-11-amanda-ribas',label:'Amanda Ribas',date:'2025-01-11',rating:8.8},{fightId:'2025-10-25-virna-jandiroba',label:'Virna Jandiroba',date:'2025-10-25',rating:9.2},[1.80,1.10,0.60,0.60],'A submission rebound and five-round contender win create a clean modern strawweight Apex without a championship-level claim.');
+  add('Carla Esparza','factual-correction','Replace the two Rose wins separated by more than seven years with Yan Xiaonan and Rose Namajunas II.','Yan Xiaonan (2021-05-22) + Rose Namajunas II (2022-05-07)',3.92,{fightId:'2021-05-22-yan-xiaonan',label:'Yan Xiaonan',date:'2021-05-22',rating:8.7},{fightId:'2022-05-07-rose-namajunas',label:'Rose Namajunas',date:'2022-05-07',rating:8.5},[1.72,1.15,0.65,0.40],'A late-career elite finish and championship upset form a compliant Apex, with the low-action title win limiting performance strength and Aura.');
+  add('Leon Edwards','recovered-judgment','Create the missing canonical Apex judgment using the two Kamaru Usman championship wins. Cody intentionally rates the first Usman performance at 6.0 and caps Claim and Aura.','Kamaru Usman II (2022-08-20) + Kamaru Usman III (2023-03-18)',4.11,{fightId:'2022-08-20-kamaru-usman',label:'Kamaru Usman',date:'2022-08-20',rating:6.0},{fightId:'2023-03-18-kamaru-usman',label:'Kamaru Usman',date:'2023-03-18',rating:9.6},[1.56,1.70,0.50,0.35],'The title-winning knockout carries enormous Proof, but losing most of the first fight sharply reduces its performance rating; Claim and Aura remain deliberately conservative.');
+
+  const key=value=>String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
+  const byKey=new Map(rows.map(row=>[key(row.fighter),Object.freeze(row)]));
+  window.UFC_CANONICAL_APEX_APPROVED_JUDGMENTS=Object.freeze({
+    version:VERSION,rows:Object.freeze(rows.slice()),entryFor:fighter=>byKey.get(key(fighter))||null,
+    fighterCount:rows.length,approvalStatus:'cody-approved',mutatesRankingData:false,mutatesScores:false
+  });
+})();
