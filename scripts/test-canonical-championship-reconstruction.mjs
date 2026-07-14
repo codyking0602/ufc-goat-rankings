@@ -38,34 +38,38 @@ if(!report?.applied)console.log('CHAMPIONSHIP_RECONSTRUCTION_PREREQUISITE_FAILUR
 assert.equal(report?.applied,true,'Championship reconstruction should calculate successfully');
 
 const clean=value=>JSON.parse(JSON.stringify(value,(key,nested)=>typeof nested==='function'?undefined:nested));
+const fmt=value=>Number.isFinite(Number(value))?Number(value).toFixed(2):'—';
+const signed=value=>Number.isFinite(Number(value))?`${Number(value)>0?'+':''}${Number(value).toFixed(2)}`:'—';
 const serializable=clean(report);
 await fs.mkdir('docs',{recursive:true});
 await fs.writeFile('docs/canonical-championship-reconstruction.json',`${JSON.stringify(serializable,null,2)}\n`,'utf8');
 
-const fighterRows=report.fighters.map(row=>`| ${row.fighter} | ${row.currentScore.toFixed(2)} | ${row.reconstructedScore.toFixed(2)} | ${row.difference>0?'+':''}${row.difference.toFixed(2)} | ${row.titleFightWins} | ${row.adjustedTitleCredit.toFixed(2)} | ${row.unmatchedLegacyRows.length} | ${row.unmatchedCanonicalWins.length} | ${row.titleTypeConflicts.length} | ${row.classification} |`);
+const fighterRows=report.fighters.map(row=>`| ${row.fighter} | ${fmt(row.currentScore)} | ${fmt(row.reconstructedScore)} | ${signed(row.difference)} | ${row.titleFightWins} | ${fmt(row.adjustedTitleCredit)} | ${row.unmatchedLegacyRows.length} | ${row.unmatchedCanonicalWins.length} | ${row.titleTypeConflicts.length} | ${row.classification} |`);
 const issueRows=report.fighters.flatMap(row=>row.issues.map(issue=>`| ${row.fighter} | ${issue.classification} | ${issue.reason.replace(/\|/g,'\\|')} |`));
 const randy=report.randyTrace;
-const randyRows=(randy?.inputs||[]).map(row=>`| ${row.opponent} | ${row.titleType} | ${row.baseCredit.toFixed(2)} | ${row.opponentStrength.toFixed(2)} | ${row.eraTitleContextAdjustment.toFixed(2)} | ${row.finalAdjustedCredit.toFixed(2)} | ${row.matchMethod} | ${row.decompositionStatus} |`);
+const randyRows=(randy?.inputs||[]).map(row=>`| ${row.opponent} | ${row.titleType} | ${fmt(row.baseCredit)} | ${fmt(row.opponentStrength)} | ${fmt(row.eraTitleContextAdjustment)} | ${fmt(row.finalAdjustedCredit)} | ${row.matchMethod} | ${row.decompositionStatus} |`);
 const markdown=[
   '# Canonical Championship Reconstruction','',
   `- Version: \`${report.version}\``,
   `- Fighters: **${report.fighterCount}**`,
+  `- Canonical parity controls: **${report.canonicalControlCoverage}/${report.fighterCount}**`,
+  `- Missing canonical controls: **${report.missingControlFighters.join(', ')||'None'}**`,
   `- Exact score parity: **${report.exactParityCount}/${report.fighterCount}**`,
-  `- Approved-score differences: **${report.differenceCount}**`,
+  `- Approved-score differences or missing controls: **${report.differenceCount}**`,
   `- Fighters with visible provenance/fact issues: **${report.issueFighterCount}**`,
   `- Unmatched legacy judgment rows: **${report.unmatchedLegacyRowCount}**`,
   `- Canonical title wins missing approved judgment rows: **${report.unmatchedCanonicalWinCount}**`,
   `- Title-type conflicts: **${report.titleTypeConflictCount}**`,
   `- Proposed model changes: **${report.proposedModelChangeCount}**`,
   `- Live ranking payload unchanged: **${report.liveDataUnchanged}**`,
-  `- Locked benchmark credit: **${report.benchmarkCredit.toFixed(2)}**`,'',
+  `- Locked benchmark credit: **${fmt(report.benchmarkCredit)}**`,'',
   '## Recovered approved formula','',
   `\`${report.formula}\``,'',
   report.inputSeparationNote,'',
   '## Randy Couture traceability test','',
-  `- Approved Championship score: **${randy?.currentScore?.toFixed(2)}/30**`,
-  `- Reconstructed Championship score: **${randy?.reconstructedScore?.toFixed(2)}/30**`,
-  `- Adjusted title credit: **${randy?.adjustedTitleCredit?.toFixed(2)}**`,
+  `- Approved Championship score: **${fmt(randy?.currentScore)}/30**`,
+  `- Reconstructed Championship score: **${fmt(randy?.reconstructedScore)}/30**`,
+  `- Adjusted title credit: **${fmt(randy?.adjustedTitleCredit)}**`,
   `- UFC title-fight wins represented: **${randy?.titleFightWins}**`,'',
   '| Opponent | Title type | Base | Opponent strength | Era/title context | Final credit | Canonical match | Input status |',
   '|---|---|---:|---:|---:|---:|---|---|',
@@ -91,6 +95,9 @@ console.log('CANONICAL_CHAMPIONSHIP_RECONSTRUCTION');
 console.log(JSON.stringify({
   version:report.version,
   fighterCount:report.fighterCount,
+  canonicalControlCoverage:report.canonicalControlCoverage,
+  controlCoverage:report.controlCoverage,
+  missingControlFighters:report.missingControlFighters,
   exactParityCount:report.exactParityCount,
   differenceCount:report.differenceCount,
   issueFighterCount:report.issueFighterCount,
@@ -101,11 +108,12 @@ console.log(JSON.stringify({
   proposedModelChangeCount:report.proposedModelChangeCount,
   liveDataUnchanged:report.liveDataUnchanged,
   randy:{approved:randy?.currentScore,reconstructed:randy?.reconstructedScore,adjustedTitleCredit:randy?.adjustedTitleCredit,titleFightWins:randy?.titleFightWins,issues:randy?.issues},
-  differences:report.fighters.filter(row=>Math.abs(row.difference)>.01).map(row=>({fighter:row.fighter,currentScore:row.currentScore,reconstructedScore:row.reconstructedScore,difference:row.difference,issues:row.issues})),
+  differences:report.fighters.filter(row=>!Number.isFinite(row.difference)||Math.abs(row.difference)>.01).map(row=>({fighter:row.fighter,controlSource:row.controlSource,currentScore:row.currentScore,reconstructedScore:row.reconstructedScore,difference:row.difference,issues:row.issues})),
   provenanceIssues:report.fighters.filter(row=>row.issues.length).map(row=>({fighter:row.fighter,issues:row.issues}))
 },null,2));
 
 assert.equal(report.fighterCount,73,'All 73 fighters must be reconstructed');
+assert.equal(report.canonicalControlCoverage,73,'All 73 fighters must have an approved canonical Championship control');
 assert.equal(report.controlCoverage,73,'All 73 fighters must have an approved Championship control');
 assert.equal(report.exactParityCount,73,'The reconstruction must reproduce all 73 approved Championship scores');
 assert.equal(report.differenceCount,0,'No approved Championship score may change silently');
