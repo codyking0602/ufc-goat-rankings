@@ -25,6 +25,8 @@ const files=[
   'assets/data/canonical-fighter-facts-opponent-quality-corrections.js',
   'assets/data/canonical-scoring-records.js',
   'assets/data/fighter-era-ledgers.js',
+  'assets/data/fighter-era-ledger-approved-longevity-resolutions.js',
+  'assets/data/fighter-era-ledger-approved-loss-context-resolutions.js',
   'assets/data/prime-windows.js',
   'assets/data/prime-round-control-audit.js',
   'assets/data/prime-dominance-ledgers.js',
@@ -108,6 +110,20 @@ assert.equal(usman.stats.primeFights.some(fight=>fight.opponent==='Khamzat Chima
 const ronda=report.entryFor('Ronda Rousey');
 assert.ok(ronda.stats.losses>=1,'The shared Era Ledger, not a category-local peak slice, controls Rousey');
 
+const randy=report.entryFor('Randy Couture');
+assert.equal(randy.stats.eraStartDate,'1997-05-30');
+assert.equal(randy.stats.eraStartLabel,'Vitor Belfort I');
+
+const israel=report.entryFor('Israel Adesanya');
+assert.equal(israel.stats.eraEndDate,'2024-08-18');
+assert.equal(israel.stats.eraEndLabel,'Dricus du Plessis');
+assert.ok(israel.stats.primeFights.some(fight=>fight.opponent==='Dricus du Plessis'&&fight.result==='count-loss'));
+
+const sean=report.entryFor('Sean Strickland');
+assert.equal(sean.stats.eraStartDate,'2021-07-31');
+assert.equal(sean.stats.eraStartLabel,'Uriah Hall');
+assert.ok(sean.stats.primeFights.some(fight=>fight.opponent==='Alex Pereira'&&fight.result==='count-loss'));
+
 assert.equal(report.fighters.every(row=>Number.isFinite(row.reconstructedScore)),true);
 assert.equal(report.fighters.every(row=>row.reconstructedScore>=0&&row.reconstructedScore<=30),true);
 assert.equal(report.fighters.every(row=>row.stats.primeFights.filter(fight=>fight.result==='count-win'||fight.result==='count-loss'||fight.result==='count-draw').every(fight=>typeof fight.eliteStage==='boolean')),true);
@@ -144,7 +160,7 @@ const markdown=[
   '  - Elite-stage performance: 4 points from result rate, round control, and finish pressure','',
   'An elite-stage fight is a counted prime fight that is either a UFC title fight or against a canonical champion-level/Top-5 opponent. A loss still adds volume credit and can earn performance credit through rounds won. No contests and technical exceptions remain excluded.','',
   'The complete 30-point raw score is multiplied by the locked prime-sample percentage. This is a uniform sample-size control, not a fighter-specific adjustment.','',
-  'The Fighter Era Ledger is the sole prime-window source for Prime Dominance. Category-local prime windows are retained only as drift checks and cannot override it.','',
+  'The Fighter Era Ledger, including Cody-approved Longevity and Loss Context phase corrections, is the sole prime-window source for Prime Dominance. Category-local prime windows are retained only as drift checks and cannot override it.','',
   '## Reconstructed leaders','',
   '| Rank | Fighter | Adjusted | Raw / 30 | Sample | Prime record | Rounds | Finish | Elite validation | Elite fights |',
   '|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|',
@@ -175,5 +191,8 @@ console.log(JSON.stringify({
   leaders:leaders.slice(0,10).map(row=>({fighter:row.fighter,score:row.reconstructedScore,rawScore:row.stats.rawScore,samplePercent:row.stats.samplePercent,delta:row.difference,eliteFights:row.stats.eliteLevelValidation.fightCount})),
   aldo:{score:aldo.reconstructedScore,record:aldo.stats.recordText,window:`${aldo.stats.eraStartLabel} → ${aldo.stats.eraEndLabel}`},
   usman:{score:usman.reconstructedScore,record:usman.stats.recordText,window:`${usman.stats.eraStartLabel} → ${usman.stats.eraEndLabel}`},
+  randy:{score:randy.reconstructedScore,record:randy.stats.recordText,window:`${randy.stats.eraStartLabel} → ${randy.stats.eraEndLabel}`},
+  israel:{score:israel.reconstructedScore,record:israel.stats.recordText,window:`${israel.stats.eraStartLabel} → ${israel.stats.eraEndLabel}`},
+  sean:{score:sean.reconstructedScore,record:sean.stats.recordText,window:`${sean.stats.eraStartLabel} → ${sean.stats.eraEndLabel}`},
   liveDataUnchanged:report.liveDataUnchanged
 },null,2));
