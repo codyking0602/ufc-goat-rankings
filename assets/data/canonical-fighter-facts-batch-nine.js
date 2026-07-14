@@ -2,7 +2,7 @@
 // Evidence only. Never mutates live scores, totals, rank, OVR, snapshots, profiles, or Compare Mode.
 (function(){
 'use strict';
-const VERSION='canonical-fighter-facts-batch-nine-20260713d-fifteen-women-220-phase2-shape-lock';
+const VERSION='canonical-fighter-facts-batch-nine-20260714c-fifteen-women-220-phase2-review-loader';
 const API=window.UFC_CANONICAL_FIGHTER_FACTS;
 const fail=(error,details=[])=>{window.UFC_CANONICAL_FIGHTER_FACTS_BATCH_NINE={version:VERSION,applied:false,error:String(error||'Unknown batch error.'),details,mutatesRankingData:false};throw new Error(`[${VERSION}] ${error}`);};
 if(!API)fail('UFC_CANONICAL_FIGHTER_FACTS is not loaded.');
@@ -73,7 +73,7 @@ document.documentElement.setAttribute('data-canonical-fighter-facts-batch-nine',
 function loadCalibration(){
   if(typeof document?.createElement!=='function'||!document.body||document.querySelector?.('[data-canonical-phase-two-calibration]'))return;
   const calibration=document.createElement('script');
-  calibration.src='assets/data/canonical-phase-two-calibration.js?v=canonical-phase-two-calibration-20260713c-ufc-only-shape-lock';
+  calibration.src='assets/data/canonical-phase-two-calibration.js?v=canonical-phase-two-calibration-20260714d-full-board-review';
   calibration.setAttribute('data-canonical-phase-two-calibration','true');
   document.body.appendChild(calibration);
 }
