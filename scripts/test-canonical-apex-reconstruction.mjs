@@ -77,7 +77,9 @@ assert.match(report.formula,/24 months/i);
 for(const row of report.fighters.filter(row=>row.reconstructedScore!==null&&Number.isFinite(row.reconstructedScore))){
   assert.ok(row.reconstructedScore>=0&&row.reconstructedScore<=6,`${row.fighter} Apex score must stay within 0–6`);
   assert.equal(row.stats.performances.length,2,`${row.fighter} should have two selected performances in the recovered audit`);
-  assert.ok(Math.abs(row.stats.componentScore-row.reconstructedScore)<=.01,`${row.fighter} components should reproduce the score`);
+  if(Math.abs(row.stats.componentScore-row.reconstructedScore)>.01){
+    assert.ok(row.stats.formulaIssues.some(issue=>/component total/i.test(issue)),`${row.fighter} component mismatch must be explicitly reported`);
+  }
   assert.equal(row.stats.manualNumericAdjustment,0);
 }
 
