@@ -1,6 +1,6 @@
 // Home screen polish: light background with dark card preview across all tabs and profiles.
 (function(){
-  const VERSION = 'home-polish-hybrid-preview-20260711c-tab-scroll-hint';
+  const VERSION = 'home-polish-hybrid-preview-20260713d-expanded-hero-copy';
   let heroCountSyncTimer = null;
 
   function injectCss(){
@@ -157,7 +157,7 @@
     const subtitle = document.querySelector('.subtitle');
     if(subtitle){
       const count = fighterCount();
-      subtitle.innerHTML = `Fighter profiles, OVR ratings, category ranks, and head-to-head comparisons. <span class="subtitle-count"><strong id="fighterCount">${count || '—'}</strong> fighters ranked.</span>`;
+      subtitle.innerHTML = `Rankings, fighter profiles, head-to-head debates, event picks, and interactive games. <span class="subtitle-count"><strong id="fighterCount">${count || '—'}</strong> fighters ranked.</span>`;
     }
   }
 
