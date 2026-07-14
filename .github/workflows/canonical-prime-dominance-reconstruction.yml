@@ -32,7 +32,7 @@ jobs:
         run: |
           node --check assets/data/canonical-prime-dominance-reconstruction.js
           node --check scripts/test-canonical-prime-dominance-reconstruction.mjs
-      - name: Reconstruct 72-fighter Prime Dominance audit
+      - name: Audit approved 72-fighter Prime Dominance model
         run: node scripts/test-canonical-prime-dominance-reconstruction.mjs > /tmp/canonical-prime-dominance-reconstruction.log 2>&1
       - name: Upload Prime Dominance reconstruction report
         if: always()
