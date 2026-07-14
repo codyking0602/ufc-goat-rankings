@@ -21,6 +21,7 @@ const files=[
   'assets/data/canonical-fighter-facts-batch-nine-data-b.js',
   'assets/data/canonical-fighter-facts-batch-nine-data-c.js',
   'assets/data/canonical-fighter-facts-batch-nine.js',
+  'assets/data/canonical-fighter-facts-approved-corrections.js',
   'assets/data/canonical-scoring-records.js',
   'assets/data/division-era-depth-shadow.js',
   'assets/data/canonical-phase-two-shadow.js',
