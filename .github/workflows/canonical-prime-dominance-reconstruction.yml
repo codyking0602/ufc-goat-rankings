@@ -12,12 +12,13 @@ on:
       - 'assets/data/prime-dominance-ledgers.js'
       - 'assets/data/prime-dominance-shadow-model.js'
       - 'assets/data/canonical-prime-dominance-reconstruction.js'
+      - 'scripts/apply-prime-sample-lock.mjs'
       - 'scripts/test-canonical-prime-dominance-reconstruction.mjs'
       - '.github/workflows/canonical-prime-dominance-reconstruction.yml'
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   reconstruct-approved-prime-dominance:
@@ -25,9 +26,24 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: agent/fighter-data-phase-1
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Apply locked full-score sample percentage
+        run: node scripts/apply-prime-sample-lock.mjs
+      - name: Commit locked sample rule
+        run: |
+          if git diff --quiet; then
+            echo "Sample lock already applied."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add assets/data/canonical-prime-dominance-reconstruction.js scripts/test-canonical-prime-dominance-reconstruction.mjs
+            git commit -m "Lock Prime Dominance full-score sample percentage"
+            git push origin HEAD:agent/fighter-data-phase-1
+          fi
       - name: Check syntax
         run: |
           node --check assets/data/canonical-prime-dominance-reconstruction.js
