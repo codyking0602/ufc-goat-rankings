@@ -12,6 +12,7 @@ on:
       - 'assets/data/canonical-scoring-records.js'
       - 'assets/data/ranking-data.js'
       - 'scripts/test-canonical-phase-two-shadow.mjs'
+      - 'scripts/test-canonical-phase-two-shape-lock.mjs'
       - '.github/workflows/canonical-phase-two-shadow.yml'
   workflow_dispatch:
 
@@ -33,8 +34,11 @@ jobs:
           node --check assets/data/canonical-phase-two-calibration.js
           node --check assets/data/canonical-fighter-facts-batch-nine.js
           node --check scripts/test-canonical-phase-two-shadow.mjs
+          node --check scripts/test-canonical-phase-two-shape-lock.mjs
       - name: Calculate and calibrate all 73 fighters
         run: node scripts/test-canonical-phase-two-shadow.mjs > /tmp/canonical-phase-two-shadow.log 2>&1
+      - name: Enforce UFC-only ranking-shape locks
+        run: node scripts/test-canonical-phase-two-shape-lock.mjs >> /tmp/canonical-phase-two-shadow.log 2>&1
       - name: Append ranking-shape review
         run: |
           node - <<'NODE' >> /tmp/canonical-phase-two-shadow.log
