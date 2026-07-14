@@ -11,6 +11,7 @@ on:
       - 'assets/data/fighter-era-ledger*.js'
       - 'assets/data/division-era-depth-shadow.js'
       - 'assets/data/canonical-final-score-reconstruction.js'
+      - 'scripts/audit-leon-final-category-gaps.mjs'
       - 'scripts/test-canonical-final-score-reconstruction.mjs'
       - '.github/workflows/canonical-final-score-reconstruction.yml'
   workflow_dispatch:
@@ -30,7 +31,10 @@ jobs:
       - name: Check syntax
         run: |
           node --check assets/data/canonical-final-score-reconstruction.js
+          node --check scripts/audit-leon-final-category-gaps.mjs
           node --check scripts/test-canonical-final-score-reconstruction.mjs
+      - name: Audit Leon's missing category inputs
+        run: node scripts/audit-leon-final-category-gaps.mjs > /tmp/leon-final-category-gap-audit.log 2>&1
       - name: Audit locked category ownership and total formulas
         run: node scripts/test-canonical-final-score-reconstruction.mjs > /tmp/canonical-final-score-reconstruction.log 2>&1
       - name: Upload final-score reconstruction report
@@ -39,6 +43,8 @@ jobs:
         with:
           name: canonical-final-score-reconstruction-report
           path: |
+            /tmp/leon-final-category-gap-audit.log
+            /tmp/leon-final-category-gap-audit.json
             /tmp/canonical-final-score-reconstruction.log
             docs/canonical-final-score-reconstruction.json
             docs/canonical-final-score-reconstruction.md
