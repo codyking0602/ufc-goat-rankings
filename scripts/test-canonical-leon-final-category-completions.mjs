@@ -59,7 +59,9 @@ const roundCorrections=context.window.UFC_CANONICAL_FIGHTER_FACTS_PRIME_ROUND_CO
 
 assert.equal(layer?.opponentQualityInstalled,true);
 assert.equal(layer?.primeDominanceInstalled,true);
-assert.equal(layer.championshipPendingApproval,true);
+assert.equal(layer.championshipPendingApproval,false);
+assert.equal(layer.approvedChampionshipScore,5.98);
+assert.equal(layer.approvalStatus,'cody-approved');
 assert.equal(layer.mutatesRankingData,false);
 assert.equal(layer.mutatesScores,false);
 assert.equal(layer.mutatesRanks,false);
@@ -97,6 +99,6 @@ console.log(JSON.stringify({
   version:layer.version,
   opponentQuality:{score:leonOq.reconstructedScore,rawCredit:leonOq.rawCredit,diminishedCredit:leonOq.diminishedCredit,topFiveWins:leonOq.topFiveWins,championLevelWins:leonOq.championLevelWins,rankedQualityWins:leonOq.rankedQualityWins},
   primeDominance:{score:leonPrime.reconstructedScore,record:leonPrime.stats.recordText,roundControlPct:leonPrime.stats.roundControlPct,finishPressurePct:leonPrime.stats.finishPressurePct,components:leonPrime.stats.components},
-  championshipPendingApproval:layer.championshipPendingApproval,
+  championship:{approved:true,score:layer.approvedChampionshipScore},
   liveDataUnchanged:JSON.stringify(context.window.RANKING_DATA)===before
 },null,2));
