@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-division-era-depth-reconstruction-20260714b-signed-zero-normalized';
+  const VERSION='canonical-division-era-depth-reconstruction-20260714c-leon-factual-completion';
   const SHADOW_VERSION='division-era-depth-shadow-20260712e-roster-72';
   const RULES=Object.freeze({
     purpose:'Measure competitive depth within each UFC division over time without duplicating the separate division-strength treatment.',
@@ -31,6 +31,7 @@
     const facts=window.UFC_CANONICAL_FIGHTER_FACTS;
     const shadow=window.UFC_DIVISION_ERA_DEPTH_SHADOW;
     const canonical=window.UFC_CANONICAL_SCORING_RECORDS;
+    const resolutions=window.UFC_CANONICAL_DIVISION_ERA_DEPTH_APPROVED_RESOLUTIONS;
     const before=window.RANKING_DATA?JSON.stringify(window.RANKING_DATA):null;
     if(!facts?.list||!shadow?.fighters||!canonical?.entryFor){
       return {version:VERSION,applied:false,error:'Missing canonical fighter facts, Division-Era Depth shadow, or canonical scoring controls.',mutatesRankingData:false,mutatesScores:false};
@@ -38,18 +39,22 @@
 
     const shadowMap=new Map(shadow.fighters.map(row=>[key(row.fighter),row]));
     const fighters=facts.list().map(record=>{
-      const source=shadowMap.get(key(record.fighter))||null;
+      const resolution=resolutions?.entryFor?.(record.fighter)||null;
+      const source=shadowMap.get(key(record.fighter))||resolution?.sourceRow||null;
       const control=canonical.entryFor(record.fighter)||null;
       const depthIndex=source?num(source.depthIndex):null;
       const shadowAdjustment=source?num(source.curvedAdjustment):null;
       const recomputedAdjustment=calculateCurve(depthIndex);
-      const canonicalAdjustment=control&&control.eraDepthAdjustment!==undefined&&control.eraDepthAdjustment!==null?round2(control.eraDepthAdjustment):null;
+      const frozenAdjustment=control&&control.eraDepthAdjustment!==undefined&&control.eraDepthAdjustment!==null?round2(control.eraDepthAdjustment):null;
+      const approvedCompletionAdjustment=resolution&&resolution.approvedAdjustment!==undefined&&resolution.approvedAdjustment!==null?round2(resolution.approvedAdjustment):null;
+      const canonicalAdjustment=frozenAdjustment??approvedCompletionAdjustment;
+      const controlProvenance=frozenAdjustment!==null?'frozen-runtime-control':approvedCompletionAdjustment!==null?'approved-factual-completion':null;
       const issues=[];
       if(!source)issues.push('missing empirical era-depth row');
       if(source&&depthIndex===null)issues.push('missing numeric depth index');
       if(source&&shadowAdjustment===null)issues.push('missing numeric curved adjustment');
       if(meaningful(shadowAdjustment,recomputedAdjustment))issues.push(`shadow adjustment ${round2(shadowAdjustment).toFixed(2)} does not match curve ${round2(recomputedAdjustment).toFixed(2)}`);
-      if(canonicalAdjustment===null)issues.push('missing frozen canonical era-depth control');
+      if(canonicalAdjustment===null)issues.push('missing canonical era-depth control');
       else if(shadowAdjustment!==null&&meaningful(canonicalAdjustment,round2(shadowAdjustment),.001))issues.push(`canonical control ${canonicalAdjustment.toFixed(2)} does not match shadow ${round2(shadowAdjustment).toFixed(2)}`);
       if(source?.womenFeatherweightTreatment?.status==='pure-wfw-zero'&&round2(shadowAdjustment)!==0)issues.push('pure women featherweight treatment must be zero');
       const status=!source?'missing-shadow':issues.length?'review-required':'clean';
@@ -58,17 +63,25 @@
         board:record.board,
         status,
         depthIndex:depthIndex===null?null:round2(depthIndex),
+        depthIndexPrecise:depthIndex,
         shadowAdjustment:shadowAdjustment===null?null:round2(shadowAdjustment),
         recomputedAdjustment,
         canonicalAdjustment,
+        controlProvenance,
+        resolutionApplied:Boolean(resolution),
+        judgmentClassification:resolution?.classification||source?.classification||null,
+        approvalStatus:resolution?.approvalStatus||source?.approvalStatus||null,
         divisionStrengthKey:record.divisionStrength?.defaultKey||null,
         sampledDivisions:source?.sampledDivisions||[],
         matchedPrimeFightCount:Number(source?.matchedPrimeFightCount||0),
+        scoredSampleCount:Number(source?.scoredSampleCount||0),
+        titleWeightedSampleCount:Number(source?.titleWeightedSampleCount||0),
         componentRatios:source?.componentRatios||null,
         womenFeatherweightTreatment:source?.womenFeatherweightTreatment||null,
         primeStart:source?.primeStart||record.primeWindow?.startFightId||null,
         primeEnd:source?.primeEnd||record.primeWindow?.endFightId||null,
         openPrime:Boolean(source?.openPrime??record.primeWindow?.open),
+        sourceProvenance:source?.provenance||null,
         issues,
         mutatesScores:false
       };
@@ -86,12 +99,15 @@
       applied:true,
       mode:'shadow-only-canonical-division-era-depth-reconstruction',
       sourceShadowVersion:shadow.version,
+      approvedResolutionVersion:resolutions?.version||null,
       sourceDataset:shadow.source||null,
       rules:RULES,
       formula:`30% qualified active pool + 50% ranks 6–15 Elo + 20% contender diversity; curved to ${RULES.range.min.toFixed(2)} through +${RULES.range.max.toFixed(2)}.`,
       fighterCount:fighters.length,
       shadowCoverageCount:fighters.filter(row=>row.shadowAdjustment!==null).length,
       canonicalControlCoverageCount:fighters.filter(row=>row.canonicalAdjustment!==null).length,
+      frozenControlCoverageCount:fighters.filter(row=>row.controlProvenance==='frozen-runtime-control').length,
+      approvedCompletionControlCount:fighters.filter(row=>row.controlProvenance==='approved-factual-completion').length,
       cleanCount:fighters.filter(row=>row.status==='clean').length,
       missingShadowCount:missingShadow.length,
       formulaIssueCount:formulaIssues.length,
