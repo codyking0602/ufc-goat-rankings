@@ -42,8 +42,14 @@
     return round2((FINISH_SCALE.find(row=>normalized>=row.min)||FINISH_SCALE.at(-1)).score);
   }
 
-  function durabilityScore(stoppageLosses){
-    return round2(clamp(COMPONENT_MAX.durability-Math.max(0,Number(stoppageLosses||0)),0,COMPONENT_MAX.durability));
+  function durabilityScore(stoppageLosses,scoredFightCount){
+    const exposure=Math.max(1,Number(scoredFightCount||0));
+    const durabilityRate=clamp(1-(Math.max(0,Number(stoppageLosses||0))/exposure),0,1);
+    return round2(durabilityRate*COMPONENT_MAX.durability);
+  }
+
+  function sampleConfidence(scoredFightCount){
+    return round2(clamp(.70+(Math.max(0,Number(scoredFightCount||0))*.04),.78,1));
   }
 
   function dominantWin(fight){
@@ -100,9 +106,11 @@
       roundControl:round2(roundControlPct*COMPONENT_MAX.roundControl),
       finishPressure:finishPressureScore(finishPressureRate),
       competitiveSeparation:round2(separationRate*COMPONENT_MAX.competitiveSeparation),
-      durability:durabilityScore(stoppageLosses)
+      durability:durabilityScore(stoppageLosses,scoredFightCount)
     };
-    const score=round2(clamp(Object.values(components).reduce((sum,value)=>sum+Number(value||0),0),0,CATEGORY_MAX));
+    const rawScore=round2(clamp(Object.values(components).reduce((sum,value)=>sum+Number(value||0),0),0,CATEGORY_MAX));
+    const confidence=sampleConfidence(scoredFightCount);
+    const score=round2(clamp(rawScore*confidence,0,CATEGORY_MAX));
 
     return {
       windowValid,
@@ -132,6 +140,8 @@
       dominantWins,
       separationPct:round2(separationRate*100),
       components,
+      rawScore,
+      sampleConfidence:confidence,
       score,
       primeFights:primeFights.map(fight=>({
         fightId:fight.id,
@@ -250,13 +260,14 @@
       issueCount:fighters.reduce((sum,row)=>sum+row.issues.length,0),
       componentMaxima:COMPONENT_MAX,
       categoryMax:CATEGORY_MAX,
-      formula:'Prime Record (9) + Round Control (8) + Finish Pressure (5) + Competitive Separation (5) + Durability (3)',
+      formula:'[Prime Record (9) + Round Control (8) + Finish Pressure (5) + Competitive Separation (5) + Durability (3)] × prime-sample confidence',
       methodology:{
         primeRecord:'(prime wins + 0.5 × prime draws) ÷ scored prime fights × 9',
         roundControl:'(rounds won + 0.5 × drawn rounds) ÷ audited counted prime rounds × 8',
         finishPressure:'tiered finish wins ÷ scored prime fights, worth 0.5–5 points',
         competitiveSeparation:'dominant prime wins ÷ scored prime fights × 5; a dominant win is a finish or a clear audited decision, while DQ wins do not qualify',
-        durability:'3 points when never stopped in the prime, then minus 1 point per prime stoppage loss, floored at 0'
+        durability:'share of scored prime fights without a stoppage loss × 3',
+        sampleConfidence:'0.70 + 0.04 × scored prime fights, floored at 0.78 and capped at 1.00; full confidence begins at eight fights'
       },
       excludedInputs:['opponent-quality tier','top-five win count','champion-name count','title-fight volume','division-strength multiplier','fighter-level hidden adjustment'],
       noContestsExcluded:true,
