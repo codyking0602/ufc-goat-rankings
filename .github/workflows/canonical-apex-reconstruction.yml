@@ -1,0 +1,47 @@
+name: Canonical Apex Reconstruction
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'assets/data/canonical-fighter-facts*.js'
+      - 'assets/data/canonical-scoring-records.js'
+      - 'assets/data/apex-peak-score-corrections.js'
+      - 'assets/data/apex-peak-component-audit.js'
+      - 'assets/data/apex-peak-live-bonus.js'
+      - 'assets/data/apex-peak-audit-dricus.js'
+      - 'assets/data/canonical-apex-reconstruction.js'
+      - 'scripts/test-canonical-apex-reconstruction.mjs'
+      - 'docs/APEX_RECONSTRUCTION.md'
+      - '.github/workflows/canonical-apex-reconstruction.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reconstruct-approved-apex:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check syntax
+        run: |
+          node --check assets/data/canonical-apex-reconstruction.js
+          node --check scripts/test-canonical-apex-reconstruction.mjs
+      - name: Audit full-roster locked Apex model
+        run: node scripts/test-canonical-apex-reconstruction.mjs > /tmp/canonical-apex-reconstruction.log 2>&1
+      - name: Upload Apex reconstruction report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-apex-reconstruction-report
+          path: |
+            /tmp/canonical-apex-reconstruction.log
+            docs/canonical-apex-reconstruction.json
+            docs/canonical-apex-reconstruction.md
+          if-no-files-found: warn
+          retention-days: 30
