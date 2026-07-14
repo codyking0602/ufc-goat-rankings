@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-14T01:57:49.713Z",
+  "generatedAt": "2026-07-14T02:20:19.770Z",
   "baseUrl": "http://127.0.0.1:4173",
   "pipeline": {
     "version": "deterministic-evidence-pipeline-20260713b-stage3",
@@ -51,8 +51,8 @@
     "finalScoreApplyCount": 0,
     "scoreAuthority": "assets/js/scoring-engine.js",
     "scoreApplicationDeferred": true,
-    "startedAt": "2026-07-14T01:57:43.815Z",
-    "completedAt": "2026-07-14T01:57:46.688Z",
+    "startedAt": "2026-07-14T02:20:08.092Z",
+    "completedAt": "2026-07-14T02:20:15.079Z",
     "error": null,
     "canonicalFighterRegistryBase": {
       "applied": true,
@@ -291,38 +291,6 @@
                 "finalCurvedAdjustment": 0
               }
             },
-            "primeRecordContext": "Leslie Smith → Felicia Spencer",
-            "canonicalPrimeRecordAudit": {
-              "fighter": "Cris Cyborg",
-              "record": "6-1",
-              "context": "Leslie Smith → Felicia Spencer",
-              "counts": {
-                "wins": 6,
-                "losses": 1,
-                "draws": 0,
-                "ncs": 0,
-                "parsed": true
-              },
-              "source": "RANKING_DATA.primeRecords reviewed value",
-              "reason": "Existing reviewed Prime Record retained under locked Era context.",
-              "eraWindow": {
-                "start": "2016-05-14",
-                "startLabel": "Leslie Smith",
-                "end": "2019-07-27",
-                "endLabel": "Felicia Spencer",
-                "endType": "promotion_exit_win",
-                "endReason": "The Nunes loss did not end the window because Cyborg immediately re-proved elite UFC form against Spencer.",
-                "canonical": true,
-                "locked": true,
-                "lockVersion": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
-              },
-              "windowLocked": true,
-              "recordOverridden": false,
-              "scoreRebuildRequired": false,
-              "scoreRebuildCompleted": false,
-              "scoreRebuildVersion": null,
-              "version": "canonical-prime-records-20260713b-mirror-sync"
-            },
             "opponentQualityLive": true,
             "opponentQualityLiveAudit": {
               "fighter": "Cris Cyborg",
@@ -423,6 +391,38 @@
               "benchmarkCredit": 14.1,
               "sourceMode": "canonical-registry",
               "version": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
+            },
+            "primeRecordContext": "Leslie Smith → Felicia Spencer",
+            "canonicalPrimeRecordAudit": {
+              "fighter": "Cris Cyborg",
+              "record": "6-1",
+              "context": "Leslie Smith → Felicia Spencer",
+              "counts": {
+                "wins": 6,
+                "losses": 1,
+                "draws": 0,
+                "ncs": 0,
+                "parsed": true
+              },
+              "source": "RANKING_DATA.primeRecords reviewed value",
+              "reason": "Existing reviewed Prime Record retained under locked Era context.",
+              "eraWindow": {
+                "start": "2016-05-14",
+                "startLabel": "Leslie Smith",
+                "end": "2019-07-27",
+                "endLabel": "Felicia Spencer",
+                "endType": "promotion_exit_win",
+                "endReason": "The Nunes loss did not end the window because Cyborg immediately re-proved elite UFC form against Spencer.",
+                "canonical": true,
+                "locked": true,
+                "lockVersion": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
+              },
+              "windowLocked": true,
+              "recordOverridden": false,
+              "scoreRebuildRequired": false,
+              "scoreRebuildCompleted": false,
+              "scoreRebuildVersion": null,
+              "version": "canonical-prime-records-20260713b-mirror-sync"
             },
             "primeDominanceShadowAudit": {
               "fighter": "Cris Cyborg",
@@ -661,7 +661,7 @@
                 "Compact championship window with shallow-division compression.",
                 "UFC-only window."
               ],
-              "appliedAt": "2026-07-14T01:57:46.027Z"
+              "appliedAt": "2026-07-14T02:20:13.562Z"
             },
             "apexPeakAudit": {
               "score": 4.6,
@@ -1080,37 +1080,6 @@
                 "finalCurvedAdjustment": 0
               }
             },
-            "canonicalPrimeRecordAudit": {
-              "fighter": "Cris Cyborg",
-              "record": "6-1",
-              "context": "Leslie Smith → Felicia Spencer",
-              "counts": {
-                "wins": 6,
-                "losses": 1,
-                "draws": 0,
-                "ncs": 0,
-                "parsed": true
-              },
-              "source": "RANKING_DATA.primeRecords reviewed value",
-              "reason": "Existing reviewed Prime Record retained under locked Era context.",
-              "eraWindow": {
-                "start": "2016-05-14",
-                "startLabel": "Leslie Smith",
-                "end": "2019-07-27",
-                "endLabel": "Felicia Spencer",
-                "endType": "promotion_exit_win",
-                "endReason": "The Nunes loss did not end the window because Cyborg immediately re-proved elite UFC form against Spencer.",
-                "canonical": true,
-                "locked": true,
-                "lockVersion": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
-              },
-              "windowLocked": true,
-              "recordOverridden": false,
-              "scoreRebuildRequired": false,
-              "scoreRebuildCompleted": false,
-              "scoreRebuildVersion": null,
-              "version": "canonical-prime-records-20260713b-mirror-sync"
-            },
             "opponentQualityLive": true,
             "opponentQualityLiveAudit": {
               "fighter": "Cris Cyborg",
@@ -1211,6 +1180,37 @@
               "benchmarkCredit": 14.1,
               "sourceMode": "canonical-registry",
               "version": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
+            },
+            "canonicalPrimeRecordAudit": {
+              "fighter": "Cris Cyborg",
+              "record": "6-1",
+              "context": "Leslie Smith → Felicia Spencer",
+              "counts": {
+                "wins": 6,
+                "losses": 1,
+                "draws": 0,
+                "ncs": 0,
+                "parsed": true
+              },
+              "source": "RANKING_DATA.primeRecords reviewed value",
+              "reason": "Existing reviewed Prime Record retained under locked Era context.",
+              "eraWindow": {
+                "start": "2016-05-14",
+                "startLabel": "Leslie Smith",
+                "end": "2019-07-27",
+                "endLabel": "Felicia Spencer",
+                "endType": "promotion_exit_win",
+                "endReason": "The Nunes loss did not end the window because Cyborg immediately re-proved elite UFC form against Spencer.",
+                "canonical": true,
+                "locked": true,
+                "lockVersion": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
+              },
+              "windowLocked": true,
+              "recordOverridden": false,
+              "scoreRebuildRequired": false,
+              "scoreRebuildCompleted": false,
+              "scoreRebuildVersion": null,
+              "version": "canonical-prime-records-20260713b-mirror-sync"
             },
             "primeDominanceShadowAudit": {
               "fighter": "Cris Cyborg",
@@ -1448,7 +1448,7 @@
                 "Compact championship window with shallow-division compression.",
                 "UFC-only window."
               ],
-              "appliedAt": "2026-07-14T01:57:46.031Z"
+              "appliedAt": "2026-07-14T02:20:13.569Z"
             },
             "longevityLegacyScore": 7.78,
             "longevityRaw30": 7.78,
@@ -1764,38 +1764,6 @@
               "openPrime": false,
               "womenFeatherweightTreatment": null
             },
-            "primeRecordContext": "Art Jimmerson → Ken Shamrock II",
-            "canonicalPrimeRecordAudit": {
-              "fighter": "Royce Gracie",
-              "record": "11-0-1",
-              "context": "Art Jimmerson → Ken Shamrock II",
-              "counts": {
-                "wins": 11,
-                "losses": 0,
-                "draws": 1,
-                "ncs": 0,
-                "parsed": true
-              },
-              "source": "RANKING_DATA.primeRecords reviewed value",
-              "reason": "Existing reviewed Prime Record retained under locked Era context.",
-              "eraWindow": {
-                "start": "1993-11-12",
-                "startLabel": "Art Jimmerson",
-                "end": "1995-04-07",
-                "endLabel": "Ken Shamrock II",
-                "endType": "time_limit_draw",
-                "endReason": "The UFC 5 draw closes Royce’s continuous elite UFC tournament era. His next UFC appearance came more than eleven years later against Matt Hughes.",
-                "canonical": true,
-                "locked": true,
-                "lockVersion": "canonical-fighter-registry-royce-gracie-20260712a"
-              },
-              "windowLocked": true,
-              "recordOverridden": false,
-              "scoreRebuildRequired": false,
-              "scoreRebuildCompleted": false,
-              "scoreRebuildVersion": null,
-              "version": "canonical-prime-records-20260713b-mirror-sync"
-            },
             "opponentQualityLive": true,
             "opponentQualityLiveAudit": {
               "fighter": "Royce Gracie",
@@ -1896,6 +1864,38 @@
               "categoryScore": 8.75,
               "benchmarkCredit": 14.1,
               "sourceMode": "canonical-registry-fixed-audit"
+            },
+            "primeRecordContext": "Art Jimmerson → Ken Shamrock II",
+            "canonicalPrimeRecordAudit": {
+              "fighter": "Royce Gracie",
+              "record": "11-0-1",
+              "context": "Art Jimmerson → Ken Shamrock II",
+              "counts": {
+                "wins": 11,
+                "losses": 0,
+                "draws": 1,
+                "ncs": 0,
+                "parsed": true
+              },
+              "source": "RANKING_DATA.primeRecords reviewed value",
+              "reason": "Existing reviewed Prime Record retained under locked Era context.",
+              "eraWindow": {
+                "start": "1993-11-12",
+                "startLabel": "Art Jimmerson",
+                "end": "1995-04-07",
+                "endLabel": "Ken Shamrock II",
+                "endType": "time_limit_draw",
+                "endReason": "The UFC 5 draw closes Royce’s continuous elite UFC tournament era. His next UFC appearance came more than eleven years later against Matt Hughes.",
+                "canonical": true,
+                "locked": true,
+                "lockVersion": "canonical-fighter-registry-royce-gracie-20260712a"
+              },
+              "windowLocked": true,
+              "recordOverridden": false,
+              "scoreRebuildRequired": false,
+              "scoreRebuildCompleted": false,
+              "scoreRebuildVersion": null,
+              "version": "canonical-prime-records-20260713b-mirror-sync"
             },
             "primeDominanceShadowAudit": {
               "fighter": "Royce Gracie",
@@ -2196,7 +2196,7 @@
                 "Tournament-champion status boost is offset by a major embryonic-era division multiplier.",
                 "UFC-only tournament-era window."
               ],
-              "appliedAt": "2026-07-14T01:57:46.024Z"
+              "appliedAt": "2026-07-14T02:20:13.557Z"
             },
             "apexPeakAudit": {
               "score": 5.4,
@@ -2715,37 +2715,6 @@
               "openPrime": false,
               "womenFeatherweightTreatment": null
             },
-            "canonicalPrimeRecordAudit": {
-              "fighter": "Royce Gracie",
-              "record": "11-0-1",
-              "context": "Art Jimmerson → Ken Shamrock II",
-              "counts": {
-                "wins": 11,
-                "losses": 0,
-                "draws": 1,
-                "ncs": 0,
-                "parsed": true
-              },
-              "source": "RANKING_DATA.primeRecords reviewed value",
-              "reason": "Existing reviewed Prime Record retained under locked Era context.",
-              "eraWindow": {
-                "start": "1993-11-12",
-                "startLabel": "Art Jimmerson",
-                "end": "1995-04-07",
-                "endLabel": "Ken Shamrock II",
-                "endType": "time_limit_draw",
-                "endReason": "The UFC 5 draw closes Royce’s continuous elite UFC tournament era. His next UFC appearance came more than eleven years later against Matt Hughes.",
-                "canonical": true,
-                "locked": true,
-                "lockVersion": "canonical-fighter-registry-royce-gracie-20260712a"
-              },
-              "windowLocked": true,
-              "recordOverridden": false,
-              "scoreRebuildRequired": false,
-              "scoreRebuildCompleted": false,
-              "scoreRebuildVersion": null,
-              "version": "canonical-prime-records-20260713b-mirror-sync"
-            },
             "opponentQualityLive": true,
             "opponentQualityLiveAudit": {
               "fighter": "Royce Gracie",
@@ -2846,6 +2815,37 @@
               "categoryScore": 8.75,
               "benchmarkCredit": 14.1,
               "sourceMode": "canonical-registry-fixed-audit"
+            },
+            "canonicalPrimeRecordAudit": {
+              "fighter": "Royce Gracie",
+              "record": "11-0-1",
+              "context": "Art Jimmerson → Ken Shamrock II",
+              "counts": {
+                "wins": 11,
+                "losses": 0,
+                "draws": 1,
+                "ncs": 0,
+                "parsed": true
+              },
+              "source": "RANKING_DATA.primeRecords reviewed value",
+              "reason": "Existing reviewed Prime Record retained under locked Era context.",
+              "eraWindow": {
+                "start": "1993-11-12",
+                "startLabel": "Art Jimmerson",
+                "end": "1995-04-07",
+                "endLabel": "Ken Shamrock II",
+                "endType": "time_limit_draw",
+                "endReason": "The UFC 5 draw closes Royce’s continuous elite UFC tournament era. His next UFC appearance came more than eleven years later against Matt Hughes.",
+                "canonical": true,
+                "locked": true,
+                "lockVersion": "canonical-fighter-registry-royce-gracie-20260712a"
+              },
+              "windowLocked": true,
+              "recordOverridden": false,
+              "scoreRebuildRequired": false,
+              "scoreRebuildCompleted": false,
+              "scoreRebuildVersion": null,
+              "version": "canonical-prime-records-20260713b-mirror-sync"
             },
             "primeDominanceShadowAudit": {
               "fighter": "Royce Gracie",
@@ -3145,7 +3145,7 @@
                 "Tournament-champion status boost is offset by a major embryonic-era division multiplier.",
                 "UFC-only tournament-era window."
               ],
-              "appliedAt": "2026-07-14T01:57:46.031Z"
+              "appliedAt": "2026-07-14T02:20:13.569Z"
             },
             "longevityLegacyScore": 2.84,
             "longevityRaw30": 2.83,
@@ -3319,7 +3319,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-14T01:57:44.685Z"
+      "appliedAt": "2026-07-14T02:20:09.928Z"
     },
     "lossContextCompletionBatchFour": {
       "version": "loss-context-ledger-completion-batch-four-20260710a-five-highest-missing",
@@ -3375,7 +3375,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-14T01:57:44.689Z"
+      "appliedAt": "2026-07-14T02:20:09.934Z"
     },
     "lossContextCompletionBatchFive": {
       "version": "loss-context-ledger-completion-batch-five-20260710b-chuck-vitor-window",
@@ -3468,7 +3468,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-14T01:57:44.692Z"
+      "appliedAt": "2026-07-14T02:20:09.938Z"
     },
     "lossContextCompletionBatchSix": {
       "version": "loss-context-ledger-completion-batch-six-20260710a-first-half-eighteen",
@@ -3656,7 +3656,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-14T01:57:44.695Z"
+      "appliedAt": "2026-07-14T02:20:09.942Z"
     },
     "lossContextCompletionBatchSeven": {
       "version": "loss-context-ledger-completion-batch-seven-20260710a-final-seventeen",
@@ -3815,7 +3815,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-14T01:57:44.699Z"
+      "appliedAt": "2026-07-14T02:20:09.946Z"
     },
     "approvedFighterAuditCorrections": {
       "version": "approved-fighter-audit-corrections-20260713e-no-score-finalize",
@@ -3861,7 +3861,7 @@
         "Jessica Andrade"
       ],
       "masvidalCreditsChanged": false,
-      "appliedAt": "2026-07-14T01:57:44.704Z"
+      "appliedAt": "2026-07-14T02:20:09.954Z"
     },
     "lossContextCanonicalProduction": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -35515,7 +35515,7 @@
         ],
         "mode": "canonical-production",
         "mutatesScores": true,
-        "appliedAt": "2026-07-14T01:57:44.725Z"
+        "appliedAt": "2026-07-14T02:20:09.997Z"
       },
       "mismatchAudit": {
         "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -57398,7 +57398,7 @@
         "missingEraLossEntries": [],
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "appliedAt": "2026-07-14T01:57:44.725Z"
+        "appliedAt": "2026-07-14T02:20:09.997Z"
       },
       "scoreReview": {
         "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -59625,7 +59625,7 @@
         "mutatesPenalty": true,
         "mutatesScores": true,
         "finalScoreRecalculationOwner": "final-score-engine.js",
-        "appliedAt": "2026-07-14T01:57:44.725Z"
+        "appliedAt": "2026-07-14T02:20:09.997Z"
       },
       "appliedCompletionFixes": [
         "Robert Whittaker",
@@ -59685,7 +59685,7 @@
       ],
       "mutatesPenalty": true,
       "mutatesScores": true,
-      "appliedAt": "2026-07-14T01:57:44.726Z"
+      "appliedAt": "2026-07-14T02:20:09.997Z"
     },
     "lossContextScoreReview": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -61912,7 +61912,7 @@
       "mutatesPenalty": true,
       "mutatesScores": true,
       "finalScoreRecalculationOwner": "final-score-engine.js",
-      "appliedAt": "2026-07-14T01:57:44.725Z"
+      "appliedAt": "2026-07-14T02:20:09.997Z"
     },
     "lossContextMismatchAudit": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -83795,7 +83795,7 @@
       "missingEraLossEntries": [],
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-14T01:57:44.725Z"
+      "appliedAt": "2026-07-14T02:20:09.997Z"
     },
     "lossContextDynamicRosterTarget": {
       "version": "loss-context-dynamic-roster-target-20260710a",
@@ -83803,7 +83803,7 @@
       "expectedRosterCount": 72,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-14T01:57:44.730Z"
+      "appliedAt": "2026-07-14T02:20:10.010Z"
     },
     "canonicalLongevityRecalculation": {
       "version": "longevity-canonical-recalculation-20260712a-couture-status-calibration",
@@ -83988,7 +83988,15 @@
       "calibratesRandyStatusMultiplier": true,
       "mutatesEraLongevityInputs": true,
       "mutatesScores": false,
-      "appliedAt": "2026-07-14T01:57:44.734Z"
+      "appliedAt": "2026-07-14T02:20:10.829Z"
+    },
+    "opponentQualityReadyDetail": {
+      "version": "opponent-quality-live-20260710c-fixed-benchmark",
+      "fighters": 72,
+      "benchmarkCredit": 14.1,
+      "sourceBenchmarkCredit": 14.1,
+      "benchmarkMode": "locked-constant",
+      "futureRosterStable": true
     },
     "canonicalPrimeRecords": {
       "version": "canonical-prime-records-20260713b-mirror-sync",
@@ -84089,37 +84097,6 @@
           "version": "canonical-prime-records-20260713b-mirror-sync"
         },
         {
-          "fighter": "Anderson Silva",
-          "record": "16-2",
-          "context": "Chris Leben → Chris Weidman II",
-          "counts": {
-            "wins": 16,
-            "losses": 2,
-            "draws": 0,
-            "ncs": 0,
-            "parsed": true
-          },
-          "source": "RANKING_DATA.primeRecords reviewed value",
-          "reason": "Existing reviewed Prime Record retained under locked Era context.",
-          "eraWindow": {
-            "start": "2006-06-28",
-            "startLabel": "Chris Leben",
-            "end": "2013-12-28",
-            "endLabel": "Chris Weidman II",
-            "endType": "unrecovered_elite_loss",
-            "endReason": "Weidman I did not end the window because Anderson immediately received the title rematch. Weidman II is the unrecovered endpoint.",
-            "canonical": true,
-            "locked": true,
-            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
-          },
-          "windowLocked": true,
-          "recordOverridden": false,
-          "scoreRebuildRequired": false,
-          "scoreRebuildCompleted": false,
-          "scoreRebuildVersion": null,
-          "version": "canonical-prime-records-20260713b-mirror-sync"
-        },
-        {
           "fighter": "Islam Makhachev",
           "record": "10-0",
           "context": "Drew Dober → Current title-level form",
@@ -84139,6 +84116,37 @@
             "endLabel": "Current title-level form",
             "endType": "open_current_title_level",
             "endReason": "Adriano Martins is pre-prime. No UFC prime loss has closed the window.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "windowLocked": true,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260713b-mirror-sync"
+        },
+        {
+          "fighter": "Anderson Silva",
+          "record": "16-2",
+          "context": "Chris Leben → Chris Weidman II",
+          "counts": {
+            "wins": 16,
+            "losses": 2,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {
+            "start": "2006-06-28",
+            "startLabel": "Chris Leben",
+            "end": "2013-12-28",
+            "endLabel": "Chris Weidman II",
+            "endType": "unrecovered_elite_loss",
+            "endReason": "Weidman I did not end the window because Anderson immediately received the title rematch. Weidman II is the unrecovered endpoint.",
             "canonical": true,
             "locked": true,
             "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
@@ -84213,37 +84221,6 @@
           "version": "canonical-prime-records-20260713b-mirror-sync"
         },
         {
-          "fighter": "Benson Henderson",
-          "record": "10-3",
-          "context": "Jim Miller → Jorge Masvidal",
-          "counts": {
-            "wins": 10,
-            "losses": 3,
-            "draws": 0,
-            "ncs": 0,
-            "parsed": true
-          },
-          "source": "RANKING_DATA.primeRecords reviewed value",
-          "reason": "Existing reviewed Prime Record retained under locked Era context.",
-          "eraWindow": {
-            "start": "2011-08-14",
-            "startLabel": "Jim Miller",
-            "end": "2015-11-28",
-            "endLabel": "Jorge Masvidal",
-            "endType": "elite_recovery_win",
-            "endReason": "Jorge Masvidal closes the final sustained elite UFC run with a win.",
-            "canonical": true,
-            "locked": true,
-            "lockVersion": "canonical-fighter-registry-batch-eight-20260713a-no-score-finalize"
-          },
-          "windowLocked": true,
-          "recordOverridden": false,
-          "scoreRebuildRequired": false,
-          "scoreRebuildCompleted": false,
-          "scoreRebuildVersion": null,
-          "version": "canonical-prime-records-20260713b-mirror-sync"
-        },
-        {
           "fighter": "Kamaru Usman",
           "record": "8-2",
           "context": "Demian Maia → Leon Edwards III",
@@ -84266,6 +84243,37 @@
             "canonical": true,
             "locked": true,
             "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "windowLocked": true,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260713b-mirror-sync"
+        },
+        {
+          "fighter": "Benson Henderson",
+          "record": "10-3",
+          "context": "Jim Miller → Jorge Masvidal",
+          "counts": {
+            "wins": 10,
+            "losses": 3,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {
+            "start": "2011-08-14",
+            "startLabel": "Jim Miller",
+            "end": "2015-11-28",
+            "endLabel": "Jorge Masvidal",
+            "endType": "elite_recovery_win",
+            "endReason": "Jorge Masvidal closes the final sustained elite UFC run with a win.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "canonical-fighter-registry-batch-eight-20260713a-no-score-finalize"
           },
           "windowLocked": true,
           "recordOverridden": false,
@@ -84306,37 +84314,6 @@
           "version": "canonical-prime-records-20260713b-mirror-sync"
         },
         {
-          "fighter": "Frank Shamrock",
-          "record": "5-0",
-          "context": "Kevin Jackson → Tito Ortiz",
-          "counts": {
-            "wins": 5,
-            "losses": 0,
-            "draws": 0,
-            "ncs": 0,
-            "parsed": true
-          },
-          "source": "RANKING_DATA.primeRecords reviewed value",
-          "reason": "Existing reviewed Prime Record retained under locked Era context.",
-          "eraWindow": {
-            "start": "1997-12-21",
-            "startLabel": "Kevin Jackson",
-            "end": "1999-09-24",
-            "endLabel": "Tito Ortiz",
-            "endType": "elite_recovery_win",
-            "endReason": "Tito Ortiz closes the final sustained elite UFC run with a win.",
-            "canonical": true,
-            "locked": true,
-            "lockVersion": "canonical-fighter-registry-batch-eight-20260713a-no-score-finalize"
-          },
-          "windowLocked": true,
-          "recordOverridden": false,
-          "scoreRebuildRequired": false,
-          "scoreRebuildCompleted": false,
-          "scoreRebuildVersion": null,
-          "version": "canonical-prime-records-20260713b-mirror-sync"
-        },
-        {
           "fighter": "Stipe Miocic",
           "record": "8-2",
           "context": "Mark Hunt → Francis Ngannou II",
@@ -84368,37 +84345,6 @@
           "version": "canonical-prime-records-20260713b-mirror-sync"
         },
         {
-          "fighter": "Royce Gracie",
-          "record": "11-0-1",
-          "context": "Art Jimmerson → Ken Shamrock II",
-          "counts": {
-            "wins": 11,
-            "losses": 0,
-            "draws": 1,
-            "ncs": 0,
-            "parsed": true
-          },
-          "source": "RANKING_DATA.primeRecords reviewed value",
-          "reason": "Existing reviewed Prime Record retained under locked Era context.",
-          "eraWindow": {
-            "start": "1993-11-12",
-            "startLabel": "Art Jimmerson",
-            "end": "1995-04-07",
-            "endLabel": "Ken Shamrock II",
-            "endType": "time_limit_draw",
-            "endReason": "The UFC 5 draw closes Royce’s continuous elite UFC tournament era. His next UFC appearance came more than eleven years later against Matt Hughes.",
-            "canonical": true,
-            "locked": true,
-            "lockVersion": "canonical-fighter-registry-royce-gracie-20260712a"
-          },
-          "windowLocked": true,
-          "recordOverridden": false,
-          "scoreRebuildRequired": false,
-          "scoreRebuildCompleted": false,
-          "scoreRebuildVersion": null,
-          "version": "canonical-prime-records-20260713b-mirror-sync"
-        },
-        {
           "fighter": "Randy Couture",
           "record": "11-6",
           "context": "Vitor Belfort I → Brock Lesnar",
@@ -84418,6 +84364,68 @@
             "endLabel": "Brock Lesnar",
             "endType": "unrecovered_elite_loss",
             "endReason": "Liddell losses were recovered by heavyweight title comeback. Brock closes late UFC elite-prime window.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "windowLocked": true,
+          "recordOverridden": true,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": true,
+          "scoreRebuildVersion": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "version": "canonical-prime-records-20260713b-mirror-sync"
+        },
+        {
+          "fighter": "Jose Aldo",
+          "record": "7-1",
+          "context": "Mark Hominick → Merab Dvalishvili",
+          "counts": {
+            "wins": 7,
+            "losses": 1,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {
+            "start": "2011-04-30",
+            "startLabel": "Mark Hominick",
+            "end": "2022-08-20",
+            "endLabel": "Merab Dvalishvili",
+            "endType": "unrecovered_elite_loss",
+            "endReason": "McGregor, Holloway, Volk, and Yan did not end the window because Aldo kept re-proving elite relevance. Merab is the unrecovered endpoint.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "windowLocked": true,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260713b-mirror-sync"
+        },
+        {
+          "fighter": "Israel Adesanya",
+          "record": "8-4",
+          "context": "Kelvin Gastelum → Dricus du Plessis",
+          "counts": {
+            "wins": 8,
+            "losses": 4,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "Canonical Era-window fight ledger recount",
+          "reason": "Kelvin Gastelum through Dricus du Plessis, inclusive.",
+          "eraWindow": {
+            "start": "2019-04-13",
+            "startLabel": "Kelvin Gastelum",
+            "end": "2024-08-17",
+            "endLabel": "Dricus du Plessis",
+            "endType": "unrecovered_elite_loss",
+            "endReason": "Jan was upward-division, Pereira was avenged, and Strickland did not close it because Izzy returned to title-level. DDP is endpoint.",
             "canonical": true,
             "locked": true,
             "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
@@ -84461,37 +84469,6 @@
           "version": "canonical-prime-records-20260713b-mirror-sync"
         },
         {
-          "fighter": "Jose Aldo",
-          "record": "7-1",
-          "context": "Mark Hominick → Merab Dvalishvili",
-          "counts": {
-            "wins": 7,
-            "losses": 1,
-            "draws": 0,
-            "ncs": 0,
-            "parsed": true
-          },
-          "source": "RANKING_DATA.primeRecords reviewed value",
-          "reason": "Existing reviewed Prime Record retained under locked Era context.",
-          "eraWindow": {
-            "start": "2011-04-30",
-            "startLabel": "Mark Hominick",
-            "end": "2022-08-20",
-            "endLabel": "Merab Dvalishvili",
-            "endType": "unrecovered_elite_loss",
-            "endReason": "McGregor, Holloway, Volk, and Yan did not end the window because Aldo kept re-proving elite relevance. Merab is the unrecovered endpoint.",
-            "canonical": true,
-            "locked": true,
-            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
-          },
-          "windowLocked": true,
-          "recordOverridden": false,
-          "scoreRebuildRequired": false,
-          "scoreRebuildCompleted": false,
-          "scoreRebuildVersion": null,
-          "version": "canonical-prime-records-20260713b-mirror-sync"
-        },
-        {
           "fighter": "Chuck Liddell",
           "record": "9-2",
           "context": "Vitor Belfort → Quinton Jackson II",
@@ -84511,68 +84488,6 @@
             "endLabel": "Quinton Jackson II",
             "endType": "unrecovered_elite_loss",
             "endReason": "Couture loss was recovered. Rampage II closes window; Jardine/Evans are decline context.",
-            "canonical": true,
-            "locked": true,
-            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
-          },
-          "windowLocked": true,
-          "recordOverridden": true,
-          "scoreRebuildRequired": false,
-          "scoreRebuildCompleted": true,
-          "scoreRebuildVersion": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
-          "version": "canonical-prime-records-20260713b-mirror-sync"
-        },
-        {
-          "fighter": "Cain Velasquez",
-          "record": "5-1",
-          "context": "Brock Lesnar → Fabricio Werdum",
-          "counts": {
-            "wins": 5,
-            "losses": 1,
-            "draws": 0,
-            "ncs": 0,
-            "parsed": true
-          },
-          "source": "RANKING_DATA.primeRecords reviewed value",
-          "reason": "Existing reviewed Prime Record retained under locked Era context.",
-          "eraWindow": {
-            "start": "2010-10-23",
-            "startLabel": "Brock Lesnar",
-            "end": "2015-06-13",
-            "endLabel": "Fabricio Werdum",
-            "endType": "unrecovered_elite_loss",
-            "endReason": "JDS I did not end it because Cain recovered and dominated rematches. Werdum closes it.",
-            "canonical": true,
-            "locked": true,
-            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
-          },
-          "windowLocked": true,
-          "recordOverridden": false,
-          "scoreRebuildRequired": false,
-          "scoreRebuildCompleted": false,
-          "scoreRebuildVersion": null,
-          "version": "canonical-prime-records-20260713b-mirror-sync"
-        },
-        {
-          "fighter": "Israel Adesanya",
-          "record": "8-4",
-          "context": "Kelvin Gastelum → Dricus du Plessis",
-          "counts": {
-            "wins": 8,
-            "losses": 4,
-            "draws": 0,
-            "ncs": 0,
-            "parsed": true
-          },
-          "source": "Canonical Era-window fight ledger recount",
-          "reason": "Kelvin Gastelum through Dricus du Plessis, inclusive.",
-          "eraWindow": {
-            "start": "2019-04-13",
-            "startLabel": "Kelvin Gastelum",
-            "end": "2024-08-17",
-            "endLabel": "Dricus du Plessis",
-            "endType": "unrecovered_elite_loss",
-            "endReason": "Jan was upward-division, Pereira was avenged, and Strickland did not close it because Izzy returned to title-level. DDP is endpoint.",
             "canonical": true,
             "locked": true,
             "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
@@ -84647,11 +84562,42 @@
           "version": "canonical-prime-records-20260713b-mirror-sync"
         },
         {
-          "fighter": "Khamzat Chimaev",
-          "record": "6-1",
-          "context": "Gilbert Burns → Current elite form",
+          "fighter": "Max Holloway",
+          "record": "14-6",
+          "context": "Cub Swanson → Current title-level form",
           "counts": {
-            "wins": 6,
+            "wins": 14,
+            "losses": 6,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {
+            "start": "2015-04-18",
+            "startLabel": "Cub Swanson",
+            "end": null,
+            "endLabel": "Current title-level form",
+            "endType": "open_current_title_level",
+            "endReason": "Poirier and Volkanovski losses did not end it because Holloway kept proving elite UFC form.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "windowLocked": true,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260713b-mirror-sync"
+        },
+        {
+          "fighter": "Cain Velasquez",
+          "record": "5-1",
+          "context": "Brock Lesnar → Fabricio Werdum",
+          "counts": {
+            "wins": 5,
             "losses": 1,
             "draws": 0,
             "ncs": 0,
@@ -84660,15 +84606,108 @@
           "source": "RANKING_DATA.primeRecords reviewed value",
           "reason": "Existing reviewed Prime Record retained under locked Era context.",
           "eraWindow": {
-            "start": "2022-04-09",
-            "startLabel": "Gilbert Burns",
-            "end": null,
-            "endLabel": "Current elite form",
-            "endType": "open_current_elite",
-            "endReason": "Burns proved elite UFC form. No unrecovered UFC elite-prime loss.",
+            "start": "2010-10-23",
+            "startLabel": "Brock Lesnar",
+            "end": "2015-06-13",
+            "endLabel": "Fabricio Werdum",
+            "endType": "unrecovered_elite_loss",
+            "endReason": "JDS I did not end it because Cain recovered and dominated rematches. Werdum closes it.",
             "canonical": true,
             "locked": true,
             "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "windowLocked": true,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260713b-mirror-sync"
+        },
+        {
+          "fighter": "Royce Gracie",
+          "record": "11-0-1",
+          "context": "Art Jimmerson → Ken Shamrock II",
+          "counts": {
+            "wins": 11,
+            "losses": 0,
+            "draws": 1,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {
+            "start": "1993-11-12",
+            "startLabel": "Art Jimmerson",
+            "end": "1995-04-07",
+            "endLabel": "Ken Shamrock II",
+            "endType": "time_limit_draw",
+            "endReason": "The UFC 5 draw closes Royce’s continuous elite UFC tournament era. His next UFC appearance came more than eleven years later against Matt Hughes.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "canonical-fighter-registry-royce-gracie-20260712a"
+          },
+          "windowLocked": true,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260713b-mirror-sync"
+        },
+        {
+          "fighter": "Tony Ferguson",
+          "record": "8-1",
+          "context": "Edson Barboza → Justin Gaethje",
+          "counts": {
+            "wins": 8,
+            "losses": 1,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {
+            "start": "2015-12-11",
+            "startLabel": "Edson Barboza",
+            "end": "2020-05-09",
+            "endLabel": "Justin Gaethje",
+            "endType": "unrecovered_elite_loss",
+            "endReason": "Gaethje closes it. Everything after is post-prime collapse.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "windowLocked": true,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260713b-mirror-sync"
+        },
+        {
+          "fighter": "Frank Shamrock",
+          "record": "5-0",
+          "context": "Kevin Jackson → Tito Ortiz",
+          "counts": {
+            "wins": 5,
+            "losses": 0,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {
+            "start": "1997-12-21",
+            "startLabel": "Kevin Jackson",
+            "end": "1999-09-24",
+            "endLabel": "Tito Ortiz",
+            "endType": "elite_recovery_win",
+            "endReason": "Tito Ortiz closes the final sustained elite UFC run with a win.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "canonical-fighter-registry-batch-eight-20260713a-no-score-finalize"
           },
           "windowLocked": true,
           "recordOverridden": false,
@@ -84709,11 +84748,11 @@
           "version": "canonical-prime-records-20260713b-mirror-sync"
         },
         {
-          "fighter": "Ilia Topuria",
-          "record": "5-1",
-          "context": "Bryce Mitchell → Current title-level form",
+          "fighter": "Khamzat Chimaev",
+          "record": "6-1",
+          "context": "Gilbert Burns → Current elite form",
           "counts": {
-            "wins": 5,
+            "wins": 6,
             "losses": 1,
             "draws": 0,
             "ncs": 0,
@@ -84722,12 +84761,12 @@
           "source": "RANKING_DATA.primeRecords reviewed value",
           "reason": "Existing reviewed Prime Record retained under locked Era context.",
           "eraWindow": {
-            "start": "2022-12-10",
-            "startLabel": "Bryce Mitchell",
+            "start": "2022-04-09",
+            "startLabel": "Gilbert Burns",
             "end": null,
-            "endLabel": "Current title-level form",
-            "endType": "open_current_title_level",
-            "endReason": "Current title-level form. No unrecovered UFC elite-prime loss.",
+            "endLabel": "Current elite form",
+            "endType": "open_current_elite",
+            "endReason": "Burns proved elite UFC form. No unrecovered UFC elite-prime loss.",
             "canonical": true,
             "locked": true,
             "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
@@ -84759,68 +84798,6 @@
             "endLabel": "Current title-level form",
             "endType": "open_current_title_level",
             "endReason": "Current title-level/champion form. No unrecovered prime-ending loss.",
-            "canonical": true,
-            "locked": true,
-            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
-          },
-          "windowLocked": true,
-          "recordOverridden": false,
-          "scoreRebuildRequired": false,
-          "scoreRebuildCompleted": false,
-          "scoreRebuildVersion": null,
-          "version": "canonical-prime-records-20260713b-mirror-sync"
-        },
-        {
-          "fighter": "Fabricio Werdum",
-          "record": "9-3",
-          "context": "Roy Nelson → Alexander Volkov",
-          "counts": {
-            "wins": 9,
-            "losses": 3,
-            "draws": 0,
-            "ncs": 0,
-            "parsed": true
-          },
-          "source": "RANKING_DATA.primeRecords reviewed value",
-          "reason": "Existing reviewed Prime Record retained under locked Era context.",
-          "eraWindow": {
-            "start": "2012-02-04",
-            "startLabel": "Roy Nelson",
-            "end": "2018-03-17",
-            "endLabel": "Alexander Volkov",
-            "endType": "unrecovered_loss",
-            "endReason": "Alexander Volkov is the final counted loss in the shared elite UFC window.",
-            "canonical": true,
-            "locked": true,
-            "lockVersion": "canonical-fighter-registry-batch-eight-20260713a-no-score-finalize"
-          },
-          "windowLocked": true,
-          "recordOverridden": false,
-          "scoreRebuildRequired": false,
-          "scoreRebuildCompleted": false,
-          "scoreRebuildVersion": null,
-          "version": "canonical-prime-records-20260713b-mirror-sync"
-        },
-        {
-          "fighter": "Tony Ferguson",
-          "record": "8-1",
-          "context": "Edson Barboza → Justin Gaethje",
-          "counts": {
-            "wins": 8,
-            "losses": 1,
-            "draws": 0,
-            "ncs": 0,
-            "parsed": true
-          },
-          "source": "RANKING_DATA.primeRecords reviewed value",
-          "reason": "Existing reviewed Prime Record retained under locked Era context.",
-          "eraWindow": {
-            "start": "2015-12-11",
-            "startLabel": "Edson Barboza",
-            "end": "2020-05-09",
-            "endLabel": "Justin Gaethje",
-            "endType": "unrecovered_elite_loss",
-            "endReason": "Gaethje closes it. Everything after is post-prime collapse.",
             "canonical": true,
             "locked": true,
             "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
@@ -84886,6 +84863,68 @@
             "canonical": true,
             "locked": true,
             "lockVersion": "canonical-fighter-registry-batch-eight-20260713a-no-score-finalize"
+          },
+          "windowLocked": true,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260713b-mirror-sync"
+        },
+        {
+          "fighter": "Fabricio Werdum",
+          "record": "9-3",
+          "context": "Roy Nelson → Alexander Volkov",
+          "counts": {
+            "wins": 9,
+            "losses": 3,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {
+            "start": "2012-02-04",
+            "startLabel": "Roy Nelson",
+            "end": "2018-03-17",
+            "endLabel": "Alexander Volkov",
+            "endType": "unrecovered_loss",
+            "endReason": "Alexander Volkov is the final counted loss in the shared elite UFC window.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "canonical-fighter-registry-batch-eight-20260713a-no-score-finalize"
+          },
+          "windowLocked": true,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260713b-mirror-sync"
+        },
+        {
+          "fighter": "Ilia Topuria",
+          "record": "5-1",
+          "context": "Bryce Mitchell → Current title-level form",
+          "counts": {
+            "wins": 5,
+            "losses": 1,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {
+            "start": "2022-12-10",
+            "startLabel": "Bryce Mitchell",
+            "end": null,
+            "endLabel": "Current title-level form",
+            "endType": "open_current_title_level",
+            "endReason": "Current title-level form. No unrecovered UFC elite-prime loss.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
           },
           "windowLocked": true,
           "recordOverridden": false,
@@ -84988,6 +85027,37 @@
           "version": "canonical-prime-records-20260713b-mirror-sync"
         },
         {
+          "fighter": "Deiveson Figueiredo",
+          "record": "7-3-1",
+          "context": "Joseph Benavidez I → Petr Yan",
+          "counts": {
+            "wins": 7,
+            "losses": 3,
+            "draws": 1,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {
+            "start": "2020-02-29",
+            "startLabel": "Joseph Benavidez I",
+            "end": "2024-11-23",
+            "endLabel": "Petr Yan",
+            "endType": "unrecovered_elite_loss",
+            "endReason": "Moreno rivalry stayed title-level and bantamweight move re-proved elite relevance. Yan closes the window per Cody call.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "windowLocked": true,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260713b-mirror-sync"
+        },
+        {
           "fighter": "Glover Teixeira",
           "record": "12-6",
           "context": "Ryan Bader → Jiri Prochazka",
@@ -85010,37 +85080,6 @@
             "canonical": true,
             "locked": true,
             "lockVersion": "canonical-fighter-registry-batch-eight-20260713a-no-score-finalize"
-          },
-          "windowLocked": true,
-          "recordOverridden": false,
-          "scoreRebuildRequired": false,
-          "scoreRebuildCompleted": false,
-          "scoreRebuildVersion": null,
-          "version": "canonical-prime-records-20260713b-mirror-sync"
-        },
-        {
-          "fighter": "Henry Cejudo",
-          "record": "4-0",
-          "context": "Demetrious Johnson II → Aljamain Sterling",
-          "counts": {
-            "wins": 4,
-            "losses": 0,
-            "draws": 0,
-            "ncs": 0,
-            "parsed": true
-          },
-          "source": "RANKING_DATA.primeRecords reviewed value",
-          "reason": "Existing reviewed Prime Record retained under locked Era context.",
-          "eraWindow": {
-            "start": "2018-08-04",
-            "startLabel": "Demetrious Johnson II",
-            "end": "2023-05-06",
-            "endLabel": "Aljamain Sterling",
-            "endType": "unrecovered_comeback_title_loss",
-            "endReason": "DJ II starts prime. Retirement gap capped. Sterling comeback title loss closes it; Merab is post-prime/comeback context.",
-            "canonical": true,
-            "locked": true,
-            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
           },
           "windowLocked": true,
           "recordOverridden": false,
@@ -85081,43 +85120,12 @@
           "version": "canonical-prime-records-20260713b-mirror-sync"
         },
         {
-          "fighter": "Deiveson Figueiredo",
-          "record": "7-3-1",
-          "context": "Joseph Benavidez I → Petr Yan",
+          "fighter": "Henry Cejudo",
+          "record": "4-0",
+          "context": "Demetrious Johnson II → Aljamain Sterling",
           "counts": {
-            "wins": 7,
-            "losses": 3,
-            "draws": 1,
-            "ncs": 0,
-            "parsed": true
-          },
-          "source": "RANKING_DATA.primeRecords reviewed value",
-          "reason": "Existing reviewed Prime Record retained under locked Era context.",
-          "eraWindow": {
-            "start": "2020-02-29",
-            "startLabel": "Joseph Benavidez I",
-            "end": "2024-11-23",
-            "endLabel": "Petr Yan",
-            "endType": "unrecovered_elite_loss",
-            "endReason": "Moreno rivalry stayed title-level and bantamweight move re-proved elite relevance. Yan closes the window per Cody call.",
-            "canonical": true,
-            "locked": true,
-            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
-          },
-          "windowLocked": true,
-          "recordOverridden": false,
-          "scoreRebuildRequired": false,
-          "scoreRebuildCompleted": false,
-          "scoreRebuildVersion": null,
-          "version": "canonical-prime-records-20260713b-mirror-sync"
-        },
-        {
-          "fighter": "Max Holloway",
-          "record": "14-6",
-          "context": "Cub Swanson → Current title-level form",
-          "counts": {
-            "wins": 14,
-            "losses": 6,
+            "wins": 4,
+            "losses": 0,
             "draws": 0,
             "ncs": 0,
             "parsed": true
@@ -85125,77 +85133,15 @@
           "source": "RANKING_DATA.primeRecords reviewed value",
           "reason": "Existing reviewed Prime Record retained under locked Era context.",
           "eraWindow": {
-            "start": "2015-04-18",
-            "startLabel": "Cub Swanson",
-            "end": null,
-            "endLabel": "Current title-level form",
-            "endType": "open_current_title_level",
-            "endReason": "Poirier and Volkanovski losses did not end it because Holloway kept proving elite UFC form.",
+            "start": "2018-08-04",
+            "startLabel": "Demetrious Johnson II",
+            "end": "2023-05-06",
+            "endLabel": "Aljamain Sterling",
+            "endType": "unrecovered_comeback_title_loss",
+            "endReason": "DJ II starts prime. Retirement gap capped. Sterling comeback title loss closes it; Merab is post-prime/comeback context.",
             "canonical": true,
             "locked": true,
             "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
-          },
-          "windowLocked": true,
-          "recordOverridden": false,
-          "scoreRebuildRequired": false,
-          "scoreRebuildCompleted": false,
-          "scoreRebuildVersion": null,
-          "version": "canonical-prime-records-20260713b-mirror-sync"
-        },
-        {
-          "fighter": "Dominick Cruz",
-          "record": "5-2",
-          "context": "Urijah Faber II → Henry Cejudo",
-          "counts": {
-            "wins": 5,
-            "losses": 2,
-            "draws": 0,
-            "ncs": 0,
-            "parsed": true
-          },
-          "source": "RANKING_DATA.primeRecords reviewed value",
-          "reason": "Existing reviewed Prime Record retained under locked Era context.",
-          "eraWindow": {
-            "start": "2011-07-02",
-            "startLabel": "Urijah Faber II",
-            "end": "2020-05-09",
-            "endLabel": "Henry Cejudo",
-            "endType": "unrecovered_late_prime_title_loss",
-            "endReason": "Garbrandt did not automatically end it; Cejudo title loss is the endpoint. Vera is post-prime.",
-            "canonical": true,
-            "locked": true,
-            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
-          },
-          "windowLocked": true,
-          "recordOverridden": false,
-          "scoreRebuildRequired": false,
-          "scoreRebuildCompleted": false,
-          "scoreRebuildVersion": null,
-          "version": "canonical-prime-records-20260713b-mirror-sync"
-        },
-        {
-          "fighter": "Vitor Belfort",
-          "record": "7-3",
-          "context": "Rich Franklin → Dan Henderson III",
-          "counts": {
-            "wins": 7,
-            "losses": 3,
-            "draws": 0,
-            "ncs": 0,
-            "parsed": true
-          },
-          "source": "RANKING_DATA.primeRecords reviewed value",
-          "reason": "Existing reviewed Prime Record retained under locked Era context.",
-          "eraWindow": {
-            "start": "2009-09-19",
-            "startLabel": "Rich Franklin",
-            "end": "2015-11-07",
-            "endLabel": "Dan Henderson III",
-            "endType": "elite_recovery_win",
-            "endReason": "Dan Henderson III closes the final sustained elite UFC run with a win.",
-            "canonical": true,
-            "locked": true,
-            "lockVersion": "canonical-fighter-registry-batch-eight-20260713a-no-score-finalize"
           },
           "windowLocked": true,
           "recordOverridden": false,
@@ -85224,161 +85170,6 @@
             "endLabel": "Frankie Edgar II",
             "endType": "unrecovered_elite_loss",
             "endReason": "GSP II did not end lightweight prime. Edgar II closes window; late collapse post-prime.",
-            "canonical": true,
-            "locked": true,
-            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
-          },
-          "windowLocked": true,
-          "recordOverridden": false,
-          "scoreRebuildRequired": false,
-          "scoreRebuildCompleted": false,
-          "scoreRebuildVersion": null,
-          "version": "canonical-prime-records-20260713b-mirror-sync"
-        },
-        {
-          "fighter": "Aljamain Sterling",
-          "record": "9-2",
-          "context": "Pedro Munhoz → Current elite form",
-          "counts": {
-            "wins": 9,
-            "losses": 2,
-            "draws": 0,
-            "ncs": 0,
-            "parsed": true
-          },
-          "source": "RANKING_DATA.primeRecords reviewed value",
-          "reason": "Existing reviewed Prime Record retained under locked Era context.",
-          "eraWindow": {
-            "start": "2019-06-08",
-            "startLabel": "Pedro Munhoz",
-            "end": null,
-            "endLabel": "Current elite form",
-            "endType": "open_current_elite",
-            "endReason": "The O’Malley loss did not close the window because Sterling re-proved elite featherweight form.",
-            "canonical": true,
-            "locked": true,
-            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
-          },
-          "windowLocked": true,
-          "recordOverridden": false,
-          "scoreRebuildRequired": false,
-          "scoreRebuildCompleted": false,
-          "scoreRebuildVersion": null,
-          "version": "canonical-prime-records-20260713b-mirror-sync"
-        },
-        {
-          "fighter": "Lyoto Machida",
-          "record": "8-4",
-          "context": "Thiago Silva → Chris Weidman",
-          "counts": {
-            "wins": 8,
-            "losses": 4,
-            "draws": 0,
-            "ncs": 0,
-            "parsed": true
-          },
-          "source": "RANKING_DATA.primeRecords reviewed value",
-          "reason": "Existing reviewed Prime Record retained under locked Era context.",
-          "eraWindow": {
-            "start": "2009-01-31",
-            "startLabel": "Thiago Silva",
-            "end": "2014-07-05",
-            "endLabel": "Chris Weidman",
-            "endType": "unrecovered_elite_loss",
-            "endReason": "Shogun and Jones losses did not fully end elite relevance. Weidman closes window.",
-            "canonical": true,
-            "locked": true,
-            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
-          },
-          "windowLocked": true,
-          "recordOverridden": false,
-          "scoreRebuildRequired": false,
-          "scoreRebuildCompleted": false,
-          "scoreRebuildVersion": null,
-          "version": "canonical-prime-records-20260713b-mirror-sync"
-        },
-        {
-          "fighter": "Robbie Lawler",
-          "record": "7-2",
-          "context": "Josh Koscheck → Tyron Woodley",
-          "counts": {
-            "wins": 7,
-            "losses": 2,
-            "draws": 0,
-            "ncs": 0,
-            "parsed": true
-          },
-          "source": "RANKING_DATA.primeRecords reviewed value",
-          "reason": "Existing reviewed Prime Record retained under locked Era context.",
-          "eraWindow": {
-            "start": "2013-02-23",
-            "startLabel": "Josh Koscheck",
-            "end": "2016-07-30",
-            "endLabel": "Tyron Woodley",
-            "endType": "unrecovered_elite_loss",
-            "endReason": "Condit war does not end it. Woodley closes championship-prime window.",
-            "canonical": true,
-            "locked": true,
-            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
-          },
-          "windowLocked": true,
-          "recordOverridden": false,
-          "scoreRebuildRequired": false,
-          "scoreRebuildCompleted": false,
-          "scoreRebuildVersion": null,
-          "version": "canonical-prime-records-20260713b-mirror-sync"
-        },
-        {
-          "fighter": "Conor McGregor",
-          "record": "6-1",
-          "context": "Dustin Poirier I → Khabib Nurmagomedov",
-          "counts": {
-            "wins": 6,
-            "losses": 1,
-            "draws": 0,
-            "ncs": 0,
-            "parsed": true
-          },
-          "source": "RANKING_DATA.primeRecords reviewed value",
-          "reason": "Existing reviewed Prime Record retained under locked Era context.",
-          "eraWindow": {
-            "start": "2014-09-27",
-            "startLabel": "Dustin Poirier I",
-            "end": "2018-10-06",
-            "endLabel": "Khabib Nurmagomedov",
-            "endType": "unrecovered_elite_loss",
-            "endReason": "Nate I did not end it because Conor recovered with Nate II and Eddie. Khabib is endpoint.",
-            "canonical": true,
-            "locked": true,
-            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
-          },
-          "windowLocked": true,
-          "recordOverridden": false,
-          "scoreRebuildRequired": false,
-          "scoreRebuildCompleted": false,
-          "scoreRebuildVersion": null,
-          "version": "canonical-prime-records-20260713b-mirror-sync"
-        },
-        {
-          "fighter": "Brock Lesnar",
-          "record": "4-1",
-          "context": "Randy Couture → Cain Velasquez",
-          "counts": {
-            "wins": 4,
-            "losses": 1,
-            "draws": 0,
-            "ncs": 0,
-            "parsed": true
-          },
-          "source": "RANKING_DATA.primeRecords reviewed value",
-          "reason": "Existing reviewed Prime Record retained under locked Era context.",
-          "eraWindow": {
-            "start": "2008-11-15",
-            "startLabel": "Randy Couture",
-            "end": "2010-10-23",
-            "endLabel": "Cain Velasquez",
-            "endType": "unrecovered_elite_loss",
-            "endReason": "Cain closes it. Overeem is post-diverticulitis/post-prime context.",
             "canonical": true,
             "locked": true,
             "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
@@ -85422,11 +85213,42 @@
           "version": "canonical-prime-records-20260713b-mirror-sync"
         },
         {
-          "fighter": "Mauricio \"Shogun\" Rua",
-          "record": "3-3",
-          "context": "Chuck Liddell → Dan Henderson I",
+          "fighter": "Aljamain Sterling",
+          "record": "9-2",
+          "context": "Pedro Munhoz → Current elite form",
           "counts": {
-            "wins": 3,
+            "wins": 9,
+            "losses": 2,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {
+            "start": "2019-06-08",
+            "startLabel": "Pedro Munhoz",
+            "end": null,
+            "endLabel": "Current elite form",
+            "endType": "open_current_elite",
+            "endReason": "The O’Malley loss did not close the window because Sterling re-proved elite featherweight form.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "windowLocked": true,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260713b-mirror-sync"
+        },
+        {
+          "fighter": "Vitor Belfort",
+          "record": "7-3",
+          "context": "Rich Franklin → Dan Henderson III",
+          "counts": {
+            "wins": 7,
             "losses": 3,
             "draws": 0,
             "ncs": 0,
@@ -85435,12 +85257,12 @@
           "source": "RANKING_DATA.primeRecords reviewed value",
           "reason": "Existing reviewed Prime Record retained under locked Era context.",
           "eraWindow": {
-            "start": "2009-04-18",
-            "startLabel": "Chuck Liddell",
-            "end": "2011-11-19",
-            "endLabel": "Dan Henderson I",
-            "endType": "unrecovered_loss",
-            "endReason": "Dan Henderson I is the final counted loss in the shared elite UFC window.",
+            "start": "2009-09-19",
+            "startLabel": "Rich Franklin",
+            "end": "2015-11-07",
+            "endLabel": "Dan Henderson III",
+            "endType": "elite_recovery_win",
+            "endReason": "Dan Henderson III closes the final sustained elite UFC run with a win.",
             "canonical": true,
             "locked": true,
             "lockVersion": "canonical-fighter-registry-batch-eight-20260713a-no-score-finalize"
@@ -85453,11 +85275,11 @@
           "version": "canonical-prime-records-20260713b-mirror-sync"
         },
         {
-          "fighter": "Sean O'Malley",
-          "record": "5-2",
-          "context": "Start → Current",
+          "fighter": "Robbie Lawler",
+          "record": "7-2",
+          "context": "Josh Koscheck → Tyron Woodley",
           "counts": {
-            "wins": 5,
+            "wins": 7,
             "losses": 2,
             "draws": 0,
             "ncs": 0,
@@ -85465,8 +85287,18 @@
           },
           "source": "RANKING_DATA.primeRecords reviewed value",
           "reason": "Existing reviewed Prime Record retained under locked Era context.",
-          "eraWindow": {},
-          "windowLocked": false,
+          "eraWindow": {
+            "start": "2013-02-23",
+            "startLabel": "Josh Koscheck",
+            "end": "2016-07-30",
+            "endLabel": "Tyron Woodley",
+            "endType": "unrecovered_elite_loss",
+            "endReason": "Condit war does not end it. Woodley closes championship-prime window.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "windowLocked": true,
           "recordOverridden": false,
           "scoreRebuildRequired": false,
           "scoreRebuildCompleted": false,
@@ -85493,6 +85325,99 @@
             "endLabel": "Max Holloway",
             "endType": "unrecovered_elite_loss",
             "endReason": "Benson, Aldo, and Ortega losses did not end it because Edgar kept re-entering title-level fights. Holloway closes it.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "windowLocked": true,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260713b-mirror-sync"
+        },
+        {
+          "fighter": "Lyoto Machida",
+          "record": "8-4",
+          "context": "Thiago Silva → Chris Weidman",
+          "counts": {
+            "wins": 8,
+            "losses": 4,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {
+            "start": "2009-01-31",
+            "startLabel": "Thiago Silva",
+            "end": "2014-07-05",
+            "endLabel": "Chris Weidman",
+            "endType": "unrecovered_elite_loss",
+            "endReason": "Shogun and Jones losses did not fully end elite relevance. Weidman closes window.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "windowLocked": true,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260713b-mirror-sync"
+        },
+        {
+          "fighter": "Dominick Cruz",
+          "record": "5-2",
+          "context": "Urijah Faber II → Henry Cejudo",
+          "counts": {
+            "wins": 5,
+            "losses": 2,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {
+            "start": "2011-07-02",
+            "startLabel": "Urijah Faber II",
+            "end": "2020-05-09",
+            "endLabel": "Henry Cejudo",
+            "endType": "unrecovered_late_prime_title_loss",
+            "endReason": "Garbrandt did not automatically end it; Cejudo title loss is the endpoint. Vera is post-prime.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "windowLocked": true,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260713b-mirror-sync"
+        },
+        {
+          "fighter": "Conor McGregor",
+          "record": "6-1",
+          "context": "Dustin Poirier I → Khabib Nurmagomedov",
+          "counts": {
+            "wins": 6,
+            "losses": 1,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {
+            "start": "2014-09-27",
+            "startLabel": "Dustin Poirier I",
+            "end": "2018-10-06",
+            "endLabel": "Khabib Nurmagomedov",
+            "endType": "unrecovered_elite_loss",
+            "endReason": "Nate I did not end it because Conor recovered with Nate II and Eddie. Khabib is endpoint.",
             "canonical": true,
             "locked": true,
             "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
@@ -85536,6 +85461,37 @@
           "version": "canonical-prime-records-20260713b-mirror-sync"
         },
         {
+          "fighter": "Dustin Poirier",
+          "record": "8-4",
+          "context": "Justin Gaethje I → Islam Makhachev",
+          "counts": {
+            "wins": 8,
+            "losses": 4,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "Canonical Era-window fight ledger recount",
+          "reason": "Justin Gaethje I through Islam Makhachev, inclusive.",
+          "eraWindow": {
+            "start": "2018-04-14",
+            "startLabel": "Justin Gaethje I",
+            "end": "2024-06-01",
+            "endLabel": "Islam Makhachev",
+            "endType": "unrecovered_elite_loss",
+            "endReason": "Khabib and Oliveira did not end it because Poirier recovered with more elite wins/title fights. Islam is endpoint.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "windowLocked": true,
+          "recordOverridden": true,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": true,
+          "scoreRebuildVersion": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
+          "version": "canonical-prime-records-20260713b-mirror-sync"
+        },
+        {
           "fighter": "Justin Gaethje",
           "record": "7-3",
           "context": "James Vick → Max Holloway",
@@ -85567,6 +85523,27 @@
           "version": "canonical-prime-records-20260713b-mirror-sync"
         },
         {
+          "fighter": "Sean O'Malley",
+          "record": "5-2",
+          "context": "Start → Current",
+          "counts": {
+            "wins": 5,
+            "losses": 2,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {},
+          "windowLocked": false,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260713b-mirror-sync"
+        },
+        {
           "fighter": "Sean Strickland",
           "record": "7-4",
           "context": "Uriah Hall → Current elite form",
@@ -85586,6 +85563,68 @@
             "endLabel": "Current elite form",
             "endType": "open_current_elite",
             "endReason": "Adesanya win starts elite/title-level window. DDP does not close it because Strickland remained elite-relevant.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "windowLocked": true,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260713b-mirror-sync"
+        },
+        {
+          "fighter": "Mauricio \"Shogun\" Rua",
+          "record": "3-3",
+          "context": "Chuck Liddell → Dan Henderson I",
+          "counts": {
+            "wins": 3,
+            "losses": 3,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {
+            "start": "2009-04-18",
+            "startLabel": "Chuck Liddell",
+            "end": "2011-11-19",
+            "endLabel": "Dan Henderson I",
+            "endType": "unrecovered_loss",
+            "endReason": "Dan Henderson I is the final counted loss in the shared elite UFC window.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "canonical-fighter-registry-batch-eight-20260713a-no-score-finalize"
+          },
+          "windowLocked": true,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260713b-mirror-sync"
+        },
+        {
+          "fighter": "Brock Lesnar",
+          "record": "4-1",
+          "context": "Randy Couture → Cain Velasquez",
+          "counts": {
+            "wins": 4,
+            "losses": 1,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {
+            "start": "2008-11-15",
+            "startLabel": "Randy Couture",
+            "end": "2010-10-23",
+            "endLabel": "Cain Velasquez",
+            "endType": "unrecovered_elite_loss",
+            "endReason": "Cain closes it. Overeem is post-diverticulitis/post-prime context.",
             "canonical": true,
             "locked": true,
             "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
@@ -85657,37 +85696,6 @@
           "scoreRebuildRequired": false,
           "scoreRebuildCompleted": false,
           "scoreRebuildVersion": null,
-          "version": "canonical-prime-records-20260713b-mirror-sync"
-        },
-        {
-          "fighter": "Dustin Poirier",
-          "record": "8-4",
-          "context": "Justin Gaethje I → Islam Makhachev",
-          "counts": {
-            "wins": 8,
-            "losses": 4,
-            "draws": 0,
-            "ncs": 0,
-            "parsed": true
-          },
-          "source": "Canonical Era-window fight ledger recount",
-          "reason": "Justin Gaethje I through Islam Makhachev, inclusive.",
-          "eraWindow": {
-            "start": "2018-04-14",
-            "startLabel": "Justin Gaethje I",
-            "end": "2024-06-01",
-            "endLabel": "Islam Makhachev",
-            "endType": "unrecovered_elite_loss",
-            "endReason": "Khabib and Oliveira did not end it because Poirier recovered with more elite wins/title fights. Islam is endpoint.",
-            "canonical": true,
-            "locked": true,
-            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
-          },
-          "windowLocked": true,
-          "recordOverridden": true,
-          "scoreRebuildRequired": false,
-          "scoreRebuildCompleted": true,
-          "scoreRebuildVersion": "prime-dominance-shadow-model-20260710d-chuck-vitor-window",
           "version": "canonical-prime-records-20260713b-mirror-sync"
         },
         {
@@ -85877,12 +85885,12 @@
           "version": "canonical-prime-records-20260713b-mirror-sync"
         },
         {
-          "fighter": "Cris Cyborg",
-          "record": "6-1",
-          "context": "Leslie Smith → Felicia Spencer",
+          "fighter": "Joanna Jedrzejczyk",
+          "record": "6-2",
+          "context": "Carla Esparza → Zhang Weili I",
           "counts": {
             "wins": 6,
-            "losses": 1,
+            "losses": 2,
             "draws": 0,
             "ncs": 0,
             "parsed": true
@@ -85890,15 +85898,15 @@
           "source": "RANKING_DATA.primeRecords reviewed value",
           "reason": "Existing reviewed Prime Record retained under locked Era context.",
           "eraWindow": {
-            "start": "2016-05-14",
-            "startLabel": "Leslie Smith",
-            "end": "2019-07-27",
-            "endLabel": "Felicia Spencer",
-            "endType": "promotion_exit_win",
-            "endReason": "The Nunes loss did not end the window because Cyborg immediately re-proved elite UFC form against Spencer.",
+            "start": "2015-03-14",
+            "startLabel": "Carla Esparza",
+            "end": "2020-03-07",
+            "endLabel": "Zhang Weili I",
+            "endType": "unrecovered_elite_loss",
+            "endReason": "Rose losses did not end window because Joanna remained elite and fought Zhang in a title-level war. Zhang I is endpoint.",
             "canonical": true,
             "locked": true,
-            "lockVersion": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
           },
           "windowLocked": true,
           "recordOverridden": false,
@@ -85939,12 +85947,12 @@
           "version": "canonical-prime-records-20260713b-mirror-sync"
         },
         {
-          "fighter": "Joanna Jedrzejczyk",
-          "record": "6-2",
-          "context": "Carla Esparza → Zhang Weili I",
+          "fighter": "Cris Cyborg",
+          "record": "6-1",
+          "context": "Leslie Smith → Felicia Spencer",
           "counts": {
             "wins": 6,
-            "losses": 2,
+            "losses": 1,
             "draws": 0,
             "ncs": 0,
             "parsed": true
@@ -85952,46 +85960,15 @@
           "source": "RANKING_DATA.primeRecords reviewed value",
           "reason": "Existing reviewed Prime Record retained under locked Era context.",
           "eraWindow": {
-            "start": "2015-03-14",
-            "startLabel": "Carla Esparza",
-            "end": "2020-03-07",
-            "endLabel": "Zhang Weili I",
-            "endType": "unrecovered_elite_loss",
-            "endReason": "Rose losses did not end window because Joanna remained elite and fought Zhang in a title-level war. Zhang I is endpoint.",
+            "start": "2016-05-14",
+            "startLabel": "Leslie Smith",
+            "end": "2019-07-27",
+            "endLabel": "Felicia Spencer",
+            "endType": "promotion_exit_win",
+            "endReason": "The Nunes loss did not end the window because Cyborg immediately re-proved elite UFC form against Spencer.",
             "canonical": true,
             "locked": true,
-            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
-          },
-          "windowLocked": true,
-          "recordOverridden": false,
-          "scoreRebuildRequired": false,
-          "scoreRebuildCompleted": false,
-          "scoreRebuildVersion": null,
-          "version": "canonical-prime-records-20260713b-mirror-sync"
-        },
-        {
-          "fighter": "Kayla Harrison",
-          "record": "3-0",
-          "context": "Holly Holm → Current UFC elite form",
-          "counts": {
-            "wins": 3,
-            "losses": 0,
-            "draws": 0,
-            "ncs": 0,
-            "parsed": true
-          },
-          "source": "RANKING_DATA.primeRecords reviewed value",
-          "reason": "Existing reviewed Prime Record retained under locked Era context.",
-          "eraWindow": {
-            "start": "2024-04-13",
-            "startLabel": "Holly Holm",
-            "end": null,
-            "endLabel": "Current UFC elite form",
-            "endType": "open_current_elite",
-            "endReason": "Holm starts UFC elite proof. Non-UFC dominance is context only.",
-            "canonical": true,
-            "locked": true,
-            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+            "lockVersion": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
           },
           "windowLocked": true,
           "recordOverridden": false,
@@ -86063,6 +86040,37 @@
           "version": "canonical-prime-records-20260713b-mirror-sync"
         },
         {
+          "fighter": "Kayla Harrison",
+          "record": "3-0",
+          "context": "Holly Holm → Current UFC elite form",
+          "counts": {
+            "wins": 3,
+            "losses": 0,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {
+            "start": "2024-04-13",
+            "startLabel": "Holly Holm",
+            "end": null,
+            "endLabel": "Current UFC elite form",
+            "endType": "open_current_elite",
+            "endReason": "Holm starts UFC elite proof. Non-UFC dominance is context only.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "windowLocked": true,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260713b-mirror-sync"
+        },
+        {
           "fighter": "Julianna Peña",
           "record": "3-2",
           "context": "Miesha Tate → Current title-level form",
@@ -86082,6 +86090,37 @@
             "endLabel": "Current title-level form",
             "endType": "open_current_title_level",
             "endReason": "Tate win and Nunes upset begin title-level window. Nunes II does not close it because Peña remains title-relevant/current.",
+            "canonical": true,
+            "locked": true,
+            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
+          },
+          "windowLocked": true,
+          "recordOverridden": false,
+          "scoreRebuildRequired": false,
+          "scoreRebuildCompleted": false,
+          "scoreRebuildVersion": null,
+          "version": "canonical-prime-records-20260713b-mirror-sync"
+        },
+        {
+          "fighter": "Carla Esparza",
+          "record": "5-3",
+          "context": "Rose Namajunas I → Zhang Weili",
+          "counts": {
+            "wins": 5,
+            "losses": 3,
+            "draws": 0,
+            "ncs": 0,
+            "parsed": true
+          },
+          "source": "RANKING_DATA.primeRecords reviewed value",
+          "reason": "Existing reviewed Prime Record retained under locked Era context.",
+          "eraWindow": {
+            "start": "2014-12-12",
+            "startLabel": "Rose Namajunas I",
+            "end": "2022-11-12",
+            "endLabel": "Zhang Weili",
+            "endType": "unrecovered_elite_loss",
+            "endReason": "Joanna did not permanently close window because Esparza rebuilt to win title again. Zhang closes it.",
             "canonical": true,
             "locked": true,
             "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
@@ -86116,37 +86155,6 @@
             "canonical": true,
             "locked": true,
             "lockVersion": "approved-fighter-audit-corrections-20260713e-no-score-finalize"
-          },
-          "windowLocked": true,
-          "recordOverridden": false,
-          "scoreRebuildRequired": false,
-          "scoreRebuildCompleted": false,
-          "scoreRebuildVersion": null,
-          "version": "canonical-prime-records-20260713b-mirror-sync"
-        },
-        {
-          "fighter": "Carla Esparza",
-          "record": "5-3",
-          "context": "Rose Namajunas I → Zhang Weili",
-          "counts": {
-            "wins": 5,
-            "losses": 3,
-            "draws": 0,
-            "ncs": 0,
-            "parsed": true
-          },
-          "source": "RANKING_DATA.primeRecords reviewed value",
-          "reason": "Existing reviewed Prime Record retained under locked Era context.",
-          "eraWindow": {
-            "start": "2014-12-12",
-            "startLabel": "Rose Namajunas I",
-            "end": "2022-11-12",
-            "endLabel": "Zhang Weili",
-            "endType": "unrecovered_elite_loss",
-            "endReason": "Joanna did not permanently close window because Esparza rebuilt to win title again. Zhang closes it.",
-            "canonical": true,
-            "locked": true,
-            "lockVersion": "fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window"
           },
           "windowLocked": true,
           "recordOverridden": false,
@@ -86258,15 +86266,7 @@
       "mutatesPrimeRecordDisplay": true,
       "normalizedRosterKeys": true,
       "mirrorsSynchronized": true,
-      "appliedAt": "2026-07-14T01:57:45.029Z"
-    },
-    "opponentQualityReadyDetail": {
-      "version": "opponent-quality-live-20260710c-fixed-benchmark",
-      "fighters": 72,
-      "benchmarkCredit": 14.1,
-      "sourceBenchmarkCredit": 14.1,
-      "benchmarkMode": "locked-constant",
-      "futureRosterStable": true
+      "appliedAt": "2026-07-14T02:20:11.645Z"
     },
     "approvedOpponentQualityCorrection": {
       "applied": true,
@@ -87204,7 +87204,7 @@
       ],
       "masvidalCreditsChanged": false,
       "version": "approved-fighter-audit-corrections-20260713e-no-score-finalize",
-      "appliedAt": "2026-07-14T01:57:45.294Z"
+      "appliedAt": "2026-07-14T02:20:11.648Z"
     },
     "canonicalFighterRegistryOpponentQuality": {
       "applied": true,
@@ -87644,7 +87644,7 @@
           "version": "prime-dominance-audit-batch-eleven-20260712a-hughes-calibration"
         }
       },
-      "appliedAt": "2026-07-14T01:57:45.655Z"
+      "appliedAt": "2026-07-14T02:20:12.591Z"
     },
     "canonicalFighterRegistryPrime": {
       "applied": true,
@@ -92824,7 +92824,7 @@
       "mutatesEliteStakes": false,
       "mutatesTotals": false,
       "finalScoreRecalculationOwner": "final-score-engine.js",
-      "appliedAt": "2026-07-14T01:57:45.665Z"
+      "appliedAt": "2026-07-14T02:20:12.602Z"
     },
     "fighterEraWindowAudit": {
       "version": "fighter-era-window-audit-20260710b-record-dependencies",
@@ -97546,7 +97546,7 @@
       "allCanonicalPrimeRecordsPresent": false,
       "mutatesScores": false,
       "mutatesWindows": false,
-      "appliedAt": "2026-07-14T01:57:46.224Z"
+      "appliedAt": "2026-07-14T02:20:14.063Z"
     },
     "canonicalFighterRegistryApex": {
       "applied": true,
@@ -97729,7 +97729,7 @@
         "mutatesRecords": true,
         "mutatesPenalty": false,
         "mutatesScores": false,
-        "appliedAt": "2026-07-14T01:57:44.726Z",
+        "appliedAt": "2026-07-14T02:20:09.997Z",
         "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
       },
       "scoreReview": {
@@ -98492,7 +98492,7 @@
       ],
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "generatedAt": "2026-07-14T01:57:46.444Z",
+      "generatedAt": "2026-07-14T02:20:14.555Z",
       "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
     },
     "canonicalFighterRegistryFinal": {
@@ -98732,38 +98732,6 @@
                 "finalCurvedAdjustment": 0
               }
             },
-            "primeRecordContext": "Leslie Smith → Felicia Spencer",
-            "canonicalPrimeRecordAudit": {
-              "fighter": "Cris Cyborg",
-              "record": "6-1",
-              "context": "Leslie Smith → Felicia Spencer",
-              "counts": {
-                "wins": 6,
-                "losses": 1,
-                "draws": 0,
-                "ncs": 0,
-                "parsed": true
-              },
-              "source": "RANKING_DATA.primeRecords reviewed value",
-              "reason": "Existing reviewed Prime Record retained under locked Era context.",
-              "eraWindow": {
-                "start": "2016-05-14",
-                "startLabel": "Leslie Smith",
-                "end": "2019-07-27",
-                "endLabel": "Felicia Spencer",
-                "endType": "promotion_exit_win",
-                "endReason": "The Nunes loss did not end the window because Cyborg immediately re-proved elite UFC form against Spencer.",
-                "canonical": true,
-                "locked": true,
-                "lockVersion": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
-              },
-              "windowLocked": true,
-              "recordOverridden": false,
-              "scoreRebuildRequired": false,
-              "scoreRebuildCompleted": false,
-              "scoreRebuildVersion": null,
-              "version": "canonical-prime-records-20260713b-mirror-sync"
-            },
             "opponentQualityLive": true,
             "opponentQualityLiveAudit": {
               "fighter": "Cris Cyborg",
@@ -98864,6 +98832,38 @@
               "benchmarkCredit": 14.1,
               "sourceMode": "canonical-registry",
               "version": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
+            },
+            "primeRecordContext": "Leslie Smith → Felicia Spencer",
+            "canonicalPrimeRecordAudit": {
+              "fighter": "Cris Cyborg",
+              "record": "6-1",
+              "context": "Leslie Smith → Felicia Spencer",
+              "counts": {
+                "wins": 6,
+                "losses": 1,
+                "draws": 0,
+                "ncs": 0,
+                "parsed": true
+              },
+              "source": "RANKING_DATA.primeRecords reviewed value",
+              "reason": "Existing reviewed Prime Record retained under locked Era context.",
+              "eraWindow": {
+                "start": "2016-05-14",
+                "startLabel": "Leslie Smith",
+                "end": "2019-07-27",
+                "endLabel": "Felicia Spencer",
+                "endType": "promotion_exit_win",
+                "endReason": "The Nunes loss did not end the window because Cyborg immediately re-proved elite UFC form against Spencer.",
+                "canonical": true,
+                "locked": true,
+                "lockVersion": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
+              },
+              "windowLocked": true,
+              "recordOverridden": false,
+              "scoreRebuildRequired": false,
+              "scoreRebuildCompleted": false,
+              "scoreRebuildVersion": null,
+              "version": "canonical-prime-records-20260713b-mirror-sync"
             },
             "primeDominanceShadowAudit": {
               "fighter": "Cris Cyborg",
@@ -99102,7 +99102,7 @@
                 "Compact championship window with shallow-division compression.",
                 "UFC-only window."
               ],
-              "appliedAt": "2026-07-14T01:57:46.027Z"
+              "appliedAt": "2026-07-14T02:20:13.562Z"
             },
             "apexPeakAudit": {
               "score": 4.6,
@@ -99521,37 +99521,6 @@
                 "finalCurvedAdjustment": 0
               }
             },
-            "canonicalPrimeRecordAudit": {
-              "fighter": "Cris Cyborg",
-              "record": "6-1",
-              "context": "Leslie Smith → Felicia Spencer",
-              "counts": {
-                "wins": 6,
-                "losses": 1,
-                "draws": 0,
-                "ncs": 0,
-                "parsed": true
-              },
-              "source": "RANKING_DATA.primeRecords reviewed value",
-              "reason": "Existing reviewed Prime Record retained under locked Era context.",
-              "eraWindow": {
-                "start": "2016-05-14",
-                "startLabel": "Leslie Smith",
-                "end": "2019-07-27",
-                "endLabel": "Felicia Spencer",
-                "endType": "promotion_exit_win",
-                "endReason": "The Nunes loss did not end the window because Cyborg immediately re-proved elite UFC form against Spencer.",
-                "canonical": true,
-                "locked": true,
-                "lockVersion": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
-              },
-              "windowLocked": true,
-              "recordOverridden": false,
-              "scoreRebuildRequired": false,
-              "scoreRebuildCompleted": false,
-              "scoreRebuildVersion": null,
-              "version": "canonical-prime-records-20260713b-mirror-sync"
-            },
             "opponentQualityLive": true,
             "opponentQualityLiveAudit": {
               "fighter": "Cris Cyborg",
@@ -99652,6 +99621,37 @@
               "benchmarkCredit": 14.1,
               "sourceMode": "canonical-registry",
               "version": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
+            },
+            "canonicalPrimeRecordAudit": {
+              "fighter": "Cris Cyborg",
+              "record": "6-1",
+              "context": "Leslie Smith → Felicia Spencer",
+              "counts": {
+                "wins": 6,
+                "losses": 1,
+                "draws": 0,
+                "ncs": 0,
+                "parsed": true
+              },
+              "source": "RANKING_DATA.primeRecords reviewed value",
+              "reason": "Existing reviewed Prime Record retained under locked Era context.",
+              "eraWindow": {
+                "start": "2016-05-14",
+                "startLabel": "Leslie Smith",
+                "end": "2019-07-27",
+                "endLabel": "Felicia Spencer",
+                "endType": "promotion_exit_win",
+                "endReason": "The Nunes loss did not end the window because Cyborg immediately re-proved elite UFC form against Spencer.",
+                "canonical": true,
+                "locked": true,
+                "lockVersion": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
+              },
+              "windowLocked": true,
+              "recordOverridden": false,
+              "scoreRebuildRequired": false,
+              "scoreRebuildCompleted": false,
+              "scoreRebuildVersion": null,
+              "version": "canonical-prime-records-20260713b-mirror-sync"
             },
             "primeDominanceShadowAudit": {
               "fighter": "Cris Cyborg",
@@ -99889,7 +99889,7 @@
                 "Compact championship window with shallow-division compression.",
                 "UFC-only window."
               ],
-              "appliedAt": "2026-07-14T01:57:46.031Z"
+              "appliedAt": "2026-07-14T02:20:13.569Z"
             },
             "longevityLegacyScore": 7.78,
             "longevityRaw30": 7.78,
@@ -100210,38 +100210,6 @@
               "openPrime": false,
               "womenFeatherweightTreatment": null
             },
-            "primeRecordContext": "Art Jimmerson → Ken Shamrock II",
-            "canonicalPrimeRecordAudit": {
-              "fighter": "Royce Gracie",
-              "record": "11-0-1",
-              "context": "Art Jimmerson → Ken Shamrock II",
-              "counts": {
-                "wins": 11,
-                "losses": 0,
-                "draws": 1,
-                "ncs": 0,
-                "parsed": true
-              },
-              "source": "RANKING_DATA.primeRecords reviewed value",
-              "reason": "Existing reviewed Prime Record retained under locked Era context.",
-              "eraWindow": {
-                "start": "1993-11-12",
-                "startLabel": "Art Jimmerson",
-                "end": "1995-04-07",
-                "endLabel": "Ken Shamrock II",
-                "endType": "time_limit_draw",
-                "endReason": "The UFC 5 draw closes Royce’s continuous elite UFC tournament era. His next UFC appearance came more than eleven years later against Matt Hughes.",
-                "canonical": true,
-                "locked": true,
-                "lockVersion": "canonical-fighter-registry-royce-gracie-20260712a"
-              },
-              "windowLocked": true,
-              "recordOverridden": false,
-              "scoreRebuildRequired": false,
-              "scoreRebuildCompleted": false,
-              "scoreRebuildVersion": null,
-              "version": "canonical-prime-records-20260713b-mirror-sync"
-            },
             "opponentQualityLive": true,
             "opponentQualityLiveAudit": {
               "fighter": "Royce Gracie",
@@ -100342,6 +100310,38 @@
               "categoryScore": 8.75,
               "benchmarkCredit": 14.1,
               "sourceMode": "canonical-registry-fixed-audit"
+            },
+            "primeRecordContext": "Art Jimmerson → Ken Shamrock II",
+            "canonicalPrimeRecordAudit": {
+              "fighter": "Royce Gracie",
+              "record": "11-0-1",
+              "context": "Art Jimmerson → Ken Shamrock II",
+              "counts": {
+                "wins": 11,
+                "losses": 0,
+                "draws": 1,
+                "ncs": 0,
+                "parsed": true
+              },
+              "source": "RANKING_DATA.primeRecords reviewed value",
+              "reason": "Existing reviewed Prime Record retained under locked Era context.",
+              "eraWindow": {
+                "start": "1993-11-12",
+                "startLabel": "Art Jimmerson",
+                "end": "1995-04-07",
+                "endLabel": "Ken Shamrock II",
+                "endType": "time_limit_draw",
+                "endReason": "The UFC 5 draw closes Royce’s continuous elite UFC tournament era. His next UFC appearance came more than eleven years later against Matt Hughes.",
+                "canonical": true,
+                "locked": true,
+                "lockVersion": "canonical-fighter-registry-royce-gracie-20260712a"
+              },
+              "windowLocked": true,
+              "recordOverridden": false,
+              "scoreRebuildRequired": false,
+              "scoreRebuildCompleted": false,
+              "scoreRebuildVersion": null,
+              "version": "canonical-prime-records-20260713b-mirror-sync"
             },
             "primeDominanceShadowAudit": {
               "fighter": "Royce Gracie",
@@ -100642,7 +100642,7 @@
                 "Tournament-champion status boost is offset by a major embryonic-era division multiplier.",
                 "UFC-only tournament-era window."
               ],
-              "appliedAt": "2026-07-14T01:57:46.024Z"
+              "appliedAt": "2026-07-14T02:20:13.557Z"
             },
             "apexPeakAudit": {
               "score": 5.4,
@@ -101161,37 +101161,6 @@
               "openPrime": false,
               "womenFeatherweightTreatment": null
             },
-            "canonicalPrimeRecordAudit": {
-              "fighter": "Royce Gracie",
-              "record": "11-0-1",
-              "context": "Art Jimmerson → Ken Shamrock II",
-              "counts": {
-                "wins": 11,
-                "losses": 0,
-                "draws": 1,
-                "ncs": 0,
-                "parsed": true
-              },
-              "source": "RANKING_DATA.primeRecords reviewed value",
-              "reason": "Existing reviewed Prime Record retained under locked Era context.",
-              "eraWindow": {
-                "start": "1993-11-12",
-                "startLabel": "Art Jimmerson",
-                "end": "1995-04-07",
-                "endLabel": "Ken Shamrock II",
-                "endType": "time_limit_draw",
-                "endReason": "The UFC 5 draw closes Royce’s continuous elite UFC tournament era. His next UFC appearance came more than eleven years later against Matt Hughes.",
-                "canonical": true,
-                "locked": true,
-                "lockVersion": "canonical-fighter-registry-royce-gracie-20260712a"
-              },
-              "windowLocked": true,
-              "recordOverridden": false,
-              "scoreRebuildRequired": false,
-              "scoreRebuildCompleted": false,
-              "scoreRebuildVersion": null,
-              "version": "canonical-prime-records-20260713b-mirror-sync"
-            },
             "opponentQualityLive": true,
             "opponentQualityLiveAudit": {
               "fighter": "Royce Gracie",
@@ -101292,6 +101261,37 @@
               "categoryScore": 8.75,
               "benchmarkCredit": 14.1,
               "sourceMode": "canonical-registry-fixed-audit"
+            },
+            "canonicalPrimeRecordAudit": {
+              "fighter": "Royce Gracie",
+              "record": "11-0-1",
+              "context": "Art Jimmerson → Ken Shamrock II",
+              "counts": {
+                "wins": 11,
+                "losses": 0,
+                "draws": 1,
+                "ncs": 0,
+                "parsed": true
+              },
+              "source": "RANKING_DATA.primeRecords reviewed value",
+              "reason": "Existing reviewed Prime Record retained under locked Era context.",
+              "eraWindow": {
+                "start": "1993-11-12",
+                "startLabel": "Art Jimmerson",
+                "end": "1995-04-07",
+                "endLabel": "Ken Shamrock II",
+                "endType": "time_limit_draw",
+                "endReason": "The UFC 5 draw closes Royce’s continuous elite UFC tournament era. His next UFC appearance came more than eleven years later against Matt Hughes.",
+                "canonical": true,
+                "locked": true,
+                "lockVersion": "canonical-fighter-registry-royce-gracie-20260712a"
+              },
+              "windowLocked": true,
+              "recordOverridden": false,
+              "scoreRebuildRequired": false,
+              "scoreRebuildCompleted": false,
+              "scoreRebuildVersion": null,
+              "version": "canonical-prime-records-20260713b-mirror-sync"
             },
             "primeDominanceShadowAudit": {
               "fighter": "Royce Gracie",
@@ -101591,7 +101591,7 @@
                 "Tournament-champion status boost is offset by a major embryonic-era division multiplier.",
                 "UFC-only tournament-era window."
               ],
-              "appliedAt": "2026-07-14T01:57:46.031Z"
+              "appliedAt": "2026-07-14T02:20:13.569Z"
             },
             "longevityLegacyScore": 2.84,
             "longevityRaw30": 2.83,
@@ -108848,7 +108848,7 @@
     "mutatesRanks": false,
     "mutatesOvr": false,
     "scoreAuthority": "assets/js/scoring-engine.js",
-    "appliedAt": "2026-07-14T01:57:45.005Z",
+    "appliedAt": "2026-07-14T02:20:10.824Z",
     "authoritativeScoreOwner": "scoring-engine.js",
     "runtimeRole": "evidence-and-detail-provider",
     "authoritativeScoreWrites": false,
@@ -108859,8 +108859,8 @@
     "version": "scoring-ownership-finalizer-20260713f-no-legacy-repair",
     "applied": true,
     "status": "clean",
-    "attemptCount": 16,
-    "elapsedMs": 4602,
+    "attemptCount": 22,
+    "elapsedMs": 10184,
     "minimumSettleMs": 2000,
     "settled": true,
     "mode": "single-authority-copy-boundary-no-legacy-repair",
@@ -108962,7 +108962,7 @@
           "overallOvr": 90
         }
       ],
-      "appliedAt": "2026-07-14T01:57:46.703Z"
+      "appliedAt": "2026-07-14T02:20:15.097Z"
     },
     "engineParity": {
       "missingCanonical": [],
@@ -108992,7 +108992,7 @@
       "division-era-depth-finalizer",
       "legacy-final-score-engine"
     ],
-    "appliedAt": "2026-07-14T01:57:48.423Z"
+    "appliedAt": "2026-07-14T02:20:18.283Z"
   },
   "engine": {
     "version": "scoring-engine-20260713c-finalizer-only",
@@ -109043,7 +109043,7 @@
       {
         "reason": "stage3-scoring-ownership-finalizer",
         "accepted": true,
-        "at": "2026-07-14T01:57:46.698Z"
+        "at": "2026-07-14T02:20:15.091Z"
       }
     ],
     "latest": {
@@ -109125,7 +109125,7 @@
           "overallOvr": 90
         }
       ],
-      "appliedAt": "2026-07-14T01:57:46.703Z"
+      "appliedAt": "2026-07-14T02:20:15.097Z"
     }
   },
   "consistency": {
