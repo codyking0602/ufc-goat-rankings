@@ -37,4 +37,12 @@ jobs:
           node --check assets/data/canonical-fighter-facts-batch-seven.js
           node --check scripts/test-canonical-fighter-facts-ten-person-batch-seven.mjs
       - name: Verify 199-fight ten-fighter ledger
-        run: node scripts/test-canonical-fighter-facts-ten-person-batch-seven.mjs
+        run: node scripts/test-canonical-fighter-facts-ten-person-batch-seven.mjs > /tmp/canonical-batch-seven.log 2>&1
+      - name: Upload batch-seven diagnostic
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-batch-seven-diagnostic
+          path: /tmp/canonical-batch-seven.log
+          if-no-files-found: warn
+          retention-days: 7
