@@ -9,7 +9,9 @@ on:
       - 'assets/data/championship-resume-ledgers.js'
       - 'assets/data/championship-resume-ledger-rule-locks.js'
       - 'assets/data/canonical-championship-reconstruction.js'
+      - 'assets/data/canonical-championship-approved-resolutions.js'
       - 'scripts/test-canonical-championship-reconstruction.mjs'
+      - 'scripts/test-canonical-championship-final-resolutions.mjs'
       - '.github/workflows/canonical-championship-reconstruction.yml'
   workflow_dispatch:
 
@@ -30,8 +32,10 @@ jobs:
           node --check assets/data/canonical-fighter-facts-approved-corrections.js
           node --check assets/data/championship-resume-ledger-rule-locks.js
           node --check assets/data/canonical-championship-reconstruction.js
+          node --check assets/data/canonical-championship-approved-resolutions.js
           node --check scripts/test-canonical-championship-reconstruction.mjs
-      - name: Reconstruct all 73 approved Championship scores
+          node --check scripts/test-canonical-championship-final-resolutions.mjs
+      - name: Reconstruct 72-fighter approved Championship audit
         run: node scripts/test-canonical-championship-reconstruction.mjs > /tmp/canonical-championship-reconstruction.log 2>&1
       - name: Upload Championship reconstruction report
         if: always()
