@@ -16,6 +16,47 @@ Longevity currently has four separate historical paths. They must not be confuse
 
 The canonical reconstruction keeps the approved 144-month formula while replacing the drifting phase source with `assets/data/fighter-era-ledgers.js`.
 
+## Successful clean audit
+
+GitHub Actions run 3 passed on July 14, 2026 with:
+
+- 73 canonical fighters audited
+- 72 shared Era Ledger windows resolved
+- 72 frozen Longevity comparison controls found
+- Leon Edwards explicitly reported as missing both the shared Era entry and frozen Longevity control
+- 24 exact shared-window/frozen-score matches
+- 32 meaningful score deltas of at least 0.25
+- 32 fighter-local prime-window conflicts treated as drift evidence only
+- 13 capped inactivity gaps
+- 18 open/current windows accrued through the canonical model as-of date
+- 11 legacy recalculation overrides that reproduce and explain frozen scores
+- 13 rows with unresolved judgment/provenance inputs
+- no mutation of `RANKING_DATA`, category values, totals, ranks, OVRs, profiles, or Compare Mode
+
+The reconstructed top five are Max Holloway 30.00, Jose Aldo 29.70, Jon Jones 29.13, Frankie Edgar 26.99, and Valentina Shevchenko 26.77. This is an audit result, not a live board.
+
+### Largest meaningful deltas
+
+| Fighter | Frozen | Reconstructed | Delta | Primary explanation |
+|---|---:|---:|---:|---|
+| Randy Couture | 25.74 | 10.97 | -14.77 | Old 1997 Vitor I patch window replaced by shared 2004 Vitor II start |
+| Aljamain Sterling | 19.15 | 8.64 | -10.51 | Legacy Munhoz/open override no longer controls the shared window |
+| Carla Esparza | 10.63 | 20.19 | +9.56 | Shared Era window begins much earlier than the fighter-local window |
+| T.J. Dillashaw | 19.98 | 12.58 | -7.40 | Old Barao-to-Sterling recalculation override removed from control |
+| Tito Ortiz | 18.11 | 10.71 | -7.40 | Frozen score contains unrecovered month/judgment provenance |
+| Sean Strickland | 12.71 | 7.31 | -5.40 | Old Uriah Hall/open override removed from control |
+| Chuck Liddell | 13.54 | 8.64 | -4.90 | Old Belfort-to-Rampage recalculation override removed from control |
+| Justin Gaethje | 15.80 | 11.01 | -4.79 | Shared Tony Ferguson start replaces old James Vick start |
+| Alexander Volkanovski | 16.34 | 20.69 | +4.35 | Open shared window now accrues through the canonical as-of date |
+| Dan Henderson | 12.85 | 9.63 | -3.22 | Old Rich Franklin-to-Cormier override removed from control |
+| Dominick Cruz | 16.58 | 14.05 | -2.53 | Stored 78 months exceeds the universal 18-month-cap result of 66.1 months |
+| Ronda Rousey | 10.51 | 8.22 | -2.29 | Old Carmouche-to-Nunes override removed from control |
+| Julianna Peña | 11.42 | 9.54 | -1.88 | Corrected shared prime start at Amanda Nunes I changes active months |
+| B.J. Penn | 18.32 | 16.65 | -1.67 | Stored active months exceed the traced 18-month-cap intervals |
+| Israel Adesanya | 14.42 | 13.12 | -1.30 | Old Gastelum-to-Dricus override removed from control |
+
+The workflow artifact contains all 32 meaningful deltas, every credited interval, and every comparison classification.
+
 ## Approved philosophy recovered
 
 Longevity measures **sustained active elite UFC relevance**, not total career length and not simple start-to-end calendar time.
@@ -90,6 +131,28 @@ The canonical calculator uses no hidden fighter-level numeric adjustment. The on
 
 Notes and historical adjustment explanations are retained as audit context but do not silently alter the result.
 
+### Unresolved judgment and provenance inputs
+
+The clean report explicitly flags these rows for additional judgment recovery before any live promotion:
+
+- Glover Teixeira
+- Rashad Evans
+- Fabricio Werdum
+- Vitor Belfort
+- Benson Henderson
+- Tito Ortiz
+- Forrest Griffin
+- Cris Cyborg
+- Mauricio "Shogun" Rua
+- Frank Shamrock
+- Miesha Tate
+- Royce Gracie
+- Leon Edwards — missing the shared Era Ledger entry and frozen control entirely
+
+These are not silent score overrides. They are audit stops: the frozen value cannot yet be fully reproduced from the shared window, explicit multipliers, a traced legacy patch, and the universal gap rule.
+
+Dominick Cruz is separately exposed as a recovered-but-unexplained stored-month judgment. His shared UFC window with two 18-month-capped injury gaps produces 66.1 active months, while the stored/frozen model uses 78.0 months. The higher value behaves roughly like a 24-month injury-gap allowance, but no approved explicit exception is recorded. The canonical reconstruction therefore keeps the universal 18-month cap and reports the delta for Cody review.
+
 ## Difference classifications
 
 Every meaningful difference is classified under the locked doctrine:
@@ -114,7 +177,7 @@ The old recalculation file contains 11 comparison-only overrides:
 - Robert Whittaker: 94.9 months, Derek Brunson through Khamzat Chimaev
 - Dan Henderson: 64.2 months, Rich Franklin through Daniel Cormier
 
-These values help explain the frozen scores. They never override the shared Era Ledger in the new calculator.
+These values help explain the frozen scores. They never override the shared Fighter Era Ledger in the new calculator.
 
 Randy Couture is the clearest benchmark: the frozen 25.74 score reflects the old 1997 Vitor Belfort I start. The current shared Era Ledger begins at Vitor Belfort II on August 21, 2004. The reconstruction must report that large factual delta rather than silently preserving the old category-local window.
 
