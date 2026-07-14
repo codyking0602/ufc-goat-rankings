@@ -160,7 +160,7 @@ console.log(JSON.stringify({
   eraLedgerDriftCount:report.eraLedgerDriftCount,
   scoredPrimeFightCount:report.scoredPrimeFightCount,
   eliteStageFightCount:report.eliteStageFightCount,
-  missingPrimeRoundRowCount:report.missingPrimeRoundRowRowCount,
+  missingPrimeRoundRowCount:report.missingPrimeRoundRowCount,
   missingEliteStageRoundRowCount:report.missingEliteStageRoundRowCount,
   exactFrozenControlParityCount:report.exactFrozenControlParityCount,
   meaningfulDeltaCount:report.meaningfulDeltaCount,
