@@ -27,6 +27,8 @@ jobs:
           node-version: '22'
       - name: Check syntax
         run: |
+          node --check assets/data/canonical-fighter-facts-approved-corrections.js
+          node --check assets/data/championship-resume-ledger-rule-locks.js
           node --check assets/data/canonical-championship-reconstruction.js
           node --check scripts/test-canonical-championship-reconstruction.mjs
       - name: Reconstruct all 73 approved Championship scores
