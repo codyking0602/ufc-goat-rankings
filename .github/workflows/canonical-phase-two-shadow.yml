@@ -32,6 +32,16 @@ jobs:
           node --check scripts/test-canonical-phase-two-shadow.mjs
       - name: Calculate all 73 fighters from canonical ledgers
         run: node scripts/test-canonical-phase-two-shadow.mjs > /tmp/canonical-phase-two-shadow.log 2>&1
+      - name: Append ranking-shape review
+        run: |
+          node - <<'NODE' >> /tmp/canonical-phase-two-shadow.log
+          const fs=require('node:fs');
+          const report=JSON.parse(fs.readFileSync('docs/canonical-phase-two-shadow.json','utf8'));
+          const names=['Jon Jones','Georges St-Pierre','Demetrious Johnson','Anderson Silva','Islam Makhachev','Khabib Nurmagomedov','Alexander Volkanovski','Jose Aldo','Max Holloway','Kamaru Usman','Matt Hughes','Randy Couture','Chuck Liddell','Frank Shamrock','Charles Oliveira','Ilia Topuria'];
+          const rows=[...report.boards.men,...report.boards.women];
+          console.log('PHASE_TWO_RANKING_SHAPE_REVIEW');
+          console.log(JSON.stringify(names.map(name=>{const row=rows.find(item=>item.fighter===name);return row?{fighter:name,rank:row.rank,totalScore:row.totalScore,overallOvr:row.overallOvr,categories:row.categories,apexPeak:row.apexPeak,penalty:row.loss.penalty,rawPenalty:row.loss.rawPenalty,topFiveWins:row.profileStats.topFiveWins,titleFightWins:row.profileStats.titleFightWins,primeRecord:row.profileStats.primeRecord,activeEliteYears:row.profileStats.activeEliteYears}:null;}),null,2));
+          NODE
       - name: Upload Phase 2 shadow report
         if: always()
         uses: actions/upload-artifact@v4
