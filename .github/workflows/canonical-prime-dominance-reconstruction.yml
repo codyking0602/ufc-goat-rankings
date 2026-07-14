@@ -6,6 +6,7 @@ on:
     paths:
       - 'assets/data/canonical-fighter-facts*.js'
       - 'assets/data/canonical-scoring-records.js'
+      - 'assets/data/fighter-era-ledgers.js'
       - 'assets/data/prime-windows.js'
       - 'assets/data/prime-round-control-audit.js'
       - 'assets/data/prime-dominance-ledgers.js'
@@ -19,7 +20,7 @@ permissions:
   contents: read
 
 jobs:
-  reconstruct-candidate-prime-dominance:
+  reconstruct-approved-prime-dominance:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
