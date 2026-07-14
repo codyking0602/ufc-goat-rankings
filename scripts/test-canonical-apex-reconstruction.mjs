@@ -28,7 +28,8 @@ const files=[
   'assets/data/apex-peak-score-corrections.js',
   'assets/data/apex-peak-component-audit.js',
   'assets/data/apex-peak-live-bonus.js',
-  'assets/data/apex-peak-audit-dricus.js'
+  'assets/data/apex-peak-audit-dricus.js',
+  'assets/data/canonical-apex-approved-judgments.js'
 ];
 
 const attributes={};
@@ -37,8 +38,8 @@ const window={};
 const context=vm.createContext({window,document,console,Date,JSON,Map,Set,Object,Array,Number,String,Math,RegExp,Error,Boolean,Promise});
 for(const file of files)vm.runInContext(await fs.readFile(file,'utf8'),context,{filename:file});
 
-// The exact runtime snapshot is audit evidence only. It recovers final Apex selections/components
-// that are currently scattered across runtime ordering and fighter registry layers. It never controls scores.
+// The exact runtime snapshot remains frozen audit evidence only. Approved judgments are read from
+// the dedicated shadow layer and never overwrite the live runtime payload.
 const runtimeSnapshot=JSON.parse(await fs.readFile('docs/runtime-scoring-snapshot.json','utf8'));
 assert.equal(runtimeSnapshot?.summary?.status,'clean','Recovered runtime evidence must come from a clean snapshot');
 assert.equal(runtimeSnapshot?.fighters?.length,72,'The runtime evidence snapshot should cover all 72 live-board fighters');
@@ -49,21 +50,24 @@ for(const snapshotRow of runtimeSnapshot.fighters){
   if(existing)existing.apexPeakAudit=JSON.parse(JSON.stringify(snapshotRow.apexPeakAudit));
   else context.window.RANKING_DATA.fighters.push({fighter:snapshotRow.fighter,apexPeakAudit:JSON.parse(JSON.stringify(snapshotRow.apexPeakAudit))});
 }
+const liveBefore=JSON.stringify(context.window.RANKING_DATA);
 vm.runInContext(await fs.readFile(reconstructionFile,'utf8'),context,{filename:reconstructionFile});
 
 const report=context.window.UFC_CANONICAL_APEX_RECONSTRUCTION;
+const approved=context.window.UFC_CANONICAL_APEX_APPROVED_JUDGMENTS;
+assert.equal(approved?.fighterCount,6,'Approved Apex batch one should contain six fighters');
+assert.equal(approved?.mutatesRankingData,false);
+assert.equal(approved?.mutatesScores,false);
 assert.equal(report?.applied,true,'Apex reconstruction should calculate successfully');
 assert.equal(report.fighterCount,73,'All 73 canonical fighters must appear in the Apex audit');
-assert.equal(report.auditedFighterCount,72,'Recovered runtime evidence should cover all 72 existing live-board Apex judgments');
+assert.equal(report.auditedFighterCount,72,'The 72 existing live-board fighters should retain explicit Apex ownership');
 assert.equal(report.missingAuditCount,1,'Leon Edwards should remain the only missing Apex judgment');
-assert.equal(report.auditedFighterCount+report.missingAuditCount,73,'Missing Apex ownership must remain explicit for the full roster');
 assert.equal(report.controlCoverage,72,'The frozen canonical snapshot covers the 72 live-board fighters');
-assert.equal(report.exactFrozenControlParityCount,72,'Every recovered locked Apex score should reproduce its frozen control');
-assert.equal(report.scoreDeltaCount,0,'Initial Apex reconstruction must not silently change approved scores');
 assert.equal(report.missingControlCount,1,'Leon Edwards should remain the only missing frozen Apex control');
 assert.deepEqual(JSON.parse(JSON.stringify(report.missingAudits.map(row=>row.fighter))),['Leon Edwards']);
 assert.deepEqual(JSON.parse(JSON.stringify(report.missingControls.map(row=>row.fighter))),['Leon Edwards']);
 assert.equal(report.liveDataUnchanged,true);
+assert.equal(JSON.stringify(context.window.RANKING_DATA),liveBefore,'The approved shadow layer must not modify the runtime ranking payload');
 assert.equal(report.mutatesRankingData,false);
 assert.equal(report.mutatesScores,false);
 assert.equal(report.rules.totalMax,6);
@@ -74,106 +78,107 @@ assert.equal(report.rules.auraMax,1);
 assert.match(report.formula,/two counted UFC wins/i);
 assert.match(report.formula,/24 months/i);
 
+const expected={
+  'Glover Teixeira':{score:4.25,current:4.80,difference:-0.55,pair:['2020-11-07-thiago-santos','2021-10-30-jan-b-achowicz'],components:[1.85,1.30,0.60,0.50]},
+  'Royce Gracie':{score:5.30,current:5.40,difference:-0.10,pair:['1993-11-12-ken-shamrock','1994-12-16-dan-severn'],components:[1.85,1.20,1.25,1.00]},
+  'Deiveson Figueiredo':{score:4.38,current:4.38,difference:0,pair:['2020-07-19-joseph-benavidez-ii','2020-11-21-alex-perez'],components:[1.83,1.15,0.75,0.65]},
+  'Frank Shamrock':{score:5.39,current:5.40,difference:-0.01,pair:['1997-12-21-kevin-jackson','1999-09-24-tito-ortiz'],components:[1.84,1.45,1.15,0.95]},
+  'Benson Henderson':{score:4.58,current:4.60,difference:-0.02,pair:['2012-02-26-frankie-edgar-i','2012-12-08-nate-diaz'],components:[1.83,1.35,0.80,0.60]},
+  'Fabricio Werdum':{score:5.17,current:5.20,difference:-0.03,pair:['2014-11-15-mark-hunt','2015-06-13-cain-velasquez'],components:[1.87,1.45,1.00,0.85]}
+};
+
+for(const [fighter,target] of Object.entries(expected)){
+  const row=report.entryFor(fighter);
+  assert.ok(row,`${fighter} must appear in the reconstruction`);
+  assert.equal(row.judgmentStatus,'cody-approved');
+  assert.equal(row.reconstructedScore,target.score,`${fighter} approved Apex score`);
+  assert.equal(row.currentScore,target.current,`${fighter} frozen score remains visible as control evidence`);
+  assert.equal(row.difference,target.difference,`${fighter} approved shadow delta`);
+  assert.deepEqual(JSON.parse(JSON.stringify(row.stats.performances.map(performance=>performance.matchedFightId))),target.pair,`${fighter} exact approved fight IDs`);
+  assert.ok(row.stats.performances.every(performance=>performance.validUfcWin),`${fighter} must use two counted UFC wins`);
+  assert.equal(row.stats.windowCheck?.passed,true,`${fighter} pair must fit the 24-month window`);
+  assert.deepEqual([
+    row.stats.components.twoPerformanceStrength,
+    row.stats.components.proof,
+    row.stats.components.bestFighterClaim,
+    row.stats.components.aura
+  ],target.components,`${fighter} explicit components`);
+  assert.equal(row.stats.formulaTwoPerformanceStrength,target.components[0],`${fighter} mechanical component must come from the ratings formula`);
+  assert.equal(row.stats.componentScore,target.score,`${fighter} components must reconcile to the final score`);
+  assert.equal(row.stats.manualNumericAdjustment,0,`${fighter} cannot contain a hidden numeric adjustment`);
+  assert.deepEqual(JSON.parse(JSON.stringify(row.stats.issues)),[],`${fighter} approved row should be clean`);
+}
+
+assert.equal(report.exactFrozenControlParityCount,68,'Four approved score changes should move outside the 0.01 parity tolerance');
+assert.equal(report.scoreDeltaCount,4,'Glover, Royce, Benson, and Werdum should be explicit score deltas');
+assert.deepEqual(JSON.parse(JSON.stringify(report.scoreDeltas.map(row=>row.fighter).sort())),['Benson Henderson','Fabricio Werdum','Glover Teixeira','Royce Gracie']);
+assert.equal(report.selectionIssueFighterCount,18,'The three approved factual pair corrections should leave the remaining review queue intact');
+assert.equal(report.formulaIssueFighterCount,5,'Five approved component recoveries should be removed from the formula queue');
+assert.equal(report.invalidSelectedPerformanceCount,0,'All previously invalid selected performances are corrected in approved batch one');
+assert.equal(report.twentyFourMonthViolationCount,18,'Batch one does not alter the remaining 24-month review queue');
+assert.equal(report.pendingReviewCount,27,'Deiveson and Frank should leave the pending queue; approved score deltas remain visible for later promotion');
+
 for(const row of report.fighters.filter(row=>row.reconstructedScore!==null&&Number.isFinite(row.reconstructedScore))){
   assert.ok(row.reconstructedScore>=0&&row.reconstructedScore<=6,`${row.fighter} Apex score must stay within 0–6`);
-  assert.equal(row.stats.performances.length,2,`${row.fighter} should have two selected performances in the recovered audit`);
-  if(Math.abs(row.stats.componentScore-row.reconstructedScore)>.01){
-    assert.ok(row.stats.formulaIssues.some(issue=>/component total/i.test(issue)),`${row.fighter} component mismatch must be explicitly reported`);
-  }
+  assert.equal(row.stats.performances.length,2,`${row.fighter} should have two selected performances in the recovered or approved audit`);
   assert.equal(row.stats.manualNumericAdjustment,0);
 }
 
-const jones=report.entryFor('Jon Jones');
-const khabib=report.entryFor('Khabib Nurmagomedov');
-const amanda=report.entryFor('Amanda Nunes');
-const gsp=report.entryFor('Georges St-Pierre');
-const dj=report.entryFor('Demetrious Johnson');
-const rose=report.entryFor('Rose Namajunas');
-const carla=report.entryFor('Carla Esparza');
-const figueiredo=report.entryFor('Deiveson Figueiredo');
-const khamzat=report.entryFor('Khamzat Chimaev');
-const leon=report.entryFor('Leon Edwards');
-
-assert.equal(jones.reconstructedScore,6);
-assert.equal(khabib.reconstructedScore,6);
-assert.equal(amanda.reconstructedScore,6);
-assert.ok([jones,khabib,amanda].every(row=>row.stats.windowCheck?.passed===true));
-assert.ok([jones,khabib,amanda].every(row=>row.stats.performances.every(performance=>performance.validUfcWin)));
-assert.equal(gsp.reconstructedScore,5.56);
-assert.equal(dj.reconstructedScore,5.15);
-assert.equal(leon.reconstructedScore,null);
-assert.equal(leon.currentScore,null);
-
-assert.equal(rose.stats.windowCheck?.passed,false,'Rose’s currently selected Joanna/Zhang pair exceeds the locked 24-month rule');
-assert.equal(carla.stats.windowCheck?.passed,false,'Carla’s two Rose wins are years apart and require a compliant Apex pair');
-assert.ok(figueiredo.stats.performances.some(performance=>performance.validUfcWin===false),'Figueiredo’s Moreno I draw cannot count as one of two selected UFC wins');
-assert.ok(khamzat.stats.formulaIssues.some(issue=>/two-performance component/i.test(issue)),'Khamzat’s explicit two-performance override must be surfaced rather than hidden');
-assert.ok(report.twentyFourMonthViolationCount>0,'The initial audit should identify noncompliant 24-month pairs');
-assert.ok(report.invalidSelectedPerformanceCount>0,'The initial audit should identify selected performances that are not counted UFC wins');
-assert.ok(report.formulaIssueFighterCount>0,'The initial audit should identify component-formula drift');
-assert.ok(report.pendingReviewCount>0,'Apex requires a judgment review queue before promotion');
+assert.equal(report.entryFor('Jon Jones').reconstructedScore,6);
+assert.equal(report.entryFor('Khabib Nurmagomedov').reconstructedScore,6);
+assert.equal(report.entryFor('Amanda Nunes').reconstructedScore,6);
+assert.equal(report.entryFor('Georges St-Pierre').reconstructedScore,5.56);
+assert.equal(report.entryFor('Demetrious Johnson').reconstructedScore,5.15);
+assert.equal(report.entryFor('Leon Edwards').reconstructedScore,null);
 
 const clean=value=>JSON.parse(JSON.stringify(value,(key,nested)=>typeof nested==='function'?undefined:nested));
 await fs.mkdir('docs',{recursive:true});
 await fs.writeFile('docs/canonical-apex-reconstruction.json',`${JSON.stringify(clean(report),null,2)}\n`,'utf8');
 
 const leaders=report.fighters.filter(row=>row.reconstructedScore!==null&&Number.isFinite(row.reconstructedScore)).slice(0,15);
-const selectionRows=report.selectionIssues.slice().sort((a,b)=>b.stats.factualIssues.length-a.stats.factualIssues.length||a.fighter.localeCompare(b.fighter));
-const formulaRows=report.formulaIssues.slice().sort((a,b)=>b.stats.formulaIssues.length-a.stats.formulaIssues.length||a.fighter.localeCompare(b.fighter));
-const missingOwnership=report.missingAudits.map(row=>row.fighter).sort((a,b)=>a.localeCompare(b));
+const approvedRows=Object.keys(expected).map(fighter=>report.entryFor(fighter));
 const markdown=[
-  '# Canonical Apex Peak Reconstruction — Initial Shadow Audit','',
+  '# Canonical Apex Peak Reconstruction — Approved Batch One','',
   `- Fighters audited: **${report.fighterCount}**`,
+  `- Cody-approved judgments encoded: **${approvedRows.length}**`,
   `- Existing Apex judgments recovered: **${report.auditedFighterCount}/${report.fighterCount}**`,
-  `- Missing Apex judgment: **${missingOwnership.join(', ')||'None'}**`,
+  `- Missing Apex judgment: **${report.missingAudits.map(row=>row.fighter).join(', ')||'None'}**`,
   `- Frozen controls available: **${report.controlCoverage}/${report.fighterCount}**`,
-  `- Exact score parity for recovered audits: **${report.exactFrozenControlParityCount}/${report.auditedFighterCount}**`,
-  `- Fighters with selected-performance issues: **${report.selectionIssueFighterCount}**`,
-  `- 24-month violations: **${report.twentyFourMonthViolationCount}**`,
-  `- Invalid selected performances: **${report.invalidSelectedPerformanceCount}**`,
-  `- Fighters with component-formula issues: **${report.formulaIssueFighterCount}**`,
+  `- Approved shadow score deltas: **${report.scoreDeltaCount}**`,
+  `- Fighters with selected-performance issues remaining: **${report.selectionIssueFighterCount}**`,
+  `- 24-month violations remaining: **${report.twentyFourMonthViolationCount}**`,
+  `- Invalid selected performances remaining: **${report.invalidSelectedPerformanceCount}**`,
+  `- Fighters with component-formula issues remaining: **${report.formulaIssueFighterCount}**`,
   `- Pending review rows: **${report.pendingReviewCount}**`,
   `- Live ranking payload changed: **${report.liveDataUnchanged?'No':'Yes'}**`,'',
   '## Locked model','',
   `**${report.formula}**`,'',
-  '- Two-performance strength is mechanical: average the two performance ratings, divide by 10, and multiply by 2.00.',
-  '- Proof, Best-Fighter Claim, and Aura remain explicit reviewed judgment inputs.',
-  '- Both selected performances must be counted UFC wins and must occur within one 24-month window.',
-  '- No contests and losses cannot be used as the two Apex performances.',
-  '- Losses inside the chosen window can still reduce Best-Fighter Claim or Aura.',
-  '- Existing final Apex audits were recovered from the clean runtime snapshot as evidence only; the snapshot does not control calculation.','',
-  '## Recovered Apex leaders','',
+  '## Approved batch one','',
+  '| Fighter | Frozen | Approved | Delta | Pair | Two-performance | Proof | Claim | Aura | Classification |',
+  '|---|---:|---:|---:|---|---:|---:|---:|---:|---|',
+  ...approvedRows.map(row=>`| ${row.fighter} | ${row.currentScore.toFixed(2)} | ${row.reconstructedScore.toFixed(2)} | ${row.difference>=0?'+':''}${row.difference.toFixed(2)} | ${row.auditWindow} | ${row.stats.components.twoPerformanceStrength.toFixed(2)} | ${row.stats.components.proof.toFixed(2)} | ${row.stats.components.bestFighterClaim.toFixed(2)} | ${row.stats.components.aura.toFixed(2)} | ${row.judgmentClassification} |`),
+  '',
+  '## Reconstructed Apex leaders','',
   '| Rank | Fighter | Apex | Pair | Two-performance | Proof | Claim | Aura |',
   '|---:|---|---:|---|---:|---:|---:|---:|',
   ...leaders.map((row,index)=>`| ${index+1} | ${row.fighter} | ${row.reconstructedScore.toFixed(2)} | ${row.auditWindow||'—'} | ${row.stats.components.twoPerformanceStrength.toFixed(2)} | ${row.stats.components.proof.toFixed(2)} | ${row.stats.components.bestFighterClaim.toFixed(2)} | ${row.stats.components.aura.toFixed(2)} |`),
   '',
-  '## Selected-performance review queue','',
-  ...(selectionRows.length?selectionRows.map(row=>`- **${row.fighter}:** ${row.stats.factualIssues.join('; ')}. Selected: ${(row.stats.performances||[]).map(performance=>`${performance.label} → ${performance.canonicalOpponent||'unmatched'} (${performance.canonicalDate||'no date'}, ${performance.officialResult||'no result'})`).join(' | ')}`):['- None']),
-  '',
-  '## Component-formula review queue','',
-  ...(formulaRows.length?formulaRows.map(row=>`- **${row.fighter}:** ${row.stats.formulaIssues.join('; ')}`):['- None']),
-  '',
-  '## Missing fighter judgment','',
-  '- **Leon Edwards:** needs a UFC-only two-win Apex pair and reviewed Proof / Best-Fighter Claim / Aura components.','',
-  'This is a shadow reconstruction only. It does not write Apex scores, total scores, ranks, OVRs, profile values, or Compare Mode values into the live app.',''
+  'This remains a shadow reconstruction only. It does not write Apex scores, total scores, ranks, OVRs, profile values, or Compare Mode values into the live app.',''
 ].join('\n');
 await fs.writeFile('docs/canonical-apex-reconstruction.md',markdown,'utf8');
 
-console.log('CANONICAL_APEX_RECONSTRUCTION');
+console.log('CANONICAL_APEX_RECONSTRUCTION_APPROVED_BATCH_ONE');
 console.log(JSON.stringify({
   version:report.version,
+  approvedVersion:approved.version,
   fighterCount:report.fighterCount,
   auditedFighterCount:report.auditedFighterCount,
-  controlCoverage:report.controlCoverage,
-  exactFrozenControlParityCount:report.exactFrozenControlParityCount,
+  approvedFighters:approvedRows.map(row=>({fighter:row.fighter,currentScore:row.currentScore,reconstructedScore:row.reconstructedScore,difference:row.difference,classification:row.judgmentClassification,pair:row.stats.performances.map(performance=>performance.matchedFightId),components:row.stats.components})),
   scoreDeltaCount:report.scoreDeltaCount,
-  missingAudits:missingOwnership,
   selectionIssueFighterCount:report.selectionIssueFighterCount,
   twentyFourMonthViolationCount:report.twentyFourMonthViolationCount,
   invalidSelectedPerformanceCount:report.invalidSelectedPerformanceCount,
   formulaIssueFighterCount:report.formulaIssueFighterCount,
   pendingReviewCount:report.pendingReviewCount,
-  selectionReview:selectionRows.map(row=>({fighter:row.fighter,issues:row.stats.factualIssues,performances:row.stats.performances.map(performance=>({label:performance.label,date:performance.canonicalDate,result:performance.officialResult,validUfcWin:performance.validUfcWin}))})),
-  formulaReview:formulaRows.map(row=>({fighter:row.fighter,issues:row.stats.formulaIssues})),
   liveDataUnchanged:report.liveDataUnchanged
 },null,2));
