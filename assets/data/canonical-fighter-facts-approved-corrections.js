@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-fighter-facts-approved-corrections-20260714a-championship-types';
+  const VERSION='canonical-fighter-facts-approved-corrections-20260714b-final-championship-review';
   const API=window.UFC_CANONICAL_FIGHTER_FACTS;
   const CORRECTIONS=[
     {
@@ -17,6 +17,12 @@
       fightId:'2008-01-19-joe-stevenson',
       championshipType:'vacant-second-division',
       note:'Cody-approved factual correction: the vacant lightweight title was Penn’s second UFC championship division after welterweight.'
+    },
+    {
+      fighter:'Robert Whittaker',
+      date:'2018-06-09',
+      specialAccomplishmentType:'missed-weight-championship-context',
+      note:'Cody-approved special context: Yoel Romero missed weight, so this is a Championship accomplishment but not an official UFC title-fight win.'
     }
   ];
 
@@ -33,17 +39,24 @@
   CORRECTIONS.forEach(correction=>{
     const record=API.get(correction.fighter);
     if(!record)fail(`Missing canonical fighter: ${correction.fighter}`);
-    const fight=(record.fights||[]).find(row=>row.id===correction.fightId);
-    if(!fight)fail(`Missing canonical fight ${correction.fightId} for ${correction.fighter}`);
+    const fight=(record.fights||[]).find(row=>correction.fightId?row.id===correction.fightId:row.date===correction.date);
+    if(!fight)fail(`Missing canonical fight for ${correction.fighter}: ${correction.fightId||correction.date}`);
     const previousType=fight?.championshipContext?.type||'none';
     fight.championshipContext={
       ...(fight.championshipContext||{}),
-      type:correction.championshipType,
+      ...(correction.championshipType?{type:correction.championshipType}:{}),
+      ...(correction.specialAccomplishmentType?{specialAccomplishmentType:correction.specialAccomplishmentType,officialTitleFight:false}:{}),
       reviewStatus:'locked',
       note:[fight?.championshipContext?.note,correction.note].filter(Boolean).join(' ')
     };
     API.replace(record,correction.note);
-    applied.push({fighter:correction.fighter,fightId:correction.fightId,previousType,championshipType:correction.championshipType});
+    applied.push({
+      fighter:correction.fighter,
+      fightId:fight.id,
+      previousType,
+      championshipType:correction.championshipType||previousType,
+      specialAccomplishmentType:correction.specialAccomplishmentType||null
+    });
   });
 
   const report={version:VERSION,applied:true,correctionCount:applied.length,applied,mutatesRankingData:false};
