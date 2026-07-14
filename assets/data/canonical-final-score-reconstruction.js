@@ -3,11 +3,11 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-final-score-reconstruction-20260714a-initial-audit';
+  const VERSION='canonical-final-score-reconstruction-20260714b-correct-control-formula';
   const CATEGORY_MAX=30;
   const CANDIDATES=Object.freeze({
-    documentedPhaseTwo:Object.freeze({championship:30,opponentQuality:24,primeDominance:30,longevity:16}),
-    historicalFinalEngine:Object.freeze({championship:35,opponentQuality:27.5,primeDominance:27.5,longevity:10})
+    historicalFinalEngine:Object.freeze({championship:35,opponentQuality:27.5,primeDominance:27.5,longevity:10}),
+    documentedPhaseTwo:Object.freeze({championship:30,opponentQuality:24,primeDominance:30,longevity:16})
   });
   const key=value=>String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
   const finite=value=>Number.isFinite(Number(value));
@@ -22,6 +22,15 @@
       longevity:round2((scores.longevity/CATEGORY_MAX)*weights.longevity)
     };
     weighted.baseScore=round2(weighted.championship+weighted.opponentQuality+weighted.primeDominance+weighted.longevity);
+    return weighted;
+  }
+
+  function totalFromScores(scores,weights){
+    const weighted=weightedCategoryTotal(scores,weights);
+    weighted.apex=round2(scores.apex);
+    weighted.penalty=round2(scores.penalty);
+    weighted.eraDepth=round2(scores.eraDepth);
+    weighted.totalScore=round2(weighted.baseScore+weighted.apex+weighted.penalty+weighted.eraDepth);
     return weighted;
   }
 
@@ -69,8 +78,15 @@
         eraDepth:finite(categoryRows.eraDepth?.canonicalAdjustment)?round2(categoryRows.eraDepth.canonicalAdjustment):null
       };
       const missingInputs=Object.entries(scores).filter(([,value])=>value===null).map(([name])=>name);
-      const frozenFormula=control?round2(Number(control.championship||0)+Number(control.opponentQuality||0)+Number(control.primeDominance||0)+Number(control.longevity||0)+Number(control.penalty||0)):null;
-      const expectedTotal=finite(control?.expectedTotalScore)?round2(control.expectedTotalScore):null;
+      const frozenControl=control?{
+        championship:round2(control.championship),opponentQuality:round2(control.opponentQuality),primeDominance:round2(control.primeDominance),longevity:round2(control.longevity),penalty:round2(control.penalty),
+        apex:finite(control.apexPeak)?round2(control.apexPeak):null,eraDepth:finite(control.eraDepthAdjustment)?round2(control.eraDepthAdjustment):null,
+        expectedTotalScore:finite(control.expectedTotalScore)?round2(control.expectedTotalScore):null,expectedRank:finite(control.expectedRank)?Number(control.expectedRank):null,expectedOverallOvr:finite(control.expectedOverallOvr)?Number(control.expectedOverallOvr):null
+      }:null;
+      const frozenInputsComplete=frozenControl&&['championship','opponentQuality','primeDominance','longevity','apex','penalty','eraDepth'].every(name=>finite(frozenControl[name]));
+      const frozenWeighted=frozenInputsComplete?totalFromScores(frozenControl,CANDIDATES.historicalFinalEngine):null;
+      const frozenFormula=frozenWeighted?.totalScore??null;
+      const expectedTotal=frozenControl?.expectedTotalScore??null;
       const frozenFormulaDifference=frozenFormula===null||expectedTotal===null?null:round2(frozenFormula-expectedTotal);
       return {
         fighter:record.fighter,
@@ -79,11 +95,8 @@
         missingInputs,
         scores,
         categoryRows,
-        frozenControl:control?{
-          championship:round2(control.championship),opponentQuality:round2(control.opponentQuality),primeDominance:round2(control.primeDominance),longevity:round2(control.longevity),penalty:round2(control.penalty),
-          apex:finite(control.apexPeak)?round2(control.apexPeak):null,eraDepth:finite(control.eraDepthAdjustment)?round2(control.eraDepthAdjustment):null,
-          expectedTotalScore:expectedTotal,expectedRank:finite(control.expectedRank)?Number(control.expectedRank):null,expectedOverallOvr:finite(control.expectedOverallOvr)?Number(control.expectedOverallOvr):null
-        }:null,
+        frozenControl,
+        frozenWeighted,
         frozenFormula,
         frozenFormulaDifference,
         mutatesScores:false
@@ -95,12 +108,8 @@
       const candidateRows=rows.map(source=>{
         const row=clone(source);
         if(row.status!=='complete')return {...row,totalScore:null,weighted:null,calculatedRank:null};
-        const weighted=weightedCategoryTotal(row.scores,weights);
-        weighted.apex=round2(row.scores.apex);
-        weighted.penalty=round2(row.scores.penalty);
-        weighted.eraDepth=round2(row.scores.eraDepth);
-        const totalScore=round2(weighted.baseScore+weighted.apex+weighted.penalty+weighted.eraDepth);
-        return {...row,weighted,totalScore,calculatedRank:null};
+        const weighted=totalFromScores(row.scores,weights);
+        return {...row,weighted,totalScore:weighted.totalScore,calculatedRank:null};
       });
       const men=assignRanks(candidateRows.filter(row=>row.board==='men'));
       const women=assignRanks(candidateRows.filter(row=>row.board==='women'));
@@ -142,7 +151,7 @@
       completeCategoryInputCount:rows.length-blocked.length,
       blockedFighterCount:blocked.length,
       blockedFighters:blocked.map(row=>({fighter:row.fighter,missingInputs:row.missingInputs})),
-      frozenFormula:'frozen Championship + frozen Opponent Quality + frozen Prime Dominance + frozen Longevity + frozen Penalty; Apex and Division-Era Depth excluded',
+      frozenFormula:'35% Championship + 27.5% Opponent Quality + 27.5% Prime Dominance + 10% Longevity, normalized from 30-point category scores, then + Apex + Loss Penalty + Division-Era Depth',
       frozenFormulaControlCount:frozenControlled.length,
       frozenFormulaParityCount:frozenParity.length,
       frozenFormulaMismatchCount:frozenControlled.length-frozenParity.length,
