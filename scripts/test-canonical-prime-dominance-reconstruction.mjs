@@ -23,6 +23,7 @@ const files=[
   'assets/data/canonical-fighter-facts-batch-nine.js',
   'assets/data/canonical-fighter-facts-approved-corrections.js',
   'assets/data/canonical-fighter-facts-opponent-quality-corrections.js',
+  'assets/data/canonical-fighter-facts-prime-round-corrections.js',
   'assets/data/canonical-scoring-records.js',
   'assets/data/fighter-era-ledgers.js',
   'assets/data/fighter-era-ledger-approved-longevity-resolutions.js',
@@ -39,6 +40,11 @@ const document={body:null,documentElement:{setAttribute(name,value){attributes[n
 const window={};
 const context=vm.createContext({window,document,console,Date,JSON,Map,Set,Object,Array,Number,String,Math,RegExp,Error,Boolean,Promise});
 for(const file of files)vm.runInContext(await fs.readFile(file,'utf8'),context,{filename:file});
+
+const roundCorrections=context.window.UFC_CANONICAL_FIGHTER_FACTS_PRIME_ROUND_CORRECTIONS;
+assert.equal(roundCorrections?.applied,true,'The 14 approved canonical round corrections must apply cleanly');
+assert.equal(roundCorrections.correctionCount,14);
+assert.equal(roundCorrections.missing.length,0);
 
 const report=context.window.UFC_CANONICAL_PRIME_DOMINANCE_RECONSTRUCTION;
 assert.equal(report?.applied,true,'Prime Dominance reconstruction should calculate successfully');
@@ -117,6 +123,9 @@ assert.ok(ronda.stats.losses>=1,'The shared Era Ledger, not a category-local pea
 const randy=report.entryFor('Randy Couture');
 assert.equal(randy.stats.eraStartDate,'1997-05-30');
 assert.equal(randy.stats.eraStartLabel,'Vitor Belfort I');
+assert.equal(randy.stats.missingRoundRows.length,0);
+assert.ok(randy.stats.primeFights.some(fight=>fight.opponent==='Pedro Rizzo'&&fight.roundsWon===3&&fight.roundsLost===2));
+assert.ok(randy.stats.primeFights.some(fight=>fight.opponent==='Ricco Rodriguez'&&fight.roundsWon===3&&fight.roundsLost===2));
 
 const israel=report.entryFor('Israel Adesanya');
 assert.equal(israel.stats.eraEndDate,'2024-08-18');
@@ -127,6 +136,17 @@ const sean=report.entryFor('Sean Strickland');
 assert.equal(sean.stats.eraStartDate,'2021-07-31');
 assert.equal(sean.stats.eraStartLabel,'Uriah Hall');
 assert.ok(sean.stats.primeFights.some(fight=>fight.opponent==='Alex Pereira'&&fight.result==='count-loss'));
+
+const tito=report.entryFor('Tito Ortiz');
+assert.equal(tito.stats.missingRoundRows.length,0);
+assert.ok(tito.stats.primeFights.some(fight=>fight.opponent==='Rashad Evans'&&fight.roundsWon===2&&fight.roundsLost===1));
+assert.ok(tito.stats.primeFights.some(fight=>fight.opponent==='Lyoto Machida'&&fight.roundsWon===0&&fight.roundsLost===3));
+
+const miesha=report.entryFor('Miesha Tate');
+assert.equal(miesha.stats.missingRoundRows.length,0);
+assert.ok(miesha.stats.primeFights.some(fight=>fight.opponent==='Ronda Rousey'&&fight.roundsWon===0&&fight.roundsLost===3));
+assert.ok(miesha.stats.primeFights.some(fight=>fight.opponent==='Liz Carmouche'&&fight.roundsWon===2&&fight.roundsLost===1));
+assert.ok(miesha.stats.primeFights.some(fight=>fight.opponent==='Rin Nakai'&&fight.roundsWon===3&&fight.roundsLost===0));
 
 assert.equal(report.fighters.every(row=>Number.isFinite(row.reconstructedScore)),true);
 assert.equal(report.fighters.every(row=>row.reconstructedScore>=0&&row.reconstructedScore<=30),true);
@@ -146,6 +166,7 @@ const markdown=[
   `- Excluded: **${report.excludedFighters.join(', ')}**`,
   `- Shared Era Ledger windows resolved: **${report.eraLedgerCoverage}/${report.fighterCount}**`,
   `- Fighter-local window drift found: **${report.eraLedgerDriftCount}**`,
+  `- Canonical round corrections applied: **${roundCorrections.correctionCount}**`,
   `- Scored prime fights: **${report.scoredPrimeFightCount}**`,
   `- Elite-stage prime fights: **${report.eliteStageFightCount}**`,
   `- Missing prime round rows: **${report.missingPrimeRoundRowCount}**`,
@@ -165,6 +186,7 @@ const markdown=[
   'An elite-stage fight is a counted prime fight that is either a UFC title fight or against a canonical champion-level/Top-5 opponent. A loss still adds volume credit and can earn performance credit through rounds won. No contests and technical exceptions remain excluded.','',
   'The complete 30-point raw score is multiplied by the locked prime-sample percentage. This is a uniform sample-size control, not a fighter-specific adjustment.','',
   'The Fighter Era Ledger, including Cody-approved Longevity and Loss Context phase corrections, is the sole prime-window source for Prime Dominance. Category-local prime windows are retained only as drift checks and cannot override it.','',
+  'The 14 round rows exposed by the expanded Randy Couture, Tito Ortiz, and Miesha Tate windows are stored as canonical fight-fact corrections rather than category-local values.','',
   '## Reconstructed leaders','',
   '| Rank | Fighter | Adjusted | Raw / 30 | Sample | Prime record | Rounds | Finish | Elite validation | Elite fights |',
   '|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|',
@@ -185,6 +207,7 @@ console.log(JSON.stringify({
   fighterCount:report.fighterCount,
   eraLedgerCoverage:report.eraLedgerCoverage,
   eraLedgerDriftCount:report.eraLedgerDriftCount,
+  canonicalRoundCorrectionCount:roundCorrections.correctionCount,
   scoredPrimeFightCount:report.scoredPrimeFightCount,
   eliteStageFightCount:report.eliteStageFightCount,
   missingPrimeRoundRowCount:report.missingPrimeRoundRowCount,
@@ -198,5 +221,7 @@ console.log(JSON.stringify({
   randy:{score:randy.reconstructedScore,record:randy.stats.recordText,window:`${randy.stats.eraStartLabel} → ${randy.stats.eraEndLabel}`},
   israel:{score:israel.reconstructedScore,record:israel.stats.recordText,window:`${israel.stats.eraStartLabel} → ${israel.stats.eraEndLabel}`},
   sean:{score:sean.reconstructedScore,record:sean.stats.recordText,window:`${sean.stats.eraStartLabel} → ${sean.stats.eraEndLabel}`},
+  tito:{score:tito.reconstructedScore,record:tito.stats.recordText,window:`${tito.stats.eraStartLabel} → ${tito.stats.eraEndLabel}`},
+  miesha:{score:miesha.reconstructedScore,record:miesha.stats.recordText,window:`${miesha.stats.eraStartLabel} → ${miesha.stats.eraEndLabel}`},
   liveDataUnchanged:report.liveDataUnchanged
 },null,2));
