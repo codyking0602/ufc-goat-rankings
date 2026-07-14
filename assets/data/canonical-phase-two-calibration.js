@@ -4,11 +4,11 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-phase-two-calibration-20260713b-debate-ready-shape';
+  const VERSION='canonical-phase-two-calibration-20260713c-ufc-only-shape-lock';
   const WEIGHTS={championship:30,opponentQuality:24,primeDominance:30,longevity:16};
   const CATEGORY_MAX=30;
   const PERFECT_PRIME_APEX_BONUS=1.95;
-  const UPWARD_ELITE_PRIME_WEIGHT=.80;
+  const UPWARD_ELITE_PRIME_WEIGHT=.79;
   const OVR={floor:82,menCeiling:99,womenCeiling:96,curve:.85};
   const FINISH_METHODS=new Set(['ko-tko','submission','doctor-stoppage']);
   let lastBaseVersion=null;
@@ -30,6 +30,16 @@
     return fight?.scoringDisposition==='count-loss'
       &&fight?.lossClassification?.divisionContext==='upward'
       &&(tier==='champion-level'||tier==='top-five');
+  }
+
+  function crossDivisionApexBonus(record){
+    let bonus=0;
+    (record?.fights||[]).forEach(fight=>{
+      if(fight?.scoringDisposition!=='count-win'||fight?.championshipContext?.fighterEligible===false)return;
+      if(fight?.championshipContext?.type==='second-division-undisputed')bonus=Math.max(bonus,.50);
+      else if(fight?.championshipContext?.type==='vacant-second-division')bonus=Math.max(bonus,.30);
+    });
+    return round2(bonus);
   }
 
   function calibratedPrime(record,row){
@@ -86,7 +96,8 @@
     const apexIndex=(winRate*.40)+(roundControl*.35)+(finishPressure*.15)+(titleDensity*.10);
     const championshipRunBonus=perfectPrime&&Number(row?.championship?.primeTitleFightWins||0)>=3?.25:0;
     const finishAuraBonus=finishPressure>=.65?.20:0;
-    const apexPeak=round2(clamp(((apexIndex*6)+(perfectPrime?PERFECT_PRIME_APEX_BONUS:0)+championshipRunBonus+finishAuraBonus)*apexSampleConfidence,0,6));
+    const secondDivisionBonus=crossDivisionApexBonus(record);
+    const apexPeak=round2(clamp(((apexIndex*6)+(perfectPrime?PERFECT_PRIME_APEX_BONUS:0)+championshipRunBonus+finishAuraBonus+secondDivisionBonus)*apexSampleConfidence,0,6));
 
     return {
       ...row.prime,
@@ -97,6 +108,7 @@
       adjustedFinishPressure:round2(finishPressure),
       adjustedDurability:round2(durability),
       upwardEliteLossCount,
+      secondDivisionApexBonus:secondDivisionBonus,
       primeSampleConfidence:round2(primeSampleConfidence),
       apexSampleConfidence:round2(apexSampleConfidence),
       calibratedPrimeDominance:primeDominance,
@@ -151,15 +163,7 @@
     all.forEach(row=>{
       const current=previous.get(key(row.fighter));
       if(!current){missing.push(row.fighter);return;}
-      deltas.push({
-        ...current,
-        calculatedRank:row.rank,
-        rankMovement:Number(current.currentRank)-row.rank,
-        calculatedTotal:row.totalScore,
-        totalDelta:round2(row.totalScore-Number(current.currentTotal)),
-        calculatedOvr:row.overallOvr,
-        ovrDelta:row.overallOvr-Number(current.currentOvr)
-      });
+      deltas.push({...current,calculatedRank:row.rank,rankMovement:Number(current.currentRank)-row.rank,calculatedTotal:row.totalScore,totalDelta:round2(row.totalScore-Number(current.currentTotal)),calculatedOvr:row.overallOvr,ovrDelta:row.overallOvr-Number(current.currentOvr)});
     });
     const biggestRankMovers=deltas.filter(row=>row.rankMovement!==0).slice().sort((a,b)=>Math.abs(b.rankMovement)-Math.abs(a.rankMovement)||b.totalDelta-a.totalDelta||a.fighter.localeCompare(b.fighter)).slice(0,20);
     const biggestTotalChanges=deltas.slice().sort((a,b)=>Math.abs(b.totalDelta)-Math.abs(a.totalDelta)||a.fighter.localeCompare(b.fighter)).slice(0,20);
@@ -206,7 +210,7 @@
       topTenMen:men.slice(0,10).map(row=>({rank:row.rank,fighter:row.fighter,totalScore:row.totalScore,overallOvr:row.overallOvr})),
       topWomen:women.slice(0,10).map(row=>({rank:row.rank,fighter:row.fighter,totalScore:row.totalScore,overallOvr:row.overallOvr})),
       legacyScoreComparison,
-      formula:{...base.formula,weights:WEIGHTS,perfectPrimeApexBonus:PERFECT_PRIME_APEX_BONUS,upwardElitePrimeWeight:UPWARD_ELITE_PRIME_WEIGHT,openPrimeSampleConfidence:1,eraDepthAdjustment:'approved curved Division-Era Depth evidence, hidden from the profile card'},
+      formula:{...base.formula,weights:WEIGHTS,perfectPrimeApexBonus:PERFECT_PRIME_APEX_BONUS,upwardElitePrimeWeight:UPWARD_ELITE_PRIME_WEIGHT,secondDivisionApexBonus:{undisputed:.50,vacant:.30},openPrimeSampleConfidence:1,eraDepthAdjustment:'approved curved Division-Era Depth evidence, hidden from the profile card'},
       eraDepthEvidenceVersion:window.UFC_DIVISION_ERA_DEPTH_SHADOW?.version||null,
       eraDepthCoverageCount:all.length-missingEraDepth.length,
       missingEraDepth:[...new Set(missingEraDepth)],
