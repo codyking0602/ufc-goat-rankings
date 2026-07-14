@@ -44,7 +44,9 @@ assert.equal(report.fighterCount,72,'Leon Edwards is excluded from the approved-
 assert.deepEqual(report.excludedFighters,['Leon Edwards']);
 assert.equal(report.controlCoverage,72);
 assert.equal(report.primeWindowSource,'fighter-era-ledgers');
-assert.equal(report.eraLedgerCoverage,72,'Every fighter must resolve through the shared Fighter Era Ledger');
+const unresolvedEraWindows=report.fighters.filter(row=>!row.stats.windowValid).map(row=>({fighter:row.fighter,era:window.UFC_FIGHTER_ERA_LEDGERS.entryFor(row.fighter)?.window||null}));
+if(unresolvedEraWindows.length)console.log('UNRESOLVED_ERA_WINDOWS',JSON.stringify(unresolvedEraWindows,null,2));
+assert.equal(report.eraLedgerCoverage,72,`Every fighter must resolve through the shared Fighter Era Ledger. Unresolved: ${unresolvedEraWindows.map(row=>row.fighter).join(', ')}`);
 assert.equal(report.missingPrimeRoundRowCount,0,'Every scored prime fight must have audited round data');
 assert.equal(report.missingEliteStageRoundRowCount,0,'Every elite-stage prime fight must have audited round data');
 assert.equal(report.primeRoundRowCount,report.scoredPrimeFightCount);
@@ -158,7 +160,7 @@ console.log(JSON.stringify({
   eraLedgerDriftCount:report.eraLedgerDriftCount,
   scoredPrimeFightCount:report.scoredPrimeFightCount,
   eliteStageFightCount:report.eliteStageFightCount,
-  missingPrimeRoundRowCount:report.missingPrimeRoundRowCount,
+  missingPrimeRoundRowCount:report.missingPrimeRoundRowRowCount,
   missingEliteStageRoundRowCount:report.missingEliteStageRoundRowCount,
   exactFrozenControlParityCount:report.exactFrozenControlParityCount,
   meaningfulDeltaCount:report.meaningfulDeltaCount,
