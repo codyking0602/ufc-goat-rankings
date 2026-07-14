@@ -2,7 +2,7 @@
 // Evidence-only on draft PR #39. Patches fight facts; never writes category scores, totals, ranks, or OVR.
 (function(){
   'use strict';
-  const VERSION='canonical-fighter-facts-prime-round-corrections-20260714a-fourteen';
+  const VERSION='canonical-fighter-facts-prime-round-corrections-20260714b-fifteen';
   const API=window.UFC_CANONICAL_FIGHTER_FACTS;
   if(!API?.get||!API?.replace){
     window.UFC_CANONICAL_FIGHTER_FACTS_PRIME_ROUND_CORRECTIONS={version:VERSION,applied:false,error:'Missing canonical fighter facts API.',mutatesRankingData:false};
@@ -29,6 +29,9 @@
       '2013-12-28-ronda-rousey':{won:0,lost:3,drawn:0,note:'Rousey controlled all three frames and submitted Tate in round three; mirrored from the locked Rousey audit.'},
       '2014-04-19-liz-carmouche':{won:2,lost:1,drawn:0,note:'Tate won the competitive three-round decision two rounds to one.'},
       '2014-09-20-rin-nakai':{won:3,lost:0,drawn:0,note:'Tate controlled the full three-round unanimous decision.'}
+    },
+    'Leon Edwards':{
+      '2025-03-22-sean-brady':{won:0,lost:4,drawn:0,note:'Brady controlled each completed frame and won the fourth-round finishing frame by guillotine submission.'}
     }
   };
 
@@ -50,7 +53,7 @@
     version:VERSION,
     applied:missing.length===0,
     correctionCount:applied.length,
-    expectedCorrectionCount:14,
+    expectedCorrectionCount:15,
     fighters:Object.keys(CORRECTIONS),
     corrections:applied,
     missing,
