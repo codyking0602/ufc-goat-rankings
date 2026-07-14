@@ -4,7 +4,7 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-championship-reconstruction-20260714d';
+  const VERSION='canonical-championship-reconstruction-20260714e-approved-conflicts';
   const CATEGORY_MAX=30;
   const LOCKED_BENCHMARK_CREDIT=14.54;
   const BASE_CREDIT=Object.freeze({
@@ -108,11 +108,12 @@
     const legacyTitleType=titleType(source.titleType||source.type);
     const canonicalType=match.fight?.championshipContext?.type||null;
     const baseCredit=Number(BASE_CREDIT[legacyTitleType]||1);
-    const opponentStrength=clamp(source.strength??source.multiplier??1,0,1.5);
-    const eraTitleContextAdjustment=1;
+    const opponentStrength=clamp(source.opponentStrength??source.strength??source.multiplier??1,0,1.5);
+    const eraTitleContextAdjustment=clamp(source.eraTitleContextAdjustment??source.contextAdjustment??1,0,1.5);
     const finalAdjustedCredit=round2(baseCredit*opponentStrength*eraTitleContextAdjustment);
     const note=String(source.notes||'').trim();
-    const combinedContext=opponentStrength!==1&&CONTEXT_WORDS.test(note);
+    const explicitContext=eraTitleContextAdjustment!==1;
+    const combinedContext=!explicitContext&&opponentStrength!==1&&CONTEXT_WORDS.test(note);
     return {
       fightId:match.fight?.id||null,
       opponent:match.fight?.opponent||source.opponent||'Unknown opponent',
@@ -125,7 +126,7 @@
       baseCredit:round6(baseCredit),
       opponentStrength:round6(opponentStrength),
       eraTitleContextAdjustment:round6(eraTitleContextAdjustment),
-      legacyCombinedAdjustment:round6(opponentStrength),
+      legacyCombinedAdjustment:round6(opponentStrength*eraTitleContextAdjustment),
       finalAdjustedCredit,
       sourceAdjustedCredit:round2(source.adjustedCredit??finalAdjustedCredit),
       reviewStatus:source.reviewStatus||'locked',
@@ -133,7 +134,7 @@
       matchMethod:match.matchMethod,
       matchConfidence:match.matchConfidence,
       judgmentStatus:'approved-recovered',
-      decompositionStatus:combinedContext?'legacy multiplier combines opponent/era/context; split not separately recoverable':'opponent-strength field recovered directly',
+      decompositionStatus:explicitContext?'opponent strength and era/title context stored separately':combinedContext?'legacy multiplier combines opponent/era/context; split not separately recoverable':'opponent-strength field recovered directly',
       titleTypeMatchesCanonical:canonicalType===legacyTitleType,
       provenance:'championship-resume-ledgers + championship-resume-ledger-rule-locks'
     };
@@ -226,6 +227,8 @@
     const facts=window.UFC_CANONICAL_FIGHTER_FACTS;
     const controls=window.UFC_CANONICAL_SCORING_RECORDS;
     const legacy=window.UFC_CHAMPIONSHIP_RESUME_LEDGERS;
+    const ruleLocks=window.UFC_CHAMPIONSHIP_RESUME_LEDGER_RULE_LOCKS;
+    const approvedScoreCorrections=ruleLocks?.approvedScoreCorrections||{};
     const before=window.RANKING_DATA?JSON.stringify(window.RANKING_DATA):null;
     if(!facts||facts.count?.()!==73||!controls||!legacy?.ledgers){
       return {version:VERSION,applied:false,error:'Championship reconstruction prerequisites are incomplete.',fighterCount:facts?.count?.()||0,controlCount:controls?.rosterCount||0,ledgerLoaded:Boolean(legacy?.ledgers),mutatesRankingData:false};
@@ -234,8 +237,11 @@
     const fighters=facts.list().map(record=>{
       const control=controls.entryFor(record.fighter);
       const staticPayloadScore=snapshotScoreFor(record.fighter);
-      const currentScore=control?round2(control.championship):staticPayloadScore;
+      const originalControlScore=control?round2(control.championship):staticPayloadScore;
+      const approvedScoreCorrection=Number.isFinite(Number(approvedScoreCorrections[record.fighter]))?round2(approvedScoreCorrections[record.fighter]):null;
+      const currentScore=approvedScoreCorrection===null?originalControlScore:approvedScoreCorrection;
       const controlSource=control?'canonical-scoring-records':'no-approved-live-control';
+      const scoreControlType=approvedScoreCorrection===null?'frozen-live-snapshot':'cody-approved-factual-correction';
       const sourceRows=clone(legacy.getLedger?.(record.fighter)?.championshipWins||legacy.ledgers?.[record.fighter]?.championshipWins||[]);
       const seeds=AGGREGATE_RECOVERY_SEEDS[record.fighter];
       let inputs=[];
@@ -284,7 +290,10 @@
         fighter:record.fighter,
         board:record.board,
         currentScore,
+        originalControlScore,
+        approvedScoreCorrection,
         controlSource,
+        scoreControlType,
         reconstructedScore:calculated.score,
         difference,
         classification:'recovered judgment',
@@ -325,6 +334,7 @@
       exactParityCount:parityRows.length,
       controlledDifferenceCount:controlledDifferences.length,
       unresolvedControlCount:missingControlFighters.length,
+      approvedScoreCorrectionCount:fighters.filter(row=>row.approvedScoreCorrection!==null).length,
       issueFighterCount:issueRows.length,
       issueCount:issueRows.reduce((sum,row)=>sum+row.issues.length,0),
       aggregateRecoveryFighterCount:fighters.filter(row=>row.aggregateRecovery&&!row.aggregateRecovery.error).length,
@@ -335,7 +345,7 @@
       benchmarkCredit:LOCKED_BENCHMARK_CREDIT,
       categoryMax:CATEGORY_MAX,
       formula:'sum(baseCredit × opponentStrength × eraTitleContextAdjustment) ÷ 14.54 × 30; round category score to 2 decimals',
-      inputSeparationNote:'Direct legacy rows retain their approved multiplier. Missing direct rows are recovered from the frozen aggregate score with a visible context factor; canonical title wins omitted by the approved control appear as zero-credit pending factual corrections rather than silently changing the score.',
+      inputSeparationNote:'Direct rows now support separate opponent-strength and era/title-context inputs. Missing direct rows are recovered from the frozen aggregate score with a visible context factor; canonical title wins omitted by the approved control appear as zero-credit pending factual corrections rather than silently changing the score.',
       liveDataUnchanged:before===after,
       mutatesRankingData:false,
       fighters,
