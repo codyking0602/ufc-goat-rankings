@@ -1,0 +1,44 @@
+name: Canonical Division-Era Depth Reconstruction
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'assets/data/canonical-fighter-facts*.js'
+      - 'assets/data/canonical-scoring-records.js'
+      - 'assets/data/division-era-depth-shadow.js'
+      - 'assets/data/canonical-division-era-depth-reconstruction.js'
+      - 'scripts/test-canonical-division-era-depth-reconstruction.mjs'
+      - 'docs/DIVISION_ERA_DEPTH_RECONSTRUCTION.md'
+      - '.github/workflows/canonical-division-era-depth-reconstruction.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reconstruct-division-era-depth:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check syntax
+        run: |
+          node --check assets/data/canonical-division-era-depth-reconstruction.js
+          node --check scripts/test-canonical-division-era-depth-reconstruction.mjs
+      - name: Audit full-roster Division-Era Depth model
+        run: node scripts/test-canonical-division-era-depth-reconstruction.mjs > /tmp/canonical-division-era-depth-reconstruction.log 2>&1
+      - name: Upload reconstruction report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-division-era-depth-reconstruction-report
+          path: |
+            /tmp/canonical-division-era-depth-reconstruction.log
+            docs/canonical-division-era-depth-reconstruction.json
+            docs/canonical-division-era-depth-reconstruction.md
+          if-no-files-found: warn
+          retention-days: 30
