@@ -8,6 +8,8 @@ on:
       - 'assets/data/canonical-scoring-records.js'
       - 'assets/data/fighter-era-ledgers.js'
       - 'assets/data/fighter-era-ledger-approved-longevity-resolutions.js'
+      - 'assets/data/fighter-era-ledger-approved-loss-context-resolutions.js'
+      - 'assets/data/canonical-loss-context-approved-resolutions.js'
       - 'assets/data/loss-context-exposure-ledger.js'
       - 'assets/data/loss-context-hybrid-shadow.js'
       - 'assets/data/loss-context-hybrid-audit.js'
@@ -32,9 +34,11 @@ jobs:
           node-version: '22'
       - name: Check syntax
         run: |
+          node --check assets/data/fighter-era-ledger-approved-loss-context-resolutions.js
+          node --check assets/data/canonical-loss-context-approved-resolutions.js
           node --check assets/data/canonical-loss-context-reconstruction.js
           node --check scripts/test-canonical-loss-context-reconstruction.mjs
-      - name: Audit full-roster approved Loss Context model
+      - name: Audit all ten approved Loss Context resolutions
         run: node scripts/test-canonical-loss-context-reconstruction.mjs > /tmp/canonical-loss-context-reconstruction.log 2>&1
       - name: Upload Loss Context reconstruction report
         if: always()
