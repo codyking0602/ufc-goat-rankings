@@ -12,6 +12,7 @@ on:
       - 'assets/data/prime-dominance-ledgers.js'
       - 'assets/data/prime-dominance-shadow-model.js'
       - 'assets/data/canonical-prime-dominance-reconstruction.js'
+      - 'scripts/complete-fighter-era-ledgers.mjs'
       - 'scripts/test-canonical-prime-dominance-reconstruction.mjs'
       - '.github/workflows/canonical-prime-dominance-reconstruction.yml'
   workflow_dispatch:
@@ -31,7 +32,10 @@ jobs:
       - name: Check syntax
         run: |
           node --check assets/data/canonical-prime-dominance-reconstruction.js
+          node --check scripts/complete-fighter-era-ledgers.mjs
           node --check scripts/test-canonical-prime-dominance-reconstruction.mjs
+      - name: Generate completed shared Fighter Era Ledger
+        run: node scripts/complete-fighter-era-ledgers.mjs
       - name: Audit approved 72-fighter Prime Dominance model
         run: node scripts/test-canonical-prime-dominance-reconstruction.mjs > /tmp/canonical-prime-dominance-reconstruction.log 2>&1
       - name: Upload Prime Dominance reconstruction report
@@ -41,6 +45,7 @@ jobs:
           name: canonical-prime-dominance-reconstruction-report
           path: |
             /tmp/canonical-prime-dominance-reconstruction.log
+            assets/data/fighter-era-ledgers.js
             docs/canonical-prime-dominance-reconstruction.json
             docs/canonical-prime-dominance-reconstruction.md
           if-no-files-found: warn
