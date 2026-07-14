@@ -7,9 +7,8 @@ Last updated: 2026-07-13
 - Repository: `codyking0602/ufc-goat-rankings`
 - Working branch: `agent/fighter-data-phase-1`
 - Draft PR: `#39 — Start canonical fighter data ownership refactor`
-- Verified batch-five runtime head: `e6deb21537ca049fc7cbdaa59be659c19f216c00`
-- Latest documentation head at handoff close: `093e7e3c2ccbe4fdb935bab06fd507e80cdbfb91`
-- Always fetch the latest branch and compare it with `main` before editing. Automated Octagon Verdict feed commits and watch-link updates can advance `main` independently.
+- Latest main sync merge: `5cabf73cb4a3cdd6f4e65ba5a312faafa983dea1`
+- Always compare the branch with `main` before editing. Automated Octagon Verdict, watch-link, picks, and generated-report commits may advance `main`.
 
 ## Permanent architecture
 
@@ -34,14 +33,14 @@ No live category score, total, rank, OVR, leaderboard position, snapshot, profil
 
 ## Current canonical coverage
 
-- Canonical fighters: **28 of 73 identities — 38.36%**
-- Canonical UFC fight rows: **582**
+- Canonical fighters: **38 of 73 identities — 52.05%**
+- Canonical UFC fight rows: **771**
 - Charles ledger: **37 rows**
 - Batch two: **102 rows**
 - Batch three: **103 rows**
 - Batch four: **138 rows**
 - Batch five: **202 rows**
-- Latest ownership-browser capture: **0 browser errors**
+- Batch six: **189 rows**
 
 | Fighter | UFC bouts | Official UFC record | Prime | Active elite years |
 |---|---:|---:|---:|---:|
@@ -73,6 +72,16 @@ No live category score, total, rank, OVR, leaderboard position, snapshot, profil
 | Ilia Topuria | 10 | 9-1 | 4-1 | 3.05 |
 | Israel Adesanya | 19 | 13-6 | 8-4 | 5.35 |
 | Cain Velasquez | 15 | 12-3 | 6-2 | 5.16 |
+| Petr Yan | 16 | 12-4 | 6-4 | 6.00 |
+| Merab Dvalishvili | 17 | 14-3 | 8-1 | 4.80 |
+| B.J. Penn | 27 | 12-13-2 | 6-5 | 5.98 |
+| Alex Pereira | 13 | 10-3 | 8-3 | 4.03 |
+| Chuck Liddell | 23 | 16-7 | 7-1 | 3.15 |
+| Francis Ngannou | 14 | 12-2 | 6-0 | 3.16 |
+| Henry Cejudo | 16 | 10-6 | 4-1 | 3.26 |
+| Conor McGregor | 15 | 10-5 | 6-2 | 3.63 |
+| Justin Gaethje | 16 | 11-5 | 7-3 | 6.18 |
+| Dustin Poirier | 32 | 22-9, 1 NC | 7-4 | 5.85 |
 
 ## Canonical files
 
@@ -89,6 +98,7 @@ Completed migration sources:
 - `assets/data/canonical-fighter-facts-batch-three.js`
 - `assets/data/canonical-fighter-facts-batch-four.js`
 - `assets/data/canonical-fighter-facts-batch-five.js`
+- `assets/data/canonical-fighter-facts-batch-six.js`
 
 Exact tests:
 
@@ -98,56 +108,55 @@ Exact tests:
 - `scripts/test-canonical-fighter-facts-five-person-batch-three.mjs`
 - `scripts/test-canonical-fighter-facts-seven-person-batch-four.mjs`
 - `scripts/test-canonical-fighter-facts-ten-person-batch-five.mjs`
+- `scripts/test-canonical-fighter-facts-ten-person-batch-six.mjs`
 
 Dedicated workflows:
 
 - `.github/workflows/canonical-batch-four.yml`
 - `.github/workflows/canonical-batch-five.yml`
+- `.github/workflows/canonical-batch-six.yml`
 
-`assets/data/ranking-data-patches.js` loads batches two through five before resolving `UFC_RANKING_DATA_PATCHES_READY`, preventing browser audits from capturing a partially loaded registry.
+`assets/data/ranking-data-patches.js` loads batches two through six before resolving `UFC_RANKING_DATA_PATCHES_READY`, preventing browser audits from capturing a partially loaded registry.
 
-## Batch-five decisions
+## Batch-six decisions
 
-- **Randy Couture:** 24 UFC bouts, 16-8. UFC 13 tournament wins count as UFC wins but not official title-fight wins. Nine official title-fight wins; 8.75 adjusted.
-- **Max Holloway:** 33 UFC bouts, 24-9 through UFC 329. BMF fights remain outside UFC divisional title scoring. Prime remains open at 16-6.
-- **Kamaru Usman:** 19 UFC bouts, 16-3. Prime remains open at 8-3. Future Dricus du Plessis fight is excluded.
-- **Jose Aldo:** UFC-only 23-bout ledger, 14-9. Every WEC fight and title accomplishment is excluded.
-- **Matt Hughes:** 25 UFC bouts, 18-7. Joe Riggs missed weight, so that win remains non-title.
-- **Daniel Cormier:** UFC-only 15-bout ledger, 11-3, 1 NC. Strikeforce is excluded and Jones II remains a no contest.
-- **Stipe Miocic:** 19 UFC bouts, 14-5. Prime ends with Ngannou II; Jones is post-prime.
-- **Ilia Topuria:** 10 UFC bouts, 9-1. Prime remains open at 4-1; Gaethje is a prime stoppage loss.
-- **Israel Adesanya:** 19 UFC bouts, 13-6. Prime closes with Dricus; Imavov and Pyfer are post-prime.
-- **Cain Velasquez:** 15 UFC bouts, 12-3. Prime is 6-2 from Nogueira through Werdum.
+- **Petr Yan:** 16 UFC bouts, 12-4. Sterling I remains an official counted DQ loss with explicit technical context rather than being treated like a normal clean defeat.
+- **Merab Dvalishvili:** 17 UFC bouts, 14-3. The canonical ledger includes three successful defenses and the December 2025 Yan title loss.
+- **B.J. Penn:** 27 UFC bouts, 12-13-2. Non-UFC fights are excluded and the late collapse remains post-prime.
+- **Alex Pereira:** 13 UFC bouts, 10-3. The Ciryl Gane loss is a counted prime upward-division elite finish loss with reduced upward-division context.
+- **Chuck Liddell:** 23 UFC bouts, 16-7. Pride and the later non-UFC Ortiz fight are excluded.
+- **Francis Ngannou:** 14 UFC bouts, 12-2. The UFC ledger ends with the Gane defense; PFL and boxing are excluded.
+- **Henry Cejudo:** 16 UFC bouts, 10-6. Sterling closes the counted prime window; later losses are post-prime.
+- **Conor McGregor:** 15 UFC bouts, 10-5 through UFC 329. Khabib closes the counted prime window; later Poirier and Holloway losses are post-prime.
+- **Justin Gaethje:** 16 UFC bouts, 11-5. The Holloway loss no longer closes the prime because Gaethje re-proved championship form with the Pimblett interim and Topuria undisputed-title wins. BMF fights receive no UFC divisional-title credit.
+- **Dustin Poirier:** 32 UFC bouts, 22-9, 1 NC. Islam closes the prime; the 2025 Holloway retirement fight is post-prime and BMF-only.
+
+Several batch-six records intentionally expose stale presentation-layer facts. Phase 1 does not repair those live values yet; it creates the authoritative evidence source that the later calculated pipeline will use.
 
 ## Validation
 
-All relevant checks passed on the final batch-five implementation:
+Required gates for batch six:
 
 - canonical schema contract
-- Charles 37-fight test
-- batch-two 102-fight test
-- batch-three 103-fight test
-- batch-four 138-fight test
-- batch-five 202-fight test
+- all previous batch derivation tests
+- dedicated 189-fight batch-six derivation test
 - exact per-fighter bout-count and derivation assertions
-- twenty-eight-record registry audit
+- thirty-eight-record registry audit
 - live score/rank/OVR/snapshot non-mutation assertion
-- Fighter Data Ownership Baseline with zero browser errors
+- Fighter Data Ownership Baseline browser capture
 - Runtime Scoring Snapshot
 - Runtime Scoring Audit
-- Six-Category Runtime Audit, including settled browser, effective-weight, Prime, Championship, Quality Wins, Longevity, and four-category balance checks
+- Six-Category Runtime Audit
 
 Known unrelated existing CI debt:
 
 - Picks UI Smoke: `Underdog Lock no-odds state is missing`
 - Scoring Architecture Guardrails contains pre-existing exact-parity/build-label debt; canonical and runtime scoring checks are unaffected
 
-At handoff close, the fighter-data branch was **behind `main` by thirteen unrelated commits**: recurring Octagon Verdict feed rebuilds, user watch-link updates, and generated scoring reports. Sync latest `main` before the next migration batch, then rerun the canonical and browser gates.
-
 ## Phase 1 checklist
 
 - [x] Canonical schema and ownership baseline
-- [x] 28 canonical fighter ledgers / 582 UFC fight rows
+- [x] 38 canonical fighter ledgers / 771 UFC fight rows
 - [ ] Continue ten-fighter batches until every ranked fighter has a canonical record
 - [ ] Generate snapshots exclusively from canonical calculations
 - [ ] Remove measurable-stat ownership from packets and display overrides
@@ -155,21 +164,21 @@ At handoff close, the fighter-data branch was **behind `main` by thirteen unrela
 
 ## Resume prompt
 
-> Continue the fighter-data refactor in `codyking0602/ufc-goat-rankings`. Read `docs/FIGHTER_DATA_REFACTOR_HANDOFF.md` and `docs/fighter-data-ownership-baseline.md` first. Continue on `agent/fighter-data-phase-1` unless the handoff says it merged. Sync latest `main` before editing because the branch was thirteen unrelated feed/watch-link/report commits behind at the last handoff. Preserve all 28 completed canonical ledgers. Work in ten-fighter batches. Never store rank, total, OVR, expected values, calculated aggregates, or hand-written snapshot stats in canonical fighter records. Keep migrations evidence-only until the calculated live pipeline is deliberately connected.
+> Continue the fighter-data refactor in `codyking0602/ufc-goat-rankings`. Read `docs/FIGHTER_DATA_REFACTOR_HANDOFF.md` and `docs/fighter-data-ownership-baseline.md` first. Continue on `agent/fighter-data-phase-1` unless the handoff says it merged. Sync latest `main` before editing. Preserve all 38 completed canonical ledgers. Work in ten-fighter batches. Never store rank, total, OVR, expected values, calculated aggregates, or hand-written snapshot stats in canonical fighter records. Keep migrations evidence-only until the calculated live pipeline is deliberately connected.
 
 ## Exact next task
 
 Create the next ten-fighter canonical ledger batch for:
 
-1. Petr Yan
-2. Merab Dvalishvili
-3. B.J. Penn
-4. Alex Pereira
-5. Chuck Liddell
-6. Francis Ngannou
-7. Henry Cejudo
-8. Conor McGregor
-9. Justin Gaethje
-10. Dustin Poirier
+1. Tony Ferguson
+2. T.J. Dillashaw
+3. Tito Ortiz
+4. Junior dos Santos
+5. Brock Lesnar
+6. Dricus du Plessis
+7. Tyron Woodley
+8. Aljamain Sterling
+9. Robert Whittaker
+10. Lyoto Machida
 
-Use the consolidated batch-five pattern: complete UFC-only histories, validate every record before registration, add exact bout-count and derivation assertions, preserve reviewed prime and loss-context decisions, load the batch before the readiness handoff, and leave every live score, rank, OVR, snapshot, profile, and Compare Mode value untouched.
+Use the consolidated batch-six pattern: complete UFC-only histories, validate every record before registration, add exact bout-count and derivation assertions, preserve reviewed prime and loss-context decisions, load the batch before the readiness handoff, and leave every live score, rank, OVR, snapshot, profile, and Compare Mode value untouched.

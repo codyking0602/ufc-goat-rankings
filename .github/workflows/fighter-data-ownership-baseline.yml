@@ -13,6 +13,7 @@ on:
       - 'assets/data/canonical-fighter-facts-batch-three.js'
       - 'assets/data/canonical-fighter-facts-batch-four.js'
       - 'assets/data/canonical-fighter-facts-batch-five.js'
+      - 'assets/data/canonical-fighter-facts-batch-six.js'
       - 'assets/data/canonical-scoring-records.js'
       - 'assets/data/ranking-data-patches.js'
       - 'assets/data/fighter-packets/**'
@@ -24,6 +25,7 @@ on:
       - 'scripts/test-canonical-fighter-facts-five-person-batch-three.mjs'
       - 'scripts/test-canonical-fighter-facts-seven-person-batch-four.mjs'
       - 'scripts/test-canonical-fighter-facts-ten-person-batch-five.mjs'
+      - 'scripts/test-canonical-fighter-facts-ten-person-batch-six.mjs'
       - 'scripts/capture-fighter-data-ownership-baseline.mjs'
       - '.github/workflows/fighter-data-ownership-baseline.yml'
   workflow_dispatch:
@@ -56,6 +58,7 @@ jobs:
           node --check assets/data/canonical-fighter-facts-batch-three.js
           node --check assets/data/canonical-fighter-facts-batch-four.js
           node --check assets/data/canonical-fighter-facts-batch-five.js
+          node --check assets/data/canonical-fighter-facts-batch-six.js
           node --check assets/data/ranking-data-patches.js
           node --check assets/js/fighter-data-ownership-audit.js
           node --check scripts/test-canonical-fighter-facts.mjs
@@ -64,6 +67,7 @@ jobs:
           node --check scripts/test-canonical-fighter-facts-five-person-batch-three.mjs
           node --check scripts/test-canonical-fighter-facts-seven-person-batch-four.mjs
           node --check scripts/test-canonical-fighter-facts-ten-person-batch-five.mjs
+          node --check scripts/test-canonical-fighter-facts-ten-person-batch-six.mjs
           node --check scripts/capture-fighter-data-ownership-baseline.mjs
 
       - name: Enforce canonical fighter ledger contract
@@ -81,8 +85,11 @@ jobs:
       - name: Verify seven-fighter canonical ledger batch
         run: node scripts/test-canonical-fighter-facts-seven-person-batch-four.mjs
 
-      - name: Verify ten-fighter canonical ledger batch
+      - name: Verify ten-fighter canonical ledger batch five
         run: node scripts/test-canonical-fighter-facts-ten-person-batch-five.mjs
+
+      - name: Verify ten-fighter canonical ledger batch six
+        run: node scripts/test-canonical-fighter-facts-ten-person-batch-six.mjs
 
       - name: Install browser audit dependencies
         run: |

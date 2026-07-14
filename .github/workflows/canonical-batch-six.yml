@@ -1,0 +1,35 @@
+name: Canonical Ten-Fighter Batch Six
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'assets/data/canonical-fighter-facts.js'
+      - 'assets/data/canonical-fighter-facts-batch-one.js'
+      - 'assets/data/canonical-fighter-facts-batch-two.js'
+      - 'assets/data/canonical-fighter-facts-batch-three.js'
+      - 'assets/data/canonical-fighter-facts-batch-four.js'
+      - 'assets/data/canonical-fighter-facts-batch-five.js'
+      - 'assets/data/canonical-fighter-facts-batch-six.js'
+      - 'scripts/test-canonical-fighter-facts-ten-person-batch-six.mjs'
+      - '.github/workflows/canonical-batch-six.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-ten-fighter-batch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check syntax
+        run: |
+          node --check assets/data/canonical-fighter-facts-batch-six.js
+          node --check scripts/test-canonical-fighter-facts-ten-person-batch-six.mjs
+      - name: Verify 189-fight ten-fighter ledger
+        run: node scripts/test-canonical-fighter-facts-ten-person-batch-six.mjs
