@@ -18,7 +18,13 @@ const sentinel={men:[{fighter:'Tony Ferguson',rank:30,totalScore:34,overallOvr:8
 const before=JSON.stringify(sentinel);
 const document={documentElement:{setAttribute(){}}};
 const context=vm.createContext({window:{RANKING_DATA:sentinel},document,console,Date,JSON,Map,Set,Object,Array,Number,String,Math,RegExp,Error,Boolean});
-for(const file of files)vm.runInContext(await fs.readFile(file,'utf8'),context,{filename:file});
+for(const file of files){
+  try{vm.runInContext(await fs.readFile(file,'utf8'),context,{filename:file});}
+  catch(error){
+    console.error(JSON.stringify(context.window.UFC_CANONICAL_FIGHTER_FACTS_BATCH_SEVEN||{file,error:String(error)},null,2));
+    throw error;
+  }
+}
 const api=context.window.UFC_CANONICAL_FIGHTER_FACTS;
 const batch=context.window.UFC_CANONICAL_FIGHTER_FACTS_BATCH_SEVEN;
 assert.equal(batch?.applied,true,batch?.error||'batch seven should apply');
