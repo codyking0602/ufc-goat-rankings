@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-division-era-depth-reconstruction-20260714c-leon-factual-completion';
+  const VERSION='canonical-division-era-depth-reconstruction-20260714d-leon-shared-era';
   const SHADOW_VERSION='division-era-depth-shadow-20260712e-roster-72';
   const RULES=Object.freeze({
     purpose:'Measure competitive depth within each UFC division over time without duplicating the separate division-strength treatment.',
@@ -12,7 +12,8 @@
     positiveFormula:'(depthIndex - 1.00) × 20, capped at +0.75',
     componentWeights:Object.freeze({qualifiedActivePool:0.30,ranksSixToFifteenElo:0.50,contenderDiversity:0.20}),
     womenFeatherweight:'Exclude WFW samples because the division lacks a viable ranks-6–15 baseline; use non-WFW samples for mixed careers and zero for pure WFW careers.',
-    divisionStrengthSeparation:'Canonical divisionStrength.defaultKey is context only and is never multiplied into the era-depth adjustment.'
+    divisionStrengthSeparation:'Canonical divisionStrength.defaultKey is context only and is never multiplied into the era-depth adjustment.',
+    phaseSource:'Approved shared Fighter Era Ledger controls any factual completion added after the frozen empirical artifact.'
   });
 
   const key=value=>String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/[“”\"]/g,'').replace(/[^a-z0-9' ]+/g,' ').replace(/\s+/g,' ').trim();
@@ -69,6 +70,7 @@
         canonicalAdjustment,
         controlProvenance,
         resolutionApplied:Boolean(resolution),
+        phaseSource:source?.phaseSource||(resolution?'fighter-era-ledgers':'frozen-empirical-artifact'),
         judgmentClassification:resolution?.classification||source?.classification||null,
         approvalStatus:resolution?.approvalStatus||source?.approvalStatus||null,
         divisionStrengthKey:record.divisionStrength?.defaultKey||null,
@@ -100,6 +102,7 @@
       mode:'shadow-only-canonical-division-era-depth-reconstruction',
       sourceShadowVersion:shadow.version,
       approvedResolutionVersion:resolutions?.version||null,
+      phaseSource:'frozen empirical rows plus approved shared Fighter Era Ledger factual completions',
       sourceDataset:shadow.source||null,
       rules:RULES,
       formula:`30% qualified active pool + 50% ranks 6–15 Elo + 20% contender diversity; curved to ${RULES.range.min.toFixed(2)} through +${RULES.range.max.toFixed(2)}.`,
