@@ -7,7 +7,7 @@
   const VERSION='canonical-phase-two-shadow-20260713a-calculated-73';
   const EXPECTED_FIGHTERS=73;
   const CATEGORY_MAX=30;
-  const QUALITY_BENCHMARK=13;
+  const QUALITY_BENCHMARK=15.5;
   const LONGEVITY_BENCHMARK_YEARS=11.5;
   const WEIGHTS={championship:35,opponentQuality:27.5,primeDominance:27.5,longevity:10};
   const OVR={floor:82,menCeiling:99,womenCeiling:96,curve:.85};
@@ -151,7 +151,20 @@
         penalty
       };
     });
-    return {penalty:round2(rows.reduce((sum,row)=>sum+row.penalty,0)),rows};
+    const scoredRows=rows.filter(row=>row.penalty<0);
+    const magnitudes=scoredRows.map(row=>Math.abs(row.penalty)).sort((a,b)=>b-a);
+    const rawPenalty=round2(rows.reduce((sum,row)=>sum+row.penalty,0));
+    const severity=round2(Math.min(3.5,magnitudes.length?magnitudes.slice(0,2).reduce((sum,value)=>sum+value,0)/Math.min(2,magnitudes.length):0));
+    const exposure=Math.max(1,Number(derived?.lossExposure?.throughPrimeUfcFights||0));
+    const frequency=round2(Math.min(2.5,(magnitudes.reduce((sum,value)=>sum+value,0)/exposure)*3));
+    const primeRows=scoredRows.filter(row=>row.phase==='prime');
+    const primeFinishCount=primeRows.filter(row=>row.finished).length;
+    const primeVolumeFloor=round2(Math.min(5.25,(primeRows.length*.75)+(primeFinishCount*.25)));
+    const preDivision=round2(Math.min(6,Math.max(severity+frequency,primeVolumeFloor)));
+    const divisionMultiplier=divisionSummary(record).averagePrimeMultiplier;
+    const divisionDiscountPct=round2(clamp((divisionMultiplier-1)*1.5,0,.15));
+    const scoringPenalty=round2(-(preDivision*(1-divisionDiscountPct)));
+    return {penalty:scoringPenalty,rawPenalty,severity,frequency,exposure,primeVolumeFloor,preDivision,divisionDiscountPct,rows};
   }
 
   function primeSummary(record,derived,championship){
@@ -176,22 +189,23 @@
   function categoryScores(stats){
     const championship=round2(clamp(stats.championship.adjustedTitleWins*2,0,CATEGORY_MAX));
     const opponentQuality=round2(clamp(CATEGORY_MAX*Math.sqrt(Math.max(0,stats.quality.divisionAdjustedPoints)/QUALITY_BENCHMARK),0,CATEGORY_MAX));
-    const primeDominance=round2(clamp(
+    const primeSampleConfidence=clamp(.70+(stats.prime.scoredFights*.04),.78,1);
+    const primeDominance=round2(clamp((
       (stats.prime.winRate*12)+
       (stats.prime.roundControl*12)+
       (stats.prime.finishPressure*3)+
       (stats.prime.durability*2)+
-      stats.prime.perfectPrime,
-      0,CATEGORY_MAX
-    ));
+      stats.prime.perfectPrime
+    )*primeSampleConfidence,0,CATEGORY_MAX));
     const effectiveEliteYears=round2(stats.longevity.activeEliteYears*stats.longevity.statusMultiplier);
     const longevity=round2(clamp((effectiveEliteYears/LONGEVITY_BENCHMARK_YEARS)*CATEGORY_MAX,0,CATEGORY_MAX));
     const apexIndex=(stats.prime.winRate*.40)+(stats.prime.roundControl*.35)+(stats.prime.finishPressure*.15)+(stats.prime.titleDensity*.10);
     const perfectBonus=stats.prime.perfectPrime?.35:0;
     const championshipRunBonus=stats.prime.perfectPrime&&stats.championship.primeTitleFightWins>=3?.25:0;
     const finishAuraBonus=stats.prime.finishPressure>=.65?.20:0;
-    const apexPeak=round2(clamp((apexIndex*6)+perfectBonus+championshipRunBonus+finishAuraBonus,0,6));
-    return {championship,opponentQuality,primeDominance,longevity,apexPeak,effectiveEliteYears};
+    const apexSampleConfidence=clamp(.85+(stats.prime.scoredFights*.025),.90,1);
+    const apexPeak=round2(clamp(((apexIndex*6)+perfectBonus+championshipRunBonus+finishAuraBonus)*apexSampleConfidence,0,6));
+    return {championship,opponentQuality,primeDominance,longevity,apexPeak,effectiveEliteYears,primeSampleConfidence:round2(primeSampleConfidence),apexSampleConfidence:round2(apexSampleConfidence)};
   }
 
   function weightedScore(categories,penalty){
@@ -239,6 +253,7 @@
       activeEliteYears:longevity.activeEliteYears,
       timesFinishedPrime:prime.stoppageLosses,
       lossPenalty:loss.penalty,
+      rawLossPenalty:loss.rawPenalty,
       divisionStrengthMultiplier:divisionStrength.averagePrimeMultiplier,
       apexPeak:categories.apexPeak
     };
