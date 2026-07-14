@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-leon-final-category-completions-20260714b-calculated';
+  const VERSION='canonical-leon-final-category-completions-20260714c-approved';
   const FIGHTER='Leon Edwards';
   const STANDARD_CREDITS=Object.freeze({'champion-level':1.25,'top-five':1,'top-ten':.85,ranked:.65,solid:.45,'name-value':.25,minimal:.10,none:0});
   const key=value=>String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
@@ -127,7 +127,10 @@
     primeDominance,
     opponentQualityInstalled,
     primeDominanceInstalled,
-    championshipPendingApproval:true,
+    championshipPendingApproval:false,
+    approvedChampionshipScore:5.98,
+    approvalStatus:'cody-approved',
+    approvedAt:'2026-07-14',
     manualNumericAdjustment:0,
     mutatesFightFacts:false,
     mutatesRankingData:false,
