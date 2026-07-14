@@ -2,7 +2,7 @@
 // Shadow-only: records approved controls and classifications without mutating live penalties.
 (function(){
   'use strict';
-  const VERSION='canonical-loss-context-approved-resolutions-20260714a-all-ten';
+  const VERSION='canonical-loss-context-approved-resolutions-20260714b-all-eleven';
   const approvedBy='Cody';
   const approvedAt='2026-07-14';
   const RESOLUTIONS={
@@ -15,7 +15,8 @@
     'Francis Ngannou':{approvedPenalty:-1.07,tolerance:.01,classification:'Cody-approved opponent-quality recovery',decision:'Treat both Stipe Miocic and Derrick Lewis as pre-prime elite decision losses.'},
     'Tito Ortiz':{approvedPenalty:-3.82,tolerance:.01,classification:'Cody-approved clean canonical reconstruction',decision:'Use the approved Machida endpoint and the complete 21-fight UFC exposure through prime.'},
     'Benson Henderson':{approvedPenalty:-3.26,tolerance:.01,classification:'Cody-approved division-relief correction',decision:'Use the locked 1.05 division multiplier rather than the maximum 1.10 relief treatment.'},
-    'Leon Edwards':{approvedPenalty:-2.61,tolerance:.01,classification:'Cody-approved new canonical control',decision:'Create the first approved Loss Context control using the RDA through Sean Brady shared window.'}
+    'Leon Edwards':{approvedPenalty:-2.61,tolerance:.01,classification:'Cody-approved new canonical control',decision:'Create the first approved Loss Context control using the RDA through Sean Brady shared window.'},
+    'Henry Cejudo':{approvedPenalty:-1.69,tolerance:.01,classification:'Cody-approved post-retirement phase correction',decision:'Close Cejudo’s original elite-prime window on the Dominick Cruz retirement win. Aljamain Sterling and every later loss are post-prime comeback results.'}
   };
   const key=value=>String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
   const byKey=new Map(Object.entries(RESOLUTIONS).map(([fighter,resolution])=>[key(fighter),{fighter,...resolution,approved:true,approvedBy,approvedAt,version:VERSION}]));
