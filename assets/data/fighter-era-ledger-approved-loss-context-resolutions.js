@@ -2,7 +2,7 @@
 // Shadow-only on PR #39. These windows feed category reconstruction but do not write live scores.
 (function(){
   'use strict';
-  const VERSION='fighter-era-ledger-approved-loss-context-resolutions-20260714a';
+  const VERSION='fighter-era-ledger-approved-loss-context-resolutions-20260714b-cejudo-retirement-endpoint';
   const era=window.UFC_FIGHTER_ERA_LEDGERS;
   const ledgers=era?.ledgers;
   if(!ledgers){
@@ -13,6 +13,7 @@
   const approvedBy='Cody';
   const approvedAt='2026-07-14';
   const windowChanges=[];
+  const primeWindowChanges=[];
 
   function approveWindow(fighter,windowPatch,decision){
     const ledger=ledgers[fighter];
@@ -43,9 +44,45 @@
     startReason:'The Uriah Hall win established Strickland as an elite middleweight contender before the Pereira and Cannonier losses.'
   },'Start the shared UFC elite-prime window at Uriah Hall on July 31, 2021.');
 
+  const cejudo=ledgers['Henry Cejudo'];
+  if(cejudo){
+    const decision='Keep the shared prime start at Demetrious Johnson II and close it on the Dominick Cruz retirement win. The three-year retirement ends the original elite-prime window; Aljamain Sterling and all later fights are post-prime comeback activity.';
+    cejudo.status='locked';
+    cejudo.window={
+      ...(cejudo.window||{}),
+      start:'2018-08-04',
+      startLabel:'Demetrious Johnson II',
+      end:'2020-05-09',
+      endLabel:'Dominick Cruz',
+      endType:'retirement_win',
+      endReason:'Cejudo retired after the Cruz title-defense win. The three-year retirement creates a clean phase break before the Sterling comeback.'
+    };
+    cejudo.lossContext={
+      ...(cejudo.lossContext||{}),
+      unrecoveredLoss:null,
+      recoveredLosses:[{label:'Demetrious Johnson I / Joseph Benavidez',date:'2016',phase:'pre-prime elite losses',recovery:'Cejudo later beat Demetrious Johnson and entered his two-division championship prime.'}],
+      postPrimeLosses:[
+        {label:'Aljamain Sterling',date:'2023-05-06',phase:'post-prime comeback title loss'},
+        {label:'Merab Dvalishvili',date:'2024-02-17',phase:'post-prime comeback elite loss'},
+        {label:'Song Yadong',date:'2025-02-22',phase:'post-prime comeback elite loss'},
+        {label:'Payton Talbott',date:'2025-12-06',phase:'post-prime comeback loss'}
+      ]
+    };
+    cejudo.longevity={
+      ...(cejudo.longevity||{}),
+      gapAdjustedMonths:21.2,
+      activeEliteYears:1.77,
+      adjustmentNote:'Demetrious Johnson II through Dominick Cruz; no retirement-gap credit.',
+      note:'Huge two-division peak, but the original UFC elite-prime run ends at retirement after the Cruz win.'
+    };
+    cejudo.notes=[cejudo.notes,decision].filter(Boolean).join(' ');
+    cejudo.approvedPrimeEndpointResolution={approved:true,approvedBy,approvedAt,decision,version:VERSION};
+    primeWindowChanges.push('Henry Cejudo');
+  }
+
   era.fighters=Object.keys(ledgers);
-  era.approvedLossContextPhaseResolutions={version:VERSION,approvedBy,approvedAt,windowChanges:[...windowChanges],mutatesScores:false};
-  window.UFC_FIGHTER_ERA_LEDGER_APPROVED_LOSS_CONTEXT_RESOLUTIONS={version:VERSION,applied:true,approvedBy,approvedAt,windowChanges:[...windowChanges],fighterCount:Object.keys(ledgers).length,mutatesScores:false,appliedAt:new Date().toISOString()};
+  era.approvedLossContextPhaseResolutions={version:VERSION,approvedBy,approvedAt,windowChanges:[...windowChanges],primeWindowChanges:[...primeWindowChanges],mutatesScores:false};
+  window.UFC_FIGHTER_ERA_LEDGER_APPROVED_LOSS_CONTEXT_RESOLUTIONS={version:VERSION,applied:true,approvedBy,approvedAt,windowChanges:[...windowChanges],primeWindowChanges:[...primeWindowChanges],fighterCount:Object.keys(ledgers).length,mutatesScores:false,appliedAt:new Date().toISOString()};
   if(typeof document!=='undefined'&&document?.documentElement?.setAttribute){
     document.documentElement.setAttribute('data-fighter-era-ledger-approved-loss-context-resolutions',VERSION);
   }
