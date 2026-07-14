@@ -1,61 +1,121 @@
 # UFC Fighter Data Refactor Handoff
 
-_Last updated: 2026-07-13_
+_Last updated: 2026-07-14_
 
 ## Branch and pull request
 
 - Repository: `codyking0602/ufc-goat-rankings`
 - Working branch: `agent/fighter-data-phase-1`
 - Draft PR: #39
-- Do not merge or activate the calculated live pipeline until Cody explicitly approves live promotion.
+- Do not merge or activate a calculated live pipeline until Cody explicitly approves live promotion.
+
+## Locked refactor doctrine
+
+The controlling document is `docs/SCORING_REFACTOR_DOCTRINE.md`.
+
+The non-negotiable goal is:
+
+> Preserve the approved UFC GOAT scoring model while making every score traceable, reproducible, and owned in one place.
+
+Architecture cleanup is not permission to silently redesign categories, category weights, fight values, modifiers, or ranking shape.
+
+The permanent flow should be:
+
+`canonical UFC fight facts + explicit reviewed judgment inputs → approved category calculators → approved modifiers → calculated total → calculated sort/rank → calculated OVR → generated leaderboard/profile/Compare Mode values`
+
+Every difference found during reconstruction must be classified as:
+
+1. **Factual correction** — a fight, result, round, or stat was wrong or missing.
+2. **Recovered judgment** — approved logic existed but was hidden, fragmented, or frozen only as an aggregate result.
+3. **Proposed model change** — the scoring philosophy or formula would change and requires Cody’s explicit approval.
+
+Nothing may silently enter the third category.
 
 ## Permanent ownership architecture
 
-The permanent flow is:
+### Canonical fight ledger
 
-`canonical UFC fight ledger + reviewed classifications → calculated categories → modifiers → calculated total → calculated sort → calculated rank → calculated OVR → generated snapshot/profile/Compare Mode`
+Owns:
 
-Live results must never be controlled by:
+- complete UFC-only fight facts
+- title context
+- opponent tier/status
+- prime phase
+- rounds
+- loss context
+- division context
+- no-contest and technical-result treatment
+
+Must not own:
+
+- category scores
+- total score
+- rank
+- OVR
+
+### Explicit judgment inputs
+
+Approved judgment decisions must be stored transparently at the fighter or fight level rather than hidden in patches or final aggregate scores.
+
+Examples:
+
+- title base value
+- title-opponent strength
+- title-era/context discount
+- opponent-quality partial credit
+- division-strength multiplier
+- prime-window boundary
+- loss-rule classification
+
+### Single scoring engine
+
+One engine should own the approved calculations for:
+
+- Championship
+- Opponent Quality
+- Prime Dominance
+- Longevity
+- Apex
+- Loss Penalty
+- Division-Era Depth
+- total score
+- calculated sort and rank
+- OVR
+
+The same output must feed leaderboard, profiles, games, snapshots, and Compare Mode.
+
+### Presentation layer
+
+`display-overrides.js` and other presentation files may own photos, copy, watch links, and visual polish only. They must not own scores, ranks, OVRs, or measurable fighter facts.
+
+## Proper role of parity locks
+
+These are migration controls and audit references only:
 
 - `expectedRank`
 - `expectedTotalScore`
 - `expectedOverallOvr`
-- hand-written aggregate snapshot values
-- measurable fighter facts stored in presentation files
-- hand-written category scores stored in fighter packets or display overrides
+
+They answer whether a reconstructed clean calculator reproduces the previously approved board. They must not remain the permanent live authority after the approved scoring logic is faithfully reconstructed.
+
+Removing the locks alone is not a scoring change. Replacing category inputs or category construction is a scoring change.
 
 ## Phase 1 complete
 
-The canonical registry now contains:
+The canonical registry contains:
 
 - **73 audited UFC-only fighter ledgers**
 - **1,366 complete UFC fight rows**
-- **100% of the current 73-fighter roster**
+- **100% of the current roster**
 - no deliberate live ranking or presentation mutations
 
-Every ledger is UFC-only. Pride, Strikeforce, WEC, ONE, Bellator, PFL, boxing, and regional achievements are excluded from scoring. No contests remain stored as official results and excluded from scoring.
+Every ledger is UFC-only. Pride, Strikeforce, WEC, ONE, Bellator, PFL, boxing, and regional achievements are excluded from scoring. No contests remain stored as official results and excluded from scored results.
 
-The final fifteen-fighter batch is the full women’s roster:
+Phase 1 is the factual foundation and remains useful.
 
-1. Amanda Nunes
-2. Valentina Shevchenko
-3. Zhang Weili
-4. Rose Namajunas
-5. Miesha Tate
-6. Mackenzie Dern
-7. Kayla Harrison
-8. Jessica Andrade
-9. Alexa Grasso
-10. Julianna Peña
-11. Carla Esparza
-12. Holly Holm
-13. Joanna Jedrzejczyk
-14. Ronda Rousey
-15. Cris Cyborg
+## Current Phase 2 status
 
-## Phase 2 shadow complete
-
-Phase 2 now calculates all measurable stats and scoring outputs from the 73 canonical ledgers without changing the live app.
+Phase 2 successfully proved that all 73 ledgers can generate measurable stats, categories, totals, ranks, OVRs, profile values, and Compare Mode values without mutating the live app.
 
 Primary files:
 
@@ -65,96 +125,77 @@ Primary files:
 - `scripts/test-canonical-phase-two-shape-lock.mjs`
 - `.github/workflows/canonical-phase-two-shadow.yml`
 - `docs/PHASE_TWO_SHADOW_HANDOFF.md`
+- `docs/PHASE_TWO_BOARD_REVIEW.md`
 
-Calculated outputs include:
+However, the Phase 2 category formulas and calibration are now classified as a **diagnostic prototype**, not an approved replacement model.
 
-- UFC record
-- UFC title-fight wins
-- adjusted title wins
-- top-five wins
-- finish percentage
-- prime record
-- rounds-won percentage
-- active elite years
-- prime durability
-- Championship
-- Opponent Quality
-- Prime Dominance
-- Longevity
-- Apex
-- Penalty
-- total score
-- calculated rank
-- app-facing OVR
-- generated profile and Compare Mode stats
+The prototype introduced genuine scoring changes, including simplified category construction and new weighting/calibration choices, without first reconstructing the approved category logic. It must not be promoted live as-is.
 
-The legacy canonical scoring snapshot is comparison-only. Expected ranks, totals, and OVRs do not control the calculated output.
+It may still be used to:
 
-## Phase 2 calibrated balance
+- validate canonical ledgers
+- expose missing provenance
+- compare formulas
+- identify factual conflicts
+- test one-owner architecture
 
-- Championship: **30%**
-- Opponent Quality: **24%**
-- Prime Dominance: **30%**
-- Longevity: **16%**
-- Apex: post-base bonus capped at 6
-- Penalty: hybrid aggregation of locked loss-event penalties
-- Division-Era Depth: approved hidden post-base modifier; not displayed on the fighter profile card
+## Championship reconstruction warning
 
-Prime upward-division elite losses count at 79% exposure inside Prime Dominance and receive the locked reduced penalty. Open prime windows use full confidence rather than being punished solely for incomplete career length. A full second-division UFC title receives a 0.50 Apex bonus; a vacant second-division UFC title receives 0.30.
+The approved Championship model values more than title-win count. Individual title wins may be discounted by:
 
-## Locked shadow ranking shape
+- title type
+- opponent difficulty
+- era/title-environment strength
+- unusual title context
 
-### Men
+For example, Randy Couture’s approved 15.85 Championship score reflects title-level strength adjustments. The Phase 2 shortcut of effectively summing full title-type credits and multiplying by two is not a faithful reconstruction.
 
-1. Jon Jones
-2. Georges St-Pierre
-3. Demetrious Johnson
-4. Anderson Silva
-5. Islam Makhachev
-6. Khabib Nurmagomedov
-7. Alexander Volkanovski
-8. Matt Hughes
-9. Max Holloway
-10. Kamaru Usman
-11. Jose Aldo
+The clean Championship calculator must preserve the approved fight-level judgment logic and make each title win traceable.
 
-### Women
+## Required next phase: category reconstruction
 
-1. Amanda Nunes
-2. Valentina Shevchenko
-3. Zhang Weili
+Proceed one category at a time.
 
-Jones remains the 99 OVR benchmark. Khabib remains top six, Volkanovski top seven, and Aldo stays within the intended UFC-only 8–11 range.
+For each category:
 
-## Validation
+1. Document the approved philosophy.
+2. Locate the old calculations and hidden/manual judgment inputs.
+3. Move the approved inputs into the canonical structure.
+4. Build one clean calculator that reproduces the approved category as closely as possible.
+5. Compare all 73 fighters against the approved snapshot.
+6. Investigate every meaningful difference.
+7. Present any proposed model change separately for Cody’s approval.
 
-The Phase 2 workflow verifies:
+Recommended order:
 
-1. 73 calculated fighters and 1,366 UFC fight rows.
-2. Exact canonical roster and registry audit success.
-3. No mutation of live ranking/profile/OVR/snapshot/Compare Mode data.
-4. No expected-rank, expected-total, or expected-OVR inputs.
-5. Exact top-four shape and the approved Islam/Khabib/Volkanovski/Aldo ranges.
-6. Amanda Nunes #1 and Valentina Shevchenko #2.
-7. Volk’s Islam losses receive upward-division elite context in both penalty and Prime Dominance exposure.
-8. Jones remains 99 OVR.
-9. Strong active elites avoid embarrassing front-end OVRs.
-10. The full shadow report is uploaded as a workflow artifact.
+1. Championship
+2. Opponent Quality
+3. Prime Dominance
+4. Longevity
+5. Loss Penalty
+6. Apex
+7. Division-Era Depth
+8. final weights, rank, and OVR
 
-The existing canonical, ownership, runtime scoring, six-category, and architecture workflows remain required. The unrelated Picks UI Smoke failure remains separate.
+## Validation standard
 
-## Known evidence fallback
+A completed category reconstruction must provide:
 
-The pinned Division-Era Depth evidence currently covers 72 of 73 identities. Leon Edwards receives a neutral 0.00 fallback rather than an invented value. The missing evidence identity is disclosed in every Phase 2 report.
+- all 73 fighters
+- current approved value
+- reconstructed value
+- delta
+- explanation for each meaningful delta
+- classification as factual correction, recovered judgment, or proposed model change
+- no live-data mutation
+
+No category should be promoted until its meaningful differences are understood and approved.
 
 ## Current safety state
 
-Phase 1 and Phase 2 are complete, but Phase 2 is still shadow-only. The published app has not changed.
-
-The next deliberate phase is live promotion:
-
-1. Replace the legacy parity snapshot as score authority.
-2. Write calculated category scores, total, rank, and OVR to the live runtime.
-3. Generate profile and Compare Mode measurable values from the canonical output.
-4. Run full browser and ranking-diff review.
-5. Merge only after Cody explicitly approves the live calculated board.
+- Phase 1 ledgers are complete.
+- Phase 2 remains shadow-only.
+- The published app has not changed.
+- PR #39 remains draft.
+- The current Phase 2 ranking board is not approved for live promotion.
+- The next task is faithful category reconstruction under `docs/SCORING_REFACTOR_DOCTRINE.md`.
