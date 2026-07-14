@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-prime-dominance-reconstruction-20260714b-era-ledger-elite-validation';
+  const VERSION='canonical-prime-dominance-reconstruction-20260714c-full-score-sample-lock';
   const EXCLUDED_FIGHTERS=new Set(['Leon Edwards']);
   const CATEGORY_MAX=30;
   const COMPONENT_MAX=Object.freeze({
@@ -20,6 +20,9 @@
     finishPressure:.5
   });
   const ELITE_VOLUME_FULL_SAMPLE=8;
+  const PRIME_SAMPLE_MIN=.70;
+  const PRIME_SAMPLE_STEP=.05;
+  const PRIME_SAMPLE_FULL_FIGHTS=7;
   const ELITE_QUALITY_TIERS=new Set(['champion-level','top-five']);
   const FINISH_METHODS=new Set(['ko-tko','submission','doctor-stoppage']);
   const FINISH_SCALE=Object.freeze([
@@ -105,6 +108,12 @@
   function finishPressureScore(rate){
     const normalized=clamp(rate,0,1);
     return round2((FINISH_SCALE.find(row=>normalized>=row.min)||FINISH_SCALE.at(-1)).score);
+  }
+
+  function primeSampleMultiplier(scoredFightCount){
+    const fights=Math.max(0,Number(scoredFightCount||0));
+    if(!fights)return 0;
+    return round2(clamp(PRIME_SAMPLE_MIN+((fights-1)*PRIME_SAMPLE_STEP),PRIME_SAMPLE_MIN,1));
   }
 
   function isEliteStageFight(fight){
@@ -218,7 +227,9 @@
       finishPressure:finishPressureScore(finishPressureRate),
       eliteLevelValidation:elite.score
     };
-    const score=round2(clamp(Object.values(components).reduce((sum,value)=>sum+Number(value||0),0),0,CATEGORY_MAX));
+    const rawScore=round2(clamp(Object.values(components).reduce((sum,value)=>sum+Number(value||0),0),0,CATEGORY_MAX));
+    const sampleMultiplier=primeSampleMultiplier(scoredFightCount);
+    const score=round2(clamp(rawScore*sampleMultiplier,0,CATEGORY_MAX));
     const factWindow=canonicalFactWindow(record);
     const eraOpen=!era?.window?.end;
     const eraDrift=Boolean(era)&&(
@@ -261,7 +272,9 @@
       stoppageLosses,
       eliteLevelValidation:elite,
       components,
-      rawScore:score,
+      rawScore,
+      sampleMultiplier,
+      samplePercent:round2(sampleMultiplier*100),
       score,
       primeFights:primeFights.map(fight=>({
         fightId:fight.id,
@@ -336,7 +349,7 @@
       if(Number.isFinite(difference)&&Math.abs(difference)>.01){
         issues.push({
           classification:'Cody-approved model change; shadow only',
-          reason:`The approved 9/9/5/7 Prime Dominance formula calculates ${stats.score.toFixed(2)}/30 versus the frozen ${currentScore.toFixed(2)}/30 control (${difference>0?'+':''}${difference.toFixed(2)}). Elite-Level Validation rewards objective elite-stage exposure and performance, including meaningful credit in losses.`
+          reason:`The approved 9/9/5/7 Prime Dominance formula produces a ${stats.rawScore.toFixed(2)}/30 raw score, then applies the locked ${stats.samplePercent.toFixed(0)}% prime-sample multiplier for ${stats.scoredFightCount} counted prime fights, resulting in ${stats.score.toFixed(2)}/30 versus the frozen ${currentScore.toFixed(2)}/30 control (${difference>0?'+':''}${difference.toFixed(2)}).`
         });
       }
 
@@ -348,7 +361,7 @@
         difference,
         legacyCanonicalScore:legacyCanonical,
         legacyDifference,
-        classification:'Cody-approved model formula; shadow only',
+        classification:'Cody-approved model formula and sample lock; shadow only',
         currentControlSource:'canonical-scoring-records',
         primeWindowSource:'fighter-era-ledgers',
         legacyJudgmentSource:legacy?'prime-dominance-ledgers + prime-dominance-shadow-model':'frozen score only',
@@ -368,7 +381,7 @@
     const meaningful=fighters.filter(row=>Number.isFinite(row.difference)&&Math.abs(row.difference)>=.25);
     const report={
       version:VERSION,
-      status:'shadow-reconstruction-cody-approved-formula-not-live',
+      status:'shadow-reconstruction-cody-approved-formula-and-sample-lock-not-live',
       applied:true,
       mode:'diagnostic-only-no-live-promotion',
       fighterCount:fighters.length,
@@ -391,8 +404,10 @@
       issueCount:fighters.reduce((sum,row)=>sum+row.issues.length,0),
       componentMaxima:COMPONENT_MAX,
       eliteValidationMaxima:ELITE_VALIDATION_MAX,
+      primeSampleRule:{minimum:PRIME_SAMPLE_MIN,stepPerFight:PRIME_SAMPLE_STEP,fullAtFights:PRIME_SAMPLE_FULL_FIGHTS},
+      sampleDiscountedFighterCount:fighters.filter(row=>row.stats.sampleMultiplier<1).length,
       categoryMax:CATEGORY_MAX,
-      formula:'Prime Record (9) + Round Control (9) + Finish Pressure (5) + Elite-Level Validation (7)',
+      formula:'[Prime Record (9) + Round Control (9) + Finish Pressure (5) + Elite-Level Validation (7)] × Prime Sample Percentage',
       methodology:{
         primeRecord:'(prime wins + 0.5 × prime draws) ÷ scored prime fights × 9',
         roundControl:'(rounds won + 0.5 × drawn rounds) ÷ audited counted prime rounds × 9',
@@ -400,6 +415,7 @@
         eliteStageDefinition:'A counted prime fight is elite-stage when it is a UFC title fight or the opponent is already tagged champion-level/Top-5 in the canonical opponent ledger.',
         eliteStageVolume:'elite-stage counted prime fights ÷ 8 × 3, capped at 3; result-neutral so elite losses still add validation',
         eliteStagePerformance:'up to 4 points: elite result rate × 2, elite round-control rate × 1.5, elite finish rate × 0.5',
+        primeSamplePercentage:'70% at one counted prime fight, plus 5 percentage points per additional counted prime fight, capped at 100% from seven fights onward; applied to the full 30-point raw score',
         primeWindow:'Fighter Era Ledger start/end dates are the sole phase source. Fighter-local category windows are audit comparisons only.'
       },
       controlledOverlap:'Elite-Level Validation uses existing title and opponent-tier tags only to identify the level of the test. Championship and Opponent Quality still own accomplishment and win-quality resume credit.',

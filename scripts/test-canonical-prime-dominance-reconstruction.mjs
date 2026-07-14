@@ -60,6 +60,7 @@ assert.equal(report.componentMaxima.eliteLevelValidation,7);
 assert.equal(Object.values(report.componentMaxima).reduce((sum,value)=>sum+value,0),30);
 assert.equal(report.eliteValidationMaxima.volume,3);
 assert.equal(report.eliteValidationMaxima.performance,4);
+assert.deepEqual(JSON.parse(JSON.stringify(report.primeSampleRule)),{minimum:.70,stepPerFight:.05,fullAtFights:7});
 assert.equal(JSON.stringify(Array.from(report.excludedInputs)),JSON.stringify([
   'subjective competitive-separation tags',
   'durability bonus',
@@ -87,7 +88,11 @@ const kayla=report.entryFor('Kayla Harrison');
 assert.ok(frank.stats.eliteLevelValidation.volumeScore<3,'Short elite samples should not max elite-stage volume');
 assert.ok(kayla.stats.eliteLevelValidation.volumeScore<3,'Tiny UFC samples should not max elite-stage volume');
 assert.ok(kayla.reconstructedScore<khabib.reconstructedScore,'Tiny perfect samples must not automatically outrank a complete elite prime');
-assert.equal('sampleConfidence' in kayla.stats,false,'The approved formula no longer uses a global confidence multiplier');
+assert.equal('sampleConfidence' in kayla.stats,false,'The retired confidence formula must stay removed');
+assert.equal(kayla.stats.sampleMultiplier,.80,'Three counted prime fights receive 80% of the full score');
+assert.equal(frank.stats.sampleMultiplier,.90,'Five counted prime fights receive 90% of the full score');
+assert.equal(khabib.stats.sampleMultiplier,1,'Seven or more counted prime fights receive the full score');
+assert.equal(kayla.stats.score,Math.round(kayla.stats.rawScore*.80*100)/100,'The multiplier applies to the entire 30-point raw score');
 
 const aldo=report.entryFor('Jose Aldo');
 assert.equal(aldo.stats.eraStartDate,'2011-04-30','Aldo must use the shared Hominick start');
@@ -134,14 +139,16 @@ const markdown=[
   '- Round Control: 9 points',
   '- Finish Pressure: 5 points',
   '- Elite-Level Validation: 7 points',
+  '- Prime Sample Percentage: 70% at one counted prime fight, +5 percentage points per additional fight, full score at seven fights',
   '  - Elite-stage volume: 3 points; result-neutral, full credit at eight counted elite-stage prime fights',
   '  - Elite-stage performance: 4 points from result rate, round control, and finish pressure','',
   'An elite-stage fight is a counted prime fight that is either a UFC title fight or against a canonical champion-level/Top-5 opponent. A loss still adds volume credit and can earn performance credit through rounds won. No contests and technical exceptions remain excluded.','',
+  'The complete 30-point raw score is multiplied by the locked prime-sample percentage. This is a uniform sample-size control, not a fighter-specific adjustment.','',
   'The Fighter Era Ledger is the sole prime-window source for Prime Dominance. Category-local prime windows are retained only as drift checks and cannot override it.','',
   '## Reconstructed leaders','',
-  '| Rank | Fighter | Prime Dominance | Prime record | Rounds | Finish | Elite validation | Elite fights |',
-  '|---:|---|---:|---:|---:|---:|---:|---:|',
-  ...leaders.map((row,index)=>`| ${index+1} | ${row.fighter} | ${row.reconstructedScore.toFixed(2)} | ${row.stats.components.primeRecord.toFixed(2)} | ${row.stats.components.roundControl.toFixed(2)} | ${row.stats.components.finishPressure.toFixed(2)} | ${row.stats.components.eliteLevelValidation.toFixed(2)} | ${row.stats.eliteLevelValidation.fightCount} |`),
+  '| Rank | Fighter | Adjusted | Raw / 30 | Sample | Prime record | Rounds | Finish | Elite validation | Elite fights |',
+  '|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|',
+  ...leaders.map((row,index)=>`| ${index+1} | ${row.fighter} | ${row.reconstructedScore.toFixed(2)} | ${row.stats.rawScore.toFixed(2)} | ${row.stats.samplePercent.toFixed(0)}% | ${row.stats.components.primeRecord.toFixed(2)} | ${row.stats.components.roundControl.toFixed(2)} | ${row.stats.components.finishPressure.toFixed(2)} | ${row.stats.components.eliteLevelValidation.toFixed(2)} | ${row.stats.eliteLevelValidation.fightCount} |`),
   '',
   '## Largest changes versus frozen control','',
   '| Fighter | Frozen | Reconstructed | Delta |',
@@ -164,7 +171,8 @@ console.log(JSON.stringify({
   missingEliteStageRoundRowCount:report.missingEliteStageRoundRowCount,
   exactFrozenControlParityCount:report.exactFrozenControlParityCount,
   meaningfulDeltaCount:report.meaningfulDeltaCount,
-  leaders:leaders.slice(0,10).map(row=>({fighter:row.fighter,score:row.reconstructedScore,delta:row.difference,eliteFights:row.stats.eliteLevelValidation.fightCount})),
+  sampleDiscountedFighterCount:report.sampleDiscountedFighterCount,
+  leaders:leaders.slice(0,10).map(row=>({fighter:row.fighter,score:row.reconstructedScore,rawScore:row.stats.rawScore,samplePercent:row.stats.samplePercent,delta:row.difference,eliteFights:row.stats.eliteLevelValidation.fightCount})),
   aldo:{score:aldo.reconstructedScore,record:aldo.stats.recordText,window:`${aldo.stats.eraStartLabel} → ${aldo.stats.eraEndLabel}`},
   usman:{score:usman.reconstructedScore,record:usman.stats.recordText,window:`${usman.stats.eraStartLabel} → ${usman.stats.eraEndLabel}`},
   liveDataUnchanged:report.liveDataUnchanged
