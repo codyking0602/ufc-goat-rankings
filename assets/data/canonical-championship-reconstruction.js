@@ -5,7 +5,7 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-championship-reconstruction-20260714a';
+  const VERSION='canonical-championship-reconstruction-20260714b';
   const CATEGORY_MAX=30;
   const LOCKED_BENCHMARK_CREDIT=14.54;
   const BASE_CREDIT=Object.freeze({
@@ -133,7 +133,7 @@
     const controls=window.UFC_CANONICAL_SCORING_RECORDS;
     const legacy=window.UFC_CHAMPIONSHIP_RESUME_LEDGERS;
     const before=window.RANKING_DATA?JSON.stringify(window.RANKING_DATA):null;
-    if(!facts||facts.count?.()!==73||!controls||controls.rosterCount!==73||!legacy?.ledgers){
+    if(!facts||facts.count?.()!==73||!controls||!legacy?.ledgers){
       return {version:VERSION,applied:false,error:'Championship reconstruction prerequisites are incomplete.',fighterCount:facts?.count?.()||0,controlCount:controls?.rosterCount||0,ledgerLoaded:Boolean(legacy?.ledgers),mutatesRankingData:false};
     }
 
@@ -143,29 +143,35 @@
       const inputs=matched.matches.map(recoveredInput);
       const calculated=calculateChampionship(inputs);
       const control=controls.entryFor(record.fighter);
-      const currentScore=round2(control?.championship||0);
-      const difference=round2(calculated.score-currentScore);
+      const staticPayloadScore=snapshotScoreFor(record.fighter);
+      const currentScore=control?round2(control.championship):staticPayloadScore;
+      const controlSource=control?'canonical-scoring-records':'static-ranking-payload-fallback';
+      const difference=Number.isFinite(currentScore)?round2(calculated.score-currentScore):null;
       const unmatchedLegacyRows=inputs.filter(row=>!row.fightId);
       const titleTypeConflicts=inputs.filter(row=>row.fightId&&!row.titleTypeMatchesCanonical);
       const arithmeticConflicts=inputs.filter(row=>Math.abs(row.finalAdjustedCredit-row.sourceAdjustedCredit)>.01);
       const issues=[];
+      if(!control)issues.push({classification:'recovered judgment',reason:'Fighter is missing from the 72-row canonical scoring parity snapshot; static ranking payload is used only to expose the migration gap.'});
       unmatchedLegacyRows.forEach(row=>issues.push({classification:'recovered judgment',reason:`Legacy title judgment for ${row.sourceOpponent||row.opponent} is not yet connected to a canonical fight ID.`}));
       matched.unmatchedCanonicalWins.forEach(fight=>issues.push({classification:'factual correction',reason:`Canonical title win over ${fight.opponent} has no recovered approved Championship judgment row.`}));
       titleTypeConflicts.forEach(row=>issues.push({classification:'factual correction',reason:`Title type conflict for ${row.opponent}: approved input=${row.titleType}, canonical fact=${row.canonicalTitleType}.`}));
       arithmeticConflicts.forEach(row=>issues.push({classification:'recovered judgment',reason:`Recovered credit arithmetic differs for ${row.opponent}: source=${row.sourceAdjustedCredit}, reconstructed=${row.finalAdjustedCredit}.`}));
-      if(Math.abs(difference)>.01)issues.push({classification:'recovered judgment',reason:`Reconstructed score differs from the approved parity control by ${difference>0?'+':''}${difference.toFixed(2)}.`});
-      const exactReason=Math.abs(difference)<=.01
+      if(Number.isFinite(difference)&&Math.abs(difference)>.01)issues.push({classification:'recovered judgment',reason:`Reconstructed score differs from the approved parity control by ${difference>0?'+':''}${difference.toFixed(2)}.`});
+      const exactReason=Number.isFinite(difference)&&Math.abs(difference)<=.01
         ?`Recovered ${inputs.length} approved title-win judgments for exact ${currentScore.toFixed(2)}/30 parity${issues.length?`; ${issues.length} provenance/fact issue(s) remain visible.`:'.'}`
-        :`Recovered title inputs calculate ${calculated.score.toFixed(2)}/30 versus approved ${currentScore.toFixed(2)}/30; review the listed provenance/fact issues.`;
+        :Number.isFinite(currentScore)
+          ?`Recovered title inputs calculate ${calculated.score.toFixed(2)}/30 versus control ${currentScore.toFixed(2)}/30; review the listed provenance/fact issues.`
+          :'No approved Championship control is available for comparison.';
       return {
         fighter:record.fighter,
         board:record.board,
         currentScore,
+        controlSource,
         reconstructedScore:calculated.score,
         difference,
         classification:'recovered judgment',
         exactReason,
-        staticPayloadScore:snapshotScoreFor(record.fighter),
+        staticPayloadScore,
         titleFightWins:inputs.length,
         adjustedTitleCredit:calculated.adjustedTitleCredit,
         benchmarkCredit:calculated.benchmarkCredit,
@@ -175,12 +181,13 @@
         titleTypeConflicts:titleTypeConflicts.map(row=>({fightId:row.fightId,opponent:row.opponent,approvedTitleType:row.titleType,canonicalTitleType:row.canonicalTitleType})),
         issues
       };
-    }).sort((a,b)=>b.currentScore-a.currentScore||a.fighter.localeCompare(b.fighter));
+    }).sort((a,b)=>Number(b.currentScore||0)-Number(a.currentScore||0)||a.fighter.localeCompare(b.fighter));
 
     const after=window.RANKING_DATA?JSON.stringify(window.RANKING_DATA):null;
     const byKey=new Map(fighters.map(row=>[clean(row.fighter),row]));
-    const parityRows=fighters.filter(row=>Math.abs(row.difference)<=.01);
+    const parityRows=fighters.filter(row=>Number.isFinite(row.difference)&&Math.abs(row.difference)<=.01);
     const issueRows=fighters.filter(row=>row.issues.length);
+    const missingControlFighters=fighters.filter(row=>row.controlSource!=='canonical-scoring-records').map(row=>row.fighter);
     const randy=byKey.get(clean('Randy Couture'))||null;
     const report={
       version:VERSION,
@@ -188,7 +195,9 @@
       applied:true,
       mode:'approved-model-reconstruction-diagnostic-only',
       fighterCount:fighters.length,
+      canonicalControlCoverage:fighters.length-missingControlFighters.length,
       controlCoverage:fighters.filter(row=>Number.isFinite(row.currentScore)).length,
+      missingControlFighters,
       exactParityCount:parityRows.length,
       differenceCount:fighters.length-parityRows.length,
       issueFighterCount:issueRows.length,
