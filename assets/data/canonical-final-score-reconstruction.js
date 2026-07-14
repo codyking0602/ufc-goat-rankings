@@ -3,10 +3,11 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-final-score-reconstruction-20260714b-correct-control-formula';
+  const VERSION='canonical-final-score-reconstruction-20260714c-prime-dominance-tilt';
   const CATEGORY_MAX=30;
   const CANDIDATES=Object.freeze({
     historicalFinalEngine:Object.freeze({championship:35,opponentQuality:27.5,primeDominance:27.5,longevity:10}),
+    primeDominanceTilt:Object.freeze({championship:35,opponentQuality:25,primeDominance:30,longevity:10}),
     documentedPhaseTwo:Object.freeze({championship:30,opponentQuality:24,primeDominance:30,longevity:16})
   });
   const key=value=>String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
