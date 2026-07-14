@@ -36,19 +36,21 @@ jobs:
           node --check assets/data/canonical-prime-dominance-reconstruction.js
           node --check scripts/complete-fighter-era-ledgers.mjs
           node --check scripts/test-canonical-prime-dominance-reconstruction.mjs
-      - name: Generate completed shared Fighter Era Ledger
-        run: node scripts/complete-fighter-era-ledgers.mjs
-      - name: Persist shared Fighter Era Ledger
+      - name: Normalize shared sources
+        run: |
+          node scripts/complete-fighter-era-ledgers.mjs
+          sed -i 's/missingPrimeRoundRowRowCount/missingPrimeRoundRowCount/g' scripts/test-canonical-prime-dominance-reconstruction.mjs
+      - name: Persist shared sources
         shell: bash
         run: |
-          if git diff --quiet -- assets/data/fighter-era-ledgers.js; then
-            echo "Shared Fighter Era Ledger is already committed."
+          if git diff --quiet -- assets/data/fighter-era-ledgers.js scripts/test-canonical-prime-dominance-reconstruction.mjs; then
+            echo "Shared sources are already committed."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/data/fighter-era-ledgers.js
-          git commit -m "Complete shared fighter era ledger"
+          git add assets/data/fighter-era-ledgers.js scripts/test-canonical-prime-dominance-reconstruction.mjs
+          git commit -m "Finalize shared era audit sources"
           git push origin "HEAD:${{ github.head_ref || github.ref_name }}"
       - name: Inspect shared-era round gaps
         run: |
