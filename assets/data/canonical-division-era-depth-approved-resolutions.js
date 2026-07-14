@@ -3,31 +3,32 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-division-era-depth-approved-resolutions-20260714a-leon';
+  const VERSION='canonical-division-era-depth-approved-resolutions-20260714b-leon-shared-era';
   const rows=[
     {
       fighter:'Leon Edwards',
       classification:'factual-completion',
       approvalStatus:'cody-approved',
-      decision:'Add the missing empirical welterweight row using the already-approved pinned source, quarterly model, title weighting, and curved adjustment.',
-      approvedAdjustment:0.02,
+      decision:'Add the missing empirical welterweight row using the pinned source, approved quarterly mechanics, and the Cody-approved shared Fighter Era Ledger window from Rafael dos Anjos through Sean Brady.',
+      approvedAdjustment:0.06,
       sourceRow:{
         fighter:'Leon Edwards',
         group:'men',
         primeStart:'2019-07-20',
-        primeEnd:'2024-07-27',
+        primeEnd:'2025-03-22',
         openPrime:false,
+        phaseSource:'fighter-era-ledgers',
         primaryDivision:'WW',
         sampledDivisions:['WW'],
-        matchedPrimeFightCount:7,
-        scoredSampleCount:7,
+        matchedPrimeFightCount:8,
+        scoredSampleCount:8,
         titleWeightedSampleCount:4,
-        depthIndex:1.0008,
-        curvedAdjustment:0.02,
+        depthIndex:1.0032,
+        curvedAdjustment:0.06,
         componentRatios:{
-          qualifiedActivePool:1.0102,
-          ranksSixToFifteenElo:0.9894,
-          contenderDiversity:1.015
+          qualifiedActivePool:1.0071,
+          ranksSixToFifteenElo:0.9952,
+          contenderDiversity:1.0173
         },
         sourceDataset:{
           repository:'komaksym/UFC-DataLab',
@@ -37,9 +38,10 @@
           datasetEnd:'2026-06-27'
         },
         reconstructionParity:{checkedNonWfwRows:69,mismatchCount:0},
+        fighterLocalPrimeAudit:{start:'2019-07-20',end:'2024-07-27',controlsScore:false},
         classification:'factual-completion',
         approvalStatus:'cody-approved',
-        provenance:'Canonical prime 2019-07-20 through 2024-07-27 + pinned empirical Division-Era Depth generator'
+        provenance:'Approved shared Fighter Era Ledger 2019-07-20 through 2025-03-22 + pinned empirical Division-Era Depth generator'
       }
     }
   ];
@@ -52,6 +54,7 @@
     entryFor:fighter=>byKey.get(key(fighter))||null,
     fighterCount:rows.length,
     approvalStatus:'cody-approved',
+    phaseSource:'fighter-era-ledgers',
     mutatesRankingData:false,
     mutatesScores:false,
     mutatesRanks:false,
