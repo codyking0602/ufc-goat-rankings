@@ -61,6 +61,11 @@ assert.equal(report.eraLedgerCoverage,73);
 assert.equal(report.missingPrimeRoundRowCount,0);
 assert.equal(report.missingEliteStageRoundRowCount,0);
 assert.equal(report.primeRoundRowCount,report.scoredPrimeFightCount);
+assert.ok(report.tournamentEventCount>=4);
+assert.ok(report.compressedTournamentBoutCount>=7);
+assert.ok(report.eliteDensityFloorAppliedCount>=1);
+assert.equal(report.primeSampleRule.eliteDensityFloor,.90);
+assert.equal(report.primeSampleRule.tournamentEventsExcludedFromDensityFloor,true);
 assert.equal(report.mutatesRankingData,false);
 
 const leon=report.entryFor('Leon Edwards');
@@ -71,6 +76,35 @@ assert.equal(leon.stats.roundControlPct,55.88);
 assert.equal(leon.stats.missingRoundRows.length,0);
 assert.equal(leon.stats.eliteLevelValidation.missingRoundRows.length,0);
 assert.deepEqual(JSON.parse(JSON.stringify(leon.stats.components)),{primeRecord:6.43,roundControl:5.03,finishPressure:.5,eliteLevelValidation:4.44});
+
+const cejudo=report.entryFor('Henry Cejudo');
+assert.ok(cejudo);
+assert.equal(cejudo.stats.recordText,'4-0');
+assert.equal(cejudo.stats.scoredFightCount,4);
+assert.equal(cejudo.stats.effectivePrimeSampleCount,4);
+assert.equal(cejudo.stats.longestConsecutiveEliteSamples,4);
+assert.equal(cejudo.stats.baseSampleMultiplier,.85);
+assert.equal(cejudo.stats.eliteDensityFloorEligible,true);
+assert.equal(cejudo.stats.eliteDensityFloorApplied,true);
+assert.equal(cejudo.stats.sampleMultiplier,.90);
+assert.equal(cejudo.reconstructedScore,22.52);
+
+const royce=report.entryFor('Royce Gracie');
+assert.ok(royce);
+assert.equal(royce.stats.recordText,'11-0-1');
+assert.equal(royce.stats.scoredFightCount,12);
+assert.equal(royce.stats.effectivePrimeSampleCount,5);
+assert.equal(royce.stats.tournamentEventCount,4);
+assert.equal(royce.stats.tournamentBoutCount,11);
+assert.equal(royce.stats.compressedTournamentBoutCount,7);
+assert.equal(royce.stats.eliteDensityFloorEligible,false);
+assert.equal(royce.stats.eliteDensityFloorApplied,false);
+assert.equal(royce.stats.eliteLevelValidation.volumeUnits,5.5);
+assert.equal(royce.stats.eliteLevelValidation.score,5.65);
+assert.equal(royce.stats.sampleMultiplier,.90);
+assert.equal(royce.reconstructedScore,25.12);
+assert.ok(royce.reconstructedScore<cejudo.currentScore,'Tournament compression should remove Royce’s artificial same-night sample advantage.');
+
 assert.equal(JSON.stringify(context.window.RANKING_DATA),before);
 
 const clean=value=>JSON.parse(JSON.stringify(value,(key,nested)=>typeof nested==='function'?undefined:nested));
@@ -84,11 +118,28 @@ await fs.writeFile('docs/canonical-prime-dominance-reconstruction.md',[
   `- Factual completions: **${report.factualCompletionCount} — Leon Edwards**`,
   `- Shared Era Ledger coverage: **${report.eraLedgerCoverage}/${report.fighterCount}**`,
   `- Canonical round corrections: **${corrections.correctionCount}**`,
+  `- Tournament events compressed: **${report.tournamentEventCount}**`,
+  `- Same-day tournament bouts removed from sample volume: **${report.compressedTournamentBoutCount}**`,
+  `- Elite-density floor applied: **${report.eliteDensityFloorAppliedCount} fighters**`,
   `- Missing prime round rows: **${report.missingPrimeRoundRowCount}**`,
   `- Missing elite-stage round rows: **${report.missingEliteStageRoundRowCount}**`,
+  `- Cejudo Prime Dominance: **${cejudo.reconstructedScore.toFixed(2)}**`,
+  `- Royce Prime Dominance after tournament compression: **${royce.reconstructedScore.toFixed(2)}**`,
   `- Leon Edwards Prime Dominance: **${leon.reconstructedScore.toFixed(2)}**`,
   '- Live ranking payload changed: **No**',''
 ].join('\n'),'utf8');
 
 console.log('CANONICAL_PRIME_DOMINANCE_FULL_ROSTER');
-console.log(JSON.stringify({fighterCount:report.fighterCount,effectiveControlCoverage:report.effectiveControlCoverage,eraLedgerCoverage:report.eraLedgerCoverage,roundCorrections:corrections.correctionCount,leon:{score:leon.reconstructedScore,record:leon.stats.recordText,roundControlPct:leon.stats.roundControlPct},liveDataUnchanged:JSON.stringify(context.window.RANKING_DATA)===before},null,2));
+console.log(JSON.stringify({
+  fighterCount:report.fighterCount,
+  effectiveControlCoverage:report.effectiveControlCoverage,
+  eraLedgerCoverage:report.eraLedgerCoverage,
+  roundCorrections:corrections.correctionCount,
+  tournamentEventCount:report.tournamentEventCount,
+  compressedTournamentBoutCount:report.compressedTournamentBoutCount,
+  eliteDensityFloorAppliedCount:report.eliteDensityFloorAppliedCount,
+  cejudo:{score:cejudo.reconstructedScore,samples:cejudo.stats.effectivePrimeSampleCount,samplePercent:cejudo.stats.samplePercent},
+  royce:{score:royce.reconstructedScore,bouts:royce.stats.scoredFightCount,samples:royce.stats.effectivePrimeSampleCount,eliteVolumeUnits:royce.stats.eliteLevelValidation.volumeUnits},
+  leon:{score:leon.reconstructedScore,record:leon.stats.recordText,roundControlPct:leon.stats.roundControlPct},
+  liveDataUnchanged:JSON.stringify(context.window.RANKING_DATA)===before
+},null,2));
