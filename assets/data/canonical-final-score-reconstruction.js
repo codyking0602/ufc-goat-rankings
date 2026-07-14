@@ -1,13 +1,14 @@
 // Canonical final-score reconstruction audit under the locked scoring-refactor doctrine.
-// Shadow-only: compares known total formulas using approved category outputs without mutating live scores, ranks, OVRs, profiles, or Compare Mode.
+// Shadow-only: compares total formulas using approved category outputs without mutating live scores, ranks, OVRs, profiles, or Compare Mode.
 (function(){
   'use strict';
 
-  const VERSION='canonical-final-score-reconstruction-20260714c-prime-dominance-tilt';
+  const VERSION='canonical-final-score-reconstruction-20260714d-approved-prime-tilt';
   const CATEGORY_MAX=30;
+  const APPROVED_CANDIDATE='approvedFinalEngine';
   const CANDIDATES=Object.freeze({
     historicalFinalEngine:Object.freeze({championship:35,opponentQuality:27.5,primeDominance:27.5,longevity:10}),
-    primeDominanceTilt:Object.freeze({championship:35,opponentQuality:25,primeDominance:30,longevity:10}),
+    approvedFinalEngine:Object.freeze({championship:35,opponentQuality:25,primeDominance:30,longevity:10}),
     documentedPhaseTwo:Object.freeze({championship:30,opponentQuality:24,primeDominance:30,longevity:16})
   });
   const key=value=>String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
@@ -120,6 +121,7 @@
       const absoluteTotalError=totalDeltas.reduce((sum,row)=>sum+Math.abs(row.totalDelta),0);
       const rankMatches=totalDeltas.filter(row=>finite(row.currentRank)&&row.currentRank===row.calculatedRank).length;
       candidateReports[candidate]={
+        approved:candidate===APPROVED_CANDIDATE,
         weights,
         modifierFormula:'weighted four-category base + locked Apex + locked Loss Penalty + locked Division-Era Depth',
         completeFighterCount:ranked.length,
@@ -143,10 +145,13 @@
     return {
       version:VERSION,
       applied:true,
-      mode:'shadow-only-final-score-formula-recovery-audit',
-      status:'decision-required',
-      doctrine:'Preserve existing category influence weights until Cody explicitly approves the final total formula.',
+      mode:'shadow-only-approved-final-score-formula',
+      status:'final-weights-approved-ovr-pending',
+      doctrine:'Use Cody-approved 35/25/30/10 category influence while retaining locked Apex, Loss Penalty, and Division-Era Depth modifiers.',
       categoryMax:CATEGORY_MAX,
+      approvedCandidate:APPROVED_CANDIDATE,
+      approvedWeights:CANDIDATES[APPROVED_CANDIDATE],
+      approvedFormula:'35% Championship + 25% Opponent Quality + 30% Prime Dominance + 10% Longevity, normalized from 30-point category scores, then + Apex + Loss Penalty + Division-Era Depth',
       candidateWeightSets:CANDIDATES,
       fighterCount:rows.length,
       completeCategoryInputCount:rows.length-blocked.length,
@@ -157,11 +162,14 @@
       frozenFormulaParityCount:frozenParity.length,
       frozenFormulaMismatchCount:frozenControlled.length-frozenParity.length,
       candidateReports,
+      approvedReport:candidateReports[APPROVED_CANDIDATE],
       rows,
       entryFor:fighter=>byKey.get(key(fighter))||null,
-      finalWeightDecisionRequired:true,
+      finalWeightDecisionRequired:false,
+      finalWeightsApproved:true,
       ovrCalculationDeferred:true,
       rankingPromotionBlocked:true,
+      rankingPromotionBlockReason:'Front-end OVR reconstruction and explicit live-promotion approval are still required.',
       liveDataUnchanged:before===after,
       mutatesRankingData:false,
       mutatesScores:false,
