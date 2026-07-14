@@ -1,0 +1,51 @@
+name: Canonical Ten-Fighter Batch Eight
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'assets/data/canonical-fighter-facts.js'
+      - 'assets/data/canonical-fighter-facts-batch-one.js'
+      - 'assets/data/canonical-fighter-facts-batch-two.js'
+      - 'assets/data/canonical-fighter-facts-batch-three.js'
+      - 'assets/data/canonical-fighter-facts-batch-four.js'
+      - 'assets/data/canonical-fighter-facts-batch-five.js'
+      - 'assets/data/canonical-fighter-facts-batch-six.js'
+      - 'assets/data/canonical-fighter-facts-batch-seven-data-a.js'
+      - 'assets/data/canonical-fighter-facts-batch-seven-data-b.js'
+      - 'assets/data/canonical-fighter-facts-batch-seven.js'
+      - 'assets/data/canonical-fighter-facts-batch-eight-data-a.js'
+      - 'assets/data/canonical-fighter-facts-batch-eight-data-b.js'
+      - 'assets/data/canonical-fighter-facts-batch-eight.js'
+      - 'scripts/test-canonical-fighter-facts-ten-person-batch-eight.mjs'
+      - '.github/workflows/canonical-batch-eight.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-ten-fighter-batch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check syntax
+        run: |
+          node --check assets/data/canonical-fighter-facts-batch-eight-data-a.js
+          node --check assets/data/canonical-fighter-facts-batch-eight-data-b.js
+          node --check assets/data/canonical-fighter-facts-batch-eight.js
+          node --check scripts/test-canonical-fighter-facts-ten-person-batch-eight.mjs
+      - name: Verify 176-fight ten-fighter ledger
+        run: node scripts/test-canonical-fighter-facts-ten-person-batch-eight.mjs > /tmp/canonical-batch-eight.log 2>&1
+      - name: Upload batch-eight diagnostic
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-batch-eight-diagnostic
+          path: /tmp/canonical-batch-eight.log
+          if-no-files-found: warn
+          retention-days: 7
