@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-leon-final-category-completions-20260714c-approved';
+  const VERSION='canonical-leon-final-category-completions-20260714d-full-coverage';
   const FIGHTER='Leon Edwards';
   const STANDARD_CREDITS=Object.freeze({'champion-level':1.25,'top-five':1,'top-ten':.85,ranked:.65,solid:.45,'name-value':.25,minimal:.10,none:0});
   const key=value=>String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
@@ -115,10 +115,36 @@
     return true;
   }
 
+  function refreshOpponentQualityReport(report){
+    if(!report?.applied)return;
+    report.fighterCount=report.fighters.length;
+    report.effectiveControlCoverage=report.fighters.filter(row=>Number.isFinite(row.currentScore)||row.fighter===FIGHTER).length;
+    report.factualCompletionCount=report.fighters.filter(row=>row.scoreStatus==='factual-completion-no-frozen-control').length;
+    report.canonicalWinCount=report.fighters.reduce((sum,row)=>sum+Number(row.canonicalWinCount||0),0);
+    report.inputCount=report.fighters.reduce((sum,row)=>sum+Number(row.inputCount||0),0);
+    report.canonicalFallbackCount=report.fighters.reduce((sum,row)=>sum+Number(row.canonicalFallbackCount||0),0);
+  }
+
+  function refreshPrimeReport(report){
+    if(!report?.applied)return;
+    report.fighterCount=report.fighters.length;
+    report.effectiveControlCoverage=report.fighters.filter(row=>Number.isFinite(row.currentScore)||row.fighter===FIGHTER).length;
+    report.factualCompletionCount=report.fighters.filter(row=>row.currentControlSource==='mechanical-factual-completion').length;
+    report.eraLedgerCoverage=report.fighters.filter(row=>row.stats?.windowValid).length;
+    report.scoredPrimeFightCount=report.fighters.reduce((sum,row)=>sum+Number(row.stats?.scoredFightCount||0),0);
+    report.primeRoundRowCount=report.fighters.reduce((sum,row)=>sum+(row.stats?.primeFights||[]).filter(fight=>fight.result==='count-win'||fight.result==='count-loss'||fight.result==='count-draw').length,0);
+    report.missingPrimeRoundRowCount=report.fighters.reduce((sum,row)=>sum+Number(row.stats?.missingRoundRows?.length||0),0);
+    report.eliteStageFightCount=report.fighters.reduce((sum,row)=>sum+Number(row.stats?.eliteLevelValidation?.fightCount||0),0);
+    report.missingEliteStageRoundRowCount=report.fighters.reduce((sum,row)=>sum+Number(row.stats?.eliteLevelValidation?.missingRoundRows?.length||0),0);
+    report.sampleDiscountedFighterCount=report.fighters.filter(row=>Number(row.stats?.sampleMultiplier)<1).length;
+  }
+
   const opponentQuality=canonicalOpponentQualityEntry();
   const primeDominance=canonicalPrimeDominanceEntry();
   const opponentQualityInstalled=install(oqReport,opponentQuality);
   const primeDominanceInstalled=install(primeReport,primeDominance);
+  if(opponentQualityInstalled)refreshOpponentQualityReport(oqReport);
+  if(primeDominanceInstalled)refreshPrimeReport(primeReport);
 
   window.UFC_CANONICAL_LEON_FINAL_CATEGORY_COMPLETIONS=Object.freeze({
     version:VERSION,
