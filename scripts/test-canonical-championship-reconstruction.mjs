@@ -21,6 +21,7 @@ const files=[
   'assets/data/canonical-fighter-facts-batch-nine-data-b.js',
   'assets/data/canonical-fighter-facts-batch-nine-data-c.js',
   'assets/data/canonical-fighter-facts-batch-nine.js',
+  'assets/data/canonical-fighter-facts-approved-corrections.js',
   'assets/data/canonical-scoring-records.js',
   'assets/data/championship-resume-ledgers.js',
   'assets/data/championship-resume-ledger-rule-locks.js',
@@ -53,6 +54,7 @@ const markdown=[
   `- Version: \`${report.version}\``,
   `- Canonical fighters processed: **${report.fighterCount}**`,
   `- Approved live controls: **${report.canonicalControlCoverage}**`,
+  `- Cody-approved Championship score corrections: **${report.approvedScoreCorrectionCount}**`,
   `- Exact parity against approved controls: **${report.exactParityCount}/${report.canonicalControlCoverage}**`,
   `- Controlled score differences: **${report.controlledDifferenceCount}**`,
   `- Missing approved controls: **${report.missingControlFighters.join(', ')||'None'}**`,
@@ -83,11 +85,12 @@ const markdown=[
   ...(issueRows.length?issueRows:['| None | — | All recovered title inputs are connected and consistent. |']),'',
   '## Interpretation','',
   '- This is diagnostic only and does not mutate the published ranking data.',
-  '- The approved score control is the 72-fighter live runtime snapshot frozen in `UFC_CANONICAL_SCORING_RECORDS`.',
+  '- The baseline score control is the 72-fighter live runtime snapshot frozen in `UFC_CANONICAL_SCORING_RECORDS`.',
+  '- Cody-approved factual corrections are layered explicitly and tested without silently rewriting the frozen snapshot.',
   '- Leon Edwards is the 73rd canonical fighter but has no live ranking row or approved Championship control; his Phase 2 score remains diagnostic and was not promoted.',
-  '- Missing direct title ledgers were recovered to exact aggregate parity without changing any approved score.',
+  '- Missing direct title ledgers were recovered to exact aggregate parity without changing any unreviewed score.',
   '- Canonical title wins omitted by the approved control are displayed as zero-credit factual-correction rows pending Cody review.',
-  '- Any true formula or score change remains blocked pending Cody’s explicit approval.',''
+  '- Any further formula or score change remains blocked pending Cody’s explicit approval.',''
 ].join('\n');
 await fs.writeFile('docs/canonical-championship-reconstruction.md',markdown,'utf8');
 
@@ -97,6 +100,7 @@ console.log(JSON.stringify({
   fighterCount:report.fighterCount,
   canonicalControlCoverage:report.canonicalControlCoverage,
   missingControlFighters:report.missingControlFighters,
+  approvedScoreCorrectionCount:report.approvedScoreCorrectionCount,
   exactParityCount:report.exactParityCount,
   controlledDifferenceCount:report.controlledDifferenceCount,
   unresolvedControlCount:report.unresolvedControlCount,
@@ -114,16 +118,38 @@ console.log(JSON.stringify({
   reviewIssues:report.fighters.filter(row=>row.issues.length).map(row=>({fighter:row.fighter,issues:row.issues}))
 },null,2));
 
+const facts=context.window.UFC_CANONICAL_FIGHTER_FACTS;
+const randyFact=facts.get('Randy Couture').fights.find(row=>row.id==='2003-09-26-tito-ortiz');
+const pennFact=facts.get('B.J. Penn').fights.find(row=>row.id==='2008-01-19-joe-stevenson');
+const israel=report.entryFor('Israel Adesanya');
+const israelWhittaker=israel.inputs.find(row=>row.fightId==='2019-10-05-robert-whittaker');
+const robbie=report.entryFor('Robbie Lawler');
+const robbieHendricks=robbie.inputs.find(row=>row.opponent==='Johny Hendricks');
+
 assert.equal(report.fighterCount,73,'All 73 canonical fighters must be reconstructed or explicitly held unresolved');
 assert.equal(report.canonicalControlCoverage,72,'The current approved live scoring snapshot contains 72 fighters');
 assert.equal(report.controlCoverage,72,'No fallback may be mistaken for an approved live control');
-assert.equal(report.exactParityCount,72,'All 72 approved live Championship scores must reproduce exactly');
+assert.equal(report.approvedScoreCorrectionCount,1,'Israel is the one Cody-approved Championship score correction in this batch');
+assert.equal(report.exactParityCount,72,'All 72 approved Championship controls, including explicit corrections, must reproduce exactly');
 assert.equal(report.controlledDifferenceCount,0,'No approved Championship score may change silently');
 assert.equal(report.unresolvedControlCount,1,'Exactly one canonical fighter lacks an approved live control');
 assert.equal(JSON.stringify(report.missingControlFighters),JSON.stringify(['Leon Edwards']),'Leon Edwards is the explicit live-control gap');
+assert.equal(report.titleTypeConflictCount,0,'All four reviewed title-type conflicts are resolved');
 assert.equal(report.proposedModelChangeCount,0,'No proposed model change belongs in this reconstruction');
 assert.equal(report.liveDataUnchanged,true,'The reconstruction must not mutate RANKING_DATA');
 assert.equal(randy.currentScore,15.85,'Randy approved Championship control');
 assert.equal(randy.reconstructedScore,15.85,'Randy reconstructed Championship score');
 assert.equal(randy.adjustedTitleCredit,7.68,'Randy adjusted title credit');
 assert.equal(randy.titleFightWins,9,'Randy UFC title-fight wins represented');
+assert.equal(randyFact.championshipContext.type,'second-division-undisputed','Randy vs Tito is a second-division undisputed title win');
+assert.equal(pennFact.championshipContext.type,'vacant-second-division','Penn vs Stevenson is a vacant second-division title win');
+assert.equal(israel.originalControlScore,13.31,'Israel frozen live Championship snapshot');
+assert.equal(israel.currentScore,13.51,'Israel Cody-approved corrected Championship score');
+assert.equal(israel.reconstructedScore,13.51,'Israel corrected score must calculate from fight-level inputs');
+assert.equal(israel.adjustedTitleCredit,6.55,'Israel corrected adjusted title credit');
+assert.equal(israelWhittaker.titleType,'normal','Whittaker was the reigning undisputed champion');
+assert.equal(israelWhittaker.finalAdjustedCredit,1,'Israel vs Whittaker receives full normal-title credit');
+assert.equal(robbieHendricks.titleType,'normal','Hendricks was the reigning champion');
+assert.equal(robbieHendricks.opponentStrength,1,'Robbie vs Hendricks keeps full opponent strength');
+assert.equal(robbieHendricks.eraTitleContextAdjustment,.9,'Robbie vs Hendricks stores the close-decision context separately');
+assert.equal(robbieHendricks.finalAdjustedCredit,.9,'Robbie approved final credit remains unchanged');
