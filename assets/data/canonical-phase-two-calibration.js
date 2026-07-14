@@ -4,12 +4,12 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-phase-two-calibration-20260713c-ufc-only-shape-lock';
+  const VERSION='canonical-phase-two-calibration-20260714d-full-board-review';
   const WEIGHTS={championship:30,opponentQuality:24,primeDominance:30,longevity:16};
   const CATEGORY_MAX=30;
   const PERFECT_PRIME_APEX_BONUS=1.95;
   const UPWARD_ELITE_PRIME_WEIGHT=.79;
-  const OVR={floor:82,menCeiling:99,womenCeiling:96,curve:.85};
+  const OVR={floor:82,menCeiling:99,womenCeiling:96,curve:.80};
   const FINISH_METHODS=new Set(['ko-tko','submission','doctor-stoppage']);
   let lastBaseVersion=null;
 
@@ -40,6 +40,27 @@
       else if(fight?.championshipContext?.type==='vacant-second-division')bonus=Math.max(bonus,.30);
     });
     return round2(bonus);
+  }
+
+  function sampleConfidence(row,scoredFights,open){
+    const activeEliteYears=Number(row?.profileStats?.activeEliteYears||0);
+    const fightStrength=clamp(scoredFights/8,0,1);
+    const yearStrength=clamp(activeEliteYears/4,0,1);
+    const resumeStrength=(fightStrength*.65)+(yearStrength*.35);
+    const prime=open
+      ?clamp(.72+(resumeStrength*.28),.82,1)
+      :clamp(.66+(resumeStrength*.34),.75,1);
+    const apex=open
+      ?clamp(.78+(resumeStrength*.22),.86,1)
+      :clamp(.72+(resumeStrength*.28),.82,1);
+    return {
+      activeEliteYears:round2(activeEliteYears),
+      fightStrength:round2(fightStrength),
+      yearStrength:round2(yearStrength),
+      resumeStrength:round2(resumeStrength),
+      prime:round2(prime),
+      apex:round2(apex)
+    };
   }
 
   function calibratedPrime(record,row){
@@ -83,8 +104,9 @@
     const perfectPrime=Number(row?.prime?.losses||0)===0?1:0;
     const scoredFights=Number(row?.prime?.scoredFights||0);
     const open=Boolean(record?.primeWindow?.open);
-    const primeSampleConfidence=open?1:clamp(.70+(scoredFights*.04),.78,1);
-    const apexSampleConfidence=open?1:clamp(.85+(scoredFights*.025),.90,1);
+    const confidence=sampleConfidence(row,scoredFights,open);
+    const primeSampleConfidence=confidence.prime;
+    const apexSampleConfidence=confidence.apex;
     const titleDensity=clamp(Number(row?.championship?.primeTitleFightWins||0)/5,0,1);
     const primeDominance=round2(clamp((
       (winRate*12)+
@@ -109,8 +131,11 @@
       adjustedDurability:round2(durability),
       upwardEliteLossCount,
       secondDivisionApexBonus:secondDivisionBonus,
-      primeSampleConfidence:round2(primeSampleConfidence),
-      apexSampleConfidence:round2(apexSampleConfidence),
+      sampleFightStrength:confidence.fightStrength,
+      sampleYearStrength:confidence.yearStrength,
+      resumeSampleStrength:confidence.resumeStrength,
+      primeSampleConfidence,
+      apexSampleConfidence,
       calibratedPrimeDominance:primeDominance,
       calibratedApexPeak:apexPeak
     };
@@ -210,7 +235,16 @@
       topTenMen:men.slice(0,10).map(row=>({rank:row.rank,fighter:row.fighter,totalScore:row.totalScore,overallOvr:row.overallOvr})),
       topWomen:women.slice(0,10).map(row=>({rank:row.rank,fighter:row.fighter,totalScore:row.totalScore,overallOvr:row.overallOvr})),
       legacyScoreComparison,
-      formula:{...base.formula,weights:WEIGHTS,perfectPrimeApexBonus:PERFECT_PRIME_APEX_BONUS,upwardElitePrimeWeight:UPWARD_ELITE_PRIME_WEIGHT,secondDivisionApexBonus:{undisputed:.50,vacant:.30},openPrimeSampleConfidence:1,eraDepthAdjustment:'approved curved Division-Era Depth evidence, hidden from the profile card'},
+      formula:{
+        ...base.formula,
+        weights:WEIGHTS,
+        perfectPrimeApexBonus:PERFECT_PRIME_APEX_BONUS,
+        upwardElitePrimeWeight:UPWARD_ELITE_PRIME_WEIGHT,
+        secondDivisionApexBonus:{undisputed:.50,vacant:.30},
+        sampleConfidence:{fightTarget:8,eliteYearTarget:4,fightWeight:.65,eliteYearWeight:.35,openPrimeFloor:.82,closedPrimeFloor:.75},
+        overallOvrCurve:OVR.curve,
+        eraDepthAdjustment:'approved curved Division-Era Depth evidence, hidden from the profile card'
+      },
       eraDepthEvidenceVersion:window.UFC_DIVISION_ERA_DEPTH_SHADOW?.version||null,
       eraDepthCoverageCount:all.length-missingEraDepth.length,
       missingEraDepth:[...new Set(missingEraDepth)],
