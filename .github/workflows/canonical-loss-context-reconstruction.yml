@@ -1,0 +1,49 @@
+name: Canonical Loss Context Reconstruction
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'assets/data/canonical-fighter-facts*.js'
+      - 'assets/data/canonical-scoring-records.js'
+      - 'assets/data/fighter-era-ledgers.js'
+      - 'assets/data/fighter-era-ledger-approved-longevity-resolutions.js'
+      - 'assets/data/loss-context-exposure-ledger.js'
+      - 'assets/data/loss-context-hybrid-shadow.js'
+      - 'assets/data/loss-context-hybrid-audit.js'
+      - 'assets/data/loss-context-hybrid-live.js'
+      - 'assets/data/canonical-loss-context-reconstruction.js'
+      - 'scripts/test-canonical-loss-context-reconstruction.mjs'
+      - 'docs/LOSS_CONTEXT_RECONSTRUCTION.md'
+      - '.github/workflows/canonical-loss-context-reconstruction.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reconstruct-approved-loss-context:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check syntax
+        run: |
+          node --check assets/data/canonical-loss-context-reconstruction.js
+          node --check scripts/test-canonical-loss-context-reconstruction.mjs
+      - name: Audit full-roster approved Loss Context model
+        run: node scripts/test-canonical-loss-context-reconstruction.mjs > /tmp/canonical-loss-context-reconstruction.log 2>&1
+      - name: Upload Loss Context reconstruction report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-loss-context-reconstruction-report
+          path: |
+            /tmp/canonical-loss-context-reconstruction.log
+            docs/canonical-loss-context-reconstruction.json
+            docs/canonical-loss-context-reconstruction.md
+          if-no-files-found: warn
+          retention-days: 30
