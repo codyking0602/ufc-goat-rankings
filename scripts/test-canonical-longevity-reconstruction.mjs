@@ -94,52 +94,43 @@ assert.equal(jones.stats.eraStartDate,'2011-02-05');
 assert.equal(jones.stats.eraEndDate,'2023-03-04');
 near(jones.stats.gapAdjustedMonths,126.1,.2,'Jones gap-adjusted months');
 assert.ok(jones.stats.cappedGapCount>=1,'Jones long gaps must be capped');
-
 assert.equal(gsp.stats.eraStartDate,'2006-11-18');
 assert.equal(gsp.stats.eraEndDate,'2017-11-04');
 near(gsp.stats.gapAdjustedMonths,101.3,.2,'GSP gap-adjusted months');
 assert.ok(gsp.stats.cappedGapCount>=1,'GSP retirement/comeback gap must be capped');
-
-assert.equal(aldo.stats.eraStartDate,'2011-04-30','Aldo must start at Mark Hominick');
+assert.equal(aldo.stats.eraStartDate,'2011-04-30');
 assert.equal(aldo.stats.eraStartLabel,'Mark Hominick');
-assert.equal(aldo.stats.eraEndDate,'2022-08-20','Aldo must end at Merab Dvalishvili');
+assert.equal(aldo.stats.eraEndDate,'2022-08-20');
 assert.equal(aldo.stats.eraEndLabel,'Merab Dvalishvili');
 near(aldo.stats.gapAdjustedMonths,135.7,.2,'Aldo gap-adjusted months');
-
-assert.equal(usman.stats.eraStartDate,'2018-05-19','Usman must start at Demian Maia');
+assert.equal(usman.stats.eraStartDate,'2018-05-19');
 assert.equal(usman.stats.eraStartLabel,'Demian Maia');
-assert.equal(usman.stats.eraEndDate,'2023-03-18','Usman must end at Leon Edwards III');
+assert.equal(usman.stats.eraEndDate,'2023-03-18');
 assert.equal(usman.stats.eraEndLabel,'Leon Edwards III');
 near(usman.stats.gapAdjustedMonths,58,.2,'Usman gap-adjusted months');
-
-assert.ok(cruz.stats.cappedGapCount>=1,'Cruz injury gaps must be capped');
-assert.ok(cruz.stats.gapAdjustedMonths<cruz.stats.storedEraLongevity.gapAdjustedMonths,'Cruz stored months must be exposed as exceeding the universal 18-month-cap reconstruction');
-assert.ok(cruz.issues.some(issue=>/precomputed/i.test(issue.reason)),'Cruz hidden stored-month judgment must be classified in the audit');
-
-assert.equal(randy.stats.eraStartDate,'2004-08-21','Randy must use the shared Vitor Belfort II start, not the old 1997 patch window');
+assert.ok(cruz.stats.cappedGapCount>=1);
+assert.ok(cruz.stats.gapAdjustedMonths<cruz.stats.storedEraLongevity.gapAdjustedMonths);
+assert.ok(cruz.issues.some(issue=>/precomputed/i.test(issue.reason)));
+assert.equal(randy.stats.eraStartDate,'2004-08-21');
 assert.equal(randy.stats.eraStartLabel,'Vitor Belfort II');
-near(randy.stats.gapAdjustedMonths,50.8,.2,'Randy shared-window months');
-near(randy.currentScore,25.74,.01,'Randy frozen score');
-near(randy.legacyPatchScore,randy.currentScore,.02,'Randy legacy patch should explain the frozen score');
-assert.ok(Math.abs(randy.difference)>=10,'Randy should expose the large factual window correction');
+near(randy.stats.gapAdjustedMonths,50.8,.2);
+near(randy.currentScore,25.74,.01);
+near(randy.legacyPatchScore,randy.currentScore,.02);
+assert.ok(Math.abs(randy.difference)>=10);
 assert.equal(randy.stats.legacyPatchEvidence.controlsScore,false);
-
-near(justin.stats.gapAdjustedMonths,47.2,.2,'Gaethje shared-window months');
-near(justin.legacyPatchScore,justin.currentScore,.02,'Gaethje legacy Vick-window patch should explain the frozen score');
+near(justin.stats.gapAdjustedMonths,47.2,.2);
+near(justin.legacyPatchScore,justin.currentScore,.02);
 assert.equal(justin.stats.eraStartLabel,'Tony Ferguson');
-
-near(royce.stats.gapAdjustedMonths,16.8,.2,'Royce short UFC-only window');
-near(frank.stats.gapAdjustedMonths,21.1,.2,'Frank short UFC-only window');
-assert.ok(royce.reconstructedScore<khabib.reconstructedScore,'A short foundational run should not receive excessive Longevity credit');
-assert.ok(frank.reconstructedScore<khabib.reconstructedScore,'A short perfect title run should not receive excessive Longevity credit');
-assert.ok(kayla.reconstructedScore<khabib.reconstructedScore,'A short open UFC sample should not receive excessive Longevity credit');
-
+near(royce.stats.gapAdjustedMonths,16.8,.2);
+near(frank.stats.gapAdjustedMonths,21.1,.2);
+assert.ok(royce.reconstructedScore<khabib.reconstructedScore);
+assert.ok(frank.reconstructedScore<khabib.reconstructedScore);
+assert.ok(kayla.reconstructedScore<khabib.reconstructedScore);
 const openRows=[islam,volk,charles,kayla];
-assert.ok(openRows.every(row=>row.stats.open),'Selected active fighters should use open shared windows');
-assert.ok(openRows.some(row=>row.stats.openTailMonths>0),'Open windows must accrue time through the model as-of date');
-assert.ok(openRows.every(row=>row.stats.openTailMonths<=18.01),'Open-window tails must be capped at 18 months');
+assert.ok(openRows.every(row=>row.stats.open));
+assert.ok(openRows.some(row=>row.stats.openTailMonths>0));
+assert.ok(openRows.every(row=>row.stats.openTailMonths<=18.01));
 
-// Category-local phase inputs are drift evidence only. Deliberately corrupt them and require identical results.
 for(const fighter of ['Jose Aldo','Kamaru Usman','Jon Jones','Randy Couture']){
   const original=context.window.UFC_CANONICAL_FIGHTER_FACTS.get(fighter);
   const altered=JSON.parse(JSON.stringify(original));
@@ -147,24 +138,22 @@ for(const fighter of ['Jose Aldo','Kamaru Usman','Jon Jones','Randy Couture']){
   altered.longevityContext={gapCapMonths:1,statusMultiplier:99,reviewStatus:'locked'};
   const recalculated=report.calculateLongevity(altered);
   const baseline=report.entryFor(fighter).stats;
-  assert.equal(recalculated.score,baseline.score,`${fighter} score changed when category-local inputs were corrupted`);
-  assert.equal(recalculated.gapAdjustedMonths,baseline.gapAdjustedMonths,`${fighter} months changed when category-local inputs were corrupted`);
+  assert.equal(recalculated.score,baseline.score);
+  assert.equal(recalculated.gapAdjustedMonths,baseline.gapAdjustedMonths);
   assert.equal(recalculated.windowSource,'fighter-era-ledgers');
   assert.equal(recalculated.categoryLocalPrimeWindowUsed,false);
   assert.equal(recalculated.categoryLocalLongevityContextUsed,false);
 }
 
-assert.equal(report.fighters.filter(row=>Number.isFinite(row.reconstructedScore)).every(row=>row.stats.intervals.every(interval=>interval.countedMonths<=18.01)),true,'No credited interval may exceed the universal cap');
-assert.ok(report.meaningfulDeltaCount>0,'Shared-window factual corrections should produce a meaningful-delta report');
-assert.ok(report.missingJudgmentInputs.some(row=>row.fighter==='Leon Edwards'),'Missing Era judgment inputs must be explicit');
+assert.equal(report.fighters.filter(row=>Number.isFinite(row.reconstructedScore)).every(row=>row.stats.intervals.every(interval=>interval.countedMonths<=18.01)),true);
+assert.ok(report.meaningfulDeltaCount>0);
+assert.ok(report.missingJudgmentInputs.some(row=>row.fighter==='Leon Edwards'));
 
 const clean=value=>JSON.parse(JSON.stringify(value,(key,nested)=>typeof nested==='function'?undefined:nested));
 await fs.mkdir('docs',{recursive:true});
 await fs.writeFile('docs/canonical-longevity-reconstruction.json',`${JSON.stringify(clean(report),null,2)}\n`,'utf8');
 
-const deltas=report.fighters
-  .filter(row=>Number.isFinite(row.difference))
-  .sort((a,b)=>Math.abs(b.difference)-Math.abs(a.difference)||a.fighter.localeCompare(b.fighter));
+const deltas=report.fighters.filter(row=>Number.isFinite(row.difference)).sort((a,b)=>Math.abs(b.difference)-Math.abs(a.difference)||a.fighter.localeCompare(b.fighter));
 const leaders=report.fighters.filter(row=>Number.isFinite(row.reconstructedScore)).slice(0,15);
 const benchmarkRows=important.map(fighter=>report.entryFor(fighter));
 const markdown=[
@@ -179,7 +168,7 @@ const markdown=[
   `- Capped inactivity gaps: **${report.cappedGapCount}**`,
   `- Open/current windows: **${report.openWindowCount}**`,
   `- Missing judgment-input rows: **${report.missingJudgmentInputCount}**`,
-  `- Live ranking payload changed: **${report.liveDataUnchanged?'No':'Yes'}**`,'',
+  `- Live ranking payload changed: **${report.liveDataUnchanged?'No':'Yes'}`,'',
   '## Recovered approved formula — shadow only','',
   `**${report.formula}**`,'',
   '- One active elite year = 12 credited months built from UFC fight dates inside the shared Fighter Era Ledger window.',
@@ -206,9 +195,26 @@ const markdown=[
   '## Missing judgment inputs','',
   ...(report.missingJudgmentInputs.length?report.missingJudgmentInputs.map(row=>`- **${row.fighter}:** ${row.inputs.join('; ')}`):['- None']),
   '',
-  'This report is diagnostic only. It does not write category scores, totals, ranks, OVRs, profile values, or Compare Mode values into the live app.',''
+  'This report is diagnostic only. It does not write category scores, totals, ranks, OVRs, profile values, or Compare Mode values.',''
 ].join('\n');
 await fs.writeFile('docs/canonical-longevity-reconstruction.md',markdown,'utf8');
+
+const unresolvedNames=new Set([...report.missingJudgmentInputs.map(row=>row.fighter),'Dominick Cruz']);
+const unresolvedDetails=report.fighters.filter(row=>unresolvedNames.has(row.fighter)).map(row=>({
+  fighter:row.fighter,
+  frozen:row.currentScore,
+  reconstructed:row.reconstructedScore,
+  delta:row.difference,
+  sharedWindow:row.stats.windowValid?`${row.stats.eraStartLabel||row.stats.eraStartDate} → ${row.stats.open?'Current':(row.stats.eraEndLabel||row.stats.eraEndDate)}`:'Missing',
+  calculatedMonths:row.stats.gapAdjustedMonths,
+  storedMonths:row.stats.storedEraLongevity?.gapAdjustedMonths??null,
+  statusMultiplier:row.stats.statusMultiplier,
+  divisionMultiplier:row.stats.divisionMultiplier,
+  cappedGapCount:row.stats.cappedGapCount,
+  legacyPatch:row.stats.legacyPatchEvidence||null,
+  missingInputs:report.missingJudgmentInputs.find(item=>item.fighter===row.fighter)?.inputs||[],
+  issues:row.issues
+}));
 
 console.log('CANONICAL_LONGEVITY_RECONSTRUCTION');
 console.log(JSON.stringify({
@@ -224,6 +230,8 @@ console.log(JSON.stringify({
   openWindowCount:report.openWindowCount,
   storedEraFormulaParityCount:report.storedEraFormulaParityCount,
   legacyPatchExplainedFrozenCount:report.legacyPatchExplainedFrozenCount,
+  missingJudgmentInputCount:report.missingJudgmentInputCount,
+  unresolvedDetails,
   leaders:leaders.slice(0,10).map(row=>({fighter:row.fighter,score:row.reconstructedScore,frozen:row.currentScore,delta:row.difference,months:row.stats.gapAdjustedMonths})),
   randy:{score:randy.reconstructedScore,frozen:randy.currentScore,legacyPatchScore:randy.legacyPatchScore,window:`${randy.stats.eraStartLabel} → ${randy.stats.eraEndLabel}`},
   aldo:{score:aldo.reconstructedScore,frozen:aldo.currentScore,window:`${aldo.stats.eraStartLabel} → ${aldo.stats.eraEndLabel}`},
