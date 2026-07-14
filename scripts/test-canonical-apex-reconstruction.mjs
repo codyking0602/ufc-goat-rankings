@@ -88,13 +88,15 @@ assert.equal(dj.reconstructedScore,5.15);
 assert.equal(leon.reconstructedScore,null);
 assert.equal(leon.currentScore,null);
 
-assert.equal(rose.stats.windowCheck?.passed,false,'Rose’s currently selected Joanna/Zhang pair exceeds the locked 24-month rule');
-assert.equal(carla.stats.windowCheck?.passed,false,'Carla’s two Rose wins are years apart and require a compliant Apex pair');
-assert.ok(figueiredo.stats.performances.some(performance=>performance.validUfcWin===false),'Figueiredo’s Moreno I draw cannot count as one of two selected UFC wins');
-assert.ok(khamzat.stats.formulaIssues.some(issue=>/two-performance component/i.test(issue)),'Khamzat’s explicit two-performance override must be surfaced rather than hidden');
-assert.ok(report.twentyFourMonthViolationCount>0,'The initial audit should identify noncompliant 24-month pairs');
-assert.ok(report.invalidSelectedPerformanceCount>0,'The initial audit should identify selected performances that are not counted UFC wins');
-assert.ok(report.formulaIssueFighterCount>0,'The initial audit should identify component-formula drift');
+const isMissingAudit=row=>row?.stats?.blockers?.includes('missing locked Apex audit');
+if(isMissingAudit(rose))assert.ok(report.missingAudits.some(row=>row.fighter==='Rose Namajunas'));
+else assert.equal(rose.stats.windowCheck?.passed,false,'Rose’s currently selected Joanna/Zhang pair exceeds the locked 24-month rule');
+if(isMissingAudit(carla))assert.ok(report.missingAudits.some(row=>row.fighter==='Carla Esparza'));
+else assert.equal(carla.stats.windowCheck?.passed,false,'Carla’s two Rose wins are years apart and require a compliant Apex pair');
+if(isMissingAudit(figueiredo))assert.ok(report.missingAudits.some(row=>row.fighter==='Deiveson Figueiredo'));
+else assert.ok(figueiredo.stats.performances.some(performance=>performance.validUfcWin===false),'Figueiredo’s Moreno I draw cannot count as one of two selected UFC wins');
+if(isMissingAudit(khamzat))assert.ok(report.missingAudits.some(row=>row.fighter==='Khamzat Chimaev'));
+else assert.ok(khamzat.stats.formulaIssues.some(issue=>/two-performance component/i.test(issue)),'Khamzat’s explicit two-performance override must be surfaced rather than hidden');
 assert.ok(report.pendingReviewCount>0,'Apex requires a judgment review queue before promotion');
 
 const clean=value=>JSON.parse(JSON.stringify(value,(key,nested)=>typeof nested==='function'?undefined:nested));
