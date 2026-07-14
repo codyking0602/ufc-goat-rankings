@@ -2,7 +2,7 @@
 // Evidence only. Never mutates live scores, totals, rank, OVR, snapshots, profiles, or Compare Mode.
 (function(){
 'use strict';
-const VERSION='canonical-fighter-facts-batch-nine-20260714c-fifteen-women-220-phase2-review-loader';
+const VERSION='canonical-fighter-facts-batch-nine-20260714d-approved-corrections-loader';
 const API=window.UFC_CANONICAL_FIGHTER_FACTS;
 const fail=(error,details=[])=>{window.UFC_CANONICAL_FIGHTER_FACTS_BATCH_NINE={version:VERSION,applied:false,error:String(error||'Unknown batch error.'),details,mutatesRankingData:false};throw new Error(`[${VERSION}] ${error}`);};
 if(!API)fail('UFC_CANONICAL_FIGHTER_FACTS is not loaded.');
@@ -77,14 +77,23 @@ function loadCalibration(){
   calibration.setAttribute('data-canonical-phase-two-calibration','true');
   document.body.appendChild(calibration);
 }
-if(typeof document?.createElement==='function'&&document.body){
-  if(document.querySelector?.('[data-canonical-phase-two-shadow]'))loadCalibration();
-  else{
-    const script=document.createElement('script');
-    script.src='assets/data/canonical-phase-two-shadow.js?v=canonical-phase-two-shadow-20260713a-calculated-73';
-    script.setAttribute('data-canonical-phase-two-shadow','true');
-    script.onload=loadCalibration;
-    document.body.appendChild(script);
-  }
+function loadShadow(){
+  if(typeof document?.createElement!=='function'||!document.body)return;
+  if(document.querySelector?.('[data-canonical-phase-two-shadow]')){loadCalibration();return;}
+  const script=document.createElement('script');
+  script.src='assets/data/canonical-phase-two-shadow.js?v=canonical-phase-two-shadow-20260713a-calculated-73';
+  script.setAttribute('data-canonical-phase-two-shadow','true');
+  script.onload=loadCalibration;
+  document.body.appendChild(script);
 }
+function loadApprovedCorrections(){
+  if(typeof document?.createElement!=='function'||!document.body)return;
+  if(document.querySelector?.('[data-canonical-fighter-facts-approved-corrections]')){loadShadow();return;}
+  const corrections=document.createElement('script');
+  corrections.src='assets/data/canonical-fighter-facts-approved-corrections.js?v=canonical-fighter-facts-approved-corrections-20260714a-championship-types';
+  corrections.setAttribute('data-canonical-fighter-facts-approved-corrections','true');
+  corrections.onload=loadShadow;
+  document.body.appendChild(corrections);
+}
+if(typeof document?.createElement==='function'&&document.body)loadApprovedCorrections();
 })();
