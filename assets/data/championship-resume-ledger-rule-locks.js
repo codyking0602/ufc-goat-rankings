@@ -1,8 +1,8 @@
 // Championship Resume rule locks. Shadow mode only; mutates ledger audit data after ledger load.
 (function(){
-  const VERSION='championship-resume-ledger-rule-locks-20260714b-approved-conflicts';
-  const BASE={normal:1,interim:.75,vacantUndisputed:.9,secondDivisionUndisputed:1.25,vacantSecondDivision:1.15};
-  const APPROVED_SCORE_CORRECTIONS=Object.freeze({'Israel Adesanya':13.51});
+  const VERSION='championship-resume-ledger-rule-locks-20260714c-final-approved-review';
+  const BASE={normal:1,interim:.75,vacantUndisputed:.9,secondDivisionUndisputed:1.25,vacantSecondDivision:1.15,missedWeightChampionshipContext:1};
+  const APPROVED_SCORE_CORRECTIONS=Object.freeze({'Israel Adesanya':14.98,'Max Holloway':8.95,'Zhang Weili':11.66});
   // [fighter, opponent, opponentStrength, reviewStatus, notes, optionalTitleType, optionalEraTitleContextAdjustment]
   const UPDATES=[
     ['Aljamain Sterling','Petr Yan',0.50,'high-risk review','DQ title win/weird title context; Cody locked DQ rule at 0.50.'],
@@ -15,6 +15,7 @@
     ['Matt Hughes','Georges St-Pierre',1.00,'high-risk review','Vacant title vs early GSP; old-era context but full elite opponent strength.'],
     ['Deiveson Figueiredo','Joseph Benavidez II',1.00,'high-risk review','Elite vacant-title opponent at full strength; missed-weight first fight context remains high-risk.'],
     ['Robbie Lawler','Johny Hendricks',1.00,'locked','Cody-approved factual correction: Hendricks was the reigning champion. Normal title win with a separate 0.90 close split-decision context adjustment.','normal',0.90],
+    ['Robert Whittaker','Yoel Romero II',1.00,'locked','Cody-approved special context: Romero missed weight. Championship accomplishment receives 0.75 context credit but is not an official UFC title-fight win.','missedWeightChampionshipContext',0.75],
     ['Demetrious Johnson','Chris Cariaso',0.75,'high-risk review','Clearly soft title opponent floor.'],
     ['Demetrious Johnson','Tim Elliott',0.75,'high-risk review','TUF/weird challenger context; soft/weird floor.'],
     ['Tito Ortiz','Elvis Sinosic',0.75,'high-risk review','Clearly softer title challenger floor.'],
@@ -29,6 +30,9 @@
     ['Randy Couture','Gabriel Gonzaga',0.90,'locked','Strong heavyweight title defense over a dangerous contender.']
   ];
   const ADDITIONS=[
+    ['Israel Adesanya','Kelvin Gastelum','interim',0.95,'locked','Cody-approved interim-title win: 0.75 base × 0.95 opponent strength = 0.71 credit.'],
+    ['Max Holloway','Frankie Edgar','normal',0.90,'locked','Cody-approved undisputed title defense over an older but still elite former champion.'],
+    ['Zhang Weili','Tatiana Suarez','normal',0.95,'locked','Cody-approved undisputed title defense over an elite challenger.'],
     ['Justin Gaethje','Paddy Pimblett','interim',0.85,'review','Recent-event add: UFC 324 interim lightweight title win. Counts as interim title credit only.'],
     ['Justin Gaethje','Ilia Topuria','normal',1.00,'review','Recent-event add: UFC Freedom 250 undisputed lightweight title win over elite two-division champion.'],
     ['Sean Strickland','Khamzat Chimaev','normal',1.00,'review','Recent-event add: UFC 328 middleweight title win by split decision.'],
@@ -44,7 +48,7 @@
   };
   function n(v,d=0){const x=Number(v);return Number.isFinite(x)?x:d;}
   function r(v){return Math.round((n(v)+Number.EPSILON)*100)/100;}
-  function typeOf(v){const s=String(v||'normal').replace(/[-_ ]+/g,'').toLowerCase();if(s==='interim')return'interim';if(s==='vacant'||s==='vacantundisputed')return'vacantUndisputed';if(s==='seconddivisionundisputed'||s==='secondbelt')return'secondDivisionUndisputed';if(s==='vacantseconddivision'||s==='vacantsecondbelt')return'vacantSecondDivision';return'normal';}
+  function typeOf(v){const s=String(v||'normal').replace(/[-_ ]+/g,'').toLowerCase();if(s==='interim')return'interim';if(s==='vacant'||s==='vacantundisputed')return'vacantUndisputed';if(s==='seconddivisionundisputed'||s==='secondbelt')return'secondDivisionUndisputed';if(s==='vacantseconddivision'||s==='vacantsecondbelt')return'vacantSecondDivision';if(s==='missedweightchampionshipcontext')return'missedWeightChampionshipContext';return'normal';}
   function credit(titleType,strength,contextAdjustment=1){const t=typeOf(titleType);return r((BASE[t]||1)*n(strength,1)*n(contextAdjustment,1));}
   function allRowsFor(fighter){const rows=[];const push=row=>{if(row&&row.fighter===fighter)rows.push(row);};(window.RANKING_DATA?.fighters||[]).forEach(push);(window.RANKING_DATA?.men||[]).forEach(push);(window.RANKING_DATA?.women||[]).forEach(push);return rows;}
   function annotateContext(){Object.entries(RECENT_CONTEXT).forEach(([fighter,note])=>{allRowsFor(fighter).forEach(row=>{row.recentEventsAudit=note;});});}
