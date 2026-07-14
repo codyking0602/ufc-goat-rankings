@@ -54,14 +54,14 @@ assert.equal(report.componentMaxima.finishPressure,5);
 assert.equal(report.componentMaxima.competitiveSeparation,5);
 assert.equal(report.componentMaxima.durability,3);
 assert.equal(Object.values(report.componentMaxima).reduce((sum,value)=>sum+value,0),30);
-assert.deepEqual(report.excludedInputs,[
+assert.equal(JSON.stringify(Array.from(report.excludedInputs)),JSON.stringify([
   'opponent-quality tier',
   'top-five win count',
   'champion-name count',
   'title-fight volume',
   'division-strength multiplier',
   'fighter-level hidden adjustment'
-]);
+]));
 
 const jones=report.entryFor('Jon Jones');
 assert.equal(jones.stats.noContests,1,'Cormier II no contest remains stored but excluded');
