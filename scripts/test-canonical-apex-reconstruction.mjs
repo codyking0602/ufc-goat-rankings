@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
 
+const reconstructionFile='assets/data/canonical-apex-reconstruction.js';
 const files=[
   'assets/data/ranking-data.js',
   'assets/data/canonical-fighter-facts.js',
@@ -27,8 +28,7 @@ const files=[
   'assets/data/apex-peak-score-corrections.js',
   'assets/data/apex-peak-component-audit.js',
   'assets/data/apex-peak-live-bonus.js',
-  'assets/data/apex-peak-audit-dricus.js',
-  'assets/data/canonical-apex-reconstruction.js'
+  'assets/data/apex-peak-audit-dricus.js'
 ];
 
 const attributes={};
@@ -37,17 +37,31 @@ const window={};
 const context=vm.createContext({window,document,console,Date,JSON,Map,Set,Object,Array,Number,String,Math,RegExp,Error,Boolean,Promise});
 for(const file of files)vm.runInContext(await fs.readFile(file,'utf8'),context,{filename:file});
 
+// The exact runtime snapshot is audit evidence only. It recovers final Apex selections/components
+// that are currently scattered across runtime ordering and fighter registry layers. It never controls scores.
+const runtimeSnapshot=JSON.parse(await fs.readFile('docs/runtime-scoring-snapshot.json','utf8'));
+assert.equal(runtimeSnapshot?.summary?.status,'clean','Recovered runtime evidence must come from a clean snapshot');
+assert.equal(runtimeSnapshot?.fighters?.length,72,'The runtime evidence snapshot should cover all 72 live-board fighters');
+context.window.RANKING_DATA.fighters=context.window.RANKING_DATA.fighters||[];
+const normalized=value=>String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
+for(const snapshotRow of runtimeSnapshot.fighters){
+  const existing=[...(context.window.RANKING_DATA.men||[]),...(context.window.RANKING_DATA.women||[]),...(context.window.RANKING_DATA.fighters||[])].find(row=>normalized(row?.fighter)===normalized(snapshotRow?.fighter));
+  if(existing)existing.apexPeakAudit=JSON.parse(JSON.stringify(snapshotRow.apexPeakAudit));
+  else context.window.RANKING_DATA.fighters.push({fighter:snapshotRow.fighter,apexPeakAudit:JSON.parse(JSON.stringify(snapshotRow.apexPeakAudit))});
+}
+vm.runInContext(await fs.readFile(reconstructionFile,'utf8'),context,{filename:reconstructionFile});
+
 const report=context.window.UFC_CANONICAL_APEX_RECONSTRUCTION;
 assert.equal(report?.applied,true,'Apex reconstruction should calculate successfully');
 assert.equal(report.fighterCount,73,'All 73 canonical fighters must appear in the Apex audit');
-assert.ok(report.auditedFighterCount>0&&report.auditedFighterCount<=72,'The initial audit should recover every Apex row actually owned by the locked evidence modules');
+assert.equal(report.auditedFighterCount,72,'Recovered runtime evidence should cover all 72 existing live-board Apex judgments');
+assert.equal(report.missingAuditCount,1,'Leon Edwards should remain the only missing Apex judgment');
 assert.equal(report.auditedFighterCount+report.missingAuditCount,73,'Missing Apex ownership must remain explicit for the full roster');
 assert.equal(report.controlCoverage,72,'The frozen canonical snapshot covers the 72 live-board fighters');
-assert.equal(report.exactFrozenControlParityCount,report.auditedFighterCount,'Every recovered locked Apex score should reproduce its frozen control');
+assert.equal(report.exactFrozenControlParityCount,72,'Every recovered locked Apex score should reproduce its frozen control');
 assert.equal(report.scoreDeltaCount,0,'Initial Apex reconstruction must not silently change approved scores');
-assert.ok(report.missingAuditCount>=1,'The ownership audit should expose missing locked Apex rows');
 assert.equal(report.missingControlCount,1,'Leon Edwards should remain the only missing frozen Apex control');
-assert.ok(report.missingAudits.some(row=>row.fighter==='Leon Edwards'),'Leon Edwards must remain an explicit missing Apex judgment');
+assert.deepEqual(JSON.parse(JSON.stringify(report.missingAudits.map(row=>row.fighter))),['Leon Edwards']);
 assert.deepEqual(JSON.parse(JSON.stringify(report.missingControls.map(row=>row.fighter))),['Leon Edwards']);
 assert.equal(report.liveDataUnchanged,true);
 assert.equal(report.mutatesRankingData,false);
@@ -88,15 +102,13 @@ assert.equal(dj.reconstructedScore,5.15);
 assert.equal(leon.reconstructedScore,null);
 assert.equal(leon.currentScore,null);
 
-const isMissingAudit=row=>row?.stats?.blockers?.includes('missing locked Apex audit');
-if(isMissingAudit(rose))assert.ok(report.missingAudits.some(row=>row.fighter==='Rose Namajunas'));
-else assert.equal(rose.stats.windowCheck?.passed,false,'Rose’s currently selected Joanna/Zhang pair exceeds the locked 24-month rule');
-if(isMissingAudit(carla))assert.ok(report.missingAudits.some(row=>row.fighter==='Carla Esparza'));
-else assert.equal(carla.stats.windowCheck?.passed,false,'Carla’s two Rose wins are years apart and require a compliant Apex pair');
-if(isMissingAudit(figueiredo))assert.ok(report.missingAudits.some(row=>row.fighter==='Deiveson Figueiredo'));
-else assert.ok(figueiredo.stats.performances.some(performance=>performance.validUfcWin===false),'Figueiredo’s Moreno I draw cannot count as one of two selected UFC wins');
-if(isMissingAudit(khamzat))assert.ok(report.missingAudits.some(row=>row.fighter==='Khamzat Chimaev'));
-else assert.ok(khamzat.stats.formulaIssues.some(issue=>/two-performance component/i.test(issue)),'Khamzat’s explicit two-performance override must be surfaced rather than hidden');
+assert.equal(rose.stats.windowCheck?.passed,false,'Rose’s currently selected Joanna/Zhang pair exceeds the locked 24-month rule');
+assert.equal(carla.stats.windowCheck?.passed,false,'Carla’s two Rose wins are years apart and require a compliant Apex pair');
+assert.ok(figueiredo.stats.performances.some(performance=>performance.validUfcWin===false),'Figueiredo’s Moreno I draw cannot count as one of two selected UFC wins');
+assert.ok(khamzat.stats.formulaIssues.some(issue=>/two-performance component/i.test(issue)),'Khamzat’s explicit two-performance override must be surfaced rather than hidden');
+assert.ok(report.twentyFourMonthViolationCount>0,'The initial audit should identify noncompliant 24-month pairs');
+assert.ok(report.invalidSelectedPerformanceCount>0,'The initial audit should identify selected performances that are not counted UFC wins');
+assert.ok(report.formulaIssueFighterCount>0,'The initial audit should identify component-formula drift');
 assert.ok(report.pendingReviewCount>0,'Apex requires a judgment review queue before promotion');
 
 const clean=value=>JSON.parse(JSON.stringify(value,(key,nested)=>typeof nested==='function'?undefined:nested));
@@ -110,8 +122,8 @@ const missingOwnership=report.missingAudits.map(row=>row.fighter).sort((a,b)=>a.
 const markdown=[
   '# Canonical Apex Peak Reconstruction — Initial Shadow Audit','',
   `- Fighters audited: **${report.fighterCount}**`,
-  `- Locked Apex audits directly recovered: **${report.auditedFighterCount}/${report.fighterCount}**`,
-  `- Missing direct Apex ownership: **${report.missingAuditCount}**`,
+  `- Existing Apex judgments recovered: **${report.auditedFighterCount}/${report.fighterCount}**`,
+  `- Missing Apex judgment: **${missingOwnership.join(', ')||'None'}**`,
   `- Frozen controls available: **${report.controlCoverage}/${report.fighterCount}**`,
   `- Exact score parity for recovered audits: **${report.exactFrozenControlParityCount}/${report.auditedFighterCount}**`,
   `- Fighters with selected-performance issues: **${report.selectionIssueFighterCount}**`,
@@ -126,14 +138,12 @@ const markdown=[
   '- Proof, Best-Fighter Claim, and Aura remain explicit reviewed judgment inputs.',
   '- Both selected performances must be counted UFC wins and must occur within one 24-month window.',
   '- No contests and losses cannot be used as the two Apex performances.',
-  '- Losses inside the chosen window can still reduce Best-Fighter Claim or Aura.','',
+  '- Losses inside the chosen window can still reduce Best-Fighter Claim or Aura.',
+  '- Existing final Apex audits were recovered from the clean runtime snapshot as evidence only; the snapshot does not control calculation.','',
   '## Recovered Apex leaders','',
   '| Rank | Fighter | Apex | Pair | Two-performance | Proof | Claim | Aura |',
   '|---:|---|---:|---|---:|---:|---:|---:|',
   ...leaders.map((row,index)=>`| ${index+1} | ${row.fighter} | ${row.reconstructedScore.toFixed(2)} | ${row.auditWindow||'—'} | ${row.stats.components.twoPerformanceStrength.toFixed(2)} | ${row.stats.components.proof.toFixed(2)} | ${row.stats.components.bestFighterClaim.toFixed(2)} | ${row.stats.components.aura.toFixed(2)} |`),
-  '',
-  '## Missing direct Apex ownership','',
-  ...missingOwnership.map(fighter=>`- **${fighter}**`),
   '',
   '## Selected-performance review queue','',
   ...(selectionRows.length?selectionRows.map(row=>`- **${row.fighter}:** ${row.stats.factualIssues.join('; ')}. Selected: ${(row.stats.performances||[]).map(performance=>`${performance.label} → ${performance.canonicalOpponent||'unmatched'} (${performance.canonicalDate||'no date'}, ${performance.officialResult||'no result'})`).join(' | ')}`):['- None']),
@@ -141,6 +151,8 @@ const markdown=[
   '## Component-formula review queue','',
   ...(formulaRows.length?formulaRows.map(row=>`- **${row.fighter}:** ${row.stats.formulaIssues.join('; ')}`):['- None']),
   '',
+  '## Missing fighter judgment','',
+  '- **Leon Edwards:** needs a UFC-only two-win Apex pair and reviewed Proof / Best-Fighter Claim / Aura components.','',
   'This is a shadow reconstruction only. It does not write Apex scores, total scores, ranks, OVRs, profile values, or Compare Mode values into the live app.',''
 ].join('\n');
 await fs.writeFile('docs/canonical-apex-reconstruction.md',markdown,'utf8');
