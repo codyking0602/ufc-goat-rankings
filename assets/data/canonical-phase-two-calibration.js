@@ -4,10 +4,11 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-phase-two-calibration-20260713a-debate-ready-shape';
+  const VERSION='canonical-phase-two-calibration-20260713b-debate-ready-shape';
   const WEIGHTS={championship:30,opponentQuality:24,primeDominance:30,longevity:16};
   const CATEGORY_MAX=30;
   const PERFECT_PRIME_APEX_BONUS=1.95;
+  const UPWARD_ELITE_PRIME_WEIGHT=.80;
   const OVR={floor:82,menCeiling:99,womenCeiling:96,curve:.85};
   const FINISH_METHODS=new Set(['ko-tko','submission','doctor-stoppage']);
   let lastBaseVersion=null;
@@ -46,7 +47,7 @@
     fights.forEach(fight=>{
       if(!['count-win','count-loss','count-draw'].includes(fight?.scoringDisposition))return;
       const upwardElite=isUpwardEliteLoss(fight);
-      const weight=upwardElite?.5:1;
+      const weight=upwardElite?UPWARD_ELITE_PRIME_WEIGHT:1;
       exposure+=weight;
       if(fight.scoringDisposition==='count-win'){
         winCredit+=weight;
@@ -143,6 +144,28 @@
     return rows;
   }
 
+  function recalibrateLegacyComparison(all,base){
+    const previous=new Map((base?.legacyScoreComparison?.deltas||[]).map(row=>[key(row.fighter),row]));
+    const deltas=[];
+    const missing=[];
+    all.forEach(row=>{
+      const current=previous.get(key(row.fighter));
+      if(!current){missing.push(row.fighter);return;}
+      deltas.push({
+        ...current,
+        calculatedRank:row.rank,
+        rankMovement:Number(current.currentRank)-row.rank,
+        calculatedTotal:row.totalScore,
+        totalDelta:round2(row.totalScore-Number(current.currentTotal)),
+        calculatedOvr:row.overallOvr,
+        ovrDelta:row.overallOvr-Number(current.currentOvr)
+      });
+    });
+    const biggestRankMovers=deltas.filter(row=>row.rankMovement!==0).slice().sort((a,b)=>Math.abs(b.rankMovement)-Math.abs(a.rankMovement)||b.totalDelta-a.totalDelta||a.fighter.localeCompare(b.fighter)).slice(0,20);
+    const biggestTotalChanges=deltas.slice().sort((a,b)=>Math.abs(b.totalDelta)-Math.abs(a.totalDelta)||a.fighter.localeCompare(b.fighter)).slice(0,20);
+    return {...(base?.legacyScoreComparison||{}),comparisonOnly:true,controlsCalculatedScores:false,coveredCount:deltas.length,missingLegacyRows:missing,deltas,biggestRankMovers,biggestTotalChanges};
+  }
+
   function build(){
     const base=window.UFC_CANONICAL_PHASE_TWO_SHADOW;
     const facts=window.UFC_CANONICAL_FIGHTER_FACTS;
@@ -171,6 +194,7 @@
     const women=assignRanksAndOvr(calibrateBoard('women'),'women');
     const all=[...men,...women];
     const byKey=new Map(all.map(row=>[key(row.fighter),row]));
+    const legacyScoreComparison=recalibrateLegacyComparison(all,base);
     const after=data?JSON.stringify(data):null;
     const report={
       ...base,
@@ -181,7 +205,8 @@
       boards:{men,women},
       topTenMen:men.slice(0,10).map(row=>({rank:row.rank,fighter:row.fighter,totalScore:row.totalScore,overallOvr:row.overallOvr})),
       topWomen:women.slice(0,10).map(row=>({rank:row.rank,fighter:row.fighter,totalScore:row.totalScore,overallOvr:row.overallOvr})),
-      formula:{...base.formula,weights:WEIGHTS,perfectPrimeApexBonus:PERFECT_PRIME_APEX_BONUS,upwardElitePrimeWeight:.5,openPrimeSampleConfidence:1,eraDepthAdjustment:'approved curved Division-Era Depth evidence, hidden from the profile card'},
+      legacyScoreComparison,
+      formula:{...base.formula,weights:WEIGHTS,perfectPrimeApexBonus:PERFECT_PRIME_APEX_BONUS,upwardElitePrimeWeight:UPWARD_ELITE_PRIME_WEIGHT,openPrimeSampleConfidence:1,eraDepthAdjustment:'approved curved Division-Era Depth evidence, hidden from the profile card'},
       eraDepthEvidenceVersion:window.UFC_DIVISION_ERA_DEPTH_SHADOW?.version||null,
       eraDepthCoverageCount:all.length-missingEraDepth.length,
       missingEraDepth:[...new Set(missingEraDepth)],
