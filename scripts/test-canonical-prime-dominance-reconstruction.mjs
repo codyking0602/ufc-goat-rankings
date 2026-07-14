@@ -67,6 +67,7 @@ const jones=report.entryFor('Jon Jones');
 assert.equal(jones.stats.noContests,1,'Cormier II no contest remains stored but excluded');
 assert.equal(jones.stats.scoredFightCount,jones.stats.primeFightCount-1,'No contest must not enter Prime Dominance scoring');
 assert.equal(jones.stats.components.durability,3);
+assert.equal(jones.stats.sampleConfidence,1);
 assert.equal(jones.stats.missingRoundRows.length,0);
 
 const khabib=report.entryFor('Khabib Nurmagomedov');
@@ -74,7 +75,14 @@ assert.equal(khabib.stats.losses,0);
 assert.equal(khabib.stats.draws,0);
 assert.equal(khabib.stats.components.primeRecord,9);
 assert.equal(khabib.stats.components.durability,3);
+assert.equal(khabib.stats.sampleConfidence,1);
 assert.ok(khabib.reconstructedScore>=27&&khabib.reconstructedScore<=30,'Khabib should remain an elite Prime Dominance benchmark');
+
+const frank=report.entryFor('Frank Shamrock');
+const kayla=report.entryFor('Kayla Harrison');
+assert.equal(frank.stats.sampleConfidence,.9,'Five-fight prime receives a visible sample-confidence discount');
+assert.equal(kayla.stats.sampleConfidence,.82,'Three-fight prime receives a visible sample-confidence discount');
+assert.ok(kayla.reconstructedScore<khabib.reconstructedScore,'Tiny perfect samples must not automatically outrank a complete elite prime');
 
 const ronda=report.entryFor('Ronda Rousey');
 assert.equal(ronda.stats.losses,2,'The Cody-approved full Rousey prime includes Holm and Nunes');
@@ -114,12 +122,13 @@ const markdown=[
   '- Round Control: 8 points',
   '- Finish Pressure: 5 points',
   '- Competitive Separation: 5 points',
-  '- Durability: 3 points','',
+  '- Durability: 3 points',
+  '- Prime-sample confidence: 0.78–1.00 multiplier; full confidence at eight scored prime fights','',
   'The former 8-point Elite-Stakes Validation block is retained in the audit as provenance but removed from the clean score. Championship, opponent quality, title-stage volume, and division depth remain owned by their respective categories.','',
   '## Reconstructed leaders','',
-  '| Rank | Fighter | Prime Dominance | Prime record | Rounds won | Finish pressure | Separation | Durability |',
-  '|---:|---|---:|---:|---:|---:|---:|---:|',
-  ...leaders.map((row,index)=>`| ${index+1} | ${row.fighter} | ${row.reconstructedScore.toFixed(2)} | ${row.stats.components.primeRecord.toFixed(2)} | ${row.stats.components.roundControl.toFixed(2)} | ${row.stats.components.finishPressure.toFixed(2)} | ${row.stats.components.competitiveSeparation.toFixed(2)} | ${row.stats.components.durability.toFixed(2)} |`),
+  '| Rank | Fighter | Prime Dominance | Raw | Confidence | Prime record | Rounds won | Finish pressure | Separation | Durability |',
+  '|---:|---|---:|---:|---:|---:|---:|---:|---:|---:|',
+  ...leaders.map((row,index)=>`| ${index+1} | ${row.fighter} | ${row.reconstructedScore.toFixed(2)} | ${row.stats.rawScore.toFixed(2)} | ${row.stats.sampleConfidence.toFixed(2)} | ${row.stats.components.primeRecord.toFixed(2)} | ${row.stats.components.roundControl.toFixed(2)} | ${row.stats.components.finishPressure.toFixed(2)} | ${row.stats.components.competitiveSeparation.toFixed(2)} | ${row.stats.components.durability.toFixed(2)} |`),
   '',
   '## Largest changes versus frozen control','',
   '| Fighter | Frozen | Reconstructed | Delta |',
