@@ -1,0 +1,45 @@
+name: Canonical Phase Two Shadow
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'assets/data/canonical-fighter-facts.js'
+      - 'assets/data/canonical-fighter-facts-batch-*.js'
+      - 'assets/data/canonical-phase-two-shadow.js'
+      - 'assets/data/canonical-scoring-records.js'
+      - 'assets/data/ranking-data.js'
+      - 'scripts/test-canonical-phase-two-shadow.mjs'
+      - '.github/workflows/canonical-phase-two-shadow.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-calculated-shadow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check syntax
+        run: |
+          node --check assets/data/canonical-phase-two-shadow.js
+          node --check assets/data/canonical-fighter-facts-batch-nine.js
+          node --check scripts/test-canonical-phase-two-shadow.mjs
+      - name: Calculate all 73 fighters from canonical ledgers
+        run: node scripts/test-canonical-phase-two-shadow.mjs > /tmp/canonical-phase-two-shadow.log 2>&1
+      - name: Upload Phase 2 shadow report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-phase-two-shadow-report
+          path: |
+            /tmp/canonical-phase-two-shadow.log
+            docs/canonical-phase-two-shadow.json
+            docs/canonical-phase-two-shadow.md
+          if-no-files-found: warn
+          retention-days: 30
