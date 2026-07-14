@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-13T23:52:34.661Z",
+  "generatedAt": "2026-07-14T01:28:50.387Z",
   "baseUrl": "http://127.0.0.1:4173",
   "pipeline": {
     "version": "deterministic-evidence-pipeline-20260713b-stage3",
@@ -51,8 +51,8 @@
     "finalScoreApplyCount": 0,
     "scoreAuthority": "assets/js/scoring-engine.js",
     "scoreApplicationDeferred": true,
-    "startedAt": "2026-07-13T23:52:24.247Z",
-    "completedAt": "2026-07-13T23:52:30.249Z",
+    "startedAt": "2026-07-14T01:28:41.888Z",
+    "completedAt": "2026-07-14T01:28:46.834Z",
     "error": null,
     "canonicalFighterRegistryBase": {
       "applied": true,
@@ -366,6 +366,32 @@
               "sourceMode": "canonical-registry",
               "version": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
             },
+            "divisionEraDepth": {
+              "version": "division-era-depth-live-20260713c-evidence-only",
+              "sourceShadowVersion": "division-era-depth-shadow-20260712e-roster-72",
+              "depthIndex": 1,
+              "adjustment": 0,
+              "componentRatios": {
+                "qualifiedActivePool": 1,
+                "ranksSixToFifteenElo": 1,
+                "contenderDiversity": 1
+              },
+              "matchedPrimeFightCount": 7,
+              "sampledDivisions": [],
+              "primeStart": "2016-05-14",
+              "primeEnd": "2019-07-27",
+              "openPrime": false,
+              "womenFeatherweightTreatment": {
+                "version": "division-era-depth-shadow-20260712e-roster-72",
+                "treatment": "pure-wfw-zero-adjustment",
+                "excludedSampleCount": 7,
+                "retainedSampleCount": 0,
+                "originalDepthIndex": 0.75,
+                "originalCurvedAdjustment": -3,
+                "finalDepthIndex": 1,
+                "finalCurvedAdjustment": 0
+              }
+            },
             "primeRecordContext": "Leslie Smith → Felicia Spencer",
             "canonicalPrimeRecordAudit": {
               "fighter": "Cris Cyborg",
@@ -397,32 +423,6 @@
               "scoreRebuildCompleted": false,
               "scoreRebuildVersion": null,
               "version": "canonical-prime-records-20260713b-mirror-sync"
-            },
-            "divisionEraDepth": {
-              "version": "division-era-depth-live-20260713c-evidence-only",
-              "sourceShadowVersion": "division-era-depth-shadow-20260712e-roster-72",
-              "depthIndex": 1,
-              "adjustment": 0,
-              "componentRatios": {
-                "qualifiedActivePool": 1,
-                "ranksSixToFifteenElo": 1,
-                "contenderDiversity": 1
-              },
-              "matchedPrimeFightCount": 7,
-              "sampledDivisions": [],
-              "primeStart": "2016-05-14",
-              "primeEnd": "2019-07-27",
-              "openPrime": false,
-              "womenFeatherweightTreatment": {
-                "version": "division-era-depth-shadow-20260712e-roster-72",
-                "treatment": "pure-wfw-zero-adjustment",
-                "excludedSampleCount": 7,
-                "retainedSampleCount": 0,
-                "originalDepthIndex": 0.75,
-                "originalCurvedAdjustment": -3,
-                "finalDepthIndex": 1,
-                "finalCurvedAdjustment": 0
-              }
             },
             "primeDominanceShadowAudit": {
               "fighter": "Cris Cyborg",
@@ -661,7 +661,7 @@
                 "Compact championship window with shallow-division compression.",
                 "UFC-only window."
               ],
-              "appliedAt": "2026-07-13T23:52:28.915Z"
+              "appliedAt": "2026-07-14T01:28:45.777Z"
             },
             "apexPeakAudit": {
               "score": 4.6,
@@ -1155,6 +1155,32 @@
               "sourceMode": "canonical-registry",
               "version": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
             },
+            "divisionEraDepth": {
+              "version": "division-era-depth-live-20260713c-evidence-only",
+              "sourceShadowVersion": "division-era-depth-shadow-20260712e-roster-72",
+              "depthIndex": 1,
+              "adjustment": 0,
+              "componentRatios": {
+                "qualifiedActivePool": 1,
+                "ranksSixToFifteenElo": 1,
+                "contenderDiversity": 1
+              },
+              "matchedPrimeFightCount": 7,
+              "sampledDivisions": [],
+              "primeStart": "2016-05-14",
+              "primeEnd": "2019-07-27",
+              "openPrime": false,
+              "womenFeatherweightTreatment": {
+                "version": "division-era-depth-shadow-20260712e-roster-72",
+                "treatment": "pure-wfw-zero-adjustment",
+                "excludedSampleCount": 7,
+                "retainedSampleCount": 0,
+                "originalDepthIndex": 0.75,
+                "originalCurvedAdjustment": -3,
+                "finalDepthIndex": 1,
+                "finalCurvedAdjustment": 0
+              }
+            },
             "canonicalPrimeRecordAudit": {
               "fighter": "Cris Cyborg",
               "record": "6-1",
@@ -1185,32 +1211,6 @@
               "scoreRebuildCompleted": false,
               "scoreRebuildVersion": null,
               "version": "canonical-prime-records-20260713b-mirror-sync"
-            },
-            "divisionEraDepth": {
-              "version": "division-era-depth-live-20260713c-evidence-only",
-              "sourceShadowVersion": "division-era-depth-shadow-20260712e-roster-72",
-              "depthIndex": 1,
-              "adjustment": 0,
-              "componentRatios": {
-                "qualifiedActivePool": 1,
-                "ranksSixToFifteenElo": 1,
-                "contenderDiversity": 1
-              },
-              "matchedPrimeFightCount": 7,
-              "sampledDivisions": [],
-              "primeStart": "2016-05-14",
-              "primeEnd": "2019-07-27",
-              "openPrime": false,
-              "womenFeatherweightTreatment": {
-                "version": "division-era-depth-shadow-20260712e-roster-72",
-                "treatment": "pure-wfw-zero-adjustment",
-                "excludedSampleCount": 7,
-                "retainedSampleCount": 0,
-                "originalDepthIndex": 0.75,
-                "originalCurvedAdjustment": -3,
-                "finalDepthIndex": 1,
-                "finalCurvedAdjustment": 0
-              }
             },
             "primeDominanceShadowAudit": {
               "fighter": "Cris Cyborg",
@@ -1448,7 +1448,7 @@
                 "Compact championship window with shallow-division compression.",
                 "UFC-only window."
               ],
-              "appliedAt": "2026-07-13T23:52:28.920Z"
+              "appliedAt": "2026-07-14T01:28:45.780Z"
             },
             "longevityLegacyScore": 7.78,
             "longevityRaw30": 7.78,
@@ -1846,6 +1846,25 @@
               "benchmarkCredit": 14.1,
               "sourceMode": "canonical-registry-fixed-audit"
             },
+            "divisionEraDepth": {
+              "version": "division-era-depth-live-20260713c-evidence-only",
+              "sourceShadowVersion": "division-era-depth-shadow-20260712e-roster-72",
+              "depthIndex": 0.75,
+              "adjustment": -3,
+              "componentRatios": {
+                "qualifiedActivePool": 0.55,
+                "ranksSixToFifteenElo": 0.55,
+                "contenderDiversity": 0.55
+              },
+              "matchedPrimeFightCount": 9,
+              "sampledDivisions": [
+                "WW"
+              ],
+              "primeStart": "1993-11-12",
+              "primeEnd": "1995-04-07",
+              "openPrime": false,
+              "womenFeatherweightTreatment": null
+            },
             "primeRecordContext": "Art Jimmerson → Ken Shamrock II",
             "canonicalPrimeRecordAudit": {
               "fighter": "Royce Gracie",
@@ -1877,25 +1896,6 @@
               "scoreRebuildCompleted": false,
               "scoreRebuildVersion": null,
               "version": "canonical-prime-records-20260713b-mirror-sync"
-            },
-            "divisionEraDepth": {
-              "version": "division-era-depth-live-20260713c-evidence-only",
-              "sourceShadowVersion": "division-era-depth-shadow-20260712e-roster-72",
-              "depthIndex": 0.75,
-              "adjustment": -3,
-              "componentRatios": {
-                "qualifiedActivePool": 0.55,
-                "ranksSixToFifteenElo": 0.55,
-                "contenderDiversity": 0.55
-              },
-              "matchedPrimeFightCount": 9,
-              "sampledDivisions": [
-                "WW"
-              ],
-              "primeStart": "1993-11-12",
-              "primeEnd": "1995-04-07",
-              "openPrime": false,
-              "womenFeatherweightTreatment": null
             },
             "primeDominanceShadowAudit": {
               "fighter": "Royce Gracie",
@@ -2196,7 +2196,7 @@
                 "Tournament-champion status boost is offset by a major embryonic-era division multiplier.",
                 "UFC-only tournament-era window."
               ],
-              "appliedAt": "2026-07-13T23:52:28.912Z"
+              "appliedAt": "2026-07-14T01:28:45.776Z"
             },
             "apexPeakAudit": {
               "score": 5.4,
@@ -2797,6 +2797,25 @@
               "benchmarkCredit": 14.1,
               "sourceMode": "canonical-registry-fixed-audit"
             },
+            "divisionEraDepth": {
+              "version": "division-era-depth-live-20260713c-evidence-only",
+              "sourceShadowVersion": "division-era-depth-shadow-20260712e-roster-72",
+              "depthIndex": 0.75,
+              "adjustment": -3,
+              "componentRatios": {
+                "qualifiedActivePool": 0.55,
+                "ranksSixToFifteenElo": 0.55,
+                "contenderDiversity": 0.55
+              },
+              "matchedPrimeFightCount": 9,
+              "sampledDivisions": [
+                "WW"
+              ],
+              "primeStart": "1993-11-12",
+              "primeEnd": "1995-04-07",
+              "openPrime": false,
+              "womenFeatherweightTreatment": null
+            },
             "canonicalPrimeRecordAudit": {
               "fighter": "Royce Gracie",
               "record": "11-0-1",
@@ -2827,25 +2846,6 @@
               "scoreRebuildCompleted": false,
               "scoreRebuildVersion": null,
               "version": "canonical-prime-records-20260713b-mirror-sync"
-            },
-            "divisionEraDepth": {
-              "version": "division-era-depth-live-20260713c-evidence-only",
-              "sourceShadowVersion": "division-era-depth-shadow-20260712e-roster-72",
-              "depthIndex": 0.75,
-              "adjustment": -3,
-              "componentRatios": {
-                "qualifiedActivePool": 0.55,
-                "ranksSixToFifteenElo": 0.55,
-                "contenderDiversity": 0.55
-              },
-              "matchedPrimeFightCount": 9,
-              "sampledDivisions": [
-                "WW"
-              ],
-              "primeStart": "1993-11-12",
-              "primeEnd": "1995-04-07",
-              "openPrime": false,
-              "womenFeatherweightTreatment": null
             },
             "primeDominanceShadowAudit": {
               "fighter": "Royce Gracie",
@@ -3145,7 +3145,7 @@
                 "Tournament-champion status boost is offset by a major embryonic-era division multiplier.",
                 "UFC-only tournament-era window."
               ],
-              "appliedAt": "2026-07-13T23:52:28.921Z"
+              "appliedAt": "2026-07-14T01:28:45.780Z"
             },
             "longevityLegacyScore": 2.84,
             "longevityRaw30": 2.83,
@@ -3319,7 +3319,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-13T23:52:25.755Z"
+      "appliedAt": "2026-07-14T01:28:43.264Z"
     },
     "lossContextCompletionBatchFour": {
       "version": "loss-context-ledger-completion-batch-four-20260710a-five-highest-missing",
@@ -3375,7 +3375,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-13T23:52:25.759Z"
+      "appliedAt": "2026-07-14T01:28:43.275Z"
     },
     "lossContextCompletionBatchFive": {
       "version": "loss-context-ledger-completion-batch-five-20260710b-chuck-vitor-window",
@@ -3468,7 +3468,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-13T23:52:25.762Z"
+      "appliedAt": "2026-07-14T01:28:43.282Z"
     },
     "lossContextCompletionBatchSix": {
       "version": "loss-context-ledger-completion-batch-six-20260710a-first-half-eighteen",
@@ -3656,7 +3656,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-13T23:52:25.769Z"
+      "appliedAt": "2026-07-14T01:28:43.286Z"
     },
     "lossContextCompletionBatchSeven": {
       "version": "loss-context-ledger-completion-batch-seven-20260710a-final-seventeen",
@@ -3815,7 +3815,7 @@
       "mutatesEraLossEvents": true,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-13T23:52:25.778Z"
+      "appliedAt": "2026-07-14T01:28:43.291Z"
     },
     "approvedFighterAuditCorrections": {
       "version": "approved-fighter-audit-corrections-20260713e-no-score-finalize",
@@ -3861,7 +3861,7 @@
         "Jessica Andrade"
       ],
       "masvidalCreditsChanged": false,
-      "appliedAt": "2026-07-13T23:52:25.785Z"
+      "appliedAt": "2026-07-14T01:28:43.300Z"
     },
     "lossContextCanonicalProduction": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -35515,7 +35515,7 @@
         ],
         "mode": "canonical-production",
         "mutatesScores": true,
-        "appliedAt": "2026-07-13T23:52:25.806Z"
+        "appliedAt": "2026-07-14T01:28:43.318Z"
       },
       "mismatchAudit": {
         "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -57398,7 +57398,7 @@
         "missingEraLossEntries": [],
         "mutatesScores": false,
         "mutatesPenalty": false,
-        "appliedAt": "2026-07-13T23:52:25.806Z"
+        "appliedAt": "2026-07-14T01:28:43.318Z"
       },
       "scoreReview": {
         "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -59625,7 +59625,7 @@
         "mutatesPenalty": true,
         "mutatesScores": true,
         "finalScoreRecalculationOwner": "final-score-engine.js",
-        "appliedAt": "2026-07-13T23:52:25.806Z"
+        "appliedAt": "2026-07-14T01:28:43.318Z"
       },
       "appliedCompletionFixes": [
         "Robert Whittaker",
@@ -59685,7 +59685,7 @@
       ],
       "mutatesPenalty": true,
       "mutatesScores": true,
-      "appliedAt": "2026-07-13T23:52:25.806Z"
+      "appliedAt": "2026-07-14T01:28:43.318Z"
     },
     "lossContextScoreReview": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -61912,7 +61912,7 @@
       "mutatesPenalty": true,
       "mutatesScores": true,
       "finalScoreRecalculationOwner": "final-score-engine.js",
-      "appliedAt": "2026-07-13T23:52:25.806Z"
+      "appliedAt": "2026-07-14T01:28:43.318Z"
     },
     "lossContextMismatchAudit": {
       "version": "loss-context-canonical-production-20260710a-runtime-closure",
@@ -83795,7 +83795,7 @@
       "missingEraLossEntries": [],
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-13T23:52:25.806Z"
+      "appliedAt": "2026-07-14T01:28:43.318Z"
     },
     "lossContextDynamicRosterTarget": {
       "version": "loss-context-dynamic-roster-target-20260710a",
@@ -83803,7 +83803,15 @@
       "expectedRosterCount": 72,
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "appliedAt": "2026-07-13T23:52:25.811Z"
+      "appliedAt": "2026-07-14T01:28:43.898Z"
+    },
+    "opponentQualityReadyDetail": {
+      "version": "opponent-quality-live-20260710c-fixed-benchmark",
+      "fighters": 72,
+      "benchmarkCredit": 14.1,
+      "sourceBenchmarkCredit": 14.1,
+      "benchmarkMode": "locked-constant",
+      "futureRosterStable": true
     },
     "canonicalLongevityRecalculation": {
       "version": "longevity-canonical-recalculation-20260712a-couture-status-calibration",
@@ -83988,15 +83996,7 @@
       "calibratesRandyStatusMultiplier": true,
       "mutatesEraLongevityInputs": true,
       "mutatesScores": false,
-      "appliedAt": "2026-07-13T23:52:26.513Z"
-    },
-    "opponentQualityReadyDetail": {
-      "version": "opponent-quality-live-20260710c-fixed-benchmark",
-      "fighters": 72,
-      "benchmarkCredit": 14.1,
-      "sourceBenchmarkCredit": 14.1,
-      "benchmarkMode": "locked-constant",
-      "futureRosterStable": true
+      "appliedAt": "2026-07-14T01:28:44.463Z"
     },
     "canonicalPrimeRecords": {
       "version": "canonical-prime-records-20260713b-mirror-sync",
@@ -86266,7 +86266,7 @@
       "mutatesPrimeRecordDisplay": true,
       "normalizedRosterKeys": true,
       "mirrorsSynchronized": true,
-      "appliedAt": "2026-07-13T23:52:27.224Z"
+      "appliedAt": "2026-07-14T01:28:44.491Z"
     },
     "approvedOpponentQualityCorrection": {
       "applied": true,
@@ -87204,7 +87204,7 @@
       ],
       "masvidalCreditsChanged": false,
       "version": "approved-fighter-audit-corrections-20260713e-no-score-finalize",
-      "appliedAt": "2026-07-13T23:52:27.226Z"
+      "appliedAt": "2026-07-14T01:28:44.492Z"
     },
     "canonicalFighterRegistryOpponentQuality": {
       "applied": true,
@@ -87644,7 +87644,7 @@
           "version": "prime-dominance-audit-batch-eleven-20260712a-hughes-calibration"
         }
       },
-      "appliedAt": "2026-07-13T23:52:28.100Z"
+      "appliedAt": "2026-07-14T01:28:45.126Z"
     },
     "canonicalFighterRegistryPrime": {
       "applied": true,
@@ -92824,7 +92824,7 @@
       "mutatesEliteStakes": false,
       "mutatesTotals": false,
       "finalScoreRecalculationOwner": "final-score-engine.js",
-      "appliedAt": "2026-07-13T23:52:28.108Z"
+      "appliedAt": "2026-07-14T01:28:45.134Z"
     },
     "fighterEraWindowAudit": {
       "version": "fighter-era-window-audit-20260710b-record-dependencies",
@@ -97546,7 +97546,7 @@
       "allCanonicalPrimeRecordsPresent": false,
       "mutatesScores": false,
       "mutatesWindows": false,
-      "appliedAt": "2026-07-13T23:52:29.339Z"
+      "appliedAt": "2026-07-14T01:28:46.104Z"
     },
     "canonicalFighterRegistryApex": {
       "applied": true,
@@ -97729,7 +97729,7 @@
         "mutatesRecords": true,
         "mutatesPenalty": false,
         "mutatesScores": false,
-        "appliedAt": "2026-07-13T23:52:25.806Z",
+        "appliedAt": "2026-07-14T01:28:43.318Z",
         "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
       },
       "scoreReview": {
@@ -98492,7 +98492,7 @@
       ],
       "mutatesScores": false,
       "mutatesPenalty": false,
-      "generatedAt": "2026-07-13T23:52:29.786Z",
+      "generatedAt": "2026-07-14T01:28:46.469Z",
       "dynamicRosterTargetVersion": "loss-context-dynamic-roster-target-20260710a"
     },
     "canonicalFighterRegistryFinal": {
@@ -98807,6 +98807,32 @@
               "sourceMode": "canonical-registry",
               "version": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
             },
+            "divisionEraDepth": {
+              "version": "division-era-depth-live-20260713c-evidence-only",
+              "sourceShadowVersion": "division-era-depth-shadow-20260712e-roster-72",
+              "depthIndex": 1,
+              "adjustment": 0,
+              "componentRatios": {
+                "qualifiedActivePool": 1,
+                "ranksSixToFifteenElo": 1,
+                "contenderDiversity": 1
+              },
+              "matchedPrimeFightCount": 7,
+              "sampledDivisions": [],
+              "primeStart": "2016-05-14",
+              "primeEnd": "2019-07-27",
+              "openPrime": false,
+              "womenFeatherweightTreatment": {
+                "version": "division-era-depth-shadow-20260712e-roster-72",
+                "treatment": "pure-wfw-zero-adjustment",
+                "excludedSampleCount": 7,
+                "retainedSampleCount": 0,
+                "originalDepthIndex": 0.75,
+                "originalCurvedAdjustment": -3,
+                "finalDepthIndex": 1,
+                "finalCurvedAdjustment": 0
+              }
+            },
             "primeRecordContext": "Leslie Smith → Felicia Spencer",
             "canonicalPrimeRecordAudit": {
               "fighter": "Cris Cyborg",
@@ -98838,32 +98864,6 @@
               "scoreRebuildCompleted": false,
               "scoreRebuildVersion": null,
               "version": "canonical-prime-records-20260713b-mirror-sync"
-            },
-            "divisionEraDepth": {
-              "version": "division-era-depth-live-20260713c-evidence-only",
-              "sourceShadowVersion": "division-era-depth-shadow-20260712e-roster-72",
-              "depthIndex": 1,
-              "adjustment": 0,
-              "componentRatios": {
-                "qualifiedActivePool": 1,
-                "ranksSixToFifteenElo": 1,
-                "contenderDiversity": 1
-              },
-              "matchedPrimeFightCount": 7,
-              "sampledDivisions": [],
-              "primeStart": "2016-05-14",
-              "primeEnd": "2019-07-27",
-              "openPrime": false,
-              "womenFeatherweightTreatment": {
-                "version": "division-era-depth-shadow-20260712e-roster-72",
-                "treatment": "pure-wfw-zero-adjustment",
-                "excludedSampleCount": 7,
-                "retainedSampleCount": 0,
-                "originalDepthIndex": 0.75,
-                "originalCurvedAdjustment": -3,
-                "finalDepthIndex": 1,
-                "finalCurvedAdjustment": 0
-              }
             },
             "primeDominanceShadowAudit": {
               "fighter": "Cris Cyborg",
@@ -99102,7 +99102,7 @@
                 "Compact championship window with shallow-division compression.",
                 "UFC-only window."
               ],
-              "appliedAt": "2026-07-13T23:52:28.915Z"
+              "appliedAt": "2026-07-14T01:28:45.777Z"
             },
             "apexPeakAudit": {
               "score": 4.6,
@@ -99596,6 +99596,32 @@
               "sourceMode": "canonical-registry",
               "version": "canonical-fighter-registry-20260711c-cris-cyborg-photos"
             },
+            "divisionEraDepth": {
+              "version": "division-era-depth-live-20260713c-evidence-only",
+              "sourceShadowVersion": "division-era-depth-shadow-20260712e-roster-72",
+              "depthIndex": 1,
+              "adjustment": 0,
+              "componentRatios": {
+                "qualifiedActivePool": 1,
+                "ranksSixToFifteenElo": 1,
+                "contenderDiversity": 1
+              },
+              "matchedPrimeFightCount": 7,
+              "sampledDivisions": [],
+              "primeStart": "2016-05-14",
+              "primeEnd": "2019-07-27",
+              "openPrime": false,
+              "womenFeatherweightTreatment": {
+                "version": "division-era-depth-shadow-20260712e-roster-72",
+                "treatment": "pure-wfw-zero-adjustment",
+                "excludedSampleCount": 7,
+                "retainedSampleCount": 0,
+                "originalDepthIndex": 0.75,
+                "originalCurvedAdjustment": -3,
+                "finalDepthIndex": 1,
+                "finalCurvedAdjustment": 0
+              }
+            },
             "canonicalPrimeRecordAudit": {
               "fighter": "Cris Cyborg",
               "record": "6-1",
@@ -99626,32 +99652,6 @@
               "scoreRebuildCompleted": false,
               "scoreRebuildVersion": null,
               "version": "canonical-prime-records-20260713b-mirror-sync"
-            },
-            "divisionEraDepth": {
-              "version": "division-era-depth-live-20260713c-evidence-only",
-              "sourceShadowVersion": "division-era-depth-shadow-20260712e-roster-72",
-              "depthIndex": 1,
-              "adjustment": 0,
-              "componentRatios": {
-                "qualifiedActivePool": 1,
-                "ranksSixToFifteenElo": 1,
-                "contenderDiversity": 1
-              },
-              "matchedPrimeFightCount": 7,
-              "sampledDivisions": [],
-              "primeStart": "2016-05-14",
-              "primeEnd": "2019-07-27",
-              "openPrime": false,
-              "womenFeatherweightTreatment": {
-                "version": "division-era-depth-shadow-20260712e-roster-72",
-                "treatment": "pure-wfw-zero-adjustment",
-                "excludedSampleCount": 7,
-                "retainedSampleCount": 0,
-                "originalDepthIndex": 0.75,
-                "originalCurvedAdjustment": -3,
-                "finalDepthIndex": 1,
-                "finalCurvedAdjustment": 0
-              }
             },
             "primeDominanceShadowAudit": {
               "fighter": "Cris Cyborg",
@@ -99889,7 +99889,7 @@
                 "Compact championship window with shallow-division compression.",
                 "UFC-only window."
               ],
-              "appliedAt": "2026-07-13T23:52:28.920Z"
+              "appliedAt": "2026-07-14T01:28:45.780Z"
             },
             "longevityLegacyScore": 7.78,
             "longevityRaw30": 7.78,
@@ -100292,6 +100292,25 @@
               "benchmarkCredit": 14.1,
               "sourceMode": "canonical-registry-fixed-audit"
             },
+            "divisionEraDepth": {
+              "version": "division-era-depth-live-20260713c-evidence-only",
+              "sourceShadowVersion": "division-era-depth-shadow-20260712e-roster-72",
+              "depthIndex": 0.75,
+              "adjustment": -3,
+              "componentRatios": {
+                "qualifiedActivePool": 0.55,
+                "ranksSixToFifteenElo": 0.55,
+                "contenderDiversity": 0.55
+              },
+              "matchedPrimeFightCount": 9,
+              "sampledDivisions": [
+                "WW"
+              ],
+              "primeStart": "1993-11-12",
+              "primeEnd": "1995-04-07",
+              "openPrime": false,
+              "womenFeatherweightTreatment": null
+            },
             "primeRecordContext": "Art Jimmerson → Ken Shamrock II",
             "canonicalPrimeRecordAudit": {
               "fighter": "Royce Gracie",
@@ -100323,25 +100342,6 @@
               "scoreRebuildCompleted": false,
               "scoreRebuildVersion": null,
               "version": "canonical-prime-records-20260713b-mirror-sync"
-            },
-            "divisionEraDepth": {
-              "version": "division-era-depth-live-20260713c-evidence-only",
-              "sourceShadowVersion": "division-era-depth-shadow-20260712e-roster-72",
-              "depthIndex": 0.75,
-              "adjustment": -3,
-              "componentRatios": {
-                "qualifiedActivePool": 0.55,
-                "ranksSixToFifteenElo": 0.55,
-                "contenderDiversity": 0.55
-              },
-              "matchedPrimeFightCount": 9,
-              "sampledDivisions": [
-                "WW"
-              ],
-              "primeStart": "1993-11-12",
-              "primeEnd": "1995-04-07",
-              "openPrime": false,
-              "womenFeatherweightTreatment": null
             },
             "primeDominanceShadowAudit": {
               "fighter": "Royce Gracie",
@@ -100642,7 +100642,7 @@
                 "Tournament-champion status boost is offset by a major embryonic-era division multiplier.",
                 "UFC-only tournament-era window."
               ],
-              "appliedAt": "2026-07-13T23:52:28.912Z"
+              "appliedAt": "2026-07-14T01:28:45.776Z"
             },
             "apexPeakAudit": {
               "score": 5.4,
@@ -101243,6 +101243,25 @@
               "benchmarkCredit": 14.1,
               "sourceMode": "canonical-registry-fixed-audit"
             },
+            "divisionEraDepth": {
+              "version": "division-era-depth-live-20260713c-evidence-only",
+              "sourceShadowVersion": "division-era-depth-shadow-20260712e-roster-72",
+              "depthIndex": 0.75,
+              "adjustment": -3,
+              "componentRatios": {
+                "qualifiedActivePool": 0.55,
+                "ranksSixToFifteenElo": 0.55,
+                "contenderDiversity": 0.55
+              },
+              "matchedPrimeFightCount": 9,
+              "sampledDivisions": [
+                "WW"
+              ],
+              "primeStart": "1993-11-12",
+              "primeEnd": "1995-04-07",
+              "openPrime": false,
+              "womenFeatherweightTreatment": null
+            },
             "canonicalPrimeRecordAudit": {
               "fighter": "Royce Gracie",
               "record": "11-0-1",
@@ -101273,25 +101292,6 @@
               "scoreRebuildCompleted": false,
               "scoreRebuildVersion": null,
               "version": "canonical-prime-records-20260713b-mirror-sync"
-            },
-            "divisionEraDepth": {
-              "version": "division-era-depth-live-20260713c-evidence-only",
-              "sourceShadowVersion": "division-era-depth-shadow-20260712e-roster-72",
-              "depthIndex": 0.75,
-              "adjustment": -3,
-              "componentRatios": {
-                "qualifiedActivePool": 0.55,
-                "ranksSixToFifteenElo": 0.55,
-                "contenderDiversity": 0.55
-              },
-              "matchedPrimeFightCount": 9,
-              "sampledDivisions": [
-                "WW"
-              ],
-              "primeStart": "1993-11-12",
-              "primeEnd": "1995-04-07",
-              "openPrime": false,
-              "womenFeatherweightTreatment": null
             },
             "primeDominanceShadowAudit": {
               "fighter": "Royce Gracie",
@@ -101591,7 +101591,7 @@
                 "Tournament-champion status boost is offset by a major embryonic-era division multiplier.",
                 "UFC-only tournament-era window."
               ],
-              "appliedAt": "2026-07-13T23:52:28.921Z"
+              "appliedAt": "2026-07-14T01:28:45.780Z"
             },
             "longevityLegacyScore": 2.84,
             "longevityRaw30": 2.83,
@@ -108848,7 +108848,7 @@
     "mutatesRanks": false,
     "mutatesOvr": false,
     "scoreAuthority": "assets/js/scoring-engine.js",
-    "appliedAt": "2026-07-13T23:52:27.243Z",
+    "appliedAt": "2026-07-14T01:28:44.479Z",
     "authoritativeScoreOwner": "scoring-engine.js",
     "runtimeRole": "evidence-and-detail-provider",
     "authoritativeScoreWrites": false,
@@ -108859,8 +108859,8 @@
     "version": "scoring-ownership-finalizer-20260713f-no-legacy-repair",
     "applied": true,
     "status": "clean",
-    "attemptCount": 23,
-    "elapsedMs": 8946,
+    "attemptCount": 20,
+    "elapsedMs": 7204,
     "minimumSettleMs": 2000,
     "settled": true,
     "mode": "single-authority-copy-boundary-no-legacy-repair",
@@ -108962,7 +108962,7 @@
           "overallOvr": 90
         }
       ],
-      "appliedAt": "2026-07-13T23:52:30.267Z"
+      "appliedAt": "2026-07-14T01:28:46.849Z"
     },
     "engineParity": {
       "missingCanonical": [],
@@ -108992,7 +108992,7 @@
       "division-era-depth-finalizer",
       "legacy-final-score-engine"
     ],
-    "appliedAt": "2026-07-13T23:52:33.199Z"
+    "appliedAt": "2026-07-14T01:28:49.098Z"
   },
   "engine": {
     "version": "scoring-engine-20260713c-finalizer-only",
@@ -109043,7 +109043,7 @@
       {
         "reason": "stage3-scoring-ownership-finalizer",
         "accepted": true,
-        "at": "2026-07-13T23:52:30.261Z"
+        "at": "2026-07-14T01:28:46.844Z"
       }
     ],
     "latest": {
@@ -109125,7 +109125,7 @@
           "overallOvr": 90
         }
       ],
-      "appliedAt": "2026-07-13T23:52:30.267Z"
+      "appliedAt": "2026-07-14T01:28:46.849Z"
     }
   },
   "consistency": {

@@ -1,7 +1,7 @@
 // App-facing watch links/stats plus the canonical late-registry bridge.
 (function(){
   'use strict';
-  const VERSION='royce-app-links-stats-20260713d-more-user-watch-links';
+  const VERSION='royce-app-links-stats-20260713e-werdum-watch-links';
   if(typeof DISPLAY_OVERRIDES==='undefined') return;
 
   const fighter='Royce Gracie';
@@ -19,6 +19,12 @@
       signatureFightUrl:'https://www.youtube.com/watch?v=P65mAfnAFhk',
       signatureFightLabel:'Watch Signature Fight',
       watchUrl:'https://youtube.com/shorts/ZAhtyftLDFM?is=CW0y_Eq4kDAXaN8b',
+      watchLabel:'Watch Moment'
+    },
+    'Fabricio Werdum':{
+      signatureFightUrl:'https://youtu.be/EA_u7Uge45Q?is=CP-pl6SIga7UptkJ',
+      signatureFightLabel:'Watch Signature Fight',
+      watchUrl:'https://youtube.com/shorts/cayrTy79QNo?is=zOsLCkArO7f6rMcx',
       watchLabel:'Watch Moment'
     },
     'Glover Teixeira':{
