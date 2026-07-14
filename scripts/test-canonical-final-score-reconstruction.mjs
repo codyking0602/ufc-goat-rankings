@@ -105,11 +105,15 @@ assert.equal(report.completeCategoryInputCount,73);
 assert.equal(report.blockedFighterCount,0);
 assert.deepEqual(JSON.parse(JSON.stringify(report.blockedFighters)),[]);
 assert.equal(report.frozenFormulaControlCount,72);
-assert.equal(report.frozenFormulaMismatchCount,0,'The frozen total must be reproduced by the historical 35/27.5/27.5/10 formula plus Apex, Loss Penalty, and Era Depth');
+assert.equal(report.frozenFormulaMismatchCount,0,'The frozen total must still be reproduced by the historical 35/27.5/27.5/10 formula plus Apex, Loss Penalty, and Era Depth');
 assert.equal(report.frozenFormulaParityCount,72);
-assert.equal(report.finalWeightDecisionRequired,true);
+assert.equal(report.approvedCandidate,'approvedFinalEngine');
+assert.deepEqual(JSON.parse(JSON.stringify(report.approvedWeights)),{championship:35,opponentQuality:25,primeDominance:30,longevity:10});
+assert.equal(report.finalWeightDecisionRequired,false);
+assert.equal(report.finalWeightsApproved,true);
 assert.equal(report.ovrCalculationDeferred,true);
 assert.equal(report.rankingPromotionBlocked,true);
+assert.match(report.rankingPromotionBlockReason,/OVR reconstruction/i);
 assert.equal(report.liveDataUnchanged,true);
 assert.equal(JSON.stringify(context.window.RANKING_DATA),liveBefore,'Final-score audit must not mutate live ranking data');
 assert.equal(report.mutatesRankingData,false);
@@ -124,6 +128,9 @@ for(const candidate of Object.values(report.candidateReports)){
   assert.equal(candidate.menTopFifteen.length,15);
   assert.ok(candidate.womenTopTen.length>=4);
 }
+assert.equal(report.candidateReports.historicalFinalEngine.approved,false);
+assert.equal(report.candidateReports.approvedFinalEngine.approved,true);
+assert.equal(report.approvedReport.approved,true);
 
 const leon=report.entryFor('Leon Edwards');
 assert.equal(leon.status,'complete');
@@ -136,16 +143,29 @@ assert.equal(leon.scores.apex!==null,true);
 assert.equal(leon.scores.penalty!==null,true);
 assert.equal(leon.scores.eraDepth,0.06);
 const historicalLeon=report.candidateReports.historicalFinalEngine.rows.find(row=>row.fighter==='Leon Edwards');
+const approvedLeon=report.candidateReports.approvedFinalEngine.rows.find(row=>row.fighter==='Leon Edwards');
 assert.ok(historicalLeon);
+assert.ok(approvedLeon);
 assert.equal(historicalLeon.totalScore,48.15);
-assert.ok(Number.isInteger(historicalLeon.calculatedRank));
+assert.equal(approvedLeon.totalScore,47.76);
+assert.ok(Number.isInteger(approvedLeon.calculatedRank));
+
+const cejudo=report.candidateReports.approvedFinalEngine.rows.find(row=>row.fighter==='Henry Cejudo');
+const royce=report.candidateReports.approvedFinalEngine.rows.find(row=>row.fighter==='Royce Gracie');
+const khabib=report.candidateReports.approvedFinalEngine.rows.find(row=>row.fighter==='Khabib Nurmagomedov');
+assert.equal(cejudo.scores.primeDominance,22.52);
+assert.equal(cejudo.scores.longevity,4.77);
+assert.equal(cejudo.scores.penalty,-1.69);
+assert.equal(royce.scores.primeDominance,25.12);
+assert.ok(royce.calculatedRank>23,'Tournament compression should move Royce below his inflated historical-weight reconstruction rank.');
+assert.ok(khabib.calculatedRank<=8,'The approved Prime Dominance tilt should restore Khabib to the intended top-eight range.');
 
 const clean=value=>JSON.parse(JSON.stringify(value,(key,nested)=>typeof nested==='function'?undefined:nested));
 await fs.mkdir('docs',{recursive:true});
 await fs.writeFile('docs/canonical-final-score-reconstruction.json',`${JSON.stringify(clean(report),null,2)}\n`,'utf8');
 
 const candidateSections=Object.entries(report.candidateReports).flatMap(([name,candidate])=>[
-  `## ${name}`,'',
+  `## ${name}${candidate.approved?' — APPROVED':''}`,'',
   `- Weights: Championship **${candidate.weights.championship}**, Opponent Quality **${candidate.weights.opponentQuality}**, Prime Dominance **${candidate.weights.primeDominance}**, Longevity **${candidate.weights.longevity}**`,
   `- Complete ranked fighters: **${candidate.completeFighterCount}**`,
   `- Mean absolute delta from frozen total: **${candidate.meanAbsoluteTotalDelta.toFixed(2)}**`,
@@ -156,30 +176,29 @@ const candidateSections=Object.entries(report.candidateReports).flatMap(([name,c
   ''
 ]);
 const markdown=[
-  '# Canonical Final Score Reconstruction — Complete 73-Fighter Audit','',
+  '# Canonical Final Score Reconstruction — Approved 73-Fighter Audit','',
   `- Fighters audited: **${report.fighterCount}**`,
   `- Complete locked-category inputs: **${report.completeCategoryInputCount}**`,
   `- Blocked fighters: **${report.blockedFighterCount}**`,
   `- Frozen total formula parity: **${report.frozenFormulaParityCount}/${report.frozenFormulaControlCount}**`,
-  `- Leon Edwards historical-baseline total: **${historicalLeon.totalScore.toFixed(2)}**`,
-  `- Leon Edwards historical-baseline rank: **#${historicalLeon.calculatedRank}**`,
+  `- Approved final weights: **35 Championship / 25 Opponent Quality / 30 Prime Dominance / 10 Longevity**`,
+  `- Leon Edwards approved-weight total: **${approvedLeon.totalScore.toFixed(2)}**`,
+  `- Leon Edwards approved-weight rank: **#${approvedLeon.calculatedRank}**`,
   `- Live ranking payload changed: **${report.liveDataUnchanged?'No':'Yes'}**`,'',
-  '## Recovered frozen total formula','',
-  `**${report.frozenFormula}**`,'',
-  'This proves how the current frozen control total was generated. It includes Apex, Loss Penalty, and Division-Era Depth and serves as the migration baseline—not automatic approval of the final post-refactor weighting choice.','',
-  '## Leon Edwards approved completion','',
-  '- Championship: **5.98**',
-  '- Opponent Quality: **21.01**',
-  '- Prime Dominance: **16.40**',
-  `- Historical-weight total: **${historicalLeon.totalScore.toFixed(2)}**`,
-  `- Historical-weight rank: **#${historicalLeon.calculatedRank}**`,'',
+  '## Approved final total formula','',
+  `**${report.approvedFormula}**`,'',
+  'The historical formula remains in the audit solely to prove migration parity. Cody approved the slight transfer from Opponent Quality to Prime Dominance after the Cejudo prime correction and tournament-event compression were installed.','',
+  '## Structural spotlight','',
+  `- Henry Cejudo Prime Dominance: **${cejudo.scores.primeDominance.toFixed(2)}**; approved rank **#${cejudo.calculatedRank}**`,
+  `- Royce Gracie Prime Dominance after tournament compression: **${royce.scores.primeDominance.toFixed(2)}**; approved rank **#${royce.calculatedRank}**`,
+  `- Khabib Nurmagomedov approved rank: **#${khabib.calculatedRank}**`,'',
   '## Blocking category gaps','',
-  '**None. All 73 fighters now have complete category inputs.**','',
+  '**None. All 73 fighters have complete category inputs.**','',
   ...candidateSections,
   '## Promotion status','',
-  '- Final weight decision: **required**',
-  '- OVR reconstruction: **deferred until total formula approval**',
-  '- Rank/OVR/live promotion: **blocked**',
+  '- Final weight decision: **approved**',
+  '- OVR reconstruction: **next required step**',
+  '- Rank/OVR/live promotion: **blocked pending OVR approval**',
   '- No live score, rank, OVR, profile, or Compare Mode value was changed.',''
 ].join('\n');
 await fs.writeFile('docs/canonical-final-score-reconstruction.md',markdown,'utf8');
@@ -192,7 +211,13 @@ console.log(JSON.stringify({
   blockedFighters:report.blockedFighters,
   frozenFormulaParityCount:report.frozenFormulaParityCount,
   frozenFormulaControlCount:report.frozenFormulaControlCount,
-  candidates:Object.fromEntries(Object.entries(report.candidateReports).map(([name,row])=>[name,{weights:row.weights,meanAbsoluteTotalDelta:row.meanAbsoluteTotalDelta,exactFrozenRankMatchCount:row.exactFrozenRankMatchCount,menTopFifteen:row.menTopFifteen,womenTopTen:row.womenTopTen,biggestRankMovers:row.biggestRankMovers.slice(0,10)}])),
-  leon:{scores:leon.scores,totalScore:historicalLeon.totalScore,calculatedRank:historicalLeon.calculatedRank},
+  approvedCandidate:report.approvedCandidate,
+  candidates:Object.fromEntries(Object.entries(report.candidateReports).map(([name,row])=>[name,{approved:row.approved,weights:row.weights,meanAbsoluteTotalDelta:row.meanAbsoluteTotalDelta,exactFrozenRankMatchCount:row.exactFrozenRankMatchCount,menTopFifteen:row.menTopFifteen,womenTopTen:row.womenTopTen,biggestRankMovers:row.biggestRankMovers.slice(0,10)}])),
+  spotlight:{
+    cejudo:{primeDominance:cejudo.scores.primeDominance,totalScore:cejudo.totalScore,calculatedRank:cejudo.calculatedRank},
+    royce:{primeDominance:royce.scores.primeDominance,totalScore:royce.totalScore,calculatedRank:royce.calculatedRank},
+    khabib:{totalScore:khabib.totalScore,calculatedRank:khabib.calculatedRank},
+    leon:{scores:leon.scores,totalScore:approvedLeon.totalScore,calculatedRank:approvedLeon.calculatedRank}
+  },
   liveDataUnchanged:report.liveDataUnchanged
 },null,2));
