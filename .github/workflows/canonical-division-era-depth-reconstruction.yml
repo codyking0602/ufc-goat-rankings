@@ -7,6 +7,7 @@ on:
       - 'assets/data/canonical-fighter-facts*.js'
       - 'assets/data/canonical-scoring-records.js'
       - 'assets/data/division-era-depth-shadow.js'
+      - 'assets/data/canonical-division-era-depth-approved-resolutions.js'
       - 'assets/data/canonical-division-era-depth-reconstruction.js'
       - 'scripts/reconstruct-leon-division-era-depth.mjs'
       - 'scripts/test-canonical-division-era-depth-reconstruction.mjs'
@@ -28,6 +29,7 @@ jobs:
           node-version: '22'
       - name: Check syntax
         run: |
+          node --check assets/data/canonical-division-era-depth-approved-resolutions.js
           node --check assets/data/canonical-division-era-depth-reconstruction.js
           node --check scripts/reconstruct-leon-division-era-depth.mjs
           node --check scripts/test-canonical-division-era-depth-reconstruction.mjs
