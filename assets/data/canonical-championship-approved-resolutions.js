@@ -1,12 +1,12 @@
 // Final Cody-approved Championship review resolutions.
-// Diagnostic-only overlay: resolves the one missed-weight special-context row and excludes Leon Edwards from this audit.
+// Diagnostic-only overlay: resolves reviewed Championship judgments without mutating live ranking data.
 (function(){
   'use strict';
 
-  const VERSION='canonical-championship-approved-resolutions-20260714a-final-four';
+  const VERSION='canonical-championship-approved-resolutions-20260714b-leon-approved';
   const report=window.UFC_CANONICAL_CHAMPIONSHIP_RECONSTRUCTION;
   const facts=window.UFC_CANONICAL_FIGHTER_FACTS;
-  const EXCLUDED_FIGHTERS=new Set(['Leon Edwards']);
+  const EXCLUDED_FIGHTERS=new Set();
   const clean=value=>String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
   const round2=value=>Math.round((Number(value||0)+Number.EPSILON)*100)/100;
 
@@ -49,6 +49,53 @@
     provenance:'canonical fighter facts + Cody-approved Championship resolution'
   });
 
+  const leon=report.fighters.find(row=>row.fighter==='Leon Edwards');
+  const leonRecord=facts.get('Leon Edwards');
+  if(!leon||!leonRecord)fail('Leon Edwards Championship reconstruction row or canonical record is missing.');
+
+  const leonJudgments=[
+    {date:'2022-08-20',opponent:'Kamaru Usman',context:1,note:'Full Championship credit for dethroning the reigning welterweight champion.'},
+    {date:'2023-03-18',opponent:'Kamaru Usman',context:.95,note:'Cody-approved modest five-percent repeat-opponent and immediate-trilogy context discount.'},
+    {date:'2023-12-16',opponent:'Colby Covington',context:.95,note:'Cody-approved modest five-percent challenger and fight-context discount while preserving full title-defense significance.'}
+  ];
+
+  leonJudgments.forEach(judgment=>{
+    const fight=(leonRecord.fights||[]).find(row=>row.date===judgment.date&&clean(row.opponent)===clean(judgment.opponent));
+    const input=(leon.inputs||[]).find(row=>(fight&&row.fightId===fight.id)||(row.date===judgment.date&&clean(row.opponent)===clean(judgment.opponent)));
+    if(!fight||!input)fail(`Leon Edwards vs. ${judgment.opponent} on ${judgment.date} could not be resolved.`);
+    if(fight.scoringDisposition!=='count-win'||fight?.championshipContext?.type!=='normal')fail(`Leon Edwards vs. ${judgment.opponent} is not a canonical normal UFC title win.`);
+    Object.assign(input,{
+      fightId:fight.id,
+      opponent:fight.opponent,
+      date:fight.date,
+      event:fight.event,
+      titleType:'normal',
+      canonicalTitleType:'normal',
+      officialTitleFight:true,
+      baseCredit:1,
+      opponentStrength:1,
+      eraTitleContextAdjustment:judgment.context,
+      legacyCombinedAdjustment:judgment.context,
+      finalAdjustedCredit:judgment.context,
+      sourceAdjustedCredit:judgment.context,
+      reviewStatus:'locked',
+      notes:judgment.note,
+      matchMethod:'cody-approved-canonical-date-opponent-match',
+      matchConfidence:1,
+      judgmentStatus:'cody-approved-factual-completion',
+      decompositionStatus:'opponent strength and title context stored separately',
+      titleTypeMatchesCanonical:true,
+      provenance:'canonical fighter facts + Cody-approved Leon Edwards Championship resolution'
+    });
+  });
+
+  leon.originalControlScore=null;
+  leon.currentScore=5.98;
+  leon.approvedScoreCorrection=5.98;
+  leon.controlSource='cody-approved-factual-completion';
+  leon.scoreControlType='cody-approved-recovered-judgment';
+  leon.classification='Cody-approved recovered Championship judgment';
+
   const calculate=row=>report.calculateChampionship(row.inputs,report.benchmarkCredit);
   const recalculateFighter=row=>{
     const calculated=calculate(row);
@@ -74,20 +121,26 @@
   report.fighters=report.fighters.filter(row=>!EXCLUDED_FIGHTERS.has(row.fighter));
 
   const byKey=new Map(report.fighters.map(row=>[clean(row.fighter),row]));
-  const controlled=report.fighters.filter(row=>row.controlSource==='canonical-scoring-records');
-  const exact=controlled.filter(row=>Number.isFinite(row.difference)&&Math.abs(row.difference)<=.01);
-  const differences=controlled.filter(row=>!Number.isFinite(row.difference)||Math.abs(row.difference)>.01);
+  const frozenControlled=report.fighters.filter(row=>row.controlSource==='canonical-scoring-records');
+  const effectiveControlled=report.fighters.filter(row=>Number.isFinite(row.currentScore));
+  const frozenExact=frozenControlled.filter(row=>Number.isFinite(row.difference)&&Math.abs(row.difference)<=.01);
+  const effectiveExact=effectiveControlled.filter(row=>Number.isFinite(row.difference)&&Math.abs(row.difference)<=.01);
+  const differences=effectiveControlled.filter(row=>!Number.isFinite(row.difference)||Math.abs(row.difference)>.01);
   const issueRows=report.fighters.filter(row=>row.issues.length);
+  const leonResolved=byKey.get(clean('Leon Edwards'));
+  if(!leonResolved||leonResolved.adjustedTitleCredit!==2.9||leonResolved.reconstructedScore!==5.98||leonResolved.titleFightWins!==3)fail('Leon Edwards approved Championship inputs did not reconstruct 2.90 credit / 5.98 score / three title-fight wins.');
 
   Object.assign(report,{
     version:VERSION,
     status:'shadow-reconstruction-approved-conflicts-resolved',
     fighterCount:report.fighters.length,
-    canonicalControlCoverage:controlled.length,
-    controlCoverage:controlled.length,
+    canonicalControlCoverage:frozenControlled.length,
+    effectiveControlCoverage:effectiveControlled.length,
+    controlCoverage:effectiveControlled.length,
     missingControlFighters:[],
     excludedFighters:Array.from(EXCLUDED_FIGHTERS),
-    exactParityCount:exact.length,
+    frozenExactParityCount:frozenExact.length,
+    exactParityCount:effectiveExact.length,
     controlledDifferenceCount:differences.length,
     unresolvedControlCount:0,
     approvedScoreCorrectionCount:report.fighters.filter(row=>row.approvedScoreCorrection!==null).length,
@@ -96,9 +149,10 @@
     pendingCanonicalJudgmentCount:report.fighters.reduce((sum,row)=>sum+row.pendingJudgmentRows.length,0),
     unmatchedLegacyRowCount:report.fighters.reduce((sum,row)=>sum+row.unmatchedLegacyRows.length,0),
     titleTypeConflictCount:report.fighters.reduce((sum,row)=>sum+row.titleTypeConflicts.length,0),
-    approvedConflictCount:8,
+    approvedConflictCount:9,
     remainingConflictCount:0,
     allApprovedConflictsResolved:true,
+    leonApproval:{fighter:'Leon Edwards',adjustedTitleCredit:2.90,championshipScore:5.98,titleFightWins:3,approvedBy:'Cody',approvedAt:'2026-07-14'},
     liveDataUnchanged:true,
     mutatesRankingData:false,
     randyTrace:byKey.get(clean('Randy Couture'))||null,
@@ -112,10 +166,13 @@
     remainingConflictCount:report.remainingConflictCount,
     excludedFighters:report.excludedFighters,
     fighterCount:report.fighterCount,
+    canonicalControlCoverage:report.canonicalControlCoverage,
+    effectiveControlCoverage:report.effectiveControlCoverage,
     exactParityCount:report.exactParityCount,
     pendingCanonicalJudgmentCount:report.pendingCanonicalJudgmentCount,
     unmatchedLegacyRowCount:report.unmatchedLegacyRowCount,
     titleTypeConflictCount:report.titleTypeConflictCount,
+    leonApproval:report.leonApproval,
     mutatesRankingData:false
   };
   window.UFC_CANONICAL_CHAMPIONSHIP_APPROVED_RESOLUTIONS=result;
