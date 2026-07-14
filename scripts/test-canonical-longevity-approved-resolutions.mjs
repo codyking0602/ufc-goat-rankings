@@ -43,10 +43,11 @@ const approval=context.window.UFC_CANONICAL_LONGEVITY_APPROVED_RESOLUTIONS;
 const era=context.window.UFC_FIGHTER_ERA_LEDGERS;
 assert.equal(report?.applied,true);
 assert.equal(approval?.applied,true);
-assert.equal(approval.resolvedCount,17);
+assert.equal(approval.resolvedCount,18);
 assert.equal(approval.allFourteenResolved,true);
 assert.equal(approval.allSeventeenResolved,true);
-assert.equal(approval.lossContextWindowResolutionCount,3);
+assert.equal(approval.allEighteenResolved,true);
+assert.equal(approval.lossContextWindowResolutionCount,4);
 assert.deepEqual(JSON.parse(JSON.stringify(approval.unresolved)),[]);
 assert.equal(report.missingJudgmentInputCount,0);
 assert.equal(report.eraLedgerCoverage,73);
@@ -104,6 +105,18 @@ assert.equal(sean.window.start,'2021-07-31');
 assert.equal(sean.window.startLabel,'Uriah Hall');
 assert.ok(report.entryFor('Sean Strickland').resolution?.approved);
 
+const cejudo=era.entryFor('Henry Cejudo');
+const cejudoRow=report.entryFor('Henry Cejudo');
+assert.equal(cejudo.window.start,'2018-08-04');
+assert.equal(cejudo.window.startLabel,'Demetrious Johnson II');
+assert.equal(cejudo.window.end,'2020-05-09');
+assert.equal(cejudo.window.endLabel,'Dominick Cruz');
+assert.equal(cejudo.window.endType,'retirement_win');
+assert.equal(cejudoRow.reconstructedScore,4.77);
+assert.equal(cejudoRow.stats.cappedGapCount,0);
+assert.equal(cejudoRow.stats.activeEliteYears,1.77);
+assert.ok(cejudoRow.resolution?.approved);
+
 const cruz=era.entryFor('Dominick Cruz');
 assert.equal(cruz.longevity.gapAdjustedMonths,66.1);
 assert.equal(cruz.longevity.approvedCanonicalAcceptance.score,14.05);
@@ -122,5 +135,6 @@ console.log(JSON.stringify({
   randy:report.entryFor('Randy Couture').reconstructedScore,
   israel:report.entryFor('Israel Adesanya').reconstructedScore,
   sean:report.entryFor('Sean Strickland').reconstructedScore,
+  cejudo:cejudoRow.reconstructedScore,
   liveDataUnchanged:report.liveDataUnchanged
 },null,2));
