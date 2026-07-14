@@ -28,11 +28,11 @@ Phase 1 remains evidence-only. Canonical records must not mutate any live score,
 
 ## Current Phase 1 coverage
 
-Batch seven brings the canonical registry to:
+Batch eight brings the canonical registry to:
 
-- **48 audited UFC-only fighter ledgers**
-- **970 complete UFC fight rows**
-- **65.75% of the 73 current identities**
+- **58 audited UFC-only fighter ledgers**
+- **1,146 complete UFC fight rows**
+- **79.45% of the 73 current identities**
 - **zero deliberate live ranking or presentation mutations**
 
 Completed fighters:
@@ -85,27 +85,37 @@ Completed fighters:
 46. Aljamain Sterling
 47. Robert Whittaker
 48. Lyoto Machida
+49. Khamzat Chimaev
+50. Leon Edwards
+51. Sean O'Malley
+52. Sean Strickland
+53. Michael Bisping
+54. Dan Henderson
+55. Chael Sonnen
+56. Robbie Lawler
+57. Frank Shamrock
+58. Royce Gracie
 
-## Batch seven
+## Batch eight
 
 Logical batch files:
 
-- `assets/data/canonical-fighter-facts-batch-seven-data-a.js`
-- `assets/data/canonical-fighter-facts-batch-seven-data-b.js`
-- `assets/data/canonical-fighter-facts-batch-seven.js`
+- `assets/data/canonical-fighter-facts-batch-eight-data-a.js`
+- `assets/data/canonical-fighter-facts-batch-eight-data-b.js`
+- `assets/data/canonical-fighter-facts-batch-eight.js`
 
-The batch contains **199 complete UFC fight rows**:
+The batch contains **176 complete UFC fight rows**:
 
-- Tony Ferguson: 24 UFC bouts, 15-9. Prime runs from Gleison Tibau through the Justin Gaethje interim-title loss.
-- T.J. Dillashaw: 18 UFC bouts, 13-5. Five official UFC title-fight wins; Cejudo is a downward-division elite loss and Sterling closes the prime.
-- Tito Ortiz: 27 UFC bouts, 15-11-1. Six official title-fight wins and 5.20 adjusted title wins; non-UFC fights excluded.
-- Junior dos Santos: 23 UFC bouts, 15-8. Werdum starts the prime and Overeem closes it; later heavyweight skid is post-prime.
-- Brock Lesnar: 8 UFC bouts, 4-3 with 1 NC. Couture through Cain is the complete title-prime; Mark Hunt remains a no contest.
-- Dricus du Plessis: 10 UFC bouts, 9-1 through Khamzat Chimaev. The scheduled July 18, 2026 Kamaru Usman fight is excluded.
-- Tyron Woodley: 16 UFC bouts, 9-6-1. Lawler through Gilbert Burns is the locked prime window.
-- Aljamain Sterling: 24 UFC bouts, 19-5 through Youssef Zalal. The prime remains open after Ortega and Zalal featherweight wins.
-- Robert Whittaker: 25 UFC bouts, 18-7 through the UFC 329 win over Nikita Krylov. Krylov is a post-prime light-heavyweight win.
-- Lyoto Machida: 24 UFC bouts, 16-8. Thiago Silva through C.B. Dollaway is the locked UFC prime; Bellator and other non-UFC fights are excluded.
+- Khamzat Chimaev: 10 UFC bouts, 9-1. Burns starts the elite prime; the Sean Strickland title loss is counted inside the prime.
+- Leon Edwards: 20 UFC bouts, 14-5 with 1 NC. Rafael dos Anjos starts the prime, Belal Muhammad closes it, and the Brady/Prates losses are post-prime.
+- Sean O'Malley: 16 UFC bouts, 12-3 with 1 NC. The prime remains open through the Song Yadong and Aiemann Zahabi rebound wins.
+- Sean Strickland: 25 UFC bouts, 18-7. The current ledger includes Anthony Hernandez and the Khamzat title win; the prime remains open.
+- Michael Bisping: 29 UFC bouts, 20-9. Brian Stann starts the prime, the GSP title loss closes it, and Gastelum is post-prime short-turnaround context.
+- Dan Henderson: 18 UFC bouts, 9-9. UFC 17 tournament wins count as UFC wins but not official title-fight wins; every non-UFC result is excluded.
+- Chael Sonnen: 14 UFC bouts, 7-7. The Anderson title run is the prime core, Jones is reduced upward-division title-loss context, and later UFC work is post-prime.
+- Robbie Lawler: 26 UFC bouts, 14-11 with 1 NC. The Steve Berger result is preserved as a no contest and the Koscheck-to-Woodley comeback title run is the locked prime.
+- Frank Shamrock: 5 UFC bouts, 5-0. All five were UFC title-fight wins, deriving 4.25 adjusted title wins after opponent-strength review; non-UFC achievements are excluded.
+- Royce Gracie: 13 UFC bouts, 11-1-1. Eleven tournament wins count as UFC wins but not official title-fight wins; the Matt Hughes loss is post-prime.
 
 ## Required validation
 
@@ -123,24 +133,34 @@ Every future batch must:
 10. Load the batch before `UFC_RANKING_DATA_PATCHES_READY` resolves.
 11. Run the dedicated canonical workflow plus the browser ownership and runtime scoring audits.
 
-## Exact next ten-fighter batch
+## Exact remaining fifteen-fighter batch
 
-1. Khamzat Chimaev
-2. Leon Edwards
-3. Sean O'Malley
-4. Sean Strickland
-5. Michael Bisping
-6. Dan Henderson
-7. Chael Sonnen
-8. Robbie Lawler
-9. Frank Shamrock
-10. Royce Gracie
+The remaining canonical migrations are the full women’s roster:
 
-After that batch, the remaining canonical migrations are the fifteen women’s identities.
+1. Amanda Nunes
+2. Valentina Shevchenko
+3. Zhang Weili
+4. Rose Namajunas
+5. Miesha Tate
+6. Mackenzie Dern
+7. Kayla Harrison
+8. Jessica Andrade
+9. Alexa Grasso
+10. Julianna Peña
+11. Carla Esparza
+12. Holly Holm
+13. Joanna Jedrzejczyk
+14. Ronda Rousey
+15. Cris Cyborg
 
-## Known unrelated CI debt
+Complete these as one final Phase 1 batch or split them into two mechanically identical sub-batches if file size becomes unwieldy. Preserve UFC-only scope, including full exclusion of Cyborg's Strikeforce and other non-UFC achievements.
+
+## Current validation status
+
+Batch eight's dedicated 176-fight derivation workflow, all earlier canonical batches, the Fighter Data Ownership Baseline, Runtime Scoring Snapshot, Runtime Scoring Audit, and Scoring Architecture Guardrails passed on the batch-eight head. Six-Category Runtime Audit was still completing when this handoff was updated.
+
+Known unrelated existing failure:
 
 - Picks UI Smoke: `Underdog Lock no-odds state is missing`
-- Scoring Architecture Guardrails: committed exact-runtime snapshot parity can drift when generated report timestamps/build output change
 
-These are not canonical fighter-ledger failures. The canonical and runtime scoring checks must still remain green.
+This is not a canonical fighter-ledger failure. The canonical and runtime scoring checks must remain green.
