@@ -2,7 +2,7 @@
 // Shadow-only: classifies approved differences and leaves live scores untouched.
 (function(){
   'use strict';
-  const VERSION='canonical-longevity-approved-resolutions-20260714b-all-seventeen';
+  const VERSION='canonical-longevity-approved-resolutions-20260714c-all-eighteen';
   const report=window.UFC_CANONICAL_LONGEVITY_RECONSTRUCTION;
   const longevityEraApproval=window.UFC_FIGHTER_ERA_LEDGER_APPROVED_LONGEVITY_RESOLUTIONS;
   const lossContextEraApproval=window.UFC_FIGHTER_ERA_LEDGER_APPROVED_LOSS_CONTEXT_RESOLUTIONS;
@@ -13,10 +13,14 @@
 
   const ACCEPTED=new Map(Object.entries(longevityEraApproval.acceptedCleanScores||{}));
   const LONGEVITY_WINDOW_RESOLUTIONS=new Set(longevityEraApproval.windowChanges||[]);
-  const LOSS_CONTEXT_WINDOW_RESOLUTIONS=new Set(lossContextEraApproval.windowChanges||[]);
+  const LOSS_CONTEXT_WINDOW_RESOLUTIONS=new Set([
+    ...(lossContextEraApproval.windowChanges||[]),
+    ...(lossContextEraApproval.primeWindowChanges||[])
+  ]);
   const WINDOW_RESOLUTIONS=new Set([...LONGEVITY_WINDOW_RESOLUTIONS,...LOSS_CONTEXT_WINDOW_RESOLUTIONS]);
   const ORIGINAL_FOURTEEN=new Set([...ACCEPTED.keys(),...LONGEVITY_WINDOW_RESOLUTIONS]);
-  const ALL_RESOLVED=new Set([...ORIGINAL_FOURTEEN,...LOSS_CONTEXT_WINDOW_RESOLUTIONS]);
+  const ORIGINAL_SEVENTEEN=new Set([...ORIGINAL_FOURTEEN,...(lossContextEraApproval.windowChanges||[])]);
+  const ALL_RESOLVED=new Set([...ORIGINAL_SEVENTEEN,...(lossContextEraApproval.primeWindowChanges||[])]);
   const resolved=[];
 
   report.fighters.forEach(row=>{
@@ -47,13 +51,15 @@
   report.approvedResolvedFighters=resolved.map(row=>row.fighter);
   report.unresolvedAfterApproval=report.missingJudgmentInputs.map(row=>row.fighter);
   report.allFourteenResolved=Array.from(ORIGINAL_FOURTEEN).every(fighter=>resolved.some(row=>row.fighter===fighter));
-  report.allSeventeenResolved=resolved.length===17&&report.missingJudgmentInputs.length===0;
+  report.allSeventeenResolved=Array.from(ORIGINAL_SEVENTEEN).every(fighter=>resolved.some(row=>row.fighter===fighter));
+  report.allEighteenResolved=Array.from(ALL_RESOLVED).every(fighter=>resolved.some(row=>row.fighter===fighter))&&resolved.length===ALL_RESOLVED.size&&report.missingJudgmentInputs.length===0;
   report.resolutions=resolved;
 
   window.UFC_CANONICAL_LONGEVITY_APPROVED_RESOLUTIONS={
     version:VERSION,applied:true,approvedBy:'Cody',approvedAt:'2026-07-14',resolvedCount:resolved.length,
     resolved,unresolved:report.unresolvedAfterApproval,allFourteenResolved:report.allFourteenResolved,
-    allSeventeenResolved:report.allSeventeenResolved,lossContextWindowResolutionCount:LOSS_CONTEXT_WINDOW_RESOLUTIONS.size,
+    allSeventeenResolved:report.allSeventeenResolved,allEighteenResolved:report.allEighteenResolved,
+    lossContextWindowResolutionCount:LOSS_CONTEXT_WINDOW_RESOLUTIONS.size,
     mutatesScores:false,liveDataUnchanged:report.liveDataUnchanged,appliedAt:new Date().toISOString()
   };
   document.documentElement.setAttribute('data-canonical-longevity-approved-resolutions',VERSION);
