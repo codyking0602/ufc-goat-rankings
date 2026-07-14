@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-division-era-depth-reconstruction-20260714a-initial-audit';
+  const VERSION='canonical-division-era-depth-reconstruction-20260714b-signed-zero-normalized';
   const SHADOW_VERSION='division-era-depth-shadow-20260712e-roster-72';
   const RULES=Object.freeze({
     purpose:'Measure competitive depth within each UFC division over time without duplicating the separate division-strength treatment.',
@@ -17,7 +17,7 @@
 
   const key=value=>String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/[“”\"]/g,'').replace(/[^a-z0-9' ]+/g,' ').replace(/\s+/g,' ').trim();
   const num=value=>Number.isFinite(Number(value))?Number(value):null;
-  const round2=value=>Math.round((Number(value||0)+Number.EPSILON)*100)/100;
+  const round2=value=>{const rounded=Math.round((Number(value||0)+Number.EPSILON)*100)/100;return Object.is(rounded,-0)?0:rounded;};
   const meaningful=(left,right,tolerance=.01)=>left!==null&&right!==null&&Math.abs(left-right)>tolerance;
 
   function calculateCurve(depthIndex){
