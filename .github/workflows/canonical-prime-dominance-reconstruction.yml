@@ -7,6 +7,8 @@ on:
       - 'assets/data/canonical-fighter-facts*.js'
       - 'assets/data/canonical-scoring-records.js'
       - 'assets/data/fighter-era-ledgers.js'
+      - 'assets/data/fighter-era-ledger-approved-longevity-resolutions.js'
+      - 'assets/data/fighter-era-ledger-approved-loss-context-resolutions.js'
       - 'assets/data/prime-windows.js'
       - 'assets/data/prime-round-control-audit.js'
       - 'assets/data/prime-dominance-ledgers.js'
@@ -30,6 +32,8 @@ jobs:
           node-version: '22'
       - name: Check syntax
         run: |
+          node --check assets/data/fighter-era-ledger-approved-longevity-resolutions.js
+          node --check assets/data/fighter-era-ledger-approved-loss-context-resolutions.js
           node --check assets/data/canonical-prime-dominance-reconstruction.js
           node --check scripts/test-canonical-prime-dominance-reconstruction.mjs
       - name: Audit approved 72-fighter Prime Dominance model
