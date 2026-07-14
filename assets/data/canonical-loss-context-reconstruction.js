@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-loss-context-reconstruction-20260714b-dq-exceptions';
+  const VERSION='canonical-loss-context-reconstruction-20260714c-approved-ten';
   const JUDGMENT_LOCK_VERSION='loss-context-hybrid-judgment-lock-20260711a';
   const RULES=Object.freeze({
     prePrimeElite:-0.75,
@@ -44,6 +44,10 @@
 
   function controlFor(fighter){
     return window.UFC_CANONICAL_SCORING_RECORDS?.entryFor?.(fighter)||null;
+  }
+
+  function resolutionFor(fighter){
+    return window.UFC_CANONICAL_LOSS_CONTEXT_APPROVED_RESOLUTIONS?.entryFor?.(fighter)||null;
   }
 
   function phaseFor(ledger,fight){
@@ -205,23 +209,36 @@
   function build(){
     const facts=window.UFC_CANONICAL_FIGHTER_FACTS;
     const controls=window.UFC_CANONICAL_SCORING_RECORDS;
+    const approvals=window.UFC_CANONICAL_LOSS_CONTEXT_APPROVED_RESOLUTIONS;
     const before=window.RANKING_DATA?JSON.stringify(window.RANKING_DATA):null;
-    if(!facts?.list||!controls?.entryFor){
-      return {version:VERSION,applied:false,error:'Canonical fighter facts or frozen scoring controls are missing.',mutatesRankingData:false};
+    if(!facts?.list||!controls?.entryFor||!approvals?.applied){
+      return {version:VERSION,applied:false,error:'Canonical fighter facts, frozen scoring controls, or approved Loss Context resolutions are missing.',mutatesRankingData:false};
     }
 
     const fighters=facts.list().map(record=>{
       const calculation=calculateLossContext(record);
       const control=controlFor(record.fighter);
+      const resolution=resolutionFor(record.fighter);
       const currentPenalty=Number.isFinite(Number(control?.penalty))?round2(control.penalty):null;
       const reconstructedPenalty=Number.isFinite(Number(calculation.score))?round2(calculation.score):null;
       const difference=currentPenalty===null||reconstructedPenalty===null?null:round2(reconstructedPenalty-currentPenalty);
+      const approvedPenalty=Number.isFinite(Number(resolution?.approvedPenalty))?round2(resolution.approvedPenalty):null;
+      const approvedDifference=approvedPenalty===null||reconstructedPenalty===null?null:round2(reconstructedPenalty-approvedPenalty);
+      const approvalTolerance=Number.isFinite(Number(resolution?.tolerance))?Number(resolution.tolerance):.01;
+      const resolvedByApproval=Boolean(resolution)&&approvedDifference!==null&&Math.abs(approvedDifference)<=approvalTolerance+.000001;
       const issues=[];
       calculation.blockers.forEach(reason=>issues.push({classification:'factual-blocker',reason}));
-      if(currentPenalty===null)issues.push({classification:'missing-frozen-control',reason:'No frozen canonical Loss Context control exists.'});
+      if(currentPenalty===null&&!resolution)issues.push({classification:'missing-frozen-control',reason:'No frozen canonical Loss Context control exists.'});
       if(calculation.reviewEvents?.length)issues.push({classification:'reviewed-judgment-input',reason:`${calculation.reviewEvents.length} loss row(s) retain review/high-risk-review status.`});
-      if(difference!==null&&Math.abs(difference)>=MEANINGFUL_DELTA)issues.push({classification:'meaningful-model-delta',reason:'Canonical fight-level reconstruction differs from the frozen approved hybrid penalty.'});
-      const status=calculation.blockers.length?'blocked':currentPenalty===null?'missing-control':Math.abs(difference)<=.01?'exact-parity':Math.abs(difference)>=MEANINGFUL_DELTA?'meaningful-delta':'rounding-delta';
+      if(difference!==null&&Math.abs(difference)>=MEANINGFUL_DELTA&&!resolution)issues.push({classification:'meaningful-model-delta',reason:'Canonical fight-level reconstruction differs from the frozen approved hybrid penalty.'});
+      if(resolution&&!resolvedByApproval)issues.push({classification:'approved-resolution-mismatch',reason:`Reconstructed ${reconstructedPenalty} differs from approved ${approvedPenalty} beyond tolerance ${approvalTolerance}.`});
+      if(resolvedByApproval)issues.push({classification:resolution.classification,reason:resolution.decision});
+      const status=calculation.blockers.length?'blocked'
+        :resolution?(resolvedByApproval?'approved-resolved':'approved-resolution-mismatch')
+        :currentPenalty===null?'missing-control'
+        :Math.abs(difference)<=.01?'exact-parity'
+        :Math.abs(difference)>=MEANINGFUL_DELTA?'meaningful-delta'
+        :'rounding-delta';
       return {
         fighter:record.fighter,
         board:record.board,
@@ -229,8 +246,14 @@
         currentPenalty,
         reconstructedPenalty,
         difference,
+        approvedPenalty,
+        approvedDifference,
+        approvalTolerance,
+        resolvedByApproval,
+        effectiveApprovedPenalty:approvedPenalty??currentPenalty,
         exactParity:difference!==null&&Math.abs(difference)<=.01,
         meaningfulDelta:difference!==null&&Math.abs(difference)>=MEANINGFUL_DELTA,
+        resolution,
         issues,
         stats:calculation,
         mutatesScores:false
@@ -239,19 +262,24 @@
 
     const byKey=new Map(fighters.map(row=>[key(row.fighter),row]));
     const controlled=fighters.filter(row=>row.currentPenalty!==null);
+    const effectiveControlled=fighters.filter(row=>row.effectiveApprovedPenalty!==null);
     const scored=fighters.filter(row=>Number.isFinite(row.reconstructedPenalty));
     const meaningful=fighters.filter(row=>row.meaningfulDelta).sort((a,b)=>Math.abs(Number(b.difference))-Math.abs(Number(a.difference))||String(a.fighter).localeCompare(String(b.fighter)));
-    const pending=fighters.filter(row=>row.status==='blocked'||row.status==='missing-control'||row.meaningfulDelta||row.stats.reviewEvents?.length);
+    const approvedRows=fighters.filter(row=>row.resolution);
+    const approvalMismatches=approvedRows.filter(row=>!row.resolvedByApproval);
+    const pending=fighters.filter(row=>row.status==='blocked'||row.status==='missing-control'||row.status==='meaningful-delta'||row.status==='approved-resolution-mismatch');
     return {
       version:VERSION,
       applied:true,
       mode:'shadow-only-approved-hybrid-loss-context-reconstruction',
       judgmentLockVersion:JUDGMENT_LOCK_VERSION,
+      approvalVersion:approvals.version,
       formula:'Raw per-loss rules -> average of two worst losses + loss burden per UFC fight through prime -> repeated-prime-loss floor -> 6-point cap -> strong-division relief up to 15%.',
       rules:RULES,
       fighterCount:fighters.length,
       scoredFighterCount:scored.length,
       controlCoverage:controlled.length,
+      effectiveControlCoverage:effectiveControlled.length,
       eraLedgerCoverage:fighters.filter(row=>!row.stats.blockers?.includes('missing-shared-era-ledger')).length,
       phaseSource:'fighter-era-ledgers',
       exposureSource:'canonical UFC fight facts through the shared Era Ledger endpoint; no contests excluded',
@@ -260,6 +288,9 @@
       meaningfulDeltaCount:meaningful.length,
       blockedCount:fighters.filter(row=>row.status==='blocked').length,
       missingControlCount:fighters.filter(row=>row.status==='missing-control').length,
+      approvedResolutionCount:approvedRows.length,
+      approvedResolutionMismatchCount:approvalMismatches.length,
+      unresolvedDecisionCount:pending.length,
       reviewJudgmentFighterCount:fighters.filter(row=>row.stats.reviewEvents?.length).length,
       technicalExceptionCount:fighters.reduce((sum,row)=>sum+row.stats.events.filter(event=>event.technicalException).length,0),
       nonCompetitiveExemptionCount:fighters.reduce((sum,row)=>sum+row.stats.events.filter(event=>event.competitive===false).length,0),
@@ -271,6 +302,8 @@
       totalCapAppliedCount:fighters.filter(row=>Number(row.stats.preDivision)>=RULES.totalMax-.01).length,
       fighters,
       meaningfulDeltas:meaningful,
+      approvedResolutions:approvedRows,
+      approvedResolutionMismatches:approvalMismatches,
       pendingReviewRows:pending,
       entryFor:fighter=>byKey.get(key(fighter))||null,
       calculateLossContext,
@@ -286,6 +319,6 @@
   const report=build();
   window.UFC_CANONICAL_LOSS_CONTEXT_RECONSTRUCTION=report;
   if(typeof document!=='undefined'&&document?.documentElement?.setAttribute){
-    document.documentElement.setAttribute('data-canonical-loss-context-reconstruction',`${VERSION}-${report.scoredFighterCount||0}-${report.meaningfulDeltaCount||0}`);
+    document.documentElement.setAttribute('data-canonical-loss-context-reconstruction',`${VERSION}-${report.scoredFighterCount||0}-${report.unresolvedDecisionCount||0}`);
   }
 })();
