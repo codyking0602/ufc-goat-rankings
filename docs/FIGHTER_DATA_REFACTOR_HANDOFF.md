@@ -142,7 +142,7 @@ Known unrelated existing CI debt:
 - Picks UI Smoke: `Underdog Lock no-odds state is missing`
 - Scoring Architecture Guardrails contains pre-existing exact-parity/build-label debt; canonical and runtime scoring checks are unaffected
 
-At handoff close, the fighter-data branch was **behind `main` by nine unrelated commits**: recurring Octagon Verdict feed rebuilds plus user watch-link updates. Sync latest `main` before the next migration batch, then rerun the canonical and browser gates.
+At handoff close, the fighter-data branch was **behind `main` by thirteen unrelated commits**: recurring Octagon Verdict feed rebuilds, user watch-link updates, and generated scoring reports. Sync latest `main` before the next migration batch, then rerun the canonical and browser gates.
 
 ## Phase 1 checklist
 
@@ -155,7 +155,7 @@ At handoff close, the fighter-data branch was **behind `main` by nine unrelated 
 
 ## Resume prompt
 
-> Continue the fighter-data refactor in `codyking0602/ufc-goat-rankings`. Read `docs/FIGHTER_DATA_REFACTOR_HANDOFF.md` and `docs/fighter-data-ownership-baseline.md` first. Continue on `agent/fighter-data-phase-1` unless the handoff says it merged. Sync latest `main` before editing because the branch was nine unrelated feed/watch-link commits behind at the last handoff. Preserve all 28 completed canonical ledgers. Work in ten-fighter batches. Never store rank, total, OVR, expected values, calculated aggregates, or hand-written snapshot stats in canonical fighter records. Keep migrations evidence-only until the calculated live pipeline is deliberately connected.
+> Continue the fighter-data refactor in `codyking0602/ufc-goat-rankings`. Read `docs/FIGHTER_DATA_REFACTOR_HANDOFF.md` and `docs/fighter-data-ownership-baseline.md` first. Continue on `agent/fighter-data-phase-1` unless the handoff says it merged. Sync latest `main` before editing because the branch was thirteen unrelated feed/watch-link/report commits behind at the last handoff. Preserve all 28 completed canonical ledgers. Work in ten-fighter batches. Never store rank, total, OVR, expected values, calculated aggregates, or hand-written snapshot stats in canonical fighter records. Keep migrations evidence-only until the calculated live pipeline is deliberately connected.
 
 ## Exact next task
 
