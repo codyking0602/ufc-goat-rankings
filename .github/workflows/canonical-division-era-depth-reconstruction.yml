@@ -8,6 +8,7 @@ on:
       - 'assets/data/canonical-scoring-records.js'
       - 'assets/data/division-era-depth-shadow.js'
       - 'assets/data/canonical-division-era-depth-reconstruction.js'
+      - 'scripts/reconstruct-leon-division-era-depth.mjs'
       - 'scripts/test-canonical-division-era-depth-reconstruction.mjs'
       - 'docs/DIVISION_ERA_DEPTH_RECONSTRUCTION.md'
       - '.github/workflows/canonical-division-era-depth-reconstruction.yml'
@@ -28,7 +29,10 @@ jobs:
       - name: Check syntax
         run: |
           node --check assets/data/canonical-division-era-depth-reconstruction.js
+          node --check scripts/reconstruct-leon-division-era-depth.mjs
           node --check scripts/test-canonical-division-era-depth-reconstruction.mjs
+      - name: Reconstruct Leon from pinned empirical source
+        run: node scripts/reconstruct-leon-division-era-depth.mjs > /tmp/leon-division-era-depth.log 2>&1
       - name: Audit full-roster Division-Era Depth model
         run: node scripts/test-canonical-division-era-depth-reconstruction.mjs > /tmp/canonical-division-era-depth-reconstruction.log 2>&1
       - name: Upload reconstruction report
@@ -37,6 +41,8 @@ jobs:
         with:
           name: canonical-division-era-depth-reconstruction-report
           path: |
+            /tmp/leon-division-era-depth.log
+            /tmp/leon-division-era-depth.json
             /tmp/canonical-division-era-depth-reconstruction.log
             docs/canonical-division-era-depth-reconstruction.json
             docs/canonical-division-era-depth-reconstruction.md
