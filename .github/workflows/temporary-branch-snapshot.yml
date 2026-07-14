@@ -1,0 +1,29 @@
+name: Temporary Branch Snapshot
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Upload branch source snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: temporary-branch-source-snapshot
+          path: |
+            assets/data
+            assets/js
+            scripts
+            docs
+            index.html
+            package.json
+            package-lock.json
+          if-no-files-found: error
+          retention-days: 1
