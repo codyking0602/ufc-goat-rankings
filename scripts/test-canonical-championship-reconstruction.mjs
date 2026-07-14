@@ -34,6 +34,7 @@ const context=vm.createContext({window,document,console,Date,JSON,Map,Set,Object
 for(const file of files)vm.runInContext(await fs.readFile(file,'utf8'),context,{filename:file});
 
 const report=context.window.UFC_CANONICAL_CHAMPIONSHIP_RECONSTRUCTION;
+if(!report?.applied)console.log('CHAMPIONSHIP_RECONSTRUCTION_PREREQUISITE_FAILURE',JSON.stringify(report,null,2));
 assert.equal(report?.applied,true,'Championship reconstruction should calculate successfully');
 
 const clean=value=>JSON.parse(JSON.stringify(value,(key,nested)=>typeof nested==='function'?undefined:nested));
@@ -99,13 +100,7 @@ console.log(JSON.stringify({
   titleTypeConflictCount:report.titleTypeConflictCount,
   proposedModelChangeCount:report.proposedModelChangeCount,
   liveDataUnchanged:report.liveDataUnchanged,
-  randy:{
-    approved:randy?.currentScore,
-    reconstructed:randy?.reconstructedScore,
-    adjustedTitleCredit:randy?.adjustedTitleCredit,
-    titleFightWins:randy?.titleFightWins,
-    issues:randy?.issues
-  },
+  randy:{approved:randy?.currentScore,reconstructed:randy?.reconstructedScore,adjustedTitleCredit:randy?.adjustedTitleCredit,titleFightWins:randy?.titleFightWins,issues:randy?.issues},
   differences:report.fighters.filter(row=>Math.abs(row.difference)>.01).map(row=>({fighter:row.fighter,currentScore:row.currentScore,reconstructedScore:row.reconstructedScore,difference:row.difference,issues:row.issues})),
   provenanceIssues:report.fighters.filter(row=>row.issues.length).map(row=>({fighter:row.fighter,issues:row.issues}))
 },null,2));
