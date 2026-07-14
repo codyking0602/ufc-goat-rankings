@@ -91,66 +91,34 @@ const era=context.window.UFC_FIGHTER_ERA_LEDGERS.entryFor('Leon Edwards');
 assert.equal(era.window.start,'2019-07-20');
 assert.equal(era.window.end,'2025-03-22');
 
-// Opponent Quality: this is purely mechanical from the reviewed canonical quality tiers.
+// Opponent Quality: purely mechanical from reviewed canonical quality tiers.
 const countedWins=occurrenceRows(record.fights.filter(fight=>fight.scoringDisposition==='count-win'));
 const oqInputs=countedWins.map(({fight,occurrence})=>{
   const tier=fight?.opponentContext?.qualityTier||'none';
-  return {
-    fightId:fight.id,
-    fighter:'Leon Edwards',
-    opponent:fight.opponent,
-    date:fight.date,
-    event:fight.event,
-    division:fight.division,
-    occurrence,
-    baseTier:tier,
-    baseCredit:Number(STANDARD_CREDITS[tier]||0),
-    adjustments:[],
-    finalCredit:Number(STANDARD_CREDITS[tier]||0),
-    judgmentSource:'canonical-reviewed-quality-tier',
-    judgmentStatus:'factual-completion-candidate',
-    reviewStatus:fight?.opponentContext?.reviewStatus||'locked',
-    note:fight?.opponentContext?.note||'',
-    canonicalQualityTier:tier,
-    championStatus:fight?.opponentContext?.championStatus||'unknown',
-    resultContext:fight?.method?.category==='dq'?'official-dq-win':'normal-official-win',
-    provenance:'canonical UFC fight fact and reviewed opponentContext quality tier'
-  };
+  return {fightId:fight.id,fighter:'Leon Edwards',opponent:fight.opponent,date:fight.date,event:fight.event,division:fight.division,occurrence,baseTier:tier,baseCredit:Number(STANDARD_CREDITS[tier]||0),adjustments:[],finalCredit:Number(STANDARD_CREDITS[tier]||0),judgmentSource:'canonical-reviewed-quality-tier',judgmentStatus:'factual-completion-candidate',reviewStatus:fight?.opponentContext?.reviewStatus||'locked',note:fight?.opponentContext?.note||'',canonicalQualityTier:tier,championStatus:fight?.opponentContext?.championStatus||'unknown',resultContext:fight?.method?.category==='dq'?'official-dq-win':'normal-official-win',provenance:'canonical UFC fight fact and reviewed opponentContext quality tier'};
 });
 const oqReport=context.window.UFC_CANONICAL_OPPONENT_QUALITY_RECONSTRUCTION;
 const oq=oqReport.calculateOpponentQuality(oqInputs,0,oqReport.benchmarkCredit);
 
-// Prime Dominance: use the already-approved 9/9/5/7 calculator and the shared Era Ledger.
+// Prime Dominance: calculate from the approved formula, but retain any factual round blockers.
 const primeReport=context.window.UFC_CANONICAL_PRIME_DOMINANCE_RECONSTRUCTION;
 const prime=primeReport.calculatePrimeDominance(record);
 assert.equal(prime.windowSource,'fighter-era-ledgers');
 assert.equal(prime.windowValid,true);
-assert.equal(prime.missingRoundRows.length,0);
-assert.equal(prime.eliteLevelValidation.missingRoundRows.length,0);
+const primeRoundBlockers=[...prime.missingRoundRows.map(row=>({...row,scope:'prime-round-control'})),...prime.eliteLevelValidation.missingRoundRows.map(row=>({...row,scope:'elite-stage-round-control'}))];
 
 // Championship: two normal title wins exist, but per-title context is judgment-based.
 const titleWins=record.fights.filter(fight=>fight.scoringDisposition==='count-win'&&fight?.championshipContext?.fighterEligible!==false&&['normal','interim','vacant-undisputed','second-division-undisputed','vacant-second-division'].includes(fight?.championshipContext?.type));
-assert.deepEqual(titleWins.map(fight=>fight.id),['2022-08-20-kamaru-usman-ii','2023-03-18-kamaru-usman-iii']);
 const championshipScenarios=[
   {
-    name:'recommended',
-    classification:'recovered judgment requiring Cody approval',
-    decision:'Full credit for dethroning the reigning champion; a modest 5% repeat-opponent/context discount on the immediate trilogy defense.',
-    rows:[
-      {fightId:titleWins[0].id,opponent:titleWins[0].opponent,date:titleWins[0].date,titleType:'normal',baseCredit:1,opponentStrength:1,eraTitleContextAdjustment:1,finalAdjustedCredit:1},
-      {fightId:titleWins[1].id,opponent:titleWins[1].opponent,date:titleWins[1].date,titleType:'normal',baseCredit:1,opponentStrength:1,eraTitleContextAdjustment:.95,finalAdjustedCredit:.95}
-    ]
+    name:'recommended',classification:'recovered judgment requiring Cody approval',decision:'Full credit for dethroning the reigning champion; a modest 5% repeat-opponent/context discount on the immediate trilogy defense.',
+    rows:titleWins.map((fight,index)=>({fightId:fight.id,opponent:fight.opponent,date:fight.date,titleType:fight.championshipContext.type,baseCredit:1,opponentStrength:1,eraTitleContextAdjustment:index===0?1:.95,finalAdjustedCredit:index===0?1:.95}))
   },
   {
-    name:'full-credit-alternative',
-    classification:'alternative judgment',
-    decision:'Treat both undisputed title wins over Usman as full-value normal title wins.',
-    rows:titleWins.map(fight=>({fightId:fight.id,opponent:fight.opponent,date:fight.date,titleType:'normal',baseCredit:1,opponentStrength:1,eraTitleContextAdjustment:1,finalAdjustedCredit:1}))
+    name:'full-credit-alternative',classification:'alternative judgment',decision:'Treat both undisputed title wins over Usman as full-value normal title wins.',
+    rows:titleWins.map(fight=>({fightId:fight.id,opponent:fight.opponent,date:fight.date,titleType:fight.championshipContext.type,baseCredit:1,opponentStrength:1,eraTitleContextAdjustment:1,finalAdjustedCredit:1}))
   }
-].map(scenario=>{
-  const adjustedTitleCredit=scenario.rows.reduce((sum,row)=>sum+row.finalAdjustedCredit,0);
-  return {...scenario,adjustedTitleCredit:round2(adjustedTitleCredit),score:round2((adjustedTitleCredit/CHAMPIONSHIP_BENCHMARK)*CATEGORY_MAX)};
-});
+].map(scenario=>{const adjustedTitleCredit=scenario.rows.reduce((sum,row)=>sum+row.finalAdjustedCredit,0);return {...scenario,adjustedTitleCredit:round2(adjustedTitleCredit),score:round2((adjustedTitleCredit/CHAMPIONSHIP_BENCHMARK)*CATEGORY_MAX)};});
 
 const longevity=context.window.UFC_CANONICAL_LONGEVITY_RECONSTRUCTION.entryFor('Leon Edwards');
 const loss=context.window.UFC_CANONICAL_LOSS_CONTEXT_RECONSTRUCTION.entryFor('Leon Edwards');
@@ -162,67 +130,19 @@ assert.ok(Number.isFinite(apex.reconstructedScore));
 assert.equal(eraDepth.canonicalAdjustment,.06);
 
 function historicalTotal(championshipScore){
-  return round2(
-    championshipScore/CATEGORY_MAX*HISTORICAL_WEIGHTS.championship+
-    oq.score/CATEGORY_MAX*HISTORICAL_WEIGHTS.opponentQuality+
-    prime.score/CATEGORY_MAX*HISTORICAL_WEIGHTS.primeDominance+
-    longevity.reconstructedScore/CATEGORY_MAX*HISTORICAL_WEIGHTS.longevity+
-    apex.reconstructedScore+
-    loss.reconstructedPenalty+
-    eraDepth.canonicalAdjustment
-  );
+  return round2(championshipScore/CATEGORY_MAX*HISTORICAL_WEIGHTS.championship+oq.score/CATEGORY_MAX*HISTORICAL_WEIGHTS.opponentQuality+prime.score/CATEGORY_MAX*HISTORICAL_WEIGHTS.primeDominance+longevity.reconstructedScore/CATEGORY_MAX*HISTORICAL_WEIGHTS.longevity+apex.reconstructedScore+loss.reconstructedPenalty+eraDepth.canonicalAdjustment);
 }
 
 const report={
-  version:'leon-final-category-gap-audit-20260714a',
-  fighter:'Leon Edwards',
-  shadowOnly:true,
-  phaseSource:'fighter-era-ledgers',
+  version:'leon-final-category-gap-audit-20260714b-round-blocker-visible',fighter:'Leon Edwards',shadowOnly:true,phaseSource:'fighter-era-ledgers',
   sharedEra:{start:era.window.start,startLabel:era.window.startLabel,end:era.window.end,endLabel:era.window.endLabel,endType:era.window.endType},
-  championship:{
-    categoryMax:CATEGORY_MAX,
-    benchmarkCredit:CHAMPIONSHIP_BENCHMARK,
-    canonicalTitleWins:titleWins.map(fight=>({fightId:fight.id,opponent:fight.opponent,date:fight.date,event:fight.event,type:fight.championshipContext.type,qualityTier:fight.opponentContext?.qualityTier||null,championStatus:fight.opponentContext?.championStatus||null})),
-    scenarios:championshipScenarios
-  },
-  opponentQuality:{
-    classification:'factual completion',
-    benchmarkCredit:oq.benchmarkCredit,
-    categoryMax:oq.categoryMax,
-    rawCredit:oq.rawCredit,
-    diminishedCredit:oq.diminishedCredit,
-    score:oq.score,
-    topFiveWins:oq.rows.filter(row=>row.finalCredit>=1).length,
-    championLevelWins:oq.rows.filter(row=>row.finalCredit>=1.15).length,
-    rankedQualityWins:oq.rows.filter(row=>row.finalCredit>=.65).length,
-    wins:oq.rows
-  },
-  primeDominance:{
-    classification:'factual completion under the approved formula',
-    score:prime.score,
-    rawScore:prime.rawScore,
-    sampleMultiplier:prime.sampleMultiplier,
-    samplePercent:prime.samplePercent,
-    recordText:prime.recordText,
-    recordPct:prime.recordPct,
-    roundControlPct:prime.roundControlPct,
-    finishPressurePct:prime.finishPressurePct,
-    scoredFightCount:prime.scoredFightCount,
-    components:prime.components,
-    eliteLevelValidation:prime.eliteLevelValidation,
-    primeFights:prime.primeFights
-  },
-  alreadyLocked:{
-    longevity:longevity.reconstructedScore,
-    apex:apex.reconstructedScore,
-    penalty:loss.reconstructedPenalty,
-    eraDepth:eraDepth.canonicalAdjustment
-  },
+  championship:{categoryMax:CATEGORY_MAX,benchmarkCredit:CHAMPIONSHIP_BENCHMARK,canonicalTitleWins:titleWins.map(fight=>({fightId:fight.id,opponent:fight.opponent,date:fight.date,event:fight.event,type:fight.championshipContext.type,qualityTier:fight.opponentContext?.qualityTier||null,championStatus:fight.opponentContext?.championStatus||null})),scenarios:championshipScenarios},
+  opponentQuality:{classification:'factual completion',benchmarkCredit:oq.benchmarkCredit,categoryMax:oq.categoryMax,rawCredit:oq.rawCredit,diminishedCredit:oq.diminishedCredit,score:oq.score,topFiveWins:oq.rows.filter(row=>row.finalCredit>=1).length,championLevelWins:oq.rows.filter(row=>row.finalCredit>=1.15).length,rankedQualityWins:oq.rows.filter(row=>row.finalCredit>=.65).length,wins:oq.rows},
+  primeDominance:{classification:primeRoundBlockers.length?'factual completion blocked by missing round audit':'factual completion under the approved formula',score:prime.score,rawScore:prime.rawScore,sampleMultiplier:prime.sampleMultiplier,samplePercent:prime.samplePercent,recordText:prime.recordText,recordPct:prime.recordPct,roundControlPct:prime.roundControlPct,finishPressurePct:prime.finishPressurePct,scoredFightCount:prime.scoredFightCount,components:prime.components,eliteLevelValidation:prime.eliteLevelValidation,primeFights:prime.primeFights,roundBlockers:primeRoundBlockers},
+  alreadyLocked:{longevity:longevity.reconstructedScore,apex:apex.reconstructedScore,penalty:loss.reconstructedPenalty,eraDepth:eraDepth.canonicalAdjustment},
   projectedHistoricalTotals:Object.fromEntries(championshipScenarios.map(scenario=>[scenario.name,historicalTotal(scenario.score)])),
-  liveDataUnchanged:true,
-  mutatesScores:false,
-  mutatesRanks:false,
-  mutatesOvr:false
+  blockers:primeRoundBlockers.length?[{category:'Prime Dominance',type:'missing-round-audit',rows:primeRoundBlockers}]:[],
+  liveDataUnchanged:true,mutatesScores:false,mutatesRanks:false,mutatesOvr:false
 };
 
 await fs.writeFile('/tmp/leon-final-category-gap-audit.json',`${JSON.stringify(report,null,2)}\n`,'utf8');
