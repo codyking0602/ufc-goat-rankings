@@ -19,7 +19,7 @@ permissions:
   contents: read
 
 jobs:
-  reconstruct-approved-prime-dominance:
+  reconstruct-candidate-prime-dominance:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -31,7 +31,7 @@ jobs:
         run: |
           node --check assets/data/canonical-prime-dominance-reconstruction.js
           node --check scripts/test-canonical-prime-dominance-reconstruction.mjs
-      - name: Reconstruct 72-fighter approved Prime Dominance audit
+      - name: Reconstruct 72-fighter Prime Dominance audit
         run: node scripts/test-canonical-prime-dominance-reconstruction.mjs > /tmp/canonical-prime-dominance-reconstruction.log 2>&1
       - name: Upload Prime Dominance reconstruction report
         if: always()
