@@ -34,6 +34,7 @@ jobs:
         run: |
           node --check assets/data/fighter-era-ledger-approved-longevity-resolutions.js
           node --check assets/data/fighter-era-ledger-approved-loss-context-resolutions.js
+          node --check assets/data/canonical-fighter-facts-prime-round-corrections.js
           node --check assets/data/canonical-prime-dominance-reconstruction.js
           node --check scripts/test-canonical-prime-dominance-reconstruction.mjs
       - name: Audit approved 72-fighter Prime Dominance model
