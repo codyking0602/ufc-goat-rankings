@@ -7,10 +7,13 @@ on:
       - 'assets/data/canonical-fighter-facts*.js'
       - 'assets/data/canonical-scoring-records.js'
       - 'assets/data/fighter-era-ledgers.js'
+      - 'assets/data/fighter-era-ledger-approved-longevity-resolutions.js'
       - 'assets/data/longevity-canonical-recalculation.js'
       - 'assets/data/longevity-shadow-scorer.js'
       - 'assets/data/canonical-longevity-reconstruction.js'
+      - 'assets/data/canonical-longevity-approved-resolutions.js'
       - 'scripts/test-canonical-longevity-reconstruction.mjs'
+      - 'scripts/test-canonical-longevity-approved-resolutions.mjs'
       - 'docs/LONGEVITY_RECONSTRUCTION.md'
       - '.github/workflows/canonical-longevity-reconstruction.yml'
   workflow_dispatch:
@@ -30,9 +33,14 @@ jobs:
       - name: Check syntax
         run: |
           node --check assets/data/canonical-longevity-reconstruction.js
+          node --check assets/data/fighter-era-ledger-approved-longevity-resolutions.js
+          node --check assets/data/canonical-longevity-approved-resolutions.js
           node --check scripts/test-canonical-longevity-reconstruction.mjs
-      - name: Audit full-roster Longevity model
+          node --check scripts/test-canonical-longevity-approved-resolutions.mjs
+      - name: Audit recovered Longevity model before approvals
         run: node scripts/test-canonical-longevity-reconstruction.mjs > /tmp/canonical-longevity-reconstruction.log 2>&1
+      - name: Audit all fourteen approved resolutions
+        run: node scripts/test-canonical-longevity-approved-resolutions.mjs > /tmp/canonical-longevity-approved-resolutions.log 2>&1
       - name: Upload Longevity reconstruction report
         if: always()
         uses: actions/upload-artifact@v4
@@ -40,6 +48,7 @@ jobs:
           name: canonical-longevity-reconstruction-report
           path: |
             /tmp/canonical-longevity-reconstruction.log
+            /tmp/canonical-longevity-approved-resolutions.log
             docs/canonical-longevity-reconstruction.json
             docs/canonical-longevity-reconstruction.md
           if-no-files-found: warn
