@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-apex-reconstruction-20260714c-all-row-surfaces';
+  const VERSION='canonical-apex-reconstruction-20260714d-approved-batch-one';
   const RULES=Object.freeze({
     window:'Best two UFC wins within 24 months',
     totalMax:6.00,
@@ -55,7 +55,13 @@
     return window.UFC_CANONICAL_SCORING_RECORDS?.entryFor?.(fighter)||null;
   }
 
+  function approvedJudgmentFor(fighter){
+    return window.UFC_CANONICAL_APEX_APPROVED_JUDGMENTS?.entryFor?.(fighter)||null;
+  }
+
   function auditFor(fighter){
+    const approved=approvedJudgmentFor(fighter);
+    if(approved?.audit)return approved.audit;
     const target=key(fighter);
     const row=allRows().find(item=>key(item.fighter)===target&&item.apexPeakAudit)||null;
     return row?.apexPeakAudit||null;
@@ -68,18 +74,24 @@
 
   function matchPerformance(record,performance){
     const year=performanceYear(performance);
-    const opponentMatches=(record?.fights||[]).filter(fight=>sameOpponent(fight?.opponent,performance?.label));
+    const fights=record?.fights||[];
+    const statedFightId=String(performance?.fightId||'').trim()||null;
+    const idMatch=statedFightId?fights.find(fight=>fight?.id===statedFightId)||null:null;
+    const opponentMatches=fights.filter(fight=>sameOpponent(fight?.opponent,performance?.label));
+    const exactDateMatches=validDate(performance?.date)?opponentMatches.filter(fight=>fight?.date===performance.date):[];
     const yearMatches=year?opponentMatches.filter(fight=>String(fight?.date||'').startsWith(year)):opponentMatches;
-    const candidates=yearMatches.length?yearMatches:opponentMatches;
+    const candidates=idMatch?[idMatch]:exactDateMatches.length?exactDateMatches:yearMatches.length?yearMatches:opponentMatches;
     const win=candidates.find(fight=>fight?.officialResult==='win'&&fight?.scoringDisposition==='count-win')||null;
     const any=candidates[0]||null;
     const fight=win||any;
     const issues=[];
+    if(statedFightId&&!idMatch)issues.push(`selected fight id does not match a canonical UFC fight (${statedFightId})`);
     if(!fight)issues.push('selected performance does not match a canonical UFC fight');
     else if(fight.officialResult!=='win'||fight.scoringDisposition!=='count-win')issues.push(`selected performance is not a counted UFC win (${fight.officialResult}/${fight.scoringDisposition})`);
     if(fight?.officialResult==='no-contest'||fight?.scoringDisposition==='excluded-no-contest')issues.push('selected performance is a no contest');
     return {
       label:performance?.label||null,
+      statedFightId,
       statedDate:performance?.date||null,
       rating:Number.isFinite(Number(performance?.rating))?Number(performance.rating):null,
       matchedFightId:fight?.id||null,
@@ -140,7 +152,7 @@
     if(windowCheck===null)issues.push('cannot verify 24-month window from canonical fight dates');
     else if(!windowCheck.passed)issues.push(`selected wins exceed 24 months (${windowCheck.start} to ${windowCheck.end}; boundary ${windowCheck.boundary})`);
 
-    const factualIssues=issues.filter(issue=>/does not match|not a counted UFC win|no contest|exactly two|numeric ratings|24 months|cannot verify/i.test(issue));
+    const factualIssues=issues.filter(issue=>/fight id|does not match|not a counted UFC win|no contest|exactly two|numeric ratings|24 months|cannot verify/i.test(issue));
     const formulaIssues=issues.filter(issue=>/component|maximum|exceeds/i.test(issue));
     return {
       score:auditScore,
@@ -163,7 +175,7 @@
         notes:audit.notes||null
       },
       manualNumericAdjustment:0,
-      provenance:'canonical UFC fight facts + locked Apex audit'
+      provenance:audit.provenance||'canonical UFC fight facts + locked Apex audit'
     };
   }
 
@@ -177,6 +189,7 @@
       const audit=auditFor(record.fighter);
       const calculation=calculate(record,audit);
       const control=controlFor(record.fighter);
+      const approved=approvedJudgmentFor(record.fighter);
       const currentScore=control?.apexPeak===null||control?.apexPeak===undefined?null:(Number.isFinite(Number(control.apexPeak))?round2(control.apexPeak):null);
       const reconstructedScore=calculation.score===null||calculation.score===undefined?null:(Number.isFinite(Number(calculation.score))?round2(calculation.score):null);
       const difference=currentScore===null||reconstructedScore===null?null:round2(reconstructedScore-currentScore);
@@ -191,6 +204,8 @@
         exactParity:difference!==null&&Math.abs(difference)<=MEANINGFUL_DELTA,
         auditVersion:audit?.version||null,
         auditWindow:audit?.window||null,
+        judgmentClassification:audit?.classification||approved?.classification||null,
+        judgmentStatus:audit?.approvalStatus||approved?.audit?.approvalStatus||null,
         stats:calculation,
         mutatesScores:false
       };
