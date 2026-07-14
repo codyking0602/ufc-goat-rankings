@@ -4,7 +4,7 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-championship-reconstruction-20260714c';
+  const VERSION='canonical-championship-reconstruction-20260714d';
   const CATEGORY_MAX=30;
   const LOCKED_BENCHMARK_CREDIT=14.54;
   const BASE_CREDIT=Object.freeze({
@@ -33,7 +33,9 @@
   const AGGREGATE_RECOVERY_SEEDS=Object.freeze({
     'Benson Henderson':[1,.95,.85,.85],
     'Frank Shamrock':[.70,.60,.60,.55,.55],
-    'Royce Gracie':[.85,.80,.70],
+    // Canonical facts tag all 11 early tournament wins as tournament context. Only the
+    // three tournament-clinching finals receive recovered Championship credit here.
+    'Royce Gracie':[0,0,.85,0,0,0,.80,0,0,0,.70],
     'Cris Cyborg':[.75,.90,.675],
     'Fabricio Werdum':[.75,.90],
     'Vitor Belfort':[.25,.85],
@@ -168,7 +170,7 @@
 
   function aggregateRecoveredInputs(record,currentScore,seeds){
     const fights=canonicalChampionshipWins(record,true);
-    if(!Array.isArray(seeds)||fights.length!==seeds.length)return {inputs:[],error:`Aggregate recovery expected ${seeds?.length||0} Championship wins but canonical facts contain ${fights.length}.`};
+    if(!Array.isArray(seeds)||fights.length!==seeds.length)return {inputs:[],error:`Aggregate recovery expected ${seeds?.length||0} Championship-tagged wins but canonical facts contain ${fights.length}.`};
     const targetCredit=Number(currentScore)*LOCKED_BENCHMARK_CREDIT/CATEGORY_MAX;
     const seedTotal=seeds.reduce((sum,value)=>sum+Number(value||0),0);
     const contextFactor=seedTotal?targetCredit/seedTotal:0;
@@ -194,16 +196,16 @@
         finalAdjustedCredit:round6(finalAdjustedCredit),
         sourceAdjustedCredit:null,
         reviewStatus:'review',
-        notes:'Approved aggregate Championship score recovered from the live control; exact historical per-fight split was not stored.',
+        notes:seedCredit>0?'Approved aggregate Championship score recovered from the live control; exact historical per-fight split was not stored.':'Tournament bout is canonical context but not a tournament-clinching Championship accomplishment; recovered credit is zero.',
         matchMethod:'aggregate-control-recovery',
         matchConfidence:1,
-        judgmentStatus:'approved-aggregate-recovered-review',
-        decompositionStatus:'Aggregate judgment recovered exactly; per-fight opponent/context split remains reviewable.',
+        judgmentStatus:seedCredit>0?'approved-aggregate-recovered-review':'approved-aggregate-context-zero',
+        decompositionStatus:seedCredit>0?'Aggregate judgment recovered exactly; per-fight opponent/context split remains reviewable.':'Canonical tournament context retained with no Championship credit.',
         titleTypeMatchesCanonical:true,
         provenance:'approved canonical scoring control + canonical fighter facts + explicit recovery seed'
       };
     });
-    return {inputs,error:null,targetCredit:round6(targetCredit),seedTotal:round6(seedTotal),contextFactor:round6(contextFactor)};
+    return {inputs,error:null,targetCredit:round6(targetCredit),seedTotal:round6(seedTotal),contextFactor:round6(contextFactor),creditedRowCount:inputs.filter(row=>Number(row.finalAdjustedCredit)>0).length};
   }
 
   function calculateChampionship(inputs,benchmark=LOCKED_BENCHMARK_CREDIT){
@@ -260,11 +262,12 @@
       const titleTypeConflicts=inputs.filter(row=>row.fightId&&row.judgmentStatus==='approved-recovered'&&!row.titleTypeMatchesCanonical);
       const arithmeticConflicts=inputs.filter(row=>row.sourceAdjustedCredit!==null&&Math.abs(Number(row.finalAdjustedCredit)-Number(row.sourceAdjustedCredit))>.01);
       const pendingRows=inputs.filter(row=>String(row.judgmentStatus||'').startsWith('pending-'));
+      const creditedRows=inputs.filter(row=>Number(row.finalAdjustedCredit)>0);
       const issues=[];
 
       if(!control)issues.push({classification:'recovered judgment',reason:'No approved live Championship control exists. Leon Edwards is present in the 73-fighter canonical ledger but absent from the 72-fighter live scoring snapshot.'});
       if(aggregateRecovery?.error)issues.push({classification:'recovered judgment',reason:aggregateRecovery.error});
-      if(aggregateRecovery&&!aggregateRecovery.error)issues.push({classification:'recovered judgment',reason:`Direct legacy title rows were missing. The approved ${currentScore.toFixed(2)}/30 aggregate was recovered across ${inputs.length} canonical Championship wins with a visible ${aggregateRecovery.contextFactor.toFixed(6)} context factor.`});
+      if(aggregateRecovery&&!aggregateRecovery.error)issues.push({classification:'recovered judgment',reason:`Direct legacy title rows were missing. The approved ${currentScore.toFixed(2)}/30 aggregate was recovered across ${aggregateRecovery.creditedRowCount} credited Championship accomplishments (${inputs.length} canonical title/tournament-context rows) with a visible ${aggregateRecovery.contextFactor.toFixed(6)} context factor.`});
       unmatchedLegacyRows.forEach(row=>issues.push({classification:'recovered judgment',reason:`Legacy title judgment for ${row.sourceOpponent||row.opponent} is not connected to a canonical fight ID.`}));
       pendingRows.forEach(row=>issues.push({classification:'factual correction',reason:`${row.opponent} is a canonical UFC title win without approved judgment credit; row is ${row.finalAdjustedCredit===0?'held at zero to preserve the approved control':'unscored because no approved control exists'}.`}));
       titleTypeConflicts.forEach(row=>issues.push({classification:'factual correction',reason:`Title type conflict for ${row.opponent}: approved input=${row.titleType}, canonical fact=${row.canonicalTitleType}.`}));
@@ -288,10 +291,11 @@
         exactReason,
         staticPayloadScore,
         titleFightWins:inputs.filter(row=>row.officialTitleFight).length,
-        championshipAccomplishmentRows:inputs.length,
+        championshipAccomplishmentRows:creditedRows.length,
+        canonicalChampionshipContextRows:inputs.length,
         adjustedTitleCredit:calculated.adjustedTitleCredit,
         benchmarkCredit:calculated.benchmarkCredit,
-        aggregateRecovery:aggregateRecovery?{targetCredit:aggregateRecovery.targetCredit,seedTotal:aggregateRecovery.seedTotal,contextFactor:aggregateRecovery.contextFactor,error:aggregateRecovery.error}:null,
+        aggregateRecovery:aggregateRecovery?{targetCredit:aggregateRecovery.targetCredit,seedTotal:aggregateRecovery.seedTotal,contextFactor:aggregateRecovery.contextFactor,creditedRowCount:aggregateRecovery.creditedRowCount,error:aggregateRecovery.error}:null,
         inputs,
         pendingJudgmentRows:pendingRows.map(row=>({fightId:row.fightId,opponent:row.opponent,titleType:row.titleType,status:row.judgmentStatus})),
         unmatchedLegacyRows:unmatchedLegacyRows.map(row=>({opponent:row.sourceOpponent||row.opponent,titleType:row.titleType,credit:row.finalAdjustedCredit})),
