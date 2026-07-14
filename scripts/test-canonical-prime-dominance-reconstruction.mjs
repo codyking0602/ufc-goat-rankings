@@ -124,8 +124,8 @@ const randy=report.entryFor('Randy Couture');
 assert.equal(randy.stats.eraStartDate,'1997-05-30');
 assert.equal(randy.stats.eraStartLabel,'Vitor Belfort I');
 assert.equal(randy.stats.missingRoundRows.length,0);
-assert.ok(randy.stats.primeFights.some(fight=>fight.opponent==='Pedro Rizzo'&&fight.roundsWon===3&&fight.roundsLost===2));
-assert.ok(randy.stats.primeFights.some(fight=>fight.opponent==='Ricco Rodriguez'&&fight.roundsWon===3&&fight.roundsLost===2));
+assert.ok(randy.stats.primeFights.some(fight=>fight.opponent==='Pedro Rizzo'&&fight.rounds?.won===3&&fight.rounds?.lost===2));
+assert.ok(randy.stats.primeFights.some(fight=>fight.opponent==='Ricco Rodriguez'&&fight.rounds?.won===3&&fight.rounds?.lost===2));
 
 const israel=report.entryFor('Israel Adesanya');
 assert.equal(israel.stats.eraEndDate,'2024-08-18');
@@ -139,14 +139,14 @@ assert.ok(sean.stats.primeFights.some(fight=>fight.opponent==='Alex Pereira'&&fi
 
 const tito=report.entryFor('Tito Ortiz');
 assert.equal(tito.stats.missingRoundRows.length,0);
-assert.ok(tito.stats.primeFights.some(fight=>fight.opponent==='Rashad Evans'&&fight.roundsWon===2&&fight.roundsLost===1));
-assert.ok(tito.stats.primeFights.some(fight=>fight.opponent==='Lyoto Machida'&&fight.roundsWon===0&&fight.roundsLost===3));
+assert.ok(tito.stats.primeFights.some(fight=>fight.opponent==='Rashad Evans'&&fight.rounds?.won===2&&fight.rounds?.lost===1));
+assert.ok(tito.stats.primeFights.some(fight=>fight.opponent==='Lyoto Machida'&&fight.rounds?.won===0&&fight.rounds?.lost===3));
 
 const miesha=report.entryFor('Miesha Tate');
 assert.equal(miesha.stats.missingRoundRows.length,0);
-assert.ok(miesha.stats.primeFights.some(fight=>fight.opponent==='Ronda Rousey'&&fight.roundsWon===0&&fight.roundsLost===3));
-assert.ok(miesha.stats.primeFights.some(fight=>fight.opponent==='Liz Carmouche'&&fight.roundsWon===2&&fight.roundsLost===1));
-assert.ok(miesha.stats.primeFights.some(fight=>fight.opponent==='Rin Nakai'&&fight.roundsWon===3&&fight.roundsLost===0));
+assert.ok(miesha.stats.primeFights.some(fight=>fight.opponent==='Ronda Rousey'&&fight.rounds?.won===0&&fight.rounds?.lost===3));
+assert.ok(miesha.stats.primeFights.some(fight=>fight.opponent==='Liz Carmouche'&&fight.rounds?.won===2&&fight.rounds?.lost===1));
+assert.ok(miesha.stats.primeFights.some(fight=>fight.opponent==='Rin Nakai'&&fight.rounds?.won===3&&fight.rounds?.lost===0));
 
 assert.equal(report.fighters.every(row=>Number.isFinite(row.reconstructedScore)),true);
 assert.equal(report.fighters.every(row=>row.reconstructedScore>=0&&row.reconstructedScore<=30),true);
