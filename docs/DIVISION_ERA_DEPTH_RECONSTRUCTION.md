@@ -21,7 +21,7 @@ Final validation:
 
 ## Category purpose
 
-Division-Era Depth measures how difficult it was to remain elite in a fighter’s UFC division during the fighter’s canonical prime window. It is an era adjustment, not a general old-versus-new penalty and not a substitute for opponent quality.
+Division-Era Depth measures how difficult it was to remain elite in a fighter’s UFC division during the fighter’s approved shared elite-prime window. It is an era adjustment, not a general old-versus-new penalty and not a substitute for opponent quality.
 
 ## Locked empirical model
 
@@ -31,7 +31,7 @@ The model uses quarterly division snapshots and three components:
 2. **Strength of ranks 6–15 by division-specific Elo — 50%**
 3. **Contender diversity — 20%**
 
-Every UFC fight inside the fighter’s canonical prime is sampled at the nearest prior quarterly snapshot. Title fights receive **1.5× weight**. Open primes receive a terminal modern snapshot.
+Every UFC fight inside the fighter’s approved elite-prime window is sampled at the nearest prior quarterly snapshot. Title fights receive **1.5× weight**. Open primes receive a terminal modern snapshot.
 
 Each division is normalized against its own recent mature baseline. This avoids treating heavyweight as weak merely because lightweight has more fighters.
 
@@ -39,6 +39,12 @@ Each division is normalized against its own recent mature baseline. This avoids 
 
 - Below 1.00: `-3 × ((1.00 - depthIndex) / 0.25)^1.5`, capped at **-3.00**.
 - Above 1.00: `(depthIndex - 1.00) × 20`, capped at **+0.75**.
+
+## Phase-source rule
+
+The frozen 72-fighter artifact remains unchanged. Any fighter added after that artifact must use the approved shared **Fighter Era Ledger** as the controlling phase source.
+
+A fighter-local `primeWindow` may remain visible for audit comparison, but it does not override a later Cody-approved shared-era resolution.
 
 ## Critical separation
 
@@ -60,23 +66,26 @@ Women’s featherweight is excluded from empirical sampling because it never mai
 
 Leon was the only fighter missing from the frozen 72-fighter empirical artifact.
 
-- Canonical prime: **Rafael dos Anjos on July 20, 2019 through Belal Muhammad on July 27, 2024**
+- Approved shared era: **Rafael dos Anjos on July 20, 2019 through Sean Brady on March 22, 2025**
+- Endpoint logic: the Belal Muhammad loss did not close the window because Leon remained elite and entered the Brady fight; Brady is the approved unrecovered endpoint
 - Division sampled: **Welterweight**
-- Matched prime fights: **7**
+- Matched prime fights: **8**
 - Title-weighted fights: **4**
-- Qualified-active-pool ratio: **1.0102**
-- Ranks 6–15 Elo ratio: **0.9894**
-- Contender-diversity ratio: **1.0150**
-- Depth index: **1.0008**
-- Locked curved adjustment: **+0.02**
+- Qualified-active-pool ratio: **1.0071**
+- Ranks 6–15 Elo ratio: **0.9952**
+- Contender-diversity ratio: **1.0173**
+- Depth index: **1.0032**
+- Locked curved adjustment: **+0.06**
 
 The reconstruction regenerated the pinned empirical source and reproduced all **69 directly comparable non-WFW frozen rows with zero mismatches** before accepting Leon’s result. The three WFW-influenced rows remain governed by the separately locked WFW-safe treatment.
 
-Classification: **factual completion**. No model weight, source, baseline, curve, prime window, or division-strength rule was changed.
+Leon’s older fighter-local endpoint at Belal Muhammad is retained as non-controlling audit context only.
+
+Classification: **factual completion**. No model weight, source, baseline, curve, title weighting, WFW treatment, or division-strength rule was changed.
 
 ## Locked architecture
 
-`pinned UFCStats-derived fight source + canonical prime windows + approved empirical mechanics + explicit factual completions → validated Division-Era Depth adjustment`
+`pinned UFCStats-derived fight source + approved shared Fighter Era Ledger windows + approved empirical mechanics + explicit factual completions → validated Division-Era Depth adjustment`
 
 The approved factual-completion layer is:
 
@@ -88,7 +97,7 @@ The full reconstruction is:
 
 ## Change policy
 
-Any future change to the source dataset, component definitions, weights, Elo rules, baseline window, prime sampling, title weighting, WFW treatment, or adjustment curve requires Cody’s explicit approval and a passing full-roster shadow audit.
+Any future change to the source dataset, component definitions, weights, Elo rules, baseline window, shared prime window, title weighting, WFW treatment, or adjustment curve requires Cody’s explicit approval and a passing full-roster shadow audit.
 
 New completed UFC fights may trigger future source refreshes for active fighters, but they must not silently alter the locked model.
 
