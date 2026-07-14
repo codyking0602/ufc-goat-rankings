@@ -12,13 +12,12 @@ on:
       - 'assets/data/prime-dominance-ledgers.js'
       - 'assets/data/prime-dominance-shadow-model.js'
       - 'assets/data/canonical-prime-dominance-reconstruction.js'
-      - 'scripts/complete-fighter-era-ledgers.mjs'
       - 'scripts/test-canonical-prime-dominance-reconstruction.mjs'
       - '.github/workflows/canonical-prime-dominance-reconstruction.yml'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   reconstruct-approved-prime-dominance:
@@ -26,49 +25,13 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.head_ref || github.ref_name }}
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
       - name: Check syntax
         run: |
           node --check assets/data/canonical-prime-dominance-reconstruction.js
-          node --check scripts/complete-fighter-era-ledgers.mjs
           node --check scripts/test-canonical-prime-dominance-reconstruction.mjs
-      - name: Normalize shared sources
-        run: |
-          node scripts/complete-fighter-era-ledgers.mjs
-          sed -i 's/missingPrimeRoundRowRowCount/missingPrimeRoundRowCount/g' scripts/test-canonical-prime-dominance-reconstruction.mjs
-      - name: Persist shared sources
-        shell: bash
-        run: |
-          if git diff --quiet -- assets/data/fighter-era-ledgers.js scripts/test-canonical-prime-dominance-reconstruction.mjs; then
-            echo "Shared sources are already committed."
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/data/fighter-era-ledgers.js scripts/test-canonical-prime-dominance-reconstruction.mjs
-          git commit -m "Finalize shared era audit sources"
-          git push origin "HEAD:${{ github.head_ref || github.ref_name }}"
-      - name: Inspect shared-era round gaps
-        run: |
-          node - <<'NODE' > /tmp/prime-round-gaps.json
-          const fs=require('fs'),vm=require('vm');
-          const testSource=fs.readFileSync('scripts/test-canonical-prime-dominance-reconstruction.mjs','utf8');
-          const match=testSource.match(/const files=(\[[\s\S]*?\n\]);/);
-          if(!match)throw new Error('Could not recover audit file list.');
-          const files=vm.runInNewContext(match[1]);
-          const document={body:null,documentElement:{setAttribute(){}},querySelector(){return null;},querySelectorAll(){return[];}};
-          const window={};
-          const context=vm.createContext({window,document,console,Date,JSON,Map,Set,Object,Array,Number,String,Math,RegExp,Error,Boolean,Promise});
-          for(const file of files)vm.runInContext(fs.readFileSync(file,'utf8'),context,{filename:file});
-          const report=window.UFC_CANONICAL_PRIME_DOMINANCE_RECONSTRUCTION;
-          const gaps=report.fighters.flatMap(row=>row.stats.missingRoundRows.map(gap=>({fighter:row.fighter,...gap,window:`${row.stats.eraStartLabel} -> ${row.stats.eraEndLabel}`})));
-          const eliteGaps=report.fighters.flatMap(row=>row.stats.eliteLevelValidation.missingRoundRows.map(gap=>({fighter:row.fighter,...gap})));
-          console.log(JSON.stringify({coverage:report.eraLedgerCoverage,fighterCount:report.fighterCount,gapCount:gaps.length,eliteGapCount:eliteGaps.length,gaps,eliteGaps},null,2));
-          NODE
       - name: Audit approved 72-fighter Prime Dominance model
         run: node scripts/test-canonical-prime-dominance-reconstruction.mjs > /tmp/canonical-prime-dominance-reconstruction.log 2>&1
       - name: Upload Prime Dominance reconstruction report
@@ -78,8 +41,6 @@ jobs:
           name: canonical-prime-dominance-reconstruction-report
           path: |
             /tmp/canonical-prime-dominance-reconstruction.log
-            /tmp/prime-round-gaps.json
-            assets/data/fighter-era-ledgers.js
             docs/canonical-prime-dominance-reconstruction.json
             docs/canonical-prime-dominance-reconstruction.md
           if-no-files-found: warn
