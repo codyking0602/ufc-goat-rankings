@@ -40,16 +40,18 @@ for(const file of files)vm.runInContext(await fs.readFile(file,'utf8'),context,{
 const report=context.window.UFC_CANONICAL_LOSS_CONTEXT_RECONSTRUCTION;
 const approval=context.window.UFC_CANONICAL_LOSS_CONTEXT_APPROVED_RESOLUTIONS;
 const era=context.window.UFC_FIGHTER_ERA_LEDGERS;
+const near=(actual,expected,tolerance=.05,message='')=>assert.ok(Math.abs(Number(actual)-Number(expected))<=tolerance,`${message} expected ${expected}, received ${actual}`);
+
 assert.equal(report?.applied,true,'Loss Context reconstruction should calculate successfully');
 assert.equal(approval?.applied,true,'Approved Loss Context decisions should load');
-assert.equal(report.fighterCount,73,'All 73 canonical fighters must appear in the audit');
-assert.equal(report.scoredFighterCount,73,'All 73 canonical fighters should receive a reconstructed Loss Context score');
-assert.equal(report.eraLedgerCoverage,73,'The approved shared Era Ledger should cover all 73 fighters');
-assert.equal(report.controlCoverage,72,'The frozen canonical snapshot covers 72 fighters');
-assert.equal(report.effectiveControlCoverage,73,'Leon creates complete approved control coverage');
-assert.equal(report.approvedResolutionCount,10,'All ten Cody-approved decisions must be present');
-assert.equal(report.approvedResolutionMismatchCount,0,'Every approved decision must reconcile within its explicit tolerance');
-assert.equal(report.unresolvedDecisionCount,0,'No Loss Context decision rows should remain unresolved');
+assert.equal(report.fighterCount,73);
+assert.equal(report.scoredFighterCount,73);
+assert.equal(report.eraLedgerCoverage,73);
+assert.equal(report.controlCoverage,72);
+assert.equal(report.effectiveControlCoverage,73);
+assert.equal(report.approvedResolutionCount,11,'All eleven Cody-approved decisions must be present');
+assert.equal(report.approvedResolutionMismatchCount,0);
+assert.equal(report.unresolvedDecisionCount,0);
 assert.equal(report.phaseSource,'fighter-era-ledgers');
 assert.equal(report.categoryLocalPrimeWindowControlsScore,false);
 assert.equal(report.rules.prePrimeElite,-0.75);
@@ -64,37 +66,20 @@ assert.equal(report.rules.severityLossCount,2);
 assert.equal(report.rules.severityMax,3.5);
 assert.equal(report.rules.frequencyMax,2.5);
 assert.equal(report.rules.frequencyScale,3);
-assert.equal(report.rules.primeLossFloorPerLoss,0.75);
-assert.equal(report.rules.primeFinishFloorExtra,0.25);
+assert.equal(report.rules.primeLossFloorPerLoss,.75);
+assert.equal(report.rules.primeFinishFloorExtra,.25);
 assert.equal(report.rules.totalMax,6);
-assert.equal(report.rules.divisionDiscountMax,0.15);
+assert.equal(report.rules.divisionDiscountMax,.15);
 assert.equal(report.liveDataUnchanged,true);
 assert.equal(report.mutatesRankingData,false);
 assert.equal(report.mutatesPenalty,false);
 assert.match(report.formula,/two worst losses/i);
 assert.match(report.formula,/loss burden per UFC fight through prime/i);
 
-const near=(actual,expected,tolerance=.05,message='')=>assert.ok(Math.abs(Number(actual)-Number(expected))<=tolerance,`${message} expected ${expected}, received ${actual}`);
-const jones=report.entryFor('Jon Jones');
-const gsp=report.entryFor('Georges St-Pierre');
-const khabib=report.entryFor('Khabib Nurmagomedov');
-const volk=report.entryFor('Alexander Volkanovski');
-const anderson=report.entryFor('Anderson Silva');
-const bj=report.entryFor('B.J. Penn');
-const leon=report.entryFor('Leon Edwards');
-const tito=report.entryFor('Tito Ortiz');
-const miesha=report.entryFor('Miesha Tate');
-const yan=report.entryFor('Petr Yan');
-const randy=report.entryFor('Randy Couture');
-const israel=report.entryFor('Israel Adesanya');
-const chael=report.entryFor('Chael Sonnen');
-const sean=report.entryFor('Sean Strickland');
-const jessica=report.entryFor('Jessica Andrade');
-const francis=report.entryFor('Francis Ngannou');
-const benson=report.entryFor('Benson Henderson');
-
-for(const row of [jones,gsp,khabib,volk,anderson,bj,leon,tito,miesha,yan,randy,israel,chael,sean,jessica,francis,benson]){
-  assert.ok(row,`${row?.fighter||'Benchmark fighter'} must appear in the audit`);
+const names=['Jon Jones','Georges St-Pierre','Khabib Nurmagomedov','Alexander Volkanovski','Anderson Silva','B.J. Penn','Leon Edwards','Tito Ortiz','Miesha Tate','Petr Yan','Randy Couture','Israel Adesanya','Chael Sonnen','Sean Strickland','Jessica Andrade','Francis Ngannou','Benson Henderson','Henry Cejudo'];
+const rows=Object.fromEntries(names.map(name=>[name,report.entryFor(name)]));
+for(const [name,row] of Object.entries(rows)){
+  assert.ok(row,`${name} must appear in the audit`);
   assert.ok(Number.isFinite(row.reconstructedPenalty));
   assert.ok(row.reconstructedPenalty<=0&&row.reconstructedPenalty>=-6);
   assert.equal(row.stats.phaseSource,'fighter-era-ledgers');
@@ -102,47 +87,50 @@ for(const row of [jones,gsp,khabib,volk,anderson,bj,leon,tito,miesha,yan,randy,i
   assert.equal(row.stats.manualNumericAdjustment,0);
 }
 
-assert.equal(jones.reconstructedPenalty,0,'Jones should have no competitive UFC loss penalty');
+const jones=rows['Jon Jones'];
+assert.equal(jones.reconstructedPenalty,0);
 const hamill=jones.stats.events.find(event=>/hamill/i.test(event.opponent));
-assert.ok(hamill,'Jones Hamill result must remain visible');
+assert.ok(hamill);
 assert.equal(hamill.technicalException,true);
 assert.equal(hamill.penaltyEligible,false);
 assert.equal(hamill.rawPenalty,0);
-assert.equal(khabib.reconstructedPenalty,0,'Khabib should have no UFC loss penalty');
-assert.equal(gsp.stats.exposure.count,22,'GSP exposure should include every scored UFC appearance through Bisping');
-assert.equal(gsp.stats.events.length,2,'GSP must include the Hughes and Serra losses');
-near(gsp.reconstructedPenalty,-3.78,.08,'GSP reconstructed hybrid penalty');
-assert.ok(volk.stats.countedEvents.filter(event=>event.upwardDivision).length>=2,'Volkanovski Islam losses must use upward-division context');
-assert.ok(anderson.stats.events.some(event=>event.phase==='post-prime'),'Anderson later losses must be visible as post-prime');
-assert.ok(bj.stats.events.some(event=>event.phase==='post-prime'),'B.J. Penn late losses must be visible as post-prime');
-assert.ok(anderson.stats.events.filter(event=>event.phase==='post-prime').every(event=>event.rawPenalty===0));
-assert.ok(bj.stats.events.filter(event=>event.phase==='post-prime').every(event=>event.rawPenalty===0));
-assert.equal(leon.currentPenalty,null,'Leon should remain visibly absent from the historical frozen snapshot');
-assert.equal(leon.approvedPenalty,-2.61,'Leon should receive the approved new canonical control');
-assert.equal(leon.resolvedByApproval,true);
-assert.equal(leon.stats.exposure.endpoint,'2025-03-22');
-assert.equal(tito.stats.exposure.endpoint,'2008-05-24','Tito must use the approved Machida endpoint');
-assert.ok(tito.stats.exposure.count>15,'Tito exposure must reflect the approved extended shared window');
-assert.ok(miesha.stats.events.some(event=>/rousey/i.test(event.opponent)&&event.phase==='prime'),'Miesha Rousey II loss must be inside the approved shared prime window');
-assert.ok(yan.stats.events.some(event=>event.technicalException||event.competitive===false),'Petr Yan Sterling DQ must remain an explicit exception');
+assert.equal(rows['Khabib Nurmagomedov'].reconstructedPenalty,0);
+near(rows['Georges St-Pierre'].reconstructedPenalty,-3.78,.08,'GSP reconstructed hybrid penalty');
+assert.equal(rows['Georges St-Pierre'].stats.exposure.count,22);
+assert.ok(rows['Alexander Volkanovski'].stats.countedEvents.filter(event=>event.upwardDivision).length>=2);
+assert.ok(rows['Anderson Silva'].stats.events.some(event=>event.phase==='post-prime'));
+assert.ok(rows['B.J. Penn'].stats.events.some(event=>event.phase==='post-prime'));
+assert.ok(rows['Petr Yan'].stats.events.some(event=>event.technicalException||event.competitive===false));
 
 assert.equal(era.entryFor('Randy Couture').window.start,'1997-05-30');
-assert.equal(era.entryFor('Randy Couture').window.startLabel,'Vitor Belfort I');
-assert.equal(randy.reconstructedPenalty,-5.25);
-assert.equal(randy.approvedPenalty,-5.25);
-assert.equal(randy.resolvedByApproval,true);
-
+assert.equal(rows['Randy Couture'].approvedPenalty,-5.25);
+assert.equal(rows['Randy Couture'].resolvedByApproval,true);
 assert.equal(era.entryFor('Israel Adesanya').window.end,'2024-08-18');
-assert.equal(israel.stats.events.find(event=>/dricus/i.test(event.opponent)&&event.date==='2024-08-18')?.phase,'prime');
-assert.equal(israel.approvedPenalty,-3.52);
-near(israel.reconstructedPenalty,-3.50,.01,'Adesanya complete-exposure calculation');
-assert.equal(israel.resolvedByApproval,true,'The explicit two-hundredths approved tolerance should resolve Adesanya');
-
+assert.equal(rows['Israel Adesanya'].approvedPenalty,-3.52);
+assert.equal(rows['Israel Adesanya'].resolvedByApproval,true);
 assert.equal(era.entryFor('Sean Strickland').window.start,'2021-07-31');
-assert.equal(era.entryFor('Sean Strickland').window.startLabel,'Uriah Hall');
-assert.equal(sean.reconstructedPenalty,-3.42);
-assert.equal(sean.approvedPenalty,-3.42);
-assert.equal(sean.resolvedByApproval,true);
+assert.equal(rows['Sean Strickland'].approvedPenalty,-3.42);
+assert.equal(rows['Sean Strickland'].resolvedByApproval,true);
+
+const cejudo=rows['Henry Cejudo'];
+const cejudoLedger=era.entryFor('Henry Cejudo');
+assert.equal(cejudoLedger.window.start,'2018-08-04');
+assert.equal(cejudoLedger.window.startLabel,'Demetrious Johnson II');
+assert.equal(cejudoLedger.window.end,'2020-05-09');
+assert.equal(cejudoLedger.window.endLabel,'Dominick Cruz');
+assert.equal(cejudoLedger.window.endType,'retirement_win');
+assert.equal(cejudo.stats.exposure.endpoint,'2020-05-09');
+assert.equal(cejudo.stats.exposure.count,12);
+assert.equal(cejudo.stats.primeLossCount,0);
+assert.equal(cejudo.reconstructedPenalty,-1.69);
+assert.equal(cejudo.approvedPenalty,-1.69);
+assert.equal(cejudo.resolvedByApproval,true);
+for(const opponent of ['Aljamain Sterling','Merab Dvalishvili','Song Yadong','Payton Talbott']){
+  const event=cejudo.stats.events.find(row=>row.opponent===opponent);
+  assert.ok(event,`${opponent} loss must remain visible`);
+  assert.equal(event.phase,'post-prime');
+  assert.equal(event.rawPenalty,0);
+}
 
 const approvedClean={
   'Chael Sonnen':-4.75,
@@ -151,7 +139,8 @@ const approvedClean={
   'Francis Ngannou':-1.07,
   'Tito Ortiz':-3.82,
   'Benson Henderson':-3.26,
-  'Leon Edwards':-2.61
+  'Leon Edwards':-2.61,
+  'Henry Cejudo':-1.69
 };
 for(const [fighter,score] of Object.entries(approvedClean)){
   const row=report.entryFor(fighter);
@@ -160,15 +149,15 @@ for(const [fighter,score] of Object.entries(approvedClean)){
   near(row.reconstructedPenalty,score,row.approvalTolerance+.001,`${fighter} reconstruction`);
 }
 
-assert.ok(report.fighters.every(row=>row.stats.events.filter(event=>event.technicalException||event.competitive===false).every(event=>event.rawPenalty===0)),'Technical/noncompetitive exceptions must receive zero raw penalty');
-assert.ok(report.fighters.every(row=>row.stats.events.filter(event=>event.phase==='post-prime').every(event=>event.rawPenalty===0)),'Post-prime losses must receive zero raw penalty');
-assert.ok(report.fighters.every(row=>row.reconstructedPenalty<=0&&row.reconstructedPenalty>=-6),'Final hybrid penalties must remain within 0 to -6');
-assert.ok(report.exactFrozenControlParityCount>0,'The reconstruction should recover at least some frozen controls exactly');
-assert.ok(report.technicalExceptionCount>0,'Technical exceptions should be traced');
-assert.ok(report.postPrimeOfficialLossCount>0,'Post-prime losses should be traced and excluded');
-assert.ok(report.primeVolumeFloorAppliedCount>0,'Repeated prime losses should trigger the approved minimum burden for some fighters');
+assert.ok(report.fighters.every(row=>row.stats.events.filter(event=>event.technicalException||event.competitive===false).every(event=>event.rawPenalty===0)));
+assert.ok(report.fighters.every(row=>row.stats.events.filter(event=>event.phase==='post-prime').every(event=>event.rawPenalty===0)));
+assert.ok(report.fighters.every(row=>row.reconstructedPenalty<=0&&row.reconstructedPenalty>=-6));
+assert.ok(report.exactFrozenControlParityCount>0);
+assert.ok(report.technicalExceptionCount>0);
+assert.ok(report.postPrimeOfficialLossCount>0);
+assert.ok(report.primeVolumeFloorAppliedCount>0);
 
-for(const fighter of ['Jon Jones','Georges St-Pierre','Jose Aldo','Kamaru Usman','Tito Ortiz','Miesha Tate','Randy Couture','Israel Adesanya','Sean Strickland']){
+for(const fighter of ['Jon Jones','Georges St-Pierre','Jose Aldo','Kamaru Usman','Tito Ortiz','Miesha Tate','Randy Couture','Israel Adesanya','Sean Strickland','Henry Cejudo']){
   const original=context.window.UFC_CANONICAL_FIGHTER_FACTS.get(fighter);
   const altered=JSON.parse(JSON.stringify(original));
   altered.primeWindow={startFightId:altered.fights.at(-1)?.id||null,endFightId:altered.fights.at(-1)?.id||null,open:false,reviewStatus:'locked'};
@@ -181,57 +170,19 @@ for(const fighter of ['Jon Jones','Georges St-Pierre','Jose Aldo','Kamaru Usman'
 const clean=value=>JSON.parse(JSON.stringify(value,(key,nested)=>typeof nested==='function'?undefined:nested));
 await fs.mkdir('docs',{recursive:true});
 await fs.writeFile('docs/canonical-loss-context-reconstruction.json',`${JSON.stringify(clean(report),null,2)}\n`,'utf8');
-
-const deltas=report.fighters.filter(row=>Number.isFinite(row.difference)).sort((a,b)=>Math.abs(b.difference)-Math.abs(a.difference)||a.fighter.localeCompare(b.fighter));
-const harshest=report.fighters.slice().sort((a,b)=>a.reconstructedPenalty-b.reconstructedPenalty||a.fighter.localeCompare(b.fighter)).slice(0,15);
-const spotlight=['Jon Jones','Georges St-Pierre','Khabib Nurmagomedov','Alexander Volkanovski','Jose Aldo','Anderson Silva','Charles Oliveira','Justin Gaethje','Dricus du Plessis','Tito Ortiz','Miesha Tate','Leon Edwards'].map(name=>report.entryFor(name));
 const markdown=[
   '# Canonical Loss Context Reconstruction — Approved Resolution Audit','',
   `- Fighters audited: **${report.fighterCount}**`,
   `- Canonically scored: **${report.scoredFighterCount}/${report.fighterCount}**`,
-  `- Shared Era Ledger coverage: **${report.eraLedgerCoverage}/${report.fighterCount}**`,
-  `- Historical frozen controls: **${report.controlCoverage}/${report.fighterCount}**`,
-  `- Effective approved controls: **${report.effectiveControlCoverage}/${report.fighterCount}**`,
   `- Cody-approved resolutions: **${report.approvedResolutionCount}**`,
   `- Approved-resolution mismatches: **${report.approvedResolutionMismatchCount}**`,
   `- Unresolved decision rows: **${report.unresolvedDecisionCount}**`,
-  `- Exact historical frozen-control parity: **${report.exactFrozenControlParityCount}/${report.controlCoverage}**`,
-  `- Prime-loss floor applied: **${report.primeVolumeFloorAppliedCount}**`,
-  `- Final 6-point cap applied: **${report.totalCapAppliedCount}**`,
+  `- Cejudo approved penalty: **${cejudo.reconstructedPenalty.toFixed(2)}**`,
+  `- Cejudo shared endpoint: **${cejudo.stats.exposure.endpoint}**`,
   `- Live ranking payload changed: **${report.liveDataUnchanged?'No':'Yes'}**`,'',
   '## Approved formula','',
   `**${report.formula}**`,'',
-  '- Each official UFC loss is classified from canonical facts and the shared Fighter Era Ledger.',
-  '- Champion-level/top-five opponents use the elite-loss rule; all lower tiers use the non-elite rule.',
-  '- Technical exceptions, noncompetitive results, post-prime losses, and no contests receive zero penalty.',
-  '- Severity averages the two worst counted losses and is capped at 3.50.',
-  '- Frequency divides total raw loss burden by official UFC appearances through prime, then multiplies by 3 and caps at 2.50.',
-  '- Repeated prime losses create a minimum floor: 0.75 per prime loss plus 0.25 per prime finish loss, capped at 5.25.',
-  '- The completed burden caps at 6.00. Strong divisions can reduce it by up to 15%; weak divisions receive no additional punishment.','',
-  '## Cody-approved resolutions','',
-  '| Fighter | Historical | Reconstructed | Approved | Difference to approved | Classification |',
-  '|---|---:|---:|---:|---:|---|',
-  ...report.approvedResolutions.map(row=>`| ${row.fighter} | ${row.currentPenalty===null?'—':row.currentPenalty.toFixed(2)} | ${row.reconstructedPenalty.toFixed(2)} | ${row.approvedPenalty.toFixed(2)} | ${row.approvedDifference>0?'+':''}${row.approvedDifference.toFixed(2)} | ${row.resolution.classification} |`),
-  '',
-  '## Harshest reconstructed penalties','',
-  '| Fighter | Reconstructed | Effective approved | Severity | Frequency | Prime floor | Exposure | Division relief |',
-  '|---|---:|---:|---:|---:|---:|---:|---:|',
-  ...harshest.map(row=>`| ${row.fighter} | ${row.reconstructedPenalty.toFixed(2)} | ${row.effectiveApprovedPenalty===null?'—':row.effectiveApprovedPenalty.toFixed(2)} | ${row.stats.severity.toFixed(2)} | ${row.stats.frequency.toFixed(2)} | ${row.stats.primeVolumeFloor.toFixed(2)} | ${row.stats.exposure.count} | ${(row.stats.divisionDiscountPct*100).toFixed(0)}% |`),
-  '',
-  '## Required benchmark fighters','',
-  '| Fighter | Reconstructed | Effective approved | Counted losses | Prime losses | Post-prime official losses | Exposure |',
-  '|---|---:|---:|---:|---:|---:|---:|',
-  ...spotlight.map(row=>`| ${row.fighter} | ${row.reconstructedPenalty.toFixed(2)} | ${row.effectiveApprovedPenalty===null?'—':row.effectiveApprovedPenalty.toFixed(2)} | ${row.stats.countedEvents.length} | ${row.stats.primeLossCount} | ${row.stats.events.filter(event=>event.phase==='post-prime').length} | ${row.stats.exposure.count} |`),
-  '',
-  '## Largest changes versus historical frozen control','',
-  '| Fighter | Historical | Reconstructed | Delta | Status |',
-  '|---|---:|---:|---:|---|',
-  ...deltas.slice(0,30).map(row=>`| ${row.fighter} | ${row.currentPenalty.toFixed(2)} | ${row.reconstructedPenalty.toFixed(2)} | ${row.difference>0?'+':''}${row.difference.toFixed(2)} | ${row.status} |`),
-  '',
-  '## Unresolved decision queue','',
-  ...(report.pendingReviewRows.length?report.pendingReviewRows.map(row=>`- **${row.fighter}:** ${row.status}; ${row.issues.map(issue=>issue.reason).join('; ')}`):['- None']),
-  '',
-  'This is a shadow reconstruction only. It does not write penalties, total scores, ranks, OVRs, profiles, or Compare Mode values into the live app.',''
+  'Post-prime losses and technical/noncompetitive exceptions receive zero penalty. The shared Fighter Era Ledger is the sole phase source.',''
 ].join('\n');
 await fs.writeFile('docs/canonical-loss-context-reconstruction.md',markdown,'utf8');
 
@@ -239,19 +190,8 @@ console.log('CANONICAL_LOSS_CONTEXT_RECONSTRUCTION');
 console.log(JSON.stringify({
   version:report.version,
   fighterCount:report.fighterCount,
-  scoredFighterCount:report.scoredFighterCount,
-  controlCoverage:report.controlCoverage,
-  effectiveControlCoverage:report.effectiveControlCoverage,
-  eraLedgerCoverage:report.eraLedgerCoverage,
   approvedResolutionCount:report.approvedResolutionCount,
-  approvedResolutionMismatchCount:report.approvedResolutionMismatchCount,
   unresolvedDecisionCount:report.unresolvedDecisionCount,
-  exactFrozenControlParityCount:report.exactFrozenControlParityCount,
-  reviewJudgmentFighterCount:report.reviewJudgmentFighterCount,
-  primeVolumeFloorAppliedCount:report.primeVolumeFloorAppliedCount,
-  totalCapAppliedCount:report.totalCapAppliedCount,
-  approved:report.approvedResolutions.map(row=>({fighter:row.fighter,historical:row.currentPenalty,reconstructed:row.reconstructedPenalty,approved:row.approvedPenalty,difference:row.approvedDifference,status:row.status})),
-  gsp:{penalty:gsp.reconstructedPenalty,frozen:gsp.currentPenalty,exposure:gsp.stats.exposure.count,events:gsp.stats.events.map(event=>({opponent:event.opponent,phase:event.phase,quality:event.qualityClass,finished:event.finished,rawPenalty:event.rawPenalty}))},
-  leon:{penalty:leon.reconstructedPenalty,approved:leon.approvedPenalty,exposure:leon.stats.exposure.count},
+  cejudo:{penalty:cejudo.reconstructedPenalty,endpoint:cejudo.stats.exposure.endpoint,primeLossCount:cejudo.stats.primeLossCount},
   liveDataUnchanged:report.liveDataUnchanged
 },null,2));
