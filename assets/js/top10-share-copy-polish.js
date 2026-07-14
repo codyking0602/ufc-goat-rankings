@@ -124,8 +124,8 @@
     if(!row || names.length !== 2) return;
     const values = names.map(topFiveWinsFor);
     const cells = row.querySelectorAll('strong');
-    if(cells[0] && values[0]) cells[0].textContent = values[0];
-    if(cells[1] && values[1]) cells[1].textContent = values[1];
+    if(cells[0] && values[0] && cells[0].textContent !== values[0]) cells[0].textContent = values[0];
+    if(cells[1] && values[1] && cells[1].textContent !== values[1]) cells[1].textContent = values[1];
   }
 
   function ensureFiveMatchupBanner(){
@@ -145,20 +145,24 @@
     const current = Math.max(1,Math.min(5,Number(match?.[1]) || 1));
     const strong = banner.querySelector('strong');
     const fill = banner.querySelector('i');
-    if(strong) strong.textContent = `5-MATCHUP CHALLENGE · ${current} OF 5`;
-    if(fill) fill.style.width = `${current * 20}%`;
+    const label = `5-MATCHUP CHALLENGE · ${current} OF 5`;
+    const width = `${current * 20}%`;
+    if(strong && strong.textContent !== label) strong.textContent = label;
+    if(fill && fill.style.width !== width) fill.style.width = width;
   }
 
   function polishApexCopy(){
+    const blindCopy = 'APEX RATING = BEST TWO UFC PERFORMANCES WITHIN A TWO-YEAR WINDOW.';
     document.querySelectorAll('#blindMatchup .blind-apex-note').forEach(note => {
-      note.textContent = 'APEX RATING = BEST TWO UFC PERFORMANCES WITHIN A TWO-YEAR WINDOW.';
+      if(note.textContent !== blindCopy) note.textContent = blindCopy;
     });
     const summary = document.getElementById('categoryLeaderSummary');
     const activeApex = document.querySelector('[data-category-leader="apexPeak"].active');
-    if(summary && activeApex){
+    if(summary && activeApex && summary.dataset.apexCopyVersion !== VERSION){
       const strong = summary.querySelector('strong')?.outerHTML || '<strong>Apex Peak</strong>';
       const countMatch = summary.textContent.match(/Showing\s+\d+\s+fighters\.?/i);
       summary.innerHTML = `${strong}<br>Best two UFC performances within a two-year window — who looked most unbeatable at their absolute best. ${countMatch?.[0] || ''}`;
+      summary.dataset.apexCopyVersion = VERSION;
     }
   }
 
