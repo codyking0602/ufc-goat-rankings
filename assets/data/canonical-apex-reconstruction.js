@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-apex-reconstruction-20260714a-initial-audit';
+  const VERSION='canonical-apex-reconstruction-20260714b-null-safe-audit';
   const RULES=Object.freeze({
     window:'Best two UFC wins within 24 months',
     totalMax:6.00,
@@ -49,10 +49,6 @@
     const aLast=aParts.at(-1);
     const bLast=bParts.at(-1);
     return Boolean(aLast&&aLast===bLast&&aParts.some(part=>bParts.includes(part)));
-  }
-
-  function canonicalRecordFor(fighter){
-    return window.UFC_CANONICAL_FIGHTER_FACTS?.get?.(fighter)||null;
   }
 
   function controlFor(fighter){
@@ -181,8 +177,8 @@
       const audit=auditFor(record.fighter);
       const calculation=calculate(record,audit);
       const control=controlFor(record.fighter);
-      const currentScore=Number.isFinite(Number(control?.apexPeak))?round2(control.apexPeak):null;
-      const reconstructedScore=Number.isFinite(Number(calculation.score))?round2(calculation.score):null;
+      const currentScore=control?.apexPeak===null||control?.apexPeak===undefined?null:(Number.isFinite(Number(control.apexPeak))?round2(control.apexPeak):null);
+      const reconstructedScore=calculation.score===null||calculation.score===undefined?null:(Number.isFinite(Number(calculation.score))?round2(calculation.score):null);
       const difference=currentScore===null||reconstructedScore===null?null:round2(reconstructedScore-currentScore);
       const status=calculation.blockers.length?'blocked':calculation.issues.length?'review-required':difference===null?'missing-control':Math.abs(difference)<=MEANINGFUL_DELTA?'exact-parity':'score-delta';
       return {
@@ -198,10 +194,10 @@
         stats:calculation,
         mutatesScores:false
       };
-    }).sort((a,b)=>Number(b.reconstructedScore||-1)-Number(a.reconstructedScore||-1)||String(a.fighter).localeCompare(String(b.fighter)));
+    }).sort((a,b)=>(b.reconstructedScore??-1)-(a.reconstructedScore??-1)||String(a.fighter).localeCompare(String(b.fighter)));
 
     const byKey=new Map(fighters.map(row=>[key(row.fighter),row]));
-    const audited=fighters.filter(row=>Number.isFinite(row.reconstructedScore));
+    const audited=fighters.filter(row=>row.reconstructedScore!==null&&Number.isFinite(row.reconstructedScore));
     const controlsCovered=fighters.filter(row=>row.currentScore!==null);
     const selectionIssues=fighters.filter(row=>row.stats.factualIssues?.length);
     const formulaIssues=fighters.filter(row=>row.stats.formulaIssues?.length);
