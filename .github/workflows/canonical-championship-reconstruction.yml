@@ -35,7 +35,7 @@ jobs:
           node --check assets/data/canonical-championship-approved-resolutions.js
           node --check scripts/test-canonical-championship-reconstruction.mjs
           node --check scripts/test-canonical-championship-final-resolutions.mjs
-      - name: Reconstruct 72-fighter approved Championship audit
+      - name: Reconstruct 73-fighter approved Championship audit
         run: node scripts/test-canonical-championship-reconstruction.mjs > /tmp/canonical-championship-reconstruction.log 2>&1
       - name: Upload Championship reconstruction report
         if: always()
