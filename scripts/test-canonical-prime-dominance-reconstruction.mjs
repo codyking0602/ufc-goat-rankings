@@ -116,7 +116,7 @@ const markdown=[
   `- Meaningful deltas (≥ 0.25): **${report.meaningfulDeltaCount}**`,
   `- Legacy elite-stakes component coverage: **${report.legacyComponentCoverage}/${report.fighterCount}**`,
   `- Live ranking payload changed: **${report.liveDataUnchanged?'No':'Yes'}**`,'',
-  '## Approved clean formula','',
+  '## Candidate clean formula — pending Cody review','',
   `**${report.formula}**`,'',
   '- Prime Record: 9 points',
   '- Round Control: 8 points',
