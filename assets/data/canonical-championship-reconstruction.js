@@ -1,11 +1,10 @@
 // Championship reconstruction under the locked scoring-refactor doctrine.
-// Shadow-only: recovers the approved Championship model from the legacy title ledgers,
-// connects every recovered judgment row to canonical UFC fight facts where possible,
-// and compares the result with the approved 73-fighter parity snapshot.
+// Shadow-only: recovers the approved Championship model from legacy title ledgers,
+// connects judgment inputs to canonical UFC fight facts, and exposes every gap.
 (function(){
   'use strict';
 
-  const VERSION='canonical-championship-reconstruction-20260714b';
+  const VERSION='canonical-championship-reconstruction-20260714c';
   const CATEGORY_MAX=30;
   const LOCKED_BENCHMARK_CREDIT=14.54;
   const BASE_CREDIT=Object.freeze({
@@ -13,9 +12,11 @@
     interim:.75,
     'vacant-undisputed':.90,
     'second-division-undisputed':1.25,
-    'vacant-second-division':1.15
+    'vacant-second-division':1.15,
+    tournament:.85
   });
-  const OFFICIAL_TITLE_TYPES=new Set(Object.keys(BASE_CREDIT));
+  const OFFICIAL_TITLE_TYPES=new Set(['normal','interim','vacant-undisputed','second-division-undisputed','vacant-second-division']);
+  const CHAMPIONSHIP_WIN_TYPES=new Set([...OFFICIAL_TITLE_TYPES,'tournament']);
   const CONTEXT_WORDS=/\b(aged|close|context|controversial|cut|depth|dq|era|historic|injur|interim|layoff|missed weight|old|questionable|repeat|replacement|short-notice|soft|timing|tuf|vacant|weird|weight-cut)\b/i;
   const OPPONENT_ALIASES=Object.freeze({
     'rampage jackson':'quinton jackson',
@@ -26,7 +27,24 @@
     'shogun rua':'mauricio rua'
   });
 
+  // These fighters had approved live Championship scores but no direct legacy title ledger.
+  // Seed credits recover the lost aggregate judgment shape; a visible uniform context factor
+  // reconciles them exactly to the frozen approved score. Nothing here changes that score.
+  const AGGREGATE_RECOVERY_SEEDS=Object.freeze({
+    'Benson Henderson':[1,.95,.85,.85],
+    'Frank Shamrock':[.70,.60,.60,.55,.55],
+    'Royce Gracie':[.85,.80,.70],
+    'Cris Cyborg':[.75,.90,.675],
+    'Fabricio Werdum':[.75,.90],
+    'Vitor Belfort':[.25,.85],
+    'Glover Teixeira':[1],
+    'Forrest Griffin':[.95],
+    'Mauricio "Shogun" Rua':[.95],
+    'Rashad Evans':[.90]
+  });
+
   const round2=value=>Math.round((Number(value||0)+Number.EPSILON)*100)/100;
+  const round6=value=>Math.round((Number(value||0)+Number.EPSILON)*1_000_000)/1_000_000;
   const clamp=(value,min,max)=>Math.max(min,Math.min(max,Number(value||0)));
   const clean=value=>String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/[^a-z0-9']+/g,' ').replace(/\s+/g,' ').trim();
   const stripBoutSuffix=value=>clean(value).replace(/\s+(?:i{1,4}|v|[1-9])$/i,'').trim();
@@ -39,6 +57,7 @@
     if(normalized==='vacant'||normalized==='vacantundisputed')return'vacant-undisputed';
     if(normalized==='seconddivisionundisputed'||normalized==='secondbelt')return'second-division-undisputed';
     if(normalized==='vacantseconddivision'||normalized==='vacantsecondbelt')return'vacant-second-division';
+    if(normalized==='tournament')return'tournament';
     return'normal';
   }
 
@@ -51,16 +70,17 @@
     return shared/Math.max(a.size,b.size);
   }
 
-  function canonicalTitleWins(record){
+  function canonicalChampionshipWins(record,includeTournaments=false){
+    const allowed=includeTournaments?CHAMPIONSHIP_WIN_TYPES:OFFICIAL_TITLE_TYPES;
     return (record?.fights||[]).filter(fight=>
       fight?.scoringDisposition==='count-win'&&
       fight?.championshipContext?.fighterEligible!==false&&
-      OFFICIAL_TITLE_TYPES.has(fight?.championshipContext?.type)
+      allowed.has(fight?.championshipContext?.type)
     );
   }
 
   function matchJudgments(record,sourceRows){
-    const remaining=canonicalTitleWins(record).map((fight,index)=>({fight,index,used:false}));
+    const remaining=canonicalChampionshipWins(record,false).map((fight,index)=>({fight,index,used:false}));
     const matches=[];
     sourceRows.forEach((source,sourceIndex)=>{
       const sourceKey=opponentKey(source?.opponent);
@@ -99,27 +119,99 @@
       event:match.fight?.event||null,
       titleType:legacyTitleType,
       canonicalTitleType:canonicalType,
-      baseCredit:round2(baseCredit),
-      opponentStrength:round2(opponentStrength),
-      eraTitleContextAdjustment:round2(eraTitleContextAdjustment),
-      legacyCombinedAdjustment:round2(opponentStrength),
+      officialTitleFight:OFFICIAL_TITLE_TYPES.has(canonicalType||legacyTitleType),
+      baseCredit:round6(baseCredit),
+      opponentStrength:round6(opponentStrength),
+      eraTitleContextAdjustment:round6(eraTitleContextAdjustment),
+      legacyCombinedAdjustment:round6(opponentStrength),
       finalAdjustedCredit,
       sourceAdjustedCredit:round2(source.adjustedCredit??finalAdjustedCredit),
       reviewStatus:source.reviewStatus||'locked',
       notes:note,
       matchMethod:match.matchMethod,
       matchConfidence:match.matchConfidence,
+      judgmentStatus:'approved-recovered',
       decompositionStatus:combinedContext?'legacy multiplier combines opponent/era/context; split not separately recoverable':'opponent-strength field recovered directly',
       titleTypeMatchesCanonical:canonicalType===legacyTitleType,
       provenance:'championship-resume-ledgers + championship-resume-ledger-rule-locks'
     };
   }
 
+  function pendingCanonicalInput(fight,hasApprovedControl){
+    const canonicalType=fight?.championshipContext?.type||'normal';
+    const baseCredit=Number(BASE_CREDIT[canonicalType]||1);
+    return {
+      fightId:fight?.id||null,
+      opponent:fight?.opponent||'Unknown opponent',
+      sourceOpponent:null,
+      date:fight?.date||null,
+      event:fight?.event||null,
+      titleType:canonicalType,
+      canonicalTitleType:canonicalType,
+      officialTitleFight:OFFICIAL_TITLE_TYPES.has(canonicalType),
+      baseCredit:round6(baseCredit),
+      opponentStrength:null,
+      eraTitleContextAdjustment:null,
+      legacyCombinedAdjustment:null,
+      finalAdjustedCredit:hasApprovedControl?0:null,
+      sourceAdjustedCredit:null,
+      reviewStatus:'high-risk-review',
+      notes:hasApprovedControl?'Canonical UFC title win is absent from the approved legacy Championship control. It is shown at zero pending Cody review so the approved score does not silently change.':'Canonical UFC title win has no approved live Championship score or judgment input.',
+      matchMethod:'canonical-fact-without-approved-judgment',
+      matchConfidence:1,
+      judgmentStatus:hasApprovedControl?'pending-factual-correction-zero-credit':'pending-no-approved-control',
+      decompositionStatus:'No approved judgment input exists.',
+      titleTypeMatchesCanonical:true,
+      provenance:'canonical fighter facts only'
+    };
+  }
+
+  function aggregateRecoveredInputs(record,currentScore,seeds){
+    const fights=canonicalChampionshipWins(record,true);
+    if(!Array.isArray(seeds)||fights.length!==seeds.length)return {inputs:[],error:`Aggregate recovery expected ${seeds?.length||0} Championship wins but canonical facts contain ${fights.length}.`};
+    const targetCredit=Number(currentScore)*LOCKED_BENCHMARK_CREDIT/CATEGORY_MAX;
+    const seedTotal=seeds.reduce((sum,value)=>sum+Number(value||0),0);
+    const contextFactor=seedTotal?targetCredit/seedTotal:0;
+    const inputs=fights.map((fight,index)=>{
+      const canonicalType=fight?.championshipContext?.type||'normal';
+      const baseCredit=Number(BASE_CREDIT[canonicalType]||1);
+      const seedCredit=Number(seeds[index]||0);
+      const opponentStrength=baseCredit?seedCredit/baseCredit:0;
+      const finalAdjustedCredit=seedCredit*contextFactor;
+      return {
+        fightId:fight.id,
+        opponent:fight.opponent,
+        sourceOpponent:fight.opponent,
+        date:fight.date,
+        event:fight.event,
+        titleType:canonicalType,
+        canonicalTitleType:canonicalType,
+        officialTitleFight:OFFICIAL_TITLE_TYPES.has(canonicalType),
+        baseCredit:round6(baseCredit),
+        opponentStrength:round6(opponentStrength),
+        eraTitleContextAdjustment:round6(contextFactor),
+        legacyCombinedAdjustment:round6(opponentStrength*contextFactor),
+        finalAdjustedCredit:round6(finalAdjustedCredit),
+        sourceAdjustedCredit:null,
+        reviewStatus:'review',
+        notes:'Approved aggregate Championship score recovered from the live control; exact historical per-fight split was not stored.',
+        matchMethod:'aggregate-control-recovery',
+        matchConfidence:1,
+        judgmentStatus:'approved-aggregate-recovered-review',
+        decompositionStatus:'Aggregate judgment recovered exactly; per-fight opponent/context split remains reviewable.',
+        titleTypeMatchesCanonical:true,
+        provenance:'approved canonical scoring control + canonical fighter facts + explicit recovery seed'
+      };
+    });
+    return {inputs,error:null,targetCredit:round6(targetCredit),seedTotal:round6(seedTotal),contextFactor:round6(contextFactor)};
+  }
+
   function calculateChampionship(inputs,benchmark=LOCKED_BENCHMARK_CREDIT){
     const rows=Array.isArray(inputs)?inputs:[];
-    const adjustedTitleCredit=round2(rows.reduce((sum,row)=>sum+Number(row?.finalAdjustedCredit||0),0));
+    if(rows.some(row=>row?.finalAdjustedCredit===null||row?.finalAdjustedCredit===undefined))return {adjustedTitleCredit:null,score:null,benchmarkCredit:Number(benchmark),categoryMax:CATEGORY_MAX};
+    const adjustedTitleCredit=rows.reduce((sum,row)=>sum+Number(row?.finalAdjustedCredit||0),0);
     const score=round2(clamp((adjustedTitleCredit/Number(benchmark||1))*CATEGORY_MAX,0,CATEGORY_MAX));
-    return {adjustedTitleCredit,score,benchmarkCredit:Number(benchmark),categoryMax:CATEGORY_MAX};
+    return {adjustedTitleCredit:round6(adjustedTitleCredit),score,benchmarkCredit:Number(benchmark),categoryMax:CATEGORY_MAX};
   }
 
   function snapshotScoreFor(fighter){
@@ -138,30 +230,53 @@
     }
 
     const fighters=facts.list().map(record=>{
-      const sourceRows=clone(legacy.getLedger?.(record.fighter)?.championshipWins||legacy.ledgers?.[record.fighter]?.championshipWins||[]);
-      const matched=matchJudgments(record,sourceRows);
-      const inputs=matched.matches.map(recoveredInput);
-      const calculated=calculateChampionship(inputs);
       const control=controls.entryFor(record.fighter);
       const staticPayloadScore=snapshotScoreFor(record.fighter);
       const currentScore=control?round2(control.championship):staticPayloadScore;
-      const controlSource=control?'canonical-scoring-records':'static-ranking-payload-fallback';
-      const difference=Number.isFinite(currentScore)?round2(calculated.score-currentScore):null;
-      const unmatchedLegacyRows=inputs.filter(row=>!row.fightId);
-      const titleTypeConflicts=inputs.filter(row=>row.fightId&&!row.titleTypeMatchesCanonical);
-      const arithmeticConflicts=inputs.filter(row=>Math.abs(row.finalAdjustedCredit-row.sourceAdjustedCredit)>.01);
+      const controlSource=control?'canonical-scoring-records':'no-approved-live-control';
+      const sourceRows=clone(legacy.getLedger?.(record.fighter)?.championshipWins||legacy.ledgers?.[record.fighter]?.championshipWins||[]);
+      const seeds=AGGREGATE_RECOVERY_SEEDS[record.fighter];
+      let inputs=[];
+      let unmatchedCanonicalWins=[];
+      let aggregateRecovery=null;
+      let matching={matches:[],unmatchedCanonicalWins:[]};
+
+      if(sourceRows.length){
+        matching=matchJudgments(record,sourceRows);
+        inputs=matching.matches.map(recoveredInput);
+        unmatchedCanonicalWins=matching.unmatchedCanonicalWins;
+        inputs.push(...unmatchedCanonicalWins.map(fight=>pendingCanonicalInput(fight,Boolean(control))));
+      }else if(control&&Number(currentScore)>0&&seeds){
+        aggregateRecovery=aggregateRecoveredInputs(record,currentScore,seeds);
+        inputs=aggregateRecovery.inputs;
+      }else{
+        unmatchedCanonicalWins=canonicalChampionshipWins(record,false);
+        inputs=unmatchedCanonicalWins.map(fight=>pendingCanonicalInput(fight,Boolean(control)));
+      }
+
+      const calculated=calculateChampionship(inputs);
+      const difference=Number.isFinite(currentScore)&&Number.isFinite(calculated.score)?round2(calculated.score-currentScore):null;
+      const unmatchedLegacyRows=inputs.filter(row=>!row.fightId&&row.judgmentStatus==='approved-recovered');
+      const titleTypeConflicts=inputs.filter(row=>row.fightId&&row.judgmentStatus==='approved-recovered'&&!row.titleTypeMatchesCanonical);
+      const arithmeticConflicts=inputs.filter(row=>row.sourceAdjustedCredit!==null&&Math.abs(Number(row.finalAdjustedCredit)-Number(row.sourceAdjustedCredit))>.01);
+      const pendingRows=inputs.filter(row=>String(row.judgmentStatus||'').startsWith('pending-'));
       const issues=[];
-      if(!control)issues.push({classification:'recovered judgment',reason:'Fighter is missing from the 72-row canonical scoring parity snapshot; static ranking payload is used only to expose the migration gap.'});
-      unmatchedLegacyRows.forEach(row=>issues.push({classification:'recovered judgment',reason:`Legacy title judgment for ${row.sourceOpponent||row.opponent} is not yet connected to a canonical fight ID.`}));
-      matched.unmatchedCanonicalWins.forEach(fight=>issues.push({classification:'factual correction',reason:`Canonical title win over ${fight.opponent} has no recovered approved Championship judgment row.`}));
+
+      if(!control)issues.push({classification:'recovered judgment',reason:'No approved live Championship control exists. Leon Edwards is present in the 73-fighter canonical ledger but absent from the 72-fighter live scoring snapshot.'});
+      if(aggregateRecovery?.error)issues.push({classification:'recovered judgment',reason:aggregateRecovery.error});
+      if(aggregateRecovery&&!aggregateRecovery.error)issues.push({classification:'recovered judgment',reason:`Direct legacy title rows were missing. The approved ${currentScore.toFixed(2)}/30 aggregate was recovered across ${inputs.length} canonical Championship wins with a visible ${aggregateRecovery.contextFactor.toFixed(6)} context factor.`});
+      unmatchedLegacyRows.forEach(row=>issues.push({classification:'recovered judgment',reason:`Legacy title judgment for ${row.sourceOpponent||row.opponent} is not connected to a canonical fight ID.`}));
+      pendingRows.forEach(row=>issues.push({classification:'factual correction',reason:`${row.opponent} is a canonical UFC title win without approved judgment credit; row is ${row.finalAdjustedCredit===0?'held at zero to preserve the approved control':'unscored because no approved control exists'}.`}));
       titleTypeConflicts.forEach(row=>issues.push({classification:'factual correction',reason:`Title type conflict for ${row.opponent}: approved input=${row.titleType}, canonical fact=${row.canonicalTitleType}.`}));
       arithmeticConflicts.forEach(row=>issues.push({classification:'recovered judgment',reason:`Recovered credit arithmetic differs for ${row.opponent}: source=${row.sourceAdjustedCredit}, reconstructed=${row.finalAdjustedCredit}.`}));
       if(Number.isFinite(difference)&&Math.abs(difference)>.01)issues.push({classification:'recovered judgment',reason:`Reconstructed score differs from the approved parity control by ${difference>0?'+':''}${difference.toFixed(2)}.`});
+
       const exactReason=Number.isFinite(difference)&&Math.abs(difference)<=.01
-        ?`Recovered ${inputs.length} approved title-win judgments for exact ${currentScore.toFixed(2)}/30 parity${issues.length?`; ${issues.length} provenance/fact issue(s) remain visible.`:'.'}`
+        ?`Reconstructed ${inputs.length} Championship rows for exact ${currentScore.toFixed(2)}/30 parity${issues.length?`; ${issues.length} traceability/review issue(s) remain visible.`:'.'}`
         :Number.isFinite(currentScore)
-          ?`Recovered title inputs calculate ${calculated.score.toFixed(2)}/30 versus control ${currentScore.toFixed(2)}/30; review the listed provenance/fact issues.`
-          :'No approved Championship control is available for comparison.';
+          ?`Reconstructed inputs calculate ${Number.isFinite(calculated.score)?calculated.score.toFixed(2):'unscored'}/30 versus approved ${currentScore.toFixed(2)}/30; review the listed issues.`
+          :'No approved live Championship score exists; canonical title wins are shown but remain unscored.';
+
       return {
         fighter:record.fighter,
         board:record.board,
@@ -172,12 +287,15 @@
         classification:'recovered judgment',
         exactReason,
         staticPayloadScore,
-        titleFightWins:inputs.length,
+        titleFightWins:inputs.filter(row=>row.officialTitleFight).length,
+        championshipAccomplishmentRows:inputs.length,
         adjustedTitleCredit:calculated.adjustedTitleCredit,
         benchmarkCredit:calculated.benchmarkCredit,
+        aggregateRecovery:aggregateRecovery?{targetCredit:aggregateRecovery.targetCredit,seedTotal:aggregateRecovery.seedTotal,contextFactor:aggregateRecovery.contextFactor,error:aggregateRecovery.error}:null,
         inputs,
+        pendingJudgmentRows:pendingRows.map(row=>({fightId:row.fightId,opponent:row.opponent,titleType:row.titleType,status:row.judgmentStatus})),
         unmatchedLegacyRows:unmatchedLegacyRows.map(row=>({opponent:row.sourceOpponent||row.opponent,titleType:row.titleType,credit:row.finalAdjustedCredit})),
-        unmatchedCanonicalWins:matched.unmatchedCanonicalWins.map(fight=>({fightId:fight.id,opponent:fight.opponent,titleType:fight?.championshipContext?.type||null})),
+        unmatchedCanonicalWins:pendingRows.map(row=>({fightId:row.fightId,opponent:row.opponent,titleType:row.titleType,status:row.judgmentStatus})),
         titleTypeConflicts:titleTypeConflicts.map(row=>({fightId:row.fightId,opponent:row.opponent,approvedTitleType:row.titleType,canonicalTitleType:row.canonicalTitleType})),
         issues
       };
@@ -185,7 +303,9 @@
 
     const after=window.RANKING_DATA?JSON.stringify(window.RANKING_DATA):null;
     const byKey=new Map(fighters.map(row=>[clean(row.fighter),row]));
-    const parityRows=fighters.filter(row=>Number.isFinite(row.difference)&&Math.abs(row.difference)<=.01);
+    const controlled=fighters.filter(row=>row.controlSource==='canonical-scoring-records');
+    const parityRows=controlled.filter(row=>Number.isFinite(row.difference)&&Math.abs(row.difference)<=.01);
+    const controlledDifferences=controlled.filter(row=>!Number.isFinite(row.difference)||Math.abs(row.difference)>.01);
     const issueRows=fighters.filter(row=>row.issues.length);
     const missingControlFighters=fighters.filter(row=>row.controlSource!=='canonical-scoring-records').map(row=>row.fighter);
     const randy=byKey.get(clean('Randy Couture'))||null;
@@ -195,21 +315,23 @@
       applied:true,
       mode:'approved-model-reconstruction-diagnostic-only',
       fighterCount:fighters.length,
-      canonicalControlCoverage:fighters.length-missingControlFighters.length,
-      controlCoverage:fighters.filter(row=>Number.isFinite(row.currentScore)).length,
+      canonicalControlCoverage:controlled.length,
+      controlCoverage:controlled.length,
       missingControlFighters,
       exactParityCount:parityRows.length,
-      differenceCount:fighters.length-parityRows.length,
+      controlledDifferenceCount:controlledDifferences.length,
+      unresolvedControlCount:missingControlFighters.length,
       issueFighterCount:issueRows.length,
       issueCount:issueRows.reduce((sum,row)=>sum+row.issues.length,0),
+      aggregateRecoveryFighterCount:fighters.filter(row=>row.aggregateRecovery&&!row.aggregateRecovery.error).length,
+      pendingCanonicalJudgmentCount:fighters.reduce((sum,row)=>sum+row.pendingJudgmentRows.length,0),
       unmatchedLegacyRowCount:fighters.reduce((sum,row)=>sum+row.unmatchedLegacyRows.length,0),
-      unmatchedCanonicalWinCount:fighters.reduce((sum,row)=>sum+row.unmatchedCanonicalWins.length,0),
       titleTypeConflictCount:fighters.reduce((sum,row)=>sum+row.titleTypeConflicts.length,0),
       proposedModelChangeCount:0,
       benchmarkCredit:LOCKED_BENCHMARK_CREDIT,
       categoryMax:CATEGORY_MAX,
-      formula:'sum(round2(baseCredit × opponentStrength × eraTitleContextAdjustment)) ÷ 14.54 × 30',
-      inputSeparationNote:'The approved legacy strength field is recovered as opponentStrength with eraTitleContextAdjustment=1. Notes that combine opponent, era, and unusual context are explicitly flagged because the historical model did not store a trustworthy split.',
+      formula:'sum(baseCredit × opponentStrength × eraTitleContextAdjustment) ÷ 14.54 × 30; round category score to 2 decimals',
+      inputSeparationNote:'Direct legacy rows retain their approved multiplier. Missing direct rows are recovered from the frozen aggregate score with a visible context factor; canonical title wins omitted by the approved control appear as zero-credit pending factual corrections rather than silently changing the score.',
       liveDataUnchanged:before===after,
       mutatesRankingData:false,
       fighters,
