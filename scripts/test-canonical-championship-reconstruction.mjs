@@ -44,21 +44,20 @@ const serializable=clean(report);
 await fs.mkdir('docs',{recursive:true});
 await fs.writeFile('docs/canonical-championship-reconstruction.json',`${JSON.stringify(serializable,null,2)}\n`,'utf8');
 
-const fighterRows=report.fighters.map(row=>`| ${row.fighter} | ${fmt(row.currentScore)} | ${fmt(row.reconstructedScore)} | ${signed(row.difference)} | ${row.titleFightWins} | ${fmt(row.adjustedTitleCredit)} | ${row.unmatchedLegacyRows.length} | ${row.unmatchedCanonicalWins.length} | ${row.titleTypeConflicts.length} | ${row.classification} |`);
+const fighterRows=report.fighters.map(row=>`| ${row.fighter} | ${fmt(row.currentScore)} | ${fmt(row.reconstructedScore)} | ${signed(row.difference)} | ${row.titleFightWins} | ${row.championshipAccomplishmentRows} | ${fmt(row.adjustedTitleCredit)} | ${row.pendingJudgmentRows.length} | ${row.titleTypeConflicts.length} | ${row.classification} |`);
 const issueRows=report.fighters.flatMap(row=>row.issues.map(issue=>`| ${row.fighter} | ${issue.classification} | ${issue.reason.replace(/\|/g,'\\|')} |`));
 const randy=report.randyTrace;
 const randyRows=(randy?.inputs||[]).map(row=>`| ${row.opponent} | ${row.titleType} | ${fmt(row.baseCredit)} | ${fmt(row.opponentStrength)} | ${fmt(row.eraTitleContextAdjustment)} | ${fmt(row.finalAdjustedCredit)} | ${row.matchMethod} | ${row.decompositionStatus} |`);
 const markdown=[
   '# Canonical Championship Reconstruction','',
   `- Version: \`${report.version}\``,
-  `- Fighters: **${report.fighterCount}**`,
-  `- Canonical parity controls: **${report.canonicalControlCoverage}/${report.fighterCount}**`,
-  `- Missing canonical controls: **${report.missingControlFighters.join(', ')||'None'}**`,
-  `- Exact score parity: **${report.exactParityCount}/${report.fighterCount}**`,
-  `- Approved-score differences or missing controls: **${report.differenceCount}**`,
-  `- Fighters with visible provenance/fact issues: **${report.issueFighterCount}**`,
-  `- Unmatched legacy judgment rows: **${report.unmatchedLegacyRowCount}**`,
-  `- Canonical title wins missing approved judgment rows: **${report.unmatchedCanonicalWinCount}**`,
+  `- Canonical fighters processed: **${report.fighterCount}**`,
+  `- Approved live controls: **${report.canonicalControlCoverage}**`,
+  `- Exact parity against approved controls: **${report.exactParityCount}/${report.canonicalControlCoverage}**`,
+  `- Controlled score differences: **${report.controlledDifferenceCount}**`,
+  `- Missing approved controls: **${report.missingControlFighters.join(', ')||'None'}**`,
+  `- Aggregate judgments recovered from approved scores: **${report.aggregateRecoveryFighterCount} fighters**`,
+  `- Canonical title wins pending judgment review: **${report.pendingCanonicalJudgmentCount}**`,
   `- Title-type conflicts: **${report.titleTypeConflictCount}**`,
   `- Proposed model changes: **${report.proposedModelChangeCount}**`,
   `- Live ranking payload unchanged: **${report.liveDataUnchanged}**`,
@@ -75,7 +74,7 @@ const markdown=[
   '|---|---|---:|---:|---:|---:|---|---|',
   ...randyRows,'',
   '## All 73 fighters','',
-  '| Fighter | Approved | Reconstructed | Difference | Title wins | Adjusted credit | Unmatched legacy | Missing judgment | Type conflicts | Classification |',
+  '| Fighter | Approved | Reconstructed | Difference | Title-fight wins | Championship rows | Adjusted credit | Pending judgments | Type conflicts | Classification |',
   '|---|---:|---:|---:|---:|---:|---:|---:|---:|---|',
   ...fighterRows,'',
   '## Visible provenance and fact issues','',
@@ -84,10 +83,11 @@ const markdown=[
   ...(issueRows.length?issueRows:['| None | — | All recovered title inputs are connected and consistent. |']),'',
   '## Interpretation','',
   '- This is diagnostic only and does not mutate the published ranking data.',
-  '- The approved score control is `UFC_CANONICAL_SCORING_RECORDS`, not the older static category values at the top of `ranking-data.js`.',
-  '- Existing Championship judgment was recovered from the title ledgers plus the Couture/rule-lock adjustment layer.',
-  '- No scoring philosophy, benchmark, title base value, or fighter score was changed.',
-  '- Any true formula change remains blocked pending Cody’s explicit approval.',''
+  '- The approved score control is the 72-fighter live runtime snapshot frozen in `UFC_CANONICAL_SCORING_RECORDS`.',
+  '- Leon Edwards is the 73rd canonical fighter but has no live ranking row or approved Championship control; his Phase 2 score remains diagnostic and was not promoted.',
+  '- Missing direct title ledgers were recovered to exact aggregate parity without changing any approved score.',
+  '- Canonical title wins omitted by the approved control are displayed as zero-credit factual-correction rows pending Cody review.',
+  '- Any true formula or score change remains blocked pending Cody’s explicit approval.',''
 ].join('\n');
 await fs.writeFile('docs/canonical-championship-reconstruction.md',markdown,'utf8');
 
@@ -96,27 +96,31 @@ console.log(JSON.stringify({
   version:report.version,
   fighterCount:report.fighterCount,
   canonicalControlCoverage:report.canonicalControlCoverage,
-  controlCoverage:report.controlCoverage,
   missingControlFighters:report.missingControlFighters,
   exactParityCount:report.exactParityCount,
-  differenceCount:report.differenceCount,
+  controlledDifferenceCount:report.controlledDifferenceCount,
+  unresolvedControlCount:report.unresolvedControlCount,
+  aggregateRecoveryFighterCount:report.aggregateRecoveryFighterCount,
+  pendingCanonicalJudgmentCount:report.pendingCanonicalJudgmentCount,
   issueFighterCount:report.issueFighterCount,
   issueCount:report.issueCount,
   unmatchedLegacyRowCount:report.unmatchedLegacyRowCount,
-  unmatchedCanonicalWinCount:report.unmatchedCanonicalWinCount,
   titleTypeConflictCount:report.titleTypeConflictCount,
   proposedModelChangeCount:report.proposedModelChangeCount,
   liveDataUnchanged:report.liveDataUnchanged,
   randy:{approved:randy?.currentScore,reconstructed:randy?.reconstructedScore,adjustedTitleCredit:randy?.adjustedTitleCredit,titleFightWins:randy?.titleFightWins,issues:randy?.issues},
-  differences:report.fighters.filter(row=>!Number.isFinite(row.difference)||Math.abs(row.difference)>.01).map(row=>({fighter:row.fighter,controlSource:row.controlSource,currentScore:row.currentScore,reconstructedScore:row.reconstructedScore,difference:row.difference,issues:row.issues})),
-  provenanceIssues:report.fighters.filter(row=>row.issues.length).map(row=>({fighter:row.fighter,issues:row.issues}))
+  controlledDifferences:report.fighters.filter(row=>row.controlSource==='canonical-scoring-records'&&(!Number.isFinite(row.difference)||Math.abs(row.difference)>.01)).map(row=>({fighter:row.fighter,currentScore:row.currentScore,reconstructedScore:row.reconstructedScore,difference:row.difference,issues:row.issues})),
+  unresolvedControls:report.fighters.filter(row=>row.controlSource!=='canonical-scoring-records').map(row=>({fighter:row.fighter,currentScore:row.currentScore,reconstructedScore:row.reconstructedScore,inputs:row.inputs,issues:row.issues})),
+  reviewIssues:report.fighters.filter(row=>row.issues.length).map(row=>({fighter:row.fighter,issues:row.issues}))
 },null,2));
 
-assert.equal(report.fighterCount,73,'All 73 fighters must be reconstructed');
-assert.equal(report.canonicalControlCoverage,73,'All 73 fighters must have an approved canonical Championship control');
-assert.equal(report.controlCoverage,73,'All 73 fighters must have an approved Championship control');
-assert.equal(report.exactParityCount,73,'The reconstruction must reproduce all 73 approved Championship scores');
-assert.equal(report.differenceCount,0,'No approved Championship score may change silently');
+assert.equal(report.fighterCount,73,'All 73 canonical fighters must be reconstructed or explicitly held unresolved');
+assert.equal(report.canonicalControlCoverage,72,'The current approved live scoring snapshot contains 72 fighters');
+assert.equal(report.controlCoverage,72,'No fallback may be mistaken for an approved live control');
+assert.equal(report.exactParityCount,72,'All 72 approved live Championship scores must reproduce exactly');
+assert.equal(report.controlledDifferenceCount,0,'No approved Championship score may change silently');
+assert.equal(report.unresolvedControlCount,1,'Exactly one canonical fighter lacks an approved live control');
+assert.equal(JSON.stringify(report.missingControlFighters),JSON.stringify(['Leon Edwards']),'Leon Edwards is the explicit live-control gap');
 assert.equal(report.proposedModelChangeCount,0,'No proposed model change belongs in this reconstruction');
 assert.equal(report.liveDataUnchanged,true,'The reconstruction must not mutate RANKING_DATA');
 assert.equal(randy.currentScore,15.85,'Randy approved Championship control');
