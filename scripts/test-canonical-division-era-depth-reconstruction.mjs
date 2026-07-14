@@ -24,7 +24,8 @@ const files=[
   'assets/data/canonical-fighter-facts-approved-corrections.js',
   'assets/data/canonical-fighter-facts-opponent-quality-corrections.js',
   'assets/data/canonical-scoring-records.js',
-  'assets/data/division-era-depth-shadow.js'
+  'assets/data/division-era-depth-shadow.js',
+  'assets/data/canonical-division-era-depth-approved-resolutions.js'
 ];
 
 class CustomEvent{constructor(type,options={}){this.type=type;this.detail=options.detail;}}
@@ -41,6 +42,16 @@ const report=context.window.UFC_CANONICAL_DIVISION_ERA_DEPTH_RECONSTRUCTION;
 assert.equal(report?.applied,true,'Division-Era Depth reconstruction should calculate');
 assert.equal(report.fighterCount,73,'All 73 canonical fighters must be audited');
 assert.equal(report.sourceShadowVersion,'division-era-depth-shadow-20260712e-roster-72');
+assert.equal(report.approvedResolutionVersion,'canonical-division-era-depth-approved-resolutions-20260714a-leon');
+assert.equal(report.shadowCoverageCount,73,'All 73 fighters must have empirical era-depth coverage');
+assert.equal(report.canonicalControlCoverageCount,73,'All 73 fighters must have an approved control');
+assert.equal(report.frozenControlCoverageCount,72,'The frozen runtime controls remain unchanged at 72');
+assert.equal(report.approvedCompletionControlCount,1,'Leon is the only approved factual completion');
+assert.equal(report.cleanCount,73,'All 73 fighters must reconstruct cleanly');
+assert.equal(report.missingShadowCount,0);
+assert.equal(report.formulaIssueCount,0);
+assert.equal(report.controlIssueCount,0);
+assert.equal(report.reviewQueueCount,0);
 assert.equal(report.liveDataUnchanged,true);
 assert.equal(JSON.stringify(context.window.RANKING_DATA),liveBefore,'Shadow reconstruction must not mutate live ranking data');
 assert.equal(report.mutatesRankingData,false);
@@ -54,9 +65,29 @@ assert.match(report.rules.divisionStrengthSeparation,/never multiplied/i);
 
 for(const row of report.fighters.filter(row=>row.shadowAdjustment!==null)){
   assert.ok(row.shadowAdjustment>=-3&&row.shadowAdjustment<=0.75,`${row.fighter} adjustment must stay within range`);
-  assert.equal(row.recomputedAdjustment,row.shadowAdjustment,`${row.fighter} curved formula must reproduce the shadow value`);
+  assert.equal(row.recomputedAdjustment,row.shadowAdjustment,`${row.fighter} curved formula must reproduce the approved value`);
   assert.ok(row.divisionStrengthKey,`${row.fighter} must retain separate division-strength context`);
 }
+
+const leon=report.entryFor('Leon Edwards');
+assert.equal(leon?.status,'clean');
+assert.equal(leon.depthIndexPrecise,1.0008);
+assert.equal(leon.depthIndex,1);
+assert.equal(leon.shadowAdjustment,0.02);
+assert.equal(leon.recomputedAdjustment,0.02);
+assert.equal(leon.canonicalAdjustment,0.02);
+assert.equal(leon.controlProvenance,'approved-factual-completion');
+assert.equal(leon.resolutionApplied,true);
+assert.equal(leon.judgmentClassification,'factual-completion');
+assert.equal(leon.approvalStatus,'cody-approved');
+assert.deepEqual(JSON.parse(JSON.stringify(leon.sampledDivisions)),['WW']);
+assert.equal(leon.matchedPrimeFightCount,7);
+assert.equal(leon.scoredSampleCount,7);
+assert.equal(leon.titleWeightedSampleCount,4);
+assert.deepEqual(JSON.parse(JSON.stringify(leon.componentRatios)),{qualifiedActivePool:1.0102,ranksSixToFifteenElo:0.9894,contenderDiversity:1.015});
+assert.equal(leon.primeStart,'2019-07-20');
+assert.equal(leon.primeEnd,'2024-07-27');
+assert.equal(leon.openPrime,false);
 
 const clean=value=>JSON.parse(JSON.stringify(value,(key,nested)=>typeof nested==='function'?undefined:nested));
 await fs.mkdir('docs',{recursive:true});
@@ -65,51 +96,59 @@ await fs.writeFile('docs/canonical-division-era-depth-reconstruction.json',`${JS
 const positives=report.fighters.filter(row=>(row.shadowAdjustment??0)>0).slice(0,15);
 const negatives=[...report.fighters].filter(row=>(row.shadowAdjustment??0)<0).sort((a,b)=>a.shadowAdjustment-b.shadowAdjustment).slice(0,20);
 const markdown=[
-  '# Canonical Division-Era Depth Reconstruction — Initial Audit','',
+  '# Canonical Division-Era Depth Reconstruction — Complete Audit','',
   `- Fighters audited: **${report.fighterCount}**`,
-  `- Existing empirical rows: **${report.shadowCoverageCount}/${report.fighterCount}**`,
-  `- Frozen canonical controls: **${report.canonicalControlCoverageCount}/${report.fighterCount}**`,
+  `- Empirical/approved source coverage: **${report.shadowCoverageCount}/${report.fighterCount}**`,
+  `- Frozen runtime controls preserved: **${report.frozenControlCoverageCount}**`,
+  `- Approved factual completions: **${report.approvedCompletionControlCount}**`,
   `- Clean rows: **${report.cleanCount}**`,
   `- Missing empirical rows: **${report.missingShadowCount}**`,
   `- Curve/formula issues: **${report.formulaIssueCount}**`,
   `- Canonical-control issues: **${report.controlIssueCount}**`,
   `- Review queue: **${report.reviewQueueCount}**`,
   `- Live ranking payload changed: **${report.liveDataUnchanged?'No':'Yes'}**`,'',
+  '## Leon Edwards factual completion','',
+  `- Canonical prime: **${leon.primeStart} through ${leon.primeEnd}**`,
+  `- Sampled UFC welterweight fights: **${leon.matchedPrimeFightCount}**`,
+  `- Title-weighted samples: **${leon.titleWeightedSampleCount}**`,
+  `- Depth index: **${leon.depthIndexPrecise.toFixed(4)}**`,
+  `- Component ratios: pool **${leon.componentRatios.qualifiedActivePool.toFixed(4)}**, ranks 6–15 Elo **${leon.componentRatios.ranksSixToFifteenElo.toFixed(4)}**, contender diversity **${leon.componentRatios.contenderDiversity.toFixed(4)}**`,
+  `- Approved curved adjustment: **+${leon.shadowAdjustment.toFixed(2)}**`,
+  '- Classification: **factual completion**. The existing approved empirical model was applied without changing its source, weights, curve, or division-strength treatment.','',
   '## Locked mechanics','',
   `**${report.formula}**`,'',
   '- Era depth is normalized within each division and time period.',
   '- Canonical division-strength keys remain separate context and are not multiplied into this adjustment.',
   '- Women’s featherweight samples are excluded because the division lacks a viable ranks-6–15 baseline.','',
   '## Review queue','',
-  '| Fighter | Status | Depth index | Shadow | Canonical | Division-strength key | Issues |',
-  '|---|---|---:|---:|---:|---|---|',
-  ...report.reviewQueue.map(row=>`| ${row.fighter} | ${row.status} | ${row.depthIndex===null?'—':row.depthIndex.toFixed(2)} | ${row.shadowAdjustment===null?'—':row.shadowAdjustment.toFixed(2)} | ${row.canonicalAdjustment===null?'—':row.canonicalAdjustment.toFixed(2)} | ${row.divisionStrengthKey||'—'} | ${row.issues.join('; ')} |`),
-  '',
+  report.reviewQueue.length?'| Fighter | Status | Issues |\n|---|---|---|\n'+report.reviewQueue.map(row=>`| ${row.fighter} | ${row.status} | ${row.issues.join('; ')} |`).join('\n'):'**None.**','',
   '## Largest positive adjustments','',
   '| Fighter | Adjustment | Depth index | Sampled divisions |',
   '|---|---:|---:|---|',
-  ...positives.map(row=>`| ${row.fighter} | +${row.shadowAdjustment.toFixed(2)} | ${row.depthIndex.toFixed(2)} | ${(row.sampledDivisions||[]).join(', ')||'—'} |`),
+  ...positives.map(row=>`| ${row.fighter} | +${row.shadowAdjustment.toFixed(2)} | ${row.depthIndexPrecise.toFixed(4)} | ${(row.sampledDivisions||[]).join(', ')||'—'} |`),
   '',
   '## Largest negative adjustments','',
   '| Fighter | Adjustment | Depth index | Sampled divisions |',
   '|---|---:|---:|---|',
-  ...negatives.map(row=>`| ${row.fighter} | ${row.shadowAdjustment.toFixed(2)} | ${row.depthIndex.toFixed(2)} | ${(row.sampledDivisions||[]).join(', ')||'—'} |`),
+  ...negatives.map(row=>`| ${row.fighter} | ${row.shadowAdjustment.toFixed(2)} | ${row.depthIndexPrecise.toFixed(4)} | ${(row.sampledDivisions||[]).join(', ')||'—'} |`),
   '',
   'This remains shadow-only. No live category score, total, rank, OVR, profile, or Compare Mode value was changed.',''
 ].join('\n');
 await fs.writeFile('docs/canonical-division-era-depth-reconstruction.md',markdown,'utf8');
 
-console.log('CANONICAL_DIVISION_ERA_DEPTH_RECONSTRUCTION_INITIAL_AUDIT');
+console.log('CANONICAL_DIVISION_ERA_DEPTH_RECONSTRUCTION_COMPLETE');
 console.log(JSON.stringify({
   version:report.version,
   fighterCount:report.fighterCount,
   shadowCoverageCount:report.shadowCoverageCount,
   canonicalControlCoverageCount:report.canonicalControlCoverageCount,
+  frozenControlCoverageCount:report.frozenControlCoverageCount,
+  approvedCompletionControlCount:report.approvedCompletionControlCount,
   cleanCount:report.cleanCount,
   missingShadowCount:report.missingShadowCount,
   formulaIssueCount:report.formulaIssueCount,
   controlIssueCount:report.controlIssueCount,
   reviewQueueCount:report.reviewQueueCount,
-  reviewQueue:report.reviewQueue.map(row=>({fighter:row.fighter,status:row.status,depthIndex:row.depthIndex,shadowAdjustment:row.shadowAdjustment,canonicalAdjustment:row.canonicalAdjustment,divisionStrengthKey:row.divisionStrengthKey,issues:row.issues})),
+  leon:{depthIndex:leon.depthIndexPrecise,adjustment:leon.shadowAdjustment,matchedPrimeFightCount:leon.matchedPrimeFightCount,titleWeightedSampleCount:leon.titleWeightedSampleCount,componentRatios:leon.componentRatios},
   liveDataUnchanged:report.liveDataUnchanged
 },null,2));
