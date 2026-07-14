@@ -157,7 +157,7 @@ Complete these as one final Phase 1 batch or split them into two mechanically id
 
 ## Current validation status
 
-Batch eight's dedicated 176-fight derivation workflow, all earlier canonical batches, the Fighter Data Ownership Baseline, Runtime Scoring Snapshot, Runtime Scoring Audit, and Scoring Architecture Guardrails passed on the batch-eight head. Six-Category Runtime Audit was still completing when this handoff was updated.
+Batch eight's dedicated 176-fight derivation workflow, all earlier canonical batches, the Fighter Data Ownership Baseline, Runtime Scoring Snapshot, Runtime Scoring Audit, Six-Category Runtime Audit, and Scoring Architecture Guardrails all passed on the batch-eight code head.
 
 Known unrelated existing failure:
 
