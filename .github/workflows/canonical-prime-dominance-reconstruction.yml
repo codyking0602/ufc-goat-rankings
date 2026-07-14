@@ -14,7 +14,8 @@ on:
       - 'assets/data/prime-dominance-ledgers.js'
       - 'assets/data/prime-dominance-shadow-model.js'
       - 'assets/data/canonical-prime-dominance-reconstruction.js'
-      - 'scripts/test-canonical-prime-dominance-reconstruction.mjs'
+      - 'assets/data/canonical-leon-final-category-completions.js'
+      - 'scripts/test-canonical-prime-dominance-full-roster.mjs'
       - '.github/workflows/canonical-prime-dominance-reconstruction.yml'
   workflow_dispatch:
 
@@ -36,9 +37,10 @@ jobs:
           node --check assets/data/fighter-era-ledger-approved-loss-context-resolutions.js
           node --check assets/data/canonical-fighter-facts-prime-round-corrections.js
           node --check assets/data/canonical-prime-dominance-reconstruction.js
-          node --check scripts/test-canonical-prime-dominance-reconstruction.mjs
-      - name: Audit approved 72-fighter Prime Dominance model
-        run: node scripts/test-canonical-prime-dominance-reconstruction.mjs > /tmp/canonical-prime-dominance-reconstruction.log 2>&1
+          node --check assets/data/canonical-leon-final-category-completions.js
+          node --check scripts/test-canonical-prime-dominance-full-roster.mjs
+      - name: Audit approved 73-fighter Prime Dominance model
+        run: node scripts/test-canonical-prime-dominance-full-roster.mjs > /tmp/canonical-prime-dominance-reconstruction.log 2>&1
       - name: Upload Prime Dominance reconstruction report
         if: always()
         uses: actions/upload-artifact@v4
