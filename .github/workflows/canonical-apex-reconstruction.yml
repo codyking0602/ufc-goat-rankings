@@ -10,6 +10,7 @@ on:
       - 'assets/data/apex-peak-component-audit.js'
       - 'assets/data/apex-peak-live-bonus.js'
       - 'assets/data/apex-peak-audit-dricus.js'
+      - 'assets/data/canonical-apex-approved-judgments.js'
       - 'assets/data/canonical-apex-reconstruction.js'
       - 'scripts/test-canonical-apex-reconstruction.mjs'
       - 'docs/APEX_RECONSTRUCTION.md'
@@ -30,6 +31,7 @@ jobs:
           node-version: '22'
       - name: Check syntax
         run: |
+          node --check assets/data/canonical-apex-approved-judgments.js
           node --check assets/data/canonical-apex-reconstruction.js
           node --check scripts/test-canonical-apex-reconstruction.mjs
       - name: Audit full-roster locked Apex model
