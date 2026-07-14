@@ -6,31 +6,33 @@ _Last updated: 2026-07-14_
 
 - Branch: `agent/fighter-data-phase-1`
 - Draft PR: #39
-- Formula: **Cody-approved**
+- Core formula: **Cody-approved**
+- Prime-sample percentage: **Cody-approved and locked**
 - Mode: **shadow only**
 - Live ranking payload changed: **No**
-- Clean audit: **Passed**
+- Clean read-only audit: **Passed**
 
-The previous separation/durability candidate has been retired. Prime Dominance now uses one shared prime source and an objective four-component formula. The formula is approved, but the reconstructed board remains under calibration review and is not promoted to the live app.
+Prime Dominance now uses one shared prime source, an objective four-component 30-point formula, and one uniform sample-size percentage applied to the complete raw score. The category remains shadow-only until Cody explicitly requests live promotion.
 
 ## Successful audit
 
-The clean read-only workflow passed with:
+The final read-only workflow passed with:
 
 - 72 of 72 fighter prime windows resolved through the shared Fighter Era Ledger
 - 714 scored prime fights
 - 609 elite-stage prime fights
 - 0 missing prime round rows
 - 0 missing elite-stage round rows
+- 16 fighters receiving a prime-sample discount
 - no mutation of live scores, rankings, OVRs, profiles, or Compare Mode
 
-The audit also found 32 fighter-local prime-window definitions that differ from the shared ledger. Those local windows are treated as drift evidence only and cannot override the shared source.
+The audit found 32 fighter-local prime-window definitions that differ from the shared ledger. Those local windows remain drift evidence only and cannot override the shared source.
 
 ## Shared prime source
 
 `assets/data/fighter-era-ledgers.js` is the sole owner of pre-prime, prime, and post-prime boundaries.
 
-Prime Dominance must not create or extend its own fighter window. The same shared phase ledger is intended for:
+The same shared phase ledger is intended for:
 
 - Prime Dominance
 - Longevity
@@ -38,11 +40,11 @@ Prime Dominance must not create or extend its own fighter window. The same share
 - prime-sensitive Opponent Quality context
 - profile prime labels
 
-The shared ledger now covers the full canonical roster. It also corrects Julianna Peña’s start from the nonexistent Miesha Tate matchup to the Amanda Nunes title upset on December 11, 2021.
+The shared ledger covers the full canonical roster. It also corrects Julianna Peña’s start from the nonexistent Miesha Tate matchup to the Amanda Nunes title upset on December 11, 2021.
 
-## Approved formula
+## Locked formula
 
-`Prime Record + Round Control + Finish Pressure + Elite-Level Validation = 30`
+`[Prime Record + Round Control + Finish Pressure + Elite-Level Validation] × Prime Sample Percentage = Prime Dominance`
 
 | Component | Maximum | Rule |
 |---|---:|---|
@@ -53,14 +55,32 @@ The shared ledger now covers the full canonical roster. It also corrects Juliann
 
 No contests and technical exceptions are excluded from the score.
 
+## Locked Prime Sample Percentage
+
+The complete raw score out of 30 is multiplied by:
+
+| Counted prime fights | Percentage of raw score |
+|---:|---:|
+| 1 | 70% |
+| 2 | 75% |
+| 3 | 80% |
+| 4 | 85% |
+| 5 | 90% |
+| 6 | 95% |
+| 7+ | 100% |
+
+Equivalent rule:
+
+`Prime Sample Percentage = min(100%, 65% + 5% × counted prime fights)`
+
+This is applied uniformly to all four components. It is not a fighter-specific adjustment and does not change the fighter’s raw dominance quality; it controls how much of that raw score is validated by the size of the UFC prime sample.
+
 ## Elite-Level Validation
 
 A counted prime fight is **elite-stage** when either:
 
 1. it is an official UFC title fight, or
-2. the opponent is already tagged `champion-level` or `top-five` in the canonical opponent ledger.
-
-This reuses existing reviewed facts rather than creating a new subjective dominant-performance label.
+2. the opponent is tagged `champion-level` or `top-five` in the canonical opponent ledger.
 
 ### Elite-stage volume — 3 points
 
@@ -78,35 +98,26 @@ This portion is result-neutral. A fighter receives validation for repeatedly com
 
 A loss can still earn performance credit through rounds won. This distinguishes a competitive elite loss from being completely outclassed without relying on a subjective separation tag.
 
-## Current shadow board
+## Final shadow board
 
-| Rank | Fighter | Prime Dominance |
-|---:|---|---:|
-| 1 | Royce Gracie | 29.08 |
-| 2 | Frank Shamrock | 28.88 |
-| 3 | Islam Makhachev | 27.38 |
-| 4 | Khabib Nurmagomedov | 27.13 |
-| 5 | Kayla Harrison | 26.96 |
-| 6 | Chuck Liddell | 26.94 |
-| 7 | Francis Ngannou | 26.76 |
-| 8 | Jon Jones | 26.35 |
-| 9 | Amanda Nunes | 25.70 |
-| 10 | Anderson Silva | 25.10 |
+| Rank | Fighter | Adjusted | Raw | Sample |
+|---:|---|---:|---:|---:|
+| 1 | Royce Gracie | 29.08 | 29.08 | 100% |
+| 2 | Islam Makhachev | 27.38 | 27.38 | 100% |
+| 3 | Khabib Nurmagomedov | 27.13 | 27.13 | 100% |
+| 4 | Chuck Liddell | 26.94 | 26.94 | 100% |
+| 5 | Jon Jones | 26.35 | 26.35 | 100% |
+| 6 | Frank Shamrock | 25.99 | 28.88 | 90% |
+| 7 | Amanda Nunes | 25.70 | 25.70 | 100% |
+| 8 | Francis Ngannou | 25.42 | 26.76 | 95% |
+| 9 | Anderson Silva | 25.10 | 25.10 | 100% |
+| 10 | Demetrious Johnson | 25.06 | 25.06 | 100% |
 
 Key reviewed outputs:
 
 - Jose Aldo: **17.44**, shared prime **Mark Hominick through Merab Dvalishvili**, prime record **13-7**
 - Kamaru Usman: **21.82**, shared prime **Demian Maia through Leon Edwards III**, prime record **8-2**
-
-## Calibration warning before live promotion
-
-The approved formula is mechanically clean, but the current board exposes a short-sample issue:
-
-- Kayla Harrison scores **26.96 from three UFC prime fights** and ranks fifth.
-- Frank Shamrock scores **28.88 from five UFC prime fights** and ranks second.
-- Royce Gracie scores **29.08** and ranks first because his early UFC prime was nearly perfect by record, rounds, and finishes.
-
-No silent adjustment has been made. Any additional sample-size control or component rebalancing would be a new model decision requiring Cody’s approval.
+- Kayla Harrison: raw **26.96**, adjusted **21.57** at **80%** for three counted UFC prime fights
 
 ## Controlled overlap
 
@@ -122,11 +133,9 @@ Division strength remains outside Prime Dominance.
 
 - Competitive Separation
 - Durability bonus
-- Prime-sample confidence multiplier
 - Division-strength modifier
-- Hidden fighter-level adjustment
-
-Round control already provides an objective measure of separation. Finish-loss and durability context remain visible and belong in Loss Penalty rather than receiving a second dedicated bonus here.
+- hidden fighter-level adjustment
+- the retired `0.70 + 0.04 × fights` confidence formula
 
 ## Safety
 
