@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-loss-context-reconstruction-20260714a-initial-audit';
+  const VERSION='canonical-loss-context-reconstruction-20260714b-dq-exceptions';
   const JUDGMENT_LOCK_VERSION='loss-context-hybrid-judgment-lock-20260711a';
   const RULES=Object.freeze({
     prePrimeElite:-0.75,
@@ -31,7 +31,6 @@
   const MEANINGFUL_DELTA=.25;
 
   const key=value=>String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
-  const clone=value=>value===undefined?undefined:JSON.parse(JSON.stringify(value));
   const round2=value=>Math.round((Number(value||0)+Number.EPSILON)*100)/100;
   const round6=value=>Math.round((Number(value||0)+Number.EPSILON)*1_000_000)/1_000_000;
   const clamp=(value,min,max)=>Math.max(min,Math.min(max,Number(value||0)));
@@ -82,7 +81,10 @@
     const classification=fight?.lossClassification||null;
     const phase=phaseFor(ledger,fight);
     const competitive=classification?.competitive!==false;
-    const technicalException=fight?.scoringDisposition==='technical-exception';
+    const methodCategory=fight?.method?.category||'other';
+    // The approved production model explicitly exempted official DQ losses such as
+    // Jones-Hamill and Yan-Sterling from normal competitive loss scoring.
+    const technicalException=fight?.scoringDisposition==='technical-exception'||methodCategory==='dq';
     const officialLoss=fight?.officialResult==='loss';
     const penaltyEligible=officialLoss&&competitive&&!technicalException;
     const event={
@@ -99,8 +101,8 @@
       qualityClass:qualityClass(fight),
       championStatus:fight?.opponentContext?.championStatus||'unknown',
       opponentReviewStatus:fight?.opponentContext?.reviewStatus||null,
-      finished:FINISH_METHODS.has(fight?.method?.category),
-      methodCategory:fight?.method?.category||'other',
+      finished:FINISH_METHODS.has(methodCategory),
+      methodCategory,
       methodDetail:fight?.method?.detail||null,
       divisionContext:classification?.divisionContext||'home',
       upwardDivision:classification?.divisionContext==='upward',
@@ -110,7 +112,7 @@
       lossReviewStatus:classification?.reviewStatus||null,
       overrideRule:classification?.overrideRule||null,
       classificationNote:classification?.note||null,
-      exemptionReason:!officialLoss?'not-an-official-loss':!competitive?'noncompetitive-technical-context':technicalException?'technical-exception':null,
+      exemptionReason:!officialLoss?'not-an-official-loss':!competitive?'noncompetitive-technical-context':technicalException?'approved-dq-technical-exception':null,
       provenance:'canonical UFC fight fact + shared Fighter Era Ledger'
     };
     const penalty=rawPenaltyFor(event);
@@ -240,7 +242,7 @@
     const scored=fighters.filter(row=>Number.isFinite(row.reconstructedPenalty));
     const meaningful=fighters.filter(row=>row.meaningfulDelta).sort((a,b)=>Math.abs(Number(b.difference))-Math.abs(Number(a.difference))||String(a.fighter).localeCompare(String(b.fighter)));
     const pending=fighters.filter(row=>row.status==='blocked'||row.status==='missing-control'||row.meaningfulDelta||row.stats.reviewEvents?.length);
-    const report={
+    return {
       version:VERSION,
       applied:true,
       mode:'shadow-only-approved-hybrid-loss-context-reconstruction',
@@ -279,7 +281,6 @@
       liveDataUnchanged:before===null||before===JSON.stringify(window.RANKING_DATA),
       generatedAt:new Date().toISOString()
     };
-    return report;
   }
 
   const report=build();
