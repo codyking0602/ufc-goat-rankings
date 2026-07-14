@@ -15,6 +15,7 @@ on:
       - 'scripts/test-canonical-apex-reconstruction.mjs'
       - 'scripts/test-canonical-apex-approved-batch-two.mjs'
       - 'scripts/test-canonical-apex-approved-batch-three.mjs'
+      - 'scripts/test-canonical-apex-approved-batch-four.mjs'
       - 'docs/APEX_RECONSTRUCTION.md'
       - '.github/workflows/canonical-apex-reconstruction.yml'
   workflow_dispatch:
@@ -36,15 +37,18 @@ jobs:
           node --check assets/data/canonical-apex-approved-judgments.js
           node --check assets/data/canonical-apex-approved-judgments-batch-two.js
           node --check assets/data/canonical-apex-approved-judgments-batch-three.js
+          node --check assets/data/canonical-apex-approved-judgments-batch-four.js
           node --check assets/data/canonical-apex-reconstruction.js
           node --check scripts/test-canonical-apex-reconstruction.mjs
           node --check scripts/test-canonical-apex-approved-batch-two.mjs
           node --check scripts/test-canonical-apex-approved-batch-three.mjs
+          node --check scripts/test-canonical-apex-approved-batch-four.mjs
       - name: Audit full-roster locked Apex model
         run: |
           node scripts/test-canonical-apex-reconstruction.mjs > /tmp/canonical-apex-reconstruction.log 2>&1
           node scripts/test-canonical-apex-approved-batch-two.mjs >> /tmp/canonical-apex-reconstruction.log 2>&1
           node scripts/test-canonical-apex-approved-batch-three.mjs >> /tmp/canonical-apex-reconstruction.log 2>&1
+          node scripts/test-canonical-apex-approved-batch-four.mjs >> /tmp/canonical-apex-reconstruction.log 2>&1
       - name: Upload Apex reconstruction report
         if: always()
         uses: actions/upload-artifact@v4
