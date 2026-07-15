@@ -7,7 +7,6 @@
   const reset=document.getElementById('resetBtn');
   if(!DATA||!select)return;
 
-  const currentYear=new Date().getFullYear();
   const selectionByView={men:'All',women:'All'};
   let applyTimer=0;
   let applying=false;
@@ -40,39 +39,9 @@
     select.value=current;
   }
 
-  function ledgerFor(name){
-    const source=window.UFC_FIGHTER_ERA_LEDGERS;
-    return source?.entryFor?.(name)||source?.ledgers?.[name]||null;
-  }
-
-  function rowFor(name){
-    const ranking=window.RANKING_DATA||{};
-    return [...(ranking.men||[]),...(ranking.women||[]),...(ranking.fighters||[])].find(row=>row?.fighter===name)||null;
-  }
-
-  function explicitEraTags(name){
-    const row=rowFor(name)||{};
-    const fromRow=Array.isArray(row.eraTags)?row.eraTags:Array.isArray(row.eras)?row.eras:[];
-    const extra=DATA.extraMembership?.[name]||[];
-    return new Set([...fromRow,...extra]);
-  }
-
   function belongsToEra(name,era){
     if(!era)return true;
-    if(explicitEraTags(name).has(era.id))return true;
-    const ledger=ledgerFor(name);
-    const startText=String(ledger?.window?.start||'');
-    if(!/^\d{4}/.test(startText))return false;
-    const start=Number(startText.slice(0,4));
-    const endText=String(ledger?.window?.end||'');
-    const end=/^\d{4}/.test(endText)?Number(endText.slice(0,4)):currentYear;
-    if(!Number.isFinite(start)||!Number.isFinite(end))return false;
-    const eraEnd=era.endYear||currentYear;
-    return start<=eraEnd&&end>=era.startYear;
-  }
-
-  function historyReady(){
-    return Boolean(window.UFC_FIGHTER_ERA_LEDGERS?.fighters?.length);
+    return DATA.eraIdsFor?.(name)?.includes(era.id)===true;
   }
 
   function parseOvr(row){
@@ -110,7 +79,7 @@
     target.style.setProperty('display','none','important');
   }
 
-  function renderContext(view,era,count,isLoading){
+  function renderContext(view,era,count){
     const target=document.getElementById(view==='women'?'womenEraContext':'menEraContext');
     if(!target)return;
     if(!era){
@@ -121,7 +90,8 @@
       <div class="era-context-fight">
         <span>Defining fight</span>
         <strong>${era.definingFight}</strong>
-        ${era.fightUrl?`<a href="${era.fightUrl}" target="_blank" rel="noopener">Watch Fight</a>`:'<small>Watch link coming later</small>'}
+        ${era.fightNote?`<small class="era-context-fight-note">${era.fightNote}</small>`:''}
+        <a href="${era.fightUrl}" target="_blank" rel="noopener">Watch Fight</a>
       </div>`:'';
     target.className=`era-context${view==='women'?' women-era-context':''}`;
     target.innerHTML=`
@@ -129,7 +99,7 @@
         <span class="era-context-kicker">UFC history filter</span>
         <div class="era-context-heading"><h3>${era.name}</h3><b>${era.years}</b></div>
         <p>${era.description}</p>
-        <small>${isLoading?'Era history is loading…':`${count} ranked fighter${count===1?'':'s'} shown. All-time rank and OVR stay unchanged.`}</small>
+        <small>${count} ranked fighter${count===1?'':'s'} shown. Membership is curated around meaningful UFC prime years; all-time rank and OVR stay unchanged.</small>
       </div>
       ${fight}
     `;
@@ -137,7 +107,7 @@
     target.style.removeProperty('display');
   }
 
-  function filterBoard(view,era,loading){
+  function filterBoard(view,era){
     const list=document.getElementById(view==='women'?'womenList':'menList');
     if(!list)return [];
     const existingNotice=list.querySelector('.era-empty-notice');
@@ -145,15 +115,15 @@
     const visible=[];
 
     rows.forEach(row=>{
-      const show=!era||loading||belongsToEra(row.dataset.fighter,era);
+      const show=!era||belongsToEra(row.dataset.fighter,era);
       setRowVisible(row,show);
       if(show)visible.push(row);
     });
 
-    if(era&&!loading&&visible.length===0){
+    if(era&&visible.length===0){
       const notice=existingNotice||document.createElement('div');
       notice.className='notice era-empty-notice';
-      notice.textContent='No ranked fighters match this era and search.';
+      notice.textContent='No ranked fighters are assigned to this era.';
       if(!existingNotice)list.appendChild(notice);
     }else{
       existingNotice?.remove();
@@ -167,9 +137,8 @@
     try{
       ['men','women'].forEach(view=>{
         const era=eraForView(view);
-        const loading=Boolean(era)&&!historyReady();
-        const visible=filterBoard(view,era,loading);
-        renderContext(view,era,visible.length,loading);
+        const visible=filterBoard(view,era);
+        renderContext(view,era,visible.length);
         updateKpis(view,visible,era);
       });
       syncControlVisibility();
@@ -199,7 +168,9 @@
     apply();
     scheduleApply(100);
   });
+
   search?.addEventListener('input',()=>scheduleApply(30));
+
   reset?.addEventListener('click',()=>{
     const view=activeView();
     if(view==='men'||view==='women')selectionByView[view]='All';
@@ -207,6 +178,7 @@
     apply();
     scheduleApply(100);
   });
+
   document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click',()=>{
     window.requestAnimationFrame(()=>{
       populateForView(activeView());
@@ -214,6 +186,7 @@
       apply();
     });
   }));
+
   window.addEventListener('ufc-scoring-pipeline-ready',()=>scheduleApply(0));
   window.addEventListener('ufc-production-ranking-ready',()=>scheduleApply(0));
 
@@ -227,7 +200,7 @@
   });
 
   window.UFC_ERA_FILTER={
-    version:'era-filter-20260715d-women-golden-age',
+    version:'era-filter-20260715e-curated-prime',
     apply,
     belongsToEra,
     selectedEra,
