@@ -114,8 +114,8 @@ try{
   const compareText=await page.locator('#compareResult').textContent();
   assert.match(compareText,/Jon Jones/);
   assert.match(compareText,/Georges St-Pierre/);
-  assert.match(compareText,/99 OVR\s*·\s*#1/);
-  assert.match(compareText,/96 OVR\s*·\s*#2/);
+  assert.match(compareText,/(?:#1\s*·\s*99 OVR|99 OVR\s*·\s*#1)/);
+  assert.match(compareText,/(?:#2\s*·\s*96 OVR|96 OVR\s*·\s*#2)/);
 
   await page.locator('.tab[data-view="play"]').click();
   const search=page.locator('#playFighterSearch');
