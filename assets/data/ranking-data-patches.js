@@ -1,125 +1,170 @@
-// Lightweight prerequisite/data loader with an explicit readiness handoff.
+// Presentation-only prerequisite loader with an explicit readiness handoff.
 (function(){
   'use strict';
-  const VERSION='ranking-data-patches-20260713ah-canonical-seventy-three-fighters';
+
+  const VERSION='ranking-data-patches-20260715a-presentation-only';
   let readyResolved=false;
   let resolveReady;
   const readyPromise=new Promise(resolve=>{resolveReady=resolve;});
   window.UFC_RANKING_DATA_PATCHES_READY=readyPromise;
 
-  const FALLBACK_PACKET_MANIFEST=[["demetrious-johnson","20260702a"],["anderson-silva","20260702a"],["khabib-nurmagomedov","20260702a"],["islam-makhachev","20260702a"],["alexander-volkanovski","20260703b"],["randy-couture","20260702a"],["max-holloway","20260703b"],["kamaru-usman","20260702a"],["jose-aldo","20260705b"],["matt-hughes","20260702a"],["daniel-cormier","20260702a"],["stipe-miocic","20260702a"],["dricus-du-plessis","20260705e-prime-195"],["tyron-woodley","20260706b"],["ilia-topuria","20260705a"],["israel-adesanya","20260710b-current-record"],["aljamain-sterling","20260703a"],["petr-yan","20260702b"],["cain-velasquez","20260702b"],["brock-lesnar","20260706a"],["merab-dvalishvili","20260702b"],["bj-penn","20260702b"],["dustin-poirier","20260703a"],["tony-ferguson","20260706b"],["tj-dillashaw","20260703a"],["alex-pereira","20260710d-ufc-record"],["chuck-liddell","20260710b-chuck-vitor-window"],["tito-ortiz","20260706a"],["junior-dos-santos","20260706a"],["dominick-cruz","20260702a"],["francis-ngannou","20260702a"],["charles-oliveira","20260710b-current-record"],["henry-cejudo","20260710b-current-record"],["conor-mcgregor","20260702a"],["justin-gaethje","20260702d"],["frankie-edgar","20260703b"],["deiveson-figueiredo","20260706a"],["khamzat-chimaev","20260706a"],["lyoto-machida","20260706b"],["sean-strickland","20260706a"],["robert-whittaker","20260710c-loss-context-record"],["sean-omalley","20260706b-round-control"],["michael-bisping","20260706a"],["dan-henderson","20260710b-ufc-record"],["chael-sonnen","20260706a"],["robbie-lawler","20260706a"],["amanda-nunes","20260710b-ufc-record"],["valentina-shevchenko","20260710b-current-record"],["zhang-weili","20260706a"],["rose-namajunas","20260706a"],["miesha-tate","20260706a"],["mackenzie-dern","20260706a"],["kayla-harrison","20260706a"],["jessica-andrade","20260706a"],["alexa-grasso","20260706a"],["julianna-pena","20260706a"],["carla-esparza","20260706a"],["holly-holm","20260706a"],["joanna-jedrzejczyk","20260702b"],["ronda-rousey","20260702b"]];
-  const SLUG_OVERRIDES={'B.J. Penn':'bj-penn','BJ Penn':'bj-penn','Georges St-Pierre':'georges-st-pierre','T.J. Dillashaw':'tj-dillashaw','TJ Dillashaw':'tj-dillashaw','Junior dos Santos':'junior-dos-santos',"Sean O'Malley":'sean-omalley','Julianna Peña':'julianna-pena','Julianna Pena':'julianna-pena'};
+  const SLUG_OVERRIDES={
+    'B.J. Penn':'bj-penn','BJ Penn':'bj-penn','Georges St-Pierre':'georges-st-pierre',
+    'T.J. Dillashaw':'tj-dillashaw','TJ Dillashaw':'tj-dillashaw','Junior dos Santos':'junior-dos-santos',
+    "Sean O'Malley":'sean-omalley','Julianna Peña':'julianna-pena','Julianna Pena':'julianna-pena'
+  };
 
-  function slugFor(name){return SLUG_OVERRIDES[name]||String(name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/&/g,' and ').replace(/['’]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');}
-  function initials(name){return String(name||'').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'UFC';}
-  function fighterNames(){const names=[];const push=f=>{const n=typeof f==='string'?f:f?.fighter;if(n&&!names.includes(n))names.push(n);};(window.RANKING_DATA?.fighters||[]).forEach(push);(window.RANKING_DATA?.men||[]).forEach(push);(window.RANKING_DATA?.women||[]).forEach(push);return names;}
-  function applyPhotoPathDefaults(){if(typeof DISPLAY_OVERRIDES==='undefined')return[];const mapped=[];fighterNames().forEach(name=>{const slug=slugFor(name);if(!slug)return;const current=DISPLAY_OVERRIDES[name]||{};DISPLAY_OVERRIDES[name]={...current,photoUrl:current.photoUrl||`assets/fighters/${slug}.webp`,thumbUrl:current.thumbUrl||`assets/fighters/${slug}-thumb.webp`};mapped.push({fighter:name,photoUrl:DISPLAY_OVERRIDES[name].photoUrl,thumbUrl:DISPLAY_OVERRIDES[name].thumbUrl});});window.UFC_PHOTO_PATH_DEFAULTS={version:VERSION,mapped};return mapped;}
-  function syncPacketProfileStats(){if(typeof DISPLAY_OVERRIDES==='undefined')return[];const synced=[];Object.entries(DISPLAY_OVERRIDES).forEach(([fighter,override])=>{if(!override?.packetProfileStats)return;const{primeRecord,primeUfcRecord,prime_record,primeRecordContext,primeWindowContext,...safeStats}=override.packetProfileStats||{};override.snapshotStats={...(override.snapshotStats||{}),...safeStats};synced.push(fighter);});window.UFC_PACKET_PROFILE_STAT_BRIDGE={version:VERSION,synced,primeRecordSource:'RANKING_DATA.primeRecords'};return synced;}
-  function fallbackImage(img){if(!img||img.dataset.ufcPhotoFallbackApplied)return;const src=img.getAttribute('src')||'';if(!src.includes('assets/fighters/'))return;img.dataset.ufcPhotoFallbackApplied='true';const name=String(img.getAttribute('alt')||'').replace(/\s+profile photo$/i,'').replace(/\s+thumbnail$/i,'').trim();const parent=img.closest('.row-photo,.fighter-photo,.ov-card-photo');if(!parent)return;img.remove();if(parent.classList.contains('row-photo')||parent.classList.contains('ov-card-photo')){parent.textContent=initials(name);return;}parent.classList.remove('has-photo');if(!parent.querySelector('.photo-initials')){const fallback=document.createElement('div');fallback.className='photo-initials';fallback.textContent=initials(name);parent.prepend(fallback);}}
-  function installImageFallback(){if(window.__UFC_PHOTO_FALLBACK_INSTALLED)return;window.__UFC_PHOTO_FALLBACK_INSTALLED=true;document.addEventListener('error',event=>{if(event.target?.tagName==='IMG')fallbackImage(event.target);},true);}
+  function slugFor(name){
+    return SLUG_OVERRIDES[name]||String(name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/&/g,' and ').replace(/['’]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+  }
+  function initials(name){return String(name||'').split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase()||'UFC';}
+
+  function fallbackImage(img){
+    if(!img||img.dataset.ufcPhotoFallbackApplied)return;
+    const src=img.getAttribute('src')||'';
+    if(!src.includes('assets/fighters/'))return;
+    img.dataset.ufcPhotoFallbackApplied='true';
+    const name=String(img.getAttribute('alt')||'').replace(/\s+profile photo$/i,'').replace(/\s+thumbnail$/i,'').trim();
+    const parent=img.closest('.row-photo,.fighter-photo,.ov-card-photo');
+    if(!parent)return;
+    img.remove();
+    if(parent.classList.contains('row-photo')||parent.classList.contains('ov-card-photo')){parent.textContent=initials(name);return;}
+    parent.classList.remove('has-photo');
+    if(!parent.querySelector('.photo-initials')){
+      const fallback=document.createElement('div');
+      fallback.className='photo-initials';
+      fallback.textContent=initials(name);
+      parent.prepend(fallback);
+    }
+  }
+  function installImageFallback(){
+    if(window.__UFC_PHOTO_FALLBACK_INSTALLED)return;
+    window.__UFC_PHOTO_FALLBACK_INSTALLED=true;
+    document.addEventListener('error',event=>{if(event.target?.tagName==='IMG')fallbackImage(event.target);},true);
+  }
   function scanBrokenImages(){document.querySelectorAll('img[src*="assets/fighters/"]').forEach(img=>{if(img.complete&&img.naturalWidth===0)fallbackImage(img);});}
-  function packetManifest(){const rows=Array.isArray(window.UFC_FIGHTER_PACKET_MANIFEST?.packets)&&window.UFC_FIGHTER_PACKET_MANIFEST.packets.length?window.UFC_FIGHTER_PACKET_MANIFEST.packets:FALLBACK_PACKET_MANIFEST;return rows.map(row=>Array.isArray(row)?{slug:row[0],version:row[1]}:row).filter(row=>row?.slug&&row?.version);}
+
+  function packetManifest(){
+    const rows=window.UFC_FIGHTER_PACKET_MANIFEST?.packets;
+    if(!Array.isArray(rows))return[];
+    return rows.map(row=>Array.isArray(row)?{slug:row[0],version:row[1]}:row).filter(row=>row?.slug&&row?.version);
+  }
+  function existingPhotoPaths(){
+    return Object.entries(window.DISPLAY_OVERRIDES||{}).filter(([,override])=>override?.photoUrl||override?.thumbUrl).map(([fighter,override])=>({fighter,photoUrl:override.photoUrl||null,thumbUrl:override.thumbUrl||null}));
+  }
 
   function status(){
     installImageFallback();
-    const photoDefaults=applyPhotoPathDefaults();
-    const packetProfileStatsSynced=syncPacketProfileStats();
-    if(window.UFC_HOME_POLISH?.refreshHero)window.UFC_HOME_POLISH.refreshHero();
-    if(window.UFC_OCTAGON_VERDICT_COMPARE_LAUNCHER?.render)window.UFC_OCTAGON_VERDICT_COMPARE_LAUNCHER.render();
-    if(window.UFC_CATEGORY_LEADERS?.render)window.UFC_CATEGORY_LEADERS.render();
-    if(window.UFC_CATEGORY_LEADERS_PRIME_ROW_POLISH?.polish)window.UFC_CATEGORY_LEADERS_PRIME_ROW_POLISH.polish();
     setTimeout(scanBrokenImages,250);
-    const packetAudit=window.UFC_FIGHTER_PACKET_SCHEMA?.auditPackets?window.UFC_FIGHTER_PACKET_SCHEMA.auditPackets():null;
     const manifestPackets=packetManifest();
-    const state={version:VERSION,mode:'deterministic-prerequisite-loader',mutatesScores:false,
-      canonicalFighterFactsBatchTwo:window.UFC_CANONICAL_FIGHTER_FACTS_BATCH_TWO||null,
-      canonicalFighterFactsBatchThree:window.UFC_CANONICAL_FIGHTER_FACTS_BATCH_THREE||null,
-      canonicalFighterFactsBatchFour:window.UFC_CANONICAL_FIGHTER_FACTS_BATCH_FOUR||null,
-      canonicalFighterFactsBatchFive:window.UFC_CANONICAL_FIGHTER_FACTS_BATCH_FIVE||null,
-      canonicalFighterFactsBatchSix:window.UFC_CANONICAL_FIGHTER_FACTS_BATCH_SIX||null,
-      canonicalFighterFactsBatchSeven:window.UFC_CANONICAL_FIGHTER_FACTS_BATCH_SEVEN||null,
-      canonicalFighterFactsBatchEight:window.UFC_CANONICAL_FIGHTER_FACTS_BATCH_EIGHT||null,
-      canonicalFighterFactsBatchNine:window.UFC_CANONICAL_FIGHTER_FACTS_BATCH_NINE||null,
-      primeWindows:window.UFC_PRIME_WINDOWS||null,primeDominanceShadow:window.UFC_PRIME_DOMINANCE_SHADOW_MODEL||null,primeDominanceLive:window.UFC_PRIME_DOMINANCE_LIVE_PROMOTER||null,primeDominanceLegacyCorrections:window.UFC_PRIME_DOMINANCE_SCORE_CORRECTIONS||null,
-      fighterEraLedgers:window.UFC_FIGHTER_ERA_LEDGERS||null,fighterEraLedgerCleanups:window.UFC_FIGHTER_ERA_LEDGER_CLEANUPS||null,fighterEraLedgerCleanupsFinal:window.UFC_FIGHTER_ERA_LEDGER_CLEANUPS_FINAL||null,fighterEraWindowLock:window.UFC_FIGHTER_ERA_WINDOW_LOCK||null,fighterEraWindowAudit:window.UFC_FIGHTER_ERA_WINDOW_AUDIT||null,
-      lossContextCompletionBatchOne:window.UFC_LOSS_CONTEXT_LEDGER_COMPLETION_BATCH_ONE||null,lossContextCompletionBatchTwo:window.UFC_LOSS_CONTEXT_LEDGER_COMPLETION_BATCH_TWO||null,lossContextCanonicalProduction:window.UFC_LOSS_CONTEXT_CANONICAL_PRODUCTION||null,
-      fighterPacketManifest:!!window.UFC_FIGHTER_PACKET_MANIFEST,fighterPacketManifestVersion:window.UFC_FIGHTER_PACKET_MANIFEST?.version||'fallback',fighterPacketManifestCount:manifestPackets.length,fighterPacketSchema:!!window.UFC_FIGHTER_PACKET_SCHEMA,
-      rankingDataAdditions:!!window.UFC_RANKING_DATA_ADDITIONS,scoreWeighting:!!window.UFC_SCORE_WEIGHTING,opponentQualityLive:window.UFC_OPPONENT_QUALITY_LIVE||null,fighterPackets:!!window.UFC_FIGHTER_PACKET_SYSTEM,watchMoments:!!window.UFC_WATCH_MOMENTS,cardNicknames:window.UFC_CARD_NICKNAMES||null,
-      rankFluidity:!!window.UFC_DYNAMIC_RANKS,divisionRankings:!!window.UFC_DIVISION_RANKINGS,compareNarrative:!!window.UFC_COMPARE_NARRATIVE_SYSTEM,octagonVerdictLauncher:!!window.UFC_OCTAGON_VERDICT_COMPARE_LAUNCHER,
-      championshipResumeLedgers:window.UFC_CHAMPIONSHIP_RESUME_LEDGERS||null,championshipResumeLedgerRuleLocks:window.UFC_CHAMPIONSHIP_RESUME_LEDGER_RULE_LOCKS||null,championshipResumeShadow:window.UFC_CHAMPIONSHIP_RESUME_SHADOW||null,championshipResumeLive:window.UFC_CHAMPIONSHIP_RESUME_LIVE||null,
-      profileCardUi:window.UFC_PROFILE_CARD_UI||null,packetFighters:window.UFC_FIGHTER_PACKET_SYSTEM?.fighters||[],watchMomentFighters:window.UFC_WATCH_MOMENTS?.fighters||[],packetProfileStatsSynced,packetAudit,photoDefaults,appliedAt:new Date().toISOString()};
+    const state={
+      version:VERSION,
+      mode:'presentation-prerequisite-loader',
+      mutatesScores:false,
+      mutatesRanks:false,
+      mutatesOvr:false,
+      syncsManualProfileStats:false,
+      inventsPhotoPaths:false,
+      fighterPacketManifest:manifestPackets.length>0,
+      fighterPacketManifestVersion:window.UFC_FIGHTER_PACKET_MANIFEST?.version||null,
+      fighterPacketManifestCount:manifestPackets.length,
+      fighterPacketSchema:Boolean(window.UFC_FIGHTER_PACKET_SCHEMA),
+      fighterPackets:Boolean(window.UFC_FIGHTER_PACKET_SYSTEM),
+      compareProfiles:Boolean(window.COMPARE_PROFILES),
+      compareFightLedger:Boolean(window.COMPARE_FIGHT_LEDGER),
+      compareNarrative:Boolean(window.UFC_COMPARE_NARRATIVE_SYSTEM),
+      watchMoments:Boolean(window.UFC_WATCH_MOMENTS),
+      profileTemplate:Boolean(window.UFC_PROFILE_TEMPLATE_SYSTEM),
+      divisionRankings:Boolean(window.UFC_DIVISION_RANKINGS),
+      photoPaths:existingPhotoPaths(),
+      appliedAt:new Date().toISOString()
+    };
     window.UFC_PHASE2_DATA_STATUS=state;
     document.documentElement.setAttribute('data-phase2-data-patch',VERSION);
     return state;
   }
-  function completeLoad(){const state=status();if(!readyResolved){readyResolved=true;resolveReady(state);window.dispatchEvent(new CustomEvent('ufc-ranking-data-patches-ready',{detail:state}));}}
-  function loadScriptOnce(src,attr,done){if(document.querySelector(`script[${attr}]`)){if(done)done();return;}const script=document.createElement('script');script.src=src;script.setAttribute(attr,'true');script.onload=()=>{if(done)done();};script.onerror=()=>{if(done)done();};document.body.appendChild(script);}
-  function loadSequence(items,done){const next=i=>{if(i>=items.length){if(done)done();return;}loadScriptOnce(items[i].src,items[i].attr,()=>next(i+1));};next(0);}
-  function packet(slug,v){return{src:`assets/data/fighter-packets/${slug}.js?v=fighter-packet-${slug}-${v}-stage3-presentation-only`,attr:`data-fighter-packet-${slug}`};}
-  function compareCoreScripts(){const packets=packetManifest().map(row=>packet(row.slug,row.version));return[
-    {src:'assets/data/canonical-fighter-facts-batch-two.js?v=canonical-fighter-facts-batch-two-20260713a-five-fighter-ledgers',attr:'data-canonical-fighter-facts-batch-two'},
-    {src:'assets/data/canonical-fighter-facts-batch-three.js?v=canonical-fighter-facts-batch-three-20260713b-compact-103',attr:'data-canonical-fighter-facts-batch-three'},
-    {src:'assets/data/canonical-fighter-facts-batch-four.js?v=canonical-fighter-facts-batch-four-20260713a-top-seven-138',attr:'data-canonical-fighter-facts-batch-four'},
-    {src:'assets/data/canonical-fighter-facts-batch-five.js?v=canonical-fighter-facts-batch-five-20260713a-ten-fighters-202',attr:'data-canonical-fighter-facts-batch-five'},
-    {src:'assets/data/canonical-fighter-facts-batch-six.js?v=canonical-fighter-facts-batch-six-20260713a-ten-fighters-189',attr:'data-canonical-fighter-facts-batch-six'},
-    {src:'assets/data/canonical-fighter-facts-batch-seven-data-a.js?v=canonical-fighter-facts-batch-seven-data-a-20260713a',attr:'data-canonical-fighter-facts-batch-seven-data-a'},
-    {src:'assets/data/canonical-fighter-facts-batch-seven-data-b.js?v=canonical-fighter-facts-batch-seven-data-b-20260713a',attr:'data-canonical-fighter-facts-batch-seven-data-b'},
-    {src:'assets/data/canonical-fighter-facts-batch-seven.js?v=canonical-fighter-facts-batch-seven-20260713a-ten-fighters-199',attr:'data-canonical-fighter-facts-batch-seven'},
-    {src:'assets/data/canonical-fighter-facts-batch-eight-data-a.js?v=canonical-fighter-facts-batch-eight-data-a-20260713a',attr:'data-canonical-fighter-facts-batch-eight-data-a'},
-    {src:'assets/data/canonical-fighter-facts-batch-eight-data-b.js?v=canonical-fighter-facts-batch-eight-data-b-20260713a',attr:'data-canonical-fighter-facts-batch-eight-data-b'},
-    {src:'assets/data/canonical-fighter-facts-batch-eight.js?v=canonical-fighter-facts-batch-eight-20260713a-ten-fighters-176',attr:'data-canonical-fighter-facts-batch-eight'},
-    {src:'assets/data/canonical-fighter-facts-batch-nine-data-a.js?v=canonical-fighter-facts-batch-nine-data-a-20260713a',attr:'data-canonical-fighter-facts-batch-nine-data-a'},
-    {src:'assets/data/canonical-fighter-facts-batch-nine-data-b.js?v=canonical-fighter-facts-batch-nine-data-b-20260713a',attr:'data-canonical-fighter-facts-batch-nine-data-b'},
-    {src:'assets/data/canonical-fighter-facts-batch-nine-data-c.js?v=canonical-fighter-facts-batch-nine-data-c-20260713a',attr:'data-canonical-fighter-facts-batch-nine-data-c'},
-    {src:'assets/data/canonical-fighter-facts-batch-nine.js?v=canonical-fighter-facts-batch-nine-20260713a-fifteen-women-220',attr:'data-canonical-fighter-facts-batch-nine'},
-    {src:'assets/js/refresh-safety.js?v=refresh-safety-20260710b-optional-container-errors',attr:'data-refresh-safety'},
-    {src:'assets/data/ranking-data-additions.js?v=ranking-data-additions-20260706e-lyoto-machida',attr:'data-ranking-data-additions'},
-    {src:'assets/data/fighter-packet-schema.js?v=fighter-packet-schema-20260703a',attr:'data-fighter-packet-schema'},
-    {src:'assets/compare-data.js?v=compare-data-20260630a',attr:'data-compare-data'},
-    {src:'assets/compare-coverage-pack-1.js?v=compare-coverage-pack-1-20260630a',attr:'data-compare-coverage-pack-1'},
-    {src:'assets/compare-coverage-pack-2.js?v=compare-coverage-pack-2-20260630a',attr:'data-compare-coverage-pack-2'},
-    {src:'assets/compare-phase2-yan.js?v=compare-phase2-yan-20260701b',attr:'data-compare-phase2-yan'},
-    {src:'assets/data/fighter-packets.js?v=fighter-packets-20260702c',attr:'data-fighter-packets'},
-    ...packets,
-    {src:'assets/js/card-nicknames.js?v=card-nicknames-20260706n-robbie-lawler',attr:'data-card-nicknames'},
-    {src:'assets/data/prime-round-row-fixes.js?v=prime-round-row-fixes-20260704a',attr:'data-prime-round-row-fixes'},
-    {src:'assets/data/fighter-era-ledgers.js?v=fighter-era-ledgers-20260709g-review-corrections',attr:'data-fighter-era-ledgers'},
-    {src:'assets/data/fighter-era-ledger-cleanups.js?v=fighter-era-ledger-cleanups-20260709b-clean-remaining-review-rows',attr:'data-fighter-era-ledger-cleanups'},
-    {src:'assets/data/fighter-era-ledger-cleanups-final.js?v=fighter-era-ledger-cleanups-final-20260710d-chuck-vitor-window',attr:'data-fighter-era-ledger-cleanups-final'},
-    {src:'assets/data/loss-context-ledger-completion-batch-one.js?v=loss-context-ledger-completion-batch-one-20260710a-whittaker-strickland',attr:'data-loss-context-ledger-completion-batch-one'},
-    {src:'assets/data/loss-context-ledger-completion-batch-two.js?v=loss-context-ledger-completion-batch-two-20260710a-five-highest-priority',attr:'data-loss-context-ledger-completion-batch-two'},
-    {src:'assets/data/score-weighting.js?v=score-weighting-20260710a-compatibility-only',attr:'data-score-weighting'},
-    {src:'assets/js/apex-peak-category-card.js?v=apex-peak-category-card-20260711c-compact-profile-card',attr:'data-apex-peak-category-card'},
-    {src:'assets/js/championship-label-polish.js?v=championship-label-polish-20260711d-label-only',attr:'data-championship-label-polish'},
-    {src:'assets/js/profile-card-ui.js?v=profile-card-ui-20260711a-canonical',attr:'data-profile-card-ui'},
-    {src:'assets/data/compare-matchups.js?v=compare-matchups-20260703a',attr:'data-compare-matchups'},
-    {src:'assets/compare-mode.js?v=special-matchups-20260630l',attr:'data-compare-mode'},
-    {src:'assets/compare-engine-v1-5.js?v=compare-engine-v1-5-20260630b',attr:'data-compare-engine-v1-5'},
-    {src:'assets/compare-copy-fixes-v1.js?v=compare-copy-fixes-v1-20260630a',attr:'data-compare-copy-fixes-v1'},
-    {src:'assets/data/plain-resume-copy-fixes.js?v=plain-resume-copy-fixes-20260706a',attr:'data-plain-resume-copy-fixes'},
-    {src:'assets/data/championship-resume-ledgers.js?v=championship-resume-ledgers-20260707a',attr:'data-championship-resume-ledgers'},
-    {src:'assets/data/championship-resume-ledger-rule-locks.js?v=championship-resume-ledgers-rule-locks-20260707b',attr:'data-championship-resume-ledger-rule-locks'},
-    {src:'assets/js/championship-resume-shadow.js?v=championship-resume-shadow-20260707e',attr:'data-championship-resume-shadow'},
-    {src:'assets/js/championship-resume-live.js?v=championship-resume-live-20260713a-category-only',attr:'data-championship-resume-live'}
-  ];}
+  function completeLoad(){
+    const state=status();
+    if(!readyResolved){
+      readyResolved=true;
+      resolveReady(state);
+      window.dispatchEvent(new CustomEvent('ufc-ranking-data-patches-ready',{detail:state}));
+    }
+  }
+
+  function loadScriptOnce(src,attribute,done){
+    const existing=document.querySelector(`script[${attribute}]`);
+    if(existing){
+      if(done){
+        if(existing.dataset.loaded==='true'||existing.readyState==='complete')done();
+        else existing.addEventListener('load',done,{once:true});
+      }
+      return;
+    }
+    const script=document.createElement('script');
+    script.src=src;
+    script.setAttribute(attribute,'true');
+    script.onload=()=>{script.dataset.loaded='true';if(done)done();};
+    script.onerror=()=>{if(done)done();};
+    document.body.appendChild(script);
+  }
+  function loadSequence(items,done){
+    const next=index=>{
+      if(index>=items.length){if(done)done();return;}
+      const item=items[index];
+      loadScriptOnce(item.src,item.attr,()=>next(index+1));
+    };
+    next(0);
+  }
+  function packet(slug,version){return{src:`assets/data/fighter-packets/${slug}.js?v=fighter-packet-${slug}-${version}-presentation-only`,attr:`data-fighter-packet-${slug}`};}
+
+  function presentationCoreScripts(){
+    const packets=packetManifest().map(row=>packet(row.slug,row.version));
+    return[
+      {src:'assets/js/refresh-safety.js?v=refresh-safety-20260710b-optional-container-errors',attr:'data-refresh-safety'},
+      {src:'assets/data/fighter-packet-schema.js?v=fighter-packet-schema-20260703a',attr:'data-fighter-packet-schema'},
+      {src:'assets/compare-data.js?v=compare-data-20260715a-presentation-only',attr:'data-compare-data'},
+      {src:'assets/compare-coverage-pack-1.js?v=compare-coverage-pack-1-20260630a',attr:'data-compare-coverage-pack-1'},
+      {src:'assets/compare-coverage-pack-2.js?v=compare-coverage-pack-2-20260630a',attr:'data-compare-coverage-pack-2'},
+      {src:'assets/compare-phase2-yan.js?v=compare-phase2-yan-20260701b',attr:'data-compare-phase2-yan'},
+      {src:'assets/data/fighter-packets.js?v=fighter-packets-20260702c',attr:'data-fighter-packets'},
+      ...packets,
+      {src:'assets/js/card-nicknames.js?v=card-nicknames-20260706n-robbie-lawler',attr:'data-card-nicknames'},
+      {src:'assets/js/apex-peak-category-card.js?v=apex-peak-category-card-20260711c-compact-profile-card',attr:'data-apex-peak-category-card'},
+      {src:'assets/js/championship-label-polish.js?v=championship-label-polish-20260711d-label-only',attr:'data-championship-label-polish'},
+      {src:'assets/js/profile-card-ui.js?v=profile-card-ui-20260711a-canonical',attr:'data-profile-card-ui'},
+      {src:'assets/data/compare-matchups.js?v=compare-matchups-20260703a',attr:'data-compare-matchups'},
+      {src:'assets/compare-mode.js?v=special-matchups-20260630l',attr:'data-compare-mode'},
+      {src:'assets/compare-engine-v1-5.js?v=compare-engine-v1-5-20260630b',attr:'data-compare-engine-v1-5'},
+      {src:'assets/compare-copy-fixes-v1.js?v=compare-copy-fixes-v1-20260630a',attr:'data-compare-copy-fixes-v1'},
+      {src:'assets/data/plain-resume-copy-fixes.js?v=plain-resume-copy-fixes-20260706a',attr:'data-plain-resume-copy-fixes'}
+    ];
+  }
+
   function loadModules(){
     const loadCompareWatchdog=()=>loadScriptOnce('assets/js/compare-narrative-watchdog.js?v=compare-narrative-watchdog-20260702a','data-compare-narrative-watchdog',completeLoad);
     const loadCompareNarrative=()=>loadScriptOnce('assets/js/compare-narrative-system.js?v=compare-narrative-system-20260703g','data-compare-narrative-system',loadCompareWatchdog);
-    const loadCompareCore=()=>loadSequence(compareCoreScripts(),loadCompareNarrative);
+    const loadCompareCore=()=>loadSequence(presentationCoreScripts(),loadCompareNarrative);
     const loadPacketManifest=()=>loadScriptOnce('assets/data/fighter-packet-manifest.js?v=fighter-packet-manifest-20260710z-chuck-vitor-window','data-fighter-packet-manifest',loadCompareCore);
     const loadBranding=()=>loadScriptOnce('assets/js/app-branding.js?v=app-branding-20260702c','data-app-branding',loadPacketManifest);
     const loadDivisionRankings=()=>loadScriptOnce('assets/js/division-rankings.js?v=division-rankings-20260705e-clean-leaderboard','data-division-rankings',loadBranding);
     const loadHomePolish=()=>loadScriptOnce('assets/js/home-polish.js?v=home-polish-hybrid-preview-20260711c-tab-scroll-hint','data-home-polish',loadDivisionRankings);
     const loadWatchMoments=()=>loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260711i-signature-fights-batch-seven','data-watch-moments',loadHomePolish);
-    const loadPackages=()=>loadScriptOnce('assets/js/fighter-profile-packages.js?v=fighter-profile-packages-20260710a-canonical-prime-record','data-fighter-profile-packages',loadWatchMoments);
-    if(window.UFC_PROFILE_TEMPLATE_SYSTEM){loadPackages();return;}
-    loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260711d-merge-profile-stats','data-profile-template-system',loadPackages);
+    const loadProfileTemplate=()=>loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260714-calculated-only','data-profile-template-system',loadWatchMoments);
+    if(window.UFC_PROFILE_TEMPLATE_SYSTEM)loadWatchMoments();else loadProfileTemplate();
   }
 
-  window.UFC_RANKING_DATA_PATCHES_V1={meta:{purpose:'Deterministic prerequisite/data loader',updated:'2026-07-13',version:VERSION},apply:status,ready:readyPromise,slugFor,syncPacketProfileStats,packetManifest};
+  window.UFC_RANKING_DATA_PATCHES_V1={
+    meta:{purpose:'Presentation-only prerequisite loader',updated:'2026-07-15',version:VERSION},
+    apply:status,
+    ready:readyPromise,
+    slugFor,
+    packetManifest,
+    syncPacketProfileStats:()=>[],
+    applyPhotoPathDefaults:()=>existingPhotoPaths()
+  };
+
   installImageFallback();
-  applyPhotoPathDefaults();
-  syncPacketProfileStats();
   loadModules();
   window.OCTAGON_VERDICT_GPT_URL='https://chatgpt.com/g/g-6a4c40425d4881919ddebc7231bff09f-octagon-verdict';
   loadScriptOnce('assets/js/octagon-verdict-compare-launcher.js?v=octagon-verdict-compare-launcher-20260711b-canonical-cards','data-octagon-verdict-compare-launcher',status);
