@@ -41,12 +41,10 @@ jobs:
           echo $! > /tmp/ufc-app-http.pid
       - name: Run rendered ranking regression
         run: node scripts/test-production-browser.mjs > /tmp/ufc-browser-test.log 2>&1
-      - name: Show regression diagnostics on failure
+      - name: Show concise regression diagnostics on failure
         if: failure()
         run: |
-          echo '--- Browser test ---'
+          echo '--- Browser assertion ---'
           cat /tmp/ufc-browser-test.log 2>/dev/null || true
-          echo '--- Local server ---'
-          cat /tmp/ufc-app-http.log 2>/dev/null || true
-          echo '--- Playwright install tail ---'
-          tail -40 /tmp/playwright-install.log 2>/dev/null || true
+          echo '--- Local server tail ---'
+          tail -20 /tmp/ufc-app-http.log 2>/dev/null || true
