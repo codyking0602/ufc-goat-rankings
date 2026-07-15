@@ -3,7 +3,8 @@
 (function(){
   'use strict';
 
-  const VERSION='fighter-tagline-system-20260715a-personable-pills';
+  const VERSION='fighter-tagline-system-20260715b-personable-pills';
+  const CHARLES_WATCH_URL='https://youtube.com/shorts/zHUAvACSUk4?is=VYzwsuIvxV85k8zH';
   const TAGLINES=Object.freeze({
     'Jon Jones':'The standard everyone chases',
     'Georges St-Pierre':'No weakness left unanswered',
@@ -116,10 +117,18 @@
     const name=String(fighter?.fighter||'').trim();
     return TAGLINES[name]||automaticTagline(fighter);
   }
+  function syncCharlesWatchMoment(){
+    window.DISPLAY_OVERRIDES=window.DISPLAY_OVERRIDES||{};
+    window.DISPLAY_OVERRIDES['Charles Oliveira']=window.DISPLAY_OVERRIDES['Charles Oliveira']||{};
+    window.DISPLAY_OVERRIDES['Charles Oliveira'].watchUrl=CHARLES_WATCH_URL;
+    document.querySelectorAll('.fighter-row[data-fighter="Charles Oliveira"] .watch-moment-link').forEach(link=>{link.href=CHARLES_WATCH_URL;});
+  }
   function install(){
     window.resumeTagFor=taglineFor;
     window.UFC_FIGHTER_TAGLINE_SYSTEM={version:VERSION,taglines:TAGLINES,taglineFor,automaticTagline,mutatesScores:false};
     document.documentElement.setAttribute('data-fighter-tagline-system',VERSION);
+    syncCharlesWatchMoment();
+    window.addEventListener('ufc-ranking-data-patches-ready',syncCharlesWatchMoment);
     if(typeof window.refresh==='function')window.refresh();
   }
 
