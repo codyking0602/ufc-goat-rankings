@@ -8,11 +8,13 @@ The permanent rule is simple:
 
 > Fight-level facts and approved judgment inputs calculate every score. Presentation files may describe the result, but may never own it.
 
-## Current architectural blocker
+## Current production state
 
-The shadow reconstruction is approved, but the current runtime `assets/js/scoring-engine.js` still reads frozen expected category inputs, totals, ranks, and OVRs from `assets/data/canonical-scoring-records.js`.
+The production ranking runtime no longer reads frozen expected category scores, totals, ranks, or OVRs as authority.
 
-That file is valid as a migration-parity control, but it cannot remain production authority. A fight-level change currently does not flow through the approved reconstruction chain unless the frozen control is also edited.
+`assets/data/canonical-scoring-records.js` and the old reconstruction modules remain migration/test history only. The page now reaches the calculated ranking through the production loader, category calculators, ranking pipeline, and calculated profile runtime.
+
+Manual snapshot ownership, hard-coded Compare stats, late profile-stat mutation, and direct migration scoring tags have been removed from the production path. The permanent architecture and rendered app are certified independently.
 
 ## Permanent ownership map
 
@@ -42,7 +44,7 @@ Never owns:
 
 ### 2. Approved judgment inputs
 
-Permanent target: `assets/data/canonical-scoring-judgments.js`
+Permanent owner: `assets/data/canonical-scoring-judgments.js`
 
 Consolidates the approved resolution overlays that cannot be represented directly as fight facts, including:
 
@@ -58,7 +60,7 @@ These are calculator inputs, not calculated outputs.
 
 ### 3. Category calculators
 
-Permanent target: `assets/js/category-calculators.js`
+Permanent owner: `assets/js/category-calculators.js`
 
 Owns the seven independent calculations:
 
@@ -88,7 +90,7 @@ Owns:
 - Compare Mode calculated fields
 - game/snapshot calculated fields
 
-`RANKING_DATA` becomes a runtime projection produced by this pipeline, not a hand-maintained scoring source.
+`RANKING_DATA` is a runtime projection produced by this pipeline, not a hand-maintained scoring source.
 
 ### 5. Presentation-only content
 
@@ -112,36 +114,34 @@ Presentation files may not contain category scores, totals, ranks, OVRs, or calc
 - presentation-only profile copy, one-liners, photos, Watch Moments, Compare Profile copy, and real direct-fight ledgers
 - one production architecture workflow and one full regression workflow
 
-### Consolidate before promotion
+### Consolidated for production
 
-- arbitrary `canonical-fighter-facts-batch-*` files into permanent fighter-fact ownership
-- `*-approved-resolutions.js`, `*-approved-judgments*.js`, and rule-lock overlays into one judgment-input owner
-- seven `canonical-*-reconstruction.js` files into one calculator module with seven exported calculators
-- `canonical-final-score-reconstruction.js`, `canonical-ovr-reconstruction.js`, `scoring-engine.js`, and `scoring-ownership-finalizer.js` into `ranking-pipeline.js`
-- calculated profile/stat bridges into the ranking pipeline
-- duplicated score stripping/ownership guards into one architecture assertion
-- category-specific test workflows into a smaller production test matrix
+- approved judgment inputs into `canonical-scoring-judgments.js`
+- seven calculations into `category-calculators.js`
+- total, rank, OVR, and projection ownership into `ranking-pipeline.js`
+- calculated profile/snapshot presentation into `calculated-profile-runtime.js`
+- production prerequisite loading into the presentation-only `ranking-data-patches.js` handoff
+- architecture ownership checks into the permanent source-boundary and browser guardrails
 
-### Delete only after the permanent pipeline passes
+### Migration history still eligible for later deletion
 
-- `canonical-scoring-records.js` as production authority; retain only an archived test fixture until exact-output certification is complete
-- `canonical-phase-two-shadow.js` and calibration-only shadow controls
-- arbitrary batch loader logic in `ranking-data-patches.js`
-- batch-specific workflows and capture scripts
-- obsolete live/shadow compatibility layers for loss context, division-era depth, championship, prime dominance, and score weighting
-- stale handoff and board-review documents superseded by the final architecture and workflow
-- frozen expected totals, ranks, and OVRs as runtime inputs
+- frozen parity controls and reconstruction-only modules not loaded by production
+- arbitrary fact-batch storage once the ledgers are physically consolidated
+- category-specific reconstruction workflows and capture scripts
+- stale handoff/review documents superseded by this architecture
 
-## Promotion sequence
+Delete these only in small groups with the permanent pipeline and browser suite rerun after each group.
 
-1. Build `ranking-pipeline.js` against the approved reconstruction outputs without wiring it into the live page.
-2. Prove the pipeline generates all 73 leaderboard and profile rows with the exact approved outputs.
-3. Replace frozen-control authority in the runtime scoring engine.
-4. Make app, Compare Mode, and Play consume the calculated projection.
-5. Run browser regression and architecture guardrails.
-6. Remove migration scaffolding in small groups, rerunning the complete suite after each removal.
-7. Show the final file tree, exact rankings/OVRs, regression results, and unrelated Picks smoke investigation to Cody.
-8. Keep PR #39 draft and do not merge until explicit approval.
+## Completed promotion sequence
+
+1. Built the permanent category and ranking pipeline against canonical facts and judgment inputs.
+2. Certified all 73 leaderboard and profile rows without frozen-output authority.
+3. Replaced runtime score, rank, and OVR ownership.
+4. Redirected leaderboard, profile snapshots, Compare Mode, and Play to calculated projection rows.
+5. Removed manual snapshot and Compare stat ownership from presentation files.
+6. Removed direct migration scoring/audit tags from `index.html`.
+7. Added physical source-boundary and rendered browser contract tests.
+8. Kept PR #39 draft and unmerged pending Cody’s explicit approval.
 
 ## Final new-fighter workflow
 
@@ -152,3 +152,14 @@ Presentation files may not contain category scores, totals, ranks, OVRs, or calc
 5. Run schema, seven-category, total/rank, OVR, architecture, and browser tests.
 6. Confirm the fight-level input automatically reaches leaderboard, profile, visible stats, Compare Mode, and games.
 7. Add fighters in small batches and review output before promotion.
+
+## Promotion checkpoint — July 15, 2026
+
+- production projection: 73 fighters, complete
+- source ownership certification: passing
+- full rendered ranking regression: passing
+- calculated snapshots: active; no `DISPLAY_OVERRIDES.snapshot` fallback ownership
+- calculated Compare stats: active; narrative copy remains presentation-only
+- production shell: no frozen scoring, reconstruction, or late stat-mutation tags
+- PR #39: draft, open, unmerged
+- published `main`: unchanged
