@@ -1,3 +1,4 @@
+# Permanent rendered-app and derived-output certification.
 name: Production Ranking Browser Smoke
 
 on:
