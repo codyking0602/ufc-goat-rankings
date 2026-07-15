@@ -125,7 +125,7 @@
   function filterBoard(view,era,loading){
     const list=document.getElementById(view==='women'?'womenList':'menList');
     if(!list)return [];
-    list.querySelector('.era-empty-notice')?.remove();
+    const existingNotice=list.querySelector('.era-empty-notice');
     const rows=[...list.querySelectorAll('.fighter-row')];
     const visible=[];
 
@@ -136,10 +136,12 @@
     });
 
     if(era&&!loading&&visible.length===0){
-      const notice=document.createElement('div');
+      const notice=existingNotice||document.createElement('div');
       notice.className='notice era-empty-notice';
       notice.textContent='No ranked fighters match this era and search.';
-      list.appendChild(notice);
+      if(!existingNotice)list.appendChild(notice);
+    }else{
+      existingNotice?.remove();
     }
     return visible;
   }
