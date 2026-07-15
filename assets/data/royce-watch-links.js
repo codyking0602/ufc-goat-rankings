@@ -1,7 +1,7 @@
 // App-facing Watch Moment and signature-fight links only.
 (function(){
   'use strict';
-  const VERSION='royce-watch-links-20260715a-presentation-only';
+  const VERSION='royce-watch-links-20260715b-pantoja-leon';
   if(typeof DISPLAY_OVERRIDES==='undefined')return;
 
   const WATCH_LINKS={
@@ -11,6 +11,20 @@
       watchUrl:'https://youtube.com/shorts/OQlVzoAnM9M?is=p7sB7tAt3oEAzJSL',
       watchLabel:'Watch Moment',
       signatureFightUrl:'https://youtu.be/-y2SEefVNtE?is=NN1arJDFgj8_a7F9',
+      signatureFightLabel:'Watch Signature Fight'
+    },
+    'Alexandre Pantoja':{
+      photoUrl:'assets/fighters/alex-pantoja.webp',
+      thumbUrl:'assets/fighters/alex-pantoja-thumb.webp',
+      watchUrl:'https://youtube.com/shorts/SWNsHqqKulw?is=dOqXog5XPpyNVzKO',
+      watchLabel:'Watch Moment',
+      signatureFightUrl:'https://youtu.be/7sj-snC5qWk?is=_DkasmmAc4OA-IDR',
+      signatureFightLabel:'Watch Signature Fight'
+    },
+    'Leon Edwards':{
+      watchUrl:'https://youtube.com/shorts/dDslAGcA7K8?is=XSzqPg0nDKPg-Drv',
+      watchLabel:'Watch Moment',
+      signatureFightUrl:'https://youtu.be/cBa12HbgdpA?is=394cct3V_dK5UMpz',
       signatureFightLabel:'Watch Signature Fight'
     },
     'Benson Henderson':{
@@ -76,6 +90,7 @@
   const applied=apply();
   window.addEventListener('ufc-ranking-data-patches-ready',apply);
   window.addEventListener('ufc-scoring-pipeline-ready',apply);
+  window.addEventListener('ufc-pantoja-fighter-added',apply);
   window.UFC_ROYCE_WATCH_LINKS={version:VERSION,mode:'presentation-only',fighters:applied,watchLinks:WATCH_LINKS,mutatesScores:false,loadsRegistry:false};
   document.documentElement.setAttribute('data-royce-watch-links',VERSION);
 })();
