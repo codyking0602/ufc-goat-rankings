@@ -1,7 +1,7 @@
 // Alexandre Pantoja fighter packet extension.
 (function(){
   'use strict';
-  const VERSION='fighter-packet-alexandre-pantoja-20260715b-visible-fallback';
+  const VERSION='fighter-packet-alexandre-pantoja-20260715c-post-bootstrap';
   const fighter='Alexandre Pantoja';
   const packet={
     status:{stage:'new fighter packet live; immediate calculated fallback plus canonical 74th-fighter rebuild',lastUpdated:'2026-07-15',nextFix:'Confirm the canonical rebuild replaces the fallback row on the live app.'},
@@ -131,6 +131,13 @@
     const packetExtensions=Array.from(new Set([...(current.packetExtensions||[]),VERSION]));
     window.UFC_FIGHTER_PACKET_SYSTEM={...current,version:current.version||VERSION,purpose:current.purpose||'Central source for fighter-facing app content during migration.',fighters,packetExtensions,appliedAt:new Date().toISOString()};
   }
+  function restoreVisibleState(){
+    ensureSeed();
+    applyDisplay();
+    applyCompare();
+    registerPacket();
+    renderFallback();
+  }
   function loadCanonicalAddition(){
     if(document.querySelector('[data-canonical-pantoja-fighter-addition]'))return;
     const script=document.createElement('script');
@@ -138,12 +145,15 @@
     script.setAttribute('data-canonical-pantoja-fighter-addition','true');
     document.body.appendChild(script);
   }
+  function restoreAfterBootstrap(){
+    [0,100,400,1200,3000].forEach((delay,index)=>window.setTimeout(()=>{
+      restoreVisibleState();
+      if(index===1)loadCanonicalAddition();
+    },delay));
+  }
 
-  ensureSeed();
-  applyDisplay();
-  applyCompare();
-  registerPacket();
-  renderFallback();
-  window.addEventListener('ufc-production-ranking-ready',()=>setTimeout(loadCanonicalAddition,50),{once:true});
-  if(document.documentElement.getAttribute('data-scoring-pipeline')==='ready')setTimeout(loadCanonicalAddition,50);
+  restoreVisibleState();
+  window.addEventListener('ufc-production-ranking-ready',restoreAfterBootstrap);
+  window.addEventListener('ufc-pantoja-fighter-added',()=>window.setTimeout(restoreVisibleState,0));
+  if(document.documentElement.getAttribute('data-scoring-pipeline')==='ready')restoreAfterBootstrap();
 })();
