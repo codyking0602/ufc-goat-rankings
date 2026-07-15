@@ -9,6 +9,14 @@ const expectedCategories=[
   'apexPeak',
   'penalty'
 ];
+const expectedLabels=[
+  'Championship Resume',
+  'Quality Wins',
+  'Prime Dominance',
+  'Elite Longevity',
+  'Peak Apex',
+  'Loss Context'
+];
 
 const browser=await chromium.launch({headless:true});
 const page=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:1});
@@ -39,7 +47,8 @@ try{
   assert.equal(profile.snapshotLabels.includes('Adjusted Title Wins'),false,'Adjusted Title Wins is hidden from the visible Resume Snapshot');
   assert.equal(profile.snapshotLabels.length,7,'Resume Snapshot contains the seven intended visible stats');
   assert.deepEqual(profile.cards.map(card=>card.category),expectedCategories,'profile categories render once in the canonical order');
-  assert.equal(profile.cards.filter(card=>card.category==='apexPeak').length,1,'Apex Peak renders exactly once');
+  assert.deepEqual(profile.cards.map(card=>card.label),expectedLabels,'profile category labels use the approved app-facing names');
+  assert.equal(profile.cards.filter(card=>card.category==='apexPeak').length,1,'Peak Apex renders exactly once');
 
   const loss=profile.cards[5];
   assert.equal(loss.category,'penalty');
