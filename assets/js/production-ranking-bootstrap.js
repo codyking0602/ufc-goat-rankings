@@ -2,7 +2,7 @@
 (function(){
   'use strict';
 
-  const VERSION='production-ranking-bootstrap-20260715g-single-photo-render';
+  const VERSION='production-ranking-bootstrap-20260715h-longest-win-streak';
   const CALCULATED_STAT_FIELDS=new Set([
     'ufcRecord','titleFightWins','adjustedTitleWins','topFiveWins','top5Wins','rankedWins',
     'finishRatePct','primeRecord','roundsWonPct','activeEliteYears','timesFinishedPrime','throughPrimeUfcFights',
@@ -38,7 +38,7 @@
     ['assets/data/canonical-scoring-judgments.js?v=production-clean-canonical-scoring-judgments','data-production-clean-scoring-judgments'],
     ['assets/js/category-calculators.js?v=production-clean-category-calculators-20260714c','data-production-clean-category-calculators'],
     ['assets/js/ranking-pipeline.js?v=production-clean-ranking-pipeline-20260714c','data-production-clean-ranking-pipeline'],
-    ['assets/js/calculated-profile-runtime.js?v=production-clean-calculated-profile-runtime-20260715b-profile-hotfix','data-production-clean-calculated-profile-runtime'],
+    ['assets/js/calculated-profile-runtime.js?v=production-clean-calculated-profile-runtime-20260715c-longest-win-streak','data-production-clean-calculated-profile-runtime'],
     ['assets/js/division-ranking-pipeline.js?v=division-ranking-pipeline-20260715b-openweight-win-qualified','data-production-clean-division-ranking-pipeline'],
     ['assets/js/division-ranking-reconciliation.js?v=division-ranking-reconciliation-20260715d-strict-openweight','data-production-clean-division-ranking-reconciliation'],
     ['assets/js/octagon-verdict-data.js?v=octagon-verdict-data-20260715b-live-pipeline','data-production-octagon-verdict-data'],
