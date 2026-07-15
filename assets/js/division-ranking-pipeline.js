@@ -3,8 +3,9 @@
 (function(){
   'use strict';
 
-  const VERSION='division-ranking-pipeline-20260715a-canonical-allocation';
-  const DIVISION_ORDER=['Heavyweight','Light Heavyweight','Middleweight','Welterweight','Lightweight','Featherweight','Bantamweight','Flyweight'];
+  const VERSION='division-ranking-pipeline-20260715b-openweight-win-qualified';
+  const DIVISION_ORDER=['Heavyweight','Light Heavyweight','Middleweight','Welterweight','Lightweight','Featherweight','Bantamweight','Flyweight','Openweight'];
+  const DIVISION_LABELS={Openweight:'Openweight (Historical)'};
   const SCORED=new Set(['count-win','count-loss','count-draw']);
   const FINISHES=new Set(['ko-tko','submission','doctor-stoppage']);
   const ELITE_TIERS=new Set(['champion-level','top-five']);
@@ -16,7 +17,8 @@
     lightweight:'Lightweight',lw:'Lightweight',
     featherweight:'Featherweight',fw:'Featherweight',
     bantamweight:'Bantamweight',bw:'Bantamweight',
-    flyweight:'Flyweight',flw:'Flyweight'
+    flyweight:'Flyweight',flw:'Flyweight',
+    openweight:'Openweight','open weight':'Openweight'
   };
 
   const clone=value=>value===undefined?undefined:JSON.parse(JSON.stringify(value));
@@ -25,6 +27,7 @@
   const key=value=>String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
   const canonicalDivision=value=>aliases[key(value)]||String(value||'').trim();
   const supportedDivision=value=>DIVISION_ORDER.includes(canonicalDivision(value));
+  const divisionLabel=value=>DIVISION_LABELS[canonicalDivision(value)]||canonicalDivision(value);
   const add=(map,division,value)=>{if(!supportedDivision(division)||!num(value))return;const name=canonicalDivision(division);map.set(name,num(map.get(name))+num(value));};
   const total=map=>Array.from(map.values()).reduce((sum,value)=>sum+num(value),0);
   const share=(map,division,fallback)=>{const denominator=total(map);if(denominator>0)return num(map.get(division))/denominator;return division===fallback?1:0;};
@@ -68,7 +71,7 @@
   function generalEvidence(record){
     const map=new Map();
     (record?.fights||[]).filter(fight=>SCORED.has(fight?.scoringDisposition)).forEach(fight=>{
-      const title=(fight?.championshipContext?.type||'none')!=='none'?1:.0;
+      const title=(fight?.championshipContext?.type||'none')!=='none'?1:0;
       const elite=ELITE_TIERS.has(fight?.opponentContext?.qualityTier||'none')?.65:0;
       add(map,divisionForFight(record,fight),1+title+elite);
     });
@@ -146,6 +149,10 @@
     return{
       ufcRecord:result.text,
       ufcFightCount:result.fightCount,
+      ufcWins:result.wins,
+      ufcLosses:result.losses,
+      ufcDraws:result.draws,
+      ufcNoContests:result.noContests,
       titleFightWins:titleRows.filter(row=>row.officialTitleFight&&row.eligible&&row.result==='count-win').length,
       adjustedTitleWins:round2(titleRows.reduce((sum,row)=>sum+num(row.credit),0)),
       topFiveWins:qualityRows.filter(row=>['champion-level','top-five'].includes(row.tier)).length,
@@ -205,10 +212,14 @@
       const longevityMonths=total(maps.longevity)*shares.longevity;
       const secondary=(record?.identity?.secondaryDivisions||[]).map(canonicalDivision);
       const role=division===primary?'primary':secondary.includes(division)?'secondary':'crossover';
+      const stats=divisionStats(record,derived,division,longevityMonths);
       return{
         fighter:record.fighter,
         division,
+        divisionLabel:divisionLabel(division),
         role,
+        rankEligible:stats.ufcWins>0,
+        rank:null,
         overallRank:num(row?.rank)||null,
         overallOvr:num(row?.overallOvr)||null,
         overallScore:round2(row?.totalScore),
@@ -216,7 +227,7 @@
         resumeSharePct:round2(resumeShare*100),
         components,
         evidenceShares:Object.fromEntries(Object.entries(shares).map(([name,value])=>[name,round2(value*100)])),
-        stats:divisionStats(record,derived,division,longevityMonths),
+        stats,
         source:'canonical-fighter-facts + calculated weighted score allocation'
       };
     });
@@ -231,7 +242,7 @@
     const rows=current.facts.list().filter(record=>record.board==='men').flatMap(record=>fighterDivisionRows(record,boardRows.get(key(record.fighter))||{},current.calculators));
     const boards={};
     DIVISION_ORDER.forEach(division=>{
-      const ranked=rows.filter(row=>row.division===division).sort((a,b)=>b.divisionScore-a.divisionScore||b.overallScore-a.overallScore||a.fighter.localeCompare(b.fighter));
+      const ranked=rows.filter(row=>row.division===division&&row.rankEligible).sort((a,b)=>b.divisionScore-a.divisionScore||b.overallScore-a.overallScore||a.fighter.localeCompare(b.fighter));
       ranked.forEach((row,index)=>{row.rank=index+1;});
       if(ranked.length)boards[division]=ranked;
     });
@@ -244,15 +255,16 @@
       if(Math.abs(allocated-expected)>.08)conservation.push({fighter,allocated,expected,difference:round2(allocated-expected)});
     });
     const passed=invalid.length===0&&conservation.length===0;
-    latest={version:VERSION,status:passed?'ready':'blocked',passed,allocationOwner:'canonical fight-level division evidence',manualGuardrails:false,fighterCount:new Set(rows.map(row=>row.fighter)).size,rowCount:rows.length,divisionCount:Object.keys(boards).length,invalid,conservation,boards,rows};
+    latest={version:VERSION,status:passed?'ready':'blocked',passed,allocationOwner:'canonical fight-level division evidence',eligibilityRule:'at least one UFC win in the division',manualGuardrails:false,fighterCount:new Set(rows.map(row=>row.fighter)).size,rowCount:rows.length,rankedRowCount:Object.values(boards).reduce((sum,board)=>sum+board.length,0),divisionCount:Object.keys(boards).length,invalid,conservation,boards,rows};
     window.UFC_DIVISION_RANKING_REPORT=latest;
     document.documentElement.setAttribute('data-division-ranking-pipeline',`${VERSION}-${latest.status}-${latest.rowCount}`);
     return latest;
   }
 
   function boardFor(division){if(latest.status!=='ready')rebuild();return clone(latest.boards[canonicalDivision(division)]||[]);}
-  function entryFor(fighter){if(latest.status!=='ready')rebuild();return clone(latest.rows.filter(row=>key(row.fighter)===key(fighter)));}
-  function exportData(){if(latest.status!=='ready')rebuild();return clone({version:latest.version,allocationOwner:latest.allocationOwner,manualGuardrails:false,boards:latest.boards});}
+  function entryFor(fighter){if(latest.status!=='ready')rebuild();return clone(latest.rows.filter(row=>key(row.fighter)===key(fighter)&&row.rankEligible));}
+  function allocationRowsFor(fighter){if(latest.status!=='ready')rebuild();return clone(latest.rows.filter(row=>key(row.fighter)===key(fighter)));}
+  function exportData(){if(latest.status!=='ready')rebuild();return clone({version:latest.version,allocationOwner:latest.allocationOwner,eligibilityRule:latest.eligibilityRule,manualGuardrails:false,boards:latest.boards});}
 
   function photo(row){
     const override=window.DISPLAY_OVERRIDES?.[row.fighter]||{};
@@ -269,7 +281,7 @@
     document.head.appendChild(style);
   }
 
-  function controls(active){return `<div class="division-leader-controls">${Object.keys(latest.boards).map(division=>`<button type="button" class="division-leader-pill ${division===active?'active':''}" data-division-pick="${division}">${division}</button>`).join('')}</div>`;}
+  function controls(active){return `<div class="division-leader-controls">${Object.keys(latest.boards).map(division=>`<button type="button" class="division-leader-pill ${division===active?'active':''}" data-division-pick="${division}">${divisionLabel(division)}</button>`).join('')}</div>`;}
   function rowHtml(row){
     const role=row.role==='primary'?'Primary UFC division':row.role==='secondary'?'Second-division résumé':'Crossover résumé';
     return `<article class="row fighter-row division-row" data-fighter="${row.fighter}"><div class="rank">#${row.rank}</div>${photo(row)}<div class="row-main"><div class="name">${row.fighter}</div><div class="meta">${row.stats.ufcRecord} UFC · Overall #${row.overallRank||'—'}</div><div class="division-context">${role} · ${Math.round(row.resumeSharePct)}% of calculated UFC résumé</div></div><div class="canonical-division-score">${row.divisionScore.toFixed(1)}<span>DIV SCORE</span></div></article>`;
@@ -284,27 +296,28 @@
     const divisions=Object.keys(latest.boards);
     if(select.dataset.canonicalDivisionOptions!==VERSION){
       const current=select.value;
-      select.innerHTML='<option value="All">All divisions</option>'+divisions.map(division=>`<option value="${division}">${division}</option>`).join('');
+      select.innerHTML='<option value="All">All divisions</option>'+divisions.map(division=>`<option value="${division}">${divisionLabel(division)}</option>`).join('');
       select.value=divisions.includes(current)?current:'All';
       select.dataset.canonicalDivisionOptions=VERSION;
     }
     const active=canonicalDivision(select.value);
     const section=document.querySelector('#division .section-title');
     if(active==='All'||!latest.boards[active]){
-      if(section){section.querySelector('h2').textContent='Division Boards';section.querySelector('p').textContent='Calculated automatically from each fighter’s UFC fights in that weight class.';}
-      target.innerHTML=`<div class="division-leader-shell">${controls('')}<div class="division-leader-summary"><strong>Pick a division</strong><br>Every board is rebuilt from the canonical fight ledgers—no manual fighter placement or sample-share tuning.</div></div>`;
+      if(section){section.querySelector('h2').textContent='Division Boards';section.querySelector('p').textContent='Calculated automatically from each fighter’s UFC wins and résumé in that weight class.';}
+      target.innerHTML=`<div class="division-leader-shell">${controls('')}<div class="division-leader-summary"><strong>Pick a division</strong><br>Every board is rebuilt from the canonical fight ledgers. A fighter must own at least one UFC win in the division to be ranked there.</div></div>`;
     }else{
-      const rows=latest.boards[active];
-      if(section){section.querySelector('h2').textContent=`${active} Rankings`;section.querySelector('p').textContent='UFC-only divisional résumé, allocated from the same calculated GOAT model.';}
-      target.innerHTML=`<div class="division-leader-shell">${controls(active)}<div class="division-leader-summary"><strong>${active} · Men</strong><br>${rows.length} fighters ranked from fight-level divisional evidence.</div><div class="leaderboard">${rows.map(rowHtml).join('')}</div></div>`;
+      const ranked=latest.boards[active];
+      const label=divisionLabel(active);
+      if(section){section.querySelector('h2').textContent=`${label} Rankings`;section.querySelector('p').textContent='UFC-only divisional résumé, allocated from the same calculated GOAT model.';}
+      target.innerHTML=`<div class="division-leader-shell">${controls(active)}<div class="division-leader-summary"><strong>${label} · Men</strong><br>${ranked.length} fighters ranked from fight-level divisional evidence and at least one UFC win.</div><div class="leaderboard">${ranked.map(rowHtml).join('')}</div></div>`;
     }
     target.querySelectorAll('[data-division-pick]').forEach(button=>button.addEventListener('click',()=>{select.value=button.dataset.divisionPick;render();}));
     target.querySelectorAll('[data-fighter]').forEach(node=>node.addEventListener('click',()=>{if(typeof window.openFighter==='function')window.openFighter(node.dataset.fighter);else if(typeof openFighter==='function')openFighter(node.dataset.fighter);}));
   }
 
-  const API={version:VERSION,role:'automatic UFC-only division ranking owner',divisionOrder:DIVISION_ORDER.slice(),manualGuardrails:false,rebuild,boardFor,entryFor,exportData,get latest(){return clone(latest);}};
+  const API={version:VERSION,role:'automatic UFC-only division ranking owner',divisionOrder:DIVISION_ORDER.slice(),divisionLabel,manualGuardrails:false,rebuild,boardFor,entryFor,allocationRowsFor,exportData,get latest(){return clone(latest);}};
   window.UFC_DIVISION_RANKING_PIPELINE=API;
-  window.UFC_DIVISION_RANKINGS={version:VERSION,mode:'canonical-fight-level-allocation',manualGuardrails:false,render,rebuild,boardFor,entryFor,exportData};
+  window.UFC_DIVISION_RANKINGS={version:VERSION,mode:'canonical-fight-level-allocation',manualGuardrails:false,render,rebuild,boardFor,entryFor,allocationRowsFor,exportData};
   window.renderDivision=render;
   window.addEventListener?.('ufc-scoring-pipeline-ready',()=>{rebuild();render();});
 })();
