@@ -57,6 +57,7 @@ try{
   assert.equal(leaderboard.charlesHref,CHARLES_WATCH_URL,'Charles rendered Watch Moment uses the requested Short');
 
   await page.locator('.tab[data-view="division"]').click();
+  await page.evaluate(()=>window.renderDivision?.());
   await page.waitForSelector('#divisionList .fighter-row[data-fighter]');
   const divisionRows=await page.locator('#divisionList .fighter-row[data-fighter]').evaluateAll(rows=>rows.map(row=>({
     fighter:row.dataset.fighter,
