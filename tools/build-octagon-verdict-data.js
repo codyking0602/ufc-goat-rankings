@@ -42,10 +42,12 @@ async function readRuntime(){
       const finite=value=>Number.isFinite(Number(value))?Number(value):undefined;
       const first=(...values)=>values.find(value=>value!==undefined&&value!==null&&value!=='');
       const clean=(value,max=900)=>{if(value===undefined||value===null)return undefined;const text=String(value).replace(/\s+/g,' ').trim();if(!text)return undefined;return text.length>max?`${text.slice(0,max-1).trim()}…`:text;};
+      const compact=obj=>Object.fromEntries(Object.entries(obj).filter(([,value])=>value!==undefined&&value!==null&&value!==''&&(!Array.isArray(value)||value.length)&&(!(typeof value==='object'&&!Array.isArray(value))||Object.keys(value).length)));
+      const slugify=name=>String(name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/&/g,' and ').replace(/[’']/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
       const qualityLedger=trace=>(trace?.inputs||[]).slice(0,16).map(input=>({fightId:input.fightId,opponent:input.opponent,date:input.date,finalCredit:finite(input.finalCredit),countedCredit:finite(input.countedCredit),tier:clean(input.tierLabel||input.qualityTier,80),context:clean(input.context||input.note||input.notes,260)})).filter(row=>row.opponent);
       const titleLedger=trace=>(trace?.inputs||[]).filter(input=>finite(input.finalAdjustedCredit)>0).slice(0,20).map(input=>({fightId:input.fightId,opponent:input.opponent,date:input.date,adjustedCredit:finite(input.finalAdjustedCredit),type:input.type,context:clean(input.context||input.note||input.notes,260)})).filter(row=>row.opponent);
       const lossEvents=trace=>(trace?.events||[]).slice(0,16).map(event=>({fightId:event.fightId,opponent:event.opponent,date:event.date,phase:event.phase,method:event.methodCategory,divisionContext:event.divisionContext,rawPenalty:finite(event.rawPenalty),context:clean(event.note||event.context,260)})).filter(row=>row.opponent);
-      const divisionRowsFor=name=>(DIVISIONS?.entryFor?.(name)||[]).map(row=>({division:row.division,rank:row.rank,divisionScore:finite(row.divisionScore),resumeSharePct:finite(row.resumeSharePct),role:row.role,stats:clone(row.stats),components:clone(row.components)}));
+      const divisionRowsFor=name=>(DIVISIONS?.entryFor?.(name)||[]).map(row=>({division:row.division,rank:row.rank,divisionScore:finite(row.divisionScore),resumeSharePct:finite(row.resumeSharePct),role:row.role,stats:clone(row.stats),components:clone(row.components),historicalDivisionFallback:Boolean(row.historicalDivisionFallback)}));
       const fighters=[];
       for(const [group,board] of [['men',DATA.men||[]],['women',DATA.women||[]]]){
         for(const row of board){
@@ -112,7 +114,8 @@ async function readRuntime(){
           rankingPipeline:window.UFC_RANKING_PIPELINE?.version,
           categoryCalculators:CALCULATORS?.version,
           canonicalFacts:FACTS?.version,
-          divisionRankings:DIVISIONS?.version
+          divisionRankings:DIVISIONS?.version,
+          divisionReconciliation:window.UFC_DIVISION_RANKING_RECONCILIATION?.version
         },
         pipelineFighterCount:window.UFC_SCORING_PIPELINE?.fighterCount,
         pipelineStatus:window.UFC_SCORING_PIPELINE?.status,
