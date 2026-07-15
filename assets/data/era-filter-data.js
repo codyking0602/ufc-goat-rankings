@@ -92,21 +92,25 @@
     }
   ];
 
+  // Most membership comes from overlap with the fighter's meaningful UFC elite window.
+  // These additions cover pioneers and major era figures whose importance sits outside that single prime window.
   const EXTRA_MEMBERSHIP={
-    'Vitor Belfort':['tournament'],
+    'Vitor Belfort':['tournament','survival','zuffa-rebuild'],
     'Randy Couture':['tournament','survival'],
-    'Ken Shamrock':['tournament','survival','zuffa-rebuild'],
+    'Ken Shamrock':['tournament','survival','zuffa-rebuild','tuf-boom'],
     'Mark Coleman':['tournament','survival'],
     'Dan Severn':['tournament'],
     'Don Frye':['tournament'],
     'Bas Rutten':['survival'],
     'Kevin Randleman':['survival'],
-    'Pat Miletich':['survival'],
+    'Pat Miletich':['survival','zuffa-rebuild'],
+    'Tito Ortiz':['tuf-boom'],
+    'Michael Bisping':['tuf-boom','golden-age'],
     'Alexandre Pantoja':['apex','new-blood']
   };
 
   window.UFC_ERA_FILTER_DATA={
-    version:'era-filter-data-20260715a',
+    version:'era-filter-data-20260715b',
     eras:ERAS,
     byId:Object.fromEntries(ERAS.map(era=>[era.id,era])),
     extraMembership:EXTRA_MEMBERSHIP
