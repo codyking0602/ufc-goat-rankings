@@ -81,15 +81,40 @@ for(const file of [
   'assets/data/canonical-division-era-depth-reconstruction.js',
   'assets/data/canonical-leon-final-category-completions.js',
   'assets/data/canonical-final-score-reconstruction.js',
-  'assets/data/canonical-ovr-reconstruction.js',
-  'assets/js/ranking-pipeline.js'
+  'assets/data/canonical-ovr-reconstruction.js'
 ]){
   vm.runInContext(await fs.readFile(file,'utf8'),context,{filename:file});
 }
 
-assert.equal(window.UFC_CANONICAL_FINAL_SCORE_RECONSTRUCTION?.applied,true);
-assert.equal(window.UFC_CANONICAL_OVR_RECONSTRUCTION?.applied,true);
+const approvedFinal=window.UFC_CANONICAL_FINAL_SCORE_RECONSTRUCTION;
+const approvedOvr=window.UFC_CANONICAL_OVR_RECONSTRUCTION;
+assert.equal(approvedFinal?.applied,true);
+assert.equal(approvedOvr?.applied,true);
+const expectedByKey=new Map(approvedFinal.approvedReport.rows.filter(row=>row.status==='complete').map(row=>{
+  const ovr=approvedOvr.entryFor(row.fighter);
+  return [key(row.fighter),{
+    fighter:row.fighter,
+    rank:row.calculatedRank,
+    totalScore:row.totalScore,
+    overallOvr:ovr.calculatedOvr,
+    scores:JSON.parse(JSON.stringify(row.scores))
+  }];
+}));
+assert.equal(expectedByKey.size,73);
+
+// Remove the shadow total/rank and OVR reports before the production pipeline loads.
+delete window.UFC_CANONICAL_FINAL_SCORE_RECONSTRUCTION;
+delete window.UFC_CANONICAL_OVR_RECONSTRUCTION;
+
+for(const file of ['assets/js/category-calculators.js','assets/js/ranking-pipeline.js']){
+  vm.runInContext(await fs.readFile(file,'utf8'),context,{filename:file});
+}
+
+assert.equal(window.UFC_CATEGORY_CALCULATOR_AUDIT?.passed,true);
+assert.equal(window.UFC_CATEGORY_CALCULATOR_AUDIT?.completeFighterCount,73);
+assert.equal(window.UFC_CATEGORY_CALCULATORS?.readsFrozenExpectedOutputs,false);
 assert.equal(window.UFC_RANKING_PIPELINE?.readsFrozenExpectedOutputsAsAuthority,false);
+assert.equal(window.UFC_RANKING_PIPELINE?.readsShadowFinalOrOvrReportsAsAuthority,false);
 
 // A production projection must not consult the frozen migration control.
 window.UFC_CANONICAL_SCORING_RECORDS.entryFor=()=>{throw new Error('Frozen scoring controls were read as production authority.');};
@@ -99,7 +124,9 @@ assert.equal(report.applied,true);
 assert.equal(report.fighterCount,73);
 assert.equal(window.RANKING_DATA.men.length+window.RANKING_DATA.women.length,73);
 assert.equal(window.RANKING_DATA.fighters.length,73);
+assert.deepEqual(JSON.parse(JSON.stringify(window.UFC_RANKING_PIPELINE.weights)),{championship:35,opponentQuality:25,primeDominance:30,longevity:10});
 assert.equal(window.RANKING_DATA.meta.calculatedRankingPipeline.frozenExpectedOutputsUsedAsAuthority,false);
+assert.equal(window.RANKING_DATA.meta.calculatedRankingPipeline.shadowFinalOrOvrReportsUsedAsAuthority,false);
 assert.equal(window.RANKING_DATA.liveScoreMode,'fight-level-calculated-single-owner');
 
 const expectedMenTopTen=[
@@ -135,6 +162,21 @@ assert.equal(entry('Amanda Nunes').rank,1);
 assert.equal(entry('Amanda Nunes').overallOvr,99);
 assert.equal(entry('Valentina Shevchenko').overallOvr,98);
 
+// Exact-output certification against the approved shadow reports.
+for(const row of window.UFC_CALCULATED_RANKING_PROJECTION.rows){
+  const expected=expectedByKey.get(key(row.fighter));
+  assert.ok(expected,`${row.fighter} approved control`);
+  assert.equal(row.rank,expected.rank,`${row.fighter} rank`);
+  assert.equal(row.totalScore,expected.totalScore,`${row.fighter} total`);
+  assert.equal(row.overallOvr,expected.overallOvr,`${row.fighter} OVR`);
+  for(const field of ['championship','opponentQuality','primeDominance','longevity']){
+    assert.equal(row[field],expected.scores[field],`${row.fighter} ${field}`);
+  }
+  assert.equal(row.apexPeak,expected.scores.apex,`${row.fighter} apex`);
+  assert.equal(row.penalty,expected.scores.penalty,`${row.fighter} penalty`);
+  assert.equal(row.eraDepthAdjustment,expected.scores.eraDepth,`${row.fighter} era depth`);
+}
+
 const boardByKey=new Map([...window.RANKING_DATA.men,...window.RANKING_DATA.women].map(row=>[key(row.fighter),row]));
 for(const profile of window.RANKING_DATA.fighters){
   const board=boardByKey.get(key(profile.fighter));
@@ -152,8 +194,11 @@ assert.equal(attributes['data-ranking-pipeline'],`${window.UFC_RANKING_PIPELINE.
 console.log('RANKING_PIPELINE_CERTIFICATION');
 console.log(JSON.stringify({
   version:window.UFC_RANKING_PIPELINE.version,
+  categoryVersion:window.UFC_CATEGORY_CALCULATORS.version,
   fighterCount:report.fighterCount,
+  exactApprovedOutputMatches:window.UFC_CALCULATED_RANKING_PROJECTION.rows.length,
   menTopTen:report.menTopTen,
   womenTopTen:report.womenTopTen,
-  frozenExpectedOutputsUsedAsAuthority:window.RANKING_DATA.meta.calculatedRankingPipeline.frozenExpectedOutputsUsedAsAuthority
+  frozenExpectedOutputsUsedAsAuthority:window.RANKING_DATA.meta.calculatedRankingPipeline.frozenExpectedOutputsUsedAsAuthority,
+  shadowFinalOrOvrReportsUsedAsAuthority:window.RANKING_DATA.meta.calculatedRankingPipeline.shadowFinalOrOvrReportsUsedAsAuthority
 },null,2));
