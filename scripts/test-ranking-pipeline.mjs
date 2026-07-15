@@ -102,7 +102,6 @@ const expectedByKey=new Map(approvedFinal.approvedReport.rows.filter(row=>row.st
 }));
 assert.equal(expectedByKey.size,73);
 
-// Remove the shadow total/rank and OVR reports before the production pipeline loads.
 delete window.UFC_CANONICAL_FINAL_SCORE_RECONSTRUCTION;
 delete window.UFC_CANONICAL_OVR_RECONSTRUCTION;
 
@@ -116,7 +115,6 @@ assert.equal(window.UFC_CATEGORY_CALCULATORS?.readsFrozenExpectedOutputs,false);
 assert.equal(window.UFC_RANKING_PIPELINE?.readsFrozenExpectedOutputsAsAuthority,false);
 assert.equal(window.UFC_RANKING_PIPELINE?.readsShadowFinalOrOvrReportsAsAuthority,false);
 
-// A production projection must not consult the frozen migration control.
 window.UFC_CANONICAL_SCORING_RECORDS.entryFor=()=>{throw new Error('Frozen scoring controls were read as production authority.');};
 
 const report=window.UFC_RANKING_PIPELINE.apply();
@@ -141,7 +139,8 @@ const expectedMenTopTen=[
   'Kamaru Usman',
   'Max Holloway'
 ];
-assert.deepEqual(window.RANKING_DATA.men.slice(0,10).map(row=>row.fighter),expectedMenTopTen);
+const actualMenTopTen=JSON.parse(JSON.stringify(window.RANKING_DATA.men.slice(0,10).map(row=>row.fighter)));
+assert.deepEqual(actualMenTopTen,expectedMenTopTen);
 
 const entry=fighter=>window.UFC_CALCULATED_RANKING_PROJECTION.entryFor(fighter);
 assert.equal(entry('Jon Jones').rank,1);
@@ -162,7 +161,6 @@ assert.equal(entry('Amanda Nunes').rank,1);
 assert.equal(entry('Amanda Nunes').overallOvr,99);
 assert.equal(entry('Valentina Shevchenko').overallOvr,98);
 
-// Exact-output certification against the approved shadow reports.
 for(const row of window.UFC_CALCULATED_RANKING_PROJECTION.rows){
   const expected=expectedByKey.get(key(row.fighter));
   assert.ok(expected,`${row.fighter} approved control`);
