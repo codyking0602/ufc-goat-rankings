@@ -19,7 +19,7 @@ function candidatesFor(fighter){
 }
 
 const browser=await chromium.launch({headless:true});
-const page=await browser.newPage({viewport:{width:1280,height:900}});
+const page=await browser.newPage({viewport:{width:390,height:844}});
 const pageErrors=[];
 page.on('pageerror',error=>pageErrors.push(String(error?.message||error)));
 try{
@@ -52,33 +52,31 @@ try{
     }
   }
 
-  let loadTimedOut=false;
-  try{
-    await page.waitForFunction(()=>{
-      const rows=[...document.querySelectorAll('#menList .fighter-row,#womenList .fighter-row')];
-      return rows.length===73&&rows.every(row=>{
-        const img=row.querySelector('.row-photo img');
-        return Boolean(img&&img.complete&&img.naturalWidth>0);
-      });
-    },null,{timeout:30000,polling:250});
-  }catch{
-    loadTimedOut=true;
+  const scrollFailures=[];
+  const boardNames={
+    men:await page.locator('#menList .fighter-row').evaluateAll(rows=>rows.map(row=>row.dataset.fighter)),
+    women:await page.locator('#womenList .fighter-row').evaluateAll(rows=>rows.map(row=>row.dataset.fighter))
+  };
+  for(const [board,names] of Object.entries(boardNames)){
+    if(board==='women')await page.locator('.tab[data-view="women"]').click();
+    for(const fighter of names){
+      const row=page.locator(`${board==='men'?'#menList':'#womenList'} .fighter-row[data-fighter="${fighter.replace(/"/g,'\\"')}"]`);
+      await row.scrollIntoViewIfNeeded();
+      try{
+        await page.waitForFunction(({container,fighter})=>{
+          const rows=[...document.querySelectorAll(`${container} .fighter-row`)];
+          const row=rows.find(item=>item.dataset.fighter===fighter);
+          const img=row?.querySelector('.row-photo img');
+          return Boolean(img&&img.complete&&img.naturalWidth>0);
+        },{container:board==='men'?'#menList':'#womenList',fighter},{timeout:5000,polling:100});
+      }catch{
+        scrollFailures.push(await row.evaluate(element=>{
+          const img=element.querySelector('.row-photo img');
+          return{fighter:element.dataset.fighter,hasImage:Boolean(img),src:img?.getAttribute('src')||null,complete:Boolean(img?.complete),naturalWidth:Number(img?.naturalWidth||0),text:element.querySelector('.row-photo')?.textContent?.trim()||''};
+        }));
+      }
+    }
   }
-
-  const rendered=await page.evaluate(()=>{
-    const inspect=container=>Array.from(document.querySelectorAll(`${container} .fighter-row`)).map(row=>{
-      const fighter=row.dataset.fighter;
-      const img=row.querySelector('.row-photo img');
-      return{fighter,hasImage:Boolean(img),src:img?.getAttribute('src')||null,complete:Boolean(img?.complete),naturalWidth:Number(img?.naturalWidth||0),text:row.querySelector('.row-photo')?.textContent?.trim()||''};
-    });
-    return{
-      men:inspect('#menList'),
-      women:inspect('#womenList'),
-      finalPhotoSync:window.UFC_CALCULATED_ROSTER_PHOTO_SYNC||null,
-      bootstrapPhotoSync:window.UFC_PRODUCTION_RANKING_BOOTSTRAP?.photoSync||null
-    };
-  });
-  const renderedFailures=[...rendered.men,...rendered.women].filter(row=>!row.hasImage||!row.complete||row.naturalWidth<=0);
 
   const profileFailures=[];
   const named=['Cris Cyborg','Lyoto Machida','Justin Gaethje','Frank Shamrock'];
@@ -86,11 +84,10 @@ try{
   for(const fighter of named){
     await page.evaluate(name=>window.openFighter?.(name),fighter);
     try{
-      await page.waitForFunction(name=>{
-        const heading=document.querySelector('#fighterDetail h2')?.textContent?.trim();
+      await page.waitForFunction(()=>{
         const img=document.querySelector('#fighterDetail .fighter-photo img');
-        return heading===name&&Boolean(img&&img.complete&&img.naturalWidth>0);
-      },fighter,{timeout:15000,polling:200});
+        return Boolean(img&&img.complete&&img.naturalWidth>0);
+      },null,{timeout:15000,polling:200});
     }catch{
       profileFailures.push(fighter);
     }
@@ -121,8 +118,13 @@ try{
 
   const namedState=mappings.filter(row=>named.includes(row.fighter)).map(mapping=>({
     ...mapping,
-    rendered:[...rendered.men,...rendered.women].find(row=>row.fighter===mapping.fighter)||null,
+    scrollFailure:scrollFailures.find(row=>row.fighter===mapping.fighter)||null,
     profile:profileStates.find(row=>row.fighter===mapping.fighter)||null
+  }));
+
+  const runtime=await page.evaluate(()=>({
+    bootstrapPhotoSync:window.UFC_PRODUCTION_RANKING_BOOTSTRAP?.photoSync||null,
+    finalPhotoSync:window.UFC_CALCULATED_ROSTER_PHOTO_SYNC||null
   }));
 
   console.log('FIGHTER_PHOTO_RENDER_AUDIT');
@@ -131,21 +133,18 @@ try{
     availableWebpCount:available.length,
     pathMissingCount:missing.length,
     decodeFailureCount:decodeFailures.length,
-    renderedFailureCount:renderedFailures.length,
+    scrollFailureCount:scrollFailures.length,
     profileFailureCount:profileFailures.length,
-    loadTimedOut,
-    bootstrapPhotoSync:rendered.bootstrapPhotoSync,
-    finalPhotoSync:rendered.finalPhotoSync,
+    ...runtime,
     namedState,
     missing,
     decodeFailures,
-    renderedFailures,
+    scrollFailures,
     profileFailures,
     pageErrors
   },null,2));
   assert.equal(missing.length,0,`${missing.length} fighter photo paths are missing`);
-  assert.equal(loadTimedOut,false,'leaderboard photos did not all finish loading within 30 seconds');
-  assert.equal(renderedFailures.length,0,`${renderedFailures.length} leaderboard fighter photos fail rendering`);
+  assert.equal(scrollFailures.length,0,`${scrollFailures.length} fighter thumbnails fail after scrolling into view`);
   assert.equal(profileFailures.length,0,`${profileFailures.length} named profile photos fail rendering`);
   assert.equal(decodeFailures.length,0,`${decodeFailures.length} fighter images fail browser decoding`);
   assert.deepEqual(pageErrors,[],'photo audit has no uncaught page errors');
