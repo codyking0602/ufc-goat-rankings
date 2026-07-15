@@ -1,7 +1,7 @@
 // Builds the Octagon Verdict dataset directly from the permanent calculated ranking pipeline.
 (function(){
   'use strict';
-  const VERSION='octagon-verdict-data-20260715a-live-pipeline';
+  const VERSION='octagon-verdict-data-20260715b-live-pipeline';
   const clone=value=>value===undefined?undefined:JSON.parse(JSON.stringify(value));
   const rows=()=>[...(window.RANKING_DATA?.men||[]),...(window.RANKING_DATA?.women||[])];
   function fighterPayload(row){
@@ -12,9 +12,9 @@
       divisions:[row.primaryDivision,row.secondaryDivision].filter(Boolean),ufcRecord:row.ufcRecord,
       categories:{championship:row.championship,opponentQuality:row.opponentQuality,primeDominance:row.primeDominance,longevity:row.longevity,apexPeak:row.apexPeak,lossPenalty:row.penalty,divisionEraDepth:row.eraDepthAdjustment},
       resume:{titleFightWins:row.titleFightWins,adjustedTitleWins:row.adjustedTitleWins,topFiveWins:row.topFiveWins,rankedWins:row.rankedWins,finishRatePct:row.finishRatePct,primeRecord:row.primeRecord,roundsWonPct:row.roundsWonPct,activeEliteYears:row.activeEliteYears,timesFinishedPrime:row.timesFinishedPrime},
-      divisionResume:window.UFC_DIVISION_RANKINGS?.ledgerFor?.(row.fighter)||null,
+      divisionResume:window.UFC_DIVISION_RANKING_PIPELINE?.entryFor?.(row.fighter)||[],
       presentation:{oneLiner:override.oneLiner||compare.shortCase||null,whyRankedHere:override.whyRankedHere||null,whyNotHigher:override.whyNotHigher||null,keyJudgmentCalls:clone(override.keyJudgmentCalls||null)},
-      source:{scores:'ranking-pipeline.js',facts:'canonical-fighter-facts.js',judgments:'canonical-scoring-judgments.js'}
+      source:{scores:'ranking-pipeline.js',facts:'canonical-fighter-facts.js',judgments:'canonical-scoring-judgments.js',divisions:'division-ranking-pipeline.js'}
     };
   }
   function build(){
