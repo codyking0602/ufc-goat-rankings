@@ -1,0 +1,46 @@
+name: Production Ranking Browser Smoke
+
+on:
+  push:
+    branches:
+      - agent/fighter-data-phase-1
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'assets/data/**'
+      - 'assets/compare-data.js'
+      - 'assets/js/app.js'
+      - 'assets/js/play.js'
+      - 'assets/js/blind-matchmaking.js'
+      - 'assets/js/category-calculators.js'
+      - 'assets/js/ranking-pipeline.js'
+      - 'assets/js/production-ranking-bootstrap.js'
+      - 'scripts/test-production-browser.mjs'
+      - '.github/workflows/production-ranking-browser-smoke.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  browser-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Chromium test runtime
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Start local app
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/ufc-app-http.log 2>&1 &
+          echo $! > /tmp/ufc-app-http.pid
+      - name: Run rendered ranking regression
+        run: node scripts/test-production-browser.mjs
+      - name: Show server log on failure
+        if: failure()
+        run: cat /tmp/ufc-app-http.log
