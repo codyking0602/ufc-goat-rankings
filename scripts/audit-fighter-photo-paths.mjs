@@ -71,15 +71,35 @@ try{
     }
   }
 
-  await page.evaluate(()=>window.refresh?.());
-  await page.waitForTimeout(750);
+  await page.evaluate(()=>{
+    window.__UFC_PHOTO_AUDIT_REFRESH_COUNT=0;
+    const original=window.refresh;
+    if(typeof original==='function'){
+      window.refresh=function(...args){window.__UFC_PHOTO_AUDIT_REFRESH_COUNT+=1;return original.apply(this,args);};
+      window.refresh();
+    }
+  });
+
+  let loadTimedOut=false;
+  try{
+    await page.waitForFunction(()=>{
+      const rows=[...document.querySelectorAll('#menList .fighter-row,#womenList .fighter-row')];
+      return rows.length===73&&rows.every(row=>{
+        const img=row.querySelector('.row-photo img');
+        return Boolean(img&&img.complete&&img.naturalWidth>0);
+      });
+    },null,{timeout:30000,polling:250});
+  }catch{
+    loadTimedOut=true;
+  }
+
   const rendered=await page.evaluate(()=>{
     const inspect=container=>Array.from(document.querySelectorAll(`${container} .fighter-row`)).map(row=>{
       const fighter=row.dataset.fighter;
       const img=row.querySelector('.row-photo img');
       return{fighter,hasImage:Boolean(img),src:img?.getAttribute('src')||null,complete:Boolean(img?.complete),naturalWidth:Number(img?.naturalWidth||0),text:row.querySelector('.row-photo')?.textContent?.trim()||''};
     });
-    return{men:inspect('#menList'),women:inspect('#womenList')};
+    return{men:inspect('#menList'),women:inspect('#womenList'),refreshCount:Number(window.__UFC_PHOTO_AUDIT_REFRESH_COUNT||0)};
   });
   const renderedFailures=[...rendered.men,...rendered.women].filter(row=>!row.hasImage||!row.complete||row.naturalWidth<=0);
 
@@ -96,6 +116,8 @@ try{
     pathMissingCount:missing.length,
     decodeFailureCount:decodeFailures.length,
     renderedFailureCount:renderedFailures.length,
+    loadTimedOut,
+    refreshCount:rendered.refreshCount,
     photoSync:await page.evaluate(()=>window.UFC_CALCULATED_ROSTER_PHOTO_SYNC||null),
     namedState,
     missing,
@@ -105,6 +127,7 @@ try{
   },null,2));
   assert.equal(missing.length,0,`${missing.length} fighter photo paths are missing`);
   assert.equal(decodeFailures.length,0,`${decodeFailures.length} fighter images fail browser decoding`);
+  assert.equal(loadTimedOut,false,'leaderboard photos did not all finish loading within 30 seconds');
   assert.equal(renderedFailures.length,0,`${renderedFailures.length} leaderboard fighter photos fail rendering`);
   assert.deepEqual(pageErrors,[],'photo audit has no uncaught page errors');
 }finally{
