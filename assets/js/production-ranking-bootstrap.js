@@ -2,7 +2,7 @@
 (function(){
   'use strict';
 
-  const VERSION='production-ranking-bootstrap-20260715i-approved-oq-audit';
+  const VERSION='production-ranking-bootstrap-20260715j-approved-oq-audit';
   const CALCULATED_STAT_FIELDS=new Set([
     'ufcRecord','titleFightWins','adjustedTitleWins','topFiveWins','top5Wins','rankedWins',
     'finishRatePct','primeRecord','roundsWonPct','activeEliteYears','timesFinishedPrime','throughPrimeUfcFights',
@@ -36,7 +36,7 @@
     ['assets/data/division-era-depth-shadow.js?v=production-clean-division-era-depth-shadow','data-production-clean-era-depth-shadow'],
     ['assets/data/canonical-division-era-depth-approved-resolutions.js?v=production-clean-canonical-division-era-depth-approved-resolutions','data-production-clean-era-depth-resolutions'],
     ['assets/data/canonical-scoring-judgments.js?v=production-clean-canonical-scoring-judgments','data-production-clean-scoring-judgments'],
-    ['assets/data/canonical-opponent-quality-audit-adjustments.js?v=canonical-opponent-quality-audit-adjustments-20260715a-merab','data-production-clean-opponent-quality-audit-adjustments'],
+    ['assets/data/canonical-opponent-quality-audit-adjustments.js?v=canonical-opponent-quality-audit-adjustments-20260715b-merab','data-production-clean-opponent-quality-audit-adjustments'],
     ['assets/js/category-calculators.js?v=production-clean-category-calculators-20260714c','data-production-clean-category-calculators'],
     ['assets/js/ranking-pipeline.js?v=production-clean-ranking-pipeline-20260714c','data-production-clean-ranking-pipeline'],
     ['assets/js/calculated-profile-runtime.js?v=production-clean-calculated-profile-runtime-20260715c-longest-win-streak','data-production-clean-calculated-profile-runtime'],
