@@ -98,7 +98,9 @@ Division owner: `assets/js/division-ranking-pipeline.js`
 
 Division normalization owner: `assets/js/division-ranking-reconciliation.js`
 
-Octagon Verdict packager: `tools/build-octagon-verdict-data.js`
+Live Octagon payload owner: `assets/js/octagon-verdict-live-data.js`
+
+Octagon Verdict knowledge packager: `tools/build-octagon-verdict-data.js`
 
 These outputs consume the completed calculated runtime; they never create or override the main score.
 
@@ -112,13 +114,15 @@ Division boards allocate each weighted category using its actual canonical fight
 - Loss Penalty follows the applicable loss events.
 - Division-Era Depth follows the fighter’s scored UFC fight evidence.
 
-The sum of every fighter’s division scores must reconcile to that fighter’s overall calculated score. Only decimal rounding residue may be normalized. A meaningful unexplained multi-division gap blocks production. Unsupported historical UFC classes such as openweight may roll into a fighter’s sole app-facing division, but never through a fighter-specific hard-coded exception.
+The sum of every fighter’s division scores must reconcile to that fighter’s overall calculated score. Only decimal rounding residue may be normalized. A meaningful unexplained multi-division gap blocks production.
+
+A fighter must own at least one UFC win in a division to appear on that division’s ranked board. Loss-only cameos remain in the allocation audit but do not create misleading ranked entries. Historical UFC Openweight is represented as its own **Openweight (Historical)** board, so Royce Gracie’s tournament résumé is not forced into welterweight.
 
 The Octagon Verdict knowledge package is rebuilt from the same browser runtime and includes:
 
 - all 73 calculated fighter records
 - current ranks, OVRs, total scores, categories, and visible stats
-- all eight automatic men’s division boards
+- eight modern men’s weight-class boards plus Openweight (Historical)
 - division-only fighter rows and scores
 - presentation-only Compare arguments
 - real direct-fight context where it exists
@@ -155,7 +159,8 @@ Presentation files may not contain category scores, totals, ranks, OVRs, calcula
 - total, rank, OVR, and projection ownership into `ranking-pipeline.js`
 - calculated profile/snapshot presentation into `calculated-profile-runtime.js`
 - division evidence allocation into `division-ranking-pipeline.js`
-- automatic Octagon packaging into `build-octagon-verdict-data.js`
+- live Compare payload generation into `octagon-verdict-live-data.js`
+- automatic Octagon knowledge packaging into `build-octagon-verdict-data.js`
 - production prerequisite loading into the presentation-only `ranking-data-patches.js` handoff
 - architecture ownership checks into the permanent source-boundary and browser guardrails
 
@@ -174,12 +179,13 @@ Delete these only in small groups with the permanent pipeline and browser suite 
 2. Certified all 73 leaderboard and profile rows without frozen-output authority.
 3. Replaced runtime score, rank, and OVR ownership.
 4. Redirected leaderboard, profile snapshots, Compare Mode, and Play to calculated projection rows.
-5. Replaced manual division guardrails with canonical fight-level category allocation.
-6. Rebuilt Octagon Verdict from the fully calculated browser runtime.
-7. Removed manual snapshot and Compare stat ownership from presentation files.
-8. Removed direct migration scoring/audit tags from `index.html`.
-9. Added physical source-boundary, rendered browser, division-conservation, and Octagon-package tests.
-10. Kept PR #39 draft and unmerged pending Cody’s explicit approval.
+5. Replaced manual division guardrails with canonical fight-level category allocation and win-qualified board eligibility.
+6. Added the historical Openweight board instead of forcing tournament fights into a modern weight class.
+7. Rebuilt Octagon Verdict from the fully calculated browser runtime and added live Compare payload copying.
+8. Removed manual snapshot and Compare stat ownership from presentation files.
+9. Removed direct migration scoring/audit tags from `index.html`.
+10. Added physical source-boundary, rendered browser, division-conservation, win-eligibility, and Octagon-package tests.
+11. Kept PR #39 draft and unmerged pending Cody’s explicit approval.
 
 ## Final new-fighter workflow
 
@@ -195,9 +201,11 @@ No division board row, sample share, modifier, rank, or Octagon fighter record s
 
 ## Automatic update behavior
 
-On a scoring branch, the full Chromium certification builds and validates a new `octagon-verdict-data.json` artifact from that exact branch.
+On a scoring branch, the full Chromium certification builds and validates a new `octagon-verdict-data.json` artifact from that exact branch. The PR workflow is artifact-only and never pushes bot commits back into the working branch.
 
-On `main`, changes to canonical facts, approved judgments, calculators, ranking projection, Compare data, or division allocation trigger the Octagon build workflow. The workflow regenerates the repository feed from the deployed calculation architecture.
+On `main`, changes to canonical facts, approved judgments, calculators, ranking projection, Compare data, or division allocation trigger the Octagon build workflow. The workflow regenerates the repository feed once from the deployed calculation architecture.
+
+Inside the app, Compare can copy the selected fighters’ current calculated payload—including their automatic division rows—or download the current full dataset.
 
 The custom GPT knowledge upload itself is static, so the newly generated JSON must still replace the prior Knowledge file in the Octagon Verdict GPT after a promoted scoring update. The generated file is the only manual handoff; its contents are no longer manually assembled.
 
@@ -205,10 +213,11 @@ The custom GPT knowledge upload itself is static, so the newly generated JSON mu
 
 - production projection: 73 fighters, complete
 - source ownership certification: passing
-- full rendered ranking regression: passing
-- automatic division boards: eight men’s divisions, passing conservation and browser certification
-- historical class fallback: generic sole-division rule; Royce openweight context certified without a fighter-specific score override
-- Octagon Verdict package: 73 fighters and eight division boards, generated and validated from browser runtime
+- automatic division boards: eight modern weight classes plus Openweight (Historical)
+- division eligibility: at least one UFC win required; loss-only cameos excluded from ranked boards
+- division conservation: every fighter’s allocation reconciles to the calculated overall score
+- Octagon Verdict package: 73 fighters and nine automatic division boards, generated from browser runtime
+- live Octagon Compare payload: current calculated ranks, OVRs, categories, résumé stats, and division rows
 - calculated snapshots: active; no `DISPLAY_OVERRIDES.snapshot` fallback ownership
 - calculated Compare stats: active; narrative copy remains presentation-only
 - production shell: no frozen scoring, reconstruction, late stat-mutation, or manual division-score ownership
