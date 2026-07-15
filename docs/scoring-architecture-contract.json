@@ -1,5 +1,5 @@
 {
-  "version": "scoring-architecture-contract-20260715d-retired-runtime-registries",
+  "version": "scoring-architecture-contract-20260715e-retired-legacy-workflows",
   "expectedRosterCount": 73,
   "facts": {
     "path": "assets/data/canonical-fighter-facts.js",
@@ -203,5 +203,10 @@
     "UFC_CANONICAL_LONGEVITY_RECONSTRUCTION",
     "UFC_DYNAMIC_ROSTER_SCORING_REPAIR",
     "UFC_DIVISION_ERA_DEPTH_FINALIZER"
+  ],
+  "retiredWorkflowPaths": [
+    ".github/workflows/fighter-data-ownership-baseline.yml",
+    ".github/workflows/runtime-scoring-audit.yml",
+    ".github/workflows/six-category-runtime-audit.yml"
   ]
 }
