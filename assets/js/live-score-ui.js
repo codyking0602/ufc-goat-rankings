@@ -1,9 +1,9 @@
-// Presentation-only helpers for calculated category ranks, Apex Peak, and category boards.
+// Presentation-only helpers for calculated category ranks, Peak Apex, and category boards.
 (function(){
   'use strict';
   if(!window.RANKING_DATA)return;
 
-  const VERSION='calculated-score-ui-20260714a-presentation-only';
+  const VERSION='calculated-score-ui-20260715c-peak-apex-single-renderer';
   const DATA=window.RANKING_DATA;
   const APEX_MAX=6;
   const num=value=>Number.isFinite(Number(value))?Number(value):0;
@@ -35,7 +35,7 @@
 
   function ensureApexCategory(){
     if(typeof CATEGORY_INFO==='undefined'||!Array.isArray(CATEGORY_INFO))return;
-    const entry=['apexPeak','Apex Peak','Best two-performance UFC peak, applied as a positive bonus after the weighted base'];
+    const entry=['apexPeak','Peak Apex','Best two-performance UFC peak, applied as a positive bonus after the weighted base'];
     const existing=CATEGORY_INFO.find(item=>item[0]==='apexPeak');
     if(existing){existing[1]=entry[1];existing[2]=entry[2];return;}
     const penaltyIndex=CATEGORY_INFO.findIndex(item=>item[0]==='penalty');
@@ -58,7 +58,7 @@
   const baseCategoryLogicSentence=typeof categoryLogicSentence==='function'?categoryLogicSentence:null;
   if(baseCategoryLogicSentence){
     categoryLogicSentence=function(fighter,key){
-      if(key==='apexPeak')return'Apex Peak rewards the fighter’s strongest two-performance UFC snapshot: performance quality, proof, best-fighter claim, and aura.';
+      if(key==='apexPeak')return'Peak Apex rewards the fighter’s strongest two-performance UFC snapshot: performance quality, proof, best-fighter claim, and aura.';
       return baseCategoryLogicSentence(fighter,key);
     };
   }
@@ -67,8 +67,8 @@
   if(baseCategoryEvidenceItems){
     categoryEvidenceItems=function(fighter,key){
       if(key==='apexPeak')return[
-        ['Apex bonus',`+${apexValue(fighter).toFixed(2)}`],
-        ['Apex wins',apexWinsText(fighter)],
+        ['Peak Apex bonus',`+${apexValue(fighter).toFixed(2)}`],
+        ['Peak Apex wins',apexWinsText(fighter)],
         ['What it proved',apexWhatItProved(fighter)],
         ['How it felt',apexHowItFelt(fighter)]
       ];
@@ -86,7 +86,7 @@
     const label=info[1];
     const ranked=categoryRows(rows,key);
     if(key==='apexPeak'){
-      return `<div class="card"><h3>${label} · ${title}</h3><p class="meta">Positive peak bonus calculated by the permanent scoring pipeline.</p><div class="leaderboard">${ranked.map((fighter,index)=>`<article class="row fighter-row category-board-card" data-fighter="${fighter.fighter}"><div class="rank">#${index+1}</div>${rowPhoto(fighter)}<div class="row-main"><div class="name">${fighter.fighter}</div><div class="meta">Overall #${fighter.rank||'—'} · GOAT ${num(fighter.totalScore).toFixed(2)} · Apex +${apexValue(fighter).toFixed(2)}</div><div class="resume-tag">${apexWinsText(fighter)}</div></div><div class="score"><strong>${categoryOvr(fighter,key)}</strong><span class="meta">PCTL</span></div></article>`).join('')}</div></div>`;
+      return `<div class="card"><h3>${label} · ${title}</h3><p class="meta">Positive peak bonus calculated by the permanent scoring pipeline.</p><div class="leaderboard">${ranked.map((fighter,index)=>`<article class="row fighter-row category-board-card" data-fighter="${fighter.fighter}"><div class="rank">#${index+1}</div>${rowPhoto(fighter)}<div class="row-main"><div class="name">${fighter.fighter}</div><div class="meta">Overall #${fighter.rank||'—'} · GOAT ${num(fighter.totalScore).toFixed(2)} · Peak Apex +${apexValue(fighter).toFixed(2)}</div><div class="resume-tag">${apexWinsText(fighter)}</div></div><div class="score"><strong>${categoryOvr(fighter,key)}</strong><span class="meta">PCTL</span></div></article>`).join('')}</div></div>`;
     }
     return `<div class="card"><h3>${title} · ${label}</h3><table class="table"><thead><tr><th>Rank</th><th>Fighter</th><th>Raw</th><th>PCTL</th><th>GOAT Score</th></tr></thead><tbody>${ranked.map((fighter,index)=>`<tr class="category-board-row" data-fighter="${fighter.fighter}"><td>#${index+1}</td><td>${fighter.fighter}</td><td>${num(categoryValueForRank(fighter,key)).toFixed(2)}</td><td>${categoryOvr(fighter,key)}</td><td>${num(fighter.totalScore).toFixed(2)}</td></tr>`).join('')}</tbody></table></div>`;
   }
@@ -99,7 +99,7 @@
     const key=selectedCategory();
     const info=categoryOptions().find(([category])=>category===key)||[key,key,''];
     const intro=key==='apexPeak'
-      ?'Apex Peak is a calculated positive bonus after the weighted base score.'
+      ?'Peak Apex is a calculated positive bonus after the weighted base score.'
       :`Sorted by ${info[1]}. Raw score is the model input; PCTL is the app-facing category grade.`;
     target.innerHTML=`<div class="notice">${intro}</div>${categoryBoard('Men',DATA.men||[],key)}${categoryBoard('Women',DATA.women||[],key)}`;
     target.querySelectorAll('[data-fighter]').forEach(row=>row.addEventListener('click',()=>openFighter(row.dataset.fighter)));
@@ -119,34 +119,13 @@
     if(!select.value)select.value='apexPeak';
   }
 
-  if(typeof openFighter==='function'){
-    const baseOpenFighter=openFighter;
-    openFighter=function(name){
-      const result=baseOpenFighter(name);
-      if(document.getElementById('apexPeakProfileCard'))return result;
-      const fighter=fullRow((DATA.men||[]).find(row=>row.fighter===name)||(DATA.women||[]).find(row=>row.fighter===name)||{fighter:name});
-      const firstCard=document.querySelector('#fighterDetail .card');
-      if(!firstCard)return result;
-      const card=document.createElement('div');
-      card.className='card';card.id='apexPeakProfileCard';
-      card.innerHTML=`<h3>Apex Peak</h3><p><strong>What it means:</strong> The best two-performance UFC peak, calculated as a positive bonus after the weighted base.</p>${snapshotGrid([
-        ['Apex bonus','+'+apexValue(fighter).toFixed(2)],
-        ['Apex wins',apexWinsText(fighter)],
-        ['What it proved',apexWhatItProved(fighter)],
-        ['How it felt',apexHowItFelt(fighter)]
-      ])}`;
-      firstCard.parentNode.insertBefore(card,firstCard);
-      return result;
-    };
-  }
-
   if(typeof renderRules==='function'){
     const baseRenderRules=renderRules;
     renderRules=function(){
       baseRenderRules();
       const table=document.querySelector('#rulesContent .card table tbody');
-      if(table&&!table.querySelector('[data-apex-peak-rule]'))table.insertAdjacentHTML('beforeend','<tr data-apex-peak-rule="true"><td><strong>Apex Peak</strong></td><td>Positive bonus after the weighted base score.</td></tr>');
-      if(table&&!table.querySelector('[data-production-formula]'))table.insertAdjacentHTML('beforeend','<tr data-production-formula="true"><td><strong>Overall Formula</strong></td><td>Championship 35% + Quality Wins 25% + Prime Dominance 30% + Longevity 10%, then Apex Peak, Loss Context, and Division-Era Depth.</td></tr>');
+      if(table&&!table.querySelector('[data-apex-peak-rule]'))table.insertAdjacentHTML('beforeend','<tr data-apex-peak-rule="true"><td><strong>Peak Apex</strong></td><td>Positive bonus after the weighted base score.</td></tr>');
+      if(table&&!table.querySelector('[data-production-formula]'))table.insertAdjacentHTML('beforeend','<tr data-production-formula="true"><td><strong>Overall Formula</strong></td><td>Championship 35% + Quality Wins 25% + Prime Dominance 30% + Longevity 10%, then Peak Apex, Loss Context, and Division-Era Depth.</td></tr>');
     };
   }
 
