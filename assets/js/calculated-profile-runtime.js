@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='calculated-profile-runtime-20260714a';
+  const VERSION='calculated-profile-runtime-20260715b-profile-hotfix';
   const pct=value=>Number.isFinite(Number(value))?`${Number(value).toFixed(1).replace(/\.0$/,'')}%`:'—';
   const years=value=>Number.isFinite(Number(value))?Number(value).toFixed(1):'—';
   const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
@@ -21,7 +21,6 @@
     return [
       ['UFC Record',visible.ufcRecord||f.ufcRecord||'—'],
       ['UFC Title-Fight Wins',visible.titleFightWins??f.titleFightWins??'—'],
-      ['Adjusted Title Wins',visible.adjustedTitleWins??f.adjustedTitleWins??'—'],
       ['Top-5 Wins',visible.topFiveWins??f.topFiveWins??'—'],
       ['Prime UFC Record',visible.primeRecord||f.primeRecord||'—'],
       ['Finish Rate',pct(visible.finishRatePct??f.finishRatePct)],
