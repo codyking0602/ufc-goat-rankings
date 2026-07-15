@@ -2,7 +2,7 @@
 (function(){
   'use strict';
 
-  const VERSION='ranking-data-patches-20260715a-presentation-only';
+  const VERSION='ranking-data-patches-20260715b-no-existing-script-deadlock';
   let readyResolved=false;
   let resolveReady;
   const readyPromise=new Promise(resolve=>{resolveReady=resolve;});
@@ -95,17 +95,21 @@
   function loadScriptOnce(src,attribute,done){
     const existing=document.querySelector(`script[${attribute}]`);
     if(existing){
-      if(done){
-        if(existing.dataset.loaded==='true'||existing.readyState==='complete')done();
-        else existing.addEventListener('load',done,{once:true});
-      }
+      if(done)queueMicrotask(done);
       return;
     }
     const script=document.createElement('script');
     script.src=src;
     script.setAttribute(attribute,'true');
-    script.onload=()=>{script.dataset.loaded='true';if(done)done();};
-    script.onerror=()=>{if(done)done();};
+    let finished=false;
+    const finish=()=>{
+      if(finished)return;
+      finished=true;
+      script.dataset.loaded='true';
+      if(done)done();
+    };
+    script.onload=finish;
+    script.onerror=finish;
     document.body.appendChild(script);
   }
   function loadSequence(items,done){
