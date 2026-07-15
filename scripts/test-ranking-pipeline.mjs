@@ -112,13 +112,7 @@ async function approvedFixture(){
 
 async function productionRuntime(){
   const target=runtime();
-  await load(target,[...factFiles,...eraFiles]);
-  // Temporary compatibility shell for the two still-unsplit diagnostic modules.
-  // It contains no frozen values and is deleted before the production API loads.
-  target.window.UFC_CANONICAL_SCORING_RECORDS={compatibilityOnly:true,entryFor(){return null;}};
-  await load(target,[...primeFiles,...longevityFiles,'assets/data/canonical-leon-final-category-completions.js']);
-  delete target.window.UFC_CANONICAL_SCORING_RECORDS;
-  await load(target,[
+  await load(target,[...factFiles,...eraFiles,
     'assets/data/division-era-depth-shadow.js',
     'assets/data/canonical-division-era-depth-approved-resolutions.js',
     'assets/data/canonical-scoring-judgments.js',
@@ -139,6 +133,11 @@ assert.equal(window.UFC_CATEGORY_CALCULATOR_AUDIT?.passed,true);
 assert.equal(window.UFC_CATEGORY_CALCULATOR_AUDIT?.completeFighterCount,73);
 assert.equal(window.UFC_CATEGORY_CALCULATORS?.readsFrozenExpectedOutputs,false);
 assert.equal(window.UFC_CATEGORY_CALCULATORS?.readsFrozenCategoryControls,false);
+assert.equal(window.UFC_CATEGORY_CALCULATORS?.readsMigrationReconstructionReports,false);
+assert.equal(window.UFC_CANONICAL_PRIME_DOMINANCE_RECONSTRUCTION,undefined);
+assert.equal(window.UFC_CANONICAL_LONGEVITY_RECONSTRUCTION,undefined);
+assert.match(window.UFC_CATEGORY_CALCULATORS.calculatorOwners.primeDominance,/category-calculators.js/);
+assert.match(window.UFC_CATEGORY_CALCULATORS.calculatorOwners.longevity,/category-calculators.js/);
 assert.equal(window.UFC_RANKING_PIPELINE?.readsFrozenExpectedOutputsAsAuthority,false);
 assert.equal(window.UFC_RANKING_PIPELINE?.readsShadowFinalOrOvrReportsAsAuthority,false);
 

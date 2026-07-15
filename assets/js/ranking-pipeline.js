@@ -274,12 +274,15 @@
     const state=sourceState();
     const projection=buildProjection();
     const previousProfiles=new Map((state.data.fighters||[]).filter(row=>row?.fighter).map(row=>[key(row.fighter),row]));
-    state.data.men=projection.men.map(clone);
-    state.data.women=projection.women.map(clone);
-    state.data.fighters=projection.rows.map(row=>({
+    const nextMen=projection.men.map(clone);
+    const nextWomen=projection.women.map(clone);
+    const nextProfiles=projection.rows.map(row=>({
       ...stripCalculated(previousProfiles.get(key(row.fighter))),
       ...clone(row)
     }));
+    if(Array.isArray(state.data.men))state.data.men.splice(0,state.data.men.length,...nextMen);else state.data.men=nextMen;
+    if(Array.isArray(state.data.women))state.data.women.splice(0,state.data.women.length,...nextWomen);else state.data.women=nextWomen;
+    if(Array.isArray(state.data.fighters))state.data.fighters.splice(0,state.data.fighters.length,...nextProfiles);else state.data.fighters=nextProfiles;
     state.data.primeRecords=state.data.primeRecords||{};
     projection.rows.forEach(row=>{
       const record=state.facts.get(row.fighter);
