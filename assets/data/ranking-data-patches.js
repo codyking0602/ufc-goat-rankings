@@ -2,7 +2,7 @@
 (function(){
   'use strict';
 
-  const VERSION='ranking-data-patches-20260715e-final-roster-photo-sync';
+  const VERSION='ranking-data-patches-20260715f-profile-card-hotfix-final-photo-sync';
   let readyResolved=false;
   let finalPhotoSyncCount=0;
   let resolveReady;
@@ -179,7 +179,6 @@
       {src:'assets/data/fighter-packets.js?v=fighter-packets-20260702c',attr:'data-fighter-packets'},
       ...packets,
       {src:'assets/js/card-nicknames.js?v=card-nicknames-20260706n-robbie-lawler',attr:'data-card-nicknames'},
-      {src:'assets/js/apex-peak-category-card.js?v=apex-peak-category-card-20260711c-compact-profile-card',attr:'data-apex-peak-category-card'},
       {src:'assets/js/championship-label-polish.js?v=championship-label-polish-20260711d-label-only',attr:'data-championship-label-polish'},
       {src:'assets/js/profile-card-ui.js?v=profile-card-ui-20260711a-canonical',attr:'data-profile-card-ui'},
       {src:'assets/data/compare-matchups.js?v=compare-matchups-20260703a',attr:'data-compare-matchups'},
