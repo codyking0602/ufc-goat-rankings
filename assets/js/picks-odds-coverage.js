@@ -83,7 +83,7 @@
     const available=cards.filter(cardHasOdds).length;
     const eligible=cards.filter(cardHasOpenUnderdog).length;
     if(available===0){
-      setText(summary,'★ Underdog Lock available once odds post');
+      setText(summary,'★ Underdog Lock waiting on posted odds');
     }else if(eligible===0){
       setText(summary,'★ No eligible underdog yet');
     }else{
