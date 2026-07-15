@@ -1,23 +1,14 @@
 (function(){
   'use strict';
 
-  const VERSION='keep-cut-challenge-20260715c-hash-route-full-compare';
+  const VERSION='keep-cut-challenge-20260715d-stable-hash-compare';
   const SESSION_KEY='ufc-goat-keep-cut-active-challenge-v2';
   let activeChallenge=null;
-  let observer=null;
 
-  function esc(value){
-    return String(value??'').replace(/[&<>"']/g,char=>({
-      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-    }[char]));
-  }
-
-  function initials(name){
-    return String(name||'').split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase()||'UFC';
-  }
-
-  function game(){return window.UFC_KEEP_CUT;}
-  function data(){return window.UFC_PLAY_DATA;}
+  const game=()=>window.UFC_KEEP_CUT;
+  const data=()=>window.UFC_PLAY_DATA;
+  const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+  const initials=name=>String(name||'').split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase()||'UFC';
 
   function visual(fighter){
     const url=fighter?.thumbUrl||fighter?.profileUrl||'';
@@ -34,16 +25,15 @@
   function decodeToken(token){
     try{
       const base64=String(token||'').replace(/-/g,'+').replace(/_/g,'/');
-      const padded=base64+'='.repeat((4-base64.length%4)%4);
-      const binary=atob(padded);
+      const binary=atob(base64+'='.repeat((4-base64.length%4)%4));
       const bytes=Uint8Array.from(binary,char=>char.charCodeAt(0));
       return JSON.parse(new TextDecoder().decode(bytes));
     }catch(_error){return null;}
   }
 
-  function parseChoices(value){
-    const choices=String(value||'').trim().toUpperCase();
-    return /^[KC]{8}$/.test(choices)?choices.split(''):null;
+  function choices(value){
+    const normalized=String(value||'').trim().toUpperCase();
+    return /^[KC]{8}$/.test(normalized)?normalized.split(''):null;
   }
 
   function resolveChallenge(payload){
@@ -53,73 +43,46 @@
     if(ids.length!==8||new Set(ids).size!==8)return null;
     const lineup=ids.map(id=>source.resolve(id));
     if(lineup.some(fighter=>!fighter))return null;
-    return {
-      lineup,
-      lineupIds:ids,
-      packId:payload.p||payload.kcpack||'ufc-careers',
-      choices:parseChoices(payload.c||payload.kcchoices),
-      id:ids.join('|')
-    };
+    return {lineup,lineupIds:ids,packId:payload.p||payload.kcpack||'ufc-careers',choices:choices(payload.c||payload.kcchoices),id:ids.join('|')};
   }
 
   function parseUrl(){
     const hash=window.location.hash||'';
     if(hash.startsWith('#kc-')){
-      const decoded=decodeToken(hash.slice(4));
-      const challenge=resolveChallenge(decoded);
+      const challenge=resolveChallenge(decodeToken(hash.slice(4)));
       if(challenge)return challenge;
     }
-
     const url=new URL(window.location.href);
     if(url.searchParams.get('game')!=='keep-cut')return null;
-    return resolveChallenge({
-      kclineup:url.searchParams.get('kclineup')||'',
-      kcpack:url.searchParams.get('kcpack')||'ufc-careers',
-      kcchoices:url.searchParams.get('kcchoices')||''
-    });
+    return resolveChallenge({kclineup:url.searchParams.get('kclineup'),kcpack:url.searchParams.get('kcpack'),kcchoices:url.searchParams.get('kcchoices')});
   }
 
   function saveChallenge(challenge){
     activeChallenge=challenge;
-    try{
-      sessionStorage.setItem(SESSION_KEY,JSON.stringify({
-        lineupIds:challenge.lineupIds,
-        packId:challenge.packId,
-        choices:challenge.choices?.join('')||''
-      }));
-    }catch(_error){}
+    try{sessionStorage.setItem(SESSION_KEY,JSON.stringify({l:challenge.lineupIds,p:challenge.packId,c:challenge.choices?.join('')||''}));}catch(_error){}
   }
 
   function restoreChallenge(){
-    try{
-      const saved=JSON.parse(sessionStorage.getItem(SESSION_KEY)||'null');
-      return resolveChallenge({l:saved?.lineupIds,p:saved?.packId,c:saved?.choices});
-    }catch(_error){return null;}
+    try{return resolveChallenge(JSON.parse(sessionStorage.getItem(SESSION_KEY)||'null'));}catch(_error){return null;}
   }
 
   function senderChoices(){
     const state=game()?.state;
-    if(!state?.completed||!Array.isArray(state.decisions)||state.decisions.length!==8)return null;
-    const choices=Array(8).fill('');
+    if(!state?.completed||state.decisions?.length!==8)return null;
+    const result=Array(8).fill('');
     state.decisions.forEach(row=>{
       const index=Number(row.revealIndex);
-      if(index>=0&&index<8)choices[index]=row.choice==='keep'?'K':'C';
+      if(index>=0&&index<8)result[index]=row.choice==='keep'?'K':'C';
     });
-    return choices.every(Boolean)?choices:null;
+    return result.every(Boolean)?result:null;
   }
 
   function challengeUrl(){
     const state=game()?.state;
-    const choices=senderChoices();
-    if(!state?.lineup?.length||!choices)return window.location.href;
-    const payload={
-      v:3,
-      p:state.packId||'ufc-careers',
-      l:state.lineup.map(fighter=>fighter.id),
-      c:choices.join('')
-    };
+    const originalChoices=senderChoices();
+    if(!state?.lineup?.length||!originalChoices)return window.location.href;
     const url=new URL(window.location.origin+window.location.pathname);
-    url.hash=`kc-${encodeToken(payload)}`;
+    url.hash=`kc-${encodeToken({v:3,p:state.packId||'ufc-careers',l:state.lineup.map(fighter=>fighter.id),c:originalChoices.join('')})}`;
     return url.toString();
   }
 
@@ -135,35 +98,30 @@
   async function shareChallenge(){
     const state=game()?.state;
     if(!state?.completed)return;
-    const link=challengeUrl();
     const pack=game().packs?.find(row=>row.id===state.packId);
-    const message=`Keep four and cut four from the exact same ${pack?.name||'UFC'} lineup. Then compare your choices with mine.\n\n${link}`;
+    const link=challengeUrl();
+    const text=`Keep four and cut four from the exact same ${pack?.name||'UFC'} lineup. Then compare your choices with mine.\n\n${link}`;
     try{
-      if(navigator.share)await navigator.share({title:'UFC Keep 4, Cut 4',text:message});
-      else{
-        await navigator.clipboard.writeText(message);
-        showToast('Challenge link copied');
-      }
-    }catch(error){
-      if(error?.name!=='AbortError')showToast('Share failed');
-    }
+      if(navigator.share)await navigator.share({title:'UFC Keep 4, Cut 4',text});
+      else{await navigator.clipboard.writeText(text);showToast('Challenge link copied');}
+    }catch(error){if(error?.name!=='AbortError')showToast('Share failed');}
   }
 
   function choiceMap(decisions){
-    const map=Array(8).fill(null);
+    const result=Array(8).fill(null);
     (decisions||[]).forEach(row=>{
       const index=Number(row.revealIndex);
-      if(index>=0&&index<8)map[index]=row.choice==='keep'?'K':'C';
+      if(index>=0&&index<8)result[index]=row.choice==='keep'?'K':'C';
     });
-    return map;
+    return result;
   }
 
-  function resultCard(fighter,choice){
+  function fighterCard(fighter,choice){
     return `<div class="kcc-fighter ${choice==='K'?'kept':'cut'}">${visual(fighter)}<strong>${esc(fighter.name)}</strong><span>${choice==='K'?'KEEP':'CUT'}</span></div>`;
   }
 
-  function choiceGroup(title,rows,choice){
-    return `<section class="kcc-choice-group ${choice==='K'?'kept':'cut'}"><header><span>${esc(title)}</span><strong>${choice==='K'?'KEPT':'CUT'}</strong></header><div class="kcc-four">${rows.map(fighter=>resultCard(fighter,choice)).join('')}</div></section>`;
+  function choiceGroup(label,fighters,choice){
+    return `<section class="kcc-choice-group ${choice==='K'?'kept':'cut'}"><header><span>${esc(label)}</span><strong>${choice==='K'?'KEPT':'CUT'}</strong></header><div class="kcc-four">${fighters.map(fighter=>fighterCard(fighter,choice)).join('')}</div></section>`;
   }
 
   function comparisonMarkup(challenge){
@@ -177,7 +135,6 @@
     const theirKept=challenge.lineup.filter((_fighter,index)=>challenge.choices[index]==='K');
     const theirCut=challenge.lineup.filter((_fighter,index)=>challenge.choices[index]==='C');
     const disagreements=state.lineup.map((fighter,index)=>({fighter,mine:mine[index],theirs:challenge.choices[index]})).filter(row=>row.mine!==row.theirs);
-
     return `<section class="kcc-comparison" data-kcc-id="${esc(challenge.id)}">
       <div class="kcc-heading"><div><span>CHALLENGE RESULTS</span><strong>${agreement}/8 SAME CALLS</strong></div><small>${disagreements.length?`${disagreements.length} disagreement${disagreements.length===1?'':'s'}`:'Perfect match'}</small></div>
       <div class="kcc-players">
@@ -192,12 +149,13 @@
     const challenge=activeChallenge||restoreChallenge();
     const state=game()?.state;
     if(!challenge?.choices||!state?.completed)return;
-    const sameLineup=state.lineup?.map(fighter=>fighter.id).join('|')===challenge.id;
-    if(!sameLineup)return;
+    if(state.lineup?.map(fighter=>fighter.id).join('|')!==challenge.id)return;
     const finish=document.querySelector('#playKeepCutPanel .kc-finish');
     if(!finish)return;
+    const existing=finish.querySelector('.kcc-comparison');
+    if(existing?.dataset.kccId===challenge.id)return;
     finish.querySelectorAll('.kc-final-group').forEach(node=>node.remove());
-    finish.querySelector('.kcc-comparison')?.remove();
+    existing?.remove();
     const actions=finish.querySelector('.kc-actions');
     const markup=comparisonMarkup(challenge);
     if(actions&&markup)actions.insertAdjacentHTML('beforebegin',markup);
@@ -206,7 +164,7 @@
   function panelIsOpen(challenge){
     const panel=document.getElementById('playKeepCutPanel');
     const state=game()?.state;
-    return Boolean(panel&&!panel.hidden&&state?.lineup?.map(fighter=>fighter.id).join('|')===challenge.id&&state.shared);
+    return Boolean(panel&&!panel.hidden&&state?.shared&&state.lineup?.map(fighter=>fighter.id).join('|')===challenge.id);
   }
 
   function openChallenge(challenge){
@@ -214,19 +172,16 @@
     saveChallenge(challenge);
     const openNow=()=>{
       const currentGame=game();
-      if(!currentGame)return false;
+      if(!currentGame)return;
       const tab=document.querySelector('.tab[data-view="play"]');
       if(tab&&!tab.classList.contains('active'))tab.click();
       if(!panelIsOpen(challenge))currentGame.open({lineup:challenge.lineup,packId:challenge.packId,shared:true});
       saveChallenge(challenge);
       patchFinishedScreen();
       document.documentElement.setAttribute('data-keep-cut-challenge-open','true');
-      return true;
     };
     openNow();
-    setTimeout(openNow,60);
-    setTimeout(openNow,260);
-    setTimeout(openNow,700);
+    [60,260,700].forEach(delay=>setTimeout(openNow,delay));
   }
 
   function injectStyles(){
@@ -264,35 +219,27 @@
       #play .kcc-differences strong,#play .kcc-differences small{display:block}
       #play .kcc-differences strong{color:#fff;font-size:10px}
       #play .kcc-differences small{margin-top:2px;color:#cbd5e1;font-size:8px}
-      @media(max-width:700px){
-        #play .kcc-players{grid-template-columns:1fr}
-        #play .kcc-differences>div{grid-template-columns:1fr}
-      }
+      @media(max-width:700px){#play .kcc-players{grid-template-columns:1fr}#play .kcc-differences>div{grid-template-columns:1fr}}
     `;
     document.head.appendChild(style);
   }
 
   function bind(){
     injectStyles();
-
     document.addEventListener('click',event=>{
-      const challengeButton=event.target.closest?.('[data-kc-challenge]');
-      if(!challengeButton)return;
+      const button=event.target.closest?.('[data-kc-challenge]');
+      if(!button)return;
       event.preventDefault();
       event.stopImmediatePropagation();
       shareChallenge();
     },true);
 
     const panel=document.getElementById('playKeepCutPanel');
-    if(panel){
-      observer=new MutationObserver(()=>requestAnimationFrame(patchFinishedScreen));
-      observer.observe(panel,{childList:true,subtree:true});
-    }
+    if(panel)new MutationObserver(()=>requestAnimationFrame(patchFinishedScreen)).observe(panel,{childList:true,subtree:true});
 
     const incoming=parseUrl();
     if(incoming)openChallenge(incoming);
     else activeChallenge=restoreChallenge();
-
     document.documentElement.setAttribute('data-keep-cut-challenge',VERSION);
   }
 
