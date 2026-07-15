@@ -2,7 +2,7 @@
 (function(){
   'use strict';
 
-  const VERSION='production-ranking-bootstrap-20260714e-clean-canonical-rebuild';
+  const VERSION='production-ranking-bootstrap-20260714f-permanent-audit-gate';
   const CALCULATED_STAT_FIELDS=new Set([
     'ufcRecord','titleFightWins','adjustedTitleWins','topFiveWins','top5Wins','rankedWins',
     'finishRatePct','primeRecord','roundsWonPct','activeEliteYears','timesFinishedPrime','throughPrimeUfcFights',
@@ -58,17 +58,6 @@
     });
   }
 
-  function sleep(ms){return new Promise(resolve=>setTimeout(resolve,ms));}
-  async function waitForCompatibilityDrain(timeoutMs=15000){
-    const started=Date.now();
-    while(Date.now()-started<timeoutMs){
-      if(window.UFC_CATEGORY_PERCENTILE_TIERS)return true;
-      await sleep(25);
-    }
-    console.warn(`[${VERSION}] Legacy compatibility chain did not publish its terminal marker before timeout; canonical inputs will still be rebuilt before scoring.`);
-    return false;
-  }
-
   function removeCalculatedKeys(object){
     if(!object||typeof object!=='object')return;
     CALCULATED_STAT_FIELDS.forEach(field=>{if(Object.prototype.hasOwnProperty.call(object,field))delete object[field];});
@@ -122,26 +111,21 @@
     });
   }
 
-  function assertApprovedInputs(){
+  function assertPermanentRuntime(){
     const missing=[];
+    const audit=window.UFC_CATEGORY_CALCULATOR_AUDIT;
     if(window.UFC_CANONICAL_FIGHTER_FACTS?.count?.()!==73)missing.push('73 clean canonical fighter records');
-    if(window.UFC_FIGHTER_ERA_LEDGER_APPROVED_LONGEVITY_RESOLUTIONS?.applied!==true)missing.push('approved longevity era resolutions');
-    if(window.UFC_FIGHTER_ERA_LEDGER_APPROVED_LOSS_CONTEXT_RESOLUTIONS?.applied!==true)missing.push('approved loss-context era resolutions');
     if(window.UFC_FIGHTER_ERA_LEDGERS?.fighters?.length!==73)missing.push('73 clean fighter era ledgers');
     if(window.UFC_CANONICAL_SCORING_JUDGMENTS?.fighterCount!==73)missing.push('73-fighter scoring judgments');
+    if(audit?.passed!==true||audit?.completeFighterCount!==73)missing.push('complete seven-category audit');
+    if(!window.UFC_RANKING_PIPELINE?.apply)missing.push('ranking pipeline');
     if(!window.UFC_CALCULATED_PROFILE_RUNTIME)missing.push('calculated profile runtime');
     if(missing.length)throw new Error(`Missing calculated ranking inputs: ${missing.join(', ')}`);
   }
 
-  function publishReady(report,compatibilityDrained){
+  function publishReady(report){
     window.UFC_SCORING_PIPELINE={
-      version:VERSION,
-      status:'ready',
-      owner:'ranking-pipeline.js',
-      inputIsolation:'clean-canonical-rebuild-after-compatibility-drain',
-      fighterCount:report.fighterCount,
-      compatibilityDrained,
-      report
+      version:VERSION,status:'ready',owner:'ranking-pipeline.js',inputIsolation:'clean-canonical-rebuild',fighterCount:report.fighterCount,report
     };
     document.documentElement.setAttribute('data-scoring-pipeline','ready');
     document.documentElement.setAttribute('data-production-ranking-bootstrap',`${VERSION}-ready-${report.fighterCount}`);
@@ -156,16 +140,13 @@
   async function apply(){
     try{
       if(window.UFC_RANKING_DATA_PATCHES_READY)await window.UFC_RANKING_DATA_PATCHES_READY;
-      const compatibilityDrained=await waitForCompatibilityDrain();
       for(const [src,attribute] of cleanScripts)await loadScript(src,attribute);
-      assertApprovedInputs();
-      const pipeline=window.UFC_RANKING_PIPELINE;
-      if(!pipeline?.apply)throw new Error('Calculated ranking pipeline did not load.');
-      const report=pipeline.apply();
+      assertPermanentRuntime();
+      const report=window.UFC_RANKING_PIPELINE.apply();
       stripPresentationScoreOwnership();
       syncComparePresentation();
-      publishReady(report,compatibilityDrained);
-      window.UFC_PRODUCTION_RANKING_BOOTSTRAP={version:VERSION,status:'ready',inputIsolation:'clean-canonical-rebuild-after-compatibility-drain',compatibilityDrained,report,stripPresentationScoreOwnership,syncComparePresentation};
+      publishReady(report);
+      window.UFC_PRODUCTION_RANKING_BOOTSTRAP={version:VERSION,status:'ready',inputIsolation:'clean-canonical-rebuild',report,stripPresentationScoreOwnership,syncComparePresentation};
     }catch(error){
       document.documentElement.setAttribute('data-production-ranking-bootstrap',`${VERSION}-error`);
       window.UFC_PRODUCTION_RANKING_BOOTSTRAP={version:VERSION,status:'error',error:String(error?.message||error)};
