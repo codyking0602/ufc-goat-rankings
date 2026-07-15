@@ -1,5 +1,5 @@
 {
-  "version": "scoring-architecture-contract-20260715a-permanent-pipeline",
+  "version": "scoring-architecture-contract-20260715b-presentation-clean",
   "expectedRosterCount": 73,
   "facts": {
     "path": "assets/data/canonical-fighter-facts.js",
@@ -168,6 +168,7 @@
     "UFC_SCORING_ENGINE",
     "UFC_FINAL_SCORE_ENGINE",
     "UFC_SCORING_OWNERSHIP_FINALIZER",
+    "UFC_SCORING_OWNERSHIP_CONTRACT",
     "UFC_CANONICAL_PRIME_DOMINANCE_RECONSTRUCTION",
     "UFC_CANONICAL_LONGEVITY_RECONSTRUCTION",
     "UFC_DYNAMIC_ROSTER_SCORING_REPAIR",
