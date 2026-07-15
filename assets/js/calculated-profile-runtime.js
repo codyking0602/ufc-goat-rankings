@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='calculated-profile-runtime-20260715c-longest-win-streak';
+  const VERSION='calculated-profile-runtime-20260715d-streak-fallback';
   const pct=value=>Number.isFinite(Number(value))?`${Number(value).toFixed(1).replace(/\.0$/,'')}%`:'—';
   const years=value=>Number.isFinite(Number(value))?Number(value).toFixed(1):'—';
   const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
@@ -37,9 +37,16 @@
     return record?longestWinStreakFromFights(record.fights):null;
   }
 
+  function rowStreak(f){
+    const visible=f?.visibleStats||{};
+    const value=Number(visible.longestUfcWinStreak??visible.longestWinStreak??f?.longestUfcWinStreak??f?.longestWinStreak);
+    return Number.isInteger(value)&&value>=0?value:null;
+  }
+
   function snapshotFor(f){
     const visible=f.visibleStats||{};
-    const longestWinStreak=longestWinStreakFor(f.fighter);
+    const canonicalStreak=longestWinStreakFor(f.fighter);
+    const longestWinStreak=Number.isInteger(canonicalStreak)?canonicalStreak:rowStreak(f);
     return [
       ['UFC Record',visible.ufcRecord||f.ufcRecord||'—'],
       ['UFC Title-Fight Wins',visible.titleFightWins??f.titleFightWins??'—'],
@@ -120,9 +127,10 @@
       rankOwner:'RANKING_DATA.rank',
       ovrOwner:'RANKING_DATA.overallOvr',
       snapshotOwner:'RANKING_DATA.visibleStats',
-      streakOwner:'UFC_CANONICAL_FIGHTER_FACTS.fights',
+      streakOwner:'UFC_CANONICAL_FIGHTER_FACTS.fights with calculated-row fallback',
       longestWinStreakFromFights,
       longestWinStreakFor,
+      rowStreak,
       snapshotFor
     };
     document.documentElement.setAttribute('data-calculated-profile-runtime',VERSION);
