@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='blind-rank-polish-20260715c-purpose-packs-turning-point';
+  const VERSION='blind-rank-polish-20260715d-clean-finish';
   const PACK_KEY='ufc-goat-blind-rank-pack-v2';
   const GAME_KEY='ufc-goat-blind-rank-v1';
   const STRIKERS=[
@@ -82,13 +82,6 @@
     patch();
   }
 
-  function story(){
-    const state=api()?.state;
-    if(!state?.completed)return null;
-    const decisions=state.lineup.map((fighter,revealIndex)=>({fighter,slot:state.placements.findIndex(row=>row?.id===fighter.id),remaining:4-revealIndex}));
-    return {commitment:decisions.find(item=>item.slot===0||item.slot===4)||decisions[0],forced:decisions[4]};
-  }
-
   function patchSelect(pack){
     const select=document.getElementById('blindRankPack');
     if(!select)return;
@@ -100,17 +93,12 @@
   }
 
   function patchFinish(){
-    const result=story();
-    if(!result)return;
-    const hero=document.querySelector('#playBlindRankPanel .br-finish-hero');
-    if(hero&&hero.dataset.refined!==VERSION){
-      const count=result.commitment.remaining;
-      hero.innerHTML=`<span>THE TURNING POINT</span><div class="br-turning-grid"><div><small>FIRST BIG COMMITMENT</small><h4>${esc(result.commitment.fighter.name)} locked at #${result.commitment.slot+1}</h4><p>${count?`You committed that slot with ${count} fighter${count===1?'':'s'} still hidden.`:'That slot stayed open until the final reveal.'}</p></div><div><small>FORCED FINISH</small><h4>${esc(result.forced.fighter.name)} landed at #${result.forced.slot+1}</h4><p>The final remaining slot made the decision for you.</p></div></div>`;
-      hero.dataset.refined=VERSION;
-      const results=hero.nextElementSibling;
-      if(results?.classList.contains('br-results')&&!results.previousElementSibling?.classList.contains('br-results-title'))results.insertAdjacentHTML('beforebegin','<div class="br-results-title">YOUR FINAL RANKING</div>');
-    }
-    const actions=document.querySelector('#playBlindRankPanel .br-actions');
+    const finish=document.querySelector('#playBlindRankPanel .br-finish');
+    if(!finish)return;
+    finish.querySelector('.br-finish-hero')?.remove();
+    const results=finish.querySelector('.br-results');
+    if(results&&!finish.querySelector('.br-results-title'))results.insertAdjacentHTML('beforebegin','<div class="br-results-title">YOUR FINAL RANKING</div>');
+    const actions=finish.querySelector('.br-actions');
     if(actions&&actions.dataset.refined!==VERSION){
       actions.innerHTML='<button type="button" class="primary" data-br-challenge>CHALLENGE A FRIEND</button><button type="button" class="secondary" data-br-replay>NEW LINEUP</button>';
       actions.dataset.refined=VERSION;
@@ -145,16 +133,9 @@
     style.textContent=`
       #play .br-current-meta,#play .br-result-row em{display:none!important}
       #play .br-result-row{grid-template-columns:42px 48px minmax(0,1fr)!important}
-      #play .br-finish-hero{padding:17px!important;text-align:left!important}
-      #play .br-finish-hero>span{display:block;color:#facc15;font-size:10px;font-weight:950;letter-spacing:.12em;text-align:center}
-      #play .br-turning-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:11px}
-      #play .br-turning-grid>div{border:1px solid rgba(82,103,134,.82);border-radius:14px;background:rgba(16,23,37,.62);padding:12px}
-      #play .br-turning-grid small{display:block;color:#94a3b8;font-size:8px;font-weight:950;letter-spacing:.1em}
-      #play .br-turning-grid h4{margin:5px 0 0;color:#fff;font-size:18px;line-height:1.1}
-      #play .br-turning-grid p{margin:6px 0 0;color:#cbd5e1;font-size:10px;line-height:1.4}
       #play .br-results-title{color:#facc15;font-size:9px;font-weight:950;letter-spacing:.12em}
       #play .br-actions{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-      @media(max-width:700px){#play .br-result-row{grid-template-columns:34px 42px minmax(0,1fr)!important}#play .br-turning-grid{grid-template-columns:1fr}#play .br-actions{grid-template-columns:1fr!important}}
+      @media(max-width:700px){#play .br-result-row{grid-template-columns:34px 42px minmax(0,1fr)!important}#play .br-actions{grid-template-columns:1fr!important}}
     `;
     document.head.appendChild(style);
   }
