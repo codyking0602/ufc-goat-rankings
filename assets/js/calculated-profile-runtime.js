@@ -119,7 +119,8 @@
       version:VERSION,
       rankOwner:'RANKING_DATA.rank',
       ovrOwner:'RANKING_DATA.overallOvr',
-      snapshotOwner:'RANKING_DATA.visibleStats + UFC_CANONICAL_FIGHTER_FACTS.fights',
+      snapshotOwner:'RANKING_DATA.visibleStats',
+      streakOwner:'UFC_CANONICAL_FIGHTER_FACTS.fights',
       longestWinStreakFromFights,
       longestWinStreakFor,
       snapshotFor
