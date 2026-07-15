@@ -4,12 +4,14 @@
 (function(){
   'use strict';
 
-  const VERSION='division-ranking-reconciliation-20260715b-historical-fallback';
+  const VERSION='division-ranking-reconciliation-20260715c-authoritative-render';
   const MAX_ROUNDING_RESIDUAL=.20;
   const pipeline=window.UFC_DIVISION_RANKING_PIPELINE;
+  const divisionUi=window.UFC_DIVISION_RANKINGS;
   if(!pipeline?.rebuild)return;
 
   const originalRebuild=pipeline.rebuild.bind(pipeline);
+  const originalRender=divisionUi?.render?.bind(divisionUi)||null;
   const num=value=>Number.isFinite(Number(value))?Number(value):0;
   const round2=value=>{const rounded=Math.round((num(value)+Number.EPSILON)*100)/100;return Object.is(rounded,-0)?0:rounded;};
 
@@ -50,7 +52,7 @@
     });
     const invalid=report.rows.filter(row=>!Number.isFinite(Number(row.divisionScore)));
     const passed=invalid.length===0&&conservation.length===0&&allocationWarnings.length===0;
-    report.version=`${report.version}+${VERSION}`;
+    report.version=`${String(report.version||'').split('+')[0]}+${VERSION}`;
     report.status=passed?'ready':'blocked';
     report.passed=passed;
     report.invalid=invalid;
@@ -64,7 +66,15 @@
   }
 
   function rebuild(){return reconcile(originalRebuild());}
+  function render(){
+    const report=rebuild();
+    if(report?.passed&&originalRender)originalRender();
+    return report;
+  }
+
   pipeline.rebuild=rebuild;
-  if(window.UFC_DIVISION_RANKINGS)window.UFC_DIVISION_RANKINGS.rebuild=rebuild;
-  window.UFC_DIVISION_RANKING_RECONCILIATION={version:VERSION,maxResidual:MAX_ROUNDING_RESIDUAL,reconcile};
+  if(divisionUi){divisionUi.rebuild=rebuild;divisionUi.render=render;}
+  window.renderDivision=render;
+  window.addEventListener?.('ufc-scoring-pipeline-ready',()=>render());
+  window.UFC_DIVISION_RANKING_RECONCILIATION={version:VERSION,maxResidual:MAX_ROUNDING_RESIDUAL,reconcile,rebuild,render};
 })();
