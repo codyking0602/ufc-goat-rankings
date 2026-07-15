@@ -2,7 +2,7 @@
 (function(){
   'use strict';
 
-  const VERSION='production-ranking-bootstrap-20260714f-permanent-audit-gate';
+  const VERSION='production-ranking-bootstrap-20260714g-presentation-clean';
   const CALCULATED_STAT_FIELDS=new Set([
     'ufcRecord','titleFightWins','adjustedTitleWins','topFiveWins','top5Wins','rankedWins',
     'finishRatePct','primeRecord','roundsWonPct','activeEliteYears','timesFinishedPrime','throughPrimeUfcFights',
@@ -90,7 +90,7 @@
     Object.entries(profiles).forEach(([fighter,profile])=>{
       const row=rowFor(fighter);
       if(!row||!profile)return;
-      const primeNote=profile.legacyStats?.primeNote||null;
+      const primeNote=profile.primeNote||profile.legacyStats?.primeNote||null;
       profile.legacyStats={
         ...(primeNote?{primeNote}:{}),
         titleFightWins:Number(row.titleFightWins||0),
