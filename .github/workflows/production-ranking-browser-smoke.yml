@@ -18,6 +18,7 @@ on:
       - 'assets/js/division-ranking-reconciliation.js'
       - 'assets/js/production-ranking-bootstrap.js'
       - 'assets/js/calculated-profile-runtime.js'
+      - 'tools/build-octagon-verdict-data.js'
       - 'scripts/test-production-browser.mjs'
       - '.github/workflows/production-ranking-browser-smoke.yml'
 
@@ -44,11 +45,32 @@ jobs:
           echo $! > /tmp/ufc-app-http.pid
       - name: Run rendered ranking regression
         run: node scripts/test-production-browser.mjs > /tmp/ufc-browser-test.log 2>&1
+      - name: Build Octagon Verdict knowledge feed
+        run: node tools/build-octagon-verdict-data.js > /tmp/octagon-verdict-build.log 2>&1
+      - name: Validate Octagon Verdict package
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const assert=require('assert/strict');
+          const feed=JSON.parse(fs.readFileSync('assets/data/octagon-verdict-data.json','utf8'));
+          assert.equal(feed.source,'calculated-browser-runtime');
+          assert.equal(feed.fighterCount,73);
+          assert.equal(feed.fighters.length,73);
+          assert.equal(Object.keys(feed.divisionBoards||{}).length,8);
+          assert.equal(feed.fighters.find(f=>f.name==='Jon Jones')?.rank,1);
+          assert.equal(feed.fighters.find(f=>f.name==='Georges St-Pierre')?.rank,2);
+          assert.equal(feed.fighters.find(f=>f.name==='Amanda Nunes')?.appOvr,99);
+          assert.equal(feed.fighters.find(f=>f.name==='Valentina Shevchenko')?.appOvr,98);
+          assert.equal(feed.guidance?.divisionRule?.includes('divisionScore'),true);
+          console.log(`Validated ${feed.fighterCount} fighters and ${Object.keys(feed.divisionBoards).length} automatic division boards.`);
+          NODE
       - name: Show concise regression diagnostics on failure
         if: failure()
         run: |
           echo '--- Browser assertion ---'
           cat /tmp/ufc-browser-test.log 2>/dev/null || true
+          echo '--- Octagon build ---'
+          cat /tmp/octagon-verdict-build.log 2>/dev/null || true
           echo '--- Local server tail ---'
           tail -20 /tmp/ufc-app-http.log 2>/dev/null || true
       - name: Archive browser diagnostics
@@ -58,5 +80,13 @@ jobs:
           name: production-ranking-browser-diagnostics
           path: |
             /tmp/ufc-browser-test.log
+            /tmp/octagon-verdict-build.log
             /tmp/ufc-app-http.log
           if-no-files-found: ignore
+      - name: Upload Octagon Verdict knowledge file
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: octagon-verdict-knowledge-feed
+          path: assets/data/octagon-verdict-data.json
+          if-no-files-found: error
