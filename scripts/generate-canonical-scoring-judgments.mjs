@@ -41,6 +41,7 @@ const sourceFiles=[
   'assets/data/opponent-quality-ledger-batch-nine.js',
   'assets/data/canonical-opponent-quality-approved-judgments.js',
   'assets/data/canonical-opponent-quality-reconstruction.js',
+  'assets/data/canonical-leon-final-category-completions.js',
   'assets/data/canonical-apex-approved-judgments.js',
   'assets/data/canonical-apex-approved-judgments-batch-two.js',
   'assets/data/canonical-apex-approved-judgments-batch-three.js',
@@ -70,9 +71,9 @@ const apex=window.UFC_CANONICAL_APEX_RECONSTRUCTION;
 assert.equal(championship?.applied,true);
 assert.equal(opponentQuality?.applied,true);
 assert.equal(apex?.applied,true);
-assert.equal(championship.fighterCount,73);
-assert.equal(opponentQuality.fighterCount,73);
-assert.equal(apex.fighterCount,73);
+assert.equal(championship.fighterCount,73,'Championship judgment coverage');
+assert.equal(opponentQuality.fighterCount,73,'Opponent Quality judgment coverage including Leon factual completion');
+assert.equal(apex.fighterCount,73,'Apex judgment coverage');
 
 const clean=value=>JSON.parse(JSON.stringify(value,(field,nested)=>typeof nested==='function'?undefined:nested));
 const championshipInputs=Object.fromEntries(championship.fighters.map(row=>[row.fighter,{
@@ -99,11 +100,12 @@ const apexInputs=Object.fromEntries(apex.fighters.map(row=>[row.fighter,{
 }]));
 
 const payload={
-  version:'canonical-scoring-judgments-20260714a-generated-approved-inputs',
+  version:'canonical-scoring-judgments-20260714b-generated-approved-inputs',
   generatedFrom:{
     championship:championship.version,
     opponentQuality:opponentQuality.version,
     apex:apex.version,
+    leonCompletion:window.UFC_CANONICAL_LEON_FINAL_CATEGORY_COMPLETIONS?.version||null,
     canonicalFacts:window.UFC_CANONICAL_FIGHTER_FACTS?.version||null
   },
   fighterCount:73,
