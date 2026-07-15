@@ -9,6 +9,7 @@ on:
     paths:
       - 'index.html'
       - 'assets/data/**'
+      - 'assets/fighters/**'
       - 'assets/compare-data.js'
       - 'assets/js/app.js'
       - 'assets/js/play.js'
@@ -23,6 +24,7 @@ on:
       - 'assets/js/octagon-verdict-data.js'
       - 'tools/build-octagon-verdict-data.js'
       - 'scripts/test-production-browser.mjs'
+      - 'scripts/audit-fighter-photo-paths.mjs'
       - '.github/workflows/production-ranking-browser-smoke.yml'
 
 permissions:
@@ -46,6 +48,8 @@ jobs:
         run: |
           python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/ufc-app-http.log 2>&1 &
           echo $! > /tmp/ufc-app-http.pid
+      - name: Audit every fighter photo path
+        run: node scripts/audit-fighter-photo-paths.mjs > /tmp/fighter-photo-audit.log 2>&1
       - name: Run rendered ranking regression
         run: node scripts/test-production-browser.mjs > /tmp/ufc-browser-test.log 2>&1
       - name: Build Octagon Verdict knowledge feed
@@ -74,6 +78,8 @@ jobs:
       - name: Show concise regression diagnostics on failure
         if: failure()
         run: |
+          echo '--- Fighter photo audit ---'
+          cat /tmp/fighter-photo-audit.log 2>/dev/null || true
           echo '--- Browser assertion ---'
           cat /tmp/ufc-browser-test.log 2>/dev/null || true
           echo '--- Octagon build ---'
@@ -86,6 +92,7 @@ jobs:
         with:
           name: production-ranking-browser-diagnostics
           path: |
+            /tmp/fighter-photo-audit.log
             /tmp/ufc-browser-test.log
             /tmp/octagon-verdict-build.log
             /tmp/ufc-app-http.log
