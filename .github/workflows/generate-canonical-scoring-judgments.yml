@@ -1,0 +1,46 @@
+name: Generate Canonical Scoring Judgments
+
+on:
+  push:
+    branches:
+      - agent/fighter-data-phase-1
+    paths:
+      - 'scripts/generate-canonical-scoring-judgments.mjs'
+      - 'assets/data/canonical-fighter-facts*.js'
+      - 'assets/data/championship-resume*.js'
+      - 'assets/data/canonical-championship*.js'
+      - 'assets/data/opponent-quality*.js'
+      - 'assets/data/canonical-opponent-quality*.js'
+      - 'assets/data/canonical-apex-approved-judgments*.js'
+      - 'assets/data/canonical-apex-reconstruction.js'
+      - 'docs/runtime-scoring-snapshot.json'
+      - '.github/workflows/generate-canonical-scoring-judgments.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/fighter-data-phase-1
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Generate permanent judgment inputs
+        run: node scripts/generate-canonical-scoring-judgments.mjs
+      - name: Commit generated judgment file
+        run: |
+          if git diff --quiet -- assets/data/canonical-scoring-judgments.js; then
+            echo 'Canonical judgment inputs already current.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/data/canonical-scoring-judgments.js
+          git commit -m 'Generate permanent canonical scoring judgments'
+          git push origin HEAD:agent/fighter-data-phase-1
