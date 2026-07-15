@@ -6,10 +6,14 @@ on:
       - agent/fighter-data-phase-1
   pull_request:
     paths:
+      - 'index.html'
       - 'assets/data/**'
+      - 'assets/js/app.js'
       - 'assets/js/category-calculators.js'
       - 'assets/js/ranking-pipeline.js'
+      - 'assets/js/production-ranking-bootstrap.js'
       - 'scripts/generate-canonical-scoring-judgments.mjs'
+      - 'scripts/promote-calculated-ranking-runtime.mjs'
       - 'scripts/test-ranking-pipeline.mjs'
       - '.github/workflows/production-ranking-pipeline.yml'
 
@@ -28,19 +32,28 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Promote calculated runtime sources
+        run: node scripts/promote-calculated-ranking-runtime.mjs
       - name: Generate permanent judgment inputs
         run: node scripts/generate-canonical-scoring-judgments.mjs
-      - name: Commit generated judgment file to working branch
+      - name: Commit generated production sources to working branch
         env:
           BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
         run: |
-          if [ -z "$(git status --porcelain -- assets/data/canonical-scoring-judgments.js)" ]; then
-            echo 'Canonical judgment inputs already current.'
+          PATHS=(
+            assets/data/canonical-scoring-judgments.js
+            assets/js/ranking-pipeline.js
+            assets/js/app.js
+            index.html
+            scripts/test-ranking-pipeline.mjs
+          )
+          if [ -z "$(git status --porcelain -- "${PATHS[@]}")" ]; then
+            echo 'Calculated production sources already current.'
           else
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add assets/data/canonical-scoring-judgments.js
-            git commit -m 'Generate permanent canonical scoring judgments'
+            git add "${PATHS[@]}"
+            git commit -m 'Promote calculated ranking runtime sources'
             git push origin HEAD:"$BRANCH_NAME"
           fi
       - name: Certify calculated production projection
