@@ -14,6 +14,7 @@ on:
       - 'assets/js/blind-matchmaking.js'
       - 'assets/js/category-calculators.js'
       - 'assets/js/ranking-pipeline.js'
+      - 'assets/js/division-ranking-pipeline.js'
       - 'assets/js/production-ranking-bootstrap.js'
       - 'assets/js/calculated-profile-runtime.js'
       - 'scripts/generate-canonical-scoring-judgments.mjs'
