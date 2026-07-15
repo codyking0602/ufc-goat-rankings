@@ -7,6 +7,39 @@
   const reset=document.getElementById('resetBtn');
   if(!DATA||!select)return;
 
+  const ERA_COPY={
+    tournament:{
+      description:'The UFC begins as a style-vs-style experiment built around one-night tournaments and minimal rules. Royce Gracie’s jiu-jitsu success changes how American fans understand fighting and establishes the promotion’s original identity.'
+    },
+    survival:{
+      description:'Political pressure, cable bans, and limited distribution nearly push the UFC out of existence. Smaller cards and early champions such as Frank Shamrock and Tito Ortiz keep it alive while the sport slowly moves toward modern rules.'
+    },
+    'zuffa-rebuild':{
+      description:'Zuffa buys a struggling UFC and rebuilds it around unified rules, weight classes, athletic commissions, and stronger promotion. The company is still losing money, but the structure of the modern UFC is created here.',
+      fightUrl:'https://youtu.be/7PBdRCKjYm0?is=NCoRl2UqojPQZycJ',
+      fightNote:'Second fight in their trilogy.'
+    },
+    'tuf-boom':{
+      description:'The Ultimate Fighter and Spike TV bring the UFC into millions of homes. Forrest Griffin vs. Stephan Bonnar provides the breakthrough moment, while a new wave of champions turns the promotion into a mainstream sport.'
+    },
+    'golden-age':{
+      description:'The roster becomes deeper, more technical, and truly global. Lighter divisions arrive, women enter the UFC, and a loaded generation of dominant champions produces one of the promotion’s strongest competitive periods.'
+    },
+    superstar:{
+      description:'Conor McGregor transforms the UFC’s commercial ceiling and makes individual fighters feel bigger than divisions. Champ-champ pursuits, enormous rivalries, and personality-driven promotion become central to how UFC greatness is discussed.'
+    },
+    apex:{
+      description:'The UFC keeps operating through the pandemic with empty-arena cards, Fight Island, and the UFC Apex. A relentless schedule accelerates contender turnover while a new championship class takes control across the promotion.'
+    },
+    'new-blood':{
+      description:'A new global generation takes control as younger champions replace many of the previous era’s defining names. Technical depth is extremely high, stars emerge quickly, and the identity of this era is still being written.'
+    }
+  };
+
+  Object.entries(ERA_COPY).forEach(([id,copy])=>{
+    if(DATA.byId?.[id])Object.assign(DATA.byId[id],copy);
+  });
+
   const selectionByView={men:'All',women:'All'};
   let applyTimer=0;
   let applying=false;
@@ -79,7 +112,7 @@
     target.style.setProperty('display','none','important');
   }
 
-  function renderContext(view,era,count){
+  function renderContext(view,era){
     const target=document.getElementById(view==='women'?'womenEraContext':'menEraContext');
     if(!target)return;
     if(!era){
@@ -99,7 +132,6 @@
         <span class="era-context-kicker">UFC history filter</span>
         <div class="era-context-heading"><h3>${era.name}</h3><b>${era.years}</b></div>
         <p>${era.description}</p>
-        <small>${count} ranked fighter${count===1?'':'s'} shown. Membership is curated around meaningful UFC prime years; all-time rank and OVR stay unchanged.</small>
       </div>
       ${fight}
     `;
@@ -138,7 +170,7 @@
       ['men','women'].forEach(view=>{
         const era=eraForView(view);
         const visible=filterBoard(view,era);
-        renderContext(view,era,visible.length);
+        renderContext(view,era);
         updateKpis(view,visible,era);
       });
       syncControlVisibility();
@@ -200,7 +232,7 @@
   });
 
   window.UFC_ERA_FILTER={
-    version:'era-filter-20260715e-curated-prime',
+    version:'era-filter-20260715f-expanded-copy',
     apply,
     belongsToEra,
     selectedEra,
