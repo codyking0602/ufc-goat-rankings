@@ -196,3 +196,12 @@
   if(api()&&data())init();
   else window.addEventListener('ufc-blind-rank-ready',init,{once:true});
 })();
+
+(function(){
+  'use strict';
+  if(document.querySelector('script[data-keep-cut-challenge-loader]'))return;
+  const script=document.createElement('script');
+  script.src='assets/js/keep-cut-challenge.js?v=keep-cut-challenge-20260715a';
+  script.dataset.keepCutChallengeLoader='true';
+  document.head.appendChild(script);
+})();
