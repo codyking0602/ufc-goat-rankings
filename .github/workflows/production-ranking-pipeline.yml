@@ -1,0 +1,26 @@
+name: Production Ranking Pipeline
+
+on:
+  push:
+    branches:
+      - agent/fighter-data-phase-1
+  pull_request:
+    paths:
+      - 'assets/data/**'
+      - 'assets/js/ranking-pipeline.js'
+      - 'scripts/test-ranking-pipeline.mjs'
+      - '.github/workflows/production-ranking-pipeline.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  certify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Certify calculated production projection
+        run: node scripts/test-ranking-pipeline.mjs
