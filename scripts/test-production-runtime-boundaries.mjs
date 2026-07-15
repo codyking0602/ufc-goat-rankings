@@ -3,6 +3,14 @@ import fs from 'node:fs/promises';
 import vm from 'node:vm';
 
 const read=path=>fs.readFile(path,'utf8');
+const exists=async path=>{
+  try{
+    await fs.access(path);
+    return true;
+  }catch(_error){
+    return false;
+  }
+};
 const contract=JSON.parse(await read('docs/scoring-architecture-contract.json'));
 const [index,app,pipeline,bootstrap,profileRuntime,calculators,play,blind,compare,display]=await Promise.all([
   read('index.html'),
@@ -16,6 +24,10 @@ const [index,app,pipeline,bootstrap,profileRuntime,calculators,play,blind,compar
   read('assets/compare-data.js'),
   read(contract.presentation.displayOverridesPath)
 ]);
+
+for(const retired of contract.retiredWorkflowPaths||[]){
+  assert.equal(await exists(retired),false,`${retired} is retired and must not return`);
+}
 
 for(const forbidden of contract.forbiddenIndexReferences){
   assert.ok(!index.includes(forbidden),`index.html must not load ${forbidden}`);
@@ -94,6 +106,7 @@ console.log(JSON.stringify({
   rosterContract:contract.expectedRosterCount,
   formula:contract.pipeline.formula,
   legacyRuntimeScriptsLoaded:false,
+  retiredWorkflowCount:(contract.retiredWorkflowPaths||[]).length,
   snapshotOwner:contract.profileRuntime.snapshotOwner,
   compareStatOwner:'RANKING_DATA calculated projection',
   playRankOwner:'RANKING_DATA.rank',
