@@ -3,7 +3,7 @@
   'use strict';
   if(!window.RANKING_DATA)return;
 
-  const VERSION='ranking-ui-polish-20260715a';
+  const VERSION='ranking-ui-polish-20260715b';
   const DATA=window.RANKING_DATA;
   const CATEGORY_ORDER=['championship','opponentQuality','primeDominance','longevity','apexPeak','penalty'];
   const CATEGORY_COPY={
@@ -139,6 +139,8 @@
   }
   function installDivisionPolish(){
     if(!window.UFC_DIVISION_RANKING_PIPELINE||!window.UFC_DIVISION_RANKINGS)return false;
+    const style=document.getElementById('ranking-ui-polish-css');
+    if(style)document.head.appendChild(style);
     window.UFC_DIVISION_RANKINGS.render=renderDivisionPolished;
     window.renderDivision=renderDivisionPolished;
     renderDivisionPolished();
@@ -158,6 +160,8 @@
     const row=launcher.querySelector('.ov-cta-row');
     setText(copy,'Copy Matchup');
     setText(open,'Open Octagon Verdict');
+    if(copy){copy.style.setProperty('background','#fff','important');copy.style.setProperty('border-color','#e5e7eb','important');copy.style.setProperty('color','#111827','important');}
+    if(open){open.style.setProperty('background','#f97316','important');open.style.setProperty('border-color','#f97316','important');open.style.setProperty('color','#111827','important');}
     if(row&&open&&copy&&(row.children[0]!==open||row.children[1]!==copy||row.children.length!==2))row.append(open,copy);
     setText(launcher.querySelector('.ov-action-card > .meta'),'Compare their UFC resumes, category edges, and final verdict.');
     normalizeResumeText(launcher);
