@@ -7,6 +7,7 @@ on:
   pull_request:
     paths:
       - 'assets/data/**'
+      - 'assets/js/category-calculators.js'
       - 'assets/js/ranking-pipeline.js'
       - 'scripts/test-ranking-pipeline.mjs'
       - '.github/workflows/production-ranking-pipeline.yml'
@@ -18,9 +19,13 @@ jobs:
   certify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Quiet checkout
+        env:
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+        run: git clone --quiet --depth 1 --branch "$BRANCH_NAME" "https://github.com/${GITHUB_REPOSITORY}.git" repo
       - uses: actions/setup-node@v4
         with:
           node-version: 22
       - name: Certify calculated production projection
+        working-directory: repo
         run: node scripts/test-ranking-pipeline.mjs
