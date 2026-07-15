@@ -3,7 +3,7 @@
   'use strict';
   if(!window.RANKING_DATA)return;
 
-  const VERSION='ranking-ui-polish-20260715b';
+  const VERSION='ranking-ui-polish-20260715c';
   const DATA=window.RANKING_DATA;
   const CATEGORY_ORDER=['championship','opponentQuality','primeDominance','longevity','apexPeak','penalty'];
   const CATEGORY_COPY={
@@ -54,11 +54,7 @@
     return `${fighter.ufcRecord||'UFC record loaded'} · ${finished} time${finished===1?'':'s'} finished during the counted prime`;
   }
   function filteredCategoryRows(rows,key){
-    const division=document.getElementById('divisionFilter')?.value||'All';
-    return rows.map(fullRow).filter(fighter=>{
-      if(division==='All')return true;
-      return [fighter.primaryDivision,fighter.secondaryDivision].filter(Boolean).some(value=>String(value).toLowerCase().includes(String(division).toLowerCase()));
-    }).sort((a,b)=>categoryValueForRank(b,key)-categoryValueForRank(a,key)||num(b.totalScore)-num(a.totalScore)||String(a.fighter).localeCompare(String(b.fighter)));
+    return rows.map(fullRow).sort((a,b)=>categoryValueForRank(b,key)-categoryValueForRank(a,key)||num(b.totalScore)-num(a.totalScore)||String(a.fighter).localeCompare(String(b.fighter)));
   }
   function categoryRowHtml(fighter,index,key){
     const rankLabel=selectedGender==='women'?`Women #${fighter.rank||'—'}`:`Overall #${fighter.rank||'—'}`;
@@ -93,7 +89,7 @@
     const section=document.querySelector('#categories .section-title');
     setText(section?.querySelector('h2'),'Category Leaders');
     setText(section?.querySelector('p'),'See who leads each scoring category.');
-    target.innerHTML=`<div class="category-leader-shell">${categoryControls(key)}<div class="category-leader-summary"><strong>${copy.label} · ${genderLabel}</strong><br>${copy.description} Showing ${rows.length} fighters.</div><div class="leaderboard category-leader-list">${rows.map((fighter,index)=>categoryRowHtml(fighter,index,key)).join('')||'<div class="notice">No fighters match this division filter.</div>'}</div></div>`;
+    target.innerHTML=`<div class="category-leader-shell">${categoryControls(key)}<div class="category-leader-summary"><strong>${copy.label} · ${genderLabel}</strong><br>${copy.description} Showing ${rows.length} fighters.</div><div class="leaderboard category-leader-list">${rows.map((fighter,index)=>categoryRowHtml(fighter,index,key)).join('')||'<div class="notice">No fighters available.</div>'}</div></div>`;
     target.querySelectorAll('[data-category-pick]').forEach(button=>button.addEventListener('click',()=>{select.value=button.dataset.categoryPick;renderCategoriesPolished();}));
     target.querySelectorAll('[data-category-gender]').forEach(button=>button.addEventListener('click',()=>{selectedGender=button.dataset.categoryGender;renderCategoriesPolished();}));
     target.querySelectorAll('[data-fighter]').forEach(row=>row.addEventListener('click',()=>openFighter(row.dataset.fighter)));
@@ -178,11 +174,11 @@
     const search=document.getElementById('search');
     const era=document.getElementById('eraFilter');
     const division=document.getElementById('divisionFilter');
-    const showToolbar=view==='men'||view==='women'||view==='categories';
+    const showToolbar=view==='men'||view==='women';
     if(toolbar)toolbar.style.display=showToolbar?'':'none';
-    if(search)search.style.display=(view==='men'||view==='women')?'':'none';
-    if(era)era.style.display=(view==='men'||view==='women')?'':'none';
-    if(division)division.style.display=showToolbar?'':'none';
+    if(search)search.style.display=showToolbar?'':'none';
+    if(era)era.style.display=showToolbar?'':'none';
+    if(division)division.style.display='none';
   }
 
   function normalizeResumeText(root){
@@ -220,7 +216,6 @@
       if(button.dataset.view==='compare')scheduleComparePolish();
       normalizeResumeText(document.body);
     },0)));
-    document.getElementById('divisionFilter')?.addEventListener('change',()=>window.setTimeout(()=>{if(document.querySelector('.tab.active')?.dataset.view==='categories')renderCategoriesPolished();},0));
     const observer=new MutationObserver(mutations=>{mutations.forEach(mutation=>mutation.addedNodes.forEach(node=>normalizeResumeText(node)));scheduleComparePolish();});
     observer.observe(document.body,{childList:true,subtree:true});
   }
