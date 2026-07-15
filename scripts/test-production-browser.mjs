@@ -29,9 +29,12 @@ const captureRuntime=()=>page.evaluate(()=>({
   primeReconstructionLoaded:Boolean(window.UFC_CANONICAL_PRIME_DOMINANCE_RECONSTRUCTION),
   longevityReconstructionLoaded:Boolean(window.UFC_CANONICAL_LONGEVITY_RECONSTRUCTION),
   compareSource:window.COMPARE_PROFILES?.['Jon Jones']?.legacyStats?.source||null,
+  profileSnapshotOwner:window.UFC_CALCULATED_PROFILE_RUNTIME?.snapshotOwner||null,
+  profileRankOwner:window.UFC_CALCULATED_PROFILE_RUNTIME?.rankOwner||null,
+  profileOvrOwner:window.UFC_CALCULATED_PROFILE_RUNTIME?.ovrOwner||null,
   overrideRank:window.DISPLAY_OVERRIDES?.['Jon Jones']?.allTimeRank,
   overrideOvr:window.DISPLAY_OVERRIDES?.['Jon Jones']?.overallOvr,
-  overrideSnapshot:window.DISPLAY_OVERRIDES?.['Jon Jones']?.snapshot,
+  inertLegacySnapshotPresent:Array.isArray(window.DISPLAY_OVERRIDES?.['Jon Jones']?.snapshot),
   writers:{
     liveScoreUi:window.UFC_SIX_CATEGORY_SCORE_MODEL||null,
     championship:window.UFC_CHAMPIONSHIP_RESUME_LIVE||null,
@@ -71,7 +74,7 @@ try{
   await page.waitForTimeout(6500);
   const runtime=await captureRuntime();
   console.log('PRODUCTION_BROWSER_PREFLIGHT');
-  console.log(JSON.stringify({atReady:{topTen:atReady.topTen,projectionTopTen:atReady.projectionTopTen,reportTopTen:atReady.reportTopTen},stable:{topTen:runtime.topTen,projectionTopTen:runtime.projectionTopTen,reportTopTen:runtime.reportTopTen},writers:runtime.writers,pageErrors,consoleErrors},null,2));
+  console.log(JSON.stringify({atReady:{topTen:atReady.topTen,projectionTopTen:atReady.projectionTopTen,reportTopTen:atReady.reportTopTen},stable:{topTen:runtime.topTen,projectionTopTen:runtime.projectionTopTen,reportTopTen:runtime.reportTopTen},profileOwners:{snapshot:runtime.profileSnapshotOwner,rank:runtime.profileRankOwner,ovr:runtime.profileOvrOwner,inertLegacySnapshotPresent:runtime.inertLegacySnapshotPresent},writers:runtime.writers,pageErrors,consoleErrors},null,2));
 
   assert.deepEqual(runtime.projectionTopTen,expectedTopTen,'calculated projection top ten');
   assert.deepEqual(runtime.reportTopTen,expectedTopTen,'ranking pipeline report top ten');
@@ -88,9 +91,11 @@ try{
   assert.equal(runtime.scoreMode,'fight-level-calculated-single-owner');
   assert.match(runtime.categoryVersion,/seven-direct-calculators/);
   assert.equal(runtime.compareSource,'calculated-ranking-pipeline');
+  assert.equal(runtime.profileSnapshotOwner,'RANKING_DATA.visibleStats');
+  assert.equal(runtime.profileRankOwner,'RANKING_DATA.rank');
+  assert.equal(runtime.profileOvrOwner,'RANKING_DATA.overallOvr');
   assert.equal(runtime.overrideRank,undefined);
   assert.equal(runtime.overrideOvr,undefined);
-  assert.equal(runtime.overrideSnapshot,undefined);
 
   const firstRow=page.locator('#menList .fighter-row').first();
   const firstText=await firstRow.textContent();
@@ -102,6 +107,7 @@ try{
   await page.waitForSelector('#drawer.open');
   const profileText=await page.locator('#fighterDetail').textContent();
   for(const text of ['UFC All-Time Rank: #1','99 OVR','Resume Snapshot','UFC Title-Fight Wins','Top-5 Wins','Prime UFC Record','Rounds Won','Active Elite Years'])assert.ok(profileText.includes(text),`profile contains ${text}`);
+  assert.ok(!profileText.includes('Prime Stoppage Losses'),'legacy manual snapshot rows are not rendered');
   await page.locator('#closeDrawer').click();
 
   await page.locator('.tab[data-view="compare"]').click();
@@ -135,7 +141,7 @@ try{
   assert.deepEqual(pageErrors,[],'rendered app has no uncaught page errors');
 
   console.log('PRODUCTION_BROWSER_CERTIFICATION');
-  console.log(JSON.stringify({topTen:runtime.topTen,jonOvr:runtime.jon.overallOvr,gspOvr:runtime.gsp.overallOvr,snapshot:'calculated visibleStats rendered',compare:'calculated rank/OVR rendered',top10Game:'100/100 for model-order list',blindResume:'calculated seven-stat matchup rendered',legacyRuntimeLoaded:false,pageErrors:pageErrors.length},null,2));
+  console.log(JSON.stringify({topTen:runtime.topTen,jonOvr:runtime.jon.overallOvr,gspOvr:runtime.gsp.overallOvr,snapshot:'calculated visibleStats rendered',compare:'calculated rank/OVR rendered',top10Game:'100/100 for model-order list',blindResume:'calculated seven-stat matchup rendered',legacyRuntimeLoaded:false,inertLegacySnapshotPayloadIgnored:runtime.inertLegacySnapshotPresent,pageErrors:pageErrors.length},null,2));
 }finally{
   await browser.close();
 }
