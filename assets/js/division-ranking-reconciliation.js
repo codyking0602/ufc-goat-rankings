@@ -1,9 +1,10 @@
 // Final normalization for the canonical division allocation pipeline.
-// It absorbs only decimal rounding residue and blocks meaningful unexplained allocation gaps.
+// It absorbs decimal rounding residue, handles unsupported historical classes generically,
+// and blocks meaningful unexplained gaps for true multi-division résumés.
 (function(){
   'use strict';
 
-  const VERSION='division-ranking-reconciliation-20260715a';
+  const VERSION='division-ranking-reconciliation-20260715b-historical-fallback';
   const MAX_ROUNDING_RESIDUAL=.20;
   const pipeline=window.UFC_DIVISION_RANKING_PIPELINE;
   if(!pipeline?.rebuild)return;
@@ -22,6 +23,7 @@
     });
 
     const allocationWarnings=[];
+    const historicalFallbacks=[];
     groups.forEach((rows,fighter)=>{
       const expected=round2(rows[0]?.overallScore);
       const allocated=round2(rows.reduce((sum,row)=>sum+num(row.divisionScore),0));
@@ -31,9 +33,13 @@
       if(!target){allocationWarnings.push({fighter,expected,allocated,residual,reason:'no eligible division row'});return;}
       target.roundingAdjustment=round2(num(target.roundingAdjustment)+residual);
       target.divisionScore=round2(num(target.divisionScore)+residual);
-      if(Math.abs(residual)>MAX_ROUNDING_RESIDUAL){
-        allocationWarnings.push({fighter,division:target.division,expected,allocated,residual,reason:'exceeds rounding tolerance'});
+      if(Math.abs(residual)<=MAX_ROUNDING_RESIDUAL)return;
+      if(rows.length===1){
+        target.historicalDivisionFallback=true;
+        historicalFallbacks.push({fighter,division:target.division,expected,allocated,residual,reason:'unsupported historical UFC class assigned to sole app-facing division'});
+        return;
       }
+      allocationWarnings.push({fighter,division:target.division,expected,allocated,residual,reason:'multi-division allocation exceeds rounding tolerance'});
     });
 
     const conservation=[];
@@ -50,7 +56,8 @@
     report.invalid=invalid;
     report.conservation=conservation;
     report.allocationWarnings=allocationWarnings;
-    report.roundingReconciliation={version:VERSION,maxResidual:MAX_ROUNDING_RESIDUAL,applied:true};
+    report.historicalFallbacks=historicalFallbacks;
+    report.roundingReconciliation={version:VERSION,maxResidual:MAX_ROUNDING_RESIDUAL,applied:true,historicalFallbackRule:'unsupported historical classes may roll into the sole app-facing division only'};
     window.UFC_DIVISION_RANKING_REPORT=report;
     document.documentElement.setAttribute('data-division-ranking-pipeline',`${report.version}-${report.status}-${report.rowCount||report.rows.length}`);
     return report;
