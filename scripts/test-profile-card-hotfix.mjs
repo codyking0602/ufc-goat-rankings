@@ -44,7 +44,7 @@ try{
   const loss=profile.cards[5];
   assert.equal(loss.category,'penalty');
   assert.equal(loss.label,'Loss Context');
-  assert.match(loss.rating,/^\d+\s+PCTL$/,'Loss Context shows its calculated rating');
+  assert.match(loss.rating,/^\d+\s+Rating$/,'Loss Context shows its calculated rating');
   assert.match(loss.context,/^#\d+\s+in category\s+·\s+Losses adjusted for timing, opponent, finish, division$/,'Loss Context shows rank and description');
   assert.ok(loss.tier,'Loss Context shows a tier');
   assert.match(loss.className,/tier-/,'Loss Context receives its calculated tier class');
