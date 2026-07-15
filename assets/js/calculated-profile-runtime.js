@@ -1,9 +1,9 @@
 // Final profile renderer for the calculated ranking runtime.
-// Preserves presentation copy/layout while taking rank, OVR, and snapshot stats only from RANKING_DATA.
+// Preserves presentation copy/layout while taking rank, OVR, and snapshot stats only from calculated app data.
 (function(){
   'use strict';
 
-  const VERSION='calculated-profile-runtime-20260715b-profile-hotfix';
+  const VERSION='calculated-profile-runtime-20260715c-longest-win-streak';
   const pct=value=>Number.isFinite(Number(value))?`${Number(value).toFixed(1).replace(/\.0$/,'')}%`:'—';
   const years=value=>Number.isFinite(Number(value))?Number(value).toFixed(1):'—';
   const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
@@ -16,8 +16,30 @@
     return board||profile?{...(profile||{}),...(board||{})}:null;
   }
 
+  function longestWinStreakFromFights(fights){
+    let current=0;
+    let longest=0;
+    (Array.isArray(fights)?fights:[]).forEach(fight=>{
+      if(fight?.scoringDisposition==='count-win'){
+        current+=1;
+        longest=Math.max(longest,current);
+      }else{
+        current=0;
+      }
+    });
+    return longest;
+  }
+
+  function longestWinStreakFor(name){
+    const facts=window.UFC_CANONICAL_FIGHTER_FACTS;
+    if(!facts?.get)return null;
+    const record=facts.get(name);
+    return record?longestWinStreakFromFights(record.fights):null;
+  }
+
   function snapshotFor(f){
     const visible=f.visibleStats||{};
+    const longestWinStreak=longestWinStreakFor(f.fighter);
     return [
       ['UFC Record',visible.ufcRecord||f.ufcRecord||'—'],
       ['UFC Title-Fight Wins',visible.titleFightWins??f.titleFightWins??'—'],
@@ -25,7 +47,8 @@
       ['Prime UFC Record',visible.primeRecord||f.primeRecord||'—'],
       ['Finish Rate',pct(visible.finishRatePct??f.finishRatePct)],
       ['Rounds Won',pct(visible.roundsWonPct??f.roundsWonPct)],
-      ['Active Elite Years',years(visible.activeEliteYears??f.activeEliteYears)]
+      ['Active Elite Years',years(visible.activeEliteYears??f.activeEliteYears)],
+      ['Longest UFC Win Streak',Number.isInteger(longestWinStreak)?longestWinStreak:'—']
     ];
   }
 
@@ -96,7 +119,9 @@
       version:VERSION,
       rankOwner:'RANKING_DATA.rank',
       ovrOwner:'RANKING_DATA.overallOvr',
-      snapshotOwner:'RANKING_DATA.visibleStats',
+      snapshotOwner:'RANKING_DATA.visibleStats + UFC_CANONICAL_FIGHTER_FACTS.fights',
+      longestWinStreakFromFights,
+      longestWinStreakFor,
       snapshotFor
     };
     document.documentElement.setAttribute('data-calculated-profile-runtime',VERSION);
