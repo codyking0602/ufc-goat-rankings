@@ -34,7 +34,7 @@ jobs:
         run: node scripts/generate-canonical-scoring-judgments.mjs
       - name: Commit generated judgment file to PR branch
         run: |
-          if git diff --quiet -- assets/data/canonical-scoring-judgments.js; then
+          if [ -z "$(git status --porcelain -- assets/data/canonical-scoring-judgments.js)" ]; then
             echo 'Canonical judgment inputs already current.'
             exit 0
           fi
