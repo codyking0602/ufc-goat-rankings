@@ -2,24 +2,43 @@
 (function(){
   'use strict';
 
-  const VERSION='production-ranking-bootstrap-20260714d-final-write-barrier';
+  const VERSION='production-ranking-bootstrap-20260714e-clean-canonical-rebuild';
   const CALCULATED_STAT_FIELDS=new Set([
     'ufcRecord','titleFightWins','adjustedTitleWins','topFiveWins','top5Wins','rankedWins',
     'finishRatePct','primeRecord','roundsWonPct','activeEliteYears','timesFinishedPrime','throughPrimeUfcFights',
     'rank','allTimeRank','overallOvr','totalScore','rawScore','championship','opponentQuality',
     'primeDominance','longevity','apexPeak','penalty','lossPenalty','eraDepthAdjustment'
   ]);
-  const scripts=[
-    ['assets/data/canonical-fighter-facts-approved-corrections.js?v=canonical-fighter-facts-approved-corrections-20260714','data-production-facts-approved-corrections'],
-    ['assets/data/canonical-fighter-facts-opponent-quality-corrections.js?v=canonical-fighter-facts-opponent-quality-corrections-20260714','data-production-facts-opponent-quality-corrections'],
-    ['assets/data/canonical-fighter-facts-prime-round-corrections.js?v=canonical-fighter-facts-prime-round-corrections-20260714','data-production-facts-prime-round-corrections'],
-    ['assets/data/fighter-era-ledger-approved-longevity-resolutions.js?v=fighter-era-ledger-approved-longevity-resolutions-20260714a','data-production-era-longevity-resolutions'],
-    ['assets/data/fighter-era-ledger-approved-loss-context-resolutions.js?v=fighter-era-ledger-approved-loss-context-resolutions-20260714b','data-production-era-loss-resolutions'],
-    ['assets/data/canonical-division-era-depth-approved-resolutions.js?v=canonical-division-era-depth-approved-resolutions-20260714','data-production-era-depth-resolutions'],
-    ['assets/data/canonical-scoring-judgments.js?v=canonical-scoring-judgments-20260714b','data-production-scoring-judgments'],
-    ['assets/js/category-calculators.js?v=category-calculators-20260714c','data-production-category-calculators'],
-    ['assets/js/ranking-pipeline.js?v=ranking-pipeline-20260714c','data-production-ranking-pipeline'],
-    ['assets/js/calculated-profile-runtime.js?v=calculated-profile-runtime-20260714a','data-production-calculated-profile-runtime']
+  const cleanScripts=[
+    ['assets/data/canonical-fighter-facts.js?v=production-clean-canonical-fighter-facts-20260713c','data-production-clean-facts-base'],
+    ['assets/data/canonical-fighter-facts-batch-one.js?v=production-clean-canonical-fighter-facts-batch-one','data-production-clean-facts-batch-one'],
+    ['assets/data/canonical-fighter-facts-batch-two.js?v=production-clean-canonical-fighter-facts-batch-two','data-production-clean-facts-batch-two'],
+    ['assets/data/canonical-fighter-facts-batch-three.js?v=production-clean-canonical-fighter-facts-batch-three','data-production-clean-facts-batch-three'],
+    ['assets/data/canonical-fighter-facts-batch-four.js?v=production-clean-canonical-fighter-facts-batch-four','data-production-clean-facts-batch-four'],
+    ['assets/data/canonical-fighter-facts-batch-five.js?v=production-clean-canonical-fighter-facts-batch-five','data-production-clean-facts-batch-five'],
+    ['assets/data/canonical-fighter-facts-batch-six.js?v=production-clean-canonical-fighter-facts-batch-six','data-production-clean-facts-batch-six'],
+    ['assets/data/canonical-fighter-facts-batch-seven-data-a.js?v=production-clean-canonical-fighter-facts-batch-seven-data-a','data-production-clean-facts-batch-seven-data-a'],
+    ['assets/data/canonical-fighter-facts-batch-seven-data-b.js?v=production-clean-canonical-fighter-facts-batch-seven-data-b','data-production-clean-facts-batch-seven-data-b'],
+    ['assets/data/canonical-fighter-facts-batch-seven.js?v=production-clean-canonical-fighter-facts-batch-seven','data-production-clean-facts-batch-seven'],
+    ['assets/data/canonical-fighter-facts-batch-eight-data-a.js?v=production-clean-canonical-fighter-facts-batch-eight-data-a','data-production-clean-facts-batch-eight-data-a'],
+    ['assets/data/canonical-fighter-facts-batch-eight-data-b.js?v=production-clean-canonical-fighter-facts-batch-eight-data-b','data-production-clean-facts-batch-eight-data-b'],
+    ['assets/data/canonical-fighter-facts-batch-eight.js?v=production-clean-canonical-fighter-facts-batch-eight','data-production-clean-facts-batch-eight'],
+    ['assets/data/canonical-fighter-facts-batch-nine-data-a.js?v=production-clean-canonical-fighter-facts-batch-nine-data-a','data-production-clean-facts-batch-nine-data-a'],
+    ['assets/data/canonical-fighter-facts-batch-nine-data-b.js?v=production-clean-canonical-fighter-facts-batch-nine-data-b','data-production-clean-facts-batch-nine-data-b'],
+    ['assets/data/canonical-fighter-facts-batch-nine-data-c.js?v=production-clean-canonical-fighter-facts-batch-nine-data-c','data-production-clean-facts-batch-nine-data-c'],
+    ['assets/data/canonical-fighter-facts-batch-nine.js?v=production-clean-canonical-fighter-facts-batch-nine','data-production-clean-facts-batch-nine'],
+    ['assets/data/canonical-fighter-facts-approved-corrections.js?v=production-clean-canonical-fighter-facts-approved-corrections','data-production-clean-facts-approved-corrections'],
+    ['assets/data/canonical-fighter-facts-opponent-quality-corrections.js?v=production-clean-canonical-fighter-facts-opponent-quality-corrections','data-production-clean-facts-opponent-quality-corrections'],
+    ['assets/data/canonical-fighter-facts-prime-round-corrections.js?v=production-clean-canonical-fighter-facts-prime-round-corrections','data-production-clean-facts-prime-round-corrections'],
+    ['assets/data/fighter-era-ledgers.js?v=production-clean-fighter-era-ledgers-20260714h','data-production-clean-era-ledgers'],
+    ['assets/data/fighter-era-ledger-approved-longevity-resolutions.js?v=production-clean-fighter-era-ledger-approved-longevity-resolutions','data-production-clean-era-longevity-resolutions'],
+    ['assets/data/fighter-era-ledger-approved-loss-context-resolutions.js?v=production-clean-fighter-era-ledger-approved-loss-context-resolutions','data-production-clean-era-loss-resolutions'],
+    ['assets/data/division-era-depth-shadow.js?v=production-clean-division-era-depth-shadow','data-production-clean-era-depth-shadow'],
+    ['assets/data/canonical-division-era-depth-approved-resolutions.js?v=production-clean-canonical-division-era-depth-approved-resolutions','data-production-clean-era-depth-resolutions'],
+    ['assets/data/canonical-scoring-judgments.js?v=production-clean-canonical-scoring-judgments','data-production-clean-scoring-judgments'],
+    ['assets/js/category-calculators.js?v=production-clean-category-calculators-20260714c','data-production-clean-category-calculators'],
+    ['assets/js/ranking-pipeline.js?v=production-clean-ranking-pipeline-20260714c','data-production-clean-ranking-pipeline'],
+    ['assets/js/calculated-profile-runtime.js?v=production-clean-calculated-profile-runtime-20260714a','data-production-clean-calculated-profile-runtime']
   ];
 
   function loadScript(src,attribute){
@@ -46,7 +65,7 @@
       if(window.UFC_CATEGORY_PERCENTILE_TIERS)return true;
       await sleep(25);
     }
-    console.warn(`[${VERSION}] Legacy compatibility chain did not publish its terminal marker before timeout; calculated pipeline will still take final ownership.`);
+    console.warn(`[${VERSION}] Legacy compatibility chain did not publish its terminal marker before timeout; canonical inputs will still be rebuilt before scoring.`);
     return false;
   }
 
@@ -105,8 +124,10 @@
 
   function assertApprovedInputs(){
     const missing=[];
+    if(window.UFC_CANONICAL_FIGHTER_FACTS?.count?.()!==73)missing.push('73 clean canonical fighter records');
     if(window.UFC_FIGHTER_ERA_LEDGER_APPROVED_LONGEVITY_RESOLUTIONS?.applied!==true)missing.push('approved longevity era resolutions');
     if(window.UFC_FIGHTER_ERA_LEDGER_APPROVED_LOSS_CONTEXT_RESOLUTIONS?.applied!==true)missing.push('approved loss-context era resolutions');
+    if(window.UFC_FIGHTER_ERA_LEDGERS?.fighters?.length!==73)missing.push('73 clean fighter era ledgers');
     if(window.UFC_CANONICAL_SCORING_JUDGMENTS?.fighterCount!==73)missing.push('73-fighter scoring judgments');
     if(!window.UFC_CALCULATED_PROFILE_RUNTIME)missing.push('calculated profile runtime');
     if(missing.length)throw new Error(`Missing calculated ranking inputs: ${missing.join(', ')}`);
@@ -117,6 +138,7 @@
       version:VERSION,
       status:'ready',
       owner:'ranking-pipeline.js',
+      inputIsolation:'clean-canonical-rebuild-after-compatibility-drain',
       fighterCount:report.fighterCount,
       compatibilityDrained,
       report
@@ -135,7 +157,7 @@
     try{
       if(window.UFC_RANKING_DATA_PATCHES_READY)await window.UFC_RANKING_DATA_PATCHES_READY;
       const compatibilityDrained=await waitForCompatibilityDrain();
-      for(const [src,attribute] of scripts)await loadScript(src,attribute);
+      for(const [src,attribute] of cleanScripts)await loadScript(src,attribute);
       assertApprovedInputs();
       const pipeline=window.UFC_RANKING_PIPELINE;
       if(!pipeline?.apply)throw new Error('Calculated ranking pipeline did not load.');
@@ -143,7 +165,7 @@
       stripPresentationScoreOwnership();
       syncComparePresentation();
       publishReady(report,compatibilityDrained);
-      window.UFC_PRODUCTION_RANKING_BOOTSTRAP={version:VERSION,status:'ready',compatibilityDrained,report,stripPresentationScoreOwnership,syncComparePresentation};
+      window.UFC_PRODUCTION_RANKING_BOOTSTRAP={version:VERSION,status:'ready',inputIsolation:'clean-canonical-rebuild-after-compatibility-drain',compatibilityDrained,report,stripPresentationScoreOwnership,syncComparePresentation};
     }catch(error){
       document.documentElement.setAttribute('data-production-ranking-bootstrap',`${VERSION}-error`);
       window.UFC_PRODUCTION_RANKING_BOOTSTRAP={version:VERSION,status:'error',error:String(error?.message||error)};
