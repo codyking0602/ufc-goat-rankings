@@ -17,12 +17,13 @@ on:
       - 'assets/js/production-ranking-bootstrap.js'
       - 'assets/js/calculated-profile-runtime.js'
       - 'scripts/generate-canonical-scoring-judgments.mjs'
+      - 'scripts/remove-legacy-fighter-registries.mjs'
       - 'scripts/test-ranking-pipeline.mjs'
       - 'scripts/test-production-runtime-boundaries.mjs'
       - '.github/workflows/production-ranking-pipeline.yml'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   certify:
@@ -31,9 +32,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref || github.ref_name }}
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Remove legacy fighter registries from production HTML
+        run: node scripts/remove-legacy-fighter-registries.mjs
       - name: Check permanent runtime source ownership
         run: node scripts/test-production-runtime-boundaries.mjs
       - name: Verify generated judgment inputs are current
@@ -42,3 +46,16 @@ jobs:
           git diff --exit-code -- assets/data/canonical-scoring-judgments.js
       - name: Certify seven-category production projection
         run: node scripts/test-ranking-pipeline.mjs
+      - name: Commit cleaned production HTML
+        env:
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+        run: |
+          if [ -z "$(git status --porcelain -- index.html)" ]; then
+            echo 'Legacy fighter registries are already absent.'
+          else
+            git config user.name 'github-actions[bot]'
+            git config user.email '4189823+github-actions[bot]@users.noreply.github.com'
+            git add index.html
+            git commit -m 'Remove legacy fighter registries from production runtime'
+            git push origin HEAD:"$BRANCH_NAME"
+          fi
