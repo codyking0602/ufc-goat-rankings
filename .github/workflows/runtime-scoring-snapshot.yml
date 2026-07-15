@@ -1,26 +1,26 @@
-name: Runtime Scoring Snapshot
+name: Production Ranking Snapshot
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - agent/fighter-data-phase-1
     paths:
       - 'index.html'
       - 'assets/data/ranking-data.js'
       - 'assets/data/display-overrides.js'
-      - 'assets/data/canonical-fighter-registry*.js'
+      - 'assets/data/canonical-fighter-facts*.js'
+      - 'assets/data/canonical-scoring-judgments.js'
       - 'assets/data/fighter-era-ledgers.js'
-      - 'assets/data/loss-context*.js'
-      - 'assets/data/division-era-depth*.js'
-      - 'assets/data/*championship*.js'
-      - 'assets/data/*quality*.js'
-      - 'assets/data/*prime*.js'
-      - 'assets/data/*longevity*.js'
-      - 'assets/data/*apex*.js'
+      - 'assets/data/fighter-era-ledger-approved-*.js'
+      - 'assets/data/division-era-depth-shadow.js'
+      - 'assets/data/canonical-division-era-depth-approved-resolutions.js'
       - 'assets/data/ranking-data-patches.js'
-      - 'assets/js/final-score-engine.js'
-      - 'assets/js/live-score-ui.js'
-      - 'assets/js/profile-stat-consistency.js'
-      - 'scripts/capture-runtime-scoring-snapshot.mjs'
+      - 'assets/js/category-calculators.js'
+      - 'assets/js/ranking-pipeline.js'
+      - 'assets/js/production-ranking-bootstrap.js'
+      - 'assets/js/calculated-profile-runtime.js'
+      - 'scripts/capture-production-ranking-snapshot.mjs'
       - '.github/workflows/runtime-scoring-snapshot.yml'
   pull_request:
     branches: [main]
@@ -28,29 +28,27 @@ on:
       - 'index.html'
       - 'assets/data/ranking-data.js'
       - 'assets/data/display-overrides.js'
-      - 'assets/data/canonical-fighter-registry*.js'
+      - 'assets/data/canonical-fighter-facts*.js'
+      - 'assets/data/canonical-scoring-judgments.js'
       - 'assets/data/fighter-era-ledgers.js'
-      - 'assets/data/loss-context*.js'
-      - 'assets/data/division-era-depth*.js'
-      - 'assets/data/*championship*.js'
-      - 'assets/data/*quality*.js'
-      - 'assets/data/*prime*.js'
-      - 'assets/data/*longevity*.js'
-      - 'assets/data/*apex*.js'
+      - 'assets/data/fighter-era-ledger-approved-*.js'
+      - 'assets/data/division-era-depth-shadow.js'
+      - 'assets/data/canonical-division-era-depth-approved-resolutions.js'
       - 'assets/data/ranking-data-patches.js'
-      - 'assets/js/final-score-engine.js'
-      - 'assets/js/live-score-ui.js'
-      - 'assets/js/profile-stat-consistency.js'
-      - 'scripts/capture-runtime-scoring-snapshot.mjs'
+      - 'assets/js/category-calculators.js'
+      - 'assets/js/ranking-pipeline.js'
+      - 'assets/js/production-ranking-bootstrap.js'
+      - 'assets/js/calculated-profile-runtime.js'
+      - 'scripts/capture-production-ranking-snapshot.mjs'
       - '.github/workflows/runtime-scoring-snapshot.yml'
   workflow_dispatch:
 
 concurrency:
-  group: runtime-scoring-snapshot-${{ github.event_name }}-${{ github.ref }}
+  group: production-ranking-snapshot-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   capture-runtime:
@@ -60,15 +58,15 @@ jobs:
       - name: Check out current ref
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          ref: ${{ github.head_ref || github.ref_name }}
 
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: '22'
 
-      - name: Validate snapshot script
-        run: node --check scripts/capture-runtime-scoring-snapshot.mjs
+      - name: Validate permanent snapshot script
+        run: node --check scripts/capture-production-ranking-snapshot.mjs
 
       - name: Install headless browser
         run: |
@@ -77,42 +75,27 @@ jobs:
 
       - name: Start local app
         run: |
-          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/ufc-runtime-server.log 2>&1 &
-          echo $! > /tmp/ufc-runtime-server.pid
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/ufc-production-ranking-server.log 2>&1 &
           for attempt in 1 2 3 4 5 6 7 8 9 10; do
             if curl --fail --silent http://127.0.0.1:4173/index.html > /dev/null; then exit 0; fi
             sleep 1
           done
-          cat /tmp/ufc-runtime-server.log
+          cat /tmp/ufc-production-ranking-server.log
           exit 1
 
-      - name: Capture fully initialized scoring runtime
+      - name: Capture permanent calculated runtime
         env:
-          UFC_APP_URL: http://127.0.0.1:4173/index.html?runtime-scoring-snapshot=1
-        run: node scripts/capture-runtime-scoring-snapshot.mjs
+          UFC_APP_URL: http://127.0.0.1:4173/index.html?production-ranking-snapshot=1
+        run: node scripts/capture-production-ranking-snapshot.mjs
 
       - name: Upload snapshot and diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: runtime-scoring-snapshot
+          name: production-ranking-snapshot
           path: |
-            docs/runtime-scoring-snapshot.json
-            docs/runtime-scoring-snapshot.md
-            /tmp/ufc-runtime-server.log
+            docs/production-ranking-snapshot.json
+            docs/production-ranking-snapshot.md
+            /tmp/ufc-production-ranking-server.log
           if-no-files-found: warn
           retention-days: 30
-
-      - name: Publish current runtime baseline
-        if: github.event_name == 'push' && success()
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs/runtime-scoring-snapshot.json docs/runtime-scoring-snapshot.md
-          git commit -m 'Refresh runtime scoring snapshot' || exit 0
-          for attempt in 1 2 3 4 5; do
-            git pull --rebase origin main || { git rebase --abort || true; sleep $((attempt * 2)); continue; }
-            if git push origin HEAD:main; then exit 0; fi
-            sleep $((attempt * 2))
-          done
-          exit 1
