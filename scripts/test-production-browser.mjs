@@ -9,7 +9,9 @@ const expectedTopTen=[
 const browser=await chromium.launch({headless:true});
 const page=await browser.newPage({viewport:{width:1280,height:900}});
 const pageErrors=[];
+const consoleErrors=[];
 page.on('pageerror',error=>pageErrors.push(error.message));
+page.on('console',message=>{if(message.type()==='error')consoleErrors.push(message.text());});
 
 const captureRuntime=()=>page.evaluate(()=>({
   topTen:window.RANKING_DATA.men.slice(0,10).map(row=>row.fighter),
@@ -41,16 +43,35 @@ const captureRuntime=()=>page.evaluate(()=>({
   }
 }));
 
+const captureBootstrap=()=>page.evaluate(()=>({
+  htmlState:document.documentElement.getAttribute('data-production-ranking-bootstrap'),
+  scoringState:document.documentElement.getAttribute('data-scoring-pipeline'),
+  bootstrap:window.UFC_PRODUCTION_RANKING_BOOTSTRAP||null,
+  factsCount:window.UFC_CANONICAL_FIGHTER_FACTS?.count?.()||null,
+  categoryAudit:window.UFC_CATEGORY_CALCULATOR_AUDIT||null,
+  judgmentCount:window.UFC_CANONICAL_SCORING_JUDGMENTS?.fighterCount||null,
+  longevityResolution:window.UFC_FIGHTER_ERA_LEDGER_APPROVED_LONGEVITY_RESOLUTIONS||null,
+  lossResolution:window.UFC_FIGHTER_ERA_LEDGER_APPROVED_LOSS_CONTEXT_RESOLUTIONS||null,
+  calculatedProfile:Boolean(window.UFC_CALCULATED_PROFILE_RUNTIME),
+  patchesState:window.UFC_PHASE2_DATA_STATUS?.version||null
+}));
+
 try{
   await page.goto('http://127.0.0.1:4173/index.html',{waitUntil:'domcontentloaded'});
-  await page.waitForFunction(()=>document.documentElement.getAttribute('data-scoring-pipeline')==='ready',null,{timeout:90000});
+  try{
+    await page.waitForFunction(()=>document.documentElement.getAttribute('data-scoring-pipeline')==='ready',null,{timeout:90000});
+  }catch(error){
+    console.log('PRODUCTION_BROWSER_BOOTSTRAP_FAILURE');
+    console.log(JSON.stringify({diagnostic:await captureBootstrap(),pageErrors,consoleErrors},null,2));
+    throw error;
+  }
   await page.waitForSelector('#menList .fighter-row',{timeout:15000});
 
   const atReady=await captureRuntime();
   await page.waitForTimeout(6500);
   const runtime=await captureRuntime();
   console.log('PRODUCTION_BROWSER_PREFLIGHT');
-  console.log(JSON.stringify({atReady:{topTen:atReady.topTen,projectionTopTen:atReady.projectionTopTen,reportTopTen:atReady.reportTopTen},stable:{topTen:runtime.topTen,projectionTopTen:runtime.projectionTopTen,reportTopTen:runtime.reportTopTen},writers:runtime.writers,pageErrors},null,2));
+  console.log(JSON.stringify({atReady:{topTen:atReady.topTen,projectionTopTen:atReady.projectionTopTen,reportTopTen:atReady.reportTopTen},stable:{topTen:runtime.topTen,projectionTopTen:runtime.projectionTopTen,reportTopTen:runtime.reportTopTen},writers:runtime.writers,pageErrors,consoleErrors},null,2));
 
   assert.deepEqual(runtime.projectionTopTen,expectedTopTen,'calculated projection top ten');
   assert.deepEqual(runtime.reportTopTen,expectedTopTen,'ranking pipeline report top ten');
