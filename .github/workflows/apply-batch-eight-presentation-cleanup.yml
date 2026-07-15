@@ -1,0 +1,43 @@
+name: Apply Batch Eight Presentation Cleanup
+
+on:
+  push:
+    branches: [agent/fighter-data-phase-1]
+    paths:
+      - 'scripts/clean-batch-eight-presentation-ownership.mjs'
+      - '.github/workflows/apply-batch-eight-presentation-cleanup.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-batch-eight-presentation-cleanup
+  cancel-in-progress: false
+
+jobs:
+  clean-batch-eight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out current cleanup branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/fighter-data-phase-1
+          fetch-depth: 0
+
+      - name: Remove manual batch-eight presentation ownership
+        run: node scripts/clean-batch-eight-presentation-ownership.mjs
+
+      - name: Commit cleaned registry
+        run: |
+          if git diff --quiet -- assets/data/canonical-fighter-registry-batch-eight.js; then
+            echo "Batch-eight registry is already clean."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/data/canonical-fighter-registry-batch-eight.js
+          git commit -m "Remove manual stats from batch-eight presentation registry"
+          git pull --rebase origin agent/fighter-data-phase-1
+          git push origin HEAD:agent/fighter-data-phase-1
