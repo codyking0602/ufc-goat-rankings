@@ -38,7 +38,10 @@ const captureRuntime=()=>page.evaluate(()=>({
   divisionReport:window.UFC_DIVISION_RANKING_PIPELINE?.latest||null,
   lhwBoard:window.UFC_DIVISION_RANKING_PIPELINE?.boardFor?.('Light Heavyweight')||[],
   wwBoard:window.UFC_DIVISION_RANKING_PIPELINE?.boardFor?.('Welterweight')||[],
+  mwBoard:window.UFC_DIVISION_RANKING_PIPELINE?.boardFor?.('Middleweight')||[],
+  hwBoard:window.UFC_DIVISION_RANKING_PIPELINE?.boardFor?.('Heavyweight')||[],
   flwBoard:window.UFC_DIVISION_RANKING_PIPELINE?.boardFor?.('Flyweight')||[],
+  openweightBoard:window.UFC_DIVISION_RANKING_PIPELINE?.boardFor?.('Openweight')||[],
   writers:{
     liveScoreUi:window.UFC_SIX_CATEGORY_SCORE_MODEL||null,
     championship:window.UFC_CHAMPIONSHIP_RESUME_LIVE||null,
@@ -79,7 +82,7 @@ try{
   await page.waitForTimeout(6500);
   const runtime=await captureRuntime();
   console.log('PRODUCTION_BROWSER_PREFLIGHT');
-  console.log(JSON.stringify({atReady:{topTen:atReady.topTen,projectionTopTen:atReady.projectionTopTen,reportTopTen:atReady.reportTopTen},stable:{topTen:runtime.topTen,projectionTopTen:runtime.projectionTopTen,reportTopTen:runtime.reportTopTen},profileOwners:{snapshot:runtime.profileSnapshotOwner,rank:runtime.profileRankOwner,ovr:runtime.profileOvrOwner,inertLegacySnapshotPresent:runtime.inertLegacySnapshotPresent},division:{status:runtime.divisionReport?.status,manualGuardrails:runtime.divisionReport?.manualGuardrails,boards:Object.keys(runtime.divisionReport?.boards||{})},writers:runtime.writers,pageErrors,consoleErrors},null,2));
+  console.log(JSON.stringify({atReady:{topTen:atReady.topTen,projectionTopTen:atReady.projectionTopTen,reportTopTen:atReady.reportTopTen},stable:{topTen:runtime.topTen,projectionTopTen:runtime.projectionTopTen,reportTopTen:runtime.reportTopTen},profileOwners:{snapshot:runtime.profileSnapshotOwner,rank:runtime.profileRankOwner,ovr:runtime.profileOvrOwner,inertLegacySnapshotPresent:runtime.inertLegacySnapshotPresent},division:{status:runtime.divisionReport?.status,manualGuardrails:runtime.divisionReport?.manualGuardrails,eligibilityRule:runtime.divisionReport?.eligibilityRule,boards:Object.keys(runtime.divisionReport?.boards||{})},writers:runtime.writers,pageErrors,consoleErrors},null,2));
 
   assert.deepEqual(runtime.projectionTopTen,expectedTopTen,'calculated projection top ten');
   assert.deepEqual(runtime.reportTopTen,expectedTopTen,'ranking pipeline report top ten');
@@ -104,15 +107,26 @@ try{
 
   assert.equal(runtime.divisionReport?.passed,true,'automatic division ranking report passes');
   assert.equal(runtime.divisionReport?.manualGuardrails,false,'division rankings have no manual guardrails');
+  assert.equal(runtime.divisionReport?.eligibilityRule,'at least one UFC win in the division');
   assert.match(runtime.divisionReport?.allocationOwner||'',/canonical fight-level division evidence/);
   assert.equal(runtime.divisionReport?.conservation?.length,0,'division allocations conserve each fighter total score');
+  assert.equal(runtime.divisionReport?.allocationWarnings?.length,0,'division allocation has no unexplained gaps');
+  assert.equal(Object.keys(runtime.divisionReport?.boards||{}).length,9,'eight modern boards plus historical Openweight');
   assert.equal(runtime.lhwBoard[0]?.fighter,'Jon Jones','Jon Jones leads calculated LHW board');
   assert.equal(runtime.wwBoard[0]?.fighter,'Georges St-Pierre','GSP leads calculated WW board');
   assert.equal(runtime.flwBoard[0]?.fighter,'Demetrious Johnson','DJ leads calculated flyweight board');
+  assert.equal(runtime.openweightBoard[0]?.fighter,'Royce Gracie','Royce leads historical Openweight board');
+  assert.ok(runtime.openweightBoard[0]?.stats?.ufcWins>0,'Royce Openweight row contains UFC wins');
+  assert.ok(!runtime.wwBoard.some(row=>row.fighter==='Royce Gracie'),'Royce loss-only Hughes cameo is excluded from welterweight board');
+  assert.ok(!runtime.hwBoard.some(row=>row.fighter==='Alex Pereira'),'Pereira loss-only heavyweight cameo is excluded');
+  assert.ok(!runtime.lhwBoard.some(row=>row.fighter==='Israel Adesanya'),'Adesanya loss-only light-heavyweight cameo is excluded');
+  assert.ok(!runtime.mwBoard.some(row=>['Kamaru Usman','Rashad Evans'].includes(row.fighter)),'loss-only middleweight cameos are excluded');
+  assert.ok(!runtime.flwBoard.some(row=>row.fighter==='T.J. Dillashaw'),'Dillashaw loss-only flyweight cameo is excluded');
+  for(const board of Object.values(runtime.divisionReport?.boards||{}))for(const row of board)assert.ok(row.stats?.ufcWins>0,`${row.fighter} owns a UFC win in ${row.division}`);
 
   const firstRow=page.locator('#menList .fighter-row').first();
   const firstText=await firstRow.textContent();
-  assert.match(firstText,/^\s*#1/);
+  assert.match(firstText(/^\s*#1/));
   assert.match(firstText,/Jon Jones/);
   assert.match(firstText,/99\s*OVR/);
 
@@ -133,12 +147,21 @@ try{
   assert.match(divisionText,/DIV SCORE/);
   assert.match(divisionText,/calculated UFC résumé/);
 
+  await page.locator('[data-division-pick="Openweight"]').click();
+  const openweightText=await page.locator('#divisionList').textContent();
+  assert.match(openweightText,/Openweight \(Historical\) · Men/);
+  assert.match(openweightText,/Royce Gracie/);
+  assert.doesNotMatch(openweightText,/0-1 UFC/);
+
   await page.locator('.tab[data-view="compare"]').click();
   const compareText=await page.locator('#compareResult').textContent();
   assert.match(compareText,/Jon Jones/);
   assert.match(compareText,/Georges St-Pierre/);
   assert.match(compareText,/(?:#1\s*·\s*99 OVR|99 OVR\s*·\s*#1)/);
   assert.match(compareText,/(?:#2\s*·\s*96 OVR|96 OVR\s*·\s*#2)/);
+  const launcherText=await page.locator('#octagonVerdictLauncher').textContent();
+  assert.match(launcherText,/Copy Live Matchup/);
+  assert.match(launcherText,/Download Full JSON/);
 
   await page.locator('.tab[data-view="play"]').click();
   const search=page.locator('#playFighterSearch');
@@ -164,7 +187,7 @@ try{
   assert.deepEqual(pageErrors,[],'rendered app has no uncaught page errors');
 
   console.log('PRODUCTION_BROWSER_CERTIFICATION');
-  console.log(JSON.stringify({topTen:runtime.topTen,jonOvr:runtime.jon.overallOvr,gspOvr:runtime.gsp.overallOvr,snapshot:'calculated visibleStats rendered',compare:'calculated rank/OVR rendered',division:'automatic canonical fight-level boards rendered',top10Game:'100/100 for model-order list',blindResume:'calculated seven-stat matchup rendered',legacyRuntimeLoaded:false,inertLegacySnapshotPayloadIgnored:runtime.inertLegacySnapshotPresent,pageErrors:pageErrors.length},null,2));
+  console.log(JSON.stringify({topTen:runtime.topTen,jonOvr:runtime.jon.overallOvr,gspOvr:runtime.gsp.overallOvr,snapshot:'calculated visibleStats rendered',compare:'calculated rank/OVR and live Octagon launcher rendered',division:'nine automatic win-qualified canonical boards rendered',openweightLeader:runtime.openweightBoard[0]?.fighter,top10Game:'100/100 for model-order list',blindResume:'calculated seven-stat matchup rendered',legacyRuntimeLoaded:false,inertLegacySnapshotPayloadIgnored:runtime.inertLegacySnapshotPresent,pageErrors:pageErrors.length},null,2));
 }finally{
   await browser.close();
 }
