@@ -41,15 +41,16 @@ jobs:
           git diff --exit-code -- assets/data/canonical-scoring-judgments.js
       - name: Certify seven-category production projection
         run: node scripts/test-ranking-pipeline.mjs
-      - name: Certify runtime ownership boundaries
-        run: node scripts/test-production-runtime-boundaries.mjs
       - name: Generate reviewable presentation-only files
         run: node scripts/generate-presentation-only-data.mjs | tee /tmp/presentation-cleanup-report.json
       - name: Verify generated presentation syntax
         run: |
           node --check assets/data/display-overrides.js
           node --check assets/compare-data.js
+      - name: Certify runtime ownership boundaries
+        run: node scripts/test-production-runtime-boundaries.mjs
       - name: Upload presentation cleanup artifact
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: presentation-only-data-cleanup
