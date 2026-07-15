@@ -1,7 +1,7 @@
 // App-facing Watch Moment and signature-fight links only.
 (function(){
   'use strict';
-  const VERSION='royce-watch-links-20260715a-presentation-only';
+  const VERSION='royce-watch-links-20260715b-card-personality';
   if(typeof DISPLAY_OVERRIDES==='undefined')return;
 
   const WATCH_LINKS={
@@ -12,6 +12,10 @@
       watchLabel:'Watch Moment',
       signatureFightUrl:'https://youtu.be/-y2SEefVNtE?is=NN1arJDFgj8_a7F9',
       signatureFightLabel:'Watch Signature Fight'
+    },
+    'Charles Oliveira':{
+      watchUrl:'https://youtube.com/shorts/zHUAvACSUk4?is=VYzwsuIvxV85k8zH',
+      watchLabel:'Watch Moment'
     },
     'Benson Henderson':{
       signatureFightUrl:'https://www.youtube.com/watch?v=P65mAfnAFhk',
@@ -73,9 +77,18 @@
     return applied;
   }
 
+  function loadFighterCardPersonality(){
+    if(document.querySelector('[data-fighter-card-personality-script]'))return;
+    const script=document.createElement('script');
+    script.src='assets/js/fighter-card-personality.js?v=fighter-card-personality-20260715a';
+    script.setAttribute('data-fighter-card-personality-script','true');
+    document.body.appendChild(script);
+  }
+
   const applied=apply();
   window.addEventListener('ufc-ranking-data-patches-ready',apply);
   window.addEventListener('ufc-scoring-pipeline-ready',apply);
   window.UFC_ROYCE_WATCH_LINKS={version:VERSION,mode:'presentation-only',fighters:applied,watchLinks:WATCH_LINKS,mutatesScores:false,loadsRegistry:false};
   document.documentElement.setAttribute('data-royce-watch-links',VERSION);
+  loadFighterCardPersonality();
 })();
