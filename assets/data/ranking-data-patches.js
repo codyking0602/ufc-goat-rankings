@@ -2,7 +2,7 @@
 (function(){
   'use strict';
 
-  const VERSION='ranking-data-patches-20260715f-profile-card-hotfix-final-photo-sync';
+  const VERSION='ranking-data-patches-20260715g-peak-apex-profile-template';
   let readyResolved=false;
   let finalPhotoSyncCount=0;
   let resolveReady;
@@ -198,7 +198,7 @@
     const loadDivisionRankings=()=>loadScriptOnce('assets/js/division-rankings.js?v=division-rankings-20260705e-clean-leaderboard','data-division-rankings',loadBranding);
     const loadHomePolish=()=>loadScriptOnce('assets/js/home-polish.js?v=home-polish-hybrid-preview-20260711c-tab-scroll-hint','data-home-polish',loadDivisionRankings);
     const loadWatchMoments=()=>loadScriptOnce('assets/js/watch-moments.js?v=watch-moments-20260711i-signature-fights-batch-seven','data-watch-moments',loadHomePolish);
-    const loadProfileTemplate=()=>loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260714-calculated-only','data-profile-template-system',loadWatchMoments);
+    const loadProfileTemplate=()=>loadScriptOnce('assets/js/profile-template-system.js?v=profile-template-system-20260715b-peak-apex','data-profile-template-system',loadWatchMoments);
     if(window.UFC_PROFILE_TEMPLATE_SYSTEM)loadWatchMoments();else loadProfileTemplate();
   }
 
