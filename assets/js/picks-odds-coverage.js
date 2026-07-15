@@ -8,14 +8,29 @@
       .filter(card=>!String(card.querySelector('.pick-lock')?.textContent || '').toLowerCase().includes('cancelled'));
   }
 
+  function usableOddsText(node){
+    return String(node?.textContent || '')
+      .replace(/\s*FAV\s*$/i,'')
+      .trim();
+  }
+
+  function hasUsableOdds(node){
+    const value=usableOddsText(node);
+    return /^[+-]\d+$/.test(value) && Number(value)!==0;
+  }
+
   function cardHasOdds(card){
-    return card.querySelectorAll('.pick-fighter-odds').length>=2;
+    const lines=[...card.querySelectorAll('.pick-fighter-odds')];
+    return lines.length>=2 && lines.slice(0,2).every(hasUsableOdds);
   }
 
   function cardHasOpenUnderdog(card){
     const openButtons=[...card.querySelectorAll('.pick-fighter:not(:disabled)')];
     if(!openButtons.length) return false;
-    return openButtons.some(button=>/^\+\d+/.test(String(button.querySelector('.pick-fighter-odds')?.textContent || '').trim()));
+    return openButtons.some(button=>{
+      const line=button.querySelector('.pick-fighter-odds');
+      return hasUsableOdds(line) && usableOddsText(line).startsWith('+');
+    });
   }
 
   function cleanSource(value){
@@ -61,7 +76,7 @@
     let state='picks-odds-empty';
 
     if(available===0){
-      message='Odds have not been posted yet. Underdog Lock will appear as lines become available.';
+      message='Odds have not been posted yet. Underdog Lock is unavailable until usable lines are posted, but you can still submit normal fight picks.';
     }else if(available<total){
       state='picks-odds-partial';
       message=`Odds available for ${available} of ${total} fights · Not all odds available yet`;
@@ -78,12 +93,13 @@
 
   function updateUnderdogSummary(cards){
     const summary=document.querySelector('#picksProgress .picks-lock-summary');
-    if(!summary || /^★\s*Underdog Lock:/i.test(summary.textContent.trim())) return;
+    const activeLock=cards.some(card=>card.querySelector('.underdog-locked') && cardHasOdds(card));
+    if(!summary || activeLock) return;
 
     const available=cards.filter(cardHasOdds).length;
     const eligible=cards.filter(cardHasOpenUnderdog).length;
     if(available===0){
-      setText(summary,'★ Underdog Lock waiting on posted odds');
+      setText(summary,'★ Underdog Lock unavailable · normal picks still open');
     }else if(eligible===0){
       setText(summary,'★ No eligible underdog yet');
     }else{
