@@ -1,5 +1,5 @@
 // App-facing copy, photos, links, and presentation-only overrides.
-// Score inputs, totals, ranks, category ratings, Loss Context, and Era Depth live in the canonical scoring pipeline.
+// Calculated stats, totals, ranks, category ratings, and Resume Snapshot values come from ranking-pipeline.js.
 const DISPLAY_OVERRIDES = {
   "Jon Jones": {
     "divisionLabel": "LHW / HW",
@@ -7,33 +7,7 @@ const DISPLAY_OVERRIDES = {
     "photoUrl": "assets/fighters/jon-jones.webp",
     "thumbUrl": "assets/fighters/jon-jones-thumb.webp",
     "oneLiner": "The benchmark UFC resume: unmatched title-fight success, elite quality wins, long-term dominance, and no true competitive loss.",
-    "snapshot": [
-      [
-        "UFC Record",
-        "22-1, 1 NC"
-      ],
-      [
-        "UFC Title-Fight Wins",
-        "16"
-      ],
-      [
-        "Championship Level",
-        "All-Time Best"
-      ],
-      [
-        "Elite Wins",
-        "All-Time Best Tier"
-      ],
-      [
-        "Active Elite Years",
-        "Elite Longevity"
-      ],
-      [
-        "Loss Context",
-        "No true competitive loss"
-      ]
-    ],
-    "whyRankedHere": "Jones ranks #1 because he has the strongest UFC championship resume ever, the best title-fight win total, elite wins across multiple eras, and one of the longest elite runs in UFC history. His resume combines championship success, quality wins, prime dominance, and longevity better than anyone else.",
+    "whyRankedHere": "Jones ranks here because he has the strongest UFC championship resume ever, the best title-fight win total, elite wins across multiple eras, and one of the longest elite runs in UFC history. His resume combines championship success, quality wins, prime dominance, and longevity better than anyone else.",
     "whyNotLower": "The main arguments against Jones are close fights, inactivity gaps, late-career sample size at heavyweight, and outside-the-cage controversy. But as a UFC resume, his in-cage case still has the strongest overall combination of title success, elite opponents, dominance, and longevity.",
     "keyJudgmentCalls": [
       [
@@ -65,33 +39,7 @@ const DISPLAY_OVERRIDES = {
     "photoUrl": "assets/fighters/georges-st-pierre.webp",
     "thumbUrl": "assets/fighters/georges-st-pierre-thumb.webp",
     "oneLiner": "The complete UFC resume: a legendary welterweight reign, elite quality wins, and one of the cleanest prime runs in the sport.",
-    "snapshot": [
-      [
-        "UFC Record",
-        "20-2"
-      ],
-      [
-        "UFC Title-Fight Wins",
-        "13"
-      ],
-      [
-        "Championship Level",
-        "All-Time Great"
-      ],
-      [
-        "Elite Wins",
-        "Best Quality Wins Case"
-      ],
-      [
-        "Active Elite Years",
-        "Long Championship Window"
-      ],
-      [
-        "Loss Context",
-        "Hughes and Serra losses were avenged decisively"
-      ]
-    ],
-    "whyRankedHere": "St-Pierre ranks #2 because he combines an all-time welterweight title reign with the strongest quality-wins case in the UFC, elite consistency across his prime, and decisive revenge wins over the losses that matter most. His resume is one of the deepest, cleanest, and easiest to defend in the sport.",
+    "whyRankedHere": "St-Pierre ranks here because he combines an all-time welterweight title reign with the strongest quality-wins case in the UFC, elite consistency across his prime, and decisive revenge wins over the losses that matter most. His resume is one of the deepest, cleanest, and easiest to defend in the sport.",
     "whyNotHigher": "Jon Jones still has the edge in championship volume and total time at the very top. St-Pierre's case is elite across the board, but the Serra upset and slightly lower title-fight total keep him just behind #1.",
     "keyJudgmentCalls": [
       [
@@ -123,33 +71,7 @@ const DISPLAY_OVERRIDES = {
     "photoUrl": "assets/fighters/demetrious-johnson.webp",
     "thumbUrl": "assets/fighters/demetrious-johnson-thumb.webp",
     "oneLiner": "The defining UFC flyweight champion: historic title control, elite technical dominance, and one of the cleanest prime skill sets in the sport.",
-    "snapshot": [
-      [
-        "UFC Record",
-        "15-2-1"
-      ],
-      [
-        "UFC Title-Fight Wins",
-        "12"
-      ],
-      [
-        "Championship Level",
-        "Historic Flyweight Reign"
-      ],
-      [
-        "Elite Wins",
-        "Strong but Division-Adjusted"
-      ],
-      [
-        "Active Elite Years",
-        "Elite Championship Window"
-      ],
-      [
-        "Loss Context",
-        "Cruz and Cejudo losses add context, not collapse"
-      ]
-    ],
-    "whyRankedHere": "Johnson ranks #3 because he built the UFC flyweight standard: a long title reign, elite technical control, strong prime dominance, and one of the best championship resumes in this ranking. His case is especially strong in title success and prime skill separation.",
+    "whyRankedHere": "Johnson ranks here because he built the UFC flyweight standard: a long title reign, elite technical control, strong prime dominance, and one of the best championship resumes in this ranking. His case is especially strong in title success and prime skill separation.",
     "whyNotHigher": "Johnson trails Jones and St-Pierre because his quality-wins score and flyweight division-strength context are lower in the current scoring model. His later non-UFC success adds historical context, but this ranking is based on the UFC resume.",
     "keyJudgmentCalls": [
       [
@@ -181,33 +103,7 @@ const DISPLAY_OVERRIDES = {
     "photoUrl": "assets/fighters/anderson-silva.webp",
     "thumbUrl": "assets/fighters/anderson-silva-thumb.webp",
     "oneLiner": "The peak-aura case: historic middleweight title control, terrifying finishing dominance, and one of the most iconic prime runs in UFC history.",
-    "snapshot": [
-      [
-        "UFC Record",
-        "17-7, 1 NC"
-      ],
-      [
-        "UFC Title-Fight Wins",
-        "11"
-      ],
-      [
-        "Championship Level",
-        "Historic Middleweight Reign"
-      ],
-      [
-        "Elite Wins",
-        "Strong but Division-Adjusted"
-      ],
-      [
-        "Active Elite Years",
-        "Long Elite Window"
-      ],
-      [
-        "Loss Context",
-        "Weidman losses count; later losses are treated as post-prime context"
-      ]
-    ],
-    "whyRankedHere": "Silva ranks #4 because his peak remains one of the most dominant and iconic runs in UFC history. He paired a historic middleweight title reign with rare finishing threat, long-term aura, and a level of separation that still defines elite prime dominance.",
+    "whyRankedHere": "Silva ranks here because his peak remains one of the most dominant and iconic runs in UFC history. He paired a historic middleweight title reign with rare finishing threat, long-term aura, and a level of separation that still defines elite prime dominance.",
     "whyNotHigher": "Silva does not pass the top three because the current scoring model gives Jones, St-Pierre, and Johnson stronger overall combinations of championship volume, opponent-quality wins, clean prime record, and loss context. The Weidman losses matter, and the middleweight division-strength adjustment keeps his quality-wins score below the very top tier.",
     "keyJudgmentCalls": [
       [
@@ -239,33 +135,7 @@ const DISPLAY_OVERRIDES = {
     "photoUrl": "assets/fighters/khabib-nurmagomedov.webp",
     "thumbUrl": "assets/fighters/khabib-nurmagomedov-thumb.webp",
     "oneLiner": "The cleanest prime run at lightweight: unbeaten in the UFC, overwhelming round control, and the strongest dominance case in this ranking.",
-    "snapshot": [
-      [
-        "UFC Record",
-        "13-0"
-      ],
-      [
-        "UFC Title-Fight Wins",
-        "4"
-      ],
-      [
-        "Championship Level",
-        "Short but Elite Title Run"
-      ],
-      [
-        "Quality Wins",
-        "Lightweight Champion Tier"
-      ],
-      [
-        "Active Elite Years",
-        "6.0 Elite Years"
-      ],
-      [
-        "Loss Context",
-        "No UFC losses"
-      ]
-    ],
-    "whyRankedHere": "Khabib ranks #6 because his prime-dominance score is the strongest in the current scoring model. He combined suffocating control, elite round winning, and a perfect UFC record, giving him one of the hardest peaks to challenge in this ranking.",
+    "whyRankedHere": "Khabib ranks here because his prime-dominance score is the strongest in the current scoring model. He combined suffocating control, elite round winning, and a perfect UFC record, giving him one of the hardest peaks to challenge in this ranking.",
     "whyNotHigher": "He does not climb higher because the current scoring model gives him less championship volume and fewer quality-wins layers than the fighters above him. His peak is elite enough to compete with anyone, but his total UFC resume is shorter.",
     "keyJudgmentCalls": [
       [
@@ -297,33 +167,7 @@ const DISPLAY_OVERRIDES = {
     "photoUrl": "assets/fighters/islam-makhachev.webp",
     "thumbUrl": "assets/fighters/islam-makhachev-thumb.webp",
     "oneLiner": "The modern lightweight control case: elite finishing efficiency, high-end prime dominance, and a title run that keeps getting stronger.",
-    "snapshot": [
-      [
-        "UFC Record",
-        "17-1"
-      ],
-      [
-        "UFC Title-Fight Wins",
-        "6"
-      ],
-      [
-        "Championship Level",
-        "Fast-Rising Champion Resume"
-      ],
-      [
-        "Quality Wins",
-        "Modern Lightweight Elite"
-      ],
-      [
-        "Active Elite Years",
-        "4.7 Elite Years"
-      ],
-      [
-        "Loss Context",
-        "Only UFC loss came pre-prime"
-      ]
-    ],
-    "whyRankedHere": "Islam ranks #5 because the current scoring model sees a rare combination of elite prime dominance and a rapidly growing championship resume. His skill, control, and finishing threat already put him near the very top tier.",
+    "whyRankedHere": "Islam ranks here because the current scoring model sees a rare combination of elite prime dominance and a rapidly growing championship resume. His skill, control, and finishing threat already put him near the very top tier.",
     "whyNotHigher": "He is still chasing the total volume of the fighters above him. The current scoring model also carries his pre-prime Martins loss and gives him fewer total elite-year reps than the older all-time resumes above him.",
     "keyJudgmentCalls": [
       [
@@ -355,33 +199,7 @@ const DISPLAY_OVERRIDES = {
     "photoUrl": "assets/fighters/alexander-volkanovski.webp",
     "thumbUrl": "assets/fighters/alexander-volkanovski-thumb.webp",
     "oneLiner": "The complete featherweight champion case: title consistency, strong quality wins, and one of the deepest modern resumes in the sport.",
-    "snapshot": [
-      [
-        "UFC Record",
-        "15-3"
-      ],
-      [
-        "UFC Title-Fight Wins",
-        "8"
-      ],
-      [
-        "Championship Level",
-        "Modern Featherweight Standard"
-      ],
-      [
-        "Quality Wins",
-        "Top-End Featherweight Case"
-      ],
-      [
-        "Active Elite Years",
-        "6.7 Elite Years"
-      ],
-      [
-        "Loss Context",
-        "Islam losses get reduced up-division treatment"
-      ]
-    ],
-    "whyRankedHere": "Volkanovski ranks #7 because he checks every important box well: championship success, quality wins, consistency, and a long elite stretch at featherweight. He may not have the single highest peak score, but his overall balance is extremely strong.",
+    "whyRankedHere": "Volkanovski ranks here because he checks every important box well: championship success, quality wins, consistency, and a long elite stretch at featherweight. He may not have the single highest peak score, but his overall balance is extremely strong.",
     "whyNotHigher": "The current scoring model hits him for the Topuria loss and keeps his prime-dominance score below the names with more overwhelming peaks. The up-division Islam losses are handled more lightly, but they still do not boost the resume the way a win would have.",
     "keyJudgmentCalls": [
       [
@@ -413,33 +231,7 @@ const DISPLAY_OVERRIDES = {
     "photoUrl": "assets/fighters/jose-aldo.webp",
     "thumbUrl": "assets/fighters/jose-aldo-thumb.webp",
     "oneLiner": "The longevity legend: an elite featherweight reign plus a late-career bantamweight resurgence that keeps his UFC case alive across eras.",
-    "snapshot": [
-      [
-        "UFC Record",
-        "14-9"
-      ],
-      [
-        "UFC Title-Fight Wins",
-        "8"
-      ],
-      [
-        "Championship Level",
-        "Historic Featherweight Champion"
-      ],
-      [
-        "Quality Wins",
-        "Deep Across Two Eras"
-      ],
-      [
-        "Active Elite Years",
-        "11.3 Elite Years"
-      ],
-      [
-        "Loss Context",
-        "Later losses mostly sit outside the core prime case"
-      ]
-    ],
-    "whyRankedHere": "Aldo ranks #11 because the current scoring model rewards his long elite shelf life, strong title work, and years of quality wins. His resume stays relevant because he held up across multiple generations of contenders.",
+    "whyRankedHere": "Aldo ranks here because the current scoring model rewards his long elite shelf life, strong title work, and years of quality wins. His resume stays relevant because he held up across multiple generations of contenders.",
     "whyNotHigher": "The current scoring model is UFC-only, so his WEC era is not carrying him here. His later UFC losses and a lower prime-dominance score than the names above him keep him just outside the top ten.",
     "keyJudgmentCalls": [
       [
@@ -471,33 +263,7 @@ const DISPLAY_OVERRIDES = {
     "photoUrl": "assets/fighters/max-holloway.webp",
     "thumbUrl": "assets/fighters/max-holloway-thumb.webp",
     "oneLiner": "The volume case: relentless pace, elite quality wins, and one of the longest useful elite windows in the featherweight era.",
-    "snapshot": [
-      [
-        "UFC Record",
-        "23-9"
-      ],
-      [
-        "UFC Title-Fight Wins",
-        "5"
-      ],
-      [
-        "Championship Level",
-        "Great but Not Massive Belt Volume"
-      ],
-      [
-        "Quality Wins",
-        "Second-Best Score in This Ranking"
-      ],
-      [
-        "Active Elite Years",
-        "10.9 Elite Years"
-      ],
-      [
-        "Loss Context",
-        "Many losses came to elite names and across long volume"
-      ]
-    ],
-    "whyRankedHere": "Holloway ranks #9 because his quality-wins score and longevity score are both elite. Few fighters in this ranking have stacked as many meaningful UFC wins over as long a stretch.",
+    "whyRankedHere": "Holloway ranks here because his quality-wins score and longevity score are both elite. Few fighters in this ranking have stacked as many meaningful UFC wins over as long a stretch.",
     "whyNotHigher": "He sits below the very top names because the current scoring model gives him less championship control and more resume drag from total losses. The volume is impressive, but the belt dominance is not on the level of the names above him.",
     "keyJudgmentCalls": [
       [
@@ -527,32 +293,6 @@ const DISPLAY_OVERRIDES = {
     "divisionLabel": "BW",
     "resumeTag": "Modern bantamweight title case",
     "oneLiner": "A modern bantamweight title case with elite skill, strong round control, and unusual DQ context that needs more nuance than a normal loss.",
-    "snapshot": [
-      [
-        "UFC Record",
-        "12-4"
-      ],
-      [
-        "UFC Title-Fight Wins",
-        "2 adjusted title-win credit"
-      ],
-      [
-        "Championship Level",
-        "Former Bantamweight Champion"
-      ],
-      [
-        "Quality Wins",
-        "Aldo and Sandhagen anchor the case"
-      ],
-      [
-        "Active Elite Years",
-        "6.0 Elite Years"
-      ],
-      [
-        "Loss Context",
-        "Sterling DQ and elite-loss context need nuance"
-      ]
-    ],
     "whyRankedHere": "Yan ranks here because his UFC-only case has real bantamweight title value, strong elite-round control, and enough quality-win/context credit to belong in the all-time conversation rather than being hidden by the messy Sterling rivalry.",
     "whyNotHigher": "He does not climb higher because the championship volume is limited and the official loss column is heavy for an all-time case, even when several losses have strong context.",
     "keyJudgmentCalls": [
