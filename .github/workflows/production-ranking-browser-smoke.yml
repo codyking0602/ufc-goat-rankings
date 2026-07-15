@@ -24,6 +24,7 @@ on:
       - 'assets/js/octagon-verdict-data.js'
       - 'tools/build-octagon-verdict-data.js'
       - 'scripts/test-production-browser.mjs'
+      - 'scripts/test-profile-card-hotfix.mjs'
       - 'scripts/audit-fighter-photo-paths.mjs'
       - '.github/workflows/production-ranking-browser-smoke.yml'
 
@@ -52,6 +53,8 @@ jobs:
         run: node scripts/audit-fighter-photo-paths.mjs > /tmp/fighter-photo-audit.log 2>&1
       - name: Run rendered ranking regression
         run: node scripts/test-production-browser.mjs > /tmp/ufc-browser-test.log 2>&1
+      - name: Run mobile profile card regression
+        run: node scripts/test-profile-card-hotfix.mjs > /tmp/profile-card-hotfix.log 2>&1
       - name: Build Octagon Verdict knowledge feed
         run: node tools/build-octagon-verdict-data.js > /tmp/octagon-verdict-build.log 2>&1
       - name: Validate Octagon Verdict package
@@ -82,6 +85,8 @@ jobs:
           cat /tmp/fighter-photo-audit.log 2>/dev/null || true
           echo '--- Browser assertion ---'
           cat /tmp/ufc-browser-test.log 2>/dev/null || true
+          echo '--- Mobile profile assertion ---'
+          cat /tmp/profile-card-hotfix.log 2>/dev/null || true
           echo '--- Octagon build ---'
           cat /tmp/octagon-verdict-build.log 2>/dev/null || true
           echo '--- Local server tail ---'
@@ -94,6 +99,8 @@ jobs:
           path: |
             /tmp/fighter-photo-audit.log
             /tmp/ufc-browser-test.log
+            /tmp/profile-card-hotfix.log
+            /tmp/profile-card-mobile-hotfix.png
             /tmp/octagon-verdict-build.log
             /tmp/ufc-app-http.log
           if-no-files-found: ignore
