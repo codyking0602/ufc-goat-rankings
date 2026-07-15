@@ -26,6 +26,7 @@ on:
       - 'scripts/test-production-browser.mjs'
       - 'scripts/test-profile-card-hotfix.mjs'
       - 'scripts/test-fighter-taglines.mjs'
+      - 'scripts/test-woodley-audit.mjs'
       - 'scripts/audit-fighter-photo-paths.mjs'
       - '.github/workflows/production-ranking-browser-smoke.yml'
 
@@ -58,6 +59,8 @@ jobs:
         run: node scripts/test-profile-card-hotfix.mjs > /tmp/profile-card-hotfix.log 2>&1
       - name: Audit fighter pill taglines and Charles Watch Moment
         run: node scripts/test-fighter-taglines.mjs > /tmp/fighter-taglines.log 2>&1
+      - name: Certify Tyron Woodley audit inputs
+        run: node scripts/test-woodley-audit.mjs > /tmp/woodley-audit.log 2>&1
       - name: Build Octagon Verdict knowledge feed
         run: node tools/build-octagon-verdict-data.js > /tmp/octagon-verdict-build.log 2>&1
       - name: Validate Octagon Verdict package
@@ -92,6 +95,8 @@ jobs:
           cat /tmp/profile-card-hotfix.log 2>/dev/null || true
           echo '--- Fighter tagline assertion ---'
           cat /tmp/fighter-taglines.log 2>/dev/null || true
+          echo '--- Woodley audit assertion ---'
+          cat /tmp/woodley-audit.log 2>/dev/null || true
           echo '--- Octagon build ---'
           cat /tmp/octagon-verdict-build.log 2>/dev/null || true
           echo '--- Local server tail ---'
@@ -106,6 +111,7 @@ jobs:
             /tmp/ufc-browser-test.log
             /tmp/profile-card-hotfix.log
             /tmp/fighter-taglines.log
+            /tmp/woodley-audit.log
             /tmp/profile-card-mobile-hotfix.png
             /tmp/octagon-verdict-build.log
             /tmp/ufc-app-http.log
