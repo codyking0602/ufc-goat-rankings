@@ -41,7 +41,11 @@ try{
       bar:card.querySelector('.category-bar i')?.style.width||'',
       className:card.className
     }));
-    return{snapshotLabels,cards};
+    return{
+      snapshotLabels,
+      cards,
+      standalonePeakApexPanels:root.querySelectorAll('#apexPeakProfileCard').length
+    };
   });
 
   assert.equal(profile.snapshotLabels.includes('Adjusted Title Wins'),false,'Adjusted Title Wins is hidden from the visible Resume Snapshot');
@@ -49,6 +53,7 @@ try{
   assert.deepEqual(profile.cards.map(card=>card.category),expectedCategories,'profile categories render once in the canonical order');
   assert.deepEqual(profile.cards.map(card=>card.label),expectedLabels,'profile category labels use the approved app-facing names');
   assert.equal(profile.cards.filter(card=>card.category==='apexPeak').length,1,'Peak Apex renders exactly once');
+  assert.equal(profile.standalonePeakApexPanels,0,'obsolete standalone Peak Apex profile panels are not rendered');
 
   const loss=profile.cards[5];
   assert.equal(loss.category,'penalty');
@@ -63,7 +68,7 @@ try{
 
   await page.screenshot({path:'/tmp/profile-card-mobile-hotfix.png',fullPage:true});
   console.log('PROFILE_CARD_MOBILE_HOTFIX_CERTIFICATION');
-  console.log(JSON.stringify({viewport:'390x844',snapshotLabels:profile.snapshotLabels,categories:profile.cards,pageErrors},null,2));
+  console.log(JSON.stringify({viewport:'390x844',snapshotLabels:profile.snapshotLabels,categories:profile.cards,standalonePeakApexPanels:profile.standalonePeakApexPanels,pageErrors},null,2));
 }finally{
   await browser.close();
 }
