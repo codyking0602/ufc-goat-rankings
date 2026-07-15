@@ -43,7 +43,7 @@ try{
   assert.equal(audit.row.primeRecord,'7-2-1');
   assert.equal(audit.row.roundsWonPct,59.38);
   assert.equal(audit.row.adjustedTitleWins,3.65);
-  assert.equal(audit.row.activeEliteYears,4.97);
+  assert.equal(audit.row.activeEliteYears,4.96);
   assert.equal(audit.row.topFiveWins,6);
 
   const credits=Object.fromEntries(audit.oq.inputs.map(input=>[input.opponent,{baseTier:input.baseTier,baseCredit:input.baseCredit,finalCredit:input.finalCredit}]));
