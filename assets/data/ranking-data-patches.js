@@ -2,7 +2,7 @@
 (function(){
   'use strict';
 
-  const VERSION='ranking-data-patches-20260715c-verified-photo-paths';
+  const VERSION='ranking-data-patches-20260715d-restore-all-photo-paths';
   let readyResolved=false;
   let resolveReady;
   const readyPromise=new Promise(resolve=>{resolveReady=resolve;});
@@ -18,17 +18,38 @@
     'Royce Gracie':Object.freeze({photoUrl:'assets/fighters/royce-gracie.webp',thumbUrl:'assets/fighters/royce-gracie-thumb.webp'})
   });
 
+  function displayOverrides(){
+    if(typeof DISPLAY_OVERRIDES!=='undefined')return DISPLAY_OVERRIDES;
+    return window.DISPLAY_OVERRIDES||{};
+  }
   function slugFor(name){
     return SLUG_OVERRIDES[name]||String(name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/&/g,' and ').replace(/['’]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
   }
   function initials(name){return String(name||'').split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase()||'UFC';}
-  function applyVerifiedPhotoPaths(){
-    const overrides=window.DISPLAY_OVERRIDES||{};
+  function fighterNames(){
+    const names=[];
+    const push=row=>{const name=typeof row==='string'?row:row?.fighter;if(name&&!names.includes(name))names.push(name);};
+    (window.RANKING_DATA?.fighters||[]).forEach(push);
+    (window.RANKING_DATA?.men||[]).forEach(push);
+    (window.RANKING_DATA?.women||[]).forEach(push);
+    return names;
+  }
+  function applyPhotoPathDefaults(){
+    const overrides=displayOverrides();
     const mapped=[];
-    Object.entries(VERIFIED_PHOTOS).forEach(([fighter,paths])=>{
-      overrides[fighter]={...(overrides[fighter]||{}),...paths};
-      mapped.push({fighter,...paths});
+    fighterNames().forEach(fighter=>{
+      const slug=slugFor(fighter);
+      if(!slug)return;
+      const current=overrides[fighter]||{};
+      const verified=VERIFIED_PHOTOS[fighter]||{};
+      overrides[fighter]={
+        ...current,
+        photoUrl:current.photoUrl||verified.photoUrl||`assets/fighters/${slug}.webp`,
+        thumbUrl:current.thumbUrl||verified.thumbUrl||`assets/fighters/${slug}-thumb.webp`
+      };
+      mapped.push({fighter,photoUrl:overrides[fighter].photoUrl,thumbUrl:overrides[fighter].thumbUrl});
     });
+    window.UFC_PHOTO_PATH_DEFAULTS={version:VERSION,mapped};
     return mapped;
   }
 
@@ -63,12 +84,12 @@
     return rows.map(row=>Array.isArray(row)?{slug:row[0],version:row[1]}:row).filter(row=>row?.slug&&row?.version);
   }
   function existingPhotoPaths(){
-    return Object.entries(window.DISPLAY_OVERRIDES||{}).filter(([,override])=>override?.photoUrl||override?.thumbUrl).map(([fighter,override])=>({fighter,photoUrl:override.photoUrl||null,thumbUrl:override.thumbUrl||null}));
+    return Object.entries(displayOverrides()).filter(([,override])=>override?.photoUrl||override?.thumbUrl).map(([fighter,override])=>({fighter,photoUrl:override.photoUrl||null,thumbUrl:override.thumbUrl||null}));
   }
 
   function status(){
     installImageFallback();
-    const verifiedPhotoPaths=applyVerifiedPhotoPaths();
+    const photoDefaults=applyPhotoPathDefaults();
     setTimeout(scanBrokenImages,250);
     const manifestPackets=packetManifest();
     const state={
@@ -79,7 +100,8 @@
       mutatesOvr:false,
       syncsManualProfileStats:false,
       inventsPhotoPaths:false,
-      verifiedPhotoPaths,
+      mapsDeterministicPhotoPaths:true,
+      photoDefaults,
       fighterPacketManifest:manifestPackets.length>0,
       fighterPacketManifestVersion:window.UFC_FIGHTER_PACKET_MANIFEST?.version||null,
       fighterPacketManifestCount:manifestPackets.length,
@@ -114,22 +136,13 @@
     script.src=src;
     script.setAttribute(attribute,'true');
     let finished=false;
-    const finish=()=>{
-      if(finished)return;
-      finished=true;
-      script.dataset.loaded='true';
-      if(done)done();
-    };
+    const finish=()=>{if(finished)return;finished=true;script.dataset.loaded='true';if(done)done();};
     script.onload=finish;
     script.onerror=finish;
     document.body.appendChild(script);
   }
   function loadSequence(items,done){
-    const next=index=>{
-      if(index>=items.length){if(done)done();return;}
-      const item=items[index];
-      loadScriptOnce(item.src,item.attr,()=>next(index+1));
-    };
+    const next=index=>{if(index>=items.length){if(done)done();return;}const item=items[index];loadScriptOnce(item.src,item.attr,()=>next(index+1));};
     next(0);
   }
   function packet(slug,version){return{src:`assets/data/fighter-packets/${slug}.js?v=fighter-packet-${slug}-${version}-presentation-only`,attr:`data-fighter-packet-${slug}`};}
@@ -177,11 +190,11 @@
     slugFor,
     packetManifest,
     syncPacketProfileStats:()=>[],
-    applyPhotoPathDefaults:applyVerifiedPhotoPaths
+    applyPhotoPathDefaults
   };
 
   installImageFallback();
-  applyVerifiedPhotoPaths();
+  applyPhotoPathDefaults();
   loadModules();
   window.OCTAGON_VERDICT_GPT_URL='https://chatgpt.com/g/g-6a4c40425d4881919ddebc7231bff09f-octagon-verdict';
   loadScriptOnce('assets/js/octagon-verdict-compare-launcher.js?v=octagon-verdict-compare-launcher-20260711b-canonical-cards','data-octagon-verdict-compare-launcher',status);
