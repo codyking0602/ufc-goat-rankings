@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="app-build" content="20260715-era-curated-prime" />
+  <meta name="app-build" content="20260715-fan-facing-category-division-polish" />
   <title>UFC All-Time Rankings</title>
   <link rel="stylesheet" href="assets/css/app.css?v=app-css-20260711a-picks" />
   <link rel="stylesheet" href="assets/css/profile-card-cleanup.css?v=profile-card-cleanup-20260713a" />
@@ -81,9 +81,9 @@
         </section>
       </div>
     </section>
-    <section id="division" class="view"><div class="section-title"><h2>Division Boards</h2><p>Top fighters by primary UFC division.</p></div><div id="divisionList"></div></section>
-    <section id="categories" class="view"><div class="section-title"><h2>Category Leaders</h2><p>Sort the board by a specific scoring category. Raw score is model input; Rating is the app-facing category grade.</p></div><div class="compare-controls"><select id="categoryBoardSelect"></select></div><div id="categoryBoardList" class="rules-grid"></div></section>
-    <section id="compare" class="view"><div class="section-title"><h2>Compare Mode</h2><p>Pick any two fighters and see where the edge comes from.</p></div><div class="compare-controls"><select id="fighterA"></select><select id="fighterB"></select></div><div id="compareResult" class="compare-grid"></div></section>
+    <section id="division" class="view"><div class="section-title"><h2>Division Rankings</h2><p>UFC-only rankings within each division.</p></div><div id="divisionList"></div></section>
+    <section id="categories" class="view"><div class="section-title"><h2>Category Leaders</h2><p>See who leads each scoring category.</p></div><div class="compare-controls"><select id="categoryBoardSelect"></select></div><div id="categoryBoardList" class="rules-grid"></div></section>
+    <section id="compare" class="view"><div class="section-title"><h2>Octagon Verdict</h2><p>Compare two fighters across category edges, UFC resume strength, and the final verdict.</p></div><div class="compare-controls"><select id="fighterA"></select><select id="fighterB"></select></div><div id="compareResult" class="compare-grid"></div></section>
     <section id="picks" class="view">
       <div class="section-title"><h2>UFC Picks</h2><p>Pick every fight, use one optional Underdog Lock, and compete across the season.</p></div>
       <div class="picks-shell">
@@ -128,6 +128,7 @@
   <script>window.DISPLAY_OVERRIDES = typeof DISPLAY_OVERRIDES !== "undefined" ? DISPLAY_OVERRIDES : {};</script>
   <script src="assets/js/app.js?v=app-calculated-ranking-runtime-20260714a"></script>
   <script src="assets/js/live-score-ui.js?v=live-score-ui-20260715c-peak-apex-single-renderer"></script>
+  <script src="assets/js/ranking-ui-polish.js?v=ranking-ui-polish-20260715a"></script>
   <script src="assets/js/fighter-tagline-system.js?v=fighter-tagline-system-20260715b-personable-pills"></script>
   <script>
   (function(){
