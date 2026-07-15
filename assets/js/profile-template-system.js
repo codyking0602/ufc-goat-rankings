@@ -2,7 +2,7 @@
 (function(){
   'use strict';
   const DATA=window.RANKING_DATA;
-  const VERSION='profile-template-system-20260714a-calculated-visible-stats';
+  const VERSION='profile-template-system-20260715b-peak-apex';
   if(!DATA||typeof DISPLAY_OVERRIDES==='undefined')return;
 
   const PROFILE_CATEGORIES=[
@@ -10,7 +10,7 @@
     ['opponentQuality','Quality Wins'],
     ['primeDominance','Prime Dominance'],
     ['longevity','Elite Longevity'],
-    ['apexPeak','Apex Peak'],
+    ['apexPeak','Peak Apex'],
     ['penalty','Loss Context']
   ];
   const PROFILE_DISPLAY_NAMES={
