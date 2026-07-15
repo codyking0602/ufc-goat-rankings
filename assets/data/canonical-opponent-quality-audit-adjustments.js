@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-opponent-quality-audit-adjustments-20260715a-merab';
+  const VERSION='canonical-opponent-quality-audit-adjustments-20260715b-merab';
   const ADJUSTMENTS=Object.freeze([
     Object.freeze({
       fighter:'Merab Dvalishvili',
@@ -41,15 +41,22 @@
   ]);
 
   const clean=value=>String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/[^a-z0-9']+/g,' ').replace(/\s+/g,' ').trim();
-  const source=window.UFC_CANONICAL_SCORING_JUDGMENTS?.opponentQuality||null;
-  const applied=[];
-  const missing=[];
+  const api=window.UFC_CANONICAL_SCORING_JUDGMENTS||null;
+  const originalEntryFor=api?.entryFor?.bind(api)||null;
+  const originalList=api?.list?.bind(api)||null;
 
-  if(source){
-    ADJUSTMENTS.forEach(adjustment=>{
-      const record=source[adjustment.fighter];
-      const candidates=(record?.inputs||[]).filter(row=>clean(row?.opponent)===clean(adjustment.opponent));
-      const target=candidates.find(row=>Number(row?.occurrence||1)===Number(adjustment.occurrence))||
+  function adjustmentsFor(fighter){
+    const target=clean(fighter);
+    return ADJUSTMENTS.filter(row=>clean(row.fighter)===target);
+  }
+
+  function applyToRow(fighter,row){
+    if(!row||!Array.isArray(row.inputs))return {row,applied:[],missing:adjustmentsFor(fighter).map(adjustment=>({fighter:adjustment.fighter,opponent:adjustment.opponent,occurrence:adjustment.occurrence}))};
+    const applied=[];
+    const missing=[];
+    adjustmentsFor(fighter).forEach(adjustment=>{
+      const candidates=row.inputs.filter(input=>clean(input?.opponent)===clean(adjustment.opponent));
+      const target=candidates.find(input=>Number(input?.occurrence||1)===Number(adjustment.occurrence))||
         (adjustment.occurrence===1?candidates[0]:null);
       if(!target){
         missing.push({fighter:adjustment.fighter,opponent:adjustment.opponent,occurrence:adjustment.occurrence});
@@ -73,17 +80,40 @@
         finalCredit:adjustment.finalCredit
       });
     });
+    return {row,applied,missing};
+  }
+
+  let validation={applied:[],missing:ADJUSTMENTS.map(row=>({fighter:row.fighter,opponent:row.opponent,occurrence:row.occurrence}))};
+  if(originalEntryFor){
+    const merab=originalEntryFor('opponentQuality','Merab Dvalishvili');
+    validation=applyToRow('Merab Dvalishvili',merab);
+    api.entryFor=function(category,fighter){
+      const row=originalEntryFor(category,fighter);
+      if(category!=='opponentQuality')return row;
+      return applyToRow(fighter,row).row;
+    };
+    if(originalList){
+      api.list=function(category){
+        const rows=originalList(category);
+        if(category!=='opponentQuality')return rows;
+        return rows.map(row=>{
+          const fighter=row?.inputs?.[0]?.fighter||row?.fighter||row?.normalized||'';
+          return applyToRow(fighter,row).row;
+        });
+      };
+    }
   }
 
   const report={
     version:VERSION,
-    applied:Boolean(source)&&missing.length===0,
-    passed:Boolean(source)&&missing.length===0&&applied.length===ADJUSTMENTS.length,
+    applied:Boolean(originalEntryFor)&&validation.missing.length===0,
+    passed:Boolean(originalEntryFor)&&validation.missing.length===0&&validation.applied.length===ADJUSTMENTS.length,
     adjustmentCount:ADJUSTMENTS.length,
-    appliedCount:applied.length,
-    missing,
-    appliedAdjustments:applied,
+    appliedCount:validation.applied.length,
+    missing:validation.missing,
+    appliedAdjustments:validation.applied,
     source:'Cody-approved fighter audit',
+    wrapsCanonicalJudgmentAccess:true,
     mutatesOnlyOpponentQualityInputs:true,
     mutatesRankingData:false
   };
