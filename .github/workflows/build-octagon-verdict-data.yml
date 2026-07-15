@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - 'agent/**'
     paths:
       - 'index.html'
       - 'assets/data/ranking-data.js'
@@ -38,10 +37,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Check out current branch
+      - name: Check out main
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref_name }}
+          ref: main
           persist-credentials: true
 
       - name: Set up Node
@@ -70,5 +69,5 @@ jobs:
             echo "Octagon Verdict data is already current."
           else
             git commit -m "Rebuild Octagon Verdict knowledge feed [skip ci]"
-            git push origin HEAD:${{ github.ref_name }}
+            git push origin HEAD:main
           fi
