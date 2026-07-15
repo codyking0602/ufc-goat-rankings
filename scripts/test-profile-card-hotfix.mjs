@@ -27,6 +27,7 @@ const expectedSnapshotLabels=[
   'Active Elite Years',
   'Longest UFC Win Streak'
 ];
+const charlesWatchUrl='https://youtube.com/shorts/zHUAvACSUk4?is=VYzwsuIvxV85k8zH';
 
 const browser=await chromium.launch({headless:true});
 const page=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:1});
@@ -37,6 +38,29 @@ try{
   await page.goto('http://127.0.0.1:4173/index.html',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>document.documentElement.getAttribute('data-scoring-pipeline')==='ready',null,{timeout:90000});
   await page.waitForSelector('#menList .fighter-row',{timeout:15000});
+  await page.waitForFunction(expected=>document.querySelector('.fighter-row[data-fighter="Charles Oliveira"] .watch-moment-link')?.href===expected,charlesWatchUrl,{timeout:15000});
+
+  const taglineAudit=await page.evaluate(()=>{
+    const system=window.UFC_FIGHTER_TAGLINE_SYSTEM;
+    const rows=[...(window.RANKING_DATA?.men||[]),...(window.RANKING_DATA?.women||[])];
+    const tags=rows.map(row=>({fighter:row.fighter,tag:system?.taglineFor?.(row)||''}));
+    const rendered=[...document.querySelectorAll('#menList .fighter-row')].map(row=>({
+      fighter:row.dataset.fighter,
+      tag:row.querySelector('.resume-tag')?.textContent.trim()||''
+    }));
+    const futureTag=system?.taglineFor?.({fighter:'Future Fighter',penalty:-1})||'';
+    const charlesLink=document.querySelector('.fighter-row[data-fighter="Charles Oliveira"] .watch-moment-link')?.href||'';
+    return{version:system?.version||null,tags,rendered,futureTag,charlesLink};
+  });
+
+  const badTagPattern=/\b(?:ufc|resume)\b/i;
+  assert.ok(taglineAudit.version,'fighter tagline system is loaded');
+  assert.ok(taglineAudit.tags.length>0,'current fighter rows are available for tagline coverage');
+  assert.deepEqual(taglineAudit.tags.filter(row=>!row.tag||badTagPattern.test(row.tag)),[],'every current fighter receives a personable pill without UFC/resume wording');
+  assert.deepEqual(taglineAudit.rendered.filter(row=>!row.tag||badTagPattern.test(row.tag)),[],'rendered leaderboard pills use the approved personable copy');
+  assert.ok(taglineAudit.futureTag&&!badTagPattern.test(taglineAudit.futureTag),'future fighters automatically receive a personable fallback tagline');
+  assert.equal(taglineAudit.charlesLink,charlesWatchUrl,'Charles Oliveira Watch Moment uses the approved Short');
+
   await page.locator('#menList .fighter-row').first().click();
   await page.waitForSelector('#drawer.open');
 
@@ -114,7 +138,7 @@ try{
 
   await page.screenshot({path:'/tmp/profile-card-mobile-hotfix.png',fullPage:true});
   console.log('PROFILE_CARD_MOBILE_HOTFIX_CERTIFICATION');
-  console.log(JSON.stringify({viewport:'390x844',snapshot:profile.snapshot,streakAudit,categories:profile.cards,standalonePeakApexPanels:profile.standalonePeakApexPanels,pageErrors},null,2));
+  console.log(JSON.stringify({viewport:'390x844',taglineAudit,snapshot:profile.snapshot,streakAudit,categories:profile.cards,standalonePeakApexPanels:profile.standalonePeakApexPanels,pageErrors},null,2));
 }finally{
   await browser.close();
 }
