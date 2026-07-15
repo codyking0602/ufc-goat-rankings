@@ -1,5 +1,5 @@
 {
-  "version": "scoring-architecture-contract-20260715c-no-manual-presentation-stats",
+  "version": "scoring-architecture-contract-20260715d-retired-runtime-registries",
   "expectedRosterCount": 73,
   "facts": {
     "path": "assets/data/canonical-fighter-facts.js",
@@ -177,7 +177,21 @@
     "assets/js/scoring-engine.js",
     "assets/js/scoring-ownership-finalizer.js",
     "assets/data/canonical-prime-dominance-reconstruction.js",
-    "assets/data/canonical-longevity-reconstruction.js"
+    "assets/data/canonical-longevity-reconstruction.js",
+    "assets/data/canonical-fighter-registry.js",
+    "assets/data/canonical-fighter-registry-royce-gracie.js",
+    "assets/data/canonical-fighter-registry-batch-eight-data.js",
+    "assets/data/canonical-fighter-registry-batch-eight.js",
+    "assets/data/module-versions.js",
+    "assets/data/loss-context-exposure-ledger.js",
+    "assets/data/loss-context-hybrid-shadow.js",
+    "assets/data/loss-context-hybrid-audit.js",
+    "assets/data/loss-context-hybrid-live.js",
+    "assets/data/division-era-depth-audit.js",
+    "assets/data/division-era-depth-live.js",
+    "assets/data/quality-wins-audit-cruz-ilia.js",
+    "assets/js/profile-stat-consistency.js",
+    "assets/js/fighter-data-ownership-audit.js"
   ],
   "forbiddenRuntimeGlobals": [
     "UFC_CANONICAL_SCORING_RECORDS",
