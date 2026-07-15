@@ -2,9 +2,11 @@
 (function(){
   'use strict';
 
-  const VERSION='ranking-data-patches-20260715g-peak-apex-profile-template';
+  const VERSION='ranking-data-patches-20260715h-single-photo-render';
+  const PHOTO_BUILD='20260715h-single-photo-render';
   let readyResolved=false;
   let finalPhotoSyncCount=0;
+  let lastPhotoSignature='';
   let resolveReady;
   const readyPromise=new Promise(resolve=>{resolveReady=resolve;});
   window.UFC_RANKING_DATA_PATCHES_READY=readyPromise;
@@ -26,6 +28,13 @@
   function slugFor(name){
     return SLUG_OVERRIDES[name]||String(name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/&/g,' and ').replace(/['’]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
   }
+  function versionPhotoUrl(url){
+    const value=String(url||'').trim();
+    if(!value)return'';
+    const [withoutHash,hash='']=value.split('#',2);
+    const cleaned=withoutHash.replace(/([?&])photoBuild=[^&#]*(&?)/,(_,lead,tail)=>tail?lead:'').replace(/[?&]$/,'');
+    return `${cleaned}${cleaned.includes('?')?'&':'?'}photoBuild=${PHOTO_BUILD}${hash?`#${hash}`:''}`;
+  }
   function initials(name){return String(name||'').split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase()||'UFC';}
   function fighterNames(){
     const names=[];
@@ -43,14 +52,16 @@
       if(!slug)return;
       const current=overrides[fighter]||{};
       const verified=VERIFIED_PHOTOS[fighter]||{};
+      const basePhoto=current.photoUrl||verified.photoUrl||`assets/fighters/${slug}.webp`;
+      const baseThumb=current.thumbUrl||verified.thumbUrl||`assets/fighters/${slug}-thumb.webp`;
       overrides[fighter]={
         ...current,
-        photoUrl:current.photoUrl||verified.photoUrl||`assets/fighters/${slug}.webp`,
-        thumbUrl:current.thumbUrl||verified.thumbUrl||`assets/fighters/${slug}-thumb.webp`
+        photoUrl:versionPhotoUrl(basePhoto),
+        thumbUrl:versionPhotoUrl(baseThumb)
       };
       mapped.push({fighter,photoUrl:overrides[fighter].photoUrl,thumbUrl:overrides[fighter].thumbUrl});
     });
-    window.UFC_PHOTO_PATH_DEFAULTS={version:VERSION,mapped};
+    window.UFC_PHOTO_PATH_DEFAULTS={version:VERSION,photoBuild:PHOTO_BUILD,mapped};
     return mapped;
   }
 
@@ -102,6 +113,7 @@
       syncsManualProfileStats:false,
       inventsPhotoPaths:false,
       mapsDeterministicPhotoPaths:true,
+      photoBuild:PHOTO_BUILD,
       photoDefaults,
       fighterPacketManifest:manifestPackets.length>0,
       fighterPacketManifestVersion:window.UFC_FIGHTER_PACKET_MANIFEST?.version||null,
@@ -129,21 +141,28 @@
       window.dispatchEvent(new CustomEvent('ufc-ranking-data-patches-ready',{detail:state}));
     }
   }
-  function syncCalculatedRosterPhotos(){
+  function syncCalculatedRosterPhotos(options={}){
     const photoDefaults=applyPhotoPathDefaults();
+    const fighterCount=fighterNames().length;
+    const signature=`${fighterCount}:${photoDefaults.length}:${PHOTO_BUILD}`;
+    const changed=signature!==lastPhotoSignature;
+    lastPhotoSignature=signature;
     finalPhotoSyncCount+=1;
     const state={
       version:VERSION,
-      fighterCount:fighterNames().length,
+      photoBuild:PHOTO_BUILD,
+      fighterCount,
       mappedCount:photoDefaults.length,
       run:finalPhotoSyncCount,
-      source:'ufc-production-ranking-ready',
+      changed,
+      refreshed:false,
+      source:options.source||'ufc-production-ranking-ready',
       appliedAt:new Date().toISOString()
     };
     window.UFC_CALCULATED_ROSTER_PHOTO_SYNC=state;
     document.documentElement.setAttribute('data-fighter-photo-sync',`${VERSION}-${state.mappedCount}`);
-    if(typeof window.refresh==='function'){
-      try{window.refresh();}catch(error){console.warn(`[${VERSION}] photo refresh failed`,error);}
+    if(options.refresh!==false&&changed&&typeof window.refresh==='function'){
+      try{window.refresh();state.refreshed=true;}catch(error){console.warn(`[${VERSION}] photo refresh failed`,error);}
     }
     setTimeout(scanBrokenImages,250);
     return state;
@@ -215,8 +234,8 @@
 
   installImageFallback();
   applyPhotoPathDefaults();
-  window.addEventListener('ufc-production-ranking-ready',syncCalculatedRosterPhotos);
-  if(document.documentElement.getAttribute('data-scoring-pipeline')==='ready')queueMicrotask(syncCalculatedRosterPhotos);
+  window.addEventListener('ufc-production-ranking-ready',()=>syncCalculatedRosterPhotos());
+  if(document.documentElement.getAttribute('data-scoring-pipeline')==='ready')queueMicrotask(()=>syncCalculatedRosterPhotos());
   loadModules();
   window.OCTAGON_VERDICT_GPT_URL='https://chatgpt.com/g/g-6a4c40425d4881919ddebc7231bff09f-octagon-verdict';
   loadScriptOnce('assets/js/octagon-verdict-compare-launcher.js?v=octagon-verdict-compare-launcher-20260711b-canonical-cards','data-octagon-verdict-compare-launcher',status);

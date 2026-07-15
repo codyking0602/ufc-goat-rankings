@@ -2,7 +2,7 @@
 (function(){
   'use strict';
 
-  const VERSION='production-ranking-bootstrap-20260715f-profile-card-hotfix';
+  const VERSION='production-ranking-bootstrap-20260715g-single-photo-render';
   const CALCULATED_STAT_FIELDS=new Set([
     'ufcRecord','titleFightWins','adjustedTitleWins','topFiveWins','top5Wins','rankedWins',
     'finishRatePct','primeRecord','roundsWonPct','activeEliteYears','timesFinishedPrime','throughPrimeUfcFights',
@@ -161,13 +161,15 @@
       const report=pipeline.apply();
       stripPresentationScoreOwnership();
       syncComparePresentation();
+      const photoSync=window.UFC_RANKING_DATA_PATCHES_V1?.syncCalculatedRosterPhotos?.({refresh:false,source:'production-ranking-bootstrap-pre-render'})||null;
+      if(photoSync&&photoSync.mappedCount!==report.fighterCount)throw new Error(`Final fighter photo mapping covered ${photoSync.mappedCount} of ${report.fighterCount} fighters.`);
       const divisionReport=window.UFC_DIVISION_RANKING_PIPELINE.rebuild();
       if(divisionReport?.passed!==true){
         const detail=JSON.stringify({invalid:divisionReport?.invalid||[],conservation:divisionReport?.conservation||[],allocationWarnings:divisionReport?.allocationWarnings||[]});
         throw new Error(`Automatic division rankings are ${divisionReport?.status||'blocked'}: ${detail}`);
       }
       publishReady(report,divisionReport);
-      window.UFC_PRODUCTION_RANKING_BOOTSTRAP={version:VERSION,status:'ready',inputIsolation:'clean-canonical-rebuild',report,divisionReport,octagonVerdict:window.OCTAGON_VERDICT_DATA||null,stripPresentationScoreOwnership,syncComparePresentation};
+      window.UFC_PRODUCTION_RANKING_BOOTSTRAP={version:VERSION,status:'ready',inputIsolation:'clean-canonical-rebuild',report,divisionReport,photoSync,octagonVerdict:window.OCTAGON_VERDICT_DATA||null,stripPresentationScoreOwnership,syncComparePresentation};
     }catch(error){
       document.documentElement.setAttribute('data-production-ranking-bootstrap',`${VERSION}-error`);
       window.UFC_PRODUCTION_RANKING_BOOTSTRAP={version:VERSION,status:'error',error:String(error?.message||error)};
