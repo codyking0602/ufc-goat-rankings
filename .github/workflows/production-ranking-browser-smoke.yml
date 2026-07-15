@@ -33,14 +33,20 @@ jobs:
           node-version: 22
       - name: Install Chromium test runtime
         run: |
-          npm install --no-save playwright
-          npx playwright install --with-deps chromium
+          npm install --no-save --silent playwright > /tmp/playwright-install.log 2>&1
+          npx playwright install --with-deps chromium >> /tmp/playwright-install.log 2>&1
       - name: Start local app
         run: |
           python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/ufc-app-http.log 2>&1 &
           echo $! > /tmp/ufc-app-http.pid
       - name: Run rendered ranking regression
-        run: node scripts/test-production-browser.mjs
-      - name: Show server log on failure
+        run: node scripts/test-production-browser.mjs > /tmp/ufc-browser-test.log 2>&1
+      - name: Show regression diagnostics on failure
         if: failure()
-        run: cat /tmp/ufc-app-http.log
+        run: |
+          echo '--- Browser test ---'
+          cat /tmp/ufc-browser-test.log 2>/dev/null || true
+          echo '--- Local server ---'
+          cat /tmp/ufc-app-http.log 2>/dev/null || true
+          echo '--- Playwright install tail ---'
+          tail -40 /tmp/playwright-install.log 2>/dev/null || true
