@@ -1,3 +1,4 @@
+// One-time generator for reviewable presentation-only source files.
 import fs from 'node:fs/promises';
 import vm from 'node:vm';
 
@@ -9,10 +10,6 @@ function evaluateDisplay(source){
   const sandbox={};
   vm.runInNewContext(`${source}\n;globalThis.__DISPLAY_OVERRIDES__=DISPLAY_OVERRIDES;`,sandbox,{filename:displayPath,timeout:5000});
   return JSON.parse(JSON.stringify(sandbox.__DISPLAY_OVERRIDES__||{}));
-}
-function cleanObjectFields(object,fields){
-  if(!object||typeof object!=='object')return;
-  fields.forEach(field=>delete object[field]);
 }
 function cleanDisplay(overrides){
   const report={fighters:0,snapshotsRemoved:0,directFieldsRemoved:0,nestedFieldsRemoved:0,categoryFieldsRemoved:0,rankPhrasesNeutralized:0};
