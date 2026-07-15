@@ -3,7 +3,7 @@
   'use strict';
   if(!window.RANKING_DATA)return;
 
-  const VERSION='calculated-score-ui-20260715b-peak-apex';
+  const VERSION='calculated-score-ui-20260715c-peak-apex-single-renderer';
   const DATA=window.RANKING_DATA;
   const APEX_MAX=6;
   const num=value=>Number.isFinite(Number(value))?Number(value):0;
@@ -117,27 +117,6 @@
       select.addEventListener('change',window.renderCategories);
     }
     if(!select.value)select.value='apexPeak';
-  }
-
-  if(typeof openFighter==='function'){
-    const baseOpenFighter=openFighter;
-    openFighter=function(name){
-      const result=baseOpenFighter(name);
-      if(document.getElementById('apexPeakProfileCard'))return result;
-      const fighter=fullRow((DATA.men||[]).find(row=>row.fighter===name)||(DATA.women||[]).find(row=>row.fighter===name)||{fighter:name});
-      const firstCard=document.querySelector('#fighterDetail .card');
-      if(!firstCard)return result;
-      const card=document.createElement('div');
-      card.className='card';card.id='apexPeakProfileCard';
-      card.innerHTML=`<h3>Peak Apex</h3><p><strong>What it means:</strong> The best two-performance UFC peak, calculated as a positive bonus after the weighted base.</p>${snapshotGrid([
-        ['Peak Apex bonus','+'+apexValue(fighter).toFixed(2)],
-        ['Peak Apex wins',apexWinsText(fighter)],
-        ['What it proved',apexWhatItProved(fighter)],
-        ['How it felt',apexHowItFelt(fighter)]
-      ])}`;
-      firstCard.parentNode.insertBefore(card,firstCard);
-      return result;
-    };
   }
 
   if(typeof renderRules==='function'){
