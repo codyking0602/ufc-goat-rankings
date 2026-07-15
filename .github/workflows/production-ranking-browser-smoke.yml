@@ -48,3 +48,12 @@ jobs:
           cat /tmp/ufc-browser-test.log 2>/dev/null || true
           echo '--- Local server tail ---'
           tail -20 /tmp/ufc-app-http.log 2>/dev/null || true
+      - name: Archive browser diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-ranking-browser-diagnostics
+          path: |
+            /tmp/ufc-browser-test.log
+            /tmp/ufc-app-http.log
+          if-no-files-found: ignore
