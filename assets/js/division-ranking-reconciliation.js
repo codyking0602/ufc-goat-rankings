@@ -1,10 +1,9 @@
 // Final normalization for the canonical division allocation pipeline.
-// It absorbs decimal rounding residue, handles unsupported historical classes generically,
-// and blocks meaningful unexplained gaps for true multi-division résumés.
+// It absorbs decimal rounding residue and blocks meaningful unexplained allocation gaps.
 (function(){
   'use strict';
 
-  const VERSION='division-ranking-reconciliation-20260715c-authoritative-render';
+  const VERSION='division-ranking-reconciliation-20260715d-strict-openweight';
   const MAX_ROUNDING_RESIDUAL=.20;
   const pipeline=window.UFC_DIVISION_RANKING_PIPELINE;
   const divisionUi=window.UFC_DIVISION_RANKINGS;
@@ -14,6 +13,18 @@
   const originalRender=divisionUi?.render?.bind(divisionUi)||null;
   const num=value=>Number.isFinite(Number(value))?Number(value):0;
   const round2=value=>{const rounded=Math.round((num(value)+Number.EPSILON)*100)/100;return Object.is(rounded,-0)?0:rounded;};
+
+  function resortBoards(report){
+    const boards={};
+    (pipeline.divisionOrder||[]).forEach(division=>{
+      const ranked=(report.rows||[]).filter(row=>row.division===division&&row.rankEligible).sort((a,b)=>num(b.divisionScore)-num(a.divisionScore)||num(b.overallScore)-num(a.overallScore)||String(a.fighter).localeCompare(String(b.fighter)));
+      ranked.forEach((row,index)=>{row.rank=index+1;});
+      if(ranked.length)boards[division]=ranked;
+    });
+    report.boards=boards;
+    report.divisionCount=Object.keys(boards).length;
+    report.rankedRowCount=Object.values(boards).reduce((sum,board)=>sum+board.length,0);
+  }
 
   function reconcile(report){
     if(!report||!Array.isArray(report.rows))return report;
@@ -25,23 +36,18 @@
     });
 
     const allocationWarnings=[];
-    const historicalFallbacks=[];
     groups.forEach((rows,fighter)=>{
       const expected=round2(rows[0]?.overallScore);
       const allocated=round2(rows.reduce((sum,row)=>sum+num(row.divisionScore),0));
       const residual=round2(expected-allocated);
       if(!residual)return;
       const target=rows.find(row=>row.role==='primary')||rows.slice().sort((a,b)=>num(b.resumeSharePct)-num(a.resumeSharePct))[0];
-      if(!target){allocationWarnings.push({fighter,expected,allocated,residual,reason:'no eligible division row'});return;}
+      if(!target){allocationWarnings.push({fighter,expected,allocated,residual,reason:'no eligible allocation row'});return;}
       target.roundingAdjustment=round2(num(target.roundingAdjustment)+residual);
       target.divisionScore=round2(num(target.divisionScore)+residual);
-      if(Math.abs(residual)<=MAX_ROUNDING_RESIDUAL)return;
-      if(rows.length===1){
-        target.historicalDivisionFallback=true;
-        historicalFallbacks.push({fighter,division:target.division,expected,allocated,residual,reason:'unsupported historical UFC class assigned to sole app-facing division'});
-        return;
+      if(Math.abs(residual)>MAX_ROUNDING_RESIDUAL){
+        allocationWarnings.push({fighter,division:target.division,expected,allocated,residual,reason:'allocation exceeds decimal-rounding tolerance'});
       }
-      allocationWarnings.push({fighter,division:target.division,expected,allocated,residual,reason:'multi-division allocation exceeds rounding tolerance'});
     });
 
     const conservation=[];
@@ -58,8 +64,8 @@
     report.invalid=invalid;
     report.conservation=conservation;
     report.allocationWarnings=allocationWarnings;
-    report.historicalFallbacks=historicalFallbacks;
-    report.roundingReconciliation={version:VERSION,maxResidual:MAX_ROUNDING_RESIDUAL,applied:true,historicalFallbackRule:'unsupported historical classes may roll into the sole app-facing division only'};
+    report.roundingReconciliation={version:VERSION,maxResidual:MAX_ROUNDING_RESIDUAL,applied:true};
+    resortBoards(report);
     window.UFC_DIVISION_RANKING_REPORT=report;
     document.documentElement.setAttribute('data-division-ranking-pipeline',`${report.version}-${report.status}-${report.rowCount||report.rows.length}`);
     return report;
