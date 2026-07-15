@@ -2,12 +2,12 @@
 (function(){
   'use strict';
 
-  const VERSION='production-ranking-bootstrap-20260714g-presentation-clean';
+  const VERSION='production-ranking-bootstrap-20260715a-presentation-boundary';
   const CALCULATED_STAT_FIELDS=new Set([
     'ufcRecord','titleFightWins','adjustedTitleWins','topFiveWins','top5Wins','rankedWins',
     'finishRatePct','primeRecord','roundsWonPct','activeEliteYears','timesFinishedPrime','throughPrimeUfcFights',
     'rank','allTimeRank','overallOvr','totalScore','rawScore','championship','opponentQuality',
-    'primeDominance','longevity','apexPeak','penalty','lossPenalty','eraDepthAdjustment'
+    'primeDominance','longevity','apexPeak','penalty','lossPenalty','lossContext','eraDepthAdjustment'
   ]);
   const cleanScripts=[
     ['assets/data/canonical-fighter-facts.js?v=production-clean-canonical-fighter-facts-20260713c','data-production-clean-facts-base'],
@@ -111,21 +111,25 @@
     });
   }
 
-  function assertPermanentRuntime(){
+  function assertApprovedInputs(){
     const missing=[];
-    const audit=window.UFC_CATEGORY_CALCULATOR_AUDIT;
     if(window.UFC_CANONICAL_FIGHTER_FACTS?.count?.()!==73)missing.push('73 clean canonical fighter records');
     if(window.UFC_FIGHTER_ERA_LEDGERS?.fighters?.length!==73)missing.push('73 clean fighter era ledgers');
     if(window.UFC_CANONICAL_SCORING_JUDGMENTS?.fighterCount!==73)missing.push('73-fighter scoring judgments');
-    if(audit?.passed!==true||audit?.completeFighterCount!==73)missing.push('complete seven-category audit');
-    if(!window.UFC_RANKING_PIPELINE?.apply)missing.push('ranking pipeline');
+    const audit=window.UFC_CATEGORY_CALCULATOR_AUDIT;
+    if(audit?.passed!==true||audit?.completeFighterCount!==73)missing.push('complete seven-category calculation audit');
     if(!window.UFC_CALCULATED_PROFILE_RUNTIME)missing.push('calculated profile runtime');
     if(missing.length)throw new Error(`Missing calculated ranking inputs: ${missing.join(', ')}`);
   }
 
   function publishReady(report){
     window.UFC_SCORING_PIPELINE={
-      version:VERSION,status:'ready',owner:'ranking-pipeline.js',inputIsolation:'clean-canonical-rebuild',fighterCount:report.fighterCount,report
+      version:VERSION,
+      status:'ready',
+      owner:'ranking-pipeline.js',
+      inputIsolation:'clean-canonical-rebuild',
+      fighterCount:report.fighterCount,
+      report
     };
     document.documentElement.setAttribute('data-scoring-pipeline','ready');
     document.documentElement.setAttribute('data-production-ranking-bootstrap',`${VERSION}-ready-${report.fighterCount}`);
@@ -141,8 +145,10 @@
     try{
       if(window.UFC_RANKING_DATA_PATCHES_READY)await window.UFC_RANKING_DATA_PATCHES_READY;
       for(const [src,attribute] of cleanScripts)await loadScript(src,attribute);
-      assertPermanentRuntime();
-      const report=window.UFC_RANKING_PIPELINE.apply();
+      assertApprovedInputs();
+      const pipeline=window.UFC_RANKING_PIPELINE;
+      if(!pipeline?.apply)throw new Error('Calculated ranking pipeline did not load.');
+      const report=pipeline.apply();
       stripPresentationScoreOwnership();
       syncComparePresentation();
       publishReady(report);
