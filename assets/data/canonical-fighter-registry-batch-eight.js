@@ -5,7 +5,7 @@
   const BASE = window.UFC_CANONICAL_FIGHTER_REGISTRY;
   const DATA = window.RANKING_DATA;
   const FIGHTERS = window.UFC_BATCH_EIGHT_FIGHTER_DATA;
-  const VERSION = 'canonical-fighter-registry-batch-eight-20260713a-no-score-finalize';
+  const VERSION = 'canonical-fighter-registry-batch-eight-20260715a-presentation-clean';
 
   if (!BASE || !DATA || !Array.isArray(FIGHTERS) || FIGHTERS.length !== 8) {
     console.error('Batch-eight registry prerequisites missing.');
@@ -279,20 +279,7 @@
       weakness: fighter.whyNot,
       scope: 'UFC accomplishments only; non-UFC achievements are context.',
       signatureWins: fighter.wins.slice(0, 5).join(', '),
-      eliteCounter: true,
-      legacyStats: {
-        ufcRecord: fighter.record,
-        titleFightWins: fighter.titles,
-        adjustedTitleWins: fighter.adj,
-        eliteWins: fighter.elite,
-        elitePlusWins: fighter.elite,
-        topFiveWins: fighter.top5,
-        topFivePlusWins: fighter.top5,
-        timesFinishedPrime: fighter.stopped,
-        primeStoppageLosses: fighter.stopped,
-        activeEliteYearsLabel: `${fighter.years.toFixed(1)} active elite years`,
-        primeNote: fighter.prime
-      }
+      eliteCounter: true
     };
   }
 
@@ -364,41 +351,12 @@
 
   function displayOverride(fighter) {
     const compare = compareProfile(fighter);
-    const stats = {
-      ufcRecord: fighter.record,
-      titleFightWins: fighter.titles,
-      adjustedTitleWins: fighter.adj,
-      eliteWins: fighter.elite,
-      elitePlusWins: fighter.elite,
-      topFiveWins: fighter.top5,
-      topFivePlusWins: fighter.top5,
-      rankedQualityWins: fighter.ranked,
-      primeRecord: fighter.prime,
-      finishRatePct: fighter.finish,
-      primeFinishRatePct: fighter.primeFinish,
-      roundsWonPct: fighter.rounds,
-      activeEliteYears: fighter.years,
-      timesFinishedPrime: fighter.stopped,
-      primeStoppageLosses: fighter.stopped
-    };
 
     return {
       profileDisplayName: DISPLAY_NAMES[fighter.name] || fighter.name,
       divisionLabel: fighter.label,
       resumeTag: fighter.tag,
       oneLiner: fighter.one,
-      snapshot: [
-        ['UFC Record', fighter.record],
-        ['UFC Title-Fight Wins', String(fighter.titles)],
-        ['Elite / Top-5 Wins', String(fighter.elite)],
-        ['Prime Record', fighter.prime],
-        ['Finish Rate', `${fighter.finish}%`],
-        ['Rounds Won', `${fighter.rounds}%`],
-        ['Active Elite Years', fighter.years.toFixed(2)],
-        ['Prime Stoppage Losses', String(fighter.stopped)]
-      ],
-      snapshotStats: { ...stats },
-      packetProfileStats: { ...stats },
       whyRankedHere: fighter.why,
       whyNotHigher: fighter.whyNot,
       bigAssumptions: [
