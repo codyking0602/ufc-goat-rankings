@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="app-build" content="20260715-pantoja-post-bootstrap" />
+  <meta name="app-build" content="20260715-pantoja-post-bootstrap-era-filter" />
   <title>UFC All-Time Rankings</title>
   <link rel="stylesheet" href="assets/css/app.css?v=app-css-20260711a-picks" />
   <link rel="stylesheet" href="assets/css/profile-card-cleanup.css?v=profile-card-cleanup-20260713a" />
@@ -29,14 +29,15 @@
   <link rel="stylesheet" href="assets/css/picks-mobile-polish.css?v=picks-mobile-polish-20260712e-photo-reset" />
   <link rel="stylesheet" href="assets/css/picks-odds-coverage.css?v=picks-odds-coverage-20260712a" />
   <link rel="stylesheet" href="assets/css/picks-tiered-scoring.css?v=picks-tiered-scoring-20260713b-clarity" />
+  <link rel="stylesheet" href="assets/css/era-filter.css?v=era-filter-20260715a" />
 </head>
 <body>
   <header class="hero"><div><p class="eyebrow">UFC ranking + debate engine</p><h1>UFC All-Time Rankings</h1><p class="subtitle">Rankings, fighter profiles, head-to-head debates, event picks, and interactive games.</p></div><div class="hero-card"><span id="fighterCount">—</span><small>fighters ranked</small></div></header>
   <nav class="tabs" aria-label="App sections"><button class="tab active" data-view="men">P4P</button><button class="tab" data-view="women">Women Only</button><button class="tab" data-view="play">Play</button><button class="tab" data-view="division">By Division</button><button class="tab" data-view="categories">Categories</button><button class="tab" data-view="compare">Compare</button><button class="tab" data-view="picks">Picks</button><button class="tab" data-view="rules">Rules</button></nav>
   <main class="shell">
-    <section class="toolbar"><input id="search" type="search" placeholder="Search fighter…" /><select id="divisionFilter"><option value="All">All divisions</option></select><button id="resetBtn" class="ghost">Reset</button></section>
-    <section id="men" class="view active-view"><div class="section-title"><h2>UFC All-Time P4P</h2><p>Main leaderboard for UFC all-time rankings.</p></div><div id="menStats" class="kpis"></div><div id="menList" class="leaderboard"></div></section>
-    <section id="women" class="view"><div class="section-title"><h2>Women Only Board</h2><p>Separate women’s all-time list, using the same UFC-only category logic.</p></div><div id="womenStats" class="kpis"></div><div id="womenList" class="leaderboard"></div></section>
+    <section class="toolbar"><input id="search" type="search" placeholder="Search fighter…" /><select id="eraFilter" aria-label="Filter rankings by UFC era"><option value="All">All eras</option></select><select id="divisionFilter"><option value="All">All divisions</option></select><button id="resetBtn" class="ghost">Reset</button></section>
+    <section id="men" class="view active-view"><div class="section-title"><h2>UFC All-Time P4P</h2><p>Main leaderboard for UFC all-time rankings.</p></div><div id="menEraContext" class="era-context" hidden></div><div id="menStats" class="kpis"></div><div id="menList" class="leaderboard"></div></section>
+    <section id="women" class="view"><div class="section-title"><h2>Women Only Board</h2><p>Separate women’s all-time list, using the same UFC-only category logic.</p></div><div id="womenEraContext" class="era-context" hidden></div><div id="womenStats" class="kpis"></div><div id="womenList" class="leaderboard"></div></section>
     <section id="play" class="view">
       <div class="section-title"><h2>Play</h2><p>Build your own UFC GOAT list or test your resume instincts without seeing the names.</p></div>
       <div class="play-shell">
@@ -123,6 +124,7 @@
   <div id="picksToast" class="picks-toast" role="status" aria-live="polite"></div>
   <script src="assets/data/ranking-data.js?v=ranking-data-20260710a-canonical-prime-record"></script>
   <script src="assets/data/display-overrides.js?v=display-overrides-20260715-presentation-only"></script>
+  <script src="assets/data/era-filter-data.js?v=era-filter-data-20260715a"></script>
   <script>window.DISPLAY_OVERRIDES = typeof DISPLAY_OVERRIDES !== "undefined" ? DISPLAY_OVERRIDES : {};</script>
   <script src="assets/js/app.js?v=app-calculated-ranking-runtime-20260714a"></script>
   <script src="assets/js/live-score-ui.js?v=live-score-ui-20260715c-peak-apex-single-renderer"></script>
@@ -150,6 +152,7 @@
     syncToolbar();
   })();
   </script>
+  <script src="assets/js/era-filter.js?v=era-filter-20260715a"></script>
   <script src="assets/data/canonical-fighter-registry-batch-eight-photos.js?v=batch-eight-photos-20260712c-unified-thumbs" data-batch-eight-photos="true"></script>
   <script src="assets/data/royce-watch-links.js?v=royce-watch-links-20260715b-pantoja-leon"></script>
   <script src="assets/data/ranking-data-patches.js?v=ranking-data-patches-20260715i-pantoja-direct-load"></script>
