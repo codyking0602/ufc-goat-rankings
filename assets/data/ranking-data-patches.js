@@ -2,8 +2,9 @@
 (function(){
   'use strict';
 
-  const VERSION='ranking-data-patches-20260715d-restore-all-photo-paths';
+  const VERSION='ranking-data-patches-20260715e-final-roster-photo-sync';
   let readyResolved=false;
+  let finalPhotoSyncCount=0;
   let resolveReady;
   const readyPromise=new Promise(resolve=>{resolveReady=resolve;});
   window.UFC_RANKING_DATA_PATCHES_READY=readyPromise;
@@ -128,6 +129,25 @@
       window.dispatchEvent(new CustomEvent('ufc-ranking-data-patches-ready',{detail:state}));
     }
   }
+  function syncCalculatedRosterPhotos(){
+    const photoDefaults=applyPhotoPathDefaults();
+    finalPhotoSyncCount+=1;
+    const state={
+      version:VERSION,
+      fighterCount:fighterNames().length,
+      mappedCount:photoDefaults.length,
+      run:finalPhotoSyncCount,
+      source:'ufc-production-ranking-ready',
+      appliedAt:new Date().toISOString()
+    };
+    window.UFC_CALCULATED_ROSTER_PHOTO_SYNC=state;
+    document.documentElement.setAttribute('data-fighter-photo-sync',`${VERSION}-${state.mappedCount}`);
+    if(typeof window.refresh==='function'){
+      try{window.refresh();}catch(error){console.warn(`[${VERSION}] photo refresh failed`,error);}
+    }
+    setTimeout(scanBrokenImages,250);
+    return state;
+  }
 
   function loadScriptOnce(src,attribute,done){
     const existing=document.querySelector(`script[${attribute}]`);
@@ -190,11 +210,14 @@
     slugFor,
     packetManifest,
     syncPacketProfileStats:()=>[],
-    applyPhotoPathDefaults
+    applyPhotoPathDefaults,
+    syncCalculatedRosterPhotos
   };
 
   installImageFallback();
   applyPhotoPathDefaults();
+  window.addEventListener('ufc-production-ranking-ready',syncCalculatedRosterPhotos);
+  if(document.documentElement.getAttribute('data-scoring-pipeline')==='ready')queueMicrotask(syncCalculatedRosterPhotos);
   loadModules();
   window.OCTAGON_VERDICT_GPT_URL='https://chatgpt.com/g/g-6a4c40425d4881919ddebc7231bff09f-octagon-verdict';
   loadScriptOnce('assets/js/octagon-verdict-compare-launcher.js?v=octagon-verdict-compare-launcher-20260711b-canonical-cards','data-octagon-verdict-compare-launcher',status);
