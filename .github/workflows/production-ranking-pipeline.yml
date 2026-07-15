@@ -8,53 +8,36 @@ on:
     paths:
       - 'index.html'
       - 'assets/data/**'
+      - 'assets/compare-data.js'
       - 'assets/js/app.js'
+      - 'assets/js/play.js'
+      - 'assets/js/blind-matchmaking.js'
       - 'assets/js/category-calculators.js'
       - 'assets/js/ranking-pipeline.js'
       - 'assets/js/production-ranking-bootstrap.js'
       - 'scripts/generate-canonical-scoring-judgments.mjs'
-      - 'scripts/promote-calculated-ranking-runtime.mjs'
       - 'scripts/test-ranking-pipeline.mjs'
+      - 'scripts/test-production-runtime-boundaries.mjs'
       - '.github/workflows/production-ranking-pipeline.yml'
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   certify:
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref || github.ref_name }}
-          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Promote calculated runtime sources
-        run: node scripts/promote-calculated-ranking-runtime.mjs
-      - name: Generate permanent judgment inputs
-        run: node scripts/generate-canonical-scoring-judgments.mjs
-      - name: Commit generated production sources to working branch
-        env:
-          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+      - name: Verify generated judgment inputs are current
         run: |
-          PATHS=(
-            assets/data/canonical-scoring-judgments.js
-            assets/js/ranking-pipeline.js
-            assets/js/app.js
-            index.html
-            scripts/test-ranking-pipeline.mjs
-          )
-          if [ -z "$(git status --porcelain -- "${PATHS[@]}")" ]; then
-            echo 'Calculated production sources already current.'
-          else
-            git config user.name 'github-actions[bot]'
-            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add "${PATHS[@]}"
-            git commit -m 'Promote calculated ranking runtime sources'
-            git push origin HEAD:"$BRANCH_NAME"
-          fi
-      - name: Certify calculated production projection
+          node scripts/generate-canonical-scoring-judgments.mjs
+          git diff --exit-code -- assets/data/canonical-scoring-judgments.js
+      - name: Certify seven-category production projection
         run: node scripts/test-ranking-pipeline.mjs
+      - name: Certify runtime ownership boundaries
+        run: node scripts/test-production-runtime-boundaries.mjs
