@@ -2,7 +2,7 @@
 (function(){
   'use strict';
 
-  const VERSION='production-ranking-bootstrap-20260714a';
+  const VERSION='production-ranking-bootstrap-20260714b-approved-era-resolutions';
   const CALCULATED_STAT_FIELDS=new Set([
     'ufcRecord','titleFightWins','adjustedTitleWins','topFiveWins','top5Wins','rankedWins',
     'finishRatePct','primeRecord','roundsWonPct','activeEliteYears','timesFinishedPrime','throughPrimeUfcFights',
@@ -13,6 +13,8 @@
     ['assets/data/canonical-fighter-facts-approved-corrections.js?v=canonical-fighter-facts-approved-corrections-20260714','data-production-facts-approved-corrections'],
     ['assets/data/canonical-fighter-facts-opponent-quality-corrections.js?v=canonical-fighter-facts-opponent-quality-corrections-20260714','data-production-facts-opponent-quality-corrections'],
     ['assets/data/canonical-fighter-facts-prime-round-corrections.js?v=canonical-fighter-facts-prime-round-corrections-20260714','data-production-facts-prime-round-corrections'],
+    ['assets/data/fighter-era-ledger-approved-longevity-resolutions.js?v=fighter-era-ledger-approved-longevity-resolutions-20260714a','data-production-era-longevity-resolutions'],
+    ['assets/data/fighter-era-ledger-approved-loss-context-resolutions.js?v=fighter-era-ledger-approved-loss-context-resolutions-20260714b','data-production-era-loss-resolutions'],
     ['assets/data/canonical-division-era-depth-approved-resolutions.js?v=canonical-division-era-depth-approved-resolutions-20260714','data-production-era-depth-resolutions'],
     ['assets/data/canonical-scoring-judgments.js?v=canonical-scoring-judgments-20260714b','data-production-scoring-judgments'],
     ['assets/js/category-calculators.js?v=category-calculators-20260714c','data-production-category-calculators'],
@@ -89,6 +91,14 @@
     });
   }
 
+  function assertApprovedInputs(){
+    const missing=[];
+    if(window.UFC_FIGHTER_ERA_LEDGER_APPROVED_LONGEVITY_RESOLUTIONS?.applied!==true)missing.push('approved longevity era resolutions');
+    if(window.UFC_FIGHTER_ERA_LEDGER_APPROVED_LOSS_CONTEXT_RESOLUTIONS?.applied!==true)missing.push('approved loss-context era resolutions');
+    if(window.UFC_CANONICAL_SCORING_JUDGMENTS?.fighterCount!==73)missing.push('73-fighter scoring judgments');
+    if(missing.length)throw new Error(`Missing calculated ranking inputs: ${missing.join(', ')}`);
+  }
+
   function publishReady(report){
     window.UFC_SCORING_PIPELINE={
       version:VERSION,
@@ -111,6 +121,7 @@
     try{
       if(window.UFC_RANKING_DATA_PATCHES_READY)await window.UFC_RANKING_DATA_PATCHES_READY;
       for(const [src,attribute] of scripts)await loadScript(src,attribute);
+      assertApprovedInputs();
       const pipeline=window.UFC_RANKING_PIPELINE;
       if(!pipeline?.apply)throw new Error('Calculated ranking pipeline did not load.');
       const report=pipeline.apply();
