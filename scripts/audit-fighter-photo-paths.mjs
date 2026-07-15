@@ -25,8 +25,7 @@ page.on('pageerror',error=>pageErrors.push(String(error?.message||error)));
 try{
   await page.goto('http://127.0.0.1:4173/index.html',{waitUntil:'domcontentloaded',timeout:120000});
   await page.waitForFunction(()=>document.documentElement.getAttribute('data-scoring-pipeline')==='ready',null,{timeout:120000});
-  await page.waitForFunction(()=>window.UFC_CALCULATED_ROSTER_PHOTO_SYNC?.mappedCount===73,null,{timeout:30000});
-  await page.waitForTimeout(1000);
+  await page.waitForFunction(()=>window.UFC_PRODUCTION_RANKING_BOOTSTRAP?.photoSync?.mappedCount===73,null,{timeout:30000});
 
   const mappings=await page.evaluate(()=>{
     const data=window.RANKING_DATA||{};
@@ -53,33 +52,6 @@ try{
     }
   }
 
-  const decodeFailures=[];
-  for(const row of mappings){
-    for(const field of ['photoUrl','thumbUrl']){
-      const result=await page.evaluate(async ({url})=>{
-        if(!url)return{ok:false,reason:'empty-url'};
-        const response=await fetch(url,{cache:'no-store'}).catch(error=>({ok:false,status:0,error:String(error)}));
-        if(!response?.ok)return{ok:false,reason:'http',status:response?.status||0,error:response?.error||null};
-        return await new Promise(resolve=>{
-          const image=new Image();
-          image.onload=()=>resolve({ok:image.naturalWidth>0&&image.naturalHeight>0,width:image.naturalWidth,height:image.naturalHeight});
-          image.onerror=()=>resolve({ok:false,reason:'decode'});
-          image.src=`${url}${url.includes('?')?'&':'?'}audit=${Date.now()}-${Math.random()}`;
-        });
-      },{url:row[field]});
-      if(!result.ok)decodeFailures.push({fighter:row.fighter,field,url:row[field],...result});
-    }
-  }
-
-  await page.evaluate(()=>{
-    window.__UFC_PHOTO_AUDIT_REFRESH_COUNT=0;
-    const original=window.refresh;
-    if(typeof original==='function'){
-      window.refresh=function(...args){window.__UFC_PHOTO_AUDIT_REFRESH_COUNT+=1;return original.apply(this,args);};
-      window.refresh();
-    }
-  });
-
   let loadTimedOut=false;
   try{
     await page.waitForFunction(()=>{
@@ -99,14 +71,58 @@ try{
       const img=row.querySelector('.row-photo img');
       return{fighter,hasImage:Boolean(img),src:img?.getAttribute('src')||null,complete:Boolean(img?.complete),naturalWidth:Number(img?.naturalWidth||0),text:row.querySelector('.row-photo')?.textContent?.trim()||''};
     });
-    return{men:inspect('#menList'),women:inspect('#womenList'),refreshCount:Number(window.__UFC_PHOTO_AUDIT_REFRESH_COUNT||0)};
+    return{
+      men:inspect('#menList'),
+      women:inspect('#womenList'),
+      finalPhotoSync:window.UFC_CALCULATED_ROSTER_PHOTO_SYNC||null,
+      bootstrapPhotoSync:window.UFC_PRODUCTION_RANKING_BOOTSTRAP?.photoSync||null
+    };
   });
   const renderedFailures=[...rendered.men,...rendered.women].filter(row=>!row.hasImage||!row.complete||row.naturalWidth<=0);
 
+  const profileFailures=[];
   const named=['Cris Cyborg','Lyoto Machida','Justin Gaethje','Frank Shamrock'];
+  const profileStates=[];
+  for(const fighter of named){
+    await page.evaluate(name=>window.openFighter?.(name),fighter);
+    try{
+      await page.waitForFunction(name=>{
+        const heading=document.querySelector('#fighterDetail h2')?.textContent?.trim();
+        const img=document.querySelector('#fighterDetail .fighter-photo img');
+        return heading===name&&Boolean(img&&img.complete&&img.naturalWidth>0);
+      },fighter,{timeout:15000,polling:200});
+    }catch{
+      profileFailures.push(fighter);
+    }
+    profileStates.push(await page.evaluate(name=>{
+      const img=document.querySelector('#fighterDetail .fighter-photo img');
+      return{fighter:name,heading:document.querySelector('#fighterDetail h2')?.textContent?.trim()||null,hasImage:Boolean(img),src:img?.getAttribute('src')||null,complete:Boolean(img?.complete),naturalWidth:Number(img?.naturalWidth||0)};
+    },fighter));
+    await page.evaluate(()=>document.getElementById('closeDrawer')?.click());
+  }
+
+  const decodeFailures=[];
+  for(const row of mappings){
+    for(const field of ['photoUrl','thumbUrl']){
+      const result=await page.evaluate(async ({url})=>{
+        if(!url)return{ok:false,reason:'empty-url'};
+        const response=await fetch(url,{cache:'no-store'}).catch(error=>({ok:false,status:0,error:String(error)}));
+        if(!response?.ok)return{ok:false,reason:'http',status:response?.status||0,error:response?.error||null};
+        return await new Promise(resolve=>{
+          const image=new Image();
+          image.onload=()=>resolve({ok:image.naturalWidth>0&&image.naturalHeight>0,width:image.naturalWidth,height:image.naturalHeight});
+          image.onerror=()=>resolve({ok:false,reason:'decode'});
+          image.src=`${url}${url.includes('?')?'&':'?'}audit=${Date.now()}-${Math.random()}`;
+        });
+      },{url:row[field]});
+      if(!result.ok)decodeFailures.push({fighter:row.fighter,field,url:row[field],...result});
+    }
+  }
+
   const namedState=mappings.filter(row=>named.includes(row.fighter)).map(mapping=>({
     ...mapping,
-    rendered:[...rendered.men,...rendered.women].find(row=>row.fighter===mapping.fighter)||null
+    rendered:[...rendered.men,...rendered.women].find(row=>row.fighter===mapping.fighter)||null,
+    profile:profileStates.find(row=>row.fighter===mapping.fighter)||null
   }));
 
   console.log('FIGHTER_PHOTO_RENDER_AUDIT');
@@ -116,19 +132,22 @@ try{
     pathMissingCount:missing.length,
     decodeFailureCount:decodeFailures.length,
     renderedFailureCount:renderedFailures.length,
+    profileFailureCount:profileFailures.length,
     loadTimedOut,
-    refreshCount:rendered.refreshCount,
-    photoSync:await page.evaluate(()=>window.UFC_CALCULATED_ROSTER_PHOTO_SYNC||null),
+    bootstrapPhotoSync:rendered.bootstrapPhotoSync,
+    finalPhotoSync:rendered.finalPhotoSync,
     namedState,
     missing,
     decodeFailures,
     renderedFailures,
+    profileFailures,
     pageErrors
   },null,2));
   assert.equal(missing.length,0,`${missing.length} fighter photo paths are missing`);
-  assert.equal(decodeFailures.length,0,`${decodeFailures.length} fighter images fail browser decoding`);
   assert.equal(loadTimedOut,false,'leaderboard photos did not all finish loading within 30 seconds');
   assert.equal(renderedFailures.length,0,`${renderedFailures.length} leaderboard fighter photos fail rendering`);
+  assert.equal(profileFailures.length,0,`${profileFailures.length} named profile photos fail rendering`);
+  assert.equal(decodeFailures.length,0,`${decodeFailures.length} fighter images fail browser decoding`);
   assert.deepEqual(pageErrors,[],'photo audit has no uncaught page errors');
 }finally{
   await browser.close();
