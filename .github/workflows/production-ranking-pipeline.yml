@@ -34,7 +34,7 @@ jobs:
         env:
           BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
         run: |
-          if git diff --quiet -- assets/data/canonical-scoring-judgments.js; then
+          if [ -z "$(git status --porcelain -- assets/data/canonical-scoring-judgments.js)" ]; then
             echo 'Canonical judgment inputs already current.'
           else
             git config user.name 'github-actions[bot]'
