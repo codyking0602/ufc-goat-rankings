@@ -98,7 +98,7 @@ Division owner: `assets/js/division-ranking-pipeline.js`
 
 Division normalization owner: `assets/js/division-ranking-reconciliation.js`
 
-Live Octagon payload owner: `assets/js/octagon-verdict-live-data.js`
+Live Octagon payload owner: `assets/js/octagon-verdict-data.js`
 
 Octagon Verdict knowledge packager: `tools/build-octagon-verdict-data.js`
 
@@ -159,7 +159,7 @@ Presentation files may not contain category scores, totals, ranks, OVRs, calcula
 - total, rank, OVR, and projection ownership into `ranking-pipeline.js`
 - calculated profile/snapshot presentation into `calculated-profile-runtime.js`
 - division evidence allocation into `division-ranking-pipeline.js`
-- live Compare payload generation into `octagon-verdict-live-data.js`
+- live Compare payload generation into `octagon-verdict-data.js`
 - automatic Octagon knowledge packaging into `build-octagon-verdict-data.js`
 - production prerequisite loading into the presentation-only `ranking-data-patches.js` handoff
 - architecture ownership checks into the permanent source-boundary and browser guardrails
