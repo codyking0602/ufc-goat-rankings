@@ -40,12 +40,33 @@ jobs:
           node-version: 22
 
       - name: Check permanent runtime source ownership
-        run: node scripts/test-production-runtime-boundaries.mjs
+        run: node scripts/test-production-runtime-boundaries.mjs > /tmp/production-runtime-boundaries.log 2>&1
 
       - name: Verify generated judgment inputs are current
         run: |
-          node scripts/generate-canonical-scoring-judgments.mjs
+          node scripts/generate-canonical-scoring-judgments.mjs > /tmp/generated-judgments.log 2>&1
           git diff --exit-code -- assets/data/canonical-scoring-judgments.js
 
       - name: Certify seven-category production projection
-        run: node scripts/test-ranking-pipeline.mjs
+        run: node scripts/test-ranking-pipeline.mjs > /tmp/production-ranking-pipeline.log 2>&1
+
+      - name: Show concise diagnostics on failure
+        if: failure()
+        run: |
+          echo '--- Runtime ownership ---'
+          cat /tmp/production-runtime-boundaries.log 2>/dev/null || true
+          echo '--- Generated judgments ---'
+          cat /tmp/generated-judgments.log 2>/dev/null || true
+          echo '--- Ranking projection ---'
+          cat /tmp/production-ranking-pipeline.log 2>/dev/null || true
+
+      - name: Archive certification diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-ranking-pipeline-diagnostics
+          path: |
+            /tmp/production-runtime-boundaries.log
+            /tmp/generated-judgments.log
+            /tmp/production-ranking-pipeline.log
+          if-no-files-found: ignore
