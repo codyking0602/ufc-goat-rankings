@@ -1,7 +1,7 @@
 // Central manifest for fighter packet modules.
 // Add new fighter packet files here instead of growing ranking-data-patches.js.
 (function(){
-  const VERSION='fighter-packet-manifest-20260710z-chuck-vitor-window';
+  const VERSION='fighter-packet-manifest-20260715a-pantoja';
   const packets=[
     {slug:'demetrious-johnson',version:'20260702a'},
     {slug:'anderson-silva',version:'20260702a'},
@@ -40,6 +40,7 @@
     {slug:'justin-gaethje',version:'20260702d'},
     {slug:'frankie-edgar',version:'20260703b'},
     {slug:'deiveson-figueiredo',version:'20260706a'},
+    {slug:'alexandre-pantoja',version:'20260715a'},
     {slug:'khamzat-chimaev',version:'20260706a'},
     {slug:'lyoto-machida',version:'20260706b'},
     {slug:'sean-strickland',version:'20260706a'},
@@ -66,7 +67,7 @@
   ];
   window.UFC_FIGHTER_PACKET_MANIFEST={
     version:VERSION,
-    updated:'2026-07-10',
+    updated:'2026-07-15',
     purpose:'Central packet list for scalable fighter additions.',
     count:packets.length,
     fighters:packets.map(p=>p.slug),
