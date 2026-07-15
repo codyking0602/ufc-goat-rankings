@@ -8,6 +8,7 @@
   if(!DATA||!select)return;
 
   const currentYear=new Date().getFullYear();
+  const selectionByView={men:'All',women:'All'};
   let applyTimer=0;
   let applying=false;
 
@@ -15,14 +16,28 @@
     return document.querySelector('.tab.active')?.dataset.view||'men';
   }
 
-  function selectedEra(){
-    return DATA.byId[select.value]||null;
+  function erasForView(view){
+    return view==='women'
+      ? DATA.eras.filter(era=>Number(era.startYear)>=2011)
+      : DATA.eras;
   }
 
-  function populate(){
-    const current=select.value;
-    select.innerHTML='<option value="All">All eras</option>'+DATA.eras.map(era=>`<option value="${era.id}">${era.name} · ${era.years}</option>`).join('');
-    select.value=DATA.byId[current]?current:'All';
+  function eraForView(view){
+    return DATA.byId[selectionByView[view]]||null;
+  }
+
+  function selectedEra(){
+    return eraForView(activeView());
+  }
+
+  function populateForView(view=activeView()){
+    if(view!=='men'&&view!=='women')return;
+    const allowed=erasForView(view);
+    const allowedIds=new Set(allowed.map(era=>era.id));
+    const current=allowedIds.has(selectionByView[view])?selectionByView[view]:'All';
+    selectionByView[view]=current;
+    select.innerHTML='<option value="All">All eras</option>'+allowed.map(era=>`<option value="${era.id}">${era.name} · ${era.years}</option>`).join('');
+    select.value=current;
   }
 
   function ledgerFor(name){
@@ -150,11 +165,9 @@
     if(applying)return;
     applying=true;
     try{
-      const era=selectedEra();
-      const loading=Boolean(era)&&!historyReady();
-
-      // Always update both boards so switching tabs cannot reveal stale era copy or stale rows.
       ['men','women'].forEach(view=>{
+        const era=eraForView(view);
+        const loading=Boolean(era)&&!historyReady();
         const visible=filterBoard(view,era,loading);
         renderContext(view,era,visible.length,loading);
         updateKpis(view,visible,era);
@@ -176,21 +189,31 @@
     select.style.display=(view==='men'||view==='women')?'':'none';
   }
 
-  populate();
+  populateForView('men');
   syncControlVisibility();
   scheduleApply();
 
   select.addEventListener('change',()=>{
+    const view=activeView();
+    if(view==='men'||view==='women')selectionByView[view]=select.value;
     apply();
     scheduleApply(100);
   });
   search?.addEventListener('input',()=>scheduleApply(30));
   reset?.addEventListener('click',()=>{
-    select.value='All';
+    const view=activeView();
+    if(view==='men'||view==='women')selectionByView[view]='All';
+    populateForView(view);
     apply();
     scheduleApply(100);
   });
-  document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click',()=>scheduleApply(30)));
+  document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click',()=>{
+    window.requestAnimationFrame(()=>{
+      populateForView(activeView());
+      syncControlVisibility();
+      apply();
+    });
+  }));
   window.addEventListener('ufc-scoring-pipeline-ready',()=>scheduleApply(0));
   window.addEventListener('ufc-production-ranking-ready',()=>scheduleApply(0));
 
@@ -204,9 +227,10 @@
   });
 
   window.UFC_ERA_FILTER={
-    version:'era-filter-20260715c-stable',
+    version:'era-filter-20260715d-women-golden-age',
     apply,
     belongsToEra,
-    selectedEra
+    selectedEra,
+    erasForView
   };
 })();
