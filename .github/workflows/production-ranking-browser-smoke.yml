@@ -19,7 +19,7 @@ on:
       - 'assets/js/production-ranking-bootstrap.js'
       - 'assets/js/calculated-profile-runtime.js'
       - 'assets/js/octagon-verdict-compare-launcher.js'
-      - 'assets/js/octagon-verdict-live-data.js'
+      - 'assets/js/octagon-verdict-data.js'
       - 'tools/build-octagon-verdict-data.js'
       - 'scripts/test-production-browser.mjs'
       - '.github/workflows/production-ranking-browser-smoke.yml'
