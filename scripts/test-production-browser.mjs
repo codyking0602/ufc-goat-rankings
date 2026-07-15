@@ -151,7 +151,7 @@ try{
   const openweightText=await page.locator('#divisionList').textContent();
   assert.match(openweightText,/Openweight \(Historical\) · Men/);
   assert.match(openweightText,/Royce Gracie/);
-  assert.doesNotMatch(openweightText,/0-1 UFC/);
+  assert.match(openweightText,/11-0-1 UFC/);
 
   await page.locator('.tab[data-view="compare"]').click();
   const compareText=await page.locator('#compareResult').textContent();
