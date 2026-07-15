@@ -1,0 +1,47 @@
+name: Canonical OVR Reconstruction
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'assets/data/canonical-fighter-facts*.js'
+      - 'assets/data/canonical-scoring-records.js'
+      - 'assets/data/canonical-*-reconstruction.js'
+      - 'assets/data/canonical-*-approved-*.js'
+      - 'assets/data/fighter-era-ledger*.js'
+      - 'assets/data/division-era-depth-shadow.js'
+      - 'assets/data/canonical-final-score-reconstruction.js'
+      - 'assets/data/canonical-ovr-reconstruction.js'
+      - 'scripts/test-canonical-ovr-reconstruction.mjs'
+      - '.github/workflows/canonical-ovr-reconstruction.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reconstruct-ovr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check syntax
+        run: |
+          node --check assets/data/canonical-ovr-reconstruction.js
+          node --check scripts/test-canonical-ovr-reconstruction.mjs
+      - name: Reconstruct and certify OVR scale
+        run: node scripts/test-canonical-ovr-reconstruction.mjs > /tmp/canonical-ovr-reconstruction.log 2>&1
+      - name: Upload OVR reconstruction report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-ovr-reconstruction-report
+          path: |
+            /tmp/canonical-ovr-reconstruction.log
+            docs/canonical-ovr-reconstruction.json
+            docs/canonical-ovr-reconstruction.md
+          if-no-files-found: warn
+          retention-days: 30

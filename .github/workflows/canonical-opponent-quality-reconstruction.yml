@@ -1,0 +1,49 @@
+name: Canonical Opponent Quality Reconstruction
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'assets/data/canonical-fighter-facts*.js'
+      - 'assets/data/canonical-scoring-records.js'
+      - 'assets/data/opponent-quality-ledger*.js'
+      - 'assets/data/opponent-quality-ledgers.js'
+      - 'assets/data/canonical-opponent-quality-approved-judgments.js'
+      - 'assets/data/canonical-opponent-quality-reconstruction.js'
+      - 'assets/data/canonical-leon-final-category-completions.js'
+      - 'scripts/test-canonical-opponent-quality-full-roster.mjs'
+      - '.github/workflows/canonical-opponent-quality-reconstruction.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reconstruct-approved-opponent-quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check syntax
+        run: |
+          node --check assets/data/canonical-fighter-facts-opponent-quality-corrections.js
+          node --check assets/data/canonical-opponent-quality-approved-judgments.js
+          node --check assets/data/canonical-opponent-quality-reconstruction.js
+          node --check assets/data/canonical-leon-final-category-completions.js
+          node --check scripts/test-canonical-opponent-quality-full-roster.mjs
+      - name: Reconstruct 73-fighter approved Opponent Quality audit
+        run: node scripts/test-canonical-opponent-quality-full-roster.mjs > /tmp/canonical-opponent-quality-reconstruction.log 2>&1
+      - name: Upload Opponent Quality reconstruction report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-opponent-quality-reconstruction-report
+          path: |
+            /tmp/canonical-opponent-quality-reconstruction.log
+            docs/canonical-opponent-quality-reconstruction.json
+            docs/canonical-opponent-quality-reconstruction.md
+          if-no-files-found: warn
+          retention-days: 30

@@ -90,7 +90,7 @@
     });
     $('playTop10Panel').hidden = mode !== 'top10';
     $('playBlindPanel').hidden = mode !== 'blind';
-    if(mode === 'blind' && !state.blindPair) nextBlindRound();
+    if(mode === 'blind' && !window.UFC_BLIND_MATCHMAKING && !state.blindPair) nextBlindRound();
   }
 
   function renderSearchResults(){
@@ -434,7 +434,7 @@
     const comparisonVisible = !$('playTop10Result')?.hidden;
     renderTop10();
     if(comparisonVisible && state.top10.length === 10) renderComparison(false);
-    if(state.mode === 'blind' && state.blindPair && !state.blindChoice) renderBlind();
+    if(state.mode === 'blind' && !window.UFC_BLIND_MATCHMAKING && state.blindPair && !state.blindChoice) renderBlind();
   }
 
   function wireEvents(){

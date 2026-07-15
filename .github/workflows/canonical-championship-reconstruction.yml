@@ -1,0 +1,50 @@
+name: Canonical Championship Reconstruction
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'assets/data/canonical-fighter-facts*.js'
+      - 'assets/data/canonical-scoring-records.js'
+      - 'assets/data/championship-resume-ledgers.js'
+      - 'assets/data/championship-resume-ledger-rule-locks.js'
+      - 'assets/data/canonical-championship-reconstruction.js'
+      - 'assets/data/canonical-championship-approved-resolutions.js'
+      - 'scripts/test-canonical-championship-reconstruction.mjs'
+      - 'scripts/test-canonical-championship-final-resolutions.mjs'
+      - '.github/workflows/canonical-championship-reconstruction.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reconstruct-approved-championship:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check syntax
+        run: |
+          node --check assets/data/canonical-fighter-facts-approved-corrections.js
+          node --check assets/data/championship-resume-ledger-rule-locks.js
+          node --check assets/data/canonical-championship-reconstruction.js
+          node --check assets/data/canonical-championship-approved-resolutions.js
+          node --check scripts/test-canonical-championship-reconstruction.mjs
+          node --check scripts/test-canonical-championship-final-resolutions.mjs
+      - name: Reconstruct 73-fighter approved Championship audit
+        run: node scripts/test-canonical-championship-reconstruction.mjs > /tmp/canonical-championship-reconstruction.log 2>&1
+      - name: Upload Championship reconstruction report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-championship-reconstruction-report
+          path: |
+            /tmp/canonical-championship-reconstruction.log
+            docs/canonical-championship-reconstruction.json
+            docs/canonical-championship-reconstruction.md
+          if-no-files-found: warn
+          retention-days: 30

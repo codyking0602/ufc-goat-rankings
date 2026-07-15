@@ -21,8 +21,8 @@ const CATEGORY_INFO = [
 function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
 function ordinal(n){ const s=["th","st","nd","rd"], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
 function overallOvr(f){
-  const o = DISPLAY_OVERRIDES[f.fighter];
-  if (o?.overallOvr) return o.overallOvr;
+  const calculated = Number(f?.overallOvr);
+  if(Number.isFinite(calculated)) return calculated;
   const max = Math.max(...DATA.men.concat(DATA.women).map(x=>x.totalScore||0), 1);
   return clamp(Math.round(75 + ((f.totalScore || 0) / max) * 24), 60, 99);
 }
@@ -33,16 +33,10 @@ function categoryBoardFor(f){
   return isWomen ? women : men;
 }
 function primeDominanceEntryFor(f){
-  if(!f?.fighter) return null;
-  return f.primeDominanceLiveAudit
-    || f.primeDominanceShadowAudit
-    || window.UFC_PRIME_DOMINANCE_LEDGERS?.entryFor?.(f.fighter)
-    || window.UFC_PRIME_DOMINANCE_SHADOW_MODEL?.report?.find(entry => entry.fighter === f.fighter)
-    || null;
+  return f?.fighter ? window.UFC_CATEGORY_CALCULATORS?.rowFor?.('primeDominance', f.fighter) || null : null;
 }
 function primeDominanceLiveValue(f){
-  const entry = primeDominanceEntryFor(f);
-  const value = Number(entry?.total ?? f?.primeDominance ?? 0);
+  const value = Number(f?.primeDominance ?? 0);
   return Number.isFinite(value) ? value : 0;
 }
 function categoryValueForRank(f, key){
@@ -51,19 +45,11 @@ function categoryValueForRank(f, key){
   return Number.isFinite(v) ? v : 0;
 }
 function categoryRank(f, key){
-  if(key !== 'primeDominance'){
-    const o = DISPLAY_OVERRIDES[f.fighter]?.categories?.[key];
-    if (o?.rank) return o.rank;
-  }
   const board = categoryBoardFor(f).map(fullRow);
   const val = categoryValueForRank(f, key);
   return 1 + board.filter(x => categoryValueForRank(x, key) > val).length;
 }
 function categoryOvr(f, key){
-  if(key !== 'primeDominance'){
-    const o = DISPLAY_OVERRIDES[f.fighter]?.categories?.[key];
-    if (o?.ovr) return o.ovr;
-  }
   const board = categoryBoardFor(f);
   const rank = categoryRank(f, key);
   if (!rank) return 55;
@@ -329,7 +315,7 @@ function snapshotGrid(items){
 }
 
 
-function profileFor(row){ return byName[row.fighter] || {}; }
+function profileFor(row){ return DATA.fighters.find(profile => profile.fighter === row.fighter) || {}; }
 function fullRow(row){ return { ...profileFor(row), ...row }; }
 
 function setKpis(id, rows){
@@ -364,7 +350,7 @@ function rowPhoto(f){
 function resumeTagFor(f){
   const override = DISPLAY_OVERRIDES[f.fighter] || {};
   if (override.resumeTag) return override.resumeTag;
-  const rank = Number(override.allTimeRank || f.rank || 999);
+  const rank = Number(f.rank || 999);
   if (rank <= 5) return "Legendary UFC resume";
   if (rank <= 15) return "Elite UFC resume";
   if (rank <= 30) return "Great UFC resume";
@@ -432,17 +418,20 @@ function openFighter(name){
   const rounds = f.rounds || [];
   const reasons = whyNotHigher(f);
   const divisionLabel = override.divisionLabel || `${f.primaryDivision || ''}${f.secondaryDivision ? ' / ' + f.secondaryDivision : ''}`;
-  const rankLabel = override.allTimeRank || f.rank || '—';
+  const rankLabel = f.rank || '—';
   const photoUrl = override.photoUrl || '';
   const photoStyle = '';
   const photoClass = photoUrl ? 'fighter-photo has-photo' : 'fighter-photo';
-  const snapshot = override.snapshot || [
-    ['UFC Record', f.ufcRecord || '—'],
+  const visible = f.visibleStats || {};
+  const snapshot = [
+    ['UFC Record', visible.ufcRecord || f.ufcRecord || '—'],
     ['UFC All-Time Rank', `#${rankLabel}`],
-    ['Finish Rate', pct(f.finishRatePct)],
-    ['Active Elite Years', fmt(f.activeEliteYears)],
-    ['Primary Division', f.primaryDivision || '—'],
-    ['Secondary Division', f.secondaryDivision || '—']
+    ['UFC Title-Fight Wins', visible.titleFightWins ?? f.titleFightWins ?? '—'],
+    ['Top-5 Wins', visible.topFiveWins ?? f.topFiveWins ?? '—'],
+    ['Finish Rate', pct(visible.finishRatePct ?? f.finishRatePct)],
+    ['Prime UFC Record', visible.primeRecord || f.primeRecord || '—'],
+    ['Rounds Won', pct(visible.roundsWonPct ?? f.roundsWonPct)],
+    ['Active Elite Years', fmt(visible.activeEliteYears ?? f.activeEliteYears)]
   ];
   const rankedSectionTitle = Number(rankLabel) === 1 ? 'Why Not Lower?' : 'Why Not Ranked Higher?';
   const rankedSectionBody = Number(rankLabel) === 1
@@ -501,8 +490,8 @@ function renderCompare(){
   const rows = cats.map(([key,label]) => {
     const av = key === 'overall' ? overallOvr(a) : categoryOvr(a, key);
     const bv = key === 'overall' ? overallOvr(b) : categoryOvr(b, key);
-    const ar = key === 'overall' ? (DISPLAY_OVERRIDES[a.fighter]?.allTimeRank || a.rank || '—') : categoryRank(a, key);
-    const br = key === 'overall' ? (DISPLAY_OVERRIDES[b.fighter]?.allTimeRank || b.rank || '—') : categoryRank(b, key);
+    const ar = key === 'overall' ? (a.rank || '—') : categoryRank(a, key);
+    const br = key === 'overall' ? (b.rank || '—') : categoryRank(b, key);
     const unit = key === 'overall' ? 'OVR' : 'PCTL';
     const aWin = av > bv;
     const bWin = bv > av;

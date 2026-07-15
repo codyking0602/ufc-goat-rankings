@@ -1,0 +1,72 @@
+# Permanent source-ownership and seven-category projection certification.
+name: Production Ranking Pipeline
+
+on:
+  push:
+    branches:
+      - agent/fighter-data-phase-1
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'assets/data/**'
+      - 'assets/compare-data.js'
+      - 'assets/js/app.js'
+      - 'assets/js/play.js'
+      - 'assets/js/blind-matchmaking.js'
+      - 'assets/js/category-calculators.js'
+      - 'assets/js/ranking-pipeline.js'
+      - 'assets/js/division-ranking-pipeline.js'
+      - 'assets/js/division-ranking-reconciliation.js'
+      - 'assets/js/production-ranking-bootstrap.js'
+      - 'assets/js/calculated-profile-runtime.js'
+      - 'scripts/generate-canonical-scoring-judgments.mjs'
+      - 'scripts/test-ranking-pipeline.mjs'
+      - 'scripts/test-production-runtime-boundaries.mjs'
+      - '.github/workflows/production-ranking-pipeline.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  certify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out current ref
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check permanent runtime source ownership
+        run: node scripts/test-production-runtime-boundaries.mjs > /tmp/production-runtime-boundaries.log 2>&1
+
+      - name: Verify generated judgment inputs are current
+        run: |
+          node scripts/generate-canonical-scoring-judgments.mjs > /tmp/generated-judgments.log 2>&1
+          git diff --exit-code -- assets/data/canonical-scoring-judgments.js
+
+      - name: Certify seven-category production projection
+        run: node scripts/test-ranking-pipeline.mjs > /tmp/production-ranking-pipeline.log 2>&1
+
+      - name: Show concise diagnostics on failure
+        if: failure()
+        run: |
+          echo '--- Runtime ownership ---'
+          cat /tmp/production-runtime-boundaries.log 2>/dev/null || true
+          echo '--- Generated judgments ---'
+          cat /tmp/generated-judgments.log 2>/dev/null || true
+          echo '--- Ranking projection ---'
+          cat /tmp/production-ranking-pipeline.log 2>/dev/null || true
+
+      - name: Archive certification diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-ranking-pipeline-diagnostics
+          path: |
+            /tmp/production-runtime-boundaries.log
+            /tmp/generated-judgments.log
+            /tmp/production-ranking-pipeline.log
+          if-no-files-found: ignore

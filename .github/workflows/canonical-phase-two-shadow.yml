@@ -1,0 +1,99 @@
+name: Canonical Phase Two Shadow
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'assets/data/canonical-fighter-facts.js'
+      - 'assets/data/canonical-fighter-facts-batch-*.js'
+      - 'assets/data/canonical-phase-two-shadow.js'
+      - 'assets/data/canonical-phase-two-calibration.js'
+      - 'assets/data/division-era-depth-shadow.js'
+      - 'assets/data/canonical-scoring-records.js'
+      - 'assets/data/ranking-data.js'
+      - 'scripts/test-canonical-phase-two-shadow.mjs'
+      - 'scripts/test-canonical-phase-two-shape-lock.mjs'
+      - '.github/workflows/canonical-phase-two-shadow.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-calculated-shadow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check syntax
+        run: |
+          node --check assets/data/canonical-phase-two-shadow.js
+          node --check assets/data/canonical-phase-two-calibration.js
+          node --check assets/data/canonical-fighter-facts-batch-nine.js
+          node --check scripts/test-canonical-phase-two-shadow.mjs
+          node --check scripts/test-canonical-phase-two-shape-lock.mjs
+      - name: Calculate and calibrate all 73 fighters
+        run: node scripts/test-canonical-phase-two-shadow.mjs > /tmp/canonical-phase-two-shadow.log 2>&1
+      - name: Enforce UFC-only ranking-shape locks
+        run: node scripts/test-canonical-phase-two-shape-lock.mjs >> /tmp/canonical-phase-two-shadow.log 2>&1
+      - name: Append full ranking review
+        run: |
+          node - <<'NODE' >> /tmp/canonical-phase-two-shadow.log
+          const fs=require('node:fs');
+          const report=JSON.parse(fs.readFileSync('docs/canonical-phase-two-shadow.json','utf8'));
+          const compact=row=>({
+            rank:row.rank,
+            fighter:row.fighter,
+            totalScore:row.totalScore,
+            overallOvr:row.overallOvr,
+            championship:row.categories.championship,
+            opponentQuality:row.categories.opponentQuality,
+            primeDominance:row.categories.primeDominance,
+            longevity:row.categories.longevity,
+            apexPeak:row.apexPeak,
+            penalty:row.loss.penalty,
+            rawPenalty:row.loss.rawPenalty,
+            eraDepthAdjustment:row.eraDepthAdjustment,
+            topFiveWins:row.profileStats.topFiveWins,
+            titleFightWins:row.profileStats.titleFightWins,
+            primeRecord:row.profileStats.primeRecord,
+            activeEliteYears:row.profileStats.activeEliteYears,
+            roundsWonPct:row.profileStats.roundsWonPct,
+            finishRatePct:row.profileStats.finishRatePct
+          });
+          const all=[...report.boards.men,...report.boards.women];
+          console.log('PHASE_TWO_FULL_MEN_BOARD');
+          console.log(JSON.stringify(report.boards.men.map(compact),null,2));
+          console.log('PHASE_TWO_FULL_WOMEN_BOARD');
+          console.log(JSON.stringify(report.boards.women.map(compact),null,2));
+          const flags=[];
+          all.forEach(row=>{
+            const reasons=[];
+            if(row.categories.championship>=29.5)reasons.push('championship-cap');
+            if(row.categories.opponentQuality>=29.5)reasons.push('opponent-quality-cap');
+            if(row.categories.primeDominance>=29.5)reasons.push('prime-cap');
+            if(row.categories.longevity>=29.5)reasons.push('longevity-cap');
+            if(row.apexPeak>=5.95)reasons.push('apex-cap');
+            if(row.loss.rawPenalty<=-10&&row.loss.penalty>-4)reasons.push('heavy-raw-loss-burden-compressed');
+            if(Number(row.profileStats.topFiveWins||0)<=2&&row.rank<=25)reasons.push('top-25-with-two-or-fewer-top-five-wins');
+            if(Number(row.profileStats.titleFightWins||0)<=1&&row.rank<=20)reasons.push('top-20-with-one-or-fewer-title-wins');
+            if(Number(row.prime?.scoredFights||0)<=5&&row.rank<=25)reasons.push('top-25-small-prime-sample');
+            if(reasons.length)flags.push({...compact(row),reasons});
+          });
+          console.log('PHASE_TWO_MODEL_REVIEW_FLAGS');
+          console.log(JSON.stringify(flags,null,2));
+          NODE
+      - name: Upload Phase 2 shadow report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-phase-two-shadow-report
+          path: |
+            /tmp/canonical-phase-two-shadow.log
+            docs/canonical-phase-two-shadow.json
+            docs/canonical-phase-two-shadow.md
+          if-no-files-found: warn
+          retention-days: 30

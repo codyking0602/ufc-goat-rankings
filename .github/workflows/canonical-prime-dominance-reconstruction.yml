@@ -1,0 +1,54 @@
+name: Canonical Prime Dominance Reconstruction
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'assets/data/canonical-fighter-facts*.js'
+      - 'assets/data/canonical-scoring-records.js'
+      - 'assets/data/fighter-era-ledgers.js'
+      - 'assets/data/fighter-era-ledger-approved-longevity-resolutions.js'
+      - 'assets/data/fighter-era-ledger-approved-loss-context-resolutions.js'
+      - 'assets/data/prime-windows.js'
+      - 'assets/data/prime-round-control-audit.js'
+      - 'assets/data/prime-dominance-ledgers.js'
+      - 'assets/data/prime-dominance-shadow-model.js'
+      - 'assets/data/canonical-prime-dominance-reconstruction.js'
+      - 'assets/data/canonical-leon-final-category-completions.js'
+      - 'scripts/test-canonical-prime-dominance-full-roster.mjs'
+      - '.github/workflows/canonical-prime-dominance-reconstruction.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reconstruct-approved-prime-dominance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check syntax
+        run: |
+          node --check assets/data/fighter-era-ledger-approved-longevity-resolutions.js
+          node --check assets/data/fighter-era-ledger-approved-loss-context-resolutions.js
+          node --check assets/data/canonical-fighter-facts-prime-round-corrections.js
+          node --check assets/data/canonical-prime-dominance-reconstruction.js
+          node --check assets/data/canonical-leon-final-category-completions.js
+          node --check scripts/test-canonical-prime-dominance-full-roster.mjs
+      - name: Audit approved 73-fighter Prime Dominance model
+        run: node scripts/test-canonical-prime-dominance-full-roster.mjs > /tmp/canonical-prime-dominance-reconstruction.log 2>&1
+      - name: Upload Prime Dominance reconstruction report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-prime-dominance-reconstruction-report
+          path: |
+            /tmp/canonical-prime-dominance-reconstruction.log
+            docs/canonical-prime-dominance-reconstruction.json
+            docs/canonical-prime-dominance-reconstruction.md
+          if-no-files-found: warn
+          retention-days: 30

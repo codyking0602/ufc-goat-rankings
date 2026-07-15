@@ -1,0 +1,59 @@
+name: Canonical Final Score Reconstruction
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'assets/data/canonical-fighter-facts*.js'
+      - 'assets/data/canonical-scoring-records.js'
+      - 'assets/data/canonical-*-reconstruction.js'
+      - 'assets/data/canonical-*-approved-*.js'
+      - 'assets/data/canonical-leon-final-category-completions.js'
+      - 'assets/data/fighter-era-ledger*.js'
+      - 'assets/data/division-era-depth-shadow.js'
+      - 'assets/data/canonical-final-score-reconstruction.js'
+      - 'scripts/audit-leon-final-category-gaps.mjs'
+      - 'scripts/test-canonical-leon-final-category-completions.mjs'
+      - 'scripts/test-canonical-final-score-reconstruction.mjs'
+      - '.github/workflows/canonical-final-score-reconstruction.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit-final-score:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check syntax
+        run: |
+          node --check assets/data/canonical-final-score-reconstruction.js
+          node --check assets/data/canonical-leon-final-category-completions.js
+          node --check scripts/audit-leon-final-category-gaps.mjs
+          node --check scripts/test-canonical-leon-final-category-completions.mjs
+          node --check scripts/test-canonical-final-score-reconstruction.mjs
+      - name: Audit Leon's missing category inputs
+        run: node scripts/audit-leon-final-category-gaps.mjs > /tmp/leon-final-category-gap-audit.log 2>&1
+      - name: Validate Leon mechanical category completions
+        run: node scripts/test-canonical-leon-final-category-completions.mjs > /tmp/leon-final-category-completions.log 2>&1
+      - name: Audit locked category ownership and total formulas
+        run: node scripts/test-canonical-final-score-reconstruction.mjs > /tmp/canonical-final-score-reconstruction.log 2>&1
+      - name: Upload final-score reconstruction report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-final-score-reconstruction-report
+          path: |
+            /tmp/leon-final-category-gap-audit.log
+            /tmp/leon-final-category-gap-audit.json
+            /tmp/leon-final-category-completions.log
+            /tmp/canonical-final-score-reconstruction.log
+            docs/canonical-final-score-reconstruction.json
+            docs/canonical-final-score-reconstruction.md
+          if-no-files-found: warn
+          retention-days: 30

@@ -1,18 +1,21 @@
 // Championship Resume rule locks. Shadow mode only; mutates ledger audit data after ledger load.
 (function(){
-  const VERSION='championship-resume-ledger-rule-locks-20260712a-couture-calibration';
-  const BASE={normal:1,interim:.75,vacantUndisputed:.9,secondDivisionUndisputed:1.25,vacantSecondDivision:1.15};
+  const VERSION='championship-resume-ledger-rule-locks-20260714c-final-approved-review';
+  const BASE={normal:1,interim:.75,vacantUndisputed:.9,secondDivisionUndisputed:1.25,vacantSecondDivision:1.15,missedWeightChampionshipContext:1};
+  const APPROVED_SCORE_CORRECTIONS=Object.freeze({'Israel Adesanya':14.98,'Max Holloway':8.95,'Zhang Weili':11.66});
+  // [fighter, opponent, opponentStrength, reviewStatus, notes, optionalTitleType, optionalEraTitleContextAdjustment]
   const UPDATES=[
     ['Aljamain Sterling','Petr Yan',0.50,'high-risk review','DQ title win/weird title context; Cody locked DQ rule at 0.50.'],
     ['Jon Jones','Alexander Gustafsson II',1.00,'locked','Elite vacant-title opponent; full opponent strength.'],
     ['Islam Makhachev','Charles Oliveira',1.00,'locked','Elite vacant-title opponent; full opponent strength.'],
     ['Daniel Cormier','Anthony Johnson',1.00,'locked','Elite vacant-title opponent; full opponent strength.'],
     ['Petr Yan','Jose Aldo',1.00,'locked','Elite vacant-title opponent; full opponent strength.'],
-    ['Israel Adesanya','Robert Whittaker',1.00,'locked','Elite vacant-title opponent; full opponent strength.'],
+    ['Israel Adesanya','Robert Whittaker',1.00,'locked','Cody-approved factual correction: Whittaker was the reigning undisputed champion. Normal title win at full elite-opponent strength.','normal',1.00],
     ['Valentina Shevchenko','Joanna Jedrzejczyk',1.00,'locked','Elite vacant-title opponent; full opponent strength.'],
     ['Matt Hughes','Georges St-Pierre',1.00,'high-risk review','Vacant title vs early GSP; old-era context but full elite opponent strength.'],
     ['Deiveson Figueiredo','Joseph Benavidez II',1.00,'high-risk review','Elite vacant-title opponent at full strength; missed-weight first fight context remains high-risk.'],
-    ['Robbie Lawler','Johny Hendricks',1.00,'review','Elite vacant-title opponent at full strength; close rivalry decision remains review.'],
+    ['Robbie Lawler','Johny Hendricks',1.00,'locked','Cody-approved factual correction: Hendricks was the reigning champion. Normal title win with a separate 0.90 close split-decision context adjustment.','normal',0.90],
+    ['Robert Whittaker','Yoel Romero II',1.00,'locked','Cody-approved special context: Romero missed weight. Championship accomplishment receives 0.75 context credit but is not an official UFC title-fight win.','missedWeightChampionshipContext',0.75],
     ['Demetrious Johnson','Chris Cariaso',0.75,'high-risk review','Clearly soft title opponent floor.'],
     ['Demetrious Johnson','Tim Elliott',0.75,'high-risk review','TUF/weird challenger context; soft/weird floor.'],
     ['Tito Ortiz','Elvis Sinosic',0.75,'high-risk review','Clearly softer title challenger floor.'],
@@ -21,12 +24,15 @@
     ['Randy Couture','Kevin Randleman',0.85,'review','Legitimate champion win with old-era heavyweight depth calibration.'],
     ['Randy Couture','Pedro Rizzo',0.85,'review','Strong title challenger, but below full modern elite-title value.'],
     ['Randy Couture','Pedro Rizzo II',0.80,'review','Repeat title win with old-era and repeat-opponent calibration.'],
-    ['Randy Couture','Tito Ortiz',0.90,'review','Second-division title win remains highly valuable, with old-era depth calibration.'],
+    ['Randy Couture','Tito Ortiz',0.90,'locked','Cody-approved classification: second-division undisputed title win, with old-era depth calibration preserved.'],
     ['Randy Couture','Vitor Belfort',0.80,'review','Weird cut-loss rematch and old-era title context reduce the credit.'],
     ['Randy Couture','Tim Sylvia',0.85,'review','Heavyweight title win remains strong, with softer-era opponent calibration.'],
     ['Randy Couture','Gabriel Gonzaga',0.90,'locked','Strong heavyweight title defense over a dangerous contender.']
   ];
   const ADDITIONS=[
+    ['Israel Adesanya','Kelvin Gastelum','interim',0.95,'locked','Cody-approved interim-title win: 0.75 base × 0.95 opponent strength = 0.71 credit.'],
+    ['Max Holloway','Frankie Edgar','normal',0.90,'locked','Cody-approved undisputed title defense over an older but still elite former champion.'],
+    ['Zhang Weili','Tatiana Suarez','normal',0.95,'locked','Cody-approved undisputed title defense over an elite challenger.'],
     ['Justin Gaethje','Paddy Pimblett','interim',0.85,'review','Recent-event add: UFC 324 interim lightweight title win. Counts as interim title credit only.'],
     ['Justin Gaethje','Ilia Topuria','normal',1.00,'review','Recent-event add: UFC Freedom 250 undisputed lightweight title win over elite two-division champion.'],
     ['Sean Strickland','Khamzat Chimaev','normal',1.00,'review','Recent-event add: UFC 328 middleweight title win by split decision.'],
@@ -42,11 +48,11 @@
   };
   function n(v,d=0){const x=Number(v);return Number.isFinite(x)?x:d;}
   function r(v){return Math.round((n(v)+Number.EPSILON)*100)/100;}
-  function typeOf(v){const s=String(v||'normal').replace(/[-_ ]+/g,'').toLowerCase();if(s==='interim')return'interim';if(s==='vacant'||s==='vacantundisputed')return'vacantUndisputed';if(s==='seconddivisionundisputed'||s==='secondbelt')return'secondDivisionUndisputed';if(s==='vacantseconddivision'||s==='vacantsecondbelt')return'vacantSecondDivision';return'normal';}
-  function credit(titleType,strength){const t=typeOf(titleType);return r((BASE[t]||1)*n(strength,1));}
+  function typeOf(v){const s=String(v||'normal').replace(/[-_ ]+/g,'').toLowerCase();if(s==='interim')return'interim';if(s==='vacant'||s==='vacantundisputed')return'vacantUndisputed';if(s==='seconddivisionundisputed'||s==='secondbelt')return'secondDivisionUndisputed';if(s==='vacantseconddivision'||s==='vacantsecondbelt')return'vacantSecondDivision';if(s==='missedweightchampionshipcontext')return'missedWeightChampionshipContext';return'normal';}
+  function credit(titleType,strength,contextAdjustment=1){const t=typeOf(titleType);return r((BASE[t]||1)*n(strength,1)*n(contextAdjustment,1));}
   function allRowsFor(fighter){const rows=[];const push=row=>{if(row&&row.fighter===fighter)rows.push(row);};(window.RANKING_DATA?.fighters||[]).forEach(push);(window.RANKING_DATA?.men||[]).forEach(push);(window.RANKING_DATA?.women||[]).forEach(push);return rows;}
   function annotateContext(){Object.entries(RECENT_CONTEXT).forEach(([fighter,note])=>{allRowsFor(fighter).forEach(row=>{row.recentEventsAudit=note;});});}
   function ensureLedger(store,fighter){if(!store.ledgers[fighter])store.ledgers[fighter]={fighter,championshipWins:[]};if(!Array.isArray(store.ledgers[fighter].championshipWins))store.ledgers[fighter].championshipWins=[];return store.ledgers[fighter].championshipWins;}
-  function apply(){const store=window.UFC_CHAMPIONSHIP_RESUME_LEDGERS;if(!store||!store.ledgers)return null;const applied=[];const added=[];UPDATES.forEach(([fighter,opponent,strength,reviewStatus,notes])=>{const rows=store.ledgers[fighter]?.championshipWins;if(!Array.isArray(rows))return;const row=rows.find(w=>w.opponent===opponent);if(!row)return;row.strength=strength;row.reviewStatus=reviewStatus;row.notes=notes;row.adjustedCredit=credit(row.titleType,strength);applied.push({fighter,opponent,strength,reviewStatus,adjustedCredit:row.adjustedCredit});});ADDITIONS.forEach(([fighter,opponent,titleType,strength,reviewStatus,notes])=>{const rows=ensureLedger(store,fighter);let row=rows.find(w=>w.opponent===opponent&&typeOf(w.titleType)===typeOf(titleType));if(!row){row={opponent,titleType:typeOf(titleType)};rows.push(row);added.push({fighter,opponent,titleType:typeOf(titleType)});}row.titleType=typeOf(titleType);row.strength=strength;row.reviewStatus=reviewStatus;row.notes=notes;row.adjustedCredit=credit(titleType,strength);applied.push({fighter,opponent,strength,reviewStatus,adjustedCredit:row.adjustedCredit});});annotateContext();if(typeof store.summarize==='function'){store.reviewRows=Object.keys(store.ledgers).map(store.summarize).filter(row=>row.reviewStatus!=='locked');}store.version=VERSION;window.UFC_CHAMPIONSHIP_RESUME_LEDGER_RULE_LOCKS={version:VERSION,mode:'shadow-rule-locks',applied,added,recentContext:RECENT_CONTEXT,notCounted:[{fighter:'Islam Makhachev',opponent:'Ian Machado Garry',reason:'Scheduled for UFC 330 on 2026-08-15; not counted until completed.'}]};document.documentElement.setAttribute('data-championship-resume-ledger-rule-locks',VERSION);return applied;}
+  function apply(){const store=window.UFC_CHAMPIONSHIP_RESUME_LEDGERS;if(!store||!store.ledgers)return null;const applied=[];const added=[];UPDATES.forEach(([fighter,opponent,strength,reviewStatus,notes,approvedTitleType,contextAdjustment])=>{const rows=store.ledgers[fighter]?.championshipWins;if(!Array.isArray(rows))return;const row=rows.find(w=>w.opponent===opponent);if(!row)return;if(approvedTitleType)row.titleType=typeOf(approvedTitleType);row.strength=strength;row.eraTitleContextAdjustment=n(contextAdjustment,1);row.reviewStatus=reviewStatus;row.notes=notes;row.adjustedCredit=credit(row.titleType,strength,row.eraTitleContextAdjustment);applied.push({fighter,opponent,titleType:row.titleType,strength,eraTitleContextAdjustment:row.eraTitleContextAdjustment,reviewStatus,adjustedCredit:row.adjustedCredit});});ADDITIONS.forEach(([fighter,opponent,titleType,strength,reviewStatus,notes])=>{const rows=ensureLedger(store,fighter);let row=rows.find(w=>w.opponent===opponent&&typeOf(w.titleType)===typeOf(titleType));if(!row){row={opponent,titleType:typeOf(titleType)};rows.push(row);added.push({fighter,opponent,titleType:typeOf(titleType)});}row.titleType=typeOf(titleType);row.strength=strength;row.eraTitleContextAdjustment=1;row.reviewStatus=reviewStatus;row.notes=notes;row.adjustedCredit=credit(titleType,strength,1);applied.push({fighter,opponent,titleType:row.titleType,strength,eraTitleContextAdjustment:1,reviewStatus,adjustedCredit:row.adjustedCredit});});annotateContext();if(typeof store.summarize==='function'){store.reviewRows=Object.keys(store.ledgers).map(store.summarize).filter(row=>row.reviewStatus!=='locked');}store.version=VERSION;window.UFC_CHAMPIONSHIP_RESUME_LEDGER_RULE_LOCKS={version:VERSION,mode:'shadow-rule-locks',applied,added,recentContext:RECENT_CONTEXT,approvedScoreCorrections:APPROVED_SCORE_CORRECTIONS,notCounted:[{fighter:'Islam Makhachev',opponent:'Ian Machado Garry',reason:'Scheduled for UFC 330 on 2026-08-15; not counted until completed.'}]};document.documentElement.setAttribute('data-championship-resume-ledger-rule-locks',VERSION);return applied;}
   apply();
 })();

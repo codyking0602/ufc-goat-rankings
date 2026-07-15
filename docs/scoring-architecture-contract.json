@@ -1,82 +1,102 @@
 {
-  "version": "scoring-architecture-contract-20260713b",
-  "expectedRosterCount": 72,
-  "canonical": {
-    "path": "assets/data/canonical-scoring-records.js",
-    "global": "UFC_CANONICAL_SCORING_RECORDS",
-    "version": "canonical-scoring-records-20260713a-stage2",
-    "sourceSha": "ad6de49cab8db327871e219ba418e369e1895a21a622b598b0cfd46bce2f3887"
+  "version": "scoring-architecture-contract-20260715g-current-era-audit",
+  "expectedRosterCount": 73,
+  "facts": {
+    "path": "assets/data/canonical-fighter-facts.js",
+    "global": "UFC_CANONICAL_FIGHTER_FACTS"
   },
-  "engine": {
-    "path": "assets/js/scoring-engine.js",
-    "global": "UFC_SCORING_ENGINE",
-    "aliasGlobal": "UFC_FINAL_SCORE_ENGINE",
-    "aliasDefinitionPaths": [
-      "assets/js/scoring-engine.js",
-      "assets/js/scoring-ownership-finalizer.js"
-    ],
-    "version": "scoring-engine-20260713c-finalizer-only",
-    "authorizedApplyReason": "stage3-scoring-ownership-finalizer",
-    "expectedApplyCount": 1,
-    "formula": "championship/30*35 + opponentQuality/30*27.5 + primeDominance/30*27.5 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment",
-    "weights": {
-      "championship": 35,
-      "opponentQuality": 27.5,
-      "primeDominance": 27.5,
-      "longevity": 10
-    },
-    "max": {
-      "championship": 30,
-      "opponentQuality": 30,
-      "primeDominance": 30,
-      "longevity": 30
-    },
-    "scoreInputFields": [
+  "judgments": {
+    "path": "assets/data/canonical-scoring-judgments.js",
+    "global": "UFC_CANONICAL_SCORING_JUDGMENTS",
+    "expectedFighterCount": 73,
+    "ownsCalculatedScores": false,
+    "ownsTotalsRanksOrOvr": false
+  },
+  "calculators": {
+    "path": "assets/js/category-calculators.js",
+    "global": "UFC_CATEGORY_CALCULATORS",
+    "version": "category-calculators-20260714c-seven-direct-calculators",
+    "expectedCompleteCount": 73,
+    "categories": [
       "championship",
       "opponentQuality",
       "primeDominance",
       "longevity",
-      "apexPeak",
       "penalty",
-      "eraDepthAdjustment"
+      "apex",
+      "eraDepth"
     ]
   },
-  "finalizer": {
-    "path": "assets/js/scoring-ownership-finalizer.js",
-    "global": "UFC_SCORING_OWNERSHIP_CONTRACT",
-    "version": "scoring-ownership-finalizer-20260713f-no-legacy-repair",
-    "expectedMode": "single-authority-copy-boundary-no-legacy-repair"
-  },
   "pipeline": {
-    "path": "assets/data/module-versions.js",
-    "global": "UFC_SCORING_PIPELINE",
-    "expectedMode": "deterministic-evidence-prerequisite-pipeline",
-    "expectedFinalScoreApplyCount": 0
-  },
-  "evidenceProviders": [
-    {
-      "path": "assets/data/loss-context-hybrid-live.js",
-      "global": "UFC_LOSS_CONTEXT_HYBRID_LIVE",
-      "expectedRole": "evidence-and-detail-provider",
-      "expectedMutationFlags": {
-        "mutatesScores": false,
-        "mutatesPenalty": false
-      }
+    "path": "assets/js/ranking-pipeline.js",
+    "global": "UFC_RANKING_PIPELINE",
+    "version": "ranking-pipeline-20260714b-direct-category-total-rank-ovr",
+    "weights": {
+      "championship": 35,
+      "opponentQuality": 25,
+      "primeDominance": 30,
+      "longevity": 10
     },
-    {
-      "path": "assets/data/division-era-depth-live.js",
-      "global": "UFC_DIVISION_ERA_DEPTH_LIVE",
-      "expectedRole": "evidence-and-detail-provider",
-      "expectedMutationFlags": {
-        "mutatesScores": false,
-        "mutatesAdjustment": false
+    "categoryMax": 30,
+    "formula": "championship/30*35 + opponentQuality/30*25 + primeDominance/30*30 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment",
+    "ovr": {
+      "floor": 82,
+      "ceiling": 99,
+      "curve": 0.85,
+      "leaderOnly99": true,
+      "anchors": {
+        "men": {
+          "floorScore": 18.68,
+          "ceilingScore": 101.92
+        },
+        "women": {
+          "floorScore": 25.78,
+          "ceilingScore": 80.79
+        }
       }
     }
+  },
+  "bootstrap": {
+    "path": "assets/js/production-ranking-bootstrap.js",
+    "global": "UFC_PRODUCTION_RANKING_BOOTSTRAP",
+    "requiredIndexOrder": [
+      "assets/data/ranking-data-patches.js",
+      "assets/js/production-ranking-bootstrap.js"
+    ]
+  },
+  "profileRuntime": {
+    "path": "assets/js/calculated-profile-runtime.js",
+    "global": "UFC_CALCULATED_PROFILE_RUNTIME",
+    "snapshotOwner": "RANKING_DATA.visibleStats",
+    "rankOwner": "RANKING_DATA.rank",
+    "ovrOwner": "RANKING_DATA.overallOvr"
+  },
+  "approvedMenTopTen": [
+    "Jon Jones",
+    "Georges St-Pierre",
+    "Anderson Silva",
+    "Demetrious Johnson",
+    "Islam Makhachev",
+    "Alexander Volkanovski",
+    "Khabib Nurmagomedov",
+    "Matt Hughes",
+    "Kamaru Usman",
+    "Max Holloway"
   ],
+  "keyResults": {
+    "Jon Jones": { "rank": 1, "overallOvr": 99 },
+    "Georges St-Pierre": { "rank": 2, "overallOvr": 96 },
+    "Henry Cejudo": { "rank": 38 },
+    "Royce Gracie": { "rank": 50 },
+    "Amanda Nunes": { "rank": 1, "overallOvr": 99 },
+    "Valentina Shevchenko": { "overallOvr": 98 }
+  },
   "presentation": {
     "displayOverridesPath": "assets/data/display-overrides.js",
+    "compareDataPath": "assets/compare-data.js",
     "fighterPacketsDirectory": "assets/data/fighter-packets",
     "forbiddenDirectFields": [
+      "snapshot",
       "overallOvr",
       "allTimeRank",
       "rankLabel",
@@ -94,9 +114,7 @@
       "eraDepthAdjustment",
       "baseScore",
       "preEraDepthTotalScore",
-      "apexPeakBonus",
-      "lossContextHybrid",
-      "divisionEraDepth"
+      "apexPeakBonus"
     ],
     "forbiddenNestedFields": [
       "overallOvr",
@@ -117,8 +135,6 @@
       "baseScore",
       "preEraDepthTotalScore",
       "apexPeakBonus",
-      "lossContextHybrid",
-      "divisionEraDepth",
       "championshipScore",
       "opponentQualityScore",
       "primeDominanceScore",
@@ -128,7 +144,23 @@
       "ovr",
       "rank",
       "score",
-      "value"
+      "value",
+      "rawScore",
+      "percentile"
+    ],
+    "forbiddenCompareProfileFields": [
+      "legacyStats",
+      "rank",
+      "overallOvr",
+      "totalScore",
+      "rawScore",
+      "championship",
+      "opponentQuality",
+      "primeDominance",
+      "longevity",
+      "apexPeak",
+      "penalty",
+      "eraDepthAdjustment"
     ],
     "fighterPacketForbiddenDisplayFields": [
       "overallOvr",
@@ -140,39 +172,41 @@
       "rank"
     ]
   },
-  "requiredScriptOrder": [
+  "forbiddenIndexReferences": [
     "assets/data/canonical-scoring-records.js",
-    "assets/data/module-versions.js",
-    "assets/data/loss-context-hybrid-live.js",
-    "assets/data/division-era-depth-live.js",
     "assets/js/scoring-engine.js",
     "assets/js/scoring-ownership-finalizer.js",
-    "assets/data/ranking-data-patches.js"
-  ],
-  "deletedLegacyFiles": [
-    "assets/js/final-score-engine.js",
-    "assets/js/rank-fluidity-fixes.js",
-    "assets/data/division-era-depth-finalizer.js",
-    "assets/data/championship-score-corrections.js",
-    "assets/data/opponent-quality-score-corrections.js",
-    "assets/data/longevity-score-corrections.js"
-  ],
-  "forbiddenLegacyReferences": [
-    "final-score-engine.js",
-    "rank-fluidity-fixes.js",
-    "division-era-depth-finalizer.js",
-    "championship-score-corrections.js",
-    "opponent-quality-score-corrections.js",
-    "longevity-score-corrections.js",
-    "dynamic-roster-scoring-repair"
+    "assets/data/canonical-prime-dominance-reconstruction.js",
+    "assets/data/canonical-longevity-reconstruction.js",
+    "assets/data/canonical-fighter-registry.js",
+    "assets/data/canonical-fighter-registry-royce-gracie.js",
+    "assets/data/canonical-fighter-registry-batch-eight-data.js",
+    "assets/data/canonical-fighter-registry-batch-eight.js",
+    "assets/data/module-versions.js",
+    "assets/data/loss-context-exposure-ledger.js",
+    "assets/data/loss-context-hybrid-shadow.js",
+    "assets/data/loss-context-hybrid-audit.js",
+    "assets/data/loss-context-hybrid-live.js",
+    "assets/data/division-era-depth-audit.js",
+    "assets/data/division-era-depth-live.js",
+    "assets/data/quality-wins-audit-cruz-ilia.js",
+    "assets/js/profile-stat-consistency.js",
+    "assets/js/fighter-data-ownership-audit.js"
   ],
   "forbiddenRuntimeGlobals": [
+    "UFC_CANONICAL_SCORING_RECORDS",
+    "UFC_SCORING_ENGINE",
+    "UFC_FINAL_SCORE_ENGINE",
+    "UFC_SCORING_OWNERSHIP_FINALIZER",
+    "UFC_SCORING_OWNERSHIP_CONTRACT",
+    "UFC_CANONICAL_PRIME_DOMINANCE_RECONSTRUCTION",
+    "UFC_CANONICAL_LONGEVITY_RECONSTRUCTION",
     "UFC_DYNAMIC_ROSTER_SCORING_REPAIR",
     "UFC_DIVISION_ERA_DEPTH_FINALIZER"
   ],
-  "supersededGuardrailFiles": [
-    ".github/workflows/stage3-scoring-cleanup.yml",
-    "scripts/run-stage3-scoring-cleanup.mjs",
-    "scripts/validate-stage3-scoring-cleanup.mjs"
+  "retiredWorkflowPaths": [
+    ".github/workflows/fighter-data-ownership-baseline.yml",
+    ".github/workflows/runtime-scoring-audit.yml",
+    ".github/workflows/six-category-runtime-audit.yml"
   ]
 }

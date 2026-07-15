@@ -164,7 +164,12 @@ check(mobilePolishCss.includes('.picks-photo-fallback[hidden]') && mobilePolishC
 
 check(oddsCoverage.includes('Not all odds available yet'),'Partial odds availability copy is missing');
 check(oddsCoverage.includes('Odds have not been posted yet'),'No-odds state is missing');
-check(oddsCoverage.includes('Underdog Lock waiting on posted odds'),'Underdog Lock no-odds state is missing');
+check(oddsCoverage.includes('function hasUsableOdds'),'Usable odds validation is missing');
+check(oddsCoverage.includes('.every(hasUsableOdds)'),'Odds coverage still trusts empty odds elements');
+check(oddsCoverage.includes('Number(value)!==0'),'Zero odds are still treated as usable');
+check(oddsCoverage.includes('Underdog Lock is unavailable until usable lines are posted'),'Underdog Lock no-odds explanation is missing');
+check(oddsCoverage.includes('you can still submit normal fight picks'),'No-odds state does not preserve normal fight-pick guidance');
+check(oddsCoverage.includes('Underdog Lock unavailable · normal picks still open'),'Underdog Lock no-odds summary is missing');
 check(oddsFunction.includes('THE_ODDS_API_KEY') && oddsFunction.includes('ODDS_REFRESH_SECRET'),'Odds function secrets are missing');
 check(oddsFunction.includes('mma_mixed_martial_arts'),'Odds function is not restricted to MMA');
 check(oddsFunction.includes('red_odds') && oddsFunction.includes('blue_odds'),'Odds function does not update both fight lines');
