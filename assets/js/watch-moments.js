@@ -1,7 +1,7 @@
 // Watch Moment links for fighter cards and Signature Fight links for profiles.
 // Keep links here as app-facing content, separate from scoring and nickname/display-name polish.
 (function(){
-  const VERSION = 'watch-moments-20260711i-signature-fights-batch-seven';
+  const VERSION = 'watch-moments-20260715j-charles-short';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const WATCH_MOMENTS = {
@@ -38,7 +38,7 @@
     'Junior dos Santos': 'https://youtube.com/shorts/Lj6I1i8V0-Y?si=SCGyTCBodnA4CkbE',
     'Dominick Cruz': 'https://youtube.com/shorts/qtiyeEjlmNE?is=RFtIr9qAPjx98Ey5',
     'Francis Ngannou': 'https://youtube.com/shorts/UlZTD5oOgpU?is=dxMm-lAXt6S8UnTo',
-    'Charles Oliveira': 'https://youtube.com/shorts/uqC1O-BdcxU?is=ON5Q8K7zkTqHj9_T',
+    'Charles Oliveira': 'https://youtube.com/shorts/zHUAvACSUk4?is=VYzwsuIvxV85k8zH',
     'Henry Cejudo': 'https://youtube.com/shorts/iqVU88zpDXw?is=NaDy1Ol5Kn1XlYzV',
     'Conor McGregor': 'https://youtube.com/shorts/eeHdLpBUmlU?is=rKzl28sGEKreaI2g',
     'Justin Gaethje': 'https://youtube.com/shorts/2LxEazU0vuM?is=tHj1Dxylleh4yGG7',
