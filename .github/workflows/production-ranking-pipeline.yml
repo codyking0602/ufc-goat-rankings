@@ -23,7 +23,7 @@ on:
       - '.github/workflows/production-ranking-pipeline.yml'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   certify:
@@ -32,6 +32,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref || github.ref_name }}
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -41,7 +42,7 @@ jobs:
           git diff --exit-code -- assets/data/canonical-scoring-judgments.js
       - name: Certify seven-category production projection
         run: node scripts/test-ranking-pipeline.mjs
-      - name: Generate reviewable presentation-only files
+      - name: Generate presentation-only files
         run: node scripts/generate-presentation-only-data.mjs | tee /tmp/presentation-cleanup-report.json
       - name: Verify generated presentation syntax
         run: |
@@ -49,6 +50,19 @@ jobs:
           node --check assets/compare-data.js
       - name: Certify runtime ownership boundaries
         run: node scripts/test-production-runtime-boundaries.mjs
+      - name: Commit certified presentation cleanup
+        env:
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+        run: |
+          if [ -z "$(git status --porcelain -- assets/data/display-overrides.js assets/compare-data.js)" ]; then
+            echo 'Presentation-only files already clean.'
+          else
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add assets/data/display-overrides.js assets/compare-data.js
+            git commit -m 'Remove manual scoring data from presentation files'
+            git push origin HEAD:"$BRANCH_NAME"
+          fi
       - name: Upload presentation cleanup artifact
         if: always()
         uses: actions/upload-artifact@v4
