@@ -21,7 +21,7 @@ on:
       - 'assets/js/division-ranking-pipeline.js'
       - 'assets/js/division-ranking-reconciliation.js'
       - 'assets/js/production-ranking-bootstrap.js'
-      - 'assets/js/octagon-verdict-live-data.js'
+      - 'assets/js/octagon-verdict-data.js'
       - 'tools/build-octagon-verdict-data.js'
       - '.github/workflows/build-octagon-verdict-data.yml'
   workflow_dispatch:
