@@ -126,7 +126,7 @@ try{
 
   const firstRow=page.locator('#menList .fighter-row').first();
   const firstText=await firstRow.textContent();
-  assert.match(firstText(/^\s*#1/));
+  assert.match(firstText,/^\s*#1/);
   assert.match(firstText,/Jon Jones/);
   assert.match(firstText,/99\s*OVR/);
 
