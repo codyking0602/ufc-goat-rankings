@@ -1,10 +1,20 @@
 // Permanent calculated ranking projection.
-// Consumes approved fight-level category reconstruction outputs and projects them into
-// leaderboard, profile, Compare Mode, and game-facing RANKING_DATA fields.
+// Consumes approved fight-level category calculations and owns weighted totals, board ranks,
+// fixed-anchor OVRs, visible stats, and the app-facing RANKING_DATA projection.
 (function(){
   'use strict';
 
-  const VERSION='ranking-pipeline-20260714a-approved-calculated-projection';
+  const VERSION='ranking-pipeline-20260714b-direct-category-total-rank-ovr';
+  const CATEGORY_MAX=30;
+  const WEIGHTS=Object.freeze({championship:35,opponentQuality:25,primeDominance:30,longevity:10});
+  const OVR_FLOOR=82;
+  const OVR_CEILING=99;
+  const OVR_CURVE=.85;
+  const LEADER_ONLY_99=true;
+  const OVR_ANCHORS=Object.freeze({
+    men:Object.freeze({floorScore:18.68,ceilingScore:101.92}),
+    women:Object.freeze({floorScore:25.78,ceilingScore:80.79})
+  });
   const CALCULATED_FIELDS=new Set([
     'rank','allTimeRank','totalScore','rawScore','overallOvr','baseScore','preEraDepthTotalScore',
     'championship','opponentQuality','primeDominance','longevity','apexPeak','apexPeakBonus',
@@ -19,6 +29,7 @@
   const key=value=>String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/\s+/g,' ');
   const clone=value=>value===undefined?undefined:JSON.parse(JSON.stringify(value));
   const round2=value=>{const rounded=Math.round((Number(value||0)+Number.EPSILON)*100)/100;return Object.is(rounded,-0)?0:rounded;};
+  const clamp=(value,min,max)=>Math.max(min,Math.min(max,Number(value||0)));
 
   function stripCalculated(source){
     const output={};
@@ -31,22 +42,93 @@
 
   function sourceState(){
     const facts=window.UFC_CANONICAL_FIGHTER_FACTS;
-    const finalScore=window.UFC_CANONICAL_FINAL_SCORE_RECONSTRUCTION;
-    const ovr=window.UFC_CANONICAL_OVR_RECONSTRUCTION;
+    const categories=window.UFC_CATEGORY_CALCULATORS;
+    const categoryAudit=categories?.audit?.()||null;
     const data=window.RANKING_DATA;
     const missing=[];
     if(!facts?.list||!facts?.deriveFor)missing.push('UFC_CANONICAL_FIGHTER_FACTS');
-    if(!finalScore?.applied||!finalScore?.approvedReport?.rows)missing.push('UFC_CANONICAL_FINAL_SCORE_RECONSTRUCTION');
-    if(!ovr?.applied||!ovr?.entryFor)missing.push('UFC_CANONICAL_OVR_RECONSTRUCTION');
+    if(!categories?.list||!categories?.entryFor)missing.push('UFC_CATEGORY_CALCULATORS');
+    if(categories&&categoryAudit?.passed!==true)missing.push('complete seven-category calculation audit');
     if(!data)missing.push('RANKING_DATA');
     if(missing.length)throw new Error(`[${VERSION}] Missing production inputs: ${missing.join(', ')}`);
-    return {facts,finalScore,ovr,data};
+    return {facts,categories,categoryAudit,data};
   }
 
   function indexes(data){
     const board=new Map([...(data.men||[]),...(data.women||[])].filter(row=>row?.fighter).map(row=>[key(row.fighter),row]));
     const profiles=new Map((data.fighters||[]).filter(row=>row?.fighter).map(row=>[key(row.fighter),row]));
     return {board,profiles};
+  }
+
+  function weightedTotal(scores){
+    const weighted={
+      championship:round2((Number(scores.championship||0)/CATEGORY_MAX)*WEIGHTS.championship),
+      opponentQuality:round2((Number(scores.opponentQuality||0)/CATEGORY_MAX)*WEIGHTS.opponentQuality),
+      primeDominance:round2((Number(scores.primeDominance||0)/CATEGORY_MAX)*WEIGHTS.primeDominance),
+      longevity:round2((Number(scores.longevity||0)/CATEGORY_MAX)*WEIGHTS.longevity)
+    };
+    weighted.baseScore=round2(weighted.championship+weighted.opponentQuality+weighted.primeDominance+weighted.longevity);
+    weighted.apex=round2(scores.apex);
+    weighted.penalty=round2(scores.penalty);
+    weighted.eraDepth=round2(scores.eraDepth);
+    weighted.preEraDepthTotalScore=round2(weighted.baseScore+weighted.apex+weighted.penalty);
+    weighted.modifierScore=round2(weighted.apex+weighted.penalty+weighted.eraDepth);
+    weighted.totalScore=round2(weighted.baseScore+weighted.modifierScore);
+    return weighted;
+  }
+
+  function assignRanks(rows){
+    const ranked=rows.slice().sort((a,b)=>
+      b.totalScore-a.totalScore||
+      b.scores.championship-a.scores.championship||
+      b.scores.opponentQuality-a.scores.opponentQuality||
+      a.fighter.localeCompare(b.fighter)
+    );
+    ranked.forEach((row,index)=>{row.calculatedRank=index+1;});
+    return ranked;
+  }
+
+  function calculateOvr(totalScore,board,rank){
+    const anchors=OVR_ANCHORS[board]||OVR_ANCHORS.men;
+    const range=Number(anchors.ceilingScore)-Number(anchors.floorScore);
+    if(range<=0)return OVR_FLOOR;
+    const normalized=clamp((Number(totalScore)-Number(anchors.floorScore))/range,0,1);
+    const curved=Math.pow(normalized,OVR_CURVE);
+    let ovr=clamp(Math.round(OVR_FLOOR+(curved*(OVR_CEILING-OVR_FLOOR))),OVR_FLOOR,OVR_CEILING);
+    if(LEADER_ONLY_99&&Number(rank)>1&&ovr===OVR_CEILING)ovr=OVR_CEILING-1;
+    return ovr;
+  }
+
+  function calculatedRows(state){
+    const categoryRows=state.categories.list();
+    const blocked=categoryRows.filter(row=>row.status!=='complete');
+    if(blocked.length)throw new Error(`[${VERSION}] Blocked category rows: ${blocked.map(row=>row.fighter).join(', ')}`);
+    const prepared=categoryRows.map(row=>{
+      const scores={
+        championship:round2(row.championship),
+        opponentQuality:round2(row.opponentQuality),
+        primeDominance:round2(row.primeDominance),
+        longevity:round2(row.longevity),
+        apex:round2(row.apex),
+        penalty:round2(row.penalty),
+        eraDepth:round2(row.eraDepth)
+      };
+      const weighted=weightedTotal(scores);
+      return {
+        fighter:row.fighter,
+        board:row.board,
+        scores,
+        weighted,
+        totalScore:weighted.totalScore,
+        calculatedRank:null,
+        calculatedOvr:null,
+        categoryTrace:row.traces
+      };
+    });
+    const men=assignRanks(prepared.filter(row=>row.board==='men'));
+    const women=assignRanks(prepared.filter(row=>row.board==='women'));
+    [...men,...women].forEach(row=>{row.calculatedOvr=calculateOvr(row.totalScore,row.board,row.calculatedRank);});
+    return {rows:[...men,...women],men,women};
   }
 
   function opponentRows(record,derived){
@@ -76,9 +158,7 @@
   function projectionRow(source,state,existing){
     const record=state.facts.get(source.fighter);
     const derived=state.facts.deriveFor(source.fighter);
-    const ovrRow=state.ovr.entryFor(source.fighter);
     if(!record||!derived)throw new Error(`[${VERSION}] Missing canonical fact projection for ${source.fighter}.`);
-    if(!ovrRow)throw new Error(`[${VERSION}] Missing calculated OVR for ${source.fighter}.`);
 
     const profile=existing.profiles.get(key(source.fighter));
     const board=existing.board.get(key(source.fighter));
@@ -116,22 +196,22 @@
       secondaryDivision,
       rank:Number(source.calculatedRank),
       allTimeRank:Number(source.calculatedRank),
-      championship:round2(source.scores.championship),
-      opponentQuality:round2(source.scores.opponentQuality),
-      primeDominance:round2(source.scores.primeDominance),
-      longevity:round2(source.scores.longevity),
-      apexPeak:round2(source.scores.apex),
-      apexPeakBonus:round2(source.scores.apex),
-      penalty:round2(source.scores.penalty),
-      lossPenalty:round2(source.scores.penalty),
-      lossContext:round2(source.scores.penalty),
-      eraDepthAdjustment:round2(source.scores.eraDepth),
-      baseScore:round2(weighted.baseScore),
-      preEraDepthTotalScore:round2(Number(weighted.baseScore||0)+Number(weighted.apex||0)+Number(weighted.penalty||0)),
+      championship:source.scores.championship,
+      opponentQuality:source.scores.opponentQuality,
+      primeDominance:source.scores.primeDominance,
+      longevity:source.scores.longevity,
+      apexPeak:source.scores.apex,
+      apexPeakBonus:source.scores.apex,
+      penalty:source.scores.penalty,
+      lossPenalty:source.scores.penalty,
+      lossContext:source.scores.penalty,
+      eraDepthAdjustment:source.scores.eraDepth,
+      baseScore:weighted.baseScore,
+      preEraDepthTotalScore:weighted.preEraDepthTotalScore,
       weightedScoreBreakdown:clone(weighted),
-      totalScore:round2(source.totalScore),
-      rawScore:round2(source.totalScore),
-      overallOvr:Number(ovrRow.calculatedOvr),
+      totalScore:source.totalScore,
+      rawScore:source.totalScore,
+      overallOvr:Number(source.calculatedOvr),
       ufcRecord:visibleStats.ufcRecord,
       ufcWins:Number(official.wins||0),
       ufcLosses:Number(official.losses||0),
@@ -159,8 +239,8 @@
       title:titleProjection(base,derived),
       opponents:opponentRows(record,derived),
       visibleStats,
-      scoreInputOwner:'canonical-category-calculators',
-      scoreInputVersion:state.finalScore.version,
+      scoreInputOwner:'category-calculators.js',
+      scoreInputVersion:state.categories.version,
       scoreInputSource:'canonical fighter facts + approved judgment inputs',
       overallScoreOwner:'ranking-pipeline.js',
       finalScoreEngineVersion:VERSION
@@ -170,16 +250,19 @@
   function buildProjection(){
     const state=sourceState();
     const existing=indexes(state.data);
-    const complete=state.finalScore.approvedReport.rows.filter(row=>row.status==='complete');
-    const rows=complete.map(source=>projectionRow(source,state,existing));
+    const calculated=calculatedRows(state);
+    const rows=calculated.rows.map(source=>projectionRow(source,state,existing));
     const men=rows.filter(row=>row.leaderboard==='men').sort((a,b)=>a.rank-b.rank||b.totalScore-a.totalScore||a.fighter.localeCompare(b.fighter));
     const women=rows.filter(row=>row.leaderboard==='women').sort((a,b)=>a.rank-b.rank||b.totalScore-a.totalScore||a.fighter.localeCompare(b.fighter));
     const byKey=new Map(rows.map(row=>[key(row.fighter),row]));
     return {
       version:VERSION,
-      sourceFinalScoreVersion:state.finalScore.version,
-      sourceOvrVersion:state.ovr.version,
       sourceFactsVersion:state.facts.version,
+      sourceCategoryVersion:state.categories.version,
+      categoryAudit:clone(state.categoryAudit),
+      weights:clone(WEIGHTS),
+      categoryMax:CATEGORY_MAX,
+      ovr:{floor:OVR_FLOOR,ceiling:OVR_CEILING,curve:OVR_CURVE,leaderOnly99:LEADER_ONLY_99,anchors:clone(OVR_ANCHORS)},
       rows,
       men,
       women,
@@ -216,17 +299,19 @@
       menCount:projection.men.length,
       womenCount:projection.women.length,
       facts:projection.sourceFactsVersion,
-      categoriesAndTotals:projection.sourceFinalScoreVersion,
-      ovr:projection.sourceOvrVersion,
+      categories:projection.sourceCategoryVersion,
+      weights:clone(WEIGHTS),
+      ovr:clone(projection.ovr),
       ownership:{
         facts:'canonical-fighter-facts.js',
         judgmentInputs:'approved canonical judgment inputs',
-        categories:'canonical category calculators',
+        categories:'category-calculators.js',
         totalRankOvr:'ranking-pipeline.js',
         runtimeProjection:'RANKING_DATA',
         presentation:'display/compare copy only'
       },
       frozenExpectedOutputsUsedAsAuthority:false,
+      shadowFinalOrOvrReportsUsedAsAuthority:false,
       appliedAt:new Date().toISOString()
     };
     state.data.liveScoreMode='fight-level-calculated-single-owner';
@@ -250,9 +335,15 @@
   const API={
     version:VERSION,
     role:'single production owner of calculated totals, ranks, OVRs, visible stats, and app projection',
+    weights:clone(WEIGHTS),
+    categoryMax:CATEGORY_MAX,
+    ovr:{floor:OVR_FLOOR,ceiling:OVR_CEILING,curve:OVR_CURVE,leaderOnly99:LEADER_ONLY_99,anchors:clone(OVR_ANCHORS)},
     mutatesCanonicalFacts:false,
     readsFrozenExpectedOutputsAsAuthority:false,
+    readsShadowFinalOrOvrReportsAsAuthority:false,
     calculatedFields:Array.from(CALCULATED_FIELDS),
+    weightedTotal,
+    calculateOvr,
     buildProjection,
     apply,
     latest:null
