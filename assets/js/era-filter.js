@@ -43,8 +43,11 @@
     if(!era)return true;
     if(explicitEraTags(name).has(era.id))return true;
     const ledger=ledgerFor(name);
-    const start=Number(String(ledger?.window?.start||'').slice(0,4));
-    const end=ledger?.window?.end?Number(String(ledger.window.end).slice(0,4)):currentYear;
+    const startText=String(ledger?.window?.start||'');
+    if(!/^\d{4}/.test(startText))return false;
+    const start=Number(startText.slice(0,4));
+    const endText=String(ledger?.window?.end||'');
+    const end=/^\d{4}/.test(endText)?Number(endText.slice(0,4)):currentYear;
     if(!Number.isFinite(start)||!Number.isFinite(end))return false;
     const eraEnd=era.endYear||currentYear;
     return start<=eraEnd&&end>=era.startYear;
@@ -159,7 +162,7 @@
   window.addEventListener('ufc-production-ranking-ready',scheduleApply);
 
   window.UFC_ERA_FILTER={
-    version:'era-filter-20260715a',
+    version:'era-filter-20260715b',
     apply,
     belongsToEra,
     selectedEra
