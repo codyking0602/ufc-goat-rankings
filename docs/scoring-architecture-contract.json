@@ -1,5 +1,5 @@
 {
-  "version": "scoring-architecture-contract-20260715f-retired-frozen-era-workflow",
+  "version": "scoring-architecture-contract-20260715g-current-era-audit",
   "expectedRosterCount": 73,
   "facts": {
     "path": "assets/data/canonical-fighter-facts.js",
@@ -207,7 +207,6 @@
   "retiredWorkflowPaths": [
     ".github/workflows/fighter-data-ownership-baseline.yml",
     ".github/workflows/runtime-scoring-audit.yml",
-    ".github/workflows/six-category-runtime-audit.yml",
-    ".github/workflows/canonical-division-era-depth-reconstruction.yml"
+    ".github/workflows/six-category-runtime-audit.yml"
   ]
 }
