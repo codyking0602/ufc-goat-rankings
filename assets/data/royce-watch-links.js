@@ -1,7 +1,17 @@
 // App-facing Watch Moment and signature-fight links only.
 (function(){
   'use strict';
-  const VERSION='royce-watch-links-20260715b-pantoja-leon';
+  const VERSION='royce-watch-links-20260715c-pantoja-guard';
+
+  function loadPantojaGuard(){
+    if(document.querySelector('[data-pantoja-final-roster-guard]'))return;
+    const script=document.createElement('script');
+    script.src='assets/data/pantoja-final-roster-guard.js?v=pantoja-final-roster-guard-20260715a';
+    script.setAttribute('data-pantoja-final-roster-guard','true');
+    document.body.appendChild(script);
+  }
+  loadPantojaGuard();
+
   if(typeof DISPLAY_OVERRIDES==='undefined')return;
 
   const WATCH_LINKS={
