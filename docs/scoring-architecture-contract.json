@@ -1,5 +1,5 @@
 {
-  "version": "scoring-architecture-contract-20260715b-presentation-clean",
+  "version": "scoring-architecture-contract-20260715c-no-manual-presentation-stats",
   "expectedRosterCount": 73,
   "facts": {
     "path": "assets/data/canonical-fighter-facts.js",
@@ -93,8 +93,10 @@
   },
   "presentation": {
     "displayOverridesPath": "assets/data/display-overrides.js",
+    "compareDataPath": "assets/compare-data.js",
     "fighterPacketsDirectory": "assets/data/fighter-packets",
     "forbiddenDirectFields": [
+      "snapshot",
       "overallOvr",
       "allTimeRank",
       "rankLabel",
@@ -145,6 +147,20 @@
       "value",
       "rawScore",
       "percentile"
+    ],
+    "forbiddenCompareProfileFields": [
+      "legacyStats",
+      "rank",
+      "overallOvr",
+      "totalScore",
+      "rawScore",
+      "championship",
+      "opponentQuality",
+      "primeDominance",
+      "longevity",
+      "apexPeak",
+      "penalty",
+      "eraDepthAdjustment"
     ],
     "fighterPacketForbiddenDisplayFields": [
       "overallOvr",
