@@ -218,6 +218,7 @@ The custom GPT knowledge upload itself is static, so the newly generated JSON mu
 - division conservation: every fighter’s allocation reconciles to the calculated overall score
 - Octagon Verdict package: 73 fighters and nine automatic division boards, generated from browser runtime
 - live Octagon Compare payload: current calculated ranks, OVRs, categories, résumé stats, and division rows
+- PR branch synchronized with `main`’s former JSON-only bot history and mergeable again
 - calculated snapshots: active; no `DISPLAY_OVERRIDES.snapshot` fallback ownership
 - calculated Compare stats: active; narrative copy remains presentation-only
 - production shell: no frozen scoring, reconstruction, late stat-mutation, or manual division-score ownership
