@@ -2,7 +2,7 @@
 (function(){
   'use strict';
 
-  const VERSION='production-ranking-bootstrap-20260715a-presentation-boundary';
+  const VERSION='production-ranking-bootstrap-20260715b-automatic-derived-outputs';
   const CALCULATED_STAT_FIELDS=new Set([
     'ufcRecord','titleFightWins','adjustedTitleWins','topFiveWins','top5Wins','rankedWins',
     'finishRatePct','primeRecord','roundsWonPct','activeEliteYears','timesFinishedPrime','throughPrimeUfcFights',
@@ -38,7 +38,8 @@
     ['assets/data/canonical-scoring-judgments.js?v=production-clean-canonical-scoring-judgments','data-production-clean-scoring-judgments'],
     ['assets/js/category-calculators.js?v=production-clean-category-calculators-20260714c','data-production-clean-category-calculators'],
     ['assets/js/ranking-pipeline.js?v=production-clean-ranking-pipeline-20260714c','data-production-clean-ranking-pipeline'],
-    ['assets/js/calculated-profile-runtime.js?v=production-clean-calculated-profile-runtime-20260714a','data-production-clean-calculated-profile-runtime']
+    ['assets/js/calculated-profile-runtime.js?v=production-clean-calculated-profile-runtime-20260714a','data-production-clean-calculated-profile-runtime'],
+    ['assets/js/division-ranking-pipeline.js?v=division-ranking-pipeline-20260715a-canonical-allocation','data-production-clean-division-ranking-pipeline']
   ];
 
   function loadScript(src,attribute){
@@ -119,16 +120,18 @@
     const audit=window.UFC_CATEGORY_CALCULATOR_AUDIT;
     if(audit?.passed!==true||audit?.completeFighterCount!==73)missing.push('complete seven-category calculation audit');
     if(!window.UFC_CALCULATED_PROFILE_RUNTIME)missing.push('calculated profile runtime');
+    if(!window.UFC_DIVISION_RANKING_PIPELINE?.rebuild)missing.push('automatic division ranking pipeline');
     if(missing.length)throw new Error(`Missing calculated ranking inputs: ${missing.join(', ')}`);
   }
 
-  function publishReady(report){
+  function publishReady(report,divisionReport){
     window.UFC_SCORING_PIPELINE={
       version:VERSION,
       status:'ready',
       owner:'ranking-pipeline.js',
       inputIsolation:'clean-canonical-rebuild',
       fighterCount:report.fighterCount,
+      divisionRankingVersion:divisionReport?.version||null,
       report
     };
     document.documentElement.setAttribute('data-scoring-pipeline','ready');
@@ -137,8 +140,8 @@
     window.UFC_CATEGORY_LEADERS?.render?.();
     window.UFC_DIVISION_RANKINGS?.render?.();
     window.UFC_OCTAGON_VERDICT_COMPARE_LAUNCHER?.render?.();
-    window.dispatchEvent(new CustomEvent('ufc-scoring-pipeline-ready',{detail:report}));
-    window.dispatchEvent(new CustomEvent('ufc-production-ranking-ready',{detail:report}));
+    window.dispatchEvent(new CustomEvent('ufc-scoring-pipeline-ready',{detail:{report,divisionReport}}));
+    window.dispatchEvent(new CustomEvent('ufc-production-ranking-ready',{detail:{report,divisionReport}}));
   }
 
   async function apply(){
@@ -151,8 +154,10 @@
       const report=pipeline.apply();
       stripPresentationScoreOwnership();
       syncComparePresentation();
-      publishReady(report);
-      window.UFC_PRODUCTION_RANKING_BOOTSTRAP={version:VERSION,status:'ready',inputIsolation:'clean-canonical-rebuild',report,stripPresentationScoreOwnership,syncComparePresentation};
+      const divisionReport=window.UFC_DIVISION_RANKING_PIPELINE.rebuild();
+      if(divisionReport?.passed!==true)throw new Error(`Automatic division rankings are ${divisionReport?.status||'blocked'}.`);
+      publishReady(report,divisionReport);
+      window.UFC_PRODUCTION_RANKING_BOOTSTRAP={version:VERSION,status:'ready',inputIsolation:'clean-canonical-rebuild',report,divisionReport,stripPresentationScoreOwnership,syncComparePresentation};
     }catch(error){
       document.documentElement.setAttribute('data-production-ranking-bootstrap',`${VERSION}-error`);
       window.UFC_PRODUCTION_RANKING_BOOTSTRAP={version:VERSION,status:'error',error:String(error?.message||error)};
