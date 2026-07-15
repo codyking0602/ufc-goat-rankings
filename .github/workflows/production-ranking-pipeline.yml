@@ -17,6 +17,7 @@ on:
       - 'assets/js/production-ranking-bootstrap.js'
       - 'assets/js/calculated-profile-runtime.js'
       - 'scripts/generate-canonical-scoring-judgments.mjs'
+      - 'scripts/generate-presentation-only-data.mjs'
       - 'scripts/test-ranking-pipeline.mjs'
       - 'scripts/test-production-runtime-boundaries.mjs'
       - '.github/workflows/production-ranking-pipeline.yml'
@@ -42,3 +43,19 @@ jobs:
         run: node scripts/test-ranking-pipeline.mjs
       - name: Certify runtime ownership boundaries
         run: node scripts/test-production-runtime-boundaries.mjs
+      - name: Generate reviewable presentation-only files
+        run: node scripts/generate-presentation-only-data.mjs | tee /tmp/presentation-cleanup-report.json
+      - name: Verify generated presentation syntax
+        run: |
+          node --check assets/data/display-overrides.js
+          node --check assets/compare-data.js
+      - name: Upload presentation cleanup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: presentation-only-data-cleanup
+          path: |
+            assets/data/display-overrides.js
+            assets/compare-data.js
+            /tmp/presentation-cleanup-report.json
+          if-no-files-found: error
+          retention-days: 3
