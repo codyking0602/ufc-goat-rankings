@@ -2,7 +2,7 @@
 (function(){
   'use strict';
 
-  const VERSION='production-ranking-bootstrap-20260714c-calculated-profile';
+  const VERSION='production-ranking-bootstrap-20260714d-final-write-barrier';
   const CALCULATED_STAT_FIELDS=new Set([
     'ufcRecord','titleFightWins','adjustedTitleWins','topFiveWins','top5Wins','rankedWins',
     'finishRatePct','primeRecord','roundsWonPct','activeEliteYears','timesFinishedPrime','throughPrimeUfcFights',
@@ -37,6 +37,17 @@
       script.onerror=()=>resolve();
       document.body.appendChild(script);
     });
+  }
+
+  function sleep(ms){return new Promise(resolve=>setTimeout(resolve,ms));}
+  async function waitForCompatibilityDrain(timeoutMs=15000){
+    const started=Date.now();
+    while(Date.now()-started<timeoutMs){
+      if(window.UFC_CATEGORY_PERCENTILE_TIERS)return true;
+      await sleep(25);
+    }
+    console.warn(`[${VERSION}] Legacy compatibility chain did not publish its terminal marker before timeout; calculated pipeline will still take final ownership.`);
+    return false;
   }
 
   function removeCalculatedKeys(object){
@@ -101,12 +112,13 @@
     if(missing.length)throw new Error(`Missing calculated ranking inputs: ${missing.join(', ')}`);
   }
 
-  function publishReady(report){
+  function publishReady(report,compatibilityDrained){
     window.UFC_SCORING_PIPELINE={
       version:VERSION,
       status:'ready',
       owner:'ranking-pipeline.js',
       fighterCount:report.fighterCount,
+      compatibilityDrained,
       report
     };
     document.documentElement.setAttribute('data-scoring-pipeline','ready');
@@ -122,6 +134,7 @@
   async function apply(){
     try{
       if(window.UFC_RANKING_DATA_PATCHES_READY)await window.UFC_RANKING_DATA_PATCHES_READY;
+      const compatibilityDrained=await waitForCompatibilityDrain();
       for(const [src,attribute] of scripts)await loadScript(src,attribute);
       assertApprovedInputs();
       const pipeline=window.UFC_RANKING_PIPELINE;
@@ -129,8 +142,8 @@
       const report=pipeline.apply();
       stripPresentationScoreOwnership();
       syncComparePresentation();
-      publishReady(report);
-      window.UFC_PRODUCTION_RANKING_BOOTSTRAP={version:VERSION,status:'ready',report,stripPresentationScoreOwnership,syncComparePresentation};
+      publishReady(report,compatibilityDrained);
+      window.UFC_PRODUCTION_RANKING_BOOTSTRAP={version:VERSION,status:'ready',compatibilityDrained,report,stripPresentationScoreOwnership,syncComparePresentation};
     }catch(error){
       document.documentElement.setAttribute('data-production-ranking-bootstrap',`${VERSION}-error`);
       window.UFC_PRODUCTION_RANKING_BOOTSTRAP={version:VERSION,status:'error',error:String(error?.message||error)};
