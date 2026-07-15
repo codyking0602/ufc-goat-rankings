@@ -11,31 +11,50 @@ const page=await browser.newPage({viewport:{width:1280,height:900}});
 const pageErrors=[];
 page.on('pageerror',error=>pageErrors.push(error.message));
 
+const captureRuntime=()=>page.evaluate(()=>({
+  topTen:window.RANKING_DATA.men.slice(0,10).map(row=>row.fighter),
+  projectionTopTen:window.UFC_CALCULATED_RANKING_PROJECTION?.men?.slice(0,10).map(row=>row.fighter)||[],
+  reportTopTen:window.UFC_RANKING_PIPELINE?.latest?.menTopTen?.map(row=>row.fighter)||[],
+  jon:window.RANKING_DATA.men.find(row=>row.fighter==='Jon Jones'),
+  gsp:window.RANKING_DATA.men.find(row=>row.fighter==='Georges St-Pierre'),
+  amanda:window.RANKING_DATA.women.find(row=>row.fighter==='Amanda Nunes'),
+  valentina:window.RANKING_DATA.women.find(row=>row.fighter==='Valentina Shevchenko'),
+  scoringRecordsLoaded:Boolean(window.UFC_CANONICAL_SCORING_RECORDS),
+  legacyEngineLoaded:Boolean(window.UFC_SCORING_ENGINE),
+  legacyFinalizerLoaded:Boolean(window.UFC_SCORING_OWNERSHIP_FINALIZER),
+  scoreMode:window.RANKING_DATA.liveScoreMode,
+  categoryVersion:window.UFC_CATEGORY_CALCULATORS?.version||null,
+  primeReconstructionLoaded:Boolean(window.UFC_CANONICAL_PRIME_DOMINANCE_RECONSTRUCTION),
+  longevityReconstructionLoaded:Boolean(window.UFC_CANONICAL_LONGEVITY_RECONSTRUCTION),
+  compareSource:window.COMPARE_PROFILES?.['Jon Jones']?.legacyStats?.source||null,
+  overrideRank:window.DISPLAY_OVERRIDES?.['Jon Jones']?.allTimeRank,
+  overrideOvr:window.DISPLAY_OVERRIDES?.['Jon Jones']?.overallOvr,
+  overrideSnapshot:window.DISPLAY_OVERRIDES?.['Jon Jones']?.snapshot,
+  writers:{
+    liveScoreUi:window.UFC_SIX_CATEGORY_SCORE_MODEL||null,
+    championship:window.UFC_CHAMPIONSHIP_RESUME_LIVE||null,
+    opponentQuality:window.UFC_OPPONENT_QUALITY_LIVE||null,
+    prime:window.UFC_PRIME_DOMINANCE_LIVE_PROMOTER||null,
+    longevity:window.UFC_LONGEVITY_LIVE_PROMOTER||null,
+    apex:window.UFC_APEX_PEAK_LIVE_BONUS||null,
+    dynamicRanks:window.UFC_DYNAMIC_RANKS||null
+  }
+}));
+
 try{
   await page.goto('http://127.0.0.1:4173/index.html',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>document.documentElement.getAttribute('data-scoring-pipeline')==='ready',null,{timeout:90000});
   await page.waitForSelector('#menList .fighter-row',{timeout:15000});
 
-  const runtime=await page.evaluate(()=>({
-    topTen:window.RANKING_DATA.men.slice(0,10).map(row=>row.fighter),
-    jon:window.RANKING_DATA.men.find(row=>row.fighter==='Jon Jones'),
-    gsp:window.RANKING_DATA.men.find(row=>row.fighter==='Georges St-Pierre'),
-    amanda:window.RANKING_DATA.women.find(row=>row.fighter==='Amanda Nunes'),
-    valentina:window.RANKING_DATA.women.find(row=>row.fighter==='Valentina Shevchenko'),
-    scoringRecordsLoaded:Boolean(window.UFC_CANONICAL_SCORING_RECORDS),
-    legacyEngineLoaded:Boolean(window.UFC_SCORING_ENGINE),
-    legacyFinalizerLoaded:Boolean(window.UFC_SCORING_OWNERSHIP_FINALIZER),
-    scoreMode:window.RANKING_DATA.liveScoreMode,
-    categoryVersion:window.UFC_CATEGORY_CALCULATORS?.version||null,
-    primeReconstructionLoaded:Boolean(window.UFC_CANONICAL_PRIME_DOMINANCE_RECONSTRUCTION),
-    longevityReconstructionLoaded:Boolean(window.UFC_CANONICAL_LONGEVITY_RECONSTRUCTION),
-    compareSource:window.COMPARE_PROFILES?.['Jon Jones']?.legacyStats?.source||null,
-    overrideRank:window.DISPLAY_OVERRIDES?.['Jon Jones']?.allTimeRank,
-    overrideOvr:window.DISPLAY_OVERRIDES?.['Jon Jones']?.overallOvr,
-    overrideSnapshot:window.DISPLAY_OVERRIDES?.['Jon Jones']?.snapshot
-  }));
+  const atReady=await captureRuntime();
+  await page.waitForTimeout(6500);
+  const runtime=await captureRuntime();
+  console.log('PRODUCTION_BROWSER_PREFLIGHT');
+  console.log(JSON.stringify({atReady:{topTen:atReady.topTen,projectionTopTen:atReady.projectionTopTen,reportTopTen:atReady.reportTopTen},stable:{topTen:runtime.topTen,projectionTopTen:runtime.projectionTopTen,reportTopTen:runtime.reportTopTen},writers:runtime.writers,pageErrors},null,2));
 
-  assert.deepEqual(runtime.topTen,expectedTopTen);
+  assert.deepEqual(runtime.projectionTopTen,expectedTopTen,'calculated projection top ten');
+  assert.deepEqual(runtime.reportTopTen,expectedTopTen,'ranking pipeline report top ten');
+  assert.deepEqual(runtime.topTen,expectedTopTen,'rendered RANKING_DATA top ten');
   assert.equal(runtime.jon.rank,1);assert.equal(runtime.jon.overallOvr,99);
   assert.equal(runtime.gsp.rank,2);assert.equal(runtime.gsp.overallOvr,96);
   assert.equal(runtime.amanda.rank,1);assert.equal(runtime.amanda.overallOvr,99);
@@ -95,17 +114,7 @@ try{
   assert.deepEqual(pageErrors,[],'rendered app has no uncaught page errors');
 
   console.log('PRODUCTION_BROWSER_CERTIFICATION');
-  console.log(JSON.stringify({
-    topTen:runtime.topTen,
-    jonOvr:runtime.jon.overallOvr,
-    gspOvr:runtime.gsp.overallOvr,
-    snapshot:'calculated visibleStats rendered',
-    compare:'calculated rank/OVR rendered',
-    top10Game:'100/100 for model-order list',
-    blindResume:'calculated seven-stat matchup rendered',
-    legacyRuntimeLoaded:false,
-    pageErrors:pageErrors.length
-  },null,2));
+  console.log(JSON.stringify({topTen:runtime.topTen,jonOvr:runtime.jon.overallOvr,gspOvr:runtime.gsp.overallOvr,snapshot:'calculated visibleStats rendered',compare:'calculated rank/OVR rendered',top10Game:'100/100 for model-order list',blindResume:'calculated seven-stat matchup rendered',legacyRuntimeLoaded:false,pageErrors:pageErrors.length},null,2));
 }finally{
   await browser.close();
 }
