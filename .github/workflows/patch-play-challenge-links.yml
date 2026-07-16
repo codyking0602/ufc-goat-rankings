@@ -54,3 +54,4 @@ jobs:
           git add index.html assets/js/play-shared-system.js
           git commit -m "Make Play challenge links cache-safe across new tabs"
           git push
+# trigger: 20260715f
