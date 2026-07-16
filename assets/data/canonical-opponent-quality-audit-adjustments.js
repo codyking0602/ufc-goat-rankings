@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-opponent-quality-audit-adjustments-20260715b-merab';
+  const VERSION='canonical-opponent-quality-audit-adjustments-20260716c-gaethje-johnson';
   const ADJUSTMENTS=Object.freeze([
     Object.freeze({
       fighter:'Merab Dvalishvili',
@@ -37,6 +37,17 @@
       adjustmentType:'late-career-timing',
       adjustmentValue:-.15,
       note:'Former title challenger, discounted for the clear late-career decline entering the fight.'
+    }),
+    Object.freeze({
+      fighter:'Justin Gaethje',
+      opponent:'Michael Johnson',
+      occurrence:1,
+      baseTier:'top-ten',
+      baseCredit:.85,
+      finalCredit:.85,
+      adjustmentType:'factual-tier-correction',
+      adjustmentValue:0,
+      note:'Cody-approved fighter audit: Michael Johnson receives full 0.85 top-ten win credit based on his ranking context at the time.'
     })
   ]);
 
@@ -85,8 +96,12 @@
 
   let validation={applied:[],missing:ADJUSTMENTS.map(row=>({fighter:row.fighter,opponent:row.opponent,occurrence:row.occurrence}))};
   if(originalEntryFor){
-    const merab=originalEntryFor('opponentQuality','Merab Dvalishvili');
-    validation=applyToRow('Merab Dvalishvili',merab);
+    validation={applied:[],missing:[]};
+    [...new Set(ADJUSTMENTS.map(row=>row.fighter))].forEach(fighter=>{
+      const result=applyToRow(fighter,originalEntryFor('opponentQuality',fighter));
+      validation.applied.push(...result.applied);
+      validation.missing.push(...result.missing);
+    });
     api.entryFor=function(category,fighter){
       const row=originalEntryFor(category,fighter);
       if(category!=='opponentQuality')return row;
@@ -97,7 +112,7 @@
         const rows=originalList(category);
         if(category!=='opponentQuality')return rows;
         return rows.map(row=>{
-          const fighter=row?.inputs?.[0]?.fighter||row?.fighter||row?.normalized||'';
+          const fighter=row?.fighter||row?.inputs?.[0]?.fighter||row?.normalized||'';
           return applyToRow(fighter,row).row;
         });
       };
