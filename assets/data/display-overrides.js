@@ -318,5 +318,37 @@ const DISPLAY_OVERRIDES = {
       ]
     ],
     "finalTakeaway": "Yan is a legit modern bantamweight title case: not a top-tier GOAT resume, but clearly strong enough that he should appear in the ranking and compare mode."
+  },
+  "Paddy Pimblett": {
+    "divisionLabel": "LW",
+    "resumeTag": "Current lightweight contender",
+    "photoUrl": "assets/fighters/paddy-pimblett.webp",
+    "thumbUrl": "assets/fighters/paddy-pimblett-thumb.webp",
+    "oneLiner": "A fearless modern lightweight contender with a 7-0 UFC start, dangerous submission offense, and a rebound win that proved he belongs against ranked opposition.",
+    "whyRankedHere": "Pimblett earns a place in the UFC-only ranking through eight UFC wins, six finishes, and a current elite stretch highlighted by King Green, Michael Chandler, and Benoit Saint Denis. The Saint Denis submission is the clearest proof that his contender run is more than popularity.",
+    "whyNotHigher": "He has not won a UFC championship fight, owns only one clear top-five win, and his elite window is still short. The Justin Gaethje interim-title loss also keeps him below established champions and long-term contenders.",
+    "keyJudgmentCalls": [
+      [
+        "Prime start",
+        "King Green begins the counted elite window; the earlier unbeaten run builds the record but not the GOAT-level prime."
+      ],
+      [
+        "Jared Gordon",
+        "the official win remains in the UFC record, but the disputed decision receives no meaningful opponent-quality boost."
+      ],
+      [
+        "Tony Ferguson",
+        "counts as a UFC win but receives minimal quality credit because Ferguson was deep into his decline."
+      ],
+      [
+        "Michael Chandler",
+        "a ranked finish with real value, discounted for Chandler's age, inactivity, and recent form."
+      ],
+      [
+        "Justin Gaethje",
+        "counts as a prime elite decision loss without a finish add-on."
+      ]
+    ],
+    "finalTakeaway": "Pimblett is now a legitimate UFC lightweight contender with real finishing proof. His resume has entered the all-time database, but title success and a deeper elite win ledger are still required before he can challenge established greats."
   }
 };
