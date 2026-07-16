@@ -1,0 +1,44 @@
+{
+  "events": [
+    {
+      "eventId": "ufc-abu-dhabi-2026-07-25",
+      "name": "UFC Fight Night",
+      "subtitle": "Ankalaev vs. Guskov",
+      "eventType": "fight-night",
+      "eventDate": "2026-07-25T16:00:00.000Z",
+      "location": "Etihad Arena · Abu Dhabi, United Arab Emirates",
+      "cardRule": "Main card only",
+      "status": "upcoming",
+      "syncUntil": "2026-07-25T19:30:00.000Z",
+      "idPrefix": "abu26",
+      "minFights": 8,
+      "mainCardFightCount": 6,
+      "expectedMainEvent": [
+        "Magomed Ankalaev",
+        "Bogdan Guskov"
+      ],
+      "sectionStarts": {
+        "Prelims": "2026-07-25T13:00:00.000Z",
+        "Main Card": "2026-07-25T16:00:00.000Z"
+      },
+      "defaultBoutMinutes": 30,
+      "official": {
+        "discoveryUrl": "https://www.ufc.com/events",
+        "fallbackUrl": "https://www.ufc.com/event/ufc-fight-night-july-25-2026",
+        "discoveryTerms": [
+          "ankalaev"
+        ],
+        "dateTerms": [
+          "july 25",
+          "jul 25"
+        ]
+      },
+      "fallbackSources": [
+        {
+          "type": "mma-mania",
+          "url": "https://www.mmamania.com/ufc-fight-cards/447644/latest-ufc-abu-dhabi-fight-card-paramount-start-time-date-location-ankalaev-vs-guskov"
+        }
+      ]
+    }
+  ]
+}
