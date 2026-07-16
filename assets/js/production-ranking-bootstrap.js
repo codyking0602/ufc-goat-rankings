@@ -2,7 +2,7 @@
 (function(){
   'use strict';
 
-  const VERSION='production-ranking-bootstrap-20260716q-tom-aspinall-77';
+  const VERSION='production-ranking-bootstrap-20260716r-tom-aspinall-photos';
   const EXPECTED_FIGHTER_COUNT=77;
   const CALCULATED_STAT_FIELDS=new Set([
     'ufcRecord','titleFightWins','adjustedTitleWins','topFiveWins','top5Wins','rankedWins',
@@ -41,7 +41,7 @@
     ['assets/data/canonical-championship-audit-adjustments.js?v=canonical-championship-audit-adjustments-20260715a-conor-mendes','data-production-clean-championship-audit-adjustments'],
     ['assets/js/category-calculators.js?v=production-clean-category-calculators-20260714c','data-production-clean-category-calculators'],
     ['assets/data/canonical-roster-batch-ten.js?v=canonical-roster-batch-ten-20260715b-pantoja-paddy-weidman','data-production-clean-roster-batch-ten'],
-    ['assets/data/canonical-roster-batch-eleven.js?v=canonical-roster-batch-eleven-20260716b-tom-aspinall','data-production-clean-roster-batch-eleven'],
+    ['assets/data/canonical-roster-batch-eleven.js?v=canonical-roster-batch-eleven-20260716c-tom-aspinall-photos','data-production-clean-roster-batch-eleven'],
     ['assets/js/ranking-pipeline.js?v=production-clean-ranking-pipeline-20260714c','data-production-clean-ranking-pipeline'],
     ['assets/js/calculated-profile-runtime.js?v=production-clean-calculated-profile-runtime-20260715c-longest-win-streak','data-production-clean-calculated-profile-runtime'],
     ['assets/js/division-ranking-pipeline.js?v=division-ranking-pipeline-20260715b-openweight-win-qualified','data-production-clean-division-ranking-pipeline'],
