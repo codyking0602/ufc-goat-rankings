@@ -1,9 +1,10 @@
 // Cody-approved fight-level Championship adjustments from fighter audits.
-// Inputs only: never writes category scores, totals, ranks, OVRs, profiles, or Compare Mode.
+// Approved inputs remain the score authority. This layer also aligns the visible adjusted-title-credit
+// projection with those same approved inputs; it never writes category totals, ranks, OVRs, profiles, or Compare Mode.
 (function(){
   'use strict';
 
-  const VERSION='canonical-championship-audit-adjustments-20260716b-gaethje-paddy';
+  const VERSION='canonical-championship-audit-adjustments-20260716c-title-credit-alignment';
   const ADJUSTMENTS=Object.freeze([
     Object.freeze({
       fighter:'Conor McGregor',
@@ -28,8 +29,12 @@
   ]);
 
   const clean=value=>String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/[^a-z0-9']+/g,' ').replace(/\s+/g,' ').trim();
+  const round2=value=>{const rounded=Math.round((Number(value||0)+Number.EPSILON)*100)/100;return Object.is(rounded,-0)?0:rounded;};
+  const clone=value=>value===undefined?undefined:JSON.parse(JSON.stringify(value));
   const api=window.UFC_CANONICAL_SCORING_JUDGMENTS||null;
   const originalEntryFor=api?.entryFor?.bind(api)||null;
+  const facts=window.UFC_CANONICAL_FIGHTER_FACTS||null;
+  const originalDeriveFor=facts?.deriveFor?.bind(facts)||null;
 
   function adjustmentsFor(fighter){
     const target=clean(fighter);
@@ -88,17 +93,48 @@
     };
   }
 
+  function scoreFacingAdjustedTitleCredit(fighter){
+    const row=api?.entryFor?.('championship',fighter);
+    if(!Array.isArray(row?.inputs))return null;
+    if(row.inputs.some(input=>!Number.isFinite(Number(input?.finalAdjustedCredit))))return null;
+    return round2(row.inputs.reduce((sum,input)=>sum+Number(input.finalAdjustedCredit),0));
+  }
+
+  let visibleProjectionAlignment={applied:false,reason:'Missing canonical deriveFor or scoring judgments'};
+  if(originalDeriveFor&&api?.entryFor){
+    facts.deriveFor=function(fighter){
+      const derived=originalDeriveFor(fighter);
+      const adjustedTitleWins=scoreFacingAdjustedTitleCredit(fighter);
+      if(!derived||adjustedTitleWins===null)return derived;
+      const next=clone(derived);
+      next.championship={
+        ...(next.championship||{}),
+        adjustedTitleWins,
+        adjustedTitleCreditSource:'approved Championship scoring inputs'
+      };
+      return next;
+    };
+    visibleProjectionAlignment={
+      applied:true,
+      source:'approved Championship scoring inputs',
+      field:'derived.championship.adjustedTitleWins',
+      purpose:'Keep the visible adjusted-title-credit total equal to the inputs that produce the Championship score.'
+    };
+  }
+
   const report={
     version:VERSION,
     applied:Boolean(originalEntryFor)&&validation.missing.length===0,
-    passed:Boolean(originalEntryFor)&&validation.missing.length===0&&validation.applied.length===ADJUSTMENTS.length,
+    passed:Boolean(originalEntryFor)&&validation.missing.length===0&&validation.applied.length===ADJUSTMENTS.length&&visibleProjectionAlignment.applied,
     adjustmentCount:ADJUSTMENTS.length,
     appliedCount:validation.applied.length,
     missing:validation.missing,
     appliedAdjustments:validation.applied,
+    visibleProjectionAlignment,
     source:'Cody-approved fighter audit',
     wrapsCanonicalJudgmentAccess:true,
-    mutatesOnlyChampionshipInputs:true,
+    wrapsCanonicalVisibleProjection:true,
+    mutatesOnlyChampionshipInputsAndVisibleAdjustedTitleCredit:true,
     mutatesRankingData:false
   };
   window.UFC_CANONICAL_CHAMPIONSHIP_AUDIT_ADJUSTMENTS=report;
