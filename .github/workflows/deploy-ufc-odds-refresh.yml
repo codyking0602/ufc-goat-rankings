@@ -2,9 +2,19 @@ name: Deploy UFC Odds Refresh
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'supabase/functions/refresh-ufc-odds/**'
+      - '.github/workflows/deploy-ufc-odds-refresh.yml'
 
 permissions:
   contents: read
+
+concurrency:
+  group: deploy-ufc-odds-refresh
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -41,7 +51,7 @@ jobs:
             --project-ref "$PROJECT_REF" \
             --no-verify-jwt
 
-      - name: Test refresh
+      - name: Test card and odds refresh
         shell: bash
         run: |
           curl --fail-with-body --retry 2 \
