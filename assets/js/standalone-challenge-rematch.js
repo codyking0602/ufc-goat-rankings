@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='standalone-challenge-rematch-20260716a';
+  const VERSION='standalone-challenge-rematch-20260716b-find-leader-score';
   const profile=window.UFC_PLAY_PROFILE;
   const client=profile?.client;
   const statusNode=document.getElementById('challengeStatus');
@@ -34,6 +34,15 @@
     url.searchParams.set('code',cleanCode(code));
     url.searchParams.set('v','1');
     return url.toString();
+  }
+
+  function setupForRematch(rematch){
+    if(rematch.gameType!=='find-leader')return rematch.setup;
+    return {
+      ...rematch.setup,
+      challengerScore:Number(rematch.result?.score)||1,
+      challengerPerfect:Boolean(rematch.result?.perfect)
+    };
   }
 
   async function shareOneLink(url){
@@ -86,7 +95,7 @@
           p_game_version:rematch.gameVersion||`${rematch.gameType}-standalone-v1`,
           p_group_code:identity.groupCode,
           p_member_token:identity.memberToken,
-          p_setup:rematch.setup,
+          p_setup:setupForRematch(rematch),
           p_result:rematch.result,
           p_metadata:metadata,
           p_expires_days:365
