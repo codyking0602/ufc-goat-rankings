@@ -1,0 +1,47 @@
+name: Finalize Intelligence matchup cleanup
+
+on:
+  push:
+    paths:
+      - '.github/workflows/finalize-intelligence-matchup-cleanup.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Cache bust Intelligence cleanup
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          index_path = Path('index.html')
+          index = index_path.read_text(encoding='utf-8')
+          index = re.sub(r'<meta name="app-build" content="[^"]*"\s*/>', '<meta name="app-build" content="20260716-intelligence-matchup-clean" />', index, count=1)
+          index = re.sub(r'assets/css/intelligence\.css\?v=[^"\s]+', 'assets/css/intelligence.css?v=intelligence-css-20260716d-matchup-clean', index, count=1)
+          index = re.sub(r'assets/js/production-ranking-bootstrap\.js\?v=[^"\s]+', 'assets/js/production-ranking-bootstrap.js?v=production-ranking-bootstrap-20260716p-intelligence-skip', index, count=1)
+          index_path.write_text(index, encoding='utf-8')
+
+          bootstrap_path = Path('assets/js/production-ranking-bootstrap.js')
+          bootstrap = bootstrap_path.read_text(encoding='utf-8')
+          bootstrap = re.sub(r"const VERSION='[^']+';", "const VERSION='production-ranking-bootstrap-20260716p-intelligence-skip';", bootstrap, count=1)
+          bootstrap = bootstrap.replace(
+              'assets/js/octagon-verdict-compare-launcher.js?v=octagon-verdict-compare-launcher-20260715a-live-json',
+              'assets/js/octagon-verdict-compare-launcher.js?v=octagon-verdict-compare-launcher-20260716b-intelligence-skip'
+          )
+          bootstrap_path.write_text(bootstrap, encoding='utf-8')
+          PY
+      - name: Commit cleanup
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/finalize-intelligence-matchup-cleanup.yml
+          git add index.html assets/js/production-ranking-bootstrap.js
+          git commit -m "Finalize compact Intelligence matchup builder"
+          git push
