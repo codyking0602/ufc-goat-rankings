@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='play-daily-rotation-20260716b-find-leader-first';
+  const VERSION='play-daily-rotation-20260716c-card-order-swipe';
   const ORDER=['find-leader','keep-cut','better-than','blind','blind-rank','top10'];
   const ROTATION=[
     {
@@ -55,14 +55,24 @@
     });
   }
 
+  function titleFor(id){
+    return ({'find-leader':'Find the Leader','keep-cut':'Keep 4, Cut 4','better-than':'Better Than…','blind':'Blind Resume','blind-rank':'Blind Rank 5','top10':'Build Your Top 10'})[id]||'';
+  }
+
   function cardFor(id){
     const hub=document.getElementById('playHub');
     if(!hub)return null;
-    return hub.querySelector(`[data-open-game="${id}"]`)
-      || [...hub.querySelectorAll('.play-game-card')].find(card=>{
-        const title=card.querySelector('.play-game-copy strong')?.textContent.trim();
-        return ({'find-leader':'Find the Leader','keep-cut':'Keep 4, Cut 4','better-than':'Better Than…','blind':'Blind Resume','blind-rank':'Blind Rank 5','top10':'Build Your Top 10'})[id]===title;
-      })||null;
+    return hub.querySelector(`.play-game-card[data-open-game="${id}"]`)
+      || [...hub.querySelectorAll('.play-game-card')].find(card=>card.querySelector('.play-game-copy strong')?.textContent.trim()===titleFor(id))
+      || null;
+  }
+
+  function repairDailyCard(){
+    const hub=document.getElementById('playHub');
+    const card=hub?.querySelector('.play-daily-card');
+    if(!hub||!card)return;
+    hub.querySelectorAll('.play-daily-button,[data-daily-board-open]').forEach(node=>node.remove());
+    hub.querySelectorAll('.play-daily-actions').forEach(node=>{if(!node.children.length)node.remove();});
   }
 
   function makeLive(card,id){
@@ -78,6 +88,7 @@
   }
 
   function reorderGames(){
+    repairDailyCard();
     const grid=document.querySelector('#playHub .play-game-grid');
     if(!grid)return false;
     ORDER.forEach(id=>{
@@ -85,6 +96,7 @@
       makeLive(card,id);
       if(card)grid.appendChild(card);
     });
+    [...grid.children].forEach(child=>{if(!child.classList?.contains('play-game-card'))child.remove();});
     const api=window.UFC_PLAY_HUB;
     if(Array.isArray(api?.games)){
       const rows=new Map(api.games.map(game=>[game.id,game]));
@@ -106,26 +118,31 @@
     currentContext=context&&context.game_type===daily.gameType?context:null;
     const card=document.querySelector('#playHub .play-daily-card');
     if(!card)return false;
+    repairDailyCard();
     const date=card.querySelector('#playDailyDate');
     const title=card.querySelector('#playDailyTitle');
     const copy=card.querySelector('.play-daily-copy>p');
     const details=card.querySelector('.play-daily-details');
-    const button=card.querySelector('.play-daily-button');
     const visual=card.querySelector('.play-daily-visual');
     if(date)date.textContent=dateLabel(day);
     if(title)title.textContent=daily.title;
     if(copy)copy.textContent=daily.description;
     if(details)details.innerHTML=daily.details.map(item=>`<span>${esc(item)}</span>`).join('');
-    if(button){
-      button.dataset.dailyRotationOpen='true';
-      button.dataset.dailyGame=daily.id;
-      button.dataset.openGame=daily.id;
-      button.dataset.daily='true';
-      button.innerHTML=`PLAY TODAY'S CHALLENGE <b>→</b>`;
-    }
     if(visual)visual.innerHTML=dailyVisual(daily);
+    let hint=card.querySelector('.play-daily-swipe-hint');
+    if(!hint){
+      hint=document.createElement('span');
+      hint.className='play-daily-swipe-hint';
+      card.appendChild(hint);
+    }
+    hint.textContent='TAP TO PLAY · SWIPE FOR LEADERBOARD →';
     card.dataset.dailyGame=daily.gameType;
+    card.dataset.dailyRotationCard='true';
+    card.setAttribute('role','button');
+    card.setAttribute('tabindex','0');
+    card.setAttribute('aria-label',`Play today's ${daily.title}. Swipe right for today's leaderboard.`);
     document.documentElement.setAttribute('data-daily-game',daily.gameType);
+    bindDailyCard(card);
     window.dispatchEvent(new CustomEvent('ufc-play-daily-rotation-ready',{detail:{day,daily,context:currentContext}}));
     return true;
   }
@@ -185,19 +202,31 @@
     }finally{opening=false;}
   }
 
+  function bindDailyCard(card){
+    if(!card||card.dataset.dailyTapBound===VERSION)return;
+    card.dataset.dailyTapBound=VERSION;
+    let start=null;
+    card.addEventListener('pointerdown',event=>{start={x:event.clientX,y:event.clientY};});
+    card.addEventListener('pointercancel',()=>{start=null;});
+    card.addEventListener('pointerup',event=>{
+      if(!start)return;
+      const distance=Math.hypot(event.clientX-start.x,event.clientY-start.y);
+      start=null;
+      if(distance<=10)openDaily();
+    });
+    card.addEventListener('keydown',event=>{
+      if(event.key!=='Enter'&&event.key!==' ')return;
+      event.preventDefault();
+      openDaily();
+    });
+  }
+
   async function install(){
     try{
       await waitFor(()=>document.querySelector('#playHub .play-game-grid')&&window.UFC_PLAY_HUB);
       reorderGames();
       updateDailyCard();
       contextForCurrent().catch(()=>undefined);
-      document.addEventListener('click',event=>{
-        const trigger=event.target.closest?.('[data-daily-rotation-open]');
-        if(!trigger)return;
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        openDaily();
-      },true);
       window.addEventListener('ufc-play-hub-ready',()=>{reorderGames();updateDailyCard(currentContext);});
       window.UFC_PLAY_DAILY_ROTATION={version:VERSION,order:[...ORDER],rotation:ROTATION.map(row=>({...row})),centralDay,dailyFor,get currentContext(){return currentContext;},contextForCurrent,openDaily,reorderGames,updateDailyCard};
       document.documentElement.setAttribute('data-play-daily-rotation',VERSION);
