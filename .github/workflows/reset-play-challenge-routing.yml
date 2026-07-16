@@ -1,0 +1,151 @@
+name: Reset Play challenge routing
+
+on:
+  push:
+    paths:
+      - '.github/workflows/reset-play-challenge-routing.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  reset:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove observer-driven challenge routing
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          shared_path = Path('assets/js/play-shared-system.js')
+          shared = shared_path.read_text()
+          shared = shared.replace(
+              "const VERSION='play-shared-system-20260715b-generic-adapters';",
+              "const VERSION='play-shared-system-20260715j-event-driven';"
+          )
+          shared = shared.replace(
+              "url.searchParams.set('playbuild','20260715f');",
+              "url.searchParams.set('playbuild','20260715j');"
+          )
+
+          old_observer = """    const observer=new MutationObserver(()=>{
+      requestAnimationFrame(()=>{
+        decorateAdapters();
+        submitActiveChallenge();
+        submitDailyIfComplete();
+        if(activeChallenge&&!activeChallenge.submitted){
+          const adapter=adapterFor(activeChallenge.game_type);
+          if(adapter)renderChallengeBanner(activeChallenge,adapter);
+        }
+      });
+    });
+    observer.observe(document.getElementById('play')||document.body,{childList:true,subtree:true});"""
+
+          new_observer = """    let completionCheckTimer=0;
+    const scheduleCompletionCheck=()=>{
+      clearTimeout(completionCheckTimer);
+      completionCheckTimer=setTimeout(()=>{
+        submitActiveChallenge();
+        submitDailyIfComplete();
+      },140);
+    };
+    document.addEventListener('click',scheduleCompletionCheck);
+    window.addEventListener('ufc-play-state-changed',scheduleCompletionCheck);
+    window.addEventListener('ufc-play-game-complete',scheduleCompletionCheck);"""
+
+          if old_observer not in shared:
+              raise SystemExit('Expected legacy Play observer block was not found')
+          shared = shared.replace(old_observer, new_observer, 1)
+
+          old_success = """      await adapter.openSetup?.(challenge.setup,challenge);
+      saveActiveChallenge(challenge);
+      pendingChallenge=null;
+      setTimeout(()=>renderChallengeBanner(challenge,adapter),80);
+      return true;"""
+          new_success = """      await adapter.openSetup?.(challenge.setup,challenge);
+      saveActiveChallenge(challenge);
+      pendingChallenge=null;
+      window.__UFC_PLAY_CHALLENGE_ROUTE_ACTIVE=false;
+      setTimeout(()=>renderChallengeBanner(challenge,adapter),80);
+      return true;"""
+          if old_success not in shared:
+              raise SystemExit('Expected challenge-open success block was not found')
+          shared = shared.replace(old_success, new_success, 1)
+          shared_path.write_text(shared)
+
+          config_path = Path('assets/data/supabase-config.js')
+          config_path.write_text("""// Public browser credentials only. Never place a Supabase service-role key here.
+window.UFC_SUPABASE_CONFIG = {
+  url: 'https://hdkjwezaswhisxupxydc.supabase.co',
+  anonKey: ['sb_publishable_','thQI0qVmK_zOMjlmSiITww_MgWO-RNi'].join('')
+};
+
+// Incoming challenge links only clean stale Picks/refresh routing here.
+// The game adapter opens the Play tab once after identity and fighter data are ready.
+(function(){
+  'use strict';
+
+  const VERSION='play-challenge-route-20260715j-clean-handoff';
+  const url=new URL(window.location.href);
+  const queryCode=String(url.searchParams.get('challenge')||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,10);
+  const hashMatch=String(url.hash||'').match(/(?:^#|[&#])challenge=([A-Z0-9]{4,10})/i);
+  const code=queryCode||String(hashMatch?.[1]||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,10);
+  if(!code)return;
+
+  ['group','room','event','archive','game','kcpack','kclineup','kcchoices','kcv','brpack','brlineup','__manual_refresh','__shell']
+    .forEach(key=>url.searchParams.delete(key));
+  url.searchParams.set('challenge',code);
+  url.hash='play';
+  window.history.replaceState(window.history.state,'',`${url.pathname}${url.search}${url.hash}`);
+
+  try{
+    [
+      'ufc-goat-manual-refresh-v1',
+      'ufc-goat-manual-refresh-progress-v1',
+      'ufc-goat-update-restore-v1',
+      'ufc-goat-update-target-v1'
+    ].forEach(key=>sessionStorage.removeItem(key));
+  }catch(_error){}
+
+  window.__UFC_PLAY_CHALLENGE_ROUTE_ACTIVE=true;
+  document.documentElement.setAttribute('data-play-challenge-route',VERSION);
+
+  // Prevent only remembered Picks code from stealing the route while the challenge loads.
+  document.addEventListener('click',event=>{
+    const picksTab=event.target.closest?.('.tab[data-view="picks"]');
+    if(!picksTab||!window.__UFC_PLAY_CHALLENGE_ROUTE_ACTIVE)return;
+    if(event.isTrusted){
+      window.__UFC_PLAY_CHALLENGE_ROUTE_ACTIVE=false;
+      return;
+    }
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  },true);
+})();
+""")
+
+          index_path = Path('index.html')
+          index = index_path.read_text()
+          index = index.replace(
+              'content="20260715-play-challenge-frame-isolation"',
+              'content="20260715-play-challenge-clean-handoff"'
+          )
+          index = index.replace(
+              'supabase-config.js?v=supabase-config-20260715i-frame-isolation',
+              'supabase-config.js?v=supabase-config-20260715j-clean-handoff'
+          )
+          index = index.replace(
+              'play-shared-system.js?v=play-shared-system-20260715f-new-tab',
+              'play-shared-system.js?v=play-shared-system-20260715j-event-driven'
+          )
+          index_path.write_text(index)
+          PY
+      - name: Commit reset and remove workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/reset-play-challenge-routing.yml
+          git add index.html assets/data/supabase-config.js assets/js/play-shared-system.js
+          git commit -m "Reset Play challenges to event-driven routing"
+          git push
