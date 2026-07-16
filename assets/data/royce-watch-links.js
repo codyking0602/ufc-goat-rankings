@@ -1,7 +1,7 @@
 // App-facing Watch Moment and signature-fight links only.
 (function(){
   'use strict';
-  const VERSION='royce-watch-links-20260715e-paddy';
+  const VERSION='royce-watch-links-20260715f-weidman';
 
   function loadPantojaGuard(){
     if(document.querySelector('[data-pantoja-final-roster-guard]'))return;
@@ -37,6 +37,14 @@
       watchUrl:'https://youtube.com/shorts/KwhW_EA1T58?is=T0iZdi_2Xj9PNYyj',
       watchLabel:'Watch Moment',
       signatureFightUrl:'https://youtu.be/-qygvEuJEC8?is=PanrIaWCzzfNqhuf',
+      signatureFightLabel:'Watch Signature Fight'
+    },
+    'Chris Weidman':{
+      photoUrl:'assets/fighters/chris-weidman.webp',
+      thumbUrl:'assets/fighters/chris-weidman-thumb.webp',
+      watchUrl:'https://youtube.com/shorts/dnmX5Xwnwa8?is=V_PYG_dmthEU2LWM',
+      watchLabel:'Watch Moment',
+      signatureFightUrl:'https://youtu.be/jDPeuWStJy4?is=gI85bNLTdl6U6q05',
       signatureFightLabel:'Watch Signature Fight'
     },
     'Leon Edwards':{
