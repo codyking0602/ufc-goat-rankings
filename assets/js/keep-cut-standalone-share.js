@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='keep-cut-standalone-share-20260716c-blind-resume-loader';
+  const VERSION='keep-cut-standalone-share-20260716d-blind-resume-rpc-fix';
   const profile=window.UFC_PLAY_PROFILE;
   const client=profile?.client;
   let creating=false;
@@ -118,7 +118,7 @@
   function loadBlindResumeSharing(){
     if(document.querySelector('script[data-blind-resume-standalone-share]'))return;
     const script=document.createElement('script');
-    script.src='assets/js/blind-resume-standalone-share.js?v=blind-resume-standalone-share-20260716a';
+    script.src='assets/js/blind-resume-standalone-share.js?v=blind-resume-standalone-share-20260716b-rpc-signature';
     script.dataset.blindResumeStandaloneShare='true';
     document.head.appendChild(script);
   }
