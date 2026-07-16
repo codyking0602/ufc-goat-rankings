@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#09101d">
+  <meta name="app-build" content="20260716-standalone-blind-rank-a">
+  <title>UFC Blind Rank 5 Challenge</title>
+  <meta name="description" content="Blind rank the same five UFC fighters, then compare both locked rankings.">
+  <link rel="stylesheet" href="assets/css/standalone-blind-rank.css?v=standalone-blind-rank-20260716a">
+</head>
+<body>
+  <main class="challenge-shell">
+    <header class="topbar">
+      <a class="brand" href="index.html#play"><span class="brand-mark">UFC</span><span class="brand-copy"><span>RANKING + DEBATE ENGINE</span><strong>BLIND RANK CHALLENGE</strong></span></a>
+      <button id="challengeProfile" class="profile-chip" type="button"><span>PROFILE</span><strong>CHECKING…</strong></button>
+    </header>
+    <div id="challengeStatus" class="status-line" role="status" aria-live="polite">Loading challenge…</div>
+    <div id="challengeApp"></div>
+  </main>
+  <script src="assets/data/ranking-data.js?v=ranking-data-20260710a-canonical-prime-record"></script>
+  <script src="assets/data/display-overrides.js?v=display-overrides-20260715-weidman-photo"></script>
+  <script src="assets/data/era-filter-data.js?v=era-filter-data-20260715c-batch-ten"></script>
+  <script>window.DISPLAY_OVERRIDES=typeof DISPLAY_OVERRIDES!=='undefined'?DISPLAY_OVERRIDES:{};</script>
+  <script src="assets/data/play-data.js?v=play-data-20260715a-phase-two"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/data/play-supabase-config.js?v=play-supabase-config-20260715a"></script>
+  <script src="assets/js/play-profile-identity.js?v=play-profile-identity-20260715a"></script>
+  <script src="assets/js/standalone-blind-rank-challenge.js?v=standalone-blind-rank-challenge-20260716a"></script>
+</body>
+</html>
