@@ -1,7 +1,7 @@
 // App-facing Watch Moment and signature-fight links only.
 (function(){
   'use strict';
-  const VERSION='royce-watch-links-20260715f-weidman';
+  const VERSION='royce-watch-links-20260716g-tom-aspinall';
 
   function loadPantojaGuard(){
     if(document.querySelector('[data-pantoja-final-roster-guard]'))return;
@@ -45,6 +45,12 @@
       watchUrl:'https://youtube.com/shorts/dnmX5Xwnwa8?is=V_PYG_dmthEU2LWM',
       watchLabel:'Watch Moment',
       signatureFightUrl:'https://youtu.be/jDPeuWStJy4?is=gI85bNLTdl6U6q05',
+      signatureFightLabel:'Watch Signature Fight'
+    },
+    'Tom Aspinall':{
+      watchUrl:'https://youtube.com/shorts/d3yyyrC5Uak?is=2K29DezdqgreGAgg',
+      watchLabel:'Watch Moment',
+      signatureFightUrl:'https://youtu.be/sb3K8AuzrMc?is=vpfnb2vD4aPgWFxt',
       signatureFightLabel:'Watch Signature Fight'
     },
     'Leon Edwards':{
