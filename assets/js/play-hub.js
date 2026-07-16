@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='play-hub-20260716f-better-than-claim-builder';
+  const VERSION='play-hub-20260716g-find-leader-local';
   const play=document.getElementById('play');
   const shell=play?.querySelector('.play-shell');
   const sectionTitle=play?.querySelector('.section-title');
@@ -74,7 +74,7 @@
     {id:'top10',icon:'10',title:'Build Your Top 10',description:'Create your UFC GOAT list, order it, and compare every placement with the model.',status:'PLAY NOW',live:true},
     {id:'blind',icon:'?',title:'Blind Resume',description:'Choose the stronger UFC-only career five times without seeing either fighter’s name.',status:'PLAY NOW',live:true},
     {id:'better-than',icon:'>',title:'Better Than…',description:'Build a claim, choose your number, and name the exact fighters you can defend.',status:'PLAY NOW',live:true},
-    {id:'find-leader',icon:'#1',title:'Find the Leader',description:'Pick through a full board until you find the fighter who owns the featured stat.',status:'COMING SOON',live:false}
+    {id:'find-leader',icon:'#1',title:'Find the Leader',description:'Search the full roster and identify the leader in five verified UFC stat categories.',status:'PLAY NOW',live:true}
   ];
 
   const hub=document.createElement('div');
@@ -159,6 +159,12 @@
       if(subtitle)subtitle.textContent='Build a subjective UFC claim and choose the exact fighters who support it.';
       return;
     }
+    if(mode==='find-leader'){
+      if(eyebrow)eyebrow.textContent='STAT HUNT';
+      if(title)title.textContent='Find the Leader';
+      if(subtitle)subtitle.textContent='Find the fighter who leads each verified UFC-only stat before your points disappear.';
+      return;
+    }
     if(eyebrow)eyebrow.textContent=daily?"TODAY'S CHALLENGE":'BLIND RESUME';
     if(title)title.textContent=daily?'Daily Blind Resume':'Blind Resume';
     if(subtitle)subtitle.textContent=daily?'Everyone gets the same five-matchup sequence today.':'Five anonymous UFC resumes. Pick the stronger career each round.';
@@ -167,7 +173,7 @@
   async function openGame(mode,options={}){
     if(opening)return;
     const daily=Boolean(options.daily);
-    if(!['top10','blind','better-than'].includes(mode))return;
+    if(!['top10','blind','better-than','find-leader'].includes(mode))return;
     opening=true;
     try{
       if(mode==='blind'){
@@ -196,11 +202,18 @@
       play.classList.add('play-game-active');
       setGameHeading(mode,daily);
       if(mode==='better-than'){
+        window.UFC_FIND_LEADER?.close?.();
         document.getElementById('playTop10Panel')?.setAttribute('hidden','');
         document.getElementById('playBlindPanel')?.setAttribute('hidden','');
         window.UFC_BETTER_THAN?.open?.();
+      }else if(mode==='find-leader'){
+        window.UFC_BETTER_THAN?.close?.();
+        document.getElementById('playTop10Panel')?.setAttribute('hidden','');
+        document.getElementById('playBlindPanel')?.setAttribute('hidden','');
+        window.UFC_FIND_LEADER?.open?.();
       }else{
         window.UFC_BETTER_THAN?.close?.();
+        window.UFC_FIND_LEADER?.close?.();
         const button=mode==='top10'?top10Button:blindButton;
         button.click();
       }
@@ -214,6 +227,7 @@
   function showHub(){
     restoreNativeRandom();
     window.UFC_BETTER_THAN?.close?.();
+    window.UFC_FIND_LEADER?.close?.();
     hub.hidden=false;
     shell.hidden=true;
     gameNav.hidden=true;
