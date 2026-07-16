@@ -1,4 +1,4 @@
-name: Deploy UFC Odds Refresh
+name: Deploy UFC Card and Odds Sync
 
 on:
   workflow_dispatch:
@@ -6,25 +6,31 @@ on:
     branches:
       - main
     paths:
+      - 'config/ufc-card-sources.json'
+      - 'scripts/sync-ufc-card.mjs'
+      - 'supabase/functions/sync-ufc-card/**'
       - 'supabase/functions/refresh-ufc-odds/**'
       - '.github/workflows/deploy-ufc-odds-refresh.yml'
+      - '.github/workflows/refresh-ufc-odds.yml'
 
 permissions:
   contents: read
 
 concurrency:
-  group: deploy-ufc-odds-refresh
+  group: deploy-ufc-card-and-odds-sync
   cancel-in-progress: false
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       THE_ODDS_API_KEY: ${{ secrets.THE_ODDS_API_KEY }}
       ODDS_REFRESH_SECRET: ${{ secrets.ODDS_REFRESH_SECRET }}
       PROJECT_REF: hdkjwezaswhisxupxydc
+      CARD_SYNC_ENDPOINT: https://hdkjwezaswhisxupxydc.supabase.co/functions/v1/sync-ufc-card
+      CARD_SYNC_SECRET: ${{ secrets.ODDS_REFRESH_SECRET }}
     steps:
       - name: Check required secrets
         shell: bash
@@ -36,22 +42,54 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
       - name: Store function secrets
         shell: bash
         run: |
           npx --yes supabase@latest secrets set \
             THE_ODDS_API_KEY="$THE_ODDS_API_KEY" \
             ODDS_REFRESH_SECRET="$ODDS_REFRESH_SECRET" \
+            CARD_SYNC_SECRET="$ODDS_REFRESH_SECRET" \
             --project-ref "$PROJECT_REF"
 
-      - name: Deploy refresh function
+      - name: Deploy card reconciliation function
+        shell: bash
+        run: |
+          npx --yes supabase@latest functions deploy sync-ufc-card \
+            --project-ref "$PROJECT_REF" \
+            --no-verify-jwt
+
+      - name: Deploy odds refresh function
         shell: bash
         run: |
           npx --yes supabase@latest functions deploy refresh-ufc-odds \
             --project-ref "$PROJECT_REF" \
             --no-verify-jwt
 
-      - name: Test card and odds refresh
+      - name: Install Playwright
+        shell: bash
+        run: |
+          npm install --no-save playwright@1.54.2
+          npx playwright install --with-deps chromium
+
+      - name: Import confirmed external card
+        shell: bash
+        run: node scripts/sync-ufc-card.mjs --apply --force
+
+      - name: Upload card-sync evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ufc-card-deploy-sync-${{ github.run_id }}
+          path: artifacts/ufc-card-sync
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Test odds refresh
         shell: bash
         run: |
           curl --fail-with-body --retry 2 \
