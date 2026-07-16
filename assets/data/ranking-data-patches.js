@@ -2,8 +2,8 @@
 (function(){
   'use strict';
 
-  const VERSION='ranking-data-patches-20260715h-single-photo-render';
-  const PHOTO_BUILD='20260715h-single-photo-render';
+  const VERSION='ranking-data-patches-20260715j-photo-missing-opt-out';
+  const PHOTO_BUILD='20260715j-photo-missing-opt-out';
   let readyResolved=false;
   let finalPhotoSyncCount=0;
   let lastPhotoSignature='';
@@ -48,9 +48,14 @@
     const overrides=displayOverrides();
     const mapped=[];
     fighterNames().forEach(fighter=>{
+      const current=overrides[fighter]||{};
+      if(current.photoUnavailable===true||current.photoStatus==='missing'){
+        overrides[fighter]={...current,photoUrl:'',thumbUrl:''};
+        mapped.push({fighter,photoUrl:'',thumbUrl:'',status:'missing'});
+        return;
+      }
       const slug=slugFor(fighter);
       if(!slug)return;
-      const current=overrides[fighter]||{};
       const verified=VERIFIED_PHOTOS[fighter]||{};
       const basePhoto=current.photoUrl||verified.photoUrl||`assets/fighters/${slug}.webp`;
       const baseThumb=current.thumbUrl||verified.thumbUrl||`assets/fighters/${slug}-thumb.webp`;
@@ -59,7 +64,7 @@
         photoUrl:versionPhotoUrl(basePhoto),
         thumbUrl:versionPhotoUrl(baseThumb)
       };
-      mapped.push({fighter,photoUrl:overrides[fighter].photoUrl,thumbUrl:overrides[fighter].thumbUrl});
+      mapped.push({fighter,photoUrl:overrides[fighter].photoUrl,thumbUrl:overrides[fighter].thumbUrl,status:'mapped'});
     });
     window.UFC_PHOTO_PATH_DEFAULTS={version:VERSION,photoBuild:PHOTO_BUILD,mapped};
     return mapped;
@@ -113,6 +118,7 @@
       syncsManualProfileStats:false,
       inventsPhotoPaths:false,
       mapsDeterministicPhotoPaths:true,
+      supportsMissingPhotoOptOut:true,
       photoBuild:PHOTO_BUILD,
       photoDefaults,
       fighterPacketManifest:manifestPackets.length>0,
@@ -153,6 +159,7 @@
       photoBuild:PHOTO_BUILD,
       fighterCount,
       mappedCount:photoDefaults.length,
+      missingCount:photoDefaults.filter(row=>row.status==='missing').length,
       run:finalPhotoSyncCount,
       changed,
       refreshed:false,
