@@ -4,7 +4,7 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-championship-audit-adjustments-20260716c-title-credit-alignment';
+  const VERSION='canonical-championship-audit-adjustments-20260716d-division-title-credit-alignment';
   const ADJUSTMENTS=Object.freeze([
     Object.freeze({
       fighter:'Conor McGregor',
@@ -93,23 +93,34 @@
     };
   }
 
-  function scoreFacingAdjustedTitleCredit(fighter){
+  function scoreFacingChampionshipProjection(fighter){
     const row=api?.entryFor?.('championship',fighter);
     if(!Array.isArray(row?.inputs))return null;
     if(row.inputs.some(input=>!Number.isFinite(Number(input?.finalAdjustedCredit))))return null;
-    return round2(row.inputs.reduce((sum,input)=>sum+Number(input.finalAdjustedCredit),0));
+    return {
+      adjustedTitleWins:round2(row.inputs.reduce((sum,input)=>sum+Number(input.finalAdjustedCredit),0)),
+      inputs:clone(row.inputs)
+    };
   }
 
   let visibleProjectionAlignment={applied:false,reason:'Missing canonical deriveFor or scoring judgments'};
   if(originalDeriveFor&&api?.entryFor){
     facts.deriveFor=function(fighter){
       const derived=originalDeriveFor(fighter);
-      const adjustedTitleWins=scoreFacingAdjustedTitleCredit(fighter);
-      if(!derived||adjustedTitleWins===null)return derived;
+      const projection=scoreFacingChampionshipProjection(fighter);
+      if(!derived||!projection)return derived;
       const next=clone(derived);
+      const inputByFightId=new Map(projection.inputs.filter(input=>input?.fightId).map(input=>[input.fightId,input]));
+      const alignedRows=(next?.championship?.rows||[]).map(row=>{
+        const input=inputByFightId.get(row?.fightId);
+        if(!input)return row;
+        const adjustedCredit=round2(input.finalAdjustedCredit);
+        return {...row,credit:adjustedCredit,adjustedCredit,finalAdjustedCredit:adjustedCredit};
+      });
       next.championship={
         ...(next.championship||{}),
-        adjustedTitleWins,
+        adjustedTitleWins:projection.adjustedTitleWins,
+        rows:alignedRows,
         adjustedTitleCreditSource:'approved Championship scoring inputs'
       };
       return next;
@@ -117,8 +128,8 @@
     visibleProjectionAlignment={
       applied:true,
       source:'approved Championship scoring inputs',
-      field:'derived.championship.adjustedTitleWins',
-      purpose:'Keep the visible adjusted-title-credit total equal to the inputs that produce the Championship score.'
+      fields:['derived.championship.adjustedTitleWins','derived.championship.rows[].credit'],
+      purpose:'Keep overall and division visible adjusted-title-credit totals equal to the inputs that produce the Championship score.'
     };
   }
 
