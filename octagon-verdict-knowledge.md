@@ -1,6 +1,6 @@
 # Octagon Verdict — Official UFC-Only Knowledge Pack
 
-Generated: **2026-07-16T12:11:22.989Z**  
+Generated: **2026-07-16T12:12:03.127Z**  
 Canonical model-as-of date: **2026-07-13**  
 Latest fighter-ledger verification date: **2026-07-15**  
 Fighters: **76**
