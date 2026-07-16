@@ -67,29 +67,15 @@ jobs:
       <div id="intelligenceToast" class="intelligence-toast" role="status" aria-live="polite"></div>
     </section>'''
 
-          text = re.sub(
-              r'<meta name="app-build" content="[^"]*"\s*/>',
-              '<meta name="app-build" content="20260716-intelligence-copy-gateway" />',
-              text,
-              count=1,
-          )
-          text = re.sub(
-              r'assets/css/intelligence\.css\?v=[^"\s]+',
-              'assets/css/intelligence.css?v=intelligence-css-20260716c-copy-gateway',
-              text,
-              count=1,
-          )
-          text = re.sub(
-              r'assets/js/intelligence\.js\?v=[^"\s]+',
-              'assets/js/intelligence.js?v=intelligence-js-20260716c-copy-gateway',
-              text,
-              count=1,
-          )
+          text = re.sub(r'<meta name="app-build" content="[^"]*"\s*/>', '<meta name="app-build" content="20260716-intelligence-copy-gateway" />', text, count=1)
+          text = re.sub(r'assets/css/intelligence\.css\?v=[^"\s]+', 'assets/css/intelligence.css?v=intelligence-css-20260716c-copy-gateway', text, count=1)
+          text = re.sub(r'assets/js/intelligence\.js\?v=[^"\s]+', 'assets/js/intelligence.js?v=intelligence-js-20260716c-copy-gateway', text, count=1)
 
-          pattern = re.compile(r'    <section id="compare"[^>]*>.*?\n    <section id="picks"', re.DOTALL)
-          if not pattern.search(text):
+          start = text.find('    <section id="compare"')
+          end = text.find('    <section id="picks"', start)
+          if start < 0 or end < 0:
               raise SystemExit('Could not locate Intelligence section boundary')
-          text = pattern.sub(section + '\n    <section id="picks"', text, count=1)
+          text = text[:start] + section + '\n' + text[end:]
           path.write_text(text, encoding='utf-8')
           PY
       - name: Commit refined Intelligence gateway
@@ -99,4 +85,5 @@ jobs:
           git rm .github/workflows/refine-intelligence-gateway.yml
           git add index.html
           git commit -m "Refine Intelligence copy and GPT handoff"
+          git pull --rebase origin main
           git push
