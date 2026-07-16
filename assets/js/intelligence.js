@@ -2,6 +2,14 @@
   'use strict';
 
   const GPT_URL='https://chatgpt.com/g/g-6a4c40425d4881919ddebc7231bff09f-octagon-verdict';
+  const PROMPTS=[
+    {icon:'👑',text:'Who is the best UFC fighter never to win undisputed gold?'},
+    {icon:'📈',text:'What would Islam need to reach the top three?'},
+    {icon:'🔥',text:'Who has the best prime outside the current top 10?'},
+    {icon:'🚀',text:'Which active fighter has the clearest path to the all-time top 10?'},
+    {icon:'🧩',text:'Which fighter’s clean record hides a lack of career volume?'},
+    {icon:'🔍',text:'Why is Pantoja’s quality-of-wins ranking lower than expected?'}
+  ];
   const copyMatchupButton=document.getElementById('intelligenceCopyMatchup');
   const toast=document.getElementById('intelligenceToast');
   let toastTimer=0;
@@ -11,7 +19,34 @@
     if(tab&&tab.textContent.trim()!=='Intelligence')tab.textContent='Intelligence';
   }
 
+  function renderStarterPrompts(){
+    const list=document.querySelector('.intelligence-prompt-list');
+    if(!list)return;
+    list.replaceChildren(...PROMPTS.map(({icon,text})=>{
+      const button=document.createElement('button');
+      button.className='intelligence-prompt';
+      button.type='button';
+      button.dataset.intelligencePrompt=text;
+
+      const iconNode=document.createElement('span');
+      iconNode.className='intelligence-prompt-icon';
+      iconNode.textContent=icon;
+
+      const copy=document.createElement('span');
+      copy.className='intelligence-prompt-copy';
+      copy.textContent=text;
+
+      const status=document.createElement('span');
+      status.className='intelligence-prompt-status';
+      status.textContent='Copy';
+
+      button.append(iconNode,copy,status);
+      return button;
+    }));
+  }
+
   ensureIntelligenceLabel();
+  renderStarterPrompts();
   const tabs=document.querySelector('.tabs');
   if(tabs)new MutationObserver(ensureIntelligenceLabel).observe(tabs,{childList:true,subtree:true,characterData:true});
   window.addEventListener?.('ufc-production-ranking-ready',ensureIntelligenceLabel);
