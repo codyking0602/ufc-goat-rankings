@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='better-than-standalone-share-20260716f-find-leader-daily-launch';
+  const VERSION='better-than-standalone-share-20260716g-play-order-swipe';
   const FIND_LEADER_VERSION='find-leader-20260716c-daily-elimination';
   let creating=false;
 
@@ -21,15 +21,15 @@
   }
 
   function patchFindLeaderHubCopy(){
-    const card=document.querySelector('[data-open-game="find-leader"]');
+    const card=document.querySelector('.play-game-card[data-open-game="find-leader"]');
     const description=card?.querySelector('.play-game-copy small');
     if(description)description.textContent='Eliminate nine fighters without removing the verified stat leader. One fatal pick ends the run.';
   }
 
   function loadDailyTools(){
     const loadClients=()=>{
-      loadScriptOnce('script[data-play-daily-rotation-v1]','assets/js/play-daily-rotation.js?v=play-daily-rotation-20260716b-find-leader-first','playDailyRotationV1');
-      loadScriptOnce('script[data-play-daily-leaderboard-rotation]','assets/js/play-daily-leaderboard.js?v=play-daily-leaderboard-20260716b-rotating-games','playDailyLeaderboardRotation');
+      loadScriptOnce('script[data-play-daily-rotation-v2]','assets/js/play-daily-rotation.js?v=play-daily-rotation-20260716c-card-order-swipe','playDailyRotationV2');
+      loadScriptOnce('script[data-play-daily-leaderboard-carousel]','assets/js/play-daily-leaderboard.js?v=play-daily-leaderboard-20260716c-swipe-carousel','playDailyLeaderboardCarousel');
     };
     if(window.UFC_PLAY_SHARED?.dailyContext){loadClients();return;}
     loadScriptOnce('script[data-play-shared-daily-loader]','assets/js/play-shared-system.js?v=play-shared-system-20260715k-clean-rebuild','playSharedDailyLoader',loadClients);
@@ -125,8 +125,8 @@
   }
 
   document.addEventListener('click',event=>{
-    const findLeader=event.target.closest?.('[data-open-game="find-leader"]');
-    if(findLeader&&!findLeader.dataset.dailyRotationOpen)setTimeout(()=>{
+    const findLeader=event.target.closest?.('.play-game-card[data-open-game="find-leader"]');
+    if(findLeader)setTimeout(()=>{
       const eyebrow=document.getElementById('playGameEyebrow');
       const subtitle=document.querySelector('#play .section-title p');
       if(eyebrow)eyebrow.textContent='ELIMINATION GAME';
