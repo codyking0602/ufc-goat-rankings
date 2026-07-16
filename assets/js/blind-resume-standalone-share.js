@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='blind-resume-standalone-share-20260716a';
+  const VERSION='blind-resume-standalone-share-20260716b-rpc-signature';
   const TOTAL_ROUNDS=5;
   const APEX_MAX=6;
   const DATA=window.RANKING_DATA||{};
@@ -139,7 +139,7 @@
     });
     const choices=state.history.map(result=>result.picked===result.fighterA?'A':'B');
     const score=choices.reduce((sum,choice,index)=>sum+(choice===rounds[index].winnerSide?1:0),0);
-    return {setup:{packId:'blind-resume-five-round',rounds},result:{choices},score};
+    return {setup:{packId:'blind-resume-five-round',rounds},result:{choices,score}};
   }
   function standaloneUrl(code){
     const url=new URL('blind-resume-challenge.html',window.location.href);
@@ -169,7 +169,6 @@
         p_member_token:identity.memberToken,
         p_setup:exported.setup,
         p_result:exported.result,
-        p_score:exported.score,
         p_metadata:{comparison:'blind-resume-round-picks',route:'standalone',client:VERSION},
         p_expires_days:365
       });
