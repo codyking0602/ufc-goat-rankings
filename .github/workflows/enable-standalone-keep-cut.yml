@@ -1,0 +1,40 @@
+name: Enable standalone Keep Cut
+
+on:
+  push:
+    paths:
+      - '.github/workflows/enable-standalone-keep-cut.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Wire standalone challenge sharing
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path=Path('index.html')
+          text=path.read_text()
+          text=text.replace(
+              '<meta name="app-build" content="20260715-intelligence-tab-launch" />',
+              '<meta name="app-build" content="20260715-intelligence-standalone-keep-cut" />'
+          )
+          paused='  <script src="assets/js/play-challenges-paused.js?v=play-challenges-paused-20260715a"></script>'
+          replacement='  <script src="assets/js/play-profile-identity.js?v=play-profile-identity-20260715a"></script>\n  <script src="assets/js/keep-cut-standalone-share.js?v=keep-cut-standalone-share-20260715a"></script>'
+          if paused not in text:
+              raise SystemExit('Paused challenge loader was not found')
+          text=text.replace(paused,replacement,1)
+          path.write_text(text)
+          PY
+      - name: Commit integration and remove workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/enable-standalone-keep-cut.yml
+          git add index.html
+          git commit -m "Enable standalone Keep Cut friend challenges"
+          git push
