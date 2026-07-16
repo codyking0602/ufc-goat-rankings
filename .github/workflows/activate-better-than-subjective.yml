@@ -1,3 +1,4 @@
+# Retry activation after repository workflow queue delay.
 name: Activate Better Than subjective game
 
 on:
