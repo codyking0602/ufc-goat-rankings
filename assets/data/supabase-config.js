@@ -4,13 +4,44 @@ window.UFC_SUPABASE_CONFIG = {
   anonKey: 'sb_publishable_thQI0qVmK_zOMjlmSiITww_MgWO-RNi'
 };
 
+// The shared challenge engine observes the Play DOM. Its challenge banner was being
+// rewritten with identical HTML after every observed mutation, which created a
+// self-sustaining render loop on Safari. Guard that one banner instance so identical
+// writes become true no-ops without changing normal app rendering.
+(function(){
+  'use strict';
+
+  const descriptor=Object.getOwnPropertyDescriptor(Element.prototype,'innerHTML');
+  if(!descriptor?.get||!descriptor?.set)return;
+
+  function guardBanner(){
+    const banner=document.getElementById('playChallengeBanner');
+    if(!banner||banner.__ufcStableInnerHTML)return;
+    Object.defineProperty(banner,'innerHTML',{
+      configurable:true,
+      enumerable:descriptor.enumerable,
+      get(){return descriptor.get.call(this);},
+      set(value){
+        const next=String(value??'');
+        if(descriptor.get.call(this)===next)return;
+        descriptor.set.call(this,next);
+      }
+    });
+    Object.defineProperty(banner,'__ufcStableInnerHTML',{value:true,configurable:true});
+  }
+
+  const observer=new MutationObserver(guardBanner);
+  observer.observe(document.documentElement,{childList:true,subtree:true});
+  guardBanner();
+})();
+
 // Keep shared Play challenges from inheriting a remembered Picks route.
 // This runs before Picks and Play scripts, but only selects Play when needed—
 // never on a repeating timer that can fight the game renderer.
 (function(){
   'use strict';
 
-  const VERSION='play-challenge-route-20260715d-stable-once';
+  const VERSION='play-challenge-route-20260715e-banner-guard';
   const PICKS_KEYS=['group','room','event','archive'];
   const LEGACY_PLAY_KEYS=['game','kcpack','kclineup','kcchoices','kcv','brpack','brlineup'];
   const PICKS_AUTO_RESTORE_KEY='ufc-picks:auto-restore-disabled';
@@ -66,7 +97,6 @@ window.UFC_SUPABASE_CONFIG = {
     if(playTab&&!playTab.classList.contains('active'))playTab.click();
   }
 
-  // One startup selection, plus readiness checks that are no-ops once Play is active.
   selectPlayOnce();
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',selectPlayOnce,{once:true});
   else window.setTimeout(selectPlayOnce,0);
