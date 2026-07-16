@@ -1,0 +1,33 @@
+name: Cache-bust Play observer isolation
+
+on:
+  push:
+    paths:
+      - '.github/workflows/cache-bust-play-observer-isolation.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update app cache keys
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path=Path('index.html')
+          text=path.read_text()
+          text=text.replace('content="20260715-play-challenge-stable-restore"','content="20260715-play-challenge-observer-isolation"')
+          text=text.replace('supabase-config.js?v=supabase-config-20260715f-trusted-click-guard','supabase-config.js?v=supabase-config-20260715g-observer-isolation')
+          path.write_text(text)
+          PY
+      - name: Commit cache patch and remove workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/cache-bust-play-observer-isolation.yml
+          git add index.html
+          git commit -m "Cache-bust Play observer isolation"
+          git push
