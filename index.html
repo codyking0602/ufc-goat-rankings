@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="app-build" content="20260715-intelligence-tab-launch" />
+  <meta name="app-build" content="20260716-intelligence-mobile-polish" />
   <title>UFC All-Time Rankings</title>
   <link rel="stylesheet" href="assets/css/app.css?v=app-css-20260711a-picks" />
   <link rel="stylesheet" href="assets/css/profile-card-cleanup.css?v=profile-card-cleanup-20260713a" />
@@ -31,7 +31,7 @@
   <link rel="stylesheet" href="assets/css/picks-odds-coverage.css?v=picks-odds-coverage-20260713b-lock-copy" />
   <link rel="stylesheet" href="assets/css/picks-tiered-scoring.css?v=picks-tiered-scoring-20260713b-clarity" />
   <link rel="stylesheet" href="assets/css/era-filter.css?v=era-filter-20260715b-curated" />
-  <link rel="stylesheet" href="assets/css/intelligence.css?v=intelligence-css-20260715a-launch" />
+  <link rel="stylesheet" href="assets/css/intelligence.css?v=intelligence-css-20260716b-mobile-polish" />
 </head>
 <body>
   <header class="hero"><div><p class="eyebrow">UFC ranking + debate engine</p><h1>UFC All-Time Rankings</h1><p class="subtitle">Rankings, fighter profiles, head-to-head debates, event picks, and interactive games.</p></div><div class="hero-card"><span id="fighterCount">—</span><small>fighters ranked</small></div></header>
@@ -70,7 +70,6 @@
             <input id="intelligenceQuestion" class="intelligence-question-input" type="text" autocomplete="off" maxlength="500" placeholder="Why is Pantoja’s quality wins score low?" aria-label="Ask UFC Intelligence a question" />
             <button class="intelligence-send" type="submit" aria-label="Prepare question">↑</button>
           </form>
-          <p class="intelligence-account-note">Answers open in Octagon Verdict on ChatGPT. A ChatGPT account is required.</p>
 
           <section id="intelligenceReady" class="intelligence-ready" hidden aria-live="polite">
             <div class="intelligence-ready-head"><div><h3>Question ready</h3><p class="intelligence-ready-copy">We’ll copy it before sending you to Octagon Verdict.</p></div></div>
@@ -86,11 +85,11 @@
             <h3 id="intelligenceTryLabel" class="intelligence-section-label">Try asking</h3>
             <div class="intelligence-prompt-list">
               <button class="intelligence-prompt" type="button" data-intelligence-prompt="Show me exactly how Jon Jones got 99 OVR."><span class="intelligence-prompt-icon">99</span><span>Show me exactly how Jon Jones got 99 OVR</span><span class="intelligence-prompt-arrow">›</span></button>
-              <button class="intelligence-prompt" type="button" data-intelligence-prompt="Why is Alexandre Pantoja’s quality wins score low?"><span class="intelligence-prompt-icon">▥</span><span>Why is Pantoja’s quality wins score low?</span><span class="intelligence-prompt-arrow">›</span></button>
-              <button class="intelligence-prompt" type="button" data-intelligence-prompt="Who is the best UFC fighter never to win undisputed gold?"><span class="intelligence-prompt-icon">♛</span><span>Who is the best fighter never to win undisputed gold?</span><span class="intelligence-prompt-arrow">›</span></button>
-              <button class="intelligence-prompt" type="button" data-intelligence-prompt="Compare Khabib Nurmagomedov and Alexander Volkanovski."><span class="intelligence-prompt-icon">⚖</span><span>Compare Khabib and Volkanovski</span><span class="intelligence-prompt-arrow">›</span></button>
-              <button class="intelligence-prompt" type="button" data-intelligence-prompt="What would Islam Makhachev need to do to pass Georges St-Pierre in the all-time rankings?"><span class="intelligence-prompt-icon">★</span><span>What would Islam need to do to pass GSP?</span><span class="intelligence-prompt-arrow">›</span></button>
-              <button class="intelligence-prompt" type="button" data-intelligence-prompt="Why is Cain Velasquez behind Francis Ngannou overall?"><span class="intelligence-prompt-icon">▥</span><span>Why is Cain behind Ngannou overall?</span><span class="intelligence-prompt-arrow">›</span></button>
+              <button class="intelligence-prompt" type="button" data-intelligence-prompt="Why is Alexandre Pantoja’s quality wins score low?"><span class="intelligence-prompt-icon">QW</span><span>Why is Pantoja’s quality wins score low?</span><span class="intelligence-prompt-arrow">›</span></button>
+              <button class="intelligence-prompt" type="button" data-intelligence-prompt="Who is the best UFC fighter never to win undisputed gold?"><span class="intelligence-prompt-icon">GO</span><span>Who is the best fighter never to win undisputed gold?</span><span class="intelligence-prompt-arrow">›</span></button>
+              <button class="intelligence-prompt" type="button" data-intelligence-prompt="Compare Khabib Nurmagomedov and Alexander Volkanovski."><span class="intelligence-prompt-icon">VS</span><span>Compare Khabib and Volkanovski</span><span class="intelligence-prompt-arrow">›</span></button>
+              <button class="intelligence-prompt" type="button" data-intelligence-prompt="What would Islam Makhachev need to do to pass Georges St-Pierre in the all-time rankings?"><span class="intelligence-prompt-icon">UP</span><span>What would Islam need to do to pass GSP?</span><span class="intelligence-prompt-arrow">›</span></button>
+              <button class="intelligence-prompt" type="button" data-intelligence-prompt="Why is Cain Velasquez behind Francis Ngannou overall?"><span class="intelligence-prompt-icon">RK</span><span>Why is Cain behind Ngannou overall?</span><span class="intelligence-prompt-arrow">›</span></button>
             </div>
           </section>
 
@@ -99,7 +98,7 @@
             <div class="intelligence-matchup-body">
               <div class="compare-controls"><select id="fighterA" aria-label="First fighter"></select><select id="fighterB" aria-label="Second fighter"></select></div>
               <div class="intelligence-matchup-actions"><button id="intelligenceComparePrompt" class="intelligence-primary" type="button">Ask This Matchup</button></div>
-              <details class="intelligence-raw"><summary>View app category snapshot</summary><div id="compareResult" class="compare-grid"></div></details>
+              <details class="intelligence-raw"><summary>Preview the app’s comparison</summary><div id="compareResult" class="compare-grid"></div></details>
             </div>
           </details>
         </div>
@@ -196,7 +195,7 @@
   <script src="assets/js/blind-rank-polish.js?v=blind-rank-polish-20260715f-shared"></script>
   <script src="assets/js/keep-cut.js?v=keep-cut-20260715a-phase-four"></script>
   <script src="assets/js/play-challenges-paused.js?v=play-challenges-paused-20260715a"></script>
-  <script src="assets/js/intelligence.js?v=intelligence-js-20260715a-launch"></script>
+  <script src="assets/js/intelligence.js?v=intelligence-js-20260716b-modal-polish"></script>
   <script src="assets/js/app-update-watcher.js?v=app-update-watcher-20260715o-weidman-photo"></script>
 </body>
 </html>
