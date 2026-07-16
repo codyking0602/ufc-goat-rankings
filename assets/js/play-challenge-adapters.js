@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='play-challenge-adapters-20260715a';
+  const VERSION='play-challenge-adapters-20260715b-routing';
   let blindController=null;
 
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({
@@ -19,6 +19,11 @@
       };
       tick();
     });
+  }
+
+  async function activatePlayView(){
+    document.querySelector('.tab[data-view="play"]')?.click();
+    await new Promise(resolve=>setTimeout(resolve,25));
   }
 
   function photoMarkup(fighter,className='play-adapter-photo'){
@@ -107,7 +112,7 @@
         const data=await waitFor(()=>window.UFC_PLAY_DATA);
         const lineup=(setup?.lineup||[]).map(id=>data.resolve(id));
         if(lineup.length!==8||lineup.some(fighter=>!fighter))throw new Error('The Keep/Cut challenge lineup is incomplete.');
-        document.querySelector('.tab[data-view="play"]')?.click();
+        await activatePlayView();
         game.open({lineup,packId:setup.packId||'ufc-careers',shared:true});
       },
       renderComparison:data=>{
@@ -157,7 +162,7 @@
         const data=await waitFor(()=>window.UFC_PLAY_DATA);
         const lineup=(setup?.lineup||[]).map(id=>data.resolve(id));
         if(lineup.length!==5||lineup.some(fighter=>!fighter))throw new Error('The Blind Rank challenge lineup is incomplete.');
-        document.querySelector('.tab[data-view="play"]')?.click();
+        await activatePlayView();
         game.open({lineup,packId:setup.packId||'ufc-careers',shared:true});
       },
       renderComparison:data=>{
@@ -268,7 +273,7 @@
         const rounds=setup?.rounds||[];
         if(rounds.length!==5||rounds.some(row=>!row.fighterA||!row.fighterB))throw new Error('The Blind Resume challenge is incomplete.');
         await waitFor(()=>window.UFC_BLIND_MATCHMAKING&&window.UFC_PLAY_HUB);
-        document.querySelector('.tab[data-view="play"]')?.click();
+        await activatePlayView();
         await window.UFC_PLAY_HUB.openGame('blind',{daily:false});
         resetBlindEngine();
         blindController={active:true,rounds,index:0};
