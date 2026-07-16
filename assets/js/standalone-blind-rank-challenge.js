@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='standalone-blind-rank-challenge-20260716a';
+  const VERSION='standalone-blind-rank-challenge-20260716b-challenge-back';
   const pageUrl=new URL(window.location.href);
   const code=String(pageUrl.searchParams.get('code')||pageUrl.searchParams.get('challenge')||'')
     .trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,10);
@@ -129,6 +129,15 @@
     const myPositions=new Map(mine.map((f,i)=>[f.id,i+1]));
     const movement=mine.map((fighter,index)=>({fighter,you:index+1,them:theirPositions.get(fighter.id),diff:Math.abs((index+1)-theirPositions.get(fighter.id))})).filter(row=>row.diff>0).sort((a,b)=>b.diff-a.diff);
     const exact=5-movement.length;
+    window.UFC_STANDALONE_REMATCH_CONTEXT={
+      gameType:'blind-rank',
+      gameVersion:state.challenge?.game_version||'blind-rank-standalone-v1',
+      page:'blind-rank-challenge.html',
+      originalCode:code,
+      setup:normalizeJson(state.challenge?.setup)||{},
+      result:{ranking:[...myIds]},
+      metadata:{comparison:'blind-rank-placement'}
+    };
     host.innerHTML=`
       <section class="challenge-intro"><span>CHALLENGE RESULTS</span><h1>${exact}/5 exact placements.</h1><p>${movement.length?`${movement.length} fighter${movement.length===1?'':'s'} landed in different slots.`:`You matched ${esc(data.creator_name)} exactly.`}</p></section>
       <section class="comparison-card">
@@ -137,7 +146,8 @@
           <section class="player-panel them"><div class="player-head"><b>CHALLENGER</b><span>${esc(data.creator_name)}</span></div>${comparisonRows(theirs,myPositions)}</section>
         </div>
         ${movement.length?`<section class="movement-card"><span>BIGGEST DIFFERENCES</span><div>${movement.map(row=>`<article><strong>${esc(row.fighter.name)}</strong><small>You #${row.you} · ${esc(data.creator_name)} #${row.them}</small></article>`).join('')}</div></section>`:''}
-        <a class="primary-action" href="index.html#play">PLAY ANOTHER GAME</a>
+        <button type="button" class="primary-action" data-challenge-back>CHALLENGE BACK</button>
+        <a class="secondary-action" href="index.html#play">PLAY A NEW GAME</a>
       </section>`;
     setStatus('Comparison complete.','success');
     try{sessionStorage.removeItem(saveKey());}catch(_error){}

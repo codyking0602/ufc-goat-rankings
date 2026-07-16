@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='standalone-blind-resume-challenge-20260716a';
+  const VERSION='standalone-blind-resume-challenge-20260716b-challenge-back';
   const TOTAL_ROUNDS=5;
   const pageUrl=new URL(window.location.href);
   const code=String(pageUrl.searchParams.get('code')||pageUrl.searchParams.get('challenge')||'')
@@ -165,6 +165,15 @@
     const theirScore=scoreFor(theirs);
     const matches=mine.filter((choice,index)=>choice===theirs[index]).length;
     const disagreements=TOTAL_ROUNDS-matches;
+    window.UFC_STANDALONE_REMATCH_CONTEXT={
+      gameType:'blind-resume',
+      gameVersion:state.challenge?.game_version||'blind-resume-standalone-v1',
+      page:'blind-resume-challenge.html',
+      originalCode:code,
+      setup:normalizeJson(state.challenge?.setup)||{},
+      result:{choices:[...mine],score:myScore},
+      metadata:{comparison:'blind-resume-round-picks'}
+    };
     host.innerHTML=`
       <section class="challenge-intro"><span>CHALLENGE RESULTS</span><h1>${matches}/5 matching picks.</h1><p>${disagreements?`${disagreements} disagreement${disagreements===1?'':'s'} across the exact same hidden matchups.`:`You matched ${esc(data.creator_name)} on every round.`}</p></section>
       <section class="comparison-card">
@@ -173,7 +182,8 @@
           const disagreement=mine[index]!==theirs[index];
           return `<article class="round-comparison ${disagreement?'disagreement':'match'}"><header><div><span>ROUND ${index+1}</span><strong>${esc(round.fighterA.name)} <em>vs</em> ${esc(round.fighterB.name)}</strong></div><b>${disagreement?'DISAGREEMENT':'MATCH'}</b></header><div class="comparison-picks">${comparisonPick(round,mine[index],data.responder_name,'YOUR PICK','responder')}${comparisonPick(round,theirs[index],data.creator_name,'CHALLENGER PICK','challenger')}</div></article>`;
         }).join('')}</div>
-        <a class="primary-action" href="index.html#play">PLAY ANOTHER GAME</a>
+        <button type="button" class="primary-action" data-challenge-back>CHALLENGE BACK</button>
+        <a class="secondary-action" href="index.html#play">PLAY A NEW GAME</a>
       </section>`;
     setStatus(`Comparison complete. ${matches} matches and ${disagreements} disagreements.`,'success');
     try{sessionStorage.removeItem(saveKey());}catch(_error){}

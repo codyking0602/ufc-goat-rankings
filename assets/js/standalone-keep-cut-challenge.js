@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='standalone-keep-cut-challenge-20260715a';
+  const VERSION='standalone-keep-cut-challenge-20260716b-challenge-back';
   const pageUrl=new URL(window.location.href);
   const code=String(pageUrl.searchParams.get('code')||pageUrl.searchParams.get('challenge')||'')
     .trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,10);
@@ -160,6 +160,15 @@
     }
     const differences=state.lineup.map((fighter,index)=>({fighter,mine:mine[index],theirs:theirs[index]})).filter(row=>row.mine!==row.theirs);
     const same=8-differences.length;
+    window.UFC_STANDALONE_REMATCH_CONTEXT={
+      gameType:'keep-cut',
+      gameVersion:state.challenge?.game_version||'keep-cut-standalone-v1',
+      page:'challenge.html',
+      originalCode:code,
+      setup:normalizeJson(state.challenge?.setup)||{},
+      result:{decisions:[...mine]},
+      metadata:{comparison:'keep-cut-decisions'}
+    };
     host.innerHTML=`
       <section class="challenge-intro"><span>CHALLENGE RESULTS</span><h1>${same}/8 same calls.</h1><p>${differences.length?`${differences.length} disagreement${differences.length===1?'':'s'} between you and ${esc(data.creator_name)}.`:`You matched ${esc(data.creator_name)} on every fighter.`}</p></section>
       <section class="comparison-card">
@@ -168,7 +177,8 @@
           <section><h2>${esc(data.creator_name)}</h2>${resultGroup(`${data.creator_name}'S FOUR`,'K',theirs)}${resultGroup(`${data.creator_name}'S FOUR`,'C',theirs)}</section>
         </div>
         ${differences.length?`<section class="split-card"><span>WHERE YOU SPLIT</span><div>${differences.map(row=>`<article><strong>${esc(row.fighter.name)}</strong><small>You ${row.mine==='K'?'kept':'cut'} · ${esc(data.creator_name)} ${row.theirs==='K'?'kept':'cut'}</small></article>`).join('')}</div></section>`:''}
-        <a class="primary-action link-action" href="index.html#play">PLAY ANOTHER GAME</a>
+        <button type="button" class="primary-action" data-challenge-back>CHALLENGE BACK</button>
+        <a class="secondary-action" href="index.html#play">PLAY A NEW GAME</a>
       </section>`;
     setStatus('Comparison complete.','success');
     try{sessionStorage.removeItem(saveKey());}catch(_error){}
