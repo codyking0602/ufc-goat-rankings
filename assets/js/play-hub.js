@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='play-hub-20260716g-find-leader-local';
+  const VERSION='play-hub-20260716h-blind-primary-era';
   const play=document.getElementById('play');
   const shell=play?.querySelector('.play-shell');
   const sectionTitle=play?.querySelector('.section-title');
@@ -20,6 +20,30 @@
     return String(value??'').replace(/[&<>"']/g,char=>({
       '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
     }[char]));
+  }
+
+  function primaryEraName(name){
+    const eraData=window.UFC_ERA_FILTER_DATA;
+    const membership=eraData?.membershipFor?.(name);
+    const primaryId=membership?.primary;
+    return eraData?.byId?.[primaryId]?.name||'—';
+  }
+
+  function syncBlindFightEra(){
+    const rows=document.querySelector('#blindMatchup .blind-compare-rows');
+    const pair=window.UFC_BLIND_MATCHMAKING?.state?.pair;
+    if(!rows||!Array.isArray(pair)||pair.length!==2)return;
+    const values=pair.map(fighter=>primaryEraName(fighter?.fighter));
+    let row=rows.querySelector('.blind-fight-era-row');
+    if(!row){
+      row=document.createElement('div');
+      row.className='blind-compare-row blind-fight-era-row';
+      row.innerHTML='<strong></strong><span>Fight Era</span><strong></strong>';
+      rows.appendChild(row);
+    }
+    const valueNodes=row.querySelectorAll('strong');
+    if(valueNodes[0]&&valueNodes[0].textContent!==values[0])valueNodes[0].textContent=values[0];
+    if(valueNodes[1]&&valueNodes[1].textContent!==values[1])valueNodes[1].textContent=values[1];
   }
 
   function centralDateKey(date=new Date()){
@@ -109,6 +133,13 @@
 
   const subtitle=sectionTitle.querySelector('p');
   if(subtitle)subtitle.textContent='Daily challenges, blind debates, and your own UFC rankings.';
+
+  const blindMatchupNode=document.getElementById('blindMatchup');
+  if(blindMatchupNode){
+    new MutationObserver(syncBlindFightEra).observe(blindMatchupNode,{childList:true,subtree:true});
+    window.setTimeout(syncBlindFightEra,0);
+  }
+  document.documentElement.setAttribute('data-blind-era-source','primary');
 
   function updateDailyCard(context){
     if(!context)return;
