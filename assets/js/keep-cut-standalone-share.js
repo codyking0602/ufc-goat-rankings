@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='keep-cut-standalone-share-20260715a';
+  const VERSION='keep-cut-standalone-share-20260716b-blind-rank-loader';
   const profile=window.UFC_PLAY_PROFILE;
   const client=profile?.client;
   let creating=false;
@@ -63,12 +63,7 @@
     if(!decisions||!Array.isArray(state?.lineup)||state.lineup.length!==8)return null;
     const fighters=state.lineup.map(fighterSnapshot);
     return {
-      setup:{
-        packId:state.packId||'ufc-careers',
-        lineup:fighters.map(fighter=>fighter.id),
-        fighterNames:fighters.map(fighter=>fighter.name),
-        fighters
-      },
+      setup:{packId:state.packId||'ufc-careers',lineup:fighters.map(fighter=>fighter.id),fighterNames:fighters.map(fighter=>fighter.name),fighters},
       result:{decisions}
     };
   }
@@ -89,21 +84,12 @@
     const original=trigger?.textContent||'CHALLENGE A FRIEND';
     if(trigger){trigger.disabled=true;trigger.textContent='CONNECTING PROFILE…';}
     try{
-      const identity=await profile.require({
-        title:'Create the Keep/Cut challenge',
-        description:'Use your existing Picks profile. Your exact eight fighters and completed decisions will be saved for the friend link.'
-      });
+      const identity=await profile.require({title:'Create the Keep/Cut challenge',description:'Use your existing Picks profile. Your exact eight fighters and completed decisions will be saved for the friend link.'});
       if(!identity)return;
       if(trigger)trigger.textContent='CREATING LINK…';
       const {data,error}=await client.rpc('play_create_challenge',{
-        p_game_type:'keep-cut',
-        p_game_version:'keep-cut-standalone-v1',
-        p_group_code:identity.groupCode,
-        p_member_token:identity.memberToken,
-        p_setup:exported.setup,
-        p_result:exported.result,
-        p_metadata:{comparison:'keep-cut-decisions',route:'standalone',client:VERSION},
-        p_expires_days:365
+        p_game_type:'keep-cut',p_game_version:'keep-cut-standalone-v1',p_group_code:identity.groupCode,p_member_token:identity.memberToken,
+        p_setup:exported.setup,p_result:exported.result,p_metadata:{comparison:'keep-cut-decisions',route:'standalone',client:VERSION},p_expires_days:365
       });
       if(error)throw error;
       if(!data?.ok)throw new Error(data?.error||'Challenge link could not be created.');
@@ -111,37 +97,34 @@
       const text='Keep four and cut four from my exact UFC lineup. Every decision locks.';
       try{
         if(navigator.share)await navigator.share({title:'UFC Keep 4, Cut 4 Challenge',text,url});
-        else{
-          await navigator.clipboard.writeText(`${text}\n\n${url}`);
-          toast('Challenge link copied.');
-        }
+        else{await navigator.clipboard.writeText(`${text}\n\n${url}`);toast('Challenge link copied.');}
       }catch(error){
         if(error?.name==='AbortError')return;
         await navigator.clipboard.writeText(`${text}\n\n${url}`);
         toast('Challenge link copied.');
       }
-    }catch(error){
-      toast(String(error?.message||'Challenge link could not be created.'));
-    }finally{
-      creating=false;
-      if(trigger){trigger.disabled=false;trigger.textContent=original;}
-    }
+    }catch(error){toast(String(error?.message||'Challenge link could not be created.'));}
+    finally{creating=false;if(trigger){trigger.disabled=false;trigger.textContent=original;}}
+  }
+
+  function loadBlindRankSharing(){
+    if(document.querySelector('script[data-blind-rank-standalone-share]'))return;
+    const script=document.createElement('script');
+    script.src='assets/js/blind-rank-standalone-share.js?v=blind-rank-standalone-share-20260716a';
+    script.dataset.blindRankStandaloneShare='true';
+    document.head.appendChild(script);
   }
 
   function install(){
     if(redirectIncomingLegacyLink())return;
+    loadBlindRankSharing();
     document.addEventListener('click',event=>{
       const keepCut=event.target.closest?.('[data-kc-challenge]');
-      if(keepCut){
+      if(keepCut){event.preventDefault();event.stopImmediatePropagation();createChallenge(keepCut);return;}
+      if(event.target.closest?.('[data-five-round-share]')){
         event.preventDefault();
         event.stopImmediatePropagation();
-        createChallenge(keepCut);
-        return;
-      }
-      if(event.target.closest?.('[data-br-challenge],[data-five-round-share]')){
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        toast('Friend challenges for this game are coming in the next phase.');
+        toast('Blind Resume friend challenges are coming in the next phase.');
       }
     },true);
     document.documentElement.setAttribute('data-keep-cut-standalone-share',VERSION);
