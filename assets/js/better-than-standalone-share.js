@@ -1,8 +1,23 @@
 (function(){
   'use strict';
 
-  const VERSION='better-than-standalone-share-20260716a-subjective-claim';
+  const VERSION='better-than-standalone-share-20260716b-find-leader-loader';
   let creating=false;
+
+  function loadFindLeaderAssets(){
+    if(!document.querySelector('link[data-find-leader-style]')){
+      const link=document.createElement('link');
+      link.rel='stylesheet';
+      link.href='assets/css/find-leader.css?v=find-leader-css-20260716a-local-audited-stats';
+      link.dataset.findLeaderStyle='true';
+      document.head.appendChild(link);
+    }
+    if(window.UFC_FIND_LEADER||document.querySelector('script[data-find-leader-script]'))return;
+    const script=document.createElement('script');
+    script.src='assets/js/find-leader.js?v=find-leader-20260716a-local-audited-stats';
+    script.dataset.findLeaderScript='true';
+    document.head.appendChild(script);
+  }
 
   function toast(message,type=''){
     let node=document.getElementById('betterThanShareToast');
@@ -80,5 +95,6 @@
     createChallenge(trigger);
   },true);
 
+  loadFindLeaderAssets();
   document.documentElement.setAttribute('data-better-than-standalone-share',VERSION);
 })();
