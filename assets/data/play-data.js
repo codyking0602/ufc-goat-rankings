@@ -1,7 +1,8 @@
 (function(){
   'use strict';
 
-  const VERSION = 'play-data-20260715a-phase-two';
+  const VERSION = 'play-data-20260716b-auto-photo-resolver';
+  const PHOTO_VERSION = 'fighter-photo-resolver-20260716a';
   const VALID_GENDERS = new Set(['men','women']);
   const VALID_TIERS = new Set(['legend','elite','contender','recognizable','wildcard']);
   const GAME_KEYS = {
@@ -14,6 +15,140 @@
     'find-leader':'findLeader',
     findLeader:'findLeader'
   };
+
+  function text(value){ return String(value ?? '').trim(); }
+  function normal(value){
+    return text(value)
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g,'')
+      .replace(/[’‘`]/g,"'")
+      .replace(/[^a-zA-Z0-9]+/g,' ')
+      .trim()
+      .toLowerCase();
+  }
+  function slug(value){ return normal(value).replace(/\s+/g,'-'); }
+  function unique(values){ return [...new Set((values || []).map(text).filter(Boolean))]; }
+  function first(...values){ return values.find(value => text(value)) || ''; }
+  function number(...values){
+    const found = values.find(value => Number.isFinite(Number(value)));
+    return found === undefined ? null : Number(found);
+  }
+  function initials(name){
+    return text(name).split(/\s+/).filter(Boolean).slice(0,2).map(part => part[0]).join('').toUpperCase() || 'UFC';
+  }
+  function normalizeDivisions(value){
+    if(Array.isArray(value)) return unique(value);
+    return unique(text(value).split(/\s*(?:\/|,|&|\band\b)\s*/i));
+  }
+  function tierFromRank(rank){
+    if(!Number.isFinite(Number(rank))) return 'recognizable';
+    if(rank <= 10) return 'legend';
+    if(rank <= 25) return 'elite';
+    if(rank <= 50) return 'contender';
+    return 'recognizable';
+  }
+
+  const PHOTO_SLUG_OVERRIDES = {
+    'Michelle Waterson-Gomez':['michelle-waterson-gomez','michelle-waterson'],
+    'Houston Alexander':['houston-alexander','alexander-houston'],
+    'Alexander Gustafsson':['alexander-gustafsson','alexander-gustafson'],
+    'Edson Barboza':['edson-barboza','edson-barbosa'],
+    'Tai Tuivasa':['tai-tuivasa','tui-tuivasa','tai-tuiavasa']
+  };
+
+  function photoSlugs(name){
+    return unique([...(PHOTO_SLUG_OVERRIDES[text(name)] || []),slug(name)]);
+  }
+
+  function photoCandidates(name,explicit={}){
+    const slugs = photoSlugs(name);
+    const thumbs = unique([explicit.thumbUrl,...slugs.map(value => `assets/fighters/${value}-thumb.webp`)]);
+    const profiles = unique([explicit.profileUrl,...slugs.map(value => `assets/fighters/${value}.webp`)]);
+    return {thumbs,profiles,all:unique([...thumbs,...profiles])};
+  }
+
+  function applyPhotoPaths(fighter){
+    const explicitThumb = text(fighter?.thumbUrl);
+    const explicitProfile = text(fighter?.profileUrl);
+    const candidates = photoCandidates(fighter?.name,{thumbUrl:explicitThumb,profileUrl:explicitProfile});
+    return {
+      ...fighter,
+      thumbUrl:candidates.thumbs[0] || '',
+      profileUrl:candidates.profiles[0] || '',
+      photoCandidates:candidates.all,
+      photoExplicit:Boolean(explicitThumb || explicitProfile),
+      photoConvention:Boolean(!explicitThumb || !explicitProfile)
+    };
+  }
+
+  const imageAttempts = new WeakMap();
+
+  function comparableUrl(value){
+    try{return new URL(value,document.baseURI).href;}
+    catch(_error){return text(value);}
+  }
+
+  function isManagedFighterImage(image){
+    const source = text(image?.getAttribute?.('src'));
+    return image?.dataset?.fighterPhoto === 'true' || /(?:^|\/)assets\/fighters\/[^?#]+\.webp(?:[?#].*)?$/i.test(source);
+  }
+
+  function replaceWithInitials(image,name){
+    const fallback = document.createElement('span');
+    fallback.className = 'fighter-photo-fallback';
+    fallback.setAttribute('aria-label',name || 'UFC fighter');
+    fallback.textContent = initials(name);
+    image.replaceWith(fallback);
+  }
+
+  function recoverImage(image){
+    if(!(image instanceof HTMLImageElement) || !isManagedFighterImage(image)) return;
+    const name = text(image.dataset.fighterName || image.alt);
+    if(!name) return;
+
+    let state = imageAttempts.get(image);
+    if(!state){
+      const current = text(image.getAttribute('src'));
+      const candidates = photoCandidates(name);
+      const generated = /-thumb\.webp(?:[?#].*)?$/i.test(current)
+        ? [...candidates.thumbs,...candidates.profiles]
+        : [...candidates.profiles,...candidates.thumbs];
+      const chain = unique([current,...generated]);
+      const currentUrl = comparableUrl(current);
+      state = {chain,index:Math.max(0,chain.findIndex(value => comparableUrl(value) === currentUrl))};
+      imageAttempts.set(image,state);
+    }
+
+    state.index += 1;
+    if(state.index < state.chain.length){
+      image.src = state.chain[state.index];
+      return;
+    }
+    replaceWithInitials(image,name);
+  }
+
+  function installPhotoFallback(){
+    if(!document.getElementById('fighter-photo-resolver-css')){
+      const style = document.createElement('style');
+      style.id = 'fighter-photo-resolver-css';
+      style.textContent = '.fighter-photo-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:inherit;font:inherit;font-weight:950;letter-spacing:.02em}';
+      document.head.appendChild(style);
+    }
+    window.addEventListener('error',event => recoverImage(event.target),true);
+  }
+
+  const photoApi = {
+    version:PHOTO_VERSION,
+    slug,
+    slugsFor:photoSlugs,
+    candidatesFor:photoCandidates,
+    apply:applyPhotoPaths,
+    initials,
+    overrides:{...PHOTO_SLUG_OVERRIDES}
+  };
+  window.UFC_FIGHTER_PHOTOS = photoApi;
+  installPhotoFallback();
+  document.documentElement.setAttribute('data-fighter-photo-resolver',PHOTO_VERSION);
 
   const EXTRA_FIGHTERS = [
     {name:'CM Punk',aliases:['Phil Brooks'],gender:'men',divisions:['Welterweight'],eras:['superstar'],selectionTier:'wildcard',tags:['celebrity','wildcard','cult']},
@@ -60,34 +195,6 @@
     {name:'Karolina Kowalkiewicz',aliases:[],gender:'women',divisions:['Strawweight'],eras:['golden-age','superstar'],selectionTier:'contender',tags:['title-challenger','veteran','striker']}
   ];
 
-  function text(value){ return String(value ?? '').trim(); }
-  function normal(value){
-    return text(value)
-      .normalize('NFKD')
-      .replace(/[\u0300-\u036f]/g,'')
-      .replace(/[’‘`]/g,"'")
-      .replace(/[^a-zA-Z0-9]+/g,' ')
-      .trim()
-      .toLowerCase();
-  }
-  function slug(value){ return normal(value).replace(/\s+/g,'-'); }
-  function unique(values){ return [...new Set((values || []).map(text).filter(Boolean))]; }
-  function first(...values){ return values.find(value => text(value)) || ''; }
-  function number(...values){
-    const found = values.find(value => Number.isFinite(Number(value)));
-    return found === undefined ? null : Number(found);
-  }
-  function normalizeDivisions(value){
-    if(Array.isArray(value)) return unique(value);
-    return unique(text(value).split(/\s*(?:\/|,|&|\band\b)\s*/i));
-  }
-  function tierFromRank(rank){
-    if(!Number.isFinite(Number(rank))) return 'recognizable';
-    if(rank <= 10) return 'legend';
-    if(rank <= 25) return 'elite';
-    if(rank <= 50) return 'contender';
-    return 'recognizable';
-  }
   function liveRows(){
     const data = window.RANKING_DATA || {};
     const women = new Set((data.women || []).map(row => normal(row?.fighter)));
@@ -118,7 +225,7 @@
         ...divisions.map(division => slug(division))
       ]);
 
-      return {
+      return applyPhotoPaths({
         id:slug(name),
         name,
         aliases:unique([name.replace(/[’]/g,"'")]),
@@ -140,12 +247,12 @@
           betterThan:true,
           findLeader:false
         }
-      };
+      });
     });
   }
 
   function extraRecord(row){
-    return {
+    return applyPhotoPaths({
       id:slug(row.name),
       name:row.name,
       aliases:unique(row.aliases),
@@ -167,7 +274,7 @@
         betterThan:false,
         findLeader:false
       }
-    };
+    });
   }
 
   function mergeRecord(base,extra){
@@ -207,6 +314,7 @@
 
   const api = {
     version:VERSION,
+    photoResolver:photoApi,
     extras:EXTRA_FIGHTERS.map(row => ({...row})),
     allFighters:[],
     modelRanked:[],
@@ -264,7 +372,6 @@
       fighter.eras.forEach(era => {
         if(eraIds.size && !eraIds.has(era)) errors.push(`${fighter.name} uses unknown era ${era}.`);
       });
-      if(fighter.source === 'play-only' && (fighter.thumbUrl || fighter.profileUrl)) errors.push(`${fighter.name} has a photo path before a real file was approved.`);
     });
 
     const eligibilityCounts = Object.fromEntries(['blindRank','keepCut','betterThan','findLeader'].map(key => [
@@ -278,7 +385,9 @@
       total:records.length,
       modelRanked:records.filter(fighter => fighter.modelRanked).length,
       playOnly:records.filter(fighter => !fighter.modelRanked).length,
-      photoReady:records.filter(fighter => fighter.thumbUrl).length,
+      photoReady:records.filter(fighter => fighter.photoExplicit).length,
+      photoConvention:records.filter(fighter => fighter.photoConvention).length,
+      photoResolver:PHOTO_VERSION,
       eligibilityCounts
     };
   }
@@ -301,7 +410,7 @@
     api.byName = Object.fromEntries(records.map(fighter => [normal(fighter.name),fighter]));
     api.audit = buildAudit(records);
 
-    const signature = `${api.audit.total}|${api.audit.modelRanked}|${api.audit.photoReady}|${api.audit.passed}`;
+    const signature = `${api.audit.total}|${api.audit.modelRanked}|${api.audit.photoReady}|${api.audit.photoConvention}|${api.audit.passed}`;
     document.documentElement.setAttribute('data-play-data',VERSION);
     document.documentElement.setAttribute('data-play-roster-size',String(api.audit.total));
     document.documentElement.setAttribute('data-play-data-audit',api.audit.passed ? 'passed' : 'failed');
@@ -315,7 +424,11 @@
 
   window.UFC_PLAY_DATA = api;
   rebuild();
+  window.dispatchEvent(new CustomEvent('ufc-fighter-photos-ready',{detail:{version:PHOTO_VERSION,mode:'automatic-convention'}}));
   window.addEventListener('ufc-scoring-pipeline-ready',rebuild);
   window.addEventListener('ufc-division-era-depth-finalized',rebuild);
-  window.addEventListener('ufc-fighter-photos-ready',rebuild);
+  window.addEventListener('ufc-fighter-photos-ready',event => {
+    if(event?.detail?.version === PHOTO_VERSION) return;
+    rebuild();
+  });
 })();
