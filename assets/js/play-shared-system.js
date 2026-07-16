@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='play-shared-system-20260715b-generic-adapters';
+  const VERSION='play-shared-system-20260715k-clean-rebuild';
   const config=window.UFC_SUPABASE_CONFIG||{};
   const client=config.url&&config.anonKey&&window.supabase?.createClient
     ? window.supabase.createClient(config.url,config.anonKey)
@@ -24,6 +24,8 @@
   let submittingChallenge=false;
   let dailySubmitting=false;
   let modalPromise=null;
+  let completionTimer=0;
+  let completionFollowupTimer=0;
 
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({
     '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
@@ -31,6 +33,18 @@
   const normalizeCode=value=>String(value||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,10);
   const normalizeGroupCode=value=>normalizeCode(value).slice(0,6);
   const normalizePin=value=>String(value||'').replace(/\D/g,'').slice(0,4);
+
+  function safeGet(key){
+    try{return localStorage.getItem(key)||'';}catch(_error){return'';}
+  }
+
+  function safeSet(key,value){
+    try{localStorage.setItem(key,value);}catch(_error){}
+  }
+
+  function safeRemove(key){
+    try{localStorage.removeItem(key);}catch(_error){}
+  }
 
   function toast(message){
     let node=document.getElementById('playSharedToast');
@@ -45,7 +59,7 @@
     node.textContent=message;
     node.classList.add('show');
     clearTimeout(toast.timer);
-    toast.timer=setTimeout(()=>node.classList.remove('show'),2100);
+    toast.timer=setTimeout(()=>node.classList.remove('show'),2300);
   }
 
   function backendMessage(error,fallback='That did not work.'){
@@ -70,8 +84,7 @@
   }
 
   function memberToken(code){
-    try{return localStorage.getItem(`${GROUP_TOKEN_PREFIX}${normalizeGroupCode(code)}`)||'';}
-    catch(_error){return'';}
+    return safeGet(`${GROUP_TOKEN_PREFIX}${normalizeGroupCode(code)}`);
   }
 
   function candidateCodes(preferred=''){
@@ -79,7 +92,7 @@
     const values=[
       normalizeGroupCode(preferred),
       normalizeGroupCode(url.searchParams.get('group')),
-      normalizeGroupCode(localStorage.getItem(ACTIVE_GROUP_KEY)),
+      normalizeGroupCode(safeGet(ACTIVE_GROUP_KEY)),
       ...storedGroupCodes()
     ].filter(Boolean);
     return [...new Set(values)];
@@ -98,6 +111,7 @@
 
   async function resolveIdentity(preferred=''){
     if(identityCache&&memberToken(identityCache.groupCode)===identityCache.memberToken)return identityCache;
+    identityCache=null;
     for(const code of candidateCodes(preferred)){
       const token=memberToken(code);
       if(!token)continue;
@@ -105,14 +119,16 @@
         const identity=await identitySnapshot(code,token);
         if(identity){
           identityCache=identity;
-          localStorage.setItem(ACTIVE_GROUP_KEY,identity.groupCode);
+          safeSet(ACTIVE_GROUP_KEY,identity.groupCode);
           renderIdentityChip();
           return identity;
         }
       }catch(error){
-        if(/play_identity_snapshot|schema cache|does not exist/i.test(String(error?.message||'')))throw error;
+        const message=String(error?.message||'');
+        if(/play_identity_snapshot|schema cache|does not exist/i.test(message))throw error;
       }
     }
+    renderIdentityChip();
     return null;
   }
 
@@ -121,17 +137,17 @@
     const token=data?.member_token||'';
     const admin=data?.admin_token||'';
     if(!code||!token)return false;
-    localStorage.setItem(`${GROUP_TOKEN_PREFIX}${code}`,token);
-    if(admin)localStorage.setItem(`${GROUP_ADMIN_PREFIX}${code}`,admin);
-    else localStorage.removeItem(`${GROUP_ADMIN_PREFIX}${code}`);
-    localStorage.setItem(ACTIVE_GROUP_KEY,code);
-    localStorage.setItem('ufc-picks:display-name',data.member?.display_name||'');
+    safeSet(`${GROUP_TOKEN_PREFIX}${code}`,token);
+    if(admin)safeSet(`${GROUP_ADMIN_PREFIX}${code}`,admin);
+    else safeRemove(`${GROUP_ADMIN_PREFIX}${code}`);
+    safeSet(ACTIVE_GROUP_KEY,code);
+    safeSet('ufc-picks:display-name',data.member?.display_name||'');
     (data.rooms||[]).forEach(room=>{
       const roomCode=normalizeGroupCode(room.code);
       if(!roomCode)return;
-      localStorage.setItem(`${ROOM_TOKEN_PREFIX}${roomCode}`,token);
-      if(admin)localStorage.setItem(`${ROOM_ADMIN_PREFIX}${roomCode}`,admin);
-      else localStorage.removeItem(`${ROOM_ADMIN_PREFIX}${roomCode}`);
+      safeSet(`${ROOM_TOKEN_PREFIX}${roomCode}`,token);
+      if(admin)safeSet(`${ROOM_ADMIN_PREFIX}${roomCode}`,admin);
+      else safeRemove(`${ROOM_ADMIN_PREFIX}${roomCode}`);
     });
     return true;
   }
@@ -167,8 +183,8 @@
       const modal=document.createElement('div');
       modal.id='playIdentityModal';
       modal.className='play-identity-modal';
-      const preferred=normalizeGroupCode(options.preferredGroup)||normalizeGroupCode(localStorage.getItem(ACTIVE_GROUP_KEY))||candidateCodes()[0]||'';
-      const savedName=localStorage.getItem('ufc-picks:display-name')||'';
+      const preferred=normalizeGroupCode(options.preferredGroup)||normalizeGroupCode(safeGet(ACTIVE_GROUP_KEY))||candidateCodes()[0]||'';
+      const savedName=safeGet('ufc-picks:display-name');
       modal.innerHTML=`<div class="play-identity-dialog" role="dialog" aria-modal="true" aria-labelledby="playIdentityTitle">
         <span class="play-identity-kicker">UFC APP PROFILE</span>
         <h3 id="playIdentityTitle">${esc(options.title||'Sign in to continue')}</h3>
@@ -185,6 +201,7 @@
       </div>`;
       document.body.appendChild(modal);
       document.body.classList.add('play-identity-open');
+
       const submit=async()=>{
         const group=normalizeGroupCode(document.getElementById('playIdentityGroup')?.value);
         const name=document.getElementById('playIdentityName')?.value.trim()||'';
@@ -206,10 +223,15 @@
           button.textContent='Sign In';
         }
       };
+
       modal.querySelector('#playIdentitySubmit')?.addEventListener('click',submit);
       modal.querySelector('[data-play-identity-cancel]')?.addEventListener('click',()=>closeIdentityModal(null));
-      modal.addEventListener('click',event=>{if(event.target===modal&&options.allowCancel!==false)closeIdentityModal(null);});
-      modal.querySelectorAll('input').forEach(input=>input.addEventListener('keydown',event=>{if(event.key==='Enter')submit();}));
+      modal.addEventListener('click',event=>{
+        if(event.target===modal&&options.allowCancel!==false)closeIdentityModal(null);
+      });
+      modal.querySelectorAll('input').forEach(input=>{
+        input.addEventListener('keydown',event=>{if(event.key==='Enter')submit();});
+      });
       modal.querySelector('#playIdentityPin')?.focus();
     });
     return modalPromise;
@@ -245,15 +267,16 @@
   }
 
   function cleanChallengeUrl(code){
-  const url=new URL(window.location.href);
-  ['game','kcpack','kclineup','kcchoices','kcv','brpack','brlineup','group','room','event','archive','__manual_refresh','__shell','playbuild'].forEach(key=>url.searchParams.delete(key));
-  url.searchParams.set('challenge',normalizeCode(code));
-  url.searchParams.set('playbuild','20260715f');
-  url.hash='play';
-  return url.toString();
-}
+    const url=new URL(window.location.href);
+    ['game','kcpack','kclineup','kcchoices','kcv','brpack','brlineup','group','room','event','archive','__manual_refresh','__shell','playbuild']
+      .forEach(key=>url.searchParams.delete(key));
+    url.searchParams.set('challenge',normalizeCode(code));
+    url.searchParams.set('playbuild','20260715k');
+    url.hash='play';
+    return url.toString();
+  }
 
-function challengeCodeFromUrl(){
+  function challengeCodeFromUrl(){
     const url=new URL(window.location.href);
     const query=normalizeCode(url.searchParams.get('challenge'));
     if(query)return query;
@@ -261,7 +284,9 @@ function challengeCodeFromUrl(){
     return normalizeCode(match?.[1]);
   }
 
-  function adapterFor(id){return adapters.get(String(id||'').trim().toLowerCase())||null;}
+  function adapterFor(id){
+    return adapters.get(String(id||'').trim().toLowerCase())||null;
+  }
 
   function registerAdapter(adapter){
     if(!adapter||!adapter.id)throw new Error('Play adapter requires an id.');
@@ -278,19 +303,31 @@ function challengeCodeFromUrl(){
   async function createChallenge(gameType){
     const adapter=adapterFor(gameType);
     if(!adapter){toast('That game is not ready for challenges yet.');return;}
-    if(adapter.canChallenge&& !adapter.canChallenge()){toast(adapter.incompleteMessage||'Finish the game before challenging a friend.');return;}
+    if(adapter.canChallenge&&!adapter.canChallenge()){
+      toast(adapter.incompleteMessage||'Finish the game before challenging a friend.');
+      return;
+    }
+
     let setup;
     let result;
     try{
       setup=adapter.exportSetup?.();
       result=adapter.exportResult?.();
-    }catch(error){toast(error.message||'Could not prepare that challenge.');return;}
-    if(!setup||!result){toast(adapter.incompleteMessage||'Finish the game before challenging a friend.');return;}
+    }catch(error){
+      toast(error.message||'Could not prepare that challenge.');
+      return;
+    }
+    if(!setup||!result){
+      toast(adapter.incompleteMessage||'Finish the game before challenging a friend.');
+      return;
+    }
+
     const identity=await requireIdentity({
       title:'Sign in to create the challenge',
       description:`The exact ${adapter.title} setup and your completed result will be saved for your friend.`
     });
     if(!identity||!client)return;
+
     const {data,error}=await client.rpc('play_create_challenge',{
       p_game_type:adapter.id,
       p_game_version:String(adapter.version||'1'),
@@ -301,16 +338,32 @@ function challengeCodeFromUrl(){
       p_metadata:adapter.exportMetadata?.()||{},
       p_expires_days:Number(adapter.expiresDays)||365
     });
-    if(error||!data?.ok){toast(backendMessage(error||new Error(data?.error),'Challenge not created.'));return;}
+    if(error||!data?.ok){
+      toast(backendMessage(error||new Error(data?.error),'Challenge not created.'));
+      return;
+    }
+
     const url=cleanChallengeUrl(data.code);
-    const text=adapter.shareText?.({url,code:data.code})||`I made a UFC ${adapter.title} challenge. Play the exact same setup, then compare your result with mine.\n\n${url}`;
+    const rawText=adapter.shareText?.({url,code:data.code})
+      ||`I made a UFC ${adapter.title} challenge. Play the exact same setup, then compare your result with mine.\n\n${url}`;
+    const nativeText=String(rawText).replace(url,'').replace(/\n{3,}/g,'\n\n').trim();
+    const clipboardText=String(rawText).includes(url)?String(rawText):`${rawText}\n\n${url}`;
+
     try{
-      if(navigator.share)await navigator.share({title:`UFC ${adapter.title} Challenge`,text,url});
-      else{await navigator.clipboard.writeText(text);toast('Challenge link copied');}
+      if(navigator.share){
+        await navigator.share({title:`UFC ${adapter.title} Challenge`,text:nativeText,url});
+      }else{
+        await navigator.clipboard.writeText(clipboardText);
+        toast('Challenge link copied');
+      }
     }catch(error){
       if(error?.name==='AbortError')return;
-      try{await navigator.clipboard.writeText(text);toast('Challenge link copied');}
-      catch(_copyError){toast('Could not share the challenge.');}
+      try{
+        await navigator.clipboard.writeText(clipboardText);
+        toast('Challenge link copied');
+      }catch(_copyError){
+        toast('Could not share the challenge.');
+      }
     }
   }
 
@@ -329,21 +382,32 @@ function challengeCodeFromUrl(){
 
   function clearActiveChallenge(){
     activeChallenge=null;
+    pendingChallenge=null;
     try{sessionStorage.removeItem(CHALLENGE_SESSION_KEY);}catch(_error){}
     document.getElementById('playChallengeBanner')?.remove();
   }
 
   function renderChallengeBanner(challenge,adapter){
     const host=adapter?.bannerHost?.()||document.querySelector('#play .play-panel:not([hidden])');
-    if(!host)return;
+    if(!host)return false;
+    const signature=`${challenge?.code||''}|${challenge?.creator_name||''}|${adapter?.id||''}`;
     let banner=document.getElementById('playChallengeBanner');
     if(!banner){
       banner=document.createElement('div');
       banner.id='playChallengeBanner';
       banner.className='play-challenge-banner';
     }
-    banner.innerHTML=`<span>FRIEND CHALLENGE</span><strong>${esc(challenge.creator_name)} sent you the same ${esc(adapter?.title||'game')} setup.</strong><small>Your result stays private until you finish.</small>`;
+    if(banner.dataset.signature!==signature){
+      banner.dataset.signature=signature;
+      banner.innerHTML=`<span>FRIEND CHALLENGE</span><strong>${esc(challenge.creator_name)} sent you the same ${esc(adapter?.title||'game')} setup.</strong><small>Your result stays private until you finish.</small>`;
+    }
     if(banner.parentElement!==host)host.prepend(banner);
+    return true;
+  }
+
+  function showChallengeBanner(challenge,adapter,attempt=0){
+    if(renderChallengeBanner(challenge,adapter))return;
+    if(attempt<5)setTimeout(()=>showChallengeBanner(challenge,adapter,attempt+1),120);
   }
 
   async function openChallenge(code){
@@ -357,7 +421,10 @@ function challengeCodeFromUrl(){
         title:`Play ${challenge.creator_name}'s challenge`,
         description:'Sign in with your existing Picks profile so the final comparison belongs to you.'
       });
-      if(!identity){pendingChallenge=null;return;}
+      if(!identity){
+        pendingChallenge=null;
+        return;
+      }
       challenge.identity=identity;
       await tryOpenPendingChallenge();
     }catch(error){
@@ -377,49 +444,76 @@ function challengeCodeFromUrl(){
       await adapter.openSetup?.(challenge.setup,challenge);
       saveActiveChallenge(challenge);
       pendingChallenge=null;
-      setTimeout(()=>renderChallengeBanner(challenge,adapter),80);
+      window.__UFC_PLAY_CHALLENGE_ROUTE_ACTIVE=false;
+      setTimeout(()=>showChallengeBanner(challenge,adapter),80);
       return true;
     }catch(error){
       pendingChallenge=null;
+      window.__UFC_PLAY_CHALLENGE_ROUTE_ACTIVE=false;
       toast(error.message||'Challenge could not open.');
       return false;
     }
   }
 
   async function submitActiveChallenge(){
-    if(submittingChallenge||!activeChallenge||activeChallenge.submitted)return;
+    if(submittingChallenge||!activeChallenge||activeChallenge.submitted||!client)return;
     const adapter=adapterFor(activeChallenge.game_type);
     if(!adapter||!adapter.isComplete?.())return;
-    if(adapter.matchesSetup&& !adapter.matchesSetup(activeChallenge.setup))return;
+    if(adapter.matchesSetup&&!adapter.matchesSetup(activeChallenge.setup))return;
+
     let result;
-    try{result=adapter.exportResult?.();}
-    catch(_error){return;}
+    try{result=adapter.exportResult?.();}catch(_error){return;}
     if(!result)return;
+
     submittingChallenge=true;
-    const identity=await requireIdentity({preferredGroup:activeChallenge.creator_group_code,title:'Sign in to see the comparison'});
-    if(!identity){submittingChallenge=false;return;}
-    const score=adapter.exportScore?.();
-    const {data,error}=await client.rpc('play_submit_challenge',{
-      p_challenge_code:activeChallenge.code,
-      p_group_code:identity.groupCode,
-      p_member_token:identity.memberToken,
-      p_result:result,
-      p_score:Number.isFinite(Number(score))?Number(score):null,
-      p_metadata:adapter.exportResponseMetadata?.()||{}
-    });
-    submittingChallenge=false;
-    if(error||!data?.ok){toast(backendMessage(error||new Error(data?.error),'Comparison could not load.'));return;}
-    activeChallenge.submitted=true;
-    try{sessionStorage.setItem(CHALLENGE_SESSION_KEY,JSON.stringify(activeChallenge));}catch(_error){}
-    try{adapter.renderComparison?.(data);}catch(renderError){console.error(renderError);toast('Result saved, but the comparison could not render.');}
+    try{
+      const identity=activeChallenge.identity||await requireIdentity({
+        preferredGroup:activeChallenge.creator_group_code,
+        title:'Sign in to see the comparison'
+      });
+      if(!identity)return;
+
+      const score=adapter.exportScore?.();
+      const {data,error}=await client.rpc('play_submit_challenge',{
+        p_challenge_code:activeChallenge.code,
+        p_group_code:identity.groupCode,
+        p_member_token:identity.memberToken,
+        p_result:result,
+        p_score:Number.isFinite(Number(score))?Number(score):null,
+        p_metadata:adapter.exportResponseMetadata?.()||{}
+      });
+      if(error||!data?.ok){
+        toast(backendMessage(error||new Error(data?.error),'Comparison could not load.'));
+        return;
+      }
+
+      activeChallenge.submitted=true;
+      try{sessionStorage.setItem(CHALLENGE_SESSION_KEY,JSON.stringify(activeChallenge));}catch(_error){}
+      document.getElementById('playChallengeBanner')?.remove();
+      try{
+        adapter.renderComparison?.(data);
+      }catch(renderError){
+        console.error(renderError);
+        toast('Result saved, but the comparison could not render.');
+      }
+    }finally{
+      submittingChallenge=false;
+    }
   }
 
   function centralDay(){
     try{
-      const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'America/Chicago',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
+      const parts=new Intl.DateTimeFormat('en-CA',{
+        timeZone:'America/Chicago',
+        year:'numeric',
+        month:'2-digit',
+        day:'2-digit'
+      }).formatToParts(new Date());
       const map=Object.fromEntries(parts.map(part=>[part.type,part.value]));
       return `${map.year}-${map.month}-${map.day}`;
-    }catch(_error){return new Date().toISOString().slice(0,10);}
+    }catch(_error){
+      return new Date().toISOString().slice(0,10);
+    }
   }
 
   async function dailyContext(gameType='blind-resume',gameVersion='',maxScore=0){
@@ -428,15 +522,20 @@ function challengeCodeFromUrl(){
     const max=Math.max(1,Number(maxScore)||Number(adapter?.daily?.maxScore)||5);
     const cacheKey=`${gameType}|${version}`;
     if(dailyContextCache.has(cacheKey))return dailyContextCache.get(cacheKey);
+
     if(client){
       const {data,error}=await client.rpc('play_daily_context',{
         p_game_type:gameType,
         p_game_version:version,
         p_max_score:max
       });
-      if(!error&&data?.ok){dailyContextCache.set(cacheKey,data);return data;}
+      if(!error&&data?.ok){
+        dailyContextCache.set(cacheKey,data);
+        return data;
+      }
       if(error&&!/play_daily_context|schema cache|does not exist/i.test(String(error.message||'')))throw error;
     }
+
     const day=centralDay();
     const fallback={
       ok:false,
@@ -477,6 +576,7 @@ function challengeCodeFromUrl(){
   }
 
   async function dailyLeaderboard(gameType,day){
+    if(!client)throw new Error('The shared leaderboard is not connected.');
     const {data,error}=await client.rpc('play_daily_leaderboard',{
       p_game_type:gameType,
       p_challenge_day:day,
@@ -506,37 +606,72 @@ function challengeCodeFromUrl(){
     if(dailySubmitting||!client)return;
     const adapter=[...adapters.values()].find(item=>item.daily?.isActive?.()&&item.isComplete?.());
     if(!adapter)return;
+
     const run=dailyRuns.get(adapter.id)||{id:0,submitted:-1};
     if(run.submitted===run.id)return;
     dailySubmitting=true;
-    const identity=await requireIdentity({title:"Sign in for today's leaderboard"});
-    if(!identity){dailySubmitting=false;return;}
-    let result;
-    let score;
+
     try{
-      result=adapter.daily.exportResult?.()||adapter.exportResult?.();
-      score=adapter.daily.score?.();
-    }catch(_error){dailySubmitting=false;return;}
-    if(!result||!Number.isFinite(Number(score))){dailySubmitting=false;return;}
-    const context=await dailyContext(adapter.id,adapter.daily.version,adapter.daily.maxScore);
-    const {data,error}=await client.rpc('play_submit_daily_attempt',{
-      p_game_type:adapter.id,
-      p_game_version:String(adapter.daily.version||adapter.version||'1'),
-      p_group_code:identity.groupCode,
-      p_member_token:identity.memberToken,
-      p_score:Number(score),
-      p_result:result,
-      p_max_score:Number(adapter.daily.maxScore)||5
+      const identity=await requireIdentity({title:"Sign in for today's leaderboard"});
+      if(!identity)return;
+
+      let result;
+      let score;
+      try{
+        result=adapter.daily.exportResult?.()||adapter.exportResult?.();
+        score=adapter.daily.score?.();
+      }catch(_error){
+        return;
+      }
+      if(!result||!Number.isFinite(Number(score)))return;
+
+      const context=await dailyContext(adapter.id,adapter.daily.version,adapter.daily.maxScore);
+      const {data,error}=await client.rpc('play_submit_daily_attempt',{
+        p_game_type:adapter.id,
+        p_game_version:String(adapter.daily.version||adapter.version||'1'),
+        p_group_code:identity.groupCode,
+        p_member_token:identity.memberToken,
+        p_score:Number(score),
+        p_result:result,
+        p_max_score:Number(adapter.daily.maxScore)||5
+      });
+      if(error||!data?.ok){
+        toast(backendMessage(error||new Error(data?.error),'Score not saved.'));
+        return;
+      }
+
+      run.submitted=run.id;
+      dailyRuns.set(adapter.id,run);
+      try{
+        const board=await dailyLeaderboard(adapter.id,context.challenge_day);
+        if(adapter.daily.renderLeaderboard)adapter.daily.renderLeaderboard(data,board);
+        else renderDefaultDailyLeaderboard(adapter,data,board);
+      }catch(boardError){
+        toast(backendMessage(boardError,'Score saved, but leaderboard did not load.'));
+      }
+    }finally{
+      dailySubmitting=false;
+    }
+  }
+
+  function decorateAdapters(){
+    adapters.forEach(adapter=>{
+      try{adapter.decorate?.();}catch(_error){}
     });
-    if(error||!data?.ok){dailySubmitting=false;toast(backendMessage(error||new Error(data?.error),'Score not saved.'));return;}
-    run.submitted=run.id;
-    dailyRuns.set(adapter.id,run);
-    try{
-      const board=await dailyLeaderboard(adapter.id,context.challenge_day);
-      if(adapter.daily.renderLeaderboard)adapter.daily.renderLeaderboard(data,board);
-      else renderDefaultDailyLeaderboard(adapter,data,board);
-    }catch(boardError){toast(backendMessage(boardError,'Score saved, but leaderboard did not load.'));}
-    dailySubmitting=false;
+  }
+
+  function scheduleCompletionChecks(){
+    clearTimeout(completionTimer);
+    clearTimeout(completionFollowupTimer);
+    completionTimer=setTimeout(()=>{
+      decorateAdapters();
+      submitActiveChallenge();
+      submitDailyIfComplete();
+    },140);
+    completionFollowupTimer=setTimeout(()=>{
+      submitActiveChallenge();
+      submitDailyIfComplete();
+    },520);
   }
 
   function injectStyles(){
@@ -555,10 +690,6 @@ function challengeCodeFromUrl(){
     document.head.appendChild(style);
   }
 
-  function decorateAdapters(){
-    adapters.forEach(adapter=>{try{adapter.decorate?.();}catch(_error){}});
-  }
-
   function bind(){
     injectStyles();
 
@@ -572,19 +703,24 @@ function challengeCodeFromUrl(){
     api.requireIdentity=requireIdentity;
     api.loginWithPin=loginWithPin;
     api.dailyContext=dailyContext;
+    api.dailyLeaderboard=dailyLeaderboard;
     api.prepareDaily=prepareDaily;
     api.markDailyReplay=markDailyReplay;
     api.clearActiveChallenge=clearActiveChallenge;
+    api.checkCompletion=scheduleCompletionChecks;
 
     resolveIdentity().catch(()=>undefined).finally(renderIdentityChip);
-    window.addEventListener('ufc-play-hub-ready',renderIdentityChip);
+    window.addEventListener('ufc-play-hub-ready',()=>{
+      renderIdentityChip();
+      decorateAdapters();
+    });
 
     document.addEventListener('click',event=>{
       for(const adapter of adapters.values()){
         if(!adapter.challengeSelector)continue;
         const trigger=event.target.closest?.(adapter.challengeSelector);
         if(!trigger)continue;
-        if(adapter.shouldHandleChallenge&& !adapter.shouldHandleChallenge(trigger,event))continue;
+        if(adapter.shouldHandleChallenge&&!adapter.shouldHandleChallenge(trigger,event))continue;
         event.preventDefault();
         event.stopImmediatePropagation();
         createChallenge(adapter.id);
@@ -595,18 +731,10 @@ function challengeCodeFromUrl(){
       }
     },true);
 
-    const observer=new MutationObserver(()=>{
-      requestAnimationFrame(()=>{
-        decorateAdapters();
-        submitActiveChallenge();
-        submitDailyIfComplete();
-        if(activeChallenge&&!activeChallenge.submitted){
-          const adapter=adapterFor(activeChallenge.game_type);
-          if(adapter)renderChallengeBanner(activeChallenge,adapter);
-        }
-      });
-    });
-    observer.observe(document.getElementById('play')||document.body,{childList:true,subtree:true});
+    document.addEventListener('click',scheduleCompletionChecks,true);
+    document.addEventListener('change',scheduleCompletionChecks,true);
+    window.addEventListener('ufc-play-state-changed',scheduleCompletionChecks);
+    window.addEventListener('ufc-play-game-complete',scheduleCompletionChecks);
 
     const challengeCode=challengeCodeFromUrl();
     if(challengeCode)setTimeout(()=>openChallenge(challengeCode),220);
