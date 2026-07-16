@@ -1,20 +1,39 @@
 (function(){
   'use strict';
 
-  const VERSION='find-leader-20260716b-elimination-challenge';
+  const VERSION='find-leader-20260716c-daily-elimination';
+  const DAILY_VERSION='find-leader-daily-v1';
   const PERFECT_SCORE=10;
   const shell=document.querySelector('#play .play-shell');
   if(!shell)return;
 
-  const state={setup:null,eliminationOrder:[],safeIds:[],fatalId:null,score:null,perfect:false,feedback:'',phase:'loading'};
+  const state={setup:null,eliminationOrder:[],safeIds:[],fatalId:null,score:null,perfect:false,feedback:'',phase:'loading',daily:false,dailyContext:null};
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const initials=name=>String(name||'UFC').split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase();
+  const clone=value=>value===undefined?undefined:JSON.parse(JSON.stringify(value));
 
   const panel=document.createElement('section');
   panel.id='playFindLeaderPanel';
   panel.className='find-leader-panel play-panel';
   panel.hidden=true;
   shell.appendChild(panel);
+
+  function hashSeed(value){
+    let hash=2166136261;
+    for(let index=0;index<String(value).length;index+=1){hash^=String(value).charCodeAt(index);hash=Math.imul(hash,16777619);}
+    return hash>>>0;
+  }
+
+  function mulberry32(seed){
+    let value=seed>>>0;
+    return function(){
+      value+=0x6D2B79F5;
+      let next=value;
+      next=Math.imul(next^(next>>>15),next|1);
+      next^=next+Math.imul(next^(next>>>7),next|61);
+      return((next^(next>>>14))>>>0)/4294967296;
+    };
+  }
 
   function candidates(){return Array.isArray(state.setup?.candidates)?state.setup.candidates:[];}
   function candidate(id){return candidates().find(row=>row.id===id)||null;}
@@ -46,22 +65,39 @@
       perfect:Boolean(state.perfect),
       eliminationOrder:[...state.eliminationOrder],
       safeIds:[...state.safeIds],
-      fatalId:state.fatalId||null
+      fatalId:state.fatalId||null,
+      questionId:String(state.setup?.questionId||''),
+      leaderId:String(state.setup?.leaderId||''),
+      candidateIds:candidates().map(row=>row.id)
     };
   }
 
   function exportChallenge(){
     const completed=result();
     if(!completed||!validateSetup(state.setup))return null;
-    const setup=JSON.parse(JSON.stringify(state.setup));
+    const setup=clone(state.setup);
     setup.challengerScore=completed.score;
     setup.challengerPerfect=completed.perfect;
     return {setup,result:completed};
   }
 
-  function startGame(questionId=''){
+  function dailySetup(context){
+    const seed=String(context?.seed||context?.challenge_key||`find-leader|${context?.challenge_day||''}|${DAILY_VERSION}`);
+    return window.UFC_FIND_LEADER_QUESTION_BANK?.random?.(mulberry32(hashSeed(seed)))||null;
+  }
+
+  function normalizeStartOptions(input){
+    if(typeof input==='string')return {questionId:input};
+    return input&&typeof input==='object'?input:{};
+  }
+
+  function startGame(input={}){
+    const options=normalizeStartOptions(input);
     const bank=window.UFC_FIND_LEADER_QUESTION_BANK;
-    const setup=questionId?bank?.create?.(questionId):bank?.random?.();
+    let setup=null;
+    if(validateSetup(options.setup))setup=clone(options.setup);
+    else if(options.daily&&options.context)setup=dailySetup(options.context);
+    else setup=options.questionId?bank?.create?.(options.questionId):bank?.random?.();
     if(!validateSetup(setup)){
       state.phase='loading';
       state.setup=null;
@@ -76,6 +112,8 @@
     state.perfect=false;
     state.feedback='';
     state.phase='playing';
+    state.daily=Boolean(options.daily);
+    state.dailyContext=options.context?clone(options.context):null;
     renderGame();
     return true;
   }
@@ -109,7 +147,7 @@
     const round=currentRound();
     panel.innerHTML=`
       <section class="find-leader-hero">
-        <div><span>ELIMINATION GAME</span><h2>${esc(state.setup.question)}</h2><p>${esc(state.setup.context)} Eliminate one fighter who is <strong>not</strong> the leader. Pick the leader and your run ends.</p></div>
+        <div><span>${state.daily?"TODAY'S CHALLENGE":'ELIMINATION GAME'}</span><h2>${esc(state.setup.question)}</h2><p>${esc(state.setup.context)} Eliminate one fighter who is <strong>not</strong> the leader. Pick the leader and your run ends.</p></div>
         <aside><span>CURRENT ROUND</span><strong>${round}</strong><small>${remaining().length} fighters standing</small></aside>
       </section>
       <section class="find-leader-pressure">
@@ -127,6 +165,7 @@
     state.score=Number(score);
     state.phase='complete';
     renderFinish();
+    window.dispatchEvent(new CustomEvent('ufc-play-game-complete',{detail:{gameType:'find-leader',daily:state.daily,score:state.score,maxScore:PERFECT_SCORE,result:result()}}));
   }
 
   function eliminate(id){
@@ -135,16 +174,10 @@
     if(!fighter)return;
     const round=currentRound();
     state.eliminationOrder.push(id);
-    if(id===state.setup.leaderId){
-      finish({perfect:false,fatalId:id,score:round});
-      return;
-    }
+    if(id===state.setup.leaderId){finish({perfect:false,fatalId:id,score:round});return;}
     state.safeIds.push(id);
     state.feedback=`Safe elimination: ${fighter.name} had ${valueText(fighter)}.`;
-    if(state.safeIds.length===9){
-      finish({perfect:true,score:PERFECT_SCORE});
-      return;
-    }
+    if(state.safeIds.length===9){finish({perfect:true,score:PERFECT_SCORE});return;}
     renderGame();
   }
 
@@ -171,7 +204,7 @@
       <section class="find-leader-results">
         <header><div><span>FULL STAT REVEAL</span><strong>${esc(state.setup.question)}</strong></div><b>${state.score}/10</b></header>
         <div class="find-leader-reveal-grid">${sorted.map(revealCard).join('')}</div>
-        <div class="find-leader-actions"><button type="button" class="find-leader-primary" data-find-leader-challenge>CHALLENGE A FRIEND</button><button type="button" class="find-leader-secondary" data-find-leader-replay>PLAY AGAIN</button><button type="button" class="find-leader-secondary" data-find-leader-home>ALL GAMES</button></div>
+        <div class="find-leader-actions"><button type="button" class="find-leader-primary" data-find-leader-challenge>CHALLENGE A FRIEND</button><button type="button" class="find-leader-secondary" data-find-leader-replay>${state.daily?'REPLAY TODAY\'S BOARD':'PLAY AGAIN'}</button><button type="button" class="find-leader-secondary" data-find-leader-home>ALL GAMES</button></div>
       </section>`;
     panel.scrollIntoView({behavior:'smooth',block:'start'});
   }
@@ -180,23 +213,53 @@
     panel.innerHTML='<section class="find-leader-loading"><span>VERIFYING QUESTION BANK</span><h2>Building the elimination board…</h2><p>The game will only open when a ten-fighter question has one verified leader in the complete UFC fight ledger.</p></section>';
   }
 
-  function open(){
+  function open(options={}){
     shell.querySelectorAll('.play-panel').forEach(node=>{if(node!==panel)node.hidden=true;});
     panel.hidden=false;
-    startGame();
+    startGame(options);
   }
   function close(){panel.hidden=true;}
+
+  function replay(){
+    if(state.daily){
+      window.UFC_PLAY_SHARED?.markDailyReplay?.('find-leader');
+      startGame({daily:true,setup:clone(state.setup),context:clone(state.dailyContext)});
+      return;
+    }
+    startGame();
+  }
+
+  function installDailyAdapter(){
+    const shared=window.UFC_PLAY_SHARED;
+    if(!shared?.registerAdapter)return false;
+    const existing=shared.adapterFor?.('find-leader');
+    if(existing?.daily?.version===DAILY_VERSION)return true;
+    shared.registerAdapter({
+      id:'find-leader',version:'find-leader-elimination-v1',title:'Find the Leader',
+      isComplete:()=>state.phase==='complete',
+      exportResult:()=>result(),
+      daily:{
+        version:DAILY_VERSION,maxScore:PERFECT_SCORE,
+        isActive:()=>state.daily&&document.documentElement.getAttribute('data-play-screen')==='daily-find-leader',
+        exportResult:()=>result(),score:()=>Number(state.score),
+        resultHost:()=>panel,resultAnchor:()=>panel.querySelector('.find-leader-result-hero')
+      }
+    });
+    return true;
+  }
 
   panel.addEventListener('click',event=>{
     const pick=event.target.closest?.('[data-find-leader-pick]');
     if(pick){eliminate(pick.dataset.findLeaderPick);return;}
-    if(event.target.closest?.('[data-find-leader-replay]')){startGame();return;}
+    if(event.target.closest?.('[data-find-leader-replay]')){replay();return;}
     if(event.target.closest?.('[data-find-leader-home]'))window.UFC_PLAY_HUB?.showHub?.();
   });
 
-  const refreshIfWaiting=()=>{if(!panel.hidden&&state.phase==='loading')startGame();};
+  const refreshIfWaiting=()=>{if(!panel.hidden&&state.phase==='loading')startGame(state.daily?{daily:true,context:state.dailyContext}:{});};
   window.addEventListener('ufc-scoring-pipeline-ready',refreshIfWaiting);
   window.addEventListener('ufc-production-ranking-ready',refreshIfWaiting);
-  window.UFC_FIND_LEADER={version:VERSION,open,close,startGame,exportChallenge,get state(){return state;}};
+  window.addEventListener('ufc-play-shared-ready',installDailyAdapter);
+  installDailyAdapter();
+  window.UFC_FIND_LEADER={version:VERSION,dailyVersion:DAILY_VERSION,open,close,startGame,dailySetup,exportChallenge,get state(){return state;}};
   document.documentElement.setAttribute('data-find-leader',VERSION);
 })();
