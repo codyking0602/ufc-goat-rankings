@@ -1,7 +1,7 @@
 // Shared canonical roster batch ten: three complete UFC-only fighter integrations.
 (function(){
 'use strict';
-const VERSION='canonical-roster-batch-ten-20260715a-pantoja-paddy-weidman';
+const VERSION='canonical-roster-batch-ten-20260715b-pantoja-paddy-weidman';
 const EXPECTED_FIGHTERS=76;
 const clean=value=>String(value||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").replace(/[^a-z0-9']+/g,' ').replace(/\s+/g,' ').trim();
 const clone=value=>value===undefined?undefined:JSON.parse(JSON.stringify(value));
@@ -9,7 +9,7 @@ const slug=value=>clean(value).replace(/'/g,'').replace(/\s+/g,'-');
 const R=(won,lost,drawn=0,note='Reviewed prime-window round allocation.')=>({status:'audited',won,lost,drawn,reviewStatus:'locked',note});
 const NA=()=>({status:'not-audited'});
 const none=()=>({type:'none'});
-const title=(manualCredit)=>({type:'normal',manualCredit:Number(manualCredit),fighterEligible:true,reviewStatus:'locked'});
+const title=manualCredit=>({type:'normal',manualCredit:Number(manualCredit),fighterEligible:true,reviewStatus:'locked'});
 const result={W:['win','count-win'],L:['loss','count-loss']};
 function makeFight({date,opponent,event,resultCode,method,round,quality,rounds=NA(),division,scheduledRounds=3,titleContext=none(),championStatus='contender',note='',loss}){
   const [officialResult,scoringDisposition]=result[resultCode];
@@ -27,8 +27,24 @@ const records=[
     longevityContext:{gapCapMonths:18,statusMultiplier:1.08,reviewStatus:'locked',note:'Universal gap cap plus title-reign status credit.'},
     divisionStrength:{defaultKey:'modern-flyweight-0.90',reviewStatus:'locked',segments:[],note:'Modern flyweight receives a modest depth discount.'},
     fights:[
-      ['2017-01-28','Eric Shelton','UFC on Fox: Shevchenko vs. Pena','W','decision',3,'solid'],['2017-07-16','Neil Seery','UFC Fight Night: Nelson vs. Ponzinibbio','W','submission',3,'solid'],['2018-01-20','Dustin Ortiz','UFC 220','L','decision',3,'top-ten'],['2018-05-19','Brandon Moreno','UFC Fight Night: Maia vs. Usman','W','decision',3,'top-ten'],['2018-11-17','Ulka Sasaki','UFC Fight Night: Magny vs. Ponzinibbio','W','submission',1,'solid'],['2019-04-13','Wilson Reis','UFC 236','W','ko-tko',1,'top-ten'],['2019-07-27','Deiveson Figueiredo','UFC 240','L','decision',3,'top-five'],['2019-12-21','Matt Schnell','UFC Fight Night: Edgar vs. The Korean Zombie','W','ko-tko',1,'ranked'],['2020-07-19','Askar Askarov','UFC Fight Night: Figueiredo vs. Benavidez 2','L','decision',3,'top-five'],
-      ['2021-02-06','Manel Kape','UFC Fight Night: Overeem vs. Volkov','W','decision',3,'ranked',R(2,1)],['2021-08-21','Brandon Royval','UFC on ESPN: Cannonier vs. Gastelum','W','submission',2,'top-five',R(2,0)],['2022-07-30','Alex Perez','UFC 277','W','submission',1,'top-five',R(1,0)],['2023-07-08','Brandon Moreno','UFC 290','W','decision',5,'champion-level',R(3,2),1,'reigning-champion'],['2023-12-16','Brandon Royval','UFC 296','W','decision',5,'top-five',R(5,0),.95,'title-challenger'],['2024-05-04','Steve Erceg','UFC 301','W','decision',5,'top-ten',R(3,2),.8,'title-challenger'],['2024-12-07','Kai Asakura','UFC 310','W','submission',2,'solid',R(2,0),.75,'title-challenger'],['2025-06-28','Kai Kara-France','UFC 317','W','submission',3,'top-five',R(3,0),.9,'title-challenger'],['2025-12-06','Joshua Van','UFC 323','L','other',1,'top-five',R(0,1),0,'title-challenger','Official injury title loss; no normal finish add-on.']
+      ['2017-01-28','Eric Shelton','UFC on Fox: Shevchenko vs. Pena','W','decision',3,'solid'],
+      ['2017-07-16','Neil Seery','UFC Fight Night: Nelson vs. Ponzinibbio','W','submission',3,'solid'],
+      ['2018-01-20','Dustin Ortiz','UFC 220','L','decision',3,'top-ten'],
+      ['2018-05-19','Brandon Moreno','UFC Fight Night: Maia vs. Usman','W','decision',3,'top-ten'],
+      ['2018-11-17','Ulka Sasaki','UFC Fight Night: Magny vs. Ponzinibbio','W','submission',1,'solid'],
+      ['2019-04-13','Wilson Reis','UFC 236','W','ko-tko',1,'top-ten'],
+      ['2019-07-27','Deiveson Figueiredo','UFC 240','L','decision',3,'top-five'],
+      ['2019-12-21','Matt Schnell','UFC Fight Night: Edgar vs. The Korean Zombie','W','ko-tko',1,'ranked'],
+      ['2020-07-19','Askar Askarov','UFC Fight Night: Figueiredo vs. Benavidez 2','L','decision',3,'top-five'],
+      ['2021-02-06','Manel Kape','UFC Fight Night: Overeem vs. Volkov','W','decision',3,'ranked',R(2,1)],
+      ['2021-08-21','Brandon Royval','UFC on ESPN: Cannonier vs. Gastelum','W','submission',2,'top-five',R(2,0)],
+      ['2022-07-30','Alex Perez','UFC 277','W','submission',1,'top-five',R(1,0)],
+      ['2023-07-08','Brandon Moreno','UFC 290','W','decision',5,'champion-level',R(3,2),1,'reigning-champion'],
+      ['2023-12-16','Brandon Royval','UFC 296','W','decision',5,'top-five',R(5,0),.95,'title-challenger'],
+      ['2024-05-04','Steve Erceg','UFC 301','W','decision',5,'top-ten',R(3,2),.8,'title-challenger'],
+      ['2024-12-07','Kai Asakura','UFC 310','W','submission',2,'solid',R(2,0),.75,'title-challenger'],
+      ['2025-06-28','Kai Kara-France','UFC 317','W','submission',3,'top-five',R(3,0),.9,'title-challenger'],
+      ['2025-12-06','Joshua Van','UFC 323','L','other',1,'top-five',R(0,1),0,'title-challenger','Official injury title loss; no normal finish add-on.']
     ].map(([date,opponent,event,resultCode,method,round,quality,rounds,titleCredit,championStatus='contender',note=''])=>makeFight({date,opponent,event,resultCode,method,round,quality,rounds:rounds||NA(),division:'Flyweight',scheduledRounds:titleCredit===undefined?3:5,titleContext:titleCredit===undefined?none():title(titleCredit),championStatus,note,loss:{note}}))
   },
   {
@@ -38,11 +54,19 @@ const records=[
     longevityContext:{gapCapMonths:18,statusMultiplier:1.03,reviewStatus:'locked',note:'Current ranked lightweight window with the universal gap cap.'},
     divisionStrength:{defaultKey:'modern-lightweight-1.10',reviewStatus:'locked',segments:[],note:'Modern lightweight receives the model’s strongest standard division context.'},
     fights:[
-      ['2021-09-04','Luigi Vendramini','UFC Fight Night: Brunson vs. Till','W','ko-tko',1,'solid'],['2022-03-19','Rodrigo Vargas','UFC Fight Night: Volkov vs. Aspinall','W','submission',1,'solid'],['2022-07-23','Jordan Leavitt','UFC Fight Night: Blaydes vs. Aspinall','W','submission',2,'solid'],['2022-12-10','Jared Gordon','UFC 282','W','decision',3,'solid',null,null,'contender','Official win retained; disputed decision receives no meaningful quality boost.'],['2023-12-16','Tony Ferguson','UFC 296','W','decision',3,'minimal',null,null,'former-champion','Late-career name win with minimal quality credit.'],['2024-07-27','King Green','UFC 304','W','submission',1,'ranked',R(1,0)],['2025-04-12','Michael Chandler','UFC 314','W','ko-tko',3,'top-ten',R(3,0),null,'former-champion','Ranked finish discounted for age, inactivity, and recent form.'],['2026-01-24','Justin Gaethje','UFC 324','L','decision',5,'champion-level',R(1.33,3.67),'interim','former-champion','Prime elite interim-title decision loss; no finish add-on.'],['2026-07-11','Benoit Saint Denis','UFC 329','W','submission',1,'top-five',R(1,0),null,'title-challenger','Fifty-two-second D’Arce choke over a top-five lightweight.']
+      ['2021-09-04','Luigi Vendramini','UFC Fight Night: Brunson vs. Till','W','ko-tko',1,'solid'],
+      ['2022-03-19','Rodrigo Vargas','UFC Fight Night: Volkov vs. Aspinall','W','submission',1,'solid'],
+      ['2022-07-23','Jordan Leavitt','UFC Fight Night: Blaydes vs. Aspinall','W','submission',2,'solid'],
+      ['2022-12-10','Jared Gordon','UFC 282','W','decision',3,'solid',null,null,'contender','Official win retained; disputed decision receives no meaningful quality boost.'],
+      ['2023-12-16','Tony Ferguson','UFC 296','W','decision',3,'minimal',null,null,'former-champion','Late-career name win with minimal quality credit.'],
+      ['2024-07-27','King Green','UFC 304','W','submission',1,'ranked',R(1,0)],
+      ['2025-04-12','Michael Chandler','UFC 314','W','ko-tko',3,'top-ten',R(3,0),null,'former-champion','Ranked finish discounted for age, inactivity, and recent form.'],
+      ['2026-01-24','Justin Gaethje','UFC 324','L','decision',5,'champion-level',R(1.33,3.67),'interim','former-champion','Prime elite interim-title decision loss; no finish add-on.'],
+      ['2026-07-11','Benoit Saint Denis','UFC 329','W','submission',1,'top-five',R(1,0),null,'title-challenger','Fifty-two-second D’Arce choke over a top-five lightweight.']
     ].map(([date,opponent,event,resultCode,method,round,quality,rounds,titleType,championStatus='contender',note=''])=>makeFight({date,opponent,event,resultCode,method,round,quality,rounds:rounds||NA(),division:'Lightweight',scheduledRounds:titleType?5:3,titleContext:titleType?{type:titleType,manualCredit:0,fighterEligible:true,reviewStatus:'locked'}:none(),championStatus,note,loss:{note}}))
   },
   {
-    fighter:WEIDMAN,board:'men',status:'audited',identity:{primaryDivision:'Middleweight',secondaryDivisions:['Light Heavyweight','Catchweight'],aliases:['The All-American']},
+    fighter:WEIDMAN,board:'men',status:'audited',identity:{primaryDivision:'Middleweight',secondaryDivisions:['Light Heavyweight'],aliases:['The All-American']},
     coverage:{complete:true,verifiedThrough:'2026-07-15',ufcOnly:true,note:'Complete official UFC ledger through Eryk Anders. Ring of Combat and other non-UFC fights excluded.'},
     primeWindow:{startFightId:'2012-07-11-mark-munoz',endFightId:'2018-11-03-ronaldo-souza',open:false,reviewStatus:'locked',note:'The Munoz breakthrough starts the connected elite/title run; the Jacare loss closes it before the later light-heavyweight move and injury-era decline.'},
     longevityContext:{gapCapMonths:18,statusMultiplier:1.08,reviewStatus:'locked',note:'Championship-prime status with the universal 18-month activity-gap cap.'},
@@ -60,7 +84,7 @@ const records=[
       makeFight({date:'2015-12-12',opponent:'Luke Rockhold',event:'UFC 194',resultCode:'L',method:'ko-tko',round:4,quality:'champion-level',rounds:R(1,3),division:'Middleweight',scheduledRounds:5,titleContext:title(0),championStatus:'title-challenger'}),
       makeFight({date:'2016-11-12',opponent:'Yoel Romero',event:'UFC 205',resultCode:'L',method:'ko-tko',round:3,quality:'top-five',rounds:R(1,2),division:'Middleweight',championStatus:'contender'}),
       makeFight({date:'2017-04-08',opponent:'Gegard Mousasi',event:'UFC 210',resultCode:'L',method:'ko-tko',round:2,quality:'top-five',rounds:R(1,1),division:'Middleweight',championStatus:'contender',note:'Official TKO loss after a confusing legal-knee and replay sequence; counted competitively with technical context.'}),
-      makeFight({date:'2017-07-22',opponent:'Kelvin Gastelum',event:'UFC on Fox: Weidman vs. Gastelum',resultCode:'W',method:'submission',round:3,quality:'top-five',rounds:R(2,1),division:'Middleweight',championStatus:'contender',note:'Elite rebound win that kept the prime window open.'}),
+      makeFight({date:'2017-07-22',opponent:'Kelvin Gastelum',event:'UFC on Fox: Weidman vs. Gastelum',resultCode:'W',method:'submission',round:3,quality:'top-ten',rounds:R(2,1),division:'Middleweight',championStatus:'contender',note:'Ranked rebound win that kept the prime window open.'}),
       makeFight({date:'2018-11-03',opponent:'Ronaldo Souza',event:'UFC 230',resultCode:'L',method:'ko-tko',round:3,quality:'top-five',rounds:R(2,1),division:'Middleweight',championStatus:'contender'}),
       makeFight({date:'2019-10-18',opponent:'Dominick Reyes',event:'UFC on ESPN: Reyes vs. Weidman',resultCode:'L',method:'ko-tko',round:1,quality:'top-five',division:'Light Heavyweight',championStatus:'contender',loss:{divisionContext:'upward',note:'Post-prime light-heavyweight debut loss.'}}),
       makeFight({date:'2020-08-08',opponent:'Omari Akhmedov',event:'UFC Fight Night: Lewis vs. Oleinik',resultCode:'W',method:'decision',round:3,quality:'ranked',division:'Middleweight'}),
@@ -84,14 +108,15 @@ const judgments={
   },
   [WEIDMAN]:{
     championship:{benchmarkCredit:14.54,inputs:[['2013-07-06-anderson-silva','Anderson Silva',1],['2013-12-28-anderson-silva','Anderson Silva II',.9],['2014-07-05-lyoto-machida','Lyoto Machida',.95],['2015-05-23-vitor-belfort','Vitor Belfort',.85]].map(([fightId,opponent,finalAdjustedCredit])=>({fightId,opponent,finalAdjustedCredit,reviewStatus:'locked'}))},
-    opponentQuality:{benchmarkCredit:14.54,fighterAdjustment:0,inputs:[['2013-07-06-anderson-silva','Anderson Silva',1.2],['2013-12-28-anderson-silva','Anderson Silva II',.9],['2014-07-05-lyoto-machida','Lyoto Machida',.95],['2015-05-23-vitor-belfort','Vitor Belfort',.85],['2012-07-11-mark-munoz','Mark Munoz',.9],['2017-07-22-kelvin-gastelum','Kelvin Gastelum',.8],['2012-01-28-demian-maia','Demian Maia',.65],['2020-08-08-omari-akhmedov','Omari Akhmedov',.5],['2024-03-30-bruno-silva','Bruno Silva',.1]].map(([fightId,opponent,finalCredit])=>({fighter:WEIDMAN,fightId,opponent,finalCredit,reviewStatus:'locked'}))},
+    opponentQuality:{benchmarkCredit:14.54,fighterAdjustment:0,inputs:[['2013-07-06-anderson-silva','Anderson Silva',1.2],['2013-12-28-anderson-silva','Anderson Silva II',.9],['2014-07-05-lyoto-machida','Lyoto Machida',.95],['2015-05-23-vitor-belfort','Vitor Belfort',.85],['2012-07-11-mark-munoz','Mark Munoz',.9],['2017-07-22-kelvin-gastelum','Kelvin Gastelum',.8],['2012-01-28-demian-maia','Demian Maia',.65],['2020-08-08-omari-akhmedov','Omari Akhmedov',.4],['2024-03-30-bruno-silva','Bruno Silva',.1]].map(([fightId,opponent,finalCredit])=>({fighter:WEIDMAN,fightId,opponent,finalCredit,reviewStatus:'locked'}))},
     apex:{performances:[{fightId:'2013-07-06-anderson-silva',opponent:'Anderson Silva',rating:9.8},{fightId:'2014-07-05-lyoto-machida',opponent:'Lyoto Machida',rating:9.5}],components:{twoPerformanceStrength:1.93,proof:1.45,bestFighterClaim:1.15,aura:1.15},notes:'The Silva knockout establishes world-best proof; the five-round Machida defense confirms championship-level separation.'}
   }
 };
+const judgmentByKey=new Map(Object.entries(judgments).map(([fighter,value])=>[clean(fighter),value]));
 const eras={
   [PANTOJA]:{status:'locked',window:{start:'2021-02-06',startLabel:'Manel Kape',end:'2025-12-06',endLabel:'Joshua Van',endType:'unrecovered_injury_title_loss',endReason:'Van is the current endpoint.'},lossContext:{unrecoveredLoss:{label:'Joshua Van',date:'2025-12-06',type:'prime elite injury title loss without finish add-on'},weirdResults:['Van injury result'],recoveredLosses:[],postPrimeLosses:[]},longevity:{gapCapMonths:18,gapAdjustedMonths:58.1,activeEliteYears:4.84,statusMultiplier:1.08,divisionMultiplier:.95,adjustmentNote:'Kape through Van.',note:'Strong four-defense championship window.'},notes:'UFC-only; TUF exhibitions excluded.'},
   [PADDY]:{status:'locked-current',window:{start:'2024-07-27',startLabel:'King Green',end:null,endLabel:'Current ranked lightweight form',endType:'open_current_contender',endReason:'The Saint Denis finish re-established elite contender form after Gaethje.'},lossContext:{unrecoveredLoss:null,weirdResults:[{label:'Jared Gordon',date:'2022-12-10',phase:'pre-prime disputed decision win'}],recoveredLosses:[{label:'Justin Gaethje',date:'2026-01-24',phase:'prime elite interim-title decision loss',recovery:'Recovered with a 52-second top-five submission win over Benoit Saint Denis.'}],postPrimeLosses:[]},longevity:{gapCapMonths:18,gapAdjustedMonths:23.6,activeEliteYears:1.97,statusMultiplier:1.03,divisionMultiplier:1.10,adjustmentNote:'King Green through current ranked form.',note:'Short current elite window in the UFC’s deepest division.'},notes:'UFC-only; Cage Warriors championship excluded.'},
-  [WEIDMAN]:{status:'locked',window:{start:'2012-07-11',startLabel:'Mark Munoz',end:'2018-11-03',endLabel:'Ronaldo Souza',endType:'unrecovered_elite_loss',endReason:'The Jacare loss closes the connected title-level middleweight window before the later division move and injury-era decline.'},lossContext:{unrecoveredLoss:{label:'Ronaldo Souza',date:'2018-11-03',type:'prime elite finish loss'},weirdResults:[{label:'Gegard Mousasi',date:'2017-04-08',phase:'prime legal-knee/replay TKO context'},{label:'Uriah Hall',date:'2021-04-24',phase:'post-prime freak leg-break technical loss'}],recoveredLosses:[{label:'Luke Rockhold / Yoel Romero / Gegard Mousasi',date:'2015-2017',recovery:'The Gastelum submission re-proved elite middleweight form and kept the prime open.'}],postPrimeLosses:[{label:'Dominick Reyes',date:'2019-10-18',phase:'post-prime upward-division loss'},{label:'Uriah Hall / Brad Tavares / Eryk Anders',date:'2021-2024',phase:'post-prime decline and injury context'}]},longevity:{gapCapMonths:18,gapAdjustedMonths:75.8,activeEliteYears:6.32,statusMultiplier:1.08,divisionMultiplier:.98,adjustmentNote:'Munoz through Jacare.',note:'Championship-prime middleweight window; later losses are separated as post-prime.'},notes:'UFC-only. Ring of Combat excluded.'}
+  [WEIDMAN]:{status:'locked',window:{start:'2012-07-11',startLabel:'Mark Munoz',end:'2018-11-03',endLabel:'Ronaldo Souza',endType:'unrecovered_elite_loss',endReason:'The Jacare loss closes the connected title-level middleweight window before the later division move and injury-era decline.'},lossContext:{unrecoveredLoss:{label:'Ronaldo Souza',date:'2018-11-03',type:'prime elite finish loss'},weirdResults:[{label:'Gegard Mousasi',date:'2017-04-08',phase:'prime legal-knee/replay TKO context'},{label:'Uriah Hall',date:'2021-04-24',phase:'post-prime freak leg-break technical loss'}],recoveredLosses:[{label:'Luke Rockhold / Yoel Romero / Gegard Mousasi',date:'2015-2017',recovery:'The Gastelum submission re-proved ranked middleweight form and kept the prime open.'}],postPrimeLosses:[{label:'Dominick Reyes',date:'2019-10-18',phase:'post-prime upward-division loss'},{label:'Uriah Hall / Brad Tavares / Eryk Anders',date:'2021-2024',phase:'post-prime decline and injury context'}]},longevity:{gapCapMonths:18,gapAdjustedMonths:75.8,activeEliteYears:6.32,statusMultiplier:1.08,divisionMultiplier:.98,adjustmentNote:'Munoz through Jacare.',note:'Championship-prime middleweight window; later losses are separated as post-prime.'},notes:'UFC-only. Ring of Combat excluded.'}
 };
 const depthRows=[
   {fighter:PANTOJA,classification:'batch-ten-factual-completion',approvalStatus:'model-reviewed',decision:'Apply a modest modern-flyweight depth discount.',approvedAdjustment:-.75,approvedAt:'2026-07-15',provenance:'Shared canonical roster batch ten'},
@@ -120,7 +145,7 @@ function registerEras(){
 function registerJudgments(){
   const api=window.UFC_CANONICAL_SCORING_JUDGMENTS;if(!api?.entryFor)throw new Error('Missing canonical scoring judgments API.');
   const previousEntry=api.entryFor.bind(api),previousList=api.list?.bind(api);
-  api.entryFor=(category,fighter)=>judgments[fighter]?.[category]?clone(judgments[fighter][category]):previousEntry(category,fighter);
+  api.entryFor=(category,fighter)=>judgmentByKey.get(clean(fighter))?.[category]?clone(judgmentByKey.get(clean(fighter))[category]):previousEntry(category,fighter);
   if(previousList)api.list=category=>[...(previousList(category)||[]),...Object.entries(judgments).filter(([,value])=>value[category]).map(([fighter,value])=>({normalized:clean(fighter),...clone(value[category])}))];
   api.fighterCount=EXPECTED_FIGHTERS;
 }
@@ -134,7 +159,8 @@ function registerDepth(){
 function registerCompare(){
   window.COMPARE_PROFILES=window.COMPARE_PROFILES||{};
   Object.entries(compareProfiles).forEach(([fighter,profile])=>{window.COMPARE_PROFILES[fighter]={...(window.COMPARE_PROFILES[fighter]||{}),...profile};if(window.DISPLAY_OVERRIDES?.[fighter])window.DISPLAY_OVERRIDES[fighter].compareProfile={...(window.DISPLAY_OVERRIDES[fighter].compareProfile||{}),...profile};});
-  window.COMPARE_FIGHT_LEDGER=window.COMPARE_FIGHT_LEDGER||{};Object.assign(window.COMPARE_FIGHT_LEDGER,fightLedger);
+  window.COMPARE_FIGHT_LEDGER=window.COMPARE_FIGHT_LEDGER||{};
+  Object.assign(window.COMPARE_FIGHT_LEDGER,fightLedger);
 }
 function reconcileCalculatorAudit(){
   const api=window.UFC_CATEGORY_CALCULATORS;if(!api?.list)throw new Error('Missing category calculator API.');
@@ -143,7 +169,12 @@ function reconcileCalculatorAudit(){
   window.UFC_CATEGORY_CALCULATOR_AUDIT=api.audit();
   if(!window.UFC_CATEGORY_CALCULATOR_AUDIT.passed)throw new Error(`Batch-ten category audit blocked: ${JSON.stringify(window.UFC_CATEGORY_CALCULATOR_AUDIT.blockedFighters)}`);
 }
-registerFacts();registerEras();registerJudgments();registerDepth();registerCompare();reconcileCalculatorAudit();
+registerFacts();
+registerEras();
+registerJudgments();
+registerDepth();
+registerCompare();
+reconcileCalculatorAudit();
 const factsAudit=window.UFC_CANONICAL_FIGHTER_FACTS.audit();
 window.UFC_CANONICAL_ROSTER_BATCH_TEN={version:VERSION,expectedFighterCount:EXPECTED_FIGHTERS,fighters:records.map(record=>record.fighter),factsAudit,categoryAudit:window.UFC_CATEGORY_CALCULATOR_AUDIT,passed:factsAudit.passed&&factsAudit.total===EXPECTED_FIGHTERS&&window.UFC_CATEGORY_CALCULATOR_AUDIT.passed};
 if(!window.UFC_CANONICAL_ROSTER_BATCH_TEN.passed)throw new Error('Canonical roster batch ten failed final shared-registry audit.');
