@@ -2,7 +2,7 @@
 (function(){
   'use strict';
 
-  const VERSION='ranking-data-patches-20260715j-photo-missing-opt-out';
+  const VERSION='ranking-data-patches-20260716a-pantoja-weidman-nicknames';
   const PHOTO_BUILD='20260715j-photo-missing-opt-out';
   let readyResolved=false;
   let finalPhotoSyncCount=0;
@@ -204,7 +204,7 @@
       {src:'assets/compare-phase2-yan.js?v=compare-phase2-yan-20260701b',attr:'data-compare-phase2-yan'},
       {src:'assets/data/fighter-packets.js?v=fighter-packets-20260702c',attr:'data-fighter-packets'},
       ...packets,
-      {src:'assets/js/card-nicknames.js?v=card-nicknames-20260706n-robbie-lawler',attr:'data-card-nicknames'},
+      {src:'assets/js/card-nicknames.js?v=card-nicknames-20260716a-pantoja-weidman',attr:'data-card-nicknames'},
       {src:'assets/js/championship-label-polish.js?v=championship-label-polish-20260711d-label-only',attr:'data-championship-label-polish'},
       {src:'assets/js/profile-card-ui.js?v=profile-card-ui-20260711a-canonical',attr:'data-profile-card-ui'},
       {src:'assets/data/compare-matchups.js?v=compare-matchups-20260703a',attr:'data-compare-matchups'},
@@ -229,7 +229,7 @@
   }
 
   window.UFC_RANKING_DATA_PATCHES_V1={
-    meta:{purpose:'Presentation-only prerequisite loader',updated:'2026-07-15',version:VERSION},
+    meta:{purpose:'Presentation-only prerequisite loader',updated:'2026-07-16',version:VERSION},
     apply:status,
     ready:readyPromise,
     slugFor,
