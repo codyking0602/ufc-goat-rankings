@@ -133,13 +133,13 @@ const DISPLAY_OVERRIDES = {
   },
   "Tom Aspinall": {
     "divisionLabel": "HW",
-    "resumeTag": "Heavyweight speed-and-finish champion",
-    "photoUnavailable": true,
-    "photoStatus": "missing",
-    "oneLiner": "A modern heavyweight speed-and-finishing champion with a perfect UFC finish rate, two title-fight wins, and elite one-minute knockouts over Pavlovich and Blaydes.",
-    "whyRankedHere": "Aspinall ranks here because his UFC case already has championship proof, elite heavyweight wins, a perfect finish rate, and one of the most explosive prime performances in the division's history. Pavlovich, Blaydes, Volkov, Spivac, and Tybura give the run enough ranked depth to move beyond prospect hype.",
-    "whyNotHigher": "He does not rank higher because the UFC title volume is still only two wins, the undisputed reign has not produced a completed defense, and the active elite window is much shorter than the established heavyweight champions. Modern heavyweight also receives a light division-depth discount.",
-    "keyJudgmentCalls": [["Prime start","the ranked Serghei Spivac finish begins the connected elite heavyweight window."],["Curtis Blaydes injury","remains an official UFC loss, but the 15-second knee injury is not treated as a normal competitive finish loss and carries no standard loss penalty."],["Blaydes rematch","the 60-second interim-title defense fully answers the competitive question from the injury result."],["Ciryl Gane no contest","is excluded from scoring and does not create a title-fight win or loss."],["Interim title credit","the Pavlovich win and Blaydes defense receive the model's partial interim-title credit; elevation to undisputed champion does not invent an extra win."]],
-    "finalTakeaway": "Aspinall is already an elite UFC heavyweight champion case: rare speed, a perfect finish rate, and real title-level wins. The skill ceiling is enormous, but more completed undisputed title work and elite longevity are still required for the top heavyweight GOAT tier."
+    "resumeTag": "Explosive heavyweight champion",
+    "photoUrl": "assets/fighters/tom-aspinall.webp",
+    "thumbUrl": "assets/fighters/tom-aspinall-thumb.webp",
+    "oneLiner": "The heavyweight speed-and-finishing case: eight UFC wins, eight finishes, two interim-title wins, and a freak-injury loss that does not represent a competitive defeat.",
+    "whyRankedHere": "Aspinall earns his place through perfect UFC finishing efficiency, elite first-round wins over Sergei Pavlovich and Curtis Blaydes, an Alexander Volkov submission, and two interim-title victories. The shared model also recognizes that his only official UFC loss was a 15-second knee injury rather than a normal competitive defeat.",
+    "whyNotHigher": "He does not rank higher because the championship volume and active elite window are still short. He has two UFC title-fight wins, no completed undisputed title defense, and fewer top-five wins than Stipe Miocic, Francis Ngannou, and the deepest heavyweight resumes.",
+    "keyJudgmentCalls": [["Prime start","Alexander Volkov begins the connected elite heavyweight window."],["Curtis Blaydes I","the 15-second knee injury remains an official loss but is treated as a freak technical result with no normal loss penalty."],["Interim title wins","Pavlovich and the Blaydes rematch receive partial interim-title credit under the shared Championship rules."],["Ciryl Gane no contest","excluded from scoring and title-win credit; Aspinall retained the undisputed title."],["Heavyweight depth","receives a modest era-depth discount because the top end is dangerous but the full division is thinner than elite lightweight and welterweight eras."]],
+    "finalTakeaway": "Aspinall is already a serious UFC heavyweight peak case: fast, technically complete, title-proven, and perfect as a finisher. He needs completed undisputed defenses and more elite wins to become a top-tier all-time heavyweight resume."
   }
 };
