@@ -1,13 +1,17 @@
 (function(){
   'use strict';
 
-  const VERSION='better-than-standalone-share-20260716d-find-leader-elimination-loader';
-  const FIND_LEADER_VERSION='find-leader-20260716b-elimination-challenge';
+  const VERSION='better-than-standalone-share-20260716e-daily-rotation-loader';
+  const FIND_LEADER_VERSION='find-leader-20260716c-daily-elimination';
   let creating=false;
 
   function loadScriptOnce(selector,src,datasetKey,onload){
     const existing=document.querySelector(selector);
-    if(existing){if(existing.dataset.loaded==='true')onload?.();else existing.addEventListener('load',()=>onload?.(),{once:true});return existing;}
+    if(existing){
+      if(existing.dataset.loaded==='true'||existing.readyState==='complete')onload?.();
+      else existing.addEventListener('load',()=>onload?.(),{once:true});
+      return existing;
+    }
     const script=document.createElement('script');
     script.src=src;
     script.dataset[datasetKey]='true';
@@ -22,6 +26,15 @@
     if(description)description.textContent='Eliminate nine fighters without removing the verified stat leader. One fatal pick ends the run.';
   }
 
+  function loadDailyTools(){
+    const loadClients=()=>{
+      loadScriptOnce('script[data-play-daily-rotation-v1]','assets/js/play-daily-rotation.js?v=play-daily-rotation-20260716a-find-leader-blind-resume','playDailyRotationV1');
+      loadScriptOnce('script[data-play-daily-leaderboard-rotation]','assets/js/play-daily-leaderboard.js?v=play-daily-leaderboard-20260716b-rotating-games','playDailyLeaderboardRotation');
+    };
+    if(window.UFC_PLAY_SHARED?.dailyContext){loadClients();return;}
+    loadScriptOnce('script[data-play-shared-daily-loader]','assets/js/play-shared-system.js?v=play-shared-system-20260715k-clean-rebuild','playSharedDailyLoader',loadClients);
+  }
+
   function loadFindLeaderAssets(){
     if(!document.querySelector('link[data-find-leader-elimination-style]')){
       const link=document.createElement('link');
@@ -32,9 +45,10 @@
     }
 
     const loadGame=()=>{
-      if(window.UFC_FIND_LEADER?.version===FIND_LEADER_VERSION)return;
-      document.getElementById('playFindLeaderPanel')?.remove();
-      loadScriptOnce('script[data-find-leader-elimination-script]','assets/js/find-leader.js?v=find-leader-20260716b-elimination-challenge','findLeaderEliminationScript');
+      if(window.UFC_FIND_LEADER?.version!==FIND_LEADER_VERSION){
+        document.getElementById('playFindLeaderPanel')?.remove();
+        loadScriptOnce('script[data-find-leader-daily-elimination]','assets/js/find-leader.js?v=find-leader-20260716c-daily-elimination','findLeaderDailyElimination',loadDailyTools);
+      }else loadDailyTools();
     };
     loadScriptOnce('script[data-find-leader-question-bank]','assets/data/find-leader-question-bank.js?v=find-leader-question-bank-20260716b-elimination','findLeaderQuestionBank',loadGame);
     loadScriptOnce('script[data-find-leader-share-adapter]','assets/js/find-leader-standalone-share.js?v=find-leader-standalone-share-20260716a-elimination','findLeaderShareAdapter');
@@ -112,7 +126,7 @@
 
   document.addEventListener('click',event=>{
     const findLeader=event.target.closest?.('[data-open-game="find-leader"]');
-    if(findLeader)setTimeout(()=>{
+    if(findLeader&&!findLeader.dataset.dailyRotationOpen)setTimeout(()=>{
       const eyebrow=document.getElementById('playGameEyebrow');
       const subtitle=document.querySelector('#play .section-title p');
       if(eyebrow)eyebrow.textContent='ELIMINATION GAME';
