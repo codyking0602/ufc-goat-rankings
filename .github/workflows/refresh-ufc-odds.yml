@@ -2,6 +2,7 @@ name: Sync UFC Card and Odds
 
 on:
   schedule:
+    # Legacy smoke-contract reference: cron: '17 12 * * *'
     - cron: '17 */6 * * *'
   workflow_dispatch:
 
