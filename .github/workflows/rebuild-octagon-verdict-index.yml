@@ -1,6 +1,13 @@
 name: Rebuild Octagon Verdict index
 
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'assets/data/octagon-verdict/fighters/*.json'
+      - 'scripts/rebuild-octagon-verdict-index.mjs'
+      - '.github/workflows/rebuild-octagon-verdict-index.yml'
   push:
     branches:
       - main
@@ -14,17 +21,16 @@ permissions:
   contents: write
 
 concurrency:
-  group: octagon-verdict-index-main
+  group: octagon-verdict-index-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   rebuild-index:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out main
+      - name: Check out the triggering revision
         uses: actions/checkout@v4
         with:
-          ref: main
           fetch-depth: 0
 
       - name: Set up Node.js
@@ -35,7 +41,18 @@ jobs:
       - name: Rebuild and validate aggregate index
         run: node scripts/rebuild-octagon-verdict-index.mjs
 
-      - name: Commit aggregate index when changed
+      - name: Require a committed aggregate index on pull requests
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          if ! git diff --quiet -- assets/data/octagon-verdict/index.json; then
+            echo 'The aggregate Octagon Verdict index is stale. Run node scripts/rebuild-octagon-verdict-index.mjs and commit index.json.'
+            git diff --stat -- assets/data/octagon-verdict/index.json
+            exit 1
+          fi
+
+      - name: Commit aggregate index when changed on main
+        if: github.event_name != 'pull_request'
         shell: bash
         run: |
           if git diff --quiet -- assets/data/octagon-verdict/index.json; then
