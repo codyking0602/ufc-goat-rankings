@@ -1,6 +1,6 @@
 # Octagon Verdict — Official UFC-Only Knowledge Pack
 
-Generated: **2026-07-16T21:40:37.243Z**  
+Generated: **2026-07-16T21:53:15.045Z**  
 Canonical model-as-of date: **2026-07-13**  
 Latest fighter-ledger verification date: **2026-07-15**  
 Fighters: **76**
@@ -32,7 +32,7 @@ Octagon Verdict explains and debates the same UFC-only rankings shown by the app
 | fighterEraLedgers | fighter-era-ledgers-20260714h-full-72-coverage |
 | scoringJudgments | canonical-scoring-judgments-20260714b-generated-approved-inputs |
 | opponentQualityAdjustments | canonical-opponent-quality-audit-adjustments-20260716c-gaethje-johnson |
-| championshipAdjustments | canonical-championship-audit-adjustments-20260716b-gaethje-paddy |
+| championshipAdjustments | canonical-championship-audit-adjustments-20260716c-title-credit-alignment |
 | divisionDepthResolutions | canonical-division-era-depth-approved-resolutions-20260715c-woodley-neutral |
 | woodleyAudit | canonical-woodley-audit-adjustments-20260715a |
 
@@ -186,7 +186,7 @@ The benchmark UFC resume: unmatched title-fight success, elite quality wins, lon
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 101.47 | 22-1, 1 NC | Light Heavyweight / Heavyweight | 16 | 15.8 | 12 | 16-0, 1 NC | 86.7% | 10.51 |
+| men | 101.47 | 22-1, 1 NC | Light Heavyweight / Heavyweight | 16 | 14.54 | 12 | 16-0, 1 NC | 86.7% | 10.51 |
 
 #### Exact model math
 
@@ -215,7 +215,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.994594**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **16**. Adjusted title wins: **15.8**. Derived undisputed-title win count: **15**. Interim-title win count: **1**.
+UFC title-fight wins: **16**. Adjusted title wins: **14.54**. Derived undisputed-title win count: **15**. Interim-title win count: **1**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -348,7 +348,7 @@ The complete UFC resume: a legendary welterweight reign, elite quality wins, and
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 87.15 | 20-2 | Welterweight / Middleweight | 13 | 13 | 15 | 14-1 | 86.0% | 8.44 |
+| men | 87.15 | 20-2 | Welterweight / Middleweight | 13 | 12.17 | 15 | 14-1 | 86.0% | 8.44 |
 
 #### Exact model math
 
@@ -377,7 +377,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.822561**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **13**. Adjusted title wins: **13**. Derived undisputed-title win count: **12**. Interim-title win count: **1**.
+UFC title-fight wins: **13**. Adjusted title wins: **12.17**. Derived undisputed-title win count: **12**. Interim-title win count: **1**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -504,7 +504,7 @@ The peak-aura case: historic middleweight title control, terrifying finishing do
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 77.98 | 17-7, 1 NC | Middleweight / Light Heavyweight | 11 | 11 | 10 | 16-2 | 71.8% | 7.5 |
+| men | 77.98 | 17-7, 1 NC | Middleweight / Light Heavyweight | 11 | 10.2 | 10 | 16-2 | 71.8% | 7.5 |
 
 #### Exact model math
 
@@ -533,7 +533,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.712398**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **11**. Adjusted title wins: **11**. Derived undisputed-title win count: **11**. Interim-title win count: **0**.
+UFC title-fight wins: **11**. Adjusted title wins: **10.2**. Derived undisputed-title win count: **11**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -663,7 +663,7 @@ The defining UFC flyweight champion: historic title control, elite technical dom
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 77.22 | 15-2-1 | Flyweight / Bantamweight | 12 | 11.9 | 8 | 13-1 | 81.8% | 6.15 |
+| men | 77.22 | 15-2-1 | Flyweight / Bantamweight | 12 | 10.6 | 8 | 13-1 | 81.8% | 6.15 |
 
 #### Exact model math
 
@@ -692,7 +692,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.703268**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **12**. Adjusted title wins: **11.9**. Derived undisputed-title win count: **12**. Interim-title win count: **0**.
+UFC title-fight wins: **12**. Adjusted title wins: **10.6**. Derived undisputed-title win count: **12**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -812,7 +812,7 @@ The modern lightweight control case: elite finishing efficiency, high-end prime 
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 69.2 | 17-1 | Lightweight / Welterweight | 6 | 6.15 | 4 | 10-0 | 89.3% | 5.35 |
+| men | 69.2 | 17-1 | Lightweight / Welterweight | 6 | 5.69 | 4 | 10-0 | 89.3% | 5.35 |
 
 #### Exact model math
 
@@ -841,7 +841,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.606920**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **6**. Adjusted title wins: **6.15**. Derived undisputed-title win count: **6**. Interim-title win count: **0**.
+UFC title-fight wins: **6**. Adjusted title wins: **5.69**. Derived undisputed-title win count: **6**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -953,7 +953,7 @@ The complete featherweight champion case: title consistency, strong quality wins
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 67.15 | 15-3 | Featherweight / Lightweight | 8 | 7.9 | 8 | 9-3 | 75.0% | 7.17 |
+| men | 67.15 | 15-3 | Featherweight / Lightweight | 8 | 7.46 | 8 | 9-3 | 75.0% | 7.17 |
 
 #### Exact model math
 
@@ -982,7 +982,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.582292**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **8**. Adjusted title wins: **7.9**. Derived undisputed-title win count: **8**. Interim-title win count: **0**.
+UFC title-fight wins: **8**. Adjusted title wins: **7.46**. Derived undisputed-title win count: **8**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -1098,7 +1098,7 @@ The cleanest prime run at lightweight: unbeaten in the UFC, overwhelming round c
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 63.87 | 13-0 | Lightweight / Catchweight | 4 | 3.9 | 5 | 8-0 | 92.0% | 6.02 |
+| men | 63.87 | 13-0 | Lightweight / Catchweight | 4 | 3.63 | 5 | 8-0 | 92.0% | 6.02 |
 
 #### Exact model math
 
@@ -1127,7 +1127,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.542888**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **4**. Adjusted title wins: **3.9**. Derived undisputed-title win count: **4**. Interim-title win count: **0**.
+UFC title-fight wins: **4**. Adjusted title wins: **3.63**. Derived undisputed-title win count: **4**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -1228,7 +1228,7 @@ The early welterweight title-control case: real championship volume, physical do
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 63.7 | 18-7 | Welterweight | 9 | 8.9 | 9 | 13-3 | 80.0% | 6.15 |
+| men | 63.7 | 18-7 | Welterweight | 9 | 8.4 | 9 | 13-3 | 80.0% | 6.15 |
 
 #### Exact model math
 
@@ -1257,7 +1257,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.540846**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **9**. Adjusted title wins: **8.9**. Derived undisputed-title win count: **9**. Interim-title win count: **0**.
+UFC title-fight wins: **9**. Adjusted title wins: **8.4**. Derived undisputed-title win count: **9**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -1384,7 +1384,7 @@ The post-GSP welterweight champion case: dominant title control, elite round win
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 63.25 | 16-3 | Welterweight / Middleweight | 6 | 6 | 8 | 8-3 | 70.8% | 7.47 |
+| men | 63.25 | 16-3 | Welterweight / Middleweight | 6 | 5.55 | 8 | 8-3 | 70.8% | 7.47 |
 
 #### Exact model math
 
@@ -1413,7 +1413,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.535440**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **6**. Adjusted title wins: **6**. Derived undisputed-title win count: **6**. Interim-title win count: **0**.
+UFC title-fight wins: **6**. Adjusted title wins: **5.55**. Derived undisputed-title win count: **6**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -1525,7 +1525,7 @@ The volume case: relentless pace, elite quality wins, and one of the longest use
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 63.08 | 24-9 | Featherweight / Lightweight | 5 | 4.75 | 11 | 16-6 | 58.8% | 11.24 |
+| men | 63.08 | 24-9 | Featherweight / Lightweight | 5 | 4.34 | 11 | 16-6 | 58.8% | 11.24 |
 
 #### Exact model math
 
@@ -1554,7 +1554,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.533397**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **5**. Adjusted title wins: **4.75**. Derived undisputed-title win count: **4**. Interim-title win count: **1**.
+UFC title-fight wins: **5**. Adjusted title wins: **4.34**. Derived undisputed-title win count: **4**. Interim-title win count: **1**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -1692,7 +1692,7 @@ The strongest UFC heavyweight resume case: title defenses, champion wins, Nganno
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 62.92 | 14-5 | Heavyweight | 6 | 6 | 8 | 8-3 | 71.0% | 6.29 |
+| men | 62.92 | 14-5 | Heavyweight | 6 | 5.8 | 8 | 8-3 | 71.0% | 6.29 |
 
 #### Exact model math
 
@@ -1721,7 +1721,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.531475**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **6**. Adjusted title wins: **6**. Derived undisputed-title win count: **6**. Interim-title win count: **0**.
+UFC title-fight wins: **6**. Adjusted title wins: **5.8**. Derived undisputed-title win count: **6**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -1833,7 +1833,7 @@ A UFC-only legend with real title value and longevity, but not a clean top-10 ca
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 62.69 | 14-9 | Featherweight / Bantamweight | 8 | 7.75 | 7 | 8-3 | 69.0% | 6.59 |
+| men | 62.69 | 14-9 | Featherweight / Bantamweight | 8 | 7.21 | 7 | 8-3 | 69.0% | 6.59 |
 
 #### Exact model math
 
@@ -1862,7 +1862,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.528712**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **8**. Adjusted title wins: **7.75**. Derived undisputed-title win count: **7**. Interim-title win count: **1**.
+UFC title-fight wins: **8**. Adjusted title wins: **7.21**. Derived undisputed-title win count: **7**. Interim-title win count: **1**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -1990,7 +1990,7 @@ The old-school championship chaos case: heavyweight gold, light heavyweight gold
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 60.99 | 16-8 | Heavyweight / Light Heavyweight | 9 | 8.75 | 9 | 6-3 | 80.8% | 4.22 |
+| men | 60.99 | 16-8 | Heavyweight / Light Heavyweight | 9 | 7.68 | 9 | 6-3 | 80.8% | 4.22 |
 
 #### Exact model math
 
@@ -2019,7 +2019,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.508289**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **9**. Adjusted title wins: **8.75**. Derived undisputed-title win count: **8**. Interim-title win count: **1**.
+UFC title-fight wins: **9**. Adjusted title wins: **7.68**. Derived undisputed-title win count: **8**. Interim-title win count: **1**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -2148,7 +2148,7 @@ The modern middleweight title-volume case: elite striking, repeated defenses, a 
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 59.24 | 13-6 | Middleweight / Light Heavyweight | 8 | 7.75 | 9 | 8-4 | 60.0% | 5.35 |
+| men | 59.24 | 13-6 | Middleweight / Light Heavyweight | 8 | 7.26 | 9 | 8-4 | 60.0% | 5.35 |
 
 #### Exact model math
 
@@ -2177,7 +2177,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.487266**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **8**. Adjusted title wins: **7.75**. Derived undisputed-title win count: **7**. Interim-title win count: **1**.
+UFC title-fight wins: **8**. Adjusted title wins: **7.26**. Derived undisputed-title win count: **7**. Interim-title win count: **1**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -2292,7 +2292,7 @@ The compact two-division champion case: heavyweight gold, light heavyweight gold
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 58.06 | 11-3, 1 NC | Light Heavyweight / Heavyweight | 6 | 6.15 | 6 | 7-3, 1 NC | 59.4% | 5.62 |
+| men | 58.06 | 11-3, 1 NC | Light Heavyweight / Heavyweight | 6 | 5.75 | 6 | 7-3, 1 NC | 59.4% | 5.62 |
 
 #### Exact model math
 
@@ -2321,7 +2321,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.473090**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **6**. Adjusted title wins: **6.15**. Derived undisputed-title win count: **6**. Interim-title win count: **0**.
+UFC title-fight wins: **6**. Adjusted title wins: **5.75**. Derived undisputed-title win count: **6**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -2430,7 +2430,7 @@ The fast-climb knockout case: middleweight gold, light heavyweight gold, huge ti
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 57.19 | 10-3 | Light Heavyweight / Middleweight / Heavyweight | 6 | 6.15 | 8 | 8-3 | 57.1% | 4.03 |
+| men | 57.19 | 10-3 | Light Heavyweight / Middleweight / Heavyweight | 6 | 5.84 | 8 | 8-3 | 57.1% | 4.03 |
 
 #### Exact model math
 
@@ -2459,7 +2459,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.462638**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **6**. Adjusted title wins: **6.15**. Derived undisputed-title win count: **6**. Interim-title win count: **0**.
+UFC title-fight wins: **6**. Adjusted title wins: **5.84**. Derived undisputed-title win count: **6**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -2567,7 +2567,7 @@ The classic light heavyweight star case: knockout aura, title defenses, Tito/Cou
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 56.42 | 16-7 | Light Heavyweight | 5 | 5 | 11 | 7-1 | 93.3% | 3.15 |
+| men | 56.42 | 16-7 | Light Heavyweight | 5 | 4.5 | 11 | 7-1 | 93.3% | 3.15 |
 
 #### Exact model math
 
@@ -2596,7 +2596,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.453388**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **5**. Adjusted title wins: **5**. Derived undisputed-title win count: **5**. Interim-title win count: **0**.
+UFC title-fight wins: **5**. Adjusted title wins: **4.5**. Derived undisputed-title win count: **5**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -2866,7 +2866,7 @@ A real bantamweight title monster with five UFC title-fight wins, huge finishes 
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 55.08 | 13-5 | Bantamweight / Flyweight | 5 | 5 | 7 | 8-3 | 75.0% | 7.4 |
+| men | 55.08 | 13-5 | Bantamweight / Flyweight | 5 | 4.65 | 7 | 8-3 | 75.0% | 7.4 |
 
 #### Exact model math
 
@@ -2895,7 +2895,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.437290**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **5**. Adjusted title wins: **5**. Derived undisputed-title win count: **5**. Interim-title win count: **0**.
+UFC title-fight wins: **5**. Adjusted title wins: **4.65**. Derived undisputed-title win count: **5**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -3004,7 +3004,7 @@ The modern bantamweight pace engine: relentless pressure, elite contender depth,
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 53.66 | 14-3 | Bantamweight | 4 | 4 | 8 | 8-1 | 77.8% | 4.8 |
+| men | 53.66 | 14-3 | Bantamweight | 4 | 3.85 | 8 | 8-1 | 77.8% | 4.8 |
 
 #### Exact model math
 
@@ -3033,7 +3033,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.420231**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **4**. Adjusted title wins: **4**. Derived undisputed-title win count: **4**. Interim-title win count: **0**.
+UFC title-fight wins: **4**. Adjusted title wins: **3.85**. Derived undisputed-title win count: **4**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -3141,7 +3141,7 @@ The toughness-and-longevity case: UFC lightweight gold, legendary title fights, 
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 53.52 | 18-11-1 | Lightweight / Featherweight / Bantamweight | 3 | 2.8 | 9 | 13-6-1 | 68.0% | 10.18 |
+| men | 53.52 | 18-11-1 | Lightweight / Featherweight / Bantamweight | 3 | 2.85 | 9 | 13-6-1 | 68.0% | 10.18 |
 
 #### Exact model math
 
@@ -3170,7 +3170,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.418549**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **3**. Adjusted title wins: **2.8**. Derived undisputed-title win count: **3**. Interim-title win count: **0**.
+UFC title-fight wins: **3**. Adjusted title wins: **2.85**. Derived undisputed-title win count: **3**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -3299,7 +3299,7 @@ The heavyweight terror case: historic power, Stipe title value, Gane defense val
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 51.59 | 12-2 | Heavyweight | 2 | 2 | 7 | 6-0 | 81.8% | 3.16 |
+| men | 51.59 | 12-2 | Heavyweight | 2 | 1.9 | 7 | 6-0 | 81.8% | 3.16 |
 
 #### Exact model math
 
@@ -3328,7 +3328,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.395363**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **2**. Adjusted title wins: **2**. Derived undisputed-title win count: **2**. Interim-title win count: **0**.
+UFC title-fight wins: **2**. Adjusted title wins: **1.9**. Derived undisputed-title win count: **2**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -3427,7 +3427,7 @@ The heavyweight pressure machine: elite pace, wrestling, cardio, and one of the 
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 50.52 | 12-3 | Heavyweight | 4 | 4 | 6 | 6-2 | 83.3% | 5.16 |
+| men | 50.52 | 12-3 | Heavyweight | 4 | 3.8 | 6 | 6-2 | 83.3% | 5.16 |
 
 #### Exact model math
 
@@ -3456,7 +3456,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.382508**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **4**. Adjusted title wins: **4**. Derived undisputed-title win count: **4**. Interim-title win count: **0**.
+UFC title-fight wins: **4**. Adjusted title wins: **3.8**. Derived undisputed-title win count: **4**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -3559,7 +3559,7 @@ Benson Henderson is ranked by the current UFC-only calculated pipeline.
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 50.49 | 11-3 | Lightweight / Welterweight | 4 | 3.65 | 7 | 10-3 | 67.3% | 4.29 |
+| men | 50.49 | 11-3 | Lightweight / Welterweight | 4 | 3.66 | 7 | 10-3 | 67.3% | 4.29 |
 
 #### Exact model math
 
@@ -3588,7 +3588,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.382148**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **4**. Adjusted title wins: **3.65**. Derived undisputed-title win count: **4**. Interim-title win count: **0**.
+UFC title-fight wins: **4**. Adjusted title wins: **3.66**. Derived undisputed-title win count: **4**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -3689,7 +3689,7 @@ The awkward-but-real bantamweight résumé case: four UFC title-fight wins, wins
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 50.21 | 19-5 | Bantamweight / Featherweight | 4 | 3.25 | 9 | 9-2 | 71.0% | 7.1 |
+| men | 50.21 | 19-5 | Bantamweight / Featherweight | 4 | 3.15 | 9 | 9-2 | 71.0% | 7.1 |
 
 #### Exact model math
 
@@ -3718,7 +3718,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.378784**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **4**. Adjusted title wins: **3.25**. Derived undisputed-title win count: **4**. Interim-title win count: **0**.
+UFC title-fight wins: **4**. Adjusted title wins: **3.15**. Derived undisputed-title win count: **4**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -3971,7 +3971,7 @@ The brilliant-but-messy skill case: lightweight gold, the Hughes welterweight up
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 49.37 | 13-13-2 | Lightweight / Welterweight | 5 | 4.9 | 7 | 6-5 | 59.5% | 5.98 |
+| men | 49.37 | 13-13-2 | Lightweight / Welterweight | 5 | 4.78 | 7 | 6-5 | 59.5% | 5.98 |
 
 #### Exact model math
 
@@ -4000,7 +4000,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.368693**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **5**. Adjusted title wins: **4.9**. Derived undisputed-title win count: **5**. Interim-title win count: **0**.
+UFC title-fight wins: **5**. Adjusted title wins: **4.78**. Derived undisputed-title win count: **5**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -4119,7 +4119,7 @@ The lightweight chaos case: undisputed UFC gold, two interim-title wins, elite a
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 49.04 | 11-5 | Lightweight | 3 | 2.5 | 6 | 7-3 | 57.6% | 6.18 |
+| men | 49.04 | 11-5 | Lightweight | 3 | 2.46 | 6 | 7-3 | 57.6% | 6.18 |
 
 #### Exact model math
 
@@ -4148,7 +4148,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.364728**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **3**. Adjusted title wins: **2.5**. Derived undisputed-title win count: **1**. Interim-title win count: **2**.
+UFC title-fight wins: **3**. Adjusted title wins: **2.46**. Derived undisputed-title win count: **1**. Interim-title win count: **2**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -4255,7 +4255,7 @@ Glover Teixeira is ranked by the current UFC-only calculated pipeline.
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 48.47 | 16-7 | Light Heavyweight | 1 | 1 | 7 | 12-6 | 55.1% | 8.77 |
+| men | 48.47 | 16-7 | Light Heavyweight | 1 | 0.99 | 7 | 12-6 | 55.1% | 8.77 |
 
 #### Exact model math
 
@@ -4284,7 +4284,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.357881**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **1**. Adjusted title wins: **1**. Derived undisputed-title win count: **1**. Interim-title win count: **0**.
+UFC title-fight wins: **1**. Adjusted title wins: **0.99**. Derived undisputed-title win count: **1**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -4396,7 +4396,7 @@ The best non-undisputed lightweight résumé in this range: elite wins everywher
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 48.37 | 22-9, 1 NC | Lightweight / Featherweight | 1 | 0.75 | 8 | 7-4 | 54.5% | 5.85 |
+| men | 48.37 | 22-9, 1 NC | Lightweight / Featherweight | 1 | 0.71 | 8 | 7-4 | 54.5% | 5.85 |
 
 #### Exact model math
 
@@ -4425,7 +4425,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.356679**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **1**. Adjusted title wins: **0.75**. Derived undisputed-title win count: **0**. Interim-title win count: **1**.
+UFC title-fight wins: **1**. Adjusted title wins: **0.71**. Derived undisputed-title win count: **0**. Interim-title win count: **1**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -4679,7 +4679,7 @@ Leon Edwards is ranked by the current UFC-only calculated pipeline.
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 47.77 | 14-5, 1 NC | Welterweight | 3 | 3 | 4 | 5-1, 1 NC | 64.5% | 4.87 |
+| men | 47.77 | 14-5, 1 NC | Welterweight | 3 | 2.9 | 4 | 5-1, 1 NC | 64.5% | 4.87 |
 
 #### Exact model math
 
@@ -4708,7 +4708,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.349471**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **3**. Adjusted title wins: **3**. Derived undisputed-title win count: **3**. Interim-title win count: **0**.
+UFC title-fight wins: **3**. Adjusted title wins: **2.9**. Derived undisputed-title win count: **3**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -4808,7 +4808,7 @@ A five-defense early UFC light heavyweight king with real title volume, huge sta
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 47.75 | 15-11-1 | Light Heavyweight / Heavyweight | 6 | 5.2 | 4 | 11-3 | 62.2% | 6.71 |
+| men | 47.75 | 15-11-1 | Light Heavyweight / Heavyweight | 6 | 5.11 | 4 | 11-3 | 62.2% | 6.71 |
 
 #### Exact model math
 
@@ -4837,7 +4837,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.349231**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **6**. Adjusted title wins: **5.2**. Derived undisputed-title win count: **6**. Interim-title win count: **0**.
+UFC title-fight wins: **6**. Adjusted title wins: **5.11**. Derived undisputed-title win count: **6**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -4961,7 +4961,7 @@ The new-era takeover case: massive featherweight legend wins, elite finishing th
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 47.63 | 9-1 | Featherweight / Lightweight | 3 | 3.15 | 4 | 4-1 | 66.7% | 3.05 |
+| men | 47.63 | 9-1 | Featherweight / Lightweight | 3 | 3.04 | 4 | 4-1 | 66.7% | 3.05 |
 
 #### Exact model math
 
@@ -4990,7 +4990,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.347790**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **3**. Adjusted title wins: **3.15**. Derived undisputed-title win count: **3**. Interim-title win count: **0**.
+UFC title-fight wins: **3**. Adjusted title wins: **3.04**. Derived undisputed-title win count: **3**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -5352,7 +5352,7 @@ A Hall of Fame welterweight champion whose comeback title run delivered all-time
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 47.29 | 14-11, 1 NC | Welterweight / Middleweight | 3 | 2.55 | 6 | 8-2 | 60.0% | 3.43 |
+| men | 47.29 | 14-11, 1 NC | Welterweight / Middleweight | 3 | 2.8 | 6 | 8-2 | 60.0% | 3.43 |
 
 #### Exact model math
 
@@ -5381,7 +5381,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.343705**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **3**. Adjusted title wins: **2.55**. Derived undisputed-title win count: **3**. Interim-title win count: **0**.
+UFC title-fight wins: **3**. Adjusted title wins: **2.8**. Derived undisputed-title win count: **3**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -5495,7 +5495,7 @@ A former middleweight champion with elite résumé depth, Romero-war proof, and 
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 47.28 | 18-7 | Middleweight / Welterweight / Light Heavyweight | 1 | 1.5 | 7 | 10-4 | 58.1% | 7.91 |
+| men | 47.28 | 18-7 | Middleweight / Welterweight / Light Heavyweight | 1 | 1.46 | 7 | 10-4 | 58.1% | 7.91 |
 
 #### Exact model math
 
@@ -5524,7 +5524,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.343585**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **1**. Adjusted title wins: **1.5**. Derived undisputed-title win count: **0**. Interim-title win count: **1**.
+UFC title-fight wins: **1**. Adjusted title wins: **1.46**. Derived undisputed-title win count: **0**. Interim-title win count: **1**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -5640,7 +5640,7 @@ A 12-fight-streak lightweight nightmare with interim-title value and elite prime
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 46.96 | 15-9 | Lightweight / Welterweight | 1 | 0.75 | 4 | 8-1 | 72.0% | 5.19 |
+| men | 46.96 | 15-9 | Lightweight / Welterweight | 1 | 0.64 | 4 | 8-1 | 72.0% | 5.19 |
 
 #### Exact model math
 
@@ -5669,7 +5669,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.339741**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **1**. Adjusted title wins: **0.75**. Derived undisputed-title win count: **0**. Interim-title win count: **1**.
+UFC title-fight wins: **1**. Adjusted title wins: **0.64**. Derived undisputed-title win count: **0**. Interim-title win count: **1**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -5777,7 +5777,7 @@ The compact achievement burst: flyweight gold, bantamweight gold, huge name wins
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 46.85 | 10-6 | Flyweight / Bantamweight | 4 | 4.15 | 5 | 4-1 | 62.5% | 3.26 |
+| men | 46.85 | 10-6 | Flyweight / Bantamweight | 4 | 3.64 | 5 | 4-1 | 62.5% | 3.26 |
 
 #### Exact model math
 
@@ -5806,7 +5806,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.338419**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **4**. Adjusted title wins: **4.15**. Derived undisputed-title win count: **4**. Interim-title win count: **0**.
+UFC title-fight wins: **4**. Adjusted title wins: **3.64**. Derived undisputed-title win count: **4**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -6044,7 +6044,7 @@ Frank Shamrock is ranked by the current UFC-only calculated pipeline.
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 46.01 | 5-0 | Light Heavyweight / Middleweight | 5 | 4.25 | 3 | 5-0 | 100.0% | 1.76 |
+| men | 46.01 | 5-0 | Light Heavyweight / Middleweight | 5 | 3 | 3 | 5-0 | 100.0% | 1.76 |
 
 #### Exact model math
 
@@ -6073,7 +6073,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.328328**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **5**. Adjusted title wins: **4.25**. Derived undisputed-title win count: **5**. Interim-title win count: **0**.
+UFC title-fight wins: **5**. Adjusted title wins: **3**. Derived undisputed-title win count: **5**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -6157,7 +6157,7 @@ A modern bantamweight title case with elite skill, strong round control, and unu
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 45.93 | 12-4 | Bantamweight | 3 | 2.65 | 6 | 6-4 | 65.1% | 6 |
+| men | 45.93 | 12-4 | Bantamweight | 3 | 2.61 | 6 | 6-4 | 65.1% | 6 |
 
 #### Exact model math
 
@@ -6186,7 +6186,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.327367**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **3**. Adjusted title wins: **2.65**. Derived undisputed-title win count: **2**. Interim-title win count: **1**.
+UFC title-fight wins: **3**. Adjusted title wins: **2.61**. Derived undisputed-title win count: **2**. Interim-title win count: **1**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -6439,7 +6439,7 @@ A violent two-time UFC flyweight champion with real Moreno-rivalry title value, 
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 45.88 | 14-7-1 | Flyweight / Bantamweight | 3 | 2.75 | 6 | 7-3-1 | 53.0% | 4.73 |
+| men | 45.88 | 14-7-1 | Flyweight / Bantamweight | 3 | 2.7 | 6 | 7-3-1 | 53.0% | 4.73 |
 
 #### Exact model math
 
@@ -6468,7 +6468,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.326766**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **3**. Adjusted title wins: **2.75**. Derived undisputed-title win count: **3**. Interim-title win count: **0**.
+UFC title-fight wins: **3**. Adjusted title wins: **2.7**. Derived undisputed-title win count: **3**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -6711,7 +6711,7 @@ Vitor Belfort is ranked by the current UFC-only calculated pipeline.
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 45.22 | 15-10, 1 NC | Middleweight / Light Heavyweight / Heavyweight / Catchweight | 1 | 1.1 | 5 | 7-3 | 64.3% | 6.1 |
+| men | 45.22 | 15-10, 1 NC | Middleweight / Light Heavyweight / Heavyweight / Catchweight | 1 | 1.11 | 5 | 7-3 | 64.3% | 6.1 |
 
 #### Exact model math
 
@@ -6740,7 +6740,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.318837**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **1**. Adjusted title wins: **1.1**. Derived undisputed-title win count: **1**. Interim-title win count: **0**.
+UFC title-fight wins: **1**. Adjusted title wins: **1.11**. Derived undisputed-title win count: **1**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -6847,7 +6847,7 @@ The Machida Era was short, but real: UFC light heavyweight gold, a scary apex, a
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 45.18 | 16-8 | Light Heavyweight / Middleweight | 2 | 1.65 | 7 | 9-5 | 58.3% | 5.88 |
+| men | 45.18 | 16-8 | Light Heavyweight / Middleweight | 2 | 1.95 | 7 | 9-5 | 58.3% | 5.88 |
 
 #### Exact model math
 
@@ -6876,7 +6876,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.318357**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **2**. Adjusted title wins: **1.65**. Derived undisputed-title win count: **2**. Interim-title win count: **0**.
+UFC title-fight wins: **2**. Adjusted title wins: **1.95**. Derived undisputed-title win count: **2**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -7125,7 +7125,7 @@ The modern middleweight chaos champion: Whittaker, Adesanya, and Strickland wins
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 44.32 | 9-1 | Middleweight | 3 | 3 | 5 | 4-1 | 52.4% | 2.11 |
+| men | 44.32 | 9-1 | Middleweight | 3 | 2.85 | 5 | 4-1 | 52.4% | 2.11 |
 
 #### Exact model math
 
@@ -7154,7 +7154,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.308025**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **3**. Adjusted title wins: **3**. Derived undisputed-title win count: **3**. Interim-title win count: **0**.
+UFC title-fight wins: **3**. Adjusted title wins: **2.85**. Derived undisputed-title win count: **3**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -7251,7 +7251,7 @@ The movement genius case: brilliant bantamweight skill, a legendary comeback, an
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 42.34 | 7-3 | Bantamweight | 4 | 3.8 | 5 | 5-2 | 67.9% | 5.51 |
+| men | 42.34 | 7-3 | Bantamweight | 4 | 3.7 | 5 | 5-2 | 67.9% | 5.51 |
 
 #### Exact model math
 
@@ -7280,7 +7280,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.284238**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **4**. Adjusted title wins: **3.8**. Derived undisputed-title win count: **4**. Interim-title win count: **0**.
+UFC title-fight wins: **4**. Adjusted title wins: **3.7**. Derived undisputed-title win count: **4**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -7378,7 +7378,7 @@ Royce Gracie is ranked by the current UFC-only calculated pipeline.
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 42.17 | 11-1-1 | Openweight / Welterweight | 0 | 0 | 2 | 11-0-1 | 95.8% | 1.4 |
+| men | 42.17 | 11-1-1 | Openweight / Welterweight | 0 | 2.35 | 2 | 11-0-1 | 95.8% | 1.4 |
 
 #### Exact model math
 
@@ -7407,7 +7407,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.282196**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **0**. Adjusted title wins: **0**. Derived undisputed-title win count: **0**. Interim-title win count: **0**.
+UFC title-fight wins: **0**. Adjusted title wins: **2.35**. Derived undisputed-title win count: **0**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -7512,7 +7512,7 @@ A short but explosive UFC-only case: DDP title value, Whittaker/Burns elite proo
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 40.84 | 9-1 | Middleweight / Welterweight | 1 | 1 | 4 | 5-1 | 72.2% | 4.08 |
+| men | 40.84 | 9-1 | Middleweight / Welterweight | 1 | 0.95 | 4 | 5-1 | 72.2% | 4.08 |
 
 #### Exact model math
 
@@ -7541,7 +7541,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.266218**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **1**. Adjusted title wins: **1**. Derived undisputed-title win count: **1**. Interim-title win count: **0**.
+UFC title-fight wins: **1**. Adjusted title wins: **0.95**. Derived undisputed-title win count: **1**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -7775,7 +7775,7 @@ A precision-striking bantamweight champion with a huge Aljo title KO, a Vera tit
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 36.15 | 12-3, 1 NC | Bantamweight | 2 | 2 | 5 | 5-2 | 48.0% | 3.72 |
+| men | 36.15 | 12-3, 1 NC | Bantamweight | 2 | 1.85 | 5 | 5-2 | 48.0% | 3.72 |
 
 #### Exact model math
 
@@ -7804,7 +7804,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.209875**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **2**. Adjusted title wins: **2**. Derived undisputed-title win count: **2**. Interim-title win count: **0**.
+UFC title-fight wins: **2**. Adjusted title wins: **1.85**. Derived undisputed-title win count: **2**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -8156,7 +8156,7 @@ A massive short-window UFC heavyweight champion whose title run was real, explos
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 31.86 | 4-3, 1 NC | Heavyweight | 3 | 2.4 | 3 | 3-1 | 57.1% | 1.94 |
+| men | 31.86 | 4-3, 1 NC | Heavyweight | 3 | 2.75 | 3 | 3-1 | 57.1% | 1.94 |
 
 #### Exact model math
 
@@ -8185,7 +8185,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.158337**, cur
 
 #### Championship receipts
 
-UFC title-fight wins: **3**. Adjusted title wins: **2.4**. Derived undisputed-title win count: **3**. Interim-title win count: **0**.
+UFC title-fight wins: **3**. Adjusted title wins: **2.75**. Derived undisputed-title win count: **3**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -8643,7 +8643,7 @@ The women’s UFC GOAT case: two-division champion, huge title-fight volume, leg
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| women | 80.47 | 16-2 | Bantamweight / Featherweight | 11 | 11.25 | 11 | 12-1 | 87.5% | 7.26 |
+| women | 80.47 | 16-2 | Bantamweight / Featherweight | 11 | 10.05 | 11 | 12-1 | 87.5% | 7.26 |
 
 #### Exact model math
 
@@ -8672,7 +8672,7 @@ OVR conversion: 25.78–80.79 board anchors, normalized score **0.994183**, curv
 
 #### Championship receipts
 
-UFC title-fight wins: **11**. Adjusted title wins: **11.25**. Derived undisputed-title win count: **11**. Interim-title win count: **0**.
+UFC title-fight wins: **11**. Adjusted title wins: **10.05**. Derived undisputed-title win count: **11**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -8790,7 +8790,7 @@ The clean technical champion case: long flyweight reign, elite skill, strong opp
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| women | 79.33 | 15-3-1 | Flyweight / Bantamweight | 11 | 10.9 | 10 | 14-2-1 | 80.4% | 9.97 |
+| women | 79.33 | 15-3-1 | Flyweight / Bantamweight | 11 | 10.05 | 10 | 14-2-1 | 80.4% | 9.97 |
 
 #### Exact model math
 
@@ -8819,7 +8819,7 @@ OVR conversion: 25.78–80.79 board anchors, normalized score **0.973459**, curv
 
 #### Championship receipts
 
-UFC title-fight wins: **11**. Adjusted title wins: **10.9**. Derived undisputed-title win count: **11**. Interim-title win count: **0**.
+UFC title-fight wins: **11**. Adjusted title wins: **10.05**. Derived undisputed-title win count: **11**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -8943,7 +8943,7 @@ A two-time UFC strawweight champion with six title-fight wins, a dominant second
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| women | 56.64 | 10-3 | Strawweight / Flyweight | 6 | 6 | 7 | 7-3 | 66.7% | 6.87 |
+| women | 56.64 | 10-3 | Strawweight / Flyweight | 6 | 5.65 | 7 | 7-3 | 66.7% | 6.87 |
 
 #### Exact model math
 
@@ -8972,7 +8972,7 @@ OVR conversion: 25.78–80.79 board anchors, normalized score **0.560989**, curv
 
 #### Championship receipts
 
-UFC title-fight wins: **6**. Adjusted title wins: **6**. Derived undisputed-title win count: **6**. Interim-title win count: **0**.
+UFC title-fight wins: **6**. Adjusted title wins: **5.65**. Derived undisputed-title win count: **6**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -9079,7 +9079,7 @@ The strawweight standard: long title control, elite striking volume, and one of 
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| women | 50.15 | 10-5 | Strawweight / Flyweight | 6 | 6 | 5 | 9-4 | 67.3% | 5.23 |
+| women | 50.15 | 10-5 | Strawweight / Flyweight | 6 | 5.45 | 5 | 9-4 | 67.3% | 5.23 |
 
 #### Exact model math
 
@@ -9108,7 +9108,7 @@ OVR conversion: 25.78–80.79 board anchors, normalized score **0.443010**, curv
 
 #### Championship receipts
 
-UFC title-fight wins: **6**. Adjusted title wins: **6**. Derived undisputed-title win count: **6**. Interim-title win count: **0**.
+UFC title-fight wins: **6**. Adjusted title wins: **5.45**. Derived undisputed-title win count: **6**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -9218,7 +9218,7 @@ A volatile but elite UFC-only case: two strawweight reigns, four title-fight win
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| women | 49.13 | 12-7 | Strawweight / Flyweight | 4 | 4 | 5 | 5-2 | 59.1% | 4.5 |
+| women | 49.13 | 12-7 | Strawweight / Flyweight | 4 | 3.9 | 5 | 5-2 | 59.1% | 4.5 |
 
 #### Exact model math
 
@@ -9247,7 +9247,7 @@ OVR conversion: 25.78–80.79 board anchors, normalized score **0.424468**, curv
 
 #### Championship receipts
 
-UFC title-fight wins: **4**. Adjusted title wins: **4**. Derived undisputed-title win count: **4**. Interim-title win count: **0**.
+UFC title-fight wins: **4**. Adjusted title wins: **3.9**. Derived undisputed-title win count: **4**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -9354,7 +9354,7 @@ The original women’s UFC superstar case: historic bantamweight title dominance
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| women | 45.49 | 6-2 | Bantamweight | 6 | 6 | 4 | 6-2 | 72.7% | 3.85 |
+| women | 45.49 | 6-2 | Bantamweight | 6 | 5.25 | 4 | 6-2 | 72.7% | 3.85 |
 
 #### Exact model math
 
@@ -9383,7 +9383,7 @@ OVR conversion: 25.78–80.79 board anchors, normalized score **0.358298**, curv
 
 #### Championship receipts
 
-UFC title-fight wins: **6**. Adjusted title wins: **6**. Derived undisputed-title win count: **6**. Interim-title win count: **0**.
+UFC title-fight wins: **6**. Adjusted title wins: **5.25**. Derived undisputed-title win count: **6**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -9481,7 +9481,7 @@ A former UFC strawweight champion with elite volume, real cross-division wins, a
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| women | 43.78 | 17-13 | Strawweight / Flyweight | 1 | 1 | 7 | 6-4 | 52.9% | 4.45 |
+| women | 43.78 | 17-13 | Strawweight / Flyweight | 1 | 0.95 | 7 | 6-4 | 52.9% | 4.45 |
 
 #### Exact model math
 
@@ -9510,7 +9510,7 @@ OVR conversion: 25.78–80.79 board anchors, normalized score **0.327213**, curv
 
 #### Championship receipts
 
-UFC title-fight wins: **1**. Adjusted title wins: **1**. Derived undisputed-title win count: **1**. Interim-title win count: **0**.
+UFC title-fight wins: **1**. Adjusted title wins: **0.95**. Derived undisputed-title win count: **1**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -9628,7 +9628,7 @@ Cris Cyborg is ranked by the current UFC-only calculated pipeline.
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| women | 39.03 | 5-1 | Featherweight / Catchweight | 3 | 2.9 | 1 | 5-1 | 84.6% | 2.63 |
+| women | 39.03 | 5-1 | Featherweight / Catchweight | 3 | 2.33 | 1 | 5-1 | 84.6% | 2.63 |
 
 #### Exact model math
 
@@ -9657,7 +9657,7 @@ OVR conversion: 25.78–80.79 board anchors, normalized score **0.240865**, curv
 
 #### Championship receipts
 
-UFC title-fight wins: **3**. Adjusted title wins: **2.9**. Derived undisputed-title win count: **3**. Interim-title win count: **0**.
+UFC title-fight wins: **3**. Adjusted title wins: **2.33**. Derived undisputed-title win count: **3**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -9742,7 +9742,7 @@ A two-time UFC strawweight champion whose résumé is stronger than the eye test
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| women | 37.64 | 10-6 | Strawweight | 2 | 1.9 | 5 | 6-1 | 61.9% | 3.55 |
+| women | 37.64 | 10-6 | Strawweight | 2 | 1.66 | 5 | 6-1 | 61.9% | 3.55 |
 
 #### Exact model math
 
@@ -9771,7 +9771,7 @@ OVR conversion: 25.78–80.79 board anchors, normalized score **0.215597**, curv
 
 #### Championship receipts
 
-UFC title-fight wins: **2**. Adjusted title wins: **1.9**. Derived undisputed-title win count: **2**. Interim-title win count: **0**.
+UFC title-fight wins: **2**. Adjusted title wins: **1.66**. Derived undisputed-title win count: **2**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -10119,7 +10119,7 @@ A current UFC strawweight champion with elite submission danger and real title v
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| women | 34.33 | 11-5 | Strawweight | 1 | 0.9 | 1 | 7-4 | 57.9% | 5.58 |
+| women | 34.33 | 11-5 | Strawweight | 1 | 0.86 | 1 | 7-4 | 57.9% | 5.58 |
 
 #### Exact model math
 
@@ -10148,7 +10148,7 @@ OVR conversion: 25.78–80.79 board anchors, normalized score **0.155426**, curv
 
 #### Championship receipts
 
-UFC title-fight wins: **1**. Adjusted title wins: **0.9**. Derived undisputed-title win count: **1**. Interim-title win count: **0**.
+UFC title-fight wins: **1**. Adjusted title wins: **0.86**. Derived undisputed-title win count: **1**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -10252,7 +10252,7 @@ A two-time UFC bantamweight champion with one of the biggest title upsets ever, 
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| women | 27.76 | 8-4 | Bantamweight / Flyweight | 2 | 1.9 | 3 | 5-4 | 50.0% | 8.37 |
+| women | 27.76 | 8-4 | Bantamweight / Flyweight | 2 | 1.81 | 3 | 5-4 | 50.0% | 8.37 |
 
 #### Exact model math
 
@@ -10281,7 +10281,7 @@ OVR conversion: 25.78–80.79 board anchors, normalized score **0.035993**, curv
 
 #### Championship receipts
 
-UFC title-fight wins: **2**. Adjusted title wins: **1.9**. Derived undisputed-title win count: **2**. Interim-title win count: **0**.
+UFC title-fight wins: **2**. Adjusted title wins: **1.81**. Derived undisputed-title win count: **2**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -10375,7 +10375,7 @@ A former UFC bantamweight champion whose UFC-only case is built on the legendary
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| women | 26.18 | 7-7 | Bantamweight / Flyweight | 1 | 1 | 3 | 3-1 | 58.3% | 1.44 |
+| women | 26.18 | 7-7 | Bantamweight / Flyweight | 1 | 0.95 | 3 | 3-1 | 58.3% | 1.44 |
 
 #### Exact model math
 
@@ -10404,7 +10404,7 @@ OVR conversion: 25.78–80.79 board anchors, normalized score **0.007271**, curv
 
 #### Championship receipts
 
-UFC title-fight wins: **1**. Adjusted title wins: **1**. Derived undisputed-title win count: **1**. Interim-title win count: **0**.
+UFC title-fight wins: **1**. Adjusted title wins: **0.95**. Derived undisputed-title win count: **1**. Interim-title win count: **0**.
 
 | Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
 | --- | --- | --- | --- | --- | --- | --- |
