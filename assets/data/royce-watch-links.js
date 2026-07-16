@@ -1,7 +1,7 @@
 // App-facing Watch Moment and signature-fight links only.
 (function(){
   'use strict';
-  const VERSION='royce-watch-links-20260715d-pantoja-cross-tab';
+  const VERSION='royce-watch-links-20260715e-paddy';
 
   function loadPantojaGuard(){
     if(document.querySelector('[data-pantoja-final-roster-guard]'))return;
@@ -29,6 +29,14 @@
       watchUrl:'https://youtube.com/shorts/SWNsHqqKulw?is=dOqXog5XPpyNVzKO',
       watchLabel:'Watch Moment',
       signatureFightUrl:'https://youtu.be/7sj-snC5qWk?is=_DkasmmAc4OA-IDR',
+      signatureFightLabel:'Watch Signature Fight'
+    },
+    'Paddy Pimblett':{
+      photoUrl:'assets/fighters/paddy-pimblett.webp',
+      thumbUrl:'assets/fighters/paddy-pimblett-thumb.webp',
+      watchUrl:'https://youtube.com/shorts/KwhW_EA1T58?is=T0iZdi_2Xj9PNYyj',
+      watchLabel:'Watch Moment',
+      signatureFightUrl:'https://youtu.be/-qygvEuJEC8?is=PanrIaWCzzfNqhuf',
       signatureFightLabel:'Watch Signature Fight'
     },
     'Leon Edwards':{
@@ -101,6 +109,7 @@
   window.addEventListener('ufc-ranking-data-patches-ready',apply);
   window.addEventListener('ufc-scoring-pipeline-ready',apply);
   window.addEventListener('ufc-pantoja-fighter-added',apply);
+  window.addEventListener('ufc-paddy-pimblett-added',apply);
   window.UFC_ROYCE_WATCH_LINKS={version:VERSION,mode:'presentation-only',fighters:applied,watchLinks:WATCH_LINKS,mutatesScores:false,loadsRegistry:false};
   document.documentElement.setAttribute('data-royce-watch-links',VERSION);
 })();
