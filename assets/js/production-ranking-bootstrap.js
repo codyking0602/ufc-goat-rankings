@@ -2,8 +2,8 @@
 (function(){
   'use strict';
 
-  const VERSION='production-ranking-bootstrap-20260715m-pantoja-paddy-75';
-  const EXPECTED_FIGHTER_COUNT=75;
+  const VERSION='production-ranking-bootstrap-20260715n-shared-roster-76';
+  const EXPECTED_FIGHTER_COUNT=76;
   const CALCULATED_STAT_FIELDS=new Set([
     'ufcRecord','titleFightWins','adjustedTitleWins','topFiveWins','top5Wins','rankedWins',
     'finishRatePct','primeRecord','roundsWonPct','activeEliteYears','timesFinishedPrime','throughPrimeUfcFights',
@@ -40,14 +40,13 @@
     ['assets/data/canonical-opponent-quality-audit-adjustments.js?v=canonical-opponent-quality-audit-adjustments-20260715b-merab','data-production-clean-opponent-quality-audit-adjustments'],
     ['assets/data/canonical-championship-audit-adjustments.js?v=canonical-championship-audit-adjustments-20260715a-conor-mendes','data-production-clean-championship-audit-adjustments'],
     ['assets/js/category-calculators.js?v=production-clean-category-calculators-20260714c','data-production-clean-category-calculators'],
+    ['assets/data/canonical-roster-batch-ten.js?v=canonical-roster-batch-ten-20260715a-pantoja-paddy-weidman','data-production-clean-roster-batch-ten'],
     ['assets/js/ranking-pipeline.js?v=production-clean-ranking-pipeline-20260714c','data-production-clean-ranking-pipeline'],
     ['assets/js/calculated-profile-runtime.js?v=production-clean-calculated-profile-runtime-20260715c-longest-win-streak','data-production-clean-calculated-profile-runtime'],
     ['assets/js/division-ranking-pipeline.js?v=division-ranking-pipeline-20260715b-openweight-win-qualified','data-production-clean-division-ranking-pipeline'],
     ['assets/js/division-ranking-reconciliation.js?v=division-ranking-reconciliation-20260715d-strict-openweight','data-production-clean-division-ranking-reconciliation'],
     ['assets/js/octagon-verdict-data.js?v=octagon-verdict-data-20260715b-live-pipeline','data-production-octagon-verdict-data'],
-    ['assets/js/octagon-verdict-compare-launcher.js?v=octagon-verdict-compare-launcher-20260715a-live-json','data-production-octagon-verdict-launcher'],
-    ['assets/data/canonical-pantoja-fighter-addition.js?v=canonical-pantoja-fighter-addition-20260715c-live-republish','data-production-clean-pantoja-addition'],
-    ['assets/data/canonical-paddy-pimblett-fighter-addition.js?v=canonical-paddy-pimblett-fighter-addition-20260715b-bootstrap-75','data-production-clean-paddy-addition']
+    ['assets/js/octagon-verdict-compare-launcher.js?v=octagon-verdict-compare-launcher-20260715a-live-json','data-production-octagon-verdict-launcher']
   ];
 
   function loadScript(src,attribute){
@@ -125,6 +124,7 @@
     if(window.UFC_CANONICAL_FIGHTER_FACTS?.count?.()!==EXPECTED_FIGHTER_COUNT)missing.push(`${EXPECTED_FIGHTER_COUNT} clean canonical fighter records`);
     if(window.UFC_FIGHTER_ERA_LEDGERS?.fighters?.length!==EXPECTED_FIGHTER_COUNT)missing.push(`${EXPECTED_FIGHTER_COUNT} clean fighter era ledgers`);
     if(window.UFC_CANONICAL_SCORING_JUDGMENTS?.fighterCount!==EXPECTED_FIGHTER_COUNT)missing.push(`${EXPECTED_FIGHTER_COUNT}-fighter scoring judgments`);
+    if(window.UFC_CANONICAL_ROSTER_BATCH_TEN?.passed!==true)missing.push('shared canonical roster batch ten');
     if(window.UFC_CANONICAL_OPPONENT_QUALITY_AUDIT_ADJUSTMENTS?.passed!==true)missing.push('approved Opponent Quality fighter-audit adjustments');
     if(window.UFC_CANONICAL_CHAMPIONSHIP_AUDIT_ADJUSTMENTS?.passed!==true)missing.push('approved Championship fighter-audit adjustments');
     const audit=window.UFC_CATEGORY_CALCULATOR_AUDIT;
@@ -138,16 +138,11 @@
 
   function publishReady(report,divisionReport){
     window.UFC_SCORING_PIPELINE={
-      version:VERSION,
-      status:'ready',
-      owner:'ranking-pipeline.js',
-      inputIsolation:'clean-canonical-rebuild',
-      fighterCount:report.fighterCount,
-      divisionRankingVersion:divisionReport?.version||null,
+      version:VERSION,status:'ready',owner:'ranking-pipeline.js',inputIsolation:'clean-canonical-rebuild',
+      fighterCount:report.fighterCount,divisionRankingVersion:divisionReport?.version||null,
       octagonVerdictVersion:window.UFC_OCTAGON_VERDICT_DATA?.version||null,
       opponentQualityAuditAdjustments:window.UFC_CANONICAL_OPPONENT_QUALITY_AUDIT_ADJUSTMENTS||null,
-      championshipAuditAdjustments:window.UFC_CANONICAL_CHAMPIONSHIP_AUDIT_ADJUSTMENTS||null,
-      report
+      championshipAuditAdjustments:window.UFC_CANONICAL_CHAMPIONSHIP_AUDIT_ADJUSTMENTS||null,report
     };
     document.documentElement.setAttribute('data-scoring-pipeline','ready');
     document.documentElement.setAttribute('data-production-ranking-bootstrap',`${VERSION}-ready-${report.fighterCount}`);
@@ -179,7 +174,7 @@
         throw new Error(`Automatic division rankings are ${divisionReport?.status||'blocked'}: ${detail}`);
       }
       publishReady(report,divisionReport);
-      window.UFC_PRODUCTION_RANKING_BOOTSTRAP={version:VERSION,status:'ready',inputIsolation:'clean-canonical-rebuild',report,divisionReport,photoSync,opponentQualityAuditAdjustments:window.UFC_CANONICAL_OPPONENT_QUALITY_AUDIT_ADJUSTMENTS||null,championshipAuditAdjustments:window.UFC_CANONICAL_CHAMPIONSHIP_AUDIT_ADJUSTMENTS||null,octagonVerdict:window.OCTAGON_VERDICT_DATA||null,stripPresentationScoreOwnership,syncComparePresentation};
+      window.UFC_PRODUCTION_RANKING_BOOTSTRAP={version:VERSION,status:'ready',inputIsolation:'clean-canonical-rebuild',report,divisionReport,photoSync,rosterBatchTen:window.UFC_CANONICAL_ROSTER_BATCH_TEN,opponentQualityAuditAdjustments:window.UFC_CANONICAL_OPPONENT_QUALITY_AUDIT_ADJUSTMENTS||null,championshipAuditAdjustments:window.UFC_CANONICAL_CHAMPIONSHIP_AUDIT_ADJUSTMENTS||null,octagonVerdict:window.OCTAGON_VERDICT_DATA||null,stripPresentationScoreOwnership,syncComparePresentation};
     }catch(error){
       document.documentElement.setAttribute('data-production-ranking-bootstrap',`${VERSION}-error`);
       window.UFC_PRODUCTION_RANKING_BOOTSTRAP={version:VERSION,status:'error',error:String(error?.message||error)};
