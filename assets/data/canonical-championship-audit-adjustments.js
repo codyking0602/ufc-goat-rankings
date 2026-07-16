@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='canonical-championship-audit-adjustments-20260715a-conor-mendes';
+  const VERSION='canonical-championship-audit-adjustments-20260716b-gaethje-paddy';
   const ADJUSTMENTS=Object.freeze([
     Object.freeze({
       fighter:'Conor McGregor',
@@ -14,6 +14,16 @@
       eraTitleContextAdjustment:1,
       finalAdjustedCredit:.75,
       note:'Cody-approved fighter audit: full 0.75 interim-title credit for the Chad Mendes win.'
+    }),
+    Object.freeze({
+      fighter:'Justin Gaethje',
+      fightId:'2026-01-24-paddy-pimblett',
+      opponent:'Paddy Pimblett',
+      baseCredit:.75,
+      opponentStrength:1,
+      eraTitleContextAdjustment:1,
+      finalAdjustedCredit:.75,
+      note:'Cody-approved fighter audit: Paddy Pimblett receives full 1.00 opponent-strength treatment within Gaethje’s 0.75 interim-title base credit.'
     })
   ]);
 
@@ -65,7 +75,12 @@
 
   let validation={applied:[],missing:ADJUSTMENTS.map(row=>({fighter:row.fighter,fightId:row.fightId}))};
   if(originalEntryFor){
-    validation=applyToRow('Conor McGregor',originalEntryFor('championship','Conor McGregor'));
+    validation={applied:[],missing:[]};
+    [...new Set(ADJUSTMENTS.map(row=>row.fighter))].forEach(fighter=>{
+      const result=applyToRow(fighter,originalEntryFor('championship',fighter));
+      validation.applied.push(...result.applied);
+      validation.missing.push(...result.missing);
+    });
     api.entryFor=function(category,fighter){
       const row=originalEntryFor(category,fighter);
       if(category!=='championship')return row;
