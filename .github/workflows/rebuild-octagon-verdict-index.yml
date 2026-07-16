@@ -1,0 +1,50 @@
+name: Rebuild Octagon Verdict index
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'assets/data/octagon-verdict/fighters/*.json'
+      - 'scripts/rebuild-octagon-verdict-index.mjs'
+      - '.github/workflows/rebuild-octagon-verdict-index.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: octagon-verdict-index-main
+  cancel-in-progress: false
+
+jobs:
+  rebuild-index:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Rebuild and validate aggregate index
+        run: node scripts/rebuild-octagon-verdict-index.mjs
+
+      - name: Commit aggregate index when changed
+        shell: bash
+        run: |
+          if git diff --quiet -- assets/data/octagon-verdict/index.json; then
+            echo 'Aggregate index is already current.'
+            exit 0
+          fi
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/data/octagon-verdict/index.json
+          git commit -m 'chore: rebuild Octagon Verdict aggregate index'
+          git push origin HEAD:main
