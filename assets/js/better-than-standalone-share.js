@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='better-than-standalone-share-20260716b-find-leader-loader';
+  const VERSION='better-than-standalone-share-20260716c-find-leader-nav';
   let creating=false;
 
   function loadFindLeaderAssets(){
@@ -88,6 +88,12 @@
   }
 
   document.addEventListener('click',event=>{
+    const findLeaderHome=event.target.closest?.('#playFindLeaderPanel [data-play-home]');
+    if(findLeaderHome){
+      event.preventDefault();
+      window.UFC_PLAY_HUB?.showHub?.();
+      return;
+    }
     const trigger=event.target.closest?.('[data-better-than-challenge]');
     if(!trigger)return;
     event.preventDefault();
