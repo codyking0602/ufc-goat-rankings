@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='keep-cut-standalone-share-20260716b-blind-rank-loader';
+  const VERSION='keep-cut-standalone-share-20260716c-blind-resume-loader';
   const profile=window.UFC_PLAY_PROFILE;
   const client=profile?.client;
   let creating=false;
@@ -115,17 +115,21 @@
     document.head.appendChild(script);
   }
 
+  function loadBlindResumeSharing(){
+    if(document.querySelector('script[data-blind-resume-standalone-share]'))return;
+    const script=document.createElement('script');
+    script.src='assets/js/blind-resume-standalone-share.js?v=blind-resume-standalone-share-20260716a';
+    script.dataset.blindResumeStandaloneShare='true';
+    document.head.appendChild(script);
+  }
+
   function install(){
     if(redirectIncomingLegacyLink())return;
     loadBlindRankSharing();
+    loadBlindResumeSharing();
     document.addEventListener('click',event=>{
       const keepCut=event.target.closest?.('[data-kc-challenge]');
-      if(keepCut){event.preventDefault();event.stopImmediatePropagation();createChallenge(keepCut);return;}
-      if(event.target.closest?.('[data-five-round-share]')){
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        toast('Blind Resume friend challenges are coming in the next phase.');
-      }
+      if(keepCut){event.preventDefault();event.stopImmediatePropagation();createChallenge(keepCut);}
     },true);
     document.documentElement.setAttribute('data-keep-cut-standalone-share',VERSION);
   }
