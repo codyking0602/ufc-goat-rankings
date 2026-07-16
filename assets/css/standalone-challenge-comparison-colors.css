@@ -1,0 +1,101 @@
+/* Clear player ownership on standalone challenge comparison results. */
+.player-columns{
+  align-items:start;
+}
+
+.player-columns>section{
+  position:relative;
+  min-width:0;
+  border:1px solid transparent;
+  border-radius:20px;
+  padding:14px;
+  overflow:hidden;
+}
+
+.player-columns>section::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  border-radius:inherit;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+}
+
+.player-columns>section:first-child{
+  border-color:rgba(96,165,250,.58);
+  background:
+    linear-gradient(145deg,rgba(59,130,246,.16),rgba(30,64,175,.045) 42%,rgba(15,24,40,.96)),
+    #101827;
+  box-shadow:0 14px 36px rgba(30,64,175,.14);
+}
+
+.player-columns>section:nth-child(2){
+  border-color:rgba(255,107,19,.62);
+  background:
+    linear-gradient(145deg,rgba(255,107,19,.16),rgba(194,65,12,.045) 42%,rgba(15,24,40,.96)),
+    #101827;
+  box-shadow:0 14px 36px rgba(194,65,12,.13);
+}
+
+.player-columns>section>h2{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:7px;
+  margin:0 0 12px;
+  color:#cbd5e1;
+  font-size:10px;
+  line-height:1.2;
+  letter-spacing:.08em;
+}
+
+.player-columns>section>h2::before{
+  display:inline-grid;
+  place-items:center;
+  min-height:30px;
+  padding:0 11px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:950;
+  line-height:1;
+  letter-spacing:.1em;
+}
+
+.player-columns>section:first-child>h2::before{
+  content:"YOUR PICKS";
+  border:1px solid rgba(96,165,250,.58);
+  background:rgba(59,130,246,.18);
+  color:#dbeafe;
+}
+
+.player-columns>section:nth-child(2)>h2::before{
+  content:"CHALLENGER'S PICKS";
+  border:1px solid rgba(255,107,19,.62);
+  background:rgba(255,107,19,.16);
+  color:#ffedd5;
+}
+
+.player-columns>section:first-child .result-group{
+  border-color:rgba(96,165,250,.25);
+  background:rgba(8,20,39,.72);
+}
+
+.player-columns>section:nth-child(2) .result-group{
+  border-color:rgba(255,107,19,.24);
+  background:rgba(25,17,18,.5);
+}
+
+.player-columns>section:first-child .result-group article{
+  border-color:rgba(96,165,250,.24);
+}
+
+.player-columns>section:nth-child(2) .result-group article{
+  border-color:rgba(255,107,19,.23);
+}
+
+@media(max-width:640px){
+  .player-columns{gap:12px}
+  .player-columns>section{padding:11px;border-radius:17px}
+  .player-columns>section>h2{margin-bottom:9px;font-size:9px}
+  .player-columns>section>h2::before{min-height:27px;padding:0 9px;font-size:9px}
+}
