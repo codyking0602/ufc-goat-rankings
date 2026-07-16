@@ -14,6 +14,35 @@
   if(!input||!form||!ready||!readyQuestion||!openLink)return;
   openLink.href=GPT_URL;
 
+  function ensureIntelligenceLabel(){
+    const tab=document.querySelector('.tab[data-view="compare"]');
+    if(tab&&tab.textContent.trim()!=='Intelligence')tab.textContent='Intelligence';
+  }
+
+  ensureIntelligenceLabel();
+  const tabs=document.querySelector('.tabs');
+  if(tabs){
+    new MutationObserver(ensureIntelligenceLabel).observe(tabs,{childList:true,subtree:true,characterData:true});
+  }
+  window.addEventListener?.('ufc-production-ranking-ready',ensureIntelligenceLabel);
+  window.addEventListener?.('ufc-scoring-pipeline-ready',ensureIntelligenceLabel);
+
+  const backdrop=document.createElement('button');
+  backdrop.type='button';
+  backdrop.className='intelligence-modal-backdrop';
+  backdrop.setAttribute('aria-label','Close question dialog');
+  backdrop.hidden=true;
+
+  const closeButton=document.createElement('button');
+  closeButton.type='button';
+  closeButton.className='intelligence-modal-close';
+  closeButton.setAttribute('aria-label','Close');
+  closeButton.textContent='×';
+  ready.querySelector('.intelligence-ready-head')?.appendChild(closeButton);
+  ready.setAttribute('role','dialog');
+  ready.setAttribute('aria-modal','true');
+  document.body.append(backdrop,ready);
+
   function cleanQuestion(value){
     return String(value||'').replace(/\s+/g,' ').trim();
   }
@@ -47,21 +76,30 @@
     if(status)status.textContent=message;
   }
 
+  function openModal(){
+    backdrop.hidden=false;
+    ready.hidden=false;
+    document.body.classList.add('intelligence-modal-open');
+    window.setTimeout(()=>closeButton.focus(),0);
+  }
+
+  function closeModal(){
+    ready.hidden=true;
+    backdrop.hidden=true;
+    document.body.classList.remove('intelligence-modal-open');
+  }
+
   async function prepareQuestion(question,options={}){
     const value=cleanQuestion(question||input.value);
     if(!value){
       input.focus();
-      setStatus('Type a question first.');
       return;
     }
     input.value=value;
     readyQuestion.textContent=value;
-    ready.hidden=false;
+    openModal();
     const copied=options.copy===false?false:await copyText(value);
     setStatus(copied?'Copied. Open Octagon Verdict and paste your question.':'Question ready. Use Copy Question, then open Octagon Verdict.');
-    if(options.scroll!==false){
-      ready.scrollIntoView({behavior:'smooth',block:'nearest'});
-    }
   }
 
   form.addEventListener('submit',event=>{
@@ -91,5 +129,11 @@
     const fighterB=document.getElementById('fighterB')?.value;
     if(!fighterA||!fighterB)return;
     prepareQuestion(`Compare ${fighterA} and ${fighterB}. Start with the verdict, give the losing fighter's best counterargument, explain why the winner still wins, and separate the better fighter from the better UFC-only GOAT resume.`);
+  });
+
+  closeButton.addEventListener('click',closeModal);
+  backdrop.addEventListener('click',closeModal);
+  document.addEventListener('keydown',event=>{
+    if(event.key==='Escape'&&!ready.hidden)closeModal();
   });
 })();
