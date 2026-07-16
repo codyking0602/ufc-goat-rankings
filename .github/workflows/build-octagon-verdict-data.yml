@@ -24,6 +24,7 @@ on:
       - 'assets/js/production-ranking-bootstrap.js'
       - 'assets/js/octagon-verdict-data.js'
       - 'tools/build-octagon-verdict-data.js'
+      - 'tools/build-octagon-verdict-knowledge.js'
       - '.github/workflows/build-octagon-verdict-data.yml'
   workflow_dispatch:
 
@@ -55,20 +56,21 @@ jobs:
           npm install --no-save --silent playwright@1.55.0 > /tmp/playwright-install.log 2>&1
           npx playwright install --with-deps chromium >> /tmp/playwright-install.log 2>&1
 
-      - name: Build calculated Octagon Verdict feed
+      - name: Build calculated Octagon Verdict feed and knowledge pack
         run: |
           python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/ufc-octagon-verdict-http.log 2>&1 &
           SERVER_PID=$!
           trap 'kill $SERVER_PID || true' EXIT
           node tools/build-octagon-verdict-data.js
+          node tools/build-octagon-verdict-knowledge.js
 
       - name: Commit generated knowledge feed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/data/octagon-verdict-data.json assets/data/octagon-verdict/
+          git add assets/data/octagon-verdict-data.json assets/data/octagon-verdict/ octagon-verdict-knowledge.md
           if git diff --cached --quiet; then
-            echo "Octagon Verdict data is already current."
+            echo "Octagon Verdict data and knowledge pack are already current."
           else
             git commit -m "Rebuild Octagon Verdict knowledge feed [skip ci]"
             git push origin HEAD:main
