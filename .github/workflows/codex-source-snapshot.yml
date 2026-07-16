@@ -1,0 +1,23 @@
+name: Codex Source Snapshot
+
+on:
+  push:
+    paths:
+      - '.github/workflows/codex-source-snapshot.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Package current source
+        run: tar --exclude=.git -czf ufc-source.tar.gz .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ufc-source-snapshot
+          path: ufc-source.tar.gz
+          if-no-files-found: error
+          retention-days: 1
