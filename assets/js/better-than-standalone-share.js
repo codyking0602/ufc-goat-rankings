@@ -1,22 +1,45 @@
 (function(){
   'use strict';
 
-  const VERSION='better-than-standalone-share-20260716c-find-leader-nav';
+  const VERSION='better-than-standalone-share-20260716d-find-leader-elimination-loader';
+  const FIND_LEADER_VERSION='find-leader-20260716b-elimination-challenge';
   let creating=false;
 
+  function loadScriptOnce(selector,src,datasetKey,onload){
+    const existing=document.querySelector(selector);
+    if(existing){if(existing.dataset.loaded==='true')onload?.();else existing.addEventListener('load',()=>onload?.(),{once:true});return existing;}
+    const script=document.createElement('script');
+    script.src=src;
+    script.dataset[datasetKey]='true';
+    script.onload=()=>{script.dataset.loaded='true';onload?.();};
+    document.head.appendChild(script);
+    return script;
+  }
+
+  function patchFindLeaderHubCopy(){
+    const card=document.querySelector('[data-open-game="find-leader"]');
+    const description=card?.querySelector('.play-game-copy small');
+    if(description)description.textContent='Eliminate nine fighters without removing the verified stat leader. One fatal pick ends the run.';
+  }
+
   function loadFindLeaderAssets(){
-    if(!document.querySelector('link[data-find-leader-style]')){
+    if(!document.querySelector('link[data-find-leader-elimination-style]')){
       const link=document.createElement('link');
       link.rel='stylesheet';
-      link.href='assets/css/find-leader.css?v=find-leader-css-20260716a-local-audited-stats';
-      link.dataset.findLeaderStyle='true';
+      link.href='assets/css/find-leader.css?v=find-leader-css-20260716b-elimination';
+      link.dataset.findLeaderEliminationStyle='true';
       document.head.appendChild(link);
     }
-    if(window.UFC_FIND_LEADER||document.querySelector('script[data-find-leader-script]'))return;
-    const script=document.createElement('script');
-    script.src='assets/js/find-leader.js?v=find-leader-20260716a-local-audited-stats';
-    script.dataset.findLeaderScript='true';
-    document.head.appendChild(script);
+
+    const loadGame=()=>{
+      if(window.UFC_FIND_LEADER?.version===FIND_LEADER_VERSION)return;
+      document.getElementById('playFindLeaderPanel')?.remove();
+      loadScriptOnce('script[data-find-leader-elimination-script]','assets/js/find-leader.js?v=find-leader-20260716b-elimination-challenge','findLeaderEliminationScript');
+    };
+    loadScriptOnce('script[data-find-leader-question-bank]','assets/data/find-leader-question-bank.js?v=find-leader-question-bank-20260716b-elimination','findLeaderQuestionBank',loadGame);
+    loadScriptOnce('script[data-find-leader-share-adapter]','assets/js/find-leader-standalone-share.js?v=find-leader-standalone-share-20260716a-elimination','findLeaderShareAdapter');
+    patchFindLeaderHubCopy();
+    window.addEventListener('ufc-play-hub-ready',patchFindLeaderHubCopy,{once:true});
   }
 
   function toast(message,type=''){
@@ -88,12 +111,15 @@
   }
 
   document.addEventListener('click',event=>{
+    const findLeader=event.target.closest?.('[data-open-game="find-leader"]');
+    if(findLeader)setTimeout(()=>{
+      const eyebrow=document.getElementById('playGameEyebrow');
+      const subtitle=document.querySelector('#play .section-title p');
+      if(eyebrow)eyebrow.textContent='ELIMINATION GAME';
+      if(subtitle)subtitle.textContent='Eliminate the non-leaders one by one. Pick the stat leader and your run ends.';
+    },0);
     const findLeaderHome=event.target.closest?.('#playFindLeaderPanel [data-play-home]');
-    if(findLeaderHome){
-      event.preventDefault();
-      window.UFC_PLAY_HUB?.showHub?.();
-      return;
-    }
+    if(findLeaderHome){event.preventDefault();window.UFC_PLAY_HUB?.showHub?.();return;}
     const trigger=event.target.closest?.('[data-better-than-challenge]');
     if(!trigger)return;
     event.preventDefault();
