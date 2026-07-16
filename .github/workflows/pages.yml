@@ -7,12 +7,11 @@ on:
       - 'index.html'
       - '*.html'
       - 'assets/**'
-      - 'scripts/generate-octagon-verdict-knowledge.mjs'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -29,24 +28,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Generate Octagon Verdict knowledge pack
-        run: |
-          node scripts/generate-octagon-verdict-knowledge.mjs \
-            --output octagon-verdict-knowledge.md \
-            --json-output octagon-verdict-data.json
-
-      - name: Commit refreshed knowledge artifacts
-        run: |
-          if [ -n "$(git status --porcelain -- octagon-verdict-knowledge.md octagon-verdict-data.json)" ]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add octagon-verdict-knowledge.md octagon-verdict-data.json
-            git commit -m "Refresh Octagon Verdict knowledge [skip ci]"
-            git push
-          else
-            echo "Octagon Verdict knowledge artifacts are already current."
-          fi
 
       - name: Prepare site
         run: |
