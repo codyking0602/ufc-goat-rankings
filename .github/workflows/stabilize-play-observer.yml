@@ -1,0 +1,83 @@
+name: Stabilize Play challenge observer
+
+on:
+  push:
+    paths:
+      - '.github/workflows/stabilize-play-observer.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove recursive Play render work
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          js = Path('assets/js/play-shared-system.js')
+          text = js.read_text()
+          text = text.replace("const VERSION='play-shared-system-20260715b-generic-adapters';", "const VERSION='play-shared-system-20260715h-stable-observer';")
+          text = text.replace("url.searchParams.set('playbuild','20260715f');", "url.searchParams.set('playbuild','20260715h');")
+
+          banner_pattern = re.compile(r"  function renderChallengeBanner\(challenge,adapter\)\{.*?\n  \}\n\n  async function openChallenge", re.S)
+          banner_replacement = '''  function renderChallengeBanner(challenge,adapter){
+    const host=adapter?.bannerHost?.()||document.querySelector('#play .play-panel:not([hidden])');
+    if(!host)return;
+    const signature=`${challenge?.code||''}|${challenge?.creator_name||''}|${adapter?.id||''}|${adapter?.title||''}`;
+    let banner=document.getElementById('playChallengeBanner');
+    if(!banner){
+      banner=document.createElement('div');
+      banner.id='playChallengeBanner';
+      banner.className='play-challenge-banner';
+    }
+    if(banner.dataset.challengeSignature!==signature){
+      banner.dataset.challengeSignature=signature;
+      banner.innerHTML=`<span>FRIEND CHALLENGE</span><strong>${esc(challenge.creator_name)} sent you the same ${esc(adapter?.title||'game')} setup.</strong><small>Your result stays private until you finish.</small>`;
+    }
+    if(banner.parentElement!==host)host.prepend(banner);
+  }
+
+  async function openChallenge'''
+          text, banner_count = banner_pattern.subn(banner_replacement, text, count=1)
+          if banner_count != 1:
+              raise SystemExit(f'Expected one banner function, found {banner_count}')
+
+          observer_pattern = re.compile(r"    const observer=new MutationObserver\(\(\)=>\{.*?\n    observer\.observe\(document\.getElementById\('play'\)\|\|document\.body,\{childList:true,subtree:true\}\);", re.S)
+          observer_replacement = '''    let observerFrame=0;
+    const observer=new MutationObserver(()=>{
+      if(observerFrame)return;
+      observerFrame=requestAnimationFrame(()=>{
+        observerFrame=0;
+        submitActiveChallenge();
+        submitDailyIfComplete();
+        if(activeChallenge&&!activeChallenge.submitted&&!document.getElementById('playChallengeBanner')){
+          const adapter=adapterFor(activeChallenge.game_type);
+          if(adapter)renderChallengeBanner(activeChallenge,adapter);
+        }
+      });
+    });
+    observer.observe(document.getElementById('play')||document.body,{childList:true,subtree:true});'''
+          text, observer_count = observer_pattern.subn(observer_replacement, text, count=1)
+          if observer_count != 1:
+              raise SystemExit(f'Expected one observer block, found {observer_count}')
+          js.write_text(text)
+
+          index = Path('index.html')
+          html = index.read_text()
+          html = re.sub(r'content="20260715-play-challenge-[^"]+"', 'content="20260715-play-challenge-stable-observer"', html, count=1)
+          html = html.replace('play-shared-system.js?v=play-shared-system-20260715f-new-tab', 'play-shared-system.js?v=play-shared-system-20260715h-stable-observer')
+          index.write_text(html)
+          PY
+      - name: Commit stabilization and remove workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/stabilize-play-observer.yml
+          git add index.html assets/js/play-shared-system.js
+          git commit -m "Stabilize Play challenge rendering"
+          git push
