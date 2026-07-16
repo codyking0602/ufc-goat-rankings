@@ -4,14 +4,15 @@ window.UFC_SUPABASE_CONFIG = {
   anonKey: 'sb_publishable_thQI0qVmK_zOMjlmSiITww_MgWO-RNi'
 };
 
-// Play challenge links must never inherit a remembered Picks room or group route.
+// Play challenge links must never inherit or lose to a remembered Picks route.
 // This runs before the Picks routing scripts and before the generic challenge handler.
 (function(){
   'use strict';
 
-  const VERSION='play-challenge-route-20260715b-clean-share';
+  const VERSION='play-challenge-route-20260715c-picks-lockout';
   const PICKS_KEYS=['group','room','event','archive'];
   const LEGACY_PLAY_KEYS=['game','kcpack','kclineup','kcchoices','kcv','brpack','brlineup'];
+  const PICKS_AUTO_RESTORE_KEY='ufc-picks:auto-restore-disabled';
 
   function replaceUrl(url){
     window.history.replaceState(window.history.state,'',`${url.pathname}${url.search}${url.hash}`);
@@ -51,26 +52,30 @@ window.UFC_SUPABASE_CONFIG = {
   replaceUrl(url);
   document.documentElement.setAttribute('data-play-challenge-route',VERSION);
 
+  // Existing Picks users often have an active room saved locally. Suppress that automatic
+  // restore while the incoming challenge is opening; an explicit Picks-tab click re-enables it.
+  try{localStorage.setItem(PICKS_AUTO_RESTORE_KEY,'1');}catch(_error){}
+
   let attempts=0;
   let timer=null;
 
-  function challengeGameIsOpen(){
-    const screen=document.documentElement.getAttribute('data-play-screen')||'';
-    return Boolean(
-      document.getElementById('playChallengeBanner') ||
-      (screen && !['hub','picks','top10','blind','daily-blind'].includes(screen))
-    );
+  function stopGuard(){
+    if(timer)window.clearInterval(timer);
+    timer=null;
   }
 
   function keepPlaySelected(){
     attempts+=1;
     const playTab=document.querySelector('.tab[data-view="play"]');
     if(playTab&&!playTab.classList.contains('active'))playTab.click();
-    if(challengeGameIsOpen()||attempts>=50){
-      if(timer)window.clearInterval(timer);
-      timer=null;
-    }
+    if(attempts>=75)stopGuard();
   }
+
+  document.addEventListener('click',event=>{
+    if(!event.target.closest?.('.tab[data-view="picks"]'))return;
+    stopGuard();
+    try{localStorage.removeItem(PICKS_AUTO_RESTORE_KEY);}catch(_error){}
+  },true);
 
   keepPlaySelected();
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',keepPlaySelected,{once:true});
