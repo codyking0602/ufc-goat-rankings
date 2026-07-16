@@ -1,6 +1,6 @@
 {
   "passed": true,
-  "generatedAt": "2026-07-16T17:48:14.207Z",
+  "generatedAt": "2026-07-16T19:33:50.254Z",
   "fighterCount": 76,
   "validatedFighters": [
     "Jon Jones",
@@ -34,8 +34,8 @@
     "canonicalFacts": "canonical-fighter-facts-20260713c-audited-rounds",
     "fighterEraLedgers": "fighter-era-ledgers-20260714h-full-72-coverage",
     "scoringJudgments": "canonical-scoring-judgments-20260714b-generated-approved-inputs",
-    "opponentQualityAdjustments": "canonical-opponent-quality-audit-adjustments-20260715b-merab",
-    "championshipAdjustments": "canonical-championship-audit-adjustments-20260715a-conor-mendes",
+    "opponentQualityAdjustments": "canonical-opponent-quality-audit-adjustments-20260716c-gaethje-johnson",
+    "championshipAdjustments": "canonical-championship-audit-adjustments-20260716b-gaethje-paddy",
     "divisionDepthResolutions": "canonical-division-era-depth-approved-resolutions-20260715c-woodley-neutral",
     "woodleyAudit": "canonical-woodley-audit-adjustments-20260715a"
   },
