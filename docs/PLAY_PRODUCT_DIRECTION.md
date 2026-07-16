@@ -224,6 +224,22 @@ Current behavior:
 - Yellow disagreement highlights
 - Challenge Back rematch
 
+### Better Than...
+
+Standalone page:
+
+- `better-than-challenge.html?code=XXXXXX`
+
+Current behavior:
+
+- Frozen target fighter, debate lens, eligibility pool, challenger count, and eligible fighter snapshots
+- Challenger names hidden until responder submission
+- Responder chooses their own count and exact list
+- Shared, challenger-only, and responder-only comparisons
+- Blue responder and orange challenger sections
+- No fake winner or model correctness
+- Challenge Back rematch
+
 ---
 
 ## Game classification rules
@@ -236,6 +252,7 @@ Examples:
 
 - Blind Rank 5
 - Keep 4, Cut 4
+- Better Than...
 - Build Your Top 10
 
 Subjective games should compare:
@@ -253,7 +270,6 @@ They should not pretend one answer is officially correct.
 Examples:
 
 - Blind Resume
-- Better Than...
 - Find the Leader
 
 Objective games may use:
@@ -286,33 +302,25 @@ All objective answers must be grounded in the UFC-only ranking model or verified
 
 ### D. Better Than...
 
-**Recommended next major game.**
+**Status:** Subjective local claim builder and standalone friend challenge complete.
 
-Example prompt:
+Core prompt structure:
 
-> Who has a better UFC GOAT resume than Charles Oliveira?
+> I can name 7 fighters better than Charles Oliveira at striking.
 
-The user selects every fighter they believe ranks above the featured fighter.
+The challenger controls:
 
-Final results should show:
+- Challenge fighter
+- Debate lens, such as overall, striking, wrestling, grappling, submissions, power, durability, cardio, or UFC-only resume
+- Eligible fighter pool, including the full roster, gender pools, verified UFC divisions, same-division pools, and 205+ division pools
+- Claim count, capped at 15 or the available pool size
+- Exact supporting fighter list
 
-- Correct selections
-- Incorrect selections
-- Fighters missed
-- Final score
-- Exact ranking cutoff
-- Challenge a Friend
-- Same featured fighter and eligible pool for both users
-- Daily Challenge compatibility
+The responder sees the frozen prompt and challenger's number, chooses their own number, and builds an exact list from the same frozen pool. The challenger's names remain hidden until submission.
 
-Recommended implementation order:
+Comparison shows both counts, the narrower claim without an official winner, shared selections, each person's unique selections, list overlap, and Challenge Back.
 
-1. Build and verify the local game.
-2. Add a small export/result adapter.
-3. Add Daily Challenge support.
-4. Add the standalone friend challenge.
-5. Add Challenge Back using the shared rematch controller.
-6. Add leaderboard presentation after score rules are verified.
+Better Than is subjective. It must not use model correctness, official scores, or a scored Daily Challenge leaderboard. Community percentages may be added later when enough submissions exist.
 
 ### E. Build Your Top 10
 
@@ -345,7 +353,6 @@ Do not launch using incomplete, estimated, or inconsistently sourced category da
 Once multiple objective games are stable, Today's Challenge can rotate between:
 
 - Blind Resume
-- Better Than...
 - Find the Leader
 
 The server must remain the source of truth for:

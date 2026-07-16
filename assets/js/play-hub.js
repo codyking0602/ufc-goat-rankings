@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='play-hub-20260716e-better-than-mvp';
+  const VERSION='play-hub-20260716f-better-than-claim-builder';
   const play=document.getElementById('play');
   const shell=play?.querySelector('.play-shell');
   const sectionTitle=play?.querySelector('.section-title');
@@ -73,7 +73,7 @@
     {id:'keep-cut',icon:'4/4',title:'Keep 4, Cut 4',description:'Make eight locked decisions without knowing which fighter is waiting at the end.',status:'COMING SOON',live:false},
     {id:'top10',icon:'10',title:'Build Your Top 10',description:'Create your UFC GOAT list, order it, and compare every placement with the model.',status:'PLAY NOW',live:true},
     {id:'blind',icon:'?',title:'Blind Resume',description:'Choose the stronger UFC-only career five times without seeing either fighter’s name.',status:'PLAY NOW',live:true},
-    {id:'better-than',icon:'>',title:'Better Than…',description:'Select every fighter whose UFC-only GOAT resume ranks above the challenge fighter.',status:'PLAY NOW',live:true},
+    {id:'better-than',icon:'>',title:'Better Than…',description:'Build a claim, choose your number, and name the exact fighters you can defend.',status:'PLAY NOW',live:true},
     {id:'find-leader',icon:'#1',title:'Find the Leader',description:'Pick through a full board until you find the fighter who owns the featured stat.',status:'COMING SOON',live:false}
   ];
 
@@ -154,9 +154,9 @@
       return;
     }
     if(mode==='better-than'){
-      if(eyebrow)eyebrow.textContent='MODEL TEST';
+      if(eyebrow)eyebrow.textContent='CLAIM BUILDER';
       if(title)title.textContent='Better Than…';
-      if(subtitle)subtitle.textContent='Select every fighter whose UFC-only GOAT resume ranks above Charles Oliveira.';
+      if(subtitle)subtitle.textContent='Build a subjective UFC claim and choose the exact fighters who support it.';
       return;
     }
     if(eyebrow)eyebrow.textContent=daily?"TODAY'S CHALLENGE":'BLIND RESUME';
