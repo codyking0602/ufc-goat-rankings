@@ -6,6 +6,10 @@ Live preview:
 
 `https://codyking0602.github.io/ufc-goat-rankings/`
 
+## Product direction
+
+- [Play Tab Product Direction](docs/PLAY_PRODUCT_DIRECTION.md) — long-term vision, architecture, game classification, current challenge status, and roadmap for the UFC social-game hub.
+
 ## Source structure
 
 - `index.html` — main app
