@@ -1,6 +1,6 @@
 # Octagon Verdict — Official UFC-Only Knowledge Pack
 
-Generated: **2026-07-16T21:53:15.045Z**  
+Generated: **2026-07-16T21:56:44.044Z**  
 Canonical model-as-of date: **2026-07-13**  
 Latest fighter-ledger verification date: **2026-07-15**  
 Fighters: **76**
@@ -32,7 +32,7 @@ Octagon Verdict explains and debates the same UFC-only rankings shown by the app
 | fighterEraLedgers | fighter-era-ledgers-20260714h-full-72-coverage |
 | scoringJudgments | canonical-scoring-judgments-20260714b-generated-approved-inputs |
 | opponentQualityAdjustments | canonical-opponent-quality-audit-adjustments-20260716c-gaethje-johnson |
-| championshipAdjustments | canonical-championship-audit-adjustments-20260716c-title-credit-alignment |
+| championshipAdjustments | canonical-championship-audit-adjustments-20260716d-division-title-credit-alignment |
 | divisionDepthResolutions | canonical-division-era-depth-approved-resolutions-20260715c-woodley-neutral |
 | woodleyAudit | canonical-woodley-audit-adjustments-20260715a |
 
