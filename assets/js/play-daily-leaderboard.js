@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='play-daily-leaderboard-20260716c-swipe-carousel';
+  const VERSION='play-daily-leaderboard-20260716d-community-days';
   let loading=false;
   let loadedKey='';
   let lastContext=null;
@@ -28,8 +28,9 @@
   }
 
   function currentDaily(){
-    const rotation=window.UFC_PLAY_DAILY_ROTATION;
-    return rotation?.dailyFor?.()||{id:'blind',gameType:'blind-resume',gameVersion:'blind-resume-daily-v2',maxScore:5,title:'Blind Resume'};
+    return window.UFC_PLAY_DAILY_ROTATION?.dailyFor?.()||{
+      id:'find-leader',gameType:'find-leader',gameVersion:'find-leader-daily-v1',maxScore:10,title:'Find the Leader',scored:true
+    };
   }
 
   function injectStyles(){
@@ -65,6 +66,12 @@
       #playDailyLeaderboard .daily-board-row small{color:#94a3b8;font-size:8px;text-align:right}
       #playDailyLeaderboard .daily-perfect{margin-left:5px;border-radius:999px;background:rgba(34,197,94,.16);padding:3px 5px;color:#86efac;font-size:7px;font-style:normal;font-weight:950;letter-spacing:.04em}
       #playDailyLeaderboard .daily-board-note{margin:10px 0 0;color:#94a3b8;font-size:9px;line-height:1.4;text-align:center}
+      #playDailyLeaderboard .daily-community-card{display:grid;gap:12px;margin-top:18px}
+      #playDailyLeaderboard .daily-community-card article{border:1px solid #526786;border-radius:16px;background:#101725;padding:16px}
+      #playDailyLeaderboard .daily-community-card article span{color:#facc15;font:950 9px/1 system-ui;letter-spacing:.1em}
+      #playDailyLeaderboard .daily-community-card article strong{display:block;margin-top:7px;color:#fff;font:950 19px/1.05 system-ui}
+      #playDailyLeaderboard .daily-community-card article p{margin:8px 0 0;color:#cbd5e1;font:650 11px/1.45 system-ui}
+      #playDailyLeaderboard .daily-community-card b{display:block;border:1px solid rgba(249,115,22,.48);border-radius:14px;background:rgba(249,115,22,.08);padding:13px;color:#fdba74;font:850 10px/1.4 system-ui;text-align:center}
       @media(max-width:650px){
         #play .play-daily-track{gap:9px}
         #play .play-daily-swipe-hint{right:12px;bottom:8px;font-size:7px}
@@ -83,10 +90,7 @@
     const hub=document.getElementById('playHub');
     if(!hub)return null;
     let node=document.getElementById('playDailyLeaderboard');
-    if(!node){
-      node=document.createElement('section');
-      node.id='playDailyLeaderboard';
-    }
+    if(!node){node=document.createElement('section');node.id='playDailyLeaderboard';}
     node.hidden=false;
     return node;
   }
@@ -102,6 +106,12 @@
     updateDots(index);
   }
 
+  function updateSecondDot(){
+    const daily=currentDaily();
+    const dot=document.querySelector('#playDailyCarousel [data-daily-slide="1"]');
+    if(dot)dot.setAttribute('aria-label',daily.scored?"Show today's leaderboard":"Show today's community view");
+  }
+
   function ensureCarousel(){
     const hub=document.getElementById('playHub');
     const card=hub?.querySelector('.play-daily-card');
@@ -113,12 +123,12 @@
       carousel=document.createElement('section');
       carousel.id='playDailyCarousel';
       carousel.className='play-daily-carousel';
-      carousel.setAttribute('aria-label',"Today's challenge and leaderboard");
+      carousel.setAttribute('aria-label',"Today's challenge and results");
       track=document.createElement('div');
       track.className='play-daily-track';
       const dots=document.createElement('div');
       dots.className='play-daily-dots';
-      dots.innerHTML='<button type="button" class="play-daily-dot active" data-daily-slide="0" aria-label="Show today\'s challenge"></button><button type="button" class="play-daily-dot" data-daily-slide="1" aria-label="Show today\'s leaderboard"></button>';
+      dots.innerHTML='<button type="button" class="play-daily-dot active" data-daily-slide="0" aria-label="Show today\'s challenge"></button><button type="button" class="play-daily-dot" data-daily-slide="1"></button>';
       card.parentNode.insertBefore(carousel,card);
       carousel.append(track,dots);
     }
@@ -126,17 +136,14 @@
     board.classList.add('play-daily-slide');
     if(card.parentNode!==track)track.appendChild(card);
     if(board.parentNode!==track)track.appendChild(board);
+    updateSecondDot();
     if(track.dataset.swipeBound!==VERSION){
       track.dataset.swipeBound=VERSION;
       let ticking=false;
       track.addEventListener('scroll',()=>{
         if(ticking)return;
         ticking=true;
-        requestAnimationFrame(()=>{
-          ticking=false;
-          const width=Math.max(1,track.clientWidth);
-          updateDots(Math.round(track.scrollLeft/width));
-        });
+        requestAnimationFrame(()=>{ticking=false;updateDots(Math.round(track.scrollLeft/Math.max(1,track.clientWidth)));});
       },{passive:true});
     }
     return {carousel,track,card,board};
@@ -148,6 +155,15 @@
 
   function errorMarkup(message,daily){
     return `<div class="daily-board-head"><div><span>TODAY'S CHALLENGE</span><h3>${esc(daily.title)} Leaderboard</h3><p>${esc(message)}</p></div><div class="daily-board-controls"><button type="button" data-daily-board-refresh>TRY AGAIN</button></div></div>`;
+  }
+
+  function communityMarkup(daily,day){
+    return `<div class="daily-board-head"><div><span>${esc(dateLabel(day).toUpperCase())}</span><h3>Today's Community</h3><p>${esc(daily.title)} is a subjective UFC debate, not a scored quiz.</p></div></div>
+      <div class="daily-community-card">
+        <article><span>SAME DAILY SETUP</span><strong>No fake winner. No invented score.</strong><p>Everyone receives the same daily prompt, fighter pool, lineup, or reveal order. Your completed answer remains your opinion.</p></article>
+        <b>Finish today's game, then use Challenge a Friend to compare the exact same setup.</b>
+      </div>
+      <p class="daily-board-note">Community percentages and popular choices can be added after enough daily submissions exist.</p>`;
   }
 
   function boardMarkup(board,identity,daily){
@@ -187,9 +203,17 @@
     const node=carousel?.board;
     if(!node)return;
     const daily=currentDaily();
+    const day=window.UFC_PLAY_DAILY_ROTATION?.centralDay?.()||'';
+    if(options.show)scrollToSlide(1);
+    if(!daily.scored){
+      lastDaily=daily;
+      lastContext=null;
+      loadedKey=`${daily.gameType}|${day}`;
+      node.innerHTML=communityMarkup(daily,day);
+      return;
+    }
     loading=true;
     node.innerHTML=loadingMarkup(daily);
-    if(options.show)scrollToSlide(1);
     try{
       const result=await fetchBoard();
       loadedKey=`${result.daily.gameType}|${result.context.challenge_day}`;
