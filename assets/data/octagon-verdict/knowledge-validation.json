@@ -1,0 +1,70 @@
+{
+  "passed": true,
+  "generatedAt": "2026-07-16T12:16:40.720Z",
+  "fighterCount": 76,
+  "validatedFighters": [
+    "Jon Jones",
+    "Georges St-Pierre",
+    "Demetrious Johnson",
+    "Anderson Silva",
+    "Khabib Nurmagomedov",
+    "Alexander Volkanovski",
+    "Islam Makhachev",
+    "Jose Aldo",
+    "Alexandre Pantoja",
+    "Cain Velasquez",
+    "Francis Ngannou"
+  ],
+  "currentFacts": {
+    "jonJones": {
+      "rank": 1,
+      "appOvr": 99,
+      "totalScore": 101.47
+    },
+    "cainVsNgannou": {
+      "cainRank": 23,
+      "ngannouRank": 22,
+      "currentLeader": "Francis Ngannou"
+    }
+  },
+  "sourceVersions": {
+    "scoringPipeline": "production-ranking-bootstrap-20260716p-intelligence-skip",
+    "rankingPipeline": "ranking-pipeline-20260714b-direct-category-total-rank-ovr",
+    "categoryCalculators": "category-calculators-20260714c-seven-direct-calculators",
+    "canonicalFacts": "canonical-fighter-facts-20260713c-audited-rounds",
+    "fighterEraLedgers": "fighter-era-ledgers-20260714h-full-72-coverage",
+    "scoringJudgments": "canonical-scoring-judgments-20260714b-generated-approved-inputs",
+    "opponentQualityAdjustments": "canonical-opponent-quality-audit-adjustments-20260715b-merab",
+    "championshipAdjustments": "canonical-championship-audit-adjustments-20260715a-conor-mendes",
+    "divisionDepthResolutions": "canonical-division-era-depth-approved-resolutions-20260715c-woodley-neutral",
+    "woodleyAudit": "canonical-woodley-audit-adjustments-20260715a"
+  },
+  "pageErrors": [],
+  "modelAsOfDate": "2026-07-13",
+  "methodology": {
+    "categoryMax": 30,
+    "weights": {
+      "championship": 35,
+      "opponentQuality": 25,
+      "primeDominance": 30,
+      "longevity": 10
+    },
+    "ovr": {
+      "floor": 82,
+      "ceiling": 99,
+      "curve": 0.85,
+      "leaderOnly99": true,
+      "anchors": {
+        "men": {
+          "floorScore": 18.68,
+          "ceilingScore": 101.92
+        },
+        "women": {
+          "floorScore": 25.78,
+          "ceilingScore": 80.79
+        }
+      }
+    }
+  },
+  "output": "octagon-verdict-knowledge.md"
+}
