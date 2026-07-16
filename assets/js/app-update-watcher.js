@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='app-update-watcher-20260715i-network-shell';
+  const VERSION='app-update-watcher-20260715j-play-challenge-compat';
   const RESTORE_KEY='ufc-goat-manual-refresh-v1';
   const PROGRESS_KEY='ufc-goat-manual-refresh-progress-v1';
   const LEGACY_KEYS=['ufc-goat-update-restore-v1','ufc-goat-update-target-v1'];
@@ -174,9 +174,18 @@
     hero.appendChild(control);
   }
 
+  function loadChallengeCompatibility(){
+    if(document.querySelector('script[data-play-challenge-compat]'))return;
+    const script=document.createElement('script');
+    script.src='assets/js/play-challenge-compat.js?v=play-challenge-compat-20260715a';
+    script.dataset.playChallengeCompat='true';
+    document.head.appendChild(script);
+  }
+
   LEGACY_KEYS.forEach(key=>{try{sessionStorage.removeItem(key);}catch(_error){}});
   cleanRefreshParameter();
   installButton();
+  loadChallengeCompatibility();
   resumeProgressIfNeeded();
   window.setTimeout(restoreState,250);
   window.UFC_APP_UPDATE_WATCHER={version:VERSION,networkRefresh,clearWebCaches};
