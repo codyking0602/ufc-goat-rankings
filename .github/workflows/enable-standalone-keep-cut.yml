@@ -17,11 +17,14 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+          import re
           path=Path('index.html')
           text=path.read_text()
-          text=text.replace(
-              '<meta name="app-build" content="20260715-intelligence-tab-launch" />',
-              '<meta name="app-build" content="20260715-intelligence-standalone-keep-cut" />'
+          text=re.sub(
+              r'<meta name="app-build" content="[^"]+" />',
+              '<meta name="app-build" content="20260716-intelligence-standalone-keep-cut" />',
+              text,
+              count=1
           )
           paused='  <script src="assets/js/play-challenges-paused.js?v=play-challenges-paused-20260715a"></script>'
           replacement='  <script src="assets/js/play-profile-identity.js?v=play-profile-identity-20260715a"></script>\n  <script src="assets/js/keep-cut-standalone-share.js?v=keep-cut-standalone-share-20260715a"></script>'
