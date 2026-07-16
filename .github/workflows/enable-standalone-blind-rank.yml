@@ -1,0 +1,36 @@
+name: Enable standalone Blind Rank
+
+on:
+  push:
+    paths:
+      - '.github/workflows/enable-standalone-blind-rank.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bump standalone share loader
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path=Path('index.html')
+          text=path.read_text()
+          old='assets/js/keep-cut-standalone-share.js?v=keep-cut-standalone-share-20260715a'
+          new='assets/js/keep-cut-standalone-share.js?v=keep-cut-standalone-share-20260716b-blind-rank-loader'
+          if old not in text:
+              raise SystemExit('Standalone share loader was not found')
+          text=text.replace(old,new,1)
+          path.write_text(text)
+          PY
+      - name: Commit integration and remove workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "4189826+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/enable-standalone-blind-rank.yml
+          git add index.html
+          git commit -m "Enable standalone Blind Rank friend challenges"
+          git push
