@@ -52,6 +52,32 @@
         { id:'okc-cannonier-duncan', order:10, cardSection:'Co-Main Event', weightClass:'Middleweight', red:'Jared Cannonier', blue:'Christian Leroy Duncan', lockAt:'2026-07-18T21:00:00-05:00', winner:null, resultStatus:'scheduled' },
         { id:'okc-du-plessis-usman', order:11, cardSection:'Main Event', weightClass:'Middleweight', red:'Dricus Du Plessis', blue:'Kamaru Usman', lockAt:'2026-07-18T21:45:00-05:00', winner:null, resultStatus:'scheduled', redOdds:-350, blueOdds:285, oddsSource:'BetOnline opening line via MMA Mania', oddsUpdatedAt:'2026-06-22T09:15:00-05:00' }
       ]
+    },
+    {
+      id: 'ufc-abu-dhabi-2026-07-25',
+      name: 'UFC Fight Night',
+      subtitle: 'Ankalaev vs. Guskov',
+      eventType: 'fight-night',
+      eventDate: '2026-07-25T12:00:00-04:00',
+      location: 'Etihad Arena · Abu Dhabi, United Arab Emirates',
+      cardRule: 'Main card only',
+      status: 'upcoming',
+      sourceNote: 'Externally maintained from UFC.com with MMA Mania as the fallback source. Full 13-fight card snapshot loaded July 16.',
+      fights: [
+        { id:'abu26-abdul-hussein-cody-gibson', order:1, cardSection:'Prelims', weightClass:'Bantamweight', red:'Abdul Hussein', blue:'Cody Gibson', lockAt:'2026-07-25T09:00:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'abu26-dustin-jacoby-muhammad-said', order:2, cardSection:'Prelims', weightClass:'Light Heavyweight', red:'Dustin Jacoby', blue:'Muhammad Said', lockAt:'2026-07-25T09:25:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'abu26-santiago-ponzinibbio-sam-patterson', order:3, cardSection:'Prelims', weightClass:'Welterweight', red:'Santiago Ponzinibbio', blue:'Sam Patterson', lockAt:'2026-07-25T09:50:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'abu26-nurullo-aliev-mike-davis', order:4, cardSection:'Prelims', weightClass:'Lightweight', red:'Nurullo Aliev', blue:'Mike Davis', lockAt:'2026-07-25T10:15:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'abu26-brendson-ribeiro-magomed-tuchalov', order:5, cardSection:'Prelims', weightClass:'Light Heavyweight', red:'Brendson Ribeiro', blue:'Magomed Tuchalov', lockAt:'2026-07-25T10:40:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'abu26-ismael-bonfim-axel-sola', order:6, cardSection:'Prelims', weightClass:'Lightweight', red:'Ismael Bonfim', blue:'Axel Sola', lockAt:'2026-07-25T11:05:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'abu26-valter-walker-thomas-petersen', order:7, cardSection:'Prelims', weightClass:'Heavyweight', red:'Valter Walker', blue:'Thomas Petersen', lockAt:'2026-07-25T11:30:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'abu26-saygid-izagakhmaev-abubakar-vagaev', order:8, cardSection:'Main Card', weightClass:'Welterweight', red:'Saygid Izagakhmaev', blue:'Abubakar Vagaev', lockAt:'2026-07-25T12:00:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'abu26-magomed-zaynukov-damian-rzepecki', order:9, cardSection:'Main Card', weightClass:'Lightweight', red:'Magomed Zaynukov', blue:'Damian Rzepecki', lockAt:'2026-07-25T12:30:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'abu26-islam-dulatov-wellington-turman', order:10, cardSection:'Main Card', weightClass:'Welterweight', red:'Islam Dulatov', blue:'Wellington Turman', lockAt:'2026-07-25T13:00:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'abu26-rizvan-kuniev-tyrell-fortune', order:11, cardSection:'Main Card', weightClass:'Heavyweight', red:'Rizvan Kuniev', blue:'Tyrell Fortune', lockAt:'2026-07-25T13:30:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'abu26-steve-erceg-ramazan-temirov', order:12, cardSection:'Co-Main Event', weightClass:'Flyweight', red:'Steve Erceg', blue:'Ramazan Temirov', lockAt:'2026-07-25T14:00:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'abu26-magomed-ankalaev-bogdan-guskov', order:13, cardSection:'Main Event', weightClass:'Light Heavyweight', red:'Magomed Ankalaev', blue:'Bogdan Guskov', lockAt:'2026-07-25T14:30:00-04:00', winner:null, resultStatus:'scheduled' }
+      ]
     }
   ];
 
