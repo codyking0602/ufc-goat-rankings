@@ -7,6 +7,7 @@ on:
       - 'index.html'
       - '*.html'
       - 'assets/**'
+      - 'scripts/generate-octagon-verdict-knowledge.mjs'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -28,6 +29,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Generate Octagon Verdict knowledge pack
+        run: |
+          node scripts/generate-octagon-verdict-knowledge.mjs \
+            --output octagon-verdict-knowledge.md \
+            --json-output octagon-verdict-data.json
 
       - name: Prepare site
         run: |
