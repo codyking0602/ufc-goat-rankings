@@ -1,18 +1,18 @@
 (function(){
   'use strict';
 
-  const VERSION='play-daily-rotation-20260716a-find-leader-blind-resume';
+  const VERSION='play-daily-rotation-20260716b-find-leader-first';
   const ORDER=['find-leader','keep-cut','better-than','blind','blind-rank','top10'];
   const ROTATION=[
-    {
-      id:'blind',gameType:'blind-resume',gameVersion:'blind-resume-daily-v2',maxScore:5,
-      title:'Blind Resume',description:'Five anonymous UFC careers. Pick the stronger resume each round and finish with one official score.',
-      details:['5 MATCHUPS','SAME LINEUP TODAY','OFFICIAL LEADERBOARD'],visual:'blind'
-    },
     {
       id:'find-leader',gameType:'find-leader',gameVersion:'find-leader-daily-v1',maxScore:10,
       title:'Find the Leader',description:'Eliminate nine fighters without removing the verified stat leader. One fatal pick ends the run.',
       details:['10 FIGHTERS','ONE VERIFIED LEADER','OFFICIAL LEADERBOARD'],visual:'leader'
+    },
+    {
+      id:'blind',gameType:'blind-resume',gameVersion:'blind-resume-daily-v2',maxScore:5,
+      title:'Blind Resume',description:'Five anonymous UFC careers. Pick the stronger resume each round and finish with one official score.',
+      details:['5 MATCHUPS','SAME LINEUP TODAY','OFFICIAL LEADERBOARD'],visual:'blind'
     }
   ];
   let opening=false;
