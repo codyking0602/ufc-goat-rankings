@@ -1,7 +1,7 @@
 // Profile-card display nicknames for fighters who are clearly known by one.
 // Keeps list/board rows clean and keeps data keys unchanged. Does not touch resume-tag pills.
 (function(){
-  const VERSION = 'card-nicknames-20260706n-robbie-lawler';
+  const VERSION = 'card-nicknames-20260716a-pantoja-weidman';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const DISPLAY_NAMES = {
@@ -20,6 +20,8 @@
     'Brock Lesnar': 'Brock “The Beast Incarnate” Lesnar',
     'Chael Sonnen': 'Chael “The American Gangster” Sonnen',
     'Robbie Lawler': 'Robbie “Ruthless” Lawler',
+    'Alexandre Pantoja': 'Alexandre “The Cannibal” Pantoja',
+    'Chris Weidman': 'Chris “The All-American” Weidman',
     'Zhang Weili': 'Zhang “Magnum” Weili',
     'Rose Namajunas': '“Thug” Rose Namajunas',
     'Miesha Tate': 'Miesha “Cupcake” Tate'
