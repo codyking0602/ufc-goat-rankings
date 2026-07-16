@@ -4,15 +4,17 @@ window.UFC_SUPABASE_CONFIG = {
   anonKey: 'sb_publishable_thQI0qVmK_zOMjlmSiITww_MgWO-RNi'
 };
 
-// Play challenge links must never inherit or lose to a remembered Picks route.
-// This runs before the Picks routing scripts and before the generic challenge handler.
+// Keep shared Play challenges from inheriting a remembered Picks route.
+// This runs before Picks and Play scripts, but only selects Play when needed—
+// never on a repeating timer that can fight the game renderer.
 (function(){
   'use strict';
 
-  const VERSION='play-challenge-route-20260715c-picks-lockout';
+  const VERSION='play-challenge-route-20260715d-stable-once';
   const PICKS_KEYS=['group','room','event','archive'];
   const LEGACY_PLAY_KEYS=['game','kcpack','kclineup','kcchoices','kcv','brpack','brlineup'];
   const PICKS_AUTO_RESTORE_KEY='ufc-picks:auto-restore-disabled';
+  const MANUAL_RESTORE_KEY='ufc-goat-manual-refresh-v1';
 
   function replaceUrl(url){
     window.history.replaceState(window.history.state,'',`${url.pathname}${url.search}${url.hash}`);
@@ -33,7 +35,7 @@ window.UFC_SUPABASE_CONFIG = {
     }
   }
 
-  // Registered before play-shared-system.js, so newly created links start from a clean Play URL.
+  // Registered before play-shared-system.js so newly created links start clean.
   document.addEventListener('click',event=>{
     if(event.target.closest?.('[data-br-challenge],[data-kc-challenge],[data-five-round-share]')){
       stripPicksRouteForShare();
@@ -50,36 +52,30 @@ window.UFC_SUPABASE_CONFIG = {
   url.searchParams.set('challenge',code);
   url.hash='play';
   replaceUrl(url);
+
+  window.__UFC_PLAY_CHALLENGE_ROUTE_ACTIVE=true;
   document.documentElement.setAttribute('data-play-challenge-route',VERSION);
+  try{
+    localStorage.setItem(PICKS_AUTO_RESTORE_KEY,'1');
+    sessionStorage.removeItem(MANUAL_RESTORE_KEY);
+  }catch(_error){}
 
-  // Existing Picks users often have an active room saved locally. Suppress that automatic
-  // restore while the incoming challenge is opening; an explicit Picks-tab click re-enables it.
-  try{localStorage.setItem(PICKS_AUTO_RESTORE_KEY,'1');}catch(_error){}
-
-  let attempts=0;
-  let timer=null;
-
-  function stopGuard(){
-    if(timer)window.clearInterval(timer);
-    timer=null;
-  }
-
-  function keepPlaySelected(){
-    attempts+=1;
+  function selectPlayOnce(){
+    if(!window.__UFC_PLAY_CHALLENGE_ROUTE_ACTIVE)return;
     const playTab=document.querySelector('.tab[data-view="play"]');
     if(playTab&&!playTab.classList.contains('active'))playTab.click();
-    if(attempts>=75)stopGuard();
   }
+
+  // One startup selection, plus readiness checks that are no-ops once Play is active.
+  selectPlayOnce();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',selectPlayOnce,{once:true});
+  else window.setTimeout(selectPlayOnce,0);
+  window.addEventListener('ufc-play-shared-ready',selectPlayOnce,{once:true});
+  window.addEventListener('ufc-play-adapter-ready',selectPlayOnce,{once:true});
 
   document.addEventListener('click',event=>{
     if(!event.target.closest?.('.tab[data-view="picks"]'))return;
-    stopGuard();
+    window.__UFC_PLAY_CHALLENGE_ROUTE_ACTIVE=false;
     try{localStorage.removeItem(PICKS_AUTO_RESTORE_KEY);}catch(_error){}
   },true);
-
-  keepPlaySelected();
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',keepPlaySelected,{once:true});
-  timer=window.setInterval(keepPlaySelected,120);
-  window.addEventListener('ufc-play-shared-ready',keepPlaySelected);
-  window.addEventListener('ufc-play-adapter-ready',keepPlaySelected);
 })();
