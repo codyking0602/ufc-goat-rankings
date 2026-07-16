@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="app-build" content="20260715-play-challenges-paused-stable" />
+  <meta name="app-build" content="20260715-intelligence-tab-launch" />
   <title>UFC All-Time Rankings</title>
   <link rel="stylesheet" href="assets/css/app.css?v=app-css-20260711a-picks" />
   <link rel="stylesheet" href="assets/css/profile-card-cleanup.css?v=profile-card-cleanup-20260713a" />
@@ -31,10 +31,11 @@
   <link rel="stylesheet" href="assets/css/picks-odds-coverage.css?v=picks-odds-coverage-20260713b-lock-copy" />
   <link rel="stylesheet" href="assets/css/picks-tiered-scoring.css?v=picks-tiered-scoring-20260713b-clarity" />
   <link rel="stylesheet" href="assets/css/era-filter.css?v=era-filter-20260715b-curated" />
+  <link rel="stylesheet" href="assets/css/intelligence.css?v=intelligence-css-20260715a-launch" />
 </head>
 <body>
   <header class="hero"><div><p class="eyebrow">UFC ranking + debate engine</p><h1>UFC All-Time Rankings</h1><p class="subtitle">Rankings, fighter profiles, head-to-head debates, event picks, and interactive games.</p></div><div class="hero-card"><span id="fighterCount">—</span><small>fighters ranked</small></div></header>
-  <nav class="tabs" aria-label="App sections"><button class="tab active" data-view="men">P4P</button><button class="tab" data-view="women">Women Only</button><button class="tab" data-view="play">Play</button><button class="tab" data-view="division">By Division</button><button class="tab" data-view="categories">Categories</button><button class="tab" data-view="compare">Compare</button><button class="tab" data-view="picks">Picks</button><button class="tab" data-view="rules">Rules</button></nav>
+  <nav class="tabs" aria-label="App sections"><button class="tab active" data-view="men">P4P</button><button class="tab" data-view="women">Women Only</button><button class="tab" data-view="play">Play</button><button class="tab" data-view="division">By Division</button><button class="tab" data-view="categories">Categories</button><button class="tab" data-view="compare">Intelligence</button><button class="tab" data-view="picks">Picks</button><button class="tab" data-view="rules">Rules</button></nav>
   <main class="shell">
     <section class="toolbar"><input id="search" type="search" placeholder="Search fighter…" /><select id="eraFilter" aria-label="Filter rankings by UFC era"><option value="All">All eras</option></select><select id="divisionFilter"><option value="All">All divisions</option></select><button id="resetBtn" class="ghost">Reset</button></section>
     <section id="men" class="view active-view"><div class="section-title"><h2>UFC All-Time P4P</h2><p>Main leaderboard for UFC all-time rankings.</p></div><div id="menEraContext" class="era-context" hidden></div><div id="menStats" class="kpis"></div><div id="menList" class="leaderboard"></div></section>
@@ -56,7 +57,54 @@
     </section>
     <section id="division" class="view"><div class="section-title"><h2>Division Rankings</h2><p>UFC-only rankings within each division.</p></div><div id="divisionList"></div></section>
     <section id="categories" class="view"><div class="section-title"><h2>Category Leaders</h2><p>See who leads each scoring category.</p></div><div class="compare-controls"><select id="categoryBoardSelect"></select></div><div id="categoryBoardList" class="rules-grid"></div></section>
-    <section id="compare" class="view"><div class="section-title"><h2>Octagon Verdict</h2><p>Compare two fighters across category edges, UFC resume strength, and the final verdict.</p></div><div class="compare-controls"><select id="fighterA"></select><select id="fighterB"></select></div><div id="compareResult" class="compare-grid"></div></section>
+    <section id="compare" class="view intelligence-view">
+      <div class="intelligence-shell">
+        <div class="intelligence-inner">
+          <header class="intelligence-hero">
+            <div class="intelligence-kicker">UFC GOAT debate engine</div>
+            <h2 class="intelligence-title">Intelligence</h2>
+            <p class="intelligence-talk">Let’s talk.</p>
+            <p class="intelligence-subtitle">Ask anything about rankings, scores, comparisons, future scenarios, or UFC GOAT debates.</p>
+          </header>
+          <form id="intelligenceQuestionForm" class="intelligence-question-form">
+            <input id="intelligenceQuestion" class="intelligence-question-input" type="text" autocomplete="off" maxlength="500" placeholder="Why is Pantoja’s quality wins score low?" aria-label="Ask UFC Intelligence a question" />
+            <button class="intelligence-send" type="submit" aria-label="Prepare question">↑</button>
+          </form>
+          <p class="intelligence-account-note">Answers open in Octagon Verdict on ChatGPT. A ChatGPT account is required.</p>
+
+          <section id="intelligenceReady" class="intelligence-ready" hidden aria-live="polite">
+            <div class="intelligence-ready-head"><div><h3>Question ready</h3><p class="intelligence-ready-copy">We’ll copy it before sending you to Octagon Verdict.</p></div></div>
+            <blockquote id="intelligenceReadyQuestion" class="intelligence-ready-question"></blockquote>
+            <div class="intelligence-ready-actions">
+              <a id="intelligenceOpenGpt" class="intelligence-primary" href="https://chatgpt.com/g/g-6a4c40425d4881919ddebc7231bff09f-octagon-verdict" target="_blank" rel="noopener noreferrer">Open Octagon Verdict ↗</a>
+              <button id="intelligenceCopyQuestion" class="intelligence-secondary" type="button">Copy Question</button>
+            </div>
+            <p id="intelligenceCopyStatus" class="intelligence-copy-status"></p>
+          </section>
+
+          <section class="intelligence-prompts" aria-labelledby="intelligenceTryLabel">
+            <h3 id="intelligenceTryLabel" class="intelligence-section-label">Try asking</h3>
+            <div class="intelligence-prompt-list">
+              <button class="intelligence-prompt" type="button" data-intelligence-prompt="Show me exactly how Jon Jones got 99 OVR."><span class="intelligence-prompt-icon">99</span><span>Show me exactly how Jon Jones got 99 OVR</span><span class="intelligence-prompt-arrow">›</span></button>
+              <button class="intelligence-prompt" type="button" data-intelligence-prompt="Why is Alexandre Pantoja’s quality wins score low?"><span class="intelligence-prompt-icon">▥</span><span>Why is Pantoja’s quality wins score low?</span><span class="intelligence-prompt-arrow">›</span></button>
+              <button class="intelligence-prompt" type="button" data-intelligence-prompt="Who is the best UFC fighter never to win undisputed gold?"><span class="intelligence-prompt-icon">♛</span><span>Who is the best fighter never to win undisputed gold?</span><span class="intelligence-prompt-arrow">›</span></button>
+              <button class="intelligence-prompt" type="button" data-intelligence-prompt="Compare Khabib Nurmagomedov and Alexander Volkanovski."><span class="intelligence-prompt-icon">⚖</span><span>Compare Khabib and Volkanovski</span><span class="intelligence-prompt-arrow">›</span></button>
+              <button class="intelligence-prompt" type="button" data-intelligence-prompt="What would Islam Makhachev need to do to pass Georges St-Pierre in the all-time rankings?"><span class="intelligence-prompt-icon">★</span><span>What would Islam need to do to pass GSP?</span><span class="intelligence-prompt-arrow">›</span></button>
+              <button class="intelligence-prompt" type="button" data-intelligence-prompt="Why is Cain Velasquez behind Francis Ngannou overall?"><span class="intelligence-prompt-icon">▥</span><span>Why is Cain behind Ngannou overall?</span><span class="intelligence-prompt-arrow">›</span></button>
+            </div>
+          </section>
+
+          <details class="intelligence-matchup">
+            <summary><span>Quick matchup builder<small>Choose two fighters, then send the debate to Octagon Verdict.</small></span></summary>
+            <div class="intelligence-matchup-body">
+              <div class="compare-controls"><select id="fighterA" aria-label="First fighter"></select><select id="fighterB" aria-label="Second fighter"></select></div>
+              <div class="intelligence-matchup-actions"><button id="intelligenceComparePrompt" class="intelligence-primary" type="button">Ask This Matchup</button></div>
+              <details class="intelligence-raw"><summary>View app category snapshot</summary><div id="compareResult" class="compare-grid"></div></details>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
     <section id="picks" class="view">
       <div class="section-title"><h2>UFC Picks</h2><p>Pick every fight, use one optional Underdog Lock, and compete across the season.</p></div>
       <div class="picks-shell">
@@ -148,6 +196,7 @@
   <script src="assets/js/blind-rank-polish.js?v=blind-rank-polish-20260715f-shared"></script>
   <script src="assets/js/keep-cut.js?v=keep-cut-20260715a-phase-four"></script>
   <script src="assets/js/play-challenges-paused.js?v=play-challenges-paused-20260715a"></script>
+  <script src="assets/js/intelligence.js?v=intelligence-js-20260715a-launch"></script>
   <script src="assets/js/app-update-watcher.js?v=app-update-watcher-20260715o-weidman-photo"></script>
 </body>
 </html>
