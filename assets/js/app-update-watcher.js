@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='app-update-watcher-20260715k-blind-daily-startup';
+  const VERSION='app-update-watcher-20260715l-play-stability-leaderboard';
   const RESTORE_KEY='ufc-goat-manual-refresh-v1';
   const PROGRESS_KEY='ufc-goat-manual-refresh-progress-v1';
   const LEGACY_KEYS=['ufc-goat-update-restore-v1','ufc-goat-update-target-v1'];
@@ -183,11 +183,15 @@
   }
 
   function loadChallengeCompatibility(){
-    loadScriptOnce('script[data-play-challenge-compat]','assets/js/play-challenge-compat.js?v=play-challenge-compat-20260715a','playChallengeCompat');
+    loadScriptOnce('script[src*="play-challenge-compat.js"]','assets/js/play-challenge-compat.js?v=play-challenge-compat-20260715b-full-ready-identity','playChallengeCompat');
   }
 
   function loadBlindDailyStartupFix(){
-    loadScriptOnce('script[data-blind-daily-startup-fix]','assets/js/blind-daily-startup-fix.js?v=blind-daily-startup-fix-20260715a','blindDailyStartupFix');
+    loadScriptOnce('script[src*="blind-daily-startup-fix.js"]','assets/js/blind-daily-startup-fix.js?v=blind-daily-startup-fix-20260715a','blindDailyStartupFix');
+  }
+
+  function loadDailyLeaderboard(){
+    loadScriptOnce('script[src*="play-daily-leaderboard.js"]','assets/js/play-daily-leaderboard.js?v=play-daily-leaderboard-20260715a','playDailyLeaderboard');
   }
 
   LEGACY_KEYS.forEach(key=>{try{sessionStorage.removeItem(key);}catch(_error){}});
@@ -195,6 +199,7 @@
   installButton();
   loadChallengeCompatibility();
   loadBlindDailyStartupFix();
+  loadDailyLeaderboard();
   resumeProgressIfNeeded();
   window.setTimeout(restoreState,250);
   window.UFC_APP_UPDATE_WATCHER={version:VERSION,networkRefresh,clearWebCaches};
