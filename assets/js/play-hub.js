@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='play-hub-20260715c-shared-daily';
+  const VERSION='play-hub-20260715d-generic-daily';
   const play=document.getElementById('play');
   const shell=play?.querySelector('.play-shell');
   const sectionTitle=play?.querySelector('.section-title');
@@ -18,7 +18,7 @@
 
   function esc(value){
     return String(value??'').replace(/[&<>"']/g,char=>({
-      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
     }[char]));
   }
 
@@ -253,7 +253,11 @@
   document.documentElement.setAttribute('data-play-screen','hub');
   window.dispatchEvent(new CustomEvent('ufc-play-hub-ready',{detail:{version:VERSION,dailyKey:`blind-resume:${fallbackDay}`}}));
 
-  const loadDailyContext=()=>window.UFC_PLAY_SHARED?.dailyContext?.('blind-resume').then(updateDailyCard).catch(()=>undefined);
-  if(window.UFC_PLAY_SHARED)loadDailyContext();
-  else window.addEventListener('ufc-play-shared-ready',loadDailyContext,{once:true});
+  const loadDailyContext=()=>{
+    const shared=window.UFC_PLAY_SHARED;
+    if(!shared?.dailyContext)return Promise.resolve();
+    return shared.dailyContext('blind-resume','blind-resume-daily-v2',5).then(updateDailyCard).catch(()=>undefined);
+  };
+  if(window.UFC_PLAY_SHARED?.dailyContext)setTimeout(loadDailyContext,0);
+  else window.addEventListener('ufc-play-shared-ready',()=>setTimeout(loadDailyContext,0),{once:true});
 })();
