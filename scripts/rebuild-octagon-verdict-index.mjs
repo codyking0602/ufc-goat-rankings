@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+const INDEX_SCHEMA_VERSION = 1;
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(scriptDir, '..');
 const fighterDir = path.join(repoRoot, 'assets', 'data', 'octagon-verdict', 'fighters');
@@ -132,6 +133,7 @@ Object.entries(detectedSourceVersions).forEach(([key, value]) => {
 
 const rebuiltIndex = {
   ...existingIndex,
+  schemaVersion: INDEX_SCHEMA_VERSION,
   version: generatedAt.slice(0, 10),
   generatedAt,
   sourceVersions,
@@ -143,6 +145,9 @@ const rebuiltIndex = {
 fs.writeFileSync(indexPath, `${JSON.stringify(rebuiltIndex)}\n`, 'utf8');
 
 const verification = readJson(indexPath);
+if (verification.schemaVersion !== INDEX_SCHEMA_VERSION) {
+  fail(`Verification failed: schemaVersion is ${verification.schemaVersion}, expected ${INDEX_SCHEMA_VERSION}.`);
+}
 if (verification.fighterCount !== fighters.length) {
   fail(`Verification failed: fighterCount is ${verification.fighterCount}, expected ${fighters.length}.`);
 }
