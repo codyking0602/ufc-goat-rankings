@@ -146,11 +146,16 @@ const verification = readJson(indexPath);
 if (verification.fighterCount !== fighters.length) {
   fail(`Verification failed: fighterCount is ${verification.fighterCount}, expected ${fighters.length}.`);
 }
-if (!verification.fighters.some((fighter) => fighter.slug === 'tom-aspinall')) {
-  fail('Verification failed: Tom Aspinall is missing from the aggregate index.');
-}
 if (verification.fighters.length !== fighters.length) {
   fail(`Verification failed: fighters array has ${verification.fighters.length}, expected ${fighters.length}.`);
+}
+
+const verificationSlugs = new Set(verification.fighters.map((fighter) => fighter.slug));
+const missingSlugs = fighters
+  .map((fighter) => fighter.slug)
+  .filter((fighterSlug) => !verificationSlugs.has(fighterSlug));
+if (verificationSlugs.size !== fighters.length || missingSlugs.length) {
+  fail(`Verification failed: aggregate index roster mismatch${missingSlugs.length ? `; missing ${missingSlugs.join(', ')}` : ''}.`);
 }
 
 console.log(`[octagon-verdict-index] Rebuilt ${path.relative(repoRoot, indexPath)} with ${fighters.length} fighters across ${divisionNames.size} division boards.`);
