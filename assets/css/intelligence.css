@@ -1,43 +1,47 @@
 /* Intelligence tab: premium ChatGPT handoff for Octagon Verdict. */
 #compare.intelligence-view{max-width:1180px;margin:0 auto}
 .intelligence-shell{position:relative;isolation:isolate;overflow:hidden;min-height:1080px;border:1px solid rgba(255,255,255,.13);border-radius:30px;padding:clamp(28px,5vw,64px);background:#050608;box-shadow:0 30px 90px rgba(0,0,0,.48)}
-.intelligence-shell::before{content:"";position:absolute;inset:0;z-index:-3;background-image:linear-gradient(180deg,rgba(3,4,6,.12) 0%,rgba(3,4,6,.42) 29%,rgba(3,4,6,.84) 58%,#050608 88%),linear-gradient(90deg,rgba(0,0,0,.25),transparent 42%,rgba(0,0,0,.2)),url('../intelligence/intelligence-interview.webp');background-position:center,center,center 18%;background-repeat:no-repeat;background-size:cover;transform:scale(1.015)}
-.intelligence-shell::after{content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(circle at 50% 8%,rgba(220,24,36,.2),transparent 23%),linear-gradient(180deg,transparent 0 50%,rgba(0,0,0,.3) 100%)}
+.intelligence-shell::before{content:"";position:absolute;inset:0;z-index:-3;background:#050608 url('../intelligence/intelligence-interview.webp') center top/100% auto no-repeat}
+.intelligence-shell::after{content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(circle at 50% 7%,rgba(220,24,36,.18),transparent 24%),linear-gradient(90deg,rgba(0,0,0,.18),transparent 38%,rgba(0,0,0,.18)),linear-gradient(180deg,rgba(3,4,6,.08) 0%,rgba(3,4,6,.2) 18%,rgba(3,4,6,.58) 38%,rgba(3,4,6,.92) 58%,#050608 76%)}
 .intelligence-inner{width:min(880px,100%);margin:0 auto}
-.intelligence-hero{text-align:center;padding:120px 0 28px;text-shadow:0 4px 24px rgba(0,0,0,.82)}
+.intelligence-hero{text-align:center;padding:92px 0 28px;text-shadow:0 4px 24px rgba(0,0,0,.82)}
 .intelligence-kicker{display:inline-flex;align-items:center;gap:9px;margin-bottom:14px;color:#ef3340;font-size:12px;font-weight:950;letter-spacing:.18em;text-transform:uppercase}
 .intelligence-kicker::before,.intelligence-kicker::after{content:"";width:28px;height:2px;background:#ef3340;border-radius:99px}
-.intelligence-title{margin:0;font-size:clamp(54px,10vw,104px);font-style:italic;font-weight:1000;line-height:.88;letter-spacing:-.065em;text-transform:uppercase;color:#fff}
+.intelligence-title{width:100%;margin:0;white-space:nowrap;font-size:clamp(42px,8.4vw,96px);font-style:italic;font-weight:1000;line-height:.9;letter-spacing:-.065em;text-transform:uppercase;color:#fff}
 .intelligence-talk{margin:15px 0 0;font-size:clamp(20px,3vw,28px);font-weight:800;color:#f4f4f5}
 .intelligence-talk::after{content:"";display:block;width:56px;height:3px;margin:13px auto 0;border-radius:99px;background:#e21d2c;box-shadow:0 0 18px rgba(226,29,44,.7)}
 .intelligence-subtitle{max-width:650px;margin:24px auto 0;color:#e5e7eb;font-size:clamp(16px,2.1vw,21px);line-height:1.45}
-.intelligence-question-form{display:grid;grid-template-columns:minmax(0,1fr) 54px;gap:10px;align-items:center;margin-top:4px;padding:10px 10px 10px 18px;border:1px solid rgba(255,255,255,.35);border-radius:22px;background:rgba(16,18,22,.62);box-shadow:0 16px 46px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.08);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.intelligence-question-form{display:grid;grid-template-columns:minmax(0,1fr) 54px;gap:10px;align-items:center;margin-top:4px;padding:10px 10px 10px 18px;border:1px solid rgba(255,255,255,.35);border-radius:22px;background:rgba(16,18,22,.66);box-shadow:0 16px 46px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.08);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
 .intelligence-question-input{width:100%;min-width:0!important;border:0!important;outline:0!important;padding:13px 0!important;background:transparent!important;color:#fff!important;font-size:clamp(16px,2vw,20px);box-shadow:none!important}
 .intelligence-question-input::placeholder{color:#a7a9af}
 .intelligence-send{width:52px;height:52px;border:0;border-radius:50%;display:grid;place-items:center;background:#e21d2c;color:#fff;font-size:27px;font-weight:900;cursor:pointer;box-shadow:0 10px 26px rgba(226,29,44,.38);transition:transform .16s ease,filter .16s ease}
 .intelligence-send:hover{transform:translateY(-1px);filter:brightness(1.08)}
 .intelligence-send:active{transform:scale(.96)}
-.intelligence-account-note{margin:10px 4px 0;color:#aeb2ba;font-size:12px;line-height:1.45;text-align:center}
-.intelligence-ready{margin-top:18px;padding:18px;border:1px solid rgba(239,51,64,.48);border-radius:20px;background:rgba(10,12,15,.76);box-shadow:0 16px 40px rgba(0,0,0,.38);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.intelligence-account-note{display:none!important}
+.intelligence-modal-backdrop{position:fixed;inset:0;z-index:1000;border:0;background:rgba(0,0,0,.68);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.intelligence-modal-backdrop[hidden]{display:none}
+.intelligence-modal-open{overflow:hidden}
+.intelligence-ready{position:fixed;left:50%;top:50%;z-index:1001;width:min(560px,calc(100vw - 28px));max-height:min(760px,calc(100vh - 36px));overflow:auto;transform:translate(-50%,-50%);padding:22px;border:1px solid rgba(239,51,64,.58);border-radius:22px;background:rgba(10,12,15,.96);box-shadow:0 28px 90px rgba(0,0,0,.66);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
 .intelligence-ready[hidden]{display:none}
 .intelligence-ready-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
-.intelligence-ready h3{margin:0;color:#fff;font-size:20px}
+.intelligence-ready h3{margin:0;color:#fff;font-size:22px}
 .intelligence-ready-copy{margin:5px 0 0;color:#b7bbc3;font-size:13px}
-.intelligence-ready-question{margin:14px 0;padding:14px 16px;border-left:3px solid #e21d2c;border-radius:0 12px 12px 0;background:rgba(255,255,255,.055);color:#fff;line-height:1.48}
+.intelligence-modal-close{flex:0 0 auto;width:36px;height:36px;border:1px solid rgba(255,255,255,.18);border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.07);color:#fff;font:inherit;font-size:22px;line-height:1;cursor:pointer}
+.intelligence-ready-question{margin:16px 0;padding:15px 17px;border-left:3px solid #e21d2c;border-radius:0 12px 12px 0;background:rgba(255,255,255,.055);color:#fff;line-height:1.5}
 .intelligence-ready-actions{display:flex;flex-wrap:wrap;gap:10px}
 .intelligence-primary,.intelligence-secondary{appearance:none;border-radius:12px;padding:12px 16px;font:inherit;font-weight:900;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px}
 .intelligence-primary{border:1px solid #e21d2c;background:#e21d2c;color:#fff;box-shadow:0 10px 24px rgba(226,29,44,.25)}
 .intelligence-secondary{border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.07);color:#fff}
 .intelligence-copy-status{min-height:18px;margin:10px 0 0;color:#b7bbc3;font-size:12px}
-.intelligence-prompts{margin-top:34px}
+.intelligence-prompts{position:relative;margin-top:34px}
 .intelligence-section-label{display:flex;align-items:center;gap:12px;margin:0 0 14px;color:#fff;font-size:12px;font-weight:950;letter-spacing:.18em;text-transform:uppercase}
 .intelligence-section-label::after{content:"";height:2px;width:54px;background:#e21d2c;border-radius:99px}
 .intelligence-prompt-list{display:grid;gap:10px}
-.intelligence-prompt{width:100%;display:grid;grid-template-columns:42px minmax(0,1fr) 24px;gap:12px;align-items:center;padding:15px 18px;border:1px solid rgba(255,255,255,.22);border-radius:16px;background:linear-gradient(90deg,rgba(226,29,44,.09),rgba(19,21,25,.7) 12%,rgba(19,21,25,.62));color:#fff;text-align:left;font:inherit;font-size:clamp(14px,2vw,18px);cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.25);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:transform .16s ease,border-color .16s ease,background .16s ease}
-.intelligence-prompt:hover{transform:translateY(-1px);border-color:rgba(239,51,64,.68);background:linear-gradient(90deg,rgba(226,29,44,.16),rgba(25,27,32,.76) 16%,rgba(19,21,25,.7))}
-.intelligence-prompt-icon{width:36px;height:36px;display:grid;place-items:center;border-radius:11px;border:1px solid rgba(239,51,64,.42);background:rgba(226,29,44,.11);font-size:19px}
+.intelligence-prompt{width:100%;display:grid;grid-template-columns:42px minmax(0,1fr) 24px;gap:12px;align-items:center;padding:15px 18px;border:1px solid rgba(255,255,255,.22);border-radius:16px;background:linear-gradient(90deg,rgba(226,29,44,.09),rgba(11,13,17,.88) 14%,rgba(11,13,17,.84));color:#fff;text-align:left;font:inherit;font-size:clamp(14px,2vw,18px);cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.34);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:transform .16s ease,border-color .16s ease,background .16s ease}
+.intelligence-prompt:hover{transform:translateY(-1px);border-color:rgba(239,51,64,.68);background:linear-gradient(90deg,rgba(226,29,44,.16),rgba(16,18,23,.94) 16%,rgba(11,13,17,.9))}
+.intelligence-prompt-icon{width:36px;height:36px;display:grid;place-items:center;border-radius:11px;border:1px solid rgba(239,51,64,.42);background:rgba(226,29,44,.11);font-size:14px;font-weight:950;letter-spacing:-.02em}
 .intelligence-prompt-arrow{font-size:28px;line-height:1;color:#fff;opacity:.9}
-.intelligence-matchup{margin-top:30px;border:1px solid rgba(255,255,255,.17);border-radius:20px;background:rgba(10,12,15,.72);overflow:hidden;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.intelligence-matchup{margin-top:30px;border:1px solid rgba(255,255,255,.17);border-radius:20px;background:rgba(7,9,12,.9);overflow:hidden;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
 .intelligence-matchup>summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:17px 18px;color:#fff;font-weight:900;cursor:pointer}
 .intelligence-matchup>summary::-webkit-details-marker{display:none}
 .intelligence-matchup>summary small{display:block;margin-top:4px;color:#9da2ab;font-weight:600}
@@ -50,26 +54,30 @@
 .intelligence-raw{margin-top:12px;border-top:1px solid rgba(255,255,255,.11);padding-top:12px}
 .intelligence-raw>summary{cursor:pointer;color:#b8bdc6;font-size:13px;font-weight:800}
 .intelligence-raw #compareResult{margin-top:12px}
-.intelligence-raw .card{background:rgba(18,21,26,.86);border-color:rgba(255,255,255,.12)}
+.intelligence-raw #octagonVerdictLauncher{display:none!important}
+.intelligence-raw .card{background:rgba(18,21,26,.92);border-color:rgba(255,255,255,.12)}
 @media(max-width:900px){
   #compare.intelligence-view{margin:-4px 0 0}
   .intelligence-shell{min-height:0;border-radius:22px;padding:18px 14px 32px}
-  .intelligence-shell::before{background-position:center,center,center top;background-size:cover}
-  .intelligence-hero{padding:120px 0 24px}
-  .intelligence-title{font-size:clamp(48px,16vw,72px)}
+  .intelligence-shell::before{background-size:100% auto;background-position:center top}
+  .intelligence-shell::after{background:linear-gradient(180deg,rgba(3,4,6,.06) 0%,rgba(3,4,6,.28) 18%,rgba(3,4,6,.76) 34%,rgba(3,4,6,.96) 51%,#050608 66%)}
+  .intelligence-hero{padding:64px 0 24px}
+  .intelligence-title{font-size:clamp(42px,11.5vw,62px);letter-spacing:-.06em}
   .intelligence-subtitle{font-size:16px}
   .intelligence-question-form{grid-template-columns:minmax(0,1fr) 48px;padding:8px 8px 8px 14px;border-radius:18px}
   .intelligence-send{width:46px;height:46px;font-size:24px}
   .intelligence-prompt{grid-template-columns:36px minmax(0,1fr) 18px;padding:13px 14px;border-radius:14px}
-  .intelligence-prompt-icon{width:32px;height:32px;font-size:17px}
+  .intelligence-prompt-icon{width:32px;height:32px;font-size:12px}
   .intelligence-prompt-arrow{font-size:23px}
   .intelligence-ready-actions{display:grid;grid-template-columns:1fr}
   .intelligence-matchup .compare-controls{grid-template-columns:1fr}
 }
+@media(max-width:600px){
+  .intelligence-ready{left:0;right:0;top:auto;bottom:0;width:100%;max-height:84vh;transform:none;border-left:0;border-right:0;border-bottom:0;border-radius:24px 24px 0 0;padding:22px 18px calc(18px + env(safe-area-inset-bottom))}
+}
 @media(max-width:520px){
-  .intelligence-shell::before{background-position:center,center,52% top}
-  .intelligence-hero{padding-top:104px}
-  .intelligence-title{letter-spacing:-.055em}
+  .intelligence-hero{padding-top:58px}
+  .intelligence-title{font-size:11.4vw;letter-spacing:-.055em}
   .intelligence-kicker{font-size:10px}
   .intelligence-kicker::before,.intelligence-kicker::after{width:18px}
   .intelligence-prompt{font-size:14px}
