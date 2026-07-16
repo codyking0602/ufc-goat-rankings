@@ -123,8 +123,8 @@ const DISPLAY_OVERRIDES = {
   "Chris Weidman": {
     "divisionLabel": "MW / LHW",
     "resumeTag": "Compact middleweight champion peak",
-    "photoUnavailable": true,
-    "photoStatus": "missing",
+    "photoUrl": "assets/fighters/chris-weidman.webp",
+    "thumbUrl": "assets/fighters/chris-weidman-thumb.webp",
     "oneLiner": "A compact elite middleweight peak built on ending Anderson Silva's reign, three successful title defenses, and real contender depth before a brutal loss-heavy back half.",
     "whyRankedHere": "Weidman ranks here because his best UFC run delivered championship proof that most contenders never reach: nine straight UFC wins, two official victories over Anderson Silva, and defenses against Silva, Lyoto Machida, and Vitor Belfort. The model also credits the Munoz breakthrough, the Gastelum rebound, and more than six active elite years.",
     "whyNotHigher": "He does not rank with the long-reign champions because the title run ended after three defenses and the reviewed prime includes four consecutive finished losses around one Gastelum rebound. His peak was elite, but the total UFC resume is much less stable than the names above him.",
