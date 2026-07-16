@@ -1,0 +1,122 @@
+name: Enable Better Than local MVP
+
+on:
+  push:
+    paths:
+      - '.github/workflows/enable-better-than-mvp.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  activate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Activate Better Than in Play Hub
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          def replace_once(text, old, new, label):
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{label}: expected one match, found {count}')
+              return text.replace(old, new, 1)
+
+          hub_path = Path('assets/js/play-hub.js')
+          hub = hub_path.read_text(encoding='utf-8')
+          hub = replace_once(
+              hub,
+              "const VERSION='play-hub-20260715d-generic-daily';",
+              "const VERSION='play-hub-20260716e-better-than-mvp';",
+              'play hub version',
+          )
+          hub = replace_once(
+              hub,
+              "    {id:'better-than',icon:'>',title:'Better Than…',description:'Name every fighter whose UFC career belongs above the challenge fighter.',status:'COMING SOON',live:false},",
+              "    {id:'better-than',icon:'>',title:'Better Than…',description:'Select every fighter whose UFC-only GOAT resume ranks above the challenge fighter.',status:'PLAY NOW',live:true},",
+              'better than game card',
+          )
+          hub = replace_once(
+              hub,
+              "      return;\n    }\n    if(eyebrow)eyebrow.textContent=daily?\"TODAY'S CHALLENGE\":'BLIND RESUME';",
+              "      return;\n    }\n    if(mode==='better-than'){\n      if(eyebrow)eyebrow.textContent='MODEL TEST';\n      if(title)title.textContent='Better Than…';\n      if(subtitle)subtitle.textContent='Select every fighter whose UFC-only GOAT resume ranks above Charles Oliveira.';\n      return;\n    }\n    if(eyebrow)eyebrow.textContent=daily?\"TODAY'S CHALLENGE\":'BLIND RESUME';",
+              'better than heading',
+          )
+          hub = replace_once(
+              hub,
+              "    if(mode!=='top10'&&mode!=='blind')return;",
+              "    if(!['top10','blind','better-than'].includes(mode))return;",
+              'open game guard',
+          )
+          hub = replace_once(
+              hub,
+              "      const button=mode==='top10'?top10Button:blindButton;\n      button.click();",
+              "      if(mode==='better-than'){\n        document.getElementById('playTop10Panel')?.setAttribute('hidden','');\n        document.getElementById('playBlindPanel')?.setAttribute('hidden','');\n        window.UFC_BETTER_THAN?.open?.();\n      }else{\n        window.UFC_BETTER_THAN?.close?.();\n        const button=mode==='top10'?top10Button:blindButton;\n        button.click();\n      }",
+              'better than open branch',
+          )
+          hub = replace_once(
+              hub,
+              "  function showHub(){\n    restoreNativeRandom();",
+              "  function showHub(){\n    restoreNativeRandom();\n    window.UFC_BETTER_THAN?.close?.();",
+              'better than hub close',
+          )
+          hub_path.write_text(hub, encoding='utf-8')
+
+          index_path = Path('index.html')
+          index = index_path.read_text(encoding='utf-8')
+          index = re.sub(
+              r'<meta name="app-build" content="[^"]+"\s*/>',
+              '<meta name="app-build" content="20260716-better-than-local-mvp" />',
+              index,
+              count=1,
+          )
+          if 'assets/css/better-than.css' not in index:
+              index = replace_once(
+                  index,
+                  '  <link rel="stylesheet" href="assets/css/play-hub.css?v=play-hub-css-20260715b" />\n',
+                  '  <link rel="stylesheet" href="assets/css/play-hub.css?v=play-hub-css-20260715b" />\n  <link rel="stylesheet" href="assets/css/better-than.css?v=better-than-css-20260716a-charles-vertical-slice" />\n',
+                  'better than css reference',
+              )
+          index, count = re.subn(
+              r'assets/js/play-hub\.js\?v=[^"\s]+',
+              'assets/js/play-hub.js?v=play-hub-20260716e-better-than-mvp',
+              index,
+              count=1,
+          )
+          if count != 1:
+              raise SystemExit(f'play hub cache reference: expected one match, found {count}')
+          if 'assets/js/better-than.js' not in index:
+              index = replace_once(
+                  index,
+                  '  <script src="assets/js/play-hub.js?v=play-hub-20260716e-better-than-mvp"></script>\n',
+                  '  <script src="assets/js/play-hub.js?v=play-hub-20260716e-better-than-mvp"></script>\n  <script src="assets/js/better-than.js?v=better-than-20260716a-charles-vertical-slice"></script>\n',
+                  'better than script reference',
+              )
+          index_path.write_text(index, encoding='utf-8')
+          PY
+      - name: Validate Better Than MVP
+        run: |
+          node --check assets/js/better-than.js
+          node --check assets/js/play-hub.js
+          grep -q "title:'Better Than…'.*status:'PLAY NOW'.*live:true" assets/js/play-hub.js
+          grep -q "window.UFC_BETTER_THAN?.open?.()" assets/js/play-hub.js
+          grep -q 'assets/css/better-than.css?v=better-than-css-20260716a-charles-vertical-slice' index.html
+          grep -q 'assets/js/better-than.js?v=better-than-20260716a-charles-vertical-slice' index.html
+          ! grep -Eq 'play_create_challenge|play_submit_challenge|play_submit_daily_attempt|\.rpc\(' assets/js/better-than.js
+      - name: Commit Better Than activation
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/enable-better-than-mvp.yml
+          git add index.html assets/js/play-hub.js
+          git commit -m "Enable Better Than local MVP"
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push && exit 0
+            sleep $((attempt * 3))
+          done
+          exit 1
