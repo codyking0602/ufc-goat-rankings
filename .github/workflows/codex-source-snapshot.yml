@@ -15,32 +15,32 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - name: Build compact architecture reports
+      - name: Build small architecture reports
         shell: bash
         run: |
           rm -rf codex-reports
           mkdir -p codex-reports
-          git ls-files > codex-reports/files.txt
+          git ls-files | head -n 1500 > codex-reports/files.txt
+          git grep -l -I 'Chris Weidman' -- ':!codex-reports/*' | sort > codex-reports/weidman-files.txt || true
+          git grep -n -I 'Chris Weidman' -- ':!codex-reports/*' | cut -c1-240 | head -n 250 > codex-reports/weidman-lines.txt || true
           {
-            echo '# Chris Weidman integration matches'
-            git grep -n -I -C 12 'Chris Weidman' -- ':!codex-architecture-report.txt' ':!codex-reports/*' || true
-          } > codex-reports/weidman-context.txt
-          {
-            echo '# Architecture symbol matches'
             for pattern in EXPECTED_FIGHTER expectedFighter fighterCount completeFighterCount CANONICAL FIGHT_LEDGER COMPARE_PROFILE COMPARE_FIGHT_LEDGER ERA_MEMBERSHIP ERA_LEDGER primeStart primeEnd CHAMPIONSHIP OPPONENT_QUALITY QUALITY_WIN APEX divisionEra category-calculators ranking-pipeline production-ranking-bootstrap; do
-              echo
               echo "## $pattern"
-              git grep -n -I "$pattern" -- ':!codex-architecture-report.txt' ':!codex-reports/*' | head -n 250 || true
+              git grep -l -I "$pattern" -- ':!codex-reports/*' | sort | head -n 120 || true
             done
-          } > codex-reports/symbols.txt
-          cp package.json codex-reports/package.json 2>/dev/null || true
-          cp index.html codex-reports/index.html
+          } > codex-reports/symbol-files.txt
+          {
+            echo '# package scripts'
+            node -e "const p=require('./package.json'); console.log(JSON.stringify(p.scripts||{},null,2))" 2>/dev/null || true
+            echo '# index scripts'
+            grep -o 'src="[^"]*"' index.html | cut -d'"' -f2
+          } > codex-reports/runtime-loaders.txt
           rm -f codex-architecture-report.txt
-      - name: Commit compact reports
+      - name: Commit small reports
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A codex-architecture-report.txt codex-reports
-          git commit -m "Generate compact temporary Codex reports [skip ci]"
+          git commit -m "Generate small temporary Codex reports [skip ci]"
           git push origin main
