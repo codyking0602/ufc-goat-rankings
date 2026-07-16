@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='better-than-standalone-share-20260716e-daily-rotation-loader';
+  const VERSION='better-than-standalone-share-20260716f-find-leader-daily-launch';
   const FIND_LEADER_VERSION='find-leader-20260716c-daily-elimination';
   let creating=false;
 
@@ -28,7 +28,7 @@
 
   function loadDailyTools(){
     const loadClients=()=>{
-      loadScriptOnce('script[data-play-daily-rotation-v1]','assets/js/play-daily-rotation.js?v=play-daily-rotation-20260716a-find-leader-blind-resume','playDailyRotationV1');
+      loadScriptOnce('script[data-play-daily-rotation-v1]','assets/js/play-daily-rotation.js?v=play-daily-rotation-20260716b-find-leader-first','playDailyRotationV1');
       loadScriptOnce('script[data-play-daily-leaderboard-rotation]','assets/js/play-daily-leaderboard.js?v=play-daily-leaderboard-20260716b-rotating-games','playDailyLeaderboardRotation');
     };
     if(window.UFC_PLAY_SHARED?.dailyContext){loadClients();return;}
