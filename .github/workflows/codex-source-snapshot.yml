@@ -15,75 +15,32 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
-      - name: Build architecture report
+      - name: Build compact architecture reports
         shell: bash
         run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import subprocess
-
-          root = Path('.')
-          report = []
-          report.append('# Codex Architecture Snapshot\n')
-          report.append('## Tracked files\n```text')
-          report.extend(subprocess.check_output(['git','ls-files'], text=True).splitlines())
-          report.append('```\n')
-
-          patterns = [
-              'Chris Weidman','Alexandre Pantoja','EXPECTED_FIGHTER','expectedFighter',
-              'fighterCount','completeFighterCount','CANONICAL','FIGHT_LEDGER',
-              'COMPARE_PROFILE','COMPARE_FIGHT_LEDGER','ERA_MEMBERSHIP','ERA_LEDGER',
-              'PRIME','primeStart','primeEnd','CHAMPIONSHIP','OPPONENT_QUALITY',
-              'QUALITY_WIN','APEX','Peak Apex','DIVISION_ERA','divisionEra',
-              'ranking-pipeline','category-calculators','production-ranking-bootstrap'
-          ]
-          report.append('## Architecture grep\n```text')
-          for pattern in patterns:
-              report.append(f'\n### {pattern}')
-              p = subprocess.run(['git','grep','-n','-I',pattern,'--',':!codex-architecture-report.txt'], text=True, capture_output=True)
-              lines = p.stdout.splitlines()
-              report.extend(lines[:500])
-              if len(lines) > 500:
-                  report.append(f'... {len(lines)-500} additional matches omitted')
-          report.append('```\n')
-
-          report.append('## Files containing Chris Weidman\n')
-          p = subprocess.run(['git','grep','-l','-I','Chris Weidman'], text=True, capture_output=True)
-          for filename in p.stdout.splitlines():
-              path = Path(filename)
-              if not path.is_file():
-                  continue
-              text = path.read_text(errors='replace')
-              report.append(f'### `{filename}` ({len(text)} chars)\n```text')
-              if len(text) <= 150000:
-                  report.append(text)
-              else:
-                  lines = text.splitlines()
-                  hits = [i for i,line in enumerate(lines) if 'Chris Weidman' in line]
-                  included = set()
-                  for hit in hits:
-                      included.update(range(max(0,hit-80), min(len(lines),hit+81)))
-                  last = -2
-                  for i in sorted(included):
-                      if i > last + 1:
-                          report.append('...')
-                      report.append(f'{i+1}: {lines[i]}')
-                      last = i
-              report.append('```\n')
-
-          for filename in ['package.json','index.html']:
-              path = Path(filename)
-              if path.exists():
-                  text = path.read_text(errors='replace')
-                  report.append(f'## `{filename}`\n```text\n{text}\n```\n')
-
-          Path('codex-architecture-report.txt').write_text('\n'.join(report))
-          PY
-      - name: Commit architecture report
+          rm -rf codex-reports
+          mkdir -p codex-reports
+          git ls-files > codex-reports/files.txt
+          {
+            echo '# Chris Weidman integration matches'
+            git grep -n -I -C 12 'Chris Weidman' -- ':!codex-architecture-report.txt' ':!codex-reports/*' || true
+          } > codex-reports/weidman-context.txt
+          {
+            echo '# Architecture symbol matches'
+            for pattern in EXPECTED_FIGHTER expectedFighter fighterCount completeFighterCount CANONICAL FIGHT_LEDGER COMPARE_PROFILE COMPARE_FIGHT_LEDGER ERA_MEMBERSHIP ERA_LEDGER primeStart primeEnd CHAMPIONSHIP OPPONENT_QUALITY QUALITY_WIN APEX divisionEra category-calculators ranking-pipeline production-ranking-bootstrap; do
+              echo
+              echo "## $pattern"
+              git grep -n -I "$pattern" -- ':!codex-architecture-report.txt' ':!codex-reports/*' | head -n 250 || true
+            done
+          } > codex-reports/symbols.txt
+          cp package.json codex-reports/package.json 2>/dev/null || true
+          cp index.html codex-reports/index.html
+          rm -f codex-architecture-report.txt
+      - name: Commit compact reports
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add codex-architecture-report.txt
-          git commit -m "Generate temporary Codex architecture report [skip ci]"
+          git add -A codex-architecture-report.txt codex-reports
+          git commit -m "Generate compact temporary Codex reports [skip ci]"
           git push origin main
