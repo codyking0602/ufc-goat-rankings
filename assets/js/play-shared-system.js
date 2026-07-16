@@ -245,14 +245,15 @@
   }
 
   function cleanChallengeUrl(code){
-    const url=new URL(window.location.href);
-    ['game','kcpack','kclineup','kcchoices','kcv','brpack','brlineup','room'].forEach(key=>url.searchParams.delete(key));
-    url.searchParams.set('challenge',normalizeCode(code));
-    url.hash='play';
-    return url.toString();
-  }
+  const url=new URL(window.location.href);
+  ['game','kcpack','kclineup','kcchoices','kcv','brpack','brlineup','group','room','event','archive','__manual_refresh','__shell','playbuild'].forEach(key=>url.searchParams.delete(key));
+  url.searchParams.set('challenge',normalizeCode(code));
+  url.searchParams.set('playbuild','20260715f');
+  url.hash='play';
+  return url.toString();
+}
 
-  function challengeCodeFromUrl(){
+function challengeCodeFromUrl(){
     const url=new URL(window.location.href);
     const query=normalizeCode(url.searchParams.get('challenge'));
     if(query)return query;
