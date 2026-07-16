@@ -1,0 +1,183 @@
+name: Fix Play challenge loop final
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-play-challenge-loop-final.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove recursive challenge rendering
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          shared_path = Path('assets/js/play-shared-system.js')
+          shared = shared_path.read_text()
+          shared = shared.replace(
+              "const VERSION='play-shared-system-20260715b-generic-adapters';",
+              "const VERSION='play-shared-system-20260715i-stable-observer';"
+          )
+          shared = shared.replace(
+              "url.searchParams.set('playbuild','20260715f');",
+              "url.searchParams.set('playbuild','20260715i');"
+          )
+
+          old_banner = """  function renderChallengeBanner(challenge,adapter){
+    const host=adapter?.bannerHost?.()||document.querySelector('#play .play-panel:not([hidden])');
+    if(!host)return;
+    let banner=document.getElementById('playChallengeBanner');
+    if(!banner){
+      banner=document.createElement('div');
+      banner.id='playChallengeBanner';
+      banner.className='play-challenge-banner';
+    }
+    banner.innerHTML=`<span>FRIEND CHALLENGE</span><strong>${esc(challenge.creator_name)} sent you the same ${esc(adapter?.title||'game')} setup.</strong><small>Your result stays private until you finish.</small>`;
+    if(banner.parentElement!==host)host.prepend(banner);
+  }"""
+          new_banner = """  function renderChallengeBanner(challenge,adapter){
+    const host=adapter?.bannerHost?.()||document.querySelector('#play .play-panel:not([hidden])');
+    if(!host)return;
+    const signature=`${challenge?.code||''}|${challenge?.creator_name||''}|${adapter?.id||''}|${adapter?.title||''}`;
+    let banner=document.getElementById('playChallengeBanner');
+    if(!banner){
+      banner=document.createElement('div');
+      banner.id='playChallengeBanner';
+      banner.className='play-challenge-banner';
+    }
+    if(banner.dataset.challengeSignature!==signature){
+      banner.dataset.challengeSignature=signature;
+      banner.innerHTML=`<span>FRIEND CHALLENGE</span><strong>${esc(challenge.creator_name)} sent you the same ${esc(adapter?.title||'game')} setup.</strong><small>Your result stays private until you finish.</small>`;
+    }
+    if(banner.parentElement!==host)host.prepend(banner);
+  }"""
+          if old_banner not in shared:
+              raise SystemExit('Current challenge banner block was not found')
+          shared = shared.replace(old_banner, new_banner, 1)
+
+          old_observer = """    const observer=new MutationObserver(()=>{
+      requestAnimationFrame(()=>{
+        decorateAdapters();
+        submitActiveChallenge();
+        submitDailyIfComplete();
+        if(activeChallenge&&!activeChallenge.submitted){
+          const adapter=adapterFor(activeChallenge.game_type);
+          if(adapter)renderChallengeBanner(activeChallenge,adapter);
+        }
+      });
+    });
+    observer.observe(document.getElementById('play')||document.body,{childList:true,subtree:true});"""
+          new_observer = """    const playObserverTarget=document.getElementById('play')||document.body;
+    const playObserverOptions={childList:true,subtree:true};
+    let observerFrame=0;
+    let observerReconnectFrame=0;
+    const observer=new MutationObserver(()=>{
+      if(observerFrame)return;
+      observerFrame=requestAnimationFrame(()=>{
+        observerFrame=0;
+        observer.disconnect();
+        decorateAdapters();
+        submitActiveChallenge();
+        submitDailyIfComplete();
+        if(activeChallenge&&!activeChallenge.submitted&&!document.getElementById('playChallengeBanner')){
+          const adapter=adapterFor(activeChallenge.game_type);
+          if(adapter)renderChallengeBanner(activeChallenge,adapter);
+        }
+        if(observerReconnectFrame)cancelAnimationFrame(observerReconnectFrame);
+        observerReconnectFrame=requestAnimationFrame(()=>{
+          observerReconnectFrame=0;
+          observer.observe(playObserverTarget,playObserverOptions);
+        });
+      });
+    });
+    observer.observe(playObserverTarget,playObserverOptions);"""
+          if old_observer not in shared:
+              raise SystemExit('Current Play observer block was not found')
+          shared = shared.replace(old_observer, new_observer, 1)
+          shared_path.write_text(shared)
+
+          config_path = Path('assets/data/supabase-config.js')
+          config = config_path.read_text()
+          prefix, separator, _rest = config.partition('};')
+          if not separator:
+              raise SystemExit('Supabase config header was not found')
+          route_guard = r'''
+
+// Incoming Play challenges outrank remembered app navigation. This startup guard
+// performs one Play selection only; the challenge engine owns the game rendering.
+(function(){
+  'use strict';
+
+  const VERSION='play-challenge-route-20260715i-clean-start';
+  const url=new URL(window.location.href);
+  const queryCode=String(url.searchParams.get('challenge')||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,10);
+  const hashMatch=String(url.hash||'').match(/(?:^#|[&#])challenge=([A-Z0-9]{4,10})/i);
+  const code=queryCode||String(hashMatch?.[1]||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,10);
+  if(!code)return;
+
+  ['group','room','event','archive','game','kcpack','kclineup','kcchoices','kcv','brpack','brlineup','__manual_refresh','__shell']
+    .forEach(key=>url.searchParams.delete(key));
+  url.searchParams.set('challenge',code);
+  url.hash='play';
+  window.history.replaceState(window.history.state,'',`${url.pathname}${url.search}${url.hash}`);
+
+  try{
+    ['ufc-goat-manual-refresh-v1','ufc-goat-manual-refresh-progress-v1','ufc-goat-update-restore-v1','ufc-goat-update-target-v1']
+      .forEach(key=>sessionStorage.removeItem(key));
+  }catch(_error){}
+
+  window.__UFC_PLAY_CHALLENGE_ROUTE_ACTIVE=true;
+  document.documentElement.setAttribute('data-play-challenge-route',VERSION);
+
+  document.addEventListener('click',event=>{
+    const picksTab=event.target.closest?.('.tab[data-view="picks"]');
+    if(!picksTab||!window.__UFC_PLAY_CHALLENGE_ROUTE_ACTIVE)return;
+    if(event.isTrusted){
+      window.__UFC_PLAY_CHALLENGE_ROUTE_ACTIVE=false;
+      return;
+    }
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  },true);
+
+  const selectPlayOnce=()=>{
+    if(!window.__UFC_PLAY_CHALLENGE_ROUTE_ACTIVE)return;
+    const playTab=document.querySelector('.tab[data-view="play"]');
+    if(playTab&&!playTab.classList.contains('active'))playTab.click();
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',selectPlayOnce,{once:true});
+  else selectPlayOnce();
+})();
+'''
+          config_path.write_text(prefix + separator + route_guard)
+
+          index_path = Path('index.html')
+          index = index_path.read_text()
+          index = index.replace(
+              'content="20260715-play-challenge-observer-isolation"',
+              'content="20260715-play-challenge-stable-observer-final"'
+          )
+          index = index.replace(
+              'supabase-config.js?v=supabase-config-20260715g-observer-isolation',
+              'supabase-config.js?v=supabase-config-20260715i-clean-start'
+          )
+          index = index.replace(
+              'play-shared-system.js?v=play-shared-system-20260715f-new-tab',
+              'play-shared-system.js?v=play-shared-system-20260715i-stable-observer'
+          )
+          index_path.write_text(index)
+          PY
+      - name: Commit fix and remove workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/fix-play-challenge-loop-final.yml
+          git add index.html assets/data/supabase-config.js assets/js/play-shared-system.js
+          git commit -m "Stop recursive Play challenge rendering"
+          git push
