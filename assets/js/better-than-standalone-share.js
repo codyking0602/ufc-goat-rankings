@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='better-than-standalone-share-20260716g-play-order-swipe';
+  const VERSION='better-than-standalone-share-20260716h-all-six-dailies';
   const FIND_LEADER_VERSION='find-leader-20260716c-daily-elimination';
   let creating=false;
 
@@ -28,8 +28,8 @@
 
   function loadDailyTools(){
     const loadClients=()=>{
-      loadScriptOnce('script[data-play-daily-rotation-v2]','assets/js/play-daily-rotation.js?v=play-daily-rotation-20260716c-card-order-swipe','playDailyRotationV2');
-      loadScriptOnce('script[data-play-daily-leaderboard-carousel]','assets/js/play-daily-leaderboard.js?v=play-daily-leaderboard-20260716c-swipe-carousel','playDailyLeaderboardCarousel');
+      loadScriptOnce('script[data-play-daily-rotation-v3]','assets/js/play-daily-rotation.js?v=play-daily-rotation-20260716d-all-six-games','playDailyRotationV3');
+      loadScriptOnce('script[data-play-daily-leaderboard-community]','assets/js/play-daily-leaderboard.js?v=play-daily-leaderboard-20260716d-community-days','playDailyLeaderboardCommunity');
     };
     if(window.UFC_PLAY_SHARED?.dailyContext){loadClients();return;}
     loadScriptOnce('script[data-play-shared-daily-loader]','assets/js/play-shared-system.js?v=play-shared-system-20260715k-clean-rebuild','playSharedDailyLoader',loadClients);
