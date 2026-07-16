@@ -21,16 +21,17 @@ permissions:
   contents: write
 
 concurrency:
-  group: octagon-verdict-index-${{ github.ref }}
+  group: octagon-verdict-index-${{ github.event.pull_request.head.ref || github.ref }}
   cancel-in-progress: false
 
 jobs:
   rebuild-index:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the triggering revision
+      - name: Check out the roster branch
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.ref || 'main' }}
           fetch-depth: 0
 
       - name: Set up Node.js
@@ -41,19 +42,10 @@ jobs:
       - name: Rebuild and validate aggregate index
         run: node scripts/rebuild-octagon-verdict-index.mjs
 
-      - name: Require a committed aggregate index on pull requests
-        if: github.event_name == 'pull_request'
+      - name: Commit aggregate index when changed
         shell: bash
-        run: |
-          if ! git diff --quiet -- assets/data/octagon-verdict/index.json; then
-            echo 'The aggregate Octagon Verdict index is stale. Run node scripts/rebuild-octagon-verdict-index.mjs and commit index.json.'
-            git diff --stat -- assets/data/octagon-verdict/index.json
-            exit 1
-          fi
-
-      - name: Commit aggregate index when changed on main
-        if: github.event_name != 'pull_request'
-        shell: bash
+        env:
+          TARGET_BRANCH: ${{ github.event.pull_request.head.ref || 'main' }}
         run: |
           if git diff --quiet -- assets/data/octagon-verdict/index.json; then
             echo 'Aggregate index is already current.'
@@ -64,4 +56,9 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add assets/data/octagon-verdict/index.json
           git commit -m 'chore: rebuild Octagon Verdict aggregate index'
-          git push origin HEAD:main
+          git push origin HEAD:"${TARGET_BRANCH}"
+
+      - name: Verify the committed aggregate index is clean
+        run: |
+          node scripts/rebuild-octagon-verdict-index.mjs
+          git diff --exit-code -- assets/data/octagon-verdict/index.json
