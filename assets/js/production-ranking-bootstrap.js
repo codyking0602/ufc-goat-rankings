@@ -2,7 +2,7 @@
 (function(){
   'use strict';
 
-  const VERSION='production-ranking-bootstrap-20260715n-shared-roster-76';
+  const VERSION='production-ranking-bootstrap-20260715o-weidman-shared-76';
   const EXPECTED_FIGHTER_COUNT=76;
   const CALCULATED_STAT_FIELDS=new Set([
     'ufcRecord','titleFightWins','adjustedTitleWins','topFiveWins','top5Wins','rankedWins',
@@ -40,7 +40,7 @@
     ['assets/data/canonical-opponent-quality-audit-adjustments.js?v=canonical-opponent-quality-audit-adjustments-20260715b-merab','data-production-clean-opponent-quality-audit-adjustments'],
     ['assets/data/canonical-championship-audit-adjustments.js?v=canonical-championship-audit-adjustments-20260715a-conor-mendes','data-production-clean-championship-audit-adjustments'],
     ['assets/js/category-calculators.js?v=production-clean-category-calculators-20260714c','data-production-clean-category-calculators'],
-    ['assets/data/canonical-roster-batch-ten.js?v=canonical-roster-batch-ten-20260715a-pantoja-paddy-weidman','data-production-clean-roster-batch-ten'],
+    ['assets/data/canonical-roster-batch-ten.js?v=canonical-roster-batch-ten-20260715b-pantoja-paddy-weidman','data-production-clean-roster-batch-ten'],
     ['assets/js/ranking-pipeline.js?v=production-clean-ranking-pipeline-20260714c','data-production-clean-ranking-pipeline'],
     ['assets/js/calculated-profile-runtime.js?v=production-clean-calculated-profile-runtime-20260715c-longest-win-streak','data-production-clean-calculated-profile-runtime'],
     ['assets/js/division-ranking-pipeline.js?v=division-ranking-pipeline-20260715b-openweight-win-qualified','data-production-clean-division-ranking-pipeline'],
