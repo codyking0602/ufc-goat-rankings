@@ -17,35 +17,37 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+          import re
 
           js = Path('assets/js/play-shared-system.js')
           text = js.read_text()
-          old = """  function cleanChallengeUrl(code){
-            const url=new URL(window.location.href);
-            ['game','kcpack','kclineup','kcchoices','kcv','brpack','brlineup','room'].forEach(key=>url.searchParams.delete(key));
-            url.searchParams.set('challenge',normalizeCode(code));
-            url.hash='play';
-            return url.toString();
-          }"""
-          new = """  function cleanChallengeUrl(code){
+          pattern = r"  function cleanChallengeUrl\(code\)\{.*?\n  \}\n\n  function challengeCodeFromUrl"
+          replacement = """  function cleanChallengeUrl(code){
             const url=new URL(window.location.href);
             ['game','kcpack','kclineup','kcchoices','kcv','brpack','brlineup','group','room','event','archive','__manual_refresh','__shell','playbuild'].forEach(key=>url.searchParams.delete(key));
             url.searchParams.set('challenge',normalizeCode(code));
             url.searchParams.set('playbuild','20260715f');
             url.hash='play';
             return url.toString();
-          }"""
-          if old not in text:
-              raise SystemExit('Could not find cleanChallengeUrl block')
-          js.write_text(text.replace(old,new))
+          }
+
+          function challengeCodeFromUrl"""
+          updated, count = re.subn(pattern,replacement,text,count=1,flags=re.S)
+          if count != 1:
+              raise SystemExit(f'cleanChallengeUrl replacements: {count}')
+          js.write_text(updated)
 
           index = Path('index.html')
           html = index.read_text()
-          old_key = 'play-shared-system.js?v=play-shared-system-20260715e-cache-route'
-          new_key = 'play-shared-system.js?v=play-shared-system-20260715f-new-tab'
-          if old_key not in html:
-              raise SystemExit('Could not find Play shared-system cache key')
-          index.write_text(html.replace(old_key,new_key))
+          html, count = re.subn(
+              r'play-shared-system\.js\?v=play-shared-system-[^"<]+',
+              'play-shared-system.js?v=play-shared-system-20260715f-new-tab',
+              html,
+              count=1
+          )
+          if count != 1:
+              raise SystemExit(f'index cache-key replacements: {count}')
+          index.write_text(html)
           PY
       - name: Commit challenge-link update
         run: |
@@ -54,4 +56,4 @@ jobs:
           git add index.html assets/js/play-shared-system.js
           git commit -m "Make Play challenge links cache-safe across new tabs"
           git push
-# trigger: 20260715f
+# trigger: 20260715g
