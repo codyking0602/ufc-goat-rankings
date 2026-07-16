@@ -2,7 +2,7 @@
 // Shadow-only on PR #39. These windows feed category reconstruction but do not write live scores.
 (function(){
   'use strict';
-  const VERSION='fighter-era-ledger-approved-loss-context-resolutions-20260714b-cejudo-retirement-endpoint';
+  const VERSION='fighter-era-ledger-approved-loss-context-resolutions-20260716c-gaethje-current';
   const era=window.UFC_FIGHTER_ERA_LEDGERS;
   const ledgers=era?.ledgers;
   if(!ledgers){
@@ -11,7 +11,7 @@
   }
 
   const approvedBy='Cody';
-  const approvedAt='2026-07-14';
+  const approvedAt='2026-07-16';
   const windowChanges=[];
   const primeWindowChanges=[];
 
@@ -78,6 +78,42 @@
     cejudo.notes=[cejudo.notes,decision].filter(Boolean).join(' ');
     cejudo.approvedPrimeEndpointResolution={approved:true,approvedBy,approvedAt,decision,version:VERSION};
     primeWindowChanges.push('Henry Cejudo');
+  }
+
+  const gaethje=ledgers['Justin Gaethje'];
+  if(gaethje){
+    const decision='Keep Justin Gaethje’s shared UFC elite-prime window open through current championship form. The Max Holloway loss was recovered by the Rafael Fiziev rematch win, the Paddy Pimblett interim-title win, and the Ilia Topuria undisputed-title win.';
+    gaethje.status='locked-current';
+    gaethje.window={
+      ...(gaethje.window||{}),
+      start:'2020-05-09',
+      startLabel:'Tony Ferguson',
+      end:null,
+      endLabel:'Current championship form',
+      endType:'open_current_champion',
+      endReason:'Holloway did not close the window because Gaethje subsequently re-proved elite form and won both interim and undisputed UFC lightweight title fights.'
+    };
+    gaethje.lossContext={
+      ...(gaethje.lossContext||{}),
+      unrecoveredLoss:null,
+      weirdResults:[],
+      recoveredLosses:[
+        {label:'Khabib Nurmagomedov',date:'2020-10-24',recovery:'Recovered with elite contender wins.'},
+        {label:'Charles Oliveira',date:'2022-05-07',recovery:'Recovered with Fiziev and Poirier elite wins.'},
+        {label:'Max Holloway',date:'2024-04-13',phase:'prime elite finish loss',recovery:'Recovered with Rafael Fiziev II, an interim-title win over Paddy Pimblett, and the undisputed-title win over Ilia Topuria.'}
+      ],
+      postPrimeLosses:[]
+    };
+    gaethje.longevity={
+      ...(gaethje.longevity||{}),
+      gapAdjustedMonths:null,
+      activeEliteYears:null,
+      adjustmentNote:'Tony Ferguson through current championship form; every inactivity gap remains capped at 18 months.',
+      note:'Current undisputed lightweight champion with an open elite-prime window.'
+    };
+    gaethje.notes=[gaethje.notes,decision].filter(Boolean).join(' ');
+    gaethje.approvedPrimeEndpointResolution={approved:true,approvedBy,approvedAt,decision,version:VERSION};
+    primeWindowChanges.push('Justin Gaethje');
   }
 
   era.fighters=Object.keys(ledgers);
