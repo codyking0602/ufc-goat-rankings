@@ -1,28 +1,57 @@
-name: Refresh UFC Odds
+name: Sync UFC Card and Odds
 
 on:
   schedule:
-    - cron: '17 12 * * *'
+    - cron: '17 */6 * * *'
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: refresh-ufc-odds
+  group: sync-ufc-card-and-odds
   cancel-in-progress: false
 
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 15
     env:
       ODDS_REFRESH_SECRET: ${{ secrets.ODDS_REFRESH_SECRET }}
       PROJECT_REF: hdkjwezaswhisxupxydc
+      CARD_SYNC_ENDPOINT: https://hdkjwezaswhisxupxydc.supabase.co/functions/v1/sync-ufc-card
+      CARD_SYNC_SECRET: ${{ secrets.ODDS_REFRESH_SECRET }}
     steps:
-      - name: Check refresh secret
+      - name: Check required secret
         shell: bash
         run: test -n "$ODDS_REFRESH_SECRET" || { echo "Missing ODDS_REFRESH_SECRET"; exit 1; }
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright
+        shell: bash
+        run: |
+          npm install --no-save playwright@1.54.2
+          npx playwright install --with-deps chromium
+
+      - name: Sync confirmed UFC card
+        shell: bash
+        run: node scripts/sync-ufc-card.mjs --apply
+
+      - name: Upload card-sync evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ufc-card-sync-${{ github.run_id }}
+          path: artifacts/ufc-card-sync
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Refresh current UFC odds
         shell: bash
@@ -31,5 +60,5 @@ jobs:
             --request POST \
             --header "content-type: application/json" \
             --header "x-odds-refresh-secret: $ODDS_REFRESH_SECRET" \
-            --data '{"source":"daily-github-schedule"}' \
+            --data '{"source":"card-sync-github-schedule"}' \
             "https://$PROJECT_REF.supabase.co/functions/v1/refresh-ufc-odds"
