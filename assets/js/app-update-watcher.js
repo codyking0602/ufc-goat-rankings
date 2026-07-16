@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='app-update-watcher-20260715j-play-challenge-compat';
+  const VERSION='app-update-watcher-20260715k-blind-daily-startup';
   const RESTORE_KEY='ufc-goat-manual-refresh-v1';
   const PROGRESS_KEY='ufc-goat-manual-refresh-progress-v1';
   const LEGACY_KEYS=['ufc-goat-update-restore-v1','ufc-goat-update-target-v1'];
@@ -174,18 +174,27 @@
     hero.appendChild(control);
   }
 
-  function loadChallengeCompatibility(){
-    if(document.querySelector('script[data-play-challenge-compat]'))return;
+  function loadScriptOnce(selector,src,datasetKey){
+    if(document.querySelector(selector))return;
     const script=document.createElement('script');
-    script.src='assets/js/play-challenge-compat.js?v=play-challenge-compat-20260715a';
-    script.dataset.playChallengeCompat='true';
+    script.src=src;
+    script.dataset[datasetKey]='true';
     document.head.appendChild(script);
+  }
+
+  function loadChallengeCompatibility(){
+    loadScriptOnce('script[data-play-challenge-compat]','assets/js/play-challenge-compat.js?v=play-challenge-compat-20260715a','playChallengeCompat');
+  }
+
+  function loadBlindDailyStartupFix(){
+    loadScriptOnce('script[data-blind-daily-startup-fix]','assets/js/blind-daily-startup-fix.js?v=blind-daily-startup-fix-20260715a','blindDailyStartupFix');
   }
 
   LEGACY_KEYS.forEach(key=>{try{sessionStorage.removeItem(key);}catch(_error){}});
   cleanRefreshParameter();
   installButton();
   loadChallengeCompatibility();
+  loadBlindDailyStartupFix();
   resumeProgressIfNeeded();
   window.setTimeout(restoreState,250);
   window.UFC_APP_UPDATE_WATCHER={version:VERSION,networkRefresh,clearWebCaches};
