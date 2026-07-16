@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='play-hub-20260715d-generic-daily';
+  const VERSION='play-hub-20260716e-better-than-mvp';
   const play=document.getElementById('play');
   const shell=play?.querySelector('.play-shell');
   const sectionTitle=play?.querySelector('.section-title');
@@ -73,7 +73,7 @@
     {id:'keep-cut',icon:'4/4',title:'Keep 4, Cut 4',description:'Make eight locked decisions without knowing which fighter is waiting at the end.',status:'COMING SOON',live:false},
     {id:'top10',icon:'10',title:'Build Your Top 10',description:'Create your UFC GOAT list, order it, and compare every placement with the model.',status:'PLAY NOW',live:true},
     {id:'blind',icon:'?',title:'Blind Resume',description:'Choose the stronger UFC-only career five times without seeing either fighter’s name.',status:'PLAY NOW',live:true},
-    {id:'better-than',icon:'>',title:'Better Than…',description:'Name every fighter whose UFC career belongs above the challenge fighter.',status:'COMING SOON',live:false},
+    {id:'better-than',icon:'>',title:'Better Than…',description:'Select every fighter whose UFC-only GOAT resume ranks above the challenge fighter.',status:'PLAY NOW',live:true},
     {id:'find-leader',icon:'#1',title:'Find the Leader',description:'Pick through a full board until you find the fighter who owns the featured stat.',status:'COMING SOON',live:false}
   ];
 
@@ -153,6 +153,12 @@
       if(subtitle)subtitle.textContent='Build your list first. The official model stays hidden until you compare.';
       return;
     }
+    if(mode==='better-than'){
+      if(eyebrow)eyebrow.textContent='MODEL TEST';
+      if(title)title.textContent='Better Than…';
+      if(subtitle)subtitle.textContent='Select every fighter whose UFC-only GOAT resume ranks above Charles Oliveira.';
+      return;
+    }
     if(eyebrow)eyebrow.textContent=daily?"TODAY'S CHALLENGE":'BLIND RESUME';
     if(title)title.textContent=daily?'Daily Blind Resume':'Blind Resume';
     if(subtitle)subtitle.textContent=daily?'Everyone gets the same five-matchup sequence today.':'Five anonymous UFC resumes. Pick the stronger career each round.';
@@ -161,7 +167,7 @@
   async function openGame(mode,options={}){
     if(opening)return;
     const daily=Boolean(options.daily);
-    if(mode!=='top10'&&mode!=='blind')return;
+    if(!['top10','blind','better-than'].includes(mode))return;
     opening=true;
     try{
       if(mode==='blind'){
@@ -189,8 +195,15 @@
       gameNav.hidden=false;
       play.classList.add('play-game-active');
       setGameHeading(mode,daily);
-      const button=mode==='top10'?top10Button:blindButton;
-      button.click();
+      if(mode==='better-than'){
+        document.getElementById('playTop10Panel')?.setAttribute('hidden','');
+        document.getElementById('playBlindPanel')?.setAttribute('hidden','');
+        window.UFC_BETTER_THAN?.open?.();
+      }else{
+        window.UFC_BETTER_THAN?.close?.();
+        const button=mode==='top10'?top10Button:blindButton;
+        button.click();
+      }
       gameNav.scrollIntoView({block:'start'});
       document.documentElement.setAttribute('data-play-screen',daily?'daily-blind':mode);
     }finally{
@@ -200,6 +213,7 @@
 
   function showHub(){
     restoreNativeRandom();
+    window.UFC_BETTER_THAN?.close?.();
     hub.hidden=false;
     shell.hidden=true;
     gameNav.hidden=true;
