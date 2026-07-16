@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION = 'card-nicknames-20260716c-shogun-profile-link';
+  const VERSION = 'card-nicknames-20260716d-tom-aspinall';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const SHOGUN_DISPLAY = 'Mauricio “Shogun” Rua';
@@ -38,6 +38,7 @@
     'Robbie Lawler': 'Robbie “Ruthless” Lawler',
     'Alexandre Pantoja': 'Alexandre “The Cannibal” Pantoja',
     'Chris Weidman': 'Chris “The All-American” Weidman',
+    'Tom Aspinall': 'Tom “Honey Badger” Aspinall',
     'Mauricio "Shogun" Rua': SHOGUN_DISPLAY,
     'Zhang Weili': 'Zhang “Magnum” Weili',
     'Rose Namajunas': '“Thug” Rose Namajunas',
