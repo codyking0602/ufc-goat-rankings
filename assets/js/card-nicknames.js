@@ -1,7 +1,7 @@
 // Profile-card display nicknames for fighters who are clearly known by one.
 // Keeps list/board rows clean and keeps data keys unchanged. Does not touch resume-tag pills.
 (function(){
-  const VERSION = 'card-nicknames-20260716a-pantoja-weidman';
+  const VERSION = 'card-nicknames-20260716b-canonical-profile-field';
   if(typeof DISPLAY_OVERRIDES === 'undefined') return;
 
   const DISPLAY_NAMES = {
@@ -51,6 +51,7 @@
   Object.entries(DISPLAY_NAMES).forEach(([fighter, displayName]) => {
     DISPLAY_OVERRIDES[fighter] = DISPLAY_OVERRIDES[fighter] || {};
     DISPLAY_OVERRIDES[fighter].displayName = displayName;
+    DISPLAY_OVERRIDES[fighter].profileDisplayName = displayName;
     if(RESUME_TAG_RESTORE[fighter]) DISPLAY_OVERRIDES[fighter].resumeTag = RESUME_TAG_RESTORE[fighter];
   });
 
