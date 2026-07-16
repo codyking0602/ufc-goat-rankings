@@ -1,0 +1,74 @@
+name: Polish Intelligence mobile
+
+on:
+  push:
+    paths:
+      - '.github/workflows/polish-intelligence-mobile.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  polish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Polish Intelligence shell
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+
+          text = re.sub(
+              r'<meta name="app-build" content="[^"]*"\s*/>',
+              '<meta name="app-build" content="20260716-intelligence-mobile-polish" />',
+              text,
+              count=1,
+          )
+          text = re.sub(
+              r'assets/css/intelligence\.css\?v=[^"\s]+',
+              'assets/css/intelligence.css?v=intelligence-css-20260716b-mobile-polish',
+              text,
+              count=1,
+          )
+          text = re.sub(
+              r'assets/js/intelligence\.js\?v=[^"\s]+',
+              'assets/js/intelligence.js?v=intelligence-js-20260716b-modal-polish',
+              text,
+              count=1,
+          )
+
+          text = re.sub(
+              r'\s*<p class="intelligence-account-note">.*?</p>',
+              '',
+              text,
+              count=1,
+              flags=re.DOTALL,
+          )
+
+          replacements = [
+              ('<span class="intelligence-prompt-icon">▥</span><span>Why is Pantoja', '<span class="intelligence-prompt-icon">QW</span><span>Why is Pantoja'),
+              ('<span class="intelligence-prompt-icon">♛</span><span>Who is the best', '<span class="intelligence-prompt-icon">GO</span><span>Who is the best'),
+              ('<span class="intelligence-prompt-icon">⚖</span><span>Compare Khabib', '<span class="intelligence-prompt-icon">VS</span><span>Compare Khabib'),
+              ('<span class="intelligence-prompt-icon">★</span><span>What would Islam', '<span class="intelligence-prompt-icon">UP</span><span>What would Islam'),
+              ('<span class="intelligence-prompt-icon">▥</span><span>Why is Cain', '<span class="intelligence-prompt-icon">RK</span><span>Why is Cain'),
+              ('<summary>View app category snapshot</summary>', '<summary>Preview the app’s comparison</summary>'),
+          ]
+          for old, new in replacements:
+              text = text.replace(old, new, 1)
+
+          path.write_text(text, encoding='utf-8')
+          PY
+      - name: Commit Intelligence polish
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/polish-intelligence-mobile.yml
+          git add index.html
+          git commit -m "Polish Intelligence mobile experience"
+          git push
