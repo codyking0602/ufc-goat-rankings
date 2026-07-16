@@ -1,0 +1,157 @@
+# One-shot activation for the local Find the Leader game.
+name: Activate Find the Leader local game
+
+on:
+  push:
+    paths:
+      - '.github/workflows/activate-find-leader-local.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  activate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Activate Find the Leader
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          def one(text, old, new, label):
+              count=text.count(old)
+              if count!=1:
+                  raise SystemExit(f'{label}: expected one match, found {count}')
+              return text.replace(old,new,1)
+
+          hub_path=Path('assets/js/play-hub.js')
+          hub=hub_path.read_text(encoding='utf-8')
+          hub=one(hub,"const VERSION='play-hub-20260716f-better-than-claim-builder';","const VERSION='play-hub-20260716g-find-leader-local';",'hub version')
+          hub=one(hub,"{id:'find-leader',icon:'#1',title:'Find the Leader',description:'Pick through a full board until you find the fighter who owns the featured stat.',status:'COMING SOON',live:false}","{id:'find-leader',icon:'#1',title:'Find the Leader',description:'Search the full roster and identify the leader in five verified UFC stat categories.',status:'PLAY NOW',live:true}",'game card')
+          marker="""    if(mode==='better-than'){
+      if(eyebrow)eyebrow.textContent='CLAIM BUILDER';
+      if(title)title.textContent='Better Than…';
+      if(subtitle)subtitle.textContent='Build a subjective UFC claim and choose the exact fighters who support it.';
+      return;
+    }
+"""
+          addition=marker+"""    if(mode==='find-leader'){
+      if(eyebrow)eyebrow.textContent='STAT HUNT';
+      if(title)title.textContent='Find the Leader';
+      if(subtitle)subtitle.textContent='Find the fighter who leads each verified UFC-only stat before your points disappear.';
+      return;
+    }
+"""
+          hub=one(hub,marker,addition,'find leader heading')
+          hub=one(hub,"if(!['top10','blind','better-than'].includes(mode))return;","if(!['top10','blind','better-than','find-leader'].includes(mode))return;",'open guard')
+          old="""      if(mode==='better-than'){
+        document.getElementById('playTop10Panel')?.setAttribute('hidden','');
+        document.getElementById('playBlindPanel')?.setAttribute('hidden','');
+        window.UFC_BETTER_THAN?.open?.();
+      }else{
+        window.UFC_BETTER_THAN?.close?.();
+        const button=mode==='top10'?top10Button:blindButton;
+        button.click();
+      }
+"""
+          new="""      if(mode==='better-than'){
+        window.UFC_FIND_LEADER?.close?.();
+        document.getElementById('playTop10Panel')?.setAttribute('hidden','');
+        document.getElementById('playBlindPanel')?.setAttribute('hidden','');
+        window.UFC_BETTER_THAN?.open?.();
+      }else if(mode==='find-leader'){
+        window.UFC_BETTER_THAN?.close?.();
+        document.getElementById('playTop10Panel')?.setAttribute('hidden','');
+        document.getElementById('playBlindPanel')?.setAttribute('hidden','');
+        window.UFC_FIND_LEADER?.open?.();
+      }else{
+        window.UFC_BETTER_THAN?.close?.();
+        window.UFC_FIND_LEADER?.close?.();
+        const button=mode==='top10'?top10Button:blindButton;
+        button.click();
+      }
+"""
+          hub=one(hub,old,new,'open branch')
+          hub=one(hub,"    window.UFC_BETTER_THAN?.close?.();\n    hub.hidden=true;" if False else "    window.UFC_BETTER_THAN?.close?.();\n    hub.hidden=false;","    window.UFC_BETTER_THAN?.close?.();\n    window.UFC_FIND_LEADER?.close?.();\n    hub.hidden=false;",'hub close')
+          hub_path.write_text(hub,encoding='utf-8')
+
+          index_path=Path('index.html')
+          index=index_path.read_text(encoding='utf-8')
+          index,count=re.subn(r'<meta name="app-build" content="[^"]+"\s*/>','<meta name="app-build" content="20260716-find-leader-local" />',index,count=1)
+          if count!=1: raise SystemExit(f'app build: {count}')
+          if 'assets/css/find-leader.css' not in index:
+              css='  <link rel="stylesheet" href="assets/css/find-leader.css?v=find-leader-css-20260716a-local-audited-stats" />\n'
+              marker='  <link rel="stylesheet" href="assets/css/better-than.css?v=better-than-css-20260716b-subjective-claim-builder" />\n'
+              index=one(index,marker,marker+css,'find leader css')
+          index,count=re.subn(r'assets/js/play-hub\.js\?v=[^"\s]+','assets/js/play-hub.js?v=play-hub-20260716g-find-leader-local',index,count=1)
+          if count!=1: raise SystemExit(f'hub cache: {count}')
+          if 'assets/js/find-leader.js' not in index:
+              script='  <script src="assets/js/find-leader.js?v=find-leader-20260716a-local-audited-stats"></script>\n'
+              marker='  <script src="assets/js/better-than.js?v=better-than-20260716b-subjective-claim-builder"></script>\n'
+              index=one(index,marker,marker+script,'find leader script')
+          index_path.write_text(index,encoding='utf-8')
+
+          doc_path=Path('docs/PLAY_PRODUCT_DIRECTION.md')
+          doc=doc_path.read_text(encoding='utf-8')
+          start=doc.index('### F. Find the Leader')
+          end=doc.index('### G. Daily Game Rotation')
+          replacement='''### F. Find the Leader
+
+**Status:** Local objective game complete. Daily Challenge and friend challenge are not yet enabled.
+
+Current local game:
+
+- Five rounds drawn from verified live-model statistics
+- Full ranked fighter roster available every round
+- Search by fighter or division
+- Wrong guesses reveal that fighter's value and reduce the round score by 10 points
+- Minimum round score of 10 points
+- Tied leaders are all accepted
+- No speed scoring or speed tiebreaker
+- Round reveal includes every tied leader and the Top 5 values
+- Final screen shows total score and round-by-round results
+
+Eligible statistics are audited at runtime across the complete ranked roster. A category is automatically excluded unless every fighter has a finite value, the values are not all identical, and the category has a positive leader.
+
+Initial verified category candidates:
+
+- UFC title-fight wins
+- Top-5 wins
+- UFC finish percentage
+- Rounds-won percentage
+- Active elite years
+
+Do not add Daily Challenge or standalone friend sharing until the local scoring and category audit are tested in the live app.
+
+'''
+          doc=doc[:start]+replacement+doc[end:]
+          doc_path.write_text(doc,encoding='utf-8')
+          PY
+      - name: Validate Find the Leader
+        run: |
+          node --check assets/js/find-leader.js
+          node --check assets/js/play-hub.js
+          grep -q "title:'Find the Leader'.*status:'PLAY NOW'.*live:true" assets/js/play-hub.js
+          grep -q "window.UFC_FIND_LEADER?.open?.()" assets/js/play-hub.js
+          grep -q "STAT_DEFINITIONS" assets/js/find-leader.js
+          grep -q "values.every(Number.isFinite)" assets/js/find-leader.js
+          grep -q 'assets/css/find-leader.css?v=find-leader-css-20260716a-local-audited-stats' index.html
+          grep -q 'assets/js/find-leader.js?v=find-leader-20260716a-local-audited-stats' index.html
+          grep -q '**Status:** Local objective game complete.' docs/PLAY_PRODUCT_DIRECTION.md
+          ! grep -Eq 'play_create_challenge|play_submit_challenge|play_submit_daily_attempt|\.rpc\(' assets/js/find-leader.js
+      - name: Commit activation
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/activate-find-leader-local.yml
+          git add index.html assets/js/play-hub.js docs/PLAY_PRODUCT_DIRECTION.md
+          git commit -m "Enable local Find the Leader game"
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push && exit 0
+            sleep $((attempt * 3))
+          done
+          exit 1
