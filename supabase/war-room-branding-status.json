@@ -1,0 +1,14 @@
+{
+  "active_members": 6,
+  "app_name": "Octagon HQ",
+  "checked_at": "2026-07-17T21:43:24.891833+00:00",
+  "enabled_members": 3,
+  "feature_name": "The War Room",
+  "internal_api_prefix": "octagon",
+  "messages": 2,
+  "push_sender_deployed": true,
+  "reactions": 2,
+  "replies": 1,
+  "saved_picks": 50,
+  "status": "active"
+}
