@@ -70,6 +70,7 @@ jobs:
       - name: Check out triggering revision
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.head_ref || github.ref_name }}
           fetch-depth: 0
           persist-credentials: true
 
@@ -155,6 +156,19 @@ jobs:
             assets/data/octagon-verdict-data.json
             assets/data/octagon-verdict/
           if-no-files-found: error
+
+      - name: Commit generated package on same-repo pull requests
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/data/octagon-verdict-data.json assets/data/octagon-verdict/
+          if git diff --cached --quiet; then
+            echo "Octagon Verdict calculated package is already current on the pull-request branch."
+          else
+            git commit -m "Rebuild Octagon Verdict calculated package [skip ci]"
+            git push origin HEAD:${{ github.head_ref }}
+          fi
 
       - name: Commit generated package on main
         if: github.event_name == 'push' && success()
