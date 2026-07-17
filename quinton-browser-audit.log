@@ -1,0 +1,15 @@
+{"rank":57,"ovr":86,"totalScore":35.91,"links":{"watchUrl":"https://youtube.com/shorts/JVSaguPG9nY?is=1ShwPvQ9FoBzYOFK","signatureFightUrl":"https://youtu.be/W3Ce7KPszhU?is=Pzzqz2wACxC7VY6g"}}
+file:///home/runner/work/ufc-goat-rankings/ufc-goat-rankings/scripts/rebuild-octagon-verdict-index.mjs:11
+  throw new Error(`[octagon-verdict-index] ${message}`);
+        ^
+
+Error: [octagon-verdict-index] alexa-grasso.json is missing divisionBoards.
+    at fail (file:///home/runner/work/ufc-goat-rankings/ufc-goat-rankings/scripts/rebuild-octagon-verdict-index.mjs:11:9)
+    at file:///home/runner/work/ufc-goat-rankings/ufc-goat-rankings/scripts/rebuild-octagon-verdict-index.mjs:69:5
+    at Array.map (<anonymous>)
+    at file:///home/runner/work/ufc-goat-rankings/ufc-goat-rankings/scripts/rebuild-octagon-verdict-index.mjs:44:31
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.23.1
