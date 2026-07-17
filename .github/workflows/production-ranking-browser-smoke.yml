@@ -24,6 +24,7 @@ on:
       - 'assets/js/octagon-verdict-data.js'
       - 'tools/build-octagon-verdict-data.js'
       - 'scripts/materialize-octagon-verdict-data.mjs'
+      - 'scripts/sync-production-cache-keys.mjs'
       - 'scripts/test-production-browser.mjs'
       - 'scripts/test-profile-card-hotfix.mjs'
       - 'scripts/test-fighter-taglines.mjs'
@@ -56,6 +57,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Sync deterministic production cache keys
+        run: node scripts/sync-production-cache-keys.mjs > /tmp/cache-sync.log 2>&1
       - name: Install Chromium test runtime
         run: |
           npm install --no-save --silent playwright > /tmp/playwright-install.log 2>&1
@@ -122,21 +125,24 @@ jobs:
           console.log(JSON.stringify(pettis,null,2));
           console.log(`Validated ${feed.fighterCount} fighters, ${index.fighterCount} materialized fighter objects, and ${Object.keys(feed.divisionBoards).length} automatic division boards.`);
           NODE
-      - name: Commit refreshed calculated package
+      - name: Commit refreshed calculated package and shell cache keys
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add assets/data/octagon-verdict-data.json assets/data/octagon-verdict/
+          git add index.html assets/data/octagon-verdict-data.json assets/data/octagon-verdict/
           if git diff --cached --quiet; then
-            echo 'Calculated package already current.'
+            echo 'Calculated package and cache keys already current.'
           else
             git commit -m 'Materialize 80-fighter Octagon Verdict package [skip ci]'
+            git pull --rebase origin main
             git push origin HEAD:main
           fi
       - name: Show concise regression diagnostics on failure
         if: failure()
         run: |
+          echo '--- Cache sync ---'
+          cat /tmp/cache-sync.log 2>/dev/null || true
           echo '--- Fighter photo audit ---'
           cat /tmp/fighter-photo-audit.log 2>/dev/null || true
           echo '--- Browser assertion ---'
@@ -157,6 +163,7 @@ jobs:
         with:
           name: production-ranking-browser-diagnostics
           path: |
+            /tmp/cache-sync.log
             /tmp/anthony-pettis-pipeline-result.json
             /tmp/fighter-photo-audit.log
             /tmp/ufc-browser-test.log
