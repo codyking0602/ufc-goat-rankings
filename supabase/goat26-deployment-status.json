@@ -1,7 +1,7 @@
 {
   "active_members": 6,
   "avatar_profiles": 2,
-  "checked_at": "2026-07-17T19:44:05.255442+00:00",
+  "checked_at": "2026-07-17T20:07:59.372299+00:00",
   "code": "GOAT26",
   "deployment_method": "supabase-management-api",
   "events": 2,
@@ -20,10 +20,10 @@
     "cody_enabled": true,
     "current_week_start": "2026-07-13",
     "enabled_members": 1,
-    "messages": 0,
+    "messages": 2,
     "phase": "message-board-interface",
-    "reactions": 0,
-    "replies": 0,
+    "reactions": 2,
+    "replies": 1,
     "rls_enabled": true,
     "rpc": {
       "anon_execute": {
