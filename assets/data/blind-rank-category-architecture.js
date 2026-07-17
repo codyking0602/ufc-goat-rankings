@@ -284,6 +284,40 @@
     };
   }
 
+  function loadScriptOnce(selector,src,attribute,onload){
+    const document=root.document;
+    if(!document)return;
+    const existing=document.querySelector(selector);
+    if(existing){
+      if(existing.dataset.loaded==='true')onload?.();
+      else if(onload)existing.addEventListener('load',onload,{once:true});
+      return;
+    }
+    const script=document.createElement('script');
+    script.src=src;
+    script.setAttribute(attribute,'true');
+    script.addEventListener('load',()=>{script.dataset.loaded='true';onload?.();},{once:true});
+    document.head.appendChild(script);
+  }
+
+  function loadPhaseTwoLedger(){
+    const loadBlindLedger=()=>{
+      if(root.UFC_BLIND_RANK_CATEGORY_RATINGS)return;
+      loadScriptOnce(
+        'script[data-blind-rank-category-ratings]',
+        'assets/data/blind-rank-category-ratings.js?v=blind-rank-category-ratings-20260717a-phase-two',
+        'data-blind-rank-category-ratings'
+      );
+    };
+    if(root.UFC_KEEP_CUT_CATEGORY_RATINGS){loadBlindLedger();return;}
+    loadScriptOnce(
+      'script[data-keep-cut-category-ratings]',
+      'assets/data/keep-cut-category-ratings.js?v=keep-cut-category-ratings-20260717a-phase-one',
+      'data-keep-cut-category-ratings',
+      loadBlindLedger
+    );
+  }
+
   const auditResult=audit();
   const api=deepFreeze({
     version:VERSION,
@@ -309,4 +343,5 @@
   if(typeof root.dispatchEvent==='function'&&typeof root.CustomEvent==='function'){
     root.dispatchEvent(new root.CustomEvent('ufc-blind-rank-category-architecture-ready',{detail:{version:VERSION,audit:auditResult}}));
   }
+  loadPhaseTwoLedger();
 })(typeof window!=='undefined'?window:globalThis);
