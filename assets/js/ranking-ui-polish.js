@@ -3,7 +3,7 @@
   'use strict';
   if(!window.RANKING_DATA)return;
 
-  const VERSION='ranking-ui-polish-20260715c';
+  const VERSION='ranking-ui-polish-20260717d-division-resume-min';
   const DATA=window.RANKING_DATA;
   const CATEGORY_ORDER=['championship','opponentQuality','primeDominance','longevity','apexPeak','penalty'];
   const CATEGORY_COPY={
@@ -15,6 +15,7 @@
     penalty:{label:'Loss Context',description:'How damaging UFC losses were based on timing, opponent quality, finish context, and circumstance.'}
   };
   const num=value=>Number.isFinite(Number(value))?Number(value):0;
+  const DIVISION_RESUME_SHARE_MIN=10;
   let selectedGender='men';
   let comparePolishQueued=false;
 
@@ -96,12 +97,12 @@
     normalizeResumeText(target);
   }
 
-  function polishedDivisionRow(row){
+  function polishedDivisionRow(row,index){
     const override=window.DISPLAY_OVERRIDES?.[row.fighter]||{};
     const url=override.thumbUrl||override.photoUrl||'';
     const initials=String(row.fighter||'').split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase();
     const role=row.role==='primary'?'Primary UFC division':row.role==='secondary'?'Second-division resume':'Crossover resume';
-    return `<article class="row fighter-row division-row division-row-polished" data-fighter="${row.fighter}"><div class="rank">#${row.rank}</div><div class="row-photo">${url?`<img src="${url}" alt="${row.fighter} thumbnail" loading="lazy">`:initials}</div><div class="row-main"><div class="name">${row.fighter}</div><div class="meta">${row.stats.ufcRecord} UFC · Overall #${row.overallRank||'—'}</div><div class="division-context">${role} · ${Math.round(row.resumeSharePct)}% of UFC resume</div></div></article>`;
+    return `<article class="row fighter-row division-row division-row-polished" data-fighter="${row.fighter}"><div class="rank">#${index+1}</div><div class="row-photo">${url?`<img src="${url}" alt="${row.fighter} thumbnail" loading="lazy">`:initials}</div><div class="row-main"><div class="name">${row.fighter}</div><div class="meta">${row.stats.ufcRecord} UFC · Overall #${row.overallRank||'—'}</div><div class="division-context">${role} · ${Math.round(row.resumeSharePct)}% of UFC resume</div></div></article>`;
   }
   function divisionControls(report,active){
     const label=division=>window.UFC_DIVISION_RANKING_PIPELINE?.divisionLabel?.(division)||division;
@@ -122,11 +123,11 @@
       setText(section?.querySelector('p'),'UFC-only rankings within each division.');
       target.innerHTML=`<div class="division-leader-shell">${divisionControls(report,'')}<div class="division-leader-summary"><strong>Pick a division</strong><br>Choose a weight class to see its UFC-only all-time ranking.</div></div>`;
     }else{
-      const rows=report.boards[active];
+      const rows=report.boards[active].filter(row=>num(row.resumeSharePct)>=DIVISION_RESUME_SHARE_MIN);
       const label=pipeline.divisionLabel?.(active)||active;
       setText(section?.querySelector('h2'),`${label} Rankings`);
       setText(section?.querySelector('p'),'UFC-only divisional resume, ranked within the division.');
-      target.innerHTML=`<div class="division-leader-shell">${divisionControls(report,active)}<div class="division-leader-summary"><strong>${label} · Men</strong><br>${rows.length} fighters ranked by UFC achievement in this division.</div><div class="leaderboard">${rows.map(polishedDivisionRow).join('')}</div></div>`;
+      target.innerHTML=`<div class="division-leader-shell">${divisionControls(report,active)}<div class="division-leader-summary"><strong>${label} · Men</strong><br>${rows.length} fighters qualified with at least ${DIVISION_RESUME_SHARE_MIN}% of their UFC resume in this division.</div><div class="leaderboard">${rows.map(polishedDivisionRow).join('')}</div></div>`;
     }
     target.querySelectorAll('[data-division-pick]').forEach(button=>button.addEventListener('click',()=>{select.value=button.dataset.divisionPick;renderDivisionPolished();}));
     target.querySelectorAll('[data-fighter]').forEach(node=>node.addEventListener('click',()=>openFighter(node.dataset.fighter)));
