@@ -101,8 +101,10 @@ jobs:
                   f'https://api.supabase.com/v1/projects/{project_ref}/database/query',
                   data=json.dumps({'query': query, 'read_only': read_only}).encode(),
                   headers={
+                      'Accept': 'application/json',
                       'Authorization': f'Bearer {access_token}',
                       'Content-Type': 'application/json',
+                      'User-Agent': 'UFC-GOAT26-GitHub-Actions/1.0',
                   },
                   method='POST',
               )
@@ -132,40 +134,54 @@ jobs:
                       return value
               raise RuntimeError('GOAT26 audit did not return an active canonical group.')
 
+          def direct_database_deploy():
+              nonlocal_db_url = db_url
+              if not nonlocal_db_url and db_password:
+                  encoded_password = urllib.parse.quote(db_password, safe='')
+                  nonlocal_db_url = f'postgresql://postgres:{encoded_password}@db.{project_ref}.supabase.co:5432/postgres?sslmode=require'
+              if not nonlocal_db_url:
+                  raise RuntimeError('No SUPABASE_DB_URL or SUPABASE_DB_PASSWORD fallback is configured.')
+              if subprocess.run(['bash','-lc','command -v psql >/dev/null 2>&1']).returncode:
+                  raise RuntimeError('PostgreSQL client is unavailable for the direct-database fallback.')
+              subprocess.run(
+                  ['psql', nonlocal_db_url, '-v', 'ON_ERROR_STOP=1', '-f', str(migration_path)],
+                  check=True,
+                  env={**os.environ, 'PGCONNECT_TIMEOUT': '20'},
+              )
+              raw_audit = subprocess.check_output(
+                  ['psql', nonlocal_db_url, '-v', 'ON_ERROR_STOP=1', '-At', '-c', audit_sql],
+                  text=True,
+                  env={**os.environ, 'PGCONNECT_TIMEOUT': '20'},
+              ).strip()
+              return json.loads(raw_audit)
+
           try:
+              management_error = None
+              audit = None
+              deployment_method = None
+
               if access_token:
-                  management_query(migration_sql, read_only=False)
-                  audit = extract_audit(management_query(audit_sql, read_only=True))
-                  deployment_method = 'supabase-management-api'
-              else:
-                  if not db_url and db_password:
-                      encoded_password = urllib.parse.quote(db_password, safe='')
-                      db_url = f'postgresql://postgres:{encoded_password}@db.{project_ref}.supabase.co:5432/postgres?sslmode=require'
+                  try:
+                      management_query(migration_sql, read_only=False)
+                      audit = extract_audit(management_query(audit_sql, read_only=True))
+                      deployment_method = 'supabase-management-api'
+                  except Exception as error:
+                      management_error = error
 
-                  if not db_url:
-                      write_status({
-                          'status': 'blocked',
-                          'code': 'GOAT26',
-                          'reason': 'No SUPABASE_ACCESS_TOKEN, SUPABASE_DB_URL, or SUPABASE_DB_PASSWORD repository secret is configured.',
-                      })
-                      print('GOAT26 database migration is staged but blocked by missing Supabase deployment credentials.')
-                      raise SystemExit(0)
-
-                  if subprocess.run(['bash','-lc','command -v psql >/dev/null 2>&1']).returncode:
-                      raise RuntimeError('PostgreSQL client is unavailable for the direct-database fallback.')
-
-                  subprocess.run(
-                      ['psql', db_url, '-v', 'ON_ERROR_STOP=1', '-f', str(migration_path)],
-                      check=True,
-                      env={**os.environ, 'PGCONNECT_TIMEOUT': '20'},
-                  )
-                  raw_audit = subprocess.check_output(
-                      ['psql', db_url, '-v', 'ON_ERROR_STOP=1', '-At', '-c', audit_sql],
-                      text=True,
-                      env={**os.environ, 'PGCONNECT_TIMEOUT': '20'},
-                  ).strip()
-                  audit = json.loads(raw_audit)
+              if audit is None and (db_url or db_password):
+                  audit = direct_database_deploy()
                   deployment_method = 'postgres-direct'
+
+              if audit is None:
+                  if management_error is not None:
+                      raise management_error
+                  write_status({
+                      'status': 'blocked',
+                      'code': 'GOAT26',
+                      'reason': 'No usable Supabase deployment credential is configured.',
+                  })
+                  print('GOAT26 database migration is staged but blocked by missing deployment credentials.')
+                  raise SystemExit(0)
 
               expected_names = ['Cody','Daddy','Rhonda','Shane','Tyler']
               actual_names = sorted(audit.get('member_names') or [], key=lambda value: str(value).lower())
@@ -211,4 +227,5 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add supabase/goat26-deployment-status.json
           git commit -m 'Record GOAT26 database deployment status [skip ci]'
-          git push
+          git pull --rebase origin main
+          git push origin HEAD:main
