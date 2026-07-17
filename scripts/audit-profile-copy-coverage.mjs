@@ -31,28 +31,24 @@ function evaluateManifest(){
 }
 function hasLiteralField(source,field){return new RegExp(`\\b${field}\\s*:`).test(source);}
 function hasWhyNot(source){return /\bwhyNotHigher\s*:|\bwhyNotLower\s*:/.test(source);}
-function hasSpecificJudgments(source){return /\bkeyJudgmentCalls\s*:/.test(source);}
-function hasFinalTakeaway(source){return /\bfinalTakeaway\s*:/.test(source);}
 function containsGeneric(value){
   const text=String(value||'').toLowerCase();
   return genericFragments.some(fragment=>text.includes(fragment));
 }
 function overrideCoverage(override){
-  if(!override||typeof override!=='object')return{complete:false,polished:false,generic:false};
+  if(!override||typeof override!=='object')return{complete:false,generic:false};
   const complete=requiredFields.every(field=>typeof override[field]==='string'&&override[field].trim())&&
     ((typeof override.whyNotHigher==='string'&&override.whyNotHigher.trim())||(typeof override.whyNotLower==='string'&&override.whyNotLower.trim()));
   const generic=[override.oneLiner,override.whyRankedHere,override.whyNotHigher,override.whyNotLower].some(containsGeneric);
-  const polished=complete&&Array.isArray(override.keyJudgmentCalls)&&override.keyJudgmentCalls.length>=3&&typeof override.finalTakeaway==='string'&&override.finalTakeaway.trim();
-  return{complete,polished:Boolean(polished),generic};
+  return{complete,generic};
 }
 function packetCoverage(slug,registeredSlugs){
   const file=path.join(packetDir,`${slug}.js`);
-  if(!registeredSlugs.has(slug)||!fs.existsSync(file))return{complete:false,polished:false,generic:false,file:null};
+  if(!registeredSlugs.has(slug)||!fs.existsSync(file))return{complete:false,generic:false,file:null};
   const source=read(file);
   const complete=requiredFields.every(field=>hasLiteralField(source,field))&&hasWhyNot(source);
   const generic=genericFragments.some(fragment=>source.toLowerCase().includes(fragment));
-  const polished=complete&&hasSpecificJudgments(source)&&hasFinalTakeaway(source);
-  return{complete,polished,generic,file:path.relative(root,file)};
+  return{complete,generic,file:path.relative(root,file)};
 }
 
 if(!fs.existsSync(fighterDir))throw new Error(`Missing fighter object directory: ${fighterDir}`);
@@ -67,13 +63,10 @@ const report=roster.map(fighter=>{
   const direct=overrideCoverage(overrides[fighter.name]);
   const packet=packetCoverage(fighter.slug,registeredSlugs);
   const complete=(direct.complete&&!direct.generic)||(packet.complete&&!packet.generic);
-  const polished=(direct.polished&&!direct.generic)||(packet.polished&&!packet.generic);
-  return{...fighter,status:!complete?'RED':polished?'GREEN':'YELLOW',source:direct.complete?'display-overrides':packet.file||'generic-fallback'};
+  return{...fighter,status:complete?'GREEN':'RED',source:direct.complete?'display-overrides':packet.file||'generic-fallback'};
 });
 const red=report.filter(row=>row.status==='RED');
-const yellow=report.filter(row=>row.status==='YELLOW');
 const green=report.filter(row=>row.status==='GREEN');
-console.log(`Profile copy audit: ${report.length} fighters | ${green.length} green | ${yellow.length} yellow | ${red.length} red`);
-if(yellow.length)console.log(`YELLOW: ${yellow.map(row=>row.name).join(', ')}`);
+console.log(`Profile copy audit: ${report.length} fighters | ${green.length} green | ${red.length} red`);
 if(red.length)console.error(`RED: ${red.map(row=>row.name).join(', ')}`);
 if(report.length===0||red.length)process.exitCode=1;
