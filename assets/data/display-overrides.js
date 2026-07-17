@@ -175,5 +175,26 @@ const DISPLAY_OVERRIDES = {
     "whyNotHigher": "He does not rank higher because he never completed a successful undisputed defense, lost both official UFC fights to Alexandre Pantoja, and accumulated four counted prime losses. Modern flyweight also receives a modest division-depth discount compared with the strongest all-time divisions.",
     "keyJudgmentCalls": [["Nickname","The app-facing profile name is Brandon “The Assassin Baby” Moreno."],["UFC-only scope","The Ultimate Fighter exhibition loss to Alexandre Pantoja and all regional fights are excluded."],["Prime start","Jussier Formiga begins the connected elite run."],["Prime end","Tatsuro Taira is the unrecovered prime finish loss; Lone’er Kavanagh is post-prime decline confirmation."],["Figueiredo rivalry","The official UFC series is 2-1-1 for Moreno and anchors his championship case."],["Pantoja rivalry","Pantoja leads the official UFC series 2-0; the TUF exhibition is not part of the UFC record."],["Division depth","Modern flyweight receives a modest discount rather than the heavier launch-era flyweight penalty."]],
     "finalTakeaway": "Moreno is the resilience champion of the flyweight GOAT conversation: two undisputed reigns, three title-fight wins, rivalry history, and real longevity. The absence of a completed undisputed defense and the Pantoja losses keep him below the division’s deepest UFC-only resumes."
+  },
+  "Anthony Pettis": {
+    "displayName": "Anthony “Showtime” Pettis",
+    "profileDisplayName": "Anthony “Showtime” Pettis",
+    "divisionLabel": "LW / FW / WW",
+    "resumeTag": "Showtime lightweight champion",
+    "photoUrl": "assets/fighters/anthony-pettis.webp",
+    "thumbUrl": "assets/fighters/anthony-pettis-thumb.webp",
+    "photoUnavailable": false,
+    "photoStatus": "verified",
+    "signatureFight": "Benson Henderson II — UFC 164",
+    "alternateFight": "Gilbert Melendez — UFC 181",
+    "watchUrl": "https://youtube.com/shorts/BiPvl_p6JqY?is=gwu2EsszP22T9us-",
+    "watchLabel": "Watch Moment",
+    "signatureFightUrl": "https://youtu.be/smbYO1-yqtA?is=lhtpeK1nOCqGUvdc",
+    "signatureFightLabel": "Watch Signature Fight",
+    "oneLiner": "The Showtime champion case: two UFC title-fight wins, three top-five victories, and signature finishes across three divisions.",
+    "whyRankedHere": "Pettis earns his place through an undisputed lightweight title win, a successful defense, three top-five victories, and one of the most memorable two-fight championship peaks of his era. The Henderson armbar and Melendez guillotine give the UFC-only resume real title proof beyond the highlight reel.",
+    "whyNotHigher": "He does not rank higher because the title reign ended after one defense, the reviewed prime finished 7-6, and six counted prime losses—including three finishes—drag down the consistency and round-control case. The WEC title and Showtime Kick are excluded from the score.",
+    "keyJudgmentCalls": [["Nickname","The app-facing profile name is Anthony “Showtime” Pettis."],["UFC-only scope","The WEC title, Showtime Kick, PFL run, and all non-UFC fights are context only."],["Prime start","The Joe Lauzon head-kick knockout begins the connected ranked and title-level run."],["Prime end","Tony Ferguson closes the connected prime after Pettis’s final Chiesa rebound; the later Thompson knockout is an isolated post-prime elite win."],["Max Holloway","The loss counts as a prime elite finish, but Pettis receives no title participation credit because he missed weight and was ineligible for the interim belt."],["Stephen Thompson","The post-prime upward-division knockout still receives full Opponent Quality win credit."],["Division depth","The lightweight murderers’ row earns a separate positive era-depth adjustment without double-counting the same strength in longevity."],["Signature fight","Benson Henderson II at UFC 164."],["Alternate fight","Gilbert Melendez at UFC 181."]],
+    "finalTakeaway": "Pettis is a real UFC champion case with a spectacular peak, not merely a highlight-reel celebrity. Two title-fight wins and elite finishes secure his ranking; the 7-6 prime and loss-heavy post-title stretch keep Showtime below the deeper long-reign champions."
   }
 };
