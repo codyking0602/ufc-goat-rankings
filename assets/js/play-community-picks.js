@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='play-community-picks-20260717a';
+  const VERSION='play-community-picks-20260717b';
   const STORAGE_PREFIX='ufc-play:daily-keep-cut-picks:';
   const BOARD_GAME_TYPE='keep-cut-picks';
   const BOARD_GAME_VERSION='keep-cut-picks-v1';
@@ -181,8 +181,8 @@
     renderTimer=setTimeout(renderBoard,120);
   }
 
-  async function submitIfComplete(){
-    if(submitLoading||document.documentElement.getAttribute('data-play-screen')!=='daily-keep-cut')return;
+  async function submitIfComplete(options={}){
+    if(submitLoading||!isKeepCutDay())return;
     const state=window.UFC_KEEP_CUT?.state;
     const decisions=decisionArray(state);
     if(!decisions||!Array.isArray(state?.lineup)||state.lineup.length!==8)return;
@@ -193,7 +193,12 @@
     try{
       const setup=await dailySetup();
       if(!setup)return;
-      const identity=await profile.resolve?.()||await profile.require?.({
+      const stateIds=state.lineup.map(fighter=>fighter?.id).join('|');
+      const dailyIds=setup.lineup.map(fighter=>fighter?.id).join('|');
+      const dailyScreen=document.documentElement.getAttribute('data-play-screen')==='daily-keep-cut';
+      if(!dailyScreen&&stateIds!==dailyIds)return;
+      let identity=await profile.resolve?.();
+      if(!identity&&options.prompt!==false)identity=await profile.require?.({
         title:"Add your picks to today's board",
         description:'Save your final four so everyone can compare their Keep 4, Cut 4 choices.'
       });
@@ -243,12 +248,13 @@
         scheduleBoard();
         return;
       }
-      if(event.target.closest?.('[data-kc-choice]'))setTimeout(submitIfComplete,180);
+      if(event.target.closest?.('[data-kc-choice]'))setTimeout(()=>submitIfComplete({prompt:true}),180);
     },true);
     window.addEventListener('ufc-play-daily-rotation-ready',()=>setTimeout(scheduleBoard,80));
     window.addEventListener('ufc-play-hub-ready',()=>setTimeout(scheduleBoard,180));
     window.addEventListener('ufc-community-picks-saved',scheduleBoard);
     [250,800,1800].forEach(delay=>setTimeout(scheduleBoard,delay));
+    [900,2000].forEach(delay=>setTimeout(()=>submitIfComplete({prompt:false}),delay));
     document.documentElement.setAttribute('data-play-community-picks',VERSION);
   }
 
