@@ -1,7 +1,7 @@
 // Central manifest for fighter packet modules.
 // Add new fighter packet files here instead of growing ranking-data-patches.js.
 (function(){
-  const VERSION='fighter-packet-manifest-20260715a-pantoja';
+  const VERSION='fighter-packet-manifest-20260716a-profile-copy-audit';
   const packets=[
     {slug:'demetrious-johnson',version:'20260702a'},
     {slug:'anderson-silva',version:'20260702a'},
@@ -50,6 +50,16 @@
     {slug:'dan-henderson',version:'20260710b-ufc-record'},
     {slug:'chael-sonnen',version:'20260706a'},
     {slug:'robbie-lawler',version:'20260706a'},
+    {slug:'benson-henderson',version:'20260716a-profile-copy-audit'},
+    {slug:'frank-shamrock',version:'20260716a-profile-copy-audit'},
+    {slug:'royce-gracie',version:'20260716a-profile-copy-audit'},
+    {slug:'leon-edwards',version:'20260716a-profile-copy-audit'},
+    {slug:'fabricio-werdum',version:'20260716a-profile-copy-audit'},
+    {slug:'vitor-belfort',version:'20260716a-profile-copy-audit'},
+    {slug:'glover-teixeira',version:'20260716a-profile-copy-audit'},
+    {slug:'mauricio-shogun-rua',version:'20260716a-profile-copy-audit'},
+    {slug:'forrest-griffin',version:'20260716a-profile-copy-audit'},
+    {slug:'rashad-evans',version:'20260716a-profile-copy-audit'},
     {slug:'amanda-nunes',version:'20260710b-ufc-record'},
     {slug:'valentina-shevchenko',version:'20260710b-ufc-record'},
     {slug:'zhang-weili',version:'20260706a'},
@@ -63,11 +73,12 @@
     {slug:'carla-esparza',version:'20260706a'},
     {slug:'holly-holm',version:'20260706a'},
     {slug:'joanna-jedrzejczyk',version:'20260702b'},
-    {slug:'ronda-rousey',version:'20260702b'}
+    {slug:'ronda-rousey',version:'20260702b'},
+    {slug:'cris-cyborg',version:'20260716a-profile-copy-audit'}
   ];
   window.UFC_FIGHTER_PACKET_MANIFEST={
     version:VERSION,
-    updated:'2026-07-15',
+    updated:'2026-07-16',
     purpose:'Central packet list for scalable fighter additions.',
     count:packets.length,
     fighters:packets.map(p=>p.slug),
