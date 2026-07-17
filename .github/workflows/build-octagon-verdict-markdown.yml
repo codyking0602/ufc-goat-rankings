@@ -95,8 +95,9 @@ jobs:
           const markdown=fs.readFileSync('octagon-verdict-knowledge.md','utf8');
           const count=Number(markdown.match(/Fighters: \*\*(\d+)\*\*/)?.[1]||0);
           assert.equal(count,79);
-          assert.match(markdown,/### 47\. Brandon Moreno — 88 OVR/);
-          assert.match(markdown,/UFC record[^\n]*11-7-2|11-7-2[^\n]*UFC record/i);
+          const moreno=markdown.match(/### 47\. Brandon Moreno — 88 OVR[\s\S]*?(?=\n### \d+\.|\n## 11\.)/)?.[0]||'';
+          assert.ok(moreno,'Brandon Moreno fighter card is missing.');
+          assert.match(moreno,/\| men \| 45\.3 \| 11-7-2 \| Flyweight \| 3 \| 2\.65 \| 5 \| 7-4-1 \| 62\.2% \| 5\.73 \|/);
           assert.ok(markdown.includes('Machine-readable JSON is optional and does not block fighter additions.'));
           assert.ok(markdown.includes('JSON exports are optional, run only when explicitly requested, and never block a fighter addition.'));
           assert.ok(!markdown.includes('Fighters: **76**'));
