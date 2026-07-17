@@ -1,8 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='blind-rank-polish-20260717a-category-architecture-bootstrap';
-  const ARCHITECTURE_SRC='assets/data/blind-rank-category-architecture.js?v=blind-rank-category-architecture-20260717a-phase-one';
+  const VERSION='blind-rank-polish-20260717b-presentation-only';
 
   function injectStyles(){
     if(document.getElementById('blind-rank-polish-css'))return;
@@ -25,23 +24,9 @@
     document.documentElement.setAttribute('data-blind-rank-refinements',VERSION);
   }
 
-  function ensureCategoryArchitecture(){
-    if(window.UFC_BLIND_RANK_CATEGORY_ARCHITECTURE)return;
-    if(document.querySelector('script[data-blind-rank-category-architecture-loader]'))return;
-    const script=document.createElement('script');
-    script.src=ARCHITECTURE_SRC;
-    script.async=false;
-    script.dataset.blindRankCategoryArchitectureLoader='true';
-    script.addEventListener('error',()=>{
-      document.documentElement.setAttribute('data-blind-rank-category-architecture','load-error');
-    },{once:true});
-    document.head.appendChild(script);
-  }
-
   function init(){
     injectStyles();
     mark();
-    ensureCategoryArchitecture();
   }
 
   document.addEventListener('ufc-blind-rank-rendered',mark);
