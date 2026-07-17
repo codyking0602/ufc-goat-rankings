@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='blind-rank-polish-20260716e-six-buckets';
+  const VERSION='blind-rank-polish-20260716f-pack-specific-scores';
   const PACK_KEY='ufc-goat-blind-rank-pack-v2';
   const GAME_KEY='ufc-goat-blind-rank-v1';
   const STRIKERS=[
@@ -11,15 +11,15 @@
     'Khabib Nurmagomedov','Islam Makhachev','Georges St-Pierre','Jon Jones','Demetrious Johnson','Charles Oliveira','B.J. Penn','Matt Hughes','Randy Couture','Daniel Cormier','Henry Cejudo','Dominick Cruz','Aljamain Sterling','Merab Dvalishvili','Kamaru Usman','Cain Velasquez','Royce Gracie','Frank Shamrock','Ken Shamrock','Mark Coleman','Urijah Faber','Colby Covington','Yoel Romero','Tony Ferguson','Diego Sanchez','Clay Guida','Khamzat Chimaev','Alexandre Pantoja','Mackenzie Dern','Kayla Harrison','Julianna Peña','Carla Esparza','Ronda Rousey'
   ];
   const PACKS=[
-    {id:'ufc-careers',name:'UFC Careers',prompt:'Rank their UFC careers',intro:'You see one fighter at a time. Place each UFC career from #1 to #5 before the next reveal.',filters:{gender:'men'}},
-    {id:'all-careers',name:'All UFC Careers',prompt:'Rank their UFC careers',intro:'You see one fighter at a time. Place each UFC career from #1 to #5 before the next reveal.',filters:{}},
-    {id:'womens-careers',name:'Women’s UFC Careers',prompt:'Rank their UFC careers',intro:'You see one fighter at a time. Place each UFC career from #1 to #5 before the next reveal.',filters:{gender:'women'}},
-    {id:'lightweight',name:'Lightweight Careers',prompt:'Rank their UFC careers',intro:'You see one lightweight at a time. Place each UFC career from #1 to #5 before the next reveal.',filters:{gender:'men',division:'Lightweight'}},
-    {id:'welterweight',name:'Welterweight Careers',prompt:'Rank their UFC careers',intro:'You see one welterweight at a time. Place each UFC career from #1 to #5 before the next reveal.',filters:{gender:'men',division:'Welterweight'}},
-    {id:'heavyweight',name:'Heavyweight Careers',prompt:'Rank their UFC careers',intro:'You see one heavyweight at a time. Place each UFC career from #1 to #5 before the next reveal.',filters:{gender:'men',division:'Heavyweight'}},
-    {id:'striking',name:'Striking',prompt:'Rank their striking',intro:'You see one fighter at a time. Rank only their UFC striking from #1 to #5 before the next reveal.',names:STRIKERS},
-    {id:'wrestling-grappling',name:'Wrestling & Grappling',prompt:'Rank their wrestling and grappling',intro:'You see one fighter at a time. Rank their UFC wrestling and grappling from #1 to #5 before the next reveal.',names:GRAPPLERS},
-    {id:'early-ufc',name:'Early UFC Careers',prompt:'Rank their UFC careers',intro:'You see one early-era fighter at a time. Place each UFC career from #1 to #5 before the next reveal.',filters:{gender:'men'},eras:['tournament','survival','zuffa-rebuild']}
+    {id:'ufc-careers',name:'UFC Careers',prompt:'Rank their UFC careers',intro:'You see one fighter at a time. Place each UFC career from #1 to #5 before the next reveal.',filters:{gender:'men'},scoreMode:'overall-rank',rankingSource:'Men’s UFC GOAT board'},
+    {id:'all-careers',name:'All UFC Careers',prompt:'Rank their UFC careers',intro:'You see one fighter at a time. Place each UFC career from #1 to #5 before the next reveal.',filters:{},scoreMode:'overall-score',rankingSource:'Calculated UFC GOAT score across both boards'},
+    {id:'womens-careers',name:'Women’s UFC Careers',prompt:'Rank their UFC careers',intro:'You see one fighter at a time. Place each UFC career from #1 to #5 before the next reveal.',filters:{gender:'women'},scoreMode:'women-rank',rankingSource:'Women’s UFC GOAT board'},
+    {id:'lightweight',name:'Lightweight Careers',prompt:'Rank their UFC careers',intro:'You see one lightweight at a time. Place each UFC career from #1 to #5 before the next reveal.',filters:{gender:'men',division:'Lightweight'},scoreMode:'division',division:'Lightweight',rankingSource:'Calculated Lightweight résumé board'},
+    {id:'welterweight',name:'Welterweight Careers',prompt:'Rank their UFC careers',intro:'You see one welterweight at a time. Place each UFC career from #1 to #5 before the next reveal.',filters:{gender:'men',division:'Welterweight'},scoreMode:'division',division:'Welterweight',rankingSource:'Calculated Welterweight résumé board'},
+    {id:'heavyweight',name:'Heavyweight Careers',prompt:'Rank their UFC careers',intro:'You see one heavyweight at a time. Place each UFC career from #1 to #5 before the next reveal.',filters:{gender:'men',division:'Heavyweight'},scoreMode:'division',division:'Heavyweight',rankingSource:'Calculated Heavyweight résumé board'},
+    {id:'striking',name:'Striking',prompt:'Rank their striking',intro:'You see one fighter at a time. Rank only their UFC striking from #1 to #5 before the next reveal.',names:STRIKERS,scoreMode:'curated',order:STRIKERS,rankingSource:'Curated UFC striking order'},
+    {id:'wrestling-grappling',name:'Wrestling & Grappling',prompt:'Rank their wrestling and grappling',intro:'You see one fighter at a time. Rank their UFC wrestling and grappling from #1 to #5 before the next reveal.',names:GRAPPLERS,scoreMode:'curated',order:GRAPPLERS,rankingSource:'Curated UFC wrestling and grappling order'},
+    {id:'early-ufc',name:'Early UFC Careers',prompt:'Rank their UFC careers',intro:'You see one early-era fighter at a time. Place each UFC career from #1 to #5 before the next reveal.',filters:{gender:'men'},eras:['tournament','survival','zuffa-rebuild'],scoreMode:'overall-score',rankingSource:'Calculated UFC GOAT score inside the early-era pool'}
   ];
   const ALIASES={'men-chaos':'ufc-careers','all-chaos':'all-careers','women-chaos':'womens-careers'};
   const BUCKET_CONFIG=[
@@ -40,15 +40,59 @@
   function packFor(id){const key=ALIASES[id]||id;return PACKS.find(pack=>pack.id===key)||PACKS[0];}
   function savedPack(){try{return packFor(localStorage.getItem(PACK_KEY)||api()?.state?.packId).id;}catch(_error){return packFor(api()?.state?.packId).id;}}
   function shuffle(items){const copy=[...items];for(let i=copy.length-1;i>0;i-=1){const j=Math.floor(Math.random()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]];}return copy;}
+  function finite(value){return Number.isFinite(Number(value));}
 
-  function rankingScore(fighter){
+  function legacyRankingScore(fighter){
     const rank=Number(fighter?.modelRank);
     if(Number.isFinite(rank))return 100000-(rank*100)+(Number(fighter?.modelScore)||0);
     return (LEGACY_TIER_SCORE[fighter?.selectionTier]||0)+(Number(fighter?.modelScore)||0);
   }
 
-  function bucketedPool(rows){
-    const ranked=[...(rows||[])].sort((a,b)=>rankingScore(b)-rankingScore(a)||a.name.localeCompare(b.name));
+  function overallScore(fighter){
+    if(finite(fighter?.modelScore))return 100000+(Number(fighter.modelScore)*100)-(finite(fighter?.modelRank)?Number(fighter.modelRank)/100:0);
+    return (LEGACY_TIER_SCORE[fighter?.selectionTier]||0)+(Number(fighter?.modelScore)||0);
+  }
+
+  function divisionBoard(pack){
+    const rankingApi=window.UFC_DIVISION_RANKINGS||window.UFC_DIVISION_RANKING_PIPELINE;
+    let rows=[];
+    try{rows=rankingApi?.boardFor?.(pack.division)||[];}catch(_error){rows=[];}
+    if(!rows.length)rows=window.UFC_DIVISION_RANKING_REPORT?.boards?.[pack.division]||[];
+    return rows.filter(row=>row?.fighter&&finite(row?.divisionScore)&&row?.rankEligible!==false);
+  }
+
+  function rankingContext(pack){
+    const source=data();
+    if(pack.scoreMode==='curated'){
+      const orderById=new Map();
+      (pack.order||[]).forEach((name,index)=>{const fighter=source?.resolve?.(name);if(fighter&&!orderById.has(fighter.id))orderById.set(fighter.id,index);});
+      return {mode:'curated',ready:orderById.size>=5,orderById};
+    }
+    if(pack.scoreMode==='division'){
+      const board=divisionBoard(pack);
+      const divisionById=new Map();
+      board.forEach(row=>{const fighter=source?.resolve?.(row.fighter);if(fighter)divisionById.set(fighter.id,row);});
+      return {mode:'division',ready:divisionById.size>=5,board,divisionById};
+    }
+    return {mode:pack.scoreMode||'overall-rank',ready:true};
+  }
+
+  function scoreForPack(pack,fighter,context=rankingContext(pack)){
+    if(context.mode==='curated'){
+      const index=context.orderById.get(fighter.id);
+      return Number.isInteger(index)?1000000-(index*1000):-Infinity;
+    }
+    if(context.mode==='division'){
+      const row=context.divisionById.get(fighter.id);
+      return row?(Number(row.divisionScore)*1000)+(1000-(Number(row.rank)||999)):-Infinity;
+    }
+    if(context.mode==='overall-score')return overallScore(fighter);
+    if(context.mode==='women-rank'||context.mode==='overall-rank')return legacyRankingScore(fighter);
+    return legacyRankingScore(fighter);
+  }
+
+  function bucketedPool(pack,rows,context=rankingContext(pack)){
+    const ranked=[...(rows||[])].sort((a,b)=>scoreForPack(pack,b,context)-scoreForPack(pack,a,context)||a.name.localeCompare(b.name));
     const buckets=Object.fromEntries(BUCKET_ORDER.map(bucket=>[bucket,[]]));
     ranked.forEach((fighter,index)=>{
       const percentile=(index+0.5)/ranked.length;
@@ -75,19 +119,22 @@
       .find(bucket=>working[bucket]?.length);
   }
 
-  function pool(pack){
+  function pool(pack,context=rankingContext(pack)){
     const source=data();
-    if(!source)return[];
+    if(!source||!context.ready)return[];
     let rows=source.poolFor('blind-rank',pack.filters||{});
     if(pack.names){const ids=new Set(pack.names.map(name=>source.resolve(name)?.id).filter(Boolean));rows=rows.filter(row=>ids.has(row.id));}
     if(pack.eras)rows=rows.filter(row=>row.eras?.some(era=>pack.eras.includes(era)));
+    if(context.mode==='curated')rows=rows.filter(row=>context.orderById.has(row.id));
+    if(context.mode==='division')rows=rows.filter(row=>context.divisionById.has(row.id));
     return rows;
   }
 
   function lineup(pack){
-    const rows=pool(pack);
+    const context=rankingContext(pack);
+    const rows=pool(pack,context);
     if(rows.length<5)return[];
-    const audit=bucketedPool(rows);
+    const audit=bucketedPool(pack,rows,context);
     const working=Object.fromEntries(BUCKET_ORDER.map(bucket=>[bucket,shuffle(audit.buckets[bucket])]));
     const picked=[];
     const targets=[];
@@ -113,8 +160,27 @@
     }
 
     const game=api();
-    if(game)game.state.bucketAudit={packId:pack.id,poolSize:rows.length,counts:audit.counts,percentages:audit.percentages,targets,actual};
+    if(game)game.state.bucketAudit={packId:pack.id,scoreMode:pack.scoreMode,rankingSource:pack.rankingSource,poolSize:rows.length,counts:audit.counts,percentages:audit.percentages,targets,actual};
     return shuffle(picked.slice(0,5));
+  }
+
+  function auditPack(packId){
+    const pack=packFor(packId);
+    const context=rankingContext(pack);
+    const rows=pool(pack,context);
+    const audit=bucketedPool(pack,rows,context);
+    const rankRows=rows=>rows.map(fighter=>({id:fighter.id,name:fighter.name,score:Number(scoreForPack(pack,fighter,context).toFixed(2))}));
+    return {
+      packId:pack.id,
+      scoreMode:pack.scoreMode,
+      rankingSource:pack.rankingSource,
+      ready:context.ready,
+      poolSize:rows.length,
+      counts:audit.counts,
+      percentages:audit.percentages,
+      topFive:rankRows(audit.ranked.slice(0,5)),
+      bottomFive:rankRows(audit.ranked.slice(-5))
+    };
   }
 
   function save(packId){
@@ -212,13 +278,22 @@
     return {fighters,packId:packFor(url.searchParams.get('brpack')).id};
   }
 
+  function installApi(){
+    const game=api();
+    if(!game)return;
+    game.bucketConfig=BUCKET_CONFIG.map(bucket=>({...bucket}));
+    game.packScoring=PACKS.map(pack=>({id:pack.id,scoreMode:pack.scoreMode,rankingSource:pack.rankingSource,division:pack.division||null}));
+    game.scoreForPack=(packId,fighter)=>{const pack=packFor(packId);return scoreForPack(pack,fighter,rankingContext(pack));};
+    game.bucketedPool=packId=>{const pack=packFor(packId);const context=rankingContext(pack);return bucketedPool(pack,pool(pack,context),context);};
+    game.auditBuckets=auditPack;
+    game.auditPacks=()=>PACKS.map(pack=>auditPack(pack.id));
+  }
+
   function init(){
     if(!api()||!data())return;
     injectStyles();
     api().state.packId=savedPack();
-    api().bucketConfig=BUCKET_CONFIG.map(bucket=>({...bucket}));
-    api().bucketedPool=bucketedPool;
-    api().auditBuckets=packId=>{const pack=packFor(packId);const rows=pool(pack);const audit=bucketedPool(rows);return {packId:pack.id,poolSize:rows.length,counts:audit.counts,percentages:audit.percentages};};
+    installApi();
     patch();
 
     document.addEventListener('change',event=>{
@@ -249,6 +324,7 @@
 
     const observer=new MutationObserver(()=>window.requestAnimationFrame(patch));
     observer.observe(document.getElementById('playBlindRankPanel')||document.body,{childList:true,subtree:true});
+    window.addEventListener('ufc-production-ranking-ready',()=>{installApi();patch();});
 
     const shared=sharedChallenge();
     if(shared)window.setTimeout(()=>{
