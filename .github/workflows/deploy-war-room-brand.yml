@@ -1,5 +1,6 @@
 name: Migrate The War Room Sources
 
+# Explicit migration trigger 20260717b
 on:
   push:
     branches: [main]
