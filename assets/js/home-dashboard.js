@@ -1,12 +1,26 @@
 (function(){
   'use strict';
 
-  const VERSION='home-dashboard-20260717c-daily-rotation';
+  const VERSION='home-dashboard-20260717d-find-leader-permanent';
   const home=document.getElementById('home');
   if(!home)return;
 
+  const DAILY_GAME=Object.freeze({
+    id:'find-leader',
+    gameType:'find-leader',
+    gameVersion:'find-leader-daily-v1',
+    title:'Find the Leader',
+    description:'Ten UFC fighters. Eliminate nine without accidentally eliminating the verified stat leader.',
+    details:['10 FIGHTERS','ONE VERIFIED LEADER','OFFICIAL LEADERBOARD'],
+    maxScore:10,
+    scored:true,
+    visual:'leader'
+  });
+
   let refreshTimer=0;
   let boardLoading=false;
+  let officialDailyLoading=false;
+  let officialDailySyncKey='';
   let lastMarkup='';
   let spotlightCache=null;
   let spotlightDay='';
@@ -50,9 +64,8 @@
 
   function formatEventDate(value){
     if(!value)return'Date TBD';
-    try{
-      return new Intl.DateTimeFormat('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(value));
-    }catch(_error){return'Date TBD';}
+    try{return new Intl.DateTimeFormat('en-US',{weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(new Date(value));}
+    catch(_error){return'Date TBD';}
   }
 
   function navigate(destination){
@@ -63,38 +76,17 @@
   }
 
   function dailyChallenge(){
-    const rotation=window.UFC_PLAY_DAILY_ROTATION;
-    const day=rotation?.centralDay?.()||centralDateKey();
-    const daily=rotation?.dailyFor?.(day);
-    if(daily?.id){
-      return{
-        ...daily,
-        challengeDay:day,
-        challengeKey:`${daily.gameType||daily.id}:${day}`
-      };
-    }
-    const hubChallenge=window.UFC_PLAY_HUB?.dailyChallenge;
-    if(hubChallenge?.id)return{
-      ...hubChallenge,
-      challengeDay:hubChallenge.challengeDay||day,
-      challengeKey:hubChallenge.challengeKey||`${hubChallenge.gameType||hubChallenge.id}:${day}`
-    };
+    const day=centralDateKey();
+    const hub=window.UFC_PLAY_HUB?.dailyChallenge;
     return{
-      id:'find-leader',
-      gameType:'find-leader',
-      title:'Find the Leader',
-      description:'Ten UFC fighters. Eliminate nine without accidentally eliminating the verified stat leader.',
-      details:['10 FIGHTERS','ONE VERIFIED LEADER','OFFICIAL LEADERBOARD'],
-      maxScore:10,
-      scored:true,
-      visual:'leader',
-      challengeKey:`find-leader:${day}`,
-      challengeDay:day
+      ...DAILY_GAME,
+      challengeDay:text(hub?.challengeDay)||day,
+      challengeKey:text(hub?.challengeKey)||`find-leader:${day}`
     };
   }
 
   function dailyStorageKey(challenge=dailyChallenge()){
-    return `ufc-play:daily-completion:${challenge.gameType||challenge.id}:${challenge.challengeDay||centralDateKey()}`;
+    return `ufc-play:daily-completion:find-leader:${challenge.challengeDay||centralDateKey()}`;
   }
 
   function legacyDailyStorageKey(challenge=dailyChallenge()){
@@ -103,70 +95,24 @@
 
   function storeDailyResult(result={},challenge=dailyChallenge()){
     if(!result.completed)return false;
-    const scored=result.scored!==undefined?Boolean(result.scored):Boolean(challenge.scored);
     writeJson(dailyStorageKey(challenge),{
       completed:true,
-      gameType:challenge.gameType||challenge.id,
-      scored,
-      score:scored&&Number.isFinite(Number(result.score))?Number(result.score):null,
-      total:scored?(Number(result.total)||Number(challenge.maxScore)||null):null,
+      gameType:'find-leader',
+      scored:true,
+      score:Number.isFinite(Number(result.score))?Number(result.score):0,
+      total:Number(result.total)||DAILY_GAME.maxScore,
       completedAt:result.completedAt||new Date().toISOString()
     });
     return true;
   }
 
-  function migrateLegacyKeepCut(challenge){
-    if(challenge.id!=='keep-cut')return false;
-    const migrationKey='ufc-home:legacy-keep-cut-daily-migrated-v1';
-    if(getLocal(migrationKey)==='1')return false;
-    const saved=readJson('ufc-goat-keep-cut-v1',null);
-    if(!saved?.completed||Number(saved.currentIndex)<8)return false;
-    setLocal(migrationKey,'1');
-    return storeDailyResult({completed:true,scored:false},challenge);
-  }
-
   function captureDailyCompletion(){
     const challenge=dailyChallenge();
-    const screen=document.documentElement.getAttribute('data-play-screen')||'';
-    const expectedScreen=`daily-${challenge.id}`;
     const hubResult=window.UFC_PLAY_HUB?.dailyResult;
     if(hubResult?.completed)return storeDailyResult(hubResult,challenge);
-
-    if(challenge.id==='find-leader'){
-      const state=window.UFC_FIND_LEADER?.state;
-      if(state?.daily&&state.phase==='complete'){
-        return storeDailyResult({completed:true,scored:true,score:state.score,total:challenge.maxScore},challenge);
-      }
-    }
-
-    if(challenge.id==='blind'){
-      const state=window.UFC_BLIND_MATCHMAKING?.state;
-      if(screen===expectedScreen&&state?.finalVisible){
-        return storeDailyResult({completed:true,scored:true,score:state.score,total:challenge.maxScore||5},challenge);
-      }
-    }
-
-    if(challenge.id==='keep-cut'){
-      const live=window.UFC_KEEP_CUT?.state;
-      if(screen===expectedScreen&&live?.completed)return storeDailyResult({completed:true,scored:false},challenge);
-      if(migrateLegacyKeepCut(challenge))return true;
-    }
-
-    if(challenge.id==='better-than'){
-      const state=window.UFC_BETTER_THAN?.state;
-      if(screen===expectedScreen&&state?.locked)return storeDailyResult({completed:true,scored:false},challenge);
-    }
-
-    if(challenge.id==='blind-rank'){
-      const state=window.UFC_BLIND_RANK?.state;
-      if(screen===expectedScreen&&(state?.completed||state?.phase==='complete'||state?.finalVisible)){
-        return storeDailyResult({completed:true,scored:false},challenge);
-      }
-    }
-
-    if(challenge.id==='top10'){
-      const result=document.getElementById('playTop10Result');
-      if(screen===expectedScreen&&result&&!result.hidden)return storeDailyResult({completed:true,scored:false},challenge);
+    const state=window.UFC_FIND_LEADER?.state;
+    if(state?.daily&&state.phase==='complete'){
+      return storeDailyResult({completed:true,score:state.score,total:DAILY_GAME.maxScore},challenge);
     }
     return false;
   }
@@ -178,10 +124,49 @@
     if(current?.completed)return current;
     const legacy=readJson(legacyDailyStorageKey(challenge),null);
     if(legacy?.completed){
-      storeDailyResult({...legacy,scored:challenge.scored},challenge);
+      storeDailyResult(legacy,challenge);
       return readJson(dailyStorageKey(challenge),legacy);
     }
     return{};
+  }
+
+  async function syncOfficialDailyResult(force=false){
+    const challenge=dailyChallenge();
+    const syncKey=`find-leader:${challenge.challengeDay}`;
+    if(!force&&(officialDailyLoading||officialDailySyncKey===syncKey||dailyState().completed))return false;
+    const shared=window.UFC_PLAY_SHARED;
+    if(!shared?.client||!shared?.dailyContext)return false;
+    officialDailyLoading=true;
+    try{
+      const context=await shared.dailyContext('find-leader',DAILY_GAME.gameVersion,DAILY_GAME.maxScore);
+      let identity=null;
+      try{identity=await shared.resolveIdentity?.();}catch(_error){}
+      const displayName=text(identity?.member?.display_name).toLowerCase();
+      if(!displayName)return false;
+      const {data,error}=await shared.client.rpc('play_daily_leaderboard',{
+        p_game_type:'find-leader',
+        p_challenge_day:context?.challenge_day||challenge.challengeDay,
+        p_limit:100
+      });
+      if(error||!data?.ok)return false;
+      const row=(Array.isArray(data.rows)?data.rows:[]).find(item=>text(item?.display_name).toLowerCase()===displayName);
+      if(!row)return false;
+      const resolvedChallenge={
+        ...challenge,
+        challengeDay:text(context?.challenge_day)||challenge.challengeDay,
+        challengeKey:`find-leader:${text(context?.challenge_day)||challenge.challengeDay}`
+      };
+      storeDailyResult({
+        completed:true,
+        score:Number(row.official_score)||0,
+        total:Number(row.max_score)||DAILY_GAME.maxScore,
+        completedAt:row.completed_at||row.updated_at||new Date().toISOString()
+      },resolvedChallenge);
+      officialDailySyncKey=syncKey;
+      render();
+      return true;
+    }catch(_error){return false;}
+    finally{officialDailyLoading=false;}
   }
 
   function preferredEvent(){
@@ -196,9 +181,7 @@
     return upcoming[0]||events[0]||null;
   }
 
-  function normalizeCardSection(value){
-    return text(value).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
-  }
+  function normalizeCardSection(value){return text(value).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();}
 
   function eventState(){
     const event=preferredEvent();
@@ -227,12 +210,10 @@
 
   function profileFor(name){
     const target=text(name).toLowerCase();
-    return (window.RANKING_DATA?.fighters||[]).find(row=>text(row?.fighter).toLowerCase()===target)||null;
+    return(window.RANKING_DATA?.fighters||[]).find(row=>text(row?.fighter).toLowerCase()===target)||null;
   }
 
-  function fighterRecord(row){
-    return text(row?.visibleStats?.ufcRecord||row?.ufcRecord||profileFor(row?.fighter)?.ufcRecord);
-  }
+  function fighterRecord(row){return text(row?.visibleStats?.ufcRecord||row?.ufcRecord||profileFor(row?.fighter)?.ufcRecord);}
 
   function fighterDivision(row){
     const profile=profileFor(row?.fighter)||{};
@@ -274,10 +255,7 @@
     const storageKey=`ufc-home:spotlight:${day}`;
     const storedName=getLocal(storageKey);
     let row=rows.find(item=>item.fighter===storedName)||null;
-    if(!row){
-      row=rows[seededIndex(day,rows.length)];
-      setLocal(storageKey,row.fighter);
-    }
+    if(!row){row=rows[seededIndex(day,rows.length)];setLocal(storageKey,row.fighter);}
     const profile=profileFor(row.fighter)||{};
     const override=window.DISPLAY_OVERRIDES?.[row.fighter]||{};
     spotlightDay=day;
@@ -292,9 +270,7 @@
     return spotlightCache;
   }
 
-  function initials(value){
-    return text(value).split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase()||'UFC';
-  }
+  function initials(value){return text(value).split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase()||'UFC';}
 
   function fighterAvatarFor(member){
     const slug=text(member?.fighter_avatar_slug);
@@ -323,33 +299,21 @@
     return`<span class="home-war-avatar" title="${esc(avatar.label||member.display_name||'War Room member')}">${avatar.photo?`<img src="${esc(avatar.photo)}" alt="">`:`<span>${esc(avatar.initials)}</span>`}</span>`;
   }
 
-  function dailyVisualMarkup(challenge){
-    const visual=challenge.visual||challenge.id;
-    if(visual==='keep-cut')return'<div class="home-daily-target"><span>4 / 4</span><strong>K/C</strong><small>8 LOCKED CALLS</small></div><em>KEEP FOUR · CUT FOUR</em>';
-    if(visual==='better-than')return'<div class="home-daily-target"><span>?</span><strong>&gt;</strong><small>BUILD THE CLAIM</small></div><em>CHOOSE YOUR NUMBER</em>';
-    if(visual==='blind')return'<div class="home-daily-target"><span>A / B</span><strong>VS</strong><small>5 MATCHUPS</small></div><em>WHO RANKS HIGHER?</em>';
-    if(visual==='blind-rank')return'<div class="home-daily-target"><span>1 → 5</span><strong>#</strong><small>EVERY SLOT LOCKS</small></div><em>BLIND RANK FIVE</em>';
-    if(visual==='top10')return'<div class="home-daily-target"><span>1 → 10</span><strong>GOAT</strong><small>BUILD YOUR LIST</small></div><em>YOUR UFC TOP TEN</em>';
-    return'<div class="home-daily-target"><span>#1</span><strong>?</strong><small>10 → 1</small></div><em>LEAVE THE LEADER STANDING</em>';
-  }
-
   function dailyMarkup(){
     const challenge=dailyChallenge();
     const result=dailyState();
     const completed=Boolean(result.completed);
-    const scored=challenge.scored!==false;
-    const total=Number(result.total)||Number(challenge.maxScore)||10;
-    const status=completed?(scored&&Number.isFinite(Number(result.score))?`COMPLETED · ${Number(result.score)}/${total}`:'COMPLETED'):'NOT PLAYED';
-    const details=Array.isArray(challenge.details)&&challenge.details.length?challenge.details:['SAME DAILY SETUP'];
+    const total=Number(result.total)||DAILY_GAME.maxScore;
+    const status=completed?`COMPLETED · ${Number(result.score)||0}/${total}`:'NOT PLAYED';
     return`<section class="home-dashboard-card home-daily">
       <div class="home-daily-copy">
-        <div class="home-dashboard-kicker"><span>TODAY'S CHALLENGE</span><span>${esc(formatDailyDate(challenge.challengeDay||centralDateKey()))}</span></div>
-        <h2>${esc(challenge.title||'Today’s Challenge')}</h2>
-        <p>${esc(challenge.description||'Everyone gets the same UFC challenge today.')}</p>
-        <div class="home-daily-meta"><span class="home-daily-pill${completed?' complete':''}">${esc(status)}</span>${details.map(item=>`<span class="home-daily-pill">${esc(item)}</span>`).join('')}</div>
+        <div class="home-dashboard-kicker"><span>TODAY'S CHALLENGE</span><span>${esc(formatDailyDate(challenge.challengeDay))}</span></div>
+        <h2>Find the Leader</h2>
+        <p>${esc(DAILY_GAME.description)}</p>
+        <div class="home-daily-meta"><span class="home-daily-pill${completed?' complete':''}">${esc(status)}</span>${DAILY_GAME.details.map(item=>`<span class="home-daily-pill">${esc(item)}</span>`).join('')}</div>
         <button type="button" class="home-dashboard-action" data-home-action="daily">${completed?'PLAY AGAIN':'PLAY NOW'} →</button>
       </div>
-      <div class="home-daily-visual" aria-hidden="true">${dailyVisualMarkup(challenge)}</div>
+      <div class="home-daily-visual" aria-hidden="true"><div class="home-daily-target"><span>#1</span><strong>?</strong><small>10 → 1</small></div><em>LEAVE THE LEADER STANDING</em></div>
     </section>`;
   }
 
@@ -443,21 +407,12 @@
     const action=button.dataset.homeAction;
     if(action==='daily'){
       navigate('play');
-      window.setTimeout(()=>{
-        if(window.UFC_PLAY_DAILY_ROTATION?.openDaily)window.UFC_PLAY_DAILY_ROTATION.openDaily();
-        else if(window.UFC_PLAY_HUB?.openDailyChallenge)window.UFC_PLAY_HUB.openDailyChallenge();
-        else window.UFC_PLAY_HUB?.openGame?.(dailyChallenge().id,{daily:true});
-      },80);
+      window.setTimeout(()=>window.UFC_PLAY_HUB?.openDailyChallenge?.(),80);
     }else if(action==='picks')navigate('picks');
     else if(action==='war-room')navigate('war-room');
     else if(action==='matchup')window.UFC_PICKS_MATCHUP_SPOTLIGHT?.open?.(button.dataset.fightId,button);
     else if(action==='spotlight')openProfileDirect(button.dataset.fighter);
   });
-
-  document.addEventListener('click',event=>{
-    if(!event.target.closest?.('[data-kc-choice],[data-better-than-lock],[data-br-slot],[data-br-place],[data-play-compare]'))return;
-    window.setTimeout(()=>{if(captureDailyCompletion())scheduleRender(0);},100);
-  },true);
 
   const drawer=document.getElementById('drawer');
   if(drawer){
@@ -468,10 +423,8 @@
 
   window.addEventListener('ufc-play-game-complete',event=>{
     const detail=event.detail||{};
-    const challenge=dailyChallenge();
-    const gameType=challenge.gameType||challenge.id;
-    if(!detail.daily||detail.gameType!==gameType)return;
-    storeDailyResult({completed:true,scored:challenge.scored,score:detail.score,total:detail.maxScore||challenge.maxScore},challenge);
+    if(!detail.daily||detail.gameType!=='find-leader')return;
+    storeDailyResult({completed:true,score:detail.score,total:detail.maxScore||DAILY_GAME.maxScore});
     scheduleRender(0);
   });
 
@@ -479,33 +432,38 @@
     captureDailyCompletion();
     if(event.detail?.destination==='home'){
       render();
-      refreshWarRoom();
+      window.setTimeout(()=>syncOfficialDailyResult(),50);
+      window.setTimeout(()=>refreshWarRoom(),120);
     }
   });
 
   [
-    'ufc-play-hub-ready','ufc-play-daily-challenge-updated','ufc-play-daily-rotation-ready',
+    'ufc-play-hub-ready','ufc-play-shared-ready','ufc-play-profile-ready',
     'ufc-picks-matchup-spotlight-ready','ufc-scoring-pipeline-ready','ufc-production-ranking-ready',
-    'ufc-play-profile-ready','ufc-app-profile-updated','ufc-canonical-group-ready'
-  ].forEach(name=>window.addEventListener(name,()=>scheduleRender(80)));
-  window.addEventListener('storage',()=>scheduleRender(50));
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)scheduleRender(80);});
-  window.setInterval(()=>{
-    captureDailyCompletion();
-    if(home.classList.contains('active-view')){
-      render();
-      refreshWarRoom();
-    }
-  },12000);
+    'ufc-app-profile-updated','ufc-canonical-group-ready'
+  ].forEach(name=>window.addEventListener(name,()=>{
+    scheduleRender(40);
+    if(name==='ufc-play-shared-ready'||name==='ufc-play-profile-ready')window.setTimeout(()=>syncOfficialDailyResult(true),60);
+  }));
+
+  window.addEventListener('storage',()=>scheduleRender(40));
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden)return;
+    scheduleRender(40);
+    window.setTimeout(()=>syncOfficialDailyResult(),80);
+  });
 
   injectHomeEnhancementStyles();
   render();
-  if(home.classList.contains('active-view'))refreshWarRoom();
+  window.setTimeout(()=>syncOfficialDailyResult(),180);
+  if(home.classList.contains('active-view'))window.setTimeout(()=>refreshWarRoom(),220);
+
   window.UFC_HOME_DASHBOARD={
     version:VERSION,
     render,
     refreshWarRoom,
     captureDailyCompletion,
+    syncOfficialDailyResult,
     get daily(){return dailyChallenge();},
     get spotlight(){return spotlightCache;}
   };
