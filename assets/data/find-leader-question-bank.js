@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='find-leader-question-bank-20260716c-eleven-challenges';
+  const VERSION='find-leader-question-bank-20260716d-twenty-challenges';
   const CANDIDATE_COUNT=10;
   const FINISH_METHODS=new Set(['ko-tko','submission','doctor-stoppage']);
   const CHAMPION_OPPONENT_STATUSES=new Set(['reigning-champion','interim-champion','former-champion']);
@@ -105,13 +105,102 @@
       shortLabel:'UNFINISHED WINS',
       since:'2015-01-01',
       metric:'wins-unfinished'
+    },
+    {
+      id:'ufc-wins-all-time',
+      question:'Who has the most UFC wins of all time?',
+      context:'Every counted UFC victory in the complete UFC fight ledger.',
+      statLabel:'all-time UFC wins',
+      shortLabel:'UFC WINS',
+      since:'1993-11-12',
+      metric:'wins'
+    },
+    {
+      id:'ufc-finishes-all-time',
+      question:'Who has the most UFC finishes of all time?',
+      context:'Every counted UFC victory by knockout, submission, or doctor stoppage.',
+      statLabel:'all-time UFC finishes',
+      shortLabel:'FINISHES',
+      since:'1993-11-12',
+      metric:'finishes'
+    },
+    {
+      id:'title-fight-wins-all-time',
+      question:'Who has the most UFC title-fight wins of all time?',
+      context:'Every official UFC title-fight victory in the complete UFC fight ledger.',
+      statLabel:'all-time UFC title-fight wins',
+      shortLabel:'TITLE WINS',
+      since:'1993-11-12',
+      metric:'title-fight-wins'
+    },
+    {
+      id:'first-round-finishes-all-time',
+      question:'Who has the most first-round UFC finishes of all time?',
+      context:'Every counted UFC victory by knockout, submission, or doctor stoppage in Round 1.',
+      statLabel:'all-time first-round UFC finishes',
+      shortLabel:'ROUND 1 FINISHES',
+      since:'1993-11-12',
+      metric:'first-round-finishes'
+    },
+    {
+      id:'decision-wins-all-time',
+      question:'Who has the most UFC decision wins of all time?',
+      context:'Every counted UFC victory recorded as a decision.',
+      statLabel:'all-time UFC decision wins',
+      shortLabel:'DECISION WINS',
+      since:'1993-11-12',
+      metric:'decision-wins'
+    },
+    {
+      id:'five-round-scheduled-wins-all-time',
+      question:'Who has the most UFC wins in fights scheduled for five rounds?',
+      context:'Counted UFC victories in bouts officially scheduled for five rounds.',
+      statLabel:'UFC wins in five-round scheduled fights',
+      shortLabel:'FIVE-ROUND WINS',
+      since:'1993-11-12',
+      metric:'five-round-scheduled-wins'
+    },
+    {
+      id:'ufc-wins-2005-2012',
+      question:'Who had the most UFC wins from 2005 through 2012?',
+      context:'Counted UFC victories from January 1, 2005 through December 31, 2012.',
+      statLabel:'UFC wins from 2005 through 2012',
+      shortLabel:'ERA WINS',
+      since:'2005-01-01',
+      through:'2012-12-31',
+      metric:'wins'
+    },
+    {
+      id:'ufc-wins-2013-2019',
+      question:'Who had the most UFC wins from 2013 through 2019?',
+      context:'Counted UFC victories from January 1, 2013 through December 31, 2019.',
+      statLabel:'UFC wins from 2013 through 2019',
+      shortLabel:'ERA WINS',
+      since:'2013-01-01',
+      through:'2019-12-31',
+      metric:'wins'
+    },
+    {
+      id:'ufc-wins-since-2022',
+      question:'Who has the most UFC wins since 2022?',
+      context:'Counted UFC victories on or after January 1, 2022.',
+      statLabel:'UFC wins since 2022',
+      shortLabel:'UFC WINS',
+      since:'2022-01-01',
+      metric:'wins'
     }
   ];
 
   const normal=value=>String(value||'').trim().toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
   const round=value=>Math.round(Number(value)||0);
   const clone=value=>JSON.parse(JSON.stringify(value));
-  const inWindow=(fight,definition)=>Boolean(fight)&&(!definition?.since||String(fight.date||'')>=definition.since);
+  const inWindow=(fight,definition)=>{
+    if(!fight)return false;
+    const date=String(fight.date||'');
+    if(definition?.since&&date<definition.since)return false;
+    if(definition?.through&&date>definition.through)return false;
+    return true;
+  };
   const isFinish=fight=>FINISH_METHODS.has(fight?.method?.category);
 
   function isTitleFight(fight){
@@ -128,6 +217,8 @@
     if(definition.metric==='knockouts')return fight?.method?.category==='ko-tko';
     if(definition.metric==='title-fight-finishes')return isTitleFight(fight)&&isFinish(fight);
     if(definition.metric==='first-round-finishes')return isFinish(fight)&&Number(fight?.method?.round)===1;
+    if(definition.metric==='decision-wins')return fight?.method?.category==='decision';
+    if(definition.metric==='five-round-scheduled-wins')return Number(fight?.scheduledRounds)===5;
     if(definition.metric==='champion-wins')return CHAMPION_OPPONENT_STATUSES.has(fight?.opponentContext?.championStatus);
     if(definition.metric==='wins-unfinished')return true;
     return false;
@@ -210,6 +301,7 @@
         statLabel:definition.statLabel,
         shortLabel:definition.shortLabel,
         since:definition.since,
+        through:definition.through||null,
         candidateCount:CANDIDATE_COUNT,
         leaderId:leader.id,
         leaderValue,
