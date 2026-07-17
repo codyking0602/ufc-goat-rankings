@@ -23,8 +23,8 @@ on:
       - 'assets/js/octagon-verdict-compare-launcher.js'
       - 'assets/js/octagon-verdict-data.js'
       - 'tools/build-octagon-verdict-data.js'
-      - 'scripts/materialize-display-overrides.mjs'
       - 'scripts/materialize-octagon-verdict-data.mjs'
+      - 'scripts/materialize-display-overrides.mjs'
       - 'scripts/sync-production-cache-keys.mjs'
       - 'scripts/test-production-browser.mjs'
       - 'scripts/test-profile-card-hotfix.mjs'
@@ -94,6 +94,7 @@ jobs:
           const feed=JSON.parse(fs.readFileSync('assets/data/octagon-verdict-data.json','utf8'));
           const index=JSON.parse(fs.readFileSync('assets/data/octagon-verdict/index.json','utf8'));
           const pettis=JSON.parse(fs.readFileSync('assets/data/octagon-verdict/fighters/anthony-pettis.json','utf8'));
+          const overrides=fs.readFileSync('assets/data/display-overrides.js','utf8');
           assert.equal(feed.source,'calculated-browser-runtime');
           assert.equal(feed.fighterCount,80);
           assert.equal(feed.fighters.length,80);
@@ -112,16 +113,20 @@ jobs:
           assert.equal(pettis.ufcRecord,'11-9');
           assert.equal(pettis.titleFightWins,2);
           assert.equal(pettis.adjustedTitleWins,2);
-          assert.equal(pettis.topFiveWins,4);
+          assert.equal(pettis.topFiveWins,3);
           assert.equal(pettis.rankedWins,8);
           assert.equal(pettis.primeRecord,'7-6');
           assert.equal(pettis.roundsWonPct,34.38);
           assert.equal(pettis.finishRatePct,63.64);
+          assert.equal(pettis.activeEliteYears,6.61);
           assert.equal(pettis.timesFinishedPrime,3);
           assert.equal(pettis.photoUrl.startsWith('assets/fighters/anthony-pettis.webp'),true);
           assert.equal(pettis.thumbUrl.startsWith('assets/fighters/anthony-pettis-thumb.webp'),true);
-          assert.equal(pettis.watchUrl,undefined);
-          assert.equal(pettis.signatureFightUrl,undefined);
+          assert.equal(pettis.watchUrl,'https://youtube.com/shorts/BiPvl_p6JqY?is=gwu2EsszP22T9us-');
+          assert.equal(pettis.signatureFightUrl,'https://youtu.be/smbYO1-yqtA?is=lhtpeK1nOCqGUvdc');
+          assert.ok(overrides.includes('Anthony “Showtime” Pettis'));
+          assert.ok(overrides.includes('BiPvl_p6JqY'));
+          assert.ok(overrides.includes('smbYO1-yqtA'));
           assert.ok(feed.divisionBoards.Lightweight.some(row=>row.fighter==='Anthony Pettis'));
           assert.ok(feed.divisionBoards.Featherweight.some(row=>row.fighter==='Anthony Pettis'));
           assert.ok(feed.divisionBoards.Welterweight.some(row=>row.fighter==='Anthony Pettis'));
