@@ -1,3 +1,4 @@
+# Main execution source v4
 name: Run Quinton Rampage Jackson Integration
 
 on:
@@ -31,6 +32,10 @@ jobs:
           source = Path('.github/workflows/integrate-quinton-jackson.yml').read_text()
           marker = "python3 - <<'PY'\n"
           body = source.split(marker, 1)[1].split("\n          PY", 1)[0]
+          body = body.replace(
+              "i=s.rindex('\\n\\n};'); s=s[:i]+OVERRIDE+s[i:]",
+              "i=s.rfind('\\n\\n};'); i=i if i>=0 else s.rfind('\\n};');\n              if i<0: raise RuntimeError('display-overrides terminator not found');\n              s=s[:i]+OVERRIDE+s[i:]"
+          )
           exec(textwrap.dedent(body), {})
 
           p = Path('assets/data/royce-watch-links.js')
@@ -46,7 +51,9 @@ jobs:
                   "      signatureFightLabel:'Watch Signature Fight'\n"
                   "    },\n"
               )
-              s = s.replace(anchor, block + anchor)
+              if anchor not in s:
+                  raise RuntimeError('watch-link insertion anchor not found')
+              s = s.replace(anchor, block + anchor, 1)
           p.write_text(s)
 
           p = Path('index.html')
@@ -80,6 +87,7 @@ jobs:
       - name: Run production browser audit
         shell: bash
         run: |
+          exec > >(tee quinton-browser-audit.log) 2>&1
           set -euo pipefail
           npm init -y >/dev/null 2>&1
           npm install --no-save playwright@1.52.0 >/dev/null 2>&1
@@ -88,7 +96,7 @@ jobs:
           SERVER_PID=$!
           trap 'kill $SERVER_PID || true' EXIT
           node - <<'NODE'
-          const fs=require('fs'),{chromium}=require('playwright');
+          const fs=require('fs'),path=require('path'),{chromium}=require('playwright');
           (async()=>{
             const browser=await chromium.launch({headless:true});
             const page=await browser.newPage();
@@ -98,11 +106,14 @@ jobs:
             await page.waitForFunction(()=>['ready','error'].includes(window.UFC_PRODUCTION_RANKING_BOOTSTRAP?.status),null,{timeout:120000});
             const x=await page.evaluate(()=>{
               const b=window.UFC_PRODUCTION_RANKING_BOOTSTRAP||{};
-              const row=[...(window.RANKING_DATA?.men||[]),...(window.RANKING_DATA?.women||[])].find(r=>r.fighter==='Quinton Jackson');
+              const men=window.RANKING_DATA?.men||[];
+              const women=window.RANKING_DATA?.women||[];
+              const row=[...men,...women].find(r=>r.fighter==='Quinton Jackson');
               const links=window.DISPLAY_OVERRIDES?.['Quinton Jackson']||{};
               return {
                 boot:{status:b.status,error:b.error||null,report:b.report||null,divisionReport:b.divisionReport||null},
                 row,
+                allRows:[...men.map(row=>({group:'men',row})),...women.map(row=>({group:'women',row}))],
                 ov:(window.OCTAGON_VERDICT_DATA?.fighters||[]).find(r=>r.name==='Quinton Jackson')||null,
                 category:window.UFC_CATEGORY_CALCULATORS?.entryFor?.('Quinton Jackson')||null,
                 photoSync:window.UFC_CALCULATED_ROSTER_PHOTO_SYNC||null,
@@ -113,25 +124,70 @@ jobs:
             if(x.boot.status!=='ready'||x.boot.report?.fighterCount!==78)throw Error('bootstrap '+JSON.stringify(x.boot));
             if(!x.row||x.category?.status!=='complete')throw Error('Quinton calculation missing '+JSON.stringify(x.category));
             if(!x.links.watchUrl.includes('JVSaguPG9nY')||!x.links.signatureFightUrl.includes('W3Ce7KPszhU'))throw Error('watch links missing '+JSON.stringify(x.links));
+            if(x.allRows.length!==78)throw Error('runtime roster count '+x.allRows.length);
             if(errors.length)throw Error(errors.join(' | '));
-            let o=x.ov||{slug:'quinton-jackson',name:'Quinton Jackson',group:'men',rank:x.row.rank,appOvr:x.row.overallOvr,totalScore:x.row.totalScore,categories:{championship:x.row.championship,opponentQuality:x.row.opponentQuality,primeDominance:x.row.primeDominance,longevity:x.row.longevity,apexPeak:x.row.apexPeak,lossPenalty:x.row.penalty,divisionEraDepth:x.row.eraDepthAdjustment},weightedScoreBreakdown:x.row.weightedScoreBreakdown,division:x.row.primaryDivision,tag:x.row.resumeTag||'High-impact light heavyweight champion',ufcRecord:x.row.ufcRecord,titleFightWins:x.row.titleFightWins,adjustedTitleWins:x.row.adjustedTitleWins,topFiveWins:x.row.topFiveWins,rankedWins:x.row.rankedWins,primeRecord:x.row.primeRecord,roundsWonPct:x.row.roundsWonPct,finishRatePct:x.row.finishRatePct,activeEliteYears:x.row.activeEliteYears,timesFinishedPrime:x.row.timesFinishedPrime,...x.copy};
+
+            const fighterDir='assets/data/octagon-verdict/fighters';
+            const indexPath='assets/data/octagon-verdict/index.json';
+            const currentIndex=JSON.parse(fs.readFileSync(indexPath,'utf8'));
+            const slugByName=new Map((currentIndex.fighters||[]).map(f=>[f.name,f.slug]));
+            const slugify=name=>name.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+
+            for(const item of x.allRows){
+              const r=item.row;
+              const slug=slugByName.get(r.fighter)||slugify(r.fighter);
+              const filePath=path.join(fighterDir,`${slug}.json`);
+              const current=fs.existsSync(filePath)?JSON.parse(fs.readFileSync(filePath,'utf8')):{};
+              const divisionBoards=Array.isArray(r.divisionBoards)&&r.divisionBoards.length?r.divisionBoards:current.divisionBoards;
+              if(!Array.isArray(divisionBoards))throw Error(`runtime divisionBoards missing for ${r.fighter}`);
+              const updated={
+                ...current,
+                slug,
+                name:r.fighter,
+                group:item.group,
+                rank:r.rank,
+                appOvr:r.overallOvr,
+                totalScore:r.totalScore,
+                division:r.primaryDivision||r.division||current.division,
+                divisionBoards,
+                tag:r.resumeTag||current.tag||''
+              };
+              fs.writeFileSync(filePath,JSON.stringify(updated)+'\n');
+            }
+
+            const qPath=path.join(fighterDir,'quinton-jackson.json');
+            const qBase=JSON.parse(fs.readFileSync(qPath,'utf8'));
+            let o={...qBase,...(x.ov||{}),slug:'quinton-jackson',name:'Quinton Jackson',group:'men',rank:x.row.rank,appOvr:x.row.overallOvr,totalScore:x.row.totalScore,categories:{championship:x.row.championship,opponentQuality:x.row.opponentQuality,primeDominance:x.row.primeDominance,longevity:x.row.longevity,apexPeak:x.row.apexPeak,lossPenalty:x.row.penalty,divisionEraDepth:x.row.eraDepthAdjustment},weightedScoreBreakdown:x.row.weightedScoreBreakdown,division:x.row.primaryDivision,divisionBoards:qBase.divisionBoards,tag:x.row.resumeTag||'High-impact light heavyweight champion',ufcRecord:x.row.ufcRecord,titleFightWins:x.row.titleFightWins,adjustedTitleWins:x.row.adjustedTitleWins,topFiveWins:x.row.topFiveWins,rankedWins:x.row.rankedWins,primeRecord:x.row.primeRecord,roundsWonPct:x.row.roundsWonPct,finishRatePct:x.row.finishRatePct,activeEliteYears:x.row.activeEliteYears,timesFinishedPrime:x.row.timesFinishedPrime,...x.copy};
             o={...o,displayName:'Quinton “Rampage” Jackson',photoStatus:'verified',photoUrl:'assets/fighters/quinton-jackson.webp',thumbUrl:'assets/fighters/quinton-jackson-thumb.webp',watchUrl:x.links.watchUrl,signatureFightUrl:x.links.signatureFightUrl};
-            fs.writeFileSync('assets/data/octagon-verdict/fighters/quinton-jackson.json',JSON.stringify(o)+'\n');
+            fs.writeFileSync(qPath,JSON.stringify(o)+'\n');
             fs.mkdirSync('assets/data/octagon-verdict/audits',{recursive:true});
             fs.writeFileSync('assets/data/octagon-verdict/audits/quinton-jackson-runtime-audit.json',JSON.stringify({generatedAt:new Date().toISOString(),fighterCount:x.boot.report.fighterCount,productionStatus:x.boot.status,categoryStatus:x.category.status,row:x.row,divisionReport:x.boot.divisionReport,photoSync:x.photoSync,watchLinks:x.links,pageErrors:errors},null,2)+'\n');
-            console.log(JSON.stringify({rank:o.rank,ovr:o.appOvr,totalScore:o.totalScore,links:x.links}));
+            console.log(JSON.stringify({rank:o.rank,ovr:o.appOvr,totalScore:o.totalScore,links:x.links,syncedFighters:x.allRows.length}));
             await browser.close();
-          })().catch(e=>{console.error(e);process.exit(1)});
+          })().catch(e=>{console.error(e.stack||e);process.exit(1)});
           NODE
           node scripts/rebuild-octagon-verdict-index.mjs
+
+      - name: Persist browser audit failure
+        if: failure()
+        shell: bash
+        run: |
+          cp /tmp/ufc-http.log quinton-http-server.log 2>/dev/null || true
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add quinton-browser-audit.log quinton-http-server.log assets/data/octagon-verdict/audits/quinton-jackson-runtime-audit.json assets/data/octagon-verdict/fighters/quinton-jackson.json 2>/dev/null || true
+          git commit -m 'Capture Quinton browser audit failure [skip ci]' || true
+          git push origin HEAD:${{ github.head_ref || 'main' }}
 
       - name: Commit verified production output
         shell: bash
         run: |
           set -euo pipefail
-          node -e "const x=require('./assets/data/octagon-verdict/fighters/quinton-jackson.json');if(!x.rank||!x.appOvr||!Number.isFinite(x.totalScore)||x.photoStatus!=='verified'||!x.watchUrl||!x.signatureFightUrl)throw Error('invalid Quinton object');console.log(JSON.stringify({rank:x.rank,ovr:x.appOvr,totalScore:x.totalScore}))"
+          node -e "const x=require('./assets/data/octagon-verdict/fighters/quinton-jackson.json');if(!x.rank||!x.appOvr||!Number.isFinite(x.totalScore)||x.photoStatus!=='verified'||!x.watchUrl||!x.signatureFightUrl||!Array.isArray(x.divisionBoards))throw Error('invalid Quinton object');console.log(JSON.stringify({rank:x.rank,ovr:x.appOvr,totalScore:x.totalScore}))"
           node -e "const x=require('./assets/data/octagon-verdict/index.json');if(x.fighterCount!==78||!x.fighters.some(f=>f.slug==='quinton-jackson'))throw Error('index missing Quinton')"
           rm -rf node_modules package.json package-lock.json
+          rm -f quinton-browser-audit.log quinton-http-server.log
+          rm -f .github/workflows/run-quinton-integration.yml .github/workflows/integrate-quinton-jackson.yml
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
