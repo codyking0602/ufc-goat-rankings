@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='octagon-message-board-20260717a';
+  const VERSION='octagon-message-board-20260717b';
   const CANONICAL_CODE='GOAT26';
   const TOKEN_KEY=`ufc-picks:group:${CANONICAL_CODE}`;
   const state={snapshot:null,weekStart:null,replyTo:null,loading:false,busy:false,mounted:false};
@@ -161,7 +161,7 @@
         <button type="button" data-octagon-reaction="like" class="${message.my_reaction==='like'?'active':''}" ${canReact?'':'disabled'}>👍 ${Number(message.likes)||0}</button>
         <button type="button" data-octagon-reaction="dislike" class="${message.my_reaction==='dislike'?'active':''}" ${canReact?'':'disabled'}>👎 ${Number(message.dislikes)||0}</button>
         ${canReply?'<button type="button" data-octagon-reply>Reply</button>':''}
-        ${message.can_delete?'<button type="button" class="delete" data-octagon-delete>Delete</button>':''}
+        ${message.can_delete&&boardCurrent?'<button type="button" class="delete" data-octagon-delete>Delete</button>':''}
       </div>`}
     </article>`;
   }
@@ -235,11 +235,13 @@
     const count=root()?.querySelector('[data-octagon-count]');
     const submit=root()?.querySelector('[data-octagon-submit]');
     if(!input||!count||!submit)return;
+    const current=Boolean(state.snapshot?.board?.is_current);
+    input.disabled=!current||state.busy;
     const length=input.value.length;
     count.textContent=`${length} / 500`;
     count.classList.toggle('over',length>500);
     submit.textContent=state.busy?'POSTING…':state.replyTo?'REPLY':'POST';
-    submit.disabled=state.busy||input.disabled||length<1||length>500||!input.value.trim();
+    submit.disabled=state.busy||!current||length<1||length>500||!input.value.trim();
   }
 
   async function context(){
@@ -336,12 +338,14 @@
       setNotice(text(error?.message)||'The reaction could not be saved.','error');
     }finally{
       state.busy=false;
+      updateComposer();
     }
   }
 
   async function removeMessage(messageId){
     if(state.busy||!window.confirm('Delete this message?'))return;
     state.busy=true;
+    updateComposer();
     setNotice('Deleting message…');
     try{
       const {client,token}=await context();
@@ -358,6 +362,7 @@
       setNotice(text(error?.message)||'The message could not be deleted.','error');
     }finally{
       state.busy=false;
+      updateComposer();
     }
   }
 
