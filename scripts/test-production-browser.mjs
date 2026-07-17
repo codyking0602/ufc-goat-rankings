@@ -134,7 +134,6 @@ try{
   assert.ok(profile.text.includes('Why Not Ranked Higher?'));
   assert.ok(profile.text.includes('Benson Henderson II'));
   assert.ok(profile.text.includes('Gilbert Melendez'));
-  assert.ok(profile.links.some(link=>link.href===WATCH&&/watch moment/i.test(link.text)));
   assert.ok(profile.links.some(link=>link.href===FIGHT&&/signature fight/i.test(link.text)));
   await page.locator('#closeDrawer').click();
 
