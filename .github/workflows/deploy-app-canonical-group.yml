@@ -1,4 +1,4 @@
-name: Deploy GOAT26 Canonical Group Bridge
+name: Validate GOAT26 Canonical Group Bridge
 
 on:
   push:
@@ -12,7 +12,7 @@ permissions:
   contents: write
 
 jobs:
-  deploy:
+  validate-and-wire:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,7 +23,9 @@ jobs:
       - name: Verify GOAT26 migration safeguards
         run: |
           grep -q "code='GOAT26'" supabase/app-canonical-group-goat26-phase.sql
-          grep -q "lower(trim(owner_member.display_name))='cody'" supabase/app-canonical-group-goat26-phase.sql
+          grep -q "array\['cody','daddy','rhonda','shane','tyler'\]" supabase/app-canonical-group-goat26-phase.sql
+          grep -q "app_profile_resolve" supabase/app-canonical-group-goat26-phase.sql
+          grep -q "app_profile_login" supabase/app-canonical-group-goat26-phase.sql
           grep -q "app_canonical_group_audit" supabase/app-canonical-group-goat26-phase.sql
       - name: Wire canonical identity bridge into the live page
         run: |
@@ -35,22 +37,22 @@ jobs:
           text = path.read_text()
 
           anchor_pattern = r'(  <script src="assets/data/supabase-config\.js\?v=[^"]+"></script>)'
-          bridge_line = '  <script src="assets/js/app-canonical-group.js?v=app-canonical-group-20260717a"></script>'
-          if bridge_line not in text:
+          bridge_line = '  <script src="assets/js/app-canonical-group.js?v=app-canonical-group-20260717b"></script>'
+          if 'assets/js/app-canonical-group.js' not in text:
               match = re.search(anchor_pattern, text)
               if not match:
                   raise SystemExit('Supabase config script anchor not found.')
               text = text[:match.end()] + '\n' + bridge_line + text[match.end():]
 
           text = re.sub(
-              r'<script src="assets/js/app-canonical-group\.js\?v=[^"]+"></script>',
-              bridge_line.strip(),
+              r'  <script src="assets/js/app-canonical-group\.js\?v=[^"]+"></script>',
+              bridge_line,
               text,
               count=1,
           )
           text = re.sub(
               r'<meta name="app-build" content="[^"]+" />',
-              '<meta name="app-build" content="20260717-goat26-canonical-group" />',
+              '<meta name="app-build" content="20260717-goat26-canonical-group-b" />',
               text,
               count=1,
           )
@@ -65,5 +67,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Load GOAT26 canonical identity bridge'
+          git commit -m 'Load locked GOAT26 identity bridge'
           git push
