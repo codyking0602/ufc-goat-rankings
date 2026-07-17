@@ -5,6 +5,9 @@ on:
   push:
     branches: [main]
     paths: [.github/workflows/run-quinton-integration.yml]
+  pull_request:
+    branches: [main]
+    paths: [.github/workflows/run-quinton-integration.yml]
 
 permissions:
   contents: write
@@ -16,6 +19,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.head_ref || 'main' }}
 
       - name: Apply production integration and watch links
         shell: bash
@@ -128,9 +132,8 @@ jobs:
           node -e "const x=require('./assets/data/octagon-verdict/fighters/quinton-jackson.json');if(!x.rank||!x.appOvr||!Number.isFinite(x.totalScore)||x.photoStatus!=='verified'||!x.watchUrl||!x.signatureFightUrl)throw Error('invalid Quinton object');console.log(JSON.stringify({rank:x.rank,ovr:x.appOvr,totalScore:x.totalScore}))"
           node -e "const x=require('./assets/data/octagon-verdict/index.json');if(x.fighterCount!==78||!x.fighters.some(f=>f.slug==='quinton-jackson'))throw Error('index missing Quinton')"
           rm -rf node_modules package.json package-lock.json
-          rm -f .github/workflows/integrate-quinton-jackson.yml .github/workflows/run-quinton-integration.yml
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
           git commit -m 'Complete Quinton Rampage Jackson production integration'
-          git push origin main
+          git push origin HEAD:${{ github.head_ref || 'main' }}
