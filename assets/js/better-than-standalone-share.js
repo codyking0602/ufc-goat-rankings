@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='better-than-standalone-share-20260717e-find-leader-record-book';
+  const VERSION='better-than-standalone-share-20260717f-find-leader-fifty-balanced';
   const FIND_LEADER_VERSION='find-leader-20260716c-daily-elimination';
   let creating=false;
 
@@ -23,10 +23,22 @@
   function patchFindLeaderHubCopy(){
     const card=document.querySelector('.play-game-card[data-open-game="find-leader"]');
     const description=card?.querySelector('.play-game-copy small');
-    if(description)description.textContent='Eliminate nine fighters without removing the verified leader. Questions now combine the canonical ledger and official UFC Record Book.';
+    if(description)description.textContent='Eliminate nine fighters without removing the verified leader. Fifty questions rotate across eras, filters, main events, and official UFC stats.';
+  }
+
+  function patchBalancedDailySetup(){
+    const game=window.UFC_FIND_LEADER;
+    const bank=window.UFC_FIND_LEADER_QUESTION_BANK;
+    if(!game||!bank?.daily||game.balancedDailyVersion===bank.version)return false;
+    const fallback=typeof game.dailySetup==='function'?game.dailySetup.bind(game):()=>null;
+    game.dailySetup=context=>bank.daily(context)||fallback(context);
+    game.balancedDailyVersion=bank.version;
+    document.documentElement.setAttribute('data-find-leader-daily-schedule',bank.version);
+    return true;
   }
 
   function loadDailyTools(){
+    patchBalancedDailySetup();
     const loadClients=()=>{
       loadScriptOnce('script[data-play-daily-rotation-v3]','assets/js/play-daily-rotation.js?v=play-daily-rotation-20260716d-all-six-games','playDailyRotationV3');
       loadScriptOnce('script[data-play-daily-leaderboard-community]','assets/js/play-daily-leaderboard.js?v=play-daily-leaderboard-20260716d-community-days','playDailyLeaderboardCommunity');
@@ -46,21 +58,22 @@
       document.head.appendChild(link);
     }
 
+    const gameReady=()=>{patchBalancedDailySetup();loadDailyTools();};
     const loadGame=()=>{
       if(window.UFC_FIND_LEADER?.version!==FIND_LEADER_VERSION){
         document.getElementById('playFindLeaderPanel')?.remove();
-        loadScriptOnce('script[data-find-leader-daily-elimination]','assets/js/find-leader.js?v=find-leader-20260716c-daily-elimination','findLeaderDailyElimination',loadDailyTools);
-      }else loadDailyTools();
+        loadScriptOnce('script[data-find-leader-daily-elimination]','assets/js/find-leader.js?v=find-leader-20260716c-daily-elimination','findLeaderDailyElimination',gameReady);
+      }else gameReady();
     };
     const loadQuestionBank=()=>loadScriptOnce(
-      'script[data-find-leader-question-bank-record-book]',
-      'assets/data/find-leader-question-bank.js?v=find-leader-question-bank-20260717b-forty-four-record-book',
-      'findLeaderQuestionBankRecordBook',
+      'script[data-find-leader-question-bank-fifty]',
+      'assets/data/find-leader-question-bank.js?v=find-leader-question-bank-20260717c-fifty-balanced',
+      'findLeaderQuestionBankFifty',
       loadGame
     );
     loadScriptOnce(
       'script[data-find-leader-record-book]',
-      'assets/data/find-leader-record-book-data.js?v=find-leader-record-book-20260717a-official-snapshot',
+      'assets/data/find-leader-record-book-data.js?v=find-leader-record-book-20260717b-fifty-question-data',
       'findLeaderRecordBook',
       loadQuestionBank
     );
@@ -118,14 +131,8 @@
       if(!identity)return;
       if(trigger)trigger.textContent='CREATING LINK…';
       const {data,error}=await client.rpc('play_create_challenge',{
-        p_game_type:'better-than',
-        p_game_version:'better-than-subjective-v1',
-        p_group_code:identity.groupCode,
-        p_member_token:identity.memberToken,
-        p_setup:exported.setup,
-        p_result:exported.result,
-        p_metadata:{comparison:'better-than-subjective-claim',route:'standalone',client:VERSION},
-        p_expires_days:365
+        p_game_type:'better-than',p_game_version:'better-than-subjective-v1',p_group_code:identity.groupCode,p_member_token:identity.memberToken,
+        p_setup:exported.setup,p_result:exported.result,p_metadata:{comparison:'better-than-subjective-claim',route:'standalone',client:VERSION},p_expires_days:365
       });
       if(error)throw error;
       if(!data?.ok)throw new Error(data?.error||'Challenge link could not be created.');
