@@ -1,6 +1,7 @@
 (function(){
   'use strict';
 
+  const VERSION='picks-matchup-spotlight-20260717d-home-bridge';
   const SPOTLIGHTS={
     'okc-du-plessis-usman':{
       kicker:'MAIN EVENT · 5 ROUNDS · MIDDLEWEIGHT',
@@ -34,7 +35,7 @@
   let lastFocus=null;
 
   function ensureStyles(){
-    if(document.querySelector('link[data-picks-matchup-spotlight]')) return;
+    if(document.querySelector('link[data-picks-matchup-spotlight]'))return;
     const link=document.createElement('link');
     link.rel='stylesheet';
     link.href='assets/css/picks-matchup-spotlight.css?v=picks-matchup-spotlight-20260713b-contrast';
@@ -44,7 +45,7 @@
 
   function ensureModal(){
     let modal=document.getElementById('picksMatchupSpotlight');
-    if(modal) return modal;
+    if(modal)return modal;
     modal=document.createElement('div');
     modal.id='picksMatchupSpotlight';
     modal.className='picks-spotlight-modal';
@@ -71,13 +72,13 @@
   }
 
   function renderSpotlight(data){
-    const clipLabel=data.clipLabel || 'Watch Fight Spotlight';
+    const clipLabel=data.clipLabel||'Watch Fight Spotlight';
     return `<div class="picks-spotlight-hero">
       <div class="picks-spotlight-kicker">${safe(data.kicker)}</div>
       <div class="picks-spotlight-fighters">${fighterHero(data.red,'red')}<div class="picks-spotlight-vs">VS</div>${fighterHero(data.blue,'blue')}</div>
     </div>
     <div class="picks-spotlight-body">
-      <section class="picks-spotlight-preview"><span>FIGHT PREVIEW</span><p>${safe(data.preview)}</p>${data.clipUrl ? `<a href="${safe(data.clipUrl)}" target="_blank" rel="noopener noreferrer">${safe(clipLabel)} ↗</a>` : ''}</section>
+      <section class="picks-spotlight-preview"><span>FIGHT PREVIEW</span><p>${safe(data.preview)}</p>${data.clipUrl?`<a href="${safe(data.clipUrl)}" target="_blank" rel="noopener noreferrer">${safe(clipLabel)} ↗</a>`:''}</section>
       <section class="picks-spotlight-section"><div class="picks-spotlight-section-title"><span>TALE OF THE TAPE</span></div><div class="picks-spotlight-tale">
         ${taleRow('Age',data.red.age,data.blue.age)}
         ${taleRow('Height',data.red.height,data.blue.height)}
@@ -88,37 +89,43 @@
     </div>`;
   }
 
+  function hasSpotlight(fightId){
+    return Boolean(SPOTLIGHTS[String(fightId||'')]);
+  }
+
   function openSpotlight(fightId,trigger){
     const data=SPOTLIGHTS[fightId];
-    if(!data) return;
+    if(!data)return false;
+    ensureStyles();
     const modal=ensureModal();
     const content=document.getElementById('picksSpotlightContent');
-    if(!content) return;
-    lastFocus=trigger || document.activeElement;
+    if(!content)return false;
+    lastFocus=trigger||document.activeElement;
     content.innerHTML=renderSpotlight(data);
     modal.hidden=false;
     modal.setAttribute('aria-hidden','false');
     document.body.classList.add('picks-spotlight-open');
     requestAnimationFrame(()=>modal.classList.add('open'));
     modal.querySelector('.picks-spotlight-close')?.focus();
+    return true;
   }
 
   function closeSpotlight(){
     const modal=document.getElementById('picksMatchupSpotlight');
-    if(!modal || modal.hidden) return;
+    if(!modal||modal.hidden)return;
     modal.classList.remove('open');
     modal.setAttribute('aria-hidden','true');
     document.body.classList.remove('picks-spotlight-open');
-    window.setTimeout(()=>{ modal.hidden=true; },180);
+    window.setTimeout(()=>{modal.hidden=true;},180);
     lastFocus?.focus?.();
   }
 
   function enhanceCards(){
     Object.keys(SPOTLIGHTS).forEach(fightId=>{
       const card=document.querySelector(`#picksFightList .pick-fight[data-fight="${CSS.escape(fightId)}"]`);
-      if(!card || card.querySelector('[data-matchup-spotlight]')) return;
+      if(!card||card.querySelector('[data-matchup-spotlight]'))return;
       const matchup=card.querySelector('.pick-matchup');
-      if(!matchup) return;
+      if(!matchup)return;
       const button=document.createElement('button');
       button.type='button';
       button.className='pick-matchup-spotlight-trigger';
@@ -132,7 +139,7 @@
     ensureStyles();
     ensureModal();
     enhanceCards();
-    const root=document.getElementById('picks') || document.body;
+    const root=document.getElementById('picks')||document.body;
     const observer=new MutationObserver(()=>{
       clearTimeout(start.timer);
       start.timer=setTimeout(enhanceCards,40);
@@ -141,12 +148,23 @@
 
     document.addEventListener('click',event=>{
       const trigger=event.target.closest('[data-matchup-spotlight]');
-      if(trigger){ openSpotlight(trigger.dataset.matchupSpotlight,trigger); return; }
-      if(event.target.closest('[data-spotlight-close]')) closeSpotlight();
+      if(trigger){openSpotlight(trigger.dataset.matchupSpotlight,trigger);return;}
+      if(event.target.closest('[data-spotlight-close]'))closeSpotlight();
     });
-    document.addEventListener('keydown',event=>{ if(event.key==='Escape') closeSpotlight(); });
+    document.addEventListener('keydown',event=>{if(event.key==='Escape')closeSpotlight();});
+
+    window.UFC_PICKS_MATCHUP_SPOTLIGHT={
+      version:VERSION,
+      has:hasSpotlight,
+      open:openSpotlight,
+      close:closeSpotlight,
+      dataFor:fightId=>SPOTLIGHTS[String(fightId||'')]||null,
+      ids:Object.keys(SPOTLIGHTS)
+    };
+    document.documentElement.setAttribute('data-picks-matchup-spotlight',VERSION);
+    window.dispatchEvent(new CustomEvent('ufc-picks-matchup-spotlight-ready',{detail:{version:VERSION,ids:Object.keys(SPOTLIGHTS)}}));
   }
 
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start,{once:true});
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
   else start();
 })();
