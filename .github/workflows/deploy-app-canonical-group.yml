@@ -10,6 +10,7 @@ on:
       - 'assets/js/app-profile.js'
       - 'assets/js/octagon-hq-shell.js'
       - 'assets/js/octagon-hq-nav-grid.js'
+      - 'assets/js/octagon-message-board.js'
       - 'supabase/app-canonical-group-goat26-phase.sql'
       - 'supabase/app-profile-avatar-phase.sql'
       - 'supabase/octagon-message-board-foundation.sql'
@@ -39,6 +40,7 @@ jobs:
           node --check assets/js/app-profile.js
           node --check assets/js/octagon-hq-shell.js
           node --check assets/js/octagon-hq-nav-grid.js
+          node --check assets/js/octagon-message-board.js
           grep -q "code='GOAT26'" supabase/app-canonical-group-goat26-phase.sql
           grep -q "array\['brock','cody','rhonda','shane','tony','tyler'\]" supabase/app-canonical-group-goat26-phase.sql
           grep -q "app_profile_resolve" supabase/app-canonical-group-goat26-phase.sql
@@ -112,7 +114,7 @@ jobs:
               where r.group_id=g.id
             ),
             'octagon',jsonb_build_object(
-              'phase','secure-rpc-layer',
+              'phase','message-board-interface',
               'current_week_start',(
                 (now() at time zone 'America/Chicago')::date
                 - (extract(isodow from (now() at time zone 'America/Chicago'))::integer - 1)
@@ -268,10 +270,10 @@ jobs:
                   or not rpc.get('security_definer')
                   or not rpc.get('internal_helper_private')
               ):
-                  raise RuntimeError(f'GOAT26 identity, history, or Octagon RPC audit failed: {audit}')
+                  raise RuntimeError(f'GOAT26 identity, history, or Octagon interface audit failed: {audit}')
               audit['deployment_method']='supabase-management-api'
               write(audit)
-              print('GOAT26 identity, Picks history, Octagon tables, and secure RPC layer verified.')
+              print('GOAT26 identity, Picks history, Octagon server layer, and message-board interface verified.')
           except Exception as error:
               reason=str(error).replace(token,'[redacted]')[:2000]
               write({'status':'failed','code':'GOAT26','reason':reason})
@@ -292,6 +294,7 @@ jobs:
           update_watcher='  <script src="assets/js/app-update-watcher.js?v=app-update-watcher-20260717-play-photo-authority"></script>'
           octagon_shell='  <script src="assets/js/octagon-hq-shell.js?v=octagon-hq-shell-20260717c"></script>'
           nav_grid='  <script src="assets/js/octagon-hq-nav-grid.js?v=octagon-hq-nav-grid-20260717g"></script>'
+          octagon_board='  <script src="assets/js/octagon-message-board.js?v=octagon-message-board-20260717a"></script>'
 
           text=re.sub(r'  <script src="assets/js/app-canonical-group\.js\?v=[^"]+"></script>',canonical,text,count=1)
           text=re.sub(r'  <script src="assets/js/play-profile-identity\.js\?v=[^"]+"></script>',play_profile,text,count=1)
@@ -319,7 +322,14 @@ jobs:
           else:
               raise SystemExit('Octagon HQ shell script anchor was not found.')
 
-          text=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260717-octagon-hq-tabs-tight-to-title" />',text,count=1)
+          if 'assets/js/octagon-message-board.js' in text:
+              text=re.sub(r'  <script src="assets/js/octagon-message-board\.js\?v=[^"]+"></script>',octagon_board,text,count=1)
+          elif nav_grid in text:
+              text=text.replace(nav_grid,nav_grid+'\n'+octagon_board,1)
+          else:
+              raise SystemExit('Octagon navigation script anchor was not found.')
+
+          text=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260717-octagon-message-board-beta" />',text,count=1)
           text=re.sub(r'<title>[^<]+</title>','<title>Octagon HQ</title>',text,count=1)
           path.write_text(text)
           PY
@@ -334,6 +344,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html supabase/goat26-deployment-status.json
-          git commit -m 'Record secure Octagon RPC deployment [skip ci]'
+          git commit -m 'Record private Octagon message-board deployment [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:main
