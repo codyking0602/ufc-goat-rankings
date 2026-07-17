@@ -26,13 +26,13 @@ jobs:
 
       - name: Validate Octagon schema source
         run: |
-          grep -q "create table if not exists public.octagon_access" supabase/octagon-message-board-foundation.sql
-          grep -q "create table if not exists public.octagon_messages" supabase/octagon-message-board-foundation.sql
-          grep -q "create table if not exists public.octagon_reactions" supabase/octagon-message-board-foundation.sql
-          grep -q "between 1 and 500" supabase/octagon-message-board-foundation.sql
-          grep -q "one reply level only" supabase/octagon-message-board-foundation.sql
-          grep -q "reaction in ('like','dislike')" supabase/octagon-message-board-foundation.sql
-          grep -q "America/Chicago" supabase/octagon-message-board-foundation.sql
+          grep -Fq "create table if not exists public.octagon_access" supabase/octagon-message-board-foundation.sql
+          grep -Fq "create table if not exists public.octagon_messages" supabase/octagon-message-board-foundation.sql
+          grep -Fq "create table if not exists public.octagon_reactions" supabase/octagon-message-board-foundation.sql
+          grep -Fq "between 1 and 500" supabase/octagon-message-board-foundation.sql
+          grep -Fq "one reply level only" supabase/octagon-message-board-foundation.sql
+          grep -Fq "reaction in ('like','dislike')" supabase/octagon-message-board-foundation.sql
+          grep -Fq "America/Chicago" supabase/octagon-message-board-foundation.sql
 
       - name: Apply and audit Octagon schema in Supabase
         env:
