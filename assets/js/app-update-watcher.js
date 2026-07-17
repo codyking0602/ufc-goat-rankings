@@ -1,16 +1,21 @@
 (function(){
   'use strict';
 
-  const VERSION='app-update-watcher-20260716m-whats-new-launch';
+  const VERSION='app-update-watcher-20260716n-even-refresh-progress';
   const RESTORE_KEY='ufc-goat-manual-refresh-v1';
   const PROGRESS_KEY='ufc-goat-manual-refresh-progress-v1';
+  const LAST_DURATION_KEY='ufc-goat-manual-refresh-duration-v1';
   const WHATS_NEW_KEY='ufc-whats-new-20260716';
   const LEGACY_KEYS=['ufc-goat-update-restore-v1','ufc-goat-update-target-v1'];
+  const DEFAULT_PROGRESS_MS=3200;
   let progressTimers=[];
+  let progressFrame=0;
+  let progressState=null;
   let whatsNewReturnFocus=null;
 
   function activeView(){return document.querySelector('.tab.active')?.dataset.view||'men';}
   function activePlayMode(){return document.querySelector('[data-play-mode].active')?.dataset.playMode||'top10';}
+  function clampNumber(value,min,max){return Math.max(min,Math.min(max,value));}
 
   function cleanRefreshParameter(){
     const url=new URL(window.location.href);
@@ -66,35 +71,93 @@
     window.setTimeout(()=>window.scrollTo({top:Number(state.scrollY)||0,left:0,behavior:'auto'}),150);
   }
 
-  function clearProgressTimers(){progressTimers.forEach(timer=>window.clearTimeout(timer));progressTimers=[];}
+  function clearProgressTimers(){
+    progressTimers.forEach(timer=>window.clearTimeout(timer));
+    progressTimers=[];
+    if(progressFrame)window.cancelAnimationFrame(progressFrame);
+    progressFrame=0;
+  }
+
   function setProgress(percent,visible=true){
     const track=document.getElementById('manualRefreshProgress');
     const fill=document.getElementById('manualRefreshProgressFill');
     if(!track||!fill)return;
     track.classList.toggle('visible',visible);
-    fill.style.width=`${Math.max(0,Math.min(100,percent))}%`;
+    fill.style.width=`${clampNumber(percent,0,100)}%`;
   }
-  function beginProgress(){
+
+  function expectedProgressDuration(){
+    let saved=0;
+    try{saved=Number(localStorage.getItem(LAST_DURATION_KEY)||0);}catch(_error){}
+    return Number.isFinite(saved)&&saved>0?clampNumber(saved,1800,8000):DEFAULT_PROGRESS_MS;
+  }
+
+  function readProgressState(){
+    let raw='';
+    try{raw=sessionStorage.getItem(PROGRESS_KEY)||'';}catch(_error){}
+    if(!raw)return null;
+    const expectedMs=expectedProgressDuration();
+    if(raw==='1')return{startedAt:Date.now()-Math.min(500,expectedMs*.15),expectedMs};
+    try{
+      const state=JSON.parse(raw);
+      const startedAt=Number(state?.startedAt);
+      const storedExpected=Number(state?.expectedMs);
+      if(Number.isFinite(startedAt)&&startedAt>0){
+        return{startedAt,expectedMs:Number.isFinite(storedExpected)?clampNumber(storedExpected,1800,8000):expectedMs};
+      }
+    }catch(_error){}
+    return null;
+  }
+
+  function writeProgressState(state){
+    try{sessionStorage.setItem(PROGRESS_KEY,JSON.stringify(state));}catch(_error){}
+  }
+
+  function progressForElapsed(elapsedMs,expectedMs){
+    const expected=clampNumber(expectedMs||DEFAULT_PROGRESS_MS,1800,8000);
+    if(elapsedMs<=expected)return 4+(90*(elapsedMs/expected));
+    return 94+(3.5*(1-Math.exp(-(elapsedMs-expected)/3500)));
+  }
+
+  function beginProgress(state){
     clearProgressTimers();
-    setProgress(8,true);
-    progressTimers.push(window.setTimeout(()=>setProgress(38,true),90));
-    progressTimers.push(window.setTimeout(()=>setProgress(62,true),260));
-    progressTimers.push(window.setTimeout(()=>setProgress(76,true),520));
+    progressState=state||{startedAt:Date.now(),expectedMs:expectedProgressDuration()};
+    const tick=()=>{
+      const elapsed=Math.max(0,Date.now()-progressState.startedAt);
+      setProgress(progressForElapsed(elapsed,progressState.expectedMs),true);
+      progressFrame=window.requestAnimationFrame(tick);
+    };
+    setProgress(progressForElapsed(Math.max(0,Date.now()-progressState.startedAt),progressState.expectedMs),true);
+    progressFrame=window.requestAnimationFrame(tick);
   }
+
+  function rememberProgressDuration(state){
+    if(!state?.startedAt)return;
+    const actual=clampNumber(Date.now()-state.startedAt,1200,10000);
+    let previous=0;
+    try{previous=Number(localStorage.getItem(LAST_DURATION_KEY)||0);}catch(_error){}
+    const next=Number.isFinite(previous)&&previous>0?Math.round((previous*.65)+(actual*.35)):actual;
+    try{localStorage.setItem(LAST_DURATION_KEY,String(clampNumber(next,1800,8000)));}catch(_error){}
+  }
+
   function finishProgress(){
+    const completedState=progressState||readProgressState();
+    rememberProgressDuration(completedState);
     clearProgressTimers();
+    progressState=null;
     setProgress(100,true);
     const button=document.getElementById('manualRefreshBtn');
     if(button){button.classList.remove('refreshing');button.removeAttribute('aria-busy');}
     try{sessionStorage.removeItem(PROGRESS_KEY);}catch(_error){}
-    progressTimers.push(window.setTimeout(()=>document.getElementById('manualRefreshProgress')?.classList.remove('visible'),320));
-    progressTimers.push(window.setTimeout(()=>setProgress(0,false),620));
+    progressTimers.push(window.setTimeout(()=>document.getElementById('manualRefreshProgress')?.classList.remove('visible'),360));
+    progressTimers.push(window.setTimeout(()=>setProgress(0,false),700));
   }
 
   function waitForPageReady(){
     if(document.readyState==='complete')return Promise.resolve();
     return new Promise(resolve=>window.addEventListener('load',resolve,{once:true}));
   }
+
   function waitForModelReady(){
     if(window.UFC_SCORING_PIPELINE?.status==='ready'||document.documentElement.getAttribute('data-scoring-pipeline')==='ready')return Promise.resolve();
     if(window.UFC_SCORING_PIPELINE_READY&&typeof window.UFC_SCORING_PIPELINE_READY.then==='function')return Promise.resolve(window.UFC_SCORING_PIPELINE_READY).catch(()=>undefined);
@@ -114,14 +177,11 @@
   }
 
   function resumeProgressIfNeeded(){
-    let shouldResume=false;
-    try{shouldResume=sessionStorage.getItem(PROGRESS_KEY)==='1';}catch(_error){}
-    if(!shouldResume)return;
+    const state=readProgressState();
+    if(!state)return;
     const button=document.getElementById('manualRefreshBtn');
     if(button){button.classList.add('refreshing');button.setAttribute('aria-busy','true');}
-    setProgress(74,true);
-    progressTimers.push(window.setTimeout(()=>setProgress(88,true),240));
-    progressTimers.push(window.setTimeout(()=>setProgress(94,true),850));
+    beginProgress(state);
     Promise.allSettled([waitForPageReady(),waitForModelReady()]).then(finishProgress);
   }
 
@@ -134,10 +194,11 @@
 
   async function networkRefresh(button){
     saveState();
-    try{sessionStorage.setItem(PROGRESS_KEY,'1');}catch(_error){}
+    const state={startedAt:Date.now(),expectedMs:expectedProgressDuration()};
+    writeProgressState(state);
     button.classList.add('refreshing');
     button.setAttribute('aria-busy','true');
-    beginProgress();
+    beginProgress(state);
     await clearWebCaches();
     const url=new URL('index.html',window.location.href);
     url.searchParams.set('__manual_refresh',String(Date.now()));
@@ -195,7 +256,7 @@
       #manualRefreshBtn.refreshing{opacity:.82;pointer-events:none}
       #manualRefreshProgress{height:2px;width:calc(100% - 14px);margin:0 7px;border-radius:999px;overflow:hidden;background:rgba(249,115,22,.16);opacity:0;transition:opacity .16s ease}
       #manualRefreshProgress.visible{opacity:1}
-      #manualRefreshProgressFill{display:block;height:100%;width:0;border-radius:inherit;background:#f97316;box-shadow:0 0 5px rgba(249,115,22,.7);transition:width .28s ease}
+      #manualRefreshProgressFill{display:block;height:100%;width:0;border-radius:inherit;background:#f97316;box-shadow:0 0 5px rgba(249,115,22,.7);transition:width .08s linear}
       #whatsNewOverlay[hidden]{display:none!important}
       #whatsNewOverlay{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:18px;background:rgba(2,4,8,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);overflow-y:auto}
       #whatsNewDialog{position:relative;width:min(760px,100%);max-height:calc(100vh - 36px);overflow:auto;border:1px solid rgba(249,115,22,.5);border-radius:24px;background:linear-gradient(145deg,#161b24 0%,#0a0d13 58%,#090b10 100%);box-shadow:0 30px 90px rgba(0,0,0,.62);color:#f8fafc}
