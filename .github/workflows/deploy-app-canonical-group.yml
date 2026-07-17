@@ -294,7 +294,7 @@ jobs:
           update_watcher='  <script src="assets/js/app-update-watcher.js?v=app-update-watcher-20260717-play-photo-authority"></script>'
           octagon_shell='  <script src="assets/js/octagon-hq-shell.js?v=octagon-hq-shell-20260717c"></script>'
           nav_grid='  <script src="assets/js/octagon-hq-nav-grid.js?v=octagon-hq-nav-grid-20260717g"></script>'
-          octagon_board='  <script src="assets/js/octagon-message-board.js?v=octagon-message-board-20260717a"></script>'
+          octagon_board='  <script src="assets/js/octagon-message-board.js?v=octagon-message-board-20260717b"></script>'
 
           text=re.sub(r'  <script src="assets/js/app-canonical-group\.js\?v=[^"]+"></script>',canonical,text,count=1)
           text=re.sub(r'  <script src="assets/js/play-profile-identity\.js\?v=[^"]+"></script>',play_profile,text,count=1)
@@ -329,7 +329,7 @@ jobs:
           else:
               raise SystemExit('Octagon navigation script anchor was not found.')
 
-          text=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260717-octagon-message-board-beta" />',text,count=1)
+          text=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260717-octagon-message-board-beta-2" />',text,count=1)
           text=re.sub(r'<title>[^<]+</title>','<title>Octagon HQ</title>',text,count=1)
           path.write_text(text)
           PY
