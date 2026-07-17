@@ -77,7 +77,7 @@ begin
       limit 1
     ),'GOAT26');
   else
-    select count(*),min(candidate.id)
+    select count(*),min(candidate.id::text)::uuid
     into v_candidate_count,v_candidate_id
     from (
       select g.id
