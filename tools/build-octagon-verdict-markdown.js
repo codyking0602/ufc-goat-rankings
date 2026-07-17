@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /*
  * Required Octagon Verdict knowledge builder.
+ * Validation branch exercises the Markdown-first production rule.
  *
  * The older knowledge-pack generator was written with a fixed roster count.
  * This wrapper makes it roster-dynamic, updates the pack's workflow language,
