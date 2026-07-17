@@ -1,13 +1,13 @@
 (function(){
   'use strict';
 
-  const VERSION='keep-cut-bootstrap-20260717g-category-lineup';
+  const VERSION='keep-cut-bootstrap-20260717h-category-lineup';
   const LEDGER_SRC='assets/data/keep-cut-category-ratings.js?v=keep-cut-category-ratings-20260717a-phase-one';
   const ENGINE_SRC='assets/js/keep-cut-v2.js?v=keep-cut-20260717e-full-roster-ledger';
   const PHASE_THREE_SRC='assets/js/keep-cut-phase3.js?v=keep-cut-20260717f-absolute-role-engine';
   const PHASE_THREE_VERSION='keep-cut-20260717f-absolute-role-engine';
-  const PHASE_FOUR_SRC='assets/js/keep-cut-phase4.js?v=keep-cut-20260717g-category-lineup';
-  const PHASE_FOUR_VERSION='keep-cut-20260717g-category-lineup';
+  const PHASE_FOUR_SRC='assets/js/keep-cut-phase4.js?v=keep-cut-20260717h-category-lineup';
+  const PHASE_FOUR_VERSION='keep-cut-20260717h-category-lineup';
 
   function loadPhaseFour(){
     if(window.UFC_KEEP_CUT?.version===PHASE_FOUR_VERSION)return;
