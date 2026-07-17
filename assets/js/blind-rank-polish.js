@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='blind-rank-polish-20260716f-pack-specific-scores';
+  const VERSION='blind-rank-polish-20260716g-lineup-templates';
   const PACK_KEY='ufc-goat-blind-rank-pack-v2';
   const GAME_KEY='ufc-goat-blind-rank-v1';
   const STRIKERS=[
@@ -31,6 +31,13 @@
     {id:'bad',weight:0.05,cutoff:1}
   ];
   const BUCKET_ORDER=BUCKET_CONFIG.map(bucket=>bucket.id);
+  const LINEUP_TEMPLATES=[
+    {id:'balanced',name:'Balanced',weight:0.65,targets:()=>['elite','great','good','average',weightedChoice([
+      ['great',0.15],['good',0.35],['average',0.30],['below-average',0.15],['bad',0.05]
+    ])]},
+    {id:'stacked',name:'Stacked',weight:0.25,targets:()=>['elite','great','good','good','average']},
+    {id:'chaos',name:'Chaos',weight:0.10,targets:()=>['great','good','average','below-average','bad']}
+  ];
   const LEGACY_TIER_SCORE={legend:5000,elite:4000,contender:3000,recognizable:2000,wildcard:1000};
   let patching=false;
 
@@ -41,6 +48,8 @@
   function savedPack(){try{return packFor(localStorage.getItem(PACK_KEY)||api()?.state?.packId).id;}catch(_error){return packFor(api()?.state?.packId).id;}}
   function shuffle(items){const copy=[...items];for(let i=copy.length-1;i>0;i-=1){const j=Math.floor(Math.random()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]];}return copy;}
   function finite(value){return value!==null&&value!==''&&Number.isFinite(Number(value));}
+  function weightedChoice(rows){let roll=Math.random();for(const [value,weight] of rows){roll-=weight;if(roll<=0)return value;}return rows.at(-1)?.[0]||null;}
+  function chooseTemplate(){return LINEUP_TEMPLATES.find(template=>template.id===weightedChoice(LINEUP_TEMPLATES.map(template=>[template.id,template.weight])))||LINEUP_TEMPLATES[0];}
 
   function legacyRankingScore(fighter){
     const rank=Number(fighter?.modelRank);
@@ -87,7 +96,6 @@
       return row?(Number(row.divisionScore)*1000)+(1000-(Number(row.rank)||999)):-Infinity;
     }
     if(context.mode==='overall-score')return overallScore(fighter);
-    if(context.mode==='women-rank'||context.mode==='overall-rank')return legacyRankingScore(fighter);
     return legacyRankingScore(fighter);
   }
 
@@ -102,12 +110,6 @@
     const counts=Object.fromEntries(BUCKET_ORDER.map(bucket=>[bucket,buckets[bucket].length]));
     const percentages=Object.fromEntries(BUCKET_ORDER.map(bucket=>[bucket,ranked.length?Number(((buckets[bucket].length/ranked.length)*100).toFixed(1)):0]));
     return {ranked,buckets,counts,percentages};
-  }
-
-  function weightedBucket(){
-    let roll=Math.random();
-    for(const bucket of BUCKET_CONFIG){roll-=bucket.weight;if(roll<=0)return bucket.id;}
-    return 'bad';
   }
 
   function nearestAvailableBucket(target,working){
@@ -136,31 +138,40 @@
     if(rows.length<5)return[];
     const audit=bucketedPool(pack,rows,context);
     const working=Object.fromEntries(BUCKET_ORDER.map(bucket=>[bucket,shuffle(audit.buckets[bucket])]));
+    const template=chooseTemplate();
+    const targets=template.targets();
     const picked=[];
-    const targets=[];
     const actual=[];
 
-    while(picked.length<5){
-      const target=weightedBucket();
+    targets.forEach(target=>{
       const source=working[target]?.length?target:nearestAvailableBucket(target,working);
       const fighter=source?working[source].pop():null;
-      if(!fighter)break;
+      if(!fighter)return;
       picked.push(fighter);
-      targets.push(target);
       actual.push(source);
-    }
+    });
 
     if(picked.length<5){
       const used=new Set(picked.map(fighter=>fighter.id));
       shuffle(rows.filter(fighter=>!used.has(fighter.id))).slice(0,5-picked.length).forEach(fighter=>{
         picked.push(fighter);
-        targets.push('fallback');
         actual.push('fallback');
       });
     }
 
     const game=api();
-    if(game)game.state.bucketAudit={packId:pack.id,scoreMode:pack.scoreMode,rankingSource:pack.rankingSource,poolSize:rows.length,counts:audit.counts,percentages:audit.percentages,targets,actual};
+    if(game)game.state.bucketAudit={
+      packId:pack.id,
+      scoreMode:pack.scoreMode,
+      rankingSource:pack.rankingSource,
+      lineupType:template.id,
+      lineupTypeName:template.name,
+      poolSize:rows.length,
+      counts:audit.counts,
+      percentages:audit.percentages,
+      targets,
+      actual
+    };
     return shuffle(picked.slice(0,5));
   }
 
@@ -169,7 +180,7 @@
     const context=rankingContext(pack);
     const rows=pool(pack,context);
     const audit=bucketedPool(pack,rows,context);
-    const rankRows=rows=>rows.map(fighter=>({id:fighter.id,name:fighter.name,score:Number(scoreForPack(pack,fighter,context).toFixed(2))}));
+    const rankRows=values=>values.map(fighter=>({id:fighter.id,name:fighter.name,score:Number(scoreForPack(pack,fighter,context).toFixed(2))}));
     return {
       packId:pack.id,
       scoreMode:pack.scoreMode,
@@ -178,6 +189,7 @@
       poolSize:rows.length,
       counts:audit.counts,
       percentages:audit.percentages,
+      lineupTemplates:LINEUP_TEMPLATES.map(template=>({id:template.id,name:template.name,weight:template.weight})),
       topFive:rankRows(audit.ranked.slice(0,5)),
       bottomFive:rankRows(audit.ranked.slice(-5))
     };
@@ -282,6 +294,7 @@
     const game=api();
     if(!game)return;
     game.bucketConfig=BUCKET_CONFIG.map(bucket=>({...bucket}));
+    game.lineupTemplates=LINEUP_TEMPLATES.map(template=>({id:template.id,name:template.name,weight:template.weight}));
     game.packScoring=PACKS.map(pack=>({id:pack.id,scoreMode:pack.scoreMode,rankingSource:pack.rankingSource,division:pack.division||null}));
     game.scoreForPack=(packId,fighter)=>{const pack=packFor(packId);return scoreForPack(pack,fighter,rankingContext(pack));};
     game.bucketedPool=packId=>{const pack=packFor(packId);const context=rankingContext(pack);return bucketedPool(pack,pool(pack,context),context);};
