@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='better-than-standalone-share-20260717i-find-leader-ready-gate';
+  const VERSION='better-than-standalone-share-20260717j-find-leader-guaranteed-open';
   const FIND_LEADER_VERSION='find-leader-20260716c-daily-elimination';
   const FIND_LEADER_READY_TIMEOUT=20000;
   let creating=false;
@@ -22,10 +22,32 @@
     return script;
   }
 
-  function findLeaderReady(){
+  function findLeaderEnhancedReady(){
     const game=window.UFC_FIND_LEADER;
     const bank=window.UFC_FIND_LEADER_QUESTION_BANK;
     return Boolean(game?.open&&game?.experienceVersion&&bank?.endless&&window.UFC_FIND_LEADER_EXPERIENCE);
+  }
+
+  function findLeaderCoreReady(){
+    const game=window.UFC_FIND_LEADER;
+    const bank=window.UFC_FIND_LEADER_QUESTION_BANK;
+    return Boolean(game?.open&&game?.version===FIND_LEADER_VERSION&&bank?.audit&&bank?.buildDefinition);
+  }
+
+  function verifiedFallbackSetup(){
+    const bank=window.UFC_FIND_LEADER_QUESTION_BANK;
+    if(!bank)return null;
+    try{
+      const enhanced=bank.endless?.({history:[],filter:'all',slot:0,random:Math.random})||bank.random?.(Math.random);
+      if(enhanced)return enhanced;
+    }catch(_error){}
+    try{
+      const raw=bank.originalMethods||bank;
+      const audit=raw.audit?.();
+      const row=(audit?.rows||[]).find(item=>item?.valid&&item?.definition);
+      const built=row?raw.buildDefinition?.(row.definition,Math.random):null;
+      return built?.setup||null;
+    }catch(_error){return null;}
   }
 
   function ensureFindLeaderBootPanel(status='loading'){
@@ -43,7 +65,7 @@
     if(status==='error'){
       panel.innerHTML='<section class="find-leader-loading"><span>GAME DATA NOT READY</span><h2>Find the Leader did not finish loading.</h2><p>The app stayed on this screen instead of opening a blank game. Tap retry to reconnect the verified question bank.</p><div class="find-leader-actions"><button type="button" class="find-leader-primary" data-find-leader-gate-retry>RETRY</button><button type="button" class="find-leader-secondary" data-find-leader-gate-home>ALL GAMES</button></div></section>';
     }else{
-      panel.innerHTML='<section class="find-leader-loading"><span>LOADING VERIFIED BOARDS</span><h2>Building Find the Leader…</h2><p>Connecting the 50-question bank, board-quality audit, and Endless Mode.</p></section>';
+      panel.innerHTML='<section class="find-leader-loading"><span>LOADING VERIFIED BOARDS</span><h2>Building Find the Leader…</h2><p>Connecting the 50-question bank and preparing a verified ten-fighter board.</p></section>';
     }
     return panel;
   }
@@ -72,17 +94,34 @@
     window.UFC_PLAY_HUB?.showHub?.();
   }
 
+  function openVerifiedFindLeader(){
+    if(!findLeaderCoreReady())return false;
+    const game=window.UFC_FIND_LEADER;
+    document.getElementById('playFindLeaderBootPanel')?.setAttribute('hidden','');
+    let opened=false;
+    if(findLeaderEnhancedReady()){
+      try{opened=game.open()!==false;}catch(_error){opened=false;}
+    }
+    if(!opened){
+      const setup=verifiedFallbackSetup();
+      if(!setup)return false;
+      try{opened=game.open({setup})!==false;}catch(_error){opened=false;}
+    }
+    if(opened){
+      document.documentElement.setAttribute('data-play-screen','find-leader');
+      document.getElementById('playGameNav')?.scrollIntoView({block:'start'});
+      return true;
+    }
+    return false;
+  }
+
   function queueFindLeaderOpen(){
     const token=++findLeaderGateToken;
     showFindLeaderBoot('loading');
     const started=Date.now();
     const check=()=>{
       if(token!==findLeaderGateToken)return;
-      if(findLeaderReady()){
-        document.getElementById('playFindLeaderBootPanel')?.setAttribute('hidden','');
-        window.UFC_PLAY_HUB?.openGame?.('find-leader');
-        return;
-      }
+      if(openVerifiedFindLeader())return;
       if(Date.now()-started>=FIND_LEADER_READY_TIMEOUT){
         showFindLeaderBoot('error');
         return;
@@ -107,7 +146,7 @@
         return;
       }
       const trigger=event.target.closest?.('[data-open-game="find-leader"]');
-      if(!trigger||findLeaderReady())return;
+      if(!trigger||findLeaderEnhancedReady())return;
       event.preventDefault();
       event.stopImmediatePropagation();
       queueFindLeaderOpen();
