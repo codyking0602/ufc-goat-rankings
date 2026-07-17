@@ -1,7 +1,7 @@
 (function(root){
   'use strict';
 
-  const VERSION='blind-rank-expansion-20260717a-phase-five-batch-one';
+  const VERSION='blind-rank-expansion-20260717b-recursion-fix';
   const DISABLED=new URLSearchParams(root.location?.search||'').get('blindRankExpansion')==='off';
   const CATEGORIES=['ufcCareer','allCareers','bestPrime','hardestAtPeak','mostComplete','bestFinisher','actionFighter','starPower','biggestWhatIf','cultChaos'];
   const TIER_BANDS=[
@@ -245,7 +245,6 @@
     ledger.byName=Object.fromEntries(ledger.entries.map(entry=>[normal(entry.fighterName),entry]));
     refreshBlindAudit(ledger);
     root.document?.documentElement?.setAttribute('data-blind-rank-rating-ledger-size',String(ledger.entries.length));
-    root.UFC_BLIND_RANK_POOL_AUDIT?.rebuild?.();
     return true;
   }
   function wrapBlindRebuild(){
