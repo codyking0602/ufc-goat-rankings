@@ -23,6 +23,7 @@ on:
       - 'assets/js/octagon-verdict-compare-launcher.js'
       - 'assets/js/octagon-verdict-data.js'
       - 'tools/build-octagon-verdict-data.js'
+      - 'scripts/materialize-octagon-verdict-data.mjs'
       - 'scripts/test-production-browser.mjs'
       - 'scripts/test-profile-card-hotfix.mjs'
       - 'scripts/test-fighter-taglines.mjs'
@@ -62,16 +63,23 @@ jobs:
       - name: Certify Tyron Woodley audit inputs
         run: node scripts/test-woodley-audit.mjs > /tmp/woodley-audit.log 2>&1
       - name: Build Octagon Verdict knowledge feed
-        run: node tools/build-octagon-verdict-data.js > /tmp/octagon-verdict-build.log 2>&1
+        run: |
+          node tools/build-octagon-verdict-data.js > /tmp/octagon-verdict-build.log 2>&1
+          node scripts/materialize-octagon-verdict-data.mjs >> /tmp/octagon-verdict-build.log 2>&1
       - name: Validate Octagon Verdict package
         run: |
           node - <<'NODE'
           const fs=require('fs');
           const assert=require('assert/strict');
           const feed=JSON.parse(fs.readFileSync('assets/data/octagon-verdict-data.json','utf8'));
+          const index=JSON.parse(fs.readFileSync('assets/data/octagon-verdict/index.json','utf8'));
+          const materializedMoreno=JSON.parse(fs.readFileSync('assets/data/octagon-verdict/fighters/brandon-moreno.json','utf8'));
           assert.equal(feed.source,'calculated-browser-runtime');
           assert.equal(feed.fighterCount,79);
           assert.equal(feed.fighters.length,79);
+          assert.equal(index.fighterCount,79);
+          assert.equal(index.fighters.length,79);
+          assert.equal(index.divisionBoardCount,9);
           assert.equal(Object.keys(feed.divisionBoards||{}).length,9);
           assert.equal(feed.divisionBoards?.Openweight?.[0]?.fighter,'Royce Gracie');
           assert.ok(feed.divisionBoards.Openweight[0].stats.ufcWins>0);
@@ -110,9 +118,15 @@ jobs:
           assert.ok(feed.divisionBoards.Flyweight.some(row=>row.fighter==='Brandon Moreno'));
           assert.equal(feed.divisionBoards.Flyweight.findIndex(row=>row.fighter==='Brandon Moreno')+1,3);
           assert.equal(feed.guidance?.divisionRule?.includes('divisionScore'),true);
+          assert.equal(materializedMoreno.name,'Brandon Moreno');
+          assert.equal(materializedMoreno.ufcRecord,'11-7-2');
+          assert.equal(materializedMoreno.rank,47);
+          assert.equal(materializedMoreno.appOvr,88);
+          assert.equal(materializedMoreno.totalScore,45.3);
+          assert.ok(index.fighters.some(row=>row.name==='Brandon Moreno'&&row.rank===47&&row.appOvr===88));
           console.log('BRANDON_MORENO_PIPELINE_RESULT');
           console.log(JSON.stringify(moreno,null,2));
-          console.log(`Validated ${feed.fighterCount} fighters and ${Object.keys(feed.divisionBoards).length} automatic win-qualified division boards.`);
+          console.log(`Validated ${feed.fighterCount} fighters, ${index.fighterCount} materialized fighter objects, and ${Object.keys(feed.divisionBoards).length} automatic win-qualified division boards.`);
           NODE
       - name: Show concise regression diagnostics on failure
         if: failure()
@@ -146,10 +160,12 @@ jobs:
             /tmp/octagon-verdict-build.log
             /tmp/ufc-app-http.log
           if-no-files-found: ignore
-      - name: Upload Octagon Verdict knowledge file
+      - name: Upload Octagon Verdict calculated package
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: octagon-verdict-knowledge-feed
-          path: assets/data/octagon-verdict-data.json
+          name: octagon-verdict-calculated-package
+          path: |
+            assets/data/octagon-verdict-data.json
+            assets/data/octagon-verdict/
           if-no-files-found: error
