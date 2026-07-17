@@ -1,11 +1,10 @@
 (function(){
   'use strict';
 
-  const VERSION='play-photo-authority-20260717a';
-  const PHOTO_BUILD='20260717a';
+  const VERSION='play-photo-authority-20260717b';
+  const PHOTO_BUILD='20260717b';
   const attempts=new WeakMap();
-  let patchedPhotoApi=false;
-  let patchedFindLeader=false;
+  const repairedFallbacks=new WeakSet();
 
   const text=value=>String(value??'').trim();
   const unique=values=>[...new Set((values||[]).map(text).filter(Boolean))];
@@ -129,7 +128,6 @@
       const candidates=candidatesFor(value);
       return kind==='profile'?(candidates.profiles[0]||''):(candidates.thumbs[0]||'');
     };
-    patchedPhotoApi=true;
     return true;
   }
 
@@ -150,7 +148,6 @@
       };
     }
     game.photoAuthorityVersion=VERSION;
-    patchedFindLeader=true;
     return true;
   }
 
@@ -184,6 +181,7 @@
     if(!image?.isConnected)return;
     const node=document.createElement('span');
     node.className='fighter-photo-fallback';
+    node.dataset.photoAuthorityFinal='true';
     node.setAttribute('aria-label',name||'UFC fighter');
     node.textContent=initials(name);
     image.replaceWith(node);
@@ -198,7 +196,7 @@
     if(!state){
       const chain=preferredChain(image,name);
       const current=comparable(image.getAttribute('src'));
-      let index=chain.findIndex(item=>comparable(item)===current);
+      const index=chain.findIndex(item=>comparable(item)===current);
       state={chain,index:index<0?-1:index};
       attempts.set(image,state);
     }
@@ -225,12 +223,32 @@
     if(target&&comparable(target)!==comparable(current)){
       image.dataset.fighterPhoto='true';
       image.dataset.fighterName=name;
+      attempts.delete(image);
       image.src=target;
     }
   }
 
+  function repairFallback(node){
+    if(!(node instanceof HTMLElement))return;
+    if(node.dataset.photoAuthorityFinal==='true'||repairedFallbacks.has(node))return;
+    if(!node.closest('#play,.challenge-shell'))return;
+    const name=cleanName(node.getAttribute('aria-label')||'');
+    if(!name)return;
+    const candidates=candidatesFor(name);
+    const src=candidates.thumbs[0]||candidates.profiles[0]||'';
+    if(!src)return;
+    repairedFallbacks.add(node);
+    const image=document.createElement('img');
+    image.alt=name;
+    image.dataset.fighterPhoto='true';
+    image.dataset.fighterName=name;
+    image.src=src;
+    node.replaceWith(image);
+  }
+
   function refreshVisible(root=document){
     const scope=root?.querySelectorAll?root:document;
+    scope.querySelectorAll('#play .fighter-photo-fallback,.challenge-shell .fighter-photo-fallback').forEach(repairFallback);
     scope.querySelectorAll('#play img,.challenge-shell img,img[data-fighter-photo="true"]').forEach(refreshImage);
   }
 
@@ -255,7 +273,7 @@
 
   installStyles();
   window.addEventListener('error',event=>{
-    if(recover(event.target,event))return;
+    recover(event.target,event);
   },true);
   ['ufc-play-data-ready','ufc-fighter-photos-ready','ufc-play-hub-ready','ufc-play-state-changed','ufc-scoring-pipeline-ready','ufc-production-ranking-ready'].forEach(type=>window.addEventListener(type,scheduleSync));
   document.addEventListener('click',()=>setTimeout(refreshVisible,0),true);
