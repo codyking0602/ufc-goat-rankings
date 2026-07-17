@@ -1,13 +1,64 @@
 (function(){
   'use strict';
 
-  const VERSION='blind-daily-startup-fix-20260717d-anthony-pettis-whats-new';
+  const VERSION='blind-daily-startup-fix-20260717e-refresh-failsafe';
   const REFRESH_LOCATION_KEY='ufc-goat-manual-refresh-location-v1';
   const PRIMARY_RESTORE_KEY='ufc-goat-manual-refresh-v1';
+  const REFRESH_PROGRESS_KEY='ufc-goat-manual-refresh-progress-v1';
   const PETTIS_WHATS_NEW_KEY='ufc-whats-new-20260717-anthony-pettis';
+  const REFRESH_FAILSAFE_MS=6500;
   let attempts=0;
   let timer=null;
   let pendingRefreshLocation=null;
+  let refreshFailSafeTimer=null;
+
+  function refreshProgressState(){
+    let raw='';
+    try{raw=sessionStorage.getItem(REFRESH_PROGRESS_KEY)||'';}catch(_error){}
+    if(!raw)return null;
+    if(raw==='1')return{startedAt:Date.now()-500};
+    try{
+      const state=JSON.parse(raw);
+      const startedAt=Number(state?.startedAt);
+      return Number.isFinite(startedAt)&&startedAt>0?{...state,startedAt}:null;
+    }catch(_error){return null;}
+  }
+
+  function clearStrandedRefresh(reason='failsafe'){
+    if(refreshFailSafeTimer)window.clearTimeout(refreshFailSafeTimer);
+    refreshFailSafeTimer=null;
+    try{sessionStorage.removeItem(REFRESH_PROGRESS_KEY);}catch(_error){}
+    const button=document.getElementById('manualRefreshBtn');
+    if(button){
+      button.classList.remove('refreshing');
+      button.removeAttribute('aria-busy');
+    }
+    const track=document.getElementById('manualRefreshProgress');
+    if(track){
+      track.classList.remove('visible');
+      track.setAttribute('aria-hidden','true');
+    }
+    const fill=document.getElementById('manualRefreshProgressFill');
+    if(fill)fill.style.width='0%';
+    document.documentElement.setAttribute('data-refresh-progress-recovered',`${VERSION}:${reason}`);
+  }
+
+  function armRefreshFailSafe(){
+    const state=refreshProgressState();
+    const button=document.getElementById('manualRefreshBtn');
+    const track=document.getElementById('manualRefreshProgress');
+    const active=Boolean(state||button?.classList.contains('refreshing')||track?.classList.contains('visible'));
+    if(!active)return false;
+    const age=state?.startedAt?Math.max(0,Date.now()-state.startedAt):0;
+    const remaining=Math.max(250,REFRESH_FAILSAFE_MS-age);
+    const settle=reason=>window.setTimeout(()=>clearStrandedRefresh(reason),250);
+    window.addEventListener('ufc-scoring-pipeline-ready',()=>settle('scoring-ready'),{once:true});
+    window.addEventListener('ufc-production-ranking-ready',()=>settle('production-ready'),{once:true});
+    if(document.readyState==='complete')window.setTimeout(()=>clearStrandedRefresh('page-ready'),2400);
+    else window.addEventListener('load',()=>window.setTimeout(()=>clearStrandedRefresh('page-load'),2400),{once:true});
+    refreshFailSafeTimer=window.setTimeout(()=>clearStrandedRefresh(age>=REFRESH_FAILSAFE_MS?'stale-state':'hard-timeout'),remaining);
+    return true;
+  }
 
   function usableRows(rows){
     return (rows||[]).filter(row=>{
@@ -90,6 +141,10 @@
     }
     if(target==='daily-blind'){
       await hub.openGame?.('blind',{daily:true});
+      return true;
+    }
+    if(target==='daily-find-leader'){
+      await hub.openDailyChallenge?.();
       return true;
     }
     if(['top10','blind','better-than','find-leader'].includes(target)){
@@ -180,6 +235,8 @@
     if(window.UFC_SCORING_PIPELINE?.status==='ready')document.documentElement.setAttribute('data-scoring-pipeline','ready');
   });
   window.addEventListener('ufc-play-hub-ready',()=>window.setTimeout(()=>restoreRefreshLocation(),0));
+  window.addEventListener('pageshow',()=>window.setTimeout(armRefreshFailSafe,0));
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)window.setTimeout(armRefreshFailSafe,0);});
 
   document.addEventListener('pointerdown',event=>{
     if(event.target.closest?.('#manualRefreshBtn'))captureRefreshLocation();
@@ -194,10 +251,13 @@
     if(!event.target.closest?.('#manualRefreshBtn'))return;
     const state=pendingRefreshLocation||captureRefreshLocation();
     patchPrimaryRestoreState(state);
+    window.setTimeout(armRefreshFailSafe,0);
   });
 
   scheduleRefreshLocationRestore();
   schedulePettisWhatsNew();
+  armRefreshFailSafe();
   timer=window.setInterval(check,250);
   window.setTimeout(check,0);
+  window.UFC_REFRESH_PROGRESS_FAILSAFE={version:VERSION,arm:armRefreshFailSafe,clear:clearStrandedRefresh};
 })();
