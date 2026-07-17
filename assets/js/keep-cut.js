@@ -2,8 +2,8 @@
   'use strict';
 
   const VERSION='keep-cut-bootstrap-20260717j-roster-batch-current';
-  const BATCH_SRC='assets/data/play-roster-batch-one.js?v=play-roster-batch-one-20260717b-retry';
-  const BATCH_VERSION='play-roster-batch-one-20260717b-retry';
+  const BATCH_SRC='assets/data/play-roster-batch-one.js?v=play-roster-batch-one-20260717c-current-audit';
+  const BATCH_VERSION='play-roster-batch-one-20260717c-current-audit';
   const COMPARE_SRCS=[
     'assets/data/compare-profiles-batch-one-a.js?v=compare-profiles-batch-one-a-20260717b',
     'assets/data/compare-profiles-batch-one-b.js?v=compare-profiles-batch-one-b-20260717b',
