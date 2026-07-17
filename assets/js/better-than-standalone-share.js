@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='better-than-standalone-share-20260717g-find-leader-endless-audit';
+  const VERSION='better-than-standalone-share-20260717h-find-leader-runtime-recovery';
   const FIND_LEADER_VERSION='find-leader-20260716c-daily-elimination';
   let creating=false;
 
@@ -65,12 +65,18 @@
       document.head.appendChild(link);
     }
 
-    const experienceReady=()=>{patchBalancedDailySetup();loadDailyTools();};
+    const recoveryReady=()=>{patchBalancedDailySetup();loadDailyTools();};
+    const loadRecovery=()=>loadScriptOnce(
+      'script[data-find-leader-runtime-recovery]',
+      'assets/js/find-leader-runtime-recovery.js?v=find-leader-runtime-recovery-20260717a',
+      'findLeaderRuntimeRecovery',
+      recoveryReady
+    );
     const loadExperience=()=>loadScriptOnce(
       'script[data-find-leader-experience]',
       'assets/js/find-leader-experience.js?v=find-leader-experience-20260717a-endless-control-center',
       'findLeaderExperience',
-      experienceReady
+      loadRecovery
     );
     const loadGame=()=>{
       if(window.UFC_FIND_LEADER?.version!==FIND_LEADER_VERSION){
