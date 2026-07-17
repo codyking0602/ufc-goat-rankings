@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='fighter-tagline-system-20260715b-personable-pills';
+  const VERSION='fighter-tagline-system-20260716d-full-roster-pills';
   const CHARLES_WATCH_URL='https://youtube.com/shorts/zHUAvACSUk4?is=VYzwsuIvxV85k8zH';
   const TAGLINES=Object.freeze({
     'Jon Jones':'The standard everyone chases',
@@ -16,6 +16,7 @@
     'Randy Couture':'Championship grit in any division',
     'Max Holloway':'The pace never lets up',
     'Kamaru Usman':'Pressure that breaks people',
+    'Leon Edwards':'Calm precision until the opening appears',
     'Jose Aldo':'Fast, violent, built to last',
     'Matt Hughes':'Old-school power and control',
     'Daniel Cormier':'Short reach, enormous problems',
@@ -65,6 +66,7 @@
     'Carla Esparza':'Wrestling that steals your rhythm',
     'Holly Holm':'Footwork, discipline, and the left kick',
     'Deiveson Figueiredo':'Flyweight power with bad intentions',
+    'Alexandre Pantoja':'Pressure that never gives you space',
     'Lyoto Machida':'One opening, one clean counter',
     'Khamzat Chimaev':'Pressure from the opening second',
     'Sean Strickland':'Jab, defense, and pure stubbornness',
@@ -78,10 +80,15 @@
     'Glover Teixeira':'Old-school grit, late-career gold',
     'Mauricio Rua':'Violence with championship history',
     'Maurício Rua':'Violence with championship history',
+    'Mauricio "Shogun" Rua':'Violence with championship history',
     'Forrest Griffin':'Made chaos look like a plan',
     'Rashad Evans':'Speed, timing, and big-fight nerve',
     'Vitor Belfort':'Fast hands before anyone was ready',
-    'Fabricio Werdum':'Heavyweight grappling with a grin'
+    'Fabricio Werdum':'Heavyweight grappling with a grin',
+    'Paddy Pimblett':'Chaos, confidence, and submissions',
+    'Chris Weidman':'The upset that changed middleweight',
+    'Tom Aspinall':'Heavyweight speed with no wasted motion',
+    'Quinton Jackson':'Power, swagger, and big-fight violence'
   });
 
   const PHRASES=Object.freeze({
@@ -89,7 +96,7 @@
     opponentQuality:Object.freeze(['Never took the easy road','A career full of dangerous names','Always tested against the best']),
     primeDominance:Object.freeze(['Made elite opponents look ordinary','At his best, the cage felt small','Peak form was a nightmare']),
     longevity:Object.freeze(['Elite across generations','Still dangerous after the era changed','Built to last']),
-    apexPeak:Object.freeze(['At his best, pure cinema','Big moments always found him','The highlight was never far away']),
+    apexPeak:Object.freeze(['Peak form made every second matter','Big moments always found him','The highlight was never far away']),
     clean:Object.freeze(['Almost impossible to crack','Hard to solve, harder to finish','Rarely gave anyone a clean answer']),
     fallback:Object.freeze(['Always one moment from changing a fight','Dangerous wherever the fight goes','Never an easy night for anyone'])
   });
