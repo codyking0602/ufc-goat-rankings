@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='blind-rank-20260717k-absolute-role-generator';
+  const VERSION='blind-rank-20260717l-relax-before-emergency';
   const STORAGE_KEY='ufc-goat-blind-rank-v1';
   const PACK_KEY='ufc-goat-blind-rank-pack-v2';
   const HISTORY_KEY='ufc-goat-blind-rank-history-v1';
@@ -113,7 +113,20 @@
     function generateLineup(pack,history,prepared={}){
       const rows=prepared.rows||ratedPool(pack);if(rows.length<LINEUP_RULES.lineupSize)return {fighters:[],meta:{packId:pack.id,broken:true,reason:'pool-under-five',poolSize:rows.length}};
       const audit=prepared.audit||bucketedPool(pack,rows);const previousSignature=lineupSignature(history?.lastLineup);const roleTargets=prepared.roleTargets||rollRoleTargets();let selected=null;let usedWindow=0;let attempts=0;let blockedImmediateRepeat=false;let immediateRepeatUnavoidable=false;
-      for(const windowSize of RELAX_WINDOWS){const excluded=new Set(windowSize?(history?.recent||[]).slice(-windowSize):[]);if(rows.length-excluded.size<LINEUP_RULES.lineupSize)continue;const attemptLimit=windowSize===0?80:30;for(let attempt=0;attempt<attemptLimit;attempt+=1){attempts+=1;const candidate=buildCandidate(rows,audit,excluded,roleTargets);if(!candidate)continue;const signature=lineupSignature(candidate.fighters);if(previousSignature&&signature===previousSignature){blockedImmediateRepeat=true;continue;}selected=candidate;usedWindow=windowSize;break;}if(selected)break;}
+      for(const windowSize of RELAX_WINDOWS){
+        const excluded=new Set(windowSize?(history?.recent||[]).slice(-windowSize):[]);if(rows.length-excluded.size<LINEUP_RULES.lineupSize)continue;
+        const attemptLimit=windowSize===0?100:40;let bestEmergencyCandidate=null;let bestEmergencyScore=Infinity;
+        for(let attempt=0;attempt<attemptLimit;attempt+=1){
+          attempts+=1;const candidate=buildCandidate(rows,audit,excluded,roleTargets);if(!candidate)continue;
+          const signature=lineupSignature(candidate.fighters);if(previousSignature&&signature===previousSignature){blockedImmediateRepeat=true;continue;}
+          const emergencyCount=candidate.assignments.filter(assignment=>assignment.fallback==='emergency').length;
+          const adjacentCount=candidate.assignments.filter(assignment=>assignment.fallback==='adjacent').length;
+          if(emergencyCount){const score=(emergencyCount*100)+adjacentCount;if(score<bestEmergencyScore){bestEmergencyCandidate=candidate;bestEmergencyScore=score;}continue;}
+          selected=candidate;usedWindow=windowSize;break;
+        }
+        if(selected)break;
+        if(windowSize===0&&bestEmergencyCandidate){selected=bestEmergencyCandidate;usedWindow=0;break;}
+      }
       if(!selected){const candidate=buildCandidate(rows,audit,new Set(),roleTargets);if(candidate){selected=candidate;usedWindow=0;if(previousSignature&&lineupSignature(candidate.fighters)===previousSignature){blockedImmediateRepeat=true;immediateRepeatUnavoidable=!breakImmediateRepeat(candidate,rows,history?.lastLineup);}}}
       if(!selected)return {fighters:[],meta:{packId:pack.id,broken:true,reason:'role-build-failed',poolSize:rows.length,roleTargets}};
       const fallbackCounts=selected.assignments.reduce((counts,assignment)=>{increment(counts,assignment.fallback);return counts;},{exact:0,adjacent:0,emergency:0,'repeat-break-adjacent':0,'repeat-break-emergency':0});

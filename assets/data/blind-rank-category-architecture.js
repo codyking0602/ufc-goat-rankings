@@ -1,7 +1,7 @@
 (function(root){
   'use strict';
 
-  const VERSION='blind-rank-category-architecture-20260717b-phase-three-handoff';
+  const VERSION='blind-rank-category-architecture-20260717c-phase-five-tuning';
   const EPSILON=0.000001;
   const TIERS=[
     {id:'elite',name:'Elite',minScore:92,description:'All-time or category-defining level.'},
@@ -28,7 +28,7 @@
     {id:'lightweight',name:'Lightweight Careers',categoryId:'ufc-career',ratingPaths:['career.divisions.lightweight','career.overall'],filters:{gender:'men',division:'Lightweight'},status:'launch'},
     {id:'welterweight',name:'Welterweight Careers',categoryId:'ufc-career',ratingPaths:['career.divisions.welterweight','career.overall'],filters:{gender:'men',division:'Welterweight'},status:'launch'},
     {id:'heavyweight',name:'Heavyweight Careers',categoryId:'ufc-career',ratingPaths:['career.divisions.heavyweight','career.overall'],filters:{gender:'men',division:'Heavyweight'},status:'launch'},
-    {id:'early-ufc',name:'Early UFC Careers',categoryId:'ufc-career',ratingPaths:['career.overall'],filters:{gender:'men'},eras:['tournament','survival','zuffa-rebuild'],status:'launch'},
+    {id:'early-ufc',name:'Early UFC Careers',categoryId:'ufc-career',ratingPaths:['career.overall'],filters:{gender:'men'},eras:['tournament','survival','zuffa-rebuild'],status:'planned'},
     {id:'striking',name:'Striking',categoryId:'striking',ratingPaths:['striking'],filters:{},status:'launch'},
     {id:'wrestling-grappling',name:'Wrestling & Grappling',categoryId:'wrestling-grappling',ratingPaths:['grappling'],filters:{},status:'launch'},
     {id:'hardest-at-peak',name:'Hardest to Beat at Peak',categoryId:'hardest-at-peak',ratingPaths:['peak'],filters:{},status:'planned'},
@@ -117,7 +117,7 @@
   }
 
   const auditResult=audit();
-  const api=deepFreeze({version:VERSION,phase:1,liveGameplayMode:'legacy-generator-until-phase-four',tiers:TIERS,categories:CATEGORIES,packs:PACKS,lineupRoles:LINEUP_ROLES,lineupRules:LINEUP_RULES,ratingContract:RATING_CONTRACT,tierForScore,categoryFor,packFor,roleFor,ratingForPack,validateRatingRecord,audit:()=>auditResult});
+  const api=deepFreeze({version:VERSION,phase:1,liveGameplayMode:'absolute-category-tiers-phase-five-tuned',tiers:TIERS,categories:CATEGORIES,packs:PACKS,lineupRoles:LINEUP_ROLES,lineupRules:LINEUP_RULES,ratingContract:RATING_CONTRACT,tierForScore,categoryFor,packFor,roleFor,ratingForPack,validateRatingRecord,audit:()=>auditResult});
   root.UFC_BLIND_RANK_CATEGORY_ARCHITECTURE=api;
   root.document?.documentElement?.setAttribute('data-blind-rank-category-architecture',auditResult.passed?'passed':'failed');
   if(typeof root.dispatchEvent==='function'&&typeof root.CustomEvent==='function')root.dispatchEvent(new root.CustomEvent('ufc-blind-rank-category-architecture-ready',{detail:{version:VERSION,audit:auditResult}}));

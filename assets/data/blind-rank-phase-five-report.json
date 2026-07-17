@@ -1,10 +1,10 @@
 {
   "version": "blind-rank-phase-five-production-audit-20260717a",
-  "generatedAt": "2026-07-17T14:22:10.191Z",
+  "generatedAt": "2026-07-17T14:30:32.114Z",
   "gamesPerPack": 25000,
   "baseline": {
     "version": "blind-rank-phase-five-tuning-20260717a",
-    "generatedAt": "2026-07-17T14:21:45.235Z",
+    "generatedAt": "2026-07-17T14:30:02.834Z",
     "gamesPerPack": 25000,
     "expansionEnabled": false,
     "expansionVersion": "blind-rank-expansion-20260717a-phase-five-batch-one",
@@ -23,7 +23,7 @@
       "Tecia Torres"
     ],
     "rosterSize": 75,
-    "durationMs": 2185,
+    "durationMs": 10166,
     "packs": [
       {
         "packId": "ufc-careers",
@@ -41,8 +41,8 @@
           "below-average": 6,
           "bad": 4
         },
-        "badGamePct": 9.82,
-        "fallbackPct": 0.04,
+        "badGamePct": 9.88,
+        "fallbackPct": 0.06,
         "emergencyFallbackPct": 0,
         "repeatProtectionExhaustedPct": 0,
         "duplicateFighterGames": 0,
@@ -67,7 +67,7 @@
           "below-average": 8,
           "bad": 4
         },
-        "badGamePct": 10.14,
+        "badGamePct": 9.94,
         "fallbackPct": 0,
         "emergencyFallbackPct": 0,
         "repeatProtectionExhaustedPct": 0,
@@ -94,9 +94,9 @@
           "bad": 0
         },
         "badGamePct": 0,
-        "fallbackPct": 66.99,
-        "emergencyFallbackPct": 13,
-        "repeatProtectionExhaustedPct": 0,
+        "fallbackPct": 49.6,
+        "emergencyFallbackPct": 0,
+        "repeatProtectionExhaustedPct": 76.47,
         "duplicateFighterGames": 0,
         "immediateDuplicateLineups": 0,
         "brokenGames": 0,
@@ -104,7 +104,7 @@
         "warnings": [
           "Pool is too small for reliable five-fighter matchmaking.",
           "Bad-fighter game frequency missed the 10% target by more than two percentage points.",
-          "More than 2% of selections required emergency fallback."
+          "More than 10% of games exhausted repeat protection completely."
         ]
       },
       {
@@ -123,17 +123,16 @@
           "below-average": 2,
           "bad": 1
         },
-        "badGamePct": 8.26,
-        "fallbackPct": 32.66,
-        "emergencyFallbackPct": 3.48,
-        "repeatProtectionExhaustedPct": 0,
+        "badGamePct": 9.03,
+        "fallbackPct": 28.26,
+        "emergencyFallbackPct": 0,
+        "repeatProtectionExhaustedPct": 0.94,
         "duplicateFighterGames": 0,
         "immediateDuplicateLineups": 0,
         "brokenGames": 0,
         "overexposed": [],
         "warnings": [
-          "Pool is below the preferred 24-fighter replay threshold.",
-          "More than 2% of selections required emergency fallback."
+          "Pool is below the preferred 24-fighter replay threshold."
         ]
       },
       {
@@ -152,18 +151,16 @@
           "below-average": 3,
           "bad": 2
         },
-        "badGamePct": 26.95,
-        "fallbackPct": 47.67,
-        "emergencyFallbackPct": 12.5,
-        "repeatProtectionExhaustedPct": 0,
+        "badGamePct": 10.2,
+        "fallbackPct": 27,
+        "emergencyFallbackPct": 0,
+        "repeatProtectionExhaustedPct": 0.77,
         "duplicateFighterGames": 0,
         "immediateDuplicateLineups": 0,
         "brokenGames": 0,
         "overexposed": [],
         "warnings": [
-          "Pool is below the preferred 24-fighter replay threshold.",
-          "Bad-fighter game frequency missed the 10% target by more than two percentage points.",
-          "More than 2% of selections required emergency fallback."
+          "Pool is below the preferred 24-fighter replay threshold."
         ]
       },
       {
@@ -182,9 +179,9 @@
           "below-average": 1,
           "bad": 1
         },
-        "badGamePct": 10.55,
-        "fallbackPct": 35.89,
-        "emergencyFallbackPct": 9.55,
+        "badGamePct": 10.46,
+        "fallbackPct": 33.33,
+        "emergencyFallbackPct": 6.98,
         "repeatProtectionExhaustedPct": 100,
         "duplicateFighterGames": 0,
         "immediateDuplicateLineups": 0,
@@ -197,27 +194,10 @@
         ]
       },
       {
-        "packId": "early-ufc",
-        "status": "blocked",
-        "passed": false,
-        "games": 0,
-        "poolSize": 4,
-        "tiers": {},
-        "badGamePct": null,
-        "fallbackPct": null,
-        "emergencyFallbackPct": null,
-        "repeatProtectionExhaustedPct": null,
-        "duplicateFighterGames": 0,
-        "immediateDuplicateLineups": 0,
-        "brokenGames": 0,
-        "overexposed": [],
-        "warnings": []
-      },
-      {
         "packId": "striking",
         "packName": "Striking",
         "categoryId": "striking",
-        "status": "warning",
+        "status": "passed",
         "passed": true,
         "games": 25000,
         "poolSize": 75,
@@ -229,17 +209,15 @@
           "below-average": 2,
           "bad": 1
         },
-        "badGamePct": 7.7,
-        "fallbackPct": 6.58,
-        "emergencyFallbackPct": 0.27,
-        "repeatProtectionExhaustedPct": 0,
+        "badGamePct": 8.6,
+        "fallbackPct": 6.47,
+        "emergencyFallbackPct": 0,
+        "repeatProtectionExhaustedPct": 0.15,
         "duplicateFighterGames": 0,
         "immediateDuplicateLineups": 0,
         "brokenGames": 0,
         "overexposed": [],
-        "warnings": [
-          "Bad-fighter game frequency missed the 10% target by more than two percentage points."
-        ]
+        "warnings": []
       },
       {
         "packId": "wrestling-grappling",
@@ -257,7 +235,7 @@
           "below-average": 10,
           "bad": 3
         },
-        "badGamePct": 10.1,
+        "badGamePct": 10.13,
         "fallbackPct": 0,
         "emergencyFallbackPct": 0,
         "repeatProtectionExhaustedPct": 0,
@@ -268,19 +246,17 @@
         "warnings": []
       }
     ],
-    "passed": false,
+    "passed": true,
     "needsAttention": [
       "womens-careers",
       "lightweight",
       "welterweight",
-      "heavyweight",
-      "early-ufc",
-      "striking"
+      "heavyweight"
     ]
   },
   "expanded": {
     "version": "blind-rank-phase-five-tuning-20260717a",
-    "generatedAt": "2026-07-17T14:22:10.171Z",
+    "generatedAt": "2026-07-17T14:30:32.098Z",
     "gamesPerPack": 25000,
     "expansionEnabled": true,
     "expansionVersion": "blind-rank-expansion-20260717a-phase-five-batch-one",
@@ -299,7 +275,7 @@
       "Tecia Torres"
     ],
     "rosterSize": 87,
-    "durationMs": 6525,
+    "durationMs": 7985,
     "packs": [
       {
         "packId": "ufc-careers",
@@ -317,7 +293,7 @@
           "below-average": 8,
           "bad": 4
         },
-        "badGamePct": 10.21,
+        "badGamePct": 10.03,
         "fallbackPct": 0,
         "emergencyFallbackPct": 0,
         "repeatProtectionExhaustedPct": 0,
@@ -343,7 +319,7 @@
           "below-average": 11,
           "bad": 4
         },
-        "badGamePct": 10.16,
+        "badGamePct": 10.27,
         "fallbackPct": 0,
         "emergencyFallbackPct": 0,
         "repeatProtectionExhaustedPct": 0,
@@ -370,9 +346,9 @@
           "bad": 0
         },
         "badGamePct": 0,
-        "fallbackPct": 43.42,
-        "emergencyFallbackPct": 1.8,
-        "repeatProtectionExhaustedPct": 0,
+        "fallbackPct": 43.5,
+        "emergencyFallbackPct": 0,
+        "repeatProtectionExhaustedPct": 9.72,
         "duplicateFighterGames": 0,
         "immediateDuplicateLineups": 0,
         "brokenGames": 0,
@@ -398,25 +374,23 @@
           "below-average": 3,
           "bad": 1
         },
-        "badGamePct": 25,
-        "fallbackPct": 53.86,
-        "emergencyFallbackPct": 10.98,
-        "repeatProtectionExhaustedPct": 0,
+        "badGamePct": 8.17,
+        "fallbackPct": 22.3,
+        "emergencyFallbackPct": 0,
+        "repeatProtectionExhaustedPct": 0.69,
         "duplicateFighterGames": 0,
         "immediateDuplicateLineups": 0,
         "brokenGames": 0,
         "overexposed": [],
         "warnings": [
-          "Pool is below the preferred 24-fighter replay threshold.",
-          "Bad-fighter game frequency missed the 10% target by more than two percentage points.",
-          "More than 2% of selections required emergency fallback."
+          "Pool is below the preferred 24-fighter replay threshold."
         ]
       },
       {
         "packId": "welterweight",
         "packName": "Welterweight Careers",
         "categoryId": "ufc-career",
-        "status": "warning",
+        "status": "passed",
         "passed": true,
         "games": 25000,
         "poolSize": 24,
@@ -428,17 +402,15 @@
           "below-average": 3,
           "bad": 2
         },
-        "badGamePct": 9.47,
-        "fallbackPct": 32.9,
-        "emergencyFallbackPct": 5.25,
-        "repeatProtectionExhaustedPct": 0,
+        "badGamePct": 10.14,
+        "fallbackPct": 26.56,
+        "emergencyFallbackPct": 0,
+        "repeatProtectionExhaustedPct": 0.5,
         "duplicateFighterGames": 0,
         "immediateDuplicateLineups": 0,
         "brokenGames": 0,
         "overexposed": [],
-        "warnings": [
-          "More than 2% of selections required emergency fallback."
-        ]
+        "warnings": []
       },
       {
         "packId": "heavyweight",
@@ -456,54 +428,16 @@
           "below-average": 2,
           "bad": 1
         },
-        "badGamePct": 9.47,
-        "fallbackPct": 40.97,
-        "emergencyFallbackPct": 11.76,
-        "repeatProtectionExhaustedPct": 0,
+        "badGamePct": 9.53,
+        "fallbackPct": 23.42,
+        "emergencyFallbackPct": 0,
+        "repeatProtectionExhaustedPct": 52.38,
         "duplicateFighterGames": 0,
         "immediateDuplicateLineups": 0,
         "brokenGames": 0,
         "overexposed": [],
         "warnings": [
           "Pool is too small for reliable five-fighter matchmaking.",
-          "More than 2% of selections required emergency fallback."
-        ]
-      },
-      {
-        "packId": "early-ufc",
-        "packName": "Early UFC Careers",
-        "categoryId": "ufc-career",
-        "status": "failed",
-        "passed": false,
-        "games": 21233,
-        "poolSize": 5,
-        "tiers": {
-          "elite": 2,
-          "great": 2,
-          "good": 0,
-          "average": 1,
-          "below-average": 0,
-          "bad": 0
-        },
-        "badGamePct": 0,
-        "fallbackPct": 60.39,
-        "emergencyFallbackPct": 36.13,
-        "repeatProtectionExhaustedPct": 100,
-        "duplicateFighterGames": 0,
-        "immediateDuplicateLineups": 21232,
-        "brokenGames": 3767,
-        "overexposed": [],
-        "warnings": [
-          "Pool is too small for reliable five-fighter matchmaking.",
-          "Wildcard missed a target tier rate by more than two percentage points.",
-          "Wildcard missed a target tier rate by more than two percentage points.",
-          "Wildcard missed a target tier rate by more than two percentage points.",
-          "Wildcard missed a target tier rate by more than two percentage points.",
-          "Wildcard missed a target tier rate by more than two percentage points.",
-          "Bad-fighter game frequency missed the 10% target by more than two percentage points.",
-          "3767 simulated games failed to produce five fighters.",
-          "21232 immediate lineup repeats were generated.",
-          "More than 2% of selections required emergency fallback.",
           "More than 10% of games exhausted repeat protection completely."
         ]
       },
@@ -523,9 +457,9 @@
           "below-average": 3,
           "bad": 2
         },
-        "badGamePct": 9.7,
-        "fallbackPct": 3.18,
-        "emergencyFallbackPct": 0.01,
+        "badGamePct": 9.79,
+        "fallbackPct": 3.11,
+        "emergencyFallbackPct": 0,
         "repeatProtectionExhaustedPct": 0,
         "duplicateFighterGames": 0,
         "immediateDuplicateLineups": 0,
@@ -549,7 +483,7 @@
           "below-average": 13,
           "bad": 4
         },
-        "badGamePct": 10,
+        "badGamePct": 10.25,
         "fallbackPct": 0,
         "emergencyFallbackPct": 0,
         "repeatProtectionExhaustedPct": 0,
@@ -560,13 +494,11 @@
         "warnings": []
       }
     ],
-    "passed": false,
+    "passed": true,
     "needsAttention": [
       "womens-careers",
       "lightweight",
-      "welterweight",
-      "heavyweight",
-      "early-ufc"
+      "heavyweight"
     ]
   },
   "comparison": [
@@ -576,10 +508,10 @@
       "poolBefore": 65,
       "poolAfter": 74,
       "poolChange": 9,
-      "fallbackChange": -0.04,
+      "fallbackChange": -0.06,
       "emergencyFallbackChange": 0,
       "exhaustedRepeatChange": 0,
-      "badGameChange": 0.39
+      "badGameChange": 0.15
     },
     {
       "packId": "all-careers",
@@ -590,7 +522,7 @@
       "fallbackChange": 0,
       "emergencyFallbackChange": 0,
       "exhaustedRepeatChange": 0,
-      "badGameChange": 0.02
+      "badGameChange": 0.33
     },
     {
       "packId": "womens-careers",
@@ -598,9 +530,9 @@
       "poolBefore": 10,
       "poolAfter": 13,
       "poolChange": 3,
-      "fallbackChange": -23.57,
-      "emergencyFallbackChange": -11.2,
-      "exhaustedRepeatChange": 0,
+      "fallbackChange": -6.1,
+      "emergencyFallbackChange": 0,
+      "exhaustedRepeatChange": -66.75,
       "badGameChange": 0
     },
     {
@@ -609,10 +541,10 @@
       "poolBefore": 17,
       "poolAfter": 20,
       "poolChange": 3,
-      "fallbackChange": 21.2,
-      "emergencyFallbackChange": 7.5,
-      "exhaustedRepeatChange": 0,
-      "badGameChange": 16.74
+      "fallbackChange": -5.96,
+      "emergencyFallbackChange": 0,
+      "exhaustedRepeatChange": -0.25,
+      "badGameChange": -0.86
     },
     {
       "packId": "welterweight",
@@ -620,10 +552,10 @@
       "poolBefore": 21,
       "poolAfter": 24,
       "poolChange": 3,
-      "fallbackChange": -14.77,
-      "emergencyFallbackChange": -7.25,
-      "exhaustedRepeatChange": 0,
-      "badGameChange": -17.48
+      "fallbackChange": -0.44,
+      "emergencyFallbackChange": 0,
+      "exhaustedRepeatChange": -0.27,
+      "badGameChange": -0.06
     },
     {
       "packId": "heavyweight",
@@ -631,21 +563,10 @@
       "poolBefore": 8,
       "poolAfter": 11,
       "poolChange": 3,
-      "fallbackChange": 5.08,
-      "emergencyFallbackChange": 2.21,
-      "exhaustedRepeatChange": -100,
-      "badGameChange": -1.08
-    },
-    {
-      "packId": "early-ufc",
-      "packName": "Early UFC Careers",
-      "poolBefore": 4,
-      "poolAfter": 5,
-      "poolChange": 1,
-      "fallbackChange": 60.39,
-      "emergencyFallbackChange": 36.13,
-      "exhaustedRepeatChange": 100,
-      "badGameChange": 0
+      "fallbackChange": -9.91,
+      "emergencyFallbackChange": -6.98,
+      "exhaustedRepeatChange": -47.62,
+      "badGameChange": -0.93
     },
     {
       "packId": "striking",
@@ -653,10 +574,10 @@
       "poolBefore": 75,
       "poolAfter": 87,
       "poolChange": 12,
-      "fallbackChange": -3.4,
-      "emergencyFallbackChange": -0.26,
-      "exhaustedRepeatChange": 0,
-      "badGameChange": 2
+      "fallbackChange": -3.36,
+      "emergencyFallbackChange": 0,
+      "exhaustedRepeatChange": -0.15,
+      "badGameChange": 1.19
     },
     {
       "packId": "wrestling-grappling",
@@ -667,7 +588,7 @@
       "fallbackChange": 0,
       "emergencyFallbackChange": 0,
       "exhaustedRepeatChange": 0,
-      "badGameChange": -0.1
+      "badGameChange": 0.12
     }
   ]
 }
