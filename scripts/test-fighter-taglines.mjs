@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
+const EXPECTED_FIGHTERS=79;
 const CHARLES_WATCH_URL='https://youtube.com/shorts/zHUAvACSUk4?is=VYzwsuIvxV85k8zH';
 const GENERIC_TAG=/\b(?:ufc|resume|résumé)\b/i;
 const browser=await chromium.launch({headless:true});
@@ -17,11 +18,11 @@ function auditRows(rows){
 try{
   await page.goto('http://127.0.0.1:4173/index.html',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>document.documentElement.getAttribute('data-scoring-pipeline')==='ready',null,{timeout:90000});
-  await page.waitForFunction(()=>{
+  await page.waitForFunction(expected=>{
     const system=window.UFC_FIGHTER_TAGLINE_SYSTEM;
     const count=document.querySelectorAll('#menList .fighter-row[data-fighter],#womenList .fighter-row[data-fighter]').length;
-    return Boolean(system)&&count===73;
-  },null,{timeout:30000});
+    return Boolean(system)&&count===expected;
+  },EXPECTED_FIGHTERS,{timeout:30000});
   await page.waitForFunction(expected=>document.querySelector('.fighter-row[data-fighter="Charles Oliveira"] .watch-moment-link')?.href===expected,CHARLES_WATCH_URL,{timeout:30000});
 
   const leaderboard=await page.evaluate(()=>{
@@ -42,15 +43,16 @@ try{
   });
 
   const leaderboardAudit=auditRows(leaderboard.rows);
-  assert.equal(leaderboard.rows.length,73,'all 73 ranked fighters render a pill tagline');
+  assert.equal(leaderboard.rows.length,EXPECTED_FIGHTERS,`all ${EXPECTED_FIGHTERS} ranked fighters render a pill tagline`);
   assert.deepEqual(leaderboardAudit.generic,[],'no visible leaderboard pill uses generic UFC/resume wording');
   assert.deepEqual(leaderboardAudit.empty,[],'no visible leaderboard pill is blank');
-  assert.ok(leaderboardAudit.uniqueTagCount>=65,`pill copy stays personal (${leaderboardAudit.uniqueTagCount} unique taglines)`);
+  assert.ok(leaderboardAudit.uniqueTagCount>=71,`pill copy stays personal (${leaderboardAudit.uniqueTagCount} unique taglines)`);
   assert.equal(leaderboard.tags['Jon Jones'],'The standard everyone chases');
   assert.equal(leaderboard.tags['Georges St-Pierre'],'No weakness left unanswered');
   assert.equal(leaderboard.tags['Merab Dvalishvili'],'The pace is the weapon');
   assert.equal(leaderboard.tags['Charles Oliveira'],'Chaos, courage, and submissions');
   assert.equal(leaderboard.tags['Amanda Nunes'],'Power that cleared two divisions');
+  assert.equal(leaderboard.tags['Brandon Moreno'],'Heart, scrambles, and championship grit');
   assert.ok(leaderboard.futureTag&&!GENERIC_TAG.test(leaderboard.futureTag),'future fighters receive a personable automatic fallback');
   assert.equal(leaderboard.system?.mutatesScores,false,'tagline system remains presentation-only');
   assert.equal(leaderboard.charlesOverride,CHARLES_WATCH_URL,'Charles override uses the requested Short');
@@ -58,7 +60,7 @@ try{
   assert.deepEqual(pageErrors,[],'tagline system causes no uncaught page errors');
 
   console.log('FIGHTER_TAGLINE_CERTIFICATION');
-  console.log(JSON.stringify({fighterCount:leaderboard.rows.length,uniqueTagCount:leaderboardAudit.uniqueTagCount,samples:{jon:leaderboard.tags['Jon Jones'],gsp:leaderboard.tags['Georges St-Pierre'],merab:leaderboard.tags['Merab Dvalishvili'],charles:leaderboard.tags['Charles Oliveira'],amanda:leaderboard.tags['Amanda Nunes']},futureTag:leaderboard.futureTag,charlesHref:leaderboard.charlesHref,pageErrors},null,2));
+  console.log(JSON.stringify({fighterCount:leaderboard.rows.length,uniqueTagCount:leaderboardAudit.uniqueTagCount,samples:{jon:leaderboard.tags['Jon Jones'],gsp:leaderboard.tags['Georges St-Pierre'],merab:leaderboard.tags['Merab Dvalishvili'],charles:leaderboard.tags['Charles Oliveira'],amanda:leaderboard.tags['Amanda Nunes'],moreno:leaderboard.tags['Brandon Moreno']},futureTag:leaderboard.futureTag,charlesHref:leaderboard.charlesHref,pageErrors},null,2));
 }finally{
   await browser.close();
 }
