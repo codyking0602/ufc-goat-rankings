@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='product-architecture-20260717e-home-default';
+  const VERSION='product-architecture-20260717f-phase-1b';
   const RANKING_VIEWS=['men','women','division','categories'];
   const DESTINATIONS=[
     {key:'home',label:'Home',view:'home'},
@@ -21,6 +21,7 @@
   let currentDestination='home';
   let currentRankingView='men';
   let bound=false;
+  let mutating=false;
 
   const text=value=>String(value??'').trim();
 
@@ -53,6 +54,23 @@
     `;
   }
 
+  function loadHomeAssets(){
+    if(!document.getElementById('homeDashboardCss')){
+      const link=document.createElement('link');
+      link.id='homeDashboardCss';
+      link.rel='stylesheet';
+      link.href='assets/css/home-dashboard.css?v=home-dashboard-20260717a';
+      document.head.appendChild(link);
+    }
+    if(!window.UFC_HOME_DASHBOARD&&!document.getElementById('homeDashboardScript')){
+      const script=document.createElement('script');
+      script.id='homeDashboardScript';
+      script.src='assets/js/home-dashboard.js?v=home-dashboard-20260717a';
+      script.async=false;
+      document.body.appendChild(script);
+    }
+  }
+
   function ensureHome(){
     let home=document.getElementById('home');
     if(!home){
@@ -63,7 +81,10 @@
       const toolbar=shell?.querySelector('.toolbar');
       if(toolbar)toolbar.before(home);else shell?.prepend(home);
     }
-    if(!home.firstElementChild)home.innerHTML='<div id="homeDashboardMount" aria-live="polite"></div>';
+    if(home.querySelector('.architecture-home-shell')){
+      home.classList.remove('architecture-home');
+      home.innerHTML='<div id="homeDashboardMount" aria-live="polite"></div>';
+    }
     return home;
   }
 
@@ -85,9 +106,23 @@
     return subnav;
   }
 
-  function cleanNav(){
+  function setDestinationLabel(button,label){
+    let labelNode=button.querySelector('[data-destination-label]');
+    if(!labelNode){
+      const badge=button.querySelector('[data-octagon-unread-badge]');
+      button.textContent='';
+      labelNode=document.createElement('span');
+      labelNode.dataset.destinationLabel='true';
+      button.appendChild(labelNode);
+      if(badge)button.appendChild(badge);
+    }
+    labelNode.textContent=label;
+  }
+
+  function normalizeNavigation(){
     const nav=document.querySelector('nav.tabs');
     if(!nav)return null;
+    mutating=true;
     document.getElementById('octagonHqCompressionCss')?.remove();
     nav.dataset.productArchitecture=VERSION;
     nav.setAttribute('aria-label','Primary app destinations');
@@ -106,7 +141,7 @@
       }
       button.dataset.view=item.view;
       if(item.key==='war-room')button.dataset.octagonBetaTab='true';
-      if(button.textContent!==item.label)button.textContent=item.label;
+      setDestinationLabel(button,item.label);
     });
 
     const desired=DESTINATIONS.map(item=>item.key);
@@ -117,6 +152,7 @@
         if(button)nav.appendChild(button);
       });
     }
+    mutating=false;
     return nav;
   }
 
@@ -142,24 +178,28 @@
   }
 
   function syncNavigation(){
+    mutating=true;
     const nav=document.querySelector('nav.tabs');
     nav?.querySelectorAll('[data-destination]').forEach(button=>{
       const selected=button.dataset.destination===currentDestination;
       button.classList.toggle('active',selected);
       button.setAttribute('aria-selected',String(selected));
-      if(button.dataset.destination==='war-room'&&button.textContent!=='War Room')button.textContent='War Room';
+      const item=DESTINATIONS.find(entry=>entry.key===button.dataset.destination);
+      if(item)setDestinationLabel(button,item.label);
     });
 
     const subnav=ensureRankingSubnav();
-    if(!subnav)return;
-    const active=currentDestination==='rankings';
-    subnav.classList.toggle('active',active);
-    subnav.setAttribute('aria-hidden',String(!active));
-    subnav.querySelectorAll('[data-ranking-view]').forEach(button=>{
-      const selected=button.dataset.rankingView===currentRankingView;
-      button.classList.toggle('active',selected);
-      button.setAttribute('aria-pressed',String(selected));
-    });
+    if(subnav){
+      const active=currentDestination==='rankings';
+      subnav.classList.toggle('active',active);
+      subnav.setAttribute('aria-hidden',String(!active));
+      subnav.querySelectorAll('[data-ranking-view]').forEach(button=>{
+        const selected=button.dataset.rankingView===currentRankingView;
+        button.classList.toggle('active',selected);
+        button.setAttribute('aria-pressed',String(selected));
+      });
+    }
+    mutating=false;
   }
 
   function showView(view,{updateHash=true}={}){
@@ -226,21 +266,23 @@
   function observeNav(){
     const nav=document.querySelector('nav.tabs');
     if(!nav)return;
-    const options={childList:true,subtree:true,attributes:true,attributeFilter:['style','class','aria-label','disabled','aria-disabled','data-beta-access','data-beta-member']};
     const observer=new MutationObserver(()=>{
-      observer.disconnect();
-      cleanNav();
-      syncNavigation();
-      observer.observe(nav,options);
+      if(mutating)return;
+      window.setTimeout(()=>{
+        if(mutating)return;
+        normalizeNavigation();
+        syncNavigation();
+      },0);
     });
-    observer.observe(nav,options);
+    observer.observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:['style','class','aria-label','disabled','aria-disabled','data-beta-access','data-beta-member']});
   }
 
   function apply(){
     installStyles();
     ensureHome();
+    loadHomeAssets();
     document.querySelector('#rules')?.remove();
-    cleanNav();
+    normalizeNavigation();
     ensureRankingSubnav();
     syncNavigation();
     syncToolbar(currentDestination==='rankings'?currentRankingView:DESTINATIONS.find(item=>item.key===currentDestination)?.view);
@@ -256,7 +298,7 @@
     observeNav();
     showView(initialView,{updateHash:Boolean(window.location.hash)});
     [100,500,1500,5000].forEach(delay=>window.setTimeout(()=>{
-      cleanNav();
+      normalizeNavigation();
       syncNavigation();
     },delay));
   }
