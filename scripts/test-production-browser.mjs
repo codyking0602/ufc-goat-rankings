@@ -12,7 +12,7 @@ const browser=await chromium.launch({headless:true});
 const page=await browser.newPage({viewport:{width:1280,height:900}});
 const pageErrors=[];
 const consoleErrors=[];
-page.on('pageerror',error=>pageErrors.push(error.message));
+page.on('pageerror',error=>pageErrors.push({message:String(error?.message||error),stack:String(error?.stack||'')}));
 page.on('console',message=>{if(message.type()==='error')consoleErrors.push(message.text());});
 
 try{
@@ -149,9 +149,6 @@ try{
   await search.fill(PETTIS);
   await page.locator(`[data-add-fighter="${PETTIS}"]`).waitFor({state:'visible',timeout:10000});
 
-  assert.deepEqual(pageErrors,[],'rendered app has no uncaught page errors');
-  assert.deepEqual(consoleErrors.filter(message=>!/supabase|realtime|octagon message/i.test(message)),[],'rendered ranking has no unexpected console errors');
-
   const certification={
     fighterCount:runtime.fighterCount,
     row,
@@ -175,6 +172,9 @@ try{
   console.log(JSON.stringify(certification,null,2));
   console.log('PRODUCTION_BROWSER_CERTIFICATION');
   console.log(JSON.stringify({fighterCount:runtime.fighterCount,topTen:runtime.topTen,divisionBoards:Object.keys(runtime.divisionReport?.boards||{}),compareSelector:true,playSearch:true,pageErrors},null,2));
+
+  assert.deepEqual(pageErrors,[],'rendered app has no uncaught page errors');
+  assert.deepEqual(consoleErrors.filter(message=>!/supabase|realtime|octagon message/i.test(message)),[],'rendered ranking has no unexpected console errors');
 }finally{
   await browser.close();
 }
