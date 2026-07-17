@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='keep-cut-bootstrap-20260717i-roster-batch-one';
+  const VERSION='keep-cut-bootstrap-20260717j-roster-batch-current';
   const BATCH_SRC='assets/data/play-roster-batch-one.js?v=play-roster-batch-one-20260717b-retry';
   const BATCH_VERSION='play-roster-batch-one-20260717b-retry';
   const COMPARE_SRCS=[
@@ -9,6 +9,7 @@
     'assets/data/compare-profiles-batch-one-b.js?v=compare-profiles-batch-one-b-20260717b',
     'assets/data/compare-profiles-batch-one-c.js?v=compare-profiles-batch-one-c-20260717b'
   ];
+  const CURRENT_PATCH_SRC='assets/data/play-roster-batch-one-current-patch.js?v=play-roster-batch-one-current-patch-20260717a';
   const LEDGER_SRC='assets/data/keep-cut-category-ratings.js?v=keep-cut-category-ratings-20260717a-phase-one';
   const ENGINE_SRC='assets/js/keep-cut-v2.js?v=keep-cut-20260717e-full-roster-ledger';
   const PHASE_THREE_SRC='assets/js/keep-cut-phase3.js?v=keep-cut-20260717f-absolute-role-engine';
@@ -53,8 +54,12 @@
     loadScript(LEDGER_SRC,'data-keep-cut-category-ratings-loader',()=>{});
   }
 
+  function loadCurrentPatch(){
+    loadScript(CURRENT_PATCH_SRC,'data-keep-cut-batch-one-current-patch',loadLedger);
+  }
+
   function loadCompare(index=0){
-    if(index>=COMPARE_SRCS.length){loadLedger();return;}
+    if(index>=COMPARE_SRCS.length){loadCurrentPatch();return;}
     const marker=`data-keep-cut-batch-one-compare-${index+1}`;
     loadScript(COMPARE_SRCS[index],marker,()=>loadCompare(index+1));
   }
