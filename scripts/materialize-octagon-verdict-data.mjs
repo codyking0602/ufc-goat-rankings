@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// Validation branch exercises the same general materializer used on main.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
