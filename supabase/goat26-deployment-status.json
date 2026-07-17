@@ -1,7 +1,7 @@
 {
   "active_members": 6,
   "avatar_profiles": 2,
-  "checked_at": "2026-07-17T20:47:18.326011+00:00",
+  "checked_at": "2026-07-17T21:06:58.411985+00:00",
   "code": "GOAT26",
   "deployment_method": "supabase-management-api",
   "events": 2,
@@ -17,41 +17,58 @@
   "name": "UFC Picks",
   "octagon": {
     "access_rows": 6,
+    "active_push_subscriptions": 0,
+    "activity_rows": 0,
     "cody_enabled": true,
     "current_week_start": "2026-07-13",
-    "enabled_members": 1,
+    "edge_function": "octagon-push",
+    "edge_function_deployed": true,
+    "enabled_members": 3,
     "messages": 2,
-    "phase": "cody-access-panel",
+    "phase": "unread-and-web-push",
     "reactions": 2,
     "replies": 1,
     "rls_enabled": true,
     "rpc": {
       "anon_execute": {
         "access_status": true,
+        "activity_status": true,
         "admin_access_roster": true,
         "admin_set_access": true,
         "delete_message": true,
+        "mark_seen": true,
         "post_message": true,
+        "register_push": true,
+        "remove_push": true,
         "set_reaction": true,
         "snapshot": true
       },
+      "delivery_context_private": true,
       "functions": {
         "access_status": true,
+        "activity_status": true,
         "admin_access_roster": true,
         "admin_set_access": true,
         "delete_message": true,
+        "delivery_context": true,
+        "mark_seen": true,
         "post_message": true,
+        "register_push": true,
+        "remove_push": true,
         "set_reaction": true,
         "snapshot": true
       },
-      "internal_helper_private": true,
-      "security_definer": true
+      "internal_helper_private": true
     },
     "tables": {
       "access": true,
+      "member_activity": true,
       "messages": true,
+      "push_config": true,
+      "push_subscriptions": true,
       "reactions": true
-    }
+    },
+    "vapid_ready": true
   },
   "rooms": 2,
   "saved_picks": 50,
