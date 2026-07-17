@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='better-than-standalone-share-20260717n-photo-authority';
+  const VERSION='better-than-standalone-share-20260717o-photo-authority';
   const FIND_LEADER_VERSION='find-leader-20260716c-daily-elimination';
   let creating=false;
 
@@ -53,7 +53,7 @@
 
   function loadFindLeaderAssets(){
     if(!window.UFC_PLAY_PHOTO_AUTHORITY){
-      loadScriptOnce('script[data-play-photo-authority]','assets/js/play-photo-authority.js?v=play-photo-authority-20260717b','playPhotoAuthority',loadFindLeaderAssets);
+      loadScriptOnce('script[data-play-photo-authority]','assets/js/play-photo-authority.js?v=play-photo-authority-20260717c','playPhotoAuthority',loadFindLeaderAssets);
       return;
     }
     window.UFC_PLAY_PHOTO_AUTHORITY.sync?.();
