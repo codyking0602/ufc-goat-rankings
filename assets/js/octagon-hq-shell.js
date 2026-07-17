@@ -1,12 +1,16 @@
 (function(){
   'use strict';
 
-  const VERSION='octagon-hq-shell-20260717b';
+  const VERSION='octagon-hq-shell-20260717c';
   const CANONICAL_CODE='GOAT26';
   const PROFILE_CACHE_KEY='ufc-app:profile-cache:goat26';
   const MEMBER_TOKEN_KEY=`ufc-picks:group:${CANONICAL_CODE}`;
   const DISPLAY_NAME_KEY='ufc-picks:display-name';
+  const BRAND_EYEBROW='UFC RANKINGS · GAMES · PICKS · COMMUNITY';
+  const BRAND_TITLE='Octagon HQ';
+  const BRAND_SUBTITLE='Rankings, games, picks, and UFC conversation.';
   let rendering=false;
+  let branding=false;
 
   const text=value=>String(value??'').trim();
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({
@@ -127,17 +131,18 @@
   }
 
   function installBrand(){
-    document.title='Octagon HQ';
     const hero=document.querySelector('.hero');
     if(!hero)return;
+    branding=true;
+    document.title=BRAND_TITLE;
     const brand=hero.firstElementChild;
     if(brand){
       const eyebrow=brand.querySelector('.eyebrow');
       const title=brand.querySelector('h1');
       const subtitle=brand.querySelector('.subtitle');
-      if(eyebrow)eyebrow.textContent='UFC RANKINGS · GAMES · PICKS · COMMUNITY';
-      if(title)title.textContent='Octagon HQ';
-      if(subtitle)subtitle.textContent='Rankings, games, picks, and UFC conversation.';
+      if(eyebrow&&eyebrow.textContent!==BRAND_EYEBROW)eyebrow.textContent=BRAND_EYEBROW;
+      if(title&&title.textContent!==BRAND_TITLE)title.textContent=BRAND_TITLE;
+      if(subtitle&&subtitle.textContent!==BRAND_SUBTITLE)subtitle.textContent=BRAND_SUBTITLE;
 
       const count=document.getElementById('fighterCount');
       if(count){
@@ -154,8 +159,9 @@
 
     const whatsNewTitle=document.getElementById('whatsNewTitle');
     const whatsNewDescription=document.getElementById('whatsNewDescription');
-    if(whatsNewTitle)whatsNewTitle.textContent='Octagon HQ Just Got Bigger';
-    if(whatsNewDescription)whatsNewDescription.textContent='Rankings, games, picks, profiles, and UFC conversation now live under one roof.';
+    if(whatsNewTitle&&whatsNewTitle.textContent!=='Octagon HQ Just Got Bigger')whatsNewTitle.textContent='Octagon HQ Just Got Bigger';
+    if(whatsNewDescription&&whatsNewDescription.textContent!=='Rankings, games, picks, profiles, and UFC conversation now live under one roof.')whatsNewDescription.textContent='Rankings, games, picks, profiles, and UFC conversation now live under one roof.';
+    branding=false;
   }
 
   function activateOctagon(button){
@@ -205,7 +211,7 @@
       .octagon-beta-shell{max-width:760px;margin:0 auto;padding:24px;border:1px solid var(--line,#263244);border-radius:24px;background:linear-gradient(160deg,#172238,#0c1322);color:#f8fafc}.octagon-beta-kicker{color:#fb923c;font:950 10px/1 system-ui;letter-spacing:.14em}.octagon-beta-shell h2{margin:10px 0 5px;font-size:clamp(36px,8vw,64px);line-height:.95}.octagon-beta-shell>p{margin:0;color:#cbd5e1;font-size:17px}.octagon-beta-card{display:grid;gap:7px;margin-top:24px;padding:18px;border:1px solid rgba(249,115,22,.32);border-radius:18px;background:rgba(249,115,22,.07)}.octagon-beta-card span{color:#fb923c;font:950 9px/1 system-ui;letter-spacing:.12em}.octagon-beta-card strong{font-size:17px}.octagon-beta-card small{color:#94a3b8;line-height:1.45}
       #manualRefreshControl{min-width:0!important;width:auto!important;align-self:start!important}#manualRefreshActions{gap:5px!important;justify-content:flex-end!important}#manualRefreshBtn,#whatsNewBtn{min-height:32px!important;padding:6px 10px!important;font-size:.68rem!important;box-shadow:none!important}#manualRefreshBtn{border-color:transparent!important;background:transparent!important;color:inherit!important;opacity:.68}#manualRefreshBtn:hover{opacity:1;background:rgba(127,127,127,.08)!important}#whatsNewBtn{background:rgba(17,24,39,.92)!important}
       @media(min-width:901px){.hero{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(230px,300px)!important;column-gap:24px!important;row-gap:8px!important}.hero>div:first-child{grid-column:1;grid-row:1/3}.app-profile-tools{grid-column:2;grid-row:2}.hero #manualRefreshControl{grid-column:2;grid-row:1;justify-self:end}.hero h1{font-size:clamp(42px,5vw,68px)!important}}
-      @media(max-width:900px){.hero{padding:13px 16px 12px!important;gap:8px!important}.hero>div:first-child{width:100%}.hero .eyebrow{margin:1px 0 6px!important;font-size:10px!important;letter-spacing:.13em!important}.hero h1{font-size:clamp(38px,11vw,48px)!important;line-height:.92!important}.hero .subtitle{margin:7px 0 0!important;font-size:15px!important;line-height:1.3!important}.octagon-hq-count{margin-top:5px;font-size:13px}.app-profile-tools{width:100%!important;min-width:0!important}.app-profile-chip{width:100%!important;min-height:42px!important}.hero #manualRefreshControl{order:-1!important;width:auto!important;align-self:flex-end!important}.hero #manualRefreshActions{justify-content:flex-end!important}.tabs{padding:9px 14px!important;gap:7px!important}.tab{padding:8px 11px!important;font-size:12px!important}.shell{padding-top:12px!important}.toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px}.toolbar #search,.toolbar #divisionFilter{grid-column:1/-1;grid-row:1}.toolbar #eraFilter{grid-column:1;grid-row:2;width:100%;min-width:0}.toolbar #resetBtn{grid-column:2;grid-row:2;width:auto;min-width:86px;padding-left:15px;padding-right:15px}.octagon-beta-shell{padding:20px}}
+      @media(max-width:900px){.hero{padding:13px 16px 12px!important;gap:8px!important}.hero>div:first-child{width:100%}.hero .eyebrow{margin:1px 0 6px!important;font-size:10px!important;letter-spacing:.13em!important}.hero h1{font-size:clamp(38px,11vw,48px)!important;line-height:.92!important}.hero .subtitle{margin:7px 0 0!important;font-size:15px!important;line-height:1.3!important}.octagon-hq-count{margin-top:5px;font-size:13px}.app-profile-tools{width:100%!important;min-width:0!important}.app-profile-chip{width:100%!important;min-height:42px!important}.hero #manualRefreshControl{order:-1!important;width:auto!important;align-self:flex-end!important}.hero #manualRefreshActions{justify-content:flex-end!important}.tabs{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;flex-wrap:initial!important;overflow:visible!important;padding:9px 14px!important;gap:7px!important}.tab{width:100%!important;min-width:0!important;padding:8px 6px!important;font-size:12px!important;white-space:normal!important}.tab[data-view="men"]{order:1}.tab[data-view="women"]{order:2}.tab[data-view="compare"]{order:3}.tab[data-view="play"]{order:4}.tab[data-view="division"]{order:5}.tab[data-view="categories"]{order:6}.tab[data-view="picks"]{order:7}.octagon-beta-tab{order:8}.tab[data-view="rules"]{order:9}.shell{padding-top:12px!important}.toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px}.toolbar #search,.toolbar #divisionFilter{grid-column:1/-1;grid-row:1}.toolbar #eraFilter{grid-column:1;grid-row:2;width:100%;min-width:0}.toolbar #resetBtn{grid-column:2;grid-row:2;width:auto;min-width:86px;padding-left:15px;padding-right:15px}.octagon-beta-shell{padding:20px}}
       @media(max-width:430px){.hero{padding-top:10px!important}.hero h1{font-size:39px!important}.app-profile-chip{grid-template-columns:32px minmax(0,1fr) auto!important}.app-profile-chip .app-profile-avatar{width:32px!important;height:32px!important;min-width:32px!important}.tabs{padding-top:7px!important;padding-bottom:7px!important}.octagon-beta-tab{gap:4px!important}}
     `;
     document.head.appendChild(style);
@@ -227,6 +233,25 @@
     observer.observe(hero,{childList:true,subtree:true,characterData:true});
   }
 
+  function protectBrand(){
+    const hero=document.querySelector('.hero');
+    if(!hero)return;
+    const observer=new MutationObserver(()=>{
+      if(branding)return;
+      const brand=hero.firstElementChild;
+      const eyebrow=brand?.querySelector?.('.eyebrow');
+      const title=brand?.querySelector?.('h1');
+      const subtitle=brand?.querySelector?.('.subtitle');
+      if(
+        document.title!==BRAND_TITLE
+        || eyebrow?.textContent!==BRAND_EYEBROW
+        || title?.textContent!==BRAND_TITLE
+        || subtitle?.textContent!==BRAND_SUBTITLE
+      ) installBrand();
+    });
+    observer.observe(hero,{childList:true,subtree:true,characterData:true});
+  }
+
   function start(){
     installStyles();
     installBrand();
@@ -236,8 +261,9 @@
     else if(get(MEMBER_TOKEN_KEY))renderLoading();
     else syncBetaAccess(null);
     protectResolvedProfile();
+    protectBrand();
+    [0,50,220,850,2200].forEach(delay=>window.setTimeout(installBrand,delay));
     [0,220,850,2200].forEach(delay=>window.setTimeout(hydrateProfile,delay));
-    window.setTimeout(installBrand,50);
   }
 
   window.addEventListener('ufc-app-profile-updated',event=>{
