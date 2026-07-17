@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='keep-cut-20260716b-production-audit';
+  const VERSION='keep-cut-20260716c-best-prime';
   const STORAGE_KEY='ufc-goat-keep-cut-v1';
   const STORAGE_VERSION=2;
   const PLAY_DATA=window.UFC_PLAY_DATA;
@@ -81,6 +81,7 @@
   const PACKS=[
     {id:'ufc-careers',group:'Serious',name:'UFC Careers',prompt:'Keep four UFC careers. Cut four.',description:'Eight ranked UFC careers arrive one at a time. Every decision locks.',scoreMode:'overall-rank',filters:{gender:'men',modelRanked:true}},
     {id:'all-careers',group:'Serious',name:'All UFC Careers',prompt:'Keep four UFC careers. Cut four.',description:'Ranked men and women from across UFC history arrive one at a time.',scoreMode:'overall-score',filters:{modelRanked:true}},
+    {id:'best-prime',group:'Serious',name:'Best Prime',prompt:'Keep four UFC primes. Cut four.',description:'Balanced by Prime Dominance and Apex Peak—not overall career rank.',scoreMode:'prime-score',candidateLimit:48,filters:{modelRanked:true}},
     {id:'never-undisputed',group:'Serious',name:'Never Won Undisputed Gold',prompt:'Keep four. Cut four.',description:'Major UFC careers without undisputed UFC gold, balanced by UFC résumé.',scoreMode:'ordered',filters:{modelRanked:true},names:NEVER_UNDISPUTED,order:CATEGORY_ORDERS['never-undisputed']},
     {id:'former-champions',group:'Serious',name:'Former Champions',prompt:'Keep four champions. Cut four.',description:'Eight ranked UFC champions arrive one at a time.',scoreMode:'overall-score',filters:{modelRanked:true},names:FORMER_CHAMPIONS},
     {id:'lightweight',group:'Serious',name:'Lightweight',prompt:'Keep four lightweights. Cut four.',description:'Ranked UFC lightweight careers, balanced by lightweight résumé.',scoreMode:'division-score',division:'Lightweight',filters:{gender:'men',division:'Lightweight',modelRanked:true}},
@@ -95,7 +96,6 @@
   const TARGET_BUCKETS=['elite','great','great','good','good','average','average','chaos'];
   const BUCKET_ORDER=['elite','great','good','average','chaos'];
   const REQUIRED_BUCKET_COUNTS=TARGET_BUCKETS.reduce((counts,bucket)=>({...counts,[bucket]:(counts[bucket]||0)+1}),{});
-
   const state={packId:'ufc-careers',lineup:[],decisions:[],currentIndex:0,completed:false,shared:false,balance:null};
   let audit={passed:false,packs:[]};
 
@@ -125,16 +125,10 @@
     return [fighter?.primaryDivision||fighter?.divisions?.[0],eraLabel(fighter)].filter(Boolean).join(' · ')||'UFC Play roster';
   }
 
-  function poolForPack(pack){
-    let pool=PLAY_DATA.poolFor('keep-cut',pack.filters||{});
-    if(Array.isArray(pack.names)){
-      const allowed=new Set(pack.names.map(name=>PLAY_DATA.resolve(name)?.id).filter(Boolean));
-      pool=pool.filter(fighter=>allowed.has(fighter.id));
-    }
-    if(Array.isArray(pack.eras)&&pack.eras.length){
-      pool=pool.filter(fighter=>fighter.eras?.some(era=>pack.eras.includes(era)));
-    }
-    return pool;
+  function rankingRow(fighter){
+    const target=String(fighter?.name||'').trim().toLowerCase();
+    const data=window.RANKING_DATA||{};
+    return [...(data.men||[]),...(data.women||[]),...(data.fighters||[])].find(row=>String(row?.fighter||'').trim().toLowerCase()===target)||null;
   }
 
   function fallbackScore(fighter){
@@ -148,17 +142,44 @@
     return Array.isArray(entries)?entries.find(entry=>entry?.division===division)||null:null;
   }
 
+  function primeScore(fighter){
+    const row=rankingRow(fighter);
+    const dominance=Number(row?.primeDominance);
+    const apex=Number(row?.apexPeak);
+    if(!Number.isFinite(dominance))return null;
+    return dominance+(Number.isFinite(apex)?apex:0);
+  }
+
   function scoreForPack(pack,fighter){
     if(pack.scoreMode==='ordered'&&Array.isArray(pack.order)){
       const index=pack.order.findIndex(name=>PLAY_DATA.resolve(name)?.id===fighter.id);
       if(index>=0)return 20000-index*100;
     }
     if(pack.scoreMode==='overall-score'&&Number.isFinite(Number(fighter?.modelScore)))return Number(fighter.modelScore);
+    if(pack.scoreMode==='prime-score'){
+      const score=primeScore(fighter);
+      if(Number.isFinite(score))return score;
+    }
     if(pack.scoreMode==='division-score'){
       const score=divisionEntry(fighter,pack.division)?.divisionScore;
       if(Number.isFinite(Number(score)))return Number(score);
     }
     return fallbackScore(fighter);
+  }
+
+  function poolForPack(pack){
+    let pool=PLAY_DATA.poolFor('keep-cut',pack.filters||{});
+    if(Array.isArray(pack.names)){
+      const allowed=new Set(pack.names.map(name=>PLAY_DATA.resolve(name)?.id).filter(Boolean));
+      pool=pool.filter(fighter=>allowed.has(fighter.id));
+    }
+    if(Array.isArray(pack.eras)&&pack.eras.length){
+      pool=pool.filter(fighter=>fighter.eras?.some(era=>pack.eras.includes(era)));
+    }
+    if(Number.isInteger(pack.candidateLimit)&&pack.candidateLimit>=8){
+      pool=[...pool].sort((a,b)=>scoreForPack(pack,b)-scoreForPack(pack,a)||a.name.localeCompare(b.name)).slice(0,pack.candidateLimit);
+    }
+    return pool;
   }
 
   function bucketedPool(pack,pool=poolForPack(pack)){
@@ -219,6 +240,7 @@
       const bucketReady=Object.entries(REQUIRED_BUCKET_COUNTS).every(([bucket,count])=>bucketCounts[bucket]>=count);
       const orderMissing=Array.isArray(pack.order)?pool.filter(fighter=>!pack.order.some(name=>PLAY_DATA.resolve(name)?.id===fighter.id)).map(fighter=>fighter.name):[];
       const divisionMissing=pack.scoreMode==='division-score'?pool.filter(fighter=>!Number.isFinite(Number(divisionEntry(fighter,pack.division)?.divisionScore))).map(fighter=>fighter.name):[];
+      const primeMissing=pack.scoreMode==='prime-score'?pool.filter(fighter=>!Number.isFinite(primeScore(fighter))).map(fighter=>fighter.name):[];
       return {
         id:pack.id,
         group:pack.group,
@@ -229,7 +251,8 @@
         bottomFive:ranked.slice(-5).map(fighter=>fighter.name),
         orderMissing,
         divisionMissing,
-        playable:pool.length>=8&&bucketReady&&orderMissing.length===0&&divisionMissing.length===0
+        primeMissing,
+        playable:pool.length>=8&&bucketReady&&orderMissing.length===0&&divisionMissing.length===0&&primeMissing.length===0
       };
     });
     return {passed:packs.every(pack=>pack.playable),packs};
