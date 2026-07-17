@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='better-than-standalone-share-20260717l-daily-find-leader';
+  const VERSION='better-than-standalone-share-20260717m-photo-authority';
   const FIND_LEADER_VERSION='find-leader-20260716c-daily-elimination';
   let creating=false;
 
@@ -39,6 +39,7 @@
 
   function loadDailyTools(){
     patchBalancedDailySetup();
+    window.UFC_PLAY_PHOTO_AUTHORITY?.sync?.();
     const loadClients=()=>{
       loadScriptOnce('script[data-play-daily-rotation-v3]','assets/js/play-daily-rotation.js?v=play-daily-rotation-20260716d-all-six-games','playDailyRotationV3');
       loadScriptOnce('script[data-play-daily-leaderboard-community]','assets/js/play-daily-leaderboard.js?v=play-daily-leaderboard-20260716d-community-days','playDailyLeaderboardCommunity');
@@ -51,6 +52,11 @@
   }
 
   function loadFindLeaderAssets(){
+    if(!window.UFC_PLAY_PHOTO_AUTHORITY){
+      loadScriptOnce('script[data-play-photo-authority]','assets/js/play-photo-authority.js?v=play-photo-authority-20260717a','playPhotoAuthority',loadFindLeaderAssets);
+      return;
+    }
+    window.UFC_PLAY_PHOTO_AUTHORITY.sync?.();
     if(!document.querySelector('link[data-find-leader-elimination-style]')){
       const link=document.createElement('link');
       link.rel='stylesheet';
@@ -59,7 +65,7 @@
       document.head.appendChild(link);
     }
 
-    const gameReady=()=>{patchBalancedDailySetup();loadDailyTools();};
+    const gameReady=()=>{patchBalancedDailySetup();window.UFC_PLAY_PHOTO_AUTHORITY?.sync?.();loadDailyTools();};
     const loadGame=()=>{
       if(window.UFC_FIND_LEADER?.version!==FIND_LEADER_VERSION){
         document.getElementById('playFindLeaderPanel')?.remove();
