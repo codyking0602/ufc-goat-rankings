@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-07-17T17:10:17.441192+00:00",
+  "checked_at": "2026-07-17T17:14:23.010618+00:00",
   "code": "GOAT26",
   "reason": "Supabase Management API returned HTTP 400: {\"message\":\"Failed to run sql query: ERROR:  P0001: The verified UFC Picks group with Cody, Daddy, Rhonda, Shane, and Tyler was not found. No changes were made.\\nCONTEXT:  PL/pgSQL function inline_code_block line 66 at RAISE\\n\"}",
   "status": "failed"
