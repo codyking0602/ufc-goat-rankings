@@ -1,30 +1,29 @@
 (function(){
   'use strict';
 
-  const VERSION='app-update-watcher-20260717o-brandon-moreno-whats-new';
+  const VERSION='app-update-watcher-20260717p-lightweight-refresh';
   const RESTORE_KEY='ufc-goat-manual-refresh-v1';
   const PROGRESS_KEY='ufc-goat-manual-refresh-progress-v1';
-  const LAST_DURATION_KEY='ufc-goat-manual-refresh-duration-v1';
-  const WHATS_NEW_KEY='ufc-whats-new-20260717-brandon-moreno';
+  const WHATS_NEW_KEY='ufc-whats-new-20260717-anthony-pettis';
   const LEGACY_KEYS=['ufc-goat-update-restore-v1','ufc-goat-update-target-v1'];
-  const DEFAULT_PROGRESS_MS=3200;
-  let progressTimers=[];
-  let progressFrame=0;
-  let progressState=null;
   let whatsNewReturnFocus=null;
 
-  function activeView(){return document.querySelector('.tab.active')?.dataset.view||'men';}
-  function activePlayMode(){return document.querySelector('[data-play-mode].active')?.dataset.playMode||'top10';}
-  function clampNumber(value,min,max){return Math.max(min,Math.min(max,value));}
+  function activeView(){
+    return document.querySelector('.tab.active')?.dataset.view
+      || document.querySelector('.view.active-view')?.id
+      || 'home';
+  }
 
-  function cleanRefreshParameter(){
+  function activePlayMode(){
+    return document.querySelector('[data-play-mode].active')?.dataset.playMode||'top10';
+  }
+
+  function cleanRefreshState(){
+    try{sessionStorage.removeItem(PROGRESS_KEY);}catch(_error){}
     const url=new URL(window.location.href);
     let changed=false;
     ['__manual_refresh','__shell'].forEach(key=>{
-      if(url.searchParams.has(key)){
-        url.searchParams.delete(key);
-        changed=true;
-      }
+      if(url.searchParams.has(key)){url.searchParams.delete(key);changed=true;}
     });
     if(changed)window.history.replaceState(window.history.state,'',`${url.pathname}${url.search}${url.hash}`);
   }
@@ -61,172 +60,54 @@
       sessionStorage.removeItem(RESTORE_KEY);
     }catch(_error){}
     if(!state)return;
+
     setControlValue('search',state.search);
     setControlValue('eraFilter',state.era);
     setControlValue('divisionFilter',state.division);
     setControlValue('fighterA',state.fighterA);
     setControlValue('fighterB',state.fighterB);
     setControlValue('categoryBoardSelect',state.category);
+
     if(typeof window.refresh==='function'){
       try{window.refresh();}catch(_error){}
     }
-    document.querySelector(`.tab[data-view="${state.activeView||'men'}"]`)?.click();
+
+    const target=document.querySelector(`.tab[data-view="${state.activeView||'home'}"]`);
+    target?.click();
+
     if(state.activeView==='play'){
       document.querySelector(`[data-play-mode="${state.playMode||'top10'}"]`)?.click();
     }
     if(state.era)document.getElementById('eraFilter')?.dispatchEvent(new Event('change',{bubbles:true}));
     if(state.category)document.getElementById('categoryBoardSelect')?.dispatchEvent(new Event('change',{bubbles:true}));
-    window.setTimeout(()=>window.scrollTo({top:Number(state.scrollY)||0,left:0,behavior:'auto'}),150);
+    window.setTimeout(()=>window.scrollTo({top:Number(state.scrollY)||0,left:0,behavior:'auto'}),120);
   }
 
-  function clearProgressTimers(){
-    progressTimers.forEach(timer=>window.clearTimeout(timer));
-    progressTimers=[];
-    if(progressFrame)window.cancelAnimationFrame(progressFrame);
-    progressFrame=0;
-  }
-
-  function setProgress(percent,visible=true){
-    const track=document.getElementById('manualRefreshProgress');
-    const fill=document.getElementById('manualRefreshProgressFill');
-    if(!track||!fill)return;
-    track.classList.toggle('visible',visible);
-    fill.style.width=`${clampNumber(percent,0,100)}%`;
-  }
-
-  function expectedProgressDuration(){
-    let saved=0;
-    try{saved=Number(localStorage.getItem(LAST_DURATION_KEY)||0);}catch(_error){}
-    return Number.isFinite(saved)&&saved>0?clampNumber(saved,1800,8000):DEFAULT_PROGRESS_MS;
-  }
-
-  function readProgressState(){
-    let raw='';
-    try{raw=sessionStorage.getItem(PROGRESS_KEY)||'';}catch(_error){}
-    if(!raw)return null;
-    const expectedMs=expectedProgressDuration();
-    if(raw==='1')return{startedAt:Date.now()-Math.min(500,expectedMs*.15),expectedMs};
-    try{
-      const state=JSON.parse(raw);
-      const startedAt=Number(state?.startedAt);
-      const storedExpected=Number(state?.expectedMs);
-      if(Number.isFinite(startedAt)&&startedAt>0){
-        return{
-          startedAt,
-          expectedMs:Number.isFinite(storedExpected)?clampNumber(storedExpected,1800,8000):expectedMs
-        };
-      }
-    }catch(_error){}
-    return null;
-  }
-
-  function writeProgressState(state){
-    try{sessionStorage.setItem(PROGRESS_KEY,JSON.stringify(state));}catch(_error){}
-  }
-
-  function progressForElapsed(elapsedMs,expectedMs){
-    const expected=clampNumber(expectedMs||DEFAULT_PROGRESS_MS,1800,8000);
-    if(elapsedMs<=expected)return 4+(90*(elapsedMs/expected));
-    return 94+(3.5*(1-Math.exp(-(elapsedMs-expected)/3500)));
-  }
-
-  function beginProgress(state){
-    clearProgressTimers();
-    progressState=state||{startedAt:Date.now(),expectedMs:expectedProgressDuration()};
-    const tick=()=>{
-      const elapsed=Math.max(0,Date.now()-progressState.startedAt);
-      setProgress(progressForElapsed(elapsed,progressState.expectedMs),true);
-      progressFrame=window.requestAnimationFrame(tick);
-    };
-    setProgress(progressForElapsed(Math.max(0,Date.now()-progressState.startedAt),progressState.expectedMs),true);
-    progressFrame=window.requestAnimationFrame(tick);
-  }
-
-  function rememberProgressDuration(state){
-    if(!state?.startedAt)return;
-    const actual=clampNumber(Date.now()-state.startedAt,1200,10000);
-    let previous=0;
-    try{previous=Number(localStorage.getItem(LAST_DURATION_KEY)||0);}catch(_error){}
-    const next=Number.isFinite(previous)&&previous>0?Math.round((previous*.65)+(actual*.35)):actual;
-    try{localStorage.setItem(LAST_DURATION_KEY,String(clampNumber(next,1800,8000)));}catch(_error){}
-  }
-
-  function finishProgress(){
-    const completedState=progressState||readProgressState();
-    rememberProgressDuration(completedState);
-    clearProgressTimers();
-    progressState=null;
-    setProgress(100,true);
-    const button=document.getElementById('manualRefreshBtn');
-    if(button){
-      button.classList.remove('refreshing');
-      button.removeAttribute('aria-busy');
-    }
-    try{sessionStorage.removeItem(PROGRESS_KEY);}catch(_error){}
-    progressTimers.push(window.setTimeout(()=>document.getElementById('manualRefreshProgress')?.classList.remove('visible'),360));
-    progressTimers.push(window.setTimeout(()=>setProgress(0,false),700));
-  }
-
-  function waitForPageReady(){
-    if(document.readyState==='complete')return Promise.resolve();
-    return new Promise(resolve=>window.addEventListener('load',resolve,{once:true}));
-  }
-
-  function waitForModelReady(){
-    if(window.UFC_SCORING_PIPELINE?.status==='ready'||document.documentElement.getAttribute('data-scoring-pipeline')==='ready')return Promise.resolve();
-    if(window.UFC_SCORING_PIPELINE_READY&&typeof window.UFC_SCORING_PIPELINE_READY.then==='function'){
-      return Promise.resolve(window.UFC_SCORING_PIPELINE_READY).catch(()=>undefined);
-    }
-    return new Promise(resolve=>{
-      let settled=false;
-      const done=()=>{
-        if(settled)return;
-        settled=true;
-        window.removeEventListener('ufc-scoring-pipeline-ready',done);
-        window.removeEventListener('ufc-scoring-pipeline-error',done);
-        resolve();
-      };
-      window.addEventListener('ufc-scoring-pipeline-ready',done,{once:true});
-      window.addEventListener('ufc-scoring-pipeline-error',done,{once:true});
-      window.setTimeout(done,8000);
-    });
-  }
-
-  function resumeProgressIfNeeded(){
-    const state=readProgressState();
-    if(!state)return;
-    const button=document.getElementById('manualRefreshBtn');
-    if(button){
-      button.classList.add('refreshing');
-      button.setAttribute('aria-busy','true');
-    }
-    beginProgress(state);
-    Promise.allSettled([waitForPageReady(),waitForModelReady()]).then(finishProgress);
-  }
-
-  async function clearWebCaches(){
-    const jobs=[];
-    if('caches'in window){
-      jobs.push(caches.keys().then(keys=>Promise.all(keys.map(key=>caches.delete(key)))).catch(()=>undefined));
-    }
-    if(navigator.serviceWorker?.getRegistrations){
-      jobs.push(navigator.serviceWorker.getRegistrations().then(items=>Promise.all(items.map(item=>item.unregister()))).catch(()=>undefined));
-    }
-    await Promise.allSettled(jobs);
-  }
-
-  async function networkRefresh(button){
-    saveState();
-    const state={startedAt:Date.now(),expectedMs:expectedProgressDuration()};
-    writeProgressState(state);
+  function showQuickProgress(button){
     button.classList.add('refreshing');
     button.setAttribute('aria-busy','true');
-    beginProgress(state);
-    await clearWebCaches();
+    const track=document.getElementById('manualRefreshProgress');
+    const fill=document.getElementById('manualRefreshProgressFill');
+    if(track){
+      track.classList.add('visible');
+      track.setAttribute('aria-hidden','false');
+    }
+    if(fill){
+      fill.style.width='28%';
+      window.setTimeout(()=>{fill.style.width='88%';},20);
+    }
+  }
+
+  function networkRefresh(button){
+    if(button?.dataset.refreshBusy==='true')return;
+    if(button)button.dataset.refreshBusy='true';
+    saveState();
+    showQuickProgress(button);
     const url=new URL('index.html',window.location.href);
     url.searchParams.set('__manual_refresh',String(Date.now()));
-    url.searchParams.set('__shell','network');
-    window.setTimeout(()=>window.location.replace(url.toString()),80);
+    url.searchParams.set('__shell','light');
+    url.hash=window.location.hash;
+    window.setTimeout(()=>window.location.replace(url.toString()),75);
   }
 
   function markWhatsNewSeen(){
@@ -246,7 +127,7 @@
     document.body.classList.remove('whats-new-open');
     const target=whatsNewReturnFocus;
     whatsNewReturnFocus=null;
-    if(target&&typeof target.focus==='function')target.focus();
+    target?.focus?.();
   }
 
   function openWhatsNew(trigger){
@@ -261,13 +142,15 @@
 
   function exploreUpdate(){
     closeWhatsNew();
-    document.querySelector('.tab[data-view="play"]')?.click();
+    window.UFC_PRODUCT_ARCHITECTURE?.activateDestination?.('play')
+      || document.querySelector('.tab[data-view="play"]')?.click();
     window.setTimeout(()=>window.scrollTo({top:0,left:0,behavior:'smooth'}),60);
   }
 
-  function installWhatsNew(){
-    if(document.getElementById('whatsNewOverlay'))return;
+  function injectStyles(){
+    if(document.getElementById('appUpdateWatcherStyles'))return;
     const style=document.createElement('style');
+    style.id='appUpdateWatcherStyles';
     style.textContent=`
       body.whats-new-open{overflow:hidden}
       #manualRefreshControl{display:flex;flex:0 0 auto;align-self:flex-start;flex-direction:column;align-items:stretch;gap:4px;min-width:206px}
@@ -276,9 +159,9 @@
       #whatsNewBtn{border-color:rgba(255,255,255,.2);color:#f8fafc}
       #manualRefreshBtn:active,#whatsNewBtn:active{transform:translateY(1px) scale(.98)}
       #manualRefreshBtn.refreshing{opacity:.82;pointer-events:none}
-      #manualRefreshProgress{height:2px;width:calc(100% - 14px);margin:0 7px;border-radius:999px;overflow:hidden;background:rgba(249,115,22,.16);opacity:0;transition:opacity .16s ease}
+      #manualRefreshProgress{height:2px;width:calc(100% - 14px);margin:0 7px;border-radius:999px;overflow:hidden;background:rgba(249,115,22,.16);opacity:0;transition:opacity .12s ease}
       #manualRefreshProgress.visible{opacity:1}
-      #manualRefreshProgressFill{display:block;height:100%;width:0;border-radius:inherit;background:#f97316;box-shadow:0 0 5px rgba(249,115,22,.7);transition:width .08s linear}
+      #manualRefreshProgressFill{display:block;height:100%;width:0;border-radius:inherit;background:#f97316;box-shadow:0 0 5px rgba(249,115,22,.7);transition:width .12s ease}
       #whatsNewOverlay[hidden]{display:none!important}
       #whatsNewOverlay{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:18px;background:rgba(2,4,8,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);overflow-y:auto}
       #whatsNewDialog{position:relative;width:min(760px,100%);max-height:calc(100vh - 36px);overflow:auto;border:1px solid rgba(249,115,22,.5);border-radius:24px;background:linear-gradient(145deg,#161b24 0%,#0a0d13 58%,#090b10 100%);box-shadow:0 30px 90px rgba(0,0,0,.62);color:#f8fafc}
@@ -290,7 +173,6 @@
       .whats-new-deck{margin:16px 0 0;color:#cbd5e1;font:600 1rem/1.55 system-ui}
       .whats-new-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:24px}
       .whats-new-card{min-width:0;padding:18px;border:1px solid rgba(255,255,255,.1);border-radius:16px;background:rgba(255,255,255,.045)}
-      .whats-new-card-wide{grid-column:1/-1}
       .whats-new-label{display:flex;align-items:center;gap:9px;margin:0 0 8px;color:#fb923c;font:900 .75rem/1.2 system-ui;letter-spacing:.1em;text-transform:uppercase}
       .whats-new-label i{display:grid;place-items:center;width:25px;height:25px;border-radius:8px;background:rgba(249,115,22,.14);font-style:normal;letter-spacing:0}
       .whats-new-card h3{margin:0;color:#fff;font:850 1.08rem/1.2 system-ui}
@@ -300,12 +182,15 @@
       .whats-new-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:24px}
       #whatsNewExplore{min-height:48px;padding:13px 20px;border:0;border-radius:12px;background:#f97316;color:#1b0c03;font:950 .86rem/1 system-ui;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
       .whats-new-once{color:#94a3b8;font:650 .76rem/1.35 system-ui;text-align:right}
-      @media (max-width:900px){#manualRefreshControl{order:-1;align-self:flex-end;min-width:196px}#manualRefreshBtn,#whatsNewBtn{min-height:38px;padding:8px 11px;font-size:.72rem}}
-      @media (max-width:620px){#whatsNewOverlay{padding:10px;place-items:start center}#whatsNewDialog{max-height:none;margin:10px 0;border-radius:19px}#whatsNewContent{padding:29px 18px 21px}.whats-new-grid{grid-template-columns:1fr}.whats-new-card-wide{grid-column:auto}.whats-new-actions{align-items:stretch;flex-direction:column}#whatsNewExplore{width:100%}.whats-new-once{text-align:center}.whats-new-title{padding-right:34px}}
-      @media (max-width:430px){#manualRefreshControl{min-width:0;width:100%}#manualRefreshActions{justify-content:stretch}#manualRefreshBtn,#whatsNewBtn{flex:1;padding-left:8px;padding-right:8px}}
+      @media(max-width:900px){#manualRefreshControl{order:-1;align-self:flex-end;min-width:196px}#manualRefreshBtn,#whatsNewBtn{min-height:38px;padding:8px 11px;font-size:.72rem}}
+      @media(max-width:620px){#whatsNewOverlay{padding:10px;place-items:start center}#whatsNewDialog{max-height:none;margin:10px 0;border-radius:19px}#whatsNewContent{padding:29px 18px 21px}.whats-new-grid{grid-template-columns:1fr}.whats-new-actions{align-items:stretch;flex-direction:column}#whatsNewExplore{width:100%}.whats-new-once{text-align:center}.whats-new-title{padding-right:34px}}
+      @media(max-width:430px){#manualRefreshControl{min-width:0;width:100%}#manualRefreshActions{justify-content:stretch}#manualRefreshBtn,#whatsNewBtn{flex:1;padding-left:8px;padding-right:8px}}
     `;
     document.head.appendChild(style);
+  }
 
+  function installWhatsNew(){
+    if(document.getElementById('whatsNewOverlay'))return;
     const overlay=document.createElement('div');
     overlay.id='whatsNewOverlay';
     overlay.hidden=true;
@@ -318,75 +203,30 @@
           <h2 id="whatsNewTitle" class="whats-new-title">The Octagon Just Got Bigger</h2>
           <p id="whatsNewDescription" class="whats-new-deck">The biggest UFC GOAT Rankings update yet is live.</p>
           <div class="whats-new-grid">
-            <article class="whats-new-card">
-              <p class="whats-new-label"><i>🎮</i> Game tab rebuilt</p>
-              <h3>More ways to settle the debate</h3>
-              <p>Play rebuilt UFC games including Blind Rank, Keep 4 Cut 4, Find the Leader, Blind Resume, and more.</p>
-            </article>
-            <article class="whats-new-card">
-              <p class="whats-new-label"><i>🧠</i> Intelligence rebuilt</p>
-              <h3>Ask anything about the rankings</h3>
-              <p>Use Octagon Verdict for fighter scores, comparisons, category results, judgment calls, and future GOAT scenarios.</p>
-            </article>
-            <article class="whats-new-card">
-              <p class="whats-new-label"><i>🥊</i> Picks card updated</p>
-              <h3>The live card reflects the change</h3>
-              <p>The dropped fight was removed and its replacement matchup was added to the current Picks card.</p>
-            </article>
-            <article class="whats-new-card">
-              <p class="whats-new-label"><i>➕</i> New fighters added</p>
-              <h3>Six more names enter the rankings</h3>
-              <div class="whats-new-fighters" aria-label="New fighters">
-                <span>Alexandre Pantoja</span><span>Paddy Pimblett</span><span>Chris Weidman</span><span>Tom Aspinall</span><span>Quinton “Rampage” Jackson</span><span>Brandon Moreno</span>
-              </div>
-            </article>
+            <article class="whats-new-card"><p class="whats-new-label"><i>🎮</i> Game tab rebuilt</p><h3>More ways to settle the debate</h3><p>Play daily challenges, Blind Rank, Keep 4 Cut 4, Find the Leader, Blind Resume, and more.</p></article>
+            <article class="whats-new-card"><p class="whats-new-label"><i>🧠</i> Intelligence rebuilt</p><h3>Ask anything about the rankings</h3><p>Use Octagon Verdict for fighter scores, comparisons, category results, judgment calls, and future GOAT scenarios.</p></article>
+            <article class="whats-new-card"><p class="whats-new-label"><i>🥊</i> Picks card updated</p><h3>The live card reflects the change</h3><p>The current Picks card includes the latest matchups, odds, standings, and main-event breakdown.</p></article>
+            <article class="whats-new-card"><p class="whats-new-label"><i>➕</i> New fighters added</p><h3>Seven more names enter the rankings</h3><div class="whats-new-fighters"><span>Alexandre Pantoja</span><span>Paddy Pimblett</span><span>Chris Weidman</span><span>Tom Aspinall</span><span>Quinton “Rampage” Jackson</span><span>Brandon Moreno</span><span>Anthony Pettis</span></div></article>
           </div>
-          <div class="whats-new-actions">
-            <button id="whatsNewExplore" type="button">Explore the Update</button>
-            <span class="whats-new-once">Shown once per major update.<br>Reopen anytime from What’s New.</span>
-          </div>
+          <div class="whats-new-actions"><button id="whatsNewExplore" type="button">Explore the Update</button><span class="whats-new-once">Shown once per major update.<br>Reopen anytime from What’s New.</span></div>
         </div>
-      </section>
-    `;
+      </section>`;
     document.body.appendChild(overlay);
-
     document.getElementById('whatsNewClose')?.addEventListener('click',closeWhatsNew);
     document.getElementById('whatsNewExplore')?.addEventListener('click',exploreUpdate);
-    overlay.addEventListener('click',event=>{
-      if(event.target===overlay)closeWhatsNew();
-    });
-    document.addEventListener('keydown',event=>{
-      if(event.key==='Escape'&&!overlay.hidden)closeWhatsNew();
-    });
+    overlay.addEventListener('click',event=>{if(event.target===overlay)closeWhatsNew();});
+    document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!overlay.hidden)closeWhatsNew();});
   }
 
   function installButton(){
     const hero=document.querySelector('.hero');
     if(!hero||document.getElementById('manualRefreshBtn'))return;
-    installWhatsNew();
     const control=document.createElement('div');
     control.id='manualRefreshControl';
-    const actions=document.createElement('div');
-    actions.id='manualRefreshActions';
-    const button=document.createElement('button');
-    button.id='manualRefreshBtn';
-    button.type='button';
-    button.textContent='↻ Refresh';
-    button.setAttribute('aria-label','Refresh app for the latest updates');
-    const whatsNew=document.createElement('button');
-    whatsNew.id='whatsNewBtn';
-    whatsNew.type='button';
-    whatsNew.textContent='What’s New';
-    whatsNew.setAttribute('aria-label','Open the latest update announcement');
-    const progress=document.createElement('div');
-    progress.id='manualRefreshProgress';
-    progress.setAttribute('aria-hidden','true');
-    progress.innerHTML='<i id="manualRefreshProgressFill"></i>';
-    button.addEventListener('click',()=>networkRefresh(button));
-    whatsNew.addEventListener('click',()=>openWhatsNew(whatsNew));
-    actions.append(button,whatsNew);
-    control.append(actions,progress);
+    control.innerHTML='<div id="manualRefreshActions"><button id="manualRefreshBtn" type="button" aria-label="Refresh app for the latest updates">↻ Refresh</button><button id="whatsNewBtn" type="button" aria-label="Open the latest update announcement">What’s New</button></div><div id="manualRefreshProgress" aria-hidden="true"><i id="manualRefreshProgressFill"></i></div>';
     hero.appendChild(control);
+    document.getElementById('manualRefreshBtn')?.addEventListener('click',event=>networkRefresh(event.currentTarget));
+    document.getElementById('whatsNewBtn')?.addEventListener('click',event=>openWhatsNew(event.currentTarget));
   }
 
   function loadScriptOnce(selector,src,datasetKey){
@@ -397,45 +237,29 @@
     document.head.appendChild(script);
   }
 
-  function loadChallengeCompatibility(){
-    loadScriptOnce(
-      'script[src*="play-challenge-compat.js"]',
-      'assets/js/play-challenge-compat.js?v=play-challenge-compat-20260715b-full-ready-identity',
-      'playChallengeCompat'
-    );
+  function loadSupportScripts(){
+    loadScriptOnce('script[src*="play-challenge-compat.js"]','assets/js/play-challenge-compat.js?v=play-challenge-compat-20260715b-full-ready-identity','playChallengeCompat');
+    loadScriptOnce('script[src*="blind-daily-startup-fix.js"]','assets/js/blind-daily-startup-fix.js?v=blind-daily-startup-fix-20260717e-refresh-failsafe','blindDailyStartupFix');
+    loadScriptOnce('script[src*="play-daily-rotation.js"]','assets/js/play-daily-rotation.js?v=play-daily-rotation-20260716d-all-six-games','playDailyRotation');
+    loadScriptOnce('script[src*="play-daily-leaderboard.js"]','assets/js/play-daily-leaderboard.js?v=play-daily-leaderboard-20260716d-community-days','playDailyLeaderboard');
   }
 
-  function loadBlindDailyStartupFix(){
-    loadScriptOnce(
-      'script[src*="blind-daily-startup-fix.js"]',
-      'assets/js/blind-daily-startup-fix.js?v=blind-daily-startup-fix-20260715a',
-      'blindDailyStartupFix'
-    );
-  }
-
-  function loadDailyLeaderboard(){
-    loadScriptOnce(
-      'script[src*="play-daily-leaderboard.js"]',
-      'assets/js/play-daily-leaderboard.js?v=play-daily-leaderboard-20260715a',
-      'playDailyLeaderboard'
-    );
-  }
-
-  function showWhatsNewOnce(){
-    if(hasSeenWhatsNew())return;
-    window.setTimeout(()=>openWhatsNew(),650);
-  }
-
-  LEGACY_KEYS.forEach(key=>{
-    try{sessionStorage.removeItem(key);}catch(_error){}
-  });
-  cleanRefreshParameter();
+  LEGACY_KEYS.forEach(key=>{try{sessionStorage.removeItem(key);}catch(_error){}});
+  cleanRefreshState();
+  injectStyles();
+  installWhatsNew();
   installButton();
-  loadChallengeCompatibility();
-  loadBlindDailyStartupFix();
-  loadDailyLeaderboard();
-  resumeProgressIfNeeded();
+  loadSupportScripts();
   window.setTimeout(restoreState,250);
-  showWhatsNewOnce();
-  window.UFC_APP_UPDATE_WATCHER={version:VERSION,networkRefresh,clearWebCaches,openWhatsNew};
+  window.setTimeout(restoreState,850);
+  if(!hasSeenWhatsNew())window.setTimeout(()=>openWhatsNew(),650);
+
+  window.UFC_APP_UPDATE_WATCHER={
+    version:VERSION,
+    networkRefresh,
+    openWhatsNew,
+    restoreState,
+    mode:'lightweight'
+  };
+  document.documentElement.setAttribute('data-app-update-watcher',VERSION);
 })();
