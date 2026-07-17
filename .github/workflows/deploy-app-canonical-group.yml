@@ -11,10 +11,12 @@ on:
       - 'assets/js/octagon-hq-shell.js'
       - 'assets/js/octagon-hq-nav-grid.js'
       - 'assets/js/octagon-message-board.js'
+      - 'assets/js/octagon-access-panel.js'
       - 'supabase/app-canonical-group-goat26-phase.sql'
       - 'supabase/app-profile-avatar-phase.sql'
       - 'supabase/octagon-message-board-foundation.sql'
       - 'supabase/octagon-message-board-rpc.sql'
+      - 'supabase/octagon-message-board-access-panel.sql'
   workflow_dispatch:
 
 permissions:
@@ -41,6 +43,7 @@ jobs:
           node --check assets/js/octagon-hq-shell.js
           node --check assets/js/octagon-hq-nav-grid.js
           node --check assets/js/octagon-message-board.js
+          node --check assets/js/octagon-access-panel.js
           grep -q "code='GOAT26'" supabase/app-canonical-group-goat26-phase.sql
           grep -q "array\['brock','cody','rhonda','shane','tony','tyler'\]" supabase/app-canonical-group-goat26-phase.sql
           grep -q "app_profile_resolve" supabase/app-canonical-group-goat26-phase.sql
@@ -60,6 +63,9 @@ jobs:
           grep -Fq "create or replace function public.octagon_delete_message" supabase/octagon-message-board-rpc.sql
           grep -Fq "create or replace function public.octagon_admin_set_access" supabase/octagon-message-board-rpc.sql
           grep -Fq "Archived Octagon weeks are currently available only to Cody" supabase/octagon-message-board-rpc.sql
+          grep -Fq "create or replace function public.octagon_admin_access_roster" supabase/octagon-message-board-access-panel.sql
+          grep -Fq "Only Cody can manage Octagon Beta access" supabase/octagon-message-board-access-panel.sql
+          grep -Fq "SECURITY DEFINER" supabase/octagon-message-board-access-panel.sql
 
       - name: Apply and audit GOAT26 in Supabase
         env:
@@ -82,6 +88,7 @@ jobs:
               Path('supabase/app-profile-avatar-phase.sql').read_text(),
               Path('supabase/octagon-message-board-foundation.sql').read_text(),
               Path('supabase/octagon-message-board-rpc.sql').read_text(),
+              Path('supabase/octagon-message-board-access-panel.sql').read_text(),
           ])
           expected=['Brock','Cody','Rhonda','Shane','Tony','Tyler']
 
@@ -114,7 +121,7 @@ jobs:
               where r.group_id=g.id
             ),
             'octagon',jsonb_build_object(
-              'phase','message-board-interface',
+              'phase','cody-access-panel',
               'current_week_start',(
                 (now() at time zone 'America/Chicago')::date
                 - (extract(isodow from (now() at time zone 'America/Chicago'))::integer - 1)
@@ -174,7 +181,8 @@ jobs:
                   'post_message',to_regprocedure('public.octagon_post_message(text,text,uuid)') is not null,
                   'set_reaction',to_regprocedure('public.octagon_set_reaction(text,uuid,text)') is not null,
                   'delete_message',to_regprocedure('public.octagon_delete_message(text,uuid)') is not null,
-                  'admin_set_access',to_regprocedure('public.octagon_admin_set_access(text,uuid,boolean)') is not null
+                  'admin_set_access',to_regprocedure('public.octagon_admin_set_access(text,uuid,boolean)') is not null,
+                  'admin_access_roster',to_regprocedure('public.octagon_admin_access_roster(text)') is not null
                 ),
                 'anon_execute',jsonb_build_object(
                   'access_status',has_function_privilege('anon','public.octagon_access_status(text)','EXECUTE'),
@@ -182,7 +190,8 @@ jobs:
                   'post_message',has_function_privilege('anon','public.octagon_post_message(text,text,uuid)','EXECUTE'),
                   'set_reaction',has_function_privilege('anon','public.octagon_set_reaction(text,uuid,text)','EXECUTE'),
                   'delete_message',has_function_privilege('anon','public.octagon_delete_message(text,uuid)','EXECUTE'),
-                  'admin_set_access',has_function_privilege('anon','public.octagon_admin_set_access(text,uuid,boolean)','EXECUTE')
+                  'admin_set_access',has_function_privilege('anon','public.octagon_admin_set_access(text,uuid,boolean)','EXECUTE'),
+                  'admin_access_roster',has_function_privilege('anon','public.octagon_admin_access_roster(text)','EXECUTE')
                 ),
                 'security_definer',(
                   select bool_and(p.prosecdef)
@@ -193,7 +202,8 @@ jobs:
                     to_regprocedure('public.octagon_post_message(text,text,uuid)'),
                     to_regprocedure('public.octagon_set_reaction(text,uuid,text)'),
                     to_regprocedure('public.octagon_delete_message(text,uuid)'),
-                    to_regprocedure('public.octagon_admin_set_access(text,uuid,boolean)')
+                    to_regprocedure('public.octagon_admin_set_access(text,uuid,boolean)'),
+                    to_regprocedure('public.octagon_admin_access_roster(text)')
                   )
                 ),
                 'internal_helper_private',not has_function_privilege('anon','public.octagon_member_context(text)','EXECUTE')
@@ -252,7 +262,7 @@ jobs:
               rpc=octagon.get('rpc') or {}
               functions=rpc.get('functions') or {}
               anon_execute=rpc.get('anon_execute') or {}
-              rpc_names=('access_status','snapshot','post_message','set_reaction','delete_message','admin_set_access')
+              rpc_names=('access_status','snapshot','post_message','set_reaction','delete_message','admin_set_access','admin_access_roster')
               if (
                   audit.get('code')!='GOAT26'
                   or not audit.get('is_canonical')
@@ -270,10 +280,10 @@ jobs:
                   or not rpc.get('security_definer')
                   or not rpc.get('internal_helper_private')
               ):
-                  raise RuntimeError(f'GOAT26 identity, history, or Octagon interface audit failed: {audit}')
+                  raise RuntimeError(f'GOAT26 identity, history, or Octagon access-panel audit failed: {audit}')
               audit['deployment_method']='supabase-management-api'
               write(audit)
-              print('GOAT26 identity, Picks history, Octagon server layer, and message-board interface verified.')
+              print('GOAT26 identity, Picks history, Octagon server layer, Realtime board, and Cody access panel verified.')
           except Exception as error:
               reason=str(error).replace(token,'[redacted]')[:2000]
               write({'status':'failed','code':'GOAT26','reason':reason})
@@ -294,7 +304,8 @@ jobs:
           update_watcher='  <script src="assets/js/app-update-watcher.js?v=app-update-watcher-20260717-play-photo-authority"></script>'
           octagon_shell='  <script src="assets/js/octagon-hq-shell.js?v=octagon-hq-shell-20260717c"></script>'
           nav_grid='  <script src="assets/js/octagon-hq-nav-grid.js?v=octagon-hq-nav-grid-20260717g"></script>'
-          octagon_board='  <script src="assets/js/octagon-message-board.js?v=octagon-message-board-20260717b"></script>'
+          octagon_board='  <script src="assets/js/octagon-message-board.js?v=octagon-message-board-20260717c-realtime"></script>'
+          access_panel='  <script src="assets/js/octagon-access-panel.js?v=octagon-access-panel-20260717a"></script>'
 
           text=re.sub(r'  <script src="assets/js/app-canonical-group\.js\?v=[^"]+"></script>',canonical,text,count=1)
           text=re.sub(r'  <script src="assets/js/play-profile-identity\.js\?v=[^"]+"></script>',play_profile,text,count=1)
@@ -329,7 +340,14 @@ jobs:
           else:
               raise SystemExit('Octagon navigation script anchor was not found.')
 
-          text=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260717-octagon-message-board-beta-2" />',text,count=1)
+          if 'assets/js/octagon-access-panel.js' in text:
+              text=re.sub(r'  <script src="assets/js/octagon-access-panel\.js\?v=[^"]+"></script>',access_panel,text,count=1)
+          elif octagon_board in text:
+              text=text.replace(octagon_board,octagon_board+'\n'+access_panel,1)
+          else:
+              raise SystemExit('Octagon message-board script anchor was not found.')
+
+          text=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260717-octagon-cody-access-panel" />',text,count=1)
           text=re.sub(r'<title>[^<]+</title>','<title>Octagon HQ</title>',text,count=1)
           path.write_text(text)
           PY
@@ -344,6 +362,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html supabase/goat26-deployment-status.json
-          git commit -m 'Record private Octagon message-board deployment [skip ci]'
+          git commit -m 'Record Octagon access-panel deployment [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:main
