@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='war-room-branding-20260717b';
+  const VERSION='war-room-branding-20260717c';
   const ATTRIBUTE_NAMES=['title','aria-label','placeholder'];
   const SKIP_SELECTOR='.octagon-message-body, textarea, input, script, style, noscript';
   let queued=false;
@@ -77,10 +77,24 @@
     queueMicrotask(applyBranding);
   }
 
+  function preserveRulesCompatibilityMount(){
+    const section=document.getElementById('rules');
+    let mount=document.getElementById('rulesContent');
+    if(!mount){
+      mount=document.createElement('div');
+      mount.id='rulesContent';
+    }
+    if(section?.contains(mount))mount.remove();
+    mount.hidden=true;
+    mount.setAttribute('aria-hidden','true');
+    mount.dataset.legacyRulesCompatibility='true';
+    if(mount.parentElement!==document.body)document.body.appendChild(mount);
+  }
+
   function loadProductArchitecture(){
     if(window.UFC_PRODUCT_ARCHITECTURE||document.querySelector('script[data-product-architecture-loader]'))return;
     const script=document.createElement('script');
-    script.src='assets/js/product-architecture.js?v=product-architecture-20260717a';
+    script.src='assets/js/product-architecture.js?v=product-architecture-20260717b';
     script.dataset.productArchitectureLoader='true';
     script.async=false;
     document.body.appendChild(script);
@@ -88,6 +102,7 @@
 
   function start(){
     applyBranding();
+    preserveRulesCompatibilityMount();
     loadProductArchitecture();
     const observer=new MutationObserver(mutations=>{
       for(const mutation of mutations){
@@ -120,7 +135,7 @@
     });
   }
 
-  window.UFC_WAR_ROOM_BRANDING={version:VERSION,apply:applyBranding,replaceCopy};
+  window.UFC_WAR_ROOM_BRANDING={version:VERSION,apply:applyBranding,replaceCopy,preserveRulesCompatibilityMount};
   document.documentElement.setAttribute('data-war-room-branding',VERSION);
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
   else start();
