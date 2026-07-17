@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='play-roster-batch-one-current-patch-20260717a';
+  const VERSION='play-roster-batch-one-current-patch-20260717b';
   const PATCHES={
     'Rafael Fiziev':{
       tags:['current-contender','striker','action','highlight'],
@@ -48,6 +48,7 @@
       }
     },
     'Mackenzie Dern':{
+      removeTags:['former-champion'],
       tags:['current-champion','champion','grappler','submission','star'],
       ratings:{ufcCareer:88,allCareers:88,bestPrime:92,hardestAtPeak:90,mostComplete:85,bestFinisher:88,actionFighter:86,starPower:86,biggestWhatIf:72,cultChaos:74},
       divisions:{Strawweight:93},
@@ -83,7 +84,8 @@
     Object.entries(PATCHES).forEach(([name,patch])=>{
       const fighter=api.resolve?.(name)||api.allFighters?.find(row=>normal(row.name)===normal(name));
       if(!fighter)return;
-      fighter.tags=unique([...(fighter.tags||[]),...(patch.tags||[])]);
+      const removed=new Set((patch.removeTags||[]).map(normal));
+      fighter.tags=unique((fighter.tags||[]).filter(tag=>!removed.has(normal(tag))).concat(patch.tags||[]));
       fighter.eligibility={...(fighter.eligibility||{}),blindRank:true,keepCut:true};
     });
     document.documentElement.setAttribute('data-play-roster-batch-one-current',VERSION);
