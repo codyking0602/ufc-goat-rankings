@@ -24,34 +24,21 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Prepare PostgreSQL fallback
-        continue-on-error: true
-        run: |
-          command -v psql >/dev/null 2>&1 && exit 0
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq postgresql-client
-
       - name: Apply guarded GOAT26 migration
         env:
           SUPABASE_PROJECT_REF: hdkjwezaswhisxupxydc
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
-          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
         run: |
           python - <<'PY'
           import json
           import os
-          import subprocess
           import urllib.error
-          import urllib.parse
           import urllib.request
           from datetime import datetime, timezone
           from pathlib import Path
 
           project_ref = os.environ['SUPABASE_PROJECT_REF']
           access_token = os.environ.get('SUPABASE_ACCESS_TOKEN', '').strip()
-          db_url = os.environ.get('SUPABASE_DB_URL', '').strip()
-          db_password = os.environ.get('SUPABASE_DB_PASSWORD', '').strip()
           migration_path = Path('supabase/app-canonical-group-goat26-phase.sql')
           status_path = Path('supabase/goat26-deployment-status.json')
           migration_sql = migration_path.read_text()
@@ -84,140 +71,146 @@ jobs:
           limit 1;
           """
 
+          candidate_sql = """
+          select jsonb_build_object(
+            'name',g.name,
+            'code_hint',left(g.code,1)||'****'||right(g.code,1),
+            'owner_name',coalesce(owner_member.display_name,''),
+            'created_at',g.created_at,
+            'active_member_count',(
+              select count(*) from public.pick_group_members gm
+              where gm.group_id=g.id and coalesce(gm.is_active,true)
+            ),
+            'member_names',(
+              select coalesce(jsonb_agg(gm.display_name order by lower(trim(gm.display_name))),'[]'::jsonb)
+              from public.pick_group_members gm
+              where gm.group_id=g.id and coalesce(gm.is_active,true)
+            ),
+            'events',(select count(*) from public.pick_group_events ge where ge.group_id=g.id),
+            'rooms',(select count(*) from public.pick_rooms r where r.group_id=g.id),
+            'saved_picks',(
+              select count(*)
+              from public.pick_rooms r
+              join public.pick_room_members rm on rm.room_id=r.id
+              join public.pick_selections ps on ps.member_id=rm.id
+              where r.group_id=g.id
+            )
+          ) as candidate
+          from public.pick_groups g
+          left join public.pick_group_members owner_member on owner_member.id=g.owner_member_id
+          where lower(trim(coalesce(owner_member.display_name,'')))='cody'
+             or exists (
+               select 1 from public.pick_group_members gm
+               where gm.group_id=g.id
+                 and lower(trim(gm.display_name))='cody'
+                 and coalesce(gm.is_active,true)
+             )
+          order by
+            (select count(*) from public.pick_selections ps
+             join public.pick_room_members rm on rm.id=ps.member_id
+             join public.pick_rooms r on r.id=rm.room_id
+             where r.group_id=g.id) desc,
+            g.created_at desc;
+          """
+
           def write_status(payload):
-              payload = dict(payload)
-              payload['checked_at'] = datetime.now(timezone.utc).isoformat()
-              status_path.write_text(json.dumps(payload, indent=2, sort_keys=True) + '\n')
+              value = dict(payload)
+              value['checked_at'] = datetime.now(timezone.utc).isoformat()
+              status_path.write_text(json.dumps(value, indent=2, sort_keys=True) + '\n')
 
           def sanitize(message):
               text = str(message)
-              for secret in (access_token, db_password, db_url):
-                  if secret:
-                      text = text.replace(secret, '[redacted]')
+              if access_token:
+                  text = text.replace(access_token, '[redacted]')
               return text[:1500]
 
-          def management_query(query, read_only=False):
+          def query(sql, read_only=False):
               request = urllib.request.Request(
                   f'https://api.supabase.com/v1/projects/{project_ref}/database/query',
-                  data=json.dumps({'query': query, 'read_only': read_only}).encode(),
+                  data=json.dumps({'query':sql,'read_only':read_only}).encode(),
                   headers={
-                      'Accept': 'application/json',
-                      'Authorization': f'Bearer {access_token}',
-                      'Content-Type': 'application/json',
-                      'User-Agent': 'UFC-GOAT26-GitHub-Actions/1.0',
+                      'Accept':'application/json',
+                      'Authorization':f'Bearer {access_token}',
+                      'Content-Type':'application/json',
+                      'User-Agent':'UFC-GOAT26-GitHub-Actions/1.0',
+                      'X-Client-Info':'ufc-goat-rankings-goat26',
                   },
                   method='POST',
               )
               try:
-                  with urllib.request.urlopen(request, timeout=90) as response:
-                      body = response.read().decode() or 'null'
-                      return json.loads(body)
+                  with urllib.request.urlopen(request,timeout=90) as response:
+                      return json.loads(response.read().decode() or 'null')
               except urllib.error.HTTPError as error:
-                  detail = error.read().decode(errors='replace')[:1000]
+                  detail=error.read().decode(errors='replace')[:1000]
                   raise RuntimeError(f'Supabase Management API returned HTTP {error.code}: {detail}') from error
 
-          def extract_audit(result):
-              rows = result.get('result', result) if isinstance(result, dict) else result
-              if isinstance(rows, list) and rows:
-                  row = rows[0]
-                  if isinstance(row, dict):
-                      value = row.get('audit', row)
-                      if isinstance(value, str):
-                          value = json.loads(value)
-                      if isinstance(value, dict):
-                          return value
-              if isinstance(rows, dict):
-                  value = rows.get('audit', rows)
-                  if isinstance(value, str):
-                      value = json.loads(value)
-                  if isinstance(value, dict):
-                      return value
-              raise RuntimeError('GOAT26 audit did not return an active canonical group.')
+          def rows(response):
+              return response.get('result',response) if isinstance(response,dict) else response
 
-          def direct_database_deploy():
-              nonlocal_db_url = db_url
-              if not nonlocal_db_url and db_password:
-                  encoded_password = urllib.parse.quote(db_password, safe='')
-                  nonlocal_db_url = f'postgresql://postgres:{encoded_password}@db.{project_ref}.supabase.co:5432/postgres?sslmode=require'
-              if not nonlocal_db_url:
-                  raise RuntimeError('No SUPABASE_DB_URL or SUPABASE_DB_PASSWORD fallback is configured.')
-              if subprocess.run(['bash','-lc','command -v psql >/dev/null 2>&1']).returncode:
-                  raise RuntimeError('PostgreSQL client is unavailable for the direct-database fallback.')
-              subprocess.run(
-                  ['psql', nonlocal_db_url, '-v', 'ON_ERROR_STOP=1', '-f', str(migration_path)],
-                  check=True,
-                  env={**os.environ, 'PGCONNECT_TIMEOUT': '20'},
-              )
-              raw_audit = subprocess.check_output(
-                  ['psql', nonlocal_db_url, '-v', 'ON_ERROR_STOP=1', '-At', '-c', audit_sql],
-                  text=True,
-                  env={**os.environ, 'PGCONNECT_TIMEOUT': '20'},
-              ).strip()
-              return json.loads(raw_audit)
+          def first_object(response,key):
+              data=rows(response)
+              if not isinstance(data,list) or not data or not isinstance(data[0],dict):
+                  raise RuntimeError(f'{key} query did not return a row.')
+              value=data[0].get(key,data[0])
+              if isinstance(value,str):
+                  value=json.loads(value)
+              if not isinstance(value,dict):
+                  raise RuntimeError(f'{key} query did not return an object.')
+              return value
+
+          def candidate_report():
+              data=rows(query(candidate_sql,read_only=True))
+              result=[]
+              for row in data or []:
+                  value=row.get('candidate',row) if isinstance(row,dict) else None
+                  if isinstance(value,str):
+                      value=json.loads(value)
+                  if isinstance(value,dict):
+                      result.append(value)
+              return result
+
+          if not access_token:
+              write_status({
+                  'status':'blocked',
+                  'code':'GOAT26',
+                  'reason':'SUPABASE_ACCESS_TOKEN is not configured in GitHub Actions.'
+              })
+              raise SystemExit(0)
 
           try:
-              management_error = None
-              audit = None
-              deployment_method = None
-
-              if access_token:
-                  try:
-                      management_query(migration_sql, read_only=False)
-                      audit = extract_audit(management_query(audit_sql, read_only=True))
-                      deployment_method = 'supabase-management-api'
-                  except Exception as error:
-                      management_error = error
-
-              if audit is None and (db_url or db_password):
-                  audit = direct_database_deploy()
-                  deployment_method = 'postgres-direct'
-
-              if audit is None:
-                  if management_error is not None:
-                      raise management_error
-                  write_status({
-                      'status': 'blocked',
-                      'code': 'GOAT26',
-                      'reason': 'No usable Supabase deployment credential is configured.',
-                  })
-                  print('GOAT26 database migration is staged but blocked by missing deployment credentials.')
-                  raise SystemExit(0)
-
-              expected_names = ['Cody','Daddy','Rhonda','Shane','Tyler']
-              actual_names = sorted(audit.get('member_names') or [], key=lambda value: str(value).lower())
+              query(migration_sql,read_only=False)
+              audit=first_object(query(audit_sql,read_only=True),'audit')
+              expected=['Cody','Daddy','Rhonda','Shane','Tyler']
+              names=sorted(audit.get('member_names') or [],key=lambda value:str(value).lower())
               if (
-                  audit.get('status') != 'active'
-                  or audit.get('code') != 'GOAT26'
+                  audit.get('status')!='active'
+                  or audit.get('code')!='GOAT26'
                   or not audit.get('is_canonical')
-                  or actual_names != expected_names
+                  or names!=expected
               ):
-                  raise RuntimeError(f'GOAT26 audit failed the canonical five-member check: {audit}')
-
-              audit['deployment_method'] = deployment_method
+                  raise RuntimeError(f'Canonical five-member audit failed: {audit}')
+              audit['deployment_method']='supabase-management-api'
               write_status(audit)
               print('GOAT26 canonical group migration applied and verified.')
-          except SystemExit:
-              raise
           except Exception as error:
-              write_status({
-                  'status': 'failed',
-                  'code': 'GOAT26',
-                  'reason': sanitize(error),
-              })
-              print(f'GOAT26 database migration failed: {sanitize(error)}')
+              payload={
+                  'status':'failed',
+                  'code':'GOAT26',
+                  'reason':sanitize(error),
+              }
+              try:
+                  payload['candidates']=candidate_report()
+              except Exception as audit_error:
+                  payload['candidate_audit_error']=sanitize(audit_error)
+              write_status(payload)
+              print(f'GOAT26 migration stopped safely: {sanitize(error)}')
           PY
 
       - name: Commit sanitized deployment status
         if: always()
         run: |
           if [ ! -f supabase/goat26-deployment-status.json ]; then
-            cat > supabase/goat26-deployment-status.json <<'JSON'
-          {
-            "code": "GOAT26",
-            "reason": "The migration workflow ended before producing a database result.",
-            "status": "failed"
-          }
-          JSON
+            printf '%s\n' '{"status":"failed","code":"GOAT26","reason":"Migration produced no result."}' > supabase/goat26-deployment-status.json
           fi
           if git diff --quiet -- supabase/goat26-deployment-status.json; then
             echo 'Deployment status did not change.'
