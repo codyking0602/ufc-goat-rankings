@@ -1,7 +1,7 @@
 // App-facing Watch Moment and signature-fight links only.
 (function(){
   'use strict';
-  const VERSION='royce-watch-links-20260716h-quinton-rampage-jackson';
+  const VERSION='royce-watch-links-20260717a-brandon-moreno';
 
   function loadPantojaGuard(){
     if(document.querySelector('[data-pantoja-final-roster-guard]'))return;
@@ -57,6 +57,14 @@
       watchUrl:'https://youtube.com/shorts/JVSaguPG9nY?is=1ShwPvQ9FoBzYOFK',
       watchLabel:'Watch Moment',
       signatureFightUrl:'https://youtu.be/W3Ce7KPszhU?is=Pzzqz2wACxC7VY6g',
+      signatureFightLabel:'Watch Signature Fight'
+    },
+    'Brandon Moreno':{
+      photoUrl:'assets/fighters/brandon-moreno.webp',
+      thumbUrl:'assets/fighters/brandon-moreno-thumb.webp',
+      watchUrl:'https://youtube.com/shorts/eKlp7eFDSTM?is=_dMar84p0EkqYXz_',
+      watchLabel:'Watch Moment',
+      signatureFightUrl:'https://youtu.be/GPrzwbgg8yU?is=M-G22YQ8u-8QVKtz',
       signatureFightLabel:'Watch Signature Fight'
     },
     'Leon Edwards':{
