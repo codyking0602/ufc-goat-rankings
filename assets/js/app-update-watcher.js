@@ -1,12 +1,13 @@
 (function(){
   'use strict';
 
-  const VERSION='app-update-watcher-20260717p-lightweight-refresh';
+  const VERSION='app-update-watcher-20260717q-find-leader-fast-start';
   const RESTORE_KEY='ufc-goat-manual-refresh-v1';
   const PROGRESS_KEY='ufc-goat-manual-refresh-progress-v1';
   const WHATS_NEW_KEY='ufc-whats-new-20260717-anthony-pettis';
   const LEGACY_KEYS=['ufc-goat-update-restore-v1','ufc-goat-update-target-v1'];
   let whatsNewReturnFocus=null;
+  let supportLoaded=false;
 
   function activeView(){
     return document.querySelector('.tab.active')?.dataset.view
@@ -76,6 +77,7 @@
     target?.click();
 
     if(state.activeView==='play'){
+      loadPlaySupportScripts();
       document.querySelector(`[data-play-mode="${state.playMode||'top10'}"]`)?.click();
     }
     if(state.era)document.getElementById('eraFilter')?.dispatchEvent(new Event('change',{bubbles:true}));
@@ -142,6 +144,7 @@
 
   function exploreUpdate(){
     closeWhatsNew();
+    loadPlaySupportScripts();
     window.UFC_PRODUCT_ARCHITECTURE?.activateDestination?.('play')
       || document.querySelector('.tab[data-view="play"]')?.click();
     window.setTimeout(()=>window.scrollTo({top:0,left:0,behavior:'smooth'}),60);
@@ -203,7 +206,7 @@
           <h2 id="whatsNewTitle" class="whats-new-title">The Octagon Just Got Bigger</h2>
           <p id="whatsNewDescription" class="whats-new-deck">The biggest UFC GOAT Rankings update yet is live.</p>
           <div class="whats-new-grid">
-            <article class="whats-new-card"><p class="whats-new-label"><i>🎮</i> Game tab rebuilt</p><h3>More ways to settle the debate</h3><p>Play daily challenges, Blind Rank, Keep 4 Cut 4, Find the Leader, Blind Resume, and more.</p></article>
+            <article class="whats-new-card"><p class="whats-new-label"><i>🎮</i> Game tab rebuilt</p><h3>More ways to settle the debate</h3><p>Play Find the Leader every day, plus Blind Rank, Keep 4 Cut 4, Blind Resume, and more.</p></article>
             <article class="whats-new-card"><p class="whats-new-label"><i>🧠</i> Intelligence rebuilt</p><h3>Ask anything about the rankings</h3><p>Use Octagon Verdict for fighter scores, comparisons, category results, judgment calls, and future GOAT scenarios.</p></article>
             <article class="whats-new-card"><p class="whats-new-label"><i>🥊</i> Picks card updated</p><h3>The live card reflects the change</h3><p>The current Picks card includes the latest matchups, odds, standings, and main-event breakdown.</p></article>
             <article class="whats-new-card"><p class="whats-new-label"><i>➕</i> New fighters added</p><h3>Seven more names enter the rankings</h3><div class="whats-new-fighters"><span>Alexandre Pantoja</span><span>Paddy Pimblett</span><span>Chris Weidman</span><span>Tom Aspinall</span><span>Quinton “Rampage” Jackson</span><span>Brandon Moreno</span><span>Anthony Pettis</span></div></article>
@@ -237,29 +240,34 @@
     document.head.appendChild(script);
   }
 
-  function loadSupportScripts(){
+  function loadPlaySupportScripts(){
+    if(supportLoaded)return;
+    supportLoaded=true;
     loadScriptOnce('script[src*="play-challenge-compat.js"]','assets/js/play-challenge-compat.js?v=play-challenge-compat-20260715b-full-ready-identity','playChallengeCompat');
     loadScriptOnce('script[src*="blind-daily-startup-fix.js"]','assets/js/blind-daily-startup-fix.js?v=blind-daily-startup-fix-20260717e-refresh-failsafe','blindDailyStartupFix');
-    loadScriptOnce('script[src*="play-daily-rotation.js"]','assets/js/play-daily-rotation.js?v=play-daily-rotation-20260716d-all-six-games','playDailyRotation');
     loadScriptOnce('script[src*="play-daily-leaderboard.js"]','assets/js/play-daily-leaderboard.js?v=play-daily-leaderboard-20260716d-community-days','playDailyLeaderboard');
   }
+
+  document.addEventListener('click',event=>{
+    if(event.target.closest?.('[data-destination="play"],.tab[data-view="play"],#whatsNewExplore'))loadPlaySupportScripts();
+  },true);
 
   LEGACY_KEYS.forEach(key=>{try{sessionStorage.removeItem(key);}catch(_error){}});
   cleanRefreshState();
   injectStyles();
   installWhatsNew();
   installButton();
-  loadSupportScripts();
-  window.setTimeout(restoreState,250);
-  window.setTimeout(restoreState,850);
+  window.setTimeout(restoreState,220);
   if(!hasSeenWhatsNew())window.setTimeout(()=>openWhatsNew(),650);
+  window.setTimeout(loadPlaySupportScripts,1800);
 
   window.UFC_APP_UPDATE_WATCHER={
     version:VERSION,
     networkRefresh,
     openWhatsNew,
     restoreState,
-    mode:'lightweight'
+    loadPlaySupportScripts,
+    mode:'lightweight-deferred'
   };
   document.documentElement.setAttribute('data-app-update-watcher',VERSION);
 })();
