@@ -12,11 +12,16 @@ on:
       - 'assets/js/octagon-hq-nav-grid.js'
       - 'assets/js/octagon-message-board.js'
       - 'assets/js/octagon-access-panel.js'
+      - 'assets/js/octagon-notifications.js'
+      - 'manifest.webmanifest'
+      - 'sw.js'
       - 'supabase/app-canonical-group-goat26-phase.sql'
       - 'supabase/app-profile-avatar-phase.sql'
       - 'supabase/octagon-message-board-foundation.sql'
       - 'supabase/octagon-message-board-rpc.sql'
       - 'supabase/octagon-message-board-access-panel.sql'
+      - 'supabase/octagon-notifications-phase.sql'
+      - 'supabase/functions/octagon-push/**'
   workflow_dispatch:
 
 permissions:
@@ -29,13 +34,13 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 18
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Validate GOAT26 identity source
+      - name: Validate GOAT26 and Octagon source
         run: |
           node --check assets/js/app-canonical-group.js
           node --check assets/js/play-profile-identity.js
@@ -44,6 +49,9 @@ jobs:
           node --check assets/js/octagon-hq-nav-grid.js
           node --check assets/js/octagon-message-board.js
           node --check assets/js/octagon-access-panel.js
+          node --check assets/js/octagon-notifications.js
+          node --check sw.js
+          python -m json.tool manifest.webmanifest >/dev/null
           grep -q "code='GOAT26'" supabase/app-canonical-group-goat26-phase.sql
           grep -q "array\['brock','cody','rhonda','shane','tony','tyler'\]" supabase/app-canonical-group-goat26-phase.sql
           grep -q "app_profile_resolve" supabase/app-canonical-group-goat26-phase.sql
@@ -62,10 +70,17 @@ jobs:
           grep -Fq "create or replace function public.octagon_set_reaction" supabase/octagon-message-board-rpc.sql
           grep -Fq "create or replace function public.octagon_delete_message" supabase/octagon-message-board-rpc.sql
           grep -Fq "create or replace function public.octagon_admin_set_access" supabase/octagon-message-board-rpc.sql
-          grep -Fq "Archived Octagon weeks are currently available only to Cody" supabase/octagon-message-board-rpc.sql
           grep -Fq "create or replace function public.octagon_admin_access_roster" supabase/octagon-message-board-access-panel.sql
-          grep -Fq "Only Cody can manage Octagon Beta access" supabase/octagon-message-board-access-panel.sql
-          grep -Fq "SECURITY DEFINER" supabase/octagon-message-board-access-panel.sql
+          grep -Fq "create table if not exists public.octagon_member_activity" supabase/octagon-notifications-phase.sql
+          grep -Fq "create table if not exists public.octagon_push_subscriptions" supabase/octagon-notifications-phase.sql
+          grep -Fq "create or replace function public.octagon_activity_status" supabase/octagon-notifications-phase.sql
+          grep -Fq "create or replace function public.octagon_mark_seen" supabase/octagon-notifications-phase.sql
+          grep -Fq "create or replace function public.octagon_push_delivery_context" supabase/octagon-notifications-phase.sql
+          grep -Fq "webpush.sendNotification" supabase/functions/octagon-push/index.ts
+          grep -Fq "notificationclick" sw.js
+
+      - name: Install VAPID dependency
+        run: python -m pip install --disable-pip-version-check --quiet cryptography
 
       - name: Apply and audit GOAT26 in Supabase
         env:
@@ -73,12 +88,14 @@ jobs:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
           python - <<'PY'
+          import base64
           import json
           import os
           import urllib.error
           import urllib.request
           from datetime import datetime, timezone
           from pathlib import Path
+          from cryptography.hazmat.primitives.asymmetric import ec
 
           project=os.environ['SUPABASE_PROJECT_REF']
           token=os.environ.get('SUPABASE_ACCESS_TOKEN','').strip()
@@ -89,131 +106,9 @@ jobs:
               Path('supabase/octagon-message-board-foundation.sql').read_text(),
               Path('supabase/octagon-message-board-rpc.sql').read_text(),
               Path('supabase/octagon-message-board-access-panel.sql').read_text(),
+              Path('supabase/octagon-notifications-phase.sql').read_text(),
           ])
           expected=['Brock','Cody','Rhonda','Shane','Tony','Tyler']
-
-          audit_sql="""
-          select jsonb_build_object(
-            'status','active',
-            'code',g.code,
-            'name',g.name,
-            'is_canonical',coalesce(g.is_canonical,false),
-            'active_members',(select count(*) from public.pick_group_members gm where gm.group_id=g.id and coalesce(gm.is_active,true)),
-            'member_names',(
-              select jsonb_agg(gm.display_name order by lower(trim(gm.display_name)))
-              from public.pick_group_members gm
-              where gm.group_id=g.id and coalesce(gm.is_active,true)
-            ),
-            'avatar_profiles',(
-              select count(*)
-              from public.pick_group_members gm
-              where gm.group_id=g.id
-                and coalesce(gm.is_active,true)
-                and nullif(trim(gm.fighter_avatar_slug),'') is not null
-            ),
-            'events',(select count(*) from public.pick_group_events ge where ge.group_id=g.id),
-            'rooms',(select count(*) from public.pick_rooms r where r.group_id=g.id),
-            'saved_picks',(
-              select count(*)
-              from public.pick_rooms r
-              join public.pick_room_members rm on rm.room_id=r.id
-              join public.pick_selections ps on ps.member_id=rm.id
-              where r.group_id=g.id
-            ),
-            'octagon',jsonb_build_object(
-              'phase','cody-access-panel',
-              'current_week_start',(
-                (now() at time zone 'America/Chicago')::date
-                - (extract(isodow from (now() at time zone 'America/Chicago'))::integer - 1)
-              ),
-              'access_rows',(
-                select count(*)
-                from public.octagon_access oa
-                where oa.group_id=g.id
-              ),
-              'enabled_members',(
-                select count(*)
-                from public.octagon_access oa
-                where oa.group_id=g.id and oa.can_access
-              ),
-              'cody_enabled',exists(
-                select 1
-                from public.octagon_access oa
-                join public.pick_group_members gm on gm.id=oa.member_id
-                where oa.group_id=g.id
-                  and oa.can_access
-                  and lower(trim(gm.display_name))='cody'
-              ),
-              'messages',(
-                select count(*)
-                from public.octagon_messages m
-                where m.group_id=g.id
-              ),
-              'replies',(
-                select count(*)
-                from public.octagon_messages m
-                where m.group_id=g.id and m.parent_message_id is not null
-              ),
-              'reactions',(
-                select count(*)
-                from public.octagon_reactions reaction
-                join public.octagon_messages m on m.id=reaction.message_id
-                where m.group_id=g.id
-              ),
-              'rls_enabled',(
-                select bool_and(c.relrowsecurity)
-                from pg_class c
-                where c.oid in (
-                  'public.octagon_access'::regclass,
-                  'public.octagon_messages'::regclass,
-                  'public.octagon_reactions'::regclass
-                )
-              ),
-              'tables',jsonb_build_object(
-                'access',to_regclass('public.octagon_access') is not null,
-                'messages',to_regclass('public.octagon_messages') is not null,
-                'reactions',to_regclass('public.octagon_reactions') is not null
-              ),
-              'rpc',jsonb_build_object(
-                'functions',jsonb_build_object(
-                  'access_status',to_regprocedure('public.octagon_access_status(text)') is not null,
-                  'snapshot',to_regprocedure('public.octagon_snapshot(text,date)') is not null,
-                  'post_message',to_regprocedure('public.octagon_post_message(text,text,uuid)') is not null,
-                  'set_reaction',to_regprocedure('public.octagon_set_reaction(text,uuid,text)') is not null,
-                  'delete_message',to_regprocedure('public.octagon_delete_message(text,uuid)') is not null,
-                  'admin_set_access',to_regprocedure('public.octagon_admin_set_access(text,uuid,boolean)') is not null,
-                  'admin_access_roster',to_regprocedure('public.octagon_admin_access_roster(text)') is not null
-                ),
-                'anon_execute',jsonb_build_object(
-                  'access_status',has_function_privilege('anon','public.octagon_access_status(text)','EXECUTE'),
-                  'snapshot',has_function_privilege('anon','public.octagon_snapshot(text,date)','EXECUTE'),
-                  'post_message',has_function_privilege('anon','public.octagon_post_message(text,text,uuid)','EXECUTE'),
-                  'set_reaction',has_function_privilege('anon','public.octagon_set_reaction(text,uuid,text)','EXECUTE'),
-                  'delete_message',has_function_privilege('anon','public.octagon_delete_message(text,uuid)','EXECUTE'),
-                  'admin_set_access',has_function_privilege('anon','public.octagon_admin_set_access(text,uuid,boolean)','EXECUTE'),
-                  'admin_access_roster',has_function_privilege('anon','public.octagon_admin_access_roster(text)','EXECUTE')
-                ),
-                'security_definer',(
-                  select bool_and(p.prosecdef)
-                  from pg_proc p
-                  where p.oid in (
-                    to_regprocedure('public.octagon_access_status(text)'),
-                    to_regprocedure('public.octagon_snapshot(text,date)'),
-                    to_regprocedure('public.octagon_post_message(text,text,uuid)'),
-                    to_regprocedure('public.octagon_set_reaction(text,uuid,text)'),
-                    to_regprocedure('public.octagon_delete_message(text,uuid)'),
-                    to_regprocedure('public.octagon_admin_set_access(text,uuid,boolean)'),
-                    to_regprocedure('public.octagon_admin_access_roster(text)')
-                  )
-                ),
-                'internal_helper_private',not has_function_privilege('anon','public.octagon_member_context(text)','EXECUTE')
-              )
-            )
-          ) as audit
-          from public.pick_groups g
-          where g.code='GOAT26' and coalesce(g.is_canonical,false)
-          limit 1;
-          """
 
           def write(payload):
               value=dict(payload)
@@ -240,14 +135,20 @@ jobs:
                   detail=error.read().decode(errors='replace')[:1600]
                   raise RuntimeError(f'Supabase Management API returned HTTP {error.code}: {detail}') from error
 
+          def rows(response):
+              return response.get('result',response) if isinstance(response,dict) else response
+
           def audit_value(response):
-              rows=response.get('result',response) if isinstance(response,dict) else response
-              value=rows[0].get('audit') if isinstance(rows,list) and rows and isinstance(rows[0],dict) else None
+              values=rows(response)
+              value=values[0].get('audit') if isinstance(values,list) and values and isinstance(values[0],dict) else None
               if isinstance(value,str):
                   value=json.loads(value)
               if not isinstance(value,dict):
                   raise RuntimeError('GOAT26 audit returned no canonical group.')
               return value
+
+          def b64url(value):
+              return base64.urlsafe_b64encode(value).rstrip(b'=').decode()
 
           if not token:
               write({'status':'blocked','code':'GOAT26','reason':'SUPABASE_ACCESS_TOKEN is not configured.'})
@@ -255,6 +156,132 @@ jobs:
 
           try:
               query(migration,read_only=False)
+
+              existing=rows(query("select public_key from public.octagon_push_config where singleton limit 1;",read_only=True))
+              if not existing:
+                  private_key=ec.generate_private_key(ec.SECP256R1())
+                  private_numbers=private_key.private_numbers()
+                  public_numbers=private_numbers.public_numbers
+                  raw_public=b'\\x04'+public_numbers.x.to_bytes(32,'big')+public_numbers.y.to_bytes(32,'big')
+                  public_key=b64url(raw_public)
+                  private_value=b64url(private_numbers.private_value.to_bytes(32,'big'))
+                  subject='https://codyking0602.github.io/ufc-goat-rankings/'
+                  query(
+                      "insert into public.octagon_push_config(singleton,public_key,private_key,subject) values "
+                      f"(true,'{public_key}','{private_value}','{subject}') on conflict(singleton) do nothing;",
+                      read_only=False,
+                  )
+
+              audit_sql="""
+              select jsonb_build_object(
+                'status','active',
+                'code',g.code,
+                'name',g.name,
+                'is_canonical',coalesce(g.is_canonical,false),
+                'active_members',(select count(*) from public.pick_group_members gm where gm.group_id=g.id and coalesce(gm.is_active,true)),
+                'member_names',(
+                  select jsonb_agg(gm.display_name order by lower(trim(gm.display_name)))
+                  from public.pick_group_members gm
+                  where gm.group_id=g.id and coalesce(gm.is_active,true)
+                ),
+                'avatar_profiles',(
+                  select count(*) from public.pick_group_members gm
+                  where gm.group_id=g.id and coalesce(gm.is_active,true)
+                    and nullif(trim(gm.fighter_avatar_slug),'') is not null
+                ),
+                'events',(select count(*) from public.pick_group_events ge where ge.group_id=g.id),
+                'rooms',(select count(*) from public.pick_rooms r where r.group_id=g.id),
+                'saved_picks',(
+                  select count(*)
+                  from public.pick_rooms r
+                  join public.pick_room_members rm on rm.room_id=r.id
+                  join public.pick_selections ps on ps.member_id=rm.id
+                  where r.group_id=g.id
+                ),
+                'octagon',jsonb_build_object(
+                  'phase','unread-and-web-push',
+                  'current_week_start',(
+                    (now() at time zone 'America/Chicago')::date
+                    - (extract(isodow from (now() at time zone 'America/Chicago'))::integer - 1)
+                  ),
+                  'access_rows',(select count(*) from public.octagon_access oa where oa.group_id=g.id),
+                  'enabled_members',(select count(*) from public.octagon_access oa where oa.group_id=g.id and oa.can_access),
+                  'cody_enabled',exists(
+                    select 1 from public.octagon_access oa
+                    join public.pick_group_members gm on gm.id=oa.member_id
+                    where oa.group_id=g.id and oa.can_access and lower(trim(gm.display_name))='cody'
+                  ),
+                  'messages',(select count(*) from public.octagon_messages m where m.group_id=g.id),
+                  'replies',(select count(*) from public.octagon_messages m where m.group_id=g.id and m.parent_message_id is not null),
+                  'reactions',(
+                    select count(*) from public.octagon_reactions reaction
+                    join public.octagon_messages m on m.id=reaction.message_id
+                    where m.group_id=g.id
+                  ),
+                  'activity_rows',(select count(*) from public.octagon_member_activity a where a.group_id=g.id),
+                  'active_push_subscriptions',(select count(*) from public.octagon_push_subscriptions s where s.group_id=g.id and s.is_active),
+                  'vapid_ready',exists(
+                    select 1 from public.octagon_push_config c
+                    where c.singleton and length(c.public_key)>=80 and length(c.private_key)>=40
+                  ),
+                  'rls_enabled',(
+                    select bool_and(c.relrowsecurity)
+                    from pg_class c
+                    where c.oid in (
+                      'public.octagon_access'::regclass,
+                      'public.octagon_messages'::regclass,
+                      'public.octagon_reactions'::regclass,
+                      'public.octagon_member_activity'::regclass,
+                      'public.octagon_push_config'::regclass,
+                      'public.octagon_push_subscriptions'::regclass
+                    )
+                  ),
+                  'tables',jsonb_build_object(
+                    'access',to_regclass('public.octagon_access') is not null,
+                    'messages',to_regclass('public.octagon_messages') is not null,
+                    'reactions',to_regclass('public.octagon_reactions') is not null,
+                    'member_activity',to_regclass('public.octagon_member_activity') is not null,
+                    'push_config',to_regclass('public.octagon_push_config') is not null,
+                    'push_subscriptions',to_regclass('public.octagon_push_subscriptions') is not null
+                  ),
+                  'rpc',jsonb_build_object(
+                    'functions',jsonb_build_object(
+                      'access_status',to_regprocedure('public.octagon_access_status(text)') is not null,
+                      'snapshot',to_regprocedure('public.octagon_snapshot(text,date)') is not null,
+                      'post_message',to_regprocedure('public.octagon_post_message(text,text,uuid)') is not null,
+                      'set_reaction',to_regprocedure('public.octagon_set_reaction(text,uuid,text)') is not null,
+                      'delete_message',to_regprocedure('public.octagon_delete_message(text,uuid)') is not null,
+                      'admin_set_access',to_regprocedure('public.octagon_admin_set_access(text,uuid,boolean)') is not null,
+                      'admin_access_roster',to_regprocedure('public.octagon_admin_access_roster(text)') is not null,
+                      'activity_status',to_regprocedure('public.octagon_activity_status(text)') is not null,
+                      'mark_seen',to_regprocedure('public.octagon_mark_seen(text,timestamptz)') is not null,
+                      'register_push',to_regprocedure('public.octagon_register_push_subscription(text,text,text,text,bigint,text)') is not null,
+                      'remove_push',to_regprocedure('public.octagon_remove_push_subscription(text,text)') is not null,
+                      'delivery_context',to_regprocedure('public.octagon_push_delivery_context(text,uuid)') is not null
+                    ),
+                    'anon_execute',jsonb_build_object(
+                      'access_status',has_function_privilege('anon','public.octagon_access_status(text)','EXECUTE'),
+                      'snapshot',has_function_privilege('anon','public.octagon_snapshot(text,date)','EXECUTE'),
+                      'post_message',has_function_privilege('anon','public.octagon_post_message(text,text,uuid)','EXECUTE'),
+                      'set_reaction',has_function_privilege('anon','public.octagon_set_reaction(text,uuid,text)','EXECUTE'),
+                      'delete_message',has_function_privilege('anon','public.octagon_delete_message(text,uuid)','EXECUTE'),
+                      'admin_set_access',has_function_privilege('anon','public.octagon_admin_set_access(text,uuid,boolean)','EXECUTE'),
+                      'admin_access_roster',has_function_privilege('anon','public.octagon_admin_access_roster(text)','EXECUTE'),
+                      'activity_status',has_function_privilege('anon','public.octagon_activity_status(text)','EXECUTE'),
+                      'mark_seen',has_function_privilege('anon','public.octagon_mark_seen(text,timestamptz)','EXECUTE'),
+                      'register_push',has_function_privilege('anon','public.octagon_register_push_subscription(text,text,text,text,bigint,text)','EXECUTE'),
+                      'remove_push',has_function_privilege('anon','public.octagon_remove_push_subscription(text,text)','EXECUTE')
+                    ),
+                    'internal_helper_private',not has_function_privilege('anon','public.octagon_member_context(text)','EXECUTE'),
+                    'delivery_context_private',not has_function_privilege('anon','public.octagon_push_delivery_context(text,uuid)','EXECUTE')
+                  )
+                )
+              ) as audit
+              from public.pick_groups g
+              where g.code='GOAT26' and coalesce(g.is_canonical,false)
+              limit 1;
+              """
+
               audit=audit_value(query(audit_sql,read_only=True))
               names=sorted(audit.get('member_names') or [],key=lambda item:str(item).lower())
               octagon=audit.get('octagon') or {}
@@ -262,7 +289,6 @@ jobs:
               rpc=octagon.get('rpc') or {}
               functions=rpc.get('functions') or {}
               anon_execute=rpc.get('anon_execute') or {}
-              rpc_names=('access_status','snapshot','post_message','set_reaction','delete_message','admin_set_access','admin_access_roster')
               if (
                   audit.get('code')!='GOAT26'
                   or not audit.get('is_canonical')
@@ -273,24 +299,42 @@ jobs:
                   or int(octagon.get('access_rows') or 0)!=int(audit.get('active_members') or 0)
                   or int(octagon.get('enabled_members') or 0)<1
                   or not octagon.get('cody_enabled')
+                  or not octagon.get('vapid_ready')
                   or not octagon.get('rls_enabled')
-                  or not all(tables.get(name) for name in ('access','messages','reactions'))
-                  or not all(functions.get(name) for name in rpc_names)
-                  or not all(anon_execute.get(name) for name in rpc_names)
-                  or not rpc.get('security_definer')
+                  or not all(tables.values())
+                  or not all(functions.values())
+                  or not all(anon_execute.values())
                   or not rpc.get('internal_helper_private')
+                  or not rpc.get('delivery_context_private')
               ):
-                  raise RuntimeError(f'GOAT26 identity, history, or Octagon access-panel audit failed: {audit}')
+                  raise RuntimeError(f'GOAT26 identity, history, or notification audit failed: {audit}')
               audit['deployment_method']='supabase-management-api'
               write(audit)
-              print('GOAT26 identity, Picks history, Octagon server layer, Realtime board, and Cody access panel verified.')
+              print('GOAT26 identity, Picks history, Octagon board, unread state, and Web Push database layer verified.')
           except Exception as error:
               reason=str(error).replace(token,'[redacted]')[:2000]
               write({'status':'failed','code':'GOAT26','reason':reason})
               raise
           PY
 
-      - name: Wire the shared identity into the live page
+      - name: Deploy Octagon push sender
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          npx --yes supabase@latest functions deploy octagon-push \
+            --project-ref hdkjwezaswhisxupxydc \
+            --no-verify-jwt
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          path=Path('supabase/goat26-deployment-status.json')
+          value=json.loads(path.read_text())
+          value.setdefault('octagon',{})['edge_function']='octagon-push'
+          value['octagon']['edge_function_deployed']=True
+          path.write_text(json.dumps(value,indent=2,sort_keys=True)+'\n')
+          PY
+
+      - name: Wire the shared identity and notifications into the live page
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -306,6 +350,9 @@ jobs:
           nav_grid='  <script src="assets/js/octagon-hq-nav-grid.js?v=octagon-hq-nav-grid-20260717g"></script>'
           octagon_board='  <script src="assets/js/octagon-message-board.js?v=octagon-message-board-20260717c-realtime"></script>'
           access_panel='  <script src="assets/js/octagon-access-panel.js?v=octagon-access-panel-20260717a"></script>'
+          notifications='  <script src="assets/js/octagon-notifications.js?v=octagon-notifications-20260717a"></script>'
+          manifest='  <link rel="manifest" href="manifest.webmanifest?v=octagon-notifications-20260717a" />'
+          theme='  <meta name="theme-color" content="#111827" />'
 
           text=re.sub(r'  <script src="assets/js/app-canonical-group\.js\?v=[^"]+"></script>',canonical,text,count=1)
           text=re.sub(r'  <script src="assets/js/play-profile-identity\.js\?v=[^"]+"></script>',play_profile,text,count=1)
@@ -321,10 +368,7 @@ jobs:
           elif update_watcher in text:
               text=text.replace(update_watcher,update_watcher+'\n'+octagon_shell,1)
           else:
-              match=re.search(r'(  <script src="assets/js/app-update-watcher\.js\?v=[^"]+"></script>)',text)
-              if not match:
-                  raise SystemExit('App update watcher script anchor was not found.')
-              text=text[:match.end()]+'\n'+octagon_shell+text[match.end():]
+              raise SystemExit('App update watcher script anchor was not found.')
 
           if 'assets/js/octagon-hq-nav-grid.js' in text:
               text=re.sub(r'  <script src="assets/js/octagon-hq-nav-grid\.js\?v=[^"]+"></script>',nav_grid,text,count=1)
@@ -347,7 +391,24 @@ jobs:
           else:
               raise SystemExit('Octagon message-board script anchor was not found.')
 
-          text=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260717-octagon-cody-access-panel" />',text,count=1)
+          if 'assets/js/octagon-notifications.js' in text:
+              text=re.sub(r'  <script src="assets/js/octagon-notifications\.js\?v=[^"]+"></script>',notifications,text,count=1)
+          elif access_panel in text:
+              text=text.replace(access_panel,access_panel+'\n'+notifications,1)
+          else:
+              raise SystemExit('Octagon access-panel script anchor was not found.')
+
+          if 'rel="manifest"' in text:
+              text=re.sub(r'  <link rel="manifest" href="[^"]+"\s*/>',manifest,text,count=1)
+          else:
+              text=text.replace('  <title>Octagon HQ</title>','  <title>Octagon HQ</title>\n'+manifest,1)
+
+          if 'name="theme-color"' in text:
+              text=re.sub(r'  <meta name="theme-color" content="[^"]+"\s*/>',theme,text,count=1)
+          else:
+              text=text.replace('  <meta name="viewport" content="width=device-width, initial-scale=1" />','  <meta name="viewport" content="width=device-width, initial-scale=1" />\n'+theme,1)
+
+          text=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260717-octagon-unread-push" />',text,count=1)
           text=re.sub(r'<title>[^<]+</title>','<title>Octagon HQ</title>',text,count=1)
           path.write_text(text)
           PY
@@ -362,6 +423,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html supabase/goat26-deployment-status.json
-          git commit -m 'Record Octagon access-panel deployment [skip ci]'
+          git commit -m 'Record Octagon unread push deployment [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:main
