@@ -1,12 +1,15 @@
 (function(){
   'use strict';
 
-  const VERSION='blind-rank-polish-20260716h-repeat-protection';
+  const VERSION='blind-rank-polish-20260716i-simulation-audit';
   const PACK_KEY='ufc-goat-blind-rank-pack-v2';
   const GAME_KEY='ufc-goat-blind-rank-v1';
   const HISTORY_KEY='ufc-goat-blind-rank-history-v1';
   const MAX_RECENT_REVEALS=15;
   const RELAX_WINDOWS=[15,10,5,0];
+  const MIN_SIMULATIONS=1;
+  const MAX_SIMULATIONS=100000;
+  const DEFAULT_SIMULATIONS=10000;
   const STRIKERS=[
     'Anderson Silva','Israel Adesanya','Alex Pereira','Conor McGregor','Max Holloway','Jose Aldo','Ilia Topuria','Stephen Thompson','Edson Barboza','Anthony Pettis','Joanna Jedrzejczyk','Valentina Shevchenko','Zhang Weili','Dustin Poirier','Justin Gaethje','Chuck Liddell','Lyoto Machida','Robbie Lawler','Sean O’Malley','Michel Pereira','Darren Till','Kevin Holland','Holly Holm','Donald Cerrone','Chan Sung Jung','Cub Swanson','Derrick Lewis','Francis Ngannou','Mike Perry','Tai Tuivasa','Paulo Costa'
   ];
@@ -50,12 +53,15 @@
   function data(){return window.UFC_PLAY_DATA;}
   function packFor(id){const key=ALIASES[id]||id;return PACKS.find(pack=>pack.id===key)||PACKS[0];}
   function savedPack(){try{return packFor(localStorage.getItem(PACK_KEY)||api()?.state?.packId).id;}catch(_error){return packFor(api()?.state?.packId).id;}}
-  function shuffle(items){const copy=[...items];for(let i=copy.length-1;i>0;i-=1){const j=Math.floor(Math.random()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]];}return copy;}
+  function shuffle(items){const copy=[...items];for(let index=copy.length-1;index>0;index-=1){const swap=Math.floor(Math.random()*(index+1));[copy[index],copy[swap]]=[copy[swap],copy[index]];}return copy;}
   function finite(value){return value!==null&&value!==''&&Number.isFinite(Number(value));}
+  function round(value,digits=2){const factor=10**digits;return Math.round((Number(value)||0)*factor)/factor;}
+  function percent(value,total,digits=2){return total?round((value/total)*100,digits):0;}
   function weightedChoice(rows){let roll=Math.random();for(const [value,weight] of rows){roll-=weight;if(roll<=0)return value;}return rows.at(-1)?.[0]||null;}
-  function chooseTemplate(){return LINEUP_TEMPLATES.find(template=>template.id===weightedChoice(LINEUP_TEMPLATES.map(template=>[template.id,template.weight])))||LINEUP_TEMPLATES[0];}
+  function chooseTemplate(){const id=weightedChoice(LINEUP_TEMPLATES.map(template=>[template.id,template.weight]));return LINEUP_TEMPLATES.find(template=>template.id===id)||LINEUP_TEMPLATES[0];}
   function fighterIds(values){return (values||[]).map(value=>typeof value==='string'?value:value?.id).filter(Boolean);}
   function lineupSignature(values){return fighterIds(values).slice().sort().join('|');}
+  function increment(object,key,amount=1){object[key]=(object[key]||0)+amount;}
 
   function loadHistory(){
     try{
@@ -186,14 +192,16 @@
   function bucketedPool(pack,rows,context=rankingContext(pack)){
     const ranked=[...(rows||[])].sort((a,b)=>scoreForPack(pack,b,context)-scoreForPack(pack,a,context)||a.name.localeCompare(b.name));
     const buckets=Object.fromEntries(BUCKET_ORDER.map(bucket=>[bucket,[]]));
+    const bucketById={};
     ranked.forEach((fighter,index)=>{
       const percentile=(index+0.5)/ranked.length;
       const bucket=BUCKET_CONFIG.find(row=>percentile<=row.cutoff)?.id||'bad';
       buckets[bucket].push(fighter);
+      bucketById[fighter.id]=bucket;
     });
     const counts=Object.fromEntries(BUCKET_ORDER.map(bucket=>[bucket,buckets[bucket].length]));
-    const percentages=Object.fromEntries(BUCKET_ORDER.map(bucket=>[bucket,ranked.length?Number(((buckets[bucket].length/ranked.length)*100).toFixed(1)):0]));
-    return {ranked,buckets,counts,percentages};
+    const percentages=Object.fromEntries(BUCKET_ORDER.map(bucket=>[bucket,ranked.length?round((buckets[bucket].length/ranked.length)*100,1):0]));
+    return {ranked,buckets,bucketById,counts,percentages};
   }
 
   function nearestAvailableBucket(target,working){
@@ -216,12 +224,11 @@
     return rows;
   }
 
-  function buildCandidate(rows,audit,excluded){
+  function buildCandidate(rows,audit,excluded,template=chooseTemplate()){
     const working=Object.fromEntries(BUCKET_ORDER.map(bucket=>[
       bucket,
       shuffle(audit.buckets[bucket].filter(fighter=>!excluded.has(fighter.id)))
     ]));
-    const template=chooseTemplate();
     const targets=template.targets();
     const picked=[];
     const actual=[];
@@ -244,25 +251,25 @@
     return picked.length===5?{fighters:shuffle(picked),template,targets,actual}:null;
   }
 
-  function lineup(pack){
-    const context=rankingContext(pack);
-    const rows=pool(pack,context);
-    if(rows.length<5)return[];
-    const audit=bucketedPool(pack,rows,context);
-    const history=packHistory(pack.id);
-    const previousSignature=lineupSignature(history.lastLineup);
+  function generateLineup(pack,history,prepared={}){
+    const context=prepared.context||rankingContext(pack);
+    const rows=prepared.rows||pool(pack,context);
+    if(rows.length<5)return {fighters:[],meta:{packId:pack.id,broken:true,reason:'pool-under-five',poolSize:rows.length}};
+    const audit=prepared.audit||bucketedPool(pack,rows,context);
+    const previousSignature=lineupSignature(history?.lastLineup);
+    const template=chooseTemplate();
     let selected=null;
     let usedWindow=0;
     let attempts=0;
     let blockedImmediateRepeat=false;
 
     for(const windowSize of RELAX_WINDOWS){
-      const excluded=new Set(windowSize?history.recent.slice(-windowSize):[]);
+      const excluded=new Set(windowSize?(history?.recent||[]).slice(-windowSize):[]);
       if(rows.length-excluded.size<5)continue;
       const attemptLimit=windowSize===0?48:20;
       for(let attempt=0;attempt<attemptLimit;attempt+=1){
         attempts+=1;
-        const candidate=buildCandidate(rows,audit,excluded);
+        const candidate=buildCandidate(rows,audit,excluded,template);
         if(!candidate)continue;
         const signature=lineupSignature(candidate.fighters);
         if(previousSignature&&signature===previousSignature){blockedImmediateRepeat=true;continue;}
@@ -274,15 +281,15 @@
     }
 
     if(!selected){
-      const excluded=new Set();
-      selected=buildCandidate(rows,audit,excluded);
+      selected=buildCandidate(rows,audit,new Set(),template);
       usedWindow=0;
     }
-    if(!selected)return[];
+    if(!selected)return {fighters:[],meta:{packId:pack.id,broken:true,reason:'candidate-build-failed',poolSize:rows.length}};
 
     if(previousSignature&&lineupSignature(selected.fighters)===previousSignature){
-      const previousIds=new Set(history.lastLineup);
-      const replacement=rows.find(fighter=>!previousIds.has(fighter.id));
+      const previousIds=new Set(history?.lastLineup||[]);
+      const selectedIds=new Set(selected.fighters.map(fighter=>fighter.id));
+      const replacement=rows.find(fighter=>!previousIds.has(fighter.id)&&!selectedIds.has(fighter.id));
       if(replacement){
         selected.fighters[selected.fighters.length-1]=replacement;
         selected.actual[selected.actual.length-1]='repeat-break';
@@ -291,29 +298,39 @@
       }
     }
 
-    const game=api();
-    if(game)game.state.bucketAudit={
-      packId:pack.id,
-      scoreMode:pack.scoreMode,
-      rankingSource:pack.rankingSource,
-      lineupType:selected.template.id,
-      lineupTypeName:selected.template.name,
-      poolSize:rows.length,
-      counts:audit.counts,
-      percentages:audit.percentages,
-      targets:selected.targets,
-      actual:selected.actual,
-      repeatProtection:{
-        configuredWindow:MAX_RECENT_REVEALS,
-        usedWindow,
-        relaxed:usedWindow<MAX_RECENT_REVEALS,
-        recentCount:history.recent.length,
-        excludedCount:usedWindow?new Set(history.recent.slice(-usedWindow)).size:0,
-        immediateRepeatBlocked:blockedImmediateRepeat,
-        attempts
+    const fighterBuckets=selected.fighters.map(fighter=>audit.bucketById[fighter.id]||'unknown');
+    return {
+      fighters:selected.fighters,
+      meta:{
+        packId:pack.id,
+        scoreMode:pack.scoreMode,
+        rankingSource:pack.rankingSource,
+        lineupType:selected.template.id,
+        lineupTypeName:selected.template.name,
+        poolSize:rows.length,
+        counts:audit.counts,
+        percentages:audit.percentages,
+        targets:selected.targets,
+        actual:selected.actual,
+        fighterBuckets,
+        repeatProtection:{
+          configuredWindow:MAX_RECENT_REVEALS,
+          usedWindow,
+          relaxed:usedWindow<MAX_RECENT_REVEALS,
+          recentCount:(history?.recent||[]).length,
+          excludedCount:usedWindow?new Set((history?.recent||[]).slice(-usedWindow)).size:0,
+          immediateRepeatBlocked:blockedImmediateRepeat,
+          attempts
+        }
       }
     };
-    return selected.fighters;
+  }
+
+  function lineup(pack){
+    const generated=generateLineup(pack,packHistory(pack.id));
+    const game=api();
+    if(game)game.state.bucketAudit=generated.meta;
+    return generated.fighters;
   }
 
   function auditPack(packId){
@@ -322,13 +339,21 @@
     const rows=pool(pack,context);
     const audit=bucketedPool(pack,rows,context);
     const history=historySnapshot(pack.id);
-    const rankRows=values=>values.map(fighter=>({id:fighter.id,name:fighter.name,score:Number(scoreForPack(pack,fighter,context).toFixed(2))}));
+    const rankRows=values=>values.map(fighter=>({id:fighter.id,name:fighter.name,score:round(scoreForPack(pack,fighter,context),2),bucket:audit.bucketById[fighter.id]}));
+    const issues=[];
+    if(!context.ready)issues.push('ranking-source-not-ready');
+    if(rows.length<5)issues.push('pool-under-five');
+    else if(rows.length<15)issues.push('pool-under-recommended-minimum');
+    else if(rows.length<24)issues.push('limited-repeat-protection');
     return {
       packId:pack.id,
       scoreMode:pack.scoreMode,
       rankingSource:pack.rankingSource,
-      ready:context.ready,
+      ready:context.ready&&rows.length>=5,
+      status:issues.length?'warning':'ready',
+      issues,
       poolSize:rows.length,
+      poolGuidance:{minimum:5,recommended:24,ideal:'30-40'},
       counts:audit.counts,
       percentages:audit.percentages,
       lineupTemplates:LINEUP_TEMPLATES.map(template=>({id:template.id,name:template.name,weight:template.weight})),
@@ -336,6 +361,177 @@
       topFive:rankRows(audit.ranked.slice(0,5)),
       bottomFive:rankRows(audit.ranked.slice(-5))
     };
+  }
+
+  function simulationCount(value){
+    const parsed=Math.floor(Number(value)||DEFAULT_SIMULATIONS);
+    return Math.max(MIN_SIMULATIONS,Math.min(MAX_SIMULATIONS,parsed));
+  }
+
+  function simulate(packId,gameCount=DEFAULT_SIMULATIONS){
+    const pack=packFor(packId);
+    const gamesRequested=simulationCount(gameCount);
+    const context=rankingContext(pack);
+    const rows=pool(pack,context);
+    const audit=bucketedPool(pack,rows,context);
+    const startedAt=Date.now();
+    const templateCounts={};
+    const targetBucketCounts={};
+    const actualBucketCounts={};
+    const fighterCounts={};
+    const relaxationCounts={};
+    const signatureCounts={};
+    const simulatedHistory={recent:[],lastLineup:[],session:null};
+    let completedGames=0;
+    let brokenGames=0;
+    let duplicateFighterGames=0;
+    let immediateDuplicateLineups=0;
+    let repeatedLineupSets=0;
+    let nearestBucketSelections=0;
+    let rawFallbackSelections=0;
+    let repeatBreakSelections=0;
+    let immediateRepeatBlocks=0;
+    let previousSignature='';
+
+    if(!context.ready||rows.length<5){
+      return {
+        version:VERSION,
+        packId:pack.id,
+        status:'blocked',
+        passed:false,
+        reason:!context.ready?'ranking-source-not-ready':'pool-under-five',
+        gamesRequested,
+        gamesCompleted:0,
+        poolSize:rows.length,
+        durationMs:Date.now()-startedAt
+      };
+    }
+
+    const prepared={context,rows,audit};
+    for(let gameIndex=0;gameIndex<gamesRequested;gameIndex+=1){
+      const generated=generateLineup(pack,simulatedHistory,prepared);
+      const fighters=generated.fighters||[];
+      const meta=generated.meta||{};
+      if(fighters.length!==5){brokenGames+=1;continue;}
+      completedGames+=1;
+      const ids=fighterIds(fighters);
+      const signature=lineupSignature(ids);
+      if(new Set(ids).size!==5)duplicateFighterGames+=1;
+      if(previousSignature&&signature===previousSignature)immediateDuplicateLineups+=1;
+      if(signatureCounts[signature])repeatedLineupSets+=1;
+      increment(signatureCounts,signature);
+      previousSignature=signature;
+      increment(templateCounts,meta.lineupType||'unknown');
+      increment(relaxationCounts,String(meta.repeatProtection?.usedWindow??'unknown'));
+      if(meta.repeatProtection?.immediateRepeatBlocked)immediateRepeatBlocks+=1;
+
+      (meta.targets||[]).forEach(target=>increment(targetBucketCounts,target));
+      (meta.actual||[]).forEach((actual,index)=>{
+        if(actual==='fallback')rawFallbackSelections+=1;
+        else if(actual==='repeat-break')repeatBreakSelections+=1;
+        else if(actual!==(meta.targets||[])[index])nearestBucketSelections+=1;
+      });
+      fighters.forEach(fighter=>{
+        increment(fighterCounts,fighter.id);
+        increment(actualBucketCounts,audit.bucketById[fighter.id]||'unknown');
+      });
+
+      simulatedHistory.lastLineup=ids.slice();
+      simulatedHistory.recent.push(...ids);
+      simulatedHistory.recent=simulatedHistory.recent.slice(-MAX_RECENT_REVEALS);
+    }
+
+    const totalSelections=completedGames*5;
+    const templateRates=Object.fromEntries(LINEUP_TEMPLATES.map(template=>[
+      template.id,
+      {targetPct:round(template.weight*100,2),games:templateCounts[template.id]||0,actualPct:percent(templateCounts[template.id]||0,completedGames,2),deviationPts:round(percent(templateCounts[template.id]||0,completedGames,2)-(template.weight*100),2)}
+    ]));
+    const bucketRates=Object.fromEntries(BUCKET_ORDER.map(bucket=>[
+      bucket,
+      {poolCount:audit.counts[bucket]||0,poolPct:audit.percentages[bucket]||0,selections:actualBucketCounts[bucket]||0,selectionPct:percent(actualBucketCounts[bucket]||0,totalSelections,2),targetSelections:targetBucketCounts[bucket]||0,targetPct:percent(targetBucketCounts[bucket]||0,totalSelections,2)}
+    ]));
+    const fighterAppearanceRates=rows.map(fighter=>{
+      const bucket=audit.bucketById[fighter.id]||'unknown';
+      const bucketSize=audit.counts[bucket]||1;
+      const bucketSelections=actualBucketCounts[bucket]||0;
+      const bucketAverage=bucketSelections/bucketSize;
+      const appearances=fighterCounts[fighter.id]||0;
+      return {
+        id:fighter.id,
+        name:fighter.name,
+        bucket,
+        appearances,
+        appearanceRatePct:percent(appearances,completedGames,2),
+        bucketAverageAppearances:round(bucketAverage,2),
+        bucketAverageRatePct:percent(bucketAverage,completedGames,2),
+        exposureIndex:bucketAverage?round(appearances/bucketAverage,3):0
+      };
+    }).sort((a,b)=>b.appearances-a.appearances||a.name.localeCompare(b.name));
+    const overexposed=fighterAppearanceRates.filter(row=>row.exposureIndex>1.25).slice(0,10);
+    const underexposed=fighterAppearanceRates.filter(row=>row.exposureIndex>0&&row.exposureIndex<0.75).sort((a,b)=>a.exposureIndex-b.exposureIndex).slice(0,10);
+    const fallbackSelections=nearestBucketSelections+rawFallbackSelections+repeatBreakSelections;
+    const warnings=[];
+    if(rows.length<15)warnings.push('Pool is too small for reliable five-fighter matchmaking.');
+    else if(rows.length<24)warnings.push('Pool is below the preferred 24-fighter replay threshold.');
+    Object.values(templateRates).forEach(row=>{if(Math.abs(row.deviationPts)>2)warnings.push('A lineup template missed its target rate by more than two percentage points.');});
+    if(brokenGames)warnings.push(`${brokenGames} simulated games failed to produce five fighters.`);
+    if(duplicateFighterGames)warnings.push(`${duplicateFighterGames} simulated games contained a duplicate fighter.`);
+    if(immediateDuplicateLineups)warnings.push(`${immediateDuplicateLineups} immediate lineup repeats were generated.`);
+    if(percent(fallbackSelections,totalSelections,2)>10)warnings.push('More than 10% of selections required a bucket fallback.');
+    if(percent(relaxationCounts['0']||0,completedGames,2)>10)warnings.push('More than 10% of games exhausted repeat protection completely.');
+    if(overexposed.length)warnings.push(`${overexposed.length} fighters exceeded 1.25× their bucket-average appearance rate.`);
+    const passed=brokenGames===0&&duplicateFighterGames===0&&immediateDuplicateLineups===0&&warnings.every(message=>!message.includes('failed')&&!message.includes('duplicate fighter')&&!message.includes('immediate lineup'));
+
+    return {
+      version:VERSION,
+      packId:pack.id,
+      packName:pack.name,
+      scoreMode:pack.scoreMode,
+      rankingSource:pack.rankingSource,
+      status:passed?(warnings.length?'warning':'passed'):'failed',
+      passed,
+      gamesRequested,
+      gamesCompleted:completedGames,
+      poolSize:rows.length,
+      durationMs:Date.now()-startedAt,
+      templateRates,
+      bucketRates,
+      repeatProtection:{
+        configuredWindow:MAX_RECENT_REVEALS,
+        relaxWindows:RELAX_WINDOWS.slice(),
+        gamesByUsedWindow:Object.fromEntries(RELAX_WINDOWS.map(windowSize=>[String(windowSize),{games:relaxationCounts[String(windowSize)]||0,pct:percent(relaxationCounts[String(windowSize)]||0,completedGames,2)}])),
+        immediateRepeatBlocks,
+        immediateDuplicateLineups
+      },
+      fallbackBehavior:{
+        nearestBucketSelections,
+        rawFallbackSelections,
+        repeatBreakSelections,
+        totalFallbackSelections:fallbackSelections,
+        fallbackSelectionPct:percent(fallbackSelections,totalSelections,2)
+      },
+      lineupUniqueness:{
+        uniqueLineups:Object.keys(signatureCounts).length,
+        repeatedLineupSets,
+        repeatedLineupPct:percent(repeatedLineupSets,completedGames,2),
+        duplicateFighterGames,
+        brokenGames
+      },
+      fighterExposure:{
+        averageAppearances:round(totalSelections/rows.length,2),
+        highest:fighterAppearanceRates.slice(0,10),
+        lowest:fighterAppearanceRates.slice().sort((a,b)=>a.appearances-b.appearances||a.name.localeCompare(b.name)).slice(0,10),
+        overexposed,
+        underexposed,
+        all:fighterAppearanceRates
+      },
+      warnings
+    };
+  }
+
+  function simulateAll(gameCount=2000){
+    const count=simulationCount(gameCount);
+    return PACKS.map(pack=>simulate(pack.id,count));
   }
 
   function save(packId){
@@ -441,6 +637,7 @@
     game.bucketConfig=BUCKET_CONFIG.map(bucket=>({...bucket}));
     game.lineupTemplates=LINEUP_TEMPLATES.map(template=>({id:template.id,name:template.name,weight:template.weight}));
     game.repeatProtection={historyKey:HISTORY_KEY,maxRecentReveals:MAX_RECENT_REVEALS,relaxWindows:RELAX_WINDOWS.slice()};
+    game.simulationConfig={defaultGames:DEFAULT_SIMULATIONS,maxGames:MAX_SIMULATIONS,nonDestructive:true};
     game.packScoring=PACKS.map(pack=>({id:pack.id,scoreMode:pack.scoreMode,rankingSource:pack.rankingSource,division:pack.division||null}));
     game.scoreForPack=(packId,fighter)=>{const pack=packFor(packId);return scoreForPack(pack,fighter,rankingContext(pack));};
     game.bucketedPool=packId=>{const pack=packFor(packId);const context=rankingContext(pack);return bucketedPool(pack,pool(pack,context),context);};
@@ -448,6 +645,8 @@
     game.clearRecentHistory=clearHistory;
     game.auditBuckets=auditPack;
     game.auditPacks=()=>PACKS.map(pack=>auditPack(pack.id));
+    game.simulate=simulate;
+    game.simulateAll=simulateAll;
   }
 
   function init(){
