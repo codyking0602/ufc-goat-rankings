@@ -1,4 +1,4 @@
-const VERSION='octagon-push-sw-20260717a';
+const VERSION='war-room-push-sw-20260717b';
 
 self.addEventListener('install',event=>{
   event.waitUntil(self.skipWaiting());
@@ -13,10 +13,10 @@ self.addEventListener('push',event=>{
   try{payload=event.data?.json?.()||{};}catch(_error){
     payload={body:event.data?.text?.()||''};
   }
-  const title=String(payload.title||'The Octagon');
+  const title=String(payload.title||'The War Room');
   const options={
-    body:String(payload.body||'New activity in The Octagon.'),
-    tag:String(payload.tag||'octagon-activity'),
+    body:String(payload.body||'New activity in The War Room.'),
+    tag:String(payload.tag||'war-room-activity'),
     renotify:true,
     data:{url:String(payload.url||'./?open=octagon')},
   };
