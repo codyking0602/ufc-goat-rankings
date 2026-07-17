@@ -75,6 +75,14 @@ async function readRuntime(){
           const secondary=row.secondaryDivision||(record?.identity?.secondaryDivisions||[]).join(' / ')||profile.secondaryDivision;
           fighters.push(compact({
             slug:slugify(name),name,group,rank:finite(row.rank),appOvr:finite(row.overallOvr),totalScore:finite(row.totalScore),
+            displayName:clean(first(display.displayName,display.profileDisplayName,name),120),
+            profileDisplayName:clean(first(display.profileDisplayName,display.displayName,name),120),
+            photoUrl:clean(display.photoUrl,260),
+            thumbUrl:clean(display.thumbUrl,260),
+            watchUrl:clean(display.watchUrl,500),
+            watchLabel:clean(display.watchLabel,80),
+            signatureFightUrl:clean(display.signatureFightUrl,500),
+            signatureFightLabel:clean(display.signatureFightLabel,80),
             categories:{championship:finite(row.championship),opponentQuality:finite(row.opponentQuality),primeDominance:finite(row.primeDominance),longevity:finite(row.longevity),apexPeak:finite(row.apexPeak),lossPenalty:finite(row.penalty),divisionEraDepth:finite(row.eraDepthAdjustment)},
             weightedScoreBreakdown:clone(row.weightedScoreBreakdown),
             division:[primary,secondary].filter(Boolean).join(' / '),
