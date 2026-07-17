@@ -3,7 +3,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
 
-const EXPECTED_FIGHTERS=79;
+const EXPECTED_FIGHTERS=80;
+const PROFILE_FIGHTERS=['Brandon Moreno','Anthony Pettis'];
 const root=process.cwd();
 const browser=await chromium.launch({headless:true});
 const page=await browser.newPage({viewport:{width:390,height:844}});
@@ -71,30 +72,41 @@ try{
     boardRenderFailures.push(...states.filter(row=>!row.src||!row.complete||row.naturalWidth<=0));
   }
 
-  await page.evaluate(()=>window.openFighter?.('Brandon Moreno'));
-  await page.waitForFunction(()=>{
-    const img=document.querySelector('#fighterDetail .fighter-photo img');
-    return Boolean(img&&img.complete&&img.naturalWidth>0);
-  },null,{timeout:15000});
-  const morenoProfile=await page.evaluate(()=>({
-    heading:document.querySelector('#fighterDetail h2')?.textContent?.trim()||null,
-    src:document.querySelector('#fighterDetail .fighter-photo img')?.getAttribute('src')||null,
-    watch:document.querySelector('#fighterDetail .watch-moment-link')?.href||null,
-    signature:[...document.querySelectorAll('#fighterDetail a')].find(link=>/signature fight/i.test(link.textContent||''))?.href||null
-  }));
+  const profiles=[];
+  for(const fighter of PROFILE_FIGHTERS){
+    await page.evaluate(name=>window.openFighter?.(name),fighter);
+    await page.waitForFunction(()=>{
+      const img=document.querySelector('#fighterDetail .fighter-photo img');
+      return Boolean(img&&img.complete&&img.naturalWidth>0);
+    },null,{timeout:15000});
+    profiles.push(await page.evaluate(name=>({
+      fighter:name,
+      heading:document.querySelector('#fighterDetail h2')?.textContent?.trim()||null,
+      src:document.querySelector('#fighterDetail .fighter-photo img')?.getAttribute('src')||null,
+      watch:document.querySelector('#fighterDetail .watch-moment-link')?.href||null,
+      signature:[...document.querySelectorAll('#fighterDetail a')].find(link=>/signature fight/i.test(link.textContent||''))?.href||null
+    }),fighter));
+    await page.locator('#closeDrawer').click();
+  }
 
   const runtime=await page.evaluate(()=>({
     bootstrapPhotoSync:window.UFC_PRODUCTION_RANKING_BOOTSTRAP?.photoSync||null,
     finalPhotoSync:window.UFC_CALCULATED_ROSTER_PHOTO_SYNC||null
   }));
   console.log('FIGHTER_PHOTO_RENDER_AUDIT');
-  console.log(JSON.stringify({fighterCount:mappings.length,missing,decodeFailures,boardRenderFailures,morenoProfile,...runtime,pageErrors},null,2));
+  console.log(JSON.stringify({fighterCount:mappings.length,missing,decodeFailures,boardRenderFailures,profiles,...runtime,pageErrors},null,2));
 
   assert.equal(missing.length,0,`${missing.length} fighter photo paths are missing`);
   assert.equal(decodeFailures.length,0,`${decodeFailures.length} fighter images fail decoding`);
   assert.equal(boardRenderFailures.length,0,`${boardRenderFailures.length} leaderboard photos fail rendering`);
-  assert.match(morenoProfile.heading||'',/Brandon.*The Assassin Baby.*Moreno/);
-  assert.match(morenoProfile.src||'',/brandon-moreno\.webp/);
+  const moreno=profiles.find(row=>row.fighter==='Brandon Moreno');
+  const pettis=profiles.find(row=>row.fighter==='Anthony Pettis');
+  assert.match(moreno?.heading||'',/Brandon.*The Assassin Baby.*Moreno/);
+  assert.match(moreno?.src||'',/brandon-moreno\.webp/);
+  assert.match(pettis?.heading||'',/Anthony.*Showtime.*Pettis/);
+  assert.match(pettis?.src||'',/anthony-pettis\.webp/);
+  assert.equal(pettis?.watch,null);
+  assert.equal(pettis?.signature,null);
   assert.deepEqual(pageErrors,[],'photo audit has no uncaught page errors');
 }finally{
   await browser.close();
