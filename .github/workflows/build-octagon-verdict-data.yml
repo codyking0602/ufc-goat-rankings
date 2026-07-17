@@ -83,13 +83,22 @@ jobs:
           npm install --no-save --silent playwright@1.55.0 > /tmp/playwright-install.log 2>&1
           npx playwright install --with-deps chromium >> /tmp/playwright-install.log 2>&1
 
-      - name: Build and materialize calculated knowledge data
+      - name: Start local app
         run: |
           python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/ufc-octagon-verdict-http.log 2>&1 &
-          SERVER_PID=$!
-          trap 'kill $SERVER_PID || true' EXIT
-          node tools/build-octagon-verdict-data.js
-          node scripts/materialize-octagon-verdict-data.mjs
+          echo $! > /tmp/ufc-octagon-verdict-http.pid
+
+      - name: Build calculated browser feed
+        shell: bash
+        run: |
+          set -o pipefail
+          node tools/build-octagon-verdict-data.js 2>&1 | tee /tmp/octagon-verdict-feed-build.log
+
+      - name: Materialize fighter objects and index
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/materialize-octagon-verdict-data.mjs 2>&1 | tee /tmp/octagon-verdict-materialize.log
 
       - name: Validate materialized 79-fighter package
         run: |
@@ -115,8 +124,30 @@ jobs:
           console.log(JSON.stringify({fighterCount:index.fighterCount,divisionBoardCount:index.divisionBoardCount,moreno:{rank:moreno.rank,ovr:moreno.appOvr,totalScore:moreno.totalScore,ufcRecord:moreno.ufcRecord}},null,2));
           NODE
 
+      - name: Show materialization diagnostics on failure
+        if: failure()
+        run: |
+          echo '--- Feed builder ---'
+          cat /tmp/octagon-verdict-feed-build.log 2>/dev/null || true
+          echo '--- Materializer ---'
+          cat /tmp/octagon-verdict-materialize.log 2>/dev/null || true
+          echo '--- HTTP server ---'
+          tail -100 /tmp/ufc-octagon-verdict-http.log 2>/dev/null || true
+
+      - name: Archive materialization diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: octagon-verdict-materialization-diagnostics
+          path: |
+            /tmp/playwright-install.log
+            /tmp/octagon-verdict-feed-build.log
+            /tmp/octagon-verdict-materialize.log
+            /tmp/ufc-octagon-verdict-http.log
+          if-no-files-found: ignore
+
       - name: Archive generated package on pull requests
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && success()
         uses: actions/upload-artifact@v4
         with:
           name: octagon-verdict-materialized-package
@@ -126,7 +157,7 @@ jobs:
           if-no-files-found: error
 
       - name: Commit generated package on main
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && success()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
