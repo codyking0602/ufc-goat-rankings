@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const VERSION='fighter-tagline-system-20260716d-full-roster-pills';
+  const VERSION='fighter-tagline-system-20260717a-brandon-moreno';
   const CHARLES_WATCH_URL='https://youtube.com/shorts/zHUAvACSUk4?is=VYzwsuIvxV85k8zH';
   const TAGLINES=Object.freeze({
     'Jon Jones':'The standard everyone chases',
@@ -67,6 +67,7 @@
     'Holly Holm':'Footwork, discipline, and the left kick',
     'Deiveson Figueiredo':'Flyweight power with bad intentions',
     'Alexandre Pantoja':'Pressure that never gives you space',
+    'Brandon Moreno':'Heart, scrambles, and championship grit',
     'Lyoto Machida':'One opening, one clean counter',
     'Khamzat Chimaev':'Pressure from the opening second',
     'Sean Strickland':'Jab, defense, and pure stubbornness',
