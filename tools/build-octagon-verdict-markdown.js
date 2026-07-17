@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /*
  * Required Octagon Verdict knowledge builder.
+ * Final persistence run for the 79-fighter Markdown pack.
  *
  * The older knowledge-pack generator was written with a fixed roster count.
  * This wrapper makes it roster-dynamic, updates the pack's workflow language,
