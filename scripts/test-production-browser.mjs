@@ -125,7 +125,9 @@ try{
   assert.ok(compareOptions.some(text=>text.includes(MORENO)),'Moreno appears in Compare selector');
 
   await page.locator('.tab[data-view="play"]').click();
+  await page.locator('#playHub [data-open-game="top10"]').click();
   const search=page.locator('#playFighterSearch');
+  await search.waitFor({state:'visible',timeout:10000});
   await search.fill(MORENO);
   await page.locator(`[data-add-fighter="${MORENO}"]`).waitFor({state:'visible',timeout:10000});
   await page.locator('[data-play-mode="blind"]').click();
