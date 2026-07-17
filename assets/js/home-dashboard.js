@@ -1,13 +1,15 @@
 (function(){
   'use strict';
 
-  const VERSION='home-dashboard-20260717a';
+  const VERSION='home-dashboard-20260717b-corrections';
   const home=document.getElementById('home');
   if(!home)return;
 
   let refreshTimer=0;
   let boardLoading=false;
   let lastMarkup='';
+  let spotlightCache=null;
+  let spotlightDay='';
 
   const text=value=>String(value??'').trim();
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({
@@ -20,6 +22,8 @@
     }catch(_error){return fallback;}
   };
   const writeJson=(key,value)=>{try{localStorage.setItem(key,JSON.stringify(value));}catch(_error){}};
+  const getLocal=key=>{try{return localStorage.getItem(key)||'';}catch(_error){return'';}};
+  const setLocal=(key,value)=>{try{localStorage.setItem(key,String(value));}catch(_error){}};
 
   function centralDateKey(date=new Date()){
     try{
@@ -27,6 +31,13 @@
       const map=Object.fromEntries(parts.map(part=>[part.type,part.value]));
       return `${map.year}-${map.month}-${map.day}`;
     }catch(_error){return date.toISOString().slice(0,10);}
+  }
+
+  function formatDailyDate(key){
+    try{
+      const date=new Date(`${key}T12:00:00-05:00`);
+      return new Intl.DateTimeFormat('en-US',{weekday:'short',month:'short',day:'numeric',timeZone:'America/Chicago'}).format(date).toUpperCase();
+    }catch(_error){return key;}
   }
 
   function formatEventDate(value){
@@ -43,24 +54,45 @@
     return true;
   }
 
-  function dailyKey(){
-    return text(window.UFC_PLAY_HUB?.dailyKey)||`blind-resume:${centralDateKey()}`;
+  function dailyChallenge(){
+    const challenge=window.UFC_PLAY_HUB?.dailyChallenge;
+    if(challenge?.id)return challenge;
+    const day=centralDateKey();
+    return{
+      id:'find-leader',
+      title:'Find the Leader',
+      description:'Ten UFC fighters. Eliminate nine without accidentally eliminating the verified stat leader.',
+      details:['10 FIGHTERS','SAME BOARD TODAY','OFFICIAL LEADERBOARD'],
+      maxScore:10,
+      challengeKey:`find-leader:${day}`,
+      challengeDay:day
+    };
   }
 
-  function dailyStorageKey(){return `ufc-home:daily:${dailyKey()}`;}
+  function dailyStorageKey(){return `ufc-home:daily:${dailyChallenge().challengeKey}`;}
+
+  function storeDailyResult(result={}){
+    if(!result.completed)return false;
+    writeJson(dailyStorageKey(),{
+      completed:true,
+      score:Number(result.score)||0,
+      total:Number(result.total)||Number(dailyChallenge().maxScore)||10,
+      completedAt:result.completedAt||new Date().toISOString()
+    });
+    return true;
+  }
 
   function captureDailyCompletion(){
-    const state=window.UFC_BLIND_MATCHMAKING?.state;
-    const dailyScreen=document.documentElement.getAttribute('data-play-screen')==='daily-blind';
-    if(!dailyScreen||!state?.finalVisible)return false;
-    const result={
-      completed:true,
-      score:Number(state.score)||0,
-      total:Number(window.UFC_BLIND_MATCHMAKING?.totalRounds)||5,
-      completedAt:new Date().toISOString()
-    };
-    writeJson(dailyStorageKey(),result);
-    return true;
+    const hubResult=window.UFC_PLAY_HUB?.dailyResult;
+    if(hubResult?.completed)return storeDailyResult(hubResult);
+    const challenge=dailyChallenge();
+    if(challenge.id==='find-leader'){
+      const state=window.UFC_FIND_LEADER?.state;
+      if(state?.daily&&state.phase==='complete'){
+        return storeDailyResult({completed:true,score:state.score,total:challenge.maxScore});
+      }
+    }
+    return false;
   }
 
   function dailyState(){
@@ -80,50 +112,99 @@
     return upcoming[0]||events[0]||null;
   }
 
+  function normalizeCardSection(value){
+    return text(value).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+  }
+
   function eventState(){
     const event=preferredEvent();
     if(!event)return{event:null,fights:[],picks:{},picked:0,total:0,main:null};
     const fights=Array.isArray(event.fights)?event.fights:[];
     const picks=readJson(`ufc-picks:${event.id}:local-picks`,{});
     const picked=fights.filter(fight=>text(picks[fight.id])).length;
-    const main=fights.find(fight=>/main event/i.test(text(fight.cardSection)))||fights[fights.length-1]||null;
+    const main=fights.find(fight=>normalizeCardSection(fight.cardSection)==='main event')||fights[fights.length-1]||null;
     return{event,fights,picks,picked,total:fights.length,main};
   }
 
+  function productionReady(){
+    return window.UFC_SCORING_PIPELINE?.status==='ready'||document.documentElement.getAttribute('data-scoring-pipeline')==='ready';
+  }
+
+  function officialRows(){
+    const data=window.RANKING_DATA||{};
+    const men=Array.isArray(data.men)?data.men:[];
+    const women=Array.isArray(data.women)?data.women:[];
+    return[
+      ...men.map(row=>({...row,spotlightBoard:'men'})),
+      ...women.map(row=>({...row,spotlightBoard:'women'}))
+    ].filter(row=>text(row?.fighter)&&Number.isFinite(Number(row?.rank)));
+  }
+
+  function profileFor(name){
+    const target=text(name).toLowerCase();
+    return (window.RANKING_DATA?.fighters||[]).find(row=>text(row?.fighter).toLowerCase()===target)||null;
+  }
+
   function fighterRecord(row){
-    return text(row?.visibleStats?.ufcRecord||row?.ufcRecord);
+    return text(row?.visibleStats?.ufcRecord||row?.ufcRecord||profileFor(row?.fighter)?.ufcRecord);
   }
 
   function fighterDivision(row){
-    return text(row?.primaryDivision||window.DISPLAY_OVERRIDES?.[row?.fighter]?.divisionLabel);
+    const profile=profileFor(row?.fighter)||{};
+    return text(row?.primaryDivision||profile.primaryDivision||window.DISPLAY_OVERRIDES?.[row?.fighter]?.divisionLabel);
   }
 
   function fighterOvr(row){
-    const override=window.DISPLAY_OVERRIDES?.[row?.fighter]||{};
-    const values=[row?.ovr,row?.overallOvr,row?.frontEndOvr,override.ovr,override.overallOvr,override.frontEndOvr];
-    const value=values.map(Number).find(Number.isFinite);
+    const value=Number(row?.overallOvr);
     if(Number.isFinite(value))return Math.round(value);
     try{
-      const calculated=window.overallOvr?.(row);
+      const calculated=window.overallOvr?.({...profileFor(row?.fighter),...row});
       return Number.isFinite(Number(calculated))?Math.round(Number(calculated)):null;
     }catch(_error){return null;}
   }
 
+  function seededIndex(value,length){
+    let seed=2166136261;
+    for(const char of String(value)){seed^=char.charCodeAt(0);seed=Math.imul(seed,16777619);}
+    return length?Math.abs(seed>>>0)%length:0;
+  }
+
+  function watchDataFor(name){
+    const override=window.DISPLAY_OVERRIDES?.[name]||{};
+    const registry=window.UFC_ROYCE_WATCH_LINKS?.watchLinks?.[name]||{};
+    const playRow=window.UFC_PLAY_DATA?.resolve?.(name)||null;
+    const watchUrl=text(override.watchUrl||registry.watchUrl||playRow?.watchUrl);
+    if(watchUrl)return{url:watchUrl,label:text(override.watchLabel||registry.watchLabel||'Watch Moment')||'Watch Moment'};
+    const signatureUrl=text(override.signatureFightUrl||registry.signatureFightUrl||playRow?.signatureFightUrl);
+    if(signatureUrl)return{url:signatureUrl,label:text(override.signatureFightLabel||registry.signatureFightLabel||'Watch Signature Fight')||'Watch Signature Fight'};
+    return null;
+  }
+
   function spotlightFighter(){
-    const data=window.RANKING_DATA||{};
-    const rows=[...(Array.isArray(data.men)?data.men:[]),...(Array.isArray(data.women)?data.women:[])].filter(row=>text(row?.fighter));
+    if(!productionReady())return null;
+    const day=centralDateKey();
+    if(spotlightCache&&spotlightDay===day)return spotlightCache;
+    const rows=officialRows().sort((a,b)=>a.spotlightBoard.localeCompare(b.spotlightBoard)||Number(a.rank)-Number(b.rank)||a.fighter.localeCompare(b.fighter));
     if(!rows.length)return null;
-    const key=centralDateKey();
-    let seed=0;
-    for(const char of key)seed=(seed*31+char.charCodeAt(0))>>>0;
-    const row=rows[seed%rows.length];
+    const storageKey=`ufc-home:spotlight:${day}`;
+    const storedName=getLocal(storageKey);
+    let row=rows.find(item=>item.fighter===storedName)||null;
+    if(!row){
+      row=rows[seededIndex(day,rows.length)];
+      setLocal(storageKey,row.fighter);
+    }
+    const profile=profileFor(row.fighter)||{};
     const override=window.DISPLAY_OVERRIDES?.[row.fighter]||{};
-    return{
+    spotlightDay=day;
+    spotlightCache={
+      ...profile,
       ...row,
       photo:text(override.thumbUrl||override.photoUrl),
       oneLiner:text(override.oneLiner),
-      ovr:fighterOvr(row)
+      ovr:fighterOvr(row),
+      watch:watchDataFor(row.fighter)
     };
+    return spotlightCache;
   }
 
   function initials(value){
@@ -158,18 +239,21 @@
   }
 
   function dailyMarkup(){
+    const challenge=dailyChallenge();
     const result=dailyState();
     const completed=Boolean(result.completed);
-    const status=completed?`COMPLETED · ${Number(result.score)||0}/${Number(result.total)||5}`:'NOT PLAYED';
+    const total=Number(result.total)||Number(challenge.maxScore)||10;
+    const status=completed?`COMPLETED · ${Number(result.score)||0}/${total}`:'NOT PLAYED';
+    const details=Array.isArray(challenge.details)&&challenge.details.length?challenge.details:['10 FIGHTERS','SAME BOARD TODAY','OFFICIAL LEADERBOARD'];
     return`<section class="home-dashboard-card home-daily">
       <div class="home-daily-copy">
-        <div class="home-dashboard-kicker"><span>TODAY'S CHALLENGE</span><span>${esc(centralDateKey())}</span></div>
-        <h2>Blind Resume</h2>
-        <p>Five anonymous UFC careers. Pick the stronger resume each round and finish with one score.</p>
-        <div class="home-daily-meta"><span class="home-daily-pill${completed?' complete':''}">${esc(status)}</span><span class="home-daily-pill">5 MATCHUPS</span><span class="home-daily-pill">SAME LINEUP TODAY</span></div>
+        <div class="home-dashboard-kicker"><span>TODAY'S CHALLENGE</span><span>${esc(formatDailyDate(challenge.challengeDay||centralDateKey()))}</span></div>
+        <h2>${esc(challenge.title||'Find the Leader')}</h2>
+        <p>${esc(challenge.description||'Eliminate the non-leaders and leave the verified stat leader standing.')}</p>
+        <div class="home-daily-meta"><span class="home-daily-pill${completed?' complete':''}">${esc(status)}</span>${details.map(item=>`<span class="home-daily-pill">${esc(item)}</span>`).join('')}</div>
         <button type="button" class="home-dashboard-action" data-home-action="daily">${completed?'PLAY AGAIN':'PLAY NOW'} →</button>
       </div>
-      <div class="home-daily-visual" aria-hidden="true"><div class="home-daily-versus"><span class="home-daily-fighter">A</span><strong>VS</strong><span class="home-daily-fighter">B</span></div><small>WHO RANKS HIGHER?</small></div>
+      <div class="home-daily-visual" aria-hidden="true"><div class="home-daily-target"><span>#1</span><strong>?</strong><small>10 → 1</small></div><em>LEAVE THE LEADER STANDING</em></div>
     </section>`;
   }
 
@@ -203,13 +287,14 @@
 
   function spotlightMarkup(){
     const fighter=spotlightFighter();
-    if(!fighter)return`<section class="home-dashboard-card home-spotlight"><div class="home-dashboard-empty">Ranking spotlight is loading.</div></section>`;
+    if(!fighter)return`<section class="home-dashboard-card home-spotlight home-spotlight-loading"><div class="home-dashboard-empty">Finalizing today’s ranking spotlight.</div></section>`;
     const rank=Number(fighter.rank);
-    const meta=[Number.isFinite(rank)&&rank>0?`#${rank} ALL-TIME`:'',fighterDivision(fighter),fighterRecord(fighter),fighter.ovr?`${fighter.ovr} OVR`:''].filter(Boolean);
+    const rankLabel=fighter.spotlightBoard==='women'?`#${rank} WOMEN'S`:`#${rank} ALL-TIME`;
+    const meta=[Number.isFinite(rank)&&rank>0?rankLabel:'',fighterDivision(fighter),fighterRecord(fighter),fighter.ovr?`${fighter.ovr} OVR`:''].filter(Boolean);
     return`<section class="home-dashboard-card home-spotlight">
       <div class="home-spotlight-photo">${fighter.photo?`<img src="${esc(fighter.photo)}" alt="${esc(fighter.fighter)}">`:`<span>${esc(initials(fighter.fighter))}</span>`}</div>
       <div class="home-spotlight-copy"><div class="home-dashboard-kicker"><span>RANKING SPOTLIGHT</span></div><h3>${esc(fighter.fighter)}</h3><div class="home-spotlight-meta">${meta.map(item=>`<span>${esc(item)}</span>`).join('<span>·</span>')}</div>${fighter.oneLiner?`<p>${esc(fighter.oneLiner)}</p>`:''}</div>
-      <button type="button" class="home-dashboard-action secondary" data-home-action="spotlight" data-fighter="${esc(fighter.fighter)}">VIEW PROFILE →</button>
+      <div class="home-spotlight-actions">${fighter.watch?`<a class="home-dashboard-action home-watch-action" href="${esc(fighter.watch.url)}" target="_blank" rel="noopener noreferrer">${esc(fighter.watch.label).toUpperCase()} →</a>`:''}<button type="button" class="home-dashboard-action secondary" data-home-action="spotlight" data-fighter="${esc(fighter.fighter)}">VIEW PROFILE →</button></div>
     </section>`;
   }
 
@@ -238,24 +323,51 @@
     refreshTimer=window.setTimeout(()=>{captureDailyCompletion();render();},delay);
   }
 
+  function openProfileDirect(fighter){
+    const drawer=document.getElementById('drawer');
+    document.body.classList.add('home-profile-open');
+    let opened=false;
+    if(typeof window.openFighter==='function'){
+      window.openFighter(fighter);
+      opened=true;
+    }else{
+      const target=text(fighter).toLowerCase();
+      const row=[...document.querySelectorAll('#menList [data-fighter],#womenList [data-fighter],#divisionList [data-fighter]')].find(item=>text(item.dataset.fighter).toLowerCase()===target);
+      if(row){row.click();opened=true;}
+    }
+    window.setTimeout(()=>{
+      if(!opened||!drawer?.classList.contains('open'))document.body.classList.remove('home-profile-open');
+    },120);
+  }
+
   home.addEventListener('click',event=>{
     const button=event.target.closest?.('[data-home-action]');
     if(!button||button.disabled)return;
     const action=button.dataset.homeAction;
     if(action==='daily'){
       navigate('play');
-      window.setTimeout(()=>window.UFC_PLAY_HUB?.openGame?.('blind',{daily:true}),80);
+      window.setTimeout(()=>{
+        if(window.UFC_PLAY_HUB?.openDailyChallenge)window.UFC_PLAY_HUB.openDailyChallenge();
+        else window.UFC_PLAY_HUB?.openGame?.(dailyChallenge().id,{daily:true});
+      },80);
     }else if(action==='picks')navigate('picks');
     else if(action==='war-room')navigate('war-room');
-    else if(action==='spotlight'){
-      const fighter=button.dataset.fighter;
-      navigate('rankings');
-      window.setTimeout(()=>{
-        if(typeof window.openFighter==='function'){window.openFighter(fighter);return;}
-        const row=[...document.querySelectorAll('[data-fighter]')].find(item=>item.dataset.fighter===fighter);
-        row?.click();
-      },100);
-    }
+    else if(action==='spotlight')openProfileDirect(button.dataset.fighter);
+  });
+
+  const drawer=document.getElementById('drawer');
+  if(drawer){
+    new MutationObserver(()=>{
+      document.body.classList.toggle('home-profile-open',drawer.classList.contains('open'));
+    }).observe(drawer,{attributes:true,attributeFilter:['class']});
+  }
+
+  window.addEventListener('ufc-play-game-complete',event=>{
+    const detail=event.detail||{};
+    const challenge=dailyChallenge();
+    if(!detail.daily||detail.gameType!==challenge.id)return;
+    storeDailyResult({completed:true,score:detail.score,total:detail.maxScore||challenge.maxScore});
+    scheduleRender(0);
   });
 
   window.addEventListener('octagon-hq:view-change',event=>{
@@ -265,7 +377,7 @@
       refreshWarRoom();
     }
   });
-  ['ufc-play-hub-ready','ufc-scoring-pipeline-ready','ufc-play-profile-ready','ufc-app-profile-updated','ufc-canonical-group-ready'].forEach(name=>window.addEventListener(name,()=>scheduleRender(80)));
+  ['ufc-play-hub-ready','ufc-play-daily-challenge-updated','ufc-scoring-pipeline-ready','ufc-production-ranking-ready','ufc-play-profile-ready','ufc-app-profile-updated','ufc-canonical-group-ready'].forEach(name=>window.addEventListener(name,()=>scheduleRender(80)));
   window.addEventListener('storage',()=>scheduleRender(50));
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)scheduleRender(80);});
   window.setInterval(()=>{
@@ -278,6 +390,6 @@
 
   render();
   if(home.classList.contains('active-view'))refreshWarRoom();
-  window.UFC_HOME_DASHBOARD={version:VERSION,render,refreshWarRoom,captureDailyCompletion};
+  window.UFC_HOME_DASHBOARD={version:VERSION,render,refreshWarRoom,captureDailyCompletion,get spotlight(){return spotlightCache;}};
   document.documentElement.setAttribute('data-home-dashboard',VERSION);
 })();
