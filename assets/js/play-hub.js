@@ -1,7 +1,16 @@
 (function(){
   'use strict';
 
-  const VERSION='play-hub-20260716h-blind-primary-era';
+  const VERSION='play-hub-20260717i-find-leader-daily-source';
+  const DAILY_CHALLENGE=Object.freeze({
+    id:'find-leader',
+    sharedId:'find-leader',
+    dailyVersion:'find-leader-daily-v1',
+    title:'Find the Leader',
+    description:'Ten UFC fighters. Eliminate nine without accidentally eliminating the verified stat leader.',
+    details:['10 FIGHTERS','SAME BOARD TODAY','OFFICIAL LEADERBOARD'],
+    maxScore:10
+  });
   const play=document.getElementById('play');
   const shell=play?.querySelector('.play-shell');
   const sectionTitle=play?.querySelector('.section-title');
@@ -98,7 +107,7 @@
     {id:'top10',icon:'10',title:'Build Your Top 10',description:'Create your UFC GOAT list, order it, and compare every placement with the model.',status:'PLAY NOW',live:true},
     {id:'blind',icon:'?',title:'Blind Resume',description:'Choose the stronger UFC-only career five times without seeing either fighter’s name.',status:'PLAY NOW',live:true},
     {id:'better-than',icon:'>',title:'Better Than…',description:'Build a claim, choose your number, and name the exact fighters you can defend.',status:'PLAY NOW',live:true},
-    {id:'find-leader',icon:'#1',title:'Find the Leader',description:'Search the full roster and identify the leader in five verified UFC stat categories.',status:'PLAY NOW',live:true}
+    {id:'find-leader',icon:'#1',title:'Find the Leader',description:'Eliminate nine UFC fighters and leave the verified stat leader standing.',status:'PLAY NOW',live:true}
   ];
 
   const hub=document.createElement('div');
@@ -108,12 +117,12 @@
     <section class="play-daily-card" aria-labelledby="playDailyTitle">
       <div class="play-daily-copy">
         <div class="play-daily-kicker"><span>TODAY'S CHALLENGE</span><time id="playDailyDate">${esc(dateLabelFromKey(fallbackDay))}</time></div>
-        <h3 id="playDailyTitle">Blind Resume</h3>
-        <p>Five anonymous UFC careers. Pick the stronger resume each round and finish with one score.</p>
-        <div class="play-daily-details"><span>5 MATCHUPS</span><span>SAME LINEUP TODAY</span><span>OFFICIAL LEADERBOARD</span></div>
-        <button type="button" class="play-daily-button" data-open-game="blind" data-daily="true">PLAY TODAY'S CHALLENGE <b>→</b></button>
+        <h3 id="playDailyTitle">${esc(DAILY_CHALLENGE.title)}</h3>
+        <p>${esc(DAILY_CHALLENGE.description)}</p>
+        <div class="play-daily-details">${DAILY_CHALLENGE.details.map(item=>`<span>${esc(item)}</span>`).join('')}</div>
+        <button type="button" class="play-daily-button" data-open-game="${esc(DAILY_CHALLENGE.id)}" data-daily="true">PLAY TODAY'S CHALLENGE <b>→</b></button>
       </div>
-      <div class="play-daily-visual" aria-hidden="true"><span class="play-daily-fighter">A</span><strong>VS</strong><span class="play-daily-fighter">B</span><small>WHO RANKS HIGHER?</small></div>
+      <div class="play-daily-visual" aria-hidden="true"><span class="play-daily-fighter">#1</span><strong>?</strong><span class="play-daily-fighter">10</span><small>LEAVE THE LEADER STANDING</small></div>
     </section>
     <div class="play-hub-heading"><div><span>ALL GAMES</span><h3>Pick your debate</h3></div><p>Quick games, blind tests, and rankings built to argue about.</p></div>
     <section class="play-game-grid" aria-label="UFC games">
@@ -141,11 +150,21 @@
   }
   document.documentElement.setAttribute('data-blind-era-source','primary');
 
+  function dailyChallengeSnapshot(){
+    return {
+      ...DAILY_CHALLENGE,
+      challengeKey:dailyContext?.challenge_key||`${DAILY_CHALLENGE.id}:${fallbackDay}`,
+      challengeDay:dailyContext?.challenge_day||fallbackDay,
+      context:dailyContext?{...dailyContext}:null
+    };
+  }
+
   function updateDailyCard(context){
     if(!context)return;
     dailyContext=context;
     const date=document.getElementById('playDailyDate');
     if(date)date.textContent=dateLabelFromKey(context.challenge_day||fallbackDay);
+    window.dispatchEvent(new CustomEvent('ufc-play-daily-challenge-updated',{detail:dailyChallengeSnapshot()}));
   }
 
   function resetBlindState(){
@@ -191,14 +210,28 @@
       return;
     }
     if(mode==='find-leader'){
-      if(eyebrow)eyebrow.textContent='STAT HUNT';
-      if(title)title.textContent='Find the Leader';
-      if(subtitle)subtitle.textContent='Find the fighter who leads each verified UFC-only stat before your points disappear.';
+      if(eyebrow)eyebrow.textContent=daily?"TODAY'S CHALLENGE":'STAT HUNT';
+      if(title)title.textContent=daily?'Daily Find the Leader':'Find the Leader';
+      if(subtitle)subtitle.textContent=daily?'Everyone gets the same ten-fighter elimination board today.':'Eliminate the non-leaders and leave the verified stat leader standing.';
       return;
     }
     if(eyebrow)eyebrow.textContent=daily?"TODAY'S CHALLENGE":'BLIND RESUME';
     if(title)title.textContent=daily?'Daily Blind Resume':'Blind Resume';
     if(subtitle)subtitle.textContent=daily?'Everyone gets the same five-matchup sequence today.':'Five anonymous UFC resumes. Pick the stronger career each round.';
+  }
+
+  async function prepareDaily(mode){
+    const shared=window.UFC_PLAY_SHARED;
+    const sharedId=mode==='find-leader'?DAILY_CHALLENGE.sharedId:'blind-resume';
+    const dailyVersion=mode==='find-leader'?DAILY_CHALLENGE.dailyVersion:'blind-resume-daily-v2';
+    const maxScore=mode==='find-leader'?DAILY_CHALLENGE.maxScore:5;
+    let prepared=null;
+    try{prepared=await shared?.prepareDaily?.(sharedId);}catch(_error){prepared=null;}
+    if(prepared?.context)return prepared;
+    try{
+      const context=await shared?.dailyContext?.(sharedId,dailyVersion,maxScore);
+      return context?{context}:null;
+    }catch(_error){return null;}
   }
 
   async function openGame(mode,options={}){
@@ -210,11 +243,9 @@
       if(mode==='blind'){
         const nextContext=daily?'daily':'quick';
         if(daily){
-          let prepared=null;
-          try{prepared=await window.UFC_PLAY_SHARED?.prepareDaily?.('blind-resume');}
-          catch(_error){prepared=null;}
-          if(!prepared)return;
-          updateDailyCard(prepared.context);
+          const prepared=await prepareDaily('blind');
+          if(!prepared?.context)return;
+          dailyContext=prepared.context;
           activateDailyRandom(prepared.context.seed||prepared.context.challenge_key);
         }else{
           restoreNativeRandom();
@@ -223,6 +254,11 @@
           resetBlindState();
           blindContext=nextContext;
         }
+      }else if(mode==='find-leader'&&daily){
+        const prepared=await prepareDaily('find-leader');
+        if(!prepared?.context)return;
+        updateDailyCard(prepared.context);
+        restoreNativeRandom();
       }else{
         restoreNativeRandom();
       }
@@ -241,7 +277,7 @@
         window.UFC_BETTER_THAN?.close?.();
         document.getElementById('playTop10Panel')?.setAttribute('hidden','');
         document.getElementById('playBlindPanel')?.setAttribute('hidden','');
-        window.UFC_FIND_LEADER?.open?.();
+        window.UFC_FIND_LEADER?.open?.(daily?{daily:true,context:dailyContext}:{});
       }else{
         window.UFC_BETTER_THAN?.close?.();
         window.UFC_FIND_LEADER?.close?.();
@@ -249,7 +285,7 @@
         button.click();
       }
       gameNav.scrollIntoView({block:'start'});
-      document.documentElement.setAttribute('data-play-screen',daily?'daily-blind':mode);
+      document.documentElement.setAttribute('data-play-screen',daily?(mode==='find-leader'?'daily-find-leader':'daily-blind'):mode);
     }finally{
       opening=false;
     }
@@ -302,7 +338,14 @@
   window.UFC_PLAY_HUB={
     version:VERSION,
     games:games.map(game=>({...game})),
-    get dailyKey(){return dailyContext?.challenge_key||`blind-resume:${fallbackDay}`;},
+    get dailyKey(){return dailyContext?.challenge_key||`${DAILY_CHALLENGE.id}:${fallbackDay}`;},
+    get dailyChallenge(){return dailyChallengeSnapshot();},
+    get dailyResult(){
+      const state=window.UFC_FIND_LEADER?.state;
+      if(!state?.daily||state.phase!=='complete')return null;
+      return {completed:true,score:Number(state.score)||0,total:DAILY_CHALLENGE.maxScore};
+    },
+    openDailyChallenge(){return openGame(DAILY_CHALLENGE.id,{daily:true});},
     openGame,
     showHub,
     activateDailyRandom,
@@ -310,12 +353,12 @@
   };
   document.documentElement.setAttribute('data-play-hub',VERSION);
   document.documentElement.setAttribute('data-play-screen','hub');
-  window.dispatchEvent(new CustomEvent('ufc-play-hub-ready',{detail:{version:VERSION,dailyKey:`blind-resume:${fallbackDay}`}}));
+  window.dispatchEvent(new CustomEvent('ufc-play-hub-ready',{detail:{version:VERSION,dailyChallenge:dailyChallengeSnapshot()}}));
 
   const loadDailyContext=()=>{
     const shared=window.UFC_PLAY_SHARED;
     if(!shared?.dailyContext)return Promise.resolve();
-    return shared.dailyContext('blind-resume','blind-resume-daily-v2',5).then(updateDailyCard).catch(()=>undefined);
+    return shared.dailyContext(DAILY_CHALLENGE.sharedId,DAILY_CHALLENGE.dailyVersion,DAILY_CHALLENGE.maxScore).then(updateDailyCard).catch(()=>undefined);
   };
   if(window.UFC_PLAY_SHARED?.dailyContext)setTimeout(loadDailyContext,0);
   else window.addEventListener('ufc-play-shared-ready',()=>setTimeout(loadDailyContext,0),{once:true});
