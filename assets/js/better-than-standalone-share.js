@@ -1,9 +1,11 @@
 (function(){
   'use strict';
 
-  const VERSION='better-than-standalone-share-20260717h-find-leader-runtime-recovery';
+  const VERSION='better-than-standalone-share-20260717i-find-leader-ready-gate';
   const FIND_LEADER_VERSION='find-leader-20260716c-daily-elimination';
+  const FIND_LEADER_READY_TIMEOUT=20000;
   let creating=false;
+  let findLeaderGateToken=0;
 
   function loadScriptOnce(selector,src,datasetKey,onload){
     const existing=document.querySelector(selector);
@@ -18,6 +20,98 @@
     script.onload=()=>{script.dataset.loaded='true';onload?.();};
     document.head.appendChild(script);
     return script;
+  }
+
+  function findLeaderReady(){
+    const game=window.UFC_FIND_LEADER;
+    const bank=window.UFC_FIND_LEADER_QUESTION_BANK;
+    return Boolean(game?.open&&game?.experienceVersion&&bank?.endless&&window.UFC_FIND_LEADER_EXPERIENCE);
+  }
+
+  function ensureFindLeaderBootPanel(status='loading'){
+    const shell=document.querySelector('#play .play-shell');
+    if(!shell)return null;
+    let panel=document.getElementById('playFindLeaderBootPanel');
+    if(!panel){
+      panel=document.createElement('section');
+      panel.id='playFindLeaderBootPanel';
+      panel.className='find-leader-panel play-panel';
+      shell.appendChild(panel);
+    }
+    shell.querySelectorAll('.play-panel').forEach(node=>{node.hidden=node!==panel;});
+    panel.hidden=false;
+    if(status==='error'){
+      panel.innerHTML='<section class="find-leader-loading"><span>GAME DATA NOT READY</span><h2>Find the Leader did not finish loading.</h2><p>The app stayed on this screen instead of opening a blank game. Tap retry to reconnect the verified question bank.</p><div class="find-leader-actions"><button type="button" class="find-leader-primary" data-find-leader-gate-retry>RETRY</button><button type="button" class="find-leader-secondary" data-find-leader-gate-home>ALL GAMES</button></div></section>';
+    }else{
+      panel.innerHTML='<section class="find-leader-loading"><span>LOADING VERIFIED BOARDS</span><h2>Building Find the Leader…</h2><p>Connecting the 50-question bank, board-quality audit, and Endless Mode.</p></section>';
+    }
+    return panel;
+  }
+
+  function showFindLeaderBoot(status='loading'){
+    const hub=document.getElementById('playHub');
+    const shell=document.querySelector('#play .play-shell');
+    const gameNav=document.getElementById('playGameNav');
+    if(hub)hub.hidden=true;
+    if(shell)shell.hidden=false;
+    if(gameNav)gameNav.hidden=false;
+    document.getElementById('play')?.classList.add('play-game-active');
+    const eyebrow=document.getElementById('playGameEyebrow');
+    const title=document.getElementById('playGameTitle');
+    const subtitle=document.querySelector('#play .section-title p');
+    if(eyebrow)eyebrow.textContent='ENDLESS ELIMINATION';
+    if(title)title.textContent='Find the Leader';
+    if(subtitle)subtitle.textContent='Loading verified UFC stat boards before the game opens.';
+    document.documentElement.setAttribute('data-play-screen','find-leader-loading');
+    ensureFindLeaderBootPanel(status)?.scrollIntoView({block:'start'});
+  }
+
+  function returnFromFindLeaderGate(){
+    findLeaderGateToken+=1;
+    document.getElementById('playFindLeaderBootPanel')?.setAttribute('hidden','');
+    window.UFC_PLAY_HUB?.showHub?.();
+  }
+
+  function queueFindLeaderOpen(){
+    const token=++findLeaderGateToken;
+    showFindLeaderBoot('loading');
+    const started=Date.now();
+    const check=()=>{
+      if(token!==findLeaderGateToken)return;
+      if(findLeaderReady()){
+        document.getElementById('playFindLeaderBootPanel')?.setAttribute('hidden','');
+        window.UFC_PLAY_HUB?.openGame?.('find-leader');
+        return;
+      }
+      if(Date.now()-started>=FIND_LEADER_READY_TIMEOUT){
+        showFindLeaderBoot('error');
+        return;
+      }
+      window.setTimeout(check,80);
+    };
+    check();
+  }
+
+  function installFindLeaderReadyGate(){
+    document.addEventListener('click',event=>{
+      if(event.target.closest?.('[data-find-leader-gate-home]')){
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        returnFromFindLeaderGate();
+        return;
+      }
+      if(event.target.closest?.('[data-find-leader-gate-retry]')){
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        queueFindLeaderOpen();
+        return;
+      }
+      const trigger=event.target.closest?.('[data-open-game="find-leader"]');
+      if(!trigger||findLeaderReady())return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      queueFindLeaderOpen();
+    },true);
   }
 
   function patchFindLeaderHubCopy(){
@@ -186,6 +280,7 @@
     createChallenge(trigger);
   },true);
 
+  installFindLeaderReadyGate();
   loadFindLeaderAssets();
   document.documentElement.setAttribute('data-better-than-standalone-share',VERSION);
 })();
