@@ -1,0 +1,55 @@
+name: Clean Up Completed GOAT26 Migration
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/cleanup-goat26-migration.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Align permanent guard and remove one-time workflows
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path=Path('.github/workflows/deploy-app-canonical-group.yml')
+          text=path.read_text()
+          replacements={
+            "array\\['cody','daddy','rhonda','shane','tyler'\\]": "array\\['brock','cody','rhonda','shane','tony','tyler'\\]",
+            "expected = ['Cody','Daddy','Rhonda','Shane','Tyler']": "expected = ['Brock','Cody','Rhonda','Shane','Tony','Tyler']",
+            'Canonical five-member audit failed': 'Canonical six-member audit failed',
+          }
+          for old,new in replacements.items():
+            text=text.replace(old,new)
+          if "expected = ['Brock','Cody','Rhonda','Shane','Tony','Tyler']" not in text:
+            raise SystemExit('Permanent GOAT26 member guard was not updated.')
+          path.write_text(text)
+          PY
+
+          rm -f \
+            .github/workflows/apply-goat26-database.yml \
+            .github/workflows/retrigger-goat26-database.yml \
+            .github/workflows/audit-goat26-candidates.yml \
+            .github/workflows/finalize-goat26-group.yml \
+            .github/workflows/cleanup-goat26-migration.yml \
+            supabase/goat26-candidate-audit.json
+
+      - name: Commit cleanup
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A .github/workflows supabase/goat26-candidate-audit.json 2>/dev/null || git add -A .github/workflows
+          git commit -m 'Clean up completed GOAT26 migration tooling [skip ci]'
+          git pull --rebase origin main
+          git push origin HEAD:main
