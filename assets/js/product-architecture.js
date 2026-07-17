@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='product-architecture-20260717d';
+  const VERSION='product-architecture-20260717e-home-default';
   const RANKING_VIEWS=['men','women','division','categories'];
   const DESTINATIONS=[
     {key:'home',label:'Home',view:'home'},
@@ -18,7 +18,7 @@
     {view:'categories',label:'Categories'}
   ];
 
-  let currentDestination='rankings';
+  let currentDestination='home';
   let currentRankingView='men';
   let bound=false;
 
@@ -39,11 +39,6 @@
       .rankings-subnav.active{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
       .rankings-subnav button{min-width:0;min-height:38px;border:1px solid transparent;border-radius:11px;background:transparent;color:var(--muted,#94a3b8);cursor:pointer;font:900 12px/1 system-ui;padding:7px 8px}
       .rankings-subnav button.active{border-color:rgba(249,115,22,.54);background:rgba(249,115,22,.13);color:#fff}
-      .architecture-home{min-height:320px}
-      .architecture-home-shell{max-width:760px;margin:0 auto;padding:clamp(28px,6vw,64px);border:1px solid var(--line,#263244);border-radius:26px;background:linear-gradient(155deg,#172238,#0c1322);color:#f8fafc;box-shadow:0 22px 60px rgba(0,0,0,.22)}
-      .architecture-home-shell span{display:block;color:#fb923c;font:950 10px/1 system-ui;letter-spacing:.15em}
-      .architecture-home-shell h2{margin:12px 0 10px;font-size:clamp(38px,8vw,72px);line-height:.92;letter-spacing:-.05em}
-      .architecture-home-shell p{max-width:620px;margin:0;color:#cbd5e1;font-size:clamp(16px,2.4vw,20px);line-height:1.45}
       #rules,.tab[data-view="rules"],[data-product-legacy-ranking-tab]{display:none!important}
       @media(max-width:900px){
         .tabs[data-product-architecture]{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;padding:5px 10px 7px!important}
@@ -54,21 +49,21 @@
       @media(max-width:430px){
         .tabs[data-product-architecture]{padding-left:9px!important;padding-right:9px!important}
         .tabs[data-product-architecture] .tab{font-size:10px!important}
-        .architecture-home-shell{padding:30px 22px;border-radius:21px}
       }
     `;
   }
 
   function ensureHome(){
     let home=document.getElementById('home');
-    if(home)return home;
-    home=document.createElement('section');
-    home.id='home';
-    home.className='view architecture-home';
-    home.innerHTML='<div class="architecture-home-shell"><span>OCTAGON HQ</span><h2>Your UFC headquarters.</h2><p>Rankings, games, picks, The War Room, and Intelligence—organized under one roof.</p></div>';
-    const shell=document.querySelector('main.shell');
-    const toolbar=shell?.querySelector('.toolbar');
-    if(toolbar)toolbar.before(home);else shell?.prepend(home);
+    if(!home){
+      home=document.createElement('section');
+      home.id='home';
+      home.className='view';
+      const shell=document.querySelector('main.shell');
+      const toolbar=shell?.querySelector('.toolbar');
+      if(toolbar)toolbar.before(home);else shell?.prepend(home);
+    }
+    if(!home.firstElementChild)home.innerHTML='<div id="homeDashboardMount" aria-live="polite"></div>';
     return home;
   }
 
@@ -129,7 +124,7 @@
     if(RANKING_VIEWS.includes(view))return'rankings';
     if(view==='compare')return'intelligence';
     if(view==='octagon')return'war-room';
-    return DESTINATIONS.find(item=>item.view===view)?.key||'rankings';
+    return DESTINATIONS.find(item=>item.view===view)?.key||'home';
   }
 
   function syncToolbar(view){
@@ -176,14 +171,13 @@
 
     let target=view==='home'?ensureHome():document.getElementById(view);
     if(!target){
-      view='men';
-      currentDestination='rankings';
-      currentRankingView='men';
-      target=document.getElementById('men');
+      view='home';
+      currentDestination='home';
+      target=ensureHome();
     }
 
     document.querySelectorAll('main.shell .view').forEach(section=>section.classList.remove('active-view'));
-    target?.classList.add('active-view');
+    target.classList.add('active-view');
     syncNavigation();
     syncToolbar(view);
 
@@ -196,13 +190,13 @@
 
   function parseHash(){
     const hash=text(window.location.hash).replace(/^#/,'').toLowerCase();
-    if(!hash)return'men';
+    if(!hash)return'home';
     if(hash.startsWith('rankings/')){
       const requested=hash.split('/')[1];
       return RANKING_VIEWS.includes(requested)?requested:'men';
     }
     const aliases={home:'home',rankings:'men',p4p:'men',overall:'men',women:'women',division:'division',divisions:'division',categories:'categories',play:'play',picks:'picks','war-room':'octagon',octagon:'octagon',intelligence:'compare'};
-    return aliases[hash]||'men';
+    return aliases[hash]||'home';
   }
 
   function bindEvents(){
