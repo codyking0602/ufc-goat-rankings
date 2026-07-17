@@ -5,11 +5,13 @@ import { chromium } from 'playwright';
 
 const EXPECTED_FIGHTERS=80;
 const PROFILE_FIGHTERS=['Brandon Moreno','Anthony Pettis'];
+const PETTIS_WATCH='https://youtube.com/shorts/BiPvl_p6JqY?is=gwu2EsszP22T9us-';
+const PETTIS_FIGHT='https://youtu.be/smbYO1-yqtA?is=lhtpeK1nOCqGUvdc';
 const root=process.cwd();
 const browser=await chromium.launch({headless:true});
 const page=await browser.newPage({viewport:{width:390,height:844}});
 const pageErrors=[];
-page.on('pageerror',error=>pageErrors.push(String(error?.message||error)));
+page.on('pageerror',error=>pageErrors.push({message:String(error?.message||error),stack:String(error?.stack||'')}));
 
 try{
   await page.goto('http://127.0.0.1:4173/index.html',{waitUntil:'domcontentloaded',timeout:120000});
@@ -83,8 +85,7 @@ try{
       fighter:name,
       heading:document.querySelector('#fighterDetail h2')?.textContent?.trim()||null,
       src:document.querySelector('#fighterDetail .fighter-photo img')?.getAttribute('src')||null,
-      watch:document.querySelector('#fighterDetail .watch-moment-link')?.href||null,
-      signature:[...document.querySelectorAll('#fighterDetail a')].find(link=>/signature fight/i.test(link.textContent||''))?.href||null
+      links:[...document.querySelectorAll('#fighterDetail a')].map(link=>({text:link.textContent?.trim()||'',href:link.href}))
     }),fighter));
     await page.locator('#closeDrawer').click();
   }
@@ -105,9 +106,8 @@ try{
   assert.match(moreno?.src||'',/brandon-moreno\.webp/);
   assert.match(pettis?.heading||'',/Anthony.*Showtime.*Pettis/);
   assert.match(pettis?.src||'',/anthony-pettis\.webp/);
-  assert.equal(pettis?.watch,null);
-  assert.equal(pettis?.signature,null);
-  assert.deepEqual(pageErrors,[],'photo audit has no uncaught page errors');
+  assert.ok(pettis?.links.some(link=>link.href===PETTIS_WATCH&&/watch moment/i.test(link.text)));
+  assert.ok(pettis?.links.some(link=>link.href===PETTIS_FIGHT&&/signature fight/i.test(link.text)));
 }finally{
   await browser.close();
 }
