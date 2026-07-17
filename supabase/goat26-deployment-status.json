@@ -1,6 +1,57 @@
 {
-  "checked_at": "2026-07-17T19:24:36.453610+00:00",
+  "active_members": 6,
+  "avatar_profiles": 2,
+  "checked_at": "2026-07-17T19:26:53.467310+00:00",
   "code": "GOAT26",
-  "reason": "Supabase Management API returned HTTP 400: {\"message\":\"Failed to run sql query: ERROR:  42501: permission denied for function octagon_week_start\\n\"}",
-  "status": "failed"
+  "deployment_method": "supabase-management-api",
+  "events": 2,
+  "is_canonical": true,
+  "member_names": [
+    "Brock",
+    "Cody",
+    "Rhonda",
+    "Shane",
+    "Tony",
+    "Tyler"
+  ],
+  "name": "UFC Picks",
+  "octagon": {
+    "access_rows": 6,
+    "cody_enabled": true,
+    "current_week_start": "2026-07-13",
+    "enabled_members": 1,
+    "messages": 0,
+    "phase": "secure-rpc-layer",
+    "reactions": 0,
+    "replies": 0,
+    "rls_enabled": true,
+    "rpc": {
+      "anon_execute": {
+        "access_status": true,
+        "admin_set_access": true,
+        "delete_message": true,
+        "post_message": true,
+        "set_reaction": true,
+        "snapshot": true
+      },
+      "functions": {
+        "access_status": true,
+        "admin_set_access": true,
+        "delete_message": true,
+        "post_message": true,
+        "set_reaction": true,
+        "snapshot": true
+      },
+      "internal_helper_private": true,
+      "security_definer": true
+    },
+    "tables": {
+      "access": true,
+      "messages": true,
+      "reactions": true
+    }
+  },
+  "rooms": 2,
+  "saved_picks": 50,
+  "status": "active"
 }
