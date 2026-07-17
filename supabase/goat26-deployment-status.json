@@ -1,0 +1,6 @@
+{
+  "checked_at": "2026-07-17T17:07:24.393188+00:00",
+  "code": "GOAT26",
+  "reason": "Supabase Management API returned HTTP 403: error code: 1010\n",
+  "status": "failed"
+}
