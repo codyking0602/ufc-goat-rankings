@@ -40,6 +40,17 @@
 .intelligence-matchup #compareResult,.intelligence-matchup #octagonVerdictLauncher{display:none!important}
 .intelligence-toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));z-index:1100;max-width:calc(100vw - 32px);transform:translate(-50%,18px);padding:12px 16px;border:1px solid rgba(239,51,64,.46);border-radius:999px;background:rgba(8,10,13,.96);color:#fff;font-size:13px;font-weight:850;box-shadow:0 18px 50px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease}
 .intelligence-toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* Final app navigation order. Rules stays out of the user-facing tabs. */
+.tabs>.tab[data-view="men"]{order:1}
+.tabs>.tab[data-view="women"]{order:2}
+.tabs>.tab[data-view="compare"]{order:3}
+.tabs>.tab[data-view="play"]{order:4}
+.tabs>.tab[data-view="division"]{order:5}
+.tabs>.tab[data-view="categories"]{order:6}
+.tabs>.tab[data-view="picks"]{order:7}
+.tabs>.tab[data-view="rules"]{display:none!important}
+
 @media(max-width:900px){
   #compare.intelligence-view{margin:-4px 0 0}
   .intelligence-shell{border-radius:22px}
@@ -47,6 +58,10 @@
   .intelligence-content{padding:24px 24px 34px}
   .intelligence-subtitle{font-size:17px}
   .intelligence-matchup .compare-controls{grid-template-columns:1fr}
+  .tabs{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:7px;overflow:visible;padding:10px 12px}
+  .tabs>.tab{width:100%;min-width:0;padding:9px 4px;font-size:12px;line-height:1.1;text-align:center;white-space:nowrap}
+  .tabs>.tab[data-view="men"],.tabs>.tab[data-view="women"],.tabs>.tab[data-view="compare"],.tabs>.tab[data-view="play"]{grid-column:span 3}
+  .tabs>.tab[data-view="division"],.tabs>.tab[data-view="categories"],.tabs>.tab[data-view="picks"]{grid-column:span 4}
 }
 @media(max-width:620px){
   .intelligence-hero{min-height:255px;background-position:center 12%;padding:0 16px 24px}
@@ -69,5 +84,7 @@
   .intelligence-prompt-status{display:none}
   .intelligence-prompt{grid-template-columns:38px minmax(0,1fr)}
   .intelligence-primary,.intelligence-secondary{font-size:11px;padding:0 6px}
+  .tabs{gap:6px;padding:9px 10px}
+  .tabs>.tab{padding:8px 3px;font-size:11px}
 }
 @media(prefers-reduced-motion:reduce){.intelligence-open-card,.intelligence-prompt-copy,.intelligence-toast,.intelligence-primary,.intelligence-secondary{transition:none}}
