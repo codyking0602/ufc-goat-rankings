@@ -23,6 +23,7 @@ on:
       - 'assets/js/octagon-verdict-compare-launcher.js'
       - 'assets/js/octagon-verdict-data.js'
       - 'tools/build-octagon-verdict-data.js'
+      - 'scripts/materialize-display-overrides.mjs'
       - 'scripts/materialize-octagon-verdict-data.mjs'
       - 'scripts/sync-production-cache-keys.mjs'
       - 'scripts/test-production-browser.mjs'
@@ -77,6 +78,10 @@ jobs:
         run: node scripts/test-fighter-taglines.mjs > /tmp/fighter-taglines.log 2>&1
       - name: Certify Tyron Woodley audit inputs
         run: node scripts/test-woodley-audit.mjs > /tmp/woodley-audit.log 2>&1
+      - name: Materialize shared display overrides
+        run: node scripts/materialize-display-overrides.mjs > /tmp/display-overrides-build.log 2>&1
+      - name: Refresh cache keys after presentation materialization
+        run: node scripts/sync-production-cache-keys.mjs >> /tmp/cache-sync.log 2>&1
       - name: Build and materialize Octagon Verdict package
         run: |
           node tools/build-octagon-verdict-data.js > /tmp/octagon-verdict-build.log 2>&1
@@ -125,16 +130,16 @@ jobs:
           console.log(JSON.stringify(pettis,null,2));
           console.log(`Validated ${feed.fighterCount} fighters, ${index.fighterCount} materialized fighter objects, and ${Object.keys(feed.divisionBoards).length} automatic division boards.`);
           NODE
-      - name: Commit refreshed calculated package and shell cache keys
+      - name: Commit refreshed calculated package, presentation data, and shell cache keys
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html assets/data/octagon-verdict-data.json assets/data/octagon-verdict/
+          git add index.html assets/data/display-overrides.js assets/data/octagon-verdict-data.json assets/data/octagon-verdict/
           if git diff --cached --quiet; then
-            echo 'Calculated package and cache keys already current.'
+            echo 'Calculated package, presentation data, and cache keys already current.'
           else
-            git commit -m 'Materialize 80-fighter Octagon Verdict package [skip ci]'
+            git commit -m 'Materialize 80-fighter production package [skip ci]'
             git pull --rebase origin main
             git push origin HEAD:main
           fi
@@ -153,6 +158,8 @@ jobs:
           cat /tmp/fighter-taglines.log 2>/dev/null || true
           echo '--- Woodley audit assertion ---'
           cat /tmp/woodley-audit.log 2>/dev/null || true
+          echo '--- Display override build ---'
+          cat /tmp/display-overrides-build.log 2>/dev/null || true
           echo '--- Octagon build ---'
           cat /tmp/octagon-verdict-build.log 2>/dev/null || true
           echo '--- Local server tail ---'
@@ -170,9 +177,11 @@ jobs:
             /tmp/profile-card-hotfix.log
             /tmp/fighter-taglines.log
             /tmp/woodley-audit.log
+            /tmp/display-overrides-build.log
             /tmp/profile-card-mobile-hotfix.png
             /tmp/octagon-verdict-build.log
             /tmp/ufc-app-http.log
+            assets/data/display-overrides.js
             assets/data/octagon-verdict-data.json
             assets/data/octagon-verdict/
           if-no-files-found: warn
