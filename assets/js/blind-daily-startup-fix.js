@@ -1,10 +1,12 @@
 (function(){
   'use strict';
 
-  const VERSION='blind-daily-startup-fix-20260717b-refresh-location';
+  const VERSION='blind-daily-startup-fix-20260717c-refresh-tab-order';
   const REFRESH_LOCATION_KEY='ufc-goat-manual-refresh-location-v1';
+  const PRIMARY_RESTORE_KEY='ufc-goat-manual-refresh-v1';
   let attempts=0;
   let timer=null;
+  let pendingRefreshLocation=null;
 
   function usableRows(rows){
     return (rows||[]).filter(row=>{
@@ -34,6 +36,8 @@
   }
 
   function activeView(){
+    const visible=document.querySelector('.view.active-view');
+    if(visible?.id)return visible.id;
     return document.querySelector('.tab.active')?.dataset.view||'men';
   }
 
@@ -41,18 +45,32 @@
     return document.documentElement.getAttribute('data-play-screen')||'hub';
   }
 
-  function saveRefreshLocation(){
+  function captureRefreshLocation(){
     const state={
       activeView:activeView(),
       playScreen:activePlayScreen(),
       scrollY:window.scrollY||0
     };
+    pendingRefreshLocation=state;
     try{sessionStorage.setItem(REFRESH_LOCATION_KEY,JSON.stringify(state));}catch(_error){}
+    return state;
   }
 
   function readRefreshLocation(){
     try{return JSON.parse(sessionStorage.getItem(REFRESH_LOCATION_KEY)||'null');}
     catch(_error){return null;}
+  }
+
+  function patchPrimaryRestoreState(state){
+    if(!state)return;
+    let primary={};
+    try{primary=JSON.parse(sessionStorage.getItem(PRIMARY_RESTORE_KEY)||'{}')||{};}catch(_error){}
+    primary.activeView=state.activeView||'men';
+    primary.scrollY=Number(state.scrollY)||0;
+    if(primary.activeView==='play'){
+      primary.playMode=state.playScreen==='blind'||state.playScreen==='daily-blind'?'blind':'top10';
+    }
+    try{sessionStorage.setItem(PRIMARY_RESTORE_KEY,JSON.stringify(primary));}catch(_error){}
   }
 
   function activateView(view){
@@ -77,6 +95,8 @@
       await hub.openGame?.(target);
       return true;
     }
+    const trigger=document.querySelector(`[data-open-game="${target}"]`);
+    if(trigger){trigger.click();return true;}
     hub.showHub?.();
     return true;
   }
@@ -84,18 +104,25 @@
   async function restoreRefreshLocation(){
     const state=readRefreshLocation();
     if(!state)return false;
+    patchPrimaryRestoreState(state);
     activateView(state.activeView);
-    if(state.activeView==='play')await restorePlayScreen(state.playScreen);
-    window.setTimeout(()=>window.scrollTo({top:Number(state.scrollY)||0,left:0,behavior:'auto'}),80);
+    if(state.activeView==='play'){
+      const restored=await restorePlayScreen(state.playScreen);
+      if(!restored)return false;
+    }
+    const y=Number(state.scrollY)||0;
+    window.setTimeout(()=>window.scrollTo({top:y,left:0,behavior:'auto'}),80);
+    window.setTimeout(()=>window.scrollTo({top:y,left:0,behavior:'auto'}),320);
     try{sessionStorage.removeItem(REFRESH_LOCATION_KEY);}catch(_error){}
     document.documentElement.setAttribute('data-refresh-location-restored',VERSION);
     return true;
   }
 
   function scheduleRefreshLocationRestore(){
-    if(!readRefreshLocation())return;
-    window.setTimeout(()=>restoreRefreshLocation(),340);
-    window.setTimeout(()=>restoreRefreshLocation(),850);
+    const state=readRefreshLocation();
+    if(!state)return;
+    patchPrimaryRestoreState(state);
+    [300,700,1250].forEach(delay=>window.setTimeout(()=>restoreRefreshLocation(),delay));
   }
 
   function check(){
@@ -110,10 +137,22 @@
   window.addEventListener('ufc-scoring-pipeline-ready',()=>{
     if(window.UFC_SCORING_PIPELINE?.status==='ready')document.documentElement.setAttribute('data-scoring-pipeline','ready');
   });
+  window.addEventListener('ufc-play-hub-ready',()=>window.setTimeout(()=>restoreRefreshLocation(),0));
+
+  document.addEventListener('pointerdown',event=>{
+    if(event.target.closest?.('#manualRefreshBtn'))captureRefreshLocation();
+  },true);
+
   document.addEventListener('click',event=>{
-    if(event.target.closest?.('#manualRefreshBtn'))saveRefreshLocation();
+    if(event.target.closest?.('#manualRefreshBtn'))captureRefreshLocation();
     if(event.target.closest?.('[data-open-game="blind"],[data-play-mode="blind"]'))window.setTimeout(check,80);
   },true);
+
+  document.addEventListener('click',event=>{
+    if(!event.target.closest?.('#manualRefreshBtn'))return;
+    const state=pendingRefreshLocation||captureRefreshLocation();
+    patchPrimaryRestoreState(state);
+  });
 
   scheduleRefreshLocationRestore();
   timer=window.setInterval(check,250);
