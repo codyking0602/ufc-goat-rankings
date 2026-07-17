@@ -1,4 +1,4 @@
-name: Deploy GOAT26 Canonical Group
+name: Deploy GOAT26 Canonical Identity
 
 on:
   push:
@@ -14,7 +14,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: deploy-goat26-canonical-group
+  group: deploy-goat26-canonical-identity
   cancel-in-progress: false
 
 jobs:
@@ -26,15 +26,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Validate canonical identity bridges
+      - name: Validate GOAT26 identity source
         run: |
           node --check assets/js/app-canonical-group.js
           node --check assets/js/play-profile-identity.js
-
-      - name: Verify GOAT26 migration safeguards
-        run: |
           grep -q "code='GOAT26'" supabase/app-canonical-group-goat26-phase.sql
-          grep -q "array\['cody','daddy','rhonda','shane','tyler'\]" supabase/app-canonical-group-goat26-phase.sql
+          grep -q "array\['brock','cody','rhonda','shane','tony','tyler'\]" supabase/app-canonical-group-goat26-phase.sql
           grep -q "app_profile_resolve" supabase/app-canonical-group-goat26-phase.sql
           grep -q "app_profile_login" supabase/app-canonical-group-goat26-phase.sql
           grep -q "app_canonical_group_audit" supabase/app-canonical-group-goat26-phase.sql
@@ -52,21 +49,13 @@ jobs:
           from datetime import datetime, timezone
           from pathlib import Path
 
-          project_ref = os.environ['SUPABASE_PROJECT_REF']
-          access_token = os.environ.get('SUPABASE_ACCESS_TOKEN', '').strip()
-          migration_path = Path('supabase/app-canonical-group-goat26-phase.sql')
-          migration_sql = migration_path.read_text()
-          old_uuid_aggregate = 'select count(*),min(candidate.id)'
-          new_uuid_aggregate = 'select count(*),(array_agg(candidate.id order by candidate.id))[1]'
-          if old_uuid_aggregate in migration_sql:
-              migration_sql = migration_sql.replace(old_uuid_aggregate, new_uuid_aggregate, 1)
-              migration_path.write_text(migration_sql)
-          elif new_uuid_aggregate not in migration_sql:
-              raise RuntimeError('The guarded GOAT26 candidate query was not found.')
+          project=os.environ['SUPABASE_PROJECT_REF']
+          token=os.environ.get('SUPABASE_ACCESS_TOKEN','').strip()
+          status_path=Path('supabase/goat26-deployment-status.json')
+          migration=Path('supabase/app-canonical-group-goat26-phase.sql').read_text()
+          expected=['Brock','Cody','Rhonda','Shane','Tony','Tyler']
 
-          status_path = Path('supabase/goat26-deployment-status.json')
-
-          audit_sql = """
+          audit_sql="""
           select jsonb_build_object(
             'status','active',
             'code',g.code,
@@ -89,194 +78,97 @@ jobs:
             )
           ) as audit
           from public.pick_groups g
-          where g.code='GOAT26'
-          order by coalesce(g.is_canonical,false) desc
+          where g.code='GOAT26' and coalesce(g.is_canonical,false)
           limit 1;
           """
 
-          candidate_sql = """
-          select coalesce(jsonb_agg(candidate order by
-            (candidate->>'active_members')::integer desc,
-            (candidate->>'saved_picks')::integer desc,
-            (candidate->>'events')::integer desc,
-            candidate->>'created_at' desc
-          ),'[]'::jsonb) as candidates
-          from (
-            select jsonb_build_object(
-              'name',g.name,
-              'owner_name',owner_member.display_name,
-              'active_members',(
-                select count(*)
-                from public.pick_group_members gm
-                where gm.group_id=g.id and coalesce(gm.is_active,true)
-              ),
-              'member_names',(
-                select coalesce(jsonb_agg(gm.display_name order by lower(trim(gm.display_name))),'[]'::jsonb)
-                from public.pick_group_members gm
-                where gm.group_id=g.id and coalesce(gm.is_active,true)
-              ),
-              'events',(select count(*) from public.pick_group_events ge where ge.group_id=g.id),
-              'rooms',(select count(*) from public.pick_rooms r where r.group_id=g.id),
-              'saved_picks',(
-                select count(*)
-                from public.pick_rooms r
-                join public.pick_room_members rm on rm.room_id=r.id
-                join public.pick_selections ps on ps.member_id=rm.id
-                where r.group_id=g.id
-              ),
-              'created_at',g.created_at
-            ) candidate
-            from public.pick_groups g
-            left join public.pick_group_members owner_member on owner_member.id=g.owner_member_id
-            where lower(trim(coalesce(owner_member.display_name,'')))='cody'
-               or exists (
-                 select 1
-                 from public.pick_group_members gm
-                 where gm.group_id=g.id
-                   and lower(trim(gm.display_name))='cody'
-                   and coalesce(gm.is_active,true)
-               )
-          ) rows;
-          """
+          def write(payload):
+              value=dict(payload)
+              value['checked_at']=datetime.now(timezone.utc).isoformat()
+              status_path.write_text(json.dumps(value,indent=2,sort_keys=True)+'\n')
 
-          def write_status(payload):
-              result = dict(payload)
-              result['checked_at'] = datetime.now(timezone.utc).isoformat()
-              status_path.write_text(json.dumps(result, indent=2, sort_keys=True) + '\n')
-
-          def query(sql, read_only=False):
-              request = urllib.request.Request(
-                  f'https://api.supabase.com/v1/projects/{project_ref}/database/query',
-                  data=json.dumps({'query': sql, 'read_only': read_only}).encode(),
+          def query(sql,read_only=False):
+              request=urllib.request.Request(
+                  f'https://api.supabase.com/v1/projects/{project}/database/query',
+                  data=json.dumps({'query':sql,'read_only':read_only}).encode(),
                   headers={
-                      'Authorization': f'Bearer {access_token}',
-                      'Content-Type': 'application/json',
-                      'Accept': 'application/json',
-                      'User-Agent': 'github-actions-goat26-migration/1.0',
-                      'X-Client-Info': 'ufc-goat-rankings-goat26-migration',
+                      'Accept':'application/json',
+                      'Authorization':f'Bearer {token}',
+                      'Content-Type':'application/json',
+                      'User-Agent':'UFC-GOAT26-GitHub-Actions/1.0',
+                      'X-Client-Info':'ufc-goat-rankings-goat26',
                   },
                   method='POST',
               )
               try:
-                  with urllib.request.urlopen(request, timeout=90) as response:
+                  with urllib.request.urlopen(request,timeout=90) as response:
                       return json.loads(response.read().decode() or 'null')
               except urllib.error.HTTPError as error:
-                  detail = error.read().decode(errors='replace')[:1000]
+                  detail=error.read().decode(errors='replace')[:1200]
                   raise RuntimeError(f'Supabase Management API returned HTTP {error.code}: {detail}') from error
 
-          def response_value(response, key):
-              rows = response.get('result', response) if isinstance(response, dict) else response
-              if isinstance(rows, list) and rows:
-                  value = rows[0].get(key, rows[0]) if isinstance(rows[0], dict) else None
-              elif isinstance(rows, dict):
-                  value = rows.get(key, rows)
-              else:
-                  value = None
-              if isinstance(value, str):
-                  value = json.loads(value)
+          def audit_value(response):
+              rows=response.get('result',response) if isinstance(response,dict) else response
+              value=rows[0].get('audit') if isinstance(rows,list) and rows and isinstance(rows[0],dict) else None
+              if isinstance(value,str):
+                  value=json.loads(value)
+              if not isinstance(value,dict):
+                  raise RuntimeError('GOAT26 audit returned no canonical group.')
               return value
 
-          if not access_token:
-              write_status({
-                  'status': 'blocked',
-                  'code': 'GOAT26',
-                  'reason': 'SUPABASE_ACCESS_TOKEN is not configured in GitHub Actions.',
-              })
-              print('GOAT26 migration blocked: missing SUPABASE_ACCESS_TOKEN.')
-          else:
-              candidates = []
-              try:
-                  candidates = response_value(query(candidate_sql, read_only=True), 'candidates') or []
-              except Exception as candidate_error:
-                  print(f'Candidate audit failed: {candidate_error}')
+          if not token:
+              write({'status':'blocked','code':'GOAT26','reason':'SUPABASE_ACCESS_TOKEN is not configured.'})
+              raise SystemExit(0)
 
-              try:
-                  query(migration_sql, read_only=False)
-                  audit = response_value(query(audit_sql, read_only=True), 'audit')
-                  if not isinstance(audit, dict):
-                      raise RuntimeError('GOAT26 audit did not return a result.')
-                  expected = ['Cody','Daddy','Rhonda','Shane','Tyler']
-                  names = sorted(audit.get('member_names') or [], key=lambda value: str(value).lower())
-                  if (
-                      audit.get('status') != 'active'
-                      or audit.get('code') != 'GOAT26'
-                      or not audit.get('is_canonical')
-                      or names != expected
-                  ):
-                      raise RuntimeError(f'Canonical five-member audit failed: {audit}')
-                  audit['deployment_method'] = 'supabase-management-api'
-                  audit['candidate_count_before_migration'] = len(candidates)
-                  write_status(audit)
-                  print('GOAT26 migration applied and verified.')
-              except Exception as error:
-                  reason = str(error).replace(access_token, '[redacted]')[:1500]
-                  write_status({
-                      'status':'failed',
-                      'code':'GOAT26',
-                      'reason':reason,
-                      'candidates':candidates,
-                  })
-                  print(f'GOAT26 migration failed: {reason}')
+          try:
+              query(migration,read_only=False)
+              audit=audit_value(query(audit_sql,read_only=True))
+              names=sorted(audit.get('member_names') or [],key=lambda item:str(item).lower())
+              if (
+                  audit.get('code')!='GOAT26'
+                  or not audit.get('is_canonical')
+                  or names!=expected
+                  or int(audit.get('events') or 0)<2
+                  or int(audit.get('rooms') or 0)<2
+                  or int(audit.get('saved_picks') or 0)<50
+              ):
+                  raise RuntimeError(f'GOAT26 identity or history audit failed: {audit}')
+              audit['deployment_method']='supabase-management-api'
+              write(audit)
+              print('GOAT26 identity and Picks history verified.')
+          except Exception as error:
+              reason=str(error).replace(token,'[redacted]')[:1600]
+              write({'status':'failed','code':'GOAT26','reason':reason})
+              raise
           PY
 
-      - name: Wire canonical identity bridges into the live page
+      - name: Wire the shared identity into the live page
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
 
-          path = Path('index.html')
-          text = path.read_text()
-          anchor_pattern = r'(  <script src="assets/data/supabase-config\.js\?v=[^"]+"></script>)'
-          canonical_line = '  <script src="assets/js/app-canonical-group.js?v=app-canonical-group-20260717b"></script>'
-          play_profile_line = '  <script src="assets/js/play-profile-identity.js?v=play-profile-identity-20260717b-goat26"></script>'
+          path=Path('index.html')
+          text=path.read_text()
+          canonical='  <script src="assets/js/app-canonical-group.js?v=app-canonical-group-20260717b"></script>'
+          play_profile='  <script src="assets/js/play-profile-identity.js?v=play-profile-identity-20260717b-goat26"></script>'
 
-          if 'assets/js/app-canonical-group.js' not in text:
-              match = re.search(anchor_pattern, text)
-              if not match:
-                  raise SystemExit('Supabase config script anchor not found.')
-              text = text[:match.end()] + '\n' + canonical_line + text[match.end():]
-
-          text = re.sub(
-              r'  <script src="assets/js/app-canonical-group\.js\?v=[^"]+"></script>',
-              canonical_line,
-              text,
-              count=1,
-          )
-          text = re.sub(
-              r'  <script src="assets/js/play-profile-identity\.js\?v=[^"]+"></script>',
-              play_profile_line,
-              text,
-              count=1,
-          )
-          text = re.sub(
-              r'<meta name="app-build" content="[^"]+" />',
-              '<meta name="app-build" content="20260717-goat26-shared-profile" />',
-              text,
-              count=1,
-          )
+          text=re.sub(r'  <script src="assets/js/app-canonical-group\.js\?v=[^"]+"></script>',canonical,text,count=1)
+          text=re.sub(r'  <script src="assets/js/play-profile-identity\.js\?v=[^"]+"></script>',play_profile,text,count=1)
+          text=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260717-goat26-shared-profile" />',text,count=1)
           path.write_text(text)
           PY
 
-      - name: Commit live wiring and deployment status
+      - name: Commit deployment record
         if: always()
         run: |
-          if [ ! -f supabase/goat26-deployment-status.json ]; then
-            cat > supabase/goat26-deployment-status.json <<'JSON'
-          {
-            "code": "GOAT26",
-            "reason": "The deployment workflow ended before producing a Supabase result.",
-            "status": "failed"
-          }
-          JSON
-          fi
-          if git diff --quiet -- index.html supabase/app-canonical-group-goat26-phase.sql supabase/goat26-deployment-status.json; then
-            echo 'GOAT26 wiring, migration source, and deployment status are unchanged.'
+          if git diff --quiet -- index.html supabase/goat26-deployment-status.json; then
+            echo 'GOAT26 deployment record is unchanged.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html supabase/app-canonical-group-goat26-phase.sql supabase/goat26-deployment-status.json
-          git commit -m 'Record GOAT26 shared profile deployment [skip ci]'
+          git add index.html supabase/goat26-deployment-status.json
+          git commit -m 'Record GOAT26 canonical identity deployment [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:main
