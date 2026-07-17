@@ -1,6 +1,6 @@
 {
   "active_members": 6,
-  "checked_at": "2026-07-17T17:18:07.562840+00:00",
+  "checked_at": "2026-07-17T17:19:00.775755+00:00",
   "code": "GOAT26",
   "deployment_method": "supabase-management-api",
   "events": 2,
@@ -16,6 +16,5 @@
   "name": "UFC Picks",
   "rooms": 2,
   "saved_picks": 50,
-  "status": "active",
-  "verified_group": "existing UFC Picks group renamed in place"
+  "status": "active"
 }
