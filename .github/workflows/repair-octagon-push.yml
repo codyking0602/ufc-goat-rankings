@@ -1,0 +1,211 @@
+name: Repair Octagon Push
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/repair-octagon-push.yml'
+      - 'assets/js/octagon-push-subscription.js'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: repair-octagon-push
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate corrected client flow
+        run: node --check assets/js/octagon-push-subscription.js
+
+      - name: Install P-256 dependency
+        run: python -m pip install --disable-pip-version-check --quiet cryptography
+
+      - name: Repair VAPID key format
+        env:
+          SUPABASE_PROJECT_REF: hdkjwezaswhisxupxydc
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          python - <<'PY'
+          import base64
+          import json
+          import os
+          import urllib.error
+          import urllib.request
+          from datetime import datetime, timezone
+          from pathlib import Path
+          from cryptography.hazmat.primitives.asymmetric import ec
+
+          project=os.environ['SUPABASE_PROJECT_REF']
+          token=os.environ.get('SUPABASE_ACCESS_TOKEN','').strip()
+          status_path=Path('supabase/octagon-push-repair-status.json')
+
+          def query(sql,read_only=False):
+              request=urllib.request.Request(
+                  f'https://api.supabase.com/v1/projects/{project}/database/query',
+                  data=json.dumps({'query':sql,'read_only':read_only}).encode(),
+                  headers={
+                      'Accept':'application/json',
+                      'Authorization':f'Bearer {token}',
+                      'Content-Type':'application/json',
+                      'User-Agent':'UFC-Octagon-Push-Repair/1.0',
+                  },
+                  method='POST',
+              )
+              try:
+                  with urllib.request.urlopen(request,timeout=90) as response:
+                      return json.loads(response.read().decode() or 'null')
+              except urllib.error.HTTPError as error:
+                  detail=error.read().decode(errors='replace')[:1600]
+                  raise RuntimeError(f'Supabase Management API returned HTTP {error.code}: {detail}') from error
+
+          def rows(response):
+              return response.get('result',response) if isinstance(response,dict) else response
+
+          def decode(value):
+              raw=str(value or '')
+              raw+=('='*((4-len(raw)%4)%4))
+              return base64.urlsafe_b64decode(raw.encode())
+
+          def encode(value):
+              return base64.urlsafe_b64encode(value).rstrip(b'=').decode()
+
+          def write(payload):
+              value=dict(payload)
+              value['checked_at']=datetime.now(timezone.utc).isoformat()
+              status_path.write_text(json.dumps(value,indent=2,sort_keys=True)+'\n')
+
+          if not token:
+              write({'status':'blocked','reason':'SUPABASE_ACCESS_TOKEN is not configured.'})
+              raise SystemExit(0)
+
+          current=rows(query("select public_key,private_key from public.octagon_push_config where singleton limit 1;",read_only=True))
+          old_public=current[0].get('public_key','') if current else ''
+          old_private=current[0].get('private_key','') if current else ''
+          try:
+              old_public_bytes=decode(old_public)
+          except Exception:
+              old_public_bytes=b''
+          try:
+              old_private_bytes=decode(old_private)
+          except Exception:
+              old_private_bytes=b''
+
+          valid=(len(old_public_bytes)==65 and old_public_bytes[:1]==b'\x04' and len(old_private_bytes)==32)
+          rotated=False
+          if not valid:
+              key=ec.generate_private_key(ec.SECP256R1())
+              private_numbers=key.private_numbers()
+              public_numbers=private_numbers.public_numbers
+              public_key=encode(b'\x04'+public_numbers.x.to_bytes(32,'big')+public_numbers.y.to_bytes(32,'big'))
+              private_key=encode(private_numbers.private_value.to_bytes(32,'big'))
+              subject='https://codyking0602.github.io/ufc-goat-rankings/'
+              query(
+                  "insert into public.octagon_push_config(singleton,public_key,private_key,subject,updated_at) values "
+                  f"(true,'{public_key}','{private_key}','{subject}',now()) "
+                  "on conflict(singleton) do update set public_key=excluded.public_key,private_key=excluded.private_key,subject=excluded.subject,updated_at=now();",
+                  read_only=False,
+              )
+              query("update public.octagon_push_subscriptions set is_active=false,updated_at=now() where is_active;",read_only=False)
+              rotated=True
+
+          verified=rows(query("select public_key,private_key from public.octagon_push_config where singleton limit 1;",read_only=True))
+          if not verified:
+              raise RuntimeError('Octagon VAPID configuration was not found after repair.')
+          public_bytes=decode(verified[0]['public_key'])
+          private_bytes=decode(verified[0]['private_key'])
+          if len(public_bytes)!=65 or public_bytes[:1]!=b'\x04' or len(private_bytes)!=32:
+              raise RuntimeError('Octagon VAPID key is still not a raw uncompressed P-256 key pair.')
+
+          active=rows(query("select count(*)::integer as count from public.octagon_push_subscriptions where is_active;",read_only=True))
+          write({
+              'status':'active',
+              'rotated':rotated,
+              'old_public_bytes':len(old_public_bytes),
+              'old_private_bytes':len(old_private_bytes),
+              'public_bytes':len(public_bytes),
+              'private_bytes':len(private_bytes),
+              'public_uncompressed':public_bytes[:1]==b'\x04',
+              'active_push_subscriptions':int(active[0].get('count',0)) if active else 0,
+          })
+          print('Octagon VAPID key verified as raw 65-byte uncompressed P-256 public key.')
+          PY
+
+      - name: Permanently wire corrected push handler
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path=Path('.github/workflows/deploy-app-canonical-group.yml')
+          text=path.read_text()
+
+          if "      - 'assets/js/octagon-push-subscription.js'" not in text:
+              text=text.replace(
+                  "      - 'assets/js/octagon-notifications.js'\n",
+                  "      - 'assets/js/octagon-notifications.js'\n      - 'assets/js/octagon-push-subscription.js'\n",
+                  1,
+              )
+
+          if 'node --check assets/js/octagon-push-subscription.js' not in text:
+              text=text.replace(
+                  '          node --check assets/js/octagon-notifications.js\n',
+                  '          node --check assets/js/octagon-notifications.js\n          node --check assets/js/octagon-push-subscription.js\n',
+                  1,
+              )
+
+          notifications='          notifications=\'  <script src="assets/js/octagon-notifications.js?v=octagon-notifications-20260717a"></script>\''
+          push_line='          push_subscription=\'  <script src="assets/js/octagon-push-subscription.js?v=octagon-push-subscription-20260717b"></script>\''
+          if push_line not in text:
+              text=text.replace(notifications,notifications+'\n'+push_line,1)
+
+          marker="""          if 'assets/js/octagon-notifications.js' in text:
+              text=re.sub(r'  <script src=\"assets/js/octagon-notifications\\.js\\?v=[^\"]+\"></script>',notifications,text,count=1)
+          elif access_panel in text:
+              text=text.replace(access_panel,access_panel+'\\n'+notifications,1)
+          else:
+              raise SystemExit('Octagon access-panel script anchor was not found.')
+"""
+          block=marker+"""
+          if 'assets/js/octagon-push-subscription.js' in text:
+              text=re.sub(r'  <script src=\"assets/js/octagon-push-subscription\\.js\\?v=[^\"]+\"></script>',push_subscription,text,count=1)
+          elif notifications in text:
+              text=text.replace(notifications,notifications+'\\n'+push_subscription,1)
+          else:
+              raise SystemExit('Octagon notification script anchor was not found.')
+"""
+          if "assets/js/octagon-push-subscription.js' in text" not in text:
+              if marker not in text:
+                  raise SystemExit('Notification wiring block was not found.')
+              text=text.replace(marker,block,1)
+
+          text=re.sub(
+              r'<meta name="app-build" content="[^"]+" />',
+              '<meta name="app-build" content="20260717-octagon-push-permission-fix" />',
+              text,
+              count=1,
+          )
+          path.write_text(text)
+          PY
+
+      - name: Commit repair and permanent deployment wiring
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/workflows/deploy-app-canonical-group.yml supabase/octagon-push-repair-status.json
+          if git diff --cached --quiet; then
+            echo 'Octagon push repair record is unchanged.'
+            exit 0
+          fi
+          git commit -m 'Repair Octagon push permission and VAPID key [skip ci]'
+          git pull --rebase origin main
+          git push origin HEAD:main
