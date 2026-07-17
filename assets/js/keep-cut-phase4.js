@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='keep-cut-20260717g-category-lineup';
+  const VERSION='keep-cut-20260717h-category-lineup';
   const STORAGE_KEY='ufc-goat-keep-cut-v1';
   const RECENT_KEY='ufc-goat-keep-cut-recent-v1';
   const MIGRATION_KEY='ufc-goat-keep-cut-phase4-migrated';
@@ -100,6 +100,35 @@
     select.value=api.packs.some(pack=>pack.id===selected)?selected:api.packs[0]?.id||'ufc-careers';
   }
 
+  function currentPack(){
+    const id=canonicalPackId(api.state.packId);
+    return api.packs.find(pack=>pack.id===id)||api.packs[0]||null;
+  }
+
+  function syncVisibleCopy(){
+    const pack=currentPack();
+    if(!pack)return;
+    if(api.state.packId!==pack.id)api.state.packId=pack.id;
+    const select=document.getElementById('keepCutPack');
+    if(select&&select.value!==pack.id)select.value=pack.id;
+    const prompt=document.getElementById('keepCutPrompt');
+    const description=document.getElementById('keepCutDescription');
+    const progress=document.querySelector('#playKeepCutPanel .kc-progress span');
+    if(prompt&&prompt.textContent!==pack.prompt)prompt.textContent=pack.prompt;
+    if(description&&description.textContent!==pack.description)description.textContent=pack.description;
+    const progressCopy=`${pack.group} · ${pack.name}`;
+    if(progress&&progress.textContent!==progressCopy)progress.textContent=progressCopy;
+  }
+
+  function installCopySync(){
+    const panel=document.getElementById('playKeepCutPanel');
+    if(!panel||panel.dataset.phaseFourCopySync==='true')return;
+    panel.dataset.phaseFourCopySync='true';
+    const observer=new MutationObserver(syncVisibleCopy);
+    observer.observe(panel,{childList:true,subtree:true});
+    syncVisibleCopy();
+  }
+
   function canonicalOptions(options={}){
     return {...options,packId:canonicalPackId(options.packId||api.state.packId)};
   }
@@ -125,6 +154,7 @@
   api.state.packId=canonicalPackId(api.state.packId);
   if(!api.packs.some(pack=>pack.id===api.state.packId))api.state.packId=api.packs[0]?.id||'ufc-careers';
   rebuildPackSelect();
+  installCopySync();
 
   api.startGame=startGame;
   api.open=open;
