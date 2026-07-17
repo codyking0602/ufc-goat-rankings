@@ -1,8 +1,9 @@
 (function(){
   'use strict';
 
-  const VERSION='keep-cut-20260716a-category-balance';
+  const VERSION='keep-cut-20260716b-production-audit';
   const STORAGE_KEY='ufc-goat-keep-cut-v1';
+  const STORAGE_VERSION=2;
   const PLAY_DATA=window.UFC_PLAY_DATA;
   const play=document.getElementById('play');
   const shell=play?.querySelector('.play-shell');
@@ -78,31 +79,25 @@
   };
 
   const PACKS=[
-    {id:'ufc-careers',group:'Serious',name:'UFC Careers',prompt:'Keep four UFC careers. Cut four.',description:'Eight ranked UFC careers arrive one at a time. Every decision locks.',filters:{gender:'men',modelRanked:true}},
-    {id:'all-careers',group:'Serious',name:'All UFC Careers',prompt:'Keep four UFC careers. Cut four.',description:'Ranked men and women from across UFC history arrive one at a time.',filters:{modelRanked:true}},
-    {id:'never-undisputed',group:'Serious',name:'Never Won Undisputed Gold',prompt:'Keep four. Cut four.',description:'Major UFC careers without undisputed UFC gold, balanced by UFC résumé.',filters:{modelRanked:true},names:NEVER_UNDISPUTED,order:CATEGORY_ORDERS['never-undisputed']},
-    {id:'former-champions',group:'Serious',name:'Former Champions',prompt:'Keep four champions. Cut four.',description:'Eight ranked UFC champions arrive one at a time.',filters:{modelRanked:true},names:FORMER_CHAMPIONS},
-    {id:'lightweight',group:'Serious',name:'Lightweight',prompt:'Keep four lightweights. Cut four.',description:'Ranked UFC lightweight careers, balanced inside the division.',filters:{gender:'men',division:'Lightweight',modelRanked:true}},
-    {id:'welterweight',group:'Serious',name:'Welterweight',prompt:'Keep four welterweights. Cut four.',description:'Ranked UFC welterweight careers, balanced inside the division.',filters:{gender:'men',division:'Welterweight',modelRanked:true}},
-    {id:'heavyweight',group:'Serious',name:'Heavyweight',prompt:'Keep four heavyweights. Cut four.',description:'Ranked UFC heavyweight careers, balanced inside the division.',filters:{gender:'men',division:'Heavyweight',modelRanked:true}},
-    {id:'early-ufc',group:'Serious',name:'Early UFC',prompt:'Keep four early UFC names. Cut four.',description:'Ranked Tournament, Survival, and Zuffa Rebuild era careers.',filters:{gender:'men',modelRanked:true},eras:['tournament','survival','zuffa-rebuild']},
-    {id:'action-fighters',group:'Entertainment',name:'Action Fighters',prompt:'Keep four action fighters. Cut four.',description:'Balanced by action value—not by the GOAT leaderboard.',names:ACTION_FIGHTERS,order:CATEGORY_ORDERS['action-fighters']},
-    {id:'ufc-stars',group:'Entertainment',name:'UFC Stars',prompt:'Keep four UFC stars. Cut four.',description:'Balanced by UFC star power—not by career rank.',names:UFC_STARS,order:CATEGORY_ORDERS['ufc-stars']},
-    {id:'cult-chaos',group:'Chaos',name:'Cult & Chaos',prompt:'Keep four agents of chaos. Cut four.',description:'Cult heroes, personalities, attractions, and beautifully strange UFC careers.',names:CULT_CHAOS,order:CATEGORY_ORDERS['cult-chaos']}
+    {id:'ufc-careers',group:'Serious',name:'UFC Careers',prompt:'Keep four UFC careers. Cut four.',description:'Eight ranked UFC careers arrive one at a time. Every decision locks.',scoreMode:'overall-rank',filters:{gender:'men',modelRanked:true}},
+    {id:'all-careers',group:'Serious',name:'All UFC Careers',prompt:'Keep four UFC careers. Cut four.',description:'Ranked men and women from across UFC history arrive one at a time.',scoreMode:'overall-score',filters:{modelRanked:true}},
+    {id:'never-undisputed',group:'Serious',name:'Never Won Undisputed Gold',prompt:'Keep four. Cut four.',description:'Major UFC careers without undisputed UFC gold, balanced by UFC résumé.',scoreMode:'ordered',filters:{modelRanked:true},names:NEVER_UNDISPUTED,order:CATEGORY_ORDERS['never-undisputed']},
+    {id:'former-champions',group:'Serious',name:'Former Champions',prompt:'Keep four champions. Cut four.',description:'Eight ranked UFC champions arrive one at a time.',scoreMode:'overall-score',filters:{modelRanked:true},names:FORMER_CHAMPIONS},
+    {id:'lightweight',group:'Serious',name:'Lightweight',prompt:'Keep four lightweights. Cut four.',description:'Ranked UFC lightweight careers, balanced by lightweight résumé.',scoreMode:'division-score',division:'Lightweight',filters:{gender:'men',division:'Lightweight',modelRanked:true}},
+    {id:'welterweight',group:'Serious',name:'Welterweight',prompt:'Keep four welterweights. Cut four.',description:'Ranked UFC welterweight careers, balanced by welterweight résumé.',scoreMode:'division-score',division:'Welterweight',filters:{gender:'men',division:'Welterweight',modelRanked:true}},
+    {id:'heavyweight',group:'Serious',name:'Heavyweight',prompt:'Keep four heavyweights. Cut four.',description:'Ranked UFC heavyweight careers, balanced by heavyweight résumé.',scoreMode:'division-score',division:'Heavyweight',filters:{gender:'men',division:'Heavyweight',modelRanked:true}},
+    {id:'early-ufc',group:'Serious',name:'Early UFC',prompt:'Keep four early UFC names. Cut four.',description:'Ranked Tournament, Survival, and Zuffa Rebuild era careers.',scoreMode:'overall-rank',filters:{gender:'men',modelRanked:true},eras:['tournament','survival','zuffa-rebuild']},
+    {id:'action-fighters',group:'Entertainment',name:'Action Fighters',prompt:'Keep four action fighters. Cut four.',description:'Balanced by action value—not by the GOAT leaderboard.',scoreMode:'ordered',names:ACTION_FIGHTERS,order:CATEGORY_ORDERS['action-fighters']},
+    {id:'ufc-stars',group:'Entertainment',name:'UFC Stars',prompt:'Keep four UFC stars. Cut four.',description:'Balanced by UFC star power—not by career rank.',scoreMode:'ordered',names:UFC_STARS,order:CATEGORY_ORDERS['ufc-stars']},
+    {id:'cult-chaos',group:'Chaos',name:'Cult & Chaos',prompt:'Keep four agents of chaos. Cut four.',description:'Cult heroes, personalities, attractions, and beautifully strange UFC careers.',scoreMode:'ordered',names:CULT_CHAOS,order:CATEGORY_ORDERS['cult-chaos']}
   ];
 
   const TARGET_BUCKETS=['elite','great','great','good','good','average','average','chaos'];
   const BUCKET_ORDER=['elite','great','good','average','chaos'];
+  const REQUIRED_BUCKET_COUNTS=TARGET_BUCKETS.reduce((counts,bucket)=>({...counts,[bucket]:(counts[bucket]||0)+1}),{});
 
-  const state={
-    packId:'ufc-careers',
-    lineup:[],
-    decisions:[],
-    currentIndex:0,
-    completed:false,
-    shared:false,
-    balance:null
-  };
+  const state={packId:'ufc-careers',lineup:[],decisions:[],currentIndex:0,completed:false,shared:false,balance:null};
+  let audit={passed:false,packs:[]};
 
   function esc(value){return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));}
   function initials(name){return String(name||'').split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase()||'UFC';}
@@ -148,11 +143,20 @@
     return tierScore[fighter?.selectionTier]||0;
   }
 
+  function divisionEntry(fighter,division){
+    const entries=window.UFC_DIVISION_RANKING_PIPELINE?.entryFor?.(fighter?.name);
+    return Array.isArray(entries)?entries.find(entry=>entry?.division===division)||null:null;
+  }
+
   function scoreForPack(pack,fighter){
-    if(Array.isArray(pack.order)){
-      const target=PLAY_DATA.resolve(fighter.id)?.id||fighter.id;
-      const index=pack.order.findIndex(name=>PLAY_DATA.resolve(name)?.id===target);
+    if(pack.scoreMode==='ordered'&&Array.isArray(pack.order)){
+      const index=pack.order.findIndex(name=>PLAY_DATA.resolve(name)?.id===fighter.id);
       if(index>=0)return 20000-index*100;
+    }
+    if(pack.scoreMode==='overall-score'&&Number.isFinite(Number(fighter?.modelScore)))return Number(fighter.modelScore);
+    if(pack.scoreMode==='division-score'){
+      const score=divisionEntry(fighter,pack.division)?.divisionScore;
+      if(Number.isFinite(Number(score)))return Number(score);
     }
     return fallbackScore(fighter);
   }
@@ -178,6 +182,7 @@
   }
 
   function buildLineup(packId){
+    PLAY_DATA.rebuild?.();
     const pack=packFor(packId);
     const pool=poolForPack(pack);
     if(pool.length<8)return[];
@@ -209,16 +214,33 @@
   function auditPacks(){
     const packs=PACKS.map(pack=>{
       const pool=poolForPack(pack);
-      const {buckets}=bucketedPool(pack,pool);
+      const {ranked,buckets}=bucketedPool(pack,pool);
+      const bucketCounts=Object.fromEntries(BUCKET_ORDER.map(bucket=>[bucket,buckets[bucket].length]));
+      const bucketReady=Object.entries(REQUIRED_BUCKET_COUNTS).every(([bucket,count])=>bucketCounts[bucket]>=count);
+      const orderMissing=Array.isArray(pack.order)?pool.filter(fighter=>!pack.order.some(name=>PLAY_DATA.resolve(name)?.id===fighter.id)).map(fighter=>fighter.name):[];
+      const divisionMissing=pack.scoreMode==='division-score'?pool.filter(fighter=>!Number.isFinite(Number(divisionEntry(fighter,pack.division)?.divisionScore))).map(fighter=>fighter.name):[];
       return {
         id:pack.id,
         group:pack.group,
+        scoreMode:pack.scoreMode,
         poolSize:pool.length,
-        bucketCounts:Object.fromEntries(BUCKET_ORDER.map(bucket=>[bucket,buckets[bucket].length])),
-        playable:pool.length>=8
+        bucketCounts,
+        topFive:ranked.slice(0,5).map(fighter=>fighter.name),
+        bottomFive:ranked.slice(-5).map(fighter=>fighter.name),
+        orderMissing,
+        divisionMissing,
+        playable:pool.length>=8&&bucketReady&&orderMissing.length===0&&divisionMissing.length===0
       };
     });
     return {passed:packs.every(pack=>pack.playable),packs};
+  }
+
+  function refreshAudit(){
+    PLAY_DATA.rebuild?.();
+    audit=auditPacks();
+    document.documentElement.setAttribute('data-keep-cut-balance-audit',audit.passed?'passed':'failed');
+    if(window.UFC_KEEP_CUT)window.UFC_KEEP_CUT.audit=audit;
+    return audit;
   }
 
   function kept(){return state.decisions.filter(row=>row.choice==='keep');}
@@ -227,6 +249,7 @@
   function saveState(){
     try{
       localStorage.setItem(STORAGE_KEY,JSON.stringify({
+        storageVersion:STORAGE_VERSION,
         packId:state.packId,
         lineup:state.lineup.map(fighter=>fighter.id),
         decisions:state.decisions.map(row=>({fighterId:row.fighter.id,choice:row.choice,revealIndex:row.revealIndex})),
@@ -239,15 +262,20 @@
   function restoreState(){
     try{
       const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');
-      if(!saved||!Array.isArray(saved.lineup)||saved.lineup.length!==8)return false;
+      if(!saved||saved.storageVersion!==STORAGE_VERSION||!Array.isArray(saved.lineup)||saved.lineup.length!==8)return false;
+      const pack=packFor(saved.packId);
       const lineup=saved.lineup.map(id=>PLAY_DATA.resolve(id));
       if(lineup.some(fighter=>!fighter)||new Set(lineup.map(fighter=>fighter.id)).size!==8)return false;
+      const allowed=new Set(poolForPack(pack).map(fighter=>fighter.id));
+      if(lineup.some(fighter=>!allowed.has(fighter.id)))return false;
+      const lineupIds=new Set(lineup.map(fighter=>fighter.id));
       const decisions=(saved.decisions||[]).map(row=>({
         fighter:PLAY_DATA.resolve(row.fighterId),
-        choice:row.choice==='keep'?'keep':'cut',
-        revealIndex:Number(row.revealIndex)||0
-      })).filter(row=>row.fighter);
-      state.packId=packFor(saved.packId).id;
+        choice:row.choice==='keep'?'keep':row.choice==='cut'?'cut':null,
+        revealIndex:Number(row.revealIndex)
+      })).filter(row=>row.fighter&&row.choice&&lineupIds.has(row.fighter.id)&&Number.isInteger(row.revealIndex)&&row.revealIndex>=0&&row.revealIndex<8);
+      if(new Set(decisions.map(row=>row.revealIndex)).size!==decisions.length)return false;
+      state.packId=pack.id;
       state.lineup=lineup;
       state.decisions=decisions.slice(0,8);
       state.currentIndex=Math.max(0,Math.min(8,Number(saved.currentIndex)||decisions.length));
@@ -446,6 +474,7 @@
     if(eyebrow)eyebrow.textContent=options.shared?'FRIEND CHALLENGE':'KEEP 4, CUT 4';
     if(title)title.textContent=options.shared?'Same Eight. Your Decisions.':'Keep 4, Cut 4';
     document.documentElement.setAttribute('data-play-screen','keep-cut');
+    PLAY_DATA.rebuild?.();
     if(options.lineup)startGame(options);
     else if(!state.lineup.length&&!restoreState())startGame({packId:state.packId});
     else render();
@@ -499,8 +528,8 @@
   ensurePanel();
   patchHub();
 
-  const audit=auditPacks();
-  document.documentElement.setAttribute('data-keep-cut-balance-audit',audit.passed?'passed':'failed');
+  refreshAudit();
+  window.addEventListener('ufc-scoring-pipeline-ready',refreshAudit);
 
   const shared=parseShared();
   if(shared){
@@ -519,7 +548,8 @@
     open,
     startGame,
     buildLineup,
-    challengeUrl
+    challengeUrl,
+    refreshAudit
   };
   document.documentElement.setAttribute('data-keep-cut',VERSION);
   window.dispatchEvent(new CustomEvent('ufc-keep-cut-ready',{detail:{version:VERSION,audit}}));
