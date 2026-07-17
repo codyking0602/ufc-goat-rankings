@@ -1,4 +1,4 @@
-# PR execution trigger v2
+# PR execution trigger v3
 name: Run Quinton Rampage Jackson Integration
 
 on:
@@ -87,6 +87,7 @@ jobs:
       - name: Run production browser audit
         shell: bash
         run: |
+          exec > >(tee quinton-browser-audit.log) 2>&1
           set -euo pipefail
           npm init -y >/dev/null 2>&1
           npm install --no-save playwright@1.52.0 >/dev/null 2>&1
@@ -128,9 +129,20 @@ jobs:
             fs.writeFileSync('assets/data/octagon-verdict/audits/quinton-jackson-runtime-audit.json',JSON.stringify({generatedAt:new Date().toISOString(),fighterCount:x.boot.report.fighterCount,productionStatus:x.boot.status,categoryStatus:x.category.status,row:x.row,divisionReport:x.boot.divisionReport,photoSync:x.photoSync,watchLinks:x.links,pageErrors:errors},null,2)+'\n');
             console.log(JSON.stringify({rank:o.rank,ovr:o.appOvr,totalScore:o.totalScore,links:x.links}));
             await browser.close();
-          })().catch(e=>{console.error(e);process.exit(1)});
+          })().catch(e=>{console.error(e.stack||e);process.exit(1)});
           NODE
           node scripts/rebuild-octagon-verdict-index.mjs
+
+      - name: Persist browser audit failure
+        if: failure()
+        shell: bash
+        run: |
+          cp /tmp/ufc-http.log quinton-http-server.log 2>/dev/null || true
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add quinton-browser-audit.log quinton-http-server.log
+          git commit -m 'Capture Quinton browser audit failure [skip ci]' || true
+          git push origin HEAD:${{ github.head_ref || 'main' }}
 
       - name: Commit verified production output
         shell: bash
