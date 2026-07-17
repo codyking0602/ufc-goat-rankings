@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='product-architecture-20260717a';
+  const VERSION='product-architecture-20260717b';
   const RANKING_VIEWS=['men','women','division','categories'];
   const DESTINATIONS=[
     {key:'home',label:'Home',view:'home'},
@@ -22,6 +22,11 @@
   let currentRankingView='men';
   let applying=false;
   let resizeTimer=0;
+  let warRoomAccess={
+    disabled:true,
+    betaAccess:'locked',
+    member:''
+  };
 
   const text=value=>String(value??'').trim();
 
@@ -32,6 +37,8 @@
     style.textContent=`
       .tabs[data-product-architecture]{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:7px!important;overflow:visible!important;padding:8px 14px!important}
       .tabs[data-product-architecture] .tab{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;min-width:0!important;max-width:none!important;min-height:40px!important;height:40px!important;margin:0!important;padding:6px 8px!important;box-sizing:border-box!important;white-space:nowrap!important;line-height:1!important}
+      .tabs[data-product-architecture] .tab[data-destination="war-room"]:disabled{opacity:.52;cursor:not-allowed}
+      .tabs[data-product-architecture] .tab[data-destination="war-room"][data-beta-access="owner"]{border-color:rgba(249,115,22,.62)}
       .rankings-subnav{display:none;align-items:center;gap:7px;margin:0 0 12px;padding:7px;border:1px solid var(--line,#263244);border-radius:15px;background:rgba(15,23,42,.72)}
       .rankings-subnav.active{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
       .rankings-subnav button{min-width:0;min-height:38px;border:1px solid transparent;border-radius:11px;background:transparent;color:var(--muted,#94a3b8);cursor:pointer;font:900 12px/1 system-ui;padding:7px 8px}
@@ -91,13 +98,33 @@
     return subnav;
   }
 
+  function captureWarRoomAccess(root=document){
+    const button=root.querySelector?.('[data-octagon-beta-tab]');
+    if(!button)return warRoomAccess;
+    warRoomAccess={
+      disabled:Boolean(button.disabled||button.getAttribute('aria-disabled')==='true'),
+      betaAccess:text(button.dataset.betaAccess)||'locked',
+      member:text(button.dataset.betaMember)
+    };
+    return warRoomAccess;
+  }
+
   function destinationMarkup(){
-    return DESTINATIONS.map(item=>`<button type="button" class="tab${item.key===currentDestination?' active':''}" data-destination="${item.key}" data-view="${item.view}" aria-selected="${item.key===currentDestination?'true':'false'}">${item.label}</button>`).join('');
+    return DESTINATIONS.map(item=>{
+      const selected=item.key===currentDestination;
+      if(item.key!=='war-room'){
+        return `<button type="button" class="tab${selected?' active':''}" data-destination="${item.key}" data-view="${item.view}" aria-selected="${selected?'true':'false'}">${item.label}</button>`;
+      }
+      const disabled=warRoomAccess.disabled;
+      const member=warRoomAccess.member?` data-beta-member="${warRoomAccess.member.replace(/"/g,'&quot;')}"`:'';
+      return `<button type="button" class="tab${selected?' active':''}" data-destination="war-room" data-view="octagon" data-octagon-beta-tab="true" data-beta-access="${warRoomAccess.betaAccess}"${member} aria-selected="${selected?'true':'false'}" aria-disabled="${disabled?'true':'false'}" aria-label="${disabled?'War Room access not enabled':'Open The War Room'}" title="${disabled?'War Room access not enabled':'Open The War Room'}" ${disabled?'disabled':''}>War Room</button>`;
+    }).join('');
   }
 
   function normalizeNavigation(){
     const nav=document.querySelector('nav.tabs');
     if(!nav)return null;
+    captureWarRoomAccess(nav);
     applying=true;
     nav.dataset.productArchitecture=VERSION;
     nav.setAttribute('aria-label','Primary app destinations');
@@ -157,6 +184,10 @@
   }
 
   function activateView(view,{updateHash=true}={}){
+    captureWarRoomAccess();
+    if(view==='octagon'&&warRoomAccess.disabled){
+      view='men';
+    }
     if(RANKING_VIEWS.includes(view))currentRankingView=view;
     currentDestination=destinationForView(view);
 
@@ -192,6 +223,10 @@
   function activateDestination(destination){
     const item=DESTINATIONS.find(entry=>entry.key===destination);
     if(!item)return;
+    if(destination==='war-room'){
+      captureWarRoomAccess();
+      if(warRoomAccess.disabled)return;
+    }
     activateView(destination==='rankings'?currentRankingView:item.view);
   }
 
@@ -212,6 +247,7 @@
       if(destinationButton){
         event.preventDefault();
         event.stopImmediatePropagation();
+        if(destinationButton.disabled||destinationButton.getAttribute('aria-disabled')==='true')return;
         activateDestination(destinationButton.dataset.destination);
         return;
       }
@@ -243,7 +279,7 @@
         });
       }
     });
-    observer.observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:['style','class','disabled','aria-label']});
+    observer.observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:['style','class','disabled','aria-label','aria-disabled','data-beta-access','data-beta-member']});
   }
 
   function applyArchitecture(){
@@ -260,12 +296,13 @@
   }
 
   function start(){
-    currentRankingView=RANKING_VIEWS.includes(parseHash())?parseHash():'men';
-    currentDestination=destinationForView(parseHash());
+    const initialView=parseHash();
+    currentRankingView=RANKING_VIEWS.includes(initialView)?initialView:'men';
+    currentDestination=destinationForView(initialView);
     applyArchitecture();
     bindEvents();
     protectArchitecture();
-    activateView(parseHash(),{updateHash:Boolean(window.location.hash)});
+    activateView(initialView,{updateHash:Boolean(window.location.hash)});
     [80,300,900,2200].forEach(delay=>window.setTimeout(applyArchitecture,delay));
   }
 
