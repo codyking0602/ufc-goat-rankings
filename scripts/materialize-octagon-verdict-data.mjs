@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// Materializes the calculated browser feed into stable per-fighter files and an aggregate index.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -23,6 +24,18 @@ const fighters=Array.isArray(feed.fighters)?feed.fighters:[];
 if(!Number.isInteger(feed.fighterCount)||feed.fighterCount<=0)fail('Feed fighterCount is missing or invalid.');
 if(fighters.length!==feed.fighterCount)fail(`Feed has ${fighters.length} fighter objects but fighterCount is ${feed.fighterCount}.`);
 
+const divisionBoardsByFighter=new Map();
+for(const [division,rows] of Object.entries(feed.divisionBoards||{})){
+  for(const row of Array.isArray(rows)?rows:[]){
+    const name=String(row?.fighter||row?.name||'').trim();
+    if(!name)continue;
+    const enriched={...row,division:row.division||division};
+    const current=divisionBoardsByFighter.get(name)||[];
+    current.push(enriched);
+    divisionBoardsByFighter.set(name,current);
+  }
+}
+
 fs.mkdirSync(fighterDir,{recursive:true});
 const seenNames=new Set();
 const seenSlugs=new Set();
@@ -34,11 +47,14 @@ const materialized=fighters.map(fighter=>{
   if(seenNames.has(name))fail(`Duplicate fighter name: ${name}.`);
   if(seenSlugs.has(slug))fail(`Duplicate fighter slug: ${slug}.`);
   seenNames.add(name);seenSlugs.add(slug);
-  const object={...fighter,slug,name};
+  const divisionBoards=Array.isArray(fighter?.divisionBoards)&&fighter.divisionBoards.length
+    ? fighter.divisionBoards
+    : divisionBoardsByFighter.get(name)||[];
+  const object={...fighter,slug,name,divisionBoards};
   if(!Number.isFinite(Number(object.rank)))fail(`${name} is missing calculated rank.`);
   if(!Number.isFinite(Number(object.appOvr)))fail(`${name} is missing calculated OVR.`);
   if(!Number.isFinite(Number(object.totalScore)))fail(`${name} is missing calculated total score.`);
-  if(!Array.isArray(object.divisionBoards))fail(`${name} is missing divisionBoards.`);
+  if(!Array.isArray(object.divisionBoards)||object.divisionBoards.length===0)fail(`${name} is missing divisionBoards.`);
   writeJson(path.join(fighterDir,`${slug}.json`),object);
   return object;
 });
