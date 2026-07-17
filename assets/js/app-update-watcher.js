@@ -1,11 +1,11 @@
 (function(){
   'use strict';
 
-  const VERSION='app-update-watcher-20260716n-even-refresh-progress';
+  const VERSION='app-update-watcher-20260717o-brandon-moreno-whats-new';
   const RESTORE_KEY='ufc-goat-manual-refresh-v1';
   const PROGRESS_KEY='ufc-goat-manual-refresh-progress-v1';
   const LAST_DURATION_KEY='ufc-goat-manual-refresh-duration-v1';
-  const WHATS_NEW_KEY='ufc-whats-new-20260716';
+  const WHATS_NEW_KEY='ufc-whats-new-20260717-brandon-moreno';
   const LEGACY_KEYS=['ufc-goat-update-restore-v1','ufc-goat-update-target-v1'];
   const DEFAULT_PROGRESS_MS=3200;
   let progressTimers=[];
@@ -20,7 +20,12 @@
   function cleanRefreshParameter(){
     const url=new URL(window.location.href);
     let changed=false;
-    ['__manual_refresh','__shell'].forEach(key=>{if(url.searchParams.has(key)){url.searchParams.delete(key);changed=true;}});
+    ['__manual_refresh','__shell'].forEach(key=>{
+      if(url.searchParams.has(key)){
+        url.searchParams.delete(key);
+        changed=true;
+      }
+    });
     if(changed)window.history.replaceState(window.history.state,'',`${url.pathname}${url.search}${url.hash}`);
   }
 
@@ -51,7 +56,10 @@
 
   function restoreState(){
     let state=null;
-    try{state=JSON.parse(sessionStorage.getItem(RESTORE_KEY)||'null');sessionStorage.removeItem(RESTORE_KEY);}catch(_error){}
+    try{
+      state=JSON.parse(sessionStorage.getItem(RESTORE_KEY)||'null');
+      sessionStorage.removeItem(RESTORE_KEY);
+    }catch(_error){}
     if(!state)return;
     setControlValue('search',state.search);
     setControlValue('eraFilter',state.era);
@@ -59,12 +67,12 @@
     setControlValue('fighterA',state.fighterA);
     setControlValue('fighterB',state.fighterB);
     setControlValue('categoryBoardSelect',state.category);
-    if(typeof window.refresh==='function'){try{window.refresh();}catch(_error){}}
-    const tab=document.querySelector(`.tab[data-view="${state.activeView||'men'}"]`);
-    if(tab)tab.click();
+    if(typeof window.refresh==='function'){
+      try{window.refresh();}catch(_error){}
+    }
+    document.querySelector(`.tab[data-view="${state.activeView||'men'}"]`)?.click();
     if(state.activeView==='play'){
-      const mode=document.querySelector(`[data-play-mode="${state.playMode||'top10'}"]`);
-      if(mode)mode.click();
+      document.querySelector(`[data-play-mode="${state.playMode||'top10'}"]`)?.click();
     }
     if(state.era)document.getElementById('eraFilter')?.dispatchEvent(new Event('change',{bubbles:true}));
     if(state.category)document.getElementById('categoryBoardSelect')?.dispatchEvent(new Event('change',{bubbles:true}));
@@ -103,7 +111,10 @@
       const startedAt=Number(state?.startedAt);
       const storedExpected=Number(state?.expectedMs);
       if(Number.isFinite(startedAt)&&startedAt>0){
-        return{startedAt,expectedMs:Number.isFinite(storedExpected)?clampNumber(storedExpected,1800,8000):expectedMs};
+        return{
+          startedAt,
+          expectedMs:Number.isFinite(storedExpected)?clampNumber(storedExpected,1800,8000):expectedMs
+        };
       }
     }catch(_error){}
     return null;
@@ -147,7 +158,10 @@
     progressState=null;
     setProgress(100,true);
     const button=document.getElementById('manualRefreshBtn');
-    if(button){button.classList.remove('refreshing');button.removeAttribute('aria-busy');}
+    if(button){
+      button.classList.remove('refreshing');
+      button.removeAttribute('aria-busy');
+    }
     try{sessionStorage.removeItem(PROGRESS_KEY);}catch(_error){}
     progressTimers.push(window.setTimeout(()=>document.getElementById('manualRefreshProgress')?.classList.remove('visible'),360));
     progressTimers.push(window.setTimeout(()=>setProgress(0,false),700));
@@ -160,7 +174,9 @@
 
   function waitForModelReady(){
     if(window.UFC_SCORING_PIPELINE?.status==='ready'||document.documentElement.getAttribute('data-scoring-pipeline')==='ready')return Promise.resolve();
-    if(window.UFC_SCORING_PIPELINE_READY&&typeof window.UFC_SCORING_PIPELINE_READY.then==='function')return Promise.resolve(window.UFC_SCORING_PIPELINE_READY).catch(()=>undefined);
+    if(window.UFC_SCORING_PIPELINE_READY&&typeof window.UFC_SCORING_PIPELINE_READY.then==='function'){
+      return Promise.resolve(window.UFC_SCORING_PIPELINE_READY).catch(()=>undefined);
+    }
     return new Promise(resolve=>{
       let settled=false;
       const done=()=>{
@@ -180,15 +196,22 @@
     const state=readProgressState();
     if(!state)return;
     const button=document.getElementById('manualRefreshBtn');
-    if(button){button.classList.add('refreshing');button.setAttribute('aria-busy','true');}
+    if(button){
+      button.classList.add('refreshing');
+      button.setAttribute('aria-busy','true');
+    }
     beginProgress(state);
     Promise.allSettled([waitForPageReady(),waitForModelReady()]).then(finishProgress);
   }
 
   async function clearWebCaches(){
     const jobs=[];
-    if('caches'in window)jobs.push(caches.keys().then(keys=>Promise.all(keys.map(key=>caches.delete(key)))).catch(()=>undefined));
-    if(navigator.serviceWorker?.getRegistrations)jobs.push(navigator.serviceWorker.getRegistrations().then(items=>Promise.all(items.map(item=>item.unregister()))).catch(()=>undefined));
+    if('caches'in window){
+      jobs.push(caches.keys().then(keys=>Promise.all(keys.map(key=>caches.delete(key)))).catch(()=>undefined));
+    }
+    if(navigator.serviceWorker?.getRegistrations){
+      jobs.push(navigator.serviceWorker.getRegistrations().then(items=>Promise.all(items.map(item=>item.unregister()))).catch(()=>undefined));
+    }
     await Promise.allSettled(jobs);
   }
 
@@ -238,8 +261,7 @@
 
   function exploreUpdate(){
     closeWhatsNew();
-    const playTab=document.querySelector('.tab[data-view="play"]');
-    if(playTab)playTab.click();
+    document.querySelector('.tab[data-view="play"]')?.click();
     window.setTimeout(()=>window.scrollTo({top:0,left:0,behavior:'smooth'}),60);
   }
 
@@ -313,9 +335,9 @@
             </article>
             <article class="whats-new-card">
               <p class="whats-new-label"><i>➕</i> New fighters added</p>
-              <h3>Five more names enter the rankings</h3>
+              <h3>Six more names enter the rankings</h3>
               <div class="whats-new-fighters" aria-label="New fighters">
-                <span>Alexandre Pantoja</span><span>Paddy Pimblett</span><span>Chris Weidman</span><span>Tom Aspinall</span><span>Quinton “Rampage” Jackson</span>
+                <span>Alexandre Pantoja</span><span>Paddy Pimblett</span><span>Chris Weidman</span><span>Tom Aspinall</span><span>Quinton “Rampage” Jackson</span><span>Brandon Moreno</span>
               </div>
             </article>
           </div>
@@ -330,7 +352,9 @@
 
     document.getElementById('whatsNewClose')?.addEventListener('click',closeWhatsNew);
     document.getElementById('whatsNewExplore')?.addEventListener('click',exploreUpdate);
-    overlay.addEventListener('click',event=>{if(event.target===overlay)closeWhatsNew();});
+    overlay.addEventListener('click',event=>{
+      if(event.target===overlay)closeWhatsNew();
+    });
     document.addEventListener('keydown',event=>{
       if(event.key==='Escape'&&!overlay.hidden)closeWhatsNew();
     });
@@ -374,15 +398,27 @@
   }
 
   function loadChallengeCompatibility(){
-    loadScriptOnce('script[src*="play-challenge-compat.js"]','assets/js/play-challenge-compat.js?v=play-challenge-compat-20260715b-full-ready-identity','playChallengeCompat');
+    loadScriptOnce(
+      'script[src*="play-challenge-compat.js"]',
+      'assets/js/play-challenge-compat.js?v=play-challenge-compat-20260715b-full-ready-identity',
+      'playChallengeCompat'
+    );
   }
 
   function loadBlindDailyStartupFix(){
-    loadScriptOnce('script[src*="blind-daily-startup-fix.js"]','assets/js/blind-daily-startup-fix.js?v=blind-daily-startup-fix-20260715a','blindDailyStartupFix');
+    loadScriptOnce(
+      'script[src*="blind-daily-startup-fix.js"]',
+      'assets/js/blind-daily-startup-fix.js?v=blind-daily-startup-fix-20260715a',
+      'blindDailyStartupFix'
+    );
   }
 
   function loadDailyLeaderboard(){
-    loadScriptOnce('script[src*="play-daily-leaderboard.js"]','assets/js/play-daily-leaderboard.js?v=play-daily-leaderboard-20260715a','playDailyLeaderboard');
+    loadScriptOnce(
+      'script[src*="play-daily-leaderboard.js"]',
+      'assets/js/play-daily-leaderboard.js?v=play-daily-leaderboard-20260715a',
+      'playDailyLeaderboard'
+    );
   }
 
   function showWhatsNewOnce(){
@@ -390,7 +426,9 @@
     window.setTimeout(()=>openWhatsNew(),650);
   }
 
-  LEGACY_KEYS.forEach(key=>{try{sessionStorage.removeItem(key);}catch(_error){}});
+  LEGACY_KEYS.forEach(key=>{
+    try{sessionStorage.removeItem(key);}catch(_error){}
+  });
   cleanRefreshParameter();
   installButton();
   loadChallengeCompatibility();
