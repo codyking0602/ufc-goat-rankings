@@ -1,6 +1,6 @@
 {
-  "checked_at": "2026-07-17T17:07:24.393188+00:00",
+  "checked_at": "2026-07-17T17:08:34.062795+00:00",
   "code": "GOAT26",
-  "reason": "Supabase Management API returned HTTP 403: error code: 1010\n",
+  "reason": "Supabase Management API returned HTTP 400: {\"message\":\"Failed to run sql query: ERROR:  42883: function min(uuid) does not exist\\nHINT:  No function matches the given name and argument types. You might need to add explicit type casts.\\nQUERY:  select count(*),min(candidate.id)\\n                                              from (\\n      select g.id\\n      from public.pick_groups g\\n      join public.pick_group_members owner_member\\n        on owner_member.id=g.owner_member_id\\n      where lower(trim(g.name))='ufc picks'\\n        and lower(trim(owner_member.display_name))='cody'\\n        and coalesce(owner_member.is_active,true)\\n        and (\\n          select coalesce(array_agg(lower(trim(gm.display_name)) order by lower(trim(gm.display_name))),array[]::text[])\\n          from public.pick_group_members gm\\n          where gm.group_id=g.id\\n            and coalesce(gm.is_active,true)\\n        )=v_expected_names\\n    ) candidate\\nCONTEXT:  PL/pgSQL function inline_code_block line 47 at SQL statement\\n\"}",
   "status": "failed"
 }
