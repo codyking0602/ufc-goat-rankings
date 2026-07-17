@@ -1,11 +1,9 @@
 (function(){
   'use strict';
 
-  const VERSION='better-than-standalone-share-20260717j-find-leader-guaranteed-open';
+  const VERSION='better-than-standalone-share-20260717k-find-leader-stable-rollback';
   const FIND_LEADER_VERSION='find-leader-20260716c-daily-elimination';
-  const FIND_LEADER_READY_TIMEOUT=20000;
   let creating=false;
-  let findLeaderGateToken=0;
 
   function loadScriptOnce(selector,src,datasetKey,onload){
     const existing=document.querySelector(selector);
@@ -22,141 +20,10 @@
     return script;
   }
 
-  function findLeaderEnhancedReady(){
-    const game=window.UFC_FIND_LEADER;
-    const bank=window.UFC_FIND_LEADER_QUESTION_BANK;
-    return Boolean(game?.open&&game?.experienceVersion&&bank?.endless&&window.UFC_FIND_LEADER_EXPERIENCE);
-  }
-
-  function findLeaderCoreReady(){
-    const game=window.UFC_FIND_LEADER;
-    const bank=window.UFC_FIND_LEADER_QUESTION_BANK;
-    return Boolean(game?.open&&game?.version===FIND_LEADER_VERSION&&bank?.audit&&bank?.buildDefinition);
-  }
-
-  function verifiedFallbackSetup(){
-    const bank=window.UFC_FIND_LEADER_QUESTION_BANK;
-    if(!bank)return null;
-    try{
-      const enhanced=bank.endless?.({history:[],filter:'all',slot:0,random:Math.random})||bank.random?.(Math.random);
-      if(enhanced)return enhanced;
-    }catch(_error){}
-    try{
-      const raw=bank.originalMethods||bank;
-      const audit=raw.audit?.();
-      const row=(audit?.rows||[]).find(item=>item?.valid&&item?.definition);
-      const built=row?raw.buildDefinition?.(row.definition,Math.random):null;
-      return built?.setup||null;
-    }catch(_error){return null;}
-  }
-
-  function ensureFindLeaderBootPanel(status='loading'){
-    const shell=document.querySelector('#play .play-shell');
-    if(!shell)return null;
-    let panel=document.getElementById('playFindLeaderBootPanel');
-    if(!panel){
-      panel=document.createElement('section');
-      panel.id='playFindLeaderBootPanel';
-      panel.className='find-leader-panel play-panel';
-      shell.appendChild(panel);
-    }
-    shell.querySelectorAll('.play-panel').forEach(node=>{node.hidden=node!==panel;});
-    panel.hidden=false;
-    if(status==='error'){
-      panel.innerHTML='<section class="find-leader-loading"><span>GAME DATA NOT READY</span><h2>Find the Leader did not finish loading.</h2><p>The app stayed on this screen instead of opening a blank game. Tap retry to reconnect the verified question bank.</p><div class="find-leader-actions"><button type="button" class="find-leader-primary" data-find-leader-gate-retry>RETRY</button><button type="button" class="find-leader-secondary" data-find-leader-gate-home>ALL GAMES</button></div></section>';
-    }else{
-      panel.innerHTML='<section class="find-leader-loading"><span>LOADING VERIFIED BOARDS</span><h2>Building Find the Leader…</h2><p>Connecting the 50-question bank and preparing a verified ten-fighter board.</p></section>';
-    }
-    return panel;
-  }
-
-  function showFindLeaderBoot(status='loading'){
-    const hub=document.getElementById('playHub');
-    const shell=document.querySelector('#play .play-shell');
-    const gameNav=document.getElementById('playGameNav');
-    if(hub)hub.hidden=true;
-    if(shell)shell.hidden=false;
-    if(gameNav)gameNav.hidden=false;
-    document.getElementById('play')?.classList.add('play-game-active');
-    const eyebrow=document.getElementById('playGameEyebrow');
-    const title=document.getElementById('playGameTitle');
-    const subtitle=document.querySelector('#play .section-title p');
-    if(eyebrow)eyebrow.textContent='ENDLESS ELIMINATION';
-    if(title)title.textContent='Find the Leader';
-    if(subtitle)subtitle.textContent='Loading verified UFC stat boards before the game opens.';
-    document.documentElement.setAttribute('data-play-screen','find-leader-loading');
-    ensureFindLeaderBootPanel(status)?.scrollIntoView({block:'start'});
-  }
-
-  function returnFromFindLeaderGate(){
-    findLeaderGateToken+=1;
-    document.getElementById('playFindLeaderBootPanel')?.setAttribute('hidden','');
-    window.UFC_PLAY_HUB?.showHub?.();
-  }
-
-  function openVerifiedFindLeader(){
-    if(!findLeaderCoreReady())return false;
-    const game=window.UFC_FIND_LEADER;
-    document.getElementById('playFindLeaderBootPanel')?.setAttribute('hidden','');
-    let opened=false;
-    if(findLeaderEnhancedReady()){
-      try{opened=game.open()!==false;}catch(_error){opened=false;}
-    }
-    if(!opened){
-      const setup=verifiedFallbackSetup();
-      if(!setup)return false;
-      try{opened=game.open({setup})!==false;}catch(_error){opened=false;}
-    }
-    if(opened){
-      document.documentElement.setAttribute('data-play-screen','find-leader');
-      document.getElementById('playGameNav')?.scrollIntoView({block:'start'});
-      return true;
-    }
-    return false;
-  }
-
-  function queueFindLeaderOpen(){
-    const token=++findLeaderGateToken;
-    showFindLeaderBoot('loading');
-    const started=Date.now();
-    const check=()=>{
-      if(token!==findLeaderGateToken)return;
-      if(openVerifiedFindLeader())return;
-      if(Date.now()-started>=FIND_LEADER_READY_TIMEOUT){
-        showFindLeaderBoot('error');
-        return;
-      }
-      window.setTimeout(check,80);
-    };
-    check();
-  }
-
-  function installFindLeaderReadyGate(){
-    document.addEventListener('click',event=>{
-      if(event.target.closest?.('[data-find-leader-gate-home]')){
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        returnFromFindLeaderGate();
-        return;
-      }
-      if(event.target.closest?.('[data-find-leader-gate-retry]')){
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        queueFindLeaderOpen();
-        return;
-      }
-      const trigger=event.target.closest?.('[data-open-game="find-leader"]');
-      if(!trigger||findLeaderEnhancedReady())return;
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      queueFindLeaderOpen();
-    },true);
-  }
-
   function patchFindLeaderHubCopy(){
     const card=document.querySelector('.play-game-card[data-open-game="find-leader"]');
     const description=card?.querySelector('.play-game-copy small');
-    if(description)description.textContent='Endless elimination across fifty verified UFC stat questions. Leave the leader standing and keep the run alive.';
+    if(description)description.textContent='Eliminate nine fighters without removing the verified leader. Fifty questions rotate across eras, filters, main events, and official UFC stats.';
   }
 
   function patchBalancedDailySetup(){
@@ -190,44 +57,19 @@
       link.dataset.findLeaderEliminationStyle='true';
       document.head.appendChild(link);
     }
-    if(!document.querySelector('link[data-find-leader-experience-style]')){
-      const link=document.createElement('link');
-      link.rel='stylesheet';
-      link.href='assets/css/find-leader-experience.css?v=find-leader-experience-css-20260717a';
-      link.dataset.findLeaderExperienceStyle='true';
-      document.head.appendChild(link);
-    }
 
-    const recoveryReady=()=>{patchBalancedDailySetup();loadDailyTools();};
-    const loadRecovery=()=>loadScriptOnce(
-      'script[data-find-leader-runtime-recovery]',
-      'assets/js/find-leader-runtime-recovery.js?v=find-leader-runtime-recovery-20260717a',
-      'findLeaderRuntimeRecovery',
-      recoveryReady
-    );
-    const loadExperience=()=>loadScriptOnce(
-      'script[data-find-leader-experience]',
-      'assets/js/find-leader-experience.js?v=find-leader-experience-20260717a-endless-control-center',
-      'findLeaderExperience',
-      loadRecovery
-    );
+    const gameReady=()=>{patchBalancedDailySetup();loadDailyTools();};
     const loadGame=()=>{
       if(window.UFC_FIND_LEADER?.version!==FIND_LEADER_VERSION){
         document.getElementById('playFindLeaderPanel')?.remove();
-        loadScriptOnce('script[data-find-leader-daily-elimination]','assets/js/find-leader.js?v=find-leader-20260716c-daily-elimination','findLeaderDailyElimination',loadExperience);
-      }else loadExperience();
+        loadScriptOnce('script[data-find-leader-daily-elimination]','assets/js/find-leader.js?v=find-leader-20260716c-daily-elimination','findLeaderDailyElimination',gameReady);
+      }else gameReady();
     };
-    const loadQuality=()=>loadScriptOnce(
-      'script[data-find-leader-quality]',
-      'assets/js/find-leader-quality.js?v=find-leader-quality-20260717a-control-center',
-      'findLeaderQuality',
-      loadGame
-    );
     const loadQuestionBank=()=>loadScriptOnce(
       'script[data-find-leader-question-bank-fifty]',
       'assets/data/find-leader-question-bank.js?v=find-leader-question-bank-20260717c-fifty-balanced',
       'findLeaderQuestionBankFifty',
-      loadQuality
+      loadGame
     );
     loadScriptOnce(
       'script[data-find-leader-record-book]',
@@ -307,8 +149,8 @@
     if(findLeader)setTimeout(()=>{
       const eyebrow=document.getElementById('playGameEyebrow');
       const subtitle=document.querySelector('#play .section-title p');
-      if(eyebrow)eyebrow.textContent='ENDLESS ELIMINATION';
-      if(subtitle)subtitle.textContent='Play verified UFC stat boards back to back. No repeats inside your previous 14 questions.';
+      if(eyebrow)eyebrow.textContent='ELIMINATION GAME';
+      if(subtitle)subtitle.textContent='Eliminate the non-leaders one by one. Pick the stat leader and your run ends.';
     },0);
     const findLeaderHome=event.target.closest?.('#playFindLeaderPanel [data-play-home]');
     if(findLeaderHome){event.preventDefault();window.UFC_PLAY_HUB?.showHub?.();return;}
@@ -319,7 +161,6 @@
     createChallenge(trigger);
   },true);
 
-  installFindLeaderReadyGate();
   loadFindLeaderAssets();
   document.documentElement.setAttribute('data-better-than-standalone-share',VERSION);
 })();
