@@ -1,7 +1,8 @@
 (function(){
   'use strict';
 
-  const VERSION='keep-cut-standalone-share-20260716d-blind-resume-rpc-fix';
+  const VERSION='keep-cut-standalone-share-20260717a-rating-ledger-bootstrap';
+  const RATING_LEDGER_SRC='assets/data/keep-cut-category-ratings.js?v=keep-cut-category-ratings-20260717a-phase-one';
   const profile=window.UFC_PLAY_PROFILE;
   const client=profile?.client;
   let creating=false;
@@ -107,6 +108,19 @@
     finally{creating=false;if(trigger){trigger.disabled=false;trigger.textContent=original;}}
   }
 
+  function loadCategoryRatings(){
+    if(window.UFC_KEEP_CUT_CATEGORY_RATINGS)return;
+    if(document.querySelector('script[data-keep-cut-category-ratings-loader]'))return;
+    const script=document.createElement('script');
+    script.src=RATING_LEDGER_SRC;
+    script.async=false;
+    script.dataset.keepCutCategoryRatingsLoader='true';
+    script.addEventListener('error',()=>{
+      document.documentElement.setAttribute('data-keep-cut-rating-ledger','load-error');
+    },{once:true});
+    document.head.appendChild(script);
+  }
+
   function loadBlindRankSharing(){
     if(document.querySelector('script[data-blind-rank-standalone-share]'))return;
     const script=document.createElement('script');
@@ -125,6 +139,7 @@
 
   function install(){
     if(redirectIncomingLegacyLink())return;
+    loadCategoryRatings();
     loadBlindRankSharing();
     loadBlindResumeSharing();
     document.addEventListener('click',event=>{
