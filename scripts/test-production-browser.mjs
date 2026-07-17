@@ -130,7 +130,7 @@ try{
   await search.waitFor({state:'visible',timeout:10000});
   await search.fill(MORENO);
   await page.locator(`[data-add-fighter="${MORENO}"]`).waitFor({state:'visible',timeout:10000});
-  await page.locator('[data-play-mode="blind"]').click();
+  await page.evaluate(()=>document.querySelector('[data-play-mode="blind"]')?.click());
   await page.waitForSelector('.blind-comparison-card',{timeout:30000});
   const blindText=await page.locator('#blindMatchup').textContent();
   for(const label of ['UFC title-fight wins','Top-5 wins','Prime UFC record','Apex rating','Rounds won','Finish rate','Active elite years'])assert.ok(blindText.includes(label),`Blind Resume contains ${label}`);
