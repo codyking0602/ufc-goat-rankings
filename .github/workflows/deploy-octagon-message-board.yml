@@ -1,0 +1,202 @@
+name: Deploy Octagon Message Board
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy-octagon-message-board.yml'
+      - 'supabase/octagon-message-board-foundation.sql'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy-octagon-message-board
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate Octagon schema source
+        run: |
+          grep -q "create table if not exists public.octagon_access" supabase/octagon-message-board-foundation.sql
+          grep -q "create table if not exists public.octagon_messages" supabase/octagon-message-board-foundation.sql
+          grep -q "create table if not exists public.octagon_reactions" supabase/octagon-message-board-foundation.sql
+          grep -q "between 1 and 500" supabase/octagon-message-board-foundation.sql
+          grep -q "one reply level only" supabase/octagon-message-board-foundation.sql
+          grep -q "reaction in ('like','dislike')" supabase/octagon-message-board-foundation.sql
+          grep -q "America/Chicago" supabase/octagon-message-board-foundation.sql
+
+      - name: Apply and audit Octagon schema in Supabase
+        env:
+          SUPABASE_PROJECT_REF: hdkjwezaswhisxupxydc
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import urllib.error
+          import urllib.request
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          project=os.environ['SUPABASE_PROJECT_REF']
+          token=os.environ.get('SUPABASE_ACCESS_TOKEN','').strip()
+          status_path=Path('supabase/octagon-deployment-status.json')
+          migration=Path('supabase/octagon-message-board-foundation.sql').read_text()
+
+          audit_sql="""
+          select jsonb_build_object(
+            'status','active',
+            'code',g.code,
+            'is_canonical',coalesce(g.is_canonical,false),
+            'current_week_start',public.octagon_week_start(now()),
+            'active_members',(
+              select count(*)
+              from public.pick_group_members gm
+              where gm.group_id=g.id and coalesce(gm.is_active,true)
+            ),
+            'access_rows',(
+              select count(*)
+              from public.octagon_access oa
+              where oa.group_id=g.id
+            ),
+            'enabled_members',(
+              select count(*)
+              from public.octagon_access oa
+              where oa.group_id=g.id and oa.can_access
+            ),
+            'cody_enabled',exists(
+              select 1
+              from public.octagon_access oa
+              join public.pick_group_members gm on gm.id=oa.member_id
+              where oa.group_id=g.id
+                and oa.can_access
+                and lower(trim(gm.display_name))='cody'
+            ),
+            'messages',(
+              select count(*)
+              from public.octagon_messages m
+              where m.group_id=g.id
+            ),
+            'replies',(
+              select count(*)
+              from public.octagon_messages m
+              where m.group_id=g.id and m.parent_message_id is not null
+            ),
+            'reactions',(
+              select count(*)
+              from public.octagon_reactions r
+              join public.octagon_messages m on m.id=r.message_id
+              where m.group_id=g.id
+            ),
+            'rls_enabled',(
+              select bool_and(c.relrowsecurity)
+              from pg_class c
+              where c.oid in (
+                'public.octagon_access'::regclass,
+                'public.octagon_messages'::regclass,
+                'public.octagon_reactions'::regclass
+              )
+            ),
+            'tables',jsonb_build_object(
+              'access',to_regclass('public.octagon_access') is not null,
+              'messages',to_regclass('public.octagon_messages') is not null,
+              'reactions',to_regclass('public.octagon_reactions') is not null
+            )
+          ) as audit
+          from public.pick_groups g
+          where g.code='GOAT26' and coalesce(g.is_canonical,false)
+          limit 1;
+          """
+
+          def write(payload):
+              value=dict(payload)
+              value['checked_at']=datetime.now(timezone.utc).isoformat()
+              status_path.write_text(json.dumps(value,indent=2,sort_keys=True)+'\n')
+
+          def query(sql,read_only=False):
+              request=urllib.request.Request(
+                  f'https://api.supabase.com/v1/projects/{project}/database/query',
+                  data=json.dumps({'query':sql,'read_only':read_only}).encode(),
+                  headers={
+                      'Accept':'application/json',
+                      'Authorization':f'Bearer {token}',
+                      'Content-Type':'application/json',
+                      'User-Agent':'UFC-Octagon-GitHub-Actions/1.0',
+                      'X-Client-Info':'ufc-goat-rankings-octagon',
+                  },
+                  method='POST',
+              )
+              try:
+                  with urllib.request.urlopen(request,timeout=90) as response:
+                      return json.loads(response.read().decode() or 'null')
+              except urllib.error.HTTPError as error:
+                  detail=error.read().decode(errors='replace')[:1600]
+                  raise RuntimeError(f'Supabase Management API returned HTTP {error.code}: {detail}') from error
+
+          def audit_value(response):
+              rows=response.get('result',response) if isinstance(response,dict) else response
+              value=rows[0].get('audit') if isinstance(rows,list) and rows and isinstance(rows[0],dict) else None
+              if isinstance(value,str):
+                  value=json.loads(value)
+              if not isinstance(value,dict):
+                  raise RuntimeError('Octagon schema audit returned no canonical GOAT26 group.')
+              return value
+
+          if not token:
+              write({'status':'blocked','code':'GOAT26','reason':'SUPABASE_ACCESS_TOKEN is not configured.'})
+              raise SystemExit(0)
+
+          try:
+              query(migration,read_only=False)
+              audit=audit_value(query(audit_sql,read_only=True))
+              tables=audit.get('tables') or {}
+              if (
+                  audit.get('code')!='GOAT26'
+                  or not audit.get('is_canonical')
+                  or int(audit.get('active_members') or 0)<1
+                  or int(audit.get('access_rows') or 0)!=int(audit.get('active_members') or 0)
+                  or int(audit.get('enabled_members') or 0)<1
+                  or not audit.get('cody_enabled')
+                  or not audit.get('rls_enabled')
+                  or not all(tables.get(name) for name in ('access','messages','reactions'))
+              ):
+                  raise RuntimeError(f'Octagon schema audit failed: {audit}')
+              audit['deployment_method']='supabase-management-api'
+              audit['phase']='database-foundation'
+              write(audit)
+              print('Octagon tables, weekly clock, access seed, RLS, and data guards verified.')
+          except Exception as error:
+              reason=str(error).replace(token,'[redacted]')[:2000]
+              write({'status':'failed','code':'GOAT26','phase':'database-foundation','reason':reason})
+              raise
+          PY
+
+      - name: Commit Octagon deployment record
+        if: always()
+        run: |
+          if git diff --quiet -- supabase/octagon-deployment-status.json; then
+            echo 'Octagon deployment record is unchanged.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add supabase/octagon-deployment-status.json
+          git commit -m 'Record Octagon database foundation deployment [skip ci]'
+          for attempt in 1 2 3; do
+            git pull --rebase origin main
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            sleep $((attempt * 2))
+          done
+          echo 'Could not push the Octagon deployment record after three attempts.' >&2
+          exit 1
