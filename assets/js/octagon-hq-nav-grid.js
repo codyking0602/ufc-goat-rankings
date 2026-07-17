@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='octagon-hq-nav-grid-20260717f';
+  const VERSION='octagon-hq-nav-grid-20260717g';
   let resizeTimer=0;
 
   function installLayoutStyles(){
@@ -10,12 +10,13 @@
     style.id='octagonHqCompressionCss';
     style.textContent=`
       @media(max-width:900px){
-        .hero{padding:9px 16px 8px!important;gap:5px!important}
+        .hero{padding:9px 16px 2px!important;gap:5px!important}
+        .hero>div:first-child{margin-bottom:0!important;padding-bottom:0!important}
         .hero .eyebrow{margin:0 0 4px!important;font-size:9px!important;letter-spacing:.12em!important}
         .hero h1{font-size:clamp(34px,9.5vw,42px)!important;line-height:.91!important}
         .hero #manualRefreshControl{margin-bottom:0!important}
         #manualRefreshBtn,#whatsNewBtn{min-height:29px!important;padding:5px 9px!important;font-size:.65rem!important}
-        .hero .octagon-title-row{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;width:100%!important;min-width:0!important}
+        .hero .octagon-title-row{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;width:100%!important;min-width:0!important;margin:0!important;padding:0!important}
         .hero .octagon-title-row h1{min-width:0!important;flex:1 1 auto!important}
         .hero .octagon-title-row .app-profile-tools{display:block!important;width:auto!important;min-width:0!important;max-width:none!important;margin:0!important;flex:0 0 auto!important}
         .hero .octagon-title-row .hero-card{display:none!important}
@@ -24,18 +25,19 @@
         .hero .octagon-title-row .app-profile-chip-copy small{display:none!important}
         .hero .octagon-title-row .app-profile-chip-copy strong{margin:0!important;font-size:11.5px!important}
         .hero .octagon-title-row .app-profile-chip-badge{font-size:7px!important}
-        .tabs{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-auto-flow:row!important;align-items:stretch!important;justify-items:stretch!important;overflow:visible!important;flex-wrap:initial!important;gap:5px!important;padding:6px 10px!important}
+        .hero .octagon-hq-count{display:none!important;margin:0!important;height:0!important;overflow:hidden!important}
+        .tabs{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-auto-flow:row!important;align-items:stretch!important;justify-items:stretch!important;overflow:visible!important;flex-wrap:initial!important;gap:5px!important;padding:3px 10px 5px!important;margin-top:0!important}
         .tabs .tab{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;min-width:0!important;max-width:none!important;height:40px!important;min-height:40px!important;max-height:40px!important;margin:0!important;padding:4px 2px!important;font-size:10.5px!important;line-height:1!important;white-space:normal!important;border-radius:12px!important;box-sizing:border-box!important;flex:none!important}
         .tabs .tab[data-view="rules"]{display:none!important}
       }
       @media(max-width:430px){
-        .hero{padding-top:7px!important}
+        .hero{padding-top:7px!important;padding-bottom:1px!important}
         .hero h1{font-size:34px!important}
         .hero .octagon-title-row{gap:7px!important}
         .hero .octagon-title-row .app-profile-chip{min-width:118px!important;max-width:138px!important;height:38px!important;min-height:38px!important;grid-template-columns:28px minmax(0,1fr) auto!important;padding:3px 6px!important;gap:6px!important}
         .hero .octagon-title-row .app-profile-avatar{width:28px!important;height:28px!important;min-width:28px!important}
         .hero .octagon-title-row .app-profile-chip-copy strong{font-size:11px!important}
-        .tabs{gap:5px!important;padding:5px 9px!important}
+        .tabs{gap:5px!important;padding:3px 9px 4px!important}
         .tabs .tab{height:38px!important;min-height:38px!important;max-height:38px!important;font-size:10px!important;border-radius:11px!important}
       }
       @media(max-width:360px){
@@ -47,8 +49,9 @@
     document.head.appendChild(style);
   }
 
-  function removeSubtitle(){
+  function removeRedundantHeroCopy(){
     document.querySelector('.hero .subtitle')?.remove();
+    document.querySelector('.hero .octagon-hq-count')?.remove();
   }
 
   function forceBetaLabel(){
@@ -93,7 +96,8 @@
     nav.style.setProperty('justify-items','stretch','important');
     nav.style.setProperty('overflow','visible','important');
     nav.style.setProperty('gap','5px','important');
-    nav.style.setProperty('padding',window.innerWidth<=430?'5px 9px':'6px 10px','important');
+    nav.style.setProperty('padding',window.innerWidth<=430?'3px 9px 4px':'3px 10px 5px','important');
+    nav.style.setProperty('margin-top','0','important');
 
     const rules=nav.querySelector('.tab[data-view="rules"]');
     if(rules)rules.style.setProperty('display','none','important');
@@ -125,7 +129,7 @@
 
   function apply(){
     installLayoutStyles();
-    removeSubtitle();
+    removeRedundantHeroCopy();
     placeProfileByTitle();
     forceBetaLabel();
     forceGrid();
@@ -145,7 +149,7 @@
     [50,220,850,2200,5000].forEach(delay=>window.setTimeout(apply,delay));
   }
 
-  window.UFC_OCTAGON_HQ_NAV_GRID={version:VERSION,apply,forceBetaLabel,forceGrid,removeSubtitle,placeProfileByTitle};
+  window.UFC_OCTAGON_HQ_NAV_GRID={version:VERSION,apply,forceBetaLabel,forceGrid,removeRedundantHeroCopy,placeProfileByTitle};
   document.documentElement.setAttribute('data-octagon-hq-nav-grid',VERSION);
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
   else start();
