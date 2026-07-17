@@ -120,6 +120,19 @@ jobs:
           path: octagon-verdict-knowledge.md
           if-no-files-found: error
 
+      - name: Commit refreshed Markdown on same-repo pull request
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add octagon-verdict-knowledge.md
+          if git diff --cached --quiet; then
+            echo "Octagon Verdict Markdown is already current on the validation branch."
+          else
+            git commit -m "Rebuild Octagon Verdict Markdown knowledge pack [skip ci]"
+            git push origin HEAD:${{ github.head_ref }}
+          fi
+
       - name: Commit refreshed Markdown on main
         if: github.event_name == 'push' && success()
         run: |
