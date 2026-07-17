@@ -1,12 +1,12 @@
 {
-  "name": "UFC Rankings",
-  "short_name": "UFC Rankings",
-  "description": "UFC-only all-time fighter rankings with OVR ratings, profiles, divisions, and compare mode.",
-  "start_url": "./",
+  "name": "Octagon HQ",
+  "short_name": "Octagon HQ",
+  "description": "UFC rankings, picks, games, and the private GOAT26 Octagon board.",
+  "start_url": "./?open=octagon",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#eef3f8",
-  "theme_color": "#f97316",
+  "background_color": "#0b1220",
+  "theme_color": "#111827",
   "orientation": "portrait-primary",
   "icons": [
     {
