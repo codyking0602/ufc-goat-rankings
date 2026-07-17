@@ -1,6 +1,6 @@
 -- UFC App canonical group migration: GOAT26.
 -- Run after the Picks commissioner, social-retention, member-PIN, and shared Play identity migrations.
--- Safe to rerun. This renames the verified five-member friend group in place;
+-- Safe to rerun. This renames the verified six-member friend group in place;
 -- it does not copy or delete members, rooms, seasons, picks, or Play history.
 
 create extension if not exists pgcrypto;
@@ -33,7 +33,7 @@ revoke all on public.app_group_migration_log from anon,authenticated;
 
 do $$
 declare
-  v_expected_names text[]:=array['cody','daddy','rhonda','shane','tyler']::text[];
+  v_expected_names text[]:=array['brock','cody','rhonda','shane','tony','tyler']::text[];
   v_existing public.pick_groups;
   v_candidate_id uuid;
   v_candidate_count integer:=0;
@@ -55,7 +55,7 @@ begin
       and coalesce(gm.is_active,true);
 
     if v_actual_names<>v_expected_names then
-      raise exception 'GOAT26 exists, but its active members are not Cody, Daddy, Rhonda, Shane, and Tyler. No changes were made.';
+      raise exception 'GOAT26 exists, but its active members are not Brock, Cody, Rhonda, Shane, Tony, and Tyler. No changes were made.';
     end if;
 
     if not exists (
@@ -96,11 +96,11 @@ begin
     ) candidate;
 
     if v_candidate_count=0 or v_candidate_id is null then
-      raise exception 'The verified UFC Picks group with Cody, Daddy, Rhonda, Shane, and Tyler was not found. No changes were made.';
+      raise exception 'The verified UFC Picks group with Brock, Cody, Rhonda, Shane, Tony, and Tyler was not found. No changes were made.';
     end if;
 
     if v_candidate_count<>1 then
-      raise exception 'More than one group matches the five-member UFC Picks fingerprint. No changes were made.';
+      raise exception 'More than one group matches the six-member UFC Picks fingerprint. No changes were made.';
     end if;
 
     select code into v_old_code
@@ -254,7 +254,7 @@ declare
   v_group public.pick_groups;
   v_member public.pick_group_members;
   v_migration public.app_group_migration_log;
-  v_expected_names text[]:=array['cody','daddy','rhonda','shane','tyler']::text[];
+  v_expected_names text[]:=array['brock','cody','rhonda','shane','tony','tyler']::text[];
   v_actual_names text[];
 begin
   select * into v_group
