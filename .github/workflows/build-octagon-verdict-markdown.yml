@@ -87,21 +87,24 @@ jobs:
           set -o pipefail
           node tools/build-octagon-verdict-markdown.js 2>&1 | tee /tmp/octagon-markdown-build.log
 
-      - name: Validate Markdown authority and Moreno coverage
+      - name: Validate Markdown authority and Anthony Pettis coverage
         run: |
           node - <<'NODE'
           const fs=require('fs');
           const assert=require('assert/strict');
           const markdown=fs.readFileSync('octagon-verdict-knowledge.md','utf8');
           const count=Number(markdown.match(/Fighters: \*\*(\d+)\*\*/)?.[1]||0);
-          assert.equal(count,79);
-          const moreno=markdown.match(/### 47\. Brandon Moreno — 88 OVR[\s\S]*?(?=\n### \d+\.|\n## 11\.)/)?.[0]||'';
-          assert.ok(moreno,'Brandon Moreno fighter card is missing.');
-          assert.match(moreno,/\| men \| 45\.3 \| 11-7-2 \| Flyweight \| 3 \| 2\.65 \| 5 \| 7-4-1 \| 62\.2% \| 5\.73 \|/);
+          assert.equal(count,80);
+          const pettis=markdown.match(/### 57\. Anthony Pettis — 87 OVR[\s\S]*?(?=\n### \d+\.|\n## 11\.)/)?.[0]||'';
+          assert.ok(pettis,'Anthony Pettis fighter card is missing.');
+          assert.match(pettis,/Anthony “Showtime” Pettis/);
+          assert.match(pettis,/\| men \| 37\.5 \| 11-9 \| Lightweight \/ Featherweight \/ Welterweight \| 2 \| 2 \| 3 \| 7-6 \| 34\.4% \| 6\.61 \|/);
+          assert.match(pettis,/Benson Henderson II|Benson Henderson/);
+          assert.match(pettis,/Gilbert Melendez/);
           assert.ok(markdown.includes('Machine-readable JSON is optional and does not block fighter additions.'));
           assert.ok(markdown.includes('JSON exports are optional, run only when explicitly requested, and never block a fighter addition.'));
-          assert.ok(!markdown.includes('Fighters: **76**'));
-          console.log(`Validated required Octagon Verdict Markdown for ${count} fighters, including Brandon Moreno.`);
+          assert.ok(!markdown.includes('Fighters: **79**'));
+          console.log(`Validated required Octagon Verdict Markdown for ${count} fighters, including Anthony “Showtime” Pettis.`);
           NODE
 
       - name: Show diagnostics on failure
