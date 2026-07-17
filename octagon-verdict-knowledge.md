@@ -1,9 +1,9 @@
 # Octagon Verdict — Official UFC-Only Knowledge Pack
 
-Generated: **2026-07-16T22:37:11.776Z**  
+Generated: **2026-07-17T09:27:19.175Z**  
 Canonical model-as-of date: **2026-07-13**  
-Latest fighter-ledger verification date: **2026-07-15**  
-Fighters: **76**
+Latest fighter-ledger verification date: **2026-07-17**  
+Fighters: **79**
 
 > Generated from the live browser scoring runtime. This file is authoritative for Octagon Verdict explanations. Do not replace calculated values with legacy score patches, visible category percentiles, memory, or non-UFC achievements.
 
@@ -19,13 +19,13 @@ Octagon Verdict explains and debates the same UFC-only rankings shown by the app
 4. `category-calculators.js` reconstructs Championship, Opponent Quality, Prime Dominance, Longevity, Loss Penalty, Apex and Division-Era Depth.
 5. `ranking-pipeline.js` applies weights, modifiers, ranks, visible stats and fixed-anchor OVRs.
 6. `display-overrides.js` supplies human-facing explanations but does not own scores.
-7. `tools/build-octagon-verdict-data.js` publishes machine-readable JSON. This companion builder publishes the human-readable audit pack.
+7. `octagon-verdict-knowledge.md` is the required Octagon Verdict knowledge artifact. Machine-readable JSON is optional and does not block fighter additions.
 
 **Legacy warning:** compare coverage packs may contain old frozen score patches. They may supply narrative context, but the calculated runtime remains score authority.
 
 | Layer | Version |
 | --- | --- |
-| scoringPipeline | production-ranking-bootstrap-20260716p-intelligence-skip |
+| scoringPipeline | production-ranking-bootstrap-20260717b-brandon-moreno-79 |
 | rankingPipeline | ranking-pipeline-20260714b-direct-category-total-rank-ovr |
 | categoryCalculators | category-calculators-20260714c-seven-direct-calculators |
 | canonicalFacts | canonical-fighter-facts-20260713c-audited-rounds |
@@ -134,21 +134,24 @@ Division strength is implemented through fighter-specific canonical keys, era-le
 | 44 | Sean Strickland | 89 | 45.89 | 4.13 | 21.97 | 17.82 | 12.73 | +3.85 | -3.42 | +0.27 |
 | 45 | Deiveson Figueiredo | 89 | 45.88 | 5.57 | 20.11 | 17.97 | 12.06 | +4.38 | -3.38 | -0.37 |
 | 46 | Conor McGregor | 89 | 45.84 | 6.19 | 16.06 | 21.21 | 10.47 | +5.8 | -4.81 | -0.45 |
-| 47 | Vitor Belfort | 88 | 45.22 | 2.3 | 18.72 | 20.97 | 15.24 | +5.26 | -3.71 | -0.66 |
-| 48 | Lyoto Machida | 88 | 45.18 | 4.02 | 21.44 | 17.86 | 13.96 | +4.64 | -4.25 | -0.28 |
-| 49 | Rashad Evans | 88 | 44.95 | 1.85 | 21.41 | 19.7 | 15.6 | +4.99 | -4.42 | -0.52 |
-| 50 | Dricus du Plessis | 88 | 44.32 | 5.88 | 14.92 | 19.14 | 9.05 | +4.55 | -1.95 | +0.27 |
-| 51 | Dominick Cruz | 88 | 42.34 | 7.63 | 13.7 | 18.19 | 14.05 | +4.25 | -3.49 | -1.61 |
-| 52 | Royce Gracie | 88 | 42.17 | 4.85 | 9.55 | 25.12 | 3.4 | +5.3 | 0 | -3 |
-| 53 | Khamzat Chimaev | 88 | 40.84 | 1.96 | 13.86 | 19.61 | 11.08 | +5.17 | -1.89 | +0.42 |
-| 54 | Michael Bisping | 87 | 37.9 | 3.61 | 19.36 | 15.19 | 4.24 | +3.77 | -2.92 | +0.11 |
-| 55 | Sean O'Malley | 87 | 36.15 | 3.82 | 13.3 | 16.67 | 9.78 | +4.06 | -3.28 | -0.1 |
-| 56 | Mauricio "Shogun" Rua | 86 | 33 | 1.95 | 15.29 | 15.44 | 6.85 | +4.81 | -4.38 | -0.17 |
-| 57 | Forrest Griffin | 86 | 32.85 | 1.95 | 13.78 | 15.59 | 10.3 | +4.98 | -4.29 | -0.62 |
-| 58 | Brock Lesnar | 86 | 31.86 | 5.67 | 8.3 | 18.57 | 4.78 | +4.18 | -3.76 | -2.26 |
-| 59 | Dan Henderson | 84 | 27.2 | 0 | 13.64 | 13.22 | 9.63 | +4.47 | -4.5 | -0.57 |
-| 60 | Chael Sonnen | 84 | 23.58 | 0 | 9.87 | 15.2 | 7.72 | +3.44 | -4.75 | -1.11 |
-| 61 | Paddy Pimblett | 84 | 23.49 | 0 | 3.4 | 16.6 | 5.55 | +3.16 | -1.7 | +0.75 |
+| 47 | Brandon Moreno | 88 | 45.3 | 5.47 | 17.31 | 18.36 | 14.33 | +4.97 | -3.25 | -0.37 |
+| 48 | Vitor Belfort | 88 | 45.22 | 2.3 | 18.72 | 20.97 | 15.24 | +5.26 | -3.71 | -0.66 |
+| 49 | Lyoto Machida | 88 | 45.18 | 4.02 | 21.44 | 17.86 | 13.96 | +4.64 | -4.25 | -0.28 |
+| 50 | Rashad Evans | 88 | 44.95 | 1.85 | 21.41 | 19.7 | 15.6 | +4.99 | -4.42 | -0.52 |
+| 51 | Tom Aspinall | 88 | 44.48 | 3.09 | 10.45 | 23.59 | 11.19 | +5.09 | 0 | -0.25 |
+| 52 | Dricus du Plessis | 88 | 44.32 | 5.88 | 14.92 | 19.14 | 9.05 | +4.55 | -1.95 | +0.27 |
+| 53 | Dominick Cruz | 88 | 42.34 | 7.63 | 13.7 | 18.19 | 14.05 | +4.25 | -3.49 | -1.61 |
+| 54 | Royce Gracie | 88 | 42.17 | 4.85 | 9.55 | 25.12 | 3.4 | +5.3 | 0 | -3 |
+| 55 | Khamzat Chimaev | 88 | 40.84 | 1.96 | 13.86 | 19.61 | 11.08 | +5.17 | -1.89 | +0.42 |
+| 56 | Michael Bisping | 87 | 37.9 | 3.61 | 19.36 | 15.19 | 4.24 | +3.77 | -2.92 | +0.11 |
+| 57 | Sean O'Malley | 87 | 36.15 | 3.82 | 13.3 | 16.67 | 9.78 | +4.06 | -3.28 | -0.1 |
+| 58 | Quinton Jackson | 86 | 35.91 | 4.13 | 11.37 | 16.41 | 10.83 | +5.06 | -3.46 | 0 |
+| 59 | Mauricio "Shogun" Rua | 86 | 33 | 1.95 | 15.29 | 15.44 | 6.85 | +4.81 | -4.38 | -0.17 |
+| 60 | Forrest Griffin | 86 | 32.85 | 1.95 | 13.78 | 15.59 | 10.3 | +4.98 | -4.29 | -0.62 |
+| 61 | Brock Lesnar | 86 | 31.86 | 5.67 | 8.3 | 18.57 | 4.78 | +4.18 | -3.76 | -2.26 |
+| 62 | Dan Henderson | 84 | 27.2 | 0 | 13.64 | 13.22 | 9.63 | +4.47 | -4.5 | -0.57 |
+| 63 | Chael Sonnen | 84 | 23.58 | 0 | 9.87 | 15.2 | 7.72 | +3.44 | -4.75 | -1.11 |
+| 64 | Paddy Pimblett | 84 | 23.49 | 0 | 3.4 | 16.6 | 5.55 | +3.16 | -1.7 | +0.75 |
 
 ### Women
 
@@ -974,7 +977,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.582292**, cur
 | --- | --- | --- | --- |
 | Championship | 15.39 | #7 | 7.46 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 23.24 | #12 | 10.93 diminished credit / 14.1 benchmark |
-| Prime Dominance | 20.21 | #29 | 20.21 raw × 100.0% sample |
+| Prime Dominance | 20.21 | #30 | 20.21 raw × 100.0% sample |
 | Longevity | 20.69 | #9 | 99.32 counted elite months |
 | Apex | +5.34 | Modifier | High-end modern featherweight apex. |
 | Loss Penalty | -2.61 | Modifier | 3 official/technical loss events reviewed |
@@ -1405,8 +1408,8 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.535440**, cur
 | --- | --- | --- | --- |
 | Championship | 11.45 | #14 | 5.55 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 24.02 | #8 | 11.29 diminished credit / 14.1 benchmark |
-| Prime Dominance | 21.82 | #20 | 21.82 raw × 100.0% sample |
-| Longevity | 14.08 | #28 | 67.56 counted elite months |
+| Prime Dominance | 21.82 | #21 | 21.82 raw × 100.0% sample |
+| Longevity | 14.08 | #29 | 67.56 counted elite months |
 | Apex | +5.48 | Modifier | Elite welterweight king proof. |
 | Loss Penalty | -2.39 | Modifier | 3 official/technical loss events reviewed |
 | Division-Era Depth | +0.27 | Modifier | empirical era-depth row + locked curve |
@@ -1546,7 +1549,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.533397**, cur
 | --- | --- | --- | --- |
 | Championship | 8.95 | #20 | 4.34 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 27.87 | #3 | 13.1 diminished credit / 14.1 benchmark |
-| Prime Dominance | 19.1 | #38 | 19.1 raw × 100.0% sample |
+| Prime Dominance | 19.1 | #39 | 19.1 raw × 100.0% sample |
 | Longevity | 30 | #1 | 150.03 counted elite months |
 | Apex | +4.89 | Modifier | The consecutive elite stoppages merit more Aura while the existing Proof and best-fighter Claim remain appropriately calibrated. |
 | Loss Penalty | -4.37 | Modifier | 9 official/technical loss events reviewed |
@@ -1854,7 +1857,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.528712**, cur
 | --- | --- | --- | --- |
 | Championship | 14.88 | #9 | 7.21 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 23.06 | #13 | 10.84 diminished credit / 14.1 benchmark |
-| Prime Dominance | 17.44 | #51 | 17.44 raw × 100.0% sample |
+| Prime Dominance | 17.44 | #53 | 17.44 raw × 100.0% sample |
 | Longevity | 29.7 | #2 | 142.54 counted elite months |
 | Apex | +4.96 | Modifier | Two elite UFC title wins establish excellent Proof and a real best-fighter claim, while the Aura score stays conservative and WEC remains excluded. |
 | Loss Penalty | -5.15 | Modifier | 9 official/technical loss events reviewed |
@@ -2011,7 +2014,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.508289**, cur
 | --- | --- | --- | --- |
 | Championship | 15.85 | #6 | 7.68 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 19.79 | #29 | 9.3 diminished credit / 14.1 benchmark |
-| Prime Dominance | 21.15 | #25 | 21.15 raw × 100.0% sample |
+| Prime Dominance | 21.15 | #26 | 21.15 raw × 100.0% sample |
 | Longevity | 26.07 | #5 | 125.14 counted elite months |
 | Apex | +4.42 | Modifier | Returning from retirement to dominate Sylvia and stop Gonzaga creates a clear championship Apex despite lower raw performance ratings. |
 | Loss Penalty | -5.25 | Modifier | 8 official/technical loss events reviewed |
@@ -2169,8 +2172,8 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.487266**, cur
 | --- | --- | --- | --- |
 | Championship | 14.98 | #8 | 7.26 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 22.05 | #17 | 10.36 diminished credit / 14.1 benchmark |
-| Prime Dominance | 17.44 | #51 | 17.44 raw × 100.0% sample |
-| Longevity | 13.12 | #32 | 62.96 counted elite months |
+| Prime Dominance | 17.44 | #53 | 17.44 raw × 100.0% sample |
+| Longevity | 13.12 | #33 | 62.96 counted elite months |
 | Apex | +5.12 | Modifier | Stopping Whittaker and dominating unbeaten Costa support stronger Proof and Aura, but not a maximum Apex tier. |
 | Loss Penalty | -3.5 | Modifier | 6 official/technical loss events reviewed |
 | Division-Era Depth | -0.05 | Modifier | empirical era-depth row + locked curve |
@@ -2313,7 +2316,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.473090**, cur
 | --- | --- | --- | --- |
 | Championship | 11.86 | #12 | 5.75 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 19.12 | #35 | 8.99 diminished credit / 14.1 benchmark |
-| Prime Dominance | 20.65 | #28 | 20.65 raw × 100.0% sample |
+| Prime Dominance | 20.65 | #29 | 20.65 raw × 100.0% sample |
 | Longevity | 17.43 | #14 | 83.66 counted elite months |
 | Apex | +5.06 | Modifier | A dominant light-heavyweight defense followed by becoming heavyweight champion captures Cormier’s cleanest UFC-only six-month Apex. |
 | Loss Penalty | -3.01 | Modifier | 3 official/technical loss events reviewed |
@@ -2451,8 +2454,8 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.462638**, cur
 | --- | --- | --- | --- |
 | Championship | 12.05 | #10 | 5.84 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 18.43 | #39 | 8.66 diminished credit / 14.1 benchmark |
-| Prime Dominance | 21.32 | #23 | 21.32 raw × 100.0% sample |
-| Longevity | 11.11 | #42 | 53.32 counted elite months |
+| Prime Dominance | 21.32 | #24 | 21.32 raw × 100.0% sample |
+| Longevity | 11.11 | #44 | 53.32 counted elite months |
 | Apex | +5.53 | Modifier | Terrifying title-fight finisher aura. |
 | Loss Penalty | -2.94 | Modifier | 3 official/technical loss events reviewed |
 | Division-Era Depth | +0.16 | Modifier | empirical era-depth row + locked curve |
@@ -2589,7 +2592,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.453388**, cur
 | Championship | 9.28 | #18 | 4.5 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 19.84 | #28 | 9.32 diminished credit / 14.1 benchmark |
 | Prime Dominance | 26.94 | #3 | 26.94 raw × 100.0% sample |
-| Longevity | 8.64 | #51 | 41.47 counted elite months |
+| Longevity | 8.64 | #54 | 41.47 counted elite months |
 | Apex | +5.27 | Modifier | Two defining championship knockouts justify substantially stronger Proof while preserving the existing Claim and Aura. |
 | Loss Penalty | -3.09 | Modifier | 7 official/technical loss events reviewed |
 | Division-Era Depth | -2.94 | Modifier | empirical era-depth row + locked curve |
@@ -2728,9 +2731,9 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.444137**, cur
 
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
-| Championship | 3.63 | #47 | 1.76 adjusted credit / 14.54 benchmark |
+| Championship | 3.63 | #49 | 1.76 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 26.22 | #4 | 12.32 diminished credit / 14.1 benchmark |
-| Prime Dominance | 21.69 | #21 | 21.69 raw × 100.0% sample |
+| Prime Dominance | 21.69 | #22 | 21.69 raw × 100.0% sample |
 | Longevity | 18.46 | #12 | 88.62 counted elite months |
 | Apex | +4.84 | Modifier | Back-to-back elite finishes support greater Claim and Aura, with the later Islam loss still limiting the ceiling. |
 | Loss Penalty | -3.06 | Modifier | 11 official/technical loss events reviewed |
@@ -2887,8 +2890,8 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.437290**, cur
 | --- | --- | --- | --- |
 | Championship | 9.59 | #17 | 4.65 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 19.2 | #34 | 9.03 diminished credit / 14.1 benchmark |
-| Prime Dominance | 23.53 | #13 | 23.53 raw × 100.0% sample |
-| Longevity | 12.58 | #36 | 60.37 counted elite months |
+| Prime Dominance | 23.53 | #14 | 23.53 raw × 100.0% sample |
+| Longevity | 12.58 | #37 | 60.37 counted elite months |
 | Apex | +4.85 | Modifier | Two championship knockouts form a clean peak; the Cejudo loss and PED context constrain Claim and Aura. |
 | Loss Penalty | -3.35 | Modifier | 5 official/technical loss events reviewed |
 | Division-Era Depth | -1.33 | Modifier | empirical era-depth row + locked curve |
@@ -3025,8 +3028,8 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.420231**, cur
 | --- | --- | --- | --- |
 | Championship | 7.94 | #21 | 3.85 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 19.6 | #30 | 9.21 diminished credit / 14.1 benchmark |
-| Prime Dominance | 22.06 | #19 | 22.06 raw × 100.0% sample |
-| Longevity | 12.96 | #33 | 62.21 counted elite months |
+| Prime Dominance | 22.06 | #20 | 22.06 raw × 100.0% sample |
+| Longevity | 12.96 | #34 | 62.21 counted elite months |
 | Apex | +4.3 | Modifier | Consecutive elite championship wins deserve stronger Proof and a modestly higher Claim and Aura, while the later Petr Yan loss prevents a higher tier. |
 | Loss Penalty | -2.59 | Modifier | 3 official/technical loss events reviewed |
 | Division-Era Depth | -0.02 | Modifier | empirical era-depth row + locked curve |
@@ -3162,7 +3165,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.418549**, cur
 | --- | --- | --- | --- |
 | Championship | 5.88 | #34 | 2.85 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 23.83 | #10 | 11.2 diminished credit / 14.1 benchmark |
-| Prime Dominance | 19.51 | #35 | 19.51 raw × 100.0% sample |
+| Prime Dominance | 19.51 | #36 | 19.51 raw × 100.0% sample |
 | Longevity | 26.99 | #4 | 129.54 counted elite months |
 | Apex | +4.21 | Modifier | Lightweight title apex with Penn/Maynard proof. |
 | Loss Penalty | -4.51 | Modifier | 11 official/technical loss events reviewed |
@@ -3318,10 +3321,10 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.395363**, cur
 
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
-| Championship | 3.92 | #44 | 1.9 adjusted credit / 14.54 benchmark |
-| Opponent Quality | 17.26 | #40 | 8.11 diminished credit / 14.1 benchmark |
+| Championship | 3.92 | #46 | 1.9 adjusted credit / 14.54 benchmark |
+| Opponent Quality | 17.26 | #41 | 8.11 diminished credit / 14.1 benchmark |
 | Prime Dominance | 25.42 | #6 | 26.76 raw × 95.0% sample |
-| Longevity | 8.19 | #53 | 39.29 counted elite months |
+| Longevity | 8.19 | #56 | 39.29 counted elite months |
 | Apex | +5.65 | Modifier | Terrifying heavyweight apex with evolved title-fight proof. |
 | Loss Penalty | -1.07 | Modifier | 2 official/technical loss events reviewed |
 | Division-Era Depth | -0.09 | Modifier | empirical era-depth row + locked curve |
@@ -3447,9 +3450,9 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.382508**, cur
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
 | Championship | 7.84 | #22 | 3.8 adjusted credit / 14.54 benchmark |
-| Opponent Quality | 17.26 | #40 | 8.11 diminished credit / 14.1 benchmark |
-| Prime Dominance | 22.43 | #18 | 22.43 raw × 100.0% sample |
-| Longevity | 11.86 | #40 | 56.92 counted elite months |
+| Opponent Quality | 17.26 | #41 | 8.11 diminished credit / 14.1 benchmark |
+| Prime Dominance | 22.43 | #19 | 22.43 raw × 100.0% sample |
+| Longevity | 11.86 | #41 | 56.92 counted elite months |
 | Apex | +5.45 | Modifier | Two prolonged dominant wins over a prime elite champion represent a genuine all-time heavyweight Apex. |
 | Loss Penalty | -3.29 | Modifier | 3 official/technical loss events reviewed |
 | Division-Era Depth | -1.55 | Modifier | empirical era-depth row + locked curve |
@@ -3555,7 +3558,7 @@ _Ledger verified through 2026-07-13. Scores come from category-calculators-20260
 
 ### 24. Benson Henderson — 90 OVR
 
-Benson Henderson is ranked by the current UFC-only calculated pipeline.
+A decision-heavy lightweight champion whose four UFC title-fight wins and seven Top-5 victories give him one of the division’s deepest UFC-only ledgers.
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -3580,8 +3583,8 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.382148**, cur
 | --- | --- | --- | --- |
 | Championship | 7.55 | #25 | 3.66 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 21.38 | #22 | 10.05 diminished credit / 14.1 benchmark |
-| Prime Dominance | 19.38 | #36 | 19.38 raw × 100.0% sample |
-| Longevity | 11.83 | #41 | 56.78 counted elite months |
+| Prime Dominance | 19.38 | #37 | 19.38 raw × 100.0% sample |
+| Longevity | 11.83 | #42 | 56.78 counted elite months |
 | Apex | +4.58 | Modifier | A championship-winning peak with strong proof and separation, but below the highest all-time best-fighter and aura tier. |
 | Loss Penalty | -3.26 | Modifier | 3 official/technical loss events reviewed |
 | Division-Era Depth | -0.78 | Modifier | empirical era-depth row + locked curve |
@@ -3671,15 +3674,15 @@ Miller through Masvidal.
 
 #### Why ranked here
 
-Benson Henderson ranks #24 because Prime Dominance and Opponent Quality supply the largest weighted pieces of a 50.49 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
+Henderson ranks here because his lightweight run combined real championship volume with elite opponent depth. He beat Frankie Edgar twice, defended against Nate Diaz and Gilbert Melendez, and added strong contender wins over Jim Miller and Clay Guida while winning roughly two-thirds of his tracked rounds.
 
 #### Why not ranked higher?
 
-Benson Henderson is 0.03 raw points behind #23 Cain Velasquez. The largest category separation versus that next target is Prime Dominance; future movement must come from new UFC evidence and a full pipeline rerun.
+He does not rank higher because the title reign was strong rather than historically dominant, his 18% UFC finish rate limits the separation case, and prime stoppage losses to Anthony Pettis and Rafael dos Anjos damaged the résumé. Several signature decisions were close enough that his dominance case trails the cleaner lightweight peaks above him.
 
 #### Final takeaway
 
-Benson Henderson ranks #24 because Prime Dominance and Opponent Quality supply the largest weighted pieces of a 50.49 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
+Henderson ranks here because his lightweight run combined real championship volume with elite opponent depth. He beat Frankie Edgar twice, defended against Nate Diaz and Gilbert Melendez, and added strong contender wins over Jim Miller and Clay Guida while winning roughly two-thirds of his tracked rounds.
 
 _Ledger verified through 2026-07-13. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
 
@@ -3710,8 +3713,8 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.378784**, cur
 | --- | --- | --- | --- |
 | Championship | 6.5 | #29 | 3.15 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 24.02 | #8 | 11.29 diminished credit / 14.1 benchmark |
-| Prime Dominance | 18.16 | #46 | 19.12 raw × 95.0% sample |
-| Longevity | 8.64 | #51 | 41.47 counted elite months |
+| Prime Dominance | 18.16 | #48 | 19.12 raw × 95.0% sample |
+| Longevity | 8.64 | #54 | 41.47 counted elite months |
 | Apex | +4.36 | Modifier | Modern bantamweight title apex with Yan/Cejudo proof. |
 | Loss Penalty | -2.74 | Modifier | 5 official/technical loss events reviewed |
 | Division-Era Depth | -0.05 | Modifier | empirical era-depth row + locked curve |
@@ -3848,10 +3851,10 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.376982**, cur
 
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
-| Championship | 3.82 | #45 | 1.85 adjusted credit / 14.54 benchmark |
+| Championship | 3.82 | #47 | 1.85 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 22.34 | #15 | 10.5 diminished credit / 14.1 benchmark |
-| Prime Dominance | 22.5 | #16 | 22.5 raw × 100.0% sample |
-| Longevity | 12.92 | #34 | 62 counted elite months |
+| Prime Dominance | 22.5 | #17 | 22.5 raw × 100.0% sample |
+| Longevity | 12.92 | #35 | 62 counted elite months |
 | Apex | +4.97 | Modifier | A shutout over an elite challenger followed by a championship knockout captures JDS’s sharpest UFC peak. |
 | Loss Penalty | -2.82 | Modifier | 8 official/technical loss events reviewed |
 | Division-Era Depth | -1.98 | Modifier | empirical era-depth row + locked curve |
@@ -3992,7 +3995,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.368693**, cur
 | --- | --- | --- | --- |
 | Championship | 9.86 | #16 | 4.78 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 19.36 | #32 | 9.1 diminished credit / 14.1 benchmark |
-| Prime Dominance | 18.37 | #44 | 18.37 raw × 100.0% sample |
+| Prime Dominance | 18.37 | #45 | 18.37 raw × 100.0% sample |
 | Longevity | 16.65 | #20 | 79.91 counted elite months |
 | Apex | +4.44 | Modifier | Prime lightweight title aura and best-fighter argument. |
 | Loss Penalty | -3.91 | Modifier | 13 official/technical loss events reviewed |
@@ -4138,9 +4141,9 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.364728**, cur
 
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
-| Championship | 5.08 | #40 | 2.46 adjusted credit / 14.54 benchmark |
+| Championship | 5.08 | #41 | 2.46 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 20.51 | #24 | 9.64 diminished credit / 14.1 benchmark |
-| Prime Dominance | 18.83 | #41 | 18.83 raw × 100.0% sample |
+| Prime Dominance | 18.83 | #42 | 18.83 raw × 100.0% sample |
 | Longevity | 17.32 | #15 | 83.14 counted elite months |
 | Apex | +4.95 | Modifier | Topuria is a maximum-level Apex win: an undefeated two-division champion and pound-for-pound benchmark broken in a title unification fight. Paddy adds legitimate interim-title proof, but his lower opponent standing and Gaethje’s historically hittable style keep this below the mythic six-point tier. |
 | Loss Penalty | -3.47 | Modifier | 5 official/technical loss events reviewed |
@@ -4251,7 +4254,7 @@ _Ledger verified through 2026-07-13. Scores come from category-calculators-20260
 
 ### 29. Glover Teixeira — 89 OVR
 
-Glover Teixeira is ranked by the current UFC-only calculated pipeline.
+The late-career title miracle: sixteen UFC wins, thirteen ranked victories, relentless finishing, and a championship breakthrough after nearly a decade among the elite.
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -4274,9 +4277,9 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.357881**, cur
 
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
-| Championship | 2.05 | #52 | 0.99 adjusted credit / 14.54 benchmark |
+| Championship | 2.05 | #55 | 0.99 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 24.55 | #6 | 11.54 diminished credit / 14.1 benchmark |
-| Prime Dominance | 19.07 | #39 | 19.07 raw × 100.0% sample |
+| Prime Dominance | 19.07 | #40 | 19.07 raw × 100.0% sample |
 | Longevity | 23 | #7 | 110.4 counted elite months |
 | Apex | +4.25 | Modifier | Elite late-career title run with strong proof, but not a serious best-fighter-alive claim and only moderate Apex aura. |
 | Loss Penalty | -5.25 | Modifier | 7 official/technical loss events reviewed |
@@ -4378,15 +4381,15 @@ Bader through Jiri with long gaps capped.
 
 #### Why ranked here
 
-Glover Teixeira ranks #29 because Opponent Quality and Prime Dominance supply the largest weighted pieces of a 48.47 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
+Teixeira ranks here because his light-heavyweight résumé combines extraordinary longevity with real opponent depth and an improbable championship finish. He beat Rampage Jackson, Ryan Bader, Rashad Evans, Anthony Smith, Thiago Santos, and Jan Błachowicz, collected seven Top-5 wins, and finally won the belt during an elite run in his forties.
 
 #### Why not ranked higher?
 
-Glover Teixeira is 0.57 raw points behind #28 Justin Gaethje. The largest category separation versus that next target is Championship; future movement must come from new UFC evidence and a full pipeline rerun.
+He does not rank higher because the championship chapter produced only one title-fight win and no successful defense. His 12-6 prime contains several meaningful defeats, including finish losses to Anthony Johnson, Alexander Gustafsson, and Jiří Procházka, while the Corey Anderson decision is a damaging non-elite prime loss in the model.
 
 #### Final takeaway
 
-Glover Teixeira ranks #29 because Opponent Quality and Prime Dominance supply the largest weighted pieces of a 48.47 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
+Teixeira ranks here because his light-heavyweight résumé combines extraordinary longevity with real opponent depth and an improbable championship finish. He beat Rampage Jackson, Ryan Bader, Rashad Evans, Anthony Smith, Thiago Santos, and Jan Błachowicz, collected seven Top-5 wins, and finally won the belt during an elite run in his forties.
 
 _Ledger verified through 2026-07-13. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
 
@@ -4415,9 +4418,9 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.356679**, cur
 
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
-| Championship | 1.46 | #57 | 0.71 adjusted credit / 14.54 benchmark |
+| Championship | 1.46 | #60 | 0.71 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 25.05 | #5 | 11.78 diminished credit / 14.1 benchmark |
-| Prime Dominance | 18.81 | #42 | 18.81 raw × 100.0% sample |
+| Prime Dominance | 18.81 | #43 | 18.81 raw × 100.0% sample |
 | Longevity | 16.39 | #21 | 78.65 counted elite months |
 | Apex | +4.94 | Modifier | Two elite wins inside one year, capped by the interim lightweight title, provide exceptional Proof without a sustained best-fighter claim. |
 | Loss Penalty | -3.4 | Modifier | 9 official/technical loss events reviewed |
@@ -4565,9 +4568,9 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.355598**, cur
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
 | Championship | 9.08 | #19 | 4.4 adjusted credit / 14.54 benchmark |
-| Opponent Quality | 10.55 | #57 | 5.11 diminished credit / 14.54 benchmark |
-| Prime Dominance | 23.19 | #14 | 23.19 raw × 100.0% sample |
-| Longevity | 12.42 | #37 | 59.51 counted elite months |
+| Opponent Quality | 10.55 | #59 | 5.11 diminished credit / 14.54 benchmark |
+| Prime Dominance | 23.19 | #15 | 23.19 raw × 100.0% sample |
+| Longevity | 12.42 | #38 | 59.51 counted elite months |
 | Apex | +4.4 | Modifier | Elite modern flyweight apex below the mythic cross-divisional peaks. |
 | Loss Penalty | -2.08 | Modifier | 4 official/technical loss events reviewed |
 | Division-Era Depth | -0.75 | Modifier | Apply a modest modern-flyweight depth discount. |
@@ -4675,7 +4678,7 @@ _Ledger verified through 2026-07-15. Scores come from category-calculators-20260
 
 ### 32. Leon Edwards — 89 OVR
 
-Leon Edwards is ranked by the current UFC-only calculated pipeline.
+A patient welterweight champion whose two victories over Kamaru Usman, three title-fight wins, and long ranked ledger created a serious modern résumé.
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -4700,7 +4703,7 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.349471**, cur
 | --- | --- | --- | --- |
 | Championship | 5.98 | #33 | 2.9 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 21.01 | #23 | 9.88 diminished credit / 14.1 benchmark |
-| Prime Dominance | 16.4 | #56 | 16.4 raw × 100.0% sample |
+| Prime Dominance | 16.4 | #59 | 16.4 raw × 100.0% sample |
 | Longevity | 15.95 | #23 | 76.58 counted elite months |
 | Apex | +4.11 | Modifier | The title-winning knockout carries enormous Proof, but losing most of the first fight sharply reduces its performance rating; Claim and Aura remain deliberately conservative. |
 | Loss Penalty | -2.61 | Modifier | 5 official/technical loss events reviewed |
@@ -4790,15 +4793,15 @@ Rafael dos Anjos through Sean Brady with all gaps capped at 18 months.
 
 #### Why ranked here
 
-Leon Edwards ranks #32 because Opponent Quality and Prime Dominance supply the largest weighted pieces of a 47.77 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
+Edwards ranks here because he paired a long climb through the welterweight rankings with championship proof at the very top. He dethroned Kamaru Usman with one of the sport’s greatest late knockouts, beat him again over five rounds, defended against Colby Covington, and accumulated eleven ranked UFC wins across a durable elite run.
 
 #### Why not ranked higher?
 
-Leon Edwards is 0.51 raw points behind #31 Alexandre Pantoja. The largest category separation versus that next target is Prime Dominance; future movement must come from new UFC evidence and a full pipeline rerun.
+He does not rank higher because the reign stopped at three title-fight wins, his finishing rate is modest, and the Belal Muhammad title loss followed by the Sean Brady submission weakened the back end of the prime. His résumé is deep, but it lacks the title volume and sustained control of the welterweight legends above him.
 
 #### Final takeaway
 
-Leon Edwards ranks #32 because Opponent Quality and Prime Dominance supply the largest weighted pieces of a 47.77 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
+Edwards ranks here because he paired a long climb through the welterweight rankings with championship proof at the very top. He dethroned Kamaru Usman with one of the sport’s greatest late knockouts, beat him again over five rounds, defended against Colby Covington, and accumulated eleven ranked UFC wins across a durable elite run.
 
 _Ledger verified through 2026-07-13. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
 
@@ -4828,8 +4831,8 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.349231**, cur
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
 | Championship | 10.54 | #15 | 5.11 adjusted credit / 14.54 benchmark |
-| Opponent Quality | 14.44 | #48 | 6.79 diminished credit / 14.1 benchmark |
-| Prime Dominance | 18.95 | #40 | 18.95 raw × 100.0% sample |
+| Opponent Quality | 14.44 | #49 | 6.79 diminished credit / 14.1 benchmark |
+| Prime Dominance | 18.95 | #41 | 18.95 raw × 100.0% sample |
 | Longevity | 21.89 | #8 | 105.08 counted elite months |
 | Apex | +3.99 | Modifier | Early UFC LHW title apex. |
 | Loss Penalty | -3.82 | Modifier | 11 official/technical loss events reviewed |
@@ -4981,9 +4984,9 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.347790**, cur
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
 | Championship | 6.27 | #30 | 3.04 adjusted credit / 14.54 benchmark |
-| Opponent Quality | 14.71 | #47 | 6.91 diminished credit / 14.1 benchmark |
-| Prime Dominance | 21.5 | #22 | 22.63 raw × 95.0% sample |
-| Longevity | 10.09 | #46 | 48.41 counted elite months |
+| Opponent Quality | 14.71 | #48 | 6.91 diminished credit / 14.1 benchmark |
+| Prime Dominance | 21.5 | #23 | 22.63 raw × 95.0% sample |
+| Longevity | 10.09 | #49 | 48.41 counted elite months |
 | Apex | +5.95 | Modifier | Volkanovski plus Oliveira is monster UFC peak proof. |
 | Loss Penalty | -2.75 | Modifier | 1 official/technical loss events reviewed |
 | Division-Era Depth | -0.01 | Modifier | empirical era-depth row + locked curve |
@@ -5107,9 +5110,9 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.346108**, cur
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
 | Championship | 7.53 | #26 | 3.65 adjusted credit / 14.54 benchmark |
-| Opponent Quality | 14.81 | #46 | 6.96 diminished credit / 14.1 benchmark |
-| Prime Dominance | 19.57 | #34 | 19.57 raw × 100.0% sample |
-| Longevity | 13.41 | #31 | 64.37 counted elite months |
+| Opponent Quality | 14.81 | #47 | 6.96 diminished credit / 14.1 benchmark |
+| Prime Dominance | 19.57 | #35 | 19.57 raw × 100.0% sample |
+| Longevity | 13.41 | #32 | 64.37 counted elite months |
 | Apex | +4.69 | Modifier | The Lawler knockout is elite, while the low-output Thompson rematch keeps separation, Claim, and Aura contained. |
 | Loss Penalty | -2.37 | Modifier | 6 official/technical loss events reviewed |
 | Division-Era Depth | 0 | Modifier | Treat Woodley-era welterweight as neutral. The measured +0.21 is too small and too sensitive to justify an affirmative GOAT bonus. |
@@ -5217,7 +5220,7 @@ _Ledger verified through 2026-07-13. Scores come from category-calculators-20260
 
 ### 36. Fabricio Werdum — 89 OVR
 
-Fabricio Werdum is ranked by the current UFC-only calculated pipeline.
+A complete heavyweight champion whose submission of Cain Velasquez crowned a deep six-year run of elite wins, finishes, and high-level round control.
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -5240,9 +5243,9 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.344786**, cur
 
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
-| Championship | 3.4 | #49 | 1.65 adjusted credit / 14.54 benchmark |
+| Championship | 3.4 | #51 | 1.65 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 20.37 | #25 | 9.57 diminished credit / 14.1 benchmark |
-| Prime Dominance | 20.8 | #27 | 20.8 raw × 100.0% sample |
+| Prime Dominance | 20.8 | #28 | 20.8 raw × 100.0% sample |
 | Longevity | 15.27 | #26 | 73.28 counted elite months |
 | Apex | +5.17 | Modifier | The Cain upset supplies elite proof and a real best-heavyweight claim, supported by the interim-title Hunt finish. |
 | Loss Penalty | -3.8 | Modifier | 6 official/technical loss events reviewed |
@@ -5334,15 +5337,15 @@ Nelson through Volkov.
 
 #### Why ranked here
 
-Fabricio Werdum ranks #36 because Prime Dominance and Opponent Quality supply the largest weighted pieces of a 47.38 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
+Werdum ranks here because his UFC résumé is much deeper than a one-night title upset. He stopped Mark Hunt for the interim belt, submitted Cain Velasquez for the undisputed championship, beat Antônio Rodrigo Nogueira and Travis Browne, collected ten ranked wins, and maintained a 9-3 prime with strong finishing and round-winning numbers.
 
 #### Why not ranked higher?
 
-Fabricio Werdum is 0.11 raw points behind #35 Tyron Woodley. The largest category separation versus that next target is Championship; future movement must come from new UFC evidence and a full pipeline rerun.
+He does not rank higher because he recorded only two UFC title-fight wins and never completed an undisputed defense. The Stipe Miocic knockout ended the reign immediately, and later prime losses to Alistair Overeem and Alexander Volkov added further damage. His contender résumé is excellent, but the championship control is too brief for the heavyweight GOAT tier.
 
 #### Final takeaway
 
-Fabricio Werdum ranks #36 because Prime Dominance and Opponent Quality supply the largest weighted pieces of a 47.38 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
+Werdum ranks here because his UFC résumé is much deeper than a one-night title upset. He stopped Mark Hunt for the interim belt, submitted Cain Velasquez for the undisputed championship, beat Antônio Rodrigo Nogueira and Travis Browne, collected ten ranked wins, and maintained a 9-3 prime with strong finishing and round-winning numbers.
 
 _Ledger verified through 2026-07-13. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
 
@@ -5373,8 +5376,8 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.343705**, cur
 | --- | --- | --- | --- |
 | Championship | 5.78 | #36 | 2.8 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 20.16 | #26 | 9.47 diminished credit / 14.1 benchmark |
-| Prime Dominance | 20.08 | #30 | 20.08 raw × 100.0% sample |
-| Longevity | 9.28 | #49 | 44.55 counted elite months |
+| Prime Dominance | 20.08 | #31 | 20.08 raw × 100.0% sample |
+| Longevity | 9.28 | #52 | 44.55 counted elite months |
 | Apex | +4.46 | Modifier | Championship-level Lawler apex with Hendricks II and Rory II proof. |
 | Loss Penalty | -3.74 | Modifier | 11 official/technical loss events reviewed |
 | Division-Era Depth | -0.14 | Modifier | empirical era-depth row + locked curve |
@@ -5514,9 +5517,9 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.343585**, cur
 
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
-| Championship | 3.01 | #50 | 1.46 adjusted credit / 14.54 benchmark |
+| Championship | 3.01 | #53 | 1.46 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 23.46 | #11 | 11.03 diminished credit / 14.1 benchmark |
-| Prime Dominance | 17.39 | #53 | 17.39 raw × 100.0% sample |
+| Prime Dominance | 17.39 | #55 | 17.39 raw × 100.0% sample |
 | Longevity | 19.56 | #11 | 93.91 counted elite months |
 | Apex | +4.1 | Modifier | Legit middleweight apex with Jacare/Romero proof. |
 | Loss Penalty | -3.75 | Modifier | 7 official/technical loss events reviewed |
@@ -5659,10 +5662,10 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.339741**, cur
 
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
-| Championship | 1.32 | #58 | 0.64 adjusted credit / 14.54 benchmark |
+| Championship | 1.32 | #61 | 0.64 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 18.83 | #36 | 8.85 diminished credit / 14.1 benchmark |
-| Prime Dominance | 22.46 | #17 | 22.46 raw × 100.0% sample |
-| Longevity | 12.36 | #38 | 59.35 counted elite months |
+| Prime Dominance | 22.46 | #18 | 22.46 raw × 100.0% sample |
+| Longevity | 12.36 | #39 | 59.35 counted elite months |
 | Apex | +4.9 | Modifier | The RDA win and interim-title victory best capture Ferguson’s elite proof, streak energy, and chaos-driven Aura. |
 | Loss Penalty | -2.01 | Modifier | 9 official/technical loss events reviewed |
 | Division-Era Depth | +0.26 | Modifier | empirical era-depth row + locked curve |
@@ -5797,9 +5800,9 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.338419**, cur
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
 | Championship | 7.51 | #27 | 3.64 adjusted credit / 14.54 benchmark |
-| Opponent Quality | 14.04 | #49 | 6.6 diminished credit / 14.1 benchmark |
-| Prime Dominance | 22.52 | #15 | 25.02 raw × 90.0% sample |
-| Longevity | 4.77 | #58 | 22.9 counted elite months |
+| Opponent Quality | 14.04 | #50 | 6.6 diminished credit / 14.1 benchmark |
+| Prime Dominance | 22.52 | #16 | 25.02 raw × 90.0% sample |
+| Longevity | 4.77 | #61 | 22.9 counted elite months |
 | Apex | +4.35 | Modifier | Champ-champ peak proof in a compact run. |
 | Loss Penalty | -1.69 | Modifier | 6 official/technical loss events reviewed |
 | Division-Era Depth | -0.38 | Modifier | empirical era-depth row + locked curve |
@@ -5927,8 +5930,8 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.331932**, cur
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
 | Championship | 7.63 | #23 | 3.7 adjusted credit / 14.54 benchmark |
-| Opponent Quality | 13.33 | #54 | 6.46 diminished credit / 14.54 benchmark |
-| Prime Dominance | 19.73 | #31 | 19.73 raw × 100.0% sample |
+| Opponent Quality | 13.33 | #55 | 6.46 diminished credit / 14.54 benchmark |
+| Prime Dominance | 19.73 | #32 | 19.73 raw × 100.0% sample |
 | Longevity | 16.71 | #19 | 80.23 counted elite months |
 | Apex | +5.68 | Modifier | The Silva knockout establishes world-best proof; the five-round Machida defense confirms championship-level separation. |
 | Loss Penalty | -4.18 | Modifier | 8 official/technical loss events reviewed |
@@ -6040,7 +6043,7 @@ _Ledger verified through 2026-07-15. Scores come from category-calculators-20260
 
 ### 42. Frank Shamrock — 89 OVR
 
-Frank Shamrock is ranked by the current UFC-only calculated pipeline.
+A perfect early-UFC champion who went 5-0 with five title-fight wins, five finishes, and a defining victory over Tito Ortiz.
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -6064,9 +6067,9 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.328328**, cur
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
 | Championship | 6.2 | #31 | 3 adjusted credit / 14.54 benchmark |
-| Opponent Quality | 10.64 | #56 | 5 diminished credit / 14.1 benchmark |
+| Opponent Quality | 10.64 | #58 | 5 diminished credit / 14.1 benchmark |
 | Prime Dominance | 25.99 | #5 | 28.88 raw × 90.0% sample |
-| Longevity | 4.59 | #59 | 22.05 counted elite months |
+| Longevity | 4.59 | #62 | 22.05 counted elite months |
 | Apex | +5.39 | Modifier | The inaugural title win and dominant Tito defense create an elite early-era Apex with explicit, formula-reconciling components. |
 | Loss Penalty | 0 | Modifier | 0 official/technical loss events reviewed |
 | Division-Era Depth | -3 | Modifier | empirical era-depth row + locked curve |
@@ -6139,15 +6142,15 @@ Jackson through Ortiz.
 
 #### Why ranked here
 
-Frank Shamrock ranks #42 because Prime Dominance and Opponent Quality supply the largest weighted pieces of a 46.01 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
+Shamrock ranks here because his short UFC run was flawless at championship level. He won all five appearances, finished every opponent, controlled every tracked round, and closed the run by stopping Tito Ortiz in the strongest performance of his UFC résumé.
 
 #### Why not ranked higher?
 
-Frank Shamrock is 0.3 raw points behind #41 Chris Weidman. The largest category separation versus that next target is Longevity; future movement must come from new UFC evidence and a full pipeline rerun.
+He does not rank higher because the entire UFC case spans only five fights and roughly 1.8 active elite years. The early light-heavyweight field was much thinner than later eras, only three wins reach Top-5 quality in the current model, and the limited sample cannot match champions who proved themselves across multiple generations.
 
 #### Final takeaway
 
-Frank Shamrock ranks #42 because Prime Dominance and Opponent Quality supply the largest weighted pieces of a 46.01 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
+Shamrock ranks here because his short UFC run was flawless at championship level. He won all five appearances, finished every opponent, controlled every tracked round, and closed the run by stopping Tito Ortiz in the strongest performance of his UFC résumé.
 
 _Ledger verified through 2026-07-13. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
 
@@ -6176,9 +6179,9 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.327367**, cur
 
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
-| Championship | 5.39 | #39 | 2.61 adjusted credit / 14.54 benchmark |
-| Opponent Quality | 17.18 | #42 | 8.07 diminished credit / 14.1 benchmark |
-| Prime Dominance | 17.91 | #48 | 17.91 raw × 100.0% sample |
+| Championship | 5.39 | #40 | 2.61 adjusted credit / 14.54 benchmark |
+| Opponent Quality | 17.18 | #43 | 8.07 diminished credit / 14.1 benchmark |
+| Prime Dominance | 17.91 | #50 | 17.91 raw × 100.0% sample |
 | Longevity | 16.93 | #17 | 81.27 counted elite months |
 | Apex | +4.15 | Modifier | High-skill bantamweight apex. |
 | Loss Penalty | -2.34 | Modifier | 4 official/technical loss events reviewed |
@@ -6313,10 +6316,10 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.326886**, cur
 
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
-| Championship | 4.13 | #42 | 2 adjusted credit / 14.54 benchmark |
+| Championship | 4.13 | #43 | 2 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 21.97 | #18 | 10.32 diminished credit / 14.1 benchmark |
-| Prime Dominance | 17.82 | #50 | 17.82 raw × 100.0% sample |
-| Longevity | 12.73 | #35 | 61.12 counted elite months |
+| Prime Dominance | 17.82 | #52 | 17.82 raw × 100.0% sample |
+| Longevity | 12.73 | #36 | 61.12 counted elite months |
 | Apex | +3.85 | Modifier | Izzy win gives real apex proof. |
 | Loss Penalty | -3.42 | Modifier | 7 official/technical loss events reviewed |
 | Division-Era Depth | +0.27 | Modifier | empirical era-depth row + locked curve |
@@ -6460,8 +6463,8 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.326766**, cur
 | --- | --- | --- | --- |
 | Championship | 5.57 | #38 | 2.7 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 20.11 | #27 | 9.45 diminished credit / 14.1 benchmark |
-| Prime Dominance | 17.97 | #47 | 17.97 raw × 100.0% sample |
-| Longevity | 12.06 | #39 | 57.89 counted elite months |
+| Prime Dominance | 17.97 | #49 | 17.97 raw × 100.0% sample |
+| Longevity | 12.06 | #40 | 57.89 counted elite months |
 | Apex | +4.38 | Modifier | A compliant two-win championship peak replaces the non-winning Moreno selection with no final score change. |
 | Loss Penalty | -3.38 | Modifier | 7 official/technical loss events reviewed |
 | Division-Era Depth | -0.37 | Modifier | empirical era-depth row + locked curve |
@@ -6599,9 +6602,9 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.326285**, cur
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
 | Championship | 6.19 | #32 | 3 adjusted credit / 14.54 benchmark |
-| Opponent Quality | 16.06 | #43 | 7.55 diminished credit / 14.1 benchmark |
-| Prime Dominance | 21.21 | #24 | 21.21 raw × 100.0% sample |
-| Longevity | 10.47 | #44 | 50.27 counted elite months |
+| Opponent Quality | 16.06 | #44 | 7.55 diminished credit / 14.1 benchmark |
+| Prime Dominance | 21.21 | #25 | 21.21 raw × 100.0% sample |
+| Longevity | 10.47 | #47 | 50.27 counted elite months |
 | Apex | +5.8 | Modifier | Two-division superstar apex. |
 | Loss Penalty | -4.81 | Modifier | 5 official/technical loss events reviewed |
 | Division-Era Depth | -0.45 | Modifier | empirical era-depth row + locked curve |
@@ -6705,9 +6708,150 @@ Conor is the UFC iconic-moment king: massive peak impact and history-changing st
 
 _Ledger verified through 2026-07-13. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
 
-### 47. Vitor Belfort — 88 OVR
+### 47. Brandon Moreno — 88 OVR
 
-Vitor Belfort is ranked by the current UFC-only calculated pipeline.
+The resilient two-reign flyweight champion: three UFC title-fight wins, a 2-1-1 Figueiredo rivalry edge, and nearly six active elite years.
+
+| Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| men | 45.3 | 11-7-2 | Flyweight | 3 | 2.65 | 5 | 7-4-1 | 62.2% | 5.73 |
+
+#### Exact model math
+
+| Component | Category value | Weight | Weighted contribution |
+| --- | --- | --- | --- |
+| Championship | 5.47 | 35 | 6.38 |
+| Opponent Quality | 17.31 | 25 | 14.42 |
+| Prime Dominance | 18.36 | 30 | 18.36 |
+| Longevity | 14.33 | 10 | 4.78 |
+
+Base score: **43.94**. Modifiers: Apex **+4.97**, Loss Penalty **-3.25**, Division-Era Depth **-0.37**. Final raw score: **45.3**.
+
+OVR conversion: 18.68–101.92 board anchors, normalized score **0.319798**, curved score **0.379441**, resulting in **88 OVR**. Only the board leader may receive 99.
+
+#### Category breakdown
+
+| Category | Score | Board rank | Primary receipt |
+| --- | --- | --- | --- |
+| Championship | 5.47 | #39 | 2.65 adjusted credit / 14.54 benchmark |
+| Opponent Quality | 17.31 | #40 | 8.39 diminished credit / 14.54 benchmark |
+| Prime Dominance | 18.36 | #46 | 18.36 raw × 100.0% sample |
+| Longevity | 14.33 | #28 | 68.8 counted elite months |
+| Apex | +4.97 | Modifier | The UFC 263 submission and UFC 283 title reclaim are two championship-proven performances that define Moreno’s four-fight rivalry and flyweight peak. |
+| Loss Penalty | -3.25 | Modifier | 7 official/technical loss events reviewed |
+| Division-Era Depth | -0.37 | Modifier | Use a modest modern-flyweight discount. The division is deeper than its launch era, but still below the strongest lightweight and welterweight periods. |
+
+#### Championship receipts
+
+UFC title-fight wins: **3**. Adjusted title wins: **2.65**. Derived undisputed-title win count: **2**. Interim-title win count: **1**.
+
+| Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
+| --- | --- | --- | --- | --- | --- | --- |
+| — | Deiveson Figueiredo | — | — | — | 1 | locked |
+| — | Kai Kara-France | — | — | — | 0.65 | locked |
+| — | Deiveson Figueiredo | — | — | — | 1 | locked |
+
+#### Opponent Quality receipts
+
+Raw win credit: **9.15**. Diminishing-return credit before fighter adjustment: **8.39**. Fighter adjustment: **0**. Final diminished credit: **8.39**.
+
+| Slot | Date | Opponent | Tier | Final credit | Slot rate | Counted credit | Context |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | — | Deiveson Figueiredo | — | 1.25 | 1 | 1.25 | Reigning champion submitted for the undisputed title. |
+| 2 | — | Deiveson Figueiredo | — | 1.15 | 1 | 1.15 | Reigning champion and defining rival; doctor-stoppage context slightly discounts the maximum. |
+| 3 | — | Jussier Formiga | — | 1 | 1 | 1 | Top-five breakthrough win. |
+| 4 | — | Kai Kara-France | — | 1 | 1 | 1 | Top-five interim-title win. |
+| 5 | — | Amir Albazi | — | 0.85 | 1 | 0.85 | Top-five win discounted for Albazi’s long inactivity. |
+| 6 | — | Brandon Royval | — | 0.85 | 1 | 0.85 | Ranked future title challenger. |
+| 7 | — | Dustin Ortiz | — | 0.65 | 0.75 | 0.49 | Ranked flyweight contender. |
+| 8 | — | Kai Kara-France | — | 0.65 | 0.75 | 0.49 | Ranked flyweight contender. |
+| 9 | — | Louis Smolka | — | 0.65 | 0.75 | 0.49 | Ranked debut win. |
+| 10 | — | Steve Erceg | — | 0.65 | 0.75 | 0.49 | Ranked former title challenger coming off losses. |
+| 11 | — | Ryan Benoit | — | 0.45 | 0.75 | 0.34 | Solid UFC win without elite ranking value. |
+
+#### Prime Dominance receipts
+
+Prime window: **Jussier Formiga → Tatsuro Taira**. Prime record: **7-4-1**. Effective samples: **12**. Sample multiplier: **100.0%**.
+
+| Prime component | Score | Evidence |
+| --- | --- | --- |
+| Prime record | 5.63 | 7-4-1; 62.5% |
+| Round control | 5.6 | 62.2%; rounds 28-17 |
+| Finish pressure | 2 | 4 finishes; 33.3% |
+| Elite-level validation | 5.13 | 10 elite-stage fights; 5.13 points |
+| Raw prime score | 18.36 | Before sample multiplier |
+| Final Prime Dominance | 18.36 | 18.36 × 1 |
+
+#### Longevity receipts
+
+Active elite years: **5.73**. Raw calendar months: **68.8**. Gap-adjusted months: **68.8**. Status multiplier: **1**. Division multiplier: **1**. Counted elite months: **68.8**.
+
+| From | To | Raw months | Counted months | Capped? |
+| --- | --- | --- | --- | --- |
+| 2020-03-14 | 2020-11-21 | 8.28 | 8.28 | No |
+| 2020-11-21 | 2020-12-12 | 0.69 | 0.69 | No |
+| 2020-12-12 | 2021-06-12 | 5.98 | 5.98 | No |
+| 2021-06-12 | 2022-01-22 | 7.36 | 7.36 | No |
+| 2022-01-22 | 2022-07-30 | 6.21 | 6.21 | No |
+| 2022-07-30 | 2023-01-21 | 5.75 | 5.75 | No |
+| 2023-01-21 | 2023-07-08 | 5.52 | 5.52 | No |
+| 2023-07-08 | 2024-02-24 | 7.59 | 7.59 | No |
+| 2024-02-24 | 2024-11-02 | 8.28 | 8.28 | No |
+| 2024-11-02 | 2025-03-29 | 4.83 | 4.83 | No |
+| 2025-03-29 | 2025-12-06 | 8.28 | 8.28 | No |
+
+#### Loss-penalty receipts
+
+The raw fight events are compressed through severity, frequency and a prime-loss volume floor. Exposure: **19** fights. Severity: **1.88**. Frequency: **1.3**. Prime-volume floor: **3.25**. Pre-division magnitude: **3.25**. Division discount: **0.0%**. Final penalty: **-3.25**.
+
+| Date | Opponent | Phase | Quality | Division | Finished | Competitive | Base | Finish extra | Raw event | Special rule |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2017-08-05 | Sergio Pettis | pre-prime | top-five | home | No | Yes | -0.75 | 0 | -0.75 | standard rule |
+| 2018-05-19 | Alexandre Pantoja | pre-prime | top-five | home | No | Yes | -0.75 | 0 | -0.75 | standard rule |
+| 2022-01-22 | Deiveson Figueiredo | prime | champion-level | home | No | Yes | -1.5 | 0 | -1.5 | standard rule |
+| 2023-07-08 | Alexandre Pantoja | prime | top-five | home | No | Yes | -1.5 | 0 | -1.5 | standard rule |
+| 2024-02-24 | Brandon Royval | prime | top-five | home | No | Yes | -1.5 | 0 | -1.5 | standard rule |
+| 2025-12-06 | Tatsuro Taira | prime | top-five | home | Yes | Yes | -1.5 | -0.75 | -2.25 | standard rule |
+| 2026-02-28 | Lone’er Kavanagh | post-prime | top-ten | home | No | Yes | 0 | 0 | 0 | standard rule |
+
+#### Division-strength context
+
+Default division key: **modern-flyweight-0.95**. Era-ledger division multiplier: **1**. Division-era modifier: **-0.37**.
+
+Modern flyweight is deeper than the division’s launch era but remains below the strongest lightweight and welterweight periods.
+
+#### Key judgment calls
+
+- **Nickname:** The app-facing profile name is Brandon “The Assassin Baby” Moreno.
+- **UFC-only scope:** The Ultimate Fighter exhibition loss to Alexandre Pantoja and all regional fights are excluded.
+- **Prime start:** Jussier Formiga begins the connected elite run.
+- **Prime end:** Tatsuro Taira is the unrecovered prime finish loss; Lone’er Kavanagh is post-prime decline confirmation.
+- **Figueiredo rivalry:** The official UFC series is 2-1-1 for Moreno and anchors his championship case.
+- **Pantoja rivalry:** Pantoja leads the official UFC series 2-0; the TUF exhibition is not part of the UFC record.
+- **Division depth:** Modern flyweight receives a modest discount rather than the heavier launch-era flyweight penalty.
+
+#### Why ranked here
+
+Moreno earns his place through three UFC title-fight wins, five top-five victories, two undisputed title reigns, an interim-title finish, and a deep modern flyweight prime. His UFC 263 submission and UFC 283 title reclaim give the resume championship proof and historical identity.
+
+#### Why not ranked higher?
+
+He does not rank higher because he never completed a successful undisputed defense, lost both official UFC fights to Alexandre Pantoja, and accumulated four counted prime losses. Modern flyweight also receives a modest division-depth discount compared with the strongest all-time divisions.
+
+#### Compare-mode guidance
+
+- **Best counterargument:** The best counterargument against Moreno is title control: he never completed a successful undisputed defense, lost both official UFC fights to Pantoja, and carries four counted prime losses.
+- **Why this résumé can still win:** Moreno wins appropriate comparisons through championship resilience, rivalry proof, and a deeper elite window than most two-reign champions. He repeatedly recovered from losses and returned to title level.
+
+#### Final takeaway
+
+Moreno is the resilience champion of the flyweight GOAT conversation: two undisputed reigns, three title-fight wins, rivalry history, and real longevity. The absence of a completed undisputed defense and the Pantoja losses keep him below the division’s deepest UFC-only resumes.
+
+_Ledger verified through 2026-07-17. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
+
+### 48. Vitor Belfort — 88 OVR
+
+A three-era knockout threat whose explosive finishing, five Top-5 wins, and violent 2013 contender run created a dangerous but uneven UFC legacy.
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -6730,9 +6874,9 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.318837**, cur
 
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
-| Championship | 2.3 | #51 | 1.11 adjusted credit / 14.54 benchmark |
+| Championship | 2.3 | #54 | 1.11 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 18.72 | #37 | 8.8 diminished credit / 14.1 benchmark |
-| Prime Dominance | 20.97 | #26 | 20.97 raw × 100.0% sample |
+| Prime Dominance | 20.97 | #27 | 20.97 raw × 100.0% sample |
 | Longevity | 15.24 | #27 | 73.17 counted elite months |
 | Apex | +5.26 | Modifier | Back-to-back elite head-kick finishes create maximum Aura, strong Proof, and a real but not maximum best-fighter claim. |
 | Loss Penalty | -3.71 | Modifier | 10 official/technical loss events reviewed |
@@ -6829,19 +6973,19 @@ Mixed heavyweight, light-heavyweight and middleweight UFC eras.
 
 #### Why ranked here
 
-Vitor Belfort ranks #47 because Prime Dominance and Opponent Quality supply the largest weighted pieces of a 45.22 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
+Belfort ranks here because he produced elite UFC wins across an extraordinary span. His ledger includes Rich Franklin, Randy Couture, Michael Bisping, Luke Rockhold, Dan Henderson, Wanderlei Silva, and Anthony Johnson, while fifteen UFC wins and a 93% finishing rate give the résumé rare offensive force and longevity.
 
 #### Why not ranked higher?
 
-Vitor Belfort is 0.62 raw points behind #46 Conor McGregor. The largest category separation versus that next target is Championship; future movement must come from new UFC evidence and a full pipeline rerun.
+He does not rank higher because the championship case is thin and unusual: his only undisputed title win came through an early cut stoppage over Randy Couture, and he never defended the belt. Prime finish losses to Anderson Silva, Jon Jones, and Chris Weidman create major drag, while ten official UFC losses make the total résumé far less stable than the champions above him.
 
 #### Final takeaway
 
-Vitor Belfort ranks #47 because Prime Dominance and Opponent Quality supply the largest weighted pieces of a 45.22 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
+Belfort ranks here because he produced elite UFC wins across an extraordinary span. His ledger includes Rich Franklin, Randy Couture, Michael Bisping, Luke Rockhold, Dan Henderson, Wanderlei Silva, and Anthony Johnson, while fifteen UFC wins and a 93% finishing rate give the résumé rare offensive force and longevity.
 
 _Ledger verified through 2026-07-13. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
 
-### 48. Lyoto Machida — 88 OVR
+### 49. Lyoto Machida — 88 OVR
 
 The Machida Era was short, but real: UFC light heavyweight gold, a scary apex, and elite wins across LHW and MW — capped by a short reign and loud prime losses.
 
@@ -6866,10 +7010,10 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.318357**, cur
 
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
-| Championship | 4.02 | #43 | 1.95 adjusted credit / 14.54 benchmark |
+| Championship | 4.02 | #45 | 1.95 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 21.44 | #20 | 10.07 diminished credit / 14.1 benchmark |
-| Prime Dominance | 17.86 | #49 | 17.86 raw × 100.0% sample |
-| Longevity | 13.96 | #30 | 67.03 counted elite months |
+| Prime Dominance | 17.86 | #51 | 17.86 raw × 100.0% sample |
+| Longevity | 13.96 | #31 | 67.03 counted elite months |
 | Apex | +4.64 | Modifier | Machida-era style aura with title-level proof. |
 | Loss Penalty | -4.25 | Modifier | 8 official/technical loss events reviewed |
 | Division-Era Depth | -0.28 | Modifier | empirical era-depth row + locked curve |
@@ -6985,9 +7129,9 @@ Machida belongs in the respected former-champion tier: higher than most one-wind
 
 _Ledger verified through 2026-07-13. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
 
-### 49. Rashad Evans — 88 OVR
+### 50. Rashad Evans — 88 OVR
 
-Rashad Evans is ranked by the current UFC-only calculated pipeline.
+A deep one-reign light-heavyweight champion whose seven Top-5 wins, iconic Chuck Liddell knockout, and Forrest Griffin title victory built a stronger résumé than the brief reign suggests.
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -7010,9 +7154,9 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.315593**, cur
 
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
-| Championship | 1.85 | #56 | 0.9 adjusted credit / 14.54 benchmark |
+| Championship | 1.85 | #59 | 0.9 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 21.41 | #21 | 10.06 diminished credit / 14.1 benchmark |
-| Prime Dominance | 19.7 | #32 | 19.7 raw × 100.0% sample |
+| Prime Dominance | 19.7 | #33 | 19.7 raw × 100.0% sample |
 | Longevity | 15.6 | #24 | 74.88 counted elite months |
 | Apex | +4.99 | Modifier | An iconic knockout followed by a title-winning finish creates a near-5.00 Apex without a sustained best-fighter claim. |
 | Loss Penalty | -4.42 | Modifier | 8 official/technical loss events reviewed |
@@ -7107,19 +7251,143 @@ Bisping through Sonnen.
 
 #### Why ranked here
 
-Rashad Evans ranks #49 because Prime Dominance and Opponent Quality supply the largest weighted pieces of a 44.95 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
+Evans ranks here because his UFC light-heavyweight ledger is loaded with meaningful wins. He knocked out Chuck Liddell, stopped Forrest Griffin to win the title, beat Rampage Jackson, Michael Bisping, Phil Davis, Thiago Silva, and Dan Henderson, and produced a 9-3 prime across six active elite years.
 
 #### Why not ranked higher?
 
-Rashad Evans is 0.23 raw points behind #48 Lyoto Machida. The largest category separation versus that next target is Championship; future movement must come from new UFC evidence and a full pipeline rerun.
+He does not rank higher because the championship reign lasted only one title-fight win and ended immediately against Lyoto Machida. The Jon Jones loss is understandable elite damage, but the Antônio Rogério Nogueira upset is a costly non-elite prime loss. With no successful defense and only a 60% rounds-won rate, his résumé trails the longer and cleaner light-heavyweight champions above him.
 
 #### Final takeaway
 
-Rashad Evans ranks #49 because Prime Dominance and Opponent Quality supply the largest weighted pieces of a 44.95 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
+Evans ranks here because his UFC light-heavyweight ledger is loaded with meaningful wins. He knocked out Chuck Liddell, stopped Forrest Griffin to win the title, beat Rampage Jackson, Michael Bisping, Phil Davis, Thiago Silva, and Dan Henderson, and produced a 9-3 prime across six active elite years.
 
 _Ledger verified through 2026-07-13. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
 
-### 50. Dricus du Plessis — 88 OVR
+### 51. Tom Aspinall — 88 OVR
+
+The heavyweight speed-and-finishing case: eight UFC wins, eight finishes, two interim-title wins, and a freak-injury loss that does not represent a competitive defeat.
+
+| Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| men | 44.48 | 8-1, 1 NC | Heavyweight | 2 | 1.5 | 2 | 4-0, 1 NC | 100.0% | 4.32 |
+
+#### Exact model math
+
+| Component | Category value | Weight | Weighted contribution |
+| --- | --- | --- | --- |
+| Championship | 3.09 | 35 | 3.6 |
+| Opponent Quality | 10.45 | 25 | 8.71 |
+| Prime Dominance | 23.59 | 30 | 23.59 |
+| Longevity | 11.19 | 10 | 3.73 |
+
+Base score: **39.63**. Modifiers: Apex **+5.09**, Loss Penalty **0**, Division-Era Depth **-0.25**. Final raw score: **44.48**.
+
+OVR conversion: 18.68–101.92 board anchors, normalized score **0.309947**, curved score **0.369483**, resulting in **88 OVR**. Only the board leader may receive 99.
+
+#### Category breakdown
+
+| Category | Score | Board rank | Primary receipt |
+| --- | --- | --- | --- |
+| Championship | 3.09 | #52 | 1.5 adjusted credit / 14.54 benchmark |
+| Opponent Quality | 10.45 | #60 | 5.06 diminished credit / 14.54 benchmark |
+| Prime Dominance | 23.59 | #13 | 27.75 raw × 85.0% sample |
+| Longevity | 11.19 | #43 | 53.71 counted elite months |
+| Apex | +5.09 | Modifier | Back-to-back first-round interim-title knockouts establish an elite heavyweight apex; undisputed title proof remains incomplete because the Gane defense ended in a no contest. |
+| Loss Penalty | 0 | Modifier | 1 official/technical loss events reviewed |
+| Division-Era Depth | -0.25 | Modifier | Apply a modest modern-heavyweight depth discount: dangerous elite contenders, but less full-roster depth than the strongest lightweight and welterweight eras. |
+
+#### Championship receipts
+
+UFC title-fight wins: **2**. Adjusted title wins: **1.5**. Derived undisputed-title win count: **0**. Interim-title win count: **2**.
+
+| Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
+| --- | --- | --- | --- | --- | --- | --- |
+| — | Sergei Pavlovich | — | — | — | 0.75 | locked |
+| — | Curtis Blaydes II | — | — | — | 0.75 | locked |
+
+#### Opponent Quality receipts
+
+Raw win credit: **5.15**. Diminishing-return credit before fighter adjustment: **5.06**. Fighter adjustment: **0**. Final diminished credit: **5.06**.
+
+| Slot | Date | Opponent | Tier | Final credit | Slot rate | Counted credit | Context |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | — | Curtis Blaydes | — | 1 | 1 | 1 | locked |
+| 2 | — | Sergei Pavlovich | — | 1 | 1 | 1 | locked |
+| 3 | — | Alexander Volkov | — | 0.85 | 1 | 0.85 | locked |
+| 4 | — | Marcin Tybura | — | 0.85 | 1 | 0.85 | locked |
+| 5 | — | Serghei Spivac | — | 0.65 | 1 | 0.65 | locked |
+| 6 | — | Andrei Arlovski | — | 0.45 | 1 | 0.45 | locked |
+| 7 | — | Jake Collier | — | 0.25 | 0.75 | 0.19 | locked |
+| 8 | — | Alan Baudot | — | 0.1 | 0.75 | 0.07 | locked |
+
+#### Prime Dominance receipts
+
+Prime window: **Alexander Volkov → Current heavyweight championship form**. Prime record: **4-0, 1 NC**. Effective samples: **4**. Sample multiplier: **85.0%**.
+
+| Prime component | Score | Evidence |
+| --- | --- | --- |
+| Prime record | 9 | 4-0; 100.0% |
+| Round control | 9 | 100.0%; rounds 4-0 |
+| Finish pressure | 5 | 4 finishes; 100.0% |
+| Elite-level validation | 4.75 | 2 elite-stage fights; 4.75 points |
+| Raw prime score | 27.75 | Before sample multiplier |
+| Final Prime Dominance | 23.59 | 27.75 × 0.85 |
+
+#### Longevity receipts
+
+Active elite years: **4.32**. Raw calendar months: **51.8**. Gap-adjusted months: **51.8**. Status multiplier: **1.08**. Division multiplier: **0.96**. Counted elite months: **53.71**.
+
+| From | To | Raw months | Counted months | Capped? |
+| --- | --- | --- | --- | --- |
+| 2022-03-19 | 2022-07-23 | 4.14 | 4.14 | No |
+| 2022-07-23 | 2023-07-22 | 11.96 | 11.96 | No |
+| 2023-07-22 | 2023-11-11 | 3.68 | 3.68 | No |
+| 2023-11-11 | 2024-07-27 | 8.51 | 8.51 | No |
+| 2024-07-27 | 2025-10-25 | 14.95 | 14.95 | No |
+| 2025-10-25 | 2026-07-13 | 8.57 | 8.57 | No |
+
+#### Loss-penalty receipts
+
+The raw fight events are compressed through severity, frequency and a prime-loss volume floor. Exposure: **9** fights. Severity: **0**. Frequency: **0**. Prime-volume floor: **0**. Pre-division magnitude: **0**. Division discount: **0.0%**. Final penalty: **0**.
+
+| Date | Opponent | Phase | Quality | Division | Finished | Competitive | Base | Finish extra | Raw event | Special rule |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2022-07-23 | Curtis Blaydes | prime | top-five | home | No | No | 0 | 0 | 0 | freak-injury-technical-result |
+
+#### Division-strength context
+
+Default division key: **modern-heavyweight-0.96**. Era-ledger division multiplier: **0.96**. Division-era modifier: **-0.25**.
+
+Modern heavyweight has elite top-end danger but less full-roster depth than the strongest lightweight and welterweight eras.
+
+#### Key judgment calls
+
+- **Prime start:** Alexander Volkov begins the connected elite heavyweight window.
+- **Curtis Blaydes I:** the 15-second knee injury remains an official loss but is treated as a freak technical result with no normal loss penalty.
+- **Interim title wins:** Pavlovich and the Blaydes rematch receive partial interim-title credit under the shared Championship rules.
+- **Ciryl Gane no contest:** excluded from scoring and title-win credit; Aspinall retained the undisputed title.
+- **Heavyweight depth:** receives a modest era-depth discount because the top end is dangerous but the full division is thinner than elite lightweight and welterweight eras.
+
+#### Why ranked here
+
+Aspinall earns his place through perfect UFC finishing efficiency, elite first-round wins over Sergei Pavlovich and Curtis Blaydes, an Alexander Volkov submission, and two interim-title victories. The shared model also recognizes that his only official UFC loss was a 15-second knee injury rather than a normal competitive defeat.
+
+#### Why not ranked higher?
+
+He does not rank higher because the championship volume and active elite window are still short. He has two UFC title-fight wins, no completed undisputed title defense, and fewer top-five wins than Stipe Miocic, Francis Ngannou, and the deepest heavyweight resumes.
+
+#### Compare-mode guidance
+
+- **Best counterargument:** The strongest counterargument is ceiling: his speed, skill, and finishing rate may make him the better fighter than several heavyweights ranked above him.
+- **Why this résumé can still win:** He wins comparisons against thinner contender cases through perfect finishing efficiency, title-level proof, and the absence of a real competitive prime loss.
+
+#### Final takeaway
+
+Aspinall is already a serious UFC heavyweight peak case: fast, technically complete, title-proven, and perfect as a finisher. He needs completed undisputed defenses and more elite wins to become a top-tier all-time heavyweight resume.
+
+_Ledger verified through 2026-07-16. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
+
+### 52. Dricus du Plessis — 88 OVR
 
 The modern middleweight chaos champion: Whittaker, Adesanya, and Strickland wins, strong finishing threat, and only one elite decision loss in the UFC.
 
@@ -7145,9 +7413,9 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.308025**, cur
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
 | Championship | 5.88 | #34 | 2.85 adjusted credit / 14.54 benchmark |
-| Opponent Quality | 14.92 | #45 | 7.01 diminished credit / 14.1 benchmark |
-| Prime Dominance | 19.14 | #37 | 20.15 raw × 95.0% sample |
-| Longevity | 9.05 | #50 | 43.44 counted elite months |
+| Opponent Quality | 14.92 | #46 | 7.01 diminished credit / 14.1 benchmark |
+| Prime Dominance | 19.14 | #38 | 20.15 raw × 95.0% sample |
+| Longevity | 9.05 | #53 | 43.44 counted elite months |
 | Apex | +4.55 | Modifier | Whittaker and Adesanya provide elite two-night proof. Close Strickland fights, a short reign, chaotic separation, and the Khamzat ceiling cap the best-fighter claim and aura. |
 | Loss Penalty | -1.95 | Modifier | 1 official/technical loss events reviewed |
 | Division-Era Depth | +0.27 | Modifier | empirical era-depth row + locked curve |
@@ -7245,7 +7513,7 @@ Du Plessis is already a real UFC-only middleweight legacy case: not long enough 
 
 _Ledger verified through 2026-07-13. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
 
-### 51. Dominick Cruz — 88 OVR
+### 53. Dominick Cruz — 88 OVR
 
 The movement genius case: brilliant bantamweight skill, a legendary comeback, and a UFC-only resume capped by injuries and long gaps.
 
@@ -7271,9 +7539,9 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.284238**, cur
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
 | Championship | 7.63 | #23 | 3.7 adjusted credit / 14.54 benchmark |
-| Opponent Quality | 13.7 | #52 | 6.44 diminished credit / 14.1 benchmark |
-| Prime Dominance | 18.19 | #45 | 18.19 raw × 100.0% sample |
-| Longevity | 14.05 | #29 | 67.42 counted elite months |
+| Opponent Quality | 13.7 | #53 | 6.44 diminished credit / 14.1 benchmark |
+| Prime Dominance | 18.19 | #47 | 18.19 raw × 100.0% sample |
+| Longevity | 14.05 | #30 | 67.42 counted elite months |
 | Apex | +4.25 | Modifier | UFC-only comeback/technical-control apex. |
 | Loss Penalty | -3.49 | Modifier | 3 official/technical loss events reviewed |
 | Division-Era Depth | -1.61 | Modifier | empirical era-depth row + locked curve |
@@ -7372,9 +7640,9 @@ Cruz is the injury-fragmented genius: one of the smartest and most unique champi
 
 _Ledger verified through 2026-07-13. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
 
-### 52. Royce Gracie — 88 OVR
+### 54. Royce Gracie — 88 OVR
 
-Royce Gracie is ranked by the current UFC-only calculated pipeline.
+The foundational tournament legend: an 11-0-1 opening run, complete finishing dominance, and the résumé that made Brazilian jiu-jitsu impossible to ignore.
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -7397,10 +7665,10 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.282196**, cur
 
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
-| Championship | 4.85 | #41 | 2.35 adjusted credit / 14.54 benchmark |
-| Opponent Quality | 9.55 | #59 | 4.49 diminished credit / 14.1 benchmark |
+| Championship | 4.85 | #42 | 2.35 adjusted credit / 14.54 benchmark |
+| Opponent Quality | 9.55 | #62 | 4.49 diminished credit / 14.1 benchmark |
 | Prime Dominance | 25.12 | #7 | 27.91 raw × 90.0% sample |
-| Longevity | 3.4 | #61 | 16.33 counted elite months |
+| Longevity | 3.4 | #64 | 16.33 counted elite months |
 | Apex | +5.3 | Modifier | The two real wins support a maximum Best-Fighter Claim and maximum Aura without using an aggregate tournament result. |
 | Loss Penalty | 0 | Modifier | 1 official/technical loss events reviewed |
 | Division-Era Depth | -3 | Modifier | empirical era-depth row + locked curve |
@@ -7494,19 +7762,19 @@ Jimmerson through Shamrock II.
 
 #### Why ranked here
 
-Royce Gracie ranks #52 because Prime Dominance and Opponent Quality supply the largest weighted pieces of a 42.17 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
+Gracie ranks here because his early UFC run was historically dominant inside the format that existed. He won three tournaments, opened 11-0-1, finished every UFC victory, and defeated the two strongest established opponents on the ledger in Ken Shamrock and Dan Severn.
 
 #### Why not ranked higher?
 
-Royce Gracie is 0.17 raw points behind #51 Dominick Cruz. The largest category separation versus that next target is Longevity; future movement must come from new UFC evidence and a full pipeline rerun.
+He does not rank higher because early tournaments were not the same as a modern UFC title reign, the opponent pool was undeveloped, only two victories receive Top-5-level credit, and his counted elite window lasted roughly 1.4 years. The model respects the dominance without pretending the competitive depth matched later divisions.
 
 #### Final takeaway
 
-Royce Gracie ranks #52 because Prime Dominance and Opponent Quality supply the largest weighted pieces of a 42.17 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
+Gracie ranks here because his early UFC run was historically dominant inside the format that existed. He won three tournaments, opened 11-0-1, finished every UFC victory, and defeated the two strongest established opponents on the ledger in Ken Shamrock and Dan Severn.
 
 _Ledger verified through 2026-07-13. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
 
-### 53. Khamzat Chimaev — 88 OVR
+### 55. Khamzat Chimaev — 88 OVR
 
 A short but explosive UFC-only case: DDP title value, Whittaker/Burns elite proof, scary dominance, and one Strickland title-loss cap.
 
@@ -7531,10 +7799,10 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.266218**, cur
 
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
-| Championship | 1.96 | #53 | 0.95 adjusted credit / 14.54 benchmark |
-| Opponent Quality | 13.86 | #50 | 6.51 diminished credit / 14.1 benchmark |
-| Prime Dominance | 19.61 | #33 | 20.64 raw × 95.0% sample |
-| Longevity | 11.08 | #43 | 53.16 counted elite months |
+| Championship | 1.96 | #56 | 0.95 adjusted credit / 14.54 benchmark |
+| Opponent Quality | 13.86 | #51 | 6.51 diminished credit / 14.1 benchmark |
+| Prime Dominance | 19.61 | #34 | 20.64 raw × 95.0% sample |
+| Longevity | 11.08 | #45 | 53.16 counted elite months |
 | Apex | +5.17 | Modifier | First-round destruction of Whittaker followed by a dominant title win; the later Strickland loss prevents maximum Claim or Aura. |
 | Loss Penalty | -1.89 | Modifier | 1 official/technical loss events reviewed |
 | Division-Era Depth | +0.42 | Modifier | empirical era-depth row + locked curve |
@@ -7629,7 +7897,7 @@ Chimaev is a peak-and-dominance case more than a deep-resume case. He belongs ab
 
 _Ledger verified through 2026-07-13. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
 
-### 54. Michael Bisping — 87 OVR
+### 56. Michael Bisping — 87 OVR
 
 A grit-and-volume UFC legend whose Rockhold upset and long middleweight résumé make him a real champion case, even without a dominant reign.
 
@@ -7654,10 +7922,10 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.230899**, cur
 
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
-| Championship | 3.61 | #48 | 1.75 adjusted credit / 14.54 benchmark |
+| Championship | 3.61 | #50 | 1.75 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 19.36 | #32 | 9.1 diminished credit / 14.1 benchmark |
-| Prime Dominance | 15.19 | #60 | 16.88 raw × 90.0% sample |
-| Longevity | 4.24 | #60 | 20.36 counted elite months |
+| Prime Dominance | 15.19 | #63 | 16.88 raw × 90.0% sample |
+| Longevity | 4.24 | #63 | 20.36 counted elite months |
 | Apex | +3.77 | Modifier | Late-career title apex with Anderson/Rockhold proof. |
 | Loss Penalty | -2.92 | Modifier | 9 official/technical loss events reviewed |
 | Division-Era Depth | +0.11 | Modifier | empirical era-depth row + locked curve |
@@ -7769,7 +8037,7 @@ Bisping is a necessary UFC-only add: huge volume, one legendary title moment, an
 
 _Ledger verified through 2026-07-13. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
 
-### 55. Sean O'Malley — 87 OVR
+### 57. Sean O'Malley — 87 OVR
 
 A precision-striking bantamweight champion with a huge Aljo title KO, a Vera title defense, and a résumé capped hard by Merab.
 
@@ -7794,10 +8062,10 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.209875**, cur
 
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
-| Championship | 3.82 | #45 | 1.85 adjusted credit / 14.54 benchmark |
-| Opponent Quality | 13.3 | #55 | 6.25 diminished credit / 14.1 benchmark |
-| Prime Dominance | 16.67 | #54 | 16.67 raw × 100.0% sample |
-| Longevity | 9.78 | #47 | 46.94 counted elite months |
+| Championship | 3.82 | #47 | 1.85 adjusted credit / 14.54 benchmark |
+| Opponent Quality | 13.3 | #56 | 6.25 diminished credit / 14.1 benchmark |
+| Prime Dominance | 16.67 | #56 | 16.67 raw × 100.0% sample |
+| Longevity | 9.78 | #50 | 46.94 counted elite months |
 | Apex | +4.06 | Modifier | Explosive bantamweight title apex. |
 | Loss Penalty | -3.28 | Modifier | 3 official/technical loss events reviewed |
 | Division-Era Depth | -0.1 | Modifier | empirical era-depth row + locked curve |
@@ -7899,9 +8167,140 @@ O'Malley is a real UFC-only champion case, not just a star case. But right now h
 
 _Ledger verified through 2026-07-13. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
 
-### 56. Mauricio "Shogun" Rua — 86 OVR
+### 58. Quinton Jackson — 86 OVR
 
-Mauricio "Shogun" Rua is ranked by the current UFC-only calculated pipeline.
+The high-impact UFC light heavyweight case: knocked out Chuck Liddell for the belt, defended against Dan Henderson, and stayed in the elite title mix through the Jon Jones era.
+
+| Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| men | 35.91 | 8-5 | Light Heavyweight | 2 | 2 | 4 | 6-3 | 53.6% | 4.33 |
+
+#### Exact model math
+
+| Component | Category value | Weight | Weighted contribution |
+| --- | --- | --- | --- |
+| Championship | 4.13 | 35 | 4.82 |
+| Opponent Quality | 11.37 | 25 | 9.47 |
+| Prime Dominance | 16.41 | 30 | 16.41 |
+| Longevity | 10.83 | 10 | 3.61 |
+
+Base score: **34.31**. Modifiers: Apex **+5.06**, Loss Penalty **-3.46**, Division-Era Depth **0**. Final raw score: **35.91**.
+
+OVR conversion: 18.68–101.92 board anchors, normalized score **0.206992**, curved score **0.262156**, resulting in **86 OVR**. Only the board leader may receive 99.
+
+#### Category breakdown
+
+| Category | Score | Board rank | Primary receipt |
+| --- | --- | --- | --- |
+| Championship | 4.13 | #43 | 2 adjusted credit / 14.54 benchmark |
+| Opponent Quality | 11.37 | #57 | 5.51 diminished credit / 14.54 benchmark |
+| Prime Dominance | 16.41 | #58 | 16.41 raw × 100.0% sample |
+| Longevity | 10.83 | #46 | 52 counted elite months |
+| Apex | +5.06 | Modifier | The Liddell knockout and Henderson title defense give Rampage a championship-proven apex with major historical impact, though the UFC-only reign was brief. |
+| Loss Penalty | -3.46 | Modifier | 5 official/technical loss events reviewed |
+| Division-Era Depth | 0 | Modifier | Use the neutral 1.00 late-2000s light-heavyweight baseline: genuine champion and top-five depth without an additional era bonus or discount. |
+
+#### Championship receipts
+
+UFC title-fight wins: **2**. Adjusted title wins: **2**. Derived undisputed-title win count: **2**. Interim-title win count: **0**.
+
+| Date | Opponent | Title type | Base | Opponent strength | Final credit | Context |
+| --- | --- | --- | --- | --- | --- | --- |
+| — | Chuck Liddell | — | — | — | 1 | locked |
+| — | Dan Henderson | — | — | — | 1 | locked |
+
+#### Opponent Quality receipts
+
+Raw win credit: **5.6**. Diminishing-return credit before fighter adjustment: **5.51**. Fighter adjustment: **0**. Final diminished credit: **5.51**.
+
+| Slot | Date | Opponent | Tier | Final credit | Slot rate | Counted credit | Context |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | — | Chuck Liddell | — | 1.25 | 1 | 1.25 | locked |
+| 2 | — | Dan Henderson | — | 1 | 1 | 1 | locked |
+| 3 | — | Lyoto Machida | — | 0.85 | 1 | 0.85 | locked |
+| 4 | — | Wanderlei Silva | — | 0.85 | 1 | 0.85 | locked |
+| 5 | — | Keith Jardine | — | 0.65 | 1 | 0.65 | locked |
+| 6 | — | Matt Hamill | — | 0.65 | 1 | 0.65 | locked |
+| 7 | — | Marvin Eastman | — | 0.25 | 0.75 | 0.19 | locked |
+| 8 | — | Fabio Maldonado | — | 0.1 | 0.75 | 0.07 | locked |
+
+#### Prime Dominance receipts
+
+Prime window: **Chuck Liddell → Jon Jones**. Prime record: **6-3**. Effective samples: **9**. Sample multiplier: **100.0%**.
+
+| Prime component | Score | Evidence |
+| --- | --- | --- |
+| Prime record | 6 | 6-3; 66.7% |
+| Round control | 4.82 | 53.6%; rounds 15-13 |
+| Finish pressure | 1 | 2 finishes; 22.2% |
+| Elite-level validation | 4.59 | 7 elite-stage fights; 4.59 points |
+| Raw prime score | 16.41 | Before sample multiplier |
+| Final Prime Dominance | 16.41 | 16.41 × 1 |
+
+#### Longevity receipts
+
+Active elite years: **4.33**. Raw calendar months: **52**. Gap-adjusted months: **52**. Status multiplier: **1**. Division multiplier: **1**. Counted elite months: **52**.
+
+| From | To | Raw months | Counted months | Capped? |
+| --- | --- | --- | --- | --- |
+| 2007-05-26 | 2007-09-08 | 3.45 | 3.45 | No |
+| 2007-09-08 | 2008-07-05 | 9.89 | 9.89 | No |
+| 2008-07-05 | 2008-12-27 | 5.75 | 5.75 | No |
+| 2008-12-27 | 2009-03-07 | 2.3 | 2.3 | No |
+| 2009-03-07 | 2010-05-29 | 14.72 | 14.72 | No |
+| 2010-05-29 | 2010-11-20 | 5.75 | 5.75 | No |
+| 2010-11-20 | 2011-05-28 | 6.21 | 6.21 | No |
+| 2011-05-28 | 2011-09-24 | 3.91 | 3.91 | No |
+
+#### Loss-penalty receipts
+
+The raw fight events are compressed through severity, frequency and a prime-loss volume floor. Exposure: **10** fights. Severity: **1.88**. Frequency: **1.58**. Prime-volume floor: **2.5**. Pre-division magnitude: **3.46**. Division discount: **0.0%**. Final penalty: **-3.46**.
+
+| Date | Opponent | Phase | Quality | Division | Finished | Competitive | Base | Finish extra | Raw event | Special rule |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2008-07-05 | Forrest Griffin | prime | top-five | home | No | Yes | -1.5 | 0 | -1.5 | standard rule |
+| 2010-05-29 | Rashad Evans | prime | top-five | home | No | Yes | -1.5 | 0 | -1.5 | standard rule |
+| 2011-09-24 | Jon Jones | prime | champion-level | home | Yes | Yes | -1.5 | -0.75 | -2.25 | standard rule |
+| 2012-02-25 | Ryan Bader | post-prime | top-ten | home | No | Yes | 0 | 0 | 0 | standard rule |
+| 2013-01-26 | Glover Teixeira | post-prime | top-five | home | No | Yes | 0 | 0 | 0 | standard rule |
+
+#### Division-strength context
+
+Default division key: **tuf-boom-light-heavyweight-1.00**. Era-ledger division multiplier: **1**. Division-era modifier: **0**.
+
+Late-2000s light heavyweight receives the neutral 1.00 baseline because the division had genuine champion and top-five depth.
+
+#### Key judgment calls
+
+- **Nickname:** The app-facing name is Quinton “Rampage” Jackson.
+- **UFC-only scope:** PRIDE, Bellator, WFA, and regional results are excluded from scoring.
+- **Prime start:** The Chuck Liddell title knockout begins the connected elite UFC run.
+- **Prime end:** The Jon Jones title loss closes the prime; Bader and Teixeira are post-prime losses.
+- **Lyoto Machida:** The official split-decision win counts, but receives discounted Opponent Quality credit because the performance was disputed.
+- **Division depth:** Late-2000s light heavyweight uses the neutral 1.00 depth baseline.
+
+#### Why ranked here
+
+Rampage earns his place through two UFC title-fight wins, four top-five victories, championship-level wins over Chuck Liddell and Dan Henderson, and a strong late-2000s light heavyweight prime. His PRIDE résumé is excluded, so this ranking stands on UFC work alone.
+
+#### Why not ranked higher?
+
+He does not rank higher because the UFC title reign was short, the reviewed prime includes losses to Forrest Griffin, Rashad Evans, and Jon Jones, and his thirteen-fight UFC sample cannot match the championship volume of the division’s longest-reigning greats.
+
+#### Compare-mode guidance
+
+- **Best counterargument:** The best counterargument against Rampage is UFC volume: two title-fight wins, three prime losses, and only thirteen UFC appearances leave less room for sustained dominance than the division’s longest championship resumes.
+- **Why this résumé can still win:** Rampage wins appropriate comparisons through championship proof and elite peak wins. He was not merely popular—he beat the reigning champion, defended against an elite challenger, and remained in the top-title mix for years.
+
+#### Final takeaway
+
+Rampage has a real UFC champion’s résumé, not just star power: a title knockout, a defense over an elite challenger, and multiple ranked wins in a deep division. The ceiling is held down by short championship volume and three prime losses.
+
+_Ledger verified through 2026-07-16. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
+
+### 59. Mauricio "Shogun" Rua — 86 OVR
+
+A violent light-heavyweight champion whose knockout of Lyoto Machida created an elite UFC peak, even though the broader UFC résumé was far less consistent than his legend suggests.
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -7924,10 +8323,10 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.172033**, cur
 
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
-| Championship | 1.95 | #54 | 0.95 adjusted credit / 14.54 benchmark |
-| Opponent Quality | 15.29 | #44 | 7.19 diminished credit / 14.1 benchmark |
-| Prime Dominance | 15.44 | #58 | 16.25 raw × 95.0% sample |
-| Longevity | 6.85 | #55 | 32.86 counted elite months |
+| Championship | 1.95 | #57 | 0.95 adjusted credit / 14.54 benchmark |
+| Opponent Quality | 15.29 | #45 | 7.19 diminished credit / 14.1 benchmark |
+| Prime Dominance | 15.44 | #61 | 16.25 raw × 95.0% sample |
+| Longevity | 6.85 | #58 | 32.86 counted elite months |
 | Apex | +4.81 | Modifier | The Machida knockout carries the UFC-only peak; PRIDE accomplishments remain excluded. |
 | Loss Penalty | -4.38 | Modifier | 12 official/technical loss events reviewed |
 | Division-Era Depth | -0.17 | Modifier | empirical era-depth row + locked curve |
@@ -8016,21 +8415,21 @@ Liddell through Henderson I.
 
 #### Why ranked here
 
-Mauricio "Shogun" Rua ranks #56 because Prime Dominance and Opponent Quality supply the largest weighted pieces of a 33 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
+Rua ranks here because his best UFC stretch delivered real championship proof. He stopped Chuck Liddell, pushed Lyoto Machida to a disputed decision, knocked Machida out in the rematch to win the belt, and later avenged the Forrest Griffin loss. Those performances create a legitimate Apex and quality-win case despite the uneven total record.
 
 #### Why not ranked higher?
 
-Mauricio "Shogun" Rua is 3.15 raw points behind #55 Sean O'Malley. The largest category separation versus that next target is Longevity; future movement must come from new UFC evidence and a full pipeline rerun.
+He does not rank higher because this ranking is UFC-only, so his celebrated PRIDE run is excluded. His UFC record is 11-12-1, he won only one title fight, and his counted prime finished 3-3 with damaging losses to Jon Jones and Dan Henderson. The late-career win volume adds context, but it cannot overcome the short championship window and losing overall record.
 
 #### Final takeaway
 
-Mauricio "Shogun" Rua ranks #56 because Prime Dominance and Opponent Quality supply the largest weighted pieces of a 33 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
+Rua ranks here because his best UFC stretch delivered real championship proof. He stopped Chuck Liddell, pushed Lyoto Machida to a disputed decision, knocked Machida out in the rematch to win the belt, and later avenged the Forrest Griffin loss. Those performances create a legitimate Apex and quality-win case despite the uneven total record.
 
 _Ledger verified through 2026-07-13. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
 
-### 57. Forrest Griffin — 86 OVR
+### 60. Forrest Griffin — 86 OVR
 
-Forrest Griffin is ranked by the current UFC-only calculated pipeline.
+An upset-driven light-heavyweight champion whose wins over Shogun Rua and Rampage Jackson created a legitimate but short-lived elite peak.
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -8053,10 +8452,10 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.170231**, cur
 
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
-| Championship | 1.95 | #54 | 0.95 adjusted credit / 14.54 benchmark |
-| Opponent Quality | 13.78 | #51 | 6.47 diminished credit / 14.1 benchmark |
-| Prime Dominance | 15.59 | #57 | 15.59 raw × 100.0% sample |
-| Longevity | 10.3 | #45 | 49.46 counted elite months |
+| Championship | 1.95 | #57 | 0.95 adjusted credit / 14.54 benchmark |
+| Opponent Quality | 13.78 | #52 | 6.47 diminished credit / 14.1 benchmark |
+| Prime Dominance | 15.59 | #60 | 15.59 raw × 100.0% sample |
+| Longevity | 10.3 | #48 | 49.46 counted elite months |
 | Apex | +4.98 | Modifier | Historic upset and championship win, with the close Jackson decision keeping the Apex below the highest tier. |
 | Loss Penalty | -4.29 | Modifier | 5 official/technical loss events reviewed |
 | Division-Era Depth | -0.62 | Modifier | empirical era-depth row + locked curve |
@@ -8138,19 +8537,19 @@ Shogun I through Shogun II.
 
 #### Why ranked here
 
-Forrest Griffin ranks #57 because Prime Dominance and Opponent Quality supply the largest weighted pieces of a 32.85 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
+Griffin ranks here because his best two-fight stretch carried real historical weight. He submitted Mauricio Rua in a major upset, then beat Quinton Jackson to win the UFC light-heavyweight title. Wins over Rich Franklin and Tito Ortiz add useful depth, while the Stephan Bonnar fight remains important context even though it is not an elite quality win.
 
 #### Why not ranked higher?
 
-Forrest Griffin is 0.15 raw points behind #56 Mauricio "Shogun" Rua. The largest category separation versus that next target is Opponent Quality; future movement must come from new UFC evidence and a full pipeline rerun.
+He does not rank higher because the championship run ended in his first defense, the counted prime finished only 4-3, and Rashad Evans, Anderson Silva, and Rua all stopped him during that window. With one title-fight win, three Top-5 victories, and a 30% UFC finish rate, the résumé lacks the sustained dominance of the champions above him.
 
 #### Final takeaway
 
-Forrest Griffin ranks #57 because Prime Dominance and Opponent Quality supply the largest weighted pieces of a 32.85 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
+Griffin ranks here because his best two-fight stretch carried real historical weight. He submitted Mauricio Rua in a major upset, then beat Quinton Jackson to win the UFC light-heavyweight title. Wins over Rich Franklin and Tito Ortiz add useful depth, while the Stephan Bonnar fight remains important context even though it is not an elite quality win.
 
 _Ledger verified through 2026-07-13. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
 
-### 58. Brock Lesnar — 86 OVR
+### 61. Brock Lesnar — 86 OVR
 
 A massive short-window UFC heavyweight champion whose title run was real, explosive, and historically important, but capped by tiny sample size and a brief elite window.
 
@@ -8176,9 +8575,9 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.158337**, cur
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
 | Championship | 5.67 | #37 | 2.75 adjusted credit / 14.54 benchmark |
-| Opponent Quality | 8.3 | #60 | 3.9 diminished credit / 14.1 benchmark |
-| Prime Dominance | 18.57 | #43 | 20.63 raw × 90.0% sample |
-| Longevity | 4.78 | #57 | 22.92 counted elite months |
+| Opponent Quality | 8.3 | #63 | 3.9 diminished credit / 14.1 benchmark |
+| Prime Dominance | 18.57 | #44 | 20.63 raw × 90.0% sample |
+| Longevity | 4.78 | #60 | 22.92 counted elite months |
 | Apex | +4.18 | Modifier | Short heavyweight title apex with huge star aura. |
 | Loss Penalty | -3.76 | Modifier | 3 official/technical loss events reviewed |
 | Division-Era Depth | -2.26 | Modifier | empirical era-depth row + locked curve |
@@ -8269,7 +8668,7 @@ Brock is a real UFC heavyweight champion case, not just a star-power case — bu
 
 _Ledger verified through 2026-07-13. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
 
-### 59. Dan Henderson — 84 OVR
+### 62. Dan Henderson — 84 OVR
 
 A true all-time MMA legend whose UFC-only score is much harsher: great Shogun/Bisping/Franklin moments, no UFC title wins, and most of the historic aura living outside this scoring scope.
 
@@ -8294,10 +8693,10 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.102355**, cur
 
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
-| Championship | 0 | #59 | 0 adjusted credit / 14.54 benchmark |
-| Opponent Quality | 13.64 | #53 | 6.41 diminished credit / 14.1 benchmark |
-| Prime Dominance | 13.22 | #61 | 13.22 raw × 100.0% sample |
-| Longevity | 9.63 | #48 | 46.2 counted elite months |
+| Championship | 0 | #62 | 0 adjusted credit / 14.54 benchmark |
+| Opponent Quality | 13.64 | #54 | 6.41 diminished credit / 14.1 benchmark |
+| Prime Dominance | 13.22 | #64 | 13.22 raw × 100.0% sample |
+| Longevity | 9.63 | #51 | 46.2 counted elite months |
 | Apex | +4.47 | Modifier | The Bisping knockout creates elite Aura, but the UFC-only run never established Henderson as the clear best fighter in a division. |
 | Loss Penalty | -4.5 | Modifier | 9 official/technical loss events reviewed |
 | Division-Era Depth | -0.57 | Modifier | empirical era-depth row + locked curve |
@@ -8399,7 +8798,7 @@ Henderson is exactly why the app needs UFC-only discipline. Historically, he is 
 
 _Ledger verified through 2026-07-13. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
 
-### 60. Chael Sonnen — 84 OVR
+### 63. Chael Sonnen — 84 OVR
 
 A relentless UFC title challenger whose wrestling pressure and Anderson Silva rivalry made him unforgettable, but zero title wins cap the résumé hard.
 
@@ -8424,10 +8823,10 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.058866**, cur
 
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
-| Championship | 0 | #59 | 0 adjusted credit / 14.54 benchmark |
-| Opponent Quality | 9.87 | #58 | 4.64 diminished credit / 14.1 benchmark |
-| Prime Dominance | 15.2 | #59 | 16 raw × 95.0% sample |
-| Longevity | 7.72 | #54 | 37.06 counted elite months |
+| Championship | 0 | #62 | 0 adjusted credit / 14.54 benchmark |
+| Opponent Quality | 9.87 | #61 | 4.64 diminished credit / 14.1 benchmark |
+| Prime Dominance | 15.2 | #62 | 16 raw × 95.0% sample |
+| Longevity | 7.72 | #57 | 37.06 counted elite months |
 | Apex | +3.44 | Modifier | Elite middleweight challenger apex. |
 | Loss Penalty | -4.75 | Modifier | 7 official/technical loss events reviewed |
 | Division-Era Depth | -1.11 | Modifier | empirical era-depth row + locked curve |
@@ -8523,7 +8922,7 @@ Chael is one of the strongest UFC no-belt personality/resume cases: memorable, d
 
 _Ledger verified through 2026-07-13. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
 
-### 61. Paddy Pimblett — 84 OVR
+### 64. Paddy Pimblett — 84 OVR
 
 A fearless modern lightweight contender with a 7-0 UFC start, dangerous submission offense, and a rebound win that proved he belongs against ranked opposition.
 
@@ -8548,10 +8947,10 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.057785**, cur
 
 | Category | Score | Board rank | Primary receipt |
 | --- | --- | --- | --- |
-| Championship | 0 | #59 | 0 adjusted credit / 14.54 benchmark |
-| Opponent Quality | 3.4 | #61 | 1.65 diminished credit / 14.54 benchmark |
-| Prime Dominance | 16.6 | #55 | 19.53 raw × 85.0% sample |
-| Longevity | 5.55 | #56 | 26.63 counted elite months |
+| Championship | 0 | #62 | 0 adjusted credit / 14.54 benchmark |
+| Opponent Quality | 3.4 | #64 | 1.65 diminished credit / 14.54 benchmark |
+| Prime Dominance | 16.6 | #57 | 19.53 raw × 85.0% sample |
+| Longevity | 5.55 | #59 | 26.63 counted elite months |
 | Apex | +3.16 | Modifier | Explosive modern-lightweight finishing peak, but without championship proof. |
 | Loss Penalty | -1.7 | Modifier | 1 official/technical loss events reviewed |
 | Division-Era Depth | +0.75 | Modifier | Apply the positive modern-lightweight depth adjustment. |
@@ -9624,7 +10023,7 @@ _Ledger verified through 2026-07-13. Scores come from category-calculators-20260
 
 ### 8. Cris Cyborg — 87 OVR
 
-Cris Cyborg is ranked by the current UFC-only calculated pipeline.
+A terrifying short-run featherweight champion who went 5-1 in the UFC, won three title fights, and finished four opponents before Amanda Nunes ended the reign.
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -9724,15 +10123,15 @@ Smith through Nunes.
 
 #### Why ranked here
 
-Cris Cyborg ranks #8 because Prime Dominance and Opponent Quality supply the largest weighted pieces of a 39.03 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
+Cyborg ranks here because her UFC sample was brief but clearly championship-level. She won the featherweight belt, defeated Holly Holm over five rounds, defended again against Yana Kunitskaya, finished four of her five UFC victories, and won nearly 85% of her tracked rounds during the run.
 
 #### Why not ranked higher?
 
-Cris Cyborg is 4.75 raw points behind #7 Jessica Andrade. The largest category separation versus that next target is Opponent Quality; future movement must come from new UFC evidence and a full pipeline rerun.
+She does not rank higher because this is a UFC-only list, so the long Strikeforce and Invicta portions of her legacy are excluded. Her UFC résumé contains only six fights, roughly 2.6 active elite years, and one Top-5 win. The Amanda Nunes knockout is also a decisive prime title-loss finish that sharply limits an otherwise dominant sample.
 
 #### Final takeaway
 
-Cris Cyborg ranks #8 because Prime Dominance and Opponent Quality supply the largest weighted pieces of a 39.03 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
+Cyborg ranks here because her UFC sample was brief but clearly championship-level. She won the featherweight belt, defeated Holly Holm over five rounds, defended again against Yana Kunitskaya, finished four of her five UFC victories, and won nearly 85% of her tracked rounds during the run.
 
 _Ledger verified through 2026-07-13. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
 
@@ -10645,7 +11044,7 @@ _Ledger verified through 2026-07-13. Scores come from category-calculators-20260
 
 ## 13. Validation and regression readiness
 
-Automated validation passed for **76 fighters** and specifically checked Jon Jones, Georges St-Pierre, Demetrious Johnson, Anderson Silva, Khabib Nurmagomedov, Alexander Volkanovski, Islam Makhachev, Jose Aldo, Alexandre Pantoja, Cain Velasquez, Francis Ngannou.
+Automated validation passed for **79 fighters** and specifically checked Jon Jones, Georges St-Pierre, Demetrious Johnson, Anderson Silva, Khabib Nurmagomedov, Alexander Volkanovski, Islam Makhachev, Jose Aldo, Alexandre Pantoja, Cain Velasquez, Francis Ngannou, Brandon Moreno.
 
 | Regression question | Status | Required answer behavior |
 | --- | --- | --- |
@@ -10662,17 +11061,18 @@ Automated validation passed for **76 fighters** and specifically checked Jon Jon
 
 ## 14. Known limitations and data gaps
 
-- **Bespoke ranking copy:** 11 fighters lack custom “Why ranked here” copy; 11 lack custom “Why not ranked higher?” copy. Calculated fallbacks are supplied.
+- **Bespoke ranking copy:** 0 fighters lack custom “Why ranked here” copy; 0 lack custom “Why not ranked higher?” copy. Calculated fallbacks are supplied.
 - **Compare-profile coverage:** 11 fighters lack a full current compare narrative.
 - **Round audit coverage:** 0 fighters have at least one prime fight without audited round allocation.
-- **Freshness metadata:** model-as-of is 2026-07-13; latest fighter ledger is verified through 2026-07-15.
+- **Freshness metadata:** model-as-of is 2026-07-13; latest fighter ledger is verified through 2026-07-17.
 - **Non-UFC counterfactuals:** the model intentionally does not calculate what excluded achievements would add.
 - **Future scenarios:** rankings, title context and round allocations require explicit assumptions.
 
 ## 15. Update workflow
 
 1. Update canonical fighter facts and approved judgments.
-2. The `Build Octagon Verdict Data` action loads the full app in Chromium.
-3. It rebuilds the split JSON feed, this Markdown pack and the validation report.
-4. The action commits generated artifacts to `main` only after validation passes.
-5. Upload the new Markdown file to the Octagon Verdict Custom GPT and run the regression questions above.
+2. The `Build Octagon Verdict Markdown` action loads the full app in Chromium.
+3. It rebuilds and validates `octagon-verdict-knowledge.md` from the live calculated runtime.
+4. The action commits the refreshed Markdown file to `main` only after validation passes.
+5. Upload the refreshed Markdown file to the Octagon Verdict Custom GPT and run the regression questions above.
+6. JSON exports are optional, run only when explicitly requested, and never block a fighter addition.
