@@ -1,10 +1,24 @@
 (function(){
   'use strict';
 
-  const VERSION='octagon-message-board-20260717b';
+  const VERSION='octagon-message-board-20260717c-realtime';
   const CANONICAL_CODE='GOAT26';
   const TOKEN_KEY=`ufc-picks:group:${CANONICAL_CODE}`;
-  const state={snapshot:null,weekStart:null,replyTo:null,loading:false,busy:false,mounted:false};
+  const REALTIME_CHANNEL=`octagon-board-${CANONICAL_CODE.toLowerCase()}`;
+  const instanceId=globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  const state={
+    snapshot:null,
+    weekStart:null,
+    replyTo:null,
+    loading:false,
+    busy:false,
+    mounted:false,
+    channel:null,
+    realtimeClient:null,
+    realtimeStatus:'off',
+    realtimeRefreshTimer:0,
+    navigationBound:false
+  };
 
   const text=value=>String(value??'').trim();
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({
@@ -38,8 +52,8 @@
       : `<span>${esc(initials(member?.display_name))}</span>`}</span>`;
   }
 
-  function hydrateBrokenImages(root=document){
-    root.querySelectorAll?.('img[data-octagon-avatar-image]').forEach(image=>{
+  function hydrateBrokenImages(rootNode=document){
+    rootNode.querySelectorAll?.('img[data-octagon-avatar-image]').forEach(image=>{
       if(image.dataset.octagonErrorBound)return;
       image.dataset.octagonErrorBound='true';
       image.addEventListener('error',()=>{
@@ -97,13 +111,14 @@
     const style=document.createElement('style');
     style.id='octagonMessageBoardCss';
     style.textContent=`
-      .octagon-board{max-width:820px;margin:0 auto;color:#f8fafc}.octagon-board button,.octagon-board textarea,.octagon-board select{font:inherit}.octagon-board-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:end;padding:20px;border:1px solid #2b3a52;border-radius:22px 22px 0 0;background:radial-gradient(circle at 92% 0,rgba(249,115,22,.19),transparent 34%),linear-gradient(145deg,#19263b,#0c1321)}.octagon-board-kicker{color:#fb923c;font:950 9px/1 system-ui;letter-spacing:.15em}.octagon-board-head h2{margin:7px 0 4px;font:950 clamp(34px,7vw,54px)/.94 system-ui;letter-spacing:-.045em}.octagon-board-week{margin:0;color:#cbd5e1;font:750 12px/1.35 system-ui}.octagon-board-head-actions{display:flex;align-items:center;gap:7px}.octagon-board-head button,.octagon-board-head select{min-height:36px;border:1px solid #465a78;border-radius:11px;background:#101827;color:#f8fafc;padding:0 10px;font:900 10px/1 system-ui}.octagon-board-head button{cursor:pointer}.octagon-board-head button:hover{border-color:#f97316}.octagon-week-select[hidden]{display:none}.octagon-board-status{min-height:0}.octagon-notice{margin:12px 0 0;padding:11px 13px;border:1px solid rgba(249,115,22,.35);border-radius:13px;background:rgba(249,115,22,.08);color:#fed7aa;font:750 11px/1.4 system-ui}.octagon-notice.error{border-color:rgba(248,113,113,.45);background:rgba(127,29,29,.2);color:#fecaca}.octagon-feed{min-height:260px;border-left:1px solid #2b3a52;border-right:1px solid #2b3a52;background:#0b1220;padding:14px}.octagon-empty{display:grid;place-items:center;min-height:230px;padding:30px;border:1px dashed #3a4b65;border-radius:17px;color:#94a3b8;text-align:center}.octagon-empty strong{display:block;color:#f8fafc;font:950 17px/1.1 system-ui}.octagon-empty span{display:block;margin-top:7px;font:700 12px/1.45 system-ui}.octagon-thread{display:grid;gap:8px;margin-bottom:12px}.octagon-message{border:1px solid #2b3a52;border-radius:17px;background:linear-gradient(180deg,#141e2f,#101827);padding:12px}.octagon-message.reply{margin-left:42px;border-left:3px solid rgba(249,115,22,.62);background:#0f1726}.octagon-message-head{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:9px;align-items:center}.octagon-avatar{width:36px;height:36px;min-width:36px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid rgba(249,115,22,.55);border-radius:12px;background:radial-gradient(circle at 50% 18%,rgba(249,115,22,.38),#111827 68%);color:#fff;font:950 10px/1 system-ui}.octagon-avatar img{width:100%;height:100%;display:block;object-fit:cover;object-position:center 12%}.octagon-message-author{min-width:0}.octagon-message-author strong,.octagon-message-author small{display:block}.octagon-message-author strong{font:950 12px/1 system-ui;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.octagon-message-author small{margin-top:4px;color:#94a3b8;font:700 9px/1 system-ui}.octagon-admin-label{color:#fb923c;font:950 7px/1 system-ui;letter-spacing:.1em}.octagon-message-body{margin:11px 0 0;color:#e5e7eb;font:650 14px/1.5 system-ui;overflow-wrap:anywhere}.octagon-message-body a{color:#fb923c;text-decoration:underline;text-underline-offset:2px}.octagon-message.deleted .octagon-message-body{color:#64748b;font-style:italic}.octagon-message-actions{display:flex;align-items:center;gap:6px;margin-top:11px;flex-wrap:wrap}.octagon-message-actions button{min-height:30px;border:1px solid #33445f;border-radius:10px;background:#0b1220;color:#cbd5e1;padding:0 9px;cursor:pointer;font:900 9px/1 system-ui}.octagon-message-actions button:hover{border-color:#f97316;color:#fff}.octagon-message-actions button.active{border-color:#f97316;background:rgba(249,115,22,.14);color:#fed7aa}.octagon-message-actions button.delete{margin-left:auto;color:#fca5a5}.octagon-composer{position:sticky;bottom:0;z-index:20;border:1px solid #2b3a52;border-radius:0 0 22px 22px;background:rgba(15,23,38,.97);backdrop-filter:blur(12px);padding:13px}.octagon-replying{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px;padding:8px 10px;border:1px solid rgba(249,115,22,.34);border-radius:11px;background:rgba(249,115,22,.08);color:#fed7aa;font:800 10px/1.3 system-ui}.octagon-replying[hidden]{display:none}.octagon-replying button{border:0;background:transparent;color:#fff;cursor:pointer;font-weight:950}.octagon-compose-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;align-items:end}.octagon-compose-copy{position:relative}.octagon-compose-copy textarea{display:block;width:100%;min-height:72px;max-height:180px;resize:vertical;border:1px solid #435675;border-radius:14px;background:#0b1220;color:#fff;padding:11px 12px 26px;outline:none;font:650 14px/1.45 system-ui}.octagon-compose-copy textarea:focus{border-color:#f97316;box-shadow:0 0 0 3px rgba(249,115,22,.12)}.octagon-character-count{position:absolute;right:10px;bottom:8px;color:#64748b;font:800 9px/1 system-ui}.octagon-character-count.over{color:#f87171}.octagon-submit{min-width:92px;min-height:44px;border:1px solid #f97316;border-radius:13px;background:#f97316;color:#111827;padding:0 14px;cursor:pointer;font:950 10px/1 system-ui}.octagon-submit:disabled,.octagon-board button:disabled{opacity:.48;cursor:not-allowed}.octagon-auth-card{margin:14px;border:1px solid rgba(249,115,22,.35);border-radius:17px;background:rgba(249,115,22,.07);padding:18px;text-align:center}.octagon-auth-card strong{display:block;font:950 17px/1.1 system-ui}.octagon-auth-card p{margin:8px 0 13px;color:#94a3b8;font:700 12px/1.45 system-ui}.octagon-auth-card button{min-height:40px;border:1px solid #f97316;border-radius:12px;background:#f97316;color:#111827;padding:0 14px;font:950 10px/1 system-ui;cursor:pointer}
+      .octagon-board{max-width:820px;margin:0 auto;color:#f8fafc}.octagon-board button,.octagon-board textarea,.octagon-board select{font:inherit}.octagon-board-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:end;padding:20px;border:1px solid #2b3a52;border-radius:22px 22px 0 0;background:radial-gradient(circle at 92% 0,rgba(249,115,22,.19),transparent 34%),linear-gradient(145deg,#19263b,#0c1321)}.octagon-board-kicker{color:#fb923c;font:950 9px/1 system-ui;letter-spacing:.15em}.octagon-board-head h2{margin:7px 0 4px;font:950 clamp(34px,7vw,54px)/.94 system-ui;letter-spacing:-.045em}.octagon-board-week{margin:0;color:#cbd5e1;font:750 12px/1.35 system-ui}.octagon-board-head-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap;justify-content:flex-end}.octagon-board-head button,.octagon-board-head select{min-height:36px;border:1px solid #465a78;border-radius:11px;background:#101827;color:#f8fafc;padding:0 10px;font:900 10px/1 system-ui}.octagon-board-head button{cursor:pointer}.octagon-board-head button:hover{border-color:#f97316}.octagon-week-select[hidden]{display:none}.octagon-live{display:inline-flex;align-items:center;gap:6px;min-height:28px;padding:0 8px;border:1px solid #3c4d67;border-radius:999px;background:#101827;color:#94a3b8;font:950 8px/1 system-ui;letter-spacing:.08em}.octagon-live i{width:6px;height:6px;border-radius:50%;background:#64748b;box-shadow:0 0 0 3px rgba(100,116,139,.12)}.octagon-live.live{border-color:rgba(34,197,94,.38);color:#86efac}.octagon-live.live i{background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.15)}.octagon-live.connecting{color:#fdba74}.octagon-live.connecting i{background:#f97316;animation:octagonLivePulse 1s ease-in-out infinite}.octagon-live.offline{color:#fca5a5}.octagon-live.offline i{background:#ef4444}@keyframes octagonLivePulse{50%{opacity:.35;transform:scale(.75)}}.octagon-board-status{min-height:0}.octagon-notice{margin:12px 0 0;padding:11px 13px;border:1px solid rgba(249,115,22,.35);border-radius:13px;background:rgba(249,115,22,.08);color:#fed7aa;font:750 11px/1.4 system-ui}.octagon-notice.error{border-color:rgba(248,113,113,.45);background:rgba(127,29,29,.2);color:#fecaca}.octagon-feed{min-height:260px;border-left:1px solid #2b3a52;border-right:1px solid #2b3a52;background:#0b1220;padding:14px}.octagon-empty{display:grid;place-items:center;min-height:230px;padding:30px;border:1px dashed #3a4b65;border-radius:17px;color:#94a3b8;text-align:center}.octagon-empty strong{display:block;color:#f8fafc;font:950 17px/1.1 system-ui}.octagon-empty span{display:block;margin-top:7px;font:700 12px/1.45 system-ui}.octagon-thread{display:grid;gap:8px;margin-bottom:12px}.octagon-message{border:1px solid #2b3a52;border-radius:17px;background:linear-gradient(180deg,#141e2f,#101827);padding:12px}.octagon-message.reply{margin-left:42px;border-left:3px solid rgba(249,115,22,.62);background:#0f1726}.octagon-message-head{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:9px;align-items:center}.octagon-avatar{width:36px;height:36px;min-width:36px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid rgba(249,115,22,.55);border-radius:12px;background:radial-gradient(circle at 50% 18%,rgba(249,115,22,.38),#111827 68%);color:#fff;font:950 10px/1 system-ui}.octagon-avatar img{width:100%;height:100%;display:block;object-fit:cover;object-position:center 12%}.octagon-message-author{min-width:0}.octagon-message-author strong,.octagon-message-author small{display:block}.octagon-message-author strong{font:950 12px/1 system-ui;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.octagon-message-author small{margin-top:4px;color:#94a3b8;font:700 9px/1 system-ui}.octagon-admin-label{color:#fb923c;font:950 7px/1 system-ui;letter-spacing:.1em}.octagon-message-body{margin:11px 0 0;color:#e5e7eb;font:650 14px/1.5 system-ui;overflow-wrap:anywhere}.octagon-message-body a{color:#fb923c;text-decoration:underline;text-underline-offset:2px}.octagon-message.deleted .octagon-message-body{color:#64748b;font-style:italic}.octagon-message-actions{display:flex;align-items:center;gap:6px;margin-top:11px;flex-wrap:wrap}.octagon-message-actions button{min-height:30px;border:1px solid #33445f;border-radius:10px;background:#0b1220;color:#cbd5e1;padding:0 9px;cursor:pointer;font:900 9px/1 system-ui}.octagon-message-actions button:hover{border-color:#f97316;color:#fff}.octagon-message-actions button.active{border-color:#f97316;background:rgba(249,115,22,.14);color:#fed7aa}.octagon-message-actions button.delete{margin-left:auto;color:#fca5a5}.octagon-composer{position:sticky;bottom:0;z-index:20;border:1px solid #2b3a52;border-radius:0 0 22px 22px;background:rgba(15,23,38,.97);backdrop-filter:blur(12px);padding:13px}.octagon-replying{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px;padding:8px 10px;border:1px solid rgba(249,115,22,.34);border-radius:11px;background:rgba(249,115,22,.08);color:#fed7aa;font:800 10px/1.3 system-ui}.octagon-replying[hidden]{display:none}.octagon-replying button{border:0;background:transparent;color:#fff;cursor:pointer;font-weight:950}.octagon-compose-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;align-items:end}.octagon-compose-copy{position:relative}.octagon-compose-copy textarea{display:block;width:100%;min-height:72px;max-height:180px;resize:vertical;border:1px solid #435675;border-radius:14px;background:#0b1220;color:#fff;padding:11px 12px 26px;outline:none;font:650 14px/1.45 system-ui}.octagon-compose-copy textarea:focus{border-color:#f97316;box-shadow:0 0 0 3px rgba(249,115,22,.12)}.octagon-character-count{position:absolute;right:10px;bottom:8px;color:#64748b;font:800 9px/1 system-ui}.octagon-character-count.over{color:#f87171}.octagon-submit{min-width:92px;min-height:44px;border:1px solid #f97316;border-radius:13px;background:#f97316;color:#111827;padding:0 14px;cursor:pointer;font:950 10px/1 system-ui}.octagon-submit:disabled,.octagon-board button:disabled{opacity:.48;cursor:not-allowed}.octagon-auth-card{margin:14px;border:1px solid rgba(249,115,22,.35);border-radius:17px;background:rgba(249,115,22,.07);padding:18px;text-align:center}.octagon-auth-card strong{display:block;font:950 17px/1.1 system-ui}.octagon-auth-card p{margin:8px 0 13px;color:#94a3b8;font:700 12px/1.45 system-ui}.octagon-auth-card button{min-height:40px;border:1px solid #f97316;border-radius:12px;background:#f97316;color:#111827;padding:0 14px;font:950 10px/1 system-ui;cursor:pointer}
       @media(max-width:620px){.octagon-board-head{grid-template-columns:1fr;padding:16px;gap:12px}.octagon-board-head-actions{justify-content:space-between}.octagon-board-head-actions select{min-width:0;max-width:190px}.octagon-feed{padding:10px}.octagon-message.reply{margin-left:24px}.octagon-compose-row{grid-template-columns:1fr}.octagon-submit{width:100%}.octagon-composer{padding:10px}}
     `;
     document.head.appendChild(style);
   }
 
   function root(){return document.getElementById('octagon');}
+  function boardActive(){return Boolean(root()?.classList.contains('active-view'))&&!document.hidden;}
 
   function mount(){
     const section=root();
@@ -116,7 +131,7 @@
     section.innerHTML=`<div class="octagon-board" data-octagon-board>
       <header class="octagon-board-head">
         <div><div class="octagon-board-kicker">PRIVATE BETA · GOAT26</div><h2>The Octagon</h2><p class="octagon-board-week" data-octagon-week>One UFC conversation. A new board every Monday.</p></div>
-        <div class="octagon-board-head-actions"><select class="octagon-week-select" data-octagon-week-select hidden aria-label="Octagon week"></select><button type="button" data-octagon-refresh>Refresh</button></div>
+        <div class="octagon-board-head-actions"><span class="octagon-live" data-octagon-live><i></i><b>OFFLINE</b></span><select class="octagon-week-select" data-octagon-week-select hidden aria-label="Octagon week"></select><button type="button" data-octagon-refresh>Refresh</button></div>
       </header>
       <div class="octagon-board-status" data-octagon-status role="status"></div>
       <div class="octagon-feed" data-octagon-feed><div class="octagon-empty"><div><strong>Loading The Octagon…</strong><span>Verifying your GOAT26 profile.</span></div></div></div>
@@ -127,6 +142,7 @@
     </div>`;
     bindStaticEvents(section);
     state.mounted=true;
+    updateLiveStatus(state.realtimeStatus);
     return true;
   }
 
@@ -134,6 +150,30 @@
     const node=root()?.querySelector('[data-octagon-status]');
     if(!node)return;
     node.innerHTML=message?`<div class="octagon-notice${kind?' '+esc(kind):''}">${esc(message)}</div>`:'';
+  }
+
+  function updateLiveStatus(status='off'){
+    state.realtimeStatus=status;
+    const node=root()?.querySelector('[data-octagon-live]');
+    if(!node)return;
+    node.classList.remove('live','connecting','offline');
+    const label=node.querySelector('b');
+    if(status==='live'){
+      node.classList.add('live');
+      if(label)label.textContent='LIVE';
+      node.title='New posts and reactions update automatically.';
+    }else if(status==='connecting'){
+      node.classList.add('connecting');
+      if(label)label.textContent='CONNECTING';
+      node.title='Connecting to live updates.';
+    }else if(status==='offline'){
+      node.classList.add('offline');
+      if(label)label.textContent='OFFLINE';
+      node.title='Live updates are offline. Manual Refresh still works.';
+    }else{
+      if(label)label.textContent='PAUSED';
+      node.title='Live updates pause when you leave The Octagon.';
+    }
   }
 
   function renderAuth(message){
@@ -250,6 +290,88 @@
     return{client:profile?.client||null,identity,token:tokenFor(identity)};
   }
 
+  function scheduleRealtimeRefresh(){
+    if(!boardActive())return;
+    window.clearTimeout(state.realtimeRefreshTimer);
+    state.realtimeRefreshTimer=window.setTimeout(async()=>{
+      if(!boardActive())return;
+      if(state.busy||state.loading){
+        scheduleRealtimeRefresh();
+        return;
+      }
+      await load(state.weekStart,{silent:true,realtime:true});
+    },220);
+  }
+
+  async function stopRealtime(){
+    window.clearTimeout(state.realtimeRefreshTimer);
+    state.realtimeRefreshTimer=0;
+    const channel=state.channel;
+    const client=state.realtimeClient;
+    state.channel=null;
+    state.realtimeClient=null;
+    if(channel){
+      try{
+        if(client?.removeChannel)await client.removeChannel(channel);
+        else await channel.unsubscribe?.();
+      }catch(_error){}
+    }
+    updateLiveStatus(navigator.onLine?'off':'offline');
+  }
+
+  async function ensureRealtime(){
+    if(!boardActive()){
+      if(state.channel)await stopRealtime();
+      return null;
+    }
+    const profile=window.UFC_PLAY_PROFILE;
+    const client=profile?.client;
+    if(!client?.channel){
+      updateLiveStatus('offline');
+      return null;
+    }
+    if(state.channel&&state.realtimeClient===client)return state.channel;
+    if(state.channel)await stopRealtime();
+
+    updateLiveStatus(navigator.onLine?'connecting':'offline');
+    const channel=client.channel(REALTIME_CHANNEL,{config:{broadcast:{self:false,ack:true}}});
+    channel.on('broadcast',{event:'board-change'},event=>{
+      if(event?.payload?.source===instanceId)return;
+      scheduleRealtimeRefresh();
+    });
+    state.channel=channel;
+    state.realtimeClient=client;
+    channel.subscribe(status=>{
+      if(state.channel!==channel)return;
+      if(status==='SUBSCRIBED')updateLiveStatus('live');
+      else if(status==='CHANNEL_ERROR'||status==='TIMED_OUT')updateLiveStatus('offline');
+      else if(status==='CLOSED')updateLiveStatus(boardActive()?'offline':'off');
+      else updateLiveStatus('connecting');
+    });
+    return channel;
+  }
+
+  async function broadcastChange(kind){
+    if(!boardActive())return;
+    const channel=await ensureRealtime();
+    if(!channel||state.realtimeStatus!=='live')return;
+    try{
+      await channel.send({
+        type:'broadcast',
+        event:'board-change',
+        payload:{source:instanceId,kind:text(kind)||'change',at:new Date().toISOString()}
+      });
+    }catch(_error){
+      updateLiveStatus('offline');
+    }
+  }
+
+  async function syncRealtime(){
+    if(boardActive())await ensureRealtime();
+    else if(state.channel)await stopRealtime();
+    else updateLiveStatus(navigator.onLine?'off':'offline');
+  }
+
   async function load(weekStart=null,options={}){
     if(state.loading)return null;
     if(!mount())return null;
@@ -260,6 +382,7 @@
       if(!client||!token){
         renderAuth('Your saved GOAT26 profile could not be verified on this device.');
         setNotice('');
+        await stopRealtime();
         return null;
       }
       const {data,error}=await client.rpc('octagon_snapshot',{
@@ -270,11 +393,14 @@
       if(!data?.ok)throw new Error(data?.error||'The Octagon could not be loaded.');
       if(state.replyTo&&!data.messages?.some(message=>message.id===state.replyTo.id))state.replyTo=null;
       render(data);
+      await syncRealtime();
       return data;
     }catch(error){
       const message=text(error?.message)||'The Octagon could not be loaded.';
-      if(/profile was not recognized|not enabled|sign in/i.test(message))renderAuth(message);
-      else{
+      if(/profile was not recognized|not enabled|sign in/i.test(message)){
+        renderAuth(message);
+        await stopRealtime();
+      }else{
         const feed=root()?.querySelector('[data-octagon-feed]');
         if(feed)feed.innerHTML='<div class="octagon-empty"><div><strong>Could not load The Octagon</strong><span>Use Refresh to try again.</span></div></div>';
       }
@@ -305,6 +431,7 @@
       input.value='';
       state.replyTo=null;
       await load(null,{silent:true});
+      await broadcastChange(data.message?.parent_message_id?'reply':'message');
     }catch(error){
       setNotice(text(error?.message)||'The message could not be posted.','error');
     }finally{
@@ -316,6 +443,7 @@
   async function react(messageId,reaction,currentReaction){
     if(state.busy)return;
     state.busy=true;
+    updateComposer();
     try{
       const {client,token}=await context();
       if(!client||!token)throw new Error('Reconnect your UFC App profile.');
@@ -334,6 +462,7 @@
         message.my_reaction=data.my_reaction;
         renderMessages(state.snapshot);
       }
+      await broadcastChange('reaction');
     }catch(error){
       setNotice(text(error?.message)||'The reaction could not be saved.','error');
     }finally{
@@ -358,6 +487,7 @@
       if(!data?.ok)throw new Error(data?.error||'The message could not be deleted.');
       if(state.replyTo?.id===messageId)state.replyTo=null;
       await load(state.weekStart,{silent:true});
+      await broadcastChange('delete');
     }catch(error){
       setNotice(text(error?.message)||'The message could not be deleted.','error');
     }finally{
@@ -407,17 +537,49 @@
     button.dataset.octagonBoardBound='true';
     button.addEventListener('click',()=>{
       if(button.disabled)return;
-      window.setTimeout(()=>load(),0);
+      window.setTimeout(async()=>{
+        await load();
+        await syncRealtime();
+      },0);
     });
     return true;
+  }
+
+  function bindNavigation(){
+    if(state.navigationBound)return;
+    state.navigationBound=true;
+    document.addEventListener('click',event=>{
+      if(!event.target.closest?.('.tab'))return;
+      window.setTimeout(syncRealtime,0);
+    });
+    document.addEventListener('visibilitychange',()=>{
+      window.setTimeout(async()=>{
+        await syncRealtime();
+        if(boardActive())await load(state.weekStart,{silent:true});
+      },0);
+    });
+    window.addEventListener('online',()=>{
+      updateLiveStatus('connecting');
+      window.setTimeout(async()=>{
+        await syncRealtime();
+        if(boardActive())await load(state.weekStart,{silent:true});
+      },100);
+    });
+    window.addEventListener('offline',()=>{
+      updateLiveStatus('offline');
+      stopRealtime();
+    });
+    window.addEventListener('pagehide',()=>{stopRealtime();},{once:true});
   }
 
   function start(){
     installStyles();
     mount();
     bindTab();
+    bindNavigation();
     [50,220,850,2200].forEach(delay=>window.setTimeout(()=>{mount();bindTab();},delay));
     if(root()?.classList.contains('active-view'))load();
+    else updateLiveStatus(navigator.onLine?'off':'offline');
   }
 
   window.addEventListener('ufc-play-profile-ready',()=>{
@@ -427,7 +589,18 @@
     if(root()?.classList.contains('active-view'))load(state.weekStart,{silent:true});
   });
 
-  window.UFC_OCTAGON_BOARD={version:VERSION,load,post,react,removeMessage,get snapshot(){return state.snapshot;}};
+  window.UFC_OCTAGON_BOARD={
+    version:VERSION,
+    load,
+    post,
+    react,
+    removeMessage,
+    ensureRealtime,
+    stopRealtime,
+    broadcastChange,
+    get snapshot(){return state.snapshot;},
+    get realtimeStatus(){return state.realtimeStatus;}
+  };
   document.documentElement.setAttribute('data-octagon-message-board',VERSION);
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
   else start();
