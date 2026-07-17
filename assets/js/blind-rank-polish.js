@@ -40,7 +40,7 @@
   function packFor(id){const key=ALIASES[id]||id;return PACKS.find(pack=>pack.id===key)||PACKS[0];}
   function savedPack(){try{return packFor(localStorage.getItem(PACK_KEY)||api()?.state?.packId).id;}catch(_error){return packFor(api()?.state?.packId).id;}}
   function shuffle(items){const copy=[...items];for(let i=copy.length-1;i>0;i-=1){const j=Math.floor(Math.random()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]];}return copy;}
-  function finite(value){return Number.isFinite(Number(value));}
+  function finite(value){return value!==null&&value!==''&&Number.isFinite(Number(value));}
 
   function legacyRankingScore(fighter){
     const rank=Number(fighter?.modelRank);
