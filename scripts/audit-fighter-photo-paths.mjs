@@ -61,21 +61,24 @@ try{
   };
   for(const [board,names] of Object.entries(boardNames)){
     if(board==='women')await page.locator('.tab[data-view="women"]').click();
+    const container=board==='men'?'#menList':'#womenList';
     for(const fighter of names){
-      const row=page.locator(`${board==='men'?'#menList':'#womenList'} .fighter-row[data-fighter="${fighter.replace(/"/g,'\\"')}"]`);
-      await row.scrollIntoViewIfNeeded();
+      await page.evaluate(({container,fighter})=>{
+        const row=[...document.querySelectorAll(`${container} .fighter-row`)].find(item=>item.dataset.fighter===fighter);
+        row?.scrollIntoView({block:'center'});
+      },{container,fighter});
       try{
         await page.waitForFunction(({container,fighter})=>{
-          const rows=[...document.querySelectorAll(`${container} .fighter-row`)];
-          const row=rows.find(item=>item.dataset.fighter===fighter);
+          const row=[...document.querySelectorAll(`${container} .fighter-row`)].find(item=>item.dataset.fighter===fighter);
           const img=row?.querySelector('.row-photo img');
           return Boolean(img&&img.complete&&img.naturalWidth>0);
-        },{container:board==='men'?'#menList':'#womenList',fighter},{timeout:5000,polling:100});
+        },{container,fighter},{timeout:5000,polling:100});
       }catch{
-        scrollFailures.push(await row.evaluate(element=>{
-          const img=element.querySelector('.row-photo img');
-          return{fighter:element.dataset.fighter,hasImage:Boolean(img),src:img?.getAttribute('src')||null,complete:Boolean(img?.complete),naturalWidth:Number(img?.naturalWidth||0),text:element.querySelector('.row-photo')?.textContent?.trim()||''};
-        }));
+        scrollFailures.push(await page.evaluate(({container,fighter})=>{
+          const element=[...document.querySelectorAll(`${container} .fighter-row`)].find(item=>item.dataset.fighter===fighter);
+          const img=element?.querySelector('.row-photo img');
+          return{fighter,hasElement:Boolean(element),hasImage:Boolean(img),src:img?.getAttribute('src')||null,complete:Boolean(img?.complete),naturalWidth:Number(img?.naturalWidth||0),text:element?.querySelector('.row-photo')?.textContent?.trim()||''};
+        },{container,fighter}));
       }
     }
   }
