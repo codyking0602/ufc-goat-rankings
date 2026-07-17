@@ -82,6 +82,9 @@ try{
 
   const row=runtime.pettis;
   assert.ok(row,'Anthony Pettis calculated row exists');
+  assert.equal(row.rank,57);
+  assert.equal(row.totalScore,37.5);
+  assert.equal(row.overallOvr,87);
   assert.equal(row.ufcRecord,'11-9');
   assert.equal(row.titleFightWins,2);
   assert.equal(row.adjustedTitleWins,2);
@@ -96,6 +99,13 @@ try{
   assert.match(String(row.secondaryDivision),/Featherweight/);
   assert.match(String(row.secondaryDivision),/Welterweight/);
   assert.equal(runtime.pettisCategory?.status,'complete');
+  assert.equal(runtime.pettisCategory?.championship,4.13);
+  assert.equal(runtime.pettisCategory?.opponentQuality,15.76);
+  assert.equal(runtime.pettisCategory?.primeDominance,14.31);
+  assert.equal(runtime.pettisCategory?.longevity,16.52);
+  assert.equal(runtime.pettisCategory?.apex,5.28);
+  assert.equal(runtime.pettisCategory?.penalty,-6);
+  assert.equal(runtime.pettisCategory?.eraDepth,.45);
   assert.deepEqual(runtime.pettisEra,{primary:'golden-age',secondary:'superstar'});
   assert.equal(runtime.pettisLedgers.length,3);
   assert.ok(runtime.pettisCompare?.shortCase&&runtime.pettisCompare?.counter&&runtime.pettisCompare?.edge);
