@@ -1,9 +1,10 @@
 (function(){
   'use strict';
 
-  const VERSION='find-leader-question-bank-20260716b-elimination';
+  const VERSION='find-leader-question-bank-20260716c-eleven-challenges';
   const CANDIDATE_COUNT=10;
   const FINISH_METHODS=new Set(['ko-tko','submission','doctor-stoppage']);
+  const CHAMPION_OPPONENT_STATUSES=new Set(['reigning-champion','interim-champion','former-champion']);
 
   const DEFINITIONS=[
     {
@@ -50,12 +51,68 @@
       shortLabel:'KNOCKOUTS',
       since:'2015-01-01',
       metric:'knockouts'
+    },
+    {
+      id:'title-fight-finishes-since-2010',
+      question:'Who has the most UFC title-fight finishes since 2010?',
+      context:'Official UFC title-fight victories by knockout, submission, or doctor stoppage on or after January 1, 2010.',
+      statLabel:'UFC title-fight finishes since 2010',
+      shortLabel:'TITLE FINISHES',
+      since:'2010-01-01',
+      metric:'title-fight-finishes'
+    },
+    {
+      id:'ufc-wins-since-2013',
+      question:'Who has the most UFC wins since 2013?',
+      context:'Counted UFC victories on or after January 1, 2013.',
+      statLabel:'UFC wins since 2013',
+      shortLabel:'UFC WINS',
+      since:'2013-01-01',
+      metric:'wins'
+    },
+    {
+      id:'longest-ufc-winning-streak',
+      question:'Who has the longest UFC winning streak?',
+      context:'Longest run of consecutive counted UFC victories in the complete UFC fight ledger.',
+      statLabel:'consecutive UFC wins',
+      shortLabel:'WIN STREAK',
+      since:'1993-11-12',
+      metric:'longest-win-streak'
+    },
+    {
+      id:'first-round-finishes-since-2015',
+      question:'Who has the most first-round UFC finishes since 2015?',
+      context:'Counted UFC wins by knockout, submission, or doctor stoppage in Round 1 on or after January 1, 2015.',
+      statLabel:'first-round UFC finishes since 2015',
+      shortLabel:'ROUND 1 FINISHES',
+      since:'2015-01-01',
+      metric:'first-round-finishes'
+    },
+    {
+      id:'wins-over-ufc-champions',
+      question:'Who has the most UFC wins over UFC champions?',
+      context:'Counted UFC victories over opponents classified in the canonical ledger as reigning, interim, or former UFC champions.',
+      statLabel:'UFC wins over UFC champions',
+      shortLabel:'CHAMPION WINS',
+      since:'1993-11-12',
+      metric:'champion-wins'
+    },
+    {
+      id:'ufc-wins-unfinished-since-2015',
+      question:'Who has the most UFC wins since 2015 without being finished?',
+      context:'Counted UFC victories on or after January 1, 2015, limited to fighters with no counted knockout, submission, or doctor-stoppage loss in that span.',
+      statLabel:'UFC wins since 2015 without a finish loss',
+      shortLabel:'UNFINISHED WINS',
+      since:'2015-01-01',
+      metric:'wins-unfinished'
     }
   ];
 
   const normal=value=>String(value||'').trim().toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
   const round=value=>Math.round(Number(value)||0);
   const clone=value=>JSON.parse(JSON.stringify(value));
+  const inWindow=(fight,definition)=>Boolean(fight)&&(!definition?.since||String(fight.date||'')>=definition.since);
+  const isFinish=fight=>FINISH_METHODS.has(fight?.method?.category);
 
   function isTitleFight(fight){
     const types=window.UFC_CANONICAL_FIGHTER_FACTS?.rules?.championshipTypes||{};
@@ -63,18 +120,41 @@
   }
 
   function countsFight(fight,definition){
-    if(!fight||String(fight.date||'')<definition.since)return false;
-    if(fight.scoringDisposition!=='count-win')return false;
+    if(!inWindow(fight,definition)||fight.scoringDisposition!=='count-win')return false;
     if(definition.metric==='wins')return true;
     if(definition.metric==='title-fight-wins')return isTitleFight(fight);
-    if(definition.metric==='finishes')return FINISH_METHODS.has(fight?.method?.category);
+    if(definition.metric==='finishes')return isFinish(fight);
     if(definition.metric==='submissions')return fight?.method?.category==='submission';
     if(definition.metric==='knockouts')return fight?.method?.category==='ko-tko';
+    if(definition.metric==='title-fight-finishes')return isTitleFight(fight)&&isFinish(fight);
+    if(definition.metric==='first-round-finishes')return isFinish(fight)&&Number(fight?.method?.round)===1;
+    if(definition.metric==='champion-wins')return CHAMPION_OPPONENT_STATUSES.has(fight?.opponentContext?.championStatus);
+    if(definition.metric==='wins-unfinished')return true;
     return false;
   }
 
+  function longestWinningStreak(record,definition){
+    let current=0;
+    let longest=0;
+    (Array.isArray(record?.fights)?record.fights:[]).forEach(fight=>{
+      if(!inWindow(fight,definition))return;
+      if(fight.scoringDisposition==='count-win'){
+        current+=1;
+        longest=Math.max(longest,current);
+      }else current=0;
+    });
+    return longest;
+  }
+
   function valueFor(record,definition){
-    return (Array.isArray(record?.fights)?record.fights:[]).filter(fight=>countsFight(fight,definition)).length;
+    const fights=Array.isArray(record?.fights)?record.fights:[];
+    if(definition.metric==='longest-win-streak')return longestWinningStreak(record,definition);
+    if(definition.metric==='wins-unfinished'){
+      const relevant=fights.filter(fight=>inWindow(fight,definition));
+      const finishLoss=relevant.some(fight=>fight.scoringDisposition==='count-loss'&&isFinish(fight));
+      return finishLoss?0:relevant.filter(fight=>fight.scoringDisposition==='count-win').length;
+    }
+    return fights.filter(fight=>countsFight(fight,definition)).length;
   }
 
   function fighterSnapshot(record,value,index){
@@ -142,6 +222,7 @@
     const rows=DEFINITIONS.map(definition=>buildDefinition(definition,()=>0.5));
     return {
       version:VERSION,
+      definitionCount:DEFINITIONS.length,
       valid:rows.filter(row=>row.valid).map(row=>row.setup.questionId),
       excluded:rows.filter(row=>!row.valid).map(row=>({questionId:row.definition.id,reason:row.reason})),
       rows
@@ -162,6 +243,7 @@
   window.UFC_FIND_LEADER_QUESTION_BANK={
     version:VERSION,
     candidateCount:CANDIDATE_COUNT,
+    definitionCount:DEFINITIONS.length,
     definitions:DEFINITIONS.map(clone),
     valueFor,
     buildDefinition,
