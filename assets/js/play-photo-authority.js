@@ -1,10 +1,10 @@
 (function(){
   'use strict';
 
-  const VERSION='play-photo-authority-20260717b';
-  const PHOTO_BUILD='20260717b';
+  const VERSION='play-photo-authority-20260717c';
+  const PHOTO_BUILD='20260717c';
   const attempts=new WeakMap();
-  const repairedFallbacks=new WeakSet();
+  const repairedNames=new Set();
 
   const text=value=>String(value??'').trim();
   const unique=values=>[...new Set((values||[]).map(text).filter(Boolean))];
@@ -230,14 +230,15 @@
 
   function repairFallback(node){
     if(!(node instanceof HTMLElement))return;
-    if(node.dataset.photoAuthorityFinal==='true'||repairedFallbacks.has(node))return;
+    if(node.dataset.photoAuthorityFinal==='true')return;
     if(!node.closest('#play,.challenge-shell'))return;
     const name=cleanName(node.getAttribute('aria-label')||'');
-    if(!name)return;
+    const key=normal(name);
+    if(!name||repairedNames.has(key))return;
     const candidates=candidatesFor(name);
     const src=candidates.thumbs[0]||candidates.profiles[0]||'';
     if(!src)return;
-    repairedFallbacks.add(node);
+    repairedNames.add(key);
     const image=document.createElement('img');
     image.alt=name;
     image.dataset.fighterPhoto='true';
