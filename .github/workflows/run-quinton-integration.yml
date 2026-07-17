@@ -2,6 +2,9 @@ name: Run Quinton Rampage Jackson Integration
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [.github/workflows/run-quinton-integration.yml]
 
 permissions:
   contents: write
