@@ -1,18 +1,22 @@
 (function(){
   'use strict';
 
-  const VERSION='find-leader-question-bank-20260717b-forty-four-record-book';
+  const VERSION='find-leader-question-bank-20260717c-fifty-balanced';
   const CANDIDATE_COUNT=10;
   const DECOY_POOL_SIZE=20;
+  const DAILY_ANCHOR='2026-07-16';
+  const DAILY_GAME_GAP_DAYS=6;
+  const NO_REPEAT_SELECTIONS=14;
+  const FAMILY_CYCLE=['wins','finishes','record-book','era','championship','filtered','main-event','wins','finishes','record-book','filtered','streaks','quality','rates','longevity','durability'];
   const FINISH_METHODS=new Set(['ko-tko','submission','doctor-stoppage']);
   const CHAMPION_OPPONENT_STATUSES=new Set(['reigning-champion','interim-champion','former-champion']);
 
-  const define=(id,question,context,statLabel,shortLabel,since,metric,family,extra={})=>({
-    id,question,context,statLabel,shortLabel,since,metric,family,...extra
-  });
-  const recordBook=(id,question,context,statLabel,shortLabel,metric)=>define(
-    id,question,context,statLabel,shortLabel,null,metric,'record-book',
-    {source:'official-record-book',recordBookMetric:metric}
+  const define=(id,question,context,statLabel,shortLabel,since,metric,family,extra={})=>({id,question,context,statLabel,shortLabel,since,metric,family,...extra});
+  const recordBook=(id,question,context,statLabel,shortLabel,metric,family='record-book')=>define(
+    id,question,context,statLabel,shortLabel,null,metric,family,{source:'official-record-book',recordBookMetric:metric}
+  );
+  const mainEvent=(id,question,context,statLabel,shortLabel,metric)=>define(
+    id,question,context,statLabel,shortLabel,'1993-11-12',metric,'main-event',{source:'main-event-ledger'}
   );
 
   const DEFINITIONS=[
@@ -38,7 +42,6 @@
     define('ufc-wins-2005-2012','Who had the most UFC wins from 2005 through 2012?','Counted UFC victories from January 1, 2005 through December 31, 2012.','UFC wins from 2005 through 2012','ERA WINS','2005-01-01','wins','era',{through:'2012-12-31'}),
     define('ufc-wins-2013-2019','Who had the most UFC wins from 2013 through 2019?','Counted UFC victories from January 1, 2013 through December 31, 2019.','UFC wins from 2013 through 2019','ERA WINS','2013-01-01','wins','era',{through:'2019-12-31'}),
     define('ufc-wins-since-2022','Who has the most UFC wins since 2022?','Counted UFC victories on or after January 1, 2022.','UFC wins since 2022','UFC WINS','2022-01-01','wins','wins'),
-
     define('ko-wins-all-time','Who has the most UFC knockout wins of all time?','Every counted UFC KO/TKO victory in the complete UFC fight ledger.','all-time UFC KO/TKO wins','KNOCKOUTS','1993-11-12','knockouts','finishes'),
     define('submission-wins-all-time','Who has the most UFC submission wins of all time?','Every counted UFC submission victory in the complete UFC fight ledger.','all-time UFC submission wins','SUBMISSIONS','1993-11-12','submissions','finishes'),
     define('ufc-wins-1993-2004','Who had the most UFC wins from 1993 through 2004?','Counted UFC victories from UFC 1 through December 31, 2004.','UFC wins from 1993 through 2004','ERA WINS','1993-11-12','wins','era',{through:'2004-12-31'}),
@@ -51,7 +54,6 @@
     define('champions-ufc-wins-all-time','Which UFC champion has the most UFC wins of all time?','Champions-only board. A fighter qualifies by earning at least one official UFC title-fight victory.','UFC wins by a UFC champion','CHAMPION WINS','1993-11-12','wins','filtered',{scope:{championsOnly:true,label:'UFC champions only'}}),
     define('lightweight-ufc-wins-all-time','Who has the most UFC wins among primary lightweights?','Primary-lightweight board using every counted UFC victory, including UFC fights contested in other divisions.','UFC wins by a primary lightweight','LIGHTWEIGHT WINS','1993-11-12','wins','filtered',{scope:{primaryDivision:'Lightweight',label:'Primary lightweights'}}),
     define('heavyweight-ufc-finishes-all-time','Who has the most UFC finishes among primary heavyweights?','Primary-heavyweight board using every counted UFC knockout, submission, or doctor-stoppage victory.','UFC finishes by a primary heavyweight','HEAVYWEIGHT FINISHES','1993-11-12','finishes','filtered',{scope:{primaryDivision:'Heavyweight',label:'Primary heavyweights'}}),
-
     define('most-consecutive-ufc-finishes','Who has the longest streak of consecutive UFC finishes?','Longest sequence of UFC appearances won by knockout, submission, or doctor stoppage without another result interrupting the run.','consecutive UFC finishes','FINISH STREAK','1993-11-12','longest-finish-streak','streaks'),
     define('ufc-wins-before-first-loss','Who earned the most UFC wins before their first UFC loss?','Counted UFC victories accumulated before the fighter’s first counted UFC loss. Draws and no contests do not end the run.','UFC wins before first loss','PRE-LOSS WINS','1993-11-12','wins-before-first-loss','streaks'),
     define('longest-ufc-win-span','Who has the longest span between their first and most recent UFC win?','Calendar months between a fighter’s first and most recent counted UFC victory.','months between first and latest UFC win','WIN SPAN','1993-11-12','win-span-months','longevity',{minimumWins:2}),
@@ -65,7 +67,14 @@
     recordBook('record-book-takedowns-landed','Who has landed the most takedowns in UFC history?','Official UFC Record Book career grappling table, updated July 12, 2026.','UFC takedowns landed','TAKEDOWNS','takedowns-landed'),
     recordBook('record-book-submission-attempts','Who has attempted the most submissions in UFC history?','Official UFC Record Book career grappling table, updated July 12, 2026.','UFC submission attempts','SUB ATTEMPTS','submission-attempts'),
     recordBook('record-book-control-time','Who has recorded the most UFC control time?','Official UFC Record Book career control-time table, converted to rounded minutes and updated July 12, 2026.','minutes of UFC control time','CONTROL TIME','control-time-minutes'),
-    recordBook('record-book-fight-time','Who has accumulated the most total UFC fight time?','Official UFC Record Book career fight-time table, converted to rounded minutes and updated July 12, 2026.','minutes of UFC fight time','FIGHT TIME','fight-time-minutes')
+    recordBook('record-book-fight-time','Who has accumulated the most total UFC fight time?','Official UFC Record Book career fight-time table, converted to rounded minutes and updated July 12, 2026.','minutes of UFC fight time','FIGHT TIME','fight-time-minutes'),
+
+    mainEvent('main-event-wins-all-time','Who has the most UFC main-event wins?','Verified UFC event headliners only. Five-round co-main events are not treated as main events.','UFC main-event wins','MAIN-EVENT WINS','main-event-wins'),
+    mainEvent('main-event-finishes-all-time','Who has the most UFC main-event finishes?','Verified UFC event headliner victories by knockout, submission, or doctor stoppage.','UFC main-event finishes','MAIN-EVENT FINISHES','main-event-finishes'),
+    recordBook('active-ufc-wins','Which active fighter has the most UFC wins?','Active-fighter filter from the official UFC Record Book, updated July 12, 2026.','UFC wins by active fighters','ACTIVE WINS','active-wins','filtered'),
+    define('women-ufc-finishes-all-time','Which woman has the most UFC finishes of all time?','Women-only board using counted UFC wins by knockout, submission, or doctor stoppage.','women’s all-time UFC finishes','WOMEN’S FINISHES','1993-11-12','finishes','filtered',{scope:{board:'women',label:'Women only'}}),
+    recordBook('welterweight-ufc-wins','Who has the most UFC welterweight wins?','Welterweight filter from the official UFC Record Book, updated July 12, 2026.','UFC welterweight wins','WELTERWEIGHT WINS','welterweight-wins','filtered'),
+    recordBook('bantamweight-ufc-wins','Who has the most UFC bantamweight wins?','Bantamweight filter from the official UFC Record Book, updated July 12, 2026.','UFC bantamweight wins','BANTAMWEIGHT WINS','bantamweight-wins','filtered')
   ];
 
   const normal=value=>String(value||'').trim().toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
@@ -87,11 +96,7 @@
     const types=window.UFC_CANONICAL_FIGHTER_FACTS?.rules?.championshipTypes||{};
     return Boolean(types?.[fight?.championshipContext?.type]?.officialTitleFight)&&fight?.championshipContext?.fighterEligible!==false;
   }
-
-  function hasUfcTitleWin(record){
-    return (Array.isArray(record?.fights)?record.fights:[]).some(fight=>countedWin(fight)&&isTitleFight(fight));
-  }
-
+  function hasUfcTitleWin(record){return (Array.isArray(record?.fights)?record.fights:[]).some(fight=>countedWin(fight)&&isTitleFight(fight));}
   function matchesScope(record,definition){
     const scope=definition?.scope||{};
     if(scope.board&&record?.board!==scope.board)return false;
@@ -99,11 +104,7 @@
     if(scope.championsOnly&&!hasUfcTitleWin(record))return false;
     return true;
   }
-
-  function relevantFights(record,definition){
-    return (Array.isArray(record?.fights)?record.fights:[]).filter(fight=>inWindow(fight,definition));
-  }
-
+  function relevantFights(record,definition){return (Array.isArray(record?.fights)?record.fights:[]).filter(fight=>inWindow(fight,definition));}
   function countsFight(fight,definition){
     if(!inWindow(fight,definition)||!countedWin(fight))return false;
     if(definition.metric==='wins')return true;
@@ -119,58 +120,32 @@
     if(definition.metric==='wins-unfinished')return true;
     return false;
   }
-
   function longestWinningStreak(record,definition){
-    let current=0;
-    let longest=0;
-    relevantFights(record,definition).forEach(fight=>{
-      if(countedWin(fight)){
-        current+=1;
-        longest=Math.max(longest,current);
-      }else current=0;
-    });
+    let current=0,longest=0;
+    relevantFights(record,definition).forEach(fight=>{if(countedWin(fight)){current+=1;longest=Math.max(longest,current);}else current=0;});
     return longest;
   }
-
   function longestFinishStreak(record,definition){
-    let current=0;
-    let longest=0;
-    relevantFights(record,definition).forEach(fight=>{
-      if(countedWin(fight)&&isFinish(fight)){
-        current+=1;
-        longest=Math.max(longest,current);
-      }else current=0;
-    });
+    let current=0,longest=0;
+    relevantFights(record,definition).forEach(fight=>{if(countedWin(fight)&&isFinish(fight)){current+=1;longest=Math.max(longest,current);}else current=0;});
     return longest;
   }
-
   function winsBeforeFirstLoss(record,definition){
     let wins=0;
-    for(const fight of relevantFights(record,definition)){
-      if(countedLoss(fight))break;
-      if(countedWin(fight))wins+=1;
-    }
+    for(const fight of relevantFights(record,definition)){if(countedLoss(fight))break;if(countedWin(fight))wins+=1;}
     return wins;
   }
-
   function winSpanMonths(record,definition){
     const dates=relevantFights(record,definition).filter(countedWin).map(fight=>String(fight.date||'')).filter(Boolean).sort();
     if(dates.length<2)return 0;
-    const first=Date.parse(`${dates[0]}T00:00:00Z`);
-    const last=Date.parse(`${dates[dates.length-1]}T00:00:00Z`);
-    if(!Number.isFinite(first)||!Number.isFinite(last)||last<=first)return 0;
-    return Math.round((last-first)/(1000*60*60*24*30.4375));
+    const first=Date.parse(`${dates[0]}T00:00:00Z`),last=Date.parse(`${dates.at(-1)}T00:00:00Z`);
+    return Number.isFinite(first)&&Number.isFinite(last)&&last>first?Math.round((last-first)/(1000*60*60*24*30.4375)):0;
   }
-
   function basicCounts(record,definition){
-    const fights=relevantFights(record,definition);
-    const wins=fights.filter(countedWin).length;
-    const losses=fights.filter(countedLoss).length;
-    const draws=fights.filter(countedDraw).length;
+    const fights=relevantFights(record,definition),wins=fights.filter(countedWin).length,losses=fights.filter(countedLoss).length,draws=fights.filter(countedDraw).length;
     const finishes=fights.filter(fight=>countedWin(fight)&&isFinish(fight)).length;
     return {fights,wins,losses,draws,finishes};
   }
-
   function valueFor(record,definition){
     const counts=basicCounts(record,definition);
     if(Number(definition?.minimumWins||0)>counts.wins)return null;
@@ -180,199 +155,143 @@
     if(definition.metric==='wins-before-first-loss')return winsBeforeFirstLoss(record,definition);
     if(definition.metric==='win-span-months')return winSpanMonths(record,definition);
     if(definition.metric==='finish-rate-pct')return counts.wins?round((counts.finishes/counts.wins)*100):0;
-    if(definition.metric==='wins-unfinished'){
-      const finishLoss=counts.fights.some(fight=>countedLoss(fight)&&isFinish(fight));
-      return finishLoss?0:counts.wins;
-    }
+    if(definition.metric==='wins-unfinished')return counts.fights.some(fight=>countedLoss(fight)&&isFinish(fight))?0:counts.wins;
     return counts.fights.filter(fight=>countsFight(fight,definition)).length;
+  }
+  function sourceValue(record,definition){
+    if(definition?.source==='main-event-ledger')return window.UFC_FIND_LEADER_MAIN_EVENTS?.valueFor?.(record,definition.metric);
+    return valueFor(record,definition);
   }
 
   function resolvedPlayFighter(names){
     const resolver=window.UFC_PLAY_DATA?.resolve;
     if(typeof resolver!=='function')return null;
-    for(const name of names.filter(Boolean)){
-      const resolved=resolver(name);
-      if(resolved)return resolved;
-    }
+    for(const name of names.filter(Boolean)){const resolved=resolver(name);if(resolved)return resolved;}
     return null;
   }
-
   function fighterSnapshot(record,value,index,statRank){
     const resolved=resolvedPlayFighter([record?.fighter]);
-    return {
-      id:String(resolved?.id||normal(record?.fighter)||`fighter-${index+1}`),
-      name:String(resolved?.name||record?.fighter||`Fighter ${index+1}`),
-      gender:resolved?.gender==='women'||record?.board==='women'?'women':'men',
-      primaryDivision:String(resolved?.primaryDivision||resolved?.divisions?.[0]||record?.identity?.primaryDivision||''),
-      divisions:Array.isArray(resolved?.divisions)?resolved.divisions:[],
-      thumbUrl:String(resolved?.thumbUrl||''),
-      profileUrl:String(resolved?.profileUrl||''),
-      value:round(value),
-      statRank:Number(statRank||index+1)
-    };
+    return {id:String(resolved?.id||normal(record?.fighter)||`fighter-${index+1}`),name:String(resolved?.name||record?.fighter||`Fighter ${index+1}`),
+      gender:resolved?.gender==='women'||record?.board==='women'?'women':'men',primaryDivision:String(resolved?.primaryDivision||resolved?.divisions?.[0]||record?.identity?.primaryDivision||''),
+      divisions:Array.isArray(resolved?.divisions)?resolved.divisions:[],thumbUrl:String(resolved?.thumbUrl||''),profileUrl:String(resolved?.profileUrl||''),value:round(value),statRank:Number(statRank||index+1)};
   }
-
   function recordBookSnapshot(row,index,statRank){
-    const names=[row?.appName,row?.name,...(Array.isArray(row?.aliases)?row.aliases:[])];
-    const resolved=resolvedPlayFighter(names);
-    const displayName=resolved?.name||row?.appName||row?.name||`Fighter ${index+1}`;
-    const women=String(row?.primaryDivision||'').startsWith("Women's");
-    return {
-      id:String(resolved?.id||normal(displayName)||`record-book-${index+1}`),
-      name:String(displayName),
-      gender:resolved?.gender==='women'||women?'women':'men',
-      primaryDivision:String(resolved?.primaryDivision||resolved?.divisions?.[0]||row?.primaryDivision||''),
-      divisions:Array.isArray(resolved?.divisions)?resolved.divisions:[],
-      thumbUrl:String(resolved?.thumbUrl||''),
-      profileUrl:String(resolved?.profileUrl||''),
-      value:round(row?.value),
-      statRank:Number(statRank||index+1)
-    };
+    const names=[row?.appName,row?.name,...(Array.isArray(row?.aliases)?row.aliases:[])],resolved=resolvedPlayFighter(names);
+    const displayName=resolved?.name||row?.appName||row?.name||`Fighter ${index+1}`,women=String(row?.primaryDivision||'').startsWith("Women's");
+    return {id:String(resolved?.id||normal(displayName)||`record-book-${index+1}`),name:String(displayName),gender:resolved?.gender==='women'||women?'women':'men',
+      primaryDivision:String(resolved?.primaryDivision||resolved?.divisions?.[0]||row?.primaryDivision||''),divisions:Array.isArray(resolved?.divisions)?resolved.divisions:[],
+      thumbUrl:String(resolved?.thumbUrl||''),profileUrl:String(resolved?.profileUrl||''),value:round(row?.value),statRank:Number(statRank||index+1)};
   }
-
   function shuffle(rows,random=Math.random){
     const copy=[...rows];
-    for(let index=copy.length-1;index>0;index-=1){
-      const next=Math.floor(random()*(index+1));
-      [copy[index],copy[next]]=[copy[next],copy[index]];
-    }
+    for(let index=copy.length-1;index>0;index-=1){const next=Math.floor(random()*(index+1));[copy[index],copy[next]]=[copy[next],copy[index]];}
     return copy;
   }
-
-  function takeRandom(rows,count,random){
-    return shuffle(rows,random).slice(0,Math.max(0,count));
-  }
-
+  const takeRandom=(rows,count,random)=>shuffle(rows,random).slice(0,Math.max(0,count));
   function candidateRows(scored,random=Math.random){
     const positive=scored.filter(row=>row.value>0).slice(0,DECOY_POOL_SIZE);
     if(positive.length<CANDIDATE_COUNT)return null;
-    const leader=positive[0];
-    const topTenTier=positive.slice(1,10);
-    const secondTenTier=positive.slice(10,DECOY_POOL_SIZE);
-    const targetTopTenTotal=4+Math.floor(random()*3);
-    const selected=[leader,...takeRandom(topTenTier,targetTopTenTotal-1,random)];
-    const selectedIndexes=new Set(selected.map(row=>row.index));
-    const lowerNeeded=CANDIDATE_COUNT-selected.length;
-    takeRandom(secondTenTier,lowerNeeded,random).forEach(row=>{
-      if(!selectedIndexes.has(row.index)){
-        selected.push(row);
-        selectedIndexes.add(row.index);
-      }
+    const leader=positive[0],topTenTier=positive.slice(1,10),secondTenTier=positive.slice(10,DECOY_POOL_SIZE);
+    const targetTopTenTotal=4+Math.floor(random()*3),selected=[leader,...takeRandom(topTenTier,targetTopTenTotal-1,random)],selectedIndexes=new Set(selected.map(row=>row.index));
+    takeRandom(secondTenTier,CANDIDATE_COUNT-selected.length,random).forEach(row=>{if(!selectedIndexes.has(row.index)){selected.push(row);selectedIndexes.add(row.index);}});
+    if(selected.length<CANDIDATE_COUNT)takeRandom(positive.filter(row=>!selectedIndexes.has(row.index)),CANDIDATE_COUNT-selected.length,random).forEach(row=>{
+      if(!selectedIndexes.has(row.index)){selected.push(row);selectedIndexes.add(row.index);}
     });
-    if(selected.length<CANDIDATE_COUNT){
-      takeRandom(positive.filter(row=>!selectedIndexes.has(row.index)),CANDIDATE_COUNT-selected.length,random).forEach(row=>{
-        if(!selectedIndexes.has(row.index)){
-          selected.push(row);
-          selectedIndexes.add(row.index);
-        }
-      });
-    }
     return selected.length===CANDIDATE_COUNT?selected:null;
   }
 
   function buildLedgerDefinition(definition,random=Math.random){
     const api=window.UFC_CANONICAL_FIGHTER_FACTS;
     if(!api?.list||api.count?.()<CANDIDATE_COUNT)return {valid:false,reason:'canonical-ledger-not-ready',definition};
+    if(definition?.source==='main-event-ledger'&&!window.UFC_FIND_LEADER_MAIN_EVENTS?.valueFor)return {valid:false,reason:'main-event-ledger-not-ready',definition};
     window.UFC_PLAY_DATA?.rebuild?.();
-    const scored=api.list()
-      .filter(record=>record?.coverage?.complete===true&&Array.isArray(record?.fights)&&matchesScope(record,definition))
-      .map((record,index)=>({record,value:valueFor(record,definition),index}))
-      .filter(row=>Number.isFinite(Number(row.value)))
-      .sort((a,b)=>b.value-a.value||String(a.record?.fighter||'').localeCompare(String(b.record?.fighter||'')))
-      .map((row,index)=>({...row,statRank:index+1}));
+    const scored=api.list().filter(record=>record?.coverage?.complete===true&&Array.isArray(record?.fights)&&matchesScope(record,definition))
+      .map((record,index)=>({record,value:sourceValue(record,definition),index})).filter(row=>Number.isFinite(Number(row.value)))
+      .sort((a,b)=>b.value-a.value||String(a.record?.fighter||'').localeCompare(String(b.record?.fighter||''))).map((row,index)=>({...row,statRank:index+1}));
     if(scored.length<CANDIDATE_COUNT)return {valid:false,reason:'not-enough-eligible-fighters',definition};
-    const leaderValue=scored[0].value;
-    const globalLeaders=scored.filter(row=>row.value===leaderValue);
+    const leaderValue=scored[0].value,globalLeaders=scored.filter(row=>row.value===leaderValue);
     if(leaderValue<=0)return {valid:false,reason:'leader-value-not-positive',definition};
     if(globalLeaders.length!==1)return {valid:false,reason:`leader-tie-${globalLeaders.length}`,definition};
     const selected=candidateRows(scored,random);
     if(!selected)return {valid:false,reason:'not-enough-positive-top-twenty-performers',definition};
-    const candidates=selected.map((row,index)=>fighterSnapshot(row.record,row.value,index,row.statRank));
-    const ids=new Set(candidates.map(row=>row.id));
+    const candidates=selected.map((row,index)=>fighterSnapshot(row.record,row.value,index,row.statRank)),ids=new Set(candidates.map(row=>row.id));
     if(ids.size!==CANDIDATE_COUNT)return {valid:false,reason:'duplicate-candidate-id',definition};
-    const leaderName=String(globalLeaders[0].record?.fighter||'');
-    const leader=candidates.find(row=>normal(row.name)===normal(leaderName))||candidates.find(row=>row.id===normal(leaderName));
+    const leaderName=String(globalLeaders[0].record?.fighter||''),leader=candidates.find(row=>normal(row.name)===normal(leaderName))||candidates.find(row=>row.id===normal(leaderName));
     if(!leader)return {valid:false,reason:'leader-missing-from-hard-board',definition};
-    return {
-      valid:true,
-      setup:{
-        bankVersion:VERSION,gameVersion:'find-leader-elimination-v1',sourceType:'canonical-ledger',
-        questionId:definition.id,question:definition.question,context:definition.context,
-        statLabel:definition.statLabel,shortLabel:definition.shortLabel,family:definition.family||'other',
-        scope:clone(definition.scope||null),since:definition.since,through:definition.through||null,
-        candidateCount:CANDIDATE_COUNT,decoyPoolSize:Math.min(DECOY_POOL_SIZE,scored.filter(row=>row.value>0).length),
-        leaderId:leader.id,leaderValue,candidates:shuffle(candidates,random)
-      }
-    };
+    return {valid:true,setup:{bankVersion:VERSION,gameVersion:'find-leader-elimination-v1',sourceType:definition?.source||'canonical-ledger',
+      source:definition?.source==='main-event-ledger'?{name:'UFC main-event headliner ledger',version:window.UFC_FIND_LEADER_MAIN_EVENTS?.version}:null,
+      questionId:definition.id,question:definition.question,context:definition.context,statLabel:definition.statLabel,shortLabel:definition.shortLabel,
+      family:definition.family||'other',scope:clone(definition.scope||null),since:definition.since,through:definition.through||null,candidateCount:CANDIDATE_COUNT,
+      decoyPoolSize:Math.min(DECOY_POOL_SIZE,scored.filter(row=>row.value>0).length),leaderId:leader.id,leaderValue,candidates:shuffle(candidates,random)}};
   }
-
   function buildRecordBookDefinition(definition,random=Math.random){
-    const book=window.UFC_FIND_LEADER_RECORD_BOOK;
-    const metric=book?.metrics?.[definition.recordBookMetric];
-    const rows=Array.isArray(metric?.rows)?metric.rows:[];
+    const book=window.UFC_FIND_LEADER_RECORD_BOOK,metric=book?.metrics?.[definition.recordBookMetric],rows=Array.isArray(metric?.rows)?metric.rows:[];
     if(rows.length<CANDIDATE_COUNT)return {valid:false,reason:'record-book-metric-not-ready',definition};
     window.UFC_PLAY_DATA?.rebuild?.();
-    const scored=rows
-      .map((row,index)=>({row,value:Number(row?.value),index,statRank:index+1}))
-      .filter(item=>Number.isFinite(item.value)&&item.value>0)
-      .sort((a,b)=>b.value-a.value||String(a.row?.name||'').localeCompare(String(b.row?.name||'')))
-      .map((item,index)=>({...item,statRank:index+1}));
+    const scored=rows.map((row,index)=>({row,value:Number(row?.value),index,statRank:index+1})).filter(item=>Number.isFinite(item.value)&&item.value>0)
+      .sort((a,b)=>b.value-a.value||String(a.row?.name||'').localeCompare(String(b.row?.name||''))).map((item,index)=>({...item,statRank:index+1}));
     if(scored.length<CANDIDATE_COUNT)return {valid:false,reason:'record-book-not-enough-candidates',definition};
-    const leaderValue=scored[0].value;
-    const leaders=scored.filter(item=>item.value===leaderValue);
+    const leaderValue=scored[0].value,leaders=scored.filter(item=>item.value===leaderValue);
     if(leaders.length!==1)return {valid:false,reason:`record-book-leader-tie-${leaders.length}`,definition};
-    const leader=leaders[0];
-    const decoys=takeRandom(scored.filter(item=>item!==leader),CANDIDATE_COUNT-1,random);
-    const selected=[leader,...decoys];
+    const leader=leaders[0],selected=[leader,...takeRandom(scored.filter(item=>item!==leader),CANDIDATE_COUNT-1,random)];
     if(selected.length!==CANDIDATE_COUNT)return {valid:false,reason:'record-book-board-incomplete',definition};
-    const candidates=selected.map((item,index)=>recordBookSnapshot(item.row,index,item.statRank));
-    const ids=new Set(candidates.map(row=>row.id));
+    const candidates=selected.map((item,index)=>recordBookSnapshot(item.row,index,item.statRank)),ids=new Set(candidates.map(row=>row.id));
     if(ids.size!==CANDIDATE_COUNT)return {valid:false,reason:'record-book-duplicate-candidate-id',definition};
-    const leaderSnapshot=candidates[0];
-    return {
-      valid:true,
-      setup:{
-        bankVersion:VERSION,gameVersion:'find-leader-elimination-v1',sourceType:'official-record-book',
-        source:clone(book.source),questionId:definition.id,question:definition.question,context:definition.context,
-        statLabel:definition.statLabel,shortLabel:definition.shortLabel,family:definition.family,
-        scope:null,since:null,through:null,candidateCount:CANDIDATE_COUNT,decoyPoolSize:scored.length,
-        leaderId:leaderSnapshot.id,leaderValue,candidates:shuffle(candidates,random)
-      }
-    };
+    return {valid:true,setup:{bankVersion:VERSION,gameVersion:'find-leader-elimination-v1',sourceType:'official-record-book',source:clone(book.source),
+      questionId:definition.id,question:definition.question,context:definition.context,statLabel:definition.statLabel,shortLabel:definition.shortLabel,family:definition.family,
+      scope:null,since:null,through:null,candidateCount:CANDIDATE_COUNT,decoyPoolSize:scored.length,leaderId:candidates[0].id,leaderValue,candidates:shuffle(candidates,random)}};
   }
-
-  function buildDefinition(definition,random=Math.random){
-    return definition?.source==='official-record-book'
-      ?buildRecordBookDefinition(definition,random)
-      :buildLedgerDefinition(definition,random);
-  }
-
+  function buildDefinition(definition,random=Math.random){return definition?.source==='official-record-book'?buildRecordBookDefinition(definition,random):buildLedgerDefinition(definition,random);}
   function audit(){
     const rows=DEFINITIONS.map(definition=>buildDefinition(definition,()=>0.5));
-    return {
-      version:VERSION,
-      definitionCount:DEFINITIONS.length,
-      valid:rows.filter(row=>row.valid).map(row=>row.setup.questionId),
-      excluded:rows.filter(row=>!row.valid).map(row=>({questionId:row.definition.id,reason:row.reason})),
-      rows
-    };
+    return {version:VERSION,definitionCount:DEFINITIONS.length,valid:rows.filter(row=>row.valid).map(row=>row.setup.questionId),
+      excluded:rows.filter(row=>!row.valid).map(row=>({questionId:row.definition.id,reason:row.reason})),rows};
   }
-
   function available(){return audit().rows.filter(row=>row.valid).map(row=>clone(row.setup));}
-  function create(questionId,random=Math.random){
-    const definition=DEFINITIONS.find(row=>row.id===questionId);
-    return definition?clone(buildDefinition(definition,random).setup||null):null;
+  function create(questionId,random=Math.random){const definition=DEFINITIONS.find(row=>row.id===questionId);return definition?clone(buildDefinition(definition,random).setup||null):null;}
+  function random(random=Math.random){const rows=DEFINITIONS.map(definition=>buildDefinition(definition,random)).filter(row=>row.valid);return rows.length?clone(rows[Math.floor(random()*rows.length)].setup):null;}
+
+  function hashSeed(value){let hash=2166136261;for(let index=0;index<String(value).length;index+=1){hash^=String(value).charCodeAt(index);hash=Math.imul(hash,16777619);}return hash>>>0;}
+  function mulberry32(seed){let value=seed>>>0;return()=>{value+=0x6D2B79F5;let next=value;next=Math.imul(next^(next>>>15),next|1);next^=next+Math.imul(next^(next>>>7),next|61);return((next^(next>>>14))>>>0)/4294967296;};}
+  function dayNumber(day){const [year,month,date]=String(day||DAILY_ANCHOR).split('-').map(Number);return Math.floor(Date.UTC(year,month-1,date)/86400000);}
+  function dayFromNumber(number){return new Date(number*86400000).toISOString().slice(0,10);}
+  function occurrenceForDay(day){return Math.max(0,Math.floor((dayNumber(day)-dayNumber(DAILY_ANCHOR))/DAILY_GAME_GAP_DAYS));}
+  const deterministicOrder=(rows,slot)=>[...rows].sort((a,b)=>hashSeed(`${VERSION}|${slot}|${a.id}`)-hashSeed(`${VERSION}|${slot}|${b.id}`)||a.id.localeCompare(b.id));
+  function scheduledDefinition(day){
+    const validRows=audit().rows.filter(row=>row.valid),validDefinitions=validRows.map(row=>DEFINITIONS.find(definition=>definition.id===row.setup.questionId)).filter(Boolean);
+    if(!validDefinitions.length)return null;
+    const targetSlot=occurrenceForDay(day),history=[];
+    let selected=null;
+    for(let slot=0;slot<=targetSlot;slot+=1){
+      const recent=new Set(history.slice(-NO_REPEAT_SELECTIONS)),family=FAMILY_CYCLE[slot%FAMILY_CYCLE.length];
+      const preferred=validDefinitions.filter(row=>row.family===family&&!recent.has(row.id));
+      const fresh=validDefinitions.filter(row=>!recent.has(row.id));
+      const pool=preferred.length?preferred:fresh.length?fresh:validDefinitions;
+      selected=deterministicOrder(pool,slot)[0]||null;
+      if(selected)history.push(selected.id);
+    }
+    return selected;
   }
-  function random(random=Math.random){
-    const rows=DEFINITIONS.map(definition=>buildDefinition(definition,random)).filter(row=>row.valid);
-    if(!rows.length)return null;
-    return clone(rows[Math.floor(random()*rows.length)].setup);
+  function daily(input={}){
+    const context=typeof input==='string'?{challenge_day:input}:input||{};
+    const day=String(context.challenge_day||DAILY_ANCHOR),definition=scheduledDefinition(day);
+    if(!definition)return null;
+    const seed=String(context.seed||context.challenge_key||`find-leader|${day}|${VERSION}`),randomizer=mulberry32(hashSeed(`${seed}|${definition.id}`));
+    return clone(buildDefinition(definition,randomizer).setup||null);
+  }
+  function dailyPlan(startDay=DAILY_ANCHOR,count=20){
+    const startSlot=occurrenceForDay(startDay),rows=[];
+    for(let offset=0;offset<Math.max(0,count);offset+=1){
+      const slot=startSlot+offset,day=dayFromNumber(dayNumber(DAILY_ANCHOR)+(slot*DAILY_GAME_GAP_DAYS)),definition=scheduledDefinition(day);
+      rows.push({slot,day,questionId:definition?.id||null,family:definition?.family||null});
+    }
+    return rows;
   }
 
   window.UFC_FIND_LEADER_QUESTION_BANK={
-    version:VERSION,candidateCount:CANDIDATE_COUNT,decoyPoolSize:DECOY_POOL_SIZE,
-    definitionCount:DEFINITIONS.length,definitions:DEFINITIONS.map(clone),
-    valueFor,buildDefinition,audit,available,create,random
+    version:VERSION,candidateCount:CANDIDATE_COUNT,decoyPoolSize:DECOY_POOL_SIZE,definitionCount:DEFINITIONS.length,definitions:DEFINITIONS.map(clone),
+    dailyRules:{anchor:DAILY_ANCHOR,gameGapDays:DAILY_GAME_GAP_DAYS,noRepeatSelections:NO_REPEAT_SELECTIONS,familyCycle:[...FAMILY_CYCLE]},
+    valueFor,buildDefinition,audit,available,create,random,daily,dailyPlan,scheduledDefinition
   };
   document.documentElement.setAttribute('data-find-leader-question-bank',VERSION);
 })();
