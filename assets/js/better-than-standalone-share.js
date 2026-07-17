@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='better-than-standalone-share-20260717f-find-leader-fifty-balanced';
+  const VERSION='better-than-standalone-share-20260717g-find-leader-endless-audit';
   const FIND_LEADER_VERSION='find-leader-20260716c-daily-elimination';
   let creating=false;
 
@@ -23,7 +23,7 @@
   function patchFindLeaderHubCopy(){
     const card=document.querySelector('.play-game-card[data-open-game="find-leader"]');
     const description=card?.querySelector('.play-game-copy small');
-    if(description)description.textContent='Eliminate nine fighters without removing the verified leader. Fifty questions rotate across eras, filters, main events, and official UFC stats.';
+    if(description)description.textContent='Endless elimination across fifty verified UFC stat questions. Leave the leader standing and keep the run alive.';
   }
 
   function patchBalancedDailySetup(){
@@ -57,19 +57,38 @@
       link.dataset.findLeaderEliminationStyle='true';
       document.head.appendChild(link);
     }
+    if(!document.querySelector('link[data-find-leader-experience-style]')){
+      const link=document.createElement('link');
+      link.rel='stylesheet';
+      link.href='assets/css/find-leader-experience.css?v=find-leader-experience-css-20260717a';
+      link.dataset.findLeaderExperienceStyle='true';
+      document.head.appendChild(link);
+    }
 
-    const gameReady=()=>{patchBalancedDailySetup();loadDailyTools();};
+    const experienceReady=()=>{patchBalancedDailySetup();loadDailyTools();};
+    const loadExperience=()=>loadScriptOnce(
+      'script[data-find-leader-experience]',
+      'assets/js/find-leader-experience.js?v=find-leader-experience-20260717a-endless-control-center',
+      'findLeaderExperience',
+      experienceReady
+    );
     const loadGame=()=>{
       if(window.UFC_FIND_LEADER?.version!==FIND_LEADER_VERSION){
         document.getElementById('playFindLeaderPanel')?.remove();
-        loadScriptOnce('script[data-find-leader-daily-elimination]','assets/js/find-leader.js?v=find-leader-20260716c-daily-elimination','findLeaderDailyElimination',gameReady);
-      }else gameReady();
+        loadScriptOnce('script[data-find-leader-daily-elimination]','assets/js/find-leader.js?v=find-leader-20260716c-daily-elimination','findLeaderDailyElimination',loadExperience);
+      }else loadExperience();
     };
+    const loadQuality=()=>loadScriptOnce(
+      'script[data-find-leader-quality]',
+      'assets/js/find-leader-quality.js?v=find-leader-quality-20260717a-control-center',
+      'findLeaderQuality',
+      loadGame
+    );
     const loadQuestionBank=()=>loadScriptOnce(
       'script[data-find-leader-question-bank-fifty]',
       'assets/data/find-leader-question-bank.js?v=find-leader-question-bank-20260717c-fifty-balanced',
       'findLeaderQuestionBankFifty',
-      loadGame
+      loadQuality
     );
     loadScriptOnce(
       'script[data-find-leader-record-book]',
@@ -149,8 +168,8 @@
     if(findLeader)setTimeout(()=>{
       const eyebrow=document.getElementById('playGameEyebrow');
       const subtitle=document.querySelector('#play .section-title p');
-      if(eyebrow)eyebrow.textContent='ELIMINATION GAME';
-      if(subtitle)subtitle.textContent='Eliminate the non-leaders one by one. Pick the stat leader and your run ends.';
+      if(eyebrow)eyebrow.textContent='ENDLESS ELIMINATION';
+      if(subtitle)subtitle.textContent='Play verified UFC stat boards back to back. No repeats inside your previous 14 questions.';
     },0);
     const findLeaderHome=event.target.closest?.('#playFindLeaderPanel [data-play-home]');
     if(findLeaderHome){event.preventDefault();window.UFC_PLAY_HUB?.showHub?.();return;}
