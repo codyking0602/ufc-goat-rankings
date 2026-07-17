@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from 'playwright';
 
+const EXPECTED_FIGHTERS=79;
 const root=process.cwd();
 const fighterDir=path.join(root,'assets','fighters');
 const available=fs.readdirSync(fighterDir).filter(name=>/\.webp$/i.test(name)).sort();
@@ -25,7 +26,7 @@ page.on('pageerror',error=>pageErrors.push(String(error?.message||error)));
 try{
   await page.goto('http://127.0.0.1:4173/index.html',{waitUntil:'domcontentloaded',timeout:120000});
   await page.waitForFunction(()=>document.documentElement.getAttribute('data-scoring-pipeline')==='ready',null,{timeout:120000});
-  await page.waitForFunction(()=>window.UFC_PRODUCTION_RANKING_BOOTSTRAP?.photoSync?.mappedCount===73,null,{timeout:30000});
+  await page.waitForFunction(expected=>window.UFC_PRODUCTION_RANKING_BOOTSTRAP?.photoSync?.mappedCount===expected,EXPECTED_FIGHTERS,{timeout:30000});
 
   const mappings=await page.evaluate(()=>{
     const data=window.RANKING_DATA||{};
@@ -41,6 +42,7 @@ try{
     }));
   });
 
+  assert.equal(mappings.length,EXPECTED_FIGHTERS,`photo mapping covers all ${EXPECTED_FIGHTERS} fighters`);
   const missing=[];
   for(const row of mappings){
     for(const field of ['photoUrl','thumbUrl']){
@@ -79,7 +81,7 @@ try{
   }
 
   const profileFailures=[];
-  const named=['Cris Cyborg','Lyoto Machida','Justin Gaethje','Frank Shamrock'];
+  const named=['Cris Cyborg','Lyoto Machida','Justin Gaethje','Frank Shamrock','Brandon Moreno'];
   const profileStates=[];
   for(const fighter of named){
     await page.evaluate(name=>window.openFighter?.(name),fighter);
