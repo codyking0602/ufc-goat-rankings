@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='better-than-standalone-share-20260716i-daily-polish';
+  const VERSION='better-than-standalone-share-20260716j-eleven-find-leader-challenges';
   const FIND_LEADER_VERSION='find-leader-20260716c-daily-elimination';
   let creating=false;
 
@@ -51,7 +51,7 @@
         loadScriptOnce('script[data-find-leader-daily-elimination]','assets/js/find-leader.js?v=find-leader-20260716c-daily-elimination','findLeaderDailyElimination',loadDailyTools);
       }else loadDailyTools();
     };
-    loadScriptOnce('script[data-find-leader-question-bank]','assets/data/find-leader-question-bank.js?v=find-leader-question-bank-20260716b-elimination','findLeaderQuestionBank',loadGame);
+    loadScriptOnce('script[data-find-leader-question-bank]','assets/data/find-leader-question-bank.js?v=find-leader-question-bank-20260716c-eleven-challenges','findLeaderQuestionBank',loadGame);
     loadScriptOnce('script[data-find-leader-share-adapter]','assets/js/find-leader-standalone-share.js?v=find-leader-standalone-share-20260716a-elimination','findLeaderShareAdapter');
     patchFindLeaderHubCopy();
     window.addEventListener('ufc-play-hub-ready',patchFindLeaderHubCopy,{once:true});
