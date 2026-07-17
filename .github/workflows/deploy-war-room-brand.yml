@@ -1,0 +1,111 @@
+name: Deploy The War Room Brand
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy-war-room-brand.yml'
+      - 'assets/js/war-room-branding.js'
+      - 'sw.js'
+      - 'supabase/functions/octagon-push/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy-war-room-brand
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate War Room source
+        run: |
+          node --check assets/js/war-room-branding.js
+          node --check sw.js
+          grep -Fq "The War Room" assets/js/war-room-branding.js
+          grep -Fq "title: 'The War Room'" supabase/functions/octagon-push/index.ts
+          grep -Fq "replied in The War Room" supabase/functions/octagon-push/index.ts
+          grep -Fq "posted in The War Room" supabase/functions/octagon-push/index.ts
+          grep -Fq "payload.title||'The War Room'" sw.js
+          grep -Fq '"saved_picks": 50' supabase/goat26-deployment-status.json
+          grep -Fq '"active_members": 6' supabase/goat26-deployment-status.json
+
+      - name: Deploy War Room push sender
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          npx --yes supabase@latest functions deploy octagon-push \
+            --project-ref hdkjwezaswhisxupxydc \
+            --no-verify-jwt
+
+      - name: Wire War Room branding into live page
+        run: |
+          python - <<'PY'
+          from datetime import datetime, timezone
+          from pathlib import Path
+          import json
+          import re
+
+          index=Path('index.html')
+          text=index.read_text()
+          script='  <script src="assets/js/war-room-branding.js?v=war-room-branding-20260717a"></script>'
+
+          if 'assets/js/war-room-branding.js' in text:
+              text=re.sub(r'  <script src="assets/js/war-room-branding\.js\?v=[^"]+"></script>',script,text,count=1)
+          elif 'assets/js/octagon-push-subscription.js' in text:
+              match=re.search(r'(  <script src="assets/js/octagon-push-subscription\.js\?v=[^"]+"></script>)',text)
+              if not match:
+                  raise SystemExit('Push subscription script anchor was not found.')
+              text=text[:match.end()]+'\n'+script+text[match.end():]
+          elif 'assets/js/octagon-notifications.js' in text:
+              match=re.search(r'(  <script src="assets/js/octagon-notifications\.js\?v=[^"]+"></script>)',text)
+              if not match:
+                  raise SystemExit('Notification script anchor was not found.')
+              text=text[:match.end()]+'\n'+script+text[match.end():]
+          else:
+              raise SystemExit('War Room script anchor was not found.')
+
+          text=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260717-war-room-brand" />',text,count=1)
+          index.write_text(text)
+
+          goat=json.loads(Path('supabase/goat26-deployment-status.json').read_text())
+          if int(goat.get('active_members') or 0)!=6 or int(goat.get('saved_picks') or 0)<50:
+              raise SystemExit('GOAT26 preservation audit failed.')
+          octagon=goat.get('octagon') or {}
+          status={
+              'status':'active',
+              'feature_name':'The War Room',
+              'app_name':'Octagon HQ',
+              'internal_api_prefix':'octagon',
+              'active_members':goat.get('active_members'),
+              'enabled_members':octagon.get('enabled_members'),
+              'messages':octagon.get('messages'),
+              'replies':octagon.get('replies'),
+              'reactions':octagon.get('reactions'),
+              'saved_picks':goat.get('saved_picks'),
+              'push_sender_deployed':True,
+              'checked_at':datetime.now(timezone.utc).isoformat(),
+          }
+          Path('supabase/war-room-branding-status.json').write_text(json.dumps(status,indent=2,sort_keys=True)+'\n')
+          PY
+
+      - name: Commit War Room deployment record
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html supabase/war-room-branding-status.json
+          if git diff --cached --quiet; then
+            echo 'War Room deployment record is unchanged.'
+            exit 0
+          fi
+          git commit -m 'Record The War Room deployment [skip ci]'
+          git pull --rebase origin main
+          git push origin HEAD:main
