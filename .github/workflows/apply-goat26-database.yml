@@ -1,0 +1,165 @@
+name: Apply GOAT26 Canonical Group Migration
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/apply-goat26-database.yml'
+      - 'supabase/app-canonical-group-goat26-phase.sql'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-goat26-canonical-group
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install PostgreSQL client fallback
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client
+
+      - name: Apply guarded GOAT26 migration
+        env:
+          SUPABASE_PROJECT_REF: hdkjwezaswhisxupxydc
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          project_ref = os.environ['SUPABASE_PROJECT_REF']
+          access_token = os.environ.get('SUPABASE_ACCESS_TOKEN', '').strip()
+          db_url = os.environ.get('SUPABASE_DB_URL', '').strip()
+          db_password = os.environ.get('SUPABASE_DB_PASSWORD', '').strip()
+          migration_path = Path('supabase/app-canonical-group-goat26-phase.sql')
+          status_path = Path('supabase/goat26-deployment-status.json')
+          migration_sql = migration_path.read_text()
+
+          audit_sql = """
+          select jsonb_build_object(
+            'status','active',
+            'code',g.code,
+            'name',g.name,
+            'active_members',(select count(*) from public.pick_group_members gm where gm.group_id=g.id and coalesce(gm.is_active,true)),
+            'events',(select count(*) from public.pick_group_events ge where ge.group_id=g.id),
+            'rooms',(select count(*) from public.pick_rooms r where r.group_id=g.id),
+            'saved_picks',(
+              select count(*)
+              from public.pick_group_events ge
+              join public.pick_room_members rm on rm.room_id=ge.room_id
+              join public.pick_selections ps on ps.member_id=rm.id
+              where ge.group_id=g.id
+            )
+          ) as audit
+          from public.pick_groups g
+          where g.code='GOAT26';
+          """
+
+          def write_status(payload):
+              payload = dict(payload)
+              payload['checked_at'] = datetime.now(timezone.utc).isoformat()
+              status_path.write_text(json.dumps(payload, indent=2, sort_keys=True) + '\n')
+
+          def management_query(query, read_only=False):
+              request = urllib.request.Request(
+                  f'https://api.supabase.com/v1/projects/{project_ref}/database/query',
+                  data=json.dumps({'query': query, 'read_only': read_only}).encode(),
+                  headers={
+                      'Authorization': f'Bearer {access_token}',
+                      'Content-Type': 'application/json',
+                  },
+                  method='POST',
+              )
+              try:
+                  with urllib.request.urlopen(request, timeout=90) as response:
+                      body = response.read().decode() or 'null'
+                      return json.loads(body)
+              except urllib.error.HTTPError as error:
+                  detail = error.read().decode(errors='replace')[:1000]
+                  raise RuntimeError(f'Supabase Management API returned HTTP {error.code}: {detail}') from error
+
+          def extract_audit(result):
+              rows = result.get('result', result) if isinstance(result, dict) else result
+              if isinstance(rows, list) and rows:
+                  row = rows[0]
+                  if isinstance(row, dict):
+                      value = row.get('audit', row)
+                      if isinstance(value, str):
+                          value = json.loads(value)
+                      if isinstance(value, dict):
+                          return value
+              if isinstance(rows, dict) and isinstance(rows.get('audit'), dict):
+                  return rows['audit']
+              raise RuntimeError('GOAT26 audit did not return an active canonical group.')
+
+          deployment_method = None
+          if access_token:
+              management_query(migration_sql, read_only=False)
+              audit = extract_audit(management_query(audit_sql, read_only=True))
+              deployment_method = 'supabase-management-api'
+          else:
+              if not db_url and db_password:
+                  encoded_password = urllib.parse.quote(db_password, safe='')
+                  db_url = f'postgresql://postgres:{encoded_password}@db.{project_ref}.supabase.co:5432/postgres?sslmode=require'
+
+              if not db_url:
+                  write_status({
+                      'status': 'blocked',
+                      'code': 'GOAT26',
+                      'reason': 'No SUPABASE_ACCESS_TOKEN, SUPABASE_DB_URL, or SUPABASE_DB_PASSWORD repository secret is configured.',
+                  })
+                  print('GOAT26 database migration is staged but blocked by missing Supabase deployment credentials.')
+                  raise SystemExit(0)
+
+              subprocess.run(
+                  ['psql', db_url, '-v', 'ON_ERROR_STOP=1', '-f', str(migration_path)],
+                  check=True,
+                  env={**os.environ, 'PGCONNECT_TIMEOUT': '20'},
+              )
+              raw_audit = subprocess.check_output(
+                  ['psql', db_url, '-v', 'ON_ERROR_STOP=1', '-At', '-c', audit_sql],
+                  text=True,
+                  env={**os.environ, 'PGCONNECT_TIMEOUT': '20'},
+              ).strip()
+              audit = json.loads(raw_audit)
+              deployment_method = 'postgres-direct'
+
+          if audit.get('status') != 'active' or audit.get('code') != 'GOAT26':
+              raise RuntimeError('GOAT26 migration completed without a valid canonical-group audit.')
+
+          audit['deployment_method'] = deployment_method
+          write_status(audit)
+          print('GOAT26 canonical group migration applied and verified.')
+          PY
+
+      - name: Commit sanitized deployment status
+        run: |
+          if git diff --quiet -- supabase/goat26-deployment-status.json; then
+            echo 'Deployment status did not change.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add supabase/goat26-deployment-status.json
+          git commit -m 'Record GOAT26 database deployment status [skip ci]'
+          git push
