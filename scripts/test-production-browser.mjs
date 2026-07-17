@@ -4,6 +4,8 @@ import { chromium } from 'playwright';
 
 const EXPECTED_FIGHTERS=80;
 const PETTIS='Anthony Pettis';
+const WATCH='https://youtube.com/shorts/BiPvl_p6JqY?is=gwu2EsszP22T9us-';
+const FIGHT='https://youtu.be/smbYO1-yqtA?is=lhtpeK1nOCqGUvdc';
 const TOP_TEN=['Jon Jones','Georges St-Pierre','Anderson Silva','Demetrious Johnson','Islam Makhachev','Alexander Volkanovski','Khabib Nurmagomedov','Matt Hughes','Kamaru Usman','Max Holloway'];
 
 const browser=await chromium.launch({headless:true});
@@ -83,26 +85,27 @@ try{
   assert.equal(row.ufcRecord,'11-9');
   assert.equal(row.titleFightWins,2);
   assert.equal(row.adjustedTitleWins,2);
-  assert.equal(row.topFiveWins,4);
+  assert.equal(row.topFiveWins,3);
   assert.equal(row.rankedWins,8);
   assert.equal(row.finishRatePct,63.64);
   assert.equal(row.primeRecord,'7-6');
   assert.equal(row.roundsWonPct,34.38);
+  assert.equal(row.activeEliteYears,6.61);
   assert.equal(row.timesFinishedPrime,3);
   assert.equal(row.primaryDivision,'Lightweight');
   assert.match(String(row.secondaryDivision),/Featherweight/);
   assert.match(String(row.secondaryDivision),/Welterweight/);
   assert.equal(runtime.pettisCategory?.status,'complete');
   assert.deepEqual(runtime.pettisEra,{primary:'golden-age',secondary:'superstar'});
-  assert.equal(runtime.pettisLedgers.length,2);
+  assert.equal(runtime.pettisLedgers.length,3);
   assert.ok(runtime.pettisCompare?.shortCase&&runtime.pettisCompare?.counter&&runtime.pettisCompare?.edge);
   assert.equal(runtime.pettisOverride?.profileDisplayName,'Anthony “Showtime” Pettis');
   assert.equal(runtime.pettisOverride?.photoUrl,'assets/fighters/anthony-pettis.webp');
   assert.equal(runtime.pettisOverride?.thumbUrl,'assets/fighters/anthony-pettis-thumb.webp');
   assert.equal(runtime.pettisOverride?.signatureFight,'Benson Henderson II — UFC 164');
   assert.equal(runtime.pettisOverride?.alternateFight,'Gilbert Melendez — UFC 181');
-  assert.equal(runtime.pettisOverride?.watchUrl,undefined);
-  assert.equal(runtime.pettisOverride?.signatureFightUrl,undefined);
+  assert.equal(runtime.pettisOverride?.watchUrl,WATCH);
+  assert.equal(runtime.pettisOverride?.signatureFightUrl,FIGHT);
 
   assert.equal(runtime.divisionReport?.passed,true);
   assert.equal(runtime.divisionReport?.manualGuardrails,false);
@@ -117,6 +120,8 @@ try{
   const pettisRow=page.locator('#menList .fighter-row[data-fighter="Anthony Pettis"]');
   await pettisRow.scrollIntoViewIfNeeded();
   assert.match(await pettisRow.textContent(),/Anthony.*Pettis/);
+  const cardWatch=await pettisRow.locator('.watch-moment-link').getAttribute('href');
+  assert.equal(cardWatch,WATCH);
 
   await page.evaluate(name=>window.openFighter?.(name),PETTIS);
   await page.waitForSelector('#drawer.open',{timeout:15000});
@@ -129,7 +134,8 @@ try{
   assert.ok(profile.text.includes('Why Not Ranked Higher?'));
   assert.ok(profile.text.includes('Benson Henderson II'));
   assert.ok(profile.text.includes('Gilbert Melendez'));
-  assert.ok(!profile.links.some(link=>/watch moment|signature fight/i.test(link.text)),'No video buttons render without supplied URLs');
+  assert.ok(profile.links.some(link=>link.href===WATCH&&/watch moment/i.test(link.text)));
+  assert.ok(profile.links.some(link=>link.href===FIGHT&&/signature fight/i.test(link.text)));
   await page.locator('#closeDrawer').click();
 
   await page.locator('.tab[data-view="compare"]').click();
@@ -157,6 +163,7 @@ try{
       Featherweight:runtime.featherweight.findIndex(item=>item.fighter===PETTIS)+1,
       Welterweight:runtime.welterweight.findIndex(item=>item.fighter===PETTIS)+1
     },
+    cardWatch,
     profile,
     audits:{facts:runtime.factsAudit,category:runtime.categoryAudit,division:runtime.divisionReport},
     crossTabs:{leaderboard:true,profile:true,compare:true,playSearch:true,era:true},
