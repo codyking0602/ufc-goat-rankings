@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#111827" />
-  <meta name="app-build" content="20260717-octagon-unread-push" />
+  <meta name="app-build" content="20260717-phase-1b-home-dashboard" />
   <title>Octagon HQ</title>
   <link rel="manifest" href="manifest.webmanifest?v=octagon-notifications-20260717a" />
   <link rel="stylesheet" href="assets/css/app.css?v=app-css-20260711a-picks" />
@@ -36,14 +36,15 @@
   <link rel="stylesheet" href="assets/css/picks-tiered-scoring.css?v=picks-tiered-scoring-20260713b-clarity" />
   <link rel="stylesheet" href="assets/css/era-filter.css?v=era-filter-20260715b-curated" />
   <link rel="stylesheet" href="assets/css/intelligence.css?v=intelligence-css-20260716d-matchup-clean" />
+  <link id="homeDashboardCss" rel="stylesheet" href="assets/css/home-dashboard.css?v=home-dashboard-20260717a" />
 </head>
 <body>
   <header class="hero"><div><p class="eyebrow">UFC ranking + debate engine</p><h1>UFC All-Time Rankings</h1><p class="subtitle">Rankings, fighter profiles, head-to-head debates, event picks, and interactive games.</p></div><div class="hero-card"><span id="fighterCount">—</span><small>fighters ranked</small></div></header>
-  <nav class="tabs" data-product-architecture="product-architecture-20260717b" aria-label="Primary app destinations"><button type="button" class="tab" data-destination="home" data-view="home" aria-selected="false">Home</button><button type="button" class="tab active" data-destination="rankings" data-view="men" aria-selected="true">Rankings</button><button type="button" class="tab" data-destination="play" data-view="play" aria-selected="false">Play</button><button type="button" class="tab" data-destination="picks" data-view="picks" aria-selected="false">Picks</button><button type="button" class="tab" data-destination="war-room" data-view="octagon" data-octagon-beta-tab="true" data-beta-access="locked" aria-selected="false" aria-disabled="true" aria-label="War Room access not enabled" title="War Room access not enabled" disabled>War Room</button><button type="button" class="tab" data-destination="intelligence" data-view="compare" aria-selected="false">Intelligence</button></nav>
+  <nav class="tabs" data-product-architecture="product-architecture-20260717f-phase-1b" aria-label="Primary app destinations"><button type="button" class="tab active" data-destination="home" data-view="home" aria-selected="true">Home</button><button type="button" class="tab" data-destination="rankings" data-view="men" aria-selected="false">Rankings</button><button type="button" class="tab" data-destination="play" data-view="play" aria-selected="false">Play</button><button type="button" class="tab" data-destination="picks" data-view="picks" aria-selected="false">Picks</button><button type="button" class="tab" data-destination="war-room" data-view="octagon" data-octagon-beta-tab="true" data-beta-access="locked" aria-selected="false" aria-disabled="true" aria-label="War Room access not enabled" title="War Room access not enabled" disabled>War Room</button><button type="button" class="tab" data-destination="intelligence" data-view="compare" aria-selected="false">Intelligence</button></nav>
   <main class="shell">
-    <section id="home" class="view architecture-home"><div class="architecture-home-shell"><span>OCTAGON HQ</span><h2>Your UFC headquarters.</h2><p>Rankings, games, picks, The War Room, and Intelligence—organized under one roof.</p></div></section>
+    <section id="home" class="view active-view"><div id="homeDashboardMount" aria-live="polite"></div></section>
     <section class="toolbar"><input id="search" type="search" placeholder="Search fighter…" /><select id="eraFilter" aria-label="Filter rankings by UFC era"><option value="All">All eras</option></select><select id="divisionFilter"><option value="All">All divisions</option></select><button id="resetBtn" class="ghost">Reset</button></section>
-    <section id="men" class="view active-view"><div class="section-title"><h2>UFC All-Time P4P</h2><p>Main leaderboard for UFC all-time rankings.</p></div><div id="menEraContext" class="era-context" hidden></div><div id="menStats" class="kpis"></div><div id="menList" class="leaderboard"></div></section>
+    <section id="men" class="view"><div class="section-title"><h2>UFC All-Time P4P</h2><p>Main leaderboard for UFC all-time rankings.</p></div><div id="menEraContext" class="era-context" hidden></div><div id="menStats" class="kpis"></div><div id="menList" class="leaderboard"></div></section>
     <section id="women" class="view"><div class="section-title"><h2>Women Only Board</h2><p>Separate women’s all-time list, using the same UFC-only category logic.</p></div><div id="womenEraContext" class="era-context" hidden></div><div id="womenStats" class="kpis"></div><div id="womenList" class="leaderboard"></div></section>
     <section id="play" class="view">
       <div class="section-title"><h2>Play</h2><p>Build your own UFC GOAT list or test your resume instincts without seeing the names.</p></div>
@@ -104,7 +105,7 @@
     const toolbar=document.querySelector('.toolbar');
     const search=document.getElementById('search');
     const divisionFilter=document.getElementById('divisionFilter');
-    function activeView(){return document.querySelector('.tab.active')?.dataset.view||'men';}
+    function activeView(){return document.querySelector('.tab.active')?.dataset.view||'home';}
     function syncToolbar(){
       const view=activeView();
       const isLeaderboard=view==='men'||view==='women';
@@ -181,12 +182,13 @@
   <script src="assets/js/intelligence.js?v=intelligence-js-20260716c-copy-gateway"></script>
   <script src="assets/js/app-update-watcher.js?v=app-update-watcher-20260717-play-photo-authority"></script>
   <script src="assets/js/octagon-hq-shell.js?v=octagon-hq-shell-20260717c"></script>
-  <script src="assets/js/octagon-hq-nav-grid.js?v=octagon-hq-nav-grid-20260717g"></script>
+  <script src="assets/js/octagon-hq-nav-grid.js?v=octagon-hq-nav-grid-disabled-20260717a"></script>
   <script src="assets/js/octagon-message-board.js?v=octagon-message-board-20260717c-realtime"></script>
   <script src="assets/js/octagon-access-panel.js?v=octagon-access-panel-20260717a"></script>
   <script src="assets/js/octagon-notifications.js?v=octagon-notifications-20260717a"></script>
   <script src="assets/js/octagon-push-subscription.js?v=octagon-push-subscription-20260717b"></script>
   <script src="assets/js/war-room-branding.js?v=war-room-branding-20260717c"></script>
-  <script src="assets/js/product-architecture.js?v=product-architecture-20260717b"></script>
+  <script id="homeDashboardScript" src="assets/js/home-dashboard.js?v=home-dashboard-20260717a"></script>
+  <script src="assets/js/product-architecture.js?v=product-architecture-20260717f-phase-1b"></script>
 </body>
 </html>
