@@ -38,8 +38,8 @@ source=replaceRequired(
 source=replaceRequired(
   source,
   /'Alexandre Pantoja','Cain Velasquez','Francis Ngannou'\s*\n\];/,
-  "'Alexandre Pantoja','Cain Velasquez','Francis Ngannou','Brandon Moreno'\n];",
-  'Brandon Moreno validation coverage'
+  "'Alexandre Pantoja','Cain Velasquez','Francis Ngannou','Brandon Moreno','Anthony Pettis'\n];",
+  'Brandon Moreno and Anthony Pettis validation coverage'
 );
 source=replaceRequired(
   source,
@@ -82,6 +82,8 @@ try{
   const count=Number(markdown.match(/Fighters: \*\*(\d+)\*\*/)?.[1]||0);
   if(count<=0)throw new Error('Generated Markdown is missing its fighter count.');
   if(!/### \d+\. Brandon Moreno — \d+ OVR/.test(markdown))throw new Error('Generated Markdown is missing Brandon Moreno’s fighter card.');
+  if(!/### \d+\. Anthony Pettis — \d+ OVR/.test(markdown))throw new Error('Generated Markdown is missing Anthony Pettis’s fighter card.');
+  if(!markdown.includes('Anthony “Showtime” Pettis'))throw new Error('Generated Markdown is missing Anthony Pettis’s official nickname.');
   if(!markdown.includes('Machine-readable JSON is optional and does not block fighter additions.'))throw new Error('Generated Markdown is missing the Markdown-authority rule.');
   if(!markdown.includes('JSON exports are optional, run only when explicitly requested, and never block a fighter addition.'))throw new Error('Generated Markdown is missing the optional-JSON workflow rule.');
 
