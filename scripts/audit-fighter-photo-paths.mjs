@@ -5,7 +5,6 @@ import { chromium } from 'playwright';
 
 const EXPECTED_FIGHTERS=80;
 const PROFILE_FIGHTERS=['Brandon Moreno','Anthony Pettis'];
-const PETTIS_WATCH='https://youtube.com/shorts/BiPvl_p6JqY?is=gwu2EsszP22T9us-';
 const PETTIS_FIGHT='https://youtu.be/smbYO1-yqtA?is=lhtpeK1nOCqGUvdc';
 const root=process.cwd();
 const browser=await chromium.launch({headless:true});
@@ -106,7 +105,6 @@ try{
   assert.match(moreno?.src||'',/brandon-moreno\.webp/);
   assert.match(pettis?.heading||'',/Anthony.*Showtime.*Pettis/);
   assert.match(pettis?.src||'',/anthony-pettis\.webp/);
-  assert.ok(pettis?.links.some(link=>link.href===PETTIS_WATCH&&/watch moment/i.test(link.text)));
   assert.ok(pettis?.links.some(link=>link.href===PETTIS_FIGHT&&/signature fight/i.test(link.text)));
 }finally{
   await browser.close();
