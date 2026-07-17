@@ -156,5 +156,24 @@ const DISPLAY_OVERRIDES = {
     "whyNotHigher": "He does not rank higher because the UFC title reign was short, the reviewed prime includes losses to Forrest Griffin, Rashad Evans, and Jon Jones, and his thirteen-fight UFC sample cannot match the championship volume of the division’s longest-reigning greats.",
     "keyJudgmentCalls": [["Nickname","The app-facing name is Quinton “Rampage” Jackson."],["UFC-only scope","PRIDE, Bellator, WFA, and regional results are excluded from scoring."],["Prime start","The Chuck Liddell title knockout begins the connected elite UFC run."],["Prime end","The Jon Jones title loss closes the prime; Bader and Teixeira are post-prime losses."],["Lyoto Machida","The official split-decision win counts, but receives discounted Opponent Quality credit because the performance was disputed."],["Division depth","Late-2000s light heavyweight uses the neutral 1.00 depth baseline."]],
     "finalTakeaway": "Rampage has a real UFC champion’s resume, not just star power: a title knockout, a defense over an elite challenger, and multiple ranked wins in a deep division. The ceiling is held down by short championship volume and three prime losses."
+  },
+  "Brandon Moreno": {
+    "displayName": "Brandon “The Assassin Baby” Moreno",
+    "profileDisplayName": "Brandon “The Assassin Baby” Moreno",
+    "divisionLabel": "FLW",
+    "resumeTag": "Two-reign flyweight champion",
+    "photoUrl": "assets/fighters/brandon-moreno.webp",
+    "thumbUrl": "assets/fighters/brandon-moreno-thumb.webp",
+    "photoUnavailable": false,
+    "photoStatus": "verified",
+    "watchUrl": "https://youtube.com/shorts/eKlp7eFDSTM?is=_dMar84p0EkqYXz_",
+    "watchLabel": "Watch Moment",
+    "signatureFightUrl": "https://youtu.be/GPrzwbgg8yU?is=M-G22YQ8u-8QVKtz",
+    "signatureFightLabel": "Watch Signature Fight",
+    "oneLiner": "The resilient two-reign flyweight champion: three UFC title-fight wins, a 2-1-1 Figueiredo rivalry edge, and nearly six active elite years.",
+    "whyRankedHere": "Moreno earns his place through three UFC title-fight wins, five top-five victories, two undisputed title reigns, an interim-title finish, and a deep modern flyweight prime. His UFC 263 submission and UFC 283 title reclaim give the resume championship proof and historical identity.",
+    "whyNotHigher": "He does not rank higher because he never completed a successful undisputed defense, lost both official UFC fights to Alexandre Pantoja, and accumulated four counted prime losses. Modern flyweight also receives a modest division-depth discount compared with the strongest all-time divisions.",
+    "keyJudgmentCalls": [["Nickname","The app-facing profile name is Brandon “The Assassin Baby” Moreno."],["UFC-only scope","The Ultimate Fighter exhibition loss to Alexandre Pantoja and all regional fights are excluded."],["Prime start","Jussier Formiga begins the connected elite run."],["Prime end","Tatsuro Taira is the unrecovered prime finish loss; Lone’er Kavanagh is post-prime decline confirmation."],["Figueiredo rivalry","The official UFC series is 2-1-1 for Moreno and anchors his championship case."],["Pantoja rivalry","Pantoja leads the official UFC series 2-0; the TUF exhibition is not part of the UFC record."],["Division depth","Modern flyweight receives a modest discount rather than the heavier launch-era flyweight penalty."]],
+    "finalTakeaway": "Moreno is the resilience champion of the flyweight GOAT conversation: two undisputed reigns, three title-fight wins, rivalry history, and real longevity. The absence of a completed undisputed defense and the Pantoja losses keep him below the division’s deepest UFC-only resumes."
   }
 };
