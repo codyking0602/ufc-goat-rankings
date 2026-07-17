@@ -5,6 +5,7 @@
   const PHOTO_CACHE_KEY='ufc-blind-rank-photo-audit-v1';
   const TIER_IDS=['elite','great','good','average','below-average','bad'];
   const TIER_INDEX=Object.fromEntries(TIER_IDS.map((tier,index)=>[tier,index]));
+  const CANDIDATE_TIER_KEY={'ufc-career':'career',striking:'striking','wrestling-grappling':'grappling','hardest-at-peak':'peak','best-finisher':'finishing','most-complete':'complete','action-fighter':'action','ufc-star-power':'starPower'};
   const THRESHOLDS={
     roster:{targetLow:160,targetHigh:180},
     pool:{
@@ -177,7 +178,7 @@
     const counts=tierCounts(rows);
     return {categoryId:category.id,categoryName:category.name,status:category.status,eligible:entries.length,rated:rows.length,missing:entries.length-rows.length,tierCounts:counts,tierPressure:Object.fromEntries(TIER_IDS.map(tier=>[tier,{count:counts[tier],expectedAppearancesPerFighterPer100Games:counts[tier]?round(demand[tier].selectionsPer100Games/counts[tier],1):null}])),reviewStatus:entries.reduce((summary,entry)=>{increment(summary,entry.reviewStatus?.[category.ratingPath]||'missing');return summary;},{})};
   }
-  function candidateTier(candidate,pack){return candidate.tiers[pack.categoryId]||candidate.tiers.career||null;}
+  function candidateTier(candidate,pack){const key=CANDIDATE_TIER_KEY[pack.categoryId]||pack.categoryId;return candidate.tiers[key]||candidate.tiers.career||null;}
   function candidateMatchesPack(candidate,pack){
     if(pack.filters?.gender&&pack.filters.gender!=='all'&&candidate.gender!==pack.filters.gender)return false;
     if(pack.filters?.division&&!candidate.divisions.some(value=>normal(value)===normal(pack.filters.division)))return false;
