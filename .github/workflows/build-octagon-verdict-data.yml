@@ -26,7 +26,32 @@ on:
       - 'assets/js/production-ranking-bootstrap.js'
       - 'assets/js/octagon-verdict-data.js'
       - 'tools/build-octagon-verdict-data.js'
-      - 'tools/build-octagon-verdict-knowledge.js'
+      - 'scripts/materialize-octagon-verdict-data.mjs'
+      - '.github/workflows/build-octagon-verdict-data.yml'
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'assets/data/ranking-data.js'
+      - 'assets/data/display-overrides.js'
+      - 'assets/data/canonical-fighter-facts*.js'
+      - 'assets/data/canonical-roster-batch-*.js'
+      - 'assets/data/canonical-scoring-judgments.js'
+      - 'assets/data/canonical-*-audit-adjustments.js'
+      - 'assets/data/fighter-era-ledger*.js'
+      - 'assets/data/fighter-packets/*.js'
+      - 'assets/data/division-era-depth-shadow.js'
+      - 'assets/data/canonical-division-era-depth-approved-resolutions.js'
+      - 'assets/compare-data.js'
+      - 'assets/compare-*.js'
+      - 'assets/js/category-calculators.js'
+      - 'assets/js/ranking-pipeline.js'
+      - 'assets/js/calculated-profile-runtime.js'
+      - 'assets/js/division-ranking-pipeline.js'
+      - 'assets/js/division-ranking-reconciliation.js'
+      - 'assets/js/production-ranking-bootstrap.js'
+      - 'assets/js/octagon-verdict-data.js'
+      - 'tools/build-octagon-verdict-data.js'
+      - 'scripts/materialize-octagon-verdict-data.mjs'
       - '.github/workflows/build-octagon-verdict-data.yml'
   workflow_dispatch:
 
@@ -42,10 +67,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Check out main
+      - name: Check out triggering revision
         uses: actions/checkout@v4
         with:
-          ref: main
+          fetch-depth: 0
           persist-credentials: true
 
       - name: Set up Node
@@ -58,23 +83,58 @@ jobs:
           npm install --no-save --silent playwright@1.55.0 > /tmp/playwright-install.log 2>&1
           npx playwright install --with-deps chromium >> /tmp/playwright-install.log 2>&1
 
-      - name: Build calculated Octagon Verdict feed and knowledge pack
+      - name: Build and materialize calculated knowledge data
         run: |
           python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/ufc-octagon-verdict-http.log 2>&1 &
           SERVER_PID=$!
           trap 'kill $SERVER_PID || true' EXIT
           node tools/build-octagon-verdict-data.js
-          node tools/build-octagon-verdict-knowledge.js
+          node scripts/materialize-octagon-verdict-data.mjs
 
-      - name: Commit generated knowledge feed
+      - name: Validate materialized 79-fighter package
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const assert=require('assert/strict');
+          const feed=JSON.parse(fs.readFileSync('assets/data/octagon-verdict-data.json','utf8'));
+          const index=JSON.parse(fs.readFileSync('assets/data/octagon-verdict/index.json','utf8'));
+          const moreno=JSON.parse(fs.readFileSync('assets/data/octagon-verdict/fighters/brandon-moreno.json','utf8'));
+          assert.equal(feed.source,'calculated-browser-runtime');
+          assert.equal(feed.fighterCount,79);
+          assert.equal(feed.fighters.length,79);
+          assert.equal(index.fighterCount,79);
+          assert.equal(index.fighters.length,79);
+          assert.equal(index.divisionBoardCount,9);
+          assert.ok(index.fighters.some(row=>row.name==='Brandon Moreno'&&row.rank===47));
+          assert.equal(moreno.name,'Brandon Moreno');
+          assert.equal(moreno.ufcRecord,'11-7-2');
+          assert.equal(moreno.rank,47);
+          assert.equal(moreno.appOvr,88);
+          assert.equal(moreno.totalScore,45.3);
+          assert.equal(moreno.divisionBoards.findIndex(row=>row.division==='Flyweight')>=0,true);
+          console.log(JSON.stringify({fighterCount:index.fighterCount,divisionBoardCount:index.divisionBoardCount,moreno:{rank:moreno.rank,ovr:moreno.appOvr,totalScore:moreno.totalScore,ufcRecord:moreno.ufcRecord}},null,2));
+          NODE
+
+      - name: Archive generated package on pull requests
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: octagon-verdict-materialized-package
+          path: |
+            assets/data/octagon-verdict-data.json
+            assets/data/octagon-verdict/
+          if-no-files-found: error
+
+      - name: Commit generated package on main
+        if: github.event_name == 'push'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/data/octagon-verdict-data.json assets/data/octagon-verdict/ octagon-verdict-knowledge.md
+          git add assets/data/octagon-verdict-data.json assets/data/octagon-verdict/
           if git diff --cached --quiet; then
-            echo "Octagon Verdict data and knowledge pack are already current."
+            echo "Octagon Verdict calculated package is already current."
           else
-            git commit -m "Rebuild Octagon Verdict knowledge feed [skip ci]"
+            git commit -m "Rebuild Octagon Verdict calculated package [skip ci]"
             git pull --rebase origin main
             git push origin HEAD:main
           fi
