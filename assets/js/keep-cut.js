@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='keep-cut-20260716c-best-prime';
+  const VERSION='keep-cut-20260716d-category-batch';
   const STORAGE_KEY='ufc-goat-keep-cut-v1';
   const STORAGE_VERSION=2;
   const PLAY_DATA=window.UFC_PLAY_DATA;
@@ -45,6 +45,24 @@
     'Alexa Grasso','Julianna Peña','Carla Esparza','Holly Holm','Alexandre Pantoja','Royce Gracie','Frank Shamrock'
   ];
 
+  const MOST_COMPLETE=[
+    'Georges St-Pierre','Jon Jones','Demetrious Johnson','Alexander Volkanovski','Islam Makhachev','Amanda Nunes',
+    'Valentina Shevchenko','Henry Cejudo','Jose Aldo','Kamaru Usman','Daniel Cormier','Khabib Nurmagomedov',
+    'Max Holloway','Petr Yan','Charles Oliveira','B.J. Penn','Frankie Edgar','T.J. Dillashaw',
+    'Aljamain Sterling','Alexandre Pantoja','Joanna Jedrzejczyk','Rose Namajunas','Robert Whittaker',
+    'Israel Adesanya','Ilia Topuria','Deiveson Figueiredo','Stipe Miocic','Cain Velasquez','Dominick Cruz',
+    'Dricus du Plessis','Randy Couture','Alex Pereira'
+  ];
+
+  const BIGGEST_WHAT_IF=[
+    'Cain Velasquez','Dominick Cruz','Tony Ferguson','Conor McGregor','Khabib Nurmagomedov','Brock Lesnar',
+    'Chris Weidman','T.J. Dillashaw','Ronda Rousey','Francis Ngannou','Alexander Gustafsson','Yoel Romero',
+    'Anthony Pettis','Nick Diaz','Rory MacDonald','Carlos Condit','Urijah Faber','Dan Henderson',
+    'Chael Sonnen','Dustin Poirier','Colby Covington','Michael Chandler','Kevin Lee','Darren Till',
+    'Petr Yan','Henry Cejudo','Holly Holm','Paige VanZant','Sage Northcutt','Kimbo Slice',
+    'Donald Cerrone','Jorge Masvidal'
+  ];
+
   const CULT_CHAOS=[
     'Chael Sonnen','Nate Diaz','Nick Diaz','Jorge Masvidal','Mike Perry','Diego Sanchez','Derrick Lewis',
     'Tai Tuivasa','Kevin Holland','Michel Pereira','Paige VanZant','Molly McCann','Kimbo Slice','CM Punk',
@@ -58,6 +76,8 @@
       'Rory MacDonald','Nate Diaz','Nick Diaz','Michael Chandler','Chael Sonnen','Dan Hooker','Cub Swanson',
       'Derrick Lewis','Kevin Lee','Matt Brown','Joe Lauzon','Kevin Holland','Tai Tuivasa'
     ],
+    'most-complete':[...MOST_COMPLETE],
+    'biggest-what-if':[...BIGGEST_WHAT_IF],
     'action-fighters':[
       'Justin Gaethje','Dustin Poirier','Max Holloway','Charles Oliveira','Robbie Lawler','Tony Ferguson',
       'Michael Chandler','Chan Sung Jung','Edson Barboza','Donald Cerrone','Dan Henderson','Nate Diaz',
@@ -82,12 +102,16 @@
     {id:'ufc-careers',group:'Serious',name:'UFC Careers',prompt:'Keep four UFC careers. Cut four.',description:'Eight ranked UFC careers arrive one at a time. Every decision locks.',scoreMode:'overall-rank',filters:{gender:'men',modelRanked:true}},
     {id:'all-careers',group:'Serious',name:'All UFC Careers',prompt:'Keep four UFC careers. Cut four.',description:'Ranked men and women from across UFC history arrive one at a time.',scoreMode:'overall-score',filters:{modelRanked:true}},
     {id:'best-prime',group:'Serious',name:'Best Prime',prompt:'Keep four UFC primes. Cut four.',description:'Balanced by Prime Dominance and Apex Peak—not overall career rank.',scoreMode:'prime-score',candidateLimit:48,filters:{modelRanked:true}},
-    {id:'never-undisputed',group:'Serious',name:'Never Won Undisputed Gold',prompt:'Keep four. Cut four.',description:'Major UFC careers without undisputed UFC gold, balanced by UFC résumé.',scoreMode:'ordered',filters:{modelRanked:true},names:NEVER_UNDISPUTED,order:CATEGORY_ORDERS['never-undisputed']},
+    {id:'never-undisputed',group:'Serious',name:'Never Won Undisputed Gold',prompt:'Keep four. Cut four.',description:'Major UFC careers without undisputed UFC gold, balanced by UFC resume.',scoreMode:'ordered',filters:{modelRanked:true},names:NEVER_UNDISPUTED,order:CATEGORY_ORDERS['never-undisputed']},
     {id:'former-champions',group:'Serious',name:'Former Champions',prompt:'Keep four champions. Cut four.',description:'Eight ranked UFC champions arrive one at a time.',scoreMode:'overall-score',filters:{modelRanked:true},names:FORMER_CHAMPIONS},
-    {id:'lightweight',group:'Serious',name:'Lightweight',prompt:'Keep four lightweights. Cut four.',description:'Ranked UFC lightweight careers, balanced by lightweight résumé.',scoreMode:'division-score',division:'Lightweight',filters:{gender:'men',division:'Lightweight',modelRanked:true}},
-    {id:'welterweight',group:'Serious',name:'Welterweight',prompt:'Keep four welterweights. Cut four.',description:'Ranked UFC welterweight careers, balanced by welterweight résumé.',scoreMode:'division-score',division:'Welterweight',filters:{gender:'men',division:'Welterweight',modelRanked:true}},
-    {id:'heavyweight',group:'Serious',name:'Heavyweight',prompt:'Keep four heavyweights. Cut four.',description:'Ranked UFC heavyweight careers, balanced by heavyweight résumé.',scoreMode:'division-score',division:'Heavyweight',filters:{gender:'men',division:'Heavyweight',modelRanked:true}},
+    {id:'lightweight',group:'Serious',name:'Lightweight',prompt:'Keep four lightweights. Cut four.',description:'Ranked UFC lightweight careers, balanced by lightweight resume.',scoreMode:'division-score',division:'Lightweight',filters:{gender:'men',division:'Lightweight',modelRanked:true}},
+    {id:'welterweight',group:'Serious',name:'Welterweight',prompt:'Keep four welterweights. Cut four.',description:'Ranked UFC welterweight careers, balanced by welterweight resume.',scoreMode:'division-score',division:'Welterweight',filters:{gender:'men',division:'Welterweight',modelRanked:true}},
+    {id:'heavyweight',group:'Serious',name:'Heavyweight',prompt:'Keep four heavyweights. Cut four.',description:'Ranked UFC heavyweight careers, balanced by heavyweight resume.',scoreMode:'division-score',division:'Heavyweight',filters:{gender:'men',division:'Heavyweight',modelRanked:true}},
     {id:'early-ufc',group:'Serious',name:'Early UFC',prompt:'Keep four early UFC names. Cut four.',description:'Ranked Tournament, Survival, and Zuffa Rebuild era careers.',scoreMode:'overall-rank',filters:{gender:'men',modelRanked:true},eras:['tournament','survival','zuffa-rebuild']},
+    {id:'hardest-at-peak',group:'Debate',name:'Hardest at Their Peak',prompt:'Keep four fighters at their hardest-to-beat peak. Cut four.',description:'Rewards prime control, Apex Peak, rounds won, and avoiding prime losses.',scoreMode:'hardest-peak',candidateLimit:48,filters:{modelRanked:true}},
+    {id:'most-complete',group:'Debate',name:'Most Complete Fighter',prompt:'Keep four complete fighters. Cut four.',description:'A curated UFC-only skill-breadth debate: striking, grappling, wrestling, defense, and adaptability.',scoreMode:'ordered',names:MOST_COMPLETE,order:CATEGORY_ORDERS['most-complete']},
+    {id:'best-finisher',group:'Debate',name:'Best Finisher',prompt:'Keep four UFC finishers. Cut four.',description:'Balances finish rate with UFC win volume, elite wins, and title-fight stakes.',scoreMode:'finisher-score',candidateLimit:40,filters:{modelRanked:true}},
+    {id:'biggest-what-if',group:'Debate',name:'Biggest UFC What-If',prompt:'Keep four UFC what-ifs. Cut four.',description:'Injuries, timing, missed title moments, short primes, and careers that left the biggest unanswered questions.',scoreMode:'ordered',names:BIGGEST_WHAT_IF,order:CATEGORY_ORDERS['biggest-what-if']},
     {id:'action-fighters',group:'Entertainment',name:'Action Fighters',prompt:'Keep four action fighters. Cut four.',description:'Balanced by action value—not by the GOAT leaderboard.',scoreMode:'ordered',names:ACTION_FIGHTERS,order:CATEGORY_ORDERS['action-fighters']},
     {id:'ufc-stars',group:'Entertainment',name:'UFC Stars',prompt:'Keep four UFC stars. Cut four.',description:'Balanced by UFC star power—not by career rank.',scoreMode:'ordered',names:UFC_STARS,order:CATEGORY_ORDERS['ufc-stars']},
     {id:'cult-chaos',group:'Chaos',name:'Cult & Chaos',prompt:'Keep four agents of chaos. Cut four.',description:'Cult heroes, personalities, attractions, and beautifully strange UFC careers.',scoreMode:'ordered',names:CULT_CHAOS,order:CATEGORY_ORDERS['cult-chaos']}
@@ -96,6 +120,7 @@
   const TARGET_BUCKETS=['elite','great','great','good','good','average','average','chaos'];
   const BUCKET_ORDER=['elite','great','good','average','chaos'];
   const REQUIRED_BUCKET_COUNTS=TARGET_BUCKETS.reduce((counts,bucket)=>({...counts,[bucket]:(counts[bucket]||0)+1}),{});
+  const METRIC_MODES=new Set(['prime-score','hardest-peak','finisher-score','division-score']);
   const state={packId:'ufc-careers',lineup:[],decisions:[],currentIndex:0,completed:false,shared:false,balance:null};
   let audit={passed:false,packs:[]};
 
@@ -131,6 +156,19 @@
     return [...(data.men||[]),...(data.women||[]),...(data.fighters||[])].find(row=>String(row?.fighter||'').trim().toLowerCase()===target)||null;
   }
 
+  function rowNumber(row,...fields){
+    for(const field of fields){
+      const value=Number(row?.[field]);
+      if(Number.isFinite(value))return value;
+    }
+    return null;
+  }
+
+  function primeLosses(row){
+    const match=String(row?.primeRecord||'').match(/(\d+)\s*-\s*(\d+)/);
+    return match?Number(match[2]):0;
+  }
+
   function fallbackScore(fighter){
     if(Number.isFinite(Number(fighter?.modelRank)))return 10000-(Number(fighter.modelRank)*100)+(Number(fighter.modelScore)||0);
     const tierScore={legend:5000,elite:4000,contender:3000,recognizable:2000,wildcard:1000};
@@ -144,10 +182,42 @@
 
   function primeScore(fighter){
     const row=rankingRow(fighter);
-    const dominance=Number(row?.primeDominance);
-    const apex=Number(row?.apexPeak);
-    if(!Number.isFinite(dominance))return null;
-    return dominance+(Number.isFinite(apex)?apex:0);
+    const dominance=rowNumber(row,'primeDominance');
+    const apex=rowNumber(row,'apexPeak')||0;
+    return dominance===null?null:dominance+apex;
+  }
+
+  function hardestPeakScore(fighter){
+    const row=rankingRow(fighter);
+    const dominance=rowNumber(row,'primeDominance');
+    const rounds=rowNumber(row,'roundsWonPct');
+    if(dominance===null||rounds===null)return null;
+    const apex=rowNumber(row,'apexPeak')||0;
+    const finish=rowNumber(row,'finishRatePct')||0;
+    const finished=rowNumber(row,'timesFinishedPrime')||0;
+    return dominance+apex+(rounds*0.08)+(finish*0.025)-(primeLosses(row)*2.25)-(finished*1.25);
+  }
+
+  function finisherScore(fighter){
+    const row=rankingRow(fighter);
+    const finish=rowNumber(row,'finishRatePct');
+    const wins=rowNumber(row,'ufcWins');
+    if(finish===null||wins===null||wins<6)return null;
+    const topFive=rowNumber(row,'topFiveWins','top5Wins')||0;
+    const titleWins=rowNumber(row,'titleFightWins','ufcTitleFightWins')||0;
+    const apex=rowNumber(row,'apexPeak')||0;
+    return (finish*0.55)+Math.min(18,wins*1.1)+Math.min(12,topFive*1.5)+Math.min(10,titleWins*1.2)+(apex*0.35);
+  }
+
+  function metricScore(pack,fighter){
+    if(pack.scoreMode==='prime-score')return primeScore(fighter);
+    if(pack.scoreMode==='hardest-peak')return hardestPeakScore(fighter);
+    if(pack.scoreMode==='finisher-score')return finisherScore(fighter);
+    if(pack.scoreMode==='division-score'){
+      const score=divisionEntry(fighter,pack.division)?.divisionScore;
+      return Number.isFinite(Number(score))?Number(score):null;
+    }
+    return null;
   }
 
   function scoreForPack(pack,fighter){
@@ -156,14 +226,8 @@
       if(index>=0)return 20000-index*100;
     }
     if(pack.scoreMode==='overall-score'&&Number.isFinite(Number(fighter?.modelScore)))return Number(fighter.modelScore);
-    if(pack.scoreMode==='prime-score'){
-      const score=primeScore(fighter);
-      if(Number.isFinite(score))return score;
-    }
-    if(pack.scoreMode==='division-score'){
-      const score=divisionEntry(fighter,pack.division)?.divisionScore;
-      if(Number.isFinite(Number(score)))return Number(score);
-    }
+    const metric=metricScore(pack,fighter);
+    if(Number.isFinite(metric))return metric;
     return fallbackScore(fighter);
   }
 
@@ -176,6 +240,7 @@
     if(Array.isArray(pack.eras)&&pack.eras.length){
       pool=pool.filter(fighter=>fighter.eras?.some(era=>pack.eras.includes(era)));
     }
+    if(METRIC_MODES.has(pack.scoreMode))pool=pool.filter(fighter=>Number.isFinite(metricScore(pack,fighter)));
     if(Number.isInteger(pack.candidateLimit)&&pack.candidateLimit>=8){
       pool=[...pool].sort((a,b)=>scoreForPack(pack,b)-scoreForPack(pack,a)||a.name.localeCompare(b.name)).slice(0,pack.candidateLimit);
     }
@@ -239,8 +304,8 @@
       const bucketCounts=Object.fromEntries(BUCKET_ORDER.map(bucket=>[bucket,buckets[bucket].length]));
       const bucketReady=Object.entries(REQUIRED_BUCKET_COUNTS).every(([bucket,count])=>bucketCounts[bucket]>=count);
       const orderMissing=Array.isArray(pack.order)?pool.filter(fighter=>!pack.order.some(name=>PLAY_DATA.resolve(name)?.id===fighter.id)).map(fighter=>fighter.name):[];
-      const divisionMissing=pack.scoreMode==='division-score'?pool.filter(fighter=>!Number.isFinite(Number(divisionEntry(fighter,pack.division)?.divisionScore))).map(fighter=>fighter.name):[];
-      const primeMissing=pack.scoreMode==='prime-score'?pool.filter(fighter=>!Number.isFinite(primeScore(fighter))).map(fighter=>fighter.name):[];
+      const namedMissing=Array.isArray(pack.names)?pack.names.filter(name=>!PLAY_DATA.resolve(name)):[];
+      const metricMissing=METRIC_MODES.has(pack.scoreMode)?PLAY_DATA.poolFor('keep-cut',pack.filters||{}).filter(fighter=>!Number.isFinite(metricScore(pack,fighter))).map(fighter=>fighter.name):[];
       return {
         id:pack.id,
         group:pack.group,
@@ -250,9 +315,9 @@
         topFive:ranked.slice(0,5).map(fighter=>fighter.name),
         bottomFive:ranked.slice(-5).map(fighter=>fighter.name),
         orderMissing,
-        divisionMissing,
-        primeMissing,
-        playable:pool.length>=8&&bucketReady&&orderMissing.length===0&&divisionMissing.length===0&&primeMissing.length===0
+        namedMissing,
+        metricMissingCount:metricMissing.length,
+        playable:pool.length>=8&&bucketReady&&orderMissing.length===0&&namedMissing.length===0
       };
     });
     return {passed:packs.every(pack=>pack.playable),packs};
@@ -437,7 +502,7 @@
   }
 
   function packOptions(){
-    return ['Serious','Entertainment','Chaos'].map(group=>{
+    return ['Serious','Debate','Entertainment','Chaos'].map(group=>{
       const packs=PACKS.filter(pack=>pack.group===group);
       return packs.length?`<optgroup label="${esc(group)}">${packs.map(pack=>`<option value="${esc(pack.id)}">${esc(pack.name)}</option>`).join('')}</optgroup>`:'';
     }).join('');
@@ -572,7 +637,9 @@
     startGame,
     buildLineup,
     challengeUrl,
-    refreshAudit
+    refreshAudit,
+    scoreForPack,
+    poolForPack
   };
   document.documentElement.setAttribute('data-keep-cut',VERSION);
   window.dispatchEvent(new CustomEvent('ufc-keep-cut-ready',{detail:{version:VERSION,audit}}));
