@@ -2,7 +2,7 @@
 (function(){
   'use strict';
 
-  const VERSION='production-ranking-bootstrap-20260717a-brandon-moreno-79';
+  const VERSION='production-ranking-bootstrap-20260717b-brandon-moreno-79';
   const EXPECTED_FIGHTER_COUNT=79;
   const CALCULATED_STAT_FIELDS=new Set([
     'ufcRecord','titleFightWins','adjustedTitleWins','topFiveWins','top5Wins','rankedWins',
@@ -43,7 +43,7 @@
     ['assets/data/canonical-roster-batch-ten.js?v=canonical-roster-batch-ten-20260715b-pantoja-paddy-weidman','data-production-clean-roster-batch-ten'],
     ['assets/data/canonical-roster-batch-eleven.js?v=canonical-roster-batch-eleven-20260716c-tom-aspinall-photos','data-production-clean-roster-batch-eleven'],
     ['assets/data/canonical-roster-batch-twelve.js?v=canonical-roster-batch-twelve-20260716b-quinton-jackson-photos','data-production-clean-roster-batch-twelve'],
-    ['assets/data/canonical-roster-batch-thirteen.js?v=canonical-roster-batch-thirteen-20260717a-brandon-moreno','data-production-clean-roster-batch-thirteen'],
+    ['assets/data/canonical-roster-batch-thirteen.js?v=canonical-roster-batch-thirteen-20260717b-official-record','data-production-clean-roster-batch-thirteen'],
     ['assets/js/ranking-pipeline.js?v=production-clean-ranking-pipeline-20260714c','data-production-clean-ranking-pipeline'],
     ['assets/js/calculated-profile-runtime.js?v=production-clean-calculated-profile-runtime-20260715c-longest-win-streak','data-production-clean-calculated-profile-runtime'],
     ['assets/js/division-ranking-pipeline.js?v=division-ranking-pipeline-20260715b-openweight-win-qualified','data-production-clean-division-ranking-pipeline'],
