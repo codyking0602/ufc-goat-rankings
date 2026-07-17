@@ -54,7 +54,16 @@ jobs:
 
           project_ref = os.environ['SUPABASE_PROJECT_REF']
           access_token = os.environ.get('SUPABASE_ACCESS_TOKEN', '').strip()
-          migration_sql = Path('supabase/app-canonical-group-goat26-phase.sql').read_text()
+          migration_path = Path('supabase/app-canonical-group-goat26-phase.sql')
+          migration_sql = migration_path.read_text()
+          old_uuid_aggregate = 'select count(*),min(candidate.id)'
+          new_uuid_aggregate = 'select count(*),(array_agg(candidate.id order by candidate.id))[1]'
+          if old_uuid_aggregate in migration_sql:
+              migration_sql = migration_sql.replace(old_uuid_aggregate, new_uuid_aggregate, 1)
+              migration_path.write_text(migration_sql)
+          elif new_uuid_aggregate not in migration_sql:
+              raise RuntimeError('The guarded GOAT26 candidate query was not found.')
+
           status_path = Path('supabase/goat26-deployment-status.json')
 
           audit_sql = """
@@ -204,13 +213,13 @@ jobs:
           }
           JSON
           fi
-          if git diff --quiet -- index.html supabase/goat26-deployment-status.json; then
-            echo 'GOAT26 wiring and deployment status are unchanged.'
+          if git diff --quiet -- index.html supabase/app-canonical-group-goat26-phase.sql supabase/goat26-deployment-status.json; then
+            echo 'GOAT26 wiring, migration source, and deployment status are unchanged.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html supabase/goat26-deployment-status.json
+          git add index.html supabase/app-canonical-group-goat26-phase.sql supabase/goat26-deployment-status.json
           git commit -m 'Record GOAT26 shared profile deployment [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:main
