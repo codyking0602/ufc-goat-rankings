@@ -97,6 +97,9 @@ jobs:
                   headers={
                       'Authorization': f'Bearer {access_token}',
                       'Content-Type': 'application/json',
+                      'Accept': 'application/json',
+                      'User-Agent': 'github-actions-goat26-migration/1.0',
+                      'X-Client-Info': 'ufc-goat-rankings-goat26-migration',
                   },
                   method='POST',
               )
