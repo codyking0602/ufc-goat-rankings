@@ -1,0 +1,140 @@
+name: Audit GOAT26 Group Candidates
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/audit-goat26-candidates.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: audit-goat26-candidates
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read live Cody-owned Picks groups
+        env:
+          SUPABASE_PROJECT_REF: hdkjwezaswhisxupxydc
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import urllib.error
+          import urllib.request
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          project_ref = os.environ['SUPABASE_PROJECT_REF']
+          access_token = os.environ.get('SUPABASE_ACCESS_TOKEN', '').strip()
+          output_path = Path('supabase/goat26-candidate-audit.json')
+
+          def write(payload):
+              result = dict(payload)
+              result['checked_at'] = datetime.now(timezone.utc).isoformat()
+              output_path.write_text(json.dumps(result, indent=2, sort_keys=True) + '\n')
+
+          if not access_token:
+              write({'status':'blocked','reason':'SUPABASE_ACCESS_TOKEN is not configured.'})
+              raise SystemExit(0)
+
+          sql = """
+          select coalesce(jsonb_agg(candidate order by
+            (candidate->>'active_members')::integer desc,
+            (candidate->>'saved_picks')::integer desc,
+            candidate->>'created_at' desc
+          ),'[]'::jsonb) as candidates
+          from (
+            select jsonb_build_object(
+              'code',g.code,
+              'name',g.name,
+              'owner_name',owner_member.display_name,
+              'is_canonical',coalesce(g.is_canonical,false),
+              'active_members',(
+                select count(*)
+                from public.pick_group_members gm
+                where gm.group_id=g.id and coalesce(gm.is_active,true)
+              ),
+              'member_names',(
+                select coalesce(jsonb_agg(gm.display_name order by lower(trim(gm.display_name))),'[]'::jsonb)
+                from public.pick_group_members gm
+                where gm.group_id=g.id and coalesce(gm.is_active,true)
+              ),
+              'events',(select count(*) from public.pick_group_events ge where ge.group_id=g.id),
+              'rooms',(select count(*) from public.pick_rooms r where r.group_id=g.id),
+              'saved_picks',(
+                select count(*)
+                from public.pick_rooms r
+                join public.pick_room_members rm on rm.room_id=r.id
+                join public.pick_selections ps on ps.member_id=rm.id
+                where r.group_id=g.id
+              ),
+              'created_at',g.created_at
+            ) candidate
+            from public.pick_groups g
+            left join public.pick_group_members owner_member on owner_member.id=g.owner_member_id
+            where lower(trim(coalesce(owner_member.display_name,'')))='cody'
+               or exists (
+                 select 1 from public.pick_group_members gm
+                 where gm.group_id=g.id
+                   and lower(trim(gm.display_name))='cody'
+                   and coalesce(gm.is_active,true)
+               )
+          ) rows;
+          """
+
+          request = urllib.request.Request(
+              f'https://api.supabase.com/v1/projects/{project_ref}/database/query',
+              data=json.dumps({'query':sql,'read_only':True}).encode(),
+              headers={
+                  'Authorization':f'Bearer {access_token}',
+                  'Content-Type':'application/json',
+                  'Accept':'application/json',
+                  'User-Agent':'github-actions-goat26-audit/1.0',
+                  'X-Client-Info':'ufc-goat-rankings-goat26-audit',
+              },
+              method='POST',
+          )
+
+          try:
+              with urllib.request.urlopen(request,timeout=90) as response:
+                  payload=json.loads(response.read().decode() or 'null')
+              rows=payload.get('result',payload) if isinstance(payload,dict) else payload
+              value=rows[0].get('candidates',[]) if isinstance(rows,list) and rows else []
+              if isinstance(value,str):
+                  value=json.loads(value)
+              write({'status':'complete','candidates':value})
+          except Exception as error:
+              reason=str(error).replace(access_token,'[redacted]')[:1500]
+              if isinstance(error,urllib.error.HTTPError):
+                  reason=f'HTTP {error.code}: '+error.read().decode(errors='replace')[:1000]
+              write({'status':'failed','reason':reason})
+          PY
+
+      - name: Commit sanitized audit
+        if: always()
+        run: |
+          if [ ! -f supabase/goat26-candidate-audit.json ]; then
+            printf '%s\n' '{"status":"failed","reason":"Audit produced no result."}' > supabase/goat26-candidate-audit.json
+          fi
+          if git diff --quiet -- supabase/goat26-candidate-audit.json; then
+            echo 'Candidate audit is unchanged.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add supabase/goat26-candidate-audit.json
+          git commit -m 'Record GOAT26 candidate audit [skip ci]'
+          git pull --rebase origin main
+          git push origin HEAD:main
