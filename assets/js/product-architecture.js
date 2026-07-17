@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='product-architecture-20260717c';
+  const VERSION='product-architecture-20260717d';
   const RANKING_VIEWS=['men','women','division','categories'];
   const DESTINATIONS=[
     {key:'home',label:'Home',view:'home'},
@@ -20,7 +20,6 @@
 
   let currentDestination='rankings';
   let currentRankingView='men';
-  let repairing=false;
   let bound=false;
 
   const text=value=>String(value??'').trim();
@@ -94,12 +93,10 @@
   function cleanNav(){
     const nav=document.querySelector('nav.tabs');
     if(!nav)return null;
-    repairing=true;
     document.getElementById('octagonHqCompressionCss')?.remove();
     nav.dataset.productArchitecture=VERSION;
     nav.setAttribute('aria-label','Primary app destinations');
     nav.removeAttribute('style');
-
     nav.querySelectorAll('.tab').forEach(button=>button.removeAttribute('style'));
     nav.querySelectorAll('.tab:not([data-destination])').forEach(button=>button.remove());
 
@@ -110,7 +107,6 @@
         button.type='button';
         button.className='tab';
         button.dataset.destination=item.key;
-        button.dataset.view=item.view;
         nav.appendChild(button);
       }
       button.dataset.view=item.view;
@@ -118,11 +114,14 @@
       if(button.textContent!==item.label)button.textContent=item.label;
     });
 
-    DESTINATIONS.forEach(item=>{
-      const button=nav.querySelector(`[data-destination="${item.key}"]`);
-      if(button)nav.appendChild(button);
-    });
-    repairing=false;
+    const desired=DESTINATIONS.map(item=>item.key);
+    const current=[...nav.children].filter(node=>node.dataset?.destination).map(node=>node.dataset.destination);
+    if(current.join('|')!==desired.join('|')){
+      desired.forEach(key=>{
+        const button=nav.querySelector(`[data-destination="${key}"]`);
+        if(button)nav.appendChild(button);
+      });
+    }
     return nav;
   }
 
@@ -175,8 +174,7 @@
     if(RANKING_VIEWS.includes(view))currentRankingView=view;
     currentDestination=destinationForView(view);
 
-    let target=document.getElementById(view);
-    if(view==='home')target=ensureHome();
+    let target=view==='home'?ensureHome():document.getElementById(view);
     if(!target){
       view='men';
       currentDestination='rankings';
@@ -234,14 +232,14 @@
   function observeNav(){
     const nav=document.querySelector('nav.tabs');
     if(!nav)return;
+    const options={childList:true,subtree:true,attributes:true,attributeFilter:['style','class','aria-label','disabled','aria-disabled','data-beta-access','data-beta-member']};
     const observer=new MutationObserver(()=>{
-      if(repairing)return;
-      queueMicrotask(()=>{
-        cleanNav();
-        syncNavigation();
-      });
+      observer.disconnect();
+      cleanNav();
+      syncNavigation();
+      observer.observe(nav,options);
     });
-    observer.observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:['style','class','aria-label','disabled','aria-disabled','data-beta-access','data-beta-member']});
+    observer.observe(nav,options);
   }
 
   function apply(){
