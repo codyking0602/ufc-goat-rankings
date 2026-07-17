@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='keep-cut-20260715a-phase-four';
+  const VERSION='keep-cut-20260716a-category-balance';
   const STORAGE_KEY='ufc-goat-keep-cut-v1';
   const PLAY_DATA=window.UFC_PLAY_DATA;
   const play=document.getElementById('play');
@@ -44,18 +44,55 @@
     'Alexa Grasso','Julianna Peña','Carla Esparza','Holly Holm','Alexandre Pantoja','Royce Gracie','Frank Shamrock'
   ];
 
-  const PACKS=[
-    {id:'ufc-careers',name:'UFC Careers',prompt:'Keep four UFC careers. Cut four.',description:'Eight fighters arrive one at a time. Every decision locks.',filters:{gender:'men'}},
-    {id:'all-careers',name:'All UFC Careers',prompt:'Keep four UFC careers. Cut four.',description:'Men and women from across UFC history arrive one at a time.',filters:{}},
-    {id:'never-undisputed',name:'Never Won Undisputed Gold',prompt:'Keep four. Cut four.',description:'Every fighter had a major UFC career without winning undisputed UFC gold.',names:NEVER_UNDISPUTED},
-    {id:'action-fighters',name:'Action Fighters',prompt:'Keep four action fighters. Cut four.',description:'Violence, pressure, wild exchanges, and fan-favorite chaos.',names:ACTION_FIGHTERS},
-    {id:'former-champions',name:'Former Champions',prompt:'Keep four champions. Cut four.',description:'Eight UFC champions arrive one at a time.',names:FORMER_CHAMPIONS},
-    {id:'ufc-stars',name:'UFC Stars',prompt:'Keep four UFC stars. Cut four.',description:'Famous champions, fan favorites, personalities, and attractions.',names:UFC_STARS},
-    {id:'lightweight',name:'Lightweight',prompt:'Keep four lightweights. Cut four.',description:'One deep division. Eight locked decisions.',filters:{gender:'men',division:'Lightweight'}},
-    {id:'welterweight',name:'Welterweight',prompt:'Keep four welterweights. Cut four.',description:'Champions, challengers, veterans, and fan favorites.',filters:{gender:'men',division:'Welterweight'}},
-    {id:'heavyweight',name:'Heavyweight',prompt:'Keep four heavyweights. Cut four.',description:'Champions, sluggers, veterans, and unpredictable names.',filters:{gender:'men',division:'Heavyweight'}},
-    {id:'early-ufc',name:'Early UFC',prompt:'Keep four early UFC names. Cut four.',description:'Tournament, Survival, and Zuffa Rebuild era fighters.',filters:{gender:'men'},eras:['tournament','survival','zuffa-rebuild']}
+  const CULT_CHAOS=[
+    'Chael Sonnen','Nate Diaz','Nick Diaz','Jorge Masvidal','Mike Perry','Diego Sanchez','Derrick Lewis',
+    'Tai Tuivasa','Kevin Holland','Michel Pereira','Paige VanZant','Molly McCann','Kimbo Slice','CM Punk',
+    'Sage Northcutt','Artem Lobov','Sam Alvey','Houston Alexander','Clay Guida','Chris Leben'
   ];
+
+  const CATEGORY_ORDERS={
+    'never-undisputed':[
+      'Dustin Poirier','Tony Ferguson','Urijah Faber','Alexander Gustafsson','Carlos Condit','Yoel Romero',
+      'Colby Covington','Stephen Thompson','Dan Henderson','Jorge Masvidal','Donald Cerrone','Chan Sung Jung',
+      'Rory MacDonald','Nate Diaz','Nick Diaz','Michael Chandler','Chael Sonnen','Dan Hooker','Cub Swanson',
+      'Derrick Lewis','Kevin Lee','Matt Brown','Joe Lauzon','Kevin Holland','Tai Tuivasa'
+    ],
+    'action-fighters':[
+      'Justin Gaethje','Dustin Poirier','Max Holloway','Charles Oliveira','Robbie Lawler','Tony Ferguson',
+      'Michael Chandler','Chan Sung Jung','Edson Barboza','Donald Cerrone','Dan Henderson','Nate Diaz',
+      'Dan Hooker','Anthony Pettis','Jorge Masvidal','Nick Diaz','Cub Swanson','Joe Lauzon','Matt Brown',
+      'Diego Sanchez','Clay Guida','Derrick Lewis','Tai Tuivasa','Mike Perry','Michel Pereira','Chris Leben'
+    ],
+    'ufc-stars':[
+      'Conor McGregor','Ronda Rousey','Georges St-Pierre','Jon Jones','Anderson Silva','Brock Lesnar',
+      'Khabib Nurmagomedov','Israel Adesanya','Chuck Liddell','Alex Pereira','Nate Diaz','Jorge Masvidal',
+      'Tito Ortiz','Max Holloway','Francis Ngannou','Sean O’Malley','Dustin Poirier','Justin Gaethje',
+      'B.J. Penn','Charles Oliveira','Robbie Lawler','Donald Cerrone','Tony Ferguson','Chael Sonnen',
+      'Urijah Faber','Paige VanZant','Michael Chandler','Derrick Lewis','Stephen Thompson','Kevin Holland','Tai Tuivasa'
+    ],
+    'cult-chaos':[
+      'Chael Sonnen','Nate Diaz','Nick Diaz','Jorge Masvidal','Mike Perry','Diego Sanchez','Derrick Lewis',
+      'Tai Tuivasa','Kevin Holland','Michel Pereira','Clay Guida','Chris Leben','Paige VanZant','Molly McCann',
+      'Kimbo Slice','Artem Lobov','Sage Northcutt','Houston Alexander','Sam Alvey','CM Punk'
+    ]
+  };
+
+  const PACKS=[
+    {id:'ufc-careers',group:'Serious',name:'UFC Careers',prompt:'Keep four UFC careers. Cut four.',description:'Eight ranked UFC careers arrive one at a time. Every decision locks.',filters:{gender:'men',modelRanked:true}},
+    {id:'all-careers',group:'Serious',name:'All UFC Careers',prompt:'Keep four UFC careers. Cut four.',description:'Ranked men and women from across UFC history arrive one at a time.',filters:{modelRanked:true}},
+    {id:'never-undisputed',group:'Serious',name:'Never Won Undisputed Gold',prompt:'Keep four. Cut four.',description:'Major UFC careers without undisputed UFC gold, balanced by UFC résumé.',filters:{modelRanked:true},names:NEVER_UNDISPUTED,order:CATEGORY_ORDERS['never-undisputed']},
+    {id:'former-champions',group:'Serious',name:'Former Champions',prompt:'Keep four champions. Cut four.',description:'Eight ranked UFC champions arrive one at a time.',filters:{modelRanked:true},names:FORMER_CHAMPIONS},
+    {id:'lightweight',group:'Serious',name:'Lightweight',prompt:'Keep four lightweights. Cut four.',description:'Ranked UFC lightweight careers, balanced inside the division.',filters:{gender:'men',division:'Lightweight',modelRanked:true}},
+    {id:'welterweight',group:'Serious',name:'Welterweight',prompt:'Keep four welterweights. Cut four.',description:'Ranked UFC welterweight careers, balanced inside the division.',filters:{gender:'men',division:'Welterweight',modelRanked:true}},
+    {id:'heavyweight',group:'Serious',name:'Heavyweight',prompt:'Keep four heavyweights. Cut four.',description:'Ranked UFC heavyweight careers, balanced inside the division.',filters:{gender:'men',division:'Heavyweight',modelRanked:true}},
+    {id:'early-ufc',group:'Serious',name:'Early UFC',prompt:'Keep four early UFC names. Cut four.',description:'Ranked Tournament, Survival, and Zuffa Rebuild era careers.',filters:{gender:'men',modelRanked:true},eras:['tournament','survival','zuffa-rebuild']},
+    {id:'action-fighters',group:'Entertainment',name:'Action Fighters',prompt:'Keep four action fighters. Cut four.',description:'Balanced by action value—not by the GOAT leaderboard.',names:ACTION_FIGHTERS,order:CATEGORY_ORDERS['action-fighters']},
+    {id:'ufc-stars',group:'Entertainment',name:'UFC Stars',prompt:'Keep four UFC stars. Cut four.',description:'Balanced by UFC star power—not by career rank.',names:UFC_STARS,order:CATEGORY_ORDERS['ufc-stars']},
+    {id:'cult-chaos',group:'Chaos',name:'Cult & Chaos',prompt:'Keep four agents of chaos. Cut four.',description:'Cult heroes, personalities, attractions, and beautifully strange UFC careers.',names:CULT_CHAOS,order:CATEGORY_ORDERS['cult-chaos']}
+  ];
+
+  const TARGET_BUCKETS=['elite','great','great','good','good','average','average','chaos'];
+  const BUCKET_ORDER=['elite','great','good','average','chaos'];
 
   const state={
     packId:'ufc-careers',
@@ -63,13 +100,13 @@
     decisions:[],
     currentIndex:0,
     completed:false,
-    shared:false
+    shared:false,
+    balance:null
   };
 
   function esc(value){return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));}
   function initials(name){return String(name||'').split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase()||'UFC';}
   function packFor(id){return PACKS.find(pack=>pack.id===id)||PACKS[0];}
-  function randomItem(items){return items.length?items[Math.floor(Math.random()*items.length)]:null;}
   function shuffled(values){
     const items=[...values];
     for(let index=items.length-1;index>0;index-=1){
@@ -105,24 +142,83 @@
     return pool;
   }
 
+  function fallbackScore(fighter){
+    if(Number.isFinite(Number(fighter?.modelRank)))return 10000-(Number(fighter.modelRank)*100)+(Number(fighter.modelScore)||0);
+    const tierScore={legend:5000,elite:4000,contender:3000,recognizable:2000,wildcard:1000};
+    return tierScore[fighter?.selectionTier]||0;
+  }
+
+  function scoreForPack(pack,fighter){
+    if(Array.isArray(pack.order)){
+      const target=PLAY_DATA.resolve(fighter.id)?.id||fighter.id;
+      const index=pack.order.findIndex(name=>PLAY_DATA.resolve(name)?.id===target);
+      if(index>=0)return 20000-index*100;
+    }
+    return fallbackScore(fighter);
+  }
+
+  function bucketedPool(pack,pool=poolForPack(pack)){
+    const ranked=[...pool].sort((a,b)=>scoreForPack(pack,b)-scoreForPack(pack,a)||a.name.localeCompare(b.name));
+    const buckets=Object.fromEntries(BUCKET_ORDER.map(bucket=>[bucket,[]]));
+    ranked.forEach((fighter,index)=>{
+      const percentile=(index+0.5)/ranked.length;
+      const bucket=percentile<=0.125?'elite':percentile<=0.375?'great':percentile<=0.625?'good':percentile<=0.875?'average':'chaos';
+      buckets[bucket].push(fighter);
+    });
+    return {ranked,buckets};
+  }
+
+  function nearestAvailableBucket(target,buckets){
+    const targetIndex=BUCKET_ORDER.indexOf(target);
+    return BUCKET_ORDER
+      .map((bucket,index)=>({bucket,distance:Math.abs(index-targetIndex)}))
+      .sort((a,b)=>a.distance-b.distance)
+      .map(row=>row.bucket)
+      .find(bucket=>buckets[bucket]?.length);
+  }
+
   function buildLineup(packId){
-    const pool=poolForPack(packFor(packId));
+    const pack=packFor(packId);
+    const pool=poolForPack(pack);
     if(pool.length<8)return[];
-    const remaining=[...pool];
+    const {buckets}=bucketedPool(pack,pool);
+    const working=Object.fromEntries(BUCKET_ORDER.map(bucket=>[bucket,shuffled(buckets[bucket])]));
     const selected=[];
-    const targetTiers=['legend','legend','elite','elite','contender','recognizable','wildcard','wildcard'];
-    targetTiers.forEach(tier=>{
-      const fighter=randomItem(remaining.filter(row=>row.selectionTier===tier));
+    const actualBuckets=[];
+
+    TARGET_BUCKETS.forEach(target=>{
+      const source=working[target]?.length?target:nearestAvailableBucket(target,working);
+      const fighter=source?working[source].pop():null;
       if(!fighter)return;
       selected.push(fighter);
-      remaining.splice(remaining.findIndex(row=>row.id===fighter.id),1);
+      actualBuckets.push(source);
     });
-    while(selected.length<8&&remaining.length){
-      const fighter=randomItem(remaining);
-      selected.push(fighter);
-      remaining.splice(remaining.findIndex(row=>row.id===fighter.id),1);
+
+    if(selected.length<8){
+      const used=new Set(selected.map(fighter=>fighter.id));
+      shuffled(pool.filter(fighter=>!used.has(fighter.id))).slice(0,8-selected.length).forEach(fighter=>{
+        selected.push(fighter);
+        actualBuckets.push('fallback');
+      });
     }
+
+    state.balance={packId:pack.id,target:[...TARGET_BUCKETS],actual:actualBuckets,poolSize:pool.length};
     return shuffled(selected.slice(0,8));
+  }
+
+  function auditPacks(){
+    const packs=PACKS.map(pack=>{
+      const pool=poolForPack(pack);
+      const {buckets}=bucketedPool(pack,pool);
+      return {
+        id:pack.id,
+        group:pack.group,
+        poolSize:pool.length,
+        bucketCounts:Object.fromEntries(BUCKET_ORDER.map(bucket=>[bucket,buckets[bucket].length])),
+        playable:pool.length>=8
+      };
+    });
+    return {passed:packs.every(pack=>pack.playable),packs};
   }
 
   function kept(){return state.decisions.filter(row=>row.choice==='keep');}
@@ -156,6 +252,7 @@
       state.decisions=decisions.slice(0,8);
       state.currentIndex=Math.max(0,Math.min(8,Number(saved.currentIndex)||decisions.length));
       state.completed=Boolean(saved.completed&&state.currentIndex>=8&&kept().length===4&&cut().length===4);
+      state.balance=null;
       return true;
     }catch(_error){return false;}
   }
@@ -170,6 +267,7 @@
     state.currentIndex=0;
     state.completed=false;
     state.shared=Boolean(options.shared);
+    if(options.lineup)state.balance=null;
     saveState();
     render();
   }
@@ -240,7 +338,7 @@
     const title=document.getElementById('playGameTitle');
     if(title&&!state.shared)title.textContent='Keep 4, Cut 4';
     target.innerHTML=`<div class="kc-game-card">
-      <div class="kc-progress"><strong>${state.completed?'COMPLETE':`DECISION ${state.currentIndex+1} OF 8`}</strong><span>${esc(pack.name)}</span></div>
+      <div class="kc-progress"><strong>${state.completed?'COMPLETE':`DECISION ${state.currentIndex+1} OF 8`}</strong><span>${esc(pack.group)} · ${esc(pack.name)}</span></div>
       <div class="kc-board">
         <section class="kc-tray keep"><div><strong>KEEP</strong><span>${kept().length}/4</span></div><div class="kc-mini-grid">${decisionSlots('keep')}</div></section>
         <section class="kc-tray cut"><div><strong>CUT</strong><span>${cut().length}/4</span></div><div class="kc-mini-grid">${decisionSlots('cut')}</div></section>
@@ -287,87 +385,20 @@
     }catch(error){if(error?.name!=='AbortError')showToast('Share failed');}
   }
 
+  function packOptions(){
+    return ['Serious','Entertainment','Chaos'].map(group=>{
+      const packs=PACKS.filter(pack=>pack.group===group);
+      return packs.length?`<optgroup label="${esc(group)}">${packs.map(pack=>`<option value="${esc(pack.id)}">${esc(pack.name)}</option>`).join('')}</optgroup>`:'';
+    }).join('');
+  }
+
   function injectStyles(){
-    if(document.getElementById('keep-cut-css'))return;
-    const style=document.createElement('style');
-    style.id='keep-cut-css';
-    style.textContent=`
-      #playKeepCutPanel[hidden]{display:none!important}
-      #play .kc-wrap{display:grid;gap:12px;color:#f8fafc}
-      #play .kc-intro{display:flex;justify-content:space-between;align-items:end;gap:18px;border:1px solid rgba(249,115,22,.55);border-radius:20px;background:linear-gradient(135deg,#29364b,#182236 62%,#101522);padding:17px}
-      #play .kc-kicker{display:block;color:#facc15;font-size:10px;font-weight:950;letter-spacing:.13em}
-      #play .kc-intro h3{margin:5px 0 0;color:#fff;font-size:27px;line-height:1}
-      #play .kc-intro p{max-width:650px;margin:7px 0 0;color:#cbd5e1;font-size:12px;line-height:1.45}
-      #play .kc-pack-control{display:grid;grid-template-columns:minmax(190px,1fr) auto;gap:7px;min-width:350px}
-      #play .kc-pack-control select,#play .kc-pack-control button{min-height:42px;border-radius:12px;font:850 11px/1 system-ui}
-      #play .kc-pack-control select{border:1px solid #526786;background:#101725;color:#f8fafc;padding:0 10px}
-      #play .kc-pack-control button{border:1px solid #f97316;background:#f97316;color:#111827;padding:0 12px;cursor:pointer}
-      #play .kc-game-card{display:grid;gap:13px;border:1px solid #4b5f7e;border-radius:21px;background:linear-gradient(180deg,#223047,#172033);padding:15px}
-      #play .kc-progress{display:flex;justify-content:space-between;gap:10px;align-items:center}
-      #play .kc-progress strong{color:#facc15;font-size:11px;letter-spacing:.08em}
-      #play .kc-progress span{color:#cbd5e1;font-size:11px}
-      #play .kc-board{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-      #play .kc-tray{border:1px solid #526786;border-radius:16px;background:#101725;padding:10px}
-      #play .kc-tray>div:first-child{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-      #play .kc-tray>div:first-child strong{font-size:12px;letter-spacing:.09em}
-      #play .kc-tray>div:first-child span{font-size:11px;font-weight:950}
-      #play .kc-tray.keep>div:first-child strong,#play .kc-tray.keep>div:first-child span{color:#4ade80}
-      #play .kc-tray.cut>div:first-child strong,#play .kc-tray.cut>div:first-child span{color:#fb7185}
-      #play .kc-mini-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
-      #play .kc-mini{min-height:76px;border:1px solid #334155;border-radius:11px;background:#172033;display:grid;justify-items:center;align-content:center;gap:4px;padding:5px;text-align:center;overflow:hidden}
-      #play .kc-mini.empty span{color:#475569;font-size:18px;font-weight:950}
-      #play .kc-mini strong{max-width:100%;color:#e2e8f0;font-size:8px;line-height:1.08;overflow:hidden;text-overflow:ellipsis}
-      #play .kc-mini-photo{width:38px;height:38px;border-radius:9px;background:#26364e;display:flex;align-items:center;justify-content:center;color:#e2e8f0;font-size:11px;font-weight:950;overflow:hidden}
-      #play .kc-mini-photo img,#play .kc-current-photo img,#play .kc-result-photo img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
-      #play .kc-current{display:grid;grid-template-columns:minmax(150px,.58fr) minmax(0,1.42fr);gap:16px;align-items:center;border:1px solid rgba(250,204,21,.42);border-radius:18px;background:radial-gradient(circle at 18% 25%,rgba(249,115,22,.18),transparent 42%),#0f1624;padding:15px}
-      #play .kc-current-photo{width:100%;max-width:230px;aspect-ratio:1/1;border:1px solid rgba(250,204,21,.45);border-radius:18px;overflow:hidden;background:linear-gradient(180deg,#35445d,#172033);display:flex;align-items:center;justify-content:center;color:#f8fafc;font-size:48px;font-weight:950;margin:auto}
-      #play .kc-current-copy>span{display:block;color:#facc15;font-size:10px;font-weight:950;letter-spacing:.11em}
-      #play .kc-current-copy h4{margin:6px 0 0;color:#fff;font-size:32px;line-height:.98}
-      #play .kc-current-copy p{margin:8px 0 0;color:#cbd5e1;font-size:12px}
-      #play .kc-forced{margin-top:13px;color:#fdba74;font-size:10px;font-weight:950;letter-spacing:.04em}
-      #play .kc-forced.active{color:#facc15}
-      #play .kc-choice-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
-      #play .kc-choice-buttons button{min-height:49px;border-radius:13px;font:950 13px/1 system-ui;letter-spacing:.08em;cursor:pointer}
-      #play .kc-choice-buttons .keep{border:1px solid #22c55e;background:#16a34a;color:#fff}
-      #play .kc-choice-buttons .cut{border:1px solid #f43f5e;background:#e11d48;color:#fff}
-      #play .kc-choice-buttons button:disabled{opacity:.2;cursor:not-allowed}
-      #play .kc-finish{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-      #play .kc-final-group{border:1px solid #526786;border-radius:17px;background:#101725;padding:11px}
-      #play .kc-final-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:8px}
-      #play .kc-final-head span{color:#94a3b8;font-size:8px;font-weight:950;letter-spacing:.11em}
-      #play .kc-final-head strong{font-size:17px;letter-spacing:.08em}
-      #play .kc-final-group.keep .kc-final-head strong{color:#4ade80}
-      #play .kc-final-group.cut .kc-final-head strong{color:#fb7185}
-      #play .kc-final-list{display:grid;gap:6px}
-      #play .kc-result-card{display:grid;grid-template-columns:46px minmax(0,1fr) auto;gap:8px;align-items:center;border:1px solid #334155;border-radius:12px;background:#172033;padding:6px}
-      #play .kc-result-photo{width:46px;height:46px;border-radius:10px;background:#26364e;display:flex;align-items:center;justify-content:center;color:#e2e8f0;font-size:12px;font-weight:950;overflow:hidden}
-      #play .kc-result-card strong,#play .kc-result-card small{display:block}
-      #play .kc-result-card strong{color:#fff;font-size:12px}
-      #play .kc-result-card small{margin-top:2px;color:#94a3b8;font-size:8px}
-      #play .kc-result-card>span{color:#64748b;font-size:7px;font-weight:950;letter-spacing:.05em}
-      #play .kc-actions{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-      #play .kc-actions button{min-height:43px;border-radius:12px;font:950 10px/1 system-ui;letter-spacing:.04em;cursor:pointer}
-      #play .kc-actions .primary{border:1px solid #f97316;background:#f97316;color:#111827}
-      #play .kc-actions .secondary{border:1px solid #526786;background:#101725;color:#f8fafc}
-      #play .kc-toast{position:fixed;left:50%;bottom:22px;z-index:1000;transform:translate(-50%,14px);opacity:0;pointer-events:none;border:1px solid rgba(250,204,21,.5);border-radius:999px;background:#101725;padding:9px 13px;color:#fde68a;font-size:11px;font-weight:900;transition:.18s ease}
-      #play .kc-toast.show{opacity:1;transform:translate(-50%,0)}
-      @media(max-width:700px){
-        #play .kc-intro{display:grid;align-items:start;padding:14px}
-        #play .kc-intro h3{font-size:23px}
-        #play .kc-pack-control{min-width:0;grid-template-columns:1fr auto}
-        #play .kc-board{grid-template-columns:1fr}
-        #play .kc-mini{min-height:68px}
-        #play .kc-current{grid-template-columns:92px minmax(0,1fr);gap:11px;padding:12px}
-        #play .kc-current-photo{width:92px;border-radius:15px;font-size:34px}
-        #play .kc-current-copy h4{font-size:24px}
-        #play .kc-current-copy p{font-size:10px}
-        #play .kc-forced{font-size:8px}
-        #play .kc-choice-buttons button{min-height:45px;font-size:11px}
-        #play .kc-finish{grid-template-columns:1fr}
-        #play .kc-actions{grid-column:auto;grid-template-columns:1fr}
-      }
-    `;
-    document.head.appendChild(style);
+    if(document.querySelector('link[data-keep-cut-css]'))return;
+    const link=document.createElement('link');
+    link.rel='stylesheet';
+    link.href='assets/css/keep-cut.css?v=keep-cut-20260716a-category-balance';
+    link.dataset.keepCutCss='true';
+    document.head.appendChild(link);
   }
 
   function ensurePanel(){
@@ -380,7 +411,7 @@
     panel.innerHTML=`<div class="kc-wrap">
       <div class="kc-intro">
         <div><span class="kc-kicker">KEEP 4, CUT 4</span><h3 id="keepCutPrompt">Keep four UFC careers. Cut four.</h3><p id="keepCutDescription">Eight fighters arrive one at a time. Every decision locks.</p></div>
-        <div class="kc-pack-control"><select id="keepCutPack" aria-label="Keep 4 Cut 4 pack">${PACKS.map(pack=>`<option value="${esc(pack.id)}">${esc(pack.name)}</option>`).join('')}</select><button type="button" data-kc-new>NEW LINEUP</button></div>
+        <div class="kc-pack-control"><select id="keepCutPack" aria-label="Keep 4 Cut 4 pack">${packOptions()}</select><button type="button" data-kc-new>NEW LINEUP</button></div>
       </div>
       <div id="keepCutGame"></div>
       <div id="keepCutToast" class="kc-toast" role="status" aria-live="polite"></div>
@@ -468,6 +499,9 @@
   ensurePanel();
   patchHub();
 
+  const audit=auditPacks();
+  document.documentElement.setAttribute('data-keep-cut-balance-audit',audit.passed?'passed':'failed');
+
   const shared=parseShared();
   if(shared){
     setTimeout(()=>{
@@ -476,7 +510,17 @@
     },120);
   }
 
-  window.UFC_KEEP_CUT={version:VERSION,packs:PACKS.map(pack=>({...pack})),state,open,startGame,challengeUrl};
+  window.UFC_KEEP_CUT={
+    version:VERSION,
+    packs:PACKS.map(pack=>({...pack})),
+    targetBuckets:[...TARGET_BUCKETS],
+    state,
+    audit,
+    open,
+    startGame,
+    buildLineup,
+    challengeUrl
+  };
   document.documentElement.setAttribute('data-keep-cut',VERSION);
-  window.dispatchEvent(new CustomEvent('ufc-keep-cut-ready',{detail:{version:VERSION}}));
+  window.dispatchEvent(new CustomEvent('ufc-keep-cut-ready',{detail:{version:VERSION,audit}}));
 })();
