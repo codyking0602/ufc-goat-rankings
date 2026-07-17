@@ -66,6 +66,7 @@ for(const file of fs.readdirSync(fighterDir)){
   if(!seenSlugs.has(slug))fs.rmSync(path.join(fighterDir,file));
 }
 
+const fighterDivisionBoardCoverageCount=materialized.filter(fighter=>fighter.divisionBoards.length>0).length;
 const index={
   schemaVersion:INDEX_SCHEMA_VERSION,
   name:'Octagon Verdict Index',
@@ -76,6 +77,7 @@ const index={
   guidance:feed.guidance||{},
   fighterCount:materialized.length,
   divisionBoardCount:Object.keys(feed.divisionBoards||{}).length,
+  fighterDivisionBoardCoverageCount,
   fighters:materialized.map(fighter=>({
     slug:fighter.slug,
     name:fighter.name,
@@ -94,4 +96,4 @@ const verification=readJson(indexPath);
 if(verification.schemaVersion!==INDEX_SCHEMA_VERSION)fail(`Index schemaVersion ${verification.schemaVersion} does not match ${INDEX_SCHEMA_VERSION}.`);
 if(verification.fighterCount!==feed.fighterCount)fail(`Index count ${verification.fighterCount} does not match feed count ${feed.fighterCount}.`);
 if(!verification.fighters.some(fighter=>fighter.name==='Brandon Moreno')&&fighters.some(fighter=>fighter.name==='Brandon Moreno'))fail('Brandon Moreno is missing from materialized index.');
-console.log(JSON.stringify({schemaVersion:verification.schemaVersion,fighterCount:verification.fighterCount,divisionBoardCount:verification.divisionBoardCount,index:path.relative(root,indexPath),fighterDirectory:path.relative(root,fighterDir)},null,2));
+console.log(JSON.stringify({schemaVersion:verification.schemaVersion,fighterCount:verification.fighterCount,divisionBoardCount:verification.divisionBoardCount,fighterDivisionBoardCoverageCount:verification.fighterDivisionBoardCoverageCount,index:path.relative(root,indexPath),fighterDirectory:path.relative(root,fighterDir)},null,2));
