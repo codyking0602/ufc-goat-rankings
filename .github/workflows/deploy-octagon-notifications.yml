@@ -1,0 +1,263 @@
+name: Deploy Octagon Notifications
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy-octagon-notifications.yml'
+      - 'assets/js/octagon-notifications.js'
+      - 'sw.js'
+      - 'manifest.webmanifest'
+      - 'supabase/octagon-notifications-phase.sql'
+      - 'supabase/functions/octagon-push/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy-octagon-notifications
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate notification source
+        run: |
+          node --check assets/js/octagon-notifications.js
+          node --check sw.js
+          python -m json.tool manifest.webmanifest >/dev/null
+          grep -Fq "create table if not exists public.octagon_member_activity" supabase/octagon-notifications-phase.sql
+          grep -Fq "create table if not exists public.octagon_push_subscriptions" supabase/octagon-notifications-phase.sql
+          grep -Fq "create or replace function public.octagon_activity_status" supabase/octagon-notifications-phase.sql
+          grep -Fq "create or replace function public.octagon_mark_seen" supabase/octagon-notifications-phase.sql
+          grep -Fq "create or replace function public.octagon_push_delivery_context" supabase/octagon-notifications-phase.sql
+          grep -Fq "webpush.sendNotification" supabase/functions/octagon-push/index.ts
+          grep -Fq "notificationclick" sw.js
+
+      - name: Install VAPID key dependency
+        run: python -m pip install --disable-pip-version-check --quiet cryptography
+
+      - name: Apply and audit notification database layer
+        env:
+          SUPABASE_PROJECT_REF: hdkjwezaswhisxupxydc
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          python - <<'PY'
+          import base64
+          import json
+          import os
+          import urllib.error
+          import urllib.request
+          from datetime import datetime, timezone
+          from pathlib import Path
+          from cryptography.hazmat.primitives.asymmetric import ec
+
+          project=os.environ['SUPABASE_PROJECT_REF']
+          token=os.environ.get('SUPABASE_ACCESS_TOKEN','').strip()
+          status_path=Path('supabase/octagon-notifications-status.json')
+          migration=Path('supabase/octagon-notifications-phase.sql').read_text()
+
+          def write(payload):
+              value=dict(payload)
+              value['checked_at']=datetime.now(timezone.utc).isoformat()
+              status_path.write_text(json.dumps(value,indent=2,sort_keys=True)+'\n')
+
+          def query(sql,read_only=False):
+              request=urllib.request.Request(
+                  f'https://api.supabase.com/v1/projects/{project}/database/query',
+                  data=json.dumps({'query':sql,'read_only':read_only}).encode(),
+                  headers={
+                      'Accept':'application/json',
+                      'Authorization':f'Bearer {token}',
+                      'Content-Type':'application/json',
+                      'User-Agent':'UFC-Octagon-Notifications-GitHub-Actions/1.0',
+                      'X-Client-Info':'ufc-goat-rankings-octagon-notifications',
+                  },
+                  method='POST',
+              )
+              try:
+                  with urllib.request.urlopen(request,timeout=90) as response:
+                      return json.loads(response.read().decode() or 'null')
+              except urllib.error.HTTPError as error:
+                  detail=error.read().decode(errors='replace')[:1600]
+                  raise RuntimeError(f'Supabase Management API returned HTTP {error.code}: {detail}') from error
+
+          def rows(response):
+              return response.get('result',response) if isinstance(response,dict) else response
+
+          def b64url(value):
+              return base64.urlsafe_b64encode(value).rstrip(b'=').decode()
+
+          if not token:
+              write({'status':'blocked','reason':'SUPABASE_ACCESS_TOKEN is not configured.'})
+              raise SystemExit(0)
+
+          try:
+              query(migration,read_only=False)
+              existing=rows(query("select public_key from public.octagon_push_config where singleton limit 1;",read_only=True))
+              if not existing:
+                  private_key=ec.generate_private_key(ec.SECP256R1())
+                  private_numbers=private_key.private_numbers()
+                  public_numbers=private_numbers.public_numbers
+                  raw_public=b'\\x04'+public_numbers.x.to_bytes(32,'big')+public_numbers.y.to_bytes(32,'big')
+                  public_key=b64url(raw_public)
+                  private_value=b64url(private_numbers.private_value.to_bytes(32,'big'))
+                  subject='https://codyking0602.github.io/ufc-goat-rankings/'
+                  insert=(
+                      "insert into public.octagon_push_config(singleton,public_key,private_key,subject) values "
+                      f"(true,'{public_key}','{private_value}','{subject}') on conflict(singleton) do nothing;"
+                  )
+                  query(insert,read_only=False)
+
+              audit_sql="""
+              select jsonb_build_object(
+                'status','active',
+                'phase','unread-and-web-push',
+                'tables',jsonb_build_object(
+                  'member_activity',to_regclass('public.octagon_member_activity') is not null,
+                  'push_config',to_regclass('public.octagon_push_config') is not null,
+                  'push_subscriptions',to_regclass('public.octagon_push_subscriptions') is not null
+                ),
+                'rls_enabled',(
+                  select bool_and(c.relrowsecurity)
+                  from pg_class c
+                  where c.oid in (
+                    'public.octagon_member_activity'::regclass,
+                    'public.octagon_push_config'::regclass,
+                    'public.octagon_push_subscriptions'::regclass
+                  )
+                ),
+                'vapid_ready',exists(
+                  select 1 from public.octagon_push_config c
+                  where c.singleton and length(c.public_key)>=80 and length(c.private_key)>=40
+                ),
+                'activity_rows',(select count(*) from public.octagon_member_activity),
+                'active_push_subscriptions',(select count(*) from public.octagon_push_subscriptions where is_active),
+                'functions',jsonb_build_object(
+                  'activity_status',to_regprocedure('public.octagon_activity_status(text)') is not null,
+                  'mark_seen',to_regprocedure('public.octagon_mark_seen(text,timestamptz)') is not null,
+                  'register_push',to_regprocedure('public.octagon_register_push_subscription(text,text,text,text,bigint,text)') is not null,
+                  'remove_push',to_regprocedure('public.octagon_remove_push_subscription(text,text)') is not null,
+                  'delivery_context',to_regprocedure('public.octagon_push_delivery_context(text,uuid)') is not null
+                ),
+                'anon_execute',jsonb_build_object(
+                  'activity_status',has_function_privilege('anon','public.octagon_activity_status(text)','EXECUTE'),
+                  'mark_seen',has_function_privilege('anon','public.octagon_mark_seen(text,timestamptz)','EXECUTE'),
+                  'register_push',has_function_privilege('anon','public.octagon_register_push_subscription(text,text,text,text,bigint,text)','EXECUTE'),
+                  'remove_push',has_function_privilege('anon','public.octagon_remove_push_subscription(text,text)','EXECUTE')
+                ),
+                'delivery_context_private',not has_function_privilege('anon','public.octagon_push_delivery_context(text,uuid)','EXECUTE'),
+                'goat26',jsonb_build_object(
+                  'members',(select count(*) from public.pick_group_members gm join public.pick_groups g on g.id=gm.group_id where g.code='GOAT26' and coalesce(gm.is_active,true)),
+                  'messages',(select count(*) from public.octagon_messages m join public.pick_groups g on g.id=m.group_id where g.code='GOAT26'),
+                  'saved_picks',(
+                    select count(*)
+                    from public.pick_rooms r
+                    join public.pick_groups g on g.id=r.group_id
+                    join public.pick_room_members rm on rm.room_id=r.id
+                    join public.pick_selections ps on ps.member_id=rm.id
+                    where g.code='GOAT26'
+                  )
+                )
+              ) as audit;
+              """
+              audit_rows=rows(query(audit_sql,read_only=True))
+              audit=audit_rows[0].get('audit') if audit_rows else None
+              if isinstance(audit,str):
+                  audit=json.loads(audit)
+              if not isinstance(audit,dict):
+                  raise RuntimeError('Notification audit returned no result.')
+              functions=audit.get('functions') or {}
+              anon=audit.get('anon_execute') or {}
+              tables=audit.get('tables') or {}
+              if (
+                  not all(tables.values())
+                  or not audit.get('rls_enabled')
+                  or not audit.get('vapid_ready')
+                  or not all(functions.values())
+                  or not all(anon.values())
+                  or not audit.get('delivery_context_private')
+                  or int((audit.get('goat26') or {}).get('members') or 0)<6
+                  or int((audit.get('goat26') or {}).get('saved_picks') or 0)<50
+              ):
+                  raise RuntimeError(f'Octagon notification audit failed: {audit}')
+              audit['deployment_method']='supabase-management-api'
+              write(audit)
+              print('Octagon unread state, VAPID configuration, and push subscriptions verified.')
+          except Exception as error:
+              reason=str(error).replace(token,'[redacted]')[:2000]
+              write({'status':'failed','reason':reason})
+              raise
+          PY
+
+      - name: Deploy Octagon push sender
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          npx --yes supabase@latest functions deploy octagon-push \
+            --project-ref hdkjwezaswhisxupxydc \
+            --no-verify-jwt
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          path=Path('supabase/octagon-notifications-status.json')
+          value=json.loads(path.read_text())
+          value['edge_function']='octagon-push'
+          value['edge_function_deployed']=True
+          path.write_text(json.dumps(value,indent=2,sort_keys=True)+'\n')
+          PY
+
+      - name: Wire notifications into the live page
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path=Path('index.html')
+          text=path.read_text()
+          manifest='  <link rel="manifest" href="manifest.webmanifest?v=octagon-notifications-20260717a" />'
+          theme='  <meta name="theme-color" content="#111827" />'
+          notifications='  <script src="assets/js/octagon-notifications.js?v=octagon-notifications-20260717a"></script>'
+
+          if 'rel="manifest"' in text:
+              text=re.sub(r'  <link rel="manifest" href="[^"]+"\s*/>',manifest,text,count=1)
+          else:
+              text=text.replace('  <title>Octagon HQ</title>','  <title>Octagon HQ</title>\n'+manifest,1)
+
+          if 'name="theme-color"' in text:
+              text=re.sub(r'  <meta name="theme-color" content="[^"]+"\s*/>',theme,text,count=1)
+          else:
+              text=text.replace('  <meta name="viewport" content="width=device-width, initial-scale=1" />','  <meta name="viewport" content="width=device-width, initial-scale=1" />\n'+theme,1)
+
+          if 'assets/js/octagon-notifications.js' in text:
+              text=re.sub(r'  <script src="assets/js/octagon-notifications\.js\?v=[^"]+"></script>',notifications,text,count=1)
+          elif 'assets/js/octagon-access-panel.js' in text:
+              match=re.search(r'(  <script src="assets/js/octagon-access-panel\.js\?v=[^"]+"></script>)',text)
+              text=text[:match.end()]+'\n'+notifications+text[match.end():]
+          else:
+              raise SystemExit('Octagon access-panel script anchor was not found.')
+
+          text=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260717-octagon-unread-push" />',text,count=1)
+          path.write_text(text)
+          PY
+
+      - name: Commit notification deployment record
+        if: always()
+        run: |
+          if git diff --quiet -- index.html supabase/octagon-notifications-status.json; then
+            echo 'Octagon notification deployment record is unchanged.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html supabase/octagon-notifications-status.json
+          git commit -m 'Record Octagon notification deployment [skip ci]'
+          git pull --rebase origin main
+          git push origin HEAD:main
