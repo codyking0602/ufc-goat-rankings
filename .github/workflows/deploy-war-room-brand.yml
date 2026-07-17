@@ -1,112 +1,146 @@
-name: Deploy The War Room Brand
+name: Migrate The War Room Sources
 
-# War Room production trigger 20260717a
 on:
   push:
     branches: [main]
     paths:
       - '.github/workflows/deploy-war-room-brand.yml'
-      - 'assets/js/war-room-branding.js'
-      - 'sw.js'
-      - 'supabase/functions/octagon-push/**'
   workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: deploy-war-room-brand
+  group: migrate-war-room-sources
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  migrate:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Validate War Room source
-        run: |
-          node --check assets/js/war-room-branding.js
-          node --check sw.js
-          grep -Fq "The War Room" assets/js/war-room-branding.js
-          grep -Fq "title: 'The War Room'" supabase/functions/octagon-push/index.ts
-          grep -Fq "replied in The War Room" supabase/functions/octagon-push/index.ts
-          grep -Fq "posted in The War Room" supabase/functions/octagon-push/index.ts
-          grep -Fq "payload.title||'The War Room'" sw.js
-          grep -Fq '"saved_picks": 50' supabase/goat26-deployment-status.json
-          grep -Fq '"active_members": 6' supabase/goat26-deployment-status.json
-
-      - name: Deploy War Room push sender
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-        run: |
-          npx --yes supabase@latest functions deploy octagon-push \
-            --project-ref hdkjwezaswhisxupxydc \
-            --no-verify-jwt
-
-      - name: Wire War Room branding into live page
+      - name: Move War Room copy into permanent source files
         run: |
           python - <<'PY'
-          from datetime import datetime, timezone
           from pathlib import Path
-          import json
           import re
+
+          targets=[
+              Path('assets/js/octagon-message-board.js'),
+              Path('assets/js/octagon-access-panel.js'),
+              Path('assets/js/octagon-notifications.js'),
+              Path('assets/js/octagon-push-subscription.js'),
+              Path('supabase/octagon-message-board-foundation.sql'),
+              Path('supabase/octagon-message-board-rpc.sql'),
+              Path('supabase/octagon-message-board-access-panel.sql'),
+              Path('supabase/octagon-notifications-phase.sql'),
+          ]
+          replacements=[
+              ('The Octagon Beta','The War Room'),
+              ('Octagon Beta','War Room'),
+              ('The Octagon','The War Room'),
+              ('the Octagon','the War Room'),
+              ('Octagon week','War Room week'),
+              ('Octagon board','War Room board'),
+              ('Octagon messages','War Room messages'),
+              ('Octagon message','War Room message'),
+              ('Octagon posts','War Room posts'),
+              ('Octagon post','War Room post'),
+              ('Octagon replies','War Room replies'),
+              ('Octagon reply','War Room reply'),
+              ('Octagon activity','War Room activity'),
+              ('Octagon access','War Room access'),
+              ('Octagon allowlist','War Room allowlist'),
+          ]
+          for path in targets:
+              text=path.read_text()
+              for old,new in replacements:
+                  text=text.replace(old,new)
+              path.write_text(text)
+
+          versions={
+              Path('assets/js/octagon-message-board.js'):(
+                  'octagon-message-board-20260717c-realtime',
+                  'octagon-message-board-20260717d-war-room'
+              ),
+              Path('assets/js/octagon-access-panel.js'):(
+                  'octagon-access-panel-20260717a',
+                  'octagon-access-panel-20260717b-war-room'
+              ),
+              Path('assets/js/octagon-notifications.js'):(
+                  'octagon-notifications-20260717a',
+                  'octagon-notifications-20260717b-war-room'
+              ),
+          }
+          for path,(old,new) in versions.items():
+              text=path.read_text()
+              if old not in text:
+                  raise SystemExit(f'Expected version {old} was not found in {path}.')
+              path.write_text(text.replace(old,new,1))
 
           index=Path('index.html')
           text=index.read_text()
-          script='  <script src="assets/js/war-room-branding.js?v=war-room-branding-20260717a"></script>'
-
-          if 'assets/js/war-room-branding.js' in text:
-              text=re.sub(r'  <script src="assets/js/war-room-branding\.js\?v=[^"]+"></script>',script,text,count=1)
-          elif 'assets/js/octagon-push-subscription.js' in text:
-              match=re.search(r'(  <script src="assets/js/octagon-push-subscription\.js\?v=[^"]+"></script>)',text)
-              if not match:
-                  raise SystemExit('Push subscription script anchor was not found.')
-              text=text[:match.end()]+'\n'+script+text[match.end():]
-          elif 'assets/js/octagon-notifications.js' in text:
-              match=re.search(r'(  <script src="assets/js/octagon-notifications\.js\?v=[^"]+"></script>)',text)
-              if not match:
-                  raise SystemExit('Notification script anchor was not found.')
-              text=text[:match.end()]+'\n'+script+text[match.end():]
-          else:
-              raise SystemExit('War Room script anchor was not found.')
-
-          text=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260717-war-room-brand" />',text,count=1)
+          text=re.sub(r'\n?  <script src="assets/js/war-room-branding\.js\?v=[^"]+"></script>','',text,count=1)
+          text=re.sub(r'assets/js/octagon-message-board\.js\?v=[^"]+','assets/js/octagon-message-board.js?v=octagon-message-board-20260717d-war-room',text,count=1)
+          text=re.sub(r'assets/js/octagon-access-panel\.js\?v=[^"]+','assets/js/octagon-access-panel.js?v=octagon-access-panel-20260717b-war-room',text,count=1)
+          text=re.sub(r'assets/js/octagon-notifications\.js\?v=[^"]+','assets/js/octagon-notifications.js?v=octagon-notifications-20260717b-war-room',text,count=1)
+          text=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260717-war-room-source" />',text,count=1)
           index.write_text(text)
 
-          goat=json.loads(Path('supabase/goat26-deployment-status.json').read_text())
-          if int(goat.get('active_members') or 0)!=6 or int(goat.get('saved_picks') or 0)<50:
-              raise SystemExit('GOAT26 preservation audit failed.')
-          octagon=goat.get('octagon') or {}
-          status={
-              'status':'active',
-              'feature_name':'The War Room',
-              'app_name':'Octagon HQ',
-              'internal_api_prefix':'octagon',
-              'active_members':goat.get('active_members'),
-              'enabled_members':octagon.get('enabled_members'),
-              'messages':octagon.get('messages'),
-              'replies':octagon.get('replies'),
-              'reactions':octagon.get('reactions'),
-              'saved_picks':goat.get('saved_picks'),
-              'push_sender_deployed':True,
-              'checked_at':datetime.now(timezone.utc).isoformat(),
-          }
-          Path('supabase/war-room-branding-status.json').write_text(json.dumps(status,indent=2,sort_keys=True)+'\n')
+          workflow=Path('.github/workflows/deploy-app-canonical-group.yml')
+          text=workflow.read_text()
+          text=text.replace(
+              'octagon-message-board-20260717c-realtime',
+              'octagon-message-board-20260717d-war-room'
+          )
+          text=text.replace(
+              'octagon-access-panel-20260717a',
+              'octagon-access-panel-20260717b-war-room'
+          )
+          text=text.replace(
+              'octagon-notifications-20260717a',
+              'octagon-notifications-20260717b-war-room'
+          )
+          text=text.replace(
+              '20260717-octagon-unread-push',
+              '20260717-war-room-source'
+          )
+          workflow.write_text(text)
+
+          for path in targets:
+              text=path.read_text()
+              if 'The Octagon' in text or 'Octagon Beta' in text:
+                  raise SystemExit(f'Old public brand copy remains in {path}.')
+
+          Path('assets/js/war-room-branding.js').unlink(missing_ok=True)
+          Path('.github/workflows/deploy-war-room-brand.yml').unlink(missing_ok=True)
           PY
 
-      - name: Commit War Room deployment record
+      - name: Validate migrated source
+        run: |
+          node --check assets/js/octagon-message-board.js
+          node --check assets/js/octagon-access-panel.js
+          node --check assets/js/octagon-notifications.js
+          node --check assets/js/octagon-push-subscription.js
+          node --check sw.js
+          grep -Fq '<h2>The War Room</h2>' assets/js/octagon-message-board.js
+          grep -Fq 'Open The War Room' assets/js/octagon-access-panel.js
+          grep -Fq 'War Room posts' assets/js/octagon-notifications.js
+          grep -Fq "title: 'The War Room'" supabase/functions/octagon-push/index.ts
+          grep -Fq 'octagon-message-board-20260717d-war-room' .github/workflows/deploy-app-canonical-group.yml
+          grep -Fq 'octagon-access-panel-20260717b-war-room' .github/workflows/deploy-app-canonical-group.yml
+          grep -Fq 'octagon-notifications-20260717b-war-room' .github/workflows/deploy-app-canonical-group.yml
+          test ! -e assets/js/war-room-branding.js
+
+      - name: Commit permanent War Room sources
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html supabase/war-room-branding-status.json
-          if git diff --cached --quiet; then
-            echo 'War Room deployment record is unchanged.'
-            exit 0
-          fi
-          git commit -m 'Record The War Room deployment [skip ci]'
+          git add -A
+          git commit -m 'Move The War Room branding into permanent sources [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:main
