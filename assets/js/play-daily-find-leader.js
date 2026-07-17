@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='play-daily-find-leader-20260717a';
+  const VERSION='play-daily-find-leader-20260717b-type-polish';
   const DAILY={
     id:'find-leader',
     gameType:'find-leader',
@@ -103,7 +103,7 @@
     api.rotation=[{...DAILY}];
     api.contextForCurrent=contextForCurrent;
     api.openDaily=openDaily;
-    api.updateDailyCard=(context)=>refreshCard(context);
+    api.updateDailyCard=context=>refreshCard(context);
     document.documentElement.setAttribute('data-play-daily-rotation',VERSION);
     document.documentElement.setAttribute('data-daily-game',DAILY.gameType);
     return true;
@@ -200,36 +200,41 @@
   }
 
   function injectStyles(){
-    if(document.getElementById('play-daily-find-leader-css'))return;
+    document.getElementById('play-daily-find-leader-css')?.remove();
     const style=document.createElement('style');
     style.id='play-daily-find-leader-css';
     style.textContent=`
-      #play .play-daily-card.play-daily-find-leader-compact{grid-template-columns:minmax(0,1fr) 180px;min-height:220px;gap:18px;padding:20px 22px 24px}
-      #play .play-daily-find-leader-compact .play-daily-kicker{margin-bottom:10px}
+      #play .play-daily-card.play-daily-find-leader-compact{grid-template-columns:minmax(0,1fr) 180px;min-height:220px;gap:14px;padding:20px 22px 22px}
+      #play .play-daily-find-leader-compact .play-daily-kicker{margin-bottom:8px}
+      #play .play-daily-find-leader-compact .play-daily-kicker time{font-size:12px}
       #play .play-daily-find-leader-compact .play-daily-copy h3{font-size:clamp(32px,4vw,48px);line-height:.95}
-      #play .play-daily-find-leader-compact .play-daily-copy>p{max-width:620px;margin-top:9px;font-size:13px;line-height:1.4}
-      #play .play-daily-find-leader-compact .play-daily-details.play-daily-category{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:8px;margin-top:13px}
-      #play .play-daily-find-leader-compact .play-daily-category span{border:0;background:transparent;padding:0;color:#fbbf24;font-size:8px;letter-spacing:.11em}
-      #play .play-daily-find-leader-compact .play-daily-category strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff;font-size:12px;line-height:1.2}
-      #play .play-daily-find-leader-compact .play-daily-visual{min-height:132px;padding:12px;border-radius:18px}
+      #play .play-daily-find-leader-compact .play-daily-copy>p{max-width:620px;margin-top:8px;font-size:15px;line-height:1.42}
+      #play .play-daily-find-leader-compact .play-daily-details.play-daily-category{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px;margin-top:11px}
+      #play .play-daily-find-leader-compact .play-daily-category span{border:0;background:transparent;padding:0;color:#fbbf24;font-size:9px;letter-spacing:.11em}
+      #play .play-daily-find-leader-compact .play-daily-category strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff;font-size:14px;line-height:1.2}
+      #play .play-daily-find-leader-compact .play-daily-visual{min-height:124px;padding:10px 12px;border-radius:18px}
       #play .play-daily-find-leader-compact .play-daily-fighter{width:54px;height:68px;border-radius:13px;font-size:30px}
       #play .play-daily-find-leader-compact .play-daily-visual strong{font-size:18px}
-      #play .play-daily-find-leader-compact .play-daily-visual small{font-size:8px}
+      #play .play-daily-find-leader-compact .play-daily-visual small{font-size:9px}
+      #play .play-daily-find-leader-compact .play-daily-swipe-hint{right:18px;bottom:10px;font-size:10px}
       #play .play-daily-find-leader-compact .play-daily-button{display:none!important}
       @media(max-width:900px){
         #play .play-daily-card.play-daily-find-leader-compact{grid-template-columns:minmax(0,1fr) 150px}
       }
       @media(max-width:620px){
-        #play .play-daily-card.play-daily-find-leader-compact{grid-template-columns:1fr;min-height:0;gap:9px;padding:15px 13px 24px}
-        #play .play-daily-find-leader-compact .play-daily-kicker{margin-bottom:8px}
+        #play .play-daily-card.play-daily-find-leader-compact{grid-template-columns:1fr;min-height:0;gap:6px;padding:15px 13px 24px}
+        #play .play-daily-find-leader-compact .play-daily-kicker{margin-bottom:6px}
+        #play .play-daily-find-leader-compact .play-daily-kicker time{font-size:11px}
         #play .play-daily-find-leader-compact .play-daily-copy h3{font-size:31px}
-        #play .play-daily-find-leader-compact .play-daily-copy>p{margin-top:7px;font-size:11px;line-height:1.35}
-        #play .play-daily-find-leader-compact .play-daily-details.play-daily-category{margin-top:9px}
-        #play .play-daily-find-leader-compact .play-daily-category strong{font-size:10px}
-        #play .play-daily-find-leader-compact .play-daily-visual{min-height:62px;padding:7px 14px;border-radius:14px}
+        #play .play-daily-find-leader-compact .play-daily-copy>p{margin-top:6px;font-size:13px;line-height:1.38}
+        #play .play-daily-find-leader-compact .play-daily-details.play-daily-category{gap:7px;margin-top:8px}
+        #play .play-daily-find-leader-compact .play-daily-category span{font-size:9px}
+        #play .play-daily-find-leader-compact .play-daily-category strong{font-size:12px}
+        #play .play-daily-find-leader-compact .play-daily-visual{min-height:58px;padding:6px 14px;border-radius:14px}
         #play .play-daily-find-leader-compact .play-daily-fighter{width:38px;height:44px;border-radius:9px;font-size:22px}
         #play .play-daily-find-leader-compact .play-daily-visual strong{font-size:14px}
-        #play .play-daily-find-leader-compact .play-daily-visual small{font-size:7px}
+        #play .play-daily-find-leader-compact .play-daily-visual small{font-size:8px}
+        #play .play-daily-find-leader-compact .play-daily-swipe-hint{right:12px;bottom:8px;font-size:8px}
       }
     `;
     document.head.appendChild(style);
