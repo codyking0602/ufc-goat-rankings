@@ -1,6 +1,6 @@
 # Octagon Verdict — Official UFC-Only Knowledge Pack
 
-Generated: **2026-07-17T09:28:40.983Z**  
+Generated: **2026-07-17T12:43:12.337Z**  
 Canonical model-as-of date: **2026-07-13**  
 Latest fighter-ledger verification date: **2026-07-17**  
 Fighters: **79**
@@ -4544,7 +4544,7 @@ _Ledger verified through 2026-07-13. Scores come from category-calculators-20260
 
 ### 31. Alexandre Pantoja — 89 OVR
 
-A relentless flyweight champion whose five title-fight wins, elite grappling, and eight-fight run built the best UFC flyweight resume outside Demetrious Johnson.
+A relentless four-defense flyweight champion who built the strongest UFC resume in the division outside Demetrious Johnson.
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -4659,16 +4659,16 @@ Modern flyweight receives a modest depth discount.
 
 #### Why ranked here
 
-Pantoja combines a real championship reign with repeated wins over the modern flyweight elite. He beat Brandon Moreno for the belt, defeated Brandon Royval twice, and finished both Kai Asakura and Kai Kara-France during a four-defense reign.
+Four successful defenses turn Pantoja from a strong champion into a real all-time case. He won the belt from Brandon Moreno, beat Brandon Royval twice, and finished Kai Asakura and Kai Kara-France during an eight-fight UFC winning streak.
 
 #### Why not ranked higher?
 
-His reign is much shorter than Demetrious Johnson’s, the flyweight opponent pool receives a division-depth discount, and several title challengers lacked proven UFC elite resumes. The Dustin Ortiz, Deiveson Figueiredo, Askar Askarov, and Joshua Van losses also keep the case from becoming completely clean.
+His championship run is excellent but still far shorter than Demetrious Johnson’s historic reign. Modern flyweight also receives a modest depth discount, while four UFC losses leave less separation than the very top GOAT resumes.
 
 #### Compare-mode guidance
 
-- **Best counterargument:** Pantoja’s best counterargument is direct modern flyweight proof: he repeatedly beat the same elite contenders who defined the post-DJ division.
-- **Why this résumé can still win:** Pantoja wins comparisons against shorter or thinner champions because he pairs four defenses with a deep collection of repeat elite wins.
+- **Best counterargument:** His strongest argument is direct modern flyweight proof: he repeatedly beat the contenders who defined the post-DJ division.
+- **Why this résumé can still win:** Pantoja beats shorter or thinner champion cases because four defenses are backed by repeated elite wins, not one isolated title moment.
 
 #### Final takeaway
 
