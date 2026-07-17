@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='better-than-standalone-share-20260717d-find-leader-batch-one';
+  const VERSION='better-than-standalone-share-20260717e-find-leader-record-book';
   const FIND_LEADER_VERSION='find-leader-20260716c-daily-elimination';
   let creating=false;
 
@@ -23,7 +23,7 @@
   function patchFindLeaderHubCopy(){
     const card=document.querySelector('.play-game-card[data-open-game="find-leader"]');
     const description=card?.querySelector('.play-game-copy small');
-    if(description)description.textContent='Eliminate nine fighters without removing the verified stat leader. Hard boards now draw from roughly the top 20.';
+    if(description)description.textContent='Eliminate nine fighters without removing the verified leader. Questions now combine the canonical ledger and official UFC Record Book.';
   }
 
   function loadDailyTools(){
@@ -52,7 +52,18 @@
         loadScriptOnce('script[data-find-leader-daily-elimination]','assets/js/find-leader.js?v=find-leader-20260716c-daily-elimination','findLeaderDailyElimination',loadDailyTools);
       }else loadDailyTools();
     };
-    loadScriptOnce('script[data-find-leader-question-bank]','assets/data/find-leader-question-bank.js?v=find-leader-question-bank-20260717a-thirty-five-hard-pool','findLeaderQuestionBank',loadGame);
+    const loadQuestionBank=()=>loadScriptOnce(
+      'script[data-find-leader-question-bank-record-book]',
+      'assets/data/find-leader-question-bank.js?v=find-leader-question-bank-20260717b-forty-four-record-book',
+      'findLeaderQuestionBankRecordBook',
+      loadGame
+    );
+    loadScriptOnce(
+      'script[data-find-leader-record-book]',
+      'assets/data/find-leader-record-book-data.js?v=find-leader-record-book-20260717a-official-snapshot',
+      'findLeaderRecordBook',
+      loadQuestionBank
+    );
     loadScriptOnce('script[data-find-leader-share-adapter]','assets/js/find-leader-standalone-share.js?v=find-leader-standalone-share-20260716a-elimination','findLeaderShareAdapter');
     patchFindLeaderHubCopy();
     window.addEventListener('ufc-play-hub-ready',patchFindLeaderHubCopy,{once:true});
