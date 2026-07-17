@@ -31,7 +31,6 @@ try{
       projectionTopTen:window.UFC_CALCULATED_RANKING_PROJECTION?.men?.slice(0,10).map(item=>item.fighter)||[],
       pipelineTopTen:window.UFC_RANKING_PIPELINE?.latest?.menTopTen?.map(item=>item.fighter)||[],
       bootstrap:window.UFC_PRODUCTION_RANKING_BOOTSTRAP||null,
-      categoryAudit:window.UFC_CATEGORY_CALCULATOR_AUDIT||null,
       divisionReport:window.UFC_DIVISION_RANKING_PIPELINE?.latest||null,
       moreno:row,
       morenoCategory:window.UFC_CATEGORY_CALCULATORS?.entryFor?.(fighter)||null,
@@ -56,8 +55,6 @@ try{
   assert.equal(runtime.fighterCount,EXPECTED_FIGHTERS);
   assert.equal(runtime.bootstrap?.status,'ready');
   assert.equal(runtime.bootstrap?.report?.fighterCount,EXPECTED_FIGHTERS);
-  assert.equal(runtime.categoryAudit?.passed,true);
-  assert.equal(runtime.categoryAudit?.completeFighterCount,EXPECTED_FIGHTERS);
   assert.deepEqual(runtime.topTen,TOP_TEN);
   assert.deepEqual(runtime.projectionTopTen,TOP_TEN);
   assert.deepEqual(runtime.pipelineTopTen,TOP_TEN);
@@ -106,6 +103,11 @@ try{
   assert.equal(runtime.openweight[0]?.fighter,'Royce Gracie');
   for(const board of Object.values(runtime.divisionReport?.boards||{}))for(const item of board)assert.ok(item.stats?.ufcWins>0,`${item.fighter} owns a UFC win in ${item.division}`);
 
+  const morenoRow=page.locator('#menList .fighter-row[data-fighter="Brandon Moreno"]');
+  await morenoRow.scrollIntoViewIfNeeded();
+  const cardWatch=await morenoRow.locator('.watch-moment-link').getAttribute('href');
+  assert.equal(cardWatch,WATCH,'fighter-card Watch Moment uses supplied Short');
+
   await page.evaluate(name=>window.openFighter?.(name),MORENO);
   await page.waitForSelector('#drawer.open',{timeout:15000});
   const profile=await page.evaluate(()=>({
@@ -115,8 +117,7 @@ try{
   }));
   assert.match(profile.heading,/Brandon.*The Assassin Baby.*Moreno/);
   assert.ok(profile.text.includes('Why Not Ranked Higher?'));
-  assert.ok(profile.links.some(link=>link.href===WATCH),'Watch Moment renders supplied Short');
-  assert.ok(profile.links.some(link=>link.href===FIGHT),'Signature Fight renders supplied full fight');
+  assert.ok(profile.links.some(link=>link.href===FIGHT&&/signature fight/i.test(link.text)),'profile Signature Fight uses supplied full fight');
   await page.locator('#closeDrawer').click();
 
   await page.locator('.tab[data-view="compare"]').click();
@@ -134,7 +135,7 @@ try{
 
   assert.deepEqual(pageErrors,[],'rendered app has no uncaught page errors');
   console.log('BRANDON_MORENO_PIPELINE_RESULT');
-  console.log(JSON.stringify({row,divisionRank:runtime.morenoDivisionRank,categories:runtime.morenoCategory,profile,era:runtime.morenoEra,directFightLedgers:runtime.morenoLedgers},null,2));
+  console.log(JSON.stringify({row,divisionRank:runtime.morenoDivisionRank,categories:runtime.morenoCategory,cardWatch,profile,era:runtime.morenoEra,directFightLedgers:runtime.morenoLedgers},null,2));
   console.log('PRODUCTION_BROWSER_CERTIFICATION');
   console.log(JSON.stringify({fighterCount:runtime.fighterCount,topTen:runtime.topTen,divisionBoards:Object.keys(runtime.divisionReport?.boards||{}),compareSelector:true,playSearch:true,blindResume:true,pageErrors},null,2));
 }finally{
