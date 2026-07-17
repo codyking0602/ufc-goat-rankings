@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='blind-rank-polish-20260715d-clean-finish';
+  const VERSION='blind-rank-polish-20260716e-six-buckets';
   const PACK_KEY='ufc-goat-blind-rank-pack-v2';
   const GAME_KEY='ufc-goat-blind-rank-v1';
   const STRIKERS=[
@@ -22,6 +22,16 @@
     {id:'early-ufc',name:'Early UFC Careers',prompt:'Rank their UFC careers',intro:'You see one early-era fighter at a time. Place each UFC career from #1 to #5 before the next reveal.',filters:{gender:'men'},eras:['tournament','survival','zuffa-rebuild']}
   ];
   const ALIASES={'men-chaos':'ufc-careers','all-chaos':'all-careers','women-chaos':'womens-careers'};
+  const BUCKET_CONFIG=[
+    {id:'elite',weight:0.15,cutoff:0.15},
+    {id:'great',weight:0.20,cutoff:0.35},
+    {id:'good',weight:0.25,cutoff:0.60},
+    {id:'average',weight:0.20,cutoff:0.80},
+    {id:'below-average',weight:0.15,cutoff:0.95},
+    {id:'bad',weight:0.05,cutoff:1}
+  ];
+  const BUCKET_ORDER=BUCKET_CONFIG.map(bucket=>bucket.id);
+  const LEGACY_TIER_SCORE={legend:5000,elite:4000,contender:3000,recognizable:2000,wildcard:1000};
   let patching=false;
 
   function esc(value){return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));}
@@ -29,8 +39,41 @@
   function data(){return window.UFC_PLAY_DATA;}
   function packFor(id){const key=ALIASES[id]||id;return PACKS.find(pack=>pack.id===key)||PACKS[0];}
   function savedPack(){try{return packFor(localStorage.getItem(PACK_KEY)||api()?.state?.packId).id;}catch(_error){return packFor(api()?.state?.packId).id;}}
-  function random(items){return items.length?items[Math.floor(Math.random()*items.length)]:null;}
   function shuffle(items){const copy=[...items];for(let i=copy.length-1;i>0;i-=1){const j=Math.floor(Math.random()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]];}return copy;}
+
+  function rankingScore(fighter){
+    const rank=Number(fighter?.modelRank);
+    if(Number.isFinite(rank))return 100000-(rank*100)+(Number(fighter?.modelScore)||0);
+    return (LEGACY_TIER_SCORE[fighter?.selectionTier]||0)+(Number(fighter?.modelScore)||0);
+  }
+
+  function bucketedPool(rows){
+    const ranked=[...(rows||[])].sort((a,b)=>rankingScore(b)-rankingScore(a)||a.name.localeCompare(b.name));
+    const buckets=Object.fromEntries(BUCKET_ORDER.map(bucket=>[bucket,[]]));
+    ranked.forEach((fighter,index)=>{
+      const percentile=(index+0.5)/ranked.length;
+      const bucket=BUCKET_CONFIG.find(row=>percentile<=row.cutoff)?.id||'bad';
+      buckets[bucket].push(fighter);
+    });
+    const counts=Object.fromEntries(BUCKET_ORDER.map(bucket=>[bucket,buckets[bucket].length]));
+    const percentages=Object.fromEntries(BUCKET_ORDER.map(bucket=>[bucket,ranked.length?Number(((buckets[bucket].length/ranked.length)*100).toFixed(1)):0]));
+    return {ranked,buckets,counts,percentages};
+  }
+
+  function weightedBucket(){
+    let roll=Math.random();
+    for(const bucket of BUCKET_CONFIG){roll-=bucket.weight;if(roll<=0)return bucket.id;}
+    return 'bad';
+  }
+
+  function nearestAvailableBucket(target,working){
+    const targetIndex=BUCKET_ORDER.indexOf(target);
+    return BUCKET_ORDER
+      .map((bucket,index)=>({bucket,distance:Math.abs(index-targetIndex)}))
+      .sort((a,b)=>a.distance-b.distance||BUCKET_ORDER.indexOf(a.bucket)-BUCKET_ORDER.indexOf(b.bucket))
+      .map(row=>row.bucket)
+      .find(bucket=>working[bucket]?.length);
+  }
 
   function pool(pack){
     const source=data();
@@ -42,16 +85,35 @@
   }
 
   function lineup(pack){
-    const remaining=[...pool(pack)];
-    if(remaining.length<5)return[];
+    const rows=pool(pack);
+    if(rows.length<5)return[];
+    const audit=bucketedPool(rows);
+    const working=Object.fromEntries(BUCKET_ORDER.map(bucket=>[bucket,shuffle(audit.buckets[bucket])]));
     const picked=[];
-    ['legend','elite','contender','recognizable','wildcard'].forEach(tier=>{
-      const fighter=random(remaining.filter(row=>row.selectionTier===tier));
-      if(!fighter)return;
+    const targets=[];
+    const actual=[];
+
+    while(picked.length<5){
+      const target=weightedBucket();
+      const source=working[target]?.length?target:nearestAvailableBucket(target,working);
+      const fighter=source?working[source].pop():null;
+      if(!fighter)break;
       picked.push(fighter);
-      remaining.splice(remaining.findIndex(row=>row.id===fighter.id),1);
-    });
-    while(picked.length<5&&remaining.length){const fighter=random(remaining);picked.push(fighter);remaining.splice(remaining.findIndex(row=>row.id===fighter.id),1);}
+      targets.push(target);
+      actual.push(source);
+    }
+
+    if(picked.length<5){
+      const used=new Set(picked.map(fighter=>fighter.id));
+      shuffle(rows.filter(fighter=>!used.has(fighter.id))).slice(0,5-picked.length).forEach(fighter=>{
+        picked.push(fighter);
+        targets.push('fallback');
+        actual.push('fallback');
+      });
+    }
+
+    const game=api();
+    if(game)game.state.bucketAudit={packId:pack.id,poolSize:rows.length,counts:audit.counts,percentages:audit.percentages,targets,actual};
     return shuffle(picked.slice(0,5));
   }
 
@@ -154,6 +216,9 @@
     if(!api()||!data())return;
     injectStyles();
     api().state.packId=savedPack();
+    api().bucketConfig=BUCKET_CONFIG.map(bucket=>({...bucket}));
+    api().bucketedPool=bucketedPool;
+    api().auditBuckets=packId=>{const pack=packFor(packId);const rows=pool(pack);const audit=bucketedPool(rows);return {packId:pack.id,poolSize:rows.length,counts:audit.counts,percentages:audit.percentages};};
     patch();
 
     document.addEventListener('change',event=>{
