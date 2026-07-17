@@ -58,8 +58,9 @@
   .intelligence-content{padding:24px 24px 34px}
   .intelligence-subtitle{font-size:17px}
   .intelligence-matchup .compare-controls{grid-template-columns:1fr}
-  .tabs{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:7px;overflow:visible;padding:10px 12px}
-  .tabs>.tab{width:100%;min-width:0;padding:9px 4px;font-size:12px;line-height:1.1;text-align:center;white-space:nowrap}
+  .tabs::before,.tabs::after{display:none!important;content:none!important}
+  .tabs{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:6px;overflow:visible;padding:8px 10px}
+  .tabs>.tab{width:100%;min-width:0;height:40px;min-height:40px;padding:0 5px;border-radius:13px;font-size:11.5px;line-height:1;text-align:center;white-space:nowrap;box-shadow:none}
   .tabs>.tab[data-view="men"],.tabs>.tab[data-view="women"],.tabs>.tab[data-view="compare"],.tabs>.tab[data-view="play"]{grid-column:span 3}
   .tabs>.tab[data-view="division"],.tabs>.tab[data-view="categories"],.tabs>.tab[data-view="picks"]{grid-column:span 4}
 }
@@ -84,7 +85,7 @@
   .intelligence-prompt-status{display:none}
   .intelligence-prompt{grid-template-columns:38px minmax(0,1fr)}
   .intelligence-primary,.intelligence-secondary{font-size:11px;padding:0 6px}
-  .tabs{gap:6px;padding:9px 10px}
-  .tabs>.tab{padding:8px 3px;font-size:11px}
+  .tabs{gap:5px;padding:7px 8px}
+  .tabs>.tab{height:38px;min-height:38px;padding:0 3px;border-radius:12px;font-size:10.5px}
 }
 @media(prefers-reduced-motion:reduce){.intelligence-open-card,.intelligence-prompt-copy,.intelligence-toast,.intelligence-primary,.intelligence-secondary{transition:none}}
