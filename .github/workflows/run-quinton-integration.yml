@@ -1,4 +1,4 @@
-# PR execution trigger
+# PR execution trigger v2
 name: Run Quinton Rampage Jackson Integration
 
 on:
@@ -32,6 +32,10 @@ jobs:
           source = Path('.github/workflows/integrate-quinton-jackson.yml').read_text()
           marker = "python3 - <<'PY'\n"
           body = source.split(marker, 1)[1].split("\n          PY", 1)[0]
+          body = body.replace(
+              "i=s.rindex('\\n\\n};'); s=s[:i]+OVERRIDE+s[i:]",
+              "i=s.rfind('\\n\\n};'); i=i if i>=0 else s.rfind('\\n};');\n              if i<0: raise RuntimeError('display-overrides terminator not found');\n              s=s[:i]+OVERRIDE+s[i:]"
+          )
           exec(textwrap.dedent(body), {})
 
           p = Path('assets/data/royce-watch-links.js')
@@ -47,7 +51,9 @@ jobs:
                   "      signatureFightLabel:'Watch Signature Fight'\n"
                   "    },\n"
               )
-              s = s.replace(anchor, block + anchor)
+              if anchor not in s:
+                  raise RuntimeError('watch-link insertion anchor not found')
+              s = s.replace(anchor, block + anchor, 1)
           p.write_text(s)
 
           p = Path('index.html')
