@@ -94,6 +94,51 @@ jobs:
           limit 1;
           """
 
+          candidate_sql = """
+          select coalesce(jsonb_agg(candidate order by
+            (candidate->>'active_members')::integer desc,
+            (candidate->>'saved_picks')::integer desc,
+            (candidate->>'events')::integer desc,
+            candidate->>'created_at' desc
+          ),'[]'::jsonb) as candidates
+          from (
+            select jsonb_build_object(
+              'name',g.name,
+              'owner_name',owner_member.display_name,
+              'active_members',(
+                select count(*)
+                from public.pick_group_members gm
+                where gm.group_id=g.id and coalesce(gm.is_active,true)
+              ),
+              'member_names',(
+                select coalesce(jsonb_agg(gm.display_name order by lower(trim(gm.display_name))),'[]'::jsonb)
+                from public.pick_group_members gm
+                where gm.group_id=g.id and coalesce(gm.is_active,true)
+              ),
+              'events',(select count(*) from public.pick_group_events ge where ge.group_id=g.id),
+              'rooms',(select count(*) from public.pick_rooms r where r.group_id=g.id),
+              'saved_picks',(
+                select count(*)
+                from public.pick_rooms r
+                join public.pick_room_members rm on rm.room_id=r.id
+                join public.pick_selections ps on ps.member_id=rm.id
+                where r.group_id=g.id
+              ),
+              'created_at',g.created_at
+            ) candidate
+            from public.pick_groups g
+            left join public.pick_group_members owner_member on owner_member.id=g.owner_member_id
+            where lower(trim(coalesce(owner_member.display_name,'')))='cody'
+               or exists (
+                 select 1
+                 from public.pick_group_members gm
+                 where gm.group_id=g.id
+                   and lower(trim(gm.display_name))='cody'
+                   and coalesce(gm.is_active,true)
+               )
+          ) rows;
+          """
+
           def write_status(payload):
               result = dict(payload)
               result['checked_at'] = datetime.now(timezone.utc).isoformat()
@@ -119,18 +164,16 @@ jobs:
                   detail = error.read().decode(errors='replace')[:1000]
                   raise RuntimeError(f'Supabase Management API returned HTTP {error.code}: {detail}') from error
 
-          def audit_value(response):
+          def response_value(response, key):
               rows = response.get('result', response) if isinstance(response, dict) else response
               if isinstance(rows, list) and rows:
-                  value = rows[0].get('audit', rows[0]) if isinstance(rows[0], dict) else None
+                  value = rows[0].get(key, rows[0]) if isinstance(rows[0], dict) else None
               elif isinstance(rows, dict):
-                  value = rows.get('audit', rows)
+                  value = rows.get(key, rows)
               else:
                   value = None
               if isinstance(value, str):
                   value = json.loads(value)
-              if not isinstance(value, dict):
-                  raise RuntimeError('GOAT26 audit did not return a result.')
               return value
 
           if not access_token:
@@ -141,9 +184,17 @@ jobs:
               })
               print('GOAT26 migration blocked: missing SUPABASE_ACCESS_TOKEN.')
           else:
+              candidates = []
+              try:
+                  candidates = response_value(query(candidate_sql, read_only=True), 'candidates') or []
+              except Exception as candidate_error:
+                  print(f'Candidate audit failed: {candidate_error}')
+
               try:
                   query(migration_sql, read_only=False)
-                  audit = audit_value(query(audit_sql, read_only=True))
+                  audit = response_value(query(audit_sql, read_only=True), 'audit')
+                  if not isinstance(audit, dict):
+                      raise RuntimeError('GOAT26 audit did not return a result.')
                   expected = ['Cody','Daddy','Rhonda','Shane','Tyler']
                   names = sorted(audit.get('member_names') or [], key=lambda value: str(value).lower())
                   if (
@@ -154,11 +205,17 @@ jobs:
                   ):
                       raise RuntimeError(f'Canonical five-member audit failed: {audit}')
                   audit['deployment_method'] = 'supabase-management-api'
+                  audit['candidate_count_before_migration'] = len(candidates)
                   write_status(audit)
                   print('GOAT26 migration applied and verified.')
               except Exception as error:
                   reason = str(error).replace(access_token, '[redacted]')[:1500]
-                  write_status({'status':'failed','code':'GOAT26','reason':reason})
+                  write_status({
+                      'status':'failed',
+                      'code':'GOAT26',
+                      'reason':reason,
+                      'candidates':candidates,
+                  })
                   print(f'GOAT26 migration failed: {reason}')
           PY
 
