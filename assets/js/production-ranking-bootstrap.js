@@ -2,8 +2,8 @@
 (function(){
   'use strict';
 
-  const VERSION='production-ranking-bootstrap-20260716s-quinton-jackson-78';
-  const EXPECTED_FIGHTER_COUNT=78;
+  const VERSION='production-ranking-bootstrap-20260717a-brandon-moreno-79';
+  const EXPECTED_FIGHTER_COUNT=79;
   const CALCULATED_STAT_FIELDS=new Set([
     'ufcRecord','titleFightWins','adjustedTitleWins','topFiveWins','top5Wins','rankedWins',
     'finishRatePct','primeRecord','roundsWonPct','activeEliteYears','timesFinishedPrime','throughPrimeUfcFights',
@@ -43,6 +43,7 @@
     ['assets/data/canonical-roster-batch-ten.js?v=canonical-roster-batch-ten-20260715b-pantoja-paddy-weidman','data-production-clean-roster-batch-ten'],
     ['assets/data/canonical-roster-batch-eleven.js?v=canonical-roster-batch-eleven-20260716c-tom-aspinall-photos','data-production-clean-roster-batch-eleven'],
     ['assets/data/canonical-roster-batch-twelve.js?v=canonical-roster-batch-twelve-20260716b-quinton-jackson-photos','data-production-clean-roster-batch-twelve'],
+    ['assets/data/canonical-roster-batch-thirteen.js?v=canonical-roster-batch-thirteen-20260717a-brandon-moreno','data-production-clean-roster-batch-thirteen'],
     ['assets/js/ranking-pipeline.js?v=production-clean-ranking-pipeline-20260714c','data-production-clean-ranking-pipeline'],
     ['assets/js/calculated-profile-runtime.js?v=production-clean-calculated-profile-runtime-20260715c-longest-win-streak','data-production-clean-calculated-profile-runtime'],
     ['assets/js/division-ranking-pipeline.js?v=division-ranking-pipeline-20260715b-openweight-win-qualified','data-production-clean-division-ranking-pipeline'],
@@ -129,6 +130,7 @@
     if(window.UFC_CANONICAL_ROSTER_BATCH_TEN?.passed!==true)missing.push('shared canonical roster batch ten');
     if(window.UFC_CANONICAL_ROSTER_BATCH_ELEVEN?.passed!==true)missing.push('shared canonical roster batch eleven');
     if(window.UFC_CANONICAL_ROSTER_BATCH_TWELVE?.passed!==true)missing.push('shared canonical roster batch twelve');
+    if(window.UFC_CANONICAL_ROSTER_BATCH_THIRTEEN?.passed!==true)missing.push('shared canonical roster batch thirteen');
     if(window.UFC_CANONICAL_OPPONENT_QUALITY_AUDIT_ADJUSTMENTS?.passed!==true)missing.push('approved Opponent Quality fighter-audit adjustments');
     if(window.UFC_CANONICAL_CHAMPIONSHIP_AUDIT_ADJUSTMENTS?.passed!==true)missing.push('approved Championship fighter-audit adjustments');
     const audit=window.UFC_CATEGORY_CALCULATOR_AUDIT;
@@ -178,7 +180,7 @@
         throw new Error(`Automatic division rankings are ${divisionReport?.status||'blocked'}: ${detail}`);
       }
       publishReady(report,divisionReport);
-      window.UFC_PRODUCTION_RANKING_BOOTSTRAP={version:VERSION,status:'ready',inputIsolation:'clean-canonical-rebuild',report,divisionReport,photoSync,rosterBatchTen:window.UFC_CANONICAL_ROSTER_BATCH_TEN,rosterBatchEleven:window.UFC_CANONICAL_ROSTER_BATCH_ELEVEN,rosterBatchTwelve:window.UFC_CANONICAL_ROSTER_BATCH_TWELVE,opponentQualityAuditAdjustments:window.UFC_CANONICAL_OPPONENT_QUALITY_AUDIT_ADJUSTMENTS||null,championshipAuditAdjustments:window.UFC_CANONICAL_CHAMPIONSHIP_AUDIT_ADJUSTMENTS||null,octagonVerdict:window.OCTAGON_VERDICT_DATA||null,stripPresentationScoreOwnership,syncComparePresentation};
+      window.UFC_PRODUCTION_RANKING_BOOTSTRAP={version:VERSION,status:'ready',inputIsolation:'clean-canonical-rebuild',report,divisionReport,photoSync,rosterBatchTen:window.UFC_CANONICAL_ROSTER_BATCH_TEN,rosterBatchEleven:window.UFC_CANONICAL_ROSTER_BATCH_ELEVEN,rosterBatchTwelve:window.UFC_CANONICAL_ROSTER_BATCH_TWELVE,rosterBatchThirteen:window.UFC_CANONICAL_ROSTER_BATCH_THIRTEEN,opponentQualityAuditAdjustments:window.UFC_CANONICAL_OPPONENT_QUALITY_AUDIT_ADJUSTMENTS||null,championshipAuditAdjustments:window.UFC_CANONICAL_CHAMPIONSHIP_AUDIT_ADJUSTMENTS||null,octagonVerdict:window.OCTAGON_VERDICT_DATA||null,stripPresentationScoreOwnership,syncComparePresentation};
     }catch(error){
       document.documentElement.setAttribute('data-production-ranking-bootstrap',`${VERSION}-error`);
       window.UFC_PRODUCTION_RANKING_BOOTSTRAP={version:VERSION,status:'error',error:String(error?.message||error)};
