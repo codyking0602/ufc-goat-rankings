@@ -1,6 +1,7 @@
 {
   "active_members": 6,
-  "checked_at": "2026-07-17T17:22:32.053176+00:00",
+  "avatar_profiles": 0,
+  "checked_at": "2026-07-17T17:33:38.932099+00:00",
   "code": "GOAT26",
   "deployment_method": "supabase-management-api",
   "events": 2,
