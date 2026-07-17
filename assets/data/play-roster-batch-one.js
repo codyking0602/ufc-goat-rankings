@@ -1,46 +1,276 @@
-(function(){
-'use strict';
-const VERSION='play-roster-batch-one-20260717b-retry';
-const FIGHTERS=[{"name":"Ben Askren","aliases":["Funky"],"gender":"men","divisions":["Welterweight"],"eras":["superstar","apex"],"selectionTier":"recognizable","tags":["wrestler","personality","what-if","cult","never-undisputed-champion"]},{"name":"Cody Garbrandt","aliases":["No Love"],"gender":"men","divisions":["Bantamweight"],"eras":["superstar","apex"],"selectionTier":"elite","tags":["former-champion","knockout","action","what-if"]},{"name":"Anthony Johnson","aliases":["Rumble","Anthony Rumble Johnson"],"gender":"men","divisions":["Light Heavyweight","Middleweight","Welterweight"],"eras":["tuf-boom","golden-age","superstar"],"selectionTier":"elite","tags":["power","knockout","title-challenger","what-if","never-undisputed-champion"]},{"name":"Lyoto Machida","aliases":["The Dragon"],"gender":"men","divisions":["Light Heavyweight","Middleweight"],"eras":["tuf-boom","golden-age"],"selectionTier":"elite","tags":["former-champion","striker","technical","highlight"]},{"name":"Josh Koscheck","aliases":["Kos"],"gender":"men","divisions":["Welterweight"],"eras":["tuf-boom","golden-age"],"selectionTier":"contender","tags":["wrestler","title-challenger","tuf-original","never-undisputed-champion"]},{"name":"Gilbert Melendez","aliases":["El Niño","El Nino"],"gender":"men","divisions":["Lightweight"],"eras":["golden-age","superstar"],"selectionTier":"contender","tags":["title-challenger","action","what-if","never-undisputed-champion"]},{"name":"Rafael Fiziev","aliases":["Ataman"],"gender":"men","divisions":["Lightweight"],"eras":["apex","new-blood"],"selectionTier":"contender","tags":["striker","action","highlight","what-if"]},{"name":"Renato Moicano","aliases":["Money Moicano","Moicano"],"gender":"men","divisions":["Lightweight","Featherweight"],"eras":["superstar","apex","new-blood"],"selectionTier":"contender","tags":["grappler","action","personality","contender"]},{"name":"Mackenzie Dern","aliases":[],"gender":"women","divisions":["Strawweight"],"eras":["apex","new-blood"],"selectionTier":"contender","tags":["grappler","submission","star","what-if"]},{"name":"Germaine de Randamie","aliases":["The Iron Lady"],"gender":"women","divisions":["Bantamweight","Featherweight"],"eras":["golden-age","superstar","apex"],"selectionTier":"contender","tags":["former-champion","striker","title-challenger","what-if"]},{"name":"Jessica Eye","aliases":["Evil"],"gender":"women","divisions":["Flyweight","Bantamweight"],"eras":["golden-age","superstar","apex"],"selectionTier":"recognizable","tags":["title-challenger","veteran"]},{"name":"Bethe Correia","aliases":["Pitbull"],"gender":"women","divisions":["Bantamweight"],"eras":["golden-age","superstar"],"selectionTier":"recognizable","tags":["title-challenger","personality","action"]}];
-const RATINGS={"Ben Askren":{"ratings":{"ufcCareer":38,"allCareers":38,"bestPrime":60,"hardestAtPeak":58,"mostComplete":50,"bestFinisher":38,"actionFighter":68,"starPower":72,"biggestWhatIf":84,"cultChaos":82},"divisions":{"Welterweight":38}},"Cody Garbrandt":{"ratings":{"ufcCareer":68,"allCareers":68,"bestPrime":89,"hardestAtPeak":90,"mostComplete":80,"bestFinisher":82,"actionFighter":86,"starPower":75,"biggestWhatIf":90,"cultChaos":65},"divisions":{"Bantamweight":74}},"Anthony Johnson":{"ratings":{"ufcCareer":76,"allCareers":76,"bestPrime":91,"hardestAtPeak":92,"mostComplete":72,"bestFinisher":96,"actionFighter":88,"starPower":77,"biggestWhatIf":86,"cultChaos":68},"divisions":{"Light Heavyweight":80,"Middleweight":55,"Welterweight":42}},"Lyoto Machida":{"ratings":{"ufcCareer":82,"allCareers":82,"bestPrime":90,"hardestAtPeak":91,"mostComplete":88,"bestFinisher":80,"actionFighter":76,"starPower":82,"biggestWhatIf":72,"cultChaos":80},"divisions":{"Light Heavyweight":84,"Middleweight":68}},"Josh Koscheck":{"ratings":{"ufcCareer":70,"allCareers":70,"bestPrime":77,"hardestAtPeak":76,"mostComplete":74,"bestFinisher":62,"actionFighter":72,"starPower":65,"biggestWhatIf":55,"cultChaos":52},"divisions":{"Welterweight":70}},"Gilbert Melendez":{"ratings":{"ufcCareer":44,"allCareers":44,"bestPrime":73,"hardestAtPeak":70,"mostComplete":78,"bestFinisher":45,"actionFighter":75,"starPower":60,"biggestWhatIf":80,"cultChaos":58},"divisions":{"Lightweight":44}},"Rafael Fiziev":{"ratings":{"ufcCareer":58,"allCareers":58,"bestPrime":76,"hardestAtPeak":77,"mostComplete":73,"bestFinisher":78,"actionFighter":88,"starPower":65,"biggestWhatIf":78,"cultChaos":55},"divisions":{"Lightweight":62}},"Renato Moicano":{"ratings":{"ufcCareer":67,"allCareers":67,"bestPrime":78,"hardestAtPeak":76,"mostComplete":80,"bestFinisher":74,"actionFighter":78,"starPower":62,"biggestWhatIf":70,"cultChaos":64},"divisions":{"Lightweight":66,"Featherweight":65}},"Mackenzie Dern":{"ratings":{"ufcCareer":61,"allCareers":61,"bestPrime":70,"hardestAtPeak":68,"mostComplete":63,"bestFinisher":82,"actionFighter":75,"starPower":78,"biggestWhatIf":82,"cultChaos":60},"divisions":{"Strawweight":61}},"Germaine de Randamie":{"ratings":{"ufcCareer":70,"allCareers":70,"bestPrime":84,"hardestAtPeak":84,"mostComplete":72,"bestFinisher":68,"actionFighter":65,"starPower":68,"biggestWhatIf":82,"cultChaos":45},"divisions":{"Bantamweight":70,"Featherweight":72}},"Jessica Eye":{"ratings":{"ufcCareer":40,"allCareers":40,"bestPrime":58,"hardestAtPeak":55,"mostComplete":56,"bestFinisher":32,"actionFighter":55,"starPower":55,"biggestWhatIf":45,"cultChaos":45},"divisions":{"Flyweight":42,"Bantamweight":38}},"Bethe Correia":{"ratings":{"ufcCareer":38,"allCareers":38,"bestPrime":52,"hardestAtPeak":48,"mostComplete":45,"bestFinisher":42,"actionFighter":62,"starPower":62,"biggestWhatIf":40,"cultChaos":58},"divisions":{"Bantamweight":38}}};
-const BANDS=[['elite',92,100],['great',82,91],['good',70,81],['average',55,69],['below-average',35,54],['bad',0,34]];
-const VALID=new Set(['legend','elite','contender','recognizable','wildcard']);
-let last='';
-const text=v=>String(v??'').trim();
-const normal=v=>text(v).normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`]/g,"'").replace(/[^a-zA-Z0-9]+/g,' ').trim().toLowerCase();
-const slug=v=>normal(v).replace(/\s+/g,'-');
-const unique=v=>[...new Set((v||[]).map(text).filter(Boolean))];
-const tier=v=>{const n=Math.max(0,Math.min(100,Math.round(Number(v)||0)));return BANDS.find(([,min,max])=>n>=min&&n<=max)?.[0]||'bad';};
-function record(row){return{id:slug(row.name),name:row.name,aliases:unique(row.aliases),gender:row.gender,primaryDivision:row.divisions[0]||'',divisions:unique(row.divisions),eras:unique(row.eras),selectionTier:VALID.has(row.selectionTier)?row.selectionTier:'recognizable',tags:unique(['play-only','batch-one',row.gender,...row.tags,...row.divisions.map(slug)]),source:'play-only-batch-one',modelRanked:false,modelRank:null,modelScore:null,thumbUrl:'',profileUrl:'',photoExplicit:false,photoConvention:false,photoCandidates:[],eligibility:{blindRank:true,keepCut:true,betterThan:false,findLeader:false}};}
-function auditPlay(api){
- const rows=api.allFighters,errors=[],ids=new Set(),names=new Set();
- rows.forEach(f=>{if(!f.id||ids.has(f.id))errors.push(`Duplicate fighter id: ${f.id||f.name}`);ids.add(f.id);const n=normal(f.name);if(!n||names.has(n))errors.push(`Duplicate fighter name: ${f.name}`);names.add(n);if(!['men','women'].includes(f.gender))errors.push(`${f.name} invalid gender`);if(!VALID.has(f.selectionTier))errors.push(`${f.name} invalid tier`);if(!f.divisions?.length)errors.push(`${f.name} missing division`);});
- api.audit={...(api.audit||{}),passed:!errors.length,errors,total:rows.length,modelRanked:rows.filter(f=>f.modelRanked).length,playOnly:rows.filter(f=>!f.modelRanked).length,photoReady:rows.filter(f=>f.photoExplicit).length,photoConvention:rows.filter(f=>f.photoConvention).length,eligibilityCounts:Object.fromEntries(['blindRank','keepCut','betterThan','findLeader'].map(k=>[k,rows.filter(f=>f.eligibility?.[k]).length]))};
- document.documentElement.setAttribute('data-play-roster-size',String(rows.length));document.documentElement.setAttribute('data-play-data-audit',api.audit.passed?'passed':'failed');
-}
-function inject(silent=false){
- const api=window.UFC_PLAY_DATA;if(!api)return false;
- FIGHTERS.forEach(row=>{let f=api.allFighters.find(x=>x.id===slug(row.name)||normal(x.name)===normal(row.name));if(!f)api.allFighters.push(record(row));else{f.aliases=unique([...f.aliases,...row.aliases]);f.divisions=unique([...f.divisions,...row.divisions]);f.eras=unique([...f.eras,...row.eras]);f.tags=unique([...f.tags,'batch-one',...row.tags]);f.eligibility={...f.eligibility,blindRank:true,keepCut:true};}});
- api.allFighters.sort((a,b)=>a.modelRanked!==b.modelRanked?(a.modelRanked?-1:1):a.modelRanked?((a.modelRank||999)-(b.modelRank||999)):a.name.localeCompare(b.name));
- api.modelRanked.splice(0,api.modelRanked.length,...api.allFighters.filter(f=>f.modelRanked));api.playOnly.splice(0,api.playOnly.length,...api.allFighters.filter(f=>!f.modelRanked));api.byId=Object.fromEntries(api.allFighters.map(f=>[f.id,f]));api.byName=Object.fromEntries(api.allFighters.map(f=>[normal(f.name),f]));auditPlay(api);
- const sig=`${api.audit.total}|${api.audit.playOnly}|${api.audit.passed}`;if(!silent&&sig!==last){last=sig;window.dispatchEvent(new CustomEvent('ufc-play-data-ready',{detail:{version:VERSION,audit:api.audit,batch:'one'}}));}return true;
-}
-function wrapPlay(){const api=window.UFC_PLAY_DATA;if(!api||api.__batchOnePlayWrapped)return;const native=api.rebuild.bind(api);api.rebuild=function(){const out=native();inject(true);return out;};api.__batchOnePlayWrapped=true;}
-function refreshLedger(ledger){
- const rows=ledger.entries,cats=ledger.categoryIds||Object.keys(ledger.categories||{}),errors=[],roster=window.UFC_PLAY_DATA.allFighters,ids=new Set(rows.map(e=>e.id));
- const missing=roster.filter(f=>!ids.has(f.id)).map(f=>f.name);if(missing.length)errors.push(`Missing roster fighters: ${missing.join(', ')}`);
- cats.forEach(c=>{if(rows.some(e=>!Number.isFinite(Number(e.ratings?.[c]))))errors.push(`${c} missing rating`);if(rows.some(e=>Number(e.ratings?.[c])<0||Number(e.ratings?.[c])>100))errors.push(`${c} invalid rating`);});
- rows.forEach(e=>e.divisions.forEach(d=>{if(!Number.isFinite(Number(e.divisionRatings?.[d])))errors.push(`${e.name} missing ${d} rating`);}));
- ledger.audit={...(ledger.audit||{}),passed:!errors.length,errors,rosterTotal:roster.length,ledgerTotal:rows.length,modelRanked:rows.filter(e=>e.modelRanked).length,playOnly:rows.filter(e=>!e.modelRanked).length,ready:rows.filter(e=>e.overallReviewStatus==='ready').length,provisional:rows.filter(e=>e.overallReviewStatus==='provisional').length};
- document.documentElement.setAttribute('data-keep-cut-rating-ledger-size',String(rows.length));document.documentElement.setAttribute('data-keep-cut-rating-ledger-audit',ledger.audit.passed?'passed':'failed');
-}
-function applyRatings(){
- const ledger=window.UFC_KEEP_CUT_CATEGORY_RATINGS;if(!ledger)return false;
- Object.entries(RATINGS).forEach(([name,data])=>{const e=ledger.resolve(name);if(!e)return;Object.entries(data.ratings).forEach(([c,v])=>{e.ratings[c]=v;e.tiers[c]=tier(v);e.ratingSources[c]='manual-batch-one';e.reviewStatus[c]='approved';});Object.entries(data.divisions).forEach(([d,v])=>{e.divisionRatings[d]=v;e.divisionTiers[d]=tier(v);e.divisionSources[d]='manual-batch-one';e.divisionReviewStatus[d]='approved';e.eligibility.divisions[d]=true;});e.rosterSource='play-only-batch-one';e.overallReviewStatus='ready';});
- refreshLedger(ledger);return true;
-}
-function hookLedger(){const ledger=window.UFC_KEEP_CUT_CATEGORY_RATINGS;if(!ledger)return;if(!ledger.__batchOneLedgerWrapped){const native=ledger.rebuild.bind(ledger);ledger.rebuild=function(){const out=native();applyRatings();return out;};ledger.__batchOneLedgerWrapped=true;}applyRatings();}
-inject();wrapPlay();window.addEventListener('ufc-keep-cut-ratings-ready',hookLedger);if(window.UFC_KEEP_CUT_CATEGORY_RATINGS)hookLedger();
-window.UFC_PLAY_ROSTER_BATCH_ONE={version:VERSION,fighters:FIGHTERS.map(x=>({...x})),ratings:RATINGS,inject,applyRatings,audit:()=>({rosterPresent:FIGHTERS.every(f=>!!window.UFC_PLAY_DATA?.resolve(f.name)),ratingsPresent:Object.keys(RATINGS).every(n=>!!window.UFC_KEEP_CUT_CATEGORY_RATINGS?.resolve(n)),rosterTotal:window.UFC_PLAY_DATA?.audit?.total||0,ledgerTotal:window.UFC_KEEP_CUT_CATEGORY_RATINGS?.audit?.ledgerTotal||0})};
-document.documentElement.setAttribute('data-play-roster-batch-one',VERSION);
-})();
+(function(root){
+  'use strict';
+
+  const VERSION='play-roster-batch-one-20260717c-current-audit';
+  const FIGHTERS=Object.freeze([
+    row('Ben Askren',['Funky'],'men',['Welterweight'],['superstar','apex'],'recognizable',['wrestler','personality','what-if','cult','never-undisputed-champion']),
+    row('Cody Garbrandt',['No Love'],'men',['Bantamweight','Flyweight'],['superstar','apex'],'elite',['former-champion','knockout','action','what-if']),
+    row('Anthony Johnson',['Rumble','Anthony Rumble Johnson'],'men',['Light Heavyweight','Middleweight','Welterweight'],['tuf-boom','golden-age','superstar'],'elite',['power','knockout','title-challenger','what-if','never-undisputed-champion']),
+    row('Lyoto Machida',['The Dragon'],'men',['Light Heavyweight','Middleweight'],['tuf-boom','golden-age'],'elite',['former-champion','striker','technical','highlight']),
+    row('Josh Koscheck',['Kos'],'men',['Welterweight'],['zuffa-rebuild','tuf-boom','golden-age'],'contender',['wrestler','title-challenger','tuf-original','never-undisputed-champion']),
+    row('Gilbert Melendez',['El Niño','El Nino'],'men',['Lightweight'],['golden-age','superstar'],'contender',['title-challenger','action','what-if','never-undisputed-champion']),
+    row('Rafael Fiziev',['Ataman'],'men',['Lightweight'],['apex','new-blood'],'contender',['striker','action','highlight','what-if']),
+    row('Renato Moicano',['Money Moicano','Moicano'],'men',['Lightweight','Featherweight'],['superstar','apex','new-blood'],'elite',['grappler','submission','action','personality','title-challenger','never-undisputed-champion']),
+    row('Mackenzie Dern',[],'women',['Strawweight'],['superstar','apex','new-blood'],'elite',['champion','former-champion','grappler','submission','star','finisher']),
+    row('Germaine de Randamie',['The Iron Lady'],'women',['Bantamweight','Featherweight'],['golden-age','superstar','apex'],'elite',['former-champion','striker','title-challenger','what-if']),
+    row('Jessica Eye',['Evil'],'women',['Flyweight','Bantamweight'],['golden-age','superstar','apex'],'recognizable',['title-challenger','veteran']),
+    row('Bethe Correia',['Pitbull'],'women',['Bantamweight'],['golden-age','superstar'],'wildcard',['title-challenger','personality','lower-tier'])
+  ]);
+
+  const RATINGS=Object.freeze({
+    'Ben Askren':rating(40,{Welterweight:42},58,55,50,42,72,76,88,88),
+    'Cody Garbrandt':rating(76,{Bantamweight:80,Flyweight:55},91,90,79,90,92,84,94,78),
+    'Anthony Johnson':rating(80,{'Light Heavyweight':86,Middleweight:68,Welterweight:62},90,91,76,97,93,83,90,72),
+    'Lyoto Machida':rating(84,{'Light Heavyweight':89,Middleweight:82},92,93,89,83,78,85,78,76),
+    'Josh Koscheck':rating(70,{Welterweight:74},80,78,78,68,75,70,60,62),
+    'Gilbert Melendez':rating(48,{Lightweight:52},78,76,82,55,92,72,94,78),
+    'Rafael Fiziev':rating(70,{Lightweight:74},84,82,76,89,93,75,82,66),
+    'Renato Moicano':rating(76,{Lightweight:80,Featherweight:74},85,82,84,89,86,82,80,86),
+    'Mackenzie Dern':rating(88,{Strawweight:93},92,90,85,88,86,86,72,74),
+    'Germaine de Randamie':rating(78,{Bantamweight:82,Featherweight:86},89,88,74,82,76,76,90,62),
+    'Jessica Eye':rating(54,{Flyweight:60,Bantamweight:52},70,67,62,34,62,64,52,56),
+    'Bethe Correia':rating(42,{Bantamweight:45},58,56,48,38,58,62,50,65)
+  });
+
+  const BANDS=[['elite',92,100],['great',82,91],['good',70,81],['average',55,69],['below-average',35,54],['bad',0,34]];
+  const VALID=new Set(['legend','elite','contender','recognizable','wildcard']);
+  let lastSignature='';
+  let injecting=false;
+
+  function row(name,aliases,gender,divisions,eras,selectionTier,tags){
+    return Object.freeze({name,aliases:Object.freeze(aliases),gender,divisions:Object.freeze(divisions),eras:Object.freeze(eras),selectionTier,tags:Object.freeze(tags)});
+  }
+  function rating(career,divisions,bestPrime,hardestAtPeak,mostComplete,bestFinisher,actionFighter,starPower,biggestWhatIf,cultChaos){
+    return Object.freeze({
+      ratings:Object.freeze({ufcCareer:career,allCareers:career,bestPrime,hardestAtPeak,mostComplete,bestFinisher,actionFighter,starPower,biggestWhatIf,cultChaos}),
+      divisions:Object.freeze(divisions)
+    });
+  }
+  const text=value=>String(value??'').trim();
+  const normal=value=>text(value).normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`]/g,"'").replace(/[^a-zA-Z0-9]+/g,' ').trim().toLowerCase();
+  const slug=value=>normal(value).replace(/\s+/g,'-');
+  const unique=values=>[...new Set((values||[]).map(text).filter(Boolean))];
+  const tier=value=>{
+    const number=Math.max(0,Math.min(100,Math.round(Number(value)||0)));
+    return BANDS.find(([,min,max])=>number>=min&&number<=max)?.[0]||'bad';
+  };
+
+  function record(fighter){
+    const base={
+      id:slug(fighter.name),
+      name:fighter.name,
+      aliases:unique(fighter.aliases),
+      gender:fighter.gender,
+      primaryDivision:fighter.divisions[0]||'',
+      divisions:unique(fighter.divisions),
+      eras:unique(fighter.eras),
+      selectionTier:VALID.has(fighter.selectionTier)?fighter.selectionTier:'recognizable',
+      tags:unique(['play-only','batch-one',fighter.gender,...fighter.tags,...fighter.divisions.map(slug)]),
+      source:'play-only-batch-one',
+      modelRanked:false,
+      modelRank:null,
+      modelScore:null,
+      thumbUrl:'',
+      profileUrl:'',
+      eligibility:{blindRank:true,keepCut:true,betterThan:false,findLeader:false}
+    };
+    return root.UFC_FIGHTER_PHOTOS?.apply?.(base)||{
+      ...base,
+      photoExplicit:false,
+      photoConvention:true,
+      photoCandidates:[]
+    };
+  }
+
+  function auditPlay(api){
+    const rows=api.allFighters;
+    const errors=[];
+    const ids=new Set();
+    const names=new Set();
+    rows.forEach(fighter=>{
+      if(!fighter.id||ids.has(fighter.id))errors.push(`Duplicate fighter id: ${fighter.id||fighter.name}`);
+      ids.add(fighter.id);
+      const name=normal(fighter.name);
+      if(!name||names.has(name))errors.push(`Duplicate fighter name: ${fighter.name}`);
+      names.add(name);
+      if(!['men','women'].includes(fighter.gender))errors.push(`${fighter.name} invalid gender`);
+      if(!VALID.has(fighter.selectionTier))errors.push(`${fighter.name} invalid tier`);
+      if(!fighter.divisions?.length)errors.push(`${fighter.name} missing division`);
+    });
+    api.audit={
+      ...(api.audit||{}),
+      passed:errors.length===0,
+      errors,
+      total:rows.length,
+      modelRanked:rows.filter(fighter=>fighter.modelRanked).length,
+      playOnly:rows.filter(fighter=>!fighter.modelRanked).length,
+      photoReady:rows.filter(fighter=>fighter.photoExplicit).length,
+      photoConvention:rows.filter(fighter=>fighter.photoConvention).length,
+      eligibilityCounts:Object.fromEntries(['blindRank','keepCut','betterThan','findLeader'].map(key=>[
+        key,rows.filter(fighter=>fighter.eligibility?.[key]).length
+      ]))
+    };
+    root.document?.documentElement?.setAttribute('data-play-roster-size',String(rows.length));
+    root.document?.documentElement?.setAttribute('data-play-data-audit',api.audit.passed?'passed':'failed');
+  }
+
+  function inject(silent=false){
+    const api=root.UFC_PLAY_DATA;
+    if(!api||injecting)return false;
+    injecting=true;
+    try{
+      FIGHTERS.forEach(fighter=>{
+        const id=slug(fighter.name);
+        const extra=record(fighter);
+        const existing=api.allFighters.find(row=>row.id===id||normal(row.name)===normal(fighter.name));
+        if(!existing){
+          api.allFighters.push(extra);
+        }else{
+          existing.aliases=unique([...(existing.aliases||[]),...extra.aliases]);
+          existing.divisions=unique([...(existing.divisions||[]),...extra.divisions]);
+          existing.eras=unique([...(existing.eras||[]),...extra.eras]);
+          existing.tags=unique([...(existing.tags||[]),...extra.tags]);
+          existing.primaryDivision=existing.primaryDivision||extra.primaryDivision;
+          existing.selectionTier=existing.modelRanked?existing.selectionTier:fighter.selectionTier;
+          existing.eligibility={...(existing.eligibility||{}),blindRank:true,keepCut:true};
+        }
+        if(!api.extras.some(row=>normal(row.name)===normal(fighter.name))){
+          api.extras.push({
+            name:fighter.name,
+            aliases:[...fighter.aliases],
+            gender:fighter.gender,
+            divisions:[...fighter.divisions],
+            eras:[...fighter.eras],
+            selectionTier:fighter.selectionTier,
+            tags:[...fighter.tags]
+          });
+        }
+      });
+
+      api.allFighters.sort((a,b)=>{
+        if(a.modelRanked!==b.modelRanked)return a.modelRanked?-1:1;
+        if(a.modelRanked&&b.modelRanked)return (a.modelRank||999)-(b.modelRank||999);
+        return a.name.localeCompare(b.name);
+      });
+      api.modelRanked.splice(0,api.modelRanked.length,...api.allFighters.filter(fighter=>fighter.modelRanked));
+      api.playOnly.splice(0,api.playOnly.length,...api.allFighters.filter(fighter=>!fighter.modelRanked));
+      api.byId=Object.fromEntries(api.allFighters.map(fighter=>[fighter.id,fighter]));
+      api.byName=Object.fromEntries(api.allFighters.map(fighter=>[normal(fighter.name),fighter]));
+      auditPlay(api);
+
+      const signature=`${api.audit.total}|${api.audit.playOnly}|${api.audit.passed}|${FIGHTERS.every(fighter=>api.byId[slug(fighter.name)])}`;
+      if(!silent&&signature!==lastSignature){
+        lastSignature=signature;
+        root.dispatchEvent?.(new CustomEvent('ufc-play-data-ready',{detail:{version:VERSION,audit:api.audit,batch:'one'}}));
+      }
+      return true;
+    }finally{
+      injecting=false;
+    }
+  }
+
+  function wrapPlay(){
+    const api=root.UFC_PLAY_DATA;
+    if(!api||api.__batchOnePlayWrapped)return;
+    const native=api.rebuild?.bind(api);
+    api.rebuild=function(){
+      const output=native?.();
+      inject(true);
+      return output||api;
+    };
+    api.__batchOnePlayWrapped=true;
+  }
+
+  function refreshLedger(ledger){
+    const rows=ledger.entries;
+    const categories=ledger.categoryIds||Object.keys(ledger.categories||{});
+    const errors=[];
+    const roster=root.UFC_PLAY_DATA?.allFighters||[];
+    const ids=new Set(rows.map(entry=>entry.id));
+    const missing=roster.filter(fighter=>!ids.has(fighter.id)).map(fighter=>fighter.name);
+    if(missing.length)errors.push(`Missing roster fighters: ${missing.join(', ')}`);
+    categories.forEach(category=>{
+      if(rows.some(entry=>!Number.isFinite(Number(entry.ratings?.[category]))))errors.push(`${category} missing rating`);
+      if(rows.some(entry=>Number(entry.ratings?.[category])<0||Number(entry.ratings?.[category])>100))errors.push(`${category} invalid rating`);
+    });
+    rows.forEach(entry=>(entry.divisions||[]).forEach(division=>{
+      if(!Number.isFinite(Number(entry.divisionRatings?.[division])))errors.push(`${entry.name} missing ${division} rating`);
+    }));
+    ledger.audit={
+      ...(ledger.audit||{}),
+      passed:errors.length===0,
+      errors,
+      rosterTotal:roster.length,
+      ledgerTotal:rows.length,
+      modelRanked:rows.filter(entry=>entry.modelRanked).length,
+      playOnly:rows.filter(entry=>!entry.modelRanked).length,
+      ready:rows.filter(entry=>entry.overallReviewStatus==='ready').length,
+      provisional:rows.filter(entry=>entry.overallReviewStatus==='provisional').length
+    };
+    root.document?.documentElement?.setAttribute('data-keep-cut-rating-ledger-size',String(rows.length));
+    root.document?.documentElement?.setAttribute('data-keep-cut-rating-ledger-audit',ledger.audit.passed?'passed':'failed');
+  }
+
+  function applyRatings(){
+    const ledger=root.UFC_KEEP_CUT_CATEGORY_RATINGS;
+    if(!ledger)return false;
+    Object.entries(RATINGS).forEach(([name,data])=>{
+      const entry=ledger.resolve(name);
+      if(!entry)return;
+      Object.entries(data.ratings).forEach(([category,value])=>{
+        entry.ratings[category]=value;
+        entry.tiers[category]=tier(value);
+        entry.ratingSources[category]='manual-batch-one';
+        entry.reviewStatus[category]='approved';
+      });
+      Object.entries(data.divisions).forEach(([division,value])=>{
+        entry.divisionRatings[division]=value;
+        entry.divisionTiers[division]=tier(value);
+        entry.divisionSources[division]='manual-batch-one';
+        entry.divisionReviewStatus[division]='approved';
+        entry.eligibility.divisions[division]=true;
+      });
+      entry.rosterSource='play-only-batch-one';
+      entry.overallReviewStatus='ready';
+    });
+    refreshLedger(ledger);
+    root.document?.documentElement?.setAttribute('data-keep-cut-fighter-batch-count',String(FIGHTERS.length));
+    return FIGHTERS.every(fighter=>Boolean(ledger.resolve(fighter.name)));
+  }
+
+  function hookLedger(){
+    const ledger=root.UFC_KEEP_CUT_CATEGORY_RATINGS;
+    if(!ledger)return;
+    if(!ledger.__batchOneLedgerWrapped){
+      const native=ledger.rebuild?.bind(ledger);
+      ledger.rebuild=function(){
+        const output=native?.();
+        applyRatings();
+        return output||ledger;
+      };
+      ledger.__batchOneLedgerWrapped=true;
+    }
+    applyRatings();
+  }
+
+  inject();
+  wrapPlay();
+  root.addEventListener?.('ufc-keep-cut-ratings-ready',hookLedger);
+  if(root.UFC_KEEP_CUT_CATEGORY_RATINGS)hookLedger();
+
+  root.UFC_PLAY_ROSTER_BATCH_ONE={
+    version:VERSION,
+    fighters:FIGHTERS.map(fighter=>({...fighter,aliases:[...fighter.aliases],divisions:[...fighter.divisions],eras:[...fighter.eras],tags:[...fighter.tags]})),
+    ratings:RATINGS,
+    inject,
+    applyRatings,
+    audit:()=>({
+      rosterPresent:FIGHTERS.every(fighter=>Boolean(root.UFC_PLAY_DATA?.resolve(fighter.name))),
+      ratingsPresent:Object.keys(RATINGS).every(name=>Boolean(root.UFC_KEEP_CUT_CATEGORY_RATINGS?.resolve(name))),
+      rosterTotal:root.UFC_PLAY_DATA?.audit?.total||0,
+      ledgerTotal:root.UFC_KEEP_CUT_CATEGORY_RATINGS?.audit?.ledgerTotal||0,
+      fighterCount:FIGHTERS.length
+    })
+  };
+  root.document?.documentElement?.setAttribute('data-play-roster-batch-one',VERSION);
+})(typeof window!=='undefined'?window:globalThis);
