@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+const INDEX_SCHEMA_VERSION=1;
 const scriptDir=path.dirname(fileURLToPath(import.meta.url));
 const root=path.resolve(scriptDir,'..');
 const feedPath=path.join(root,'assets','data','octagon-verdict-data.json');
@@ -66,7 +67,7 @@ for(const file of fs.readdirSync(fighterDir)){
 }
 
 const index={
-  schemaVersion:1,
+  schemaVersion:INDEX_SCHEMA_VERSION,
   name:'Octagon Verdict Index',
   version:String(feed.version||feed.generatedAt||new Date().toISOString()).slice(0,10),
   generatedAt:feed.generatedAt||new Date().toISOString(),
@@ -90,6 +91,7 @@ const index={
 writeJson(indexPath,index);
 
 const verification=readJson(indexPath);
+if(verification.schemaVersion!==INDEX_SCHEMA_VERSION)fail(`Index schemaVersion ${verification.schemaVersion} does not match ${INDEX_SCHEMA_VERSION}.`);
 if(verification.fighterCount!==feed.fighterCount)fail(`Index count ${verification.fighterCount} does not match feed count ${feed.fighterCount}.`);
 if(!verification.fighters.some(fighter=>fighter.name==='Brandon Moreno')&&fighters.some(fighter=>fighter.name==='Brandon Moreno'))fail('Brandon Moreno is missing from materialized index.');
-console.log(JSON.stringify({fighterCount:verification.fighterCount,divisionBoardCount:verification.divisionBoardCount,index:path.relative(root,indexPath),fighterDirectory:path.relative(root,fighterDir)},null,2));
+console.log(JSON.stringify({schemaVersion:verification.schemaVersion,fighterCount:verification.fighterCount,divisionBoardCount:verification.divisionBoardCount,index:path.relative(root,indexPath),fighterDirectory:path.relative(root,fighterDir)},null,2));
