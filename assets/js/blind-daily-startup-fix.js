@@ -1,9 +1,10 @@
 (function(){
   'use strict';
 
-  const VERSION='blind-daily-startup-fix-20260717c-refresh-tab-order';
+  const VERSION='blind-daily-startup-fix-20260717d-anthony-pettis-whats-new';
   const REFRESH_LOCATION_KEY='ufc-goat-manual-refresh-location-v1';
   const PRIMARY_RESTORE_KEY='ufc-goat-manual-refresh-v1';
+  const PETTIS_WHATS_NEW_KEY='ufc-whats-new-20260717-anthony-pettis';
   let attempts=0;
   let timer=null;
   let pendingRefreshLocation=null;
@@ -125,6 +126,47 @@
     [300,700,1250].forEach(delay=>window.setTimeout(()=>restoreRefreshLocation(),delay));
   }
 
+  function markPettisWhatsNewSeen(){
+    try{localStorage.setItem(PETTIS_WHATS_NEW_KEY,'1');}catch(_error){}
+  }
+
+  function hasSeenPettisWhatsNew(){
+    try{return localStorage.getItem(PETTIS_WHATS_NEW_KEY)==='1';}catch(_error){return false;}
+  }
+
+  function updatePettisWhatsNew(){
+    const overlay=document.getElementById('whatsNewOverlay');
+    if(!overlay)return false;
+    const fighters=overlay.querySelector('.whats-new-fighters');
+    const heading=fighters?.previousElementSibling;
+    if(heading)heading.textContent='Seven more names enter the rankings';
+    if(fighters&&!Array.from(fighters.children).some(node=>node.textContent.trim()==='Anthony Pettis')){
+      const name=document.createElement('span');
+      name.textContent='Anthony Pettis';
+      fighters.appendChild(name);
+    }
+    if(!overlay.dataset.pettisSeenBinding){
+      overlay.dataset.pettisSeenBinding='true';
+      document.getElementById('whatsNewClose')?.addEventListener('click',markPettisWhatsNewSeen);
+      document.getElementById('whatsNewExplore')?.addEventListener('click',markPettisWhatsNewSeen);
+      overlay.addEventListener('click',event=>{if(event.target===overlay)markPettisWhatsNewSeen();});
+      document.addEventListener('keydown',event=>{
+        if(event.key==='Escape'&&!overlay.hidden)markPettisWhatsNewSeen();
+      });
+    }
+    if(!hasSeenPettisWhatsNew())window.UFC_APP_UPDATE_WATCHER?.openWhatsNew?.();
+    document.documentElement.setAttribute('data-pettis-whats-new',VERSION);
+    return true;
+  }
+
+  function schedulePettisWhatsNew(){
+    let tries=0;
+    const pettisTimer=window.setInterval(()=>{
+      tries+=1;
+      if(updatePettisWhatsNew()||tries>=30)window.clearInterval(pettisTimer);
+    },100);
+  }
+
   function check(){
     attempts+=1;
     if(kickBlindGame()||attempts>=40){
@@ -155,6 +197,7 @@
   });
 
   scheduleRefreshLocationRestore();
+  schedulePettisWhatsNew();
   timer=window.setInterval(check,250);
   window.setTimeout(check,0);
 })();
