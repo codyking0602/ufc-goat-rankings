@@ -1,4 +1,4 @@
-# Permanent rendered-app and derived-output certification.
+# Permanent rendered-app and required Markdown knowledge certification.
 name: Production Ranking Browser Smoke
 
 on:
@@ -21,9 +21,9 @@ on:
       - 'assets/js/production-ranking-bootstrap.js'
       - 'assets/js/calculated-profile-runtime.js'
       - 'assets/js/octagon-verdict-compare-launcher.js'
-      - 'assets/js/octagon-verdict-data.js'
-      - 'tools/build-octagon-verdict-data.js'
-      - 'scripts/materialize-octagon-verdict-data.mjs'
+      - 'tools/build-octagon-verdict-knowledge.js'
+      - 'tools/build-octagon-verdict-markdown.js'
+      - 'octagon-verdict-knowledge.md'
       - 'scripts/materialize-display-overrides.mjs'
       - 'scripts/sync-production-cache-keys.mjs'
       - 'scripts/test-production-browser.mjs'
@@ -39,7 +39,9 @@ on:
       - 'assets/fighters/**'
       - 'assets/compare-data.js'
       - 'assets/js/**'
-      - 'tools/build-octagon-verdict-data.js'
+      - 'tools/build-octagon-verdict-knowledge.js'
+      - 'tools/build-octagon-verdict-markdown.js'
+      - 'octagon-verdict-knowledge.md'
       - 'scripts/**'
       - '.github/workflows/production-ranking-browser-smoke.yml'
 
@@ -82,69 +84,42 @@ jobs:
         run: node scripts/materialize-display-overrides.mjs > /tmp/display-overrides-build.log 2>&1
       - name: Refresh cache keys after presentation materialization
         run: node scripts/sync-production-cache-keys.mjs >> /tmp/cache-sync.log 2>&1
-      - name: Build and materialize Octagon Verdict package
-        run: |
-          node tools/build-octagon-verdict-data.js > /tmp/octagon-verdict-build.log 2>&1
-          node scripts/materialize-octagon-verdict-data.mjs >> /tmp/octagon-verdict-build.log 2>&1
-      - name: Validate 80-fighter generated package
+      - name: Build required Octagon Verdict Markdown
+        run: node tools/build-octagon-verdict-markdown.js > /tmp/octagon-verdict-markdown-build.log 2>&1
+      - name: Validate 80-fighter Markdown knowledge pack
         run: |
           node - <<'NODE'
           const fs=require('fs');
           const assert=require('assert/strict');
-          const feed=JSON.parse(fs.readFileSync('assets/data/octagon-verdict-data.json','utf8'));
-          const index=JSON.parse(fs.readFileSync('assets/data/octagon-verdict/index.json','utf8'));
-          const pettis=JSON.parse(fs.readFileSync('assets/data/octagon-verdict/fighters/anthony-pettis.json','utf8'));
+          const markdown=fs.readFileSync('octagon-verdict-knowledge.md','utf8');
           const overrides=fs.readFileSync('assets/data/display-overrides.js','utf8');
-          assert.equal(feed.source,'calculated-browser-runtime');
-          assert.equal(feed.fighterCount,80);
-          assert.equal(feed.fighters.length,80);
-          assert.equal(index.fighterCount,80);
-          assert.equal(index.fighters.length,80);
-          assert.equal(index.divisionBoardCount,9);
-          assert.equal(Object.keys(feed.divisionBoards||{}).length,9);
-          assert.equal(feed.divisionBoards?.Openweight?.[0]?.fighter,'Royce Gracie');
-          for(const [division,rows] of Object.entries(feed.divisionBoards))for(const row of rows)assert.ok(row.stats?.ufcWins>0,`${row.fighter} must own a UFC win in ${division}`);
-          assert.equal(feed.fighters.find(f=>f.name==='Jon Jones')?.rank,1);
-          assert.equal(feed.fighters.find(f=>f.name==='Georges St-Pierre')?.rank,2);
-          assert.equal(feed.fighters.find(f=>f.name==='Amanda Nunes')?.appOvr,99);
-          assert.equal(feed.fighters.find(f=>f.name==='Valentina Shevchenko')?.appOvr,98);
-          assert.equal(pettis.name,'Anthony Pettis');
-          assert.equal(pettis.profileDisplayName,'Anthony “Showtime” Pettis');
-          assert.equal(pettis.ufcRecord,'11-9');
-          assert.equal(pettis.titleFightWins,2);
-          assert.equal(pettis.adjustedTitleWins,2);
-          assert.equal(pettis.topFiveWins,3);
-          assert.equal(pettis.rankedWins,8);
-          assert.equal(pettis.primeRecord,'7-6');
-          assert.equal(pettis.roundsWonPct,34.38);
-          assert.equal(pettis.finishRatePct,63.64);
-          assert.equal(pettis.activeEliteYears,6.61);
-          assert.equal(pettis.timesFinishedPrime,3);
-          assert.equal(pettis.photoUrl.startsWith('assets/fighters/anthony-pettis.webp'),true);
-          assert.equal(pettis.thumbUrl.startsWith('assets/fighters/anthony-pettis-thumb.webp'),true);
-          assert.equal(pettis.watchUrl,'https://youtube.com/shorts/BiPvl_p6JqY?is=gwu2EsszP22T9us-');
-          assert.equal(pettis.signatureFightUrl,'https://youtu.be/smbYO1-yqtA?is=lhtpeK1nOCqGUvdc');
+          const count=Number(markdown.match(/Fighters: \*\*(\d+)\*\*/)?.[1]||0);
+          assert.equal(count,80);
+          assert.match(markdown,/\| 1 \| Jon Jones \| 99 \|/);
+          assert.match(markdown,/### 57\. Anthony Pettis — 87 OVR/);
+          const pettis=markdown.match(/### 57\. Anthony Pettis — 87 OVR[\s\S]*?(?=\n### \d+\.|\n## 11\.)/)?.[0]||'';
+          assert.ok(pettis,'Anthony Pettis fighter card is missing.');
+          assert.match(pettis,/Anthony “Showtime” Pettis/);
+          assert.match(pettis,/\| men \| 37\.5 \| 11-9 \| Lightweight \/ Featherweight \/ Welterweight \| 2 \| 2 \| 3 \| 7-6 \| 34\.4% \| 6\.61 \|/);
+          assert.match(pettis,/Benson Henderson/);
+          assert.match(pettis,/Gilbert Melendez/);
           assert.ok(overrides.includes('Anthony “Showtime” Pettis'));
           assert.ok(overrides.includes('BiPvl_p6JqY'));
           assert.ok(overrides.includes('smbYO1-yqtA'));
-          assert.ok(feed.divisionBoards.Lightweight.some(row=>row.fighter==='Anthony Pettis'));
-          assert.ok(feed.divisionBoards.Featherweight.some(row=>row.fighter==='Anthony Pettis'));
-          assert.ok(feed.divisionBoards.Welterweight.some(row=>row.fighter==='Anthony Pettis'));
-          assert.ok(index.fighters.some(row=>row.name==='Anthony Pettis'&&row.rank===pettis.rank&&row.appOvr===pettis.appOvr));
-          console.log('ANTHONY_PETTIS_GENERATED_RESULT');
-          console.log(JSON.stringify(pettis,null,2));
-          console.log(`Validated ${feed.fighterCount} fighters, ${index.fighterCount} materialized fighter objects, and ${Object.keys(feed.divisionBoards).length} automatic division boards.`);
+          assert.ok(markdown.includes('Machine-readable JSON is optional and does not block fighter additions.'));
+          assert.ok(markdown.includes('JSON exports are optional, run only when explicitly requested, and never block a fighter addition.'));
+          console.log(`Validated required Markdown knowledge for ${count} fighters, including Anthony “Showtime” Pettis.`);
           NODE
-      - name: Commit refreshed calculated package, presentation data, and shell cache keys
+      - name: Commit refreshed presentation, Markdown, and shell cache keys
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html assets/data/display-overrides.js assets/data/octagon-verdict-data.json assets/data/octagon-verdict/
+          git add index.html assets/data/display-overrides.js octagon-verdict-knowledge.md
           if git diff --cached --quiet; then
-            echo 'Calculated package, presentation data, and cache keys already current.'
+            echo 'Presentation data, Markdown knowledge, and cache keys already current.'
           else
-            git commit -m 'Materialize 80-fighter production package [skip ci]'
+            git commit -m 'Materialize 80-fighter Markdown production package [skip ci]'
             git pull --rebase origin main
             git push origin HEAD:main
           fi
@@ -165,8 +140,8 @@ jobs:
           cat /tmp/woodley-audit.log 2>/dev/null || true
           echo '--- Display override build ---'
           cat /tmp/display-overrides-build.log 2>/dev/null || true
-          echo '--- Octagon build ---'
-          cat /tmp/octagon-verdict-build.log 2>/dev/null || true
+          echo '--- Octagon Markdown build ---'
+          cat /tmp/octagon-verdict-markdown-build.log 2>/dev/null || true
           echo '--- Local server tail ---'
           tail -30 /tmp/ufc-app-http.log 2>/dev/null || true
       - name: Archive production diagnostics
@@ -184,9 +159,8 @@ jobs:
             /tmp/woodley-audit.log
             /tmp/display-overrides-build.log
             /tmp/profile-card-mobile-hotfix.png
-            /tmp/octagon-verdict-build.log
+            /tmp/octagon-verdict-markdown-build.log
             /tmp/ufc-app-http.log
             assets/data/display-overrides.js
-            assets/data/octagon-verdict-data.json
-            assets/data/octagon-verdict/
+            octagon-verdict-knowledge.md
           if-no-files-found: warn
