@@ -30,7 +30,7 @@ jobs:
       - name: Install P-256 dependency
         run: python -m pip install --disable-pip-version-check --quiet cryptography
 
-      - name: Repair VAPID key format
+      - name: Rotate malformed VAPID key
         env:
           SUPABASE_PROJECT_REF: hdkjwezaswhisxupxydc
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
@@ -91,14 +91,10 @@ jobs:
           current=rows(query("select public_key,private_key from public.octagon_push_config where singleton limit 1;",read_only=True))
           old_public=current[0].get('public_key','') if current else ''
           old_private=current[0].get('private_key','') if current else ''
-          try:
-              old_public_bytes=decode(old_public)
-          except Exception:
-              old_public_bytes=b''
-          try:
-              old_private_bytes=decode(old_private)
-          except Exception:
-              old_private_bytes=b''
+          try: old_public_bytes=decode(old_public)
+          except Exception: old_public_bytes=b''
+          try: old_private_bytes=decode(old_private)
+          except Exception: old_private_bytes=b''
 
           valid=(len(old_public_bytes)==65 and old_public_bytes[:1]==b'\x04' and len(old_private_bytes)==32)
           rotated=False
@@ -119,12 +115,10 @@ jobs:
               rotated=True
 
           verified=rows(query("select public_key,private_key from public.octagon_push_config where singleton limit 1;",read_only=True))
-          if not verified:
-              raise RuntimeError('Octagon VAPID configuration was not found after repair.')
           public_bytes=decode(verified[0]['public_key'])
           private_bytes=decode(verified[0]['private_key'])
           if len(public_bytes)!=65 or public_bytes[:1]!=b'\x04' or len(private_bytes)!=32:
-              raise RuntimeError('Octagon VAPID key is still not a raw uncompressed P-256 key pair.')
+              raise RuntimeError('VAPID key is not a raw uncompressed P-256 key pair after repair.')
 
           active=rows(query("select count(*)::integer as count from public.octagon_push_subscriptions where is_active;",read_only=True))
           write({
@@ -140,72 +134,35 @@ jobs:
           print('Octagon VAPID key verified as raw 65-byte uncompressed P-256 public key.')
           PY
 
-      - name: Permanently wire corrected push handler
+      - name: Publish corrected Alerts handler
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
 
-          path=Path('.github/workflows/deploy-app-canonical-group.yml')
+          path=Path('index.html')
           text=path.read_text()
-
-          if "      - 'assets/js/octagon-push-subscription.js'" not in text:
-              text=text.replace(
-                  "      - 'assets/js/octagon-notifications.js'\n",
-                  "      - 'assets/js/octagon-notifications.js'\n      - 'assets/js/octagon-push-subscription.js'\n",
-                  1,
-              )
-
-          if 'node --check assets/js/octagon-push-subscription.js' not in text:
-              text=text.replace(
-                  '          node --check assets/js/octagon-notifications.js\n',
-                  '          node --check assets/js/octagon-notifications.js\n          node --check assets/js/octagon-push-subscription.js\n',
-                  1,
-              )
-
-          notifications='          notifications=\'  <script src="assets/js/octagon-notifications.js?v=octagon-notifications-20260717a"></script>\''
-          push_line='          push_subscription=\'  <script src="assets/js/octagon-push-subscription.js?v=octagon-push-subscription-20260717b"></script>\''
-          if push_line not in text:
-              text=text.replace(notifications,notifications+'\n'+push_line,1)
-
-          marker="""          if 'assets/js/octagon-notifications.js' in text:
-              text=re.sub(r'  <script src=\"assets/js/octagon-notifications\\.js\\?v=[^\"]+\"></script>',notifications,text,count=1)
-          elif access_panel in text:
-              text=text.replace(access_panel,access_panel+'\\n'+notifications,1)
-          else:
-              raise SystemExit('Octagon access-panel script anchor was not found.')
-"""
-          block=marker+"""
+          script='  <script src="assets/js/octagon-push-subscription.js?v=octagon-push-subscription-20260717b"></script>'
           if 'assets/js/octagon-push-subscription.js' in text:
-              text=re.sub(r'  <script src=\"assets/js/octagon-push-subscription\\.js\\?v=[^\"]+\"></script>',push_subscription,text,count=1)
-          elif notifications in text:
-              text=text.replace(notifications,notifications+'\\n'+push_subscription,1)
+              text=re.sub(r'  <script src="assets/js/octagon-push-subscription\.js\?v=[^"]+"></script>',script,text,count=1)
           else:
-              raise SystemExit('Octagon notification script anchor was not found.')
-"""
-          if "assets/js/octagon-push-subscription.js' in text" not in text:
-              if marker not in text:
-                  raise SystemExit('Notification wiring block was not found.')
-              text=text.replace(marker,block,1)
-
-          text=re.sub(
-              r'<meta name="app-build" content="[^"]+" />',
-              '<meta name="app-build" content="20260717-octagon-push-permission-fix" />',
-              text,
-              count=1,
-          )
+              anchor=re.search(r'(  <script src="assets/js/octagon-notifications\.js\?v=[^"]+"></script>)',text)
+              if not anchor:
+                  raise SystemExit('Octagon notification script anchor was not found.')
+              text=text[:anchor.end()]+'\n'+script+text[anchor.end():]
+          text=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260717-octagon-push-permission-fix" />',text,count=1)
           path.write_text(text)
           PY
 
-      - name: Commit repair and permanent deployment wiring
+      - name: Commit repaired live build
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add .github/workflows/deploy-app-canonical-group.yml supabase/octagon-push-repair-status.json
+          git add index.html supabase/octagon-push-repair-status.json
           if git diff --cached --quiet; then
-            echo 'Octagon push repair record is unchanged.'
+            echo 'Octagon push repair is already current.'
             exit 0
           fi
-          git commit -m 'Repair Octagon push permission and VAPID key [skip ci]'
+          git commit -m 'Record repaired Octagon push setup [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:main
