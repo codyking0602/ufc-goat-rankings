@@ -89,10 +89,24 @@ try{
     await page.locator('#closeDrawer').click();
   }
 
-  const runtime=await page.evaluate(()=>({
-    bootstrapPhotoSync:window.UFC_PRODUCTION_RANKING_BOOTSTRAP?.photoSync||null,
-    finalPhotoSync:window.UFC_CALCULATED_ROSTER_PHOTO_SYNC||null
-  }));
+  const runtime=await page.evaluate(()=>{
+    const fighter='Anthony Pettis';
+    const projection=window.UFC_CALCULATED_RANKING_PROJECTION?.entryFor?.(fighter)||window.RANKING_DATA?.men?.find(row=>row.fighter===fighter)||null;
+    const boards=window.UFC_DIVISION_RANKING_PIPELINE?.latest?.boards||{};
+    const rankIn=division=>(boards[division]||[]).findIndex(row=>row.fighter===fighter)+1;
+    return{
+      bootstrapPhotoSync:window.UFC_PRODUCTION_RANKING_BOOTSTRAP?.photoSync||null,
+      finalPhotoSync:window.UFC_CALCULATED_ROSTER_PHOTO_SYNC||null,
+      bootstrapStatus:window.UFC_PRODUCTION_RANKING_BOOTSTRAP?.status||null,
+      bootstrapReportCount:window.UFC_PRODUCTION_RANKING_BOOTSTRAP?.report?.fighterCount||null,
+      batchFourteen:window.UFC_PRODUCTION_RANKING_BOOTSTRAP?.rosterBatchFourteen||window.UFC_CANONICAL_ROSTER_BATCH_FOURTEEN||null,
+      categoryAudit:window.UFC_CATEGORY_CALCULATOR_AUDIT||null,
+      factsAudit:window.UFC_CANONICAL_FIGHTER_FACTS?.audit?.()||null,
+      pettis:projection,
+      pettisCategory:window.UFC_CATEGORY_CALCULATORS?.entryFor?.(fighter)||null,
+      pettisDivisionRanks:{Lightweight:rankIn('Lightweight'),Featherweight:rankIn('Featherweight'),Welterweight:rankIn('Welterweight')}
+    };
+  });
   console.log('FIGHTER_PHOTO_RENDER_AUDIT');
   console.log(JSON.stringify({fighterCount:mappings.length,missing,decodeFailures,boardRenderFailures,profiles,...runtime,pageErrors},null,2));
 
