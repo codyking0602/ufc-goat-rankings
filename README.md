@@ -16,6 +16,13 @@ Live preview:
 - `assets/fighters/` — fighter thumbnails and profile images
 - `.github/workflows/pages.yml` — GitHub Pages deployment
 
+## Octagon Verdict knowledge rule
+
+- `octagon-verdict-knowledge.md` is the required Octagon Verdict knowledge artifact.
+- Every completed fighter or scoring update must rebuild and commit the Markdown file from the live calculated runtime.
+- Upload the refreshed Markdown file to the Octagon Verdict Custom GPT after roster changes.
+- JSON exports are optional, run only when explicitly requested, and never block a fighter addition or production completion.
+
 ## Fighter image convention
 
 Use two WebP images per fighter:
