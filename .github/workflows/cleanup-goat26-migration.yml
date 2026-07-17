@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/cleanup-goat26-migration.yml'
+  workflow_dispatch:
 
 permissions:
   contents: write
