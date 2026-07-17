@@ -113,7 +113,10 @@ jobs:
             ),
             'octagon',jsonb_build_object(
               'phase','secure-rpc-layer',
-              'current_week_start',public.octagon_week_start(now()),
+              'current_week_start',(
+                (now() at time zone 'America/Chicago')::date
+                - (extract(isodow from (now() at time zone 'America/Chicago'))::integer - 1)
+              ),
               'access_rows',(
                 select count(*)
                 from public.octagon_access oa
