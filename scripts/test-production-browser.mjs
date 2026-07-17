@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
+const EXPECTED_FIGHTERS=79;
+const MORENO='Brandon Moreno';
+const MORENO_WATCH='https://youtube.com/shorts/eKlp7eFDSTM?is=_dMar84p0EkqYXz_';
+const MORENO_FIGHT='https://youtu.be/GPrzwbgg8yU?is=M-G22YQ8u-8QVKtz';
 const expectedTopTen=[
   'Jon Jones','Georges St-Pierre','Anderson Silva','Demetrious Johnson','Islam Makhachev',
   'Alexander Volkanovski','Khabib Nurmagomedov','Matt Hughes','Kamaru Usman','Max Holloway'
@@ -13,7 +17,8 @@ const consoleErrors=[];
 page.on('pageerror',error=>pageErrors.push(error.message));
 page.on('console',message=>{if(message.type()==='error')consoleErrors.push(message.text());});
 
-const captureRuntime=()=>page.evaluate(()=>({
+const captureRuntime=()=>page.evaluate(fighter=>({
+  fighterCount:(window.RANKING_DATA.men||[]).length+(window.RANKING_DATA.women||[]).length,
   topTen:window.RANKING_DATA.men.slice(0,10).map(row=>row.fighter),
   projectionTopTen:window.UFC_CALCULATED_RANKING_PROJECTION?.men?.slice(0,10).map(row=>row.fighter)||[],
   reportTopTen:window.UFC_RANKING_PIPELINE?.latest?.menTopTen?.map(row=>row.fighter)||[],
@@ -21,6 +26,12 @@ const captureRuntime=()=>page.evaluate(()=>({
   gsp:window.RANKING_DATA.men.find(row=>row.fighter==='Georges St-Pierre'),
   amanda:window.RANKING_DATA.women.find(row=>row.fighter==='Amanda Nunes'),
   valentina:window.RANKING_DATA.women.find(row=>row.fighter==='Valentina Shevchenko'),
+  moreno:window.UFC_CALCULATED_RANKING_PROJECTION?.entryFor?.(fighter)||window.RANKING_DATA.men.find(row=>row.fighter===fighter)||null,
+  morenoCategory:window.UFC_CATEGORY_CALCULATORS?.entryFor?.(fighter)||null,
+  morenoOverride:window.DISPLAY_OVERRIDES?.[fighter]||null,
+  morenoCompare:window.COMPARE_PROFILES?.[fighter]||null,
+  morenoEra:window.UFC_ERA_FILTER_DATA?.curatedMembership?.[fighter]||null,
+  morenoFightLedgers:Object.entries(window.COMPARE_FIGHT_LEDGER||{}).filter(([,row])=>Array.isArray(row?.fighters)&&row.fighters.includes(fighter)).map(([key,row])=>({key,...row})),
   scoringRecordsLoaded:Boolean(window.UFC_CANONICAL_SCORING_RECORDS),
   legacyEngineLoaded:Boolean(window.UFC_SCORING_ENGINE),
   legacyFinalizerLoaded:Boolean(window.UFC_SCORING_OWNERSHIP_FINALIZER),
@@ -51,7 +62,7 @@ const captureRuntime=()=>page.evaluate(()=>({
     apex:window.UFC_APEX_PEAK_LIVE_BONUS||null,
     dynamicRanks:window.UFC_DYNAMIC_RANKS||null
   }
-}));
+}),MORENO);
 
 const captureBootstrap=()=>page.evaluate(()=>({
   htmlState:document.documentElement.getAttribute('data-production-ranking-bootstrap'),
@@ -77,13 +88,17 @@ try{
     throw error;
   }
   await page.waitForSelector('#menList .fighter-row',{timeout:15000});
+  await page.evaluate(()=>document.getElementById('whatsNewOverlay')?.remove());
 
   const atReady=await captureRuntime();
   await page.waitForTimeout(6500);
   const runtime=await captureRuntime();
+  const morenoDivisionIndex=runtime.flwBoard.findIndex(row=>row.fighter===MORENO);
+  const morenoDivisionRank=morenoDivisionIndex>=0?morenoDivisionIndex+1:null;
   console.log('PRODUCTION_BROWSER_PREFLIGHT');
-  console.log(JSON.stringify({atReady:{topTen:atReady.topTen,projectionTopTen:atReady.projectionTopTen,reportTopTen:atReady.reportTopTen},stable:{topTen:runtime.topTen,projectionTopTen:runtime.projectionTopTen,reportTopTen:runtime.reportTopTen},profileOwners:{snapshot:runtime.profileSnapshotOwner,rank:runtime.profileRankOwner,ovr:runtime.profileOvrOwner,inertLegacySnapshotPresent:runtime.inertLegacySnapshotPresent},division:{status:runtime.divisionReport?.status,manualGuardrails:runtime.divisionReport?.manualGuardrails,eligibilityRule:runtime.divisionReport?.eligibilityRule,boards:Object.keys(runtime.divisionReport?.boards||{})},writers:runtime.writers,pageErrors,consoleErrors},null,2));
+  console.log(JSON.stringify({atReady:{topTen:atReady.topTen,projectionTopTen:atReady.projectionTopTen,reportTopTen:atReady.reportTopTen},stable:{topTen:runtime.topTen,projectionTopTen:runtime.projectionTopTen,reportTopTen:runtime.reportTopTen},profileOwners:{snapshot:runtime.profileSnapshotOwner,rank:runtime.profileRankOwner,ovr:runtime.profileOvrOwner,inertLegacySnapshotPresent:runtime.inertLegacySnapshotPresent},division:{status:runtime.divisionReport?.status,manualGuardrails:runtime.divisionReport?.manualGuardrails,eligibilityRule:runtime.divisionReport?.eligibilityRule,boards:Object.keys(runtime.divisionReport?.boards||{})},moreno:{row:runtime.moreno,divisionRank:morenoDivisionRank,category:runtime.morenoCategory,era:runtime.morenoEra,ledgerCount:runtime.morenoFightLedgers.length},writers:runtime.writers,pageErrors,consoleErrors},null,2));
 
+  assert.equal(runtime.fighterCount,EXPECTED_FIGHTERS);
   assert.deepEqual(runtime.projectionTopTen,expectedTopTen,'calculated projection top ten');
   assert.deepEqual(runtime.reportTopTen,expectedTopTen,'ranking pipeline report top ten');
   assert.deepEqual(runtime.topTen,expectedTopTen,'rendered RANKING_DATA top ten');
@@ -105,6 +120,26 @@ try{
   assert.equal(runtime.overrideRank,undefined);
   assert.equal(runtime.overrideOvr,undefined);
 
+  assert.ok(runtime.moreno,'Moreno calculated row exists');
+  assert.equal(runtime.moreno.ufcRecord,'11-8-1');
+  assert.equal(runtime.moreno.titleFightWins,3);
+  assert.equal(runtime.moreno.adjustedTitleWins,2.65);
+  assert.equal(runtime.moreno.topFiveWins,5);
+  assert.equal(runtime.moreno.rankedWins,10);
+  assert.equal(runtime.moreno.primeRecord,'7-4-1');
+  assert.equal(runtime.moreno.roundsWonPct,62.22);
+  assert.equal(runtime.moreno.finishRatePct,54.55);
+  assert.equal(runtime.moreno.activeEliteYears,5.73);
+  assert.equal(runtime.moreno.timesFinishedPrime,1);
+  assert.equal(runtime.moreno.primaryDivision,'Flyweight');
+  assert.equal(runtime.morenoCategory?.status,'complete');
+  assert.deepEqual(runtime.morenoEra,{primary:'apex',secondary:'new-blood'});
+  assert.ok(runtime.morenoCompare?.shortCase&&runtime.morenoCompare?.counter&&runtime.morenoCompare?.edge);
+  assert.equal(runtime.morenoFightLedgers.length,4);
+  assert.equal(runtime.morenoOverride?.profileDisplayName,'Brandon “The Assassin Baby” Moreno');
+  assert.equal(runtime.morenoOverride?.watchUrl,MORENO_WATCH);
+  assert.equal(runtime.morenoOverride?.signatureFightUrl,MORENO_FIGHT);
+
   assert.equal(runtime.divisionReport?.passed,true,'automatic division ranking report passes');
   assert.equal(runtime.divisionReport?.manualGuardrails,false,'division rankings have no manual guardrails');
   assert.equal(runtime.divisionReport?.eligibilityRule,'at least one UFC win in the division');
@@ -115,6 +150,7 @@ try{
   assert.equal(runtime.lhwBoard[0]?.fighter,'Jon Jones','Jon Jones leads calculated LHW board');
   assert.equal(runtime.wwBoard[0]?.fighter,'Georges St-Pierre','GSP leads calculated WW board');
   assert.equal(runtime.flwBoard[0]?.fighter,'Demetrious Johnson','DJ leads calculated flyweight board');
+  assert.ok(morenoDivisionRank,'Moreno is included on the calculated flyweight board');
   assert.equal(runtime.openweightBoard[0]?.fighter,'Royce Gracie','Royce leads historical Openweight board');
   assert.ok(runtime.openweightBoard[0]?.stats?.ufcWins>0,'Royce Openweight row contains UFC wins');
   assert.ok(!runtime.wwBoard.some(row=>row.fighter==='Royce Gracie'),'Royce loss-only Hughes cameo is excluded from welterweight board');
@@ -129,12 +165,24 @@ try{
   assert.match(firstText,/^\s*#1/);
   assert.match(firstText,/Jon Jones/);
   assert.match(firstText,/99\s*OVR/);
-
   await firstRow.click();
   await page.waitForSelector('#drawer.open');
   const profileText=await page.locator('#fighterDetail').textContent();
   for(const text of ['UFC All-Time Rank: #1','99 OVR','Resume Snapshot','UFC Title-Fight Wins','Top-5 Wins','Prime UFC Record','Rounds Won','Active Elite Years'])assert.ok(profileText.includes(text),`profile contains ${text}`);
   assert.ok(!profileText.includes('Prime Stoppage Losses'),'legacy manual snapshot rows are not rendered');
+  await page.locator('#closeDrawer').click();
+
+  await page.evaluate(name=>window.openFighter?.(name),MORENO);
+  await page.waitForSelector('#drawer.open');
+  const morenoProfile=await page.evaluate(()=>({
+    text:document.querySelector('#fighterDetail')?.textContent||'',
+    heading:document.querySelector('#fighterDetail h2')?.textContent?.trim()||'',
+    links:[...document.querySelectorAll('#fighterDetail a')].map(link=>({text:link.textContent?.trim()||'',href:link.href}))
+  }));
+  assert.match(morenoProfile.heading,/Brandon.*The Assassin Baby.*Moreno/);
+  assert.ok(morenoProfile.text.includes('Why Not Ranked Higher?'));
+  assert.ok(morenoProfile.links.some(link=>link.href===MORENO_WATCH));
+  assert.ok(morenoProfile.links.some(link=>link.href===MORENO_FIGHT));
   await page.locator('#closeDrawer').click();
 
   await page.locator('.tab[data-view="division"]').click();
@@ -154,6 +202,8 @@ try{
   assert.match(openweightText,/11-0-1 UFC/);
 
   await page.locator('.tab[data-view="compare"]').click();
+  const compareOptions=await page.locator('#fighterA option').allTextContents();
+  assert.ok(compareOptions.some(text=>text.includes('Brandon Moreno')),'Moreno appears in Compare selector');
   const compareText=await page.locator('#compareResult').textContent();
   assert.match(compareText,/Jon Jones/);
   assert.match(compareText,/Georges St-Pierre/);
@@ -165,6 +215,9 @@ try{
 
   await page.locator('.tab[data-view="play"]').click();
   const search=page.locator('#playFighterSearch');
+  await search.fill(MORENO);
+  await page.locator(`[data-add-fighter="${MORENO}"]`).waitFor({state:'visible',timeout:10000});
+  await search.fill('');
   for(const name of expectedTopTen){
     await search.fill(name);
     const add=page.locator(`[data-add-fighter="${name}"]`);
@@ -186,8 +239,10 @@ try{
 
   assert.deepEqual(pageErrors,[],'rendered app has no uncaught page errors');
 
+  console.log('BRANDON_MORENO_PIPELINE_RESULT');
+  console.log(JSON.stringify({row:runtime.moreno,divisionRank:morenoDivisionRank,categories:runtime.morenoCategory,profile:morenoProfile,era:runtime.morenoEra,directFightLedgers:runtime.morenoFightLedgers},null,2));
   console.log('PRODUCTION_BROWSER_CERTIFICATION');
-  console.log(JSON.stringify({topTen:runtime.topTen,jonOvr:runtime.jon.overallOvr,gspOvr:runtime.gsp.overallOvr,snapshot:'calculated visibleStats rendered',compare:'calculated rank/OVR and live Octagon launcher rendered',division:'nine automatic win-qualified canonical boards rendered',openweightLeader:runtime.openweightBoard[0]?.fighter,top10Game:'100/100 for model-order list',blindResume:'calculated seven-stat matchup rendered',legacyRuntimeLoaded:false,inertLegacySnapshotPayloadIgnored:runtime.inertLegacySnapshotPresent,pageErrors:pageErrors.length},null,2));
+  console.log(JSON.stringify({fighterCount:runtime.fighterCount,topTen:runtime.topTen,jonOvr:runtime.jon.overallOvr,gspOvr:runtime.gsp.overallOvr,snapshot:'calculated visibleStats rendered',compare:'calculated rank/OVR and live Octagon launcher rendered',division:'nine automatic win-qualified canonical boards rendered',openweightLeader:runtime.openweightBoard[0]?.fighter,top10Game:'100/100 for model-order list',blindResume:'calculated seven-stat matchup rendered',legacyRuntimeLoaded:false,inertLegacySnapshotPayloadIgnored:runtime.inertLegacySnapshotPresent,pageErrors:pageErrors.length},null,2));
 }finally{
   await browser.close();
 }
