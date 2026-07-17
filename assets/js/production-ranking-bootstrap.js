@@ -44,7 +44,7 @@
     ['assets/data/canonical-roster-batch-eleven.js?v=canonical-roster-batch-eleven-20260716c-tom-aspinall-photos','data-production-clean-roster-batch-eleven'],
     ['assets/data/canonical-roster-batch-twelve.js?v=canonical-roster-batch-twelve-20260716b-quinton-jackson-photos','data-production-clean-roster-batch-twelve'],
     ['assets/data/canonical-roster-batch-thirteen.js?v=canonical-roster-batch-thirteen-20260717b-official-record','data-production-clean-roster-batch-thirteen'],
-    ['assets/data/canonical-roster-batch-fourteen.js?v=canonical-roster-batch-fourteen-20260717a-anthony-pettis','data-production-clean-roster-batch-fourteen'],
+    ['assets/data/canonical-roster-batch-fourteen.js?v=canonical-roster-batch-fourteen-20260717b-anthony-pettis-videos','data-production-clean-roster-batch-fourteen'],
     ['assets/js/ranking-pipeline.js?v=production-clean-ranking-pipeline-20260714c','data-production-clean-ranking-pipeline'],
     ['assets/js/calculated-profile-runtime.js?v=production-clean-calculated-profile-runtime-20260715c-longest-win-streak','data-production-clean-calculated-profile-runtime'],
     ['assets/js/division-ranking-pipeline.js?v=division-ranking-pipeline-20260715b-openweight-win-qualified','data-production-clean-division-ranking-pipeline'],
