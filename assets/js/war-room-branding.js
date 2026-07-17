@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='war-room-branding-20260717a';
+  const VERSION='war-room-branding-20260717b';
   const ATTRIBUTE_NAMES=['title','aria-label','placeholder'];
   const SKIP_SELECTOR='.octagon-message-body, textarea, input, script, style, noscript';
   let queued=false;
@@ -77,8 +77,18 @@
     queueMicrotask(applyBranding);
   }
 
+  function loadProductArchitecture(){
+    if(window.UFC_PRODUCT_ARCHITECTURE||document.querySelector('script[data-product-architecture-loader]'))return;
+    const script=document.createElement('script');
+    script.src='assets/js/product-architecture.js?v=product-architecture-20260717a';
+    script.dataset.productArchitectureLoader='true';
+    script.async=false;
+    document.body.appendChild(script);
+  }
+
   function start(){
     applyBranding();
+    loadProductArchitecture();
     const observer=new MutationObserver(mutations=>{
       for(const mutation of mutations){
         if(mutation.type==='characterData'){
