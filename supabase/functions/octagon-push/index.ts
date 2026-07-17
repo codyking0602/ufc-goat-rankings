@@ -49,9 +49,9 @@ Deno.serve(async (request: Request) => {
     const kind = context.kind === 'reply' ? 'reply' : 'post';
     const subscriptions = Array.isArray(context.subscriptions) ? context.subscriptions : [];
     const notification = JSON.stringify({
-      title: 'The Octagon',
-      body: kind === 'reply' ? `${senderName} replied in The Octagon.` : `${senderName} posted in The Octagon.`,
-      tag: `octagon-${messageId}`,
+      title: 'The War Room',
+      body: kind === 'reply' ? `${senderName} replied in The War Room.` : `${senderName} posted in The War Room.`,
+      tag: `war-room-${messageId}`,
       url: './?open=octagon',
     });
 
