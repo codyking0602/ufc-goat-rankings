@@ -1,9 +1,12 @@
 (function(){
   'use strict';
 
-  const VERSION='blind-rank-polish-20260716g-lineup-templates';
+  const VERSION='blind-rank-polish-20260716h-repeat-protection';
   const PACK_KEY='ufc-goat-blind-rank-pack-v2';
   const GAME_KEY='ufc-goat-blind-rank-v1';
+  const HISTORY_KEY='ufc-goat-blind-rank-history-v1';
+  const MAX_RECENT_REVEALS=15;
+  const RELAX_WINDOWS=[15,10,5,0];
   const STRIKERS=[
     'Anderson Silva','Israel Adesanya','Alex Pereira','Conor McGregor','Max Holloway','Jose Aldo','Ilia Topuria','Stephen Thompson','Edson Barboza','Anthony Pettis','Joanna Jedrzejczyk','Valentina Shevchenko','Zhang Weili','Dustin Poirier','Justin Gaethje','Chuck Liddell','Lyoto Machida','Robbie Lawler','Sean O’Malley','Michel Pereira','Darren Till','Kevin Holland','Holly Holm','Donald Cerrone','Chan Sung Jung','Cub Swanson','Derrick Lewis','Francis Ngannou','Mike Perry','Tai Tuivasa','Paulo Costa'
   ];
@@ -40,6 +43,7 @@
   ];
   const LEGACY_TIER_SCORE={legend:5000,elite:4000,contender:3000,recognizable:2000,wildcard:1000};
   let patching=false;
+  let historyState=loadHistory();
 
   function esc(value){return String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));}
   function api(){return window.UFC_BLIND_RANK;}
@@ -50,6 +54,86 @@
   function finite(value){return value!==null&&value!==''&&Number.isFinite(Number(value));}
   function weightedChoice(rows){let roll=Math.random();for(const [value,weight] of rows){roll-=weight;if(roll<=0)return value;}return rows.at(-1)?.[0]||null;}
   function chooseTemplate(){return LINEUP_TEMPLATES.find(template=>template.id===weightedChoice(LINEUP_TEMPLATES.map(template=>[template.id,template.weight])))||LINEUP_TEMPLATES[0];}
+  function fighterIds(values){return (values||[]).map(value=>typeof value==='string'?value:value?.id).filter(Boolean);}
+  function lineupSignature(values){return fighterIds(values).slice().sort().join('|');}
+
+  function loadHistory(){
+    try{
+      const parsed=JSON.parse(localStorage.getItem(HISTORY_KEY)||'null');
+      return parsed&&typeof parsed==='object'&&parsed.packs&&typeof parsed.packs==='object'?parsed:{version:1,packs:{}};
+    }catch(_error){return {version:1,packs:{}};}
+  }
+
+  function saveHistory(){
+    try{localStorage.setItem(HISTORY_KEY,JSON.stringify(historyState));}catch(_error){}
+  }
+
+  function packHistory(packId){
+    const id=packFor(packId).id;
+    const current=historyState.packs[id]||{};
+    const record={
+      recent:Array.isArray(current.recent)?current.recent.filter(Boolean).slice(-MAX_RECENT_REVEALS):[],
+      lastLineup:Array.isArray(current.lastLineup)?current.lastLineup.filter(Boolean).slice(0,5):[],
+      session:current.session&&typeof current.session==='object'?{
+        signature:String(current.session.signature||''),
+        revealedIndexes:Array.isArray(current.session.revealedIndexes)?current.session.revealedIndexes.map(Number).filter(index=>Number.isInteger(index)&&index>=0&&index<5):[]
+      }:null
+    };
+    historyState.packs[id]=record;
+    return record;
+  }
+
+  function clearHistory(packId){
+    if(packId)delete historyState.packs[packFor(packId).id];
+    else historyState={version:1,packs:{}};
+    saveHistory();
+    return packId?historySnapshot(packId):{cleared:true};
+  }
+
+  function historySnapshot(packId){
+    const record=packHistory(packId);
+    return {
+      packId:packFor(packId).id,
+      recent:record.recent.slice(),
+      recentCount:record.recent.length,
+      lastLineup:record.lastLineup.slice(),
+      activeSession:record.session?{signature:record.session.signature,revealedIndexes:record.session.revealedIndexes.slice()}:null
+    };
+  }
+
+  function beginHistorySession(packId,fighters){
+    const record=packHistory(packId);
+    const ids=fighterIds(fighters);
+    record.lastLineup=ids.slice(0,5);
+    record.session={signature:lineupSignature(ids),revealedIndexes:[]};
+    saveHistory();
+    syncCurrentReveal();
+  }
+
+  function syncCurrentReveal(){
+    const game=api();
+    const state=game?.state;
+    if(!state||state.shared||!Array.isArray(state.lineup)||!state.lineup.length)return;
+    const packId=packFor(state.packId).id;
+    const ids=fighterIds(state.lineup);
+    const signature=lineupSignature(ids);
+    const record=packHistory(packId);
+    let dirty=false;
+    if(!record.session||record.session.signature!==signature){
+      record.session={signature,revealedIndexes:[]};
+      record.lastLineup=ids.slice(0,5);
+      dirty=true;
+    }
+    const highest=Math.min(Math.max(Number(state.currentIndex)||0,0),ids.length-1);
+    for(let index=0;index<=highest;index+=1){
+      if(record.session.revealedIndexes.includes(index))continue;
+      record.session.revealedIndexes.push(index);
+      record.recent.push(ids[index]);
+      record.recent=record.recent.slice(-MAX_RECENT_REVEALS);
+      dirty=true;
+    }
+    if(dirty)saveHistory();
+  }
 
   function legacyRankingScore(fighter){
     const rank=Number(fighter?.modelRank);
@@ -132,12 +216,11 @@
     return rows;
   }
 
-  function lineup(pack){
-    const context=rankingContext(pack);
-    const rows=pool(pack,context);
-    if(rows.length<5)return[];
-    const audit=bucketedPool(pack,rows,context);
-    const working=Object.fromEntries(BUCKET_ORDER.map(bucket=>[bucket,shuffle(audit.buckets[bucket])]));
+  function buildCandidate(rows,audit,excluded){
+    const working=Object.fromEntries(BUCKET_ORDER.map(bucket=>[
+      bucket,
+      shuffle(audit.buckets[bucket].filter(fighter=>!excluded.has(fighter.id)))
+    ]));
     const template=chooseTemplate();
     const targets=template.targets();
     const picked=[];
@@ -153,10 +236,59 @@
 
     if(picked.length<5){
       const used=new Set(picked.map(fighter=>fighter.id));
-      shuffle(rows.filter(fighter=>!used.has(fighter.id))).slice(0,5-picked.length).forEach(fighter=>{
+      shuffle(rows.filter(fighter=>!excluded.has(fighter.id)&&!used.has(fighter.id))).slice(0,5-picked.length).forEach(fighter=>{
         picked.push(fighter);
         actual.push('fallback');
       });
+    }
+    return picked.length===5?{fighters:shuffle(picked),template,targets,actual}:null;
+  }
+
+  function lineup(pack){
+    const context=rankingContext(pack);
+    const rows=pool(pack,context);
+    if(rows.length<5)return[];
+    const audit=bucketedPool(pack,rows,context);
+    const history=packHistory(pack.id);
+    const previousSignature=lineupSignature(history.lastLineup);
+    let selected=null;
+    let usedWindow=0;
+    let attempts=0;
+    let blockedImmediateRepeat=false;
+
+    for(const windowSize of RELAX_WINDOWS){
+      const excluded=new Set(windowSize?history.recent.slice(-windowSize):[]);
+      if(rows.length-excluded.size<5)continue;
+      const attemptLimit=windowSize===0?48:20;
+      for(let attempt=0;attempt<attemptLimit;attempt+=1){
+        attempts+=1;
+        const candidate=buildCandidate(rows,audit,excluded);
+        if(!candidate)continue;
+        const signature=lineupSignature(candidate.fighters);
+        if(previousSignature&&signature===previousSignature){blockedImmediateRepeat=true;continue;}
+        selected=candidate;
+        usedWindow=windowSize;
+        break;
+      }
+      if(selected)break;
+    }
+
+    if(!selected){
+      const excluded=new Set();
+      selected=buildCandidate(rows,audit,excluded);
+      usedWindow=0;
+    }
+    if(!selected)return[];
+
+    if(previousSignature&&lineupSignature(selected.fighters)===previousSignature){
+      const previousIds=new Set(history.lastLineup);
+      const replacement=rows.find(fighter=>!previousIds.has(fighter.id));
+      if(replacement){
+        selected.fighters[selected.fighters.length-1]=replacement;
+        selected.actual[selected.actual.length-1]='repeat-break';
+        selected.fighters=shuffle(selected.fighters);
+        blockedImmediateRepeat=true;
+      }
     }
 
     const game=api();
@@ -164,15 +296,24 @@
       packId:pack.id,
       scoreMode:pack.scoreMode,
       rankingSource:pack.rankingSource,
-      lineupType:template.id,
-      lineupTypeName:template.name,
+      lineupType:selected.template.id,
+      lineupTypeName:selected.template.name,
       poolSize:rows.length,
       counts:audit.counts,
       percentages:audit.percentages,
-      targets,
-      actual
+      targets:selected.targets,
+      actual:selected.actual,
+      repeatProtection:{
+        configuredWindow:MAX_RECENT_REVEALS,
+        usedWindow,
+        relaxed:usedWindow<MAX_RECENT_REVEALS,
+        recentCount:history.recent.length,
+        excludedCount:usedWindow?new Set(history.recent.slice(-usedWindow)).size:0,
+        immediateRepeatBlocked:blockedImmediateRepeat,
+        attempts
+      }
     };
-    return shuffle(picked.slice(0,5));
+    return selected.fighters;
   }
 
   function auditPack(packId){
@@ -180,6 +321,7 @@
     const context=rankingContext(pack);
     const rows=pool(pack,context);
     const audit=bucketedPool(pack,rows,context);
+    const history=historySnapshot(pack.id);
     const rankRows=values=>values.map(fighter=>({id:fighter.id,name:fighter.name,score:Number(scoreForPack(pack,fighter,context).toFixed(2))}));
     return {
       packId:pack.id,
@@ -190,6 +332,7 @@
       counts:audit.counts,
       percentages:audit.percentages,
       lineupTemplates:LINEUP_TEMPLATES.map(template=>({id:template.id,name:template.name,weight:template.weight})),
+      repeatProtection:{maxRecentReveals:MAX_RECENT_REVEALS,relaxWindows:RELAX_WINDOWS.slice(),...history},
       topFive:rankRows(audit.ranked.slice(0,5)),
       bottomFive:rankRows(audit.ranked.slice(-5))
     };
@@ -218,6 +361,7 @@
     game.startGame({packId:'men-chaos',lineup:fighters,shared});
     game.state.packId=pack.id;
     game.state.shared=Boolean(shared);
+    if(!shared)beginHistorySession(pack.id,fighters);
     save(pack.id);
     patch();
   }
@@ -261,6 +405,7 @@
       if(intro)intro.textContent=pack.intro;
       if(progress)progress.textContent=pack.name;
       if(title&&!state.shared)title.textContent=pack.prompt.replace(/^./,letter=>letter.toUpperCase());
+      syncCurrentReveal();
       patchFinish();
       document.documentElement.setAttribute('data-blind-rank-refinements',VERSION);
     }finally{patching=false;}
@@ -295,9 +440,12 @@
     if(!game)return;
     game.bucketConfig=BUCKET_CONFIG.map(bucket=>({...bucket}));
     game.lineupTemplates=LINEUP_TEMPLATES.map(template=>({id:template.id,name:template.name,weight:template.weight}));
+    game.repeatProtection={historyKey:HISTORY_KEY,maxRecentReveals:MAX_RECENT_REVEALS,relaxWindows:RELAX_WINDOWS.slice()};
     game.packScoring=PACKS.map(pack=>({id:pack.id,scoreMode:pack.scoreMode,rankingSource:pack.rankingSource,division:pack.division||null}));
     game.scoreForPack=(packId,fighter)=>{const pack=packFor(packId);return scoreForPack(pack,fighter,rankingContext(pack));};
     game.bucketedPool=packId=>{const pack=packFor(packId);const context=rankingContext(pack);return bucketedPool(pack,pool(pack,context),context);};
+    game.recentHistory=historySnapshot;
+    game.clearRecentHistory=clearHistory;
     game.auditBuckets=auditPack;
     game.auditPacks=()=>PACKS.map(pack=>auditPack(pack.id));
   }
