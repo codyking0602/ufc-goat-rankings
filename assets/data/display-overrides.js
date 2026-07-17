@@ -141,5 +141,20 @@ const DISPLAY_OVERRIDES = {
     "whyNotHigher": "He does not rank higher because the championship volume and active elite window are still short. He has two UFC title-fight wins, no completed undisputed title defense, and fewer top-five wins than Stipe Miocic, Francis Ngannou, and the deepest heavyweight resumes.",
     "keyJudgmentCalls": [["Prime start","Alexander Volkov begins the connected elite heavyweight window."],["Curtis Blaydes I","the 15-second knee injury remains an official loss but is treated as a freak technical result with no normal loss penalty."],["Interim title wins","Pavlovich and the Blaydes rematch receive partial interim-title credit under the shared Championship rules."],["Ciryl Gane no contest","excluded from scoring and title-win credit; Aspinall retained the undisputed title."],["Heavyweight depth","receives a modest era-depth discount because the top end is dangerous but the full division is thinner than elite lightweight and welterweight eras."]],
     "finalTakeaway": "Aspinall is already a serious UFC heavyweight peak case: fast, technically complete, title-proven, and perfect as a finisher. He needs completed undisputed defenses and more elite wins to become a top-tier all-time heavyweight resume."
+  },
+  "Quinton Jackson": {
+    "displayName": "Quinton “Rampage” Jackson",
+    "profileDisplayName": "Quinton “Rampage” Jackson",
+    "divisionLabel": "LHW",
+    "resumeTag": "High-impact light heavyweight champion",
+    "photoUrl": "assets/fighters/quinton-jackson.webp",
+    "thumbUrl": "assets/fighters/quinton-jackson-thumb.webp",
+    "photoUnavailable": false,
+    "photoStatus": "verified",
+    "oneLiner": "The high-impact UFC light heavyweight case: knocked out Chuck Liddell for the belt, defended against Dan Henderson, and stayed in the elite title mix through the Jon Jones era.",
+    "whyRankedHere": "Rampage earns his place through two UFC title-fight wins, four top-five victories, championship-level wins over Chuck Liddell and Dan Henderson, and a strong late-2000s light heavyweight prime. His PRIDE resume is excluded, so this ranking stands on UFC work alone.",
+    "whyNotHigher": "He does not rank higher because the UFC title reign was short, the reviewed prime includes losses to Forrest Griffin, Rashad Evans, and Jon Jones, and his thirteen-fight UFC sample cannot match the championship volume of the division’s longest-reigning greats.",
+    "keyJudgmentCalls": [["Nickname","The app-facing name is Quinton “Rampage” Jackson."],["UFC-only scope","PRIDE, Bellator, WFA, and regional results are excluded from scoring."],["Prime start","The Chuck Liddell title knockout begins the connected elite UFC run."],["Prime end","The Jon Jones title loss closes the prime; Bader and Teixeira are post-prime losses."],["Lyoto Machida","The official split-decision win counts, but receives discounted Opponent Quality credit because the performance was disputed."],["Division depth","Late-2000s light heavyweight uses the neutral 1.00 depth baseline."]],
+    "finalTakeaway": "Rampage has a real UFC champion’s resume, not just star power: a title knockout, a defense over an elite challenger, and multiple ranked wins in a deep division. The ceiling is held down by short championship volume and three prime losses."
   }
 };

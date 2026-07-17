@@ -1,7 +1,7 @@
 // App-facing Watch Moment and signature-fight links only.
 (function(){
   'use strict';
-  const VERSION='royce-watch-links-20260716g-tom-aspinall';
+  const VERSION='royce-watch-links-20260716h-quinton-rampage-jackson';
 
   function loadPantojaGuard(){
     if(document.querySelector('[data-pantoja-final-roster-guard]'))return;
@@ -51,6 +51,12 @@
       watchUrl:'https://youtube.com/shorts/d3yyyrC5Uak?is=2K29DezdqgreGAgg',
       watchLabel:'Watch Moment',
       signatureFightUrl:'https://youtu.be/sb3K8AuzrMc?is=vpfnb2vD4aPgWFxt',
+      signatureFightLabel:'Watch Signature Fight'
+    },
+    'Quinton Jackson':{
+      watchUrl:'https://youtube.com/shorts/JVSaguPG9nY?is=1ShwPvQ9FoBzYOFK',
+      watchLabel:'Watch Moment',
+      signatureFightUrl:'https://youtu.be/W3Ce7KPszhU?is=Pzzqz2wACxC7VY6g',
       signatureFightLabel:'Watch Signature Fight'
     },
     'Leon Edwards':{

@@ -317,6 +317,12 @@ window.RANKING_DATA = {
       "longevity": 6.21,
       "penalty": -7.0,
       "leaderboard": "men"
+    }    ,{
+      "fighter": "Quinton Jackson",
+      "leaderboard": "men",
+      "gender": "Men",
+      "primaryDivision": "Light Heavyweight",
+      "secondaryDivision": ""
     }
   ],
   "women": [
@@ -9021,6 +9027,49 @@ window.RANKING_DATA = {
         }
       ],
       "rounds": []
+    }    ,{
+      "id": "QJ001",
+      "fighter": "Quinton Jackson",
+      "gender": "Men",
+      "primaryDivision": "Light Heavyweight",
+      "secondaryDivision": "",
+      "scope": "UFC",
+      "ufcRecord": "8-5",
+      "ufcWins": 8,
+      "ufcLosses": 5,
+      "scoredUfcFights": 13,
+      "finishWins": 3,
+      "finishRatePct": 37.5,
+      "timesFinishedPrime": 1,
+      "activeEliteYears": 4.33,
+      "primeStart": "2007-05-26",
+      "primeEnd": "2011-09-24",
+      "notes": "Quinton “Rampage” Jackson. UFC-only ledger; PRIDE, Bellator, WFA, and regional fights excluded. Shared pipeline owns all score, rank, category, and OVR outputs.",
+      "title": {
+        "normalTitleWins": 2,
+        "interimTitleWins": 0,
+        "adjustedTitleWins": 2,
+        "notes": "Won the UFC light heavyweight title over Chuck Liddell and defended it against Dan Henderson."
+      },
+      "opponents": [
+        {"opponent":"Chuck Liddell","date":"2007-05-26","division":"Light Heavyweight","context":"Reigning UFC champion","credit":1.25,"type":"Champion bonus","source":"UFC/UFCStats"},
+        {"opponent":"Dan Henderson","date":"2007-09-08","division":"Light Heavyweight","context":"Top-five title challenger","credit":1.0,"type":"Full","source":"UFC/UFCStats"},
+        {"opponent":"Wanderlei Silva","date":"2008-12-27","division":"Light Heavyweight","context":"Top-five light heavyweight","credit":0.85,"type":"Discounted elite","source":"UFC/UFCStats"},
+        {"opponent":"Lyoto Machida","date":"2010-11-20","division":"Light Heavyweight","context":"Former champion / disputed split decision","credit":0.85,"type":"Discounted elite","source":"UFC/UFCStats"},
+        {"opponent":"Keith Jardine","date":"2009-03-07","division":"Light Heavyweight","context":"Top-ten light heavyweight","credit":0.65,"type":"Ranked","source":"UFC/UFCStats"},
+        {"opponent":"Matt Hamill","date":"2011-05-28","division":"Light Heavyweight","context":"Top-ten light heavyweight","credit":0.65,"type":"Ranked","source":"UFC/UFCStats"}
+      ],
+      "rounds": [
+        {"opponent":"Chuck Liddell","date":"2007-05-26","method":"KO","roundEnded":1,"roundsCounted":1,"roundsWon":1,"basis":"Round 1 finish counted as won","confidence":"High","notes":"Won UFC title."},
+        {"opponent":"Dan Henderson","date":"2007-09-08","method":"Decision","roundEnded":5,"roundsCounted":5,"roundsWon":3,"basis":"Reviewed five-round allocation","confidence":"Medium","notes":"Successful title defense."},
+        {"opponent":"Forrest Griffin","date":"2008-07-05","method":"Decision loss","roundEnded":5,"roundsCounted":5,"roundsWon":2,"basis":"Reviewed round allocation","confidence":"Medium","notes":"Competitive title loss."},
+        {"opponent":"Wanderlei Silva","date":"2008-12-27","method":"KO","roundEnded":1,"roundsCounted":1,"roundsWon":1,"basis":"Round 1 finish counted as won","confidence":"High","notes":""},
+        {"opponent":"Keith Jardine","date":"2009-03-07","method":"Decision","roundEnded":3,"roundsCounted":3,"roundsWon":2,"basis":"Reviewed decision allocation","confidence":"High","notes":""},
+        {"opponent":"Rashad Evans","date":"2010-05-29","method":"Decision loss","roundEnded":3,"roundsCounted":3,"roundsWon":1,"basis":"Reviewed decision allocation","confidence":"High","notes":"Jackson won the third round."},
+        {"opponent":"Lyoto Machida","date":"2010-11-20","method":"Decision","roundEnded":3,"roundsCounted":3,"roundsWon":2,"basis":"Official winning cards","confidence":"High","notes":"Disputed split decision."},
+        {"opponent":"Matt Hamill","date":"2011-05-28","method":"Decision","roundEnded":3,"roundsCounted":3,"roundsWon":3,"basis":"Official decision scorecards","confidence":"High","notes":""},
+        {"opponent":"Jon Jones","date":"2011-09-24","method":"Submission loss","roundEnded":4,"roundsCounted":4,"roundsWon":0,"basis":"Finished loss","confidence":"High","notes":"Prime-ending title loss."}
+      ]
     }
   ],
   "divisionStrength": [
@@ -9781,6 +9830,9 @@ window.RANKING_DATA = {
     },
     "Mackenzie Dern": {
       "record": "6-4"
+    }    ,"Quinton Jackson": {
+      "record": "6-3",
+      "context": "Chuck Liddell 2007 → Jon Jones 2011"
     }
   }
 };
