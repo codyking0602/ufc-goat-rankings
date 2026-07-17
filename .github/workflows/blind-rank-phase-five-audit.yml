@@ -10,6 +10,7 @@ on:
       - 'assets/data/keep-cut-category-ratings.js'
       - 'assets/js/blind-rank.js'
       - 'assets/js/blind-rank-phase-five-tuning.js'
+      - 'scripts/apply-blind-rank-phase-five-engine-tuning.py'
       - 'scripts/apply-blind-rank-phase-five-loader.py'
       - 'scripts/run-blind-rank-phase-five-audit.mjs'
       - '.github/workflows/blind-rank-phase-five-audit.yml'
@@ -29,8 +30,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Apply Phase 5 thin-pool tuning
+        run: python3 scripts/apply-blind-rank-phase-five-engine-tuning.py
       - name: Apply Phase 5 production loader
         run: python3 scripts/apply-blind-rank-phase-five-loader.py
+      - name: Validate tuned JavaScript
+        run: |
+          node --check assets/js/blind-rank.js
+          node --check assets/data/blind-rank-category-architecture.js
+          node --check assets/data/blind-rank-expansion-batch-one.js
+          node --check assets/js/blind-rank-phase-five-tuning.js
       - name: Install browser audit dependency
         run: |
           npm install --no-save playwright@1.55.0
@@ -48,11 +57,11 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html assets/data/blind-rank-phase-five-report.json assets/data/blind-rank-phase-five-report.md
+          git add index.html assets/js/blind-rank.js assets/data/blind-rank-category-architecture.js assets/data/blind-rank-phase-five-report.json assets/data/blind-rank-phase-five-report.md
           if git diff --cached --quiet; then
             echo 'Audited build and report unchanged.'
             exit 0
           fi
-          git commit -m 'Publish Blind Rank Phase 5 audited build [skip ci]'
+          git commit -m 'Publish Blind Rank Phase 5 tuned build [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:main
