@@ -1,0 +1,133 @@
+name: Run Quinton Rampage Jackson Integration
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply production integration and watch links
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import textwrap
+
+          source = Path('.github/workflows/integrate-quinton-jackson.yml').read_text()
+          marker = "python3 - <<'PY'\n"
+          body = source.split(marker, 1)[1].split("\n          PY", 1)[0]
+          exec(textwrap.dedent(body), {})
+
+          p = Path('assets/data/royce-watch-links.js')
+          s = p.read_text()
+          s = s.replace('royce-watch-links-20260716g-tom-aspinall', 'royce-watch-links-20260716h-quinton-rampage-jackson')
+          if "'Quinton Jackson':{" not in s:
+              anchor = "    'Leon Edwards':{\n"
+              block = (
+                  "    'Quinton Jackson':{\n"
+                  "      watchUrl:'https://youtube.com/shorts/JVSaguPG9nY?is=1ShwPvQ9FoBzYOFK',\n"
+                  "      watchLabel:'Watch Moment',\n"
+                  "      signatureFightUrl:'https://youtu.be/W3Ce7KPszhU?is=Pzzqz2wACxC7VY6g',\n"
+                  "      signatureFightLabel:'Watch Signature Fight'\n"
+                  "    },\n"
+              )
+              s = s.replace(anchor, block + anchor)
+          p.write_text(s)
+
+          p = Path('index.html')
+          s = p.read_text()
+          s = s.replace('royce-watch-links-20260715f-weidman', 'royce-watch-links-20260716h-quinton-rampage-jackson')
+          p.write_text(s)
+          PY
+
+      - name: Validate production sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check assets/data/ranking-data.js
+          node --check assets/data/display-overrides.js
+          node --check assets/data/canonical-roster-batch-twelve.js
+          node --check assets/data/royce-watch-links.js
+          node --check assets/js/production-ranking-bootstrap.js
+          test "$(grep -c '"fighter": "Quinton Jackson"' assets/data/ranking-data.js)" -ge 2
+          grep -q '"id": "QJ001"' assets/data/ranking-data.js
+          grep -q 'Quinton “Rampage” Jackson' assets/data/display-overrides.js
+          grep -q 'EXPECTED_FIGHTER_COUNT=78' assets/js/production-ranking-bootstrap.js
+          grep -q 'canonical-roster-batch-twelve-20260716b-quinton-jackson-photos' assets/js/production-ranking-bootstrap.js
+          grep -q "photoStatus:'verified'" assets/data/canonical-roster-batch-twelve.js
+          grep -q 'JVSaguPG9nY' assets/data/royce-watch-links.js
+          grep -q 'W3Ce7KPszhU' assets/data/royce-watch-links.js
+          grep -q 'royce-watch-links-20260716h-quinton-rampage-jackson' index.html
+          test -s assets/fighters/quinton-jackson.webp
+          test -s assets/fighters/quinton-jackson-thumb.webp
+          grep -q 'app-build.*quinton-rampage-jackson-78' index.html
+
+      - name: Run production browser audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm init -y >/dev/null 2>&1
+          npm install --no-save playwright@1.52.0 >/dev/null 2>&1
+          npx playwright install --with-deps chromium >/dev/null 2>&1
+          python3 -m http.server 4173 >/tmp/ufc-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          node - <<'NODE'
+          const fs=require('fs'),{chromium}=require('playwright');
+          (async()=>{
+            const browser=await chromium.launch({headless:true});
+            const page=await browser.newPage();
+            const errors=[];
+            page.on('pageerror',e=>errors.push(String(e)));
+            await page.goto('http://127.0.0.1:4173/index.html?audit=quinton-jackson',{waitUntil:'load',timeout:120000});
+            await page.waitForFunction(()=>['ready','error'].includes(window.UFC_PRODUCTION_RANKING_BOOTSTRAP?.status),null,{timeout:120000});
+            const x=await page.evaluate(()=>{
+              const b=window.UFC_PRODUCTION_RANKING_BOOTSTRAP||{};
+              const row=[...(window.RANKING_DATA?.men||[]),...(window.RANKING_DATA?.women||[])].find(r=>r.fighter==='Quinton Jackson');
+              const links=window.DISPLAY_OVERRIDES?.['Quinton Jackson']||{};
+              return {
+                boot:{status:b.status,error:b.error||null,report:b.report||null,divisionReport:b.divisionReport||null},
+                row,
+                ov:(window.OCTAGON_VERDICT_DATA?.fighters||[]).find(r=>r.name==='Quinton Jackson')||null,
+                category:window.UFC_CATEGORY_CALCULATORS?.entryFor?.('Quinton Jackson')||null,
+                photoSync:window.UFC_CALCULATED_ROSTER_PHOTO_SYNC||null,
+                links:{watchUrl:links.watchUrl||'',signatureFightUrl:links.signatureFightUrl||''},
+                copy:{shortCase:window.COMPARE_PROFILES?.['Quinton Jackson']?.shortCase||'',whyRankedHere:links.whyRankedHere||'',whyNotHigher:links.whyNotHigher||'',finalTakeaway:links.finalTakeaway||''}
+              };
+            });
+            if(x.boot.status!=='ready'||x.boot.report?.fighterCount!==78)throw Error('bootstrap '+JSON.stringify(x.boot));
+            if(!x.row||x.category?.status!=='complete')throw Error('Quinton calculation missing '+JSON.stringify(x.category));
+            if(!x.links.watchUrl.includes('JVSaguPG9nY')||!x.links.signatureFightUrl.includes('W3Ce7KPszhU'))throw Error('watch links missing '+JSON.stringify(x.links));
+            if(errors.length)throw Error(errors.join(' | '));
+            let o=x.ov||{slug:'quinton-jackson',name:'Quinton Jackson',group:'men',rank:x.row.rank,appOvr:x.row.overallOvr,totalScore:x.row.totalScore,categories:{championship:x.row.championship,opponentQuality:x.row.opponentQuality,primeDominance:x.row.primeDominance,longevity:x.row.longevity,apexPeak:x.row.apexPeak,lossPenalty:x.row.penalty,divisionEraDepth:x.row.eraDepthAdjustment},weightedScoreBreakdown:x.row.weightedScoreBreakdown,division:x.row.primaryDivision,tag:x.row.resumeTag||'High-impact light heavyweight champion',ufcRecord:x.row.ufcRecord,titleFightWins:x.row.titleFightWins,adjustedTitleWins:x.row.adjustedTitleWins,topFiveWins:x.row.topFiveWins,rankedWins:x.row.rankedWins,primeRecord:x.row.primeRecord,roundsWonPct:x.row.roundsWonPct,finishRatePct:x.row.finishRatePct,activeEliteYears:x.row.activeEliteYears,timesFinishedPrime:x.row.timesFinishedPrime,...x.copy};
+            o={...o,displayName:'Quinton “Rampage” Jackson',photoStatus:'verified',photoUrl:'assets/fighters/quinton-jackson.webp',thumbUrl:'assets/fighters/quinton-jackson-thumb.webp',watchUrl:x.links.watchUrl,signatureFightUrl:x.links.signatureFightUrl};
+            fs.writeFileSync('assets/data/octagon-verdict/fighters/quinton-jackson.json',JSON.stringify(o)+'\n');
+            fs.mkdirSync('assets/data/octagon-verdict/audits',{recursive:true});
+            fs.writeFileSync('assets/data/octagon-verdict/audits/quinton-jackson-runtime-audit.json',JSON.stringify({generatedAt:new Date().toISOString(),fighterCount:x.boot.report.fighterCount,productionStatus:x.boot.status,categoryStatus:x.category.status,row:x.row,divisionReport:x.boot.divisionReport,photoSync:x.photoSync,watchLinks:x.links,pageErrors:errors},null,2)+'\n');
+            console.log(JSON.stringify({rank:o.rank,ovr:o.appOvr,totalScore:o.totalScore,links:x.links}));
+            await browser.close();
+          })().catch(e=>{console.error(e);process.exit(1)});
+          NODE
+          node scripts/rebuild-octagon-verdict-index.mjs
+
+      - name: Commit verified production output
+        shell: bash
+        run: |
+          set -euo pipefail
+          node -e "const x=require('./assets/data/octagon-verdict/fighters/quinton-jackson.json');if(!x.rank||!x.appOvr||!Number.isFinite(x.totalScore)||x.photoStatus!=='verified'||!x.watchUrl||!x.signatureFightUrl)throw Error('invalid Quinton object');console.log(JSON.stringify({rank:x.rank,ovr:x.appOvr,totalScore:x.totalScore}))"
+          node -e "const x=require('./assets/data/octagon-verdict/index.json');if(x.fighterCount!==78||!x.fighters.some(f=>f.slug==='quinton-jackson'))throw Error('index missing Quinton')"
+          rm -rf node_modules package.json package-lock.json
+          rm -f .github/workflows/integrate-quinton-jackson.yml .github/workflows/run-quinton-integration.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Complete Quinton Rampage Jackson production integration'
+          git push origin main
