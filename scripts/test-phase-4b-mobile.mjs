@@ -4,7 +4,18 @@ import { chromium } from 'playwright';
 
 const reportPath='/tmp/phase-4b-mobile-report.json';
 const screenshotPath='/tmp/phase-4b-mobile-preview.png';
-const report={passed:false,stage:'boot',memberCount:0,samples:[],viewChanges:[],consoleErrors:[],error:null};
+const report={
+  passed:false,
+  stage:'boot',
+  memberCount:0,
+  samples:[],
+  delayedSamples:[],
+  viewChanges:[],
+  directoryReplacements:0,
+  profileReplacements:0,
+  consoleErrors:[],
+  error:null
+};
 let browser;
 let page;
 
@@ -35,25 +46,50 @@ try{
   report.stage='inject-community-fixture';
   await page.evaluate(async fixtureMembers=>{
     const identity={memberToken:'phase-4b-preview-token',member:fixtureMembers[0],group:{code:'GOAT26',members:fixtureMembers,me:fixtureMembers[0]}};
+    const picksMembers=fixtureMembers.map((member,index)=>({
+      ...member,
+      points:Math.max(0,60-index*7),
+      score:Math.max(0,60-index*7),
+      correct:Math.max(0,14-index),
+      picks_made:18,
+      picks_count:18,
+      event_wins:index===0?1:0
+    }));
     const originalPlay=window.UFC_PLAY_PROFILE||{};
     const originalApp=window.UFC_APP_PROFILE||{};
-    const originalClient=originalPlay.client||null;
     const client={
-      ...(originalClient||{}),
       rpc:async(name,args)=>{
         if(name==='app_profile_community_snapshot')return{data:{ok:true,group:{code:'GOAT26',name:'Octagon HQ',member_count:fixtureMembers.length},me_id:'m1',members:fixtureMembers},error:null};
+        if(name==='app_profile_group_snapshot')return{data:{ok:true,group:{code:'GOAT26',name:'Octagon HQ'},me:fixtureMembers[0],members:fixtureMembers},error:null};
         if(name==='app_profile_set_top_ten')return{data:{ok:true,member_id:'m1',top_ten:args?.p_top_ten||[],top_ten_updated_at:new Date().toISOString()},error:null};
-        return originalClient?.rpc?originalClient.rpc(name,args):{data:null,error:null};
+        if(name==='picks_group_snapshot')return{data:{group:{code:'GOAT26',season:{correct_points:4}},me:picksMembers[0],members:picksMembers,events:[]},error:null};
+        if(name==='picks_public_events')return{data:[],error:null};
+        if(name==='picks_social_snapshot')return{data:{group:{me:{id:'m1'},members:[]}},error:null};
+        return{data:null,error:null};
       }
     };
+    window.__phase4bIdentity=identity;
     window.UFC_PLAY_PROFILE={...originalPlay,client,resolve:async()=>identity};
     window.UFC_APP_PROFILE={...originalApp,group:identity.group,resolve:async()=>identity};
+    window.dispatchEvent(new CustomEvent('ufc-play-profile-ready',{detail:identity}));
+    await window.UFC_PICKS_SEASON_LOOP?.refresh?.();
     await window.UFC_COMMUNITY_PROFILES.refresh();
   },members);
 
   report.stage='directory';
   await page.waitForSelector('#communityProfilesMount .community-directory',{timeout:30000});
   await page.waitForFunction(()=>document.querySelectorAll('[data-community-member]').length===6,null,{timeout:30000});
+  await page.waitForTimeout(500);
+
+  await page.evaluate(()=>{
+    const mount=document.getElementById('communityProfilesMount');
+    window.__phase4bDirectoryNode=mount?.querySelector('.community-directory')||null;
+    window.__phase4bDirectoryReplacements=0;
+    window.__phase4bDirectoryObserver=new MutationObserver(records=>{
+      if(records.some(record=>record.type==='childList'))window.__phase4bDirectoryReplacements+=1;
+    });
+    if(mount)window.__phase4bDirectoryObserver.observe(mount,{childList:true});
+  });
 
   for(let index=0;index<16;index+=1){
     report.samples.push(await page.evaluate(()=>({
@@ -67,7 +103,37 @@ try{
   }
   assert(report.samples.every(sample=>sample.home&&!sample.picks),'Home did not remain the only active destination.');
   assert(report.samples.every(sample=>sample.directories===1),'Community directory was duplicated or removed.');
-  assert(report.samples.every(sample=>sample.members===6),'Member roster changed during the stability window.');
+  assert(report.samples.every(sample=>sample.members===6),'Member roster changed during the initial stability window.');
+
+  report.stage='event-storm';
+  for(let index=0;index<8;index+=1){
+    await page.evaluate(index=>{
+      window.dispatchEvent(new CustomEvent('ufc-picks-season-updated',{detail:window.UFC_PICKS_SEASON_LOOP?.data||null}));
+      window.dispatchEvent(new CustomEvent('ufc-play-profile-ready',{detail:window.__phase4bIdentity}));
+      if(index%2===0)window.dispatchEvent(new CustomEvent('ufc-app-profile-updated',{detail:{identity:window.__phase4bIdentity}}));
+    },index);
+    await page.waitForTimeout(180);
+  }
+  await page.waitForTimeout(1200);
+  assert(await page.evaluate(()=>window.__phase4bDirectoryNode===document.querySelector('#communityProfilesMount .community-directory')),'Directory node was replaced during unchanged live updates.');
+  assert.equal(await page.evaluate(()=>window.__phase4bDirectoryReplacements),0,'Directory was rebuilt during unchanged live updates.');
+
+  report.stage='delayed-stability';
+  await page.waitForTimeout(32000);
+  await page.evaluate(()=>{
+    window.dispatchEvent(new CustomEvent('octagon-hq:view-change',{detail:{destination:'home',view:'home'}}));
+    window.dispatchEvent(new CustomEvent('octagon-hq:soft-refresh',{detail:{source:'phase-4b-delayed-test'}}));
+  });
+  await page.waitForTimeout(1400);
+  report.delayedSamples.push(await page.evaluate(()=>({
+    home:document.querySelector('#home')?.classList.contains('active-view')||false,
+    directories:document.querySelectorAll('#communityProfilesMount .community-directory').length,
+    members:document.querySelectorAll('[data-community-member]').length,
+    sameNode:window.__phase4bDirectoryNode===document.querySelector('#communityProfilesMount .community-directory'),
+    replacements:window.__phase4bDirectoryReplacements
+  })));
+  assert(report.delayedSamples.every(sample=>sample.home&&sample.directories===1&&sample.members===6),'Directory did not survive the delayed stability window.');
+  assert(report.delayedSamples.every(sample=>sample.sameNode&&sample.replacements===0),'Directory was replaced after the delayed refresh window.');
 
   report.stage='public-profile-open';
   report.memberCount=await page.locator('[data-community-member]').count();
@@ -78,6 +144,26 @@ try{
   assert((await page.locator('.community-profile-card').count())>=5,'Public profile activity sections are incomplete.');
   assert.equal((await page.locator('.community-profile-title strong').first().textContent())?.trim(),'Shane','Wrong public profile opened.');
 
+  await page.evaluate(()=>{
+    const panel=document.querySelector('.community-profile-panel');
+    window.__phase4bProfileNode=panel;
+    window.__phase4bProfileReplacements=0;
+    window.__phase4bProfileObserver=new MutationObserver(records=>{
+      if(records.some(record=>record.type==='childList'))window.__phase4bProfileReplacements+=1;
+    });
+    if(panel)window.__phase4bProfileObserver.observe(panel,{childList:true});
+  });
+  for(let index=0;index<4;index+=1){
+    await page.evaluate(()=>{
+      window.dispatchEvent(new CustomEvent('ufc-picks-season-updated',{detail:window.UFC_PICKS_SEASON_LOOP?.data||null}));
+      window.dispatchEvent(new CustomEvent('ufc-play-profile-ready',{detail:window.__phase4bIdentity}));
+    });
+    await page.waitForTimeout(220);
+  }
+  await page.waitForTimeout(900);
+  assert(await page.evaluate(()=>window.__phase4bProfileNode===document.querySelector('.community-profile-panel')),'Open member profile panel was replaced during unchanged live updates.');
+  assert.equal(await page.evaluate(()=>window.__phase4bProfileReplacements),0,'Open member profile content was rebuilt during unchanged live updates.');
+
   report.stage='public-profile-close';
   await page.locator('[data-community-close]').first().click();
   await page.waitForSelector('.community-profile-overlay',{state:'detached',timeout:10000});
@@ -86,6 +172,8 @@ try{
   report.stage='final-stability';
   await page.waitForTimeout(1500);
   assert.equal(await page.locator('#communityProfilesMount .community-directory').count(),1,'Directory did not remain stable after closing a profile.');
+  report.directoryReplacements=await page.evaluate(()=>window.__phase4bDirectoryReplacements||0);
+  report.profileReplacements=await page.evaluate(()=>window.__phase4bProfileReplacements||0);
   const featureErrors=report.consoleErrors.filter(message=>/community-profiles|fresh-home-launch|SyntaxError|ReferenceError/i.test(message));
   assert.deepEqual(featureErrors,[],'Phase 4B emitted a browser error.');
   report.viewChanges=await page.evaluate(()=>window.__phase4bViewChanges);
@@ -96,6 +184,8 @@ try{
   report.error={message:error?.message||String(error),stack:error?.stack||null};
   if(page){
     try{report.viewChanges=await page.evaluate(()=>window.__phase4bViewChanges||[]);}catch(_error){}
+    try{report.directoryReplacements=await page.evaluate(()=>window.__phase4bDirectoryReplacements||0);}catch(_error){}
+    try{report.profileReplacements=await page.evaluate(()=>window.__phase4bProfileReplacements||0);}catch(_error){}
     try{await page.screenshot({path:screenshotPath,fullPage:true});}catch(_error){}
   }
   throw error;
