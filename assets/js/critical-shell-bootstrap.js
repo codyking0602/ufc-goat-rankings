@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='critical-shell-bootstrap-20260717a';
+  const VERSION='critical-shell-bootstrap-20260717b-immediate';
   const ARCH_VERSION='product-architecture-20260717g-performance';
   let started=false;
 
@@ -94,13 +94,13 @@
   function recover(){
     installStyle();
     normalizeHeader();
-    normalizeNavigation();
-    normalizeViews();
     if(window.UFC_PRODUCT_ARCHITECTURE?.version===ARCH_VERSION){
       window.UFC_PRODUCT_ARCHITECTURE.apply?.();
-    }else{
-      loadScript('criticalProductArchitecture','assets/js/product-architecture.js?v=product-architecture-20260717g-critical');
+      return;
     }
+    normalizeNavigation();
+    normalizeViews();
+    loadScript('criticalProductArchitecture','assets/js/product-architecture.js?v=product-architecture-20260717g-critical');
     loadScript('criticalHomeDashboard','assets/js/home-dashboard.js?v=home-dashboard-20260717d-critical');
   }
 
@@ -114,6 +114,6 @@
   }
 
   window.UFC_CRITICAL_SHELL={version:VERSION,recover};
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
-  else start();
+  if(document.body)start();
+  else document.addEventListener('DOMContentLoaded',start,{once:true});
 })();
