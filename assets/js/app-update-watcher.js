@@ -3,7 +3,6 @@
 
   const VERSION='app-update-watcher-20260718f-build-aware-refresh';
   const WHAT_CHANGED_SRC='assets/js/what-changed.js?v=what-changed-20260718b-compact';
-  const PROFILE_BRIDGE_SRC='assets/js/activity-profile-phase3-bridge.js?v=activity-profile-phase3-bridge-20260718a';
   const RESTORE_KEY='ufc-goat-manual-refresh-v1';
   const LEGACY_KEYS=['ufc-goat-update-restore-v1','ufc-goat-update-target-v1','ufc-goat-manual-refresh-progress-v1'];
   let playSupportScheduled=false;
@@ -99,7 +98,7 @@
   function bindDeferredSupport(){if(document.documentElement.dataset.playSupportBinding===VERSION)return;document.documentElement.dataset.playSupportBinding=VERSION;window.addEventListener('octagon-hq:view-change',event=>{if(event.detail?.destination==='play')schedulePlaySupport();});document.addEventListener('click',event=>{if(event.target.closest?.('[data-open-game="blind"],[data-play-mode="blind"],[data-five-round-replay]'))loadBlindSupport();if(event.target.closest?.('[data-kc-challenge],[data-br-challenge],[data-five-round-share]'))loadChallengeCompat();},true);}
 
   LEGACY_KEYS.forEach(key=>{try{sessionStorage.removeItem(key);}catch(_error){}});
-  cleanRefreshState();injectStyles();installButton();bindDeferredSupport();loadScript('activityProfilePhase3Bridge',PROFILE_BRIDGE_SRC);window.setTimeout(restoreState,100);
+  cleanRefreshState();injectStyles();installButton();bindDeferredSupport();window.setTimeout(restoreState,100);
   window.addEventListener('octagon-hq:what-changed-seen',syncUnread);
   window.addEventListener('storage',event=>{if(event.key===changeSource().seenStorageKey)syncUnread();});
 
