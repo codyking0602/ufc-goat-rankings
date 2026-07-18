@@ -8,6 +8,7 @@ on:
       - 'supabase/app-profile-photo-upload-phase.sql'
       - 'assets/js/app-profile.js'
       - 'assets/js/profile-activity.js'
+      - 'assets/js/find-leader-retention.js'
       - 'assets/js/product-architecture.js'
   workflow_dispatch:
 
@@ -27,15 +28,18 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Validate shared profile release
+      - name: Validate shared profile and retention release
         run: |
           node --check assets/js/app-profile.js
           node --check assets/js/profile-activity.js
+          node --check assets/js/find-leader-retention.js
           node --check assets/js/picks-social-retention.js
           node --check assets/js/picks-settings-admin-cleanup.js
           node --check assets/js/profile-avatar-sync.js
           node --check assets/js/product-polish.js
           node --check assets/js/product-architecture.js
+          grep -Fq 'find-leader-retention-20260718b-phase-2b-final' assets/js/find-leader-retention.js
+          grep -Fq "play_daily_leaderboard" assets/js/find-leader-retention.js
           grep -Fq 'add column if not exists profile_photo_data text' supabase/app-profile-photo-upload-phase.sql
           grep -Fq 'create or replace function public.app_profile_set_photo' supabase/app-profile-photo-upload-phase.sql
           grep -Fq "profile_photo_data',v_member.profile_photo_data" supabase/app-profile-photo-upload-phase.sql
@@ -94,8 +98,10 @@ jobs:
             ),
             'snapshot_rpc',to_regprocedure('public.app_profile_group_snapshot(text)') is not null,
             'photo_rpc',to_regprocedure('public.app_profile_set_photo(text,text)') is not null,
+            'daily_leaderboard_rpc',to_regprocedure('public.play_daily_leaderboard(text,date,integer)') is not null,
             'anon_snapshot',has_function_privilege('anon','public.app_profile_group_snapshot(text)','EXECUTE'),
             'anon_photo',has_function_privilege('anon','public.app_profile_set_photo(text,text)','EXECUTE'),
+            'anon_daily_leaderboard',has_function_privilege('anon','public.play_daily_leaderboard(text,date,integer)','EXECUTE'),
             'photo_profiles',(
               select count(*)
               from public.pick_group_members gm
@@ -114,10 +120,12 @@ jobs:
               audit.get('column_exists'),
               audit.get('snapshot_rpc'),
               audit.get('photo_rpc'),
+              audit.get('daily_leaderboard_rpc'),
               audit.get('anon_snapshot'),
               audit.get('anon_photo'),
+              audit.get('anon_daily_leaderboard'),
           ]):
-              raise RuntimeError(f'Profile photo audit failed: {audit}')
+              raise RuntimeError(f'Profile and daily retention audit failed: {audit}')
 
           status={}
           if status_path.exists():
@@ -134,9 +142,18 @@ jobs:
               'status':'active',
               'sources':['play-local-ledger','find-leader-history','picks-room-snapshots','war-room-snapshot'],
           }
+          status['find_leader_retention']={
+              'phase':'phase-2b',
+              'status':'active',
+              'history_days':35,
+              'reset_timezone':'America/Chicago',
+              'official_score_rule':'first-completed-attempt',
+              'best_score_rule':'replays-can-improve-best-only',
+              'history_source':'play_daily_leaderboard',
+          }
           status['checked_at']=datetime.now(timezone.utc).isoformat()
           status_path.write_text(json.dumps(status,indent=2,sort_keys=True)+'\n')
-          print('Shared profile photo and Phase 2A activity release verified.')
+          print('Shared profile and Phase 2B Find the Leader retention verified.')
           PY
 
       - name: Wire shared profile activity into the live page
@@ -151,7 +168,7 @@ jobs:
               'app-profile.js':'app-profile-20260718b-photo-upload',
               'picks-social-retention.js':'picks-social-retention-20260718f-shared-profile',
               'picks-settings-admin-cleanup.js':'picks-settings-admin-cleanup-20260718e-admin-only',
-              'product-architecture.js':'product-architecture-20260718k-phase-2a-profile',
+              'product-architecture.js':'product-architecture-20260718l-phase-2b-retention',
           }
           for filename,version in versions.items():
               pattern=rf'assets/js/{re.escape(filename)}\?v=[^"\s]+'
@@ -162,7 +179,7 @@ jobs:
 
           text=re.sub(
               r'<meta name="app-build" content="[^"]+" />',
-              '<meta name="app-build" content="20260718-phase-2a-activity-profile" />',
+              '<meta name="app-build" content="20260718-phase-2b-find-leader-retention" />',
               text,
               count=1,
           )
@@ -172,12 +189,12 @@ jobs:
       - name: Commit deployment record
         run: |
           if git diff --quiet -- index.html supabase/goat26-deployment-status.json; then
-            echo 'Shared profile activity deployment record is unchanged.'
+            echo 'Shared profile and retention deployment record is unchanged.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
           git add index.html supabase/goat26-deployment-status.json
-          git commit -m 'Record Phase 2A activity profile deployment [skip ci]'
+          git commit -m 'Record Phase 2B Find the Leader retention deployment [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:main
