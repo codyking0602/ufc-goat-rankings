@@ -1,4 +1,4 @@
-# Deploy trigger: Shogun profile and Moment repair 2026-07-16
+# Deploy trigger: Consolidated single-shell release 2026-07-18
 name: Deploy UFC GOAT Rankings
 
 on:
@@ -8,6 +8,8 @@ on:
       - 'index.html'
       - '*.html'
       - 'assets/**'
+      - 'manifest.webmanifest'
+      - 'sw.js'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
