@@ -1,8 +1,8 @@
 const VERSION='octagon-hq-sw-20260718c-phase-4a';
-const CACHE_NAME='octagon-hq-static-v1';
+const CACHE_NAME='octagon-hq-static-v2';
 const LEGACY_PREFIX='octagon-hq-static-';
 const CORE=['./','./index.html','./manifest.webmanifest'];
-const FORCE_NETWORK=/\/assets\/(?:js\/(?:app-notification-surface-fix|app-update-watcher|product-architecture|native-app-shell)\.js|css\/native-app-shell\.css)$/i;
+const FORCE_NETWORK=/\/assets\/(?:js\/(?:app-notification-surface-fix|app-update-watcher|product-architecture|native-app-shell|native-app-shell-stability|community-profiles|fresh-home-launch)\.js|css\/(?:native-app-shell|native-app-shell-stability|community-profiles)\.css)$/i;
 
 self.addEventListener('install',event=>{
   event.waitUntil((async()=>{
@@ -16,6 +16,7 @@ self.addEventListener('activate',event=>{
   event.waitUntil((async()=>{
     const target=await caches.open(CACHE_NAME);
     const keys=await caches.keys();
+    const replacedLegacy=keys.some(key=>key.startsWith(LEGACY_PREFIX)&&key!==CACHE_NAME);
     for(const key of keys){
       if(!key.startsWith(LEGACY_PREFIX)||key===CACHE_NAME)continue;
       const source=await caches.open(key);
@@ -32,6 +33,10 @@ self.addEventListener('activate',event=>{
     const stale=await target.keys();
     await Promise.all(stale.filter(request=>FORCE_NETWORK.test(new URL(request.url).pathname)).map(request=>target.delete(request)));
     await self.clients.claim();
+    if(replacedLegacy){
+      const windows=await self.clients.matchAll({type:'window',includeUncontrolled:true});
+      await Promise.allSettled(windows.map(client=>client.navigate?.(client.url)));
+    }
   })());
 });
 
@@ -67,6 +72,10 @@ async function instantNavigation(request,event){
 
 async function cacheFirst(request){
   const cache=await caches.open(CACHE_NAME);
+  const url=new URL(request.url);
+  if(FORCE_NETWORK.test(url.pathname)){
+    return (await updateCache(request))||await cache.match(request)||Response.error();
+  }
   const cached=await cache.match(request);
   if(cached)return cached;
   const response=await fetch(request);
@@ -114,5 +123,5 @@ self.addEventListener('notificationclick',event=>{
 });
 
 self.addEventListener('message',event=>{
-  if(event.data?.type==='OCTAGON_SW_VERSION')event.source?.postMessage?.({type:'OCTAGON_SW_VERSION',version:VERSION});
+  if(event.data?.type==='OCTAGON_SW_VERSION')event.source?.postMessage?.({type:'OCTAGON_SW_VERSION',version:VERSION,cache:CACHE_NAME});
 });
