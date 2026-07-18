@@ -1,295 +1,355 @@
 (function(){
   'use strict';
 
-  const VERSION='octagon-hq-shell-20260717c';
-  const CANONICAL_CODE='GOAT26';
-  const PROFILE_CACHE_KEY='ufc-app:profile-cache:goat26';
-  const MEMBER_TOKEN_KEY=`ufc-picks:group:${CANONICAL_CODE}`;
-  const DISPLAY_NAME_KEY='ufc-picks:display-name';
-  const BRAND_EYEBROW='UFC RANKINGS · GAMES · PICKS · COMMUNITY';
-  const BRAND_TITLE='Octagon HQ';
-  const BRAND_SUBTITLE='Rankings, games, picks, and UFC conversation.';
-  let rendering=false;
-  let branding=false;
+  const VERSION='app-shell-20260718a-single-owner';
+  const DESTINATIONS=[
+    {key:'home',label:'Home',view:'home'},
+    {key:'rankings',label:'Rankings',view:'men'},
+    {key:'play',label:'Play',view:'play'},
+    {key:'picks',label:'Picks',view:'picks'},
+    {key:'war-room',label:'War Room',view:'octagon'},
+    {key:'intelligence',label:'Intelligence',view:'compare'}
+  ];
+  const RANKING_VIEWS=['men','women','division','categories'];
+  const RANKING_TABS=[
+    {view:'men',label:'Overall'},
+    {view:'women',label:'Women'},
+    {view:'division',label:'Divisions'},
+    {view:'categories',label:'Categories'}
+  ];
+
+  let currentDestination='home';
+  let currentRankingView='men';
+  let eventsBound=false;
+  let playSupportLoaded=false;
+  let warObserver=null;
+  let normalizingWar=false;
 
   const text=value=>String(value??'').trim();
-  const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-  }[char]));
-  const initials=value=>text(value).split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase()||'UFC';
-  const get=key=>{try{return localStorage.getItem(key)||'';}catch(_error){return'';}};
-  const set=(key,value)=>{try{localStorage.setItem(key,value);}catch(_error){}};
-
-  function readCache(){
-    try{
-      const value=JSON.parse(get(PROFILE_CACHE_KEY)||'null');
-      return value&&text(value.display_name)?value:null;
-    }catch(_error){return null;}
-  }
-
-  function cacheMember(member){
-    if(!member||!text(member.display_name))return null;
-    const value={
-      id:text(member.id),
-      display_name:text(member.display_name),
-      fighter_avatar_slug:text(member.fighter_avatar_slug),
-      is_admin:Boolean(member.is_admin||member.is_app_admin),
-      updated_at:new Date().toISOString()
-    };
-    set(PROFILE_CACHE_KEY,JSON.stringify(value));
-    set(DISPLAY_NAME_KEY,value.display_name);
-    return value;
-  }
-
-  function isCodyAdmin(member){
-    return Boolean(member?.is_admin)&&text(member?.display_name).toLowerCase()==='cody';
-  }
-
-  function fighterFor(slug){
-    const clean=text(slug).toLowerCase();
-    if(!clean)return null;
-    return window.UFC_PLAY_DATA?.byId?.[clean]
-      || window.UFC_PLAY_DATA?.resolve?.(clean)
-      || null;
-  }
-
-  function photoFor(member){
-    const fighter=fighterFor(member?.fighter_avatar_slug);
-    if(!fighter)return{fighter:null,src:''};
-    const candidates=window.UFC_PLAY_PHOTO_AUTHORITY?.candidatesFor?.(fighter);
-    return{
-      fighter,
-      src:text(fighter.thumbUrl||candidates?.thumbs?.[0]||fighter.profileUrl||candidates?.profiles?.[0])
-    };
-  }
-
-  function profileMarkup(member){
-    const {fighter,src}=photoFor(member);
-    const label=fighter?.name||member?.display_name||'UFC profile';
-    const avatar=src
-      ? `<span class="app-profile-avatar"><img src="${esc(src)}" alt="${esc(label)}" data-fighter-photo="true" data-fighter-name="${esc(fighter?.name||'')}"></span>`
-      : `<span class="app-profile-avatar"><span>${esc(initials(member?.display_name))}</span></span>`;
-    return `${avatar}<span class="app-profile-chip-copy"><small>OCTAGON HQ PROFILE</small><strong>${esc(member.display_name)}</strong></span><span class="app-profile-chip-badge">${member.is_admin?'ADMIN':CANONICAL_CODE}</span>`;
-  }
-
-  function syncBetaAccess(member){
-    const button=document.querySelector('[data-octagon-beta-tab]');
-    if(!button)return;
-    const allowed=isCodyAdmin(member);
-    button.disabled=!allowed;
-    button.setAttribute('aria-disabled',String(!allowed));
-    button.dataset.betaAccess=allowed?'owner':'locked';
-    button.title=allowed?'Open the private Octagon beta':'Private beta · Cody only';
-    button.innerHTML=`<span>Octagon</span><small>BETA</small>${allowed?'':'<b aria-hidden="true">🔒</b>'}`;
-  }
-
-  function renderMember(member){
-    const chip=document.querySelector('.app-profile-chip');
-    if(!chip||!member||!text(member.display_name))return false;
-    rendering=true;
-    chip.innerHTML=profileMarkup(member);
-    chip.dataset.profileResolved='true';
-    chip.setAttribute('aria-label',`Open ${member.display_name}'s Octagon HQ profile`);
-    rendering=false;
-    syncBetaAccess(member);
-    return true;
-  }
-
-  function renderLoading(){
-    const chip=document.querySelector('.app-profile-chip');
-    if(!chip||!get(MEMBER_TOKEN_KEY))return false;
-    rendering=true;
-    chip.innerHTML=`<span class="app-profile-avatar"><span>…</span></span><span class="app-profile-chip-copy"><small>OCTAGON HQ PROFILE</small><strong>Loading profile…</strong></span><span class="app-profile-chip-badge">${CANONICAL_CODE}</span>`;
-    chip.dataset.profileResolved='loading';
-    rendering=false;
-    syncBetaAccess(null);
-    return true;
-  }
-
-  async function hydrateProfile(){
-    const api=window.UFC_PLAY_PROFILE;
-    const client=api?.client;
-    let identity=null;
-    try{identity=await api?.resolve?.();}catch(_error){}
-    const token=text(identity?.memberToken||identity?.member_token||get(MEMBER_TOKEN_KEY));
-    if(!client||!token)return null;
-
-    try{
-      const {data,error}=await client.rpc('app_profile_group_snapshot',{p_member_token:token});
-      if(error)throw error;
-      if(!data?.ok||!data?.me)return null;
-      const member=cacheMember(data.me);
-      if(identity?.member)Object.assign(identity.member,data.me);
-      if(window.UFC_PLAY_PROFILE?.identity?.member)Object.assign(window.UFC_PLAY_PROFILE.identity.member,data.me);
-      renderMember(member);
-      return data;
-    }catch(_error){
-      const cached=readCache();
-      if(cached)renderMember(cached);
-      return null;
-    }
-  }
-
-  function installBrand(){
-    const hero=document.querySelector('.hero');
-    if(!hero)return;
-    branding=true;
-    document.title=BRAND_TITLE;
-    const brand=hero.firstElementChild;
-    if(brand){
-      const eyebrow=brand.querySelector('.eyebrow');
-      const title=brand.querySelector('h1');
-      const subtitle=brand.querySelector('.subtitle');
-      if(eyebrow&&eyebrow.textContent!==BRAND_EYEBROW)eyebrow.textContent=BRAND_EYEBROW;
-      if(title&&title.textContent!==BRAND_TITLE)title.textContent=BRAND_TITLE;
-      if(subtitle&&subtitle.textContent!==BRAND_SUBTITLE)subtitle.textContent=BRAND_SUBTITLE;
-
-      const count=document.getElementById('fighterCount');
-      if(count){
-        let countLine=brand.querySelector('.octagon-hq-count');
-        if(!countLine){
-          countLine=document.createElement('p');
-          countLine.className='octagon-hq-count';
-          countLine.append(count,document.createTextNode(' fighters ranked'));
-          brand.appendChild(countLine);
-        }
-      }
-    }
-    hero.querySelector('.hero-card')?.setAttribute('aria-hidden','true');
-
-    const whatsNewTitle=document.getElementById('whatsNewTitle');
-    const whatsNewDescription=document.getElementById('whatsNewDescription');
-    if(whatsNewTitle&&whatsNewTitle.textContent!=='Octagon HQ Just Got Bigger')whatsNewTitle.textContent='Octagon HQ Just Got Bigger';
-    if(whatsNewDescription&&whatsNewDescription.textContent!=='Rankings, games, picks, profiles, and UFC conversation now live under one roof.')whatsNewDescription.textContent='Rankings, games, picks, profiles, and UFC conversation now live under one roof.';
-    branding=false;
-  }
-
-  function activateOctagon(button){
-    if(button.disabled||button.dataset.betaAccess!=='owner')return;
-    document.querySelectorAll('.tab').forEach(item=>item.classList.remove('active'));
-    document.querySelectorAll('.view').forEach(view=>view.classList.remove('active-view'));
-    button.classList.add('active');
-    document.getElementById('octagon')?.classList.add('active-view');
-    const toolbar=document.querySelector('.toolbar');
-    if(toolbar)toolbar.style.display='none';
-  }
-
-  function installBetaTab(){
-    const nav=document.querySelector('.tabs');
-    const main=document.querySelector('main.shell');
-    if(!nav||!main)return;
-
-    let button=nav.querySelector('[data-octagon-beta-tab]');
-    if(!button){
-      button=document.createElement('button');
-      button.type='button';
-      button.className='tab octagon-beta-tab';
-      button.dataset.view='octagon';
-      button.dataset.octagonBetaTab='true';
-      button.addEventListener('click',()=>activateOctagon(button));
-      nav.appendChild(button);
-    }
-
-    if(!document.getElementById('octagon')){
-      const section=document.createElement('section');
-      section.id='octagon';
-      section.className='view octagon-beta-view';
-      section.innerHTML=`<div class="octagon-beta-shell"><div class="octagon-beta-kicker">PRIVATE BETA · CODY ONLY</div><h2>The Octagon</h2><p>One UFC conversation. A new board every Monday.</p><div class="octagon-beta-card"><span>FOUNDATION READY</span><strong>Your GOAT26 profile and fighter avatar are connected.</strong><small>The weekly message feed, replies, and like/dislike reactions are the next build.</small></div></div>`;
-      const rules=document.getElementById('rules');
-      if(rules)rules.before(section);else main.appendChild(section);
-    }
-
-    syncBetaAccess(readCache());
-  }
 
   function installStyles(){
-    if(document.getElementById('octagonHqShellCss'))return;
-    const style=document.createElement('style');
-    style.id='octagonHqShellCss';
+    let style=document.getElementById('appShellCss');
+    if(!style){
+      style=document.createElement('style');
+      style.id='appShellCss';
+      document.head.appendChild(style);
+    }
     style.textContent=`
-      .hero{position:relative;align-items:center!important}.hero>div:first-child{min-width:0}.hero h1{letter-spacing:-.045em}.hero .subtitle{max-width:680px;margin-bottom:0}.octagon-hq-count{margin:7px 0 0;color:var(--text,#111827);font-weight:950;font-size:14px;line-height:1.1}.octagon-hq-count #fighterCount{font-size:inherit;font-weight:inherit}.hero .hero-card[aria-hidden="true"]{display:none!important}.app-profile-tools{min-width:230px!important;width:min(300px,100%)!important;display:block!important}.app-profile-chip{min-height:44px!important;border-radius:14px!important;padding:5px 8px!important;grid-template-columns:34px minmax(0,1fr) auto!important;gap:8px!important;box-shadow:0 8px 22px rgba(0,0,0,.16)!important}.app-profile-chip .app-profile-avatar{width:34px!important;height:34px!important;min-width:34px!important;border-radius:10px!important}.app-profile-chip-copy small{font-size:7px!important}.app-profile-chip-copy strong{font-size:12px!important}.app-profile-chip-badge{font-size:8px!important}.tabs{gap:8px!important}.tab{padding:9px 13px!important}.octagon-beta-tab{display:inline-flex!important;align-items:center;justify-content:center;gap:6px}.octagon-beta-tab small{padding:3px 5px;border-radius:999px;background:rgba(249,115,22,.14);color:#f97316;font:950 7px/1 system-ui;letter-spacing:.08em}.octagon-beta-tab b{font-size:10px}.octagon-beta-tab:disabled{opacity:.52;cursor:not-allowed}.octagon-beta-tab[data-beta-access="owner"]{border-color:rgba(249,115,22,.62)}
-      .octagon-beta-shell{max-width:760px;margin:0 auto;padding:24px;border:1px solid var(--line,#263244);border-radius:24px;background:linear-gradient(160deg,#172238,#0c1322);color:#f8fafc}.octagon-beta-kicker{color:#fb923c;font:950 10px/1 system-ui;letter-spacing:.14em}.octagon-beta-shell h2{margin:10px 0 5px;font-size:clamp(36px,8vw,64px);line-height:.95}.octagon-beta-shell>p{margin:0;color:#cbd5e1;font-size:17px}.octagon-beta-card{display:grid;gap:7px;margin-top:24px;padding:18px;border:1px solid rgba(249,115,22,.32);border-radius:18px;background:rgba(249,115,22,.07)}.octagon-beta-card span{color:#fb923c;font:950 9px/1 system-ui;letter-spacing:.12em}.octagon-beta-card strong{font-size:17px}.octagon-beta-card small{color:#94a3b8;line-height:1.45}
-      #manualRefreshControl{min-width:0!important;width:auto!important;align-self:start!important}#manualRefreshActions{gap:5px!important;justify-content:flex-end!important}#manualRefreshBtn,#whatsNewBtn{min-height:32px!important;padding:6px 10px!important;font-size:.68rem!important;box-shadow:none!important}#manualRefreshBtn{border-color:transparent!important;background:transparent!important;color:inherit!important;opacity:.68}#manualRefreshBtn:hover{opacity:1;background:rgba(127,127,127,.08)!important}#whatsNewBtn{background:rgba(17,24,39,.92)!important}
-      @media(min-width:901px){.hero{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(230px,300px)!important;column-gap:24px!important;row-gap:8px!important}.hero>div:first-child{grid-column:1;grid-row:1/3}.app-profile-tools{grid-column:2;grid-row:2}.hero #manualRefreshControl{grid-column:2;grid-row:1;justify-self:end}.hero h1{font-size:clamp(42px,5vw,68px)!important}}
-      @media(max-width:900px){.hero{padding:13px 16px 12px!important;gap:8px!important}.hero>div:first-child{width:100%}.hero .eyebrow{margin:1px 0 6px!important;font-size:10px!important;letter-spacing:.13em!important}.hero h1{font-size:clamp(38px,11vw,48px)!important;line-height:.92!important}.hero .subtitle{margin:7px 0 0!important;font-size:15px!important;line-height:1.3!important}.octagon-hq-count{margin-top:5px;font-size:13px}.app-profile-tools{width:100%!important;min-width:0!important}.app-profile-chip{width:100%!important;min-height:42px!important}.hero #manualRefreshControl{order:-1!important;width:auto!important;align-self:flex-end!important}.hero #manualRefreshActions{justify-content:flex-end!important}.tabs{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;flex-wrap:initial!important;overflow:visible!important;padding:9px 14px!important;gap:7px!important}.tab{width:100%!important;min-width:0!important;padding:8px 6px!important;font-size:12px!important;white-space:normal!important}.tab[data-view="men"]{order:1}.tab[data-view="women"]{order:2}.tab[data-view="compare"]{order:3}.tab[data-view="play"]{order:4}.tab[data-view="division"]{order:5}.tab[data-view="categories"]{order:6}.tab[data-view="picks"]{order:7}.octagon-beta-tab{order:8}.tab[data-view="rules"]{order:9}.shell{padding-top:12px!important}.toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px}.toolbar #search,.toolbar #divisionFilter{grid-column:1/-1;grid-row:1}.toolbar #eraFilter{grid-column:1;grid-row:2;width:100%;min-width:0}.toolbar #resetBtn{grid-column:2;grid-row:2;width:auto;min-width:86px;padding-left:15px;padding-right:15px}.octagon-beta-shell{padding:20px}}
-      @media(max-width:430px){.hero{padding-top:10px!important}.hero h1{font-size:39px!important}.app-profile-chip{grid-template-columns:32px minmax(0,1fr) auto!important}.app-profile-chip .app-profile-avatar{width:32px!important;height:32px!important;min-width:32px!important}.tabs{padding-top:7px!important;padding-bottom:7px!important}.octagon-beta-tab{gap:4px!important}}
+      .hero{position:relative;align-items:center!important}.hero>div:first-child{min-width:0}.hero h1{letter-spacing:-.045em}.hero .subtitle{max-width:680px;margin-bottom:0}.hero .hero-card[aria-hidden="true"]{display:none!important}
+      .tabs[data-app-shell]{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;grid-auto-flow:row!important;gap:7px!important;overflow:visible!important;padding:8px 14px!important;margin:0!important}
+      .tabs[data-app-shell] .tab{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;min-width:0!important;max-width:none!important;height:40px!important;min-height:40px!important;max-height:40px!important;margin:0!important;padding:6px 8px!important;box-sizing:border-box!important;white-space:nowrap!important;line-height:1!important;order:initial!important;grid-column:auto!important;grid-row:auto!important}
+      .tabs[data-app-shell] .tab[data-destination="war-room"]:disabled{opacity:.52;cursor:not-allowed}
+      .rankings-subnav{display:none;align-items:center;gap:7px;margin:0 0 12px;padding:7px;border:1px solid var(--line,#263244);border-radius:15px;background:rgba(15,23,42,.72)}
+      .rankings-subnav.active{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+      .rankings-subnav button{min-width:0;min-height:38px;border:1px solid transparent;border-radius:11px;background:transparent;color:var(--muted,#94a3b8);cursor:pointer;font:900 12px/1 system-ui;padding:7px 8px}
+      .rankings-subnav button.active{border-color:rgba(249,115,22,.54);background:rgba(249,115,22,.13);color:#fff}
+      main.shell>.view:not(.active-view){display:none!important}
+      #rules,.tab[data-view="rules"],[data-product-legacy-ranking-tab],.critical-home-fallback,.architecture-home-shell,.boot-home,.boot-nav,.boot-hero{display:none!important}
+      @media(max-width:900px){
+        .hero{padding:13px 16px 12px!important;gap:8px!important}.hero>div:first-child{width:100%}.hero .eyebrow{margin:1px 0 6px!important;font-size:10px!important;letter-spacing:.13em!important}.hero h1{font-size:clamp(38px,11vw,48px)!important;line-height:.92!important}.hero .subtitle{margin:7px 0 0!important;font-size:15px!important;line-height:1.3!important}
+        .tabs[data-app-shell]{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;padding:6px 10px 8px!important}
+        .tabs[data-app-shell] .tab{height:42px!important;min-height:42px!important;max-height:42px!important;padding:6px 5px!important;font-size:11px!important;white-space:normal!important;border-radius:12px!important}
+        .rankings-subnav{margin-bottom:10px;padding:6px;gap:5px}.rankings-subnav button{min-height:36px;padding:6px 3px;font-size:10.5px}
+      }
     `;
-    document.head.appendChild(style);
   }
 
-  function protectResolvedProfile(){
-    const hero=document.querySelector('.hero');
-    if(!hero)return;
-    const observer=new MutationObserver(()=>{
-      if(rendering)return;
-      const chip=hero.querySelector('.app-profile-chip');
-      if(!chip)return;
-      const cached=readCache();
-      const hasToken=Boolean(get(MEMBER_TOKEN_KEY));
-      const incorrectlySignedOut=hasToken&&/sign in/i.test(chip.textContent||'');
-      if(cached&&(incorrectlySignedOut||chip.dataset.profileResolved!=='true'))renderMember(cached);
-      else if(incorrectlySignedOut)renderLoading();
-    });
-    observer.observe(hero,{childList:true,subtree:true,characterData:true});
+  function purgeLegacyShell(){
+    ['criticalShellCss','productArchitectureCss','octagonHqCompressionCss'].forEach(id=>document.getElementById(id)?.remove());
+    document.querySelectorAll('.critical-home-fallback,.architecture-home-shell,.boot-home,.boot-nav,.boot-hero').forEach(node=>node.remove());
+    document.querySelectorAll('script[id^="criticalShell"],script[id^="criticalProduct"],script[id^="criticalHome"]').forEach(node=>node.remove());
+
+    const shell=document.querySelector('main.shell');
+    if(!shell)return;
+    const homes=[...shell.querySelectorAll(':scope > #home')];
+    homes.slice(1).forEach(node=>node.remove());
+    let home=homes[0];
+    if(!home){
+      home=document.createElement('section');
+      home.id='home';
+      home.className='view';
+      shell.prepend(home);
+    }
+    let mount=home.querySelector('#homeDashboardMount');
+    const invalidHome=home.querySelector('.critical-home-fallback,.architecture-home-shell')||!mount;
+    if(invalidHome){
+      home.innerHTML='<div id="homeDashboardMount" aria-live="polite"></div>';
+      mount=home.firstElementChild;
+    }
+    mount?.querySelectorAll('.critical-home-fallback').forEach(node=>node.remove());
   }
 
-  function protectBrand(){
+  function normalizeHeader(){
     const hero=document.querySelector('.hero');
-    if(!hero)return;
-    const observer=new MutationObserver(()=>{
-      if(branding)return;
-      const brand=hero.firstElementChild;
-      const eyebrow=brand?.querySelector?.('.eyebrow');
-      const title=brand?.querySelector?.('h1');
-      const subtitle=brand?.querySelector?.('.subtitle');
-      if(
-        document.title!==BRAND_TITLE
-        || eyebrow?.textContent!==BRAND_EYEBROW
-        || title?.textContent!==BRAND_TITLE
-        || subtitle?.textContent!==BRAND_SUBTITLE
-      ) installBrand();
+    const brand=hero?.firstElementChild;
+    if(!hero||!brand)return;
+    const eyebrow=brand.querySelector('.eyebrow');
+    const title=brand.querySelector('h1');
+    const subtitle=brand.querySelector('.subtitle');
+    if(eyebrow)eyebrow.textContent='UFC RANKINGS · GAMES · PICKS · COMMUNITY';
+    if(title)title.textContent='Octagon HQ';
+    if(subtitle)subtitle.textContent='Rankings, games, picks, and UFC conversation.';
+    document.title='Octagon HQ';
+    hero.querySelector('.hero-card')?.setAttribute('aria-hidden','true');
+  }
+
+  function ensureOctagonView(){
+    if(document.getElementById('octagon'))return;
+    const section=document.createElement('section');
+    section.id='octagon';
+    section.className='view';
+    document.querySelector('main.shell')?.appendChild(section);
+  }
+
+  function ensureRankingSubnav(){
+    const shell=document.querySelector('main.shell');
+    if(!shell)return null;
+    let nav=shell.querySelector('[data-rankings-subnav]');
+    if(!nav){
+      nav=document.createElement('nav');
+      nav.className='rankings-subnav';
+      nav.dataset.rankingsSubnav='true';
+      nav.setAttribute('aria-label','Ranking views');
+      const toolbar=shell.querySelector('.toolbar');
+      if(toolbar)toolbar.before(nav);else shell.prepend(nav);
+    }
+    nav.innerHTML=RANKING_TABS.map(item=>`<button type="button" data-ranking-view="${item.view}">${item.label}</button>`).join('');
+    return nav;
+  }
+
+  function warAccessSnapshot(button){
+    return{
+      disabled:Boolean(button?.disabled),
+      aria:button?.getAttribute('aria-disabled')||'false',
+      access:button?.dataset?.betaAccess||'',
+      member:button?.dataset?.betaMember||'',
+      title:button?.title||''
+    };
+  }
+
+  function normalizeWarButton(){
+    if(normalizingWar)return;
+    const button=document.querySelector('nav.tabs [data-destination="war-room"]');
+    if(!button)return;
+    normalizingWar=true;
+    const badge=button.querySelector('[data-octagon-unread-badge]');
+    let label=button.querySelector('[data-destination-label]');
+    if(!label||label.textContent!=='War Room'){
+      button.textContent='';
+      label=document.createElement('span');
+      label.dataset.destinationLabel='true';
+      label.textContent='War Room';
+      button.appendChild(label);
+      if(badge)button.appendChild(badge);
+    }
+    if(button.disabled){
+      button.setAttribute('aria-label','War Room access not enabled');
+      button.title='War Room access not enabled';
+    }else{
+      button.setAttribute('aria-label','Open The War Room');
+      button.title='Open The War Room';
+    }
+    normalizingWar=false;
+  }
+
+  function normalizeNavigation(){
+    const nav=document.querySelector('nav.tabs');
+    if(!nav)return null;
+    const existingWar=nav.querySelector('[data-destination="war-room"],[data-octagon-beta-tab]');
+    const access=warAccessSnapshot(existingWar);
+    nav.innerHTML='';
+    nav.dataset.appShell=VERSION;
+    nav.dataset.productArchitecture=VERSION;
+    nav.setAttribute('aria-label','Primary app destinations');
+
+    DESTINATIONS.forEach(item=>{
+      const button=document.createElement('button');
+      button.type='button';
+      button.className='tab';
+      button.dataset.destination=item.key;
+      button.dataset.view=item.view;
+      button.setAttribute('aria-selected','false');
+      const label=document.createElement('span');
+      label.dataset.destinationLabel='true';
+      label.textContent=item.label;
+      button.appendChild(label);
+      if(item.key==='war-room'){
+        button.dataset.octagonBetaTab='true';
+        if(access.access)button.dataset.betaAccess=access.access;
+        if(access.member)button.dataset.betaMember=access.member;
+        button.disabled=access.disabled;
+        button.setAttribute('aria-disabled',access.aria);
+        button.title=access.title;
+      }
+      nav.appendChild(button);
     });
-    observer.observe(hero,{childList:true,subtree:true,characterData:true});
+    normalizeWarButton();
+    return nav;
+  }
+
+  function observeWarButton(){
+    warObserver?.disconnect();
+    const button=document.querySelector('nav.tabs [data-destination="war-room"]');
+    if(!button)return;
+    warObserver=new MutationObserver(()=>queueMicrotask(normalizeWarButton));
+    warObserver.observe(button,{childList:true,subtree:true,attributes:true,attributeFilter:['disabled','aria-disabled','data-beta-access','data-beta-member']});
+  }
+
+  function destinationForView(view){
+    if(RANKING_VIEWS.includes(view))return'rankings';
+    if(view==='compare')return'intelligence';
+    if(view==='octagon')return'war-room';
+    return DESTINATIONS.find(item=>item.view===view)?.key||'home';
+  }
+
+  function syncToolbar(view){
+    const toolbar=document.querySelector('.toolbar');
+    const search=document.getElementById('search');
+    const era=document.getElementById('eraFilter');
+    const division=document.getElementById('divisionFilter');
+    const reset=document.getElementById('resetBtn');
+    const rankingUtility=view==='men'||view==='women'||view==='division';
+    if(toolbar)toolbar.style.display=rankingUtility?'':'none';
+    if(search)search.style.display=(view==='men'||view==='women')?'':'none';
+    if(era)era.style.display=rankingUtility?'':'none';
+    if(division)division.style.display=view==='division'?'':'none';
+    if(reset)reset.style.display=rankingUtility?'':'none';
+  }
+
+  function syncNavigation(){
+    document.querySelectorAll('nav.tabs [data-destination]').forEach(button=>{
+      const selected=button.dataset.destination===currentDestination;
+      button.classList.toggle('active',selected);
+      button.setAttribute('aria-selected',String(selected));
+    });
+    const subnav=document.querySelector('[data-rankings-subnav]');
+    const rankingActive=currentDestination==='rankings';
+    subnav?.classList.toggle('active',rankingActive);
+    subnav?.setAttribute('aria-hidden',String(!rankingActive));
+    subnav?.querySelectorAll('[data-ranking-view]').forEach(button=>{
+      const selected=button.dataset.rankingView===currentRankingView;
+      button.classList.toggle('active',selected);
+      button.setAttribute('aria-pressed',String(selected));
+    });
+  }
+
+  function loadScript(id,src){
+    if(document.getElementById(id)||document.querySelector(`script[src*="${src.split('?')[0]}"]`))return;
+    const script=document.createElement('script');
+    script.id=id;
+    script.src=src;
+    script.async=true;
+    document.head.appendChild(script);
+  }
+
+  function loadPlaySupport(){
+    if(playSupportLoaded)return;
+    playSupportLoaded=true;
+    requestAnimationFrame(()=>{
+      loadScript('playPermanentDailyController','assets/js/play-daily-rotation.js?v=play-daily-controller-20260717e-find-leader-permanent');
+      const loadBoard=()=>loadScript('playDailyLeaderboardCurrent','assets/js/play-daily-leaderboard.js?v=play-daily-leaderboard-20260717e-find-leader-only');
+      if(typeof requestIdleCallback==='function')requestIdleCallback(loadBoard,{timeout:900});
+      else window.setTimeout(loadBoard,250);
+    });
+  }
+
+  function showView(view,{updateHash=true}={}){
+    if(RANKING_VIEWS.includes(view))currentRankingView=view;
+    currentDestination=destinationForView(view);
+    const warButton=document.querySelector('[data-destination="war-room"]');
+    if(view==='octagon'&&(warButton?.disabled||warButton?.getAttribute('aria-disabled')==='true'))return false;
+
+    let target=document.getElementById(view);
+    if(!target){
+      view='home';
+      currentDestination='home';
+      target=document.getElementById('home');
+    }
+    document.querySelectorAll('main.shell>.view').forEach(section=>section.classList.toggle('active-view',section===target));
+    syncNavigation();
+    syncToolbar(view);
+
+    if(updateHash){
+      const next=currentDestination==='rankings'?`#rankings/${currentRankingView}`:`#${currentDestination}`;
+      if(window.location.hash!==next)history.replaceState(null,'',next);
+    }
+
+    requestAnimationFrame(()=>{
+      if(currentDestination==='play')loadPlaySupport();
+      window.dispatchEvent(new CustomEvent('octagon-hq:view-change',{detail:{destination:currentDestination,view}}));
+    });
+    return true;
+  }
+
+  function parseRoute(){
+    const open=text(new URLSearchParams(window.location.search).get('open')).toLowerCase();
+    if(open==='octagon'||open==='war-room')return'octagon';
+    const hash=text(window.location.hash).replace(/^#/,'').toLowerCase();
+    if(hash.startsWith('rankings/')){
+      const requested=hash.split('/')[1];
+      return RANKING_VIEWS.includes(requested)?requested:'men';
+    }
+    const aliases={home:'home',rankings:'men',p4p:'men',overall:'men',women:'women',division:'division',divisions:'division',categories:'categories',play:'play',picks:'picks','war-room':'octagon',octagon:'octagon',intelligence:'compare'};
+    return aliases[hash]||'home';
+  }
+
+  function bindEvents(){
+    if(eventsBound)return;
+    eventsBound=true;
+    document.addEventListener('click',event=>{
+      const destination=event.target.closest?.('nav.tabs [data-destination]');
+      if(destination){
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        if(destination.disabled||destination.getAttribute('aria-disabled')==='true')return;
+        const key=destination.dataset.destination;
+        const item=DESTINATIONS.find(entry=>entry.key===key);
+        if(item)showView(key==='rankings'?currentRankingView:item.view);
+        return;
+      }
+      const ranking=event.target.closest?.('[data-rankings-subnav] [data-ranking-view]');
+      if(ranking){
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        showView(ranking.dataset.rankingView);
+      }
+    },true);
+    window.addEventListener('hashchange',()=>showView(parseRoute(),{updateHash:false}));
   }
 
   function start(){
     installStyles();
-    installBrand();
-    installBetaTab();
-    const cached=readCache();
-    if(cached)renderMember(cached);
-    else if(get(MEMBER_TOKEN_KEY))renderLoading();
-    else syncBetaAccess(null);
-    protectResolvedProfile();
-    protectBrand();
-    [0,50,220,850,2200].forEach(delay=>window.setTimeout(installBrand,delay));
-    [0,220,850,2200].forEach(delay=>window.setTimeout(hydrateProfile,delay));
+    purgeLegacyShell();
+    normalizeHeader();
+    ensureOctagonView();
+    normalizeNavigation();
+    ensureRankingSubnav();
+    bindEvents();
+    observeWarButton();
+    const route=parseRoute();
+    currentRankingView=RANKING_VIEWS.includes(route)?route:'men';
+    currentDestination=destinationForView(route);
+    showView(route,{updateHash:Boolean(window.location.hash)});
+    document.documentElement.setAttribute('data-app-shell',VERSION);
   }
 
-  window.addEventListener('ufc-app-profile-updated',event=>{
-    const member=cacheMember(event.detail?.member);
-    if(member)renderMember(member);
-  });
-  window.addEventListener('ufc-play-profile-ready',event=>{
-    const member=cacheMember(event.detail?.member);
-    if(member)renderMember(member);
-    window.setTimeout(hydrateProfile,0);
-  });
-  window.addEventListener('ufc-canonical-group-ready',event=>{
-    const member=cacheMember(event.detail?.member);
-    if(member)renderMember(member);
-    window.setTimeout(hydrateProfile,0);
-  });
-  window.addEventListener('ufc-play-data-ready',()=>{
-    const cached=readCache();
-    if(cached)renderMember(cached);
-  });
-  window.addEventListener('storage',event=>{
-    if(event.key===PROFILE_CACHE_KEY||event.key===MEMBER_TOKEN_KEY)start();
-  });
+  const api={
+    version:VERSION,
+    start,
+    apply:start,
+    activateView:showView,
+    activateDestination:key=>{
+      const item=DESTINATIONS.find(entry=>entry.key===key);
+      if(item)return showView(key==='rankings'?currentRankingView:item.view);
+      return false;
+    },
+    loadPlaySupport,
+    get currentDestination(){return currentDestination;},
+    get currentRankingView(){return currentRankingView;}
+  };
 
-  window.UFC_OCTAGON_HQ_SHELL={version:VERSION,hydrateProfile,renderMember,readCache,syncBetaAccess};
-  document.documentElement.setAttribute('data-octagon-hq-shell',VERSION);
+  window.UFC_APP_SHELL=api;
+  window.UFC_PRODUCT_ARCHITECTURE=api;
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
   else start();
 })();
