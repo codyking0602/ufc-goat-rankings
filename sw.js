@@ -1,4 +1,5 @@
-const VERSION='octagon-hq-sw-20260718a-network-first';
+const VERSION='octagon-hq-sw-20260718b-fast-refresh';
+const CACHE_NAME='octagon-hq-static-20260718b';
 
 self.addEventListener('install',event=>{
   event.waitUntil(self.skipWaiting());
@@ -7,47 +8,70 @@ self.addEventListener('install',event=>{
 self.addEventListener('activate',event=>{
   event.waitUntil((async()=>{
     const keys=await caches.keys();
-    await Promise.all(keys.map(key=>caches.delete(key)));
+    await Promise.all(keys.filter(key=>key.startsWith('octagon-hq-static-')&&key!==CACHE_NAME).map(key=>caches.delete(key)));
     await self.clients.claim();
   })());
 });
 
-function shouldReload(request,url){
-  if(request.mode==='navigate')return true;
+function isNavigation(request,url){
+  return request.mode==='navigate'||/\/(?:index|share)\.html$/i.test(url.pathname);
+}
+
+function isVersionedStatic(request,url){
   if(url.origin!==self.location.origin)return false;
-  return /\.(?:html|js|css|json|webmanifest)$/i.test(url.pathname);
+  if(request.destination==='serviceworker')return false;
+  return /\.(?:js|css|json|webmanifest|png|webp|jpe?g|gif|svg|ico)$/i.test(url.pathname);
+}
+
+async function networkFirst(request){
+  const cache=await caches.open(CACHE_NAME);
+  try{
+    const response=await fetch(request,{cache:'no-cache'});
+    if(response?.ok)await cache.put(request,response.clone());
+    return response;
+  }catch(_error){
+    return (await cache.match(request))||Response.error();
+  }
+}
+
+async function cacheFirst(request){
+  const cache=await caches.open(CACHE_NAME);
+  const cached=await cache.match(request);
+  if(cached)return cached;
+  const response=await fetch(request);
+  if(response?.ok)await cache.put(request,response.clone());
+  return response;
 }
 
 self.addEventListener('fetch',event=>{
   const request=event.request;
   if(request.method!=='GET')return;
   const url=new URL(request.url);
-  if(!shouldReload(request,url))return;
-  event.respondWith((async()=>{
-    try{
-      return await fetch(request,{cache:'reload'});
-    }catch(_error){
-      return fetch(request);
-    }
-  })());
+  if(isNavigation(request,url)){
+    event.respondWith(networkFirst(request));
+    return;
+  }
+  if(isVersionedStatic(request,url))event.respondWith(cacheFirst(request));
 });
 
 self.addEventListener('push',event=>{
   let payload={};
   try{payload=event.data?.json?.()||{};}catch(_error){payload={body:event.data?.text?.()||''};}
-  const title=String(payload.title||'The War Room');
+  const title=String(payload.title||'Octagon HQ');
   const options={
-    body:String(payload.body||'New activity in The War Room.'),
-    tag:String(payload.tag||'war-room-activity'),
+    body:String(payload.body||'New Octagon HQ activity.'),
+    tag:String(payload.tag||'octagon-hq-activity'),
     renotify:true,
-    data:{url:String(payload.url||'./#war-room')}
+    icon:'./assets/app-icon.png?v=20260702c',
+    badge:'./assets/app-icon.png?v=20260702c',
+    data:{url:String(payload.url||'./#home')}
   };
   event.waitUntil(self.registration.showNotification(title,options));
 });
 
 self.addEventListener('notificationclick',event=>{
   event.notification.close();
-  const target=new URL(String(event.notification.data?.url||'./#war-room'),self.registration.scope).href;
+  const target=new URL(String(event.notification.data?.url||'./#home'),self.registration.scope).href;
   event.waitUntil((async()=>{
     const windows=await self.clients.matchAll({type:'window',includeUncontrolled:true});
     for(const client of windows){
