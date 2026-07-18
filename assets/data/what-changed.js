@@ -4,6 +4,7 @@
   // Editorial release rule: keep this feed intentionally small.
   // Add one concise card for a major product release and one card for each newly added fighter.
   // Rank and OVR movement must use approved before/after values; never infer history from the current board alone.
+  // Deployment touch: apply the Octagon HQ notification-branding update.
   const source={
     version:'what-changed-data-20260718f-phase-3',
     timezone:'America/Chicago',
