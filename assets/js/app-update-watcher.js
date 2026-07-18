@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='app-update-watcher-20260718c-compact-feed';
+  const VERSION='app-update-watcher-20260718d-centered-two-card';
   const WHAT_CHANGED_SRC='assets/js/what-changed.js?v=what-changed-20260718b-compact';
   const RESTORE_KEY='ufc-goat-manual-refresh-v1';
   const PROGRESS_KEY='ufc-goat-manual-refresh-progress-v1';
@@ -101,8 +101,8 @@
     if(document.getElementById('appUpdateWatcherStyles'))return;
     const style=document.createElement('style');style.id='appUpdateWatcherStyles';style.textContent=`
       #manualRefreshControl{display:flex;flex:0 0 auto;align-self:flex-start;flex-direction:column;align-items:stretch;gap:4px;min-width:206px}#manualRefreshActions{display:flex;align-items:center;justify-content:flex-end;gap:7px}
-      #manualRefreshBtn,#whatsNewBtn{position:relative;z-index:1;min-height:40px;padding:9px 13px;border:1px solid rgba(249,115,22,.72);border-radius:999px;background:rgba(10,13,19,.9);box-shadow:0 10px 30px rgba(0,0,0,.24);color:#fed7aa;font:900 .76rem/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.06em;white-space:nowrap;cursor:pointer}#whatsNewBtn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border-color:rgba(255,255,255,.2);color:#f8fafc}#whatsNewBtn.has-unread{border-color:rgba(249,115,22,.9);box-shadow:0 0 0 3px rgba(249,115,22,.11),0 10px 30px rgba(0,0,0,.24)}#whatsNewUnread{display:grid;place-items:center;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:#f97316;color:#1b0c03;font:950 10px/1 system-ui;letter-spacing:0}#whatsNewUnread[hidden]{display:none!important}#manualRefreshBtn:active,#whatsNewBtn:active{transform:translateY(1px) scale(.98)}#manualRefreshBtn.refreshing{opacity:.82;pointer-events:none}#manualRefreshProgress{height:2px;width:calc(100% - 14px);margin:0 7px;border-radius:999px;overflow:hidden;background:rgba(249,115,22,.16);opacity:0;transition:opacity .12s ease}#manualRefreshProgress.visible{opacity:1}#manualRefreshProgressFill{display:block;height:100%;width:0;border-radius:inherit;background:#f97316;box-shadow:0 0 5px rgba(249,115,22,.7);transition:width .12s ease}
-      @media(max-width:900px){#manualRefreshControl{order:-1;align-self:flex-end;min-width:196px}#manualRefreshBtn,#whatsNewBtn{min-height:38px;padding:8px 11px;font-size:.7rem}}@media(max-width:430px){#manualRefreshControl{min-width:0;width:100%}#manualRefreshActions{justify-content:stretch}#manualRefreshBtn,#whatsNewBtn{flex:1;padding-left:8px;padding-right:8px}}
+      #manualRefreshBtn,#whatsNewBtn{position:relative;z-index:1;min-height:40px;padding:9px 13px;border:1px solid rgba(249,115,22,.72);border-radius:999px;background:rgba(10,13,19,.9);box-shadow:0 10px 30px rgba(0,0,0,.24);color:#fed7aa;font:900 .76rem/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:.06em;white-space:nowrap;cursor:pointer}#whatsNewBtn{display:grid;place-items:center;min-width:82px;border-color:rgba(255,255,255,.2);color:#f8fafc;text-align:center}#whatsNewBtn.has-unread{border-color:rgba(249,115,22,.9);box-shadow:0 0 0 3px rgba(249,115,22,.11),0 10px 30px rgba(0,0,0,.24)}#whatsNewUnread{position:absolute;top:5px;right:5px;display:grid;place-items:center;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:#f97316;color:#1b0c03;font:950 10px/1 system-ui;letter-spacing:0}#whatsNewUnread[hidden]{display:none!important}#manualRefreshBtn:active,#whatsNewBtn:active{transform:translateY(1px) scale(.98)}#manualRefreshBtn.refreshing{opacity:.82;pointer-events:none}#manualRefreshProgress{height:2px;width:calc(100% - 14px);margin:0 7px;border-radius:999px;overflow:hidden;background:rgba(249,115,22,.16);opacity:0;transition:opacity .12s ease}#manualRefreshProgress.visible{opacity:1}#manualRefreshProgressFill{display:block;height:100%;width:0;border-radius:inherit;background:#f97316;box-shadow:0 0 5px rgba(249,115,22,.7);transition:width .12s ease}
+      @media(max-width:900px){#manualRefreshControl{order:-1;align-self:flex-end;min-width:196px}#manualRefreshBtn,#whatsNewBtn{min-height:38px;padding:8px 11px;font-size:.7rem}#whatsNewBtn{padding-left:22px;padding-right:22px}}@media(max-width:430px){#manualRefreshControl{min-width:0;width:100%}#manualRefreshActions{justify-content:stretch}#manualRefreshBtn,#whatsNewBtn{flex:1;padding-left:8px;padding-right:8px}}
     `;document.head.appendChild(style);
   }
   function installButton(){
@@ -134,6 +134,6 @@
   window.addEventListener('octagon-hq:what-changed-seen',syncUnread);
   window.addEventListener('storage',event=>{if(event.key===changeSource().seenStorageKey)syncUnread();});
 
-  window.UFC_APP_UPDATE_WATCHER={version:VERSION,networkRefresh,openWhatChanged,openWhatsNew:openWhatChanged,restoreState,syncUnread,unreadCount,schedulePlaySupport,loadPermanentDaily,loadDailyLeaderboard,loadChallengeCompat,loadBlindSupport,mode:'phase-2d-lazy-compact-history'};
+  window.UFC_APP_UPDATE_WATCHER={version:VERSION,networkRefresh,openWhatChanged,openWhatsNew:openWhatChanged,restoreState,syncUnread,unreadCount,schedulePlaySupport,loadPermanentDaily,loadDailyLeaderboard,loadChallengeCompat,loadBlindSupport,mode:'phase-2d-lazy-two-card'};
   document.documentElement.setAttribute('data-app-update-watcher',VERSION);
 })();
