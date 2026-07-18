@@ -1,0 +1,26 @@
+{
+  "audit": {
+    "bonus_100": 1,
+    "bonus_150": 2,
+    "bonus_175": 2,
+    "bonus_200": 3,
+    "bonus_250": 4,
+    "bonus_300": 5,
+    "bonus_350": 6,
+    "bonus_400": 7,
+    "correct_pick_points": 4,
+    "event_scoring_version": "tiered-v1",
+    "montes_bonus": 2,
+    "montes_odds": 175,
+    "ok": true,
+    "public_payload_correct_points": 4,
+    "public_payload_version": "tiered-v1"
+  },
+  "checked_at": "2026-07-18T21:05:43.265334+00:00",
+  "frontend": {
+    "community_directory": "full-width",
+    "fresh_launch": "home",
+    "tier_bonus_display": "derived-from-live-odds"
+  },
+  "status": "active"
+}
