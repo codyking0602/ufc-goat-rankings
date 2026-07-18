@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='app-notification-surface-fix-20260718a';
+  const VERSION='app-notification-surface-fix-20260718b-phase-4a';
   const CACHE_PREFIX='octagon-hq:activity-profile-html-v1:';
   let observer=null;
   let syncTimer=0;
@@ -84,7 +84,7 @@
 
   function registerCurrentWorker(){
     if(!('serviceWorker' in navigator))return;
-    navigator.serviceWorker.register('sw.js?v=octagon-hq-sw-20260718b-fast-refresh',{scope:'./'}).then(registration=>registration.update?.()).catch(()=>undefined);
+    navigator.serviceWorker.register('sw.js?v=octagon-hq-sw-20260718c-phase-4a',{scope:'./'}).then(registration=>registration.update?.()).catch(()=>undefined);
   }
 
   function start(){
