@@ -11,7 +11,7 @@
     "status": "active"
   },
   "avatar_profiles": 2,
-  "checked_at": "2026-07-18T09:56:39.592990+00:00",
+  "checked_at": "2026-07-18T10:21:00.881543+00:00",
   "code": "GOAT26",
   "deployment_method": "supabase-management-api",
   "events": 2,
@@ -91,36 +91,28 @@
     "vapid_ready": true
   },
   "picks_season_loop": {
-    "career_source": "completed-picks-room-snapshots",
+    "canonical_totals_source": "picks_group_snapshot",
+    "event_detail_source": "picks_room_snapshot",
+    "layout": "compact-home-summary-plus-canonical-leaderboard",
     "loading_policy": "lazy-on-picks-or-profile",
-    "metrics": [
-      "record",
-      "accuracy",
-      "main-event-record",
-      "underdog-hits",
-      "event-finishes",
-      "season-standings"
-    ],
     "phase": "phase-2c",
-    "recap": "existing-group-recap-plus-personal-season-summary",
-    "reminders": "shared-profile-opt-in-on-event-card",
-    "season_basis": "calendar-year",
-    "status": "active"
+    "recap": "existing-group-recap-plus-personal-event-summary",
+    "reminders": "event-route-shared-profile-opt-in",
+    "status": "active",
+    "tie_policy": "shared-rank-for-exact-equals"
   },
   "profile_photos": {
-    "anon_daily_leaderboard": true,
-    "anon_photo": true,
-    "anon_snapshot": true,
     "column_exists": true,
     "crop_size": 320,
     "daily_leaderboard_rpc": true,
     "phase": "shared-photo-or-fighter-avatar",
     "photo_profiles": 1,
     "photo_rpc": true,
+    "picks_group_rpc": true,
     "picks_profile_rpc": true,
-    "picks_snapshot_rpc": true,
+    "picks_room_rpc": true,
     "picks_social_rpc": true,
-    "snapshot_rpc": true,
+    "profile_snapshot_rpc": true,
     "status": "active"
   },
   "rooms": 2,
