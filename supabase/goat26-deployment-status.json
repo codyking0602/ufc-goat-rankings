@@ -11,7 +11,7 @@
     "status": "active"
   },
   "avatar_profiles": 2,
-  "checked_at": "2026-07-18T11:45:05.369106+00:00",
+  "checked_at": "2026-07-18T13:10:41.923831+00:00",
   "code": "GOAT26",
   "deployment_method": "supabase-management-api",
   "events": 2,
@@ -101,7 +101,7 @@
     "internal_navigation": "immediate-scoped-observers",
     "layout": "home-season-summary-leaderboard-archive",
     "phase": "phase-2c",
-    "reminders": "in-app-while-open-plus-phone-calendar",
+    "reminders": "removed",
     "status": "active",
     "tie_policy": "shared-rank-for-exact-equals"
   },
