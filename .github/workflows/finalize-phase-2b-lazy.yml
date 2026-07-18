@@ -1,0 +1,51 @@
+name: Finalize Phase 2B Lazy History
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/finalize-phase-2b-lazy.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Make retention history lazy and bounded
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path=Path('assets/js/find-leader-retention.js')
+          text=path.read_text()
+          replacements={
+            "window.addEventListener('ufc-play-profile-ready',event=>{state.identity=event.detail||null;refresh({days:HISTORY_DAYS});});": "window.addEventListener('ufc-play-profile-ready',event=>{state.identity=event.detail||null;if(state.historyOpen||document.querySelector('.profile-activity-overlay')||document.getElementById('play')?.classList.contains('active-view'))refresh({days:HISTORY_DAYS});});",
+            "document.addEventListener('click',event=>{const day=event.target.closest?.('[data-find-history-day]');if(day){openHistory(day.dataset.findHistoryDay);return;}if(event.target.closest?.('[data-find-history-open]'))openHistory();});": "document.addEventListener('click',event=>{if(event.target.closest?.('.app-profile-chip')){[80,260,700].forEach(delay=>setTimeout(ensureProfileAction,delay));refresh({days:HISTORY_DAYS});return;}const day=event.target.closest?.('[data-find-history-day]');if(day){refresh({days:HISTORY_DAYS}).then(()=>openHistory(day.dataset.findHistoryDay));return;}if(event.target.closest?.('[data-find-history-open]'))refresh({days:HISTORY_DAYS}).then(()=>openHistory());});",
+            "state.profileObserver=new MutationObserver(()=>ensureProfileAction());state.profileObserver.observe(document.body,{childList:true,subtree:true});": "",
+            "function start(){installStyles();bind();state.rows=mergeRows(readLedger(),localRows());renderAll();refresh({days:HISTORY_DAYS});clearInterval(state.timer);state.timer=setInterval(updateCountdowns,1000);}": "function start(){installStyles();bind();state.rows=mergeRows(readLedger(),localRows());renderAll();clearInterval(state.timer);state.timer=setInterval(updateCountdowns,1000);}",
+          }
+          for old,new in replacements.items():
+              if old not in text:
+                  raise SystemExit(f'Expected Phase 2B source fragment was not found: {old[:90]}')
+              text=text.replace(old,new,1)
+          text=text.replace("const VERSION='find-leader-retention-20260718b-phase-2b-final';","const VERSION='find-leader-retention-20260718c-phase-2b-lazy';",1)
+          path.write_text(text)
+          PY
+          node --check assets/js/find-leader-retention.js
+          grep -Fq "find-leader-retention-20260718c-phase-2b-lazy" assets/js/find-leader-retention.js
+          grep -Fq "refresh({days:HISTORY_DAYS}).then" assets/js/find-leader-retention.js
+          ! grep -Fq "profileObserver=new MutationObserver" assets/js/find-leader-retention.js
+      - name: Remove one-time workflow and commit
+        run: |
+          rm .github/workflows/finalize-phase-2b-lazy.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
+          git add assets/js/find-leader-retention.js .github/workflows/finalize-phase-2b-lazy.yml
+          git commit -m 'Finalize lazy Phase 2B history loading [skip ci]'
+          git pull --rebase origin main
+          git push origin HEAD:main
