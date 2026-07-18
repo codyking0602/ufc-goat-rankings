@@ -12,7 +12,7 @@
     "status": "active"
   },
   "avatar_profiles": 2,
-  "checked_at": "2026-07-18T15:17:21.601075+00:00",
+  "checked_at": "2026-07-18T15:36:34.652192+00:00",
   "code": "GOAT26",
   "deployment_method": "supabase-management-api",
   "events": 2,
@@ -23,6 +23,7 @@
     "loading_policy": "lazy-on-play-profile-or-history",
     "official_score_rule": "first-completed-attempt",
     "phase": "phase-2b",
+    "photo_source": "shared-fighter-photo-authority-with-alias-fallback",
     "reset_timezone": "America/Chicago",
     "status": "active"
   },
@@ -159,12 +160,13 @@
   "what_changed": {
     "canonical_source": "assets/data/what-changed.js",
     "controller": "assets/js/what-changed.js",
-    "copy_reduction": "25-percent-seed-summary-word-count",
+    "current_seed_entries": 2,
     "deep_links": "fighter-profile-and-destination",
     "density": "compact-mobile",
-    "editorial_policy": "fighter-and-major-feature-entry-in-release-change",
+    "editorial_policy": "one-concise-major-release-card-plus-new-fighter-cards",
     "fighter_hydration": "current-production-ranking-data",
     "header_owner": "assets/js/app-update-watcher.js",
+    "initial_backlog_collapsed": true,
     "loading_policy": "lightweight-data-controller-lazy",
     "phase": "phase-2d",
     "status": "active",
