@@ -1,0 +1,83 @@
+name: Finalize Picks Speed Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/finalize-picks-speed.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply final Picks fixes
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          season=Path('assets/js/picks-season-loop.js')
+          text=season.read_text()
+          text=re.sub(
+              r"  function updateCountdown\(\)\{.*?\n",
+              "  function updateCountdown(){const node=document.querySelector('#picksSeasonReminder>div:first-child small');if(!state.data?.upcoming||!node)return;const lock=nextLock(state.data.upcoming);node.textContent=lock?`Locks ${formatDate(lock.lockAt,true)} · ${remainingLabel(lock.lockAt)} remaining`:`Card starts ${formatDate(eventDate(state.data.upcoming),true)}`;}\n",
+              text,
+              count=1,
+          )
+          season.write_text(text)
+
+          architecture=Path('assets/js/product-architecture.js')
+          text=architecture.read_text()
+          text=text.replace('product-architecture-20260718o-phase-2c-consolidated','product-architecture-20260718p-phase-2c-speed')
+          text=text.replace('picks-season-loop-20260718b-phase-2c-consolidated','picks-season-loop-20260718c-phase-2c-speed')
+          architecture.write_text(text)
+
+          index=Path('index.html')
+          text=index.read_text()
+          text=re.sub(r'assets/js/picks-internal-navigation\.js\?v=[^"\s]+','assets/js/picks-internal-navigation.js?v=picks-internal-navigation-20260718a-fast-routes',text,count=1)
+          text=re.sub(r'assets/js/product-architecture\.js\?v=[^"\s]+','assets/js/product-architecture.js?v=product-architecture-20260718p-phase-2c-speed',text,count=1)
+          text=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260718-phase-2c-final-speed" />',text,count=1)
+          index.write_text(text)
+
+          canonical=Path('.github/workflows/deploy-shared-profile-photos.yml')
+          text=canonical.read_text()
+          if "      - 'assets/js/picks-internal-navigation.js'" not in text:
+              text=text.replace("      - 'assets/js/picks-season-loop.js'\n", "      - 'assets/js/picks-season-loop.js'\n      - 'assets/js/picks-internal-navigation.js'\n")
+          if 'node --check assets/js/picks-internal-navigation.js' not in text:
+              text=text.replace('          node --check assets/js/picks-season-loop.js\n','          node --check assets/js/picks-season-loop.js\n          node --check assets/js/picks-internal-navigation.js\n')
+          text=text.replace('picks-season-loop-20260718b-phase-2c-consolidated','picks-season-loop-20260718c-phase-2c-speed')
+          text=text.replace('product-architecture-20260718o-phase-2c-consolidated','product-architecture-20260718p-phase-2c-speed')
+          if "'picks-internal-navigation.js':'picks-internal-navigation-20260718a-fast-routes'," not in text:
+              text=text.replace("               'picks-settings-admin-cleanup.js':'picks-settings-admin-cleanup-20260718e-admin-only',\n", "               'picks-settings-admin-cleanup.js':'picks-settings-admin-cleanup-20260718e-admin-only',\n               'picks-internal-navigation.js':'picks-internal-navigation-20260718a-fast-routes',\n")
+          text=text.replace('20260718-phase-2c-picks-consolidated','20260718-phase-2c-final-speed')
+          text=text.replace("'loading_policy':'lazy-on-picks-or-profile'", "'loading_policy':'lazy-on-picks-or-profile','internal_navigation':'immediate-childlist-only'")
+          canonical.write_text(text)
+          PY
+
+      - name: Validate final Picks build
+        run: |
+          node --check assets/js/picks-season-loop.js
+          node --check assets/js/picks-internal-navigation.js
+          node --check assets/js/product-architecture.js
+          grep -Fq 'picks-season-loop-20260718c-phase-2c-speed' assets/js/picks-season-loop.js
+          grep -Fq 'picks-internal-navigation-20260718a-fast-routes' assets/js/picks-internal-navigation.js
+          grep -Fq 'product-architecture-20260718p-phase-2c-speed' assets/js/product-architecture.js
+          grep -Fq 'picks-internal-navigation-20260718a-fast-routes' index.html
+
+      - name: Commit final release
+        run: |
+          rm .github/workflows/finalize-picks-speed.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
+          git add assets/js/picks-season-loop.js assets/js/picks-internal-navigation.js assets/js/product-architecture.js index.html .github/workflows/deploy-shared-profile-photos.yml .github/workflows/finalize-picks-speed.yml
+          git commit -m 'Finalize Picks activity, reminders and fast tabs [skip ci]'
+          git pull --rebase origin main
+          git push origin HEAD:main
