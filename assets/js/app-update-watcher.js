@@ -1,8 +1,8 @@
 (function(){
   'use strict';
 
-  const VERSION='app-update-watcher-20260718b-phase-2d';
-  const WHAT_CHANGED_SRC='assets/js/what-changed.js?v=what-changed-20260718a-phase-2d';
+  const VERSION='app-update-watcher-20260718c-compact-feed';
+  const WHAT_CHANGED_SRC='assets/js/what-changed.js?v=what-changed-20260718b-compact';
   const RESTORE_KEY='ufc-goat-manual-refresh-v1';
   const PROGRESS_KEY='ufc-goat-manual-refresh-progress-v1';
   const LEGACY_KEYS=['ufc-goat-update-restore-v1','ufc-goat-update-target-v1'];
@@ -134,6 +134,6 @@
   window.addEventListener('octagon-hq:what-changed-seen',syncUnread);
   window.addEventListener('storage',event=>{if(event.key===changeSource().seenStorageKey)syncUnread();});
 
-  window.UFC_APP_UPDATE_WATCHER={version:VERSION,networkRefresh,openWhatChanged,openWhatsNew:openWhatChanged,restoreState,syncUnread,unreadCount,schedulePlaySupport,loadPermanentDaily,loadDailyLeaderboard,loadChallengeCompat,loadBlindSupport,mode:'phase-2d-lazy-history'};
+  window.UFC_APP_UPDATE_WATCHER={version:VERSION,networkRefresh,openWhatChanged,openWhatsNew:openWhatChanged,restoreState,syncUnread,unreadCount,schedulePlaySupport,loadPermanentDaily,loadDailyLeaderboard,loadChallengeCompat,loadBlindSupport,mode:'phase-2d-lazy-compact-history'};
   document.documentElement.setAttribute('data-app-update-watcher',VERSION);
 })();
