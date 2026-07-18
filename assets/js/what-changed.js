@@ -20,6 +20,10 @@
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const slugify=value=>text(value).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
   const entries=()=>Array.isArray(SOURCE.entries)?[...SOURCE.entries].sort((a,b)=>new Date(b.publishedAt)-new Date(a.publishedAt)):[];
+  function displayOverrides(){
+    try{return typeof DISPLAY_OVERRIDES!=='undefined'&&DISPLAY_OVERRIDES?DISPLAY_OVERRIDES:(window.DISPLAY_OVERRIDES||{});}
+    catch(_error){return window.DISPLAY_OVERRIDES||{};}
+  }
 
   function readSeen(){
     try{
@@ -40,7 +44,7 @@
     return [...(data.men||[]),...(data.women||[])].map(row=>({...profileMap.get(row.fighter),...row}));
   }
   function calculateOvr(row,rows){
-    const override=window.DISPLAY_OVERRIDES?.[row.fighter]||{};
+    const override=displayOverrides()[row.fighter]||{};
     const direct=Number(row.overallOvr??row.ovr??override.overallOvr??override.ovr);
     if(Number.isFinite(direct))return direct;
     const max=Math.max(...rows.map(item=>Number(item.totalScore)||0),1);
@@ -51,7 +55,7 @@
     const rows=rankingRows();
     const row=rows.find(item=>slugify(item.fighter)===slug);
     if(!row)return null;
-    const override=window.DISPLAY_OVERRIDES?.[row.fighter]||{};
+    const override=displayOverrides()[row.fighter]||{};
     return{
       fighter:row.fighter,
       displayName:override.profileDisplayName||override.displayName||row.fighter,
@@ -81,8 +85,8 @@
   function dateLabel(value){
     const date=new Date(value);
     if(Number.isNaN(date.getTime()))return'';
-    try{return new Intl.DateTimeFormat('en-US',{timeZone:SOURCE.timezone||'America/Chicago',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}).format(date);}
-    catch(_error){return date.toLocaleString();}
+    try{return new Intl.DateTimeFormat('en-US',{timeZone:SOURCE.timezone||'America/Chicago',month:'short',day:'numeric'}).format(date);}
+    catch(_error){return date.toLocaleDateString();}
   }
 
   function changeMarkup(entry){
