@@ -12,8 +12,20 @@
     "war_room_trigger": true,
     "worker_rpc": true
   },
-  "checked_at": "2026-07-18T17:01:34.631637+00:00",
+  "checked_at": "2026-07-18T17:43:47.283869+00:00",
   "database": "success",
-  "phase": "phase-3-smart-notifications",
+  "phase": "phase-3-user-visible-fix",
+  "server_board_at_deploy": {
+    "challenge_day": "2026-07-18",
+    "player_count": 1,
+    "players": [
+      {
+        "attempt_count": 1,
+        "best_score": 9,
+        "display_name": "Cody",
+        "official_score": 9
+      }
+    ]
+  },
   "workflow_status": "success"
 }
