@@ -11,7 +11,7 @@
     "status": "active"
   },
   "avatar_profiles": 2,
-  "checked_at": "2026-07-18T14:06:56.427127+00:00",
+  "checked_at": "2026-07-18T14:42:20.762082+00:00",
   "code": "GOAT26",
   "deployment_method": "supabase-management-api",
   "events": 2,
@@ -121,6 +121,22 @@
   },
   "rooms": 2,
   "saved_picks": 51,
+  "sharing_deep_links": {
+    "entry_page": "share.html",
+    "find_leader_payload": "exact-verified-board-and-result",
+    "owner": "assets/js/share-deep-links.js",
+    "phase": "phase-2e",
+    "private_routes": "picks-and-war-room-respect-existing-access",
+    "social_preview": "generic-static-card-plus-runtime-metadata",
+    "status": "active",
+    "targets": [
+      "fighter-profile",
+      "prepared-comparison",
+      "find-leader-result",
+      "picks-event-recap",
+      "war-room-discussion"
+    ]
+  },
   "status": "active",
   "what_changed": {
     "canonical_source": "assets/data/what-changed.js",
