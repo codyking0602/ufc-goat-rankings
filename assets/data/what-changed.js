@@ -1,8 +1,10 @@
 (function(){
   'use strict';
 
+  // Editorial release rule: add verified fighter and major feature milestones here in the same production change.
+  // Rank and OVR movement must use approved before/after values; never infer history from the current board alone.
   const source={
-    version:'what-changed-data-20260718a-phase-2d',
+    version:'what-changed-data-20260718b-compact',
     timezone:'America/Chicago',
     seenStorageKey:'octagon-hq-what-changed-seen-v1',
     entries:[
@@ -11,15 +13,15 @@
         publishedAt:'2026-07-18T06:39:54-05:00',
         type:'Picks Updated',
         headline:'Picks Season is live',
-        summary:'Picks now has a season home, one canonical leaderboard, event standings, completed-event recaps, and a past-events archive.',
+        summary:'Season Home, one leaderboard, event standings, recaps, and past events are now connected.',
         destination:'picks'
       },
       {
         id:'find-leader-retention-20260718',
         publishedAt:'2026-07-18T00:05:00-05:00',
         type:'Game Updated',
-        headline:'Find the Leader now remembers the run',
-        summary:'Current streak, best streak, first-attempt scores, replay bests, daily history, placements, achievements, and the Central-time reset are now connected.',
+        headline:'Find the Leader remembers the run',
+        summary:'Streaks, first-attempt scores, replay bests, history, placements, achievements, and Central-time resets are now tracked.',
         destination:'play',
         action:'find-leader'
       },
@@ -27,39 +29,39 @@
         id:'activity-profile-launched-20260717',
         publishedAt:'2026-07-17T23:05:00-05:00',
         type:'App Updated',
-        headline:'The shared Activity Profile launched',
-        summary:'One profile now connects Play, Picks, The War Room, achievements, recent activity, and the shared photo identity used throughout Octagon HQ.'
+        headline:'Shared Activity Profile launched',
+        summary:'One profile now connects Play, Picks, The War Room, achievements, activity, and your shared photo.'
       },
       {
         id:'war-room-rebuilt-20260717',
         publishedAt:'2026-07-17T22:17:46-05:00',
         type:'War Room Updated',
         headline:'The War Room was rebuilt',
-        summary:'The private discussion space now has a cleaner hierarchy, shared identity, realtime connection, and the permanent War Room name.',
+        summary:'Cleaner hierarchy, shared identity, realtime connection, and the permanent War Room name.',
         destination:'war-room'
       },
       {
         id:'octagon-hq-single-shell-20260717',
         publishedAt:'2026-07-17T21:41:45-05:00',
         type:'App Updated',
-        headline:'Octagon HQ became one connected product',
-        summary:'Home, Rankings, Play, Picks, The War Room, and Intelligence now run through one six-destination shell.',
+        headline:'One connected Octagon HQ',
+        summary:'All six destinations now run through one connected Octagon HQ shell.',
         destination:'home'
       },
       {
         id:'intelligence-profile-actions-20260717',
         publishedAt:'2026-07-17T20:13:00-05:00',
         type:'App Updated',
-        headline:'Fighter profiles now connect to Intelligence',
-        summary:'Compare opens a prepared matchup builder, while Ask Why creates a fighter-specific question for Octagon Verdict.',
+        headline:'Profiles connect to Intelligence',
+        summary:'Compare prepares a matchup. Ask Why creates a fighter-specific Octagon Verdict question.',
         destination:'intelligence'
       },
       {
         id:'home-rebuilt-20260717',
         publishedAt:'2026-07-17T17:36:45-05:00',
         type:'App Updated',
-        headline:'Home was rebuilt around the daily UFC loop',
-        summary:'Today’s Find the Leader challenge, the next UFC event, The War Room, and Ranking Spotlight now anchor the Home experience.',
+        headline:'Home rebuilt around the daily UFC loop',
+        summary:'Find the Leader, the next event, The War Room, and Ranking Spotlight now anchor Home.',
         destination:'home'
       },
       {
@@ -67,7 +69,7 @@
         publishedAt:'2026-07-17T15:54:59-05:00',
         type:'Watch Moment Added',
         headline:'Anthony Pettis Watch Moments added',
-        summary:'Showtime’s profile now connects directly to his featured UFC moment and signature UFC title fight.',
+        summary:'Showtime’s profile now links to a featured moment and signature UFC title fight.',
         fighterSlug:'anthony-pettis'
       },
       {
@@ -75,7 +77,7 @@
         publishedAt:'2026-07-17T15:46:03-05:00',
         type:'Fighter Added',
         headline:'Anthony Pettis entered the rankings',
-        summary:'The former UFC lightweight champion became the 80th ranked fighter in the production roster.',
+        summary:'The former UFC lightweight champion became the 80th fighter in the roster.',
         fighterSlug:'anthony-pettis',
         verified:{rankAtPublish:80}
       }
