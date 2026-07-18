@@ -1,10 +1,14 @@
-name: Deploy GOAT26 Phase 3 Smart Notifications
+name: Deploy GOAT26 App Platform
 
 on:
   push:
     branches: [main]
     paths:
       - '.github/workflows/deploy-app-canonical-group.yml'
+      - 'assets/css/native-app-shell.css'
+      - 'assets/js/native-app-shell.js'
+      - 'assets/js/product-architecture.js'
+      - 'assets/js/app-notification-surface-fix.js'
       - 'assets/js/app-notification-center.js'
       - 'assets/js/app-update-watcher.js'
       - 'assets/js/play-daily-service.js'
@@ -19,7 +23,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: deploy-goat26-phase-three
+  group: deploy-goat26-app-platform
   cancel-in-progress: false
 
 jobs:
@@ -31,20 +35,26 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Validate Phase 3 source
+      - name: Validate app platform source
         run: |
+          node --check assets/js/native-app-shell.js
+          node --check assets/js/product-architecture.js
+          node --check assets/js/app-notification-surface-fix.js
           node --check assets/js/app-notification-center.js
           node --check assets/js/app-update-watcher.js
           node --check assets/js/play-daily-service.js
           node --check assets/js/play-daily-live-sync.js
           node --check assets/data/what-changed.js
           node --check sw.js
+          grep -Fq "native-app-shell-20260718a-phase-4a" assets/js/native-app-shell.js
+          grep -Fq "product-architecture-20260718s-phase-4a-native-shell" assets/js/product-architecture.js
+          grep -Fq "app-notification-surface-fix-20260718b-phase-4a" assets/js/app-notification-surface-fix.js
           grep -Fq "app-notification-center-20260718c-profile-first" assets/js/app-notification-center.js
           grep -Fq "app-update-watcher-20260718f-build-aware-refresh" assets/js/app-update-watcher.js
           grep -Fq "play-daily-service-20260718a-reliable-submit" assets/js/play-daily-service.js
           grep -Fq "play-daily-live-sync-20260718a-phase-3" assets/js/play-daily-live-sync.js
           grep -Fq "what-changed-data-20260718f-phase-3" assets/data/what-changed.js
-          grep -Fq "octagon-hq-sw-20260718b-fast-refresh" sw.js
+          grep -Fq "octagon-hq-sw-20260718c-phase-4a" sw.js
           grep -Fq "app_notify_profile_challenge_insert" supabase/app-notifications-phase-three.sql
           grep -Fq "app_notify_war_room_message_insert" supabase/app-notifications-phase-three.sql
           grep -Fq "app_queue_picks_reminders" supabase/app-notifications-phase-three.sql
@@ -79,7 +89,7 @@ jobs:
                       'Accept':'application/json',
                       'Authorization':f'Bearer {token}',
                       'Content-Type':'application/json',
-                      'User-Agent':'Octagon-HQ-Phase-3/1.0',
+                      'User-Agent':'Octagon-HQ-App-Platform/1.0',
                   },
                   method='POST',
               )
@@ -172,13 +182,19 @@ jobs:
               'server_board_at_deploy':board,
           }
           status['refresh_performance']={
-              'status':'active','navigation':'network-first','versioned_assets':'cache-first',
-              'manual_refresh':'soft-sync-unless-new-build-exists','build_check_timeout_ms':2600,
+              'status':'active','navigation':'instant-cached-shell','versioned_assets':'cache-first',
+              'manual_refresh':'desktop-build-check','mobile_refresh':'pull-to-soft-sync',
+          }
+          status['phase_4a_native_shell']={
+              'status':'active','bottom_navigation':['home','rankings','play','picks','war-room'],
+              'intelligence_entry':'global-ask-action','pull_to_refresh':True,
+              'badges':['direct-challenges','missing-picks','war-room-unread'],
+              'transitions':'lightweight-view-enter','haptics':'feature-detected-refresh-threshold-only',
           }
           status['checked_at']=datetime.now(timezone.utc).isoformat()
           status_path.write_text(json.dumps(status,indent=2,sort_keys=True)+'\n')
           diagnostic_path.write_text(json.dumps({
-              'phase':'phase-3-user-visible-fix','workflow_status':'success','database':'success','audit':audit,
+              'phase':'phase-4a-native-shell','workflow_status':'success','database':'success','audit':audit,
               'server_board_at_deploy':board,'checked_at':datetime.now(timezone.utc).isoformat(),
           },indent=2,sort_keys=True)+'\n')
           PY
@@ -191,7 +207,7 @@ jobs:
             --project-ref hdkjwezaswhisxupxydc \
             --no-verify-jwt
 
-      - name: Wire user-visible Phase 3 fixes into the live app
+      - name: Wire app platform into the live app
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -205,6 +221,8 @@ jobs:
               'app-update-watcher.js':'app-update-watcher-20260718f-build-aware-refresh',
               'profile-challenges.js':'profile-challenges-20260718c-stable-inbox',
               'app-notification-center.js':'app-notification-center-20260718c-profile-first',
+              'product-architecture.js':'product-architecture-20260718s-phase-4a-native-shell',
+              'app-notification-surface-fix.js':'app-notification-surface-fix-20260718b-phase-4a',
           }
           for filename,version in replacements.items():
               pattern=rf'assets/js/{re.escape(filename)}\?v=[^"\s]+'
@@ -222,27 +240,44 @@ jobs:
           if not anchor: raise SystemExit('Could not find play-profile-identity.js anchor')
           text=text[:anchor.end()]+anchor.group('indent')+daily_tag.strip()+text[anchor.end():]
 
-          text=re.sub(r'\s*<script src="assets/js/octagon-push-subscription\.js\?v=[^"]+"></script>','',text)
+          css_tag='  <link rel="stylesheet" href="assets/css/native-app-shell.css?v=native-app-shell-css-20260718a-phase-4a" />'
+          text=re.sub(r'\s*<link rel="stylesheet" href="assets/css/native-app-shell\.css\?v=[^"]+"\s*/>','',text)
+          if '</head>' not in text: raise SystemExit('Could not find </head>')
+          text=text.replace('</head>',css_tag+'\n</head>',1)
 
-          text=re.sub(r'<link rel="manifest" href="[^"]+"\s*/>','<link rel="manifest" href="manifest.webmanifest?v=phase-3-user-visible-fix" />',text,count=1)
-          text=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260718-phase-3-user-visible-fix" />',text,count=1)
+          script_tag='  <script src="assets/js/native-app-shell.js?v=native-app-shell-20260718a-phase-4a"></script>'
+          text=re.sub(r'\s*<script src="assets/js/native-app-shell\.js\?v=[^"]+"></script>','',text)
+          share=re.search(r'(?P<indent>\s*)<script src="assets/js/share-deep-links\.js\?v=[^"]+"></script>',text)
+          if share:
+              text=text[:share.start()]+share.group('indent')+script_tag.strip()+share.group('indent')+share.group(0).strip()+text[share.end():]
+          elif '</body>' in text:
+              text=text.replace('</body>',script_tag+'\n</body>',1)
+          else:
+              raise SystemExit('Could not place native app shell script')
+
+          text=re.sub(r'\s*<script src="assets/js/octagon-push-subscription\.js\?v=[^"]+"></script>','',text)
+          text=re.sub(r'<link rel="manifest" href="[^"]+"\s*/>','<link rel="manifest" href="manifest.webmanifest?v=octagon-hq-branding-20260718a" />',text,count=1)
+          text=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260718-phase-4a-native-shell" />',text,count=1)
           path.write_text(text)
           PY
 
           grep -Fq 'play-daily-service-20260718a-reliable-submit' index.html
           grep -Fq 'app-notification-center-20260718c-profile-first' index.html
           grep -Fq 'app-update-watcher-20260718f-build-aware-refresh' index.html
+          grep -Fq 'native-app-shell-css-20260718a-phase-4a' index.html
+          grep -Fq 'native-app-shell-20260718a-phase-4a' index.html
+          grep -Fq '20260718-phase-4a-native-shell' index.html
           ! grep -Fq 'octagon-push-subscription.js' index.html
 
-      - name: Commit Phase 3 deployment record
+      - name: Commit app platform deployment record
         run: |
           if git diff --quiet -- index.html supabase/goat26-deployment-status.json supabase/phase-three-deployment-diagnostic.json; then
-            echo 'User-visible Phase 3 deployment record is unchanged.'
+            echo 'App platform deployment record is unchanged.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
           git add index.html supabase/goat26-deployment-status.json supabase/phase-three-deployment-diagnostic.json
-          git commit -m 'Deploy user-visible Phase 3 fixes [skip ci]'
+          git commit -m 'Deploy Phase 4A app platform [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:main
