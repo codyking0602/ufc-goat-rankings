@@ -1,11 +1,11 @@
-/* Final mobile polish for the live Picks experience. */
+/* Focused mobile polish for the live Picks experience. */
 .picks-room-banner.picks-room-banner-compact{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;padding:12px 14px;border-radius:16px}
 .picks-room-banner-compact .picks-room-copy{display:flex;align-items:center;gap:10px;min-width:0;flex-wrap:wrap}
 .picks-room-banner-compact .picks-room-live{display:none}
 .picks-room-banner-compact .picks-room-copy>strong{font-size:17px;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .picks-room-banner-compact .picks-room-meta{gap:7px;font-size:10px}
 .picks-room-banner-compact .picks-code{padding:5px 9px;font-size:10px}
-.picks-room-banner-compact .picks-room-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) 42px;gap:7px;align-items:stretch}
+.picks-room-banner-compact .picks-room-actions{display:grid;grid-template-columns:repeat(var(--picks-room-action-count,2),minmax(0,1fr)) 42px;gap:7px;align-items:stretch}
 .picks-room-banner-compact .picks-room-actions>.picks-primary,.picks-room-banner-compact .picks-room-actions>.picks-secondary{min-width:0;padding:9px 11px;border-radius:10px;font-size:10px;white-space:nowrap}
 .picks-room-more{position:relative;min-width:0}
 .picks-room-more>summary{display:flex;align-items:center;justify-content:center;width:42px;height:100%;min-height:38px;border:1px solid #cbd5e1;border-radius:10px;background:#fff;color:#172033;font-size:16px;font-weight:950;letter-spacing:.08em;cursor:pointer;list-style:none}
@@ -36,7 +36,7 @@
   .picks-room-banner-compact .picks-room-copy{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 9px}
   .picks-room-banner-compact .picks-room-copy>strong{font-size:16px}
   .picks-room-banner-compact .picks-room-meta{justify-content:flex-end;white-space:nowrap}
-  .picks-room-banner-compact .picks-room-actions{grid-template-columns:repeat(3,minmax(0,1fr)) 40px}
+  .picks-room-banner-compact .picks-room-actions{grid-template-columns:repeat(var(--picks-room-action-count,2),minmax(0,1fr)) 40px}
   .picks-room-banner-compact .picks-room-actions>.picks-primary,.picks-room-banner-compact .picks-room-actions>.picks-secondary{padding:9px 6px;font-size:9px}
   .picks-room-more>summary{width:40px;min-height:36px}
   .picks-event-hero.has-event-art>.picks-event-meta{padding:11px 12px 8px;gap:7px}
@@ -45,6 +45,6 @@
 }
 @media(max-width:390px){
   .picks-room-banner-compact .picks-room-meta>span{display:none}
-  .picks-room-banner-compact .picks-room-actions{grid-template-columns:repeat(3,minmax(0,1fr)) 38px;gap:5px}
+  .picks-room-banner-compact .picks-room-actions{grid-template-columns:repeat(var(--picks-room-action-count,2),minmax(0,1fr)) 38px;gap:5px}
   .picks-room-more>summary{width:38px}
 }
