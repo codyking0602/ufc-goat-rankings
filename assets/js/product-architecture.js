@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='product-architecture-20260718m-phase-2b-lazy';
+  const VERSION='product-architecture-20260718n-phase-2c-picks';
   const SHELL_SRC='assets/js/octagon-hq-shell.js?v=app-shell-20260718d-rankings-static';
   const CONNECTIVITY_SRC='assets/js/product-connectivity.js?v=product-connectivity-20260718c-clean-handoffs';
   const POLISH_CSS='assets/css/product-polish.css?v=product-polish-20260718c-header-final';
@@ -9,6 +9,7 @@
   const AVATAR_SYNC_SRC='assets/js/profile-avatar-sync.js?v=profile-avatar-sync-20260718c-home-war-room';
   const ACTIVITY_SRC='assets/js/profile-activity.js?v=profile-activity-20260718a-phase-2a';
   const FIND_LEADER_RETENTION_SRC='assets/js/find-leader-retention.js?v=find-leader-retention-20260718c-phase-2b-lazy';
+  const PICKS_SEASON_SRC='assets/js/picks-season-loop.js?v=picks-season-loop-20260718a-phase-2c';
 
   function shell(){return window.UFC_APP_SHELL||null;}
 
@@ -34,6 +35,7 @@
   function loadAvatarSync(){if(!window.UFC_PROFILE_AVATAR_SYNC)loadScriptOnce('assets/js/profile-avatar-sync.js',AVATAR_SYNC_SRC);}
   function loadActivityProfile(){if(!window.UFC_PROFILE_ACTIVITY)loadScriptOnce('assets/js/profile-activity.js',ACTIVITY_SRC);}
   function loadFindLeaderRetention(){if(!window.UFC_FIND_LEADER_RETENTION)loadScriptOnce('assets/js/find-leader-retention.js',FIND_LEADER_RETENTION_SRC);}
+  function loadPicksSeason(){if(!window.UFC_PICKS_SEASON_LOOP)loadScriptOnce('assets/js/picks-season-loop.js',PICKS_SEASON_SRC);}
 
   function call(method,...args){const api=shell();if(api?.[method])return api[method](...args);loadShell();return false;}
 
@@ -54,5 +56,6 @@
   loadAvatarSync();
   loadActivityProfile();
   loadFindLeaderRetention();
+  loadPicksSeason();
   document.documentElement.setAttribute('data-product-architecture',VERSION);
 })();
