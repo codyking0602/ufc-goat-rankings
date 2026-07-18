@@ -1,24 +1,60 @@
 (function(){
   'use strict';
 
-  const VERSION='product-connectivity-20260717b-stable';
+  const VERSION='product-connectivity-20260718c-clean-handoffs';
   const GPT_URL='https://chatgpt.com/g/g-6a4c40425d4881919ddebc7231bff09f-octagon-verdict';
   let renderFrame=0;
-  let picksObserver=null;
   let profileObserver=null;
   let warRoomObserver=null;
-  let accessObserver=null;
   let toastTimer=0;
+  let eventsBound=false;
 
   const text=value=>String(value??'').trim();
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({
     '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
   }[char]));
 
+  function normalizeFighterIdentity(value){
+    return text(value)
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g,'')
+      .replace(/["“”'‘’][^"“”'‘’]{1,40}["“”'‘’]/g,' ')
+      .replace(/\([^)]{1,40}\)/g,' ')
+      .toLowerCase()
+      .replace(/&/g,' and ')
+      .replace(/[^a-z0-9]+/g,' ')
+      .trim();
+  }
+
+  function allCanonicalNames(){
+    const data=window.RANKING_DATA||{};
+    const rows=[
+      ...(Array.isArray(data.fighters)?data.fighters:[]),
+      ...(Array.isArray(data.men)?data.men:[]),
+      ...(Array.isArray(data.women)?data.women:[])
+    ];
+    const seen=new Set();
+    return rows.map(row=>text(row?.fighter)).filter(name=>{
+      const key=normalizeFighterIdentity(name);
+      if(!key||seen.has(key))return false;
+      seen.add(key);
+      return true;
+    });
+  }
+
+  function canonicalFighterName(value){
+    const target=normalizeFighterIdentity(value);
+    if(!target)return'';
+    return allCanonicalNames().find(name=>normalizeFighterIdentity(name)===target)||text(value);
+  }
+
   function installStyles(){
-    if(document.getElementById('productConnectivityCss'))return;
-    const style=document.createElement('style');
-    style.id='productConnectivityCss';
+    let style=document.getElementById('productConnectivityCss');
+    if(!style){
+      style=document.createElement('style');
+      style.id='productConnectivityCss';
+      document.head.appendChild(style);
+    }
     style.textContent=`
       .profile-connectivity-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:16px}
       .profile-connectivity-actions button{min-height:45px;border:1px solid #475569;border-radius:13px;background:#111827;color:#fff;padding:0 14px;cursor:pointer;font:950 10px/1 system-ui;letter-spacing:.05em;text-transform:uppercase}
@@ -32,21 +68,11 @@
       .intelligence-context-actions button,.intelligence-context-actions a{min-height:40px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #475569;border-radius:11px;background:#111827;color:#fff;padding:0 13px;text-decoration:none;cursor:pointer;font:950 9px/1 system-ui;letter-spacing:.04em;text-transform:uppercase}
       .intelligence-context-actions a{border-color:#f97316;background:#f97316;color:#17100b}
       .intelligence-context-status{display:block;margin-top:9px;color:#fdba74;font:750 10px/1.35 system-ui}
-      .picks-war-room-bridge{margin:14px 0;padding:16px;border:1px solid rgba(249,115,22,.48);border-radius:17px;background:linear-gradient(135deg,#17243a,#0d1524);color:#f8fafc;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center}
-      .picks-war-room-bridge span,.picks-war-room-bridge strong,.picks-war-room-bridge small{display:block}
-      .picks-war-room-bridge span{color:#fb923c;font:950 9px/1 system-ui;letter-spacing:.14em}
-      .picks-war-room-bridge strong{margin-top:6px;font:950 17px/1.08 system-ui}
-      .picks-war-room-bridge small{margin-top:7px;color:#94a3b8;font:700 11px/1.4 system-ui}
-      .picks-war-room-bridge button{min-height:44px;border:1px solid #f97316;border-radius:12px;background:#f97316;color:#17100b;padding:0 15px;cursor:pointer;font:950 10px/1 system-ui;white-space:nowrap}
-      .octagon-intelligence-button{border-color:rgba(249,115,22,.72)!important;color:#fed7aa!important}
+      #picksWarRoomBridge,.picks-war-room-bridge{display:none!important}
       .product-connectivity-toast{position:fixed;left:50%;bottom:22px;z-index:12000;max-width:min(420px,calc(100vw - 28px));transform:translate(-50%,18px);padding:11px 14px;border:1px solid rgba(249,115,22,.55);border-radius:12px;background:#111827;color:#fff;box-shadow:0 18px 50px rgba(0,0,0,.35);font:800 11px/1.35 system-ui;opacity:0;pointer-events:none;transition:.18s ease}
       .product-connectivity-toast.show{opacity:1;transform:translate(-50%,0)}
-      @media(max-width:620px){
-        .picks-war-room-bridge{grid-template-columns:1fr}.picks-war-room-bridge button{width:100%}
-        .intelligence-context-actions{display:grid;grid-template-columns:1fr 1fr}.intelligence-context-actions button,.intelligence-context-actions a{width:100%}
-      }
+      @media(max-width:620px){.intelligence-context-actions{display:grid;grid-template-columns:1fr 1fr}.intelligence-context-actions button,.intelligence-context-actions a{width:100%}}
     `;
-    document.head.appendChild(style);
   }
 
   function toast(message){
@@ -91,31 +117,24 @@
 
   function activate(destination){
     if(window.UFC_PRODUCT_ARCHITECTURE?.activateDestination){
-      window.UFC_PRODUCT_ARCHITECTURE.activateDestination(destination);
-      return true;
+      return window.UFC_PRODUCT_ARCHITECTURE.activateDestination(destination)!==false;
     }
     document.querySelector(`[data-destination="${destination}"]`)?.click();
     return true;
   }
 
   function rankingLocation(name){
-    const target=text(name).toLowerCase();
+    const target=normalizeFighterIdentity(name);
     const data=window.RANKING_DATA||{};
     const boards=[
       {key:'men',rows:Array.isArray(data.men)?data.men:[]},
       {key:'women',rows:Array.isArray(data.women)?data.women:[]}
     ];
     for(const board of boards){
-      const index=board.rows.findIndex(row=>text(row?.fighter).toLowerCase()===target);
+      const index=board.rows.findIndex(row=>normalizeFighterIdentity(row?.fighter)===target);
       if(index>=0)return{...board,row:board.rows[index],index};
     }
     return{key:'',rows:[],row:null,index:-1};
-  }
-
-  function nearestOpponent(name){
-    const result=rankingLocation(name);
-    if(result.index<0)return'';
-    return text(result.rows[result.index+1]?.fighter||result.rows[result.index-1]?.fighter);
   }
 
   function closeFighterDrawer(){
@@ -170,41 +189,65 @@
     },40);
   }
 
-  function setSelectValue(select,value){
-    if(!select||!value)return false;
-    const option=[...select.options].find(item=>item.value===value||text(item.textContent)===value);
+  function optionForFighter(select,value){
+    if(!select)return null;
+    const requested=normalizeFighterIdentity(canonicalFighterName(value));
+    return [...select.options].find(option=>{
+      const optionValue=normalizeFighterIdentity(option.value);
+      const optionLabel=normalizeFighterIdentity(option.textContent);
+      return optionValue===requested||optionLabel===requested;
+    })||null;
+  }
+
+  function setFighterSelect(select,value){
+    const option=optionForFighter(select,value);
     if(!option)return false;
     select.value=option.value;
     select.dispatchEvent(new Event('change',{bubbles:true}));
     return true;
   }
 
+  function resetOpponentSelect(select){
+    if(!select)return false;
+    let placeholder=[...select.options].find(option=>option.dataset.chooseOpponent==='true');
+    if(!placeholder){
+      placeholder=document.createElement('option');
+      placeholder.value='';
+      placeholder.textContent='Choose opponent';
+      placeholder.disabled=true;
+      placeholder.dataset.chooseOpponent='true';
+      select.prepend(placeholder);
+    }
+    placeholder.selected=true;
+    select.value='';
+    select.dispatchEvent(new Event('change',{bubbles:true}));
+    return true;
+  }
+
   function prepareComparison(name){
+    closeFighterDrawer();
     activate('intelligence');
-    const opponent=nearestOpponent(name);
+    document.getElementById('intelligenceContextBridge')?.remove();
     let tries=0;
     const apply=()=>{
       tries+=1;
-      const a=document.getElementById('fighterA');
-      const b=document.getElementById('fighterB');
-      if(!a||!b||!a.options.length){
-        if(tries<20)window.setTimeout(apply,60);
+      const fighterA=document.getElementById('fighterA');
+      const fighterB=document.getElementById('fighterB');
+      if(!fighterA||!fighterB||!fighterA.options.length||!fighterB.options.length){
+        if(tries<24)window.setTimeout(apply,60);
         return;
       }
-      setSelectValue(a,name);
-      if(opponent)setSelectValue(b,opponent);
-      if(b.value===a.value){
-        const fallback=[...b.options].find(option=>option.value!==a.value);
-        if(fallback){b.value=fallback.value;b.dispatchEvent(new Event('change',{bubbles:true}));}
-      }
+      const canonical=canonicalFighterName(name);
+      const selected=setFighterSelect(fighterA,canonical);
+      resetOpponentSelect(fighterB);
       const details=document.querySelector('details.intelligence-matchup');
       if(details)details.open=true;
-      const prompt=`Compare ${name} and ${b.value}. Start with the verdict, give the losing fighter's best counterargument, explain why the winner still wins, and separate the better fighter from the better UFC-only GOAT resume.`;
-      renderIntelligenceContext({source:'FROM FIGHTER PROFILE',title:`${name} comparison ready`,prompt,copied:false});
-      details?.scrollIntoView({behavior:'smooth',block:'start'});
-      toast(`${name} loaded into Compare.`);
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        details?.scrollIntoView({behavior:'smooth',block:'start'});
+      }));
+      toast(selected?`${canonical} is ready. Choose an opponent.`:'Choose the first fighter, then select an opponent.');
     };
-    window.setTimeout(apply,40);
+    window.setTimeout(apply,30);
   }
 
   function enhanceFighterProfile(){
@@ -220,55 +263,6 @@
     actions.innerHTML=`<button type="button" data-profile-connectivity="compare" data-fighter="${esc(name)}">COMPARE</button><button type="button" class="primary" data-profile-connectivity="ask" data-fighter="${esc(name)}">ASK WHY</button>`;
     const copy=summary.querySelector('.profile-copy');
     if(copy)copy.after(actions);else summary.appendChild(actions);
-    return true;
-  }
-
-  function currentPicksEvent(){
-    const events=Array.isArray(window.UFC_PICKS_EVENTS)?window.UFC_PICKS_EVENTS:[];
-    const selected=text(document.getElementById('picksEventSelect')?.value);
-    return events.find(event=>text(event?.id)===selected)
-      || events.find(event=>event?.status==='live')
-      || events.find(event=>event?.status==='upcoming')
-      || events[0]
-      || null;
-  }
-
-  function localPicks(event){
-    if(!event?.id)return{};
-    try{return JSON.parse(localStorage.getItem(`ufc-picks:${event.id}:local-picks`)||'{}')||{};}
-    catch(_error){return{};}
-  }
-
-  function warRoomAvailable(){
-    const button=document.querySelector('[data-destination="war-room"]');
-    return Boolean(button&&!button.disabled&&button.getAttribute('aria-disabled')!=='true');
-  }
-
-  function renderPicksBridge(){
-    const picks=document.getElementById('picks');
-    if(!picks)return false;
-    const event=currentPicksEvent();
-    const fights=Array.isArray(event?.fights)?event.fights:[];
-    const saved=localPicks(event);
-    const complete=Boolean(fights.length&&fights.every(fight=>text(saved[fight.id])));
-    let bridge=document.getElementById('picksWarRoomBridge');
-    if(!complete||!warRoomAvailable()){
-      bridge?.remove();
-      return false;
-    }
-    if(!bridge){
-      bridge=document.createElement('section');
-      bridge.id='picksWarRoomBridge';
-      bridge.className='picks-war-room-bridge';
-      const progress=document.querySelector('#picks .picks-progress-card');
-      if(progress)progress.after(bridge);else document.getElementById('picksFightList')?.before(bridge);
-    }
-    const main=fights.find(fight=>text(fight?.cardSection).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim()==='main event')||fights[fights.length-1];
-    const pick=text(saved[main?.id]);
-    const signature=`${event?.id||''}|${main?.id||''}|${pick}|${fights.length}`;
-    if(bridge.dataset.signature===signature)return true;
-    bridge.dataset.signature=signature;
-    bridge.innerHTML=`<div><span>PICKS COMPLETE</span><strong>Defend your main-event pick.</strong><small>${pick?`You picked ${esc(pick)}. `:''}Your card is saved—take the conversation to the War Room.</small></div><button type="button" data-connectivity-war-room>JOIN WAR ROOM →</button>`;
     return true;
   }
 
@@ -289,23 +283,32 @@
   }
 
   function enhanceWarRoom(){
-    const actions=document.querySelector('[data-octagon-board] .octagon-board-head-actions');
-    if(!actions)return false;
-    if(actions.querySelector('[data-connectivity-war-intelligence]'))return true;
-    const button=document.createElement('button');
-    button.type='button';
-    button.className='octagon-intelligence-button';
-    button.dataset.connectivityWarIntelligence='true';
-    button.textContent='TAKE TO INTELLIGENCE';
-    const refresh=actions.querySelector('[data-octagon-refresh]');
-    if(refresh)refresh.before(button);else actions.appendChild(button);
+    const board=document.querySelector('[data-octagon-board]');
+    const actions=board?.querySelector('.octagon-board-head-actions');
+    if(!board||!actions)return false;
+    let button=board.querySelector('[data-connectivity-war-intelligence]');
+    if(!button){
+      button=document.createElement('button');
+      button.type='button';
+      button.className='octagon-intelligence-button';
+      button.dataset.connectivityWarIntelligence='true';
+      button.textContent='TAKE TO INTELLIGENCE →';
+    }
+    const primary=board.querySelector('[data-war-room-primary-actions]');
+    if(primary&&!primary.contains(button))primary.appendChild(button);
+    else if(!button.isConnected)actions.appendChild(button);
     return true;
+  }
+
+  function removePicksBridge(){
+    document.querySelectorAll('#picksWarRoomBridge,.picks-war-room-bridge').forEach(node=>node.remove());
+    return false;
   }
 
   function renderAll(){
     enhanceFighterProfile();
     enhanceWarRoom();
-    renderPicksBridge();
+    removePicksBridge();
   }
 
   function scheduleRender(){
@@ -323,37 +326,27 @@
       profileObserver=new MutationObserver(scheduleRender);
       profileObserver.observe(detail,{childList:true,subtree:true});
     }
-    const picks=document.getElementById('picks');
-    if(picks){
-      picksObserver?.disconnect();
-      picksObserver=new MutationObserver(scheduleRender);
-      picksObserver.observe(picks,{childList:true,subtree:true,attributes:true,attributeFilter:['class','hidden']});
-    }
     const warRoom=document.getElementById('octagon');
     if(warRoom){
       warRoomObserver?.disconnect();
       warRoomObserver=new MutationObserver(scheduleRender);
       warRoomObserver.observe(warRoom,{childList:true,subtree:true});
     }
-    const access=document.querySelector('[data-destination="war-room"]');
-    if(access){
-      accessObserver?.disconnect();
-      accessObserver=new MutationObserver(scheduleRender);
-      accessObserver.observe(access,{attributes:true,attributeFilter:['disabled','aria-disabled','data-beta-access','data-beta-member']});
-    }
   }
 
   function bindEvents(){
+    if(eventsBound)return;
+    eventsBound=true;
     document.addEventListener('click',event=>{
       const profileButton=event.target.closest?.('[data-profile-connectivity]');
       if(profileButton){
         event.preventDefault();
         event.stopPropagation();
         const name=text(profileButton.dataset.fighter);
-        closeFighterDrawer();
         if(profileButton.dataset.profileConnectivity==='compare'){
           prepareComparison(name);
         }else{
+          closeFighterDrawer();
           const location=rankingLocation(name);
           const rank=Number(location.row?.rank);
           const rankText=Number.isFinite(rank)&&rank>0
@@ -366,12 +359,8 @@
         return;
       }
 
-      if(event.target.closest?.('[data-connectivity-war-room]')){
-        activate('war-room');
-        return;
-      }
-
       if(event.target.closest?.('[data-connectivity-war-intelligence]')){
+        event.preventDefault();
         openIntelligencePrompt({source:'FROM THE WAR ROOM',title:'War Room debate ready',prompt:warRoomPrompt(),copy:true});
         return;
       }
@@ -388,8 +377,6 @@
       }
     },true);
 
-    document.getElementById('picksEventSelect')?.addEventListener('change',()=>window.setTimeout(scheduleRender,0));
-    window.addEventListener('storage',scheduleRender);
     window.addEventListener('octagon-hq:view-change',scheduleRender);
     window.addEventListener('ufc-production-ranking-ready',scheduleRender);
     window.addEventListener('ufc-scoring-pipeline-ready',scheduleRender);
@@ -399,10 +386,11 @@
 
   function start(){
     installStyles();
+    removePicksBridge();
     bindObservers();
     bindEvents();
     renderAll();
-    [150,600,1600].forEach(delay=>window.setTimeout(()=>{
+    [120,500,1400].forEach(delay=>window.setTimeout(()=>{
       bindObservers();
       renderAll();
     },delay));
@@ -413,9 +401,11 @@
     render:renderAll,
     prepareComparison,
     openIntelligencePrompt,
-    renderPicksBridge,
+    renderPicksBridge:removePicksBridge,
     enhanceWarRoom,
-    enhanceFighterProfile
+    enhanceFighterProfile,
+    normalizeFighterIdentity,
+    canonicalFighterName
   };
   document.documentElement.setAttribute('data-product-connectivity',VERSION);
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
