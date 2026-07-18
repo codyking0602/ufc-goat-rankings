@@ -1,7 +1,7 @@
 {
   "active_members": 6,
   "avatar_profiles": 2,
-  "checked_at": "2026-07-18T19:56:36.010786+00:00",
+  "checked_at": "2026-07-18T20:19:58.909226+00:00",
   "code": "GOAT26",
   "daily_leaderboard_live_sync": {
     "change_detection": "server-signature-before-render",
@@ -110,6 +110,30 @@
     "resume_snapshot": "canonical-derived-fallbacks",
     "status": "stabilized",
     "whats_new_label": "single-label-with-badge"
+  },
+  "phase_4b_community_profiles": {
+    "active_members": 6,
+    "community_snapshot_rpc": true,
+    "deep_links_preserved": true,
+    "fresh_launch_destination": "home",
+    "home_member_directory": true,
+    "loading_policy": "deferred-server-snapshot-with-current-group-fallback",
+    "missing_top_ten_state": "visible-call-to-action",
+    "ok": true,
+    "personal_top_ten": "server-published-from-build-your-top-10",
+    "profile_challenge_target": "preselected-find-leader-recipient",
+    "profile_stats": [
+      "direct-challenges",
+      "picks-record",
+      "war-room-participation",
+      "daily-days"
+    ],
+    "public_member_profiles": true,
+    "published_top_tens": 0,
+    "set_top_ten_rpc": true,
+    "status": "active",
+    "top_ten_column": true,
+    "top_ten_updated_column": true
   },
   "refresh_performance": {
     "manual_refresh": "desktop-build-check",
