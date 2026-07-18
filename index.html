@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#111827" />
-  <meta name="app-build" content="20260717-phase-1c-direct-loader" />
+  <meta name="app-build" content="20260717-phase-1c-direct-loader-v2" />
   <title>Octagon HQ</title>
   <link rel="stylesheet" href="assets/css/app.css?v=app-css-20260711a-picks" />
   <link rel="stylesheet" href="assets/css/home-dashboard.css?v=home-dashboard-20260717d" />
@@ -24,7 +24,7 @@
   (async function(){
     const status=document.getElementById('bootStatus');
     try{
-      const response=await fetch('legacy-shell.html?v=phase-1c-direct-loader-20260717',{cache:'no-store'});
+      const response=await fetch('legacy-shell.html?v=phase-1c-direct-loader-20260717-v2',{cache:'no-store'});
       if(!response.ok)throw new Error('Shell request failed');
       let html=await response.text();
       const fallback='<section id="home" class="view active-view"><div class="home-dashboard critical-home-fallback"><section class="critical-home-primary"><div class="critical-home-kicker">TODAY\'S CHALLENGE</div><h2>Find the Leader</h2><p>Eliminate nine UFC fighters without removing the verified stat leader.</p><button type="button" data-critical-destination="play">PLAY NOW →</button></section><div class="critical-home-grid"><section class="critical-home-card"><div class="critical-home-kicker">NEXT UFC EVENT</div><h3>Make Your Picks</h3><p>The live event card and your saved picks are loading.</p><button type="button" class="secondary" data-critical-destination="picks">OPEN PICKS →</button></section><section class="critical-home-card"><div class="critical-home-kicker">THE WAR ROOM</div><h3>Join Conversation</h3><p>Recent avatars and notifications are loading.</p><button type="button" class="secondary" data-critical-destination="war-room">JOIN CONVERSATION →</button></section></div><section class="critical-home-card"><div class="critical-home-kicker">RANKING SPOTLIGHT</div><h3>Explore the Top 80</h3><p>Today\'s fighter spotlight is finalizing with the production rankings.</p><button type="button" class="secondary" data-critical-destination="rankings">VIEW RANKINGS →</button></section></div></section>';
