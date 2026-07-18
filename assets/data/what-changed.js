@@ -5,10 +5,18 @@
   // Add one concise card for a major product release and one card for each newly added fighter.
   // Rank and OVR movement must use approved before/after values; never infer history from the current board alone.
   const source={
-    version:'what-changed-data-20260718e-two-card-reset',
+    version:'what-changed-data-20260718f-phase-3',
     timezone:'America/Chicago',
     seenStorageKey:'octagon-hq-what-changed-seen-v1',
     entries:[
+      {
+        id:'smart-notifications-20260718',
+        publishedAt:'2026-07-18T11:46:00-05:00',
+        type:'App Updated',
+        headline:'Smart notifications are live',
+        summary:'Get direct challenges, missing-Picks reminders, and War Room alerts on your device.',
+        destination:'home'
+      },
       {
         id:'octagon-hq-redesign-20260718',
         publishedAt:'2026-07-18T10:20:00-05:00',
