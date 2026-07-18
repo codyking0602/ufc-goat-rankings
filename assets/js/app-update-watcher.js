@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='app-update-watcher-20260718d-centered-two-card';
+  const VERSION='app-update-watcher-20260718e-phase-3-fast-refresh';
   const WHAT_CHANGED_SRC='assets/js/what-changed.js?v=what-changed-20260718b-compact';
   const RESTORE_KEY='ufc-goat-manual-refresh-v1';
   const PROGRESS_KEY='ufc-goat-manual-refresh-progress-v1';
@@ -56,14 +56,14 @@
     button.classList.add('refreshing');button.setAttribute('aria-busy','true');
     const track=document.getElementById('manualRefreshProgress');const fill=document.getElementById('manualRefreshProgressFill');
     track?.classList.add('visible');track?.setAttribute('aria-hidden','false');
-    if(fill){fill.style.width='28%';window.setTimeout(()=>{fill.style.width='88%';},20);}
+    if(fill){fill.style.width='45%';window.setTimeout(()=>{fill.style.width='92%';},25);}
   }
   function networkRefresh(button){
     if(button?.dataset.refreshBusy==='true')return;
     if(button)button.dataset.refreshBusy='true';
     saveState();showQuickProgress(button);
-    const url=new URL('index.html',window.location.href);url.searchParams.set('__manual_refresh',String(Date.now()));url.searchParams.set('__shell','light');url.hash=window.location.hash;
-    window.setTimeout(()=>window.location.replace(url.toString()),50);
+    try{sessionStorage.setItem(PROGRESS_KEY,'fast');}catch(_error){}
+    window.setTimeout(()=>window.location.reload(),35);
   }
 
   function changeSource(){return window.OCTAGON_CHANGELOG||{entries:[],seenStorageKey:'octagon-hq-what-changed-seen-v1'};}
@@ -116,12 +116,12 @@
     syncUnread();
   }
 
-  function loadScript(id,src){if(document.getElementById(id))return;document.querySelectorAll(`script[data-deferred-guard="${id}"]`).forEach(node=>node.remove());const script=document.createElement('script');script.id=id;script.src=src;script.async=true;document.head.appendChild(script);}
+  function loadScript(id,src){if(document.getElementById(id)||document.querySelector(`script[src*="${src.split('?')[0]}"]`))return;document.querySelectorAll(`script[data-deferred-guard="${id}"]`).forEach(node=>node.remove());const script=document.createElement('script');script.id=id;script.src=src;script.async=true;document.head.appendChild(script);}
   function loadPermanentDaily(){loadScript('playPermanentDailyController','assets/js/play-daily-rotation.js?v=play-daily-controller-20260717e-find-leader-permanent');}
-  function loadDailyLeaderboard(){loadScript('playDailyLeaderboardCurrent','assets/js/play-daily-leaderboard.js?v=play-daily-leaderboard-20260717e-find-leader-only');}
+  function loadDailyLeaderboard(){loadScript('playDailyLeaderboardCurrent','assets/js/play-daily-leaderboard.js?v=play-daily-leaderboard-20260717e-find-leader-only');loadScript('playDailyLeaderboardLive','assets/js/play-daily-live-sync.js?v=play-daily-live-sync-20260718a-phase-3');}
   function loadChallengeCompat(){loadScript('playChallengeCompatCurrent','assets/js/play-challenge-compat.js?v=play-challenge-compat-20260717c-on-demand');}
   function loadBlindSupport(){loadScript('blindDailyStartupFixCurrent','assets/js/blind-daily-startup-fix.js?v=blind-daily-startup-fix-20260717f-on-demand');}
-  function schedulePlaySupport(){if(playSupportScheduled)return;playSupportScheduled=true;requestAnimationFrame(()=>{loadPermanentDaily();const loadBoard=()=>loadDailyLeaderboard();if(typeof requestIdleCallback==='function')requestIdleCallback(loadBoard,{timeout:900});else window.setTimeout(loadBoard,250);});}
+  function schedulePlaySupport(){if(playSupportScheduled)return;playSupportScheduled=true;requestAnimationFrame(()=>{loadPermanentDaily();const loadBoard=()=>loadDailyLeaderboard();if(typeof requestIdleCallback==='function')requestIdleCallback(loadBoard,{timeout:500});else window.setTimeout(loadBoard,120);});}
   function bindDeferredSupport(){
     if(document.documentElement.dataset.playSupportBinding===VERSION)return;
     document.documentElement.dataset.playSupportBinding=VERSION;
@@ -130,10 +130,10 @@
   }
 
   LEGACY_KEYS.forEach(key=>{try{sessionStorage.removeItem(key);}catch(_error){}});
-  cleanRefreshState();injectStyles();installButton();bindDeferredSupport();window.setTimeout(restoreState,160);
+  cleanRefreshState();injectStyles();installButton();bindDeferredSupport();window.setTimeout(restoreState,100);
   window.addEventListener('octagon-hq:what-changed-seen',syncUnread);
   window.addEventListener('storage',event=>{if(event.key===changeSource().seenStorageKey)syncUnread();});
 
-  window.UFC_APP_UPDATE_WATCHER={version:VERSION,networkRefresh,openWhatChanged,openWhatsNew:openWhatChanged,restoreState,syncUnread,unreadCount,schedulePlaySupport,loadPermanentDaily,loadDailyLeaderboard,loadChallengeCompat,loadBlindSupport,mode:'phase-2d-lazy-two-card'};
+  window.UFC_APP_UPDATE_WATCHER={version:VERSION,networkRefresh,openWhatChanged,openWhatsNew:openWhatChanged,restoreState,syncUnread,unreadCount,schedulePlaySupport,loadPermanentDaily,loadDailyLeaderboard,loadChallengeCompat,loadBlindSupport,mode:'phase-3-fast-refresh-live-leaderboard'};
   document.documentElement.setAttribute('data-app-update-watcher',VERSION);
 })();
