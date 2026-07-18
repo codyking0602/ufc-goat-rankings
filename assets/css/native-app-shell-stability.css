@@ -1,0 +1,14 @@
+/* Phase 4A stabilization: fighter profiles, bottom clearance, and compact update control. */
+@media(max-width:900px){
+  main.shell{padding-bottom:calc(var(--native-nav-height) + var(--native-safe-bottom) + 30px)!important}
+  #whatsNewBtn [data-whats-new-label]{display:block;line-height:1!important}
+
+  .drawer{z-index:5000!important;background:#eef3f8!important}
+  .drawer-panel{width:100vw!important;height:100dvh!important;margin:0!important;border:0!important;padding:10px 12px calc(var(--native-nav-height) + var(--native-safe-bottom) + 28px)!important;background:#eef3f8!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch}
+  .drawer-panel>.close{position:sticky!important;top:8px!important;z-index:20!important;float:none!important;display:grid!important;place-items:center!important;width:48px!important;height:48px!important;margin:0 0 8px auto!important;border:1px solid #475569!important;border-radius:15px!important;background:#111827!important;color:#fff!important;box-shadow:0 10px 28px rgba(2,6,23,.28)!important;font-size:31px!important;line-height:1!important}
+  #fighterDetail{clear:both;min-width:0}
+  .drawer .profile-hero{margin-top:0!important}
+  .drawer .fighter-photo{aspect-ratio:1/1!important;max-height:min(58dvh,520px)!important;min-height:0!important;background:#05070b!important}
+  .drawer .fighter-photo-img{object-fit:contain!important;background:#05070b!important}
+  body.fighter-profile-open{overflow:hidden!important;padding-bottom:0!important}
+}
