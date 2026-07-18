@@ -1,9 +1,10 @@
 (function(){
   'use strict';
 
-  const VERSION='profile-avatar-sync-20260718a';
+  const VERSION='profile-avatar-sync-20260718b-resolved';
   let frame=0;
   let observer=null;
+  let resolving=false;
 
   const text=value=>String(value??'').trim();
   const initials=value=>text(value).split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase()||'UFC';
@@ -63,17 +64,38 @@
     frame=requestAnimationFrame(()=>{frame=0;apply();});
   }
 
+  async function resolveSharedProfile(){
+    if(resolving)return;
+    const api=window.UFC_APP_PROFILE;
+    if(!api)return;
+    resolving=true;
+    try{
+      await api.resolve?.();
+      if(!api.group)await api.groupSnapshot?.();
+      apply();
+      await window.UFC_PICKS_SHARED_PROFILE?.refresh?.(true);
+      await window.UFC_PICKS_ADMIN_SETTINGS?.refresh?.();
+      window.dispatchEvent(new CustomEvent('ufc-app-profile-ready',{detail:{identity:api.identity,group:api.group}}));
+    }catch(_error){}finally{
+      resolving=false;
+    }
+  }
+
   function start(){
     schedule();
+    resolveSharedProfile();
     const octagon=document.getElementById('octagon');
     if(octagon){
       observer=new MutationObserver(schedule);
       observer.observe(octagon,{childList:true,subtree:true});
     }
-    ['ufc-app-profile-updated','ufc-play-profile-ready','ufc-play-data-ready','octagon-hq:view-change'].forEach(name=>window.addEventListener(name,schedule));
+    ['ufc-app-profile-updated','ufc-play-profile-ready','ufc-play-data-ready','octagon-hq:view-change'].forEach(name=>window.addEventListener(name,()=>{
+      schedule();
+      if(!window.UFC_APP_PROFILE?.group)resolveSharedProfile();
+    }));
   }
 
-  window.UFC_PROFILE_AVATAR_SYNC={version:VERSION,apply};
+  window.UFC_PROFILE_AVATAR_SYNC={version:VERSION,apply,resolve:resolveSharedProfile};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
   else start();
 })();
