@@ -1,14 +1,26 @@
 {
-  "checked_at": "2026-07-18T16:54:45.989016+00:00",
-  "database": "failed",
-  "error": "Supabase Management API returned HTTP 400: {\"message\":\"Failed to run sql query: ERROR:  42501: permission denied for function app_notification_audit\\n\"}",
-  "finished_at": "2026-07-18T16:54:49.444216+00:00",
+  "audit": {
+    "active_subscriptions": 1,
+    "challenge_trigger": true,
+    "configured": true,
+    "cron_scheduled": true,
+    "ok": true,
+    "pending_outbox": 0,
+    "preference_rows": 6,
+    "settings_rpc": true,
+    "test_rpc": true,
+    "war_room_trigger": true,
+    "worker_rpc": true
+  },
+  "checked_at": "2026-07-18T16:57:13.135973+00:00",
+  "database": "success",
+  "finished_at": "2026-07-18T16:57:39.869777+00:00",
   "phase": "phase-3-smart-notifications",
   "workflow_outcomes": {
-    "database": "failure",
+    "database": "success",
     "validate": "success",
-    "wire": "skipped",
-    "worker": "skipped"
+    "wire": "success",
+    "worker": "success"
   },
-  "workflow_status": "failed"
+  "workflow_status": "success"
 }

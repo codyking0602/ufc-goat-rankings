@@ -1,8 +1,13 @@
 {
   "active_members": 6,
   "avatar_profiles": 2,
-  "checked_at": "2026-07-18T16:42:05.204466+00:00",
+  "checked_at": "2026-07-18T16:57:16.415797+00:00",
   "code": "GOAT26",
+  "daily_leaderboard_live_sync": {
+    "change_detection": "server-signature-before-render",
+    "poll_seconds": 10,
+    "status": "active"
+  },
   "deployment_method": "supabase-management-api",
   "events": 2,
   "is_canonical": true,
@@ -70,7 +75,42 @@
     },
     "vapid_ready": true
   },
+  "refresh_performance": {
+    "manual_refresh": "normal-reload-with-state-restore",
+    "navigation": "network-first",
+    "status": "active",
+    "versioned_assets": "cache-first"
+  },
   "rooms": 2,
   "saved_picks": 51,
+  "smart_notifications": {
+    "active_subscriptions": 1,
+    "challenge_trigger": true,
+    "configured": true,
+    "cron_scheduled": true,
+    "delivery_owner": "database-outbox-and-edge-worker",
+    "device_settings": "activity-profile",
+    "ok": true,
+    "pending_outbox": 0,
+    "phase": "phase-3",
+    "picks_windows_minutes": [
+      120,
+      20
+    ],
+    "preference_rows": 6,
+    "settings_rpc": true,
+    "status": "active",
+    "test_notification": true,
+    "test_rpc": true,
+    "types": [
+      "direct-challenge",
+      "picks-reminder",
+      "war-room"
+    ],
+    "war_room_trigger": true,
+    "worker": "octagon-push",
+    "worker_interval": "one-minute",
+    "worker_rpc": true
+  },
   "status": "active"
 }
