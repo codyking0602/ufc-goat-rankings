@@ -1,0 +1,106 @@
+name: Lock Octagon HQ Branding
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy-octagon-hq-branding.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  brand:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply Octagon HQ branding
+        run: |
+          python - <<'PY'
+          import json
+          import re
+          from pathlib import Path
+
+          index_path=Path('index.html')
+          index=index_path.read_text()
+          mobile_meta='''  <meta name="application-name" content="Octagon HQ" />
+  <meta name="apple-mobile-web-app-title" content="Octagon HQ" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="assets/app-icon.png?v=20260702c" />'''
+          if 'apple-mobile-web-app-title' not in index:
+              anchor='  <meta name="viewport" content="width=device-width, initial-scale=1" />'
+              if anchor not in index: raise SystemExit('Viewport anchor missing from index.html')
+              index=index.replace(anchor,anchor+'\n'+mobile_meta,1)
+          index=re.sub(r'manifest\.webmanifest\?v=[^"\s]+','manifest.webmanifest?v=octagon-hq-branding-20260718a',index,count=1)
+          index_path.write_text(index)
+
+          manifest_path=Path('manifest.webmanifest')
+          manifest=json.loads(manifest_path.read_text())
+          manifest.update({
+              'name':'Octagon HQ',
+              'short_name':'Octagon HQ',
+              'description':'UFC rankings, games, Picks, The War Room, Intelligence, and direct challenges.',
+              'start_url':'./#home',
+              'scope':'./',
+              'display':'standalone',
+          })
+          manifest_path.write_text(json.dumps(manifest,indent=2)+'\n')
+
+          sql_path=Path('supabase/app-notifications-phase-three.sql')
+          sql=sql_path.read_text()
+          replacements={
+              "'title','Octagon HQ notifications are on'":"'title','Notifications are on'",
+              "'body','Direct challenges, Picks reminders, and War Room alerts can reach this device.'":"'body','Challenges, Picks reminders, and War Room alerts are ready.'",
+          }
+          for old,new in replacements.items():
+              if old not in sql and new not in sql: raise SystemExit(f'Notification branding anchor missing: {old}')
+              sql=sql.replace(old,new)
+          sql_path.write_text(sql)
+
+          canonical_path=Path('.github/workflows/deploy-app-canonical-group.yml')
+          canonical=canonical_path.read_text()
+          canonical=canonical.replace('manifest.webmanifest?v=phase-3-user-visible-fix','manifest.webmanifest?v=octagon-hq-branding-20260718a')
+          if "apple-mobile-web-app-title" not in canonical:
+              wire_anchor="           path=Path('index.html')\n           text=path.read_text()"
+              injection="""           path=Path('index.html')
+           text=path.read_text()
+           mobile_meta='''  <meta name=\"application-name\" content=\"Octagon HQ\" />
+  <meta name=\"apple-mobile-web-app-title\" content=\"Octagon HQ\" />
+  <meta name=\"apple-mobile-web-app-capable\" content=\"yes\" />
+  <meta name=\"mobile-web-app-capable\" content=\"yes\" />
+  <meta name=\"apple-mobile-web-app-status-bar-style\" content=\"black-translucent\" />
+  <link rel=\"apple-touch-icon\" href=\"assets/app-icon.png?v=20260702c\" />'''
+           if 'apple-mobile-web-app-title' not in text:
+               anchor='  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />'
+               if anchor not in text: raise SystemExit('Viewport anchor missing from index.html')
+               text=text.replace(anchor,anchor+'\\n'+mobile_meta,1)"""
+              if wire_anchor not in canonical: raise SystemExit('Canonical index wiring anchor missing')
+              canonical=canonical.replace(wire_anchor,injection,1)
+          canonical_path.write_text(canonical)
+          PY
+
+          grep -Fq '<meta name="apple-mobile-web-app-title" content="Octagon HQ" />' index.html
+          grep -Fq '<meta name="application-name" content="Octagon HQ" />' index.html
+          grep -Fq 'manifest.webmanifest?v=octagon-hq-branding-20260718a' index.html
+          grep -Fq '"name": "Octagon HQ"' manifest.webmanifest
+          grep -Fq "'title','Notifications are on'" supabase/app-notifications-phase-three.sql
+          grep -Fq "'body','Challenges, Picks reminders, and War Room alerts are ready.'" supabase/app-notifications-phase-three.sql
+
+      - name: Commit Octagon HQ branding
+        run: |
+          if git diff --quiet -- index.html manifest.webmanifest supabase/app-notifications-phase-three.sql .github/workflows/deploy-app-canonical-group.yml; then
+            echo 'Octagon HQ branding is already current.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
+          git add index.html manifest.webmanifest supabase/app-notifications-phase-three.sql .github/workflows/deploy-app-canonical-group.yml
+          git commit -m 'Deploy Octagon HQ install and notification branding'
+          git pull --rebase origin main
+          git push origin HEAD:main
