@@ -1,14 +1,3 @@
-// Critical shell loads before Supabase and the production pipeline can block the page.
-(function(){
-  'use strict';
-  if(window.UFC_CRITICAL_SHELL||document.getElementById('criticalShellBootstrapLoader'))return;
-  const script=document.createElement('script');
-  script.id='criticalShellBootstrapLoader';
-  script.src='assets/js/critical-shell-bootstrap.js?v=critical-shell-bootstrap-20260717b-immediate';
-  script.async=false;
-  document.head.appendChild(script);
-})();
-
 // Presentation-only helpers for calculated category ranks, Peak Apex, and category boards.
 (function(){
   'use strict';

@@ -1,22 +1,16 @@
 (function(){
   'use strict';
 
-  const VERSION='war-room-branding-20260717f-shell-recovery';
-  const ARCH_VERSION='product-architecture-20260717g-performance';
-  const CONNECT_VERSION='product-connectivity-20260717d-clean-handoffs';
+  const VERSION='war-room-branding-20260717e-phase-1c-stable';
   const ATTRIBUTE_NAMES=['title','aria-label','placeholder'];
   const SKIP_SELECTOR='.octagon-message-body, textarea, input, script, style, noscript';
   let queued=false;
 
   function replaceCopy(value){
     return String(value??'')
-      .replace(/PRIVATE BETA\s*·\s*GOAT26/gi,'GOAT26 WAR ROOM')
-      .replace(/Manage Beta Access/gi,'Manage War Room Access')
-      .replace(/Manage Beta/gi,'Manage Access')
-      .replace(/Private Beta/gi,'War Room')
       .replace(/The Octagon/g,'The War Room')
       .replace(/the Octagon/g,'the War Room')
-      .replace(/Octagon Beta/g,'War Room')
+      .replace(/Octagon Beta/g,'War Room Beta')
       .replace(/Octagon week/g,'War Room week')
       .replace(/Octagon board/g,'War Room board')
       .replace(/Octagon messages/g,'War Room messages')
@@ -65,34 +59,16 @@
         if(next!==current)child.setAttribute(name,next);
       }
     });
-  }
 
-  function normalizeShellCopy(){
-    const hero=document.querySelector('.hero');
-    const brand=hero?.firstElementChild;
-    const eyebrow=brand?.querySelector('.eyebrow');
-    const title=brand?.querySelector('h1');
-    const subtitle=brand?.querySelector('.subtitle');
-    if(eyebrow)eyebrow.textContent='UFC RANKINGS · GAMES · PICKS · COMMUNITY';
-    if(title)title.textContent='Octagon HQ';
-    if(subtitle)subtitle.textContent='Rankings, games, picks, and UFC conversation.';
-    document.title='Octagon HQ';
-
-    const board=document.querySelector('[data-octagon-board]');
-    const kicker=board?.querySelector('.octagon-board-kicker');
-    const heading=board?.querySelector('.octagon-board-head h2');
-    const input=board?.querySelector('[data-octagon-input]');
-    const manage=board?.querySelector('[data-octagon-manage-beta]');
-    if(kicker)kicker.textContent='GOAT26 WAR ROOM';
-    if(heading)heading.textContent='The War Room';
-    if(input&&/Octagon|Beta/i.test(input.placeholder||''))input.placeholder=replaceCopy(input.placeholder);
-    if(manage)manage.textContent='Manage Access';
+    const heading=element.matches?.('[data-octagon-board]')
+      ? element.querySelector('.octagon-board-head h2')
+      : element.querySelector?.('[data-octagon-board] .octagon-board-head h2');
+    if(heading&&heading.textContent!=='The War Room')heading.textContent='The War Room';
   }
 
   function applyBranding(){
     queued=false;
     if(document.body)brandElement(document.body);
-    normalizeShellCopy();
   }
 
   function scheduleBranding(){
@@ -115,37 +91,29 @@
     if(mount.parentElement!==document.body)document.body.appendChild(mount);
   }
 
-  function appendScript(id,src){
-    if(document.getElementById(id))return;
+  function loadProductArchitecture(){
+    if(window.UFC_PRODUCT_ARCHITECTURE||document.querySelector('script[data-product-architecture-loader]'))return;
     const script=document.createElement('script');
-    script.id=id;
-    script.src=src;
+    script.src='assets/js/product-architecture.js?v=product-architecture-20260717g-performance';
+    script.dataset.productArchitectureLoader='true';
     script.async=false;
     document.body.appendChild(script);
   }
 
-  function recoverArchitecture(){
-    if(window.UFC_PRODUCT_ARCHITECTURE?.version!==ARCH_VERSION){
-      appendScript('productArchitectureRecovery','assets/js/product-architecture.js?v=product-architecture-20260717g-performance-recovery');
-    }else{
-      window.UFC_PRODUCT_ARCHITECTURE.apply?.();
-    }
-  }
-
-  function recoverConnectivity(){
-    if(window.UFC_PRODUCT_CONNECTIVITY?.version!==CONNECT_VERSION){
-      appendScript('productConnectivityRecovery','assets/js/product-connectivity.js?v=product-connectivity-20260717d-clean-handoffs-recovery');
-    }else{
-      window.UFC_PRODUCT_CONNECTIVITY.render?.();
-    }
+  function loadProductConnectivity(){
+    if(window.UFC_PRODUCT_CONNECTIVITY||document.querySelector('script[data-product-connectivity-loader]'))return;
+    const script=document.createElement('script');
+    script.src='assets/js/product-connectivity.js?v=product-connectivity-20260717b-stable';
+    script.dataset.productConnectivityLoader='true';
+    script.async=false;
+    document.body.appendChild(script);
   }
 
   function start(){
     applyBranding();
     preserveRulesCompatibilityMount();
-    recoverArchitecture();
-    recoverConnectivity();
-
+    loadProductArchitecture();
+    loadProductConnectivity();
     const observer=new MutationObserver(mutations=>{
       for(const mutation of mutations){
         if(mutation.type==='characterData'){
@@ -171,25 +139,13 @@
       attributeFilter:ATTRIBUTE_NAMES
     });
 
-    [50,250,800,1800,3600].forEach(delay=>window.setTimeout(()=>{
-      applyBranding();
-      recoverArchitecture();
-      recoverConnectivity();
-    },delay));
-
+    [50,250,900,2400].forEach(delay=>window.setTimeout(applyBranding,delay));
     ['ufc-play-profile-ready','ufc-app-profile-updated','ufc-canonical-group-ready'].forEach(name=>{
       window.addEventListener(name,scheduleBranding);
     });
   }
 
-  window.UFC_WAR_ROOM_BRANDING={
-    version:VERSION,
-    apply:applyBranding,
-    replaceCopy,
-    preserveRulesCompatibilityMount,
-    recoverArchitecture,
-    recoverConnectivity
-  };
+  window.UFC_WAR_ROOM_BRANDING={version:VERSION,apply:applyBranding,replaceCopy,preserveRulesCompatibilityMount,loadProductConnectivity};
   document.documentElement.setAttribute('data-war-room-branding',VERSION);
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
   else start();
