@@ -4,10 +4,18 @@
   // Editorial release rule: add verified fighter and major feature milestones here in the same production change.
   // Rank and OVR movement must use approved before/after values; never infer history from the current board alone.
   const source={
-    version:'what-changed-data-20260718b-compact',
+    version:'what-changed-data-20260718c-phase-2e',
     timezone:'America/Chicago',
     seenStorageKey:'octagon-hq-what-changed-seen-v1',
     entries:[
+      {
+        id:'sharing-deep-links-live-20260718',
+        publishedAt:'2026-07-18T09:31:00-05:00',
+        type:'App Updated',
+        headline:'Sharing and direct links are live',
+        summary:'Fighter profiles, matchups, Find the Leader results, Picks recaps, and War Room discussions now open directly.',
+        destination:'home'
+      },
       {
         id:'picks-season-launched-20260718',
         publishedAt:'2026-07-18T06:39:54-05:00',
