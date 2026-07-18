@@ -6,6 +6,9 @@ on:
     paths:
       - '.github/workflows/deploy-shared-profile-photos.yml'
       - 'supabase/app-profile-photo-upload-phase.sql'
+      - 'assets/data/what-changed.js'
+      - 'assets/js/what-changed.js'
+      - 'assets/js/app-update-watcher.js'
       - 'assets/js/app-profile.js'
       - 'assets/js/profile-activity.js'
       - 'assets/js/find-leader-retention.js'
@@ -33,8 +36,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Validate shared profile and Picks cohesion release
+      - name: Validate shared profile, Picks and What Changed release
         run: |
+          node --check assets/data/what-changed.js
+          node --check assets/js/what-changed.js
+          node --check assets/js/app-update-watcher.js
           node --check assets/js/app-profile.js
           node --check assets/js/profile-activity.js
           node --check assets/js/find-leader-retention.js
@@ -47,6 +53,11 @@ jobs:
           node --check assets/js/profile-avatar-sync.js
           node --check assets/js/product-polish.js
           node --check assets/js/product-architecture.js
+          grep -Fq 'what-changed-data-20260718a-phase-2d' assets/data/what-changed.js
+          grep -Fq 'what-changed-20260718a-phase-2d' assets/js/what-changed.js
+          grep -Fq 'app-update-watcher-20260718b-phase-2d' assets/js/app-update-watcher.js
+          grep -Fq 'octagon-hq-what-changed-seen-v1' assets/data/what-changed.js
+          grep -Fq 'data-what-changed-entry' assets/js/what-changed.js
           grep -Fq 'find-leader-retention-20260718c-phase-2b-lazy' assets/js/find-leader-retention.js
           grep -Fq 'picks-season-loop-20260718d-canonical-ui' assets/js/picks-season-loop.js
           grep -Fq 'picks-internal-navigation-20260718a-fast-routes' assets/js/picks-internal-navigation.js
@@ -61,10 +72,11 @@ jobs:
           grep -Fq "picks-room-no-share" assets/js/picks-mobile-polish.js
           ! grep -Fq "picks-season-grid" assets/js/picks-season-loop.js
           ! grep -Fq "profileObserver=new MutationObserver" assets/js/find-leader-retention.js
+          ! grep -Eiq "beta|bootloader|cache failure|repair history" assets/data/what-changed.js
           grep -Fq 'add column if not exists profile_photo_data text' supabase/app-profile-photo-upload-phase.sql
           grep -Fq 'create or replace function public.app_profile_set_photo' supabase/app-profile-photo-upload-phase.sql
 
-      - name: Wire the final Picks assets into the live page
+      - name: Wire the final Phase 2D assets into the live page
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -80,6 +92,7 @@ jobs:
               'picks-internal-navigation.js':'picks-internal-navigation-20260718a-fast-routes',
               'picks-home-event-cleanup.js':'picks-home-event-cleanup-20260718c-no-reminder',
               'picks-mobile-polish.js':'picks-mobile-polish-20260718f-event-art',
+              'app-update-watcher.js':'app-update-watcher-20260718b-phase-2d',
               'product-architecture.js':'product-architecture-20260718q-picks-cohesion',
           }
           for filename,version in js_versions.items():
@@ -109,9 +122,18 @@ jobs:
               if count!=1:
                   raise SystemExit('Could not insert picks-season-loop.js after app-profile.js')
 
+          changelog_src='assets/data/what-changed.js?v=what-changed-data-20260718a-phase-2d'
+          changelog_pattern=r'\s*<script src="assets/data/what-changed\.js\?v=[^"]+"></script>'
+          text=re.sub(changelog_pattern,'',text)
+          watcher_tag=re.search(r'(?P<indent>\s*)<script src="assets/js/app-update-watcher\.js\?v=[^"]+"></script>',text)
+          if not watcher_tag:
+              raise SystemExit('Could not find app-update-watcher.js in index.html')
+          replacement=f'{watcher_tag.group("indent")}<script src="{changelog_src}"></script>{watcher_tag.group("indent")}<script src="assets/js/app-update-watcher.js?v=app-update-watcher-20260718b-phase-2d"></script>'
+          text=text[:watcher_tag.start()]+replacement+text[watcher_tag.end():]
+
           text=re.sub(
               r'<meta name="app-build" content="[^"]+" />',
-              '<meta name="app-build" content="20260718-picks-event-no-reminder" />',
+              '<meta name="app-build" content="20260718-phase-2d-what-changed" />',
               text,
               count=1,
           )
@@ -121,12 +143,12 @@ jobs:
       - name: Commit live asset versions
         run: |
           if git diff --quiet -- index.html; then
-            echo 'Live Picks asset versions are unchanged.'
+            echo 'Live Phase 2D asset versions are unchanged.'
           else
             git config user.name 'github-actions[bot]'
             git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
             git add index.html
-            git commit -m 'Deploy Picks Event without reminder [skip ci]'
+            git commit -m 'Deploy Phase 2D What Changed [skip ci]'
             git pull --rebase origin main
             git push origin HEAD:main
           fi
@@ -228,9 +250,15 @@ jobs:
               'activity_profile_source':'canonical-picks-group-totals',
               'internal_navigation':'immediate-scoped-observers'
           }
+          status['what_changed']={
+              'phase':'phase-2d','status':'active','canonical_source':'assets/data/what-changed.js',
+              'controller':'assets/js/what-changed.js','header_owner':'assets/js/app-update-watcher.js',
+              'unread_policy':'unseen-entry-ids-local','loading_policy':'lightweight-data-controller-lazy',
+              'fighter_hydration':'current-production-ranking-data','deep_links':'fighter-profile-and-destination'
+          }
           status['checked_at']=datetime.now(timezone.utc).isoformat()
           status_path.write_text(json.dumps(status,indent=2,sort_keys=True)+'\n')
-          print('Shared profile and Picks no-reminder release verified.')
+          print('Shared profile, Picks and Phase 2D What Changed release verified.')
           PY
 
       - name: Commit deployment audit
@@ -242,6 +270,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
           git add supabase/goat26-deployment-status.json
-          git commit -m 'Record Picks no-reminder deployment [skip ci]'
+          git commit -m 'Record Phase 2D What Changed deployment [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:main
