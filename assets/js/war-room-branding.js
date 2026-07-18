@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='war-room-branding-20260717d-clean';
+  const VERSION='war-room-branding-20260717e-clean';
   const ATTRIBUTE_NAMES=['title','aria-label','placeholder'];
   const USER_COPY_SELECTOR='.octagon-message-body';
 
@@ -117,8 +117,8 @@
   function loadProductConnectivity(){
     loadScript(
       'productConnectivityCurrent',
-      'assets/js/product-connectivity.js?v=product-connectivity-20260717c-clean-handoffs',
-      ()=>window.UFC_PRODUCT_CONNECTIVITY?.version==='product-connectivity-20260717c-clean-handoffs'
+      'assets/js/product-connectivity.js?v=product-connectivity-20260717d-clean-handoffs',
+      ()=>window.UFC_PRODUCT_CONNECTIVITY?.version==='product-connectivity-20260717d-clean-handoffs'
     );
   }
 
