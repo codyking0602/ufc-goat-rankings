@@ -1,0 +1,116 @@
+name: Validate Phase 4B Preview
+
+on:
+  push:
+    branches: [phase-4b-clean-preview-v2]
+    paths:
+      - 'assets/js/community-profiles.js'
+      - 'assets/js/fresh-home-launch.js'
+      - 'assets/css/community-profiles.css'
+      - 'supabase/app-community-profiles-phase-4b.sql'
+      - 'scripts/test-phase-4b-mobile.mjs'
+      - '.github/workflows/validate-phase-4b-preview.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'assets/js/community-profiles.js'
+      - 'assets/js/fresh-home-launch.js'
+      - 'assets/css/community-profiles.css'
+      - 'supabase/app-community-profiles-phase-4b.sql'
+      - 'scripts/test-phase-4b-mobile.mjs'
+      - '.github/workflows/validate-phase-4b-preview.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate Phase 4B JavaScript
+        run: |
+          node --check assets/js/community-profiles.js
+          node --check assets/js/fresh-home-launch.js
+          node --check scripts/test-phase-4b-mobile.mjs
+      - name: Diagnose repository JavaScript syntax
+        id: syntax
+        shell: bash
+        run: |
+          : > /tmp/js-syntax-diagnostic.txt
+          failed=0
+          while IFS= read -r -d '' file; do
+            if ! output=$(node --check "$file" 2>&1); then
+              {
+                echo "FILE=$file"
+                echo "$output"
+              } | tee /tmp/js-syntax-diagnostic.txt
+              cp "$file" /tmp/failing-source.js
+              failed=1
+              break
+            fi
+          done < <(find assets -type f -name '*.js' -print0 | sort -z)
+          if [ "$failed" -eq 0 ]; then
+            echo "ALL_ASSET_JS_VALID" | tee /tmp/js-syntax-diagnostic.txt
+          fi
+          exit "$failed"
+      - name: Upload syntax diagnostic
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase-4b-js-syntax-diagnostic
+          path: |
+            /tmp/js-syntax-diagnostic.txt
+            /tmp/failing-source.js
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Enforce stable architecture
+        run: |
+          ! grep -Fq 'MutationObserver' assets/js/community-profiles.js
+          ! grep -Fq 'setInterval' assets/js/community-profiles.js
+          ! grep -Fq 'window.location.reload' assets/js/community-profiles.js
+          ! grep -Fq 'serviceWorker' assets/js/community-profiles.js
+          ! grep -Fq 'MutationObserver' assets/js/fresh-home-launch.js
+          ! grep -Fq 'setInterval' assets/js/fresh-home-launch.js
+          grep -Fq 'community-profiles-20260718e-clean-preview' assets/js/community-profiles.js
+          grep -Fq 'fresh-home-launch-20260718f-clean-preview' assets/js/fresh-home-launch.js
+          grep -Fq 'app_profile_community_snapshot' supabase/app-community-profiles-phase-4b.sql
+          grep -Fq 'app_profile_set_top_ten' supabase/app-community-profiles-phase-4b.sql
+      - name: Confirm live shell is untouched
+        run: |
+          git fetch origin main
+          git diff --exit-code origin/main -- sw.js
+          git diff --exit-code origin/main -- assets/js/octagon-hq-shell.js
+          git diff --exit-code origin/main -- assets/js/native-app-shell.js
+          git diff --exit-code origin/main -- assets/js/home-dashboard.js
+      - name: Install mobile browser runtime
+        run: |
+          npm install --no-save --package-lock=false playwright@1.54.1
+          npx playwright install --with-deps chromium
+      - name: Start preview server
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/phase-4b-preview-server.log 2>&1 &
+          for attempt in $(seq 1 20); do
+            if curl --fail --silent http://127.0.0.1:4173/index.html > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/phase-4b-preview-server.log
+          exit 1
+      - name: Test fresh launch, stability, directory, and profile lifecycle
+        run: node scripts/test-phase-4b-mobile.mjs
+      - name: Upload Phase 4B mobile proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase-4b-mobile-proof
+          path: |
+            /tmp/phase-4b-mobile-report.json
+            /tmp/phase-4b-mobile-preview.png
+            /tmp/phase-4b-preview-server.log
+          if-no-files-found: warn
+          retention-days: 14
