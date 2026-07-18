@@ -11,6 +11,9 @@ on:
       - 'assets/js/find-leader-retention.js'
       - 'assets/js/picks-season-loop.js'
       - 'assets/js/picks-internal-navigation.js'
+      - 'assets/js/picks-home-event-cleanup.js'
+      - 'assets/js/picks-mobile-polish.js'
+      - 'assets/css/picks-mobile-polish.css'
       - 'assets/js/product-architecture.js'
   workflow_dispatch:
 
@@ -30,31 +33,104 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Validate shared profile and retention release
+      - name: Validate shared profile and Picks cohesion release
         run: |
           node --check assets/js/app-profile.js
           node --check assets/js/profile-activity.js
           node --check assets/js/find-leader-retention.js
           node --check assets/js/picks-season-loop.js
           node --check assets/js/picks-internal-navigation.js
+          node --check assets/js/picks-home-event-cleanup.js
+          node --check assets/js/picks-mobile-polish.js
           node --check assets/js/picks-social-retention.js
           node --check assets/js/picks-settings-admin-cleanup.js
           node --check assets/js/profile-avatar-sync.js
           node --check assets/js/product-polish.js
           node --check assets/js/product-architecture.js
           grep -Fq 'find-leader-retention-20260718c-phase-2b-lazy' assets/js/find-leader-retention.js
-          grep -Fq 'picks-season-loop-20260718c-phase-2c-speed' assets/js/picks-season-loop.js
+          grep -Fq 'picks-season-loop-20260718d-canonical-ui' assets/js/picks-season-loop.js
           grep -Fq 'picks-internal-navigation-20260718a-fast-routes' assets/js/picks-internal-navigation.js
-          grep -Fq 'product-architecture-20260718p-phase-2c-speed' assets/js/product-architecture.js
+          grep -Fq 'picks-home-event-cleanup-20260718b-season-only' assets/js/picks-home-event-cleanup.js
+          grep -Fq 'picks-mobile-polish-20260718f-event-art' assets/js/picks-mobile-polish.js
+          grep -Fq 'product-architecture-20260718q-picks-cohesion' assets/js/product-architecture.js
           grep -Fq "picks_group_snapshot" assets/js/picks-season-loop.js
           grep -Fq "identityMember" assets/js/picks-season-loop.js
           grep -Fq "IN-APP ALERT" assets/js/picks-season-loop.js
           grep -Fq "picks_social_update_profile" assets/js/picks-season-loop.js
           grep -Fq "patchEventStandings" assets/js/picks-season-loop.js
+          grep -Fq "data-home-layout" assets/js/picks-home-event-cleanup.js
+          grep -Fq "picks-room-no-share" assets/js/picks-mobile-polish.js
           ! grep -Fq "picks-season-grid" assets/js/picks-season-loop.js
           ! grep -Fq "profileObserver=new MutationObserver" assets/js/find-leader-retention.js
           grep -Fq 'add column if not exists profile_photo_data text' supabase/app-profile-photo-upload-phase.sql
           grep -Fq 'create or replace function public.app_profile_set_photo' supabase/app-profile-photo-upload-phase.sql
+
+      - name: Wire the final Picks assets into the live page
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path=Path('index.html')
+          text=path.read_text()
+
+          js_versions={
+              'app-profile.js':'app-profile-20260718b-photo-upload',
+              'picks-social-retention.js':'picks-social-retention-20260718f-shared-profile',
+              'picks-settings-admin-cleanup.js':'picks-settings-admin-cleanup-20260718e-admin-only',
+              'picks-internal-navigation.js':'picks-internal-navigation-20260718a-fast-routes',
+              'picks-home-event-cleanup.js':'picks-home-event-cleanup-20260718b-season-only',
+              'picks-mobile-polish.js':'picks-mobile-polish-20260718f-event-art',
+              'product-architecture.js':'product-architecture-20260718q-picks-cohesion',
+          }
+          for filename,version in js_versions.items():
+              pattern=rf'assets/js/{re.escape(filename)}\?v=[^"\s]+'
+              replacement=f'assets/js/{filename}?v={version}'
+              text,count=re.subn(pattern,replacement,text,count=1)
+              if count!=1:
+                  raise SystemExit(f'Could not update {filename} in index.html')
+
+          css_versions={
+              'picks-mobile-polish.css':'picks-mobile-polish-20260718f-event-art',
+          }
+          for filename,version in css_versions.items():
+              pattern=rf'assets/css/{re.escape(filename)}\?v=[^"\s]+'
+              replacement=f'assets/css/{filename}?v={version}'
+              text,count=re.subn(pattern,replacement,text,count=1)
+              if count!=1:
+                  raise SystemExit(f'Could not update {filename} in index.html')
+
+          season_src='assets/js/picks-season-loop.js?v=picks-season-loop-20260718d-canonical-ui'
+          existing=r'<script src="assets/js/picks-season-loop\.js\?v=[^"]+"></script>'
+          if re.search(existing,text):
+              text=re.sub(existing,f'<script src="{season_src}"></script>',text,count=1)
+          else:
+              anchor=r'(<script src="assets/js/app-profile\.js\?v=[^"]+"></script>)'
+              text,count=re.subn(anchor,rf'\1\n  <script src="{season_src}"></script>',text,count=1)
+              if count!=1:
+                  raise SystemExit('Could not insert picks-season-loop.js after app-profile.js')
+
+          text=re.sub(
+              r'<meta name="app-build" content="[^"]+" />',
+              '<meta name="app-build" content="20260718-picks-cohesion-canonical" />',
+              text,
+              count=1,
+          )
+          path.write_text(text)
+          PY
+
+      - name: Commit live asset versions
+        run: |
+          if git diff --quiet -- index.html; then
+            echo 'Live Picks asset versions are unchanged.'
+          else
+            git config user.name 'github-actions[bot]'
+            git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
+            git add index.html
+            git commit -m 'Deploy canonical Picks cohesion release [skip ci]'
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
 
       - name: Apply and audit profile migration
         env:
@@ -145,58 +221,28 @@ jobs:
               'history_source':'play_daily_leaderboard','loading_policy':'lazy-on-play-profile-or-history'
           }
           status['picks_season_loop']={
-              'phase':'phase-2c','status':'active','layout':'compact-home-summary-plus-canonical-leaderboard',
+              'phase':'phase-2c','status':'active','layout':'home-season-summary-leaderboard-archive',
               'canonical_totals_source':'picks_group_snapshot','event_detail_source':'picks_room_snapshot',
               'tie_policy':'shared-rank-for-exact-equals','reminders':'in-app-while-open-plus-phone-calendar',
-              'event_pre_score_rank':'dash','home_next_event':'removed','event_heading':'removed',
+              'event_pre_score_rank':'dash','home_next_event':'removed-at-source',
+              'event_art':'load-confirmed-persistent','event_share':'home-only',
               'activity_profile_source':'canonical-picks-group-totals',
-              'internal_navigation':'immediate-childlist-only','loading_policy':'lazy-on-picks-or-profile'
+              'internal_navigation':'immediate-scoped-observers'
           }
           status['checked_at']=datetime.now(timezone.utc).isoformat()
           status_path.write_text(json.dumps(status,indent=2,sort_keys=True)+'\n')
-          print('Shared profile and final Phase 2C Picks release verified.')
+          print('Shared profile and canonical Picks cohesion release verified.')
           PY
 
-      - name: Wire shared profile activity into the live page
+      - name: Commit deployment audit
         run: |
-          python - <<'PY'
-          from pathlib import Path
-          import re
-
-          path=Path('index.html')
-          text=path.read_text()
-          versions={
-              'app-profile.js':'app-profile-20260718b-photo-upload',
-              'picks-social-retention.js':'picks-social-retention-20260718f-shared-profile',
-              'picks-settings-admin-cleanup.js':'picks-settings-admin-cleanup-20260718e-admin-only',
-              'picks-internal-navigation.js':'picks-internal-navigation-20260718a-fast-routes',
-              'product-architecture.js':'product-architecture-20260718p-phase-2c-speed',
-          }
-          for filename,version in versions.items():
-              pattern=rf'assets/js/{re.escape(filename)}\?v=[^"\s]+'
-              replacement=f'assets/js/{filename}?v={version}'
-              text,count=re.subn(pattern,replacement,text,count=1)
-              if count!=1:
-                  raise SystemExit(f'Could not update {filename} in index.html')
-
-          text=re.sub(
-              r'<meta name="app-build" content="[^"]+" />',
-              '<meta name="app-build" content="20260718-phase-2c-final-speed" />',
-              text,
-              count=1,
-          )
-          path.write_text(text)
-          PY
-
-      - name: Commit deployment record
-        run: |
-          if git diff --quiet -- index.html supabase/goat26-deployment-status.json; then
-            echo 'Shared profile and retention deployment record is unchanged.'
+          if git diff --quiet -- supabase/goat26-deployment-status.json; then
+            echo 'Deployment audit is unchanged.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
-          git add index.html supabase/goat26-deployment-status.json
-          git commit -m 'Record final Phase 2C Picks release [skip ci]'
+          git add supabase/goat26-deployment-status.json
+          git commit -m 'Record canonical Picks cohesion deployment [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:main
