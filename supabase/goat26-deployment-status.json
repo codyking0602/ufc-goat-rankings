@@ -11,7 +11,7 @@
     "status": "active"
   },
   "avatar_profiles": 2,
-  "checked_at": "2026-07-18T13:10:41.923831+00:00",
+  "checked_at": "2026-07-18T13:38:52.621997+00:00",
   "code": "GOAT26",
   "deployment_method": "supabase-management-api",
   "events": 2,
@@ -121,5 +121,16 @@
   },
   "rooms": 2,
   "saved_picks": 51,
-  "status": "active"
+  "status": "active",
+  "what_changed": {
+    "canonical_source": "assets/data/what-changed.js",
+    "controller": "assets/js/what-changed.js",
+    "deep_links": "fighter-profile-and-destination",
+    "fighter_hydration": "current-production-ranking-data",
+    "header_owner": "assets/js/app-update-watcher.js",
+    "loading_policy": "lightweight-data-controller-lazy",
+    "phase": "phase-2d",
+    "status": "active",
+    "unread_policy": "unseen-entry-ids-local"
+  }
 }
