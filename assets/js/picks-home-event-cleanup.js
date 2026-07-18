@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='picks-home-event-cleanup-20260718b-season-only';
+  const VERSION='picks-home-event-cleanup-20260718c-no-reminder';
   let syncing=false;
   let groupObserver=null;
   let groupTarget=null;
@@ -11,6 +11,17 @@
   const safe=value=>String(value??'').replace(/[&<>'"]/g,char=>({
     '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'
   }[char]));
+
+  function removeUpcomingReminder(){
+    let style=document.getElementById('picksNoUpcomingReminderCss');
+    if(!style){
+      style=document.createElement('style');
+      style.id='picksNoUpcomingReminderCss';
+      style.textContent='#picksSeasonReminder{display:none!important}';
+      document.head.appendChild(style);
+    }
+    document.getElementById('picksSeasonReminder')?.remove();
+  }
 
   function restoreLegacyHome(compact,events){
     if(!compact)return;
@@ -158,6 +169,7 @@
   }
 
   function cleanEvent(){
+    removeUpcomingReminder();
     const eventView=document.getElementById('picksEventView');
     if(!eventView)return;
 
@@ -227,6 +239,7 @@
     if(syncing)return;
     syncing=true;
     try{
+      removeUpcomingReminder();
       buildCompactHome();
       setInitialClosed('picksHistoryCard');
       setInitialClosed('picksSocialCard');
@@ -267,6 +280,7 @@
   }
 
   function start(){
+    removeUpcomingReminder();
     sync();
     [80,280,800].forEach(delay=>setTimeout(sync,delay));
     window.addEventListener('picks:routechange',()=>requestAnimationFrame(sync));
