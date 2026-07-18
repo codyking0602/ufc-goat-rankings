@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='war-room-branding-20260717d-phase-1c';
+  const VERSION='war-room-branding-20260717e-phase-1c-stable';
   const ATTRIBUTE_NAMES=['title','aria-label','placeholder'];
   const SKIP_SELECTOR='.octagon-message-body, textarea, input, script, style, noscript';
   let queued=false;
@@ -103,7 +103,7 @@
   function loadProductConnectivity(){
     if(window.UFC_PRODUCT_CONNECTIVITY||document.querySelector('script[data-product-connectivity-loader]'))return;
     const script=document.createElement('script');
-    script.src='assets/js/product-connectivity.js?v=product-connectivity-20260717a-phase-1c';
+    script.src='assets/js/product-connectivity.js?v=product-connectivity-20260717b-stable';
     script.dataset.productConnectivityLoader='true';
     script.async=false;
     document.body.appendChild(script);
