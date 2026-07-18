@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='app-shell-20260718b-immediate-single-owner';
+  const VERSION='app-shell-20260718c-legacy-route-safe';
   const DESTINATIONS=[
     ['home','Home','home'],
     ['rankings','Rankings','men'],
@@ -68,14 +68,9 @@
   function ensureViews(){
     const shell=document.querySelector('main.shell');
     if(!shell)return;
-    if(!document.getElementById('octagon')){
-      const section=document.createElement('section');section.id='octagon';section.className='view';shell.appendChild(section);
-    }
+    if(!document.getElementById('octagon')){const section=document.createElement('section');section.id='octagon';section.className='view';shell.appendChild(section);}
     let subnav=shell.querySelector('[data-rankings-subnav]');
-    if(!subnav){
-      subnav=document.createElement('nav');subnav.className='rankings-subnav';subnav.dataset.rankingsSubnav='true';subnav.setAttribute('aria-label','Ranking views');
-      const toolbar=shell.querySelector('.toolbar');if(toolbar)toolbar.before(subnav);else shell.prepend(subnav);
-    }
+    if(!subnav){subnav=document.createElement('nav');subnav.className='rankings-subnav';subnav.dataset.rankingsSubnav='true';subnav.setAttribute('aria-label','Ranking views');const toolbar=shell.querySelector('.toolbar');if(toolbar)toolbar.before(subnav);else shell.prepend(subnav);}
     subnav.innerHTML=RANKING_TABS.map(([view,label])=>`<button type="button" data-ranking-view="${view}">${label}</button>`).join('');
   }
 
@@ -88,9 +83,7 @@
     normalizingWar=true;
     const badge=button.querySelector('[data-octagon-unread-badge]');
     let label=button.querySelector('[data-destination-label]');
-    if(!label||label.textContent!=='War Room'){
-      button.textContent='';label=document.createElement('span');label.dataset.destinationLabel='true';label.textContent='War Room';button.appendChild(label);if(badge)button.appendChild(badge);
-    }
+    if(!label||label.textContent!=='War Room'){button.textContent='';label=document.createElement('span');label.dataset.destinationLabel='true';label.textContent='War Room';button.appendChild(label);if(badge)button.appendChild(badge);}
     button.setAttribute('aria-label',button.disabled?'War Room access not enabled':'Open The War Room');
     button.title=button.disabled?'War Room access not enabled':'Open The War Room';
     normalizingWar=false;
@@ -99,15 +92,12 @@
   function normalizeNavigation(){
     const nav=document.querySelector('nav.tabs');
     if(!nav)return;
-    const oldWar=nav.querySelector('[data-destination="war-room"],[data-octagon-beta-tab]');
-    const access=warState(oldWar);
+    const access=warState(nav.querySelector('[data-destination="war-room"],[data-octagon-beta-tab]'));
     nav.innerHTML='';nav.dataset.appShell=VERSION;nav.dataset.productArchitecture=VERSION;nav.setAttribute('aria-label','Primary app destinations');
     DESTINATIONS.forEach(([key,labelText,view])=>{
       const button=document.createElement('button');button.type='button';button.className='tab';button.dataset.destination=key;button.dataset.view=view;button.setAttribute('aria-selected','false');
       const label=document.createElement('span');label.dataset.destinationLabel='true';label.textContent=labelText;button.appendChild(label);
-      if(key==='war-room'){
-        button.dataset.octagonBetaTab='true';if(access.access)button.dataset.betaAccess=access.access;if(access.member)button.dataset.betaMember=access.member;button.disabled=access.disabled;button.setAttribute('aria-disabled',access.aria);button.title=access.title;
-      }
+      if(key==='war-room'){button.dataset.octagonBetaTab='true';if(access.access)button.dataset.betaAccess=access.access;if(access.member)button.dataset.betaMember=access.member;button.disabled=access.disabled;button.setAttribute('aria-disabled',access.aria);button.title=access.title;}
       nav.appendChild(button);
     });
     normalizeWarButton();
@@ -116,16 +106,10 @@
     if(war){warObserver=new MutationObserver(()=>queueMicrotask(normalizeWarButton));warObserver.observe(war,{childList:true,subtree:true,attributes:true,attributeFilter:['disabled','aria-disabled','data-beta-access','data-beta-member']});}
   }
 
-  function destinationForView(view){
-    if(RANKING_VIEWS.includes(view))return'rankings';
-    if(view==='compare')return'intelligence';
-    if(view==='octagon')return'war-room';
-    return DESTINATIONS.find(item=>item[2]===view)?.[0]||'home';
-  }
+  function destinationForView(view){if(RANKING_VIEWS.includes(view))return'rankings';if(view==='compare')return'intelligence';if(view==='octagon')return'war-room';return DESTINATIONS.find(item=>item[2]===view)?.[0]||'home';}
 
   function syncToolbar(view){
-    const toolbar=document.querySelector('.toolbar');const search=document.getElementById('search');const era=document.getElementById('eraFilter');const division=document.getElementById('divisionFilter');const reset=document.getElementById('resetBtn');
-    const ranking=view==='men'||view==='women'||view==='division';
+    const toolbar=document.querySelector('.toolbar');const search=document.getElementById('search');const era=document.getElementById('eraFilter');const division=document.getElementById('divisionFilter');const reset=document.getElementById('resetBtn');const ranking=view==='men'||view==='women'||view==='division';
     if(toolbar)toolbar.style.display=ranking?'':'none';if(search)search.style.display=(view==='men'||view==='women')?'':'none';if(era)era.style.display=ranking?'':'none';if(division)division.style.display=view==='division'?'':'none';if(reset)reset.style.display=ranking?'':'none';
   }
 
@@ -135,25 +119,20 @@
     subnav?.querySelectorAll('[data-ranking-view]').forEach(button=>{const selected=button.dataset.rankingView===currentRankingView;button.classList.toggle('active',selected);button.setAttribute('aria-pressed',String(selected));});
   }
 
-  function loadScript(id,src){
-    if(document.getElementById(id)||document.querySelector(`script[src*="${src.split('?')[0]}"]`))return;
-    const script=document.createElement('script');script.id=id;script.src=src;script.async=true;document.head.appendChild(script);
-  }
+  function loadScript(id,src){if(document.getElementById(id)||document.querySelector(`script[src*="${src.split('?')[0]}"]`))return;const script=document.createElement('script');script.id=id;script.src=src;script.async=true;document.head.appendChild(script);}
 
   function loadPlaySupport(){
     if(playSupportLoaded)return;playSupportLoaded=true;
-    requestAnimationFrame(()=>{
-      loadScript('playPermanentDailyController','assets/js/play-daily-rotation.js?v=play-daily-controller-20260717e-find-leader-permanent');
-      const loadBoard=()=>loadScript('playDailyLeaderboardCurrent','assets/js/play-daily-leaderboard.js?v=play-daily-leaderboard-20260717e-find-leader-only');
-      if(typeof requestIdleCallback==='function')requestIdleCallback(loadBoard,{timeout:900});else setTimeout(loadBoard,250);
-    });
+    requestAnimationFrame(()=>{loadScript('playPermanentDailyController','assets/js/play-daily-rotation.js?v=play-daily-controller-20260717e-find-leader-permanent');const loadBoard=()=>loadScript('playDailyLeaderboardCurrent','assets/js/play-daily-leaderboard.js?v=play-daily-leaderboard-20260717e-find-leader-only');if(typeof requestIdleCallback==='function')requestIdleCallback(loadBoard,{timeout:900});else setTimeout(loadBoard,250);});
   }
 
   function showView(view,{updateHash=true}={}){
+    if(view==='octagon'){
+      const war=document.querySelector('[data-destination="war-room"]');
+      if(war?.disabled||war?.getAttribute('aria-disabled')==='true')view='home';
+    }
     if(RANKING_VIEWS.includes(view))currentRankingView=view;
     currentDestination=destinationForView(view);
-    const war=document.querySelector('[data-destination="war-room"]');
-    if(view==='octagon'&&(war?.disabled||war?.getAttribute('aria-disabled')==='true'))return false;
     let target=document.getElementById(view);
     if(!target){view='home';currentDestination='home';target=document.getElementById('home');}
     document.querySelectorAll('main.shell>.view').forEach(section=>section.classList.toggle('active-view',section===target));
@@ -164,7 +143,8 @@
   }
 
   function parseRoute(){
-    const open=text(new URLSearchParams(location.search).get('open')).toLowerCase();if(open==='octagon'||open==='war-room')return'octagon';
+    const params=new URLSearchParams(location.search);
+    if(params.has('open')){params.delete('open');const query=params.toString();history.replaceState(null,'',`${location.pathname}${query?`?${query}`:''}${location.hash}`);}
     const hash=text(location.hash).replace(/^#/,'').toLowerCase();
     if(hash.startsWith('rankings/')){const view=hash.split('/')[1];return RANKING_VIEWS.includes(view)?view:'men';}
     return({home:'home',rankings:'men',p4p:'men',overall:'men',women:'women',division:'division',divisions:'division',categories:'categories',play:'play',picks:'picks','war-room':'octagon',octagon:'octagon',intelligence:'compare'})[hash]||'home';
@@ -184,8 +164,7 @@
     if(started){syncNavigation();return true;}
     if(!document.querySelector('nav.tabs')||!document.querySelector('main.shell'))return false;
     started=true;installStyles();purgeLegacy();normalizeHeader();ensureViews();normalizeNavigation();bindEvents();
-    const route=parseRoute();currentRankingView=RANKING_VIEWS.includes(route)?route:'men';currentDestination=destinationForView(route);showView(route,{updateHash:Boolean(location.hash)});
-    document.documentElement.setAttribute('data-app-shell',VERSION);return true;
+    const route=parseRoute();currentRankingView=RANKING_VIEWS.includes(route)?route:'men';currentDestination=destinationForView(route);showView(route,{updateHash:Boolean(location.hash)});document.documentElement.setAttribute('data-app-shell',VERSION);return true;
   }
 
   const api={version:VERSION,start,apply:start,activateView:showView,activateDestination:key=>{const item=DESTINATIONS.find(row=>row[0]===key);return item?showView(key==='rankings'?currentRankingView:item[2]):false;},loadPlaySupport,get currentDestination(){return currentDestination;},get currentRankingView(){return currentRankingView;}};
