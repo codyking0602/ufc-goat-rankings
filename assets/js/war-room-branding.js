@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='war-room-branding-20260717c';
+  const VERSION='war-room-branding-20260717d-phase-1c';
   const ATTRIBUTE_NAMES=['title','aria-label','placeholder'];
   const SKIP_SELECTOR='.octagon-message-body, textarea, input, script, style, noscript';
   let queued=false;
@@ -94,8 +94,17 @@
   function loadProductArchitecture(){
     if(window.UFC_PRODUCT_ARCHITECTURE||document.querySelector('script[data-product-architecture-loader]'))return;
     const script=document.createElement('script');
-    script.src='assets/js/product-architecture.js?v=product-architecture-20260717b';
+    script.src='assets/js/product-architecture.js?v=product-architecture-20260717g-performance';
     script.dataset.productArchitectureLoader='true';
+    script.async=false;
+    document.body.appendChild(script);
+  }
+
+  function loadProductConnectivity(){
+    if(window.UFC_PRODUCT_CONNECTIVITY||document.querySelector('script[data-product-connectivity-loader]'))return;
+    const script=document.createElement('script');
+    script.src='assets/js/product-connectivity.js?v=product-connectivity-20260717a-phase-1c';
+    script.dataset.productConnectivityLoader='true';
     script.async=false;
     document.body.appendChild(script);
   }
@@ -104,6 +113,7 @@
     applyBranding();
     preserveRulesCompatibilityMount();
     loadProductArchitecture();
+    loadProductConnectivity();
     const observer=new MutationObserver(mutations=>{
       for(const mutation of mutations){
         if(mutation.type==='characterData'){
@@ -135,7 +145,7 @@
     });
   }
 
-  window.UFC_WAR_ROOM_BRANDING={version:VERSION,apply:applyBranding,replaceCopy,preserveRulesCompatibilityMount};
+  window.UFC_WAR_ROOM_BRANDING={version:VERSION,apply:applyBranding,replaceCopy,preserveRulesCompatibilityMount,loadProductConnectivity};
   document.documentElement.setAttribute('data-war-room-branding',VERSION);
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
   else start();
