@@ -1,4 +1,4 @@
-# Deploy trigger: Phase 1C shell recovery 2026-07-17
+# Deploy trigger: Phase 1C Home recovery 2026-07-17
 name: Deploy UFC GOAT Rankings
 
 on:
@@ -47,33 +47,37 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import re
 
           path = Path('_site/index.html')
           html = path.read_text(encoding='utf-8')
 
           replacements = {
-              'content="20260717-phase-1b-home-dashboard"': 'content="20260717-phase-1c-shell-recovery"',
+              'content="20260717-phase-1b-home-dashboard"': 'content="20260717-phase-1c-home-recovery"',
               '<p class="eyebrow">UFC ranking + debate engine</p>': '<p class="eyebrow">UFC RANKINGS · GAMES · PICKS · COMMUNITY</p>',
               '<h1>UFC All-Time Rankings</h1>': '<h1>Octagon HQ</h1>',
               '<p class="subtitle">Rankings, fighter profiles, head-to-head debates, event picks, and interactive games.</p>': '<p class="subtitle">Rankings, games, picks, and UFC conversation.</p>',
               '<span id="fighterCount">—</span>': '<span id="fighterCount">80</span>',
-              'assets/js/live-score-ui.js?v=live-score-ui-20260715c-peak-apex-single-renderer': 'assets/js/live-score-ui.js?v=live-score-ui-20260717-shell-recovery',
+              'assets/js/live-score-ui.js?v=live-score-ui-20260715c-peak-apex-single-renderer': 'assets/js/live-score-ui.js?v=live-score-ui-20260717-home-recovery',
               'assets/js/war-room-branding.js?v=war-room-branding-20260717c': 'assets/js/war-room-branding.js?v=war-room-branding-20260717f-shell-recovery',
-              'assets/js/home-dashboard.js?v=home-dashboard-20260717a': 'assets/js/home-dashboard.js?v=home-dashboard-20260717d-critical',
-              'assets/js/product-architecture.js?v=product-architecture-20260717f-phase-1b': 'assets/js/product-architecture.js?v=product-architecture-20260717g-performance',
           }
           for old, new in replacements.items():
               html = html.replace(old, new)
 
-          critical = '<script id="criticalShellDirect" src="assets/js/critical-shell-bootstrap.js?v=critical-shell-bootstrap-20260717b-immediate"></script>'
-          live_score = '<script src="assets/js/live-score-ui.js?v=live-score-ui-20260717-shell-recovery"></script>'
-          if critical not in html and live_score in html:
+          # The critical loader owns Architecture and Home. Remove stale late copies
+          # so they cannot race it or rebind the page after the first render.
+          html = re.sub(r'\s*<script id="homeDashboardScript" src="assets/js/home-dashboard\.js\?v=[^"]+"></script>', '', html)
+          html = re.sub(r'\s*<script src="assets/js/product-architecture\.js\?v=[^"]+"></script>', '', html)
+
+          critical = '<script id="criticalShellDirect" src="assets/js/critical-shell-bootstrap.js?v=critical-shell-bootstrap-20260717c-home-recovery"></script>'
+          live_score = '<script src="assets/js/live-score-ui.js?v=live-score-ui-20260717-home-recovery"></script>'
+          html = re.sub(r'\s*<script id="criticalShellDirect" src="assets/js/critical-shell-bootstrap\.js\?v=[^"]+"></script>', '', html)
+          if live_score in html:
               html = html.replace(live_score, critical + '\n  ' + live_score, 1)
 
           connectivity = '<script id="productConnectivityDirect" src="assets/js/product-connectivity.js?v=product-connectivity-20260717d-clean-handoffs"></script>'
-          architecture = '<script src="assets/js/product-architecture.js?v=product-architecture-20260717g-performance"></script>'
-          if connectivity not in html and architecture in html:
-              html = html.replace(architecture, architecture + '\n  ' + connectivity, 1)
+          html = re.sub(r'\s*<script id="productConnectivityDirect" src="assets/js/product-connectivity\.js\?v=[^"]+"></script>', '', html)
+          html = html.replace('</body>', '  ' + connectivity + '\n</body>', 1)
 
           path.write_text(html, encoding='utf-8')
           PY
