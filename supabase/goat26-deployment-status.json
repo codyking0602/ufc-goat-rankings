@@ -1,7 +1,7 @@
 {
   "active_members": 6,
   "avatar_profiles": 2,
-  "checked_at": "2026-07-18T04:02:38.914819+00:00",
+  "checked_at": "2026-07-18T04:18:43.531719+00:00",
   "code": "GOAT26",
   "deployment_method": "supabase-management-api",
   "events": 2,
@@ -69,6 +69,17 @@
       "reactions": true
     },
     "vapid_ready": true
+  },
+  "profile_photos": {
+    "anon_photo": true,
+    "anon_snapshot": true,
+    "column_exists": true,
+    "crop_size": 320,
+    "phase": "shared-photo-or-fighter-avatar",
+    "photo_profiles": 0,
+    "photo_rpc": true,
+    "snapshot_rpc": true,
+    "status": "active"
   },
   "rooms": 2,
   "saved_picks": 51,
