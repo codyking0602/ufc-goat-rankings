@@ -1,18 +1,18 @@
 (function(){
   'use strict';
 
-  const VERSION='what-changed-20260718a-phase-2d';
+  const VERSION='what-changed-20260718b-compact';
   const SOURCE=window.OCTAGON_CHANGELOG||{entries:[],timezone:'America/Chicago',seenStorageKey:'octagon-hq-what-changed-seen-v1'};
-  const TYPE_META={
-    'Fighter Added':['ADD','Fighter Added'],
-    'Audit Completed':['AUDIT','Audit Completed'],
-    'Rank Changed':['RANK','Rank Changed'],
-    'OVR Changed':['OVR','OVR Changed'],
-    'Watch Moment Added':['WATCH','Watch Moment Added'],
-    'Game Updated':['GAME','Game Updated'],
-    'Picks Updated':['PICKS','Picks Updated'],
-    'War Room Updated':['WAR','War Room Updated'],
-    'App Updated':['APP','App Updated']
+  const TYPE_LABELS={
+    'Fighter Added':'Fighter Added',
+    'Audit Completed':'Audit Completed',
+    'Rank Changed':'Rank Changed',
+    'OVR Changed':'OVR Changed',
+    'Watch Moment Added':'Watch Moment',
+    'Game Updated':'Game Updated',
+    'Picks Updated':'Picks Updated',
+    'War Room Updated':'War Room Updated',
+    'App Updated':'App Updated'
   };
   const state={installed:false,rendered:false,open:false,returnFocus:null};
 
@@ -20,11 +20,11 @@
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const slugify=value=>text(value).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
   const entries=()=>Array.isArray(SOURCE.entries)?[...SOURCE.entries].sort((a,b)=>new Date(b.publishedAt)-new Date(a.publishedAt)):[];
+
   function displayOverrides(){
     try{return typeof DISPLAY_OVERRIDES!=='undefined'&&DISPLAY_OVERRIDES?DISPLAY_OVERRIDES:(window.DISPLAY_OVERRIDES||{});}
     catch(_error){return window.DISPLAY_OVERRIDES||{};}
   }
-
   function readSeen(){
     try{
       const value=JSON.parse(localStorage.getItem(SOURCE.seenStorageKey)||'[]');
@@ -105,20 +105,20 @@
     const fighter=fighterFor(entry.fighterSlug);
     if(!fighter)return'';
     const photo=fighter.photo?`<img src="${esc(fighter.photo)}" alt="">`:`<span>${esc(initials(fighter.displayName))}</span>`;
-    return`<div class="what-changed-fighter"><div class="what-changed-avatar">${photo}</div><div><strong>${esc(fighter.displayName)}</strong><small>${fighter.rank?`Current #${fighter.rank}`:'Current rank —'} · ${fighter.ovr} OVR${fighter.division?` · ${esc(fighter.division)}`:''}</small></div></div>`;
+    return`<div class="what-changed-fighter"><div class="what-changed-avatar">${photo}</div><div><strong>${esc(fighter.displayName)}</strong><small>${fighter.rank?`#${fighter.rank}`:'Rank —'} · ${fighter.ovr} OVR${fighter.division?` · ${esc(fighter.division)}`:''}</small></div></div>`;
   }
   function entryMarkup(entry){
-    const [code,label]=TYPE_META[entry.type]||['UPDATE',entry.type||'Update'];
+    const label=TYPE_LABELS[entry.type]||entry.type||'Update';
     const actionable=Boolean(entry.fighterSlug||entry.destination);
     const tag=actionable?'button':'article';
     const attrs=actionable?`type="button" data-what-changed-entry="${esc(entry.id)}" aria-label="Open update: ${esc(entry.headline)}"`:'';
+    const arrow=actionable?'<i class="what-changed-arrow" aria-hidden="true">→</i>':'';
     return`<${tag} class="what-changed-entry${actionable?' is-actionable':''}" ${attrs}>
-      <div class="what-changed-entry-top"><span class="what-changed-type"><b>${esc(code)}</b>${esc(label)}</span><time datetime="${esc(entry.publishedAt)}">${esc(dateLabel(entry.publishedAt))}</time></div>
+      <div class="what-changed-entry-top"><span class="what-changed-type">${esc(label)}</span><span class="what-changed-date"><time datetime="${esc(entry.publishedAt)}">${esc(dateLabel(entry.publishedAt))}</time>${arrow}</span></div>
       <h3>${esc(entry.headline)}</h3>
       <p>${esc(entry.summary)}</p>
       ${changeMarkup(entry)}
       ${fighterMarkup(entry)}
-      ${actionable?'<span class="what-changed-open">Open <i aria-hidden="true">→</i></span>':''}
     </${tag}>`;
   }
   function render(){
@@ -139,12 +139,12 @@
     style.textContent=`
       body.what-changed-open{overflow:hidden;overscroll-behavior:none}
       #whatChangedOverlay[hidden]{display:none!important}#whatChangedOverlay{position:fixed;inset:0;z-index:11000;display:flex;justify-content:flex-end;background:rgba(2,6,14,.78);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px)}
-      #whatChangedDialog{display:flex;flex-direction:column;width:min(560px,100%);height:100%;max-height:100dvh;border-left:1px solid rgba(249,115,22,.35);background:linear-gradient(180deg,#111a2b 0%,#07101d 100%);box-shadow:-30px 0 80px rgba(0,0,0,.52);color:#f8fafc;outline:none;overflow:hidden}
-      .what-changed-head{position:relative;flex:0 0 auto;padding:24px 68px 19px 22px;border-bottom:1px solid rgba(148,163,184,.18);background:linear-gradient(145deg,rgba(30,41,59,.88),rgba(9,17,30,.96))}.what-changed-head:before{content:"";position:absolute;inset:0 auto 0 0;width:5px;background:#f97316}.what-changed-kicker{margin:0;color:#fb923c;font:950 10px/1 system-ui;letter-spacing:.16em;text-transform:uppercase}.what-changed-head h1{margin:9px 0 0;font:950 clamp(29px,8vw,42px)/.96 system-ui;letter-spacing:-.045em}.what-changed-head p:last-of-type{margin:10px 0 0;color:#b9c7d9;font:650 14px/1.45 system-ui}
-      #whatChangedClose{position:absolute;top:17px;right:17px;width:42px;height:42px;border:1px solid rgba(255,255,255,.18);border-radius:999px;background:rgba(3,8,16,.58);color:#fff;font:500 25px/1 system-ui;cursor:pointer}
-      #whatChangedFeed{flex:1 1 auto;min-height:0;padding:18px 18px 34px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}.what-changed-group+ .what-changed-group{margin-top:24px}.what-changed-group>h2{margin:0 4px 10px;color:#94a3b8;font:950 10px/1 system-ui;letter-spacing:.14em;text-transform:uppercase}.what-changed-group>div{display:grid;gap:10px}
-      .what-changed-entry{position:relative;display:block;width:100%;min-width:0;margin:0;padding:16px;border:1px solid rgba(148,163,184,.18);border-radius:17px;background:linear-gradient(145deg,rgba(23,35,54,.94),rgba(10,18,31,.96));color:inherit;text-align:left;font:inherit;box-shadow:0 14px 30px rgba(0,0,0,.18);overflow:hidden}.what-changed-entry.is-actionable{cursor:pointer}.what-changed-entry.is-actionable:hover,.what-changed-entry.is-actionable:focus-visible{border-color:rgba(249,115,22,.72);transform:translateY(-1px);outline:none}.what-changed-entry-top{display:flex;align-items:center;justify-content:space-between;gap:12px}.what-changed-type{display:inline-flex;align-items:center;gap:8px;color:#fed7aa;font:900 9px/1 system-ui;letter-spacing:.09em;text-transform:uppercase}.what-changed-type b{display:grid;place-items:center;min-width:38px;height:24px;padding:0 7px;border-radius:8px;background:rgba(249,115,22,.14);color:#fb923c;font-size:8px}.what-changed-entry time{color:#8494aa;font:750 10px/1.2 system-ui;white-space:nowrap}.what-changed-entry h3{margin:13px 0 0;color:#fff;font:900 18px/1.16 system-ui;letter-spacing:-.018em}.what-changed-entry>p{margin:8px 0 0;color:#c2cfdf;font:560 13px/1.48 system-ui}.what-changed-verified{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.what-changed-verified span{padding:6px 8px;border:1px solid rgba(249,115,22,.28);border-radius:999px;background:rgba(249,115,22,.09);color:#ffedd5;font:850 10px/1 system-ui}.what-changed-fighter{display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:13px;border-top:1px solid rgba(148,163,184,.14)}.what-changed-avatar{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;border:1px solid rgba(249,115,22,.3);border-radius:50%;background:#111827;color:#fb923c;font:900 11px/1 system-ui;overflow:hidden}.what-changed-avatar img{width:100%;height:100%;object-fit:cover}.what-changed-fighter strong,.what-changed-fighter small{display:block}.what-changed-fighter strong{font:900 13px/1.2 system-ui}.what-changed-fighter small{margin-top:4px;color:#94a3b8;font:750 10px/1.25 system-ui}.what-changed-open{display:flex;align-items:center;justify-content:flex-end;gap:7px;margin-top:12px;color:#fb923c;font:900 10px/1 system-ui;letter-spacing:.08em;text-transform:uppercase}.what-changed-open i{font-style:normal;font-size:15px}.what-changed-empty{display:grid;gap:6px;padding:20px;border:1px solid rgba(148,163,184,.18);border-radius:16px;background:rgba(15,23,42,.75)}.what-changed-empty span{color:#94a3b8;font-size:13px}
-      @media(max-width:620px){#whatChangedOverlay{align-items:flex-end}#whatChangedDialog{width:100%;height:min(92dvh,820px);border-top:1px solid rgba(249,115,22,.42);border-left:0;border-radius:22px 22px 0 0}.what-changed-head{padding:21px 62px 16px 18px}.what-changed-head h1{font-size:32px}#whatChangedFeed{padding:14px 12px 28px}.what-changed-entry{padding:14px}.what-changed-entry-top{align-items:flex-start}.what-changed-entry time{font-size:9px}}
+      #whatChangedDialog{display:flex;flex-direction:column;width:min(560px,100%);height:100%;max-height:100dvh;border-left:1px solid rgba(249,115,22,.38);background:linear-gradient(180deg,#111a2b 0%,#07101d 100%);box-shadow:-30px 0 80px rgba(0,0,0,.52);color:#f8fafc;outline:none;overflow:hidden}
+      .what-changed-head{position:relative;flex:0 0 auto;padding:18px 62px 14px 19px;border-bottom:1px solid rgba(148,163,184,.2);background:linear-gradient(145deg,#1a273a,#0b1423)}.what-changed-head:before{content:"";position:absolute;inset:0 auto 0 0;width:5px;background:#f97316}.what-changed-kicker{margin:0;color:#ff9b50;font:950 10px/1 system-ui;letter-spacing:.15em;text-transform:uppercase}.what-changed-head h1{margin:6px 0 0;color:#fff!important;opacity:1!important;text-transform:none!important;font:950 clamp(28px,7vw,36px)/1 system-ui;letter-spacing:-.035em;text-shadow:0 2px 18px rgba(0,0,0,.38)}.what-changed-head p:last-of-type{margin:7px 0 0;color:#d4deea!important;text-transform:none!important;letter-spacing:0!important;font:650 12.5px/1.35 system-ui}
+      #whatChangedClose{position:absolute;top:12px;right:14px;width:38px;height:38px;border:1px solid rgba(255,255,255,.24);border-radius:999px;background:rgba(3,8,16,.66);color:#fff;font:500 23px/1 system-ui;cursor:pointer}
+      #whatChangedFeed{flex:1 1 auto;min-height:0;padding:12px 12px calc(22px + env(safe-area-inset-bottom));overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}.what-changed-group+.what-changed-group{margin-top:17px}.what-changed-group>h2{margin:0 3px 8px;color:#b5c2d4;font:950 10px/1 system-ui;letter-spacing:.13em;text-transform:uppercase}.what-changed-group>div{display:grid;gap:8px}
+      .what-changed-entry{position:relative;display:block;width:100%;min-width:0;margin:0;padding:13px 14px;border:1px solid rgba(148,163,184,.22);border-radius:15px;background:linear-gradient(145deg,rgba(23,35,54,.96),rgba(10,18,31,.98));color:inherit;text-align:left;font:inherit;box-shadow:0 10px 24px rgba(0,0,0,.15);overflow:hidden}.what-changed-entry.is-actionable{cursor:pointer}.what-changed-entry.is-actionable:hover,.what-changed-entry.is-actionable:focus-visible{border-color:rgba(249,115,22,.78);transform:translateY(-1px);outline:none}.what-changed-entry-top{display:flex;align-items:center;justify-content:space-between;gap:10px}.what-changed-type{display:inline-flex;align-items:center;min-height:25px;padding:0 9px;border-radius:8px;background:rgba(249,115,22,.14);color:#ffd3b2;font:900 9.5px/1 system-ui;letter-spacing:.075em;text-transform:uppercase}.what-changed-date{display:inline-flex;align-items:center;gap:9px;flex:0 0 auto}.what-changed-entry time{color:#b7c3d4;font:800 10.5px/1.2 system-ui;white-space:nowrap}.what-changed-arrow{color:#ff8a35;font:900 19px/1 system-ui;font-style:normal}.what-changed-entry h3{margin:9px 0 0;color:#fff;font:900 17px/1.18 system-ui;letter-spacing:-.015em}.what-changed-entry>p{margin:6px 0 0;color:#d2dce8!important;text-transform:none!important;letter-spacing:0!important;font:570 12.5px/1.38 system-ui}.what-changed-verified{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.what-changed-verified span{padding:5px 8px;border:1px solid rgba(249,115,22,.36);border-radius:999px;background:rgba(249,115,22,.1);color:#ffe4cf;font:850 10px/1 system-ui}.what-changed-fighter{display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:9px;border-top:1px solid rgba(148,163,184,.16)}.what-changed-avatar{display:grid;place-items:center;flex:0 0 34px;width:34px;height:34px;border:1px solid rgba(249,115,22,.38);border-radius:50%;background:#111827;color:#fb923c;font:900 9px/1 system-ui;overflow:hidden}.what-changed-avatar img{width:100%;height:100%;object-fit:cover}.what-changed-fighter strong,.what-changed-fighter small{display:block}.what-changed-fighter strong{font:900 11.5px/1.15 system-ui}.what-changed-fighter small{margin-top:3px;color:#aebdd0;font:750 9.5px/1.2 system-ui}.what-changed-empty{display:grid;gap:6px;padding:17px;border:1px solid rgba(148,163,184,.2);border-radius:15px;background:rgba(15,23,42,.75)}.what-changed-empty span{color:#aebdd0;font-size:12.5px}
+      @media(max-width:620px){#whatChangedOverlay{align-items:flex-end}#whatChangedDialog{width:100%;height:min(92dvh,820px);border-top:1px solid rgba(249,115,22,.46);border-left:0;border-radius:20px 20px 0 0}.what-changed-head{padding:16px 56px 12px 16px}.what-changed-head h1{font-size:28px}.what-changed-head p:last-of-type{font-size:12px}#whatChangedClose{top:10px;right:12px}#whatChangedFeed{padding:11px 10px calc(20px + env(safe-area-inset-bottom))}.what-changed-entry{padding:12px 13px}.what-changed-entry h3{font-size:16.5px}.what-changed-entry>p{font-size:12.5px}.what-changed-entry time{font-size:10px}}
       @media(prefers-reduced-motion:no-preference){.what-changed-entry.is-actionable{transition:border-color .14s ease,transform .14s ease}}
     `;
     document.head.appendChild(style);
@@ -157,7 +157,7 @@
     overlay.id='whatChangedOverlay';
     overlay.hidden=true;
     overlay.setAttribute('aria-hidden','true');
-    overlay.innerHTML=`<section id="whatChangedDialog" role="dialog" aria-modal="true" aria-labelledby="whatChangedTitle" aria-describedby="whatChangedDescription" tabindex="-1"><header class="what-changed-head"><p class="what-changed-kicker">Octagon HQ updates</p><h1 id="whatChangedTitle">What Changed</h1><p id="whatChangedDescription">Verified ranking, fighter, game, Picks, War Room, and product changes.</p><button id="whatChangedClose" type="button" aria-label="Close What Changed">×</button></header><div id="whatChangedFeed" aria-live="polite"></div></section>`;
+    overlay.innerHTML=`<section id="whatChangedDialog" role="dialog" aria-modal="true" aria-labelledby="whatChangedTitle" aria-describedby="whatChangedDescription" tabindex="-1"><header class="what-changed-head"><p class="what-changed-kicker">Octagon HQ updates</p><h1 id="whatChangedTitle">What Changed</h1><p id="whatChangedDescription">Verified ranking, fighter, game, Picks and product updates.</p><button id="whatChangedClose" type="button" aria-label="Close What Changed">×</button></header><div id="whatChangedFeed" aria-live="polite"></div></section>`;
     document.body.appendChild(overlay);
     overlay.addEventListener('click',event=>{if(event.target===overlay)close();});
     document.getElementById('whatChangedClose')?.addEventListener('click',()=>close());
