@@ -5,7 +5,6 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/deploy-phase-4b-community.yml'
-      - 'supabase/app-community-profiles-phase-4b.sql'
       - 'assets/js/community-profiles.js'
       - 'assets/js/fresh-home-launch.js'
       - 'assets/css/community-profiles.css'
@@ -21,7 +20,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
         with:
@@ -31,112 +30,12 @@ jobs:
         run: |
           node --check assets/js/community-profiles.js
           node --check assets/js/fresh-home-launch.js
-          grep -Fq 'community-profiles-20260718a-phase-4b' assets/js/community-profiles.js
-          grep -Fq 'fresh-home-launch-20260718a-phase-4b' assets/js/fresh-home-launch.js
-          grep -Fq 'app_profile_set_top_ten' supabase/app-community-profiles-phase-4b.sql
-          grep -Fq 'app_profile_community_snapshot' supabase/app-community-profiles-phase-4b.sql
+          grep -Fq 'community-profiles-20260718b-full-public-profile' assets/js/community-profiles.js
+          grep -Fq 'fresh-home-launch-20260718d-single-owner' assets/js/fresh-home-launch.js
           grep -Fq '.community-member-grid' assets/css/community-profiles.css
+          ! grep -Fq 'scheduleBootHome' assets/js/fresh-home-launch.js
 
-      - name: Apply and audit Phase 4B database
-        env:
-          SUPABASE_PROJECT_REF: hdkjwezaswhisxupxydc
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-        run: |
-          python - <<'PY'
-          import json
-          import os
-          import urllib.error
-          import urllib.request
-          from datetime import datetime, timezone
-          from pathlib import Path
-
-          project=os.environ['SUPABASE_PROJECT_REF']
-          token=os.environ.get('SUPABASE_ACCESS_TOKEN','').strip()
-          if not token:
-              raise RuntimeError('SUPABASE_ACCESS_TOKEN is not configured.')
-
-          def query(sql,read_only=False):
-              request=urllib.request.Request(
-                  f'https://api.supabase.com/v1/projects/{project}/database/query',
-                  data=json.dumps({'query':sql,'read_only':read_only}).encode(),
-                  headers={
-                      'Accept':'application/json',
-                      'Authorization':f'Bearer {token}',
-                      'Content-Type':'application/json',
-                      'User-Agent':'Octagon-HQ-Phase-4B/1.0',
-                  },
-                  method='POST',
-              )
-              try:
-                  with urllib.request.urlopen(request,timeout=120) as response:
-                      return json.loads(response.read().decode() or 'null')
-              except urllib.error.HTTPError as error:
-                  detail=error.read().decode(errors='replace')[:2200]
-                  raise RuntimeError(f'Supabase Management API returned HTTP {error.code}: {detail}') from error
-
-          def rows(value):
-              return value.get('result',value) if isinstance(value,dict) else value
-
-          query(Path('supabase/app-community-profiles-phase-4b.sql').read_text(),read_only=False)
-          audit_sql="""
-          select jsonb_build_object(
-            'ok',true,
-            'top_ten_column',exists(
-              select 1 from information_schema.columns
-              where table_schema='public' and table_name='pick_group_members' and column_name='goat_top_ten'
-            ),
-            'top_ten_updated_column',exists(
-              select 1 from information_schema.columns
-              where table_schema='public' and table_name='pick_group_members' and column_name='goat_top_ten_updated_at'
-            ),
-            'set_top_ten_rpc',to_regprocedure('public.app_profile_set_top_ten(text,jsonb)') is not null,
-            'community_snapshot_rpc',to_regprocedure('public.app_profile_community_snapshot(text)') is not null,
-            'active_members',(
-              select count(*) from public.pick_group_members gm
-              join public.pick_groups g on g.id=gm.group_id
-              where (coalesce(g.is_canonical,false) or g.code='GOAT26') and coalesce(gm.is_active,true)
-            ),
-            'published_top_tens',(
-              select count(*) from public.pick_group_members gm
-              join public.pick_groups g on g.id=gm.group_id
-              where (coalesce(g.is_canonical,false) or g.code='GOAT26')
-                and coalesce(gm.is_active,true)
-                and jsonb_array_length(coalesce(gm.goat_top_ten,'[]'::jsonb))=10
-            )
-          ) as audit;
-          """
-          result=rows(query(audit_sql,read_only=True))
-          audit=result[0].get('audit') if isinstance(result,list) and result else None
-          if isinstance(audit,str):
-              audit=json.loads(audit)
-          required=['top_ten_column','top_ten_updated_column','set_top_ten_rpc','community_snapshot_rpc']
-          if not isinstance(audit,dict) or not audit.get('ok') or not all(audit.get(key) for key in required):
-              raise RuntimeError(f'Phase 4B audit failed: {audit}')
-
-          status_path=Path('supabase/goat26-deployment-status.json')
-          try:
-              status=json.loads(status_path.read_text()) if status_path.exists() else {}
-          except Exception:
-              status={}
-          status['phase_4b_community_profiles']={
-              **audit,
-              'status':'active',
-              'home_member_directory':True,
-              'public_member_profiles':True,
-              'profile_stats':['direct-challenges','picks-record','war-room-participation','daily-days'],
-              'personal_top_ten':'server-published-from-build-your-top-10',
-              'missing_top_ten_state':'visible-call-to-action',
-              'profile_challenge_target':'preselected-find-leader-recipient',
-              'fresh_launch_destination':'home',
-              'deep_links_preserved':True,
-              'loading_policy':'deferred-server-snapshot-with-current-group-fallback',
-          }
-          status['checked_at']=datetime.now(timezone.utc).isoformat()
-          status_path.write_text(json.dumps(status,indent=2,sort_keys=True)+'\n')
-          print(json.dumps(audit,sort_keys=True))
-          PY
-
-      - name: Wire Phase 4B into the live app
+      - name: Wire single-owner startup and community profiles
         run: |
           python - <<'PY'
           import re
@@ -146,38 +45,42 @@ jobs:
           text=path.read_text()
 
           text=re.sub(r'\s*<link rel="stylesheet" href="assets/css/community-profiles\.css\?v=[^"]+"\s*/>','',text)
-          css='  <link rel="stylesheet" href="assets/css/community-profiles.css?v=community-profiles-css-20260718a-phase-4b" />'
-          if '</head>' not in text:
-              raise SystemExit('Could not find </head>')
+          css='  <link rel="stylesheet" href="assets/css/community-profiles.css?v=community-profiles-css-20260718b-public-activity" />'
           text=text.replace('</head>',css+'\n</head>',1)
 
           text=re.sub(r'\s*<script src="assets/js/(?:community-profiles|fresh-home-launch)\.js\?v=[^"]+"></script>','',text)
+
+          shell=re.search(r'(?P<indent>\s*)<script src="assets/js/octagon-hq-shell\.js\?v=[^"]+"></script>',text)
+          if not shell:
+              raise SystemExit('Could not find app shell script')
+          early='  <script src="assets/js/fresh-home-launch.js?v=fresh-home-launch-20260718d-single-owner"></script>'
+          text=text[:shell.start()]+shell.group('indent')+early+shell.group('indent')+shell.group(0).strip()+text[shell.end():]
+
           anchor=re.search(r'(?P<indent>\s*)<script src="assets/js/profile-challenges\.js\?v=[^"]+"></script>',text)
           if not anchor:
-              raise SystemExit('Could not find profile-challenges.js anchor')
-          scripts='\n'.join([
-              '  <script src="assets/js/community-profiles.js?v=community-profiles-20260718a-phase-4b"></script>',
-              '  <script src="assets/js/fresh-home-launch.js?v=fresh-home-launch-20260718a-phase-4b"></script>',
-          ])
-          text=text[:anchor.end()]+anchor.group('indent')+scripts.strip()+text[anchor.end():]
-          text=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260718-phase-4b-community" />',text,count=1)
+              raise SystemExit('Could not find profile challenge script')
+          community='  <script src="assets/js/community-profiles.js?v=community-profiles-20260718b-full-public-profile"></script>'
+          text=text[:anchor.end()]+anchor.group('indent')+community+text[anchor.end():]
+
+          text=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260718-phase-4b-routing-stable" />',text,count=1)
           path.write_text(text)
           PY
 
-          grep -Fq '20260718-phase-4b-community' index.html
-          grep -Fq 'community-profiles-css-20260718a-phase-4b' index.html
-          grep -Fq 'community-profiles-20260718a-phase-4b' index.html
-          grep -Fq 'fresh-home-launch-20260718a-phase-4b' index.html
+          test "$(grep -c 'fresh-home-launch.js' index.html)" -eq 1
+          test "$(grep -c 'community-profiles.js' index.html)" -eq 1
+          grep -B1 -F 'octagon-hq-shell.js' index.html | grep -Fq 'fresh-home-launch-20260718d-single-owner'
+          grep -Fq 'community-profiles-20260718b-full-public-profile' index.html
+          grep -Fq '20260718-phase-4b-routing-stable' index.html
 
-      - name: Commit Phase 4B deployment record
+      - name: Commit Phase 4B routing deployment
         run: |
-          if git diff --quiet -- index.html supabase/goat26-deployment-status.json; then
-            echo 'Phase 4B deployment record is unchanged.'
+          if git diff --quiet -- index.html; then
+            echo 'Phase 4B routing is already current.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
-          git add index.html supabase/goat26-deployment-status.json
-          git commit -m 'Deploy Phase 4B community profiles [skip ci]'
+          git add index.html
+          git commit -m 'Deploy stable Phase 4B routing [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:main
