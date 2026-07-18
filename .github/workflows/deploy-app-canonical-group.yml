@@ -7,6 +7,7 @@ on:
       - '.github/workflows/deploy-app-canonical-group.yml'
       - 'assets/js/app-notification-center.js'
       - 'assets/js/app-update-watcher.js'
+      - 'assets/js/play-daily-service.js'
       - 'assets/js/play-daily-live-sync.js'
       - 'assets/data/what-changed.js'
       - 'sw.js'
@@ -34,11 +35,13 @@ jobs:
         run: |
           node --check assets/js/app-notification-center.js
           node --check assets/js/app-update-watcher.js
+          node --check assets/js/play-daily-service.js
           node --check assets/js/play-daily-live-sync.js
           node --check assets/data/what-changed.js
           node --check sw.js
-          grep -Fq "app-notification-center-20260718b-phase-3-stable" assets/js/app-notification-center.js
-          grep -Fq "app-update-watcher-20260718e-phase-3-fast-refresh" assets/js/app-update-watcher.js
+          grep -Fq "app-notification-center-20260718c-profile-first" assets/js/app-notification-center.js
+          grep -Fq "app-update-watcher-20260718f-build-aware-refresh" assets/js/app-update-watcher.js
+          grep -Fq "play-daily-service-20260718a-reliable-submit" assets/js/play-daily-service.js
           grep -Fq "play-daily-live-sync-20260718a-phase-3" assets/js/play-daily-live-sync.js
           grep -Fq "what-changed-data-20260718f-phase-3" assets/data/what-changed.js
           grep -Fq "octagon-hq-sw-20260718b-fast-refresh" sw.js
@@ -127,6 +130,26 @@ jobs:
           if not isinstance(audit,dict) or not audit.get('ok') or not all(audit.get(key) for key in required):
               raise RuntimeError(f'Phase 3 notification audit failed: {audit}')
 
+          leaderboard_sql="""
+          select jsonb_build_object(
+            'challenge_day',(timezone('America/Chicago',now()))::date,
+            'player_count',count(*),
+            'players',coalesce(jsonb_agg(jsonb_build_object(
+              'display_name',gm.display_name,
+              'official_score',a.official_score,
+              'best_score',a.best_score,
+              'attempt_count',a.attempt_count
+            ) order by a.official_score desc,gm.display_name) filter(where a.member_id is not null),'[]'::jsonb)
+          ) as board
+          from public.play_daily_attempts a
+          join public.pick_group_members gm on gm.id=a.member_id
+          where a.challenge_day=(timezone('America/Chicago',now()))::date
+            and a.game_type='find-leader';
+          """
+          board_rows=rows(query(leaderboard_sql,read_only=True))
+          board=board_rows[0].get('board') if isinstance(board_rows,list) and board_rows else {'player_count':0,'players':[]}
+          if isinstance(board,str): board=json.loads(board)
+
           status={}
           if status_path.exists():
               try: status=json.loads(status_path.read_text())
@@ -138,16 +161,25 @@ jobs:
               'types':['direct-challenge','picks-reminder','war-room'],
               'picks_windows_minutes':[120,20],
               'worker':'octagon-push','worker_interval':'one-minute',
-              'device_settings':'activity-profile','test_notification':True,
+              'device_settings':'app-profile-and-activity-profile','test_notification':True,
               'subscription_repair':'automatic-current-profile-rebind',
+              'war_room_toggle':'removed',
           }
-          status['daily_leaderboard_live_sync']={'status':'active','poll_seconds':10,'change_detection':'server-signature-before-render'}
-          status['refresh_performance']={'status':'active','navigation':'network-first','versioned_assets':'cache-first','manual_refresh':'normal-reload-with-state-restore'}
+          status['daily_leaderboard_live_sync']={
+              'status':'active','poll_seconds':10,'change_detection':'server-signature-before-render',
+              'submission_owner':'assets/js/play-daily-service.js',
+              'device_recovery':'current-day-local-score-backfill',
+              'server_board_at_deploy':board,
+          }
+          status['refresh_performance']={
+              'status':'active','navigation':'network-first','versioned_assets':'cache-first',
+              'manual_refresh':'soft-sync-unless-new-build-exists','build_check_timeout_ms':2600,
+          }
           status['checked_at']=datetime.now(timezone.utc).isoformat()
           status_path.write_text(json.dumps(status,indent=2,sort_keys=True)+'\n')
           diagnostic_path.write_text(json.dumps({
-              'phase':'phase-3-smart-notifications','workflow_status':'success','database':'success','audit':audit,
-              'checked_at':datetime.now(timezone.utc).isoformat(),
+              'phase':'phase-3-user-visible-fix','workflow_status':'success','database':'success','audit':audit,
+              'server_board_at_deploy':board,'checked_at':datetime.now(timezone.utc).isoformat(),
           },indent=2,sort_keys=True)+'\n')
           PY
 
@@ -159,42 +191,58 @@ jobs:
             --project-ref hdkjwezaswhisxupxydc \
             --no-verify-jwt
 
-      - name: Wire Phase 3 into the live app
+      - name: Wire user-visible Phase 3 fixes into the live app
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
+
           path=Path('index.html')
           text=path.read_text()
+
           replacements={
               'app-profile.js':'app-profile-20260718b-photo-upload',
-              'app-update-watcher.js':'app-update-watcher-20260718e-phase-3-fast-refresh',
+              'app-update-watcher.js':'app-update-watcher-20260718f-build-aware-refresh',
               'profile-challenges.js':'profile-challenges-20260718c-stable-inbox',
+              'app-notification-center.js':'app-notification-center-20260718c-profile-first',
           }
           for filename,version in replacements.items():
-              text,count=re.subn(rf'assets/js/{re.escape(filename)}\?v=[^"\s]+',f'assets/js/{filename}?v={version}',text,count=1)
-              if count!=1: raise SystemExit(f'Could not update {filename} in index.html')
+              pattern=rf'assets/js/{re.escape(filename)}\?v=[^"\s]+'
+              replacement=f'assets/js/{filename}?v={version}'
+              if re.search(pattern,text):
+                  text,count=re.subn(pattern,replacement,text,count=1)
+                  if count!=1: raise SystemExit(f'Could not update {filename} in index.html')
+
           text,count=re.subn(r'assets/data/what-changed\.js\?v=[^"\s]+','assets/data/what-changed.js?v=what-changed-data-20260718f-phase-3',text,count=1)
           if count!=1: raise SystemExit('Could not update What Changed data in index.html')
-          text=re.sub(r'\s*<script src="assets/js/app-notification-center\.js\?v=[^"]+"></script>','',text)
-          anchor=re.search(r'(?P<indent>\s*)<script src="assets/js/profile-challenges\.js\?v=[^"]+"></script>',text)
-          if not anchor: raise SystemExit('Could not find profile-challenges.js anchor')
-          tag='<script src="assets/js/app-notification-center.js?v=app-notification-center-20260718b-phase-3-stable"></script>'
-          text=text[:anchor.start()]+anchor.group(0)+anchor.group('indent')+tag+text[anchor.end():]
-          text=re.sub(r'<link rel="manifest" href="[^"]+"\s*/>','<link rel="manifest" href="manifest.webmanifest?v=phase-3-smart-notifications" />',text,count=1)
-          text=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260718-phase-3-smart-notifications-stable" />',text,count=1)
+
+          daily_tag='  <script src="assets/js/play-daily-service.js?v=play-daily-service-20260718a-reliable-submit"></script>'
+          text=re.sub(r'\s*<script src="assets/js/play-daily-service\.js\?v=[^"]+"></script>','',text)
+          anchor=re.search(r'(?P<indent>\s*)<script src="assets/js/play-profile-identity\.js\?v=[^"]+"></script>',text)
+          if not anchor: raise SystemExit('Could not find play-profile-identity.js anchor')
+          text=text[:anchor.end()]+anchor.group('indent')+daily_tag.strip()+text[anchor.end():]
+
+          text=re.sub(r'\s*<script src="assets/js/octagon-push-subscription\.js\?v=[^"]+"></script>','',text)
+
+          text=re.sub(r'<link rel="manifest" href="[^"]+"\s*/>','<link rel="manifest" href="manifest.webmanifest?v=phase-3-user-visible-fix" />',text,count=1)
+          text=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260718-phase-3-user-visible-fix" />',text,count=1)
           path.write_text(text)
           PY
+
+          grep -Fq 'play-daily-service-20260718a-reliable-submit' index.html
+          grep -Fq 'app-notification-center-20260718c-profile-first' index.html
+          grep -Fq 'app-update-watcher-20260718f-build-aware-refresh' index.html
+          ! grep -Fq 'octagon-push-subscription.js' index.html
 
       - name: Commit Phase 3 deployment record
         run: |
           if git diff --quiet -- index.html supabase/goat26-deployment-status.json supabase/phase-three-deployment-diagnostic.json; then
-            echo 'Stable Phase 3 deployment record is unchanged.'
+            echo 'User-visible Phase 3 deployment record is unchanged.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
           git add index.html supabase/goat26-deployment-status.json supabase/phase-three-deployment-diagnostic.json
-          git commit -m 'Deploy stable Phase 3 smart notifications [skip ci]'
+          git commit -m 'Deploy user-visible Phase 3 fixes [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:main
