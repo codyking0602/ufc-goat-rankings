@@ -1,9 +1,13 @@
 (function(){
   'use strict';
 
-  const VERSION='find-leader-20260718b-profile-challenges';
+  const VERSION='find-leader-20260718c-photo-authority';
   const DAILY_VERSION='find-leader-daily-v1';
   const PERFECT_SCORE=10;
+  const PHOTO_ALIASES=new Map([
+    ['mauricio rua','shogun-rua'],
+    ['mauricio shogun rua','shogun-rua']
+  ]);
   const shell=document.querySelector('#play .play-shell');
   if(!shell)return;
 
@@ -11,6 +15,7 @@
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const initials=name=>String(name||'UFC').split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase();
   const clone=value=>value===undefined?undefined:JSON.parse(JSON.stringify(value));
+  const normalName=value=>String(value||'').toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
 
   const panel=document.createElement('section');
   panel.id='playFindLeaderPanel';
@@ -28,9 +33,22 @@
   function valueText(fighter){return `${Number(fighter?.value||0)} ${state.setup?.statLabel||'verified stat'}`;}
   function fighterMeta(fighter){return fighter?.primaryDivision||fighter?.divisions?.[0]||'UFC fighter';}
 
+  function photoFor(fighter){
+    const name=String(fighter?.name||fighter?.id||'').trim();
+    const alias=PHOTO_ALIASES.get(normalName(name));
+    if(alias)return `assets/fighters/${alias}-thumb.webp`;
+    const direct=fighter?.thumbUrl||fighter?.profileUrl;
+    if(direct)return direct;
+    const resolved=window.UFC_PLAY_DATA?.resolve?.(name)||window.UFC_PLAY_DATA?.resolve?.(fighter?.id);
+    const resolvedPhoto=resolved?.thumbUrl||resolved?.profileUrl;
+    if(resolvedPhoto)return resolvedPhoto;
+    const applied=window.UFC_FIGHTER_PHOTOS?.apply?.({name});
+    return applied?.thumbUrl||applied?.profileUrl||'';
+  }
+
   function visual(fighter,className='find-leader-photo'){
-    const url=fighter?.thumbUrl||fighter?.profileUrl||'';
-    return `<span class="${className}">${url?`<img src="${esc(url)}" alt="${esc(fighter.name)}">`:`<b>${esc(initials(fighter?.name))}</b>`}</span>`;
+    const url=photoFor(fighter);
+    return `<span class="${className}">${url?`<img src="${esc(url)}" alt="${esc(fighter.name)}" data-fighter-photo="true" data-fighter-name="${esc(fighter.name)}">`:`<b>${esc(initials(fighter?.name))}</b>`}</span>`;
   }
 
   function validateSetup(setup){
@@ -51,7 +69,7 @@
     const setup=clone(state.setup);setup.challengerScore=completed.score;setup.challengerPerfect=completed.perfect;return{setup,result:completed};
   }
 
-  function compactCandidate(row){return{id:String(row?.id||''),name:String(row?.name||''),value:Number(row?.value),primaryDivision:row?.primaryDivision||row?.divisions?.[0]||'',thumbUrl:row?.thumbUrl||''};}
+  function compactCandidate(row){return{id:String(row?.id||''),name:String(row?.name||''),value:Number(row?.value),primaryDivision:row?.primaryDivision||row?.divisions?.[0]||'',thumbUrl:photoFor(row)};}
   function sharePayload(){
     const completed=result();if(!completed||!validateSetup(state.setup))return null;
     const setup={questionId:String(state.setup.questionId||''),question:String(state.setup.question||''),context:String(state.setup.context||''),statLabel:String(state.setup.statLabel||''),shortLabel:String(state.setup.shortLabel||''),leaderId:String(state.setup.leaderId||''),candidateCount:PERFECT_SCORE,candidates:candidates().map(compactCandidate)};
