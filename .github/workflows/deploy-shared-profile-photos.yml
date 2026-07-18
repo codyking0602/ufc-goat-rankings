@@ -6,11 +6,13 @@ on:
     paths:
       - '.github/workflows/deploy-shared-profile-photos.yml'
       - 'supabase/app-profile-photo-upload-phase.sql'
+      - 'supabase/play-profile-challenges-phase.sql'
       - 'share.html'
       - 'assets/data/what-changed.js'
       - 'assets/js/what-changed.js'
       - 'assets/js/app-update-watcher.js'
       - 'assets/js/share-deep-links.js'
+      - 'assets/js/profile-challenges.js'
       - 'assets/js/find-leader.js'
       - 'assets/js/app-profile.js'
       - 'assets/js/profile-activity.js'
@@ -39,12 +41,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Validate shared profile, Picks, What Changed and Phase 2E sharing
+      - name: Validate profile challenges and existing shared releases
         run: |
           node --check assets/data/what-changed.js
           node --check assets/js/what-changed.js
           node --check assets/js/app-update-watcher.js
           node --check assets/js/share-deep-links.js
+          node --check assets/js/profile-challenges.js
           node --check assets/js/find-leader.js
           node --check assets/js/app-profile.js
           node --check assets/js/profile-activity.js
@@ -58,14 +61,25 @@ jobs:
           node --check assets/js/profile-avatar-sync.js
           node --check assets/js/product-polish.js
           node --check assets/js/product-architecture.js
-          grep -Eq 'what-changed-data-20260718(b-compact|c-phase-2e)' assets/data/what-changed.js
+          grep -Fq 'what-changed-data-20260718d-profile-challenges' assets/data/what-changed.js
           grep -Fq 'what-changed-20260718b-compact' assets/js/what-changed.js
           grep -Fq 'app-update-watcher-20260718c-compact-feed' assets/js/app-update-watcher.js
-          grep -Fq 'share-deep-links-20260718a-phase-2e' assets/js/share-deep-links.js
-          grep -Fq 'find-leader-20260718a-phase-2e-shared-results' assets/js/find-leader.js
-          grep -Fq 'openSharedResult' assets/js/find-leader.js
-          grep -Fq 'shareFindLeader' assets/js/share-deep-links.js
-          grep -Fq "ROUTE_TYPES=new Set(['fighter','compare','find-leader','picks-event','war-room'])" assets/js/share-deep-links.js
+          grep -Fq 'share-deep-links-20260718b-no-comparisons' assets/js/share-deep-links.js
+          grep -Fq 'profile-challenges-20260718b-passive-inbox' assets/js/profile-challenges.js
+          grep -Fq 'find-leader-20260718b-profile-challenges' assets/js/find-leader.js
+          grep -Fq 'CHALLENGE SOMEONE' assets/js/find-leader.js
+          grep -Fq 'play_send_profile_challenge' assets/js/profile-challenges.js
+          grep -Fq 'play_profile_challenge_inbox' assets/js/profile-challenges.js
+          grep -Fq 'renderActivityInbox' assets/js/profile-challenges.js
+          grep -Fq "ROUTE_TYPES=new Set(['fighter','find-leader','play-challenge','picks-event','war-room'])" assets/js/share-deep-links.js
+          ! grep -Fq 'SHARE RESULT' assets/js/find-leader.js
+          ! grep -Fq 'CHALLENGE A FRIEND' assets/js/find-leader.js
+          ! grep -Fq 'shareComparison' assets/js/share-deep-links.js
+          ! grep -Fq 'data-phase2e-share-comparison' assets/js/share-deep-links.js
+          grep -Fq 'create or replace function public.play_send_profile_challenge' supabase/play-profile-challenges-phase.sql
+          grep -Fq 'create or replace function public.play_profile_challenge_inbox' supabase/play-profile-challenges-phase.sql
+          grep -Fq 'create or replace function public.play_open_profile_challenge' supabase/play-profile-challenges-phase.sql
+          grep -Fq 'create or replace function public.play_submit_profile_challenge' supabase/play-profile-challenges-phase.sql
           grep -Fq 'Editorial release rule' assets/data/what-changed.js
           grep -Fq 'octagon-hq-what-changed-seen-v1' assets/data/what-changed.js
           grep -Fq 'data-what-changed-entry' assets/js/what-changed.js
@@ -89,7 +103,7 @@ jobs:
           grep -Fq 'add column if not exists profile_photo_data text' supabase/app-profile-photo-upload-phase.sql
           grep -Fq 'create or replace function public.app_profile_set_photo' supabase/app-profile-photo-upload-phase.sql
 
-      - name: Wire Phase 2E sharing and deep links into the live page
+      - name: Wire direct profile challenges into the live page
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -105,7 +119,7 @@ jobs:
               'picks-internal-navigation.js':'picks-internal-navigation-20260718a-fast-routes',
               'picks-home-event-cleanup.js':'picks-home-event-cleanup-20260718c-no-reminder',
               'picks-mobile-polish.js':'picks-mobile-polish-20260718f-event-art',
-              'find-leader.js':'find-leader-20260718a-phase-2e-shared-results',
+              'find-leader.js':'find-leader-20260718b-profile-challenges',
               'app-update-watcher.js':'app-update-watcher-20260718c-compact-feed',
               'product-architecture.js':'product-architecture-20260718q-picks-cohesion',
           }
@@ -116,9 +130,7 @@ jobs:
               if count!=1:
                   raise SystemExit(f'Could not update {filename} in index.html')
 
-          css_versions={
-              'picks-mobile-polish.css':'picks-mobile-polish-20260718f-event-art',
-          }
+          css_versions={'picks-mobile-polish.css':'picks-mobile-polish-20260718f-event-art'}
           for filename,version in css_versions.items():
               pattern=rf'assets/css/{re.escape(filename)}\?v=[^"\s]+'
               replacement=f'assets/css/{filename}?v={version}'
@@ -141,44 +153,23 @@ jobs:
           if not changelog_match:
               raise SystemExit('Could not read What Changed data version')
           changelog_src=f'assets/data/what-changed.js?v={changelog_match.group(1)}'
-          changelog_pattern=r'\s*<script src="assets/data/what-changed\.js\?v=[^"]+"></script>'
-          text=re.sub(changelog_pattern,'',text)
+          text=re.sub(r'\s*<script src="assets/data/what-changed\.js\?v=[^"]+"></script>','',text)
           watcher_tag=re.search(r'(?P<indent>\s*)<script src="assets/js/app-update-watcher\.js\?v=[^"]+"></script>',text)
           if not watcher_tag:
               raise SystemExit('Could not find app-update-watcher.js in index.html')
           replacement=f'{watcher_tag.group("indent")}<script src="{changelog_src}"></script>{watcher_tag.group("indent")}<script src="assets/js/app-update-watcher.js?v=app-update-watcher-20260718c-compact-feed"></script>'
           text=text[:watcher_tag.start()]+replacement+text[watcher_tag.end():]
 
-          share_tag='  <script src="assets/js/share-deep-links.js?v=share-deep-links-20260718a-phase-2e"></script>'
+          text=re.sub(r'\s*<script src="assets/js/profile-challenges\.js\?v=[^"]+"></script>','',text)
           text=re.sub(r'\s*<script src="assets/js/share-deep-links\.js\?v=[^"]+"></script>','',text)
+          tags='  <script src="assets/js/profile-challenges.js?v=profile-challenges-20260718b-passive-inbox"></script>\n  <script src="assets/js/share-deep-links.js?v=share-deep-links-20260718b-no-comparisons"></script>'
           if '</body>' not in text:
               raise SystemExit('Could not find closing body tag')
-          text=text.replace('</body>',f'{share_tag}\n</body>',1)
-
-          head_tags=[
-              (r'<meta name="description" content="[^"]*"\s*/?>','<meta name="description" content="UFC-only GOAT rankings, fighter comparisons, games, Picks, and War Room discussion in Octagon HQ." />'),
-              (r'<link rel="canonical" href="[^"]*"\s*/?>','<link rel="canonical" href="https://codyking0602.github.io/ufc-goat-rankings/" />'),
-              (r'<meta property="og:type" content="[^"]*"\s*/?>','<meta property="og:type" content="website" />'),
-              (r'<meta property="og:site_name" content="[^"]*"\s*/?>','<meta property="og:site_name" content="Octagon HQ" />'),
-              (r'<meta property="og:title" content="[^"]*"\s*/?>','<meta property="og:title" content="Octagon HQ" />'),
-              (r'<meta property="og:description" content="[^"]*"\s*/?>','<meta property="og:description" content="UFC rankings, debates, games, Picks, and community — built for the group chat." />'),
-              (r'<meta property="og:url" content="[^"]*"\s*/?>','<meta property="og:url" content="https://codyking0602.github.io/ufc-goat-rankings/" />'),
-              (r'<meta property="og:image" content="[^"]*"\s*/?>','<meta property="og:image" content="https://codyking0602.github.io/ufc-goat-rankings/assets/app-icon.png?v=20260702c" />'),
-              (r'<meta name="twitter:card" content="[^"]*"\s*/?>','<meta name="twitter:card" content="summary" />'),
-              (r'<meta name="twitter:title" content="[^"]*"\s*/?>','<meta name="twitter:title" content="Octagon HQ" />'),
-              (r'<meta name="twitter:description" content="[^"]*"\s*/?>','<meta name="twitter:description" content="UFC rankings, debates, games, Picks, and community." />'),
-              (r'<meta name="twitter:image" content="[^"]*"\s*/?>','<meta name="twitter:image" content="https://codyking0602.github.io/ufc-goat-rankings/assets/app-icon.png?v=20260702c" />'),
-          ]
-          viewport='<meta name="viewport" content="width=device-width, initial-scale=1" />'
-          for pattern,tag in head_tags:
-              if re.search(pattern,text):
-                  text=re.sub(pattern,tag,text,count=1)
-              else:
-                  text=text.replace(viewport,f'{viewport}\n  {tag}',1)
+          text=text.replace('</body>',f'{tags}\n</body>',1)
 
           text=re.sub(
               r'<meta name="app-build" content="[^"]+" />',
-              '<meta name="app-build" content="20260718-phase-2e-sharing-deep-links" />',
+              '<meta name="app-build" content="20260718-phase-2e-profile-challenges" />',
               text,
               count=1,
           )
@@ -188,17 +179,17 @@ jobs:
       - name: Commit live asset versions
         run: |
           if git diff --quiet -- index.html; then
-            echo 'Live Phase 2E asset versions are unchanged.'
+            echo 'Live profile challenge asset versions are unchanged.'
           else
             git config user.name 'github-actions[bot]'
             git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
             git add index.html
-            git commit -m 'Deploy Phase 2E sharing and deep links [skip ci]'
+            git commit -m 'Deploy direct profile challenges [skip ci]'
             git pull --rebase origin main
             git push origin HEAD:main
           fi
 
-      - name: Apply and audit profile migration
+      - name: Apply and audit profile migrations
         env:
           SUPABASE_PROJECT_REF: hdkjwezaswhisxupxydc
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
@@ -214,7 +205,8 @@ jobs:
           project=os.environ['SUPABASE_PROJECT_REF']
           token=os.environ.get('SUPABASE_ACCESS_TOKEN','').strip()
           status_path=Path('supabase/goat26-deployment-status.json')
-          migration=Path('supabase/app-profile-photo-upload-phase.sql').read_text()
+          profile_migration=Path('supabase/app-profile-photo-upload-phase.sql').read_text()
+          challenge_migration=Path('supabase/play-profile-challenges-phase.sql').read_text()
 
           def query(sql,read_only=False):
               request=urllib.request.Request(
@@ -241,14 +233,13 @@ jobs:
           if not token:
               raise RuntimeError('SUPABASE_ACCESS_TOKEN is not configured.')
 
-          query(migration,read_only=False)
+          query(profile_migration,read_only=False)
+          query(challenge_migration,read_only=False)
           audit_sql="""
           select jsonb_build_object(
             'column_exists',exists(
               select 1 from information_schema.columns
-              where table_schema='public'
-                and table_name='pick_group_members'
-                and column_name='profile_photo_data'
+              where table_schema='public' and table_name='pick_group_members' and column_name='profile_photo_data'
             ),
             'profile_snapshot_rpc',to_regprocedure('public.app_profile_group_snapshot(text)') is not null,
             'photo_rpc',to_regprocedure('public.app_profile_set_photo(text,text)') is not null,
@@ -257,30 +248,42 @@ jobs:
             'picks_room_rpc',to_regprocedure('public.picks_room_snapshot(text,text)') is not null,
             'picks_social_rpc',to_regprocedure('public.picks_social_snapshot(text,text)') is not null,
             'picks_profile_rpc',to_regprocedure('public.picks_social_update_profile(text,text,text,boolean)') is not null,
+            'recipient_column',exists(
+              select 1 from information_schema.columns
+              where table_schema='public' and table_name='play_challenges' and column_name='recipient_member_id'
+            ),
+            'profile_challenge_send_rpc',to_regprocedure('public.play_send_profile_challenge(text,uuid,text,text,jsonb,jsonb,jsonb,integer)') is not null,
+            'profile_challenge_inbox_rpc',to_regprocedure('public.play_profile_challenge_inbox(text)') is not null,
+            'profile_challenge_open_rpc',to_regprocedure('public.play_open_profile_challenge(text,text)') is not null,
+            'profile_challenge_submit_rpc',to_regprocedure('public.play_submit_profile_challenge(text,text,jsonb,numeric,jsonb)') is not null,
+            'play_create_rpc',to_regprocedure('public.play_create_challenge(text,text,text,text,jsonb,jsonb,jsonb,integer)') is not null,
+            'play_get_rpc',to_regprocedure('public.play_get_challenge(text)') is not null,
             'photo_profiles',(
-              select count(*)
-              from public.pick_group_members gm
+              select count(*) from public.pick_group_members gm
               join public.pick_groups g on g.id=gm.group_id
-              where g.code='GOAT26'
-                and coalesce(gm.is_active,true)
+              where g.code='GOAT26' and coalesce(gm.is_active,true)
                 and nullif(trim(gm.profile_photo_data),'') is not null
             )
           ) as audit;
           """
           response=rows(query(audit_sql,read_only=True))
           audit=response[0].get('audit') if isinstance(response,list) and response else None
-          if isinstance(audit,str):
-              audit=json.loads(audit)
-          required=['column_exists','profile_snapshot_rpc','photo_rpc','daily_leaderboard_rpc','picks_group_rpc','picks_room_rpc','picks_social_rpc','picks_profile_rpc']
+          if isinstance(audit,str): audit=json.loads(audit)
+          required=[
+              'column_exists','profile_snapshot_rpc','photo_rpc','daily_leaderboard_rpc','picks_group_rpc',
+              'picks_room_rpc','picks_social_rpc','picks_profile_rpc','recipient_column',
+              'profile_challenge_send_rpc','profile_challenge_inbox_rpc','profile_challenge_open_rpc',
+              'profile_challenge_submit_rpc','play_create_rpc','play_get_rpc'
+          ]
           if not isinstance(audit,dict) or not all(audit.get(key) for key in required):
-              raise RuntimeError(f'Profile and retention audit failed: {audit}')
+              raise RuntimeError(f'Profile and challenge audit failed: {audit}')
 
           status={}
           if status_path.exists():
               try: status=json.loads(status_path.read_text())
               except Exception: status={}
           status['profile_photos']={**audit,'phase':'shared-photo-or-fighter-avatar','crop_size':320,'status':'active'}
-          status['activity_profile']={'phase':'phase-2a','status':'active','sources':['play-local-ledger','find-leader-history','picks-group-snapshot','war-room-snapshot']}
+          status['activity_profile']={'phase':'phase-2a','status':'active','sources':['play-local-ledger','find-leader-history','picks-group-snapshot','war-room-snapshot','profile-challenge-inbox']}
           status['find_leader_retention']={
               'phase':'phase-2b','status':'active','history_days':35,'reset_timezone':'America/Chicago',
               'official_score_rule':'first-completed-attempt','best_score_rule':'replays-can-improve-best-only',
@@ -292,8 +295,7 @@ jobs:
               'tie_policy':'shared-rank-for-exact-equals','reminders':'removed',
               'event_pre_score_rank':'dash','home_next_event':'removed-at-source',
               'event_art':'load-confirmed-persistent','event_share':'home-only',
-              'activity_profile_source':'canonical-picks-group-totals',
-              'internal_navigation':'immediate-scoped-observers'
+              'activity_profile_source':'canonical-picks-group-totals','internal_navigation':'immediate-scoped-observers'
           }
           status['what_changed']={
               'phase':'phase-2d','status':'active','canonical_source':'assets/data/what-changed.js',
@@ -304,15 +306,18 @@ jobs:
               'editorial_policy':'fighter-and-major-feature-entry-in-release-change'
           }
           status['sharing_deep_links']={
-              'phase':'phase-2e','status':'active','owner':'assets/js/share-deep-links.js',
-              'targets':['fighter-profile','prepared-comparison','find-leader-result','picks-event-recap','war-room-discussion'],
-              'entry_page':'share.html','social_preview':'generic-static-card-plus-runtime-metadata',
-              'private_routes':'picks-and-war-room-respect-existing-access',
-              'find_leader_payload':'exact-verified-board-and-result'
+              'phase':'phase-2e','status':'active','owner':'assets/js/profile-challenges.js',
+              'link_owner':'assets/js/share-deep-links.js',
+              'targets':['fighter-profile','find-leader-profile-challenge','picks-event-recap','war-room-discussion'],
+              'removed':['prepared-comparison-sharing','duplicate-result-share-action'],
+              'primary_action':'challenge-someone','delivery':'profile-inbox','fallback':'short-link',
+              'profile_inbox_source':'play_profile_challenge_inbox','exact_board':True,
+              'recipient_score_visibility':'hidden-until-completion','push_notifications':False,
+              'entry_page':'share.html','social_preview':'generic-static-card-plus-runtime-metadata'
           }
           status['checked_at']=datetime.now(timezone.utc).isoformat()
           status_path.write_text(json.dumps(status,indent=2,sort_keys=True)+'\n')
-          print('Shared profile, Picks, What Changed and Phase 2E sharing release verified.')
+          print('Direct profile challenges, profile inbox and short-link fallback verified.')
           PY
 
       - name: Commit deployment audit
@@ -324,6 +329,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
           git add supabase/goat26-deployment-status.json
-          git commit -m 'Record Phase 2E sharing deployment [skip ci]'
+          git commit -m 'Record direct profile challenge deployment [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:main
