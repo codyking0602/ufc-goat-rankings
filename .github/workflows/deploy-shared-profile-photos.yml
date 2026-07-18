@@ -1,4 +1,4 @@
-name: Deploy Shared Profile Photos
+name: Deploy Shared Profile and Activity
 
 on:
   push:
@@ -6,13 +6,16 @@ on:
     paths:
       - '.github/workflows/deploy-shared-profile-photos.yml'
       - 'supabase/app-profile-photo-upload-phase.sql'
+      - 'assets/js/app-profile.js'
+      - 'assets/js/profile-activity.js'
+      - 'assets/js/product-architecture.js'
   workflow_dispatch:
 
 permissions:
   contents: write
 
 concurrency:
-  group: deploy-shared-profile-photos
+  group: deploy-shared-profile-activity
   cancel-in-progress: false
 
 jobs:
@@ -27,6 +30,7 @@ jobs:
       - name: Validate shared profile release
         run: |
           node --check assets/js/app-profile.js
+          node --check assets/js/profile-activity.js
           node --check assets/js/picks-social-retention.js
           node --check assets/js/picks-settings-admin-cleanup.js
           node --check assets/js/profile-avatar-sync.js
@@ -62,7 +66,7 @@ jobs:
                       'Accept':'application/json',
                       'Authorization':f'Bearer {token}',
                       'Content-Type':'application/json',
-                      'User-Agent':'UFC-Shared-Profile-Photos/1.0',
+                      'User-Agent':'UFC-Shared-Profile-Activity/1.0',
                   },
                   method='POST',
               )
@@ -125,12 +129,17 @@ jobs:
               'crop_size':320,
               'status':'active',
           }
+          status['activity_profile']={
+              'phase':'phase-2a',
+              'status':'active',
+              'sources':['play-local-ledger','find-leader-history','picks-room-snapshots','war-room-snapshot'],
+          }
           status['checked_at']=datetime.now(timezone.utc).isoformat()
           status_path.write_text(json.dumps(status,indent=2,sort_keys=True)+'\n')
-          print('Shared profile photo database layer verified.')
+          print('Shared profile photo and Phase 2A activity release verified.')
           PY
 
-      - name: Wire shared profile release into the live page
+      - name: Wire shared profile activity into the live page
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -142,7 +151,7 @@ jobs:
               'app-profile.js':'app-profile-20260718b-photo-upload',
               'picks-social-retention.js':'picks-social-retention-20260718f-shared-profile',
               'picks-settings-admin-cleanup.js':'picks-settings-admin-cleanup-20260718e-admin-only',
-              'product-architecture.js':'product-architecture-20260718i-profile-release',
+              'product-architecture.js':'product-architecture-20260718k-phase-2a-profile',
           }
           for filename,version in versions.items():
               pattern=rf'assets/js/{re.escape(filename)}\?v=[^"\s]+'
@@ -153,7 +162,7 @@ jobs:
 
           text=re.sub(
               r'<meta name="app-build" content="[^"]+" />',
-              '<meta name="app-build" content="20260718-shared-profile-photos" />',
+              '<meta name="app-build" content="20260718-phase-2a-activity-profile" />',
               text,
               count=1,
           )
@@ -163,12 +172,12 @@ jobs:
       - name: Commit deployment record
         run: |
           if git diff --quiet -- index.html supabase/goat26-deployment-status.json; then
-            echo 'Shared profile photo deployment record is unchanged.'
+            echo 'Shared profile activity deployment record is unchanged.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
           git add index.html supabase/goat26-deployment-status.json
-          git commit -m 'Record shared profile photo deployment [skip ci]'
+          git commit -m 'Record Phase 2A activity profile deployment [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:main
