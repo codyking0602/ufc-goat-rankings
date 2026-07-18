@@ -65,12 +65,13 @@ jobs:
           grep -Fq 'what-changed-20260718b-compact' assets/js/what-changed.js
           grep -Fq 'app-update-watcher-20260718c-compact-feed' assets/js/app-update-watcher.js
           grep -Fq 'share-deep-links-20260718b-no-comparisons' assets/js/share-deep-links.js
-          grep -Fq 'profile-challenges-20260718b-passive-inbox' assets/js/profile-challenges.js
+          grep -Fq 'profile-challenges-20260718c-stable-inbox' assets/js/profile-challenges.js
           grep -Fq 'find-leader-20260718b-profile-challenges' assets/js/find-leader.js
           grep -Fq 'CHALLENGE SOMEONE' assets/js/find-leader.js
           grep -Fq 'play_send_profile_challenge' assets/js/profile-challenges.js
           grep -Fq 'play_profile_challenge_inbox' assets/js/profile-challenges.js
           grep -Fq 'renderActivityInbox' assets/js/profile-challenges.js
+          grep -Fq 'inboxSignature' assets/js/profile-challenges.js
           grep -Fq "ROUTE_TYPES=new Set(['fighter','find-leader','play-challenge','picks-event','war-room'])" assets/js/share-deep-links.js
           ! grep -Fq 'SHARE RESULT' assets/js/find-leader.js
           ! grep -Fq 'CHALLENGE A FRIEND' assets/js/find-leader.js
@@ -160,9 +161,14 @@ jobs:
           replacement=f'{watcher_tag.group("indent")}<script src="{changelog_src}"></script>{watcher_tag.group("indent")}<script src="assets/js/app-update-watcher.js?v=app-update-watcher-20260718c-compact-feed"></script>'
           text=text[:watcher_tag.start()]+replacement+text[watcher_tag.end():]
 
+          profile_text=Path('assets/js/profile-challenges.js').read_text()
+          profile_match=re.search(r"const VERSION='([^']+)'",profile_text)
+          if not profile_match:
+              raise SystemExit('Could not read profile challenge version')
+          profile_version=profile_match.group(1)
           text=re.sub(r'\s*<script src="assets/js/profile-challenges\.js\?v=[^"]+"></script>','',text)
           text=re.sub(r'\s*<script src="assets/js/share-deep-links\.js\?v=[^"]+"></script>','',text)
-          tags='  <script src="assets/js/profile-challenges.js?v=profile-challenges-20260718b-passive-inbox"></script>\n  <script src="assets/js/share-deep-links.js?v=share-deep-links-20260718b-no-comparisons"></script>'
+          tags=f'  <script src="assets/js/profile-challenges.js?v={profile_version}"></script>\n  <script src="assets/js/share-deep-links.js?v=share-deep-links-20260718b-no-comparisons"></script>'
           if '</body>' not in text:
               raise SystemExit('Could not find closing body tag')
           text=text.replace('</body>',f'{tags}\n</body>',1)
@@ -184,7 +190,7 @@ jobs:
             git config user.name 'github-actions[bot]'
             git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
             git add index.html
-            git commit -m 'Deploy direct profile challenges [skip ci]'
+            git commit -m 'Deploy stable profile challenge inbox [skip ci]'
             git pull --rebase origin main
             git push origin HEAD:main
           fi
@@ -313,11 +319,12 @@ jobs:
               'primary_action':'challenge-someone','delivery':'profile-inbox','fallback':'short-link',
               'profile_inbox_source':'play_profile_challenge_inbox','exact_board':True,
               'recipient_score_visibility':'hidden-until-completion','push_notifications':False,
+              'render_policy':'signature-stable-no-loop',
               'entry_page':'share.html','social_preview':'generic-static-card-plus-runtime-metadata'
           }
           status['checked_at']=datetime.now(timezone.utc).isoformat()
           status_path.write_text(json.dumps(status,indent=2,sort_keys=True)+'\n')
-          print('Direct profile challenges, profile inbox and short-link fallback verified.')
+          print('Stable direct profile challenges, profile inbox and short-link fallback verified.')
           PY
 
       - name: Commit deployment audit
@@ -329,6 +336,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
           git add supabase/goat26-deployment-status.json
-          git commit -m 'Record direct profile challenge deployment [skip ci]'
+          git commit -m 'Record stable profile challenge deployment [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:main
