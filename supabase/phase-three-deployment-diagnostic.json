@@ -14,13 +14,13 @@
   },
   "checked_at": "2026-07-18T16:57:13.135973+00:00",
   "database": "success",
-  "finished_at": "2026-07-18T16:57:39.869777+00:00",
+  "finished_at": "2026-07-18T17:00:13.437145+00:00",
   "phase": "phase-3-smart-notifications",
   "workflow_outcomes": {
-    "database": "success",
-    "validate": "success",
-    "wire": "success",
-    "worker": "success"
+    "database": "skipped",
+    "validate": "failure",
+    "wire": "skipped",
+    "worker": "skipped"
   },
-  "workflow_status": "success"
+  "workflow_status": "failed"
 }
