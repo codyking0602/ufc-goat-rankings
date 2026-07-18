@@ -41,7 +41,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Validate profile challenges and existing shared releases
+      - name: Validate profile challenges, compact updates and fighter photos
         run: |
           node --check assets/data/what-changed.js
           node --check assets/js/what-changed.js
@@ -61,18 +61,23 @@ jobs:
           node --check assets/js/profile-avatar-sync.js
           node --check assets/js/product-polish.js
           node --check assets/js/product-architecture.js
-          grep -Fq 'what-changed-data-20260718d-profile-challenges' assets/data/what-changed.js
+          grep -Fq 'what-changed-data-20260718e-two-card-reset' assets/data/what-changed.js
           grep -Fq 'what-changed-20260718b-compact' assets/js/what-changed.js
-          grep -Fq 'app-update-watcher-20260718c-compact-feed' assets/js/app-update-watcher.js
+          grep -Fq 'app-update-watcher-20260718d-centered-two-card' assets/js/app-update-watcher.js
           grep -Fq 'share-deep-links-20260718b-no-comparisons' assets/js/share-deep-links.js
           grep -Fq 'profile-challenges-20260718c-stable-inbox' assets/js/profile-challenges.js
-          grep -Fq 'find-leader-20260718b-profile-challenges' assets/js/find-leader.js
+          grep -Fq 'find-leader-20260718c-photo-authority' assets/js/find-leader.js
+          grep -Fq 'PHOTO_ALIASES' assets/js/find-leader.js
+          grep -Fq 'data-fighter-photo="true"' assets/js/find-leader.js
           grep -Fq 'CHALLENGE SOMEONE' assets/js/find-leader.js
           grep -Fq 'play_send_profile_challenge' assets/js/profile-challenges.js
           grep -Fq 'play_profile_challenge_inbox' assets/js/profile-challenges.js
           grep -Fq 'renderActivityInbox' assets/js/profile-challenges.js
           grep -Fq 'inboxSignature' assets/js/profile-challenges.js
           grep -Fq "ROUTE_TYPES=new Set(['fighter','find-leader','play-challenge','picks-event','war-room'])" assets/js/share-deep-links.js
+          test "$(grep -c "id:'" assets/data/what-changed.js)" -eq 2
+          grep -Fq "headline:'Octagon HQ app redesign'" assets/data/what-changed.js
+          grep -Fq "headline:'New fighter: Anthony Pettis'" assets/data/what-changed.js
           ! grep -Fq 'SHARE RESULT' assets/js/find-leader.js
           ! grep -Fq 'CHALLENGE A FRIEND' assets/js/find-leader.js
           ! grep -Fq 'shareComparison' assets/js/share-deep-links.js
@@ -104,7 +109,7 @@ jobs:
           grep -Fq 'add column if not exists profile_photo_data text' supabase/app-profile-photo-upload-phase.sql
           grep -Fq 'create or replace function public.app_profile_set_photo' supabase/app-profile-photo-upload-phase.sql
 
-      - name: Wire direct profile challenges into the live page
+      - name: Wire compact updates and photo authority into the live page
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -120,8 +125,8 @@ jobs:
               'picks-internal-navigation.js':'picks-internal-navigation-20260718a-fast-routes',
               'picks-home-event-cleanup.js':'picks-home-event-cleanup-20260718c-no-reminder',
               'picks-mobile-polish.js':'picks-mobile-polish-20260718f-event-art',
-              'find-leader.js':'find-leader-20260718b-profile-challenges',
-              'app-update-watcher.js':'app-update-watcher-20260718c-compact-feed',
+              'find-leader.js':'find-leader-20260718c-photo-authority',
+              'app-update-watcher.js':'app-update-watcher-20260718d-centered-two-card',
               'product-architecture.js':'product-architecture-20260718q-picks-cohesion',
           }
           for filename,version in js_versions.items():
@@ -158,7 +163,7 @@ jobs:
           watcher_tag=re.search(r'(?P<indent>\s*)<script src="assets/js/app-update-watcher\.js\?v=[^"]+"></script>',text)
           if not watcher_tag:
               raise SystemExit('Could not find app-update-watcher.js in index.html')
-          replacement=f'{watcher_tag.group("indent")}<script src="{changelog_src}"></script>{watcher_tag.group("indent")}<script src="assets/js/app-update-watcher.js?v=app-update-watcher-20260718c-compact-feed"></script>'
+          replacement=f'{watcher_tag.group("indent")}<script src="{changelog_src}"></script>{watcher_tag.group("indent")}<script src="assets/js/app-update-watcher.js?v=app-update-watcher-20260718d-centered-two-card"></script>'
           text=text[:watcher_tag.start()]+replacement+text[watcher_tag.end():]
 
           profile_text=Path('assets/js/profile-challenges.js').read_text()
@@ -175,7 +180,7 @@ jobs:
 
           text=re.sub(
               r'<meta name="app-build" content="[^"]+" />',
-              '<meta name="app-build" content="20260718-phase-2e-profile-challenges" />',
+              '<meta name="app-build" content="20260718-phase-2e-two-card-photo-fix" />',
               text,
               count=1,
           )
@@ -185,12 +190,12 @@ jobs:
       - name: Commit live asset versions
         run: |
           if git diff --quiet -- index.html; then
-            echo 'Live profile challenge asset versions are unchanged.'
+            echo 'Live compact update and photo asset versions are unchanged.'
           else
             git config user.name 'github-actions[bot]'
             git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
             git add index.html
-            git commit -m 'Deploy stable profile challenge inbox [skip ci]'
+            git commit -m 'Deploy two-card updates and fighter photos [skip ci]'
             git pull --rebase origin main
             git push origin HEAD:main
           fi
@@ -293,7 +298,8 @@ jobs:
           status['find_leader_retention']={
               'phase':'phase-2b','status':'active','history_days':35,'reset_timezone':'America/Chicago',
               'official_score_rule':'first-completed-attempt','best_score_rule':'replays-can-improve-best-only',
-              'history_source':'play_daily_leaderboard','loading_policy':'lazy-on-play-profile-or-history'
+              'history_source':'play_daily_leaderboard','loading_policy':'lazy-on-play-profile-or-history',
+              'photo_source':'shared-fighter-photo-authority-with-alias-fallback'
           }
           status['picks_season_loop']={
               'phase':'phase-2c','status':'active','layout':'home-season-summary-leaderboard-archive',
@@ -308,8 +314,8 @@ jobs:
               'controller':'assets/js/what-changed.js','header_owner':'assets/js/app-update-watcher.js',
               'unread_policy':'unseen-entry-ids-local','loading_policy':'lightweight-data-controller-lazy',
               'fighter_hydration':'current-production-ranking-data','deep_links':'fighter-profile-and-destination',
-              'density':'compact-mobile','copy_reduction':'25-percent-seed-summary-word-count',
-              'editorial_policy':'fighter-and-major-feature-entry-in-release-change'
+              'density':'compact-mobile','current_seed_entries':2,'initial_backlog_collapsed':True,
+              'editorial_policy':'one-concise-major-release-card-plus-new-fighter-cards'
           }
           status['sharing_deep_links']={
               'phase':'phase-2e','status':'active','owner':'assets/js/profile-challenges.js',
@@ -324,7 +330,7 @@ jobs:
           }
           status['checked_at']=datetime.now(timezone.utc).isoformat()
           status_path.write_text(json.dumps(status,indent=2,sort_keys=True)+'\n')
-          print('Stable direct profile challenges, profile inbox and short-link fallback verified.')
+          print('Two-card What Changed feed, centered NEW control and Find the Leader photos verified.')
           PY
 
       - name: Commit deployment audit
@@ -336,6 +342,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
           git add supabase/goat26-deployment-status.json
-          git commit -m 'Record stable profile challenge deployment [skip ci]'
+          git commit -m 'Record two-card updates and fighter photo fix [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:main
