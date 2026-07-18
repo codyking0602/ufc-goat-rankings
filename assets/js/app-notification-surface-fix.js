@@ -2,55 +2,104 @@
   'use strict';
 
   const VERSION='app-notification-surface-fix-20260718a';
+  const CACHE_PREFIX='octagon-hq:activity-profile-html-v1:';
   let observer=null;
-  let timer=0;
+  let syncTimer=0;
 
-  function controller(){return window.UFC_APP_NOTIFICATIONS||null;}
+  const text=value=>String(value??'').trim();
+  const profileName=()=>text(document.querySelector('.profile-activity-title strong')?.textContent||window.UFC_APP_PROFILE?.identity?.member?.display_name||'profile').toLowerCase();
+  const cacheKey=()=>`${CACHE_PREFIX}${profileName()}`;
 
-  function render(){
-    const api=controller();
-    if(!api)return false;
-    try{api.render?.();}catch(_error){}
-    if(!api.settings){
-      try{void api.loadSettings?.();}catch(_error){}
-    }
+  function bindCachedActions(root){
+    root?.querySelectorAll?.('[data-profile-activity-destination]').forEach(button=>{
+      if(button.dataset.phase3BridgeBound===VERSION)return;
+      button.dataset.phase3BridgeBound=VERSION;
+      button.addEventListener('click',()=>{
+        const destination=button.dataset.profileActivityDestination;
+        window.UFC_PROFILE_ACTIVITY?.close?.();
+        window.UFC_APP_SHELL?.activateDestination?.(destination)||window.UFC_PRODUCT_ARCHITECTURE?.activateDestination?.(destination);
+      });
+    });
+  }
+
+  function saveFinishedProfile(){
+    const body=document.querySelector('.profile-activity-body');
+    const grid=body?.querySelector('.profile-activity-grid');
+    if(!body||!grid||body.querySelector('.profile-activity-loading'))return;
+    const clone=body.cloneNode(true);
+    clone.querySelectorAll('[data-app-notification-center]').forEach(node=>node.remove());
+    try{localStorage.setItem(cacheKey(),clone.innerHTML);}catch(_error){}
+  }
+
+  function restoreCachedProfile(){
+    const body=document.querySelector('.profile-activity-body');
+    if(!body||!body.querySelector('.profile-activity-loading'))return false;
+    let cached='';
+    try{cached=localStorage.getItem(cacheKey())||'';}catch(_error){}
+    if(!cached||!cached.includes('profile-activity-grid'))return false;
+    body.innerHTML=cached;
+    body.dataset.cachedActivityProfile='true';
+    bindCachedActions(body);
     return true;
   }
 
-  function schedule(delay=35){
-    window.clearTimeout(timer);
-    timer=window.setTimeout(render,delay);
+  function syncNotifications(){
+    window.clearTimeout(syncTimer);
+    syncTimer=window.setTimeout(()=>{
+      const api=window.UFC_APP_NOTIFICATIONS;
+      if(!api)return;
+      api.render?.();
+      if(!api.settings)void api.loadSettings?.();
+    },20);
   }
 
-  function relevant(node){
-    if(!node||node.nodeType!==1)return false;
-    const selector='.profile-activity-grid,.profile-activity-body,.profile-activity-panel,.app-profile-body,.app-profile-panel';
-    return Boolean(node.matches?.(selector)||node.querySelector?.(selector));
+  function sync(){
+    restoreCachedProfile();
+    saveFinishedProfile();
+    bindCachedActions(document.querySelector('.profile-activity-body'));
+    syncNotifications();
   }
 
-  function start(){
+  function installObserver(){
     if(observer)return;
     observer=new MutationObserver(records=>{
-      if(records.some(record=>[...record.addedNodes].some(relevant))){
-        schedule(20);
-        window.setTimeout(render,120);
+      let relevant=false;
+      for(const record of records){
+        for(const node of record.addedNodes){
+          if(node.nodeType!==1)continue;
+          if(node.matches?.('.profile-activity-overlay,.profile-activity-body,.profile-activity-grid,.app-profile-panel,.app-profile-body')||node.querySelector?.('.profile-activity-overlay,.profile-activity-body,.profile-activity-grid,.app-profile-panel,.app-profile-body')){
+            relevant=true;
+            break;
+          }
+        }
+        if(relevant)break;
+      }
+      if(relevant){
+        window.requestAnimationFrame(sync);
+        window.setTimeout(sync,120);
       }
     });
     observer.observe(document.body,{childList:true,subtree:true});
-
-    document.addEventListener('click',event=>{
-      if(!event.target.closest?.('.app-profile-chip,[data-profile-activity-edit]'))return;
-      [20,100,300,800].forEach(delay=>window.setTimeout(render,delay));
-    },true);
-
-    ['ufc-play-profile-ready','ufc-app-profile-updated','ufc-profile-challenges-updated','octagon-hq:notification-device-change'].forEach(name=>{
-      window.addEventListener(name,()=>{schedule(20);window.setTimeout(render,180);});
-    });
-
-    [0,180,650,1500,3000].forEach(delay=>window.setTimeout(render,delay));
   }
 
-  window.UFC_APP_NOTIFICATION_SURFACE_FIX={version:VERSION,render,schedule};
+  function registerCurrentWorker(){
+    if(!('serviceWorker' in navigator))return;
+    navigator.serviceWorker.register('sw.js?v=octagon-hq-sw-20260718b-fast-refresh',{scope:'./'}).then(registration=>registration.update?.()).catch(()=>undefined);
+  }
+
+  function start(){
+    installObserver();
+    registerCurrentWorker();
+    document.addEventListener('click',event=>{
+      if(event.target.closest?.('.app-profile-chip,[data-profile-activity-edit]')){
+        [0,40,140,500,1200].forEach(delay=>window.setTimeout(sync,delay));
+      }
+    },true);
+    ['ufc-play-profile-ready','ufc-app-profile-updated','octagon-hq:notification-device-change','octagon-hq:soft-refresh'].forEach(name=>window.addEventListener(name,()=>window.setTimeout(sync,40)));
+    [0,120,500,1400].forEach(delay=>window.setTimeout(sync,delay));
+  }
+
+  window.UFC_APP_NOTIFICATION_SURFACE_FIX={version:VERSION,render:sync,schedule:sync,restoreCachedProfile,saveFinishedProfile};
   document.documentElement.setAttribute('data-app-notification-surface-fix',VERSION);
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
