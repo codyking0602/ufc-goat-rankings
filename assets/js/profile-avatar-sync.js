@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='profile-avatar-sync-20260718b-resolved';
+  const VERSION='profile-avatar-sync-20260718c-home-war-room';
   let frame=0;
   let observer=null;
   let resolving=false;
@@ -21,35 +21,42 @@
     return [member?.id||'',member?.profile_updated_at||'',member?.fighter_avatar_slug||'',String(member?.profile_photo_data||'').length].join('|');
   }
 
-  function syncWarRoom(){
+  function paint(node,member,attribute='data-profile-avatar-image'){
     const api=window.UFC_APP_PROFILE;
-    if(!api)return;
-    document.querySelectorAll('.octagon-avatar[data-member-name]').forEach(node=>{
-      const member=memberByName(node.dataset.memberName);
-      if(!member)return;
-      const nextSignature=signature(member);
-      if(node.dataset.profileSignature===nextSignature)return;
-      const src=api.avatarSource?.(member)||'';
-      node.dataset.profileSignature=nextSignature;
-      node.style.borderRadius='50%';
-      node.innerHTML=src
-        ?`<img src="${String(src).replace(/"/g,'&quot;')}" alt="${text(member.display_name).replace(/"/g,'&quot;')} profile" data-octagon-avatar-image>`
-        :`<span>${initials(member.display_name)}</span>`;
+    if(!node||!member||!api)return;
+    const nextSignature=signature(member);
+    if(node.dataset.profileSignature===nextSignature)return;
+    const src=api.avatarSource?.(member)||'';
+    node.dataset.profileSignature=nextSignature;
+    node.style.borderRadius='50%';
+    node.innerHTML=src
+      ?`<img src="${String(src).replace(/"/g,'&quot;')}" alt="${text(member.display_name).replace(/"/g,'&quot;')} profile" ${attribute}>`
+      :`<span>${initials(member.display_name)}</span>`;
+  }
+
+  function syncWarRoom(){
+    document.querySelectorAll('.octagon-avatar[data-member-name]').forEach(node=>paint(node,memberByName(node.dataset.memberName),'data-octagon-avatar-image'));
+  }
+
+  function recentWarAuthors(){
+    const messages=Array.isArray(window.UFC_OCTAGON_BOARD?.snapshot?.messages)?window.UFC_OCTAGON_BOARD.snapshot.messages:[];
+    const seen=new Set();const authors=[];
+    [...messages].sort((a,b)=>new Date(b?.created_at)-new Date(a?.created_at)).forEach(message=>{
+      const author=message?.author||{};const key=text(author.id||author.display_name).toLowerCase();
+      if(!key||seen.has(key)||authors.length>=2)return;
+      seen.add(key);authors.push(author);
     });
+    return authors;
   }
 
   function syncHomeAvatars(){
-    const api=window.UFC_APP_PROFILE;
-    if(!api)return;
-    document.querySelectorAll('.home-war-avatar[data-member-name]').forEach(node=>{
-      const member=memberByName(node.dataset.memberName);
-      if(!member)return;
-      const nextSignature=signature(member);
-      if(node.dataset.profileSignature===nextSignature)return;
-      const src=api.avatarSource?.(member)||'';
-      node.dataset.profileSignature=nextSignature;
-      node.style.borderRadius='50%';
-      node.innerHTML=src?`<img src="${String(src).replace(/"/g,'&quot;')}" alt="${text(member.display_name).replace(/"/g,'&quot;')} profile">`:`<span>${initials(member.display_name)}</span>`;
+    const nodes=[...document.querySelectorAll('.home-war-avatar')];
+    if(!nodes.length)return;
+    const authors=recentWarAuthors();
+    nodes.forEach((node,index)=>{
+      const author=authors[index];
+      const member=author?memberByName(author.display_name):null;
+      if(member)paint(node,member,'');
     });
   }
 
@@ -89,7 +96,7 @@
       observer=new MutationObserver(schedule);
       observer.observe(octagon,{childList:true,subtree:true});
     }
-    ['ufc-app-profile-updated','ufc-play-profile-ready','ufc-play-data-ready','octagon-hq:view-change'].forEach(name=>window.addEventListener(name,()=>{
+    ['ufc-app-profile-updated','ufc-play-profile-ready','ufc-play-data-ready','octagon-hq:view-change','ufc-home-dashboard-rendered'].forEach(name=>window.addEventListener(name,()=>{
       schedule();
       if(!window.UFC_APP_PROFILE?.group)resolveSharedProfile();
     }));
