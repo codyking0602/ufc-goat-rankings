@@ -36,7 +36,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Validate shared profile, Picks and What Changed release
+      - name: Validate shared profile, Picks and compact What Changed release
         run: |
           node --check assets/data/what-changed.js
           node --check assets/js/what-changed.js
@@ -53,9 +53,10 @@ jobs:
           node --check assets/js/profile-avatar-sync.js
           node --check assets/js/product-polish.js
           node --check assets/js/product-architecture.js
-          grep -Fq 'what-changed-data-20260718a-phase-2d' assets/data/what-changed.js
-          grep -Fq 'what-changed-20260718a-phase-2d' assets/js/what-changed.js
-          grep -Fq 'app-update-watcher-20260718b-phase-2d' assets/js/app-update-watcher.js
+          grep -Fq 'what-changed-data-20260718b-compact' assets/data/what-changed.js
+          grep -Fq 'what-changed-20260718b-compact' assets/js/what-changed.js
+          grep -Fq 'app-update-watcher-20260718c-compact-feed' assets/js/app-update-watcher.js
+          grep -Fq 'Editorial release rule' assets/data/what-changed.js
           grep -Fq 'octagon-hq-what-changed-seen-v1' assets/data/what-changed.js
           grep -Fq 'data-what-changed-entry' assets/js/what-changed.js
           grep -Fq 'find-leader-retention-20260718c-phase-2b-lazy' assets/js/find-leader-retention.js
@@ -76,7 +77,7 @@ jobs:
           grep -Fq 'add column if not exists profile_photo_data text' supabase/app-profile-photo-upload-phase.sql
           grep -Fq 'create or replace function public.app_profile_set_photo' supabase/app-profile-photo-upload-phase.sql
 
-      - name: Wire the final Phase 2D assets into the live page
+      - name: Wire the compact Phase 2D assets into the live page
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -92,7 +93,7 @@ jobs:
               'picks-internal-navigation.js':'picks-internal-navigation-20260718a-fast-routes',
               'picks-home-event-cleanup.js':'picks-home-event-cleanup-20260718c-no-reminder',
               'picks-mobile-polish.js':'picks-mobile-polish-20260718f-event-art',
-              'app-update-watcher.js':'app-update-watcher-20260718b-phase-2d',
+              'app-update-watcher.js':'app-update-watcher-20260718c-compact-feed',
               'product-architecture.js':'product-architecture-20260718q-picks-cohesion',
           }
           for filename,version in js_versions.items():
@@ -122,18 +123,18 @@ jobs:
               if count!=1:
                   raise SystemExit('Could not insert picks-season-loop.js after app-profile.js')
 
-          changelog_src='assets/data/what-changed.js?v=what-changed-data-20260718a-phase-2d'
+          changelog_src='assets/data/what-changed.js?v=what-changed-data-20260718b-compact'
           changelog_pattern=r'\s*<script src="assets/data/what-changed\.js\?v=[^"]+"></script>'
           text=re.sub(changelog_pattern,'',text)
           watcher_tag=re.search(r'(?P<indent>\s*)<script src="assets/js/app-update-watcher\.js\?v=[^"]+"></script>',text)
           if not watcher_tag:
               raise SystemExit('Could not find app-update-watcher.js in index.html')
-          replacement=f'{watcher_tag.group("indent")}<script src="{changelog_src}"></script>{watcher_tag.group("indent")}<script src="assets/js/app-update-watcher.js?v=app-update-watcher-20260718b-phase-2d"></script>'
+          replacement=f'{watcher_tag.group("indent")}<script src="{changelog_src}"></script>{watcher_tag.group("indent")}<script src="assets/js/app-update-watcher.js?v=app-update-watcher-20260718c-compact-feed"></script>'
           text=text[:watcher_tag.start()]+replacement+text[watcher_tag.end():]
 
           text=re.sub(
               r'<meta name="app-build" content="[^"]+" />',
-              '<meta name="app-build" content="20260718-phase-2d-what-changed" />',
+              '<meta name="app-build" content="20260718-phase-2d-what-changed-compact" />',
               text,
               count=1,
           )
@@ -143,12 +144,12 @@ jobs:
       - name: Commit live asset versions
         run: |
           if git diff --quiet -- index.html; then
-            echo 'Live Phase 2D asset versions are unchanged.'
+            echo 'Live compact Phase 2D asset versions are unchanged.'
           else
             git config user.name 'github-actions[bot]'
             git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
             git add index.html
-            git commit -m 'Deploy Phase 2D What Changed [skip ci]'
+            git commit -m 'Deploy compact Phase 2D What Changed [skip ci]'
             git pull --rebase origin main
             git push origin HEAD:main
           fi
@@ -254,11 +255,13 @@ jobs:
               'phase':'phase-2d','status':'active','canonical_source':'assets/data/what-changed.js',
               'controller':'assets/js/what-changed.js','header_owner':'assets/js/app-update-watcher.js',
               'unread_policy':'unseen-entry-ids-local','loading_policy':'lightweight-data-controller-lazy',
-              'fighter_hydration':'current-production-ranking-data','deep_links':'fighter-profile-and-destination'
+              'fighter_hydration':'current-production-ranking-data','deep_links':'fighter-profile-and-destination',
+              'density':'compact-mobile','copy_reduction':'25-percent-seed-summary-word-count',
+              'editorial_policy':'fighter-and-major-feature-entry-in-release-change'
           }
           status['checked_at']=datetime.now(timezone.utc).isoformat()
           status_path.write_text(json.dumps(status,indent=2,sort_keys=True)+'\n')
-          print('Shared profile, Picks and Phase 2D What Changed release verified.')
+          print('Shared profile, Picks and compact Phase 2D What Changed release verified.')
           PY
 
       - name: Commit deployment audit
@@ -270,6 +273,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
           git add supabase/goat26-deployment-status.json
-          git commit -m 'Record Phase 2D What Changed deployment [skip ci]'
+          git commit -m 'Record compact Phase 2D What Changed deployment [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:main
