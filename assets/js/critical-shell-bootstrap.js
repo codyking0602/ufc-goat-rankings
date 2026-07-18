@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='critical-shell-bootstrap-20260717c-home-recovery';
+  const VERSION='critical-shell-bootstrap-20260717d-no-tab-reset';
   const ARCH_VERSION='product-architecture-20260717g-performance';
   const HOME_SRC='assets/js/home-dashboard.js?v=home-dashboard-20260717e-recovery';
   let started=false;
@@ -139,9 +139,14 @@
   function recover(forceDashboard=false){
     installStyle();
     normalizeHeader();
-    if(!window.UFC_PRODUCT_ARCHITECTURE)normalizeNavigation();
-    normalizeViews();
-    loadArchitecture();
+    const architectureReady=window.UFC_PRODUCT_ARCHITECTURE?.version===ARCH_VERSION;
+    if(!architectureReady){
+      normalizeNavigation();
+      normalizeViews();
+      loadArchitecture();
+    }else{
+      window.UFC_PRODUCT_ARCHITECTURE.apply?.();
+    }
     ensureDashboard(forceDashboard);
   }
 
