@@ -1,20 +1,31 @@
 const VERSION='octagon-hq-sw-20260718b-fast-refresh';
-const CACHE_NAME='octagon-hq-static-20260718b';
+const CACHE_NAME='octagon-hq-static-v1';
+const LEGACY_PREFIX='octagon-hq-static-';
+const CORE=['./','./index.html','./manifest.webmanifest'];
 
 self.addEventListener('install',event=>{
-  event.waitUntil(self.skipWaiting());
+  event.waitUntil((async()=>{
+    const cache=await caches.open(CACHE_NAME);
+    await Promise.allSettled(CORE.map(path=>cache.add(new Request(path,{cache:'reload'}))));
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate',event=>{
   event.waitUntil((async()=>{
+    const target=await caches.open(CACHE_NAME);
     const keys=await caches.keys();
-    await Promise.all(keys.filter(key=>key.startsWith('octagon-hq-static-')&&key!==CACHE_NAME).map(key=>caches.delete(key)));
-    const cache=await caches.open(CACHE_NAME);
-    const requests=await cache.keys();
-    await Promise.all(requests.filter(request=>{
-      const path=new URL(request.url).pathname;
-      return /\/assets\/js\/(?:product-architecture|app-notification-center)\.js$/i.test(path);
-    }).map(request=>cache.delete(request)));
+    for(const key of keys){
+      if(!key.startsWith(LEGACY_PREFIX)||key===CACHE_NAME)continue;
+      const source=await caches.open(key);
+      const requests=await source.keys();
+      for(const request of requests){
+        if(await target.match(request))continue;
+        const response=await source.match(request);
+        if(response)await target.put(request,response);
+      }
+      await caches.delete(key);
+    }
     await self.clients.claim();
   })());
 });
@@ -29,22 +40,21 @@ function isVersionedStatic(request,url){
   return /\.(?:js|css|json|webmanifest|png|webp|jpe?g|gif|svg|ico)$/i.test(url.pathname);
 }
 
-async function updateNavigationCache(request,cache){
+async function updateCache(request){
+  const cache=await caches.open(CACHE_NAME);
   try{
     const response=await fetch(request,{cache:'no-cache'});
     if(response?.ok)await cache.put(request,response.clone());
     return response;
-  }catch(_error){
-    return null;
-  }
+  }catch(_error){return null;}
 }
 
-async function staleNavigation(request,event){
+async function instantNavigation(request,event){
   const cache=await caches.open(CACHE_NAME);
-  const cached=await cache.match(request,{ignoreSearch:true});
-  const network=updateNavigationCache(request,cache);
+  const cached=await cache.match(request,{ignoreSearch:true})||await cache.match('./index.html')||await cache.match('./');
+  const network=updateCache(request);
   if(cached){
-    event.waitUntil(network.catch(()=>null));
+    event.waitUntil(network);
     return cached;
   }
   return (await network)||Response.error();
@@ -64,7 +74,7 @@ self.addEventListener('fetch',event=>{
   if(request.method!=='GET')return;
   const url=new URL(request.url);
   if(isNavigation(request,url)){
-    event.respondWith(staleNavigation(request,event));
+    event.respondWith(instantNavigation(request,event));
     return;
   }
   if(isVersionedStatic(request,url))event.respondWith(cacheFirst(request));
