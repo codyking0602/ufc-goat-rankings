@@ -12,15 +12,8 @@
     "war_room_trigger": true,
     "worker_rpc": true
   },
-  "checked_at": "2026-07-18T16:57:13.135973+00:00",
+  "checked_at": "2026-07-18T17:01:34.631637+00:00",
   "database": "success",
-  "finished_at": "2026-07-18T17:00:13.437145+00:00",
   "phase": "phase-3-smart-notifications",
-  "workflow_outcomes": {
-    "database": "skipped",
-    "validate": "failure",
-    "wire": "skipped",
-    "worker": "skipped"
-  },
-  "workflow_status": "failed"
+  "workflow_status": "success"
 }

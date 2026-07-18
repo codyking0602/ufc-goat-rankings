@@ -1,7 +1,7 @@
 {
   "active_members": 6,
   "avatar_profiles": 2,
-  "checked_at": "2026-07-18T16:57:16.415797+00:00",
+  "checked_at": "2026-07-18T17:01:34.631368+00:00",
   "code": "GOAT26",
   "daily_leaderboard_live_sync": {
     "change_detection": "server-signature-before-render",
@@ -100,6 +100,7 @@
     "preference_rows": 6,
     "settings_rpc": true,
     "status": "active",
+    "subscription_repair": "automatic-current-profile-rebind",
     "test_notification": true,
     "test_rpc": true,
     "types": [
