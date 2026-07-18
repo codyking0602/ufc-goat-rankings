@@ -1,12 +1,13 @@
 (function(){
   'use strict';
 
-  const VERSION='product-architecture-20260718j-rankings-static';
+  const VERSION='product-architecture-20260718k-phase-2a-profile';
   const SHELL_SRC='assets/js/octagon-hq-shell.js?v=app-shell-20260718d-rankings-static';
   const CONNECTIVITY_SRC='assets/js/product-connectivity.js?v=product-connectivity-20260718c-clean-handoffs';
   const POLISH_CSS='assets/css/product-polish.css?v=product-polish-20260718c-header-final';
   const POLISH_SRC='assets/js/product-polish.js?v=product-polish-20260718c-header-final';
   const AVATAR_SYNC_SRC='assets/js/profile-avatar-sync.js?v=profile-avatar-sync-20260718c-home-war-room';
+  const ACTIVITY_SRC='assets/js/profile-activity.js?v=profile-activity-20260718a-phase-2a';
 
   function shell(){return window.UFC_APP_SHELL||null;}
 
@@ -46,6 +47,11 @@
     loadScriptOnce('assets/js/profile-avatar-sync.js',AVATAR_SYNC_SRC);
   }
 
+  function loadActivityProfile(){
+    if(window.UFC_PROFILE_ACTIVITY)return;
+    loadScriptOnce('assets/js/profile-activity.js',ACTIVITY_SRC);
+  }
+
   function call(method,...args){
     const api=shell();
     if(api?.[method])return api[method](...args);
@@ -71,5 +77,6 @@
   loadConnectivity();
   loadPolish();
   loadAvatarSync();
+  loadActivityProfile();
   document.documentElement.setAttribute('data-product-architecture',VERSION);
 })();
