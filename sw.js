@@ -9,6 +9,12 @@ self.addEventListener('activate',event=>{
   event.waitUntil((async()=>{
     const keys=await caches.keys();
     await Promise.all(keys.filter(key=>key.startsWith('octagon-hq-static-')&&key!==CACHE_NAME).map(key=>caches.delete(key)));
+    const cache=await caches.open(CACHE_NAME);
+    const requests=await cache.keys();
+    await Promise.all(requests.filter(request=>{
+      const path=new URL(request.url).pathname;
+      return /\/assets\/js\/(?:product-architecture|app-notification-center)\.js$/i.test(path);
+    }).map(request=>cache.delete(request)));
     await self.clients.claim();
   })());
 });
@@ -23,15 +29,25 @@ function isVersionedStatic(request,url){
   return /\.(?:js|css|json|webmanifest|png|webp|jpe?g|gif|svg|ico)$/i.test(url.pathname);
 }
 
-async function networkFirst(request){
-  const cache=await caches.open(CACHE_NAME);
+async function updateNavigationCache(request,cache){
   try{
     const response=await fetch(request,{cache:'no-cache'});
     if(response?.ok)await cache.put(request,response.clone());
     return response;
   }catch(_error){
-    return (await cache.match(request))||Response.error();
+    return null;
   }
+}
+
+async function staleNavigation(request,event){
+  const cache=await caches.open(CACHE_NAME);
+  const cached=await cache.match(request,{ignoreSearch:true});
+  const network=updateNavigationCache(request,cache);
+  if(cached){
+    event.waitUntil(network.catch(()=>null));
+    return cached;
+  }
+  return (await network)||Response.error();
 }
 
 async function cacheFirst(request){
@@ -48,7 +64,7 @@ self.addEventListener('fetch',event=>{
   if(request.method!=='GET')return;
   const url=new URL(request.url);
   if(isNavigation(request,url)){
-    event.respondWith(networkFirst(request));
+    event.respondWith(staleNavigation(request,event));
     return;
   }
   if(isVersionedStatic(request,url))event.respondWith(cacheFirst(request));
