@@ -3,6 +3,7 @@
 
   const VERSION='app-update-watcher-20260718f-build-aware-refresh';
   const WHAT_CHANGED_SRC='assets/js/what-changed.js?v=what-changed-20260718b-compact';
+  const PROFILE_BRIDGE_SRC='assets/js/activity-profile-phase3-bridge.js?v=activity-profile-phase3-bridge-20260718a';
   const RESTORE_KEY='ufc-goat-manual-refresh-v1';
   const LEGACY_KEYS=['ufc-goat-update-restore-v1','ufc-goat-update-target-v1','ufc-goat-manual-refresh-progress-v1'];
   let playSupportScheduled=false;
@@ -12,6 +13,11 @@
   const currentBuild=()=>document.querySelector('meta[name="app-build"]')?.content||'';
   const activeView=()=>document.querySelector('.tab.active')?.dataset.view||document.querySelector('.view.active-view')?.id||'home';
   const activePlayMode=()=>document.querySelector('[data-play-mode].active')?.dataset.playMode||'top10';
+
+  function loadScript(id,src){
+    if(document.getElementById(id)||document.querySelector(`script[src*="${src.split('?')[0]}"]`))return null;
+    const script=document.createElement('script');script.id=id;script.src=src;script.async=true;document.head.appendChild(script);return script;
+  }
 
   function cleanRefreshState(){
     const button=document.getElementById('manualRefreshBtn');
@@ -40,29 +46,16 @@
   }
 
   function progress(value){const fill=document.getElementById('manualRefreshProgressFill');if(fill)fill.style.width=`${Math.max(0,Math.min(100,value))}%`;}
-  function beginRefresh(button){
-    if(!button)return;button.dataset.refreshBusy='true';button.classList.add('refreshing');button.setAttribute('aria-busy','true');button.textContent='↻ Syncing';
-    const track=document.getElementById('manualRefreshProgress');track?.classList.add('visible');track?.setAttribute('aria-hidden','false');progress(18);
-  }
-  function finishRefresh(button,label='Updated'){
-    progress(100);if(button)button.textContent=`✓ ${label}`;
-    window.setTimeout(()=>{if(button){button.textContent='↻ Refresh';button.classList.remove('refreshing');button.removeAttribute('aria-busy');delete button.dataset.refreshBusy;}const track=document.getElementById('manualRefreshProgress');track?.classList.remove('visible');track?.setAttribute('aria-hidden','true');progress(0);refreshBusy=false;},700);
-  }
+  function beginRefresh(button){if(!button)return;button.dataset.refreshBusy='true';button.classList.add('refreshing');button.setAttribute('aria-busy','true');button.textContent='↻ Syncing';const track=document.getElementById('manualRefreshProgress');track?.classList.add('visible');track?.setAttribute('aria-hidden','false');progress(18);}
+  function finishRefresh(button,label='Updated'){progress(100);if(button)button.textContent=`✓ ${label}`;window.setTimeout(()=>{if(button){button.textContent='↻ Refresh';button.classList.remove('refreshing');button.removeAttribute('aria-busy');delete button.dataset.refreshBusy;}const track=document.getElementById('manualRefreshProgress');track?.classList.remove('visible');track?.setAttribute('aria-hidden','true');progress(0);refreshBusy=false;},700);}
 
   async function remoteBuild(){
-    const controller=new AbortController();const timer=window.setTimeout(()=>controller.abort(),2600);
-    try{
-      const url=new URL('index.html',document.baseURI);url.searchParams.set('__build_check',String(Date.now()));
-      const response=await fetch(url,{cache:'no-store',headers:{'Cache-Control':'no-cache'},signal:controller.signal});
-      if(!response.ok)return'';
-      const html=await response.text();
-      return html.match(/<meta\s+name=["']app-build["']\s+content=["']([^"']+)["']/i)?.[1]||html.match(/<meta\s+content=["']([^"']+)["']\s+name=["']app-build["']/i)?.[1]||'';
-    }catch(_error){return'';}finally{window.clearTimeout(timer);}
+    const controller=new AbortController();const timer=window.setTimeout(()=>controller.abort(),1800);
+    try{const url=new URL('index.html',document.baseURI);url.searchParams.set('__build_check',String(Date.now()));const response=await fetch(url,{cache:'no-store',headers:{'Cache-Control':'no-cache'},signal:controller.signal});if(!response.ok)return'';const html=await response.text();return html.match(/<meta\s+name=["']app-build["']\s+content=["']([^"']+)["']/i)?.[1]||html.match(/<meta\s+content=["']([^"']+)["']\s+name=["']app-build["']/i)?.[1]||'';}catch(_error){return'';}finally{window.clearTimeout(timer);}
   }
 
   async function quickSync(){
-    const tasks=[];
-    const add=value=>{if(value&&typeof value.then==='function')tasks.push(value);};
+    const tasks=[];const add=value=>{if(value&&typeof value.then==='function')tasks.push(value);};
     try{add(window.UFC_PLAY_DAILY_SERVICE?.recoverCurrentDay?.());}catch(_error){}
     try{add(window.UFC_DAILY_LEADERBOARD_LIVE?.check?.({force:true}));}catch(_error){}
     try{add(window.UFC_PROFILE_CHALLENGES?.loadInbox?.());}catch(_error){}
@@ -70,38 +63,21 @@
     try{if(activeView()==='octagon'||activeView()==='war-room')add(window.UFC_OCTAGON_BOARD?.load?.(null,{silent:true}));}catch(_error){}
     try{window.UFC_HOME_DASHBOARD?.render?.();}catch(_error){}
     window.dispatchEvent(new CustomEvent('octagon-hq:soft-refresh',{detail:{view:activeView(),build:currentBuild()}}));
-    await Promise.allSettled(tasks);
+    await Promise.race([Promise.allSettled(tasks),new Promise(resolve=>window.setTimeout(resolve,1800))]);
   }
 
-  async function installNewBuild(build){
-    saveState();progress(82);
-    try{const registration=await navigator.serviceWorker?.getRegistration?.();await registration?.update?.();}catch(_error){}
-    const url=new URL(window.location.href);url.searchParams.set('__app_update',`${build||'latest'}-${Date.now()}`);
-    window.location.replace(url.toString());
-  }
-
+  async function installNewBuild(build){saveState();progress(82);try{const registration=await navigator.serviceWorker?.getRegistration?.();await registration?.update?.();}catch(_error){}const url=new URL(window.location.href);url.searchParams.set('__app_update',`${build||'latest'}-${Date.now()}`);window.location.replace(url.toString());}
   async function networkRefresh(button){
     if(refreshBusy||button?.dataset.refreshBusy==='true')return;
-    refreshBusy=true;beginRefresh(button);
-    const local=currentBuild();
-    try{
-      const buildPromise=remoteBuild();
-      await quickSync();progress(58);
-      const remote=await buildPromise;
-      if(remote&&remote!==local){if(button)button.textContent='↻ Updating app';await installNewBuild(remote);return;}
-      finishRefresh(button,remote?'Updated':'Synced');
-    }catch(error){console.error(error);finishRefresh(button,'Synced');}
+    refreshBusy=true;beginRefresh(button);const local=currentBuild();
+    try{const buildPromise=remoteBuild();await quickSync();progress(58);const remote=await buildPromise;if(remote&&remote!==local){if(button)button.textContent='↻ Updating app';await installNewBuild(remote);return;}finishRefresh(button,remote?'Updated':'Synced');}catch(error){console.error(error);finishRefresh(button,'Synced');}
   }
 
   function changeSource(){return window.OCTAGON_CHANGELOG||{entries:[],seenStorageKey:'octagon-hq-what-changed-seen-v1'};}
   function seenIds(){try{const parsed=JSON.parse(localStorage.getItem(changeSource().seenStorageKey)||'[]');return new Set(Array.isArray(parsed)?parsed:[]);}catch(_error){return new Set();}}
   function unreadCount(){const seen=seenIds();return(changeSource().entries||[]).filter(entry=>entry?.id&&!seen.has(entry.id)).length;}
   function syncUnread(){const button=document.getElementById('whatsNewBtn'),badge=document.getElementById('whatsNewUnread');if(!button||!badge)return;const count=unreadCount();button.classList.toggle('has-unread',count>0);badge.hidden=count===0;badge.textContent=count>99?'99+':String(count);badge.setAttribute('aria-label',`${count} unread update${count===1?'':'s'}`);button.setAttribute('aria-label',count?`Open What Changed, ${count} unread update${count===1?'':'s'}`:'Open What Changed');}
-  function loadWhatChanged(){
-    if(window.UFC_WHAT_CHANGED)return Promise.resolve(window.UFC_WHAT_CHANGED);if(whatChangedLoading)return whatChangedLoading;
-    whatChangedLoading=new Promise((resolve,reject)=>{const existing=document.getElementById('whatChangedController');if(existing){existing.addEventListener('load',()=>resolve(window.UFC_WHAT_CHANGED),{once:true});existing.addEventListener('error',reject,{once:true});return;}const script=document.createElement('script');script.id='whatChangedController';script.src=WHAT_CHANGED_SRC;script.async=true;script.addEventListener('load',()=>window.UFC_WHAT_CHANGED?resolve(window.UFC_WHAT_CHANGED):reject(new Error('What Changed controller did not initialize')),{once:true});script.addEventListener('error',()=>reject(new Error('What Changed controller failed to load')),{once:true});document.head.appendChild(script);}).finally(()=>{whatChangedLoading=null;});
-    return whatChangedLoading;
-  }
+  function loadWhatChanged(){if(window.UFC_WHAT_CHANGED)return Promise.resolve(window.UFC_WHAT_CHANGED);if(whatChangedLoading)return whatChangedLoading;whatChangedLoading=new Promise((resolve,reject)=>{const existing=document.getElementById('whatChangedController');if(existing){existing.addEventListener('load',()=>resolve(window.UFC_WHAT_CHANGED),{once:true});existing.addEventListener('error',reject,{once:true});return;}const script=document.createElement('script');script.id='whatChangedController';script.src=WHAT_CHANGED_SRC;script.async=true;script.addEventListener('load',()=>window.UFC_WHAT_CHANGED?resolve(window.UFC_WHAT_CHANGED):reject(new Error('What Changed controller did not initialize')),{once:true});script.addEventListener('error',()=>reject(new Error('What Changed controller failed to load')),{once:true});document.head.appendChild(script);}).finally(()=>{whatChangedLoading=null;});return whatChangedLoading;}
   function openWhatChanged(trigger){const button=trigger||document.getElementById('whatsNewBtn');button?.setAttribute('aria-busy','true');loadWhatChanged().then(controller=>controller.open(button)).catch(()=>{if(button)button.setAttribute('aria-label','What Changed could not load. Refresh and try again.');}).finally(()=>button?.removeAttribute('aria-busy'));}
 
   function injectStyles(){
@@ -112,9 +88,9 @@
       @media(max-width:900px){#manualRefreshControl{order:-1;align-self:flex-end;min-width:196px}#manualRefreshBtn,#whatsNewBtn{min-height:38px;padding:8px 11px;font-size:.7rem}#whatsNewBtn{padding-left:22px;padding-right:22px}}@media(max-width:430px){#manualRefreshControl{min-width:0;width:100%}#manualRefreshActions{justify-content:stretch}#manualRefreshBtn,#whatsNewBtn{flex:1;padding-left:8px;padding-right:8px}}
     `;document.head.appendChild(style);
   }
+
   function installButton(){const hero=document.querySelector('.hero');if(!hero)return;let control=document.getElementById('manualRefreshControl');if(!control){control=document.createElement('div');control.id='manualRefreshControl';control.innerHTML='<div id="manualRefreshActions"><button id="manualRefreshBtn" type="button" aria-label="Sync the latest app data and check for updates">↻ Refresh</button><button id="whatsNewBtn" type="button" aria-label="Open What Changed">NEW <span id="whatsNewUnread" role="status" aria-live="polite" hidden></span></button></div><div id="manualRefreshProgress" aria-hidden="true"><i id="manualRefreshProgressFill"></i></div>';hero.appendChild(control);}const refreshButton=document.getElementById('manualRefreshBtn');if(refreshButton&&!refreshButton.dataset.currentRefreshBound){refreshButton.dataset.currentRefreshBound='true';refreshButton.addEventListener('click',event=>void networkRefresh(event.currentTarget));}const button=document.getElementById('whatsNewBtn');if(button&&!button.dataset.currentWhatsNewBound){button.dataset.currentWhatsNewBound='true';button.addEventListener('click',event=>openWhatChanged(event.currentTarget));}syncUnread();}
 
-  function loadScript(id,src){if(document.getElementById(id)||document.querySelector(`script[src*="${src.split('?')[0]}"]`))return;const script=document.createElement('script');script.id=id;script.src=src;script.async=true;document.head.appendChild(script);}
   function loadPermanentDaily(){loadScript('playPermanentDailyController','assets/js/play-daily-rotation.js?v=play-daily-controller-20260717e-find-leader-permanent');}
   function loadDailyLeaderboard(){loadScript('playDailyLeaderboardCurrent','assets/js/play-daily-leaderboard.js?v=play-daily-leaderboard-20260717e-find-leader-only');loadScript('playDailyLeaderboardLive','assets/js/play-daily-live-sync.js?v=play-daily-live-sync-20260718a-phase-3');}
   function loadChallengeCompat(){loadScript('playChallengeCompatCurrent','assets/js/play-challenge-compat.js?v=play-challenge-compat-20260717c-on-demand');}
@@ -123,10 +99,10 @@
   function bindDeferredSupport(){if(document.documentElement.dataset.playSupportBinding===VERSION)return;document.documentElement.dataset.playSupportBinding=VERSION;window.addEventListener('octagon-hq:view-change',event=>{if(event.detail?.destination==='play')schedulePlaySupport();});document.addEventListener('click',event=>{if(event.target.closest?.('[data-open-game="blind"],[data-play-mode="blind"],[data-five-round-replay]'))loadBlindSupport();if(event.target.closest?.('[data-kc-challenge],[data-br-challenge],[data-five-round-share]'))loadChallengeCompat();},true);}
 
   LEGACY_KEYS.forEach(key=>{try{sessionStorage.removeItem(key);}catch(_error){}});
-  cleanRefreshState();injectStyles();installButton();bindDeferredSupport();window.setTimeout(restoreState,100);
+  cleanRefreshState();injectStyles();installButton();bindDeferredSupport();loadScript('activityProfilePhase3Bridge',PROFILE_BRIDGE_SRC);window.setTimeout(restoreState,100);
   window.addEventListener('octagon-hq:what-changed-seen',syncUnread);
   window.addEventListener('storage',event=>{if(event.key===changeSource().seenStorageKey)syncUnread();});
 
-  window.UFC_APP_UPDATE_WATCHER={version:VERSION,networkRefresh,quickSync,remoteBuild,openWhatChanged,openWhatsNew:openWhatChanged,restoreState,syncUnread,unreadCount,schedulePlaySupport,loadPermanentDaily,loadDailyLeaderboard,loadChallengeCompat,loadBlindSupport,mode:'build-aware-soft-refresh'};
+  window.UFC_APP_UPDATE_WATCHER={version:VERSION,refresh:networkRefresh,quickSync,openWhatChanged,syncUnread,schedulePlaySupport};
   document.documentElement.setAttribute('data-app-update-watcher',VERSION);
 })();
