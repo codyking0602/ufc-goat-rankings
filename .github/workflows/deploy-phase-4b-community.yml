@@ -1,86 +1,16 @@
-name: Deploy Phase 4B Community Profiles
+name: Phase 4B Community Profiles — Paused
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/deploy-phase-4b-community.yml'
-      - 'assets/js/community-profiles.js'
-      - 'assets/js/fresh-home-launch.js'
-      - 'assets/css/community-profiles.css'
   workflow_dispatch:
 
 permissions:
-  contents: write
-
-concurrency:
-  group: deploy-phase-4b-community
-  cancel-in-progress: false
+  contents: read
 
 jobs:
-  deploy:
+  paused:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Validate Phase 4B source
+      - name: Phase 4B is paused
         run: |
-          node --check assets/js/community-profiles.js
-          node --check assets/js/fresh-home-launch.js
-          grep -Fq 'community-profiles-20260718b-full-public-profile' assets/js/community-profiles.js
-          grep -Fq 'fresh-home-launch-20260718d-single-owner' assets/js/fresh-home-launch.js
-          grep -Fq '.community-member-grid' assets/css/community-profiles.css
-          ! grep -Fq 'scheduleBootHome' assets/js/fresh-home-launch.js
-
-      - name: Wire single-owner startup and community profiles
-        run: |
-          python - <<'PY'
-          import re
-          from pathlib import Path
-
-          path=Path('index.html')
-          text=path.read_text()
-
-          text=re.sub(r'\s*<link rel="stylesheet" href="assets/css/community-profiles\.css\?v=[^"]+"\s*/>','',text)
-          css='  <link rel="stylesheet" href="assets/css/community-profiles.css?v=community-profiles-css-20260718b-public-activity" />'
-          text=text.replace('</head>',css+'\n</head>',1)
-
-          text=re.sub(r'\s*<script src="assets/js/(?:community-profiles|fresh-home-launch)\.js\?v=[^"]+"></script>','',text)
-
-          shell=re.search(r'(?P<indent>\s*)<script src="assets/js/octagon-hq-shell\.js\?v=[^"]+"></script>',text)
-          if not shell:
-              raise SystemExit('Could not find app shell script')
-          early='  <script src="assets/js/fresh-home-launch.js?v=fresh-home-launch-20260718d-single-owner"></script>'
-          text=text[:shell.start()]+shell.group('indent')+early+shell.group('indent')+shell.group(0).strip()+text[shell.end():]
-
-          anchor=re.search(r'(?P<indent>\s*)<script src="assets/js/profile-challenges\.js\?v=[^"]+"></script>',text)
-          if not anchor:
-              raise SystemExit('Could not find profile challenge script')
-          community='  <script src="assets/js/community-profiles.js?v=community-profiles-20260718b-full-public-profile"></script>'
-          text=text[:anchor.end()]+anchor.group('indent')+community+text[anchor.end():]
-
-          text=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260718-phase-4b-routing-stable" />',text,count=1)
-          path.write_text(text)
-          PY
-
-          test "$(grep -c 'fresh-home-launch.js' index.html)" -eq 1
-          test "$(grep -c 'community-profiles.js' index.html)" -eq 1
-          grep -B1 -F 'octagon-hq-shell.js' index.html | grep -Fq 'fresh-home-launch-20260718d-single-owner'
-          grep -Fq 'community-profiles-20260718b-full-public-profile' index.html
-          grep -Fq '20260718-phase-4b-routing-stable' index.html
-
-      - name: Commit Phase 4B routing deployment
-        run: |
-          if git diff --quiet -- index.html; then
-            echo 'Phase 4B routing is already current.'
-            exit 0
-          fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
-          git add index.html
-          git commit -m 'Deploy stable Phase 4B routing [skip ci]'
-          git pull --rebase origin main
-          git push origin HEAD:main
+          echo "Phase 4B community profiles are intentionally disabled while the Phase 4A app shell is stabilized."
+          echo "Do not re-enable automatic deployment until startup is physically verified on iPhone."
