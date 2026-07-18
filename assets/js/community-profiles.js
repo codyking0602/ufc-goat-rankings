@@ -1,62 +1,409 @@
 (function(){
   'use strict';
 
-  const VERSION='community-profiles-20260718e-clean-preview';
+  const VERSION='community-profiles-20260718g-production-stable';
   const TOP10_KEY='ufc-goat-play-top10-v1';
   const TARGET_KEY='octagon-hq:challenge-target-v2';
-  const state={identity:null,snapshot:null,loading:null,overlay:null,lastDirectorySignature:'',lastPublished:'',bound:false,challengeWrapped:false};
+  const REFRESH_AGE_MS=30000;
+  const state={
+    identity:null,
+    snapshot:null,
+    loading:null,
+    overlay:null,
+    lastLoadedAt:0,
+    lastDirectorySignature:'',
+    lastProfileSignature:'',
+    lastPublished:'',
+    bound:false,
+    challengeWrapped:false
+  };
 
   const text=value=>String(value??'').trim();
-  const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+  const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[char]));
   const num=value=>Number.isFinite(Number(value))?Number(value):0;
   const norm=value=>text(value).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
   const tokenFor=identity=>text(identity?.memberToken||identity?.member_token);
   const client=()=>window.UFC_PLAY_PROFILE?.client||null;
 
   function parse(value,fallback=null){try{return JSON.parse(value);}catch(_error){return fallback;}}
-  function localTop10(){try{const rows=parse(localStorage.getItem(TOP10_KEY),[]);return Array.isArray(rows)?rows.map(text).filter(Boolean).slice(0,10):[];}catch(_error){return[];}}
-  function currentMemberId(){return state.snapshot?.me_id||state.identity?.member?.id||window.UFC_APP_PROFILE?.group?.me?.id||'';}
+  function localTop10(){
+    try{
+      const rows=parse(localStorage.getItem(TOP10_KEY),[]);
+      return Array.isArray(rows)?rows.map(text).filter(Boolean).slice(0,10):[];
+    }catch(_error){return[];}
+  }
+  function identityMemberId(identity=state.identity){return identity?.member?.id||'';}
+  function currentMemberId(){return state.snapshot?.me_id||identityMemberId()||window.UFC_APP_PROFILE?.group?.me?.id||'';}
   function fallbackMembers(){return Array.isArray(window.UFC_APP_PROFILE?.group?.members)?window.UFC_APP_PROFILE.group.members:[];}
-  function members(){const rows=state.snapshot?.members?.length?state.snapshot.members:fallbackMembers();const me=currentMemberId();return[...rows].sort((a,b)=>a.id===me?-1:b.id===me?1:text(a.display_name).localeCompare(text(b.display_name)));}
-  function avatar(member,kind='friend'){return window.UFC_APP_PROFILE?.avatarMarkup?.(member,kind)||`<span class="app-profile-avatar ${esc(kind)}"><span>${esc(text(member?.display_name).slice(0,2).toUpperCase()||'UFC')}</span></span>`;}
+  function members(){
+    const rows=state.snapshot?.members?.length?state.snapshot.members:fallbackMembers();
+    const me=currentMemberId();
+    return [...rows].sort((a,b)=>a.id===me?-1:b.id===me?1:text(a.display_name).localeCompare(text(b.display_name)));
+  }
+  function avatar(member,kind='friend'){
+    return window.UFC_APP_PROFILE?.avatarMarkup?.(member,kind)
+      ||`<span class="app-profile-avatar ${esc(kind)}"><span>${esc(text(member?.display_name).slice(0,2).toUpperCase()||'UFC')}</span></span>`;
+  }
   function top10(member){return Array.isArray(member?.top_ten)?member.top_ten.map(text).filter(Boolean).slice(0,10):[];}
   function picksRows(){return window.UFC_PICKS_SEASON_LOOP?.data?.group?.members||[];}
-  function picksFor(member){return picksRows().find(row=>row.id===member?.id)||picksRows().find(row=>norm(row.display_name)===norm(member?.display_name))||{};}
-  function picksRank(member){const rows=picksRows(),row=picksFor(member);if(!row?.id&&!row?.display_name)return'—';const key=item=>[num(item?.points??item?.score),num(item?.event_wins),num(item?.correct),num(item?.picks_made??item?.picks_count)].join('|');const index=rows.findIndex(item=>key(item)===key(row));if(index<0)return'—';return`${rows.filter(item=>key(item)===key(row)).length>1?'T-':'#'}${index+1}`;}
-  function stats(member){const picks=picksFor(member),made=num(picks.picks_made??picks.picks_count),correct=num(picks.correct),challenges=member.challenge_stats||{},war=member.war_stats||{},daily=member.daily_stats||{};return{made,correct,losses:Math.max(0,made-correct),accuracy:made?Math.round(correct/made*100):0,points:num(picks.points??picks.score),eventWins:num(picks.event_wins),rank:picksRank(member),challenges:num(challenges.completed),sent:num(challenges.sent),received:num(challenges.received),posts:num(war.posts),replies:num(war.replies),dailyDays:num(daily.days),perfect:num(daily.perfect_tens)};}
-  function relativeTime(value){const time=new Date(value).getTime();if(!Number.isFinite(time)||time<=0)return'No recent activity';const minutes=Math.max(0,Math.round((Date.now()-time)/60000));if(minutes<1)return'Active just now';if(minutes<60)return`Active ${minutes}m ago`;const hours=Math.floor(minutes/60);if(hours<24)return`Active ${hours}h ago`;const days=Math.floor(hours/24);return days<7?`Active ${days}d ago`:new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric'}).format(new Date(value));}
+  function picksFor(member){
+    return picksRows().find(row=>row.id===member?.id)
+      ||picksRows().find(row=>norm(row.display_name)===norm(member?.display_name))
+      ||{};
+  }
+  function picksRank(member){
+    const rows=picksRows();
+    const row=picksFor(member);
+    if(!row?.id&&!row?.display_name)return'—';
+    const key=item=>[
+      num(item?.points??item?.score),
+      num(item?.event_wins),
+      num(item?.correct),
+      num(item?.picks_made??item?.picks_count)
+    ].join('|');
+    const index=rows.findIndex(item=>key(item)===key(row));
+    if(index<0)return'—';
+    return`${rows.filter(item=>key(item)===key(row)).length>1?'T-':'#'}${index+1}`;
+  }
+  function stats(member){
+    const picks=picksFor(member);
+    const made=num(picks.picks_made??picks.picks_count);
+    const correct=num(picks.correct);
+    const challenges=member.challenge_stats||{};
+    const war=member.war_stats||{};
+    const daily=member.daily_stats||{};
+    return{
+      made,
+      correct,
+      losses:Math.max(0,made-correct),
+      accuracy:made?Math.round(correct/made*100):0,
+      points:num(picks.points??picks.score),
+      eventWins:num(picks.event_wins),
+      rank:picksRank(member),
+      challenges:num(challenges.completed),
+      sent:num(challenges.sent),
+      received:num(challenges.received),
+      posts:num(war.posts),
+      replies:num(war.replies),
+      dailyDays:num(daily.days),
+      perfect:num(daily.perfect_tens)
+    };
+  }
+  function relativeTime(value){
+    const time=new Date(value).getTime();
+    if(!Number.isFinite(time)||time<=0)return'No recent activity';
+    const minutes=Math.max(0,Math.round((Date.now()-time)/60000));
+    if(minutes<1)return'Active just now';
+    if(minutes<60)return`Active ${minutes}m ago`;
+    const hours=Math.floor(minutes/60);
+    if(hours<24)return`Active ${hours}h ago`;
+    const days=Math.floor(hours/24);
+    return days<7?`Active ${days}d ago`:new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric'}).format(new Date(value));
+  }
 
-  function ensureMount(){const home=document.getElementById('home');const dashboard=document.getElementById('homeDashboardMount');if(!home||!dashboard)return null;let mount=home.querySelector('#communityProfilesMount');if(!mount){mount=document.createElement('div');mount.id='communityProfilesMount';mount.className='community-profiles-mount';dashboard.after(mount);}return mount;}
-  function directorySignature(rows){return JSON.stringify(rows.map(member=>{const value=stats(member);return[member.id,member.display_name,member.profile_updated_at,member.top_ten_updated_at,top10(member),value.rank,value.points,value.challenges,value.posts+value.replies,value.dailyDays];}));}
-  function directoryCard(member){const value=stats(member),own=member.id===currentMemberId(),ready=top10(member).length===10;return`<button type="button" class="community-member-card${own?' me':''}" data-community-member="${esc(member.id)}">${avatar(member)}<span class="community-member-main"><span class="community-member-name">${esc(member.display_name)}${own?' <em>YOU</em>':''}</span><span class="community-member-active">${esc(relativeTime(member.last_active_at||member.profile_updated_at))}</span><span class="community-member-pills"><b>${value.rank==='—'?'Picks —':`${value.rank} Picks`}</b><b>${value.challenges} challenge${value.challenges===1?'':'s'}</b><b class="${ready?'complete':'missing'}">${ready?'Top 10 ready':'Top 10 needed'}</b></span></span><span class="community-member-arrow" aria-hidden="true">›</span></button>`;}
-  function renderDirectory(){const mount=ensureMount();if(!mount)return false;const rows=members(),mine=rows.find(member=>member.id===currentMemberId()),signature=directorySignature(rows);if(signature===state.lastDirectorySignature&&mount.firstElementChild)return true;state.lastDirectorySignature=signature;mount.innerHTML=`<section class="home-dashboard-card community-directory"><header class="community-directory-head"><div><span>OCTAGON HQ COMMUNITY</span><strong>Member Profiles</strong><small>Open a profile to see Picks, Play, War Room activity, achievements, and personal rankings.</small></div><div class="community-directory-head-actions"><b>${rows.length} PROFILES</b>${mine&&top10(mine).length!==10?'<button type="button" class="community-directory-action primary" data-community-build-top10>BUILD YOUR TOP 10</button>':'<button type="button" class="community-directory-action" data-community-open-self>OPEN YOUR PROFILE</button>'}</div></header>${rows.length?`<div class="community-member-grid">${rows.map(directoryCard).join('')}</div>`:'<div class="community-directory-empty">Member profiles will appear after your GOAT26 profile loads.</div>'}</section>`;return true;}
+  function ensureMount(){
+    const home=document.getElementById('home');
+    const dashboard=document.getElementById('homeDashboardMount');
+    if(!home||!dashboard)return null;
+    let mount=home.querySelector('#communityProfilesMount');
+    if(!mount){
+      mount=document.createElement('div');
+      mount.id='communityProfilesMount';
+      mount.className='community-profiles-mount';
+      dashboard.after(mount);
+    }
+    return mount;
+  }
+  function memberSignature(member){
+    const value=stats(member);
+    return[
+      member.id,
+      member.display_name,
+      member.profile_updated_at,
+      member.top_ten_updated_at,
+      member.last_active_at,
+      member.profile_photo_data,
+      member.fighter_avatar_slug,
+      top10(member),
+      value.rank,
+      value.points,
+      value.correct,
+      value.made,
+      value.eventWins,
+      value.challenges,
+      value.sent,
+      value.received,
+      value.posts,
+      value.replies,
+      value.dailyDays,
+      value.perfect
+    ];
+  }
+  function directorySignature(rows){return JSON.stringify(rows.map(memberSignature));}
+  function directoryCard(member){
+    const value=stats(member);
+    const own=member.id===currentMemberId();
+    const ready=top10(member).length===10;
+    return`<button type="button" class="community-member-card${own?' me':''}" data-community-member="${esc(member.id)}">${avatar(member)}<span class="community-member-main"><span class="community-member-name">${esc(member.display_name)}${own?' <em>YOU</em>':''}</span><span class="community-member-active">${esc(relativeTime(member.last_active_at||member.profile_updated_at))}</span><span class="community-member-pills"><b>${value.rank==='—'?'Picks —':`${value.rank} Picks`}</b><b>${value.challenges} challenge${value.challenges===1?'':'s'}</b><b class="${ready?'complete':'missing'}">${ready?'Top 10 ready':'Top 10 needed'}</b></span></span><span class="community-member-arrow" aria-hidden="true">›</span></button>`;
+  }
+  function renderDirectory(){
+    const mount=ensureMount();
+    if(!mount)return false;
+    const rows=members();
+    const mine=rows.find(member=>member.id===currentMemberId());
+    const signature=directorySignature(rows);
+    if(signature===state.lastDirectorySignature&&mount.firstElementChild)return true;
+    state.lastDirectorySignature=signature;
+    mount.innerHTML=`<section class="home-dashboard-card community-directory"><header class="community-directory-head"><div><span>OCTAGON HQ COMMUNITY</span><strong>Member Profiles</strong><small>Open a profile to see Picks, Play, War Room activity, achievements, and personal rankings.</small></div><div class="community-directory-head-actions"><b>${rows.length} PROFILES</b>${mine&&top10(mine).length!==10?'<button type="button" class="community-directory-action primary" data-community-build-top10>BUILD YOUR TOP 10</button>':'<button type="button" class="community-directory-action" data-community-open-self>OPEN YOUR PROFILE</button>'}</div></header>${rows.length?`<div class="community-member-grid">${rows.map(directoryCard).join('')}</div>`:'<div class="community-directory-empty">Member profiles will appear after your GOAT26 profile loads.</div>'}</section>`;
+    return true;
+  }
 
-  async function resolveIdentity(force=false){if(state.identity&&!force)return state.identity;state.identity=await window.UFC_APP_PROFILE?.resolve?.(force).catch(()=>null)||await window.UFC_PLAY_PROFILE?.resolve?.().catch(()=>null)||null;return state.identity;}
-  async function load(force=false){if(state.loading&&!force)return state.loading;state.loading=(async()=>{renderDirectory();const identity=await resolveIdentity(force),rpc=client(),token=tokenFor(identity);if(!identity||!rpc||!token)return null;try{const{data,error}=await rpc.rpc('app_profile_community_snapshot',{p_member_token:token});if(error)throw error;if(!data?.ok)throw new Error(data?.error||'Community profiles unavailable.');state.snapshot=data;state.lastDirectorySignature='';renderDirectory();if(state.overlay)renderProfile();window.dispatchEvent(new CustomEvent('octagon-hq:community-updated',{detail:data}));return data;}catch(_error){return null;}})().finally(()=>{state.loading=null;});return state.loading;}
+  async function resolveIdentity(){
+    if(state.identity)return state.identity;
+    state.identity=await window.UFC_APP_PROFILE?.resolve?.().catch(()=>null)
+      ||await window.UFC_PLAY_PROFILE?.resolve?.().catch(()=>null)
+      ||null;
+    return state.identity;
+  }
+  async function load(force=false){
+    if(state.loading)return state.loading;
+    if(!force&&state.snapshot&&Date.now()-state.lastLoadedAt<REFRESH_AGE_MS){
+      renderDirectory();
+      renderProfile();
+      return state.snapshot;
+    }
+    if(!state.snapshot)renderDirectory();
+    state.loading=(async()=>{
+      const identity=await resolveIdentity();
+      const rpc=client();
+      const token=tokenFor(identity);
+      if(!identity||!rpc||!token)return null;
+      try{
+        const{data,error}=await rpc.rpc('app_profile_community_snapshot',{p_member_token:token});
+        if(error)throw error;
+        if(!data?.ok)throw new Error(data?.error||'Community profiles unavailable.');
+        state.snapshot=data;
+        state.lastLoadedAt=Date.now();
+        renderDirectory();
+        renderProfile();
+        window.dispatchEvent(new CustomEvent('octagon-hq:community-updated',{detail:data}));
+        return data;
+      }catch(_error){return null;}
+    })().finally(()=>{state.loading=null;});
+    return state.loading;
+  }
 
-  function fighterThumb(name){const override=window.DISPLAY_OVERRIDES?.[name]||{};return text(override.thumbUrl||override.photoUrl||override.thumb||override.photo);}
-  function top10Markup(member){const rows=top10(member);if(rows.length!==10)return'<div class="community-top-ten-empty">This member has not published a UFC Top 10 yet.</div>';return`<div class="community-top-ten-list">${rows.map((name,index)=>{const photo=fighterThumb(name);return`<div class="community-top-ten-row"><b>#${index+1}</b><span class="community-top-ten-photo">${photo?`<img src="${esc(photo)}" alt="${esc(name)}">`:esc(name.slice(0,2).toUpperCase())}</span><strong>${esc(name)}</strong></div>`;}).join('')}</div>`;}
+  function fighterThumb(name){
+    const override=window.DISPLAY_OVERRIDES?.[name]||{};
+    return text(override.thumbUrl||override.photoUrl||override.thumb||override.photo);
+  }
+  function top10Markup(member){
+    const rows=top10(member);
+    if(rows.length!==10)return'<div class="community-top-ten-empty">This member has not published a UFC Top 10 yet.</div>';
+    return`<div class="community-top-ten-list">${rows.map((name,index)=>{
+      const photo=fighterThumb(name);
+      return`<div class="community-top-ten-row"><b>#${index+1}</b><span class="community-top-ten-photo">${photo?`<img src="${esc(photo)}" alt="${esc(name)}">`:esc(name.slice(0,2).toUpperCase())}</span><strong>${esc(name)}</strong></div>`;
+    }).join('')}</div>`;
+  }
   function metric(label,value,copy){return`<div class="community-profile-metric"><span>${esc(label)}</span><strong>${esc(value)}</strong><small>${esc(copy)}</small></div>`;}
   function activityCard(kicker,title,aside,metrics){return`<article class="community-profile-card"><header class="community-profile-card-head"><div><span>${esc(kicker)}</span><strong>${esc(title)}</strong></div><small>${esc(aside)}</small></header><div class="community-profile-metrics">${metrics.join('')}</div></article>`;}
-  function achievements(member,value){const rows=[{title:'Profile Ready',copy:'Shared Octagon HQ identity.',unlocked:Boolean(member.profile_photo_data||member.fighter_avatar_slug)},{title:'Perfect 10',copy:'Scored 10/10 in Find the Leader.',unlocked:value.perfect>0},{title:'Daily Regular',copy:'Completed three daily challenges.',unlocked:value.dailyDays>=3},{title:'Picks Player',copy:'Has graded UFC Picks.',unlocked:value.made>0},{title:'Event Champion',copy:'Finished first in a Picks event.',unlocked:value.eventWins>0},{title:'War Room Voice',copy:'Posted or replied in The War Room.',unlocked:value.posts+value.replies>0},{title:'Challenge Competitor',copy:'Completed a direct challenge.',unlocked:value.challenges>0},{title:'Top 10 Published',copy:'Shared a personal UFC Top 10.',unlocked:top10(member).length===10}];return`<article class="community-profile-card wide"><header class="community-profile-card-head"><div><span>ACHIEVEMENTS</span><strong>Octagon HQ résumé</strong></div><small>${rows.filter(row=>row.unlocked).length}/${rows.length} unlocked</small></header><div class="community-achievements">${rows.map(row=>`<div class="community-achievement${row.unlocked?'':' locked'}"><i>${row.unlocked?'✓':'·'}</i><div><strong>${esc(row.title)}</strong><small>${esc(row.copy)}</small></div></div>`).join('')}</div></article>`;}
-  function recentActivity(member,value){const items=[];if(value.dailyDays)items.push(`Completed ${value.dailyDays} daily challenge${value.dailyDays===1?'':'s'}`);if(value.challenges)items.push(`Finished ${value.challenges} direct challenge${value.challenges===1?'':'s'}`);if(value.posts||value.replies)items.push(`${value.posts+value.replies} War Room message${value.posts+value.replies===1?'':'s'}`);if(value.made)items.push(`${value.correct}-${value.losses} UFC Picks record`);return`<article class="community-profile-card wide"><header class="community-profile-card-head"><div><span>RECENT ACTIVITY</span><strong>Across Octagon HQ</strong></div><small>${esc(relativeTime(member.last_active_at||member.profile_updated_at))}</small></header><div class="community-recent-list">${items.length?items.map(item=>`<div><span>•</span><strong>${esc(item)}</strong></div>`).join(''):'<div><span>•</span><strong>No shared activity yet.</strong></div>'}</div></article>`;}
+  function achievements(member,value){
+    const rows=[
+      {title:'Profile Ready',copy:'Shared Octagon HQ identity.',unlocked:Boolean(member.profile_photo_data||member.fighter_avatar_slug)},
+      {title:'Perfect 10',copy:'Scored 10/10 in Find the Leader.',unlocked:value.perfect>0},
+      {title:'Daily Regular',copy:'Completed three daily challenges.',unlocked:value.dailyDays>=3},
+      {title:'Picks Player',copy:'Has graded UFC Picks.',unlocked:value.made>0},
+      {title:'Event Champion',copy:'Finished first in a Picks event.',unlocked:value.eventWins>0},
+      {title:'War Room Voice',copy:'Posted or replied in The War Room.',unlocked:value.posts+value.replies>0},
+      {title:'Challenge Competitor',copy:'Completed a direct challenge.',unlocked:value.challenges>0},
+      {title:'Top 10 Published',copy:'Shared a personal UFC Top 10.',unlocked:top10(member).length===10}
+    ];
+    return`<article class="community-profile-card wide"><header class="community-profile-card-head"><div><span>ACHIEVEMENTS</span><strong>Octagon HQ résumé</strong></div><small>${rows.filter(row=>row.unlocked).length}/${rows.length} unlocked</small></header><div class="community-achievements">${rows.map(row=>`<div class="community-achievement${row.unlocked?'':' locked'}"><i>${row.unlocked?'✓':'·'}</i><div><strong>${esc(row.title)}</strong><small>${esc(row.copy)}</small></div></div>`).join('')}</div></article>`;
+  }
+  function recentActivity(member,value){
+    const items=[];
+    if(value.dailyDays)items.push(`Completed ${value.dailyDays} daily challenge${value.dailyDays===1?'':'s'}`);
+    if(value.challenges)items.push(`Finished ${value.challenges} direct challenge${value.challenges===1?'':'s'}`);
+    if(value.posts||value.replies)items.push(`${value.posts+value.replies} War Room message${value.posts+value.replies===1?'':'s'}`);
+    if(value.made)items.push(`${value.correct}-${value.losses} UFC Picks record`);
+    return`<article class="community-profile-card wide"><header class="community-profile-card-head"><div><span>RECENT ACTIVITY</span><strong>Across Octagon HQ</strong></div><small>${esc(relativeTime(member.last_active_at||member.profile_updated_at))}</small></header><div class="community-recent-list">${items.length?items.map(item=>`<div><span>•</span><strong>${esc(item)}</strong></div>`).join(''):'<div><span>•</span><strong>No shared activity yet.</strong></div>'}</div></article>`;
+  }
 
-  function closeProfile(){state.overlay?.remove();state.overlay=null;document.body.classList.remove('community-profile-open');}
-  function renderProfile(){const panel=state.overlay?.querySelector('[data-community-profile-panel]');if(!panel)return;const member=members().find(item=>item.id===panel.dataset.memberId);if(!member)return;const value=stats(member),own=member.id===currentMemberId();panel.innerHTML=`<header class="community-profile-head">${avatar(member,'large')}<div class="community-profile-title"><span>OCTAGON HQ PROFILE · GOAT26</span><strong>${esc(member.display_name)}</strong><small>${member.is_admin?'Administrator · ':''}${esc(relativeTime(member.last_active_at||member.profile_updated_at))}</small></div><button type="button" class="community-profile-close" aria-label="Close member profile" data-community-close>×</button></header><div class="community-profile-body"><section class="community-profile-summary"><article><span>PICKS RECORD</span><strong>${value.made?`${value.correct}-${value.losses}`:'—'}</strong><small>${value.made?`${value.accuracy}% correct`:'No graded picks'}</small></article><article><span>SEASON RANK</span><strong>${value.rank}</strong><small>${value.points} points</small></article><article><span>CHALLENGES</span><strong>${value.challenges}</strong><small>${value.sent} sent · ${value.received} received</small></article><article><span>ACHIEVEMENTS</span><strong>${[Boolean(member.profile_photo_data||member.fighter_avatar_slug),value.perfect>0,value.dailyDays>=3,value.made>0,value.eventWins>0,value.posts+value.replies>0,value.challenges>0,top10(member).length===10].filter(Boolean).length}</strong><small>of 8 unlocked</small></article></section><section class="community-profile-grid">${activityCard('UFC PICKS','Season Activity',value.rank,[metric('POINTS',value.points,'Total'),metric('ACCURACY',`${value.accuracy}%`,`${value.correct}/${value.made||0}`),metric('EVENT WINS',value.eventWins,'First-place finishes')])}${activityCard('PLAY','Games & Challenges',`${value.dailyDays} daily day${value.dailyDays===1?'':'s'}`,[metric('CHALLENGES',value.challenges,'Completed'),metric('PERFECT 10s',value.perfect,'Find the Leader'),metric('DAILY DAYS',value.dailyDays,'Completed')])}${activityCard('THE WAR ROOM','Participation','Shared discussion',[metric('POSTS',value.posts,'Top-level takes'),metric('REPLIES',value.replies,'Conversation'),metric('TOTAL',value.posts+value.replies,'Messages')])}${achievements(member,value)}${recentActivity(member,value)}<article class="community-profile-card wide community-top-ten-card"><header class="community-profile-card-head"><div><span>PERSONAL RANKINGS</span><strong>${esc(member.display_name)}’s UFC Top 10</strong></div><small>${top10(member).length===10?'Published':'Not published yet'}</small></header>${top10Markup(member)}</article></section><footer class="community-profile-actions">${own?'<button type="button" data-community-edit-profile>EDIT PROFILE</button><button type="button" class="primary" data-community-build-top10>EDIT TOP 10</button>':`<button type="button" data-community-close>BACK</button><button type="button" class="primary" data-community-challenge="${esc(member.id)}">CHALLENGE ${esc(member.display_name.toUpperCase())}</button>`}</footer></div>`;}
-  async function openMember(id){if(!state.snapshot)await load();const member=members().find(item=>item.id===id);if(!member)return false;closeProfile();const overlay=document.createElement('div');overlay.className='community-profile-overlay';overlay.innerHTML=`<section class="community-profile-panel" data-community-profile-panel data-member-id="${esc(member.id)}" role="dialog" aria-modal="true" aria-label="${esc(member.display_name)} profile"></section>`;document.body.appendChild(overlay);document.body.classList.add('community-profile-open');state.overlay=overlay;renderProfile();if(!window.UFC_PICKS_SEASON_LOOP?.data)window.UFC_PICKS_SEASON_LOOP?.refresh?.().then(()=>state.overlay&&renderProfile()).catch(()=>null);return true;}
+  function closeProfile(){
+    state.overlay?.remove();
+    state.overlay=null;
+    state.lastProfileSignature='';
+    document.body.classList.remove('community-profile-open');
+  }
+  function renderProfile(){
+    const panel=state.overlay?.querySelector('[data-community-profile-panel]');
+    if(!panel)return false;
+    const member=members().find(item=>item.id===panel.dataset.memberId);
+    if(!member)return false;
+    const value=stats(member);
+    const own=member.id===currentMemberId();
+    const signature=JSON.stringify(memberSignature(member));
+    if(signature===state.lastProfileSignature&&panel.firstElementChild)return true;
+    state.lastProfileSignature=signature;
+    panel.innerHTML=`<header class="community-profile-head">${avatar(member,'large')}<div class="community-profile-title"><span>OCTAGON HQ PROFILE · GOAT26</span><strong>${esc(member.display_name)}</strong><small>${member.is_admin?'Administrator · ':''}${esc(relativeTime(member.last_active_at||member.profile_updated_at))}</small></div><button type="button" class="community-profile-close" aria-label="Close member profile" data-community-close>×</button></header><div class="community-profile-body"><section class="community-profile-summary"><article><span>PICKS RECORD</span><strong>${value.made?`${value.correct}-${value.losses}`:'—'}</strong><small>${value.made?`${value.accuracy}% correct`:'No graded picks'}</small></article><article><span>SEASON RANK</span><strong>${value.rank}</strong><small>${value.points} points</small></article><article><span>CHALLENGES</span><strong>${value.challenges}</strong><small>${value.sent} sent · ${value.received} received</small></article><article><span>ACHIEVEMENTS</span><strong>${[Boolean(member.profile_photo_data||member.fighter_avatar_slug),value.perfect>0,value.dailyDays>=3,value.made>0,value.eventWins>0,value.posts+value.replies>0,value.challenges>0,top10(member).length===10].filter(Boolean).length}</strong><small>of 8 unlocked</small></article></section><section class="community-profile-grid">${activityCard('UFC PICKS','Season Activity',value.rank,[metric('POINTS',value.points,'Total'),metric('ACCURACY',`${value.accuracy}%`,`${value.correct}/${value.made||0}`),metric('EVENT WINS',value.eventWins,'First-place finishes')])}${activityCard('PLAY','Games & Challenges',`${value.dailyDays} daily day${value.dailyDays===1?'':'s'}`,[metric('CHALLENGES',value.challenges,'Completed'),metric('PERFECT 10s',value.perfect,'Find the Leader'),metric('DAILY DAYS',value.dailyDays,'Completed')])}${activityCard('THE WAR ROOM','Participation','Shared discussion',[metric('POSTS',value.posts,'Top-level takes'),metric('REPLIES',value.replies,'Conversation'),metric('TOTAL',value.posts+value.replies,'Messages')])}${achievements(member,value)}${recentActivity(member,value)}<article class="community-profile-card wide community-top-ten-card"><header class="community-profile-card-head"><div><span>PERSONAL RANKINGS</span><strong>${esc(member.display_name)}’s UFC Top 10</strong></div><small>${top10(member).length===10?'Published':'Not published yet'}</small></header>${top10Markup(member)}</article></section><footer class="community-profile-actions">${own?'<button type="button" data-community-edit-profile>EDIT PROFILE</button><button type="button" class="primary" data-community-build-top10>EDIT TOP 10</button>':`<button type="button" data-community-close>BACK</button><button type="button" class="primary" data-community-challenge="${esc(member.id)}">CHALLENGE ${esc(member.display_name.toUpperCase())}</button>`}</footer></div>`;
+    return true;
+  }
+  async function openMember(id){
+    if(!state.snapshot)await load();
+    const member=members().find(item=>item.id===id);
+    if(!member)return false;
+    closeProfile();
+    const overlay=document.createElement('div');
+    overlay.className='community-profile-overlay';
+    overlay.innerHTML=`<section class="community-profile-panel" data-community-profile-panel data-member-id="${esc(member.id)}" role="dialog" aria-modal="true" aria-label="${esc(member.display_name)} profile"></section>`;
+    document.body.appendChild(overlay);
+    document.body.classList.add('community-profile-open');
+    state.overlay=overlay;
+    state.lastProfileSignature='';
+    renderProfile();
+    if(!window.UFC_PICKS_SEASON_LOOP?.data){
+      window.UFC_PICKS_SEASON_LOOP?.refresh?.().then(()=>renderProfile()).catch(()=>null);
+    }
+    return true;
+  }
 
-  function openTop10(){closeProfile();window.UFC_APP_SHELL?.activateDestination?.('play')||window.UFC_PRODUCT_ARCHITECTURE?.activateDestination?.('play');window.UFC_PLAY_HUB?.openGame?.('top10');}
-  function saveChallengeTarget(member){try{localStorage.setItem(TARGET_KEY,JSON.stringify({id:member.id,name:member.display_name,createdAt:Date.now()}));}catch(_error){}}
-  function challengeTarget(){try{const value=parse(localStorage.getItem(TARGET_KEY),null);return value?.id&&Date.now()-num(value.createdAt)<86400000?value:null;}catch(_error){return null;}}
+  function openTop10(){
+    closeProfile();
+    window.UFC_APP_SHELL?.activateDestination?.('play')||window.UFC_PRODUCT_ARCHITECTURE?.activateDestination?.('play');
+    window.setTimeout(()=>window.UFC_PLAY_HUB?.openGame?.('top10'),60);
+  }
+  function saveChallengeTarget(member){
+    try{localStorage.setItem(TARGET_KEY,JSON.stringify({id:member.id,name:member.display_name,createdAt:Date.now()}));}catch(_error){}
+  }
+  function challengeTarget(){
+    try{
+      const value=parse(localStorage.getItem(TARGET_KEY),null);
+      return value?.id&&Date.now()-num(value.createdAt)<86400000?value:null;
+    }catch(_error){return null;}
+  }
   function clearChallengeTarget(){try{localStorage.removeItem(TARGET_KEY);}catch(_error){}}
-  function challengeMember(member){saveChallengeTarget(member);closeProfile();window.UFC_APP_SHELL?.activateDestination?.('play')||window.UFC_PRODUCT_ARCHITECTURE?.activateDestination?.('play');window.UFC_PLAY_HUB?.showHub?.();}
-  function wrapChallengePicker(){const api=window.UFC_PROFILE_CHALLENGES;if(!api?.openSendModal||state.challengeWrapped||api.__communityCleanWrapped)return false;const original=api.openSendModal.bind(api);api.openSendModal=async payload=>{const opened=await original(payload),target=challengeTarget();if(opened&&target?.id)requestAnimationFrame(()=>document.querySelector(`[data-challenge-member="${target.id}"]`)?.click());return opened;};api.__communityCleanWrapped=true;state.challengeWrapped=true;return true;}
+  function challengeMember(member){
+    saveChallengeTarget(member);
+    closeProfile();
+    window.UFC_APP_SHELL?.activateDestination?.('play')||window.UFC_PRODUCT_ARCHITECTURE?.activateDestination?.('play');
+    window.UFC_PLAY_HUB?.showHub?.();
+  }
+  function wrapChallengePicker(){
+    const api=window.UFC_PROFILE_CHALLENGES;
+    if(!api?.openSendModal||state.challengeWrapped||api.__communityCleanWrapped)return false;
+    const original=api.openSendModal.bind(api);
+    api.openSendModal=async payload=>{
+      const opened=await original(payload);
+      const target=challengeTarget();
+      if(opened&&target?.id)requestAnimationFrame(()=>document.querySelector(`[data-challenge-member="${target.id}"]`)?.click());
+      return opened;
+    };
+    api.__communityCleanWrapped=true;
+    state.challengeWrapped=true;
+    return true;
+  }
 
-  async function publishTop10(clear=false){const rows=clear?[]:localTop10();if(!clear&&(rows.length!==10||new Set(rows.map(norm)).size!==10))return false;const signature=JSON.stringify(rows);if(signature===state.lastPublished)return true;const identity=await resolveIdentity(),rpc=client(),token=tokenFor(identity);if(!rpc||!token)return false;try{const{data,error}=await rpc.rpc('app_profile_set_top_ten',{p_member_token:token,p_top_ten:rows});if(error)throw error;if(!data?.ok)throw new Error(data?.error||'Top 10 could not be published.');state.lastPublished=signature;const mine=state.snapshot?.members?.find(member=>member.id===currentMemberId());if(mine){mine.top_ten=[...rows];mine.top_ten_updated_at=data.top_ten_updated_at||null;}state.lastDirectorySignature='';renderDirectory();if(state.overlay)renderProfile();window.dispatchEvent(new CustomEvent('octagon-hq:top-ten-published',{detail:data}));return true;}catch(_error){return false;}}
+  async function publishTop10(clear=false){
+    const rows=clear?[]:localTop10();
+    if(!clear&&(rows.length!==10||new Set(rows.map(norm)).size!==10))return false;
+    const signature=JSON.stringify(rows);
+    if(signature===state.lastPublished)return true;
+    const identity=await resolveIdentity();
+    const rpc=client();
+    const token=tokenFor(identity);
+    if(!rpc||!token)return false;
+    try{
+      const{data,error}=await rpc.rpc('app_profile_set_top_ten',{p_member_token:token,p_top_ten:rows});
+      if(error)throw error;
+      if(!data?.ok)throw new Error(data?.error||'Top 10 could not be published.');
+      state.lastPublished=signature;
+      const mine=state.snapshot?.members?.find(member=>member.id===currentMemberId());
+      if(mine){
+        mine.top_ten=[...rows];
+        mine.top_ten_updated_at=data.top_ten_updated_at||null;
+      }
+      renderDirectory();
+      renderProfile();
+      window.dispatchEvent(new CustomEvent('octagon-hq:top-ten-published',{detail:data}));
+      return true;
+    }catch(_error){return false;}
+  }
 
-  function bind(){if(state.bound)return;state.bound=true;document.addEventListener('click',event=>{const memberButton=event.target.closest?.('[data-community-member]');if(memberButton){openMember(memberButton.dataset.communityMember);return;}if(event.target.closest?.('[data-community-open-self]')){if(currentMemberId())openMember(currentMemberId());return;}if(event.target.closest?.('[data-community-build-top10]')){openTop10();return;}if(event.target.closest?.('[data-community-edit-profile]')){closeProfile();window.UFC_APP_PROFILE?.open?.();return;}const challengeButton=event.target.closest?.('[data-community-challenge]');if(challengeButton){const member=members().find(item=>item.id===challengeButton.dataset.communityChallenge);if(member)challengeMember(member);return;}if(event.target.closest?.('[data-community-close]')){closeProfile();return;}const top10Action=event.target.closest?.('#playTop10List [data-move],#playTop10List [data-remove-fighter],#playFighterResults [data-add-fighter]');if(top10Action)queueMicrotask(()=>publishTop10(false));if(event.target.closest?.('#playResetTop10Btn'))queueMicrotask(()=>publishTop10(true));});window.addEventListener('octagon-hq:view-change',event=>{if(event.detail?.destination==='home'){renderDirectory();load();}wrapChallengePicker();});window.addEventListener('ufc-picks-season-updated',()=>{state.lastDirectorySignature='';renderDirectory();if(state.overlay)renderProfile();});window.addEventListener('ufc-app-profile-updated',()=>{state.identity=null;state.snapshot=null;state.lastDirectorySignature='';load(true);});window.addEventListener('ufc-play-profile-ready',event=>{state.identity=event.detail||null;state.snapshot=null;state.lastDirectorySignature='';load(true);});window.addEventListener('ufc-profile-challenge-sent',clearChallengeTarget);window.addEventListener('octagon-hq:soft-refresh',()=>load(true));document.addEventListener('keydown',event=>{if(event.key==='Escape'&&state.overlay)closeProfile();});document.addEventListener('click',event=>{if(event.target===state.overlay)closeProfile();});}
-  function start(){bind();renderDirectory();wrapChallengePicker();if(document.getElementById('home')?.classList.contains('active-view'))load();document.documentElement.dataset.communityProfiles=VERSION;}
+  function acceptIdentity(detail){
+    const next=detail?.identity||detail||null;
+    if(!next)return;
+    const previousId=identityMemberId();
+    const nextId=identityMemberId(next);
+    state.identity=next;
+    if(previousId&&nextId&&previousId!==nextId){
+      state.snapshot=null;
+      state.lastLoadedAt=0;
+      state.lastDirectorySignature='';
+      state.lastProfileSignature='';
+    }
+  }
+  function bind(){
+    if(state.bound)return;
+    state.bound=true;
+    document.addEventListener('click',event=>{
+      const memberButton=event.target.closest?.('[data-community-member]');
+      if(memberButton){openMember(memberButton.dataset.communityMember);return;}
+      if(event.target.closest?.('[data-community-open-self]')){if(currentMemberId())openMember(currentMemberId());return;}
+      if(event.target.closest?.('[data-community-build-top10]')){openTop10();return;}
+      if(event.target.closest?.('[data-community-edit-profile]')){closeProfile();window.UFC_APP_PROFILE?.open?.();return;}
+      const challengeButton=event.target.closest?.('[data-community-challenge]');
+      if(challengeButton){
+        const member=members().find(item=>item.id===challengeButton.dataset.communityChallenge);
+        if(member)challengeMember(member);
+        return;
+      }
+      if(event.target.closest?.('[data-community-close]')){closeProfile();return;}
+      const top10Action=event.target.closest?.('#playTop10List [data-move],#playTop10List [data-remove-fighter],#playFighterResults [data-add-fighter]');
+      if(top10Action)queueMicrotask(()=>publishTop10(false));
+      if(event.target.closest?.('#playResetTop10Btn'))queueMicrotask(()=>publishTop10(true));
+    });
+    window.addEventListener('octagon-hq:view-change',event=>{
+      if(event.detail?.destination==='home'){
+        renderDirectory();
+        void load(false);
+      }
+      wrapChallengePicker();
+    });
+    window.addEventListener('ufc-picks-season-updated',()=>{
+      renderDirectory();
+      renderProfile();
+    });
+    window.addEventListener('ufc-app-profile-updated',event=>{
+      acceptIdentity(event.detail);
+      void load(true);
+    });
+    window.addEventListener('ufc-play-profile-ready',event=>{
+      acceptIdentity(event.detail);
+      void load(true);
+    });
+    window.addEventListener('ufc-profile-challenge-sent',clearChallengeTarget);
+    window.addEventListener('octagon-hq:soft-refresh',()=>void load(true));
+    document.addEventListener('keydown',event=>{if(event.key==='Escape'&&state.overlay)closeProfile();});
+    document.addEventListener('click',event=>{if(event.target===state.overlay)closeProfile();});
+  }
+  function start(){
+    bind();
+    renderDirectory();
+    wrapChallengePicker();
+    if(document.getElementById('home')?.classList.contains('active-view'))void load(false);
+    document.documentElement.dataset.communityProfiles=VERSION;
+  }
 
-  window.UFC_COMMUNITY_PROFILES={version:VERSION,load,refresh:()=>load(true),renderDirectory,openMember,close:closeProfile,publishTop10};
+  window.UFC_COMMUNITY_PROFILES={
+    version:VERSION,
+    load,
+    refresh:()=>load(true),
+    renderDirectory,
+    openMember,
+    close:closeProfile,
+    publishTop10
+  };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
