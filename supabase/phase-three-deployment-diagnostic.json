@@ -12,9 +12,9 @@
     "war_room_trigger": true,
     "worker_rpc": true
   },
-  "checked_at": "2026-07-18T19:26:58.800552+00:00",
+  "checked_at": "2026-07-18T19:56:36.011133+00:00",
   "database": "success",
-  "phase": "phase-4a-native-shell",
+  "phase": "phase-4a-stabilized",
   "server_board_at_deploy": {
     "challenge_day": "2026-07-18",
     "player_count": 1,

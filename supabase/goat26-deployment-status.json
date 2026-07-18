@@ -1,7 +1,7 @@
 {
   "active_members": 6,
   "avatar_profiles": 2,
-  "checked_at": "2026-07-18T19:26:58.800288+00:00",
+  "checked_at": "2026-07-18T19:56:36.010786+00:00",
   "code": "GOAT26",
   "daily_leaderboard_live_sync": {
     "change_detection": "server-signature-before-render",
@@ -95,6 +95,7 @@
       "missing-picks",
       "war-room-unread"
     ],
+    "bottom_clearance": "safe-area-and-navigation-aware",
     "bottom_navigation": [
       "home",
       "rankings",
@@ -102,11 +103,13 @@
       "picks",
       "war-room"
     ],
-    "haptics": "feature-detected-refresh-threshold-only",
     "intelligence_entry": "global-ask-action",
+    "profile_drawer": "native-safe-dismissible",
     "pull_to_refresh": true,
-    "status": "active",
-    "transitions": "lightweight-view-enter"
+    "ranking_spotlight": "production-row-fallback",
+    "resume_snapshot": "canonical-derived-fallbacks",
+    "status": "stabilized",
+    "whats_new_label": "single-label-with-badge"
   },
   "refresh_performance": {
     "manual_refresh": "desktop-build-check",
@@ -134,7 +137,6 @@
     "preference_rows": 6,
     "settings_rpc": true,
     "status": "active",
-    "subscription_repair": "automatic-current-profile-rebind",
     "test_notification": true,
     "test_rpc": true,
     "types": [
@@ -142,7 +144,6 @@
       "picks-reminder",
       "war-room"
     ],
-    "war_room_toggle": "removed",
     "war_room_trigger": true,
     "worker": "octagon-push",
     "worker_interval": "one-minute",
