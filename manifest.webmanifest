@@ -2,7 +2,7 @@
   "id": "./",
   "name": "Octagon HQ",
   "short_name": "Octagon HQ",
-  "description": "UFC rankings, games, picks, The War Room, and Intelligence.",
+  "description": "UFC rankings, games, Picks, The War Room, Intelligence, and direct challenges.",
   "start_url": "./#home",
   "scope": "./",
   "display": "standalone",

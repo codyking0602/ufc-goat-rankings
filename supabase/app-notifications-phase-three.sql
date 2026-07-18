@@ -365,8 +365,8 @@ begin
     'test',
     'test:'||v_member.id::text||':'||gen_random_uuid()::text,
     jsonb_build_object(
-      'title','Octagon HQ notifications are on',
-      'body','Direct challenges, Picks reminders, and War Room alerts can reach this device.',
+      'title','Notifications are on',
+      'body','Challenges, Picks reminders, and War Room alerts are ready.',
       'tag','octagon-hq-test',
       'url','./#home'
     ),
