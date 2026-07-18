@@ -1,32 +1,10 @@
 {
   "active_members": 6,
-  "activity_profile": {
-    "phase": "phase-2a",
-    "sources": [
-      "play-local-ledger",
-      "find-leader-history",
-      "picks-group-snapshot",
-      "war-room-snapshot",
-      "profile-challenge-inbox"
-    ],
-    "status": "active"
-  },
   "avatar_profiles": 2,
-  "checked_at": "2026-07-18T15:36:34.652192+00:00",
+  "checked_at": "2026-07-18T16:40:20.911121+00:00",
   "code": "GOAT26",
   "deployment_method": "supabase-management-api",
   "events": 2,
-  "find_leader_retention": {
-    "best_score_rule": "replays-can-improve-best-only",
-    "history_days": 35,
-    "history_source": "play_daily_leaderboard",
-    "loading_policy": "lazy-on-play-profile-or-history",
-    "official_score_rule": "first-completed-attempt",
-    "phase": "phase-2b",
-    "photo_source": "shared-fighter-photo-authority-with-alias-fallback",
-    "reset_timezone": "America/Chicago",
-    "status": "active"
-  },
   "is_canonical": true,
   "member_names": [
     "Brock",
@@ -40,13 +18,13 @@
   "octagon": {
     "access_rows": 6,
     "active_push_subscriptions": 1,
-    "activity_rows": 1,
+    "activity_rows": 2,
     "cody_enabled": true,
     "current_week_start": "2026-07-13",
     "edge_function": "octagon-push",
     "edge_function_deployed": true,
     "enabled_members": 5,
-    "messages": 4,
+    "messages": 5,
     "phase": "unread-and-web-push",
     "reactions": 1,
     "replies": 2,
@@ -92,84 +70,7 @@
     },
     "vapid_ready": true
   },
-  "picks_season_loop": {
-    "activity_profile_source": "canonical-picks-group-totals",
-    "canonical_totals_source": "picks_group_snapshot",
-    "event_art": "load-confirmed-persistent",
-    "event_detail_source": "picks_room_snapshot",
-    "event_pre_score_rank": "dash",
-    "event_share": "home-only",
-    "home_next_event": "removed-at-source",
-    "internal_navigation": "immediate-scoped-observers",
-    "layout": "home-season-summary-leaderboard-archive",
-    "phase": "phase-2c",
-    "reminders": "removed",
-    "status": "active",
-    "tie_policy": "shared-rank-for-exact-equals"
-  },
-  "profile_photos": {
-    "column_exists": true,
-    "crop_size": 320,
-    "daily_leaderboard_rpc": true,
-    "phase": "shared-photo-or-fighter-avatar",
-    "photo_profiles": 1,
-    "photo_rpc": true,
-    "picks_group_rpc": true,
-    "picks_profile_rpc": true,
-    "picks_room_rpc": true,
-    "picks_social_rpc": true,
-    "play_create_rpc": true,
-    "play_get_rpc": true,
-    "profile_challenge_inbox_rpc": true,
-    "profile_challenge_open_rpc": true,
-    "profile_challenge_send_rpc": true,
-    "profile_challenge_submit_rpc": true,
-    "profile_snapshot_rpc": true,
-    "recipient_column": true,
-    "status": "active"
-  },
   "rooms": 2,
   "saved_picks": 51,
-  "sharing_deep_links": {
-    "delivery": "profile-inbox",
-    "entry_page": "share.html",
-    "exact_board": true,
-    "fallback": "short-link",
-    "link_owner": "assets/js/share-deep-links.js",
-    "owner": "assets/js/profile-challenges.js",
-    "phase": "phase-2e",
-    "primary_action": "challenge-someone",
-    "profile_inbox_source": "play_profile_challenge_inbox",
-    "push_notifications": false,
-    "recipient_score_visibility": "hidden-until-completion",
-    "removed": [
-      "prepared-comparison-sharing",
-      "duplicate-result-share-action"
-    ],
-    "render_policy": "signature-stable-no-loop",
-    "social_preview": "generic-static-card-plus-runtime-metadata",
-    "status": "active",
-    "targets": [
-      "fighter-profile",
-      "find-leader-profile-challenge",
-      "picks-event-recap",
-      "war-room-discussion"
-    ]
-  },
-  "status": "active",
-  "what_changed": {
-    "canonical_source": "assets/data/what-changed.js",
-    "controller": "assets/js/what-changed.js",
-    "current_seed_entries": 2,
-    "deep_links": "fighter-profile-and-destination",
-    "density": "compact-mobile",
-    "editorial_policy": "one-concise-major-release-card-plus-new-fighter-cards",
-    "fighter_hydration": "current-production-ranking-data",
-    "header_owner": "assets/js/app-update-watcher.js",
-    "initial_backlog_collapsed": true,
-    "loading_policy": "lightweight-data-controller-lazy",
-    "phase": "phase-2d",
-    "status": "active",
-    "unread_policy": "unseen-entry-ids-local"
-  }
+  "status": "active"
 }
