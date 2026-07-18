@@ -1,0 +1,44 @@
+name: Validate Phase 4B Preview
+
+on:
+  push:
+    branches: [phase-4b-clean-preview]
+    paths:
+      - 'assets/js/community-profiles.js'
+      - 'assets/js/fresh-home-launch.js'
+      - 'assets/css/community-profiles.css'
+      - 'supabase/app-community-profiles-phase-4b.sql'
+      - '.github/workflows/validate-phase-4b-preview.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate JavaScript
+        run: |
+          node --check assets/js/community-profiles.js
+          node --check assets/js/fresh-home-launch.js
+      - name: Enforce stable architecture
+        run: |
+          ! grep -Fq 'MutationObserver' assets/js/community-profiles.js
+          ! grep -Fq 'setInterval' assets/js/community-profiles.js
+          ! grep -Fq 'window.location.reload' assets/js/community-profiles.js
+          ! grep -Fq 'serviceWorker' assets/js/community-profiles.js
+          ! grep -Fq 'MutationObserver' assets/js/fresh-home-launch.js
+          ! grep -Fq 'setInterval' assets/js/fresh-home-launch.js
+          grep -Fq 'community-profiles-20260718e-clean-preview' assets/js/community-profiles.js
+          grep -Fq 'fresh-home-launch-20260718f-clean-preview' assets/js/fresh-home-launch.js
+          grep -Fq 'app_profile_community_snapshot' supabase/app-community-profiles-phase-4b.sql
+          grep -Fq 'app_profile_set_top_ten' supabase/app-community-profiles-phase-4b.sql
+      - name: Confirm live shell is untouched
+        run: |
+          git diff --exit-code origin/main -- sw.js
+          git diff --exit-code origin/main -- assets/js/octagon-hq-shell.js
+          git diff --exit-code origin/main -- assets/js/native-app-shell.js
+          git diff --exit-code origin/main -- assets/js/home-dashboard.js
