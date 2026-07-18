@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='product-architecture-20260717f-phase-1b';
+  const VERSION='product-architecture-20260717g-performance';
   const RANKING_VIEWS=['men','women','division','categories'];
   const DESTINATIONS=[
     {key:'home',label:'Home',view:'home'},
@@ -22,6 +22,9 @@
   let currentRankingView='men';
   let bound=false;
   let mutating=false;
+  let navObserver=null;
+  let navSyncFrame=0;
+  let playSupportScheduled=false;
 
   const text=value=>String(value??'').trim();
 
@@ -41,6 +44,7 @@
       .rankings-subnav button{min-width:0;min-height:38px;border:1px solid transparent;border-radius:11px;background:transparent;color:var(--muted,#94a3b8);cursor:pointer;font:900 12px/1 system-ui;padding:7px 8px}
       .rankings-subnav button.active{border-color:rgba(249,115,22,.54);background:rgba(249,115,22,.13);color:#fff}
       #rules,.tab[data-view="rules"],[data-product-legacy-ranking-tab]{display:none!important}
+      main.shell>.view:not(.active-view){display:none!important}
       @media(max-width:900px){
         .tabs[data-product-architecture]{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;padding:5px 10px 7px!important}
         .tabs[data-product-architecture] .tab{height:39px!important;min-height:39px!important;max-height:39px!important;padding:5px 4px!important;font-size:10.5px!important;white-space:normal!important;border-radius:11px!important}
@@ -54,18 +58,67 @@
     `;
   }
 
+  function installLegacySupportGuards(){
+    const guards=[
+      ['playPermanentDailyController','play-daily-rotation.js'],
+      ['playDailyLeaderboardCurrent','play-daily-leaderboard.js'],
+      ['playChallengeCompatCurrent','play-challenge-compat.js'],
+      ['blindDailyStartupFixCurrent','blind-daily-startup-fix.js']
+    ];
+    guards.forEach(([id,match])=>{
+      if(document.querySelector(`script[src*="${match}"]`))return;
+      const guard=document.createElement('script');
+      guard.type='application/json';
+      guard.src=`about:blank#${match}`;
+      guard.dataset.deferredGuard=id;
+      document.head.appendChild(guard);
+    });
+  }
+
+  function loadDeferredScript(id,src){
+    if(document.getElementById(id))return;
+    document.querySelectorAll(`script[data-deferred-guard="${id}"]`).forEach(node=>node.remove());
+    const script=document.createElement('script');
+    script.id=id;
+    script.src=src;
+    script.async=true;
+    document.head.appendChild(script);
+  }
+
+  function schedulePlaySupport(){
+    if(playSupportScheduled)return;
+    playSupportScheduled=true;
+    requestAnimationFrame(()=>{
+      loadDeferredScript('playPermanentDailyController','assets/js/play-daily-rotation.js?v=play-daily-controller-20260717e-find-leader-permanent');
+      const loadBoard=()=>loadDeferredScript('playDailyLeaderboardCurrent','assets/js/play-daily-leaderboard.js?v=play-daily-leaderboard-20260717e-find-leader-only');
+      if(typeof requestIdleCallback==='function')requestIdleCallback(loadBoard,{timeout:900});
+      else window.setTimeout(loadBoard,250);
+    });
+  }
+
+  function loadBlindSupport(){
+    loadDeferredScript('blindDailyStartupFixCurrent','assets/js/blind-daily-startup-fix.js?v=blind-daily-startup-fix-20260717f-on-demand');
+  }
+
+  function loadChallengeCompat(){
+    loadDeferredScript('playChallengeCompatCurrent','assets/js/play-challenge-compat.js?v=play-challenge-compat-20260717c-on-demand');
+  }
+
   function loadHomeAssets(){
-    if(!document.getElementById('homeDashboardCss')){
-      const link=document.createElement('link');
-      link.id='homeDashboardCss';
-      link.rel='stylesheet';
-      link.href='assets/css/home-dashboard.css?v=home-dashboard-20260717a';
-      document.head.appendChild(link);
+    let css=document.getElementById('homeDashboardCss');
+    if(!css){
+      css=document.createElement('link');
+      css.id='homeDashboardCss';
+      css.rel='stylesheet';
+      document.head.appendChild(css);
+    }
+    if(!String(css.href||'').includes('home-dashboard-20260717d')){
+      css.href='assets/css/home-dashboard.css?v=home-dashboard-20260717d';
     }
     if(!window.UFC_HOME_DASHBOARD&&!document.getElementById('homeDashboardScript')){
       const script=document.createElement('script');
       script.id='homeDashboardScript';
-      script.src='assets/js/home-dashboard.js?v=home-dashboard-20260717a';
+      script.src='assets/js/home-dashboard.js?v=home-dashboard-20260717d-find-leader-permanent';
       script.async=false;
       document.body.appendChild(script);
     }
@@ -116,7 +169,7 @@
       button.appendChild(labelNode);
       if(badge)button.appendChild(badge);
     }
-    labelNode.textContent=label;
+    if(labelNode.textContent!==label)labelNode.textContent=label;
   }
 
   function normalizeNavigation(){
@@ -182,21 +235,19 @@
     const nav=document.querySelector('nav.tabs');
     nav?.querySelectorAll('[data-destination]').forEach(button=>{
       const selected=button.dataset.destination===currentDestination;
-      button.classList.toggle('active',selected);
-      button.setAttribute('aria-selected',String(selected));
-      const item=DESTINATIONS.find(entry=>entry.key===button.dataset.destination);
-      if(item)setDestinationLabel(button,item.label);
+      if(button.classList.contains('active')!==selected)button.classList.toggle('active',selected);
+      if(button.getAttribute('aria-selected')!==String(selected))button.setAttribute('aria-selected',String(selected));
     });
 
     const subnav=ensureRankingSubnav();
     if(subnav){
       const active=currentDestination==='rankings';
-      subnav.classList.toggle('active',active);
-      subnav.setAttribute('aria-hidden',String(!active));
+      if(subnav.classList.contains('active')!==active)subnav.classList.toggle('active',active);
+      if(subnav.getAttribute('aria-hidden')!==String(!active))subnav.setAttribute('aria-hidden',String(!active));
       subnav.querySelectorAll('[data-ranking-view]').forEach(button=>{
         const selected=button.dataset.rankingView===currentRankingView;
-        button.classList.toggle('active',selected);
-        button.setAttribute('aria-pressed',String(selected));
+        if(button.classList.contains('active')!==selected)button.classList.toggle('active',selected);
+        if(button.getAttribute('aria-pressed')!==String(selected))button.setAttribute('aria-pressed',String(selected));
       });
     }
     mutating=false;
@@ -204,7 +255,7 @@
 
   function showView(view,{updateHash=true}={}){
     const warButton=document.querySelector('[data-destination="war-room"]');
-    if(view==='octagon'&&(warButton?.disabled||warButton?.getAttribute('aria-disabled')==='true'))return;
+    if(view==='octagon'&&(warButton?.disabled||warButton?.getAttribute('aria-disabled')==='true'))return false;
 
     if(RANKING_VIEWS.includes(view))currentRankingView=view;
     currentDestination=destinationForView(view);
@@ -216,8 +267,11 @@
       target=ensureHome();
     }
 
-    document.querySelectorAll('main.shell .view').forEach(section=>section.classList.remove('active-view'));
-    target.classList.add('active-view');
+    const current=document.querySelector('main.shell .view.active-view');
+    if(current!==target){
+      current?.classList.remove('active-view');
+      target.classList.add('active-view');
+    }
     syncNavigation();
     syncToolbar(view);
 
@@ -225,7 +279,12 @@
       const next=currentDestination==='rankings'?`#rankings/${currentRankingView}`:`#${currentDestination}`;
       if(window.location.hash!==next)history.replaceState(null,'',next);
     }
-    window.dispatchEvent(new CustomEvent('octagon-hq:view-change',{detail:{destination:currentDestination,view}}));
+
+    requestAnimationFrame(()=>{
+      if(currentDestination==='play')schedulePlaySupport();
+      window.dispatchEvent(new CustomEvent('octagon-hq:view-change',{detail:{destination:currentDestination,view}}));
+    });
+    return true;
   }
 
   function parseHash(){
@@ -243,6 +302,8 @@
     if(bound)return;
     bound=true;
     document.addEventListener('click',event=>{
+      if(event.target.closest?.('[data-open-game="blind"],[data-play-mode="blind"],[data-five-round-replay]'))loadBlindSupport();
+      if(event.target.closest?.('[data-kc-challenge],[data-br-challenge],[data-five-round-share]'))loadChallengeCompat();
       const destinationButton=event.target.closest?.('nav.tabs [data-destination]');
       if(destinationButton){
         event.preventDefault();
@@ -263,21 +324,31 @@
     window.addEventListener('hashchange',()=>showView(parseHash(),{updateHash:false}));
   }
 
+  function scheduleNavSync(){
+    if(navSyncFrame)return;
+    navSyncFrame=requestAnimationFrame(()=>{
+      navSyncFrame=0;
+      if(mutating)return;
+      normalizeNavigation();
+      syncNavigation();
+    });
+  }
+
   function observeNav(){
     const nav=document.querySelector('nav.tabs');
     if(!nav)return;
-    const observer=new MutationObserver(()=>{
-      if(mutating)return;
-      window.setTimeout(()=>{
-        if(mutating)return;
-        normalizeNavigation();
-        syncNavigation();
-      },0);
+    navObserver?.disconnect();
+    navObserver=new MutationObserver(scheduleNavSync);
+    navObserver.observe(nav,{
+      childList:true,
+      subtree:true,
+      attributes:true,
+      attributeFilter:['disabled','aria-disabled','data-beta-access','data-beta-member']
     });
-    observer.observe(nav,{childList:true,subtree:true,attributes:true,attributeFilter:['style','class','aria-label','disabled','aria-disabled','data-beta-access','data-beta-member']});
   }
 
   function apply(){
+    installLegacySupportGuards();
     installStyles();
     ensureHome();
     loadHomeAssets();
@@ -297,16 +368,18 @@
     bindEvents();
     observeNav();
     showView(initialView,{updateHash:Boolean(window.location.hash)});
-    [100,500,1500,5000].forEach(delay=>window.setTimeout(()=>{
-      normalizeNavigation();
-      syncNavigation();
-    },delay));
   }
 
-  window.UFC_PRODUCT_ARCHITECTURE={version:VERSION,apply,activateView:showView,activateDestination:key=>{
-    const item=DESTINATIONS.find(entry=>entry.key===key);
-    if(item)showView(key==='rankings'?currentRankingView:item.view);
-  }};
+  window.UFC_PRODUCT_ARCHITECTURE={
+    version:VERSION,
+    apply,
+    activateView:showView,
+    schedulePlaySupport,
+    activateDestination:key=>{
+      const item=DESTINATIONS.find(entry=>entry.key===key);
+      if(item)showView(key==='rankings'?currentRankingView:item.view);
+    }
+  };
   document.documentElement.setAttribute('data-product-architecture',VERSION);
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
   else start();
