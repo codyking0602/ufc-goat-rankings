@@ -1,13 +1,14 @@
 (function(){
   'use strict';
 
-  const VERSION='product-architecture-20260718q-picks-cohesion';
+  const VERSION='product-architecture-20260718r-notification-surface';
   const SHELL_SRC='assets/js/octagon-hq-shell.js?v=app-shell-20260718d-rankings-static';
   const CONNECTIVITY_SRC='assets/js/product-connectivity.js?v=product-connectivity-20260718c-clean-handoffs';
   const POLISH_CSS='assets/css/product-polish.css?v=product-polish-20260718c-header-final';
   const POLISH_SRC='assets/js/product-polish.js?v=product-polish-20260718c-header-final';
   const AVATAR_SYNC_SRC='assets/js/profile-avatar-sync.js?v=profile-avatar-sync-20260718c-home-war-room';
   const ACTIVITY_SRC='assets/js/profile-activity.js?v=profile-activity-20260718a-phase-2a';
+  const NOTIFICATION_SURFACE_SRC='assets/js/app-notification-surface-fix.js?v=app-notification-surface-fix-20260718a';
   const FIND_LEADER_RETENTION_SRC='assets/js/find-leader-retention.js?v=find-leader-retention-20260718c-phase-2b-lazy';
   const PICKS_SEASON_SRC='assets/js/picks-season-loop.js?v=picks-season-loop-20260718d-canonical-ui';
 
@@ -60,6 +61,12 @@
     }
   }
 
+  function loadNotificationSurfaceFix(){
+    if(!window.UFC_APP_NOTIFICATION_SURFACE_FIX){
+      loadScriptOnce('assets/js/app-notification-surface-fix.js',NOTIFICATION_SURFACE_SRC);
+    }
+  }
+
   function loadFindLeaderRetention(){
     if(!window.UFC_FIND_LEADER_RETENTION){
       loadScriptOnce('assets/js/find-leader-retention.js',FIND_LEADER_RETENTION_SRC);
@@ -98,6 +105,7 @@
   loadPolish();
   loadAvatarSync();
   loadActivityProfile();
+  loadNotificationSurfaceFix();
   loadFindLeaderRetention();
   loadPicksSeason();
 
