@@ -1,7 +1,8 @@
-const VERSION='octagon-hq-sw-20260718b-fast-refresh';
+const VERSION='octagon-hq-sw-20260718c-phase-4a';
 const CACHE_NAME='octagon-hq-static-v1';
 const LEGACY_PREFIX='octagon-hq-static-';
 const CORE=['./','./index.html','./manifest.webmanifest'];
+const FORCE_NETWORK=/\/assets\/(?:js\/(?:app-notification-surface-fix|app-update-watcher|product-architecture|native-app-shell)\.js|css\/native-app-shell\.css)$/i;
 
 self.addEventListener('install',event=>{
   event.waitUntil((async()=>{
@@ -21,7 +22,7 @@ self.addEventListener('activate',event=>{
       const requests=await source.keys();
       for(const request of requests){
         const path=new URL(request.url).pathname;
-        if(/\/assets\/js\/(?:app-notification-surface-fix|app-update-watcher)\.js$/i.test(path))continue;
+        if(FORCE_NETWORK.test(path))continue;
         if(await target.match(request))continue;
         const response=await source.match(request);
         if(response)await target.put(request,response);
@@ -29,7 +30,7 @@ self.addEventListener('activate',event=>{
       await caches.delete(key);
     }
     const stale=await target.keys();
-    await Promise.all(stale.filter(request=>/\/assets\/js\/(?:app-notification-surface-fix|app-update-watcher)\.js$/i.test(new URL(request.url).pathname)).map(request=>target.delete(request)));
+    await Promise.all(stale.filter(request=>FORCE_NETWORK.test(new URL(request.url).pathname)).map(request=>target.delete(request)));
     await self.clients.claim();
   })());
 });
