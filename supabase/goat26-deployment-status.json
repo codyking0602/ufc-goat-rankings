@@ -11,7 +11,7 @@
     "status": "active"
   },
   "avatar_profiles": 2,
-  "checked_at": "2026-07-18T09:39:17.386150+00:00",
+  "checked_at": "2026-07-18T09:44:08.001418+00:00",
   "code": "GOAT26",
   "deployment_method": "supabase-management-api",
   "events": 2,
@@ -19,6 +19,7 @@
     "best_score_rule": "replays-can-improve-best-only",
     "history_days": 35,
     "history_source": "play_daily_leaderboard",
+    "loading_policy": "lazy-on-play-profile-or-history",
     "official_score_rule": "first-completed-attempt",
     "phase": "phase-2b",
     "reset_timezone": "America/Chicago",
