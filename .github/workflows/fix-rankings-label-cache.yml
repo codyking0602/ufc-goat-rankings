@@ -1,3 +1,4 @@
+# Second push intentionally triggers this self-cleaning workflow.
 name: Fix Rankings Label Cache
 
 on:
