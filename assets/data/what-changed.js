@@ -4,17 +4,18 @@
   // Editorial release rule: add verified fighter and major feature milestones here in the same production change.
   // Rank and OVR movement must use approved before/after values; never infer history from the current board alone.
   const source={
-    version:'what-changed-data-20260718c-phase-2e',
+    version:'what-changed-data-20260718d-profile-challenges',
     timezone:'America/Chicago',
     seenStorageKey:'octagon-hq-what-changed-seen-v1',
     entries:[
       {
-        id:'sharing-deep-links-live-20260718',
-        publishedAt:'2026-07-18T09:31:00-05:00',
-        type:'App Updated',
-        headline:'Sharing and direct links are live',
-        summary:'Fighter profiles, matchups, Find the Leader results, Picks recaps, and War Room discussions now open directly.',
-        destination:'home'
+        id:'profile-challenges-live-20260718',
+        publishedAt:'2026-07-18T10:15:00-05:00',
+        type:'Game Updated',
+        headline:'Profile challenges are live',
+        summary:'Finish Find the Leader, send the exact board to another Octagon HQ profile, or copy a short challenge link.',
+        destination:'play',
+        action:'find-leader'
       },
       {
         id:'picks-season-launched-20260718',
