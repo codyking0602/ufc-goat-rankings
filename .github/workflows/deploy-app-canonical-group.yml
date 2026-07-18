@@ -71,18 +71,11 @@ jobs:
           token=os.environ.get('SUPABASE_ACCESS_TOKEN','').strip()
           diagnostic_path=Path('supabase/phase-three-deployment-diagnostic.json')
           status_path=Path('supabase/goat26-deployment-status.json')
-          result={
-              'phase':'phase-3-smart-notifications',
-              'database':'started',
-              'checked_at':datetime.now(timezone.utc).isoformat(),
-          }
+          result={'phase':'phase-3-smart-notifications','database':'started','checked_at':datetime.now(timezone.utc).isoformat()}
 
-          def save():
-              diagnostic_path.write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
-
-          def clean_error(value):
-              text=str(value).replace(token,'[redacted]')
-              return text[:2400]
+          def save(): diagnostic_path.write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
+          def clean_error(value): return str(value).replace(token,'[redacted]')[:2400]
+          def rows(value): return value.get('result',value) if isinstance(value,dict) else value
 
           def query(sql,read_only=False):
               request=urllib.request.Request(
@@ -103,22 +96,15 @@ jobs:
                   detail=error.read().decode(errors='replace')[:2200]
                   raise RuntimeError(f'Supabase Management API returned HTTP {error.code}: {detail}') from error
 
-          def rows(value):
-              return value.get('result',value) if isinstance(value,dict) else value
-
           try:
-              if not token:
-                  raise RuntimeError('SUPABASE_ACCESS_TOKEN is not configured.')
-
+              if not token: raise RuntimeError('SUPABASE_ACCESS_TOKEN is not configured.')
               query(Path('supabase/app-notifications-phase-three.sql').read_text(),read_only=False)
 
               config_source=Path('assets/data/supabase-config.js').read_text()
               key_parts=re.search(r"anonKey:\s*\['([^']+)','([^']+)'\]",config_source)
-              if not key_parts:
-                  raise RuntimeError('Could not read the public Supabase browser key.')
+              if not key_parts: raise RuntimeError('Could not read the public Supabase browser key.')
               anon_key=''.join(key_parts.groups())
               edge_url=f'https://{project}.supabase.co/functions/v1/octagon-push'
-
               existing=rows(query("select internal_token from public.app_notification_config where singleton limit 1;",read_only=True))
               worker_token=(existing[0].get('internal_token') if isinstance(existing,list) and existing else '') or secrets.token_urlsafe(40)
               safe_worker=worker_token.replace("'","''")
@@ -131,14 +117,26 @@ jobs:
               )
               query('select public.app_notification_schedule();',read_only=False)
 
-              audit_rows=rows(query('select public.app_notification_audit() as audit;',read_only=True))
+              audit_sql="""
+              select jsonb_build_object(
+                'ok',true,
+                'configured',exists(select 1 from public.app_notification_config where singleton),
+                'preference_rows',(select count(*) from public.app_notification_preferences),
+                'active_subscriptions',(select count(*) from public.octagon_push_subscriptions where is_active),
+                'pending_outbox',(select count(*) from public.app_notification_outbox where status in ('pending','failed','sending')),
+                'cron_scheduled',exists(select 1 from cron.job where jobname='octagon-hq-smart-notifications'),
+                'challenge_trigger',exists(select 1 from pg_trigger where tgname='app_notify_profile_challenge_insert' and not tgisinternal),
+                'war_room_trigger',exists(select 1 from pg_trigger where tgname='app_notify_war_room_message_insert' and not tgisinternal),
+                'settings_rpc',to_regprocedure('public.app_notification_settings(text)') is not null,
+                'test_rpc',to_regprocedure('public.app_notification_send_test(text)') is not null,
+                'worker_rpc',to_regprocedure('public.app_notification_claim_batch(text,integer)') is not null
+              ) as audit;
+              """
+              audit_rows=rows(query(audit_sql,read_only=True))
               audit=audit_rows[0].get('audit') if isinstance(audit_rows,list) and audit_rows else None
-              if isinstance(audit,str):
-                  audit=json.loads(audit)
-              if not isinstance(audit,dict):
-                  raise RuntimeError('Phase 3 notification audit returned no data.')
-              required=['configured','cron_scheduled','challenge_trigger','war_room_trigger']
-              if not audit.get('ok') or not all(audit.get(key) for key in required):
+              if isinstance(audit,str): audit=json.loads(audit)
+              required=['configured','cron_scheduled','challenge_trigger','war_room_trigger','settings_rpc','test_rpc','worker_rpc']
+              if not isinstance(audit,dict) or not audit.get('ok') or not all(audit.get(key) for key in required):
                   raise RuntimeError(f'Phase 3 notification audit failed: {audit}')
 
               result.update({'database':'success','audit':audit})
@@ -148,27 +146,15 @@ jobs:
                   except Exception: status={}
               status['smart_notifications']={
                   **audit,
-                  'phase':'phase-3',
-                  'status':'active',
+                  'phase':'phase-3','status':'active',
                   'delivery_owner':'database-outbox-and-edge-worker',
                   'types':['direct-challenge','picks-reminder','war-room'],
                   'picks_windows_minutes':[120,20],
-                  'worker':'octagon-push',
-                  'worker_interval':'one-minute',
-                  'device_settings':'activity-profile',
-                  'test_notification':True,
+                  'worker':'octagon-push','worker_interval':'one-minute',
+                  'device_settings':'activity-profile','test_notification':True,
               }
-              status['daily_leaderboard_live_sync']={
-                  'status':'active',
-                  'poll_seconds':10,
-                  'change_detection':'server-signature-before-render',
-              }
-              status['refresh_performance']={
-                  'status':'active',
-                  'navigation':'network-first',
-                  'versioned_assets':'cache-first',
-                  'manual_refresh':'normal-reload-with-state-restore',
-              }
+              status['daily_leaderboard_live_sync']={'status':'active','poll_seconds':10,'change_detection':'server-signature-before-render'}
+              status['refresh_performance']={'status':'active','navigation':'network-first','versioned_assets':'cache-first','manual_refresh':'normal-reload-with-state-restore'}
               status['checked_at']=datetime.now(timezone.utc).isoformat()
               status_path.write_text(json.dumps(status,indent=2,sort_keys=True)+'\n')
               save()
@@ -200,47 +186,25 @@ jobs:
 
           path=Path('index.html')
           text=path.read_text()
-
           replacements={
               'app-profile.js':'app-profile-20260718b-photo-upload',
               'app-update-watcher.js':'app-update-watcher-20260718e-phase-3-fast-refresh',
               'profile-challenges.js':'profile-challenges-20260718c-stable-inbox',
           }
           for filename,version in replacements.items():
-              pattern=rf'assets/js/{re.escape(filename)}\?v=[^"\s]+'
-              value=f'assets/js/{filename}?v={version}'
-              text,count=re.subn(pattern,value,text,count=1)
-              if count!=1:
-                  raise SystemExit(f'Could not update {filename} in index.html')
+              text,count=re.subn(rf'assets/js/{re.escape(filename)}\?v=[^"\s]+',f'assets/js/{filename}?v={version}',text,count=1)
+              if count!=1: raise SystemExit(f'Could not update {filename} in index.html')
 
-          text,count=re.subn(
-              r'assets/data/what-changed\.js\?v=[^"\s]+',
-              'assets/data/what-changed.js?v=what-changed-data-20260718f-phase-3',
-              text,
-              count=1,
-          )
-          if count!=1:
-              raise SystemExit('Could not update What Changed data in index.html')
+          text,count=re.subn(r'assets/data/what-changed\.js\?v=[^"\s]+','assets/data/what-changed.js?v=what-changed-data-20260718f-phase-3',text,count=1)
+          if count!=1: raise SystemExit('Could not update What Changed data in index.html')
 
           text=re.sub(r'\s*<script src="assets/js/app-notification-center\.js\?v=[^"]+"></script>','',text)
           anchor=re.search(r'(?P<indent>\s*)<script src="assets/js/profile-challenges\.js\?v=[^"]+"></script>',text)
-          if not anchor:
-              raise SystemExit('Could not find profile-challenges.js anchor')
+          if not anchor: raise SystemExit('Could not find profile-challenges.js anchor')
           tag='<script src="assets/js/app-notification-center.js?v=app-notification-center-20260718a-phase-3"></script>'
           text=text[:anchor.start()]+anchor.group(0)+anchor.group('indent')+tag+text[anchor.end():]
-
-          text=re.sub(
-              r'<link rel="manifest" href="[^"]+"\s*/>',
-              '<link rel="manifest" href="manifest.webmanifest?v=phase-3-smart-notifications" />',
-              text,
-              count=1,
-          )
-          text=re.sub(
-              r'<meta name="app-build" content="[^"]+" />',
-              '<meta name="app-build" content="20260718-phase-3-smart-notifications" />',
-              text,
-              count=1,
-          )
+          text=re.sub(r'<link rel="manifest" href="[^"]+"\s*/>','<link rel="manifest" href="manifest.webmanifest?v=phase-3-smart-notifications" />',text,count=1)
+          text=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260718-phase-3-smart-notifications" />',text,count=1)
           path.write_text(text)
           PY
 
@@ -257,7 +221,6 @@ jobs:
           import os
           from datetime import datetime, timezone
           from pathlib import Path
-
           path=Path('supabase/phase-three-deployment-diagnostic.json')
           try: result=json.loads(path.read_text())
           except Exception: result={'phase':'phase-3-smart-notifications'}
@@ -283,7 +246,4 @@ jobs:
             git pull --rebase origin main
             git push origin HEAD:main
           fi
-
-          if [ "${VALIDATE_OUTCOME}" != "success" ] || [ "${DATABASE_OUTCOME}" != "success" ] || [ "${WORKER_OUTCOME}" != "success" ] || [ "${WIRE_OUTCOME}" != "success" ]; then
-            exit 1
-          fi
+          if [ "${VALIDATE_OUTCOME}" != "success" ] || [ "${DATABASE_OUTCOME}" != "success" ] || [ "${WORKER_OUTCOME}" != "success" ] || [ "${WIRE_OUTCOME}" != "success" ]; then exit 1; fi
