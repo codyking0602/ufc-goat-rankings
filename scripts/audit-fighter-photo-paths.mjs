@@ -65,7 +65,14 @@ try{
   for(const view of ['men','women']){
     await page.evaluate(view=>document.querySelector(`.tab[data-view="${view}"]`)?.click(),view);
     const container=view==='men'?'#menList':'#womenList';
-    await page.waitForTimeout(300);
+    await page.waitForFunction(selector=>{
+      const rows=[...document.querySelectorAll(`${selector} .fighter-row`)];
+      if(!rows.length)return false;
+      return rows.every(row=>{
+        const img=row.querySelector('.row-photo img');
+        return Boolean(img&&img.complete&&img.naturalWidth>0);
+      });
+    },container,{timeout:15000}).catch(()=>null);
     const states=await page.locator(`${container} .fighter-row`).evaluateAll(rows=>rows.map(row=>{
       const img=row.querySelector('.row-photo img');
       return{fighter:row.dataset.fighter,src:img?.getAttribute('src')||null,complete:Boolean(img?.complete),naturalWidth:Number(img?.naturalWidth||0)};
