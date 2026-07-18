@@ -1,0 +1,174 @@
+name: Deploy Shared Profile Photos
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy-shared-profile-photos.yml'
+      - 'supabase/app-profile-photo-upload-phase.sql'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy-shared-profile-photos
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate shared profile release
+        run: |
+          node --check assets/js/app-profile.js
+          node --check assets/js/picks-social-retention.js
+          node --check assets/js/picks-settings-admin-cleanup.js
+          node --check assets/js/profile-avatar-sync.js
+          node --check assets/js/product-polish.js
+          node --check assets/js/product-architecture.js
+          grep -Fq 'add column if not exists profile_photo_data text' supabase/app-profile-photo-upload-phase.sql
+          grep -Fq 'create or replace function public.app_profile_set_photo' supabase/app-profile-photo-upload-phase.sql
+          grep -Fq "profile_photo_data',v_member.profile_photo_data" supabase/app-profile-photo-upload-phase.sql
+
+      - name: Apply and audit profile photo migration
+        env:
+          SUPABASE_PROJECT_REF: hdkjwezaswhisxupxydc
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import urllib.error
+          import urllib.request
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          project=os.environ['SUPABASE_PROJECT_REF']
+          token=os.environ.get('SUPABASE_ACCESS_TOKEN','').strip()
+          status_path=Path('supabase/goat26-deployment-status.json')
+          migration=Path('supabase/app-profile-photo-upload-phase.sql').read_text()
+
+          def query(sql,read_only=False):
+              request=urllib.request.Request(
+                  f'https://api.supabase.com/v1/projects/{project}/database/query',
+                  data=json.dumps({'query':sql,'read_only':read_only}).encode(),
+                  headers={
+                      'Accept':'application/json',
+                      'Authorization':f'Bearer {token}',
+                      'Content-Type':'application/json',
+                      'User-Agent':'UFC-Shared-Profile-Photos/1.0',
+                  },
+                  method='POST',
+              )
+              try:
+                  with urllib.request.urlopen(request,timeout=90) as response:
+                      return json.loads(response.read().decode() or 'null')
+              except urllib.error.HTTPError as error:
+                  detail=error.read().decode(errors='replace')[:1600]
+                  raise RuntimeError(f'Supabase Management API returned HTTP {error.code}: {detail}') from error
+
+          def rows(response):
+              return response.get('result',response) if isinstance(response,dict) else response
+
+          if not token:
+              raise RuntimeError('SUPABASE_ACCESS_TOKEN is not configured.')
+
+          query(migration,read_only=False)
+          audit_sql="""
+          select jsonb_build_object(
+            'column_exists',exists(
+              select 1 from information_schema.columns
+              where table_schema='public'
+                and table_name='pick_group_members'
+                and column_name='profile_photo_data'
+            ),
+            'snapshot_rpc',to_regprocedure('public.app_profile_group_snapshot(text)') is not null,
+            'photo_rpc',to_regprocedure('public.app_profile_set_photo(text,text)') is not null,
+            'anon_snapshot',has_function_privilege('anon','public.app_profile_group_snapshot(text)','EXECUTE'),
+            'anon_photo',has_function_privilege('anon','public.app_profile_set_photo(text,text)','EXECUTE'),
+            'photo_profiles',(
+              select count(*)
+              from public.pick_group_members gm
+              join public.pick_groups g on g.id=gm.group_id
+              where g.code='GOAT26'
+                and coalesce(gm.is_active,true)
+                and nullif(trim(gm.profile_photo_data),'') is not null
+            )
+          ) as audit;
+          """
+          response=rows(query(audit_sql,read_only=True))
+          audit=response[0].get('audit') if isinstance(response,list) and response else None
+          if isinstance(audit,str):
+              audit=json.loads(audit)
+          if not isinstance(audit,dict) or not all([
+              audit.get('column_exists'),
+              audit.get('snapshot_rpc'),
+              audit.get('photo_rpc'),
+              audit.get('anon_snapshot'),
+              audit.get('anon_photo'),
+          ]):
+              raise RuntimeError(f'Profile photo audit failed: {audit}')
+
+          status={}
+          if status_path.exists():
+              try: status=json.loads(status_path.read_text())
+              except Exception: status={}
+          status['profile_photos']={
+              **audit,
+              'phase':'shared-photo-or-fighter-avatar',
+              'crop_size':320,
+              'status':'active',
+          }
+          status['checked_at']=datetime.now(timezone.utc).isoformat()
+          status_path.write_text(json.dumps(status,indent=2,sort_keys=True)+'\n')
+          print('Shared profile photo database layer verified.')
+          PY
+
+      - name: Wire shared profile release into the live page
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path=Path('index.html')
+          text=path.read_text()
+          versions={
+              'app-profile.js':'app-profile-20260718b-photo-upload',
+              'picks-social-retention.js':'picks-social-retention-20260718f-shared-profile',
+              'picks-settings-admin-cleanup.js':'picks-settings-admin-cleanup-20260718e-admin-only',
+              'product-architecture.js':'product-architecture-20260718i-profile-release',
+          }
+          for filename,version in versions.items():
+              pattern=rf'assets/js/{re.escape(filename)}\?v=[^"\s]+'
+              replacement=f'assets/js/{filename}?v={version}'
+              text,count=re.subn(pattern,replacement,text,count=1)
+              if count!=1:
+                  raise SystemExit(f'Could not update {filename} in index.html')
+
+          text=re.sub(
+              r'<meta name="app-build" content="[^"]+" />',
+              '<meta name="app-build" content="20260718-shared-profile-photos" />',
+              text,
+              count=1,
+          )
+          path.write_text(text)
+          PY
+
+      - name: Commit deployment record
+        run: |
+          if git diff --quiet -- index.html supabase/goat26-deployment-status.json; then
+            echo 'Shared profile photo deployment record is unchanged.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html supabase/goat26-deployment-status.json
+          git commit -m 'Record shared profile photo deployment [skip ci]'
+          git pull --rebase origin main
+          git push origin HEAD:main
