@@ -1,5 +1,5 @@
-const VERSION='octagon-hq-sw-20260718c-phase-4a';
-const CACHE_NAME='octagon-hq-static-v2';
+const VERSION='octagon-hq-sw-20260718d-emergency-reset';
+const CACHE_NAME='octagon-hq-static-v3';
 const LEGACY_PREFIX='octagon-hq-static-';
 const CORE=['./','./index.html','./manifest.webmanifest'];
 const FORCE_NETWORK=/\/assets\/(?:js\/(?:app-notification-surface-fix|app-update-watcher|product-architecture|native-app-shell|native-app-shell-stability|community-profiles|fresh-home-launch)\.js|css\/(?:native-app-shell|native-app-shell-stability|community-profiles)\.css)$/i;
@@ -14,29 +14,9 @@ self.addEventListener('install',event=>{
 
 self.addEventListener('activate',event=>{
   event.waitUntil((async()=>{
-    const target=await caches.open(CACHE_NAME);
     const keys=await caches.keys();
-    const replacedLegacy=keys.some(key=>key.startsWith(LEGACY_PREFIX)&&key!==CACHE_NAME);
-    for(const key of keys){
-      if(!key.startsWith(LEGACY_PREFIX)||key===CACHE_NAME)continue;
-      const source=await caches.open(key);
-      const requests=await source.keys();
-      for(const request of requests){
-        const path=new URL(request.url).pathname;
-        if(FORCE_NETWORK.test(path))continue;
-        if(await target.match(request))continue;
-        const response=await source.match(request);
-        if(response)await target.put(request,response);
-      }
-      await caches.delete(key);
-    }
-    const stale=await target.keys();
-    await Promise.all(stale.filter(request=>FORCE_NETWORK.test(new URL(request.url).pathname)).map(request=>target.delete(request)));
+    await Promise.all(keys.filter(key=>key.startsWith(LEGACY_PREFIX)&&key!==CACHE_NAME).map(key=>caches.delete(key)));
     await self.clients.claim();
-    if(replacedLegacy){
-      const windows=await self.clients.matchAll({type:'window',includeUncontrolled:true});
-      await Promise.allSettled(windows.map(client=>client.navigate?.(client.url)));
-    }
   })());
 });
 
@@ -50,6 +30,18 @@ function isVersionedStatic(request,url){
   return /\.(?:js|css|json|webmanifest|png|webp|jpe?g|gif|svg|ico)$/i.test(url.pathname);
 }
 
+async function networkNavigation(request){
+  const cache=await caches.open(CACHE_NAME);
+  try{
+    const response=await fetch(request,{cache:'no-store'});
+    if(response?.ok){
+      await cache.put(new Request('./index.html'),response.clone());
+      return response;
+    }
+  }catch(_error){}
+  return await cache.match('./index.html')||await cache.match('./')||Response.error();
+}
+
 async function updateCache(request){
   const cache=await caches.open(CACHE_NAME);
   try{
@@ -59,23 +51,10 @@ async function updateCache(request){
   }catch(_error){return null;}
 }
 
-async function instantNavigation(request,event){
-  const cache=await caches.open(CACHE_NAME);
-  const cached=await cache.match(request,{ignoreSearch:true})||await cache.match('./index.html')||await cache.match('./');
-  const network=updateCache(request);
-  if(cached){
-    event.waitUntil(network);
-    return cached;
-  }
-  return (await network)||Response.error();
-}
-
-async function cacheFirst(request){
+async function cacheStatic(request){
   const cache=await caches.open(CACHE_NAME);
   const url=new URL(request.url);
-  if(FORCE_NETWORK.test(url.pathname)){
-    return (await updateCache(request))||await cache.match(request)||Response.error();
-  }
+  if(FORCE_NETWORK.test(url.pathname))return (await updateCache(request))||await cache.match(request)||Response.error();
   const cached=await cache.match(request);
   if(cached)return cached;
   const response=await fetch(request);
@@ -88,10 +67,10 @@ self.addEventListener('fetch',event=>{
   if(request.method!=='GET')return;
   const url=new URL(request.url);
   if(isNavigation(request,url)){
-    event.respondWith(instantNavigation(request,event));
+    event.respondWith(networkNavigation(request));
     return;
   }
-  if(isVersionedStatic(request,url))event.respondWith(cacheFirst(request));
+  if(isVersionedStatic(request,url))event.respondWith(cacheStatic(request));
 });
 
 self.addEventListener('push',event=>{
