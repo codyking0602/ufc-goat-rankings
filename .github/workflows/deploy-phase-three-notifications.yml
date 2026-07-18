@@ -1,0 +1,214 @@
+name: Deploy Phase 3 Smart Notifications
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy-phase-three-notifications.yml'
+      - 'supabase/app-notifications-phase-three.sql'
+      - 'supabase/functions/octagon-push/**'
+      - 'assets/js/app-notification-center.js'
+      - 'assets/js/app-update-watcher.js'
+      - 'assets/js/play-daily-live-sync.js'
+      - 'assets/data/what-changed.js'
+      - 'sw.js'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy-phase-three-smart-notifications
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate Phase 3 notification and refresh sources
+        run: |
+          node --check assets/js/app-notification-center.js
+          node --check assets/js/app-update-watcher.js
+          node --check assets/js/play-daily-live-sync.js
+          node --check assets/data/what-changed.js
+          node --check sw.js
+          grep -Fq "phase-3-smart-notifications" supabase/app-notifications-phase-three.sql
+          grep -Fq "app_notify_profile_challenge_insert" supabase/app-notifications-phase-three.sql
+          grep -Fq "app_notify_war_room_message_insert" supabase/app-notifications-phase-three.sql
+          grep -Fq "app_queue_picks_reminders" supabase/app-notifications-phase-three.sql
+          grep -Fq "octagon-hq-smart-notifications" supabase/app-notifications-phase-three.sql
+          grep -Fq "app_notification_claim_batch" supabase/functions/octagon-push/index.ts
+          grep -Fq "server-owned" supabase/functions/octagon-push/index.ts
+          grep -Fq "play-daily-live-sync-20260718a-phase-3" assets/js/play-daily-live-sync.js
+          grep -Fq "window.location.reload()" assets/js/app-update-watcher.js
+          grep -Fq "cacheFirst" sw.js
+
+      - name: Apply and audit Phase 3 notification database
+        env:
+          SUPABASE_PROJECT_REF: hdkjwezaswhisxupxydc
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import re
+          import secrets
+          import urllib.error
+          import urllib.request
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          project=os.environ['SUPABASE_PROJECT_REF']
+          token=os.environ.get('SUPABASE_ACCESS_TOKEN','').strip()
+          if not token:
+              raise RuntimeError('SUPABASE_ACCESS_TOKEN is not configured.')
+
+          status_path=Path('supabase/goat26-deployment-status.json')
+          migration=Path('supabase/app-notifications-phase-three.sql').read_text()
+          config_source=Path('assets/data/supabase-config.js').read_text()
+          key_parts=re.search(r"anonKey:\s*\['([^']+)','([^']+)'\]",config_source)
+          if not key_parts:
+              raise RuntimeError('Could not read the public Supabase browser key.')
+          anon_key=''.join(key_parts.groups())
+          edge_url=f'https://{project}.supabase.co/functions/v1/octagon-push'
+
+          def query(sql,read_only=False):
+              request=urllib.request.Request(
+                  f'https://api.supabase.com/v1/projects/{project}/database/query',
+                  data=json.dumps({'query':sql,'read_only':read_only}).encode(),
+                  headers={
+                      'Accept':'application/json',
+                      'Authorization':f'Bearer {token}',
+                      'Content-Type':'application/json',
+                      'User-Agent':'Octagon-HQ-Phase-3/1.0',
+                  },
+                  method='POST',
+              )
+              try:
+                  with urllib.request.urlopen(request,timeout=120) as response:
+                      return json.loads(response.read().decode() or 'null')
+              except urllib.error.HTTPError as error:
+                  detail=error.read().decode(errors='replace')[:2400]
+                  raise RuntimeError(f'Supabase Management API returned HTTP {error.code}: {detail}') from error
+
+          def rows(value):
+              return value.get('result',value) if isinstance(value,dict) else value
+
+          query(migration,read_only=False)
+          existing=rows(query("select internal_token from public.app_notification_config where singleton limit 1;",read_only=True))
+          worker_token=(existing[0].get('internal_token') if isinstance(existing,list) and existing else '') or secrets.token_urlsafe(40)
+          safe_token=worker_token.replace("'","''")
+          query(
+              "insert into public.app_notification_config(singleton,internal_token,edge_url,anon_key,updated_at) values "
+              f"(true,'{safe_token}','{edge_url}','{anon_key}',now()) "
+              "on conflict(singleton) do update set edge_url=excluded.edge_url,anon_key=excluded.anon_key,updated_at=now();",
+              read_only=False,
+          )
+          query('select public.app_notification_schedule();',read_only=False)
+          audit_rows=rows(query('select public.app_notification_audit() as audit;',read_only=True))
+          audit=audit_rows[0].get('audit') if isinstance(audit_rows,list) and audit_rows else None
+          if isinstance(audit,str): audit=json.loads(audit)
+          if not isinstance(audit,dict):
+              raise RuntimeError('Phase 3 notification audit returned no data.')
+          required=['configured','cron_scheduled','challenge_trigger','war_room_trigger']
+          if not audit.get('ok') or not all(audit.get(key) for key in required):
+              raise RuntimeError(f'Phase 3 notification audit failed: {audit}')
+
+          status={}
+          if status_path.exists():
+              try: status=json.loads(status_path.read_text())
+              except Exception: status={}
+          status['smart_notifications']={
+              **audit,
+              'phase':'phase-3',
+              'status':'active',
+              'delivery_owner':'database-outbox-and-edge-worker',
+              'types':['direct-challenge','picks-reminder','war-room'],
+              'picks_windows_minutes':[120,20],
+              'worker':'octagon-push',
+              'worker_interval':'one-minute',
+              'device_settings':'activity-profile',
+              'test_notification':True,
+          }
+          status['daily_leaderboard_live_sync']={
+              'status':'active',
+              'poll_seconds':10,
+              'change_detection':'server-signature-before-render',
+          }
+          status['refresh_performance']={
+              'status':'active',
+              'navigation':'network-first',
+              'versioned_assets':'cache-first',
+              'manual_refresh':'normal-reload-with-state-restore',
+          }
+          status['checked_at']=datetime.now(timezone.utc).isoformat()
+          status_path.write_text(json.dumps(status,indent=2,sort_keys=True)+'\n')
+          print(json.dumps(audit,indent=2))
+          PY
+
+      - name: Deploy smart notification worker
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          npx --yes supabase@latest functions deploy octagon-push \
+            --project-ref hdkjwezaswhisxupxydc \
+            --no-verify-jwt
+
+      - name: Wire Phase 3 into the live app
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path=Path('index.html')
+          text=path.read_text()
+
+          text,count=re.subn(
+              r'assets/js/app-update-watcher\.js\?v=[^"\s]+',
+              'assets/js/app-update-watcher.js?v=app-update-watcher-20260718e-phase-3-fast-refresh',
+              text,
+              count=1,
+          )
+          if count!=1:
+              raise SystemExit('Could not update app-update-watcher.js in index.html')
+
+          notification_tag='<script src="assets/js/app-notification-center.js?v=app-notification-center-20260718a-phase-3"></script>'
+          text=re.sub(r'\s*<script src="assets/js/app-notification-center\.js\?v=[^"]+"></script>','',text)
+          anchor=re.search(r'(?P<indent>\s*)<script src="assets/js/profile-challenges\.js\?v=[^"]+"></script>',text)
+          if not anchor:
+              raise SystemExit('Could not find profile-challenges.js anchor')
+          replacement=anchor.group(0)+anchor.group('indent')+notification_tag
+          text=text[:anchor.start()]+replacement+text[anchor.end():]
+
+          text=re.sub(
+              r'<link rel="manifest" href="[^"]+"\s*/>',
+              '<link rel="manifest" href="manifest.webmanifest?v=phase-3-smart-notifications" />',
+              text,
+              count=1,
+          )
+          text=re.sub(
+              r'<meta name="app-build" content="[^"]+" />',
+              '<meta name="app-build" content="20260718-phase-3-smart-notifications" />',
+              text,
+              count=1,
+          )
+          path.write_text(text)
+          PY
+
+      - name: Commit Phase 3 deployment record
+        run: |
+          if git diff --quiet -- index.html supabase/goat26-deployment-status.json; then
+            echo 'Phase 3 deployment record is unchanged.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
+          git add index.html supabase/goat26-deployment-status.json
+          git commit -m 'Deploy Phase 3 smart notifications [skip ci]'
+          git pull --rebase origin main
+          git push origin HEAD:main
