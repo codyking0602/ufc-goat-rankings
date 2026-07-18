@@ -104,3 +104,5 @@ jobs:
           git commit -m 'Deploy Octagon HQ install and notification branding'
           git pull --rebase origin main
           git push origin HEAD:main
+
+# Triggered after the workflow existed on main.
