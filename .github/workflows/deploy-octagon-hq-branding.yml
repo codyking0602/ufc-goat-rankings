@@ -27,15 +27,18 @@ jobs:
 
           index_path=Path('index.html')
           index=index_path.read_text()
-          mobile_meta='''  <meta name="application-name" content="Octagon HQ" />
-  <meta name="apple-mobile-web-app-title" content="Octagon HQ" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link rel="apple-touch-icon" href="assets/app-icon.png?v=20260702c" />'''
+          mobile_meta='\n'.join([
+              '  <meta name="application-name" content="Octagon HQ" />',
+              '  <meta name="apple-mobile-web-app-title" content="Octagon HQ" />',
+              '  <meta name="apple-mobile-web-app-capable" content="yes" />',
+              '  <meta name="mobile-web-app-capable" content="yes" />',
+              '  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />',
+              '  <link rel="apple-touch-icon" href="assets/app-icon.png?v=20260702c" />',
+          ])
           if 'apple-mobile-web-app-title' not in index:
               anchor='  <meta name="viewport" content="width=device-width, initial-scale=1" />'
-              if anchor not in index: raise SystemExit('Viewport anchor missing from index.html')
+              if anchor not in index:
+                  raise SystemExit('Viewport anchor missing from index.html')
               index=index.replace(anchor,anchor+'\n'+mobile_meta,1)
           index=re.sub(r'manifest\.webmanifest\?v=[^"\s]+','manifest.webmanifest?v=octagon-hq-branding-20260718a',index,count=1)
           index_path.write_text(index)
@@ -59,7 +62,8 @@ jobs:
               "'body','Direct challenges, Picks reminders, and War Room alerts can reach this device.'":"'body','Challenges, Picks reminders, and War Room alerts are ready.'",
           }
           for old,new in replacements.items():
-              if old not in sql and new not in sql: raise SystemExit(f'Notification branding anchor missing: {old}')
+              if old not in sql and new not in sql:
+                  raise SystemExit(f'Notification branding anchor missing: {old}')
               sql=sql.replace(old,new)
           sql_path.write_text(sql)
           PY
