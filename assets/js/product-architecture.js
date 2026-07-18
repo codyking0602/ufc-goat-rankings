@@ -1,14 +1,14 @@
 (function(){
   'use strict';
 
-  const VERSION='product-architecture-20260718l-phase-2b-retention';
+  const VERSION='product-architecture-20260718m-phase-2b-lazy';
   const SHELL_SRC='assets/js/octagon-hq-shell.js?v=app-shell-20260718d-rankings-static';
   const CONNECTIVITY_SRC='assets/js/product-connectivity.js?v=product-connectivity-20260718c-clean-handoffs';
   const POLISH_CSS='assets/css/product-polish.css?v=product-polish-20260718c-header-final';
   const POLISH_SRC='assets/js/product-polish.js?v=product-polish-20260718c-header-final';
   const AVATAR_SYNC_SRC='assets/js/profile-avatar-sync.js?v=profile-avatar-sync-20260718c-home-war-room';
   const ACTIVITY_SRC='assets/js/profile-activity.js?v=profile-activity-20260718a-phase-2a';
-  const FIND_LEADER_RETENTION_SRC='assets/js/find-leader-retention.js?v=find-leader-retention-20260718b-phase-2b-final';
+  const FIND_LEADER_RETENTION_SRC='assets/js/find-leader-retention.js?v=find-leader-retention-20260718c-phase-2b-lazy';
 
   function shell(){return window.UFC_APP_SHELL||null;}
 
