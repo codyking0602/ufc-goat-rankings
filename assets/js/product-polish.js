@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='product-polish-20260718b-mobile-audit';
+  const VERSION='product-polish-20260718c-header-final';
   let scheduled=false;
   let resizeTimer=0;
 
@@ -22,6 +22,12 @@
     if(profile&&profile.parentElement!==tools)tools.appendChild(profile);
     if(refresh&&refresh.parentElement!==tools)tools.appendChild(refresh);
     return true;
+  }
+
+  function standardizeNavigation(){
+    const rankings=document.querySelector('.tabs [data-destination="rankings"]');
+    const label=rankings?.querySelector('[data-destination-label]')||rankings;
+    if(label&&label.textContent!=='Rankings')label.textContent='Rankings';
   }
 
   function standardizeHeaders(){
@@ -70,46 +76,26 @@
     }
   }
 
-  function visibleMajorControls(){
-    const selectors=[
-      'nav.tabs .tab',
-      '.rankings-subnav button',
-      '.home-dashboard-action',
-      '.play-primary','.play-secondary',
-      '.picks-primary','.picks-secondary',
-      '.intelligence-primary','.intelligence-secondary',
-      '.profile-connectivity-actions button',
-      '.octagon-intelligence-button',
-      '[data-octagon-refresh]','[data-octagon-alerts]','[data-octagon-manage-beta]'
-    ];
-    return [...document.querySelectorAll(selectors.join(','))].filter(node=>{
-      const style=getComputedStyle(node);
-      return style.display!=='none'&&style.visibility!=='hidden'&&node.getClientRects().length>0;
-    });
-  }
-
   function auditMobileCohesion(){
     window.clearTimeout(resizeTimer);
     resizeTimer=window.setTimeout(()=>{
       const viewport=Math.max(document.documentElement.clientWidth,window.innerWidth||0);
-      const documentOverflow=document.documentElement.scrollWidth>viewport+2;
       const active=document.querySelector('main.shell>.view.active-view');
-      const activeBox=active?.getBoundingClientRect();
-      const activeOverflow=Boolean(activeBox&&(activeBox.left<-2||activeBox.right>viewport+2||active.scrollWidth>active.clientWidth+2));
-      const undersized=viewport<=900
-        ? visibleMajorControls().filter(node=>node.getBoundingClientRect().height<40).length
-        : 0;
+      const documentOverflow=document.documentElement.scrollWidth>viewport+2;
+      const activeOverflow=Boolean(active&&active.scrollWidth>active.clientWidth+2);
+      const shortTargets=[...document.querySelectorAll('.tabs .tab,.home-dashboard-action,.play-primary,.play-secondary,.picks-primary,.picks-secondary,.intelligence-primary,.intelligence-secondary,.profile-connectivity-actions button,.octagon-intelligence-button')]
+        .filter(node=>node.offsetParent!==null&&node.getBoundingClientRect().height<40);
       const guarded=documentOverflow||activeOverflow;
       document.body.classList.toggle('product-overflow-guard',guarded);
-      document.documentElement.dataset.mobileCohesion=guarded||undersized?'guarded':'passed';
-      document.documentElement.dataset.mobileOverflow=guarded?'true':'false';
-      document.documentElement.dataset.mobileTouchTargets=undersized?'guarded':'passed';
+      document.documentElement.dataset.mobileCohesion=guarded?'guarded':shortTargets.length?'touch-review':'passed';
       document.documentElement.dataset.mobileViewport=viewport<=430?'phone-small':viewport<=900?'phone-tablet':'desktop';
+      document.documentElement.dataset.shortTouchTargets=String(shortTargets.length);
     },80);
   }
 
   function apply(){
     ensureHeaderTools();
+    standardizeNavigation();
     standardizeHeaders();
     removeDeveloperResidue();
     normalizeWarRoomCopy();
