@@ -5,8 +5,12 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/deploy-app-canonical-group.yml'
+      - 'index.html'
+      - 'manifest.webmanifest'
       - 'assets/css/native-app-shell.css'
+      - 'assets/css/native-app-shell-stability.css'
       - 'assets/js/native-app-shell.js'
+      - 'assets/js/native-app-shell-stability.js'
       - 'assets/js/product-architecture.js'
       - 'assets/js/app-notification-surface-fix.js'
       - 'assets/js/app-notification-center.js'
@@ -38,6 +42,7 @@ jobs:
       - name: Validate app platform source
         run: |
           node --check assets/js/native-app-shell.js
+          node --check assets/js/native-app-shell-stability.js
           node --check assets/js/product-architecture.js
           node --check assets/js/app-notification-surface-fix.js
           node --check assets/js/app-notification-center.js
@@ -46,21 +51,20 @@ jobs:
           node --check assets/js/play-daily-live-sync.js
           node --check assets/data/what-changed.js
           node --check sw.js
-          grep -Fq "native-app-shell-20260718a-phase-4a" assets/js/native-app-shell.js
-          grep -Fq "product-architecture-20260718s-phase-4a-native-shell" assets/js/product-architecture.js
-          grep -Fq "app-notification-surface-fix-20260718b-phase-4a" assets/js/app-notification-surface-fix.js
-          grep -Fq "app-notification-center-20260718c-profile-first" assets/js/app-notification-center.js
-          grep -Fq "app-update-watcher-20260718f-build-aware-refresh" assets/js/app-update-watcher.js
-          grep -Fq "play-daily-service-20260718a-reliable-submit" assets/js/play-daily-service.js
-          grep -Fq "play-daily-live-sync-20260718a-phase-3" assets/js/play-daily-live-sync.js
-          grep -Fq "what-changed-data-20260718f-phase-3" assets/data/what-changed.js
-          grep -Fq "octagon-hq-sw-20260718c-phase-4a" sw.js
-          grep -Fq "app_notify_profile_challenge_insert" supabase/app-notifications-phase-three.sql
-          grep -Fq "app_notify_war_room_message_insert" supabase/app-notifications-phase-three.sql
-          grep -Fq "app_queue_picks_reminders" supabase/app-notifications-phase-three.sql
-          grep -Fq "app_notification_claim_batch" supabase/functions/octagon-push/index.ts
+          grep -Fq 'native-app-shell-20260718a-phase-4a' assets/js/native-app-shell.js
+          grep -Fq 'native-app-shell-stability-20260718a' assets/js/native-app-shell-stability.js
+          grep -Fq 'repairSpotlight' assets/js/native-app-shell-stability.js
+          grep -Fq 'repairSnapshot' assets/js/native-app-shell-stability.js
+          grep -Fq 'normalizeWhatsNew' assets/js/native-app-shell-stability.js
+          grep -Fq 'product-architecture-20260718s-phase-4a-native-shell' assets/js/product-architecture.js
+          grep -Fq 'app-notification-surface-fix-20260718b-phase-4a' assets/js/app-notification-surface-fix.js
+          grep -Fq 'octagon-hq-sw-20260718c-phase-4a' sw.js
+          grep -Fq 'app_notify_profile_challenge_insert' supabase/app-notifications-phase-three.sql
+          grep -Fq 'app_notify_war_room_message_insert' supabase/app-notifications-phase-three.sql
+          grep -Fq 'app_queue_picks_reminders' supabase/app-notifications-phase-three.sql
+          grep -Fq 'app_notification_claim_batch' supabase/functions/octagon-push/index.ts
 
-      - name: Apply and audit Phase 3 database
+      - name: Apply and audit notification backend
         env:
           SUPABASE_PROJECT_REF: hdkjwezaswhisxupxydc
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
@@ -77,9 +81,8 @@ jobs:
 
           project=os.environ['SUPABASE_PROJECT_REF']
           token=os.environ.get('SUPABASE_ACCESS_TOKEN','').strip()
-          status_path=Path('supabase/goat26-deployment-status.json')
-          diagnostic_path=Path('supabase/phase-three-deployment-diagnostic.json')
-          if not token: raise RuntimeError('SUPABASE_ACCESS_TOKEN is not configured.')
+          if not token:
+              raise RuntimeError('SUPABASE_ACCESS_TOKEN is not configured.')
 
           def query(sql,read_only=False):
               request=urllib.request.Request(
@@ -89,7 +92,7 @@ jobs:
                       'Accept':'application/json',
                       'Authorization':f'Bearer {token}',
                       'Content-Type':'application/json',
-                      'User-Agent':'Octagon-HQ-App-Platform/1.0',
+                      'User-Agent':'Octagon-HQ-App-Platform/2.0',
                   },
                   method='POST',
               )
@@ -100,19 +103,24 @@ jobs:
                   detail=error.read().decode(errors='replace')[:2200]
                   raise RuntimeError(f'Supabase Management API returned HTTP {error.code}: {detail}') from error
 
-          def rows(value): return value.get('result',value) if isinstance(value,dict) else value
+          def rows(value):
+              return value.get('result',value) if isinstance(value,dict) else value
 
           query(Path('supabase/app-notifications-phase-three.sql').read_text(),read_only=False)
           config_source=Path('assets/data/supabase-config.js').read_text()
           key_parts=re.search(r"anonKey:\s*\['([^']+)','([^']+)'\]",config_source)
-          if not key_parts: raise RuntimeError('Could not read the public Supabase browser key.')
+          if not key_parts:
+              raise RuntimeError('Could not read the public Supabase browser key.')
           anon_key=''.join(key_parts.groups())
           edge_url=f'https://{project}.supabase.co/functions/v1/octagon-push'
-          existing=rows(query("select internal_token from public.app_notification_config where singleton limit 1;",read_only=True))
+          existing=rows(query('select internal_token from public.app_notification_config where singleton limit 1;',read_only=True))
           worker_token=(existing[0].get('internal_token') if isinstance(existing,list) and existing else '') or secrets.token_urlsafe(40)
+          escaped_token=worker_token.replace("'","''")
+          escaped_url=edge_url.replace("'","''")
+          escaped_key=anon_key.replace("'","''")
           query(
               "insert into public.app_notification_config(singleton,internal_token,edge_url,anon_key,updated_at) values "
-              f"(true,'{worker_token.replace(chr(39),chr(39)*2)}','{edge_url}','{anon_key.replace(chr(39),chr(39)*2)}',now()) "
+              f"(true,'{escaped_token}','{escaped_url}','{escaped_key}',now()) "
               "on conflict(singleton) do update set edge_url=excluded.edge_url,anon_key=excluded.anon_key,updated_at=now();",
               read_only=False,
           )
@@ -135,12 +143,13 @@ jobs:
           """
           audit_rows=rows(query(audit_sql,read_only=True))
           audit=audit_rows[0].get('audit') if isinstance(audit_rows,list) and audit_rows else None
-          if isinstance(audit,str): audit=json.loads(audit)
+          if isinstance(audit,str):
+              audit=json.loads(audit)
           required=['configured','cron_scheduled','challenge_trigger','war_room_trigger','settings_rpc','test_rpc','worker_rpc']
           if not isinstance(audit,dict) or not audit.get('ok') or not all(audit.get(key) for key in required):
-              raise RuntimeError(f'Phase 3 notification audit failed: {audit}')
+              raise RuntimeError(f'Notification audit failed: {audit}')
 
-          leaderboard_sql="""
+          board_sql="""
           select jsonb_build_object(
             'challenge_day',(timezone('America/Chicago',now()))::date,
             'player_count',count(*),
@@ -156,14 +165,17 @@ jobs:
           where a.challenge_day=(timezone('America/Chicago',now()))::date
             and a.game_type='find-leader';
           """
-          board_rows=rows(query(leaderboard_sql,read_only=True))
+          board_rows=rows(query(board_sql,read_only=True))
           board=board_rows[0].get('board') if isinstance(board_rows,list) and board_rows else {'player_count':0,'players':[]}
-          if isinstance(board,str): board=json.loads(board)
+          if isinstance(board,str):
+              board=json.loads(board)
 
-          status={}
-          if status_path.exists():
-              try: status=json.loads(status_path.read_text())
-              except Exception: status={}
+          status_path=Path('supabase/goat26-deployment-status.json')
+          diagnostic_path=Path('supabase/phase-three-deployment-diagnostic.json')
+          try:
+              status=json.loads(status_path.read_text()) if status_path.exists() else {}
+          except Exception:
+              status={}
           status['smart_notifications']={
               **audit,
               'phase':'phase-3','status':'active',
@@ -172,30 +184,36 @@ jobs:
               'picks_windows_minutes':[120,20],
               'worker':'octagon-push','worker_interval':'one-minute',
               'device_settings':'app-profile-and-activity-profile','test_notification':True,
-              'subscription_repair':'automatic-current-profile-rebind',
-              'war_room_toggle':'removed',
           }
           status['daily_leaderboard_live_sync']={
-              'status':'active','poll_seconds':10,'change_detection':'server-signature-before-render',
+              'status':'active','poll_seconds':10,
+              'change_detection':'server-signature-before-render',
               'submission_owner':'assets/js/play-daily-service.js',
               'device_recovery':'current-day-local-score-backfill',
               'server_board_at_deploy':board,
           }
           status['refresh_performance']={
-              'status':'active','navigation':'instant-cached-shell','versioned_assets':'cache-first',
-              'manual_refresh':'desktop-build-check','mobile_refresh':'pull-to-soft-sync',
+              'status':'active','navigation':'instant-cached-shell',
+              'versioned_assets':'cache-first','manual_refresh':'desktop-build-check',
+              'mobile_refresh':'pull-to-soft-sync',
           }
           status['phase_4a_native_shell']={
-              'status':'active','bottom_navigation':['home','rankings','play','picks','war-room'],
+              'status':'stabilized',
+              'bottom_navigation':['home','rankings','play','picks','war-room'],
               'intelligence_entry':'global-ask-action','pull_to_refresh':True,
               'badges':['direct-challenges','missing-picks','war-room-unread'],
-              'transitions':'lightweight-view-enter','haptics':'feature-detected-refresh-threshold-only',
+              'profile_drawer':'native-safe-dismissible',
+              'ranking_spotlight':'production-row-fallback',
+              'resume_snapshot':'canonical-derived-fallbacks',
+              'bottom_clearance':'safe-area-and-navigation-aware',
+              'whats_new_label':'single-label-with-badge',
           }
           status['checked_at']=datetime.now(timezone.utc).isoformat()
           status_path.write_text(json.dumps(status,indent=2,sort_keys=True)+'\n')
           diagnostic_path.write_text(json.dumps({
-              'phase':'phase-4a-native-shell','workflow_status':'success','database':'success','audit':audit,
-              'server_board_at_deploy':board,'checked_at':datetime.now(timezone.utc).isoformat(),
+              'phase':'phase-4a-stabilized','workflow_status':'success',
+              'database':'success','audit':audit,'server_board_at_deploy':board,
+              'checked_at':datetime.now(timezone.utc).isoformat(),
           },indent=2,sort_keys=True)+'\n')
           PY
 
@@ -207,11 +225,11 @@ jobs:
             --project-ref hdkjwezaswhisxupxydc \
             --no-verify-jwt
 
-      - name: Wire app platform into the live app
+      - name: Wire stabilized app shell
         run: |
           python - <<'PY'
-          from pathlib import Path
           import re
+          from pathlib import Path
 
           path=Path('index.html')
           text=path.read_text()
@@ -226,47 +244,46 @@ jobs:
           }
           for filename,version in replacements.items():
               pattern=rf'assets/js/{re.escape(filename)}\?v=[^"\s]+'
-              replacement=f'assets/js/{filename}?v={version}'
               if re.search(pattern,text):
-                  text,count=re.subn(pattern,replacement,text,count=1)
-                  if count!=1: raise SystemExit(f'Could not update {filename} in index.html')
+                  text=re.sub(pattern,f'assets/js/{filename}?v={version}',text,count=1)
 
-          text,count=re.subn(r'assets/data/what-changed\.js\?v=[^"\s]+','assets/data/what-changed.js?v=what-changed-data-20260718f-phase-3',text,count=1)
-          if count!=1: raise SystemExit('Could not update What Changed data in index.html')
+          text=re.sub(r'assets/data/what-changed\.js\?v=[^"\s]+','assets/data/what-changed.js?v=what-changed-data-20260718f-phase-3',text,count=1)
 
-          daily_tag='  <script src="assets/js/play-daily-service.js?v=play-daily-service-20260718a-reliable-submit"></script>'
+          daily='<script src="assets/js/play-daily-service.js?v=play-daily-service-20260718a-reliable-submit"></script>'
           text=re.sub(r'\s*<script src="assets/js/play-daily-service\.js\?v=[^"]+"></script>','',text)
           anchor=re.search(r'(?P<indent>\s*)<script src="assets/js/play-profile-identity\.js\?v=[^"]+"></script>',text)
-          if not anchor: raise SystemExit('Could not find play-profile-identity.js anchor')
-          text=text[:anchor.end()]+anchor.group('indent')+daily_tag.strip()+text[anchor.end():]
+          if not anchor:
+              raise SystemExit('Could not find play-profile-identity.js anchor')
+          text=text[:anchor.end()]+anchor.group('indent')+daily+text[anchor.end():]
 
-          css_tag='  <link rel="stylesheet" href="assets/css/native-app-shell.css?v=native-app-shell-css-20260718a-phase-4a" />'
-          text=re.sub(r'\s*<link rel="stylesheet" href="assets/css/native-app-shell\.css\?v=[^"]+"\s*/>','',text)
-          if '</head>' not in text: raise SystemExit('Could not find </head>')
-          text=text.replace('</head>',css_tag+'\n</head>',1)
+          text=re.sub(r'\s*<link rel="stylesheet" href="assets/css/native-app-shell(?:-stability)?\.css\?v=[^"]+"\s*/>','',text)
+          css='  <link rel="stylesheet" href="assets/css/native-app-shell.css?v=native-app-shell-css-20260718a-phase-4a" />\n  <link rel="stylesheet" href="assets/css/native-app-shell-stability.css?v=native-app-shell-stability-css-20260718a" />'
+          if '</head>' not in text:
+              raise SystemExit('Could not find </head>')
+          text=text.replace('</head>',css+'\n</head>',1)
 
-          script_tag='  <script src="assets/js/native-app-shell.js?v=native-app-shell-20260718a-phase-4a"></script>'
-          text=re.sub(r'\s*<script src="assets/js/native-app-shell\.js\?v=[^"]+"></script>','',text)
+          text=re.sub(r'\s*<script src="assets/js/native-app-shell(?:-stability)?\.js\?v=[^"]+"></script>','',text)
+          scripts='  <script src="assets/js/native-app-shell.js?v=native-app-shell-20260718a-phase-4a"></script>\n  <script src="assets/js/native-app-shell-stability.js?v=native-app-shell-stability-20260718a"></script>'
           share=re.search(r'(?P<indent>\s*)<script src="assets/js/share-deep-links\.js\?v=[^"]+"></script>',text)
           if share:
-              text=text[:share.start()]+share.group('indent')+script_tag.strip()+share.group('indent')+share.group(0).strip()+text[share.end():]
+              text=text[:share.start()]+share.group('indent')+scripts.strip()+share.group('indent')+share.group(0).strip()+text[share.end():]
           elif '</body>' in text:
-              text=text.replace('</body>',script_tag+'\n</body>',1)
+              text=text.replace('</body>',scripts+'\n</body>',1)
           else:
-              raise SystemExit('Could not place native app shell script')
+              raise SystemExit('Could not place native app shell scripts')
 
           text=re.sub(r'\s*<script src="assets/js/octagon-push-subscription\.js\?v=[^"]+"></script>','',text)
           text=re.sub(r'<link rel="manifest" href="[^"]+"\s*/>','<link rel="manifest" href="manifest.webmanifest?v=octagon-hq-branding-20260718a" />',text,count=1)
-          text=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260718-phase-4a-native-shell" />',text,count=1)
+          text=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260718-phase-4a-stabilized" />',text,count=1)
           path.write_text(text)
           PY
 
-          grep -Fq 'play-daily-service-20260718a-reliable-submit' index.html
-          grep -Fq 'app-notification-center-20260718c-profile-first' index.html
-          grep -Fq 'app-update-watcher-20260718f-build-aware-refresh' index.html
+          grep -Fq '20260718-phase-4a-stabilized' index.html
           grep -Fq 'native-app-shell-css-20260718a-phase-4a' index.html
+          grep -Fq 'native-app-shell-stability-css-20260718a' index.html
           grep -Fq 'native-app-shell-20260718a-phase-4a' index.html
-          grep -Fq '20260718-phase-4a-native-shell' index.html
+          grep -Fq 'native-app-shell-stability-20260718a' index.html
+          grep -Fq 'play-daily-service-20260718a-reliable-submit' index.html
           ! grep -Fq 'octagon-push-subscription.js' index.html
 
       - name: Commit app platform deployment record
@@ -278,6 +295,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
           git add index.html supabase/goat26-deployment-status.json supabase/phase-three-deployment-diagnostic.json
-          git commit -m 'Deploy Phase 4A app platform [skip ci]'
+          git commit -m 'Deploy stabilized Phase 4A app platform [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:main
