@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='octagon-hq-nav-grid-disabled-20260717a';
+  const VERSION='octagon-hq-nav-grid-disabled-20260718b';
 
   function clearLegacyGrid(){
     document.getElementById('octagonHqCompressionCss')?.remove();
