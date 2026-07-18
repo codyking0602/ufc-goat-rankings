@@ -1,7 +1,17 @@
 {
   "active_members": 6,
+  "activity_profile": {
+    "phase": "phase-2a",
+    "sources": [
+      "play-local-ledger",
+      "find-leader-history",
+      "picks-room-snapshots",
+      "war-room-snapshot"
+    ],
+    "status": "active"
+  },
   "avatar_profiles": 2,
-  "checked_at": "2026-07-18T05:14:42.966668+00:00",
+  "checked_at": "2026-07-18T05:36:43.443530+00:00",
   "code": "GOAT26",
   "deployment_method": "supabase-management-api",
   "events": 2,
@@ -69,6 +79,17 @@
       "reactions": true
     },
     "vapid_ready": true
+  },
+  "profile_photos": {
+    "anon_photo": true,
+    "anon_snapshot": true,
+    "column_exists": true,
+    "crop_size": 320,
+    "phase": "shared-photo-or-fighter-avatar",
+    "photo_profiles": 1,
+    "photo_rpc": true,
+    "snapshot_rpc": true,
+    "status": "active"
   },
   "rooms": 2,
   "saved_picks": 51,
