@@ -6,7 +6,9 @@ on:
     paths:
       - '.github/workflows/deploy-octagon-hq-branding.yml'
       - 'assets/css/native-app-shell.css'
+      - 'assets/css/native-app-shell-stability.css'
       - 'assets/js/native-app-shell.js'
+      - 'assets/js/native-app-shell-stability.js'
       - 'assets/js/product-architecture.js'
       - 'assets/js/app-notification-surface-fix.js'
       - 'sw.js'
@@ -26,17 +28,23 @@ jobs:
       - name: Validate Phase 4A source
         run: |
           node --check assets/js/native-app-shell.js
+          node --check assets/js/native-app-shell-stability.js
           node --check assets/js/product-architecture.js
           node --check assets/js/app-notification-surface-fix.js
           node --check sw.js
           grep -Fq "native-app-shell-20260718a-phase-4a" assets/js/native-app-shell.js
+          grep -Fq "native-app-shell-stability-20260718a" assets/js/native-app-shell-stability.js
           grep -Fq "product-architecture-20260718s-phase-4a-native-shell" assets/js/product-architecture.js
           grep -Fq "app-notification-surface-fix-20260718b-phase-4a" assets/js/app-notification-surface-fix.js
           grep -Fq "octagon-hq-sw-20260718c-phase-4a" sw.js
           grep -Fq ".native-bottom-nav" assets/css/native-app-shell.css
           grep -Fq ".native-pull-refresh" assets/css/native-app-shell.css
+          grep -Fq ".drawer-panel>.close" assets/css/native-app-shell-stability.css
+          grep -Fq "repairSpotlight" assets/js/native-app-shell-stability.js
+          grep -Fq "repairSnapshot" assets/js/native-app-shell-stability.js
+          grep -Fq "normalizeWhatsNew" assets/js/native-app-shell-stability.js
 
-      - name: Wire Phase 4A into the live app
+      - name: Wire Phase 4A stabilization into the live app
         run: |
           python - <<'PY'
           import json
@@ -60,26 +68,33 @@ jobs:
                   raise SystemExit('Viewport anchor missing from index.html')
               index=index.replace(anchor,anchor+'\n'+mobile_meta,1)
 
-          index=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260718-phase-4a-native-shell" />',index,count=1)
+          index=re.sub(r'<meta name="app-build" content="[^"]+" />','<meta name="app-build" content="20260718-phase-4a-stabilized" />',index,count=1)
           index=re.sub(r'manifest\.webmanifest\?v=[^"\s]+','manifest.webmanifest?v=octagon-hq-branding-20260718a',index,count=1)
           index=re.sub(r'assets/js/product-architecture\.js\?v=[^"\s]+','assets/js/product-architecture.js?v=product-architecture-20260718s-phase-4a-native-shell',index,count=1)
           index=re.sub(r'assets/js/app-notification-surface-fix\.js\?v=[^"\s]+','assets/js/app-notification-surface-fix.js?v=app-notification-surface-fix-20260718b-phase-4a',index,count=1)
 
-          css_tag='  <link rel="stylesheet" href="assets/css/native-app-shell.css?v=native-app-shell-css-20260718a-phase-4a" />'
-          index=re.sub(r'\s*<link rel="stylesheet" href="assets/css/native-app-shell\.css\?v=[^"]+"\s*/>','',index)
+          css_tags=[
+              '  <link rel="stylesheet" href="assets/css/native-app-shell.css?v=native-app-shell-css-20260718a-phase-4a" />',
+              '  <link rel="stylesheet" href="assets/css/native-app-shell-stability.css?v=native-app-shell-stability-css-20260718a" />',
+          ]
+          index=re.sub(r'\s*<link rel="stylesheet" href="assets/css/native-app-shell(?:-stability)?\.css\?v=[^"]+"\s*/>','',index)
           if '</head>' not in index:
               raise SystemExit('Could not find </head> in index.html')
-          index=index.replace('</head>',css_tag+'\n</head>',1)
+          index=index.replace('</head>','\n'.join(css_tags)+'\n</head>',1)
 
-          script_tag='  <script src="assets/js/native-app-shell.js?v=native-app-shell-20260718a-phase-4a"></script>'
-          index=re.sub(r'\s*<script src="assets/js/native-app-shell\.js\?v=[^"]+"></script>','',index)
+          script_tags=[
+              '  <script src="assets/js/native-app-shell.js?v=native-app-shell-20260718a-phase-4a"></script>',
+              '  <script src="assets/js/native-app-shell-stability.js?v=native-app-shell-stability-20260718a"></script>',
+          ]
+          index=re.sub(r'\s*<script src="assets/js/native-app-shell(?:-stability)?\.js\?v[^"]+"\s*></script>','',index)
           share_anchor=re.search(r'(?P<indent>\s*)<script src="assets/js/share-deep-links\.js\?v=[^"]+"></script>',index)
+          block='\n'.join(script_tags)
           if share_anchor:
-              index=index[:share_anchor.start()]+share_anchor.group('indent')+script_tag.strip()+share_anchor.group('indent')+share_anchor.group(0).strip()+index[share_anchor.end():]
+              index=index[:share_anchor.start()]+share_anchor.group('indent')+block.strip()+share_anchor.group('indent')+share_anchor.group(0).strip()+index[share_anchor.end():]
           elif '</body>' in index:
-              index=index.replace('</body>',script_tag+'\n</body>',1)
+              index=index.replace('</body>',block+'\n</body>',1)
           else:
-              raise SystemExit('Could not place native-app-shell.js in index.html')
+              raise SystemExit('Could not place native app shell scripts in index.html')
           index_path.write_text(index)
 
           manifest_path=Path('manifest.webmanifest')
@@ -96,45 +111,47 @@ jobs:
 
           canonical_path=Path('.github/workflows/deploy-app-canonical-group.yml')
           canonical=canonical_path.read_text()
-          canonical=canonical.replace('name: Deploy GOAT26 Phase 3 Smart Notifications','name: Deploy GOAT26 App Platform')
-          path_anchor="      - 'assets/js/app-notification-center.js'"
+          path_anchor="      - 'assets/css/native-app-shell.css'"
           additions="\n".join([
-              "      - 'assets/css/native-app-shell.css'",
-              "      - 'assets/js/native-app-shell.js'",
-              "      - 'assets/js/product-architecture.js'",
-              "      - 'assets/js/app-notification-surface-fix.js'",
+              "      - 'assets/css/native-app-shell-stability.css'",
+              "      - 'assets/js/native-app-shell-stability.js'",
           ])
-          if "assets/js/native-app-shell.js" not in canonical:
+          if "assets/js/native-app-shell-stability.js" not in canonical:
               if path_anchor not in canonical:
-                  raise SystemExit('Canonical workflow path anchor missing')
-              canonical=canonical.replace(path_anchor,additions+'\n'+path_anchor,1)
-          canonical=canonical.replace('grep -Fq "octagon-hq-sw-20260718b-fast-refresh" sw.js','grep -Fq "octagon-hq-sw-20260718c-phase-4a" sw.js')
-          canonical=canonical.replace("'app-update-watcher.js':'app-update-watcher-20260718f-build-aware-refresh',","'app-update-watcher.js':'app-update-watcher-20260718f-build-aware-refresh',\n               'product-architecture.js':'product-architecture-20260718s-phase-4a-native-shell',\n               'app-notification-surface-fix.js':'app-notification-surface-fix-20260718b-phase-4a',")
-          canonical=canonical.replace('manifest.webmanifest?v=phase-3-user-visible-fix','manifest.webmanifest?v=octagon-hq-branding-20260718a')
-          canonical=canonical.replace('20260718-phase-3-user-visible-fix','20260718-phase-4a-native-shell')
-          if 'node --check assets/js/native-app-shell.js' not in canonical:
-              canonical=canonical.replace('           node --check assets/js/app-notification-center.js','           node --check assets/js/native-app-shell.js\n           node --check assets/js/product-architecture.js\n           node --check assets/js/app-notification-surface-fix.js\n           node --check assets/js/app-notification-center.js',1)
+                  raise SystemExit('Canonical workflow native path anchor missing')
+              canonical=canonical.replace(path_anchor,path_anchor+'\n'+additions,1)
+          if 'node --check assets/js/native-app-shell-stability.js' not in canonical:
+              canonical=canonical.replace('           node --check assets/js/native-app-shell.js','           node --check assets/js/native-app-shell.js\n           node --check assets/js/native-app-shell-stability.js',1)
+          if 'native-app-shell-stability-20260718a' not in canonical:
+              canonical=canonical.replace('           grep -Fq "native-app-shell-20260718a-phase-4a" assets/js/native-app-shell.js','           grep -Fq "native-app-shell-20260718a-phase-4a" assets/js/native-app-shell.js\n           grep -Fq "native-app-shell-stability-20260718a" assets/js/native-app-shell-stability.js',1)
+          canonical=canonical.replace('20260718-phase-4a-native-shell','20260718-phase-4a-stabilized')
+          canonical=canonical.replace("css_tag='  <link rel=\"stylesheet\" href=\"assets/css/native-app-shell.css?v=native-app-shell-css-20260718a-phase-4a\" />'","css_tag='  <link rel=\"stylesheet\" href=\"assets/css/native-app-shell.css?v=native-app-shell-css-20260718a-phase-4a\" />\\n  <link rel=\"stylesheet\" href=\"assets/css/native-app-shell-stability.css?v=native-app-shell-stability-css-20260718a\" />'")
+          canonical=canonical.replace("text=re.sub(r'\\s*<link rel=\"stylesheet\" href=\"assets/css/native-app-shell\\.css\\?v[^\"]+\"\\s*/>','',text)","text=re.sub(r'\\s*<link rel=\"stylesheet\" href=\"assets/css/native-app-shell(?:-stability)?\\.css\\?v[^\"]+\"\\s*/>','',text)")
+          canonical=canonical.replace("script_tag='  <script src=\"assets/js/native-app-shell.js?v=native-app-shell-20260718a-phase-4a\"></script>'","script_tag='  <script src=\"assets/js/native-app-shell.js?v=native-app-shell-20260718a-phase-4a\"></script>\\n  <script src=\"assets/js/native-app-shell-stability.js?v=native-app-shell-stability-20260718a\"></script>'")
+          canonical=canonical.replace("text=re.sub(r'\\s*<script src=\"assets/js/native-app-shell\\.js\\?v[^\"]+\"></script>','',text)","text=re.sub(r'\\s*<script src=\"assets/js/native-app-shell(?:-stability)?\\.js\\?v[^\"]+\"></script>','',text)")
+          canonical=canonical.replace("           grep -Fq 'native-app-shell-20260718a-phase-4a' index.html","           grep -Fq 'native-app-shell-20260718a-phase-4a' index.html\n           grep -Fq 'native-app-shell-stability-20260718a' index.html")
           canonical_path.write_text(canonical)
           PY
 
-          grep -Fq '20260718-phase-4a-native-shell' index.html
+          grep -Fq '20260718-phase-4a-stabilized' index.html
           grep -Fq 'native-app-shell-css-20260718a-phase-4a' index.html
+          grep -Fq 'native-app-shell-stability-css-20260718a' index.html
           grep -Fq 'native-app-shell-20260718a-phase-4a' index.html
+          grep -Fq 'native-app-shell-stability-20260718a' index.html
           grep -Fq 'product-architecture-20260718s-phase-4a-native-shell' index.html
           grep -Fq 'app-notification-surface-fix-20260718b-phase-4a' index.html
           grep -Fq 'manifest.webmanifest?v=octagon-hq-branding-20260718a' index.html
-          grep -Fq "assets/js/native-app-shell.js" .github/workflows/deploy-app-canonical-group.yml
-          grep -Fq 'octagon-hq-sw-20260718c-phase-4a' .github/workflows/deploy-app-canonical-group.yml
+          grep -Fq "assets/js/native-app-shell-stability.js" .github/workflows/deploy-app-canonical-group.yml
 
-      - name: Commit Phase 4A frontend deployment
+      - name: Commit Phase 4A stabilization deployment
         run: |
           if git diff --quiet -- index.html manifest.webmanifest .github/workflows/deploy-app-canonical-group.yml; then
-            echo 'Phase 4A frontend wiring is already current.'
+            echo 'Phase 4A stabilization wiring is already current.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
           git add index.html manifest.webmanifest .github/workflows/deploy-app-canonical-group.yml
-          git commit -m 'Deploy Phase 4A native app shell [skip ci]'
+          git commit -m 'Deploy Phase 4A stabilization [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:main
