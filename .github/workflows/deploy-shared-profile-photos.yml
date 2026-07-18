@@ -10,6 +10,7 @@ on:
       - 'assets/js/profile-activity.js'
       - 'assets/js/find-leader-retention.js'
       - 'assets/js/picks-season-loop.js'
+      - 'assets/js/picks-internal-navigation.js'
       - 'assets/js/product-architecture.js'
   workflow_dispatch:
 
@@ -35,18 +36,21 @@ jobs:
           node --check assets/js/profile-activity.js
           node --check assets/js/find-leader-retention.js
           node --check assets/js/picks-season-loop.js
+          node --check assets/js/picks-internal-navigation.js
           node --check assets/js/picks-social-retention.js
           node --check assets/js/picks-settings-admin-cleanup.js
           node --check assets/js/profile-avatar-sync.js
           node --check assets/js/product-polish.js
           node --check assets/js/product-architecture.js
           grep -Fq 'find-leader-retention-20260718c-phase-2b-lazy' assets/js/find-leader-retention.js
-          grep -Fq 'picks-season-loop-20260718b-phase-2c-consolidated' assets/js/picks-season-loop.js
-          grep -Fq 'product-architecture-20260718o-phase-2c-consolidated' assets/js/product-architecture.js
+          grep -Fq 'picks-season-loop-20260718c-phase-2c-speed' assets/js/picks-season-loop.js
+          grep -Fq 'picks-internal-navigation-20260718a-fast-routes' assets/js/picks-internal-navigation.js
+          grep -Fq 'product-architecture-20260718p-phase-2c-speed' assets/js/product-architecture.js
           grep -Fq "picks_group_snapshot" assets/js/picks-season-loop.js
           grep -Fq "identityMember" assets/js/picks-season-loop.js
-          grep -Fq "Current events use" assets/js/picks-season-loop.js
+          grep -Fq "IN-APP ALERT" assets/js/picks-season-loop.js
           grep -Fq "picks_social_update_profile" assets/js/picks-season-loop.js
+          grep -Fq "patchEventStandings" assets/js/picks-season-loop.js
           ! grep -Fq "picks-season-grid" assets/js/picks-season-loop.js
           ! grep -Fq "profileObserver=new MutationObserver" assets/js/find-leader-retention.js
           grep -Fq 'add column if not exists profile_photo_data text' supabase/app-profile-photo-upload-phase.sql
@@ -134,7 +138,7 @@ jobs:
               try: status=json.loads(status_path.read_text())
               except Exception: status={}
           status['profile_photos']={**audit,'phase':'shared-photo-or-fighter-avatar','crop_size':320,'status':'active'}
-          status['activity_profile']={'phase':'phase-2a','status':'active','sources':['play-local-ledger','find-leader-history','picks-room-snapshots','war-room-snapshot']}
+          status['activity_profile']={'phase':'phase-2a','status':'active','sources':['play-local-ledger','find-leader-history','picks-group-snapshot','war-room-snapshot']}
           status['find_leader_retention']={
               'phase':'phase-2b','status':'active','history_days':35,'reset_timezone':'America/Chicago',
               'official_score_rule':'first-completed-attempt','best_score_rule':'replays-can-improve-best-only',
@@ -143,12 +147,14 @@ jobs:
           status['picks_season_loop']={
               'phase':'phase-2c','status':'active','layout':'compact-home-summary-plus-canonical-leaderboard',
               'canonical_totals_source':'picks_group_snapshot','event_detail_source':'picks_room_snapshot',
-              'tie_policy':'shared-rank-for-exact-equals','reminders':'event-route-shared-profile-opt-in',
-              'recap':'existing-group-recap-plus-personal-event-summary','loading_policy':'lazy-on-picks-or-profile'
+              'tie_policy':'shared-rank-for-exact-equals','reminders':'in-app-while-open-plus-phone-calendar',
+              'event_pre_score_rank':'dash','home_next_event':'removed','event_heading':'removed',
+              'activity_profile_source':'canonical-picks-group-totals',
+              'internal_navigation':'immediate-childlist-only','loading_policy':'lazy-on-picks-or-profile'
           }
           status['checked_at']=datetime.now(timezone.utc).isoformat()
           status_path.write_text(json.dumps(status,indent=2,sort_keys=True)+'\n')
-          print('Shared profile and consolidated Phase 2C Picks season loop verified.')
+          print('Shared profile and final Phase 2C Picks release verified.')
           PY
 
       - name: Wire shared profile activity into the live page
@@ -163,7 +169,8 @@ jobs:
               'app-profile.js':'app-profile-20260718b-photo-upload',
               'picks-social-retention.js':'picks-social-retention-20260718f-shared-profile',
               'picks-settings-admin-cleanup.js':'picks-settings-admin-cleanup-20260718e-admin-only',
-              'product-architecture.js':'product-architecture-20260718o-phase-2c-consolidated',
+              'picks-internal-navigation.js':'picks-internal-navigation-20260718a-fast-routes',
+              'product-architecture.js':'product-architecture-20260718p-phase-2c-speed',
           }
           for filename,version in versions.items():
               pattern=rf'assets/js/{re.escape(filename)}\?v=[^"\s]+'
@@ -174,7 +181,7 @@ jobs:
 
           text=re.sub(
               r'<meta name="app-build" content="[^"]+" />',
-              '<meta name="app-build" content="20260718-phase-2c-picks-consolidated" />',
+              '<meta name="app-build" content="20260718-phase-2c-final-speed" />',
               text,
               count=1,
           )
@@ -190,6 +197,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
           git add index.html supabase/goat26-deployment-status.json
-          git commit -m 'Record consolidated Phase 2C Picks deployment [skip ci]'
+          git commit -m 'Record final Phase 2C Picks release [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:main
