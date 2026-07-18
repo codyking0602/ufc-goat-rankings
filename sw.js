@@ -20,12 +20,16 @@ self.addEventListener('activate',event=>{
       const source=await caches.open(key);
       const requests=await source.keys();
       for(const request of requests){
+        const path=new URL(request.url).pathname;
+        if(/\/assets\/js\/(?:app-notification-surface-fix|app-update-watcher)\.js$/i.test(path))continue;
         if(await target.match(request))continue;
         const response=await source.match(request);
         if(response)await target.put(request,response);
       }
       await caches.delete(key);
     }
+    const stale=await target.keys();
+    await Promise.all(stale.filter(request=>/\/assets\/js\/(?:app-notification-surface-fix|app-update-watcher)\.js$/i.test(new URL(request.url).pathname)).map(request=>target.delete(request)));
     await self.clients.claim();
   })());
 });
