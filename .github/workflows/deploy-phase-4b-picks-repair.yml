@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: deploy-phase-4b-picks-repair
@@ -24,13 +24,15 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Validate repair source
         run: |
           node --check assets/js/fresh-home-launch.js
           node --check assets/js/picks-scoring-live-repair.js
           grep -Fq 'grid-column:1/-1' assets/css/community-profiles.css
-          grep -Fq 'picks_tiered_lock_bonus(175)=2' supabase/picks-scoring-repair-phase.sql
+          grep -Fq 'picks_tiered_lock_bonus(175)<>2' supabase/picks-scoring-repair-phase.sql
 
       - name: Apply tiered scoring and audit production
         env:
@@ -42,6 +44,7 @@ jobs:
           import os
           import urllib.error
           import urllib.request
+          from datetime import datetime,timezone
           from pathlib import Path
 
           project=os.environ['SUPABASE_PROJECT_REF']
@@ -130,5 +133,24 @@ jobs:
               raise RuntimeError(f'Picks scoring audit failed: {audit}')
           if audit.get('montes_odds') is not None and audit.get('montes_bonus')!=2:
               raise RuntimeError(f'Alberto Montes bonus is not +2: {audit}')
+          Path('supabase/picks-scoring-repair-deployed.json').write_text(json.dumps({
+              'status':'active',
+              'checked_at':datetime.now(timezone.utc).isoformat(),
+              'audit':audit,
+              'frontend':{
+                  'fresh_launch':'home',
+                  'community_directory':'full-width',
+                  'tier_bonus_display':'derived-from-live-odds'
+              }
+          },indent=2,sort_keys=True)+'\n')
           print(json.dumps(audit,sort_keys=True))
           PY
+
+      - name: Record successful repair
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
+          git add supabase/picks-scoring-repair-deployed.json
+          git commit -m 'Record Phase 4B Picks repair [skip ci]' || exit 0
+          git pull --rebase origin main
+          git push origin HEAD:main
