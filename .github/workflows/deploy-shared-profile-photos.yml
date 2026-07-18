@@ -50,13 +50,12 @@ jobs:
           grep -Fq 'find-leader-retention-20260718c-phase-2b-lazy' assets/js/find-leader-retention.js
           grep -Fq 'picks-season-loop-20260718d-canonical-ui' assets/js/picks-season-loop.js
           grep -Fq 'picks-internal-navigation-20260718a-fast-routes' assets/js/picks-internal-navigation.js
-          grep -Fq 'picks-home-event-cleanup-20260718b-season-only' assets/js/picks-home-event-cleanup.js
+          grep -Fq 'picks-home-event-cleanup-20260718c-no-reminder' assets/js/picks-home-event-cleanup.js
+          grep -Fq 'removeUpcomingReminder' assets/js/picks-home-event-cleanup.js
           grep -Fq 'picks-mobile-polish-20260718f-event-art' assets/js/picks-mobile-polish.js
           grep -Fq 'product-architecture-20260718q-picks-cohesion' assets/js/product-architecture.js
           grep -Fq "picks_group_snapshot" assets/js/picks-season-loop.js
           grep -Fq "identityMember" assets/js/picks-season-loop.js
-          grep -Fq "IN-APP ALERT" assets/js/picks-season-loop.js
-          grep -Fq "picks_social_update_profile" assets/js/picks-season-loop.js
           grep -Fq "patchEventStandings" assets/js/picks-season-loop.js
           grep -Fq "data-home-layout" assets/js/picks-home-event-cleanup.js
           grep -Fq "picks-room-no-share" assets/js/picks-mobile-polish.js
@@ -79,7 +78,7 @@ jobs:
               'picks-social-retention.js':'picks-social-retention-20260718f-shared-profile',
               'picks-settings-admin-cleanup.js':'picks-settings-admin-cleanup-20260718e-admin-only',
               'picks-internal-navigation.js':'picks-internal-navigation-20260718a-fast-routes',
-              'picks-home-event-cleanup.js':'picks-home-event-cleanup-20260718b-season-only',
+              'picks-home-event-cleanup.js':'picks-home-event-cleanup-20260718c-no-reminder',
               'picks-mobile-polish.js':'picks-mobile-polish-20260718f-event-art',
               'product-architecture.js':'product-architecture-20260718q-picks-cohesion',
           }
@@ -112,7 +111,7 @@ jobs:
 
           text=re.sub(
               r'<meta name="app-build" content="[^"]+" />',
-              '<meta name="app-build" content="20260718-picks-cohesion-canonical" />',
+              '<meta name="app-build" content="20260718-picks-event-no-reminder" />',
               text,
               count=1,
           )
@@ -127,7 +126,7 @@ jobs:
             git config user.name 'github-actions[bot]'
             git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
             git add index.html
-            git commit -m 'Deploy canonical Picks cohesion release [skip ci]'
+            git commit -m 'Deploy Picks Event without reminder [skip ci]'
             git pull --rebase origin main
             git push origin HEAD:main
           fi
@@ -223,7 +222,7 @@ jobs:
           status['picks_season_loop']={
               'phase':'phase-2c','status':'active','layout':'home-season-summary-leaderboard-archive',
               'canonical_totals_source':'picks_group_snapshot','event_detail_source':'picks_room_snapshot',
-              'tie_policy':'shared-rank-for-exact-equals','reminders':'in-app-while-open-plus-phone-calendar',
+              'tie_policy':'shared-rank-for-exact-equals','reminders':'removed',
               'event_pre_score_rank':'dash','home_next_event':'removed-at-source',
               'event_art':'load-confirmed-persistent','event_share':'home-only',
               'activity_profile_source':'canonical-picks-group-totals',
@@ -231,7 +230,7 @@ jobs:
           }
           status['checked_at']=datetime.now(timezone.utc).isoformat()
           status_path.write_text(json.dumps(status,indent=2,sort_keys=True)+'\n')
-          print('Shared profile and canonical Picks cohesion release verified.')
+          print('Shared profile and Picks no-reminder release verified.')
           PY
 
       - name: Commit deployment audit
@@ -243,6 +242,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
           git add supabase/goat26-deployment-status.json
-          git commit -m 'Record canonical Picks cohesion deployment [skip ci]'
+          git commit -m 'Record Picks no-reminder deployment [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:main
