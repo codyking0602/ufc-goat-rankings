@@ -6,12 +6,13 @@
       "play-local-ledger",
       "find-leader-history",
       "picks-group-snapshot",
-      "war-room-snapshot"
+      "war-room-snapshot",
+      "profile-challenge-inbox"
     ],
     "status": "active"
   },
   "avatar_profiles": 2,
-  "checked_at": "2026-07-18T14:43:18.926150+00:00",
+  "checked_at": "2026-07-18T15:13:22.855980+00:00",
   "code": "GOAT26",
   "deployment_method": "supabase-management-api",
   "events": 2,
@@ -116,23 +117,39 @@
     "picks_profile_rpc": true,
     "picks_room_rpc": true,
     "picks_social_rpc": true,
+    "play_create_rpc": true,
+    "play_get_rpc": true,
+    "profile_challenge_inbox_rpc": true,
+    "profile_challenge_open_rpc": true,
+    "profile_challenge_send_rpc": true,
+    "profile_challenge_submit_rpc": true,
     "profile_snapshot_rpc": true,
+    "recipient_column": true,
     "status": "active"
   },
   "rooms": 2,
   "saved_picks": 51,
   "sharing_deep_links": {
+    "delivery": "profile-inbox",
     "entry_page": "share.html",
-    "find_leader_payload": "exact-verified-board-and-result",
-    "owner": "assets/js/share-deep-links.js",
+    "exact_board": true,
+    "fallback": "short-link",
+    "link_owner": "assets/js/share-deep-links.js",
+    "owner": "assets/js/profile-challenges.js",
     "phase": "phase-2e",
-    "private_routes": "picks-and-war-room-respect-existing-access",
+    "primary_action": "challenge-someone",
+    "profile_inbox_source": "play_profile_challenge_inbox",
+    "push_notifications": false,
+    "recipient_score_visibility": "hidden-until-completion",
+    "removed": [
+      "prepared-comparison-sharing",
+      "duplicate-result-share-action"
+    ],
     "social_preview": "generic-static-card-plus-runtime-metadata",
     "status": "active",
     "targets": [
       "fighter-profile",
-      "prepared-comparison",
-      "find-leader-result",
+      "find-leader-profile-challenge",
       "picks-event-recap",
       "war-room-discussion"
     ]
