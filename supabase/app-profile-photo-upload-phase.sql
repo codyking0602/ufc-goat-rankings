@@ -1,4 +1,5 @@
 -- Persistent circular profile-photo support for the shared GOAT26 profile.
+-- Final release sync: 2026-07-18.
 -- Run after supabase/app-profile-avatar-phase.sql. Safe to rerun.
 -- Photos are cropped/compressed in the browser before this function is called.
 
