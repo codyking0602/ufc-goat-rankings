@@ -1,13 +1,13 @@
 (function(){
   'use strict';
 
-  const VERSION='app-update-watcher-20260717q-find-leader-fast-start';
+  const VERSION='app-update-watcher-20260717r-on-demand-play-support';
   const RESTORE_KEY='ufc-goat-manual-refresh-v1';
   const PROGRESS_KEY='ufc-goat-manual-refresh-progress-v1';
   const WHATS_NEW_KEY='ufc-whats-new-20260717-anthony-pettis';
   const LEGACY_KEYS=['ufc-goat-update-restore-v1','ufc-goat-update-target-v1'];
   let whatsNewReturnFocus=null;
-  let supportLoaded=false;
+  let playSupportScheduled=false;
 
   function activeView(){
     return document.querySelector('.tab.active')?.dataset.view
@@ -21,6 +21,16 @@
 
   function cleanRefreshState(){
     try{sessionStorage.removeItem(PROGRESS_KEY);}catch(_error){}
+    const button=document.getElementById('manualRefreshBtn');
+    button?.classList.remove('refreshing');
+    button?.removeAttribute('aria-busy');
+    if(button)delete button.dataset.refreshBusy;
+    const track=document.getElementById('manualRefreshProgress');
+    track?.classList.remove('visible');
+    track?.setAttribute('aria-hidden','true');
+    const fill=document.getElementById('manualRefreshProgressFill');
+    if(fill)fill.style.width='0%';
+
     const url=new URL(window.location.href);
     let changed=false;
     ['__manual_refresh','__shell'].forEach(key=>{
@@ -69,31 +79,30 @@
     setControlValue('fighterB',state.fighterB);
     setControlValue('categoryBoardSelect',state.category);
 
-    if(typeof window.refresh==='function'){
+    const rankingView=['men','women','division','categories'].includes(state.activeView);
+    if(rankingView&&typeof window.refresh==='function'){
       try{window.refresh();}catch(_error){}
     }
 
     const target=document.querySelector(`.tab[data-view="${state.activeView||'home'}"]`);
     target?.click();
-
     if(state.activeView==='play'){
-      loadPlaySupportScripts();
+      schedulePlaySupport();
       document.querySelector(`[data-play-mode="${state.playMode||'top10'}"]`)?.click();
     }
     if(state.era)document.getElementById('eraFilter')?.dispatchEvent(new Event('change',{bubbles:true}));
     if(state.category)document.getElementById('categoryBoardSelect')?.dispatchEvent(new Event('change',{bubbles:true}));
-    window.setTimeout(()=>window.scrollTo({top:Number(state.scrollY)||0,left:0,behavior:'auto'}),120);
+    window.setTimeout(()=>window.scrollTo({top:Number(state.scrollY)||0,left:0,behavior:'auto'}),100);
   }
 
   function showQuickProgress(button){
+    if(!button)return;
     button.classList.add('refreshing');
     button.setAttribute('aria-busy','true');
     const track=document.getElementById('manualRefreshProgress');
     const fill=document.getElementById('manualRefreshProgressFill');
-    if(track){
-      track.classList.add('visible');
-      track.setAttribute('aria-hidden','false');
-    }
+    track?.classList.add('visible');
+    track?.setAttribute('aria-hidden','false');
     if(fill){
       fill.style.width='28%';
       window.setTimeout(()=>{fill.style.width='88%';},20);
@@ -109,7 +118,7 @@
     url.searchParams.set('__manual_refresh',String(Date.now()));
     url.searchParams.set('__shell','light');
     url.hash=window.location.hash;
-    window.setTimeout(()=>window.location.replace(url.toString()),75);
+    window.setTimeout(()=>window.location.replace(url.toString()),50);
   }
 
   function markWhatsNewSeen(){
@@ -144,7 +153,6 @@
 
   function exploreUpdate(){
     closeWhatsNew();
-    loadPlaySupportScripts();
     window.UFC_PRODUCT_ARCHITECTURE?.activateDestination?.('play')
       || document.querySelector('.tab[data-view="play"]')?.click();
     window.setTimeout(()=>window.scrollTo({top:0,left:0,behavior:'smooth'}),60);
@@ -223,51 +231,95 @@
 
   function installButton(){
     const hero=document.querySelector('.hero');
-    if(!hero||document.getElementById('manualRefreshBtn'))return;
-    const control=document.createElement('div');
-    control.id='manualRefreshControl';
-    control.innerHTML='<div id="manualRefreshActions"><button id="manualRefreshBtn" type="button" aria-label="Refresh app for the latest updates">↻ Refresh</button><button id="whatsNewBtn" type="button" aria-label="Open the latest update announcement">What’s New</button></div><div id="manualRefreshProgress" aria-hidden="true"><i id="manualRefreshProgressFill"></i></div>';
-    hero.appendChild(control);
-    document.getElementById('manualRefreshBtn')?.addEventListener('click',event=>networkRefresh(event.currentTarget));
-    document.getElementById('whatsNewBtn')?.addEventListener('click',event=>openWhatsNew(event.currentTarget));
+    if(!hero)return;
+    let control=document.getElementById('manualRefreshControl');
+    if(!control){
+      control=document.createElement('div');
+      control.id='manualRefreshControl';
+      control.innerHTML='<div id="manualRefreshActions"><button id="manualRefreshBtn" type="button" aria-label="Refresh app for the latest updates">↻ Refresh</button><button id="whatsNewBtn" type="button" aria-label="Open the latest update announcement">What’s New</button></div><div id="manualRefreshProgress" aria-hidden="true"><i id="manualRefreshProgressFill"></i></div>';
+      hero.appendChild(control);
+    }
+    const refreshButton=document.getElementById('manualRefreshBtn');
+    if(refreshButton&&!refreshButton.dataset.currentRefreshBound){
+      refreshButton.dataset.currentRefreshBound='true';
+      refreshButton.addEventListener('click',event=>networkRefresh(event.currentTarget));
+    }
+    const whatsNewButton=document.getElementById('whatsNewBtn');
+    if(whatsNewButton&&!whatsNewButton.dataset.currentWhatsNewBound){
+      whatsNewButton.dataset.currentWhatsNewBound='true';
+      whatsNewButton.addEventListener('click',event=>openWhatsNew(event.currentTarget));
+    }
   }
 
-  function loadScriptOnce(selector,src,datasetKey){
-    if(document.querySelector(selector))return;
+  function loadScript(id,src){
+    if(document.getElementById(id))return;
+    document.querySelectorAll(`script[data-deferred-guard="${id}"]`).forEach(node=>node.remove());
     const script=document.createElement('script');
+    script.id=id;
     script.src=src;
-    script.dataset[datasetKey]='true';
+    script.async=true;
     document.head.appendChild(script);
   }
 
-  function loadPlaySupportScripts(){
-    if(supportLoaded)return;
-    supportLoaded=true;
-    loadScriptOnce('script[src*="play-challenge-compat.js"]','assets/js/play-challenge-compat.js?v=play-challenge-compat-20260715b-full-ready-identity','playChallengeCompat');
-    loadScriptOnce('script[src*="blind-daily-startup-fix.js"]','assets/js/blind-daily-startup-fix.js?v=blind-daily-startup-fix-20260717e-refresh-failsafe','blindDailyStartupFix');
-    loadScriptOnce('script[src*="play-daily-leaderboard.js"]','assets/js/play-daily-leaderboard.js?v=play-daily-leaderboard-20260716d-community-days','playDailyLeaderboard');
+  function loadPermanentDaily(){
+    loadScript('playPermanentDailyController','assets/js/play-daily-rotation.js?v=play-daily-controller-20260717e-find-leader-permanent');
   }
 
-  document.addEventListener('click',event=>{
-    if(event.target.closest?.('[data-destination="play"],.tab[data-view="play"],#whatsNewExplore'))loadPlaySupportScripts();
-  },true);
+  function loadDailyLeaderboard(){
+    loadScript('playDailyLeaderboardCurrent','assets/js/play-daily-leaderboard.js?v=play-daily-leaderboard-20260717e-find-leader-only');
+  }
+
+  function loadChallengeCompat(){
+    loadScript('playChallengeCompatCurrent','assets/js/play-challenge-compat.js?v=play-challenge-compat-20260717c-on-demand');
+  }
+
+  function loadBlindSupport(){
+    loadScript('blindDailyStartupFixCurrent','assets/js/blind-daily-startup-fix.js?v=blind-daily-startup-fix-20260717f-on-demand');
+  }
+
+  function schedulePlaySupport(){
+    if(playSupportScheduled)return;
+    playSupportScheduled=true;
+    requestAnimationFrame(()=>{
+      loadPermanentDaily();
+      const loadBoard=()=>loadDailyLeaderboard();
+      if(typeof requestIdleCallback==='function')requestIdleCallback(loadBoard,{timeout:900});
+      else window.setTimeout(loadBoard,250);
+    });
+  }
+
+  function bindDeferredSupport(){
+    if(document.documentElement.dataset.playSupportBinding===VERSION)return;
+    document.documentElement.dataset.playSupportBinding=VERSION;
+    window.addEventListener('octagon-hq:view-change',event=>{
+      if(event.detail?.destination==='play')schedulePlaySupport();
+    });
+    document.addEventListener('click',event=>{
+      if(event.target.closest?.('[data-open-game="blind"],[data-play-mode="blind"],[data-five-round-replay]'))loadBlindSupport();
+      if(event.target.closest?.('[data-kc-challenge],[data-br-challenge],[data-five-round-share]'))loadChallengeCompat();
+    },true);
+  }
 
   LEGACY_KEYS.forEach(key=>{try{sessionStorage.removeItem(key);}catch(_error){}});
   cleanRefreshState();
   injectStyles();
   installWhatsNew();
   installButton();
-  window.setTimeout(restoreState,220);
+  bindDeferredSupport();
+  window.setTimeout(restoreState,160);
   if(!hasSeenWhatsNew())window.setTimeout(()=>openWhatsNew(),650);
-  window.setTimeout(loadPlaySupportScripts,1800);
 
   window.UFC_APP_UPDATE_WATCHER={
     version:VERSION,
     networkRefresh,
     openWhatsNew,
     restoreState,
-    loadPlaySupportScripts,
-    mode:'lightweight-deferred'
+    schedulePlaySupport,
+    loadPermanentDaily,
+    loadDailyLeaderboard,
+    loadChallengeCompat,
+    loadBlindSupport,
+    mode:'lightweight-on-demand'
   };
   document.documentElement.setAttribute('data-app-update-watcher',VERSION);
 })();
