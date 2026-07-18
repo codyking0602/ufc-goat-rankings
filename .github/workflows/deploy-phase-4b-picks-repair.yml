@@ -1,0 +1,134 @@
+name: Deploy Phase 4B and Picks Repair
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy-phase-4b-picks-repair.yml'
+      - 'supabase/picks-scoring-repair-phase.sql'
+      - 'assets/js/fresh-home-launch.js'
+      - 'assets/js/picks-scoring-live-repair.js'
+      - 'assets/css/community-profiles.css'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-phase-4b-picks-repair
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate repair source
+        run: |
+          node --check assets/js/fresh-home-launch.js
+          node --check assets/js/picks-scoring-live-repair.js
+          grep -Fq 'grid-column:1/-1' assets/css/community-profiles.css
+          grep -Fq 'picks_tiered_lock_bonus(175)=2' supabase/picks-scoring-repair-phase.sql
+
+      - name: Apply tiered scoring and audit production
+        env:
+          SUPABASE_PROJECT_REF: hdkjwezaswhisxupxydc
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import urllib.error
+          import urllib.request
+          from pathlib import Path
+
+          project=os.environ['SUPABASE_PROJECT_REF']
+          token=os.environ.get('SUPABASE_ACCESS_TOKEN','').strip()
+          if not token:
+              raise RuntimeError('SUPABASE_ACCESS_TOKEN is not configured.')
+
+          def query(sql,read_only=False):
+              request=urllib.request.Request(
+                  f'https://api.supabase.com/v1/projects/{project}/database/query',
+                  data=json.dumps({'query':sql,'read_only':read_only}).encode(),
+                  headers={
+                      'Accept':'application/json',
+                      'Authorization':f'Bearer {token}',
+                      'Content-Type':'application/json',
+                      'User-Agent':'Octagon-HQ-Phase-4B-Picks-Repair/1.0',
+                  },
+                  method='POST',
+              )
+              try:
+                  with urllib.request.urlopen(request,timeout=150) as response:
+                      return json.loads(response.read().decode() or 'null')
+              except urllib.error.HTTPError as error:
+                  detail=error.read().decode(errors='replace')[:2400]
+                  raise RuntimeError(f'Supabase Management API returned HTTP {error.code}: {detail}') from error
+
+          migration='\n\n'.join([
+              Path('supabase/picks-tiered-scoring-phase.sql').read_text(),
+              Path('supabase/picks-scoring-repair-phase.sql').read_text(),
+          ])
+          query(migration,read_only=False)
+
+          audit_sql="""
+          with current_event as (
+            select id,scoring_version
+            from public.pick_events
+            where id='ufc-oklahoma-city-2026-07-18'
+          ), montes as (
+            select case
+              when red_name='Alberto Montes' then red_odds
+              when blue_name='Alberto Montes' then blue_odds
+              else null
+            end odds
+            from public.pick_fights
+            where event_id='ufc-oklahoma-city-2026-07-18'
+              and id='okc-mcmillen-montes'
+          )
+          select jsonb_build_object(
+            'ok',true,
+            'event_scoring_version',(select scoring_version from current_event),
+            'correct_pick_points',public.picks_correct_pick_points('tiered-v1',1),
+            'bonus_100',public.picks_tiered_lock_bonus(100),
+            'bonus_150',public.picks_tiered_lock_bonus(150),
+            'bonus_175',public.picks_tiered_lock_bonus(175),
+            'bonus_200',public.picks_tiered_lock_bonus(200),
+            'bonus_250',public.picks_tiered_lock_bonus(250),
+            'bonus_300',public.picks_tiered_lock_bonus(300),
+            'bonus_350',public.picks_tiered_lock_bonus(350),
+            'bonus_400',public.picks_tiered_lock_bonus(400),
+            'montes_odds',(select odds from montes),
+            'montes_bonus',public.picks_tiered_lock_bonus((select odds from montes)),
+            'public_payload_version',(select item->>'scoringVersion' from jsonb_array_elements(public.picks_public_events()) item where item->>'id'='ufc-oklahoma-city-2026-07-18' limit 1),
+            'public_payload_correct_points',(select (item->>'correctPickPoints')::integer from jsonb_array_elements(public.picks_public_events()) item where item->>'id'='ufc-oklahoma-city-2026-07-18' limit 1)
+          ) audit;
+          """
+          result=query(audit_sql,read_only=True)
+          rows=result.get('result',result) if isinstance(result,dict) else result
+          audit=rows[0].get('audit') if isinstance(rows,list) and rows else None
+          if isinstance(audit,str):
+              audit=json.loads(audit)
+          expected={
+              'event_scoring_version':'tiered-v1',
+              'correct_pick_points':4,
+              'bonus_100':1,
+              'bonus_150':2,
+              'bonus_175':2,
+              'bonus_200':3,
+              'bonus_250':4,
+              'bonus_300':5,
+              'bonus_350':6,
+              'bonus_400':7,
+              'public_payload_version':'tiered-v1',
+              'public_payload_correct_points':4,
+          }
+          if not isinstance(audit,dict) or any(audit.get(k)!=v for k,v in expected.items()):
+              raise RuntimeError(f'Picks scoring audit failed: {audit}')
+          if audit.get('montes_odds') is not None and audit.get('montes_bonus')!=2:
+              raise RuntimeError(f'Alberto Montes bonus is not +2: {audit}')
+          print(json.dumps(audit,sort_keys=True))
+          PY
