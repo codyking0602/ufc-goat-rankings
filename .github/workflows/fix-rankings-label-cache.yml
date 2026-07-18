@@ -1,0 +1,132 @@
+name: Fix Rankings Label Cache
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-rankings-label-cache.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fix-rankings-label-cache
+  cancel-in-progress: false
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Remove stale P4P navigation asset versions
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          def replace(path, pattern, replacement, label):
+              file = Path(path)
+              text = file.read_text()
+              updated, count = re.subn(pattern, replacement, text, count=1)
+              if count != 1:
+                  raise SystemExit(f'Could not update {label} in {path}')
+              file.write_text(updated)
+
+          replace(
+              'assets/js/octagon-hq-shell.js',
+              r"const VERSION='app-shell-[^']+';",
+              "const VERSION='app-shell-20260718d-rankings-static';",
+              'shell version',
+          )
+          replace(
+              'assets/js/octagon-hq-nav-grid.js',
+              r"const VERSION='octagon-hq-nav-grid-[^']+';",
+              "const VERSION='octagon-hq-nav-grid-disabled-20260718b';",
+              'nav grid version',
+          )
+          replace(
+              'assets/js/product-architecture.js',
+              r"const VERSION='product-architecture-[^']+';",
+              "const VERSION='product-architecture-20260718j-rankings-static';",
+              'product architecture version',
+          )
+          replace(
+              'assets/js/product-architecture.js',
+              r"const SHELL_SRC='assets/js/octagon-hq-shell\.js\?v=[^']+';",
+              "const SHELL_SRC='assets/js/octagon-hq-shell.js?v=app-shell-20260718d-rankings-static';",
+              'product architecture shell source',
+          )
+
+          index = Path('index.html')
+          text = index.read_text()
+          replacements = {
+              r'assets/js/octagon-hq-shell\.js\?v=[^"\s]+': 'assets/js/octagon-hq-shell.js?v=app-shell-20260718d-rankings-static',
+              r'assets/js/octagon-hq-nav-grid\.js\?v=[^"\s]+': 'assets/js/octagon-hq-nav-grid.js?v=octagon-hq-nav-grid-disabled-20260718b',
+              r'assets/js/product-architecture\.js\?v=[^"\s]+': 'assets/js/product-architecture.js?v=product-architecture-20260718j-rankings-static',
+          }
+          for pattern, replacement in replacements.items():
+              text, count = re.subn(pattern, replacement, text, count=1)
+              if count != 1:
+                  raise SystemExit(f'Could not update {replacement} in index.html')
+          text, count = re.subn(
+              r'<meta name="app-build" content="[^"]+" />',
+              '<meta name="app-build" content="20260718-rankings-label-static" />',
+              text,
+              count=1,
+          )
+          if count != 1:
+              raise SystemExit('Could not update app build marker')
+          index.write_text(text)
+
+          canonical = Path('.github/workflows/deploy-app-canonical-group.yml')
+          text = canonical.read_text()
+          text, shell_count = re.subn(
+              r"octagon_shell='  <script src=\"assets/js/octagon-hq-shell\.js\?v=[^\"]+\"></script>'",
+              "octagon_shell='  <script src=\"assets/js/octagon-hq-shell.js?v=app-shell-20260718d-rankings-static\"></script>'",
+              text,
+              count=1,
+          )
+          text, nav_count = re.subn(
+              r"nav_grid='  <script src=\"assets/js/octagon-hq-nav-grid\.js\?v=[^\"]+\"></script>'",
+              "nav_grid='  <script src=\"assets/js/octagon-hq-nav-grid.js?v=octagon-hq-nav-grid-disabled-20260718b\"></script>'",
+              text,
+              count=1,
+          )
+          if shell_count != 1 or nav_count != 1:
+              raise SystemExit('Could not update canonical deployment navigation versions')
+          canonical.write_text(text)
+
+          profile = Path('.github/workflows/deploy-shared-profile-photos.yml')
+          text = profile.read_text()
+          text, count = re.subn(
+              r"'product-architecture\.js':'product-architecture-[^']+'",
+              "'product-architecture.js':'product-architecture-20260718j-rankings-static'",
+              text,
+              count=1,
+          )
+          if count != 1:
+              raise SystemExit('Could not update focused profile deployment product version')
+          profile.write_text(text)
+
+          Path('.github/workflows/fix-rankings-label-cache.yml').unlink()
+          PY
+
+          node --check assets/js/octagon-hq-shell.js
+          node --check assets/js/octagon-hq-nav-grid.js
+          node --check assets/js/product-architecture.js
+          grep -Fq '>Rankings</span>' index.html
+          grep -Fq 'app-shell-20260718d-rankings-static' index.html
+          grep -Fq 'octagon-hq-nav-grid-disabled-20260718b' index.html
+
+      - name: Publish permanent navigation fix
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html assets/js/octagon-hq-shell.js assets/js/octagon-hq-nav-grid.js assets/js/product-architecture.js .github/workflows/deploy-app-canonical-group.yml .github/workflows/deploy-shared-profile-photos.yml .github/workflows/fix-rankings-label-cache.yml
+          git commit -m 'Make Rankings navigation label static'
+          git pull --rebase origin main
+          git push origin HEAD:main
