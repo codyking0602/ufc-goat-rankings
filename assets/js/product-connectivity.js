@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='product-connectivity-20260717c-clean-handoffs';
+  const VERSION='product-connectivity-20260717d-clean-handoffs';
   const GPT_URL='https://chatgpt.com/g/g-6a4c40425d4881919ddebc7231bff09f-octagon-verdict';
   let profileObserver=null;
   let warRoomObserver=null;
@@ -286,9 +286,12 @@
 
   async function syncWarRoomRuntime(destination){
     const board=window.UFC_OCTAGON_BOARD;
+    const notifications=window.UFC_OCTAGON_NOTIFICATIONS;
     if(destination==='war-room'){
       await board?.load?.();
       await board?.ensureRealtime?.();
+      const status=await notifications?.refreshStatus?.({opening:true});
+      if(status?.can_access)window.setTimeout(()=>notifications?.markSeen?.(),650);
       enhanceWarRoom();
     }else{
       await board?.stopRealtime?.();
