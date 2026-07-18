@@ -6,9 +6,12 @@ on:
     paths:
       - '.github/workflows/deploy-shared-profile-photos.yml'
       - 'supabase/app-profile-photo-upload-phase.sql'
+      - 'share.html'
       - 'assets/data/what-changed.js'
       - 'assets/js/what-changed.js'
       - 'assets/js/app-update-watcher.js'
+      - 'assets/js/share-deep-links.js'
+      - 'assets/js/find-leader.js'
       - 'assets/js/app-profile.js'
       - 'assets/js/profile-activity.js'
       - 'assets/js/find-leader-retention.js'
@@ -36,11 +39,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Validate shared profile, Picks and compact What Changed release
+      - name: Validate shared profile, Picks, What Changed and Phase 2E sharing
         run: |
           node --check assets/data/what-changed.js
           node --check assets/js/what-changed.js
           node --check assets/js/app-update-watcher.js
+          node --check assets/js/share-deep-links.js
+          node --check assets/js/find-leader.js
           node --check assets/js/app-profile.js
           node --check assets/js/profile-activity.js
           node --check assets/js/find-leader-retention.js
@@ -53,12 +58,19 @@ jobs:
           node --check assets/js/profile-avatar-sync.js
           node --check assets/js/product-polish.js
           node --check assets/js/product-architecture.js
-          grep -Fq 'what-changed-data-20260718b-compact' assets/data/what-changed.js
+          grep -Eq 'what-changed-data-20260718(b-compact|c-phase-2e)' assets/data/what-changed.js
           grep -Fq 'what-changed-20260718b-compact' assets/js/what-changed.js
           grep -Fq 'app-update-watcher-20260718c-compact-feed' assets/js/app-update-watcher.js
+          grep -Fq 'share-deep-links-20260718a-phase-2e' assets/js/share-deep-links.js
+          grep -Fq 'find-leader-20260718a-phase-2e-shared-results' assets/js/find-leader.js
+          grep -Fq 'openSharedResult' assets/js/find-leader.js
+          grep -Fq 'shareFindLeader' assets/js/share-deep-links.js
+          grep -Fq "ROUTE_TYPES=new Set(['fighter','compare','find-leader','picks-event','war-room'])" assets/js/share-deep-links.js
           grep -Fq 'Editorial release rule' assets/data/what-changed.js
           grep -Fq 'octagon-hq-what-changed-seen-v1' assets/data/what-changed.js
           grep -Fq 'data-what-changed-entry' assets/js/what-changed.js
+          grep -Fq 'property="og:image"' share.html
+          grep -Fq 'window.location.replace' share.html
           grep -Fq 'find-leader-retention-20260718c-phase-2b-lazy' assets/js/find-leader-retention.js
           grep -Fq 'picks-season-loop-20260718d-canonical-ui' assets/js/picks-season-loop.js
           grep -Fq 'picks-internal-navigation-20260718a-fast-routes' assets/js/picks-internal-navigation.js
@@ -77,7 +89,7 @@ jobs:
           grep -Fq 'add column if not exists profile_photo_data text' supabase/app-profile-photo-upload-phase.sql
           grep -Fq 'create or replace function public.app_profile_set_photo' supabase/app-profile-photo-upload-phase.sql
 
-      - name: Wire the compact Phase 2D assets into the live page
+      - name: Wire Phase 2E sharing and deep links into the live page
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -93,6 +105,7 @@ jobs:
               'picks-internal-navigation.js':'picks-internal-navigation-20260718a-fast-routes',
               'picks-home-event-cleanup.js':'picks-home-event-cleanup-20260718c-no-reminder',
               'picks-mobile-polish.js':'picks-mobile-polish-20260718f-event-art',
+              'find-leader.js':'find-leader-20260718a-phase-2e-shared-results',
               'app-update-watcher.js':'app-update-watcher-20260718c-compact-feed',
               'product-architecture.js':'product-architecture-20260718q-picks-cohesion',
           }
@@ -123,7 +136,11 @@ jobs:
               if count!=1:
                   raise SystemExit('Could not insert picks-season-loop.js after app-profile.js')
 
-          changelog_src='assets/data/what-changed.js?v=what-changed-data-20260718b-compact'
+          changelog_text=Path('assets/data/what-changed.js').read_text()
+          changelog_match=re.search(r"version:'([^']+)'",changelog_text)
+          if not changelog_match:
+              raise SystemExit('Could not read What Changed data version')
+          changelog_src=f'assets/data/what-changed.js?v={changelog_match.group(1)}'
           changelog_pattern=r'\s*<script src="assets/data/what-changed\.js\?v=[^"]+"></script>'
           text=re.sub(changelog_pattern,'',text)
           watcher_tag=re.search(r'(?P<indent>\s*)<script src="assets/js/app-update-watcher\.js\?v=[^"]+"></script>',text)
@@ -132,9 +149,36 @@ jobs:
           replacement=f'{watcher_tag.group("indent")}<script src="{changelog_src}"></script>{watcher_tag.group("indent")}<script src="assets/js/app-update-watcher.js?v=app-update-watcher-20260718c-compact-feed"></script>'
           text=text[:watcher_tag.start()]+replacement+text[watcher_tag.end():]
 
+          share_tag='  <script src="assets/js/share-deep-links.js?v=share-deep-links-20260718a-phase-2e"></script>'
+          text=re.sub(r'\s*<script src="assets/js/share-deep-links\.js\?v=[^"]+"></script>','',text)
+          if '</body>' not in text:
+              raise SystemExit('Could not find closing body tag')
+          text=text.replace('</body>',f'{share_tag}\n</body>',1)
+
+          head_tags=[
+              (r'<meta name="description" content="[^"]*"\s*/?>','<meta name="description" content="UFC-only GOAT rankings, fighter comparisons, games, Picks, and War Room discussion in Octagon HQ." />'),
+              (r'<link rel="canonical" href="[^"]*"\s*/?>','<link rel="canonical" href="https://codyking0602.github.io/ufc-goat-rankings/" />'),
+              (r'<meta property="og:type" content="[^"]*"\s*/?>','<meta property="og:type" content="website" />'),
+              (r'<meta property="og:site_name" content="[^"]*"\s*/?>','<meta property="og:site_name" content="Octagon HQ" />'),
+              (r'<meta property="og:title" content="[^"]*"\s*/?>','<meta property="og:title" content="Octagon HQ" />'),
+              (r'<meta property="og:description" content="[^"]*"\s*/?>','<meta property="og:description" content="UFC rankings, debates, games, Picks, and community — built for the group chat." />'),
+              (r'<meta property="og:url" content="[^"]*"\s*/?>','<meta property="og:url" content="https://codyking0602.github.io/ufc-goat-rankings/" />'),
+              (r'<meta property="og:image" content="[^"]*"\s*/?>','<meta property="og:image" content="https://codyking0602.github.io/ufc-goat-rankings/assets/app-icon.png?v=20260702c" />'),
+              (r'<meta name="twitter:card" content="[^"]*"\s*/?>','<meta name="twitter:card" content="summary" />'),
+              (r'<meta name="twitter:title" content="[^"]*"\s*/?>','<meta name="twitter:title" content="Octagon HQ" />'),
+              (r'<meta name="twitter:description" content="[^"]*"\s*/?>','<meta name="twitter:description" content="UFC rankings, debates, games, Picks, and community." />'),
+              (r'<meta name="twitter:image" content="[^"]*"\s*/?>','<meta name="twitter:image" content="https://codyking0602.github.io/ufc-goat-rankings/assets/app-icon.png?v=20260702c" />'),
+          ]
+          viewport='<meta name="viewport" content="width=device-width, initial-scale=1" />'
+          for pattern,tag in head_tags:
+              if re.search(pattern,text):
+                  text=re.sub(pattern,tag,text,count=1)
+              else:
+                  text=text.replace(viewport,f'{viewport}\n  {tag}',1)
+
           text=re.sub(
               r'<meta name="app-build" content="[^"]+" />',
-              '<meta name="app-build" content="20260718-phase-2d-what-changed-compact" />',
+              '<meta name="app-build" content="20260718-phase-2e-sharing-deep-links" />',
               text,
               count=1,
           )
@@ -144,12 +188,12 @@ jobs:
       - name: Commit live asset versions
         run: |
           if git diff --quiet -- index.html; then
-            echo 'Live compact Phase 2D asset versions are unchanged.'
+            echo 'Live Phase 2E asset versions are unchanged.'
           else
             git config user.name 'github-actions[bot]'
             git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
             git add index.html
-            git commit -m 'Deploy compact Phase 2D What Changed [skip ci]'
+            git commit -m 'Deploy Phase 2E sharing and deep links [skip ci]'
             git pull --rebase origin main
             git push origin HEAD:main
           fi
@@ -259,9 +303,16 @@ jobs:
               'density':'compact-mobile','copy_reduction':'25-percent-seed-summary-word-count',
               'editorial_policy':'fighter-and-major-feature-entry-in-release-change'
           }
+          status['sharing_deep_links']={
+              'phase':'phase-2e','status':'active','owner':'assets/js/share-deep-links.js',
+              'targets':['fighter-profile','prepared-comparison','find-leader-result','picks-event-recap','war-room-discussion'],
+              'entry_page':'share.html','social_preview':'generic-static-card-plus-runtime-metadata',
+              'private_routes':'picks-and-war-room-respect-existing-access',
+              'find_leader_payload':'exact-verified-board-and-result'
+          }
           status['checked_at']=datetime.now(timezone.utc).isoformat()
           status_path.write_text(json.dumps(status,indent=2,sort_keys=True)+'\n')
-          print('Shared profile, Picks and compact Phase 2D What Changed release verified.')
+          print('Shared profile, Picks, What Changed and Phase 2E sharing release verified.')
           PY
 
       - name: Commit deployment audit
@@ -273,6 +324,6 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '4189826+github-actions[bot]@users.noreply.github.com'
           git add supabase/goat26-deployment-status.json
-          git commit -m 'Record compact Phase 2D What Changed deployment [skip ci]'
+          git commit -m 'Record Phase 2E sharing deployment [skip ci]'
           git pull --rebase origin main
           git push origin HEAD:main
