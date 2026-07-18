@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='find-leader-retention-20260718b-phase-2b-final';
+  const VERSION='find-leader-retention-20260718c-phase-2b-lazy';
   const GAME_TYPE='find-leader';
   const MAX_SCORE=10;
   const HISTORY_DAYS=35;
@@ -103,13 +103,13 @@
     window.addEventListener('ufc-play-game-complete',event=>saveAttempt(event.detail||{}));
     window.addEventListener('ufc-play-hub-ready',()=>{renderAll();refresh({days:HISTORY_DAYS});});
     window.addEventListener('ufc-play-daily-rotation-ready',renderAll);
-    window.addEventListener('ufc-play-profile-ready',event=>{state.identity=event.detail||null;refresh({days:HISTORY_DAYS});});
+    window.addEventListener('ufc-play-profile-ready',event=>{state.identity=event.detail||null;if(state.historyOpen||document.querySelector('.profile-activity-overlay')||document.getElementById('play')?.classList.contains('active-view'))refresh({days:HISTORY_DAYS});});
     window.addEventListener('ufc-app-profile-updated',event=>{state.identity=event.detail?.identity||state.identity;refresh({days:HISTORY_DAYS,force:true});});
-    document.addEventListener('click',event=>{const day=event.target.closest?.('[data-find-history-day]');if(day){openHistory(day.dataset.findHistoryDay);return;}if(event.target.closest?.('[data-find-history-open]'))openHistory();});
+    document.addEventListener('click',event=>{if(event.target.closest?.('.app-profile-chip')){[80,260,700].forEach(delay=>setTimeout(ensureProfileAction,delay));refresh({days:HISTORY_DAYS});return;}const day=event.target.closest?.('[data-find-history-day]');if(day){refresh({days:HISTORY_DAYS}).then(()=>openHistory(day.dataset.findHistoryDay));return;}if(event.target.closest?.('[data-find-history-open]'))refresh({days:HISTORY_DAYS}).then(()=>openHistory());});
     document.addEventListener('keydown',event=>{if(event.key==='Escape'&&state.historyOpen)closeHistory();});
-    state.profileObserver=new MutationObserver(()=>ensureProfileAction());state.profileObserver.observe(document.body,{childList:true,subtree:true});
+    
   }
-  function start(){installStyles();bind();state.rows=mergeRows(readLedger(),localRows());renderAll();refresh({days:HISTORY_DAYS});clearInterval(state.timer);state.timer=setInterval(updateCountdowns,1000);}
+  function start(){installStyles();bind();state.rows=mergeRows(readLedger(),localRows());renderAll();clearInterval(state.timer);state.timer=setInterval(updateCountdowns,1000);}
 
   window.UFC_FIND_LEADER_RETENTION={version:VERSION,refresh,history,streaks,openHistory,closeHistory,saveAttempt,centralDay,countdownText,get rows(){return history();}};
   document.documentElement.setAttribute('data-find-leader-retention',VERSION);
