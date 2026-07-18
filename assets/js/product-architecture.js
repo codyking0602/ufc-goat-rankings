@@ -1,11 +1,11 @@
 (function(){
   'use strict';
 
-  const VERSION='product-architecture-20260718e-polish-final';
+  const VERSION='product-architecture-20260718f-profile-unification';
   const SHELL_SRC='assets/js/octagon-hq-shell.js?v=app-shell-20260718c-legacy-route-safe';
   const CONNECTIVITY_SRC='assets/js/product-connectivity.js?v=product-connectivity-20260718c-clean-handoffs';
-  const POLISH_CSS='assets/css/product-polish.css?v=product-polish-20260718a';
-  const POLISH_SRC='assets/js/product-polish.js?v=product-polish-20260718b-mobile-audit';
+  const POLISH_CSS='assets/css/product-polish.css?v=product-polish-20260718c-header-final';
+  const POLISH_SRC='assets/js/product-polish.js?v=product-polish-20260718c-header-final';
 
   function shell(){return window.UFC_APP_SHELL||null;}
 
