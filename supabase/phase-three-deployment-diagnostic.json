@@ -1,0 +1,14 @@
+{
+  "checked_at": "2026-07-18T16:54:45.989016+00:00",
+  "database": "failed",
+  "error": "Supabase Management API returned HTTP 400: {\"message\":\"Failed to run sql query: ERROR:  42501: permission denied for function app_notification_audit\\n\"}",
+  "finished_at": "2026-07-18T16:54:49.444216+00:00",
+  "phase": "phase-3-smart-notifications",
+  "workflow_outcomes": {
+    "database": "failure",
+    "validate": "success",
+    "wire": "skipped",
+    "worker": "skipped"
+  },
+  "workflow_status": "failed"
+}
