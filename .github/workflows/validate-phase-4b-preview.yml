@@ -2,7 +2,7 @@ name: Validate Phase 4B Preview
 
 on:
   push:
-    branches: [phase-4b-clean-preview-v2]
+    branches: [phase-4b-clean-preview-v2, fix/phase-4b-production-flicker]
     paths:
       - 'assets/js/community-profiles.js'
       - 'assets/js/fresh-home-launch.js'
@@ -77,7 +77,7 @@ jobs:
           ! grep -Fq 'serviceWorker' assets/js/community-profiles.js
           ! grep -Fq 'MutationObserver' assets/js/fresh-home-launch.js
           ! grep -Fq 'setInterval' assets/js/fresh-home-launch.js
-          grep -Fq 'community-profiles-20260718e-clean-preview' assets/js/community-profiles.js
+          grep -Fq 'community-profiles-20260718g-production-stable' assets/js/community-profiles.js
           grep -Fq 'fresh-home-launch-20260718f-clean-preview' assets/js/fresh-home-launch.js
           grep -Fq 'app_profile_community_snapshot' supabase/app-community-profiles-phase-4b.sql
           grep -Fq 'app_profile_set_top_ten' supabase/app-community-profiles-phase-4b.sql
@@ -101,7 +101,7 @@ jobs:
           done
           cat /tmp/phase-4b-preview-server.log
           exit 1
-      - name: Test fresh launch, stability, directory, and profile lifecycle
+      - name: Test fresh launch, delayed stability, directory, and profile lifecycle
         run: node scripts/test-phase-4b-mobile.mjs
       - name: Upload Phase 4B mobile proof
         if: always()
