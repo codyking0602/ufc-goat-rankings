@@ -9,6 +9,14 @@ on:
       - 'assets/css/community-profiles.css'
       - 'supabase/app-community-profiles-phase-4b.sql'
       - '.github/workflows/validate-phase-4b-preview.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'assets/js/community-profiles.js'
+      - 'assets/js/fresh-home-launch.js'
+      - 'assets/css/community-profiles.css'
+      - 'supabase/app-community-profiles-phase-4b.sql'
+      - '.github/workflows/validate-phase-4b-preview.yml'
   workflow_dispatch:
 
 permissions:
@@ -38,6 +46,7 @@ jobs:
           grep -Fq 'app_profile_set_top_ten' supabase/app-community-profiles-phase-4b.sql
       - name: Confirm live shell is untouched
         run: |
+          git fetch origin main
           git diff --exit-code origin/main -- sw.js
           git diff --exit-code origin/main -- assets/js/octagon-hq-shell.js
           git diff --exit-code origin/main -- assets/js/native-app-shell.js
