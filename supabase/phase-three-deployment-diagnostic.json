@@ -1,6 +1,6 @@
 {
   "audit": {
-    "active_subscriptions": 1,
+    "active_subscriptions": 2,
     "challenge_trigger": true,
     "configured": true,
     "cron_scheduled": true,
@@ -12,9 +12,9 @@
     "war_room_trigger": true,
     "worker_rpc": true
   },
-  "checked_at": "2026-07-18T18:32:59.638148+00:00",
+  "checked_at": "2026-07-18T19:26:58.800552+00:00",
   "database": "success",
-  "phase": "phase-3-user-visible-fix",
+  "phase": "phase-4a-native-shell",
   "server_board_at_deploy": {
     "challenge_day": "2026-07-18",
     "player_count": 1,

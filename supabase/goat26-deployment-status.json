@@ -1,7 +1,7 @@
 {
   "active_members": 6,
   "avatar_profiles": 2,
-  "checked_at": "2026-07-18T18:32:59.637823+00:00",
+  "checked_at": "2026-07-18T19:26:58.800288+00:00",
   "code": "GOAT26",
   "daily_leaderboard_live_sync": {
     "change_detection": "server-signature-before-render",
@@ -89,17 +89,36 @@
     },
     "vapid_ready": true
   },
+  "phase_4a_native_shell": {
+    "badges": [
+      "direct-challenges",
+      "missing-picks",
+      "war-room-unread"
+    ],
+    "bottom_navigation": [
+      "home",
+      "rankings",
+      "play",
+      "picks",
+      "war-room"
+    ],
+    "haptics": "feature-detected-refresh-threshold-only",
+    "intelligence_entry": "global-ask-action",
+    "pull_to_refresh": true,
+    "status": "active",
+    "transitions": "lightweight-view-enter"
+  },
   "refresh_performance": {
-    "build_check_timeout_ms": 2600,
-    "manual_refresh": "soft-sync-unless-new-build-exists",
-    "navigation": "network-first",
+    "manual_refresh": "desktop-build-check",
+    "mobile_refresh": "pull-to-soft-sync",
+    "navigation": "instant-cached-shell",
     "status": "active",
     "versioned_assets": "cache-first"
   },
   "rooms": 2,
   "saved_picks": 51,
   "smart_notifications": {
-    "active_subscriptions": 1,
+    "active_subscriptions": 2,
     "challenge_trigger": true,
     "configured": true,
     "cron_scheduled": true,
