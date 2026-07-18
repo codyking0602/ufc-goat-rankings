@@ -1,7 +1,7 @@
 {
   "active_members": 6,
   "avatar_profiles": 2,
-  "checked_at": "2026-07-17T22:16:08.774779+00:00",
+  "checked_at": "2026-07-18T02:32:32.662833+00:00",
   "code": "GOAT26",
   "deployment_method": "supabase-management-api",
   "events": 2,
@@ -23,11 +23,11 @@
     "current_week_start": "2026-07-13",
     "edge_function": "octagon-push",
     "edge_function_deployed": true,
-    "enabled_members": 3,
-    "messages": 2,
+    "enabled_members": 5,
+    "messages": 4,
     "phase": "unread-and-web-push",
-    "reactions": 2,
-    "replies": 1,
+    "reactions": 1,
+    "replies": 2,
     "rls_enabled": true,
     "rpc": {
       "anon_execute": {
@@ -71,6 +71,6 @@
     "vapid_ready": true
   },
   "rooms": 2,
-  "saved_picks": 50,
+  "saved_picks": 51,
   "status": "active"
 }
