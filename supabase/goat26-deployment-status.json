@@ -5,13 +5,13 @@
     "sources": [
       "play-local-ledger",
       "find-leader-history",
-      "picks-room-snapshots",
+      "picks-group-snapshot",
       "war-room-snapshot"
     ],
     "status": "active"
   },
   "avatar_profiles": 2,
-  "checked_at": "2026-07-18T10:21:00.881543+00:00",
+  "checked_at": "2026-07-18T11:45:05.369106+00:00",
   "code": "GOAT26",
   "deployment_method": "supabase-management-api",
   "events": 2,
@@ -91,13 +91,17 @@
     "vapid_ready": true
   },
   "picks_season_loop": {
+    "activity_profile_source": "canonical-picks-group-totals",
     "canonical_totals_source": "picks_group_snapshot",
+    "event_art": "load-confirmed-persistent",
     "event_detail_source": "picks_room_snapshot",
-    "layout": "compact-home-summary-plus-canonical-leaderboard",
-    "loading_policy": "lazy-on-picks-or-profile",
+    "event_pre_score_rank": "dash",
+    "event_share": "home-only",
+    "home_next_event": "removed-at-source",
+    "internal_navigation": "immediate-scoped-observers",
+    "layout": "home-season-summary-leaderboard-archive",
     "phase": "phase-2c",
-    "recap": "existing-group-recap-plus-personal-event-summary",
-    "reminders": "event-route-shared-profile-opt-in",
+    "reminders": "in-app-while-open-plus-phone-calendar",
     "status": "active",
     "tie_policy": "shared-rank-for-exact-equals"
   },
