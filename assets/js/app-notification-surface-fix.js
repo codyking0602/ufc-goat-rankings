@@ -1,7 +1,10 @@
 (function(){
   'use strict';
 
-  const VERSION='app-notification-surface-fix-20260718b-phase-4a';
+  if(window.__UFC_APP_NOTIFICATION_SURFACE_FIX_STARTED__)return;
+  window.__UFC_APP_NOTIFICATION_SURFACE_FIX_STARTED__=true;
+
+  const VERSION='app-notification-surface-fix-20260718c-single-owner';
   const CACHE_PREFIX='octagon-hq:activity-profile-html-v1:';
   let observer=null;
   let syncTimer=0;

@@ -2,22 +2,28 @@ name: Validate Phase 4B Preview
 
 on:
   push:
-    branches: [phase-4b-clean-preview-v2, fix/phase-4b-production-flicker]
+    branches: [phase-4b-clean-preview-v2, fix/phase-4b-production-flicker, fix/profile-signin-flicker]
     paths:
       - 'assets/js/community-profiles.js'
       - 'assets/js/fresh-home-launch.js'
+      - 'assets/js/product-architecture.js'
+      - 'assets/js/app-notification-surface-fix.js'
       - 'assets/css/community-profiles.css'
       - 'supabase/app-community-profiles-phase-4b.sql'
       - 'scripts/test-phase-4b-mobile.mjs'
+      - 'scripts/test-profile-signin-stability.mjs'
       - '.github/workflows/validate-phase-4b-preview.yml'
   pull_request:
     branches: [main]
     paths:
       - 'assets/js/community-profiles.js'
       - 'assets/js/fresh-home-launch.js'
+      - 'assets/js/product-architecture.js'
+      - 'assets/js/app-notification-surface-fix.js'
       - 'assets/css/community-profiles.css'
       - 'supabase/app-community-profiles-phase-4b.sql'
       - 'scripts/test-phase-4b-mobile.mjs'
+      - 'scripts/test-profile-signin-stability.mjs'
       - '.github/workflows/validate-phase-4b-preview.yml'
   workflow_dispatch:
 
@@ -27,7 +33,7 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 18
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -37,7 +43,10 @@ jobs:
         run: |
           node --check assets/js/community-profiles.js
           node --check assets/js/fresh-home-launch.js
+          node --check assets/js/product-architecture.js
+          node --check assets/js/app-notification-surface-fix.js
           node --check scripts/test-phase-4b-mobile.mjs
+          node --check scripts/test-profile-signin-stability.mjs
       - name: Diagnose repository JavaScript syntax
         id: syntax
         shell: bash
@@ -79,6 +88,12 @@ jobs:
           ! grep -Fq 'setInterval' assets/js/fresh-home-launch.js
           grep -Fq 'community-profiles-20260718g-production-stable' assets/js/community-profiles.js
           grep -Fq 'fresh-home-launch-20260718f-clean-preview' assets/js/fresh-home-launch.js
+          grep -Fq 'product-architecture-20260718t-single-owner-startup' assets/js/product-architecture.js
+          grep -Fq '__UFC_PRODUCT_ARCHITECTURE_STARTED__' assets/js/product-architecture.js
+          ! grep -Fq 'loadNativeShell();' assets/js/product-architecture.js
+          ! grep -Fq 'loadNotificationSurfaceFix();' assets/js/product-architecture.js
+          grep -Fq 'app-notification-surface-fix-20260718c-single-owner' assets/js/app-notification-surface-fix.js
+          grep -Fq '__UFC_APP_NOTIFICATION_SURFACE_FIX_STARTED__' assets/js/app-notification-surface-fix.js
           grep -Fq 'app_profile_community_snapshot' supabase/app-community-profiles-phase-4b.sql
           grep -Fq 'app_profile_set_top_ten' supabase/app-community-profiles-phase-4b.sql
       - name: Confirm live shell is untouched
@@ -103,6 +118,8 @@ jobs:
           exit 1
       - name: Test fresh launch, delayed stability, directory, and profile lifecycle
         run: node scripts/test-phase-4b-mobile.mjs
+      - name: Test Picks profile sign-in stability
+        run: node scripts/test-profile-signin-stability.mjs
       - name: Upload Phase 4B mobile proof
         if: always()
         uses: actions/upload-artifact@v4
@@ -110,6 +127,7 @@ jobs:
           name: phase-4b-mobile-proof
           path: |
             /tmp/phase-4b-mobile-report.json
+            /tmp/profile-signin-stability-report.json
             /tmp/phase-4b-mobile-preview.png
             /tmp/phase-4b-preview-server.log
           if-no-files-found: warn
