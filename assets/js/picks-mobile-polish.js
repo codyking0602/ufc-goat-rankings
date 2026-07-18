@@ -1,43 +1,93 @@
 (function(){
   'use strict';
 
+  const VERSION='picks-mobile-polish-20260718f-event-art';
+  const observers=new Map();
   let syncing=false;
-  const mobileLabels={men:'P4P',women:'Women',division:'Divisions',categories:'Categories',compare:'Compare',picks:'Picks',rules:'Rules'};
+
+  function currentVisual(){
+    const eventId=document.getElementById('picksEventSelect')?.value||'';
+    return {eventId,visual:window.UFC_PICKS_EVENT_VISUALS?.[eventId]||null};
+  }
+
+  function clearEventArtwork(hero){
+    hero.querySelector(':scope > .picks-event-art')?.remove();
+    hero.classList.remove('has-event-art');
+    delete hero.dataset.eventArtId;
+  }
+
+  function showEventArtwork(hero,image,eventId){
+    if(!image.isConnected||hero.dataset.eventArtId!==eventId)return;
+    if(image.naturalWidth>0)hero.classList.add('has-event-art');
+  }
+
+  function bindArtworkImage(hero,image,eventId){
+    if(image.dataset.eventArtBound==='true')return;
+    image.dataset.eventArtBound='true';
+
+    image.addEventListener('load',()=>showEventArtwork(hero,image,eventId),{once:true});
+    image.addEventListener('error',()=>{
+      if(image.isConnected)image.remove();
+      if(hero.dataset.eventArtId===eventId){
+        hero.classList.remove('has-event-art');
+        delete hero.dataset.eventArtId;
+      }
+    },{once:true});
+
+    if(image.complete){
+      if(image.naturalWidth>0)showEventArtwork(hero,image,eventId);
+      else image.dispatchEvent(new Event('error'));
+    }
+  }
 
   function applyEventArtwork(){
     const hero=document.getElementById('picksEventHero');
-    const eventId=document.getElementById('picksEventSelect')?.value || '';
-    const visual=window.UFC_PICKS_EVENT_VISUALS?.[eventId];
-    if(!hero) return;
+    if(!hero)return;
 
-    const current=hero.querySelector(':scope > .picks-event-art');
+    const {eventId,visual}=currentVisual();
+    let image=hero.querySelector(':scope > .picks-event-art');
+
     if(!visual?.hero){
-      current?.remove();
-      hero.classList.remove('has-event-art');
-      delete hero.dataset.eventArtId;
+      clearEventArtwork(hero);
       return;
     }
 
-    hero.classList.add('has-event-art');
-    if(current && hero.dataset.eventArtId===eventId && current.getAttribute('src')===visual.hero) return;
-    current?.remove();
+    if(image&&(
+      hero.dataset.eventArtId!==eventId||
+      image.getAttribute('src')!==visual.hero
+    )){
+      image.remove();
+      image=null;
+    }
 
-    const image=document.createElement('img');
-    image.className='picks-event-art';
-    image.src=visual.hero;
-    image.alt=visual.alt || '';
-    image.loading='eager';
-    image.decoding='async';
-    hero.prepend(image);
-    hero.dataset.eventArtId=eventId;
+    if(!image){
+      hero.classList.remove('has-event-art');
+      image=document.createElement('img');
+      image.className='picks-event-art';
+      image.src=visual.hero;
+      image.alt=visual.alt||'';
+      image.loading='eager';
+      image.decoding='async';
+      image.setAttribute('fetchpriority','high');
+      hero.dataset.eventArtId=eventId;
+      hero.prepend(image);
+    }
+
+    bindArtworkImage(hero,image,eventId);
   }
 
   function initials(name){
-    return String(name || '').split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase();
+    return String(name||'')
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0,2)
+      .map(part=>part[0])
+      .join('')
+      .toUpperCase();
   }
 
   function fighterSlug(name){
-    return String(name || '')
+    return String(name||'')
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g,'')
       .toLowerCase()
@@ -47,11 +97,15 @@
 
   function expectedPhotoUrl(name){
     const slug=fighterSlug(name);
-    return slug ? `assets/fighters/${slug}-thumb.webp` : '';
+    return slug?`assets/fighters/${slug}-thumb.webp`:'';
   }
 
   function failedUrls(photo){
-    return new Set(String(photo.dataset.polishPhotoFailed || '').split('|').filter(Boolean));
+    return new Set(
+      String(photo.dataset.polishPhotoFailed||'')
+        .split('|')
+        .filter(Boolean)
+    );
   }
 
   function rememberFailure(photo,url){
@@ -68,159 +122,190 @@
       photo.appendChild(fallback);
     }
     fallback.classList.add('picks-photo-fallback');
-    if(!fallback.textContent.trim()) fallback.textContent=initials(name);
+    if(!fallback.textContent.trim())fallback.textContent=initials(name);
     return fallback;
   }
 
-  function bindImage(photo,img,name){
-    if(img.dataset.polishPhotoBound) return;
-    img.dataset.polishPhotoBound='true';
+  function tryDefaultPhoto(photo,name,url){
+    if(!url||failedUrls(photo).has(url)||photo.querySelector('img'))return;
     const fallback=ensureFallback(photo,name);
-    const raw=img.getAttribute('src') || '';
+    const image=document.createElement('img');
+    image.src=url;
+    image.alt='';
+    image.loading='lazy';
+    image.decoding='async';
+    image.dataset.polishPhotoBound='true';
+    fallback.hidden=false;
+    photo.insertBefore(image,fallback);
+
+    image.addEventListener('load',()=>{
+      fallback.hidden=true;
+      photo.classList.remove('photo-missing');
+    },{once:true});
+
+    image.addEventListener('error',()=>{
+      rememberFailure(photo,url);
+      image.remove();
+      fallback.hidden=false;
+      photo.classList.add('photo-missing');
+    },{once:true});
+  }
+
+  function bindFightImage(photo,image,name){
+    if(image.dataset.polishPhotoBound==='true')return;
+    image.dataset.polishPhotoBound='true';
+
+    const fallback=ensureFallback(photo,name);
+    const raw=image.getAttribute('src')||'';
     const expected=expectedPhotoUrl(name);
 
     const showPhoto=()=>{
       fallback.hidden=true;
       photo.classList.remove('photo-missing');
     };
+
     const showFallback=()=>{
       rememberFailure(photo,raw);
-      img.remove();
+      image.remove();
       fallback.hidden=false;
       photo.classList.add('photo-missing');
-      if(expected && expected!==raw) tryDefaultPhoto(photo,name,expected);
+      if(expected&&expected!==raw)tryDefaultPhoto(photo,name,expected);
     };
 
-    img.addEventListener('load',showPhoto,{once:true});
-    img.addEventListener('error',showFallback,{once:true});
-    if(img.complete){
-      if(img.naturalWidth>0) showPhoto();
+    image.addEventListener('load',showPhoto,{once:true});
+    image.addEventListener('error',showFallback,{once:true});
+
+    if(image.complete){
+      if(image.naturalWidth>0)showPhoto();
       else showFallback();
     }
   }
 
-  function tryDefaultPhoto(photo,name,url){
-    if(!url || failedUrls(photo).has(url) || photo.querySelector('img')) return;
-    const fallback=ensureFallback(photo,name);
-    const img=document.createElement('img');
-    img.src=url;
-    img.alt='';
-    img.loading='lazy';
-    img.decoding='async';
-    img.dataset.polishPhotoBound='true';
-    fallback.hidden=false;
-    photo.insertBefore(img,fallback);
-    img.addEventListener('load',()=>{
-      fallback.hidden=true;
-      photo.classList.remove('photo-missing');
-    },{once:true});
-    img.addEventListener('error',()=>{
-      rememberFailure(photo,url);
-      img.remove();
-      fallback.hidden=false;
-      photo.classList.add('photo-missing');
-    },{once:true});
-  }
-
   function wireFightPhotos(){
     document.querySelectorAll('#picksFightList .pick-fighter').forEach(button=>{
-      const name=button.querySelector('.pick-fighter-name')?.textContent?.trim() || button.dataset.pick || '';
+      const name=button.querySelector('.pick-fighter-name')?.textContent?.trim()
+        ||button.dataset.pick
+        ||'';
       const photo=button.querySelector('.pick-fighter-photo');
-      if(!name || !photo) return;
+      if(!name||!photo)return;
+
       ensureFallback(photo,name);
-      const img=photo.querySelector('img');
-      if(img) bindImage(photo,img,name);
+      const image=photo.querySelector('img');
+      if(image)bindFightImage(photo,image,name);
       else tryDefaultPhoto(photo,name,expectedPhotoUrl(name));
     });
   }
 
   function formatRemaining(minutes){
-    const total=Math.max(0,Math.round(Number(minutes) || 0));
-    if(total<=1) return 'Locks in under a minute';
+    const total=Math.max(0,Math.round(Number(minutes)||0));
+    if(total<=1)return'Locks in under a minute';
     if(total>=1440){
       const days=Math.floor(total/1440);
       const hours=Math.floor((total%1440)/60);
-      return `Locks in ${days} day${days===1?'':'s'}${hours ? `, ${hours} hour${hours===1?'':'s'}` : ''}`;
+      return `Locks in ${days} day${days===1?'':'s'}${hours?`, ${hours} hour${hours===1?'':'s'}`:''}`;
     }
     if(total>=60){
       const hours=Math.floor(total/60);
       const mins=total%60;
-      return `Locks in ${hours} hour${hours===1?'':'s'}${mins ? `, ${mins} minute${mins===1?'':'s'}` : ''}`;
+      return `Locks in ${hours} hour${hours===1?'':'s'}${mins?`, ${mins} minute${mins===1?'':'s'}`:''}`;
     }
     return `Locks in ${total} minutes`;
   }
 
   function polishCountdown(){
     const detail=document.querySelector('#picksLivePanel .picks-live-copy small');
-    if(!detail) return;
+    if(!detail)return;
     const match=detail.textContent.trim().match(/^Locks in about\s+(\d+)\s+minutes$/i);
-    if(!match) return;
+    if(!match)return;
     const next=formatRemaining(Number(match[1]));
-    if(detail.textContent!==next) detail.textContent=next;
+    if(detail.textContent!==next)detail.textContent=next;
   }
 
   function compactRoomBanner(){
     const banner=document.getElementById('picksRoomBanner');
-    if(!banner?.classList.contains('active')) return;
-    banner.classList.add('picks-room-banner-compact');
+    if(!banner?.classList.contains('active'))return;
+
+    banner.classList.add('picks-room-banner-compact','picks-room-no-share');
+
+    const share=banner.querySelector('#picksShareRoom');
+    share?.remove();
+
     const actions=banner.querySelector('.picks-room-actions');
     const leave=banner.querySelector('#picksSwitchRoom');
-    if(!actions || !leave || leave.closest('.picks-room-more')) return;
+    if(!actions)return;
 
-    const more=document.createElement('details');
-    more.className='picks-room-more';
-    more.innerHTML='<summary aria-label="More room actions">•••</summary><div class="picks-room-more-menu"></div>';
-    more.querySelector('.picks-room-more-menu')?.appendChild(leave);
-    leave.textContent='Leave room';
-    actions.appendChild(more);
-  }
+    if(leave&&!leave.closest('.picks-room-more')){
+      const more=document.createElement('details');
+      more.className='picks-room-more';
+      more.innerHTML=`
+        <summary aria-label="More room actions">•••</summary>
+        <div class="picks-room-more-menu"></div>
+      `;
+      more.querySelector('.picks-room-more-menu')?.appendChild(leave);
+      leave.textContent='Leave room';
+      actions.appendChild(more);
+    }
 
-  function applyMobileLabels(){
-    const mobile=window.matchMedia('(max-width:900px)').matches;
-    document.querySelectorAll('.tabs .tab').forEach(button=>{
-      if(!button.dataset.desktopLabel) button.dataset.desktopLabel=button.textContent.trim();
-      const next=mobile ? (mobileLabels[button.dataset.view] || button.dataset.desktopLabel) : button.dataset.desktopLabel;
-      if(button.textContent!==next) button.textContent=next;
-      button.setAttribute('aria-label',button.dataset.desktopLabel);
-      if(!button.dataset.mobileCenterBound){
-        button.dataset.mobileCenterBound='true';
-        button.addEventListener('click',()=>{
-          if(!window.matchMedia('(max-width:900px)').matches) return;
-          window.setTimeout(()=>button.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}),30);
-        });
-      }
-    });
+    const visibleActions=[...actions.children].filter(node=>!node.classList.contains('picks-room-more'));
+    actions.style.setProperty('--picks-room-action-count',String(Math.max(1,visibleActions.length)));
   }
 
   function sync(){
-    if(syncing) return;
+    if(syncing)return;
     syncing=true;
     try{
       applyEventArtwork();
       compactRoomBanner();
       polishCountdown();
       wireFightPhotos();
-      applyMobileLabels();
+      installObservers();
     }finally{
       syncing=false;
     }
   }
 
-  function start(){
-    sync();
-    const picks=document.getElementById('picks') || document.body;
-    const observer=new MutationObserver(()=>{
-      clearTimeout(start.timer);
-      start.timer=setTimeout(sync,70);
-    });
-    observer.observe(picks,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['class','hidden','src']});
-    window.addEventListener('resize',()=>{
-      clearTimeout(start.resizeTimer);
-      start.resizeTimer=setTimeout(applyMobileLabels,120);
-    });
-    window.addEventListener('picks:routechange',()=>setTimeout(sync,30));
+  function scheduleSync(){
+    clearTimeout(scheduleSync.timer);
+    scheduleSync.timer=setTimeout(sync,35);
   }
 
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start,{once:true});
-  else start();
+  function observe(id,options){
+    const node=document.getElementById(id);
+    if(!node||observers.get(id)?.node===node)return;
+
+    observers.get(id)?.observer.disconnect();
+    const observer=new MutationObserver(scheduleSync);
+    observer.observe(node,options);
+    observers.set(id,{node,observer});
+  }
+
+  function installObservers(){
+    observe('picksEventHero',{childList:true,subtree:false});
+    observe('picksFightList',{childList:true,subtree:true});
+    observe('picksRoomBanner',{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+    observe('picksLivePanel',{childList:true,subtree:true,characterData:true});
+  }
+
+  function start(){
+    sync();
+    [80,260,700].forEach(delay=>setTimeout(sync,delay));
+
+    document.getElementById('picksEventSelect')?.addEventListener('change',()=>{
+      requestAnimationFrame(applyEventArtwork);
+    });
+
+    window.addEventListener('picks:routechange',event=>{
+      if(event.detail?.route==='event')requestAnimationFrame(sync);
+    });
+
+    window.addEventListener('ufc-picks-season-updated',()=>requestAnimationFrame(sync));
+    document.documentElement.setAttribute('data-picks-mobile-polish',VERSION);
+  }
+
+  window.UFC_PICKS_MOBILE_POLISH={version:VERSION,sync,applyEventArtwork};
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',start,{once:true});
+  }else{
+    start();
+  }
 })();
