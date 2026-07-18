@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='find-leader-20260716c-daily-elimination';
+  const VERSION='find-leader-20260718a-phase-2e-shared-results';
   const DAILY_VERSION='find-leader-daily-v1';
   const PERFECT_SCORE=10;
   const shell=document.querySelector('#play .play-shell');
@@ -79,6 +79,60 @@
     setup.challengerScore=completed.score;
     setup.challengerPerfect=completed.perfect;
     return {setup,result:completed};
+  }
+
+  function compactCandidate(row){
+    return {
+      id:String(row?.id||''),
+      name:String(row?.name||''),
+      value:Number(row?.value),
+      primaryDivision:row?.primaryDivision||row?.divisions?.[0]||'',
+      thumbUrl:row?.thumbUrl||''
+    };
+  }
+
+  function sharePayload(){
+    const completed=result();
+    if(!completed||!validateSetup(state.setup))return null;
+    const setup={
+      questionId:String(state.setup.questionId||''),
+      question:String(state.setup.question||''),
+      context:String(state.setup.context||''),
+      statLabel:String(state.setup.statLabel||''),
+      shortLabel:String(state.setup.shortLabel||''),
+      leaderId:String(state.setup.leaderId||''),
+      candidateCount:PERFECT_SCORE,
+      candidates:candidates().map(compactCandidate)
+    };
+    return {setup,result:{score:completed.score,perfect:completed.perfect,eliminationOrder:[...completed.eliminationOrder]}};
+  }
+
+  function openSharedResult(payload={}){
+    const setup=clone(payload?.setup);
+    const completed=payload?.result||{};
+    if(!validateSetup(setup))return false;
+    const ids=new Set(setup.candidates.map(row=>row.id));
+    const order=[];
+    (Array.isArray(completed.eliminationOrder)?completed.eliminationOrder:[]).forEach(id=>{if(ids.has(id)&&!order.includes(id))order.push(id);});
+    const leaderIndex=order.indexOf(setup.leaderId);
+    const perfect=Boolean(completed.perfect)&&leaderIndex===-1&&order.length===PERFECT_SCORE-1;
+    if(!perfect&&leaderIndex<0)return false;
+    const safe=perfect?order:order.slice(0,leaderIndex);
+    if(safe.some(id=>id===setup.leaderId)||safe.length>(PERFECT_SCORE-1))return false;
+    const score=perfect?PERFECT_SCORE:leaderIndex+1;
+    state.setup=setup;
+    state.eliminationOrder=perfect?order:[...safe,setup.leaderId];
+    state.safeIds=safe;
+    state.fatalId=perfect?null:setup.leaderId;
+    state.score=score;
+    state.perfect=perfect;
+    state.feedback='';
+    state.phase='complete';
+    state.daily=Boolean(payload.daily);
+    state.dailyContext=payload.dailyContext?clone(payload.dailyContext):null;
+    panel.hidden=false;
+    renderFinish();
+    return true;
   }
 
   function dailySetup(context){
@@ -204,7 +258,7 @@
       <section class="find-leader-results">
         <header><div><span>FULL STAT REVEAL</span><strong>${esc(state.setup.question)}</strong></div><b>${state.score}/10</b></header>
         <div class="find-leader-reveal-grid">${sorted.map(revealCard).join('')}</div>
-        <div class="find-leader-actions"><button type="button" class="find-leader-primary" data-find-leader-challenge>CHALLENGE A FRIEND</button><button type="button" class="find-leader-secondary" data-find-leader-replay>${state.daily?'REPLAY TODAY\'S BOARD':'PLAY AGAIN'}</button><button type="button" class="find-leader-secondary" data-find-leader-home>ALL GAMES</button></div>
+        <div class="find-leader-actions"><button type="button" class="find-leader-primary" data-find-leader-share-result>SHARE RESULT</button><button type="button" class="find-leader-secondary" data-find-leader-challenge>CHALLENGE A FRIEND</button><button type="button" class="find-leader-secondary" data-find-leader-replay>${state.daily?'REPLAY TODAY\'S BOARD':'PLAY AGAIN'}</button><button type="button" class="find-leader-secondary" data-find-leader-home>ALL GAMES</button></div>
       </section>`;
     panel.scrollIntoView({behavior:'smooth',block:'start'});
   }
@@ -229,6 +283,13 @@
     startGame();
   }
 
+  function shareResult(){
+    const payload=sharePayload();
+    if(!payload)return false;
+    if(window.UFC_SHARE_LINKS?.shareFindLeader){window.UFC_SHARE_LINKS.shareFindLeader(payload);return true;}
+    return false;
+  }
+
   function installDailyAdapter(){
     const shared=window.UFC_PLAY_SHARED;
     if(!shared?.registerAdapter)return false;
@@ -251,6 +312,7 @@
   panel.addEventListener('click',event=>{
     const pick=event.target.closest?.('[data-find-leader-pick]');
     if(pick){eliminate(pick.dataset.findLeaderPick);return;}
+    if(event.target.closest?.('[data-find-leader-share-result]')){shareResult();return;}
     if(event.target.closest?.('[data-find-leader-replay]')){replay();return;}
     if(event.target.closest?.('[data-find-leader-home]'))window.UFC_PLAY_HUB?.showHub?.();
   });
@@ -260,6 +322,6 @@
   window.addEventListener('ufc-production-ranking-ready',refreshIfWaiting);
   window.addEventListener('ufc-play-shared-ready',installDailyAdapter);
   installDailyAdapter();
-  window.UFC_FIND_LEADER={version:VERSION,dailyVersion:DAILY_VERSION,open,close,startGame,dailySetup,exportChallenge,get state(){return state;}};
+  window.UFC_FIND_LEADER={version:VERSION,dailyVersion:DAILY_VERSION,open,close,startGame,dailySetup,exportChallenge,sharePayload,openSharedResult,get state(){return state;}};
   document.documentElement.setAttribute('data-find-leader',VERSION);
 })();
