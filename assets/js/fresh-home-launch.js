@@ -1,17 +1,15 @@
 (function(){
   'use strict';
 
-  const VERSION='fresh-home-launch-20260719c-cold-start-home-ios-resume';
+  const VERSION='fresh-home-launch-20260719e-single-startup-route';
   const RESUME_PICKS_KEY='__picks_resume';
   const RESUME_WINDOW_MS=30000;
-  const RESUME_HOME_DELAY_MS=500;
   const deepLinkKeys=['challenge','share','fighter','message','notification','push'];
   const picksRouteKeys=['group','room','event','picksView','archive'];
   const staleKeys=['group','room','event','picksView','archive','week','open','game',RESUME_PICKS_KEY];
   const navigationType=performance.getEntriesByType?.('navigation')?.[0]?.type||'navigate';
   const standalone=window.navigator.standalone===true
     ||window.matchMedia?.('(display-mode: standalone)')?.matches===true;
-  let hiddenAt=0;
   let resumeMarkerTimer=0;
 
   function currentUrl(){return new URL(location.href);}
@@ -92,27 +90,6 @@
     const trigger=event.target.closest?.('#picksPinSignInButton,[data-group-room],[data-history-room],#picksGroupAddEvent,#picksRoomAction');
     if(trigger)markPicksResume();
   },true);
-
-  function recordHidden(){
-    hiddenAt=Date.now();
-    clearResumeMarker();
-  }
-  function restoreHomeAfterStandaloneResume(source){
-    if(!standalone||!hiddenAt||document.hidden)return false;
-    const elapsed=Date.now()-hiddenAt;
-    hiddenAt=0;
-    if(elapsed<RESUME_HOME_DELAY_MS||hasExplicitDeepLink())return false;
-    return activateHome(source);
-  }
-
-  document.addEventListener('visibilitychange',()=>{
-    if(document.hidden)recordHidden();
-    else restoreHomeAfterStandaloneResume('standalone-visibility-resume');
-  });
-  window.addEventListener('pagehide',recordHidden);
-  window.addEventListener('pageshow',event=>{
-    if(event.persisted)restoreHomeAfterStandaloneResume('standalone-pageshow-resume');
-  });
 
   if(!document.getElementById('profileSetupReminderScript')){
     const reminder=document.createElement('script');

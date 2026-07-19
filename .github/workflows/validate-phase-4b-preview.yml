@@ -4,7 +4,9 @@ on:
   push:
     branches: [phase-4b-clean-preview-v2, fix/phase-4b-production-flicker, fix/profile-signin-flicker, fix/picks-login-reload-loop, polish/profile-directory-top10-auth]
     paths:
+      - 'index.html'
       - 'assets/js/community-profiles.js'
+      - 'assets/js/fresh-home-route-bootstrap.js'
       - 'assets/js/fresh-home-launch.js'
       - 'assets/js/product-architecture.js'
       - 'assets/js/app-notification-surface-fix.js'
@@ -17,7 +19,9 @@ on:
   pull_request:
     branches: [main]
     paths:
+      - 'index.html'
       - 'assets/js/community-profiles.js'
+      - 'assets/js/fresh-home-route-bootstrap.js'
       - 'assets/js/fresh-home-launch.js'
       - 'assets/js/product-architecture.js'
       - 'assets/js/app-notification-surface-fix.js'
@@ -44,6 +48,7 @@ jobs:
       - name: Validate Phase 4B JavaScript
         run: |
           node --check assets/js/community-profiles.js
+          node --check assets/js/fresh-home-route-bootstrap.js
           node --check assets/js/fresh-home-launch.js
           node --check assets/js/product-architecture.js
           node --check assets/js/app-notification-surface-fix.js
@@ -87,12 +92,17 @@ jobs:
           ! grep -Fq 'serviceWorker' assets/js/community-profiles.js
           ! grep -Fq 'MutationObserver' assets/js/fresh-home-launch.js
           ! grep -Fq 'setInterval' assets/js/fresh-home-launch.js
+          ! grep -Fq 'visibilitychange' assets/js/fresh-home-launch.js
+          ! grep -Fq 'pagehide' assets/js/fresh-home-launch.js
+          ! grep -Fq 'pageshow' assets/js/fresh-home-launch.js
           grep -Fq 'community-profiles-20260718h-collapsed-top10-profile' assets/js/community-profiles.js
           grep -Fq 'community-top10-overlay' assets/js/community-profiles.js
           grep -Fq 'syncPicksAccess' assets/js/community-profiles.js
-          grep -Fq 'fresh-home-launch-20260719c-cold-start-home' assets/js/fresh-home-launch.js
+          grep -Fq 'fresh-home-route-bootstrap-20260719a' assets/js/fresh-home-route-bootstrap.js
+          grep -Fq 'fresh-home-launch-20260719e-single-startup-route' assets/js/fresh-home-launch.js
           grep -Fq 'RESUME_PICKS_KEY' assets/js/fresh-home-launch.js
           grep -Fq "picksRouteKeys=['group','room','event','picksView','archive']" assets/js/fresh-home-launch.js
+          grep -Fq 'fresh-home-route-bootstrap.js?v=fresh-home-route-bootstrap-20260719a' index.html
           grep -Fq 'product-architecture-20260718u-shared-profile-auth' assets/js/product-architecture.js
           grep -Fq 'syncSharedProfileToPicks' assets/js/product-architecture.js
           grep -Fq '__UFC_PRODUCT_ARCHITECTURE_STARTED__' assets/js/product-architecture.js
