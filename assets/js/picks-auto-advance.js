@@ -25,15 +25,19 @@
     }
   }
 
+  function eventIsStillOpen(event){
+    if(!event || !OPEN_EVENT_STATUSES.has(event.status)) return false;
+    if(event.status==='live') return true;
+    const time=new Date(event.event_date || event.eventDate || 0).getTime();
+    return Number.isFinite(time) && time>=Date.now()-STALE_EVENT_GRACE_MS;
+  }
+
   function nextOpenEvent(snapshot){
-    const now=Date.now();
     const byId=new Map();
     [...(snapshot?.events || []),...(snapshot?.available_events || [])].forEach(event=>{
       const id=event?.event_id || event?.id;
-      if(!id || !OPEN_EVENT_STATUSES.has(event.status)) return;
+      if(!id || !eventIsStillOpen(event)) return;
       const date=event.event_date || event.eventDate;
-      const time=new Date(date || 0).getTime();
-      if(event.status!=='live' && (!Number.isFinite(time) || time<now-STALE_EVENT_GRACE_MS)) return;
       byId.set(id,{...event,id,event_date:date});
     });
     return [...byId.values()].sort((left,right)=>new Date(left.event_date)-new Date(right.event_date))[0] || null;
@@ -81,7 +85,7 @@
         if(snapshotError || !snapshot?.group?.is_admin) continue;
 
         const active=(snapshot.events || []).find(event=>event.is_active);
-        if(active && OPEN_EVENT_STATUSES.has(active.status)) continue;
+        if(eventIsStillOpen(active)) continue;
         const target=nextOpenEvent(snapshot);
         if(!target || target.id===active?.event_id) continue;
 
