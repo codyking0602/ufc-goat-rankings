@@ -10,6 +10,7 @@ _Last updated: 2026-07-19_
 - **Current runtime PR:** [#100 — Add zero-change singleton guards to route startup](https://github.com/codyking0602/ufc-goat-rankings/pull/100)
 - **Master tracker:** [#102 — Zero-change startup architecture cleanup](https://github.com/codyking0602/ufc-goat-rankings/issues/102)
 - **Visible product changes approved:** none
+- **Major Phase 1 owner audit:** complete and documented in [`PHASE-1-OWNER-AUDIT.md`](./PHASE-1-OWNER-AUDIT.md)
 
 ## What is already on `main`
 
@@ -17,10 +18,12 @@ _Last updated: 2026-07-19_
 - `scripts/test-startup-contract.mjs`
 - `.github/workflows/startup-architecture-gate.yml`
 - permanent startup project handoff documentation in this directory
+- complete major-owner classification and runtime sequence
+- PR #100 installed-iPhone test procedure
 
-These changes document and test startup architecture. They do not change runtime behavior.
+These changes document and test startup architecture. They do not change production runtime behavior.
 
-## Current Phase 1 batch
+## Current Phase 1 runtime batch
 
 Draft PR #100 proposes:
 
@@ -34,8 +37,9 @@ The intended first execution remains identical. An accidental second execution e
 
 - PR #100 is open, draft, and mergeable.
 - The branch is based directly on current `main`.
-- It is 0 commits behind.
-- The diff remains exactly 8 additions across 3 files.
+- It is 0 commits behind at the completed CI run.
+- The runtime diff remains exactly 8 additions across 3 files.
+- Head commit under test: `8136c728f5794229273b8a2c5ce9f291eeaf30db`.
 
 ## Refreshed validation for PR #100
 
@@ -43,23 +47,52 @@ Passed:
 
 - startup JavaScript syntax;
 - startup ownership and load-order contract;
-- iOS standalone cold-start and lifecycle stability;
+- iOS standalone cold-start and lifecycle browser simulation;
 - profile sign-in startup stability;
 - delayed Home/community stability;
 - Phase 4B mobile/profile/Picks stability.
 
-## Remaining merge gate
+Retained CI proof additionally reports:
 
-The project rules require installed-iPhone verification before merging routing or lifecycle-sensitive startup changes.
+- one product architecture script;
+- one native shell script;
+- one notification surface script;
+- one bottom navigation;
+- one community directory with no delayed replacement;
+- successful Top 10 save;
+- correct Home cold launch;
+- correct Picks resume route.
 
-PR #100 therefore remains draft even though the automated startup and mobile checks are green.
+## Remaining merge gate — Cody required
 
-Manual verification should confirm:
+The project rules require a physical installed-iPhone check before merging routing or lifecycle-sensitive startup changes. Existing CI produces localhost browser proof and downloadable reports, not an installable branch deployment.
+
+The immutable commit snapshot and exact procedure are documented in [`PR-100-IPHONE-TEST.md`](./PR-100-IPHONE-TEST.md).
+
+Preview link:
+
+[Open immutable PR #100 preview](https://rawcdn.githack.com/codyking0602/ufc-goat-rankings/8136c728f5794229273b8a2c5ce9f291eeaf30db/index.html)
+
+The preview uses a separate origin and separate browser storage. It must be added to the Home Screen under a temporary name such as **Octagon Test**. If it fails to load, install, or retain assets correctly, the result is inconclusive and PR #100 stays draft.
+
+Manual verification must confirm:
 
 - cold launch from fully closed;
-- launch after previously leaving the app on Picks or another non-Home destination;
+- launch after previously leaving the test app on Picks or another non-Home destination;
 - background and resume;
+- one active view and one bottom navigation;
 - no route bounce, blank screen, duplicate reminder, duplicate tap handling, or navigation flicker.
+
+## Completed Phase 1 owner audit
+
+The major owners are now separated into four classes:
+
+1. simple global-guard candidates;
+2. prerequisite-dependent owners whose marker must be set only after required DOM/data exists;
+3. `app.js`, which must remain a structural manifest singleton because of global lexical declarations and public APIs;
+4. `production-ranking-bootstrap.js`, which needs intentional retry semantics before duplicate execution can be blocked.
+
+The next runtime owner after PR #100 is `assets/js/octagon-hq-shell.js`. That future batch must add only one global marker and one startup-contract assertion.
 
 ## Existing unrelated red checks
 
@@ -73,23 +106,21 @@ These remain separate from the startup runtime diff:
    - The run stops at the fighter-photo path audit before rendered ranking/startup certification.
    - This is outside the Phase 1 route-guard diff.
 
-## Phase 1 audit finding
-
-`assets/js/octagon-hq-shell.js` already protects repeated calls through its `started` and `eventsBound` state and disconnects/replaces its navigation observers. However, those guards are closure-scoped, so a truly duplicated script execution would create a second closure. This is the leading candidate for the next small Phase 1 audit batch, but no additional runtime change should be opened until PR #100 clears its installed-app gate.
-
 ## Exact next action
 
-1. Perform installed-iPhone verification of PR #100 through an appropriate preview/deployment path.
-2. Record the result in PR #100 and this file.
-3. Merge only if visible behavior is unchanged.
-4. Then audit `octagon-hq-shell.js` as the next possible idempotence owner.
+1. Cody performs the installed-iPhone test in [`PR-100-IPHONE-TEST.md`](./PR-100-IPHONE-TEST.md).
+2. Record pass or failure on PR #100.
+3. Merge PR #100 only if the physical behavior is unchanged.
+4. Update this file and the master tracker.
+5. Open the isolated `octagon-hq-shell.js` singleton-guard batch from the resulting current `main`.
 
 ## Stop conditions
 
-Stop and leave the PR draft if any of the following occurs:
+Stop and leave PR #100 draft if any of the following occurs:
 
+- the preview cannot be installed or does not load correctly;
 - visible behavior changes;
 - route timing changes;
-- a new reload, polling, observer, or listener is introduced;
+- a blank screen, route bounce, duplicate reminder, duplicated navigation shell, or double tap occurs;
 - the diff starts absorbing scoring, fighter-data, photo, or product work;
 - installed-app behavior cannot be confidently verified.
