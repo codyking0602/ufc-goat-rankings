@@ -20,11 +20,11 @@ This file records the canonical owner of each startup responsibility. Detailed d
 | Ranking data | `assets/data/ranking-data.js` | Canonical data source | Outside startup cleanup except load-order checks |
 | Base ranking rendering and global UI APIs | `assets/js/app.js` | Structural global singleton | Enforce exact-one manifest load; no standard IIFE guard |
 | Calculated production scoring bootstrap | `assets/js/production-ranking-bootstrap.js` | Canonical calculated-production launcher | Explicit retry semantics required before idempotence change |
-| Picks base runtime | `assets/js/picks.js` | Canonical Picks owner | Next isolated guard candidate; inspect prerequisites, identity/profile handoffs, saved state, routes, retries, listeners, observers, timers, APIs, and mobile lifecycle before adding a marker |
+| Picks base runtime | `assets/js/picks.js` | Canonical Picks owner | Global duplicate-file guard merged and physical-iPhone verified in PR #113; original `DOMContentLoaded` retry, saved state, room resume, render ownership, support-owner handoffs, and 30-second polling preserved |
 | Play base runtime | `assets/js/play.js` | Canonical base Play owner | Prerequisite-aware guard required |
 | Play game hub | `assets/js/play-hub.js` | Canonical Play navigation owner | Separate prerequisite-aware guard required |
 | Home dashboard rendering | `assets/js/home-dashboard.js` | Canonical Home owner | Global duplicate-file guard merged and live-verified in PR #107 |
-| Community profile rendering | `assets/js/community-profiles.js` | Canonical community owner | Isolated broad-surface guard candidate |
+| Community profile rendering | `assets/js/community-profiles.js` | Canonical community owner | Next isolated broad-surface guard candidate; inspect prerequisites, identity/sign-in, Top 10, saved profile state, challenges, Picks handoff, routes, listeners, observers, timers, APIs, sharing, notifications, and mobile lifecycle before adding a marker |
 | Cross-feature profile compatibility | `assets/js/product-architecture.js` | Compatibility/handoff owner | Already globally protected |
 | Late initial route activation and reminder injection | `assets/js/fresh-home-launch.js` | Late startup owner | Global duplicate-start guard merged and live-verified in PR #100 |
 | Notification data and rendering | `assets/js/app-notification-center.js` | Intended canonical notification owner | Global duplicate-file guard merged and live-verified in PR #110; first-run, service-worker, profile/activity surface, event/API retry, and user-gesture permission behavior preserved |
