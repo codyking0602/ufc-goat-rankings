@@ -1,4 +1,5 @@
 name: One-time backend Picks event advance
+# rerun: stale-live-expiry
 
 on:
   push:
