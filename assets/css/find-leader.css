@@ -82,15 +82,17 @@
   #play .find-leader-hero>aside span{font-size:6px!important}
   #play .find-leader-hero>aside strong{font-size:16px!important}
   #play .find-leader-feedback{padding:4px 6px!important;font-size:7.5px!important}
-  #play .find-leader-grid{gap:4px!important;padding:6px!important;border-radius:14px!important}
-  #play .find-leader-tile{grid-template-rows:54px 13px 18px!important;gap:2px!important;min-height:0!important;padding:4px!important;border-radius:11px!important}
-  #play .find-leader-photo{height:54px!important;border-radius:8px!important}
+  #play .find-leader-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:4px!important;padding:6px!important;border-radius:14px!important}
+  #play .find-leader-tile{grid-template-rows:72px 13px 18px!important;gap:2px!important;min-height:0!important;padding:4px!important;border-radius:11px!important}
+  #play .find-leader-photo{height:72px!important;border-radius:8px!important}
+  #play .find-leader-photo img{object-position:center center!important}
   #play .find-leader-name{padding:0 1px!important}
-  #play .find-leader-name strong{font-size:9px!important;line-height:1!important}
+  #play .find-leader-name strong{font-size:8.5px!important;line-height:1!important}
   #play .find-leader-name small{display:none!important}
-  #play .find-leader-tile>em{padding:4px 3px!important;border-radius:7px!important;font-size:6.5px!important;line-height:1!important}
+  #play .find-leader-tile>em{padding:4px 2px!important;border-radius:7px!important;font-size:6.2px!important;line-height:1!important;letter-spacing:.035em!important}
   #play .find-leader-card-number{left:6px!important;top:6px!important;width:17px!important;height:17px!important;font-size:7px!important}
   #play .find-leader-elimination-round{right:5px!important;top:5px!important;padding:3px 5px!important;font-size:6px!important}
+  #play .find-leader-tile:last-child:nth-child(3n+1){grid-column:2}
   #play .find-leader-result-hero,#play .find-leader-results{padding:11px;border-radius:17px}
   #play .find-leader-actions{grid-template-columns:1fr}
   #play .find-leader-primary,#play .find-leader-secondary{width:100%}
