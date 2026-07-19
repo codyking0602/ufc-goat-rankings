@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='wavelength-20260718a-live-replacement';
+  const VERSION='wavelength-adaptive-20260718b';
   const SITE_URL='https://codyking0602.github.io/ufc-goat-rankings/';
   const DATA=window.RANKING_DATA||{};
   const OVERRIDES=window.DISPLAY_OVERRIDES||{};
@@ -9,152 +9,106 @@
   const modeButton=document.querySelector('[data-play-mode="top10"]');
   if(!panel||!modeButton)return;
 
-  const ROUNDS=Object.freeze([
-    {id:'chaos-eight',target:8,clues:[
-      {category:'FIGHTER TRAIT',text:'Michael Chandler’s ability to follow a game plan',rating:12},
-      {category:'LOCATION',text:'The UFC Apex as a live crowd atmosphere',rating:5},
-      {category:'UFC LEGACY',text:'Greg Hardy’s UFC legacy',rating:9},
-      {category:'FIGHTER',text:'CM Punk as an overall UFC fighter',rating:2}
-    ]},
-    {id:'ufc-chaos-eighteen',target:18,clues:[
-      {category:'UFC CULTURE',text:'Dana White’s press-conference honesty',rating:20},
-      {category:'UFC DATA',text:'The accuracy of UFC height listings',rating:15},
-      {category:'PERSONALITY',text:'Hasbulla’s relevance to the UFC product',rating:19},
-      {category:'FIGHTER TRAIT',text:'An average heavyweight’s five-round cardio',rating:17}
-    ]},
-    {id:'low-prestige-twenty-seven',target:27,clues:[
-      {category:'CHAMPIONSHIP',text:'The legitimacy of a typical UFC interim belt',rating:30},
-      {category:'UFC RESUME',text:'Paige VanZant’s UFC-only résumé',rating:25},
-      {category:'LOCATION',text:'The UFC Apex as a fan travel destination',rating:22},
-      {category:'PERSONALITY',text:'Tito Ortiz’s public speaking',rating:29}
-    ]},
-    {id:'rough-thirty-one',target:31,clues:[
-      {category:'UFC DECISION',text:'Signing CM Punk as a sporting decision',rating:27},
-      {category:'ATMOSPHERE',text:'The crowd energy for an average Apex prelim',rating:28},
-      {category:'POPULARITY',text:'Greg Hardy’s popularity with hardcore UFC fans',rating:32},
-      {category:'UFC SYSTEM',text:'The usefulness of the official UFC rankings',rating:34}
-    ]},
-    {id:'mixed-thirty-five',target:35,clues:[
-      {category:'UFC SYSTEM',text:'UFC judging as a whole',rating:37},
-      {category:'MATCHMAKING',text:'The need for a fourth Moreno–Figueiredo fight',rating:32},
-      {category:'UFC LEGACY',text:'Sage Northcutt’s UFC legacy',rating:34},
-      {category:'UFC CULTURE',text:'The quality of an average modern UFC poster',rating:38}
-    ]},
-    {id:'tested-forty-three',target:43,clues:[
-      {category:'UFC HISTORY',text:'The BMF belt’s importance to UFC history',rating:39},
-      {category:'CONTENDER',text:'Paulo Costa’s reliability as a contender',rating:47},
-      {category:'PERSONALITY',text:'Nina Drama as a UFC personality',rating:44},
-      {category:'CHAMPIONSHIP',text:'Colby Covington’s championship credibility',rating:42}
-    ]},
-    {id:'resume-forty-seven',target:47,clues:[
-      {category:'CHAMPIONSHIP',text:'Jorge Masvidal’s championship résumé',rating:45},
-      {category:'CHAMPIONSHIP',text:'Chael Sonnen’s actual UFC championship résumé',rating:48},
-      {category:'UFC CULTURE',text:'The prestige of the BMF title',rating:50},
-      {category:'UFC HISTORY',text:'Tito Ortiz’s relevance to modern UFC fans',rating:46}
-    ]},
-    {id:'balanced-fifty',target:50,clues:[
-      {category:'UFC RESUME',text:'Michael Chandler’s UFC-only résumé',rating:53},
-      {category:'UFC CULTURE',text:'The BMF belt’s competitive meaning',rating:47},
-      {category:'UFC CONTENT',text:'UFC Embedded as weekly viewing',rating:51},
-      {category:'CONTENDER',text:'Kevin Holland’s reliability as a contender',rating:49}
-    ]},
-    {id:'solid-fifty-six',target:56,clues:[
-      {category:'FIGHTER SKILL',text:'Derrick Lewis’s technical depth',rating:53},
-      {category:'UFC RESUME',text:'Jorge Masvidal’s UFC-only résumé',rating:58},
-      {category:'COMMENTARY',text:'Joe Rogan’s technical commentary',rating:55},
-      {category:'LOCATION',text:'Las Vegas as a UFC travel destination',rating:59}
-    ]},
-    {id:'career-sixty',target:60,clues:[
-      {category:'UFC CAREER',text:'Michael Chandler’s UFC career',rating:61},
-      {category:'PRESENTATION',text:'Fight Island’s visual presentation',rating:63},
-      {category:'UFC RESUME',text:'Colby Covington’s UFC-only résumé',rating:58},
-      {category:'UFC SYSTEM',text:'The consistency of UFC Hall of Fame selections',rating:57}
-    ]},
-    {id:'culture-sixty-two',target:62,clues:[
-      {category:'STAR POWER',text:'Paddy Pimblett’s star power',rating:65},
-      {category:'GOAT CASE',text:'Tony Ferguson’s UFC-only GOAT case',rating:59},
-      {category:'PRESENTATION',text:'Bruce Buffer’s catchphrase quality',rating:64},
-      {category:'UFC CULTURE',text:'The Reebok era’s visual identity',rating:60}
-    ]},
-    {id:'depth-sixty-five',target:65,clues:[
-      {category:'CHAMPIONSHIP',text:'Dustin Poirier’s championship résumé',rating:62},
-      {category:'OFFICIATING',text:'Herb Dean’s overall refereeing reputation',rating:66},
-      {category:'PRESENTATION',text:'Israel Adesanya’s walkout creativity',rating:68},
-      {category:'UFC HISTORY',text:'The Ultimate Fighter’s importance to modern UFC fans',rating:64}
-    ]},
-    {id:'variety-sixty-seven',target:67,clues:[
-      {category:'FIGHTER SKILL',text:'Khamzat Chimaev’s microphone skills',rating:65},
-      {category:'ATMOSPHERE',text:'Madison Square Garden’s UFC crowd atmosphere',rating:70},
-      {category:'UFC RESUME',text:'Anthony Pettis’s UFC-only résumé',rating:66},
-      {category:'FIGHTER SKILL',text:'A spinning back kick as a high-percentage technique',rating:63}
-    ]},
-    {id:'crowd-seventy',target:70,clues:[
-      {category:'UFC RESUME',text:'Donald Cerrone’s UFC-only résumé',rating:71},
-      {category:'COMMENTARY',text:'Dominick Cruz as a commentator',rating:68},
-      {category:'ATMOSPHERE',text:'A packed UFC Fight Night crowd in London',rating:73},
-      {category:'UFC CULTURE',text:'The BMF belt as entertainment',rating:69}
-    ]},
-    {id:'original-seventy-two',target:72,clues:[
-      {category:'FIGHTER SKILL',text:'Justin Gaethje’s wrestling',rating:74},
-      {category:'CHAMPIONSHIP',text:'Belal Muhammad’s championship résumé',rating:70},
-      {category:'LOCATION',text:'Abu Dhabi as a UFC location',rating:75},
-      {category:'FIGHTER',text:'Chase Hooper as an overall UFC fighter',rating:69}
-    ]},
-    {id:'fun-seventy-five',target:75,clues:[
-      {category:'PERSONALITY',text:'Alex Pereira’s ability to create hype without saying much',rating:76},
-      {category:'FIGHTER SKILL',text:'Charles Oliveira’s recovery',rating:78},
-      {category:'ATMOSPHERE',text:'A major UFC crowd in London',rating:74},
-      {category:'UFC CULTURE',text:'“The Korean Zombie” as a fighter nickname',rating:77}
-    ]},
-    {id:'promotion-seventy-seven',target:77,clues:[
-      {category:'FIGHTER SKILL',text:'Alexander Volkanovski’s fight IQ',rating:80},
-      {category:'UFC HISTORY',text:'McGregor–Aldo’s historical importance',rating:79},
-      {category:'COMMENTARY',text:'Laura Sanko as a commentator',rating:75},
-      {category:'UFC CONTENT',text:'UFC Embedded as promotional content',rating:74}
-    ]},
-    {id:'sharp-seventy-nine',target:79,clues:[
-      {category:'FIGHTER SKILL',text:'Sean O’Malley’s striking accuracy',rating:81},
-      {category:'UFC HISTORY',text:'UFC 205’s historical importance',rating:78},
-      {category:'COMMENTARY',text:'Daniel Cormier as an analyst',rating:76},
-      {category:'PERSONALITY',text:'Nate Diaz’s authenticity',rating:80}
-    ]},
-    {id:'event-eighty-two',target:82,clues:[
-      {category:'PROMOTION',text:'Conor McGregor’s promotional impact',rating:86},
-      {category:'FIGHT',text:'Zhang Weili vs. Joanna Jędrzejczyk’s rewatchability',rating:84},
-      {category:'COACHING',text:'Trevor Wittman as a coach',rating:79},
-      {category:'VENUE',text:'Madison Square Garden as a UFC venue',rating:81}
-    ]},
-    {id:'complete-eighty-four',target:84,clues:[
-      {category:'UFC LEGACY',text:'José Aldo’s UFC-only legacy',rating:82},
-      {category:'FIGHTER SKILL',text:'Islam Makhachev’s technical completeness',rating:87},
-      {category:'EVENT',text:'UFC 300’s card depth',rating:85},
-      {category:'UFC HISTORY',text:'Joe Rogan’s importance to UFC history',rating:83}
-    ]},
-    {id:'elite-eighty-five',target:85,clues:[
-      {category:'FIGHTER TRAIT',text:'Max Holloway’s durability',rating:88},
-      {category:'COMMENTARY',text:'Jon Anik’s play-by-play',rating:84},
-      {category:'PRIME',text:'Khabib Nurmagomedov’s prime dominance',rating:87},
-      {category:'EVENT',text:'UFC 300 as an event',rating:83}
-    ]},
-    {id:'historic-eighty-eight',target:88,clues:[
-      {category:'FIGHTER SKILL',text:'Georges St-Pierre’s fight IQ',rating:91},
-      {category:'AURA',text:'Alex Pereira’s aura',rating:89},
-      {category:'UFC HISTORY',text:'Bruce Buffer’s importance to the UFC',rating:86},
-      {category:'FIGHT',text:'Jones–Gustafsson I’s historical value',rating:87}
-    ]},
-    {id:'greatness-ninety-one',target:91,clues:[
-      {category:'FIGHTER SKILL',text:'Demetrious Johnson’s technical skill',rating:93},
-      {category:'AURA',text:'Anderson Silva’s peak aura',rating:92},
-      {category:'PRIME',text:'Khabib Nurmagomedov’s UFC prime record',rating:95},
-      {category:'ATMOSPHERE',text:'UFC 229’s atmosphere',rating:89}
-    ]},
-    {id:'goat-ninety-five',target:95,clues:[
-      {category:'GOAT CASE',text:'Jon Jones’s UFC-only GOAT résumé',rating:99},
-      {category:'FIGHTER SKILL',text:'Georges St-Pierre’s completeness',rating:96},
-      {category:'GOAT CASE',text:'Amanda Nunes’s women’s UFC GOAT case',rating:94},
-      {category:'FIGHTER TRAIT',text:'Max Holloway’s chin',rating:93}
-    ]}
-  ]);
+  const TARGETS=Object.freeze([18,27,31,35,43,47,50,56,60,62,65,67,70,72,75,77,79,82,84,85,88,91]);
+
+  const CLUE_BANK=Object.freeze([
+    {category:'FIGHTER TRAIT',text:'Michael Chandler’s ability to follow a game plan',rating:12},
+    {category:'LOCATION',text:'The UFC Apex as a live crowd atmosphere',rating:5},
+    {category:'UFC LEGACY',text:'Greg Hardy’s UFC legacy',rating:9},
+    {category:'FIGHTER',text:'CM Punk as an overall UFC fighter',rating:2},
+    {category:'UFC CULTURE',text:'Dana White’s press-conference honesty',rating:20},
+    {category:'UFC DATA',text:'The accuracy of UFC height listings',rating:15},
+    {category:'PERSONALITY',text:'Hasbulla’s relevance to the UFC product',rating:19},
+    {category:'FIGHTER TRAIT',text:'An average heavyweight’s five-round cardio',rating:17},
+    {category:'CHAMPIONSHIP',text:'The legitimacy of a typical UFC interim belt',rating:30},
+    {category:'UFC RESUME',text:'Paige VanZant’s UFC-only résumé',rating:25},
+    {category:'LOCATION',text:'The UFC Apex as a fan travel destination',rating:22},
+    {category:'PERSONALITY',text:'Tito Ortiz’s public speaking',rating:29},
+    {category:'UFC DECISION',text:'Signing CM Punk as a sporting decision',rating:27},
+    {category:'ATMOSPHERE',text:'The crowd energy for an average Apex prelim',rating:28},
+    {category:'POPULARITY',text:'Greg Hardy’s popularity with hardcore UFC fans',rating:32},
+    {category:'UFC SYSTEM',text:'The usefulness of the official UFC rankings',rating:34},
+    {category:'UFC SYSTEM',text:'UFC judging as a whole',rating:37},
+    {category:'MATCHMAKING',text:'The need for a fourth Moreno–Figueiredo fight',rating:32},
+    {category:'UFC LEGACY',text:'Sage Northcutt’s UFC legacy',rating:34},
+    {category:'UFC CULTURE',text:'The quality of an average modern UFC poster',rating:38},
+    {category:'UFC HISTORY',text:'The BMF belt’s importance to UFC history',rating:39},
+    {category:'CONTENDER',text:'Paulo Costa’s reliability as a contender',rating:47},
+    {category:'PERSONALITY',text:'Nina Drama as a UFC personality',rating:44},
+    {category:'CHAMPIONSHIP',text:'Colby Covington’s championship credibility',rating:42},
+    {category:'CHAMPIONSHIP',text:'Jorge Masvidal’s championship résumé',rating:45},
+    {category:'CHAMPIONSHIP',text:'Chael Sonnen’s actual UFC championship résumé',rating:48},
+    {category:'UFC CULTURE',text:'The prestige of the BMF title',rating:50},
+    {category:'UFC HISTORY',text:'Tito Ortiz’s relevance to modern UFC fans',rating:46},
+    {category:'UFC RESUME',text:'Michael Chandler’s UFC-only résumé',rating:53},
+    {category:'UFC CULTURE',text:'The BMF belt’s competitive meaning',rating:47},
+    {category:'UFC CONTENT',text:'UFC Embedded as weekly viewing',rating:51},
+    {category:'CONTENDER',text:'Kevin Holland’s reliability as a contender',rating:49},
+    {category:'FIGHTER SKILL',text:'Derrick Lewis’s technical depth',rating:53},
+    {category:'UFC RESUME',text:'Jorge Masvidal’s UFC-only résumé',rating:58},
+    {category:'COMMENTARY',text:'Joe Rogan’s technical commentary',rating:55},
+    {category:'LOCATION',text:'Las Vegas as a UFC travel destination',rating:59},
+    {category:'UFC CAREER',text:'Michael Chandler’s UFC career',rating:61},
+    {category:'PRESENTATION',text:'Fight Island’s visual presentation',rating:63},
+    {category:'UFC RESUME',text:'Colby Covington’s UFC-only résumé',rating:58},
+    {category:'UFC SYSTEM',text:'The consistency of UFC Hall of Fame selections',rating:57},
+    {category:'STAR POWER',text:'Paddy Pimblett’s star power',rating:65},
+    {category:'GOAT CASE',text:'Tony Ferguson’s UFC-only GOAT case',rating:59},
+    {category:'PRESENTATION',text:'Bruce Buffer’s catchphrase quality',rating:64},
+    {category:'UFC CULTURE',text:'The Reebok era’s visual identity',rating:60},
+    {category:'CHAMPIONSHIP',text:'Dustin Poirier’s championship résumé',rating:62},
+    {category:'OFFICIATING',text:'Herb Dean’s overall refereeing reputation',rating:66},
+    {category:'PRESENTATION',text:'Israel Adesanya’s walkout creativity',rating:68},
+    {category:'UFC HISTORY',text:'The Ultimate Fighter’s relevance to today’s UFC',rating:64},
+    {category:'FIGHTER SKILL',text:'Khamzat Chimaev’s microphone skills',rating:65},
+    {category:'ATMOSPHERE',text:'Madison Square Garden’s UFC crowd atmosphere',rating:70},
+    {category:'UFC RESUME',text:'Anthony Pettis’s UFC-only résumé',rating:66},
+    {category:'FIGHTER SKILL',text:'A spinning back kick as a high-percentage technique',rating:63},
+    {category:'UFC RESUME',text:'Donald Cerrone’s UFC-only résumé',rating:71},
+    {category:'COMMENTARY',text:'Dominick Cruz as a commentator',rating:68},
+    {category:'ATMOSPHERE',text:'A packed UFC Fight Night crowd in London',rating:73},
+    {category:'UFC CULTURE',text:'The BMF belt as entertainment',rating:69},
+    {category:'FIGHTER SKILL',text:'Justin Gaethje’s wrestling',rating:74},
+    {category:'CHAMPIONSHIP',text:'Belal Muhammad’s championship résumé',rating:70},
+    {category:'LOCATION',text:'Abu Dhabi as a UFC location',rating:75},
+    {category:'FIGHTER',text:'Chase Hooper as an overall UFC fighter',rating:69},
+    {category:'PERSONALITY',text:'Alex Pereira’s ability to create hype without saying much',rating:76},
+    {category:'FIGHTER SKILL',text:'Charles Oliveira’s recovery',rating:78},
+    {category:'ATMOSPHERE',text:'A major UFC crowd in London',rating:74},
+    {category:'UFC CULTURE',text:'“The Korean Zombie” as a fighter nickname',rating:77},
+    {category:'FIGHTER SKILL',text:'Alexander Volkanovski’s fight IQ',rating:80},
+    {category:'UFC HISTORY',text:'McGregor–Aldo’s historical importance',rating:79},
+    {category:'COMMENTARY',text:'Laura Sanko as a commentator',rating:75},
+    {category:'UFC CONTENT',text:'UFC Embedded as promotional content',rating:74},
+    {category:'FIGHTER SKILL',text:'Sean O’Malley’s striking accuracy',rating:81},
+    {category:'UFC HISTORY',text:'UFC 205’s historical importance',rating:78},
+    {category:'COMMENTARY',text:'Daniel Cormier as an analyst',rating:76},
+    {category:'PERSONALITY',text:'Nate Diaz’s authenticity',rating:80},
+    {category:'PROMOTION',text:'Conor McGregor’s promotional impact',rating:86},
+    {category:'FIGHT',text:'Zhang Weili vs. Joanna Jędrzejczyk’s rewatchability',rating:84},
+    {category:'COACHING',text:'Trevor Wittman as a coach',rating:79},
+    {category:'VENUE',text:'Madison Square Garden as a UFC venue',rating:81},
+    {category:'UFC LEGACY',text:'José Aldo’s UFC-only legacy',rating:82},
+    {category:'FIGHTER SKILL',text:'Islam Makhachev’s technical completeness',rating:87},
+    {category:'EVENT',text:'UFC 300’s card depth',rating:85},
+    {category:'UFC HISTORY',text:'Joe Rogan’s importance to UFC history',rating:83},
+    {category:'FIGHTER TRAIT',text:'Max Holloway’s durability',rating:88},
+    {category:'COMMENTARY',text:'Jon Anik’s play-by-play',rating:84},
+    {category:'PRIME',text:'Khabib Nurmagomedov’s prime dominance',rating:87},
+    {category:'EVENT',text:'UFC 300 as an event',rating:83},
+    {category:'FIGHTER SKILL',text:'Georges St-Pierre’s fight IQ',rating:91},
+    {category:'AURA',text:'Alex Pereira’s aura',rating:89},
+    {category:'UFC HISTORY',text:'Bruce Buffer’s importance to the UFC',rating:86},
+    {category:'FIGHT',text:'Jones–Gustafsson I’s historical value',rating:87},
+    {category:'FIGHTER SKILL',text:'Demetrious Johnson’s technical skill',rating:93},
+    {category:'AURA',text:'Anderson Silva’s peak aura',rating:92},
+    {category:'PRIME',text:'Khabib Nurmagomedov’s UFC prime record',rating:95},
+    {category:'ATMOSPHERE',text:'UFC 229’s atmosphere',rating:89},
+    {category:'GOAT CASE',text:'Jon Jones’s UFC-only GOAT résumé',rating:99},
+    {category:'FIGHTER SKILL',text:'Georges St-Pierre’s completeness',rating:96},
+    {category:'GOAT CASE',text:'Amanda Nunes’s women’s UFC GOAT case',rating:94},
+    {category:'FIGHTER TRAIT',text:'Max Holloway’s chin',rating:93}
+  ].map((clue,index)=>Object.freeze({...clue,id:`clue-${index+1}`})));
 
   const state={round:null,clueIndex:0,guesses:[],guess:50,complete:false,shareStatus:''};
 
@@ -187,12 +141,61 @@
     if(distance<=7)return `${distance} POINTS OFF · CLOSE`;
     return `${distance} POINTS OFF`;
   }
-  function lastRoundId(){try{return localStorage.getItem('ufc-wavelength-last-round')||'';}catch(_error){return '';}}
-  function rememberRound(id){try{localStorage.setItem('ufc-wavelength-last-round',id);}catch(_error){}}
-  function pickRound(){
-    const last=lastRoundId();
-    const options=ROUNDS.filter(round=>round.id!==last);
-    return options[Math.floor(Math.random()*options.length)]||ROUNDS[0];
+  function lastTarget(){try{return Number(localStorage.getItem('ufc-wavelength-last-target'))||0;}catch(_error){return 0;}}
+  function rememberTarget(target){try{localStorage.setItem('ufc-wavelength-last-target',String(target));}catch(_error){}}
+  function randomItem(items){return items[Math.floor(Math.random()*items.length)];}
+
+  function chooseClue(desiredRating,options={}){
+    const usedIds=new Set(options.usedIds||[]);
+    const usedCategories=new Set(options.usedCategories||[]);
+    const direction=Number(options.direction)||0;
+    let candidates=CLUE_BANK.filter(clue=>!usedIds.has(clue.id));
+    if(direction>0){
+      const directional=candidates.filter(clue=>clue.rating>options.target);
+      if(directional.length)candidates=directional;
+    }else if(direction<0){
+      const directional=candidates.filter(clue=>clue.rating<options.target);
+      if(directional.length)candidates=directional;
+    }
+    const scored=candidates.map(clue=>{
+      const distance=Math.abs(clue.rating-desiredRating);
+      const repeatPenalty=usedCategories.has(clue.category)?12:0;
+      const randomness=Math.random()*2.5;
+      return {clue,score:distance+repeatPenalty+randomness};
+    }).sort((a,b)=>a.score-b.score);
+    return scored[0]?.clue||CLUE_BANK[0];
+  }
+
+  function firstClueFor(target){
+    return chooseClue(target+((Math.random()>.5)?3:-3),{target});
+  }
+
+  function desiredCorrection(target,guess,nextClueIndex){
+    const error=target-guess;
+    if(Math.abs(error)<=2)return clamp(target+(Math.random()>.5?2:-2),1,100);
+    const factors=[0,.36,.5,.62];
+    const factor=factors[nextClueIndex]||.5;
+    const push=clamp(Math.round(Math.abs(error)*factor),4,22);
+    return clamp(target+(Math.sign(error)*push),1,100);
+  }
+
+  function nextAdaptiveClue(){
+    const target=state.round.target;
+    const lastGuess=state.guesses[state.guesses.length-1];
+    const direction=Math.sign(target-lastGuess);
+    const desired=desiredCorrection(target,lastGuess,state.clueIndex+1);
+    return chooseClue(desired,{
+      target,
+      direction,
+      usedIds:state.round.clues.map(clue=>clue.id),
+      usedCategories:state.round.clues.map(clue=>clue.category)
+    });
+  }
+
+  function pickTarget(){
+    const previous=lastTarget();
+    const options=TARGETS.filter(target=>target!==previous);
+    return randomItem(options)||65;
   }
 
   function injectStyles(){
@@ -272,8 +275,9 @@
   }
 
   function historyMarkup(){
-    if(!state.guesses.length)return '<span class="wavelength-history-label">YOUR GUESSES WILL STAY HERE</span>';
-    return `<span class="wavelength-history-label">PATH</span>${state.guesses.map((guess,index)=>`${index?'<em>→</em>':''}<b>${guess}</b>`).join('')}`;
+    if(!state.guesses.length)return '<span class="wavelength-history-label">YOUR PATH</span><b>—</b><em>→</em><b>—</b><em>→</em><b>—</b><em>→</em><b>—</b>';
+    const slots=[0,1,2,3].map(index=>state.guesses[index]??'—');
+    return `<span class="wavelength-history-label">YOUR PATH</span>${slots.map((guess,index)=>`${index?'<em>→</em>':''}<b>${guess}</b>`).join('')}`;
   }
 
   function clueMarkup(){
@@ -287,11 +291,11 @@
       <section class="wavelength-guess-panel">
         <div class="wavelength-guess-head"><span>${state.clueIndex===3?'FINAL ANSWER':'YOUR GUESS'}</span><strong class="wavelength-number" data-wavelength-number>${state.guess}</strong></div>
         <input class="wavelength-range" data-wavelength-range type="range" min="1" max="100" step="1" value="${state.guess}" aria-label="Your Wavelength guess from 1 to 100">
-        <div class="wavelength-scale"><span>1</span><span>50</span><span>100</span></div>
+        <div class="wavelength-scale"><span>1 · BAD</span><span>50 · AVERAGE</span><span>100 · ELITE</span></div>
         <button class="wavelength-lock" data-wavelength-lock type="button">${state.clueIndex===3?'LOCK FINAL GUESS':'LOCK GUESS & REVEAL NEXT CLUE'}</button>
       </section>
       <div class="wavelength-history" data-wavelength-history>${historyMarkup()}</div>
-      <p class="wavelength-rules">No high-or-low hints. Use each new UFC clue to recalibrate. Only your fourth guess scores.</p>`;
+      <p class="wavelength-rules">Each new clue adjusts to your last guess. Only your fourth guess determines your score.</p>`;
   }
 
   function resultMarkup(){
@@ -347,18 +351,21 @@
       panel.scrollIntoView({behavior:'smooth',block:'start'});
       return;
     }
+    const nextClue=nextAdaptiveClue();
+    state.round.clues.push(nextClue);
     state.clueIndex+=1;
     render();
   }
 
   function newRound(){
-    state.round=pickRound();
+    const target=pickTarget();
+    state.round={id:`adaptive-${Date.now()}-${target}`,target,clues:[firstClueFor(target)]};
     state.clueIndex=0;
     state.guesses=[];
     state.guess=50;
     state.complete=false;
     state.shareStatus='';
-    rememberRound(state.round.id);
+    rememberTarget(target);
     render();
     panel.scrollIntoView({behavior:'smooth',block:'start'});
   }
@@ -398,7 +405,7 @@
     if(model){
       model.icon='≈';
       model.title='Wavelength';
-      model.description='Use four completely different UFC clues to find one hidden number from 1–100.';
+      model.description='Make four guesses. Each new UFC clue adjusts to your last answer.';
     }
     const card=document.querySelector('#playHub [data-open-game="top10"]');
     if(card){
@@ -407,7 +414,7 @@
       const description=card.querySelector('.play-game-copy small');
       if(icon)icon.textContent='≈';
       if(title)title.textContent='Wavelength';
-      if(description)description.textContent='Use four completely different UFC clues to find one hidden number from 1–100.';
+      if(description)description.textContent='Make four guesses. Each new UFC clue adjusts to your last answer.';
       card.setAttribute('aria-label','Open Wavelength');
     }
   }
@@ -421,7 +428,7 @@
     const subtitle=document.querySelector('#play .section-title p');
     if(eyebrow)eyebrow.textContent='FIND THE NUMBER';
     if(title)title.textContent='Wavelength';
-    if(subtitle)subtitle.textContent='Four UFC clues. Four guesses. One hidden number.';
+    if(subtitle)subtitle.textContent='Four UFC clues. Each one reacts to your last guess.';
   }
 
   function open(){
@@ -440,7 +447,15 @@
   window.addEventListener('ufc-play-hub-ready',()=>{applyWavelengthCopy();window.setTimeout(applyWavelengthCopy,0);});
   window.setTimeout(applyWavelengthCopy,0);
   window.setTimeout(applyWavelengthCopy,800);
-  window.UFC_WAVELENGTH={version:VERSION,state,rounds:ROUNDS.map(round=>({...round,clues:round.clues.map(clue=>({...clue}))})),open,newRound};
+  window.UFC_WAVELENGTH={
+    version:VERSION,
+    state,
+    clueBank:CLUE_BANK.map(clue=>({...clue})),
+    open,
+    newRound,
+    desiredCorrection,
+    chooseClue
+  };
   document.documentElement.setAttribute('data-wavelength',VERSION);
 
   function key(value){return String(value||'').trim().toLowerCase();}
@@ -542,7 +557,7 @@
     ensureFiveMatchupBanner();
     repairTopFiveRow();
     polishApexCopy();
-    document.documentElement.setAttribute('data-blind-resume-polish','blind-polish-20260718a');
+    document.documentElement.setAttribute('data-blind-resume-polish','blind-polish-20260718b');
   }
   const blindMatchup=document.getElementById('blindMatchup');
   if(blindMatchup)new MutationObserver(()=>window.requestAnimationFrame(applyBlindPolish)).observe(blindMatchup,{childList:true,subtree:true});
