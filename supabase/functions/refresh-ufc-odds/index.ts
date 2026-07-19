@@ -4,34 +4,6 @@ const JSON_HEADERS = { "content-type": "application/json; charset=utf-8" };
 const SPORT_KEY = "mma_mixed_martial_arts";
 const DEFAULT_BOOKMAKERS = ["betonlineag", "draftkings", "fanduel", "betmgm", "betrivers", "bovada"];
 
-const MAINTAINED_CARDS = [
-  {
-    id: "ufc-oklahoma-city-2026-07-18",
-    name: "UFC Oklahoma City",
-    subtitle: "Du Plessis vs. Usman",
-    event_type: "fight-night",
-    event_date: "2026-07-19T00:00:00.000Z",
-    location: "Paycom Center · Oklahoma City, Oklahoma",
-    card_rule: "Main card only",
-    status: "upcoming",
-    source_note: "Full 11-fight card stored as of July 16. Fight Night Picks show only the five-fight main card. Tavares vs. Barriault was cancelled; Hooper vs. Ramirez was promoted.",
-    sync_until: "2026-07-19T00:00:00.000Z",
-    fights: [
-      { id:"okc-barbosa-melisano", bout_order:1, card_section:"Prelims", weight_class:"Women's Flyweight", red_name:"Dione Barbosa", blue_name:"Anna Melisano", lock_at:"2026-07-18T21:00:00.000Z" },
-      { id:"okc-hines-harris", bout_order:2, card_section:"Prelims", weight_class:"Heavyweight", red_name:"Alvin Hines", blue_name:"RJ Harris", lock_at:"2026-07-18T21:30:00.000Z" },
-      { id:"okc-coria-nicoll", bout_order:3, card_section:"Prelims", weight_class:"Flyweight", red_name:"Alden Coria", blue_name:"Stewart Nicoll", lock_at:"2026-07-18T22:00:00.000Z" },
-      { id:"okc-franco-rodrigues", bout_order:4, card_section:"Prelims", weight_class:"Heavyweight", red_name:"Felipe Franco", blue_name:"Levi Rodrigues Jr.", lock_at:"2026-07-18T22:30:00.000Z" },
-      { id:"okc-lebosnoyani-ko", bout_order:5, card_section:"Prelims", weight_class:"Welterweight", red_name:"Jean-Paul Lebosnoyani", blue_name:"Seok Hyeon Ko", lock_at:"2026-07-18T23:00:00.000Z" },
-      { id:"okc-delgado-bashi", bout_order:6, card_section:"Prelims", weight_class:"Featherweight", red_name:"Jose Delgado", blue_name:"Austin Bashi", lock_at:"2026-07-18T23:30:00.000Z" },
-      { id:"okc-mcmillen-montes", bout_order:7, card_section:"Main Card", weight_class:"Featherweight", red_name:"Tommy McMillen", blue_name:"Alberto Montes", lock_at:"2026-07-19T00:00:00.000Z" },
-      { id:"okc-ricci-kline", bout_order:8, card_section:"Main Card", weight_class:"Women's Strawweight", red_name:"Tabatha Ricci", blue_name:"Fatima Kline", lock_at:"2026-07-19T00:30:00.000Z" },
-      { id:"okc-hooper-ramirez", bout_order:9, card_section:"Main Card", weight_class:"Lightweight", red_name:"Chase Hooper", blue_name:"Mitch Ramirez", lock_at:"2026-07-19T01:00:00.000Z" },
-      { id:"okc-cannonier-duncan", bout_order:10, card_section:"Co-Main Event", weight_class:"Middleweight", red_name:"Jared Cannonier", blue_name:"Christian Leroy Duncan", lock_at:"2026-07-19T02:00:00.000Z" },
-      { id:"okc-du-plessis-usman", bout_order:11, card_section:"Main Event", weight_class:"Middleweight", red_name:"Dricus Du Plessis", blue_name:"Kamaru Usman", lock_at:"2026-07-19T02:45:00.000Z" },
-    ],
-  },
-];
-
 function json(status, body) {
   return new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });
 }
@@ -113,117 +85,9 @@ function isMainCard(section) {
 }
 
 function isPickableFight(event, fight) {
-  return event.event_type === "numbered" || /full card/i.test(String(event.card_rule || "")) || isMainCard(fight.card_section);
-}
-
-async function deleteFightPicks(supabase, fightIds, failures) {
-  const ids = [...new Set((fightIds || []).filter(Boolean))];
-  if (!ids.length) return 0;
-  const { data, error } = await supabase
-    .from("pick_selections")
-    .delete()
-    .in("fight_id", ids)
-    .select("fight_id");
-  if (error) {
-    failures.push({ stage: "reset-picks", fightIds: ids, error: error.message });
-    return 0;
-  }
-  return (data || []).length;
-}
-
-async function syncMaintainedCards(supabase) {
-  const summary = { events: 0, fightsInserted: 0, fightsUpdated: 0, fightsCancelled: 0, picksReset: 0, failures: [] };
-  const now = Date.now();
-
-  for (const maintained of MAINTAINED_CARDS) {
-    if (now >= new Date(maintained.sync_until).getTime()) continue;
-    const { fights, sync_until: _syncUntil, ...eventRow } = maintained;
-    const { error: eventError } = await supabase.from("pick_events").upsert(eventRow, { onConflict: "id" });
-    if (eventError) {
-      summary.failures.push({ stage: "upsert-event", eventId: maintained.id, error: eventError.message });
-      continue;
-    }
-    summary.events += 1;
-
-    const { data: existingRows, error: existingError } = await supabase
-      .from("pick_fights")
-      .select("id,bout_order,card_section,red_name,blue_name,result_status,winner_name,red_odds,blue_odds,odds_source,odds_updated_at")
-      .eq("event_id", maintained.id);
-    if (existingError) {
-      summary.failures.push({ stage: "load-fights", eventId: maintained.id, error: existingError.message });
-      continue;
-    }
-
-    const existing = existingRows || [];
-    const byId = new Map(existing.map((fight) => [fight.id, fight]));
-    const usedOrders = new Set(existing.map((fight) => Number(fight.bout_order)));
-    let stageBase = -1000000000;
-    while (existing.some((_fight, index) => usedOrders.has(stageBase - index))) stageBase -= 1000;
-    for (const [index, fight] of existing.entries()) {
-      const { error } = await supabase
-        .from("pick_fights")
-        .update({ bout_order: stageBase - index })
-        .eq("id", fight.id);
-      if (error) summary.failures.push({ stage: "stage-order", fightId: fight.id, error: error.message });
-    }
-
-    const activeIds = new Set(fights.map((fight) => fight.id));
-    const stale = existing.filter((fight) => !activeIds.has(fight.id) && fight.result_status !== "cancelled");
-    summary.picksReset += await deleteFightPicks(supabase, stale.map((fight) => fight.id), summary.failures);
-    for (const fight of stale) {
-      const { error } = await supabase.from("pick_fights").update({
-        result_status: "cancelled",
-        winner_name: null,
-        red_odds: null,
-        blue_odds: null,
-        odds_source: null,
-        odds_updated_at: null,
-      }).eq("id", fight.id);
-      if (error) summary.failures.push({ stage: "cancel-stale", fightId: fight.id, error: error.message });
-      else summary.fightsCancelled += 1;
-    }
-
-    for (const fight of fights) {
-      const previous = byId.get(fight.id);
-      const matchupChanged = Boolean(previous) && matchupKey(previous.red_name, previous.blue_name) !== matchupKey(fight.red_name, fight.blue_name);
-      const demoted = Boolean(previous) && isPickableFight(maintained, previous) && !isPickableFight(maintained, fight);
-      if (matchupChanged || demoted) {
-        summary.picksReset += await deleteFightPicks(supabase, [fight.id], summary.failures);
-      }
-
-      if (!previous) {
-        const { error } = await supabase.from("pick_fights").insert({
-          ...fight,
-          event_id: maintained.id,
-          winner_name: null,
-          result_status: "scheduled",
-          red_odds: null,
-          blue_odds: null,
-          odds_source: null,
-          odds_updated_at: null,
-        });
-        if (error) summary.failures.push({ stage: "insert-fight", fightId: fight.id, error: error.message });
-        else summary.fightsInserted += 1;
-        continue;
-      }
-
-      const resultStatus = matchupChanged || previous.result_status === "cancelled" ? "scheduled" : previous.result_status;
-      const update = {
-        ...fight,
-        event_id: maintained.id,
-        result_status: resultStatus,
-        winner_name: resultStatus === "complete" ? previous.winner_name : null,
-      };
-      if (matchupChanged) {
-        Object.assign(update, { red_odds: null, blue_odds: null, odds_source: null, odds_updated_at: null });
-      }
-      const { error } = await supabase.from("pick_fights").update(update).eq("id", fight.id);
-      if (error) summary.failures.push({ stage: "update-fight", fightId: fight.id, error: error.message });
-      else summary.fightsUpdated += 1;
-    }
-  }
-
-  return summary;
+  return event.event_type === "numbered"
+    || /full card/i.test(String(event.card_rule || ""))
+    || isMainCard(fight.card_section);
 }
 
 Deno.serve(async (request) => {
@@ -250,11 +114,6 @@ Deno.serve(async (request) => {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
-  const cardSync = await syncMaintainedCards(supabase);
-  if (cardSync.failures.length) {
-    return json(500, { error: "Card synchronization failed", cardSync });
-  }
-
   const now = Date.now();
   const from = new Date(now - 48 * 60 * 60 * 1000).toISOString();
   const to = new Date(now + 60 * 24 * 60 * 60 * 1000).toISOString();
@@ -265,9 +124,13 @@ Deno.serve(async (request) => {
     .gte("event_date", from)
     .lte("event_date", to);
 
-  if (eventsError) return json(500, { error: "Could not load UFC events", detail: eventsError.message, cardSync });
+  if (eventsError) {
+    return json(500, { error: "Could not load UFC events", detail: eventsError.message });
+  }
   const eventIds = (events || []).map((event) => event.id);
-  if (!eventIds.length) return json(200, { updated: 0, matched: 0, missing: 0, message: "No active UFC events", cardSync });
+  if (!eventIds.length) {
+    return json(200, { updated: 0, matched: 0, missing: 0, message: "No active UFC events" });
+  }
 
   const { data: fights, error: fightsError } = await supabase
     .from("pick_fights")
@@ -275,10 +138,14 @@ Deno.serve(async (request) => {
     .in("event_id", eventIds)
     .eq("result_status", "scheduled")
     .gt("lock_at", new Date().toISOString());
-  if (fightsError) return json(500, { error: "Could not load UFC fights", detail: fightsError.message, cardSync });
+  if (fightsError) {
+    return json(500, { error: "Could not load UFC fights", detail: fightsError.message });
+  }
 
   const eventById = new Map((events || []).map((event) => [event.id, event]));
-  const eligibleFights = (fights || []).filter((fight) => isPickableFight(eventById.get(fight.event_id) || {}, fight));
+  const eligibleFights = (fights || []).filter((fight) =>
+    isPickableFight(eventById.get(fight.event_id) || {}, fight)
+  );
 
   const endpoint = new URL(`https://api.the-odds-api.com/v4/sports/${SPORT_KEY}/odds/`);
   endpoint.searchParams.set("apiKey", oddsApiKey);
@@ -293,7 +160,6 @@ Deno.serve(async (request) => {
       error: "Odds provider request failed",
       status: providerResponse.status,
       detail: await providerResponse.text(),
-      cardSync,
     });
   }
 
@@ -313,13 +179,21 @@ Deno.serve(async (request) => {
     const candidates = byMatchup.get(matchupKey(fight.red_name, fight.blue_name)) || [];
     const providerEvent = closestProviderEvent(candidates, fight);
     if (!providerEvent) {
-      missing.push({ fightId: fight.id, matchup: `${fight.red_name} vs. ${fight.blue_name}`, reason: "matchup-not-found" });
+      missing.push({
+        fightId: fight.id,
+        matchup: `${fight.red_name} vs. ${fight.blue_name}`,
+        reason: "matchup-not-found",
+      });
       continue;
     }
 
     const line = chooseLine(providerEvent, fight, preferredBookmakers);
     if (!line) {
-      missing.push({ fightId: fight.id, matchup: `${fight.red_name} vs. ${fight.blue_name}`, reason: "moneyline-not-posted" });
+      missing.push({
+        fightId: fight.id,
+        matchup: `${fight.red_name} vs. ${fight.blue_name}`,
+        reason: "moneyline-not-posted",
+      });
       continue;
     }
 
@@ -348,7 +222,6 @@ Deno.serve(async (request) => {
   return json(failures.length ? 207 : 200, {
     provider: "The Odds API",
     sport: SPORT_KEY,
-    cardSync,
     activeEvents: eventIds.length,
     scheduledFights: eligibleFights.length,
     providerEvents: Array.isArray(providerEvents) ? providerEvents.length : 0,
