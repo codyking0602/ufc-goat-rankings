@@ -8,7 +8,8 @@ This directory is the permanent handoff point for the zero-change startup reliab
 2. Read the current open runtime PR named in that file.
 3. Read [`../startup-architecture.md`](../startup-architecture.md) for the governing contract.
 4. Read [`DECISIONS.md`](./DECISIONS.md) before proposing any architectural change.
-5. Update the documentation after every completed batch.
+5. Read [`PHASE-1-OWNER-AUDIT.md`](./PHASE-1-OWNER-AUDIT.md) before selecting a Phase 1 runtime owner.
+6. Update the documentation after every completed batch.
 
 The master GitHub tracker is issue [#102](https://github.com/codyking0602/ufc-goat-rankings/issues/102).
 
@@ -20,8 +21,9 @@ When documents disagree, use this order:
 2. `docs/startup/STATUS.md` for the active phase and next action.
 3. `docs/startup-architecture.md` for the project contract and phase definitions.
 4. `docs/startup/DECISIONS.md` for locked decisions.
-5. GitHub issue #102 for the high-level checklist.
-6. Historical PR descriptions and chat summaries.
+5. `docs/startup/PHASE-1-OWNER-AUDIT.md` for Phase 1 classifications and sequencing.
+6. GitHub issue #102 for the high-level checklist.
+7. Historical PR descriptions and chat summaries.
 
 Chat history is supporting context only. It is never the project record.
 
@@ -56,7 +58,7 @@ Protect the approved experience with a written contract, ownership assertions, b
 
 ### Phase 1 — Make startup owners idempotent
 
-Every startup owner must be safe against accidental duplicate execution before scripts are moved or deleted.
+Every startup owner must be safe against accidental duplicate execution before scripts are moved or deleted. Owners are classified in [`PHASE-1-OWNER-AUDIT.md`](./PHASE-1-OWNER-AUDIT.md); do not apply one universal guard pattern to every file.
 
 ### Phase 2 — Remove duplicate ownership
 
