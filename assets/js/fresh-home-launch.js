@@ -4,7 +4,7 @@
   if(window.__UFC_FRESH_HOME_LAUNCH_STARTED__)return;
   window.__UFC_FRESH_HOME_LAUNCH_STARTED__=true;
 
-  const VERSION='fresh-home-launch-20260719f-singleton';
+  const VERSION='fresh-home-launch-20260719e-single-startup-route';
   const RESUME_PICKS_KEY='__picks_resume';
   const RESUME_WINDOW_MS=30000;
   const deepLinkKeys=['challenge','share','fighter','message','notification','push'];
