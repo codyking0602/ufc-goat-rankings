@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='profile-setup-reminder-20260719a';
+  const VERSION='profile-setup-reminder-20260719b';
   const TOP10_KEY='ufc-goat-play-top10-v1';
   const state={member:null,shown:false,overlay:null,timer:null,bound:false};
 
@@ -42,7 +42,7 @@
     const member=state.member||{};
     const hasPublishedTop10=Array.isArray(member.top_ten);
     const serverTop10=hasPublishedTop10?member.top_ten.map(text).filter(Boolean).slice(0,10):[];
-    const rows=hasPublishedTop10?serverTop10:localTop10();
+    const rows=hasPublishedTop10?serverTop10:[];
     const top10=rows.length===10&&new Set(rows.map(name=>name.toLowerCase())).size===10;
     const photo=Boolean(text(member.profile_photo_data||member.profilePhotoData));
     const percent=(top10?50:0)+(photo?50:0);
@@ -64,7 +64,7 @@
   function renderChip(){
     const chip=document.querySelector('.app-profile-chip');
     const member=state.member;
-    if(!chip||!member)return false;
+    if(!chip||!member||!Array.isArray(member.top_ten))return false;
     const copy=chip.querySelector('.app-profile-chip-copy');
     if(!copy)return false;
     let cue=copy.querySelector('[data-profile-setup-progress]');
@@ -115,7 +115,7 @@
 
   function open(){
     const value=completion();
-    if(state.shown||value.complete||!state.member||!homeIsActive()||appIsBusy())return false;
+    if(state.shown||value.complete||!state.member||!Array.isArray(state.member.top_ten)||!homeIsActive()||appIsBusy())return false;
     state.shown=true;
     const copy=copyFor(value);
     const actions=[];
@@ -142,7 +142,7 @@
   function schedule(){
     renderChip();
     const value=completion();
-    if(state.shown||value.complete||!state.member||!homeIsActive()||appIsBusy())return;
+    if(state.shown||value.complete||!state.member||!Array.isArray(state.member.top_ten)||!homeIsActive()||appIsBusy())return;
     clearTimeout(state.timer);
     state.timer=window.setTimeout(()=>{
       state.timer=null;
@@ -159,7 +159,7 @@
   function receiveProfile(detail){
     mergeMember(detail?.member||detail?.group?.me||detail?.identity?.member||detail);
     renderChip();
-    if(document.getElementById('home')?.classList.contains('active-view'))schedule();
+    window.setTimeout(schedule,800);
   }
 
   function receiveTop10(detail){
@@ -195,8 +195,9 @@
     mergeMember(window.UFC_APP_PROFILE?.group?.me||window.UFC_APP_PROFILE?.identity?.member||window.UFC_PLAY_PROFILE?.identity?.member||null);
     renderChip();
     window.setTimeout(()=>{
-      void window.UFC_COMMUNITY_PROFILES?.refresh?.();
-      schedule();
+      const refresh=window.UFC_COMMUNITY_PROFILES?.refresh?.();
+      if(refresh?.finally)refresh.finally(schedule);
+      else schedule();
     },180);
     document.documentElement.dataset.profileSetupReminder=VERSION;
   }
