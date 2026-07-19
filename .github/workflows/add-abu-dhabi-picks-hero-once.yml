@@ -1,0 +1,84 @@
+name: One-time Abu Dhabi Picks hero
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/add-abu-dhabi-picks-hero-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update to latest main
+        shell: bash
+        run: git pull --rebase origin main
+
+      - name: Build and wire Abu Dhabi artwork
+        shell: python
+        run: |
+          import base64
+          from pathlib import Path
+
+          chunks = [
+              Path('artifacts/tmp/abu-dhabi-hero-1.b64'),
+              Path('artifacts/tmp/abu-dhabi-hero-2.b64'),
+              Path('artifacts/tmp/abu-dhabi-hero-3a.b64'),
+              Path('artifacts/tmp/abu-dhabi-hero-3b.b64'),
+              Path('artifacts/tmp/abu-dhabi-hero-3c.b64'),
+          ]
+          encoded = ''.join(path.read_text(encoding='utf-8').strip() for path in chunks)
+          image = base64.b64decode(encoded, validate=True)
+          if len(image) != 16110:
+              raise SystemExit(f'Unexpected hero byte size: {len(image)}')
+          if image[:4] != b'RIFF' or image[8:12] != b'WEBP':
+              raise SystemExit('Decoded hero is not a valid WebP container')
+
+          hero_path = Path('assets/events/ufc-abu-dhabi-ankalaev-guskov.webp')
+          hero_path.write_bytes(image)
+
+          visuals_path = Path('assets/data/picks-event-visuals.js')
+          visuals = visuals_path.read_text(encoding='utf-8')
+          if 'ufc-abu-dhabi-2026-07-25' in visuals:
+              raise SystemExit('Abu Dhabi event visual already exists')
+          closing = '\n});\n'
+          if visuals.count(closing) != 1:
+              raise SystemExit('Unexpected picks-event-visuals.js structure')
+          addition = """,
+          'ufc-abu-dhabi-2026-07-25': {
+            hero: 'assets/events/ufc-abu-dhabi-ankalaev-guskov.webp?v=20260719a',
+            alt: 'Magomed Ankalaev vs. Bogdan Guskov UFC Abu Dhabi promotional artwork'
+          }"""
+          visuals_path.write_text(visuals.replace(closing, addition + closing, 1), encoding='utf-8')
+
+          index_path = Path('index.html')
+          index = index_path.read_text(encoding='utf-8')
+          replacements = {
+              'content="20260719-picks-legacy-owner-recovery"': 'content="20260719-abu-dhabi-event-art"',
+              'picks-event-visuals.js?v=picks-event-visuals-20260712b-repaired': 'picks-event-visuals.js?v=picks-event-visuals-20260719c-abu-dhabi',
+          }
+          for old, new in replacements.items():
+              if index.count(old) != 1:
+                  raise SystemExit(f'Expected exactly one index marker: {old}')
+              index = index.replace(old, new, 1)
+          index_path.write_text(index, encoding='utf-8')
+
+          for path in chunks:
+              path.unlink()
+          Path('.github/workflows/add-abu-dhabi-picks-hero-once.yml').unlink()
+
+      - name: Publish hero artwork
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Add Ankalaev-Guskov Picks event artwork"
+          git push origin main
