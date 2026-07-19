@@ -2,63 +2,78 @@
 
 This file separates active startup concerns from unrelated repository failures discovered during validation.
 
-## Active startup concerns
+## Active startup concern
 
-### PR #100 still needs installed-iPhone verification
+### PR #100 live installed-app verification is pending
 
-**Status:** Automated validation passed; manual installed-app verification pending  
-**Impact:** The first Phase 1 runtime batch remains draft.
+**Status:** Merged to `main` as `5e733cc4568100e96080ce27ad601b7022daba33`; real installed-iPhone verification pending  
+**Impact:** The next Phase 1 runtime owner remains blocked.
 
-The branch is now current with `main`, mergeable, and still limited to 8 additions across 3 files. The remaining project-rule gate is physical verification of cold launch, non-Home relaunch, background/resume, route stability, reminder behavior, and single tap handling.
+The merged change contains only two three-line duplicate-start guards and two contract assertions. Relevant startup, iOS, profile, Home/community, and Phase 4B mobile/Picks checks passed before merge.
 
-### Startup ownership is still distributed across compatibility layers
+The real GitHub Pages installation must now confirm:
 
-Known examples:
+- current mobile presentation loads rather than the desktop fallback;
+- cold launch and non-Home relaunch are stable;
+- background/resume is stable;
+- one bottom navigation is present;
+- no route bounce, blank state, duplicate reminder, or double-handled tap occurs.
+
+Immediate rollback target: merge commit `5e733cc4568100e96080ce27ad601b7022daba33`.
+
+## Rejected test environment
+
+### Third-party immutable static preview
+
+The separate-origin preview was rejected because it did not load the full production mobile/native shell. It visibly showed desktop navigation tabs, incorrect current ordering, and an incomplete product presentation.
+
+This was not treated as a PR regression. Source comparison confirmed the previewed commit and current production runtime differed only by the exact eight-line guard/test change. The preview URL must not be used for further sign-in or product verification.
+
+## Ongoing architectural concerns
+
+Startup ownership remains distributed across some compatibility layers:
 
 - canonical notification center plus notification surface compatibility;
 - canonical native shell plus native shell stability repairs;
 - profile/identity handoffs across multiple startup files;
 - calculated ranking runtime split across base and production bootstrap files.
 
-These are not automatic bugs. They are Phase 2 and Phase 3 investigation targets.
+These are documented Phase 2 and Phase 3 targets, not automatic bugs and not permission to consolidate them during Phase 1.
 
-### Phase 1 owner inventory is incomplete
-
-The current ownership map identifies major owners but has not yet catalogued every listener, observer, timeout, interval, dynamic script loader, lifecycle event, or initialized marker.
-
-The leading next audit candidate is `assets/js/octagon-hq-shell.js`. It protects repeated API calls with closure-scoped `started` and `eventsBound` state, but a duplicated script execution would create a second closure. No additional runtime change should begin until PR #100 clears its installed-app gate.
+The major Phase 1 owner inventory is complete. The next isolated candidate is `assets/js/octagon-hq-shell.js`, but no new runtime batch begins until PR #100 passes live installed-app verification.
 
 ## Resolved during current work
 
 ### PR #100 branch divergence
 
-- The PR was 14 commits behind current `main` after documentation landed.
-- The branch was rebuilt from current `main` while preserving the exact original runtime diff.
-- Current state: 0 commits behind, mergeable, 8 additions across 3 files.
+- The branch was rebuilt directly from current `main`.
+- The final comparison was 0 commits behind.
+- The merged diff remained exactly 8 additions across 3 files.
+- Relevant CI passed before merge.
 
-## Unrelated repository failures observed during startup validation
+## Unrelated repository failures
 
 ### Stale scoring roster-count contract
 
 - `docs/scoring-architecture-contract.json` expects 73 fighters.
-- Current production roster is 80 fighters.
-- This failure is not caused by the Phase 1 route-guard changes.
+- Current production roster contains 80 fighters.
+- This was not caused by PR #100.
 - Fix separately from startup runtime work.
 
 ### Fighter-photo path audit failure
 
 - Production Ranking Browser Smoke stops during fighter-photo path auditing.
 - It stops before rendered ranking/startup certification begins.
-- This failure is not caused by the Phase 1 route-guard changes.
+- This was not caused by PR #100.
 - Fix separately from startup runtime work.
 
-## Documentation/process issue
+## Documentation/process note
 
 Two accidental placeholder issues, #103 and #104, were created during tracker setup and immediately closed as `not planned`. They contain no work. Issue #102 is the only startup architecture master tracker.
 
 ## Rules for this file
 
-- Do not mark an issue resolved merely because a later test passed once.
-- Link the resolving PR or commit.
+- Do not mark the live verification complete until Cody tests the real installed app.
+- Link resolving PRs or commits.
 - Move completed items to `CHANGELOG.md` after merge or explicit closure.
 - Keep unrelated failures visible without expanding startup PR scope.
