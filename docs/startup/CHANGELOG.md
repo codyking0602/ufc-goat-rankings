@@ -256,3 +256,33 @@ Cody tested the immutable PR head `47812a65cfda297e5a64ea1fb51d186fce7d50a4` on 
 PR #112 was squash-merged as commit `5b82c3a47b64a4955c4fd4eb041fafe46473e8ac`. Batch 7 was closed as physically verified.
 
 The next isolated Phase 1 owner is `assets/js/picks.js`. Batch 8 must begin in a fresh session from current `main`, inspect all prerequisite and retry behavior before adding any marker, and remain separate from this closeout.
+
+## 2026-07-19 — Phase 1 batch 8 merged and verified
+
+PR #113 added a top-level duplicate-file-execution guard to `assets/js/picks.js` and one matching startup-contract assertion.
+
+The prerequisite/retry inspection established that the canonical page provides the Picks DOM, event data, Supabase library/config, and canonical-group owner before `picks.js` runs. The only missing-mount retry remains the original one-time `DOMContentLoaded` callback. Duplicate file evaluation was not an intentional retry; it created a second private state closure, optional Supabase client, static control handlers, render ownership, and 30-second polling loop.
+
+Final state:
+
+- 5 additions;
+- 0 deletions;
+- 2 changed files;
+- branch built directly from current `main`;
+- JavaScript syntax passed;
+- startup ownership contract passed;
+- focused duplicate-evaluation and first-run equivalence proof passed;
+- Startup Architecture Gate run #22 passed;
+- local app startup passed;
+- iOS startup and route stability passed;
+- profile sign-in startup stability passed;
+- delayed Home/community stability passed;
+- Picks UI Smoke JavaScript syntax step passed.
+
+The unrelated Picks UI static contract remained red for missing mobile top-tab auto-centering and missing daily-odds-workflow setup documentation in unchanged files. Scoring Architecture Guardrails and Production Ranking Browser Smoke also remained red at their existing unrelated contracts. No unrelated issue was repaired in this batch.
+
+Cody physically tested immutable PR head `1ea7bdf46f09f18279ac4f21a2bbfd492f1d44ba` on an installed iPhone and reported the app was normal. Picks startup, login/PIN, saved state, Top 10 and profile handoffs, challenges, badges, navigation, rapid taps, background/resume, notifications, rotation/resize, surrounding product surfaces, and duplicate-ownership symptoms showed no visible regression.
+
+PR #113 was squash-merged as commit `0c488a449d413636228aafd1e45ee8197d5078ba`. Batch 8 was closed as physically verified.
+
+The next isolated Phase 1 owner is `assets/js/community-profiles.js`. Batch 9 must begin in a fresh session from current `main`, inspect all prerequisite and retry behavior before adding any marker, and remain separate from this closeout.
