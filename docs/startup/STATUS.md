@@ -6,13 +6,13 @@ _Last updated: 2026-07-19_
 
 - **Current phase:** Phase 1 — Make startup owners idempotent
 - **Phase 0:** Complete
-- **Phase 1 runtime batches merged and verified:** 3
-- **Latest verified runtime commit:** `f4e3ada330fb841ade0333c580376dacaf58ec88`
-- **Current runtime PR:** [#107 — Guard Home dashboard against duplicate execution](https://github.com/codyking0602/ufc-goat-rankings/pull/107)
-- **Tested PR head:** `da46ec9c3bd946b1e0d8e91ea341b32d4a84e83c`
+- **Phase 1 runtime batches merged and verified:** 4
+- **Latest verified runtime commit:** `7fd6ede029cc307932cb38bc2c9274484b18f403`
+- **Estimated entire cleanup progress:** approximately 20%
 - **Master tracker:** [#102 — Zero-change startup architecture cleanup](https://github.com/codyking0602/ufc-goat-rankings/issues/102)
 - **Visible product changes approved:** none
 - **Major Phase 1 owner audit:** complete in [`PHASE-1-OWNER-AUDIT.md`](./PHASE-1-OWNER-AUDIT.md)
+- **Recommended session state:** start a fresh chat before batch 5; this file is the handoff source of truth
 
 ## Completed runtime batches
 
@@ -26,33 +26,36 @@ PR #105 protected `octagon-hq-shell.js`. Final diff: 4 additions, 0 deletions, 2
 
 ### Batch 3 — Legacy nav-grid cleanup guard
 
-PR #106 protected `octagon-hq-nav-grid.js` from duplicate file evaluation while preserving its immediate cleanup, five delayed cleanup passes, resize listener, public API, and all navigation presentation.
+PR #106 protected `octagon-hq-nav-grid.js` while preserving its cleanup timers, resize listener, API, and navigation presentation. Final diff: 6 additions, 0 deletions, 2 files. Automated checks and real installed-iPhone navigation/rotation/tap verification passed. Squash merge: `f4e3ada330fb841ade0333c580376dacaf58ec88`.
 
-Final diff: 6 additions, 0 deletions, 2 files.
+### Batch 4 — Home dashboard guard
 
-JavaScript syntax, startup ownership, iOS route stability, profile sign-in, delayed Home/community, and real installed-iPhone navigation/rotation/tap checks passed. PR #106 was squash-merged as `f4e3ada330fb841ade0333c580376dacaf58ec88`. Cody reported the live app was normal.
+PR #107 protected `home-dashboard.js` from duplicate file evaluation while preserving Home markup, card order, copy, styles, timers, listeners, daily challenge, Picks, War Room, fighter spotlight, and public API behavior.
 
-## Current Phase 1 batch — Ready for physical gate
+Final diff:
 
-Draft PR #107 protects `assets/js/home-dashboard.js` from duplicate file evaluation.
-
-Exact diff:
-
-- 3-line top-level global duplicate-file-execution marker in `home-dashboard.js`;
-- one matching assertion in `scripts/test-startup-contract.mjs`;
 - 6 additions;
 - 0 deletions;
 - 2 files.
 
-No Home markup, copy, styling, timer value, listener body, navigation, daily challenge, Picks, War Room, fighter spotlight, data, scoring, or public API behavior changed.
-
-Startup Architecture Gate run #13 passed on tested head `da46ec9c3bd946b1e0d8e91ea341b32d4a84e83c`:
+Validation passed:
 
 - JavaScript syntax;
 - startup ownership contract;
 - iOS startup route stability;
 - profile sign-in startup stability;
-- delayed Home/community stability.
+- delayed Home/community stability;
+- real installed-iPhone Home cold launch, card presentation, daily challenge, Picks, War Room, fighter spotlight, background/resume, and return-to-Home behavior.
+
+PR #107 was squash-merged as `7fd6ede029cc307932cb38bc2c9274484b18f403`. Cody reported the live app was normal.
+
+## Next Phase 1 batch
+
+The next isolated owner is `assets/js/native-app-shell-stability.js`.
+
+This is a temporary mobile/native repair layer. The next session must first inspect its exact current execution path and confirm that a simple top-level guard cannot suppress a required prerequisite retry. The allowed runtime scope is expected to be one singleton marker plus one startup-contract assertion only, but that must be reconfirmed from current `main` before editing.
+
+Removal or consolidation of the repair layer is not part of Phase 1. That belongs to Phase 3 after source behavior has dedicated regression coverage.
 
 ## Existing unrelated red checks
 
@@ -64,20 +67,21 @@ Startup Architecture Gate run #13 passed on tested head `da46ec9c3bd946b1e0d8e91
    - The run stops at the fighter-photo path audit before rendered ranking/startup certification.
    - This is outside the startup singleton-guard diffs.
 
-## Exact next action — Cody's iPhone required
+## Exact next action
 
-1. Bring this documentation-only status commit into PR #107 without changing its runtime comparison.
-2. Rerun the Startup Architecture Gate on the current branch head.
-3. Merge only the exact six-addition runtime diff through a controlled live rollout.
-4. On the real installed app, verify Home cold launch, card order/content, daily challenge button, Picks button/progress, War Room button/state, fighter spotlight/profile opening, background/resume, and return-to-Home behavior.
-5. Begin the next runtime batch only after Cody reports the live Home screen is normal.
+1. Start a fresh chat and read this file, `DECISIONS.md`, `OWNERS.md`, `PHASE-1-OWNER-AUDIT.md`, and issue #102.
+2. Inspect current `main` for `assets/js/native-app-shell-stability.js` prerequisite and retry behavior.
+3. Create a fresh branch from current `main`.
+4. Keep the runtime batch isolated to that owner and its contract assertion.
+5. Run the full Startup Architecture Gate.
+6. Use a controlled live rollout and real installed-iPhone verification before beginning batch 6.
+7. After every physical iPhone result, report the estimated percentage complete for the entire cleanup and whether a new chat is recommended.
 
 ## Stop conditions
 
-Stop and leave PR #107 draft if:
+Stop and leave the next batch draft if:
 
-- Home markup, card order, copy, buttons, or spotlight content changes;
-- daily challenge, Picks, War Room, or fighter-profile navigation changes;
-- visibility/resume behavior changes;
-- a duplicate Home mount, blank screen, flicker, stale Home, route bounce, or double-handled tap occurs;
-- the diff begins changing timers, listener behavior, scoring, fighter data, photos, or product behavior.
+- mobile navigation, profile, Home, header, touch, resize, or background/resume behavior changes;
+- a repair pass appears to be serving as an intentional retry rather than accidental duplicate execution;
+- a blank screen, flicker, duplicated shell, stale view, route bounce, or double-handled tap occurs;
+- the diff begins removing repair logic or changing timers, observers, styling, scoring, fighter data, photos, or product behavior.
