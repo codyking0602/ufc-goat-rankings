@@ -1,0 +1,46 @@
+name: One-time Picks rollover cache bust
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/picks-rollover-cache-bust-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Force fresh Picks rollover assets
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+          replacements = {
+              'content="20260719-home-route-loop-hotfix"': 'content="20260719-picks-abu-dhabi-rollover"',
+              'picks-events.js?v=picks-events-20260716a-okc-full-card-sync': 'picks-events.js?v=picks-events-20260719b-abu-dhabi-next',
+              'supabase-config.js?v=supabase-config-20260715l-stable-no-route': 'supabase-config.js?v=supabase-config-20260719b-picks-auto-advance',
+              'picks-persistent-groups.js?v=picks-persistent-groups-20260712d-active-room-routing': 'picks-persistent-groups.js?v=picks-persistent-groups-20260719c-auto-next-event',
+              'picks-season-loop.js?v=picks-season-loop-20260718d-canonical-ui': 'picks-season-loop.js?v=picks-season-loop-20260719b-abu-dhabi-next',
+          }
+          for old, new in replacements.items():
+              if old not in text:
+                  raise SystemExit(f'Missing expected index marker: {old}')
+              text = text.replace(old, new, 1)
+          path.write_text(text, encoding='utf-8')
+
+      - name: Publish fresh app build
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Bust cache for Abu Dhabi Picks rollover"
+          git push origin main
