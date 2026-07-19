@@ -1,6 +1,9 @@
 (function(){
   'use strict';
 
+  if(window.__UFC_HOME_DASHBOARD_STARTED__)return;
+  window.__UFC_HOME_DASHBOARD_STARTED__=true;
+
   const VERSION='home-dashboard-20260718a-single-renderer';
   const DAILY={
     gameType:'find-leader',
