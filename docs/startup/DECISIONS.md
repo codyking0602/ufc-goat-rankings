@@ -114,3 +114,15 @@ A mobile-sensitive startup batch may use immediate post-merge live verification 
 - no next runtime batch begins until the real installed app passes physical verification.
 
 PR #100 qualified because it contained only two three-line duplicate-start guards and two contract assertions. This exception does not automatically apply to native navigation, touch handling, notifications, service workers, data loaders, or retry-sensitive owners.
+
+## Decision 014 — Report whole-project progress after every iPhone gate
+
+**Date:** 2026-07-19  
+**Status:** Locked
+
+After every physical iPhone verification result, the response must include two brief items:
+
+- an estimated completion percentage for the entire startup-architecture cleanup, not merely the current phase;
+- whether continuing in the current chat is still safe or a fresh chat is recommended.
+
+The percentage is an honest planning estimate based on all phases, remaining owner risk, regression coverage, repair retirement, load-order cleanup, and rollout work. It is not a simple count of merged pull requests.
