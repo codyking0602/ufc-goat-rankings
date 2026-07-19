@@ -72,6 +72,7 @@ const earlyRoute=forbid('assets/js/fresh-home-route-bootstrap.js',[
   'location.reload',
   'window.location.reload'
 ]);
+assert(earlyRoute.includes('__UFC_FRESH_HOME_ROUTE_BOOTSTRAP_STARTED__'),'The early route bootstrap must keep its global duplicate-start guard.');
 assert(earlyRoute.includes('history.replaceState'),'The early route bootstrap must remain a synchronous URL normalizer.');
 
 const shell=read('assets/js/octagon-hq-shell.js');
@@ -93,6 +94,7 @@ const freshLaunch=forbid('assets/js/fresh-home-launch.js',[
   'location.reload',
   'window.location.reload'
 ]);
+assert(freshLaunch.includes('__UFC_FRESH_HOME_LAUNCH_STARTED__'),'Fresh launch must keep its global duplicate-start guard.');
 assert(freshLaunch.includes('profile-setup-reminder.js'),'Fresh launch may only inject the profile setup reminder after route selection.');
 
 const notificationSurface=read('assets/js/app-notification-surface-fix.js');
