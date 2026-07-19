@@ -104,6 +104,8 @@ const freshLaunch=forbid('assets/js/fresh-home-launch.js',[
 assert(freshLaunch.includes('__UFC_FRESH_HOME_LAUNCH_STARTED__'),'Fresh launch must keep its global duplicate-start guard.');
 assert(freshLaunch.includes('profile-setup-reminder.js'),'Fresh launch may only inject the profile setup reminder after route selection.');
 
+assert(read('assets/js/app-notification-center.js').includes('__UFC_APP_NOTIFICATION_CENTER_STARTED__'),'Notification center must keep its global duplicate-file-execution guard.');
+
 const notificationSurface=read('assets/js/app-notification-surface-fix.js');
 assert(notificationSurface.includes('__UFC_APP_NOTIFICATION_SURFACE_FIX_STARTED__'),'Notification surface must keep its global duplicate-start guard.');
 
