@@ -1,6 +1,9 @@
 (function(){
   'use strict';
 
+  if(window.__UFC_FRESH_HOME_ROUTE_BOOTSTRAP_STARTED__)return;
+  window.__UFC_FRESH_HOME_ROUTE_BOOTSTRAP_STARTED__=true;
+
   const VERSION='fresh-home-route-bootstrap-20260719a';
   const RESUME_PICKS_KEY='__picks_resume';
   const RESUME_WINDOW_MS=30000;
