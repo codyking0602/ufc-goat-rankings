@@ -118,6 +118,7 @@ forbid('assets/js/native-app-shell-stability.js',[
   'window.location.reload',
   'setInterval('
 ]);
+assert(read('assets/js/native-app-shell-stability.js').includes('__UFC_NATIVE_APP_SHELL_STABILITY_STARTED__'),'Native shell stability must keep its global duplicate-file-execution guard.');
 
 assert(/<meta\s+name=["']app-build["']\s+content=["'][^"']+["']/i.test(index),'index.html must retain an app-build marker for update delivery.');
 
