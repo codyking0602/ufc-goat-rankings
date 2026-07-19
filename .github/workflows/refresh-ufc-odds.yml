@@ -27,6 +27,16 @@ jobs:
         shell: bash
         run: test -n "$ODDS_REFRESH_SECRET" || { echo "Missing ODDS_REFRESH_SECRET"; exit 1; }
 
+      - name: Advance groups using current event data
+        shell: bash
+        run: |
+          curl --fail-with-body --retry 2 \
+            --request POST \
+            --header "content-type: application/json" \
+            --header "x-card-sync-secret: $ODDS_REFRESH_SECRET" \
+            --data '{"source":"card-sync-preflight"}' \
+            "https://$PROJECT_REF.supabase.co/functions/v1/advance-picks-event"
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -46,6 +56,7 @@ jobs:
         run: node scripts/sync-ufc-card.mjs --apply
 
       - name: Advance permanent groups to next event
+        if: always()
         shell: bash
         run: |
           curl --fail-with-body --retry 2 \
@@ -65,6 +76,7 @@ jobs:
           retention-days: 14
 
       - name: Refresh current UFC odds
+        if: always()
         shell: bash
         run: |
           curl --fail-with-body --retry 2 \
