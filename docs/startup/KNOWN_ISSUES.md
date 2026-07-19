@@ -4,17 +4,12 @@ This file separates active startup concerns from unrelated repository failures d
 
 ## Active startup concerns
 
-### PR #100 is currently reported as non-mergeable
+### PR #100 still needs installed-iPhone verification
 
-**Status:** Investigating  
-**Impact:** The first Phase 1 runtime batch must remain draft.
+**Status:** Automated validation passed; manual installed-app verification pending  
+**Impact:** The first Phase 1 runtime batch remains draft.
 
-Required action:
-
-1. Compare the PR head with current `main`.
-2. Determine whether the report represents a true conflict, stale branch state, or incomplete GitHub computation.
-3. Reconcile without adding unrelated runtime changes.
-4. Re-run relevant startup checks.
+The branch is now current with `main`, mergeable, and still limited to 8 additions across 3 files. The remaining project-rule gate is physical verification of cold launch, non-Home relaunch, background/resume, route stability, reminder behavior, and single tap handling.
 
 ### Startup ownership is still distributed across compatibility layers
 
@@ -30,6 +25,16 @@ These are not automatic bugs. They are Phase 2 and Phase 3 investigation targets
 ### Phase 1 owner inventory is incomplete
 
 The current ownership map identifies major owners but has not yet catalogued every listener, observer, timeout, interval, dynamic script loader, lifecycle event, or initialized marker.
+
+The leading next audit candidate is `assets/js/octagon-hq-shell.js`. It protects repeated API calls with closure-scoped `started` and `eventsBound` state, but a duplicated script execution would create a second closure. No additional runtime change should begin until PR #100 clears its installed-app gate.
+
+## Resolved during current work
+
+### PR #100 branch divergence
+
+- The PR was 14 commits behind current `main` after documentation landed.
+- The branch was rebuilt from current `main` while preserving the exact original runtime diff.
+- Current state: 0 commits behind, mergeable, 8 additions across 3 files.
 
 ## Unrelated repository failures observed during startup validation
 
