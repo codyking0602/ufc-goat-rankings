@@ -5,7 +5,7 @@ _Last updated: 2026-07-19_
 ## Overall status
 
 - **Current phase:** Phase 1 — Make startup owners idempotent
-- **Phase 0:** Functionally complete; permanent documentation is being finalized
+- **Phase 0:** Complete
 - **Runtime merged to `main`:** none from Phase 1
 - **Current runtime PR:** [#100 — Add zero-change singleton guards to route startup](https://github.com/codyking0602/ufc-goat-rankings/pull/100)
 - **Master tracker:** [#102 — Zero-change startup architecture cleanup](https://github.com/codyking0602/ufc-goat-rankings/issues/102)
@@ -22,7 +22,7 @@ These changes document and test startup architecture. They do not change runtime
 
 ## Current Phase 1 batch
 
-Draft PR #100 currently proposes:
+Draft PR #100 proposes:
 
 - one singleton guard in `assets/js/fresh-home-route-bootstrap.js`;
 - one singleton guard in `assets/js/fresh-home-launch.js`;
@@ -30,7 +30,14 @@ Draft PR #100 currently proposes:
 
 The intended first execution remains identical. An accidental second execution exits before repeating route work or attaching duplicate behavior.
 
-## Validation already observed for PR #100
+## Branch state
+
+- PR #100 is open, draft, and mergeable.
+- The branch is based directly on current `main`.
+- It is 0 commits behind.
+- The diff remains exactly 8 additions across 3 files.
+
+## Refreshed validation for PR #100
 
 Passed:
 
@@ -41,13 +48,22 @@ Passed:
 - delayed Home/community stability;
 - Phase 4B mobile/profile/Picks stability.
 
-## Current caution
+## Remaining merge gate
 
-GitHub currently reports PR #100 as **not mergeable**. Do not merge it until the cause is identified and the branch is reconciled safely with current `main`.
+The project rules require installed-iPhone verification before merging routing or lifecycle-sensitive startup changes.
+
+PR #100 therefore remains draft even though the automated startup and mobile checks are green.
+
+Manual verification should confirm:
+
+- cold launch from fully closed;
+- launch after previously leaving the app on Picks or another non-Home destination;
+- background and resume;
+- no route bounce, blank screen, duplicate reminder, duplicate tap handling, or navigation flicker.
 
 ## Existing unrelated red checks
 
-These are tracked separately and must not be silently mixed into the startup runtime diff:
+These remain separate from the startup runtime diff:
 
 1. **Scoring Architecture Guardrails**
    - The scoring contract expects 73 fighters while production contains 80.
@@ -57,12 +73,16 @@ These are tracked separately and must not be silently mixed into the startup run
    - The run stops at the fighter-photo path audit before rendered ranking/startup certification.
    - This is outside the Phase 1 route-guard diff.
 
+## Phase 1 audit finding
+
+`assets/js/octagon-hq-shell.js` already protects repeated calls through its `started` and `eventsBound` state and disconnects/replaces its navigation observers. However, those guards are closure-scoped, so a truly duplicated script execution would create a second closure. This is the leading candidate for the next small Phase 1 audit batch, but no additional runtime change should be opened until PR #100 clears its installed-app gate.
+
 ## Exact next action
 
-1. Compare PR #100 with current `main` and determine why GitHub reports it as non-mergeable.
-2. Reconcile the branch without expanding the runtime diff.
-3. Re-run the startup-specific and mobile/profile checks.
-4. Inventory the next startup owner only after this first batch is clean.
+1. Perform installed-iPhone verification of PR #100 through an appropriate preview/deployment path.
+2. Record the result in PR #100 and this file.
+3. Merge only if visible behavior is unchanged.
+4. Then audit `octagon-hq-shell.js` as the next possible idempotence owner.
 
 ## Stop conditions
 
