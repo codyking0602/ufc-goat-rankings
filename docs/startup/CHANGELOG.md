@@ -105,7 +105,7 @@ The immutable separate-origin static preview did not reproduce the production mo
 
 The preview was declared invalid and Cody was told not to sign in there. Source comparison confirmed the branch differed from current `main` only by the exact eight-line guard/test diff.
 
-## 2026-07-19 — Phase 1 batch 1 merged
+## 2026-07-19 — Phase 1 batch 1 merged and verified
 
 PR #100 was rebuilt directly from current `main` and revalidated on head `86c2cba7ce83ce6ef4a824cf79634e006dd53f5c`.
 
@@ -121,4 +121,29 @@ Final pre-merge state:
 
 PR #100 was squash-merged as commit `5e733cc4568100e96080ce27ad601b7022daba33`.
 
-The rollout is now in controlled live verification on the real GitHub Pages installed app. The next runtime batch remains blocked until Cody confirms the current mobile presentation, route behavior, background/resume, reminders, navigation shell, and tap handling are unchanged.
+Cody then verified the real installed iPhone app. The current mobile presentation, cold launch, navigation shell, and visible behavior were normal. Batch 1 was closed as live-verified.
+
+## 2026-07-19 — Phase 1 batch 2 merged and verified
+
+PR #105 added a top-level duplicate-file-execution guard to `assets/js/octagon-hq-shell.js` and one matching startup-contract assertion.
+
+Final state:
+
+- 4 additions;
+- 0 deletions;
+- 2 changed files;
+- current with `main`;
+- Startup Architecture Gate passed;
+- iOS startup route stability passed;
+- profile sign-in stability passed;
+- delayed Home/community stability passed.
+
+PR #105 was squash-merged as commit `d7b47d6fb9ad45b101f67d5658b3e2a874a746c8`.
+
+Cody tested the real installed app after deployment. Home, Rankings, Play, Picks, War Room, Intelligence, all Rankings subviews, Picks background/resume, and the bottom navigation behaved normally. Batch 2 was closed as live-verified.
+
+## 2026-07-19 — Phase 1 batch 3 started
+
+The next isolated owner is `assets/js/octagon-hq-nav-grid.js`.
+
+This batch is limited to a duplicate-file-execution guard and one contract assertion. Its existing delayed cleanup timers and resize listener remain unchanged until the later repair-loop phase.
