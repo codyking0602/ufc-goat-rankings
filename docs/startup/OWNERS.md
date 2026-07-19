@@ -14,9 +14,9 @@ This file records the canonical owner of each startup responsibility. Detailed d
 
 | Responsibility | Canonical owner | Current status | Phase 1 decision |
 |---|---|---|---|
-| Earliest installed-app route normalization | `assets/js/fresh-home-route-bootstrap.js` | Canonical synchronous owner | Global duplicate-start guard merged in PR #100; live verification pending |
-| Primary destination and ranking-subview activation | `assets/js/octagon-hq-shell.js` via `window.UFC_APP_SHELL` | Canonical navigation owner | Next isolated simple-guard candidate after PR #100 live verification |
-| Legacy navigation-grid cleanup | `assets/js/octagon-hq-nav-grid.js` | Compatibility cleanup | Isolated simple-guard candidate after app shell |
+| Earliest installed-app route normalization | `assets/js/fresh-home-route-bootstrap.js` | Canonical synchronous owner | Global duplicate-start guard merged and live-verified in PR #100 |
+| Primary destination and ranking-subview activation | `assets/js/octagon-hq-shell.js` via `window.UFC_APP_SHELL` | Canonical navigation owner | Global duplicate-file guard merged and live-verified in PR #105 |
+| Legacy navigation-grid cleanup | `assets/js/octagon-hq-nav-grid.js` | Compatibility cleanup | Current isolated simple-guard candidate; repair timers remain unchanged until Phase 3 |
 | Ranking data | `assets/data/ranking-data.js` | Canonical data source | Outside startup cleanup except load-order checks |
 | Base ranking rendering and global UI APIs | `assets/js/app.js` | Structural global singleton | Enforce exact-one manifest load; no standard IIFE guard |
 | Calculated production scoring bootstrap | `assets/js/production-ranking-bootstrap.js` | Canonical calculated-production launcher | Explicit retry semantics required before idempotence change |
@@ -26,7 +26,7 @@ This file records the canonical owner of each startup responsibility. Detailed d
 | Home dashboard rendering | `assets/js/home-dashboard.js` | Canonical Home owner | Isolated simple-guard candidate |
 | Community profile rendering | `assets/js/community-profiles.js` | Canonical community owner | Isolated broad-surface guard candidate |
 | Cross-feature profile compatibility | `assets/js/product-architecture.js` | Compatibility/handoff owner | Already globally protected |
-| Late initial route activation and reminder injection | `assets/js/fresh-home-launch.js` | Late startup owner | Global duplicate-start guard merged in PR #100; live verification pending |
+| Late initial route activation and reminder injection | `assets/js/fresh-home-launch.js` | Late startup owner | Global duplicate-start guard merged and live-verified in PR #100 |
 | Notification data and rendering | `assets/js/app-notification-center.js` | Intended canonical notification owner | Isolated mobile-sensitive guard candidate |
 | Notification/profile surface compatibility | `assets/js/app-notification-surface-fix.js` | Temporary compatibility layer | Already globally protected; must not expand |
 | Mobile bottom navigation, badges, transitions, pull-to-refresh | `assets/js/native-app-shell.js` | Intended canonical native shell owner | Isolated physical-iPhone guard candidate |
