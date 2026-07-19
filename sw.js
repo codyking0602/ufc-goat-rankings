@@ -1,8 +1,8 @@
-const VERSION='octagon-hq-sw-20260718d-find-leader-fit-ten';
-const CACHE_NAME='octagon-hq-static-v3';
+const VERSION='octagon-hq-sw-20260719a-game-challenges';
+const CACHE_NAME='octagon-hq-static-v4';
 const LEGACY_PREFIX='octagon-hq-static-';
 const CORE=['./','./index.html','./manifest.webmanifest'];
-const FORCE_NETWORK=/\/assets\/(?:js\/(?:app-notification-surface-fix|app-update-watcher|product-architecture|native-app-shell|native-app-shell-stability|community-profiles|fresh-home-launch|find-leader)\.js|css\/(?:native-app-shell|native-app-shell-stability|community-profiles|find-leader)\.css)$/i;
+const FORCE_NETWORK=/\/assets\/(?:(?:js\/(?:app-notification-surface-fix|app-update-watcher|product-architecture|native-app-shell|native-app-shell-stability|community-profiles|fresh-home-launch|find-leader|game-challenges)|data\/what-changed)\.js|css\/(?:native-app-shell|native-app-shell-stability|community-profiles|find-leader)\.css)$/i;
 
 self.addEventListener('install',event=>{
   event.waitUntil((async()=>{
