@@ -73,3 +73,26 @@ Every future work session starts from `docs/startup/STATUS.md`, the governing ar
 **Status:** Locked
 
 Rankings are not to be simplified as part of startup work. War Room is an active product surface and must be preserved and tested like the rest of the app.
+
+## Decision 011 — Do not use one universal guard pattern
+
+**Date:** 2026-07-19  
+**Status:** Locked
+
+Phase 1 owners fall into different technical classes:
+
+- simple IIFE owners that can receive a top-level global marker;
+- prerequisite-dependent owners whose marker must be set only after required DOM or data exists;
+- structural global scripts such as `app.js` that must remain exact-one manifest loads;
+- retry-sensitive launchers such as `production-ranking-bootstrap.js` that need an intentional retry API before later execution can be blocked.
+
+No file may receive the standard singleton marker merely because another startup file used it successfully.
+
+## Decision 012 — Mobile-sensitive owners require physical-device proof
+
+**Date:** 2026-07-19  
+**Status:** Locked
+
+Routing, native navigation, touch handling, background/resume, profile sign-in, notification, and installed-app changes require physical iPhone verification before merge.
+
+An immutable separate-origin snapshot may be used for pre-merge testing when CI does not publish a branch deployment. Failure of that preview to load or install is inconclusive, not approval to merge.
