@@ -77,6 +77,8 @@ Required before merging a change that affects routing, lifecycle events, cache b
 
 Record the outcome in the PR and `STATUS.md`.
 
+For PR #100, use [`PR-100-IPHONE-TEST.md`](./PR-100-IPHONE-TEST.md). The test uses an immutable commit snapshot on a separate preview origin so the production installation remains untouched.
+
 ## Merge decision categories
 
 ### Green
@@ -103,13 +105,24 @@ Record the outcome in the PR and `STATUS.md`.
 
 ## Current Phase 1 baseline
 
-For draft PR #100, the following have already been observed as passing:
+For draft PR #100, the following have passed on head commit `8136c728f5794229273b8a2c5ce9f291eeaf30db`:
 
 - startup syntax;
 - ownership/load-order contract;
-- iOS startup/lifecycle stability;
+- iOS startup/lifecycle browser simulation;
 - profile sign-in startup stability;
 - delayed Home/community stability;
 - Phase 4B mobile/profile/Picks stability.
 
-The PR remains held because its mergeability state must be reconciled with current `main`.
+The retained CI proof also reports:
+
+- one product-architecture script;
+- one native shell script;
+- one notification-surface script;
+- one bottom navigation;
+- one community directory with no delayed replacement;
+- successful Top 10 save;
+- correct Home cold launch;
+- correct Picks resume route.
+
+PR #100 is open, current with `main`, and mergeable. Its only remaining required gate is the installed-iPhone test documented above.
