@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='find-leader-20260718c-photo-authority';
+  const VERSION='find-leader-20260718d-compact-board';
   const DAILY_VERSION='find-leader-daily-v1';
   const PERFECT_SCORE=10;
   const PHOTO_ALIASES=new Map([
@@ -22,6 +22,49 @@
   panel.className='find-leader-panel play-panel';
   panel.hidden=true;
   shell.appendChild(panel);
+
+  function installCompactStyles(){
+    if(document.getElementById('findLeaderCompactCss'))return;
+    const style=document.createElement('style');
+    style.id='findLeaderCompactCss';
+    style.textContent=`
+      #play .find-leader-panel{gap:9px}
+      #play .find-leader-hero{grid-template-columns:minmax(0,1fr) auto;gap:11px;padding:13px 14px}
+      #play .find-leader-question h2{margin-top:5px;font-size:clamp(24px,4vw,40px);line-height:.96}
+      #play .find-leader-question p{margin-top:7px;font-size:10.5px;line-height:1.35}
+      #play .find-leader-hero>aside{display:grid;grid-template-columns:repeat(3,minmax(58px,1fr));gap:5px;align-self:stretch;padding:6px;text-align:center}
+      #play .find-leader-hero>aside>div{display:grid;align-content:center;min-width:0;border-radius:11px;background:rgba(30,41,59,.72);padding:7px 6px}
+      #play .find-leader-hero>aside span{font-size:7px;letter-spacing:.08em}
+      #play .find-leader-hero>aside strong{margin-top:3px;font-size:22px;line-height:1}
+      #play .find-leader-feedback{grid-column:1/-1;margin:0;padding:7px 10px;font-size:9px}
+      #play .find-leader-grid{gap:7px;padding:10px}
+      #play .find-leader-tile{grid-template-rows:108px auto auto;gap:5px;padding:6px;border-radius:14px}
+      #play .find-leader-photo{height:108px;border-radius:10px}
+      #play .find-leader-name strong{font-size:11px}
+      #play .find-leader-name small{margin-top:2px;font-size:7.5px}
+      #play .find-leader-tile>em{padding:6px 5px;font-size:7.5px}
+      #play .find-leader-card-number{left:9px;top:9px;width:21px;height:21px;font-size:8px}
+      @media(max-width:780px){
+        #play .find-leader-hero{grid-template-columns:1fr}
+        #play .find-leader-hero>aside{width:100%;box-sizing:border-box}
+      }
+      @media(max-width:540px){
+        #play .find-leader-panel{gap:8px}
+        #play .find-leader-hero,#play .find-leader-grid{padding:9px;border-radius:16px}
+        #play .find-leader-question h2{font-size:23px}
+        #play .find-leader-question p{font-size:9.5px}
+        #play .find-leader-hero>aside{padding:5px}
+        #play .find-leader-hero>aside>div{padding:6px 4px}
+        #play .find-leader-hero>aside strong{font-size:20px}
+        #play .find-leader-tile{grid-template-rows:88px auto auto;gap:4px;padding:5px}
+        #play .find-leader-photo{height:88px}
+        #play .find-leader-name strong{font-size:10.5px}
+        #play .find-leader-tile>em{padding:5px 4px;font-size:7px}
+      }
+    `;
+    document.head.appendChild(style);
+  }
+  installCompactStyles();
 
   function hashSeed(value){let hash=2166136261;for(let index=0;index<String(value).length;index+=1){hash^=String(value).charCodeAt(index);hash=Math.imul(hash,16777619);}return hash>>>0;}
   function mulberry32(seed){let value=seed>>>0;return function(){value+=0x6D2B79F5;let next=value;next=Math.imul(next^(next>>>15),next|1);next^=next+Math.imul(next^(next>>>7),next|61);return((next^(next>>>14))>>>0)/4294967296;};}
@@ -102,7 +145,10 @@
   }
 
   function renderGame(){
-    const round=currentRound();panel.innerHTML=`<section class="find-leader-hero"><div><span>${state.daily?"TODAY'S CHALLENGE":'ELIMINATION GAME'}</span><h2>${esc(state.setup.question)}</h2><p>${esc(state.setup.context)} Eliminate one fighter who is <strong>not</strong> the leader. Pick the leader and your run ends.</p></div><aside><span>CURRENT ROUND</span><strong>${round}</strong><small>${remaining().length} fighters standing</small></aside></section><section class="find-leader-pressure"><div><span>YOUR MISSION</span><strong>Leave the leader standing</strong></div><b>${state.safeIds.length}/9 SAFE</b></section><p class="find-leader-feedback${state.feedback?' active':''}">${esc(state.feedback||'All values are hidden. Tap one fighter to eliminate them.')}</p><section class="find-leader-grid">${candidates().map(card).join('')}</section>`;panel.scrollIntoView({behavior:'smooth',block:'start'});
+    const round=currentRound(),standing=remaining().length;
+    const feedback=state.feedback?`<p class="find-leader-feedback active">${esc(state.feedback)}</p>`:'';
+    panel.innerHTML=`<section class="find-leader-hero"><div class="find-leader-question"><span>${state.daily?"TODAY'S CHALLENGE":'ELIMINATION GAME'}</span><h2>${esc(state.setup.question)}</h2><p>${esc(state.setup.context)}</p></div><aside aria-label="Current game status"><div><span>ROUND</span><strong>${round}</strong></div><div><span>STANDING</span><strong>${standing}</strong></div><div><span>SAFE</span><strong>${state.safeIds.length}/9</strong></div></aside>${feedback}</section><section class="find-leader-grid">${candidates().map(card).join('')}</section>`;
+    panel.scrollIntoView({behavior:'smooth',block:'start'});
   }
 
   function finish({perfect,fatalId=null,score}){state.perfect=Boolean(perfect);state.fatalId=fatalId;state.score=Number(score);state.phase='complete';renderFinish();window.dispatchEvent(new CustomEvent('ufc-play-game-complete',{detail:{gameType:'find-leader',daily:state.daily,score:state.score,maxScore:PERFECT_SCORE,result:result()}}));}
