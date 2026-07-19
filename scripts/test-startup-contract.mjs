@@ -76,6 +76,7 @@ assert(earlyRoute.includes('__UFC_FRESH_HOME_ROUTE_BOOTSTRAP_STARTED__'),'The ea
 assert(earlyRoute.includes('history.replaceState'),'The early route bootstrap must remain a synchronous URL normalizer.');
 
 const shell=read('assets/js/octagon-hq-shell.js');
+assert(shell.includes('__UFC_OCTAGON_HQ_SHELL_STARTED__'),'The app shell must keep its global duplicate-file-execution guard.');
 assert(shell.includes('let started=false'),'The app shell must keep its single-start guard.');
 assert(shell.includes('if(started){syncNavigation();return true;}'),'The app shell must remain idempotent.');
 assert(shell.includes('window.UFC_APP_SHELL=api'),'The app shell must remain the canonical navigation API.');

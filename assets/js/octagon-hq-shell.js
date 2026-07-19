@@ -1,6 +1,9 @@
 (function(){
   'use strict';
 
+  if(window.__UFC_OCTAGON_HQ_SHELL_STARTED__)return;
+  window.__UFC_OCTAGON_HQ_SHELL_STARTED__=true;
+
   const VERSION='app-shell-20260718d-rankings-static';
   const DESTINATIONS=[
     ['home','Home','home'],
