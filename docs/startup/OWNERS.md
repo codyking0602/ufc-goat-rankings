@@ -27,9 +27,9 @@ This file records the canonical owner of each startup responsibility. Detailed d
 | Community profile rendering | `assets/js/community-profiles.js` | Canonical community owner | Isolated broad-surface guard candidate |
 | Cross-feature profile compatibility | `assets/js/product-architecture.js` | Compatibility/handoff owner | Already globally protected |
 | Late initial route activation and reminder injection | `assets/js/fresh-home-launch.js` | Late startup owner | Global duplicate-start guard merged and live-verified in PR #100 |
-| Notification data and rendering | `assets/js/app-notification-center.js` | Intended canonical notification owner | Next isolated mobile-sensitive candidate; inspect service-worker, profile-surface, prerequisite, and retry semantics before adding a marker |
+| Notification data and rendering | `assets/js/app-notification-center.js` | Intended canonical notification owner | Global duplicate-file guard merged and live-verified in PR #110; first-run, service-worker, profile/activity surface, event/API retry, and user-gesture permission behavior preserved |
 | Notification/profile surface compatibility | `assets/js/app-notification-surface-fix.js` | Temporary compatibility layer | Already globally protected; must not expand |
-| Mobile bottom navigation, badges, transitions, pull-to-refresh | `assets/js/native-app-shell.js` | Intended canonical native shell owner | Isolated physical-iPhone guard candidate |
+| Mobile bottom navigation, badges, transitions, pull-to-refresh | `assets/js/native-app-shell.js` | Intended canonical native shell owner | Next isolated physical-iPhone guard candidate; inspect prerequisites, retry paths, observer, listeners, interval, touch, badges, transitions, and refresh behavior before adding a marker |
 | Mobile/native compatibility repairs | `assets/js/native-app-shell-stability.js` | Temporary repair layer | Global duplicate-file guard merged and live-verified in PR #108; public `schedule()` retry path preserved; removal belongs to Phase 3 |
 | Sharing and incoming share routing | `assets/js/share-deep-links.js` | Canonical share/deep-link owner | Isolated guard candidate after core startup owners |
 

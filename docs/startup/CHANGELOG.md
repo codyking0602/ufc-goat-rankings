@@ -202,3 +202,30 @@ PR #108 was squash-merged as commit `6b0c9442b5a4df46e481296bb8d5cbd3befe1ab7`.
 Cody verified the real installed iPhone app after deployment. Cold launch, Home/profile/header repairs, bottom-navigation and touch behavior, background/resume, and return-to-Home behavior were normal. Batch 5 was closed as live-verified.
 
 Removal or consolidation of `native-app-shell-stability.js` remains deferred to Phase 3 after source-level regression coverage exists. The next isolated Phase 1 owner is `assets/js/app-notification-center.js`.
+
+## 2026-07-19 — Phase 1 batch 6 merged and verified
+
+PR #110 added a duplicate-file-execution guard to `assets/js/app-notification-center.js` and one startup-contract assertion.
+
+The prerequisite/retry inspection established that notification startup does not depend on duplicate file evaluation. Profile-ready/profile-updated events, the notification-device-change listener, MutationObserver, the delayed settings attempt, public `loadSettings()` and `render()` APIs, and the guarded notification-surface compatibility layer remain the intentional retry paths. Notification permission remains user-gesture-only through the existing Enable-button path.
+
+Final state:
+
+- 4 additions;
+- 0 deletions;
+- 2 changed files;
+- branch current with `main` at validation;
+- Startup Architecture Gate run #18 passed;
+- JavaScript syntax passed;
+- startup ownership contract passed;
+- local app startup passed;
+- iOS startup route and resume stability passed;
+- profile sign-in startup stability passed;
+- delayed Home/community stability passed;
+- duplicate-evaluation harness and first-run equivalence proof passed.
+
+PR #110 was squash-merged as commit `865527b15902e7b61fff429e4faf9ce2a0bc811c`.
+
+Cody verified the real installed iPhone app after deployment. Cold launch, profile and activity Smart alerts surfaces, permission behavior, notification controls, navigation, touch handling, and background/resume behavior were normal. Batch 6 was closed as live-verified.
+
+The next isolated Phase 1 owner is `assets/js/native-app-shell.js`. It must remain a separate mobile-sensitive draft batch and receive dedicated navigation, touch, badge, transition, pull-to-refresh, profile, Picks, notification, lifecycle, and installed-iPhone verification.

@@ -135,3 +135,12 @@ The percentage is an honest planning estimate based on all phases, remaining own
 A temporary repair layer may receive a top-level duplicate-file marker only when required later repair attempts are already owned by an explicit callable API or by preserved event/timer paths rather than by re-evaluating the file.
 
 For `native-app-shell-stability.js`, the public `schedule()` API plus its readiness events, MutationObserver, and delayed passes are the intentional retry mechanism. PR #108 therefore blocks only a second closure, listener set, observer, timer set, and replacement API. The repair implementation itself remains unchanged and cannot be removed or consolidated until Phase 3 regression coverage exists.
+
+## Decision 016 — Notification retries and permission ownership remain explicit
+
+**Date:** 2026-07-19  
+**Status:** Locked
+
+`app-notification-center.js` does not rely on duplicate file evaluation for prerequisite recovery. Its intentional later attempts are owned by profile-ready/profile-updated events, the notification-device-change listener, its MutationObserver, the existing delayed settings attempt, the public `loadSettings()` and `render()` APIs, and the separately guarded notification-surface compatibility layer.
+
+Notification permission must remain user-gesture-only through the existing Enable-button path. A startup guard may block duplicate notification ownership only when it preserves that permission boundary, service-worker behavior, profile and activity surfaces, all event/API retry paths, and the complete first execution. PR #110 met those conditions and was live-verified.
