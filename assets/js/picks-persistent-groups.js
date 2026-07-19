@@ -182,7 +182,12 @@
     if(!code || !admin) return false;
 
     const active=(snapshot.events || []).find(event=>event.is_active);
-    if(active && !['complete','hidden'].includes(String(active.status || '').toLowerCase())) return false;
+    const activeStatus=String(active?.status || '').toLowerCase();
+    const activeTime=new Date(active?.event_date || 0).getTime();
+    const activeFinished=!active
+      || ['complete','hidden'].includes(activeStatus)
+      || (activeStatus!=='live' && Number.isFinite(activeTime) && activeTime<Date.now()-(6*60*60*1000));
+    if(!activeFinished) return false;
 
     const next=(snapshot.available_events || [])
       .filter(event=>['upcoming','live'].includes(String(event.status || '').toLowerCase()))
