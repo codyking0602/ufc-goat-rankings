@@ -92,7 +92,8 @@ jobs:
           grep -Fq 'syncPicksAccess' assets/js/community-profiles.js
           grep -Fq 'fresh-home-launch-20260718g-picks-route-safe' assets/js/fresh-home-launch.js
           grep -Fq "picksRouteKeys=['group','room','event','picksView','archive']" assets/js/fresh-home-launch.js
-          grep -Fq 'product-architecture-20260718t-single-owner-startup' assets/js/product-architecture.js
+          grep -Fq 'product-architecture-20260718u-shared-profile-auth' assets/js/product-architecture.js
+          grep -Fq 'syncSharedProfileToPicks' assets/js/product-architecture.js
           grep -Fq '__UFC_PRODUCT_ARCHITECTURE_STARTED__' assets/js/product-architecture.js
           ! grep -Fq 'loadNativeShell();' assets/js/product-architecture.js
           ! grep -Fq 'loadNotificationSurfaceFix();' assets/js/product-architecture.js
