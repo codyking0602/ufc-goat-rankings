@@ -95,6 +95,7 @@
     queueMicrotask(hide);
     window.setTimeout(hide,160);
     window.setTimeout(hide,500);
+    window.setTimeout(()=>document.getElementById('picksPinSignInCard')?.remove(),520);
   }
 
   function syncSharedProfileToPicks(value){
