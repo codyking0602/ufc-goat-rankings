@@ -38,7 +38,6 @@ Never place the service-role or secret key in the repository. All migration file
 - Draws, no contests, cancellations, and unresolved fights are excluded from accuracy.
 - Friends' exact picks remain hidden until that fight locks.
 
-
 Commissioners can choose future-season point values. Scoring locks once the first pick is submitted in that season, but the season name remains editable.
 
 ## Permanent groups
@@ -110,22 +109,22 @@ Event cards are maintained directly in the repository and Supabase rather than t
 For each new event:
 
 1. Confirm the official card, event date, bout order, and sections.
-2. Add or update the event in the maintained data workflow.
+2. Add the event to `config/ufc-card-sources.json` and the local fallback in `assets/data/picks-events.js`.
 3. Verify the room and picks on the live site.
-4. Let the daily odds workflow fill available moneylines.
-5. Update replacements or cancellations when the card changes.
+4. Let the scheduled card-and-odds workflow refresh Supabase every six hours.
+5. Update the maintained source only when the next UFC event needs to be added or a source rule changes.
 
 `picks-event-manager-phase.sql` remains in the migration sequence because later group and commissioner schema depends on that phase, but its retired front-end files have been removed.
 
-## Automated odds refresh
+## Automated card and odds refresh
 
-The live Picks card can refresh UFC moneylines every 24 hours through `supabase/functions/refresh-ufc-odds/index.ts` and the **Refresh UFC Odds** GitHub Actions workflow.
+The live Picks card is checked every six hours through `scripts/sync-ufc-card.mjs`, `supabase/functions/sync-ufc-card/index.ts`, and the **Sync UFC Card and Odds** GitHub Actions workflow. Once the confirmed card is applied to Supabase, `supabase/functions/refresh-ufc-odds/index.ts` refreshes available moneylines.
 
 ### Required repository secrets
 
 Open **GitHub → Settings → Secrets and variables → Actions** and add:
 
-- `SUPABASE_ACCESS_TOKEN` — a Supabase personal access token used only to deploy the Edge Function.
+- `SUPABASE_ACCESS_TOKEN` — a Supabase personal access token used only to deploy the Edge Functions.
 - `THE_ODDS_API_KEY` — the private API key from The Odds API.
 - `ODDS_REFRESH_SECRET` — a long random secret shared only by the deploy and refresh workflows.
 
@@ -133,18 +132,22 @@ Do not put any of these values in source files, browser JavaScript, workflow YAM
 
 ### First deployment
 
-1. Open **Actions → Deploy UFC Odds Refresh**.
-2. Choose **Run workflow** on `main`.
-3. Confirm the deployment and test steps finish green.
-4. Open **Actions → Refresh UFC Odds** and run it once manually if another immediate refresh is needed.
+1. Open **Actions → Deploy UFC Card Sync** and run it on `main`.
+2. Open **Actions → Deploy UFC Odds Refresh** and run it on `main`.
+3. Confirm both deployment and test steps finish green.
+4. Open **Actions → Sync UFC Card and Odds** and run it once manually if another immediate refresh is needed.
 
-The deployment workflow stores `THE_ODDS_API_KEY` and `ODDS_REFRESH_SECRET` as Supabase Edge Function secrets, deploys the function with JWT verification disabled, protects it with the custom refresh secret, and performs one test refresh.
+The deployment workflows store the required private values as Supabase Edge Function secrets, deploy the functions with JWT verification disabled, protect them with the custom refresh secret, and perform test requests.
 
-### Daily behavior
+### Scheduled behavior
 
-- **Refresh UFC Odds** runs daily at 12:17 UTC and can also be run manually.
-- The provider request is restricted to MMA head-to-head moneylines in the US region.
-- Only `upcoming` or `live` UFC events and `scheduled` fights are eligible.
+- **Sync UFC Card and Odds** runs every six hours at minute 17 and can also be run manually.
+- The card scraper uses UFC.com first and MMA Mania only as a fallback.
+- Two matching captures are required before a card can update Supabase.
+- The sync detects new fights, opponent replacements, order changes, main-card promotions or demotions, and cancellations.
+- Destructive card shrinkage and incomplete snapshots are rejected.
+- The odds provider request is restricted to MMA head-to-head moneylines in the US region.
+- Only `upcoming` or `live` UFC events and `scheduled` pickable fights are eligible for odds.
 - Fighter pairs are matched after punctuation and accent normalization.
 - A line is saved only when both fighters have a valid moneyline from the same sportsbook.
 - Missing or unmatched provider data never clears the last valid odds already stored.
@@ -178,26 +181,3 @@ Once an event is published, Supabase is the multiplayer source of truth.
 Browser notifications are opportunistic and only appear when the app is opened near event time. The calendar file is the reliable reminder outside the app.
 
 ## Reliability checks
-
-The `Picks UI Smoke` GitHub Actions workflow runs whenever the Picks interface changes.
-
-It checks:
-
-- JavaScript syntax for every `picks*.js` file
-- Every local CSS and JavaScript asset referenced by `index.html`
-- Required Home, Event, Settings, standings, recap, and correction mount points
-- Cleanup-script loading order
-- Route restoration and keyboard navigation hooks
-- Profile, reminder, PIN, archive-admin, and automatic-odds hooks
-- Daily odds schedule and Edge Function deployment contract
-- Absence of the retired Event Manager, Social Hub, and Phase 11 frontend files
-
-Run the same check locally with:
-
-```bash
-node scripts/check-picks-ui.mjs
-```
-
-## Fallback data
-
-`assets/data/picks-events.js` is only the no-backend preview/fallback. Keep it aligned with the live event while testing.
