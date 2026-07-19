@@ -6,77 +6,63 @@ _Last updated: 2026-07-19_
 
 - **Current phase:** Phase 1 — Make startup owners idempotent
 - **Phase 0:** Complete
-- **Phase 1 runtime batches merged and verified:** 1
-- **Latest verified runtime commit:** `5e733cc4568100e96080ce27ad601b7022daba33`
-- **Current runtime PR:** [#105 — Guard the canonical app shell against duplicate execution](https://github.com/codyking0602/ufc-goat-rankings/pull/105)
-- **Current PR head:** `cf4b580aa6c0be6c15772d8818cabb772fa448e1`
+- **Phase 1 runtime batches merged and verified:** 2
+- **Latest verified runtime commit:** `d7b47d6fb9ad45b101f67d5658b3e2a874a746c8`
 - **Master tracker:** [#102 — Zero-change startup architecture cleanup](https://github.com/codyking0602/ufc-goat-rankings/issues/102)
 - **Visible product changes approved:** none
 - **Major Phase 1 owner audit:** complete in [`PHASE-1-OWNER-AUDIT.md`](./PHASE-1-OWNER-AUDIT.md)
 
-## Phase 1 batch 1 — Complete
+## Completed runtime batches
 
-PR #100 added only:
+### Batch 1 — Route startup guards
 
-- one singleton guard in `assets/js/fresh-home-route-bootstrap.js`;
-- one singleton guard in `assets/js/fresh-home-launch.js`;
-- two startup-contract assertions.
+PR #100 protected:
+
+- `assets/js/fresh-home-route-bootstrap.js`;
+- `assets/js/fresh-home-launch.js`;
+- their startup-contract assertions.
+
+Final diff: 8 additions, 0 deletions, 3 files. Automated startup/mobile checks passed, and Cody verified the real installed iPhone app looked and behaved normally after deployment.
+
+### Batch 2 — Canonical app-shell guard
+
+PR #105 protected `assets/js/octagon-hq-shell.js` from entire-file duplicate evaluation and added one startup-contract assertion.
 
 Final diff:
-
-- 8 additions;
-- 0 deletions;
-- 3 files;
-- no HTML, CSS, data, scoring, navigation-rule, timing, product, or visual changes.
-
-Passed before merge:
-
-- startup JavaScript syntax;
-- startup ownership and load-order contract;
-- iOS Home startup and lifecycle browser simulation;
-- profile sign-in startup stability;
-- delayed Home/community stability;
-- Phase 4B mobile/profile/Picks stability.
-
-Passed after deployment on Cody's real installed iPhone app:
-
-- current mobile presentation loaded normally;
-- no desktop-tab fallback;
-- no duplicate bottom navigation;
-- cold launch looked normal;
-- no visible regression reported.
-
-The third-party immutable preview was rejected before sign-in because it failed to load the full production mobile/native shell. It is not an approved preview method for future startup batches.
-
-## Phase 1 batch 2 — Ready for physical gate
-
-Draft PR #105 changes only:
-
-- `assets/js/octagon-hq-shell.js`: top-level global duplicate-file-execution guard;
-- `scripts/test-startup-contract.mjs`: one matching assertion.
-
-Exact diff:
 
 - 4 additions;
 - 0 deletions;
 - 2 files;
-- no route rules, timing, navigation labels, views, styles, product data, or feature behavior changed.
+- no route rules, timing, labels, view selection, styles, data, or product behavior changed.
 
-Why it is needed:
-
-The shell's existing `started` and `eventsBound` flags protect repeated calls inside one evaluation. They do not protect against the entire file being evaluated again, which would create a second closure with separate listeners and observers.
-
-## Batch 2 automated validation
-
-Passed on head `cf4b580aa6c0be6c15772d8818cabb772fa448e1`:
+Validation passed:
 
 - JavaScript syntax;
 - startup ownership contract;
 - iOS startup route stability;
 - profile sign-in startup stability;
-- delayed Home/community stability.
+- delayed Home/community stability;
+- real installed-iPhone navigation, Rankings subviews, Picks lifecycle, War Room state, and presentation.
 
-The older Phase 4B preview workflow does not apply to this PR because it explicitly assumes `octagon-hq-shell.js` is unchanged. Its mobile, profile, Picks, and Home scenarios are already represented inside the Startup Architecture Gate for this batch.
+PR #105 was squash-merged as `d7b47d6fb9ad45b101f67d5658b3e2a874a746c8` and Cody reported the live app was normal.
+
+## Current Phase 1 batch
+
+The next isolated owner is `assets/js/octagon-hq-nav-grid.js`.
+
+This file is a legacy navigation-grid cleanup layer. It currently:
+
+- clears old inline grid styles immediately;
+- repeats that cleanup through five delayed timeouts;
+- repeats it on window resize;
+- exposes `window.UFC_OCTAGON_HQ_NAV_GRID`.
+
+The Phase 1 batch may only add:
+
+- one top-level global duplicate-file-execution marker;
+- one matching assertion in `scripts/test-startup-contract.mjs`.
+
+The timeouts and resize repair behavior must remain unchanged in this phase. Their removal or consolidation belongs to Phase 3 after source behavior has regression coverage.
 
 ## Existing unrelated red checks
 
@@ -86,33 +72,23 @@ The older Phase 4B preview workflow does not apply to this PR because it explici
 
 2. **Production Ranking Browser Smoke**
    - The run stops at the fighter-photo path audit before rendered ranking/startup certification.
-   - This is outside the startup singleton-guard diff.
+   - This is outside the startup singleton-guard diffs.
 
-## Exact next action — Cody's iPhone required
+## Exact next action
 
-PR #105 remains draft and unmerged.
-
-A faithful isolated installed-PWA preview is not available. Do not reuse the rejected third-party static preview.
-
-Before merge, verify through an approved controlled deployment path that the real installed app preserves:
-
-- current mobile presentation and one bottom navigation;
-- Home, Rankings, Play, Picks, War Room, and Intelligence ordering;
-- Overall, Women, Divisions, and Categories ranking subviews;
-- Picks background/resume and relaunch behavior;
-- War Room access/disabled state and label;
-- one-tap navigation with no route bounce, blank screen, or duplicated handling.
-
-Only after that physical result is recorded may PR #105 be merged.
+1. Create a fresh branch from current `main`.
+2. Add only the `octagon-hq-nav-grid.js` global marker and its contract assertion.
+3. Confirm the diff is limited to those two files with no deletions.
+4. Run the Startup Architecture Gate.
+5. Keep the PR draft until automated validation passes.
+6. Because the file touches navigation presentation and resize behavior, use a controlled live rollout and real installed-iPhone verification before starting the next runtime batch.
 
 ## Stop conditions
 
-Stop and leave PR #105 draft if any of the following occurs:
+Stop and leave the batch draft if:
 
-- visible behavior changes;
-- route timing or active-view behavior changes;
-- rankings subview state changes;
-- War Room access or label state changes;
-- a blank screen, route bounce, duplicate listener effect, duplicated navigation shell, or double tap occurs;
-- the diff starts absorbing scoring, fighter-data, photo, or product work;
-- installed-app behavior cannot be confidently verified.
+- visible navigation presentation changes;
+- tab ordering or sizing changes;
+- resize behavior changes;
+- a duplicate navigation shell, blank screen, flicker, route bounce, or double-handled tap occurs;
+- the diff begins changing timeout values, cleanup logic, styling rules, scoring, fighter data, photos, or product behavior.
