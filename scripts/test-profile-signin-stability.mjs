@@ -118,9 +118,8 @@ try{
 
   report.stage='cold-launch-home';
   const coldUrl=report.finalUrl;
-  const context=page.context();
   await page.close();
-  page=await context.newPage();
+  page=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true});
   await stubSupabase(page);
   observePage(page);
   await page.goto(coldUrl,{waitUntil:'domcontentloaded',timeout:60000});
