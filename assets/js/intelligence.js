@@ -2,6 +2,7 @@
   'use strict';
 
   const GPT_URL='https://chatgpt.com/g/g-6a4c40425d4881919ddebc7231bff09f-octagon-verdict';
+  const VERSION='intelligence-20260718d-blind-resume-gateway';
   const PROMPTS=[
     {icon:'👑',text:'Who is the best UFC fighter never to win undisputed gold?'},
     {icon:'📈',text:'What would Islam need to reach the top three?'},
@@ -96,6 +97,15 @@
     toastTimer=window.setTimeout(()=>toast.classList.remove('show'),1900);
   }
 
+  function activateIntelligence(){
+    if(window.UFC_APP_SHELL?.activateDestination?.('intelligence'))return true;
+    if(window.UFC_PRODUCT_ARCHITECTURE?.activateView?.('compare'))return true;
+    const tab=document.querySelector('[data-destination="intelligence"],[data-view="compare"]');
+    if(tab){tab.click();return true;}
+    location.hash='#intelligence';
+    return false;
+  }
+
   document.querySelectorAll('[data-intelligence-prompt]').forEach(button=>{
     button.addEventListener('click',async()=>{
       const copied=await copyText(button.dataset.intelligencePrompt);
@@ -130,4 +140,66 @@
     const copied=await copyText(prompt);
     showToast(copied?'Matchup copied. Open Octagon Verdict to paste it.':'Could not copy the matchup automatically.');
   });
+
+  function blindResumePrompt(result){
+    if(!result?.winner||!result?.loser)return'';
+    const winnerRank=result.winner===result.fighterA?result.rankA:result.rankB;
+    const loserRank=result.loser===result.fighterA?result.rankA:result.rankB;
+    const board=result.gender==='women'?"women's":"men's";
+    return `Compare ${result.winner} and ${result.loser} in the UFC-only GOAT model. ${result.winner} is ranked #${winnerRank} and ${result.loser} is ranked #${loserRank} on the ${board} board. Start with the verdict, break down Championship, Opponent Quality, Prime Dominance, Longevity, and Loss Context, give ${result.loser}'s strongest counterargument, explain why ${result.winner} still ranks higher, and separate the better fighter from the better UFC-only GOAT resume.`;
+  }
+
+  function installBlindGatewayStyles(){
+    if(document.getElementById('blindIntelligenceGatewayCss'))return;
+    const style=document.createElement('style');
+    style.id='blindIntelligenceGatewayCss';
+    style.textContent=`
+      #play .blind-intelligence-actions{display:grid;gap:8px;margin-top:10px}
+      #play .blind-intelligence-actions .play-primary,#play .blind-intelligence-actions .play-secondary{width:100%}
+      #play .blind-intelligence-button{border-color:rgba(249,115,22,.58);background:#101725;color:#fdba74}
+      #play .blind-intelligence-button:disabled{opacity:.68;cursor:default}
+    `;
+    document.head.appendChild(style);
+  }
+
+  function decorateBlindReveal(){
+    const reveal=document.getElementById('blindReveal');
+    const next=reveal?.querySelector('[data-five-round-next]');
+    const result=window.UFC_BLIND_MATCHMAKING?.state?.currentResult;
+    if(!reveal||reveal.hidden||!next||!result||reveal.querySelector('[data-blind-intelligence]'))return;
+    installBlindGatewayStyles();
+    const actions=document.createElement('div');
+    actions.className='blind-intelligence-actions';
+    const button=document.createElement('button');
+    button.type='button';
+    button.className='play-secondary blind-intelligence-button';
+    button.dataset.blindIntelligence='true';
+    button.textContent='EXPLAIN IN INTELLIGENCE';
+    next.before(actions);
+    actions.append(button,next);
+  }
+
+  async function handleBlindGateway(button){
+    const result=window.UFC_BLIND_MATCHMAKING?.state?.currentResult;
+    const prompt=blindResumePrompt(result);
+    if(!prompt)return;
+    button.disabled=true;
+    button.textContent='COPYING MATCHUP…';
+    const copied=await copyText(prompt);
+    activateIntelligence();
+    window.setTimeout(()=>showToast(copied?'Matchup copied. Open Octagon Verdict and paste it.':'Intelligence opened, but the matchup could not be copied automatically.'),60);
+  }
+
+  const blindReveal=document.getElementById('blindReveal');
+  if(blindReveal){
+    new MutationObserver(decorateBlindReveal).observe(blindReveal,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden']});
+    blindReveal.addEventListener('click',event=>{
+      const button=event.target.closest('[data-blind-intelligence]');
+      if(button){event.preventDefault();event.stopPropagation();handleBlindGateway(button);}
+    });
+    decorateBlindReveal();
+  }
+
+  window.UFC_INTELLIGENCE={version:VERSION,copyText,showToast,activate:activateIntelligence,blindResumePrompt};
+  document.documentElement.setAttribute('data-intelligence',VERSION);
 })();
