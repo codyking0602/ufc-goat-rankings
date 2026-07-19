@@ -22,7 +22,7 @@
   <link rel="canonical" href="https://codyking0602.github.io/ufc-goat-rankings/" />
   <meta name="description" content="UFC-only GOAT rankings, fighter comparisons, games, Picks, and War Room discussion in Octagon HQ." />
   <meta name="theme-color" content="#111827" />
-  <meta name="app-build" content="20260719-picks-abu-dhabi-rollover" />
+  <meta name="app-build" content="20260719-picks-legacy-owner-recovery" />
   <title>Octagon HQ</title>
   <link rel="manifest" href="manifest.webmanifest?v=octagon-hq-branding-20260718a" />
   <link rel="stylesheet" href="assets/css/app.css?v=app-css-20260711a-picks" />
@@ -112,30 +112,36 @@
           <button class="intelligence-prompt" type="button" data-intelligence-prompt="Who is the best UFC fighter never to win undisputed gold?"><span class="intelligence-prompt-icon">👑</span><span class="intelligence-prompt-copy">Who is the best fighter never to win undisputed gold?</span><span class="intelligence-prompt-status">Copy</span></button>
           <button class="intelligence-prompt" type="button" data-intelligence-prompt="Compare Khabib Nurmagomedov and Alexander Volkanovski."><span class="intelligence-prompt-icon">⚖️</span><span class="intelligence-prompt-copy">Compare Khabib and Volkanovski</span><span class="intelligence-prompt-status">Copy</span></button>
           <button class="intelligence-prompt" type="button" data-intelligence-prompt="What would Islam Makhachev need to do to pass Georges St-Pierre in the all-time rankings?"><span class="intelligence-prompt-icon">📈</span><span class="intelligence-prompt-copy">What would Islam need to do to pass GSP?</span><span class="intelligence-prompt-status">Copy</span></button>
-          <button class="intelligence-prompt" type="button" data-intelligence-prompt="Why is Cain Velasquez behind Francis Ngannou overall?"><span class="intelligence-prompt-icon">🧠</span><span class="intelligence-prompt-copy">Why is Cain behind Ngannou overall?</span><span class="intelligence-prompt-status">Copy</span></button>
+          <button class="intelligence-prompt" type="button" data-intelligence-prompt="Why is Cain Velasquez behind Francis Ngannou overall?"><span class="intelligence-prompt-icon">🧠</span><span class="intelligence-prompt-copy">Why is Cain behind Ngannou?</span><span class="intelligence-prompt-status">Copy</span></button>
         </div></section>
-        <details class="intelligence-matchup"><summary><span>Quick matchup builder<small>Choose two fighters, copy the debate, then open Octagon Verdict.</small></span></summary><div class="intelligence-matchup-body"><div class="compare-controls"><select id="fighterA" aria-label="First fighter"></select><select id="fighterB" aria-label="Second fighter"></select></div><div class="intelligence-matchup-actions"><button id="intelligenceCopyMatchup" class="intelligence-primary" type="button">Copy This Matchup</button><a class="intelligence-secondary" data-intelligence-open href="https://chatgpt.com/g/g-6a4c40425d4881919ddebc7231bff09f-octagon-verdict" target="_blank" rel="noopener noreferrer">Open Octagon Verdict ↗</a></div><div id="compareResult" hidden></div></div></details>
-      </div></div></div><div id="intelligenceToast" class="intelligence-toast" role="status" aria-live="polite"></div>
+      </div></div></div>
     </section>
 
-    <section id="picks" class="view"><div class="section-title"><h2>UFC Picks</h2><p>Pick every fight, use one optional Underdog Lock, and compete across the season.</p></div><div class="picks-shell">
-      <label id="picksEventPicker" class="picks-label picks-event-picker">Event<select id="picksEventSelect"></select></label><div id="picksEventHero" class="picks-event-hero"></div><div id="picksSetupNote" class="picks-setup-note">Local preview is active. Add the Supabase project URL and public anon key to enable real friend rooms across different phones.</div><div id="picksRoomBanner" class="picks-room-banner"></div>
-      <div id="picksRoomSetup" class="card picks-room-card"><div class="picks-mode-switch" role="tablist" aria-label="Room action"><button id="picksCreateMode" class="active" type="button">Start a Room</button><button id="picksJoinMode" type="button">Join a Room</button></div><div id="picksRoomIntro" class="picks-room-intro">Start a room, share the link, and everyone picks from their own phone.</div><label class="picks-label">Your name<input id="picksDisplayName" maxlength="30" autocomplete="nickname" placeholder="Cody" /></label><div id="picksJoinFields" hidden><label class="picks-label">Room code<input id="picksRoomCode" maxlength="6" autocapitalize="characters" placeholder="ABC123" /></label></div><button id="picksRoomAction" class="picks-primary picks-room-action" type="button">Start Picks Room</button><div id="picksStatus" class="picks-status">Friends’ exact picks stay hidden until each fight locks.</div></div>
-      <details id="picksAdminPanel" class="card picks-admin-card" hidden><summary>Manage Live Results <span>Room Owner</span></summary><div id="picksAdminContent" class="picks-admin-content"></div></details>
-      <div class="card picks-progress-card"><div id="picksProgress" class="picks-progress"></div></div><div id="picksFightList" class="picks-fights"></div><div id="picksStandingsCard" class="card picks-standings-card"><h3>Room Standings</h3><div id="picksStandings" class="picks-standings"></div></div>
-      <div id="picksRoomPicksCard" class="card picks-room-picks-card" hidden><div class="picks-card-head"><h3>Room Picks</h3><span id="picksRoomPicksCount">Waiting for first lock</span></div><p class="picks-card-subtitle">Everyone’s picks appear here as soon as each fight locks.</p><div id="picksRoomPicks" class="picks-room-picks-list"></div></div>
-    </div></section>
-    <section id="octagon" class="view"></section>
+    <section id="picks" class="view">
+      <div class="section-title"><h2>UFC Picks</h2><p>Make picks against your group. Numbered events use the full card; Fight Nights use the main card.</p></div>
+      <div class="picks-shell">
+        <div class="picks-mode-switch" role="tablist" aria-label="Picks room mode"><button type="button" class="active" data-picks-mode="join" aria-selected="true">Join Room</button><button type="button" data-picks-mode="create" aria-selected="false">Create Room</button></div>
+        <section id="picksRoomSetup" class="picks-room-setup"><div><p class="picks-kicker">WEEKLY UFC PICKS</p><h3 id="picksRoomSetupTitle">Join a room</h3><p id="picksRoomIntro">Enter the room code and your name. No account required.</p></div><div class="picks-form-grid"><input id="picksDisplayName" type="text" maxlength="30" placeholder="Display name" autocomplete="nickname" /><input id="picksRoomName" type="text" maxlength="40" placeholder="Room name (optional)" hidden /><input id="picksRoomCode" type="text" maxlength="6" placeholder="Room code" autocomplete="off" /><select id="picksEventSelect" aria-label="Choose UFC event"></select><button id="picksRoomAction" type="button">Join Room</button></div><p id="picksStatus" class="picks-status"></p></section>
+        <section id="picksRoom" class="picks-room" hidden>
+          <div id="picksRoomBanner" class="picks-room-banner"></div>
+          <div class="picks-room-actions"><button id="picksCopyRoomLink" type="button">Copy invite link</button><button id="picksCopyRoomCode" type="button">Copy room code</button><button id="picksLeaveRoom" type="button">Leave room</button></div>
+          <div id="picksLockNotice" class="picks-lock-notice"></div>
+          <div id="picksFightList" class="picks-fight-list"></div>
+          <div id="picksUnderdogLock" class="picks-underdog-lock"></div>
+          <div class="picks-submit-row"><button id="picksSubmit" type="button">Save picks</button><span id="picksSubmitStatus"></span></div>
+          <div id="picksLeaderboard" class="picks-leaderboard"></div>
+          <div id="picksEventRecap" class="picks-event-recap"></div>
+          <div id="picksAdminPanel" class="picks-admin-panel"></div>
+        </section>
+        <div id="picksToast" class="picks-toast" role="status" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section id="octagon" class="view"><div class="section-title"><h2>War Room</h2><p>Live UFC debate and community conversation.</p></div><div id="octagonGateMount" class="octagon-gate-mount"></div><div class="octagon-shell"><div class="octagon-topbar"><div><p class="octagon-kicker">LIVE UFC CHAT</p><h3>War Room</h3></div><button id="octagonLeave" type="button">Leave</button></div><div id="octagonMessages" class="octagon-messages"></div><div class="octagon-compose"><input id="octagonInput" maxlength="280" placeholder="Say something…" /><button id="octagonSend" type="button">Send</button></div></div></section>
   </main>
 
-  <div id="rulesContent" hidden aria-hidden="true" data-legacy-rules-compatibility="true"></div>
-  <aside id="drawer" class="drawer" aria-hidden="true"><div class="drawer-panel"><button id="closeDrawer" class="close">×</button><div id="fighterDetail"></div></div></aside>
-  <div id="picksToast" class="picks-toast" role="status" aria-live="polite"></div>
-
-  <!-- The shell is intentionally first and is the only navigation owner. -->
-  <script src="assets/js/fresh-home-route-bootstrap.js?v=fresh-home-route-bootstrap-20260719a"></script>
-  <script src="assets/js/octagon-hq-shell.js?v=octagon-hq-shell-20260717c"></script>
-  <script src="assets/js/octagon-hq-nav-grid.js?v=octagon-hq-nav-grid-20260717g"></script>
+  <div id="profile" class="profile" hidden><div class="profile-shell"><button id="profileClose" class="profile-close" type="button" aria-label="Close profile">×</button><div id="profileContent"></div></div></div>
+  <div id="compareModal" class="compare-modal" hidden><div class="compare-shell"><button id="compareClose" class="profile-close" type="button" aria-label="Close comparison">×</button><div id="compareContent"></div></div></div>
 
   <script src="assets/data/ranking-data.js?v=ranking-data-20260717b-anthony-pettis-80"></script>
   <script src="assets/data/display-overrides.js?v=display-overrides-20260717b-anthony-pettis"></script>
@@ -160,7 +166,7 @@
   <script src="assets/data/picks-events.js?v=picks-events-20260719b-abu-dhabi-next"></script>
   <script src="assets/data/picks-photo-overrides.js?v=picks-photo-overrides-20260712b-okc-ddp-live"></script>
   <script src="assets/data/picks-event-visuals.js?v=picks-event-visuals-20260712b-repaired"></script>
-  <script src="assets/data/supabase-config.js?v=supabase-config-20260719b-picks-auto-advance"></script>
+  <script src="assets/data/supabase-config.js?v=supabase-config-20260719c-legacy-owner-recovery"></script>
   <script src="assets/js/app-canonical-group.js?v=app-canonical-group-20260717b"></script>
   <script src="assets/js/picks.js?v=picks-js-20260711e-room-admin"></script>
   <script src="assets/js/picks-manual-lock.js?v=picks-manual-lock-20260711b"></script>
@@ -190,7 +196,7 @@
   <script src="assets/js/play-share-card.js?v=play-share-card-20260713a-portrait-grid"></script>
   <script src="assets/js/blind-matchmaking.js?v=blind-matchmaking-20260713b-five-round-watch-moments"></script>
   <script src="assets/js/play-hub.js?v=play-hub-20260716g-find-leader-local"></script>
-  <script src="assets/js/better-than.js?v=better-than-20260716b-subjective-claim-builder"></script>
+  <script src="assets/js/better-than.js?v=better-than-js-20260716b-subjective-claim-builder"></script>
   <script src="assets/js/find-leader.js?v=find-leader-20260718d-compact-board"></script>
   <script src="assets/data/blind-rank-category-architecture.js?v=blind-rank-category-architecture-20260717c-phase-five-tuning"></script>
   <script src="assets/js/blind-rank.js?v=blind-rank-20260717l-relax-before-emergency"></script>
