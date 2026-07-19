@@ -1,6 +1,9 @@
 (function(){
   'use strict';
 
+  if(window.__UFC_PICKS_STARTED__)return;
+  window.__UFC_PICKS_STARTED__=true;
+
   const eventsFallback = Array.isArray(window.UFC_PICKS_EVENTS) ? window.UFC_PICKS_EVENTS : [];
   const config = window.UFC_SUPABASE_CONFIG || {};
   const supabaseReady = Boolean(config.url && config.anonKey && window.supabase?.createClient);
