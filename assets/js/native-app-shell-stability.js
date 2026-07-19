@@ -1,6 +1,9 @@
 (function(){
   'use strict';
 
+  if(window.__UFC_NATIVE_APP_SHELL_STABILITY_STARTED__)return;
+  window.__UFC_NATIVE_APP_SHELL_STABILITY_STARTED__=true;
+
   const VERSION='native-app-shell-stability-20260718a';
   let observer=null;
   let timer=0;
