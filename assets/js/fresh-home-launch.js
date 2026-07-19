@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='fresh-home-launch-20260719a-profile-reminder';
+  const VERSION='fresh-home-launch-20260719b-profile-reminder';
   const params=new URLSearchParams(location.search);
   const deepLinkKeys=['challenge','share','fighter','message','notification','push'];
   const picksRouteKeys=['group','room','event','picksView','archive'];
@@ -24,7 +24,7 @@
   if(!document.getElementById('profileSetupReminderScript')){
     const reminder=document.createElement('script');
     reminder.id='profileSetupReminderScript';
-    reminder.src='assets/js/profile-setup-reminder.js?v=profile-setup-reminder-20260719a';
+    reminder.src='assets/js/profile-setup-reminder.js?v=profile-setup-reminder-20260719b';
     reminder.async=false;
     document.body.appendChild(reminder);
   }
