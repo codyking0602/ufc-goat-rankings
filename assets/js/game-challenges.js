@@ -236,7 +236,9 @@
       const id=card.dataset.openGame||({'Blind Rank 5':'blind-rank','Keep 4, Cut 4':'keep-cut'}[card.dataset.comingGame]);
       if(id)map.set(id,card);
     });
-    ORDER.map(id=>map.get(id)).filter(Boolean).forEach(card=>grid.appendChild(card));
+    const wanted=ORDER.map(id=>map.get(id)).filter(Boolean);
+    const current=[...grid.children].filter(node=>node.classList?.contains('play-game-card'));
+    if(wanted.some((card,index)=>current[index]!==card))wanted.forEach(card=>grid.appendChild(card));
     const wavelength=map.get('top10');
     if(wavelength){
       wavelength.classList.add('is-new');
@@ -246,7 +248,7 @@
     const games=window.UFC_PLAY_HUB?.games;
     if(Array.isArray(games)){
       const ordered=ORDER.map(id=>games.find(game=>game.id===id)).filter(Boolean);
-      if(ordered.length===games.length)games.splice(0,games.length,...ordered);
+      if(ordered.length===games.length&&ordered.some((game,index)=>games[index]!==game))games.splice(0,games.length,...ordered);
     }
   }
 
@@ -255,7 +257,7 @@
     SOURCE_ATTRIBUTES.forEach(attribute=>button.removeAttribute(attribute));
     button.dataset.gameChallenge=game;
     button.dataset.gameChallengeReady='true';
-    button.textContent='CHALLENGE SOMEONE';
+    if(button.textContent.trim()!=='CHALLENGE SOMEONE')button.textContent='CHALLENGE SOMEONE';
     button.setAttribute('aria-label',`Challenge someone in ${titleFor(game)}`);
   }
 
