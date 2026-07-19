@@ -109,6 +109,7 @@ const notificationSurface=read('assets/js/app-notification-surface-fix.js');
 assert(notificationSurface.includes('__UFC_APP_NOTIFICATION_SURFACE_FIX_STARTED__'),'Notification surface must keep its global duplicate-start guard.');
 
 const nativeShell=read('assets/js/native-app-shell.js');
+assert(nativeShell.includes('__UFC_NATIVE_APP_SHELL_STARTED__'),'Native shell must keep its global duplicate-file-execution guard.');
 assert(nativeShell.includes("document.querySelector('[data-native-bottom-nav]')"),'Native shell must reuse the existing bottom navigation.');
 assert(nativeShell.includes('state.started'),'Native shell must keep an idempotent start state.');
 

@@ -1,6 +1,9 @@
 (function(){
   'use strict';
 
+  if(window.__UFC_NATIVE_APP_SHELL_STARTED__)return;
+  window.__UFC_NATIVE_APP_SHELL_STARTED__=true;
+
   const VERSION='native-app-shell-20260718a-phase-4a';
   const MOBILE_QUERY='(max-width: 900px)';
   const REFRESH_THRESHOLD=74;
