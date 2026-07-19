@@ -1,0 +1,95 @@
+name: Final Abu Dhabi Picks hero publish
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/add-abu-dhabi-picks-hero-final.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: abu-dhabi-picks-hero-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build verified event artwork
+        shell: python
+        run: |
+          import base64
+          import hashlib
+          from pathlib import Path
+
+          chunks = [
+              Path('artifacts/tmp/abu-dhabi-hero-1.b64'),
+              Path('artifacts/tmp/abu-dhabi-hero-2.b64'),
+              Path('artifacts/tmp/abu-dhabi-hero-3a.b64'),
+              Path('artifacts/tmp/abu-dhabi-hero-3b.b64'),
+              Path('artifacts/tmp/abu-dhabi-hero-3c.b64'),
+          ]
+          expected = [
+              (8000, 'e47c6be67eb4d0bf4315a9803d6d39228b5e4fc82f60841e774f27a91f5223ad'),
+              (8000, 'e452e83391e60bb3821bb5f52edd0a24914895519a3ad9b072ddd1e4bc44d92f'),
+              (2000, '5da124506cbcdfce3dfc9c47d9b8f099c4320937ce11253d1b11f2204ff76e4c'),
+              (2000, '0906e6e21186435376a2771d81588d31e4550af27a522934ecba1f7050edea11'),
+              (1480, 'e2d5eb08af34ed07b0e2a52ca4c58e5613ae9f981cfbcb53b255a4039bc6929c'),
+          ]
+          encoded_parts = []
+          for index, path in enumerate(chunks):
+              text = path.read_text(encoding='utf-8').strip()
+              length, digest = expected[index]
+              if len(text) != length or hashlib.sha256(text.encode()).hexdigest() != digest:
+                  raise SystemExit(f'Invalid staged image chunk: {path}')
+              encoded_parts.append(text)
+
+          image = base64.b64decode(''.join(encoded_parts), validate=True)
+          if len(image) != 16110 or image[:4] != b'RIFF' or image[8:12] != b'WEBP':
+              raise SystemExit('Invalid decoded WebP')
+          Path('assets/events/ufc-abu-dhabi-ankalaev-guskov.webp').write_bytes(image)
+
+          visuals_path = Path('assets/data/picks-event-visuals.js')
+          visuals = visuals_path.read_text(encoding='utf-8')
+          if 'ufc-abu-dhabi-2026-07-25' not in visuals:
+              closing = '\n});\n'
+              addition = """,
+          'ufc-abu-dhabi-2026-07-25': {
+            hero: 'assets/events/ufc-abu-dhabi-ankalaev-guskov.webp?v=20260719a',
+            alt: 'Magomed Ankalaev vs. Bogdan Guskov UFC Abu Dhabi promotional artwork'
+          }"""
+              if visuals.count(closing) != 1:
+                  raise SystemExit('Unexpected event visual structure')
+              visuals_path.write_text(visuals.replace(closing, addition + closing, 1), encoding='utf-8')
+
+          index_path = Path('index.html')
+          index = index_path.read_text(encoding='utf-8')
+          if 'content="20260719-picks-legacy-owner-recovery"' in index:
+              index = index.replace('content="20260719-picks-legacy-owner-recovery"', 'content="20260719-abu-dhabi-event-art"', 1)
+          if 'picks-event-visuals.js?v=picks-event-visuals-20260712b-repaired' in index:
+              index = index.replace('picks-event-visuals.js?v=picks-event-visuals-20260712b-repaired', 'picks-event-visuals.js?v=picks-event-visuals-20260719c-abu-dhabi', 1)
+          index_path.write_text(index, encoding='utf-8')
+
+          cleanup = chunks + [
+              Path('artifacts/tmp/abu-dhabi-hero-diagnostic.json'),
+              Path('.github/workflows/add-abu-dhabi-picks-hero-once.yml'),
+              Path('.github/workflows/add-abu-dhabi-picks-hero-final.yml'),
+          ]
+          for path in cleanup:
+              if path.exists():
+                  path.unlink()
+
+      - name: Publish artwork
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Add Ankalaev-Guskov Picks event artwork"
+          git push origin main
