@@ -2,7 +2,7 @@ const VERSION='octagon-hq-sw-20260719c-profile-share';
 const CACHE_NAME='octagon-hq-static-v6';
 const LEGACY_PREFIX='octagon-hq-static-';
 const CORE=['./','./index.html','./manifest.webmanifest'];
-const FORCE_NETWORK=/\/assets\/(?:(?:js\/(?:app-notification-surface-fix|app-update-watcher|product-architecture|native-app-shell|native-app-shell-stability|community-profiles|fresh-home-launch|find-leader|game-challenges|share-deep-links)\.js|data\/what-changed)\.js|css\/(?:native-app-shell|native-app-shell-stability|community-profiles|find-leader)\.css)$/i;
+const FORCE_NETWORK=/\/assets\/(?:(?:js\/(?:app-notification-surface-fix|app-update-watcher|product-architecture|native-app-shell|native-app-shell-stability|community-profiles|fresh-home-launch|find-leader|game-challenges|share-deep-links)|data\/what-changed)\.js|css\/(?:native-app-shell|native-app-shell-stability|community-profiles|find-leader)\.css)$/i;
 
 self.addEventListener('install',event=>{
   event.waitUntil((async()=>{
