@@ -1,0 +1,51 @@
+{
+  "expected": [
+    [
+      8000,
+      "e47c6be67eb4d0bf4315a9803d6d39228b5e4fc82f60841e774f27a91f5223ad"
+    ],
+    [
+      8000,
+      "e452e83391e60bb3821bb5f52edd0a24914895519a3ad9b072ddd1e4bc44d92f"
+    ],
+    [
+      2000,
+      "5da124506cbcdfce3dfc9c47d9b8f099c4320937ce11253d1b11f2204ff76e4c"
+    ],
+    [
+      2000,
+      "0906e6e21186435376a2771d81588d31e4550af27a522934ecba1f7050edea11"
+    ],
+    [
+      1480,
+      "e2d5eb08af34ed07b0e2a52ca4c58e5613ae9f981cfbcb53b255a4039bc6929c"
+    ]
+  ],
+  "actual": [
+    {
+      "path": "artifacts/tmp/abu-dhabi-hero-1.b64",
+      "length": 8000,
+      "sha256": "e47c6be67eb4d0bf4315a9803d6d39228b5e4fc82f60841e774f27a91f5223ad"
+    },
+    {
+      "path": "artifacts/tmp/abu-dhabi-hero-2.b64",
+      "length": 8000,
+      "sha256": "e452e83391e60bb3821bb5f52edd0a24914895519a3ad9b072ddd1e4bc44d92f"
+    },
+    {
+      "path": "artifacts/tmp/abu-dhabi-hero-3a.b64",
+      "length": 1999,
+      "sha256": "6547ee669cdd5e333f99f653413084892a7357c7b8a0d4caf734ab2e9877d222"
+    },
+    {
+      "path": "artifacts/tmp/abu-dhabi-hero-3b.b64",
+      "length": 2000,
+      "sha256": "0906e6e21186435376a2771d81588d31e4550af27a522934ecba1f7050edea11"
+    },
+    {
+      "path": "artifacts/tmp/abu-dhabi-hero-3c.b64",
+      "length": 1480,
+      "sha256": "e2d5eb08af34ed07b0e2a52ca4c58e5613ae9f981cfbcb53b255a4039bc6929c"
+    }
+  ]
+}
