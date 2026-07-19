@@ -144,3 +144,14 @@ For `native-app-shell-stability.js`, the public `schedule()` API plus its readin
 `app-notification-center.js` does not rely on duplicate file evaluation for prerequisite recovery. Its intentional later attempts are owned by profile-ready/profile-updated events, the notification-device-change listener, its MutationObserver, the existing delayed settings attempt, the public `loadSettings()` and `render()` APIs, and the separately guarded notification-surface compatibility layer.
 
 Notification permission must remain user-gesture-only through the existing Enable-button path. A startup guard may block duplicate notification ownership only when it preserves that permission boundary, service-worker behavior, profile and activity surfaces, all event/API retry paths, and the complete first execution. PR #110 met those conditions and was live-verified.
+
+## Decision 017 — Native shell retries remain inside the canonical owner
+
+**Date:** 2026-07-19  
+**Status:** Locked
+
+`native-app-shell.js` does not rely on duplicate file evaluation for prerequisite recovery. Its complete first execution has no missing-DOM or missing-data early exit, and the original closure remains responsible for any deferred `DOMContentLoaded` start.
+
+Intentional later synchronization remains owned by the public `start()`, `syncActive()`, `syncBadges()`, `refresh()`, and `ensureAskAction()` APIs; view, profile, Picks, notification, and soft-refresh events; its MutationObserver; delayed startup passes; resize and orientation listeners; visibility resume; and the existing 10-second badge interval. The separately guarded `native-app-shell-stability.js` repair API remains unchanged.
+
+PR #112 therefore blocks only accidental second-file ownership: a replacement public API, duplicate listener set, duplicate observer, duplicate pull-to-refresh owner, duplicate delayed passes, and duplicate perpetual badge interval. The exact first-run footprint passed automated equivalence testing and physical installed-iPhone verification before the tested head was squash-merged.
