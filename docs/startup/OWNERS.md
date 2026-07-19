@@ -23,14 +23,14 @@ This file records the canonical owner of each startup responsibility. Detailed d
 | Picks base runtime | `assets/js/picks.js` | Canonical Picks owner | Isolated guard candidate with Picks/mobile testing |
 | Play base runtime | `assets/js/play.js` | Canonical base Play owner | Prerequisite-aware guard required |
 | Play game hub | `assets/js/play-hub.js` | Canonical Play navigation owner | Separate prerequisite-aware guard required |
-| Home dashboard rendering | `assets/js/home-dashboard.js` | Canonical Home owner | Current isolated simple-guard candidate |
+| Home dashboard rendering | `assets/js/home-dashboard.js` | Canonical Home owner | Global duplicate-file guard merged and live-verified in PR #107 |
 | Community profile rendering | `assets/js/community-profiles.js` | Canonical community owner | Isolated broad-surface guard candidate |
 | Cross-feature profile compatibility | `assets/js/product-architecture.js` | Compatibility/handoff owner | Already globally protected |
 | Late initial route activation and reminder injection | `assets/js/fresh-home-launch.js` | Late startup owner | Global duplicate-start guard merged and live-verified in PR #100 |
 | Notification data and rendering | `assets/js/app-notification-center.js` | Intended canonical notification owner | Isolated mobile-sensitive guard candidate |
 | Notification/profile surface compatibility | `assets/js/app-notification-surface-fix.js` | Temporary compatibility layer | Already globally protected; must not expand |
 | Mobile bottom navigation, badges, transitions, pull-to-refresh | `assets/js/native-app-shell.js` | Intended canonical native shell owner | Isolated physical-iPhone guard candidate |
-| Mobile/native compatibility repairs | `assets/js/native-app-shell-stability.js` | Temporary repair layer | Isolated guard candidate; removal belongs to Phase 3 |
+| Mobile/native compatibility repairs | `assets/js/native-app-shell-stability.js` | Temporary repair layer | Current isolated guard candidate; inspect prerequisite/retry semantics first; removal belongs to Phase 3 |
 | Sharing and incoming share routing | `assets/js/share-deep-links.js` | Canonical share/deep-link owner | Isolated guard candidate after core startup owners |
 
 ## Dynamic-loading boundaries
