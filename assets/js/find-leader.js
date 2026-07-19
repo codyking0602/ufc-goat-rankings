@@ -1,9 +1,10 @@
 (function(){
   'use strict';
 
-  const VERSION='find-leader-20260718d-compact-board';
+  const VERSION='find-leader-20260719a-group-leaders';
   const DAILY_VERSION='find-leader-daily-v1';
   const PERFECT_SCORE=10;
+  const GROUP_POOL_BUILDS=12;
   const PHOTO_ALIASES=new Map([
     ['mauricio rua','shogun-rua'],
     ['mauricio shogun rua','shogun-rua']
@@ -68,6 +69,53 @@
 
   function hashSeed(value){let hash=2166136261;for(let index=0;index<String(value).length;index+=1){hash^=String(value).charCodeAt(index);hash=Math.imul(hash,16777619);}return hash>>>0;}
   function mulberry32(seed){let value=seed>>>0;return function(){value+=0x6D2B79F5;let next=value;next=Math.imul(next^(next>>>15),next|1);next^=next+Math.imul(next^(next>>>7),next|61);return((next^(next>>>14))>>>0)/4294967296;};}
+  function shuffle(rows,random=Math.random){const copy=[...rows];for(let index=copy.length-1;index>0;index-=1){const next=Math.floor(random()*(index+1));[copy[index],copy[next]]=[copy[next],copy[index]];}return copy;}
+  const takeRandom=(rows,count,random)=>shuffle(rows,random).slice(0,Math.max(0,count));
+
+  function groupQuestion(setup){
+    const label=String(setup?.statLabel||setup?.shortLabel||'this stat').replace(/^all-time\s+/i,'');
+    return `Who leads this group in ${label}?`;
+  }
+
+  function groupBoard(baseSetup,random=Math.random){
+    const bank=window.UFC_FIND_LEADER_QUESTION_BANK;
+    if(!baseSetup?.questionId||typeof bank?.create!=='function')return baseSetup;
+    const poolById=new Map();
+    const absorb=setup=>(Array.isArray(setup?.candidates)?setup.candidates:[]).forEach(row=>{
+      if(!row?.id||!Number.isFinite(Number(row.value)))return;
+      const current=poolById.get(row.id);
+      if(!current||Number(row.value)>Number(current.value))poolById.set(row.id,clone(row));
+    });
+    absorb(baseSetup);
+    for(let index=0;index<GROUP_POOL_BUILDS;index+=1)absorb(bank.create(baseSetup.questionId,random));
+    const pool=[...poolById.values()].sort((a,b)=>Number(b.value)-Number(a.value)||String(a.name).localeCompare(String(b.name)));
+    if(pool.length<PERFECT_SCORE)return baseSetup;
+    const possibleLeaders=pool.filter(row=>pool.filter(other=>Number(other.value)<Number(row.value)).length>=PERFECT_SCORE-1).slice(0,10);
+    if(!possibleLeaders.length)return baseSetup;
+    let boardLeader=possibleLeaders[0];
+    const alternatives=possibleLeaders.slice(1,8);
+    if(alternatives.length&&random()<0.86)boardLeader=alternatives[Math.floor(random()*alternatives.length)];
+    const lower=pool.filter(row=>Number(row.value)<Number(boardLeader.value));
+    if(lower.length<PERFECT_SCORE-1)return baseSetup;
+    const near=lower.slice(0,Math.min(12,lower.length)),far=lower.slice(near.length);
+    const selected=[],used=new Set([boardLeader.id]);
+    const add=rows=>rows.forEach(row=>{if(selected.length>=PERFECT_SCORE-1||used.has(row.id))return;selected.push(row);used.add(row.id);});
+    add(takeRandom(near,Math.min(6,near.length),random));
+    add(takeRandom(far,PERFECT_SCORE-1-selected.length,random));
+    add(takeRandom(lower.filter(row=>!used.has(row.id)),PERFECT_SCORE-1-selected.length,random));
+    if(selected.length!==PERFECT_SCORE-1)return baseSetup;
+    const candidates=shuffle([boardLeader,...selected].map(clone),random);
+    return {...clone(baseSetup),originalQuestion:String(baseSetup.question||''),question:groupQuestion(baseSetup),
+      context:`Highest ${String(baseSetup.statLabel||'verified stat')} among the ten fighters shown. The overall UFC record holder does not have to appear.`,
+      groupRelative:true,leaderId:boardLeader.id,leaderValue:Number(boardLeader.value),candidates};
+  }
+
+  function createSetup(questionId,random=Math.random){
+    const bank=window.UFC_FIND_LEADER_QUESTION_BANK;
+    const base=questionId?bank?.create?.(questionId,random):bank?.random?.(random);
+    return groupBoard(base,random)||null;
+  }
+
   function candidates(){return Array.isArray(state.setup?.candidates)?state.setup.candidates:[];}
   function candidate(id){return candidates().find(row=>row.id===id)||null;}
   function leader(){return candidate(state.setup?.leaderId);}
@@ -127,12 +175,12 @@
     state.setup=setup;state.eliminationOrder=perfect?order:[...safe,setup.leaderId];state.safeIds=safe;state.fatalId=perfect?null:setup.leaderId;state.score=perfect?PERFECT_SCORE:leaderIndex+1;state.perfect=perfect;state.feedback='';state.phase='complete';state.daily=Boolean(payload.daily);state.dailyContext=payload.dailyContext?clone(payload.dailyContext):null;panel.hidden=false;renderFinish();return true;
   }
 
-  function dailySetup(context){const seed=String(context?.seed||context?.challenge_key||`find-leader|${context?.challenge_day||''}|${DAILY_VERSION}`);return window.UFC_FIND_LEADER_QUESTION_BANK?.random?.(mulberry32(hashSeed(seed)))||null;}
+  function dailySetup(context){const seed=String(context?.seed||context?.challenge_key||`find-leader|${context?.challenge_day||''}|${DAILY_VERSION}`),random=mulberry32(hashSeed(seed));return createSetup(null,random);}
   function normalizeStartOptions(input){if(typeof input==='string')return{questionId:input};return input&&typeof input==='object'?input:{};}
 
   function startGame(input={}){
-    const options=normalizeStartOptions(input),bank=window.UFC_FIND_LEADER_QUESTION_BANK;let setup=null;
-    if(validateSetup(options.setup))setup=clone(options.setup);else if(options.daily&&options.context)setup=dailySetup(options.context);else setup=options.questionId?bank?.create?.(options.questionId):bank?.random?.();
+    const options=normalizeStartOptions(input);let setup=null;
+    if(validateSetup(options.setup))setup=clone(options.setup);else if(options.daily&&options.context)setup=dailySetup(options.context);else setup=createSetup(options.questionId||null,Math.random);
     if(!validateSetup(setup)){state.phase='loading';state.setup=null;renderLoading();return false;}
     state.setup=setup;state.eliminationOrder=[];state.safeIds=[];state.fatalId=null;state.score=null;state.perfect=false;state.feedback='';state.phase='playing';state.daily=Boolean(options.daily);state.dailyContext=options.context?clone(options.context):null;renderGame();return true;
   }
@@ -157,7 +205,7 @@
   function revealCard(fighter,index){const status=statusFor(fighter),order=state.eliminationOrder.indexOf(fighter.id),badge=status==='leader'?'LEFT STANDING':status==='fatal'?'FATAL PICK':status==='safe'?'SAFE ELIMINATION':'NOT PICKED';return`<article class="find-leader-reveal-tile ${status}">${visual(fighter,'find-leader-reveal-photo')}<span><b>#${index+1}</b><strong>${esc(fighter.name)}</strong><small>${esc(fighterMeta(fighter))}</small></span><em>${Number(fighter.value)}<small>${esc(state.setup.shortLabel||'VALUE')}</small></em><i>${esc(badge)}${order>=0?` · R${order+1}`:''}</i></article>`;}
 
   function renderFinish(){
-    const headline=resultHeadline(),sorted=[...candidates()].sort((a,b)=>Number(b.value)-Number(a.value)||a.name.localeCompare(b.name));panel.innerHTML=`<section class="find-leader-result-hero ${state.perfect?'perfect':'failed'}"><div><span>${headline.eyebrow}</span><strong>${headline.title}</strong><p>${esc(headline.copy)}</p></div><article>${visual(leader(),'find-leader-result-photo')}<div><span>STAT LEADER</span><strong>${esc(leader()?.name||'—')}</strong><small>${esc(valueText(leader()))}</small></div></article></section><section class="find-leader-results"><header><div><span>FULL STAT REVEAL</span><strong>${esc(state.setup.question)}</strong></div><b>${state.score}/10</b></header><div class="find-leader-reveal-grid">${sorted.map(revealCard).join('')}</div><div class="find-leader-actions"><button type="button" class="find-leader-primary" data-find-leader-challenge-someone>CHALLENGE SOMEONE</button><button type="button" class="find-leader-secondary" data-find-leader-replay>${state.daily?'REPLAY TODAY\'S BOARD':'PLAY AGAIN'}</button><button type="button" class="find-leader-secondary" data-find-leader-home>ALL GAMES</button></div></section>`;panel.scrollIntoView({behavior:'smooth',block:'start'});
+    const headline=resultHeadline(),sorted=[...candidates()].sort((a,b)=>Number(b.value)-Number(a.value)||a.name.localeCompare(b.name));panel.innerHTML=`<section class="find-leader-result-hero ${state.perfect?'perfect':'failed'}"><div><span>${headline.eyebrow}</span><strong>${headline.title}</strong><p>${esc(headline.copy)}</p></div><article>${visual(leader(),'find-leader-result-photo')}<div><span>GROUP LEADER</span><strong>${esc(leader()?.name||'—')}</strong><small>${esc(valueText(leader()))}</small></div></article></section><section class="find-leader-results"><header><div><span>FULL STAT REVEAL</span><strong>${esc(state.setup.question)}</strong></div><b>${state.score}/10</b></header><div class="find-leader-reveal-grid">${sorted.map(revealCard).join('')}</div><div class="find-leader-actions"><button type="button" class="find-leader-primary" data-find-leader-challenge-someone>CHALLENGE SOMEONE</button><button type="button" class="find-leader-secondary" data-find-leader-replay>${state.daily?'REPLAY TODAY\'S BOARD':'PLAY AGAIN'}</button><button type="button" class="find-leader-secondary" data-find-leader-home>ALL GAMES</button></div></section>`;panel.scrollIntoView({behavior:'smooth',block:'start'});
   }
 
   function challengeSomeone(){const payload=sharePayload();if(!payload)return false;return window.UFC_PROFILE_CHALLENGES?.openSendModal?.(payload)||false;}
