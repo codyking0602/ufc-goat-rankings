@@ -6,13 +6,13 @@ _Last updated: 2026-07-19_
 
 - **Current phase:** Phase 1 — Make startup owners idempotent
 - **Phase 0:** Complete
-- **Phase 1 runtime batches merged and verified:** 6
-- **Latest verified runtime commit:** `865527b15902e7b61fff429e4faf9ce2a0bc811c`
-- **Estimated entire cleanup progress:** approximately 27%
+- **Phase 1 runtime batches merged and verified:** 7
+- **Latest verified runtime commit:** `5b82c3a47b64a4955c4fd4eb041fafe46473e8ac`
+- **Estimated entire cleanup progress:** approximately 30%
 - **Master tracker:** [#102 — Zero-change startup architecture cleanup](https://github.com/codyking0602/ufc-goat-rankings/issues/102)
 - **Visible product changes approved:** none
 - **Major Phase 1 owner audit:** complete in [`PHASE-1-OWNER-AUDIT.md`](./PHASE-1-OWNER-AUDIT.md)
-- **Recommended session state:** start a fresh chat before batch 7; this file is the handoff source of truth
+- **Recommended session state:** start a fresh chat before batch 8; this file is the handoff source of truth
 
 ## Completed runtime batches
 
@@ -99,13 +99,38 @@ Validation passed:
 
 PR #110 was squash-merged as `865527b15902e7b61fff429e4faf9ce2a0bc811c`. Cody reported the installed app was normal.
 
+### Batch 7 — Native app shell guard
+
+PR #112 protected `native-app-shell.js` from accidental duplicate file evaluation while preserving its complete first-run behavior, bottom-navigation reuse, active-state synchronization, badge synchronization, transitions, pull-to-refresh, touch handling, lifecycle listeners, MutationObserver, delayed passes, public APIs, and existing 10-second badge interval.
+
+The prerequisite/retry inspection confirmed that `start()` has no missing-DOM or missing-data early exit and that duplicate file evaluation is not an intentional retry mechanism. Required later synchronization remains owned by the public APIs, view/profile/Picks/notification/soft-refresh events, MutationObserver, delayed startup passes, resize/orientation, visibility resume, and the badge interval. The separately guarded `native-app-shell-stability.js` repair layer was unchanged.
+
+Final diff:
+
+- 4 additions;
+- 0 deletions;
+- 2 files.
+
+Validation passed:
+
+- JavaScript syntax;
+- startup ownership contract;
+- local app startup;
+- iOS startup route and lifecycle stability;
+- profile sign-in and Picks startup stability;
+- delayed Home/community stability;
+- focused duplicate-evaluation and first-run equivalence proof;
+- real installed-iPhone signed-in testing of cold launch, navigation, rapid tab switching, badges, profiles, Picks, notifications, pull-to-refresh, rotation, background/resume, sharing, saved-profile behavior, and return to Home.
+
+PR #112 was squash-merged as `5b82c3a47b64a4955c4fd4eb041fafe46473e8ac`. Cody reported the immutable test build was normal.
+
 ## Next Phase 1 batch
 
-The next isolated owner is `assets/js/native-app-shell.js`.
+The next isolated owner is `assets/js/picks.js`.
 
-This is the canonical mobile bottom-navigation owner and is the highest-sensitivity remaining simple guard candidate. The next session must inspect its exact first-run and repeat-execution path, including closure-scoped `state.started`, bottom-navigation reuse, badges, transitions, pull-to-refresh, touch/click handling, MutationObserver ownership, the 10-second badge interval, lifecycle listeners, startup prerequisites, and whether duplicate file evaluation currently serves any intentional retry.
+This is the canonical Picks base runtime. The next session must inspect its exact first-run and repeat-execution path, including prerequisite DOM/data checks, sign-in and identity handoffs, profile readiness, saved Picks state, route activation, listeners, observers, timers, dynamic loading, public APIs, background/resume behavior, and whether duplicate file evaluation currently serves any intentional retry.
 
-The runtime scope must remain one owner plus one matching startup-contract assertion only if inspection confirms the complete first-run path and all intentional retries remain intact. Do not change bottom-navigation presentation, badge logic, transitions, refresh behavior, touch handling, routes, styling, copy, or installed-app behavior.
+The runtime scope must remain one owner plus one matching startup-contract assertion only if inspection confirms that the complete first-run path and all intentional retries remain intact. Do not change Picks presentation, copy, flows, identity behavior, saved state, navigation, styling, scoring, data, games, sharing, notifications, or installed-app behavior.
 
 ## Existing unrelated red checks
 
@@ -119,19 +144,19 @@ The runtime scope must remain one owner plus one matching startup-contract asser
 
 ## Exact next action
 
-1. Start a fresh chat and read this file, `DECISIONS.md`, `OWNERS.md`, `PHASE-1-OWNER-AUDIT.md`, and issue #102.
-2. Inspect current `main` for `assets/js/native-app-shell.js` prerequisite, retry, listener, observer, interval, touch, navigation, badge, transition, refresh, and lifecycle behavior.
+1. Start a fresh chat and read this file, `DECISIONS.md`, `OWNERS.md`, `PHASE-1-OWNER-AUDIT.md`, `TEST_PLAN.md`, and issue #102.
+2. Inspect current `main` for `assets/js/picks.js` prerequisite, retry, identity, profile, saved-state, route, listener, observer, timer, dynamic-load, API, and lifecycle behavior.
 3. Create a fresh branch directly from current `main`.
 4. Keep the runtime batch isolated to that owner and its contract assertion.
-5. Run the full Startup Architecture Gate plus native-shell, navigation, touch, profile, Picks, notification, startup, and lifecycle validation.
+5. Run the full Startup Architecture Gate plus Picks, profile sign-in, route, mobile, background/resume, saved-state, and installed-app validation.
 6. Keep the PR draft until real installed-iPhone verification passes.
-7. Do not begin batch 8 until batch 7 is merged, physically verified, and documented.
+7. Do not begin batch 9 until batch 8 is merged, physically verified, and documented.
 
 ## Stop conditions
 
-Stop and leave batch 7 draft if:
+Stop and leave batch 8 draft if:
 
-- bottom navigation, badge state, transitions, pull-to-refresh, routes, touch/click behavior, profile, Picks, notifications, or background/resume behavior changes;
+- Picks presentation, copy, sign-in, profile handoff, saved state, routes, navigation, sharing, notifications, or background/resume behavior changes;
 - a second execution appears to be serving as an intentional prerequisite retry;
-- duplicate navigation, duplicated observer/listener/interval ownership, repeated taps, blank state, flicker, route bounce, stale badge state, or double-handled refresh occurs;
-- the diff begins changing styling, copy, product behavior, service-worker logic, scoring, fighter data, photos, Games, Picks, Intelligence, War Room, or sharing.
+- duplicate listeners, observers, timers, API replacement, route handling, repeated taps, blank state, flicker, stale state, or double-handled actions occur;
+- the diff begins changing styling, copy, product behavior, scoring, fighter data, photos, Games, Rankings, Intelligence, War Room, notifications, or sharing.
