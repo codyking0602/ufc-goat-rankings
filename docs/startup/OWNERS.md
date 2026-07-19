@@ -16,14 +16,14 @@ This file records the canonical owner of each startup responsibility. Detailed d
 |---|---|---|---|
 | Earliest installed-app route normalization | `assets/js/fresh-home-route-bootstrap.js` | Canonical synchronous owner | Global duplicate-start guard merged and live-verified in PR #100 |
 | Primary destination and ranking-subview activation | `assets/js/octagon-hq-shell.js` via `window.UFC_APP_SHELL` | Canonical navigation owner | Global duplicate-file guard merged and live-verified in PR #105 |
-| Legacy navigation-grid cleanup | `assets/js/octagon-hq-nav-grid.js` | Compatibility cleanup | Current isolated simple-guard candidate; repair timers remain unchanged until Phase 3 |
+| Legacy navigation-grid cleanup | `assets/js/octagon-hq-nav-grid.js` | Compatibility cleanup | Global duplicate-file guard merged and live-verified in PR #106; repair timers remain until Phase 3 |
 | Ranking data | `assets/data/ranking-data.js` | Canonical data source | Outside startup cleanup except load-order checks |
 | Base ranking rendering and global UI APIs | `assets/js/app.js` | Structural global singleton | Enforce exact-one manifest load; no standard IIFE guard |
 | Calculated production scoring bootstrap | `assets/js/production-ranking-bootstrap.js` | Canonical calculated-production launcher | Explicit retry semantics required before idempotence change |
 | Picks base runtime | `assets/js/picks.js` | Canonical Picks owner | Isolated guard candidate with Picks/mobile testing |
 | Play base runtime | `assets/js/play.js` | Canonical base Play owner | Prerequisite-aware guard required |
 | Play game hub | `assets/js/play-hub.js` | Canonical Play navigation owner | Separate prerequisite-aware guard required |
-| Home dashboard rendering | `assets/js/home-dashboard.js` | Canonical Home owner | Isolated simple-guard candidate |
+| Home dashboard rendering | `assets/js/home-dashboard.js` | Canonical Home owner | Current isolated simple-guard candidate |
 | Community profile rendering | `assets/js/community-profiles.js` | Canonical community owner | Isolated broad-surface guard candidate |
 | Cross-feature profile compatibility | `assets/js/product-architecture.js` | Compatibility/handoff owner | Already globally protected |
 | Late initial route activation and reminder injection | `assets/js/fresh-home-launch.js` | Late startup owner | Global duplicate-start guard merged and live-verified in PR #100 |
