@@ -1,6 +1,9 @@
 (function(){
   'use strict';
 
+  if(window.__UFC_OCTAGON_HQ_NAV_GRID_STARTED__)return;
+  window.__UFC_OCTAGON_HQ_NAV_GRID_STARTED__=true;
+
   const VERSION='octagon-hq-nav-grid-disabled-20260718b';
 
   function clearLegacyGrid(){
