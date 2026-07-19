@@ -20,7 +20,7 @@ This file records the canonical owner of each startup responsibility. Detailed d
 | Ranking data | `assets/data/ranking-data.js` | Canonical data source | Outside startup cleanup except load-order checks |
 | Base ranking rendering and global UI APIs | `assets/js/app.js` | Structural global singleton | Enforce exact-one manifest load; no standard IIFE guard |
 | Calculated production scoring bootstrap | `assets/js/production-ranking-bootstrap.js` | Canonical calculated-production launcher | Explicit retry semantics required before idempotence change |
-| Picks base runtime | `assets/js/picks.js` | Canonical Picks owner | Isolated guard candidate with Picks/mobile testing |
+| Picks base runtime | `assets/js/picks.js` | Canonical Picks owner | Next isolated guard candidate; inspect prerequisites, identity/profile handoffs, saved state, routes, retries, listeners, observers, timers, APIs, and mobile lifecycle before adding a marker |
 | Play base runtime | `assets/js/play.js` | Canonical base Play owner | Prerequisite-aware guard required |
 | Play game hub | `assets/js/play-hub.js` | Canonical Play navigation owner | Separate prerequisite-aware guard required |
 | Home dashboard rendering | `assets/js/home-dashboard.js` | Canonical Home owner | Global duplicate-file guard merged and live-verified in PR #107 |
@@ -29,7 +29,7 @@ This file records the canonical owner of each startup responsibility. Detailed d
 | Late initial route activation and reminder injection | `assets/js/fresh-home-launch.js` | Late startup owner | Global duplicate-start guard merged and live-verified in PR #100 |
 | Notification data and rendering | `assets/js/app-notification-center.js` | Intended canonical notification owner | Global duplicate-file guard merged and live-verified in PR #110; first-run, service-worker, profile/activity surface, event/API retry, and user-gesture permission behavior preserved |
 | Notification/profile surface compatibility | `assets/js/app-notification-surface-fix.js` | Temporary compatibility layer | Already globally protected; must not expand |
-| Mobile bottom navigation, badges, transitions, pull-to-refresh | `assets/js/native-app-shell.js` | Intended canonical native shell owner | Next isolated physical-iPhone guard candidate; inspect prerequisites, retry paths, observer, listeners, interval, touch, badges, transitions, and refresh behavior before adding a marker |
+| Mobile bottom navigation, badges, transitions, pull-to-refresh | `assets/js/native-app-shell.js` | Intended canonical native shell owner | Global duplicate-file guard merged and physical-iPhone verified in PR #112; first-run shell ownership and all API/event/observer/timer/lifecycle retry paths preserved |
 | Mobile/native compatibility repairs | `assets/js/native-app-shell-stability.js` | Temporary repair layer | Global duplicate-file guard merged and live-verified in PR #108; public `schedule()` retry path preserved; removal belongs to Phase 3 |
 | Sharing and incoming share routing | `assets/js/share-deep-links.js` | Canonical share/deep-link owner | Isolated guard candidate after core startup owners |
 
