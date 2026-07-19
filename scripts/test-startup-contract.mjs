@@ -88,6 +88,7 @@ const homeDashboard=read('assets/js/home-dashboard.js');
 assert(homeDashboard.includes('__UFC_HOME_DASHBOARD_STARTED__'),'The Home dashboard must keep its global duplicate-file-execution guard.');
 
 assert(read('assets/js/picks.js').includes('__UFC_PICKS_STARTED__'),'Picks must keep its global duplicate-file-execution guard.');
+assert(read('assets/js/community-profiles.js').includes('__UFC_COMMUNITY_PROFILES_STARTED__'),'Community profiles must keep its global duplicate-file-execution guard.');
 
 const product=read('assets/js/product-architecture.js');
 assert(product.includes('__UFC_PRODUCT_ARCHITECTURE_STARTED__'),'Product architecture must keep its global duplicate-start guard.');
