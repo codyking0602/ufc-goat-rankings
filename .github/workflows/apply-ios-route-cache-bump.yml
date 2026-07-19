@@ -1,0 +1,37 @@
+name: Apply iOS Route Cache Bump
+
+on:
+  push:
+    branches: [chore/bust-ios-home-route-cache]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chore/bust-ios-home-route-cache
+      - name: Update build and route script cache keys
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path=Path('index.html')
+          text=path.read_text()
+          old_build='<meta name="app-build" content="20260719-shanes-watchlist-photo-cache-fix" />'
+          new_build='<meta name="app-build" content="20260719-ios-resume-home-route" />'
+          old_script='assets/js/fresh-home-launch.js?v=fresh-home-launch-20260718a-phase-4b'
+          new_script='assets/js/fresh-home-launch.js?v=fresh-home-launch-20260719d-ios-resume-home'
+          assert text.count(old_build)==1, 'Expected current app-build marker once'
+          assert text.count(old_script)==1, 'Expected current fresh-home script key once'
+          path.write_text(text.replace(old_build,new_build).replace(old_script,new_script))
+          PY
+      - name: Commit cache bump
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add index.html
+          git commit -m "Bust iOS Home route cache"
+          git push origin HEAD:chore/bust-ios-home-route-cache
