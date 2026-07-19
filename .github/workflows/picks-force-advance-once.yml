@@ -21,48 +21,74 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check required secrets
-        shell: bash
-        run: |
-          test -n "$SUPABASE_ACCESS_TOKEN" || { echo "Missing SUPABASE_ACCESS_TOKEN"; exit 1; }
-          test -n "$ODDS_REFRESH_SECRET" || { echo "Missing ODDS_REFRESH_SECRET"; exit 1; }
-
       - name: Deploy event advance function
+        id: deploy
+        continue-on-error: true
         shell: bash
         run: |
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
+            echo "Missing SUPABASE_ACCESS_TOKEN"
+            exit 2
+          fi
           npx --yes supabase@latest functions deploy advance-picks-event \
             --project-ref "$PROJECT_REF" \
             --no-verify-jwt
 
       - name: Force current event rollover
+        id: force
+        continue-on-error: true
         shell: bash
         run: |
-          curl --fail-with-body --retry 2 \
+          if [ -z "$ODDS_REFRESH_SECRET" ]; then
+            printf '%s\n' '{"error":"Missing ODDS_REFRESH_SECRET"}' > picks-force-advance-response.json
+            printf '%s\n' '0' > picks-force-advance-http-status.txt
+            exit 2
+          fi
+          status=$(curl --silent --show-error --retry 2 \
+            --output picks-force-advance-response.json \
+            --write-out '%{http_code}' \
             --request POST \
             --header "content-type: application/json" \
             --header "x-card-sync-secret: $ODDS_REFRESH_SECRET" \
             --data '{"source":"one-time-backend-force"}' \
-            "https://$PROJECT_REF.supabase.co/functions/v1/advance-picks-event" \
-            | tee picks-force-advance-result.json
+            "https://$PROJECT_REF.supabase.co/functions/v1/advance-picks-event")
+          printf '%s\n' "$status" > picks-force-advance-http-status.txt
+          cat picks-force-advance-response.json
+          test "$status" -ge 200 -a "$status" -lt 300
 
-      - name: Validate Abu Dhabi target
-        shell: python
-        run: |
-          import json
-          from pathlib import Path
-
-          data = json.loads(Path('picks-force-advance-result.json').read_text())
-          if data.get('error'):
-              raise SystemExit(data)
-          target = data.get('summary', {}).get('targetEventId')
-          if target != 'ufc-abu-dhabi-2026-07-25':
-              raise SystemExit(f'Unexpected target event: {target}')
-
-      - name: Publish verification result
+      - name: Publish diagnostic result
+        if: always()
+        env:
+          DEPLOY_OUTCOME: ${{ steps.deploy.outcome }}
+          FORCE_OUTCOME: ${{ steps.force.outcome }}
+          HAS_SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN != '' }}
+          HAS_ODDS_REFRESH_SECRET: ${{ secrets.ODDS_REFRESH_SECRET != '' }}
         shell: bash
         run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          response_path = Path('picks-force-advance-response.json')
+          status_path = Path('picks-force-advance-http-status.txt')
+          try:
+              response = json.loads(response_path.read_text()) if response_path.exists() else None
+          except Exception as exc:
+              response = {'parse_error': str(exc), 'raw': response_path.read_text()[:2000]}
+          diagnostic = {
+              'deploy_outcome': os.environ.get('DEPLOY_OUTCOME'),
+              'force_outcome': os.environ.get('FORCE_OUTCOME'),
+              'has_supabase_access_token': os.environ.get('HAS_SUPABASE_ACCESS_TOKEN') == 'true',
+              'has_odds_refresh_secret': os.environ.get('HAS_ODDS_REFRESH_SECRET') == 'true',
+              'http_status': status_path.read_text().strip() if status_path.exists() else None,
+              'response': response,
+          }
+          Path('picks-force-advance-diagnostic.json').write_text(json.dumps(diagnostic, indent=2) + '\n')
+          PY
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add picks-force-advance-result.json
-          git commit -m "Verify backend Picks event advance"
+          git pull --rebase origin main
+          git add picks-force-advance-diagnostic.json
+          git commit -m "Publish Picks backend advance diagnostic"
           git push origin main
