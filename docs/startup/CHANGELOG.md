@@ -147,3 +147,58 @@ Cody tested the real installed app after deployment. Home, Rankings, Play, Picks
 The next isolated owner is `assets/js/octagon-hq-nav-grid.js`.
 
 This batch is limited to a duplicate-file-execution guard and one contract assertion. Its existing delayed cleanup timers and resize listener remain unchanged until the later repair-loop phase.
+
+## 2026-07-19 — Phase 1 batch 3 merged and verified
+
+PR #106 added a duplicate-file-execution guard to `assets/js/octagon-hq-nav-grid.js` and one startup-contract assertion while preserving its cleanup timers, resize listener, public API, and navigation presentation.
+
+Final state:
+
+- 6 additions;
+- 0 deletions;
+- 2 changed files;
+- Startup Architecture Gate passed.
+
+PR #106 was squash-merged as commit `f4e3ada330fb841ade0333c580376dacaf58ec88`.
+
+Cody verified the installed iPhone app after deployment. Cold launch, bottom-navigation order and sizing, rotation and resize handling, active states, and single-tap behavior were normal. Batch 3 was closed as live-verified.
+
+## 2026-07-19 — Phase 1 batch 4 merged and verified
+
+PR #107 added a duplicate-file-execution guard to `assets/js/home-dashboard.js` and one startup-contract assertion while preserving Home markup, card order, copy, styling, timers, listeners, daily challenge, Picks, War Room, fighter spotlight, and the existing public API.
+
+Final state:
+
+- 6 additions;
+- 0 deletions;
+- 2 changed files;
+- Startup Architecture Gate passed.
+
+PR #107 was squash-merged as commit `7fd6ede029cc307932cb38bc2c9274484b18f403`.
+
+Cody verified the installed iPhone app after deployment. Home cold launch, card presentation, daily challenge, Picks, War Room, fighter spotlight/profile opening, background/resume, and return-to-Home behavior were normal. Batch 4 was closed as live-verified.
+
+## 2026-07-19 — Phase 1 batch 5 merged and verified
+
+PR #108 added a duplicate-file-execution guard to `assets/js/native-app-shell-stability.js` and one startup-contract assertion.
+
+The prerequisite/retry inspection established that this temporary repair layer does not rely on file re-evaluation for legitimate retries. The existing public `schedule()` API, readiness events, MutationObserver, and delayed repair passes remain the intentional retry paths.
+
+Final state:
+
+- 4 additions;
+- 0 deletions;
+- 2 changed files;
+- branch current with `main` at validation;
+- Startup Architecture Gate run #16 passed;
+- JavaScript syntax passed;
+- startup ownership contract passed;
+- iOS startup route stability passed;
+- profile sign-in startup stability passed;
+- delayed Home/community stability passed.
+
+PR #108 was squash-merged as commit `6b0c9442b5a4df46e481296bb8d5cbd3befe1ab7`.
+
+Cody verified the real installed iPhone app after deployment. Cold launch, Home/profile/header repairs, bottom-navigation and touch behavior, background/resume, and return-to-Home behavior were normal. Batch 5 was closed as live-verified.
+
+Removal or consolidation of `native-app-shell-stability.js` remains deferred to Phase 3 after source-level regression coverage exists. The next isolated Phase 1 owner is `assets/js/app-notification-center.js`.
