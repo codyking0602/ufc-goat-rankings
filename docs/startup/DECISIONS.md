@@ -155,3 +155,14 @@ Notification permission must remain user-gesture-only through the existing Enabl
 Intentional later synchronization remains owned by the public `start()`, `syncActive()`, `syncBadges()`, `refresh()`, and `ensureAskAction()` APIs; view, profile, Picks, notification, and soft-refresh events; its MutationObserver; delayed startup passes; resize and orientation listeners; visibility resume; and the existing 10-second badge interval. The separately guarded `native-app-shell-stability.js` repair API remains unchanged.
 
 PR #112 therefore blocks only accidental second-file ownership: a replacement public API, duplicate listener set, duplicate observer, duplicate pull-to-refresh owner, duplicate delayed passes, and duplicate perpetual badge interval. The exact first-run footprint passed automated equivalence testing and physical installed-iPhone verification before the tested head was squash-merged.
+
+## Decision 018 — Picks file evaluation is not a retry mechanism
+
+**Date:** 2026-07-19  
+**Status:** Locked
+
+`assets/js/picks.js` is loaded after its static Picks mount, event data, Supabase library/config, and canonical-group owner. Its only missing-mount recovery is the original one-time `DOMContentLoaded` callback. The canonical owner does not publish a public retry API, dynamically reload itself, or rely on duplicate evaluation for identity, profile, PIN, route, saved-state, or backend recovery.
+
+Intentional later Picks work remains owned by the original 30-second refresh interval and the separate group, PIN, recovery, history, commissioner, season, archive, navigation, profile-handoff, notification, badge, challenge, and native-shell owners. PR #113 therefore blocks only accidental duplicate ownership: a second private state closure, optional Supabase client, static handler set, render owner, and polling loop.
+
+The marker must remain before all client, state, listener, storage, DOM, and timer ownership. The exact first-run footprint and the existing `DOMContentLoaded` path passed focused equivalence testing, the full Startup Architecture Gate, and physical installed-iPhone verification before tested head `1ea7bdf46f09f18279ac4f21a2bbfd492f1d44ba` was squash-merged as `0c488a449d413636228aafd1e45ee8197d5078ba`.
