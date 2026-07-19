@@ -229,3 +229,30 @@ PR #110 was squash-merged as commit `865527b15902e7b61fff429e4faf9ce2a0bc811c`.
 Cody verified the real installed iPhone app after deployment. Cold launch, profile and activity Smart alerts surfaces, permission behavior, notification controls, navigation, touch handling, and background/resume behavior were normal. Batch 6 was closed as live-verified.
 
 The next isolated Phase 1 owner is `assets/js/native-app-shell.js`. It must remain a separate mobile-sensitive draft batch and receive dedicated navigation, touch, badge, transition, pull-to-refresh, profile, Picks, notification, lifecycle, and installed-iPhone verification.
+
+## 2026-07-19 — Phase 1 batch 7 merged and verified
+
+PR #112 added a top-level duplicate-file-execution guard to `assets/js/native-app-shell.js` and one matching startup-contract assertion.
+
+The prerequisite/retry inspection established that the native shell does not depend on duplicate file evaluation. Its complete first execution has no missing-DOM or missing-data early exit. Public shell APIs, route/profile/Picks/notification/soft-refresh events, MutationObserver, delayed passes, resize/orientation, visibility resume, and the existing 10-second badge interval remain the intentional later synchronization paths. `native-app-shell-stability.js` was unchanged.
+
+Final state:
+
+- 4 additions;
+- 0 deletions;
+- 2 changed files;
+- branch current with `main` at validation;
+- Startup Architecture Gate run #20 passed;
+- JavaScript syntax passed;
+- startup ownership contract passed;
+- local app startup passed;
+- iOS startup route and lifecycle stability passed;
+- profile sign-in and Picks startup stability passed;
+- delayed Home/community stability passed;
+- duplicate-evaluation harness and first-run equivalence proof passed.
+
+Cody tested the immutable PR head `47812a65cfda297e5a64ea1fb51d186fce7d50a4` on an installed iPhone, signed in, and reported the app was normal. Cold launch, bottom navigation, rapid tab switching, badges, fighter/profile surfaces, Picks, notification/profile surfaces, pull-to-refresh, background/resume, rotation, Home return, Games, Intelligence, War Room, sharing, and saved-profile behavior showed no visible regression.
+
+PR #112 was squash-merged as commit `5b82c3a47b64a4955c4fd4eb041fafe46473e8ac`. Batch 7 was closed as physically verified.
+
+The next isolated Phase 1 owner is `assets/js/picks.js`. Batch 8 must begin in a fresh session from current `main`, inspect all prerequisite and retry behavior before adding any marker, and remain separate from this closeout.
