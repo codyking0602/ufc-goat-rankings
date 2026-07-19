@@ -2,7 +2,7 @@ name: Validate Phase 4B Preview
 
 on:
   push:
-    branches: [phase-4b-clean-preview-v2, fix/phase-4b-production-flicker, fix/profile-signin-flicker]
+    branches: [phase-4b-clean-preview-v2, fix/phase-4b-production-flicker, fix/profile-signin-flicker, fix/picks-login-reload-loop]
     paths:
       - 'assets/js/community-profiles.js'
       - 'assets/js/fresh-home-launch.js'
@@ -87,7 +87,8 @@ jobs:
           ! grep -Fq 'MutationObserver' assets/js/fresh-home-launch.js
           ! grep -Fq 'setInterval' assets/js/fresh-home-launch.js
           grep -Fq 'community-profiles-20260718g-production-stable' assets/js/community-profiles.js
-          grep -Fq 'fresh-home-launch-20260718f-clean-preview' assets/js/fresh-home-launch.js
+          grep -Fq 'fresh-home-launch-20260718g-picks-route-safe' assets/js/fresh-home-launch.js
+          grep -Fq "picksRouteKeys=['group','room','event','picksView','archive']" assets/js/fresh-home-launch.js
           grep -Fq 'product-architecture-20260718t-single-owner-startup' assets/js/product-architecture.js
           grep -Fq '__UFC_PRODUCT_ARCHITECTURE_STARTED__' assets/js/product-architecture.js
           ! grep -Fq 'loadNativeShell();' assets/js/product-architecture.js
@@ -118,7 +119,7 @@ jobs:
           exit 1
       - name: Test fresh launch, delayed stability, directory, and profile lifecycle
         run: node scripts/test-phase-4b-mobile.mjs
-      - name: Test Picks profile sign-in stability
+      - name: Test real Picks PIN login route stability
         run: node scripts/test-profile-signin-stability.mjs
       - name: Upload Phase 4B mobile proof
         if: always()
