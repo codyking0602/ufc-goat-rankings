@@ -90,7 +90,8 @@ jobs:
           grep -Fq 'community-profiles-20260718h-collapsed-top10-profile' assets/js/community-profiles.js
           grep -Fq 'community-top10-overlay' assets/js/community-profiles.js
           grep -Fq 'syncPicksAccess' assets/js/community-profiles.js
-          grep -Fq 'fresh-home-launch-20260718g-picks-route-safe' assets/js/fresh-home-launch.js
+          grep -Fq 'fresh-home-launch-20260719c-cold-start-home' assets/js/fresh-home-launch.js
+          grep -Fq 'RESUME_PICKS_KEY' assets/js/fresh-home-launch.js
           grep -Fq "picksRouteKeys=['group','room','event','picksView','archive']" assets/js/fresh-home-launch.js
           grep -Fq 'product-architecture-20260718u-shared-profile-auth' assets/js/product-architecture.js
           grep -Fq 'syncSharedProfileToPicks' assets/js/product-architecture.js
@@ -123,7 +124,7 @@ jobs:
           exit 1
       - name: Test fresh launch, collapsed directory, Top 10 profile save, and profile lifecycle
         run: node scripts/test-phase-4b-mobile.mjs
-      - name: Test real Picks PIN login route stability
+      - name: Test real Picks PIN login and cold-launch routing
         run: node scripts/test-profile-signin-stability.mjs
       - name: Upload Phase 4B mobile proof
         if: always()
