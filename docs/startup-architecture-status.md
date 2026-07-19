@@ -2,13 +2,14 @@
 
 **Last updated:** July 19, 2026  
 **Project:** Octagon HQ startup reliability cleanup  
+**Master tracker:** [GitHub issue #101](https://github.com/codyking0602/ufc-goat-rankings/issues/101)  
 **Primary contract:** [`docs/startup-architecture.md`](./startup-architecture.md)
 
 ## How to resume this project in any new chat
 
 Use this instruction:
 
-> Continue the Octagon HQ startup architecture project. Read `docs/startup-architecture-status.md`, `docs/startup-architecture.md`, and the master GitHub issue before changing anything. Preserve the exact current app experience and continue from the documented next action.
+> Continue the Octagon HQ startup architecture project. Read `docs/startup-architecture-status.md`, `docs/startup-architecture.md`, `docs/startup-architecture-plan.md`, `docs/startup-architecture-inventory.md`, `docs/startup-architecture-decisions.md`, and GitHub issue #101 before changing anything. Preserve the exact current app experience and continue from the documented next action.
 
 This file is the source of truth for current phase, completed work, blockers, and the exact next action. Update it at the end of every meaningful work session.
 
@@ -16,9 +17,21 @@ This file is the source of truth for current phase, completed work, blockers, an
 
 - **Phase 0 — Freeze and measure:** Complete.
 - **Phase 1 — Make every startup owner idempotent:** In progress.
+- **Phase 1 inventory:** Complete for Tier 1 and Tier 2 startup owners.
 - **Live production runtime:** Unchanged by Phase 1 work so far.
 - **Active runtime draft:** PR #100, `agent/startup-singleton-guards-v2`.
+- **Master tracker:** Issue #101.
 - **Superseded draft:** PR #99, closed without merge.
+
+## Durable documentation now on `main`
+
+- `docs/startup-architecture.md` — contract and phase outline.
+- `docs/startup-architecture-plan.md` — detailed execution plan and exit criteria.
+- `docs/startup-architecture-status.md` — current state and exact next action.
+- `docs/startup-architecture-inventory.md` — owner-by-owner Phase 1 audit.
+- `docs/startup-architecture-decisions.md` — locked decisions.
+- `docs/startup-architecture-handoff.md` — cross-chat continuation procedure.
+- GitHub issue #101 — permanent checklist and dated session log.
 
 ## Completed protection work
 
@@ -34,6 +47,40 @@ This file is the source of truth for current phase, completed work, blockers, an
   - delayed Home and community stability;
   - duplicate shell and active-view detection.
 - Created clean draft PR #100 with only singleton guards and test assertions.
+- Audited all Tier 1 critical startup owners.
+- Audited all Tier 2 support modules loaded by `product-architecture.js`.
+
+## Phase 1 inventory conclusion
+
+Already globally idempotent:
+
+- `assets/js/product-architecture.js`
+- `assets/js/app-notification-surface-fix.js`
+
+Batch 1 pending on PR #100:
+
+- `assets/js/fresh-home-route-bootstrap.js`
+- `assets/js/fresh-home-launch.js`
+
+Remaining Tier 1 files need isolated Phase 1 guard work:
+
+- `assets/js/octagon-hq-shell.js`
+- `assets/js/octagon-hq-nav-grid.js`
+- `assets/js/home-dashboard.js`
+- `assets/js/community-profiles.js`
+- `assets/js/app-notification-center.js`
+- `assets/js/native-app-shell.js`
+- `assets/js/native-app-shell-stability.js`
+- `assets/js/share-deep-links.js`
+
+All six Tier 2 support modules need file-level guards in later Phase 1 batches:
+
+- `assets/js/product-connectivity.js`
+- `assets/js/product-polish.js`
+- `assets/js/profile-avatar-sync.js`
+- `assets/js/profile-activity.js`
+- `assets/js/find-leader-retention.js`
+- `assets/js/picks-season-loop.js`
 
 ## Phase 1, Batch 1
 
@@ -84,14 +131,21 @@ No startup runtime PR reaches `main` until:
 
 ## Exact next action
 
-1. Finish the Phase 1 startup-owner inventory.
-2. Classify every startup script as:
-   - already idempotent;
-   - needs a singleton guard;
-   - intentionally repeatable;
-   - compatibility-only and scheduled for a later phase.
-3. Do not add more runtime changes to PR #100.
-4. After the inventory is complete, decide whether Batch 1 is ready for physical iPhone verification and merge, or whether a separate baseline-test maintenance PR is required first.
+### Cody physical iPhone verification for PR #100
+
+Before Batch 1 is merged, verify the currently installed app still behaves normally on the existing live build, then verify the PR preview if a preview URL is available. Required checks:
+
+1. Cold-open the installed app from a stale Picks screen or after force-closing it. It should open Home without flashing Picks.
+2. Open Rankings, background the app, return several times, and confirm it stays on Rankings without refreshing or jumping Home.
+3. Open Picks through the normal app navigation and confirm it remains on Picks.
+4. Use a Picks room or PIN handoff and confirm that intentional Picks continuation still works.
+5. Open the profile chip and confirm no startup flicker, duplicate overlay, or repeated sign-in prompt.
+
+Report each item as pass or fail. Do not merge PR #100 until the physical verification is recorded on issue #101.
+
+### After Batch 1
+
+Begin Phase 1 Batch 2 with a test-first branch for `octagon-hq-shell.js`. Do not overlap additional runtime changes with PR #100.
 
 ## Phase progress
 
@@ -115,3 +169,7 @@ No startup runtime PR reaches `main` until:
 - Opened PR #100 for Phase 1 Batch 1.
 - PR #100 startup-specific browser checks passed.
 - Left PR #100 unmerged while documenting unrelated baseline check failures.
+- Added persistent plan, status, inventory, decision, and cross-chat handoff files to `main`.
+- Created master tracker issue #101.
+- Completed Tier 1 and Tier 2 startup-owner inventory.
+- Paused runtime changes at the correct boundary pending physical iPhone verification for Batch 1.
