@@ -87,6 +87,8 @@ assert(navGrid.includes('__UFC_OCTAGON_HQ_NAV_GRID_STARTED__'),'The nav-grid cle
 const homeDashboard=read('assets/js/home-dashboard.js');
 assert(homeDashboard.includes('__UFC_HOME_DASHBOARD_STARTED__'),'The Home dashboard must keep its global duplicate-file-execution guard.');
 
+assert(read('assets/js/picks.js').includes('__UFC_PICKS_STARTED__'),'Picks must keep its global duplicate-file-execution guard.');
+
 const product=read('assets/js/product-architecture.js');
 assert(product.includes('__UFC_PRODUCT_ARCHITECTURE_STARTED__'),'Product architecture must keep its global duplicate-start guard.');
 assert.equal(product.includes('loadNativeShell'),false,'Product architecture must not dynamically load the native shell.');
