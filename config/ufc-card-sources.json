@@ -39,6 +39,47 @@
           "url": "https://www.mmamania.com/ufc-fight-cards/447644/latest-ufc-abu-dhabi-fight-card-paramount-start-time-date-location-ankalaev-vs-guskov"
         }
       ]
+    },
+    {
+      "eventId": "ufc-belgrade-2026-08-01",
+      "name": "UFC Fight Night",
+      "subtitle": "Medic vs. Rodriguez",
+      "eventType": "fight-night",
+      "eventDate": "2026-08-01T17:00:00.000Z",
+      "location": "Belgrade Arena · Belgrade, Serbia",
+      "cardRule": "Main card only",
+      "status": "upcoming",
+      "syncUntil": "2026-08-01T21:30:00.000Z",
+      "idPrefix": "belgrade26",
+      "minFights": 8,
+      "mainCardFightCount": 5,
+      "expectedMainEvent": [
+        "Uros Medic",
+        "Daniel Rodriguez"
+      ],
+      "sectionStarts": {
+        "Prelims": "2026-08-01T14:00:00.000Z",
+        "Main Card": "2026-08-01T17:00:00.000Z"
+      },
+      "defaultBoutMinutes": 30,
+      "official": {
+        "discoveryUrl": "https://www.ufc.com/events",
+        "fallbackUrl": "https://www.ufc.com/event/ufc-fight-night-august-01-2026",
+        "discoveryTerms": [
+          "medic",
+          "rodriguez"
+        ],
+        "dateTerms": [
+          "august 1",
+          "aug 1"
+        ]
+      },
+      "fallbackSources": [
+        {
+          "type": "mma-mania",
+          "url": "https://www.mmamania.com/ufc-fight-cards/446488/latest-ufc-belgrade-fight-card-paramount-start-time-date-and-location-medic-vs-rodriguez-mma"
+        }
+      ]
     }
   ]
 }
