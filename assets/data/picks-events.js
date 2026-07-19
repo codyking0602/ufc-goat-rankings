@@ -37,20 +37,21 @@
       eventDate: '2026-07-18T19:00:00-05:00',
       location: 'Paycom Center · Oklahoma City, Oklahoma',
       cardRule: 'Main card only',
-      status: 'upcoming',
-      sourceNote: 'Full 11-fight card stored as of July 16. Fight Night Picks show only the five-fight main card. Tavares vs. Barriault was cancelled; Hooper vs. Ramirez was promoted.',
+      status: 'complete',
+      sourceNote: 'Confirmed 12-fight card and final results. Fight Night Picks include only the five-fight main card.',
       fights: [
-        { id:'okc-barbosa-melisano', order:1, cardSection:'Prelims', weightClass:"Women's Flyweight", red:'Dione Barbosa', blue:'Anna Melisano', lockAt:'2026-07-18T16:00:00-05:00', winner:null, resultStatus:'scheduled' },
-        { id:'okc-hines-harris', order:2, cardSection:'Prelims', weightClass:'Heavyweight', red:'Alvin Hines', blue:'RJ Harris', lockAt:'2026-07-18T16:30:00-05:00', winner:null, resultStatus:'scheduled' },
-        { id:'okc-coria-nicoll', order:3, cardSection:'Prelims', weightClass:'Flyweight', red:'Alden Coria', blue:'Stewart Nicoll', lockAt:'2026-07-18T17:00:00-05:00', winner:null, resultStatus:'scheduled' },
-        { id:'okc-franco-rodrigues', order:4, cardSection:'Prelims', weightClass:'Heavyweight', red:'Felipe Franco', blue:'Levi Rodrigues Jr.', lockAt:'2026-07-18T17:30:00-05:00', winner:null, resultStatus:'scheduled' },
-        { id:'okc-lebosnoyani-ko', order:5, cardSection:'Prelims', weightClass:'Welterweight', red:'Jean-Paul Lebosnoyani', blue:'Seok Hyeon Ko', lockAt:'2026-07-18T18:00:00-05:00', winner:null, resultStatus:'scheduled' },
-        { id:'okc-delgado-bashi', order:6, cardSection:'Prelims', weightClass:'Featherweight', red:'Jose Delgado', blue:'Austin Bashi', lockAt:'2026-07-18T18:30:00-05:00', winner:null, resultStatus:'scheduled' },
-        { id:'okc-mcmillen-montes', order:7, cardSection:'Main Card', weightClass:'Featherweight', red:'Tommy McMillen', blue:'Alberto Montes', lockAt:'2026-07-18T19:00:00-05:00', winner:null, resultStatus:'scheduled' },
-        { id:'okc-ricci-kline', order:8, cardSection:'Main Card', weightClass:"Women's Strawweight", red:'Tabatha Ricci', blue:'Fatima Kline', lockAt:'2026-07-18T19:30:00-05:00', winner:null, resultStatus:'scheduled' },
-        { id:'okc-hooper-ramirez', order:9, cardSection:'Main Card', weightClass:'Lightweight', red:'Chase Hooper', blue:'Mitch Ramirez', lockAt:'2026-07-18T20:00:00-05:00', winner:null, resultStatus:'scheduled' },
-        { id:'okc-cannonier-duncan', order:10, cardSection:'Co-Main Event', weightClass:'Middleweight', red:'Jared Cannonier', blue:'Christian Leroy Duncan', lockAt:'2026-07-18T21:00:00-05:00', winner:null, resultStatus:'scheduled' },
-        { id:'okc-du-plessis-usman', order:11, cardSection:'Main Event', weightClass:'Middleweight', red:'Dricus Du Plessis', blue:'Kamaru Usman', lockAt:'2026-07-18T21:45:00-05:00', winner:null, resultStatus:'scheduled', redOdds:-350, blueOdds:285, oddsSource:'BetOnline opening line via MMA Mania', oddsUpdatedAt:'2026-06-22T09:15:00-05:00' }
+        { id:'okc-elliott-anderson', order:1, cardSection:'Prelims', weightClass:'Featherweight', red:'Ezra Elliott', blue:'Damien Anderson', lockAt:'2026-07-18T16:00:00-05:00', winner:'Ezra Elliott', resultStatus:'complete' },
+        { id:'okc-barbosa-melisano', order:2, cardSection:'Prelims', weightClass:"Women's Flyweight", red:'Dione Barbosa', blue:'Anna Melisano', lockAt:'2026-07-18T16:25:00-05:00', winner:'Dione Barbosa', resultStatus:'complete' },
+        { id:'okc-hines-harris', order:3, cardSection:'Prelims', weightClass:'Heavyweight', red:'Alvin Hines', blue:'RJ Harris', lockAt:'2026-07-18T16:50:00-05:00', winner:'RJ Harris', resultStatus:'complete' },
+        { id:'okc-coria-nicoll', order:4, cardSection:'Prelims', weightClass:'Flyweight', red:'Alden Coria', blue:'Stewart Nicoll', lockAt:'2026-07-18T17:15:00-05:00', winner:'Alden Coria', resultStatus:'complete' },
+        { id:'okc-franco-rodrigues', order:5, cardSection:'Prelims', weightClass:'Light Heavyweight', red:'Felipe Franco', blue:'Levi Rodrigues Jr.', lockAt:'2026-07-18T17:40:00-05:00', winner:'Felipe Franco', resultStatus:'complete' },
+        { id:'okc-lebosnoyani-ko', order:6, cardSection:'Prelims', weightClass:'Welterweight', red:'Jean-Paul Lebosnoyani', blue:'Seok Hyeon Ko', lockAt:'2026-07-18T18:05:00-05:00', winner:'Jean-Paul Lebosnoyani', resultStatus:'complete' },
+        { id:'okc-delgado-bashi', order:7, cardSection:'Prelims', weightClass:'Featherweight', red:'Jose Miguel Delgado', blue:'Austin Bashi', lockAt:'2026-07-18T18:30:00-05:00', winner:'Jose Miguel Delgado', resultStatus:'complete' },
+        { id:'okc-mcmillen-montes', order:8, cardSection:'Main Card', weightClass:'Featherweight', red:'Tommy McMillen', blue:'Alberto Montes', lockAt:'2026-07-18T19:00:00-05:00', winner:'Tommy McMillen', resultStatus:'complete', redOdds:-135, blueOdds:115, oddsSource:'UFC.com event snapshot', oddsUpdatedAt:'2026-07-18T18:30:00-05:00' },
+        { id:'okc-ricci-kline', order:9, cardSection:'Main Card', weightClass:"Women's Strawweight", red:'Tabatha Ricci', blue:'Fatima Kline', lockAt:'2026-07-18T19:30:00-05:00', winner:'Fatima Kline', resultStatus:'complete', redOdds:350, blueOdds:-450, oddsSource:'UFC.com event snapshot', oddsUpdatedAt:'2026-07-18T18:30:00-05:00' },
+        { id:'okc-hooper-ramirez', order:10, cardSection:'Main Card', weightClass:'Lightweight', red:'Chase Hooper', blue:'Mitch Ramirez', lockAt:'2026-07-18T20:00:00-05:00', winner:'Chase Hooper', resultStatus:'complete', redOdds:-350, blueOdds:275, oddsSource:'UFC.com event snapshot', oddsUpdatedAt:'2026-07-18T18:30:00-05:00' },
+        { id:'okc-cannonier-duncan', order:11, cardSection:'Co-Main Event', weightClass:'Middleweight', red:'Jared Cannonier', blue:'Christian Leroy Duncan', lockAt:'2026-07-18T21:00:00-05:00', winner:'Christian Leroy Duncan', resultStatus:'complete', redOdds:290, blueOdds:-370, oddsSource:'UFC.com event snapshot', oddsUpdatedAt:'2026-07-18T18:30:00-05:00' },
+        { id:'okc-du-plessis-usman', order:12, cardSection:'Main Event', weightClass:'Middleweight', red:'Dricus Du Plessis', blue:'Kamaru Usman', lockAt:'2026-07-18T21:45:00-05:00', winner:'Dricus Du Plessis', resultStatus:'complete', redOdds:-230, blueOdds:190, oddsSource:'UFC.com event snapshot', oddsUpdatedAt:'2026-07-18T18:30:00-05:00' }
       ]
     },
     {
@@ -77,6 +78,31 @@
         { id:'abu26-rizvan-kuniev-tyrell-fortune', order:11, cardSection:'Main Card', weightClass:'Heavyweight', red:'Rizvan Kuniev', blue:'Tyrell Fortune', lockAt:'2026-07-25T13:30:00-04:00', winner:null, resultStatus:'scheduled' },
         { id:'abu26-steve-erceg-ramazan-temirov', order:12, cardSection:'Co-Main Event', weightClass:'Flyweight', red:'Steve Erceg', blue:'Ramazan Temirov', lockAt:'2026-07-25T14:00:00-04:00', winner:null, resultStatus:'scheduled' },
         { id:'abu26-magomed-ankalaev-bogdan-guskov', order:13, cardSection:'Main Event', weightClass:'Light Heavyweight', red:'Magomed Ankalaev', blue:'Bogdan Guskov', lockAt:'2026-07-25T14:30:00-04:00', winner:null, resultStatus:'scheduled' }
+      ]
+    },
+    {
+      id: 'ufc-belgrade-2026-08-01',
+      name: 'UFC Fight Night',
+      subtitle: 'Medic vs. Rodriguez',
+      eventType: 'fight-night',
+      eventDate: '2026-08-01T13:00:00-04:00',
+      location: 'Belgrade Arena · Belgrade, Serbia',
+      cardRule: 'Main card only',
+      status: 'upcoming',
+      sourceNote: 'Externally maintained from UFC.com with MMA Mania as the fallback source. Current 12-fight snapshot includes Blachowicz vs. Stirling.',
+      fights: [
+        { id:'belgrade26-jovan-leka-max-gimenis', order:1, cardSection:'Prelims', weightClass:'Heavyweight', red:'Jovan Leka', blue:'Max Gimenis', lockAt:'2026-08-01T10:00:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-nina-milosevic-hailey-cowan', order:2, cardSection:'Prelims', weightClass:"Women's Bantamweight", red:'Nina Milosevic', blue:'Hailey Cowan', lockAt:'2026-08-01T10:25:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-mateusz-rebecki-kyle-prepolec', order:3, cardSection:'Prelims', weightClass:'Lightweight', red:'Mateusz Rebecki', blue:'Kyle Prepolec', lockAt:'2026-08-01T10:50:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-dennis-buzukja-bogdan-grad', order:4, cardSection:'Prelims', weightClass:'Featherweight', red:'Dennis Buzukja', blue:'Bogdan Grad', lockAt:'2026-08-01T11:15:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-mark-vologdin-josias-musasa', order:5, cardSection:'Prelims', weightClass:'Bantamweight', red:'Mark Vologdin', blue:'Josias Musasa', lockAt:'2026-08-01T11:40:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-oban-elliott-michael-oliveira', order:6, cardSection:'Prelims', weightClass:'Welterweight', red:'Oban Elliott', blue:'Michael Oliveira', lockAt:'2026-08-01T12:05:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-ludovit-klein-tofiq-musayev', order:7, cardSection:'Prelims', weightClass:'Lightweight', red:'Ludovit Klein', blue:'Tofiq Musayev', lockAt:'2026-08-01T12:30:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-vlasto-cepo-gilbert-urbina', order:8, cardSection:'Main Card', weightClass:'Middleweight', red:'Vlasto Cepo', blue:'Gilbert Urbina', lockAt:'2026-08-01T13:00:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-dusko-todorovic-robert-valentin', order:9, cardSection:'Main Card', weightClass:'Middleweight', red:'Dusko Todorovic', blue:'Robert Valentin', lockAt:'2026-08-01T13:30:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-aleksandar-rakic-marcin-tybura', order:10, cardSection:'Main Card', weightClass:'Heavyweight', red:'Aleksandar Rakic', blue:'Marcin Tybura', lockAt:'2026-08-01T14:00:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-jan-blachowicz-navajo-stirling', order:11, cardSection:'Co-Main Event', weightClass:'Light Heavyweight', red:'Jan Blachowicz', blue:'Navajo Stirling', lockAt:'2026-08-01T14:30:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-uros-medic-daniel-rodriguez', order:12, cardSection:'Main Event', weightClass:'Welterweight', red:'Uros Medic', blue:'Daniel Rodriguez', lockAt:'2026-08-01T15:00:00-04:00', winner:null, resultStatus:'scheduled' }
       ]
     }
   ];
