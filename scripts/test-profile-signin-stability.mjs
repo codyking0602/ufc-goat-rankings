@@ -60,6 +60,7 @@ const supabaseStub=`
 try{
   browser=await chromium.launch({headless:true});
   page=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true});
+  await page.addInitScript(()=>Object.defineProperty(navigator,'standalone',{value:true,configurable:true}));
   await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',route=>route.fulfill({status:200,contentType:'application/javascript',body:supabaseStub}));
   page.on('console',message=>{if(message.type()==='error')report.consoleErrors.push(message.text());});
   page.on('pageerror',error=>report.consoleErrors.push(error.stack||error.message));
