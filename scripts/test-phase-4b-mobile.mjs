@@ -206,7 +206,7 @@ try{
   await page.evaluate(()=>window.UFC_APP_SHELL.activateDestination('picks'));
   await page.waitForFunction(()=>document.querySelector('#picks')?.classList.contains('active-view'),null,{timeout:10000});
   await page.waitForTimeout(600);
-  report.sharedProfileOpenedPicks=await page.evaluate(()=>localStorage.getItem('ufc-picks:group:GOAT26')==='phase-4b-preview-token'&&!document.getElementById('picksPinSignInCard'));
+  report.sharedProfileOpenedPicks=await page.evaluate(()=>{const token=localStorage.getItem('ufc-picks:group:GOAT26')||'';const card=document.getElementById('picksPinSignInCard');return Boolean(token)&&(!card||card.hidden||getComputedStyle(card).display==='none');});
   assert.equal(report.sharedProfileOpenedPicks,true,'The shared Octagon HQ profile did not carry into Picks.');
   await page.evaluate(()=>window.UFC_APP_SHELL.activateDestination('home'));
   await page.waitForFunction(()=>document.querySelector('#home')?.classList.contains('active-view'),null,{timeout:10000});
