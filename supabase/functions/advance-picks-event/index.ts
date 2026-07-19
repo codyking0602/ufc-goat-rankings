@@ -19,7 +19,7 @@ function eventIsFinished(event, now) {
   if (!event) return true;
   if (FINISHED_STATUSES.has(String(event.status || ""))) return true;
   const eventTime = new Date(event.event_date || 0).getTime();
-  return event.status !== "live" && Number.isFinite(eventTime) && eventTime < now - STALE_ACTIVE_GRACE_MS;
+  return Number.isFinite(eventTime) && eventTime < now - STALE_ACTIVE_GRACE_MS;
 }
 
 async function createRoom(supabase, group, eventId) {
@@ -139,6 +139,7 @@ Deno.serve(async (request) => {
   const summary = {
     targetEventId: null,
     targetEventName: null,
+    staleEventsCompleted: 0,
     groupsChecked: 0,
     groupsEligible: 0,
     groupsAdvanced: 0,
@@ -157,9 +158,28 @@ Deno.serve(async (request) => {
       .order("event_date", { ascending: true });
     if (eventError) throw new Error(`Could not load upcoming events: ${eventError.message}`);
 
+    const staleOpenEvents = (openEvents || []).filter((event) => {
+      const eventTime = new Date(event.event_date || 0).getTime();
+      return Number.isFinite(eventTime) && eventTime < now - STALE_ACTIVE_GRACE_MS;
+    });
+    const staleIds = staleOpenEvents.map((event) => event.id);
+    if (staleIds.length) {
+      const { error: staleError } = await supabase
+        .from("pick_events")
+        .update({ status: "complete" })
+        .in("id", staleIds);
+      if (staleError) throw new Error(`Could not complete stale UFC events: ${staleError.message}`);
+      summary.staleEventsCompleted = staleIds.length;
+    }
+
+    const staleIdSet = new Set(staleIds);
     const target = (openEvents || [])
+      .filter((event) => !staleIdSet.has(event.id))
       .filter((event) => OPEN_STATUSES.has(event.status))
-      .filter((event) => event.status === "live" || new Date(event.event_date).getTime() >= now - STALE_ACTIVE_GRACE_MS)
+      .filter((event) => {
+        const eventTime = new Date(event.event_date || 0).getTime();
+        return Number.isFinite(eventTime) && eventTime >= now - STALE_ACTIVE_GRACE_MS;
+      })
       .sort((left, right) => new Date(left.event_date).getTime() - new Date(right.event_date).getTime())[0];
 
     if (!target) return json(200, { advanced: false, message: "No upcoming UFC event is ready", summary });
