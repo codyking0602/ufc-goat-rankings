@@ -9,6 +9,7 @@ on:
       - 'config/ufc-card-sources.json'
       - 'scripts/sync-ufc-card.mjs'
       - 'supabase/functions/sync-ufc-card/**'
+      - 'supabase/functions/advance-picks-event/**'
       - 'supabase/functions/refresh-ufc-odds/**'
       - '.github/workflows/deploy-ufc-odds-refresh.yml'
       - '.github/workflows/refresh-ufc-odds.yml'
@@ -63,6 +64,13 @@ jobs:
             --project-ref "$PROJECT_REF" \
             --no-verify-jwt
 
+      - name: Deploy next-event advance function
+        shell: bash
+        run: |
+          npx --yes supabase@latest functions deploy advance-picks-event \
+            --project-ref "$PROJECT_REF" \
+            --no-verify-jwt
+
       - name: Deploy odds refresh function
         shell: bash
         run: |
@@ -79,6 +87,16 @@ jobs:
       - name: Import confirmed external card
         shell: bash
         run: node scripts/sync-ufc-card.mjs --apply --force
+
+      - name: Advance permanent groups to next event
+        shell: bash
+        run: |
+          curl --fail-with-body --retry 2 \
+            --request POST \
+            --header "content-type: application/json" \
+            --header "x-card-sync-secret: $ODDS_REFRESH_SECRET" \
+            --data '{"source":"deploy-workflow"}' \
+            "https://$PROJECT_REF.supabase.co/functions/v1/advance-picks-event"
 
       - name: Upload card-sync evidence
         if: always()
