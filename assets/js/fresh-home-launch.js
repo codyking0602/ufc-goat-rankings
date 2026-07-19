@@ -1,60 +1,118 @@
 (function(){
   'use strict';
 
-  const VERSION='fresh-home-launch-20260719c-cold-start-home';
-  const RESUME_PICKS_KEY='ufc-app:resume-picks-once';
-  const RESUME_WINDOW_MS=120000;
-  const params=new URLSearchParams(location.search);
+  const VERSION='fresh-home-launch-20260719c-cold-start-home-ios-resume';
+  const RESUME_PICKS_KEY='__picks_resume';
+  const RESUME_WINDOW_MS=30000;
+  const RESUME_HOME_DELAY_MS=500;
   const deepLinkKeys=['challenge','share','fighter','message','notification','push'];
   const picksRouteKeys=['group','room','event','picksView','archive'];
-  const staleKeys=['group','room','event','picksView','archive','week','open','game'];
-  const picksHash=String(location.hash||'').toLowerCase()==='#picks';
-  const picksRoute=picksHash||picksRouteKeys.some(key=>params.has(key));
-  const group=String(params.get('group')||'').trim();
-  const room=String(params.get('room')||'').trim();
-  const barePicksInvite=Boolean(group||room)
-    &&!params.has('event')
-    &&!params.has('picksView')
-    &&!params.has('archive');
+  const staleKeys=['group','room','event','picksView','archive','week','open','game',RESUME_PICKS_KEY];
   const navigationType=performance.getEntriesByType?.('navigation')?.[0]?.type||'navigate';
   const standalone=window.navigator.standalone===true
     ||window.matchMedia?.('(display-mode: standalone)')?.matches===true;
+  let hiddenAt=0;
+  let resumeMarkerTimer=0;
 
-  function markPicksResume(){
-    try{sessionStorage.setItem(RESUME_PICKS_KEY,String(Date.now()));}catch(_error){}
+  function currentUrl(){return new URL(location.href);}
+  function hasExplicitDeepLink(url=currentUrl()){
+    return deepLinkKeys.some(key=>url.searchParams.has(key));
   }
-
-  let resumePicks=false;
-  try{
-    const markedAt=Number(sessionStorage.getItem(RESUME_PICKS_KEY)||0);
-    resumePicks=markedAt>0&&Date.now()-markedAt<RESUME_WINDOW_MS;
-    sessionStorage.removeItem(RESUME_PICKS_KEY);
-  }catch(_error){}
-
-  const preserveBrowserReload=picksRoute&&navigationType==='reload'&&!standalone;
-  const picksContinuation=picksRoute&&(resumePicks||barePicksInvite||preserveBrowserReload);
-  const explicitDeepLink=deepLinkKeys.some(key=>params.has(key));
-
-  if(picksContinuation){
-    const url=new URL(location.href);
+  function hasPicksRoute(url=currentUrl()){
+    return String(url.hash||'').toLowerCase()==='#picks'
+      ||picksRouteKeys.some(key=>url.searchParams.has(key));
+  }
+  function isBarePicksInvite(url=currentUrl()){
+    const group=String(url.searchParams.get('group')||'').trim();
+    const room=String(url.searchParams.get('room')||'').trim();
+    return Boolean(group||room)
+      &&!url.searchParams.has('event')
+      &&!url.searchParams.has('picksView')
+      &&!url.searchParams.has('archive');
+  }
+  function resumeTimestamp(url=currentUrl()){
+    return Number(url.searchParams.get(RESUME_PICKS_KEY)||0);
+  }
+  function hasFreshPicksResume(url=currentUrl()){
+    const markedAt=resumeTimestamp(url);
+    return markedAt>0&&Date.now()-markedAt<RESUME_WINDOW_MS;
+  }
+  function replaceUrl(url){
+    history.replaceState(history.state,'',`${url.pathname}${url.search}${url.hash}`);
+  }
+  function clearResumeMarker(){
+    window.clearTimeout(resumeMarkerTimer);
+    const url=currentUrl();
+    if(!url.searchParams.has(RESUME_PICKS_KEY))return;
+    url.searchParams.delete(RESUME_PICKS_KEY);
+    replaceUrl(url);
+  }
+  function markPicksResume(){
+    const url=currentUrl();
+    url.searchParams.set(RESUME_PICKS_KEY,String(Date.now()));
+    replaceUrl(url);
+    window.clearTimeout(resumeMarkerTimer);
+    resumeMarkerTimer=window.setTimeout(clearResumeMarker,RESUME_WINDOW_MS);
+  }
+  function activatePicks(source='startup'){
+    const url=currentUrl();
+    url.searchParams.delete(RESUME_PICKS_KEY);
     url.hash='picks';
-    history.replaceState(history.state,'',`${url.pathname}${url.search}#picks`);
+    replaceUrl(url);
     window.UFC_APP_SHELL?.activateDestination?.('picks')
       ||window.UFC_PRODUCT_ARCHITECTURE?.activateDestination?.('picks');
-    if(barePicksInvite)markPicksResume();
-  }else if(!explicitDeepLink){
-    const url=new URL(location.href);
+    document.documentElement.dataset.freshLaunchRoute='picks';
+    document.documentElement.dataset.freshLaunchSource=source;
+    return true;
+  }
+  function activateHome(source='startup'){
+    const url=currentUrl();
     staleKeys.forEach(key=>url.searchParams.delete(key));
     url.hash='home';
-    history.replaceState(history.state,'',`${url.pathname}${url.search}#home`);
+    replaceUrl(url);
     window.UFC_APP_SHELL?.activateDestination?.('home')
       ||window.UFC_PRODUCT_ARCHITECTURE?.activateDestination?.('home');
+    document.documentElement.dataset.freshLaunchRoute='home';
+    document.documentElement.dataset.freshLaunchSource=source;
+    return true;
   }
+
+  const startupUrl=currentUrl();
+  const picksRoute=hasPicksRoute(startupUrl);
+  const barePicksInvite=isBarePicksInvite(startupUrl);
+  const resumePicks=hasFreshPicksResume(startupUrl);
+  const preserveBrowserReload=picksRoute&&navigationType==='reload'&&!standalone;
+  const picksContinuation=picksRoute&&(resumePicks||barePicksInvite||preserveBrowserReload);
+  const explicitDeepLink=hasExplicitDeepLink(startupUrl);
+
+  if(picksContinuation)activatePicks(resumePicks?'one-navigation-picks-resume':barePicksInvite?'picks-invite':'browser-reload');
+  else if(!explicitDeepLink)activateHome('startup');
 
   document.addEventListener('click',event=>{
     const trigger=event.target.closest?.('#picksPinSignInButton,[data-group-room],[data-history-room],#picksGroupAddEvent,#picksRoomAction');
     if(trigger)markPicksResume();
   },true);
+
+  function recordHidden(){
+    hiddenAt=Date.now();
+    clearResumeMarker();
+  }
+  function restoreHomeAfterStandaloneResume(source){
+    if(!standalone||!hiddenAt||document.hidden)return false;
+    const elapsed=Date.now()-hiddenAt;
+    hiddenAt=0;
+    if(elapsed<RESUME_HOME_DELAY_MS||hasExplicitDeepLink())return false;
+    return activateHome(source);
+  }
+
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden)recordHidden();
+    else restoreHomeAfterStandaloneResume('standalone-visibility-resume');
+  });
+  window.addEventListener('pagehide',recordHidden);
+  window.addEventListener('pageshow',event=>{
+    if(event.persisted)restoreHomeAfterStandaloneResume('standalone-pageshow-resume');
+  });
 
   if(!document.getElementById('profileSetupReminderScript')){
     const reminder=document.createElement('script');
@@ -75,6 +133,9 @@
     resumePicks,
     navigationType,
     standalone,
-    route
+    route,
+    markPicksResume,
+    activateHome,
+    activatePicks
   };
 })();
