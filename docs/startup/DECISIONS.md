@@ -93,6 +93,24 @@ No file may receive the standard singleton marker merely because another startup
 **Date:** 2026-07-19  
 **Status:** Locked
 
-Routing, native navigation, touch handling, background/resume, profile sign-in, notification, and installed-app changes require physical iPhone verification before merge.
+Routing, native navigation, touch handling, background/resume, profile sign-in, notification, and installed-app changes normally require physical iPhone verification before merge.
 
-An immutable separate-origin snapshot may be used for pre-merge testing when CI does not publish a branch deployment. Failure of that preview to load or install is inconclusive, not approval to merge.
+A preview is valid only when it faithfully reproduces the current production app shell and asset environment. A preview that visibly falls back to an incomplete or outdated presentation must be rejected and must not be used for sign-in or approval.
+
+## Decision 013 — Controlled live verification is a narrow exception
+
+**Date:** 2026-07-19  
+**Status:** Locked
+
+A mobile-sensitive startup batch may use immediate post-merge live verification only when every condition below is true:
+
+- the separate preview environment cannot faithfully reproduce production;
+- the runtime change is guard-only and preserves the exact first execution path;
+- the branch is rebuilt directly from current `main`;
+- the diff is tiny, fully understood, and contains no product or visual changes;
+- all relevant startup, mobile, profile, and lifecycle automated checks pass;
+- the merge is pinned to the tested head;
+- an immediate revert target is recorded;
+- no next runtime batch begins until the real installed app passes physical verification.
+
+PR #100 qualified because it contained only two three-line duplicate-start guards and two contract assertions. This exception does not automatically apply to native navigation, touch handling, notifications, service workers, data loaders, or retry-sensitive owners.
