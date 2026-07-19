@@ -4,9 +4,9 @@
   // Editorial release rule: keep this feed intentionally small.
   // Add one concise card for a major product release and one card for each newly added fighter.
   // Rank and OVR movement must use approved before/after values; never infer history from the current board alone.
-  // Deployment touch: add Wavelength and the shared all-game challenge flow.
+  // Deployment touch: load the immediate all-game challenge controller.
   const source={
-    version:'what-changed-data-20260719a-wavelength-challenges',
+    version:'what-changed-data-20260719b-immediate-challenges',
     timezone:'America/Chicago',
     seenStorageKey:'octagon-hq-what-changed-seen-v1',
     entries:[
@@ -52,7 +52,7 @@
 
   if(!document.querySelector('script[data-all-game-challenges-loader]')){
     const script=document.createElement('script');
-    script.src='assets/js/game-challenges.js?v=game-challenges-20260719a-all-six';
+    script.src='assets/js/game-challenges.js?v=game-challenges-20260719b-immediate-buttons';
     script.async=false;
     script.dataset.allGameChallengesLoader='true';
     document.head.appendChild(script);
