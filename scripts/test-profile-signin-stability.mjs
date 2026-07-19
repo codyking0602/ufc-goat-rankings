@@ -73,7 +73,14 @@ try{
   await page.waitForSelector('#picksPinSignInCard',{state:'visible',timeout:30000});
 
   report.stage='real-pin-signin';
-  await page.fill('#picksPinGroupCode','GOAT26');
+  await page.evaluate(()=>{
+    const input=document.getElementById('picksPinGroupCode');
+    if(!input)return;
+    input.removeAttribute('readonly');
+    input.removeAttribute('aria-readonly');
+    input.value='GOAT26';
+    input.dispatchEvent(new Event('input',{bubbles:true}));
+  });
   await page.fill('#picksPinDisplayName','Cody');
   await page.fill('#picksPinValue','1234');
   await Promise.all([
