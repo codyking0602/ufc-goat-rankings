@@ -1,0 +1,68 @@
+name: One-time backend Picks event advance
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/picks-force-advance-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  advance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      ODDS_REFRESH_SECRET: ${{ secrets.ODDS_REFRESH_SECRET }}
+      PROJECT_REF: hdkjwezaswhisxupxydc
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check required secrets
+        shell: bash
+        run: |
+          test -n "$SUPABASE_ACCESS_TOKEN" || { echo "Missing SUPABASE_ACCESS_TOKEN"; exit 1; }
+          test -n "$ODDS_REFRESH_SECRET" || { echo "Missing ODDS_REFRESH_SECRET"; exit 1; }
+
+      - name: Deploy event advance function
+        shell: bash
+        run: |
+          npx --yes supabase@latest functions deploy advance-picks-event \
+            --project-ref "$PROJECT_REF" \
+            --no-verify-jwt
+
+      - name: Force current event rollover
+        shell: bash
+        run: |
+          curl --fail-with-body --retry 2 \
+            --request POST \
+            --header "content-type: application/json" \
+            --header "x-card-sync-secret: $ODDS_REFRESH_SECRET" \
+            --data '{"source":"one-time-backend-force"}' \
+            "https://$PROJECT_REF.supabase.co/functions/v1/advance-picks-event" \
+            | tee picks-force-advance-result.json
+
+      - name: Validate Abu Dhabi target
+        shell: python
+        run: |
+          import json
+          from pathlib import Path
+
+          data = json.loads(Path('picks-force-advance-result.json').read_text())
+          if data.get('error'):
+              raise SystemExit(data)
+          target = data.get('summary', {}).get('targetEventId')
+          if target != 'ufc-abu-dhabi-2026-07-25':
+              raise SystemExit(f'Unexpected target event: {target}')
+
+      - name: Publish verification result
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add picks-force-advance-result.json
+          git commit -m "Verify backend Picks event advance"
+          git push origin main
