@@ -4,12 +4,20 @@
   // Editorial release rule: keep this feed intentionally small.
   // Add one concise card for a major product release and one card for each newly added fighter.
   // Rank and OVR movement must use approved before/after values; never infer history from the current board alone.
-  // Deployment touch: apply the Octagon HQ notification-branding update.
+  // Deployment touch: add Wavelength and the shared all-game challenge flow.
   const source={
-    version:'what-changed-data-20260718f-phase-3',
+    version:'what-changed-data-20260719a-wavelength-challenges',
     timezone:'America/Chicago',
     seenStorageKey:'octagon-hq-what-changed-seen-v1',
     entries:[
+      {
+        id:'wavelength-game-20260719',
+        publishedAt:'2026-07-19T20:00:00-05:00',
+        type:'New Game',
+        headline:'New game: Wavelength',
+        summary:'Four adaptive UFC clues steer you toward one hidden 1–100 number. Every Play game can now challenge a profile or share by text.',
+        destination:'play'
+      },
       {
         id:'smart-notifications-20260718',
         publishedAt:'2026-07-18T11:46:00-05:00',
@@ -41,4 +49,12 @@
   source.entries.sort((a,b)=>new Date(b.publishedAt)-new Date(a.publishedAt));
   Object.freeze(source.entries);
   window.OCTAGON_CHANGELOG=Object.freeze(source);
+
+  if(!document.querySelector('script[data-all-game-challenges-loader]')){
+    const script=document.createElement('script');
+    script.src='assets/js/game-challenges.js?v=game-challenges-20260719a-all-six';
+    script.async=false;
+    script.dataset.allGameChallengesLoader='true';
+    document.head.appendChild(script);
+  }
 })();
