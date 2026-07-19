@@ -6,13 +6,13 @@ _Last updated: 2026-07-19_
 
 - **Current phase:** Phase 1 — Make startup owners idempotent
 - **Phase 0:** Complete
-- **Phase 1 runtime batches merged and verified:** 4
-- **Latest verified runtime commit:** `7fd6ede029cc307932cb38bc2c9274484b18f403`
-- **Estimated entire cleanup progress:** approximately 20%
+- **Phase 1 runtime batches merged and verified:** 5
+- **Latest verified runtime commit:** `6b0c9442b5a4df46e481296bb8d5cbd3befe1ab7`
+- **Estimated entire cleanup progress:** approximately 24%
 - **Master tracker:** [#102 — Zero-change startup architecture cleanup](https://github.com/codyking0602/ufc-goat-rankings/issues/102)
 - **Visible product changes approved:** none
 - **Major Phase 1 owner audit:** complete in [`PHASE-1-OWNER-AUDIT.md`](./PHASE-1-OWNER-AUDIT.md)
-- **Recommended session state:** start a fresh chat before batch 5; this file is the handoff source of truth
+- **Recommended session state:** start a fresh chat before batch 6; this file is the handoff source of truth
 
 ## Completed runtime batches
 
@@ -49,13 +49,38 @@ Validation passed:
 
 PR #107 was squash-merged as `7fd6ede029cc307932cb38bc2c9274484b18f403`. Cody reported the live app was normal.
 
+### Batch 5 — Native shell stability repair guard
+
+PR #108 protected `native-app-shell-stability.js` from duplicate file evaluation while preserving its public `schedule()` retry API, MutationObserver, click listener, readiness listeners, delayed repair passes, profile snapshot repair, Home spotlight repair, NEW-button normalization, drawer synchronization, and first-run behavior.
+
+The prerequisite/retry inspection confirmed that the file does not exit early on missing DOM or data. Required later repair attempts already run through `schedule()` and the existing event/timer paths, so the top-level marker blocks only accidental duplicate ownership.
+
+Final diff:
+
+- 4 additions;
+- 0 deletions;
+- 2 files.
+
+Validation passed:
+
+- JavaScript syntax;
+- startup ownership contract;
+- iOS startup route stability;
+- profile sign-in startup stability;
+- delayed Home/community stability;
+- real installed-iPhone cold launch, Home/profile/header repair behavior, bottom-navigation/touch behavior, background/resume, and return-to-Home behavior.
+
+PR #108 was squash-merged as `6b0c9442b5a4df46e481296bb8d5cbd3befe1ab7`. Cody reported the live app was normal.
+
+Removal or consolidation of this temporary repair layer remains deferred to Phase 3 after source behavior has dedicated regression coverage.
+
 ## Next Phase 1 batch
 
-The next isolated owner is `assets/js/native-app-shell-stability.js`.
+The next isolated owner is `assets/js/app-notification-center.js`.
 
-This is a temporary mobile/native repair layer. The next session must first inspect its exact current execution path and confirm that a simple top-level guard cannot suppress a required prerequisite retry. The allowed runtime scope is expected to be one singleton marker plus one startup-contract assertion only, but that must be reconfirmed from current `main` before editing.
+This is the intended canonical notification owner and is mobile-sensitive. The next session must inspect its exact current execution path, including service-worker registration, profile-surface setup, closure-scoped `state.started`, observers, listeners, and whether any second file execution currently acts as an accidental prerequisite retry.
 
-Removal or consolidation of the repair layer is not part of Phase 1. That belongs to Phase 3 after source behavior has dedicated regression coverage.
+The allowed runtime scope is expected to be one duplicate-file marker plus one startup-contract assertion only if current `main` confirms that first-run and retry behavior remain intact. Notification rendering, permission behavior, profile surfaces, service-worker behavior, observers, copy, styling, and product behavior must not change.
 
 ## Existing unrelated red checks
 
@@ -70,18 +95,18 @@ Removal or consolidation of the repair layer is not part of Phase 1. That belong
 ## Exact next action
 
 1. Start a fresh chat and read this file, `DECISIONS.md`, `OWNERS.md`, `PHASE-1-OWNER-AUDIT.md`, and issue #102.
-2. Inspect current `main` for `assets/js/native-app-shell-stability.js` prerequisite and retry behavior.
+2. Inspect current `main` for `assets/js/app-notification-center.js` prerequisite, retry, service-worker, profile-surface, listener, and observer behavior.
 3. Create a fresh branch from current `main`.
 4. Keep the runtime batch isolated to that owner and its contract assertion.
-5. Run the full Startup Architecture Gate.
-6. Use a controlled live rollout and real installed-iPhone verification before beginning batch 6.
-7. After every physical iPhone result, report the estimated percentage complete for the entire cleanup and whether a new chat is recommended.
+5. Run the full Startup Architecture Gate and notification/profile-relevant validation.
+6. Use a controlled live rollout and real installed-iPhone verification before beginning batch 7.
+7. After the physical iPhone result, report the estimated percentage complete for the entire cleanup and whether a new chat is recommended.
 
 ## Stop conditions
 
 Stop and leave the next batch draft if:
 
-- mobile navigation, profile, Home, header, touch, resize, or background/resume behavior changes;
-- a repair pass appears to be serving as an intentional retry rather than accidental duplicate execution;
-- a blank screen, flicker, duplicated shell, stale view, route bounce, or double-handled tap occurs;
-- the diff begins removing repair logic or changing timers, observers, styling, scoring, fighter data, photos, or product behavior.
+- notification permissions, rendering, unread state, service-worker registration, profile surfaces, navigation, touch, or background/resume behavior changes;
+- a second execution appears to be serving as an intentional prerequisite retry;
+- a duplicate notification, duplicated observer/listener, repeated permission prompt, blank state, flicker, stale profile surface, route bounce, or double-handled tap occurs;
+- the diff begins changing service-worker logic, notification data, styling, scoring, fighter data, photos, or product behavior.

@@ -126,3 +126,12 @@ After every physical iPhone verification result, the response must include two b
 - whether continuing in the current chat is still safe or a fresh chat is recommended.
 
 The percentage is an honest planning estimate based on all phases, remaining owner risk, regression coverage, repair retirement, load-order cleanup, and rollout work. It is not a simple count of merged pull requests.
+
+## Decision 015 — Repair retries must remain callable after duplicate-file protection
+
+**Date:** 2026-07-19  
+**Status:** Locked
+
+A temporary repair layer may receive a top-level duplicate-file marker only when required later repair attempts are already owned by an explicit callable API or by preserved event/timer paths rather than by re-evaluating the file.
+
+For `native-app-shell-stability.js`, the public `schedule()` API plus its readiness events, MutationObserver, and delayed passes are the intentional retry mechanism. PR #108 therefore blocks only a second closure, listener set, observer, timer set, and replacement API. The repair implementation itself remains unchanged and cannot be removed or consolidated until Phase 3 regression coverage exists.
