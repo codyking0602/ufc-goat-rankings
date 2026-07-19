@@ -14,20 +14,55 @@
   let timer=0;
   let running=false;
 
-  function ownedGroupCodes(){
-    try{
-      return Object.keys(localStorage)
-        .filter(key=>key.startsWith(GROUP_TOKEN_PREFIX))
-        .map(key=>key.slice(GROUP_TOKEN_PREFIX.length))
-        .filter(code=>code && localStorage.getItem(`${GROUP_ADMIN_PREFIX}${code}`));
-    }catch(_error){
-      return [];
+  const normalize=value=>String(value || '').trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6);
+
+  function storageKeys(){
+    try{ return Object.keys(localStorage); }
+    catch(_error){ return []; }
+  }
+
+  function groupCodes(){
+    return storageKeys()
+      .filter(key=>key.startsWith(GROUP_TOKEN_PREFIX))
+      .map(key=>normalize(key.slice(GROUP_TOKEN_PREFIX.length)))
+      .filter(Boolean);
+  }
+
+  function legacyAdminTokens(){
+    const values=storageKeys()
+      .filter(key=>key.startsWith(ROOM_ADMIN_PREFIX) || key.startsWith(GROUP_ADMIN_PREFIX))
+      .map(key=>localStorage.getItem(key))
+      .filter(Boolean);
+    return [...new Set(values)];
+  }
+
+  async function recoverLastRoomGroup(){
+    const room=normalize(localStorage.getItem('ufc-picks:last-room'));
+    const memberToken=room ? localStorage.getItem(`${ROOM_TOKEN_PREFIX}${room}`) : null;
+    if(!room || !memberToken) return null;
+
+    const candidates=[localStorage.getItem(`${ROOM_ADMIN_PREFIX}${room}`),...legacyAdminTokens()].filter(Boolean);
+    if(!candidates.length) candidates.push(null);
+
+    for(const adminToken of [...new Set(candidates)]){
+      const {data,error}=await client.rpc('picks_group_for_room',{
+        p_room_code:room,
+        p_member_token:memberToken,
+        p_admin_token:adminToken || null
+      });
+      if(error || !data?.group_code) continue;
+      const code=normalize(data.group_code);
+      if(!code) continue;
+      localStorage.setItem(`${GROUP_TOKEN_PREFIX}${code}`,memberToken);
+      if(data.is_admin && adminToken) localStorage.setItem(`${GROUP_ADMIN_PREFIX}${code}`,adminToken);
+      return code;
     }
+    return null;
   }
 
   function eventIsStillOpen(event){
-    if(!event || !OPEN_EVENT_STATUSES.has(event.status)) return false;
-    if(event.status==='live') return true;
+    if(!event || !OPEN_EVENT_STATUSES.has(String(event.status || '').toLowerCase())) return false;
+    if(String(event.status || '').toLowerCase()==='live') return true;
     const time=new Date(event.event_date || event.eventDate || 0).getTime();
     return Number.isFinite(time) && time>=Date.now()-STALE_EVENT_GRACE_MS;
   }
@@ -54,6 +89,7 @@
     try{
       localStorage.setItem(`${ROOM_TOKEN_PREFIX}${roomCode}`,memberToken);
       localStorage.setItem(`${ROOM_ADMIN_PREFIX}${roomCode}`,adminToken);
+      localStorage.setItem(`${GROUP_ADMIN_PREFIX}${groupCode}`,adminToken);
       localStorage.setItem('ufc-picks:last-room',roomCode);
     }catch(_error){}
     if(!picksIsOpen()) return;
@@ -66,24 +102,36 @@
     location.replace(url.toString());
   }
 
+  async function loadOwnerSnapshot(code,memberToken){
+    const direct=localStorage.getItem(`${GROUP_ADMIN_PREFIX}${code}`);
+    const candidates=[direct,...legacyAdminTokens()].filter(Boolean);
+    for(const adminToken of [...new Set(candidates)]){
+      const {data,error}=await client.rpc('picks_group_snapshot',{
+        p_group_code:code,
+        p_member_token:memberToken,
+        p_admin_token:adminToken
+      });
+      if(error || !data) continue;
+      if(data.group?.is_admin){
+        localStorage.setItem(`${GROUP_ADMIN_PREFIX}${code}`,adminToken);
+        return {snapshot:data,adminToken};
+      }
+    }
+    return null;
+  }
+
   async function advance(){
     if(running) return;
-    const codes=ownedGroupCodes();
-    if(!codes.length) return;
     running=true;
     try{
-      for(const code of codes){
+      await recoverLastRoomGroup();
+      for(const code of [...new Set(groupCodes())]){
         const memberToken=localStorage.getItem(`${GROUP_TOKEN_PREFIX}${code}`);
-        const adminToken=localStorage.getItem(`${GROUP_ADMIN_PREFIX}${code}`);
-        if(!memberToken || !adminToken) continue;
+        if(!memberToken) continue;
+        const owner=await loadOwnerSnapshot(code,memberToken);
+        if(!owner) continue;
 
-        const {data:snapshot,error:snapshotError}=await client.rpc('picks_group_snapshot',{
-          p_group_code:code,
-          p_member_token:memberToken,
-          p_admin_token:adminToken
-        });
-        if(snapshotError || !snapshot?.group?.is_admin) continue;
-
+        const {snapshot,adminToken}=owner;
         const active=(snapshot.events || []).find(event=>event.is_active);
         if(eventIsStillOpen(active)) continue;
         const target=nextOpenEvent(snapshot);
@@ -102,9 +150,7 @@
         openRoom(code,data.room_code,data.event_id,memberToken,adminToken);
       }
     }catch(_error){}
-    finally{
-      running=false;
-    }
+    finally{ running=false; }
   }
 
   function schedule(delay=0){
