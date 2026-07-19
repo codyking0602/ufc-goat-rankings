@@ -7,7 +7,7 @@ const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const read=relative=>fs.readFileSync(path.join(root,relative),'utf8');
 const index=read('index.html');
 
-const sources=[...index.matchAll(/<script\b[^>]*\bsrc=["']([^#']+)[#'][^>]*>/gi)].map(match=>match[1]);
+const sources=[...index.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/gi)].map(match=>match[1]);
 const localSources=sources.filter(source=>!/^https?:\/\//i.test(source));
 const localPaths=localSources.map(source=>source.split('?')[0]);
 const positions=new Map(localPaths.map((source,index)=>[source,index]));
