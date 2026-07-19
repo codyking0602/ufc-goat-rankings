@@ -2,7 +2,7 @@
   'use strict';
 
   const GPT_URL='https://chatgpt.com/g/g-6a4c40425d4881919ddebc7231bff09f-octagon-verdict';
-  const VERSION='intelligence-20260719a-shanes-watchlist';
+  const VERSION='intelligence-20260719b-watchlist-removed';
   const PROMPTS=[
     {icon:'👑',text:'Who is the best UFC fighter never to win undisputed gold?'},
     {icon:'📈',text:'What would Islam need to reach the top three?'},
@@ -46,84 +46,8 @@
     }));
   }
 
-  function node(tag,className,text){
-    const element=document.createElement(tag);
-    if(className)element.className=className;
-    if(text!==undefined&&text!==null)element.textContent=String(text);
-    return element;
-  }
-
-  function renderWatchCard(fighter,index){
-    const card=node('article',`shane-watch-card${index===0?' is-featured':''}`);
-    card.dataset.shaneWatchFighter=fighter.id||'';
-
-    const top=node('div','shane-watch-card-top');
-    top.append(node('span','shane-watch-status',fighter.status||'Watching'),node('span','shane-watch-added',fighter.added||''));
-
-    const identity=node('div','shane-watch-identity');
-    const avatar=node('div','shane-watch-avatar',fighter.initials||fighter.name?.slice(0,2)||'FW');
-    avatar.setAttribute('aria-hidden','true');
-    const nameWrap=node('div','shane-watch-name-wrap');
-    nameWrap.append(node('h4','shane-watch-name',fighter.name||'Fighter'));
-    if(fighter.nickname)nameWrap.append(node('span','shane-watch-nickname',`“${fighter.nickname}”`));
-    identity.append(avatar,nameWrap);
-
-    const meta=[fighter.division,fighter.age?`Age ${fighter.age}`:'',fighter.country].filter(Boolean).join(' · ');
-    const metaNode=node('p','shane-watch-meta',meta);
-    const snapshotLabel=node('div','shane-watch-snapshot-label','At Shane’s call');
-    const stats=node('div','shane-watch-stats');
-    (fighter.snapshot||[]).slice(0,3).forEach(stat=>{
-      const statNode=node('div','shane-watch-stat');
-      statNode.append(node('strong','',stat.value),node('span','',stat.label));
-      stats.append(statNode);
-    });
-
-    card.append(top,identity,metaNode,snapshotLabel,stats);
-    if(fighter.quote)card.append(node('blockquote','shane-watch-quote',`“${fighter.quote}”`));
-    else if(fighter.note)card.append(node('p','shane-watch-note',fighter.note));
-
-    const footer=node('div','shane-watch-footer');
-    if(fighter.comparison){
-      const comparison=node('span','');
-      comparison.append('Shane’s comp: ',node('strong','',fighter.comparison));
-      footer.append(comparison);
-    }else{
-      footer.append(node('span','','Why he’s here'));
-    }
-    footer.append(node('span','shane-watch-highlight',fighter.highlight||''));
-    card.append(footer);
-    return card;
-  }
-
-  function renderShanesWatchlist(){
-    const data=window.SHANES_FIGHTERS_TO_WATCH;
-    const content=document.querySelector('.intelligence-content');
-    const prompts=content?.querySelector('.intelligence-prompts');
-    if(!content||!prompts||!Array.isArray(data?.fighters)||!data.fighters.length||content.querySelector('.shane-watchlist'))return;
-
-    const section=node('section','shane-watchlist');
-    section.setAttribute('aria-labelledby','shaneWatchlistTitle');
-
-    const head=node('div','shane-watchlist-head');
-    const copy=node('div','shane-watchlist-copy');
-    copy.append(
-      node('span','shane-watchlist-kicker','Scouting board'),
-      node('h3','shane-watchlist-title',data.title||'Shane’s Fighters to Watch'),
-      node('p','shane-watchlist-subtitle',data.subtitle||'Early calls. No hindsight. No cap.')
-    );
-    copy.querySelector('.shane-watchlist-title').id='shaneWatchlistTitle';
-    const count=node('span','shane-watchlist-count',`${data.fighters.length} active`);
-    head.append(copy,count);
-
-    const grid=node('div','shane-watch-grid');
-    data.fighters.forEach((fighter,index)=>grid.append(renderWatchCard(fighter,index)));
-    section.append(head,grid);
-    prompts.before(section);
-  }
-
   ensureIntelligenceLabel();
   renderStarterPrompts();
-  renderShanesWatchlist();
   const tabs=document.querySelector('.tabs');
   if(tabs)new MutationObserver(ensureIntelligenceLabel).observe(tabs,{childList:true,subtree:true,characterData:true});
   window.addEventListener?.('ufc-production-ranking-ready',ensureIntelligenceLabel);
@@ -276,6 +200,6 @@
     decorateBlindReveal();
   }
 
-  window.UFC_INTELLIGENCE={version:VERSION,copyText,showToast,activate:activateIntelligence,blindResumePrompt,renderShanesWatchlist};
+  window.UFC_INTELLIGENCE={version:VERSION,copyText,showToast,activate:activateIntelligence,blindResumePrompt};
   document.documentElement.setAttribute('data-intelligence',VERSION);
 })();
