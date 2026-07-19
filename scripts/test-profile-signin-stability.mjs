@@ -57,18 +57,25 @@ const supabaseStub=`
 })();
 `;
 
-try{
-  browser=await chromium.launch({headless:true});
-  page=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true});
-  await page.addInitScript(()=>Object.defineProperty(navigator,'standalone',{value:true,configurable:true}));
-  await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',route=>route.fulfill({status:200,contentType:'application/javascript',body:supabaseStub}));
-  page.on('console',message=>{if(message.type()==='error')report.consoleErrors.push(message.text());});
-  page.on('pageerror',error=>report.consoleErrors.push(error.stack||error.message));
-  page.on('request',request=>{
-    if(request.isNavigationRequest()&&request.frame()===page.mainFrame()&&request.url().startsWith('http://127.0.0.1:4173/')){
+function observePage(target){
+  target.on('console',message=>{if(message.type()==='error')report.consoleErrors.push(message.text());});
+  target.on('pageerror',error=>report.consoleErrors.push(error.stack||error.message));
+  target.on('request',request=>{
+    if(request.isNavigationRequest()&&request.frame()===target.mainFrame()&&request.url().startsWith('http://127.0.0.1:4173/')){
       report.navigationRequests.push(request.url());
     }
   });
+}
+
+async function stubSupabase(target){
+  await target.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',route=>route.fulfill({status:200,contentType:'application/javascript',body:supabaseStub}));
+}
+
+try{
+  browser=await chromium.launch({headless:true});
+  page=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true});
+  await stubSupabase(page);
+  observePage(page);
 
   report.stage='launch';
   await page.goto('http://127.0.0.1:4173/index.html#home',{waitUntil:'domcontentloaded',timeout:60000});
@@ -110,7 +117,13 @@ try{
   assert.deepEqual(report.activeViews,['picks'],'Signed-in Picks did not remain the only active app view.');
 
   report.stage='cold-launch-home';
-  await page.goto(report.finalUrl,{waitUntil:'domcontentloaded',timeout:60000});
+  const coldUrl=report.finalUrl;
+  const context=page.context();
+  await page.close();
+  page=await context.newPage();
+  await stubSupabase(page);
+  observePage(page);
+  await page.goto(coldUrl,{waitUntil:'domcontentloaded',timeout:60000});
   await page.waitForFunction(()=>window.UFC_APP_SHELL&&document.querySelector('#home')?.classList.contains('active-view'),null,{timeout:60000});
   await page.waitForTimeout(1800);
 
@@ -134,9 +147,9 @@ try{
   assert.deepEqual(report.coldActiveViews,['home'],'Cold launch did not leave Home as the only active app view.');
   assert.equal(report.navigationRequests.length,3,`Expected initial load, successful-login navigation, and simulated cold launch; received ${report.navigationRequests.length}.`);
   assert.equal(report.scriptCounts.productArchitecture,1,'Product architecture loaded more than once.');
-  assert.equal(report.scriptCounts.nativeShell,1,'Native app shell loaded more than once.');
-  assert.equal(report.scriptCounts.notificationSurface,1,'Notification surface loaded more than once.');
-  assert.equal(report.scriptCounts.bottomNav,1,'Native bottom navigation was duplicated.');
+  assert.equal(report.scriptCounts.nativeShell,1,'Profile sign-in caused another native shell load.');
+  assert.equal(report.scriptCounts.notificationSurface,1,'Profile sign-in caused another notification surface load.');
+  assert.equal(report.scriptCounts.bottomNav,1,'Profile sign-in duplicated the native navigation.');
 
   const featureErrors=report.consoleErrors.filter(message=>/fresh-home-launch|picks-persistent-groups|picks-member-pin|SyntaxError|ReferenceError/i.test(message));
   assert.deepEqual(featureErrors,[],'Picks sign-in or cold-launch routing emitted an error.');
