@@ -1,4 +1,5 @@
 name: One-time Abu Dhabi Picks hero
+# rerun: repaired chunk
 
 on:
   push:
