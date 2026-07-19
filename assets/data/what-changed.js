@@ -6,10 +6,18 @@
   // Rank and OVR movement must use approved before/after values; never infer history from the current board alone.
   // Deployment touch: load the immediate all-game challenge controller.
   const source={
-    version:'what-changed-data-20260719b-immediate-challenges',
+    version:'what-changed-data-20260719c-shane-watchlist',
     timezone:'America/Chicago',
     seenStorageKey:'octagon-hq-what-changed-seen-v1',
     entries:[
+      {
+        id:'shanes-fighters-to-watch-20260719',
+        publishedAt:'2026-07-19T09:00:00-05:00',
+        type:'New Feature',
+        headline:'New: Shane’s Fighters to Watch',
+        summary:'A new scouting board at the bottom of Home tracks Shane’s early prospect calls, led by Fatima “The Archangel” Kline, with UFC profile links and headshots as they are added.',
+        destination:'home'
+      },
       {
         id:'wavelength-game-20260719',
         publishedAt:'2026-07-19T20:00:00-05:00',
