@@ -81,6 +81,9 @@ assert(shell.includes('let started=false'),'The app shell must keep its single-s
 assert(shell.includes('if(started){syncNavigation();return true;}'),'The app shell must remain idempotent.');
 assert(shell.includes('window.UFC_APP_SHELL=api'),'The app shell must remain the canonical navigation API.');
 
+const navGrid=read('assets/js/octagon-hq-nav-grid.js');
+assert(navGrid.includes('__UFC_OCTAGON_HQ_NAV_GRID_STARTED__'),'The nav-grid cleanup must keep its global duplicate-file-execution guard.');
+
 const product=read('assets/js/product-architecture.js');
 assert(product.includes('__UFC_PRODUCT_ARCHITECTURE_STARTED__'),'Product architecture must keep its global duplicate-start guard.');
 assert.equal(product.includes('loadNativeShell'),false,'Product architecture must not dynamically load the native shell.');
