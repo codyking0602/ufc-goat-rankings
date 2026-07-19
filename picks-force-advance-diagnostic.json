@@ -1,0 +1,22 @@
+{
+  "deploy_outcome": "success",
+  "force_outcome": "success",
+  "has_supabase_access_token": true,
+  "has_odds_refresh_secret": true,
+  "http_status": "200",
+  "response": {
+    "advanced": false,
+    "summary": {
+      "targetEventId": "ufc-oklahoma-city-2026-07-18",
+      "targetEventName": "UFC Oklahoma City \u00b7 Du Plessis vs. Usman",
+      "groupsChecked": 4,
+      "groupsEligible": 0,
+      "groupsAdvanced": 0,
+      "roomsCreated": 0,
+      "roomsReused": 0,
+      "membersAdded": 0,
+      "advanced": []
+    },
+    "advancedAt": "2026-07-19T17:35:31.809Z"
+  }
+}
