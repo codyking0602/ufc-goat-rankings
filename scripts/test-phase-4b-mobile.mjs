@@ -13,6 +13,8 @@ const report={
   viewChanges:[],
   directoryReplacements:0,
   profileReplacements:0,
+  top10Saved:false,
+  sharedProfileOpenedPicks:false,
   consoleErrors:[],
   error:null
 };
@@ -45,7 +47,7 @@ try{
 
   report.stage='inject-community-fixture';
   await page.evaluate(async fixtureMembers=>{
-    const identity={memberToken:'phase-4b-preview-token',member:fixtureMembers[0],group:{code:'GOAT26',members:fixtureMembers,me:fixtureMembers[0]}};
+    const identity={memberToken:'phase-4b-preview-token',member:fixtureMembers[0],rooms:[],group:{code:'GOAT26',members:fixtureMembers,me:fixtureMembers[0]}};
     const picksMembers=fixtureMembers.map((member,index)=>({
       ...member,
       points:Math.max(0,60-index*7),
@@ -61,10 +63,14 @@ try{
       rpc:async(name,args)=>{
         if(name==='app_profile_community_snapshot')return{data:{ok:true,group:{code:'GOAT26',name:'Octagon HQ',member_count:fixtureMembers.length},me_id:'m1',members:fixtureMembers},error:null};
         if(name==='app_profile_group_snapshot')return{data:{ok:true,group:{code:'GOAT26',name:'Octagon HQ'},me:fixtureMembers[0],members:fixtureMembers},error:null};
-        if(name==='app_profile_set_top_ten')return{data:{ok:true,member_id:'m1',top_ten:args?.p_top_ten||[],top_ten_updated_at:new Date().toISOString()},error:null};
+        if(name==='app_profile_set_top_ten'){
+          window.__phase4bSavedTop10=args?.p_top_ten||[];
+          return{data:{ok:true,member_id:'m1',top_ten:args?.p_top_ten||[],top_ten_updated_at:new Date().toISOString()},error:null};
+        }
         if(name==='picks_group_snapshot')return{data:{group:{code:'GOAT26',season:{correct_points:4}},me:picksMembers[0],members:picksMembers,events:[]},error:null};
         if(name==='picks_public_events')return{data:[],error:null};
         if(name==='picks_social_snapshot')return{data:{group:{me:{id:'m1'},members:[]}},error:null};
+        if(name==='picks_member_pin_status')return{data:{has_pin:true},error:null};
         return{data:null,error:null};
       }
     };
@@ -80,6 +86,7 @@ try{
   await page.waitForSelector('#communityProfilesMount .community-directory',{timeout:30000});
   await page.waitForFunction(()=>document.querySelectorAll('[data-community-member]').length===6,null,{timeout:30000});
   await page.waitForTimeout(500);
+  assert.equal(await page.locator('#communityProfilesMount .community-directory').evaluate(node=>node.open),false,'Member directory should start collapsed.');
 
   await page.evaluate(()=>{
     const mount=document.getElementById('communityProfilesMount');
@@ -135,6 +142,32 @@ try{
   assert(report.delayedSamples.every(sample=>sample.home&&sample.directories===1&&sample.members===6),'Directory did not survive the delayed stability window.');
   assert(report.delayedSamples.every(sample=>sample.sameNode&&sample.replacements===0),'Directory was replaced after the delayed refresh window.');
 
+  report.stage='profile-top10-editor';
+  await page.locator('.community-directory-summary').click();
+  assert.equal(await page.locator('#communityProfilesMount .community-directory').evaluate(node=>node.open),true,'Member directory did not expand.');
+  const viewCountBeforeTop10=(await page.evaluate(()=>window.__phase4bViewChanges.length));
+  await page.locator('[data-community-build-top10]').click();
+  await page.waitForSelector('.community-top10-overlay .community-top10-panel',{state:'visible',timeout:30000});
+  assert(await page.locator('#home').evaluate(node=>node.classList.contains('active-view')),'Top 10 editor left Home.');
+  assert.equal(await page.locator('#play').evaluate(node=>node.classList.contains('active-view')),false,'Top 10 editor opened the Play game.');
+  await page.locator('[data-top10-save]').click();
+  await page.waitForSelector('.community-top10-overlay',{state:'detached',timeout:10000});
+  report.top10Saved=await page.evaluate(()=>Array.isArray(window.__phase4bSavedTop10)&&window.__phase4bSavedTop10.length===10);
+  assert.equal(report.top10Saved,true,'Top 10 did not save directly to the profile RPC.');
+  const top10ViewChanges=(await page.evaluate(index=>window.__phase4bViewChanges.slice(index),viewCountBeforeTop10));
+  assert.equal(top10ViewChanges.some(change=>change.destination==='play'),false,'Top 10 action routed through Play.');
+
+  await page.evaluate(()=>{
+    window.__phase4bDirectoryObserver?.disconnect();
+    const mount=document.getElementById('communityProfilesMount');
+    window.__phase4bDirectoryNode=mount?.querySelector('.community-directory')||null;
+    window.__phase4bDirectoryReplacements=0;
+    window.__phase4bDirectoryObserver=new MutationObserver(records=>{
+      if(records.some(record=>record.type==='childList'))window.__phase4bDirectoryReplacements+=1;
+    });
+    if(mount)window.__phase4bDirectoryObserver.observe(mount,{childList:true});
+  });
+
   report.stage='public-profile-open';
   report.memberCount=await page.locator('[data-community-member]').count();
   const shaneCard=page.locator('[data-community-member]').filter({hasText:'Shane'}).first();
@@ -168,6 +201,15 @@ try{
   await page.locator('[data-community-close]').first().click();
   await page.waitForSelector('.community-profile-overlay',{state:'detached',timeout:10000});
   assert(await page.locator('#home').evaluate(node=>node.classList.contains('active-view')),'Closing a member profile left Home.');
+
+  report.stage='shared-profile-picks-access';
+  await page.evaluate(()=>window.UFC_APP_SHELL.activateDestination('picks'));
+  await page.waitForFunction(()=>document.querySelector('#picks')?.classList.contains('active-view'),null,{timeout:10000});
+  await page.waitForTimeout(600);
+  report.sharedProfileOpenedPicks=await page.evaluate(()=>{const token=localStorage.getItem('ufc-picks:group:GOAT26')||'';const card=document.getElementById('picksPinSignInCard');return Boolean(token)&&(!card||card.hidden||getComputedStyle(card).display==='none');});
+  assert.equal(report.sharedProfileOpenedPicks,true,'The shared Octagon HQ profile did not carry into Picks.');
+  await page.evaluate(()=>window.UFC_APP_SHELL.activateDestination('home'));
+  await page.waitForFunction(()=>document.querySelector('#home')?.classList.contains('active-view'),null,{timeout:10000});
 
   report.stage='final-stability';
   await page.waitForTimeout(1500);

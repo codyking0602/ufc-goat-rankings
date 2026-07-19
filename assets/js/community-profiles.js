@@ -1,15 +1,23 @@
 (function(){
   'use strict';
 
-  const VERSION='community-profiles-20260718g-production-stable';
+  const VERSION='community-profiles-20260718h-collapsed-top10-profile';
   const TOP10_KEY='ufc-goat-play-top10-v1';
   const TARGET_KEY='octagon-hq:challenge-target-v2';
+  const CANONICAL_CODE='GOAT26';
+  const GROUP_TOKEN_PREFIX='ufc-picks:group:';
+  const ROOM_TOKEN_PREFIX='ufc-picks:room:';
+  const ACTIVE_GROUP_KEY='ufc-player:group-code';
   const REFRESH_AGE_MS=30000;
   const state={
     identity:null,
     snapshot:null,
     loading:null,
     overlay:null,
+    top10Editor:null,
+    top10Rows:[],
+    top10Query:'',
+    top10ReturnToProfile:false,
     lastLoadedAt:0,
     lastDirectorySignature:'',
     lastProfileSignature:'',
@@ -34,6 +42,7 @@
       return Array.isArray(rows)?rows.map(text).filter(Boolean).slice(0,10):[];
     }catch(_error){return[];}
   }
+  function storeLocalTop10(rows){try{localStorage.setItem(TOP10_KEY,JSON.stringify(rows));}catch(_error){}}
   function identityMemberId(identity=state.identity){return identity?.member?.id||'';}
   function currentMemberId(){return state.snapshot?.me_id||identityMemberId()||window.UFC_APP_PROFILE?.group?.me?.id||'';}
   function fallbackMembers(){return Array.isArray(window.UFC_APP_PROFILE?.group?.members)?window.UFC_APP_PROFILE.group.members:[];}
@@ -103,6 +112,30 @@
     return days<7?`Active ${days}d ago`:new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric'}).format(new Date(value));
   }
 
+  function syncPicksAccess(identity=state.identity){
+    const token=tokenFor(identity);
+    if(!token)return false;
+    try{
+      localStorage.setItem(`${GROUP_TOKEN_PREFIX}${CANONICAL_CODE}`,token);
+      localStorage.setItem(ACTIVE_GROUP_KEY,CANONICAL_CODE);
+      if(identity?.member?.display_name)localStorage.setItem('ufc-picks:display-name',text(identity.member.display_name));
+      (identity?.rooms||[]).forEach(room=>{
+        const code=text(room?.code).toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6);
+        if(code)localStorage.setItem(`${ROOM_TOKEN_PREFIX}${code}`,token);
+      });
+    }catch(_error){}
+    const picksActive=document.getElementById('picks')?.classList.contains('active-view')||location.hash==='#picks';
+    if(picksActive){
+      const url=new URL(location.href);
+      if(!url.searchParams.get('group')){
+        url.searchParams.set('group',CANONICAL_CODE);
+        history.replaceState(history.state,'',`${url.pathname}${url.search}${url.hash||'#picks'}`);
+      }
+    }
+    window.UFCPicksPinAuth?.refresh?.();
+    return true;
+  }
+
   function ensureMount(){
     const home=document.getElementById('home');
     const dashboard=document.getElementById('homeDashboardMount');
@@ -155,8 +188,10 @@
     const mine=rows.find(member=>member.id===currentMemberId());
     const signature=directorySignature(rows);
     if(signature===state.lastDirectorySignature&&mount.firstElementChild)return true;
+    const wasOpen=Boolean(mount.querySelector('.community-directory')?.open);
     state.lastDirectorySignature=signature;
-    mount.innerHTML=`<section class="home-dashboard-card community-directory"><header class="community-directory-head"><div><span>OCTAGON HQ COMMUNITY</span><strong>Member Profiles</strong><small>Open a profile to see Picks, Play, War Room activity, achievements, and personal rankings.</small></div><div class="community-directory-head-actions"><b>${rows.length} PROFILES</b>${mine&&top10(mine).length!==10?'<button type="button" class="community-directory-action primary" data-community-build-top10>BUILD YOUR TOP 10</button>':'<button type="button" class="community-directory-action" data-community-open-self>OPEN YOUR PROFILE</button>'}</div></header>${rows.length?`<div class="community-member-grid">${rows.map(directoryCard).join('')}</div>`:'<div class="community-directory-empty">Member profiles will appear after your GOAT26 profile loads.</div>'}</section>`;
+    const top10Label=mine&&top10(mine).length===10?'EDIT YOUR TOP 10':'BUILD YOUR TOP 10';
+    mount.innerHTML=`<details class="home-dashboard-card community-directory"${wasOpen?' open':''}><summary class="community-directory-summary"><div><span>OCTAGON HQ COMMUNITY</span><strong>Member Profiles</strong></div><div class="community-directory-summary-meta"><b>${rows.length} PROFILE${rows.length===1?'':'S'}</b><i aria-hidden="true">⌄</i></div></summary><div class="community-directory-body"><div class="community-directory-intro"><small>Open a profile to see Picks, Play, War Room activity, achievements, and personal rankings.</small><div class="community-directory-actions">${mine?`<button type="button" class="community-directory-action primary" data-community-build-top10>${top10Label}</button><button type="button" class="community-directory-action" data-community-open-self>OPEN YOUR PROFILE</button>`:''}</div></div>${rows.length?`<div class="community-member-grid">${rows.map(directoryCard).join('')}</div>`:'<div class="community-directory-empty">Member profiles will appear after your GOAT26 profile loads.</div>'}</div></details>`;
     return true;
   }
 
@@ -165,6 +200,7 @@
     state.identity=await window.UFC_APP_PROFILE?.resolve?.().catch(()=>null)
       ||await window.UFC_PLAY_PROFILE?.resolve?.().catch(()=>null)
       ||null;
+    syncPicksAccess(state.identity);
     return state.identity;
   }
   async function load(force=false){
@@ -195,9 +231,28 @@
     return state.loading;
   }
 
+  function fighterRecord(name){
+    const direct=window.UFC_PLAY_DATA?.resolve?.(name)||window.UFC_PLAY_DATA?.byName?.[name]||null;
+    if(direct)return direct;
+    const row=[...(window.RANKING_DATA?.men||[]),...(window.RANKING_DATA?.women||[])].find(item=>text(item?.fighter||item?.name)===name);
+    return row?{name:row.fighter||row.name,id:row.id||norm(row.fighter||row.name).replace(/ /g,'-')}:null;
+  }
   function fighterThumb(name){
+    const fighter=fighterRecord(name)||{};
     const override=window.DISPLAY_OVERRIDES?.[name]||{};
-    return text(override.thumbUrl||override.photoUrl||override.thumb||override.photo);
+    return text(fighter.thumbUrl||fighter.photoUrl||fighter.thumb||fighter.photo||override.thumbUrl||override.photoUrl||override.thumb||override.photo);
+  }
+  function top10Roster(query=''){
+    const needle=norm(query);
+    const fromPlay=window.UFC_PLAY_DATA?.search?.(query,{limit:120,filters:{}})||[];
+    const rows=fromPlay.length?fromPlay:[...(window.RANKING_DATA?.men||[]),...(window.RANKING_DATA?.women||[])].map(row=>({name:row.fighter||row.name,id:row.id}));
+    const seen=new Set();
+    return rows.map(row=>({name:text(row?.name||row?.fighter),id:text(row?.id)})).filter(row=>row.name).filter(row=>{
+      const key=norm(row.name);
+      if(seen.has(key)||(!key.includes(needle)&&needle))return false;
+      seen.add(key);
+      return true;
+    });
   }
   function top10Markup(member){
     const rows=top10(member);
@@ -269,11 +324,60 @@
     return true;
   }
 
-  function openTop10(){
-    closeProfile();
-    window.UFC_APP_SHELL?.activateDestination?.('play')||window.UFC_PRODUCT_ARCHITECTURE?.activateDestination?.('play');
-    window.setTimeout(()=>window.UFC_PLAY_HUB?.openGame?.('top10'),60);
+  function closeTop10Editor(){
+    state.top10Editor?.remove();
+    state.top10Editor=null;
+    state.top10Rows=[];
+    state.top10Query='';
+    document.body.classList.remove('community-top10-open');
   }
+  function top10SelectedMarkup(){
+    if(!state.top10Rows.length)return'<div class="community-top10-empty">Add ten fighters to build your personal UFC Top 10.</div>';
+    return state.top10Rows.map((name,index)=>{
+      const photo=fighterThumb(name);
+      return`<div class="community-top10-selected-row" data-top10-selected="${esc(name)}"><b>#${index+1}</b><span>${photo?`<img src="${esc(photo)}" alt="${esc(name)}">`:esc(name.slice(0,2).toUpperCase())}</span><strong>${esc(name)}</strong><div><button type="button" data-top10-move="up" aria-label="Move ${esc(name)} up"${index===0?' disabled':''}>↑</button><button type="button" data-top10-move="down" aria-label="Move ${esc(name)} down"${index===state.top10Rows.length-1?' disabled':''}>↓</button><button type="button" data-top10-remove aria-label="Remove ${esc(name)}">×</button></div></div>`;
+    }).join('');
+  }
+  function top10SearchMarkup(){
+    const chosen=new Set(state.top10Rows.map(norm));
+    const rows=top10Roster(state.top10Query).filter(row=>!chosen.has(norm(row.name))).slice(0,36);
+    if(!rows.length)return'<div class="community-top10-empty">No available fighters match that search.</div>';
+    return rows.map(row=>{
+      const photo=fighterThumb(row.name);
+      return`<button type="button" class="community-top10-result" data-top10-add="${esc(row.name)}"${state.top10Rows.length>=10?' disabled':''}><span>${photo?`<img src="${esc(photo)}" alt="${esc(row.name)}">`:esc(row.name.slice(0,2).toUpperCase())}</span><strong>${esc(row.name)}</strong><b>+</b></button>`;
+    }).join('');
+  }
+  function renderTop10Editor(){
+    const panel=state.top10Editor?.querySelector('[data-community-top10-panel]');
+    if(!panel)return false;
+    panel.innerHTML=`<header class="community-top10-head"><div><span>PERSONAL RANKINGS</span><strong>Your UFC Top 10</strong><small>This saves directly to your Octagon HQ profile. It is not tied to a game.</small></div><button type="button" data-top10-close aria-label="Close Top 10 editor">×</button></header><div class="community-top10-body"><section class="community-top10-picked"><div class="community-top10-section-head"><strong>YOUR ORDER</strong><b>${state.top10Rows.length}/10</b></div><div class="community-top10-selected-list">${top10SelectedMarkup()}</div></section><section class="community-top10-add"><div class="community-top10-section-head"><strong>ADD FIGHTERS</strong><small>Search the UFC roster</small></div><input type="search" value="${esc(state.top10Query)}" placeholder="Search fighter…" autocomplete="off" data-top10-search><div class="community-top10-results">${top10SearchMarkup()}</div></section></div><footer class="community-top10-footer"><button type="button" data-top10-close>CANCEL</button><span data-top10-status>${state.top10Rows.length===10?'Ready to publish':'Choose exactly ten fighters'}</span><button type="button" class="primary" data-top10-save${state.top10Rows.length===10?'':' disabled'}>SAVE TOP 10</button></footer>`;
+    panel.querySelector('[data-top10-search]')?.focus();
+    return true;
+  }
+  async function openTop10(){
+    let identity=await resolveIdentity().catch(()=>null);
+    if(!identity){
+      identity=await window.UFC_PLAY_PROFILE?.require?.({title:'Sign in to edit your Top 10',description:'Use your Octagon HQ profile once. Picks and every other profile feature will use the same sign-in.'});
+      if(!identity)return false;
+      acceptIdentity(identity);
+      await load(true);
+    }
+    const mine=members().find(member=>member.id===currentMemberId());
+    if(!mine)return false;
+    state.top10ReturnToProfile=Boolean(state.overlay);
+    closeProfile();
+    closeTop10Editor();
+    state.top10Rows=(top10(mine).length?top10(mine):localTop10()).slice(0,10);
+    const editor=document.createElement('div');
+    editor.className='community-top10-overlay';
+    editor.innerHTML='<section class="community-top10-panel" data-community-top10-panel role="dialog" aria-modal="true" aria-label="Edit your UFC Top 10"></section>';
+    document.body.appendChild(editor);
+    document.body.classList.add('community-top10-open');
+    state.top10Editor=editor;
+    renderTop10Editor();
+    return true;
+  }
+
   function saveChallengeTarget(member){
     try{localStorage.setItem(TARGET_KEY,JSON.stringify({id:member.id,name:member.display_name,createdAt:Date.now()}));}catch(_error){}
   }
@@ -305,8 +409,8 @@
     return true;
   }
 
-  async function publishTop10(clear=false){
-    const rows=clear?[]:localTop10();
+  async function publishTop10(clear=false,explicitRows=null){
+    const rows=clear?[]:(Array.isArray(explicitRows)?explicitRows:localTop10()).map(text).filter(Boolean).slice(0,10);
     if(!clear&&(rows.length!==10||new Set(rows.map(norm)).size!==10))return false;
     const signature=JSON.stringify(rows);
     if(signature===state.lastPublished)return true;
@@ -319,11 +423,13 @@
       if(error)throw error;
       if(!data?.ok)throw new Error(data?.error||'Top 10 could not be published.');
       state.lastPublished=signature;
+      storeLocalTop10(rows);
       const mine=state.snapshot?.members?.find(member=>member.id===currentMemberId());
       if(mine){
         mine.top_ten=[...rows];
         mine.top_ten_updated_at=data.top_ten_updated_at||null;
       }
+      state.lastDirectorySignature='';
       renderDirectory();
       renderProfile();
       window.dispatchEvent(new CustomEvent('octagon-hq:top-ten-published',{detail:data}));
@@ -337,6 +443,7 @@
     const previousId=identityMemberId();
     const nextId=identityMemberId(next);
     state.identity=next;
+    syncPicksAccess(next);
     if(previousId&&nextId&&previousId!==nextId){
       state.snapshot=null;
       state.lastLoadedAt=0;
@@ -351,7 +458,7 @@
       const memberButton=event.target.closest?.('[data-community-member]');
       if(memberButton){openMember(memberButton.dataset.communityMember);return;}
       if(event.target.closest?.('[data-community-open-self]')){if(currentMemberId())openMember(currentMemberId());return;}
-      if(event.target.closest?.('[data-community-build-top10]')){openTop10();return;}
+      if(event.target.closest?.('[data-community-build-top10]')){void openTop10();return;}
       if(event.target.closest?.('[data-community-edit-profile]')){closeProfile();window.UFC_APP_PROFILE?.open?.();return;}
       const challengeButton=event.target.closest?.('[data-community-challenge]');
       if(challengeButton){
@@ -360,15 +467,49 @@
         return;
       }
       if(event.target.closest?.('[data-community-close]')){closeProfile();return;}
-      const top10Action=event.target.closest?.('#playTop10List [data-move],#playTop10List [data-remove-fighter],#playFighterResults [data-add-fighter]');
-      if(top10Action)queueMicrotask(()=>publishTop10(false));
-      if(event.target.closest?.('#playResetTop10Btn'))queueMicrotask(()=>publishTop10(true));
+      if(event.target.closest?.('[data-top10-close]')){closeTop10Editor();return;}
+      const addButton=event.target.closest?.('[data-top10-add]');
+      if(addButton&&state.top10Rows.length<10){state.top10Rows.push(addButton.dataset.top10Add);renderTop10Editor();return;}
+      const selected=event.target.closest?.('[data-top10-selected]');
+      if(selected){
+        const index=state.top10Rows.findIndex(name=>norm(name)===norm(selected.dataset.top10Selected));
+        if(index<0)return;
+        if(event.target.closest?.('[data-top10-remove]'))state.top10Rows.splice(index,1);
+        else{
+          const move=event.target.closest?.('[data-top10-move]')?.dataset.top10Move;
+          const target=move==='up'?index-1:move==='down'?index+1:index;
+          if(target>=0&&target<state.top10Rows.length&&target!==index)[state.top10Rows[index],state.top10Rows[target]]=[state.top10Rows[target],state.top10Rows[index]];
+        }
+        renderTop10Editor();
+        return;
+      }
+      const saveButton=event.target.closest?.('[data-top10-save]');
+      if(saveButton&&!saveButton.disabled){
+        const status=state.top10Editor?.querySelector('[data-top10-status]');
+        saveButton.disabled=true;
+        saveButton.textContent='SAVING…';
+        if(status)status.textContent='Publishing to your profile…';
+        void publishTop10(false,state.top10Rows).then(saved=>{
+          if(!saved){saveButton.disabled=false;saveButton.textContent='SAVE TOP 10';if(status)status.textContent='Could not save. Try again.';return;}
+          if(status)status.textContent='Saved to your Octagon HQ profile.';
+          const returnToProfile=state.top10ReturnToProfile;
+          window.setTimeout(()=>{closeTop10Editor();if(returnToProfile)void openMember(currentMemberId());},450);
+        });
+        return;
+      }
+    });
+    document.addEventListener('input',event=>{
+      if(!event.target.matches?.('[data-top10-search]'))return;
+      state.top10Query=event.target.value||'';
+      const results=state.top10Editor?.querySelector('.community-top10-results');
+      if(results)results.innerHTML=top10SearchMarkup();
     });
     window.addEventListener('octagon-hq:view-change',event=>{
       if(event.detail?.destination==='home'){
         renderDirectory();
         void load(false);
       }
+      if(event.detail?.destination==='picks')syncPicksAccess();
       wrapChallengePicker();
     });
     window.addEventListener('ufc-picks-season-updated',()=>{
@@ -385,14 +526,24 @@
     });
     window.addEventListener('ufc-profile-challenge-sent',clearChallengeTarget);
     window.addEventListener('octagon-hq:soft-refresh',()=>void load(true));
-    document.addEventListener('keydown',event=>{if(event.key==='Escape'&&state.overlay)closeProfile();});
-    document.addEventListener('click',event=>{if(event.target===state.overlay)closeProfile();});
+    document.addEventListener('keydown',event=>{
+      if(event.key!=='Escape')return;
+      if(state.top10Editor)closeTop10Editor();
+      else if(state.overlay)closeProfile();
+    });
+    document.addEventListener('click',event=>{
+      if(event.target===state.overlay)closeProfile();
+      if(event.target===state.top10Editor)closeTop10Editor();
+    });
   }
   function start(){
     bind();
     renderDirectory();
     wrapChallengePicker();
-    if(document.getElementById('home')?.classList.contains('active-view'))void load(false);
+    void resolveIdentity().then(()=>{
+      syncPicksAccess();
+      if(document.getElementById('home')?.classList.contains('active-view'))void load(false);
+    });
     document.documentElement.dataset.communityProfiles=VERSION;
   }
 
@@ -402,7 +553,9 @@
     refresh:()=>load(true),
     renderDirectory,
     openMember,
+    openTop10,
     close:closeProfile,
+    closeTop10Editor,
     publishTop10
   };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
