@@ -11,6 +11,9 @@ const report={
   finalUrl:'',
   freshLaunchRoute:'',
   activeViews:[],
+  coldLaunchUrl:'',
+  coldLaunchRoute:'',
+  coldActiveViews:[],
   consoleErrors:[],
   error:null
 };
@@ -54,17 +57,25 @@ const supabaseStub=`
 })();
 `;
 
-try{
-  browser=await chromium.launch({headless:true});
-  page=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true});
-  await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',route=>route.fulfill({status:200,contentType:'application/javascript',body:supabaseStub}));
-  page.on('console',message=>{if(message.type()==='error')report.consoleErrors.push(message.text());});
-  page.on('pageerror',error=>report.consoleErrors.push(error.stack||error.message));
-  page.on('request',request=>{
-    if(request.isNavigationRequest()&&request.frame()===page.mainFrame()&&request.url().startsWith('http://127.0.0.1:4173/')){
+function observePage(target){
+  target.on('console',message=>{if(message.type()==='error')report.consoleErrors.push(message.text());});
+  target.on('pageerror',error=>report.consoleErrors.push(error.stack||error.message));
+  target.on('request',request=>{
+    if(request.isNavigationRequest()&&request.frame()===target.mainFrame()&&request.url().startsWith('http://127.0.0.1:4173/')){
       report.navigationRequests.push(request.url());
     }
   });
+}
+
+async function stubSupabase(target){
+  await target.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',route=>route.fulfill({status:200,contentType:'application/javascript',body:supabaseStub}));
+}
+
+try{
+  browser=await chromium.launch({headless:true});
+  page=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true});
+  await stubSupabase(page);
+  observePage(page);
 
   report.stage='launch';
   await page.goto('http://127.0.0.1:4173/index.html#home',{waitUntil:'domcontentloaded',timeout:60000});
@@ -95,12 +106,6 @@ try{
   report.finalUrl=page.url();
   report.freshLaunchRoute=await page.evaluate(()=>document.documentElement.dataset.freshLaunchRoute||'');
   report.activeViews=await page.evaluate(()=>[...document.querySelectorAll('main.shell>.view.active-view')].map(node=>node.id));
-  report.scriptCounts=await page.evaluate(()=>({
-    productArchitecture:document.querySelectorAll('script[src*="assets/js/product-architecture.js"]').length,
-    nativeShell:document.querySelectorAll('script[src*="assets/js/native-app-shell.js"]').length,
-    notificationSurface:document.querySelectorAll('script[src*="assets/js/app-notification-surface-fix.js"]').length,
-    bottomNav:document.querySelectorAll('[data-native-bottom-nav]').length
-  }));
 
   const final=new URL(report.finalUrl);
   assert.equal(final.searchParams.get('group'),'GOAT26','Signed-in group route was removed.');
@@ -108,16 +113,45 @@ try{
   assert.equal(final.searchParams.get('event'),'event-1','Signed-in event route was removed.');
   assert.equal(final.searchParams.get('picksView'),'event','Signed-in Picks view was removed.');
   assert.equal(final.hash,'#picks','Signed-in route did not remain on Picks.');
-  assert.equal(report.freshLaunchRoute,'picks','Fresh launch controller did not recognize the signed-in Picks route.');
+  assert.equal(report.freshLaunchRoute,'picks','Fresh launch controller did not recognize the signed-in Picks continuation.');
   assert.deepEqual(report.activeViews,['picks'],'Signed-in Picks did not remain the only active app view.');
-  assert.equal(report.navigationRequests.length,2,`Expected one initial load and one successful-login navigation, received ${report.navigationRequests.length}.`);
+
+  report.stage='cold-launch-home';
+  const coldUrl=report.finalUrl;
+  await page.close();
+  page=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true});
+  await stubSupabase(page);
+  observePage(page);
+  await page.goto(coldUrl,{waitUntil:'domcontentloaded',timeout:60000});
+  await page.waitForFunction(()=>window.UFC_APP_SHELL&&document.querySelector('#home')?.classList.contains('active-view'),null,{timeout:60000});
+  await page.waitForTimeout(1800);
+
+  report.coldLaunchUrl=page.url();
+  report.coldLaunchRoute=await page.evaluate(()=>document.documentElement.dataset.freshLaunchRoute||'');
+  report.coldActiveViews=await page.evaluate(()=>[...document.querySelectorAll('main.shell>.view.active-view')].map(node=>node.id));
+  report.scriptCounts=await page.evaluate(()=>({
+    productArchitecture:document.querySelectorAll('script[src*="assets/js/product-architecture.js"]').length,
+    nativeShell:document.querySelectorAll('script[src*="assets/js/native-app-shell.js"]').length,
+    notificationSurface:document.querySelectorAll('script[src*="assets/js/app-notification-surface-fix.js"]').length,
+    bottomNav:document.querySelectorAll('[data-native-bottom-nav]').length
+  }));
+
+  const cold=new URL(report.coldLaunchUrl);
+  assert.equal(cold.searchParams.has('group'),false,'Cold launch kept a stale Picks group route.');
+  assert.equal(cold.searchParams.has('room'),false,'Cold launch kept a stale Picks room route.');
+  assert.equal(cold.searchParams.has('event'),false,'Cold launch kept a stale Picks event route.');
+  assert.equal(cold.searchParams.has('picksView'),false,'Cold launch kept a stale internal Picks view.');
+  assert.equal(cold.hash,'#home','Cold launch did not normalize to Home.');
+  assert.equal(report.coldLaunchRoute,'home','Fresh launch controller did not classify the stale Picks URL as Home.');
+  assert.deepEqual(report.coldActiveViews,['home'],'Cold launch did not leave Home as the only active app view.');
+  assert.equal(report.navigationRequests.length,3,`Expected initial load, successful-login navigation, and simulated cold launch; received ${report.navigationRequests.length}.`);
   assert.equal(report.scriptCounts.productArchitecture,1,'Product architecture loaded more than once.');
-  assert.equal(report.scriptCounts.nativeShell,1,'Native app shell loaded more than once.');
-  assert.equal(report.scriptCounts.notificationSurface,1,'Notification surface loaded more than once.');
-  assert.equal(report.scriptCounts.bottomNav,1,'Native bottom navigation was duplicated.');
+  assert.equal(report.scriptCounts.nativeShell,1,'Profile sign-in caused another native shell load.');
+  assert.equal(report.scriptCounts.notificationSurface,1,'Profile sign-in caused another notification surface load.');
+  assert.equal(report.scriptCounts.bottomNav,1,'Profile sign-in duplicated the native navigation.');
 
   const featureErrors=report.consoleErrors.filter(message=>/fresh-home-launch|picks-persistent-groups|picks-member-pin|SyntaxError|ReferenceError/i.test(message));
-  assert.deepEqual(featureErrors,[],'Real Picks PIN sign-in emitted a routing error.');
+  assert.deepEqual(featureErrors,[],'Picks sign-in or cold-launch routing emitted an error.');
 
   report.passed=true;
   report.stage='complete';

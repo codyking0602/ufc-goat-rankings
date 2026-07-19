@@ -143,6 +143,7 @@ try{
   assert(report.delayedSamples.every(sample=>sample.sameNode&&sample.replacements===0),'Directory was replaced after the delayed refresh window.');
 
   report.stage='profile-top10-editor';
+  await page.evaluate(()=>window.UFC_PROFILE_SETUP_REMINDER?.close?.());
   await page.locator('.community-directory-summary').click();
   assert.equal(await page.locator('#communityProfilesMount .community-directory').evaluate(node=>node.open),true,'Member directory did not expand.');
   const viewCountBeforeTop10=(await page.evaluate(()=>window.__phase4bViewChanges.length));
