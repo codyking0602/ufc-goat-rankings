@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='fresh-home-launch-20260718g-picks-route-safe';
+  const VERSION='fresh-home-launch-20260719a-profile-reminder';
   const params=new URLSearchParams(location.search);
   const deepLinkKeys=['challenge','share','fighter','message','notification','push'];
   const picksRouteKeys=['group','room','event','picksView','archive'];
@@ -19,6 +19,14 @@
     history.replaceState(null,'',`${url.pathname}${url.search}#home`);
     window.UFC_APP_SHELL?.activateDestination?.('home')
       ||window.UFC_PRODUCT_ARCHITECTURE?.activateDestination?.('home');
+  }
+
+  if(!document.getElementById('profileSetupReminderScript')){
+    const reminder=document.createElement('script');
+    reminder.id='profileSetupReminderScript';
+    reminder.src='assets/js/profile-setup-reminder.js?v=profile-setup-reminder-20260719a';
+    reminder.async=false;
+    document.body.appendChild(reminder);
   }
 
   const route=picksRoute?'picks':explicitDeepLink?'deep-link':'home';
