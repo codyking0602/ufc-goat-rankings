@@ -1,0 +1,64 @@
+name: Apply Batch 8 Picks guard
+
+on:
+  push:
+    branches:
+      - agent/picks-singleton-guard-batch-8
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/picks-singleton-guard-batch-8
+          fetch-depth: 0
+
+      - name: Apply verified two-file patch
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import subprocess
+
+          def blob_sha(path):
+              return subprocess.check_output(['git','hash-object',path], text=True).strip()
+
+          picks=Path('assets/js/picks.js')
+          contract=Path('scripts/test-startup-contract.mjs')
+          assert blob_sha(str(picks)) == 'caa2c25768ec849ea0fe597a48d629717b99e897'
+          assert blob_sha(str(contract)) == '201d3820b4416f16944b4ae177ffe6b70a64163c'
+
+          picks_text=picks.read_text()
+          picks_needle="  'use strict';\n\n"
+          picks_guard="  'use strict';\n\n  if(window.__UFC_PICKS_STARTED__)return;\n  window.__UFC_PICKS_STARTED__=true;\n\n"
+          assert picks_text.count(picks_needle) == 1
+          picks.write_text(picks_text.replace(picks_needle,picks_guard,1))
+
+          contract_text=contract.read_text()
+          contract_needle="const homeDashboard=read('assets/js/home-dashboard.js');\nassert(homeDashboard.includes('__UFC_HOME_DASHBOARD_STARTED__'),'The Home dashboard must keep its global duplicate-file-execution guard.');\n\n"
+          contract_assertion="assert(read('assets/js/picks.js').includes('__UFC_PICKS_STARTED__'),'Picks must keep its global duplicate-file-execution guard.');\n\n"
+          assert contract_text.count(contract_needle) == 1
+          contract.write_text(contract_text.replace(contract_needle,contract_needle+contract_assertion,1))
+
+          assert blob_sha(str(picks)) == '6010e78bf7b1bde4a2886d0fc78f188613823f28'
+          assert blob_sha(str(contract)) == 'b2d3f041288390ca24775868e73e3afe735da36d'
+          PY
+
+          node --check assets/js/picks.js
+          node --check scripts/test-startup-contract.mjs
+          node scripts/test-startup-contract.mjs
+
+      - name: Commit isolated final diff
+        run: |
+          rm .github/workflows/batch8-apply.yml
+          changed="$(git diff --name-only 7c9eb79222eff5b780bb12ab07a2d6d27c828511)"
+          test "$changed" = "assets/js/picks.js
+          scripts/test-startup-contract.mjs"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/js/picks.js scripts/test-startup-contract.mjs .github/workflows/batch8-apply.yml
+          git commit -m "Guard Picks runtime against duplicate execution"
+          git push origin HEAD:agent/picks-singleton-guard-batch-8
