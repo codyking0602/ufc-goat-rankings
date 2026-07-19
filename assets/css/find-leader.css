@@ -85,7 +85,7 @@
   #play .find-leader-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:4px!important;padding:6px!important;border-radius:14px!important}
   #play .find-leader-tile{grid-template-rows:72px 13px 18px!important;gap:2px!important;min-height:0!important;padding:4px!important;border-radius:11px!important}
   #play .find-leader-photo{height:72px!important;border-radius:8px!important}
-  #play .find-leader-photo img{object-position:center center!important}
+  #play .find-leader-photo img{object-position:center 45%!important;transform:scale(.91);transform-origin:center 45%}
   #play .find-leader-name{padding:0 1px!important}
   #play .find-leader-name strong{font-size:8.5px!important;line-height:1!important}
   #play .find-leader-name small{display:none!important}
