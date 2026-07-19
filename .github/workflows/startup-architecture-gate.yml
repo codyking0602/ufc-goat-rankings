@@ -1,0 +1,107 @@
+name: Startup Architecture Gate
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'assets/js/fresh-home-route-bootstrap.js'
+      - 'assets/js/octagon-hq-shell.js'
+      - 'assets/js/octagon-hq-nav-grid.js'
+      - 'assets/js/home-dashboard.js'
+      - 'assets/js/product-architecture.js'
+      - 'assets/js/community-profiles.js'
+      - 'assets/js/fresh-home-launch.js'
+      - 'assets/js/app-notification-center.js'
+      - 'assets/js/app-notification-surface-fix.js'
+      - 'assets/js/native-app-shell.js'
+      - 'assets/js/native-app-shell-stability.js'
+      - 'assets/js/share-deep-links.js'
+      - 'assets/js/play-profile-identity.js'
+      - 'assets/js/picks-member-pin.js'
+      - 'assets/js/picks-persistent-groups.js'
+      - 'scripts/test-startup-contract.mjs'
+      - 'scripts/test-ios-standalone-resume-home.mjs'
+      - 'scripts/test-profile-signin-stability.mjs'
+      - 'scripts/test-phase-4b-mobile.mjs'
+      - '.github/workflows/startup-architecture-gate.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'assets/js/fresh-home-route-bootstrap.js'
+      - 'assets/js/octagon-hq-shell.js'
+      - 'assets/js/octagon-hq-nav-grid.js'
+      - 'assets/js/home-dashboard.js'
+      - 'assets/js/product-architecture.js'
+      - 'assets/js/community-profiles.js'
+      - 'assets/js/fresh-home-launch.js'
+      - 'assets/js/app-notification-center.js'
+      - 'assets/js/app-notification-surface-fix.js'
+      - 'assets/js/native-app-shell.js'
+      - 'assets/js/native-app-shell-stability.js'
+      - 'assets/js/share-deep-links.js'
+      - 'assets/js/play-profile-identity.js'
+      - 'assets/js/picks-member-pin.js'
+      - 'assets/js/picks-persistent-groups.js'
+      - 'scripts/test-startup-contract.mjs'
+      - 'scripts/test-ios-standalone-resume-home.mjs'
+      - 'scripts/test-profile-signin-stability.mjs'
+      - 'scripts/test-phase-4b-mobile.mjs'
+      - '.github/workflows/startup-architecture-gate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: startup-architecture-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  startup-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Validate startup JavaScript syntax
+        run: |
+          node --check scripts/test-startup-contract.mjs
+          node --check assets/js/fresh-home-route-bootstrap.js
+          node --check assets/js/octagon-hq-shell.js
+          node --check assets/js/product-architecture.js
+          node --check assets/js/community-profiles.js
+          node --check assets/js/fresh-home-launch.js
+          node --check assets/js/app-notification-center.js
+          node --check assets/js/app-notification-surface-fix.js
+          node --check assets/js/native-app-shell.js
+          node --check assets/js/native-app-shell-stability.js
+
+      - name: Enforce startup ownership contract
+        run: node scripts/test-startup-contract.mjs
+
+      - name: Install browser test runtime
+        run: npm install --no-save --package-lock=false playwright@1.54.1 && npx playwright install --with-deps chromium
+
+      - name: Start local app
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/startup-architecture-server.log 2>&1 &
+          for attempt in $(seq 1 20); do
+            if curl --fail --silent http://127.0.0.1:4173/index.html > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/startup-architecture-server.log
+          exit 1
+
+      - name: Test iOS startup route stability
+        run: node scripts/test-ios-standalone-resume-home.mjs
+
+      - name: Test profile sign-in startup stability
+        run: node scripts/test-profile-signin-stability.mjs
+
+      - name: Test Home and community delayed stability
+        run: node scripts/test-phase-4b-mobile.mjs
