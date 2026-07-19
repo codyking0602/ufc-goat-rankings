@@ -40,7 +40,7 @@ Refreshed validation passed:
 - delayed Home/community stability;
 - Phase 4B mobile/profile/Picks stability.
 
-The branch was rebuilt directly from current `main`, preserving the exact 8-addition, 3-file runtime diff. It is open, draft, mergeable, and held only for physical installed-iPhone verification.
+The branch was rebuilt directly from current `main`, preserving the exact 8-addition, 3-file runtime diff.
 
 ## 2026-07-19 — Permanent continuity system
 
@@ -97,4 +97,28 @@ Downloaded and inspected the Phase 4B proof artifact for PR #100. The reports re
 - one notification surface;
 - one bottom navigation.
 
-The workflow serves the branch only on localhost during CI and does not publish an installable branch deployment. The remaining gate is therefore the physical procedure in `PR-100-IPHONE-TEST.md` using an immutable separate-origin commit snapshot.
+The workflow served the branch only on localhost during CI and did not publish an installable branch deployment.
+
+## 2026-07-19 — Third-party preview rejected
+
+The immutable separate-origin static preview did not reproduce the production mobile app. It showed the desktop tab fallback, incorrect current ordering, and an incomplete native shell.
+
+The preview was declared invalid and Cody was told not to sign in there. Source comparison confirmed the branch differed from current `main` only by the exact eight-line guard/test diff.
+
+## 2026-07-19 — Phase 1 batch 1 merged
+
+PR #100 was rebuilt directly from current `main` and revalidated on head `86c2cba7ce83ce6ef4a824cf79634e006dd53f5c`.
+
+Final pre-merge state:
+
+- 0 commits behind `main`;
+- 8 additions;
+- 0 deletions;
+- 3 changed files;
+- Startup Architecture Gate passed;
+- iOS Home Startup Stability passed;
+- Phase 4B mobile/profile/Picks validation passed.
+
+PR #100 was squash-merged as commit `5e733cc4568100e96080ce27ad601b7022daba33`.
+
+The rollout is now in controlled live verification on the real GitHub Pages installed app. The next runtime batch remains blocked until Cody confirms the current mobile presentation, route behavior, background/resume, reminders, navigation shell, and tap handling are unchanged.
