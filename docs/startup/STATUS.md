@@ -6,13 +6,13 @@ _Last updated: 2026-07-19_
 
 - **Current phase:** Phase 1 — Make startup owners idempotent
 - **Phase 0:** Complete
-- **Phase 1 runtime batches merged and verified:** 5
-- **Latest verified runtime commit:** `6b0c9442b5a4df46e481296bb8d5cbd3befe1ab7`
-- **Estimated entire cleanup progress:** approximately 24%
+- **Phase 1 runtime batches merged and verified:** 6
+- **Latest verified runtime commit:** `865527b15902e7b61fff429e4faf9ce2a0bc811c`
+- **Estimated entire cleanup progress:** approximately 27%
 - **Master tracker:** [#102 — Zero-change startup architecture cleanup](https://github.com/codyking0602/ufc-goat-rankings/issues/102)
 - **Visible product changes approved:** none
 - **Major Phase 1 owner audit:** complete in [`PHASE-1-OWNER-AUDIT.md`](./PHASE-1-OWNER-AUDIT.md)
-- **Recommended session state:** start a fresh chat before batch 6; this file is the handoff source of truth
+- **Recommended session state:** start a fresh chat before batch 7; this file is the handoff source of truth
 
 ## Completed runtime batches
 
@@ -74,13 +74,38 @@ PR #108 was squash-merged as `6b0c9442b5a4df46e481296bb8d5cbd3befe1ab7`. Cody re
 
 Removal or consolidation of this temporary repair layer remains deferred to Phase 3 after source behavior has dedicated regression coverage.
 
+### Batch 6 — Notification center guard
+
+PR #110 protected `app-notification-center.js` from duplicate file evaluation while preserving notification rendering, permission behavior, service-worker registration and updates, profile and activity surfaces, observers, listeners, public APIs, copy, styling, navigation, saved state, and first-run behavior.
+
+The prerequisite/retry inspection confirmed that the owner does not exit early when profile DOM, identity, settings, or push data are unavailable. Required later attempts already run through profile-ready/profile-updated events, the notification-device-change listener, MutationObserver, the existing 250 ms settings attempt, the public `loadSettings()` and `render()` APIs, and the separately guarded notification-surface compatibility layer. Notification permission remains user-gesture-only through the existing Enable-button path.
+
+Final diff:
+
+- 4 additions;
+- 0 deletions;
+- 2 files.
+
+Validation passed:
+
+- JavaScript syntax;
+- startup ownership contract;
+- local app startup;
+- iOS startup route and resume stability;
+- profile sign-in startup stability;
+- delayed Home/community stability;
+- duplicate-evaluation harness and first-run equivalence proof;
+- real installed-iPhone cold launch, profile and activity notification surfaces, permission behavior, notification controls, navigation, touch behavior, and background/resume behavior.
+
+PR #110 was squash-merged as `865527b15902e7b61fff429e4faf9ce2a0bc811c`. Cody reported the installed app was normal.
+
 ## Next Phase 1 batch
 
-The next isolated owner is `assets/js/app-notification-center.js`.
+The next isolated owner is `assets/js/native-app-shell.js`.
 
-This is the intended canonical notification owner and is mobile-sensitive. The next session must inspect its exact current execution path, including service-worker registration, profile-surface setup, closure-scoped `state.started`, observers, listeners, and whether any second file execution currently acts as an accidental prerequisite retry.
+This is the canonical mobile bottom-navigation owner and is the highest-sensitivity remaining simple guard candidate. The next session must inspect its exact first-run and repeat-execution path, including closure-scoped `state.started`, bottom-navigation reuse, badges, transitions, pull-to-refresh, touch/click handling, MutationObserver ownership, the 10-second badge interval, lifecycle listeners, startup prerequisites, and whether duplicate file evaluation currently serves any intentional retry.
 
-The allowed runtime scope is expected to be one duplicate-file marker plus one startup-contract assertion only if current `main` confirms that first-run and retry behavior remain intact. Notification rendering, permission behavior, profile surfaces, service-worker behavior, observers, copy, styling, and product behavior must not change.
+The runtime scope must remain one owner plus one matching startup-contract assertion only if inspection confirms the complete first-run path and all intentional retries remain intact. Do not change bottom-navigation presentation, badge logic, transitions, refresh behavior, touch handling, routes, styling, copy, or installed-app behavior.
 
 ## Existing unrelated red checks
 
@@ -95,18 +120,18 @@ The allowed runtime scope is expected to be one duplicate-file marker plus one s
 ## Exact next action
 
 1. Start a fresh chat and read this file, `DECISIONS.md`, `OWNERS.md`, `PHASE-1-OWNER-AUDIT.md`, and issue #102.
-2. Inspect current `main` for `assets/js/app-notification-center.js` prerequisite, retry, service-worker, profile-surface, listener, and observer behavior.
-3. Create a fresh branch from current `main`.
+2. Inspect current `main` for `assets/js/native-app-shell.js` prerequisite, retry, listener, observer, interval, touch, navigation, badge, transition, refresh, and lifecycle behavior.
+3. Create a fresh branch directly from current `main`.
 4. Keep the runtime batch isolated to that owner and its contract assertion.
-5. Run the full Startup Architecture Gate and notification/profile-relevant validation.
-6. Use a controlled live rollout and real installed-iPhone verification before beginning batch 7.
-7. After the physical iPhone result, report the estimated percentage complete for the entire cleanup and whether a new chat is recommended.
+5. Run the full Startup Architecture Gate plus native-shell, navigation, touch, profile, Picks, notification, startup, and lifecycle validation.
+6. Keep the PR draft until real installed-iPhone verification passes.
+7. Do not begin batch 8 until batch 7 is merged, physically verified, and documented.
 
 ## Stop conditions
 
-Stop and leave the next batch draft if:
+Stop and leave batch 7 draft if:
 
-- notification permissions, rendering, unread state, service-worker registration, profile surfaces, navigation, touch, or background/resume behavior changes;
+- bottom navigation, badge state, transitions, pull-to-refresh, routes, touch/click behavior, profile, Picks, notifications, or background/resume behavior changes;
 - a second execution appears to be serving as an intentional prerequisite retry;
-- a duplicate notification, duplicated observer/listener, repeated permission prompt, blank state, flicker, stale profile surface, route bounce, or double-handled tap occurs;
-- the diff begins changing service-worker logic, notification data, styling, scoring, fighter data, photos, or product behavior.
+- duplicate navigation, duplicated observer/listener/interval ownership, repeated taps, blank state, flicker, route bounce, stale badge state, or double-handled refresh occurs;
+- the diff begins changing styling, copy, product behavior, service-worker logic, scoring, fighter data, photos, Games, Picks, Intelligence, War Room, or sharing.
