@@ -1,6 +1,9 @@
 (function(){
   'use strict';
 
+  if(window.__UFC_APP_NOTIFICATION_CENTER_STARTED__)return;
+  window.__UFC_APP_NOTIFICATION_CENTER_STARTED__=true;
+
   const VERSION='app-notification-center-20260718c-profile-first';
   const TOKEN_KEY='ufc-picks:group:GOAT26';
   const SW_URL='sw.js?v=octagon-hq-sw-20260718b-fast-refresh';
