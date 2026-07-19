@@ -12,6 +12,7 @@
   let lastSignature='';
   let loading=false;
   let inviteGroup=null;
+  let autoAdvancing=false;
 
   const safe=value=>String(value ?? '').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
   const normalize=value=>String(value || '').trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6);
@@ -174,6 +175,36 @@
     openRoom(code,data.room_code,data.event_id);
   }
 
+  async function autoAdvanceIfNeeded(snapshot){
+    if(autoAdvancing || archiveMode() || !snapshot?.group?.is_admin) return false;
+    const code=normalize(snapshot.group.code);
+    const admin=groupAdmin(code);
+    if(!code || !admin) return false;
+
+    const active=(snapshot.events || []).find(event=>event.is_active);
+    if(active && !['complete','hidden'].includes(String(active.status || '').toLowerCase())) return false;
+
+    const next=(snapshot.available_events || [])
+      .filter(event=>['upcoming','live'].includes(String(event.status || '').toLowerCase()))
+      .sort((left,right)=>new Date(left.event_date || 0).getTime()-new Date(right.event_date || 0).getTime())[0];
+    if(!next?.id) return false;
+
+    autoAdvancing=true;
+    const {data,error}=await client.rpc('picks_group_add_event',{
+      p_group_code:code,
+      p_admin_token:admin,
+      p_event_id:next.id
+    });
+    if(error){
+      autoAdvancing=false;
+      return false;
+    }
+
+    toast('Next UFC event ready');
+    openRoom(code,data.room_code,data.event_id);
+    return true;
+  }
+
   async function loadSnapshot(code,token,admin){
     const {data,error}=await client.rpc('picks_group_snapshot',{p_group_code:code,p_member_token:token,p_admin_token:admin || null});
     return error ? null : data;
@@ -198,6 +229,7 @@
     }
 
     const snapshot=await loadSnapshot(code,token,admin);
+    if(snapshot && await autoAdvanceIfNeeded(snapshot)) return true;
     const activeRoom=normalize(snapshot?.active_room?.code);
     if(activeRoom && activeRoom!==room && !archiveMode()){
       openRoom(code,activeRoom,snapshot.active_room.event_id);
@@ -257,6 +289,7 @@
 
     const snapshot=await loadSnapshot(code,token,groupAdmin(code));
     if(!snapshot){ configureInvite(publicGroup); return true; }
+    if(await autoAdvanceIfNeeded(snapshot)) return true;
     if(snapshot.active_room?.code){
       openRoom(code,snapshot.active_room.code,snapshot.active_room.event_id);
       return true;
