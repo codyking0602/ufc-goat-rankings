@@ -33,13 +33,15 @@ Draft PR #100 proposes:
 
 The intended first execution remains identical. An accidental second execution exits before repeating route work or attaching duplicate behavior.
 
-## Branch state
+## Tested snapshot and branch state
 
-- PR #100 is open, draft, and mergeable.
-- The branch is based directly on current `main`.
-- It is 0 commits behind at the completed CI run.
-- The runtime diff remains exactly 8 additions across 3 files.
-- Head commit under test: `8136c728f5794229273b8a2c5ce9f291eeaf30db`.
+- Frozen phone-test commit: `8136c728f5794229273b8a2c5ce9f291eeaf30db`.
+- The runtime comparison remains exactly 8 additions across 3 files.
+- PR #100 is open, draft, and currently mergeable.
+- `main` has ten newer documentation-only startup commits.
+- The PR head will remain frozen until the physical test is complete so the tested snapshot does not change.
+
+After a physical pass, reconcile current `main` into the branch, confirm the comparison still contains only the same three runtime files and eight additions, rerun CI, and only then merge.
 
 ## Refreshed validation for PR #100
 
@@ -110,9 +112,10 @@ These remain separate from the startup runtime diff:
 
 1. Cody performs the installed-iPhone test in [`PR-100-IPHONE-TEST.md`](./PR-100-IPHONE-TEST.md).
 2. Record pass or failure on PR #100.
-3. Merge PR #100 only if the physical behavior is unchanged.
-4. Update this file and the master tracker.
-5. Open the isolated `octagon-hq-shell.js` singleton-guard batch from the resulting current `main`.
+3. On a pass, reconcile the documentation-only `main` commits into the branch.
+4. Confirm the runtime diff remains exactly 8 additions across the same 3 files and rerun startup/mobile CI.
+5. Merge only if the reconciled branch is clean and visible behavior remains unchanged.
+6. Open the isolated `octagon-hq-shell.js` singleton-guard batch from the resulting current `main`.
 
 ## Stop conditions
 
