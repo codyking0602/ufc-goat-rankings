@@ -18,7 +18,7 @@
 | `assets/js/octagon-hq-shell.js` | Primary navigation and active-view owner | Locally idempotent; needs global evaluation guard | Separate Phase 1 batch | Remains canonical navigation owner |
 | `assets/js/octagon-hq-nav-grid.js` | Clears legacy navigation-grid styling | No global guard; installs timers and resize listener | Separate Phase 1 batch | Compatibility candidate for Phase 3 retirement |
 | `assets/js/home-dashboard.js` | Home dashboard renderer and Home event bridge | Local `bound` protection only | Add global evaluation guard in a separate batch | Preserve markup-signature render suppression |
-| `assets/js/product-architecture.js` | Cross-feature loader and shared-profile handoffs | Globally idempotent | No Phase 1 runtime change | Audit dynamically loaded support owners |
+| `assets/js/product-architecture.js` | Cross-feature loader and shared-profile handoffs | Globally idempotent | No Phase 1 runtime change | Keep as the named support-module loader |
 | `assets/js/community-profiles.js` | Community directory, profile overlay, Top 10 editing | Local `state.bound` protection only | Add global evaluation guard in a separate batch | Later consolidate identity handoffs |
 | `assets/js/fresh-home-launch.js` | One-time late route handoff and profile reminder | Needs global guard on `main` | PR #100 adds guard | Keep route behavior startup-only |
 | `assets/js/app-notification-center.js` | Notification settings, service worker registration, profile surfaces | Local `state.started` protection only | Add global evaluation guard in a separate batch | Later consolidate notification rendering ownership |
@@ -26,6 +26,19 @@
 | `assets/js/native-app-shell.js` | Mobile bottom nav, badges, pull-to-refresh, transitions | Local `state.started` protection only | Add global evaluation guard in a separate batch | Remains native interaction owner |
 | `assets/js/native-app-shell-stability.js` | Snapshot, spotlight, drawer, and What's New repairs | No global guard; compatibility-only | Add global evaluation guard in a separate batch | Retire repairs one at a time in Phase 3 |
 | `assets/js/share-deep-links.js` | Share controls and incoming deep-link routing | No global guard | Add global evaluation guard in a separate batch | Later verify route requests use shell only |
+
+## Tier 2 — Dynamically loaded support modules
+
+All six support modules loaded by `product-architecture.js` were audited on July 19, 2026. `loadScriptOnce()` prevents the normal loader from requesting them twice, but none of the modules is safe against duplicate file evaluation yet.
+
+| Support module | Current ownership | Current safety | Phase 1 action | Risk if duplicated |
+|---|---|---|---|---|
+| `assets/js/product-connectivity.js` | Fighter-profile, Intelligence, and War Room bridges | Local `eventsBound` only | Add global evaluation guard | Duplicate document click handler, observers, delayed renders, and lifecycle listeners |
+| `assets/js/product-polish.js` | Header, copy, residue cleanup, and mobile cohesion polish | No global guard | Add global evaluation guard | Duplicate timers, route listeners, resize and orientation handlers |
+| `assets/js/profile-avatar-sync.js` | Shared-profile avatars across Home and War Room | No global guard | Add global evaluation guard | Duplicate observer, profile resolution, listeners, and ready events |
+| `assets/js/profile-activity.js` | Activity-profile overlay and game/Picks/War Room history | No global guard | Add global evaluation guard | Duplicate capture click handler, game-complete ledger writes, and profile listeners |
+| `assets/js/find-leader-retention.js` | Daily history, streaks, countdown, and retention surfaces | Local `state.bound` only | Add global evaluation guard | Duplicate event handlers, refresh schedules, and one-second intervals |
+| `assets/js/picks-season-loop.js` | Picks season summary, reminders, standings patches, and profile action | Local `state.bound` only | Add global evaluation guard | Duplicate route/profile handlers, observers, delayed setup, and 30-second interval |
 
 ## Phase 1 batch plan
 
@@ -71,18 +84,14 @@
 - `share-deep-links.js`
 - Prefer separate PRs if their tests or rollback boundaries differ.
 
-## Tier 2 — Dynamically loaded support modules
+### Batch 7 — Dynamically loaded support owners
 
-The following modules are loaded through `product-architecture.js` and still need a full Phase 1 audit:
+Split by ownership boundary rather than placing all six files in one PR:
 
-- `assets/js/product-connectivity.js`
-- `assets/js/product-polish.js`
-- `assets/js/profile-avatar-sync.js`
-- `assets/js/profile-activity.js`
-- `assets/js/find-leader-retention.js`
-- `assets/js/picks-season-loop.js`
-
-They must be classified before Phase 1 is complete. No assumption should be made that `loadScriptOnce()` alone makes their own code idempotent.
+1. Product bridges: `product-connectivity.js` and `product-polish.js` only if shared tests justify one batch.
+2. Profile surfaces: `profile-avatar-sync.js` and `profile-activity.js` only if shared profile lifecycle tests justify one batch.
+3. Game retention: `find-leader-retention.js`.
+4. Picks season: `picks-season-loop.js`.
 
 ## Inventory evidence recorded July 19, 2026
 
@@ -95,3 +104,9 @@ They must be classified before Phase 1 is complete. No assumption should be made
 - Native shell reuses an existing bottom navigation and has local `state.started`, but duplicate file evaluation would create a second local state and listener set.
 - Native stability installs a MutationObserver, event listeners, and scheduled repairs without a global guard.
 - Share deep links installs observers, click listeners, delayed patch attempts, and route listeners without a global guard.
+- Product connectivity has local event protection but no file-level guard.
+- Product polish installs delayed runs plus resize and orientation listeners without a file-level guard.
+- Profile avatar sync can duplicate profile resolution, observer work, and ready events.
+- Profile activity can duplicate ledger-writing and profile-opening listeners.
+- Find the Leader retention can create another one-second countdown interval after duplicate evaluation.
+- Picks season loop can create another 30-second interval and duplicate route/profile listeners after duplicate evaluation.
