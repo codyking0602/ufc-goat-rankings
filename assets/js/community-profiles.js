@@ -1,6 +1,9 @@
 (function(){
   'use strict';
 
+  if(window.__UFC_COMMUNITY_PROFILES_STARTED__)return;
+  window.__UFC_COMMUNITY_PROFILES_STARTED__=true;
+
   const VERSION='community-profiles-20260718h-collapsed-top10-profile';
   const TOP10_KEY='ufc-goat-play-top10-v1';
   const TARGET_KEY='octagon-hq:challenge-target-v2';
