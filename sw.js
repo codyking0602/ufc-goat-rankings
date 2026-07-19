@@ -1,5 +1,5 @@
-const VERSION='octagon-hq-sw-20260719a-game-challenges';
-const CACHE_NAME='octagon-hq-static-v4';
+const VERSION='octagon-hq-sw-20260719b-immediate-challenges';
+const CACHE_NAME='octagon-hq-static-v5';
 const LEGACY_PREFIX='octagon-hq-static-';
 const CORE=['./','./index.html','./manifest.webmanifest'];
 const FORCE_NETWORK=/\/assets\/(?:(?:js\/(?:app-notification-surface-fix|app-update-watcher|product-architecture|native-app-shell|native-app-shell-stability|community-profiles|fresh-home-launch|find-leader|game-challenges)|data\/what-changed)\.js|css\/(?:native-app-shell|native-app-shell-stability|community-profiles|find-leader)\.css)$/i;
