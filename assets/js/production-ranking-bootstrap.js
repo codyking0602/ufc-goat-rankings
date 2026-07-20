@@ -2,6 +2,8 @@
 (function(){
   'use strict';
 
+  if(window.__UFC_PRODUCTION_RANKING_BOOTSTRAP_OWNER__)return;
+
   const VERSION='production-ranking-bootstrap-20260717c-anthony-pettis-80';
   const EXPECTED_FIGHTER_COUNT=80;
   const CALCULATED_STAT_FIELDS=new Set([
@@ -55,17 +57,30 @@
 
   function loadScript(src,attribute){
     return new Promise(resolve=>{
-      const existing=document.querySelector(`script[${attribute}]`);
+      let existing=document.querySelector(`script[${attribute}]`);
+      if(existing?.dataset.loaded==='error'){
+        existing.remove();
+        existing=null;
+      }
       if(existing){
         if(existing.dataset.loaded==='true'||existing.readyState==='complete')resolve();
-        else existing.addEventListener('load',resolve,{once:true});
+        else{
+          const cleanup=()=>{
+            existing.removeEventListener('load',loaded);
+            existing.removeEventListener('error',failed);
+          };
+          const loaded=()=>{existing.dataset.loaded='true';cleanup();resolve();};
+          const failed=()=>{existing.dataset.loaded='error';cleanup();existing.remove();resolve();};
+          existing.addEventListener('load',loaded,{once:true});
+          existing.addEventListener('error',failed,{once:true});
+        }
         return;
       }
       const script=document.createElement('script');
       script.src=src;
       script.setAttribute(attribute,'true');
       script.onload=()=>{script.dataset.loaded='true';resolve();};
-      script.onerror=()=>resolve();
+      script.onerror=()=>{script.dataset.loaded='error';script.remove();resolve();};
       document.body.appendChild(script);
     });
   }
@@ -163,7 +178,9 @@
     window.dispatchEvent(new CustomEvent('ufc-production-ranking-ready',{detail:{report,divisionReport,octagonVerdict:window.OCTAGON_VERDICT_DATA||null}}));
   }
 
-  async function apply(){
+  const lifecycleState={status:'idle',attempt:null,attemptCount:0,lastResult:null};
+
+  async function attempt(){
     try{
       if(window.UFC_RANKING_DATA_PATCHES_READY)await window.UFC_RANKING_DATA_PATCHES_READY;
       for(const [src,attribute] of cleanScripts)await loadScript(src,attribute);
@@ -182,13 +199,42 @@
         throw new Error(`Automatic division rankings are ${divisionReport?.status||'blocked'}: ${detail}`);
       }
       publishReady(report,divisionReport);
-      window.UFC_PRODUCTION_RANKING_BOOTSTRAP={version:VERSION,status:'ready',inputIsolation:'clean-canonical-rebuild',report,divisionReport,photoSync,rosterBatchTen:window.UFC_CANONICAL_ROSTER_BATCH_TEN,rosterBatchEleven:window.UFC_CANONICAL_ROSTER_BATCH_ELEVEN,rosterBatchTwelve:window.UFC_CANONICAL_ROSTER_BATCH_TWELVE,rosterBatchThirteen:window.UFC_CANONICAL_ROSTER_BATCH_THIRTEEN,rosterBatchFourteen:window.UFC_CANONICAL_ROSTER_BATCH_FOURTEEN,opponentQualityAuditAdjustments:window.UFC_CANONICAL_OPPONENT_QUALITY_AUDIT_ADJUSTMENTS||null,championshipAuditAdjustments:window.UFC_CANONICAL_CHAMPIONSHIP_AUDIT_ADJUSTMENTS||null,octagonVerdict:window.OCTAGON_VERDICT_DATA||null,stripPresentationScoreOwnership,syncComparePresentation};
+      const result={version:VERSION,status:'ready',inputIsolation:'clean-canonical-rebuild',report,divisionReport,photoSync,rosterBatchTen:window.UFC_CANONICAL_ROSTER_BATCH_TEN,rosterBatchEleven:window.UFC_CANONICAL_ROSTER_BATCH_ELEVEN,rosterBatchTwelve:window.UFC_CANONICAL_ROSTER_BATCH_TWELVE,rosterBatchThirteen:window.UFC_CANONICAL_ROSTER_BATCH_THIRTEEN,rosterBatchFourteen:window.UFC_CANONICAL_ROSTER_BATCH_FOURTEEN,opponentQualityAuditAdjustments:window.UFC_CANONICAL_OPPONENT_QUALITY_AUDIT_ADJUSTMENTS||null,championshipAuditAdjustments:window.UFC_CANONICAL_CHAMPIONSHIP_AUDIT_ADJUSTMENTS||null,octagonVerdict:window.OCTAGON_VERDICT_DATA||null,stripPresentationScoreOwnership,syncComparePresentation};
+      lifecycleState.status='ready';
+      lifecycleState.lastResult=result;
+      window.UFC_PRODUCTION_RANKING_BOOTSTRAP=result;
+      return result;
     }catch(error){
       document.documentElement.setAttribute('data-production-ranking-bootstrap',`${VERSION}-error`);
-      window.UFC_PRODUCTION_RANKING_BOOTSTRAP={version:VERSION,status:'error',error:String(error?.message||error)};
+      const result={version:VERSION,status:'error',error:String(error?.message||error)};
+      lifecycleState.status='error';
+      lifecycleState.lastResult=result;
+      window.UFC_PRODUCTION_RANKING_BOOTSTRAP=result;
       console.error(`[${VERSION}]`,error);
+      return result;
     }
   }
 
-  apply();
+  function run(force){
+    if(lifecycleState.attempt)return lifecycleState.attempt;
+    if(!force&&lifecycleState.status==='ready')return Promise.resolve(lifecycleState.lastResult);
+    lifecycleState.status='running';
+    lifecycleState.attemptCount+=1;
+    lifecycleState.attempt=attempt().finally(()=>{lifecycleState.attempt=null;});
+    return lifecycleState.attempt;
+  }
+
+  const lifecycle={
+    version:VERSION,
+    start:()=>run(false),
+    retry:()=>run(false),
+    apply:()=>run(true),
+    refresh:()=>run(true),
+    get status(){return lifecycleState.status;},
+    get attemptCount(){return lifecycleState.attemptCount;},
+    get result(){return lifecycleState.lastResult;}
+  };
+  window.__UFC_PRODUCTION_RANKING_BOOTSTRAP_OWNER__=lifecycle;
+  window.UFC_PRODUCTION_RANKING_BOOTSTRAP_LIFECYCLE=lifecycle;
+  lifecycle.start();
 })();
