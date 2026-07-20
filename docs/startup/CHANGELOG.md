@@ -182,3 +182,53 @@ Cody physically tested exact immutable PR head `1915c0ff314b7911688574f279eba889
 PR #114 was squash-merged as commit `4a811201bd6c2ac620d829d9701a187e468142b0`. Batch 9 was closed as physically verified.
 
 The next isolated Phase 1 owner is `assets/js/play.js`. Batch 10 must remain separate from `play-hub.js`, begin from fresh current `main`, and prove that its intentional missing-DOM and missing-ranking-data prerequisite behavior remains recoverable before any marker is added.
+
+## 2026-07-19 — Phase 1 Batch 10A merged and verified
+
+PR #115 protected `assets/js/play.js` with a prerequisite-aware duplicate-file-execution guard and added one matching startup-contract assertion.
+
+The required prerequisites are the static Play panel `#play` and `window.RANKING_DATA.men` as an array. The successful marker was placed after the existing prerequisite return and before state construction, where `loadTop10()` begins storage and successful-owner work.
+
+This placement preserves the intentional recovery boundary:
+
+- missing Play DOM or ranking data returns without setting the marker;
+- a failed attempt creates no partial listeners, observers, timers, intervals, storage, DOM, API, rendering, Top 10, or blind-resume ownership;
+- a later file execution may initialize after prerequisites appear;
+- only a second execution after successful initialization is blocked.
+
+Final state:
+
+- starting `main`: `67b3cc9d94ca28641f4ba1ce4378b19fa08f985c`;
+- exact physically tested head: `6eac38e575dd778a5b4e42fe5b83283723df1847`;
+- squash merge: `2040f604892c067ee288fe88df15594a570ac396`;
+- 4 additions;
+- 0 deletions;
+- 2 changed files;
+- runtime original blob: `f7aff84b33c847d825f5fa0207549572582c5096`;
+- runtime guarded blob: `dd3cb93abeecd92897c4fe2beb734e4a6148acfc`;
+- startup-contract original blob: `af9d23224988be205becc284bcb0f0a70433edea`;
+- startup-contract modified blob: `95e77fcb7e66e982ad5dc7bbabdaaf1a4938261d`.
+
+Focused proof and validation passed:
+
+- exact original and guarded blob reproduction;
+- JavaScript syntax;
+- startup ownership contract;
+- missing-DOM and missing-ranking-data recovery;
+- byte-for-byte first-run equivalence after removing only the marker lines;
+- 14 original element listeners, two ranking-ready listeners, and one 1400 ms timeout preserved;
+- zero observers, intervals, polling, or dynamic script loads;
+- second successful execution added zero ownership;
+- a Top 10 action after deliberate duplicate evaluation saved once;
+- complete Startup Architecture Gate;
+- iOS startup route and lifecycle stability;
+- profile sign-in and Picks continuation;
+- delayed Home/community stability.
+
+Unrelated existing red checks remained separate: stale production ranking certification expectations, scoring guardrail roster/rank and Alexandre Pantoja diagnostics, and women’s fighter-thumbnail rendering failures.
+
+Cody physically tested exact immutable PR head `6eac38e575dd778a5b4e42fe5b83283723df1847` on the installed iPhone and reported **“Normal.”** Cold launch, Play entry and exit, signed-in and signed-out behavior, Top 10 viewing/editing/saving/persistence, blind resume, repeated game entry, navigation, profile and Picks handoffs, sharing, notifications, badges, background/resume, relaunch, rapid taps, rotation/resize, and delayed stability showed no visible regression, duplicate ownership, failed prerequisite recovery, or lost state.
+
+PR #115 was squash-merged as commit `2040f604892c067ee288fe88df15594a570ac396`. Batch 10A was closed as physically verified.
+
+The next isolated Phase 1 owner is `assets/js/play-hub.js`. It must remain a fresh, separate prerequisite-aware batch and must not be combined with another owner.
