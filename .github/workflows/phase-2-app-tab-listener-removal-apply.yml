@@ -24,20 +24,15 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import re
 
           app_path = Path('assets/js/app.js')
           app = app_path.read_text()
-          legacy = """document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', () => {
-            document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
-            document.querySelectorAll('.view').forEach(v=>v.classList.remove('active-view'));
-            btn.classList.add('active');
-            el(btn.dataset.view).classList.add('active-view');
-            refresh();
-          }));
-          """
-          if app.count(legacy) != 1:
-              raise SystemExit(f'Expected exactly one legacy tab listener, found {app.count(legacy)}')
-          app_path.write_text(app.replace(legacy, ''))
+          pattern = re.compile(r"document\.querySelectorAll\('\.tab'\)\.forEach\(btn => btn\.addEventListener\('click', \(\) => \{\n\s+document\.querySelectorAll\('\.tab'\)\.forEach\(b=>b\.classList\.remove\('active'\)\);\n\s+document\.querySelectorAll\('\.view'\)\.forEach\(v=>v\.classList\.remove\('active-view'\)\);\n\s+btn\.classList\.add\('active'\);\n\s+el\(btn\.dataset\.view\)\.classList\.add\('active-view'\);\n\s+refresh\(\);\n\s+\}\)\);\n")
+          app, count = pattern.subn('', app)
+          if count != 1:
+              raise SystemExit(f'Expected exactly one legacy tab listener, found {count}')
+          app_path.write_text(app)
 
           contract_path = Path('scripts/test-startup-contract.mjs')
           contract = contract_path.read_text()
