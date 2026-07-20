@@ -7,7 +7,7 @@ on:
       - '.github/workflows/phase-2-community-access-owner-apply.yml'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   apply:
@@ -117,12 +117,10 @@ jobs:
           node --check scripts/test-startup-contract.mjs
           node scripts/test-startup-contract.mjs
           git diff --check
-      - name: Upload validated community access files
-        uses: actions/upload-artifact@v4
-        with:
-          name: community-access-owner-files
-          path: |
-            assets/js/community-profiles.js
-            scripts/test-community-profile-access-owner.mjs
-            scripts/test-startup-contract.mjs
-            .github/workflows/startup-architecture-gate.yml
+      - name: Commit validated runtime and contract
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add assets/js/community-profiles.js scripts/test-startup-contract.mjs
+          git commit -m "Remove duplicate Community access synchronization"
+          git push origin HEAD:agent/phase-2-community-access-owner
