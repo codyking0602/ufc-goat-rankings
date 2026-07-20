@@ -544,14 +544,6 @@ function refresh(){
 
 populateControls(); refresh();
 
-document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', () => {
-  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active-view'));
-  btn.classList.add('active');
-  el(btn.dataset.view).classList.add('active-view');
-  refresh();
-}));
-
 el('search').addEventListener('input', refresh);
 el('divisionFilter').addEventListener('change', refresh);
 el('resetBtn').addEventListener('click', () => { el('search').value=''; el('divisionFilter').value='All'; refresh(); });
