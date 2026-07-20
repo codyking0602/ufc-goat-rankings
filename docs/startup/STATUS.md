@@ -1,19 +1,20 @@
 # Startup Architecture Status
 
-_Last updated: 2026-07-19_
+_Last updated: 2026-07-20_
 
 ## Overall status
 
-- **Current phase:** Phase 1 — Make startup owners idempotent
-- **Phase 0:** Complete
-- **Phase 1 runtime batches merged and physically verified:** 12
-- **Latest verified runtime commit:** `e332f46ec63c6698fdebd8ecc843c3f0df4eaabd`
-- **Exact Batch 11 iPhone-tested head:** `ad0e84e4069224270db8186aa771216af90343b4`
-- **Estimated entire cleanup progress:** approximately 45%
-- **Master tracker:** [#102 — Zero-change startup architecture cleanup](https://github.com/codyking0602/ufc-goat-rankings/issues/102)
-- **Visible product changes approved:** none
-- **Major Phase 1 owner audit:** complete in [`PHASE-1-OWNER-AUDIT.md`](./PHASE-1-OWNER-AUDIT.md)
-- **Recommended session state:** start a fresh chat before the production-ranking-bootstrap lifecycle batch; this file is the handoff source of truth
+- **Current phase:** Phase 1 complete — all owners in the major Phase 1 audit are protected under their audited guard class.
+- **Phase 0:** Complete.
+- **Phase 1:** Complete.
+- **Phase 1 runtime batches merged and physically verified:** 13.
+- **Latest verified runtime commit:** `44684936bce748572a3497ec161500011a9623b9`.
+- **Exact Batch 12 iPhone-tested head:** `a9f50c846c5f3b266b444f0f1a6ffc2e2c9bf9e0`.
+- **Estimated entire cleanup progress:** approximately 50%.
+- **Master tracker:** [#102 — Zero-change startup architecture cleanup](https://github.com/codyking0602/ufc-goat-rankings/issues/102).
+- **Visible product changes approved:** none.
+- **Major Phase 1 owner audit:** exhausted; no additional Phase 1 runtime owner remains in [`PHASE-1-OWNER-AUDIT.md`](./PHASE-1-OWNER-AUDIT.md).
+- **Recommended session state:** start a fresh chat before Phase 2 planning. Do not begin a Phase 2 runtime change until a dedicated duplicate-ownership audit names one responsibility and one canonical owner.
 
 ## Completed runtime batches
 
@@ -31,138 +32,128 @@ _Last updated: 2026-07-19_
 | 10A | `play.js` | #115 | `2040f604892c067ee288fe88df15594a570ac396` | Exact tested head normal |
 | 10B | `play-hub.js` | #119 | `b1a7a3c92c2f7c13b64b4d68df3d26e4e9afbec8` | Exact tested head normal |
 | 11 | `share-deep-links.js` | #121 | `e332f46ec63c6698fdebd8ecc843c3f0df4eaabd` | Exact tested head normal |
+| 12 | `production-ranking-bootstrap.js` | #123 | `44684936bce748572a3497ec161500011a9623b9` | Exact tested head normal |
 
-## Batch 11 closeout — Sharing and incoming deep-link ownership
+## Batch 12 closeout — Calculated production ranking bootstrap
 
-PR #121 added a top-level duplicate-file-execution guard to `assets/js/share-deep-links.js` and one matching assertion to `scripts/test-startup-contract.mjs`.
+PR #123 replaced whole-file re-evaluation as the scoring bootstrap's accidental retry mechanism with a stable explicit lifecycle and then blocked only a second owner closure.
 
 Final runtime record:
 
-- starting `main`: `9743808a9a3200426f26099209c8f8e57ef32851`;
-- exact physically tested PR head: `ad0e84e4069224270db8186aa771216af90343b4`;
-- squash merge: `e332f46ec63c6698fdebd8ecc843c3f0df4eaabd`;
-- 5 additions;
-- 0 deletions;
-- 2 changed files;
-- original `share-deep-links.js` blob: `67979699403b6539d798ca3cf72c37bc42c60e21`;
-- guarded `share-deep-links.js` blob: `4716ae05270dd0f6d24c2973af058d4e15f383a3`;
-- original startup-contract blob: `dd426780dfdacdf1a9aa7848bcc0fc627ea5b627`;
-- guarded startup-contract blob: `b67f87807be533b346e15254dc1041b77bda1a3b`.
+- starting `main`: `952683af839547b84576fe2ea3a9c813dc709983`;
+- exact physically tested PR head: `a9f50c846c5f3b266b444f0f1a6ffc2e2c9bf9e0`;
+- CI-tested runtime/test parent: `087e384446884a8573ac4542504ea808cf343684`;
+- squash merge: `44684936bce748572a3497ec161500011a9623b9`;
+- 57 additions;
+- 8 deletions;
+- 3 changed files, including the required timestamp-only Octagon Verdict Markdown regeneration;
+- original runtime blob: `7f94b5092319038b8a52a826c60def6c5ada8979`;
+- merged runtime blob: `df5136ccd93e69bba924af757e8b0b4abfdf9df7`;
+- original startup-contract blob: `b67f87807be533b346e15254dc1041b77bda1a3b`;
+- merged startup-contract blob: `0f89092f5bab7e3cf8c77871d90c11cc1ea01728`.
 
-The owner has no top-level missing-DOM, missing-data, missing-route-owner, or missing-browser-API return before successful ownership begins. The marker is immediately after `'use strict'` and before `VERSION`, private state, API publication, DOM work, listeners, observers, timers, URL reads, outgoing sharing, or incoming-route handling.
+The owner now separates:
 
-Duplicate file evaluation was proven not to be an intentional prerequisite-recovery path. Legitimate later work remains owned by:
+1. **File ownership initialization**
+   - one private lifecycle state;
+   - one stable owner object;
+   - publication of `window.UFC_PRODUCTION_RANKING_BOOTSTRAP_LIFECYCLE`;
+   - no owner timers, intervals, observers, polling, or persistent listeners.
+2. **Bootstrap/application attempts**
+   - `start()` and `retry()` recover idle/error attempts and are no-ops after ready;
+   - `apply()` and `refresh()` intentionally force one recalculation after ready;
+   - concurrent calls share one in-flight Promise;
+   - failed dependency tags are removed so a later explicit retry can reload them;
+   - the legacy `window.UFC_PRODUCTION_RANKING_BOOTSTRAP` result still appears only at the original success/error boundary.
 
-- the existing once-only `DOMContentLoaded` path;
-- 40, 180, 700, and 1800 millisecond patch, observer, and decoration passes;
-- the 80 millisecond initial incoming-route pass;
-- `ufc-production-ranking-ready`;
-- `popstate`;
-- fighter-profile and War Room MutationObservers;
-- public `window.UFC_SHARE_LINKS` APIs;
-- route-specific `wait(...)` retry loops.
+The duplicate guard remains immediately after `'use strict'` and exits only when the complete lifecycle owner already exists. The owner marker is not published until private state and all lifecycle methods exist, and it is published before the automatic first `start()` attempt.
 
-The exact first-run owner remains unchanged:
+Preserved first-success behavior includes:
 
-- `window.UFC_SHARE_LINKS` publication and `data-share-deep-links` state;
-- fighter profile canvas/file sharing;
-- Find the Leader result sharing;
-- Picks recap sharing;
-- War Room message sharing;
-- native Web Share success, cancellation, and rejection behavior;
-- secure clipboard and hidden-textarea copy fallbacks;
-- profile and War Room decoration;
-- two document click listeners, including the capture-phase Picks recap owner;
-- two MutationObservers when the relevant mounts exist;
-- five initial timers;
-- production-ranking-ready and `popstate` listeners;
-- fighter, Find the Leader, Play challenge, Picks event, and War Room incoming routing;
-- existing Rankings, Play, profile-challenge, Picks, War Room, profile, sharing, and native-shell handoffs.
+- `UFC_RANKING_DATA_PATCHES_READY`;
+- all 40 ordered canonical calculation dependencies;
+- approved-input validation;
+- `UFC_RANKING_PIPELINE.apply()` and in-place `RANKING_DATA` replacement;
+- presentation score cleanup and Compare synchronization;
+- final fighter-photo synchronization;
+- division ranking rebuild and validation;
+- `UFC_SCORING_PIPELINE` and readiness attributes;
+- app refresh, category rendering, and division rendering;
+- `ufc-ranking-pipeline-applied`, `ufc-scoring-pipeline-ready`, and `ufc-production-ranking-ready`;
+- Octagon Verdict data build and Compare launcher rendering;
+- unchanged ranking, profile, division, category, Games, Compare, Intelligence, and audit consumers.
 
 Focused proof established:
 
-- removing only the two marker lines reproduces the original runtime byte-for-byte;
-- original and guarded first-run traces are equivalent;
-- missing optional DOM and APIs recover through existing delayed, event, observer, public-API, and route-wait paths without file re-evaluation;
-- deliberate duplicate evaluation adds zero listeners, timers, intervals, observers, API replacement, URL work, route work, share handling, clipboard writes, or native share sheets;
-- original duplicate evaluation created a second private closure, four additional listeners, five timers, two observers when mounts existed, replacement API ownership, and a fresh route key;
-- native share success, cancellation, rejection fallback, secure clipboard fallback, and `execCommand` fallback remain unchanged;
-- outgoing fighter, Find the Leader, Picks, and War Room payloads remain unchanged;
-- all five supported incoming route types activate once;
-- malformed and unsupported links do not activate a destination;
-- failed incoming routes remain retryable;
-- `popstate` handles a newly navigated supported link once;
-- no history or location mutation is introduced.
+- original and modified first-success observable behavior is equivalent;
+- missing prerequisites create no partial calculation or publication;
+- missing prerequisites recover through `retry()` without file re-evaluation;
+- failed calculation/application attempts remain retryable;
+- repeated duplicate evaluation adds zero script loaders, listeners, timers, intervals, observers, calculations, publications, readiness events, refreshes, or render passes;
+- repeated `start()` and `retry()` calls after ready are stable no-ops;
+- concurrent forced calls share one attempt;
+- later explicit `apply()` and `refresh()` each produce one intentional complete recalculation;
+- no rank, score, category, OVR, visible statistic, profile projection, or fighter order changes.
 
-Validation passed on exact head `ad0e84e4069224270db8186aa771216af90343b4`:
+Measured original duplicate-evaluation footprint included 40 extra dependency-load listeners and two complete ranking calculation/publication chains. The protected owner retains the exact successful first-run footprint: one calculation, one app refresh, one category render, one scoring-ready event, and one production-ready event, with the existing downstream double rebuild/build effects caused by their preserved readiness listeners.
 
-- JavaScript syntax;
-- startup ownership contract;
-- focused exact-original and duplicate-execution harness;
-- Startup Architecture Gate #32;
-- iOS startup route stability;
-- profile sign-in startup stability;
-- delayed Home/community stability.
+Validation:
+
+- JavaScript syntax passed;
+- startup ownership contract passed;
+- focused lifecycle, prerequisite, retry, first-run-equivalence, explicit-apply, and duplicate-execution harness passed;
+- Startup Architecture Gate passed on the exact runtime/test parent, including iOS startup route stability, profile sign-in startup stability, and delayed Home/community stability;
+- required Octagon Verdict Markdown build passed;
+- the generated timestamp-only child changed no runtime or test blob.
 
 Unrelated red checks were inspected but not repaired:
 
-- Scoring Architecture Guardrails #1265 retained stale 73-versus-80 roster/facts expectations, stale Henry Cejudo and Royce Gracie rank expectations, category-audit baseline diagnostics, and Alexandre Pantoja display diagnostics;
-- Production Ranking Browser Smoke #447 retained the existing 14 women’s leaderboard thumbnail render failures.
+- stale 73-versus-80 roster and old-rank expectations;
+- stale Henry Cejudo rank certification;
+- existing Alexandre Pantoja category-audit and display-ownership diagnostics;
+- existing 14 women’s leaderboard-thumbnail rendering failures.
 
-Cody physically tested exact immutable head `ad0e84e4069224270db8186aa771216af90343b4` and reported **“Normal.”** No visible regression, blank state, flicker, route bounce, stale or lost state, duplicate UI, double action, duplicate share sheet, duplicate clipboard write, repeated incoming route, repeated URL handling, duplicate ownership, or failed prerequisite recovery was observed.
+Cody physically tested exact immutable head `a9f50c846c5f3b266b444f0f1a6ffc2e2c9bf9e0` on the installed iPhone and reported **“Normal.”** No blank state, flicker, route bounce, stale or missing ranking data, repeated ranking refresh, duplicate readiness event, duplicate rendering, changed rank, changed score, changed category, changed OVR, or changed fighter order was reported.
 
-## Next Phase 1 batch
+## Phase 1 conclusion
 
-**Next isolated owner: `assets/js/production-ranking-bootstrap.js` only.**
+Every owner listed in the major Phase 1 audit has now been handled according to its audited class:
 
-This is not a standard guard batch. The owner remains classified as **retry semantics required**. Do not add a naive top-level marker.
+- simple IIFE owners use complete-owner guards;
+- prerequisite-aware owners claim ownership only after prerequisites pass;
+- `app.js` remains an exact-one manifest structural singleton;
+- the retry-sensitive production ranking launcher now owns an explicit callable lifecycle before duplicate evaluation is blocked.
 
-The next batch must first design and prove an intentional apply/retry lifecycle that preserves:
-
-- ordered canonical calculation dependency loading;
-- script-attribute and source checks;
-- canonical data, scoring calculator, and ranking-pipeline readiness;
-- calculated production rebuild and refresh behavior;
-- all current success, failure, and delayed-readiness events;
-- app refresh and generated production feed handoffs;
-- any current accidental second-evaluation recovery that must be replaced by an explicit callable path;
-- no duplicate script loading, rebuild, event dispatch, app refresh, or scoring state transition.
-
-`app.js` remains a structural manifest singleton and must not receive a standard IIFE guard.
+There is **no next isolated Phase 1 owner in the current audit**. Do not invent one or add a standard guard to `app.js`.
 
 ## Existing unrelated red checks
 
-1. **Scoring Architecture Guardrails**
-   - Existing stale roster/rank expectations and Alexandre Pantoja diagnostics remain outside startup work.
-
+1. **Production ranking and scoring contracts**
+   - Stale roster-count and rank expectations plus Alexandre Pantoja diagnostics remain outside startup work.
 2. **Production Ranking Browser Smoke**
    - Existing women’s fighter-thumbnail rendering failures remain separate from startup ownership.
+3. **Picks and other product certification diagnostics**
+   - Existing static-contract or product-data findings remain separate.
 
-3. **Picks UI and production certification diagnostics**
-   - Existing static-contract and ranking expectation findings remain separate.
-
-Do not repair these in a startup-owner PR unless a failure directly references the isolated changed lines.
+Do not repair these inside startup architecture work unless a failure directly references the isolated changed lines.
 
 ## Exact next action
 
-1. Start a fresh chat from current `main` and reread `STATUS.md`, `DECISIONS.md`, `OWNERS.md`, `PHASE-1-OWNER-AUDIT.md`, `TEST_PLAN.md`, and every current Issue #102 comment.
-2. Verify and record the exact starting `main` SHA.
-3. Inspect `assets/js/production-ranking-bootstrap.js`, its dynamic dependency order, its complete current retry behavior, and only directly invoked scoring/bootstrap/app-refresh owners.
-4. Prove whether duplicate evaluation currently provides legitimate prerequisite or failure recovery.
-5. Design an explicit callable apply/retry lifecycle before blocking any second evaluation.
-6. Keep the runtime batch isolated to the production bootstrap and the minimum matching contract/test proof justified by inspection.
-7. Open a draft PR and require exact-head automated and physical-device verification if lifecycle, routing, app refresh, or installed behavior can be affected.
-8. Do not begin Phase 2, Phase 3, or unrelated scoring/product cleanup.
+1. Start a fresh chat from current `main`.
+2. Reread the governing architecture docs and every current Issue #102 comment.
+3. Treat Phase 1 as complete.
+4. Create a **Phase 2 duplicate-ownership audit** before changing runtime code.
+5. Audit Phase 2 in the roadmap order: route ownership, identity/profile ownership, notification ownership, then refresh/lifecycle ownership.
+6. Name one canonical responsibility and one isolated owner only after the audit proves the boundary.
+7. Do not begin Phase 3 repair retirement, Phase 4 startup deferral, Phase 5 manifest simplification, or Phase 6 certification.
 
-## Stop conditions
+## Stop conditions for the next session
 
-Stop and leave the production bootstrap unchanged or draft-only if:
+Stop before runtime editing if:
 
-- a safe explicit retry lifecycle cannot replace necessary second-evaluation recovery;
-- dependency loading order or canonical source ownership changes;
-- calculated rankings, visible scores, ranks, profiles, or production feeds change;
-- app refresh timing, ready events, failure events, or retry behavior changes;
-- scripts, rebuilds, events, refreshes, listeners, timers, or state transitions duplicate;
-- blank state, flicker, stale ranking data, route bounce, or delayed instability appears;
-- the runtime diff expands into `app.js`, scoring formulas, fighter data, presentation, photos, or unrelated checks;
-- another startup owner or later cleanup phase begins.
+- the proposed Phase 2 responsibility has multiple unresolved owners;
+- the canonical owner cannot be identified without broad product changes;
+- rankings, data, formulas, UI, navigation behavior, or product copy would change;
+- the work would remove a repair or fallback without dedicated regression proof;
+- the work would combine route, identity, notification, and lifecycle consolidation in one batch;
+- the work would treat `app.js` as a normal IIFE guard candidate.
