@@ -2,10 +2,19 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
+const SOURCE_PATH='assets/js/app-notification-center.js';
 const BASE='http://127.0.0.1:4173/notification-identity-owner-proof.html';
 const REPORT='/tmp/notification-identity-owner-report.json';
-const report={passed:false,stage:'boot',initial:null,profileUpdate:null,preference:null,error:null};
+const report={passed:false,stage:'static-contract',initial:null,readiness:null,profileUpdate:null,preference:null,interactive:null,error:null};
 let browser;
+
+const source=fs.readFileSync(SOURCE_PATH,'utf8');
+assert.match(source,/function cachedIdentity\(\)[\s\S]*UFC_PLAY_PROFILE\?\.identity[\s\S]*UFC_APP_PROFILE\?\.identity/,'Notification center must consume the published canonical identity cache.');
+assert.doesNotMatch(source,/UFC_PLAY_PROFILE\?\.(?:resolve|resolveIdentity)\?\.\(/,'Notification center must not invoke the canonical resolver.');
+assert.doesNotMatch(source,/UFC_APP_PROFILE\?\.resolve\?\.\(/,'Notification center must not invoke the profile editor resolver.');
+assert.match(source,/async function loadSettings\(force=false\)[\s\S]*const who=cachedIdentity\(\),rpc=client\(\),token=tokenFor\(who\)/,'Passive settings loads must read cached identity before RPC work.');
+assert.match(source,/async function requireIdentity\(\)[\s\S]*UFC_PLAY_PROFILE\?\.require\?\.\(/,'Explicit notification actions may require identity through the canonical owner.');
+assert.match(source,/ufc-play-profile-ready/,'Notification center must retain canonical readiness synchronization.');
 
 const html=`<!doctype html>
 <html><head><meta charset="utf-8"><title>Notification identity owner proof</title></head>
@@ -17,7 +26,7 @@ const html=`<!doctype html>
     const member={id:'m1',display_name:'Cody'};
     const identity={memberToken:'notification-owner-token',member_token:'notification-owner-token',member};
     const ok=data=>({data,error:null});
-    window.__NOTIFICATION_OWNER__={canonicalResolves:0,editorResolves:0,rpcs:[],identity};
+    window.__NOTIFICATION_OWNER__={canonicalResolves:0,canonicalRequires:0,editorResolves:0,rpcs:[],identity};
     const client={
       async rpc(name,args){
         window.__NOTIFICATION_OWNER__.rpcs.push({name,args});
@@ -32,6 +41,12 @@ const html=`<!doctype html>
       client,
       async resolve(){
         window.__NOTIFICATION_OWNER__.canonicalResolves+=1;
+        const node=document.createElement('div');node.dataset.unexpectedNotificationSignin='true';document.body.appendChild(node);
+        this.identity=window.__NOTIFICATION_OWNER__.identity;
+        return this.identity;
+      },
+      async require(){
+        window.__NOTIFICATION_OWNER__.canonicalRequires+=1;
         this.identity=window.__NOTIFICATION_OWNER__.identity;
         return this.identity;
       }
@@ -48,7 +63,21 @@ const html=`<!doctype html>
   <script src="/assets/js/app-notification-center.js"></script>
 </body></html>`;
 
+async function snapshot(page){
+  return await page.evaluate(()=>({
+    canonicalResolves:window.__NOTIFICATION_OWNER__.canonicalResolves,
+    canonicalRequires:window.__NOTIFICATION_OWNER__.canonicalRequires,
+    editorResolves:window.__NOTIFICATION_OWNER__.editorResolves,
+    rpcs:window.__NOTIFICATION_OWNER__.rpcs,
+    storageReads:window.__NOTIFICATION_STORAGE_READS__,
+    profileCards:document.querySelectorAll('[data-app-notification-center="profile"]').length,
+    activityCards:document.querySelectorAll('[data-app-notification-center="activity"]').length,
+    unexpectedSignin:document.querySelectorAll('[data-unexpected-notification-signin]').length
+  }));
+}
+
 try{
+  report.stage='browser-launch';
   browser=await chromium.launch({headless:true});
   const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true});
   const page=await context.newPage();
@@ -65,37 +94,43 @@ try{
     localStorage.setItem('ufc-picks:group:GOAT26','stale-storage-token');
     window.__NOTIFICATION_STORAGE_READS__=[];
     Storage.prototype.getItem=function(key){
-      const text=String(key);
-      if(this===window.localStorage&&text==='ufc-picks:group:GOAT26'){
-        window.__NOTIFICATION_STORAGE_READS__.push({key:text,stack:String(new Error().stack||'')});
-      }
+      const value=String(key);
+      if(this===window.localStorage&&value==='ufc-picks:group:GOAT26')window.__NOTIFICATION_STORAGE_READS__.push({key:value,stack:String(new Error().stack||'')});
       return originalGet.call(this,key);
     };
   });
 
   await page.route(BASE,route=>route.fulfill({status:200,contentType:'text/html',body:html}));
-  report.stage='launch';
   await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:60000});
-  await page.waitForFunction(()=>window.UFC_APP_NOTIFICATIONS?.settings,null,{timeout:30000});
   await page.waitForSelector('[data-app-notification-center="profile"]',{state:'attached',timeout:10000});
   await page.waitForSelector('[data-app-notification-center="activity"]',{state:'attached',timeout:10000});
+  await page.waitForTimeout(500);
 
-  report.stage='initial-settings';
-  report.initial=await page.evaluate(()=>({
-    canonicalResolves:window.__NOTIFICATION_OWNER__.canonicalResolves,
-    editorResolves:window.__NOTIFICATION_OWNER__.editorResolves,
-    rpcs:window.__NOTIFICATION_OWNER__.rpcs,
-    storageReads:window.__NOTIFICATION_STORAGE_READS__,
-    profileCards:document.querySelectorAll('[data-app-notification-center="profile"]').length,
-    activityCards:document.querySelectorAll('[data-app-notification-center="activity"]').length
-  }));
-  assert.equal(report.initial.canonicalResolves,1,'Notification settings must resolve through the canonical profile owner.');
-  assert.equal(report.initial.editorResolves,0,'Notification settings must not invoke the profile editor resolver.');
-  assert.equal(report.initial.rpcs.filter(row=>row.name==='app_notification_settings').length,1,'Notification settings must load once.');
-  assert.equal(report.initial.rpcs.find(row=>row.name==='app_notification_settings')?.args?.p_member_token,'notification-owner-token');
+  report.stage='uncached-startup';
+  report.initial=await snapshot(page);
+  assert.equal(report.initial.canonicalResolves,0,'Passive notification startup must not invoke the canonical resolver.');
+  assert.equal(report.initial.canonicalRequires,0,'Passive notification startup must not require sign-in.');
+  assert.equal(report.initial.editorResolves,0,'Passive notification startup must not invoke the editor resolver.');
+  assert.equal(report.initial.rpcs.filter(row=>row.name==='app_notification_settings').length,0,'Uncached startup must wait for published identity before loading settings.');
   assert.equal(report.initial.storageReads.some(row=>/app-notification-center\.js/i.test(row.stack)),false,'Notification center must not read canonical access from storage.');
-  assert.equal(report.initial.profileCards,1,'Notification settings must retain one profile surface.');
-  assert.equal(report.initial.activityCards,1,'Notification settings must retain one activity surface.');
+  assert.equal(report.initial.profileCards,1,'Notification center must retain one profile surface.');
+  assert.equal(report.initial.activityCards,1,'Notification center must retain one activity surface.');
+  assert.equal(report.initial.unexpectedSignin,0,'Passive notification startup must not create a sign-in surface.');
+
+  report.stage='canonical-readiness';
+  await page.evaluate(()=>{
+    window.UFC_PLAY_PROFILE.identity=window.__NOTIFICATION_OWNER__.identity;
+    window.__NOTIFICATION_OWNER__.rpcs=[];
+    window.dispatchEvent(new CustomEvent('ufc-play-profile-ready',{detail:window.__NOTIFICATION_OWNER__.identity}));
+  });
+  await page.waitForFunction(()=>window.__NOTIFICATION_OWNER__.rpcs.some(row=>row.name==='app_notification_settings'&&row.args?.p_member_token==='notification-owner-token'),null,{timeout:10000});
+  report.readiness=await snapshot(page);
+  assert.equal(report.readiness.canonicalResolves,0,'Published canonical readiness must not re-enter the resolver.');
+  assert.equal(report.readiness.canonicalRequires,0,'Published canonical readiness must not require sign-in.');
+  assert.equal(report.readiness.editorResolves,0);
+  assert.equal(report.readiness.rpcs.filter(row=>row.name==='app_notification_settings').length,1,'Canonical readiness must load notification settings once.');
+  assert.equal(report.readiness.profileCards,1);
+  assert.equal(report.readiness.activityCards,1);
 
   report.stage='profile-update';
   await page.evaluate(()=>{
@@ -106,13 +141,9 @@ try{
     window.dispatchEvent(new CustomEvent('ufc-app-profile-updated',{detail:{identity:updated}}));
   });
   await page.waitForFunction(()=>window.__NOTIFICATION_OWNER__.rpcs.some(row=>row.name==='app_notification_settings'&&row.args?.p_member_token==='notification-update-token'),null,{timeout:10000});
-  report.profileUpdate=await page.evaluate(()=>({
-    canonicalResolves:window.__NOTIFICATION_OWNER__.canonicalResolves,
-    editorResolves:window.__NOTIFICATION_OWNER__.editorResolves,
-    rpcs:window.__NOTIFICATION_OWNER__.rpcs,
-    storageReads:window.__NOTIFICATION_STORAGE_READS__
-  }));
-  assert.equal(report.profileUpdate.canonicalResolves,1,'A published profile update must reuse its supplied canonical identity.');
+  report.profileUpdate=await snapshot(page);
+  assert.equal(report.profileUpdate.canonicalResolves,0,'A published profile update must reuse its supplied canonical identity.');
+  assert.equal(report.profileUpdate.canonicalRequires,0);
   assert.equal(report.profileUpdate.editorResolves,0);
   assert.equal(report.profileUpdate.storageReads.some(row=>/app-notification-center\.js/i.test(row.stack)),false);
 
@@ -120,22 +151,32 @@ try{
   await page.evaluate(()=>{window.__NOTIFICATION_OWNER__.rpcs=[];window.__NOTIFICATION_STORAGE_READS__=[];});
   await page.evaluate(()=>window.UFC_APP_NOTIFICATIONS.updatePreference('direct_challenges',true));
   await page.waitForFunction(()=>window.__NOTIFICATION_OWNER__.rpcs.some(row=>row.name==='app_notification_update_preferences'),null,{timeout:10000});
-  report.preference=await page.evaluate(()=>({
-    editorResolves:window.__NOTIFICATION_OWNER__.editorResolves,
-    rpcs:window.__NOTIFICATION_OWNER__.rpcs,
-    storageReads:window.__NOTIFICATION_STORAGE_READS__,
-    enabled:window.UFC_APP_NOTIFICATIONS.settings?.preferences?.direct_challenges
-  }));
+  report.preference=await snapshot(page);
   const preferenceRpc=report.preference.rpcs.find(row=>row.name==='app_notification_update_preferences');
-  assert.equal(preferenceRpc?.args?.p_member_token,'notification-update-token','Notification preference writes must use the supplied canonical identity token.');
+  assert.equal(preferenceRpc?.args?.p_member_token,'notification-update-token','Notification preference writes must use the published canonical token.');
   assert.equal(preferenceRpc?.args?.p_direct_challenges,true);
+  assert.equal(report.preference.canonicalResolves,0);
+  assert.equal(report.preference.canonicalRequires,0,'Cached explicit actions must not prompt again.');
   assert.equal(report.preference.editorResolves,0);
   assert.equal(report.preference.storageReads.some(row=>/app-notification-center\.js/i.test(row.stack)),false);
-  assert.equal(report.preference.enabled,true,'Notification preference state must remain functional.');
+
+  report.stage='explicit-fallback';
+  await page.reload({waitUntil:'domcontentloaded',timeout:60000});
+  await page.waitForSelector('[data-app-notification-center="profile"]',{state:'attached',timeout:10000});
+  await page.waitForTimeout(400);
+  await page.evaluate(()=>{window.__NOTIFICATION_OWNER__.rpcs=[];window.__NOTIFICATION_STORAGE_READS__=[];});
+  await page.evaluate(()=>window.UFC_APP_NOTIFICATIONS.disableDevice());
+  await page.waitForFunction(()=>window.__NOTIFICATION_OWNER__.canonicalRequires===1&&window.__NOTIFICATION_OWNER__.rpcs.some(row=>row.name==='app_notification_settings'),null,{timeout:10000});
+  report.interactive=await snapshot(page);
+  assert.equal(report.interactive.canonicalResolves,0,'Explicit notification actions must still avoid the generic resolver.');
+  assert.equal(report.interactive.canonicalRequires,1,'An explicit notification action may require identity through the canonical owner.');
+  assert.equal(report.interactive.editorResolves,0);
+  assert.equal(report.interactive.rpcs.some(row=>row.name==='app_notification_settings'&&row.args?.p_member_token==='notification-owner-token'),true,'Explicit identity fallback must load settings with the required token.');
+  assert.equal(report.interactive.storageReads.some(row=>/app-notification-center\.js/i.test(row.stack)),false);
 
   report.passed=true;
   report.stage='complete';
-  console.log('Notification canonical identity ownership proof passed.');
+  console.log('Notification passive identity ownership proof passed.');
   await context.close();
 }catch(error){
   report.error={message:error?.message||String(error),stack:error?.stack||null};
