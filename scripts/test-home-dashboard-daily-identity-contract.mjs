@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 const source=fs.readFileSync('assets/js/home-dashboard.js','utf8');
-const cached=source.match(/function cachedIdentity\(\)\{([\s\S]*?)\n  \}/);
+const cached=source.match(/function cachedIdentity\(\)\{([\s\S]*?)\}/);
 const sync=source.match(/async function syncOfficialDaily\(force=false\)\{([\s\S]*?)\n  \}\n\n  function preferredEvent/);
 
 assert(cached,'Home Dashboard cached identity boundary could not be identified.');
