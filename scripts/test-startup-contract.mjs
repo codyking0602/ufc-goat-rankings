@@ -99,6 +99,9 @@ assert(/if\(!panel \|\| !Array\.isArray\(DATA\.men\)\) return;\s+if\(window\.__U
 const playHub=read('assets/js/play-hub.js');
 assert(/if\(!play\|\|!shell\|\|!sectionTitle\|\|!top10Button\|\|!blindButton\)return;\s+if\(window\.__UFC_PLAY_HUB_STARTED__\)return;\s+window\.__UFC_PLAY_HUB_STARTED__=true;\s+const nativeRandom=/.test(playHub),'Play hub must keep its duplicate-file guard after required Play DOM prerequisites pass and before successful ownership begins.');
 
+const app=read('assets/js/app.js');
+assert.equal(app.includes("document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click'"),false,'app.js must not own primary tab activation; the canonical shell owns route activation.');
+
 const product=read('assets/js/product-architecture.js');
 assert(product.includes('__UFC_PRODUCT_ARCHITECTURE_STARTED__'),'Product architecture must keep its global duplicate-start guard.');
 assert.equal(product.includes('loadNativeShell'),false,'Product architecture must not dynamically load the native shell.');
