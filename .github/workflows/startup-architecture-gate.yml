@@ -74,15 +74,22 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Validate existing startup JavaScript syntax
+      - name: Validate startup contract syntax
+        run: node --check scripts/test-startup-contract.mjs
+
+      - name: Validate route recovery proof syntax
+        run: node --check scripts/test-route-owner-shell-recovery-queue.mjs
+
+      - name: Validate startup runtime syntax A
         run: |
-          node --check scripts/test-startup-contract.mjs
-          node --check scripts/test-route-owner-shell-recovery-queue.mjs
           node --check assets/js/fresh-home-route-bootstrap.js
           node --check assets/js/octagon-hq-shell.js
           node --check assets/js/product-architecture.js
           node --check assets/js/app.js
           node --check assets/js/community-profiles.js
+
+      - name: Validate startup runtime syntax B
+        run: |
           node --check assets/js/fresh-home-launch.js
           node --check assets/js/app-notification-center.js
           node --check assets/js/app-notification-surface-fix.js
