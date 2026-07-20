@@ -1,14 +1,10 @@
 # Startup Architecture Changelog
 
-This is a historical record of completed or formally started startup-architecture work. Current state belongs in `STATUS.md`.
+This is the historical record of completed or formally started startup-architecture work. Current state belongs in `STATUS.md`.
 
 ## 2026-07-19 — Phase 0 foundation
 
-Added the zero-change startup architecture contract:
-
-- documented the approved behavior freeze;
-- identified major startup phases and intended owners;
-- defined the six cleanup phases and final definition of done.
+Added the zero-visible-change startup architecture contract, identified the six cleanup phases and intended owners, and locked the rule that current `main` is the production source of truth.
 
 Commit: `2e70d6b6ceb6c697c46dedadfeaf75ad40b70517`
 
@@ -19,32 +15,11 @@ Added:
 - `scripts/test-startup-contract.mjs`;
 - `.github/workflows/startup-architecture-gate.yml`.
 
-The gate checks startup syntax, ownership expectations, critical load order, and duplicate-loading risks without changing production runtime behavior.
-
-## 2026-07-19 — Phase 1 first draft batch
-
-Opened draft PR #100, **Add zero-change singleton guards to route startup**.
-
-Proposed runtime changes:
-
-- guard `fresh-home-route-bootstrap.js` against accidental second execution;
-- guard `fresh-home-launch.js` against accidental second execution;
-- assert both guards in the startup contract.
-
-Refreshed validation passed:
-
-- startup syntax;
-- startup ownership/load order;
-- iOS standalone startup/lifecycle browser simulation;
-- profile startup;
-- delayed Home/community stability;
-- Phase 4B mobile/profile/Picks stability.
-
-The branch was rebuilt directly from current `main`, preserving the exact 8-addition, 3-file runtime diff.
+The gate checks startup syntax, ownership expectations, critical load order, iOS startup routing, profile sign-in startup, and delayed Home/community stability without changing runtime behavior.
 
 ## 2026-07-19 — Permanent continuity system
 
-Created master tracker issue #102 and added the repo-based handoff system:
+Created master tracker Issue #102 and the repository handoff system:
 
 - `docs/startup/README.md`;
 - `docs/startup/STATUS.md`;
@@ -54,235 +29,156 @@ Created master tracker issue #102 and added the repo-based handoff system:
 - `docs/startup/KNOWN_ISSUES.md`;
 - `docs/startup/CHANGELOG.md`.
 
-The repository records the active phase, current PR, passing checks, blockers, locked decisions, ownership map, and exact next action. Future chats start from `STATUS.md`, not chat memory.
+Future sessions start from repository documentation rather than chat memory.
 
-## 2026-07-19 — Major Phase 1 owner audit complete
+## 2026-07-19 — Major Phase 1 owner audit
 
-Added:
-
-- `docs/startup/PHASE-1-OWNER-AUDIT.md`;
-- `docs/startup/PR-100-IPHONE-TEST.md`.
-
-Audited major route, navigation, ranking, Play, Picks, Home, community, profile-handoff, notification, native-shell, repair, and share owners for:
-
-- duplicate file execution protection;
-- document/window listeners;
-- observers;
-- timers and intervals;
-- dynamic loading;
-- public APIs;
-- prerequisite early returns;
-- retry-sensitive behavior.
-
-The audit established four technical classes rather than applying a universal guard:
+Added `docs/startup/PHASE-1-OWNER-AUDIT.md` and classified startup owners into four technical groups:
 
 1. simple global-guard candidates;
 2. prerequisite-aware guard candidates;
 3. structural manifest singletons;
 4. retry-sensitive launchers requiring an explicit lifecycle.
 
-The one-owner-per-batch sequence is documented. The next runtime candidate after PR #100 is `assets/js/octagon-hq-shell.js` only.
+The audit established the one-owner-per-batch sequence and prohibited a universal marker pattern.
 
-## 2026-07-19 — PR #100 retained CI proof reviewed
+## 2026-07-19 — Preview and rollout policy
 
-Downloaded and inspected the Phase 4B proof artifact for PR #100. The reports recorded:
+The separate-origin static preview used during the earliest batches did not faithfully reproduce the production installed app. It was rejected for approval use.
 
-- stable repeated Home samples;
-- one community directory with no delayed replacements;
-- successful Top 10 save;
-- correct Home cold launch;
-- correct Picks resume;
-- one product architecture script;
-- one native shell;
-- one notification surface;
-- one bottom navigation.
+Physical iPhone verification became the required merge gate for mobile-sensitive owners, with the exact immutable PR head recorded before approval.
 
-The workflow served the branch only on localhost during CI and did not publish an installable branch deployment.
+## 2026-07-19 — Phase 1 Batch 1 merged and verified
 
-## 2026-07-19 — Third-party preview rejected
+PR #100 protected:
 
-The immutable separate-origin static preview did not reproduce the production mobile app. It showed the desktop tab fallback, incorrect current ordering, and an incomplete native shell.
+- `assets/js/fresh-home-route-bootstrap.js`;
+- `assets/js/fresh-home-launch.js`.
 
-The preview was declared invalid and Cody was told not to sign in there. Source comparison confirmed the branch differed from current `main` only by the exact eight-line guard/test diff.
+Final runtime diff: 8 additions, 0 deletions, 3 files. Startup and Phase 4B mobile checks passed. Cody verified the installed app was normal.
 
-## 2026-07-19 — Phase 1 batch 1 merged and verified
+Squash merge: `5e733cc4568100e96080ce27ad601b7022daba33`
 
-PR #100 was rebuilt directly from current `main` and revalidated on head `86c2cba7ce83ce6ef4a824cf79634e006dd53f5c`.
+## 2026-07-19 — Phase 1 Batch 2 merged and verified
 
-Final pre-merge state:
+PR #105 protected `assets/js/octagon-hq-shell.js` and added one startup-contract assertion.
 
-- 0 commits behind `main`;
-- 8 additions;
-- 0 deletions;
-- 3 changed files;
-- Startup Architecture Gate passed;
-- iOS Home Startup Stability passed;
-- Phase 4B mobile/profile/Picks validation passed.
+Final runtime diff: 4 additions, 0 deletions, 2 files. Navigation, ranking subviews, Picks lifecycle, profile sign-in, delayed Home/community, and installed-iPhone behavior passed.
 
-PR #100 was squash-merged as commit `5e733cc4568100e96080ce27ad601b7022daba33`.
+Squash merge: `d7b47d6fb9ad45b101f67d5658b3e2a874a746c8`
 
-Cody then verified the real installed iPhone app. The current mobile presentation, cold launch, navigation shell, and visible behavior were normal. Batch 1 was closed as live-verified.
+## 2026-07-19 — Phase 1 Batch 3 merged and verified
 
-## 2026-07-19 — Phase 1 batch 2 merged and verified
+PR #106 protected `assets/js/octagon-hq-nav-grid.js` while preserving its cleanup timers, resize listener, public API, and navigation presentation.
 
-PR #105 added a top-level duplicate-file-execution guard to `assets/js/octagon-hq-shell.js` and one matching startup-contract assertion.
+Final runtime diff: 6 additions, 0 deletions, 2 files. Cody verified cold launch, bottom-navigation sizing/order, active state, resize/rotation, and tap behavior.
 
-Final state:
+Squash merge: `f4e3ada330fb841ade0333c580376dacaf58ec88`
 
-- 4 additions;
-- 0 deletions;
-- 2 changed files;
-- current with `main`;
-- Startup Architecture Gate passed;
-- iOS startup route stability passed;
-- profile sign-in stability passed;
-- delayed Home/community stability passed.
+## 2026-07-19 — Phase 1 Batch 4 merged and verified
 
-PR #105 was squash-merged as commit `d7b47d6fb9ad45b101f67d5658b3e2a874a746c8`.
+PR #107 protected `assets/js/home-dashboard.js` while preserving Home markup, card order, copy, styles, timers, listeners, daily challenge, Picks, War Room, fighter spotlight, and public APIs.
 
-Cody tested the real installed app after deployment. Home, Rankings, Play, Picks, War Room, Intelligence, all Rankings subviews, Picks background/resume, and the bottom navigation behaved normally. Batch 2 was closed as live-verified.
+Final runtime diff: 6 additions, 0 deletions, 2 files. Cody verified Home cold launch, cards, Games, Picks, War Room, profile opening, background/resume, and return-to-Home behavior.
 
-## 2026-07-19 — Phase 1 batch 3 started
+Squash merge: `7fd6ede029cc307932cb38bc2c9274484b18f403`
 
-The next isolated owner is `assets/js/octagon-hq-nav-grid.js`.
+## 2026-07-19 — Phase 1 Batch 5 merged and verified
 
-This batch is limited to a duplicate-file-execution guard and one contract assertion. Its existing delayed cleanup timers and resize listener remain unchanged until the later repair-loop phase.
+PR #108 protected `assets/js/native-app-shell-stability.js` while preserving its public `schedule()` retry API, readiness events, MutationObserver, listeners, and delayed repair passes.
 
-## 2026-07-19 — Phase 1 batch 3 merged and verified
+Final runtime diff: 4 additions, 0 deletions, 2 files. Removal remains deferred to Phase 3 after regression coverage exists.
 
-PR #106 added a duplicate-file-execution guard to `assets/js/octagon-hq-nav-grid.js` and one startup-contract assertion while preserving its cleanup timers, resize listener, public API, and navigation presentation.
+Squash merge: `6b0c9442b5a4df46e481296bb8d5cbd3befe1ab7`
 
-Final state:
+## 2026-07-19 — Phase 1 Batch 6 merged and verified
 
-- 6 additions;
-- 0 deletions;
-- 2 changed files;
-- Startup Architecture Gate passed.
+PR #110 protected `assets/js/app-notification-center.js` while preserving notification rendering, service-worker behavior, profile/activity surfaces, settings retries, observers, event APIs, permission ownership, and user-gesture-only enabling.
 
-PR #106 was squash-merged as commit `f4e3ada330fb841ade0333c580376dacaf58ec88`.
+Final runtime diff: 4 additions, 0 deletions, 2 files. Cody verified installed-iPhone notification surfaces, permission behavior, controls, navigation, touch, and background/resume.
 
-Cody verified the installed iPhone app after deployment. Cold launch, bottom-navigation order and sizing, rotation and resize handling, active states, and single-tap behavior were normal. Batch 3 was closed as live-verified.
+Squash merge: `865527b15902e7b61fff429e4faf9ce2a0bc811c`
 
-## 2026-07-19 — Phase 1 batch 4 merged and verified
+## 2026-07-19 — Phase 1 Batch 7 merged and verified
 
-PR #107 added a duplicate-file-execution guard to `assets/js/home-dashboard.js` and one startup-contract assertion while preserving Home markup, card order, copy, styling, timers, listeners, daily challenge, Picks, War Room, fighter spotlight, and the existing public API.
+PR #112 protected `assets/js/native-app-shell.js` while preserving bottom navigation, badge synchronization, transitions, pull-to-refresh, touch handling, public APIs, events, MutationObserver, delayed passes, resize/orientation, visibility resume, and the 10-second badge interval.
 
-Final state:
+Final runtime diff: 4 additions, 0 deletions, 2 files. Cody physically tested immutable head `47812a65cfda297e5a64ea1fb51d186fce7d50a4` and reported the installed app was normal.
 
-- 6 additions;
-- 0 deletions;
-- 2 changed files;
-- Startup Architecture Gate passed.
+Squash merge: `5b82c3a47b64a4955c4fd4eb041fafe46473e8ac`
 
-PR #107 was squash-merged as commit `7fd6ede029cc307932cb38bc2c9274484b18f403`.
+## 2026-07-19 — Phase 1 Batch 8 merged and verified
 
-Cody verified the installed iPhone app after deployment. Home cold launch, card presentation, daily challenge, Picks, War Room, fighter spotlight/profile opening, background/resume, and return-to-Home behavior were normal. Batch 4 was closed as live-verified.
-
-## 2026-07-19 — Phase 1 batch 5 merged and verified
-
-PR #108 added a duplicate-file-execution guard to `assets/js/native-app-shell-stability.js` and one startup-contract assertion.
-
-The prerequisite/retry inspection established that this temporary repair layer does not rely on file re-evaluation for legitimate retries. The existing public `schedule()` API, readiness events, MutationObserver, and delayed repair passes remain the intentional retry paths.
-
-Final state:
-
-- 4 additions;
-- 0 deletions;
-- 2 changed files;
-- branch current with `main` at validation;
-- Startup Architecture Gate run #16 passed;
-- JavaScript syntax passed;
-- startup ownership contract passed;
-- iOS startup route stability passed;
-- profile sign-in startup stability passed;
-- delayed Home/community stability passed.
-
-PR #108 was squash-merged as commit `6b0c9442b5a4df46e481296bb8d5cbd3befe1ab7`.
-
-Cody verified the real installed iPhone app after deployment. Cold launch, Home/profile/header repairs, bottom-navigation and touch behavior, background/resume, and return-to-Home behavior were normal. Batch 5 was closed as live-verified.
-
-Removal or consolidation of `native-app-shell-stability.js` remains deferred to Phase 3 after source-level regression coverage exists. The next isolated Phase 1 owner is `assets/js/app-notification-center.js`.
-
-## 2026-07-19 — Phase 1 batch 6 merged and verified
-
-PR #110 added a duplicate-file-execution guard to `assets/js/app-notification-center.js` and one startup-contract assertion.
-
-The prerequisite/retry inspection established that notification startup does not depend on duplicate file evaluation. Profile-ready/profile-updated events, the notification-device-change listener, MutationObserver, the delayed settings attempt, public `loadSettings()` and `render()` APIs, and the guarded notification-surface compatibility layer remain the intentional retry paths. Notification permission remains user-gesture-only through the existing Enable-button path.
-
-Final state:
-
-- 4 additions;
-- 0 deletions;
-- 2 changed files;
-- branch current with `main` at validation;
-- Startup Architecture Gate run #18 passed;
-- JavaScript syntax passed;
-- startup ownership contract passed;
-- local app startup passed;
-- iOS startup route and resume stability passed;
-- profile sign-in startup stability passed;
-- delayed Home/community stability passed;
-- duplicate-evaluation harness and first-run equivalence proof passed.
-
-PR #110 was squash-merged as commit `865527b15902e7b61fff429e4faf9ce2a0bc811c`.
-
-Cody verified the real installed iPhone app after deployment. Cold launch, profile and activity Smart alerts surfaces, permission behavior, notification controls, navigation, touch handling, and background/resume behavior were normal. Batch 6 was closed as live-verified.
-
-The next isolated Phase 1 owner is `assets/js/native-app-shell.js`. It must remain a separate mobile-sensitive draft batch and receive dedicated navigation, touch, badge, transition, pull-to-refresh, profile, Picks, notification, lifecycle, and installed-iPhone verification.
-
-## 2026-07-19 — Phase 1 batch 7 merged and verified
-
-PR #112 added a top-level duplicate-file-execution guard to `assets/js/native-app-shell.js` and one matching startup-contract assertion.
-
-The prerequisite/retry inspection established that the native shell does not depend on duplicate file evaluation. Its complete first execution has no missing-DOM or missing-data early exit. Public shell APIs, route/profile/Picks/notification/soft-refresh events, MutationObserver, delayed passes, resize/orientation, visibility resume, and the existing 10-second badge interval remain the intentional later synchronization paths. `native-app-shell-stability.js` was unchanged.
-
-Final state:
-
-- 4 additions;
-- 0 deletions;
-- 2 changed files;
-- branch current with `main` at validation;
-- Startup Architecture Gate run #20 passed;
-- JavaScript syntax passed;
-- startup ownership contract passed;
-- local app startup passed;
-- iOS startup route and lifecycle stability passed;
-- profile sign-in and Picks startup stability passed;
-- delayed Home/community stability passed;
-- duplicate-evaluation harness and first-run equivalence proof passed.
-
-Cody tested the immutable PR head `47812a65cfda297e5a64ea1fb51d186fce7d50a4` on an installed iPhone, signed in, and reported the app was normal. Cold launch, bottom navigation, rapid tab switching, badges, fighter/profile surfaces, Picks, notification/profile surfaces, pull-to-refresh, background/resume, rotation, Home return, Games, Intelligence, War Room, sharing, and saved-profile behavior showed no visible regression.
-
-PR #112 was squash-merged as commit `5b82c3a47b64a4955c4fd4eb041fafe46473e8ac`. Batch 7 was closed as physically verified.
-
-The next isolated Phase 1 owner is `assets/js/picks.js`. Batch 8 must begin in a fresh session from current `main`, inspect all prerequisite and retry behavior before adding any marker, and remain separate from this closeout.
-
-## 2026-07-19 — Phase 1 batch 8 merged and verified
-
-PR #113 added a top-level duplicate-file-execution guard to `assets/js/picks.js` and one matching startup-contract assertion.
-
-The prerequisite/retry inspection established that the canonical page provides the Picks DOM, event data, Supabase library/config, and canonical-group owner before `picks.js` runs. The only missing-mount retry remains the original one-time `DOMContentLoaded` callback. Duplicate file evaluation was not an intentional retry; it created a second private state closure, optional Supabase client, static control handlers, render ownership, and 30-second polling loop.
+PR #113 protected `assets/js/picks.js` while preserving the original `DOMContentLoaded` retry, saved Picks and Underdog Lock restoration, tokens, room resume, routes, control bindings, backend event load, render ownership, support-owner handoffs, and 30-second polling.
 
 Final state:
 
 - 5 additions;
 - 0 deletions;
-- 2 changed files;
-- branch built directly from current `main`;
-- JavaScript syntax passed;
-- startup ownership contract passed;
+- 2 files;
 - focused duplicate-evaluation and first-run equivalence proof passed;
-- Startup Architecture Gate run #22 passed;
-- local app startup passed;
-- iOS startup and route stability passed;
-- profile sign-in startup stability passed;
-- delayed Home/community stability passed;
-- Picks UI Smoke JavaScript syntax step passed.
+- Startup Architecture Gate passed;
+- iOS route, profile sign-in, delayed Home/community, and Picks syntax validation passed.
 
-The unrelated Picks UI static contract remained red for missing mobile top-tab auto-centering and missing daily-odds-workflow setup documentation in unchanged files. Scoring Architecture Guardrails and Production Ranking Browser Smoke also remained red at their existing unrelated contracts. No unrelated issue was repaired in this batch.
+Unrelated Picks static-contract, scoring guardrail, and fighter-photo failures remained separate.
 
-Cody physically tested immutable PR head `1ea7bdf46f09f18279ac4f21a2bbfd492f1d44ba` on an installed iPhone and reported the app was normal. Picks startup, login/PIN, saved state, Top 10 and profile handoffs, challenges, badges, navigation, rapid taps, background/resume, notifications, rotation/resize, surrounding product surfaces, and duplicate-ownership symptoms showed no visible regression.
+Cody physically tested immutable head `1ea7bdf46f09f18279ac4f21a2bbfd492f1d44ba` and reported the installed app was normal.
 
-PR #113 was squash-merged as commit `0c488a449d413636228aafd1e45ee8197d5078ba`. Batch 8 was closed as physically verified.
+Squash merge: `0c488a449d413636228aafd1e45ee8197d5078ba`
 
-The next isolated Phase 1 owner is `assets/js/community-profiles.js`. Batch 9 must begin in a fresh session from current `main`, inspect all prerequisite and retry behavior before adding any marker, and remain separate from this closeout.
+## 2026-07-19 — Phase 1 Batch 9 merged and verified
+
+PR #114 protected `assets/js/community-profiles.js` with a top-level global duplicate-file-execution guard and added one matching startup-contract assertion.
+
+The prerequisite and retry inspection established that the community owner has no top-level missing-DOM, missing-profile, missing-identity, or missing-data return before publishing its API and binding its lifecycle. Duplicate file evaluation was not an intentional retry mechanism.
+
+The preserved retry and refresh paths include:
+
+- one-time `DOMContentLoaded` startup;
+- public `load()`, `refresh()`, `renderDirectory()`, `openMember()`, `openTop10()`, and `publishTop10()` APIs;
+- Home view changes and soft refresh;
+- profile-ready and profile-updated events;
+- Picks-season updates and delayed refresh;
+- profile reminder callbacks;
+- delayed challenge-picker wrapping;
+- individual profile close/reopen behavior;
+- Top 10 load, edit, save, local restoration, and return-to-profile behavior;
+- Picks identity/token handoff and challenge cleanup.
+
+Final state:
+
+- starting `main`: `bdacf8f10b913f5afad4ec6819921fd6f761e572`;
+- exact physically tested head: `1915c0ff314b7911688574f279eba889d4967a42`;
+- 4 additions;
+- 0 deletions;
+- 2 changed files;
+- runtime original blob: `f88c3f95caf720b273e9d5a82341f8f5d3110342`;
+- runtime guarded blob: `e087c82c48bd0e51765779ab4faa3df524673d7e`;
+- startup-contract original blob: `b2d3f041288390ca24775868e73e3afe735da36d`;
+- startup-contract modified blob: `af9d23224988be205becc284bcb0f0a70433edea`.
+
+Validation passed:
+
+- JavaScript syntax;
+- startup ownership contract;
+- focused duplicate-evaluation harness;
+- exact first-run equivalence proof;
+- Startup Architecture Gate run #24;
+- iOS startup route stability;
+- profile sign-in startup stability;
+- delayed Home/community stability;
+- Phase 4B fresh launch, community directory, individual profile, Top 10 save, shared-profile/Picks handoff, real Picks PIN, and cold-launch routing validation.
+
+The passing Phase 4B artifact recorded one community directory throughout repeated and delayed samples, zero directory/profile replacement, a successful saved Top 10, and the expected Home → Picks → Home sequence.
+
+Unrelated existing red checks were documented and not repaired:
+
+- Production Ranking Browser Smoke stopped at existing women’s thumbnail render failures;
+- Scoring Architecture Guardrails stopped in the existing permanent source/runtime contract and retained the Alexandre Pantoja generic-fallback warning;
+- existing local-preview daily-score and category-audit diagnostics remained outside Batch 9.
+
+Cody physically tested exact immutable PR head `1915c0ff314b7911688574f279eba889d4967a42` on the installed iPhone and reported **“Normal.”** Community startup, signed-in and signed-out directory behavior, profiles, Top 10 persistence, challenges, Picks handoff, notifications, badges, sharing, navigation, rapid taps, background/resume, relaunch, rotation/resize, and surrounding product surfaces showed no visible regression or duplicate ownership.
+
+PR #114 was squash-merged as commit `4a811201bd6c2ac620d829d9701a187e468142b0`. Batch 9 was closed as physically verified.
+
+The next isolated Phase 1 owner is `assets/js/play.js`. Batch 10 must remain separate from `play-hub.js`, begin from fresh current `main`, and prove that its intentional missing-DOM and missing-ranking-data prerequisite behavior remains recoverable before any marker is added.
