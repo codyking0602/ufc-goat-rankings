@@ -111,6 +111,10 @@ const profileIdentity=read('assets/js/play-profile-identity.js');
 assert(profileIdentity.includes("async function login(_groupCode,displayName,pin,options={})"),'The shared profile owner must expose the canonical login transaction.');
 assert(profileIdentity.includes("if(options.publish!==false)window.dispatchEvent(new CustomEvent('ufc-play-profile-ready'"),'The canonical login owner must preserve normal readiness publication while allowing a reload-bound consumer to suppress it.');
 assert(profileIdentity.includes("active_room:data?.active_room||identity?.active_room||null"),'The canonical login result must preserve Picks active-room continuation context.');
+assert(profileIdentity.includes('function storeResolved(identity)'),'The canonical profile owner must persist resolved identity access.');
+assert(profileIdentity.includes('set(ACTIVE_GROUP_KEY,CANONICAL_CODE)'),'The canonical profile owner must persist the active group.');
+assert(profileIdentity.includes('set(DISPLAY_NAME_KEY'),'The canonical profile owner must persist the shared display name.');
+assert(profileIdentity.includes('set(`${ROOM_TOKEN_PREFIX}${roomCode}`,token)'),'The canonical profile owner must persist resolved room access.');
 const picksPin=read('assets/js/picks-member-pin.js');
 const picksSignIn=picksPin.match(/async function signIn\(\)\{([\s\S]*?)\n  \}\n\n  function ensureSignInCard/);
 assert(picksSignIn,'The returning-member Picks sign-in boundary could not be identified.');
@@ -123,8 +127,13 @@ assert(picksPin.includes("client.rpc('picks_commissioner_set_member_pin'"),'The 
 
 const product=read('assets/js/product-architecture.js');
 assert(product.includes('__UFC_PRODUCT_ARCHITECTURE_STARTED__'),'Product architecture must keep its global duplicate-start guard.');
-assert(product.includes('function syncSharedProfileToPicks(value)'),'Product architecture must remain the cross-feature Picks compatibility owner.');
-assert(product.includes('localStorage.setItem(GROUP_TOKEN_KEY,token)'),'Product architecture must retain its canonical group compatibility handoff until a separate audited removal.');
+assert(product.includes('function handoffSharedProfileToPicks(value)'),'Product architecture must remain the cross-feature Picks compatibility owner.');
+assert.equal(product.includes('GROUP_TOKEN_KEY'),false,'Product architecture must not own canonical group-token persistence.');
+assert.equal(product.includes('ACTIVE_GROUP_KEY'),false,'Product architecture must not own active-group persistence.');
+assert.equal(product.includes('localStorage.setItem('),false,'Product architecture must not persist canonical identity or access values.');
+assert(product.includes('function suppressDuplicatePicksSignIn()'),'Product architecture must retain duplicate Picks sign-in suppression.');
+assert(product.includes("url.searchParams.set('group',CANONICAL_CODE)"),'Product architecture must retain the Picks group URL handoff.');
+assert(product.includes('window.UFCPicksPinAuth?.refresh?.()'),'Product architecture must retain the Picks PIN-surface refresh.');
 assert.equal(product.includes('loadNativeShell'),false,'Product architecture must not dynamically load the native shell.');
 assert.equal(product.includes('loadNotificationSurfaceFix'),false,'Product architecture must not dynamically load the notification surface.');
 assert(product.includes(`const PENDING_NAVIGATION_KEY='${pendingNavigationKey}'`),'Product architecture and the canonical shell must share one explicit recovery handoff key.');
@@ -151,7 +160,7 @@ const freshLaunch=forbid('assets/js/fresh-home-launch.js',[
   'location.reload',
   'window.location.reload'
 ]);
-assert(freshLaunch.includes('__UFC_FRESH_HOME_LAUNCH_STARTED__'),'Fresh launch must keep its global duplicate-start guard.');
+assert(freshLaunch.includes('__UFC_FRESH_HOME_LAUNCH_STARTED__'),'Fresh launch must keep its global duplicate-file-execution guard.');
 assert(freshLaunch.includes('profile-setup-reminder.js'),'Fresh launch may only inject the profile setup reminder after route selection.');
 
 assert(read('assets/js/app-notification-center.js').includes('__UFC_APP_NOTIFICATION_CENTER_STARTED__'),'Notification center must keep its global duplicate-file-execution guard.');
@@ -185,6 +194,8 @@ console.log(JSON.stringify({
   localScriptCount:localPaths.length,
   singleOwnerScripts:singleOwnerScripts.length,
   recoveryNavigationHandoff:true,
+  canonicalProfileAccessOwner:true,
+  productProfileHandoffOnly:true,
   firstScript:localPaths[0],
   lastScript:localPaths.at(-1)
 },null,2));
