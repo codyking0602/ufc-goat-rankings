@@ -29,6 +29,8 @@ on:
       - 'scripts/test-community-profile-access-owner.mjs'
       - 'scripts/test-community-profile-identity-contract.mjs'
       - 'scripts/test-community-profile-identity-owner.mjs'
+      - 'scripts/test-home-dashboard-daily-identity-contract.mjs'
+      - 'scripts/test-home-dashboard-daily-identity-owner.mjs'
       - 'scripts/test-product-profile-handoff-owner.mjs'
       - 'scripts/test-product-startup-handoff-contract.mjs'
       - 'scripts/test-product-startup-handoff-single.mjs'
@@ -69,6 +71,8 @@ on:
       - 'scripts/test-community-profile-access-owner.mjs'
       - 'scripts/test-community-profile-identity-contract.mjs'
       - 'scripts/test-community-profile-identity-owner.mjs'
+      - 'scripts/test-home-dashboard-daily-identity-contract.mjs'
+      - 'scripts/test-home-dashboard-daily-identity-owner.mjs'
       - 'scripts/test-product-profile-handoff-owner.mjs'
       - 'scripts/test-product-startup-handoff-contract.mjs'
       - 'scripts/test-product-startup-handoff-single.mjs'
@@ -113,6 +117,7 @@ jobs:
           node --check assets/js/product-architecture.js
           node --check assets/js/app.js
           node --check assets/js/community-profiles.js
+          node --check assets/js/home-dashboard.js
 
       - name: Validate startup runtime syntax B
         run: |
@@ -135,6 +140,8 @@ jobs:
           node --check scripts/test-community-profile-access-owner.mjs
           node --check scripts/test-community-profile-identity-contract.mjs
           node --check scripts/test-community-profile-identity-owner.mjs
+          node --check scripts/test-home-dashboard-daily-identity-contract.mjs
+          node --check scripts/test-home-dashboard-daily-identity-owner.mjs
           node --check scripts/test-product-profile-handoff-owner.mjs
           node --check scripts/test-product-startup-handoff-contract.mjs
           node --check scripts/test-product-startup-handoff-single.mjs
@@ -149,6 +156,9 @@ jobs:
 
       - name: Enforce community profile identity contract
         run: node scripts/test-community-profile-identity-contract.mjs
+
+      - name: Enforce Home daily identity contract
+        run: node scripts/test-home-dashboard-daily-identity-contract.mjs
 
       - name: Enforce Product startup handoff contract
         run: node scripts/test-product-startup-handoff-contract.mjs
@@ -208,6 +218,17 @@ jobs:
         with:
           name: community-profile-identity-owner-report
           path: /tmp/community-profile-identity-owner-report.json
+          if-no-files-found: ignore
+
+      - name: Test Home daily identity ownership
+        run: node scripts/test-home-dashboard-daily-identity-owner.mjs
+
+      - name: Upload Home daily identity diagnostic
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: home-dashboard-daily-identity-owner-report
+          path: /tmp/home-dashboard-daily-identity-owner-report.json
           if-no-files-found: ignore
 
       - name: Test Product profile handoff ownership
