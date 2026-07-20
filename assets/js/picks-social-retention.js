@@ -1,17 +1,17 @@
 (function(){
   'use strict';
 
-  const VERSION='picks-social-retention-20260718f-shared-profile';
+  const VERSION='picks-social-retention-20260720g-passive-identity';
   const config=window.UFC_SUPABASE_CONFIG||{};
   if(!config.url||!config.anonKey||!window.supabase?.createClient)return;
 
   const client=window.supabase.createClient(config.url,config.anonKey);
-  const GROUP_TOKEN_PREFIX='ufc-picks:group:';
-  const state={code:'',token:'',snapshot:null,loading:false,lastSignature:''};
+  const state={identity:null,code:'',token:'',snapshot:null,loading:false,lastSignature:''};
 
   const safe=value=>String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
   const normalize=value=>String(value||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6);
   const initials=value=>String(value||'').trim().split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase()||'UFC';
+  const tokenFor=identity=>String(identity?.memberToken||identity?.member_token||'').trim();
 
   function installStyles(){
     if(document.getElementById('picksSharedProfileCss'))return;
@@ -28,20 +28,16 @@
     node.textContent=message;node.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>node.classList.remove('show'),1900);
   }
 
-  function storedGroupCode(){
-    const codes=[];
-    try{
-      for(let index=0;index<localStorage.length;index+=1){
-        const key=localStorage.key(index)||'';if(!key.startsWith(GROUP_TOKEN_PREFIX))continue;
-        const code=normalize(key.slice(GROUP_TOKEN_PREFIX.length));if(code&&localStorage.getItem(key))codes.push(code);
-      }
-    }catch(_error){}
-    return codes.length===1?codes[0]:'';
+  function passiveIdentity(){
+    const value=state.identity||window.UFC_PLAY_PROFILE?.identity||window.UFC_APP_PROFILE?.identity;
+    state.identity=value||null;
+    return state.identity;
   }
 
   function context(){
-    const url=new URL(window.location.href);const code=normalize(url.searchParams.get('group'))||storedGroupCode();
-    return {code,token:code?localStorage.getItem(`${GROUP_TOKEN_PREFIX}${code}`)||'':''};
+    const identity=passiveIdentity();
+    const code=normalize(identity?.groupCode||identity?.group_code||identity?.group?.code||window.UFC_PLAY_PROFILE?.canonicalGroupCode||window.UFC_APP_PROFILE?.canonicalGroupCode);
+    return {identity,code,token:tokenFor(identity)};
   }
 
   function ensureProfileShell(){
@@ -141,7 +137,7 @@
   }
 
   async function refresh(force=false){
-    if(state.loading)return;const shell=ensureProfileShell();const next=context();if(!next.code||!next.token){if(shell)shell.hidden=true;return;}
+    if(state.loading)return;const shell=ensureProfileShell();const next=context();if(!next.identity||!next.code||!next.token){if(shell)shell.hidden=true;return;}
     state.code=next.code;state.token=next.token;state.loading=true;
     try{
       const {data,error}=await client.rpc('picks_social_snapshot',{p_group_code:state.code,p_member_token:state.token});if(error||!data?.group){if(shell)shell.hidden=true;return;}
@@ -159,7 +155,9 @@
     installStyles();ensureProfileShell();refresh();
     const observer=new MutationObserver(()=>{ensureProfileShell();if(state.snapshot)decorateExistingRows(state.snapshot);});
     observer.observe(document.getElementById('picks')||document.body,{childList:true,subtree:true});
-    ['ufc-app-profile-updated','ufc-play-profile-ready','ufc-play-data-ready'].forEach(name=>window.addEventListener(name,()=>setTimeout(syncSharedProfile,0)));
+    window.addEventListener('ufc-play-profile-ready',event=>{state.identity=event.detail||null;setTimeout(syncSharedProfile,0);});
+    window.addEventListener('ufc-app-profile-updated',event=>{state.identity=event.detail?.identity||state.identity;setTimeout(syncSharedProfile,0);});
+    window.addEventListener('ufc-play-data-ready',()=>setTimeout(syncSharedProfile,0));
     window.setInterval(()=>refresh(),30000);
   }
 
