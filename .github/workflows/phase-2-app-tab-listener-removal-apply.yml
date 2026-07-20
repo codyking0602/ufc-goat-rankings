@@ -24,14 +24,16 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import re
 
           app_path = Path('assets/js/app.js')
           app = app_path.read_text()
-          pattern = re.compile(r"document\.querySelectorAll\('\.tab'\)\.forEach\(btn => btn\.addEventListener\('click', \(\) => \{\n\s+document\.querySelectorAll\('\.tab'\)\.forEach\(b=>b\.classList\.remove\('active'\)\);\n\s+document\.querySelectorAll\('\.view'\)\.forEach\(v=>v\.classList\.remove\('active-view'\)\);\n\s+btn\.classList\.add\('active'\);\n\s+el\(btn\.dataset\.view\)\.classList\.add\('active-view'\);\n\s+refresh\(\);\n\s+\}\)\);\n")
-          app, count = pattern.subn('', app)
-          if count != 1:
-              raise SystemExit(f'Expected exactly one legacy tab listener, found {count}')
+          start_marker = "document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', () => {\n"
+          end_marker = "}));\n\nel('search').addEventListener('input', refresh);"
+          if app.count(start_marker) != 1 or app.count(end_marker) != 1:
+              raise SystemExit('Legacy tab listener boundaries are missing or duplicated')
+          start = app.index(start_marker)
+          end = app.index(end_marker, start)
+          app = app[:start] + "el('search').addEventListener('input', refresh);" + app[end + len(end_marker):]
           app_path.write_text(app)
 
           contract_path = Path('scripts/test-startup-contract.mjs')
