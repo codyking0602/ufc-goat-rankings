@@ -22,11 +22,12 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           import traceback
-          source=Path('.github/workflows/phase-2-identity-profile-audit-apply.yml').read_text()
-          start=source.index("          python3 - <<'PY'\n")+len("          python3 - <<'PY'\n")
-          end=source.index("\n          PY\n",start)
-          code='\n'.join(line[10:] if line.startswith('          ') else line for line in source[start:end].splitlines())
           try:
+              source=Path('.github/workflows/phase-2-identity-profile-audit-apply.yml').read_text()
+              marker="          python3 - <<'PY'\n"
+              start=source.index(marker)+len(marker)
+              end=source.index("\n          PY\n",start)
+              code='\n'.join(line[10:] if line.startswith('          ') else line for line in source[start:end].splitlines())
               exec(compile(code,'phase-2-identity-profile-audit','exec'))
           except Exception:
               Path('phase-2-identity-audit-error.txt').write_text(traceback.format_exc())
@@ -49,4 +50,4 @@ jobs:
           git add phase-2-identity-audit-error.txt
           git commit -m "Record identity audit workflow error"
           git push origin HEAD:agent/phase-2-identity-profile-audit
-# diagnostic-trigger
+# extraction-diagnostic-trigger
