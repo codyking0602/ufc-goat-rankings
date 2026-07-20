@@ -20,48 +20,58 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: agent/phase-2-app-tab-listener-removal
-      - name: Apply exact isolated patch
+      - name: Remove exact app tab listener
         run: |
           python3 - <<'PY'
           from pathlib import Path
-
-          app_path = Path('assets/js/app.js')
-          app = app_path.read_text()
-          start_marker = "document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', () => {\n"
-          end_marker = "}));\n\nel('search').addEventListener('input', refresh);"
-          if app.count(start_marker) != 1 or app.count(end_marker) != 1:
-              raise SystemExit('Legacy tab listener boundaries are missing or duplicated')
-          start = app.index(start_marker)
-          end = app.index(end_marker, start)
-          app = app[:start] + "el('search').addEventListener('input', refresh);" + app[end + len(end_marker):]
-          app_path.write_text(app)
-
-          contract_path = Path('scripts/test-startup-contract.mjs')
-          contract = contract_path.read_text()
-          anchor = "const product=read('assets/js/product-architecture.js');\n"
-          guard = "const app=read('assets/js/app.js');\nassert.equal(app.includes(\"document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click'\"),false,'app.js must not own primary tab activation; the canonical shell owns route activation.');\n\n"
-          if guard not in contract:
-              if contract.count(anchor) != 1:
-                  raise SystemExit('Startup contract anchor missing or duplicated')
-              contract = contract.replace(anchor, guard + anchor)
-              contract_path.write_text(contract)
-
-          gate_path = Path('.github/workflows/startup-architecture-gate.yml')
-          gate = gate_path.read_text()
-          product_path = "      - 'assets/js/product-architecture.js'\n"
-          app_path_line = "      - 'assets/js/app.js'\n"
-          if gate.count(app_path_line) == 0:
-              if gate.count(product_path) != 2:
-                  raise SystemExit('Expected two product-architecture path anchors')
-              gate = gate.replace(product_path, product_path + app_path_line)
-          check_anchor = "          node --check assets/js/product-architecture.js\n"
-          check_line = "          node --check assets/js/app.js\n"
-          if check_line not in gate:
-              if gate.count(check_anchor) != 1:
-                  raise SystemExit('Syntax-check anchor missing or duplicated')
-              gate = gate.replace(check_anchor, check_anchor + check_line)
-          gate_path.write_text(gate)
+          p=Path('assets/js/app.js')
+          s=p.read_text()
+          start="document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', () => {"
+          next_listener="el('search').addEventListener('input', refresh);"
+          assert s.count(start)==1, f'start count={s.count(start)}'
+          a=s.index(start)
+          b=s.index(next_listener,a)
+          removed=s[a:b]
+          assert "el(btn.dataset.view).classList.add('active-view');" in removed
+          assert "refresh();" in removed
+          p.write_text(s[:a]+s[b:])
           PY
+      - name: Add permanent ownership assertion
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('scripts/test-startup-contract.mjs')
+          s=p.read_text()
+          anchor="const product=read('assets/js/product-architecture.js');\n"
+          guard="const app=read('assets/js/app.js');\nassert.equal(app.includes(\"document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click'\"),false,'app.js must not own primary tab activation; the canonical shell owns route activation.');\n\n"
+          assert s.count(anchor)==1, f'contract anchor count={s.count(anchor)}'
+          if guard not in s:s=s.replace(anchor,guard+anchor)
+          p.write_text(s)
+          PY
+      - name: Extend startup gate coverage
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('.github/workflows/startup-architecture-gate.yml')
+          s=p.read_text()
+          product="      - 'assets/js/product-architecture.js'\n"
+          app="      - 'assets/js/app.js'\n"
+          assert s.count(product)==2, f'workflow product path count={s.count(product)}'
+          if app not in s:s=s.replace(product,product+app)
+          anchor="          node --check assets/js/product-architecture.js\n"
+          check="          node --check assets/js/app.js\n"
+          assert s.count(anchor)==1, f'workflow check anchor count={s.count(anchor)}'
+          if check not in s:s=s.replace(anchor,anchor+check)
+          p.write_text(s)
+          PY
+      - name: Validate isolated patch
+        run: |
+          node --check assets/js/app.js
+          node scripts/test-startup-contract.mjs
+          ! grep -Fq "document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click'" assets/js/app.js
+          git diff --check
+      - name: Commit isolated patch
+        run: |
           rm .github/workflows/phase-2-app-tab-listener-removal-apply.yml
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
