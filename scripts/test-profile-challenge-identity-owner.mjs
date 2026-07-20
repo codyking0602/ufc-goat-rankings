@@ -15,11 +15,11 @@ const html=`<!doctype html>
   <script>
   (function(){
     const identity={ok:true,group:{code:'GOAT26'},groupCode:'GOAT26',member:{id:'m1',display_name:'Cody',is_admin:true},memberToken:'challenge-token',member_token:'challenge-token',rooms:[]};
-    const counters=window.__PROFILE_CHALLENGE_PROOF__={canonicalResolves:0,editorResolves:0,readyEvents:0,updatedEvents:0,inboxCalls:0,groupSnapshots:0};
+    const counters=window.__PROFILE_CHALLENGE_PROOF__={canonicalResolves:0,canonicalRequires:0,editorResolves:0,readyEvents:0,updatedEvents:0,inboxCalls:0,groupSnapshots:0};
     const client={async rpc(name,args){
       if(name==='play_profile_challenge_inbox'){
         counters.inboxCalls+=1;
-        await new Promise(resolve=>setTimeout(resolve,45));
+        await new Promise(resolve=>setTimeout(resolve,200));
         return{data:{ok:true,unread_count:1,rows:[{code:'ABC123',creator_name:'Shane',creator_fighter_avatar_slug:'',creator_profile_photo_data:'',created_at:new Date().toISOString(),opened_at:null,completed:false,score:null}]},error:null};
       }
       return{data:{ok:true},error:null};
@@ -27,13 +27,8 @@ const html=`<!doctype html>
     window.UFC_PLAY_PROFILE={
       identity:null,
       client,
-      async resolve(){
-        counters.canonicalResolves+=1;
-        this.identity=identity;
-        window.dispatchEvent(new CustomEvent('ufc-play-profile-ready',{detail:identity}));
-        return identity;
-      },
-      async require(){this.identity=identity;return identity;}
+      async resolve(){counters.canonicalResolves+=1;throw new Error('Passive challenge loading must not initiate canonical resolution.');},
+      async require(){counters.canonicalRequires+=1;this.identity=identity;return identity;}
     };
     window.UFC_APP_PROFILE={
       identity:null,
@@ -48,6 +43,10 @@ const html=`<!doctype html>
     window.addEventListener('ufc-play-profile-ready',()=>{counters.readyEvents+=1;});
     window.addEventListener('ufc-profile-challenges-updated',()=>{counters.updatedEvents+=1;});
     window.UFC_PROFILE_ACTIVITY={close(){}};
+    setTimeout(()=>{
+      window.UFC_PLAY_PROFILE.identity=identity;
+      window.dispatchEvent(new CustomEvent('ufc-play-profile-ready',{detail:identity}));
+    },100);
   })();
   </script>
   <script src="/assets/js/profile-challenges.js"></script>
@@ -70,10 +69,11 @@ try{
     inboxCards:document.querySelectorAll('[data-profile-challenge-inbox]').length,
     badge:document.querySelector('.app-profile-chip-badge')?.textContent||''
   }));
-  assert.equal(report.startup.canonicalResolves,1,'Passive startup must resolve canonical identity once.');
+  assert.equal(report.startup.canonicalResolves,0,'Passive startup must not initiate canonical identity resolution.');
+  assert.equal(report.startup.canonicalRequires,0,'Passive startup must not open canonical sign-in.');
   assert.equal(report.startup.editorResolves,0,'Passive startup must never invoke the visible profile editor resolver.');
-  assert.equal(report.startup.readyEvents,1,'Canonical startup resolution must publish readiness once.');
-  assert.equal(report.startup.inboxCalls,1,'Startup resolution and readiness re-entry must coalesce into one inbox RPC.');
+  assert.equal(report.startup.readyEvents,1,'The canonical owner must be able to publish readiness once.');
+  assert.equal(report.startup.inboxCalls,1,'Ready-event and scheduled startup loads must coalesce into one inbox RPC.');
   assert.equal(report.startup.updatedEvents,1,'One startup inbox RPC must publish one inbox update.');
   assert.equal(report.startup.inboxCards,1,'The Activity Profile must retain one challenge inbox card.');
   assert.match(report.startup.badge,/1 NEW/,'The profile chip must retain the unread challenge badge.');
@@ -101,18 +101,20 @@ try{
     opened:Boolean(document.querySelector('.profile-challenge-overlay')),
     groupSnapshots:window.__PROFILE_CHALLENGE_PROOF__.groupSnapshots,
     canonicalResolves:window.__PROFILE_CHALLENGE_PROOF__.canonicalResolves,
+    canonicalRequires:window.__PROFILE_CHALLENGE_PROOF__.canonicalRequires,
     editorResolves:window.__PROFILE_CHALLENGE_PROOF__.editorResolves,
     members:document.querySelectorAll('[data-challenge-member]').length
   }));
   assert.equal(opened,true,'Direct challenge modal must still open.');
   assert.equal(report.directSend.groupSnapshots,1,'Direct challenge sending must request the member-list snapshot once.');
-  assert.equal(report.directSend.canonicalResolves,1,'Direct send must reuse the existing canonical identity.');
+  assert.equal(report.directSend.canonicalResolves,0,'Direct send must reuse the supplied canonical identity without resolving again.');
+  assert.equal(report.directSend.canonicalRequires,0,'Direct send must not request sign-in when identity already exists.');
   assert.equal(report.directSend.editorResolves,0,'Direct send must not invoke the editor identity resolver.');
   assert.equal(report.directSend.members,1,'Direct send must retain the other-profile recipient choice.');
 
   report.passed=true;
   report.stage='complete';
-  console.log('Profile challenge canonical identity proof passed.');
+  console.log('Profile challenge passive identity proof passed.');
   await context.close();
 }catch(error){
   report.error={message:error?.message||String(error),stack:error?.stack||null};
