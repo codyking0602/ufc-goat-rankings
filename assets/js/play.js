@@ -6,6 +6,8 @@
   const OVERRIDES = window.DISPLAY_OVERRIDES || {};
   const panel = document.getElementById('play');
   if(!panel || !Array.isArray(DATA.men)) return;
+  if(window.__UFC_PLAY_STARTED__) return;
+  window.__UFC_PLAY_STARTED__ = true;
 
   const state = {
     mode: 'top10',
