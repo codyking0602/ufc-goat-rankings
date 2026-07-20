@@ -23,6 +23,7 @@ on:
       - 'assets/js/picks-persistent-groups.js'
       - 'scripts/test-startup-contract.mjs'
       - 'scripts/test-route-owner-shell-recovery-queue.mjs'
+      - 'scripts/test-profile-login-owner-delegation.mjs'
       - 'scripts/test-ios-standalone-resume-home.mjs'
       - 'scripts/test-profile-signin-stability.mjs'
       - 'scripts/test-phase-4b-mobile.mjs'
@@ -49,6 +50,7 @@ on:
       - 'assets/js/picks-persistent-groups.js'
       - 'scripts/test-startup-contract.mjs'
       - 'scripts/test-route-owner-shell-recovery-queue.mjs'
+      - 'scripts/test-profile-login-owner-delegation.mjs'
       - 'scripts/test-ios-standalone-resume-home.mjs'
       - 'scripts/test-profile-signin-stability.mjs'
       - 'scripts/test-phase-4b-mobile.mjs'
@@ -76,6 +78,7 @@ jobs:
         run: |
           node --check scripts/test-startup-contract.mjs
           node --check scripts/test-route-owner-shell-recovery-queue.mjs
+          node --check scripts/test-profile-login-owner-delegation.mjs
           node --check assets/js/fresh-home-route-bootstrap.js
           node --check assets/js/octagon-hq-shell.js
           node --check assets/js/product-architecture.js
@@ -86,6 +89,8 @@ jobs:
           node --check assets/js/app-notification-surface-fix.js
           node --check assets/js/native-app-shell.js
           node --check assets/js/native-app-shell-stability.js
+          node --check assets/js/play-profile-identity.js
+          node --check assets/js/picks-member-pin.js
 
       - name: Enforce startup ownership contract
         run: node scripts/test-startup-contract.mjs
@@ -105,6 +110,9 @@ jobs:
 
       - name: Test canonical shell recovery queue
         run: node scripts/test-route-owner-shell-recovery-queue.mjs
+
+      - name: Test canonical profile login delegation
+        run: node scripts/test-profile-login-owner-delegation.mjs
 
       - name: Test iOS startup route stability
         run: node scripts/test-ios-standalone-resume-home.mjs
