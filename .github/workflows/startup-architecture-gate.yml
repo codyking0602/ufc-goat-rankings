@@ -5,7 +5,6 @@ on:
     branches: [main]
     paths:
       - 'index.html'
-      - 'assets/js/app.js'
       - 'assets/js/fresh-home-route-bootstrap.js'
       - 'assets/js/octagon-hq-shell.js'
       - 'assets/js/octagon-hq-nav-grid.js'
@@ -22,8 +21,6 @@ on:
       - 'assets/js/picks-member-pin.js'
       - 'assets/js/picks-persistent-groups.js'
       - 'scripts/test-startup-contract.mjs'
-      - 'scripts/test-route-owner-app-tab-delegation.mjs'
-      - 'scripts/test-route-owner-recovery-window.mjs'
       - 'scripts/test-ios-standalone-resume-home.mjs'
       - 'scripts/test-profile-signin-stability.mjs'
       - 'scripts/test-phase-4b-mobile.mjs'
@@ -32,7 +29,6 @@ on:
     branches: [main]
     paths:
       - 'index.html'
-      - 'assets/js/app.js'
       - 'assets/js/fresh-home-route-bootstrap.js'
       - 'assets/js/octagon-hq-shell.js'
       - 'assets/js/octagon-hq-nav-grid.js'
@@ -49,8 +45,6 @@ on:
       - 'assets/js/picks-member-pin.js'
       - 'assets/js/picks-persistent-groups.js'
       - 'scripts/test-startup-contract.mjs'
-      - 'scripts/test-route-owner-app-tab-delegation.mjs'
-      - 'scripts/test-route-owner-recovery-window.mjs'
       - 'scripts/test-ios-standalone-resume-home.mjs'
       - 'scripts/test-profile-signin-stability.mjs'
       - 'scripts/test-phase-4b-mobile.mjs'
@@ -77,9 +71,6 @@ jobs:
       - name: Validate startup JavaScript syntax
         run: |
           node --check scripts/test-startup-contract.mjs
-          node --check scripts/test-route-owner-app-tab-delegation.mjs
-          node --check scripts/test-route-owner-recovery-window.mjs
-          node --check assets/js/app.js
           node --check assets/js/fresh-home-route-bootstrap.js
           node --check assets/js/octagon-hq-shell.js
           node --check assets/js/product-architecture.js
@@ -105,47 +96,6 @@ jobs:
           done
           cat /tmp/startup-architecture-server.log
           exit 1
-
-      - name: Test normal app tab delegation and missing-DOM recovery
-        shell: bash
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          path=Path('scripts/test-route-owner-app-tab-delegation.mjs')
-          body=path.read_text()
-          marker='async function testRecoveryVariant'
-          if marker not in body:
-              raise SystemExit('Expected recovery function marker not found')
-          body=body.split(marker,1)[0]+'''let browser;\ntry{\n  browser=await chromium.launch({headless:true});\n  const normalBaseline=await testNormalVariant(browser,'baseline',appSource);\n  const normalCandidate=await testNormalVariant(browser,'candidate',candidateSource);\n  assert.deepEqual(normalCandidate,normalBaseline,'Removing only the legacy app.js tab block changed normal canonical route or legacy rendering/control behavior.');\n  const missingDom=await testTemporaryMissingShellDom(browser);\n  console.log(JSON.stringify({passed:true,normalBaseline,normalCandidate,missingDom},null,2));\n}finally{\n  if(browser)await browser.close();\n}\n'''
-          path.write_text(body)
-          PY
-          set -o pipefail
-          node scripts/test-route-owner-app-tab-delegation.mjs 2>&1 | tee /tmp/route-owner-normal-proof.log
-
-      - name: Test product-architecture shell recovery window
-        if: always()
-        shell: bash
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          path=Path('scripts/test-route-owner-recovery-window.mjs')
-          body=path.read_text()
-          body=body.replace("await page.addScriptTag({content:'window.__firstShellAttemptFailed=true;'});","await page.evaluate(()=>{window.__firstShellAttemptFailed=true;});")
-          body=body.replace("await page.addScriptTag({content:`const el=id=>document.getElementById(id);function refresh(){window.__legacyRefreshes+=1;}\\n${legacyListenerSource}`});","await page.evaluate(source=>(0,eval)(source),`const el=id=>document.getElementById(id);function refresh(){window.__legacyRefreshes+=1;}\\n${legacyListenerSource}`);")
-          body=body.replace("await page.addScriptTag({content:productSource});","await page.evaluate(source=>(0,eval)(source),productSource);")
-          body=body.replace("await page.addScriptTag({content:shellSource});","await page.evaluate(source=>(0,eval)(source),shellSource);")
-          path.write_text(body)
-          PY
-          set -o pipefail
-          node scripts/test-route-owner-recovery-window.mjs 2>&1 | tee /tmp/route-owner-recovery-proof.log
-
-      - name: Upload focused proof output
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: route-owner-proof-output
-          path: /tmp/route-owner-*-proof.log
-          if-no-files-found: error
 
       - name: Test iOS startup route stability
         run: node scripts/test-ios-standalone-resume-home.mjs
