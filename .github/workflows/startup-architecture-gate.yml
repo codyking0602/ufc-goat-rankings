@@ -13,6 +13,7 @@ on:
       - 'assets/js/app.js'
       - 'assets/js/community-profiles.js'
       - 'assets/js/app-profile.js'
+      - 'assets/js/profile-challenges.js'
       - 'assets/js/fresh-home-launch.js'
       - 'assets/js/app-notification-center.js'
       - 'assets/js/app-notification-surface-fix.js'
@@ -31,6 +32,8 @@ on:
       - 'scripts/test-product-startup-handoff-single.mjs'
       - 'scripts/test-app-profile-group-snapshot-contract.mjs'
       - 'scripts/test-app-profile-group-snapshot-single.mjs'
+      - 'scripts/test-profile-challenge-identity-contract.mjs'
+      - 'scripts/test-profile-challenge-identity-owner.mjs'
       - 'scripts/test-notification-identity-owner.mjs'
       - 'scripts/test-ios-standalone-resume-home.mjs'
       - 'scripts/test-profile-signin-stability.mjs'
@@ -48,6 +51,7 @@ on:
       - 'assets/js/app.js'
       - 'assets/js/community-profiles.js'
       - 'assets/js/app-profile.js'
+      - 'assets/js/profile-challenges.js'
       - 'assets/js/fresh-home-launch.js'
       - 'assets/js/app-notification-center.js'
       - 'assets/js/app-notification-surface-fix.js'
@@ -66,6 +70,8 @@ on:
       - 'scripts/test-product-startup-handoff-single.mjs'
       - 'scripts/test-app-profile-group-snapshot-contract.mjs'
       - 'scripts/test-app-profile-group-snapshot-single.mjs'
+      - 'scripts/test-profile-challenge-identity-contract.mjs'
+      - 'scripts/test-profile-challenge-identity-owner.mjs'
       - 'scripts/test-notification-identity-owner.mjs'
       - 'scripts/test-ios-standalone-resume-home.mjs'
       - 'scripts/test-profile-signin-stability.mjs'
@@ -107,6 +113,7 @@ jobs:
       - name: Validate startup runtime syntax B
         run: |
           node --check assets/js/app-profile.js
+          node --check assets/js/profile-challenges.js
           node --check assets/js/fresh-home-launch.js
           node --check assets/js/app-notification-center.js
           node --check assets/js/app-notification-surface-fix.js
@@ -127,6 +134,8 @@ jobs:
           node --check scripts/test-product-startup-handoff-single.mjs
           node --check scripts/test-app-profile-group-snapshot-contract.mjs
           node --check scripts/test-app-profile-group-snapshot-single.mjs
+          node --check scripts/test-profile-challenge-identity-contract.mjs
+          node --check scripts/test-profile-challenge-identity-owner.mjs
           node --check scripts/test-notification-identity-owner.mjs
 
       - name: Enforce startup ownership contract
@@ -137,6 +146,9 @@ jobs:
 
       - name: Enforce app profile group snapshot contract
         run: node scripts/test-app-profile-group-snapshot-contract.mjs
+
+      - name: Enforce profile challenge identity contract
+        run: node scripts/test-profile-challenge-identity-contract.mjs
 
       - name: Install browser test runtime
         run: npm install --no-save --package-lock=false playwright@1.54.1 && npx playwright install --with-deps chromium
@@ -209,6 +221,17 @@ jobs:
         with:
           name: app-profile-group-snapshot-single-report
           path: /tmp/app-profile-group-snapshot-single-report.json
+          if-no-files-found: ignore
+
+      - name: Test profile challenge identity ownership
+        run: node scripts/test-profile-challenge-identity-owner.mjs
+
+      - name: Upload profile challenge identity diagnostic
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: profile-challenge-identity-owner-report
+          path: /tmp/profile-challenge-identity-owner-report.json
           if-no-files-found: ignore
 
       - name: Test notification identity ownership
