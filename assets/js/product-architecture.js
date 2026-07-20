@@ -4,7 +4,7 @@
   if(window.__UFC_PRODUCT_ARCHITECTURE_STARTED__)return;
   window.__UFC_PRODUCT_ARCHITECTURE_STARTED__=true;
 
-  const VERSION='product-architecture-20260720a-shell-recovery-queue';
+  const VERSION='product-architecture-20260720b-profile-handoff-only';
   const SHELL_SRC='assets/js/octagon-hq-shell.js?v=app-shell-20260720a-recovery-handoff';
   const CONNECTIVITY_SRC='assets/js/product-connectivity.js?v=product-connectivity-20260718c-clean-handoffs';
   const POLISH_CSS='assets/css/product-polish.css?v=product-polish-20260718c-header-final';
@@ -14,8 +14,6 @@
   const FIND_LEADER_RETENTION_SRC='assets/js/find-leader-retention.js?v=find-leader-retention-20260718c-phase-2b-lazy';
   const PICKS_SEASON_SRC='assets/js/picks-season-loop.js?v=picks-season-loop-20260718d-canonical-ui';
   const CANONICAL_CODE='GOAT26';
-  const GROUP_TOKEN_KEY=`ufc-picks:group:${CANONICAL_CODE}`;
-  const ACTIVE_GROUP_KEY='ufc-player:group-code';
   const PENDING_NAVIGATION_KEY='__UFC_PENDING_SHELL_NAVIGATION__';
 
   let recoveryEventsBound=false;
@@ -141,10 +139,6 @@
     return value?.identity||value||window.UFC_PLAY_PROFILE?.identity||window.UFC_APP_PROFILE?.identity||null;
   }
 
-  function identityToken(identity){
-    return String(identity?.memberToken||identity?.member_token||'').trim();
-  }
-
   function installSharedProfileStyle(){
     if(document.getElementById('sharedProfileAuthCss'))return;
     const style=document.createElement('style');
@@ -169,15 +163,9 @@
     window.setTimeout(()=>document.getElementById('picksPinSignInCard')?.remove(),520);
   }
 
-  function syncSharedProfileToPicks(value){
+  function handoffSharedProfileToPicks(value){
     const identity=identityFrom(value);
-    const token=identityToken(identity);
-    if(!token)return false;
-    try{
-      localStorage.setItem(GROUP_TOKEN_KEY,token);
-      localStorage.setItem(ACTIVE_GROUP_KEY,CANONICAL_CODE);
-      if(identity?.member?.display_name)localStorage.setItem('ufc-picks:display-name',String(identity.member.display_name));
-    }catch(_error){}
+    if(!identity)return false;
     suppressDuplicatePicksSignIn();
     if(document.getElementById('picks')?.classList.contains('active-view')||location.hash==='#picks'){
       const url=new URL(location.href);
@@ -191,12 +179,12 @@
   }
 
   function bindSharedProfileAuth(){
-    window.addEventListener('ufc-play-profile-ready',event=>syncSharedProfileToPicks(event.detail));
-    window.addEventListener('ufc-app-profile-updated',event=>syncSharedProfileToPicks(event.detail));
+    window.addEventListener('ufc-play-profile-ready',event=>handoffSharedProfileToPicks(event.detail));
+    window.addEventListener('ufc-app-profile-updated',event=>handoffSharedProfileToPicks(event.detail));
     window.addEventListener('octagon-hq:view-change',event=>{
-      if(event.detail?.destination==='picks')syncSharedProfileToPicks();
+      if(event.detail?.destination==='picks')handoffSharedProfileToPicks();
     });
-    window.UFC_PLAY_PROFILE?.resolve?.().then(syncSharedProfileToPicks).catch(()=>null);
+    window.UFC_PLAY_PROFILE?.resolve?.().then(handoffSharedProfileToPicks).catch(()=>null);
   }
 
   function call(method,...args){
