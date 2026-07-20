@@ -171,5 +171,13 @@ jobs:
       - name: Test profile sign-in startup stability
         run: node scripts/test-profile-signin-stability.mjs
 
+      - name: Upload profile sign-in stability diagnostic
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: profile-signin-stability-report
+          path: /tmp/profile-signin-stability-report.json
+          if-no-files-found: ignore
+
       - name: Test Home and community delayed stability
         run: node scripts/test-phase-4b-mobile.mjs
