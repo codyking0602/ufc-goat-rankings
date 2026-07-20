@@ -106,6 +106,20 @@ jobs:
       - name: Test focused app tab route-owner delegation
         shell: bash
         run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path=Path('scripts/test-route-owner-app-tab-delegation.mjs')
+          body=path.read_text()
+          old="""  const navigation=page.goto(baseUrl,{waitUntil:'domcontentloaded',timeout:60000});
+            await secondRequestSeen;"""
+          new="""  await page.goto(baseUrl,{waitUntil:'commit',timeout:60000});
+            await secondRequestSeen;"""
+          if old not in body:
+              raise SystemExit('Expected recovery navigation block not found')
+          body=body.replace(old,new,1)
+          body=body.replace("  await navigation;\n  await page.waitForFunction", "  await page.waitForLoadState('domcontentloaded',{timeout:60000});\n  await page.waitForFunction",1)
+          path.write_text(body)
+          PY
           set -o pipefail
           node scripts/test-route-owner-app-tab-delegation.mjs 2>&1 | tee /tmp/route-owner-proof.log
 
