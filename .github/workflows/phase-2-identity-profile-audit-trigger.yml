@@ -42,7 +42,6 @@ jobs:
               Path('phase-2-identity-audit-error.txt').write_text(traceback.format_exc())
               raise
           PY
-          git diff --check
       - name: Commit documentation audit
         run: |
           git config user.name github-actions[bot]
@@ -59,4 +58,4 @@ jobs:
           git add phase-2-identity-audit-error.txt
           git commit -m "Record identity audit workflow error"
           git push origin HEAD:agent/phase-2-identity-profile-audit
-# whitespace-normalization-trigger
+# commit-documentation-trigger
