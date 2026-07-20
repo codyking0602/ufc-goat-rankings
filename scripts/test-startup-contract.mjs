@@ -132,6 +132,9 @@ assert(read('assets/js/native-app-shell-stability.js').includes('__UFC_NATIVE_AP
 const shareDeepLinks=read('assets/js/share-deep-links.js');
 assert(/'use strict';\s+if\(window\.__UFC_SHARE_DEEP_LINKS_STARTED__\)return;\s+window\.__UFC_SHARE_DEEP_LINKS_STARTED__=true;\s+const VERSION=/.test(shareDeepLinks),'Share/deep links must keep its duplicate-file guard before private state, listeners, API publication, and route ownership.');
 
+const productionRankingBootstrap=read('assets/js/production-ranking-bootstrap.js');
+assert(/'use strict';\s+if\(window\.__UFC_PRODUCTION_RANKING_BOOTSTRAP_OWNER__\)return;\s+const VERSION=[\s\S]*function run\(force\)\{\s+if\(lifecycleState\.attempt\)return lifecycleState\.attempt;\s+if\(!force&&lifecycleState\.status==='ready'\)return Promise\.resolve\(lifecycleState\.lastResult\);[\s\S]*const lifecycle=\{\s+version:VERSION,\s+start:\(\)=>run\(false\),\s+retry:\(\)=>run\(false\),\s+apply:\(\)=>run\(true\),\s+refresh:\(\)=>run\(true\),[\s\S]*window\.__UFC_PRODUCTION_RANKING_BOOTSTRAP_OWNER__=lifecycle;\s+window\.UFC_PRODUCTION_RANKING_BOOTSTRAP_LIFECYCLE=lifecycle;\s+lifecycle\.start\(\);/.test(productionRankingBootstrap),'Production ranking bootstrap must keep its owner guard before private state and its explicit deduplicated start/retry/apply/refresh lifecycle before the automatic first attempt.');
+
 assert(/<meta\s+name=["']app-build["']\s+content=["'][^"']+["']/i.test(index),'index.html must retain an app-build marker for update delivery.');
 
 console.log(JSON.stringify({
