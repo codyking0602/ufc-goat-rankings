@@ -133,6 +133,14 @@ jobs:
       - name: Test community profile access ownership
         run: node scripts/test-community-profile-access-owner.mjs
 
+      - name: Upload community access ownership diagnostic
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: community-profile-access-owner-report
+          path: /tmp/community-profile-access-owner-report.json
+          if-no-files-found: ignore
+
       - name: Test iOS startup route stability
         run: node scripts/test-ios-standalone-resume-home.mjs
 
