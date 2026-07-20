@@ -4,8 +4,8 @@
   if(window.__UFC_PRODUCT_ARCHITECTURE_STARTED__)return;
   window.__UFC_PRODUCT_ARCHITECTURE_STARTED__=true;
 
-  const VERSION='product-architecture-20260718u-shared-profile-auth';
-  const SHELL_SRC='assets/js/octagon-hq-shell.js?v=app-shell-20260718d-rankings-static';
+  const VERSION='product-architecture-20260720a-shell-recovery-queue';
+  const SHELL_SRC='assets/js/octagon-hq-shell.js?v=app-shell-20260720a-recovery-handoff';
   const CONNECTIVITY_SRC='assets/js/product-connectivity.js?v=product-connectivity-20260718c-clean-handoffs';
   const POLISH_CSS='assets/css/product-polish.css?v=product-polish-20260718c-header-final';
   const POLISH_SRC='assets/js/product-polish.js?v=product-polish-20260718c-header-final';
@@ -16,6 +16,10 @@
   const CANONICAL_CODE='GOAT26';
   const GROUP_TOKEN_KEY=`ufc-picks:group:${CANONICAL_CODE}`;
   const ACTIVE_GROUP_KEY='ufc-player:group-code';
+  const PENDING_NAVIGATION_KEY='__UFC_PENDING_SHELL_NAVIGATION__';
+
+  let recoveryEventsBound=false;
+  let recoveryScript=null;
 
   function shell(){
     return window.UFC_APP_SHELL||null;
@@ -37,8 +41,75 @@
     document.head.appendChild(link);
   }
 
+  function releaseRecoveryNavigation(){
+    if(!recoveryEventsBound)return;
+    recoveryEventsBound=false;
+    document.removeEventListener('click',captureRecoveryNavigation,true);
+  }
+
+  function publishRecoveredShell(){
+    const api=shell();
+    if(!api)return false;
+    releaseRecoveryNavigation();
+    window.UFC_PRODUCT_ARCHITECTURE=api;
+    return true;
+  }
+
+  function bindRecoveryNavigation(){
+    if(recoveryEventsBound||shell())return;
+    recoveryEventsBound=true;
+    document.addEventListener('click',captureRecoveryNavigation,true);
+  }
+
   function loadShell(){
-    if(!shell())loadScriptOnce('assets/js/octagon-hq-shell.js',SHELL_SRC);
+    if(publishRecoveredShell())return true;
+    bindRecoveryNavigation();
+    if(recoveryScript?.isConnected||document.querySelector('script[data-product-architecture-shell-recovery="true"]'))return false;
+    const script=document.createElement('script');
+    script.src=SHELL_SRC;
+    script.async=false;
+    script.dataset.productArchitectureShellRecovery='true';
+    script.addEventListener('load',()=>{
+      recoveryScript=null;
+      script.remove();
+      publishRecoveredShell();
+    },{once:true});
+    script.addEventListener('error',()=>{
+      recoveryScript=null;
+      script.remove();
+    },{once:true});
+    recoveryScript=script;
+    document.head.appendChild(script);
+    return false;
+  }
+
+  function queueNavigation(method,...args){
+    window[PENDING_NAVIGATION_KEY]={method,args};
+    loadShell();
+    return false;
+  }
+
+  function captureRecoveryNavigation(event){
+    if(shell()){
+      releaseRecoveryNavigation();
+      return;
+    }
+    const destination=event.target.closest?.('nav.tabs [data-destination]');
+    if(destination){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if(destination.disabled||destination.getAttribute('aria-disabled')==='true')return;
+      const key=String(destination.dataset.destination||'').trim();
+      if(key)queueNavigation('activateDestination',key);
+      return;
+    }
+    const ranking=event.target.closest?.('[data-rankings-subnav] [data-ranking-view]');
+    if(ranking){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      const view=String(ranking.dataset.rankingView||'').trim();
+      if(view)queueNavigation('activateView',view);
+    }
   }
 
   function loadConnectivity(){
@@ -135,12 +206,18 @@
     return false;
   }
 
+  function callNavigation(method,...args){
+    const api=shell();
+    if(api?.[method])return api[method](...args);
+    return queueNavigation(method,...args);
+  }
+
   const facade={
     version:VERSION,
     compatibilityOnly:true,
     apply:()=>call('start'),
-    activateView:(view,options)=>call('activateView',view,options),
-    activateDestination:key=>call('activateDestination',key),
+    activateView:(view,options)=>callNavigation('activateView',view,options),
+    activateDestination:key=>callNavigation('activateDestination',key),
     schedulePlaySupport:()=>call('loadPlaySupport')
   };
 

@@ -21,6 +21,7 @@ on:
       - 'assets/js/picks-member-pin.js'
       - 'assets/js/picks-persistent-groups.js'
       - 'scripts/test-startup-contract.mjs'
+      - 'scripts/test-route-owner-shell-recovery-queue.mjs'
       - 'scripts/test-ios-standalone-resume-home.mjs'
       - 'scripts/test-profile-signin-stability.mjs'
       - 'scripts/test-phase-4b-mobile.mjs'
@@ -45,6 +46,7 @@ on:
       - 'assets/js/picks-member-pin.js'
       - 'assets/js/picks-persistent-groups.js'
       - 'scripts/test-startup-contract.mjs'
+      - 'scripts/test-route-owner-shell-recovery-queue.mjs'
       - 'scripts/test-ios-standalone-resume-home.mjs'
       - 'scripts/test-profile-signin-stability.mjs'
       - 'scripts/test-phase-4b-mobile.mjs'
@@ -71,6 +73,7 @@ jobs:
       - name: Validate startup JavaScript syntax
         run: |
           node --check scripts/test-startup-contract.mjs
+          node --check scripts/test-route-owner-shell-recovery-queue.mjs
           node --check assets/js/fresh-home-route-bootstrap.js
           node --check assets/js/octagon-hq-shell.js
           node --check assets/js/product-architecture.js
@@ -96,6 +99,9 @@ jobs:
           done
           cat /tmp/startup-architecture-server.log
           exit 1
+
+      - name: Test canonical shell recovery queue
+        run: node scripts/test-route-owner-shell-recovery-queue.mjs
 
       - name: Test iOS startup route stability
         run: node scripts/test-ios-standalone-resume-home.mjs

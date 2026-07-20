@@ -4,7 +4,7 @@
   if(window.__UFC_OCTAGON_HQ_SHELL_STARTED__)return;
   window.__UFC_OCTAGON_HQ_SHELL_STARTED__=true;
 
-  const VERSION='app-shell-20260718d-rankings-static';
+  const VERSION='app-shell-20260720a-recovery-handoff';
   const DESTINATIONS=[
     ['home','Home','home'],
     ['rankings','Rankings','men'],
@@ -15,6 +15,7 @@
   ];
   const RANKING_VIEWS=['men','women','division','categories'];
   const RANKING_TABS=[['men','Overall'],['women','Women'],['division','Divisions'],['categories','Categories']];
+  const PENDING_NAVIGATION_KEY='__UFC_PENDING_SHELL_NAVIGATION__';
 
   let started=false;
   let eventsBound=false;
@@ -179,6 +180,24 @@
     return({home:'home',rankings:'men',p4p:'men',overall:'men',women:'women',division:'division',divisions:'division',categories:'categories',play:'play',picks:'picks','war-room':'octagon',octagon:'octagon',intelligence:'compare'})[hash]||'home';
   }
 
+  function takePendingNavigation(defaultRankingView){
+    const pending=window[PENDING_NAVIGATION_KEY];
+    if(!pending||!Array.isArray(pending.args))return null;
+    delete window[PENDING_NAVIGATION_KEY];
+    if(pending.method==='activateDestination'){
+      const key=text(pending.args[0]).toLowerCase();
+      const item=DESTINATIONS.find(row=>row[0]===key);
+      return item?{view:key==='rankings'?defaultRankingView:item[2],options:{updateHash:true}}:null;
+    }
+    if(pending.method==='activateView'){
+      const view=text(pending.args[0]);
+      if(!view)return null;
+      const options=pending.args[1]&&typeof pending.args[1]==='object'?pending.args[1]:{updateHash:true};
+      return{view,options};
+    }
+    return null;
+  }
+
   function bindEvents(){
     if(eventsBound)return;eventsBound=true;
     document.addEventListener('click',event=>{
@@ -193,7 +212,7 @@
     if(started){syncNavigation();return true;}
     if(!document.querySelector('nav.tabs')||!document.querySelector('main.shell'))return false;
     started=true;installStyles();purgeLegacy();normalizeHeader();ensureViews();normalizeNavigation();bindEvents();
-    const route=parseRoute();currentRankingView=RANKING_VIEWS.includes(route)?route:'men';currentDestination=destinationForView(route);showView(route,{updateHash:Boolean(location.hash)});document.documentElement.setAttribute('data-app-shell',VERSION);return true;
+    const route=parseRoute();currentRankingView=RANKING_VIEWS.includes(route)?route:'men';const pending=takePendingNavigation(currentRankingView);const initialView=pending?.view||route;if(RANKING_VIEWS.includes(initialView))currentRankingView=initialView;currentDestination=destinationForView(initialView);showView(initialView,pending?.options||{updateHash:Boolean(location.hash)});document.documentElement.setAttribute('data-app-shell',VERSION);return true;
   }
 
   const api={version:VERSION,start,apply:start,activateView:showView,activateDestination:key=>{const item=DESTINATIONS.find(row=>row[0]===key);return item?showView(key==='rankings'?currentRankingView:item[2]):false;},loadPlaySupport,get currentDestination(){return currentDestination;},get currentRankingView(){return currentRankingView;}};
