@@ -180,6 +180,7 @@ try{
     await page.waitForFunction(()=>/still loading/i.test(document.getElementById('picksPinSignInStatus')?.textContent||''));
     assert.deepEqual(await credentialRpcNames(page),[],'A delayed canonical owner must not trigger a direct credential fallback.');
     await page.evaluate(()=>{window.UFC_PLAY_PROFILE=window.__savedProfileOwner;});
+    await page.waitForTimeout(150); // Let the existing 120 ms PIN mutation resync settle before the explicit retry.
     await Promise.all([
       page.waitForURL(url=>url.searchParams.get('room')==='ROOM01'&&url.hash==='#picks',{timeout:30000}),
       page.click('#picksPinSignInButton')

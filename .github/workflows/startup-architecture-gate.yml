@@ -27,6 +27,8 @@ on:
       - 'scripts/test-route-owner-shell-recovery-queue.mjs'
       - 'scripts/test-profile-login-owner-delegation.mjs'
       - 'scripts/test-community-profile-access-owner.mjs'
+      - 'scripts/test-community-profile-identity-contract.mjs'
+      - 'scripts/test-community-profile-identity-owner.mjs'
       - 'scripts/test-product-profile-handoff-owner.mjs'
       - 'scripts/test-product-startup-handoff-contract.mjs'
       - 'scripts/test-product-startup-handoff-single.mjs'
@@ -65,6 +67,8 @@ on:
       - 'scripts/test-route-owner-shell-recovery-queue.mjs'
       - 'scripts/test-profile-login-owner-delegation.mjs'
       - 'scripts/test-community-profile-access-owner.mjs'
+      - 'scripts/test-community-profile-identity-contract.mjs'
+      - 'scripts/test-community-profile-identity-owner.mjs'
       - 'scripts/test-product-profile-handoff-owner.mjs'
       - 'scripts/test-product-startup-handoff-contract.mjs'
       - 'scripts/test-product-startup-handoff-single.mjs'
@@ -129,6 +133,8 @@ jobs:
         run: |
           node --check scripts/test-profile-login-owner-delegation.mjs
           node --check scripts/test-community-profile-access-owner.mjs
+          node --check scripts/test-community-profile-identity-contract.mjs
+          node --check scripts/test-community-profile-identity-owner.mjs
           node --check scripts/test-product-profile-handoff-owner.mjs
           node --check scripts/test-product-startup-handoff-contract.mjs
           node --check scripts/test-product-startup-handoff-single.mjs
@@ -140,6 +146,9 @@ jobs:
 
       - name: Enforce startup ownership contract
         run: node scripts/test-startup-contract.mjs
+
+      - name: Enforce community profile identity contract
+        run: node scripts/test-community-profile-identity-contract.mjs
 
       - name: Enforce Product startup handoff contract
         run: node scripts/test-product-startup-handoff-contract.mjs
@@ -188,6 +197,17 @@ jobs:
         with:
           name: community-profile-access-owner-report
           path: /tmp/community-profile-access-owner-report.json
+          if-no-files-found: ignore
+
+      - name: Test community profile identity ownership
+        run: node scripts/test-community-profile-identity-owner.mjs
+
+      - name: Upload community identity ownership diagnostic
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: community-profile-identity-owner-report
+          path: /tmp/community-profile-identity-owner-report.json
           if-no-files-found: ignore
 
       - name: Test Product profile handoff ownership

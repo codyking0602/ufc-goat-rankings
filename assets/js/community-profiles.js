@@ -4,7 +4,7 @@
   if(window.__UFC_COMMUNITY_PROFILES_STARTED__)return;
   window.__UFC_COMMUNITY_PROFILES_STARTED__=true;
 
-  const VERSION='community-profiles-20260720a-canonical-access-consumer';
+  const VERSION='community-profiles-20260720b-passive-identity-consumer';
   const TOP10_KEY='ufc-goat-play-top10-v1';
   const TARGET_KEY='octagon-hq:challenge-target-v2';
   const CANONICAL_CODE='GOAT26';
@@ -171,11 +171,9 @@
     return true;
   }
 
-  async function resolveIdentity(){
-    if(state.identity)return state.identity;
-    state.identity=await window.UFC_APP_PROFILE?.resolve?.().catch(()=>null)
-      ||await window.UFC_PLAY_PROFILE?.resolve?.().catch(()=>null)
-      ||null;
+  function cachedIdentity(){
+    const identity=state.identity||window.UFC_PLAY_PROFILE?.identity||window.UFC_APP_PROFILE?.identity||null;
+    if(identity)acceptIdentity(identity);
     return state.identity;
   }
   async function load(force=false){
@@ -187,7 +185,7 @@
     }
     if(!state.snapshot)renderDirectory();
     state.loading=(async()=>{
-      const identity=await resolveIdentity();
+      const identity=cachedIdentity();
       const rpc=client();
       const token=tokenFor(identity);
       if(!identity||!rpc||!token)return null;
@@ -330,7 +328,7 @@
     return true;
   }
   async function openTop10(){
-    let identity=await resolveIdentity().catch(()=>null);
+    let identity=cachedIdentity();
     if(!identity){
       identity=await window.UFC_PLAY_PROFILE?.require?.({title:'Sign in to edit your Top 10',description:'Use your Octagon HQ profile once. Picks and every other profile feature will use the same sign-in.'});
       if(!identity)return false;
@@ -389,7 +387,7 @@
     if(!clear&&(rows.length!==10||new Set(rows.map(norm)).size!==10))return false;
     const signature=JSON.stringify(rows);
     if(signature===state.lastPublished)return true;
-    const identity=await resolveIdentity();
+    const identity=cachedIdentity();
     const rpc=client();
     const token=tokenFor(identity);
     if(!rpc||!token)return false;
@@ -513,9 +511,8 @@
     bind();
     renderDirectory();
     wrapChallengePicker();
-    void resolveIdentity().then(()=>{
-      if(document.getElementById('home')?.classList.contains('active-view'))void load(false);
-    });
+    acceptIdentity(window.UFC_PLAY_PROFILE?.identity||window.UFC_APP_PROFILE?.identity);
+    if(state.identity&&document.getElementById('home')?.classList.contains('active-view'))void load(false);
     document.documentElement.dataset.communityProfiles=VERSION;
   }
 
