@@ -29,6 +29,15 @@ jobs:
               end=source.index("\n          PY\n",start)
               code='\n'.join(line[10:] if line.startswith('          ') else line for line in source[start:end].splitlines())
               exec(compile(code,'phase-2-identity-profile-audit','exec'))
+              for name in [
+                  'docs/startup/STATUS.md',
+                  'docs/startup/OWNERS.md',
+                  'docs/startup/DECISIONS.md',
+                  'docs/startup/CHANGELOG.md',
+                  'docs/startup/PHASE-2-IDENTITY-PROFILE-OWNERSHIP-AUDIT.md'
+              ]:
+                  path=Path(name)
+                  path.write_text('\n'.join(line.rstrip() for line in path.read_text().splitlines())+'\n')
           except Exception:
               Path('phase-2-identity-audit-error.txt').write_text(traceback.format_exc())
               raise
@@ -50,4 +59,4 @@ jobs:
           git add phase-2-identity-audit-error.txt
           git commit -m "Record identity audit workflow error"
           git push origin HEAD:agent/phase-2-identity-profile-audit
-# extraction-diagnostic-trigger
+# whitespace-normalization-trigger
