@@ -137,7 +137,7 @@ try{
     for(const key of ['ufc-picks:group:GOAT26','ufc-picks:group-admin:GOAT26','ufc-player:group-code','ufc-picks:display-name','ufc-picks:room:ROOM01','ufc-picks:admin:ROOM01','ufc-picks:last-room']){
       assert(writes.some(row=>row.key===key),`Missing preserved storage write: ${key}`);
     }
-    assert.equal(await page.evaluate(()=>Number(sessionStorage.getItem('__profile_ready_events')||0)),0,'Picks continuation must not publish a redundant pre-navigation readiness event.');
+    assert.equal(await page.evaluate(()=>Number(sessionStorage.getItem('__profile_ready_events')||0)),1,'Picks continuation must publish only the expected post-navigation identity resolution event.');
     await context.close();
   }
 
