@@ -1,0 +1,127 @@
+name: Apply community access ownership batch
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/phase-2-community-access-owner-apply.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/phase-2-community-access-owner
+      - name: Remove duplicate Community access bridge
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          def replace_once(text, old, new, label):
+              if old not in text:
+                  raise SystemExit(f'Missing expected block: {label}')
+              if text.count(old) != 1:
+                  raise SystemExit(f'Expected one block for {label}, found {text.count(old)}')
+              return text.replace(old, new, 1)
+
+          community_path=Path('assets/js/community-profiles.js')
+          community=community_path.read_text()
+          community=replace_once(
+              community,
+              "  const VERSION='community-profiles-20260718h-collapsed-top10-profile';",
+              "  const VERSION='community-profiles-20260720a-canonical-access-consumer';",
+              'community version'
+          )
+          community=replace_once(
+              community,
+              "  const CANONICAL_CODE='GOAT26';\n  const GROUP_TOKEN_PREFIX='ufc-picks:group:';\n  const ROOM_TOKEN_PREFIX='ufc-picks:room:';\n  const ACTIVE_GROUP_KEY='ufc-player:group-code';",
+              "  const CANONICAL_CODE='GOAT26';",
+              'duplicate access constants'
+          )
+          community=replace_once(
+              community,
+              "  function syncPicksAccess(identity=state.identity){\n    const token=tokenFor(identity);\n    if(!token)return false;\n    try{\n      localStorage.setItem(`${GROUP_TOKEN_PREFIX}${CANONICAL_CODE}`,token);\n      localStorage.setItem(ACTIVE_GROUP_KEY,CANONICAL_CODE);\n      if(identity?.member?.display_name)localStorage.setItem('ufc-picks:display-name',text(identity.member.display_name));\n      (identity?.rooms||[]).forEach(room=>{\n        const code=text(room?.code).toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6);\n        if(code)localStorage.setItem(`${ROOM_TOKEN_PREFIX}${code}`,token);\n      });\n    }catch(_error){}\n    const picksActive=document.getElementById('picks')?.classList.contains('active-view')||location.hash==='#picks';\n    if(picksActive){\n      const url=new URL(location.href);\n      if(!url.searchParams.get('group')){\n        url.searchParams.set('group',CANONICAL_CODE);\n        history.replaceState(history.state,'',`${url.pathname}${url.search}${url.hash||'#picks'}`);\n      }\n    }\n    window.UFCPicksPinAuth?.refresh?.();\n    return true;\n  }\n\n",
+              "",
+              'community Picks access bridge'
+          )
+          community=replace_once(
+              community,
+              "    syncPicksAccess(state.identity);\n    return state.identity;",
+              "    return state.identity;",
+              'resolve identity bridge call'
+          )
+          community=replace_once(
+              community,
+              "    state.identity=next;\n    syncPicksAccess(next);\n    if(previousId&&nextId&&previousId!==nextId){",
+              "    state.identity=next;\n    if(previousId&&nextId&&previousId!==nextId){",
+              'accept identity bridge call'
+          )
+          community=replace_once(
+              community,
+              "      if(event.detail?.destination==='picks')syncPicksAccess();\n      wrapChallengePicker();",
+              "      wrapChallengePicker();",
+              'view change bridge call'
+          )
+          community=replace_once(
+              community,
+              "    void resolveIdentity().then(()=>{\n      syncPicksAccess();\n      if(document.getElementById('home')?.classList.contains('active-view'))void load(false);\n    });",
+              "    void resolveIdentity().then(()=>{\n      if(document.getElementById('home')?.classList.contains('active-view'))void load(false);\n    });",
+              'startup bridge call'
+          )
+          community_path.write_text(community)
+
+          contract_path=Path('scripts/test-startup-contract.mjs')
+          contract=contract_path.read_text()
+          contract=replace_once(
+              contract,
+              "assert(read('assets/js/community-profiles.js').includes('__UFC_COMMUNITY_PROFILES_STARTED__'),'Community profiles must keep its global duplicate-file-execution guard.');",
+              "const communityProfiles=read('assets/js/community-profiles.js');\nassert(communityProfiles.includes('__UFC_COMMUNITY_PROFILES_STARTED__'),'Community profiles must keep its global duplicate-file-execution guard.');\nassert.equal(communityProfiles.includes('function syncPicksAccess'),false,'Community profiles must not own shared Picks access synchronization.');\nassert.equal(communityProfiles.includes('GROUP_TOKEN_PREFIX'),false,'Community profiles must not persist canonical group access.');\nassert.equal(communityProfiles.includes('ROOM_TOKEN_PREFIX'),false,'Community profiles must not persist room access.');\nassert.equal(communityProfiles.includes('ACTIVE_GROUP_KEY'),false,'Community profiles must not own the active Picks group key.');",
+              'community startup contract'
+          )
+          contract=replace_once(
+              contract,
+              "const product=read('assets/js/product-architecture.js');\nassert(product.includes('__UFC_PRODUCT_ARCHITECTURE_STARTED__'),'Product architecture must keep its global duplicate-start guard.');",
+              "const product=read('assets/js/product-architecture.js');\nassert(product.includes('__UFC_PRODUCT_ARCHITECTURE_STARTED__'),'Product architecture must keep its global duplicate-start guard.');\nassert(product.includes('function syncSharedProfileToPicks(value)'),'Product architecture must remain the cross-feature Picks compatibility owner.');\nassert(product.includes('localStorage.setItem(GROUP_TOKEN_KEY,token)'),'Product architecture must retain its canonical group compatibility handoff until a separate audited removal.');",
+              'product compatibility contract'
+          )
+          contract_path.write_text(contract)
+
+          gate_path=Path('.github/workflows/startup-architecture-gate.yml')
+          gate=gate_path.read_text()
+          gate=gate.replace(
+              "      - 'scripts/test-profile-login-owner-delegation.mjs'\n",
+              "      - 'scripts/test-profile-login-owner-delegation.mjs'\n      - 'scripts/test-community-profile-access-owner.mjs'\n"
+          )
+          if gate.count("      - 'scripts/test-community-profile-access-owner.mjs'") != 2:
+              raise SystemExit('Expected community proof path in push and pull_request filters.')
+          gate=replace_once(
+              gate,
+              "      - name: Validate canonical profile delegation proof syntax\n        run: node --check scripts/test-profile-login-owner-delegation.mjs\n",
+              "      - name: Validate canonical profile delegation proof syntax\n        run: |\n          node --check scripts/test-profile-login-owner-delegation.mjs\n          node --check scripts/test-community-profile-access-owner.mjs\n",
+              'community proof syntax gate'
+          )
+          gate=replace_once(
+              gate,
+              "      - name: Test canonical profile login delegation\n        run: node scripts/test-profile-login-owner-delegation.mjs\n",
+              "      - name: Test canonical profile login delegation\n        run: node scripts/test-profile-login-owner-delegation.mjs\n\n      - name: Test community profile access ownership\n        run: node scripts/test-community-profile-access-owner.mjs\n",
+              'community browser proof gate'
+          )
+          gate_path.write_text(gate)
+          PY
+          node --check assets/js/community-profiles.js
+          node --check scripts/test-community-profile-access-owner.mjs
+          node --check scripts/test-startup-contract.mjs
+          node scripts/test-startup-contract.mjs
+          git diff --check
+      - name: Commit isolated runtime and proof
+        run: |
+          if git diff --quiet; then exit 0; fi
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add assets/js/community-profiles.js scripts/test-community-profile-access-owner.mjs scripts/test-startup-contract.mjs .github/workflows/startup-architecture-gate.yml
+          git commit -m "Remove duplicate Community access synchronization"
+          git push origin HEAD:agent/phase-2-community-access-owner
