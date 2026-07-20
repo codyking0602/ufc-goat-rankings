@@ -24,6 +24,7 @@ on:
       - 'scripts/test-startup-contract.mjs'
       - 'scripts/test-route-owner-shell-recovery-queue.mjs'
       - 'scripts/test-profile-login-owner-delegation.mjs'
+      - 'scripts/test-community-profile-access-owner.mjs'
       - 'scripts/test-ios-standalone-resume-home.mjs'
       - 'scripts/test-profile-signin-stability.mjs'
       - 'scripts/test-phase-4b-mobile.mjs'
@@ -51,6 +52,7 @@ on:
       - 'scripts/test-startup-contract.mjs'
       - 'scripts/test-route-owner-shell-recovery-queue.mjs'
       - 'scripts/test-profile-login-owner-delegation.mjs'
+      - 'scripts/test-community-profile-access-owner.mjs'
       - 'scripts/test-ios-standalone-resume-home.mjs'
       - 'scripts/test-profile-signin-stability.mjs'
       - 'scripts/test-phase-4b-mobile.mjs'
@@ -102,7 +104,9 @@ jobs:
           node --check assets/js/picks-member-pin.js
 
       - name: Validate canonical profile delegation proof syntax
-        run: node --check scripts/test-profile-login-owner-delegation.mjs
+        run: |
+          node --check scripts/test-profile-login-owner-delegation.mjs
+          node --check scripts/test-community-profile-access-owner.mjs
 
       - name: Enforce startup ownership contract
         run: node scripts/test-startup-contract.mjs
@@ -125,6 +129,17 @@ jobs:
 
       - name: Test canonical profile login delegation
         run: node scripts/test-profile-login-owner-delegation.mjs
+
+      - name: Test community profile access ownership
+        run: node scripts/test-community-profile-access-owner.mjs
+
+      - name: Upload community access ownership diagnostic
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: community-profile-access-owner-report
+          path: /tmp/community-profile-access-owner-report.json
+          if-no-files-found: ignore
 
       - name: Test iOS startup route stability
         run: node scripts/test-ios-standalone-resume-home.mjs

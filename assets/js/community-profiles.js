@@ -4,13 +4,10 @@
   if(window.__UFC_COMMUNITY_PROFILES_STARTED__)return;
   window.__UFC_COMMUNITY_PROFILES_STARTED__=true;
 
-  const VERSION='community-profiles-20260718h-collapsed-top10-profile';
+  const VERSION='community-profiles-20260720a-canonical-access-consumer';
   const TOP10_KEY='ufc-goat-play-top10-v1';
   const TARGET_KEY='octagon-hq:challenge-target-v2';
   const CANONICAL_CODE='GOAT26';
-  const GROUP_TOKEN_PREFIX='ufc-picks:group:';
-  const ROOM_TOKEN_PREFIX='ufc-picks:room:';
-  const ACTIVE_GROUP_KEY='ufc-player:group-code';
   const REFRESH_AGE_MS=30000;
   const state={
     identity:null,
@@ -115,30 +112,6 @@
     return days<7?`Active ${days}d ago`:new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric'}).format(new Date(value));
   }
 
-  function syncPicksAccess(identity=state.identity){
-    const token=tokenFor(identity);
-    if(!token)return false;
-    try{
-      localStorage.setItem(`${GROUP_TOKEN_PREFIX}${CANONICAL_CODE}`,token);
-      localStorage.setItem(ACTIVE_GROUP_KEY,CANONICAL_CODE);
-      if(identity?.member?.display_name)localStorage.setItem('ufc-picks:display-name',text(identity.member.display_name));
-      (identity?.rooms||[]).forEach(room=>{
-        const code=text(room?.code).toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,6);
-        if(code)localStorage.setItem(`${ROOM_TOKEN_PREFIX}${code}`,token);
-      });
-    }catch(_error){}
-    const picksActive=document.getElementById('picks')?.classList.contains('active-view')||location.hash==='#picks';
-    if(picksActive){
-      const url=new URL(location.href);
-      if(!url.searchParams.get('group')){
-        url.searchParams.set('group',CANONICAL_CODE);
-        history.replaceState(history.state,'',`${url.pathname}${url.search}${url.hash||'#picks'}`);
-      }
-    }
-    window.UFCPicksPinAuth?.refresh?.();
-    return true;
-  }
-
   function ensureMount(){
     const home=document.getElementById('home');
     const dashboard=document.getElementById('homeDashboardMount');
@@ -203,7 +176,6 @@
     state.identity=await window.UFC_APP_PROFILE?.resolve?.().catch(()=>null)
       ||await window.UFC_PLAY_PROFILE?.resolve?.().catch(()=>null)
       ||null;
-    syncPicksAccess(state.identity);
     return state.identity;
   }
   async function load(force=false){
@@ -446,7 +418,6 @@
     const previousId=identityMemberId();
     const nextId=identityMemberId(next);
     state.identity=next;
-    syncPicksAccess(next);
     if(previousId&&nextId&&previousId!==nextId){
       state.snapshot=null;
       state.lastLoadedAt=0;
@@ -512,7 +483,6 @@
         renderDirectory();
         void load(false);
       }
-      if(event.detail?.destination==='picks')syncPicksAccess();
       wrapChallengePicker();
     });
     window.addEventListener('ufc-picks-season-updated',()=>{
@@ -544,7 +514,6 @@
     renderDirectory();
     wrapChallengePicker();
     void resolveIdentity().then(()=>{
-      syncPicksAccess();
       if(document.getElementById('home')?.classList.contains('active-view'))void load(false);
     });
     document.documentElement.dataset.communityProfiles=VERSION;

@@ -93,7 +93,12 @@ const homeDashboard=read('assets/js/home-dashboard.js');
 assert(homeDashboard.includes('__UFC_HOME_DASHBOARD_STARTED__'),'The Home dashboard must keep its global duplicate-file-execution guard.');
 
 assert(read('assets/js/picks.js').includes('__UFC_PICKS_STARTED__'),'Picks must keep its global duplicate-file-execution guard.');
-assert(read('assets/js/community-profiles.js').includes('__UFC_COMMUNITY_PROFILES_STARTED__'),'Community profiles must keep its global duplicate-file-execution guard.');
+const communityProfiles=read('assets/js/community-profiles.js');
+assert(communityProfiles.includes('__UFC_COMMUNITY_PROFILES_STARTED__'),'Community profiles must keep its global duplicate-file-execution guard.');
+assert.equal(communityProfiles.includes('function syncPicksAccess'),false,'Community profiles must not own shared Picks access synchronization.');
+assert.equal(communityProfiles.includes('GROUP_TOKEN_PREFIX'),false,'Community profiles must not persist canonical group access.');
+assert.equal(communityProfiles.includes('ROOM_TOKEN_PREFIX'),false,'Community profiles must not persist room access.');
+assert.equal(communityProfiles.includes('ACTIVE_GROUP_KEY'),false,'Community profiles must not own the active Picks group key.');
 const play=read('assets/js/play.js');
 assert(/if\(!panel \|\| !Array\.isArray\(DATA\.men\)\) return;\s+if\(window\.__UFC_PLAY_STARTED__\) return;\s+window\.__UFC_PLAY_STARTED__ = true;\s+const state = \{/.test(play),'Play must keep its duplicate-file guard after required DOM and ranking-data prerequisites pass and before successful ownership begins.');
 const playHub=read('assets/js/play-hub.js');
@@ -118,6 +123,8 @@ assert(picksPin.includes("client.rpc('picks_commissioner_set_member_pin'"),'The 
 
 const product=read('assets/js/product-architecture.js');
 assert(product.includes('__UFC_PRODUCT_ARCHITECTURE_STARTED__'),'Product architecture must keep its global duplicate-start guard.');
+assert(product.includes('function syncSharedProfileToPicks(value)'),'Product architecture must remain the cross-feature Picks compatibility owner.');
+assert(product.includes('localStorage.setItem(GROUP_TOKEN_KEY,token)'),'Product architecture must retain its canonical group compatibility handoff until a separate audited removal.');
 assert.equal(product.includes('loadNativeShell'),false,'Product architecture must not dynamically load the native shell.');
 assert.equal(product.includes('loadNotificationSurfaceFix'),false,'Product architecture must not dynamically load the notification surface.');
 assert(product.includes(`const PENDING_NAVIGATION_KEY='${pendingNavigationKey}'`),'Product architecture and the canonical shell must share one explicit recovery handoff key.');
