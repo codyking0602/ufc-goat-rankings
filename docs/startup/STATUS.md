@@ -6,14 +6,14 @@ _Last updated: 2026-07-19_
 
 - **Current phase:** Phase 1 — Make startup owners idempotent
 - **Phase 0:** Complete
-- **Phase 1 runtime batches merged and physically verified:** 11
-- **Latest verified runtime commit:** `b1a7a3c92c2f7c13b64b4d68df3d26e4e9afbec8`
-- **Exact Batch 10B iPhone-tested head:** `35bc9a750cdbdfb2cec69b2e17d954b95b1ca8fc`
-- **Estimated entire cleanup progress:** approximately 42%
+- **Phase 1 runtime batches merged and physically verified:** 12
+- **Latest verified runtime commit:** `e332f46ec63c6698fdebd8ecc843c3f0df4eaabd`
+- **Exact Batch 11 iPhone-tested head:** `ad0e84e4069224270db8186aa771216af90343b4`
+- **Estimated entire cleanup progress:** approximately 45%
 - **Master tracker:** [#102 — Zero-change startup architecture cleanup](https://github.com/codyking0602/ufc-goat-rankings/issues/102)
 - **Visible product changes approved:** none
 - **Major Phase 1 owner audit:** complete in [`PHASE-1-OWNER-AUDIT.md`](./PHASE-1-OWNER-AUDIT.md)
-- **Recommended session state:** start a fresh chat before the `share-deep-links.js` batch; this file is the handoff source of truth
+- **Recommended session state:** start a fresh chat before the production-ranking-bootstrap lifecycle batch; this file is the handoff source of truth
 
 ## Completed runtime batches
 
@@ -30,88 +30,105 @@ _Last updated: 2026-07-19_
 | 9 | `community-profiles.js` | #114 | `4a811201bd6c2ac620d829d9701a187e468142b0` | Exact tested head normal |
 | 10A | `play.js` | #115 | `2040f604892c067ee288fe88df15594a570ac396` | Exact tested head normal |
 | 10B | `play-hub.js` | #119 | `b1a7a3c92c2f7c13b64b4d68df3d26e4e9afbec8` | Exact tested head normal |
+| 11 | `share-deep-links.js` | #121 | `e332f46ec63c6698fdebd8ecc843c3f0df4eaabd` | Exact tested head normal |
 
-## Batch 10B closeout — Play Hub startup ownership
+## Batch 11 closeout — Sharing and incoming deep-link ownership
 
-PR #119 added a prerequisite-aware duplicate-file-execution guard to `assets/js/play-hub.js` and one matching assertion to `scripts/test-startup-contract.mjs`.
+PR #121 added a top-level duplicate-file-execution guard to `assets/js/share-deep-links.js` and one matching assertion to `scripts/test-startup-contract.mjs`.
 
 Final runtime record:
 
-- starting `main`: `e48a36c464a25f9f6d336435e2ba876f10177a85`;
-- exact physically tested PR head: `35bc9a750cdbdfb2cec69b2e17d954b95b1ca8fc`;
-- squash merge: `b1a7a3c92c2f7c13b64b4d68df3d26e4e9afbec8`;
-- 4 additions;
+- starting `main`: `9743808a9a3200426f26099209c8f8e57ef32851`;
+- exact physically tested PR head: `ad0e84e4069224270db8186aa771216af90343b4`;
+- squash merge: `e332f46ec63c6698fdebd8ecc843c3f0df4eaabd`;
+- 5 additions;
 - 0 deletions;
 - 2 changed files;
-- original `play-hub.js` blob: `84f7a556efef0f9964ffc459009c166673216218`;
-- guarded `play-hub.js` blob: `0831bd2d58c04dd683a72c3178596ea43aca0f2b`;
-- original startup-contract blob: `95e77fcb7e66e982ad5dc7bbabdaaf1a4938261d`;
-- guarded startup-contract blob: `dd426780dfdacdf1a9aa7848bcc0fc627ea5b627`.
+- original `share-deep-links.js` blob: `67979699403b6539d798ca3cf72c37bc42c60e21`;
+- guarded `share-deep-links.js` blob: `4716ae05270dd0f6d24c2973af058d4e15f383a3`;
+- original startup-contract blob: `dd426780dfdacdf1a9aa7848bcc0fc627ea5b627`;
+- guarded startup-contract blob: `b67f87807be533b346e15254dc1041b77bda1a3b`.
 
-The required startup prerequisites are the five static Play DOM elements:
+The owner has no top-level missing-DOM, missing-data, missing-route-owner, or missing-browser-API return before successful ownership begins. The marker is immediately after `'use strict'` and before `VERSION`, private state, API publication, DOM work, listeners, observers, timers, URL reads, outgoing sharing, or incoming-route handling.
 
-1. `#play`;
-2. `.play-shell`;
-3. `.section-title`;
-4. `[data-play-mode="top10"]`;
-5. `[data-play-mode="blind"]`.
+Duplicate file evaluation was proven not to be an intentional prerequisite-recovery path. Legitimate later work remains owned by:
 
-The marker remains immediately after the existing prerequisite return and before native-random capture and private hub state. Missing-prerequisite execution leaves the marker unset and creates no listeners, timers, intervals, observers, storage activity, DOM ownership, API publication, rendering, or script loading. A later file evaluation can initialize normally after the missing DOM appears. Only later evaluation after one successful initialization is blocked.
+- the existing once-only `DOMContentLoaded` path;
+- 40, 180, 700, and 1800 millisecond patch, observer, and decoration passes;
+- the 80 millisecond initial incoming-route pass;
+- `ufc-production-ranking-ready`;
+- `popstate`;
+- fighter-profile and War Room MutationObservers;
+- public `window.UFC_SHARE_LINKS` APIs;
+- route-specific `wait(...)` retry loops.
 
 The exact first-run owner remains unchanged:
 
-- private hub, daily and opening state;
-- native-random capture, daily seeded-random activation, and native-random restoration;
-- creation and insertion of `#playHub` and `#playGameNav`;
-- initial Hub rendering, shell visibility, subtitle and screen state;
-- current six-tab listener footprint;
-- optional Blind Resume era observer and zero-delay sync;
-- current daily-context restoration or once-only shared-ready recovery;
-- zero intervals, direct storage operations, and dynamic script loads;
-- Top 10, Blind Resume, Better Than, Find the Leader, daily challenge, Games, profile, Picks, sharing, shell, and native-navigation handoffs;
-- unchanged `window.UFC_PLAY_HUB` API and custom events.
+- `window.UFC_SHARE_LINKS` publication and `data-share-deep-links` state;
+- fighter profile canvas/file sharing;
+- Find the Leader result sharing;
+- Picks recap sharing;
+- War Room message sharing;
+- native Web Share success, cancellation, and rejection behavior;
+- secure clipboard and hidden-textarea copy fallbacks;
+- profile and War Room decoration;
+- two document click listeners, including the capture-phase Picks recap owner;
+- two MutationObservers when the relevant mounts exist;
+- five initial timers;
+- production-ranking-ready and `popstate` listeners;
+- fighter, Find the Leader, Play challenge, Picks event, and War Room incoming routing;
+- existing Rankings, Play, profile-challenge, Picks, War Room, profile, sharing, and native-shell handoffs.
 
 Focused proof established:
 
-- all five missing-DOM cases leave zero ownership and recover on a later execution;
-- optional APIs and datasets are not incorrectly promoted to startup prerequisites;
 - removing only the two marker lines reproduces the original runtime byte-for-byte;
-- guarded and original first-run ownership traces are equivalent;
-- daily game choice, restoration, seeded randomness, initial mode, navigation, routes, rendering, listeners, timers, observer, APIs, and handoffs are unchanged;
-- deliberate duplicate execution adds zero listeners, timers, intervals, observers, storage restoration, API replacement, rendering, game selection, route handling, tap handling, saves, or state transitions;
-- important Play actions still fire once.
+- original and guarded first-run traces are equivalent;
+- missing optional DOM and APIs recover through existing delayed, event, observer, public-API, and route-wait paths without file re-evaluation;
+- deliberate duplicate evaluation adds zero listeners, timers, intervals, observers, API replacement, URL work, route work, share handling, clipboard writes, or native share sheets;
+- original duplicate evaluation created a second private closure, four additional listeners, five timers, two observers when mounts existed, replacement API ownership, and a fresh route key;
+- native share success, cancellation, rejection fallback, secure clipboard fallback, and `execCommand` fallback remain unchanged;
+- outgoing fighter, Find the Leader, Picks, and War Room payloads remain unchanged;
+- all five supported incoming route types activate once;
+- malformed and unsupported links do not activate a destination;
+- failed incoming routes remain retryable;
+- `popstate` handles a newly navigated supported link once;
+- no history or location mutation is introduced.
 
-Validation passed on the exact tested head:
+Validation passed on exact head `ad0e84e4069224270db8186aa771216af90343b4`:
 
 - JavaScript syntax;
 - startup ownership contract;
-- focused prerequisite and duplicate-execution harness;
-- Startup Architecture Gate #30;
+- focused exact-original and duplicate-execution harness;
+- Startup Architecture Gate #32;
 - iOS startup route stability;
 - profile sign-in startup stability;
-- delayed Home/community stability;
-- installed-iPhone cold launch, Home/top/bottom Play entry, leave and return, rapid Play activation, signed-out and signed-in behavior, daily restoration and selection, game cards, Top 10, Blind Resume, profile/Picks/sharing handoffs, navigation, notifications, badges, background/resume, relaunch, rotation/resize, rapid taps, and delayed stability.
+- delayed Home/community stability.
 
-Cody physically tested exact immutable head `35bc9a750cdbdfb2cec69b2e17d954b95b1ca8fc` and reported **“Normal.”** No visible regression, blank state, flicker, route bounce, stale or lost state, duplicate UI, double action, duplicate game choice, duplicate route, duplicate save, duplicate ownership, or failed prerequisite recovery was observed.
+Unrelated red checks were inspected but not repaired:
+
+- Scoring Architecture Guardrails #1265 retained stale 73-versus-80 roster/facts expectations, stale Henry Cejudo and Royce Gracie rank expectations, category-audit baseline diagnostics, and Alexandre Pantoja display diagnostics;
+- Production Ranking Browser Smoke #447 retained the existing 14 women’s leaderboard thumbnail render failures.
+
+Cody physically tested exact immutable head `ad0e84e4069224270db8186aa771216af90343b4` and reported **“Normal.”** No visible regression, blank state, flicker, route bounce, stale or lost state, duplicate UI, double action, duplicate share sheet, duplicate clipboard write, repeated incoming route, repeated URL handling, duplicate ownership, or failed prerequisite recovery was observed.
 
 ## Next Phase 1 batch
 
-**Next isolated owner: `assets/js/share-deep-links.js` only.**
+**Next isolated owner: `assets/js/production-ranking-bootstrap.js` only.**
 
-Start from fresh current `main`. Do not combine sharing/deep-link ownership with another owner or begin Phase 2/3 cleanup.
+This is not a standard guard batch. The owner remains classified as **retry semantics required**. Do not add a naive top-level marker.
 
-The next batch must inspect and preserve:
+The next batch must first design and prove an intentional apply/retry lifecycle that preserves:
 
-- `DOMContentLoaded` versus immediate startup behavior;
-- profile and War Room observers;
-- delayed patch/decorate passes and incoming route timer;
-- public `window.UFC_SHARE_LINKS` API;
-- profile, Find the Leader, Play challenge, Picks event, and War Room link routing;
-- native share, clipboard fallback, share-card generation, and toast ownership;
-- ranking-ready and `popstate` retry paths;
-- current route de-duplication state;
-- signed-in/signed-out, installed-app, background/resume, rotation/resize, and delayed stability boundaries;
-- whether duplicate file evaluation is or is not an intentional prerequisite recovery mechanism.
+- ordered canonical calculation dependency loading;
+- script-attribute and source checks;
+- canonical data, scoring calculator, and ranking-pipeline readiness;
+- calculated production rebuild and refresh behavior;
+- all current success, failure, and delayed-readiness events;
+- app refresh and generated production feed handoffs;
+- any current accidental second-evaluation recovery that must be replaced by an explicit callable path;
+- no duplicate script loading, rebuild, event dispatch, app refresh, or scoring state transition.
+
+`app.js` remains a structural manifest singleton and must not receive a standard IIFE guard.
 
 ## Existing unrelated red checks
 
@@ -128,23 +145,24 @@ Do not repair these in a startup-owner PR unless a failure directly references t
 
 ## Exact next action
 
-1. Start a fresh chat from current `main` and reread `STATUS.md`, `DECISIONS.md`, `OWNERS.md`, `PHASE-1-OWNER-AUDIT.md`, `TEST_PLAN.md`, and current Issue #102 comments.
+1. Start a fresh chat from current `main` and reread `STATUS.md`, `DECISIONS.md`, `OWNERS.md`, `PHASE-1-OWNER-AUDIT.md`, `TEST_PLAN.md`, and every current Issue #102 comment.
 2. Verify and record the exact starting `main` SHA.
-3. Inspect `assets/js/share-deep-links.js` and only its directly relevant profile, Play, Picks, War Room, route, sharing, and native-shell handoffs.
-4. Create a fresh isolated branch directly from current `main`.
-5. Document every top-level path and prove whether duplicate evaluation currently provides prerequisite recovery.
-6. Add a guard only at a proven safe ownership boundary and one matching startup-contract assertion.
-7. Open a draft PR and require exact-head automated and installed-iPhone verification before merge.
-8. Do not begin another startup owner or unrelated cleanup.
+3. Inspect `assets/js/production-ranking-bootstrap.js`, its dynamic dependency order, its complete current retry behavior, and only directly invoked scoring/bootstrap/app-refresh owners.
+4. Prove whether duplicate evaluation currently provides legitimate prerequisite or failure recovery.
+5. Design an explicit callable apply/retry lifecycle before blocking any second evaluation.
+6. Keep the runtime batch isolated to the production bootstrap and the minimum matching contract/test proof justified by inspection.
+7. Open a draft PR and require exact-head automated and physical-device verification if lifecycle, routing, app refresh, or installed behavior can be affected.
+8. Do not begin Phase 2, Phase 3, or unrelated scoring/product cleanup.
 
 ## Stop conditions
 
-Stop and leave the next owner unchanged or draft-only if:
+Stop and leave the production bootstrap unchanged or draft-only if:
 
-- duplicate evaluation appears necessary for legitimate prerequisite recovery and no narrow marker placement preserves it;
-- profile, Find the Leader, Play challenge, Picks event, or War Room incoming routing changes;
-- native sharing, clipboard fallback, generated cards, toasts, observers, delayed passes, ranking-ready retries, or `popstate` behavior changes;
-- duplicate listeners, observers, timers, APIs, rendering, route handling, shares, or decorations occur;
-- blank state, flicker, route bounce, stale state, or delayed instability appears;
-- the runtime diff expands beyond the isolated share owner and one matching startup-contract assertion;
-- unrelated product, scoring, fighter-data, photo, presentation, or red-check work begins.
+- a safe explicit retry lifecycle cannot replace necessary second-evaluation recovery;
+- dependency loading order or canonical source ownership changes;
+- calculated rankings, visible scores, ranks, profiles, or production feeds change;
+- app refresh timing, ready events, failure events, or retry behavior changes;
+- scripts, rebuilds, events, refreshes, listeners, timers, or state transitions duplicate;
+- blank state, flicker, stale ranking data, route bounce, or delayed instability appears;
+- the runtime diff expands into `app.js`, scoring formulas, fighter data, presentation, photos, or unrelated checks;
+- another startup owner or later cleanup phase begins.
