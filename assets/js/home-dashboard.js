@@ -4,7 +4,7 @@
   if(window.__UFC_HOME_DASHBOARD_STARTED__)return;
   window.__UFC_HOME_DASHBOARD_STARTED__=true;
 
-  const VERSION='home-dashboard-20260718a-single-renderer';
+  const VERSION='home-dashboard-20260720b-passive-daily-identity';
   const DAILY={
     gameType:'find-leader',
     gameVersion:'find-leader-daily-v1',
@@ -138,17 +138,19 @@
     return{};
   }
 
+  function cachedIdentity(){return window.UFC_PLAY_PROFILE?.identity||window.UFC_APP_PROFILE?.identity||null;}
+
   async function syncOfficialDaily(force=false){
     const current=challenge();
     if(!force&&(officialLoading||officialSyncedDay===current.day||dailyState().completed))return false;
+    const identity=cachedIdentity();
+    const name=text(identity?.member?.display_name).toLowerCase();
+    if(!name)return false;
     const shared=window.UFC_PLAY_SHARED;
     if(!shared?.client||!shared?.dailyContext)return false;
     officialLoading=true;
     try{
       const context=await shared.dailyContext(DAILY.gameType,DAILY.gameVersion,DAILY.maxScore);
-      const identity=await shared.resolveIdentity?.().catch(()=>null);
-      const name=text(identity?.member?.display_name).toLowerCase();
-      if(!name)return false;
       const {data,error}=await shared.client.rpc('play_daily_leaderboard',{
         p_game_type:DAILY.gameType,
         p_challenge_day:context?.challenge_day||current.day,
