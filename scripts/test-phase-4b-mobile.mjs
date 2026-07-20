@@ -75,6 +75,9 @@ try{
       }
     };
     window.__phase4bIdentity=identity;
+    localStorage.setItem('ufc-picks:group:GOAT26',identity.memberToken);
+    localStorage.setItem('ufc-player:group-code','GOAT26');
+    localStorage.setItem('ufc-picks:display-name',identity.member.display_name);
     window.UFC_PLAY_PROFILE={...originalPlay,client,resolve:async()=>identity};
     window.UFC_APP_PROFILE={...originalApp,group:identity.group,resolve:async()=>identity};
     window.dispatchEvent(new CustomEvent('ufc-play-profile-ready',{detail:identity}));
