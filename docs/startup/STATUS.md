@@ -6,188 +6,118 @@ _Last updated: 2026-07-19_
 
 - **Current phase:** Phase 1 — Make startup owners idempotent
 - **Phase 0:** Complete
-- **Phase 1 runtime batches merged and verified:** 8
-- **Latest verified runtime commit:** `0c488a449d413636228aafd1e45ee8197d5078ba`
-- **Estimated entire cleanup progress:** approximately 34%
+- **Phase 1 runtime batches merged and physically verified:** 9
+- **Latest verified runtime commit:** `4a811201bd6c2ac620d829d9701a187e468142b0`
+- **Exact Batch 9 iPhone-tested head:** `1915c0ff314b7911688574f279eba889d4967a42`
+- **Estimated entire cleanup progress:** approximately 38%
 - **Master tracker:** [#102 — Zero-change startup architecture cleanup](https://github.com/codyking0602/ufc-goat-rankings/issues/102)
 - **Visible product changes approved:** none
 - **Major Phase 1 owner audit:** complete in [`PHASE-1-OWNER-AUDIT.md`](./PHASE-1-OWNER-AUDIT.md)
-- **Recommended session state:** start a fresh chat before batch 9; this file is the handoff source of truth
+- **Recommended session state:** start a fresh chat before Batch 10; this file is the handoff source of truth
 
 ## Completed runtime batches
 
-### Batch 1 — Route startup guards
+| Batch | Owner | PR | Squash merge | Physical result |
+|---|---|---:|---|---|
+| 1 | `fresh-home-route-bootstrap.js` and `fresh-home-launch.js` | #100 | `5e733cc4568100e96080ce27ad601b7022daba33` | Installed app normal |
+| 2 | `octagon-hq-shell.js` | #105 | `d7b47d6fb9ad45b101f67d5658b3e2a874a746c8` | Installed app normal |
+| 3 | `octagon-hq-nav-grid.js` | #106 | `f4e3ada330fb841ade0333c580376dacaf58ec88` | Installed app normal |
+| 4 | `home-dashboard.js` | #107 | `7fd6ede029cc307932cb38bc2c9274484b18f403` | Installed app normal |
+| 5 | `native-app-shell-stability.js` | #108 | `6b0c9442b5a4df46e481296bb8d5cbd3befe1ab7` | Installed app normal |
+| 6 | `app-notification-center.js` | #110 | `865527b15902e7b61fff429e4faf9ce2a0bc811c` | Installed app normal |
+| 7 | `native-app-shell.js` | #112 | `5b82c3a47b64a4955c4fd4eb041fafe46473e8ac` | Exact tested head normal |
+| 8 | `picks.js` | #113 | `0c488a449d413636228aafd1e45ee8197d5078ba` | Exact tested head normal |
+| 9 | `community-profiles.js` | #114 | `4a811201bd6c2ac620d829d9701a187e468142b0` | Exact tested head normal |
 
-PR #100 protected `fresh-home-route-bootstrap.js` and `fresh-home-launch.js`. Final diff: 8 additions, 0 deletions, 3 files. Automated startup/mobile checks passed, and Cody verified the real installed app was normal.
+## Batch 9 closeout — Community profiles
 
-### Batch 2 — Canonical app-shell guard
+PR #114 added a top-level global duplicate-file-execution guard to `assets/js/community-profiles.js` and one matching assertion to `scripts/test-startup-contract.mjs`.
 
-PR #105 protected `octagon-hq-shell.js`. Final diff: 4 additions, 0 deletions, 2 files. Startup, route, profile, Home/community, Rankings-subview, Picks-lifecycle, War Room, and installed-iPhone checks passed. Squash merge: `d7b47d6fb9ad45b101f67d5658b3e2a874a746c8`.
-
-### Batch 3 — Legacy nav-grid cleanup guard
-
-PR #106 protected `octagon-hq-nav-grid.js` while preserving its cleanup timers, resize listener, API, and navigation presentation. Final diff: 6 additions, 0 deletions, 2 files. Automated checks and real installed-iPhone navigation/rotation/tap verification passed. Squash merge: `f4e3ada330fb841ade0333c580376dacaf58ec88`.
-
-### Batch 4 — Home dashboard guard
-
-PR #107 protected `home-dashboard.js` from duplicate file evaluation while preserving Home markup, card order, copy, styles, timers, listeners, daily challenge, Picks, War Room, fighter spotlight, and public API behavior.
-
-Final diff:
-
-- 6 additions;
-- 0 deletions;
-- 2 files.
-
-Validation passed:
-
-- JavaScript syntax;
-- startup ownership contract;
-- iOS startup route stability;
-- profile sign-in startup stability;
-- delayed Home/community stability;
-- real installed-iPhone Home cold launch, card presentation, daily challenge, Picks, War Room, fighter spotlight, background/resume, and return-to-Home behavior.
-
-PR #107 was squash-merged as `7fd6ede029cc307932cb38bc2c9274484b18f403`. Cody reported the live app was normal.
-
-### Batch 5 — Native shell stability repair guard
-
-PR #108 protected `native-app-shell-stability.js` from duplicate file evaluation while preserving its public `schedule()` retry API, MutationObserver, click listener, readiness listeners, delayed repair passes, profile snapshot repair, Home spotlight repair, NEW-button normalization, drawer synchronization, and first-run behavior.
-
-The prerequisite/retry inspection confirmed that the file does not exit early on missing DOM or data. Required later repair attempts already run through `schedule()` and the existing event/timer paths, so the top-level marker blocks only accidental duplicate ownership.
-
-Final diff:
+The final runtime diff was:
 
 - 4 additions;
 - 0 deletions;
-- 2 files.
+- 2 changed files;
+- starting `main`: `bdacf8f10b913f5afad4ec6819921fd6f761e572`;
+- exact physically tested PR head: `1915c0ff314b7911688574f279eba889d4967a42`;
+- squash merge: `4a811201bd6c2ac620d829d9701a187e468142b0`.
 
-Validation passed:
+Inspection proved that duplicate file evaluation was not an intentional prerequisite retry. The file has no top-level missing-DOM, missing-profile, or missing-identity return before publishing its API and binding its preserved lifecycle paths. The marker therefore remains immediately after `'use strict'`, before private state, listeners, storage, DOM, API, and rendering ownership.
 
-- JavaScript syntax;
-- startup ownership contract;
-- iOS startup route stability;
-- profile sign-in startup stability;
-- delayed Home/community stability;
-- real installed-iPhone cold launch, Home/profile/header repair behavior, bottom-navigation/touch behavior, background/resume, and return-to-Home behavior.
+The following legitimate paths remain callable through the original closure:
 
-PR #108 was squash-merged as `6b0c9442b5a4df46e481296bb8d5cbd3befe1ab7`. Cody reported the live app was normal.
+- one-time `DOMContentLoaded` startup;
+- public `load()`, `refresh()`, `renderDirectory()`, `openMember()`, `openTop10()`, and `publishTop10()` APIs;
+- `octagon-hq:view-change` and `octagon-hq:soft-refresh`;
+- `ufc-play-profile-ready` and `ufc-app-profile-updated`;
+- `ufc-picks-season-updated` and delayed Picks refresh;
+- profile setup reminder callbacks;
+- delayed challenge-picker wrapping;
+- profile opening, closing, and reopening;
+- Top 10 load, edit, save, local restoration, and return-to-profile behavior;
+- Picks identity/token handoff and challenge-target cleanup.
 
-Removal or consolidation of this temporary repair layer remains deferred to Phase 3 after source behavior has dedicated regression coverage.
-
-### Batch 6 — Notification center guard
-
-PR #110 protected `app-notification-center.js` from duplicate file evaluation while preserving notification rendering, permission behavior, service-worker registration and updates, profile and activity surfaces, observers, listeners, public APIs, copy, styling, navigation, saved state, and first-run behavior.
-
-The prerequisite/retry inspection confirmed that the owner does not exit early when profile DOM, identity, settings, or push data are unavailable. Required later attempts already run through profile-ready/profile-updated events, the notification-device-change listener, MutationObserver, the existing 250 ms settings attempt, the public `loadSettings()` and `render()` APIs, and the separately guarded notification-surface compatibility layer. Notification permission remains user-gesture-only through the existing Enable-button path.
-
-Final diff:
-
-- 4 additions;
-- 0 deletions;
-- 2 files.
-
-Validation passed:
+Validation passed on the exact tested head:
 
 - JavaScript syntax;
 - startup ownership contract;
-- local app startup;
-- iOS startup route and resume stability;
-- profile sign-in startup stability;
-- delayed Home/community stability;
-- duplicate-evaluation harness and first-run equivalence proof;
-- real installed-iPhone cold launch, profile and activity notification surfaces, permission behavior, notification controls, navigation, touch behavior, and background/resume behavior.
-
-PR #110 was squash-merged as `865527b15902e7b61fff429e4faf9ce2a0bc811c`. Cody reported the installed app was normal.
-
-### Batch 7 — Native app shell guard
-
-PR #112 protected `native-app-shell.js` from accidental duplicate file evaluation while preserving its complete first-run behavior, bottom-navigation reuse, active-state synchronization, badge synchronization, transitions, pull-to-refresh, touch handling, lifecycle listeners, MutationObserver, delayed passes, public APIs, and existing 10-second badge interval.
-
-The prerequisite/retry inspection confirmed that `start()` has no missing-DOM or missing-data early exit and that duplicate file evaluation is not an intentional retry mechanism. Required later synchronization remains owned by the public APIs, view/profile/Picks/notification/soft-refresh events, MutationObserver, delayed startup passes, resize/orientation, visibility resume, and the badge interval. The separately guarded `native-app-shell-stability.js` repair layer was unchanged.
-
-Final diff:
-
-- 4 additions;
-- 0 deletions;
-- 2 files.
-
-Validation passed:
-
-- JavaScript syntax;
-- startup ownership contract;
-- local app startup;
-- iOS startup route and lifecycle stability;
-- profile sign-in and Picks startup stability;
-- delayed Home/community stability;
-- focused duplicate-evaluation and first-run equivalence proof;
-- real installed-iPhone signed-in testing of cold launch, navigation, rapid tab switching, badges, profiles, Picks, notifications, pull-to-refresh, rotation, background/resume, sharing, saved-profile behavior, and return to Home.
-
-PR #112 was squash-merged as `5b82c3a47b64a4955c4fd4eb041fafe46473e8ac`. Cody reported the immutable test build was normal.
-
-### Batch 8 — Picks base runtime guard
-
-PR #113 protected `picks.js` from accidental duplicate file evaluation while preserving its complete original first execution, saved Picks and Underdog Lock restoration, room and admin token restoration, route activation, static control bindings, backend event load, URL room resume, render ownership, and existing 30-second refresh interval.
-
-The prerequisite/retry inspection confirmed that the canonical static page provides the full Picks mount, event data, Supabase library/config, and canonical-group owner before `picks.js` executes. The only missing-mount retry remains the original one-time `DOMContentLoaded` path. Duplicate file evaluation was not a legitimate retry: it created a second private state closure, optional Supabase client, handler set, render owner, and polling loop.
-
-Final diff:
-
-- 5 additions;
-- 0 deletions;
-- 2 files.
-
-Validation passed:
-
-- JavaScript syntax;
-- startup ownership contract;
-- local app startup;
+- focused duplicate-evaluation harness;
+- exact first-run equivalence proof;
+- full Startup Architecture Gate;
 - iOS startup and route stability;
-- profile sign-in startup stability;
+- profile sign-in stability;
 - delayed Home/community stability;
-- focused duplicate-evaluation and first-run equivalence proof;
-- Picks UI Smoke JavaScript syntax step;
-- real installed-iPhone testing of Picks startup, sign-in/PIN, saved state, Top 10 and profile handoffs, challenges, badges, navigation, rapid taps, background/resume, notifications, rotation/resize, surrounding product surfaces, and duplicate-ownership symptoms.
+- Phase 4B fresh-launch, directory, profile, Top 10, Picks PIN, and cold-launch browser validation;
+- physical installed-iPhone cold launch, signed-in behavior, community/profile surfaces, saved Top 10, challenges, Picks handoff, notifications, badges, sharing, navigation, rapid taps, background/resume, relaunch, and rotation/resize.
 
-Cody tested immutable PR head `1ea7bdf46f09f18279ac4f21a2bbfd492f1d44ba` and reported the app was normal. PR #113 was squash-merged as `0c488a449d413636228aafd1e45ee8197d5078ba`.
+Cody reported the exact tested head was **normal**. No duplicate directory/profile UI, reminders, listeners, observers, timers, saves, taps, route handling, blank state, flicker, stale state, or delayed instability was observed.
 
 ## Next Phase 1 batch
 
-The next isolated owner is `assets/js/community-profiles.js`.
+**Batch 10 owner: `assets/js/play.js` only.**
 
-This is the canonical community directory/profile owner and a broad-surface guard candidate. The next session must inspect its exact first-run and repeat-execution path, including prerequisite DOM/data checks, closure-scoped binding state, identity loading, sign-in and profile readiness, Top 10 editor behavior, saved profile state, profile challenges, Picks identity handoff, directory/profile navigation, listeners, observers, timers, dynamic loading, public APIs, background/resume behavior, sharing, notifications, and whether duplicate file evaluation currently serves any intentional retry.
+`play.js` is a prerequisite-aware owner. The current audit says it can intentionally exit when the Play panel or ranking data is absent, so Batch 10 must not place a marker before proving and preserving those prerequisites. Inspect whether the marker belongs after prerequisites pass, whether the existing `DOMContentLoaded` or other explicit lifecycle paths perform the legitimate retry, and whether duplicate file evaluation currently contributes any recovery behavior.
 
-The runtime scope must remain one owner plus one matching startup-contract assertion only if inspection proves that the complete first-run path and every intentional prerequisite recovery mechanism remain intact. Do not change community/profile presentation, copy, flows, identity behavior, Top 10, challenges, Picks, navigation, styling, scoring, data, Games, sharing, notifications, or installed-app behavior.
+Batch 10 runtime scope is limited to:
+
+- `assets/js/play.js`;
+- one matching assertion in `scripts/test-startup-contract.mjs`, only if inspection proves a guard is safe.
+
+Do not combine `play.js` with `play-hub.js`. The Play hub is the following separate prerequisite-aware batch.
 
 ## Existing unrelated red checks
 
 1. **Scoring Architecture Guardrails**
-   - The permanent source/runtime contract remains stale against the current 80-fighter production roster.
-   - This is a scoring test issue, not a startup regression.
+   - The permanent source/runtime contract remains stale against current production scoring/data state.
+   - The existing Alexandre Pantoja generic-fallback profile-copy warning remains outside startup work.
 
 2. **Production Ranking Browser Smoke**
-   - The run stops at the fighter-photo path audit before rendered ranking/startup certification.
-   - This is outside the startup singleton-guard diffs.
+   - The run stops at existing women’s fighter-thumbnail rendering failures before its later ranking checks.
+   - Batch 9 did not touch fighter photos, display overrides, rankings, or scoring.
 
 3. **Picks UI Smoke**
    - Picks JavaScript syntax passes.
-   - The static contract currently reports missing mobile top-tab auto-centering and missing daily-odds-workflow setup documentation in unchanged files.
-   - These are separate from the Batch 8 `picks.js` guard and were not repaired in that batch.
+   - Existing static-contract findings remain separate from startup singleton work.
+
+Do not repair these in a startup-owner PR unless a failure directly references the isolated changed lines.
 
 ## Exact next action
 
-1. Start a fresh chat and read this file, `DECISIONS.md`, `OWNERS.md`, `PHASE-1-OWNER-AUDIT.md`, `TEST_PLAN.md`, and issue #102.
-2. Inspect current `main` for `assets/js/community-profiles.js` prerequisite, retry, identity, sign-in, profile, Top 10, challenge, Picks-handoff, route, listener, observer, timer, dynamic-load, API, sharing, notification, and lifecycle behavior.
-3. Create a fresh branch directly from current `main`.
-4. Keep the runtime batch isolated to that owner and its contract assertion.
-5. Run the full Startup Architecture Gate plus community directory/profile, profile sign-in, Top 10, challenge, Picks handoff, route, sharing, notification, mobile, background/resume, saved-state, and installed-app validation.
-6. Keep the PR draft until real installed-iPhone verification passes.
-7. Do not begin batch 10 until batch 9 is merged, physically verified, and documented.
+1. Start a fresh chat from current `main` and reread this file, `DECISIONS.md`, `OWNERS.md`, `PHASE-1-OWNER-AUDIT.md`, `TEST_PLAN.md`, and all current Issue #102 comments.
+2. Verify and record the exact starting `main` SHA.
+3. Inspect `assets/js/play.js` first-run and repeated-execution behavior, especially its prerequisite return, ranking-data readiness, DOM readiness, saved Top 10 state, blind-resume state, listeners, public APIs, sharing handoffs, Play hub handoffs, routes, lifecycle events, timers, and whether duplicate evaluation serves a retry.
+4. Create a fresh Batch 10 branch directly from that verified `main`.
+5. Keep the runtime diff to `assets/js/play.js` and one startup-contract assertion only if safe.
+6. Open a draft PR and keep it draft until the exact head passes automated and physical iPhone verification.
+7. Do not begin the Play hub batch during Batch 10.
 
 ## Stop conditions
 
-Stop and leave batch 9 draft if:
+Stop and leave Batch 10 unmodified or draft-only if:
 
-- community directory/profile presentation, copy, sign-in, identity, Top 10, challenge, Picks handoff, saved state, routes, navigation, sharing, notifications, or background/resume behavior changes;
-- a second execution appears to serve an intentional prerequisite retry;
-- duplicate directory/profile UI, listeners, observers, timers, API replacement, route handling, repeated taps, blank state, flicker, stale state, or double-handled actions occur;
-- the diff begins changing styling, copy, product behavior, scoring, fighter data, photos, Games, Rankings, Intelligence, War Room, notifications, Picks, or sharing.
+- `play.js` duplicate evaluation appears to serve a legitimate prerequisite retry;
+- a narrow marker cannot preserve missing-DOM or missing-ranking-data recovery;
+- Top 10, blind resume, Games, saved state, Play navigation, sharing, routes, profile/Picks handoffs, mobile lifecycle, or surrounding product behavior changes;
+- duplicate listeners, rendering, timers, APIs, saves, taps, routes, blank states, flicker, stale state, or delayed instability occurs;
+- the diff expands beyond `assets/js/play.js` and its one startup-contract assertion;
+- work begins on `play-hub.js`, scoring, fighter data, photos, presentation, or unrelated red checks.
