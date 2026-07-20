@@ -124,17 +124,7 @@ jobs:
         run: node scripts/test-route-owner-shell-recovery-queue.mjs
 
       - name: Test canonical profile login delegation
-        run: |
-          set -o pipefail
-          node scripts/test-profile-login-owner-delegation.mjs 2>&1 | tee /tmp/profile-login-owner-output.txt
-
-      - name: Upload canonical profile delegation diagnostic
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: profile-login-owner-output
-          path: /tmp/profile-login-owner-output.txt
-          if-no-files-found: ignore
+        run: node scripts/test-profile-login-owner-delegation.mjs
 
       - name: Test iOS startup route stability
         run: node scripts/test-ios-standalone-resume-home.mjs
