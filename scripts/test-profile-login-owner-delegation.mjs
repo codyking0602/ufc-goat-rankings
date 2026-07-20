@@ -179,11 +179,28 @@ try{
     await page.click('#picksPinSignInButton');
     await page.waitForFunction(()=>/still loading/i.test(document.getElementById('picksPinSignInStatus')?.textContent||''));
     assert.deepEqual(await credentialRpcNames(page),[],'A delayed canonical owner must not trigger a direct credential fallback.');
-    await page.evaluate(()=>{window.UFC_PLAY_PROFILE=window.__savedProfileOwner;});
-    await Promise.all([
-      page.waitForURL(url=>url.searchParams.get('room')==='ROOM01'&&url.hash==='#picks',{timeout:30000}),
-      page.click('#picksPinSignInButton')
-    ]);
+    await page.evaluate(()=>{
+      window.UFC_PLAY_PROFILE=window.__savedProfileOwner;
+      window.__PROFILE_RETRY_BUTTON__=document.getElementById('picksPinSignInButton');
+      window.__PROFILE_RETRY_TARGET_CLICKS__=0;
+      window.__PROFILE_RETRY_BUTTON__?.addEventListener('click',()=>{window.__PROFILE_RETRY_TARGET_CLICKS__+=1;});
+    });
+    const retryNavigation=page.waitForURL(url=>url.searchParams.get('room')==='ROOM01'&&url.hash==='#picks',{timeout:30000}).catch(async error=>{
+      const diagnostic=await page.evaluate(()=>({
+        url:location.href,
+        owner:Boolean(window.UFC_PLAY_PROFILE?.login),
+        sameButton:window.__PROFILE_RETRY_BUTTON__===document.getElementById('picksPinSignInButton'),
+        targetClicks:window.__PROFILE_RETRY_TARGET_CLICKS__,
+        buttonDisabled:document.getElementById('picksPinSignInButton')?.disabled,
+        status:document.getElementById('picksPinSignInStatus')?.textContent||'',
+        cardCount:document.querySelectorAll('#picksPinSignInCard').length,
+        rpcNames:window.__PROFILE_RPC_LOG__.map(row=>row.name),
+        storageWrites:window.__PROFILE_STORAGE_WRITES__.map(row=>row.key)
+      }));
+      console.log(`Case 6 diagnostic: ${JSON.stringify(diagnostic)}`);
+      throw error;
+    });
+    await Promise.all([retryNavigation,page.click('#picksPinSignInButton')]);
     assert.equal((await rpcNames(page)).filter(name=>name==='app_profile_login').length,1,'Retry after owner recovery must perform one canonical login.');
     await context.close();
   }
