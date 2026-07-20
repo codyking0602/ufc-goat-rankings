@@ -90,6 +90,9 @@ assert(homeDashboard.includes('__UFC_HOME_DASHBOARD_STARTED__'),'The Home dashbo
 assert(read('assets/js/picks.js').includes('__UFC_PICKS_STARTED__'),'Picks must keep its global duplicate-file-execution guard.');
 assert(read('assets/js/community-profiles.js').includes('__UFC_COMMUNITY_PROFILES_STARTED__'),'Community profiles must keep its global duplicate-file-execution guard.');
 
+const play=read('assets/js/play.js');
+assert(/const panel = document\.getElementById\('play'\);\s+if\(!panel \|\| !Array\.isArray\(DATA\.men\)\) return;\s+if\(window\.__UFC_PLAY_STARTED__\)return;\s+window\.__UFC_PLAY_STARTED__=true;\s+const state = \{/.test(play),'Play must claim duplicate-file ownership only after its DOM and ranking-data prerequisites pass.');
+
 const product=read('assets/js/product-architecture.js');
 assert(product.includes('__UFC_PRODUCT_ARCHITECTURE_STARTED__'),'Product architecture must keep its global duplicate-start guard.');
 assert.equal(product.includes('loadNativeShell'),false,'Product architecture must not dynamically load the native shell.');
