@@ -104,7 +104,18 @@ jobs:
           exit 1
 
       - name: Test focused app tab route-owner delegation
-        run: node scripts/test-route-owner-app-tab-delegation.mjs
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/test-route-owner-app-tab-delegation.mjs 2>&1 | tee /tmp/route-owner-proof.log
+
+      - name: Upload focused proof output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: route-owner-proof-output
+          path: /tmp/route-owner-proof.log
+          if-no-files-found: error
 
       - name: Test iOS startup route stability
         run: node scripts/test-ios-standalone-resume-home.mjs
