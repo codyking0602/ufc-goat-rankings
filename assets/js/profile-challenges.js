@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='profile-challenges-20260720d-canonical-identity-consumer';
+  const VERSION='profile-challenges-20260720e-passive-identity-consumer';
   const ROOT='https://codyking0602.github.io/ufc-goat-rankings/';
   const state={identity:null,inbox:{rows:[],unread_count:0},inboxPromise:null,active:null,modal:null,payload:null,recipient:'',busy:false,routed:false,observer:null,decorateTimer:0};
   const text=value=>String(value??'').trim();
@@ -19,7 +19,7 @@
     `;document.head.appendChild(node);
   }
 
-  async function passiveIdentity(){let value=state.identity||window.UFC_PLAY_PROFILE?.identity||window.UFC_APP_PROFILE?.identity;if(!value)value=await window.UFC_PLAY_PROFILE?.resolve?.().catch(()=>null);state.identity=value||null;return state.identity;}
+  async function passiveIdentity(){const value=state.identity||window.UFC_PLAY_PROFILE?.identity||window.UFC_APP_PROFILE?.identity;state.identity=value||null;return state.identity;}
   async function identity(options={}){let value=await passiveIdentity();if(!value)value=await window.UFC_PLAY_PROFILE?.require?.({title:options.title||'Open your UFC App profile',description:options.description||'Use your GOAT26 display name and four-digit PIN.'});state.identity=value||null;return state.identity;}
   function validPayload(value){const setup=value?.setup,result=value?.result;if(!setup||!result||!Array.isArray(setup.candidates)||setup.candidates.length!==10)return null;return{gameType:'find-leader',gameVersion:'find-leader-profile-challenge-v1',setup:clone(setup),result:clone(result)};}
   function avatar(member){return window.UFC_APP_PROFILE?.avatarMarkup?.(member,'friend')||`<span class="app-profile-avatar friend"><span>${esc(text(member?.display_name).slice(0,2).toUpperCase())}</span></span>`;}
