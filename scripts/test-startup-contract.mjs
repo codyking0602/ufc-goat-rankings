@@ -102,6 +102,23 @@ assert(/if\(!play\|\|!shell\|\|!sectionTitle\|\|!top10Button\|\|!blindButton\)re
 const app=read('assets/js/app.js');
 assert.equal(app.includes("document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click'"),false,'app.js must not own primary tab activation; the canonical shell owns route activation.');
 
+const profileIdentity=read('assets/js/play-profile-identity.js');
+assert(profileIdentity.includes("async function login(_groupCode,displayName,pin,options={})"),'The shared profile owner must expose the canonical login transaction.');
+assert(profileIdentity.includes("if(options.publish!==false)window.dispatchEvent(new CustomEvent('ufc-play-profile-ready'"),'The canonical login owner must preserve normal readiness publication while allowing a reload-bound consumer to suppress it.');
+assert(profileIdentity.includes("active_room:data?.active_room||identity?.active_room||null"),'The canonical login result must preserve Picks active-room continuation context.');
+const picksPin=read('assets/js/picks-member-pin.js');
+const picksSignIn=picksPin.match(/async function signIn\(\)\{([\s\S]*?)
+  \}
+
+  function ensureSignInCard/);
+assert(picksSignIn,'The returning-member Picks sign-in boundary could not be identified.');
+assert(picksSignIn[1].includes('window.UFC_PLAY_PROFILE'),'The Picks returning-member card must delegate authentication to the canonical shared profile owner.');
+assert(picksSignIn[1].includes("{publish:false,source:'picks-member-pin'}"),'The reload-bound Picks login must suppress only its redundant pre-navigation readiness publication.');
+assert.equal(picksSignIn[1].includes("client.rpc('picks_member_login_pin'"),false,'The Picks sign-in surface must not call a credential RPC directly.');
+assert.equal(picksPin.includes('function storeAccess(data)'),false,'The Picks PIN module must not duplicate canonical access-token persistence.');
+assert(picksPin.includes("client.rpc('picks_member_set_pin'"),'The Picks module must retain member PIN management.');
+assert(picksPin.includes("client.rpc('picks_commissioner_set_member_pin'"),'The Picks module must retain commissioner PIN management.');
+
 const product=read('assets/js/product-architecture.js');
 assert(product.includes('__UFC_PRODUCT_ARCHITECTURE_STARTED__'),'Product architecture must keep its global duplicate-start guard.');
 assert.equal(product.includes('loadNativeShell'),false,'Product architecture must not dynamically load the native shell.');

@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='play-profile-identity-20260717b-goat26';
+  const VERSION='play-profile-identity-20260720a-canonical-login-owner';
   const CANONICAL_CODE='GOAT26';
   const GROUP_TOKEN_PREFIX='ufc-picks:group:';
   const GROUP_ADMIN_PREFIX='ufc-picks:group-admin:';
@@ -111,7 +111,25 @@
     return true;
   }
 
-  async function login(_groupCode,displayName,pin){
+  function loginIdentity(data,identity){
+    const token=String(data?.member_token||identity?.memberToken||identity?.member_token||'');
+    const admin=String(data?.admin_token||identity?.adminToken||identity?.admin_token||'');
+    return {
+      ...(identity||{}),
+      ok:true,
+      group:data?.group||identity?.group||{code:CANONICAL_CODE},
+      groupCode:CANONICAL_CODE,
+      member:data?.member||identity?.member||null,
+      member_token:token,
+      memberToken:token,
+      admin_token:admin,
+      adminToken:admin,
+      rooms:Array.isArray(data?.rooms)?data.rooms:(identity?.rooms||[]),
+      active_room:data?.active_room||identity?.active_room||null
+    };
+  }
+
+  async function login(_groupCode,displayName,pin,options={}){
     if(!client)throw new Error('UFC App profiles are not connected.');
     const args={
       p_display_name:String(displayName||'').trim(),
@@ -130,8 +148,8 @@
     if(error)throw error;
     if(!data?.ok)throw new Error(data?.error||'Those UFC App sign-in details did not match.');
     if(!storeLogin(data))throw new Error('The profile login did not return valid access.');
-    cache=await snapshot(data.member_token);
-    window.dispatchEvent(new CustomEvent('ufc-play-profile-ready',{detail:cache}));
+    cache=loginIdentity(data,await snapshot(data.member_token));
+    if(options.publish!==false)window.dispatchEvent(new CustomEvent('ufc-play-profile-ready',{detail:cache}));
     return cache;
   }
 

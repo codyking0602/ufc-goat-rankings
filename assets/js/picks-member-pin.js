@@ -74,32 +74,9 @@
     node.className=`picks-pin-status${type ? ` ${type}` : ''}`;
   }
 
-  function storeAccess(data){
-    const code=normalizeCode(data?.group?.code);
-    const token=data?.member_token || '';
-    const admin=data?.admin_token || '';
-    if(!code || !token) return false;
-
-    localStorage.setItem(`${GROUP_TOKEN_PREFIX}${code}`,token);
-    if(admin) localStorage.setItem(`${GROUP_ADMIN_PREFIX}${code}`,admin);
-    else localStorage.removeItem(`${GROUP_ADMIN_PREFIX}${code}`);
-    localStorage.setItem('ufc-picks:display-name',data.member?.display_name || '');
-
-    (data.rooms || []).forEach(room=>{
-      const roomCode=normalizeCode(room.code);
-      if(!roomCode) return;
-      localStorage.setItem(`${ROOM_TOKEN_PREFIX}${roomCode}`,token);
-      if(admin) localStorage.setItem(`${ROOM_ADMIN_PREFIX}${roomCode}`,admin);
-      else localStorage.removeItem(`${ROOM_ADMIN_PREFIX}${roomCode}`);
-    });
-
-    accessInvalid=false;
-    return true;
-  }
-
   function openSignedInProfile(data){
     const destination=new URL(window.location.href);
-    const code=normalizeCode(data.group.code);
+    const code=normalizeCode(data?.group?.code||data?.groupCode||window.UFC_PLAY_PROFILE?.canonicalGroupCode);
     destination.searchParams.set('group',code);
 
     if(data.active_room?.code){
@@ -129,39 +106,28 @@
     if(!name){ setSignInStatus('Enter the exact name on the leaderboard.','error'); return; }
     if(pin.length!==4){ setSignInStatus('Enter the 4-digit PIN.','error'); return; }
 
+    const owner=window.UFC_PLAY_PROFILE;
+    if(!owner?.login){
+      setSignInStatus('Profile sign-in is still loading. Try again.','error');
+      return;
+    }
+
     const original=button?.textContent;
     if(button){ button.disabled=true; button.textContent='Signing In…'; }
     setSignInStatus('Checking your profile…','working');
 
-    const {data,error}=await client.rpc('picks_member_login_pin',{
-      p_group_code:group,
-      p_display_name:name,
-      p_pin:pin
-    });
-
-    if(button){ button.disabled=false; button.textContent=original || 'Sign In'; }
-
-    if(error){
+    try{
+      const data=await owner.login(group,name,pin,{publish:false,source:'picks-member-pin'});
+      accessInvalid=false;
+      setSignInStatus('Profile found. Opening your group…','success');
+      openSignedInProfile(data);
+    }catch(error){
       const message=friendlyError(error,'Could not sign in.');
       setSignInStatus(message,'error');
       toast(message);
-      return;
+    }finally{
+      if(button){ button.disabled=false; button.textContent=original || 'Sign In'; }
     }
-
-    if(!data?.ok){
-      const message=data?.error || 'Sign-in details did not match.';
-      setSignInStatus(message,'error');
-      toast(message);
-      return;
-    }
-
-    if(!storeAccess(data)){
-      setSignInStatus('Profile access was returned without a valid token.','error');
-      return;
-    }
-
-    setSignInStatus('Profile found. Opening your group…','success');
-    openSignedInProfile(data);
   }
 
   function ensureSignInCard(){
