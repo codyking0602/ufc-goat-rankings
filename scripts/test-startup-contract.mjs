@@ -163,7 +163,14 @@ const freshLaunch=forbid('assets/js/fresh-home-launch.js',[
 assert(freshLaunch.includes('__UFC_FRESH_HOME_LAUNCH_STARTED__'),'Fresh launch must keep its global duplicate-file-execution guard.');
 assert(freshLaunch.includes('profile-setup-reminder.js'),'Fresh launch may only inject the profile setup reminder after route selection.');
 
-assert(read('assets/js/app-notification-center.js').includes('__UFC_APP_NOTIFICATION_CENTER_STARTED__'),'Notification center must keep its global duplicate-file-execution guard.');
+const notificationCenter=read('assets/js/app-notification-center.js');
+assert(notificationCenter.includes('__UFC_APP_NOTIFICATION_CENTER_STARTED__'),'Notification center must keep its global duplicate-file-execution guard.');
+assert(notificationCenter.includes('window.UFC_PLAY_PROFILE?.resolve?.()'),'Notification center must resolve identity through the canonical profile owner.');
+assert.equal(notificationCenter.includes('window.UFC_APP_PROFILE?.resolve?.()'),false,'Notification center must not invoke the visible profile-editor resolver for identity.');
+assert.equal(notificationCenter.includes('localStorage.getItem('),false,'Notification center must not read canonical access directly from storage.');
+assert.equal(notificationCenter.includes('TOKEN_KEY'),false,'Notification center must not own a canonical group-token key.');
+assert(notificationCenter.includes("rpc.rpc('app_notification_settings'"),'Notification center must retain notification-settings ownership.');
+assert(notificationCenter.includes("rpc.rpc('app_notification_update_preferences'"),'Notification center must retain notification-preference ownership.');
 const notificationSurface=read('assets/js/app-notification-surface-fix.js');
 assert(notificationSurface.includes('__UFC_APP_NOTIFICATION_SURFACE_FIX_STARTED__'),'Notification surface must keep its global duplicate-start guard.');
 
@@ -196,6 +203,7 @@ console.log(JSON.stringify({
   recoveryNavigationHandoff:true,
   canonicalProfileAccessOwner:true,
   productProfileHandoffOnly:true,
+  notificationCanonicalIdentityConsumer:true,
   firstScript:localPaths[0],
   lastScript:localPaths.at(-1)
 },null,2));
