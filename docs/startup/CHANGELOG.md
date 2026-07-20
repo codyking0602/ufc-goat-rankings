@@ -232,3 +232,53 @@ Cody physically tested exact immutable PR head `6eac38e575dd778a5b4e42fe5b832837
 PR #115 was squash-merged as commit `2040f604892c067ee288fe88df15594a570ac396`. Batch 10A was closed as physically verified.
 
 The next isolated Phase 1 owner is `assets/js/play-hub.js`. It must remain a fresh, separate prerequisite-aware batch and must not be combined with another owner.
+
+## 2026-07-19 — Phase 1 Batch 10B merged and verified
+
+PR #119 protected `assets/js/play-hub.js` with a prerequisite-aware duplicate-file-execution guard and added one matching startup-contract assertion.
+
+The required prerequisites are the five static Play DOM elements: `#play`, `.play-shell`, `.section-title`, `[data-play-mode="top10"]`, and `[data-play-mode="blind"]`. The successful marker was placed immediately after the existing prerequisite return and before native-random capture and private hub state.
+
+This placement preserves the intentional recovery boundary:
+
+- missing-DOM attempts return without setting the marker;
+- failed attempts create no listeners, timers, intervals, observers, storage, DOM, API, rendering, or script-loading ownership;
+- a later file execution may initialize after the missing DOM appears;
+- only a later execution after successful initialization is blocked.
+
+Final state:
+
+- starting `main`: `e48a36c464a25f9f6d336435e2ba876f10177a85`;
+- exact physically tested head: `35bc9a750cdbdfb2cec69b2e17d954b95b1ca8fc`;
+- squash merge: `b1a7a3c92c2f7c13b64b4d68df3d26e4e9afbec8`;
+- 4 additions;
+- 0 deletions;
+- 2 changed files;
+- runtime original blob: `84f7a556efef0f9964ffc459009c166673216218`;
+- runtime guarded blob: `0831bd2d58c04dd683a72c3178596ea43aca0f2b`;
+- startup-contract original blob: `95e77fcb7e66e982ad5dc7bbabdaaf1a4938261d`;
+- startup-contract modified blob: `dd426780dfdacdf1a9aa7848bcc0fc627ea5b627`.
+
+Focused proof and validation passed:
+
+- exact original and guarded blob reproduction;
+- JavaScript syntax;
+- startup ownership contract;
+- all five independent missing-DOM recovery cases;
+- optional APIs/data remained optional startup handoffs;
+- byte-for-byte first-run equivalence after removing only the marker lines;
+- current hub rendering, Play mode, daily challenge choice/restoration, seeded Blind Resume randomness, native-random restoration, navigation, routing, listeners, observer, timers, APIs, events, and cross-feature handoffs preserved;
+- second successful execution added zero listeners, timers, intervals, observers, storage restoration, API replacement, rendering, game choice, route handling, tap handling, saves, or state transitions;
+- important Play actions after deliberate duplicate evaluation fired once;
+- complete Startup Architecture Gate #30;
+- iOS startup route stability;
+- profile sign-in startup stability;
+- delayed Home/community stability.
+
+Unrelated existing red checks remained separate: stale scoring roster/rank expectations, Alexandre Pantoja diagnostics, and 14 women’s fighter-thumbnail rendering failures.
+
+Cody physically tested exact immutable PR head `35bc9a750cdbdfb2cec69b2e17d954b95b1ca8fc` on the installed iPhone and reported **“Normal.”** Cold launch, Play entry from Home/top/bottom navigation, leave and return, rapid activation, signed-out and signed-in behavior, daily restoration and selection, game cards, Top 10, Blind Resume, profile/Picks/sharing handoffs, all primary destinations, notifications, badges, background/resume, relaunch, rotation/resize, rapid taps, and delayed stability showed no visible regression, blank state, flicker, route bounce, stale or lost state, duplicate UI, double action, duplicate game choice, duplicate route, duplicate save, duplicate ownership, or failed prerequisite recovery.
+
+PR #119 was squash-merged as commit `b1a7a3c92c2f7c13b64b4d68df3d26e4e9afbec8`. Batch 10B was closed as physically verified.
+
+The next isolated Phase 1 owner is `assets/js/share-deep-links.js`. It must begin from fresh current `main` and remain separate from every other owner.
