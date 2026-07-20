@@ -282,3 +282,63 @@ Cody physically tested exact immutable PR head `35bc9a750cdbdfb2cec69b2e17d954b9
 PR #119 was squash-merged as commit `b1a7a3c92c2f7c13b64b4d68df3d26e4e9afbec8`. Batch 10B was closed as physically verified.
 
 The next isolated Phase 1 owner is `assets/js/share-deep-links.js`. It must begin from fresh current `main` and remain separate from every other owner.
+
+## 2026-07-19 — Phase 1 Batch 11 merged and verified
+
+PR #121 protected `assets/js/share-deep-links.js` with a top-level duplicate-file-execution guard and added one matching startup-contract assertion.
+
+Inspection established that the owner has no top-level prerequisite return. It publishes `window.UFC_SHARE_LINKS`, marks `data-share-deep-links`, and either starts immediately or registers the existing once-only `DOMContentLoaded` callback. Missing profile, ranking, route, Play, Picks, War Room, or browser-share capabilities are handled by existing delayed passes, events, observers, public APIs, fallbacks, and route-specific wait loops rather than by evaluating the file again.
+
+The marker was placed immediately after `'use strict'` and before `VERSION`, private state, API publication, DOM ownership, listeners, observers, timers, URL reads, outgoing sharing, and incoming routing. Removing only the two marker lines reproduces the original runtime byte-for-byte.
+
+Final state:
+
+- starting `main`: `9743808a9a3200426f26099209c8f8e57ef32851`;
+- exact physically tested head: `ad0e84e4069224270db8186aa771216af90343b4`;
+- squash merge: `e332f46ec63c6698fdebd8ecc843c3f0df4eaabd`;
+- 5 additions;
+- 0 deletions;
+- 2 changed files;
+- runtime original blob: `67979699403b6539d798ca3cf72c37bc42c60e21`;
+- runtime guarded blob: `4716ae05270dd0f6d24c2973af058d4e15f383a3`;
+- startup-contract original blob: `dd426780dfdacdf1a9aa7848bcc0fc627ea5b627`;
+- startup-contract modified blob: `b67f87807be533b346e15254dc1041b77bda1a3b`.
+
+Preserved lifecycle and recovery ownership includes:
+
+- once-only `DOMContentLoaded` startup;
+- 40, 180, 700, and 1800 millisecond patch/observer/decorate passes;
+- the 80 millisecond initial incoming-route pass;
+- `ufc-production-ranking-ready` and `popstate` listeners;
+- fighter profile and War Room MutationObservers;
+- public share, share-URL, encode/decode, fighter, Find the Leader, Picks, War Room, and route APIs;
+- native Web Share success, cancellation, and rejection behavior;
+- secure clipboard and hidden-textarea copy fallbacks;
+- route-specific wait loops and failed-route retry behavior;
+- fighter, Find the Leader, Play challenge, Picks event, and War Room incoming links;
+- Rankings, Play, profile-challenge, Picks, War Room, profile, sharing, and native-shell handoffs.
+
+Focused proof and validation passed:
+
+- exact original and guarded blob reproduction;
+- original and guarded first-run trace equivalence;
+- missing optional DOM/API recovery without file re-evaluation;
+- zero duplicate listeners, timers, intervals, observers, API replacement, URL work, route work, share actions, clipboard writes, or native share sheets after deliberate guarded re-evaluation;
+- unchanged outgoing share payloads and native/clipboard fallback behavior;
+- all five supported incoming route types activating once;
+- malformed and unsupported links activating no destination;
+- failed route retry and `popstate` behavior;
+- no history or location mutation;
+- JavaScript syntax and startup contract;
+- complete Startup Architecture Gate #32;
+- iOS startup route stability;
+- profile sign-in startup stability;
+- delayed Home/community stability.
+
+Scoring Architecture Guardrails #1265 and Production Ranking Browser Smoke #447 retained their documented unrelated stale roster/rank, Alexandre Pantoja, and women’s thumbnail diagnostics. Their retained artifacts were inspected and no failure referenced the changed files.
+
+Cody physically tested exact immutable PR head `ad0e84e4069224270db8186aa771216af90343b4` on the installed iPhone and reported **“Normal.”** No visible regression, blank state, flicker, route bounce, stale or lost state, duplicate UI, double action, duplicate share sheet, duplicate clipboard write, repeated incoming route, repeated URL handling, duplicate ownership, or failed prerequisite recovery was observed.
+
+PR #121 was squash-merged as commit `e332f46ec63c6698fdebd8ecc843c3f0df4eaabd`. Batch 11 was closed as physically verified.
+
+The next isolated Phase 1 owner is `assets/js/production-ranking-bootstrap.js`. It remains retry-sensitive and requires an explicit apply/retry lifecycle before any duplicate-execution guard can be considered. `assets/js/app.js` remains a structural manifest singleton and must not receive a standard IIFE guard.
