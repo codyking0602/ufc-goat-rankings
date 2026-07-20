@@ -19,7 +19,9 @@ jobs:
           ref: agent/phase-2-profile-login-owner
       - name: Apply isolated runtime and proof
         run: |
-          python3 - <<'PY'
+          set +e
+          {
+            python3 - <<'PY'
           from pathlib import Path
           source=Path('.github/workflows/phase-2-profile-login-owner-apply.yml').read_text()
           marker="          python3 - <<'PY'\n"
@@ -28,12 +30,24 @@ jobs:
           code='\n'.join(line[10:] if line.startswith('          ') else line for line in source[start:end].splitlines())
           exec(compile(code,'phase-2-profile-login-owner','exec'))
           PY
-          node --check assets/js/play-profile-identity.js
-          node --check assets/js/picks-member-pin.js
-          node --check scripts/test-profile-login-owner-delegation.mjs
-          node --check scripts/test-profile-signin-stability.mjs
-          node scripts/test-startup-contract.mjs
-          git diff --check
+            node --check assets/js/play-profile-identity.js
+            node --check assets/js/picks-member-pin.js
+            node --check scripts/test-profile-login-owner-delegation.mjs
+            node --check scripts/test-profile-signin-stability.mjs
+            node scripts/test-startup-contract.mjs
+            git diff --check
+          } > phase-2-profile-login-owner-error.txt 2>&1
+          status=$?
+          if [ "$status" -ne 0 ]; then
+            cat phase-2-profile-login-owner-error.txt
+            git config user.name github-actions[bot]
+            git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+            git add phase-2-profile-login-owner-error.txt
+            git commit -m "Record profile login owner patch error"
+            git push origin HEAD:agent/phase-2-profile-login-owner
+            exit "$status"
+          fi
+          rm phase-2-profile-login-owner-error.txt
       - name: Commit isolated runtime and proof
         run: |
           git config user.name github-actions[bot]
@@ -41,4 +55,4 @@ jobs:
           git add assets/js/play-profile-identity.js assets/js/picks-member-pin.js scripts/test-profile-signin-stability.mjs scripts/test-startup-contract.mjs scripts/test-profile-login-owner-delegation.mjs
           git commit -m "Delegate Picks profile login to the canonical owner"
           git push origin HEAD:agent/phase-2-profile-login-owner
-# initial
+# diagnostic
