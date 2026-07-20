@@ -4,14 +4,12 @@
   if(window.__UFC_APP_NOTIFICATION_CENTER_STARTED__)return;
   window.__UFC_APP_NOTIFICATION_CENTER_STARTED__=true;
 
-  const VERSION='app-notification-center-20260718c-profile-first';
-  const TOKEN_KEY='ufc-picks:group:GOAT26';
+  const VERSION='app-notification-center-20260720d-canonical-identity-consumer';
   const SW_URL='sw.js?v=octagon-hq-sw-20260718b-fast-refresh';
   const state={settings:null,identity:null,busy:false,observer:null,renderTimer:0,status:'',statusKind:'',loading:false,started:false};
 
   const text=value=>String(value??'').trim();
-  const get=key=>{try{return localStorage.getItem(key)||'';}catch(_error){return'';}};
-  const tokenFor=identity=>text(identity?.memberToken||identity?.member_token||get(TOKEN_KEY));
+  const tokenFor=identity=>text(identity?.memberToken||identity?.member_token);
   const client=()=>window.UFC_PLAY_PROFILE?.client||null;
 
   function installStyles(){
@@ -47,8 +45,7 @@
   }
   async function currentSubscription(){const worker=await registration(false);return worker?.pushManager?.getSubscription?.().catch(()=>null)||null;}
   async function identity(){
-    let value=state.identity||window.UFC_APP_PROFILE?.identity||window.UFC_PLAY_PROFILE?.identity;
-    if(!value)value=await window.UFC_APP_PROFILE?.resolve?.().catch(()=>null);
+    let value=state.identity||window.UFC_PLAY_PROFILE?.identity||window.UFC_APP_PROFILE?.identity;
     if(!value)value=await window.UFC_PLAY_PROFILE?.resolve?.().catch(()=>null);
     state.identity=value||null;
     return state.identity;
