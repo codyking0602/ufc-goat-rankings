@@ -15,7 +15,7 @@ _Last updated: 2026-07-20_
 - **Estimated entire cleanup progress:** approximately 52%.
 - **Master tracker:** [#102 — Zero-change startup architecture cleanup](https://github.com/codyking0602/ufc-goat-rankings/issues/102).
 - **Visible product changes approved:** none.
-- **Documentation PR / merge:** to be recorded after the audit PR is squash-merged.
+- **Documentation PR / merge:** [#125](https://github.com/codyking0602/ufc-goat-rankings/pull/125), squash merge `0ded9ae67d415bb1cf5125eb6c0b429ce1dc5863`.
 - **Recommended session state:** start a fresh chat for the focused missing/delayed-shell proof. Do not begin the runtime removal until that proof passes.
 
 ## Phase 2 route-audit conclusion
