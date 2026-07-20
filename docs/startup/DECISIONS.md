@@ -166,3 +166,16 @@ PR #112 therefore blocks only accidental second-file ownership: a replacement pu
 Intentional later Picks work remains owned by the original 30-second refresh interval and the separate group, PIN, recovery, history, commissioner, season, archive, navigation, profile-handoff, notification, badge, challenge, and native-shell owners. PR #113 therefore blocks only accidental duplicate ownership: a second private state closure, optional Supabase client, static handler set, render owner, and polling loop.
 
 The marker must remain before all client, state, listener, storage, DOM, and timer ownership. The exact first-run footprint and the existing `DOMContentLoaded` path passed focused equivalence testing, the full Startup Architecture Gate, and physical installed-iPhone verification before tested head `1ea7bdf46f09f18279ac4f21a2bbfd492f1d44ba` was squash-merged as `0c488a449d413636228aafd1e45ee8197d5078ba`.
+
+## Decision 019 — Community profile file evaluation is not a retry mechanism
+
+**Date:** 2026-07-19  
+**Status:** Locked
+
+`assets/js/community-profiles.js` does not exit at top level when the Home mount, identity, profile data, community snapshot, Picks data, or challenge API is unavailable. It always publishes `window.UFC_COMMUNITY_PROFILES` and binds the original lifecycle owner; missing prerequisites are handled inside callable render/load methods and preserved events rather than by loading the file again.
+
+Intentional later community work remains owned by the public `load()`, `refresh()`, `renderDirectory()`, `openMember()`, `openTop10()`, and `publishTop10()` APIs; `DOMContentLoaded`; Home view changes and soft refreshes; profile-ready and profile-updated events; Picks-season updates and refreshes; profile setup reminder callbacks; delayed challenge-picker wrapping; and the existing profile/Top 10 close, reopen, restoration, and return paths.
+
+PR #114 therefore blocks only accidental second-file ownership: a second private state closure, replacement public API, duplicate document/window listener sets, duplicate directory/profile rendering ownership, duplicate Top 10 action handling, duplicate identity/storage handoff, and duplicate challenge wrapping attempts. Background/resume, page-show, visibility, notification, badge, and sharing lifecycles remain owned by their surrounding modules and were not moved into the community owner.
+
+The marker must remain immediately after `'use strict'`, before all private state, listeners, storage, DOM, API, and rendering ownership. The original source after the marker remains byte-for-byte unchanged. Focused equivalence testing, the full Startup Architecture Gate, the Phase 4B mobile/profile suite, and physical installed-iPhone verification passed on exact head `1915c0ff314b7911688574f279eba889d4967a42` before PR #114 was squash-merged as `4a811201bd6c2ac620d829d9701a187e468142b0`.
