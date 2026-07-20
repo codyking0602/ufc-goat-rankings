@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='app-profile-20260718b-photo-upload';
+  const VERSION='app-profile-20260720c-single-group-snapshot';
   const CANONICAL_CODE='GOAT26';
   const OUTPUT_SIZE=320;
   const state={identity:null,group:null,selectedSlug:'',pendingPhotoData:null,photoChanged:false,modal:null,crop:null};
@@ -69,7 +69,11 @@
   }
 
   async function resolve(force=false){
-    if(state.identity&&!force)return state.identity;
+    if(state.identity&&!force){
+      if(!state.group){try{await groupSnapshot(state.identity);}catch(_error){state.group=null;}}
+      renderChip();
+      return state.identity;
+    }
     const identity=await window.UFC_PLAY_PROFILE?.resolve?.();state.identity=identity||null;
     if(identity){try{await groupSnapshot(identity);}catch(_error){state.group=null;}}else state.group=null;
     renderChip();return state.identity;
@@ -166,7 +170,7 @@
 
   window.UFC_APP_PROFILE={version:VERSION,canonicalGroupCode:CANONICAL_CODE,resolve,open,close,saveAvatar,savePhoto,groupSnapshot,fighterForSlug,fighterForMember:memberFighter,avatarUrl:avatarSource,avatarSource,avatarMarkup,createAvatar,get identity(){return state.identity;},get group(){return state.group;}};
   document.documentElement.setAttribute('data-app-profile',VERSION);
-  window.addEventListener('ufc-play-profile-ready',event=>{state.identity=event.detail||null;groupSnapshot(state.identity).catch(()=>null).finally(renderChip);});
+  window.addEventListener('ufc-play-profile-ready',event=>{state.identity=event.detail||null;state.group=null;renderChip();});
   window.addEventListener('ufc-play-data-ready',()=>{renderChip();if(state.modal)renderFighterGrid(state.modal.querySelector('[data-profile-search]')?.value||'');});
   window.addEventListener('ufc-production-ranking-ready',renderChip);
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();

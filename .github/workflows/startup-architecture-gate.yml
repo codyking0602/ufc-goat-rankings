@@ -12,6 +12,7 @@ on:
       - 'assets/js/product-architecture.js'
       - 'assets/js/app.js'
       - 'assets/js/community-profiles.js'
+      - 'assets/js/app-profile.js'
       - 'assets/js/fresh-home-launch.js'
       - 'assets/js/app-notification-center.js'
       - 'assets/js/app-notification-surface-fix.js'
@@ -28,6 +29,8 @@ on:
       - 'scripts/test-product-profile-handoff-owner.mjs'
       - 'scripts/test-product-startup-handoff-contract.mjs'
       - 'scripts/test-product-startup-handoff-single.mjs'
+      - 'scripts/test-app-profile-group-snapshot-contract.mjs'
+      - 'scripts/test-app-profile-group-snapshot-single.mjs'
       - 'scripts/test-notification-identity-owner.mjs'
       - 'scripts/test-ios-standalone-resume-home.mjs'
       - 'scripts/test-profile-signin-stability.mjs'
@@ -44,6 +47,7 @@ on:
       - 'assets/js/product-architecture.js'
       - 'assets/js/app.js'
       - 'assets/js/community-profiles.js'
+      - 'assets/js/app-profile.js'
       - 'assets/js/fresh-home-launch.js'
       - 'assets/js/app-notification-center.js'
       - 'assets/js/app-notification-surface-fix.js'
@@ -60,6 +64,8 @@ on:
       - 'scripts/test-product-profile-handoff-owner.mjs'
       - 'scripts/test-product-startup-handoff-contract.mjs'
       - 'scripts/test-product-startup-handoff-single.mjs'
+      - 'scripts/test-app-profile-group-snapshot-contract.mjs'
+      - 'scripts/test-app-profile-group-snapshot-single.mjs'
       - 'scripts/test-notification-identity-owner.mjs'
       - 'scripts/test-ios-standalone-resume-home.mjs'
       - 'scripts/test-profile-signin-stability.mjs'
@@ -100,6 +106,7 @@ jobs:
 
       - name: Validate startup runtime syntax B
         run: |
+          node --check assets/js/app-profile.js
           node --check assets/js/fresh-home-launch.js
           node --check assets/js/app-notification-center.js
           node --check assets/js/app-notification-surface-fix.js
@@ -118,6 +125,8 @@ jobs:
           node --check scripts/test-product-profile-handoff-owner.mjs
           node --check scripts/test-product-startup-handoff-contract.mjs
           node --check scripts/test-product-startup-handoff-single.mjs
+          node --check scripts/test-app-profile-group-snapshot-contract.mjs
+          node --check scripts/test-app-profile-group-snapshot-single.mjs
           node --check scripts/test-notification-identity-owner.mjs
 
       - name: Enforce startup ownership contract
@@ -125,6 +134,9 @@ jobs:
 
       - name: Enforce Product startup handoff contract
         run: node scripts/test-product-startup-handoff-contract.mjs
+
+      - name: Enforce app profile group snapshot contract
+        run: node scripts/test-app-profile-group-snapshot-contract.mjs
 
       - name: Install browser test runtime
         run: npm install --no-save --package-lock=false playwright@1.54.1 && npx playwright install --with-deps chromium
@@ -186,6 +198,17 @@ jobs:
         with:
           name: product-startup-handoff-single-report
           path: /tmp/product-startup-handoff-single-report.json
+          if-no-files-found: ignore
+
+      - name: Test app profile single group snapshot
+        run: node scripts/test-app-profile-group-snapshot-single.mjs
+
+      - name: Upload app profile group snapshot diagnostic
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-profile-group-snapshot-single-report
+          path: /tmp/app-profile-group-snapshot-single-report.json
           if-no-files-found: ignore
 
       - name: Test notification identity ownership
