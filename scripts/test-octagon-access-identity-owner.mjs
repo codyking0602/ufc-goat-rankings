@@ -72,7 +72,7 @@ async function snapshot(page){
     rpcs:window.__OCTAGON_ACCESS_PROOF__.rpcs,
     channels:window.__OCTAGON_ACCESS_PROOF__.channels,
     storageReads:window.__OCTAGON_ACCESS_STORAGE_READS__,
-    panels:document.querySelectorAll('[data-octagon-access-panel]').length,
+    panels:document.querySelectorAll('section.octagon-access-panel[data-octagon-access-panel]').length,
     manageButtons:document.querySelectorAll('[data-octagon-manage-beta]').length,
     betaDisabled:document.querySelector('[data-octagon-beta-tab]')?.disabled,
     unexpectedSignin:document.querySelectorAll('[data-unexpected-octagon-signin]').length
@@ -98,7 +98,7 @@ try{
 
   await page.route(BASE,route=>route.fulfill({status:200,contentType:'text/html',body:html}));
   await page.goto(BASE,{waitUntil:'domcontentloaded',timeout:60000});
-  await page.waitForFunction(()=>window.UFC_OCTAGON_ACCESS&&document.querySelector('[data-octagon-access-panel]'),null,{timeout:10000});
+  await page.waitForFunction(()=>window.UFC_OCTAGON_ACCESS&&document.querySelector('section.octagon-access-panel[data-octagon-access-panel]'),null,{timeout:10000});
   await page.waitForTimeout(600);
 
   report.stage='uncached-startup';
