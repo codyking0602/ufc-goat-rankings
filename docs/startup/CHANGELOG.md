@@ -342,3 +342,59 @@ Cody physically tested exact immutable PR head `ad0e84e4069224270db8186aa771216a
 PR #121 was squash-merged as commit `e332f46ec63c6698fdebd8ecc843c3f0df4eaabd`. Batch 11 was closed as physically verified.
 
 The next isolated Phase 1 owner is `assets/js/production-ranking-bootstrap.js`. It remains retry-sensitive and requires an explicit apply/retry lifecycle before any duplicate-execution guard can be considered. `assets/js/app.js` remains a structural manifest singleton and must not receive a standard IIFE guard.
+
+## 2026-07-20 — Phase 1 Batch 12 merged and verified
+
+PR #123 protected `assets/js/production-ranking-bootstrap.js` with a complete-owner guard, introduced an explicit calculated-production lifecycle, and added one matching startup-contract assertion.
+
+Whole-file re-evaluation had been the only callable recovery path after missing prerequisites or failed calculation/application work. A deliberate duplicate evaluation while dependency loading was in flight created a second owner closure, 40 additional dependency-load listeners, and a second complete ranking calculation/publication chain.
+
+The merged lifecycle now separates owner initialization from application attempts:
+
+- `start()` and `retry()` recover idle/error attempts and are stable no-ops after ready;
+- `apply()` and `refresh()` intentionally force one recalculation after ready;
+- concurrent calls share one in-flight Promise;
+- failed dependency tags are removed so a later explicit retry can reload them;
+- failed calculation or application attempts retain the same owner and remain retryable without file re-evaluation;
+- the legacy `window.UFC_PRODUCTION_RANKING_BOOTSTRAP` result retains its original success/error publication timing and shape.
+
+The duplicate guard remains immediately after `'use strict'`, but it checks for the complete lifecycle owner rather than setting a naive early boolean. The owner is published only after private lifecycle state and all public methods exist, and before the automatic first `start()` call.
+
+Final state:
+
+- starting `main`: `952683af839547b84576fe2ea3a9c813dc709983`;
+- exact physically tested PR head: `a9f50c846c5f3b266b444f0f1a6ffc2e2c9bf9e0`;
+- CI-tested runtime/test parent: `087e384446884a8573ac4542504ea808cf343684`;
+- squash merge: `44684936bce748572a3497ec161500011a9623b9`;
+- 57 additions;
+- 8 deletions;
+- 3 changed files, including the required timestamp-only Octagon Verdict Markdown regeneration;
+- runtime original blob: `7f94b5092319038b8a52a826c60def6c5ada8979`;
+- runtime merged blob: `df5136ccd93e69bba924af757e8b0b4abfdf9df7`;
+- startup-contract original blob: `b67f87807be533b346e15254dc1041b77bda1a3b`;
+- startup-contract merged blob: `0f89092f5bab7e3cf8c77871d90c11cc1ea01728`.
+
+Focused proof and validation passed:
+
+- original and modified first-success observable equivalence;
+- missing-prerequisite recovery through `retry()` without file re-evaluation;
+- failed calculation/application recovery;
+- stable repeated `start()` and `retry()` calls after ready;
+- intentional single recalculation through `apply()` and `refresh()`;
+- shared in-flight attempts;
+- zero duplicate scripts, listeners, timers, intervals, observers, calculations, publications, readiness events, refreshes, or render passes from deliberate second file evaluation;
+- unchanged rankings, OVRs, categories, profiles, visible statistics, division boards, generated data, and fighter order;
+- JavaScript syntax and startup ownership contract;
+- complete Startup Architecture Gate on the runtime/test parent;
+- iOS startup route stability;
+- profile sign-in startup stability;
+- delayed Home/community stability;
+- required Octagon Verdict Markdown generation.
+
+Unrelated red checks remained outside scope: stale 73-versus-80 roster and old-rank expectations, stale Henry Cejudo certification, existing Alexandre Pantoja diagnostics, and 14 women’s leaderboard-thumbnail rendering failures.
+
+Cody physically tested exact immutable PR head `a9f50c846c5f3b266b444f0f1a6ffc2e2c9bf9e0` on the installed iPhone and reported **“Normal.”** No visible regression, blank state, flicker, route bounce, stale or missing ranking data, repeated ranking refresh, duplicate readiness event, duplicate rendering, or changed rank, score, category, OVR, visible statistic, profile, or fighter ordering was reported.
+
+PR #123 was squash-merged as commit `44684936bce748572a3497ec161500011a9623b9`. Batch 12 was closed as physically verified.
+
+Batch 12 completed the final owner in the major Phase 1 audit. There is no next isolated Phase 1 owner in the current audit. The next project step is a fresh Phase 2 duplicate-ownership audit, beginning with route ownership, before any consolidation or runtime deletion is attempted.
