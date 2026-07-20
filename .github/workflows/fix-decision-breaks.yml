@@ -32,4 +32,4 @@ jobs:
           git add docs/startup/DECISIONS.md
           git commit -m "Preserve decision log Markdown formatting"
           git push origin HEAD:agent/phase-2-identity-profile-audit
-# initial
+# synchronize
