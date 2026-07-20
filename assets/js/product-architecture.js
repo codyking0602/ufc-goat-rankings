@@ -71,7 +71,8 @@
     script.dataset.productArchitectureShellRecovery='true';
     script.addEventListener('load',()=>{
       recoveryScript=null;
-      if(!publishRecoveredShell())script.remove();
+      script.remove();
+      publishRecoveredShell();
     },{once:true});
     script.addEventListener('error',()=>{
       recoveryScript=null;
