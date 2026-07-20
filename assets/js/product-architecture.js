@@ -4,7 +4,7 @@
   if(window.__UFC_PRODUCT_ARCHITECTURE_STARTED__)return;
   window.__UFC_PRODUCT_ARCHITECTURE_STARTED__=true;
 
-  const VERSION='product-architecture-20260720b-profile-handoff-only';
+  const VERSION='product-architecture-20260720c-single-startup-handoff';
   const SHELL_SRC='assets/js/octagon-hq-shell.js?v=app-shell-20260720a-recovery-handoff';
   const CONNECTIVITY_SRC='assets/js/product-connectivity.js?v=product-connectivity-20260718c-clean-handoffs';
   const POLISH_CSS='assets/css/product-polish.css?v=product-polish-20260718c-header-final';
@@ -184,7 +184,9 @@
     window.addEventListener('octagon-hq:view-change',event=>{
       if(event.detail?.destination==='picks')handoffSharedProfileToPicks();
     });
-    window.UFC_PLAY_PROFILE?.resolve?.().then(handoffSharedProfileToPicks).catch(()=>null);
+    const existing=identityFrom();
+    if(existing)handoffSharedProfileToPicks(existing);
+    else window.UFC_PLAY_PROFILE?.resolve?.().catch(()=>null);
   }
 
   function call(method,...args){
