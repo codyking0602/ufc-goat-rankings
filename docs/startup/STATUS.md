@@ -6,14 +6,14 @@ _Last updated: 2026-07-19_
 
 - **Current phase:** Phase 1 — Make startup owners idempotent
 - **Phase 0:** Complete
-- **Phase 1 runtime batches merged and physically verified:** 9
-- **Latest verified runtime commit:** `4a811201bd6c2ac620d829d9701a187e468142b0`
-- **Exact Batch 9 iPhone-tested head:** `1915c0ff314b7911688574f279eba889d4967a42`
-- **Estimated entire cleanup progress:** approximately 38%
+- **Phase 1 runtime batches merged and physically verified:** 10
+- **Latest verified runtime commit:** `2040f604892c067ee288fe88df15594a570ac396`
+- **Exact Batch 10A iPhone-tested head:** `6eac38e575dd778a5b4e42fe5b83283723df1847`
+- **Estimated entire cleanup progress:** approximately 40%
 - **Master tracker:** [#102 — Zero-change startup architecture cleanup](https://github.com/codyking0602/ufc-goat-rankings/issues/102)
 - **Visible product changes approved:** none
 - **Major Phase 1 owner audit:** complete in [`PHASE-1-OWNER-AUDIT.md`](./PHASE-1-OWNER-AUDIT.md)
-- **Recommended session state:** start a fresh chat before Batch 10; this file is the handoff source of truth
+- **Recommended session state:** start a fresh chat before the separate `play-hub.js` batch; this file is the handoff source of truth
 
 ## Completed runtime batches
 
@@ -28,96 +28,109 @@ _Last updated: 2026-07-19_
 | 7 | `native-app-shell.js` | #112 | `5b82c3a47b64a4955c4fd4eb041fafe46473e8ac` | Exact tested head normal |
 | 8 | `picks.js` | #113 | `0c488a449d413636228aafd1e45ee8197d5078ba` | Exact tested head normal |
 | 9 | `community-profiles.js` | #114 | `4a811201bd6c2ac620d829d9701a187e468142b0` | Exact tested head normal |
+| 10A | `play.js` | #115 | `2040f604892c067ee288fe88df15594a570ac396` | Exact tested head normal |
 
-## Batch 9 closeout — Community profiles
+## Batch 10A closeout — Play base runtime
 
-PR #114 added a top-level global duplicate-file-execution guard to `assets/js/community-profiles.js` and one matching assertion to `scripts/test-startup-contract.mjs`.
+PR #115 added a prerequisite-aware duplicate-file-execution guard to `assets/js/play.js` and one matching assertion to `scripts/test-startup-contract.mjs`.
 
-The final runtime diff was:
+Final runtime record:
 
+- starting `main`: `67b3cc9d94ca28641f4ba1ce4378b19fa08f985c`;
+- exact physically tested PR head: `6eac38e575dd778a5b4e42fe5b83283723df1847`;
+- squash merge: `2040f604892c067ee288fe88df15594a570ac396`;
 - 4 additions;
 - 0 deletions;
 - 2 changed files;
-- starting `main`: `bdacf8f10b913f5afad4ec6819921fd6f761e572`;
-- exact physically tested PR head: `1915c0ff314b7911688574f279eba889d4967a42`;
-- squash merge: `4a811201bd6c2ac620d829d9701a187e468142b0`.
+- original `play.js` blob: `f7aff84b33c847d825f5fa0207549572582c5096`;
+- guarded `play.js` blob: `dd3cb93abeecd92897c4fe2beb734e4a6148acfc`;
+- original startup-contract blob: `af9d23224988be205becc284bcb0f0a70433edea`;
+- guarded startup-contract blob: `95e77fcb7e66e982ad5dc7bbabdaaf1a4938261d`.
 
-Inspection proved that duplicate file evaluation was not an intentional prerequisite retry. The file has no top-level missing-DOM, missing-profile, or missing-identity return before publishing its API and binding its preserved lifecycle paths. The marker therefore remains immediately after `'use strict'`, before private state, listeners, storage, DOM, API, and rendering ownership.
+The required prerequisites are the static `#play` panel and `window.RANKING_DATA.men` as an array. The marker remains after the existing prerequisite return and before `const state`, whose `loadTop10()` call is the first storage and successful-owner work.
 
-The following legitimate paths remain callable through the original closure:
+This preserves the legitimate recovery path:
 
-- one-time `DOMContentLoaded` startup;
-- public `load()`, `refresh()`, `renderDirectory()`, `openMember()`, `openTop10()`, and `publishTop10()` APIs;
-- `octagon-hq:view-change` and `octagon-hq:soft-refresh`;
-- `ufc-play-profile-ready` and `ufc-app-profile-updated`;
-- `ufc-picks-season-updated` and delayed Picks refresh;
-- profile setup reminder callbacks;
-- delayed challenge-picker wrapping;
-- profile opening, closing, and reopening;
-- Top 10 load, edit, save, local restoration, and return-to-profile behavior;
-- Picks identity/token handoff and challenge-target cleanup.
+- a failed execution caused by missing Play DOM or ranking data does not set the marker;
+- a later file execution after prerequisites appear may initialize normally;
+- only a second execution after one successful initialization is blocked.
+
+Successful first-run ownership remains unchanged:
+
+- 14 element listeners;
+- two ranking-ready window listeners;
+- one 1400 ms refresh timeout;
+- zero observers;
+- zero intervals;
+- zero dynamic script loads;
+- base Top 10 restoration, editing, reordering, saving, comparison, and sharing;
+- base blind-resume pairing, selection, reveal, score, and next-round behavior.
 
 Validation passed on the exact tested head:
 
 - JavaScript syntax;
 - startup ownership contract;
-- focused duplicate-evaluation harness;
-- exact first-run equivalence proof;
-- full Startup Architecture Gate;
-- iOS startup and route stability;
-- profile sign-in stability;
+- exact-source missing-prerequisite and duplicate-execution harness;
+- byte-for-byte first-run equivalence after removing only the marker lines;
+- complete Startup Architecture Gate;
+- iOS route and lifecycle stability;
+- profile sign-in and Picks continuation;
 - delayed Home/community stability;
-- Phase 4B fresh-launch, directory, profile, Top 10, Picks PIN, and cold-launch browser validation;
-- physical installed-iPhone cold launch, signed-in behavior, community/profile surfaces, saved Top 10, challenges, Picks handoff, notifications, badges, sharing, navigation, rapid taps, background/resume, relaunch, and rotation/resize.
+- physical installed-iPhone cold launch, Play entry/exit, signed-in and signed-out behavior, Top 10 persistence, blind resume, navigation, handoffs, sharing, notifications, badges, background/resume, relaunch, rapid taps, and rotation/resize.
 
-Cody reported the exact tested head was **normal**. No duplicate directory/profile UI, reminders, listeners, observers, timers, saves, taps, route handling, blank state, flicker, stale state, or delayed instability was observed.
+Cody reported the exact tested head was **normal**. No blank screen, flicker, route bounce, lost Top 10 state, stale game state, duplicate game UI, duplicated taps, double saves, failed prerequisite recovery, or duplicate listener/timer/render ownership was observed.
 
 ## Next Phase 1 batch
 
-**Batch 10 owner: `assets/js/play.js` only.**
+**Next isolated owner: `assets/js/play-hub.js` only.**
 
-`play.js` is a prerequisite-aware owner. The current audit says it can intentionally exit when the Play panel or ranking data is absent, so Batch 10 must not place a marker before proving and preserving those prerequisites. Inspect whether the marker belongs after prerequisites pass, whether the existing `DOMContentLoaded` or other explicit lifecycle paths perform the legitimate retry, and whether duplicate file evaluation currently contributes any recovery behavior.
+`play-hub.js` remains a separate prerequisite-aware batch. Do not combine it with another owner or revisit `play.js` unless a direct regression is found.
 
-Batch 10 runtime scope is limited to:
+The next batch must inspect and preserve:
 
-- `assets/js/play.js`;
-- one matching assertion in `scripts/test-startup-contract.mjs`, only if inspection proves a guard is safe.
-
-Do not combine `play.js` with `play-hub.js`. The Play hub is the following separate prerequisite-aware batch.
+- Play DOM prerequisites and load order;
+- daily-random and saved daily-state restoration;
+- hub and game-card rendering ownership;
+- Games navigation and route handoffs;
+- Home, Play, profile, Picks, Rankings, Intelligence, War Room, sharing, notification, and native-shell handoffs;
+- all listeners, observers, timers, storage, dynamic loading, public APIs, and retry paths;
+- recovery after an unsuccessful prerequisite attempt.
 
 ## Existing unrelated red checks
 
 1. **Scoring Architecture Guardrails**
-   - The permanent source/runtime contract remains stale against current production scoring/data state.
-   - The existing Alexandre Pantoja generic-fallback profile-copy warning remains outside startup work.
+   - Existing stale roster/rank expectations and Alexandre Pantoja diagnostics remain outside startup work.
 
-2. **Production Ranking Browser Smoke**
-   - The run stops at existing women’s fighter-thumbnail rendering failures before its later ranking checks.
-   - Batch 9 did not touch fighter photos, display overrides, rankings, or scoring.
+2. **Production Ranking Pipeline**
+   - Existing certification expectation mismatch remains separate from startup ownership.
 
-3. **Picks UI Smoke**
-   - Picks JavaScript syntax passes.
+3. **Production Ranking Browser Smoke**
+   - The run stops at existing women’s fighter-thumbnail rendering failures before later ranking checks.
+
+4. **Picks UI Smoke**
    - Existing static-contract findings remain separate from startup singleton work.
 
 Do not repair these in a startup-owner PR unless a failure directly references the isolated changed lines.
 
 ## Exact next action
 
-1. Start a fresh chat from current `main` and reread this file, `DECISIONS.md`, `OWNERS.md`, `PHASE-1-OWNER-AUDIT.md`, `TEST_PLAN.md`, and all current Issue #102 comments.
+1. Start a fresh chat from current `main` and reread `STATUS.md`, `DECISIONS.md`, `OWNERS.md`, `PHASE-1-OWNER-AUDIT.md`, `TEST_PLAN.md`, and current Issue #102 comments.
 2. Verify and record the exact starting `main` SHA.
-3. Inspect `assets/js/play.js` first-run and repeated-execution behavior, especially its prerequisite return, ranking-data readiness, DOM readiness, saved Top 10 state, blind-resume state, listeners, public APIs, sharing handoffs, Play hub handoffs, routes, lifecycle events, timers, and whether duplicate evaluation serves a retry.
-4. Create a fresh Batch 10 branch directly from that verified `main`.
-5. Keep the runtime diff to `assets/js/play.js` and one startup-contract assertion only if safe.
-6. Open a draft PR and keep it draft until the exact head passes automated and physical iPhone verification.
-7. Do not begin the Play hub batch during Batch 10.
+3. Inspect `assets/js/play-hub.js` and only its directly relevant Play/game/navigation prerequisites and handoffs.
+4. Create a fresh isolated branch directly from current `main`.
+5. Proceed only if a prerequisite-aware guard preserves failed-attempt recovery and exact first-run behavior.
+6. Keep the runtime diff to `assets/js/play-hub.js` and one matching startup-contract assertion.
+7. Open a draft PR and require exact-head automated and installed-iPhone verification before merge.
+8. Do not begin any later owner or unrelated cleanup.
 
 ## Stop conditions
 
-Stop and leave Batch 10 unmodified or draft-only if:
+Stop and leave the next batch unmodified or draft-only if:
 
-- `play.js` duplicate evaluation appears to serve a legitimate prerequisite retry;
-- a narrow marker cannot preserve missing-DOM or missing-ranking-data recovery;
-- Top 10, blind resume, Games, saved state, Play navigation, sharing, routes, profile/Picks handoffs, mobile lifecycle, or surrounding product behavior changes;
-- duplicate listeners, rendering, timers, APIs, saves, taps, routes, blank states, flicker, stale state, or delayed instability occurs;
-- the diff expands beyond `assets/js/play.js` and its one startup-contract assertion;
-- work begins on `play-hub.js`, scoring, fighter data, photos, presentation, or unrelated red checks.
+- duplicate evaluation appears to serve an intentional prerequisite retry;
+- a failed prerequisite attempt would set the successful marker;
+- a later execution cannot recover after prerequisites appear;
+- daily randomness, saved game state, game presentation, navigation, routes, handoffs, or first-run behavior changes;
+- duplicate listeners, observers, timers, intervals, storage, APIs, rendering, taps, or saves occur;
+- the diff expands beyond `play-hub.js` and its one matching startup-contract assertion;
+- unrelated product, scoring, fighter-data, photo, presentation, or red-check work begins.
