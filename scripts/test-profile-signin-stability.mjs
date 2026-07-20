@@ -28,6 +28,7 @@ const supabaseStub=`
   const ok=data=>({data,error:null});
   const client={
     async rpc(name,args){
+      if(name==='app_profile_login')return ok({ok:true,group,member,member_token:'signin-stability-token',admin_token:'admin-token',active_room:room,rooms:[room]});
       if(name==='picks_member_login_pin')return ok({ok:true,group,member,member_token:'signin-stability-token',admin_token:'admin-token',active_room:room,rooms:[room]});
       if(name==='picks_group_for_room')return ok({group_code:'GOAT26'});
       if(name==='picks_group_snapshot')return ok({group,season:{name:'2026 Season',correct_points:4,underdog_bonus:1},me:member,members:[member],events:[{event_id:'event-1',room_code:'ROOM01',status:'active',is_active:true,name:'Test Event'}],available_events:[],active_room:room});
