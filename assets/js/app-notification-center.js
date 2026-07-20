@@ -4,7 +4,7 @@
   if(window.__UFC_APP_NOTIFICATION_CENTER_STARTED__)return;
   window.__UFC_APP_NOTIFICATION_CENTER_STARTED__=true;
 
-  const VERSION='app-notification-center-20260720d-canonical-identity-consumer';
+  const VERSION='app-notification-center-20260720e-passive-identity-consumer';
   const SW_URL='sw.js?v=octagon-hq-sw-20260718b-fast-refresh';
   const state={settings:null,identity:null,busy:false,observer:null,renderTimer:0,status:'',statusKind:'',loading:false,started:false};
 
@@ -44,9 +44,14 @@
     return current;
   }
   async function currentSubscription(){const worker=await registration(false);return worker?.pushManager?.getSubscription?.().catch(()=>null)||null;}
-  async function identity(){
-    let value=state.identity||window.UFC_PLAY_PROFILE?.identity||window.UFC_APP_PROFILE?.identity;
-    if(!value)value=await window.UFC_PLAY_PROFILE?.resolve?.().catch(()=>null);
+  function cachedIdentity(){
+    const value=state.identity||window.UFC_PLAY_PROFILE?.identity||window.UFC_APP_PROFILE?.identity;
+    state.identity=value||null;
+    return state.identity;
+  }
+  async function requireIdentity(){
+    let value=cachedIdentity();
+    if(!value)value=await window.UFC_PLAY_PROFILE?.require?.({title:'Open your UFC App profile',description:'Use your GOAT26 display name and four-digit PIN.'});
     state.identity=value||null;
     return state.identity;
   }
@@ -70,7 +75,7 @@
     if(state.settings&&!force){scheduleRender();return state.settings;}
     state.loading=true;scheduleRender();
     try{
-      const who=await identity(),rpc=client(),token=tokenFor(who);
+      const who=cachedIdentity(),rpc=client(),token=tokenFor(who);
       if(!who||!rpc||!token){state.settings=null;scheduleRender();return null;}
       const {data,error}=await rpc.rpc('app_notification_settings',{p_member_token:token});
       if(error)throw error;
@@ -93,7 +98,7 @@
       if(isIOS()&&!isStandalone())throw new Error('On iPhone, add Octagon HQ to your Home Screen and open the installed app first.');
       const permission=await permissionPromise;
       if(permission!=='granted')throw new Error(Notification.permission==='denied'?'Notifications are blocked in iPhone Settings.':'Notification permission was not granted.');
-      const settings=state.settings||await loadSettings(true),who=await identity();
+      const who=await requireIdentity(),settings=state.settings||await loadSettings(true);
       if(!settings||!who)throw new Error('Reconnect your Octagon HQ profile and try again.');
       const publicKey=text(settings.vapid_public_key);if(!publicKey)throw new Error('Push notification keys are not ready.');
       const worker=await registration(true);let subscription=await worker.pushManager.getSubscription();
@@ -116,7 +121,7 @@
   async function disableDevice(){
     if(state.busy)return false;state.busy=true;setStatus('Turning off notifications on this device…');
     try{
-      const who=await identity(),rpc=client(),token=tokenFor(who),subscription=await currentSubscription();
+      const who=await requireIdentity(),rpc=client(),token=tokenFor(who),subscription=await currentSubscription();
       if(subscription&&rpc&&token){
         const {data,error}=await rpc.rpc('app_remove_push_subscription',{p_member_token:token,p_endpoint:subscription.endpoint});
         if(error)throw error;if(!data?.ok)throw new Error(data?.error||'The device subscription could not be removed.');
@@ -133,7 +138,7 @@
     if(state.busy||!state.settings)return;
     const prefs={...state.settings.preferences,[key]:Boolean(value)};state.settings.preferences=prefs;scheduleRender();
     try{
-      const who=await identity(),rpc=client(),token=tokenFor(who);
+      const who=await requireIdentity(),rpc=client(),token=tokenFor(who);
       const {data,error}=await rpc.rpc('app_notification_update_preferences',{p_member_token:token,p_direct_challenges:Boolean(prefs.direct_challenges),p_picks_reminders:Boolean(prefs.picks_reminders),p_war_room_messages:Boolean(prefs.war_room_messages)});
       if(error)throw error;if(!data?.ok)throw new Error(data?.error||'Notification preferences could not save.');
       state.settings.preferences=data.preferences||prefs;setStatus('Notification preferences saved.');
@@ -144,7 +149,7 @@
     if(state.busy)return;state.busy=true;setStatus('Queuing a test notification…');
     try{
       if(!state.settings?.current_device_enabled)throw new Error('Enable notifications on this device first.');
-      const who=await identity(),rpc=client(),token=tokenFor(who);
+      const who=await requireIdentity(),rpc=client(),token=tokenFor(who);
       const {data,error}=await rpc.rpc('app_notification_send_test',{p_member_token:token});
       if(error)throw error;if(!data?.ok)throw new Error(data?.error||'The test notification could not be queued.');
       setStatus('Test queued. It should arrive within about one minute.');
