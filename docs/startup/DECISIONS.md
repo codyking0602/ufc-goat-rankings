@@ -192,3 +192,15 @@ The `window.__UFC_PLAY_STARTED__` marker must remain immediately after the exist
 Duplicate file evaluation remains permitted only until the first successful initialization. After prerequisites pass and the marker is set, later evaluations must exit before state construction and add zero ownership. `play.js` has no `DOMContentLoaded` retry, public retry API, view-change retry, dynamic loader, observer, interval, or shell-route owner of its own; therefore a later file execution is the preserved recovery path after an earlier prerequisite failure.
 
 PR #115 preserved exact first-run Top 10 and blind-resume behavior, two ranking-ready listeners, one 1400 ms refresh timeout, all sharing and navigation handoffs, and byte-for-byte source equivalence after removing only the marker lines. Focused missing-prerequisite and duplicate-execution proof, the full Startup Architecture Gate, and physical installed-iPhone verification passed on exact head `6eac38e575dd778a5b4e42fe5b83283723df1847` before squash merge `2040f604892c067ee288fe88df15594a570ac396`.
+
+## Decision 021 — Shared profile credential verification has one owner
+
+**Date:** 2026-07-20  
+**Status:** Locked
+
+`assets/js/play-profile-identity.js` through `window.UFC_PLAY_PROFILE` is the canonical owner of shared profile credential verification, current/legacy login RPC fallback, resolved identity cache, canonical group/admin/room/display-name access persistence, and `ufc-play-profile-ready` publication.
+
+A feature-specific surface may preserve its own form, validation, status copy, and post-login destination, but it must delegate accepted credentials to the canonical owner. `picks-member-pin.js` therefore retains the returning-member card and all member/commissioner PIN-management responsibilities while its duplicated direct login and token-persistence path is the first isolated Phase 2 identity candidate.
+
+`app-canonical-group.js` remains a separate pre-resolution migration owner because it adopts historical tokens before normal identity resolution and may perform the existing one-time canonicalization reload. Profile editing, community/activity/avatar rendering, notification consumption, and compatibility synchronization remain separate responsibilities and cannot be folded into the credential-delegation batch.
+
