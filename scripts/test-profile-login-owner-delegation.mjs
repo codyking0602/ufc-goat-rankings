@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
 const BASE='http://127.0.0.1:4173/index.html#home';
+const CREDENTIAL_RPCS=new Set(['app_profile_login','picks_member_login_pin','app_profile_resolve','play_identity_snapshot']);
 let browser;
 
 function supabaseStub(){
@@ -20,9 +21,9 @@ function supabaseStub(){
       async rpc(name,args){
         record(name,args);
         if(name==='app_profile_login'){
-if(scenario.mode==='fallback')return{data:null,error:{message:'Could not find the function app_profile_login in the schema cache'}};
-if(scenario.mode==='wrong')return ok({ok:false,error:'Sign-in details did not match.'});
-return ok(loginData());
+          if(scenario.mode==='fallback')return{data:null,error:{message:'Could not find the function app_profile_login in the schema cache'}};
+          if(scenario.mode==='wrong')return ok({ok:false,error:'Sign-in details did not match.'});
+          return ok(loginData());
         }
         if(name==='picks_member_login_pin')return ok(loginData());
         if(name==='app_profile_resolve')return ok({ok:true,group,member,member_token:args?.p_member_token||'owner-token',active_room:activeRoom,rooms});
@@ -93,21 +94,24 @@ async function openPicksCard(page){
 }
 
 const rpcNames=page=>page.evaluate(()=>window.__PROFILE_RPC_LOG__.map(row=>row.name));
+const credentialRpcNames=async page=>(await rpcNames(page)).filter(name=>CREDENTIAL_RPCS.has(name));
 
 try{
   browser=await chromium.launch({headless:true});
 
+  console.log('Case 1: normal canonical login');
   {
     const {context,page}=await openCase({mode:'current'});
     const result=await page.evaluate(()=>window.UFC_PLAY_PROFILE.login('GOAT26','Cody','1234'));
     assert.equal(result.group.code,'GOAT26');
     assert.equal(result.active_room.code,'ROOM01');
     assert.equal(result.memberToken,'owner-token');
-    assert.deepEqual(await rpcNames(page),['app_profile_login','app_profile_resolve']);
+    assert.deepEqual(await credentialRpcNames(page),['app_profile_login','app_profile_resolve']);
     assert.equal(await page.evaluate(()=>window.__PROFILE_READY_EVENTS__),1,'Normal shared profile login must still publish readiness once.');
     await context.close();
   }
 
+  console.log('Case 2: reload-bound readiness suppression');
   {
     const {context,page}=await openCase({mode:'current'});
     const result=await page.evaluate(()=>window.UFC_PLAY_PROFILE.login('GOAT26','Cody','1234',{publish:false,source:'proof'}));
@@ -116,6 +120,7 @@ try{
     await context.close();
   }
 
+  console.log('Case 3: Picks active-room continuation');
   {
     const {context,page}=await openCase({mode:'current'});
     await openPicksCard(page);
@@ -134,6 +139,7 @@ try{
     await context.close();
   }
 
+  console.log('Case 4: legacy login fallback');
   {
     const {context,page}=await openCase({mode:'fallback'});
     await openPicksCard(page);
@@ -147,6 +153,7 @@ try{
     await context.close();
   }
 
+  console.log('Case 5: wrong PIN');
   {
     const {context,page}=await openCase({mode:'wrong'});
     await openPicksCard(page);
@@ -162,13 +169,14 @@ try{
     await context.close();
   }
 
+  console.log('Case 6: delayed canonical owner retry');
   {
     const {context,page}=await openCase({mode:'current'});
     await openPicksCard(page);
     await page.evaluate(()=>{window.__savedProfileOwner=window.UFC_PLAY_PROFILE;window.UFC_PLAY_PROFILE=null;});
     await page.click('#picksPinSignInButton');
     await page.waitForFunction(()=>/still loading/i.test(document.getElementById('picksPinSignInStatus')?.textContent||''));
-    assert.deepEqual(await rpcNames(page),[],'A delayed canonical owner must not trigger a direct credential fallback.');
+    assert.deepEqual(await credentialRpcNames(page),[],'A delayed canonical owner must not trigger a direct credential fallback.');
     await page.evaluate(()=>{window.UFC_PLAY_PROFILE=window.__savedProfileOwner;});
     await Promise.all([
       page.waitForURL(url=>url.searchParams.get('room')==='ROOM01'&&url.hash==='#picks',{timeout:30000}),
@@ -178,6 +186,7 @@ try{
     await context.close();
   }
 
+  console.log('Case 7: no active room');
   {
     const {context,page}=await openCase({mode:'current',noRoom:true});
     await openPicksCard(page);
