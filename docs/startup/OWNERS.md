@@ -21,8 +21,8 @@ This file records the canonical owner of each startup responsibility. Detailed d
 | Base ranking rendering and global UI APIs | `assets/js/app.js` | Structural global singleton | Enforce exact-one manifest load; no standard IIFE guard |
 | Calculated production scoring bootstrap | `assets/js/production-ranking-bootstrap.js` | Canonical calculated-production launcher | Explicit retry semantics required before idempotence change |
 | Picks base runtime | `assets/js/picks.js` | Canonical Picks owner | Global duplicate-file guard merged and physical-iPhone verified in PR #113; original `DOMContentLoaded` retry, saved state, room resume, render ownership, support-owner handoffs, and 30-second polling preserved |
-| Play base runtime | `assets/js/play.js` | Canonical base Play owner | **Batch 10 owner.** Prerequisite-aware guard inspection required; do not mark before Play DOM and ranking-data prerequisites pass, and do not combine with `play-hub.js` |
-| Play game hub | `assets/js/play-hub.js` | Canonical Play navigation owner | Separate prerequisite-aware batch after `play.js`; preserve Play DOM prerequisites and daily-random restoration behavior |
+| Play base runtime | `assets/js/play.js` | Canonical base Play owner | Prerequisite-aware guard merged and physical-iPhone verified in PR #115; marker remains after `#play` and `RANKING_DATA.men` checks and before state/storage ownership, preserving later successful execution after an earlier prerequisite failure |
+| Play game hub | `assets/js/play-hub.js` | Canonical Play navigation owner | **Next isolated Phase 1 owner.** Separate prerequisite-aware batch; preserve Play DOM prerequisites, recovery after failed attempts, daily randomness, saved daily-state restoration, navigation, handoffs, and first-run behavior |
 | Home dashboard rendering | `assets/js/home-dashboard.js` | Canonical Home owner | Global duplicate-file guard merged and live-verified in PR #107 |
 | Community profile rendering | `assets/js/community-profiles.js` | Canonical community owner | Global duplicate-file guard merged and physical-iPhone verified in PR #114; first execution, directory/profile rendering, identity/profile events, Top 10, challenge, Picks handoff, public refresh APIs, and delayed retry paths preserved |
 | Cross-feature profile compatibility | `assets/js/product-architecture.js` | Compatibility/handoff owner | Already globally protected |
@@ -31,7 +31,7 @@ This file records the canonical owner of each startup responsibility. Detailed d
 | Notification/profile surface compatibility | `assets/js/app-notification-surface-fix.js` | Temporary compatibility layer | Already globally protected; must not expand |
 | Mobile bottom navigation, badges, transitions, pull-to-refresh | `assets/js/native-app-shell.js` | Intended canonical native shell owner | Global duplicate-file guard merged and physical-iPhone verified in PR #112; first-run shell ownership and all API/event/observer/timer/lifecycle retry paths preserved |
 | Mobile/native compatibility repairs | `assets/js/native-app-shell-stability.js` | Temporary repair layer | Global duplicate-file guard merged and live-verified in PR #108; public `schedule()` retry path preserved; removal belongs to Phase 3 |
-| Sharing and incoming share routing | `assets/js/share-deep-links.js` | Canonical share/deep-link owner | Isolated guard candidate after the two separate Play prerequisite-aware batches |
+| Sharing and incoming share routing | `assets/js/share-deep-links.js` | Canonical share/deep-link owner | Isolated guard candidate after the separate Play hub prerequisite-aware batch |
 
 ## Dynamic-loading boundaries
 
