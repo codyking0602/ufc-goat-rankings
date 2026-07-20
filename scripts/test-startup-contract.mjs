@@ -107,10 +107,7 @@ assert(profileIdentity.includes("async function login(_groupCode,displayName,pin
 assert(profileIdentity.includes("if(options.publish!==false)window.dispatchEvent(new CustomEvent('ufc-play-profile-ready'"),'The canonical login owner must preserve normal readiness publication while allowing a reload-bound consumer to suppress it.');
 assert(profileIdentity.includes("active_room:data?.active_room||identity?.active_room||null"),'The canonical login result must preserve Picks active-room continuation context.');
 const picksPin=read('assets/js/picks-member-pin.js');
-const picksSignIn=picksPin.match(/async function signIn\(\)\{([\s\S]*?)
-  \}
-
-  function ensureSignInCard/);
+const picksSignIn=picksPin.match(/async function signIn\(\)\{([\s\S]*?)\n  \}\n\n  function ensureSignInCard/);
 assert(picksSignIn,'The returning-member Picks sign-in boundary could not be identified.');
 assert(picksSignIn[1].includes('window.UFC_PLAY_PROFILE'),'The Picks returning-member card must delegate authentication to the canonical shared profile owner.');
 assert(picksSignIn[1].includes("{publish:false,source:'picks-member-pin'}"),'The reload-bound Picks login must suppress only its redundant pre-navigation readiness publication.');
