@@ -26,6 +26,7 @@ on:
       - 'scripts/test-profile-login-owner-delegation.mjs'
       - 'scripts/test-community-profile-access-owner.mjs'
       - 'scripts/test-product-profile-handoff-owner.mjs'
+      - 'scripts/test-notification-identity-owner.mjs'
       - 'scripts/test-ios-standalone-resume-home.mjs'
       - 'scripts/test-profile-signin-stability.mjs'
       - 'scripts/test-phase-4b-mobile.mjs'
@@ -55,6 +56,7 @@ on:
       - 'scripts/test-profile-login-owner-delegation.mjs'
       - 'scripts/test-community-profile-access-owner.mjs'
       - 'scripts/test-product-profile-handoff-owner.mjs'
+      - 'scripts/test-notification-identity-owner.mjs'
       - 'scripts/test-ios-standalone-resume-home.mjs'
       - 'scripts/test-profile-signin-stability.mjs'
       - 'scripts/test-phase-4b-mobile.mjs'
@@ -110,6 +112,7 @@ jobs:
           node --check scripts/test-profile-login-owner-delegation.mjs
           node --check scripts/test-community-profile-access-owner.mjs
           node --check scripts/test-product-profile-handoff-owner.mjs
+          node --check scripts/test-notification-identity-owner.mjs
 
       - name: Enforce startup ownership contract
         run: node scripts/test-startup-contract.mjs
@@ -163,6 +166,17 @@ jobs:
         with:
           name: product-profile-handoff-owner-report
           path: /tmp/product-profile-handoff-owner-report.json
+          if-no-files-found: ignore
+
+      - name: Test notification identity ownership
+        run: node scripts/test-notification-identity-owner.mjs
+
+      - name: Upload notification identity diagnostic
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: notification-identity-owner-report
+          path: /tmp/notification-identity-owner-report.json
           if-no-files-found: ignore
 
       - name: Test iOS startup route stability
