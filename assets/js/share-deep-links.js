@@ -1,5 +1,7 @@
 (function(){
 'use strict';
+if(window.__UFC_SHARE_DEEP_LINKS_STARTED__)return;
+window.__UFC_SHARE_DEEP_LINKS_STARTED__=true;
 const VERSION='share-deep-links-20260719b-compact-profile-actions';
 const ROOT='https://codyking0602.github.io/ufc-goat-rankings/';
 const TYPES=new Set(['fighter','find-leader','play-challenge','picks-event','war-room']);
