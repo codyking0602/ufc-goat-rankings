@@ -75,11 +75,16 @@ const earlyRoute=forbid('assets/js/fresh-home-route-bootstrap.js',[
 assert(earlyRoute.includes('__UFC_FRESH_HOME_ROUTE_BOOTSTRAP_STARTED__'),'The early route bootstrap must keep its global duplicate-start guard.');
 assert(earlyRoute.includes('history.replaceState'),'The early route bootstrap must remain a synchronous URL normalizer.');
 
+const pendingNavigationKey='__UFC_PENDING_SHELL_NAVIGATION__';
 const shell=read('assets/js/octagon-hq-shell.js');
 assert(shell.includes('__UFC_OCTAGON_HQ_SHELL_STARTED__'),'The app shell must keep its global duplicate-file-execution guard.');
 assert(shell.includes('let started=false'),'The app shell must keep its single-start guard.');
 assert(shell.includes('if(started){syncNavigation();return true;}'),'The app shell must remain idempotent.');
 assert(shell.includes('window.UFC_APP_SHELL=api'),'The app shell must remain the canonical navigation API.');
+assert(shell.includes(`const PENDING_NAVIGATION_KEY='${pendingNavigationKey}'`),'The canonical shell must own the recovery-navigation handoff key.');
+assert(shell.includes('function takePendingNavigation(defaultRankingView)'),'The canonical shell must consume a queued recovery navigation request.');
+assert(/const route=parseRoute\(\);currentRankingView=RANKING_VIEWS\.includes\(route\)\?route:'men';const pending=takePendingNavigation\(currentRankingView\);const initialView=pending\?\.view\|\|route;[\s\S]*showView\(initialView,pending\?\.options\|\|\{updateHash:Boolean\(location\.hash\)\}\)/.test(shell),'The shell must consume the queued request inside its single startup activation rather than replaying a second route after startup.');
+assert.equal((shell.match(/takePendingNavigation\(currentRankingView\)/g)||[]).length,1,'The shell must consume at most one queued navigation handoff during startup.');
 
 const navGrid=read('assets/js/octagon-hq-nav-grid.js');
 assert(navGrid.includes('__UFC_OCTAGON_HQ_NAV_GRID_STARTED__'),'The nav-grid cleanup must keep its global duplicate-file-execution guard.');
@@ -98,6 +103,20 @@ const product=read('assets/js/product-architecture.js');
 assert(product.includes('__UFC_PRODUCT_ARCHITECTURE_STARTED__'),'Product architecture must keep its global duplicate-start guard.');
 assert.equal(product.includes('loadNativeShell'),false,'Product architecture must not dynamically load the native shell.');
 assert.equal(product.includes('loadNotificationSurfaceFix'),false,'Product architecture must not dynamically load the notification surface.');
+assert(product.includes(`const PENDING_NAVIGATION_KEY='${pendingNavigationKey}'`),'Product architecture and the canonical shell must share one explicit recovery handoff key.');
+assert(product.includes("document.addEventListener('click',captureRecoveryNavigation,true)"),'Product architecture must intercept navigation only during a missing-shell recovery window.');
+assert(product.includes("document.removeEventListener('click',captureRecoveryNavigation,true)"),'The recovery interception must be removed when the shell becomes available.');
+assert(product.includes("queueNavigation('activateDestination',key)"),'Recovery-window destination taps must be queued for the canonical shell.');
+assert(product.includes("queueNavigation('activateView',view)"),'Recovery-window ranking-view taps must be queued for the canonical shell.');
+assert(product.includes("script.dataset.productArchitectureShellRecovery='true'"),'Dynamic shell recovery must remain explicitly marked.');
+assert(product.includes("script.addEventListener('error'"),'A failed recovery shell request must remain retryable.');
+assert.equal(product.includes('setInterval('),false,'Product architecture must not add a recovery polling loop.');
+assert.equal(product.includes('location.reload'),false,'Product architecture must not add a recovery reload path.');
+const recoveryCapture=product.match(/function captureRecoveryNavigation\(event\)\{([\s\S]*?)\n  \}\n\n  function loadConnectivity/);
+assert(recoveryCapture,'The recovery capture boundary could not be identified.');
+assert.equal(/classList\.(?:add|remove|toggle)/.test(recoveryCapture[1]),false,'Recovery interception must not mutate active classes or partially activate a destination.');
+assert.equal(recoveryCapture[1].includes('history.'),false,'Recovery interception must not write route history outside the canonical shell.');
+assert.equal(recoveryCapture[1].includes('dispatchEvent'),false,'Recovery interception must not publish a route event outside the canonical shell.');
 
 const freshLaunch=forbid('assets/js/fresh-home-launch.js',[
   'MutationObserver',
@@ -141,6 +160,7 @@ console.log(JSON.stringify({
   passed:true,
   localScriptCount:localPaths.length,
   singleOwnerScripts:singleOwnerScripts.length,
+  recoveryNavigationHandoff:true,
   firstScript:localPaths[0],
   lastScript:localPaths.at(-1)
 },null,2));
