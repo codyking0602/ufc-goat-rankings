@@ -25,6 +25,7 @@ on:
       - 'scripts/test-route-owner-shell-recovery-queue.mjs'
       - 'scripts/test-profile-login-owner-delegation.mjs'
       - 'scripts/test-community-profile-access-owner.mjs'
+      - 'scripts/test-product-profile-handoff-owner.mjs'
       - 'scripts/test-ios-standalone-resume-home.mjs'
       - 'scripts/test-profile-signin-stability.mjs'
       - 'scripts/test-phase-4b-mobile.mjs'
@@ -53,6 +54,7 @@ on:
       - 'scripts/test-route-owner-shell-recovery-queue.mjs'
       - 'scripts/test-profile-login-owner-delegation.mjs'
       - 'scripts/test-community-profile-access-owner.mjs'
+      - 'scripts/test-product-profile-handoff-owner.mjs'
       - 'scripts/test-ios-standalone-resume-home.mjs'
       - 'scripts/test-profile-signin-stability.mjs'
       - 'scripts/test-phase-4b-mobile.mjs'
@@ -107,6 +109,7 @@ jobs:
         run: |
           node --check scripts/test-profile-login-owner-delegation.mjs
           node --check scripts/test-community-profile-access-owner.mjs
+          node --check scripts/test-product-profile-handoff-owner.mjs
 
       - name: Enforce startup ownership contract
         run: node scripts/test-startup-contract.mjs
@@ -128,7 +131,17 @@ jobs:
         run: node scripts/test-route-owner-shell-recovery-queue.mjs
 
       - name: Test canonical profile login delegation
-        run: node scripts/test-profile-login-owner-delegation.mjs
+        run: |
+          set -o pipefail
+          node scripts/test-profile-login-owner-delegation.mjs 2>&1 | tee /tmp/profile-login-owner-report.log
+
+      - name: Upload canonical profile login diagnostic
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: profile-login-owner-report
+          path: /tmp/profile-login-owner-report.log
+          if-no-files-found: ignore
 
       - name: Test community profile access ownership
         run: node scripts/test-community-profile-access-owner.mjs
@@ -141,11 +154,30 @@ jobs:
           path: /tmp/community-profile-access-owner-report.json
           if-no-files-found: ignore
 
+      - name: Test Product profile handoff ownership
+        run: node scripts/test-product-profile-handoff-owner.mjs
+
+      - name: Upload Product profile handoff diagnostic
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: product-profile-handoff-owner-report
+          path: /tmp/product-profile-handoff-owner-report.json
+          if-no-files-found: ignore
+
       - name: Test iOS startup route stability
         run: node scripts/test-ios-standalone-resume-home.mjs
 
       - name: Test profile sign-in startup stability
         run: node scripts/test-profile-signin-stability.mjs
+
+      - name: Upload profile sign-in stability diagnostic
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: profile-signin-stability-report
+          path: /tmp/profile-signin-stability-report.json
+          if-no-files-found: ignore
 
       - name: Test Home and community delayed stability
         run: node scripts/test-phase-4b-mobile.mjs
