@@ -12,7 +12,7 @@
       "syncUntil": "2026-07-25T19:30:00.000Z",
       "idPrefix": "abu26",
       "minFights": 8,
-      "mainCardFightCount": 6,
+      "mainCardFightCount": 7,
       "expectedMainEvent": [
         "Magomed Ankalaev",
         "Bogdan Guskov"
