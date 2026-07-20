@@ -301,7 +301,7 @@ Final state:
 - 2 changed files;
 - runtime original blob: `67979699403b6539d798ca3cf72c37bc42c60e21`;
 - runtime guarded blob: `4716ae05270dd0f6d24c2973af058d4e15f383a3`;
-- startup-contract original blob: `dd426780dfdac1a9aa7848bcc0fc627ea5b627`;
+- startup-contract original blob: `dd426780dfdacdf1a9aa7848bcc0fc627ea5b627`;
 - startup-contract modified blob: `b67f87807be533b346e15254dc1041b77bda1a3b`.
 
 Preserved lifecycle and recovery ownership includes:
