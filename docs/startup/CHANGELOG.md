@@ -426,3 +426,22 @@ If the proof passes, the future runtime batch is limited to:
 Fresh-launch classifier consolidation remains later work because query-only Picks invitations/continuations and the short-lived Picks resume marker still depend on the late launcher.
 
 No runtime, test, workflow, scoring, fighter, UI, product, photo, sharing, notification, service-worker, or generated-data file changed in this audit. Estimated entire startup cleanup progress moved from approximately 50% to approximately 52% through completed Phase 2 route documentation only.
+
+## 2026-07-20 — Phase 2 route ownership merged and physically verified
+
+PR #128 added a recovery-window queue owned by `product-architecture.js` only while the canonical shell API is unavailable. The recovered shell consumes the latest accepted intent inside its normal single startup activation. Exact head `71a73a4e7e6f9c6ca9486aa21c5e168f834d17da` passed the Startup Architecture Gate and installed-iPhone verification before merge `63c00d5f16859bca54b9d68e665d55f852d0b93e`.
+
+PR #129 then removed only the legacy primary `.tab` click listener from `assets/js/app.js`, added a permanent contract assertion, and made the Startup Architecture Gate run for `app.js` changes. Exact head `bd8065bbe1433575cf3ff042e6f630266dd1da1f` passed the full gate and installed-iPhone verification before merge `fa47a51513c28bc3ba6173f1c95c47ca97ab85aa`.
+
+The canonical shell is now the sole primary route-activation owner. No visible navigation, Rankings, Games, Picks, Intelligence, War Room, profile, sharing, saved-state, notification, or installed-app behavior changed.
+
+## 2026-07-20 — Phase 2 identity/profile ownership audit completed
+
+Created `docs/startup/PHASE-2-IDENTITY-PROFILE-OWNERSHIP-AUDIT.md` from production `main` `fa47a51513c28bc3ba6173f1c95c47ca97ab85aa`.
+
+The documentation-only audit identified one first genuine duplicate responsibility: `picks-member-pin.js` directly verifies returning-member credentials and persists group/admin/room/display-name access even though `play-profile-identity.js` already owns current login, legacy fallback, resolved identity cache, storage normalization, and readiness publication.
+
+The first runtime candidate is limited to delegating that Picks login transaction to `window.UFC_PLAY_PROFILE` while preserving the existing card, validation/status copy, wrong-PIN recovery, active-room or Picks-Home continuation, member PIN settings, commissioner PIN controls, observers, and status refresh.
+
+Canonical-group migration, profile editing, community/activity/avatar rendering, notification identity consumption, product compatibility, route ownership, native shell, sharing, rankings, data, and product UI are explicitly outside that batch. The audit defines 12 required execution traces, focused automated proof, physical iPhone proof, stop conditions, and deferred later compatibility candidates.
+

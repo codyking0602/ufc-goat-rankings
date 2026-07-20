@@ -4,39 +4,33 @@ _Last updated: 2026-07-20_
 
 ## Overall status
 
-- **Current phase:** Phase 2 route-ownership audit complete; no Phase 2 runtime removal is authorized yet.
+- **Current phase:** Phase 2 route ownership is physically complete; the identity/profile audit is complete and its first isolated runtime candidate is authorized for proof.
 - **Phase 0:** Complete.
 - **Phase 1:** Complete.
 - **Phase 1 runtime batches merged and physically verified:** 13.
-- **Latest verified runtime commit:** `44684936bce748572a3497ec161500011a9623b9`.
+- **Latest verified runtime commit:** `fa47a51513c28bc3ba6173f1c95c47ca97ab85aa`.
 - **Exact Batch 12 iPhone-tested head:** `a9f50c846c5f3b266b444f0f1a6ffc2e2c9bf9e0`.
 - **Phase 2 route-audit starting `main`:** `7d9dc2ce668d5a4eac9dd9c31fe7e9865abc4dfe`.
 - **Phase 2 route audit:** [`PHASE-2-ROUTE-OWNERSHIP-AUDIT.md`](./PHASE-2-ROUTE-OWNERSHIP-AUDIT.md).
-- **Estimated entire cleanup progress:** approximately 52%.
+- **Estimated entire cleanup progress:** approximately 58%.
 - **Master tracker:** [#102 — Zero-change startup architecture cleanup](https://github.com/codyking0602/ufc-goat-rankings/issues/102).
 - **Visible product changes approved:** none.
 - **Documentation PR / merge:** [#125](https://github.com/codyking0602/ufc-goat-rankings/pull/125), squash merge `0ded9ae67d415bb1cf5125eb6c0b429ce1dc5863`.
-- **Recommended session state:** start a fresh chat for the focused missing/delayed-shell proof. Do not begin the runtime removal until that proof passes.
+- **Recommended session state:** continue with one fresh identity/profile runtime branch. Stop at the exact installed-iPhone gate before merge.
 
-## Phase 2 route-audit conclusion
+## Phase 2 route and identity/profile status
 
-Route ownership is genuinely duplicated, but the duplicate-looking paths are not equally removable.
+Route ownership is now physically complete:
 
-Confirmed duplication:
+1. PR #128 added the canonical shell recovery-window queue and was merged as `63c00d5f16859bca54b9d68e665d55f852d0b93e` after exact head `71a73a4e7e6f9c6ca9486aa21c5e168f834d17da` passed installed-iPhone verification.
+2. PR #129 removed the legacy `app.js` primary-tab listener and was merged as `fa47a51513c28bc3ba6173f1c95c47ca97ab85aa` after exact head `bd8065bbe1433575cf3ff042e6f630266dd1da1f` passed installed-iPhone verification.
+3. `octagon-hq-shell.js` is the sole primary route-activation owner, and the permanent startup contract rejects reintroduction of the `app.js` listener.
 
-1. `assets/js/app.js` attaches a legacy primary-tab view switcher after `assets/js/octagon-hq-shell.js` has already claimed canonical navigation.
-2. `assets/js/fresh-home-route-bootstrap.js` and `assets/js/fresh-home-launch.js` independently classify startup Home/Picks/deep-link intent and can activate the same route twice.
+The identity/profile audit is complete: [`PHASE-2-IDENTITY-PROFILE-OWNERSHIP-AUDIT.md`](./PHASE-2-IDENTITY-PROFILE-OWNERSHIP-AUDIT.md).
 
-The cleanest first candidate is the legacy `.tab` activation block in `assets/js/app.js`. It is shadowed during normal clicks by the shell's earlier document-capture handler, but it may still be a partial fallback during a failed first shell load and later `product-architecture.js` recovery. Current tests do not prove that failure window.
+Its first isolated candidate is the returning-member Picks sign-in path. `play-profile-identity.js` is the canonical credential, fallback, identity-cache, readiness, and access-persistence owner. `picks-member-pin.js` must delegate authentication while retaining its Picks-specific card, validation/status copy, route continuation, member PIN settings, commissioner PIN management, observer, and status refresh.
 
-Therefore:
-
-- no runtime PR should be opened yet;
-- the next task is a focused route-owner harness only;
-- the harness must prove that delayed/missing shell recovery does not depend on the legacy `app.js` listener;
-- if that proof fails, the runtime candidate is rejected and the audit must be updated before another responsibility is selected.
-
-The startup-classifier duplication is a later batch. `fresh-home-launch.js` still closes a required query-only Picks route gap and owns the short-lived Picks resume marker.
+No other identity/profile consolidation is authorized in that batch.
 
 ## Completed runtime batches
 
@@ -55,6 +49,8 @@ The startup-classifier duplication is a later batch. `fresh-home-launch.js` stil
 | 10B | `play-hub.js` | #119 | `b1a7a3c92c2f7c13b64b4d68df3d26e4e9afbec8` | Exact tested head normal |
 | 11 | `share-deep-links.js` | #121 | `e332f46ec63c6698fdebd8ecc843c3f0df4eaabd` | Exact tested head normal |
 | 12 | `production-ranking-bootstrap.js` | #123 | `44684936bce748572a3497ec161500011a9623b9` | Exact tested head normal |
+| 2A | Canonical shell recovery queue | #128 | `63c00d5f16859bca54b9d68e665d55f852d0b93e` | Exact tested head normal |
+| 2B | Legacy `app.js` primary-tab listener removal | #129 | `fa47a51513c28bc3ba6173f1c95c47ca97ab85aa` | Exact tested head normal |
 
 ## Batch 12 closeout — Calculated production ranking bootstrap
 
@@ -161,22 +157,23 @@ Do not repair these inside startup architecture work unless a failure directly r
 
 ## Exact next action
 
-1. Start a fresh chat from current `main` after the documentation audit is merged.
-2. Reread the governing startup docs, the Phase 2 route audit, and every current Issue #102 comment.
-3. Build a focused harness for the single candidate responsibility: legacy primary top-tab activation in `assets/js/app.js`.
-4. Simulate normal shell ownership, delayed shell start, failed first shell load, product-architecture dynamic recovery, and a user activation during the recovery window.
-5. Do not remove the listener unless the harness proves it is not a required fallback.
-6. If the proof passes, open one isolated runtime batch touching only `app.js`, the startup contract, the focused harness, and the workflow entry.
-7. Do not begin startup-classifier consolidation, Phase 3 repair retirement, Phase 4 startup deferral, Phase 5 manifest simplification, or Phase 6 certification.
+1. Start a fresh runtime branch from current `main` after this documentation audit merges.
+2. Add a focused browser proof for the returning-member Picks login transaction before or with the runtime edit.
+3. Extend `UFC_PLAY_PROFILE.login()` only as needed to return existing group/active-room continuation context and optionally suppress a redundant pre-navigation readiness event.
+4. Change only the Picks returning-member login path to call the canonical owner; preserve its UI and route continuation.
+5. Keep canonical-group migration, profile editing, community, activity, avatar, notification, product compatibility, PIN settings, commissioner PIN, routing, and sharing unchanged.
+6. Run the complete Startup Architecture Gate and inspect unrelated red workflows without repairing them.
+7. Freeze an immutable draft-PR head and stop for installed-iPhone verification before merge.
 
 ## Stop conditions for the next session
 
-Stop before runtime editing if:
+Stop or redesign before runtime merge if:
 
-- the legacy `app.js` listener performs a required action while the shell is delayed or recovering;
-- the proposed change requires edits to shell, fresh launch, product architecture, native shell, share, Picks, Play, profile, War Room, Intelligence, or `index.html`;
-- rankings, data, formulas, UI, navigation behavior, saved state, sharing payloads, or product copy would change;
-- one tap would produce zero or multiple route activations;
-- a repair, retry, or fallback would be removed without focused regression proof;
-- the work expands into identity/profile, notification, general refresh/lifecycle, or Phase 3 consolidation;
-- the work treats `app.js` as a normal IIFE guard candidate.
+- the Picks module still calls a login RPC or writes access tokens after delegation;
+- the canonical owner cannot preserve active-room/event continuation;
+- delayed owner availability is not retryable;
+- one accepted submit produces zero or multiple credential checks;
+- shared profile modal login behavior changes;
+- PIN status/change or commissioner PIN ownership moves;
+- the change requires canonical-group, app-profile, community, activity, avatar, notification, product-architecture, native-shell, route-shell, sharing, scoring, data, UI, or product-copy edits;
+- wrong-PIN recovery, stored access, profile readiness, cold-launch normalization, or installed-app behavior changes.

@@ -1,6 +1,6 @@
 # Startup Ownership Inventory
 
-This file records the canonical owner of each startup responsibility. Detailed duplicate-execution findings and the completed Phase 1 sequence are in [`PHASE-1-OWNER-AUDIT.md`](./PHASE-1-OWNER-AUDIT.md). The current route boundary is documented in [`PHASE-2-ROUTE-OWNERSHIP-AUDIT.md`](./PHASE-2-ROUTE-OWNERSHIP-AUDIT.md).
+This file records the canonical owner of each startup responsibility. Detailed duplicate-execution findings and the completed Phase 1 sequence are in [`PHASE-1-OWNER-AUDIT.md`](./PHASE-1-OWNER-AUDIT.md). The completed route boundary is documented in [`PHASE-2-ROUTE-OWNERSHIP-AUDIT.md`](./PHASE-2-ROUTE-OWNERSHIP-AUDIT.md), and the current identity/profile boundary is documented in [`PHASE-2-IDENTITY-PROFILE-OWNERSHIP-AUDIT.md`](./PHASE-2-IDENTITY-PROFILE-OWNERSHIP-AUDIT.md).
 
 ## Ownership rules
 
@@ -18,11 +18,15 @@ This file records the canonical owner of each startup responsibility. Detailed d
 | Responsibility | Canonical owner | Current status | Phase 1 / Phase 2 result |
 |---|---|---|---|
 | Earliest installed-app route normalization | `assets/js/fresh-home-route-bootstrap.js` | Canonical synchronous owner | Global duplicate-start guard merged and physically verified in PR #100; Phase 2 confirms late launch repeats part of its Home/Picks classification but still closes a query-only Picks gap |
-| Primary destination and ranking-subview activation | `assets/js/octagon-hq-shell.js` via `window.UFC_APP_SHELL` | Canonical navigation owner | Global duplicate-file guard merged and physically verified in PR #105; Phase 2 confirms `app.js` still contains a shadowed legacy top-tab activation path |
+| Primary destination and ranking-subview activation | `assets/js/octagon-hq-shell.js` via `window.UFC_APP_SHELL` | Canonical navigation owner | Recovery queue merged and physically verified in PR #128; legacy `app.js` activation removed and physically verified in PR #129 |
 | Legacy navigation-grid cleanup | `assets/js/octagon-hq-nav-grid.js` | Compatibility cleanup | Global duplicate-file guard merged and physically verified in PR #106; presentation-only route synchronization, not a second route chooser |
 | Ranking data | `assets/data/ranking-data.js` | Canonical data source | Outside startup cleanup except load-order checks |
-| Base ranking rendering and global UI APIs | `assets/js/app.js` | Structural global singleton | Exact-one manifest load retained; Phase 2 identifies its legacy `.tab` activation block as duplicate primary-navigation code, but removal is blocked until delayed/missing-shell recovery proof passes |
+| Base ranking rendering and global UI APIs | `assets/js/app.js` | Structural global singleton | Exact-one manifest load retained; legacy primary-tab activation removed in physically verified PR #129 and permanently prohibited by the startup contract |
 | Calculated production scoring bootstrap | `assets/js/production-ranking-bootstrap.js` via `window.UFC_PRODUCTION_RANKING_BOOTSTRAP_LIFECYCLE` | Canonical calculated-production launcher | Explicit `start`/`retry`/`apply`/`refresh` lifecycle plus complete-owner guard merged and physically verified in PR #123; failed attempts remain callable without file re-evaluation |
+| Shared profile credentials, login, resolution, cache, and access persistence | `assets/js/play-profile-identity.js` via `window.UFC_PLAY_PROFILE` | Canonical identity owner | Phase 2 identity audit confirms the Picks returning-member path duplicates login RPC and storage ownership; first runtime candidate delegates that transaction here |
+| Legacy group-token adoption | `assets/js/app-canonical-group.js` via `window.UFC_APP_IDENTITY_CONFIG` | Pre-resolution migration owner | Remains separate: validates historical group tokens, adopts them into GOAT26, canonicalizes URLs, and owns its existing one-time migration reload |
+| App profile editing and group snapshot | `assets/js/app-profile.js` via `window.UFC_APP_PROFILE` | Canonical profile-presentation owner | Delegates credentials to `UFC_PLAY_PROFILE`; retains chip/editor, fighter/avatar/photo changes, group snapshot, and `ufc-app-profile-updated` |
+| Picks returning-member and PIN surfaces | `assets/js/picks-member-pin.js` | Picks UI and PIN-management owner | Must retain card UI, validation/status, post-login continuation, member PIN and commissioner PIN controls; direct credential/storage ownership is the first Phase 2 identity candidate |
 | Picks base runtime | `assets/js/picks.js` | Canonical Picks owner | Global duplicate-file guard merged and physically verified in PR #113; original `DOMContentLoaded`, saved-state, room-resume, rendering, support handoffs, and 30-second polling preserved |
 | Picks internal section routing | `assets/js/picks-internal-navigation.js` | Canonical Picks Home/Event/Settings subroute owner | Legitimate nested route owner using `picksView`, session state, popstate, and DOM repair; not primary destination ownership |
 | Play base runtime | `assets/js/play.js` | Canonical base Play owner | Prerequisite-aware guard merged and physically verified in PR #115; ownership begins only after `#play` and `RANKING_DATA.men` exist |
@@ -60,46 +64,26 @@ All owners listed in the major Phase 1 audit have been handled according to thei
 
 There is no next isolated Phase 1 owner in the current audit.
 
-## Phase 2 route boundary
+## Phase 2 completed route boundary
 
-The route audit is complete and proves genuine duplicate ownership, but it does not authorize runtime deletion.
+The canonical shell is now the sole primary destination and ranking-subview activation owner. PR #128 preserved missing-shell recovery through one queued canonical handoff, and PR #129 removed the shadowed `app.js` listener. Both exact heads passed the full automated gate and installed-iPhone verification.
 
-### Canonical primary route owner
+Startup classification overlap between early bootstrap and late launch remains a later route candidate because query-only Picks continuation and the short-lived Picks resume marker still depend on late launch.
 
-`assets/js/octagon-hq-shell.js` is the sole intended owner of:
+## Phase 2 identity/profile boundary
 
-- primary destination activation;
-- ranking-subview activation and preservation;
-- active-view mutation;
-- primary top-nav selection/ARIA;
-- route hash writing and hash parsing;
-- toolbar synchronization;
-- disabled War Room fallback;
-- `octagon-hq:view-change` publication.
+`play-profile-identity.js` is the sole intended owner of shared credential verification, current/legacy login RPC selection, resolved identity cache, canonical access persistence, and `ufc-play-profile-ready` publication.
 
-### First candidate responsibility
+The first candidate is limited to delegating `picks-member-pin.js` returning-member authentication. The Picks module remains owner of its sign-in card presentation, validation/status, post-login Picks route, member PIN settings, commissioner PIN controls, observer, and status refresh.
 
-The first candidate is removal of the legacy primary `.tab` activation block in `assets/js/app.js`.
-
-It is **not runtime-ready** until a focused harness proves that:
-
-- the shell still handles normal and programmatic top-tab clicks once;
-- Rankings subview preservation is unchanged;
-- a failed or delayed first shell load recovers through product architecture without relying on the legacy handler;
-- an activation during that recovery window is not lost.
-
-If the missing-owner proof fails, the candidate must be rejected and the audit updated. Do not compensate by editing multiple route owners in one batch.
-
-### Later route candidate
-
-Early bootstrap and late launch both classify startup route intent. Consolidation is deferred because late launch still activates query-only Picks invitations/continuations and owns the short-lived Picks resume marker.
+Canonical-group adoption, profile editing, community/activity/avatar rendering, notification consumption, and cross-feature compatibility remain separate owners. Later storage/event normalization requires a new isolated audit after the first identity batch is physically verified.
 
 ## Remaining Phase 2 audit order
 
 After the first route candidate is either proved or rejected, continue the roadmap one responsibility area at a time:
 
-1. complete the isolated route-owner runtime batch or update the route audit;
-2. identity/profile ownership audit;
+1. complete and physically verify the isolated identity/profile credential-delegation batch;
+2. audit remaining identity/profile storage/event compatibility separately;
 3. notification ownership audit;
 4. refresh/lifecycle ownership audit.
 
