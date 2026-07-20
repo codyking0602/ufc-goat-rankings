@@ -1,0 +1,69 @@
+name: Apply isolated app tab listener removal
+
+on:
+  push:
+    branches: [agent/phase-2-app-tab-listener-removal]
+    paths:
+      - '.github/workflows/phase-2-app-tab-listener-removal-apply.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/phase-2-app-tab-listener-removal
+      - name: Apply exact isolated patch
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          app_path = Path('assets/js/app.js')
+          app = app_path.read_text()
+          legacy = """document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+            document.querySelectorAll('.view').forEach(v=>v.classList.remove('active-view'));
+            btn.classList.add('active');
+            el(btn.dataset.view).classList.add('active-view');
+            refresh();
+          }));
+          """
+          if app.count(legacy) != 1:
+              raise SystemExit(f'Expected exactly one legacy tab listener, found {app.count(legacy)}')
+          app_path.write_text(app.replace(legacy, ''))
+
+          contract_path = Path('scripts/test-startup-contract.mjs')
+          contract = contract_path.read_text()
+          anchor = "const product=read('assets/js/product-architecture.js');\n"
+          guard = "const app=read('assets/js/app.js');\nassert.equal(app.includes(\"document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click'\"),false,'app.js must not own primary tab activation; the canonical shell owns route activation.');\n\n"
+          if guard not in contract:
+              if contract.count(anchor) != 1:
+                  raise SystemExit('Startup contract anchor missing or duplicated')
+              contract = contract.replace(anchor, guard + anchor)
+              contract_path.write_text(contract)
+
+          gate_path = Path('.github/workflows/startup-architecture-gate.yml')
+          gate = gate_path.read_text()
+          product_path = "      - 'assets/js/product-architecture.js'\n"
+          app_path_line = "      - 'assets/js/app.js'\n"
+          if gate.count(app_path_line) == 0:
+              if gate.count(product_path) != 2:
+                  raise SystemExit('Expected two product-architecture path anchors')
+              gate = gate.replace(product_path, product_path + app_path_line)
+          check_anchor = "          node --check assets/js/product-architecture.js\n"
+          check_line = "          node --check assets/js/app.js\n"
+          if check_line not in gate:
+              if gate.count(check_anchor) != 1:
+                  raise SystemExit('Syntax-check anchor missing or duplicated')
+              gate = gate.replace(check_anchor, check_anchor + check_line)
+          gate_path.write_text(gate)
+          PY
+          rm .github/workflows/phase-2-app-tab-listener-removal-apply.yml
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add assets/js/app.js scripts/test-startup-contract.mjs .github/workflows/startup-architecture-gate.yml .github/workflows/phase-2-app-tab-listener-removal-apply.yml
+          git commit -m "Remove legacy app tab route listener"
+          git push origin HEAD:agent/phase-2-app-tab-listener-removal
