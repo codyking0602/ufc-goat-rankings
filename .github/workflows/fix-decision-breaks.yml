@@ -1,0 +1,35 @@
+name: Fix decision markdown breaks
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-decision-breaks.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/phase-2-identity-profile-audit
+      - name: Restore intentional Markdown breaks
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path=Path('docs/startup/DECISIONS.md')
+          lines=[]
+          for line in path.read_text().splitlines():
+              if line.startswith('**Date:** '): line=line.rstrip()+'  '
+              lines.append(line)
+          path.write_text('\n'.join(lines)+'\n')
+          PY
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add docs/startup/DECISIONS.md
+          git commit -m "Preserve decision log Markdown formatting"
+          git push origin HEAD:agent/phase-2-identity-profile-audit
+# initial
