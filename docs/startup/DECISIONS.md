@@ -179,3 +179,16 @@ Intentional later community work remains owned by the public `load()`, `refresh(
 PR #114 therefore blocks only accidental second-file ownership: a second private state closure, replacement public API, duplicate document/window listener sets, duplicate directory/profile rendering ownership, duplicate Top 10 action handling, duplicate identity/storage handoff, and duplicate challenge wrapping attempts. Background/resume, page-show, visibility, notification, badge, and sharing lifecycles remain owned by their surrounding modules and were not moved into the community owner.
 
 The marker must remain immediately after `'use strict'`, before all private state, listeners, storage, DOM, API, and rendering ownership. The original source after the marker remains byte-for-byte unchanged. Focused equivalence testing, the full Startup Architecture Gate, the Phase 4B mobile/profile suite, and physical installed-iPhone verification passed on exact head `1915c0ff314b7911688574f279eba889d4967a42` before PR #114 was squash-merged as `4a811201bd6c2ac620d829d9701a187e468142b0`.
+
+## Decision 020 — Play base ownership begins only after prerequisites pass
+
+**Date:** 2026-07-19  
+**Status:** Locked
+
+`assets/js/play.js` is a prerequisite-aware owner. Its required startup prerequisites are the static `#play` panel and `window.RANKING_DATA.men` as an array. The file may intentionally return when either prerequisite is unavailable, and that failed attempt must not claim successful ownership.
+
+The `window.__UFC_PLAY_STARTED__` marker must remain immediately after the existing prerequisite return and before `const state`, because `state.top10: loadTop10()` is the first storage and successful-owner work. A missing-prerequisite execution must leave the marker unset and must create no listener, observer, timer, interval, storage, DOM, API, rendering, Top 10, or blind-resume ownership.
+
+Duplicate file evaluation remains permitted only until the first successful initialization. After prerequisites pass and the marker is set, later evaluations must exit before state construction and add zero ownership. `play.js` has no `DOMContentLoaded` retry, public retry API, view-change retry, dynamic loader, observer, interval, or shell-route owner of its own; therefore a later file execution is the preserved recovery path after an earlier prerequisite failure.
+
+PR #115 preserved exact first-run Top 10 and blind-resume behavior, two ranking-ready listeners, one 1400 ms refresh timeout, all sharing and navigation handoffs, and byte-for-byte source equivalence after removing only the marker lines. Focused missing-prerequisite and duplicate-execution proof, the full Startup Architecture Gate, and physical installed-iPhone verification passed on exact head `6eac38e575dd778a5b4e42fe5b83283723df1847` before squash merge `2040f604892c067ee288fe88df15594a570ac396`.
