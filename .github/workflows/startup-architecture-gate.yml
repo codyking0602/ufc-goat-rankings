@@ -116,7 +116,7 @@ jobs:
           marker='async function testRecoveryVariant'
           if marker not in body:
               raise SystemExit('Expected recovery function marker not found')
-          body=body.split(marker,1)[0]+'''let browser;\ntry{\n  browser=await chromium.launch({headless:true});\n  const normalBaseline=await testNormalVariant(browser,'baseline',appSource);\n  const normalCandidate=await testNormalVariant(browser,'candidate',candidateSource);\n  assert.deepEqual(normalCandidate,normalBaseline,'Removing only the legacy app.js tab block changed normal canonical route or legacy rendering/control behavior.');\n  const missingDom=await testTemporaryMissingShellDom(browser);\n  console.log(JSON.stringify({passed:true,normalBaseline,normalCandidate,missingDom},null,2));\n}finally{\n  if(browser)await browser.close();\n}\n''' 
+          body=body.split(marker,1)[0]+'''let browser;\ntry{\n  browser=await chromium.launch({headless:true});\n  const normalBaseline=await testNormalVariant(browser,'baseline',appSource);\n  const normalCandidate=await testNormalVariant(browser,'candidate',candidateSource);\n  assert.deepEqual(normalCandidate,normalBaseline,'Removing only the legacy app.js tab block changed normal canonical route or legacy rendering/control behavior.');\n  const missingDom=await testTemporaryMissingShellDom(browser);\n  console.log(JSON.stringify({passed:true,normalBaseline,normalCandidate,missingDom},null,2));\n}finally{\n  if(browser)await browser.close();\n}\n'''
           path.write_text(body)
           PY
           set -o pipefail
@@ -126,6 +126,16 @@ jobs:
         if: always()
         shell: bash
         run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path=Path('scripts/test-route-owner-recovery-window.mjs')
+          body=path.read_text()
+          body=body.replace("await page.addScriptTag({content:'window.__firstShellAttemptFailed=true;'});","await page.evaluate(()=>{window.__firstShellAttemptFailed=true;});")
+          body=body.replace("await page.addScriptTag({content:`const el=id=>document.getElementById(id);function refresh(){window.__legacyRefreshes+=1;}\\n${legacyListenerSource}`});","await page.evaluate(source=>(0,eval)(source),`const el=id=>document.getElementById(id);function refresh(){window.__legacyRefreshes+=1;}\\n${legacyListenerSource}`);")
+          body=body.replace("await page.addScriptTag({content:productSource});","await page.evaluate(source=>(0,eval)(source),productSource);")
+          body=body.replace("await page.addScriptTag({content:shellSource});","await page.evaluate(source=>(0,eval)(source),shellSource);")
+          path.write_text(body)
+          PY
           set -o pipefail
           node scripts/test-route-owner-recovery-window.mjs 2>&1 | tee /tmp/route-owner-recovery-proof.log
 
