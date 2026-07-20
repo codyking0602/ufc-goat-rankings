@@ -398,3 +398,31 @@ Cody physically tested exact immutable PR head `a9f50c846c5f3b266b444f0f1a6ffc2e
 PR #123 was squash-merged as commit `44684936bce748572a3497ec161500011a9623b9`. Batch 12 was closed as physically verified.
 
 Batch 12 completed the final owner in the major Phase 1 audit. There is no next isolated Phase 1 owner in the current audit. The next project step is a fresh Phase 2 duplicate-ownership audit, beginning with route ownership, before any consolidation or runtime deletion is attempted.
+
+## 2026-07-20 — Phase 2 route-ownership audit completed
+
+Created `docs/startup/PHASE-2-ROUTE-OWNERSHIP-AUDIT.md` from verified starting `main` `7d9dc2ce668d5a4eac9dd9c31fe7e9865abc4dfe`.
+
+The documentation-only audit:
+
+- mapped startup normalization, primary activation, ranking subviews, top and bottom navigation, Home launch, warm and cold shared links, popstate, fighter profiles, Picks, Play, War Room, Intelligence, challenge routing, retries, missing prerequisites, resume, storage, events, APIs, observers, timers, and dynamic shell recovery;
+- documented 12 required execution traces;
+- separated destination choice, destination activation, presentation synchronization, payload routing, repair, retry, resume, and decoration;
+- confirmed duplicate ownership in the legacy `app.js` top-tab activation block and the overlapping early/late Home/Picks startup classifier;
+- documented why deep-link orchestration, Picks and Play internal routes, native-shell synchronization, and repair layers are legitimate shared responsibilities;
+- prohibited a runtime change during the audit.
+
+The first isolated candidate is removal of the shadowed legacy primary `.tab` activation block in `assets/js/app.js`, leaving `assets/js/octagon-hq-shell.js` as the sole primary top-navigation owner.
+
+The candidate is **not yet authorized** because the legacy listener may still provide partial navigation during a failed first shell load before `product-architecture.js` dynamically recovers the shell. A focused missing/delayed-shell harness must prove that the fallback is unnecessary and that an activation during recovery is not lost.
+
+If the proof passes, the future runtime batch is limited to:
+
+- `assets/js/app.js`;
+- `scripts/test-startup-contract.mjs`;
+- a new focused route-owner harness;
+- the startup workflow entry that runs the harness.
+
+Fresh-launch classifier consolidation remains later work because query-only Picks invitations/continuations and the short-lived Picks resume marker still depend on the late launcher.
+
+No runtime, test, workflow, scoring, fighter, UI, product, photo, sharing, notification, service-worker, or generated-data file changed in this audit. Estimated entire startup cleanup progress moved from approximately 50% to approximately 52% through completed Phase 2 route documentation only.
