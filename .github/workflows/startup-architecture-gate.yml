@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'index.html'
+      - 'assets/js/app.js'
       - 'assets/js/fresh-home-route-bootstrap.js'
       - 'assets/js/octagon-hq-shell.js'
       - 'assets/js/octagon-hq-nav-grid.js'
@@ -21,6 +22,7 @@ on:
       - 'assets/js/picks-member-pin.js'
       - 'assets/js/picks-persistent-groups.js'
       - 'scripts/test-startup-contract.mjs'
+      - 'scripts/test-route-owner-app-tab-delegation.mjs'
       - 'scripts/test-ios-standalone-resume-home.mjs'
       - 'scripts/test-profile-signin-stability.mjs'
       - 'scripts/test-phase-4b-mobile.mjs'
@@ -29,6 +31,7 @@ on:
     branches: [main]
     paths:
       - 'index.html'
+      - 'assets/js/app.js'
       - 'assets/js/fresh-home-route-bootstrap.js'
       - 'assets/js/octagon-hq-shell.js'
       - 'assets/js/octagon-hq-nav-grid.js'
@@ -45,6 +48,7 @@ on:
       - 'assets/js/picks-member-pin.js'
       - 'assets/js/picks-persistent-groups.js'
       - 'scripts/test-startup-contract.mjs'
+      - 'scripts/test-route-owner-app-tab-delegation.mjs'
       - 'scripts/test-ios-standalone-resume-home.mjs'
       - 'scripts/test-profile-signin-stability.mjs'
       - 'scripts/test-phase-4b-mobile.mjs'
@@ -71,6 +75,8 @@ jobs:
       - name: Validate startup JavaScript syntax
         run: |
           node --check scripts/test-startup-contract.mjs
+          node --check scripts/test-route-owner-app-tab-delegation.mjs
+          node --check assets/js/app.js
           node --check assets/js/fresh-home-route-bootstrap.js
           node --check assets/js/octagon-hq-shell.js
           node --check assets/js/product-architecture.js
@@ -96,6 +102,9 @@ jobs:
           done
           cat /tmp/startup-architecture-server.log
           exit 1
+
+      - name: Test focused app tab route-owner delegation
+        run: node scripts/test-route-owner-app-tab-delegation.mjs
 
       - name: Test iOS startup route stability
         run: node scripts/test-ios-standalone-resume-home.mjs
