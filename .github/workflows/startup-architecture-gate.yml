@@ -131,7 +131,17 @@ jobs:
         run: node scripts/test-route-owner-shell-recovery-queue.mjs
 
       - name: Test canonical profile login delegation
-        run: node scripts/test-profile-login-owner-delegation.mjs
+        run: |
+          set -o pipefail
+          node scripts/test-profile-login-owner-delegation.mjs 2>&1 | tee /tmp/profile-login-owner-report.log
+
+      - name: Upload canonical profile login diagnostic
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: profile-login-owner-report
+          path: /tmp/profile-login-owner-report.log
+          if-no-files-found: ignore
 
       - name: Test community profile access ownership
         run: node scripts/test-community-profile-access-owner.mjs
