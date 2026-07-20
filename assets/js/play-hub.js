@@ -17,6 +17,8 @@
   const top10Button=play?.querySelector('[data-play-mode="top10"]');
   const blindButton=play?.querySelector('[data-play-mode="blind"]');
   if(!play||!shell||!sectionTitle||!top10Button||!blindButton)return;
+  if(window.__UFC_PLAY_HUB_STARTED__)return;
+  window.__UFC_PLAY_HUB_STARTED__=true;
 
   const nativeRandom=window.__UFC_NATIVE_RANDOM||Math.random.bind(Math);
   window.__UFC_NATIVE_RANDOM=nativeRandom;

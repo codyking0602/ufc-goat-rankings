@@ -91,6 +91,8 @@ assert(read('assets/js/picks.js').includes('__UFC_PICKS_STARTED__'),'Picks must 
 assert(read('assets/js/community-profiles.js').includes('__UFC_COMMUNITY_PROFILES_STARTED__'),'Community profiles must keep its global duplicate-file-execution guard.');
 const play=read('assets/js/play.js');
 assert(/if\(!panel \|\| !Array\.isArray\(DATA\.men\)\) return;\s+if\(window\.__UFC_PLAY_STARTED__\) return;\s+window\.__UFC_PLAY_STARTED__ = true;\s+const state = \{/.test(play),'Play must keep its duplicate-file guard after required DOM and ranking-data prerequisites pass and before successful ownership begins.');
+const playHub=read('assets/js/play-hub.js');
+assert(/if\(!play\|\|!shell\|\|!sectionTitle\|\|!top10Button\|\|!blindButton\)return;\s+if\(window\.__UFC_PLAY_HUB_STARTED__\)return;\s+window\.__UFC_PLAY_HUB_STARTED__=true;\s+const nativeRandom=/.test(playHub),'Play hub must keep its duplicate-file guard after required Play DOM prerequisites pass and before successful ownership begins.');
 
 const product=read('assets/js/product-architecture.js');
 assert(product.includes('__UFC_PRODUCT_ARCHITECTURE_STARTED__'),'Product architecture must keep its global duplicate-start guard.');
