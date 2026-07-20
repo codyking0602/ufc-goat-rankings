@@ -1,6 +1,13 @@
 name: Sync UFC Card and Odds
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'config/ufc-card-sources.json'
+      - 'scripts/sync-ufc-card.mjs'
+      - '.github/workflows/refresh-ufc-odds.yml'
   schedule:
     # Legacy smoke-contract reference: cron: '17 12 * * *'
     - cron: '17 */6 * * *'
