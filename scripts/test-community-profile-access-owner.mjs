@@ -12,7 +12,7 @@ const supabaseStub=`
   const member={id:'m1',display_name:'Cody',is_admin:true,points:40,score:40,correct:10,picks_made:12,picks_count:12,event_wins:1,top_ten:[]};
   const room={code:'ROOM01',event_id:'event-1'};
   const group={code:'GOAT26',name:'GOAT26',is_admin:true,member_count:1};
-  const identity=token=>({ok:true,group,member,member_token:token||'community-owner-token',active_room:room,rooms:[room]});
+  const identity=token=>({ok:true,group,member,member_token:token||'community-owner-token',active_room:null,rooms:[room]});
   const ok=data=>({data,error:null});
   const client={
     async rpc(name,args){
@@ -21,7 +21,7 @@ const supabaseStub=`
       if(name==='app_profile_group_snapshot')return ok({ok:true,group,me:member,members:[member]});
       if(name==='app_profile_community_snapshot')return ok({ok:true,group,me_id:'m1',members:[member]});
       if(name==='picks_group_for_room')return ok({group_code:'GOAT26'});
-      if(name==='picks_group_snapshot')return ok({group,season:{name:'2026 Season',correct_points:4,underdog_bonus:1},me:member,members:[member],events:[{event_id:'event-1',room_code:'ROOM01',status:'active',is_active:true,name:'Test Event'}],available_events:[],active_room:room});
+      if(name==='picks_group_snapshot')return ok({group,season:{name:'2026 Season',correct_points:4,underdog_bonus:1},me:member,members:[member],events:[{event_id:'event-1',room_code:'ROOM01',status:'upcoming',is_active:false,name:'Test Event'}],available_events:[],active_room:null});
       if(name==='picks_room_snapshot')return ok({room,members:[member],me:member});
       if(name==='picks_public_events')return ok([{id:'event-1',name:'Test Event',status:'upcoming',eventDate:'2026-07-25T00:00:00Z',fights:[]}]);
       if(name==='picks_group_public')return ok(group);
@@ -53,6 +53,7 @@ try{
   await page.addInitScript(()=>{
     const originalSet=Storage.prototype.setItem;
     originalSet.call(localStorage,'ufc-picks:group:GOAT26','community-owner-token');
+    originalSet.call(localStorage,'ufc-picks:auto-restore-disabled','true');
     window.__COMMUNITY_ACCESS_WRITES__=[];
     window.__COMMUNITY_HISTORY_WRITES__=[];
     Storage.prototype.setItem=function(key,value){
