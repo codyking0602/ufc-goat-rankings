@@ -1,12 +1,12 @@
 (function(){
   'use strict';
 
-  const VERSION='octagon-access-panel-20260717a';
+  const VERSION='octagon-access-panel-20260720b-passive-identity';
   const CANONICAL_CODE='GOAT26';
-  const TOKEN_KEY=`ufc-picks:group:${CANONICAL_CODE}`;
   const ACCESS_CHANNEL=`octagon-access-${CANONICAL_CODE.toLowerCase()}`;
   const instanceId=globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random().toString(36).slice(2)}`;
   const state={
+    identity:null,
     me:null,
     canAccess:false,
     roster:[],
@@ -16,7 +16,8 @@
     channel:null,
     realtimeClient:null,
     refreshTimer:0,
-    pollTimer:0
+    pollTimer:0,
+    accessPromise:null
   };
 
   const text=value=>String(value??'').trim();
@@ -24,8 +25,7 @@
     '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
   }[char]));
   const initials=value=>text(value).split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase()||'UFC';
-  const get=key=>{try{return localStorage.getItem(key)||'';}catch(_error){return'';}};
-  const tokenFor=identity=>text(identity?.memberToken||identity?.member_token||get(TOKEN_KEY));
+  const tokenFor=identity=>text(identity?.memberToken||identity?.member_token);
 
   function fighterFor(slug){
     const clean=text(slug).toLowerCase();
@@ -168,35 +168,53 @@
     hydrateBrokenImages(list);
   }
 
-  async function context(){
+  function cachedIdentity(){
+    const identity=state.identity||window.UFC_PLAY_PROFILE?.identity||window.UFC_APP_PROFILE?.identity;
+    state.identity=identity||null;
+    return state.identity;
+  }
+
+  function passiveContext(){
     const profile=window.UFC_PLAY_PROFILE;
-    const identity=await profile?.resolve?.().catch(()=>null);
+    const identity=cachedIdentity();
     return{client:profile?.client||null,identity,token:tokenFor(identity)};
   }
 
+  async function interactiveContext(){
+    const profile=window.UFC_PLAY_PROFILE;
+    let identity=cachedIdentity();
+    if(!identity)identity=await profile?.require?.({title:'Open your UFC App profile',description:'Use your GOAT26 display name and four-digit PIN.'});
+    state.identity=identity||null;
+    return{client:profile?.client||null,identity:state.identity,token:tokenFor(state.identity)};
+  }
+
   async function checkCurrentAccess(){
-    const {client,token}=await context();
-    if(!client||!token){
-      state.me=null;
-      state.canAccess=false;
-      setBetaTabAccess(false,null);
-      ensurePanel();
-      return null;
-    }
-    try{
-      const {data,error}=await client.rpc('octagon_access_status',{p_member_token:token});
-      if(error)throw error;
-      if(!data?.ok)throw new Error(data?.error||'Could not verify Octagon access.');
-      state.me=data.member||null;
-      state.canAccess=Boolean(data.can_access);
-      setBetaTabAccess(state.canAccess,state.me);
-      ensurePanel();
-      await ensureAccessRealtime(client);
-      return data;
-    }catch(_error){
-      ensurePanel();
-      return null;
-    }
+    if(state.accessPromise)return state.accessPromise;
+    state.accessPromise=(async()=>{
+      const {client,token}=passiveContext();
+      if(!client||!token){
+        state.me=null;
+        state.canAccess=false;
+        setBetaTabAccess(false,null);
+        ensurePanel();
+        return null;
+      }
+      try{
+        const {data,error}=await client.rpc('octagon_access_status',{p_member_token:token});
+        if(error)throw error;
+        if(!data?.ok)throw new Error(data?.error||'Could not verify Octagon access.');
+        state.me=data.member||null;
+        state.canAccess=Boolean(data.can_access);
+        setBetaTabAccess(state.canAccess,state.me);
+        ensurePanel();
+        await ensureAccessRealtime(client);
+        return data;
+      }catch(_error){
+        ensurePanel();
+        return null;
+      }
+    })();
+    try{return await state.accessPromise;}finally{state.accessPromise=null;}
   }
 
   async function loadRoster(){
@@ -205,7 +223,7 @@
     accessStatus('Loading GOAT26 access…');
     renderRoster();
     try{
-      const {client,token}=await context();
+      const {client,token}=await interactiveContext();
       if(!client||!token)throw new Error('Reconnect your Cody profile.');
       const {data,error}=await client.rpc('octagon_admin_access_roster',{p_member_token:token});
       if(error)throw error;
@@ -231,7 +249,7 @@
     accessStatus(`${next?'Enabling':'Locking'} ${member.display_name}…`);
     renderRoster();
     try{
-      const {client,token}=await context();
+      const {client,token}=await interactiveContext();
       if(!client||!token)throw new Error('Reconnect your Cody profile.');
       const {data,error}=await client.rpc('octagon_admin_set_access',{
         p_member_token:token,
@@ -311,18 +329,13 @@
 
   function start(){
     installStyles();
-    [0,250,900,2600,5000].forEach(delay=>window.setTimeout(()=>{
-      ensurePanel();
-      checkCurrentAccess();
-    },delay));
+    ensurePanel();
+    checkCurrentAccess();
     ['ufc-play-profile-ready','ufc-app-profile-updated','ufc-canonical-group-ready'].forEach(name=>{
-      window.addEventListener(name,()=>{
+      window.addEventListener(name,event=>{
+        state.identity=event.detail?.identity||event.detail||cachedIdentity();
         scheduleAccessCheck(60);
-        window.setTimeout(checkCurrentAccess,500);
       });
-    });
-    window.addEventListener('storage',event=>{
-      if(event.key===TOKEN_KEY)scheduleAccessCheck(60);
     });
     document.addEventListener('visibilitychange',()=>{
       if(!document.hidden)scheduleAccessCheck(80);
