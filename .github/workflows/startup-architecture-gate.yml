@@ -24,6 +24,7 @@ on:
       - 'assets/js/picks-member-pin.js'
       - 'assets/js/picks-persistent-groups.js'
       - 'assets/js/picks-social-retention.js'
+      - 'assets/js/octagon-access-panel.js'
       - 'scripts/test-startup-contract.mjs'
       - 'scripts/test-route-owner-shell-recovery-queue.mjs'
       - 'scripts/test-profile-login-owner-delegation.mjs'
@@ -42,6 +43,8 @@ on:
       - 'scripts/test-notification-identity-owner.mjs'
       - 'scripts/test-picks-social-identity-contract.mjs'
       - 'scripts/test-picks-social-identity-owner.mjs'
+      - 'scripts/test-octagon-access-identity-contract.mjs'
+      - 'scripts/test-octagon-access-identity-owner.mjs'
       - 'scripts/test-ios-standalone-resume-home.mjs'
       - 'scripts/test-profile-signin-stability.mjs'
       - 'scripts/test-phase-4b-mobile.mjs'
@@ -69,6 +72,7 @@ on:
       - 'assets/js/picks-member-pin.js'
       - 'assets/js/picks-persistent-groups.js'
       - 'assets/js/picks-social-retention.js'
+      - 'assets/js/octagon-access-panel.js'
       - 'scripts/test-startup-contract.mjs'
       - 'scripts/test-route-owner-shell-recovery-queue.mjs'
       - 'scripts/test-profile-login-owner-delegation.mjs'
@@ -87,6 +91,8 @@ on:
       - 'scripts/test-notification-identity-owner.mjs'
       - 'scripts/test-picks-social-identity-contract.mjs'
       - 'scripts/test-picks-social-identity-owner.mjs'
+      - 'scripts/test-octagon-access-identity-contract.mjs'
+      - 'scripts/test-octagon-access-identity-owner.mjs'
       - 'scripts/test-ios-standalone-resume-home.mjs'
       - 'scripts/test-profile-signin-stability.mjs'
       - 'scripts/test-phase-4b-mobile.mjs'
@@ -135,6 +141,7 @@ jobs:
           node --check assets/js/native-app-shell.js
           node --check assets/js/native-app-shell-stability.js
           node --check assets/js/picks-social-retention.js
+          node --check assets/js/octagon-access-panel.js
 
       - name: Validate canonical profile owner JavaScript syntax
         run: |
@@ -159,6 +166,8 @@ jobs:
           node --check scripts/test-notification-identity-owner.mjs
           node --check scripts/test-picks-social-identity-contract.mjs
           node --check scripts/test-picks-social-identity-owner.mjs
+          node --check scripts/test-octagon-access-identity-contract.mjs
+          node --check scripts/test-octagon-access-identity-owner.mjs
 
       - name: Enforce startup ownership contract
         run: node scripts/test-startup-contract.mjs
@@ -180,6 +189,9 @@ jobs:
 
       - name: Enforce Picks social identity contract
         run: node scripts/test-picks-social-identity-contract.mjs
+
+      - name: Enforce Octagon access identity contract
+        run: node scripts/test-octagon-access-identity-contract.mjs
 
       - name: Install browser test runtime
         run: npm install --no-save --package-lock=false playwright@1.54.1 && npx playwright install --with-deps chromium
@@ -307,6 +319,17 @@ jobs:
         with:
           name: picks-social-identity-owner-report
           path: /tmp/picks-social-identity-owner-report.json
+          if-no-files-found: ignore
+
+      - name: Test Octagon access identity ownership
+        run: node scripts/test-octagon-access-identity-owner.mjs
+
+      - name: Upload Octagon access identity diagnostic
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: octagon-access-identity-owner-report
+          path: /tmp/octagon-access-identity-owner-report.json
           if-no-files-found: ignore
 
       - name: Test iOS startup route stability
