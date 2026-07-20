@@ -129,6 +129,9 @@ forbid('assets/js/native-app-shell-stability.js',[
 ]);
 assert(read('assets/js/native-app-shell-stability.js').includes('__UFC_NATIVE_APP_SHELL_STABILITY_STARTED__'),'Native shell stability must keep its global duplicate-file-execution guard.');
 
+const shareDeepLinks=read('assets/js/share-deep-links.js');
+assert(/'use strict';\s+if\(window\.__UFC_SHARE_DEEP_LINKS_STARTED__\)return;\s+window\.__UFC_SHARE_DEEP_LINKS_STARTED__=true;\s+const VERSION=/.test(shareDeepLinks),'Share/deep links must keep its duplicate-file guard before private state, listeners, API publication, and route ownership.');
+
 assert(/<meta\s+name=["']app-build["']\s+content=["'][^"']+["']/i.test(index),'index.html must retain an app-build marker for update delivery.');
 
 console.log(JSON.stringify({
