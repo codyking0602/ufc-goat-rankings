@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import { chromium } from 'playwright';
 
 await import('./test-native-shell-stability-drawer-contract.mjs');
+await import('./test-dark-mobile-shell-theme.mjs');
 
 const fixtureUrl='http://127.0.0.1:4173/phase-3-drawer-owner-proof.html#rankings';
 const reportPath='/tmp/native-shell-stability-drawer-owner-report.json';
