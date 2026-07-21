@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='app-update-watcher-20260720g-runtime-activation';
+  const VERSION='app-update-watcher-20260721a-whats-new-owner';
   const WHAT_CHANGED_SRC='assets/js/what-changed.js?v=what-changed-20260718b-compact';
   const RESTORE_KEY='ufc-goat-manual-refresh-v1';
   const LEGACY_KEYS=['ufc-goat-update-restore-v1','ufc-goat-update-target-v1','ufc-goat-manual-refresh-progress-v1'];
@@ -102,7 +102,7 @@
     `;document.head.appendChild(style);
   }
 
-  function installButton(){const hero=document.querySelector('.hero');if(!hero)return;let control=document.getElementById('manualRefreshControl');if(!control){control=document.createElement('div');control.id='manualRefreshControl';control.innerHTML='<div id="manualRefreshActions"><button id="manualRefreshBtn" type="button" aria-label="Sync the latest app data and check for updates">↻ Refresh</button><button id="whatsNewBtn" type="button" aria-label="Open What Changed">NEW <span id="whatsNewUnread" role="status" aria-live="polite" hidden></span></button></div><div id="manualRefreshProgress" aria-hidden="true"><i id="manualRefreshProgressFill"></i></div>';hero.appendChild(control);}const refreshButton=document.getElementById('manualRefreshBtn');if(refreshButton&&!refreshButton.dataset.currentRefreshBound){refreshButton.dataset.currentRefreshBound='true';refreshButton.addEventListener('click',event=>void networkRefresh(event.currentTarget));}const button=document.getElementById('whatsNewBtn');if(button&&!button.dataset.currentWhatsNewBound){button.dataset.currentWhatsNewBound='true';button.addEventListener('click',event=>openWhatChanged(event.currentTarget));}syncUnread();}
+  function installButton(){const hero=document.querySelector('.hero');if(!hero)return;let control=document.getElementById('manualRefreshControl');if(!control){control=document.createElement('div');control.id='manualRefreshControl';control.innerHTML='<div id="manualRefreshActions"><button id="manualRefreshBtn" type="button" aria-label="Sync the latest app data and check for updates">↻ Refresh</button><button id="whatsNewBtn" type="button" aria-label="Open What Changed"><span data-whats-new-label>NEW</span><span id="whatsNewUnread" role="status" aria-live="polite" hidden></span></button></div><div id="manualRefreshProgress" aria-hidden="true"><i id="manualRefreshProgressFill"></i></div>';hero.appendChild(control);}const refreshButton=document.getElementById('manualRefreshBtn');if(refreshButton&&!refreshButton.dataset.currentRefreshBound){refreshButton.dataset.currentRefreshBound='true';refreshButton.addEventListener('click',event=>void networkRefresh(event.currentTarget));}const button=document.getElementById('whatsNewBtn');if(button&&!button.dataset.currentWhatsNewBound){button.dataset.currentWhatsNewBound='true';button.addEventListener('click',event=>openWhatChanged(event.currentTarget));}syncUnread();}
 
   function loadPermanentDaily(){loadScript('playPermanentDailyController','assets/js/play-daily-rotation.js?v=play-daily-controller-20260717e-find-leader-permanent');}
   function loadDailyLeaderboard(){loadScript('playDailyLeaderboardCurrent','assets/js/play-daily-leaderboard.js?v=play-daily-leaderboard-20260717e-find-leader-only');loadScript('playDailyLeaderboardLive','assets/js/play-daily-live-sync.js?v=play-daily-live-sync-20260718a-phase-3');}
