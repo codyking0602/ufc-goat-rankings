@@ -2,7 +2,7 @@
 
 _Last updated: 2026-07-21_
 
-This file records the canonical owner of each startup responsibility. Detailed history remains in the Phase 1, completed Phase 2, and current Phase 3 audits and ledgers.
+This file records the canonical owner of each startup responsibility. Detailed history remains in the Phase 1, Phase 2, and Phase 3 audits and ledgers.
 
 ## Ownership rules
 
@@ -16,10 +16,9 @@ This file records the canonical owner of each startup responsibility. Detailed h
 - Historical-token migration may validate and adopt a token before normal identity resolution, but it hands the resolved identity to the canonical profile owner rather than publishing canonical profile readiness.
 - The canonical profile owner consumes a valid migration handoff without repeating its snapshot RPC; it retains independent resolution when migration has no result.
 - Compatibility layers may preserve presentation/recovery behavior but may not initiate a canonical owner’s data or render responsibility.
-- A repair layer may react to a real replacement/lifecycle event, but it may not independently render canonical state merely because startup was historically unreliable.
+- A presentation adapter may map one canonical DOM state into required mobile presentation state, but it may not independently render canonical content or wake from unrelated lifecycle events.
 - One ownership issue changes per runtime batch.
 - `assets/js/app.js` is a structural manifest singleton and must not receive a standard IIFE guard.
-- Compatibility and repair layers may not expand; their target-by-target retirement belongs to Phase 3 after source behavior is covered.
 
 ## Canonical owners
 
@@ -31,6 +30,8 @@ This file records the canonical owner of each startup responsibility. Detailed h
 | Base ranking rendering and global UI APIs | `assets/js/app.js` | Exact-one structural manifest singleton; no primary-tab activation |
 | Calculated production ranking lifecycle | `assets/js/production-ranking-bootstrap.js` | Canonical `start`/`retry`/`apply`/`refresh` owner with one in-flight attempt |
 | Calculated fighter profile and Resume Snapshot | `assets/js/calculated-profile-runtime.js` | Sole calculated `openFighter()` and profile-content owner; one complete profile write; Resume Snapshot values come from `RANKING_DATA.visibleStats`, with canonical UFC fight facts used for the win-streak fallback |
+| Fighter drawer open/close state | Base `assets/js/app.js` close/open handlers plus calculated `openFighter()` override | Canonical owners of `#drawer.open` and `aria-hidden`; they do not own the mobile body scroll-lock class |
+| Mobile fighter-drawer presentation and native overlay dismissal | `assets/js/native-app-shell-stability.js` | Sole mapping from `#drawer.open` to `body.fighter-profile-open`; one startup sync; one `#drawer` `class`/`aria-hidden` observer; native destination clicks dismiss an open profile through the canonical close button or bounded fallback; no broad observer, route listener, soft-refresh listener, delayed retry, public repair schedule, or canonical content repair |
 | Shared credentials, login/fallback, identity cache, canonical readiness, and canonical access persistence | `assets/js/play-profile-identity.js` via `window.UFC_PLAY_PROFILE` | Sole shared identity/access owner; consumes a valid migration handoff without repeating its snapshot and retains independent fallback resolution |
 | Historical group-token migration and canonical adoption | `assets/js/app-canonical-group.js` | Pre-resolution migration owner only; validates historical access, adopts canonical/admin/room values, normalizes the URL, owns the one-time migration reload, and returns a bounded resolved-identity handoff without publishing `ufc-play-profile-ready` |
 | Visible profile editor and full group snapshot | `assets/js/app-profile.js` via `window.UFC_APP_PROFILE` | Sole editor/group-snapshot owner; publishes `ufc-app-profile-updated` |
@@ -46,10 +47,9 @@ This file records the canonical owner of each startup responsibility. Detailed h
 | Notification settings, push registration, preferences, and canonical notification rendering | `assets/js/app-notification-center.js` | Sole notification settings/render owner; passive identity consumer for startup/settings; explicit user actions may use canonical `require()` |
 | Notification/profile surface compatibility | `assets/js/app-notification-surface-fix.js` | Profile-cache presentation compatibility only; may cache/restore activity HTML and bind cached actions but may not call canonical notification render/settings work |
 | App-wide quick synchronization | `assets/js/app-update-watcher.js` | Canonical app quick-sync owner for the normal path; does not perform the native pull action’s final activity-status refresh |
-| What’s New trigger markup, unread badge, and trigger binding | `assets/js/app-update-watcher.js` | Sole owner of update-control creation, labeled **NEW** markup, unread calculation, badge text/visibility/class, accessibility labels, seen/storage synchronization, and trigger binding; no stability-layer normalization after PR #163 |
+| What’s New trigger markup, unread badge, and trigger binding | `assets/js/app-update-watcher.js` | Sole owner of update-control creation, labeled **NEW** markup, unread calculation, badge text/visibility/class, accessibility labels, seen/storage synchronization, and trigger binding |
 | What Changed overlay and feed | `assets/js/what-changed.js` | Sole overlay/feed render, open/close, entry action, and mark-all-seen owner; does not create or normalize the header trigger |
 | Mobile bottom navigation, badges, transitions, and pull-to-refresh presentation | `assets/js/native-app-shell.js` | Native presentation and accepted pull-action owner; delegates route activation, prefers canonical quick sync, and performs one final activity-status refresh after either normal or fallback sync |
-| Mobile/native repair behavior | `assets/js/native-app-shell-stability.js` | Temporary drawer/overlay presentation repair layer only after PRs #159, #161, and #163; no Ranking Spotlight, fighter-profile content, or What’s New markup ownership; retained drawer/body, native overlay dismissal, route/soft-refresh, drawer observer, and bounded delayed-startup paths remain Phase 3 candidates only after focused proof |
 | Sharing and incoming supported deep links | `assets/js/share-deep-links.js` | Canonical share/deep-link orchestrator; delegates destination activation |
 | Profile challenge inbox, actions, and routing | `assets/js/profile-challenges.js` | Passive inbox identity consumer with one in-flight load; explicit actions may require sign-in |
 | Picks social profile/reminder snapshot | `assets/js/picks-social-retention.js` | Passive identity consumer with one in-flight snapshot owner |
@@ -73,13 +73,16 @@ Startup Architecture Gate protects:
 - Home/Ranking Spotlight canonical readiness and rendering with no stability-layer repair;
 - calculated fighter-profile and Resume Snapshot ownership with no stability-layer content repair;
 - What’s New trigger markup and unread state with no stability-layer normalization;
+- drawer/body synchronization through one startup sync and one drawer-only observer;
+- absence of body-wide observation, route/soft-refresh drawer repair, delayed drawer retries, close-button continuation, and public repair scheduling;
+- canonical close-button behavior plus native-destination overlay dismissal and fallback;
 - profile-challenge passive inbox loading;
 - notification settings passive identity;
 - notification/profile compatibility passive ownership and live cached-action restoration;
 - Picks social and season passive identity;
 - War Room board, access, and notification passive identity with their request owners;
 - native pull normal, fallback, War Room, and concurrent accepted-action ownership;
-- iOS route stability and delayed Home/community/profile/stability behavior.
+- iOS route stability and delayed Home/community/profile behavior.
 
 Passive or subordinate paths must produce:
 
@@ -89,9 +92,10 @@ Passive or subordinate paths must produce:
 - zero identity-dependent RPCs before published identity;
 - one request owner for competing refresh paths;
 - zero compatibility-layer calls into canonical notification settings or render ownership;
-- zero repair-layer Ranking Spotlight mutations before or after canonical ranking readiness;
-- zero repair-layer fighter-profile or Resume Snapshot content mutations;
-- zero repair-layer What’s New markup or unread-state mutations;
+- zero stability-layer Ranking Spotlight mutations;
+- zero stability-layer fighter-profile or Resume Snapshot content mutations;
+- zero stability-layer What’s New markup or unread-state mutations;
+- zero body-wide, route-driven, soft-refresh-driven, delayed, or public drawer repair triggers;
 - exactly one final activity-status refresh for one accepted pull action;
 - exactly one snapshot validation across a successful migration-to-canonical-identity handoff.
 
@@ -103,20 +107,16 @@ Passive or subordinate paths must produce:
 - Late launch continuation checks the shell’s published destination before requesting a handoff.
 - Repeating the exact active view does not re-toggle the DOM, rewrite route state unnecessarily, or republish `octagon-hq:view-change`.
 - Bare Picks group/room invitations still receive one necessary Home-to-Picks recovery handoff.
-- Presentation observers and repairs may synchronize state but may not choose a competing primary route.
+- Native destination overlay dismissal may close an open profile before route delegation, but it may not choose or republish the destination.
 - `octagon-hq-shell.js` remains network-first in the service worker so installed clients receive the corrected owner.
 
-## Phase 2 closure
+## Completed cleanup boundaries
 
-The final production-load audit after PR #157 found no remaining demonstrated competing identity, access, readiness, route, notification, or full-refresh owner. Phase 2 is complete.
+- Phase 1 established idempotent owners.
+- Phase 2 removed demonstrated duplicate route, identity, profile, access, notification, and refresh ownership.
+- Phase 3 removed duplicate Spotlight, Resume Snapshot, and What’s New repairs; retired the body-wide observer, route/soft-refresh repair listeners, six delayed retries, close-button continuation, and public repair API; retained only the proved drawer/body mapping, drawer-only observer, and native overlay dismissal.
 
-## Phase 3 current boundary
-
-- PR #159 removed the duplicate Ranking Spotlight renderer. `home-dashboard.js` has permanent static and mobile proof covering delayed readiness, repeated events, route/visibility recovery, refresh, and stable observation.
-- PR #161 removed the duplicate Resume Snapshot writer and profile-content observer target. `calculated-profile-runtime.js` has permanent proof covering canonical open, calculated values, delayed stability, intentional corruption, canonical reopen, drawer synchronization, and native-destination dismissal.
-- PR #163 removed the duplicate What’s New normalizer and manual-refresh/What’s New observer targets. `app-update-watcher.js` has permanent proof covering one canonical markup write, unread state/events, trigger binding, delayed route/observer work, intentional corruption, refresh restoration, and retained drawer recovery.
-
-The remaining stability responsibilities are drawer/body synchronization and native-destination overlay dismissal. Their observer, route/soft-refresh, and delayed timer support must be audited target by target before further retirement.
+Further movement or renaming of the minimal native presentation adapter belongs to later startup/script-manifest simplification, not repair-loop retirement.
 
 ## Testing and interruption policy
 
