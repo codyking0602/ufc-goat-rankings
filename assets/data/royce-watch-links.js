@@ -1,16 +1,7 @@
 // App-facing Watch Moment and signature-fight links only.
 (function(){
   'use strict';
-  const VERSION='royce-watch-links-20260717a-brandon-moreno';
-
-  function loadPantojaGuard(){
-    if(document.querySelector('[data-pantoja-final-roster-guard]'))return;
-    const script=document.createElement('script');
-    script.src='assets/data/pantoja-final-roster-guard.js?v=pantoja-final-roster-guard-20260715b-cross-tab';
-    script.setAttribute('data-pantoja-final-roster-guard','true');
-    document.body.appendChild(script);
-  }
-  loadPantojaGuard();
+  const VERSION='royce-watch-links-20260721b-no-roster-guard';
 
   if(typeof DISPLAY_OVERRIDES==='undefined')return;
 
@@ -136,7 +127,6 @@
   const applied=apply();
   window.addEventListener('ufc-ranking-data-patches-ready',apply);
   window.addEventListener('ufc-scoring-pipeline-ready',apply);
-  window.addEventListener('ufc-pantoja-fighter-added',apply);
   window.addEventListener('ufc-paddy-pimblett-added',apply);
   window.UFC_ROYCE_WATCH_LINKS={version:VERSION,mode:'presentation-only',fighters:applied,watchLinks:WATCH_LINKS,mutatesScores:false,loadsRegistry:false};
   document.documentElement.setAttribute('data-royce-watch-links',VERSION);
