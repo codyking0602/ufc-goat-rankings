@@ -184,6 +184,6 @@ Browser notifications are opportunistic and only appear when the app is opened n
 
 ## Reliability checks
 
-- `scripts/test-picks-mobile-top-tabs.mjs` certifies the six primary app tabs at 390×844, including useful visibility after each enabled destination opens and no horizontal shell scrolling.
+- On mobile, the desktop tab source is intentionally hidden. `scripts/test-picks-mobile-top-tabs.mjs` certifies the visible five-item native bottom navigation and the sticky-header Intelligence action at 390×844, including useful visibility after each enabled destination opens and no horizontal navigation scrolling.
 - `scripts/check-picks-ui.mjs` certifies that exactly one scheduled workflow owns card-and-odds refreshes, while manual dispatch remains available.
 - **Picks UI Smoke** runs both checks for relevant production changes.
