@@ -1,10 +1,10 @@
 # Phase 2 Duplicate-Ownership Progress — 2026-07-21
 
-## Current production position
+## Final production position
 
-- Production `main`: `a727a38540cd78a12f6035632c5b9e7016bea18c`.
-- Entire startup cleanup: approximately 91% complete.
-- Phase 2: approximately 99.5% complete.
+- Production `main`: `ba2c24f6c22333a73a041d59aa8aef9bdd5642a3`.
+- Entire startup cleanup: approximately 92% complete.
+- Phase 2: complete.
 - Phase 0 and Phase 1: complete.
 - Visible product change: none intended or approved.
 
@@ -40,65 +40,66 @@
 | #153 | Make notification/profile surface compatibility passive | `14f23d54548eef7e6fcf89acddfcded255ebeb58` |
 | #154 | Update permanent status after notification compatibility cleanup | `9fc4e7ec3d87fc69f4b4c49edec1bfb2da0b6040` |
 | #155 | Deduplicate native pull activity-status refresh | `a727a38540cd78a12f6035632c5b9e7016bea18c` |
+| #156 | Update permanent status after native pull ownership cleanup | `a31b81e9798ea829ee52dadb198828954b9d245e` |
+| #157 | Reuse the validated canonical-migration identity handoff instead of repeating the same snapshot | `ba2c24f6c22333a73a041d59aa8aef9bdd5642a3` |
 
-## Canonical identity boundary
+## Locked canonical boundaries
+
+### Identity
 
 `assets/js/play-profile-identity.js` owns:
 
 - current and legacy shared login RPC selection;
-- credential verification;
+- explicit credential verification;
 - resolved identity cache;
 - group/member/admin/room access persistence;
 - active-group/display-name persistence;
-- canonical readiness publication;
-- explicit `require()` behavior.
+- canonical `ufc-play-profile-ready` publication;
+- explicit `require()` behavior;
+- independent canonical snapshot fallback when no migration result exists.
 
-Passive consumers use cached identity and readiness/update events. They do not independently resolve identity, read canonical access storage, publish readiness, or trigger the visible profile editor merely to obtain identity.
+`assets/js/app-canonical-group.js` owns only pre-resolution historical-token migration:
 
-## Canonical route boundary
+- historical token discovery and validation;
+- canonical group/admin/room adoption;
+- canonical URL normalization;
+- migration-specific `ufc-canonical-group-ready` publication;
+- existing one-time reload and loop protection;
+- a bounded already-resolved identity handoff to the canonical owner.
+
+A successful migration handoff is not snapshotted again. The migration layer does not publish canonical profile readiness.
+
+### Profile
+
+`assets/js/app-profile.js` owns the visible profile editor, full group snapshot, profile presentation changes, and `ufc-app-profile-updated`.
+
+Passive consumers use cached identity and readiness/update events. They do not independently resolve identity, read canonical access storage, publish readiness, or trigger visible editor/group work merely to obtain identity.
+
+### Routing
 
 `assets/js/octagon-hq-shell.js` owns primary destination and ranking-subview activation.
 
-The route contract now requires:
-
-- `fresh-home-route-bootstrap.js` may classify and normalize startup URL state but does not activate a primary destination;
-- subordinate continuations delegate to `UFC_APP_SHELL` rather than mutating primary view state;
 - one real accepted transition publishes one `octagon-hq:view-change` event;
-- an exact already-active view request coalesces before DOM, hash, and event work;
+- an exact already-active request coalesces before DOM, hash, and event work;
 - a bare Picks group/room invitation retains one legitimate Home-to-Picks recovery transition;
-- missing-shell recovery remains one queued canonical handoff;
-- the canonical shell remains network-first for installed-app freshness.
+- missing-shell recovery remains one queued canonical handoff.
 
-## Canonical notification boundary
+### Notifications and refresh
 
-`assets/js/app-notification-center.js` owns:
+- `assets/js/app-notification-center.js` owns notification settings and rendering.
+- `assets/js/octagon-notifications.js` owns activity status, unread, mark-seen, realtime, and push behavior with one activity-status request owner.
+- `assets/js/app-update-watcher.js` owns normal app-wide quick sync.
+- `assets/js/native-app-shell.js` owns one accepted pull action and one final activity-status refresh after normal or fallback sync.
+- compatibility and fallback layers may not repeat those canonical responsibilities.
 
-- notification settings RPC work;
-- profile/activity notification rendering and render coalescing;
-- readiness, profile-update, device-change, and observer-driven refreshes;
-- preference writes, push registration/removal, test delivery, and explicit identity fallback.
-
-`assets/js/app-notification-surface-fix.js` is a passive profile-cache compatibility layer. It may cache and restore activity-profile HTML, observe profile surfaces, synchronize its cache on soft refresh, register the current service worker, and bind cached action routes. It may not invoke canonical notification render/settings work.
-
-## Canonical native refresh boundary
-
-The accepted pull action is `assets/js/native-app-shell.js` `refresh()`.
-
-- it retains one `state.refreshing` in-flight guard;
-- it prefers `assets/js/app-update-watcher.js` `quickSync()`;
-- when that owner is unavailable, its subordinate `fallbackQuickSync()` retains daily, leaderboard, challenge inbox, notification settings, active War Room board, Home rendering, and soft-refresh work;
-- after either sync path, the accepted action performs exactly one final `assets/js/octagon-notifications.js` `refreshStatus()` call;
-- the fallback may not duplicate that final activity-status refresh.
-
-## Permanent ownership proofs
+## Permanent ownership proof coverage
 
 Startup Architecture Gate now protects:
 
-- canonical shell recovery and sole route activation;
-- exact same-view route coalescing;
-- late Home/Picks continuation ownership;
-- ordinary Home startup, browser Picks reload, direct route handoffs, and bare Picks invite recovery;
-- canonical login delegation;
+- canonical shell recovery, sole route activation, and exact same-view coalescing;
+- late Home/Picks continuation and bare-invite recovery;
+- canonical login delegation and profile sign-in stability;
+- canonical migration identity handoff, historical-token adoption, schema fallback, repeated resolution, and independent canonical fallback;
 - Community access and identity ownership;
 - Product access persistence and one startup handoff;
 - App Profile single group snapshot;
@@ -106,53 +107,49 @@ Startup Architecture Gate now protects:
 - profile-challenge passive inbox loading;
 - notification settings passive identity;
 - notification/profile compatibility passive ownership and live cached-action restoration;
-- Picks social passive identity;
-- Picks season passive identity;
-- War Room board passive identity;
-- War Room access passive identity and one access-status request owner;
-- War Room notification passive identity and one activity-status request owner;
+- Picks social and season passive identity;
+- War Room board, access, and notification passive identity with one request owner each;
 - native pull normal, Home fallback, War Room fallback, and concurrent accepted-action ownership;
-- iOS route stability;
-- profile sign-in stability;
-- delayed Home/community stability.
+- iOS route stability and delayed Home/community stability.
 
-## PR #155 validation record
+## PR #157 validation record
 
-- Final exact tested head: `ed97c47766e57d2764e3e76d03927acbda61e58a`.
-- Startup Architecture Gate #145: passed completely.
-- Dedicated mobile workflow #23: passed completely.
-- Production merge: `a727a38540cd78a12f6035632c5b9e7016bea18c`.
-- Changed runtime responsibility: native pull fallback activity refresh only.
+- Final exact tested head: `908f265dad46603b5556613effbd830214cb78d4`.
+- Startup Architecture Gate #149: passed completely.
+- Production merge: `ba2c24f6c22333a73a041d59aa8aef9bdd5642a3`.
+- Changed runtime responsibility: migration-to-canonical identity handoff only.
 
-The focused static and browser proof established:
+The focused static and mobile-browser proof established:
 
-- production load order places the quick-sync owner and activity owner before the native presentation layer;
-- the normal watcher path runs one quick sync, zero fallback tasks, and one final activity refresh;
-- the Home fallback runs each recovery task once, skips War Room board loading, and performs one final activity refresh;
-- the War Room fallback retains one silent board load and one final activity refresh;
-- two concurrent calls while one accepted pull is in flight produce one quick sync and one final activity refresh;
-- completion copy, completion state, bottom navigation, Ask action, badges, and native refreshing cleanup remain intact.
+- production load order keeps migration before the canonical identity owner;
+- canonical and historical tokens are each validated exactly once before canonical identity reuse;
+- current snapshot and legacy schema-fallback snapshot paths both produce the bounded handoff;
+- repeated `UFC_PLAY_PROFILE.resolve()` calls reuse the canonical cache and publish profile readiness once;
+- migration-specific readiness remains separate from canonical profile readiness;
+- canonical group, display-name, room-token, admin-token, and active-group adoption remain intact;
+- independent canonical snapshot fallback remains when migration has no candidate;
+- explicit current login and legacy login fallback remain unchanged;
+- one-time migration reload and loop protection remain intact.
 
 Known unrelated workflow failures remained outside the isolated branch:
 
 - Production Ranking Browser Smoke stopped at fighter-photo path auditing;
-- Scoring Architecture Guardrails stopped at the existing permanent source/runtime contract;
-- Validate Phase 4B Preview stopped at the historical stable-architecture pin.
+- Scoring Architecture Guardrails stopped at the existing permanent source/runtime contract.
 
-None referenced the isolated native pull runtime or proof files.
+Neither referenced the isolated identity runtime or proof files.
 
-## CI-first and interruption rule
+## Phase 2 closure audit
 
-Routine installed-iPhone checkpoints are retired. CI and focused mobile-browser proofs are the default gate.
+The production load map was rebuilt after PR #157 from current `index.html`. The current startup contract and production-loaded JavaScript were rechecked for competing identity resolution, canonical storage ownership, duplicate readiness publication, repeated full profile/group/inbox/notification/social/season/board/access work, and overlapping route/lifecycle refresh paths.
 
-Do not contact Cody for routine checkpoints, normal merge authorization, bot-only `main` movement, known unrelated red workflows, or ordinary proof design. Continue autonomously through audit, focused implementation, validation, merge, and documentation.
+No additional narrow duplicate could be demonstrated without entering Phase 3 repair-loop retirement or unrelated product work. Existing compatibility layers remain named Phase 3 candidates rather than unproved Phase 2 defects.
 
-Contact Cody only when a specific unresolved user-only or physical-only uncertainty blocks a safe decision. State the exact uncertainty and combine all related checks into one request.
+Phase 2 is formally complete.
 
-## Remaining Phase 2 work
+## Next phase
 
-Perform one final fresh production-loaded audit from current `main`; do not presume another duplicate.
+Phase 3 may begin from current production `main`.
 
-Re-scan remaining production modules for one competing responsibility involving identity resolution, canonical storage, readiness publication, repeated full refreshes, or overlapping route/visibility/reconnect/realtime/polling work. `fresh-home-launch.js`, `app-notification-surface-fix.js`, and `native-app-shell.js` are covered by permanent ownership contracts.
+Audit one repair behavior at a time. Identify the canonical source behavior, prove every timer/observer/startup/route/direct path, preserve legitimate recovery, add focused static and browser evidence, and remove only the proved redundant repair. Do not perform broad repair-layer cleanup.
 
-If no additional duplicate can be demonstrated, document that clean audit and close Phase 2. Do not begin Phase 3 repair-loop retirement until Phase 2 is formally closed.
+The CI-first and interruption policy remains unchanged: continue autonomously and contact Cody only when a specific unresolved user-only or physical-only uncertainty blocks a safe decision.
