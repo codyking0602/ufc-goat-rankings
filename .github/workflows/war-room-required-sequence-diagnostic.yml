@@ -1,0 +1,51 @@
+name: War Room Required Sequence Diagnostic
+
+on:
+  push:
+    branches: [agent/war-room-required-scoring-diagnostic]
+
+permissions:
+  contents: read
+
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser validation runtime
+        run: |
+          npm install --no-save --package-lock=false playwright@1.54.2 acorn@8
+          npx playwright install --with-deps chromium
+      - name: Start local app
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/war-room-required-http.log 2>&1 &
+          for attempt in $(seq 1 20); do
+            if curl --fail --silent http://127.0.0.1:4173/index.html > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          exit 1
+      - name: Sync production cache keys
+        run: node scripts/sync-production-cache-keys.mjs
+      - name: Audit fighter photo paths
+        run: node scripts/audit-fighter-photo-paths.mjs
+      - name: Test production browser
+        run: node scripts/test-production-browser.mjs
+      - name: Test profile card hotfix
+        run: node scripts/test-profile-card-hotfix.mjs
+      - name: Test fighter taglines
+        run: node scripts/test-fighter-taglines.mjs
+      - name: Test Woodley audit
+        run: node scripts/test-woodley-audit.mjs
+      - name: Audit profile copy coverage
+        continue-on-error: true
+        run: node scripts/audit-profile-copy-coverage.mjs
+      - name: Test production runtime boundaries
+        continue-on-error: true
+        run: node scripts/test-production-runtime-boundaries.mjs
+      - name: Run scoring architecture guardrails
+        continue-on-error: true
+        run: node scripts/run-scoring-architecture-guardrails.mjs
