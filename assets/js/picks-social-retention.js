@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='picks-social-retention-20260720g-passive-identity';
+  const VERSION='picks-social-retention-20260721h-active-picks-only';
   const config=window.UFC_SUPABASE_CONFIG||{};
   if(!config.url||!config.anonKey||!window.supabase?.createClient)return;
 
@@ -146,19 +146,40 @@
     }finally{state.loading=false;}
   }
 
+  function picksActive(){
+    const destination=window.UFC_APP_SHELL?.currentDestination;
+    if(destination)return destination==='picks';
+    return document.getElementById('picks')?.classList.contains('active-view')===true;
+  }
+
   function syncSharedProfile(){
-    if(state.snapshot)render(state.snapshot);
-    else refresh(true);
+    if(!picksActive())return;
+    state.snapshot?render(state.snapshot):refresh(true);
+  }
+
+  function scheduleSync(){
+    clearTimeout(syncSharedProfile.timer);
+    syncSharedProfile.timer=setTimeout(syncSharedProfile,80);
   }
 
   function start(){
-    installStyles();ensureProfileShell();refresh();
-    const observer=new MutationObserver(()=>{ensureProfileShell();if(state.snapshot)decorateExistingRows(state.snapshot);});
+    installStyles();ensureProfileShell();if(picksActive()&&document.getElementById('picksProfileShell'))refresh();
+    const observer=new MutationObserver(()=>{
+      const hadShell=Boolean(document.getElementById('picksProfileShell'));
+      ensureProfileShell();
+      if(picksActive()&&!hadShell&&document.getElementById('picksProfileShell'))scheduleSync();
+      else if(picksActive()&&state.snapshot)decorateExistingRows(state.snapshot);
+    });
     observer.observe(document.getElementById('picks')||document.body,{childList:true,subtree:true});
-    window.addEventListener('ufc-play-profile-ready',event=>{state.identity=event.detail||null;setTimeout(syncSharedProfile,0);});
-    window.addEventListener('ufc-app-profile-updated',event=>{state.identity=event.detail?.identity||state.identity;setTimeout(syncSharedProfile,0);});
-    window.addEventListener('ufc-play-data-ready',()=>setTimeout(syncSharedProfile,0));
-    window.setInterval(()=>refresh(),30000);
+    window.addEventListener('ufc-play-profile-ready',event=>{state.identity=event.detail||null;if(picksActive())setTimeout(syncSharedProfile,0);});
+    window.addEventListener('ufc-app-profile-updated',event=>{state.identity=event.detail?.identity||state.identity;if(picksActive())setTimeout(syncSharedProfile,0);});
+    window.addEventListener('ufc-play-data-ready',()=>{if(picksActive())setTimeout(syncSharedProfile,0);});
+    window.addEventListener('octagon-hq:view-change',event=>{
+      if(event.detail?.destination!=='picks')return;
+      const shell=ensureProfileShell();
+      if(shell)refresh(true);
+    });
+    window.setInterval(()=>{if(picksActive())refresh();},30000);
   }
 
   window.UFC_PICKS_SHARED_PROFILE={version:VERSION,refresh,decorateExistingRows,isAdmin};
