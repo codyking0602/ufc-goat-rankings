@@ -1,6 +1,6 @@
 # Octagon Verdict — Official UFC-Only Knowledge Pack
 
-Generated: **2026-07-21T18:31:34.584Z**  
+Generated: **2026-07-21T21:10:35.219Z**  
 Canonical model-as-of date: **2026-07-13**  
 Latest fighter-ledger verification date: **2026-07-17**  
 Fighters: **80**
@@ -4545,7 +4545,7 @@ _Ledger verified through 2026-07-13. Scores come from category-calculators-20260
 
 ### 31. Alexandre Pantoja — 89 OVR
 
-Alexandre Pantoja is ranked by the current UFC-only calculated pipeline.
+A relentless flyweight champion whose five title-fight wins, elite grappling, and eight-fight run built the best UFC flyweight resume outside Demetrious Johnson.
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -4659,15 +4659,15 @@ Modern flyweight receives a modest depth discount.
 
 #### Why ranked here
 
-Alexandre Pantoja ranks #31 because Prime Dominance and Championship supply the largest weighted pieces of a 48.26 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
+Pantoja combines a real championship reign with repeated wins over the modern flyweight elite. He beat Brandon Moreno for the belt, defeated Brandon Royval twice, and finished both Kai Asakura and Kai Kara-France during a four-defense reign.
 
 #### Why not ranked higher?
 
-Alexandre Pantoja is 0.11 raw points behind #30 Dustin Poirier. The largest category separation versus that next target is Opponent Quality; future movement must come from new UFC evidence and a full pipeline rerun.
+His reign is much shorter than Demetrious Johnson’s, the flyweight opponent pool receives a division-depth discount, and several title challengers lacked proven UFC elite resumes. The Dustin Ortiz, Deiveson Figueiredo, Askar Askarov, and Joshua Van losses also keep the case from becoming completely clean.
 
 #### Final takeaway
 
-Alexandre Pantoja ranks #31 because Prime Dominance and Championship supply the largest weighted pieces of a 48.26 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
+Pantoja is the clear second-best UFC flyweight championship resume behind Demetrious Johnson: a rugged, high-pressure champion with real title volume and elite submission wins.
 
 _Ledger verified through 2026-07-15. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
 
@@ -11201,7 +11201,7 @@ Automated validation passed for **80 fighters** and specifically checked Jon Jon
 
 ## 14. Known limitations and data gaps
 
-- **Bespoke ranking copy:** 1 fighters lack custom “Why ranked here” copy; 1 lack custom “Why not ranked higher?” copy. Calculated fallbacks are supplied.
+- **Bespoke ranking copy:** 0 fighters lack custom “Why ranked here” copy; 0 lack custom “Why not ranked higher?” copy. Calculated fallbacks are supplied.
 - **Compare-profile coverage:** 12 fighters lack a full current compare narrative.
 - **Round audit coverage:** 0 fighters have at least one prime fight without audited round allocation.
 - **Freshness metadata:** model-as-of is 2026-07-13; latest fighter ledger is verified through 2026-07-17.
