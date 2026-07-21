@@ -71,3 +71,4 @@ await import('./test-native-shell-stability-whats-new-owner.mjs');
 await import('./test-native-shell-stability-drawer-owner.mjs');
 await import('./test-native-pull-refresh-ownership.mjs');
 await import('./test-picks-commissioner-active-owner.mjs');
+await import('./test-native-shell-startup-resync-owner.mjs');

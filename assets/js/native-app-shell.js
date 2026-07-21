@@ -4,7 +4,7 @@
   if(window.__UFC_NATIVE_APP_SHELL_STARTED__)return;
   window.__UFC_NATIVE_APP_SHELL_STARTED__=true;
 
-  const VERSION='native-app-shell-20260721b-single-activity-refresh';
+  const VERSION='native-app-shell-20260721c-no-delayed-startup-resync';
   const MOBILE_QUERY='(max-width: 900px)';
   const REFRESH_THRESHOLD=74;
   const NAV_ITEMS=[
@@ -331,7 +331,6 @@
     bindPullToRefresh();
     bindEvents();
     observe();
-    [80,260,800,1800,4200].forEach(delay=>window.setTimeout(()=>{ensureAskAction();syncActive();syncBadges();},delay));
     window.setInterval(()=>{if(!document.hidden)syncBadges();},10000);
     document.documentElement.dataset.nativeAppShell=VERSION;
   }
