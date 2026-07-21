@@ -29,8 +29,8 @@ assert.match(watcher,/window\.addEventListener\('storage'.*syncUnread/s,'The can
 assert.match(watcher,/cleanRefreshState\(\);injectStyles\(\);installButton\(\);bindDeferredSupport\(\)/,'The canonical owner must install its own markup during startup.');
 
 assert.doesNotMatch(stability,/normalizeWhatsNew|whatsNewBtn|whatsNewUnread|manualRefreshControl|data-whats-new-label|NEWNEW|UFC_APP_UPDATE_WATCHER/,'The stability layer must not inspect, rewrite, observe, or resync What’s New markup.');
-assert.doesNotMatch(stability,/#drawer,#manualRefreshControl|#drawer,#whatsNewBtn/,'The indefinite observer must not retain historical What’s New targets.');
-for(const preserved of ['syncDrawerState','closeFighterProfile','fighter-profile-open','octagon-hq:view-change','octagon-hq:soft-refresh','[0,80,240,700,1600,3600]']){
+assert.doesNotMatch(stability,/document\.body,\{childList|subtree:true|octagon-hq:view-change|octagon-hq:soft-refresh|\[0,80,240,700,1600,3600\]/,'What’s New retirement must not leave broad observer, route, or delayed retry triggers behind.');
+for(const preserved of ['syncDrawerState','closeFighterProfile','fighter-profile-open','observer.observe(drawer','attributeFilter:[\'class\',\'aria-hidden\']']){
   assert(stability.includes(preserved),`Legitimate drawer stability recovery changed unexpectedly: ${preserved}`);
 }
 
@@ -59,5 +59,5 @@ console.log(JSON.stringify({
   subordinateLayer:stabilityPath,
   watcherPosition,
   stabilityPosition,
-  preserved:['drawer/body synchronization','native destination close','route and delayed startup recovery']
+  preserved:['drawer/body synchronization','native destination close','drawer-only observation']
 },null,2));

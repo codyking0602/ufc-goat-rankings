@@ -34,10 +34,11 @@ for(const label of ['UFC Record','UFC Title-Fight Wins','Top-5 Wins','Prime UFC 
 
 assert.doesNotMatch(stability,/repairSnapshot|snapshotValues|canonicalFighterName|profileFor|titleFightWins|topFiveWins|roundsWonPct/,'The stability layer must not retain calculated profile helpers or a second snapshot writer.');
 assert.doesNotMatch(stability,/fighterDetail|snapshot-item|snapshot-grid|RANKING_DATA|DISPLAY_OVERRIDES|currentFighter/,'The stability layer must not inspect or mutate fighter-profile content.');
-assert.doesNotMatch(stability,/\.snapshot-grid/,'The indefinite observer must not target canonical Resume Snapshot markup.');
+assert.doesNotMatch(stability,/\.snapshot-grid/,'The drawer observer must not target canonical Resume Snapshot markup.');
+assert.doesNotMatch(stability,/octagon-hq:view-change|octagon-hq:soft-refresh|\[0,80,240,700,1600,3600\]/,'Profile presentation recovery must not retain route or delayed retry triggers.');
 
-for(const preserved of ['syncDrawerState','fighter-profile-open','closeFighterProfile','octagon-hq:view-change','octagon-hq:soft-refresh','[0,80,240,700,1600,3600]']){
-  assert(stability.includes(preserved),`Legitimate native stability recovery changed unexpectedly: ${preserved}`);
+for(const preserved of ['syncDrawerState','fighter-profile-open','closeFighterProfile','observer.observe(drawer','attributeFilter:[\'class\',\'aria-hidden\']']){
+  assert(stability.includes(preserved),`Legitimate native drawer recovery changed unexpectedly: ${preserved}`);
 }
 
 function jsFiles(directory){
@@ -60,5 +61,5 @@ console.log(JSON.stringify({
   subordinateLayer:stabilityPath,
   bootstrapPosition,
   stabilityPosition,
-  preserved:['drawer/body synchronization','native destination close','route and delayed startup recovery']
+  preserved:['drawer/body synchronization','native destination close','drawer-only observation']
 },null,2));

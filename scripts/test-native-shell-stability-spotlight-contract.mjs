@@ -23,7 +23,7 @@ assert.doesNotMatch(stability,/function\s+repairSpotlight\s*\(/,'The stability l
 assert.doesNotMatch(stability,/repairSpotlight/,'The retired Ranking Spotlight repair must not remain callable or exported.');
 assert.doesNotMatch(stability,/home-spotlight-loading/,'The stability observer must not target the canonical owner’s loading placeholder.');
 assert.doesNotMatch(stability,/ufc-scoring-pipeline-ready|ufc-production-ranking-ready/,'Ranking readiness must be consumed only by the canonical Home owner.');
-assert.doesNotMatch(stability,/closest\?\.\('#drawer,#home/,'The indefinite stability observer must not wake for arbitrary Home mutations.');
+assert.doesNotMatch(stability,/#home|closest\?\.\('#drawer,#home/,'The stability layer must not inspect or observe Home.');
 
 assert.match(home,/function\s+spotlight\s*\(/,'Home Dashboard must retain Ranking Spotlight selection ownership.');
 assert.match(home,/if\(!productionReady\(\)\)return null/,'Home Dashboard must retain its production-readiness boundary.');
@@ -34,8 +34,8 @@ assert.match(home,/octagon-hq:view-change/,'Home Dashboard must retain route-dri
 assert.match(home,/visibilitychange/,'Home Dashboard must retain foreground recovery.');
 assert.match(home,/markup===lastMarkup/,'Home Dashboard must retain stable duplicate-render suppression.');
 
-for(const preserved of ['syncDrawerState','closeFighterProfile','octagon-hq:soft-refresh','[0,80,240,700,1600,3600]']){
-  assert(stability.includes(preserved),`Legitimate stability recovery changed unexpectedly: ${preserved}`);
+for(const preserved of ['syncDrawerState','closeFighterProfile','data-native-destination','attributeFilter:[\'class\',\'aria-hidden\']']){
+  assert(stability.includes(preserved),`Legitimate drawer recovery changed unexpectedly: ${preserved}`);
 }
 
 console.log(JSON.stringify({
@@ -45,5 +45,5 @@ console.log(JSON.stringify({
   subordinateLayer:stabilityPath,
   homePosition,
   stabilityPosition,
-  preserved:['drawer state','native destination close','delayed startup recovery']
+  preserved:['drawer state','native destination close','drawer-only observation']
 },null,2));

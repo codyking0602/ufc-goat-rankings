@@ -62,6 +62,7 @@ async function snapshot(page){
     counts:{...window.__PHASE3_PROFILE_PROOF__.counts},
     profileVersion:window.UFC_CALCULATED_PROFILE_RUNTIME?.version||'',
     stabilityVersion:window.UFC_NATIVE_APP_SHELL_STABILITY?.version||'',
+    publicSchedule:typeof window.UFC_NATIVE_APP_SHELL_STABILITY?.schedule,
     drawerOpen:document.getElementById('drawer')?.classList.contains('open')||false,
     drawerAria:document.getElementById('drawer')?.getAttribute('aria-hidden')||'',
     bodyOpen:document.body.classList.contains('fighter-profile-open'),
@@ -99,14 +100,15 @@ try{
   const opened=await snapshot(page);
   report.snapshots.opened=opened;
   assert.match(opened.profileVersion,/calculated-profile-runtime/,'The calculated profile owner did not load.');
-  assert.match(opened.stabilityVersion,/^native-app-shell-stability-/,'The Phase 3 stability runtime did not load.');
+  assert.match(opened.stabilityVersion,/drawer-observer/,'The narrowed Phase 3 stability runtime did not load.');
+  assert.equal(opened.publicSchedule,'undefined','The historical public repair schedule remains exposed.');
   assert.equal(opened.counts.detailWrites,1,'The canonical profile owner must write the profile exactly once when opened.');
   assert.equal(opened.counts.snapshotTextWrites,0,'The stability layer rewrote snapshot values during canonical open.');
   assert.equal(opened.snapshotCount,1,'Canonical open must render exactly one Resume Snapshot.');
   assert.deepEqual(opened.values,expected,'The canonical calculated snapshot rendered unexpected values.');
   assert.equal(opened.currentFighter,'','The retired stability repair still published hidden drawer fighter state.');
 
-  report.phase='observer-route-and-delayed-window';
+  report.phase='unrelated-route-and-retired-delay-window';
   await page.evaluate(()=>{
     const noise=document.createElement('span');
     noise.textContent='observer noise';
@@ -114,32 +116,42 @@ try{
     noise.remove();
     window.dispatchEvent(new CustomEvent('octagon-hq:view-change',{detail:{destination:'rankings'}}));
     window.dispatchEvent(new CustomEvent('octagon-hq:soft-refresh'));
-    window.UFC_NATIVE_APP_SHELL_STABILITY.schedule();
-    window.UFC_NATIVE_APP_SHELL_STABILITY.schedule();
   });
   await page.waitForTimeout(3900);
   const delayed=await snapshot(page);
   report.snapshots.delayed=delayed;
-  assert.equal(delayed.counts.detailWrites,1,'Delayed stability work caused a competing profile render.');
-  assert.equal(delayed.counts.snapshotTextWrites,0,'Observer, route, or delayed stability work rewrote canonical snapshot values.');
-  assert.deepEqual(delayed.values,expected,'Delayed stability work changed the canonical Resume Snapshot.');
-  assert.equal(delayed.bodyOpen,true,'Drawer/body synchronization was lost while retiring the snapshot writer.');
+  assert.equal(delayed.counts.detailWrites,1,'Unrelated route or delayed activity caused a competing profile render.');
+  assert.equal(delayed.counts.snapshotTextWrites,0,'Unrelated activity rewrote canonical snapshot values.');
+  assert.deepEqual(delayed.values,expected,'Unrelated activity changed the canonical Resume Snapshot.');
+  assert.equal(delayed.bodyOpen,true,'The real drawer-open mutation did not retain mobile body state.');
 
-  report.phase='corruption-boundary';
+  report.phase='retired-route-repair-boundary';
   await page.evaluate(()=>{
     const item=[...document.querySelectorAll('.snapshot-item')].find(node=>node.querySelector('small')?.textContent==='Top-5 Wins');
     item.querySelector('strong').firstChild.nodeValue='BROKEN';
     document.body.classList.remove('fighter-profile-open');
     window.dispatchEvent(new CustomEvent('octagon-hq:view-change',{detail:{destination:'rankings'}}));
     window.dispatchEvent(new CustomEvent('octagon-hq:soft-refresh'));
-    window.UFC_NATIVE_APP_SHELL_STABILITY.schedule();
   });
   await page.waitForTimeout(250);
-  const corrupted=await snapshot(page);
-  report.snapshots.corrupted=corrupted;
-  assert.equal(corrupted.values['Top-5 Wins'],'BROKEN','The stability layer still repairs canonical profile content.');
-  assert.equal(corrupted.counts.snapshotTextWrites,0,'The retired snapshot writer still mutated a snapshot value.');
-  assert.equal(corrupted.bodyOpen,true,'The retained drawer/body recovery did not restore presentation state.');
+  const routeOnly=await snapshot(page);
+  report.snapshots.routeOnly=routeOnly;
+  assert.equal(routeOnly.values['Top-5 Wins'],'BROKEN','The stability layer still repairs canonical profile content.');
+  assert.equal(routeOnly.counts.snapshotTextWrites,0,'The retired snapshot writer still mutated a snapshot value.');
+  assert.equal(routeOnly.bodyOpen,false,'A retired route or soft-refresh listener still reclaimed body state.');
+
+  report.phase='drawer-only-recovery';
+  await page.evaluate(()=>{
+    const drawer=document.getElementById('drawer');
+    drawer.setAttribute('aria-hidden','true');
+    drawer.setAttribute('aria-hidden','false');
+  });
+  await page.waitForFunction(()=>document.body.classList.contains('fighter-profile-open'),null,{timeout:10000});
+  const recovered=await snapshot(page);
+  report.snapshots.recovered=recovered;
+  assert.equal(recovered.values['Top-5 Wins'],'BROKEN','Drawer synchronization reclaimed fighter-profile content ownership.');
+  assert.equal(recovered.counts.snapshotTextWrites,0,'Drawer synchronization mutated a snapshot value.');
+  assert.equal(recovered.bodyOpen,true,'The drawer-only observer did not restore mobile presentation state.');
 
   report.phase='canonical-reopen';
   await page.evaluate(()=>window.openFighter('Jon Jones'));
