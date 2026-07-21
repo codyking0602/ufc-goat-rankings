@@ -194,7 +194,7 @@ try{
   await page.waitForTimeout(80);
   report.admin=await snapshot(page);
   const rosterRpc=report.admin.rpcs.find(row=>row.name==='octagon_admin_access_roster');
-  const toggleRpc=report.admin.rpcs.find(row=>row.name==='octagon_admin_admin_set_access');
+  const toggleRpc=report.admin.rpcs.find(row=>row.name==='octagon_admin_set_access');
   assert.equal(rosterRpc?.args?.p_member_token,'access-owner-token','Admin roster loading must reuse published identity.');
   assert.equal(toggleRpc?.args?.p_member_token,'access-owner-token','Admin access changes must reuse published identity.');
   assert.equal(toggleRpc?.args?.p_target_member_id,'m2');
