@@ -4,15 +4,15 @@ _Last updated: 2026-07-21_
 
 ## Current position
 
-- **Production `main`:** `aa09175a99fcd1b381645e96e74531336674346f`.
-- **Latest startup runtime merge:** PR #159, `aa09175a99fcd1b381645e96e74531336674346f`.
-- **Exact latest tested runtime head:** `c274c5d1c35f2d1b212632dd181e5f29343c1178`.
-- **Latest complete Startup Architecture Gate:** run #151 passed.
-- **Current phase:** Phase 3 — retire repair loops. First production batch complete.
+- **Latest production runtime merge:** PR #161, `942cdd215aa81cb3820fb464334d08101a139e9d`.
+- **Exact latest tested runtime head:** `534a984625bb2764beb289b0211ab102318dd713`.
+- **Latest complete Startup Architecture Gate:** run #158 passed.
+- **Latest dedicated iOS Home Startup Stability:** run #28 passed.
+- **Current phase:** Phase 3 — retire repair loops. Two production batches complete.
 - **Phase 0:** Complete.
 - **Phase 1:** Complete.
 - **Phase 2:** Complete.
-- **Entire startup cleanup:** Approximately 92% complete.
+- **Entire startup cleanup:** Approximately 93% complete.
 - **Visible product changes approved:** None. The zero-visible-change contract remains in force.
 - **Master tracker:** [Issue #102](https://github.com/codyking0602/ufc-goat-rankings/issues/102).
 - **Completed Phase 2 ledger:** [`PHASE-2-PROGRESS-20260721.md`](./PHASE-2-PROGRESS-20260721.md).
@@ -84,64 +84,52 @@ The closing audit found no remaining demonstrated competing owner for:
 
 Phase 2 is formally complete. Compatibility and repair layers moved into Phase 3 rather than being treated as unproved duplicate-owner defects.
 
-## Latest completed batch — Phase 3 PR #159
+## Phase 3 completed batches
 
-### Proven repair loop
+### PR #159 — Ranking Spotlight repair retired
 
-`assets/js/native-app-shell-stability.js` previously contained an independent `repairSpotlight()` renderer. It could wake from:
+`assets/js/native-app-shell-stability.js` previously contained an independent `repairSpotlight()` renderer. It could wake from arbitrary Home mutations, ranking-readiness events, route/soft-refresh events, and all six delayed startup retries. It read raw ranking globals/local storage and directly replaced the canonical loading placeholder.
 
-- arbitrary Home mutations;
-- scoring and production-ranking readiness events;
-- route and soft-refresh events;
-- six delayed startup retries through 3.6 seconds.
-
-It read raw ranking globals and local storage, then directly replaced the canonical `.home-spotlight-loading` node through `outerHTML`.
-
-`assets/js/home-dashboard.js` already owns:
-
-- calculated-ranking readiness;
-- the Spotlight loading placeholder;
-- deterministic daily fighter selection and persistence;
-- Spotlight markup and actions;
-- Home route re-entry and visibility recovery;
-- identical-markup suppression.
-
-PR #159 therefore removed only the duplicate Spotlight repair and its triggers. It did not delete the stability file.
-
-### Legitimate recovery preserved
-
-The batch retained:
-
-- fighter-profile Resume Snapshot repair;
-- drawer/body open-state synchronization;
-- native-destination drawer dismissal;
-- malformed **What’s New** button normalization;
-- route and soft-refresh presentation recovery;
-- the narrowed MutationObserver;
-- all bounded delayed-startup passes.
-
-### Proof
-
-The focused mobile proof withheld ranking readiness beyond the previous 3.6-second retry window, mutated Home, exercised signed-out and published-profile events, repeated ranking readiness, changed routes, simulated foreground recovery, directly repeated stability schedules, and refreshed.
-
-Only `home-dashboard.js` replaced the placeholder after canonical readiness. The stability layer produced zero Spotlight `outerHTML` writes, zero duplicate cards, and zero unchanged Home rewrites.
+`assets/js/home-dashboard.js` already owned readiness, placeholder, deterministic selection, markup, route re-entry, visibility recovery, and duplicate-markup suppression. PR #159 removed only the duplicate renderer and its Home/readiness triggers.
 
 - Dedicated iOS Home Startup Stability #22: passed.
 - Startup Architecture Gate #151: passed completely.
 - Exact tested head: `c274c5d1c35f2d1b212632dd181e5f29343c1178`.
 - Production merge: `aa09175a99fcd1b381645e96e74531336674346f`.
 
+### PR #161 — Resume Snapshot repair retired
+
+`assets/js/native-app-shell-stability.js` also independently inferred the open fighter, recalculated Resume Snapshot values through separate fallbacks, rewrote snapshot DOM, and stored hidden drawer fighter state. Its schema had drifted from the current calculated profile.
+
+`assets/js/calculated-profile-runtime.js` is loaded and required by the production ranking bootstrap before readiness. It owns `openFighter()`, the single complete profile write, all eight current Resume Snapshot fields from calculated visible stats, and the canonical-facts win-streak fallback.
+
+PR #161 removed only the duplicate snapshot writer, its helper calculations, hidden drawer fighter state, and explicit snapshot added-node target. It preserved:
+
+- drawer/body open-state synchronization;
+- native-destination profile dismissal;
+- malformed **What’s New** normalization;
+- route and soft-refresh presentation recovery;
+- the narrowed MutationObserver;
+- all bounded delayed-startup passes.
+
+The mobile proof covered canonical profile open, current calculated values, drawer mutation, route and soft-refresh events, direct schedules, the complete 3.6-second delayed window, intentional snapshot corruption, canonical reopen, drawer/body synchronization, and native-destination dismissal. The stability layer made zero profile-content writes.
+
+- Dedicated iOS Home Startup Stability #28: passed.
+- Startup Architecture Gate #158: passed completely.
+- Exact tested head: `534a984625bb2764beb289b0211ab102318dd713`.
+- Production merge: `942cdd215aa81cb3820fb464334d08101a139e9d`.
+
 ## Known unrelated red workflows
 
 These remain outside startup ownership unless a failure directly references an isolated changed line:
 
-- Production Ranking Browser Smoke #560 stopped at the existing fighter-photo path audit before ranking/browser certification.
-- Scoring Architecture Guardrails #1389 passed syntax and physical source ownership, then failed stale roster/rank/display expectations: 73 expected versus 80 current fighters/facts, judgment count 74, category audit state, Henry Cejudo and Royce Gracie pinned ranks, and Alexandre Pantoja display diagnostics.
+- Production Ranking Browser Smoke #566 stopped at the existing **Audit every fighter photo path** step before ranking and mobile-profile certification.
+- Scoring Architecture Guardrails #1396 passed syntax, profile-copy coverage, and physical source ownership, then stopped at its established permanent runtime contract step.
 - Production Ranking Pipeline and Snapshot may stop on stale ranking/roster certification expectations.
 - Validate Phase 4B Preview may stop at its historical hard-pinned architecture check.
 - Picks UI Smoke may report an existing Picks product/static-contract finding.
 
-None of the inspected #560 or #1389 failures referenced the four isolated PR #159 files.
+None of the inspected #566 or #1396 failure steps references the isolated stability runtime or profile-owner proof responsibility.
 
 ## Testing and interruption policy
 
@@ -162,8 +150,8 @@ Unrelated automated odds-health, deployment, documentation, or generated-file co
 ## Exact next action
 
 1. Continue Phase 3 from current production `main`.
-2. Audit one remaining behavior in `assets/js/native-app-shell-stability.js` at a time.
-3. Trace the profile snapshot repair, malformed **What’s New** normalization, drawer/body synchronization, observer breadth, and delayed startup timers to their current owners before changing any of them.
-4. Preserve native-destination overlay dismissal and any real delayed-DOM or lifecycle recovery.
-5. Add a focused static boundary and mobile delayed-observation proof for the next isolated batch.
+2. Audit malformed **What’s New** normalization as the next isolated behavior.
+3. Identify the canonical button-markup and unread-state owners and reproduce any real malformed or replaced-DOM condition before changing the repair.
+4. Preserve drawer/body synchronization, native-destination overlay dismissal, and any demonstrated delayed-DOM recovery.
+5. After **What’s New**, audit drawer/body synchronization and native overlay dismissal separately, then narrow observer/listener/timer breadth target by target.
 6. Do not broadly remove the observer, timers, or stability file.
