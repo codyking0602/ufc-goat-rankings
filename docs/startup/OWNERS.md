@@ -11,6 +11,7 @@ This file records the canonical owner of each startup responsibility. Detailed h
 - Passive consumers do not resolve shared identity, read canonical access storage, publish canonical readiness, or trigger full editor/group work merely to obtain identity.
 - Explicit user actions may use the canonical `require()` boundary when sign-in is genuinely needed.
 - Competing startup, route, visibility, reconnect, realtime, polling, and direct refresh paths share one in-flight owner when they request the same data.
+- One accepted primary route transition publishes one canonical route event; an already-active exact-view retry is a no-op.
 - One ownership issue changes per runtime batch.
 - `assets/js/app.js` is a structural manifest singleton and must not receive a standard IIFE guard.
 - Compatibility and repair layers may not expand; their retirement belongs to Phase 3 after source behavior is covered.
@@ -19,8 +20,8 @@ This file records the canonical owner of each startup responsibility. Detailed h
 
 | Responsibility | Canonical owner | Current contract |
 |---|---|---|
-| Earliest installed-app route normalization | `assets/js/fresh-home-route-bootstrap.js` | Synchronous startup classification only; protected against duplicate execution |
-| Primary destination and ranking-subview activation | `assets/js/octagon-hq-shell.js` via `window.UFC_APP_SHELL` | Sole primary route owner; recovery queue is one canonical handoff |
+| Earliest installed-app route normalization | `assets/js/fresh-home-route-bootstrap.js` | Synchronous startup classification only; protected against duplicate execution; does not activate a primary destination |
+| Primary destination and ranking-subview activation | `assets/js/octagon-hq-shell.js` via `window.UFC_APP_SHELL` | Sole primary route owner; recovery queue is one canonical handoff; exact already-active views coalesce before DOM/hash/event work |
 | Ranking data | `assets/data/ranking-data.js` | Canonical fighter/ranking source; outside startup cleanup except load order |
 | Base ranking rendering and global UI APIs | `assets/js/app.js` | Exact-one structural manifest singleton; no primary-tab activation |
 | Calculated production ranking lifecycle | `assets/js/production-ranking-bootstrap.js` | Canonical `start`/`retry`/`apply`/`refresh` owner with one in-flight attempt |
@@ -28,14 +29,14 @@ This file records the canonical owner of each startup responsibility. Detailed h
 | Legacy group-token migration and canonical adoption | `assets/js/app-canonical-group.js` | Pre-resolution migration owner only; not a general identity consumer |
 | Visible profile editor and full group snapshot | `assets/js/app-profile.js` via `window.UFC_APP_PROFILE` | Sole editor/group-snapshot owner; publishes `ufc-app-profile-updated` |
 | Picks sign-in card and PIN-management surfaces | `assets/js/picks-member-pin.js` | UI, validation/status, continuation, member PIN, and commissioner PIN owner; credentials delegate to canonical profile owner |
-| Picks base runtime | `assets/js/picks.js` | Canonical Picks room/event/pick/render owner |
+| Picks base runtime | `assets/js/picks.js` | Canonical Picks room/event/pick/render owner; startup compatibility activation is subordinate to shell idempotence and may not republish an already-active primary route |
 | Picks internal routing | `assets/js/picks-internal-navigation.js` | Nested Picks route owner only; not a primary app route owner |
 | Play base runtime | `assets/js/play.js` | Canonical base Play owner after DOM/data prerequisites |
 | Play internal game navigation | `assets/js/play-hub.js` | Canonical Play game-screen owner after hub prerequisites |
 | Home rendering | `assets/js/home-dashboard.js` | Canonical Home renderer; official daily sync consumes cached identity only |
 | Community directory, member profiles, and Top 10 | `assets/js/community-profiles.js` | Canonical community owner; passive identity consumer; explicit Top 10 editing may require sign-in |
 | Cross-feature profile/Picks handoffs | `assets/js/product-architecture.js` | Compatibility/handoff owner only; no canonical access persistence or duplicate startup profile handoff |
-| Late route/reminder continuation | `assets/js/fresh-home-launch.js` | Late launch and Picks-continuation owner; broad removal remains unapproved until separately audited |
+| Late route/reminder continuation | `assets/js/fresh-home-launch.js` | Late launch and Picks-continuation owner; consumes the shell’s published destination and skips a same-destination handoff; retains legitimate bare-invite recovery |
 | Notification settings, push registration, preferences, and canonical notification rendering | `assets/js/app-notification-center.js` | Passive identity consumer for startup/settings; explicit user actions may use canonical `require()` |
 | Notification/profile surface compatibility | `assets/js/app-notification-surface-fix.js` | Temporary compatibility layer; Phase 3 removal candidate after source proof |
 | Mobile bottom navigation, badges, transitions, and pull-to-refresh presentation | `assets/js/native-app-shell.js` | Native presentation owner; delegates route activation to app shell |
@@ -75,7 +76,11 @@ Their passive paths must produce:
 - `octagon-hq-shell.js` alone mutates primary active destination and ranking subview state.
 - Recovery-window navigation is queued and consumed by the canonical shell.
 - Incoming deep links and nested Picks/Play routes delegate to their intended destination owners.
+- Late launch continuation checks the shell’s published destination before requesting a handoff.
+- Repeating the exact active view does not re-toggle the DOM, rewrite route state unnecessarily, or republish `octagon-hq:view-change`.
+- Bare Picks group/room invitations still receive one necessary Home-to-Picks recovery handoff.
 - Presentation observers and repairs may synchronize state but may not choose a competing primary route.
+- `octagon-hq-shell.js` remains network-first in the service worker so installed clients receive the corrected owner.
 
 ## Testing and interruption policy
 
@@ -89,7 +94,7 @@ Request Cody only for a named unresolved user-only or physical-only risk involvi
 
 1. Start from a fresh production-load audit; do not assume the next duplicate.
 2. Inspect remaining identity/readiness/refresh/lifecycle hotspots one responsibility at a time.
-3. `native-app-shell.js`, `fresh-home-launch.js`, and `app-notification-surface-fix.js` are candidates only when production-loaded evidence proves a duplicate.
+3. `native-app-shell.js` and `app-notification-surface-fix.js` are candidates only when production-loaded evidence proves a duplicate; `fresh-home-launch.js` is now under permanent route-ownership proof.
 4. Close Phase 2 documentation when no unproved competing identity, access, readiness, route, or full-refresh owner remains.
 5. Begin Phase 3 repair-loop retirement only after Phase 2 closes.
 
