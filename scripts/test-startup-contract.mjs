@@ -40,7 +40,8 @@ const singleOwnerScripts=[
   'assets/js/app-notification-surface-fix.js',
   'assets/js/native-app-shell.js',
   'assets/js/native-app-shell-stability.js',
-  'assets/js/share-deep-links.js'
+  'assets/js/share-deep-links.js',
+  'assets/js/picks-season-loop.js'
 ];
 singleOwnerScripts.forEach(requireOne);
 
@@ -175,6 +176,20 @@ assert.equal(notificationCenter.includes('localStorage.getItem('),false,'Notific
 assert.equal(notificationCenter.includes('TOKEN_KEY'),false,'Notification center must not own a canonical group-token key.');
 assert(notificationCenter.includes("rpc.rpc('app_notification_settings'"),'Notification center must retain notification-settings ownership.');
 assert(notificationCenter.includes("rpc.rpc('app_notification_update_preferences'"),'Notification center must retain notification-preference ownership.');
+
+const picksSeason=read('assets/js/picks-season-loop.js');
+assert(picksSeason.includes('function passiveIdentity()'),'Picks season must consume published identity through a cache-only helper.');
+assert(picksSeason.includes('window.UFC_PLAY_PROFILE?.identity'),'Picks season must consume canonical cached identity.');
+assert(picksSeason.includes('window.UFC_APP_PROFILE?.identity'),'Picks season may reuse app-profile cached identity.');
+assert.equal(picksSeason.includes('window.UFC_PLAY_PROFILE?.resolve?.()'),false,'Picks season must not invoke the canonical resolver during passive work.');
+assert.equal(picksSeason.includes('window.UFC_PLAY_PROFILE?.require?.('),false,'Picks season passive work must not require sign-in.');
+assert.equal(picksSeason.includes('window.UFC_APP_PROFILE?.resolve?.()'),false,'Picks season must not invoke the visible profile-editor resolver.');
+assert.equal(picksSeason.includes('localStorage.getItem('),false,'Picks season must not read canonical access directly from storage.');
+assert.equal(picksSeason.includes('GROUP_TOKEN_KEY'),false,'Picks season must not own the canonical member-token key.');
+assert.equal(picksSeason.includes('GROUP_ADMIN_KEY'),false,'Picks season must not own the canonical admin-token key.');
+assert(picksSeason.includes('if(state.loading)return state.loading;'),'Picks season must keep one unconditional in-flight load guard.');
+assert(picksSeason.includes("['ufc-play-profile-ready','ufc-app-profile-updated']"),'Picks season must retain readiness-driven synchronization.');
+
 const notificationSurface=read('assets/js/app-notification-surface-fix.js');
 assert(notificationSurface.includes('__UFC_APP_NOTIFICATION_SURFACE_FIX_STARTED__'),'Notification surface must keep its global duplicate-start guard.');
 
@@ -208,6 +223,7 @@ console.log(JSON.stringify({
   canonicalProfileAccessOwner:true,
   productProfileHandoffOnly:true,
   notificationPassiveIdentityConsumer:true,
+  picksSeasonPassiveIdentityConsumer:true,
   firstScript:localPaths[0],
   lastScript:localPaths.at(-1)
 },null,2));

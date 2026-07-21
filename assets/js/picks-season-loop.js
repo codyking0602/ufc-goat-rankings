@@ -1,10 +1,8 @@
 (function(){
   'use strict';
 
-  const VERSION='picks-season-loop-20260718d-canonical-ui';
+  const VERSION='picks-season-loop-20260720e-passive-identity';
   const GROUP_CODE='GOAT26';
-  const GROUP_TOKEN_KEY=`ufc-picks:group:${GROUP_CODE}`;
-  const GROUP_ADMIN_KEY=`ufc-picks:group-admin:${GROUP_CODE}`;
   const config=window.UFC_SUPABASE_CONFIG||{};
   const ownClient=config.url&&config.anonKey&&window.supabase?.createClient
     ? window.supabase.createClient(config.url,config.anonKey)
@@ -31,7 +29,6 @@
   }[char]));
   const num=value=>Number.isFinite(Number(value))?Number(value):0;
   const normalize=value=>text(value).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
-  const get=key=>{try{return localStorage.getItem(key)||'';}catch(_error){return'';}};
   const api=()=>window.UFC_PLAY_PROFILE?.client||window.UFC_APP_PROFILE?.identity?.client||ownClient;
   const currentYear=()=>Number(new Intl.DateTimeFormat('en-US',{
     timeZone:'America/Chicago',
@@ -240,13 +237,14 @@
     };
   }
 
-  async function resolveIdentity(){
-    if(state.identity)return state.identity;
-    state.identity=await window.UFC_APP_PROFILE?.resolve?.().catch(()=>null)
-      ||await window.UFC_PLAY_PROFILE?.resolve?.().catch(()=>null)
-      ||null;
+  function passiveIdentity(){
+    const value=state.identity||window.UFC_PLAY_PROFILE?.identity||window.UFC_APP_PROFILE?.identity;
+    state.identity=value||null;
     return state.identity;
   }
+
+  const tokenFor=identity=>text(identity?.memberToken||identity?.member_token);
+  const adminTokenFor=identity=>text(identity?.adminToken||identity?.admin_token)||null;
 
   function canonicalMe(group,identity){
     const members=group?.members||[];
@@ -274,15 +272,15 @@
   }
 
   async function loadData(force=false){
-    if(state.loading&&!force)return state.loading;
+    if(state.loading)return state.loading;
 
     state.loading=(async()=>{
       const client=api();
-      const identity=await resolveIdentity();
-      const token=get(GROUP_TOKEN_KEY)||identity?.memberToken||identity?.member_token||'';
+      const identity=passiveIdentity();
+      const token=tokenFor(identity);
       if(!client||!identity||!token)return null;
 
-      const admin=get(GROUP_ADMIN_KEY)||null;
+      const admin=adminTokenFor(identity);
       const [
         {data:group,error:groupError},
         {data:events,error:eventError},
@@ -770,7 +768,7 @@
 
   async function toggleReminder(input){
     const client=api();
-    const token=get(GROUP_TOKEN_KEY)||state.data?.identity?.memberToken||'';
+    const token=tokenFor(state.data?.identity||passiveIdentity());
     if(!client||!token){
       input.checked=!input.checked;
       toast('Open your shared profile first');
