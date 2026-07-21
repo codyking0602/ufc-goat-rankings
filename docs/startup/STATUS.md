@@ -4,13 +4,13 @@ _Last updated: 2026-07-21_
 
 ## Current position
 
-- **Production `main`:** `14f23d54548eef7e6fcf89acddfcded255ebeb58`.
-- **Latest startup runtime merge:** PR #153, `14f23d54548eef7e6fcf89acddfcded255ebeb58`.
+- **Production `main`:** `a727a38540cd78a12f6035632c5b9e7016bea18c`.
+- **Latest startup runtime merge:** PR #155, `a727a38540cd78a12f6035632c5b9e7016bea18c`.
 - **Current phase:** Phase 2 — remove duplicate ownership.
 - **Phase 0:** Complete.
 - **Phase 1:** Complete.
-- **Phase 2:** Approximately 99% complete.
-- **Entire startup cleanup:** Approximately 90% complete.
+- **Phase 2:** Approximately 99.5% complete.
+- **Entire startup cleanup:** Approximately 91% complete.
 - **Visible product changes approved:** None. The zero-visible-change contract remains in force.
 - **Master tracker:** [Issue #102](https://github.com/codyking0602/ufc-goat-rankings/issues/102).
 - **Current Phase 2 ledger:** [`PHASE-2-PROGRESS-20260721.md`](./PHASE-2-PROGRESS-20260721.md).
@@ -36,7 +36,7 @@ All 13 audited Phase 1 runtime owners are protected according to their actual li
 - PR #151 made exact same-view activation a canonical no-op and prevented late launch continuations from reactivating the already-owned destination.
 - The permanent startup contract rejects competing primary route activation and proves that one accepted route transition publishes one event while an already-active retry publishes none.
 
-### Phase 2 — identity, profile, access, notification, and passive consumers
+### Phase 2 — identity, profile, access, notification, refresh, and passive consumers
 
 `assets/js/play-profile-identity.js` is the canonical shared credential, login/fallback, identity-cache, readiness-publication, and access-persistence owner.
 
@@ -60,27 +60,29 @@ Completed isolated corrections:
 | #149 | War Room notification activity, unread, mark-seen, realtime, and push work are passive with one activity-status request owner | `31297afb6af98c6e777306fd61b9fe48d566ce35` |
 | #151 | Canonical route owner coalesces same-view activation; late Home/Picks continuation skips the already-owned destination | `fc0b21d8558ba20849460c8dcc01bee383f83240` |
 | #153 | Notification surface compatibility no longer invokes canonical notification rendering/settings work | `14f23d54548eef7e6fcf89acddfcded255ebeb58` |
+| #155 | Native pull-to-refresh fallback no longer duplicates the accepted action’s final activity-status refresh | `a727a38540cd78a12f6035632c5b9e7016bea18c` |
 
 PR #144 was a test-only correction and changed no production behavior.
 
-## Latest completed batch — PR #153
+## Latest completed batch — PR #155
 
-Production-loaded notification code previously had two layers initiating the same notification work:
+Production-loaded pull-to-refresh code previously had two sequential activity-status refreshes on the missing-update-watcher fallback path:
 
-- `app-notification-center.js` already owned notification settings loading, render coalescing, readiness/profile/device refreshes, profile/activity observers, and explicit user actions;
-- `app-notification-surface-fix.js` independently called the owner’s public `render()` and `loadSettings()` methods from startup timers, profile observers, readiness/profile/device events, soft refresh, and direct compatibility synchronization.
+- `native-app-shell.js` `fallbackQuickSync()` completed `UFC_OCTAGON_NOTIFICATIONS.refreshStatus()` as one of its recovery tasks;
+- after that promise cleared, the outer accepted pull action `refresh()` immediately called the same activity owner again;
+- one accepted fallback pull therefore produced two sequential `octagon_activity_status` RPCs.
 
-PR #153 now:
+PR #155 now:
 
-- makes `app-notification-surface-fix.js` a profile-cache compatibility layer only;
-- removes every compatibility-layer call into canonical notification render/settings ownership;
-- preserves activity-profile HTML caching, restoration, observer/timer recovery, soft-refresh cache synchronization, service-worker registration, and cached action routing;
-- removes serialized listener-bound markers before caching so restored action buttons receive live listeners;
-- preserves canonical notification settings, preference writes, push behavior, explicit `require()` fallback, profile/activity notification cards, and canonical identity/storage boundaries.
+- leaves the preferred `app-update-watcher.js` `quickSync()` path unchanged;
+- removes only the subordinate fallback’s activity-status call;
+- retains the accepted native pull action’s one final activity-status refresh;
+- preserves daily Play recovery, leaderboard refresh, challenge inbox refresh, notification settings refresh, active War Room board refresh, Home rendering, soft-refresh publication, badges, completion copy, haptics, and the accepted-action in-flight guard;
+- adds permanent static and mobile-browser ownership proofs for watcher, Home fallback, War Room fallback, and concurrent pull paths.
 
-Startup Architecture Gate #143 passed completely on exact tested head `17611dc8fbe0cbf93bda9e6c308705ee2e621656`. Production merge: `14f23d54548eef7e6fcf89acddfcded255ebeb58`.
+Startup Architecture Gate #145 passed completely on exact tested head `ed97c47766e57d2764e3e76d03927acbda61e58a`. The dedicated mobile workflow also passed on that exact head. Production merge: `a727a38540cd78a12f6035632c5b9e7016bea18c`.
 
-Known unrelated workflows remained confined to their established diagnostics: fighter-photo auditing, the permanent scoring source/runtime contract, and the Phase 4B historical architecture pin. None referenced the isolated notification compatibility runtime or proofs.
+Known unrelated workflows remained confined to their established diagnostics: fighter-photo auditing, the permanent scoring source/runtime contract, and the Phase 4B historical architecture pin. None referenced the isolated native pull runtime or proofs.
 
 ## Testing and interruption policy
 
@@ -113,14 +115,14 @@ These remain outside startup ownership unless a failure directly references an i
 ## Exact next action
 
 1. Verify current production `main` because automated UFC odds/deployment workflows may advance it.
-2. Start another fresh production-load audit from `index.html`, the startup contract, and loaded JavaScript files.
-3. Do not assume the next duplicate in advance.
-4. Search remaining modules for competing identity resolution, canonical storage ownership, duplicate readiness publication, repeated full refreshes, or route/visibility/reconnect/realtime/polling paths that call the same expensive work.
-5. `native-app-shell.js` remains a candidate only when production-loaded evidence demonstrates a duplicate. `fresh-home-launch.js` and `app-notification-surface-fix.js` are now covered by permanent ownership proofs.
-6. Prove one narrow duplicate, name the canonical owner and passive consumer, record every trigger/retry path and existing coalescing behavior, then make the smallest isolated change.
-7. Add focused static and mobile-browser ownership proofs, wire them into Startup Architecture Gate, run the complete gate, inspect unrelated reds, and merge under the CI-first policy.
+2. Perform one final fresh Phase 2 production-load audit from `index.html`, the startup contract, and loaded JavaScript files.
+3. Do not assume another duplicate exists.
+4. Re-scan remaining production-loaded modules for competing identity resolution, canonical storage ownership, duplicate readiness publication, repeated full refreshes, or overlapping route/visibility/reconnect/realtime/polling work.
+5. `fresh-home-launch.js`, `app-notification-surface-fix.js`, and `native-app-shell.js` are now covered by permanent ownership proofs.
+6. If no new duplicate can be demonstrated, document the clean audit and close Phase 2 rather than beginning an unproved cleanup.
+7. If one narrow duplicate remains, prove it, add focused static/mobile evidence, run the complete gate, and merge under the CI-first policy.
 8. Continue autonomously. Contact Cody only under the genuine unresolved-uncertainty rule above.
-9. Close Phase 2 only after the production-loaded modules contain no unproved competing identity, access, readiness, route, notification, or full-refresh owner.
+9. Begin Phase 3 repair-loop retirement only after Phase 2 is formally closed.
 
 ## Stop conditions
 

@@ -2,9 +2,9 @@
 
 ## Current production position
 
-- Production `main`: `14f23d54548eef7e6fcf89acddfcded255ebeb58`.
-- Entire startup cleanup: approximately 90% complete.
-- Phase 2: approximately 99% complete.
+- Production `main`: `a727a38540cd78a12f6035632c5b9e7016bea18c`.
+- Entire startup cleanup: approximately 91% complete.
+- Phase 2: approximately 99.5% complete.
 - Phase 0 and Phase 1: complete.
 - Visible product change: none intended or approved.
 
@@ -38,6 +38,8 @@
 | #151 | Deduplicate canonical startup route activation and preserve legitimate invite recovery | `fc0b21d8558ba20849460c8dcc01bee383f83240` |
 | #152 | Update permanent status after route ownership cleanup | `7f44188513109148c7347afdcb8d3a15b39f3cd7` |
 | #153 | Make notification/profile surface compatibility passive | `14f23d54548eef7e6fcf89acddfcded255ebeb58` |
+| #154 | Update permanent status after notification compatibility cleanup | `9fc4e7ec3d87fc69f4b4c49edec1bfb2da0b6040` |
+| #155 | Deduplicate native pull activity-status refresh | `a727a38540cd78a12f6035632c5b9e7016bea18c` |
 
 ## Canonical identity boundary
 
@@ -76,7 +78,17 @@ The route contract now requires:
 - readiness, profile-update, device-change, and observer-driven refreshes;
 - preference writes, push registration/removal, test delivery, and explicit identity fallback.
 
-`assets/js/app-notification-surface-fix.js` is now a passive profile-cache compatibility layer. It may cache and restore activity-profile HTML, observe profile surfaces, synchronize its cache on soft refresh, register the current service worker, and bind cached action routes. It may not invoke canonical notification render/settings work.
+`assets/js/app-notification-surface-fix.js` is a passive profile-cache compatibility layer. It may cache and restore activity-profile HTML, observe profile surfaces, synchronize its cache on soft refresh, register the current service worker, and bind cached action routes. It may not invoke canonical notification render/settings work.
+
+## Canonical native refresh boundary
+
+The accepted pull action is `assets/js/native-app-shell.js` `refresh()`.
+
+- it retains one `state.refreshing` in-flight guard;
+- it prefers `assets/js/app-update-watcher.js` `quickSync()`;
+- when that owner is unavailable, its subordinate `fallbackQuickSync()` retains daily, leaderboard, challenge inbox, notification settings, active War Room board, Home rendering, and soft-refresh work;
+- after either sync path, the accepted action performs exactly one final `assets/js/octagon-notifications.js` `refreshStatus()` call;
+- the fallback may not duplicate that final activity-status refresh.
 
 ## Permanent ownership proofs
 
@@ -99,27 +111,27 @@ Startup Architecture Gate now protects:
 - War Room board passive identity;
 - War Room access passive identity and one access-status request owner;
 - War Room notification passive identity and one activity-status request owner;
+- native pull normal, Home fallback, War Room fallback, and concurrent accepted-action ownership;
 - iOS route stability;
 - profile sign-in stability;
 - delayed Home/community stability.
 
-## PR #153 validation record
+## PR #155 validation record
 
-- Final exact tested head: `17611dc8fbe0cbf93bda9e6c308705ee2e621656`.
-- Startup Architecture Gate #143: passed completely.
-- Production merge: `14f23d54548eef7e6fcf89acddfcded255ebeb58`.
-- Changed runtime responsibility: notification/profile compatibility only.
+- Final exact tested head: `ed97c47766e57d2764e3e76d03927acbda61e58a`.
+- Startup Architecture Gate #145: passed completely.
+- Dedicated mobile workflow #23: passed completely.
+- Production merge: `a727a38540cd78a12f6035632c5b9e7016bea18c`.
+- Changed runtime responsibility: native pull fallback activity refresh only.
 
 The focused static and browser proof established:
 
-- the canonical notification center loads before its compatibility consumer;
-- the compatibility layer makes zero public notification `loadSettings()` or `render()` calls during startup timers;
-- readiness and profile updates each produce exactly one canonical notification-settings RPC;
-- soft refresh, profile mutation, profile-chip clicks, and direct compatibility sync produce zero notification-settings RPCs and zero public render/settings calls;
-- passive startup performs zero canonical/editor resolver calls and zero canonical access-storage reads;
-- explicit notification actions retain canonical `require()` fallback;
-- cached activity-profile HTML restores without canonical notification markup;
-- cached action buttons remain live after restoration because serialized listener-bound markers are removed before caching.
+- production load order places the quick-sync owner and activity owner before the native presentation layer;
+- the normal watcher path runs one quick sync, zero fallback tasks, and one final activity refresh;
+- the Home fallback runs each recovery task once, skips War Room board loading, and performs one final activity refresh;
+- the War Room fallback retains one silent board load and one final activity refresh;
+- two concurrent calls while one accepted pull is in flight produce one quick sync and one final activity refresh;
+- completion copy, completion state, bottom navigation, Ask action, badges, and native refreshing cleanup remain intact.
 
 Known unrelated workflow failures remained outside the isolated branch:
 
@@ -127,7 +139,7 @@ Known unrelated workflow failures remained outside the isolated branch:
 - Scoring Architecture Guardrails stopped at the existing permanent source/runtime contract;
 - Validate Phase 4B Preview stopped at the historical stable-architecture pin.
 
-None referenced the isolated notification compatibility runtime or proof files.
+None referenced the isolated native pull runtime or proof files.
 
 ## CI-first and interruption rule
 
@@ -139,8 +151,8 @@ Contact Cody only when a specific unresolved user-only or physical-only uncertai
 
 ## Remaining Phase 2 work
 
-Start another fresh production-loaded audit from current `main`; do not presume the next duplicate.
+Perform one final fresh production-loaded audit from current `main`; do not presume another duplicate.
 
-Search for one remaining competing responsibility involving identity resolution, canonical storage, readiness publication, repeated full refreshes, or overlapping route/visibility/reconnect/realtime/polling work. `native-app-shell.js` remains a candidate only if the current production load map proves a duplicate. `fresh-home-launch.js` and `app-notification-surface-fix.js` are now covered by permanent ownership contracts.
+Re-scan remaining production modules for one competing responsibility involving identity resolution, canonical storage, readiness publication, repeated full refreshes, or overlapping route/visibility/reconnect/realtime/polling work. `fresh-home-launch.js`, `app-notification-surface-fix.js`, and `native-app-shell.js` are covered by permanent ownership contracts.
 
-Handle one narrow responsibility at a time. Close Phase 2 only when no unproved competing identity, access, readiness, route, notification, or full-refresh owner remains. Do not begin broad Phase 3 repair-loop retirement before that point.
+If no additional duplicate can be demonstrated, document that clean audit and close Phase 2. Do not begin Phase 3 repair-loop retirement until Phase 2 is formally closed.

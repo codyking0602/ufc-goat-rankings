@@ -12,6 +12,7 @@ This file records the canonical owner of each startup responsibility. Detailed h
 - Explicit user actions may use the canonical `require()` boundary when sign-in is genuinely needed.
 - Competing startup, route, visibility, reconnect, realtime, polling, and direct refresh paths share one in-flight owner when they request the same data.
 - One accepted primary route transition publishes one canonical route event; an already-active exact-view retry is a no-op.
+- One accepted pull-to-refresh action performs one final activity-status refresh; subordinate fallback work may not duplicate it.
 - Compatibility layers may preserve presentation/recovery behavior but may not initiate a canonical owner’s data or render responsibility.
 - One ownership issue changes per runtime batch.
 - `assets/js/app.js` is a structural manifest singleton and must not receive a standard IIFE guard.
@@ -40,7 +41,8 @@ This file records the canonical owner of each startup responsibility. Detailed h
 | Late route/reminder continuation | `assets/js/fresh-home-launch.js` | Late launch and Picks-continuation owner; consumes the shell’s published destination and skips a same-destination handoff; retains legitimate bare-invite recovery |
 | Notification settings, push registration, preferences, and canonical notification rendering | `assets/js/app-notification-center.js` | Sole notification settings/render owner; passive identity consumer for startup/settings; explicit user actions may use canonical `require()` |
 | Notification/profile surface compatibility | `assets/js/app-notification-surface-fix.js` | Profile-cache presentation compatibility only; may cache/restore activity HTML and bind cached actions but may not call canonical notification render/settings work |
-| Mobile bottom navigation, badges, transitions, and pull-to-refresh presentation | `assets/js/native-app-shell.js` | Native presentation owner; delegates route activation to app shell |
+| App-wide quick synchronization | `assets/js/app-update-watcher.js` | Canonical app quick-sync owner for the normal path; does not perform the native pull action’s final activity-status refresh |
+| Mobile bottom navigation, badges, transitions, and pull-to-refresh presentation | `assets/js/native-app-shell.js` | Native presentation and accepted pull-action owner; delegates route activation, prefers canonical quick sync, and performs one final activity-status refresh after either normal or fallback sync |
 | Mobile/native repair behavior | `assets/js/native-app-shell-stability.js` | Temporary repair layer; Phase 3 removal candidate |
 | Sharing and incoming supported deep links | `assets/js/share-deep-links.js` | Canonical share/deep-link orchestrator; delegates destination activation |
 | Profile challenge inbox, actions, and routing | `assets/js/profile-challenges.js` | Passive inbox identity consumer with one in-flight load; explicit actions may require sign-in |
@@ -48,9 +50,9 @@ This file records the canonical owner of each startup responsibility. Detailed h
 | Picks season summary/events/social/room loading | `assets/js/picks-season-loop.js` | Passive identity consumer with coalesced season request set |
 | War Room message board | `assets/js/octagon-message-board.js` | Passive identity consumer; visible **SIGN IN** button is its one explicit canonical `require()` boundary |
 | War Room membership/access status and Cody’s access-management panel | `assets/js/octagon-access-panel.js` | Passive identity consumer; one in-flight access-status owner; no direct sign-in or storage ownership |
-| War Room activity/unread/mark-seen/realtime/push behavior | `assets/js/octagon-notifications.js` | Passive identity consumer; one in-flight activity-status owner; push enable/disable reuses published identity; no resolver or canonical-storage ownership |
+| War Room activity/unread/mark-seen/realtime/push behavior | `assets/js/octagon-notifications.js` | Passive identity consumer and canonical activity-status owner; one in-flight activity-status request; push enable/disable reuses published identity; no resolver or canonical-storage ownership |
 
-## Passive identity and notification contract
+## Passive identity, notification, and refresh contract
 
 Permanent static and browser/runtime ownership proofs now cover:
 
@@ -62,18 +64,22 @@ Permanent static and browser/runtime ownership proofs now cover:
 - Picks season loop;
 - War Room message board;
 - War Room access panel;
-- War Room notifications.
+- War Room notifications;
+- native pull-to-refresh normal, fallback, War Room, and concurrent paths.
 
-Their passive paths must produce:
+Their passive or subordinate paths must produce:
 
 - zero canonical/editor resolver calls;
 - zero canonical token storage reads;
 - zero sign-in surfaces before an explicit user action;
 - zero identity-dependent RPCs before published identity;
 - one request owner for competing refresh paths;
-- zero compatibility-layer calls into canonical notification settings or render ownership.
+- zero compatibility-layer calls into canonical notification settings or render ownership;
+- exactly one final activity-status refresh for one accepted pull action.
 
 The notification compatibility proof additionally requires cached activity-profile restoration and restored action routing to remain functional without serialized stale listener markers.
+
+The native pull proof additionally requires the fallback to retain daily, leaderboard, challenge inbox, notification settings, active War Room board, Home rendering, and soft-refresh work while leaving activity status to the accepted action’s final refresh.
 
 ## Route contract
 
@@ -96,10 +102,10 @@ Request Cody only for a named unresolved user-only or physical-only risk involvi
 
 ## Remaining Phase 2 order
 
-1. Start from a fresh production-load audit; do not assume the next duplicate.
-2. Inspect remaining identity/readiness/refresh/lifecycle hotspots one responsibility at a time.
-3. `native-app-shell.js` remains a candidate only when production-loaded evidence proves a duplicate. `fresh-home-launch.js` and `app-notification-surface-fix.js` are under permanent ownership proof.
-4. Close Phase 2 documentation when no unproved competing identity, access, readiness, route, notification, or full-refresh owner remains.
+1. Perform one final fresh production-load audit; do not assume another duplicate.
+2. Re-scan remaining identity/readiness/refresh/lifecycle hotspots one responsibility at a time.
+3. `fresh-home-launch.js`, `app-notification-surface-fix.js`, and `native-app-shell.js` are under permanent ownership proof.
+4. If no new competing owner can be demonstrated, document the clean audit and close Phase 2.
 5. Begin Phase 3 repair-loop retirement only after Phase 2 closes.
 
 Do not combine these areas into a broad refactor.
