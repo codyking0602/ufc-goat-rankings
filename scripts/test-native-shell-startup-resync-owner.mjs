@@ -18,6 +18,7 @@ const fixture=`<!doctype html><html><head><meta charset="utf-8"><title>Native st
   const proof=window.__NATIVE_STARTUP_RESYNC_PROOF__={badgeWrites:[],intervals:[],setDestination(value){destination=value;}};
   window.UFC_APP_SHELL={get currentDestination(){return destination;},activateDestination(value){destination=value;return true;}};
   window.UFC_PROFILE_CHALLENGES={unreadCount:0};
+  window.UFC_OCTAGON_ACCESS={mode:'owner'};
   window.UFC_OCTAGON_NOTIFICATIONS={unread:0,markSeen(){}};
   Object.defineProperty(window,'matchMedia',{configurable:true,value:()=>({matches:true,addEventListener(){},removeEventListener(){}})});
   Object.defineProperty(navigator,'setAppBadge',{configurable:true,value:async value=>{proof.badgeWrites.push({type:'set',value});}});
@@ -37,6 +38,7 @@ async function snapshot(page){
     askAction:document.querySelectorAll('[data-native-ask]').length,
     pullIndicator:document.querySelectorAll('[data-native-pull-refresh]').length,
     active:[...document.querySelectorAll('[data-native-destination].active')].map(node=>node.dataset.nativeDestination),
+    warHidden:Boolean(document.querySelector('[data-native-destination="war-room"]')?.hidden),
     badges:Object.fromEntries([...document.querySelectorAll('[data-native-badge]')].map(node=>[node.dataset.nativeBadge,{text:node.textContent,hidden:node.hidden}]))
   }));
 }
@@ -52,11 +54,12 @@ try{
   report.phase='initial-start';
   const initial=await snapshot(page);
   report.snapshots.initial=initial;
-  assert.equal(initial.version,'native-app-shell-20260721c-no-delayed-startup-resync');
+  assert.equal(initial.version,'native-app-shell-20260721d-permission-aware-war-room');
   assert.equal(initial.bottomNav,1,'Initial startup did not create exactly one bottom navigation.');
   assert.equal(initial.askAction,1,'Initial startup did not create exactly one Ask action.');
   assert.equal(initial.pullIndicator,1,'Initial startup did not create exactly one pull indicator.');
   assert.deepEqual(initial.active,['home'],'Initial native route state did not match the canonical Home destination.');
+  assert.equal(initial.warHidden,false,'Eligible War Room navigation was hidden on initial native startup.');
   assert.deepEqual(initial.intervals,[10000],'The separate 10-second badge poll changed or duplicated.');
   assert.equal(initial.badgeWrites.length,1,'Initial startup performed multiple app-badge synchronizations.');
 
