@@ -1,0 +1,80 @@
+name: War Room iOS Import Diagnostic
+
+on:
+  push:
+    branches: [agent/war-room-permission-aware]
+
+permissions:
+  contents: read
+
+jobs:
+  import-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser runtime
+        run: npm install --no-save --package-lock=false playwright@1.54.2 >/tmp/war-room-npm.log 2>&1 && npx playwright install --with-deps chromium >/tmp/war-room-playwright.log 2>&1
+      - name: Start local app
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/war-room-ios-http.log 2>&1 &
+          for attempt in $(seq 1 20); do
+            if curl --fail --silent http://127.0.0.1:4173/index.html >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/war-room-ios-http.log
+          exit 1
+      - name: Fresh launch route owner
+        continue-on-error: true
+        run: node scripts/test-fresh-launch-route-ownership.mjs
+      - name: Native spotlight owner
+        continue-on-error: true
+        run: node scripts/test-native-shell-stability-spotlight-owner.mjs
+      - name: Native profile owner
+        continue-on-error: true
+        run: node scripts/test-native-shell-stability-profile-owner.mjs
+      - name: Native whats-new owner
+        continue-on-error: true
+        run: node scripts/test-native-shell-stability-whats-new-owner.mjs
+      - name: Native drawer owner
+        continue-on-error: true
+        run: node scripts/test-native-shell-stability-drawer-owner.mjs
+      - name: Native pull refresh owner
+        continue-on-error: true
+        run: node scripts/test-native-pull-refresh-ownership.mjs
+      - name: Picks commissioner owner
+        continue-on-error: true
+        run: node scripts/test-picks-commissioner-active-owner.mjs
+      - name: Native startup resync owner
+        continue-on-error: true
+        run: node scripts/test-native-shell-startup-resync-owner.mjs
+      - name: Octagon notification owner
+        continue-on-error: true
+        run: node scripts/test-octagon-notification-startup-retry-owner.mjs
+      - name: Octagon access owner
+        continue-on-error: true
+        run: node scripts/test-octagon-access-startup-retry-owner.mjs
+      - name: Octagon board owner
+        continue-on-error: true
+        run: node scripts/test-octagon-board-startup-retry-owner.mjs
+      - name: Picks persistent owner
+        continue-on-error: true
+        run: node scripts/test-picks-persistent-groups-active-owner.mjs
+      - name: Picks social owner
+        continue-on-error: true
+        run: node scripts/test-picks-social-active-owner.mjs
+      - name: Product startup contract
+        continue-on-error: true
+        run: node scripts/test-product-startup-handoff-contract.mjs
+      - name: Better-than owner
+        continue-on-error: true
+        run: node scripts/test-better-than-find-leader-owner.mjs
+      - name: Better-than photo owner
+        continue-on-error: true
+        run: node scripts/test-better-than-photo-authority-owner.mjs
+      - name: Picks mobile tabs
+        continue-on-error: true
+        run: node scripts/test-picks-mobile-top-tabs.mjs
