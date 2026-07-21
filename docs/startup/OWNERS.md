@@ -30,6 +30,7 @@ This file records the canonical owner of each startup responsibility. Detailed h
 | Ranking data | `assets/data/ranking-data.js` | Canonical fighter/ranking source; outside startup cleanup except load order |
 | Base ranking rendering and global UI APIs | `assets/js/app.js` | Exact-one structural manifest singleton; no primary-tab activation |
 | Calculated production ranking lifecycle | `assets/js/production-ranking-bootstrap.js` | Canonical `start`/`retry`/`apply`/`refresh` owner with one in-flight attempt |
+| Calculated fighter profile and Resume Snapshot | `assets/js/calculated-profile-runtime.js` | Sole calculated `openFighter()` and profile-content owner; one complete profile write; Resume Snapshot values come from `RANKING_DATA.visibleStats`, with canonical UFC fight facts used for the win-streak fallback |
 | Shared credentials, login/fallback, identity cache, canonical readiness, and canonical access persistence | `assets/js/play-profile-identity.js` via `window.UFC_PLAY_PROFILE` | Sole shared identity/access owner; consumes a valid migration handoff without repeating its snapshot and retains independent fallback resolution |
 | Historical group-token migration and canonical adoption | `assets/js/app-canonical-group.js` | Pre-resolution migration owner only; validates historical access, adopts canonical/admin/room values, normalizes the URL, owns the one-time migration reload, and returns a bounded resolved-identity handoff without publishing `ufc-play-profile-ready` |
 | Visible profile editor and full group snapshot | `assets/js/app-profile.js` via `window.UFC_APP_PROFILE` | Sole editor/group-snapshot owner; publishes `ufc-app-profile-updated` |
@@ -46,7 +47,7 @@ This file records the canonical owner of each startup responsibility. Detailed h
 | Notification/profile surface compatibility | `assets/js/app-notification-surface-fix.js` | Profile-cache presentation compatibility only; may cache/restore activity HTML and bind cached actions but may not call canonical notification render/settings work |
 | App-wide quick synchronization | `assets/js/app-update-watcher.js` | Canonical app quick-sync owner for the normal path; does not perform the native pull action’s final activity-status refresh |
 | Mobile bottom navigation, badges, transitions, and pull-to-refresh presentation | `assets/js/native-app-shell.js` | Native presentation and accepted pull-action owner; delegates route activation, prefers canonical quick sync, and performs one final activity-status refresh after either normal or fallback sync |
-| Mobile/native repair behavior | `assets/js/native-app-shell-stability.js` | Temporary target-specific repair layer; no Ranking Spotlight ownership after PR #159; retained snapshot, drawer, What’s New, route/soft-refresh, observer, and bounded delayed-startup paths remain Phase 3 candidates only after focused proof |
+| Mobile/native repair behavior | `assets/js/native-app-shell-stability.js` | Temporary target-specific presentation repair layer; no Ranking Spotlight or calculated fighter-profile content ownership after PRs #159 and #161; retained drawer/body, native overlay dismissal, **What’s New**, route/soft-refresh, observer, and bounded delayed-startup paths remain Phase 3 candidates only after focused proof |
 | Sharing and incoming supported deep links | `assets/js/share-deep-links.js` | Canonical share/deep-link orchestrator; delegates destination activation |
 | Profile challenge inbox, actions, and routing | `assets/js/profile-challenges.js` | Passive inbox identity consumer with one in-flight load; explicit actions may require sign-in |
 | Picks social profile/reminder snapshot | `assets/js/picks-social-retention.js` | Passive identity consumer with one in-flight snapshot owner |
@@ -68,13 +69,14 @@ Startup Architecture Gate protects:
 - App Profile single group snapshot;
 - Home daily passive identity;
 - Home/Ranking Spotlight canonical readiness and rendering with no stability-layer repair;
+- calculated fighter-profile and Resume Snapshot ownership with no stability-layer content repair;
 - profile-challenge passive inbox loading;
 - notification settings passive identity;
 - notification/profile compatibility passive ownership and live cached-action restoration;
 - Picks social and season passive identity;
 - War Room board, access, and notification passive identity with their request owners;
 - native pull normal, fallback, War Room, and concurrent accepted-action ownership;
-- iOS route stability and delayed Home/community stability.
+- iOS route stability and delayed Home/community/profile stability.
 
 Passive or subordinate paths must produce:
 
@@ -85,6 +87,7 @@ Passive or subordinate paths must produce:
 - one request owner for competing refresh paths;
 - zero compatibility-layer calls into canonical notification settings or render ownership;
 - zero repair-layer Ranking Spotlight mutations before or after canonical ranking readiness;
+- zero repair-layer fighter-profile or Resume Snapshot content mutations;
 - exactly one final activity-status refresh for one accepted pull action;
 - exactly one snapshot validation across a successful migration-to-canonical-identity handoff.
 
@@ -105,7 +108,8 @@ The final production-load audit after PR #157 found no remaining demonstrated co
 
 ## Phase 3 current boundary
 
-PR #159 removed only the duplicate Ranking Spotlight renderer from `native-app-shell-stability.js`. `home-dashboard.js` now has a permanent static and mobile-browser proof covering cold/delayed startup, readiness, repeated events, route/visibility recovery, refresh, and stable delayed observation.
+- PR #159 removed the duplicate Ranking Spotlight renderer from `native-app-shell-stability.js`. `home-dashboard.js` has permanent static and mobile-browser proof covering cold/delayed startup, readiness, repeated events, route/visibility recovery, refresh, and stable delayed observation.
+- PR #161 removed the duplicate Resume Snapshot writer and its profile-content observer target. `calculated-profile-runtime.js` has permanent static and mobile-browser proof covering canonical open, current calculated values, observer/route/soft-refresh/delayed stability, intentional content corruption, canonical reopen, drawer/body synchronization, and native-destination dismissal.
 
 The remaining stability behaviors are not presumed obsolete. Each must receive its own canonical-owner trace and recovery proof before removal or narrowing.
 
