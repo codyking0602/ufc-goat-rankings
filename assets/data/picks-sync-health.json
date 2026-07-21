@@ -1,0 +1,25 @@
+{
+  "outcome": "success",
+  "events": [
+    {
+      "eventId": "ufc-abu-dhabi-2026-07-25",
+      "sourceType": "official-ufc",
+      "sourceUrl": "https://www.ufc.com/event/ufc-fight-night-july-25-2026",
+      "fights": 13,
+      "confirmationHash": "93fb1131c12a5160c8dfef384d00129d5f64ebb4be75d60bac7bf87b9cd48554",
+      "synced": true,
+      "fightsReceived": 13,
+      "pickableFightsReceived": 7
+    },
+    {
+      "eventId": "ufc-belgrade-2026-08-01",
+      "sourceType": "official-ufc",
+      "sourceUrl": "https://www.ufc.com/event/ufc-fight-night-august-01-2026",
+      "fights": 12,
+      "confirmationHash": "62b34dbb91d21eb002dd9248ce6e08fd3e4869c380d45eae69ad4a491304a1c5",
+      "synced": true,
+      "fightsReceived": 12,
+      "pickableFightsReceived": 5
+    }
+  ]
+}
