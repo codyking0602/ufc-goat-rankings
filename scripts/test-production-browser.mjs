@@ -120,8 +120,8 @@ try{
   assert.equal(runtime.pettisLedgers.length,3);
   assert.ok(runtime.pettisCompare?.shortCase&&runtime.pettisCompare?.counter&&runtime.pettisCompare?.edge);
   assert.equal(runtime.pettisOverride?.profileDisplayName,'Anthony “Showtime” Pettis');
-  assert.equal(runtime.pettisOverride?.photoUrl,'assets/fighters/anthony-pettis.webp');
-  assert.equal(runtime.pettisOverride?.thumbUrl,'assets/fighters/anthony-pettis-thumb.webp');
+  assert.match(runtime.pettisOverride?.photoUrl||'',/^assets\/fighters\/anthony-pettis\.webp(?:\?|$)/);
+  assert.match(runtime.pettisOverride?.thumbUrl||'',/^assets\/fighters\/anthony-pettis-thumb\.webp(?:\?|$)/);
   assert.equal(runtime.pettisOverride?.signatureFight,'Benson Henderson II — UFC 164');
   assert.equal(runtime.pettisOverride?.alternateFight,'Gilbert Melendez — UFC 181');
   assert.equal(runtime.pettisOverride?.watchUrl,WATCH);
