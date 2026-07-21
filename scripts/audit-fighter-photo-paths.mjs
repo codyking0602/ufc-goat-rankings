@@ -63,7 +63,16 @@ try{
 
   const boardRenderFailures=[];
   for(const view of ['men','women']){
-    await page.evaluate(view=>document.querySelector(`.tab[data-view="${view}"]`)?.click(),view);
+    await page.evaluate(view=>{
+      const shell=window.UFC_APP_SHELL||window.UFC_PRODUCT_ARCHITECTURE;
+      if(typeof shell?.activateView!=='function')throw new Error('Canonical app shell is unavailable for ranking-view activation.');
+      shell.activateView(view,{updateHash:false});
+    },view);
+    await page.waitForFunction(view=>{
+      const target=document.getElementById(view);
+      const selected=document.querySelector(`[data-rankings-subnav] [data-ranking-view="${view}"]`);
+      return Boolean(target?.classList.contains('active-view')&&selected?.classList.contains('active'));
+    },view,{timeout:15000});
     const container=view==='men'?'#menList':'#womenList';
     await page.waitForFunction(selector=>{
       const rows=[...document.querySelectorAll(`${selector} .fighter-row`)];
