@@ -87,6 +87,11 @@ const report=roster.map(fighter=>{
 const red=report.filter(row=>row.status==='RED');
 const green=report.filter(row=>row.status==='GREEN');
 const missingPills=roster.filter(row=>typeof taglines[row.name]!=='string'||!taglines[row.name].trim());
+const pantoja=report.find(row=>row.name==='Alexandre Pantoja');
+if(!pantoja||pantoja.status!=='GREEN'||pantoja.source!=='display-overrides'){
+  console.log('PANTOJA PROFILE COPY: canonical display-overrides coverage missing');
+  process.exitCode=1;
+}
 console.log(`Profile copy audit: ${report.length} fighters | ${green.length} green | ${red.length} red`);
 if(red.length)console.log(`PROFILE RED: ${red.map(row=>`${row.name} [${row.source}]`).join(', ')}`);
 console.log(`Custom pill audit: ${roster.length-missingPills.length}/${roster.length} covered`);
