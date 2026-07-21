@@ -1,8 +1,6 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
-await import('./test-canonical-migration-identity-owner.mjs');
-
 const BASE='http://127.0.0.1:4173/index.html#home';
 const CREDENTIAL_RPCS=new Set(['app_profile_login','picks_member_login_pin','app_profile_resolve','play_identity_snapshot']);
 let browser;
@@ -207,3 +205,5 @@ try{
 }finally{
   if(browser)await browser.close();
 }
+
+await import('./test-canonical-migration-identity-owner.mjs');
