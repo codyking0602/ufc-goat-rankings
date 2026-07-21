@@ -39,7 +39,7 @@ const bridgedBranch=owner.match(/if\(bridged\)\{([\s\S]*?)\n    \}/)?.[1]||'';
 assert(bridgedBranch,'Could not identify the bridged identity branch.');
 assert.doesNotMatch(bridgedBranch,/snapshot\(|client\.rpc|app_profile_resolve|play_identity_snapshot/,'The bridged identity branch must not repeat credential verification or snapshot RPC work.');
 assert.match(owner,/for\(const token of candidateTokens\(\)\)[\s\S]*const identity=await snapshot\(token\)/,'Independent canonical snapshot fallback must remain when migration has no result.');
-assert.equal((owner.match(/ufc-play-profile-ready/g)||[]).length,2,'Only canonical resolve and explicit login may publish canonical profile readiness.');
+assert.equal((owner.match(/ufc-play-profile-ready/g)||[]).length,3,'Only migration handoff resolution, independent canonical resolution, and explicit login may publish canonical profile readiness.');
 assert.match(owner,/async function login\(/,'Explicit login ownership must remain.');
 assert.match(owner,/picks_member_login_pin/,'Legacy explicit-login fallback must remain.');
 
