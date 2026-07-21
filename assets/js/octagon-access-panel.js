@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='octagon-access-panel-20260721b-passive-identity';
+  const VERSION='octagon-access-panel-20260721c-single-startup-access-check';
   const CANONICAL_CODE='GOAT26';
   const ACCESS_CHANNEL=`octagon-access-${CANONICAL_CODE.toLowerCase()}`;
   const instanceId=globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -326,10 +326,8 @@
 
   function start(){
     installStyles();
-    [0,250,900,2600,5000].forEach(delay=>window.setTimeout(()=>{
-      ensurePanel();
-      checkCurrentAccess();
-    },delay));
+    ensurePanel();
+    void checkCurrentAccess();
     ['ufc-play-profile-ready','ufc-app-profile-updated','ufc-canonical-group-ready'].forEach(name=>{
       window.addEventListener(name,event=>{
         passiveIdentity(event.detail);
