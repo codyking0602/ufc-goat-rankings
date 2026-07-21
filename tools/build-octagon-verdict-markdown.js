@@ -15,10 +15,15 @@ const sourcePath=path.join(__dirname,'build-octagon-verdict-knowledge.js');
 const tempPath=path.join(__dirname,'.build-octagon-verdict-markdown.tmp.js');
 const tempValidationPath=path.join(root,'.octagon-verdict-markdown-validation.tmp.json');
 const outputPath=path.join(root,'octagon-verdict-knowledge.md');
+const previousMarkdown=fs.existsSync(outputPath)?fs.readFileSync(outputPath,'utf8'):'';
+const generatedLine=/^Generated: \*\*.*\*\*  $/m;
 
 function replaceRequired(source,pattern,replacement,label){
   if(!pattern.test(source))throw new Error(`Could not update ${label}; source builder changed unexpectedly.`);
   return source.replace(pattern,replacement);
+}
+function withoutGeneratedTimestamp(value){
+  return String(value||'').replace(generatedLine,'Generated: **<stable>**  ');
 }
 
 let source=fs.readFileSync(sourcePath,'utf8');
@@ -78,7 +83,15 @@ try{
   if(result.stderr)process.stderr.write(result.stderr);
   if(result.status!==0)process.exit(result.status||1);
 
-  const markdown=fs.readFileSync(outputPath,'utf8');
+  let markdown=fs.readFileSync(outputPath,'utf8');
+  if(previousMarkdown&&withoutGeneratedTimestamp(previousMarkdown)===withoutGeneratedTimestamp(markdown)){
+    const previousGenerated=previousMarkdown.match(generatedLine)?.[0];
+    if(previousGenerated&&markdown.match(generatedLine)?.[0]!==previousGenerated){
+      markdown=markdown.replace(generatedLine,previousGenerated);
+      fs.writeFileSync(outputPath,markdown,'utf8');
+      console.log('Preserved the existing Generated timestamp because the knowledge content did not change.');
+    }
+  }
   const count=Number(markdown.match(/Fighters: \*\*(\d+)\*\*/)?.[1]||0);
   if(count<=0)throw new Error('Generated Markdown is missing its fighter count.');
   if(!/### \d+\. Brandon Moreno — \d+ OVR/.test(markdown))throw new Error('Generated Markdown is missing Brandon Moreno’s fighter card.');
