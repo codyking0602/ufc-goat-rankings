@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
-// Permanent War Room proof: one access owner publishes permission state; shell surfaces only consume it.
+// Permanent exact-head proof: one access owner publishes permission state; shell surfaces only consume it.
 const access=fs.readFileSync('assets/js/octagon-access-panel.js','utf8');
 const board=fs.readFileSync('assets/js/octagon-message-board.js','utf8');
 const shell=fs.readFileSync('assets/js/octagon-hq-shell.js','utf8');
