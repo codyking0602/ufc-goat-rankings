@@ -4,10 +4,9 @@
   if(window.__UFC_APP_NOTIFICATION_SURFACE_FIX_STARTED__)return;
   window.__UFC_APP_NOTIFICATION_SURFACE_FIX_STARTED__=true;
 
-  const VERSION='app-notification-surface-fix-20260720d-current-worker';
+  const VERSION='app-notification-surface-fix-20260721f-profile-cache-only';
   const CACHE_PREFIX='octagon-hq:activity-profile-html-v1:';
   let observer=null;
-  let syncTimer=0;
 
   const text=value=>String(value??'').trim();
   const profileName=()=>text(document.querySelector('.profile-activity-title strong')?.textContent||window.UFC_APP_PROFILE?.identity?.member?.display_name||'profile').toLowerCase();
@@ -31,6 +30,7 @@
     if(!body||!grid||body.querySelector('.profile-activity-loading'))return;
     const clone=body.cloneNode(true);
     clone.querySelectorAll('[data-app-notification-center]').forEach(node=>node.remove());
+    clone.querySelectorAll('[data-phase3-bridge-bound]').forEach(node=>node.removeAttribute('data-phase3-bridge-bound'));
     try{localStorage.setItem(cacheKey(),clone.innerHTML);}catch(_error){}
   }
 
@@ -46,21 +46,10 @@
     return true;
   }
 
-  function syncNotifications(){
-    window.clearTimeout(syncTimer);
-    syncTimer=window.setTimeout(()=>{
-      const api=window.UFC_APP_NOTIFICATIONS;
-      if(!api)return;
-      api.render?.();
-      if(!api.settings)void api.loadSettings?.();
-    },20);
-  }
-
   function sync(){
     restoreCachedProfile();
     saveFinishedProfile();
     bindCachedActions(document.querySelector('.profile-activity-body'));
-    syncNotifications();
   }
 
   function installObserver(){
