@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import { chromium } from 'playwright';
 
 const app=fs.readFileSync('assets/css/app.css','utf8');
+const home=fs.readFileSync('assets/css/home-dashboard.css','utf8');
 const shell=fs.readFileSync('assets/css/native-app-shell.css','utf8');
 const stability=fs.readFileSync('assets/css/native-app-shell-stability.css','utf8');
 const polish=fs.readFileSync('assets/css/product-polish.css','utf8');
@@ -15,6 +16,18 @@ assert.ok(
 assert.ok(
   app.includes('background:radial-gradient(circle at top left,#1f0b0b,var(--bg) 45%)'),
   'The app canvas must use a black surface with only a restrained red tint.'
+);
+assert.ok(
+  home.includes('background:var(--panel2);')
+    &&home.includes('.home-event h3{margin:13px 0 3px;color:var(--text);')
+    &&home.includes('.home-event-track i{display:block;height:100%;border-radius:inherit;background:var(--accent)}')
+    &&home.includes('background:var(--accent);\n  color:#fff;'),
+  'The Home presentation owner must consume canonical dark surfaces, light text, and UFC red actions.'
+);
+assert.doesNotMatch(
+  home,
+  /#f97316|#fb923c|rgba\(249,115,22|background:#fff(?:;|})/i,
+  'The visible Home presentation owner still contains the retired orange or white-card treatment.'
 );
 assert.ok(
   polish.includes('--product-surface:var(--panel);')
@@ -54,12 +67,13 @@ assert.match(
   'Final product polish must own the canonical light mobile title color.'
 );
 assert.ok(
-  serviceWorker.includes('css\\/(?:app|native-app-shell|native-app-shell-stability|product-polish|community-profiles|find-leader)\\.css'),
-  'The canonical cache owner must fetch both global and final-polish palette assets from the network.'
+  serviceWorker.includes('css\\/(?:app|home-dashboard|native-app-shell|native-app-shell-stability|product-polish|community-profiles|find-leader)\\.css'),
+  'The canonical cache owner must fetch global, Home, and final-polish palette assets from the network.'
 );
 assert.ok(
-  serviceWorker.includes("const VERSION='octagon-hq-sw-20260721c-canonical-palette-network-first';"),
-  'The canonical palette cache policy must publish through a new service-worker identity.'
+  serviceWorker.includes("const VERSION='octagon-hq-sw-20260721d-visible-home-palette';")
+    &&serviceWorker.includes("const CACHE_NAME='octagon-hq-static-v13';"),
+  'The visible Home palette must publish through a new service-worker identity and cache.'
 );
 assert.ok(
   stability.includes('.drawer{z-index:5000!important;background:rgba(0,0,0,.72)!important}'),
@@ -84,11 +98,16 @@ const fixture=`<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="/assets/css/app.css">
+<link rel="stylesheet" href="/assets/css/home-dashboard.css">
 <link rel="stylesheet" href="/assets/css/native-app-shell.css">
 <link rel="stylesheet" href="/assets/css/product-polish.css">
 </head><body>
 <header class="hero"><div><h1 id="paletteTitle">Octagon HQ</h1></div><div class="product-header-tools"><button class="native-ask-action" type="button">Ask</button></div></header>
-<main class="shell"><button id="palettePrimary" class="home-dashboard-action" type="button">Continue</button></main>
+<main class="shell"><section id="home" class="view active-view"><div class="home-dashboard">
+  <section id="paletteDaily" class="home-dashboard-card home-daily"><div class="home-daily-copy"><div id="paletteKicker" class="home-dashboard-kicker">TODAY'S CHALLENGE</div><h2>Find the Leader</h2><button id="palettePrimary" class="home-dashboard-action" type="button">Play Again</button></div></section>
+  <section id="paletteEvent" class="home-dashboard-card home-event"><div class="home-dashboard-kicker">NEXT UFC EVENT</div><h3 id="paletteEventTitle">UFC Fight Night</h3><div class="home-event-matchup">Ankalaev vs. Guskov</div><div class="home-event-progress"><div class="home-event-track"><i id="paletteProgress" style="width:100%"></i></div></div><button class="home-dashboard-action secondary" type="button">Review Picks</button></section>
+  <section id="paletteWar" class="home-dashboard-card home-war-room"><div class="home-dashboard-kicker">THE WAR ROOM</div></section>
+</div></section></main>
 <nav class="native-bottom-nav"><button id="paletteActiveNav" class="native-nav-button active" type="button"><span>Home</span><b id="paletteBadge" class="native-nav-badge">1</b></button></nav>
 </body></html>`;
 
@@ -114,20 +133,26 @@ try{
       tokens:{
         bg:root.getPropertyValue('--bg').trim(),
         panel:root.getPropertyValue('--panel').trim(),
+        panel2:root.getPropertyValue('--panel2').trim(),
         accent:root.getPropertyValue('--accent').trim(),
         accent2:root.getPropertyValue('--accent2').trim()
       },
       actual:{
         headerBackground:getComputedStyle(document.querySelector('.hero')).backgroundColor,
         titleColor:style('paletteTitle').color,
+        eventBackground:style('paletteEvent').backgroundColor,
+        eventTitleColor:style('paletteEventTitle').color,
+        kickerColor:style('paletteKicker').color,
         primaryBackground:style('palettePrimary').backgroundColor,
         primaryColor:style('palettePrimary').color,
+        progressBackground:style('paletteProgress').backgroundColor,
         activeNavColor:style('paletteActiveNav').color,
         badgeBackground:style('paletteBadge').backgroundColor,
         badgeColor:style('paletteBadge').color
       },
       expected:{
         panelBackground:reference({background:'var(--panel)'}).backgroundColor,
+        panel2Background:reference({background:'var(--panel2)'}).backgroundColor,
         textColor:reference({color:'var(--text)'}).color,
         accentBackground:reference({background:'var(--accent)'}).backgroundColor,
         accent2Color:reference({color:'var(--accent2)'}).color,
@@ -137,20 +162,24 @@ try{
   });
   assert.deepEqual(
     rendered.tokens,
-    {bg:'#080808',panel:'#111111',accent:'#d20a0a',accent2:'#ff4d4d'},
+    {bg:'#080808',panel:'#111111',panel2:'#191919',accent:'#d20a0a',accent2:'#ff4d4d'},
     'Rendered mobile CSS did not receive the canonical palette tokens.'
   );
   assert.equal(rendered.actual.headerBackground,rendered.expected.panelBackground,'The computed mobile header does not consume the canonical panel token.');
   assert.equal(rendered.actual.titleColor,rendered.expected.textColor,'The computed mobile title does not consume the canonical text token.');
+  assert.equal(rendered.actual.eventBackground,rendered.expected.panel2Background,'The computed upcoming-event card is not a canonical charcoal surface.');
+  assert.equal(rendered.actual.eventTitleColor,rendered.expected.textColor,'The computed upcoming-event title does not use canonical light text.');
+  assert.equal(rendered.actual.kickerColor,rendered.expected.accent2Color,'The computed Home kicker does not use the canonical red highlight.');
   assert.equal(rendered.actual.primaryBackground,rendered.expected.accentBackground,'The computed primary action does not consume canonical UFC red.');
   assert.equal(rendered.actual.primaryColor,rendered.expected.whiteColor,'The computed primary action does not retain white contrast text.');
+  assert.equal(rendered.actual.progressBackground,rendered.expected.accentBackground,'The computed Home progress bar does not consume canonical UFC red.');
   assert.equal(rendered.actual.activeNavColor,rendered.expected.accent2Color,'The computed active navigation state does not consume the canonical red highlight.');
   assert.equal(rendered.actual.badgeBackground,rendered.expected.accentBackground,'The computed notification badge does not consume canonical UFC red.');
   assert.equal(rendered.actual.badgeColor,rendered.expected.whiteColor,'The computed notification badge does not retain white contrast text.');
-  console.log(JSON.stringify({proof:'canonical-dark-palette',rendered},null,2));
+  console.log(JSON.stringify({proof:'visible-home-black-red-palette',rendered},null,2));
   await context.close();
 }finally{
   await browser.close();
 }
 
-console.log('Canonical black and red mobile theme contract passed.');
+console.log('Visible Home black and red mobile theme contract passed.');
