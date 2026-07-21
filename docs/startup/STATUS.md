@@ -4,13 +4,13 @@ _Last updated: 2026-07-21_
 
 ## Current position
 
-- **Production `main`:** `31297afb6af98c6e777306fd61b9fe48d566ce35`.
-- **Latest startup runtime merge:** PR #149, `31297afb6af98c6e777306fd61b9fe48d566ce35`.
+- **Production `main`:** `fc0b21d8558ba20849460c8dcc01bee383f83240`.
+- **Latest startup runtime merge:** PR #151, `fc0b21d8558ba20849460c8dcc01bee383f83240`.
 - **Current phase:** Phase 2 — remove duplicate ownership.
 - **Phase 0:** Complete.
 - **Phase 1:** Complete.
-- **Phase 2:** Approximately 95% complete.
-- **Entire startup cleanup:** Approximately 87% complete.
+- **Phase 2:** Approximately 98% complete.
+- **Entire startup cleanup:** Approximately 89% complete.
 - **Visible product changes approved:** None. The zero-visible-change contract remains in force.
 - **Master tracker:** [Issue #102](https://github.com/codyking0602/ufc-goat-rankings/issues/102).
 - **Current Phase 2 ledger:** [`PHASE-2-PROGRESS-20260721.md`](./PHASE-2-PROGRESS-20260721.md).
@@ -33,7 +33,8 @@ All 13 audited Phase 1 runtime owners are protected according to their actual li
 - `assets/js/octagon-hq-shell.js` is the sole primary destination and ranking-subview activation owner.
 - PR #128 preserved missing-shell recovery through one queued canonical handoff.
 - PR #129 removed the legacy `app.js` primary-tab listener.
-- The permanent startup contract rejects competing primary route activation.
+- PR #151 made exact same-view activation a canonical no-op and prevented late launch continuations from reactivating the already-owned destination.
+- The permanent startup contract rejects competing primary route activation and now proves that one accepted route transition publishes one event while an already-active retry publishes none.
 
 ### Phase 2 — identity, profile, access, and passive consumers
 
@@ -57,27 +58,29 @@ Completed isolated corrections:
 | #145 | War Room message board is a passive identity consumer; visible **SIGN IN** remains explicit | `52aef7a0b24d9cc06a891b3e4f23a457bd4b6b02` |
 | #146 | War Room access panel is passive with one access-status request owner | `cc75ef4371196ea89a79aa7ff14f759a252a4dd4` |
 | #149 | War Room notification activity, unread, mark-seen, realtime, and push work are passive with one activity-status request owner | `31297afb6af98c6e777306fd61b9fe48d566ce35` |
+| #151 | Canonical route owner coalesces same-view activation; late Home/Picks continuation skips the already-owned destination | `fc0b21d8558ba20849460c8dcc01bee383f83240` |
 
 PR #144 was a test-only correction and changed no production behavior.
 
-## Latest completed batch — PR #149
+## Latest completed batch — PR #151
 
-`assets/js/octagon-notifications.js` previously:
+Production-loaded startup code previously allowed the canonical shell to select Home or Picks and then receive the same destination again from subordinate startup compatibility paths:
 
-- called `UFC_PLAY_PROFILE.resolve()` from passive activity, unread, mark-seen, push, and realtime paths;
-- read `ufc-picks:group:GOAT26` directly from local storage;
-- reacted to canonical-token storage changes;
-- allowed five startup timers, deep-link retries, readiness events, visibility resume, reconnect, realtime activity, polling, and direct callers to compete for `octagon_activity_status`.
+- `fresh-home-launch.js` delegated a late Home or Picks activation after the shell had already selected it;
+- the existing Picks startup compatibility click could request Picks again on a Picks reload;
+- a browser Picks reload therefore published two identical `octagon-hq:view-change` events and repeated downstream route-triggered work.
 
-PR #149 now:
+PR #151 now:
 
-- consumes published cached identity only;
-- derives the member token only from published identity;
-- shares one in-flight activity-status Promise;
-- preserves unread badges, Alerts UI, return banner, realtime broadcasts, board RPC interception, push registration/removal, service-worker integration, mark-seen behavior, and notification deep-link opening;
-- makes `octagon-notifications.js` use the existing service-worker network-first runtime policy so the corrected file cannot remain stale in the installed app.
+- makes `octagon-hq-shell.js` coalesce an exact already-active view before DOM, hash, or event work;
+- makes `fresh-home-launch.js` consume the shell’s published destination and skip a same-destination handoff;
+- preserves the necessary bare group/room invite recovery where the shell legitimately transitions from Home to Picks;
+- preserves rapid real navigation, missing-shell recovery, disabled War Room behavior, ranking subviews, Play support loading, and all existing route destinations;
+- keeps `octagon-hq-shell.js` network-first in the installed app and rotates the service-worker cache.
 
-Startup Architecture Gate #129 passed completely on exact head `d4f7b0ce289c6cb1f33290c91a419b33ef1ef30c`. Cody tested that final deployable head on the installed app and reported it **looks normal**.
+Startup Architecture Gate #139 passed completely on exact tested head `d79db8ef2275a289e3e9538faa9c125a87dfd004`. The dedicated mobile route workflow also passed on that exact head. Production merge: `fc0b21d8558ba20849460c8dcc01bee383f83240`.
+
+Known unrelated workflows remained confined to their established diagnostics: fighter-photo auditing, the permanent scoring source/runtime contract, and the Phase 4B historical architecture pin. None referenced the isolated route files.
 
 ## Testing and interruption policy
 
@@ -110,10 +113,10 @@ These remain outside startup ownership unless a failure directly references an i
 ## Exact next action
 
 1. Verify current production `main` because automated UFC odds/deployment workflows may advance it.
-2. Start a fresh production-load audit from `index.html`, the startup contract, and loaded JavaScript files.
+2. Start another fresh production-load audit from `index.html`, the startup contract, and loaded JavaScript files.
 3. Do not assume the next duplicate in advance.
 4. Search remaining modules for competing identity resolution, canonical storage ownership, duplicate readiness publication, repeated full refreshes, or route/visibility/reconnect/realtime/polling paths that call the same expensive work.
-5. Likely files worth inspecting only if production-loaded evidence leads there include `native-app-shell.js`, `fresh-home-launch.js`, and `app-notification-surface-fix.js`.
+5. `native-app-shell.js` and `app-notification-surface-fix.js` remain candidates only when production-loaded evidence demonstrates a duplicate; `fresh-home-launch.js` is now covered by the route-ownership proof.
 6. Prove one narrow duplicate, name the canonical owner and passive consumer, record every trigger/retry path and existing coalescing behavior, then make the smallest isolated change.
 7. Add focused static and mobile-browser ownership proofs, wire them into Startup Architecture Gate, run the complete gate, inspect unrelated reds, and merge under the CI-first policy.
 8. Continue autonomously. Contact Cody only under the genuine unresolved-uncertainty rule above.
