@@ -16,7 +16,7 @@ assert.doesNotMatch(source,/GROUP_TOKEN_PREFIX|storedGroupCode|ufc-picks:group:/
 
 const identity={ok:true,group:{code:'GOAT26'},groupCode:'GOAT26',member:{id:'m1',display_name:'Cody',is_admin:true},memberToken:'picks-social-owner-token',member_token:'picks-social-owner-token'};
 const html=`<!doctype html><html><head><meta charset="utf-8"><title>Picks social identity ownership</title></head><body>
-  <section id="picks"><div class="picks-shell"></div></section>
+  <section id="picks" class="active-view"><div class="picks-shell"></div></section>
   <div id="picksToast"></div>
   <script>
     window.__PICKS_SOCIAL_IDENTITY__=${JSON.stringify(identity)};
@@ -123,3 +123,5 @@ try{
   fs.writeFileSync(REPORT,`${JSON.stringify(report,null,2)}\n`,'utf8');
   if(browser)await browser.close();
 }
+
+await import('./test-picks-social-active-owner.mjs');
