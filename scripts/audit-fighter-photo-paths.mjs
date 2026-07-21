@@ -8,24 +8,24 @@ const run=(command,args)=>{
 
 const path='assets/js/picks-commissioner.js';
 let source=fs.readFileSync(path,'utf8');
-const oldStart="""  function start(){
+const oldStart=`  function start(){
     ensureCard();
     if(picksActive()) refresh();
-""";
-const newStart="""  function start(){
+`;
+const newStart=`  function start(){
     ensureCard();
     if(picksActive() && document.getElementById('picksCommissionerCard')) refresh();
-""";
-const oldRoute="""    window.addEventListener('octagon-hq:view-change',event=>{
+`;
+const oldRoute=`    window.addEventListener('octagon-hq:view-change',event=>{
       if(event.detail?.destination==='picks') refresh();
     });
-""";
-const newRoute="""    window.addEventListener('octagon-hq:view-change',event=>{
+`;
+const newRoute=`    window.addEventListener('octagon-hq:view-change',event=>{
       if(event.detail?.destination!=='picks') return;
       ensureCard();
       if(document.getElementById('picksCommissionerCard')) refresh();
     });
-""";
+`;
 if(!source.includes(oldStart)||!source.includes(oldRoute))throw new Error('Expected commissioner activation blocks were not found.');
 source=source.replace(oldStart,newStart).replace(oldRoute,newRoute);
 fs.writeFileSync(path,source);
