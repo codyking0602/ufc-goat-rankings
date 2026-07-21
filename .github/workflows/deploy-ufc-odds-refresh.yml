@@ -84,26 +84,6 @@ jobs:
             --project-ref "$PROJECT_REF" \
             --no-verify-jwt
 
-      - name: Install Playwright
-        shell: bash
-        run: |
-          npm install --no-save playwright@1.54.2
-          npx playwright install --with-deps chromium
-
-      - name: Import confirmed external card
-        shell: bash
-        run: node scripts/sync-ufc-card.mjs --apply --force
-
-      - name: Advance permanent groups to next event
-        shell: bash
-        run: |
-          curl --fail-with-body --retry 2 \
-            --request POST \
-            --header "content-type: application/json" \
-            --header "x-card-sync-secret: $ODDS_REFRESH_SECRET" \
-            --data '{"source":"deploy-workflow"}' \
-            "https://$PROJECT_REF.supabase.co/functions/v1/advance-picks-event"
-
       - name: Verify deployed odds refresh
         id: odds_refresh
         continue-on-error: true
@@ -120,7 +100,7 @@ jobs:
             | tee artifacts/ufc-odds-refresh/odds-refresh-response.json
 
       - name: Publish deployed odds health
-        if: always()
+        if: always() && steps.odds_refresh.outcome != 'skipped'
         env:
           ODDS_OUTCOME: ${{ steps.odds_refresh.outcome }}
         shell: bash
@@ -162,6 +142,33 @@ jobs:
             git commit -m "Record deployed UFC odds health [skip ci]"
             git push
           fi
+
+      - name: Install Playwright for card verification
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: |
+          npm install --no-save playwright@1.54.2
+          npx playwright install --with-deps chromium
+
+      - name: Import confirmed external card
+        id: card_import
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: node scripts/sync-ufc-card.mjs --apply --force
+
+      - name: Advance permanent groups to next event
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: |
+          curl --fail-with-body --retry 2 \
+            --request POST \
+            --header "content-type: application/json" \
+            --header "x-card-sync-secret: $ODDS_REFRESH_SECRET" \
+            --data '{"source":"deploy-workflow"}' \
+            "https://$PROJECT_REF.supabase.co/functions/v1/advance-picks-event"
 
       - name: Upload sync evidence
         if: always()
