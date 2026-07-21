@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
-const EXPECTED_FIGHTERS=79;
+const EXPECTED_FIGHTERS=80;
 const CHARLES_WATCH_URL='https://youtube.com/shorts/zHUAvACSUk4?is=VYzwsuIvxV85k8zH';
 const GENERIC_TAG=/\b(?:ufc|resume|résumé)\b/i;
 const browser=await chromium.launch({headless:true});
