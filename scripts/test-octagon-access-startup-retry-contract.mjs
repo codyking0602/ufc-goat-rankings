@@ -39,6 +39,8 @@ assert.match(shell,/app-shell-20260721c-permission-aware-war-room/,'Permission-a
 assert.match(shell,/data-war-room-access=\"locked\"/,'The desktop shell must collapse the hidden War Room destination.');
 assert.match(shell,/const labelText=invited\?'Join with invite':'War Room'/,'The shell must preserve the invite state instead of converting it to disabled UI.');
 assert.match(shell,/button\.hidden=locked;[\s\S]*button\.disabled=locked/,'The shell must hide locked War Room navigation.');
+assert.match(shell,/attributeFilter:\['data-beta-access','data-beta-member'\]/,'The shell observer must watch only owner-published permission data.');
+assert.doesNotMatch(shell,/attributeFilter:\[[^\]]*(?:'disabled'|'aria-disabled')/,'The shell observer must not watch attributes rewritten by its own normalizer.');
 assert.doesNotMatch(shell,/UFC_PLAY_PROFILE|UFC_APP_PROFILE|octagon_access_status/,'The shell must not resolve identity or verify access.');
 
 assert.match(home,/home-dashboard-20260721a-permission-aware-war-room/,'Permission-aware Home version is missing.');
