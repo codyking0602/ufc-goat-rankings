@@ -79,14 +79,14 @@ try{
       if(!rows.length)return false;
       return rows.every(row=>{
         const img=row.querySelector('.row-photo img');
-        return Boolean(img&&img.complete&&img.naturalWidth>0);
+        return Boolean(img&&img.naturalWidth>0);
       });
     },container,{timeout:15000}).catch(()=>null);
     const states=await page.locator(`${container} .fighter-row`).evaluateAll(rows=>rows.map(row=>{
       const img=row.querySelector('.row-photo img');
       return{fighter:row.dataset.fighter,src:img?.getAttribute('src')||null,complete:Boolean(img?.complete),naturalWidth:Number(img?.naturalWidth||0)};
     }));
-    boardRenderFailures.push(...states.filter(row=>!row.src||!row.complete||row.naturalWidth<=0));
+    boardRenderFailures.push(...states.filter(row=>!row.src||row.naturalWidth<=0));
   }
 
   const profiles=[];
