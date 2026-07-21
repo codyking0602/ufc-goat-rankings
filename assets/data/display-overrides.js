@@ -237,7 +237,12 @@ const DISPLAY_OVERRIDES = {
     "signatureFightUrl": "https://youtu.be/7sj-snC5qWk?is=_DkasmmAc4OA-IDR",
     "signatureFightLabel": "Watch Signature Fight",
     "displayName": "Alexandre “The Cannibal” Pantoja",
-    "profileDisplayName": "Alexandre “The Cannibal” Pantoja"
+    "profileDisplayName": "Alexandre “The Cannibal” Pantoja",
+    "divisionLabel": "FLW",
+    "oneLiner": "A relentless flyweight champion whose five title-fight wins, elite grappling, and eight-fight run built the best UFC flyweight resume outside Demetrious Johnson.",
+    "whyRankedHere": "Pantoja combines a real championship reign with repeated wins over the modern flyweight elite. He beat Brandon Moreno for the belt, defeated Brandon Royval twice, and finished both Kai Asakura and Kai Kara-France during a four-defense reign.",
+    "whyNotHigher": "His reign is much shorter than Demetrious Johnson’s, the flyweight opponent pool receives a division-depth discount, and several title challengers lacked proven UFC elite resumes. The Dustin Ortiz, Deiveson Figueiredo, Askar Askarov, and Joshua Van losses also keep the case from becoming completely clean.",
+    "finalTakeaway": "Pantoja is the clear second-best UFC flyweight championship resume behind Demetrious Johnson: a rugged, high-pressure champion with real title volume and elite submission wins."
   },
   "Aljamain Sterling": {
     "watchUrl": "https://youtube.com/shorts/9u6oSybWX0o?is=vI7Sq1yLpVg-CsbN",
