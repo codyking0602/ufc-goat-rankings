@@ -4,7 +4,7 @@
   if(window.__UFC_NATIVE_APP_SHELL_STABILITY_STARTED__)return;
   window.__UFC_NATIVE_APP_SHELL_STABILITY_STARTED__=true;
 
-  const VERSION='native-app-shell-stability-20260721d-whats-new-owner';
+  const VERSION='native-app-shell-stability-20260721e-drawer-observer';
   let observer=null;
   let timer=0;
 
@@ -23,7 +23,7 @@
     return true;
   }
 
-  function schedule(){
+  function scheduleDrawerSync(){
     window.clearTimeout(timer);
     timer=window.setTimeout(syncDrawerState,30);
   }
@@ -31,17 +31,16 @@
   function start(){
     document.addEventListener('click',event=>{
       if(event.target.closest?.('[data-native-destination]'))closeFighterProfile();
-      if(event.target.closest?.('#closeDrawer'))window.setTimeout(syncDrawerState,0);
     },true);
-    observer=new MutationObserver(records=>{
-      if(records.some(record=>record.target?.closest?.('#drawer')||[...record.addedNodes].some(node=>node.nodeType===1&&node.matches?.('#drawer'))))schedule();
-    });
-    observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','hidden','aria-hidden']});
-    ['octagon-hq:view-change','octagon-hq:soft-refresh'].forEach(name=>window.addEventListener(name,schedule));
-    [0,80,240,700,1600,3600].forEach(delay=>window.setTimeout(schedule,delay));
+    const drawer=document.getElementById('drawer');
+    if(drawer){
+      observer=new MutationObserver(scheduleDrawerSync);
+      observer.observe(drawer,{attributes:true,attributeFilter:['class','aria-hidden']});
+    }
+    syncDrawerState();
     document.documentElement.dataset.nativeAppShellStability=VERSION;
   }
 
-  window.UFC_NATIVE_APP_SHELL_STABILITY={version:VERSION,schedule,closeFighterProfile};
+  window.UFC_NATIVE_APP_SHELL_STABILITY={version:VERSION,closeFighterProfile};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
