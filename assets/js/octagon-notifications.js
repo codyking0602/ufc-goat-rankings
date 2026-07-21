@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='octagon-notifications-20260721b-passive-identity';
+  const VERSION='octagon-notifications-20260721c-single-startup-status';
   const CANONICAL_CODE='GOAT26';
   const ACTIVITY_CHANNEL=`octagon-activity-${CANONICAL_CODE.toLowerCase()}`;
   const instanceId=globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -439,11 +439,9 @@
     state.started=true;
     installStyles();
     bindEvents();
-    [0,180,700,1800,4200].forEach(delay=>window.setTimeout(async()=>{
-      ensureBadge();
-      ensureBoardExtras();
-      await refreshStatus();
-    },delay));
+    ensureBadge();
+    ensureBoardExtras();
+    void refreshStatus();
     window.setInterval(()=>{
       ensureBadge();
       ensureBoardExtras();
