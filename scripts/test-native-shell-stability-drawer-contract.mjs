@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+// The profile open/close owners now publish drawer, ARIA, and body-lock state atomically.
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const read=relative=>fs.readFileSync(path.join(root,relative),'utf8');
 const app=read('assets/js/app.js');
