@@ -74,7 +74,7 @@ try{
   assert.equal(cold.counts.mountWrites,1,'Cold startup must have one canonical Home render.');
   assert.equal(cold.counts.spotlightOuterWrites,0,'The stability layer rewrote the spotlight during cold startup.');
 
-  report.phase='home-mutation-and-delayed-window';
+  report.phase='home-mutation-and-retired-delay-window';
   await page.evaluate(()=>{
     const noise=document.createElement('div');
     noise.id='phase3-home-noise';
@@ -84,9 +84,9 @@ try{
   await page.waitForTimeout(3900);
   const delayed=await snapshot(page);
   report.snapshots.delayed=delayed;
-  assert.equal(delayed.loadingCount,1,'A Home mutation or delayed stability timer bypassed ranking readiness.');
-  assert.equal(delayed.counts.mountWrites,1,'Delayed stability work caused a competing Home render.');
-  assert.equal(delayed.counts.spotlightOuterWrites,0,'The retired outerHTML spotlight repair still ran.');
+  assert.equal(delayed.loadingCount,1,'A Home mutation bypassed ranking readiness.');
+  assert.equal(delayed.counts.mountWrites,1,'Unrelated Home activity caused a competing Home render.');
+  assert.equal(delayed.counts.spotlightOuterWrites,0,'The retired Spotlight repair or delayed retry returned.');
 
   report.phase='canonical-readiness';
   await page.evaluate(()=>{
@@ -114,8 +114,6 @@ try{
     window.dispatchEvent(new CustomEvent('octagon-hq:view-change',{detail:{destination:'picks'}}));
     window.dispatchEvent(new CustomEvent('octagon-hq:view-change',{detail:{destination:'home'}}));
     document.dispatchEvent(new Event('visibilitychange'));
-    window.UFC_NATIVE_APP_SHELL_STABILITY.schedule();
-    window.UFC_NATIVE_APP_SHELL_STABILITY.schedule();
   });
   await page.waitForTimeout(350);
   const stable=await snapshot(page);
@@ -123,7 +121,7 @@ try{
   assert.equal(stable.spotlightCount,1,'Repeated readiness, route, or resume events duplicated the spotlight card.');
   assert.equal(stable.fighter,'Jon Jones','Repeated events destabilized the canonical spotlight.');
   assert.equal(stable.counts.mountWrites,2,'Stable repeated events must not rewrite unchanged Home markup.');
-  assert.equal(stable.counts.spotlightOuterWrites,0,'A delayed or event-driven stability repair still rewrote the spotlight.');
+  assert.equal(stable.counts.spotlightOuterWrites,0,'The stability layer still rewrote the spotlight.');
 
   await page.reload({waitUntil:'domcontentloaded',timeout:60000});
   await page.waitForFunction(()=>window.UFC_HOME_DASHBOARD&&window.UFC_NATIVE_APP_SHELL_STABILITY,null,{timeout:10000});
