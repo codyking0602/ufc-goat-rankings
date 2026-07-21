@@ -56,8 +56,8 @@
   <link rel="stylesheet" href="assets/css/intelligence.css?v=intelligence-css-20260719b-watchlist-removed" />
   <link id="homeDashboardCss" rel="stylesheet" href="assets/css/home-dashboard.css?v=home-dashboard-20260717d" />
   <link rel="stylesheet" href="assets/css/community-profiles.css?v=community-profiles-css-20260718a-phase-4b" />
-  <link rel="stylesheet" href="assets/css/native-app-shell.css?v=native-app-shell-css-20260718a-phase-4a" />
-  <link rel="stylesheet" href="assets/css/native-app-shell-stability.css?v=native-app-shell-stability-css-20260718a" />
+  <link rel="stylesheet" href="assets/css/native-app-shell.css?v=native-app-shell-css-20260721b-dark-shell" />
+  <link rel="stylesheet" href="assets/css/native-app-shell-stability.css?v=native-app-shell-stability-css-20260721b-dark-drawer" />
 </head>
 <body>
   <header class="hero">
@@ -117,7 +117,6 @@
         <details class="intelligence-matchup"><summary><span>Quick matchup builder<small>Choose two fighters, copy the debate, then open Octagon Verdict.</small></span></summary><div class="intelligence-matchup-body"><div class="compare-controls"><select id="fighterA" aria-label="First fighter"></select><select id="fighterB" aria-label="Second fighter"></select></div><div class="intelligence-matchup-actions"><button id="intelligenceCopyMatchup" class="intelligence-primary" type="button">Copy This Matchup</button><a class="intelligence-secondary" data-intelligence-open href="https://chatgpt.com/g/g-6a4c40425d4881919ddebc7231bff09f-octagon-verdict" target="_blank" rel="noopener noreferrer">Open Octagon Verdict ↗</a></div><div id="compareResult" hidden></div></div></details>
       </div></div></div><div id="intelligenceToast" class="intelligence-toast" role="status" aria-live="polite"></div>
     </section>
-
     <section id="picks" class="view"><div class="section-title"><h2>UFC Picks</h2><p>Pick every fight, use one optional Underdog Lock, and compete across the season.</p></div><div class="picks-shell">
       <label id="picksEventPicker" class="picks-label picks-event-picker">Event<select id="picksEventSelect"></select></label><div id="picksEventHero" class="picks-event-hero"></div><div id="picksSetupNote" class="picks-setup-note">Local preview is active. Add the Supabase project URL and public anon key to enable real friend rooms across different phones.</div><div id="picksRoomBanner" class="picks-room-banner"></div>
       <div id="picksRoomSetup" class="card picks-room-card"><div class="picks-mode-switch" role="tablist" aria-label="Room action"><button id="picksCreateMode" class="active" type="button">Start a Room</button><button id="picksJoinMode" type="button">Join a Room</button></div><div id="picksRoomIntro" class="picks-room-intro">Start a room, share the link, and everyone picks from their own phone.</div><label class="picks-label">Your name<input id="picksDisplayName" maxlength="30" autocomplete="nickname" placeholder="Cody" /></label><div id="picksJoinFields" hidden><label class="picks-label">Room code<input id="picksRoomCode" maxlength="6" autocapitalize="characters" placeholder="ABC123" /></label></div><button id="picksRoomAction" class="picks-primary picks-room-action" type="button">Start Picks Room</button><div id="picksStatus" class="picks-status">Friends’ exact picks stay hidden until each fight locks.</div></div>
