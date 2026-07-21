@@ -1,0 +1,37 @@
+name: Phase 4 Startup Work Inventory
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'assets/js/**'
+      - 'scripts/audit-phase-4-startup-work.mjs'
+      - '.github/workflows/phase-4-startup-work-inventory.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phase-4-startup-work-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate inventory syntax
+        run: node --check scripts/audit-phase-4-startup-work.mjs
+      - name: Build production startup-work inventory
+        run: node scripts/audit-phase-4-startup-work.mjs | tee /tmp/phase-4-startup-work-inventory.json
+      - name: Upload inventory
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase-4-startup-work-inventory
+          path: /tmp/phase-4-startup-work-inventory.json
