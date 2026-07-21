@@ -2,9 +2,9 @@
 
 ## Current production position
 
-- Production `main`: `fc0b21d8558ba20849460c8dcc01bee383f83240`.
-- Entire startup cleanup: approximately 89% complete.
-- Phase 2: approximately 98% complete.
+- Production `main`: `14f23d54548eef7e6fcf89acddfcded255ebeb58`.
+- Entire startup cleanup: approximately 90% complete.
+- Phase 2: approximately 99% complete.
 - Phase 0 and Phase 1: complete.
 - Visible product change: none intended or approved.
 
@@ -36,6 +36,8 @@
 | #149 | Make War Room notifications passive, coalesce activity checks, and prevent installed-app stale runtime | `31297afb6af98c6e777306fd61b9fe48d566ce35` |
 | #150 | Update permanent status after passive notifications | `3d8b71761a4b502b97befe3b3a6f5de6f7d6ab8f` |
 | #151 | Deduplicate canonical startup route activation and preserve legitimate invite recovery | `fc0b21d8558ba20849460c8dcc01bee383f83240` |
+| #152 | Update permanent status after route ownership cleanup | `7f44188513109148c7347afdcb8d3a15b39f3cd7` |
+| #153 | Make notification/profile surface compatibility passive | `14f23d54548eef7e6fcf89acddfcded255ebeb58` |
 
 ## Canonical identity boundary
 
@@ -65,6 +67,17 @@ The route contract now requires:
 - missing-shell recovery remains one queued canonical handoff;
 - the canonical shell remains network-first for installed-app freshness.
 
+## Canonical notification boundary
+
+`assets/js/app-notification-center.js` owns:
+
+- notification settings RPC work;
+- profile/activity notification rendering and render coalescing;
+- readiness, profile-update, device-change, and observer-driven refreshes;
+- preference writes, push registration/removal, test delivery, and explicit identity fallback.
+
+`assets/js/app-notification-surface-fix.js` is now a passive profile-cache compatibility layer. It may cache and restore activity-profile HTML, observe profile surfaces, synchronize its cache on soft refresh, register the current service worker, and bind cached action routes. It may not invoke canonical notification render/settings work.
+
 ## Permanent ownership proofs
 
 Startup Architecture Gate now protects:
@@ -80,6 +93,7 @@ Startup Architecture Gate now protects:
 - Home daily passive identity;
 - profile-challenge passive inbox loading;
 - notification settings passive identity;
+- notification/profile compatibility passive ownership and live cached-action restoration;
 - Picks social passive identity;
 - Picks season passive identity;
 - War Room board passive identity;
@@ -89,23 +103,23 @@ Startup Architecture Gate now protects:
 - profile sign-in stability;
 - delayed Home/community stability.
 
-## PR #151 validation record
+## PR #153 validation record
 
-- Final exact tested head: `d79db8ef2275a289e3e9538faa9c125a87dfd004`.
-- Startup Architecture Gate #139: passed completely.
-- Dedicated mobile route workflow #20: passed completely.
-- Production merge: `fc0b21d8558ba20849460c8dcc01bee383f83240`.
-- Changed runtime responsibility: canonical primary route activation only.
-- Service-worker correction: `octagon-hq-shell.js` is network-first and the static cache version advanced.
+- Final exact tested head: `17611dc8fbe0cbf93bda9e6c308705ee2e621656`.
+- Startup Architecture Gate #143: passed completely.
+- Production merge: `14f23d54548eef7e6fcf89acddfcded255ebeb58`.
+- Changed runtime responsibility: notification/profile compatibility only.
 
-The focused proof established:
+The focused static and browser proof established:
 
-- ordinary Home startup publishes one Home route event;
-- an already-active Home retry publishes none;
-- a direct Home-to-Picks transition publishes one additional event and a repeated Picks retry publishes none;
-- a browser Picks reload publishes one Picks route event rather than two;
-- a bare group invitation still publishes exactly Home then Picks;
-- rapid real taps, ranking subviews, disabled War Room, programmatic recovery, failed-load retry, and missing-DOM recovery remain functional.
+- the canonical notification center loads before its compatibility consumer;
+- the compatibility layer makes zero public notification `loadSettings()` or `render()` calls during startup timers;
+- readiness and profile updates each produce exactly one canonical notification-settings RPC;
+- soft refresh, profile mutation, profile-chip clicks, and direct compatibility sync produce zero notification-settings RPCs and zero public render/settings calls;
+- passive startup performs zero canonical/editor resolver calls and zero canonical access-storage reads;
+- explicit notification actions retain canonical `require()` fallback;
+- cached activity-profile HTML restores without canonical notification markup;
+- cached action buttons remain live after restoration because serialized listener-bound markers are removed before caching.
 
 Known unrelated workflow failures remained outside the isolated branch:
 
@@ -113,7 +127,7 @@ Known unrelated workflow failures remained outside the isolated branch:
 - Scoring Architecture Guardrails stopped at the existing permanent source/runtime contract;
 - Validate Phase 4B Preview stopped at the historical stable-architecture pin.
 
-None referenced the isolated route runtime, proof, or service-worker files.
+None referenced the isolated notification compatibility runtime or proof files.
 
 ## CI-first and interruption rule
 
@@ -127,6 +141,6 @@ Contact Cody only when a specific unresolved user-only or physical-only uncertai
 
 Start another fresh production-loaded audit from current `main`; do not presume the next duplicate.
 
-Search for one remaining competing responsibility involving identity resolution, canonical storage, readiness publication, repeated full refreshes, or overlapping route/visibility/reconnect/realtime/polling work. `native-app-shell.js` and `app-notification-surface-fix.js` are candidates only if the current production load map proves a duplicate. `fresh-home-launch.js` is now covered by the permanent route-ownership contract.
+Search for one remaining competing responsibility involving identity resolution, canonical storage, readiness publication, repeated full refreshes, or overlapping route/visibility/reconnect/realtime/polling work. `native-app-shell.js` remains a candidate only if the current production load map proves a duplicate. `fresh-home-launch.js` and `app-notification-surface-fix.js` are now covered by permanent ownership contracts.
 
-Handle one narrow responsibility at a time. Close Phase 2 only when no unproved competing identity, access, readiness, route, or full-refresh owner remains. Do not begin broad Phase 3 repair-loop retirement before that point.
+Handle one narrow responsibility at a time. Close Phase 2 only when no unproved competing identity, access, readiness, route, notification, or full-refresh owner remains. Do not begin broad Phase 3 repair-loop retirement before that point.
