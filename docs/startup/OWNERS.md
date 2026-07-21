@@ -2,7 +2,7 @@
 
 _Last updated: 2026-07-21_
 
-This file records the canonical owner of each startup responsibility. Detailed history remains in the Phase 1, Phase 2, and Phase 3 audits and ledgers.
+This file records the canonical owner of each startup responsibility. Detailed history remains in the Phase 1, Phase 2, Phase 3, and current Phase 4 audits and ledgers.
 
 ## Ownership rules
 
@@ -11,13 +11,14 @@ This file records the canonical owner of each startup responsibility. Detailed h
 - Passive consumers do not resolve shared identity, read canonical access storage, publish canonical readiness, or trigger full editor/group work merely to obtain identity.
 - Explicit user actions may use the canonical `require()` boundary when sign-in is genuinely needed.
 - Competing startup, route, visibility, reconnect, realtime, polling, and direct refresh paths share one in-flight owner when they request the same data.
+- Destination-specific network work runs only when its destination is active, unless a proved global responsibility requires otherwise.
+- Direct-route startup, delayed local mount, explicit user actions, and active-view freshness remain supported when hidden startup work is removed.
 - One accepted primary route transition publishes one canonical route event; an already-active exact-view retry is a no-op.
 - One accepted pull-to-refresh action performs one final activity-status refresh; subordinate fallback work may not duplicate it.
 - Historical-token migration may validate and adopt a token before normal identity resolution, but it hands the resolved identity to the canonical profile owner rather than publishing canonical profile readiness.
-- The canonical profile owner consumes a valid migration handoff without repeating its snapshot RPC; it retains independent resolution when migration has no result.
 - Compatibility layers may preserve presentation/recovery behavior but may not initiate a canonical owner’s data or render responsibility.
 - A presentation adapter may map one canonical DOM state into required mobile presentation state, but it may not independently render canonical content or wake from unrelated lifecycle events.
-- One ownership issue changes per runtime batch.
+- One ownership or startup-work responsibility changes per runtime batch.
 - `assets/js/app.js` is a structural manifest singleton and must not receive a standard IIFE guard.
 
 ## Canonical owners
@@ -31,12 +32,13 @@ This file records the canonical owner of each startup responsibility. Detailed h
 | Calculated production ranking lifecycle | `assets/js/production-ranking-bootstrap.js` | Canonical `start`/`retry`/`apply`/`refresh` owner with one in-flight attempt |
 | Calculated fighter profile and Resume Snapshot | `assets/js/calculated-profile-runtime.js` | Sole calculated `openFighter()` and profile-content owner; one complete profile write; Resume Snapshot values come from `RANKING_DATA.visibleStats`, with canonical UFC fight facts used for the win-streak fallback |
 | Fighter drawer open/close state | Base `assets/js/app.js` close/open handlers plus calculated `openFighter()` override | Canonical owners of `#drawer.open` and `aria-hidden`; they do not own the mobile body scroll-lock class |
-| Mobile fighter-drawer presentation and native overlay dismissal | `assets/js/native-app-shell-stability.js` | Sole mapping from `#drawer.open` to `body.fighter-profile-open`; one startup sync; one `#drawer` `class`/`aria-hidden` observer; native destination clicks dismiss an open profile through the canonical close button or bounded fallback; no broad observer, route listener, soft-refresh listener, delayed retry, public repair schedule, or canonical content repair |
+| Mobile fighter-drawer presentation and native overlay dismissal | `assets/js/native-app-shell-stability.js` | Sole mapping from `#drawer.open` to `body.fighter-profile-open`; one startup sync; one `#drawer` `class`/`aria-hidden` observer; native destination clicks dismiss an open profile through the canonical close button or bounded fallback; no broad repair triggers or canonical content repair |
 | Shared credentials, login/fallback, identity cache, canonical readiness, and canonical access persistence | `assets/js/play-profile-identity.js` via `window.UFC_PLAY_PROFILE` | Sole shared identity/access owner; consumes a valid migration handoff without repeating its snapshot and retains independent fallback resolution |
 | Historical group-token migration and canonical adoption | `assets/js/app-canonical-group.js` | Pre-resolution migration owner only; validates historical access, adopts canonical/admin/room values, normalizes the URL, owns the one-time migration reload, and returns a bounded resolved-identity handoff without publishing `ufc-play-profile-ready` |
 | Visible profile editor and full group snapshot | `assets/js/app-profile.js` via `window.UFC_APP_PROFILE` | Sole editor/group-snapshot owner; publishes `ufc-app-profile-updated` |
 | Picks sign-in card and PIN-management surfaces | `assets/js/picks-member-pin.js` | UI, validation/status, continuation, member PIN, and commissioner PIN owner; credentials delegate to canonical profile owner |
 | Picks base runtime | `assets/js/picks.js` | Canonical Picks room/event/pick/render owner; startup compatibility activation is subordinate to shell idempotence and may not republish an already-active primary route |
+| Picks commissioner card, snapshot, and actions | `assets/js/picks-commissioner.js` | Sole commissioner snapshot/action owner; installs its local card without network work; refreshes only for direct active Picks startup after card mount, canonical Picks route entry after card mount, one bounded late-card handoff, active-view freshness polling, and explicit commissioner actions; performs no Home-startup, hidden-mutation, or hidden-interval RPC work |
 | Picks internal routing | `assets/js/picks-internal-navigation.js` | Nested Picks route owner only; not a primary app route owner |
 | Play base runtime | `assets/js/play.js` | Canonical base Play owner after DOM/data prerequisites |
 | Play internal game navigation | `assets/js/play-hub.js` | Canonical Play game-screen owner after hub prerequisites |
@@ -58,44 +60,27 @@ This file records the canonical owner of each startup responsibility. Detailed h
 | War Room membership/access status and Cody’s access-management panel | `assets/js/octagon-access-panel.js` | Passive identity consumer; one in-flight access-status owner; no direct sign-in or storage ownership |
 | War Room activity/unread/mark-seen/realtime/push behavior | `assets/js/octagon-notifications.js` | Passive identity consumer and canonical activity-status owner; one in-flight activity-status request; push enable/disable reuses published identity; no resolver or canonical-storage ownership |
 
-## Permanent ownership proofs
+## Permanent ownership and startup-work proofs
 
-Startup Architecture Gate protects:
+Startup Architecture Gate and the dedicated iOS suite protect:
 
-- canonical shell recovery and sole primary route activation;
-- exact same-view route coalescing and late launch ownership;
-- canonical login delegation and profile sign-in stability;
-- historical-token migration handoff, canonical-token adoption, schema fallback, repeated resolution, and independent canonical fallback;
-- Community access and passive identity ownership;
-- Product access persistence and one startup handoff;
-- App Profile single group snapshot;
-- Home daily passive identity;
-- Home/Ranking Spotlight canonical readiness and rendering with no stability-layer repair;
-- calculated fighter-profile and Resume Snapshot ownership with no stability-layer content repair;
-- What’s New trigger markup and unread state with no stability-layer normalization;
+- canonical shell recovery, sole route activation, same-view coalescing, and late launch ownership;
+- canonical login, migration handoff, profile, group snapshot, and passive identity boundaries;
+- Home/Ranking Spotlight, calculated fighter-profile, Resume Snapshot, and What’s New single-owner boundaries;
 - drawer/body synchronization through one startup sync and one drawer-only observer;
-- absence of body-wide observation, route/soft-refresh drawer repair, delayed drawer retries, close-button continuation, and public repair scheduling;
 - canonical close-button behavior plus native-destination overlay dismissal and fallback;
-- profile-challenge passive inbox loading;
-- notification settings passive identity;
-- notification/profile compatibility passive ownership and live cached-action restoration;
-- Picks social and season passive identity;
-- War Room board, access, and notification passive identity with their request owners;
-- native pull normal, fallback, War Room, and concurrent accepted-action ownership;
-- iOS route stability and delayed Home/community/profile behavior.
+- notification, Community, Picks social/season, challenge, War Room, and native pull request ownership;
+- Picks commissioner active-destination activation: zero Home-startup RPCs, zero hidden-mutation RPCs, zero hidden polling, one direct/route/late-mount handoff, and preserved active freshness/action refreshes;
+- iOS route stability and delayed Home/community/profile/Picks behavior.
 
 Passive or subordinate paths must produce:
 
-- zero canonical/editor resolver calls;
-- zero canonical token storage reads;
+- zero canonical/editor resolver calls or canonical token reads;
 - zero sign-in surfaces before an explicit user action;
 - zero identity-dependent RPCs before published identity;
+- zero stability-layer canonical content mutations or broad repair triggers;
+- zero hidden commissioner snapshot RPCs while Picks is not active;
 - one request owner for competing refresh paths;
-- zero compatibility-layer calls into canonical notification settings or render ownership;
-- zero stability-layer Ranking Spotlight mutations;
-- zero stability-layer fighter-profile or Resume Snapshot content mutations;
-- zero stability-layer What’s New markup or unread-state mutations;
-- zero body-wide, route-driven, soft-refresh-driven, delayed, or public drawer repair triggers;
 - exactly one final activity-status refresh for one accepted pull action;
 - exactly one snapshot validation across a successful migration-to-canonical-identity handoff.
 
@@ -104,24 +89,21 @@ Passive or subordinate paths must produce:
 - `octagon-hq-shell.js` alone mutates primary active destination and ranking subview state.
 - Recovery-window navigation is queued and consumed by the canonical shell.
 - Incoming deep links and nested Picks/Play routes delegate to their intended destination owners.
-- Late launch continuation checks the shell’s published destination before requesting a handoff.
-- Repeating the exact active view does not re-toggle the DOM, rewrite route state unnecessarily, or republish `octagon-hq:view-change`.
-- Bare Picks group/room invitations still receive one necessary Home-to-Picks recovery handoff.
+- Repeating the exact active view does not republish route work.
+- Bare Picks group/room invitations retain one necessary Home-to-Picks recovery handoff.
 - Native destination overlay dismissal may close an open profile before route delegation, but it may not choose or republish the destination.
-- `octagon-hq-shell.js` remains network-first in the service worker so installed clients receive the corrected owner.
+- Destination-specific data owners may consume the canonical route event to begin active-view work.
+- `octagon-hq-shell.js` remains network-first in the service worker.
 
 ## Completed cleanup boundaries
 
 - Phase 1 established idempotent owners.
 - Phase 2 removed demonstrated duplicate route, identity, profile, access, notification, and refresh ownership.
-- Phase 3 removed duplicate Spotlight, Resume Snapshot, and What’s New repairs; retired the body-wide observer, route/soft-refresh repair listeners, six delayed retries, close-button continuation, and public repair API; retained only the proved drawer/body mapping, drawer-only observer, and native overlay dismissal.
+- Phase 3 removed duplicate repairs and narrowed native stability to the proved drawer presentation adapter and overlay dismissal.
+- Phase 4 established a deterministic startup-work inventory and made Picks commissioner network work active-view only in PR #171.
 
-Further movement or renaming of the minimal native presentation adapter belongs to later startup/script-manifest simplification, not repair-loop retirement.
+Broad script deletion, bundling, or manifest restructuring remains Phase 5 work.
 
 ## Testing and interruption policy
 
-CI and focused mobile-browser proofs are the normal merge gate.
-
-Do not contact Cody for routine checkpoints, bot-only `main` movement, known unrelated red workflows, ordinary proof design, or normal merge authorization. Continue autonomously when evidence is complete.
-
-Request Cody only for a named unresolved user-only or physical-only risk involving installed cache/service worker, primary route/sign-in/loading/native-shell behavior, unreproducible iOS lifecycle behavior, a real product choice, or conflicting evidence.
+CI and focused browser/mobile proofs are the normal merge gate. Continue autonomously through routine audit, implementation, exact-head verification, merge, and documentation. Request Cody only for a named user-only or physical-only risk, conflicting primary behavior, or a genuine product decision.
