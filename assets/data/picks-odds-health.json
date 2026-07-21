@@ -1,0 +1,55 @@
+{
+  "outcome": "success",
+  "provider": "The Odds API",
+  "sport": "mma_mixed_martial_arts",
+  "activeEvents": 2,
+  "scheduledFights": 12,
+  "providerEvents": 30,
+  "matched": 5,
+  "updated": 5,
+  "missing": [
+    {
+      "fightId": "abu26-saygid-izagakhmaev-abubakar-vagaev",
+      "matchup": "ABUBAKAR VAGAEV vs. SAYGID IZAGAKHMAEV",
+      "reason": "matchup-not-found"
+    },
+    {
+      "fightId": "abu26-steve-erceg-ramazan-temirov",
+      "matchup": "STEVE ERCEG vs. RAMAZAN TEMIROV",
+      "reason": "matchup-not-found"
+    },
+    {
+      "fightId": "belgrade26-dusko-todorovic-robert-valentin",
+      "matchup": "DUŠKO TODOROVIĆ vs. ROBERT VALENTIN",
+      "reason": "matchup-not-found"
+    },
+    {
+      "fightId": "belgrade26-jan-b-achowicz-navajo-stirling",
+      "matchup": "JAN BŁACHOWICZ vs. NAVAJO STIRLING",
+      "reason": "matchup-not-found"
+    },
+    {
+      "fightId": "belgrade26-aleksandar-rakic-marcin-tybura",
+      "matchup": "ALEKSANDAR RAKIĆ vs. MARCIN TYBURA",
+      "reason": "matchup-not-found"
+    },
+    {
+      "fightId": "belgrade26-uros-medic-daniel-rodriguez",
+      "matchup": "UROŠ MEDIĆ vs. DANIEL RODRIGUEZ",
+      "reason": "matchup-not-found"
+    },
+    {
+      "fightId": "belgrade26-vlasto-cepo-gilbert-urbina",
+      "matchup": "VLASTO CEPO vs. GILBERT URBINA",
+      "reason": "matchup-not-found"
+    }
+  ],
+  "failures": [],
+  "quota": {
+    "remaining": "459",
+    "used": "41",
+    "last": "1"
+  },
+  "refreshedAt": "2026-07-21T01:44:34.404Z",
+  "error": null
+}
