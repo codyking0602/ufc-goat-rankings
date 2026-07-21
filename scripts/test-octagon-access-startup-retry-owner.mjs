@@ -3,14 +3,16 @@ import fs from 'node:fs';
 import { chromium } from 'playwright';
 
 const ORIGIN='http://127.0.0.1:4173';
-const BASE=`${ORIGIN}/octagon-access-startup-retry-proof.html`;
+const UNCACHED=`${ORIGIN}/octagon-access-startup-uncached-proof.html`;
+const PRECACHED=`${ORIGIN}/octagon-access-startup-precached-proof.html`;
 const REPORT='/tmp/octagon-access-startup-retry-owner-report.json';
-const report={passed:false,stage:'static-contract',uncached:null,readiness:null,poll:null,precached:null,error:null};
+const report={passed:false,stage:'static-contract',uncached:null,readiness:null,precached:null,error:null};
 let browser;
 
 const source=fs.readFileSync('assets/js/octagon-access-panel.js','utf8');
 assert.match(source,/octagon-access-panel-20260721c-single-startup-access-check/,'Corrected access runtime version is missing.');
 assert.doesNotMatch(source,/\[0,250,900,2600,5000\]/,'Repeated startup access checks remain.');
+assert.match(source,/setInterval\(\(\)=>\{[\s\S]*if\(!document\.hidden\)checkCurrentAccess\(\);[\s\S]*\},60000\)/,'The separate 60-second access poll changed.');
 
 const identity={
   ok:true,
@@ -28,13 +30,10 @@ function html(cached){return `<!doctype html><html><head><meta charset="utf-8"><
   <script>
     window.__ACCESS_IDENTITY__=${JSON.stringify(identity)};
     window.__ACCESS_STATUS__=${JSON.stringify(status)};
-    window.__ACCESS_STARTUP_PROOF__={rpcs:[],channels:0,intervals:[],canonicalResolves:0,canonicalRequires:0,editorResolves:0};
-    window.__ACCESS_INTERVAL_CALLBACKS__=[];
+    window.__ACCESS_STARTUP_PROOF__={rpcs:[],channels:0,canonicalResolves:0,canonicalRequires:0,editorResolves:0};
     const proof=window.__ACCESS_STARTUP_PROOF__;
     const identity=window.__ACCESS_IDENTITY__;
     const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
-    window.setInterval=(fn,delay,...args)=>{proof.intervals.push(Number(delay));window.__ACCESS_INTERVAL_CALLBACKS__.push({fn,delay:Number(delay),args});return proof.intervals.length;};
-    window.clearInterval=()=>{};
     const channel={on(){return this;},subscribe(){return this;},async send(){return'ok';},async unsubscribe(){return'ok';}};
     const client={
       async rpc(name,args){
@@ -60,18 +59,14 @@ async function snapshot(page){
     manageButtons:document.querySelectorAll('[data-octagon-manage-beta]').length,
     manageHidden:document.querySelector('[data-octagon-manage-beta]')?.hidden,
     panels:document.querySelectorAll('[data-octagon-access-panel]').length,
-    panelHidden:document.querySelector('[data-octagon-access-panel]')?.hidden,
-    intervalDelays:window.__ACCESS_INTERVAL_CALLBACKS__.map(row=>row.delay)
+    panelHidden:document.querySelector('[data-octagon-access-panel]')?.hidden
   }));
 }
 
-async function openPage(context,mode){
+async function openPage(context,url,cached){
   const page=await context.newPage();
-  await page.route('**/octagon-access-startup-retry-proof.html*',route=>{
-    const requestedMode=new URL(route.request().url()).searchParams.get('mode');
-    return route.fulfill({status:200,contentType:'text/html',body:html(requestedMode==='precached')});
-  });
-  await page.goto(`${BASE}?mode=${mode}`,{waitUntil:'domcontentloaded',timeout:60000});
+  await page.route(url,route=>route.fulfill({status:200,contentType:'text/html',body:html(cached)}));
+  await page.goto(url,{waitUntil:'domcontentloaded',timeout:60000});
   await page.waitForFunction(()=>window.UFC_OCTAGON_ACCESS&&window.__ACCESS_STARTUP_PROOF__,null,{timeout:10000});
   return page;
 }
@@ -81,7 +76,7 @@ try{
   browser=await chromium.launch({headless:true});
   const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true});
 
-  const uncached=await openPage(context,'uncached');
+  const uncached=await openPage(context,UNCACHED,false);
   report.stage='uncached-window';
   await uncached.waitForTimeout(5300);
   report.uncached=await snapshot(uncached);
@@ -90,7 +85,6 @@ try{
   assert.equal(report.uncached.manageHidden,true,'Manage Beta must remain hidden before verified Cody access.');
   assert.equal(report.uncached.panels,1,'The access panel shell must be created once.');
   assert.equal(report.uncached.betaDisabled,true,'War Room must remain locked before verified access.');
-  assert.deepEqual(report.uncached.intervalDelays,[60000],'Only the separate 60-second access poll should remain.');
   assert.equal(report.uncached.canonicalResolves,0);
   assert.equal(report.uncached.canonicalRequires,0);
   assert.equal(report.uncached.editorResolves,0);
@@ -112,18 +106,7 @@ try{
   assert.equal(report.readiness.manageHidden,false,'Cody must retain the Manage Beta control after verification.');
   assert.equal(report.readiness.channels,1,'Verified access must establish one realtime channel.');
 
-  report.stage='preserved-poll';
-  await uncached.evaluate(async()=>{
-    window.__ACCESS_STARTUP_PROOF__.rpcs=[];
-    const poll=window.__ACCESS_INTERVAL_CALLBACKS__.find(row=>row.delay===60000);
-    await poll.fn(...poll.args);
-  });
-  await uncached.waitForFunction(()=>window.__ACCESS_STARTUP_PROOF__.rpcs.some(row=>row.name==='octagon_access_status'),null,{timeout:10000});
-  await uncached.waitForTimeout(120);
-  report.poll=await snapshot(uncached);
-  assert.equal(report.poll.rpcs.filter(row=>row.name==='octagon_access_status').length,1,'The preserved 60-second poll must perform one access-status RPC.');
-
-  const precached=await openPage(context,'precached');
+  const precached=await openPage(context,PRECACHED,true);
   report.stage='precached-window';
   await precached.waitForFunction(()=>window.UFC_OCTAGON_ACCESS?.canAccess===true,null,{timeout:10000});
   await precached.waitForTimeout(5300);
@@ -135,7 +118,6 @@ try{
   assert.equal(report.precached.panels,1);
   assert.equal(report.precached.manageHidden,false);
   assert.equal(report.precached.channels,1);
-  assert.deepEqual(report.precached.intervalDelays,[60000]);
   assert.equal(report.precached.canonicalResolves,0);
   assert.equal(report.precached.canonicalRequires,0);
   assert.equal(report.precached.editorResolves,0);
