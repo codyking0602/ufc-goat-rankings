@@ -38,7 +38,7 @@ jobs:
       - name: Enforce production script manifest ownership
         run: |
           set -o pipefail
-          node scripts/audit-phase-5-script-manifest.mjs | tee /tmp/phase-5-script-manifest-inventory.json
+          node scripts/audit-phase-5-script-manifest.mjs 2>&1 | tee /tmp/phase-5-script-manifest-inventory.json
       - name: Upload manifest inventory
         if: always()
         uses: actions/upload-artifact@v4
