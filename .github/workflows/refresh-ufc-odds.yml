@@ -153,6 +153,7 @@ jobs:
             providerEvents:response.providerEvents??null,
             matched:response.matched??null,
             updated:response.updated??null,
+            reconciled:Array.isArray(response.reconciled)?response.reconciled:[],
             missing:Array.isArray(response.missing)?response.missing:[],
             failures:Array.isArray(response.failures)?response.failures:[],
             quota:response.quota||null,
