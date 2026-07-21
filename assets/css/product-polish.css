@@ -2,17 +2,17 @@
   --product-radius:18px;
   --product-radius-sm:12px;
   --product-touch:44px;
-  --product-surface:#121a29;
-  --product-surface-2:#172238;
-  --product-border:#33445d;
-  --product-muted:#94a3b8;
-  --product-accent:#f97316;
+  --product-surface:var(--panel);
+  --product-surface-2:var(--panel2);
+  --product-border:var(--line);
+  --product-muted:var(--muted);
+  --product-accent:var(--accent);
 }
 
 html,body{max-width:100%;overflow-x:clip}
 body{min-height:100dvh}
 button,a,input,select,summary{-webkit-tap-highlight-color:transparent}
-button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid #fb923c;outline-offset:2px}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
 
 /* Compact product header */
 .hero{
@@ -40,10 +40,10 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 #manualRefreshProgress{position:absolute!important;left:0;right:0;bottom:-1px;width:100%!important;margin:0!important}
 
 /* Navigation and page headers */
-.tabs[data-app-shell]{padding:8px clamp(12px,4vw,52px)!important;background:#101827!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.tabs[data-app-shell]{padding:8px clamp(12px,4vw,52px)!important;background:var(--panel)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 .tabs[data-app-shell] .tab{min-height:44px!important;height:44px!important;max-height:44px!important;border-radius:13px!important;font-size:11px!important;transition:border-color .14s ease,background .14s ease,transform .14s ease!important}
 .tabs[data-app-shell] .tab:active{transform:scale(.985)}
-.rankings-subnav{border-radius:14px!important;background:#101827!important}
+.rankings-subnav{border-radius:14px!important;background:var(--panel)!important}
 .rankings-subnav button{min-height:42px!important;border-radius:10px!important}
 .section-title,.product-page-header{display:block!important;margin:4px 0 18px!important;padding:0 2px!important}
 .section-title h2,.product-page-header h2{margin:0!important;font-size:clamp(25px,4vw,32px)!important;line-height:1!important;letter-spacing:-.035em!important}
@@ -56,7 +56,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 }
 .card,.kpi,.play-intro-card,.play-list-card,.play-add-card,.play-result-card,.intelligence-matchup,.picks-progress-card,.picks-standings-card,.picks-room-card,.picks-fight-card{box-shadow:none!important}
 .home-dashboard{width:100%;max-width:1080px;margin-inline:auto}
-.home-dashboard-card{box-shadow:0 10px 28px rgba(2,6,23,.08)!important}
+.home-dashboard-card{box-shadow:0 10px 28px rgba(0,0,0,.24)!important}
 .play-shell,.picks-shell,.intelligence-shell,[data-octagon-board]{width:100%;max-width:1080px;margin-inline:auto;min-width:0}
 main.shell>.view{min-width:0;max-width:100%}
 
@@ -68,8 +68,8 @@ main.shell>.view{min-width:0;max-width:100%}
   transition:transform .12s ease,border-color .12s ease,background .12s ease!important;
 }
 .home-dashboard-action:active,.play-primary:active,.play-secondary:active,.picks-primary:active,.picks-secondary:active,.intelligence-primary:active,.intelligence-secondary:active,.profile-connectivity-actions button:active,.octagon-intelligence-button:active,[data-octagon-refresh]:active,[data-octagon-alerts]:active,[data-octagon-manage-beta]:active,#whatsNewExplore:active{transform:scale(.985)!important}
-.home-dashboard-action:not(.secondary),.play-primary,.picks-primary,.intelligence-primary,.profile-connectivity-actions button.primary,.octagon-intelligence-button,#whatsNewExplore{border-color:var(--product-accent)!important;background:var(--product-accent)!important;color:#17100b!important}
-.home-dashboard-action.secondary,.play-secondary,.picks-secondary,.intelligence-secondary,.profile-connectivity-actions button:not(.primary){border-color:#42536e!important;background:#111827!important;color:#f8fafc!important}
+.home-dashboard-action:not(.secondary),.play-primary,.picks-primary,.intelligence-primary,.profile-connectivity-actions button.primary,.octagon-intelligence-button,#whatsNewExplore{border-color:var(--product-accent)!important;background:var(--product-accent)!important;color:#fff!important}
+.home-dashboard-action.secondary,.play-secondary,.picks-secondary,.intelligence-secondary,.profile-connectivity-actions button:not(.primary){border-color:var(--product-border)!important;background:var(--product-surface-2)!important;color:var(--text)!important}
 input,select{min-height:var(--product-touch);border-radius:var(--product-radius-sm)!important}
 
 /* Remove visible product residue */
