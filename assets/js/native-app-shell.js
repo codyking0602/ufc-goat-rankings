@@ -4,7 +4,7 @@
   if(window.__UFC_NATIVE_APP_SHELL_STARTED__)return;
   window.__UFC_NATIVE_APP_SHELL_STARTED__=true;
 
-  const VERSION='native-app-shell-20260721c-no-delayed-startup-resync';
+  const VERSION='native-app-shell-20260721d-permission-aware-war-room';
   const MOBILE_QUERY='(max-width: 900px)';
   const REFRESH_THRESHOLD=74;
   const NAV_ITEMS=[
@@ -37,7 +37,7 @@
       home:'<path d="M3.5 10.8 12 3.8l8.5 7v9.4a1.8 1.8 0 0 1-1.8 1.8H5.3a1.8 1.8 0 0 1-1.8-1.8Z"/><path d="M9 22v-7h6v7"/>',
       rankings:'<path d="M8 4h8v4a4 4 0 0 1-8 0Z"/><path d="M6 5H3v2a4 4 0 0 0 4 4M18 5h3v2a4 4 0 0 1-4 4M12 12v5M8 21h8M9 17h6"/>',
       play:'<path d="M8.5 5.8 19 12 8.5 18.2Z"/>',
-      picks:'<path d="M6 3.5h12a2 2 0 0 1 2 2v15H4v-15a2 2 0 0 1 2-2Z"/><path d="m8 10 2.2 2.2L16 6.8M8 16h8"/>',
+      picks:'<path d="M6 3.5h12a2 2 0 0 1 2 2v15H4v-15a2 2 0 0 1-2-2Z"/><path d="m8 10 2.2 2.2L16 6.8M8 16h8"/>',
       'war-room':'<path d="M4 5.5h16v10H9l-5 4Z"/><path d="M8 9h8M8 12h5"/>',
       ask:'<path d="M12 3.5a7.5 7.5 0 1 0 4.9 13.2L21 20l-1.4-4.7A7.5 7.5 0 0 0 12 3.5Z"/><path d="M9.6 9.2a2.7 2.7 0 0 1 5.1 1.2c0 1.9-2.7 2-2.7 3.7M12 17.2h.01"/>',
       refresh:'<path d="M20 6v5h-5"/><path d="M19 11a7.5 7.5 0 1 0 .2 5"/>',
@@ -114,15 +114,19 @@
 
   function syncActive(destination=currentDestination()){
     const nav=ensureBottomNav();
-    const warSource=document.querySelector('nav.tabs [data-destination="war-room"]');
+    const warMode=text(window.UFC_OCTAGON_ACCESS?.mode).toLowerCase()||'locked';
     nav.querySelectorAll('[data-native-destination]').forEach(button=>{
       const active=button.dataset.nativeDestination===destination;
       button.classList.toggle('active',active);
       button.setAttribute('aria-selected',String(active));
       if(button.dataset.nativeDestination==='war-room'){
-        const disabled=Boolean(warSource?.disabled)||warSource?.getAttribute('aria-disabled')==='true';
-        button.setAttribute('aria-disabled',String(disabled));
-        button.disabled=disabled;
+        const locked=warMode==='locked';
+        const invited=warMode==='invite';
+        button.hidden=locked;
+        button.setAttribute('aria-disabled',String(locked));
+        button.disabled=locked;
+        button.querySelector('span')?.replaceChildren(invited?'Join':'War Room');
+        button.setAttribute('aria-label',invited?'Join War Room with invite':locked?'War Room access not enabled':'Open War Room');
       }
     });
   }
@@ -314,6 +318,7 @@
       animateActiveView();
       syncBadges();
     });
+    window.addEventListener('octagon-hq:war-room-access-change',()=>syncActive(currentDestination()));
     ['ufc-profile-challenges-updated','ufc-profile-challenge-sent','ufc-play-profile-ready','ufc-app-profile-updated','octagon-hq:soft-refresh','octagon-hq:notification-device-change'].forEach(name=>window.addEventListener(name,syncBadges));
     window.addEventListener('resize',()=>{ensureAskAction();syncActive();},{passive:true});
     window.addEventListener('orientationchange',()=>window.setTimeout(()=>{ensureAskAction();syncActive();},120),{passive:true});
