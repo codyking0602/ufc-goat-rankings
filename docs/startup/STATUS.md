@@ -4,7 +4,8 @@ _Last updated: 2026-07-21_
 
 ## Current position
 
-- **Production `main`:** `cc75ef4371196ea89a79aa7ff14f759a252a4dd4`.
+- **Production `main`:** `02ec4aee96f94d821ca1c218b7ffec47af6b0944`.
+- **Latest startup runtime merge:** `cc75ef4371196ea89a79aa7ff14f759a252a4dd4`.
 - **Current phase:** Phase 2 — remove duplicate ownership.
 - **Phase 0:** Complete.
 - **Phase 1:** Complete.
@@ -14,7 +15,7 @@ _Last updated: 2026-07-21_
 - **Master tracker:** [Issue #102](https://github.com/codyking0602/ufc-goat-rankings/issues/102).
 - **Current Phase 2 ledger:** [`PHASE-2-PROGRESS-20260721.md`](./PHASE-2-PROGRESS-20260721.md).
 
-The previous 50–58% estimates predated the main Phase 2 runtime sequence and are superseded by this file.
+The current `main` commit after the runtime merge is a generated Octagon Verdict Markdown timestamp-only child. The previous 50–58% estimates predated the main Phase 2 runtime sequence and are superseded by this file.
 
 ## Completed architecture boundaries
 
