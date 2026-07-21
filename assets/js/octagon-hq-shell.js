@@ -4,7 +4,7 @@
   if(window.__UFC_OCTAGON_HQ_SHELL_STARTED__)return;
   window.__UFC_OCTAGON_HQ_SHELL_STARTED__=true;
 
-  const VERSION='app-shell-20260721b-single-view-activation';
+  const VERSION='app-shell-20260721c-permission-aware-war-room';
   const DESTINATIONS=[
     ['home','Home','home'],
     ['rankings','Rankings','men'],
@@ -36,14 +36,16 @@
     style.textContent=`
       .hero{position:relative;align-items:center!important}.hero>div:first-child{min-width:0}.hero h1{letter-spacing:-.045em}.hero .subtitle{max-width:680px;margin-bottom:0}.hero .hero-card[aria-hidden="true"]{display:none!important}
       .tabs[data-app-shell]{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;grid-auto-flow:row!important;gap:7px!important;overflow:visible!important;padding:8px 14px!important;margin:0!important}
+      .tabs[data-app-shell][data-war-room-access="locked"]{grid-template-columns:repeat(5,minmax(0,1fr))!important}
       .tabs[data-app-shell] .tab{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;min-width:0!important;max-width:none!important;height:40px!important;min-height:40px!important;max-height:40px!important;margin:0!important;padding:6px 8px!important;box-sizing:border-box!important;white-space:nowrap!important;line-height:1!important;order:initial!important;grid-column:auto!important;grid-row:auto!important}
+      .tabs[data-app-shell] .tab[data-destination="war-room"][hidden]{display:none!important}
       .tabs[data-app-shell] .tab[data-destination="rankings"]{font-size:0!important}
       .tabs[data-app-shell] .tab[data-destination="rankings"]::after{content:"Rankings";font:900 12px/1 system-ui}
       .tabs[data-app-shell] .tab[data-destination="war-room"]:disabled{opacity:.52;cursor:not-allowed}
       .rankings-subnav{display:none;align-items:center;gap:7px;margin:0 0 12px;padding:7px;border:1px solid var(--line,#263244);border-radius:15px;background:rgba(15,23,42,.72)}
       .rankings-subnav.active{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}.rankings-subnav button{min-width:0;min-height:38px;border:1px solid transparent;border-radius:11px;background:transparent;color:var(--muted,#94a3b8);cursor:pointer;font:900 12px/1 system-ui;padding:7px 8px}.rankings-subnav button.active{border-color:rgba(249,115,22,.54);background:rgba(249,115,22,.13);color:#fff}
       main.shell>.view:not(.active-view){display:none!important}#rules,.tab[data-view="rules"],[data-product-legacy-ranking-tab],.critical-home-fallback,.architecture-home-shell,.boot-home,.boot-nav,.boot-hero{display:none!important}
-      @media(max-width:900px){.hero{padding:13px 16px 12px!important;gap:8px!important}.hero>div:first-child{width:100%}.hero .eyebrow{margin:1px 0 6px!important;font-size:10px!important;letter-spacing:.13em!important}.hero h1{font-size:clamp(38px,11vw,48px)!important;line-height:.92!important}.hero .subtitle{margin:7px 0 0!important;font-size:15px!important;line-height:1.3!important}.tabs[data-app-shell]{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;padding:6px 10px 8px!important}.tabs[data-app-shell] .tab{height:42px!important;min-height:42px!important;max-height:42px!important;padding:6px 5px!important;font-size:11px!important;white-space:normal!important;border-radius:12px!important}.tabs[data-app-shell] .tab[data-destination="rankings"]{font-size:0!important}.tabs[data-app-shell] .tab[data-destination="rankings"]::after{font-size:10.5px}.rankings-subnav{margin-bottom:10px;padding:6px;gap:5px}.rankings-subnav button{min-height:36px;padding:6px 3px;font-size:10.5px}}
+      @media(max-width:900px){.hero{padding:13px 16px 12px!important;gap:8px!important}.hero>div:first-child{width:100%}.hero .eyebrow{margin:1px 0 6px!important;font-size:10px!important;letter-spacing:.13em!important}.hero h1{font-size:clamp(38px,11vw,48px)!important;line-height:.92!important}.hero .subtitle{margin:7px 0 0!important;font-size:15px!important;line-height:1.3!important}.tabs[data-app-shell],.tabs[data-app-shell][data-war-room-access="locked"]{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;padding:6px 10px 8px!important}.tabs[data-app-shell] .tab{height:42px!important;min-height:42px!important;max-height:42px!important;padding:6px 5px!important;font-size:11px!important;white-space:normal!important;border-radius:12px!important}.tabs[data-app-shell] .tab[data-destination="rankings"]{font-size:0!important}.tabs[data-app-shell] .tab[data-destination="rankings"]::after{font-size:10.5px}.rankings-subnav{margin-bottom:10px;padding:6px;gap:5px}.rankings-subnav button{min-height:36px;padding:6px 3px;font-size:10.5px}}
     `;
   }
 
@@ -83,7 +85,7 @@
     subnav.innerHTML=RANKING_TABS.map(([view,label])=>`<button type="button" data-ranking-view="${view}">${label}</button>`).join('');
   }
 
-  function warState(button){return{disabled:Boolean(button?.disabled),aria:button?.getAttribute('aria-disabled')||'false',access:button?.dataset?.betaAccess||'',member:button?.dataset?.betaMember||'',title:button?.title||''};}
+  function warState(button){return{access:button?.dataset?.betaAccess||'locked',member:button?.dataset?.betaMember||''};}
 
   function normalizeRankingsButton(){
     if(normalizingRankings)return;
@@ -107,11 +109,20 @@
     const button=document.querySelector('nav.tabs [data-destination="war-room"]');
     if(!button)return;
     normalizingWar=true;
+    const mode=button.dataset.betaAccess||'locked';
+    const locked=mode==='locked';
+    const invited=mode==='invite';
+    const labelText=invited?'Join with invite':'War Room';
     const badge=button.querySelector('[data-octagon-unread-badge]');
     let label=button.querySelector('[data-destination-label]');
-    if(!label||label.textContent!=='War Room'){button.textContent='';label=document.createElement('span');label.dataset.destinationLabel='true';label.textContent='War Room';button.appendChild(label);if(badge)button.appendChild(badge);}
-    button.setAttribute('aria-label',button.disabled?'War Room access not enabled':'Open The War Room');
-    button.title=button.disabled?'War Room access not enabled':'Open The War Room';
+    if(!label||label.textContent!==labelText){button.textContent='';label=document.createElement('span');label.dataset.destinationLabel='true';label.textContent=labelText;button.appendChild(label);if(badge)button.appendChild(badge);}
+    button.hidden=locked;
+    button.disabled=locked;
+    button.setAttribute('aria-disabled',String(locked));
+    button.setAttribute('aria-label',invited?'Join The War Room with your invite':locked?'War Room access not enabled':'Open The War Room');
+    button.title=invited?'Join The War Room with your invite':locked?'War Room access not enabled':'Open The War Room';
+    const nav=button.closest('nav.tabs');
+    if(nav)nav.dataset.warRoomAccess=mode;
     normalizingWar=false;
   }
 
@@ -119,11 +130,11 @@
     const nav=document.querySelector('nav.tabs');
     if(!nav)return;
     const access=warState(nav.querySelector('[data-destination="war-room"],[data-octagon-beta-tab]'));
-    nav.innerHTML='';nav.dataset.appShell=VERSION;nav.dataset.productArchitecture=VERSION;nav.setAttribute('aria-label','Primary app destinations');
+    nav.innerHTML='';nav.dataset.appShell=VERSION;nav.dataset.productArchitecture=VERSION;nav.dataset.warRoomAccess=access.access;nav.setAttribute('aria-label','Primary app destinations');
     DESTINATIONS.forEach(([key,labelText,view])=>{
       const button=document.createElement('button');button.type='button';button.className='tab';button.dataset.destination=key;button.dataset.view=view;button.setAttribute('aria-selected','false');
       const label=document.createElement('span');label.dataset.destinationLabel='true';label.textContent=labelText;button.appendChild(label);
-      if(key==='war-room'){button.dataset.octagonBetaTab='true';if(access.access)button.dataset.betaAccess=access.access;if(access.member)button.dataset.betaMember=access.member;button.disabled=access.disabled;button.setAttribute('aria-disabled',access.aria);button.title=access.title;}
+      if(key==='war-room'){button.dataset.octagonBetaTab='true';button.dataset.betaAccess=access.access;if(access.member)button.dataset.betaMember=access.member;button.hidden=access.access==='locked';button.disabled=access.access==='locked';button.setAttribute('aria-disabled',String(access.access==='locked'));}
       nav.appendChild(button);
     });
     normalizeRankingsButton();
@@ -160,7 +171,7 @@
   function showView(view,{updateHash=true}={}){
     if(view==='octagon'){
       const war=document.querySelector('[data-destination="war-room"]');
-      if(war?.disabled||war?.getAttribute('aria-disabled')==='true')view='home';
+      if(war?.dataset.betaAccess==='locked'||war?.disabled||war?.getAttribute('aria-disabled')==='true')view='home';
     }
     if(RANKING_VIEWS.includes(view))currentRankingView=view;
     let nextDestination=destinationForView(view);
