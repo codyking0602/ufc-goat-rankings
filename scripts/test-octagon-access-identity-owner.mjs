@@ -99,8 +99,8 @@ async function snapshot(page){
     betaAccess:document.querySelector('[data-octagon-beta-tab]')?.dataset.betaAccess||'',
     manageButtons:document.querySelectorAll('[data-octagon-manage-beta]').length,
     manageHidden:document.querySelector('[data-octagon-manage-beta]')?.hidden,
-    panels:document.querySelectorAll('[data-octagon-access-panel]').length,
-    panelHidden:document.querySelector('[data-octagon-access-panel]')?.hidden,
+    panels:document.querySelectorAll('section[data-octagon-access-panel]').length,
+    panelHidden:document.querySelector('section[data-octagon-access-panel]')?.hidden,
     rosterRows:document.querySelectorAll('[data-access-member-id]').length,
     signInSurfaces:document.querySelectorAll('[role="dialog"],.app-profile-overlay,.play-profile-modal,.picks-pin-signin').length,
     canAccess:Boolean(window.UFC_OCTAGON_ACCESS?.canAccess)
@@ -194,7 +194,7 @@ try{
   await page.waitForTimeout(80);
   report.admin=await snapshot(page);
   const rosterRpc=report.admin.rpcs.find(row=>row.name==='octagon_admin_access_roster');
-  const toggleRpc=report.admin.rpcs.find(row=>row.name==='octagon_admin_set_access');
+  const toggleRpc=report.admin.rpcs.find(row=>row.name==='octagon_admin_admin_set_access');
   assert.equal(rosterRpc?.args?.p_member_token,'access-owner-token','Admin roster loading must reuse published identity.');
   assert.equal(toggleRpc?.args?.p_member_token,'access-owner-token','Admin access changes must reuse published identity.');
   assert.equal(toggleRpc?.args?.p_target_member_id,'m2');
