@@ -117,6 +117,7 @@
       const drawer=document.getElementById('drawer');
       drawer?.classList.add('open');
       drawer?.setAttribute('aria-hidden','false');
+      document.body.classList.add('fighter-profile-open');
       const panel=document.querySelector('.drawer-panel');
       if(panel)panel.scrollTop=0;
       if(typeof window.attachCategoryExplanations==='function')window.attachCategoryExplanations(f);

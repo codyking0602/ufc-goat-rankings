@@ -114,8 +114,6 @@ try{
     window.dispatchEvent(new CustomEvent('octagon-hq:view-change',{detail:{destination:'picks'}}));
     window.dispatchEvent(new CustomEvent('octagon-hq:view-change',{detail:{destination:'home'}}));
     document.dispatchEvent(new Event('visibilitychange'));
-    window.UFC_NATIVE_APP_SHELL_STABILITY.schedule();
-    window.UFC_NATIVE_APP_SHELL_STABILITY.schedule();
   });
   await page.waitForTimeout(350);
   const stable=await snapshot(page);

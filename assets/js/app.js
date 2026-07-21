@@ -466,6 +466,7 @@ function openFighter(name){
   `;
   el('drawer').classList.add('open');
   el('drawer').setAttribute('aria-hidden','false');
+  document.body.classList.add('fighter-profile-open');
   const panel = document.querySelector('.drawer-panel');
   if(panel) panel.scrollTop = 0;
   attachCategoryExplanations(f);
@@ -547,5 +548,5 @@ populateControls(); refresh();
 el('search').addEventListener('input', refresh);
 el('divisionFilter').addEventListener('change', refresh);
 el('resetBtn').addEventListener('click', () => { el('search').value=''; el('divisionFilter').value='All'; refresh(); });
-el('closeDrawer').addEventListener('click', () => { el('drawer').classList.remove('open'); el('drawer').setAttribute('aria-hidden','true'); });
+el('closeDrawer').addEventListener('click', () => { el('drawer').classList.remove('open'); el('drawer').setAttribute('aria-hidden','true'); document.body.classList.remove('fighter-profile-open'); });
 el('drawer').addEventListener('click', e => { if(e.target.id==='drawer') el('closeDrawer').click(); });

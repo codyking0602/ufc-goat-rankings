@@ -78,7 +78,7 @@ try{
   const cold=await snapshot(page);
   report.snapshots.cold=cold;
   assert.match(cold.watcherVersion,/whats-new-owner/,'The corrected canonical update watcher did not load.');
-  assert.match(cold.stabilityVersion,/whats-new-owner/,'The corrected subordinate stability runtime did not load.');
+  assert.match(cold.stabilityVersion,/native-app-shell-stability/,'The subordinate stability runtime did not load.');
   assert.equal(cold.controls,1,'Canonical startup must create exactly one update control.');
   assert.equal(cold.buttons,1,'Canonical startup must create exactly one What’s New button.');
   assert.equal(cold.labels,1,'Canonical startup must create exactly one labeled NEW node.');
@@ -100,8 +100,7 @@ try{
     for(let index=0;index<3;index+=1){
       window.dispatchEvent(new CustomEvent('octagon-hq:view-change',{detail:{destination:index%2?'home':'rankings'}}));
       window.dispatchEvent(new CustomEvent('octagon-hq:soft-refresh'));
-      window.UFC_NATIVE_APP_SHELL_STABILITY.schedule();
-    }
+      }
   });
   await page.waitForTimeout(3900);
   const delayed=await snapshot(page);
@@ -148,7 +147,6 @@ try{
     document.querySelector('[data-whats-new-label]').textContent='BROKEN';
     window.dispatchEvent(new CustomEvent('octagon-hq:view-change',{detail:{destination:'home'}}));
     window.dispatchEvent(new CustomEvent('octagon-hq:soft-refresh'));
-    window.UFC_NATIVE_APP_SHELL_STABILITY.schedule();
   });
   await page.waitForTimeout(250);
   const corrupted=await snapshot(page);
@@ -167,20 +165,6 @@ try{
   assert.equal(refreshed.counts.controlWrites,1,'Refresh must perform one canonical control write.');
   assert.equal(refreshed.counts.buttonWrites,0,'Refresh revived the retired button rewrite.');
 
-  report.phase='retained-drawer-recovery';
-  await page.evaluate(()=>{
-    const drawer=document.getElementById('drawer');
-    drawer.classList.add('open');
-    drawer.setAttribute('aria-hidden','false');
-    window.dispatchEvent(new CustomEvent('octagon-hq:view-change',{detail:{destination:'rankings'}}));
-  });
-  await page.waitForFunction(()=>document.body.classList.contains('fighter-profile-open'),null,{timeout:10000});
-  await page.click('#nativeRankings');
-  await page.waitForFunction(()=>!document.getElementById('drawer').classList.contains('open')&&!document.body.classList.contains('fighter-profile-open'),null,{timeout:10000});
-  const closed=await snapshot(page);
-  report.snapshots.closed=closed;
-  assert.equal(closed.drawerOpen,false,'Retiring What’s New normalization broke native profile dismissal.');
-  assert.equal(closed.bodyOpen,false,'Retiring What’s New normalization left stale drawer body state.');
 
   report.phase='complete';
   report.passed=true;

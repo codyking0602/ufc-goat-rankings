@@ -50,6 +50,7 @@ const fixture=`<!doctype html>
       const drawer=document.getElementById('drawer');
       drawer.classList.remove('open');
       drawer.setAttribute('aria-hidden','true');
+      document.body.classList.remove('fighter-profile-open');
     });
   })();
   </script>
@@ -114,8 +115,6 @@ try{
     noise.remove();
     window.dispatchEvent(new CustomEvent('octagon-hq:view-change',{detail:{destination:'rankings'}}));
     window.dispatchEvent(new CustomEvent('octagon-hq:soft-refresh'));
-    window.UFC_NATIVE_APP_SHELL_STABILITY.schedule();
-    window.UFC_NATIVE_APP_SHELL_STABILITY.schedule();
   });
   await page.waitForTimeout(3900);
   const delayed=await snapshot(page);
@@ -132,7 +131,6 @@ try{
     document.body.classList.remove('fighter-profile-open');
     window.dispatchEvent(new CustomEvent('octagon-hq:view-change',{detail:{destination:'rankings'}}));
     window.dispatchEvent(new CustomEvent('octagon-hq:soft-refresh'));
-    window.UFC_NATIVE_APP_SHELL_STABILITY.schedule();
   });
   await page.waitForTimeout(250);
   const corrupted=await snapshot(page);
