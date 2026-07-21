@@ -332,16 +332,32 @@
     }
   }
 
+  function picksActive(){
+    const destination=window.UFC_APP_SHELL?.currentDestination;
+    if(destination) return destination==='picks';
+    return document.getElementById('picks')?.classList.contains('active-view')===true;
+  }
+
+  function scheduleRefresh(){
+    clearTimeout(start.timer);
+    start.timer=setTimeout(()=>{ if(picksActive()) refresh(); },300);
+  }
+
   function start(){
     ensureCard();
-    refresh();
+    if(picksActive() && document.getElementById('picksCommissionerCard')) refresh();
     const observer=new MutationObserver(()=>{
+      const hadCard=Boolean(document.getElementById('picksCommissionerCard'));
       ensureCard();
-      clearTimeout(start.timer);
-      start.timer=setTimeout(()=>refresh(),300);
+      if(picksActive() && !hadCard && document.getElementById('picksCommissionerCard')) scheduleRefresh();
     });
     observer.observe(document.getElementById('picks') || document.body,{childList:true,subtree:true});
-    window.setInterval(()=>refresh(),45000);
+    window.addEventListener('octagon-hq:view-change',event=>{
+      if(event.detail?.destination!=='picks') return;
+      ensureCard();
+      if(document.getElementById('picksCommissionerCard')) refresh();
+    });
+    window.setInterval(()=>{ if(picksActive()) refresh(); },45000);
   }
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start,{once:true});
