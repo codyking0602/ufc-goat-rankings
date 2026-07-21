@@ -1,4 +1,5 @@
 name: Picks UI Smoke
+# Final production certification trigger; workflow behavior is unchanged.
 
 on:
   push:
