@@ -1,0 +1,1 @@
+test-profile-login-owner-delegation.mjs imports test-canonical-migration-identity-owner.mjs, which imports the static contract.
