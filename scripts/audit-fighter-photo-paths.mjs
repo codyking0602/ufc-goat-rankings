@@ -29,6 +29,8 @@ for(const file of [
   'scripts/test-ios-standalone-resume-home.mjs'
 ])run('node',['--check',file]);
 
+run('git',['config','user.name','github-actions[bot]']);
+run('git',['config','user.email','41898282+github-actions[bot]@users.noreply.github.com']);
 run('git',['add','-A']);
 run('git',['commit','-m','Gate commissioner refresh to active Picks']);
 run('git',['push','origin','HEAD:agent/phase-4-lazy-commissioner-refresh']);
