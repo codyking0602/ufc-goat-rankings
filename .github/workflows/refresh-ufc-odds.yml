@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: sync-ufc-card-and-odds
@@ -60,8 +60,55 @@ jobs:
           npx playwright install --with-deps chromium
 
       - name: Sync confirmed UFC card
+        id: card_sync
+        continue-on-error: true
         shell: bash
-        run: node scripts/sync-ufc-card.mjs --apply
+        run: |
+          mkdir -p artifacts/ufc-card-sync
+          set -o pipefail
+          node scripts/sync-ufc-card.mjs --apply 2>&1 | tee artifacts/ufc-card-sync/card-sync-console.log
+
+      - name: Publish card-sync health
+        if: always()
+        env:
+          SYNC_OUTCOME: ${{ steps.card_sync.outcome }}
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs=require('node:fs');
+          const path=require('node:path');
+          const reportPath=path.join('artifacts','ufc-card-sync','card-sync-report.json');
+          const logPath=path.join('artifacts','ufc-card-sync','card-sync-console.log');
+          let report=[];
+          if(fs.existsSync(reportPath)){
+            try{report=JSON.parse(fs.readFileSync(reportPath,'utf8')).report||[];}catch(_error){}
+          }
+          const health={
+            outcome:process.env.SYNC_OUTCOME||'unknown',
+            events:report.map(row=>({
+              eventId:row.eventId,
+              sourceType:row.sourceType,
+              sourceUrl:row.sourceUrl,
+              fights:row.fights,
+              confirmationHash:row.confirmationHash,
+              synced:Boolean(row.result?.synced),
+              fightsReceived:row.result?.summary?.fightsReceived??null,
+              pickableFightsReceived:row.result?.summary?.pickableFightsReceived??null
+            }))
+          };
+          if(health.outcome!=='success'&&fs.existsSync(logPath)){
+            health.error=fs.readFileSync(logPath,'utf8').trim().split('\n').slice(-20).join('\n');
+          }
+          fs.mkdirSync(path.join('assets','data'),{recursive:true});
+          fs.writeFileSync(path.join('assets','data','picks-sync-health.json'),JSON.stringify(health,null,2)+'\n');
+          NODE
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/data/picks-sync-health.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Record UFC card sync health [skip ci]"
+            git push
+          fi
 
       - name: Advance permanent groups to next event
         if: always()
@@ -93,3 +140,8 @@ jobs:
             --header "x-odds-refresh-secret: $ODDS_REFRESH_SECRET" \
             --data '{"source":"card-sync-github-schedule"}' \
             "https://$PROJECT_REF.supabase.co/functions/v1/refresh-ufc-odds"
+
+      - name: Fail when card synchronization failed
+        if: always() && steps.card_sync.outcome != 'success'
+        shell: bash
+        run: exit 1
