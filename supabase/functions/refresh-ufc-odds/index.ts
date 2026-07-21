@@ -1,4 +1,9 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
+import {
+  matchupMatches,
+  normalizeName,
+  sameFighterName,
+} from "../_shared/ufc-name-matching.js";
 
 const JSON_HEADERS = { "content-type": "application/json; charset=utf-8" };
 const SPORT_KEY = "mma_mixed_martial_arts";
@@ -6,16 +11,6 @@ const DEFAULT_BOOKMAKERS = ["betonlineag", "draftkings", "fanduel", "betmgm", "b
 
 function json(status, body) {
   return new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });
-}
-
-function normalizeName(value) {
-  return String(value || "")
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/\b(jr|sr|ii|iii|iv)\b/g, "")
-    .replace(/[^a-z0-9]+/g, "")
-    .trim();
 }
 
 function matchupKey(first, second) {
@@ -34,15 +29,20 @@ function findMarket(bookmaker) {
     : null;
 }
 
+function outcomePrice(outcomes, fighterName) {
+  const exact = outcomes.find((outcome) => normalizeName(outcome?.name) === normalizeName(fighterName));
+  if (exact) return asAmericanPrice(exact?.price);
+
+  const reconciled = outcomes.find((outcome) => sameFighterName(outcome?.name, fighterName));
+  return reconciled ? asAmericanPrice(reconciled?.price) : null;
+}
+
 function lineForBookmaker(bookmaker, fight) {
   const market = findMarket(bookmaker);
   if (!market || !Array.isArray(market.outcomes)) return null;
 
-  const outcomes = new Map(
-    market.outcomes.map((outcome) => [normalizeName(outcome?.name), asAmericanPrice(outcome?.price)])
-  );
-  const redOdds = outcomes.get(normalizeName(fight.red_name));
-  const blueOdds = outcomes.get(normalizeName(fight.blue_name));
+  const redOdds = outcomePrice(market.outcomes, fight.red_name);
+  const blueOdds = outcomePrice(market.outcomes, fight.blue_name);
   if (redOdds == null || blueOdds == null) return null;
 
   return {
@@ -78,6 +78,17 @@ function closestProviderEvent(candidates, fight) {
     const rightTime = new Date(right?.commence_time || 0).getTime();
     return Math.abs(leftTime - fightTime) - Math.abs(rightTime - fightTime);
   })[0];
+}
+
+function providerCandidates(byMatchup, providerEvents, fight) {
+  const exact = byMatchup.get(matchupKey(fight.red_name, fight.blue_name)) || [];
+  if (exact.length) return { candidates: exact, matchedBy: "exact" };
+
+  const reconciled = providerEvents.filter((providerEvent) => matchupMatches(providerEvent, fight));
+  return {
+    candidates: reconciled,
+    matchedBy: reconciled.length ? "reconciled-name" : "none",
+  };
 }
 
 function isMainCard(section) {
@@ -163,9 +174,10 @@ Deno.serve(async (request) => {
     });
   }
 
-  const providerEvents = await providerResponse.json();
+  const providerEventsRaw = await providerResponse.json();
+  const providerEvents = Array.isArray(providerEventsRaw) ? providerEventsRaw : [];
   const byMatchup = new Map();
-  for (const providerEvent of Array.isArray(providerEvents) ? providerEvents : []) {
+  for (const providerEvent of providerEvents) {
     const key = matchupKey(providerEvent?.home_team, providerEvent?.away_team);
     if (!key || key === "|") continue;
     const list = byMatchup.get(key) || [];
@@ -176,8 +188,8 @@ Deno.serve(async (request) => {
   const updates = [];
   const missing = [];
   for (const fight of eligibleFights) {
-    const candidates = byMatchup.get(matchupKey(fight.red_name, fight.blue_name)) || [];
-    const providerEvent = closestProviderEvent(candidates, fight);
+    const resolution = providerCandidates(byMatchup, providerEvents, fight);
+    const providerEvent = closestProviderEvent(resolution.candidates, fight);
     if (!providerEvent) {
       missing.push({
         fightId: fight.id,
@@ -197,7 +209,7 @@ Deno.serve(async (request) => {
       continue;
     }
 
-    updates.push({ fight, providerEvent, line });
+    updates.push({ fight, providerEvent, line, matchedBy: resolution.matchedBy });
   }
 
   const failures = [];
@@ -224,9 +236,16 @@ Deno.serve(async (request) => {
     sport: SPORT_KEY,
     activeEvents: eventIds.length,
     scheduledFights: eligibleFights.length,
-    providerEvents: Array.isArray(providerEvents) ? providerEvents.length : 0,
+    providerEvents: providerEvents.length,
     matched: updates.length,
     updated,
+    reconciled: updates
+      .filter((item) => item.matchedBy === "reconciled-name")
+      .map((item) => ({
+        fightId: item.fight.id,
+        matchup: `${item.fight.red_name} vs. ${item.fight.blue_name}`,
+        providerMatchup: `${item.providerEvent?.home_team} vs. ${item.providerEvent?.away_team}`,
+      })),
     missing,
     failures,
     quota: {
