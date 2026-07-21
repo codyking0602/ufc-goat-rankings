@@ -2,11 +2,11 @@
 
 ## Current production position
 
-- Latest production runtime merge: PR #161, `942cdd215aa81cb3820fb464334d08101a139e9d`.
-- Exact tested runtime head: `534a984625bb2764beb289b0211ab102318dd713`.
-- Startup Architecture Gate: run #158 passed completely.
-- Dedicated iOS Home Startup Stability: run #28 passed completely.
-- Phase 3: in progress; two repair-loop retirement batches complete.
+- Latest production runtime merge: PR #163, `ec8fce96cad3a19763da9545ffd671f484750556`.
+- Exact tested runtime head: `b0dc85d4027845952890cc7e2e11ffdcf6c1b11f`.
+- Startup Architecture Gate: run #163 passed completely.
+- Dedicated iOS Home Startup Stability: run #32 passed completely.
+- Phase 3: in progress; three repair-loop retirement batches complete.
 - Visible product change: none intended or approved.
 
 ## Working rule
@@ -18,87 +18,97 @@ Phase 3 audits one repair behavior at a time. A repair is removed only when the 
 | Behavior | Trigger / frequency | State or DOM changed | Canonical overlap | Lifecycle / teardown | Removal risk | Current disposition |
 |---|---|---|---|---|---|---|
 | Module singleton | One production load | Claims `window.__UFC_NATIVE_APP_SHELL_STABILITY_STARTED__` | None | Startup-only; no teardown needed | Duplicate listeners/observers if absent | Keep |
-| `repairSnapshot()` | Formerly ran from debounced observer work, route/soft-refresh events, delayed startup passes, and open-drawer sync | Rewrote visible Resume Snapshot values and `drawer.dataset.currentFighter` | `assets/js/calculated-profile-runtime.js` already owns the complete calculated profile and Resume Snapshot render | Historical indefinite repair; no teardown | Removal would be unsafe only if the calculated profile owner could not restore its own content | **Removed in PR #161 after static and mobile proof** |
-| `normalizeWhatsNew()` | Debounced observer work, route/soft-refresh events, delayed startup passes | Repairs malformed **NEW** button markup and asks the update watcher to resync unread state | Update watcher owns unread state; this layer repairs malformed presentation | Recovery can run indefinitely; no teardown | Known malformed/duplicated button DOM could remain broken | Keep pending a separate malformed-DOM reproduction audit |
-| `syncDrawerState()` | Debounced observer work, close click continuation, route/soft-refresh events, delayed startup passes | Toggles `body.fighter-profile-open` only after PR #161 | Drawer/profile owner controls open state and content | Recovery can run indefinitely; no teardown | Native layout or restored drawer state may desynchronize body presentation | Keep pending a separate drawer-state audit |
-| `closeFighterProfile()` | Capturing click on a native destination | Closes the fighter drawer and clears body state | Canonical destination owner handles routing, not overlay dismissal | Event-driven; no teardown | Destination changes could leave the profile overlay covering the new route | Keep as legitimate native navigation recovery pending its own audit |
-| `schedule()` | Any retained listener/observer/timer; 30 ms debounce | Runs retained **What’s New** and drawer-state synchronization | Subordinate only | Reuses one timeout; no teardown | Removing it would change all retained recovery cadence | Keep while retained behaviors remain |
-| Body `MutationObserver` | Indefinite child/class/hidden/aria-hidden observation | Schedules retained drawer and **What’s New** repairs | No longer reads or mutates Home or fighter-profile content after PRs #159 and #161 | Indefinite; no teardown | Legitimate DOM replacement may be missed if removed broadly | Narrowed target by target; keep pending remaining proofs |
-| Route and soft-refresh listeners | Every `octagon-hq:view-change` and `octagon-hq:soft-refresh` | Schedules retained drawer/**What’s New** synchronization | Canonical route/refresh owners publish events; stability remains a passive presentation consumer | Indefinite; no teardown | Route-driven overlay/presentation recovery may be lost | Keep pending target-specific proof |
-| Delayed startup passes | One shot at 0, 80, 240, 700, 1600, and 3600 ms | Schedules retained repairs | Historical delayed-startup safety net | Startup-only; timers are not retained for cancellation | Late DOM availability may still require bounded retry | Keep pending target-specific delayed-startup proof |
-| `repairSpotlight()` | Formerly ran from delayed passes, ranking-readiness events, route/soft-refresh events, and arbitrary Home mutations | Directly replaced `.home-spotlight-loading` with independently generated Spotlight HTML | `assets/js/home-dashboard.js` owns the full Spotlight lifecycle | Historical indefinite repair; no teardown | Removal would be unsafe only if Home could not recover after delayed rankings | **Removed in PR #159 after static and mobile proof** |
+| `repairSnapshot()` | Formerly ran from observer work, route/soft-refresh events, delayed startup passes, and open-drawer sync | Rewrote visible Resume Snapshot values and hidden current-fighter state | `assets/js/calculated-profile-runtime.js` owns the complete calculated profile and snapshot render | Historical indefinite repair | Removal unsafe only if the profile owner could not restore its own content | **Removed in PR #161** |
+| `normalizeWhatsNew()` | Formerly ran from observer work, route/soft-refresh events, and delayed startup passes | Replaced the **What’s New** button markup and called the update watcher’s unread sync | `assets/js/app-update-watcher.js` already owns trigger markup, click binding, unread count, badge state, and accessibility state | Historical indefinite repair | Removal unsafe only if malformed markup came from an independent production writer | **Removed in PR #163** |
+| `syncDrawerState()` | Debounced drawer observation, close continuation, route/soft-refresh events, and delayed startup passes | Toggles `body.fighter-profile-open` from `#drawer.open` | Drawer/profile owner controls drawer state and content | Recovery can run indefinitely; no teardown | Native layout or restored drawer state may desynchronize body presentation | Keep pending a separate drawer-state audit |
+| `closeFighterProfile()` | Capturing click on a native destination | Closes the fighter drawer and clears body state | Canonical destination owner handles routing, not overlay dismissal | Event-driven; no teardown | Destination changes could leave the profile overlay covering the new route | Keep pending its own native-overlay audit |
+| `schedule()` | Retained listener/observer/timer; 30 ms debounce | Runs only drawer/body synchronization after PR #163 | Subordinate only | Reuses one timeout; no teardown | Removing it changes all retained drawer recovery cadence | Keep while drawer recovery remains |
+| Body `MutationObserver` | Indefinite child/class/hidden/aria-hidden observation, now drawer-targeted only | Schedules drawer/body synchronization | No longer reads or mutates Home, profile content, or **What’s New** | Indefinite; no teardown | Legitimate drawer replacement may be missed if removed prematurely | Narrowed target by target; keep pending drawer proof |
+| Route and soft-refresh listeners | Every `octagon-hq:view-change` and `octagon-hq:soft-refresh` | Schedules drawer/body synchronization | Canonical route/refresh owners publish events; stability remains a passive presentation consumer | Indefinite; no teardown | Route-driven overlay recovery may be lost | Keep pending drawer/overlay proof |
+| Delayed startup passes | One shot at 0, 80, 240, 700, 1600, and 3600 ms | Schedules drawer/body synchronization | Historical delayed-startup safety net | Startup-only | Late drawer availability may still require bounded retry | Keep pending drawer-specific delayed proof |
+| `repairSpotlight()` | Formerly ran from delayed passes, ranking-readiness events, route/soft-refresh events, and arbitrary Home mutations | Replaced `.home-spotlight-loading` with independently generated Spotlight HTML | `assets/js/home-dashboard.js` owns the full Spotlight lifecycle | Historical indefinite repair | Removal unsafe only if Home could not recover after delayed rankings | **Removed in PR #159** |
 
 ## Batch 1 — retire duplicate Ranking Spotlight repair
 
-### Proven duplicate
+`home-dashboard.js` is the canonical Home and Ranking Spotlight renderer. It owns calculated-ranking readiness, loading state, deterministic daily selection, Spotlight markup/actions, route re-entry, foreground recovery, and identical-markup suppression.
 
-`home-dashboard.js` is the canonical Home and Ranking Spotlight renderer. It already owns calculated-ranking readiness, the loading placeholder, deterministic daily selection and persistence, Spotlight markup and actions, Home route re-entry, foreground recovery, and identical-markup suppression.
+PR #159 removed `repairSpotlight()`, duplicate helpers, the Home observer target, and ranking-readiness listeners. The mobile proof withheld readiness beyond the old 3.6-second retry window and confirmed only Home Dashboard replaced the placeholder.
 
-The stability layer independently watched arbitrary Home mutations, listened to the same ranking-readiness events, ran six delayed retries, read raw ranking globals/local storage, and could replace the owner’s placeholder through `outerHTML`. It therefore acted as a second renderer rather than a necessary recovery consumer.
-
-### Production change
-
-PR #159 removed `repairSpotlight()`, its duplicate helpers, Home observer target, and ranking-readiness listeners while preserving all then-unproved profile, drawer, **What’s New**, route, soft-refresh, and delayed-startup paths.
-
-### Proof
-
-The mobile proof withheld ranking readiness beyond the old 3.6-second retry window, exercised Home mutation, canonical readiness, repeated readiness/profile events, route changes, foreground recovery, direct schedules, and refresh. Only `home-dashboard.js` replaced the placeholder.
-
-Startup Architecture Gate #151 and dedicated iOS Home Startup Stability #22 passed on exact head `c274c5d1c35f2d1b212632dd181e5f29343c1178`.
+- Exact tested head: `c274c5d1c35f2d1b212632dd181e5f29343c1178`.
+- Startup Architecture Gate #151: passed.
+- Dedicated iOS Home Startup Stability #22: passed.
 
 ## Batch 2 — retire duplicate Resume Snapshot repair
 
+`assets/js/calculated-profile-runtime.js` is loaded and required before production ranking readiness. It replaces `window.openFighter()`, performs the single complete profile write, builds the eight-field Resume Snapshot from calculated visible stats, and owns the canonical-facts win-streak fallback.
+
+The stability layer separately inferred the fighter, recalculated and rewrote snapshot values, and stored hidden current-fighter state. Its schema had already drifted from the actual profile.
+
+PR #161 removed `repairSnapshot()`, its helper calculations, hidden fighter state, and explicit snapshot observer target. Drawer/body synchronization and native destination dismissal remained intact.
+
+The mobile proof covered canonical open, current calculated values, route/soft-refresh/direct schedules, the full delayed window, intentional content corruption, canonical reopen, drawer synchronization, and native destination dismissal with zero stability profile-content writes.
+
+- Exact tested head: `534a984625bb2764beb289b0211ab102318dd713`.
+- Startup Architecture Gate #158: passed.
+- Dedicated iOS Home Startup Stability #28: passed.
+
+## Batch 3 — retire duplicate What’s New normalization
+
 ### Proven duplicate
 
-`assets/js/calculated-profile-runtime.js` is the calculated fighter-profile owner loaded by `assets/js/production-ranking-bootstrap.js` before production readiness is published. It:
+`assets/js/app-update-watcher.js` is the sole production owner of:
 
-- replaces `window.openFighter()`;
-- renders the complete fighter profile through one `fighterDetail.innerHTML` write;
-- builds the eight-field Resume Snapshot from `RANKING_DATA.visibleStats`;
-- explicitly publishes `snapshotOwner: 'RANKING_DATA.visibleStats'`;
-- derives Longest UFC Win Streak from canonical UFC fight facts with a calculated-row fallback;
-- restores its own content whenever the fighter profile is reopened.
+- `#manualRefreshControl`, `#whatsNewBtn`, and `#whatsNewUnread` creation;
+- the **What’s New** click binding;
+- unread count calculation;
+- badge text, visibility, and `has-unread` visual state;
+- button and badge accessibility labels;
+- seen-event and cross-tab storage synchronization.
 
-The stability layer independently inferred the displayed fighter, recalculated several values through separate fallbacks, rewrote every matching `.snapshot-item strong`, and stored `drawer.dataset.currentFighter`. Its schema had already drifted from the canonical owner: it still repaired **Prime Stoppage Losses** while the current profile displays **Longest UFC Win Streak**. It was therefore an older second content owner, not a needed drawer-state recovery.
+The owner’s historical startup markup emitted plain `NEW` text plus the badge. `normalizeWhatsNew()` required a separate `[data-whats-new-label]` node, so it classified the canonical owner’s normal markup as malformed and rewrote the button during every startup. No second production markup writer or reproduced external malformed-DOM source existed. The repair created the condition it claimed to fix.
 
 ### Production change
 
-PR #161:
+PR #163:
 
-- removed `repairSnapshot()` and all snapshot-specific lookup/calculation helpers;
-- removed the snapshot repair from `syncDrawerState()`;
-- removed `.snapshot-grid` as an explicit added-node observer target;
-- removed `repairSnapshot` from the exported stability API;
-- stopped the stability layer from inspecting `fighterDetail`, ranking data, display overrides, snapshot items, or hidden current-fighter state;
-- preserved drawer/body synchronization, native-destination profile dismissal, **What’s New** normalization, route and soft-refresh listeners, the narrowed observer, and all six bounded startup passes.
+- changed the canonical watcher’s one control write to emit `<span data-whats-new-label>NEW</span>` and the unread badge together;
+- removed `normalizeWhatsNew()` and its text/markup helpers from the stability layer;
+- removed **What’s New** and manual-refresh observer targets;
+- removed the normalizer from `schedule()` and the exported stability API;
+- left `syncUnread()` and all unread/click behavior in the canonical update watcher;
+- preserved drawer/body synchronization, native-destination profile dismissal, route and soft-refresh listeners, drawer-only observation, and all six bounded startup passes.
 
 ### Proof
 
-The permanent static contract requires the production bootstrap to load and require the calculated profile runtime before readiness, protects the complete current snapshot schema, and rejects any remaining `repairSnapshot` production writer or profile-content access from the stability layer.
+The permanent static contract protects one markup owner, the complete labeled canonical markup, unread-state ownership, seen/storage synchronization, and the absence of any remaining `normalizeWhatsNew`, `NEWNEW`, or **What’s New** access in the stability layer.
 
-The mobile 390×844 proof:
+The mobile 390×844 proof verifies:
 
-- opens Jon Jones through the calculated `openFighter()` owner;
-- verifies exactly one profile write and the current eight calculated snapshot values;
-- exercises drawer mutation, route, soft-refresh, direct schedules, and the complete 3.6-second delayed startup window;
-- confirms zero stability snapshot-value writes and no duplicate profile render;
-- intentionally corrupts one snapshot value and proves the stability layer does not reclaim content ownership;
-- reopens the fighter through the canonical owner and confirms the correct calculated value returns;
-- verifies retained drawer/body synchronization and native-destination overlay dismissal.
+- one canonical control/button/label/badge write at startup;
+- correct unread count, visibility, visual state, and accessibility labels;
+- zero stability button writes through arbitrary DOM mutation, repeated route/soft-refresh/direct schedules, and the complete delayed window;
+- canonical seen-event and storage-event updates without markup replacement;
+- retained click binding;
+- intentional label corruption is not reclaimed by the stability layer;
+- refresh restores canonical markup through one owner write;
+- retained drawer/body synchronization and native destination dismissal.
 
-The isolated profile proof passed. The first aggregate rerun exposed only a stale assertion in the older Spotlight proof that required the previous runtime version name; that proof was corrected to test the owner behavior rather than pin a future Phase 3 version label. No temporary diagnostic workflow remains.
+The isolated static/mobile proof passed. The first aggregate run exposed a stale exact-version assertion in the previous profile proof; it was corrected to verify the native stability runtime contract rather than pin the previous Phase 3 label. The temporary diagnostic workflow was removed before the final tested head.
 
-Startup Architecture Gate #158 and dedicated iOS Home Startup Stability #28 passed on exact head `534a984625bb2764beb289b0211ab102318dd713`.
+- Exact tested head: `b0dc85d4027845952890cc7e2e11ffdcf6c1b11f`.
+- Startup Architecture Gate #163: passed.
+- Dedicated iOS Home Startup Stability #32: passed.
+- Production runtime merge: `ec8fce96cad3a19763da9545ffd671f484750556`.
 
 ## Unrelated workflow inspection
 
-- Production Ranking Browser Smoke #566 failed at **Audit every fighter photo path** before ranking and mobile-profile certification. None of the six PR #161 files participates in that photo audit.
-- Scoring Architecture Guardrails #1396 passed syntax, profile-copy coverage, and physical source ownership, then failed its established permanent runtime contract step. The isolated stability runtime and profile-owner proof do not alter scoring, roster, rank, or generated data expectations.
+- Production Ranking Browser Smoke #571 failed at **Audit every fighter photo path** before ranking and mobile-profile certification. None of the PR #163 files participates in that photo audit.
+- Scoring Architecture Guardrails #1401 passed syntax, profile-copy coverage, and physical source ownership, then failed its established permanent runtime contract step. PR #163 does not alter scoring, roster, rank, or generated data.
 
 ## Remaining Phase 3 order
 
-1. Audit malformed **What’s New** normalization and identify the current markup/unread owner plus any reproducible malformed-DOM condition.
-2. Audit drawer/body synchronization and native-destination overlay dismissal as separate responsibilities.
-3. Narrow the observer, route/soft-refresh listeners, and six startup timers only as their final retained targets are proved.
-4. Do not broadly delete the observer, timers, or stability file while they still support an unproved recovery path.
+1. Audit `syncDrawerState()` as a drawer/body presentation responsibility.
+2. Audit `closeFighterProfile()` separately as native-destination overlay dismissal.
+3. Narrow or remove the drawer-only observer, route/soft-refresh listeners, and six startup timers only as those final responsibilities are proved.
+4. Do not broadly delete the remaining stability file while a demonstrated overlay or delayed-drawer recovery path remains.
 5. Add focused static and mobile delayed-observation proof for every subsequent batch.
