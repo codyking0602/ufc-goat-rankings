@@ -16,6 +16,7 @@ on:
       - 'supabase/functions/refresh-ufc-odds/**'
       - 'docs/picks-setup.md'
       - 'scripts/check-picks-ui.mjs'
+      - 'scripts/test-picks-mobile-top-tabs.mjs'
       - '.github/workflows/picks-ui-smoke.yml'
       - '.github/workflows/refresh-ufc-odds.yml'
       - '.github/workflows/deploy-ufc-odds-refresh.yml'
@@ -33,6 +34,7 @@ on:
       - 'supabase/functions/refresh-ufc-odds/**'
       - 'docs/picks-setup.md'
       - 'scripts/check-picks-ui.mjs'
+      - 'scripts/test-picks-mobile-top-tabs.mjs'
       - '.github/workflows/picks-ui-smoke.yml'
       - '.github/workflows/refresh-ufc-odds.yml'
       - '.github/workflows/deploy-ufc-odds-refresh.yml'
@@ -48,7 +50,7 @@ permissions:
 jobs:
   smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - name: Quiet checkout
         env:
@@ -65,7 +67,24 @@ jobs:
         run: |
           find assets/js -maxdepth 1 -type f -name 'picks*.js' -print0 | xargs -0 -n1 node --check
           node --check scripts/check-picks-ui.mjs
+          node --check scripts/test-picks-mobile-top-tabs.mjs
 
-      - name: Verify Picks UI contract
+      - name: Verify Picks source and ownership contract
         working-directory: repo
         run: node scripts/check-picks-ui.mjs
+
+      - name: Install mobile browser runtime
+        working-directory: repo
+        run: |
+          npm install --no-save --silent playwright@1.54.2
+          npx playwright install --with-deps chromium
+
+      - name: Start local app
+        working-directory: repo
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/picks-ui-http.log 2>&1 &
+          echo $! > /tmp/picks-ui-http.pid
+
+      - name: Verify mobile top-tab layout
+        working-directory: repo
+        run: node scripts/test-picks-mobile-top-tabs.mjs
