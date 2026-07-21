@@ -79,7 +79,7 @@ async function snapshot(page){
 }
 
 function assertCompleted(value,stage){
-  assert.match(value.version,/single-activity-refresh/,`${stage}: corrected native runtime did not load.`);
+  assert.equal(value.version,'native-app-shell-20260721c-no-delayed-startup-resync',`${stage}: corrected native runtime did not load.`);
   assert.equal(value.refreshing,'',`${stage}: native refreshing state did not clear.`);
   assert.equal(value.label,'Updated just now',`${stage}: pull-to-refresh completion copy changed.`);
   assert.equal(value.complete,true,`${stage}: pull-to-refresh completion state changed.`);
