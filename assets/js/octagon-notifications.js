@@ -1,12 +1,12 @@
 (function(){
   'use strict';
 
-  const VERSION='octagon-notifications-20260717a';
+  const VERSION='octagon-notifications-20260721b-passive-identity';
   const CANONICAL_CODE='GOAT26';
-  const TOKEN_KEY=`ufc-picks:group:${CANONICAL_CODE}`;
   const ACTIVITY_CHANNEL=`octagon-activity-${CANONICAL_CODE.toLowerCase()}`;
   const instanceId=globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random().toString(36).slice(2)}`;
   const state={
+    identity:null,
     me:null,
     canAccess:false,
     unread:0,
@@ -14,6 +14,7 @@
     channel:null,
     realtimeClient:null,
     refreshTimer:0,
+    refreshPromise:null,
     opening:false,
     currentDeviceSubscribed:false,
     rpcClient:null,
@@ -21,11 +22,20 @@
   };
 
   const text=value=>String(value??'').trim();
-  const get=key=>{try{return localStorage.getItem(key)||'';}catch(_error){return'';}};
-  const tokenFor=identity=>text(identity?.memberToken||identity?.member_token||get(TOKEN_KEY));
+  const tokenFor=identity=>text(identity?.memberToken||identity?.member_token);
   const betaButton=()=>document.querySelector('[data-octagon-beta-tab]');
   const boardRoot=()=>document.querySelector('[data-octagon-board]');
   const boardActive=()=>Boolean(document.getElementById('octagon')?.classList.contains('active-view'))&&!document.hidden;
+
+  function passiveIdentity(value){
+    const supplied=value?.identity||value;
+    if(tokenFor(supplied))state.identity=supplied;
+    const canonical=window.UFC_PLAY_PROFILE?.identity;
+    if(tokenFor(canonical))state.identity=canonical;
+    const editor=window.UFC_APP_PROFILE?.identity;
+    if(tokenFor(editor))state.identity=editor;
+    return state.identity;
+  }
 
   function installStyles(){
     if(document.getElementById('octagonNotificationsCss'))return;
@@ -122,9 +132,9 @@
     if(strong)strong.textContent=`${value} new post${value===1?'':'s'}`;
   }
 
-  async function context(){
+  function context(value){
     const profile=window.UFC_PLAY_PROFILE;
-    const identity=await profile?.resolve?.().catch(()=>null);
+    const identity=passiveIdentity(value);
     const client=profile?.client||null;
     if(client)wrapRpc(client);
     return{client,identity,token:tokenFor(identity)};
@@ -147,39 +157,44 @@
   }
 
   async function refreshStatus(options={}){
-    const {client,token}=await context();
-    if(!client||!token){
-      state.me=null;
-      state.canAccess=false;
-      state.unread=0;
-      ensureBadge();
-      ensureBoardExtras();
-      return null;
-    }
-    try{
-      const {data,error}=await client.rpc('octagon_activity_status',{p_member_token:token});
-      if(error)throw error;
-      if(!data?.ok)throw new Error(data?.error||'Could not load Octagon activity.');
-      state.me=data.member||null;
-      state.canAccess=Boolean(data.can_access);
-      state.unread=Number(data.unread_count)||0;
-      state.vapidPublicKey=text(data.vapid_public_key);
-      ensureBadge();
-      ensureBoardExtras();
-      await syncCurrentDeviceSubscription();
-      await ensureActivityRealtime(client);
-      if(options.opening&&state.unread>0)showReturnBanner(state.unread);
-      return data;
-    }catch(_error){
-      ensureBadge();
-      ensureBoardExtras();
-      return null;
-    }
+    if(state.refreshPromise)return state.refreshPromise;
+    state.refreshPromise=(async()=>{
+      const {client,token}=context();
+      if(!client||!token){
+        state.me=null;
+        state.canAccess=false;
+        state.unread=0;
+        ensureBadge();
+        ensureBoardExtras();
+        return null;
+      }
+      try{
+        const {data,error}=await client.rpc('octagon_activity_status',{p_member_token:token});
+        if(error)throw error;
+        if(!data?.ok)throw new Error(data?.error||'Could not load Octagon activity.');
+        state.me=data.member||null;
+        state.canAccess=Boolean(data.can_access);
+        state.unread=Number(data.unread_count)||0;
+        state.vapidPublicKey=text(data.vapid_public_key);
+        ensureBadge();
+        ensureBoardExtras();
+        await syncCurrentDeviceSubscription();
+        await ensureActivityRealtime(client);
+        if(options.opening&&state.unread>0)showReturnBanner(state.unread);
+        return data;
+      }catch(_error){
+        ensureBadge();
+        ensureBoardExtras();
+        return null;
+      }
+    })();
+    try{return await state.refreshPromise;}
+    finally{state.refreshPromise=null;}
   }
 
   async function markSeen(){
     if(!boardActive()||!state.canAccess)return null;
-    const {client,token}=await context();
+    const {client,token}=context();
     if(!client||!token)return null;
     try{
       const {data,error}=await client.rpc('octagon_mark_seen',{p_member_token:token,p_seen_at:new Date().toISOString()});
@@ -243,7 +258,7 @@
   }
 
   async function broadcastActivity(kind,messageId=''){
-    const {client}=await context();
+    const {client}=context();
     const channel=await ensureActivityRealtime(client);
     if(!channel)return;
     try{
@@ -257,7 +272,7 @@
 
   async function messageCreated(messageId,kind){
     await broadcastActivity(kind,messageId);
-    const {client,token}=await context();
+    const {client,token}=context();
     if(!client?.functions?.invoke||!token||!messageId)return;
     try{
       await client.functions.invoke('octagon-push',{body:{member_token:token,message_id:messageId}});
@@ -332,7 +347,7 @@
         });
       }
       const json=subscription.toJSON();
-      const {client,token}=await context();
+      const {client,token}=context();
       const {data,error}=await client.rpc('octagon_register_push_subscription',{
         p_member_token:token,
         p_endpoint:subscription.endpoint,
@@ -358,7 +373,7 @@
       const registration=await serviceWorkerRegistration(false);
       const subscription=await registration?.pushManager?.getSubscription?.();
       if(subscription){
-        const {client,token}=await context();
+        const {client,token}=context();
         const {data,error}=await client.rpc('octagon_remove_push_subscription',{
           p_member_token:token,
           p_endpoint:subscription.endpoint
@@ -406,9 +421,11 @@
       if(button&&!button.disabled)window.setTimeout(openingBoard,60);
     });
     ['ufc-play-profile-ready','ufc-app-profile-updated','ufc-canonical-group-ready'].forEach(name=>{
-      window.addEventListener(name,()=>scheduleRefresh(70));
+      window.addEventListener(name,event=>{
+        passiveIdentity(event.detail);
+        scheduleRefresh(70);
+      });
     });
-    window.addEventListener('storage',event=>{if(event.key===TOKEN_KEY)scheduleRefresh(70);});
     document.addEventListener('visibilitychange',()=>{
       if(document.hidden)stopActivityRealtime();
       else scheduleRefresh(80);
