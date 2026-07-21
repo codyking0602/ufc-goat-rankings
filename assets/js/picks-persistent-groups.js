@@ -315,17 +315,33 @@
     }
   }
 
+  function picksActive(){
+    const destination=window.UFC_APP_SHELL?.currentDestination;
+    if(destination) return destination==='picks';
+    return document.getElementById('picks')?.classList.contains('active-view')===true;
+  }
+
+  function scheduleRefresh(){
+    clearTimeout(start.timer);
+    start.timer=setTimeout(()=>{ if(picksActive()) refresh(); },220);
+  }
+
   function start(){
     ensureCard();
     document.getElementById('picksRoomAction')?.addEventListener('click',joinInvite,true);
-    refresh();
+    if(picksActive() && document.getElementById('picksGroupCard')) refresh();
     const observer=new MutationObserver(()=>{
+      const hadCard=Boolean(document.getElementById('picksGroupCard'));
       ensureCard();
-      window.clearTimeout(start.timer);
-      start.timer=window.setTimeout(refresh,220);
+      if(picksActive() && !hadCard && document.getElementById('picksGroupCard')) scheduleRefresh();
     });
     observer.observe(document.getElementById('picks') || document.body,{childList:true,subtree:true});
-    window.setInterval(refresh,45000);
+    window.addEventListener('octagon-hq:view-change',event=>{
+      if(event.detail?.destination!=='picks') return;
+      ensureCard();
+      if(document.getElementById('picksGroupCard')) refresh();
+    });
+    window.setInterval(()=>{ if(picksActive()) refresh(); },45000);
   }
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start,{once:true});
