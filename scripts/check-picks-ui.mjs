@@ -161,9 +161,9 @@ check(mobilePolish.includes('formatRemaining'),'Readable fight countdown formatt
 check(mobilePolish.includes('day${days===1')&&mobilePolish.includes('hour${hours===1'),'Countdown does not support day/hour copy');
 check(mobilePolish.includes('fighterSlug')&&mobilePolish.includes('-thumb.webp'),'Automatic fighter thumbnail path wiring is missing');
 check(mobilePolish.includes('picks-room-more'),'Compact room overflow menu is missing');
-check(mobileTopTabsTest.includes('width:390')&&mobileTopTabsTest.includes('height:844'),'Mobile top-tab certification does not use the required 390×844 viewport');
-check(mobileTopTabsTest.includes("['home','rankings','play','picks','intelligence']"),'Mobile top-tab certification does not cover every enabled destination');
-check(mobileTopTabsTest.includes('scrollWidth<=snapshot.nav.clientWidth+1'),'Mobile top-tab certification does not reject horizontal overflow');
+check(mobileTopTabsTest.includes('width:390')&&mobileTopTabsTest.includes('height:844'),'Mobile navigation certification does not use the required 390×844 viewport');
+check(mobileTopTabsTest.includes("['home','rankings','play','picks']")&&mobileTopTabsTest.includes('[data-native-ask]'),'Mobile navigation certification does not cover every enabled native destination and Intelligence action');
+check(mobileTopTabsTest.includes('scrollWidth<=snapshot.nav.clientWidth+1'),'Mobile navigation certification does not reject horizontal overflow');
 check(mobilePolish.includes('applyEventArtwork')&&mobilePolish.includes('UFC_PICKS_EVENT_VISUALS'),'Event artwork renderer is missing');
 check(mobilePolishCss.includes('position:relative!important')&&mobilePolishCss.includes('top:auto!important'),'Picks internal navigation still overlays fight content on mobile');
 check(mobilePolishCss.includes('picks-room-banner-compact'),'Compact room banner styling is missing');
@@ -235,4 +235,4 @@ if(failures.length){
   process.exit(1);
 }
 
-console.log(`Picks UI smoke check passed: ${assetRefs.length} local assets resolved, ${requiredFiles.length} required files present, 10 official Oklahoma City fighter thumbnails, mobile 390×844 shell coverage, one six-hour odds owner, artwork, reminders, and setup documentation verified.`);
+console.log(`Picks UI smoke check passed: ${assetRefs.length} local assets resolved, ${requiredFiles.length} required files present, 10 official Oklahoma City fighter thumbnails, mobile 390×844 native navigation coverage, one six-hour odds owner, artwork, reminders, and setup documentation verified.`);
