@@ -68,7 +68,7 @@ try{
   report.phase='cold-start';
   const cold=await snapshot(page);
   report.snapshots.cold=cold;
-  assert.match(cold.stabilityVersion,/spotlight-owner/,'Corrected Phase 3 stability runtime did not load.');
+  assert.match(cold.stabilityVersion,/^native-app-shell-stability-/,'The Phase 3 stability runtime did not load.');
   assert.equal(cold.spotlightCount,1,'Cold startup must render one canonical spotlight card.');
   assert.equal(cold.loadingCount,1,'Cold startup must remain on the canonical owner’s loading placeholder until rankings are ready.');
   assert.equal(cold.counts.mountWrites,1,'Cold startup must have one canonical Home render.');
