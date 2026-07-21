@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='octagon-message-board-20260721d-passive-identity';
+  const VERSION='octagon-message-board-20260721e-single-startup-mount-bind';
   const CANONICAL_CODE='GOAT26';
   const REALTIME_CHANNEL=`octagon-board-${CANONICAL_CODE.toLowerCase()}`;
   const instanceId=globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -583,7 +583,6 @@
     mount();
     bindTab();
     bindNavigation();
-    [50,220,850,2200].forEach(delay=>window.setTimeout(()=>{mount();bindTab();},delay));
     if(root()?.classList.contains('active-view'))load();
     else updateLiveStatus(navigator.onLine?'off':'offline');
   }
