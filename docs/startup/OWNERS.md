@@ -2,7 +2,7 @@
 
 _Last updated: 2026-07-21_
 
-This file records the canonical owner of each startup responsibility. Detailed history remains in the Phase 1–5 audits and progress ledgers.
+This file records the canonical owner of each startup responsibility. Detailed history remains in the Phase 1–6 audits and progress ledgers.
 
 ## Ownership rules
 
@@ -20,6 +20,7 @@ This file records the canonical owner of each startup responsibility. Detailed h
 - Compatibility layers may preserve presentation or missing-owner recovery behavior but may not initiate a canonical owner’s data or render responsibility on the healthy production path.
 - Each explicit local production script path appears once and resolves to a repository file.
 - An explicit/dynamic script overlap requires focused proof that healthy production consumes the explicit owner once and that the dynamic path runs only when the owner is genuinely absent.
+- A compatibility layer may not replace a valid manifest owner because of a competing version requirement.
 - One ownership, startup-work, or manifest-wiring issue changes per runtime batch.
 - `assets/js/app.js` is a structural manifest singleton and must not receive a standard IIFE guard.
 
@@ -27,6 +28,8 @@ This file records the canonical owner of each startup responsibility. Detailed h
 
 | Responsibility | Canonical owner | Current contract |
 |---|---|---|
+| Explicit production script manifest | `index.html` | 85 local production scripts; every path exists; each explicit script appears once; canonical prerequisite order is enforced |
+| Production manifest audit | `scripts/audit-phase-5-script-manifest.mjs` and `.github/workflows/phase-5-script-manifest-inventory.yml` | Rejects missing files, duplicate explicit tags, ordering regressions, duplicate Picks-season loading, and unapproved explicit/dynamic overlaps |
 | Earliest installed-app route normalization | `assets/js/fresh-home-route-bootstrap.js` | Synchronous startup classification only; protected against duplicate execution; does not activate a primary destination |
 | Primary destination and ranking-subview activation | `assets/js/octagon-hq-shell.js` via `window.UFC_APP_SHELL` | Sole primary route owner; recovery queue is one canonical handoff; exact already-active views coalesce before DOM/hash/event work; Product compatibility may recover this owner only when absent |
 | Ranking data | `assets/data/ranking-data.js` | Canonical fighter/ranking source; outside startup cleanup except load order |
@@ -49,6 +52,7 @@ This file records the canonical owner of each startup responsibility. Detailed h
 | Play internal game navigation | `assets/js/play-hub.js` | Canonical Play game-screen owner after hub prerequisites |
 | Play fighter-photo candidates, hydration, and image-error recovery | `assets/js/play-photo-authority.js` via `window.UFC_PLAY_PHOTO_AUTHORITY` | Explicit manifest owner; healthy production loads once before Better Than compatibility; Better Than may perform one bounded current-build recovery only when the API is absent |
 | Find the Leader game owner and panel | `assets/js/find-leader.js` via `window.UFC_FIND_LEADER` | Explicit manifest owner; healthy production loads once and retains one panel; Better Than may perform one bounded current-build recovery only when the API is absent and may not replace the owner by version comparison |
+| Better Than compatibility and challenge sharing | `assets/js/better-than-standalone-share.js` | Compatibility owner only; consumes healthy Play photo authority and Find the Leader owners; bounded recovery is permitted only when either owner is genuinely absent |
 | Home rendering and Ranking Spotlight | `assets/js/home-dashboard.js` | Sole Home/Spotlight readiness, selection, placeholder, markup, route re-entry, visibility recovery, and duplicate suppression owner |
 | Community directory, profiles, and Top 10 | `assets/js/community-profiles.js` | Canonical community owner; passive identity consumer; explicit Top 10 editing may require sign-in |
 | Cross-feature profile/Picks handoffs | `assets/js/product-architecture.js` | Compatibility/handoff owner only; no canonical access persistence, duplicate startup profile handoff, or duplicate Picks season loader; primary-shell injection is missing-owner recovery only |
@@ -66,7 +70,7 @@ This file records the canonical owner of each startup responsibility. Detailed h
 
 ## Permanent ownership, startup-work, and manifest proofs
 
-Startup Architecture Gate, dedicated mobile suites, and Phase 5 Script Manifest Inventory protect:
+Startup Architecture Gate, dedicated mobile suites, Phase 4 Startup Work Inventory, and Phase 5 Script Manifest Inventory protect:
 
 - sole primary route ownership, recovery queue behavior, and exact-view coalescing;
 - canonical identity delegation, migration handoff, storage ownership, readiness publication, and sign-in stability;
@@ -126,5 +130,6 @@ No other explicit/dynamic overlap is permitted without equivalent proof and an i
 - Phase 3 retired duplicate content/presentation repair loops while preserving the proved minimal drawer presentation adapter.
 - Phase 4 established a measured production startup inventory, removed unnecessary Home/off-screen Picks work, retired unconditional native resynchronization, and removed redundant War Room notification, access, and board startup retry arrays.
 - Phase 5 removed obsolete manifest wiring, established the deterministic 85-script manifest inventory, removed the healthy-path Find the Leader reload, and certified every retained recovery overlap.
+- Phase 6 consolidated exact-head certification and canonical documentation with no runtime change.
 
 The startup/identity architecture cleanup is complete. Future changes are maintenance-only unless deterministic evidence proves a new duplicate owner, unnecessary inactive work, speculative retry, obsolete manifest edge, or unapproved overlap.
