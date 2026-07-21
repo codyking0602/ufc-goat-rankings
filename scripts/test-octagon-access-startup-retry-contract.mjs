@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
+// Permanent Phase 4 proof: synchronous board mount and readiness events replace repeated access retries.
 const access=fs.readFileSync('assets/js/octagon-access-panel.js','utf8');
 const board=fs.readFileSync('assets/js/octagon-message-board.js','utf8');
 const index=fs.readFileSync('index.html','utf8');
