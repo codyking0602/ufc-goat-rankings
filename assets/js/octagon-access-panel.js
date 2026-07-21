@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='octagon-access-panel-20260721b-passive-identity';
+  const VERSION='octagon-access-panel-20260721c-native-access-event';
   const CANONICAL_CODE='GOAT26';
   const ACCESS_CHANNEL=`octagon-access-${CANONICAL_CODE.toLowerCase()}`;
   const instanceId=globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -92,6 +92,8 @@
   function setBetaTabAccess(allowed,member=state.me){
     const button=betaButton();
     if(!button)return false;
+    const beforeDisabled=button.disabled;
+    const beforeAccess=button.dataset.betaAccess||'';
     button.disabled=!allowed;
     button.setAttribute('aria-disabled',String(!allowed));
     button.dataset.betaAccess=allowed?'owner':'locked';
@@ -99,6 +101,9 @@
     button.textContent='Beta';
     button.setAttribute('aria-label',allowed?'Open The Octagon':'Private Beta · Access not enabled');
     if(member?.display_name)button.dataset.betaMember=text(member.display_name);
+    if(beforeDisabled!==button.disabled||beforeAccess!==button.dataset.betaAccess){
+      window.dispatchEvent(new CustomEvent('octagon-hq:war-room-access-change',{detail:{allowed:Boolean(allowed)}}));
+    }
     return true;
   }
 

@@ -4,7 +4,7 @@
   if(window.__UFC_NATIVE_APP_SHELL_STARTED__)return;
   window.__UFC_NATIVE_APP_SHELL_STARTED__=true;
 
-  const VERSION='native-app-shell-20260721b-single-activity-refresh';
+  const VERSION='native-app-shell-20260721c-event-driven-startup';
   const MOBILE_QUERY='(max-width: 900px)';
   const REFRESH_THRESHOLD=74;
   const NAV_ITEMS=[
@@ -314,6 +314,7 @@
       animateActiveView();
       syncBadges();
     });
+    window.addEventListener('octagon-hq:war-room-access-change',()=>syncActive(currentDestination()));
     ['ufc-profile-challenges-updated','ufc-profile-challenge-sent','ufc-play-profile-ready','ufc-app-profile-updated','octagon-hq:soft-refresh','octagon-hq:notification-device-change'].forEach(name=>window.addEventListener(name,syncBadges));
     window.addEventListener('resize',()=>{ensureAskAction();syncActive();},{passive:true});
     window.addEventListener('orientationchange',()=>window.setTimeout(()=>{ensureAskAction();syncActive();},120),{passive:true});
@@ -331,7 +332,6 @@
     bindPullToRefresh();
     bindEvents();
     observe();
-    [80,260,800,1800,4200].forEach(delay=>window.setTimeout(()=>{ensureAskAction();syncActive();syncBadges();},delay));
     window.setInterval(()=>{if(!document.hidden)syncBadges();},10000);
     document.documentElement.dataset.nativeAppShell=VERSION;
   }
