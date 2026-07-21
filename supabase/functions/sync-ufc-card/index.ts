@@ -69,6 +69,11 @@ function validatePayload(body) {
   if (!Array.isArray(body.fights)) throw new Error("Fight snapshot is missing");
   const minFights = Math.max(5, Number(body.validation?.minFights || 5));
   if (body.fights.length < minFights) throw new Error(`Snapshot contains only ${body.fights.length} fights; expected at least ${minFights}`);
+  const expectedMainCardFights = Math.max(0, Number(body.validation?.expectedMainCardFights || 0));
+  const mainCardFights = body.fights.filter((fight) => isMainCard(fight.card_section)).length;
+  if (expectedMainCardFights && mainCardFights < expectedMainCardFights) {
+    throw new Error(`Snapshot contains only ${mainCardFights} main-card fights; expected at least ${expectedMainCardFights}`);
+  }
   const sourceUrl = new URL(body.sourceUrl);
   if (!ALLOWED_SOURCE_HOSTS.has(sourceUrl.hostname.toLowerCase())) throw new Error(`Unapproved card source: ${sourceUrl.hostname}`);
   const expected = body.validation?.expectedMainEvent;
@@ -123,12 +128,14 @@ Deno.serve(async (request) => {
     blue_name: normalizeSpace(fight.blue_name),
     lock_at: new Date(fight.lock_at).toISOString(),
   }));
+  const incomingPickable = incomingFights.filter((fight) => isPickable(event, fight));
   const summary = {
     eventId: event.id,
     sourceType: body.sourceType,
     sourceUrl: body.sourceUrl,
     confirmationHash: body.confirmationHash,
     fightsReceived: incomingFights.length,
+    pickableFightsReceived: incomingPickable.length,
     inserted: 0,
     updated: 0,
     cancelled: 0,
@@ -149,7 +156,7 @@ Deno.serve(async (request) => {
     const status = existingEvent && ["live", "complete"].includes(existingEvent.status)
       ? existingEvent.status
       : event.status;
-    const sourceNote = `${normalizeSpace(event.source_note)} · ${body.fights.length} fights · confirmed ${body.confirmationHash.slice(0, 12)}`;
+    const sourceNote = `${normalizeSpace(event.source_note)} · ${body.fights.length} fights · ${incomingPickable.length} pickable · confirmed ${body.confirmationHash.slice(0, 12)}`;
     const { error: eventError } = await supabase.from("pick_events").upsert({
       id: event.id,
       name: normalizeSpace(event.name),
@@ -171,8 +178,12 @@ Deno.serve(async (request) => {
 
     const existing = existingRows || [];
     const activeExisting = existing.filter((fight) => !RESOLVED_STATUSES.has(fight.result_status));
+    const existingPickable = activeExisting.filter((fight) => isPickable(event, fight));
     if (activeExisting.length >= 5 && incomingFights.length < Math.ceil(activeExisting.length * 0.6)) {
       throw new Error(`Refusing destructive card shrink from ${activeExisting.length} to ${incomingFights.length} fights`);
+    }
+    if (existingPickable.length >= 3 && incomingPickable.length < existingPickable.length && body.validation?.allowPickableShrink !== true) {
+      throw new Error(`Refusing pickable-card shrink from ${existingPickable.length} to ${incomingPickable.length} fights`);
     }
 
     for (const [index, fight] of existing.entries()) {
