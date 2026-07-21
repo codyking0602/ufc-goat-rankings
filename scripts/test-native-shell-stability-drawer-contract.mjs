@@ -23,6 +23,8 @@ assert.match(calculatedProfile,/drawer\?\.classList\.add\('open'\).*drawer\?\.se
 assert.doesNotMatch(app,/fighter-profile-open/,'The base profile owner must not silently become a second mobile body-state owner.');
 assert.doesNotMatch(calculatedProfile,/fighter-profile-open/,'The calculated profile owner must not silently become a second mobile body-state owner.');
 assert.match(stabilityCss,/body\.fighter-profile-open\{overflow:hidden!important;padding-bottom:0!important\}/,'Mobile profile presentation must retain its body scroll-lock contract.');
+assert.match(stabilityCss,/\.drawer \.fighter-photo-img\{object-fit:cover!important;/,'Mobile fighter photos must fill the canonical profile frame without stretching.');
+assert.doesNotMatch(stabilityCss,/\.drawer \.fighter-photo-img\{object-fit:contain!important;/,'Mobile fighter photos must not restore letterboxed profile framing.');
 
 assert.match(stability,/function\s+syncDrawerState\s*\(\).*classList\.contains\('open'\).*classList\.toggle\('fighter-profile-open'/s,'The stability runtime must retain the one drawer-to-body presentation mapping.');
 assert.match(stability,/observer\.observe\(drawer,\{attributes:true,attributeFilter:\['class','aria-hidden'\]\}\)/,'Drawer synchronization must observe only canonical drawer attributes.');
