@@ -82,16 +82,25 @@ async function state(page){
   }));
 }
 
-function assertSingleActivation(result,{destination,view,rankingView}){
+function assertActivationState(result,{destination,view,rankingView}){
   assert.deepEqual(result.active,[view],`${destination} did not leave exactly one expected active view.`);
   assert.equal(result.destination,destination,`${destination} did not match canonical shell state.`);
   assert.deepEqual(result.selectedTop,[destination],`${destination} selected-state and ARIA were not singular.`);
-  assert.equal(result.events.length,1,`${destination} emitted ${result.events.length} route events instead of one.`);
-  assert.equal(result.events[0].destination,destination,`${destination} emitted the wrong destination event.`);
   if(rankingView){
     assert.equal(result.rankingView,rankingView,`${destination} did not retain the expected ranking view.`);
     assert.deepEqual(result.selectedRanking,[rankingView],`${destination} ranking-subnavigation state was not singular.`);
   }
+}
+
+function assertSingleActivation(result,expected){
+  assertActivationState(result,expected);
+  assert.equal(result.events.length,1,`${expected.destination} emitted ${result.events.length} route events instead of one.`);
+  assert.equal(result.events[0].destination,expected.destination,`${expected.destination} emitted the wrong destination event.`);
+}
+
+function assertCoalescedActivation(result,expected){
+  assertActivationState(result,expected);
+  assert.equal(result.events.length,0,`${expected.destination} republished an already-active route.`);
 }
 
 async function clickDestination(page,destination,{enableWar=false}={}){
@@ -121,7 +130,7 @@ async function testNormalOwnership(browser){
 
   const results={};
   results.home=await clickDestination(page,'home');
-  assertSingleActivation(results.home,{destination:'home',view:'home'});
+  assertCoalescedActivation(results.home,{destination:'home',view:'home'});
   results.rankings=await clickDestination(page,'rankings');
   assertSingleActivation(results.rankings,{destination:'rankings',view:'men',rankingView:'men'});
   results.play=await clickDestination(page,'play');
@@ -150,7 +159,9 @@ async function testNormalOwnership(browser){
     await clearEvents(page);
     await page.evaluate(rankingView=>document.querySelector(`[data-rankings-subnav] [data-ranking-view="${rankingView}"]`).click(),rankingView);
     await waitForFrames(page);
-    assertSingleActivation(await state(page),{destination:'rankings',view,rankingView});
+    const rankingState=await state(page);
+    if(rankingView==='men')assertCoalescedActivation(rankingState,{destination:'rankings',view,rankingView});
+    else assertSingleActivation(rankingState,{destination:'rankings',view,rankingView});
   }
   await clickDestination(page,'play');
   const returned=await clickDestination(page,'rankings');

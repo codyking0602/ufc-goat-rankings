@@ -4,7 +4,7 @@
   if(window.__UFC_FRESH_HOME_LAUNCH_STARTED__)return;
   window.__UFC_FRESH_HOME_LAUNCH_STARTED__=true;
 
-  const VERSION='fresh-home-launch-20260719e-single-startup-route';
+  const VERSION='fresh-home-launch-20260721a-single-route-activation';
   const RESUME_PICKS_KEY='__picks_resume';
   const RESUME_WINDOW_MS=30000;
   const deepLinkKeys=['challenge','share','fighter','message','notification','push'];
@@ -55,13 +55,18 @@
     window.clearTimeout(resumeMarkerTimer);
     resumeMarkerTimer=window.setTimeout(clearResumeMarker,RESUME_WINDOW_MS);
   }
+  function activateDestinationOnce(destination){
+    const owner=window.UFC_APP_SHELL||window.UFC_PRODUCT_ARCHITECTURE||null;
+    if(!owner?.activateDestination)return false;
+    if(owner.currentDestination===destination)return false;
+    return owner.activateDestination(destination)!==false;
+  }
   function activatePicks(source='startup'){
     const url=currentUrl();
     url.searchParams.delete(RESUME_PICKS_KEY);
     url.hash='picks';
     replaceUrl(url);
-    window.UFC_APP_SHELL?.activateDestination?.('picks')
-      ||window.UFC_PRODUCT_ARCHITECTURE?.activateDestination?.('picks');
+    activateDestinationOnce('picks');
     document.documentElement.dataset.freshLaunchRoute='picks';
     document.documentElement.dataset.freshLaunchSource=source;
     return true;
@@ -71,8 +76,7 @@
     staleKeys.forEach(key=>url.searchParams.delete(key));
     url.hash='home';
     replaceUrl(url);
-    window.UFC_APP_SHELL?.activateDestination?.('home')
-      ||window.UFC_PRODUCT_ARCHITECTURE?.activateDestination?.('home');
+    activateDestinationOnce('home');
     document.documentElement.dataset.freshLaunchRoute='home';
     document.documentElement.dataset.freshLaunchSource=source;
     return true;
