@@ -1,12 +1,12 @@
 (function(){
   'use strict';
 
-  const VERSION='octagon-message-board-20260717c-realtime';
+  const VERSION='octagon-message-board-20260721d-passive-identity';
   const CANONICAL_CODE='GOAT26';
-  const TOKEN_KEY=`ufc-picks:group:${CANONICAL_CODE}`;
   const REALTIME_CHANNEL=`octagon-board-${CANONICAL_CODE.toLowerCase()}`;
   const instanceId=globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random().toString(36).slice(2)}`;
   const state={
+    identity:null,
     snapshot:null,
     weekStart:null,
     replyTo:null,
@@ -25,8 +25,13 @@
     '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
   }[char]));
   const initials=value=>text(value).split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase()||'UFC';
-  const get=key=>{try{return localStorage.getItem(key)||'';}catch(_error){return'';}};
-  const tokenFor=identity=>text(identity?.memberToken||identity?.member_token||get(TOKEN_KEY));
+  const tokenFor=identity=>text(identity?.memberToken||identity?.member_token);
+
+  function passiveIdentity(){
+    const value=window.UFC_PLAY_PROFILE?.identity||window.UFC_APP_PROFILE?.identity||state.identity;
+    state.identity=value||null;
+    return state.identity;
+  }
 
   function fighterFor(slug){
     const clean=text(slug).toLowerCase();
@@ -183,7 +188,8 @@
     if(composer)composer.hidden=true;
     feed.innerHTML=`<div class="octagon-auth-card"><strong>Reconnect your UFC App profile</strong><p>${esc(message||'Sign in with Cody and your four-digit PIN to open the private Beta.')}</p><button type="button" data-octagon-sign-in>SIGN IN</button></div>`;
     feed.querySelector('[data-octagon-sign-in]')?.addEventListener('click',async()=>{
-      await window.UFC_PLAY_PROFILE?.require?.({title:'Open The Octagon',description:'Use your Cody profile and four-digit PIN to enter the private Beta.'});
+      const identity=await window.UFC_PLAY_PROFILE?.require?.({title:'Open The Octagon',description:'Use your Cody profile and four-digit PIN to enter the private Beta.'});
+      if(identity)state.identity=identity;
       await load();
     });
   }
@@ -284,9 +290,9 @@
     submit.disabled=state.busy||!current||length<1||length>500||!input.value.trim();
   }
 
-  async function context(){
+  function context(){
     const profile=window.UFC_PLAY_PROFILE;
-    const identity=await profile?.resolve?.();
+    const identity=passiveIdentity();
     return{client:profile?.client||null,identity,token:tokenFor(identity)};
   }
 
@@ -582,10 +588,12 @@
     else updateLiveStatus(navigator.onLine?'off':'offline');
   }
 
-  window.addEventListener('ufc-play-profile-ready',()=>{
+  window.addEventListener('ufc-play-profile-ready',event=>{
+    state.identity=event.detail||state.identity;
     if(root()?.classList.contains('active-view'))load();
   });
-  window.addEventListener('ufc-app-profile-updated',()=>{
+  window.addEventListener('ufc-app-profile-updated',event=>{
+    state.identity=event.detail?.identity||state.identity;
     if(root()?.classList.contains('active-view'))load(state.weekStart,{silent:true});
   });
 
