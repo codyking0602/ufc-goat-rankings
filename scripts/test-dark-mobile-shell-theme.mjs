@@ -53,9 +53,8 @@ assert.match(
   /@media\(max-width:900px\)\{[\s\S]*?\.hero h1\{[^}]*color:var\(--text\)!important/s,
   'Final product polish must own the canonical light mobile title color.'
 );
-assert.match(
-  serviceWorker,
-  /css\\\/\(\?:app\|native-app-shell\|native-app-shell-stability\|product-polish\|community-profiles\|find-leader\)\\\.css/,
+assert.ok(
+  serviceWorker.includes('css\\/(?:app|native-app-shell|native-app-shell-stability|product-polish|community-profiles|find-leader)\\.css'),
   'The canonical cache owner must fetch both global and final-polish palette assets from the network.'
 );
 assert.ok(
@@ -96,37 +95,58 @@ const browser=await chromium.launch({headless:true});
 try{
   const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
   const page=await context.newPage();
-  await page.route('**/canonical-dark-palette-proof.html',route=>route.fulfill({status:200,contentType:'text/html',body:fixture}));
+  await page.route('**/canonical-dark-palette-proof.html*',route=>route.fulfill({status:200,contentType:'text/html',body:fixture}));
   await page.goto('http://127.0.0.1:4173/canonical-dark-palette-proof.html',{waitUntil:'networkidle',timeout:60000});
   const rendered=await page.evaluate(()=>{
     const root=getComputedStyle(document.documentElement);
     const style=id=>getComputedStyle(document.getElementById(id));
+    const reference=declarations=>{
+      const node=document.createElement('i');
+      Object.assign(node.style,declarations);
+      document.body.appendChild(node);
+      const computed=getComputedStyle(node);
+      const result={backgroundColor:computed.backgroundColor,color:computed.color};
+      node.remove();
+      return result;
+    };
     return {
-      bg:root.getPropertyValue('--bg').trim(),
-      panel:root.getPropertyValue('--panel').trim(),
-      accent:root.getPropertyValue('--accent').trim(),
-      accent2:root.getPropertyValue('--accent2').trim(),
-      headerBackground:getComputedStyle(document.querySelector('.hero')).backgroundColor,
-      titleColor:style('paletteTitle').color,
-      primaryBackground:style('palettePrimary').backgroundColor,
-      primaryColor:style('palettePrimary').color,
-      activeNavColor:style('paletteActiveNav').color,
-      badgeBackground:style('paletteBadge').backgroundColor,
-      badgeColor:style('paletteBadge').color
+      tokens:{
+        bg:root.getPropertyValue('--bg').trim(),
+        panel:root.getPropertyValue('--panel').trim(),
+        accent:root.getPropertyValue('--accent').trim(),
+        accent2:root.getPropertyValue('--accent2').trim()
+      },
+      actual:{
+        headerBackground:getComputedStyle(document.querySelector('.hero')).backgroundColor,
+        titleColor:style('paletteTitle').color,
+        primaryBackground:style('palettePrimary').backgroundColor,
+        primaryColor:style('palettePrimary').color,
+        activeNavColor:style('paletteActiveNav').color,
+        badgeBackground:style('paletteBadge').backgroundColor,
+        badgeColor:style('paletteBadge').color
+      },
+      expected:{
+        panelBackground:reference({background:'var(--panel)'}).backgroundColor,
+        textColor:reference({color:'var(--text)'}).color,
+        accentBackground:reference({background:'var(--accent)'}).backgroundColor,
+        accent2Color:reference({color:'var(--accent2)'}).color,
+        whiteColor:reference({color:'#fff'}).color
+      }
     };
   });
   assert.deepEqual(
-    {bg:rendered.bg,panel:rendered.panel,accent:rendered.accent,accent2:rendered.accent2},
+    rendered.tokens,
     {bg:'#080808',panel:'#111111',accent:'#d20a0a',accent2:'#ff4d4d'},
     'Rendered mobile CSS did not receive the canonical palette tokens.'
   );
-  assert.equal(rendered.headerBackground,'rgb(17, 17, 17)','The computed mobile header is not canonical charcoal.');
-  assert.equal(rendered.titleColor,'rgb(245, 245, 245)','The computed mobile title is not canonical white.');
-  assert.equal(rendered.primaryBackground,'rgb(210, 10, 10)','The computed primary action is not canonical UFC red.');
-  assert.equal(rendered.primaryColor,'rgb(255, 255, 255)','The computed primary action does not retain white contrast text.');
-  assert.equal(rendered.activeNavColor,'rgb(255, 77, 77)','The computed active navigation state is not the canonical red highlight.');
-  assert.equal(rendered.badgeBackground,'rgb(210, 10, 10)','The computed notification badge is not canonical UFC red.');
-  assert.equal(rendered.badgeColor,'rgb(255, 255, 255)','The computed notification badge does not retain white contrast text.');
+  assert.equal(rendered.actual.headerBackground,rendered.expected.panelBackground,'The computed mobile header does not consume the canonical panel token.');
+  assert.equal(rendered.actual.titleColor,rendered.expected.textColor,'The computed mobile title does not consume the canonical text token.');
+  assert.equal(rendered.actual.primaryBackground,rendered.expected.accentBackground,'The computed primary action does not consume canonical UFC red.');
+  assert.equal(rendered.actual.primaryColor,rendered.expected.whiteColor,'The computed primary action does not retain white contrast text.');
+  assert.equal(rendered.actual.activeNavColor,rendered.expected.accent2Color,'The computed active navigation state does not consume the canonical red highlight.');
+  assert.equal(rendered.actual.badgeBackground,rendered.expected.accentBackground,'The computed notification badge does not consume canonical UFC red.');
+  assert.equal(rendered.actual.badgeColor,rendered.expected.whiteColor,'The computed notification badge does not retain white contrast text.');
+  console.log(JSON.stringify({proof:'canonical-dark-palette',rendered},null,2));
   await context.close();
 }finally{
   await browser.close();
