@@ -1,9 +1,18 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
+const index=fs.readFileSync('index.html','utf8');
 const shell=fs.readFileSync('assets/css/native-app-shell.css','utf8');
 const stability=fs.readFileSync('assets/css/native-app-shell-stability.css','utf8');
 
+assert.ok(
+  index.includes('assets/css/native-app-shell.css?v=native-app-shell-css-20260721b-dark-shell'),
+  'The live shell must publish a fresh cache identity for the dark mobile header CSS.'
+);
+assert.ok(
+  index.includes('assets/css/native-app-shell-stability.css?v=native-app-shell-stability-css-20260721b-dark-drawer'),
+  'The live shell must publish a fresh cache identity for the dark fighter drawer CSS.'
+);
 assert.ok(
   shell.includes('html{overscroll-behavior-y:contain;background:var(--bg)}'),
   'The mobile document background must consume the canonical app background token.'
