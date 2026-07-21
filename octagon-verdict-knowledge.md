@@ -1,6 +1,6 @@
 # Octagon Verdict — Official UFC-Only Knowledge Pack
 
-Generated: **2026-07-21T03:25:36.262Z**  
+Generated: **2026-07-21T18:31:34.584Z**  
 Canonical model-as-of date: **2026-07-13**  
 Latest fighter-ledger verification date: **2026-07-17**  
 Fighters: **80**
@@ -118,7 +118,7 @@ Division strength is implemented through fighter-specific canonical keys, era-le
 | 28 | Justin Gaethje | 89 | 49.04 | 5.08 | 20.51 | 18.83 | 17.32 | +4.95 | -3.47 | -0.06 |
 | 29 | Glover Teixeira | 89 | 48.47 | 2.05 | 24.55 | 19.07 | 23 | +4.25 | -5.25 | -0.12 |
 | 30 | Dustin Poirier | 89 | 48.37 | 1.46 | 25.05 | 18.81 | 16.39 | +4.94 | -3.4 | -0.02 |
-| 31 | Alexandre Pantoja | 89 | 48.28 | 9.08 | 10.55 | 23.19 | 12.42 | +4.4 | -2.08 | -0.75 |
+| 31 | Alexandre Pantoja | 89 | 48.26 | 9.08 | 10.55 | 23.19 | 12.4 | +4.4 | -2.09 | -0.75 |
 | 32 | Leon Edwards | 89 | 47.77 | 5.98 | 21.01 | 16.4 | 15.95 | +4.11 | -2.61 | +0.06 |
 | 33 | Tito Ortiz | 89 | 47.75 | 10.54 | 14.44 | 18.95 | 21.89 | +3.99 | -3.82 | -3 |
 | 34 | Ilia Topuria | 89 | 47.63 | 6.27 | 14.71 | 21.5 | 10.09 | +5.95 | -2.75 | -0.01 |
@@ -4545,11 +4545,11 @@ _Ledger verified through 2026-07-13. Scores come from category-calculators-20260
 
 ### 31. Alexandre Pantoja — 89 OVR
 
-A relentless four-defense flyweight champion who built the strongest UFC resume in the division outside Demetrious Johnson.
+Alexandre Pantoja is ranked by the current UFC-only calculated pipeline.
 
 | Board | Raw score | UFC record | Division(s) | Title-fight wins | Adjusted title wins | Top-5 wins | Prime record | Rounds won | Elite years |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| men | 48.28 | 14-4 | Flyweight | 5 | 4.4 | 5 | 8-1 | 77.8% | 4.84 |
+| men | 48.26 | 14-4 | Flyweight | 5 | 4.4 | 5 | 8-1 | 77.8% | 4.83 |
 
 #### Exact model math
 
@@ -4558,11 +4558,11 @@ A relentless four-defense flyweight champion who built the strongest UFC resume 
 | Championship | 9.08 | 35 | 10.59 |
 | Opponent Quality | 10.55 | 25 | 8.79 |
 | Prime Dominance | 23.19 | 30 | 23.19 |
-| Longevity | 12.42 | 10 | 4.14 |
+| Longevity | 12.4 | 10 | 4.13 |
 
-Base score: **46.71**. Modifiers: Apex **+4.4**, Loss Penalty **-2.08**, Division-Era Depth **-0.75**. Final raw score: **48.28**.
+Base score: **46.7**. Modifiers: Apex **+4.4**, Loss Penalty **-2.09**, Division-Era Depth **-0.75**. Final raw score: **48.26**.
 
-OVR conversion: 18.68–101.92 board anchors, normalized score **0.355598**, curved score **0.415256**, resulting in **89 OVR**. Only the board leader may receive 99.
+OVR conversion: 18.68–101.92 board anchors, normalized score **0.355358**, curved score **0.415017**, resulting in **89 OVR**. Only the board leader may receive 99.
 
 #### Category breakdown
 
@@ -4571,9 +4571,9 @@ OVR conversion: 18.68–101.92 board anchors, normalized score **0.355598**, cur
 | Championship | 9.08 | #19 | 4.4 adjusted credit / 14.54 benchmark |
 | Opponent Quality | 10.55 | #60 | 5.11 diminished credit / 14.54 benchmark |
 | Prime Dominance | 23.19 | #15 | 23.19 raw × 100.0% sample |
-| Longevity | 12.42 | #39 | 59.51 counted elite months |
+| Longevity | 12.4 | #39 | 59.51 counted elite months |
 | Apex | +4.4 | Modifier | Elite modern flyweight apex below the mythic cross-divisional peaks. |
-| Loss Penalty | -2.08 | Modifier | 4 official/technical loss events reviewed |
+| Loss Penalty | -2.09 | Modifier | 4 official/technical loss events reviewed |
 | Division-Era Depth | -0.75 | Modifier | Apply a modest modern-flyweight depth discount. |
 
 #### Championship receipts
@@ -4621,7 +4621,7 @@ Prime window: **Manel Kape → Joshua Van**. Prime record: **8-1**. Effective sa
 
 #### Longevity receipts
 
-Active elite years: **4.84**. Raw calendar months: **58**. Gap-adjusted months: **58**. Status multiplier: **1.08**. Division multiplier: **0.95**. Counted elite months: **59.51**.
+Active elite years: **4.83**. Raw calendar months: **58**. Gap-adjusted months: **58**. Status multiplier: **1.08**. Division multiplier: **0.95**. Counted elite months: **59.51**.
 
 | From | To | Raw months | Counted months | Capped? |
 | --- | --- | --- | --- | --- |
@@ -4636,7 +4636,7 @@ Active elite years: **4.84**. Raw calendar months: **58**. Gap-adjusted months: 
 
 #### Loss-penalty receipts
 
-The raw fight events are compressed through severity, frequency and a prime-loss volume floor. Exposure: **18** fights. Severity: **1.38**. Frequency: **0.71**. Prime-volume floor: **0.75**. Pre-division magnitude: **2.09**. Division discount: **0.0%**. Final penalty: **-2.08**.
+The raw fight events are compressed through severity, frequency and a prime-loss volume floor. Exposure: **18** fights. Severity: **1.38**. Frequency: **0.71**. Prime-volume floor: **0.75**. Pre-division magnitude: **2.09**. Division discount: **0.0%**. Final penalty: **-2.09**.
 
 | Date | Opponent | Phase | Quality | Division | Finished | Competitive | Base | Finish extra | Raw event | Special rule |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -4659,20 +4659,15 @@ Modern flyweight receives a modest depth discount.
 
 #### Why ranked here
 
-Four successful defenses turn Pantoja from a strong champion into a real all-time case. He won the belt from Brandon Moreno, beat Brandon Royval twice, and finished Kai Asakura and Kai Kara-France during an eight-fight UFC winning streak.
+Alexandre Pantoja ranks #31 because Prime Dominance and Championship supply the largest weighted pieces of a 48.26 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
 
 #### Why not ranked higher?
 
-His championship run is excellent but still far shorter than Demetrious Johnson’s historic reign. Modern flyweight also receives a modest depth discount, while four UFC losses leave less separation than the very top GOAT resumes.
-
-#### Compare-mode guidance
-
-- **Best counterargument:** His strongest argument is direct modern flyweight proof: he repeatedly beat the contenders who defined the post-DJ division.
-- **Why this résumé can still win:** Pantoja beats shorter or thinner champion cases because four defenses are backed by repeated elite wins, not one isolated title moment.
+Alexandre Pantoja is 0.11 raw points behind #30 Dustin Poirier. The largest category separation versus that next target is Opponent Quality; future movement must come from new UFC evidence and a full pipeline rerun.
 
 #### Final takeaway
 
-Pantoja owns the strongest UFC flyweight championship case after Demetrious Johnson: five title-fight wins, four defenses, and an eight-fight winning streak through the modern division.
+Alexandre Pantoja ranks #31 because Prime Dominance and Championship supply the largest weighted pieces of a 48.26 UFC-only raw score. The placement is calculated from the full board rather than manually assigned.
 
 _Ledger verified through 2026-07-15. Scores come from category-calculators-20260714c-seven-direct-calculators and ranking-pipeline-20260714b-direct-category-total-rank-ovr._
 
@@ -11206,8 +11201,8 @@ Automated validation passed for **80 fighters** and specifically checked Jon Jon
 
 ## 14. Known limitations and data gaps
 
-- **Bespoke ranking copy:** 0 fighters lack custom “Why ranked here” copy; 0 lack custom “Why not ranked higher?” copy. Calculated fallbacks are supplied.
-- **Compare-profile coverage:** 11 fighters lack a full current compare narrative.
+- **Bespoke ranking copy:** 1 fighters lack custom “Why ranked here” copy; 1 lack custom “Why not ranked higher?” copy. Calculated fallbacks are supplied.
+- **Compare-profile coverage:** 12 fighters lack a full current compare narrative.
 - **Round audit coverage:** 0 fighters have at least one prime fight without audited round allocation.
 - **Freshness metadata:** model-as-of is 2026-07-13; latest fighter ledger is verified through 2026-07-17.
 - **Non-UFC counterfactuals:** the model intentionally does not calculate what excluded achievements would add.
