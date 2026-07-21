@@ -5,7 +5,7 @@ import { chromium } from 'playwright';
 const ORIGIN='http://127.0.0.1:4173';
 const UNCACHED=`${ORIGIN}/octagon-access-startup-uncached-proof.html`;
 const PRECACHED=`${ORIGIN}/octagon-access-startup-precached-proof.html`;
-const REPORT='/tmp/octagon-access-startup-retry-owner-report.json';
+const REPORT='/tmp/octagon-access-identity-owner-report.json';
 const report={passed:false,stage:'static-contract',uncached:null,readiness:null,precached:null,error:null};
 let browser;
 
