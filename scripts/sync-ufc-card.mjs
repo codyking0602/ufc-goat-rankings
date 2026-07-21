@@ -46,12 +46,23 @@ function matchupKey(first,second){
 
 function canonicalSection(value){
   const text=normalizeSpace(value).toLowerCase();
-  if(text.includes('early') && text.includes('prelim')) return 'Early Prelims';
-  if(text.includes('prelim')) return 'Prelims';
   if(text.includes('co-main') || text.includes('co main')) return 'Co-Main Event';
   if(text.includes('main event')) return 'Main Event';
-  if(text.includes('main')) return 'Main Card';
+  if(text.includes('early') && text.includes('prelim')) return 'Early Prelims';
+  if(text.includes('prelim')) return 'Prelims';
+  if(text.includes('main card') || text==='main') return 'Main Card';
   return '';
+}
+
+function isMainSection(value){
+  return ['Main Card','Co-Main Event','Main Event'].includes(canonicalSection(value));
+}
+
+function expectedMainCount(config){
+  if(config.eventType==='numbered' || /full card/i.test(String(config.cardRule || ''))) return 0;
+  const count=Number(config.mainCardFightCount);
+  if(!Number.isInteger(count) || count<1) throw new Error(`Missing valid mainCardFightCount for ${config.eventId}`);
+  return count;
 }
 
 function weightClassFromText(value){
@@ -103,10 +114,38 @@ function expectedMainEventFound(fights,expected){
   return fights.some(fight=>matchupKey(fight.red_name,fight.blue_name)===expectedKey);
 }
 
+function chooseMainWindow(fights,count,expectedKey){
+  if(!count || fights.length<count) return null;
+  const expectedIndex=fights.findIndex(fight=>matchupKey(fight.red_name,fight.blue_name)===expectedKey);
+  const firstStart=expectedIndex>=0 ? Math.max(0,expectedIndex-count+1) : 0;
+  const lastStart=expectedIndex>=0 ? Math.min(expectedIndex,fights.length-count) : fights.length-count;
+  let best=null;
+  for(let start=firstStart;start<=lastStart;start+=1){
+    const end=start+count;
+    let score=0;
+    for(let index=0;index<fights.length;index+=1){
+      const section=canonicalSection(fights[index].card_section);
+      const inside=index>=start && index<end;
+      if(inside){
+        if(isMainSection(section)) score+=12;
+        else if(section==='Prelims' || section==='Early Prelims') score-=3;
+        else score+=2;
+      }else if(isMainSection(section)){
+        score-=5;
+      }
+    }
+    if(start===0) score+=1;
+    if(!best || score>best.score) best={start,end,score};
+  }
+  return best;
+}
+
 function ensureFightSections(rawFights,config){
   const expectedKey=matchupKey(config.expectedMainEvent?.[0],config.expectedMainEvent?.[1]);
+  const mainMinimum=expectedMainCount(config);
   const cleaned=[];
   const seen=new Set();
+
   for(const raw of rawFights){
     const red=normalizeSpace(raw.red_name || raw.red || '');
     const blue=normalizeSpace(raw.blue_name || raw.blue || '');
@@ -127,23 +166,29 @@ function ensureFightSections(rawFights,config){
   }
 
   if(!cleaned.length) return [];
-  const hasAnySection=cleaned.some(fight=>fight.card_section);
-  if(!hasAnySection){
-    const mainCount=Math.max(1,Math.min(Number(config.mainCardFightCount || 5),cleaned.length));
-    cleaned.forEach((fight,index)=>{
-      fight.card_section=index<mainCount ? 'Main Card' : 'Prelims';
-    });
-  }else{
-    cleaned.forEach(fight=>{
-      if(!fight.card_section) fight.card_section='Prelims';
-    });
+
+  const explicitMain=cleaned.filter(fight=>isMainSection(fight.card_section)).length;
+  if(mainMinimum && explicitMain<mainMinimum){
+    const window=chooseMainWindow(cleaned,mainMinimum,expectedKey);
+    if(window){
+      cleaned.forEach((fight,index)=>{
+        if(index<window.start || index>=window.end) return;
+        if(matchupKey(fight.red_name,fight.blue_name)===expectedKey) fight.card_section='Main Event';
+        else if(!['Main Event','Co-Main Event'].includes(fight.card_section)) fight.card_section='Main Card';
+      });
+    }
   }
 
+  cleaned.forEach(fight=>{
+    if(!fight.card_section) fight.card_section='Prelims';
+  });
+
   const mainEvent=cleaned.find(fight=>fight.card_section==='Main Event');
-  const mainCandidates=cleaned.filter(fight=>['Main Card','Co-Main Event'].includes(fight.card_section));
-  if(mainEvent && !mainCandidates.some(fight=>fight.card_section==='Co-Main Event')){
-    const firstMain=mainCandidates.sort((a,b)=>a.source_index-b.source_index)[0];
-    if(firstMain) firstMain.card_section='Co-Main Event';
+  const mainCandidates=cleaned
+    .filter(fight=>fight.card_section==='Main Card')
+    .sort((a,b)=>Math.abs(a.source_index-(mainEvent?.source_index ?? 0))-Math.abs(b.source_index-(mainEvent?.source_index ?? 0)));
+  if(mainEvent && !cleaned.some(fight=>fight.card_section==='Co-Main Event') && mainCandidates[0]){
+    mainCandidates[0].card_section='Co-Main Event';
   }
 
   return cleaned;
@@ -161,7 +206,7 @@ function chronologicalFights(rawFights,config){
   const grouped={
     'Early Prelims':ordered.filter(fight=>fight.card_section==='Early Prelims'),
     'Prelims':ordered.filter(fight=>fight.card_section==='Prelims'),
-    'Main Card':ordered.filter(fight=>['Main Card','Co-Main Event','Main Event'].includes(fight.card_section))
+    'Main Card':ordered.filter(fight=>isMainSection(fight.card_section))
   };
   const sectionNames=['Early Prelims','Prelims','Main Card'];
   const sectionStarts=config.sectionStarts || {};
@@ -203,8 +248,9 @@ function validateSnapshot(snapshot,config){
   if(!snapshot.sourceUrl || !/^https:\/\//i.test(snapshot.sourceUrl)) failures.push('missing-source-url');
   if(snapshot.fights.length<Number(config.minFights || 5)) failures.push(`too-few-fights:${snapshot.fights.length}`);
   if(!expectedMainEventFound(snapshot.fights,config.expectedMainEvent)) failures.push('expected-main-event-missing');
-  const mainCount=snapshot.fights.filter(fight=>String(fight.card_section).toLowerCase().includes('main')).length;
-  if(mainCount<3) failures.push(`too-few-main-card-fights:${mainCount}`);
+  const mainCount=snapshot.fights.filter(fight=>isMainSection(fight.card_section)).length;
+  const requiredMain=expectedMainCount(config);
+  if(requiredMain && mainCount<requiredMain) failures.push(`too-few-main-card-fights:${mainCount}<${requiredMain}`);
   const uniquePairs=new Set(snapshot.fights.map(fight=>matchupKey(fight.red_name,fight.blue_name)));
   if(uniquePairs.size!==snapshot.fights.length) failures.push('duplicate-matchups');
   if(snapshot.fights.some(fight=>!fight.lock_at || !Number.isFinite(new Date(fight.lock_at).getTime()))) failures.push('invalid-lock-time');
@@ -252,36 +298,59 @@ async function discoverOfficialUrl(page,official,config){
 async function parseOfficialUfc(page){
   return page.evaluate(()=>{
     const normalize=value=>String(value || '').replace(/\s+/g,' ').trim();
+    const sectionFromText=value=>{
+      const text=normalize(value).toLowerCase();
+      if(text.includes('co-main') || text.includes('co main')) return 'Co-Main Event';
+      if(text.includes('main event')) return 'Main Event';
+      if(text.includes('early') && text.includes('prelim')) return 'Early Prelims';
+      if(text.includes('prelim')) return 'Prelims';
+      if(text.includes('main card') || text==='main') return 'Main Card';
+      return '';
+    };
     const athleteNameFromLink=link=>{
-      const text=normalize(link.innerText || link.textContent || '')
-        .replace(/\b(view profile|profile)\b/ig,'')
-        .trim();
+      const text=normalize(link.innerText || link.textContent || '').replace(/\b(view profile|profile)\b/ig,'').trim();
       if(text) return text;
       const parts=new URL(link.href,location.href).pathname.split('/').filter(Boolean);
       const athleteIndex=parts.indexOf('athlete');
       return athleteIndex>=0 ? String(parts[athleteIndex+1] || '').split('-').map(part=>part ? part[0].toUpperCase()+part.slice(1) : '').join(' ') : '';
     };
-    const sectionFromText=value=>{
-      const text=normalize(value).toLowerCase();
-      if(text.includes('early') && text.includes('prelim')) return 'Early Prelims';
-      if(text.includes('prelim')) return 'Prelims';
-      if(text.includes('co-main') || text.includes('co main')) return 'Co-Main Event';
-      if(text.includes('main event')) return 'Main Event';
-      if(text.includes('main card')) return 'Main Card';
-      return '';
-    };
-    const markers=[...document.querySelectorAll('h1,h2,h3,h4,h5,[class*="headline"],[class*="title"],[class*="label"]')]
-      .map(node=>({node,section:sectionFromText(node.innerText || node.textContent)}))
+    const candidateSelector='.c-listing-fight,[class*="listing-fight"],[data-fight-id],[class*="fight-card"] article';
+    const allCandidates=[...document.querySelectorAll(candidateSelector)].filter(node=>{
+      const athleteLinks=node.querySelectorAll('a[href*="/athlete/"]');
+      const cornerNames=node.querySelectorAll('[class*="corner-name"]');
+      return athleteLinks.length>=2 || cornerNames.length>=2;
+    });
+    const candidates=allCandidates.filter(node=>!allCandidates.some(other=>other!==node && node.contains(other)));
+    const candidateSet=new Set(candidates);
+    const markers=[...document.querySelectorAll('h1,h2,h3,h4,h5,[data-card-section],[class*="card-title"],[class*="card-label"]')]
+      .filter(node=>!node.closest(candidateSelector) || !candidateSet.has(node.closest(candidateSelector)))
+      .map(node=>({node,section:sectionFromText(`${node.getAttribute('data-card-section') || ''} ${node.innerText || node.textContent || ''}`)}))
       .filter(item=>item.section);
-    const candidates=[...document.querySelectorAll('.c-listing-fight,[class*="listing-fight"],[data-fight-id],[class*="fight-card"] article')]
-      .filter(node=>{
-        const athleteLinks=node.querySelectorAll('a[href*="/athlete/"]');
-        const cornerNames=node.querySelectorAll('[class*="corner-name"]');
-        return athleteLinks.length>=2 || cornerNames.length>=2;
-      });
-    const smallest=candidates.filter(node=>!candidates.some(other=>other!==node && node.contains(other)));
+
+    const contextSection=node=>{
+      let current=node;
+      while(current && current!==document.body){
+        const descriptor=[
+          current.id,
+          typeof current.className==='string' ? current.className : '',
+          current.getAttribute?.('data-card-section'),
+          current.getAttribute?.('data-section'),
+          current.getAttribute?.('aria-label')
+        ].filter(Boolean).join(' ');
+        const section=sectionFromText(descriptor.replace(/[-_]+/g,' '));
+        if(section) return section;
+        current=current.parentElement;
+      }
+      let preceding='';
+      for(const marker of markers){
+        const relation=marker.node.compareDocumentPosition(node);
+        if(relation & Node.DOCUMENT_POSITION_FOLLOWING) preceding=marker.section;
+      }
+      return preceding;
+    };
+
     const rows=[];
-    for(const [sourceIndex,node] of smallest.entries()){
+    for(const [sourceIndex,node] of candidates.entries()){
       const linkMap=new Map();
       for(const link of node.querySelectorAll('a[href*="/athlete/"]')){
         const name=athleteNameFromLink(link);
@@ -293,19 +362,13 @@ async function parseOfficialUfc(page){
       }
       names=[...new Set(names)].filter(Boolean);
       if(names.length<2) continue;
-      let section='';
-      for(const marker of markers){
-        const relation=marker.node.compareDocumentPosition(node);
-        if(relation & Node.DOCUMENT_POSITION_FOLLOWING) section=marker.section;
-      }
       const weightNode=node.querySelector('[class*="class-text"],[class*="weight-class"],[class*="weight"]');
-      const sourceBoutId=node.getAttribute('data-fight-id') || node.id || [...linkMap.keys()].sort().join('|');
       rows.push({
         red_name:names[0],
         blue_name:names[1],
         weight_class:normalize(weightNode?.innerText || weightNode?.textContent || node.innerText || ''),
-        card_section:section,
-        source_bout_id:sourceBoutId,
+        card_section:contextSection(node),
+        source_bout_id:node.getAttribute('data-fight-id') || node.id || [...linkMap.keys()].sort().join('|'),
         source_index:sourceIndex,
         text:normalize(node.innerText || '')
       });
@@ -393,7 +456,7 @@ async function confirmedSnapshot(browser,source,config){
   const firstSignature=signature(first);
   const secondSignature=signature(second);
   if(firstSignature!==secondSignature){
-    throw new Error(`Two-source captures disagreed for ${config.eventId}: ${firstSignature} vs ${secondSignature}`);
+    throw new Error(`Two captures disagreed for ${config.eventId}: ${firstSignature} vs ${secondSignature}`);
   }
   return {...second,confirmed:true,confirmationHash:secondSignature};
 }
@@ -427,7 +490,8 @@ async function postSnapshot(snapshot,config){
       ...snapshot,
       validation:{
         minFights:Number(config.minFights || 5),
-        expectedMainEvent:config.expectedMainEvent || []
+        expectedMainEvent:config.expectedMainEvent || [],
+        expectedMainCardFights:expectedMainCount(config)
       }
     })
   });
@@ -443,6 +507,7 @@ async function main(){
   const parsed=JSON.parse(fs.readFileSync(CONFIG_PATH,'utf8'));
   const events=Array.isArray(parsed.events) ? parsed.events : [];
   if(!events.length) throw new Error('No UFC card sources are configured');
+  events.forEach(config=>expectedMainCount(config));
   const now=Date.now();
   const active=events.filter(event=>FORCE || !event.syncUntil || now<new Date(event.syncUntil).getTime());
   if(!active.length){
@@ -455,11 +520,14 @@ async function main(){
     for(const config of active){
       const snapshot=await chooseSnapshot(browser,config);
       const result=await postSnapshot(snapshot,config);
+      const mainCardFights=snapshot.fights.filter(fight=>isMainSection(fight.card_section)).length;
       const reportRow={
         eventId:config.eventId,
         sourceType:snapshot.sourceType,
         sourceUrl:snapshot.sourceUrl,
         fights:snapshot.fights.length,
+        mainCardFights,
+        requiredMainCardFights:expectedMainCount(config),
         confirmationHash:snapshot.confirmationHash,
         applied:APPLY,
         result
