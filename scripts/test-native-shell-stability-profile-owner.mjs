@@ -168,6 +168,7 @@ try{
   report.passed=false;
   report.error={name:error?.name||'Error',message:error?.message||String(error),stack:error?.stack||''};
   fs.writeFileSync(reportPath,JSON.stringify(report,null,2));
+  console.error(JSON.stringify(report,null,2));
   throw error;
 }finally{
   await browser.close();
