@@ -4,7 +4,7 @@
   if(window.__UFC_NATIVE_APP_SHELL_STARTED__)return;
   window.__UFC_NATIVE_APP_SHELL_STARTED__=true;
 
-  const VERSION='native-app-shell-20260718a-phase-4a';
+  const VERSION='native-app-shell-20260721b-single-activity-refresh';
   const MOBILE_QUERY='(max-width: 900px)';
   const REFRESH_THRESHOLD=74;
   const NAV_ITEMS=[
@@ -223,7 +223,6 @@
     try{add(window.UFC_DAILY_LEADERBOARD_LIVE?.check?.({force:true}));}catch(_error){}
     try{add(window.UFC_PROFILE_CHALLENGES?.loadInbox?.());}catch(_error){}
     try{add(window.UFC_APP_NOTIFICATIONS?.loadSettings?.(true));}catch(_error){}
-    try{add(window.UFC_OCTAGON_NOTIFICATIONS?.refreshStatus?.());}catch(_error){}
     try{if(currentDestination()==='war-room')add(window.UFC_OCTAGON_BOARD?.load?.(null,{silent:true}));}catch(_error){}
     try{window.UFC_HOME_DASHBOARD?.render?.();}catch(_error){}
     window.dispatchEvent(new CustomEvent('octagon-hq:soft-refresh',{detail:{source:'pull-to-refresh',destination:currentDestination()}}));
