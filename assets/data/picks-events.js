@@ -1,6 +1,7 @@
 (function(){
   'use strict';
 
+  const EVENTS_UPDATED='ufc-picks-events-updated';
   const fullEvents = [
     {
       id: 'ufc-329-2026-07-11',
@@ -165,9 +166,18 @@
     });
   }
 
+  function publishEvents(events,source='unknown'){
+    const scoped=scopeEvents(events);
+    const snapshot={events:scoped,source:String(source || 'unknown'),updatedAt:new Date().toISOString()};
+    window.UFC_PICKS_EVENTS=scoped;
+    window.UFC_PICKS_EVENT_STATE=snapshot;
+    window.dispatchEvent(new CustomEvent(EVENTS_UPDATED,{detail:snapshot}));
+    return scoped;
+  }
+
   window.UFC_PICKS_FULL_EVENTS=fullEvents;
-  window.UFC_PICKS_SCOPE={isPickable,scopeEvents};
-  window.UFC_PICKS_EVENTS=scopeEvents(fullEvents);
+  window.UFC_PICKS_SCOPE={isPickable,scopeEvents,publishEvents};
+  publishEvents(fullEvents,'fallback');
 
   const supabaseApi=window.supabase;
   if(supabaseApi?.createClient && !supabaseApi.__ufcPicksScopeWrapped){
@@ -178,7 +188,7 @@
       client.rpc=async(name,params,options)=>{
         const response=await rpc(name,params,options);
         if(name==='picks_public_events' && Array.isArray(response?.data)){
-          response.data=scopeEvents(response.data);
+          response.data=publishEvents(response.data,'supabase');
         }
         return response;
       };
