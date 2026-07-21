@@ -1,0 +1,44 @@
+name: Phase 5 Script Manifest Inventory
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'assets/js/**'
+      - 'scripts/audit-phase-5-script-manifest.mjs'
+      - '.github/workflows/phase-5-script-manifest-inventory.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'assets/js/**'
+      - 'scripts/audit-phase-5-script-manifest.mjs'
+      - '.github/workflows/phase-5-script-manifest-inventory.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phase-5-script-manifest-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate inventory syntax
+        run: node --check scripts/audit-phase-5-script-manifest.mjs
+      - name: Enforce production script manifest ownership
+        run: node scripts/audit-phase-5-script-manifest.mjs | tee /tmp/phase-5-script-manifest-inventory.json
+      - name: Upload manifest inventory
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase-5-script-manifest-inventory
+          path: /tmp/phase-5-script-manifest-inventory.json
