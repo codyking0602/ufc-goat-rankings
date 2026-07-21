@@ -4,23 +4,19 @@ _Last updated: 2026-07-21_
 
 ## Current position
 
-- **Latest production merge:** PR #189, `628bf47bbe2933688a36a0a7e96d952da5e828d8`
-- **Exact latest tested head:** `8689ba590c74fff516c32011ca71916c3e7561a5`
-- **Latest complete Startup Architecture Gate:** #212 passed
-- **Latest dedicated iOS Home Startup Stability:** #67 passed
-- **Latest Phase 5 Script Manifest Inventory:** #10 passed
-- **Current phase:** Startup/identity architecture cleanup complete; maintenance-only
-- **Phase 0:** Complete
-- **Phase 1:** Complete
-- **Phase 2:** Complete
-- **Phase 3:** Complete
-- **Phase 4:** Complete
-- **Phase 5:** Complete
-- **Entire startup/identity cleanup:** 100% complete under the established ownership, startup-work, and manifest standards
+- **Latest startup architecture merge:** PR #189, `628bf47bbe2933688a36a0a7e96d952da5e828d8`
+- **Latest runtime-changing merge:** PR #188, `478a17d9ad4cda70a2d2fb75975ebe2bfb1881f4`
+- **Exact final tested head:** `8689ba590c74fff516c32011ca71916c3e7561a5`
+- **Tested head versus production merge:** one merge commit, zero changed files
+- **Final Startup Architecture Gate:** #212 passed
+- **Final dedicated iOS Home Startup Stability:** #67 passed
+- **Final Phase 5 Script Manifest Inventory:** #10 passed
+- **Current phase:** Phases 0–6 complete; maintenance-only
+- **Entire startup/identity cleanup:** 100% complete under the established ownership, startup-work, manifest, and certification standards
 - **Visible product changes approved:** none; the zero-visible-change contract was preserved
 - **Master tracker:** [Issue #102](https://github.com/codyking0602/ufc-goat-rankings/issues/102)
 - **Phase 4 ledger:** [`PHASE-4-PROGRESS-20260721.md`](./PHASE-4-PROGRESS-20260721.md)
-- **Phase 5 ledger:** [`PHASE-5-PROGRESS-20260721.md`](./PHASE-5-PROGRESS-20260721.md)
+- **Phase 5 and certification ledger:** [`PHASE-5-PROGRESS-20260721.md`](./PHASE-5-PROGRESS-20260721.md)
 - **Canonical ownership map:** [`OWNERS.md`](./OWNERS.md)
 
 ## Completed architecture boundaries
@@ -80,7 +76,21 @@ Exactly three focused recovery overlaps remain:
 2. Better Than → Find the Leader
 3. Product compatibility → primary shell
 
-Every healthy production path consumes the explicit owner exactly once. The dynamic path is permitted only when the owner is genuinely absent, with focused browser proof for the normal and recovery cases.
+Every healthy production path consumes the explicit owner exactly once. A dynamic path is permitted only when the owner is genuinely absent, with focused healthy-startup and recovery proof.
+
+### Phase 6 — final certification
+
+Phase 6 made no runtime change and created no temporary workflow.
+
+Certification is complete because:
+
+- Startup Architecture Gate #212 passed on the exact final head;
+- dedicated iOS #67 passed on the exact final head;
+- Phase 5 Script Manifest Inventory #10 passed, including both focused manifest-owner browser proofs;
+- the tested head and production merge have zero changed files;
+- canonical status, ownership, Phase 4, and Phase 5 documentation is current;
+- unrelated red checks were inspected and documented;
+- no physical-only uncertainty or visible product change remains.
 
 ## Final behavioral boundary
 
@@ -94,15 +104,15 @@ Every healthy production path consumes the explicit owner exactly once. The dyna
 
 ## Known unrelated red workflows
 
-The final exact Phase 5 head retained the established unrelated Production Ranking Browser Smoke failure at the fighter-photo audit. Earlier known Picks UI and scoring architecture failures remain outside the startup/identity cleanup boundary.
+The final exact Phase 5 head retained the established Production Ranking Browser Smoke #626 failure at the fighter-photo audit. Scoring Architecture Guardrails #1448 retained its established permanent source/runtime contract failure on the preceding runtime batch. Historical Phase 4B validation may remain pinned to its legacy architecture expectation.
 
-None references the final manifest inventory, recovery proofs, or startup ownership changes.
+None references the final manifest inventory, recovery proofs, startup ownership changes, or documentation.
 
 ## Maintenance standard
 
 No further startup cleanup phase is open.
 
-Future changes should use the existing inventories and ownership proofs. Start new architecture work only when production behavior or a deterministic audit proves one of the following:
+Future changes should use the permanent inventories and ownership proofs. Start new architecture work only when production behavior or a deterministic audit proves one of the following:
 
 - a competing canonical owner;
 - unnecessary inactive-destination work;
