@@ -1,4 +1,5 @@
 name: Scoring Architecture Guardrails
+# Final production certification trigger; workflow behavior is unchanged.
 
 on:
   pull_request:
