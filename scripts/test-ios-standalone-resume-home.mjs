@@ -66,4 +66,5 @@ try{
 
 await import('./test-fresh-launch-route-ownership.mjs');
 await import('./test-native-shell-stability-spotlight-owner.mjs');
+await import('./test-native-shell-stability-profile-owner.mjs');
 await import('./test-native-pull-refresh-ownership.mjs');
