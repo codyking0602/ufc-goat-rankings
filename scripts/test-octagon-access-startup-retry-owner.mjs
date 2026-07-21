@@ -33,7 +33,6 @@ function html(cached){return `<!doctype html><html><head><meta charset="utf-8"><
     const proof=window.__ACCESS_STARTUP_PROOF__;
     const identity=window.__ACCESS_IDENTITY__;
     const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
-    const nativeSetInterval=window.setInterval.bind(window);
     window.setInterval=(fn,delay,...args)=>{proof.intervals.push(Number(delay));window.__ACCESS_INTERVAL_CALLBACKS__.push({fn,delay:Number(delay),args});return proof.intervals.length;};
     window.clearInterval=()=>{};
     const channel={on(){return this;},subscribe(){return this;},async send(){return'ok';},async unsubscribe(){return'ok';}};
@@ -48,7 +47,6 @@ function html(cached){return `<!doctype html><html><head><meta charset="utf-8"><
     };
     window.UFC_PLAY_PROFILE={identity:${cached?'identity':'null'},client,async resolve(){proof.canonicalResolves+=1;return identity;},async require(){proof.canonicalRequires+=1;return identity;}};
     window.UFC_APP_PROFILE={identity:${cached?'identity':'null'},async resolve(){proof.editorResolves+=1;return identity;}};
-    window.__NATIVE_SET_INTERVAL__=nativeSetInterval;
   </script>
   <script src="/assets/js/octagon-access-panel.js"></script>
 </body></html>`;}
@@ -69,7 +67,10 @@ async function snapshot(page){
 
 async function openPage(context,mode){
   const page=await context.newPage();
-  await page.route(`${BASE}?mode=${mode}`,route=>route.fulfill({status:200,contentType:'text/html',body:html(mode==='precached')}));
+  await page.route('**/octagon-access-startup-retry-proof.html*',route=>{
+    const requestedMode=new URL(route.request().url()).searchParams.get('mode');
+    return route.fulfill({status:200,contentType:'text/html',body:html(requestedMode==='precached')});
+  });
   await page.goto(`${BASE}?mode=${mode}`,{waitUntil:'domcontentloaded',timeout:60000});
   await page.waitForFunction(()=>window.UFC_OCTAGON_ACCESS&&window.__ACCESS_STARTUP_PROOF__,null,{timeout:10000});
   return page;
