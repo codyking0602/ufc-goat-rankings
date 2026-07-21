@@ -73,3 +73,4 @@ await import('./test-native-pull-refresh-ownership.mjs');
 await import('./test-picks-commissioner-active-owner.mjs');
 await import('./test-native-shell-startup-resync-owner.mjs');
 await import('./test-octagon-notification-startup-retry-owner.mjs');
+await import('./test-octagon-access-startup-retry-owner.mjs');
