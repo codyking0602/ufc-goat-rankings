@@ -132,16 +132,18 @@ Do not put any of these values in source files, browser JavaScript, workflow YAM
 
 ### First deployment
 
-1. Open **Actions → Deploy UFC Card Sync** and run it on `main`.
-2. Open **Actions → Deploy UFC Odds Refresh** and run it on `main`.
-3. Confirm both deployment and test steps finish green.
-4. Open **Actions → Sync UFC Card and Odds** and run it once manually if another immediate refresh is needed.
+1. Open **Actions → Deploy UFC Card and Odds Sync** and run it on `main`.
+2. Confirm the function deployment and verification requests finish green.
+3. Open **Actions → Sync UFC Card and Odds** and run it manually only when another immediate refresh is needed.
 
-The deployment workflows store the required private values as Supabase Edge Function secrets, deploy the functions with JWT verification disabled, protect them with the custom refresh secret, and perform test requests.
+The deploy workflow stores the required private values as Supabase Edge Function secrets, deploys both functions with JWT verification disabled, protects them with the custom refresh secret, and performs verification requests. It is not a second recurring refresh owner.
 
-### Scheduled behavior
+### Scheduled behavior and ownership
 
-- **Sync UFC Card and Odds** runs every six hours at minute 17 and can also be run manually.
+The single recurring owner is `.github/workflows/refresh-ufc-odds.yml`. Its **Sync UFC Card and Odds** workflow runs every six hours at minute 17 and also supports manual `workflow_dispatch` runs. `.github/workflows/deploy-ufc-odds-refresh.yml` deploys and verifies the functions but does not define a recurring schedule.
+
+The browser does not run an odds polling timer and does not refresh odds on focus or visibility changes. Manual refresh behavior remains available through the scheduled workflow's `workflow_dispatch` entry point.
+
 - The card scraper uses UFC.com first and MMA Mania only as a fallback.
 - Two matching captures are required before a card can update Supabase.
 - The sync detects new fights, opponent replacements, order changes, main-card promotions or demotions, and cancellations.
@@ -181,3 +183,7 @@ Once an event is published, Supabase is the multiplayer source of truth.
 Browser notifications are opportunistic and only appear when the app is opened near event time. The calendar file is the reliable reminder outside the app.
 
 ## Reliability checks
+
+- On mobile, the desktop tab source is intentionally hidden. `scripts/test-picks-mobile-top-tabs.mjs` certifies the visible five-item native bottom navigation and the sticky-header Intelligence action at 390×844, including useful visibility after each enabled destination opens and no horizontal navigation scrolling.
+- `scripts/check-picks-ui.mjs` certifies that exactly one scheduled workflow owns card-and-odds refreshes, while manual dispatch remains available.
+- **Picks UI Smoke** runs both checks for relevant production changes.

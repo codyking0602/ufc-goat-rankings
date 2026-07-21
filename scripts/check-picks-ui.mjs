@@ -8,7 +8,7 @@ const exists=relative=>fs.existsSync(path.join(root,relative));
 const failures=[];
 
 function check(condition,message){
-  if(condition) return;
+  if(condition)return;
   failures.push(message);
   console.error(`CHECK FAILED: ${message}`);
 }
@@ -25,6 +25,7 @@ const recoverySql=read('supabase/picks-device-recovery-phase.sql');
 const settingsCleanup=read('assets/js/picks-settings-admin-cleanup.js');
 const mobilePolish=read('assets/js/picks-mobile-polish.js');
 const mobilePolishCss=read('assets/css/picks-mobile-polish.css');
+const mobileTopTabsTest=read('scripts/test-picks-mobile-top-tabs.mjs');
 const oddsCoverage=read('assets/js/picks-odds-coverage.js');
 const oddsFunction=read('supabase/functions/refresh-ufc-odds/index.ts');
 const oddsSchedule=read('.github/workflows/refresh-ufc-odds.yml');
@@ -33,6 +34,10 @@ const events=read('assets/data/picks-events.js');
 const photos=read('assets/data/picks-photo-overrides.js');
 const eventVisuals=read('assets/data/picks-event-visuals.js');
 const setup=read('docs/picks-setup.md');
+const workflowSources=fs.readdirSync(path.join(root,'.github/workflows'))
+  .filter(name=>/\.ya?ml$/i.test(name))
+  .map(name=>({relative:`.github/workflows/${name}`,body:read(`.github/workflows/${name}`)}));
+const scheduledOddsOwners=workflowSources.filter(({body})=>/^\s*schedule:\s*$/m.test(body)&&body.includes('refresh-ufc-odds'));
 
 const requiredFiles=[
   'assets/js/picks.js',
@@ -65,7 +70,8 @@ const requiredFiles=[
   '.github/workflows/refresh-ufc-odds.yml',
   '.github/workflows/deploy-ufc-odds-refresh.yml',
   'supabase/picks-device-recovery-phase.sql',
-  'supabase/ufc-oklahoma-city-event.sql'
+  'supabase/ufc-oklahoma-city-event.sql',
+  'scripts/test-picks-mobile-top-tabs.mjs'
 ];
 requiredFiles.forEach(requireFile);
 
@@ -85,7 +91,7 @@ retiredFiles.forEach(relative=>check(!exists(relative),`Retired frontend file st
 
 const assetRefs=[...index.matchAll(/(?:src|href)="([^"?#]+)(?:\?[^"#]*)?"/g)]
   .map(match=>match[1])
-  .filter(value=>!/^https?:\/\//.test(value) && !value.startsWith('data:') && !value.startsWith('#'));
+  .filter(value=>!/^https?:\/\//.test(value)&&!value.startsWith('data:')&&!value.startsWith('#'));
 assetRefs.forEach(requireFile);
 
 for(const retired of retiredFiles){
@@ -105,7 +111,9 @@ const requiredIndexRefs=[
   'assets/js/picks-upcoming-event-settings.js',
   'assets/js/picks-device-recovery.js',
   'assets/js/picks-mobile-polish.js',
-  'assets/js/picks-odds-coverage.js'
+  'assets/js/picks-odds-coverage.js',
+  'assets/js/octagon-hq-shell.js',
+  'assets/js/octagon-hq-nav-grid.js'
 ];
 requiredIndexRefs.forEach(relative=>check(index.includes(relative),`index.html does not load ${relative}`));
 
@@ -120,7 +128,7 @@ const scriptOrder=[
   'assets/js/picks-odds-coverage.js'
 ].map(relative=>index.indexOf(relative));
 check(scriptOrder.every(position=>position>=0),'One or more Picks cleanup scripts are missing from index.html');
-check(scriptOrder.every((position,indexValue)=>indexValue===0 || position>scriptOrder[indexValue-1]),'Picks cleanup scripts are loaded in an unsafe order');
+check(scriptOrder.every((position,indexValue)=>indexValue===0||position>scriptOrder[indexValue-1]),'Picks cleanup scripts are loaded in an unsafe order');
 
 const requiredStaticIds=[
   'picks','picksEventPicker','picksEventHero','picksRoomBanner','picksRoomSetup',
@@ -139,28 +147,30 @@ check(!nav.includes('picksSocialCard'),'Social Hub is still routed into the live
 check(!nav.includes('picksEventManagerCard'),'Event Manager is still routed into the live app');
 check(!nav.includes('picksAutomationCard'),'Card Automation is still routed into the live app');
 check(nav.includes("window.addEventListener('popstate'"),'Back/forward route restoration is missing');
-check(nav.includes('ArrowRight') && nav.includes('ArrowLeft'),'Keyboard tab navigation is missing');
+check(nav.includes('ArrowRight')&&nav.includes('ArrowLeft'),'Keyboard tab navigation is missing');
 
 const retiredSocialSymbols=['awardsSection','activitySection','shareGraphic','buildCanvas','picksShareWinnerCard','picksShareSeasonCard'];
 retiredSocialSymbols.forEach(symbol=>check(!profile.includes(symbol),`Retired Social Hub code remains: ${symbol}`));
 check(profile.includes('profileMarkup'),'Profile settings renderer is missing');
 check(profile.includes('picks_social_update_profile'),'Profile persistence RPC is missing');
 check(profile.includes('picksAddCalendar'),'Calendar reminder support is missing');
-check(profile.includes("'TRIGGER:-PT8H'") && profile.includes("'TRIGGER:-PT1H'"),'Fight-day calendar alerts are missing');
+check(profile.includes("'TRIGGER:-PT8H'")&&profile.includes("'TRIGGER:-PT1H'"),'Fight-day calendar alerts are missing');
 check(settingsCleanup.includes('Add Phone Reminders'),'Settings cleanup does not preserve the phone-reminder label');
 
 check(mobilePolish.includes('formatRemaining'),'Readable fight countdown formatter is missing');
-check(mobilePolish.includes('day${days===1') && mobilePolish.includes('hour${hours===1'),'Countdown does not support day/hour copy');
-check(mobilePolish.includes('fighterSlug') && mobilePolish.includes('-thumb.webp'),'Automatic fighter thumbnail path wiring is missing');
+check(mobilePolish.includes('day${days===1')&&mobilePolish.includes('hour${hours===1'),'Countdown does not support day/hour copy');
+check(mobilePolish.includes('fighterSlug')&&mobilePolish.includes('-thumb.webp'),'Automatic fighter thumbnail path wiring is missing');
 check(mobilePolish.includes('picks-room-more'),'Compact room overflow menu is missing');
-check(mobilePolish.includes("inline:'center'"),'Mobile top-tab auto-centering is missing');
-check(mobilePolish.includes('applyEventArtwork') && mobilePolish.includes('UFC_PICKS_EVENT_VISUALS'),'Event artwork renderer is missing');
-check(mobilePolishCss.includes('position:relative!important') && mobilePolishCss.includes('top:auto!important'),'Picks internal navigation still overlays fight content on mobile');
+check(mobileTopTabsTest.includes('width:390')&&mobileTopTabsTest.includes('height:844'),'Mobile navigation certification does not use the required 390×844 viewport');
+check(mobileTopTabsTest.includes("['home','rankings','play','picks']")&&mobileTopTabsTest.includes('[data-native-ask]'),'Mobile navigation certification does not cover every enabled native destination and Intelligence action');
+check(mobileTopTabsTest.includes('scrollWidth<=snapshot.nav.clientWidth+1'),'Mobile navigation certification does not reject horizontal overflow');
+check(mobilePolish.includes('applyEventArtwork')&&mobilePolish.includes('UFC_PICKS_EVENT_VISUALS'),'Event artwork renderer is missing');
+check(mobilePolishCss.includes('position:relative!important')&&mobilePolishCss.includes('top:auto!important'),'Picks internal navigation still overlays fight content on mobile');
 check(mobilePolishCss.includes('picks-room-banner-compact'),'Compact room banner styling is missing');
-check(mobilePolishCss.includes('scroll-snap-type:x proximity'),'Mobile top navigation scroll affordance is missing');
-check(mobilePolishCss.includes('picks-event-hero.has-event-art') && mobilePolishCss.includes('picks-event-art'),'Event artwork styling is missing');
-check(mobilePolishCss.includes('>.picks-event-meta') && mobilePolishCss.includes('background:#101827'),'Event details are not separated below the artwork');
-check(mobilePolishCss.includes('.picks-photo-fallback[hidden]') && mobilePolishCss.includes(':has(>img)'),'Loaded fighter photos do not fully hide fallback initials');
+check(mobilePolishCss.includes('scroll-snap-type:x proximity'),'Mobile Picks navigation scroll affordance is missing');
+check(mobilePolishCss.includes('picks-event-hero.has-event-art')&&mobilePolishCss.includes('picks-event-art'),'Event artwork styling is missing');
+check(mobilePolishCss.includes('>.picks-event-meta')&&mobilePolishCss.includes('background:#101827'),'Event details are not separated below the artwork');
+check(mobilePolishCss.includes('.picks-photo-fallback[hidden]')&&mobilePolishCss.includes(':has(>img)'),'Loaded fighter photos do not fully hide fallback initials');
 
 check(oddsCoverage.includes('Not all odds available yet'),'Partial odds availability copy is missing');
 check(oddsCoverage.includes('Odds have not been posted yet'),'No-odds state is missing');
@@ -170,13 +180,17 @@ check(oddsCoverage.includes('Number(value)!==0'),'Zero odds are still treated as
 check(oddsCoverage.includes('Underdog Lock is unavailable until usable lines are posted'),'Underdog Lock no-odds explanation is missing');
 check(oddsCoverage.includes('you can still submit normal fight picks'),'No-odds state does not preserve normal fight-pick guidance');
 check(oddsCoverage.includes('Underdog Lock unavailable · normal picks still open'),'Underdog Lock no-odds summary is missing');
-check(oddsFunction.includes('THE_ODDS_API_KEY') && oddsFunction.includes('ODDS_REFRESH_SECRET'),'Odds function secrets are missing');
+check(oddsFunction.includes('THE_ODDS_API_KEY')&&oddsFunction.includes('ODDS_REFRESH_SECRET'),'Odds function secrets are missing');
 check(oddsFunction.includes('mma_mixed_martial_arts'),'Odds function is not restricted to MMA');
-check(oddsFunction.includes('red_odds') && oddsFunction.includes('blue_odds'),'Odds function does not update both fight lines');
+check(oddsFunction.includes('red_odds')&&oddsFunction.includes('blue_odds'),'Odds function does not update both fight lines');
 check(oddsFunction.includes('.eq("result_status", "scheduled")'),'Odds function can overwrite resolved fights');
-check(oddsSchedule.includes("cron: '17 12 * * *'"),'Daily odds refresh schedule is missing');
-check(oddsSchedule.includes('refresh-ufc-odds'),'Daily workflow does not invoke the odds function');
-check(oddsDeploy.includes('secrets set') && oddsDeploy.includes('--no-verify-jwt'),'Odds function deployment workflow is incomplete');
+check(oddsSchedule.includes("cron: '17 */6 * * *'"),'Six-hour odds refresh schedule is missing');
+check(oddsSchedule.includes('workflow_dispatch:'),'Manual card-and-odds refresh dispatch is missing');
+check(oddsSchedule.includes('refresh-ufc-odds'),'Scheduled workflow does not invoke the odds function');
+check(scheduledOddsOwners.length===1,`Expected one scheduled odds owner, found ${scheduledOddsOwners.length}: ${scheduledOddsOwners.map(item=>item.relative).join(', ')}`);
+check(scheduledOddsOwners[0]?.relative==='.github/workflows/refresh-ufc-odds.yml','The combined card-and-odds workflow is not the single scheduled owner');
+check(!/^\s*schedule:\s*$/m.test(oddsDeploy),'Deploy workflow must not own recurring odds refresh');
+check(oddsDeploy.includes('secrets set')&&oddsDeploy.includes('--no-verify-jwt'),'Odds function deployment workflow is incomplete');
 
 check(events.includes("id: 'ufc-oklahoma-city-2026-07-18'"),'UFC Oklahoma City event is missing');
 check(events.includes("red:'Chase Hooper', blue:'Mitch Ramirez'"),'Current Oklahoma City main card is missing Hooper vs. Ramirez');
@@ -188,7 +202,7 @@ for(const fighter of ['Tabatha Ricci','Fatima Kline','Tommy McMillen','Alberto M
   check(photos.includes(`"${fighter}": okcPhoto(`),`Official Picks photo mapping is missing for ${fighter}`);
 }
 check(photos.includes('"Marc-André Barriault": okcPhoto(\'marc-andre-barriault\')'),'Official Picks photo mapping is missing for Marc-André Barriault');
-check(eventVisuals.includes("'ufc-oklahoma-city-2026-07-18'") && eventVisuals.includes('ufc-oklahoma-city-du-plessis-usman.webp'),'Oklahoma City event artwork mapping is missing');
+check(eventVisuals.includes("'ufc-oklahoma-city-2026-07-18'")&&eventVisuals.includes('ufc-oklahoma-city-du-plessis-usman.webp'),'Oklahoma City event artwork mapping is missing');
 
 check(recovery.includes('picks_member_recovery_status'),'Recovery status RPC hook is missing');
 check(recovery.includes('picks_member_generate_recovery_key'),'Recovery key creation hook is missing');
@@ -206,9 +220,14 @@ check(settingsCleanup.includes("label==='EVENT CONTROL'"),'Commissioner event-co
 
 check(setup.includes('picks-event-automation-phase.sql` is retired and should not be run'),'Setup guide does not clearly retire Phase 11');
 check(setup.includes('picks-device-recovery-phase.sql'),'Setup guide does not include the device recovery migration');
-check(setup.includes('Home') && setup.includes('Event') && setup.includes('Settings'),'Setup guide does not document the current Picks structure');
-check(setup.includes('THE_ODDS_API_KEY') && setup.includes('ODDS_REFRESH_SECRET'),'Setup guide does not document automated odds secrets');
-check(setup.includes('Refresh UFC Odds'),'Setup guide does not document the daily odds workflow');
+check(setup.includes('Home')&&setup.includes('Event')&&setup.includes('Settings'),'Setup guide does not document the current Picks structure');
+check(setup.includes('THE_ODDS_API_KEY')&&setup.includes('ODDS_REFRESH_SECRET'),'Setup guide does not document automated odds secrets');
+check(setup.includes('Deploy UFC Card and Odds Sync'),'Setup guide does not document the current combined deploy workflow');
+check(setup.includes('single recurring owner'),'Setup guide does not identify one recurring odds owner');
+check(setup.includes('.github/workflows/refresh-ufc-odds.yml'),'Setup guide does not name the scheduled odds owner');
+check(setup.includes('every six hours at minute 17'),'Setup guide does not document the approved odds cadence');
+check(setup.includes('does not run an odds polling timer'),'Setup guide does not document client-side odds ownership');
+check(setup.includes('workflow_dispatch'),'Setup guide does not preserve manual refresh behavior');
 
 if(failures.length){
   console.error(`Picks UI smoke check failed with ${failures.length} issue${failures.length===1?'':'s'}:`);
@@ -216,4 +235,4 @@ if(failures.length){
   process.exit(1);
 }
 
-console.log(`Picks UI smoke check passed: ${assetRefs.length} local assets resolved, ${requiredFiles.length} required files present, 10 official Oklahoma City fighter thumbnails, artwork, reminders, mobile polish, and automated odds verified.`);
+console.log(`Picks UI smoke check passed: ${assetRefs.length} local assets resolved, ${requiredFiles.length} required files present, 10 official Oklahoma City fighter thumbnails, mobile 390×844 native navigation coverage, one six-hour odds owner, artwork, reminders, and setup documentation verified.`);
