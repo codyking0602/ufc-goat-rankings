@@ -17,7 +17,7 @@ on:
       - '.github/workflows/refresh-ufc-odds.yml'
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: deploy-ufc-card-and-odds-sync
@@ -104,21 +104,77 @@ jobs:
             --data '{"source":"deploy-workflow"}' \
             "https://$PROJECT_REF.supabase.co/functions/v1/advance-picks-event"
 
-      - name: Upload card-sync evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ufc-card-deploy-sync-${{ github.run_id }}
-          path: artifacts/ufc-card-sync
-          if-no-files-found: ignore
-          retention-days: 14
-
-      - name: Test odds refresh
+      - name: Verify deployed odds refresh
+        id: odds_refresh
+        continue-on-error: true
         shell: bash
         run: |
+          mkdir -p artifacts/ufc-odds-refresh
+          set -o pipefail
           curl --fail-with-body --retry 2 \
             --request POST \
             --header "content-type: application/json" \
             --header "x-odds-refresh-secret: $ODDS_REFRESH_SECRET" \
             --data '{"source":"deploy-workflow"}' \
-            "https://$PROJECT_REF.supabase.co/functions/v1/refresh-ufc-odds"
+            "https://$PROJECT_REF.supabase.co/functions/v1/refresh-ufc-odds" \
+            | tee artifacts/ufc-odds-refresh/odds-refresh-response.json
+
+      - name: Publish deployed odds health
+        if: always()
+        env:
+          ODDS_OUTCOME: ${{ steps.odds_refresh.outcome }}
+        shell: bash
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
+          node <<'NODE'
+          const fs=require('node:fs');
+          const path=require('node:path');
+          const responsePath=path.join('artifacts','ufc-odds-refresh','odds-refresh-response.json');
+          let response={};
+          if(fs.existsSync(responsePath)){
+            try{response=JSON.parse(fs.readFileSync(responsePath,'utf8'));}
+            catch(error){response={parseError:error.message,raw:fs.readFileSync(responsePath,'utf8').slice(0,4000)};}
+          }
+          const health={
+            outcome:process.env.ODDS_OUTCOME||'unknown',
+            provider:response.provider||null,
+            sport:response.sport||null,
+            activeEvents:response.activeEvents??null,
+            scheduledFights:response.scheduledFights??null,
+            providerEvents:response.providerEvents??null,
+            matched:response.matched??null,
+            updated:response.updated??null,
+            reconciled:Array.isArray(response.reconciled)?response.reconciled:[],
+            missing:Array.isArray(response.missing)?response.missing:[],
+            failures:Array.isArray(response.failures)?response.failures:[],
+            quota:response.quota||null,
+            refreshedAt:response.refreshedAt||new Date().toISOString(),
+            error:response.error||response.detail||response.parseError||null
+          };
+          fs.mkdirSync(path.join('assets','data'),{recursive:true});
+          fs.writeFileSync(path.join('assets','data','picks-odds-health.json'),JSON.stringify(health,null,2)+'\n');
+          NODE
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/data/picks-odds-health.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Record deployed UFC odds health [skip ci]"
+            git push
+          fi
+
+      - name: Upload sync evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ufc-card-and-odds-deploy-${{ github.run_id }}
+          path: |
+            artifacts/ufc-card-sync
+            artifacts/ufc-odds-refresh
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Fail when deployed odds refresh failed
+        if: always() && steps.odds_refresh.outcome != 'success'
+        shell: bash
+        run: exit 1
