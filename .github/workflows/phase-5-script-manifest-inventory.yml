@@ -35,7 +35,7 @@ jobs:
           node-version: '22'
       - name: Validate inventory syntax
         run: node --check scripts/audit-phase-5-script-manifest.mjs
-      - name: Enforce production script manifest ownership
+      - name: Build production script manifest inventory
         run: |
           set -o pipefail
           node scripts/audit-phase-5-script-manifest.mjs 2>&1 | tee /tmp/phase-5-script-manifest-inventory.json
