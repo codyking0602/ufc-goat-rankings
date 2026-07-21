@@ -8,6 +8,8 @@
   const config = window.UFC_SUPABASE_CONFIG || {};
   const supabaseReady = Boolean(config.url && config.anonKey && window.supabase?.createClient);
   const client = supabaseReady ? window.supabase.createClient(config.url,config.anonKey) : null;
+  const EVENT_REFRESH_INTERVAL_MS=5*60*1000;
+  let eventRefreshBusy=false;
   const state = {
     events:eventsFallback,
     event:eventsFallback[0] || null,
@@ -605,13 +607,28 @@
   }
 
   async function loadBackendEvents(preserveEvent=false){
-    if(!client) return;
+    if(!client) return false;
     const {data,error}=await client.rpc('picks_public_events');
-    if(error || !Array.isArray(data) || !data.length) return;
+    if(error || !Array.isArray(data) || !data.length) return false;
     const current=state.event?.id;
     state.events=data;
     state.event=preferredEvent(state.events,current);
     if(!preserveEvent) loadLocalPicks();
+    return true;
+  }
+
+  async function refreshEventData({refreshRoomSnapshot=Boolean(state.room)}={}){
+    if(eventRefreshBusy) return false;
+    eventRefreshBusy=true;
+    try{
+      const loaded=await loadBackendEvents(true);
+      if(!loaded) return false;
+      if(refreshRoomSnapshot && state.room) await refreshRoom();
+      else render();
+      return true;
+    }finally{
+      eventRefreshBusy=false;
+    }
   }
 
   async function resumeRoomFromUrl(){
@@ -646,6 +663,13 @@
     $('picksCreateMode')?.addEventListener('click',()=>setRoomMode('create'));
     $('picksJoinMode')?.addEventListener('click',()=>setRoomMode('join'));
     $('picksRoomAction')?.addEventListener('click',handleRoomAction);
+    window.addEventListener('octagon-hq:view-change',event=>{
+      if(event.detail?.destination==='picks') void refreshEventData();
+    });
+    window.addEventListener('octagon-hq:soft-refresh',()=>void refreshEventData());
+    document.addEventListener('visibilitychange',()=>{
+      if(!document.hidden) void refreshEventData();
+    });
   }
 
   async function init(){
@@ -665,10 +689,18 @@
     render();
     await resumeRoomFromUrl();
     setInterval(async()=>{
-      if(state.room){ await loadBackendEvents(true); await refreshRoom(); }
+      if(state.room) await refreshEventData({refreshRoomSnapshot:true});
       else renderFights();
     },30000);
+    setInterval(()=>void refreshEventData(),EVENT_REFRESH_INTERVAL_MS);
   }
+
+  window.UFC_PICKS={
+    ...(window.UFC_PICKS || {}),
+    refreshEvents:()=>refreshEventData(),
+    get events(){return state.events;},
+    get event(){return state.event;}
+  };
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init,{once:true});
   else init();
