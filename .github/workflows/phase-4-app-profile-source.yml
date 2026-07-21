@@ -1,0 +1,29 @@
+name: Phase 4 App Profile Source
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'assets/js/app-profile.js'
+      - 'scripts/test-app-profile-group-snapshot-contract.mjs'
+      - 'scripts/test-app-profile-group-snapshot-single.mjs'
+      - '.github/workflows/phase-4-app-profile-source.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Upload target source
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase-4-app-profile-source
+          path: |
+            assets/js/app-profile.js
+            scripts/test-app-profile-group-snapshot-contract.mjs
+            scripts/test-app-profile-group-snapshot-single.mjs
