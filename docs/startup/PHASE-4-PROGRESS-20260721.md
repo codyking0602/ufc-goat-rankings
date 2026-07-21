@@ -214,24 +214,88 @@ The existing passive identity proof continues to certify zero resolver/storage/s
 - Phase 4 Startup Work Inventory #15: passed.
 - Production merge: `8df258a6dc7e20560783f30d6e974476e62ac5d6`.
 
+## Batch 4 — War Room access startup status retries
+
+### Measured avoidable work
+
+`assets/js/octagon-access-panel.js` performed `ensurePanel()` and `checkCurrentAccess()` at 0, 250, 900, 2600, and 5000 milliseconds.
+
+The only additional risk versus the notification owner was local panel mounting. The production load order and owner lifecycle proved that risk was already closed:
+
+- `assets/js/octagon-message-board.js` loads before the access panel;
+- the board owner registers its `DOMContentLoaded` listener first;
+- the board owner synchronously runs `installStyles()`, `mount()`, and `bindTab()` before the access-panel startup listener runs;
+- the access owner’s first `ensurePanel()` therefore sees the mounted board/header/actions structure.
+
+The access owner already retained the correct late-work boundaries:
+
+- passive cached identity only;
+- one in-flight `octagon_access_status` request owner;
+- canonical identity readiness/update events;
+- realtime `access-change` verification;
+- visibility and online recovery;
+- a separate 60-second server verification poll;
+- Cody-only roster loading and access-toggle actions.
+
+### Production boundary after PR #179
+
+PR #179 replaced the five startup attempts with:
+
+1. one immediate `installStyles()` call;
+2. one immediate `ensurePanel()` call;
+3. one immediate passive `checkCurrentAccess()` attempt.
+
+The immediate attempt performs one access-status RPC when identity is already cached. Without identity, it performs no RPC, keeps the War Room locked, keeps the Cody management control hidden, and waits for an existing readiness event.
+
+The following remain unchanged:
+
+- identity readiness/update scheduling;
+- one in-flight request coalescing;
+- realtime access-change verification;
+- visibility and online recovery;
+- the 60-second verification poll;
+- Cody-only roster and access-toggle RPCs;
+- access rules and War Room tab state.
+
+### Permanent proof
+
+The static contract verifies board-before-access load order, synchronous board mounting, one immediate access shell/status attempt, absence of the 0/250/900/2600/5000 array, readiness/realtime/lifecycle handoffs, the 60-second poll, and Cody management ownership.
+
+The 390×844 mobile proof covers:
+
+- uncached startup through the complete former five-second retry window: zero access-status RPCs, one management control shell, one access-panel shell, a locked War Room tab, and hidden management;
+- a later canonical identity event: exactly one RPC, enabled War Room access, and visible Cody management;
+- pre-cached startup through the complete former window: exactly one RPC, not five;
+- the preserved 60-second poll callback: one additional access-status RPC.
+
+The existing access identity proof continues to certify zero resolver/storage/sign-in ownership, one readiness RPC, competing-request coalescing, and Cody roster/toggle actions. The new proof is imported by the iOS startup suite.
+
+- Exact tested head: `5458ba3545476846d16bbaf58ed279a344dddbdc`.
+- Startup Architecture Gate #188: passed.
+- Dedicated iOS Home Startup Stability #52: passed on unchanged rerun after the first dedicated attempt was cancelled during execution.
+- Phase 4 Startup Work Inventory #18: passed.
+- Production merge: `002b31f5ccad3db185b5a6053cb620925482c426`.
+
 ## Known unrelated red workflows
 
 The inspected failures do not reference the isolated Phase 4 responsibilities:
 
 - Picks UI Smoke #840 passed Picks JavaScript syntax, then failed the existing checks for mobile top-tab auto-centering, a daily odds refresh schedule, and setup-guide documentation.
-- Production Ranking Browser Smoke #589, #593, and #598 stopped at the existing **Audit every fighter photo path** step before ranking and mobile-profile certification.
-- Scoring Architecture Guardrails #1415, #1418, and #1422 passed syntax, profile-copy coverage, and physical source ownership, then stopped at the established permanent runtime contract step.
+- Production Ranking Browser Smoke #589, #593, #598, and #603 stopped at the existing **Audit every fighter photo path** step before ranking and mobile-profile certification.
+- Scoring Architecture Guardrails #1415, #1418, #1422, and #1426 passed syntax, profile-copy coverage, and physical source ownership, then stopped at the established permanent runtime contract step.
 
 ## Next audit order
 
 Continue from the current inventory one measured responsibility at a time.
 
-The next audit should inspect the War Room access-status owner in `assets/js/octagon-access-panel.js`, separating:
+The next audit should inspect the War Room board owner’s local mount/bind startup retries in `assets/js/octagon-message-board.js` at 50, 220, 850, and 2200 milliseconds.
 
-1. local access-panel shell installation;
-2. startup/readiness access-status requests;
-3. active War Room route entry;
-4. visibility/online/realtime or polling behavior;
-5. Cody-only access-management actions.
+Separate:
 
-Do not combine access-status startup-work reduction with identity ownership, board rendering, notification status, or access-rule changes.
+1. synchronous initial `mount()` and `bindTab()`;
+2. late availability of the static `#octagon` root and beta tab;
+3. active War Room startup loading;
+4. canonical identity readiness loading;
+5. route/visibility/online/realtime behavior.
+
+Do not combine board mount retry reduction with message-board RPC ownership, access rules, notification state, realtime semantics, or active-route load behavior.
