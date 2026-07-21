@@ -3,7 +3,7 @@ import {
   matchupMatches,
   normalizeName,
   sameFighterName
-} from '../supabase/functions/_shared/ufc-name-matching.js';
+} from '../supabase/functions/_shared/ufc-name-matching.mjs';
 
 assert.equal(normalizeName('Jan Błachowicz'), 'janblachowicz');
 assert.equal(normalizeName('Uroš Medić'), 'urosmedic');
