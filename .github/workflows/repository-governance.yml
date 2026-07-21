@@ -1,0 +1,108 @@
+name: Repository Governance
+
+on:
+  pull_request_target:
+    branches: [main]
+    types: [opened, edited, reopened, synchronize, ready_for_review]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: repository-governance-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  repository-governance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Enforce PR ownership and exact-head contract
+        if: github.event_name == 'pull_request_target'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const body = pr.body || '';
+            const headSha = pr.head.sha;
+            const failures = [];
+
+            const requiredHeadings = [
+              '## Scope',
+              '## Ownership',
+              '## Duplicate-responsibility check',
+              '## Behavior',
+              '## Exact-head validation',
+              '## Restricted filename justification'
+            ];
+
+            for (const heading of requiredHeadings) {
+              if (!body.includes(heading)) failures.push(`Missing PR section: ${heading}`);
+            }
+
+            const requiredChecks = [
+              'I changed the existing canonical owner or documented an intentional ownership transfer.',
+              'I did not add a second startup, identity, route, refresh, scoring, data, or rendering owner.',
+              'I did not add a late patch, fallback, repair loop, or duplicate initializer instead of fixing the canonical owner.',
+              'I listed the user-visible and protected behavior that remains unchanged.',
+              'The relevant automated checks ran against the exact PR head listed above.'
+            ];
+
+            const escapeRegExp = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            for (const label of requiredChecks) {
+              const checked = new RegExp(`- \\[x\\]\\s+${escapeRegExp(label)}`, 'i').test(body);
+              if (!checked) failures.push(`Unchecked required item: ${label}`);
+            }
+
+            if (!body.includes(headSha)) {
+              failures.push(`Exact-head validation must list the current PR head: ${headSha}`);
+            }
+
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+              per_page: 100
+            });
+
+            const restrictedTokens = new Set([
+              'patch', 'patches',
+              'fallback', 'fallbacks',
+              'guard', 'guards', 'guardrail', 'guardrails',
+              'hotfix', 'hotfixes'
+            ]);
+
+            const hasRestrictedToken = filename => filename
+              .toLowerCase()
+              .split(/[^a-z0-9]+/)
+              .some(token => restrictedTokens.has(token));
+
+            const restrictedNewFiles = files
+              .filter(file => file.status === 'added' || file.status === 'renamed')
+              .map(file => file.filename)
+              .filter(hasRestrictedToken);
+
+            if (restrictedNewFiles.length) {
+              const section = body.split('## Restricted filename justification')[1]?.split(/^## /m)[0]?.trim() || '';
+              if (!section || /^none\.?$/i.test(section) || section.length < 60) {
+                failures.push('Restricted new filenames require a substantive justification in the PR body.');
+              }
+              for (const filename of restrictedNewFiles) {
+                if (!section.includes(filename)) failures.push(`Restricted filename justification must name: ${filename}`);
+              }
+            }
+
+            await core.summary
+              .addHeading('Repository governance')
+              .addRaw(`PR head: \`${headSha}\`\n\n`)
+              .addRaw(`Changed files: ${files.length}\n\n`)
+              .addRaw(`Restricted new filenames: ${restrictedNewFiles.length ? restrictedNewFiles.map(name => `\`${name}\``).join(', ') : 'none'}\n`)
+              .write();
+
+            if (failures.length) core.setFailed(failures.join('\n'));
+
+      - name: Confirm workflow availability
+        if: github.event_name == 'workflow_dispatch'
+        run: echo 'Repository Governance is available for main-branch protection.'
