@@ -55,8 +55,8 @@ async function snapshot(page){
     betaAccess:document.querySelector('[data-octagon-beta-tab]')?.dataset.betaAccess||'',
     manageButtons:document.querySelectorAll('[data-octagon-manage-beta]').length,
     manageHidden:document.querySelector('[data-octagon-manage-beta]')?.hidden,
-    panels:document.querySelectorAll('[data-octagon-access-panel]').length,
-    panelHidden:document.querySelector('[data-octagon-access-panel]')?.hidden
+    panels:document.querySelectorAll('section[data-octagon-access-panel]').length,
+    panelHidden:document.querySelector('section[data-octagon-access-panel]')?.hidden
   }));
 }
 
