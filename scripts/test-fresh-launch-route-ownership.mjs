@@ -11,33 +11,10 @@ async function pageFor(context){
   const page=await context.newPage();
   await page.addInitScript(()=>{
     window.__freshLaunchRouteEvents=[];
-    window.__freshLaunchRouteCalls=[];
-    window.__freshLaunchHashChanges=[];
-    window.__freshLaunchNavClicks=[];
-    let shellApi;
-    Object.defineProperty(window,'UFC_APP_SHELL',{
-      configurable:true,
-      get(){return shellApi;},
-      set(value){
-        shellApi=value;
-        if(!value||value.__freshLaunchRouteProofWrapped)return;
-        Object.defineProperty(value,'__freshLaunchRouteProofWrapped',{value:true});
-        for(const method of ['activateDestination','activateView']){
-          const original=value[method];
-          if(typeof original!=='function')continue;
-          value[method]=function(...args){
-            window.__freshLaunchRouteCalls.push({method,args,current:value.currentDestination||'',stack:new Error().stack||''});
-            return original.apply(value,args);
-          };
-        }
-      }
-    });
-    window.addEventListener('octagon-hq:view-change',event=>window.__freshLaunchRouteEvents.push({destination:event.detail?.destination||'',view:event.detail?.view||''}));
-    window.addEventListener('hashchange',()=>window.__freshLaunchHashChanges.push({url:location.href,stack:new Error().stack||''}));
-    document.addEventListener('click',event=>{
-      const node=event.target.closest?.('nav.tabs [data-destination],[data-rankings-subnav] [data-ranking-view]');
-      if(node)window.__freshLaunchNavClicks.push({destination:node.dataset.destination||'',view:node.dataset.rankingView||'',trusted:event.isTrusted,stack:new Error().stack||''});
-    },true);
+    window.addEventListener('octagon-hq:view-change',event=>window.__freshLaunchRouteEvents.push({
+      destination:event.detail?.destination||'',
+      view:event.detail?.view||''
+    }));
   });
   await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',route=>route.fulfill({status:200,contentType:'application/javascript',body:stub}));
   return page;
@@ -53,9 +30,6 @@ const snap=page=>page.evaluate(()=>({
   destination:window.UFC_APP_SHELL.currentDestination,
   active:[...document.querySelectorAll('main.shell>.view.active-view')].map(node=>node.id),
   events:[...window.__freshLaunchRouteEvents],
-  calls:[...window.__freshLaunchRouteCalls],
-  hashChanges:[...window.__freshLaunchHashChanges],
-  navClicks:[...window.__freshLaunchNavClicks],
   navigationType:window.UFC_FRESH_HOME_LAUNCH.navigationType
 }));
 
@@ -72,17 +46,21 @@ try{
   assert.equal(homeStart.destination,'home');
   assert.deepEqual(homeStart.active,['home']);
   assert.deepEqual(homeStart.events,[{destination:'home',view:'home'}]);
-  await home.evaluate(()=>window.UFC_FRESH_HOME_LAUNCH.activateHome('proof'));
+
+  await home.evaluate(()=>window.UFC_FRESH_HOME_LAUNCH.activateHome('ownership-proof'));
   await home.waitForTimeout(100);
-  report.snapshots.homeRepeat=await snap(home);
-  assert.equal(report.snapshots.homeRepeat.events.length,1,'Already-active Home emitted a duplicate route event.');
-  await home.evaluate(()=>window.UFC_FRESH_HOME_LAUNCH.activatePicks('proof'));
+  const homeRepeat=await snap(home);
+  report.snapshots.homeRepeat=homeRepeat;
+  assert.equal(homeRepeat.events.length,1,'Already-active Home emitted a duplicate route event.');
+
+  await home.evaluate(()=>window.UFC_FRESH_HOME_LAUNCH.activatePicks('ownership-proof'));
   await home.waitForTimeout(100);
-  await home.evaluate(()=>window.UFC_FRESH_HOME_LAUNCH.activatePicks('proof-repeat'));
+  await home.evaluate(()=>window.UFC_FRESH_HOME_LAUNCH.activatePicks('ownership-proof-repeat'));
   await home.waitForTimeout(100);
   const direct=await snap(home);
   report.snapshots.direct=direct;
   assert.equal(direct.destination,'picks');
+  assert.deepEqual(direct.active,['picks']);
   assert.equal(direct.events.length,2,'Picks should receive one real handoff and no duplicate repeat.');
   await home.close();
 
@@ -98,7 +76,7 @@ try{
   assert.equal(picksReload.navigationType,'reload');
   assert.equal(picksReload.destination,'picks');
   assert.deepEqual(picksReload.active,['picks']);
-  assert.deepEqual(picksReload.events,[{destination:'picks',view:'picks'}]);
+  assert.deepEqual(picksReload.events,[{destination:'picks',view:'picks'}],'A Picks reload must publish exactly one canonical route event.');
   await reload.close();
 
   report.phase='bare-picks-invite';
@@ -109,7 +87,7 @@ try{
   report.snapshots.bareInvite=bareInvite;
   assert.equal(bareInvite.destination,'picks');
   assert.deepEqual(bareInvite.active,['picks']);
-  assert.deepEqual(bareInvite.events,[{destination:'home',view:'home'},{destination:'picks',view:'picks'}]);
+  assert.deepEqual(bareInvite.events,[{destination:'home',view:'home'},{destination:'picks',view:'picks'}],'A bare Picks invite must retain one necessary Home-to-Picks recovery handoff.');
   await invite.close();
 
   await context.close();
