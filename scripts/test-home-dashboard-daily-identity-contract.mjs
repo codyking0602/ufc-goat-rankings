@@ -3,7 +3,7 @@ import fs from 'node:fs';
 
 const source=fs.readFileSync('assets/js/home-dashboard.js','utf8');
 const cached=source.match(/function cachedIdentity\(\)\{([\s\S]*?)\}/);
-const sync=source.match(/async function syncOfficialDaily\(force=false\)\{([\s\S]*?)\n  \}\n\n  function preferredEvent/);
+const sync=source.match(/async function syncOfficialDaily\(force=false\)\{([\s\S]*?)\n  \}\n\n  function /);
 
 assert(cached,'Home Dashboard cached identity boundary could not be identified.');
 assert(sync,'Home Dashboard official daily sync boundary could not be identified.');
