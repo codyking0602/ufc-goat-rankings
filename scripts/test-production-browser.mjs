@@ -160,6 +160,12 @@ try{
   assert.ok(compareOptions.some(text=>text.includes(PETTIS)),'Pettis appears in Compare selector');
 
   await activateView('play');
+  const wavelengthCard=await page.evaluate(()=>{
+    const card=document.querySelector('#playHub [data-open-game="top10"]');
+    return{status:card?.querySelector('.play-game-card-top em')?.textContent?.trim()||'',isNew:Boolean(card?.classList.contains('is-new'))};
+  });
+  assert.equal(wavelengthCard.status,'PLAY NOW');
+  assert.equal(wavelengthCard.isNew,false);
   await page.locator('#playHub [data-open-game="top10"]').click();
   await page.waitForFunction(()=>document.documentElement.getAttribute('data-play-screen')==='wavelength',null,{timeout:10000});
   await page.locator('#playTop10Panel [data-wavelength-stage]').waitFor({state:'visible',timeout:10000});
