@@ -4,9 +4,11 @@ _Last updated: 2026-07-21_
 
 ## Current position
 
-- **Production `main`:** `ba2c24f6c22333a73a041d59aa8aef9bdd5642a3`.
-- **Latest startup runtime merge:** PR #157, `ba2c24f6c22333a73a041d59aa8aef9bdd5642a3`.
-- **Current phase:** Phase 3 — retire repair loops. No Phase 3 runtime removal has started.
+- **Production `main`:** `aa09175a99fcd1b381645e96e74531336674346f`.
+- **Latest startup runtime merge:** PR #159, `aa09175a99fcd1b381645e96e74531336674346f`.
+- **Exact latest tested runtime head:** `c274c5d1c35f2d1b212632dd181e5f29343c1178`.
+- **Latest complete Startup Architecture Gate:** run #151 passed.
+- **Current phase:** Phase 3 — retire repair loops. First production batch complete.
 - **Phase 0:** Complete.
 - **Phase 1:** Complete.
 - **Phase 2:** Complete.
@@ -14,6 +16,7 @@ _Last updated: 2026-07-21_
 - **Visible product changes approved:** None. The zero-visible-change contract remains in force.
 - **Master tracker:** [Issue #102](https://github.com/codyking0602/ufc-goat-rankings/issues/102).
 - **Completed Phase 2 ledger:** [`PHASE-2-PROGRESS-20260721.md`](./PHASE-2-PROGRESS-20260721.md).
+- **Current Phase 3 ledger:** [`PHASE-3-PROGRESS-20260721.md`](./PHASE-3-PROGRESS-20260721.md).
 
 The older percentage estimates are superseded.
 
@@ -65,27 +68,6 @@ Completed isolated corrections:
 
 PR #144 was a test-only correction and changed no production behavior.
 
-## Latest completed batch — PR #157
-
-Production-loaded identity startup previously validated the same stored member token twice:
-
-- `app-canonical-group.js` validated a canonical or historical token before adoption;
-- `play-profile-identity.js` awaited that migration and then independently called the same snapshot path for the same token.
-
-PR #157 now:
-
-- keeps historical-token discovery, validation, canonical adoption, admin/room migration, URL normalization, and one-time reload ownership in `app-canonical-group.js`;
-- returns the already-resolved identity as a bounded migration handoff;
-- lets `play-profile-identity.js` validate that handoff shape, cache it, normalize canonical storage, and publish `ufc-play-profile-ready` without another snapshot RPC;
-- preserves independent canonical resolution when migration has no valid result;
-- preserves current login, legacy login fallback, explicit `require()`, migration-specific readiness, and reload-loop protection.
-
-Startup Architecture Gate #149 passed completely on exact tested head `908f265dad46603b5556613effbd830214cb78d4`. Production merge: `ba2c24f6c22333a73a041d59aa8aef9bdd5642a3`.
-
-The focused static and mobile-browser proof covered canonical tokens, historical tokens, schema fallback, repeated `resolve()` calls, independent owner fallback, canonical storage adoption, one canonical profile-ready publication, and preserved migration reload behavior.
-
-Known unrelated workflows remained confined to their established diagnostics: fighter-photo auditing and the permanent scoring source/runtime contract. Neither referenced the isolated identity runtime or proof files.
-
 ## Phase 2 closure audit
 
 After PR #157 merged, the production load map was rebuilt from `index.html` and checked against the current startup contract and production-loaded JavaScript only.
@@ -100,7 +82,66 @@ The closing audit found no remaining demonstrated competing owner for:
 - native pull final refresh;
 - startup, readiness, route, visibility, reconnect, realtime, polling, timer, observer, or direct-call paths requesting the same proved expensive work.
 
-`native-app-shell-stability.js` and other compatibility layers remain Phase 3 candidates, not Phase 2 ownership defects. Phase 2 is therefore formally closed rather than extended with an unproved cleanup.
+Phase 2 is formally complete. Compatibility and repair layers moved into Phase 3 rather than being treated as unproved duplicate-owner defects.
+
+## Latest completed batch — Phase 3 PR #159
+
+### Proven repair loop
+
+`assets/js/native-app-shell-stability.js` previously contained an independent `repairSpotlight()` renderer. It could wake from:
+
+- arbitrary Home mutations;
+- scoring and production-ranking readiness events;
+- route and soft-refresh events;
+- six delayed startup retries through 3.6 seconds.
+
+It read raw ranking globals and local storage, then directly replaced the canonical `.home-spotlight-loading` node through `outerHTML`.
+
+`assets/js/home-dashboard.js` already owns:
+
+- calculated-ranking readiness;
+- the Spotlight loading placeholder;
+- deterministic daily fighter selection and persistence;
+- Spotlight markup and actions;
+- Home route re-entry and visibility recovery;
+- identical-markup suppression.
+
+PR #159 therefore removed only the duplicate Spotlight repair and its triggers. It did not delete the stability file.
+
+### Legitimate recovery preserved
+
+The batch retained:
+
+- fighter-profile Resume Snapshot repair;
+- drawer/body open-state synchronization;
+- native-destination drawer dismissal;
+- malformed **What’s New** button normalization;
+- route and soft-refresh presentation recovery;
+- the narrowed MutationObserver;
+- all bounded delayed-startup passes.
+
+### Proof
+
+The focused mobile proof withheld ranking readiness beyond the previous 3.6-second retry window, mutated Home, exercised signed-out and published-profile events, repeated ranking readiness, changed routes, simulated foreground recovery, directly repeated stability schedules, and refreshed.
+
+Only `home-dashboard.js` replaced the placeholder after canonical readiness. The stability layer produced zero Spotlight `outerHTML` writes, zero duplicate cards, and zero unchanged Home rewrites.
+
+- Dedicated iOS Home Startup Stability #22: passed.
+- Startup Architecture Gate #151: passed completely.
+- Exact tested head: `c274c5d1c35f2d1b212632dd181e5f29343c1178`.
+- Production merge: `aa09175a99fcd1b381645e96e74531336674346f`.
+
+## Known unrelated red workflows
+
+These remain outside startup ownership unless a failure directly references an isolated changed line:
+
+- Production Ranking Browser Smoke #560 stopped at the existing fighter-photo path audit before ranking/browser certification.
+- Scoring Architecture Guardrails #1389 passed syntax and physical source ownership, then failed stale roster/rank/display expectations: 73 expected versus 80 current fighters/facts, judgment count 74, category audit state, Henry Cejudo and Royce Gracie pinned ranks, and Alexandre Pantoja display diagnostics.
+- Production Ranking Pipeline and Snapshot may stop on stale ranking/roster certification expectations.
+- Validate Phase 4B Preview may stop at its historical hard-pinned architecture check.
+- Picks UI Smoke may report an existing Picks product/static-contract finding.
+
+None of the inspected #560 or #1389 failures referenced the four isolated PR #159 files.
 
 ## Testing and interruption policy
 
@@ -118,21 +159,11 @@ Request Cody only when a genuine unresolved user-only or physical-only uncertain
 
 Unrelated automated odds-health, deployment, documentation, or generated-file commits do not invalidate passing startup evidence when their changed files are proven non-overlapping.
 
-## Known unrelated red workflows
-
-These remain outside startup ownership unless a failure directly references an isolated changed line:
-
-- Production Ranking Browser Smoke may stop at fighter-photo path/render audits.
-- Production Ranking Pipeline and Snapshot may stop on stale ranking/roster certification expectations.
-- Scoring Architecture Guardrails may stop in the existing permanent source/runtime contract.
-- Validate Phase 4B Preview may stop at its historical hard-pinned architecture check.
-- Picks UI Smoke may report an existing Picks product/static-contract finding.
-
 ## Exact next action
 
-1. Start Phase 3 from current production `main`.
-2. Audit one repair or compatibility loop at a time; do not broadly delete repair code.
-3. Name the canonical source behavior that makes the repair removable and prove every startup, timer, observer, route, mutation, and direct-call path first.
-4. `assets/js/native-app-shell-stability.js` is a candidate only after source behavior and focused browser evidence prove a specific repair redundant.
-5. Preserve the zero-visible-change contract and all legitimate recovery paths.
-6. Continue autonomously under the same CI-first and interruption rules.
+1. Continue Phase 3 from current production `main`.
+2. Audit one remaining behavior in `assets/js/native-app-shell-stability.js` at a time.
+3. Trace the profile snapshot repair, malformed **What’s New** normalization, drawer/body synchronization, observer breadth, and delayed startup timers to their current owners before changing any of them.
+4. Preserve native-destination overlay dismissal and any real delayed-DOM or lifecycle recovery.
+5. Add a focused static boundary and mobile delayed-observation proof for the next isolated batch.
+6. Do not broadly remove the observer, timers, or stability file.
