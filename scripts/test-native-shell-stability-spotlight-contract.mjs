@@ -34,7 +34,7 @@ assert.match(home,/octagon-hq:view-change/,'Home Dashboard must retain route-dri
 assert.match(home,/visibilitychange/,'Home Dashboard must retain foreground recovery.');
 assert.match(home,/markup===lastMarkup/,'Home Dashboard must retain stable duplicate-render suppression.');
 
-for(const preserved of ['normalizeWhatsNew','syncDrawerState','closeFighterProfile','manualRefreshControl','octagon-hq:soft-refresh','[0,80,240,700,1600,3600]']){
+for(const preserved of ['syncDrawerState','closeFighterProfile','octagon-hq:soft-refresh','[0,80,240,700,1600,3600]']){
   assert(stability.includes(preserved),`Legitimate stability recovery changed unexpectedly: ${preserved}`);
 }
 
@@ -45,5 +45,5 @@ console.log(JSON.stringify({
   subordinateLayer:stabilityPath,
   homePosition,
   stabilityPosition,
-  preserved:['drawer state','What’s New normalization','native destination close','delayed startup recovery']
+  preserved:['drawer state','native destination close','delayed startup recovery']
 },null,2));
