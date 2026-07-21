@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='app-canonical-group-20260717b';
+  const VERSION='app-canonical-group-20260721c-resolved-handoff';
   const CANONICAL_CODE='GOAT26';
   const GROUP_TOKEN_PREFIX='ufc-picks:group:';
   const GROUP_ADMIN_PREFIX='ufc-picks:group-admin:';
@@ -59,15 +59,25 @@
     });
   }
 
+  function resolvedHandoff(candidate,identity){
+    return {
+      ...(identity||{}),
+      groupCode:CANONICAL_CODE,
+      memberToken:candidate.token,
+      member_token:candidate.token,
+      migrationSourceCode:candidate.code
+    };
+  }
+
   async function resolveCandidate(candidate){
     let response=await client.rpc('app_profile_resolve',{p_member_token:candidate.token});
-    if(!response.error&&response.data?.ok)return response.data;
+    if(!response.error&&response.data?.ok)return resolvedHandoff(candidate,response.data);
 
     response=await client.rpc('play_identity_snapshot',{
       p_group_code:CANONICAL_CODE,
       p_member_token:candidate.token
     });
-    return !response.error&&response.data?.ok ? response.data : null;
+    return !response.error&&response.data?.ok ? resolvedHandoff(candidate,response.data) : null;
   }
 
   async function adopt(){

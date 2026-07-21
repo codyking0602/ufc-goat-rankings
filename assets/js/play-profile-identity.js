@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='play-profile-identity-20260720a-canonical-login-owner';
+  const VERSION='play-profile-identity-20260721b-reuse-migration-handoff';
   const CANONICAL_CODE='GOAT26';
   const GROUP_TOKEN_PREFIX='ufc-picks:group:';
   const GROUP_ADMIN_PREFIX='ufc-picks:group-admin:';
@@ -26,7 +26,18 @@
   const remove=key=>{try{localStorage.removeItem(key);}catch(_error){}};
 
   async function waitForCanonicalBridge(){
-    try{await window.UFC_APP_IDENTITY_CONFIG?.ready;}catch(_error){}
+    try{return await window.UFC_APP_IDENTITY_CONFIG?.ready||null;}catch(_error){return null;}
+  }
+
+  function migrationIdentity(identity){
+    const token=String(identity?.memberToken||identity?.member_token||'');
+    if(!identity?.ok||!token)return null;
+    return {
+      ...identity,
+      groupCode:CANONICAL_CODE,
+      memberToken:token,
+      member_token:token
+    };
   }
 
   function candidateTokens(){
@@ -75,8 +86,15 @@
   }
 
   async function resolve(){
-    await waitForCanonicalBridge();
+    const bridged=migrationIdentity(await waitForCanonicalBridge());
     if(cache&&get(`${GROUP_TOKEN_PREFIX}${CANONICAL_CODE}`)===cache.memberToken)return cache;
+
+    if(bridged){
+      cache=bridged;
+      storeResolved(bridged);
+      window.dispatchEvent(new CustomEvent('ufc-play-profile-ready',{detail:bridged}));
+      return bridged;
+    }
 
     for(const token of candidateTokens()){
       try{

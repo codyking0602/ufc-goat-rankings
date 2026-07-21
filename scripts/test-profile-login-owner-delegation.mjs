@@ -205,3 +205,5 @@ try{
 }finally{
   if(browser)await browser.close();
 }
+
+await import('./test-canonical-migration-identity-owner.mjs');
