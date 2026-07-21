@@ -76,8 +76,8 @@ jobs:
       - name: Install mobile browser runtime
         working-directory: repo
         run: |
-          npm install --no-save --silent playwright@1.54.2
-          npx playwright install --with-deps chromium
+          npm install --no-save --silent playwright@1.54.2 > /tmp/picks-playwright-install.log 2>&1
+          npx playwright install --with-deps chromium >> /tmp/picks-playwright-install.log 2>&1
 
       - name: Start local app
         working-directory: repo
