@@ -161,10 +161,18 @@ try{
 
   await activateView('play');
   await page.locator('#playHub [data-open-game="top10"]').click();
-  const search=page.locator('#playFighterSearch');
-  await search.waitFor({state:'visible',timeout:10000});
-  await search.fill(PETTIS);
-  await page.locator(`[data-add-fighter="${PETTIS}"]`).waitFor({state:'visible',timeout:10000});
+  await page.waitForFunction(()=>document.documentElement.getAttribute('data-play-screen')==='wavelength',null,{timeout:10000});
+  await page.locator('#playTop10Panel [data-wavelength-stage]').waitFor({state:'visible',timeout:10000});
+  const wavelength=await page.evaluate(()=>({
+    title:document.getElementById('playGameTitle')?.textContent?.trim()||'',
+    screen:document.documentElement.getAttribute('data-play-screen'),
+    hasRange:Boolean(document.querySelector('#playTop10Panel [data-wavelength-range]')),
+    hasLock:Boolean(document.querySelector('#playTop10Panel [data-wavelength-lock]'))
+  }));
+  assert.equal(wavelength.title,'Wavelength');
+  assert.equal(wavelength.screen,'wavelength');
+  assert.equal(wavelength.hasRange,true);
+  assert.equal(wavelength.hasLock,true);
 
   const certification={
     fighterCount:runtime.fighterCount,
@@ -179,8 +187,9 @@ try{
     },
     cardWatch,
     profile,
+    wavelength,
     audits:{facts:runtime.factsAudit,category:runtime.categoryAudit,division:runtime.divisionReport},
-    crossTabs:{leaderboard:true,profile:true,compare:true,playSearch:true,era:true},
+    crossTabs:{leaderboard:true,profile:true,compare:true,playWavelength:true,era:true},
     pageErrors,
     consoleErrors
   };
@@ -188,7 +197,7 @@ try{
   console.log('ANTHONY_PETTIS_PIPELINE_RESULT');
   console.log(JSON.stringify(certification,null,2));
   console.log('PRODUCTION_BROWSER_CERTIFICATION');
-  console.log(JSON.stringify({fighterCount:runtime.fighterCount,topTen:runtime.topTen,divisionBoards:Object.keys(runtime.divisionReport?.boards||{}),compareSelector:true,playSearch:true,pageErrors},null,2));
+  console.log(JSON.stringify({fighterCount:runtime.fighterCount,topTen:runtime.topTen,divisionBoards:Object.keys(runtime.divisionReport?.boards||{}),compareSelector:true,playWavelength:true,pageErrors},null,2));
 
   assert.deepEqual(pageErrors,[],'rendered app has no uncaught page errors');
   assert.deepEqual(consoleErrors.filter(message=>!/supabase|realtime|octagon message/i.test(message)),[],'rendered ranking has no unexpected console errors');
