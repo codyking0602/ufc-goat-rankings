@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import {
   matchupMatches,
+  nameTokens,
   normalizeName,
   sameFighterName,
 } from "../_shared/ufc-name-matching.mjs";
@@ -88,6 +89,32 @@ function providerCandidates(byMatchup, providerEvents, fight) {
   return {
     candidates: reconciled,
     matchedBy: reconciled.length ? "reconciled-name" : "none",
+  };
+}
+
+function surname(value) {
+  return nameTokens(value).at(-1) || "";
+}
+
+function nearbyProviderMatchups(providerEvents, fight) {
+  const targetSurnames = new Set([surname(fight.red_name), surname(fight.blue_name)].filter(Boolean));
+  return providerEvents
+    .filter((providerEvent) => {
+      const providerSurnames = [surname(providerEvent?.home_team), surname(providerEvent?.away_team)];
+      return providerSurnames.some((value) => targetSurnames.has(value));
+    })
+    .map((providerEvent) => `${providerEvent?.home_team} vs. ${providerEvent?.away_team}`)
+    .slice(0, 6);
+}
+
+function missingDetail(fight, providerEvents, reason) {
+  return {
+    fightId: fight.id,
+    matchup: `${fight.red_name} vs. ${fight.blue_name}`,
+    reason,
+    existingRedOdds: asAmericanPrice(fight.red_odds),
+    existingBlueOdds: asAmericanPrice(fight.blue_odds),
+    nearbyProviderMatchups: nearbyProviderMatchups(providerEvents, fight),
   };
 }
 
@@ -191,21 +218,13 @@ Deno.serve(async (request) => {
     const resolution = providerCandidates(byMatchup, providerEvents, fight);
     const providerEvent = closestProviderEvent(resolution.candidates, fight);
     if (!providerEvent) {
-      missing.push({
-        fightId: fight.id,
-        matchup: `${fight.red_name} vs. ${fight.blue_name}`,
-        reason: "matchup-not-found",
-      });
+      missing.push(missingDetail(fight, providerEvents, "matchup-not-found"));
       continue;
     }
 
     const line = chooseLine(providerEvent, fight, preferredBookmakers);
     if (!line) {
-      missing.push({
-        fightId: fight.id,
-        matchup: `${fight.red_name} vs. ${fight.blue_name}`,
-        reason: "moneyline-not-posted",
-      });
+      missing.push(missingDetail(fight, providerEvents, "moneyline-not-posted"));
       continue;
     }
 
