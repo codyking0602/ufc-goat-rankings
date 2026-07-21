@@ -52,6 +52,7 @@ async function snapshot(page){
     counts:{...window.__PHASE3_WHATS_NEW_PROOF__.counts},
     watcherVersion:window.UFC_APP_UPDATE_WATCHER?.version||'',
     stabilityVersion:window.UFC_NATIVE_APP_SHELL_STABILITY?.version||'',
+    publicSchedule:typeof window.UFC_NATIVE_APP_SHELL_STABILITY?.schedule,
     controls:document.querySelectorAll('#manualRefreshControl').length,
     buttons:document.querySelectorAll('#whatsNewBtn').length,
     labels:document.querySelectorAll('#whatsNewBtn [data-whats-new-label]').length,
@@ -78,7 +79,8 @@ try{
   const cold=await snapshot(page);
   report.snapshots.cold=cold;
   assert.match(cold.watcherVersion,/whats-new-owner/,'The corrected canonical update watcher did not load.');
-  assert.match(cold.stabilityVersion,/whats-new-owner/,'The corrected subordinate stability runtime did not load.');
+  assert.match(cold.stabilityVersion,/drawer-observer/,'The narrowed subordinate stability runtime did not load.');
+  assert.equal(cold.publicSchedule,'undefined','The historical public repair schedule remains exposed.');
   assert.equal(cold.controls,1,'Canonical startup must create exactly one update control.');
   assert.equal(cold.buttons,1,'Canonical startup must create exactly one What’s New button.');
   assert.equal(cold.labels,1,'Canonical startup must create exactly one labeled NEW node.');
@@ -91,7 +93,7 @@ try{
   assert.equal(cold.counts.controlWrites,1,'What’s New markup must be created through one canonical control write.');
   assert.equal(cold.counts.buttonWrites,0,'The stability layer rewrote the canonical button during startup.');
 
-  report.phase='route-observer-and-delayed-window';
+  report.phase='route-body-mutation-and-retired-delay-window';
   await page.evaluate(()=>{
     const noise=document.createElement('span');
     noise.textContent='hero noise';
@@ -100,17 +102,16 @@ try{
     for(let index=0;index<3;index+=1){
       window.dispatchEvent(new CustomEvent('octagon-hq:view-change',{detail:{destination:index%2?'home':'rankings'}}));
       window.dispatchEvent(new CustomEvent('octagon-hq:soft-refresh'));
-      window.UFC_NATIVE_APP_SHELL_STABILITY.schedule();
     }
   });
   await page.waitForTimeout(3900);
   const delayed=await snapshot(page);
   report.snapshots.delayed=delayed;
-  assert.equal(delayed.controls,1,'Route, observer, or delayed work duplicated the update control.');
-  assert.equal(delayed.buttons,1,'Route, observer, or delayed work duplicated the What’s New button.');
-  assert.equal(delayed.labels,1,'Route, observer, or delayed work changed the canonical label structure.');
-  assert.equal(delayed.counts.controlWrites,1,'Delayed stability work recreated canonical update markup.');
-  assert.equal(delayed.counts.buttonWrites,0,'Delayed stability work rewrote the What’s New button.');
+  assert.equal(delayed.controls,1,'Route, body mutation, or retired delayed work duplicated the update control.');
+  assert.equal(delayed.buttons,1,'Route, body mutation, or retired delayed work duplicated the What’s New button.');
+  assert.equal(delayed.labels,1,'Unrelated activity changed the canonical label structure.');
+  assert.equal(delayed.counts.controlWrites,1,'Unrelated activity recreated canonical update markup.');
+  assert.equal(delayed.counts.buttonWrites,0,'Unrelated activity rewrote the What’s New button.');
 
   report.phase='canonical-unread-events';
   await page.evaluate(()=>{
@@ -148,7 +149,6 @@ try{
     document.querySelector('[data-whats-new-label]').textContent='BROKEN';
     window.dispatchEvent(new CustomEvent('octagon-hq:view-change',{detail:{destination:'home'}}));
     window.dispatchEvent(new CustomEvent('octagon-hq:soft-refresh'));
-    window.UFC_NATIVE_APP_SHELL_STABILITY.schedule();
   });
   await page.waitForTimeout(250);
   const corrupted=await snapshot(page);
@@ -172,15 +172,14 @@ try{
     const drawer=document.getElementById('drawer');
     drawer.classList.add('open');
     drawer.setAttribute('aria-hidden','false');
-    window.dispatchEvent(new CustomEvent('octagon-hq:view-change',{detail:{destination:'rankings'}}));
   });
   await page.waitForFunction(()=>document.body.classList.contains('fighter-profile-open'),null,{timeout:10000});
   await page.click('#nativeRankings');
   await page.waitForFunction(()=>!document.getElementById('drawer').classList.contains('open')&&!document.body.classList.contains('fighter-profile-open'),null,{timeout:10000});
   const closed=await snapshot(page);
   report.snapshots.closed=closed;
-  assert.equal(closed.drawerOpen,false,'Retiring What’s New normalization broke native profile dismissal.');
-  assert.equal(closed.bodyOpen,false,'Retiring What’s New normalization left stale drawer body state.');
+  assert.equal(closed.drawerOpen,false,'Retiring broad drawer triggers broke native profile dismissal.');
+  assert.equal(closed.bodyOpen,false,'Drawer-only recovery left stale mobile body state.');
 
   report.phase='complete';
   report.passed=true;
