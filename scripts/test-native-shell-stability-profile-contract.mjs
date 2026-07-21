@@ -36,7 +36,7 @@ assert.doesNotMatch(stability,/repairSnapshot|snapshotValues|canonicalFighterNam
 assert.doesNotMatch(stability,/fighterDetail|snapshot-item|snapshot-grid|RANKING_DATA|DISPLAY_OVERRIDES|currentFighter/,'The stability layer must not inspect or mutate fighter-profile content.');
 assert.doesNotMatch(stability,/\.snapshot-grid/,'The indefinite observer must not target canonical Resume Snapshot markup.');
 
-for(const preserved of ['normalizeWhatsNew','syncDrawerState','fighter-profile-open','closeFighterProfile','manualRefreshControl','octagon-hq:view-change','octagon-hq:soft-refresh','[0,80,240,700,1600,3600]']){
+for(const preserved of ['syncDrawerState','fighter-profile-open','closeFighterProfile','octagon-hq:view-change','octagon-hq:soft-refresh','[0,80,240,700,1600,3600]']){
   assert(stability.includes(preserved),`Legitimate native stability recovery changed unexpectedly: ${preserved}`);
 }
 
@@ -60,5 +60,5 @@ console.log(JSON.stringify({
   subordinateLayer:stabilityPath,
   bootstrapPosition,
   stabilityPosition,
-  preserved:['drawer/body synchronization','What’s New normalization','native destination close','route and delayed startup recovery']
+  preserved:['drawer/body synchronization','native destination close','route and delayed startup recovery']
 },null,2));

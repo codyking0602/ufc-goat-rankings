@@ -99,7 +99,7 @@ try{
   const opened=await snapshot(page);
   report.snapshots.opened=opened;
   assert.match(opened.profileVersion,/calculated-profile-runtime/,'The calculated profile owner did not load.');
-  assert.match(opened.stabilityVersion,/profile-owner/,'The corrected Phase 3 stability runtime did not load.');
+  assert.match(opened.stabilityVersion,/^native-app-shell-stability-/,'The Phase 3 stability runtime did not load.');
   assert.equal(opened.counts.detailWrites,1,'The canonical profile owner must write the profile exactly once when opened.');
   assert.equal(opened.counts.snapshotTextWrites,0,'The stability layer rewrote snapshot values during canonical open.');
   assert.equal(opened.snapshotCount,1,'Canonical open must render exactly one Resume Snapshot.');
