@@ -70,3 +70,5 @@ Full rollback evidence and usage rules are recorded in [`ROLLBACK-BASELINE.md`](
 ## Remaining handoff items
 
 There are no intentionally deferred production-cleanup items from the July 21 handoff. Any future red workflow must be investigated as a new deterministic failure rather than reopening completed startup phases by default.
+
+<!-- Temporary positive-control change for Repository Governance. This branch will not be merged. -->
