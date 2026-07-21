@@ -1,0 +1,153 @@
+===== sync =====
+status=0
+{
+  "build": "production-ranking-bootstrap-20260717c-anthony-pettis-80-build-80",
+  "count": 80,
+  "replacements": []
+}
+
+===== profile-copy =====
+status=1
+Profile copy audit: 79 fighters | 78 green | 1 red
+PROFILE RED: Alexandre Pantoja [generic-fallback]
+Custom pill audit: 79/79 covered
+
+===== runtime-boundaries =====
+status=0
+PRODUCTION_RUNTIME_BOUNDARY_CERTIFICATION
+{
+  "rosterContract": 80,
+  "formula": "championship/30*35 + opponentQuality/30*25 + primeDominance/30*30 + longevity/30*10 + apexPeak + penalty + eraDepthAdjustment",
+  "legacyRuntimeScriptsLoaded": false,
+  "retiredWorkflowCount": 3,
+  "snapshotOwner": "RANKING_DATA.visibleStats",
+  "compareStatOwner": "RANKING_DATA calculated projection",
+  "playRankOwner": "RANKING_DATA.rank",
+  "categoryOwner": "category-calculators.js",
+  "totalRankOvrOwner": "ranking-pipeline.js",
+  "physicalPresentationScoringFields": false
+}
+
+===== scoring-guardrails =====
+status=0
+            "overallOvr": 91
+          },
+          {
+            "rank": 5,
+            "fighter": "Rose Namajunas",
+            "totalScore": 49.13,
+            "overallOvr": 90
+          },
+          {
+            "rank": 6,
+            "fighter": "Ronda Rousey",
+            "totalScore": 45.49,
+            "overallOvr": 89
+          },
+          {
+            "rank": 7,
+            "fighter": "Jessica Andrade",
+            "totalScore": 43.78,
+            "overallOvr": 89
+          },
+          {
+            "rank": 8,
+            "fighter": "Cris Cyborg",
+            "totalScore": 39.03,
+            "overallOvr": 87
+          },
+          {
+            "rank": 9,
+            "fighter": "Carla Esparza",
+            "totalScore": 37.64,
+            "overallOvr": 87
+          },
+          {
+            "rank": 10,
+            "fighter": "Alexa Grasso",
+            "totalScore": 36.98,
+            "overallOvr": 86
+          }
+        ]
+      }
+    },
+    "scoreMode": "fight-level-calculated-single-owner",
+    "topTen": [
+      "Jon Jones",
+      "Georges St-Pierre",
+      "Anderson Silva",
+      "Demetrious Johnson",
+      "Islam Makhachev",
+      "Alexander Volkanovski",
+      "Khabib Nurmagomedov",
+      "Matt Hughes",
+      "Kamaru Usman",
+      "Max Holloway"
+    ],
+    "projectionTopTen": [
+      "Jon Jones",
+      "Georges St-Pierre",
+      "Anderson Silva",
+      "Demetrious Johnson",
+      "Islam Makhachev",
+      "Alexander Volkanovski",
+      "Khabib Nurmagomedov",
+      "Matt Hughes",
+      "Kamaru Usman",
+      "Max Holloway"
+    ],
+    "keyResults": {
+      "Jon Jones": {
+        "rank": 1,
+        "overallOvr": 99
+      },
+      "Georges St-Pierre": {
+        "rank": 2,
+        "overallOvr": 96
+      },
+      "Henry Cejudo": {
+        "rank": 40,
+        "overallOvr": 89
+      },
+      "Royce Gracie": {
+        "rank": 54,
+        "overallOvr": 88
+      },
+      "Amanda Nunes": {
+        "rank": 1,
+        "overallOvr": 99
+      },
+      "Valentina Shevchenko": {
+        "rank": 2,
+        "overallOvr": 98
+      }
+    },
+    "formulaMismatches": [],
+    "profileMismatches": [],
+    "displayViolations": [],
+    "profileRuntime": {
+      "snapshotOwner": "RANKING_DATA.visibleStats",
+      "rankOwner": "RANKING_DATA.rank",
+      "ovrOwner": "RANKING_DATA.overallOvr"
+    },
+    "compareSource": "calculated-ranking-pipeline",
+    "runtimeGlobals": {
+      "UFC_CANONICAL_SCORING_RECORDS": false,
+      "UFC_SCORING_ENGINE": false,
+      "UFC_FINAL_SCORE_ENGINE": false,
+      "UFC_SCORING_OWNERSHIP_FINALIZER": false,
+      "UFC_SCORING_OWNERSHIP_CONTRACT": false,
+      "UFC_CANONICAL_PRIME_DOMINANCE_RECONSTRUCTION": false,
+      "UFC_CANONICAL_LONGEVITY_RECONSTRUCTION": false,
+      "UFC_DYNAMIC_ROSTER_SCORING_REPAIR": false,
+      "UFC_DIVISION_ERA_DEPTH_FINALIZER": false
+    }
+  },
+  "runtimeFailures": [],
+  "browserDiagnostics": {
+    "errors": [],
+    "consoleErrors": []
+  },
+  "passed": true
+}
+
