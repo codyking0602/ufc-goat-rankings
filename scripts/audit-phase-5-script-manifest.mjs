@@ -28,6 +28,7 @@ const requiredOrder=[
   ['assets/js/fresh-home-route-bootstrap.js','assets/js/octagon-hq-shell.js','Early route normalization must precede the primary shell.'],
   ['assets/js/octagon-hq-shell.js','assets/js/app.js','The primary shell must publish before the base app runtime.'],
   ['assets/js/play-profile-identity.js','assets/js/app-profile.js','Canonical identity must load before the visible profile editor.'],
+  ['assets/js/find-leader.js','assets/js/better-than-standalone-share.js','The manifest-owned Find the Leader must load before Better Than compatibility.'],
   ['assets/js/picks-season-loop.js','assets/js/product-architecture.js','The manifest-owned Picks season API must publish before Product compatibility.'],
   ['assets/js/product-architecture.js','assets/js/fresh-home-launch.js','Product compatibility must exist before the late launch controller.'],
   ['assets/js/app-notification-center.js','assets/js/app-notification-surface-fix.js','Canonical notification ownership must load before its presentation compatibility layer.'],
@@ -39,6 +40,15 @@ for(const [before,after,message] of requiredOrder){
   assert(orderOf(after)>=0,`Missing required production script: ${after}`);
   assert(orderOf(before)<orderOf(after),message);
 }
+
+const betterThanSource=fs.readFileSync('assets/js/better-than-standalone-share.js','utf8');
+const findLeaderSource=fs.readFileSync('assets/js/find-leader.js','utf8');
+const findLeaderVersion=findLeaderSource.match(/const VERSION='([^']+)'/)?.[1]||'';
+assert(findLeaderVersion,'Current Find the Leader version could not be identified.');
+assert.doesNotMatch(betterThanSource,/FIND_LEADER_VERSION/,'Better Than compatibility must not maintain a competing Find the Leader version requirement.');
+assert.doesNotMatch(betterThanSource,/UFC_FIND_LEADER\?\.version\s*!==/,'Better Than compatibility must not replace a valid manifest owner because of version comparison.');
+assert.match(betterThanSource,/if\(!window\.UFC_FIND_LEADER\)\{[\s\S]*data-find-leader-owner-recovery[\s\S]*\}else gameReady\(\);/,'Find the Leader recovery must run only when the manifest owner is absent.');
+assert(betterThanSource.includes(`assets/js/find-leader.js?v=${findLeaderVersion}`),'Find the Leader recovery must request the current owner build.');
 
 const literalAssetScript=/["'`](assets\/js\/[^"'`?]+\.js)(?:\?[^"'`]*)?["'`]/g;
 const dynamicEdges=[];
@@ -61,6 +71,7 @@ for(const owner of explicitFiles.filter(file=>file.startsWith('assets/js/'))){
 }
 
 const approvedRecoveryDuplicates=new Set([
+  'assets/js/better-than-standalone-share.js=>assets/js/find-leader.js',
   'assets/js/product-architecture.js=>assets/js/octagon-hq-shell.js'
 ]);
 
@@ -71,11 +82,18 @@ const unapprovedDuplicateDynamicEdges=dynamicEdges.filter(edge=>
 const approvedRecoveryEdges=dynamicEdges.filter(edge=>
   approvedRecoveryDuplicates.has(`${edge.owner}=>${edge.dependency}`)
 );
-assert.deepEqual(approvedRecoveryEdges,[{
-  owner:'assets/js/product-architecture.js',
-  dependency:'assets/js/octagon-hq-shell.js',
-  explicit:true
-}],'The sole approved explicit/dynamic overlap must remain the tested Product shell-recovery path.');
+assert.deepEqual(approvedRecoveryEdges,[
+  {
+    owner:'assets/js/better-than-standalone-share.js',
+    dependency:'assets/js/find-leader.js',
+    explicit:true
+  },
+  {
+    owner:'assets/js/product-architecture.js',
+    dependency:'assets/js/octagon-hq-shell.js',
+    explicit:true
+  }
+],'Approved explicit/dynamic overlaps must remain limited to tested missing-owner recovery paths.');
 
 const manifestOwnedPicksSeason=dynamicEdges.some(edge=>edge.dependency==='assets/js/picks-season-loop.js');
 assert.equal(manifestOwnedPicksSeason,false,'Picks season must not regain a second dynamic loader.');
