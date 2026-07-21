@@ -8,6 +8,7 @@ const read=relative=>fs.readFileSync(path.join(root,relative),'utf8');
 const index=read('index.html');
 const early=read('assets/js/fresh-home-route-bootstrap.js');
 const shell=read('assets/js/octagon-hq-shell.js');
+const picks=read('assets/js/picks.js');
 const launch=read('assets/js/fresh-home-launch.js');
 
 const localPaths=[...index.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/gi)]
@@ -16,16 +17,22 @@ const position=source=>localPaths.indexOf(source);
 
 const earlyPath='assets/js/fresh-home-route-bootstrap.js';
 const shellPath='assets/js/octagon-hq-shell.js';
+const picksPath='assets/js/picks.js';
 const launchPath='assets/js/fresh-home-launch.js';
 
 assert(position(earlyPath)>=0,'The early route bootstrap must remain production-loaded.');
 assert(position(shellPath)>position(earlyPath),'The canonical shell must load after early route normalization.');
-assert(position(launchPath)>position(shellPath),'Fresh launch must remain a subordinate late continuation layer.');
+assert(position(picksPath)>position(shellPath),'Picks must initialize only after the canonical shell owns the primary route.');
+assert(position(launchPath)>position(picksPath),'Fresh launch must remain a subordinate late continuation layer.');
 
 assert(early.includes("url.hash='home'"),'The early bootstrap must keep ordinary startup URL normalization.');
 assert.equal(early.includes('activateDestination('),false,'The early bootstrap must not activate a primary destination.');
 assert(shell.includes('showView(initialView'),'The canonical shell must retain the one initial route activation.');
+assert(shell.includes("let currentView=''"),'The canonical shell must retain exact-view activation state.');
+assert(shell.includes("if(currentView===view&&target?.classList.contains('active-view'))"),'The canonical shell must coalesce an already-active exact view.');
 assert(shell.includes('get currentDestination(){return currentDestination;}'),'The canonical shell must publish its current destination for passive route handoffs.');
+assert.equal(picks.includes('UFC_APP_SHELL'),false,'Picks must not become a direct primary-route owner.');
+assert.equal(picks.includes('UFC_PRODUCT_ARCHITECTURE'),false,'Picks must not invoke the compatibility route owner directly.');
 
 const helper=launch.match(/function activateDestinationOnce\(destination\)\{([\s\S]*?)\n  \}/);
 assert(helper,'Fresh launch must use one subordinate route-handoff helper.');
@@ -49,10 +56,12 @@ assert(launch.includes("else if(!explicitDeepLink)activateHome('startup')"),'Fre
 console.log(JSON.stringify({
   passed:true,
   owner:shellPath,
-  subordinate:launchPath,
+  consumers:[picksPath,launchPath],
   earlyPosition:position(earlyPath),
   ownerPosition:position(shellPath),
+  picksPosition:position(picksPath),
   subordinatePosition:position(launchPath),
-  sameDestinationReactivationBlocked:true,
+  sameViewActivationCoalesced:true,
+  sameDestinationHandoffBlocked:true,
   bareInviteRecoveryPreserved:true
 },null,2));
