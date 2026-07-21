@@ -75,3 +75,4 @@ await import('./test-native-shell-startup-resync-owner.mjs');
 await import('./test-octagon-notification-startup-retry-owner.mjs');
 await import('./test-octagon-access-startup-retry-owner.mjs');
 await import('./test-octagon-board-startup-retry-owner.mjs');
+await import('./test-picks-persistent-groups-active-owner.mjs');
