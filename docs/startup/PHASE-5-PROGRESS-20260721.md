@@ -4,7 +4,7 @@
 
 Simplify and certify the production startup script manifest after Phases 1–4 established canonical ownership.
 
-Phase 5 worked directly from the production `index.html` load order. It changed or approved one wiring edge at a time and preserved all route, identity, readiness, profile, Picks, War Room, notification, native-shell, installed-app, and public API behavior.
+Phase 5 worked directly from the production `index.html` load order. It changed or approved one wiring edge at a time and preserved all route, identity, readiness, profile, Picks, War Room, notification, native-shell, installed-app, game, ranking, scoring, and public API behavior.
 
 The completion standard was:
 
@@ -28,6 +28,8 @@ Preserved:
 - connectivity, Product polish, avatar sync, profile activity, and Find the Leader retention loaders;
 - shared-profile/Picks handoff;
 - Product compatibility facade and public APIs.
+
+Certification:
 
 - Runtime: `product-architecture-20260721a-manifest-owned-picks-season`
 - Exact tested head: `e01b03bfccf8d67d8a4eb3d3f9cf729592f47cad`
@@ -58,6 +60,8 @@ The first truthful inventory identified two candidates in `assets/js/better-than
 1. Play photo authority;
 2. Find the Leader.
 
+Certification:
+
 - Exact tested head: `29869666894d2702235d413c7d15ad9781932081`
 - Phase 5 Script Manifest Inventory #5: passed
 - Production merge: `942bbb1087b1a720318ddc003db6fd32b7d5f495`
@@ -81,6 +85,8 @@ Focused 390×844 proof established:
 - zero recovery scripts are injected on the healthy path;
 - an absent owner triggers one bounded recovery request for the current build;
 - photo-authority synchronization and downstream daily support remain intact.
+
+Certification:
 
 - Runtime: `better-than-standalone-share-20260721q-find-leader-owner`
 - Exact tested head: `30379516cfd859bc6b4bea61a1bf6042ca5c0390`
@@ -113,11 +119,14 @@ Missing-owner proof:
 - current owner version published;
 - one style owner.
 
+Certification:
+
 - Exact tested head: `8689ba590c74fff516c32011ca71916c3e7561a5`
 - Startup Architecture Gate #212: passed
 - Dedicated iOS #67: passed
-- Phase 5 Script Manifest Inventory #10: passed
+- Phase 5 Script Manifest Inventory #10: passed, including both focused manifest-owner browser proofs
 - Production merge: `628bf47bbe2933688a36a0a7e96d952da5e828d8`
+- Tested head versus production merge: one merge commit and zero changed files
 
 ## Final manifest boundary
 
@@ -136,11 +145,17 @@ Exactly three explicit/dynamic overlaps remain, each with a focused bounded reco
 2. `assets/js/better-than-standalone-share.js` → `assets/js/find-leader.js`
 3. `assets/js/product-architecture.js` → `assets/js/octagon-hq-shell.js`
 
-Each healthy path consumes the explicit manifest owner. Each dynamic path is allowed only when that owner is genuinely absent.
+Each healthy path consumes the explicit manifest owner. Each dynamic path is allowed only when that owner is genuinely absent. A compatibility layer may not replace a valid manifest owner because of a competing version requirement.
 
-## Known unrelated red workflow
+## Known unrelated red workflows
 
-Production Ranking Browser Smoke #626 remained at the established fighter-photo audit step. It did not reference the Phase 5 manifest inventory or ownership proofs.
+The final Phase 5 heads retained the established unrelated failures:
+
+- Production Ranking Browser Smoke #626 stopped at the existing fighter-photo audit.
+- Scoring Architecture Guardrails #1448 stopped at the existing permanent source/runtime contract.
+- Historical Phase 4B validation may stop at its hard-pinned architecture check.
+
+None references the isolated manifest wiring, ownership proofs, or final documentation.
 
 ## Phase 5 completion
 
@@ -148,9 +163,25 @@ Phase 5 is complete.
 
 No unresolved script-manifest or load-order candidate remains under the Phase 5 standard. Broad bundling, module conversion, or unrelated performance refactoring was intentionally excluded because no ownership evidence required it.
 
+## Phase 6 final certification
+
+Phase 6 required no runtime change and no temporary workflow.
+
+Final certification is satisfied by:
+
+- exact-head Startup Architecture Gate #212;
+- exact-head dedicated iOS #67;
+- clean Phase 5 Script Manifest Inventory #10;
+- focused healthy-startup and missing-owner recovery proofs;
+- zero file difference between the tested head and production merge;
+- current canonical status and ownership documentation;
+- documented unrelated red checks;
+- no unresolved physical-only uncertainty;
+- no approved visible product change.
+
 ## Architecture cleanup completion
 
-The startup/identity architecture cleanup is complete through Phases 0–5.
+The startup/identity architecture cleanup is complete through Phases 0–6.
 
 The repository now has:
 
@@ -162,4 +193,4 @@ The repository now has:
 - deterministic startup-work and script-manifest inventories;
 - focused recovery proofs for every approved manifest overlap.
 
-Future startup changes should be maintenance-driven and evidence-based. A new cleanup phase should begin only if production behavior or the inventories prove a new duplicate owner, unnecessary inactive work, or obsolete manifest edge.
+Future startup changes are maintenance under the permanent ownership map, Phase 4 and Phase 5 inventories, Startup Architecture Gate, and dedicated iOS suite. A new cleanup phase should begin only if production behavior or the inventories prove a new duplicate owner, unnecessary inactive work, or obsolete manifest edge.
