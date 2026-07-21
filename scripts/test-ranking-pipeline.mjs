@@ -173,7 +173,7 @@ assert.equal(entry('Anderson Silva').rank,3);assert.equal(entry('Demetrious John
 assert.equal(entry('Islam Makhachev').rank,5);assert.equal(entry('Alexander Volkanovski').rank,6);
 assert.equal(entry('Khabib Nurmagomedov').rank,7);assert.equal(entry('Matt Hughes').rank,8);
 assert.equal(entry('Kamaru Usman').rank,9);assert.equal(entry('Max Holloway').rank,10);
-assert.equal(entry('Henry Cejudo').rank,38);assert.equal(entry('Royce Gracie').rank,50);
+assert.equal(entry('Henry Cejudo').rank,39);assert.equal(entry('Royce Gracie').rank,51);
 assert.equal(entry('Amanda Nunes').rank,1);assert.equal(entry('Amanda Nunes').overallOvr,99);
 assert.equal(entry('Valentina Shevchenko').overallOvr,98);
 
