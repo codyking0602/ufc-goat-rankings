@@ -124,4 +124,4 @@ try{
   if(browser)await browser.close();
 }
 
-await import('./test-picks-social-active-diagnostic.mjs');
+await import('./test-picks-social-active-owner.mjs');
