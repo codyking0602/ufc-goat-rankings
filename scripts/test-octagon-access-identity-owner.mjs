@@ -216,3 +216,5 @@ try{
   fs.writeFileSync(REPORT,`${JSON.stringify(report,null,2)}\n`,'utf8');
   if(browser)await browser.close();
 }
+
+await import('./test-octagon-access-startup-retry-owner.mjs');
