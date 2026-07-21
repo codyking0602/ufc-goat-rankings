@@ -80,3 +80,4 @@ await import('./test-picks-social-active-owner.mjs');
 await import('./test-product-startup-handoff-contract.mjs');
 await import('./test-better-than-find-leader-owner.mjs');
 await import('./test-better-than-photo-authority-owner.mjs');
+await import('./test-picks-mobile-top-tabs.mjs');
