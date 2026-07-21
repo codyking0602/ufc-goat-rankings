@@ -4,298 +4,193 @@
 
 Reduce measured startup and off-screen work without changing canonical ownership, visible behavior, routes, rankings, scoring, fighter data, or the production script manifest.
 
-Phase 4 changes one narrow runtime responsibility at a time. Every runtime batch requires:
+Phase 4 changed one narrow runtime responsibility at a time. Every runtime batch required:
 
 1. a current production measurement or demonstrated avoidable call path;
 2. owner tracing before editing;
-3. static and mobile-browser proof;
+3. static and 390×844 mobile-browser proof;
 4. the complete Startup Architecture Gate;
 5. the dedicated iOS Home Startup Stability suite;
-6. exact-head verification before merge.
+6. the Phase 4 Startup Work Inventory;
+7. exact-head verification before merge.
 
-Broad script deletion, bundling, or manifest consolidation remains Phase 5 work.
+Broad script deletion, bundling, or manifest consolidation remained out of scope and is now the Phase 5 boundary.
 
 ## Baseline inventory — PR #169
 
 PR #169 added `scripts/audit-phase-4-startup-work.mjs` and the read-only **Phase 4 Startup Work Inventory** workflow.
 
-The inventory reads the production `index.html` manifest and records, per loaded JavaScript file:
+The inventory reads the production `index.html` manifest and records production order, byte size, timers, scheduling signals, lifecycle/readiness listeners, potential network references, and profile/group-snapshot references. It generates audit candidates; it does not prove that every matched operation executes at startup.
 
-- production order and byte size;
-- timer and scheduling signals;
-- lifecycle/readiness listeners;
-- potential network-operation references;
-- profile resolution and full group-snapshot references.
-
-The report is a candidate generator, not proof that every matched call executes at startup. Runtime edits still require direct tracing and focused proof.
-
-- Inventory head: `f8831fc2060f4a591b477d0c7329fcec0e520c77`.
-- Production merge: `f1de569d022bf8fd6bb41a1710d8617957312d0e`.
-- Phase 4 Startup Work Inventory #1: passed.
+- Inventory head: `f8831fc2060f4a591b477d0c7329fcec0e520c77`
+- Production merge: `f1de569d022bf8fd6bb41a1710d8617957312d0e`
+- Phase 4 Startup Work Inventory #1: passed
 
 ## Batch 1 — Picks commissioner snapshot activation
 
-### Measured avoidable work
+`assets/js/picks-commissioner.js` previously requested commissioner state during Home startup when saved Picks access existed, reacted to hidden Picks mutations, and continued its 45-second poll off-screen.
 
-`assets/js/picks-commissioner.js` previously called `refresh()` unconditionally during startup. When one saved Picks group and commissioner/member token existed, this could issue a commissioner RPC while Home was the active destination.
+PR #171 retained commissioner ownership while binding automatic network work to active Picks and a mounted commissioner card. Explicit commissioner actions retained forced refreshes.
 
-The same module also:
-
-- observed the hidden Picks subtree and scheduled `refresh()` after ordinary mutations;
-- ran a 45-second commissioner freshness poll even while Picks was off-screen.
-
-Those requests were not required for Home startup and did not change ownership. The commissioner module remains the correct owner of commissioner snapshot data and actions.
-
-### Production boundary after PR #171
-
-Commissioner data work is now activation-bound:
-
-- startup installs the local commissioner card shell without requesting network state while Home is active;
-- direct Picks startup requests commissioner state only after the local card exists;
-- canonical `octagon-hq:view-change` entry to Picks installs the card before requesting state;
-- a late Picks shell/card mount receives one bounded refresh handoff;
-- ordinary hidden or visible Picks subtree mutations do not request commissioner state;
-- the existing 45-second freshness poll runs only while Picks is active;
-- leaving Picks stops off-screen polling;
-- explicit commissioner actions retain their existing forced refreshes.
-
-### Permanent proof
-
-The static contract verifies:
-
-- the canonical shell loads before the commissioner module;
-- one active-destination predicate prefers `window.UFC_APP_SHELL.currentDestination`;
-- Home startup contains no unconditional commissioner refresh;
-- direct and route-entry refreshes wait for the mounted card;
-- late card creation retains one bounded handoff;
-- polling is active-Picks-only;
-- ordinary mutation observation cannot schedule network work.
-
-The 390×844 mobile proof covers:
-
-- Home startup with saved tokens: zero commissioner RPCs;
-- hidden Picks mutation: zero RPCs;
-- hidden 45-second poll callback: zero RPCs;
-- route entry to Picks: one RPC and visible commissioner card;
-- ordinary active mutation: no duplicate RPC;
-- active poll callback: one freshness RPC;
-- route exit followed by poll callback: no off-screen RPC;
-- direct Picks startup: one RPC;
-- late Picks shell insertion: no premature RPC and one post-mount RPC.
-
-The proof is imported by the existing iOS startup suite.
-
-- Exact tested head: `de893fa4927e22a7968522c69fd429c17e46c965`.
-- Startup Architecture Gate #177: passed.
-- Dedicated iOS Home Startup Stability #44: passed.
-- Production merge: `2eea1a03e169e3ba3289b4c0b6198a87ea4233ab`.
+- Home startup, hidden mutation, and hidden polling: zero commissioner RPCs
+- Direct active startup and route entry: one bounded request after card mount
+- Late active card mount: one bounded handoff
+- Active polling: preserved
+- Exact tested head: `de893fa4927e22a7968522c69fd429c17e46c965`
+- Startup Architecture Gate #177: passed
+- Dedicated iOS #44: passed
+- Production merge: `2eea1a03e169e3ba3289b4c0b6198a87ea4233ab`
 
 ## Batch 2 — Native-shell delayed startup resynchronization
 
-### Measured avoidable work
+`assets/js/native-app-shell.js` performed one complete initial component, route, and badge synchronization, then repeated Ask-action, active-route, and badge synchronization at 80, 260, 800, 1800, and 4200 milliseconds.
 
-`assets/js/native-app-shell.js` already performed one complete startup pass that:
+PR #174 removed only those five unconditional passes. Canonical route/update events, targeted observation, resize/orientation recovery, visibility recovery, pull-to-refresh, and the separate 10-second badge poll remain.
 
-- created the bottom navigation;
-- created the **Ask** action;
-- created the pull-to-refresh indicator;
-- synchronized the active primary destination;
-- synchronized Play, Picks, War Room, and app badge state;
-- bound route/lifecycle events and targeted DOM observation.
-
-It then repeated `ensureAskAction()`, `syncActive()`, and `syncBadges()` at 80, 260, 800, 1800, and 4200 milliseconds regardless of whether anything changed.
-
-The audit separated the three responsibilities:
-
-- **Ask action:** the static hero exists before the native shell starts, so the initial creation is sufficient; resize/orientation and relevant observation remain for later recovery.
-- **Route state:** the canonical shell exists before the native shell and publishes `octagon-hq:view-change`; visibility recovery and relevant `main.shell` observation remain.
-- **Badges:** challenge unread updates publish events, Picks progress changes mutate an observed target, and the War Room notification owner creates/updates the observed unread badge. The separate 10-second live badge poll remains for uncued late state.
-
-No delayed pass had a unique late prerequisite.
-
-### Production boundary after PR #174
-
-PR #174 removed only the five unconditional startup passes.
-
-The native shell now retains:
-
-- one initial component, route, and badge synchronization;
-- canonical route-event synchronization;
-- challenge/profile/notification update events;
-- targeted Picks, profile-challenge, War Room, and active-view observation;
-- resize and orientation recovery;
-- visibility recovery;
-- pull-to-refresh behavior;
-- the separate 10-second live badge poll.
-
-### Permanent proof
-
-The static contract verifies production load order, one initial synchronization, absence of the five-delay array, and preservation of owner events, targeted observation, visibility recovery, and the 10-second poll.
-
-The 390×844 mobile proof covers:
-
-- exactly one bottom nav, Ask action, pull indicator, route sync, and initial app-badge write;
-- zero additional app-badge writes throughout the complete former 4.2-second retry window;
-- challenge unread updates through the owner event;
-- Picks missing-pick updates through progress DOM mutation;
-- War Room unread updates through the notification owner’s badge DOM mutation;
-- canonical route entry through `octagon-hq:view-change`;
-- late state recovery through the preserved 10-second poll callback.
-
-The existing native pull-refresh proof was updated only for the runtime version and continues to certify normal, fallback, War Room, and concurrent accepted-action behavior. The new proof is imported by the iOS startup suite.
-
-- Exact tested head: `a625b9a1f2dd13de342d0103e004884dcc71a437`.
-- Startup Architecture Gate #180: passed.
-- Dedicated iOS Home Startup Stability #46: passed.
-- Phase 4 Startup Work Inventory #12: passed.
-- Production merge: `f03ef47aab32ee67816d7ba86206af3a8c208093`.
+- Exact tested head: `a625b9a1f2dd13de342d0103e004884dcc71a437`
+- Startup Architecture Gate #180: passed
+- Dedicated iOS #46: passed
+- Inventory #12: passed
+- Production merge: `f03ef47aab32ee67816d7ba86206af3a8c208093`
 
 ## Batch 3 — War Room notification startup status retries
 
-### Measured avoidable work
+`assets/js/octagon-notifications.js` performed shell setup and `refreshStatus()` at 0, 180, 700, 1800, and 4200 milliseconds.
 
-`assets/js/octagon-notifications.js` performed local shell creation and `refreshStatus()` at 0, 180, 700, 1800, and 4200 milliseconds.
+PR #177 preserved one immediate local shell/status attempt. Cached identity produces one startup request; uncached startup produces zero RPCs and waits for published readiness. Direct-link opening, realtime, visibility/online recovery, explicit refresh, mark-seen, push, the 30-second status poll, and 3-second local DOM maintenance remain.
 
-The notification owner already had the correct late-work boundaries:
-
-- one passive cached-identity read during `refreshStatus()`;
-- one in-flight activity-status request owner;
-- `ufc-play-profile-ready`, `ufc-app-profile-updated`, and `ufc-canonical-group-ready` readiness/update events;
-- realtime activity-change refresh;
-- visibility and online recovery;
-- explicit refresh, mark-seen, push, and opening-board behavior;
-- a bounded direct-link opening retry loop;
-- a separate 30-second status poll;
-- separate 3-second local badge/board-shell maintenance.
-
-The audit proved:
-
-- pre-cached identity is available to one immediate startup attempt;
-- uncached startup must perform zero RPCs and wait for a published identity event;
-- later timed startup retries do not provide a unique identity or route handoff.
-
-### Production boundary after PR #177
-
-PR #177 replaced the five startup attempts with:
-
-1. one immediate `ensureBadge()` call;
-2. one immediate `ensureBoardExtras()` call;
-3. one immediate passive `refreshStatus()` attempt.
-
-The immediate attempt performs one activity-status RPC when identity is already cached. Without identity, it performs no RPC; the existing readiness events schedule the later request.
-
-The following remain unchanged:
-
-- direct-link opening retry;
-- realtime activity refresh;
-- visibility and online recovery;
-- explicit refresh and mark-seen;
-- push registration/removal and post/reply push invocation;
-- one in-flight request coalescing;
-- the 30-second status poll;
-- the 3-second local DOM maintenance.
-
-### Permanent proof
-
-The static contract verifies one immediate startup attempt, absence of the 0/180/700/1800/4200 array, readiness-event scheduling, direct-link retry, realtime refresh, lifecycle recovery, and both recurring intervals.
-
-The 390×844 mobile proof covers:
-
-- uncached startup through the complete former 4.2-second retry window: zero activity-status RPCs and one set of local notification shells;
-- a later canonical identity event: exactly one RPC and correct unread/access state;
-- pre-cached startup through the complete former retry window: exactly one RPC, not five;
-- the preserved 30-second poll callback: one additional status RPC.
-
-The existing passive identity proof continues to certify zero resolver/storage/sign-in ownership, one readiness RPC, competing-request coalescing, mark-seen, push, and realtime behavior. The new proof is imported by the iOS startup suite.
-
-- Exact tested head: `7d307fb4af9647748b552867390fb9498fe146c0`.
-- Startup Architecture Gate #184: passed.
-- Dedicated iOS Home Startup Stability #49: passed.
-- Phase 4 Startup Work Inventory #15: passed.
-- Production merge: `8df258a6dc7e20560783f30d6e974476e62ac5d6`.
+- Exact tested head: `7d307fb4af9647748b552867390fb9498fe146c0`
+- Startup Architecture Gate #184: passed
+- Dedicated iOS #49: passed
+- Inventory #15: passed
+- Production merge: `8df258a6dc7e20560783f30d6e974476e62ac5d6`
 
 ## Batch 4 — War Room access startup status retries
 
-### Measured avoidable work
-
 `assets/js/octagon-access-panel.js` performed `ensurePanel()` and `checkCurrentAccess()` at 0, 250, 900, 2600, and 5000 milliseconds.
 
-The only additional risk versus the notification owner was local panel mounting. The production load order and owner lifecycle proved that risk was already closed:
+PR #179 preserved one immediate shell/status attempt. The board owner is already synchronously mounted before access startup. Cached identity produces one request; uncached startup produces zero RPCs and waits for readiness. Realtime, visibility/online recovery, the 60-second verification poll, Cody roster/toggles, access rules, and tab state remain.
 
-- `assets/js/octagon-message-board.js` loads before the access panel;
-- the board owner registers its `DOMContentLoaded` listener first;
-- the board owner synchronously runs `installStyles()`, `mount()`, and `bindTab()` before the access-panel startup listener runs;
-- the access owner’s first `ensurePanel()` therefore sees the mounted board/header/actions structure.
+- Exact tested head: `5458ba3545476846d16bbaf58ed279a344dddbdc`
+- Startup Architecture Gate #188: passed
+- Dedicated iOS #52: passed on unchanged rerun after an initial cancellation
+- Inventory #18: passed
+- Production merge: `002b31f5ccad3db185b5a6053cb620925482c426`
 
-The access owner already retained the correct late-work boundaries:
+## Batch 5 — War Room message-board mount and bind retries
 
-- passive cached identity only;
-- one in-flight `octagon_access_status` request owner;
-- canonical identity readiness/update events;
-- realtime `access-change` verification;
-- visibility and online recovery;
-- a separate 60-second server verification poll;
-- Cody-only roster loading and access-toggle actions.
+`assets/js/octagon-message-board.js` performed a synchronous startup `mount()` and `bindTab()`, then repeated both at 50, 220, 850, and 2200 milliseconds.
 
-### Production boundary after PR #179
+The audit proved the static `#octagon` root and beta tab exist before the board starts, and the synchronous startup mount/bind already establishes the local board shell. Identity readiness, active-route loading, visibility/online recovery, realtime behavior, and explicit board actions own later work.
 
-PR #179 replaced the five startup attempts with:
+PR #182 removed only the four delayed local retries.
 
-1. one immediate `installStyles()` call;
-2. one immediate `ensurePanel()` call;
-3. one immediate passive `checkCurrentAccess()` attempt.
+Preserved behavior:
 
-The immediate attempt performs one access-status RPC when identity is already cached. Without identity, it performs no RPC, keeps the War Room locked, keeps the Cody management control hidden, and waits for an existing readiness event.
+- one synchronous startup mount and tab/navigation bind;
+- active and inactive loading boundaries;
+- cached and uncached identity readiness;
+- route, visibility, online, and realtime behavior;
+- direct board actions and the explicit sign-in boundary.
 
-The following remain unchanged:
+- Exact tested head: `b7ee8b933fecfb51883bc443f99f54541726ed87`
+- Startup Architecture Gate #193: passed
+- Dedicated iOS #56: passed
+- Inventory #22: passed
+- Production merge: `e2c0ec89f518ab14c00151a1998b9c8b724fcd25`
 
-- identity readiness/update scheduling;
-- one in-flight request coalescing;
-- realtime access-change verification;
-- visibility and online recovery;
-- the 60-second verification poll;
-- Cody-only roster and access-toggle RPCs;
-- access rules and War Room tab state.
+## Batch 6 — Persistent Picks groups activation
 
-### Permanent proof
+`assets/js/picks-persistent-groups.js` could refresh group state while Picks was inactive, including Home startup and hidden polling/mutation paths.
 
-The static contract verifies board-before-access load order, synchronous board mounting, one immediate access shell/status attempt, absence of the 0/250/900/2600/5000 array, readiness/realtime/lifecycle handoffs, the 60-second poll, and Cody management ownership.
+PR #184 retained the module as the persistent-group owner but bound automatic refreshes to active Picks.
 
-The 390×844 mobile proof covers:
+Production boundary:
 
-- uncached startup through the complete former five-second retry window: zero access-status RPCs, one management control shell, one access-panel shell, a locked War Room tab, and hidden management;
-- a later canonical identity event: exactly one RPC, enabled War Room access, and visible Cody management;
-- pre-cached startup through the complete former window: exactly one RPC, not five;
-- the preserved 60-second poll callback: one additional access-status RPC.
+- hidden Home startup: zero persistent-group RPCs;
+- hidden mutation and hidden polling: zero RPCs;
+- route entry to Picks: refresh preserved;
+- active polling and active late-card behavior: preserved;
+- route exit: automatic work becomes silent;
+- direct group and room actions: preserved;
+- late shell support: preserved.
 
-The existing access identity proof continues to certify zero resolver/storage/sign-in ownership, one readiness RPC, competing-request coalescing, and Cody roster/toggle actions. The new proof is imported by the iOS startup suite.
+- Exact tested head: `c8eee4570584c0124093771510472a3446e96b5c`
+- Startup Architecture Gate #196: passed
+- Dedicated iOS #58: passed
+- Inventory #24: passed
+- Production merge: `fdf96f533e4a32ba260d0dc22f6796b3507bdbcb`
 
-- Exact tested head: `5458ba3545476846d16bbaf58ed279a344dddbdc`.
-- Startup Architecture Gate #188: passed.
-- Dedicated iOS Home Startup Stability #52: passed on unchanged rerun after the first dedicated attempt was cancelled during execution.
-- Phase 4 Startup Work Inventory #18: passed.
-- Production merge: `002b31f5ccad3db185b5a6053cb620925482c426`.
+## Batch 7 — Picks social/profile-reminder activation
+
+`assets/js/picks-social-retention.js` previously performed automatic social snapshot/profile work while Picks was inactive:
+
+- cached Home startup could request `picks_social_snapshot`;
+- hidden identity/profile/data readiness events could request state;
+- hidden mutation handling could wake profile work;
+- the 30-second poll continued off-screen.
+
+PR #185 introduced `picksActive()` using `window.UFC_APP_SHELL.currentDestination` with an active-view fallback and bound automatic snapshot/profile synchronization to active Picks.
+
+Production boundary:
+
+- Home with cached identity: local shell only, zero snapshot RPCs;
+- hidden readiness/profile/data events: cached identity may update, but zero RPC, resolver, editor, or sign-in work;
+- route entry to Picks: one snapshot and visible **Profile & Reminders** UI;
+- ordinary active mutation: row decoration only, zero duplicate RPC;
+- active 30-second poll: one refresh;
+- route exit followed by poll: zero refresh;
+- direct cached active startup: one refresh;
+- direct uncached active startup: zero until canonical readiness, then one refresh;
+- late active shell: zero before mount, one bounded refresh after mount;
+- explicit externally invoked `window.UFC_PICKS_SHARED_PROFILE.refresh()` remains usable while inactive;
+- profile editor, reminder RPC, browser notification, and calendar-reminder behavior remain unchanged.
+
+The final PR contains exactly:
+
+1. `assets/js/picks-social-retention.js`
+2. `scripts/test-ios-standalone-resume-home.mjs`
+3. `scripts/test-picks-social-active-contract.mjs`
+4. `scripts/test-picks-social-active-owner.mjs`
+5. `scripts/test-picks-social-identity-owner.mjs`
+
+The temporary diagnostic wrapper was removed before certification.
+
+- Runtime version: `picks-social-retention-20260721h-active-picks-only`
+- Exact tested head: `41eedc4d562873d32768d302e75be9e139bc823c`
+- Startup Architecture Gate #202: passed
+- Dedicated iOS #63: passed
+- Inventory #29: passed
+- Production merge: `bdd09daaa8c4218b4c3c03138d457ca4197f2025`
 
 ## Known unrelated red workflows
 
-The inspected failures do not reference the isolated Phase 4 responsibilities:
+The final exact-head run retained the established unrelated failures:
 
-- Picks UI Smoke #840 passed Picks JavaScript syntax, then failed the existing checks for mobile top-tab auto-centering, a daily odds refresh schedule, and setup-guide documentation.
-- Production Ranking Browser Smoke #589, #593, #598, and #603 stopped at the existing **Audit every fighter photo path** step before ranking and mobile-profile certification.
-- Scoring Architecture Guardrails #1415, #1418, #1422, and #1426 passed syntax, profile-copy coverage, and physical source ownership, then stopped at the established permanent runtime contract step.
+- Picks UI Smoke #849 passed Picks JavaScript syntax, then reported mobile top-tab auto-centering, daily odds refresh scheduling, and setup-guide documentation.
+- Production Ranking Browser Smoke #614 stopped in the established fighter-photo audit path.
+- Scoring Architecture Guardrails #1440 remained in the established permanent source/runtime contract path.
 
-## Next audit order
+None references the isolated Picks social activation change.
 
-Continue from the current inventory one measured responsibility at a time.
+## Phase 4 completion
 
-The next audit should inspect the War Room board owner’s local mount/bind startup retries in `assets/js/octagon-message-board.js` at 50, 220, 850, and 2200 milliseconds.
+Phase 4 is complete.
 
-Separate:
+The final production inventory and runtime proofs do not demonstrate another duplicate startup owner or another unnecessary inactive-destination network path that should be changed under the Phase 4 standard.
 
-1. synchronous initial `mount()` and `bindTab()`;
-2. late availability of the static `#octagon` root and beta tab;
-3. active War Room startup loading;
-4. canonical identity readiness loading;
-5. route/visibility/online/realtime behavior.
+Phase 4 established these permanent boundaries:
 
-Do not combine board mount retry reduction with message-board RPC ownership, access rules, notification state, realtime semantics, or active-route load behavior.
+- destination-specific owners may install local shells at startup but do not perform automatic network work while inactive;
+- passive consumers use cached canonical identity and readiness/update events;
+- delayed retry arrays require a unique late prerequisite, not speculation;
+- recurring polls are destination-bound unless an app-wide requirement is proved;
+- explicit public APIs and user actions remain available even when automatic inactive work is silent.
+
+## Phase 5 handoff — script manifest and loading order
+
+The next phase is **Phase 5: startup script-manifest and loading-order simplification**.
+
+Audit narrowly from the production `index.html` load order. Remove or move only wiring that is proven obsolete after the completed ownership cleanup. Preserve runtime behavior, public APIs, prerequisite order, installed-app behavior, and all Phase 1–4 ownership contracts.
+
+Do not begin broad bundling, arbitrary script deletion, or unrelated code cleanup. The first Phase 5 batch should establish a deterministic manifest inventory and prove one obsolete wiring edge before editing.
