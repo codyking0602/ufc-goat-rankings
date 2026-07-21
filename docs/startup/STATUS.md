@@ -4,20 +4,22 @@ _Last updated: 2026-07-21_
 
 ## Current position
 
-- **Latest production runtime merge:** PR #167, `a52364b7a53132a96c8ca5ef5f6726c32a74a2d0`.
-- **Exact latest tested runtime head:** `c332cf912f3c2cbd98984f60902ba70a2304475f`.
-- **Latest complete Startup Architecture Gate:** run #168 passed.
-- **Latest dedicated iOS Home Startup Stability:** run #36 passed.
+- **Latest production runtime merge:** PR #171, `2eea1a03e169e3ba3289b4c0b6198a87ea4233ab`.
+- **Exact latest tested runtime head:** `de893fa4927e22a7968522c69fd429c17e46c965`.
+- **Latest complete Startup Architecture Gate:** run #177 passed.
+- **Latest dedicated iOS Home Startup Stability:** run #44 passed.
 - **Current phase:** Phase 4 — reduce startup work.
 - **Phase 0:** Complete.
 - **Phase 1:** Complete.
 - **Phase 2:** Complete.
 - **Phase 3:** Complete.
+- **Phase 4:** In progress; inventory and first runtime reduction complete.
 - **Entire startup cleanup:** Approximately 95% complete.
 - **Visible product changes approved:** None. The zero-visible-change contract remains in force.
 - **Master tracker:** [Issue #102](https://github.com/codyking0602/ufc-goat-rankings/issues/102).
 - **Completed Phase 2 ledger:** [`PHASE-2-PROGRESS-20260721.md`](./PHASE-2-PROGRESS-20260721.md).
 - **Completed Phase 3 ledger:** [`PHASE-3-PROGRESS-20260721.md`](./PHASE-3-PROGRESS-20260721.md).
+- **Current Phase 4 ledger:** [`PHASE-4-PROGRESS-20260721.md`](./PHASE-4-PROGRESS-20260721.md).
 
 The older percentage estimates are superseded.
 
@@ -90,8 +92,6 @@ The retained implementation performs one immediate startup sync and observes onl
 
 The separate native-overlay audit proved `closeFighterProfile()` is also legitimate: native destination buttons delegate routing but neither the native shell nor the route owner dismisses an already-open fighter drawer. The handler delegates to the canonical close button and retains a bounded missing-button fallback.
 
-The mobile proof covered stale startup state, real open/close mutations, unrelated body/route/soft-refresh activity, the complete retired 3.9-second retry window, drawer-only recovery, canonical close, native destination dismissal, and fallback dismissal.
-
 - Exact tested head: `c332cf912f3c2cbd98984f60902ba70a2304475f`.
 - Startup Architecture Gate #168: passed.
 - Dedicated iOS Home Startup Stability #36: passed.
@@ -99,7 +99,7 @@ The mobile proof covered stale startup state, real open/close mutations, unrelat
 
 ## Phase 3 final runtime boundary
 
-`assets/js/native-app-shell-stability.js` is no longer a general repair loop. It now contains only:
+`assets/js/native-app-shell-stability.js` is no longer a general repair loop. It contains only:
 
 1. one singleton guard;
 2. one drawer-to-mobile-body presentation mapping;
@@ -111,17 +111,45 @@ It has no canonical content renderer, body-wide observer, route/soft-refresh rep
 
 Further movement or renaming belongs to Phase 5 script-manifest simplification, not repair-loop retirement.
 
+## Phase 4 — startup work reduced
+
+### PR #169 — measured production inventory
+
+PR #169 added a read-only inventory of the production JavaScript manifest. It records loaded order, size, scheduling signals, lifecycle listeners, potential network operations, and profile/group-snapshot references. Counts identify audit candidates; they are not treated as proof that a matched operation executes at startup.
+
+- Inventory head: `f8831fc2060f4a591b477d0c7329fcec0e520c77`.
+- Production merge: `f1de569d022bf8fd6bb41a1710d8617957312d0e`.
+- Phase 4 Startup Work Inventory #1: passed.
+
+### PR #171 — commissioner snapshot activation
+
+`assets/js/picks-commissioner.js` previously requested commissioner state during Home startup when saved Picks access existed, scheduled refreshes after hidden Picks mutations, and continued its 45-second poll while Picks was off-screen.
+
+PR #171 retained the commissioner module as the canonical data/action owner but bound its network work to active Picks:
+
+- Home startup installs only the local card shell and performs zero commissioner RPCs;
+- direct Picks startup and route entry refresh only after the card is mounted;
+- late card creation receives one bounded refresh handoff;
+- ordinary hidden or active subtree mutations do not request state;
+- the 45-second freshness poll runs only while Picks is active;
+- explicit commissioner actions retain their forced refreshes.
+
+- Exact tested head: `de893fa4927e22a7968522c69fd429c17e46c965`.
+- Startup Architecture Gate #177: passed.
+- Dedicated iOS Home Startup Stability #44: passed.
+- Production merge: `2eea1a03e169e3ba3289b4c0b6198a87ea4233ab`.
+
 ## Known unrelated red workflows
 
 These remain outside startup ownership unless a failure directly references an isolated changed line:
 
-- Production Ranking Browser Smoke #576 stopped at the existing **Audit every fighter photo path** step before ranking and mobile-profile certification.
-- Scoring Architecture Guardrails #1406 passed syntax, profile-copy coverage, and physical source ownership, then stopped at its established permanent runtime contract step.
+- Picks UI Smoke #840 passed Picks JavaScript syntax, then failed the existing mobile top-tab auto-centering, daily odds schedule, and setup-guide documentation checks.
+- Production Ranking Browser Smoke #589 stopped at the existing **Audit every fighter photo path** step before ranking and mobile-profile certification.
+- Scoring Architecture Guardrails #1415 passed syntax, profile-copy coverage, and physical source ownership, then stopped at its established permanent runtime contract step.
 - Production Ranking Pipeline and Snapshot may stop on stale ranking/roster certification expectations.
 - Validate Phase 4B Preview may stop at its historical hard-pinned architecture check.
-- Picks UI Smoke may report an existing Picks product/static-contract finding.
 
-Neither inspected #576 nor #1406 references the isolated drawer/stability responsibility.
+None of the inspected #840, #589, or #1415 failures references the isolated commissioner activation responsibility.
 
 ## Testing and interruption policy
 
@@ -133,8 +161,9 @@ Request Cody only when a genuine unresolved user-only or physical-only uncertain
 
 ## Exact next action
 
-1. Begin Phase 4 from current production `main`.
-2. Build a current production startup-work inventory from `index.html`, owner bootstraps, startup timers, readiness handlers, and permanent browser proofs.
-3. Select the smallest measured task that performs avoidable work without changing ownership or visible behavior.
-4. Audit and change one startup-work responsibility at a time.
-5. Do not begin broad script-manifest deletion or bundling; that remains Phase 5.
+1. Start from production merge `2eea1a03e169e3ba3289b4c0b6198a87ea4233ab` plus this documentation merge.
+2. Audit the five unconditional native-shell startup resynchronization passes at 80, 260, 800, 1800, and 4200 milliseconds.
+3. Separate component creation, active-route synchronization, and badge synchronization before editing.
+4. Prove whether any late prerequisite still requires each delayed pass.
+5. Preserve the 10-second live badge poll as a separate responsibility unless independently proven avoidable.
+6. Do not begin broad script-manifest deletion or bundling; that remains Phase 5.
