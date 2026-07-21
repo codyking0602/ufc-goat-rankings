@@ -1,0 +1,75 @@
+name: Remove Wavelength new badge
+
+on:
+  push:
+    branches:
+      - agent/remove-wavelength-new-badge
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/remove-wavelength-new-badge
+          fetch-depth: 0
+      - name: Apply focused Play catalog change
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          game = Path('assets/js/game-challenges.js')
+          text = game.read_text()
+          replacements = {
+              "const VERSION='game-challenges-20260719b-immediate-buttons';": "const VERSION='game-challenges-20260721c-wavelength-play-now';",
+              "      #playHub .play-game-card.is-new .play-game-card-top em{border-color:rgba(250,204,21,.72);background:rgba(250,204,21,.14);color:#fde68a}\n": "",
+              "    const wavelength=map.get('top10');\n    if(wavelength){\n      wavelength.classList.add('is-new');\n      const status=wavelength.querySelector('.play-game-card-top em');\n      if(status)status.textContent='NEW';\n    }\n": "    const wavelength=map.get('top10');\n    if(wavelength){\n      wavelength.classList.remove('is-new');\n      const status=wavelength.querySelector('.play-game-card-top em');\n      if(status&&status.textContent!=='PLAY NOW')status.textContent='PLAY NOW';\n    }\n",
+          }
+          for old, new in replacements.items():
+              if old not in text:
+                  raise SystemExit(f'Missing expected game-challenges source: {old[:80]}')
+              text = text.replace(old, new, 1)
+          game.write_text(text)
+
+          changed = Path('assets/data/what-changed.js')
+          text = changed.read_text()
+          replacements = {
+              "// Deployment touch: load the immediate all-game challenge controller.": "// Deployment touch: retire the Wavelength launch badge.",
+              "version:'what-changed-data-20260719c-shane-watchlist'": "version:'what-changed-data-20260721d-wavelength-play-now'",
+              "assets/js/game-challenges.js?v=game-challenges-20260719b-immediate-buttons": "assets/js/game-challenges.js?v=game-challenges-20260721c-wavelength-play-now",
+          }
+          for old, new in replacements.items():
+              if old not in text:
+                  raise SystemExit(f'Missing expected what-changed source: {old}')
+              text = text.replace(old, new, 1)
+          changed.write_text(text)
+
+          index = Path('index.html')
+          text = index.read_text()
+          old = 'assets/data/what-changed.js?v=what-changed-data-20260719c-shane-watchlist'
+          new = 'assets/data/what-changed.js?v=what-changed-data-20260721d-wavelength-play-now'
+          if old not in text:
+              raise SystemExit('Missing expected what-changed cache key in index.html')
+          index.write_text(text.replace(old, new, 1))
+
+          test = Path('scripts/test-production-browser.mjs')
+          text = test.read_text()
+          old = "  await activateView('play');\n  await page.locator('#playHub [data-open-game=\"top10\"]').click();"
+          new = "  await activateView('play');\n  const wavelengthCard=await page.evaluate(()=>{\n    const card=document.querySelector('#playHub [data-open-game=\"top10\"]');\n    return{status:card?.querySelector('.play-game-card-top em')?.textContent?.trim()||'',isNew:Boolean(card?.classList.contains('is-new'))};\n  });\n  assert.equal(wavelengthCard.status,'PLAY NOW');\n  assert.equal(wavelengthCard.isNew,false);\n  await page.locator('#playHub [data-open-game=\"top10\"]').click();"
+          if old not in text:
+              raise SystemExit('Missing expected Wavelength browser-test insertion point')
+          test.write_text(text.replace(old, new, 1))
+
+          Path('.github/workflows/remove-wavelength-new-temporary.yml').unlink()
+          PY
+      - name: Commit focused change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/js/game-challenges.js assets/data/what-changed.js index.html scripts/test-production-browser.mjs .github/workflows/remove-wavelength-new-temporary.yml
+          git commit -m "Remove Wavelength new badge"
+          git push origin HEAD:agent/remove-wavelength-new-badge
