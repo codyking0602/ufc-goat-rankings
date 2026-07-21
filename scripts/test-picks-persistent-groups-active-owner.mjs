@@ -23,10 +23,11 @@ const snapshot={
 function fixture(mode){
   const active=['direct-group','direct-room','late-shell'].includes(mode);
   const includeShell=mode!=='late-shell';
-  const hiddenRoom=mode==='home';
+  const hasRoomBanner=['home','direct-room'].includes(mode);
+  const shell=includeShell?`<div class="picks-shell">${hasRoomBanner?'<div id="picksRoomBanner"><span class="picks-code">ROOM01</span></div>':''}<div id="picksEventRecap"></div></div>`:'';
   return `<!doctype html><html><head><meta charset="utf-8"><title>Persistent group activation</title></head><body>
     <section id="home" class="${active?'':'active-view'}"></section>
-    <section id="picks" class="${active?'active-view':''}">${includeShell?'<div class="picks-shell"><div id="picksRoomBanner"><span class="picks-code">ROOM01</span></div><div id="picksEventRecap"></div></div>':hiddenRoom?'<div class="picks-shell"><div id="picksRoomBanner"><span class="picks-code">ROOM01</span></div></div>':''}</section>
+    <section id="picks" class="${active?'active-view':''}">${shell}</section>
     <div id="picksToast"></div>
     <script>
       window.UFC_SUPABASE_CONFIG={url:'https://example.supabase.co',anonKey:'anon'};
