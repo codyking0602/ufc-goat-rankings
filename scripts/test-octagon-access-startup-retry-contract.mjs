@@ -19,4 +19,4 @@ assert.match(realtime[0],/channel\.on\('broadcast',\{event:'access-change'\}[\s\
 assert.match(source,/client\.rpc\('octagon_admin_access_roster'/,'Cody roster management must remain.');
 assert.match(source,/client\.rpc\('octagon_admin_set_access'/,'Cody access toggles must remain.');
 
-console.log(JSON.stringify({passed:true,responsibility:'War Room access startup retries',removed:[250,900,2600,5000],preserved:['one immediate panel/access attempt','identity readiness','realtime access refresh','visibility and online recovery','60-second access poll','Cody roster and toggle actions']},null,2));
+console.log(JSON.stringify({passed:true,responsibility:'War Room access startup retries',removed:[250,900,2600,5000],preserved:['one immediate panel/access attempt','published identity readiness','realtime access refresh','visibility and online recovery','60-second access poll','Cody roster and toggle actions']},null,2));
