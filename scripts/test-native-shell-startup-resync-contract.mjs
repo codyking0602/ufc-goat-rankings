@@ -17,14 +17,15 @@ const start=source.match(/function start\(\)\{([\s\S]*?)\n  \}\n\n  window\.UFC_
 
 assert(shellPosition>=0&&nativePosition>shellPosition,'The native shell must load after the canonical route owner.');
 assert(start,'Native shell startup body could not be located.');
-assert.match(source,/native-app-shell-20260721c-no-delayed-startup-resync/,'The corrected native-shell runtime version is missing.');
+assert.match(source,/native-app-shell-20260721d-permission-aware-war-room/,'The permission-aware native-shell runtime version is missing.');
 assert.doesNotMatch(source,/\[80,260,800,1800,4200\]/,'The five unconditional startup resynchronization passes remain.');
 for(const call of ['ensureBottomNav','ensureAskAction','ensurePullIndicator','syncActive','syncBadges'])assert.match(start[1],new RegExp(`\\b${call}\\(\\);`),`Initial ${call} work was removed.`);
 assert.match(start[1],/bindEvents\(\);[\s\S]*observe\(\);/,'Late owner events and targeted observation must remain bound.');
 assert.match(start[1],/setInterval\(\(\)=>\{if\(!document\.hidden\)syncBadges\(\);\},10000\)/,'The separate live badge poll must remain.');
 assert.match(source,/octagon-hq:view-change[\s\S]*syncActive[\s\S]*syncBadges/,'Canonical route events no longer synchronize native state.');
+assert.match(source,/octagon-hq:war-room-access-change[\s\S]*syncActive/,'The War Room permission owner no longer synchronizes native navigation.');
 assert.match(source,/#picksProgress[\s\S]*data-octagon-unread-badge[\s\S]*data-profile-challenge-inbox/,'Targeted late badge observation was removed.');
 assert.match(challenges,/ufc-profile-challenges-updated/,'The challenge owner no longer publishes unread updates.');
 assert.match(notifications,/ensureBadge\(\)[\s\S]*refreshStatus\(\)/,'The notification owner no longer publishes its unread badge DOM state.');
 
-console.log(JSON.stringify({passed:true,responsibility:'native shell delayed startup resynchronization',removed:[80,260,800,1800,4200],preserved:['one initial component/route/badge synchronization','owner events','targeted observation','visibility recovery','10-second live badge poll']},null,2));
+console.log(JSON.stringify({passed:true,responsibility:'native shell delayed startup resynchronization',removed:[80,260,800,1800,4200],preserved:['one initial component/route/badge synchronization','owner events','targeted observation','visibility recovery','10-second live badge poll','War Room permission handoff']},null,2));

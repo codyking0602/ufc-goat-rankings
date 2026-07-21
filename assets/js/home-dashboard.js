@@ -4,7 +4,7 @@
   if(window.__UFC_HOME_DASHBOARD_STARTED__)return;
   window.__UFC_HOME_DASHBOARD_STARTED__=true;
 
-  const VERSION='home-dashboard-20260720c-canonical-picks-events';
+  const VERSION='home-dashboard-20260721a-permission-aware-war-room';
   const DAILY={
     gameType:'find-leader',
     gameVersion:'find-leader-daily-v1',
@@ -254,6 +254,7 @@
   }
 
   function initials(value){return text(value).split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase()||'UFC';}
+  function warMode(){return text(window.UFC_OCTAGON_ACCESS?.mode).toLowerCase()||'locked';}
 
   function recentWarMembers(){
     const messages=Array.isArray(window.UFC_OCTAGON_BOARD?.snapshot?.messages)?window.UFC_OCTAGON_BOARD.snapshot.messages:[];
@@ -311,11 +312,12 @@
   }
 
   function warMarkup(){
+    const mode=warMode();
+    if(mode==='locked')return'';
+    const invited=mode==='invite';
     const members=recentWarMembers();
-    const unread=Math.max(0,Number(window.UFC_OCTAGON_NOTIFICATIONS?.unread)||0);
-    const button=document.querySelector('[data-destination="war-room"]');
-    const disabled=Boolean(button?.disabled||button?.getAttribute('aria-disabled')==='true');
-    return`<section class="home-dashboard-card home-war-room"><div class="home-dashboard-kicker"><span>THE WAR ROOM</span></div><div class="home-war-room-body"><div class="home-war-avatars">${memberAvatar(members[0],0)}${memberAvatar(members[1],1)}</div><div class="home-war-count"><strong>${unread}</strong><span>notification${unread===1?'':'s'}</span></div></div><button type="button" class="home-dashboard-action" data-home-action="war-room" ${disabled?'disabled':''}>JOIN CONVERSATION →</button></section>`;
+    const unread=invited?0:Math.max(0,Number(window.UFC_OCTAGON_NOTIFICATIONS?.unread)||0);
+    return`<section class="home-dashboard-card home-war-room"><div class="home-dashboard-kicker"><span>THE WAR ROOM</span></div><div class="home-war-room-body"><div class="home-war-avatars">${memberAvatar(members[0],0)}${memberAvatar(members[1],1)}</div><div class="home-war-count"><strong>${unread}</strong><span>${invited?'invite required':`notification${unread===1?'':'s'}`}</span></div></div><button type="button" class="home-dashboard-action" data-home-action="war-room">${invited?'JOIN WITH INVITE':'JOIN CONVERSATION'} →</button></section>`;
   }
 
   function spotlightMarkup(){
@@ -344,8 +346,7 @@
 
   async function refreshWarRoom(){
     if(boardLoading)return;
-    const button=document.querySelector('[data-destination="war-room"]');
-    if(button?.disabled||button?.getAttribute('aria-disabled')==='true'){render();return;}
+    if(warMode()!=='owner'){render();return;}
     boardLoading=true;
     try{
       await window.UFC_OCTAGON_NOTIFICATIONS?.refreshStatus?.();
@@ -390,8 +391,8 @@
         setTimeout(()=>refreshWarRoom(),100);
       }
     });
-    ['ufc-picks-events-updated','ufc-play-hub-ready','ufc-play-shared-ready','ufc-play-profile-ready','ufc-picks-matchup-spotlight-ready','ufc-scoring-pipeline-ready','ufc-production-ranking-ready','ufc-app-profile-updated','ufc-canonical-group-ready'].forEach(name=>window.addEventListener(name,()=>{
-      scheduleRender(name==='ufc-picks-events-updated'?0:30);
+    ['ufc-picks-events-updated','ufc-play-hub-ready','ufc-play-shared-ready','ufc-play-profile-ready','ufc-picks-matchup-spotlight-ready','ufc-scoring-pipeline-ready','ufc-production-ranking-ready','ufc-app-profile-updated','ufc-canonical-group-ready','octagon-hq:war-room-access-change'].forEach(name=>window.addEventListener(name,()=>{
+      scheduleRender(name==='ufc-picks-events-updated'||name==='octagon-hq:war-room-access-change'?0:30);
       if(name==='ufc-play-shared-ready'||name==='ufc-play-profile-ready')setTimeout(()=>syncOfficialDaily(true),50);
     }));
     window.addEventListener('storage',()=>scheduleRender(30));
