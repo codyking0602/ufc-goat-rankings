@@ -63,7 +63,7 @@
       location: 'Etihad Arena · Abu Dhabi, United Arab Emirates',
       cardRule: 'Main card only',
       status: 'upcoming',
-      sourceNote: 'Confirmed against UFC.com on July 20. Current card has five prelims and six main-card fights.',
+      sourceNote: 'Confirmed July 20 snapshot with five prelims and seven main-card fights.',
       fights: [
         { id:'abu26-nurullo-aliev-mike-davis', order:1, cardSection:'Prelims', weightClass:'Lightweight', red:'Nurullo Aliev', blue:'Mike Davis', lockAt:'2026-07-25T09:00:00-04:00', winner:null, resultStatus:'scheduled' },
         { id:'abu26-magomed-tuchalov-brendson-ribeiro', order:2, cardSection:'Prelims', weightClass:'Light Heavyweight', red:'Magomed Tuchalov', blue:'Brendson Ribeiro', lockAt:'2026-07-25T09:30:00-04:00', winner:null, resultStatus:'scheduled' },
@@ -71,11 +71,12 @@
         { id:'abu26-uran-satybaldiev-dustin-jacoby', order:4, cardSection:'Prelims', weightClass:'Light Heavyweight', red:'Uran Satybaldiev', blue:'Dustin Jacoby', lockAt:'2026-07-25T10:30:00-04:00', winner:null, resultStatus:'scheduled' },
         { id:'abu26-valter-walker-thomas-petersen', order:5, cardSection:'Prelims', weightClass:'Heavyweight', red:'Valter Walker', blue:'Thomas Petersen', lockAt:'2026-07-25T11:00:00-04:00', winner:null, resultStatus:'scheduled' },
         { id:'abu26-ismael-bonfim-axel-sola', order:6, cardSection:'Main Card', weightClass:'Lightweight', red:'Ismael Bonfim', blue:'Axel Sola', lockAt:'2026-07-25T12:00:00-04:00', winner:null, resultStatus:'scheduled' },
-        { id:'abu26-rizvan-kuniev-tyrell-fortune', order:7, cardSection:'Main Card', weightClass:'Heavyweight', red:'Rizvan Kuniev', blue:'Tyrell Fortune', lockAt:'2026-07-25T12:30:00-04:00', winner:null, resultStatus:'scheduled' },
-        { id:'abu26-magomed-zaynukov-damian-rzepecki', order:8, cardSection:'Main Card', weightClass:'Lightweight', red:'Magomed Zaynukov', blue:'Damian Rzepecki', lockAt:'2026-07-25T13:00:00-04:00', winner:null, resultStatus:'scheduled' },
-        { id:'abu26-islam-dulatov-wellington-turman', order:9, cardSection:'Main Card', weightClass:'Welterweight', red:'Islam Dulatov', blue:'Wellington Turman', lockAt:'2026-07-25T13:30:00-04:00', winner:null, resultStatus:'scheduled' },
-        { id:'abu26-steve-erceg-ramazan-temirov', order:10, cardSection:'Co-Main Event', weightClass:'Flyweight', red:'Steve Erceg', blue:'Ramazan Temirov', lockAt:'2026-07-25T14:00:00-04:00', winner:null, resultStatus:'scheduled' },
-        { id:'abu26-magomed-ankalaev-bogdan-guskov', order:11, cardSection:'Main Event', weightClass:'Light Heavyweight', red:'Magomed Ankalaev', blue:'Bogdan Guskov', lockAt:'2026-07-25T14:30:00-04:00', winner:null, resultStatus:'scheduled' }
+        { id:'abu26-saygid-izagakhmaev-abubakar-vagaev', order:7, cardSection:'Main Card', weightClass:'Welterweight', red:'Saygid Izagakhmaev', blue:'Abubakar Vagaev', lockAt:'2026-07-25T12:30:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'abu26-rizvan-kuniev-tyrell-fortune', order:8, cardSection:'Main Card', weightClass:'Heavyweight', red:'Rizvan Kuniev', blue:'Tyrell Fortune', lockAt:'2026-07-25T13:00:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'abu26-magomed-zaynukov-damian-rzepecki', order:9, cardSection:'Main Card', weightClass:'Lightweight', red:'Magomed Zaynukov', blue:'Damian Rzepecki', lockAt:'2026-07-25T13:30:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'abu26-islam-dulatov-wellington-turman', order:10, cardSection:'Main Card', weightClass:'Welterweight', red:'Islam Dulatov', blue:'Wellington Turman', lockAt:'2026-07-25T14:00:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'abu26-steve-erceg-ramazan-temirov', order:11, cardSection:'Co-Main Event', weightClass:'Flyweight', red:'Steve Erceg', blue:'Ramazan Temirov', lockAt:'2026-07-25T14:15:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'abu26-magomed-ankalaev-bogdan-guskov', order:12, cardSection:'Main Event', weightClass:'Light Heavyweight', red:'Magomed Ankalaev', blue:'Bogdan Guskov', lockAt:'2026-07-25T14:30:00-04:00', winner:null, resultStatus:'scheduled' }
       ]
     },
     {
@@ -124,44 +125,13 @@
     return fight?.cardSection || fight?.card_section || '';
   }
 
-  function fighterKey(value){
-    return String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'');
-  }
-
-  function matchupKey(fight){
-    const red=fight?.red || fight?.red_name || '';
-    const blue=fight?.blue || fight?.blue_name || '';
-    return [fighterKey(red),fighterKey(blue)].sort().join('|');
-  }
-
   function isPickable(event,fight){
     if(eventType(event)==='numbered' || /full card/i.test(String(cardRule(event)))) return true;
     return normalizedSection(fightSection(fight))==='Main Card';
   }
 
-  function reconcileMainCardSections(event){
-    if(eventType(event)==='numbered' || /full card/i.test(String(cardRule(event)))) return event;
-    const fallback=fullEvents.find(candidate=>candidate.id===event?.id);
-    if(!fallback) return event;
-    const expectedMain=(fallback.fights || []).filter(fight=>isPickable(fallback,fight));
-    const liveFights=Array.isArray(event?.fights) ? event.fights : [];
-    const liveMainCount=liveFights.filter(fight=>isPickable(event,fight)).length;
-    if(liveMainCount>=expectedMain.length) return event;
-    const expectedByMatchup=new Map(expectedMain.map(fight=>[matchupKey(fight),fight.cardSection]));
-    const fights=liveFights.map(fight=>{
-      const expectedSection=expectedByMatchup.get(matchupKey(fight));
-      if(!expectedSection) return fight;
-      if(Object.prototype.hasOwnProperty.call(fight,'card_section') && !Object.prototype.hasOwnProperty.call(fight,'cardSection')){
-        return {...fight,card_section:expectedSection};
-      }
-      return {...fight,cardSection:expectedSection};
-    });
-    return {...event,fights};
-  }
-
   function scopedEvent(event){
-    const reconciled=reconcileMainCardSections(event);
-    return {...reconciled,fights:(reconciled?.fights || []).filter(fight=>isPickable(reconciled,fight))};
+    return {...event,fights:(event?.fights || []).filter(fight=>isPickable(event,fight))};
   }
 
   function pruneLocalPicks(event){
@@ -175,7 +145,9 @@
     let changed=false;
     Object.entries(picks).forEach(([fightId,fighter])=>{
       const fight=fights.get(fightId);
-      if(!fight || (fighter!==fight.red && fighter!==fight.blue)){
+      const red=fight?.red || fight?.red_name;
+      const blue=fight?.blue || fight?.blue_name;
+      if(!fight || (fighter!==red && fighter!==blue)){
         delete picks[fightId];
         changed=true;
       }
