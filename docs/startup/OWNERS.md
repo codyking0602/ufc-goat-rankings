@@ -2,7 +2,7 @@
 
 _Last updated: 2026-07-21_
 
-This file records the canonical owner of each startup responsibility. Detailed history remains in the Phase 1, Phase 2, and Phase 3 audits and ledgers.
+This file records the canonical owner of each startup responsibility. Detailed history remains in the Phase 1, Phase 2, Phase 3, and Phase 4 audits and ledgers.
 
 ## Ownership rules
 
@@ -11,13 +11,14 @@ This file records the canonical owner of each startup responsibility. Detailed h
 - Passive consumers do not resolve shared identity, read canonical access storage, publish canonical readiness, or trigger full editor/group work merely to obtain identity.
 - Explicit user actions may use the canonical `require()` boundary when sign-in is genuinely needed.
 - Competing startup, route, visibility, reconnect, realtime, polling, and direct refresh paths share one in-flight owner when they request the same data.
+- A feature-specific network owner does not perform startup or polling work while its destination is inactive unless a separate app-wide requirement is proved.
 - One accepted primary route transition publishes one canonical route event; an already-active exact-view retry is a no-op.
 - One accepted pull-to-refresh action performs one final activity-status refresh; subordinate fallback work may not duplicate it.
 - Historical-token migration may validate and adopt a token before normal identity resolution, but it hands the resolved identity to the canonical profile owner rather than publishing canonical profile readiness.
 - The canonical profile owner consumes a valid migration handoff without repeating its snapshot RPC; it retains independent resolution when migration has no result.
 - Compatibility layers may preserve presentation/recovery behavior but may not initiate a canonical owner’s data or render responsibility.
 - A presentation adapter may map one canonical DOM state into required mobile presentation state, but it may not independently render canonical content or wake from unrelated lifecycle events.
-- One ownership issue changes per runtime batch.
+- One ownership or startup-work issue changes per runtime batch.
 - `assets/js/app.js` is a structural manifest singleton and must not receive a standard IIFE guard.
 
 ## Canonical owners
@@ -38,6 +39,7 @@ This file records the canonical owner of each startup responsibility. Detailed h
 | Picks sign-in card and PIN-management surfaces | `assets/js/picks-member-pin.js` | UI, validation/status, continuation, member PIN, and commissioner PIN owner; credentials delegate to canonical profile owner |
 | Picks base runtime | `assets/js/picks.js` | Canonical Picks room/event/pick/render owner; startup compatibility activation is subordinate to shell idempotence and may not republish an already-active primary route |
 | Picks internal routing | `assets/js/picks-internal-navigation.js` | Nested Picks route owner only; not a primary app route owner |
+| Picks commissioner snapshot and commissioner actions | `assets/js/picks-commissioner.js` | Sole commissioner snapshot/action owner; local card shell may install at startup, but network state loads only after Picks is active and the card exists; route entry and late card mount provide bounded activation; 45-second freshness polling is active-Picks-only; explicit actions retain forced refreshes |
 | Play base runtime | `assets/js/play.js` | Canonical base Play owner after DOM/data prerequisites |
 | Play internal game navigation | `assets/js/play-hub.js` | Canonical Play game-screen owner after hub prerequisites |
 | Home rendering and Ranking Spotlight | `assets/js/home-dashboard.js` | Sole Home/Spotlight readiness, deterministic selection, placeholder, markup, route re-entry, visibility recovery, and duplicate-markup suppression owner; official daily sync consumes cached identity only |
@@ -58,7 +60,7 @@ This file records the canonical owner of each startup responsibility. Detailed h
 | War Room membership/access status and Cody’s access-management panel | `assets/js/octagon-access-panel.js` | Passive identity consumer; one in-flight access-status owner; no direct sign-in or storage ownership |
 | War Room activity/unread/mark-seen/realtime/push behavior | `assets/js/octagon-notifications.js` | Passive identity consumer and canonical activity-status owner; one in-flight activity-status request; push enable/disable reuses published identity; no resolver or canonical-storage ownership |
 
-## Permanent ownership proofs
+## Permanent ownership and startup-work proofs
 
 Startup Architecture Gate protects:
 
@@ -80,16 +82,18 @@ Startup Architecture Gate protects:
 - notification settings passive identity;
 - notification/profile compatibility passive ownership and live cached-action restoration;
 - Picks social and season passive identity;
+- Picks commissioner zero-work Home startup, active route entry, late card mount, active-only polling, and off-screen silence;
 - War Room board, access, and notification passive identity with their request owners;
 - native pull normal, fallback, War Room, and concurrent accepted-action ownership;
 - iOS route stability and delayed Home/community/profile behavior.
 
-Passive or subordinate paths must produce:
+Passive, subordinate, or inactive-destination paths must produce:
 
 - zero canonical/editor resolver calls;
 - zero canonical token storage reads;
 - zero sign-in surfaces before an explicit user action;
 - zero identity-dependent RPCs before published identity;
+- zero commissioner snapshot RPCs while Picks is inactive;
 - one request owner for competing refresh paths;
 - zero compatibility-layer calls into canonical notification settings or render ownership;
 - zero stability-layer Ranking Spotlight mutations;
@@ -115,6 +119,7 @@ Passive or subordinate paths must produce:
 - Phase 1 established idempotent owners.
 - Phase 2 removed demonstrated duplicate route, identity, profile, access, notification, and refresh ownership.
 - Phase 3 removed duplicate Spotlight, Resume Snapshot, and What’s New repairs; retired the body-wide observer, route/soft-refresh repair listeners, six delayed retries, close-button continuation, and public repair API; retained only the proved drawer/body mapping, drawer-only observer, and native overlay dismissal.
+- Phase 4 established a measured production startup-work inventory and removed Home-startup, hidden-mutation, and off-screen commissioner snapshot work while preserving active Picks behavior.
 
 Further movement or renaming of the minimal native presentation adapter belongs to later startup/script-manifest simplification, not repair-loop retirement.
 
