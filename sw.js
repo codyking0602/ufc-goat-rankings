@@ -1,5 +1,5 @@
-const VERSION='octagon-hq-sw-20260720c-picks-runtime-refresh';
-const CACHE_NAME='octagon-hq-static-v10';
+const VERSION='octagon-hq-sw-20260720d-network-build-check';
+const CACHE_NAME='octagon-hq-static-v11';
 const LEGACY_PREFIX='octagon-hq-static-';
 const CORE=['./','./index.html','./manifest.webmanifest'];
 const FORCE_NETWORK=/\/assets\/(?:(?:js\/(?:app-notification-surface-fix|app-update-watcher|product-architecture|native-app-shell|native-app-shell-stability|community-profiles|fresh-home-launch|home-dashboard|find-leader|game-challenges|share-deep-links|picks|picks-auto-advance)|data\/(?:what-changed|supabase-config|picks-events))\.js|css\/(?:native-app-shell|native-app-shell-stability|community-profiles|find-leader)\.css)$/i;
@@ -40,8 +40,8 @@ self.addEventListener('activate',event=>{
   })());
 });
 
-function isNavigation(request,url){
-  return request.mode==='navigate'||\/(?:index|share)\.html$/i.test(url.pathname);
+function isNavigation(request){
+  return request.mode==='navigate';
 }
 
 function isVersionedStatic(request,url){
@@ -87,7 +87,7 @@ self.addEventListener('fetch',event=>{
   const request=event.request;
   if(request.method!=='GET')return;
   const url=new URL(request.url);
-  if(isNavigation(request,url)){
+  if(isNavigation(request)){
     event.respondWith(instantNavigation(request,event));
     return;
   }
