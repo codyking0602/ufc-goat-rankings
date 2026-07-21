@@ -22,7 +22,7 @@
   <link rel="canonical" href="https://codyking0602.github.io/ufc-goat-rankings/" />
   <meta name="description" content="UFC-only GOAT rankings, fighter comparisons, games, Picks, and War Room discussion in Octagon HQ." />
   <meta name="theme-color" content="#111827" />
-  <meta name="app-build" content="production-ranking-bootstrap-20260717c-anthony-pettis-80-build-80" />
+  <meta name="app-build" content="war-room-permission-20260721a" />
   <title>Octagon HQ</title>
   <link rel="manifest" href="manifest.webmanifest?v=octagon-hq-branding-20260718a" />
   <link rel="stylesheet" href="assets/css/app.css?v=app-css-20260711a-picks" />
@@ -65,12 +65,12 @@
     <div class="hero-card" aria-hidden="true"><span id="fighterCount">80</span><small>fighters ranked</small></div>
   </header>
 
-  <nav class="tabs" data-app-shell="static" aria-label="Primary app destinations">
+  <nav class="tabs" data-app-shell="static" data-war-room-access="locked" aria-label="Primary app destinations">
     <button type="button" class="tab active" data-destination="home" data-view="home" aria-selected="true"><span data-destination-label>Home</span></button>
     <button type="button" class="tab" data-destination="rankings" data-view="men" aria-selected="false"><span data-destination-label>Rankings</span></button>
     <button type="button" class="tab" data-destination="play" data-view="play" aria-selected="false"><span data-destination-label>Play</span></button>
     <button type="button" class="tab" data-destination="picks" data-view="picks" aria-selected="false"><span data-destination-label>Picks</span></button>
-    <button type="button" class="tab" data-destination="war-room" data-view="octagon" data-octagon-beta-tab="true" data-beta-access="locked" aria-selected="false" aria-disabled="true" aria-label="War Room access not enabled" title="War Room access not enabled" disabled><span data-destination-label>War Room</span></button>
+    <button type="button" class="tab" data-destination="war-room" data-view="octagon" data-octagon-beta-tab="true" data-beta-access="locked" aria-selected="false" aria-disabled="true" aria-label="War Room access not enabled" title="War Room access not enabled" hidden disabled><span data-destination-label>War Room</span></button>
     <button type="button" class="tab" data-destination="intelligence" data-view="compare" aria-selected="false"><span data-destination-label>Intelligence</span></button>
   </nav>
 
@@ -134,7 +134,7 @@
 
   <!-- The shell is intentionally first and is the only navigation owner. -->
   <script src="assets/js/fresh-home-route-bootstrap.js?v=fresh-home-route-bootstrap-20260719a"></script>
-  <script src="assets/js/octagon-hq-shell.js?v=octagon-hq-shell-20260717c"></script>
+  <script src="assets/js/octagon-hq-shell.js?v=octagon-hq-shell-20260721c-permission-aware-war-room"></script>
   <script src="assets/js/octagon-hq-nav-grid.js?v=octagon-hq-nav-grid-20260717g"></script>
 
   <script src="assets/data/ranking-data.js?v=571bb3f1d420"></script>
@@ -208,17 +208,17 @@
   <script src="assets/data/what-changed.js?v=what-changed-data-20260719c-shane-watchlist"></script>
   <script src="assets/js/app-update-watcher.js?v=7cdd1c0453d6"></script>
   <script src="assets/js/octagon-message-board.js?v=octagon-message-board-20260717c-realtime"></script>
-  <script src="assets/js/octagon-access-panel.js?v=octagon-access-panel-20260721b-passive-identity"></script>
+  <script src="assets/js/octagon-access-panel.js?v=octagon-access-panel-20260721d-permission-surfaces"></script>
   <script src="assets/js/octagon-notifications.js?v=octagon-notifications-20260717a"></script>
   <script src="assets/js/war-room-branding.js?v=war-room-branding-20260718a-single-shell"></script>
-  <script id="homeDashboardScript" src="assets/js/home-dashboard.js?v=home-dashboard-20260720c-canonical-picks-events"></script>
+  <script id="homeDashboardScript" src="assets/js/home-dashboard.js?v=home-dashboard-20260721a-permission-aware-war-room"></script>
   <script src="assets/js/product-architecture.js?v=product-architecture-20260718s-phase-4a-native-shell"></script>
   <script src="assets/js/profile-challenges.js?v=profile-challenges-20260718c-stable-inbox"></script>
   <script src="assets/js/community-profiles.js?v=community-profiles-20260718a-phase-4b"></script>
   <script src="assets/js/fresh-home-launch.js?v=fresh-home-launch-20260719e-single-startup-route"></script>
   <script src="assets/js/app-notification-center.js?v=app-notification-center-20260718c-profile-first"></script>
   <script src="assets/js/app-notification-surface-fix.js?v=app-notification-surface-fix-20260718b-phase-4a"></script>
-  <script src="assets/js/native-app-shell.js?v=native-app-shell-20260718a-phase-4a"></script>
+  <script src="assets/js/native-app-shell.js?v=native-app-shell-20260721d-permission-aware-war-room"></script>
   <script src="assets/js/native-app-shell-stability.js?v=native-app-shell-stability-20260718a"></script>
   <script src="assets/js/share-deep-links.js?v=share-deep-links-20260718b-no-comparisons"></script>
 </body>
