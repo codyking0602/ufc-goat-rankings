@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 const source=fs.readFileSync('assets/js/octagon-notifications.js','utf8');
+const serviceWorker=fs.readFileSync('sw.js','utf8');
 const passive=source.match(/function passiveIdentity\(value\)\{([\s\S]*?)\n  \}/);
 const context=source.match(/function context\(value\)\{([\s\S]*?)\n  \}/);
 const refresh=source.match(/async function refreshStatus\(options=\{\}\)\{([\s\S]*?)\n  \}\n\n  async function markSeen/);
@@ -42,6 +43,7 @@ assert(source.includes("channel.on('broadcast',{event:'activity-change'}"),'Real
 assert(source.includes("name==='octagon_post_message'"),'Board post interception must remain.');
 assert(source.includes("name==='octagon_delete_message'"),'Board delete interception must remain.');
 assert(source.includes("url.searchParams.get('open')!=='octagon'"),'Notification deep-link opening retry must remain.');
+assert.match(serviceWorker,/FORCE_NETWORK=[^;]*octagon-notifications/,'The installed app must network-refresh the notification runtime instead of retaining a stale cache-first copy.');
 
 console.log(JSON.stringify({
   passed:true,
@@ -49,6 +51,7 @@ console.log(JSON.stringify({
   passiveResolver:false,
   canonicalStorageRead:false,
   activityStatusInFlightOwner:true,
+  serviceWorkerNetworkFresh:true,
   pushOwner:true,
   markSeenOwner:true
 },null,2));
