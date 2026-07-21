@@ -1,8 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='better-than-standalone-share-20260717p-daily-type-polish';
-  const FIND_LEADER_VERSION='find-leader-20260716c-daily-elimination';
+  const VERSION='better-than-standalone-share-20260721q-find-leader-owner';
   let creating=false;
 
   function loadScriptOnce(selector,src,datasetKey,onload){
@@ -67,9 +66,8 @@
 
     const gameReady=()=>{patchBalancedDailySetup();window.UFC_PLAY_PHOTO_AUTHORITY?.sync?.();loadDailyTools();};
     const loadGame=()=>{
-      if(window.UFC_FIND_LEADER?.version!==FIND_LEADER_VERSION){
-        document.getElementById('playFindLeaderPanel')?.remove();
-        loadScriptOnce('script[data-find-leader-daily-elimination]','assets/js/find-leader.js?v=find-leader-20260716c-daily-elimination','findLeaderDailyElimination',gameReady);
+      if(!window.UFC_FIND_LEADER){
+        loadScriptOnce('script[data-find-leader-owner-recovery]','assets/js/find-leader.js?v=find-leader-20260719a-group-leaders','findLeaderOwnerRecovery',gameReady);
       }else gameReady();
     };
     const loadQuestionBank=()=>loadScriptOnce(
