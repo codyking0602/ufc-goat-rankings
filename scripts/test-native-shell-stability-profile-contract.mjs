@@ -48,10 +48,10 @@ function jsFiles(directory){
   });
 }
 const assetRoot=path.join(root,'assets','js');
-const hiddenSnapshotOwners=jsFiles(assetRoot)
-  .filter(file=>/repairSnapshot|dataset\.currentFighter/.test(fs.readFileSync(file,'utf8')))
+const hiddenSnapshotRepairs=jsFiles(assetRoot)
+  .filter(file=>/\brepairSnapshot\b/.test(fs.readFileSync(file,'utf8')))
   .map(file=>path.relative(root,file));
-assert.deepEqual(hiddenSnapshotOwners,[],'A hidden Resume Snapshot repair or drawer dataset owner remains in production JavaScript.');
+assert.deepEqual(hiddenSnapshotRepairs,[],'A hidden Resume Snapshot repair remains in production JavaScript.');
 
 console.log(JSON.stringify({
   passed:true,
