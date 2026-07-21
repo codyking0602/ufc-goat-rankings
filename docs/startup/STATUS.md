@@ -4,17 +4,17 @@ _Last updated: 2026-07-21_
 
 ## Current position
 
-- **Latest production runtime merge:** PR #174, `f03ef47aab32ee67816d7ba86206af3a8c208093`.
-- **Exact latest tested runtime head:** `a625b9a1f2dd13de342d0103e004884dcc71a437`.
-- **Latest complete Startup Architecture Gate:** run #180 passed.
-- **Latest dedicated iOS Home Startup Stability:** run #46 passed.
+- **Latest production runtime merge:** PR #177, `8df258a6dc7e20560783f30d6e974476e62ac5d6`.
+- **Exact latest tested runtime head:** `7d307fb4af9647748b552867390fb9498fe146c0`.
+- **Latest complete Startup Architecture Gate:** run #184 passed.
+- **Latest dedicated iOS Home Startup Stability:** run #49 passed.
 - **Current phase:** Phase 4 — reduce startup work.
 - **Phase 0:** Complete.
 - **Phase 1:** Complete.
 - **Phase 2:** Complete.
 - **Phase 3:** Complete.
-- **Phase 4:** In progress; inventory and two runtime reductions complete.
-- **Entire startup cleanup:** Approximately 96% complete.
+- **Phase 4:** In progress; inventory and three runtime reductions complete.
+- **Entire startup cleanup:** Approximately 97% complete.
 - **Visible product changes approved:** None. The zero-visible-change contract remains in force.
 - **Master tracker:** [Issue #102](https://github.com/codyking0602/ufc-goat-rankings/issues/102).
 - **Completed Phase 2 ledger:** [`PHASE-2-PROGRESS-20260721.md`](./PHASE-2-PROGRESS-20260721.md).
@@ -127,14 +127,7 @@ PR #171 retained the commissioner module as the canonical data/action owner but 
 
 `assets/js/native-app-shell.js` performed one complete initial component/route/badge synchronization, then repeated Ask-action, active-route, and badge synchronization at 80, 260, 800, 1800, and 4200 milliseconds regardless of change.
 
-The audit proved all late requirements already had owners:
-
-- static hero and canonical shell exist before native startup;
-- route changes publish `octagon-hq:view-change`;
-- challenge unread changes publish events;
-- Picks progress and War Room unread changes mutate targeted observed DOM;
-- resize, orientation, and visibility recovery remain;
-- the separate 10-second live badge poll remains.
+The audit proved late requirements already had owners: canonical route events, challenge update events, targeted Picks/War Room DOM observation, resize/orientation and visibility recovery, and the separate 10-second badge poll.
 
 PR #174 removed only the five unconditional passes. Initial creation, owner events, targeted observation, visibility recovery, pull-to-refresh, and live polling are unchanged.
 
@@ -144,17 +137,35 @@ PR #174 removed only the five unconditional passes. Initial creation, owner even
 - Phase 4 Startup Work Inventory #12: passed.
 - Production merge: `f03ef47aab32ee67816d7ba86206af3a8c208093`.
 
+### PR #177 — War Room notification startup status retries
+
+`assets/js/octagon-notifications.js` previously called local shell setup and `refreshStatus()` at 0, 180, 700, 1800, and 4200 milliseconds.
+
+The audit proved one passive immediate attempt plus existing identity readiness events cover both startup cases:
+
+- cached identity performs exactly one startup activity-status RPC;
+- uncached startup performs zero RPCs and waits for a published identity event;
+- readiness events schedule the later request and the in-flight owner coalesces competing calls.
+
+PR #177 removed the 180/700/1800/4200 retries and preserved one immediate shell/status attempt. Direct-link opening, realtime, visibility/online recovery, explicit refresh, mark-seen, push, the 30-second status poll, and the 3-second local DOM maintenance are unchanged.
+
+- Exact tested head: `7d307fb4af9647748b552867390fb9498fe146c0`.
+- Startup Architecture Gate #184: passed.
+- Dedicated iOS Home Startup Stability #49: passed.
+- Phase 4 Startup Work Inventory #15: passed.
+- Production merge: `8df258a6dc7e20560783f30d6e974476e62ac5d6`.
+
 ## Known unrelated red workflows
 
 These remain outside startup ownership unless a failure directly references an isolated changed line:
 
 - Picks UI Smoke #840 passed Picks JavaScript syntax, then failed the existing mobile top-tab auto-centering, daily odds schedule, and setup-guide documentation checks.
-- Production Ranking Browser Smoke #589 and #593 stopped at the existing **Audit every fighter photo path** step before ranking and mobile-profile certification.
-- Scoring Architecture Guardrails #1415 and #1418 passed syntax, profile-copy coverage, and physical source ownership, then stopped at the established permanent runtime contract step.
+- Production Ranking Browser Smoke #589, #593, and #598 stopped at the existing **Audit every fighter photo path** step before ranking and mobile-profile certification.
+- Scoring Architecture Guardrails #1415, #1418, and #1422 passed syntax, profile-copy coverage, and physical source ownership, then stopped at the established permanent runtime contract step.
 - Production Ranking Pipeline and Snapshot may stop on stale ranking/roster certification expectations.
 - Validate Phase 4B Preview may stop at its historical hard-pinned architecture check.
 
-None of the inspected failures references the isolated commissioner activation or native delayed-pass responsibilities.
+None of the inspected failures references the isolated Phase 4 responsibilities.
 
 ## Testing and interruption policy
 
@@ -166,9 +177,9 @@ Request Cody only when a genuine unresolved user-only or physical-only uncertain
 
 ## Exact next action
 
-1. Start from production merge `f03ef47aab32ee67816d7ba86206af3a8c208093` plus this documentation merge.
-2. Audit the War Room notification owner’s startup retry schedule at 0, 180, 700, 1800, and 4200 milliseconds.
-3. Trace identity readiness and direct-link behavior separately.
-4. Prove whether identity events plus one initial attempt make later `refreshStatus()` retries redundant.
-5. Preserve realtime, visibility, online, opening-board, explicit refresh, the 30-second status poll, and the 3-second local DOM maintenance unless independently proven avoidable.
+1. Start from production merge `8df258a6dc7e20560783f30d6e974476e62ac5d6` plus this documentation merge.
+2. Audit `assets/js/octagon-access-panel.js` as the next measured War Room startup-work candidate.
+3. Separate local panel installation, startup/readiness status requests, active War Room route entry, lifecycle/realtime/polling, and Cody-only management actions.
+4. Remove only demonstrated inactive-destination or repeated startup work.
+5. Preserve access rules, identity ownership, board rendering, notification status, and explicit management actions.
 6. Do not begin broad script-manifest deletion or bundling; that remains Phase 5.

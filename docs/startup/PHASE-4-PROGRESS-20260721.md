@@ -150,24 +150,88 @@ The existing native pull-refresh proof was updated only for the runtime version 
 - Phase 4 Startup Work Inventory #12: passed.
 - Production merge: `f03ef47aab32ee67816d7ba86206af3a8c208093`.
 
+## Batch 3 — War Room notification startup status retries
+
+### Measured avoidable work
+
+`assets/js/octagon-notifications.js` performed local shell creation and `refreshStatus()` at 0, 180, 700, 1800, and 4200 milliseconds.
+
+The notification owner already had the correct late-work boundaries:
+
+- one passive cached-identity read during `refreshStatus()`;
+- one in-flight activity-status request owner;
+- `ufc-play-profile-ready`, `ufc-app-profile-updated`, and `ufc-canonical-group-ready` readiness/update events;
+- realtime activity-change refresh;
+- visibility and online recovery;
+- explicit refresh, mark-seen, push, and opening-board behavior;
+- a bounded direct-link opening retry loop;
+- a separate 30-second status poll;
+- separate 3-second local badge/board-shell maintenance.
+
+The audit proved:
+
+- pre-cached identity is available to one immediate startup attempt;
+- uncached startup must perform zero RPCs and wait for a published identity event;
+- later timed startup retries do not provide a unique identity or route handoff.
+
+### Production boundary after PR #177
+
+PR #177 replaced the five startup attempts with:
+
+1. one immediate `ensureBadge()` call;
+2. one immediate `ensureBoardExtras()` call;
+3. one immediate passive `refreshStatus()` attempt.
+
+The immediate attempt performs one activity-status RPC when identity is already cached. Without identity, it performs no RPC; the existing readiness events schedule the later request.
+
+The following remain unchanged:
+
+- direct-link opening retry;
+- realtime activity refresh;
+- visibility and online recovery;
+- explicit refresh and mark-seen;
+- push registration/removal and post/reply push invocation;
+- one in-flight request coalescing;
+- the 30-second status poll;
+- the 3-second local DOM maintenance.
+
+### Permanent proof
+
+The static contract verifies one immediate startup attempt, absence of the 0/180/700/1800/4200 array, readiness-event scheduling, direct-link retry, realtime refresh, lifecycle recovery, and both recurring intervals.
+
+The 390×844 mobile proof covers:
+
+- uncached startup through the complete former 4.2-second retry window: zero activity-status RPCs and one set of local notification shells;
+- a later canonical identity event: exactly one RPC and correct unread/access state;
+- pre-cached startup through the complete former retry window: exactly one RPC, not five;
+- the preserved 30-second poll callback: one additional status RPC.
+
+The existing passive identity proof continues to certify zero resolver/storage/sign-in ownership, one readiness RPC, competing-request coalescing, mark-seen, push, and realtime behavior. The new proof is imported by the iOS startup suite.
+
+- Exact tested head: `7d307fb4af9647748b552867390fb9498fe146c0`.
+- Startup Architecture Gate #184: passed.
+- Dedicated iOS Home Startup Stability #49: passed.
+- Phase 4 Startup Work Inventory #15: passed.
+- Production merge: `8df258a6dc7e20560783f30d6e974476e62ac5d6`.
+
 ## Known unrelated red workflows
 
-The inspected failures do not reference either isolated Phase 4 responsibility:
+The inspected failures do not reference the isolated Phase 4 responsibilities:
 
 - Picks UI Smoke #840 passed Picks JavaScript syntax, then failed the existing checks for mobile top-tab auto-centering, a daily odds refresh schedule, and setup-guide documentation.
-- Production Ranking Browser Smoke #589 and #593 stopped at the existing **Audit every fighter photo path** step before ranking and mobile-profile certification.
-- Scoring Architecture Guardrails #1415 and #1418 passed syntax, profile-copy coverage, and physical source ownership, then stopped at the established permanent runtime contract step.
+- Production Ranking Browser Smoke #589, #593, and #598 stopped at the existing **Audit every fighter photo path** step before ranking and mobile-profile certification.
+- Scoring Architecture Guardrails #1415, #1418, and #1422 passed syntax, profile-copy coverage, and physical source ownership, then stopped at the established permanent runtime contract step.
 
 ## Next audit order
 
 Continue from the current inventory one measured responsibility at a time.
 
-The next leading network candidate is the War Room notification owner’s startup retry schedule in `assets/js/octagon-notifications.js`: 0, 180, 700, 1800, and 4200 milliseconds, each calling `refreshStatus()`.
+The next audit should inspect the War Room access-status owner in `assets/js/octagon-access-panel.js`, separating:
 
-Before editing that candidate:
+1. local access-panel shell installation;
+2. startup/readiness access-status requests;
+3. active War Room route entry;
+4. visibility/online/realtime or polling behavior;
+5. Cody-only access-management actions.
 
-1. trace identity readiness and direct-link behavior separately;
-2. prove whether the notification owner’s identity events and one initial attempt make later retries redundant;
-3. preserve realtime, visibility, online, opening-board, and explicit refresh behavior;
-4. preserve the 30-second status poll and 3-second local DOM maintenance as separate responsibilities unless independently proven avoidable;
-5. do not combine the audit with notification ownership, push, or board-render changes.
+Do not combine access-status startup-work reduction with identity ownership, board rendering, notification status, or access-rule changes.
