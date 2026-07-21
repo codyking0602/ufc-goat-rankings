@@ -1,0 +1,247 @@
+name: Required PR Validation
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize, ready_for_review]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: required-pr-validation-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      ranking: ${{ steps.classify.outputs.ranking }}
+      scoring: ${{ steps.classify.outputs.scoring }}
+      picks: ${{ steps.classify.outputs.picks }}
+      startup: ${{ steps.classify.outputs.startup }}
+      ios: ${{ steps.classify.outputs.ios }}
+      phase5: ${{ steps.classify.outputs.phase5 }}
+      browser: ${{ steps.classify.outputs.browser }}
+    steps:
+      - name: Classify changed files
+        id: classify
+        uses: actions/github-script@v7
+        with:
+          script: |
+            if (!context.payload.pull_request) {
+              for (const name of ['ranking','scoring','picks','startup','ios','phase5','browser']) core.setOutput(name, 'true');
+              return;
+            }
+
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              per_page: 100
+            });
+            const names = files.map(file => file.filename);
+            const some = predicate => names.some(predicate);
+
+            const ranking = some(name =>
+              name === 'index.html' ||
+              name.startsWith('assets/data/') ||
+              name.startsWith('assets/fighters/') ||
+              name === 'assets/compare-data.js' ||
+              /^assets\/js\/(app|play|blind-matchmaking|category-calculators|ranking-pipeline|division-ranking|production-ranking-bootstrap|calculated-profile-runtime|octagon-verdict-compare-launcher)\.js$/.test(name) ||
+              name.startsWith('tools/build-octagon-verdict') ||
+              name === 'octagon-verdict-knowledge.md' ||
+              /^scripts\/(audit-fighter-photo-paths|materialize-display-overrides|sync-production-cache-keys|test-production-browser|test-profile-card-hotfix|test-fighter-taglines|test-woodley-audit)\.mjs$/.test(name)
+            );
+
+            const scoring = some(name =>
+              name === 'index.html' ||
+              (name.startsWith('assets/') && name.endsWith('.js')) ||
+              name === 'docs/scoring-architecture-contract.json' ||
+              /^scripts\/(audit-profile-copy-coverage|validate-scoring-architecture|run-scoring-architecture-guardrails|test-production-runtime-boundaries)\.mjs$/.test(name)
+            );
+
+            const picks = some(name =>
+              name === 'index.html' ||
+              /^assets\/(js|css)\/picks/.test(name) ||
+              /^assets\/data\/picks-/.test(name) ||
+              name.startsWith('supabase/functions/refresh-ufc-odds/') ||
+              /^supabase\/.*(event|picks).*\.sql$/.test(name) ||
+              name === 'docs/picks-setup.md' ||
+              /^scripts\/(check-picks-ui|test-picks-mobile-top-tabs)\.mjs$/.test(name) ||
+              /^\.github\/workflows\/(picks-ui-smoke|refresh-ufc-odds|deploy-ufc-odds-refresh)\.yml$/.test(name)
+            );
+
+            const startupOwners = new Set([
+              'assets/js/fresh-home-route-bootstrap.js',
+              'assets/js/octagon-hq-shell.js',
+              'assets/js/octagon-hq-nav-grid.js',
+              'assets/js/home-dashboard.js',
+              'assets/js/product-architecture.js',
+              'assets/js/app.js',
+              'assets/js/community-profiles.js',
+              'assets/js/app-profile.js',
+              'assets/js/profile-challenges.js',
+              'assets/js/fresh-home-launch.js',
+              'assets/js/app-notification-center.js',
+              'assets/js/app-notification-surface-fix.js',
+              'assets/js/native-app-shell.js',
+              'assets/js/native-app-shell-stability.js',
+              'assets/js/share-deep-links.js',
+              'assets/js/play-profile-identity.js',
+              'assets/js/picks-member-pin.js',
+              'assets/js/picks-persistent-groups.js',
+              'assets/js/picks-social-retention.js',
+              'assets/js/picks-season-loop.js',
+              'assets/js/octagon-message-board.js',
+              'assets/js/octagon-access-panel.js',
+              'assets/js/octagon-notifications.js'
+            ]);
+
+            const startup = some(name =>
+              name === 'index.html' ||
+              startupOwners.has(name) ||
+              /^scripts\/test-.*(startup|identity|profile|notification|route-owner|group-snapshot).*\.mjs$/.test(name) ||
+              name === '.github/workflows/startup-architecture-gate.yml'
+            );
+
+            const ios = some(name =>
+              name === 'index.html' ||
+              name === 'manifest.webmanifest' ||
+              name.startsWith('assets/js/') ||
+              name.startsWith('assets/css/') ||
+              /^scripts\/test-(ios|phase-4b-mobile|profile-signin-stability)/.test(name)
+            );
+
+            const phase5 = some(name =>
+              name === 'index.html' ||
+              name.startsWith('assets/js/play') ||
+              name.startsWith('assets/js/better-than') ||
+              name.startsWith('assets/js/find-leader') ||
+              /^scripts\/(audit-phase-5-script-manifest|test-better-than-find-leader-owner|test-better-than-photo-authority-owner|test-ios-standalone-resume-home)\.mjs$/.test(name) ||
+              name === '.github/workflows/phase-5-script-manifest-inventory.yml'
+            );
+
+            const browser = ranking || scoring || picks || startup || ios || phase5;
+            for (const [name, value] of Object.entries({ ranking, scoring, picks, startup, ios, phase5, browser })) {
+              core.setOutput(name, String(value));
+            }
+
+  required-pr-validation:
+    needs: changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out exact PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Validate changed JavaScript syntax
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          while IFS= read -r file; do
+            if [[ -f "$file" && ( "$file" == *.js || "$file" == *.mjs ) ]]; then
+              node --check "$file"
+            fi
+          done < <(git diff --name-only "$BASE_SHA...$HEAD_SHA")
+
+      - name: Verify permanent governance artifacts
+        run: |
+          test -f .github/pull_request_template.md
+          test -f .github/workflows/repository-governance.yml
+          test -f .github/MAIN-PROTECTION.md
+          test -f docs/architecture/OWNERSHIP-MAP.md
+          test -f docs/production/ROLLBACK-BASELINE.md
+
+      - name: Install browser validation runtime
+        if: needs.changes.outputs.browser == 'true'
+        run: |
+          npm install --no-save --package-lock=false playwright@1.54.2 acorn@8
+          npx playwright install --with-deps chromium
+
+      - name: Start local app
+        if: needs.changes.outputs.browser == 'true'
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/required-pr-validation-http.log 2>&1 &
+          for attempt in $(seq 1 20); do
+            if curl --fail --silent http://127.0.0.1:4173/index.html > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/required-pr-validation-http.log
+          exit 1
+
+      - name: Run ranking and fighter-photo validation
+        if: needs.changes.outputs.ranking == 'true'
+        run: |
+          node scripts/sync-production-cache-keys.mjs
+          node scripts/audit-fighter-photo-paths.mjs
+          node scripts/test-production-browser.mjs
+          node scripts/test-profile-card-hotfix.mjs
+          node scripts/test-fighter-taglines.mjs
+          node scripts/test-woodley-audit.mjs
+
+      - name: Run scoring architecture validation
+        if: needs.changes.outputs.scoring == 'true'
+        run: |
+          node scripts/audit-profile-copy-coverage.mjs
+          node scripts/test-production-runtime-boundaries.mjs
+          node scripts/run-scoring-architecture-guardrails.mjs
+
+      - name: Run Picks validation
+        if: needs.changes.outputs.picks == 'true'
+        run: |
+          node scripts/check-picks-ui.mjs
+          node scripts/test-picks-mobile-top-tabs.mjs
+
+      - name: Run startup ownership validation
+        if: needs.changes.outputs.startup == 'true'
+        run: |
+          node scripts/test-startup-contract.mjs
+          node scripts/test-route-owner-shell-recovery-queue.mjs
+
+      - name: Run Phase 5 ownership validation
+        if: needs.changes.outputs.phase5 == 'true'
+        run: |
+          node scripts/audit-phase-5-script-manifest.mjs
+          node scripts/test-better-than-find-leader-owner.mjs
+          node scripts/test-better-than-photo-authority-owner.mjs
+
+      - name: Run dedicated mobile and iOS aggregate
+        if: needs.changes.outputs.ios == 'true' || needs.changes.outputs.startup == 'true' || needs.changes.outputs.phase5 == 'true'
+        run: node scripts/test-ios-standalone-resume-home.mjs
+
+      - name: Publish exact-head validation summary
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          RANKING: ${{ needs.changes.outputs.ranking }}
+          SCORING: ${{ needs.changes.outputs.scoring }}
+          PICKS: ${{ needs.changes.outputs.picks }}
+          STARTUP: ${{ needs.changes.outputs.startup }}
+          IOS: ${{ needs.changes.outputs.ios }}
+          PHASE5: ${{ needs.changes.outputs.phase5 }}
+        run: |
+          {
+            echo '### Required PR Validation'
+            echo
+            echo "Exact head: \`$HEAD_SHA\`"
+            echo
+            echo "- Ranking/browser: $RANKING"
+            echo "- Scoring: $SCORING"
+            echo "- Picks: $PICKS"
+            echo "- Startup: $STARTUP"
+            echo "- iOS/mobile: $IOS"
+            echo "- Phase 5: $PHASE5"
+          } >> "$GITHUB_STEP_SUMMARY"
