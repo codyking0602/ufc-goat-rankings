@@ -4,7 +4,7 @@
   if(window.__UFC_PRODUCT_ARCHITECTURE_STARTED__)return;
   window.__UFC_PRODUCT_ARCHITECTURE_STARTED__=true;
 
-  const VERSION='product-architecture-20260720c-single-startup-handoff';
+  const VERSION='product-architecture-20260721a-manifest-owned-picks-season';
   const SHELL_SRC='assets/js/octagon-hq-shell.js?v=app-shell-20260720a-recovery-handoff';
   const CONNECTIVITY_SRC='assets/js/product-connectivity.js?v=product-connectivity-20260718c-clean-handoffs';
   const POLISH_CSS='assets/css/product-polish.css?v=product-polish-20260718c-header-final';
@@ -12,7 +12,6 @@
   const AVATAR_SYNC_SRC='assets/js/profile-avatar-sync.js?v=profile-avatar-sync-20260718c-home-war-room';
   const ACTIVITY_SRC='assets/js/profile-activity.js?v=profile-activity-20260718a-phase-2a';
   const FIND_LEADER_RETENTION_SRC='assets/js/find-leader-retention.js?v=find-leader-retention-20260718c-phase-2b-lazy';
-  const PICKS_SEASON_SRC='assets/js/picks-season-loop.js?v=picks-season-loop-20260718d-canonical-ui';
   const CANONICAL_CODE='GOAT26';
   const PENDING_NAVIGATION_KEY='__UFC_PENDING_SHELL_NAVIGATION__';
 
@@ -131,10 +130,6 @@
     if(!window.UFC_FIND_LEADER_RETENTION)loadScriptOnce('assets/js/find-leader-retention.js',FIND_LEADER_RETENTION_SRC);
   }
 
-  function loadPicksSeason(){
-    if(!window.UFC_PICKS_SEASON_LOOP)loadScriptOnce('assets/js/picks-season-loop.js',PICKS_SEASON_SRC);
-  }
-
   function identityFrom(value){
     return value?.identity||value||window.UFC_PLAY_PROFILE?.identity||window.UFC_APP_PROFILE?.identity||null;
   }
@@ -222,7 +217,6 @@
   loadAvatarSync();
   loadActivityProfile();
   loadFindLeaderRetention();
-  loadPicksSeason();
   bindSharedProfileAuth();
 
   // native-app-shell.js and app-notification-surface-fix.js are explicit,
