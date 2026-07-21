@@ -1,8 +1,8 @@
-const VERSION='octagon-hq-sw-20260721b-product-polish-network-first';
+const VERSION='octagon-hq-sw-20260721c-canonical-palette-network-first';
 const CACHE_NAME='octagon-hq-static-v12';
 const LEGACY_PREFIX='octagon-hq-static-';
 const CORE=['./','./index.html','./manifest.webmanifest'];
-const FORCE_NETWORK=/\/assets\/(?:(?:js\/(?:app-notification-surface-fix|app-update-watcher|product-architecture|octagon-hq-shell|native-app-shell|native-app-shell-stability|community-profiles|fresh-home-launch|home-dashboard|find-leader|game-challenges|share-deep-links|picks|picks-auto-advance|octagon-notifications)|data\/(?:what-changed|supabase-config|picks-events))\.js|css\/(?:native-app-shell|native-app-shell-stability|product-polish|community-profiles|find-leader)\.css)$/i;
+const FORCE_NETWORK=/\/assets\/(?:(?:js\/(?:app-notification-surface-fix|app-update-watcher|product-architecture|octagon-hq-shell|native-app-shell|native-app-shell-stability|community-profiles|fresh-home-launch|home-dashboard|find-leader|game-challenges|share-deep-links|picks|picks-auto-advance|octagon-notifications)|data\/(?:what-changed|supabase-config|picks-events))\.js|css\/(?:app|native-app-shell|native-app-shell-stability|product-polish|community-profiles|find-leader)\.css)$/i;
 
 self.addEventListener('install',event=>{
   event.waitUntil((async()=>{
