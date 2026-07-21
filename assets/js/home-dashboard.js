@@ -4,7 +4,7 @@
   if(window.__UFC_HOME_DASHBOARD_STARTED__)return;
   window.__UFC_HOME_DASHBOARD_STARTED__=true;
 
-  const VERSION='home-dashboard-20260720b-passive-daily-identity';
+  const VERSION='home-dashboard-20260720c-canonical-picks-events';
   const DAILY={
     gameType:'find-leader',
     gameVersion:'find-leader-daily-v1',
@@ -168,12 +168,15 @@
     finally{officialLoading=false;}
   }
 
+  function eventDateValue(event){return event?.eventDate||event?.event_date||'';}
+
   function preferredEvent(){
-    const events=Array.isArray(window.UFC_PICKS_EVENTS)?window.UFC_PICKS_EVENTS:[];
+    const canonical=window.UFC_PICKS_EVENT_STATE?.events;
+    const events=Array.isArray(canonical)?canonical:(Array.isArray(window.UFC_PICKS_EVENTS)?window.UFC_PICKS_EVENTS:[]);
     if(!events.length)return null;
     const now=Date.now();
     return events.find(event=>event?.status==='live')
-      ||events.filter(event=>event?.status==='upcoming'||new Date(event?.eventDate).getTime()>=now).sort((a,b)=>new Date(a.eventDate)-new Date(b.eventDate))[0]
+      ||events.filter(event=>event?.status==='upcoming'||new Date(eventDateValue(event)).getTime()>=now).sort((a,b)=>new Date(eventDateValue(a))-new Date(eventDateValue(b)))[0]
       ||events[0];
   }
 
@@ -184,7 +187,8 @@
     const picks=readJson(`ufc-picks:${event.id}:local-picks`,{});
     const picked=fights.filter(fight=>text(picks[fight.id])).length;
     const normalize=value=>text(value).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
-    const main=fights.find(fight=>normalize(fight.cardSection)==='main event')||fights[fights.length-1]||null;
+    const section=fight=>fight?.cardSection||fight?.card_section||'';
+    const main=fights.find(fight=>normalize(section(fight))==='main event')||fights[fights.length-1]||null;
     const hasBreakdown=Boolean(main?.id&&window.UFC_PICKS_MATCHUP_SPOTLIGHT?.has?.(main.id));
     return{event,fights,picks,picked,total:fights.length,main,hasBreakdown};
   }
@@ -294,10 +298,12 @@
     if(!state.event)return`<section class="home-dashboard-card home-event"><div class="home-dashboard-kicker"><span>NEXT UFC EVENT</span></div><div class="home-dashboard-empty">No upcoming event is loaded.</div></section>`;
     const percent=state.total?Math.round((state.picked/state.total)*100):0;
     const action=state.picked>=state.total&&state.total?'REVIEW PICKS':state.picked?'FINISH PICKS':'MAKE PICKS';
+    const mainRed=state.main?.red||state.main?.red_name||'';
+    const mainBlue=state.main?.blue||state.main?.blue_name||'';
     return`<section class="home-dashboard-card home-event">
       <div class="home-dashboard-kicker"><span>NEXT UFC EVENT</span><span>${esc(state.event.status==='live'?'LIVE':'UPCOMING')}</span></div>
-      <h3>${esc(state.event.name)}</h3><div class="home-event-matchup">${esc(state.event.subtitle||'')}</div><div class="home-event-date">${esc(eventDateLabel(state.event.eventDate))}</div>
-      ${state.main?`<div class="home-event-main"><span>MAIN EVENT</span><strong>${esc(state.main.red)} vs. ${esc(state.main.blue)}</strong></div>`:''}
+      <h3>${esc(state.event.name)}</h3><div class="home-event-matchup">${esc(state.event.subtitle||'')}</div><div class="home-event-date">${esc(eventDateLabel(eventDateValue(state.event)))}</div>
+      ${state.main?`<div class="home-event-main"><span>MAIN EVENT</span><strong>${esc(mainRed)} vs. ${esc(mainBlue)}</strong></div>`:''}
       ${state.hasBreakdown?`<button type="button" class="home-event-breakdown" data-home-action="matchup" data-fight-id="${esc(state.main.id)}"><span><b>FIGHT SPOTLIGHT</b><strong>View matchup breakdown</strong></span><i aria-hidden="true">›</i></button>`:''}
       <div class="home-event-progress"><div class="home-event-progress-head"><span>YOUR PICKS</span><strong>${state.picked} OF ${state.total}</strong></div><div class="home-event-track"><i style="width:${percent}%"></i></div></div>
       <button type="button" class="home-dashboard-action secondary" data-home-action="picks">${action} →</button>
@@ -384,8 +390,8 @@
         setTimeout(()=>refreshWarRoom(),100);
       }
     });
-    ['ufc-play-hub-ready','ufc-play-shared-ready','ufc-play-profile-ready','ufc-picks-matchup-spotlight-ready','ufc-scoring-pipeline-ready','ufc-production-ranking-ready','ufc-app-profile-updated','ufc-canonical-group-ready'].forEach(name=>window.addEventListener(name,()=>{
-      scheduleRender(30);
+    ['ufc-picks-events-updated','ufc-play-hub-ready','ufc-play-shared-ready','ufc-play-profile-ready','ufc-picks-matchup-spotlight-ready','ufc-scoring-pipeline-ready','ufc-production-ranking-ready','ufc-app-profile-updated','ufc-canonical-group-ready'].forEach(name=>window.addEventListener(name,()=>{
+      scheduleRender(name==='ufc-picks-events-updated'?0:30);
       if(name==='ufc-play-shared-ready'||name==='ufc-play-profile-ready')setTimeout(()=>syncOfficialDaily(true),50);
     }));
     window.addEventListener('storage',()=>scheduleRender(30));
