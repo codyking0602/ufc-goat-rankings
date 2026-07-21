@@ -27,6 +27,7 @@ const orderOf=file=>explicitFiles.indexOf(file);
 const requiredOrder=[
   ['assets/js/fresh-home-route-bootstrap.js','assets/js/octagon-hq-shell.js','Early route normalization must precede the primary shell.'],
   ['assets/js/octagon-hq-shell.js','assets/js/app.js','The primary shell must publish before the base app runtime.'],
+  ['assets/js/play-photo-authority.js','assets/js/better-than-standalone-share.js','The manifest-owned Play photo authority must load before Better Than compatibility.'],
   ['assets/js/play-profile-identity.js','assets/js/app-profile.js','Canonical identity must load before the visible profile editor.'],
   ['assets/js/find-leader.js','assets/js/better-than-standalone-share.js','The manifest-owned Find the Leader must load before Better Than compatibility.'],
   ['assets/js/picks-season-loop.js','assets/js/product-architecture.js','The manifest-owned Picks season API must publish before Product compatibility.'],
@@ -43,12 +44,17 @@ for(const [before,after,message] of requiredOrder){
 
 const betterThanSource=fs.readFileSync('assets/js/better-than-standalone-share.js','utf8');
 const findLeaderSource=fs.readFileSync('assets/js/find-leader.js','utf8');
+const photoAuthoritySource=fs.readFileSync('assets/js/play-photo-authority.js','utf8');
 const findLeaderVersion=findLeaderSource.match(/const VERSION='([^']+)'/)?.[1]||'';
+const photoAuthorityVersion=photoAuthoritySource.match(/const VERSION='([^']+)'/)?.[1]||'';
 assert(findLeaderVersion,'Current Find the Leader version could not be identified.');
+assert(photoAuthorityVersion,'Current Play photo authority version could not be identified.');
 assert.doesNotMatch(betterThanSource,/FIND_LEADER_VERSION/,'Better Than compatibility must not maintain a competing Find the Leader version requirement.');
 assert.doesNotMatch(betterThanSource,/UFC_FIND_LEADER\?\.version\s*!==/,'Better Than compatibility must not replace a valid manifest owner because of version comparison.');
 assert.match(betterThanSource,/if\(!window\.UFC_FIND_LEADER\)\{[\s\S]*data-find-leader-owner-recovery[\s\S]*\}else gameReady\(\);/,'Find the Leader recovery must run only when the manifest owner is absent.');
 assert(betterThanSource.includes(`assets/js/find-leader.js?v=${findLeaderVersion}`),'Find the Leader recovery must request the current owner build.');
+assert.match(betterThanSource,/if\(!window\.UFC_PLAY_PHOTO_AUTHORITY\)\{[\s\S]*data-play-photo-authority[\s\S]*return;[\s\S]*\}/,'Photo authority recovery must run only when the manifest owner is absent.');
+assert(betterThanSource.includes(`assets/js/play-photo-authority.js?v=${photoAuthorityVersion}`),'Photo authority recovery must request the current owner build.');
 
 const literalAssetScript=/["'`](assets\/js\/[^"'`?]+\.js)(?:\?[^"'`]*)?["'`]/g;
 const dynamicEdges=[];
@@ -71,6 +77,7 @@ for(const owner of explicitFiles.filter(file=>file.startsWith('assets/js/'))){
 }
 
 const approvedRecoveryDuplicates=new Set([
+  'assets/js/better-than-standalone-share.js=>assets/js/play-photo-authority.js',
   'assets/js/better-than-standalone-share.js=>assets/js/find-leader.js',
   'assets/js/product-architecture.js=>assets/js/octagon-hq-shell.js'
 ]);
@@ -78,11 +85,17 @@ const approvedRecoveryDuplicates=new Set([
 const unapprovedDuplicateDynamicEdges=dynamicEdges.filter(edge=>
   edge.explicit&&!approvedRecoveryDuplicates.has(`${edge.owner}=>${edge.dependency}`)
 );
+assert.deepEqual(unapprovedDuplicateDynamicEdges,[],'Every explicit/dynamic overlap must have a tested, bounded missing-owner recovery contract.');
 
 const approvedRecoveryEdges=dynamicEdges.filter(edge=>
   approvedRecoveryDuplicates.has(`${edge.owner}=>${edge.dependency}`)
 );
 assert.deepEqual(approvedRecoveryEdges,[
+  {
+    owner:'assets/js/better-than-standalone-share.js',
+    dependency:'assets/js/play-photo-authority.js',
+    explicit:true
+  },
   {
     owner:'assets/js/better-than-standalone-share.js',
     dependency:'assets/js/find-leader.js',
@@ -100,7 +113,7 @@ assert.equal(manifestOwnedPicksSeason,false,'Picks season must not regain a seco
 
 const report={
   passed:true,
-  clean:unapprovedDuplicateDynamicEdges.length===0,
+  clean:true,
   productionScriptCount:explicitFiles.length,
   explicitScripts:scriptRefs,
   requiredOrder:requiredOrder.map(([before,after])=>({before,after})),
