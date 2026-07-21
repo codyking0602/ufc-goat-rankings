@@ -15,11 +15,21 @@ const consoleErrors=[];
 page.on('pageerror',error=>pageErrors.push({message:String(error?.message||error),stack:String(error?.stack||'')}));
 page.on('console',message=>{if(message.type()==='error')consoleErrors.push(message.text());});
 
+async function activateView(view){
+  await page.evaluate(nextView=>{
+    const shell=window.UFC_APP_SHELL||window.UFC_PRODUCT_ARCHITECTURE;
+    if(typeof shell?.activateView!=='function')throw new Error('Canonical app shell is unavailable for view activation.');
+    shell.activateView(nextView,{updateHash:false});
+  },view);
+  await page.waitForFunction(nextView=>document.getElementById(nextView)?.classList.contains('active-view'),view,{timeout:15000});
+}
+
 try{
   await page.goto('http://127.0.0.1:4173/index.html',{waitUntil:'domcontentloaded',timeout:120000});
   await page.waitForFunction(()=>document.documentElement.getAttribute('data-scoring-pipeline')==='ready',null,{timeout:120000});
-  await page.waitForSelector('#menList .fighter-row',{timeout:30000});
   await page.evaluate(()=>document.getElementById('whatsNewOverlay')?.remove());
+  await activateView('men');
+  await page.waitForSelector('#menList .fighter-row',{state:'visible',timeout:30000});
   await page.waitForTimeout(6500);
 
   const runtime=await page.evaluate(fighter=>{
@@ -147,11 +157,11 @@ try{
   assert.ok(profile.links.some(link=>link.href===FIGHT&&/signature fight/i.test(link.text)));
   await page.locator('#closeDrawer').click();
 
-  await page.locator('.tab[data-view="compare"]').click();
+  await activateView('compare');
   const compareOptions=await page.locator('#fighterA option').allTextContents();
   assert.ok(compareOptions.some(text=>text.includes(PETTIS)),'Pettis appears in Compare selector');
 
-  await page.locator('.tab[data-view="play"]').click();
+  await activateView('play');
   await page.locator('#playHub [data-open-game="top10"]').click();
   const search=page.locator('#playFighterSearch');
   await search.waitFor({state:'visible',timeout:10000});
