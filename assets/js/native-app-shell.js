@@ -4,7 +4,7 @@
   if(window.__UFC_NATIVE_APP_SHELL_STARTED__)return;
   window.__UFC_NATIVE_APP_SHELL_STARTED__=true;
 
-  const VERSION='native-app-shell-20260721c-no-delayed-startup-resync';
+  const VERSION='native-app-shell-20260721d-permission-aware-war-room';
   const MOBILE_QUERY='(max-width: 900px)';
   const REFRESH_THRESHOLD=74;
   const NAV_ITEMS=[
@@ -114,15 +114,19 @@
 
   function syncActive(destination=currentDestination()){
     const nav=ensureBottomNav();
-    const warSource=document.querySelector('nav.tabs [data-destination="war-room"]');
+    const warMode=text(window.UFC_OCTAGON_ACCESS?.mode).toLowerCase()||'locked';
     nav.querySelectorAll('[data-native-destination]').forEach(button=>{
       const active=button.dataset.nativeDestination===destination;
       button.classList.toggle('active',active);
       button.setAttribute('aria-selected',String(active));
       if(button.dataset.nativeDestination==='war-room'){
-        const disabled=Boolean(warSource?.disabled)||warSource?.getAttribute('aria-disabled')==='true';
-        button.setAttribute('aria-disabled',String(disabled));
-        button.disabled=disabled;
+        const locked=warMode==='locked';
+        const invited=warMode==='invite';
+        button.hidden=locked;
+        button.setAttribute('aria-disabled',String(locked));
+        button.disabled=locked;
+        button.querySelector('span')?.replaceChildren(invited?'Join':'War Room');
+        button.setAttribute('aria-label',invited?'Join War Room with invite':locked?'War Room access not enabled':'Open War Room');
       }
     });
   }
@@ -314,6 +318,7 @@
       animateActiveView();
       syncBadges();
     });
+    window.addEventListener('octagon-hq:war-room-access-change',()=>syncActive(currentDestination()));
     ['ufc-profile-challenges-updated','ufc-profile-challenge-sent','ufc-play-profile-ready','ufc-app-profile-updated','octagon-hq:soft-refresh','octagon-hq:notification-device-change'].forEach(name=>window.addEventListener(name,syncBadges));
     window.addEventListener('resize',()=>{ensureAskAction();syncActive();},{passive:true});
     window.addEventListener('orientationchange',()=>window.setTimeout(()=>{ensureAskAction();syncActive();},120),{passive:true});

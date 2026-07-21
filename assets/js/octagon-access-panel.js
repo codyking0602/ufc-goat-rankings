@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='octagon-access-panel-20260721c-single-startup-access';
+  const VERSION='octagon-access-panel-20260721d-permission-surfaces';
   const CANONICAL_CODE='GOAT26';
   const ACCESS_CHANNEL=`octagon-access-${CANONICAL_CODE.toLowerCase()}`;
   const instanceId=globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -9,6 +9,7 @@
     identity:null,
     me:null,
     canAccess:false,
+    mode:'locked',
     roster:[],
     loading:false,
     accessCheckPromise:null,
@@ -89,16 +90,38 @@
   function betaButton(){return document.querySelector('[data-octagon-beta-tab]');}
   function isCody(member){return Boolean(member?.is_admin)&&text(member?.display_name).toLowerCase()==='cody';}
 
+  function hasInvite(){
+    try{return text(new URL(window.location.href).searchParams.get('group')).toUpperCase()===CANONICAL_CODE;}
+    catch(_error){return false;}
+  }
+
+  function accessMode(allowed){
+    if(allowed)return'owner';
+    return !tokenFor(state.identity)&&hasInvite()?'invite':'locked';
+  }
+
   function setBetaTabAccess(allowed,member=state.me){
     const button=betaButton();
     if(!button)return false;
-    button.disabled=!allowed;
-    button.setAttribute('aria-disabled',String(!allowed));
-    button.dataset.betaAccess=allowed?'owner':'locked';
-    button.title=allowed?'Open The Octagon':'Private Beta · Access not enabled';
-    button.textContent='Beta';
-    button.setAttribute('aria-label',allowed?'Open The Octagon':'Private Beta · Access not enabled');
-    if(member?.display_name)button.dataset.betaMember=text(member.display_name);
+    const mode=accessMode(allowed);
+    const beforeMode=state.mode;
+    state.mode=mode;
+    const locked=mode==='locked';
+    const invited=mode==='invite';
+    button.hidden=locked;
+    button.disabled=locked;
+    button.setAttribute('aria-disabled',String(locked));
+    button.dataset.betaAccess=mode;
+    button.title=invited?'Join The War Room with your invite':allowed?'Open The War Room':'War Room access not enabled';
+    button.textContent=invited?'Join with invite':'War Room';
+    button.setAttribute('aria-label',invited?'Join The War Room with your invite':allowed?'Open The War Room':'War Room access not enabled');
+    if(member?.display_name)button.dataset.betaMember=text(member.display_name);else delete button.dataset.betaMember;
+    document.documentElement.dataset.warRoomAccess=mode;
+    const nav=button.closest('nav.tabs');
+    if(nav)nav.dataset.warRoomAccess=mode;
+    if(beforeMode!==mode){
+      window.dispatchEvent(new CustomEvent('octagon-hq:war-room-access-change',{detail:{mode,allowed:mode==='owner'}}));
+    }
     return true;
   }
 
@@ -351,7 +374,8 @@
     toggleMember,
     togglePanel,
     get roster(){return state.roster.slice();},
-    get canAccess(){return state.canAccess;}
+    get canAccess(){return state.canAccess;},
+    get mode(){return state.mode;}
   };
   document.documentElement.setAttribute('data-octagon-access-panel',VERSION);
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
