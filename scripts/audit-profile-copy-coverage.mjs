@@ -91,6 +91,8 @@ const pantoja=report.find(row=>row.name==='Alexandre Pantoja');
 if(!pantoja||pantoja.status!=='GREEN'||pantoja.source!=='display-overrides'){
   console.log('PANTOJA PROFILE COPY: canonical display-overrides coverage missing');
   process.exitCode=1;
+}else{
+  console.log('PANTOJA PROFILE COPY: canonical display-overrides coverage green');
 }
 console.log(`Profile copy audit: ${report.length} fighters | ${green.length} green | ${red.length} red`);
 if(red.length)console.log(`PROFILE RED: ${red.map(row=>`${row.name} [${row.source}]`).join(', ')}`);
