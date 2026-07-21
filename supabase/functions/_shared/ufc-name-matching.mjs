@@ -7,6 +7,37 @@ const SPECIAL_LATIN = [
   [/[ø]/g, 'o']
 ];
 
+const GIVEN_NAME_ALIASES = new Map([
+  ['alex', 'alexander'],
+  ['ben', 'benjamin'],
+  ['bill', 'william'],
+  ['billy', 'william'],
+  ['bob', 'robert'],
+  ['bobby', 'robert'],
+  ['chris', 'christopher'],
+  ['dan', 'daniel'],
+  ['danny', 'daniel'],
+  ['jake', 'jacob'],
+  ['jim', 'james'],
+  ['jimmy', 'james'],
+  ['joe', 'joseph'],
+  ['joey', 'joseph'],
+  ['jon', 'jonathan'],
+  ['matt', 'matthew'],
+  ['mike', 'michael'],
+  ['nate', 'nathan'],
+  ['nick', 'nicholas'],
+  ['rob', 'robert'],
+  ['sam', 'samuel'],
+  ['steve', 'stephen'],
+  ['steven', 'stephen'],
+  ['tim', 'timothy'],
+  ['tom', 'thomas'],
+  ['tony', 'anthony'],
+  ['will', 'william'],
+  ['zach', 'zachary']
+]);
+
 export function nameTokens(value) {
   let text = String(value || '')
     .normalize('NFKD')
@@ -29,6 +60,13 @@ export function normalizeName(value) {
   return nameTokens(value).join('');
 }
 
+function canonicalGiven(tokens) {
+  const given = tokens.slice(0, -1);
+  if (!given.length) return '';
+  if (given.length === 1) return GIVEN_NAME_ALIASES.get(given[0]) || given[0];
+  return given.join('');
+}
+
 function commonPrefixLength(left, right) {
   const limit = Math.min(left.length, right.length);
   let index = 0;
@@ -49,8 +87,8 @@ export function sameFighterName(leftValue, rightValue) {
   const rightSurname = right.at(-1);
   if (!leftSurname || leftSurname !== rightSurname) return false;
 
-  const leftGiven = left.slice(0, -1).join('');
-  const rightGiven = right.slice(0, -1).join('');
+  const leftGiven = canonicalGiven(left);
+  const rightGiven = canonicalGiven(right);
   if (!leftGiven || !rightGiven) return false;
   if (leftGiven === rightGiven) return true;
 
