@@ -345,7 +345,7 @@
 
   function start(){
     ensureCard();
-    if(picksActive()) refresh();
+    if(picksActive() && document.getElementById('picksCommissionerCard')) refresh();
     const observer=new MutationObserver(()=>{
       const hadCard=Boolean(document.getElementById('picksCommissionerCard'));
       ensureCard();
@@ -353,7 +353,9 @@
     });
     observer.observe(document.getElementById('picks') || document.body,{childList:true,subtree:true});
     window.addEventListener('octagon-hq:view-change',event=>{
-      if(event.detail?.destination==='picks') refresh();
+      if(event.detail?.destination!=='picks') return;
+      ensureCard();
+      if(document.getElementById('picksCommissionerCard')) refresh();
     });
     window.setInterval(()=>{ if(picksActive()) refresh(); },45000);
   }
