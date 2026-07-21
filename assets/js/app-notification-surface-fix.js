@@ -4,7 +4,7 @@
   if(window.__UFC_APP_NOTIFICATION_SURFACE_FIX_STARTED__)return;
   window.__UFC_APP_NOTIFICATION_SURFACE_FIX_STARTED__=true;
 
-  const VERSION='app-notification-surface-fix-20260721e-profile-cache-only';
+  const VERSION='app-notification-surface-fix-20260721f-profile-cache-only';
   const CACHE_PREFIX='octagon-hq:activity-profile-html-v1:';
   let observer=null;
 
@@ -30,6 +30,7 @@
     if(!body||!grid||body.querySelector('.profile-activity-loading'))return;
     const clone=body.cloneNode(true);
     clone.querySelectorAll('[data-app-notification-center]').forEach(node=>node.remove());
+    clone.querySelectorAll('[data-phase3-bridge-bound]').forEach(node=>node.removeAttribute('data-phase3-bridge-bound'));
     try{localStorage.setItem(cacheKey(),clone.innerHTML);}catch(_error){}
   }
 
