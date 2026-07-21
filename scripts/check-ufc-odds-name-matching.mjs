@@ -8,13 +8,14 @@ import {
 assert.equal(normalizeName('Jan Błachowicz'), 'janblachowicz');
 assert.equal(normalizeName('Uroš Medić'), 'urosmedic');
 assert.equal(sameFighterName('Ramazan Temirov', 'Ramazonbek Temirov'), true);
-assert.equal(sameFighterName('Steve Erceg', 'Steve Erceg'), true);
+assert.equal(sameFighterName('Steve Erceg', 'Stephen Erceg'), true);
+assert.equal(sameFighterName('Steven Erceg', 'Stephen Erceg'), true);
 assert.equal(sameFighterName('Umar Nurmagomedov', 'Usman Nurmagomedov'), false);
 assert.equal(sameFighterName('Magomed Ankalaev', 'Magomed Guskov'), false);
 
 assert.equal(
   matchupMatches(
-    { home_team: 'Steve Erceg', away_team: 'Ramazonbek Temirov' },
+    { home_team: 'Stephen Erceg', away_team: 'Ramazonbek Temirov' },
     { red_name: 'STEVE ERCEG', blue_name: 'RAMAZAN TEMIROV' }
   ),
   true
