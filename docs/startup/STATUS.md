@@ -4,17 +4,17 @@ _Last updated: 2026-07-21_
 
 ## Current position
 
-- **Latest production runtime merge:** PR #171, `2eea1a03e169e3ba3289b4c0b6198a87ea4233ab`.
-- **Exact latest tested runtime head:** `de893fa4927e22a7968522c69fd429c17e46c965`.
-- **Latest complete Startup Architecture Gate:** run #177 passed.
-- **Latest dedicated iOS Home Startup Stability:** run #44 passed.
+- **Latest production runtime merge:** PR #174, `f03ef47aab32ee67816d7ba86206af3a8c208093`.
+- **Exact latest tested runtime head:** `a625b9a1f2dd13de342d0103e004884dcc71a437`.
+- **Latest complete Startup Architecture Gate:** run #180 passed.
+- **Latest dedicated iOS Home Startup Stability:** run #46 passed.
 - **Current phase:** Phase 4 — reduce startup work.
 - **Phase 0:** Complete.
 - **Phase 1:** Complete.
 - **Phase 2:** Complete.
 - **Phase 3:** Complete.
-- **Phase 4:** In progress; inventory and first runtime reduction complete.
-- **Entire startup cleanup:** Approximately 95% complete.
+- **Phase 4:** In progress; inventory and two runtime reductions complete.
+- **Entire startup cleanup:** Approximately 96% complete.
 - **Visible product changes approved:** None. The zero-visible-change contract remains in force.
 - **Master tracker:** [Issue #102](https://github.com/codyking0602/ufc-goat-rankings/issues/102).
 - **Completed Phase 2 ledger:** [`PHASE-2-PROGRESS-20260721.md`](./PHASE-2-PROGRESS-20260721.md).
@@ -80,17 +80,7 @@ PR #163 made the canonical watcher emit complete labeled markup in its one contr
 
 The drawer-to-body mapping is legitimate: profile owners control `#drawer.open` and `aria-hidden`, while mobile CSS requires `body.fighter-profile-open` for scroll lock. Removing the mapping would cause a real mobile regression.
 
-The broad trigger set was not legitimate. PR #167 removed:
-
-- body-wide child/subtree/attribute observation;
-- route-change and soft-refresh listeners;
-- six delayed startup retries;
-- close-button continuation;
-- public repair scheduling.
-
-The retained implementation performs one immediate startup sync and observes only the static drawer’s `class` and `aria-hidden` attributes.
-
-The separate native-overlay audit proved `closeFighterProfile()` is also legitimate: native destination buttons delegate routing but neither the native shell nor the route owner dismisses an already-open fighter drawer. The handler delegates to the canonical close button and retains a bounded missing-button fallback.
+The broad trigger set was not legitimate. PR #167 removed body-wide observation, route/soft-refresh repair listeners, six delayed retries, close-button continuation, and public repair scheduling. The retained implementation performs one immediate startup sync and observes only the static drawer’s `class` and `aria-hidden` attributes. Native-destination overlay dismissal remains as proved one-shot behavior.
 
 - Exact tested head: `c332cf912f3c2cbd98984f60902ba70a2304475f`.
 - Startup Architecture Gate #168: passed.
@@ -99,13 +89,7 @@ The separate native-overlay audit proved `closeFighterProfile()` is also legitim
 
 ## Phase 3 final runtime boundary
 
-`assets/js/native-app-shell-stability.js` is no longer a general repair loop. It contains only:
-
-1. one singleton guard;
-2. one drawer-to-mobile-body presentation mapping;
-3. one immediate startup synchronization;
-4. one drawer-attribute observer;
-5. one native-destination overlay dismissal handler.
+`assets/js/native-app-shell-stability.js` contains only one singleton guard, one drawer-to-mobile-body presentation mapping, one immediate startup synchronization, one drawer-attribute observer, and one native-destination overlay dismissal handler.
 
 It has no canonical content renderer, body-wide observer, route/soft-refresh repair listener, delayed retry array, close-button continuation, or public repair API.
 
@@ -139,17 +123,38 @@ PR #171 retained the commissioner module as the canonical data/action owner but 
 - Dedicated iOS Home Startup Stability #44: passed.
 - Production merge: `2eea1a03e169e3ba3289b4c0b6198a87ea4233ab`.
 
+### PR #174 — native-shell delayed startup passes
+
+`assets/js/native-app-shell.js` performed one complete initial component/route/badge synchronization, then repeated Ask-action, active-route, and badge synchronization at 80, 260, 800, 1800, and 4200 milliseconds regardless of change.
+
+The audit proved all late requirements already had owners:
+
+- static hero and canonical shell exist before native startup;
+- route changes publish `octagon-hq:view-change`;
+- challenge unread changes publish events;
+- Picks progress and War Room unread changes mutate targeted observed DOM;
+- resize, orientation, and visibility recovery remain;
+- the separate 10-second live badge poll remains.
+
+PR #174 removed only the five unconditional passes. Initial creation, owner events, targeted observation, visibility recovery, pull-to-refresh, and live polling are unchanged.
+
+- Exact tested head: `a625b9a1f2dd13de342d0103e004884dcc71a437`.
+- Startup Architecture Gate #180: passed.
+- Dedicated iOS Home Startup Stability #46: passed.
+- Phase 4 Startup Work Inventory #12: passed.
+- Production merge: `f03ef47aab32ee67816d7ba86206af3a8c208093`.
+
 ## Known unrelated red workflows
 
 These remain outside startup ownership unless a failure directly references an isolated changed line:
 
 - Picks UI Smoke #840 passed Picks JavaScript syntax, then failed the existing mobile top-tab auto-centering, daily odds schedule, and setup-guide documentation checks.
-- Production Ranking Browser Smoke #589 stopped at the existing **Audit every fighter photo path** step before ranking and mobile-profile certification.
-- Scoring Architecture Guardrails #1415 passed syntax, profile-copy coverage, and physical source ownership, then stopped at its established permanent runtime contract step.
+- Production Ranking Browser Smoke #589 and #593 stopped at the existing **Audit every fighter photo path** step before ranking and mobile-profile certification.
+- Scoring Architecture Guardrails #1415 and #1418 passed syntax, profile-copy coverage, and physical source ownership, then stopped at the established permanent runtime contract step.
 - Production Ranking Pipeline and Snapshot may stop on stale ranking/roster certification expectations.
 - Validate Phase 4B Preview may stop at its historical hard-pinned architecture check.
 
-None of the inspected #840, #589, or #1415 failures references the isolated commissioner activation responsibility.
+None of the inspected failures references the isolated commissioner activation or native delayed-pass responsibilities.
 
 ## Testing and interruption policy
 
@@ -161,9 +166,9 @@ Request Cody only when a genuine unresolved user-only or physical-only uncertain
 
 ## Exact next action
 
-1. Start from production merge `2eea1a03e169e3ba3289b4c0b6198a87ea4233ab` plus this documentation merge.
-2. Audit the five unconditional native-shell startup resynchronization passes at 80, 260, 800, 1800, and 4200 milliseconds.
-3. Separate component creation, active-route synchronization, and badge synchronization before editing.
-4. Prove whether any late prerequisite still requires each delayed pass.
-5. Preserve the 10-second live badge poll as a separate responsibility unless independently proven avoidable.
+1. Start from production merge `f03ef47aab32ee67816d7ba86206af3a8c208093` plus this documentation merge.
+2. Audit the War Room notification owner’s startup retry schedule at 0, 180, 700, 1800, and 4200 milliseconds.
+3. Trace identity readiness and direct-link behavior separately.
+4. Prove whether identity events plus one initial attempt make later `refreshStatus()` retries redundant.
+5. Preserve realtime, visibility, online, opening-board, explicit refresh, the 30-second status poll, and the 3-second local DOM maintenance unless independently proven avoidable.
 6. Do not begin broad script-manifest deletion or bundling; that remains Phase 5.

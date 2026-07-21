@@ -90,21 +90,84 @@ The proof is imported by the existing iOS startup suite.
 - Dedicated iOS Home Startup Stability #44: passed.
 - Production merge: `2eea1a03e169e3ba3289b4c0b6198a87ea4233ab`.
 
-## Known unrelated red workflows for Batch 1
+## Batch 2 — Native-shell delayed startup resynchronization
 
-The inspected failures do not reference the isolated commissioner responsibility:
+### Measured avoidable work
+
+`assets/js/native-app-shell.js` already performed one complete startup pass that:
+
+- created the bottom navigation;
+- created the **Ask** action;
+- created the pull-to-refresh indicator;
+- synchronized the active primary destination;
+- synchronized Play, Picks, War Room, and app badge state;
+- bound route/lifecycle events and targeted DOM observation.
+
+It then repeated `ensureAskAction()`, `syncActive()`, and `syncBadges()` at 80, 260, 800, 1800, and 4200 milliseconds regardless of whether anything changed.
+
+The audit separated the three responsibilities:
+
+- **Ask action:** the static hero exists before the native shell starts, so the initial creation is sufficient; resize/orientation and relevant observation remain for later recovery.
+- **Route state:** the canonical shell exists before the native shell and publishes `octagon-hq:view-change`; visibility recovery and relevant `main.shell` observation remain.
+- **Badges:** challenge unread updates publish events, Picks progress changes mutate an observed target, and the War Room notification owner creates/updates the observed unread badge. The separate 10-second live badge poll remains for uncued late state.
+
+No delayed pass had a unique late prerequisite.
+
+### Production boundary after PR #174
+
+PR #174 removed only the five unconditional startup passes.
+
+The native shell now retains:
+
+- one initial component, route, and badge synchronization;
+- canonical route-event synchronization;
+- challenge/profile/notification update events;
+- targeted Picks, profile-challenge, War Room, and active-view observation;
+- resize and orientation recovery;
+- visibility recovery;
+- pull-to-refresh behavior;
+- the separate 10-second live badge poll.
+
+### Permanent proof
+
+The static contract verifies production load order, one initial synchronization, absence of the five-delay array, and preservation of owner events, targeted observation, visibility recovery, and the 10-second poll.
+
+The 390×844 mobile proof covers:
+
+- exactly one bottom nav, Ask action, pull indicator, route sync, and initial app-badge write;
+- zero additional app-badge writes throughout the complete former 4.2-second retry window;
+- challenge unread updates through the owner event;
+- Picks missing-pick updates through progress DOM mutation;
+- War Room unread updates through the notification owner’s badge DOM mutation;
+- canonical route entry through `octagon-hq:view-change`;
+- late state recovery through the preserved 10-second poll callback.
+
+The existing native pull-refresh proof was updated only for the runtime version and continues to certify normal, fallback, War Room, and concurrent accepted-action behavior. The new proof is imported by the iOS startup suite.
+
+- Exact tested head: `a625b9a1f2dd13de342d0103e004884dcc71a437`.
+- Startup Architecture Gate #180: passed.
+- Dedicated iOS Home Startup Stability #46: passed.
+- Phase 4 Startup Work Inventory #12: passed.
+- Production merge: `f03ef47aab32ee67816d7ba86206af3a8c208093`.
+
+## Known unrelated red workflows
+
+The inspected failures do not reference either isolated Phase 4 responsibility:
 
 - Picks UI Smoke #840 passed Picks JavaScript syntax, then failed the existing checks for mobile top-tab auto-centering, a daily odds refresh schedule, and setup-guide documentation.
-- Production Ranking Browser Smoke #589 stopped at the existing **Audit every fighter photo path** step before ranking and mobile-profile certification.
-- Scoring Architecture Guardrails #1415 passed syntax, profile-copy coverage, and physical source ownership, then stopped at its established permanent runtime contract step.
+- Production Ranking Browser Smoke #589 and #593 stopped at the existing **Audit every fighter photo path** step before ranking and mobile-profile certification.
+- Scoring Architecture Guardrails #1415 and #1418 passed syntax, profile-copy coverage, and physical source ownership, then stopped at the established permanent runtime contract step.
 
 ## Next audit order
 
-Use the current production inventory and continue one measured responsibility at a time. The leading next candidate is the five unconditional startup resynchronization passes in `assets/js/native-app-shell.js` at 80, 260, 800, 1800, and 4200 milliseconds.
+Continue from the current inventory one measured responsibility at a time.
+
+The next leading network candidate is the War Room notification owner’s startup retry schedule in `assets/js/octagon-notifications.js`: 0, 180, 700, 1800, and 4200 milliseconds, each calling `refreshStatus()`.
 
 Before editing that candidate:
 
-1. separate static component creation from badge and active-route synchronization;
-2. prove which late prerequisites, if any, still require each delayed pass;
-3. preserve the 10-second live badge poll as a separate responsibility unless independently proven avoidable;
-4. preserve route events, relevant mutation observation, resize/orientation handling, visibility recovery, and pull-to-refresh behavior unless their own audit proves redundancy.
+1. trace identity readiness and direct-link behavior separately;
+2. prove whether the notification owner’s identity events and one initial attempt make later retries redundant;
+3. preserve realtime, visibility, online, opening-board, and explicit refresh behavior;
+4. preserve the 30-second status poll and 3-second local DOM maintenance as separate responsibilities unless independently proven avoidable;
+5. do not combine the audit with notification ownership, push, or board-render changes.
