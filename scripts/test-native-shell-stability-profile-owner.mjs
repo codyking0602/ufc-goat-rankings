@@ -122,7 +122,7 @@ try{
   assert.equal(delayed.counts.detailWrites,1,'Delayed stability work caused a competing profile render.');
   assert.equal(delayed.counts.snapshotTextWrites,0,'Observer, route, or delayed stability work rewrote canonical snapshot values.');
   assert.deepEqual(delayed.values,expected,'Delayed stability work changed the canonical Resume Snapshot.');
-  assert.equal(delayed.bodyOpen,true,'Drawer/body synchronization was lost while retiring the snapshot writer.');
+  assert.equal(delayed.bodyOpen,true,'Canonical profile state changed during unrelated delayed activity.');
 
   report.phase='corruption-boundary';
   await page.evaluate(()=>{
@@ -137,7 +137,7 @@ try{
   report.snapshots.corrupted=corrupted;
   assert.equal(corrupted.values['Top-5 Wins'],'BROKEN','The stability layer still repairs canonical profile content.');
   assert.equal(corrupted.counts.snapshotTextWrites,0,'The retired snapshot writer still mutated a snapshot value.');
-  assert.equal(corrupted.bodyOpen,true,'The retained drawer/body recovery did not restore presentation state.');
+  assert.equal(corrupted.bodyOpen,false,'The retired drawer synchronization loop still reclaimed canonical body state.');
 
   report.phase='canonical-reopen';
   await page.evaluate(()=>window.openFighter('Jon Jones'));
@@ -148,6 +148,7 @@ try{
   assert.equal(reopened.counts.snapshotTextWrites,0,'Canonical reopen was followed by a second snapshot writer.');
   assert.deepEqual(reopened.values,expected,'Canonical reopen did not restore calculated Resume Snapshot values.');
   assert.equal(reopened.snapshotCount,1,'Canonical reopen duplicated the Resume Snapshot.');
+  assert.equal(reopened.bodyOpen,true,'Canonical reopen did not restore its body-lock state.');
 
   report.phase='native-destination-close';
   await page.click('#nativeHome');
