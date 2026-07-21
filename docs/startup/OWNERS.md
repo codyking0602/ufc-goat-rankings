@@ -12,6 +12,7 @@ This file records the canonical owner of each startup responsibility. Detailed h
 - Explicit user actions may use the canonical `require()` boundary when sign-in is genuinely needed.
 - Competing startup, route, visibility, reconnect, realtime, polling, and direct refresh paths share one in-flight owner when they request the same data.
 - One accepted primary route transition publishes one canonical route event; an already-active exact-view retry is a no-op.
+- Compatibility layers may preserve presentation/recovery behavior but may not initiate a canonical owner’s data or render responsibility.
 - One ownership issue changes per runtime batch.
 - `assets/js/app.js` is a structural manifest singleton and must not receive a standard IIFE guard.
 - Compatibility and repair layers may not expand; their retirement belongs to Phase 3 after source behavior is covered.
@@ -37,8 +38,8 @@ This file records the canonical owner of each startup responsibility. Detailed h
 | Community directory, member profiles, and Top 10 | `assets/js/community-profiles.js` | Canonical community owner; passive identity consumer; explicit Top 10 editing may require sign-in |
 | Cross-feature profile/Picks handoffs | `assets/js/product-architecture.js` | Compatibility/handoff owner only; no canonical access persistence or duplicate startup profile handoff |
 | Late route/reminder continuation | `assets/js/fresh-home-launch.js` | Late launch and Picks-continuation owner; consumes the shell’s published destination and skips a same-destination handoff; retains legitimate bare-invite recovery |
-| Notification settings, push registration, preferences, and canonical notification rendering | `assets/js/app-notification-center.js` | Passive identity consumer for startup/settings; explicit user actions may use canonical `require()` |
-| Notification/profile surface compatibility | `assets/js/app-notification-surface-fix.js` | Temporary compatibility layer; Phase 3 removal candidate after source proof |
+| Notification settings, push registration, preferences, and canonical notification rendering | `assets/js/app-notification-center.js` | Sole notification settings/render owner; passive identity consumer for startup/settings; explicit user actions may use canonical `require()` |
+| Notification/profile surface compatibility | `assets/js/app-notification-surface-fix.js` | Profile-cache presentation compatibility only; may cache/restore activity HTML and bind cached actions but may not call canonical notification render/settings work |
 | Mobile bottom navigation, badges, transitions, and pull-to-refresh presentation | `assets/js/native-app-shell.js` | Native presentation owner; delegates route activation to app shell |
 | Mobile/native repair behavior | `assets/js/native-app-shell-stability.js` | Temporary repair layer; Phase 3 removal candidate |
 | Sharing and incoming supported deep links | `assets/js/share-deep-links.js` | Canonical share/deep-link orchestrator; delegates destination activation |
@@ -49,13 +50,13 @@ This file records the canonical owner of each startup responsibility. Detailed h
 | War Room membership/access status and Cody’s access-management panel | `assets/js/octagon-access-panel.js` | Passive identity consumer; one in-flight access-status owner; no direct sign-in or storage ownership |
 | War Room activity/unread/mark-seen/realtime/push behavior | `assets/js/octagon-notifications.js` | Passive identity consumer; one in-flight activity-status owner; push enable/disable reuses published identity; no resolver or canonical-storage ownership |
 
-## Passive identity contract
+## Passive identity and notification contract
 
 Permanent static and browser/runtime ownership proofs now cover:
 
 - Community Profiles;
 - Home official daily synchronization;
-- notification settings;
+- notification settings and notification/profile compatibility;
 - profile-challenge inbox;
 - Picks social profile/reminders;
 - Picks season loop;
@@ -69,7 +70,10 @@ Their passive paths must produce:
 - zero canonical token storage reads;
 - zero sign-in surfaces before an explicit user action;
 - zero identity-dependent RPCs before published identity;
-- one request owner for competing refresh paths.
+- one request owner for competing refresh paths;
+- zero compatibility-layer calls into canonical notification settings or render ownership.
+
+The notification compatibility proof additionally requires cached activity-profile restoration and restored action routing to remain functional without serialized stale listener markers.
 
 ## Route contract
 
@@ -94,8 +98,8 @@ Request Cody only for a named unresolved user-only or physical-only risk involvi
 
 1. Start from a fresh production-load audit; do not assume the next duplicate.
 2. Inspect remaining identity/readiness/refresh/lifecycle hotspots one responsibility at a time.
-3. `native-app-shell.js` and `app-notification-surface-fix.js` are candidates only when production-loaded evidence proves a duplicate; `fresh-home-launch.js` is now under permanent route-ownership proof.
-4. Close Phase 2 documentation when no unproved competing identity, access, readiness, route, or full-refresh owner remains.
+3. `native-app-shell.js` remains a candidate only when production-loaded evidence proves a duplicate. `fresh-home-launch.js` and `app-notification-surface-fix.js` are under permanent ownership proof.
+4. Close Phase 2 documentation when no unproved competing identity, access, readiness, route, notification, or full-refresh owner remains.
 5. Begin Phase 3 repair-loop retirement only after Phase 2 closes.
 
 Do not combine these areas into a broad refactor.
