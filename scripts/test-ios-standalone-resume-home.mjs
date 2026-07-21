@@ -39,6 +39,17 @@ try{
   assert.equal(startup.route,'home','Late launch controller did not remain on Home.');
   assert.deepEqual(startup.active,['home'],'Home was not the only active startup view.');
 
+  const computedTheme=await page.evaluate(()=>{
+    const hero=document.querySelector('.hero');
+    const title=hero?.querySelector('h1');
+    return{
+      headerBackground:hero?getComputedStyle(hero).backgroundColor:'',
+      titleColor:title?getComputedStyle(title).color:''
+    };
+  });
+  assert.equal(computedTheme.headerBackground,'rgb(18, 23, 34)','The computed mobile header background is not the canonical dark panel.');
+  assert.equal(computedTheme.titleColor,'rgb(238, 242, 255)','The computed mobile title color is not the canonical light text.');
+
   await page.evaluate(()=>window.UFC_APP_SHELL.activateDestination('rankings'));
   await page.waitForFunction(()=>document.querySelector('#men')?.classList.contains('active-view'),null,{timeout:10000});
   const baselineChanges=await page.evaluate(()=>window.__viewChanges.length);
