@@ -9,6 +9,6 @@
   #fighterDetail{clear:both;min-width:0}
   .drawer .profile-hero{margin-top:0!important}
   .drawer .fighter-photo{aspect-ratio:1/1!important;max-height:min(58dvh,520px)!important;min-height:0!important;background:#05070b!important}
-  .drawer .fighter-photo-img{object-fit:contain!important;background:#05070b!important}
+  .drawer .fighter-photo-img{object-fit:cover!important;background:#05070b!important}
   body.fighter-profile-open{overflow:hidden!important;padding-bottom:0!important}
 }
