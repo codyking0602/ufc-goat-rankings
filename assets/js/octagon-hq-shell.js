@@ -144,7 +144,7 @@
     rankingObserver.observe(nav,{childList:true,subtree:true,characterData:true});
     warObserver?.disconnect();
     const war=nav.querySelector('[data-destination="war-room"]');
-    if(war){warObserver=new MutationObserver(()=>queueMicrotask(normalizeWarButton));warObserver.observe(war,{childList:true,subtree:true,attributes:true,attributeFilter:['disabled','aria-disabled','data-beta-access','data-beta-member']});}
+    if(war){warObserver=new MutationObserver(()=>queueMicrotask(normalizeWarButton));warObserver.observe(war,{childList:true,subtree:true,attributes:true,attributeFilter:['data-beta-access','data-beta-member']});}
   }
 
   function destinationForView(view){if(RANKING_VIEWS.includes(view))return'rankings';if(view==='compare')return'intelligence';if(view==='octagon')return'war-room';return DESTINATIONS.find(item=>item[2]===view)?.[0]||'home';}
