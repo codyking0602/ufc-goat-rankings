@@ -37,6 +37,7 @@ assert.doesNotMatch(consumer,/ufc-picks:group:GOAT26/,'The compatibility layer m
 assert.match(consumer,/function restoreCachedProfile\(\)/,'Cached profile restoration must remain.');
 assert.match(consumer,/function saveFinishedProfile\(\)/,'Finished profile caching must remain.');
 assert.match(consumer,/function bindCachedActions\(root\)/,'Cached activity actions must remain bound.');
+assert.match(consumer,/clone\.querySelectorAll\('\[data-phase3-bridge-bound\]'\)[\s\S]*removeAttribute\('data-phase3-bridge-bound'\)/,'Serialized cached actions must drop stale listener markers before restoration.');
 assert.match(consumer,/new MutationObserver/,'Profile-cache observation must remain.');
 assert.match(consumer,/serviceWorker\.register/,'Installed-app worker registration compatibility must remain.');
 assert.match(consumer,/octagon-hq:soft-refresh/,'Soft refresh may still synchronize the profile cache.');
@@ -50,5 +51,6 @@ console.log(JSON.stringify({
   consumerPosition,
   notificationRenderOwnedByCenter:true,
   notificationSettingsOwnedByCenter:true,
-  profileCacheCompatibilityPreserved:true
+  profileCacheCompatibilityPreserved:true,
+  restoredCachedActionsRemainLive:true
 },null,2));
