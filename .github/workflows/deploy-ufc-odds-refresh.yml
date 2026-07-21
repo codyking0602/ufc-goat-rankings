@@ -8,6 +8,8 @@ on:
     paths:
       - 'config/ufc-card-sources.json'
       - 'scripts/sync-ufc-card.mjs'
+      - 'scripts/check-ufc-odds-name-matching.mjs'
+      - 'supabase/functions/_shared/ufc-name-matching.js'
       - 'supabase/functions/sync-ufc-card/**'
       - 'supabase/functions/advance-picks-event/**'
       - 'supabase/functions/refresh-ufc-odds/**'
@@ -47,6 +49,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+
+      - name: Test sportsbook fighter-name reconciliation
+        shell: bash
+        run: node scripts/check-ufc-odds-name-matching.mjs
 
       - name: Store function secrets
         shell: bash
