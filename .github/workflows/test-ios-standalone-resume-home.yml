@@ -34,13 +34,3 @@ jobs:
           cat /tmp/ios-home-startup-server.log
           exit 1
       - run: node scripts/test-ios-standalone-resume-home.mjs
-      - name: Upload iOS aggregate diagnostic
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ios-home-startup-diagnostic
-          path: |
-            /tmp/*report.json
-            /tmp/ios-home-startup-server.log
-          if-no-files-found: warn
-          retention-days: 2
