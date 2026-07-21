@@ -1,6 +1,6 @@
 {
-  "version": "scoring-architecture-contract-20260715g-current-era-audit",
-  "expectedRosterCount": 73,
+  "version": "scoring-architecture-contract-20260721h-production-80",
+  "expectedRosterCount": 80,
   "facts": {
     "path": "assets/data/canonical-fighter-facts.js",
     "global": "UFC_CANONICAL_FIGHTER_FACTS"
@@ -8,7 +8,7 @@
   "judgments": {
     "path": "assets/data/canonical-scoring-judgments.js",
     "global": "UFC_CANONICAL_SCORING_JUDGMENTS",
-    "expectedFighterCount": 73,
+    "expectedFighterCount": 80,
     "ownsCalculatedScores": false,
     "ownsTotalsRanksOrOvr": false
   },
@@ -16,7 +16,7 @@
     "path": "assets/js/category-calculators.js",
     "global": "UFC_CATEGORY_CALCULATORS",
     "version": "category-calculators-20260714c-seven-direct-calculators",
-    "expectedCompleteCount": 73,
+    "expectedCompleteCount": 80,
     "categories": [
       "championship",
       "opponentQuality",
@@ -86,8 +86,8 @@
   "keyResults": {
     "Jon Jones": { "rank": 1, "overallOvr": 99 },
     "Georges St-Pierre": { "rank": 2, "overallOvr": 96 },
-    "Henry Cejudo": { "rank": 38 },
-    "Royce Gracie": { "rank": 50 },
+    "Henry Cejudo": { "rank": 40 },
+    "Royce Gracie": { "rank": 54 },
     "Amanda Nunes": { "rank": 1, "overallOvr": 99 },
     "Valentina Shevchenko": { "overallOvr": 98 }
   },
@@ -203,6 +203,10 @@
     "UFC_CANONICAL_LONGEVITY_RECONSTRUCTION",
     "UFC_DYNAMIC_ROSTER_SCORING_REPAIR",
     "UFC_DIVISION_ERA_DEPTH_FINALIZER"
+  ],
+  "retiredRuntimePaths": [
+    "assets/data/pantoja-final-roster-guard.js",
+    "assets/data/canonical-pantoja-fighter-addition.js"
   ],
   "retiredWorkflowPaths": [
     ".github/workflows/fighter-data-ownership-baseline.yml",
