@@ -10,6 +10,7 @@ const early=read('assets/js/fresh-home-route-bootstrap.js');
 const shell=read('assets/js/octagon-hq-shell.js');
 const picks=read('assets/js/picks.js');
 const launch=read('assets/js/fresh-home-launch.js');
+const serviceWorker=read('sw.js');
 
 const localPaths=[...index.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/gi)]
   .map(match=>match[1].split('?')[0]);
@@ -33,6 +34,7 @@ assert(shell.includes("if(currentView===view&&target?.classList.contains('active
 assert(shell.includes('get currentDestination(){return currentDestination;}'),'The canonical shell must publish its current destination for passive route handoffs.');
 assert.equal(picks.includes('UFC_APP_SHELL'),false,'Picks must not become a direct primary-route owner.');
 assert.equal(picks.includes('UFC_PRODUCT_ARCHITECTURE'),false,'Picks must not invoke the compatibility route owner directly.');
+assert(serviceWorker.includes('product-architecture|octagon-hq-shell|native-app-shell'),'The canonical shell must remain network-first in the installed app.');
 
 const helper=launch.match(/function activateDestinationOnce\(destination\)\{([\s\S]*?)\n  \}/);
 assert(helper,'Fresh launch must use one subordinate route-handoff helper.');
@@ -63,5 +65,6 @@ console.log(JSON.stringify({
   subordinatePosition:position(launchPath),
   sameViewActivationCoalesced:true,
   sameDestinationHandoffBlocked:true,
-  bareInviteRecoveryPreserved:true
+  bareInviteRecoveryPreserved:true,
+  installedSourceFreshnessProtected:true
 },null,2));
