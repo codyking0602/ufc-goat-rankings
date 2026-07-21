@@ -37,8 +37,14 @@ page.on('pageerror',error=>pageErrors.push(error.message));
 try{
   await page.goto('http://127.0.0.1:4173/index.html',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>document.documentElement.getAttribute('data-scoring-pipeline')==='ready',null,{timeout:90000});
-  await page.waitForSelector('#menList .fighter-row',{timeout:15000});
-  await page.evaluate(()=>document.getElementById('whatsNewOverlay')?.remove());
+  await page.evaluate(()=>{
+    document.getElementById('whatsNewOverlay')?.remove();
+    const shell=window.UFC_APP_SHELL||window.UFC_PRODUCT_ARCHITECTURE;
+    if(typeof shell?.activateView!=='function')throw new Error('Canonical app shell is unavailable for ranking-view activation.');
+    shell.activateView('men',{updateHash:false});
+  });
+  await page.waitForFunction(()=>document.getElementById('men')?.classList.contains('active-view'),null,{timeout:15000});
+  await page.waitForSelector('#menList .fighter-row',{state:'visible',timeout:15000});
   await page.waitForFunction(expected=>document.querySelector('.fighter-row[data-fighter="Charles Oliveira"] .watch-moment-link')?.href===expected,charlesWatchUrl,{timeout:15000});
 
   const taglineAudit=await page.evaluate(()=>{
