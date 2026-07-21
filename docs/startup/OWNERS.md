@@ -57,7 +57,7 @@ This file records the canonical owner of each startup responsibility. Detailed h
 | Picks social profile/reminder snapshot | `assets/js/picks-social-retention.js` | Passive identity consumer with one in-flight snapshot owner |
 | Picks season summary/events/social/room loading | `assets/js/picks-season-loop.js` | Passive identity consumer with coalesced season request set |
 | War Room message board | `assets/js/octagon-message-board.js` | Passive identity consumer; visible **SIGN IN** button is its one explicit canonical `require()` boundary |
-| War Room membership/access status and Cody’s access-management panel | `assets/js/octagon-access-panel.js` | Passive identity consumer; one in-flight access-status owner; no direct sign-in or storage ownership |
+| War Room membership/access status and Cody’s access-management panel | `assets/js/octagon-access-panel.js` | Passive identity consumer and sole access-status/admin owner; board owner mounts synchronously before access startup; one immediate panel/status attempt consumes cached identity, uncached startup waits for readiness events, and no 250/900/2600/5000 ms access retry array remains; one in-flight request owner, realtime/lifecycle verification, 60-second polling, Cody roster/toggles, access rules, and no direct sign-in/storage ownership remain |
 | War Room activity/unread/mark-seen/realtime/push behavior | `assets/js/octagon-notifications.js` | Passive identity consumer and canonical activity-status owner; one immediate shell/status startup attempt consumes cached identity, uncached startup waits for published readiness events, and no 180/700/1800/4200 ms status retry array remains; one in-flight request owner, direct-link/realtime/lifecycle refreshes, explicit actions, 30-second status polling, 3-second local DOM maintenance, push behavior, and canonical-storage/resolver boundaries remain |
 
 ## Permanent ownership and startup-work proofs
@@ -84,6 +84,9 @@ Startup Architecture Gate protects:
 - Picks social and season passive identity;
 - Picks commissioner zero-work Home startup, active route entry, late card mount, active-only polling, and off-screen silence;
 - War Room board, access, and notification passive identity with their request owners;
+- synchronous War Room board mounting before access-panel startup;
+- one passive War Room access startup attempt, zero uncached RPCs through the former five-second retry window, one cached startup RPC, and one readiness-handoff RPC;
+- preservation of access realtime, visibility/online, 60-second verification, and Cody administration responsibilities;
 - one passive War Room notification startup status attempt, zero uncached RPCs through the former 4.2-second retry window, one cached startup RPC, and one readiness-handoff RPC;
 - preservation of direct-link, realtime, visibility/online, explicit, 30-second poll, and local DOM notification responsibilities;
 - one initial native component/route/badge synchronization with zero repeated startup work through the former 4.2-second retry window;
@@ -98,6 +101,7 @@ Passive, subordinate, or inactive-destination paths must produce:
 - zero canonical token storage reads;
 - zero sign-in surfaces before an explicit user action;
 - zero identity-dependent RPCs before published identity;
+- zero repeated War Room access-status startup retries after the one immediate passive attempt;
 - zero repeated War Room activity-status startup retries after the one immediate passive attempt;
 - zero commissioner snapshot RPCs while Picks is inactive;
 - zero unconditional native component, active-route, or badge resynchronization after the initial startup pass;
@@ -126,7 +130,7 @@ Passive, subordinate, or inactive-destination paths must produce:
 - Phase 1 established idempotent owners.
 - Phase 2 removed demonstrated duplicate route, identity, profile, access, notification, and refresh ownership.
 - Phase 3 removed duplicate Spotlight, Resume Snapshot, and What’s New repairs; retired the body-wide observer, route/soft-refresh repair listeners, six delayed retries, close-button continuation, and public repair API; retained only the proved drawer/body mapping, drawer-only observer, and native overlay dismissal.
-- Phase 4 established a measured production startup-work inventory, removed Home-startup/hidden-mutation/off-screen commissioner snapshot work, retired five unconditional native component/route/badge startup passes, and retired four repeated War Room notification status retries while preserving owner events, direct-link/realtime/lifecycle work, and separate live polling.
+- Phase 4 established a measured production startup-work inventory, removed Home-startup/hidden-mutation/off-screen commissioner snapshot work, retired five unconditional native component/route/badge startup passes, retired four repeated War Room notification status retries, and retired four repeated War Room access-status retries while preserving owner events, direct-link/realtime/lifecycle work, live verification, and explicit administration.
 
 Further movement or renaming of the minimal native presentation adapter belongs to later startup/script-manifest simplification, not repair-loop retirement.
 

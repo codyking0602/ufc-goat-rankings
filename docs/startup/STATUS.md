@@ -4,17 +4,17 @@ _Last updated: 2026-07-21_
 
 ## Current position
 
-- **Latest production runtime merge:** PR #177, `8df258a6dc7e20560783f30d6e974476e62ac5d6`.
-- **Exact latest tested runtime head:** `7d307fb4af9647748b552867390fb9498fe146c0`.
-- **Latest complete Startup Architecture Gate:** run #184 passed.
-- **Latest dedicated iOS Home Startup Stability:** run #49 passed.
+- **Latest production runtime merge:** PR #179, `002b31f5ccad3db185b5a6053cb620925482c426`.
+- **Exact latest tested runtime head:** `5458ba3545476846d16bbaf58ed279a344dddbdc`.
+- **Latest complete Startup Architecture Gate:** run #188 passed.
+- **Latest dedicated iOS Home Startup Stability:** run #52 passed.
 - **Current phase:** Phase 4 — reduce startup work.
 - **Phase 0:** Complete.
 - **Phase 1:** Complete.
 - **Phase 2:** Complete.
 - **Phase 3:** Complete.
-- **Phase 4:** In progress; inventory and three runtime reductions complete.
-- **Entire startup cleanup:** Approximately 97% complete.
+- **Phase 4:** In progress; inventory and four runtime reductions complete.
+- **Entire startup cleanup:** Approximately 98% complete.
 - **Visible product changes approved:** None. The zero-visible-change contract remains in force.
 - **Master tracker:** [Issue #102](https://github.com/codyking0602/ufc-goat-rankings/issues/102).
 - **Completed Phase 2 ledger:** [`PHASE-2-PROGRESS-20260721.md`](./PHASE-2-PROGRESS-20260721.md).
@@ -155,13 +155,27 @@ PR #177 removed the 180/700/1800/4200 retries and preserved one immediate shell/
 - Phase 4 Startup Work Inventory #15: passed.
 - Production merge: `8df258a6dc7e20560783f30d6e974476e62ac5d6`.
 
+### PR #179 — War Room access startup status retries
+
+`assets/js/octagon-access-panel.js` previously ran `ensurePanel()` and `checkCurrentAccess()` at 0, 250, 900, 2600, and 5000 milliseconds.
+
+The audit proved the board mount is already available for the first access attempt because the board owner loads first, registers its startup listener first, and synchronously mounts/binds the board before the access-panel listener runs.
+
+PR #179 removed the 250/900/2600/5000 retries and preserved one immediate panel/status attempt. Cached identity produces exactly one startup RPC; uncached startup produces zero RPCs and waits for readiness. Realtime, visibility/online recovery, the 60-second verification poll, request coalescing, Cody roster/toggles, access rules, and tab state are unchanged.
+
+- Exact tested head: `5458ba3545476846d16bbaf58ed279a344dddbdc`.
+- Startup Architecture Gate #188: passed.
+- Dedicated iOS Home Startup Stability #52: passed on unchanged rerun after an initial cancellation.
+- Phase 4 Startup Work Inventory #18: passed.
+- Production merge: `002b31f5ccad3db185b5a6053cb620925482c426`.
+
 ## Known unrelated red workflows
 
 These remain outside startup ownership unless a failure directly references an isolated changed line:
 
 - Picks UI Smoke #840 passed Picks JavaScript syntax, then failed the existing mobile top-tab auto-centering, daily odds schedule, and setup-guide documentation checks.
-- Production Ranking Browser Smoke #589, #593, and #598 stopped at the existing **Audit every fighter photo path** step before ranking and mobile-profile certification.
-- Scoring Architecture Guardrails #1415, #1418, and #1422 passed syntax, profile-copy coverage, and physical source ownership, then stopped at the established permanent runtime contract step.
+- Production Ranking Browser Smoke #589, #593, #598, and #603 stopped at the existing **Audit every fighter photo path** step before ranking and mobile-profile certification.
+- Scoring Architecture Guardrails #1415, #1418, #1422, and #1426 passed syntax, profile-copy coverage, and physical source ownership, then stopped at the established permanent runtime contract step.
 - Production Ranking Pipeline and Snapshot may stop on stale ranking/roster certification expectations.
 - Validate Phase 4B Preview may stop at its historical hard-pinned architecture check.
 
@@ -177,9 +191,9 @@ Request Cody only when a genuine unresolved user-only or physical-only uncertain
 
 ## Exact next action
 
-1. Start from production merge `8df258a6dc7e20560783f30d6e974476e62ac5d6` plus this documentation merge.
-2. Audit `assets/js/octagon-access-panel.js` as the next measured War Room startup-work candidate.
-3. Separate local panel installation, startup/readiness status requests, active War Room route entry, lifecycle/realtime/polling, and Cody-only management actions.
-4. Remove only demonstrated inactive-destination or repeated startup work.
-5. Preserve access rules, identity ownership, board rendering, notification status, and explicit management actions.
+1. Start from production merge `002b31f5ccad3db185b5a6053cb620925482c426` plus this documentation merge.
+2. Audit `assets/js/octagon-message-board.js` startup mount/bind retries at 50, 220, 850, and 2200 milliseconds.
+3. Separate synchronous initial mount/bind work from active War Room startup loading and identity readiness loading.
+4. Prove whether the static `#octagon` root and beta tab are already available before the first board start.
+5. Preserve message-board RPC ownership, route/visibility/online/realtime behavior, access rules, and active-route loading unless independently proven avoidable.
 6. Do not begin broad script-manifest deletion or bundling; that remains Phase 5.
