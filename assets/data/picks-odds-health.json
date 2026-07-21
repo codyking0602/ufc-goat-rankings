@@ -12,45 +12,68 @@
     {
       "fightId": "abu26-saygid-izagakhmaev-abubakar-vagaev",
       "matchup": "ABUBAKAR VAGAEV vs. SAYGID IZAGAKHMAEV",
-      "reason": "matchup-not-found"
+      "reason": "matchup-not-found",
+      "existingRedOdds": null,
+      "existingBlueOdds": null,
+      "nearbyProviderMatchups": []
     },
     {
       "fightId": "abu26-steve-erceg-ramazan-temirov",
       "matchup": "STEVE ERCEG vs. RAMAZAN TEMIROV",
-      "reason": "matchup-not-found"
+      "reason": "matchup-not-found",
+      "existingRedOdds": null,
+      "existingBlueOdds": null,
+      "nearbyProviderMatchups": [
+        "Stephen Erceg vs. Ramazonbek Temirov"
+      ]
     },
     {
       "fightId": "belgrade26-dusko-todorovic-robert-valentin",
       "matchup": "DUŠKO TODOROVIĆ vs. ROBERT VALENTIN",
-      "reason": "matchup-not-found"
+      "reason": "matchup-not-found",
+      "existingRedOdds": null,
+      "existingBlueOdds": null,
+      "nearbyProviderMatchups": []
     },
     {
       "fightId": "belgrade26-jan-b-achowicz-navajo-stirling",
       "matchup": "JAN BŁACHOWICZ vs. NAVAJO STIRLING",
-      "reason": "matchup-not-found"
+      "reason": "matchup-not-found",
+      "existingRedOdds": null,
+      "existingBlueOdds": null,
+      "nearbyProviderMatchups": []
     },
     {
       "fightId": "belgrade26-vlasto-cepo-gilbert-urbina",
       "matchup": "VLASTO CEPO vs. GILBERT URBINA",
-      "reason": "matchup-not-found"
+      "reason": "matchup-not-found",
+      "existingRedOdds": null,
+      "existingBlueOdds": null,
+      "nearbyProviderMatchups": []
     },
     {
       "fightId": "belgrade26-aleksandar-rakic-marcin-tybura",
       "matchup": "ALEKSANDAR RAKIĆ vs. MARCIN TYBURA",
-      "reason": "matchup-not-found"
+      "reason": "matchup-not-found",
+      "existingRedOdds": null,
+      "existingBlueOdds": null,
+      "nearbyProviderMatchups": []
     },
     {
       "fightId": "belgrade26-uros-medic-daniel-rodriguez",
       "matchup": "UROŠ MEDIĆ vs. DANIEL RODRIGUEZ",
-      "reason": "matchup-not-found"
+      "reason": "matchup-not-found",
+      "existingRedOdds": null,
+      "existingBlueOdds": null,
+      "nearbyProviderMatchups": []
     }
   ],
   "failures": [],
   "quota": {
-    "remaining": "451",
-    "used": "49",
+    "remaining": "450",
+    "used": "50",
     "last": "1"
   },
-  "refreshedAt": "2026-07-21T02:04:30.861Z",
+  "refreshedAt": "2026-07-21T02:08:39.782Z",
   "error": null
 }
