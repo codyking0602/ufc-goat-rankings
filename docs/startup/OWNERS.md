@@ -2,7 +2,7 @@
 
 _Last updated: 2026-07-21_
 
-This file records the canonical owner of each startup responsibility. Detailed history remains in the Phase 1 and completed Phase 2 audits and ledgers.
+This file records the canonical owner of each startup responsibility. Detailed history remains in the Phase 1, completed Phase 2, and current Phase 3 audits and ledgers.
 
 ## Ownership rules
 
@@ -16,9 +16,10 @@ This file records the canonical owner of each startup responsibility. Detailed h
 - Historical-token migration may validate and adopt a token before normal identity resolution, but it hands the resolved identity to the canonical profile owner rather than publishing canonical profile readiness.
 - The canonical profile owner consumes a valid migration handoff without repeating its snapshot RPC; it retains independent resolution when migration has no result.
 - Compatibility layers may preserve presentation/recovery behavior but may not initiate a canonical owner’s data or render responsibility.
+- A repair layer may react to a real replacement/lifecycle event, but it may not independently render canonical state merely because startup was historically unreliable.
 - One ownership issue changes per runtime batch.
 - `assets/js/app.js` is a structural manifest singleton and must not receive a standard IIFE guard.
-- Compatibility and repair layers may not expand; their retirement belongs to Phase 3 after source behavior is covered.
+- Compatibility and repair layers may not expand; their target-by-target retirement belongs to Phase 3 after source behavior is covered.
 
 ## Canonical owners
 
@@ -37,7 +38,7 @@ This file records the canonical owner of each startup responsibility. Detailed h
 | Picks internal routing | `assets/js/picks-internal-navigation.js` | Nested Picks route owner only; not a primary app route owner |
 | Play base runtime | `assets/js/play.js` | Canonical base Play owner after DOM/data prerequisites |
 | Play internal game navigation | `assets/js/play-hub.js` | Canonical Play game-screen owner after hub prerequisites |
-| Home rendering | `assets/js/home-dashboard.js` | Canonical Home renderer; official daily sync consumes cached identity only |
+| Home rendering and Ranking Spotlight | `assets/js/home-dashboard.js` | Sole Home/Spotlight readiness, deterministic selection, placeholder, markup, route re-entry, visibility recovery, and duplicate-markup suppression owner; official daily sync consumes cached identity only |
 | Community directory, member profiles, and Top 10 | `assets/js/community-profiles.js` | Canonical community owner; passive identity consumer; explicit Top 10 editing may require sign-in |
 | Cross-feature profile/Picks handoffs | `assets/js/product-architecture.js` | Compatibility/handoff owner only; no canonical access persistence or duplicate startup profile handoff |
 | Late route/reminder continuation | `assets/js/fresh-home-launch.js` | Late launch and Picks-continuation owner; consumes the shell’s published destination and skips a same-destination handoff; retains legitimate bare-invite recovery |
@@ -45,7 +46,7 @@ This file records the canonical owner of each startup responsibility. Detailed h
 | Notification/profile surface compatibility | `assets/js/app-notification-surface-fix.js` | Profile-cache presentation compatibility only; may cache/restore activity HTML and bind cached actions but may not call canonical notification render/settings work |
 | App-wide quick synchronization | `assets/js/app-update-watcher.js` | Canonical app quick-sync owner for the normal path; does not perform the native pull action’s final activity-status refresh |
 | Mobile bottom navigation, badges, transitions, and pull-to-refresh presentation | `assets/js/native-app-shell.js` | Native presentation and accepted pull-action owner; delegates route activation, prefers canonical quick sync, and performs one final activity-status refresh after either normal or fallback sync |
-| Mobile/native repair behavior | `assets/js/native-app-shell-stability.js` | Temporary repair layer; Phase 3 candidate only after a specific repair is proved redundant |
+| Mobile/native repair behavior | `assets/js/native-app-shell-stability.js` | Temporary target-specific repair layer; no Ranking Spotlight ownership after PR #159; retained snapshot, drawer, What’s New, route/soft-refresh, observer, and bounded delayed-startup paths remain Phase 3 candidates only after focused proof |
 | Sharing and incoming supported deep links | `assets/js/share-deep-links.js` | Canonical share/deep-link orchestrator; delegates destination activation |
 | Profile challenge inbox, actions, and routing | `assets/js/profile-challenges.js` | Passive inbox identity consumer with one in-flight load; explicit actions may require sign-in |
 | Picks social profile/reminder snapshot | `assets/js/picks-social-retention.js` | Passive identity consumer with one in-flight snapshot owner |
@@ -66,6 +67,7 @@ Startup Architecture Gate protects:
 - Product access persistence and one startup handoff;
 - App Profile single group snapshot;
 - Home daily passive identity;
+- Home/Ranking Spotlight canonical readiness and rendering with no stability-layer repair;
 - profile-challenge passive inbox loading;
 - notification settings passive identity;
 - notification/profile compatibility passive ownership and live cached-action restoration;
@@ -82,6 +84,7 @@ Passive or subordinate paths must produce:
 - zero identity-dependent RPCs before published identity;
 - one request owner for competing refresh paths;
 - zero compatibility-layer calls into canonical notification settings or render ownership;
+- zero repair-layer Ranking Spotlight mutations before or after canonical ranking readiness;
 - exactly one final activity-status refresh for one accepted pull action;
 - exactly one snapshot validation across a successful migration-to-canonical-identity handoff.
 
@@ -100,7 +103,11 @@ Passive or subordinate paths must produce:
 
 The final production-load audit after PR #157 found no remaining demonstrated competing identity, access, readiness, route, notification, or full-refresh owner. Phase 2 is complete.
 
-Phase 3 may now audit repair and compatibility layers one narrow behavior at a time. A repair may be removed only after the canonical source behavior is identified and focused static/browser evidence proves the repair redundant without losing recovery.
+## Phase 3 current boundary
+
+PR #159 removed only the duplicate Ranking Spotlight renderer from `native-app-shell-stability.js`. `home-dashboard.js` now has a permanent static and mobile-browser proof covering cold/delayed startup, readiness, repeated events, route/visibility recovery, refresh, and stable delayed observation.
+
+The remaining stability behaviors are not presumed obsolete. Each must receive its own canonical-owner trace and recovery proof before removal or narrowing.
 
 ## Testing and interruption policy
 
