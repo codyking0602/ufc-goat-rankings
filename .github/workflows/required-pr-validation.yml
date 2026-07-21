@@ -196,6 +196,7 @@ jobs:
       - name: Run scoring architecture validation
         if: needs.changes.outputs.scoring == 'true'
         run: |
+          git reset --hard "${{ github.event.pull_request.head.sha || github.sha }}"
           node scripts/audit-profile-copy-coverage.mjs
           node scripts/test-production-runtime-boundaries.mjs
           node scripts/run-scoring-architecture-guardrails.mjs
