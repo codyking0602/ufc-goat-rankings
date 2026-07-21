@@ -9,7 +9,7 @@ on:
       - 'config/ufc-card-sources.json'
       - 'scripts/sync-ufc-card.mjs'
       - 'scripts/check-ufc-odds-name-matching.mjs'
-      - 'supabase/functions/_shared/ufc-name-matching.js'
+      - 'supabase/functions/_shared/ufc-name-matching.mjs'
       - 'supabase/functions/sync-ufc-card/**'
       - 'supabase/functions/advance-picks-event/**'
       - 'supabase/functions/refresh-ufc-odds/**'
