@@ -1,0 +1,44 @@
+name: War Room Route Diagnostic
+
+on:
+  push:
+    branches: [agent/war-room-permission-aware]
+
+permissions:
+  contents: read
+
+jobs:
+  route-proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser runtime
+        run: npm install --no-save --package-lock=false playwright@1.54.2 && npx playwright install --with-deps chromium
+      - name: Start local app
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/war-room-route-http.log 2>&1 &
+          for attempt in $(seq 1 20); do
+            if curl --fail --silent http://127.0.0.1:4173/index.html > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/war-room-route-http.log
+          exit 1
+      - name: Run route owner proof
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/test-route-owner-shell-recovery-queue.mjs 2>&1 | tee /tmp/war-room-route-proof.log
+      - name: Upload route diagnostic
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: war-room-route-diagnostic
+          path: |
+            /tmp/war-room-route-proof.log
+            /tmp/war-room-route-http.log
+          if-no-files-found: warn
+          retention-days: 2
