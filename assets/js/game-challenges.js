@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='game-challenges-20260719b-immediate-buttons';
+  const VERSION='game-challenges-20260721c-wavelength-play-now';
   const ROOT='https://codyking0602.github.io/ufc-goat-rankings/';
   const ORDER=['find-leader','top10','blind','blind-rank','keep-cut','better-than'];
   const TARGETS=[18,27,31,35,43,47,50,56,60,62,65,67,70,72,75,77,79,82,84,85,88,91];
@@ -40,7 +40,6 @@
     const style=document.createElement('style');
     style.id='allGameChallengeCss';
     style.textContent=`
-      #playHub .play-game-card.is-new .play-game-card-top em{border-color:rgba(250,204,21,.72);background:rgba(250,204,21,.14);color:#fde68a}
       body.game-challenge-open{overflow:hidden}
       .game-challenge-overlay{position:fixed;inset:0;z-index:15000;display:grid;place-items:center;padding:18px;background:rgba(2,6,23,.9);backdrop-filter:blur(12px)}
       .game-challenge-panel{width:min(600px,100%);max-height:94vh;overflow:auto;border:1px solid rgba(249,115,22,.68);border-radius:24px;background:linear-gradient(180deg,#1c293d,#0d1421);color:#f8fafc;box-shadow:0 22px 70px rgba(0,0,0,.5)}
@@ -241,9 +240,9 @@
     if(wanted.some((card,index)=>current[index]!==card))wanted.forEach(card=>grid.appendChild(card));
     const wavelength=map.get('top10');
     if(wavelength){
-      wavelength.classList.add('is-new');
+      wavelength.classList.remove('is-new');
       const status=wavelength.querySelector('.play-game-card-top em');
-      if(status)status.textContent='NEW';
+      if(status&&status.textContent!=='PLAY NOW')status.textContent='PLAY NOW';
     }
     const games=window.UFC_PLAY_HUB?.games;
     if(Array.isArray(games)){
