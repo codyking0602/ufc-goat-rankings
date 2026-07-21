@@ -1,0 +1,200 @@
+name: Document Phase 4 Board Startup Batch
+
+on:
+  push:
+    branches:
+      - agent/document-phase-4-board-startup
+    paths:
+      - '.github/workflows/document-phase-4-board-startup.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  document:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/document-phase-4-board-startup
+          fetch-depth: 0
+      - name: Update startup documentation
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          progress = Path('docs/startup/PHASE-4-PROGRESS-20260721.md')
+          text = progress.read_text()
+          anchor = '## Known unrelated red workflows\n'
+          batch = '''## Batch 5 — War Room board delayed startup mount/bind retries
+
+### Measured avoidable work
+
+`assets/js/octagon-message-board.js` synchronously installed styles, mounted the board, bound the static War Room beta tab, and bound navigation/lifecycle behavior. It then repeated `mount()` and `bindTab()` at 50, 220, 850, and 2200 milliseconds regardless of whether the static shell was already available.
+
+The audit proved the delayed passes had no unique prerequisite:
+
+- the production `#octagon` root exists before the message-board script loads;
+- the static `[data-octagon-beta-tab]` control also exists before the owner loads;
+- one synchronous startup pass mounts one board shell and marks the beta tab bound;
+- active cached startup already performs one snapshot load;
+- active uncached startup performs zero RPCs and waits for published identity;
+- beta-tab entry, identity readiness, visibility/online recovery, realtime, and explicit board actions already own later work.
+
+### Production boundary after PR #182
+
+PR #182 removed only the four delayed `mount()`/`bindTab()` passes.
+
+The owner now retains:
+
+- one synchronous `installStyles()`, `mount()`, `bindTab()`, and `bindNavigation()` startup pass;
+- inactive startup with zero board snapshot RPCs;
+- active cached startup with one snapshot RPC;
+- active uncached startup with zero RPCs until the existing identity readiness event;
+- beta-tab entry loading;
+- visibility and online active-board recovery;
+- realtime subscription and board-change refresh;
+- all message-board post, reply, reaction, delete, week-navigation, and explicit sign-in behavior.
+
+### Permanent proof
+
+The static contract verifies production root/tab-before-script order, one synchronous mount/bind pass, absence of the 50/220/850/2200 array, and preservation of active startup loading, readiness loading, tab entry, lifecycle recovery, snapshot RPC ownership, and realtime ownership.
+
+The 390×844 mobile proof covers:
+
+- immediate inactive startup: one board shell, one beta-tab binding, and zero snapshot RPCs;
+- the complete former 2.2-second retry window: the same board shell remains and no RPC appears;
+- beta-tab entry: exactly one snapshot RPC;
+- active cached startup: exactly one snapshot RPC and one realtime channel;
+- active uncached startup: zero RPCs until published identity, followed by exactly one snapshot RPC and one realtime channel.
+
+The existing War Room identity proof continues to certify passive identity, one in-flight snapshot owner, explicit sign-in, and posting behavior. The new proof is imported by the iOS startup suite.
+
+- Exact tested head: `b7ee8b933fecfb51883bc443f99f54541726ed87`.
+- Startup Architecture Gate #193: passed.
+- Dedicated iOS Home Startup Stability #56: passed.
+- Phase 4 Startup Work Inventory #22: passed.
+- Production merge: `e2c0ec89f518ab14c00151a1998b9c8b724fcd25`.
+
+'''
+          if anchor not in text:
+              raise SystemExit('Progress known-red anchor missing.')
+          text = text.replace(anchor, batch + anchor, 1)
+          text = text.replace('Production Ranking Browser Smoke #589, #593, #598, and #603', 'Production Ranking Browser Smoke #589, #593, #598, #603, and #607')
+          text = text.replace('Scoring Architecture Guardrails #1415, #1418, #1422, and #1426', 'Scoring Architecture Guardrails #1415, #1418, #1422, #1426, and #1431')
+          next_anchor = '''## Next audit order
+
+Continue from the current inventory one measured responsibility at a time.
+
+The next audit should inspect the War Room board owner’s local mount/bind startup retries in `assets/js/octagon-message-board.js` at 50, 220, 850, and 2200 milliseconds.
+
+Separate:
+
+1. synchronous initial `mount()` and `bindTab()`;
+2. late availability of the static `#octagon` root and beta tab;
+3. active War Room startup loading;
+4. canonical identity readiness loading;
+5. route/visibility/online/realtime behavior.
+
+Do not combine board mount retry reduction with message-board RPC ownership, access rules, notification state, realtime semantics, or active-route load behavior.
+'''
+          replacement = '''## Next audit order
+
+Continue from the current inventory one measured responsibility at a time.
+
+The next audit should inspect `assets/js/picks-persistent-groups.js`, which currently calls `refresh()` during startup, schedules another refresh after ordinary Picks subtree mutations, and polls every 45 seconds without checking whether Picks is active.
+
+Separate:
+
+1. permanent-group link and room-resolution behavior on direct Picks entry;
+2. local group-card shell installation;
+3. active Picks route entry and late shell availability;
+4. ordinary subtree mutation from actual group/room state changes;
+5. the 45-second freshness poll;
+6. invite joining, auto-advance, group sharing, and admin event actions.
+
+Do not combine persistent-group activation with canonical identity/token ownership, Picks base rendering, commissioner behavior, internal routing, or product changes.
+'''
+          if next_anchor not in text:
+              raise SystemExit('Progress next-action block missing.')
+          progress.write_text(text.replace(next_anchor, replacement, 1))
+
+          status = Path('docs/startup/STATUS.md')
+          text = status.read_text()
+          replacements = {
+            '- **Latest production runtime merge:** PR #179, `002b31f5ccad3db185b5a6053cb620925482c426`.':'- **Latest production runtime merge:** PR #182, `e2c0ec89f518ab14c00151a1998b9c8b724fcd25`.',
+            '- **Exact latest tested runtime head:** `5458ba3545476846d16bbaf58ed279a344dddbdc`.':'- **Exact latest tested runtime head:** `b7ee8b933fecfb51883bc443f99f54541726ed87`.',
+            '- **Latest complete Startup Architecture Gate:** run #188 passed.':'- **Latest complete Startup Architecture Gate:** run #193 passed.',
+            '- **Latest dedicated iOS Home Startup Stability:** run #52 passed.':'- **Latest dedicated iOS Home Startup Stability:** run #56 passed.',
+            '- **Phase 4:** In progress; inventory and four runtime reductions complete.':'- **Phase 4:** In progress; inventory and five runtime reductions complete.',
+            '- **Entire startup cleanup:** Approximately 98% complete.':'- **Entire startup cleanup:** Approximately 99% complete.'
+          }
+          for old,new in replacements.items():
+              if old not in text: raise SystemExit(f'Status marker missing: {old}')
+              text = text.replace(old,new,1)
+          status_anchor = '## Known unrelated red workflows\n'
+          status_batch = '''### PR #182 — War Room board delayed startup mount/bind retries
+
+`assets/js/octagon-message-board.js` previously performed one complete synchronous startup mount/bind pass, then repeated `mount()` and `bindTab()` at 50, 220, 850, and 2200 milliseconds.
+
+The audit proved the production root and beta tab already exist before the owner loads. PR #182 removed only the four delayed passes while preserving one synchronous mount/bind, inactive silence, active cached and uncached loading, identity readiness, beta-tab entry, lifecycle recovery, realtime, and every board action.
+
+- Exact tested head: `b7ee8b933fecfb51883bc443f99f54541726ed87`.
+- Startup Architecture Gate #193: passed.
+- Dedicated iOS Home Startup Stability #56: passed.
+- Phase 4 Startup Work Inventory #22: passed.
+- Production merge: `e2c0ec89f518ab14c00151a1998b9c8b724fcd25`.
+
+'''
+          if status_anchor not in text: raise SystemExit('Status known-red anchor missing.')
+          text = text.replace(status_anchor,status_batch+status_anchor,1)
+          text = text.replace('Production Ranking Browser Smoke #589, #593, #598, and #603', 'Production Ranking Browser Smoke #589, #593, #598, #603, and #607')
+          text = text.replace('Scoring Architecture Guardrails #1415, #1418, #1422, and #1426', 'Scoring Architecture Guardrails #1415, #1418, #1422, #1426, and #1431')
+          old_action = '''1. Start from production merge `002b31f5ccad3db185b5a6053cb620925482c426` plus this documentation merge.
+2. Audit `assets/js/octagon-message-board.js` startup mount/bind retries at 50, 220, 850, and 2200 milliseconds.
+3. Separate synchronous initial mount/bind work from active War Room startup loading and identity readiness loading.
+4. Prove whether the static `#octagon` root and beta tab are already available before the first board start.
+5. Preserve message-board RPC ownership, route/visibility/online/realtime behavior, access rules, and active-route loading unless independently proven avoidable.
+6. Do not begin broad script-manifest deletion or bundling; that remains Phase 5.
+'''
+          new_action = '''1. Start from production merge `e2c0ec89f518ab14c00151a1998b9c8b724fcd25` plus this documentation merge.
+2. Audit `assets/js/picks-persistent-groups.js` startup, mutation-driven, and 45-second refresh work.
+3. Prove direct group-link/room entry and active Picks route behavior separately from Home or inactive-Picks startup.
+4. Preserve invite joining, room resolution, auto-advance, sharing, admin event actions, and local token handoffs.
+5. Do not combine the audit with canonical identity ownership, Picks base rendering, commissioner behavior, internal routing, or broad script-manifest work.
+6. Do not begin broad script-manifest deletion or bundling; that remains Phase 5.
+'''
+          if old_action not in text: raise SystemExit('Status exact-action block missing.')
+          status.write_text(text.replace(old_action,new_action,1))
+
+          owners = Path('docs/startup/OWNERS.md')
+          text = owners.read_text()
+          old_row = '| War Room message board | `assets/js/octagon-message-board.js` | Passive identity consumer; visible **SIGN IN** button is its one explicit canonical `require()` boundary |'
+          new_row = '| War Room message board | `assets/js/octagon-message-board.js` | Passive identity consumer and sole board snapshot/action/realtime owner; static root and beta tab exist before startup; one synchronous mount/tab/navigation bind remains and no 50/220/850/2200 ms retry array remains; inactive startup performs no snapshot RPC, cached active startup loads once, uncached active startup waits for readiness, and explicit **SIGN IN**, tab entry, lifecycle recovery, realtime, and board actions remain |'
+          if old_row not in text: raise SystemExit('Owners message-board row missing.')
+          text = text.replace(old_row,new_row,1)
+          proof_anchor = '- War Room board, access, and notification passive identity with their request owners;\n'
+          proof_add = '''- War Room board, access, and notification passive identity with their request owners;
+- one synchronous War Room board mount/tab/navigation bind with zero repeated local startup passes through the former 2.2-second retry window;
+- inactive board startup silence, one cached active startup snapshot, one uncached readiness snapshot, and preserved tab/lifecycle/realtime behavior;
+'''
+          if proof_anchor not in text: raise SystemExit('Owners proof anchor missing.')
+          text = text.replace(proof_anchor,proof_add,1)
+          passive_anchor = '- zero repeated War Room access-status startup retries after the one immediate passive attempt;\n'
+          passive_add = '- zero repeated War Room board mount/tab binding after the one synchronous startup pass;\n' + passive_anchor
+          if passive_anchor not in text: raise SystemExit('Owners passive anchor missing.')
+          text = text.replace(passive_anchor,passive_add,1)
+          old_completed = '- Phase 4 established a measured production startup-work inventory, removed Home-startup/hidden-mutation/off-screen commissioner snapshot work, retired five unconditional native component/route/badge startup passes, retired four repeated War Room notification status retries, and retired four repeated War Room access-status retries while preserving owner events, direct-link/realtime/lifecycle work, live verification, and explicit administration.'
+          new_completed = '- Phase 4 established a measured production startup-work inventory, removed Home-startup/hidden-mutation/off-screen commissioner snapshot work, retired five unconditional native component/route/badge startup passes, retired repeated War Room notification and access-status retries, and retired four repeated War Room board mount/bind passes while preserving owner events, direct-link/tab/realtime/lifecycle work, live verification, explicit administration, and all board actions.'
+          if old_completed not in text: raise SystemExit('Owners completed-boundary marker missing.')
+          owners.write_text(text.replace(old_completed,new_completed,1))
+          PY
+      - name: Publish clean documentation update
+        run: |
+          rm .github/workflows/document-phase-4-board-startup.yml
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add docs/startup/PHASE-4-PROGRESS-20260721.md docs/startup/STATUS.md docs/startup/OWNERS.md
+          git add -u .github/workflows/document-phase-4-board-startup.yml
+          git commit -m "Document War Room board startup retry retirement"
+          git push origin HEAD:agent/document-phase-4-board-startup
