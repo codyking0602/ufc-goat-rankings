@@ -5,7 +5,7 @@ await import('./test-fresh-launch-route-ownership-contract.mjs');
 
 const supabaseStub=`
 window.supabase={createClient(){
-  const chain={select(){return chain;},eq(){return chain;},order(){return Promise.resolve({data:[],error:null});},limit(){return Promise.resolve({data:[],error:null});},single(){return Promise.resolve({data:null,error:null});}};
+  const chain={select(){return chain;},eq(){return chain;},order(){return Promise.resolve({data:[],error:null});},limit(){return Promise.resolve({data:null,error:null});},single(){return Promise.resolve({data:null,error:null});}};
   return{rpc:async()=>({data:null,error:null}),from:()=>chain,channel(){return{on(){return this;},subscribe(){return this;}}},removeChannel:async()=>{}};
 }};
 `;
@@ -65,3 +65,4 @@ try{
 }
 
 await import('./test-fresh-launch-route-ownership.mjs');
+await import('./test-native-pull-refresh-ownership.mjs');
