@@ -51,7 +51,7 @@ This file records the canonical owner of each startup responsibility. Detailed h
 | App-wide quick synchronization | `assets/js/app-update-watcher.js` | Canonical app quick-sync owner for the normal path; does not perform the native pull action’s final activity-status refresh |
 | What’s New trigger markup, unread badge, and trigger binding | `assets/js/app-update-watcher.js` | Sole owner of update-control creation, labeled **NEW** markup, unread calculation, badge text/visibility/class, accessibility labels, seen/storage synchronization, and trigger binding |
 | What Changed overlay and feed | `assets/js/what-changed.js` | Sole overlay/feed render, open/close, entry action, and mark-all-seen owner; does not create or normalize the header trigger |
-| Mobile bottom navigation, badges, transitions, and pull-to-refresh presentation | `assets/js/native-app-shell.js` | Native presentation and accepted pull-action owner; delegates route activation, prefers canonical quick sync, and performs one final activity-status refresh after either normal or fallback sync |
+| Mobile bottom navigation, badges, transitions, and pull-to-refresh presentation | `assets/js/native-app-shell.js` | Native presentation and accepted pull-action owner; performs one initial component/route/badge synchronization, then uses canonical route/update events, targeted DOM observation, resize/orientation, visibility recovery, and a separate 10-second live badge poll; no 80/260/800/1800/4200 ms startup resynchronization array; delegates route activation, prefers canonical quick sync, and performs one final activity-status refresh after either normal or fallback sync |
 | Sharing and incoming supported deep links | `assets/js/share-deep-links.js` | Canonical share/deep-link orchestrator; delegates destination activation |
 | Profile challenge inbox, actions, and routing | `assets/js/profile-challenges.js` | Passive inbox identity consumer with one in-flight load; explicit actions may require sign-in |
 | Picks social profile/reminder snapshot | `assets/js/picks-social-retention.js` | Passive identity consumer with one in-flight snapshot owner |
@@ -84,6 +84,9 @@ Startup Architecture Gate protects:
 - Picks social and season passive identity;
 - Picks commissioner zero-work Home startup, active route entry, late card mount, active-only polling, and off-screen silence;
 - War Room board, access, and notification passive identity with their request owners;
+- one initial native component/route/badge synchronization with zero repeated startup work through the former 4.2-second retry window;
+- native late challenge, Picks-progress, War Room unread, and route updates through owner events or targeted observation;
+- preservation of the separate 10-second native live badge poll;
 - native pull normal, fallback, War Room, and concurrent accepted-action ownership;
 - iOS route stability and delayed Home/community/profile behavior.
 
@@ -94,6 +97,7 @@ Passive, subordinate, or inactive-destination paths must produce:
 - zero sign-in surfaces before an explicit user action;
 - zero identity-dependent RPCs before published identity;
 - zero commissioner snapshot RPCs while Picks is inactive;
+- zero unconditional native component, active-route, or badge resynchronization after the initial startup pass;
 - one request owner for competing refresh paths;
 - zero compatibility-layer calls into canonical notification settings or render ownership;
 - zero stability-layer Ranking Spotlight mutations;
@@ -119,7 +123,7 @@ Passive, subordinate, or inactive-destination paths must produce:
 - Phase 1 established idempotent owners.
 - Phase 2 removed demonstrated duplicate route, identity, profile, access, notification, and refresh ownership.
 - Phase 3 removed duplicate Spotlight, Resume Snapshot, and What’s New repairs; retired the body-wide observer, route/soft-refresh repair listeners, six delayed retries, close-button continuation, and public repair API; retained only the proved drawer/body mapping, drawer-only observer, and native overlay dismissal.
-- Phase 4 established a measured production startup-work inventory and removed Home-startup, hidden-mutation, and off-screen commissioner snapshot work while preserving active Picks behavior.
+- Phase 4 established a measured production startup-work inventory, removed Home-startup/hidden-mutation/off-screen commissioner snapshot work, and retired five unconditional native component/route/badge startup resynchronization passes while preserving owner-driven updates and live polling.
 
 Further movement or renaming of the minimal native presentation adapter belongs to later startup/script-manifest simplification, not repair-loop retirement.
 
