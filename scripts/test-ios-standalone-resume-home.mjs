@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
 
+await import('./test-fresh-launch-route-ownership-contract.mjs');
+
 const supabaseStub=`
 window.supabase={createClient(){
   const chain={select(){return chain;},eq(){return chain;},order(){return Promise.resolve({data:[],error:null});},limit(){return Promise.resolve({data:[],error:null});},single(){return Promise.resolve({data:null,error:null});}};
@@ -61,3 +63,5 @@ try{
 }finally{
   if(browser)await browser.close();
 }
+
+await import('./test-fresh-launch-route-ownership.mjs');
