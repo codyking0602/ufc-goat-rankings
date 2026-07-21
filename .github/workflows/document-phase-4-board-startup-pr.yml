@@ -1,0 +1,40 @@
+name: Apply Phase 4 Board Documentation
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/document-phase-4-board-startup-pr.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+      - name: Run staged documentation patch
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          source=Path('.github/workflows/document-phase-4-board-startup.yml').read_text()
+          marker="          python3 - <<'PY'\n"
+          start=source.index(marker)+len(marker)
+          end=source.index('\n          PY\n',start)
+          code='\n'.join(line[10:] if line.startswith('          ') else line for line in source[start:end].splitlines())
+          exec(compile(code,'document-phase-4-board-startup','exec'))
+          PY
+      - name: Publish clean documentation update
+        run: |
+          rm .github/workflows/document-phase-4-board-startup.yml .github/workflows/document-phase-4-board-startup-pr.yml
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add docs/startup/PHASE-4-PROGRESS-20260721.md docs/startup/STATUS.md docs/startup/OWNERS.md
+          git add -u .github/workflows/document-phase-4-board-startup.yml .github/workflows/document-phase-4-board-startup-pr.yml
+          git commit -m "Document War Room board startup retry retirement"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
