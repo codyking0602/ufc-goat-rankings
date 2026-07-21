@@ -6,6 +6,8 @@ const ENABLED_DESTINATIONS=['home','rankings','play','picks','intelligence'];
 const browser=await chromium.launch({headless:true});
 const page=await browser.newPage({viewport:VIEWPORT,deviceScaleFactor:1});
 const pageErrors=[];
+let diagnosticLabel='startup';
+let diagnosticSnapshot=null;
 page.on('pageerror',error=>pageErrors.push(String(error?.message||error)));
 
 async function navSnapshot(){
@@ -24,6 +26,7 @@ async function navSnapshot(){
     });
     return{
       viewport:{width:window.innerWidth,height:window.innerHeight},
+      scroll:{x:window.scrollX,y:window.scrollY},
       nav:{
         scrollWidth:nav.scrollWidth,
         clientWidth:nav.clientWidth,
@@ -36,6 +39,8 @@ async function navSnapshot(){
 }
 
 function assertUsefulVisibility(snapshot,label){
+  diagnosticLabel=label;
+  diagnosticSnapshot=snapshot;
   assert.ok(snapshot,`${label}: primary app navigation exists`);
   assert.deepEqual(snapshot.viewport,VIEWPORT,`${label}: certification uses the 390×844 mobile viewport`);
   assert.equal(snapshot.tabs.length,6,`${label}: all six primary destinations render`);
@@ -71,12 +76,16 @@ try{
     const snapshot=await navSnapshot();
     assertUsefulVisibility(snapshot,`${destination} route`);
     assert.equal(snapshot.tabs.find(item=>item.destination===destination)?.selected,true,`${destination}: newly opened top tab is selected and visible`);
-    routeSnapshots.push({destination,nav:snapshot.nav,selected:snapshot.tabs.find(item=>item.selected)?.destination||null});
+    routeSnapshots.push({destination,scroll:snapshot.scroll,nav:snapshot.nav,selected:snapshot.tabs.find(item=>item.selected)?.destination||null});
   }
 
   assert.deepEqual(pageErrors,[],'mobile top-tab navigation causes no uncaught page errors');
   console.log('PICKS_MOBILE_TOP_TAB_CERTIFICATION');
   console.log(JSON.stringify({viewport:'390x844',layout:'six-tab 3x2 shell grid',warRoomDisabled:true,routes:routeSnapshots,pageErrors},null,2));
+}catch(error){
+  console.error('PICKS_MOBILE_TOP_TAB_FAILURE');
+  console.error(JSON.stringify({label:diagnosticLabel,snapshot:diagnosticSnapshot,pageErrors},null,2));
+  throw error;
 }finally{
   await browser.close();
 }
