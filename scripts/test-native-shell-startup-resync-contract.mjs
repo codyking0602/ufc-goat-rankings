@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+// Permanent Phase 4 proof: late owner signals replace unconditional startup retry passes.
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const read=file=>fs.readFileSync(path.join(root,file),'utf8');
 const source=read('assets/js/native-app-shell.js');
