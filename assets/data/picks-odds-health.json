@@ -1,16 +1,75 @@
 {
-  "outcome": "skipped",
-  "provider": null,
-  "sport": null,
-  "activeEvents": null,
-  "scheduledFights": null,
-  "providerEvents": null,
-  "matched": null,
-  "updated": null,
-  "reconciled": [],
-  "missing": [],
+  "outcome": "success",
+  "provider": "The Odds API",
+  "sport": "mma_mixed_martial_arts",
+  "activeEvents": 2,
+  "scheduledFights": 12,
+  "providerEvents": 30,
+  "matched": 6,
+  "updated": 6,
+  "reconciled": [
+    {
+      "fightId": "abu26-steve-erceg-ramazan-temirov",
+      "matchup": "STEVE ERCEG vs. RAMAZAN TEMIROV",
+      "providerMatchup": "Stephen Erceg vs. Ramazonbek Temirov"
+    }
+  ],
+  "missing": [
+    {
+      "fightId": "abu26-saygid-izagakhmaev-abubakar-vagaev",
+      "matchup": "ABUBAKAR VAGAEV vs. SAYGID IZAGAKHMAEV",
+      "reason": "matchup-not-found",
+      "existingRedOdds": null,
+      "existingBlueOdds": null,
+      "nearbyProviderMatchups": []
+    },
+    {
+      "fightId": "belgrade26-dusko-todorovic-robert-valentin",
+      "matchup": "DUŠKO TODOROVIĆ vs. ROBERT VALENTIN",
+      "reason": "matchup-not-found",
+      "existingRedOdds": null,
+      "existingBlueOdds": null,
+      "nearbyProviderMatchups": []
+    },
+    {
+      "fightId": "belgrade26-jan-b-achowicz-navajo-stirling",
+      "matchup": "JAN BŁACHOWICZ vs. NAVAJO STIRLING",
+      "reason": "matchup-not-found",
+      "existingRedOdds": null,
+      "existingBlueOdds": null,
+      "nearbyProviderMatchups": []
+    },
+    {
+      "fightId": "belgrade26-vlasto-cepo-gilbert-urbina",
+      "matchup": "VLASTO CEPO vs. GILBERT URBINA",
+      "reason": "matchup-not-found",
+      "existingRedOdds": null,
+      "existingBlueOdds": null,
+      "nearbyProviderMatchups": []
+    },
+    {
+      "fightId": "belgrade26-aleksandar-rakic-marcin-tybura",
+      "matchup": "ALEKSANDAR RAKIĆ vs. MARCIN TYBURA",
+      "reason": "matchup-not-found",
+      "existingRedOdds": null,
+      "existingBlueOdds": null,
+      "nearbyProviderMatchups": []
+    },
+    {
+      "fightId": "belgrade26-uros-medic-daniel-rodriguez",
+      "matchup": "UROŠ MEDIĆ vs. DANIEL RODRIGUEZ",
+      "reason": "matchup-not-found",
+      "existingRedOdds": null,
+      "existingBlueOdds": null,
+      "nearbyProviderMatchups": []
+    }
+  ],
   "failures": [],
-  "quota": null,
-  "refreshedAt": "2026-07-21T02:12:16.589Z",
+  "quota": {
+    "remaining": "449",
+    "used": "51",
+    "last": "1"
+  },
+  "refreshedAt": "2026-07-21T02:13:58.583Z",
   "error": null
 }
