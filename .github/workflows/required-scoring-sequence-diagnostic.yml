@@ -1,0 +1,52 @@
+name: Required Scoring Sequence Diagnostic
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize, ready_for_review]
+
+permissions:
+  contents: read
+
+jobs:
+  sequence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser runtime
+        run: |
+          npm install --no-save --package-lock=false playwright@1.54.2 acorn@8
+          npx playwright install --with-deps chromium
+      - name: Start local app
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/required-scoring-sequence-http.log 2>&1 &
+          for attempt in $(seq 1 20); do
+            if curl --fail --silent http://127.0.0.1:4173/index.html >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          exit 1
+      - name: Ranking prelude
+        run: |
+          node scripts/sync-production-cache-keys.mjs
+          node scripts/audit-fighter-photo-paths.mjs
+          node scripts/test-production-browser.mjs
+          node scripts/test-profile-card-hotfix.mjs
+          node scripts/test-fighter-taglines.mjs
+          node scripts/test-woodley-audit.mjs
+      - name: Profile copy coverage after ranking
+        continue-on-error: true
+        run: node scripts/audit-profile-copy-coverage.mjs
+      - name: Runtime boundaries after ranking
+        continue-on-error: true
+        run: node scripts/test-production-runtime-boundaries.mjs
+      - name: Scoring guardrails after ranking
+        continue-on-error: true
+        run: node scripts/run-scoring-architecture-guardrails.mjs
