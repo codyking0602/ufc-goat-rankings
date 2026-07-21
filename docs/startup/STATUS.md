@@ -1,179 +1,130 @@
 # Startup Architecture Status
 
-_Last updated: 2026-07-20_
+_Last updated: 2026-07-21_
 
-## Overall status
+## Current position
 
-- **Current phase:** Phase 2 route ownership is physically complete; the identity/profile audit is complete and its first isolated runtime candidate is authorized for proof.
+- **Production `main`:** `02ec4aee96f94d821ca1c218b7ffec47af6b0944`.
+- **Latest startup runtime merge:** `cc75ef4371196ea89a79aa7ff14f759a252a4dd4`.
+- **Current phase:** Phase 2 — remove duplicate ownership.
 - **Phase 0:** Complete.
 - **Phase 1:** Complete.
-- **Phase 1 runtime batches merged and physically verified:** 13.
-- **Latest verified runtime commit:** `fa47a51513c28bc3ba6173f1c95c47ca97ab85aa`.
-- **Exact Batch 12 iPhone-tested head:** `a9f50c846c5f3b266b444f0f1a6ffc2e2c9bf9e0`.
-- **Phase 2 route-audit starting `main`:** `7d9dc2ce668d5a4eac9dd9c31fe7e9865abc4dfe`.
-- **Phase 2 route audit:** [`PHASE-2-ROUTE-OWNERSHIP-AUDIT.md`](./PHASE-2-ROUTE-OWNERSHIP-AUDIT.md).
-- **Estimated entire cleanup progress:** approximately 58%.
-- **Master tracker:** [#102 — Zero-change startup architecture cleanup](https://github.com/codyking0602/ufc-goat-rankings/issues/102).
-- **Visible product changes approved:** none.
-- **Documentation PR / merge:** [#125](https://github.com/codyking0602/ufc-goat-rankings/pull/125), squash merge `0ded9ae67d415bb1cf5125eb6c0b429ce1dc5863`.
-- **Recommended session state:** continue with one fresh identity/profile runtime branch. Stop at the exact installed-iPhone gate before merge.
+- **Phase 2:** Approximately 92% complete.
+- **Entire startup cleanup:** Approximately 86% complete.
+- **Visible product changes approved:** None. The zero-visible-change contract remains in force.
+- **Master tracker:** [Issue #102](https://github.com/codyking0602/ufc-goat-rankings/issues/102).
+- **Current Phase 2 ledger:** [`PHASE-2-PROGRESS-20260721.md`](./PHASE-2-PROGRESS-20260721.md).
 
-## Phase 2 route and identity/profile status
+The current `main` commit after the runtime merge is a generated Octagon Verdict Markdown timestamp-only child. The previous 50–58% estimates predated the main Phase 2 runtime sequence and are superseded by this file.
 
-Route ownership is now physically complete:
+## Completed architecture boundaries
 
-1. PR #128 added the canonical shell recovery-window queue and was merged as `63c00d5f16859bca54b9d68e665d55f852d0b93e` after exact head `71a73a4e7e6f9c6ca9486aa21c5e168f834d17da` passed installed-iPhone verification.
-2. PR #129 removed the legacy `app.js` primary-tab listener and was merged as `fa47a51513c28bc3ba6173f1c95c47ca97ab85aa` after exact head `bd8065bbe1433575cf3ff042e6f630266dd1da1f` passed installed-iPhone verification.
-3. `octagon-hq-shell.js` is the sole primary route-activation owner, and the permanent startup contract rejects reintroduction of the `app.js` listener.
+### Phase 1 — idempotent owners
 
-The identity/profile audit is complete: [`PHASE-2-IDENTITY-PROFILE-OWNERSHIP-AUDIT.md`](./PHASE-2-IDENTITY-PROFILE-OWNERSHIP-AUDIT.md).
+All 13 audited Phase 1 runtime owners are protected according to their actual lifecycle class:
 
-Its first isolated candidate is the returning-member Picks sign-in path. `play-profile-identity.js` is the canonical credential, fallback, identity-cache, readiness, and access-persistence owner. `picks-member-pin.js` must delegate authentication while retaining its Picks-specific card, validation/status copy, route continuation, member PIN settings, commissioner PIN management, observer, and status refresh.
+- simple owners use complete-owner guards;
+- prerequisite-aware owners claim ownership only after prerequisites exist;
+- `assets/js/app.js` remains an exact-one structural manifest singleton;
+- `assets/js/production-ranking-bootstrap.js` owns an explicit retryable lifecycle.
 
-No other identity/profile consolidation is authorized in that batch.
+### Phase 2 — primary routing
 
-## Completed runtime batches
+- `assets/js/octagon-hq-shell.js` is the sole primary destination and ranking-subview activation owner.
+- PR #128 preserved missing-shell recovery through one queued canonical handoff.
+- PR #129 removed the legacy `app.js` primary-tab listener.
+- The permanent startup contract rejects reintroduction of competing primary route activation.
 
-| Batch | Owner | PR | Squash merge | Physical result |
-|---|---|---:|---|---|
-| 1 | `fresh-home-route-bootstrap.js` and `fresh-home-launch.js` | #100 | `5e733cc4568100e96080ce27ad601b7022daba33` | Installed app normal |
-| 2 | `octagon-hq-shell.js` | #105 | `d7b47d6fb9ad45b101f67d5658b3e2a874a746c8` | Installed app normal |
-| 3 | `octagon-hq-nav-grid.js` | #106 | `f4e3ada330fb841ade0333c580376dacaf58ec88` | Installed app normal |
-| 4 | `home-dashboard.js` | #107 | `7fd6ede029cc307932cb38bc2c9274484b18f403` | Installed app normal |
-| 5 | `native-app-shell-stability.js` | #108 | `6b0c9442b5a4df46e481296bb8d5cbd3befe1ab7` | Installed app normal |
-| 6 | `app-notification-center.js` | #110 | `865527b15902e7b61fff429e4faf9ce2a0bc811c` | Installed app normal |
-| 7 | `native-app-shell.js` | #112 | `5b82c3a47b64a4955c4fd4eb041fafe46473e8ac` | Exact tested head normal |
-| 8 | `picks.js` | #113 | `0c488a449d413636228aafd1e45ee8197d5078ba` | Exact tested head normal |
-| 9 | `community-profiles.js` | #114 | `4a811201bd6c2ac620d829d9701a187e468142b0` | Exact tested head normal |
-| 10A | `play.js` | #115 | `2040f604892c067ee288fe88df15594a570ac396` | Exact tested head normal |
-| 10B | `play-hub.js` | #119 | `b1a7a3c92c2f7c13b64b4d68df3d26e4e9afbec8` | Exact tested head normal |
-| 11 | `share-deep-links.js` | #121 | `e332f46ec63c6698fdebd8ecc843c3f0df4eaabd` | Exact tested head normal |
-| 12 | `production-ranking-bootstrap.js` | #123 | `44684936bce748572a3497ec161500011a9623b9` | Exact tested head normal |
-| 2A | Canonical shell recovery queue | #128 | `63c00d5f16859bca54b9d68e665d55f852d0b93e` | Exact tested head normal |
-| 2B | Legacy `app.js` primary-tab listener removal | #129 | `fa47a51513c28bc3ba6173f1c95c47ca97ab85aa` | Exact tested head normal |
+### Phase 2 — identity, profile, access, and passive consumers
 
-## Batch 12 closeout — Calculated production ranking bootstrap
+`assets/js/play-profile-identity.js` is the canonical shared credential, login/fallback, identity-cache, readiness-publication, and access-persistence owner.
 
-PR #123 replaced whole-file re-evaluation as the scoring bootstrap's accidental retry mechanism with a stable explicit lifecycle and then blocked only a second owner closure.
+Completed isolated corrections:
 
-Final runtime record:
+| PR | Responsibility corrected | Production result |
+|---:|---|---|
+| #131 | Picks returning-member login delegates to the canonical profile owner | Merged |
+| #132 | Community no longer duplicates shared Picks access persistence or route compatibility | Merged |
+| #133 | Product Architecture no longer duplicates canonical profile access persistence | Merged |
+| #134 / #140 | Notification settings became a cache/event consumer; explicit user actions retain canonical `require()` | Merged |
+| #135 | Product performs one cached or readiness-driven startup profile handoff | Merged |
+| #136 | App Profile is the single full group-snapshot owner | Merged |
+| #137 | Profile-challenge inbox loading is a passive identity consumer with one in-flight refresh | Merged |
+| #138 | Community profile loading is a passive identity consumer | Merged |
+| #139 | Home daily synchronization is a passive identity consumer | Merged |
+| #141 | Picks social profile/reminder loading is a passive identity consumer | Merged |
+| #143 | Picks season loading is a passive identity consumer with coalesced RPC work | Merged |
+| #145 | War Room message board is a passive identity consumer; its visible **SIGN IN** button remains explicit | Merged as `52aef7a0b24d9cc06a891b3e4f23a457bd4b6b02` |
+| #146 | War Room access panel is a passive identity consumer with one access-status request owner | Merged as `cc75ef4371196ea89a79aa7ff14f759a252a4dd4` |
 
-- starting `main`: `952683af839547b84576fe2ea3a9c813dc709983`;
-- exact physically tested PR head: `a9f50c846c5f3b266b444f0f1a6ffc2e2c9bf9e0`;
-- CI-tested runtime/test parent: `087e384446884a8573ac4542504ea808cf343684`;
-- squash merge: `44684936bce748572a3497ec161500011a9623b9`;
-- 57 additions;
-- 8 deletions;
-- 3 changed files, including the required timestamp-only Octagon Verdict Markdown regeneration;
-- original runtime blob: `7f94b5092319038b8a52a826c60def6c5ada8979`;
-- merged runtime blob: `df5136ccd93e69bba924af757e8b0b4abfdf9df7`;
-- original startup-contract blob: `b67f87807be533b346e15254dc1041b77bda1a3b`;
-- merged startup-contract blob: `0f89092f5bab7e3cf8c77871d90c11cc1ea01728`.
+PR #144 was a test-only correction to keep the Home ownership contract helper-agnostic. It changed no production behavior.
 
-The owner now separates:
+## Current testing policy
 
-1. **File ownership initialization**
-   - one private lifecycle state;
-   - one stable owner object;
-   - publication of `window.UFC_PRODUCTION_RANKING_BOOTSTRAP_LIFECYCLE`;
-   - no owner timers, intervals, observers, polling, or persistent listeners.
-2. **Bootstrap/application attempts**
-   - `start()` and `retry()` recover idle/error attempts and are no-ops after ready;
-   - `apply()` and `refresh()` intentionally force one recalculation after ready;
-   - concurrent calls share one in-flight Promise;
-   - failed dependency tags are removed so a later explicit retry can reload them;
-   - the legacy `window.UFC_PRODUCTION_RANKING_BOOTSTRAP` result still appears only at the original success/error boundary.
+CI and focused mobile-browser ownership proofs are the default merge gate.
 
-The duplicate guard remains immediately after `'use strict'` and exits only when the complete lifecycle owner already exists. The owner marker is not published until private state and all lifecycle methods exist, and it is published before the automatic first `start()` attempt.
+A routine installed-iPhone checkpoint is no longer required after more than 25 consecutive Normal physical results. Request a physical test only when a specific unresolved physical-only risk remains, such as:
 
-Preserved first-success behavior includes:
+- service-worker or installed-app cache behavior;
+- a real primary-route, sign-in, loading, or native-shell behavior change;
+- iOS lifecycle behavior that cannot be reproduced in the browser harness;
+- conflicting, flaky, or incomplete automated evidence.
 
-- `UFC_RANKING_DATA_PATCHES_READY`;
-- all 40 ordered canonical calculation dependencies;
-- approved-input validation;
-- `UFC_RANKING_PIPELINE.apply()` and in-place `RANKING_DATA` replacement;
-- presentation score cleanup and Compare synchronization;
-- final fighter-photo synchronization;
-- division ranking rebuild and validation;
-- `UFC_SCORING_PIPELINE` and readiness attributes;
-- app refresh, category rendering, and division rendering;
-- `ufc-ranking-pipeline-applied`, `ufc-scoring-pipeline-ready`, and `ufc-production-ranking-ready`;
-- Octagon Verdict data build and Compare launcher rendering;
-- unchanged ranking, profile, division, category, Games, Compare, Intelligence, and audit consumers.
+When a physical test is required, record the exact unresolved uncertainty and combine related checks into one test.
 
-Focused proof established:
+Unrelated automated odds-health or deployment commits advancing `main` do not invalidate an already-passing startup head when their changed files are proven non-overlapping.
 
-- original and modified first-success observable behavior is equivalent;
-- missing prerequisites create no partial calculation or publication;
-- missing prerequisites recover through `retry()` without file re-evaluation;
-- failed calculation/application attempts remain retryable;
-- repeated duplicate evaluation adds zero script loaders, listeners, timers, intervals, observers, calculations, publications, readiness events, refreshes, or render passes;
-- repeated `start()` and `retry()` calls after ready are stable no-ops;
-- concurrent forced calls share one attempt;
-- later explicit `apply()` and `refresh()` each produce one intentional complete recalculation;
-- no rank, score, category, OVR, visible statistic, profile projection, or fighter order changes.
+## Latest completed batch — PR #146
 
-Measured original duplicate-evaluation footprint included 40 extra dependency-load listeners and two complete ranking calculation/publication chains. The protected owner retains the exact successful first-run footprint: one calculation, one app refresh, one category render, one scoring-ready event, and one production-ready event, with the existing downstream double rebuild/build effects caused by their preserved readiness listeners.
+`assets/js/octagon-access-panel.js` previously:
 
-Validation:
+- called `UFC_PLAY_PROFILE.resolve()` from passive access checks, roster loading, and access toggles;
+- fell back to `ufc-picks:group:GOAT26` in `localStorage`;
+- reacted directly to canonical-token storage changes;
+- allowed startup timers, readiness events, visibility resume, reconnect, realtime, polling, and direct calls to compete for `octagon_access_status`;
+- scheduled a second unconditional access check after every readiness event.
 
-- JavaScript syntax passed;
-- startup ownership contract passed;
-- focused lifecycle, prerequisite, retry, first-run-equivalence, explicit-apply, and duplicate-execution harness passed;
-- Startup Architecture Gate passed on the exact runtime/test parent, including iOS startup route stability, profile sign-in startup stability, and delayed Home/community stability;
-- required Octagon Verdict Markdown build passed;
-- the generated timestamp-only child changed no runtime or test blob.
+PR #146 now:
 
-Unrelated red checks were inspected but not repaired:
+- consumes only published cached identity;
+- derives access only from the published member token;
+- shares one in-flight access-status Promise;
+- performs one readiness-driven check;
+- preserves Cody’s Manage Beta panel, roster, access toggles, realtime broadcasts, periodic verification, and War Room tab gating.
 
-- stale 73-versus-80 roster and old-rank expectations;
-- stale Henry Cejudo rank certification;
-- existing Alexandre Pantoja category-audit and display-ownership diagnostics;
-- existing 14 women’s leaderboard-thumbnail rendering failures.
+Startup Architecture Gate #125 passed completely on unchanged rerun. The fully tested runtime/test head was `f5429e69e13643f2af9275a7813cf0842f2fc89d`; the final PR head differed only by the required generated Octagon Verdict Markdown timestamp.
 
-Cody physically tested exact immutable head `a9f50c846c5f3b266b444f0f1a6ffc2e2c9bf9e0` on the installed iPhone and reported **“Normal.”** No blank state, flicker, route bounce, stale or missing ranking data, repeated ranking refresh, duplicate readiness event, duplicate rendering, changed rank, changed score, changed category, changed OVR, or changed fighter order was reported.
+## Known unrelated red workflows
 
-## Phase 1 conclusion
+These remain outside startup ownership unless a failure directly references an isolated changed line:
 
-Every owner listed in the major Phase 1 audit has now been handled according to its audited class:
+- Production Ranking Browser Smoke may stop at fighter-photo path/render audits.
+- Production Ranking Pipeline and Snapshot may stop on stale ranking/roster certification expectations.
+- Scoring Architecture Guardrails may stop in the existing permanent source/runtime contract.
+- Validate Phase 4B Preview may stop at its historical hard-pinned architecture check.
+- Picks UI Smoke may report an existing Picks product/static-contract finding.
 
-- simple IIFE owners use complete-owner guards;
-- prerequisite-aware owners claim ownership only after prerequisites pass;
-- `app.js` remains an exact-one manifest structural singleton;
-- the retry-sensitive production ranking launcher now owns an explicit callable lifecycle before duplicate evaluation is blocked.
-
-There is **no next isolated Phase 1 owner in the current audit**. Do not invent one or add a standard guard to `app.js`.
-
-## Existing unrelated red checks
-
-1. **Production ranking and scoring contracts**
-   - Stale roster-count and rank expectations plus Alexandre Pantoja diagnostics remain outside startup work.
-2. **Production Ranking Browser Smoke**
-   - Existing women's fighter-thumbnail rendering failures remain separate from startup ownership.
-3. **Picks and other product certification diagnostics**
-   - Existing static-contract or product-data findings remain separate.
-
-Do not repair these inside startup architecture work unless a failure directly references the isolated changed lines.
+The current Startup Architecture Gate contains the maintained route, identity, profile, notification, Picks, War Room, iOS-route, sign-in, and delayed-stability proofs.
 
 ## Exact next action
 
-1. Start a fresh runtime branch from current `main` after this documentation audit merges.
-2. Add a focused browser proof for the returning-member Picks login transaction before or with the runtime edit.
-3. Extend `UFC_PLAY_PROFILE.login()` only as needed to return existing group/active-room continuation context and optionally suppress a redundant pre-navigation readiness event.
-4. Change only the Picks returning-member login path to call the canonical owner; preserve its UI and route continuation.
-5. Keep canonical-group migration, profile editing, community, activity, avatar, notification, product compatibility, PIN settings, commissioner PIN, routing, and sharing unchanged.
-6. Run the complete Startup Architecture Gate and inspect unrelated red workflows without repairing them.
-7. Freeze an immutable draft-PR head and stop for installed-iPhone verification before merge.
+1. Start from current production `main` and verify its exact SHA.
+2. Audit `assets/js/octagon-notifications.js` as the strongest remaining production-loaded identity/access candidate.
+3. Do not assume it is wrong: trace its identity resolution, token ownership, readiness listeners, startup timers, visibility/reconnect work, RPCs, and in-flight behavior first.
+4. If duplicate ownership is proven, make only the smallest passive-consumer correction.
+5. Add a focused static contract and mobile-browser proof, run the complete Startup Architecture Gate, inspect unrelated reds, and merge under the CI-first policy.
+6. Continue the remaining refresh/lifecycle audit one responsibility at a time.
+7. Close Phase 2 only after the production-loaded modules no longer contain an unproved competing identity, access, readiness, route, or full-refresh owner.
 
-## Stop conditions for the next session
+## Stop conditions
 
-Stop or redesign before runtime merge if:
+Stop or redesign an isolated candidate if:
 
-- the Picks module still calls a login RPC or writes access tokens after delegation;
-- the canonical owner cannot preserve active-room/event continuation;
-- delayed owner availability is not retryable;
-- one accepted submit produces zero or multiple credential checks;
-- shared profile modal login behavior changes;
-- PIN status/change or commissioner PIN ownership moves;
-- the change requires canonical-group, app-profile, community, activity, avatar, notification, product-architecture, native-shell, route-shell, sharing, scoring, data, UI, or product-copy edits;
-- wrong-PIN recovery, stored access, profile readiness, cold-launch normalization, or installed-app behavior changes.
+- the duplicate cannot be demonstrated from production-loaded code;
+- removal loses a legitimate recovery path;
+- identity-dependent RPCs can begin before published identity;
+- an explicit sign-in or admin action stops working;
+- one accepted action produces zero or multiple RPCs;
+- readiness, route, visibility, reconnect, realtime, polling, or direct paths cannot be safely coalesced;
+- the correction requires unrelated product, route, scoring, data, native-shell, visual, or Supabase-contract changes;
+- automated evidence remains conflicting or incomplete.
