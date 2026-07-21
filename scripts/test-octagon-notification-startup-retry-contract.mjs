@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
+// Permanent Phase 4 proof: readiness events replace repeated startup status retries.
 const source=fs.readFileSync('assets/js/octagon-notifications.js','utf8');
 const start=source.match(/function start\(\)\{([\s\S]*?)\n  \}\n\n  window\.UFC_OCTAGON_NOTIFICATIONS/);
 const events=source.match(/function bindEvents\(\)\{([\s\S]*?)\n  \}\n\n  function start/);
