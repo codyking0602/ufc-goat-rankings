@@ -3,7 +3,7 @@ import {
   matchupMatches,
   normalizeName,
   sameFighterName,
-} from "../_shared/ufc-name-matching.js";
+} from "../_shared/ufc-name-matching.mjs";
 
 const JSON_HEADERS = { "content-type": "application/json; charset=utf-8" };
 const SPORT_KEY = "mma_mixed_martial_arts";
