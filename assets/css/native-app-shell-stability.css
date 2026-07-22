@@ -14,19 +14,27 @@
   --accent2:#ff5a5f!important;
   --accent-amber:#f59e0b!important;
   --accent-amber-soft:#fbbf24!important;
+  --success:#22c55e!important;
+  --success-soft:#86efac!important;
+  --link:#8ab4f8!important;
 }
 
 html{background:#000!important;color-scheme:dark}
 body,main.shell,main.shell>.view,#homeDashboardMount,.home-dashboard{background:#000!important;color:var(--text)!important}
 body{background-image:none!important}
-.hero{border-bottom-color:var(--line)!important;background:#000!important;color:var(--text)!important;box-shadow:none!important}
+body>.hero,.hero{border-bottom-color:var(--line)!important;background-color:#000!important;background-image:none!important;color:var(--text)!important;box-shadow:none!important}
 .hero h1{color:var(--text)!important}
 .hero .eyebrow{color:var(--accent2)!important}
+.hero-card{border-color:var(--line)!important;background:var(--panel2)!important;color:var(--text)!important;box-shadow:none!important}
+.hero-card span{color:var(--text)!important}
+.hero-card small{color:var(--muted)!important}
 .section-title h2,.product-page-header h2{color:var(--text)!important}
 .section-title p,.product-page-header p{color:var(--muted)!important}
 
 /* Neutral app chrome and controls. */
 .native-ask-action,#whatsNewBtn,#manualRefreshBtn,.product-header-tools .app-profile-chip{border-color:var(--line)!important;background:var(--panel2)!important;color:var(--text)!important;box-shadow:none!important}
+.product-header-tools,.product-header-tools strong,.product-header-tools small{color:var(--text)!important}
+#whatsNewUnread{border-color:#000!important;background:var(--accent)!important;color:#fff!important}
 .toolbar{background:#000!important}
 input,select,textarea,option,.ghost,#resetBtn{border-color:var(--line)!important;background:var(--panel2)!important;color:var(--text)!important;box-shadow:none!important}
 input::placeholder,textarea::placeholder{color:var(--muted)!important}
@@ -48,12 +56,22 @@ input::placeholder,textarea::placeholder{color:var(--muted)!important}
 .home-war-avatar{border-color:var(--panel)!important;background:var(--panel3)!important}
 
 /* Rankings: neutral information hierarchy; red is a restrained rank/action accent. */
+#men,#women,#division,#categories{background:#000!important;color:var(--text)!important}
+#men .section-title h2,#women .section-title h2,#division .section-title h2,#categories .section-title h2{color:var(--text)!important;text-shadow:none!important}
+#men .section-title p,#women .section-title p,#division .section-title p,#categories .section-title p{color:var(--muted)!important}
 .row{border-color:var(--line)!important;background:linear-gradient(180deg,var(--panel2),var(--panel))!important;color:var(--text)!important;box-shadow:none!important}
 .row:hover{border-color:var(--accent)!important}
 .rank{color:var(--text)!important}
 .leaderboard .row:nth-child(-n+3) .rank{color:var(--accent2)!important}
+.row .name,.row .score,.row-main>.name{color:var(--text)!important}
+.row .meta,.row .score .meta,.category-leader-evidence,.division-context{color:var(--muted)!important}
+.row-photo{border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important;box-shadow:none!important}
 .resume-tag{border-color:var(--line)!important;background:var(--panel)!important;color:#c7c7c7!important}
-.row button,.row a[role="button"]{border-color:color-mix(in srgb,var(--accent) 58%,var(--line))!important;background:transparent!important;color:#ffb0b3!important}
+.category-chip{border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important;box-shadow:none!important}
+.category-chip b{color:var(--text)!important}
+.category-chip span,.category-chip small{color:var(--muted)!important}
+.row button,.row a[role="button"],.watch-moment-link{border-color:color-mix(in srgb,var(--accent) 58%,var(--line))!important;background:transparent!important;color:#ffb0b3!important;box-shadow:none!important}
+.row a.watch-moment-link[role="button"]{border-color:var(--accent)!important}
 
 /* Play: one featured red rail/action, otherwise black and charcoal. */
 #play .play-daily-card{border-color:var(--line)!important;background:radial-gradient(circle at 88% 18%,color-mix(in srgb,var(--accent) 12%,transparent),transparent 34%),linear-gradient(145deg,var(--panel2),var(--panel))!important}
@@ -61,7 +79,8 @@ input::placeholder,textarea::placeholder{color:var(--muted)!important}
 #play .play-daily-kicker span{background:var(--accent)!important;color:#fff!important}
 #play .play-daily-kicker time{border-color:transparent!important;background:transparent!important;color:var(--muted)!important}
 #play .play-daily-details span{border-color:var(--line)!important;background:var(--panel)!important;color:var(--muted)!important}
-#play .play-daily-visual small{background:transparent!important;color:var(--muted)!important}
+#play .play-daily-details.play-daily-category span{border:0!important;background:transparent!important;color:var(--accent2)!important}
+#play .play-daily-visual small,#play .play-daily-swipe-hint{background:transparent!important;color:var(--muted)!important}
 #play .play-daily-button,#play .play-primary,#play .find-leader-primary{border-color:var(--accent)!important;background:var(--accent)!important;color:#fff!important;box-shadow:none!important}
 #play .play-daily-visual,#play .play-daily-fighter{border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important;box-shadow:none!important}
 #play .play-daily-visual strong{color:var(--accent2)!important}
@@ -74,6 +93,29 @@ input::placeholder,textarea::placeholder{color:var(--muted)!important}
 #play :where(.find-leader-hero,.find-leader-pressure,.find-leader-grid,.find-leader-result-hero,.find-leader-results,.find-leader-loading,.find-leader-tile,.find-leader-reveal-tile){border-color:var(--line)!important;background:linear-gradient(155deg,var(--panel2),var(--panel))!important;box-shadow:none!important}
 #play :where(.find-leader-hero>div>span,.find-leader-result-hero>div>span,.find-leader-results>header span,.find-leader-loading>span){color:var(--accent2)!important}
 #play :where(.find-leader-hero>aside,.find-leader-result-hero>article,.find-leader-feedback,.find-leader-tile>em){border-color:var(--line)!important;background:var(--panel)!important;color:var(--muted)!important;box-shadow:none!important}
+#playDailyLeaderboard{border-color:var(--line)!important;background:linear-gradient(155deg,var(--panel2),var(--panel))!important;color:var(--text)!important;box-shadow:none!important}
+#playDailyLeaderboard .daily-board-head span{color:var(--accent2)!important}
+#playDailyLeaderboard .daily-board-head h3{color:var(--text)!important}
+#playDailyLeaderboard .daily-board-head p,#playDailyLeaderboard .daily-board-note{color:var(--muted)!important}
+#playDailyLeaderboard .daily-board-controls button{border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important;box-shadow:none!important}
+#playDailyLeaderboard .daily-board-status{border-color:var(--line)!important;background:var(--panel)!important;color:var(--muted)!important}
+#playDailyLeaderboard .daily-board-row{border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important;box-shadow:none!important}
+#playDailyLeaderboard .daily-board-row.you{border-color:var(--accent)!important;box-shadow:inset 3px 0 0 var(--accent)!important}
+#playDailyLeaderboard .daily-board-row.perfect{border-color:color-mix(in srgb,var(--success) 62%,var(--line))!important}
+#playDailyLeaderboard .daily-board-row>b{color:var(--muted)!important}
+#playDailyLeaderboard .daily-board-row strong,#playDailyLeaderboard .daily-board-row span{color:var(--text)!important}
+#playDailyLeaderboard .daily-board-row small{color:var(--muted)!important}
+#playDailyLeaderboard .daily-perfect{background:color-mix(in srgb,var(--success) 16%,transparent)!important;color:var(--success-soft)!important}
+#playDailyLeaderboard .daily-community-card article{border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important}
+#playDailyLeaderboard .daily-community-card article span{color:var(--accent2)!important}
+#playDailyLeaderboard .daily-community-card article strong{color:var(--text)!important}
+#playDailyLeaderboard .daily-community-card article p{color:var(--muted)!important}
+#playDailyLeaderboard .daily-community-card b{border-color:color-mix(in srgb,var(--accent) 45%,var(--line))!important;background:var(--panel)!important;color:#ffb0b3!important}
+#play .play-daily-dot{background:var(--muted)!important;opacity:.42!important}
+#play .play-daily-dot.active{background:var(--accent)!important;opacity:1!important}
+#play :where(.play-streak-card,.play-leaderboard-card,.daily-streak-card,.play-stat-card){border-color:var(--line)!important;background:var(--panel2)!important;color:var(--text)!important;box-shadow:none!important}
+#play :where(.play-streak-card,.daily-streak-card) :where(strong,b){color:var(--text)!important}
+#play :where(.play-streak-card,.daily-streak-card) :where(span,small,p){color:var(--muted)!important}
 
 /* Picks: neutral odds and surfaces, red selection/action, amber Underdog Lock. */
 #picks{background:#000!important;color:var(--text)!important}
@@ -81,10 +123,26 @@ input::placeholder,textarea::placeholder{color:var(--muted)!important}
 #picks :where(.picks-mode-switch,.picks-room-choice,.picks-internal-nav,.pick-fight-head,.pick-reveal,.pick-reveal-side,.room-picks-grid>div,.picks-live-sides>div,.picks-admin-fight,.picks-admin-content,.picks-room-more>summary,.picks-room-more-menu,.picks-summary-chips span,.picks-tiered-levels span){border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important;box-shadow:none!important}
 #picks :where(.picks-mode-switch button.active,.picks-room-choice button.active,.picks-internal-nav button.active){border-color:var(--accent)!important;background:var(--panel)!important;color:var(--text)!important;box-shadow:none!important}
 #picks :where(.picks-primary,.picks-admin-lock-button,.pick-selected-mark){border-color:var(--accent)!important;background:var(--accent)!important;color:#fff!important;box-shadow:none!important}
+#picks .picks-event-picker select,#picks .picks-event-picker option{border-color:var(--line)!important;background:var(--panel2)!important;color:var(--text)!important}
+#picks .picks-room-banner{border-color:color-mix(in srgb,var(--success) 42%,var(--line))!important;background:var(--panel2)!important;color:var(--text)!important;box-shadow:none!important}
+#picks .picks-room-banner strong,#picks .picks-room-copy>strong{color:var(--text)!important}
+#picks .picks-room-meta,#picks .picks-room-banner small{color:var(--muted)!important}
+#picks .picks-room-live,#picks .picks-event-kicker.live,#picks .picks-status.good,#picks .picks-status.live{color:var(--success-soft)!important}
+#picks .picks-event-kicker.live::before{background:var(--success)!important;box-shadow:0 0 0 4px color-mix(in srgb,var(--success) 14%,transparent)!important}
+#picks .picks-code{border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important}
 #picks .picks-progress-bar{background:var(--panel)!important}
 #picks .picks-progress-bar i{background:var(--accent)!important}
+html body #picks .card.picks-standings-card{border-color:var(--line)!important;background-color:var(--panel2)!important;background-image:none!important;color:var(--text)!important;box-shadow:none!important}
+#picks .picks-standings-card h3{color:var(--text)!important}
+#picks .picks-standing-row{border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important;box-shadow:none!important}
+#picks .picks-standing-rank{color:var(--muted)!important}
+#picks .picks-standing-row strong,#picks .picks-standing-score strong{color:var(--text)!important}
+#picks .picks-standing-row .meta,#picks .picks-standing-score small{color:var(--muted)!important}
+#picks .picks-you{border-color:transparent!important;background:color-mix(in srgb,var(--accent) 13%,var(--panel))!important;color:#ff9296!important}
 #picks .pick-fighter{border-color:var(--line)!important;background:linear-gradient(180deg,var(--panel2),var(--panel))!important;color:var(--text)!important;box-shadow:none!important}
 #picks .pick-fighter.selected{border-color:var(--accent)!important;background:var(--panel2)!important;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 24%,transparent)!important}
+#picks .pick-fighter.correct{border-color:color-mix(in srgb,var(--success) 62%,var(--line))!important}
+#picks .pick-fighter-name{color:var(--text)!important}
 html body #picks .pick-fighter-odds{color:#b8b8b8!important}
 html body #picks .pick-fighter-odds b{border-color:transparent!important;background:color-mix(in srgb,var(--accent) 13%,var(--panel))!important;color:#ff9296!important}
 #picks .pick-fighter.underdog-locked{border-color:var(--accent-amber)!important;background:var(--panel2)!important}
@@ -93,29 +151,77 @@ html body #picks .pick-fighter-odds b{border-color:transparent!important;backgro
 #picks .picks-tiered-lock-label{color:var(--accent-amber-soft)!important}
 #picks .pick-fight-number{color:var(--accent2)!important}
 #picks :where(.pick-lock,.pick-fight-head>span,.pick-vs,.picks-odds-source){color:var(--muted)!important}
+#picks .pick-lock.has-pick{color:var(--muted)!important}
 
-/* War Room: neutral conversation surface, familiar link color, red only for action/admin. */
+/* Member profiles: red primary actions, neutral secondary actions, semantic readiness. */
+.community-directory,.community-profile-panel,.community-top10-panel{border-color:var(--line)!important;background:linear-gradient(180deg,var(--panel2),var(--panel))!important;color:var(--text)!important}
+.community-member-card,.community-profile-summary article,.community-profile-card,.community-profile-metric,.community-achievement,.community-recent-list>div,.community-top-ten-card,.community-top-ten-row,.community-top10-picked,.community-top10-add,.community-top10-selected-row,.community-top10-result{border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important;box-shadow:none!important}
+.community-directory-summary>div:first-child span,.community-profile-title span,.community-profile-card-head span,.community-top10-head span{color:var(--accent2)!important}
+.community-member-name,.community-profile-title strong,.community-profile-card-head strong,.community-profile-metric strong,.community-top-ten-row strong{color:var(--text)!important}
+.community-member-active,.community-profile-title small,.community-profile-card-head small,.community-profile-metric small{color:var(--muted)!important}
+.community-member-pills b{border-color:var(--line)!important;background:var(--panel2)!important;color:var(--muted)!important}
+.community-member-pills b.complete{border-color:color-mix(in srgb,var(--success) 44%,var(--line))!important;background:color-mix(in srgb,var(--success) 12%,var(--panel))!important;color:var(--success-soft)!important}
+.community-member-pills b.missing{border-color:color-mix(in srgb,var(--accent-amber) 52%,var(--line))!important;background:color-mix(in srgb,var(--accent-amber) 10%,var(--panel))!important;color:var(--accent-amber-soft)!important}
+.community-directory-action,.community-profile-actions button,.community-top10-footer button,.community-profile-close,.community-top10-head button{border-color:var(--line)!important;background:var(--panel2)!important;color:var(--text)!important;box-shadow:none!important}
+.community-directory-action.primary,.community-profile-actions button.primary,.community-top10-footer button.primary{border-color:var(--accent)!important;background:var(--accent)!important;color:#fff!important}
+.community-top10-footer span{color:var(--muted)!important}
+
+/* Shane's Fighters to Watch: one app language with small scouting accents. */
+#homeDashboardMount>.home-shane-watchlist{border-color:var(--line)!important;background:var(--panel2)!important;box-shadow:none!important}
+.home-shane-watchlist>summary{background:var(--panel2)!important;color:var(--text)!important}
+.home-shane-watchlist>summary::after{background:color-mix(in srgb,var(--accent) 13%,var(--panel))!important;color:var(--accent2)!important}
+.home-shane-summary-copy small{color:var(--accent2)!important}
+.home-shane-summary-copy strong{color:var(--text)!important}
+.home-shane-summary-copy em{color:var(--muted)!important}
+.home-shane-summary-count{border-color:color-mix(in srgb,var(--accent) 42%,var(--line))!important;background:var(--panel)!important;color:#ffb0b3!important}
+.home-shane-body{border-top-color:var(--line)!important;background:var(--panel2)!important}
+.home-shane-card,.home-shane-card:nth-child(3n+1),.home-shane-card:nth-child(3n+2),.home-shane-card:nth-child(3n){--shane-accent:#ff5a5f!important;--shane-glow:225,6,0!important;border-color:var(--line)!important;background:var(--panel)!important;box-shadow:none!important}
+.home-shane-card.is-latest{border-left:3px solid var(--accent)!important}
+.home-shane-card-band{border-bottom-color:var(--line)!important;background:var(--panel2)!important;color:var(--accent2)!important}
+.home-shane-card-band time{color:var(--muted)!important}
+.home-shane-card-number{border-color:var(--line)!important;background:var(--panel3)!important;color:var(--text)!important}
+.home-shane-status{color:var(--accent2)!important}
+.home-shane-avatar{border-color:var(--line)!important;background:var(--panel2)!important;color:var(--text)!important}
+.home-shane-identity h4{color:var(--text)!important}
+.home-shane-identity p,.home-shane-meta{color:var(--muted)!important}
+.home-shane-stats div{border-color:var(--line)!important;background:var(--panel2)!important}
+.home-shane-stats strong{color:var(--text)!important}
+.home-shane-stats span{color:var(--muted)!important}
+.home-shane-note{border-left-color:var(--accent)!important;background:var(--panel2)!important;color:#e5e5e5!important}
+.home-shane-footer{border-top-color:var(--line)!important;color:var(--muted)!important}
+.home-shane-footer strong{color:var(--text)!important}
+.home-shane-ufc-link{border-color:var(--line)!important;background:var(--panel2)!important;color:var(--link)!important}
+.home-shane-ufc-link span{color:var(--link)!important}
+
+/* War Room: neutral conversation surface, blue links, green live, red action/admin. */
 .octagon-board{color:var(--text)!important}
 .octagon-board-head{border-color:var(--line)!important;background:linear-gradient(155deg,var(--panel2),var(--panel))!important;color:var(--text)!important;box-shadow:none!important}
-.octagon-board-kicker,.octagon-admin-label{color:var(--accent2)!important}
+.octagon-board-kicker,.octagon-admin-label,.octagon-access-member small.admin{color:var(--accent2)!important}
 .octagon-board-week{color:var(--muted)!important}
 .octagon-board-head button,.octagon-board-head select{border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important}
+.octagon-live{border-color:var(--line)!important;background:var(--panel)!important;color:var(--muted)!important}
+.octagon-live.live{border-color:color-mix(in srgb,var(--success) 40%,var(--line))!important;color:var(--success-soft)!important}
+.octagon-live.live i{background:var(--success)!important}
 .octagon-feed{border-color:var(--line)!important;background:#000!important}
 .octagon-message,.octagon-composer{border-color:var(--line)!important;background:var(--panel2)!important;color:var(--text)!important;box-shadow:none!important}
 .octagon-message.reply{border-left-color:var(--accent)!important;background:var(--panel)!important}
 .octagon-message-author small,.octagon-character-count{color:var(--muted)!important}
 .octagon-message-body{color:#e5e5e5!important}
-.octagon-message-body a{color:#8ab4f8!important}
+.octagon-message-body a{color:var(--link)!important}
 .octagon-message-actions button{border-color:var(--line)!important;background:var(--panel)!important;color:#d4d4d4!important}
 .octagon-message-actions button.active{border-color:var(--accent)!important;background:var(--panel)!important;color:#ffb0b3!important}
 .octagon-compose-copy textarea{border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important}
 .octagon-board-head .octagon-intelligence-button,.octagon-submit,.octagon-intelligence-button{border-color:var(--accent)!important;background:var(--accent)!important;color:#fff!important;box-shadow:none!important}
-
-/* Community/profile overlays follow the same dark language. */
-.community-directory,.community-profile-panel,.community-top10-panel{border-color:var(--line)!important;background:linear-gradient(180deg,var(--panel2),var(--panel))!important;color:var(--text)!important}
-.community-member-card,.community-profile-summary article,.community-profile-card,.community-profile-metric,.community-achievement,.community-recent-list>div,.community-top-ten-card,.community-top-ten-row,.community-top10-picked,.community-top10-add,.community-top10-selected-row{border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important}
-.community-directory-summary>div:first-child span,.community-profile-title span,.community-profile-card-head span,.community-top10-head span{color:var(--accent2)!important}
-.community-directory-action.primary,.community-profile-actions button.primary{border-color:var(--accent)!important;background:var(--accent)!important;color:#fff!important}
+.octagon-manage-beta,.octagon-manage-beta.active{border-color:var(--line)!important;background:var(--panel)!important;color:#d4d4d4!important;box-shadow:none!important}
+.octagon-access-panel{border-color:var(--line)!important;background:var(--panel2)!important}
+.octagon-access-panel-inner,.octagon-access-row{border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important}
+.octagon-access-panel-head{border-bottom-color:var(--line)!important}
+.octagon-access-panel-head span{color:var(--accent2)!important}
+.octagon-access-panel-head strong,.octagon-access-member strong{color:var(--text)!important}
+.octagon-access-panel-head small,.octagon-access-member small,.octagon-access-footer,.octagon-access-loading{color:var(--muted)!important}
+.octagon-access-panel-close,.octagon-access-toggle{border-color:var(--line)!important;background:var(--panel2)!important;color:var(--muted)!important}
+.octagon-access-toggle.enabled{border-color:color-mix(in srgb,var(--success) 44%,var(--line))!important;background:color-mix(in srgb,var(--success) 12%,var(--panel))!important;color:var(--success-soft)!important}
+.octagon-access-toggle.enabled i{background:var(--success)!important}
 
 /* Native bottom navigation: ESPN-style black bar with a restrained active indicator. */
 .native-bottom-nav{border-top-color:var(--line)!important;background:#000!important;box-shadow:0 -10px 28px rgba(0,0,0,.42)!important}
@@ -129,7 +235,7 @@ html body #picks .pick-fighter-odds b{border-color:transparent!important;backgro
 @media(max-width:900px){
   main.shell{padding-bottom:calc(var(--native-nav-height) + var(--native-safe-bottom) + 30px)!important}
   #whatsNewBtn [data-whats-new-label]{display:block;line-height:1!important}
-  .hero{background:#000!important}
+  body>.hero,.hero{background-color:#000!important;background-image:none!important}
   .drawer{z-index:5000!important;background:rgba(0,0,0,.78)!important}
   .drawer-panel{width:100vw!important;height:100dvh!important;margin:0!important;border:0!important;padding:10px 12px calc(var(--native-nav-height) + var(--native-safe-bottom) + 28px)!important;background:var(--bg)!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch}
   .drawer-panel>.close{position:sticky!important;top:8px!important;z-index:20!important;float:none!important;display:grid!important;place-items:center!important;width:48px!important;height:48px!important;margin:0 0 8px auto!important;border:1px solid var(--line)!important;border-radius:15px!important;background:var(--panel2)!important;color:var(--text)!important;box-shadow:none!important;font-size:31px!important;line-height:1!important}
