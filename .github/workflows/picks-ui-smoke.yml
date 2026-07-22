@@ -14,8 +14,12 @@ on:
       - 'supabase/picks-device-recovery-phase.sql'
       - 'supabase/picks-member-pin-phase.sql'
       - 'supabase/picks-archive-admin-phase.sql'
+      - 'supabase/functions/sync-ufc-card/**'
       - 'supabase/functions/refresh-ufc-odds/**'
       - 'docs/picks-setup.md'
+      - 'scripts/apply-maintained-ufc-baselines.mjs'
+      - 'scripts/sync-ufc-card.mjs'
+      - 'scripts/test-ufc-card-section-authority.mjs'
       - 'scripts/check-picks-ui.mjs'
       - 'scripts/test-picks-mobile-top-tabs.mjs'
       - '.github/workflows/picks-ui-smoke.yml'
@@ -32,8 +36,12 @@ on:
       - 'supabase/picks-device-recovery-phase.sql'
       - 'supabase/picks-member-pin-phase.sql'
       - 'supabase/picks-archive-admin-phase.sql'
+      - 'supabase/functions/sync-ufc-card/**'
       - 'supabase/functions/refresh-ufc-odds/**'
       - 'docs/picks-setup.md'
+      - 'scripts/apply-maintained-ufc-baselines.mjs'
+      - 'scripts/sync-ufc-card.mjs'
+      - 'scripts/test-ufc-card-section-authority.mjs'
       - 'scripts/check-picks-ui.mjs'
       - 'scripts/test-picks-mobile-top-tabs.mjs'
       - '.github/workflows/picks-ui-smoke.yml'
@@ -67,8 +75,17 @@ jobs:
         working-directory: repo
         run: |
           find assets/js -maxdepth 1 -type f -name 'picks*.js' -print0 | xargs -0 -n1 node --check
+          node --check scripts/apply-maintained-ufc-baselines.mjs
+          node --check scripts/sync-ufc-card.mjs
+          node --check scripts/test-ufc-card-section-authority.mjs
           node --check scripts/check-picks-ui.mjs
           node --check scripts/test-picks-mobile-top-tabs.mjs
+
+      - name: Verify maintained UFC card authority
+        working-directory: repo
+        run: |
+          node scripts/apply-maintained-ufc-baselines.mjs --force
+          node scripts/test-ufc-card-section-authority.mjs
 
       - name: Verify Picks source and ownership contract
         working-directory: repo

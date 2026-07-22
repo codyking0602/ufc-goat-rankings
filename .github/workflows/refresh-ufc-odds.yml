@@ -1,14 +1,6 @@
 name: Sync UFC Card and Odds
 
 on:
-  push:
-    # Card-source or automation changes should update Supabase immediately.
-    branches:
-      - main
-    paths:
-      - 'config/ufc-card-sources.json'
-      - 'scripts/sync-ufc-card.mjs'
-      - '.github/workflows/refresh-ufc-odds.yml'
   schedule:
     - cron: '17 */6 * * *'
   workflow_dispatch:
@@ -52,39 +44,65 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Apply maintained repository card baseline
+        id: maintained_baseline
+        shell: bash
+        run: |
+          mkdir -p artifacts/ufc-card-sync
+          set -o pipefail
+          node scripts/apply-maintained-ufc-baselines.mjs --apply 2>&1 | tee artifacts/ufc-card-sync/maintained-baseline-console.log
+
       - name: Install Playwright
         shell: bash
         run: |
           npm install --no-save playwright@1.54.2
           npx playwright install --with-deps chromium
 
-      - name: Sync confirmed UFC card
+      - name: Sync confirmed external UFC card
         id: card_sync
         continue-on-error: true
         shell: bash
         run: |
-          mkdir -p artifacts/ufc-card-sync
           set -o pipefail
           node scripts/sync-ufc-card.mjs --apply 2>&1 | tee artifacts/ufc-card-sync/card-sync-console.log
 
       - name: Publish card-sync health
         if: always()
         env:
+          BASELINE_OUTCOME: ${{ steps.maintained_baseline.outcome }}
           SYNC_OUTCOME: ${{ steps.card_sync.outcome }}
         shell: bash
         run: |
           node <<'NODE'
           const fs=require('node:fs');
           const path=require('node:path');
-          const reportPath=path.join('artifacts','ufc-card-sync','card-sync-report.json');
+          const readReport=(filename,key)=>{
+            const reportPath=path.join('artifacts','ufc-card-sync',filename);
+            if(!fs.existsSync(reportPath))return[];
+            try{return JSON.parse(fs.readFileSync(reportPath,'utf8'))[key]||[];}catch(_error){return[];}
+          };
+          const baseline=readReport('maintained-baseline-report.json','report');
+          const external=readReport('card-sync-report.json','report');
           const logPath=path.join('artifacts','ufc-card-sync','card-sync-console.log');
-          let report=[];
-          if(fs.existsSync(reportPath)){
-            try{report=JSON.parse(fs.readFileSync(reportPath,'utf8')).report||[];}catch(_error){}
-          }
+          const baselineOutcome=process.env.BASELINE_OUTCOME||'unknown';
+          const externalOutcome=process.env.SYNC_OUTCOME||'unknown';
           const health={
-            outcome:process.env.SYNC_OUTCOME||'unknown',
-            events:report.map(row=>({
+            outcome:baselineOutcome==='success'?(externalOutcome==='success'?'success':'baseline-safe-external-unavailable'):'failure',
+            baselineOutcome,
+            externalOutcome,
+            baselines:baseline.map(row=>({
+              eventId:row.eventId,
+              fights:row.fights,
+              mainCardFights:row.mainCardFights,
+              confirmationHash:row.confirmationHash,
+              synced:Boolean(row.result?.synced),
+              skipped:Boolean(row.result?.skipped),
+              sectionAuthority:row.result?.summary?.sectionAuthority||null,
+              promotions:row.result?.summary?.promotions??null,
+              demotions:row.result?.summary?.demotions??null,
+              picksReset:row.result?.summary?.picksReset??null
+            })),
+            events:external.map(row=>({
               eventId:row.eventId,
               sourceType:row.sourceType,
               sourceUrl:row.sourceUrl,
@@ -92,11 +110,12 @@ jobs:
               confirmationHash:row.confirmationHash,
               synced:Boolean(row.result?.synced),
               fightsReceived:row.result?.summary?.fightsReceived??null,
-              pickableFightsReceived:row.result?.summary?.pickableFightsReceived??null
+              pickableFightsReceived:row.result?.summary?.pickableFightsReceived??null,
+              sectionAuthority:row.result?.summary?.sectionAuthority||null
             }))
           };
-          if(health.outcome!=='success'&&fs.existsSync(logPath)){
-            health.error=fs.readFileSync(logPath,'utf8').trim().split('\n').slice(-20).join('\n');
+          if(externalOutcome!=='success'&&fs.existsSync(logPath)){
+            health.externalError=fs.readFileSync(logPath,'utf8').trim().split('\n').slice(-20).join('\n');
           }
           fs.mkdirSync(path.join('assets','data'),{recursive:true});
           fs.writeFileSync(path.join('assets','data','picks-sync-health.json'),JSON.stringify(health,null,2)+'\n');
@@ -173,6 +192,7 @@ jobs:
           git add assets/data/picks-sync-health.json assets/data/picks-odds-health.json
           if ! git diff --cached --quiet; then
             git commit -m "Record UFC card and odds sync health [skip ci]"
+            git pull --rebase origin main
             git push
           fi
 
@@ -186,11 +206,6 @@ jobs:
             artifacts/ufc-odds-refresh
           if-no-files-found: ignore
           retention-days: 14
-
-      - name: Fail when card synchronization failed
-        if: always() && steps.card_sync.outcome != 'success'
-        shell: bash
-        run: exit 1
 
       - name: Fail when odds refresh request failed
         if: always() && steps.odds_refresh.outcome != 'success'
