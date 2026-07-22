@@ -4,7 +4,7 @@
   if(window.__UFC_FRESH_HOME_LAUNCH_STARTED__)return;
   window.__UFC_FRESH_HOME_LAUNCH_STARTED__=true;
 
-  const VERSION='fresh-home-launch-20260722f-explicit-picks-handoff';
+  const VERSION='fresh-home-launch-20260722g-explicit-picks-only';
   const RESUME_PICKS_KEY='__picks_resume';
   const INVITE_KEY='invite';
   const RESUME_WINDOW_MS=30000;
@@ -42,17 +42,9 @@
   function resumeTimestamp(url=currentUrl()){
     return Number(url.searchParams.get(RESUME_PICKS_KEY)||0);
   }
-  function isSameOriginRoomHandoff(url=currentUrl()){
-    const room=String(url.searchParams.get('room')||'').trim();
-    if(navigationType!=='navigate'||!room||!url.searchParams.has('event')||url.searchParams.get('picksView')!=='event')return false;
-    try{
-      const referrer=new URL(String(document.referrer||''));
-      return Boolean(document.referrer)&&referrer.origin===url.origin;
-    }catch(_error){return false;}
-  }
   function hasFreshPicksResume(url=currentUrl()){
     const markedAt=resumeTimestamp(url);
-    return bootstrapEntry==='resume'||(markedAt>0&&Date.now()-markedAt<RESUME_WINDOW_MS)||isSameOriginRoomHandoff(url);
+    return bootstrapEntry==='resume'||(markedAt>0&&Date.now()-markedAt<RESUME_WINDOW_MS);
   }
   function replaceUrl(url){
     history.replaceState(history.state,'',`${url.pathname}${url.search}${url.hash}`);
@@ -126,7 +118,7 @@
   document.addEventListener('click',event=>{
     const shareTrigger=event.target.closest?.('#picksShareGroup,#picksShareRoom');
     if(shareTrigger)markPicksInviteForShare();
-    const trigger=event.target.closest?.('#picksPinSignInButton,[data-group-room],[data-history-room],#picksGroupAddEvent,#picksRoomAction');
+    const trigger=event.target.closest?.('[data-group-room],[data-history-room],#picksGroupAddEvent,#picksRoomAction');
     if(trigger)markPicksResume();
   },true);
 
