@@ -79,6 +79,75 @@ input,select{min-height:var(--product-touch);border-radius:var(--product-radius-
 #picksSetupNote,.picks-setup-note,#picksWarRoomBridge,.picks-war-room-bridge,[data-dev-note],[data-preview-note]{display:none!important}
 [data-octagon-notification-status]:empty,.octagon-notice:empty,.app-profile-status:empty{display:none!important}
 
+/* Canonical production palette sweep. This final owner neutralizes retired white-card, navy, orange, and yellow component themes. */
+input,select,textarea,option{border-color:var(--line)!important;background:var(--panel2)!important;color:var(--text)!important}
+input::placeholder,textarea::placeholder{color:var(--muted)!important}
+
+#play{
+  --play-text:var(--text);
+  --play-muted:var(--muted);
+  --play-subtle:var(--muted);
+  --play-card:var(--panel);
+  --play-card-2:var(--panel2);
+  --play-line:var(--line);
+  --play-orange:var(--accent);
+  --play-gold:var(--accent2);
+}
+#play :where(.play-mode-switch,.play-intro-card,.play-list-card,.play-add-card,.play-result-card,.blind-stage,.blind-reveal,.play-rank-row,.play-search-result,.play-insight-grid>div,.blind-comparison-card,.blind-scoreboard span,.blind-reveal-fighter,.play-empty-state,.play-empty-mini){border-color:var(--line)!important;background:var(--panel2)!important;color:var(--text)!important;box-shadow:none!important}
+#play :where(.play-mode-switch,.play-search-box,.play-rank-actions button,.play-secondary){border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important}
+#play :where(.play-intro-card,.play-list-card,.play-add-card,.play-result-card,.blind-stage,.blind-reveal,.blind-comparison-card){background:linear-gradient(180deg,var(--panel2),var(--panel))!important}
+#play :where(h2,h3,strong,.play-rank-copy strong,.play-search-result strong,.blind-header h3,.blind-verdict strong,.blind-reveal-fighter>strong){color:var(--text)!important}
+#play :where(p,small,.play-card-head span,.play-rank-copy small,.play-search-result small,.blind-header p,.blind-compare-row span,.blind-verdict p,.blind-reveal-fighter>span,.blind-reveal-fighter>small,.play-help){color:var(--muted)!important}
+#play :where(.play-rank-number,.play-progress-wrap strong,.play-search-result>b,.blind-scoreboard strong,.blind-identity>span,.blind-verdict span,.blind-reveal-fighter em){color:var(--accent2)!important}
+#play :where(.play-primary,.blind-pick-a,.blind-pick-b,.play-mode-switch button.active){border-color:var(--accent)!important;background:linear-gradient(135deg,var(--accent),var(--accent2))!important;color:#fff!important;box-shadow:none!important}
+#play .play-progress{border-color:var(--line)!important;background:var(--panel)!important}
+#play .play-progress i{background:linear-gradient(90deg,var(--accent),var(--accent2))!important}
+#play .play-fighter-photo,#play .blind-silhouette{border-color:var(--line)!important;background:var(--panel)!important;color:var(--muted)!important}
+#play .blind-compare-head{border-color:var(--line)!important;background:radial-gradient(circle at 50% 0,color-mix(in srgb,var(--accent) 18%,transparent),transparent 48%)!important}
+#play .blind-verdict.correct{border-color:rgba(34,197,94,.52)!important;background:color-mix(in srgb,#22c55e 10%,var(--panel2))!important}
+#play .blind-verdict.miss{border-color:color-mix(in srgb,var(--accent) 55%,var(--line))!important;background:color-mix(in srgb,var(--accent) 10%,var(--panel2))!important}
+
+#picks{color:var(--text)}
+#picks :where(.picks-room-card,.picks-progress-card,.picks-standings-card,.picks-live-board-card,.picks-admin-card,.picks-room-picks-card,.picks-history-card,.picks-group-card,.picks-commissioner-card,.picks-profile-card,.picks-tiered-scoring,.picks-locked-section,.pick-fight,.room-picks-fight,.picks-live-panel,.picks-live-empty,.picks-reveal-card){border-color:var(--line)!important;background:var(--panel2)!important;color:var(--text)!important;box-shadow:none!important}
+#picks :where(.picks-mode-switch,.picks-room-choice,.picks-internal-nav,.pick-fight-head,.pick-reveal,.pick-reveal-side,.room-picks-grid>div,.picks-live-sides>div,.picks-admin-fight,.picks-admin-content,.picks-room-more>summary,.picks-room-more-menu,.picks-summary-chips span,.picks-tiered-levels span){border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important;box-shadow:none!important}
+#picks .picks-event-hero:not(.has-event-art){border-color:var(--line)!important;background:radial-gradient(circle at 92% 8%,color-mix(in srgb,var(--accent) 24%,transparent),transparent 34%),linear-gradient(135deg,var(--panel2),var(--panel))!important;box-shadow:0 20px 48px rgba(0,0,0,.24)!important}
+#picks .picks-event-hero.is-live{border-color:color-mix(in srgb,var(--accent) 65%,var(--line))!important}
+#picks .picks-event-hero.has-event-art,#picks .picks-event-hero.has-event-art>.picks-event-meta,#picks .picks-event-hero.has-event-art>.picks-odds-source{background:var(--panel)!important}
+#picks .picks-pill{border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important}
+#picks .picks-room-banner{border-color:color-mix(in srgb,#22c55e 45%,var(--line))!important;background:linear-gradient(135deg,color-mix(in srgb,#22c55e 10%,var(--panel2)),var(--panel2))!important;box-shadow:none!important}
+#picks :where(.picks-room-copy>strong,.picks-card-heading h3,.picks-card-head h3,.picks-progress-top strong,.picks-live-head strong,.picks-section-heading span,.pick-fight-head strong,.pick-fighter-name,.pick-reveal-side strong,.room-picks-head strong,.room-picks-grid b,.picks-admin-card>summary,.picks-admin-fight-head strong,.picks-tiered-head strong){color:var(--text)!important}
+#picks :where(.picks-room-meta,.picks-card-heading small,.picks-card-subtitle,.picks-progress-top span,.picks-progress-top b,.picks-live-head>b,.picks-live-sides small,.picks-live-missed,.pick-fight-head>span,.pick-fighter-odds,.pick-vs,.pick-lock,.pick-reveal-title,.pick-reveal-side small,.pick-reveal-missed,.picks-locked-section summary,.room-picks-head span,.room-picks-grid small,.room-picks-missed,.picks-admin-fight-head span,.picks-tiered-head small,.picks-tiered-lock-label small,.picks-odds-source){color:var(--muted)!important}
+#picks :where(.picks-room-intro span,.picks-card-heading span,.picks-live-head span,.picks-live-sides strong span,.pick-fight-number,.pick-reveal-side strong span,.picks-tiered-head span,.picks-tiered-head strong b,.picks-tiered-lock-label,.picks-tiered-levels em){color:var(--accent2)!important}
+#picks :where(.picks-primary,.picks-room-choice button.active,.picks-mode-switch button.active,.picks-admin-lock-button,.pick-selected-mark){border-color:var(--accent)!important;background:var(--accent)!important;color:#fff!important;box-shadow:none!important}
+#picks :where(.picks-secondary,.picks-room-more>summary,.picks-admin-actions button){border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important}
+#picks .picks-room-more-menu #picksSwitchRoom{background:color-mix(in srgb,var(--accent) 12%,var(--panel))!important;color:var(--accent2)!important}
+#picks .picks-code{border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important}
+#picks .picks-progress-bar{background:var(--panel)!important}
+#picks .picks-progress-bar i{background:var(--accent)!important}
+#picks .pick-fighter{border-color:var(--line)!important;background:linear-gradient(180deg,var(--panel2),var(--panel))!important;color:var(--text)!important;box-shadow:none!important}
+#picks .pick-fighter:hover{border-color:var(--accent)!important}
+#picks .pick-fighter.selected{border-color:var(--accent)!important;background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 22%,var(--panel2)),var(--panel2))!important;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 30%,transparent)!important}
+#picks .pick-fighter.underdog-locked{border-color:var(--accent2)!important;background:linear-gradient(145deg,color-mix(in srgb,var(--accent2) 18%,var(--panel2)),var(--panel2))!important}
+#picks .pick-fighter-photo{background:linear-gradient(135deg,var(--panel2),var(--panel))!important;color:#fff!important;box-shadow:0 6px 14px rgba(0,0,0,.24)!important}
+#picks .pick-fighter-odds b{background:color-mix(in srgb,var(--accent) 14%,var(--panel))!important;color:var(--accent2)!important}
+#picks .pick-lock-badge,#picks .pick-underdog-action.active{border-color:var(--accent)!important;background:var(--accent)!important;color:#fff!important}
+#picks .pick-underdog-action{border-color:var(--accent)!important;background:color-mix(in srgb,var(--accent) 10%,var(--panel))!important;color:var(--accent2)!important}
+#picks .pick-fighter.correct,#picks .picks-live-sides>div.winner{border-color:#22c55e!important;background:color-mix(in srgb,#22c55e 10%,var(--panel2))!important}
+#picks .picks-status.good,#picks .picks-room-live,#picks .picks-odds-source.picks-odds-complete{color:#86efac!important}
+#picks .picks-status.bad,#picks .pick-lock.locked,#picks .pick-fight-head>span.locked{color:#fca5a5!important}
+#picks .picks-odds-source.picks-odds-partial{color:var(--accent2)!important}
+#picks .picks-odds-source.picks-odds-empty{color:var(--muted)!important}
+
+/* The base Picks sheet uses an ID-qualified important rule for this card; match that ownership explicitly. */
+html body #picks .picks-progress-card{border-color:var(--line)!important;background:var(--panel2)!important;color:var(--text)!important;box-shadow:none!important}
+html body #picks .picks-progress-card .picks-progress-top strong{color:var(--text)!important}
+html body #picks .picks-progress-card .picks-progress-top span,html body #picks .picks-progress-card .picks-progress-top b{color:var(--muted)!important}
+html body #picks .picks-progress-card .picks-summary-chips span{border-color:var(--line)!important;background:var(--panel)!important;color:var(--muted)!important}
+html body #picks .picks-progress-card .picks-progress-bar{background:var(--panel)!important}
+html body #picks .picks-progress-card .picks-progress-bar i{border-color:transparent!important;background:var(--accent)!important;color:transparent!important}
+
+.intelligence-matchup select,.intelligence-secondary{border-color:var(--line)!important;background:linear-gradient(180deg,var(--panel2),var(--panel))!important;color:var(--text)!important}
+
 /* Mobile cohesion */
 @media(max-width:900px){
   .hero{grid-template-columns:minmax(0,1fr) auto!important;padding:13px 12px 11px!important;gap:9px!important;border-bottom:1px solid var(--line)!important;background:var(--panel)!important;box-shadow:0 8px 28px rgba(0,0,0,.28)!important}

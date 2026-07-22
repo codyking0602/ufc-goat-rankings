@@ -108,3 +108,5 @@ try{
 }finally{
   await browser.close();
 }
+
+await import('./test-production-palette-sweep.mjs');
