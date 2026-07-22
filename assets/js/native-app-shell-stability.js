@@ -4,9 +4,14 @@
   if(window.__UFC_NATIVE_APP_SHELL_STABILITY_STARTED__)return;
   window.__UFC_NATIVE_APP_SHELL_STABILITY_STARTED__=true;
 
-  const VERSION='native-app-shell-stability-20260721e-drawer-observer';
+  const VERSION='native-app-shell-stability-20260722f-drawer-observer-sticky-overflow-clip';
   let observer=null;
   let timer=0;
+
+  function syncHorizontalOverflow(){
+    document.documentElement.style.setProperty('overflow-x','clip','important');
+    document.body?.style.setProperty('overflow-x','clip','important');
+  }
 
   function syncDrawerState(){
     const open=document.getElementById('drawer')?.classList.contains('open');
@@ -29,6 +34,7 @@
   }
 
   function start(){
+    syncHorizontalOverflow();
     document.addEventListener('click',event=>{
       if(event.target.closest?.('[data-native-destination]'))closeFighterProfile();
     },true);
@@ -41,6 +47,6 @@
     document.documentElement.dataset.nativeAppShellStability=VERSION;
   }
 
-  window.UFC_NATIVE_APP_SHELL_STABILITY={version:VERSION,closeFighterProfile};
+  window.UFC_NATIVE_APP_SHELL_STABILITY={version:VERSION,closeFighterProfile,syncHorizontalOverflow};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
