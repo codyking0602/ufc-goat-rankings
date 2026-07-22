@@ -182,5 +182,9 @@ const imports=[
 ];
 for(const [stage,path] of imports)await runImport(stage,path);
 
-fs.writeFileSync('/tmp/profile-signin-stability-report.json',JSON.stringify({proof:'ios-startup-aggregate',failures},null,2));
-if(failures.length)throw new AggregateError(failures.map(row=>new Error(`${row.stage}: ${row.message}`)),`${failures.length} iOS aggregate check${failures.length===1?'':'s'} failed.`);
+const report={proof:'ios-startup-aggregate',failures};
+fs.writeFileSync('/tmp/profile-signin-stability-report.json',JSON.stringify(report,null,2));
+if(failures.length){
+  console.error(JSON.stringify(report,null,2));
+  throw new AggregateError(failures.map(row=>new Error(`${row.stage}: ${row.message}`)),`${failures.length} iOS aggregate check${failures.length===1?'':'s'} failed.`);
+}
