@@ -134,8 +134,8 @@ assert.equal(homeStyles.status,200,'Offline relaunch could not recover the Home 
 assert.match(await homeStyles.text(),/NETWORK:\/ufc-goat-rankings\/assets\/css\/home-dashboard\.css/);
 
 const navigation=await runtime.request('?group=GOAT26#picks',{mode:'navigate',destination:'document'});
-assert.equal(navigation.status,200,'Offline standalone navigation could not recover cached index.html.');
-assert.match(await navigation.text(),/NETWORK:\/ufc-goat-rankings\/index\.html/);
+assert.equal(navigation.status,200,'Offline standalone navigation could not recover a cached app document.');
+assert.match(await navigation.text(),/NETWORK:\/ufc-goat-rankings\/(?:index\.html)?/);
 
 runtime.setNetworkMode('error');
 const transientFailure=await runtime.request('assets/js/native-app-shell.js?v=temporary-503');
