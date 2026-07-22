@@ -4,7 +4,7 @@
   if(window.__UFC_APP_UPDATE_WATCHER_STARTED__)return;
   window.__UFC_APP_UPDATE_WATCHER_STARTED__=true;
 
-  const VERSION='app-update-watcher-20260722e-standalone-controller-repair';
+  const VERSION='app-update-watcher-20260722f-existing-controller-repair';
   const WHAT_CHANGED_SRC='assets/js/what-changed.js?v=what-changed-20260718b-compact';
   const RESTORE_KEY='ufc-goat-manual-refresh-v1';
   const CONTROLLER_RELOAD_KEY='ufc-app:controller-reload:v21';
@@ -17,6 +17,7 @@
   let uiInitialized=false;
   const standalone=window.navigator.standalone===true
     ||window.matchMedia?.('(display-mode: standalone)')?.matches===true;
+  const hadControllerAtStart=Boolean(navigator.serviceWorker?.controller);
 
   const currentBuild=()=>document.querySelector('meta[name="app-build"]')?.content||'';
   const activeView=()=>document.querySelector('.tab.active')?.dataset.view||document.querySelector('.view.active-view')?.id||'home';
@@ -63,7 +64,7 @@
   }
 
   function reloadForControllerChange(){
-    if(!standalone||controllerReloading)return false;
+    if(!standalone||!hadControllerAtStart||controllerReloading)return false;
     try{
       if(sessionStorage.getItem(CONTROLLER_RELOAD_KEY)==='1')return false;
       sessionStorage.setItem(CONTROLLER_RELOAD_KEY,'1');
