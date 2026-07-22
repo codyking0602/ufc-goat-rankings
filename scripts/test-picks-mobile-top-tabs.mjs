@@ -108,4 +108,10 @@ try{
   await browser.close();
 }
 
-await import('./test-production-palette-sweep.mjs');
+const originalLog=console.log;
+console.log=(...args)=>{if(args[0]==='PALETTE_TOKENS')return;originalLog(...args);};
+try{
+  await import('./test-production-palette-sweep.mjs');
+}finally{
+  console.log=originalLog;
+}
