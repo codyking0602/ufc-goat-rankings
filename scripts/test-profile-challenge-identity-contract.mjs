@@ -41,5 +41,5 @@ console.log(JSON.stringify({
   explicitRequire:true,
   concurrentInbox:'coalesced',
   directSendGroupSnapshot:true,
-  challengeCenter:'play-received-sent-results'
+  challengeCenter:'play-received-sent-comparison'
 },null,2));
