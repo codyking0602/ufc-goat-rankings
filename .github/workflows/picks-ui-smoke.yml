@@ -112,6 +112,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: picks-mobile-shell-diagnostic
-          path: /tmp/picks-mobile-nav-diagnostic.json
+          path: |
+            /tmp/picks-mobile-nav-diagnostic.json
+            repo/assets/css/native-app-shell-stability.css
+            repo/scripts/test-production-palette-sweep.mjs
           if-no-files-found: warn
           retention-days: 7
