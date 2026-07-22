@@ -1,24 +1,9 @@
-const VERSION='octagon-hq-sw-20260722c-force-home-cold-launch';
-const CACHE_NAME='octagon-hq-static-v18';
+const VERSION='octagon-hq-sw-20260722d-safe-home-activation';
+const CACHE_NAME='octagon-hq-static-v19';
 const LEGACY_PREFIX='octagon-hq-static-';
 const CORE=['./','./index.html','./manifest.webmanifest'];
 const PALETTE_NETWORK_ONLY=/\/assets\/css\/(?:app|home-dashboard|native-app-shell|native-app-shell-stability|product-polish)\.css$/i;
 const FORCE_NETWORK=/\/assets\/(?:(?:js\/(?:app-canonical-group|app-notification-surface-fix|app-update-watcher|product-architecture|octagon-hq-shell|native-app-shell|native-app-shell-stability|community-profiles|fresh-home-route-bootstrap|fresh-home-launch|home-dashboard|find-leader|better-than-standalone-share|play-daily-find-leader|game-challenges|profile-challenges|share-deep-links|picks|picks-auto-advance|octagon-notifications)|data\/(?:find-leader-question-bank|find-leader-record-book-data|what-changed|supabase-config|picks-events))\.js|css\/(?:app|home-dashboard|native-app-shell|native-app-shell-stability|product-polish|community-profiles|find-leader|picks-mobile-polish)\.css)$/i;
-const LOCAL_PREVIEW_HOSTS=new Set(['localhost','127.0.0.1']);
-const PICKS_ROUTE_KEYS=['group','room','event','picksView','archive'];
-
-function stalePicksClientUrl(value){
-  try{
-    const url=new URL(value);
-    const picksRoute=String(url.hash||'').toLowerCase()==='#picks'
-      ||PICKS_ROUTE_KEYS.some(key=>url.searchParams.has(key));
-    const explicitEntry=url.searchParams.get('invite')==='1'
-      ||url.searchParams.has('__picks_resume')
-      ||url.searchParams.has('notification')
-      ||url.searchParams.has('push');
-    return picksRoute&&!explicitEntry;
-  }catch(_error){return false;}
-}
 
 self.addEventListener('install',event=>{
   event.waitUntil((async()=>{
@@ -51,13 +36,6 @@ self.addEventListener('activate',event=>{
       return FORCE_NETWORK.test(path)||PALETTE_NETWORK_ONLY.test(path);
     }).map(request=>target.delete(request)));
     await self.clients.claim();
-    if(!LOCAL_PREVIEW_HOSTS.has(self.location.hostname)){
-      const windows=await self.clients.matchAll({type:'window',includeUncontrolled:true});
-      const cleanHome=new URL('./#home',self.registration.scope).href;
-      await Promise.allSettled(windows.map(client=>client.navigate?.(
-        stalePicksClientUrl(client.url)?cleanHome:client.url
-      )));
-    }
   })());
 });
 
