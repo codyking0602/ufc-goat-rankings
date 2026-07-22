@@ -49,7 +49,7 @@ function supabaseStub(){
 }
 
 async function openCase(scenario={}){
-  const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true});
+  const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true,serviceWorkers:'block'});
   const page=await context.newPage();
   await page.addInitScript(value=>{
     window.__PROFILE_OWNER_SCENARIO__=value;
