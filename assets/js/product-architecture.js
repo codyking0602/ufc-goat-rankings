@@ -4,11 +4,10 @@
   if(window.__UFC_PRODUCT_ARCHITECTURE_STARTED__)return;
   window.__UFC_PRODUCT_ARCHITECTURE_STARTED__=true;
 
-  const VERSION='product-architecture-20260721a-manifest-owned-picks-season';
+  const VERSION='product-architecture-20260721b-static-polish-css';
   const SHELL_SRC='assets/js/octagon-hq-shell.js?v=app-shell-20260720a-recovery-handoff';
   const CONNECTIVITY_SRC='assets/js/product-connectivity.js?v=product-connectivity-20260718c-clean-handoffs';
-  const POLISH_CSS='assets/css/product-polish.css?v=product-polish-20260718c-header-final';
-  const POLISH_SRC='assets/js/product-polish.js?v=product-polish-20260718c-header-final';
+  const POLISH_SRC='assets/js/product-polish.js?v=product-polish-20260721d-static-css-owner';
   const AVATAR_SYNC_SRC='assets/js/profile-avatar-sync.js?v=profile-avatar-sync-20260718c-home-war-room';
   const ACTIVITY_SRC='assets/js/profile-activity.js?v=profile-activity-20260718a-phase-2a';
   const FIND_LEADER_RETENTION_SRC='assets/js/find-leader-retention.js?v=find-leader-retention-20260718c-phase-2b-lazy';
@@ -28,14 +27,6 @@
     script.src=src;
     script.async=false;
     document.head.appendChild(script);
-  }
-
-  function loadStyleOnce(match,href){
-    if(document.querySelector(`link[href*="${match}"]`))return;
-    const link=document.createElement('link');
-    link.rel='stylesheet';
-    link.href=href;
-    document.head.appendChild(link);
   }
 
   function releaseRecoveryNavigation(){
@@ -114,7 +105,6 @@
   }
 
   function loadPolish(){
-    loadStyleOnce('assets/css/product-polish.css',POLISH_CSS);
     if(!window.UFC_PRODUCT_POLISH)loadScriptOnce('assets/js/product-polish.js',POLISH_SRC);
   }
 
