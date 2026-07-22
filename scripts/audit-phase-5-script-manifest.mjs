@@ -66,7 +66,7 @@ assert.match(profileChallengeSource,/titleFor\(typeFor\(row\)\)/,'Challenge rows
 assert.match(profileChallengeSource,/window\.addEventListener\('click',[\s\S]*data-open-profile-challenge[\s\S]*playInboxChallenge/,'The profile challenge owner must intercept inbox Play actions before game-specific document handlers.');
 assert.match(profileChallengeSource,/window\.UFC_GAME_CHALLENGES\?\.openChallenge[\s\S]*await loadInbox\(\);return true;/,'Non-Find Leader inbox challenges must delegate to the current all-game owner and refresh unread state after opening.');
 assert.match(profileChallengeSource,/function addedActivitySurface\(records\)[\s\S]*profile-activity-grid[\s\S]*if\(addedActivitySurface\(records\)\)loadInbox\(\);/,'Opening or restoring Activity Profile must refresh and render its challenge inbox.');
-assert.match(profileChallengeSource,/data-native-badge=\\"play\\"[\s\S]*openInbox\(\)/,'The Play notification badge must open the Activity Profile challenge inbox.');
+assert.match(profileChallengeSource,/data-native-badge="play"[\s\S]*openInbox\(\)/,'The Play notification badge must open the Activity Profile challenge inbox.');
 
 const literalAssetScript=/["'`](assets\/js\/[^"'`?]+\.js)(?:\?[^"'`]*)?["'`]/g;
 const dynamicEdges=[];
