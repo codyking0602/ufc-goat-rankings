@@ -4,8 +4,9 @@
   if(window.__UFC_FRESH_HOME_ROUTE_BOOTSTRAP_STARTED__)return;
   window.__UFC_FRESH_HOME_ROUTE_BOOTSTRAP_STARTED__=true;
 
-  const VERSION='fresh-home-route-bootstrap-20260722g-pin-resume-owner';
+  const VERSION='fresh-home-route-bootstrap-20260722h-pin-navigation-handoff';
   const RESUME_PICKS_KEY='__picks_resume';
+  const PIN_RESUME_STORAGE_KEY='__ufc_picks_pin_resume';
   const INVITE_KEY='invite';
   const RESUME_WINDOW_MS=30000;
   const deepLinkKeys=['challenge','share','fighter','message','notification','push'];
@@ -20,7 +21,14 @@
   const room=String(url.searchParams.get('room')||'').trim();
   const inviteMarked=url.searchParams.get(INVITE_KEY)==='1'&&Boolean(group||room);
   const markedAt=Number(url.searchParams.get(RESUME_PICKS_KEY)||0);
-  const resumePicks=markedAt>0&&Date.now()-markedAt<RESUME_WINDOW_MS;
+  let pinResumeAt=0;
+  try{
+    pinResumeAt=Number(window.sessionStorage?.getItem(PIN_RESUME_STORAGE_KEY)||0);
+    if(pinResumeAt)window.sessionStorage?.removeItem(PIN_RESUME_STORAGE_KEY);
+  }catch(_error){}
+  const pinResumeTarget=Boolean(room&&url.searchParams.has('event')&&url.searchParams.get('picksView')==='event');
+  const resumePicks=(markedAt>0&&Date.now()-markedAt<RESUME_WINDOW_MS)
+    ||(pinResumeTarget&&pinResumeAt>0&&Date.now()-pinResumeAt<RESUME_WINDOW_MS);
   const explicitDeepLink=deepLinkKeys.some(key=>url.searchParams.has(key));
   const preservePicks=picksRoute&&(resumePicks||inviteMarked);
 
@@ -40,10 +48,7 @@
 
   document.addEventListener?.('click',event=>{
     if(!event.target.closest?.('#picksPinSignInButton'))return;
-    const next=new URL(location.href);
-    next.searchParams.delete(INVITE_KEY);
-    next.searchParams.set(RESUME_PICKS_KEY,String(Date.now()));
-    history.replaceState(history.state,'',`${next.pathname}${next.search}${next.hash}`);
+    try{window.sessionStorage?.setItem(PIN_RESUME_STORAGE_KEY,String(Date.now()));}catch(_error){}
   },true);
 
   document.documentElement.dataset.freshHomeBootstrap=VERSION;
