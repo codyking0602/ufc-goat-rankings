@@ -1,0 +1,51 @@
+name: Debug Find Leader iOS Aggregate
+
+on:
+  push:
+    branches:
+      - agent/find-leader-canonical-daily-board
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  debug-ios-aggregate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser validation runtime
+        run: |
+          npm install --no-save --package-lock=false playwright@1.54.2 acorn@8
+          npx playwright install --with-deps chromium
+      - name: Start local app
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/debug-find-leader-http.log 2>&1 &
+          for attempt in $(seq 1 20); do
+            if curl --fail --silent http://127.0.0.1:4173/index.html > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/debug-find-leader-http.log
+          exit 1
+      - name: Run aggregate with captured output
+        id: aggregate
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          node scripts/test-ios-standalone-resume-home.mjs 2>&1 | tee /tmp/debug-find-leader-ios-aggregate.log
+      - name: Upload aggregate diagnostic
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-find-leader-ios-aggregate
+          path: |
+            /tmp/debug-find-leader-ios-aggregate.log
+            /tmp/better-than-find-leader-owner-report.json
+          if-no-files-found: warn
+      - name: Preserve failure
+        if: steps.aggregate.outcome == 'failure'
+        run: exit 1
