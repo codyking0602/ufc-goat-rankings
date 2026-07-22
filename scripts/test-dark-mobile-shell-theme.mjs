@@ -39,13 +39,15 @@ assert.ok(
   'The cache owner must fetch canonical palette styles from the network without storing stale copies.'
 );
 assert.ok(
-  serviceWorker.includes("const VERSION='octagon-hq-sw-20260722c-force-home-cold-launch';")
-    &&serviceWorker.includes("const CACHE_NAME='octagon-hq-static-v18';")
+  serviceWorker.includes("const VERSION='octagon-hq-sw-20260722d-safe-home-activation';")
+    &&serviceWorker.includes("const CACHE_NAME='octagon-hq-static-v19';")
     &&serviceWorker.includes('fresh-home-route-bootstrap|fresh-home-launch')
-    &&serviceWorker.includes('stalePicksClientUrl(client.url)?cleanHome:client.url')
     &&serviceWorker.includes('game-challenges|profile-challenges|share-deep-links'),
-  'The current service-worker identity must publish the standalone Home repair and retain current app owners.'
+  'The current service-worker identity must publish the safe Home launch and retain current app owners.'
 );
+const activation=serviceWorker.match(/self\.addEventListener\('activate',event=>\{([\s\S]*?)\n\}\);\n\nfunction isNavigation/);
+assert(activation,'The service-worker activation boundary could not be identified.');
+assert.doesNotMatch(activation[1],/clients\.matchAll|client\.navigate|openWindow/,'Service-worker activation must never navigate or reopen a live app client.');
 assert.ok(
   index.includes('<meta name="theme-color" content="#080808" />')
     &&index.includes('<meta name="app-build" content="profile-challenges-delivery-20260722a" />')
