@@ -1,14 +1,22 @@
 (function(){
   'use strict';
 
-  const VERSION='app-update-watcher-20260721a-whats-new-owner';
+  if(window.__UFC_APP_UPDATE_WATCHER_STARTED__)return;
+  window.__UFC_APP_UPDATE_WATCHER_STARTED__=true;
+
+  const VERSION='app-update-watcher-20260722g-ios-controller-repair';
   const WHAT_CHANGED_SRC='assets/js/what-changed.js?v=what-changed-20260718b-compact';
   const RESTORE_KEY='ufc-goat-manual-refresh-v1';
+  const CONTROLLER_RELOAD_KEY='ufc-app:controller-reload:v21';
   const LEGACY_KEYS=['ufc-goat-update-restore-v1','ufc-goat-update-target-v1','ufc-goat-manual-refresh-progress-v1'];
   let playSupportScheduled=false;
   let whatChangedLoading=null;
   let refreshBusy=false;
   let serviceWorkerUpdating=false;
+  let controllerReloading=false;
+  let uiInitialized=false;
+  const iosStandalone=window.navigator.standalone===true;
+  const hadControllerAtStart=Boolean(navigator.serviceWorker?.controller);
 
   const currentBuild=()=>document.querySelector('meta[name="app-build"]')?.content||'';
   const activeView=()=>document.querySelector('.tab.active')?.dataset.view||document.querySelector('.view.active-view')?.id||'home';
@@ -54,12 +62,28 @@
     try{const url=new URL('index.html',document.baseURI);url.searchParams.set('__build_check',String(Date.now()));const response=await fetch(url,{cache:'no-store',headers:{'Cache-Control':'no-cache'},signal:controller.signal});if(!response.ok)return'';const html=await response.text();return html.match(/<meta\s+name=["']app-build["']\s+content=["']([^"']+)["']/i)?.[1]||html.match(/<meta\s+content=["']([^"']+)["']\s+name=["']app-build["']/i)?.[1]||'';}catch(_error){return'';}finally{window.clearTimeout(timer);}
   }
 
+  function reloadForControllerChange(){
+    if(!iosStandalone||!hadControllerAtStart||controllerReloading)return false;
+    try{
+      if(sessionStorage.getItem(CONTROLLER_RELOAD_KEY)==='1')return false;
+      sessionStorage.setItem(CONTROLLER_RELOAD_KEY,'1');
+    }catch(_error){}
+    controllerReloading=true;
+    const url=new URL(window.location.href);
+    url.searchParams.set('__shell',`v21-${Date.now()}`);
+    window.location.replace(url.toString());
+    return true;
+  }
+
   async function updateServiceWorker(){
     if(serviceWorkerUpdating||!('serviceWorker' in navigator))return false;
     serviceWorkerUpdating=true;
     try{
-      const registration=await navigator.serviceWorker.getRegistration();
-      if(!registration)return false;
+      let registration=await navigator.serviceWorker.getRegistration();
+      if(!registration){
+        if(!iosStandalone)return false;
+        registration=await navigator.serviceWorker.register('./sw.js',{scope:'./',updateViaCache:'none'});
+      }
       await registration.update();
       return true;
     }catch(_error){return false;}
@@ -111,12 +135,20 @@
   function schedulePlaySupport(){if(playSupportScheduled)return;playSupportScheduled=true;requestAnimationFrame(()=>{loadPermanentDaily();const loadBoard=()=>loadDailyLeaderboard();if(typeof requestIdleCallback==='function')requestIdleCallback(loadBoard,{timeout:450});else window.setTimeout(loadBoard,100);});}
   function bindDeferredSupport(){if(document.documentElement.dataset.playSupportBinding===VERSION)return;document.documentElement.dataset.playSupportBinding=VERSION;window.addEventListener('octagon-hq:view-change',event=>{if(event.detail?.destination==='play')schedulePlaySupport();});document.addEventListener('click',event=>{if(event.target.closest?.('[data-open-game="blind"],[data-play-mode="blind"],[data-five-round-replay]'))loadBlindSupport();if(event.target.closest?.('[data-kc-challenge],[data-br-challenge],[data-five-round-share]'))loadChallengeCompat();},true);}
 
-  LEGACY_KEYS.forEach(key=>{try{sessionStorage.removeItem(key);}catch(_error){}});
-  cleanRefreshState();injectStyles();installButton();bindDeferredSupport();window.setTimeout(restoreState,100);window.setTimeout(updateServiceWorker,250);
+  function initializeUi(){
+    if(uiInitialized)return;
+    uiInitialized=true;
+    LEGACY_KEYS.forEach(key=>{try{sessionStorage.removeItem(key);}catch(_error){}});
+    cleanRefreshState();injectStyles();installButton();bindDeferredSupport();window.setTimeout(restoreState,100);
+  }
+
+  if(iosStandalone&&'serviceWorker' in navigator)navigator.serviceWorker.addEventListener('controllerchange',reloadForControllerChange);
+  void updateServiceWorker();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initializeUi,{once:true});else initializeUi();
   window.addEventListener('octagon-hq:what-changed-seen',syncUnread);
   window.addEventListener('storage',event=>{if(event.key===changeSource().seenStorageKey)syncUnread();});
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)window.setTimeout(updateServiceWorker,80);});
 
-  window.UFC_APP_UPDATE_WATCHER={version:VERSION,refresh:networkRefresh,quickSync,openWhatChanged,syncUnread,schedulePlaySupport,updateServiceWorker};
+  window.UFC_APP_UPDATE_WATCHER={version:VERSION,refresh:networkRefresh,quickSync,openWhatChanged,syncUnread,schedulePlaySupport,updateServiceWorker,reloadForControllerChange};
   document.documentElement.setAttribute('data-app-update-watcher',VERSION);
 })();

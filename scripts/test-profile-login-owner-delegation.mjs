@@ -49,7 +49,7 @@ function supabaseStub(){
 }
 
 async function openCase(scenario={}){
-  const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true});
+  const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true,serviceWorkers:'block'});
   const page=await context.newPage();
   await page.addInitScript(value=>{
     window.__PROFILE_OWNER_SCENARIO__=value;
@@ -97,6 +97,24 @@ async function openPicksCard(page){
 
 const rpcNames=page=>page.evaluate(()=>window.__PROFILE_RPC_LOG__.map(row=>row.name));
 const credentialRpcNames=async page=>(await rpcNames(page)).filter(name=>CREDENTIAL_RPCS.has(name));
+const continuationSnapshot=page=>page.evaluate(()=>({
+  url:location.href,
+  readyEvents:Number(sessionStorage.getItem('__profile_ready_events')||0),
+  pinResume:sessionStorage.getItem('__ufc_picks_pin_resume')||'',
+  rpcLog:window.__PROFILE_RPC_LOG__||[],
+  storageWrites:window.__PROFILE_STORAGE_WRITES__||[],
+  bootstrapRoute:document.documentElement.dataset.freshHomeBootstrapRoute||'',
+  bootstrapEntry:document.documentElement.dataset.freshHomeBootstrapPicksEntry||'',
+  launchRoute:document.documentElement.dataset.freshLaunchRoute||'',
+  launchSource:document.documentElement.dataset.freshLaunchSource||'',
+  destination:window.UFC_APP_SHELL?.currentDestination||'',
+  activeViews:[...document.querySelectorAll('main.shell>.view.active-view')].map(node=>node.id),
+  profileVersion:window.UFC_PLAY_PROFILE?.version||'',
+  profileIdentity:window.UFC_PLAY_PROFILE?.identity||null,
+  canonicalReady:Boolean(window.UFC_APP_IDENTITY_CONFIG?.ready),
+  updateVersion:window.UFC_APP_UPDATE_WATCHER?.version||'',
+  serviceWorkerControlled:Boolean(navigator.serviceWorker?.controller)
+}));
 
 try{
   browser=await chromium.launch({headless:true});
@@ -137,7 +155,11 @@ try{
     for(const key of ['ufc-picks:group:GOAT26','ufc-picks:group-admin:GOAT26','ufc-player:group-code','ufc-picks:display-name','ufc-picks:room:ROOM01','ufc-picks:admin:ROOM01','ufc-picks:last-room']){
       assert(writes.some(row=>row.key===key),`Missing preserved storage write: ${key}`);
     }
-    await page.waitForFunction(()=>Number(sessionStorage.getItem('__profile_ready_events')||0)===1,null,{timeout:10000});
+    try{
+      await page.waitForFunction(()=>Number(sessionStorage.getItem('__profile_ready_events')||0)>=1,null,{timeout:10000});
+    }catch(error){
+      throw new Error(`Picks continuation readiness timed out: ${JSON.stringify(await continuationSnapshot(page))}`,{cause:error});
+    }
     assert.equal(await page.evaluate(()=>Number(sessionStorage.getItem('__profile_ready_events')||0)),1,'Picks continuation must publish only the expected post-navigation identity resolution event.');
     await context.close();
   }
@@ -181,7 +203,7 @@ try{
     await page.waitForFunction(()=>/still loading/i.test(document.getElementById('picksPinSignInStatus')?.textContent||''));
     assert.deepEqual(await credentialRpcNames(page),[],'A delayed canonical owner must not trigger a direct credential fallback.');
     await page.evaluate(()=>{window.UFC_PLAY_PROFILE=window.__savedProfileOwner;});
-    await page.waitForTimeout(150); // Let the existing 120 ms PIN mutation resync settle before the explicit retry.
+    await page.waitForTimeout(150);
     await Promise.all([
       page.waitForURL(url=>url.searchParams.get('room')==='ROOM01'&&url.hash==='#picks',{timeout:30000}),
       page.click('#picksPinSignInButton',{noWaitAfter:true})

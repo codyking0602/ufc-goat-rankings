@@ -11,6 +11,7 @@ const early=read('assets/js/fresh-home-route-bootstrap.js');
 const shell=read('assets/js/octagon-hq-shell.js');
 const picks=read('assets/js/picks.js');
 const launch=read('assets/js/fresh-home-launch.js');
+const profileIdentity=read('assets/js/play-profile-identity.js');
 const canonicalGroup=read('assets/js/app-canonical-group.js');
 const serviceWorker=read('sw.js');
 
@@ -30,8 +31,20 @@ assert(position(launchPath)>position(picksPath),'Fresh launch must remain a subo
 
 assert(early.includes("url.hash='home'"),'The early bootstrap must keep ordinary startup URL normalization.');
 assert(early.includes("const INVITE_KEY='invite'"),'The early bootstrap must distinguish a fresh Picks invite from a restored Picks URL.');
-assert(early.includes('const legacyBrowserInvite=!standalone&&barePicksInvite;'),'Unmarked legacy invites may only bypass Home in a normal browser.');
+assert.equal(early.includes('legacyBrowserInvite'),false,'The early bootstrap still preserves an unmarked browser group URL as Picks.');
+assert.equal(early.includes('preserveBrowserReload'),false,'A browser reload still bypasses explicit Picks entry requirements.');
+assert(early.includes("const UPDATE_OWNER_SRC='assets/js/app-update-watcher.js"),'The existing update watcher must publish before the blocking remote startup boundary.');
+assert(early.includes('publishUpdateOwner();'),'The earliest startup layer must start the existing update owner before route parsing continues.');
+assert(early.includes("const PIN_RESUME_STORAGE_KEY='__ufc_picks_pin_resume'"),'The earliest route owner must define the one-use PIN navigation handoff.');
+assert(early.includes('window.sessionStorage?.getItem(PIN_RESUME_STORAGE_KEY)'),'The earliest route owner must consume the successful PIN navigation handoff.');
+assert.equal(early.includes('setItem(PIN_RESUME_STORAGE_KEY'),false,'The route classifier must not manufacture the successful PIN login handoff.');
+assert(early.includes("(picksView==='event'&&room&&event)"),'The PIN handoff must support a complete room/event target.');
+assert(early.includes("(picksView==='home'&&!room)"),'The PIN handoff must support a successful login without an active room.');
+assert(early.includes('if(pinResumeAt)window.sessionStorage?.removeItem(PIN_RESUME_STORAGE_KEY);'),'The PIN handoff must be consumed once on the next navigation.');
+assert(early.includes('const preservePicks=picksRoute&&(resumePicks||inviteMarked);'),'The early bootstrap must preserve Picks only for an explicit invite or intentional resume.');
 assert.equal(early.includes('activateDestination('),false,'The early bootstrap must not activate a primary destination.');
+assert(profileIdentity.includes("if(options.source==='picks-member-pin')"),'The canonical profile login owner must distinguish the PIN navigation handoff.');
+assert(profileIdentity.includes('sessionStorage.setItem(PIN_RESUME_STORAGE_KEY,String(Date.now()))'),'The canonical profile login owner must mark the successful PIN navigation before returning.');
 assert(shell.includes('showView(initialView'),'The canonical shell must retain the one initial route activation.');
 assert(shell.includes("let currentView=''"),'The canonical shell must retain exact-view activation state.');
 assert(shell.includes("if(currentView===view&&target?.classList.contains('active-view'))"),'The canonical shell must coalesce an already-active exact view.');
@@ -41,6 +54,8 @@ assert.equal(picks.includes('UFC_PRODUCT_ARCHITECTURE'),false,'Picks must not in
 assert(serviceWorker.includes('product-architecture|octagon-hq-shell|native-app-shell'),'The canonical shell must remain network-first in the installed app.');
 assert(serviceWorker.includes('fresh-home-route-bootstrap|fresh-home-launch'),'Both Home startup layers must remain network-first in the installed app.');
 assert(serviceWorker.includes('app-canonical-group'),'The canonical group startup owner must remain network-first so installed apps cannot retain the route bug.');
+assert(serviceWorker.includes('play-profile-identity'),'The profile-owned PIN handoff must remain network-first in the installed app.');
+assert(serviceWorker.includes('SUPABASE_SCRIPT_SOURCES'),'The cache owner must bound the external Supabase startup dependency.');
 const activation=serviceWorker.match(/self\.addEventListener\('activate',event=>\{([\s\S]*?)\n\}\);\n\nfunction isNavigation/);
 assert(activation,'The service-worker activation boundary could not be identified.');
 assert.doesNotMatch(activation[1],/clients\.matchAll|client\.navigate|openWindow/,'Service-worker activation must not replace the live standalone document.');
@@ -64,14 +79,30 @@ for(const [name,destination] of [['activatePicks','picks'],['activateHome','home
 assert.equal((launch.match(/activateDestinationOnce\('home'\)/g)||[]).length,1,'Home continuation must have exactly one route handoff.');
 assert.equal((launch.match(/activateDestinationOnce\('picks'\)/g)||[]).length,1,'Picks continuation must have exactly one route handoff.');
 assert(launch.includes('const explicitPicksInvite=isExplicitPicksInvite(startupUrl);'),'Fresh launch must consume the early explicit Picks entry classification.');
-assert(launch.includes('const legacyBrowserInvite=!standalone&&barePicksInvite;'),'Fresh launch must not preserve an unmarked group-only URL in standalone mode.');
+assert.equal(launch.includes('legacyBrowserInvite'),false,'Fresh launch still preserves an unmarked group-only browser URL.');
+assert.equal(launch.includes('preserveBrowserReload'),false,'Fresh launch still treats browser reload as Picks permission.');
+assert(launch.includes('const picksContinuation=picksRoute&&(resumePicks||explicitPicksInvite);'),'Fresh launch must require an explicit invite or intentional resume for Picks continuation.');
 assert(launch.includes("event.target.closest?.('#picksShareGroup,#picksShareRoom')"),'Existing Picks share buttons must mark outgoing links as explicit invites.');
 assert(launch.includes("url.searchParams.set(INVITE_KEY,'1')"),'The Picks share boundary must add the one-use invite marker.');
+assert.equal(launch.includes('#picksPinSignInButton'),false,'The late launch layer still duplicates the profile-owned PIN navigation handoff.');
 assert(launch.includes('if(picksContinuation)activatePicks('),'Fresh launch must preserve explicit Picks continuation recovery.');
 assert(launch.includes("else if(!explicitDeepLink)activateHome('startup')"),'Fresh launch must preserve ordinary Home normalization.');
 
-function runEarlyScenario(href,{standalone=true,navigationType='navigate'}={}){
+function makeStorage(seed={}){
+  const map=new Map(Object.entries(seed).map(([key,value])=>[String(key),String(value)]));
+  return {
+    get length(){return map.size;},
+    key:index=>[...map.keys()][index]??null,
+    getItem:key=>map.has(String(key))?map.get(String(key)):null,
+    setItem:(key,value)=>map.set(String(key),String(value)),
+    removeItem:key=>map.delete(String(key)),
+    snapshot:()=>Object.fromEntries(map)
+  };
+}
+
+function runEarlyScenario(href,{standalone=true,sessionSeed={}}={}){
   let currentHref=href;
+  const sessionStorage=makeStorage(sessionSeed);
   const location={
     get href(){return currentHref;},
     set href(value){currentHref=String(value);}
@@ -80,21 +111,28 @@ function runEarlyScenario(href,{standalone=true,navigationType='navigate'}={}){
     state:null,
     replaceState(_state,_title,value){currentHref=new URL(String(value),currentHref).toString();}
   };
-  const document={documentElement:{dataset:{}}};
+  const document={
+    readyState:'complete',
+    documentElement:{dataset:{},appendChild(){}},
+    head:{appendChild(){}},
+    querySelector(){return null;},
+    createElement(){return{async:false,src:''};}
+  };
   const window={
     navigator:{standalone},
     matchMedia:()=>({matches:standalone}),
     location,
-    history
+    history,
+    sessionStorage
   };
-  const performance={getEntriesByType:()=>[{type:navigationType}]};
-  const context={window,document,location,history,performance,URL,Date};
+  const context={window,document,location,history,URL,Date};
   vm.runInNewContext(early,context,{filename:'fresh-home-route-bootstrap.js'});
   return{
     url:new URL(currentHref),
     route:document.documentElement.dataset.freshHomeBootstrapRoute,
     entry:document.documentElement.dataset.freshHomeBootstrapPicksEntry||'',
-    windowEntry:window.__UFC_FRESH_HOME_PICKS_ENTRY__||''
+    windowEntry:window.__UFC_FRESH_HOME_PICKS_ENTRY__||'',
+    session:sessionStorage.snapshot()
   };
 }
 
@@ -107,6 +145,36 @@ const staleStandaloneHome=runEarlyScenario('https://example.test/?group=GOAT26#h
 assert.equal(staleStandaloneHome.url.hash,'#home','A stale group parameter overrode an explicit Home hash.');
 assert.equal(staleStandaloneHome.url.searchParams.has('group'),false,'Home retained a stale Picks group parameter.');
 
+const staleBrowserPicks=runEarlyScenario('https://example.test/?group=GOAT26#picks',{standalone:false});
+assert.equal(staleBrowserPicks.url.hash,'#home','A Safari navigation still treated an unmarked group URL as a Picks invite.');
+assert.equal(staleBrowserPicks.url.searchParams.has('group'),false,'A Safari navigation retained the stale group parameter.');
+
+const staleBrowserReload=runEarlyScenario('https://example.test/?group=GOAT26#picks',{standalone:false});
+assert.equal(staleBrowserReload.url.hash,'#home','A Safari reload still bypassed explicit Picks entry.');
+assert.equal(staleBrowserReload.url.searchParams.has('group'),false,'A Safari reload retained the stale group parameter.');
+
+const pinMarkedAt=Date.now();
+const pinNavigation=runEarlyScenario(
+  'https://example.test/?group=GOAT26&room=ROOM01&event=event-1&picksView=event#picks',
+  {sessionSeed:{__ufc_picks_pin_resume:String(pinMarkedAt)}}
+);
+assert.equal(pinNavigation.url.hash,'#picks','The next resolved PIN room navigation was redirected to Home.');
+assert.equal(pinNavigation.url.searchParams.get('room'),'ROOM01','The resolved PIN room navigation lost its room.');
+assert.equal(pinNavigation.route,'picks','The resolved PIN room navigation was not classified as Picks.');
+assert.equal(pinNavigation.entry,'resume','The resolved PIN room navigation was not published as a one-use resume.');
+assert.equal('__ufc_picks_pin_resume' in pinNavigation.session,false,'The PIN navigation handoff was not consumed after one use.');
+
+const pinHomeNavigation=runEarlyScenario(
+  'https://example.test/?group=GOAT26&picksView=home#picks',
+  {sessionSeed:{__ufc_picks_pin_resume:String(pinMarkedAt)}}
+);
+assert.equal(pinHomeNavigation.url.hash,'#picks','A successful PIN login without an active room was redirected away from Picks home.');
+assert.equal(pinHomeNavigation.route,'picks','A successful PIN login without an active room was not classified as Picks.');
+
+const unmarkedRoomNavigation=runEarlyScenario('https://example.test/?group=GOAT26&room=ROOM01&event=event-1&picksView=event#picks');
+assert.equal(unmarkedRoomNavigation.url.hash,'#home','An unmarked room/event URL bypassed Home.');
+assert.equal(unmarkedRoomNavigation.url.searchParams.has('room'),false,'An unmarked room/event URL retained stale room state.');
+
 const markedInvite=runEarlyScenario('https://example.test/?group=GOAT26&invite=1#picks');
 assert.equal(markedInvite.url.hash,'#picks','A marked fresh Picks invite was redirected to Home.');
 assert.equal(markedInvite.url.searchParams.get('group'),'GOAT26','A marked fresh Picks invite lost its group.');
@@ -116,20 +184,9 @@ assert.equal(markedInvite.entry,'invite','The early bootstrap did not publish th
 assert.equal(markedInvite.windowEntry,'invite','The late launch handoff cannot observe the consumed invite entry.');
 
 const freshResume=runEarlyScenario(`https://example.test/?group=GOAT26&__picks_resume=${Date.now()}#picks`);
-assert.equal(freshResume.url.hash,'#picks','A fresh one-navigation Picks resume was redirected to Home.');
-assert.equal(freshResume.route,'picks','A fresh Picks resume was not classified as Picks.');
-assert.equal(freshResume.entry,'resume','The early bootstrap did not publish the fresh resume entry.');
-
-function makeStorage(seed={}){
-  const map=new Map(Object.entries(seed));
-  return {
-    get length(){return map.size;},
-    key:index=>[...map.keys()][index]??null,
-    getItem:key=>map.has(String(key))?map.get(String(key)):null,
-    setItem:(key,value)=>map.set(String(key),String(value)),
-    removeItem:key=>map.delete(String(key))
-  };
-}
+assert.equal(freshResume.url.hash,'#picks','A fresh URL-based one-navigation Picks resume was redirected to Home.');
+assert.equal(freshResume.route,'picks','A fresh URL-based Picks resume was not classified as Picks.');
+assert.equal(freshResume.entry,'resume','The early bootstrap did not publish the fresh URL-based resume entry.');
 
 async function runCanonicalGroupScenario(href){
   let currentHref=href;
@@ -190,11 +247,18 @@ console.log(JSON.stringify({
   sameViewActivationCoalesced:true,
   sameDestinationHandoffBlocked:true,
   standaloneGroupRestoreReset:true,
+  browserGroupRestoreReset:true,
+  browserReloadReset:true,
+  profileOwnedPinNavigationHandoff:true,
+  pinNavigationHandoffPreserved:true,
+  pinHomeHandoffPreserved:true,
+  unmarkedRoomNavigationReset:true,
   markedInvitePreserved:true,
   freshResumePreserved:true,
   shareInviteMarked:true,
   signedInHomePreserved:true,
   explicitPicksCanonicalized:true,
   installedSourceFreshnessProtected:true,
+  boundedSupabaseStartup:true,
   safeServiceWorkerActivation:true
 },null,2));

@@ -39,14 +39,17 @@ assert.ok(
   'The cache owner must fetch canonical palette styles network-first and retain an installed fallback.'
 );
 assert.ok(
-  serviceWorker.includes("const VERSION='octagon-hq-sw-20260722e-installed-shell-fallback';")
-    &&serviceWorker.includes("const CACHE_NAME='octagon-hq-static-v20';")
+  serviceWorker.includes("const VERSION='octagon-hq-sw-20260722f-supabase-launch-deadline';")
+    &&serviceWorker.includes("const CACHE_NAME='octagon-hq-static-v21';")
     &&serviceWorker.includes('const SHELL_FALLBACKS=[')
     &&serviceWorker.includes('await Promise.all(CORE.map(')
     &&serviceWorker.includes('cache.match(request,{ignoreSearch:true})')
     &&serviceWorker.includes('fresh-home-route-bootstrap|fresh-home-launch')
-    &&serviceWorker.includes('game-challenges|profile-challenges|share-deep-links'),
-  'The current service-worker identity must require and publish a recoverable installed shell.'
+    &&serviceWorker.includes('game-challenges|profile-challenges|share-deep-links')
+    &&serviceWorker.includes('const SUPABASE_SCRIPT_SOURCES=[')
+    &&serviceWorker.includes('Promise.any(sources.map(source=>fetchWithDeadline(source)))')
+    &&serviceWorker.includes('return installed||Response.error();'),
+  'The current service-worker identity must publish a recoverable shell and bound the external Supabase startup dependency.'
 );
 const activation=serviceWorker.match(/self\.addEventListener\('activate',event=>\{([\s\S]*?)\n\}\);\n\nfunction isNavigation/);
 assert(activation,'The service-worker activation boundary could not be identified.');
