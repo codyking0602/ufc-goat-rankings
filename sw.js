@@ -1,7 +1,8 @@
-const VERSION='octagon-hq-sw-20260721e-versioned-palette-assets';
-const CACHE_NAME='octagon-hq-static-v14';
+const VERSION='octagon-hq-sw-20260721f-static-palette-owner';
+const CACHE_NAME='octagon-hq-static-v15';
 const LEGACY_PREFIX='octagon-hq-static-';
 const CORE=['./','./index.html','./manifest.webmanifest'];
+const PALETTE_NETWORK_ONLY=/\/assets\/css\/(?:app|home-dashboard|native-app-shell|native-app-shell-stability|product-polish)\.css$/i;
 const FORCE_NETWORK=/\/assets\/(?:(?:js\/(?:app-notification-surface-fix|app-update-watcher|product-architecture|octagon-hq-shell|native-app-shell|native-app-shell-stability|community-profiles|fresh-home-launch|home-dashboard|find-leader|game-challenges|share-deep-links|picks|picks-auto-advance|octagon-notifications)|data\/(?:what-changed|supabase-config|picks-events))\.js|css\/(?:app|home-dashboard|native-app-shell|native-app-shell-stability|product-polish|community-profiles|find-leader)\.css)$/i;
 
 self.addEventListener('install',event=>{
@@ -23,7 +24,7 @@ self.addEventListener('activate',event=>{
       const requests=await source.keys();
       for(const request of requests){
         const path=new URL(request.url).pathname;
-        if(FORCE_NETWORK.test(path))continue;
+        if(FORCE_NETWORK.test(path)||PALETTE_NETWORK_ONLY.test(path))continue;
         if(await target.match(request))continue;
         const response=await source.match(request);
         if(response)await target.put(request,response);
@@ -31,7 +32,10 @@ self.addEventListener('activate',event=>{
       await caches.delete(key);
     }
     const stale=await target.keys();
-    await Promise.all(stale.filter(request=>FORCE_NETWORK.test(new URL(request.url).pathname)).map(request=>target.delete(request)));
+    await Promise.all(stale.filter(request=>{
+      const path=new URL(request.url).pathname;
+      return FORCE_NETWORK.test(path)||PALETTE_NETWORK_ONLY.test(path);
+    }).map(request=>target.delete(request)));
     await self.clients.claim();
     if(replacedLegacy){
       const windows=await self.clients.matchAll({type:'window',includeUncontrolled:true});
@@ -48,6 +52,11 @@ function isVersionedStatic(request,url){
   if(url.origin!==self.location.origin)return false;
   if(request.destination==='serviceworker')return false;
   return /\.(?:js|css|json|webmanifest|png|webp|jpe?g|gif|svg|ico)$/i.test(url.pathname);
+}
+
+async function networkOnly(request){
+  try{return await fetch(request,{cache:'no-store'});}
+  catch(_error){return Response.error();}
 }
 
 async function updateCache(request){
@@ -89,6 +98,10 @@ self.addEventListener('fetch',event=>{
   const url=new URL(request.url);
   if(isNavigation(request)){
     event.respondWith(instantNavigation(request,event));
+    return;
+  }
+  if(url.origin===self.location.origin&&PALETTE_NETWORK_ONLY.test(url.pathname)){
+    event.respondWith(networkOnly(request));
     return;
   }
   if(isVersionedStatic(request,url))event.respondWith(cacheFirst(request));
