@@ -11,6 +11,7 @@ const ORIGIN=`http://127.0.0.1:${PORT}`;
 const BASE=`${ORIGIN}${PREFIX}`;
 const INDEX=fs.readFileSync('index.html','utf8');
 const SW_VERSION='octagon-hq-sw-20260721g-palette-shell-reset';
+const SW_URL_VERSION='octagon-hq-sw-20260720c-picks-runtime-refresh';
 const SW_CACHE='octagon-hq-static-v16';
 const CSS_ORDER=[...INDEX.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/g)].map(match=>new URL(match[1],`${BASE}/index.html`).pathname);
 const retired=['rgb(249, 115, 22)','rgb(251, 146, 60)','rgb(250, 204, 21)','rgb(17, 24, 39)','rgb(24, 34, 51)','rgb(23, 32, 51)','rgb(16, 23, 37)','rgb(30, 41, 59)'];
@@ -32,7 +33,7 @@ assert.ok(worker.includes(`const VERSION='${SW_VERSION}';`)&&worker.includes(`co
 assert.ok(worker.includes('function isShellPath(path){')&&worker.includes("return /\\/(?:index\\.html)?$/i.test(path);"));
 assert.ok(worker.includes('if(isShellPath(path)||FORCE_NETWORK.test(path)||PALETTE_NETWORK_ONLY.test(path))continue;'));
 assert.match(worker,/find-leader\|picks-mobile-polish/);
-assert.ok(registration.includes(`register('sw.js?v=${SW_VERSION}',{scope:'./',updateViaCache:'none'})`));
+assert.ok(registration.includes(`register('sw.js?v=${SW_URL_VERSION}',{scope:'./'})`)&&registration.includes('registration.update?.()'));
 
 const MIME={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.webmanifest':'application/manifest+json','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.jpeg':'image/jpeg','.svg':'image/svg+xml'};
 const server=http.createServer((request,response)=>{
@@ -109,11 +110,11 @@ try{
   const pwa=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,serviceWorkers:'allow'});
   const page=await pageFor(pwa);await page.goto(`${BASE}/seed.html`);
   await page.evaluate(async({base})=>{const cache=await caches.open('octagon-hq-static-v15');await cache.put(`${base}/index.html?installed=1`,new Response('legacy',{headers:{'content-type':'text/html'}}));await cache.put(`${base}/assets/css/picks-mobile-polish.css?v=old`,new Response('.x{color:#f97316}',{headers:{'content-type':'text/css'}}));},{base:BASE});
-  await page.evaluate(({base,prefix,version})=>{navigator.serviceWorker.register(`${base}/sw.js?v=${version}`,{scope:`${prefix}/`,updateViaCache:'none'});},{base:BASE,prefix:PREFIX,version:SW_VERSION});
-  await page.waitForFunction(version=>navigator.serviceWorker.controller?.scriptURL.includes(version),SW_VERSION,{timeout:30000});
+  await page.evaluate(({base,prefix,urlVersion})=>{navigator.serviceWorker.register(`${base}/sw.js?v=${urlVersion}`,{scope:`${prefix}/`});},{base:BASE,prefix:PREFIX,urlVersion:SW_URL_VERSION});
+  await page.waitForFunction(urlVersion=>navigator.serviceWorker.controller?.scriptURL.includes(urlVersion),SW_URL_VERSION,{timeout:30000});
   const pwaProof=await exercise(page,'installed PWA',`${BASE}/index.html?installed=1`);
   const workerProof=await page.evaluate(async({url})=>{const controller=navigator.serviceWorker.controller;const identity=await new Promise(resolve=>{const handler=event=>{if(event.data?.type!=='OCTAGON_SW_VERSION')return;navigator.serviceWorker.removeEventListener('message',handler);resolve(event.data);};navigator.serviceWorker.addEventListener('message',handler);controller.postMessage({type:'OCTAGON_SW_VERSION'});});const keys=await caches.keys();const urls=[];for(const key of keys)for(const request of await (await caches.open(key)).keys())urls.push(request.url);const cached=await caches.match(url);return{controller:controller.scriptURL,identity,keys,urls,html:cached?await cached.text():'',title:document.title};},{url:`${BASE}/index.html?installed=1`});
-  assert.ok(workerProof.controller.includes(SW_VERSION));assert.deepEqual(workerProof.identity,{type:'OCTAGON_SW_VERSION',version:SW_VERSION,cache:SW_CACHE});assert.deepEqual(workerProof.keys.filter(key=>key.startsWith('octagon-hq-static-')),['octagon-hq-static-v16']);assert.ok(!workerProof.urls.some(url=>url.includes('find-leader.css')||url.includes('picks-mobile-polish.css')));assert.notEqual(workerProof.html,'legacy');assert.equal(workerProof.title,'Octagon HQ');await pwa.close();
+  assert.ok(workerProof.controller.includes(SW_URL_VERSION));assert.deepEqual(workerProof.identity,{type:'OCTAGON_SW_VERSION',version:SW_VERSION,cache:SW_CACHE});assert.deepEqual(workerProof.keys.filter(key=>key.startsWith('octagon-hq-static-')),['octagon-hq-static-v16']);assert.ok(!workerProof.urls.some(url=>url.includes('find-leader.css')||url.includes('picks-mobile-polish.css')));assert.notEqual(workerProof.html,'legacy');assert.equal(workerProof.title,'Octagon HQ');await pwa.close();
   console.log(JSON.stringify({proof:'real-production-palette',normal:normalProof,pwa:pwaProof,worker:workerProof},null,2));
 }finally{await browser.close();await new Promise(resolve=>server.close(resolve));}
 console.log('Real production palette regression passed.');
