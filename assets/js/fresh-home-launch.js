@@ -4,7 +4,7 @@
   if(window.__UFC_FRESH_HOME_LAUNCH_STARTED__)return;
   window.__UFC_FRESH_HOME_LAUNCH_STARTED__=true;
 
-  const VERSION='fresh-home-launch-20260722e-explicit-picks-handoff';
+  const VERSION='fresh-home-launch-20260722f-explicit-picks-handoff';
   const RESUME_PICKS_KEY='__picks_resume';
   const INVITE_KEY='invite';
   const RESUME_WINDOW_MS=30000;
@@ -47,7 +47,7 @@
     if(navigationType!=='navigate'||!room||!url.searchParams.has('event')||url.searchParams.get('picksView')!=='event')return false;
     try{
       const referrer=new URL(String(document.referrer||''));
-      return referrer.origin===url.origin&&referrer.pathname===url.pathname;
+      return Boolean(document.referrer)&&referrer.origin===url.origin;
     }catch(_error){return false;}
   }
   function hasFreshPicksResume(url=currentUrl()){
