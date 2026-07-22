@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import {
   buildReconciliationPlan,
+  isAuthoritativeSource,
   isPickable,
   matchupKey,
   normalizeName,
@@ -8,7 +9,7 @@ import {
 
 const JSON_HEADERS = { "content-type": "application/json; charset=utf-8" };
 const ALLOWED_SOURCE_HOSTS = new Set(["ufc.com", "www.ufc.com", "mmamania.com", "www.mmamania.com"]);
-const ALLOWED_SOURCE_TYPES = new Set(["official-ufc", "mma-mania"]);
+const ALLOWED_SOURCE_TYPES = new Set(["official-ufc", "maintained-repo", "mma-mania"]);
 const RESOLVED_STATUSES = new Set(["complete", "draw", "no-contest"]);
 
 function json(status, body) {
@@ -27,6 +28,10 @@ function safeFightId(value) {
     .slice(0, 120);
 }
 
+function authorityFromNote(value) {
+  return String(value || "").match(/slot-authority=(official-ufc|maintained-repo)/i)?.[1]?.toLowerCase() || null;
+}
+
 async function deleteFightPicks(supabase, fightIds, summary) {
   const ids = [...new Set((fightIds || []).filter(Boolean))];
   if (!ids.length) return;
@@ -40,7 +45,7 @@ async function deleteFightPicks(supabase, fightIds, summary) {
 }
 
 function validatePayload(body) {
-  if (!body || body.confirmed !== true || !body.confirmationHash) throw new Error("Two matching source captures are required");
+  if (!body || body.confirmed !== true || !body.confirmationHash) throw new Error("A confirmed card snapshot is required");
   if (!ALLOWED_SOURCE_TYPES.has(body.sourceType)) throw new Error(`Unsupported card source type: ${body.sourceType}`);
   if (!body.event?.id || !body.event?.event_date || !body.event?.event_type) throw new Error("Incomplete event payload");
   if (!Array.isArray(body.fights)) throw new Error("Fight snapshot is missing");
@@ -51,8 +56,12 @@ function validatePayload(body) {
   if (expectedMainCardFights && mainCardFights !== expectedMainCardFights) {
     throw new Error(`Snapshot contains ${mainCardFights} main-card fights; expected exactly ${expectedMainCardFights}`);
   }
-  const sourceUrl = new URL(body.sourceUrl);
-  if (!ALLOWED_SOURCE_HOSTS.has(sourceUrl.hostname.toLowerCase())) throw new Error(`Unapproved card source: ${sourceUrl.hostname}`);
+  if (body.sourceType === "maintained-repo") {
+    if (body.sourceUrl !== "repository:assets/data/picks-events.js") throw new Error("Unapproved maintained card source");
+  } else {
+    const sourceUrl = new URL(body.sourceUrl);
+    if (!ALLOWED_SOURCE_HOSTS.has(sourceUrl.hostname.toLowerCase())) throw new Error(`Unapproved card source: ${sourceUrl.hostname}`);
+  }
   const expected = body.validation?.expectedMainEvent;
   if (Array.isArray(expected) && expected.length === 2) {
     const expectedKey = matchupKey(expected[0], expected[1]);
@@ -113,7 +122,9 @@ Deno.serve(async (request) => {
     confirmationHash: body.confirmationHash,
     fightsReceived: incomingFights.length,
     pickableFightsReceived: incomingPickable.length,
-    sectionAuthority: body.sourceType === "official-ufc" ? "authoritative" : "preserve-existing",
+    sectionAuthority: isAuthoritativeSource(body.sourceType) ? body.sourceType : "preserve-existing",
+    priorAuthority: null,
+    skipped: false,
     inserted: 0,
     updated: 0,
     cancelled: 0,
@@ -126,27 +137,24 @@ Deno.serve(async (request) => {
   try {
     const { data: existingEvent, error: existingEventError } = await supabase
       .from("pick_events")
-      .select("id,status")
+      .select("id,status,source_note")
       .eq("id", event.id)
       .maybeSingle();
     if (existingEventError) throw new Error(`Could not load event: ${existingEventError.message}`);
 
-    const status = existingEvent && ["live", "complete"].includes(existingEvent.status)
-      ? existingEvent.status
-      : event.status;
-    const sourceNote = `${normalizeSpace(event.source_note)} · ${body.fights.length} fights · ${incomingPickable.length} source-pickable · ${summary.sectionAuthority} · confirmed ${body.confirmationHash.slice(0, 12)}`;
-    const { error: eventError } = await supabase.from("pick_events").upsert({
-      id: event.id,
-      name: normalizeSpace(event.name),
-      subtitle: normalizeSpace(event.subtitle),
-      event_type: event.event_type,
-      event_date: new Date(event.event_date).toISOString(),
-      location: normalizeSpace(event.location),
-      card_rule: normalizeSpace(event.card_rule),
-      status,
-      source_note: sourceNote,
-    }, { onConflict: "id" });
-    if (eventError) throw new Error(`Could not upsert event: ${eventError.message}`);
+    const priorAuthority = authorityFromNote(existingEvent?.source_note);
+    summary.priorAuthority = priorAuthority;
+    if (body.sourceType === "maintained-repo" && priorAuthority === "official-ufc") {
+      summary.skipped = true;
+      summary.sectionAuthority = "official-ufc";
+      return json(200, {
+        synced: true,
+        skipped: true,
+        reason: "UFC.com already owns this event's card slots",
+        summary,
+        syncedAt: new Date().toISOString(),
+      });
+    }
 
     const { data: existingRows, error: existingError } = await supabase
       .from("pick_fights")
@@ -164,9 +172,30 @@ Deno.serve(async (request) => {
       throw new Error(`Refusing pickable-card shrink from ${existingPickable.length} to ${incomingPickable.length} fights`);
     }
 
-    // Build the complete plan before any fight rows are touched. If a fallback
-    // tries to change card slots, the request fails closed with zero mutations.
     const plan = buildReconciliationPlan(existing, incomingFights, event, body.sourceType);
+    const nextAuthority = body.sourceType === "official-ufc"
+      ? "official-ufc"
+      : body.sourceType === "maintained-repo"
+        ? "maintained-repo"
+        : priorAuthority || "maintained-repo";
+    summary.sectionAuthority = nextAuthority;
+
+    const status = existingEvent && ["live", "complete"].includes(existingEvent.status)
+      ? existingEvent.status
+      : event.status;
+    const sourceNote = `${normalizeSpace(event.source_note)} · slot-authority=${nextAuthority} · ${body.fights.length} fights · ${incomingPickable.length} source-pickable · observed-by=${body.sourceType} · confirmed ${body.confirmationHash.slice(0, 12)}`;
+    const { error: eventError } = await supabase.from("pick_events").upsert({
+      id: event.id,
+      name: normalizeSpace(event.name),
+      subtitle: normalizeSpace(event.subtitle),
+      event_type: event.event_type,
+      event_date: new Date(event.event_date).toISOString(),
+      location: normalizeSpace(event.location),
+      card_rule: normalizeSpace(event.card_rule),
+      status,
+      source_note: sourceNote,
+    }, { onConflict: "id" });
+    if (eventError) throw new Error(`Could not upsert event: ${eventError.message}`);
 
     for (const [index, fight] of existing.entries()) {
       const { error } = await supabase
