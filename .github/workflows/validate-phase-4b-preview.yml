@@ -95,11 +95,11 @@ jobs:
           ! grep -Fq 'visibilitychange' assets/js/fresh-home-launch.js
           ! grep -Fq 'pagehide' assets/js/fresh-home-launch.js
           ! grep -Fq 'pageshow' assets/js/fresh-home-launch.js
-          grep -Fq 'community-profiles-20260718h-collapsed-top10-profile' assets/js/community-profiles.js
+          grep -Fq 'community-profiles-20260720b-passive-identity-consumer' assets/js/community-profiles.js
           grep -Fq 'community-top10-overlay' assets/js/community-profiles.js
           grep -Fq 'syncPicksAccess' assets/js/community-profiles.js
-          grep -Fq 'fresh-home-route-bootstrap-20260719a' assets/js/fresh-home-route-bootstrap.js
-          grep -Fq 'fresh-home-launch-20260719e-single-startup-route' assets/js/fresh-home-launch.js
+          grep -Fq 'fresh-home-route-bootstrap-20260722b-force-standalone-home' assets/js/fresh-home-route-bootstrap.js
+          grep -Fq 'fresh-home-launch-20260722c-explicit-picks-share' assets/js/fresh-home-launch.js
           grep -Fq 'RESUME_PICKS_KEY' assets/js/fresh-home-launch.js
           grep -Fq "picksRouteKeys=['group','room','event','picksView','archive']" assets/js/fresh-home-launch.js
           grep -Fq 'fresh-home-route-bootstrap.js?v=fresh-home-route-bootstrap-20260719a' index.html
@@ -108,7 +108,7 @@ jobs:
           grep -Fq '__UFC_PRODUCT_ARCHITECTURE_STARTED__' assets/js/product-architecture.js
           ! grep -Fq 'loadNativeShell();' assets/js/product-architecture.js
           ! grep -Fq 'loadNotificationSurfaceFix();' assets/js/product-architecture.js
-          grep -Fq 'app-notification-surface-fix-20260718c-single-owner' assets/js/app-notification-surface-fix.js
+          grep -Fq 'app-notification-surface-fix-20260721f-profile-cache-only' assets/js/app-notification-surface-fix.js
           grep -Fq '__UFC_APP_NOTIFICATION_SURFACE_FIX_STARTED__' assets/js/app-notification-surface-fix.js
           grep -Fq 'app_profile_community_snapshot' supabase/app-community-profiles-phase-4b.sql
           grep -Fq 'app_profile_set_top_ten' supabase/app-community-profiles-phase-4b.sql
