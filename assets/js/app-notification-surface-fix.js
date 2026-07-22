@@ -4,7 +4,7 @@
   if(window.__UFC_APP_NOTIFICATION_SURFACE_FIX_STARTED__)return;
   window.__UFC_APP_NOTIFICATION_SURFACE_FIX_STARTED__=true;
 
-  const VERSION='app-notification-surface-fix-20260721f-profile-cache-only';
+  const VERSION='app-notification-surface-fix-20260721g-current-palette-worker';
   const CACHE_PREFIX='octagon-hq:activity-profile-html-v1:';
   let observer=null;
 
@@ -76,7 +76,7 @@
 
   function registerCurrentWorker(){
     if(!('serviceWorker' in navigator))return;
-    navigator.serviceWorker.register('sw.js?v=octagon-hq-sw-20260720c-picks-runtime-refresh',{scope:'./'}).then(registration=>registration.update?.()).catch(()=>undefined);
+    navigator.serviceWorker.register('sw.js?v=octagon-hq-sw-20260721g-palette-shell-reset',{scope:'./',updateViaCache:'none'}).then(registration=>registration.update?.()).catch(()=>undefined);
   }
 
   function start(){
