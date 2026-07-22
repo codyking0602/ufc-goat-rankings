@@ -41,7 +41,7 @@
       "syncUntil": "2026-08-01T21:30:00.000Z",
       "idPrefix": "belgrade26",
       "minFights": 8,
-      "mainCardFightCount": 5,
+      "mainCardFightCount": 4,
       "expectedMainEvent": [
         "Uros Medic",
         "Daniel Rodriguez"
