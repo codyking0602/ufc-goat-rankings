@@ -1,4 +1,6 @@
-/* Phase 4A stabilization: fighter profiles, bottom clearance, and compact update control. */
+@import url("./product-polish.css?v=product-polish-20260721e-static-final-owner");
+
+/* Final static presentation owner: shared product polish plus mobile shell stability. */
 @media(max-width:900px){
   main.shell{padding-bottom:calc(var(--native-nav-height) + var(--native-safe-bottom) + 30px)!important}
   #whatsNewBtn [data-whats-new-label]{display:block;line-height:1!important}
