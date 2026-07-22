@@ -4,7 +4,7 @@
   if(window.__UFC_FRESH_HOME_ROUTE_BOOTSTRAP_STARTED__)return;
   window.__UFC_FRESH_HOME_ROUTE_BOOTSTRAP_STARTED__=true;
 
-  const VERSION='fresh-home-route-bootstrap-20260722j-profile-owned-pin-handoff';
+  const VERSION='fresh-home-route-bootstrap-20260722k-standalone-update-owner';
   const UPDATE_OWNER_SRC='assets/js/app-update-watcher.js?v=app-update-watcher-20260722c-early-worker-owner';
   const RESUME_PICKS_KEY='__picks_resume';
   const PIN_RESUME_STORAGE_KEY='__ufc_picks_pin_resume';
@@ -13,6 +13,9 @@
   const deepLinkKeys=['challenge','share','fighter','message','notification','push'];
   const picksRouteKeys=['group','room','event','picksView','archive'];
   const staleKeys=['group','room','event','picksView','archive','week','open','game',INVITE_KEY,RESUME_PICKS_KEY];
+  const url=new URL(location.href);
+  const standalone=window.navigator.standalone===true
+    ||window.matchMedia?.('(display-mode: standalone)')?.matches===true;
 
   function publishUpdateOwner(){
     if(window.__UFC_APP_UPDATE_WATCHER_STARTED__||document.querySelector?.('script[src*="assets/js/app-update-watcher.js"]'))return false;
@@ -28,11 +31,8 @@
     return true;
   }
 
-  publishUpdateOwner();
+  if(standalone)publishUpdateOwner();
 
-  const url=new URL(location.href);
-  const standalone=window.navigator.standalone===true
-    ||window.matchMedia?.('(display-mode: standalone)')?.matches===true;
   const picksRoute=String(url.hash||'').toLowerCase()==='#picks'
     ||picksRouteKeys.some(key=>url.searchParams.has(key));
   const group=String(url.searchParams.get('group')||'').trim();
