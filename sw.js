@@ -17,7 +17,6 @@ self.addEventListener('activate',event=>{
   event.waitUntil((async()=>{
     const target=await caches.open(CACHE_NAME);
     const keys=await caches.keys();
-    const replacedLegacy=keys.some(key=>key.startsWith(LEGACY_PREFIX)&&key!==CACHE_NAME);
     for(const key of keys){
       if(!key.startsWith(LEGACY_PREFIX)||key===CACHE_NAME)continue;
       const source=await caches.open(key);
@@ -37,10 +36,8 @@ self.addEventListener('activate',event=>{
       return FORCE_NETWORK.test(path)||PALETTE_NETWORK_ONLY.test(path);
     }).map(request=>target.delete(request)));
     await self.clients.claim();
-    if(replacedLegacy){
-      const windows=await self.clients.matchAll({type:'window',includeUncontrolled:true});
-      await Promise.allSettled(windows.map(client=>client.navigate?.(client.url)));
-    }
+    const windows=await self.clients.matchAll({type:'window',includeUncontrolled:true});
+    await Promise.allSettled(windows.map(client=>client.navigate?.(client.url)));
   })());
 });
 
@@ -68,15 +65,11 @@ async function updateCache(request){
   }catch(_error){return null;}
 }
 
-async function instantNavigation(request,event){
+async function instantNavigation(request){
   const cache=await caches.open(CACHE_NAME);
-  const cached=await cache.match(request,{ignoreSearch:true})||await cache.match('./index.html')||await cache.match('./');
-  const network=updateCache(request);
-  if(cached){
-    event.waitUntil(network);
-    return cached;
-  }
-  return (await network)||Response.error();
+  const network=await updateCache(request);
+  if(network?.ok)return network;
+  return await cache.match(request,{ignoreSearch:true})||await cache.match('./index.html')||await cache.match('./')||network||Response.error();
 }
 
 async function cacheFirst(request){
@@ -97,7 +90,7 @@ self.addEventListener('fetch',event=>{
   if(request.method!=='GET')return;
   const url=new URL(request.url);
   if(isNavigation(request)){
-    event.respondWith(instantNavigation(request,event));
+    event.respondWith(instantNavigation(request));
     return;
   }
   if(url.origin===self.location.origin&&PALETTE_NETWORK_ONLY.test(url.pathname)){
