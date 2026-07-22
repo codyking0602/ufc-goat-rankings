@@ -4,7 +4,7 @@
   if(window.__UFC_FRESH_HOME_ROUTE_BOOTSTRAP_STARTED__)return;
   window.__UFC_FRESH_HOME_ROUTE_BOOTSTRAP_STARTED__=true;
 
-  const VERSION='fresh-home-route-bootstrap-20260722d-explicit-picks-handoff';
+  const VERSION='fresh-home-route-bootstrap-20260722e-explicit-picks-handoff';
   const RESUME_PICKS_KEY='__picks_resume';
   const INVITE_KEY='invite';
   const RESUME_WINDOW_MS=30000;
@@ -25,7 +25,7 @@
   if(navigationType==='navigate'&&room&&url.searchParams.has('event')&&url.searchParams.get('picksView')==='event'){
     try{
       const referrer=new URL(String(document.referrer||''));
-      sameOriginRoomHandoff=referrer.origin===url.origin&&referrer.pathname===url.pathname;
+      sameOriginRoomHandoff=Boolean(document.referrer)&&referrer.origin===url.origin;
     }catch(_error){}
   }
   const resumePicks=(markedAt>0&&Date.now()-markedAt<RESUME_WINDOW_MS)||sameOriginRoomHandoff;
