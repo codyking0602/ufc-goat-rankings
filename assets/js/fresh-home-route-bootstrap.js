@@ -4,7 +4,7 @@
   if(window.__UFC_FRESH_HOME_ROUTE_BOOTSTRAP_STARTED__)return;
   window.__UFC_FRESH_HOME_ROUTE_BOOTSTRAP_STARTED__=true;
 
-  const VERSION='fresh-home-route-bootstrap-20260722e-explicit-picks-handoff';
+  const VERSION='fresh-home-route-bootstrap-20260722f-pin-resume-owner';
   const RESUME_PICKS_KEY='__picks_resume';
   const INVITE_KEY='invite';
   const RESUME_WINDOW_MS=30000;
@@ -12,7 +12,6 @@
   const picksRouteKeys=['group','room','event','picksView','archive'];
   const staleKeys=['group','room','event','picksView','archive','week','open','game',INVITE_KEY,RESUME_PICKS_KEY];
   const url=new URL(location.href);
-  const navigationType=performance.getEntriesByType?.('navigation')?.[0]?.type||'navigate';
   const standalone=window.navigator.standalone===true
     ||window.matchMedia?.('(display-mode: standalone)')?.matches===true;
   const picksRoute=String(url.hash||'').toLowerCase()==='#picks'
@@ -21,14 +20,7 @@
   const room=String(url.searchParams.get('room')||'').trim();
   const inviteMarked=url.searchParams.get(INVITE_KEY)==='1'&&Boolean(group||room);
   const markedAt=Number(url.searchParams.get(RESUME_PICKS_KEY)||0);
-  let sameOriginRoomHandoff=false;
-  if(navigationType==='navigate'&&room&&url.searchParams.has('event')&&url.searchParams.get('picksView')==='event'){
-    try{
-      const referrer=new URL(String(document.referrer||''));
-      sameOriginRoomHandoff=Boolean(document.referrer)&&referrer.origin===url.origin;
-    }catch(_error){}
-  }
-  const resumePicks=(markedAt>0&&Date.now()-markedAt<RESUME_WINDOW_MS)||sameOriginRoomHandoff;
+  const resumePicks=markedAt>0&&Date.now()-markedAt<RESUME_WINDOW_MS;
   const explicitDeepLink=deepLinkKeys.some(key=>url.searchParams.has(key));
   const preservePicks=picksRoute&&(resumePicks||inviteMarked);
 
@@ -45,6 +37,14 @@
     url.hash='home';
     history.replaceState(history.state,'',`${url.pathname}${url.search}#home`);
   }
+
+  document.addEventListener('click',event=>{
+    if(!event.target.closest?.('#picksPinSignInButton'))return;
+    const next=new URL(location.href);
+    next.searchParams.delete(INVITE_KEY);
+    next.searchParams.set(RESUME_PICKS_KEY,String(Date.now()));
+    history.replaceState(history.state,'',`${next.pathname}${next.search}${next.hash}`);
+  },true);
 
   document.documentElement.dataset.freshHomeBootstrap=VERSION;
   document.documentElement.dataset.freshHomeBootstrapRoute=preservePicks?'picks':explicitDeepLink?'deep-link':'home';
