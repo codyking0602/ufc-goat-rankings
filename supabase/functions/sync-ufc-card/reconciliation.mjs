@@ -31,7 +31,7 @@ export function isPickable(event, fight) {
 }
 
 export function isAuthoritativeSource(sourceType) {
-  return sourceType === 'official-ufc' || sourceType === 'maintained-repo';
+  return sourceType === 'mma-mania' || sourceType === 'maintained-repo';
 }
 
 function sharedFighterCount(left, right) {
@@ -57,19 +57,19 @@ function findPreviousFight(incoming, unmatched, byPair) {
 }
 
 /**
- * UFC.com owns live card changes. The maintained repository baseline owns the
- * initial safe slot layout when UFC.com is unavailable. A fallback source may
- * only reconcile an opponent replacement inside an already-known slot.
+ * MMA Mania owns live card membership, section placement and order. The
+ * maintained repository card safely seeds an event when the article cannot be
+ * reached. No UFC.com source participates in automated reconciliation.
  */
 export function buildReconciliationPlan(existing, incomingFights, event, sourceType) {
   const authoritative = isAuthoritativeSource(sourceType);
   const activeExisting = existing.filter((fight) => !RESOLVED_STATUSES.has(fight.result_status));
 
   if (!authoritative && !activeExisting.length) {
-    throw new Error('Fallback card source cannot establish an event without an existing authoritative baseline');
+    throw new Error('Non-authoritative card source cannot establish an event');
   }
   if (!authoritative && incomingFights.length !== activeExisting.length) {
-    throw new Error(`Fallback card source cannot add or remove fight slots (${activeExisting.length} existing vs ${incomingFights.length} incoming)`);
+    throw new Error(`Non-authoritative card source cannot add or remove fight slots (${activeExisting.length} existing vs ${incomingFights.length} incoming)`);
   }
 
   const unmatched = new Map(existing.map((fight) => [fight.id, fight]));
@@ -86,7 +86,7 @@ export function buildReconciliationPlan(existing, incomingFights, event, sourceT
     const previous = findPreviousFight(incoming, unmatched, byPair);
     if (!previous) {
       if (!authoritative) {
-        throw new Error(`Fallback card source cannot create a new slot for ${incoming.red_name} vs. ${incoming.blue_name}`);
+        throw new Error(`Non-authoritative card source cannot create a new slot for ${incoming.red_name} vs. ${incoming.blue_name}`);
       }
       actions.push({ type: 'insert', incoming });
       continue;
@@ -118,7 +118,7 @@ export function buildReconciliationPlan(existing, incomingFights, event, sourceT
   if (!authoritative) {
     const activeStale = stale.filter((fight) => !RESOLVED_STATUSES.has(fight.result_status));
     if (activeStale.length) {
-      throw new Error(`Fallback card source cannot remove existing slots: ${activeStale.map((fight) => fight.id).join(', ')}`);
+      throw new Error(`Non-authoritative card source cannot remove existing slots: ${activeStale.map((fight) => fight.id).join(', ')}`);
     }
   }
 
