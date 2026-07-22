@@ -83,15 +83,13 @@ try{
   await page.waitForFunction(()=>localStorage.getItem('ufc-picks:room:ROOM01')==='product-owner-token',null,{timeout:30000});
 
   report.stage='canonical-access';
-  report.initial=await page.evaluate(()=>(
-    {
-      group:localStorage.getItem('ufc-picks:group:GOAT26'),
-      room:localStorage.getItem('ufc-picks:room:ROOM01'),
-      active:localStorage.getItem('ufc-player:group-code'),
-      display:localStorage.getItem('ufc-picks:display-name'),
-      writes:window.__PROFILE_ACCESS_WRITES__
-    }
-  ));
+  report.initial=await page.evaluate(()=>({
+    group:localStorage.getItem('ufc-picks:group:GOAT26'),
+    room:localStorage.getItem('ufc-picks:room:ROOM01'),
+    active:localStorage.getItem('ufc-player:group-code'),
+    display:localStorage.getItem('ufc-picks:display-name'),
+    writes:window.__PROFILE_ACCESS_WRITES__
+  }));
   assert.equal(report.initial.group,'product-owner-token');
   assert.equal(report.initial.room,'product-owner-token');
   assert.equal(report.initial.active,'GOAT26');
@@ -107,13 +105,11 @@ try{
     window.dispatchEvent(new CustomEvent('ufc-app-profile-updated',{detail:{identity:window.UFC_PLAY_PROFILE.identity}}));
   });
   await page.waitForTimeout(250);
-  report.profileUpdate=await page.evaluate(()=>(
-    {
-      refreshes:window.__PIN_REFRESH_COUNT__,
-      writes:window.__PROFILE_ACCESS_WRITES__,
-      cardSuppressed:document.documentElement.dataset.sharedProfileAuth==='true'
-    }
-  ));
+  report.profileUpdate=await page.evaluate(()=>({
+    refreshes:window.__PIN_REFRESH_COUNT__,
+    writes:window.__PROFILE_ACCESS_WRITES__,
+    cardSuppressed:document.documentElement.dataset.sharedProfileAuth==='true'
+  }));
   assert.equal(report.profileUpdate.refreshes,1,'A profile update must retain one Product-owned Picks PIN refresh.');
   assert.deepEqual(report.profileUpdate.writes,[],'A profile update must not trigger compatibility access persistence.');
   assert.equal(report.profileUpdate.cardSuppressed,true,'Product Architecture must retain duplicate Picks sign-in suppression.');
@@ -130,14 +126,12 @@ try{
     window.dispatchEvent(new CustomEvent('octagon-hq:view-change',{detail:{destination:'picks'}}));
   });
   await page.waitForTimeout(250);
-  report.picks=await page.evaluate(()=>(
-    {
-      group:new URL(location.href).searchParams.get('group'),
-      refreshes:window.__PIN_REFRESH_COUNT__,
-      writes:window.__PROFILE_ACCESS_WRITES__,
-      history:window.__PROFILE_HISTORY_WRITES__
-    }
-  ));
+  report.picks=await page.evaluate(()=>({
+    group:new URL(location.href).searchParams.get('group'),
+    refreshes:window.__PIN_REFRESH_COUNT__,
+    writes:window.__PROFILE_ACCESS_WRITES__,
+    history:window.__PROFILE_HISTORY_WRITES__
+  }));
   assert.equal(report.picks.group,'GOAT26','Product Architecture must retain the Picks group URL handoff.');
   assert.equal(report.picks.refreshes,1,'A Picks destination handoff must retain one PIN-surface refresh.');
   assert.deepEqual(report.picks.writes,[],'The Picks handoff must not change canonical access values.');
