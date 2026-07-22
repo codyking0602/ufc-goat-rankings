@@ -1,0 +1,77 @@
+{
+  "secretsOutcome": "success",
+  "runtimeOutcome": "success",
+  "contractsOutcome": "success",
+  "deployOutcome": "success",
+  "baselineOutcome": "success",
+  "externalOutcome": "failure",
+  "baselineReport": {
+    "generatedAt": "2026-07-22T12:35:47.981Z",
+    "report": [
+      {
+        "eventId": "ufc-abu-dhabi-2026-07-25",
+        "sourceType": "maintained-repo",
+        "fights": 13,
+        "mainCardFights": 6,
+        "confirmationHash": "ebe58f06e138d2f11ac57bf8bd9f91d2768952b9a4ae47cc03bedad5f11fba56",
+        "applied": true,
+        "result": {
+          "synced": true,
+          "summary": {
+            "eventId": "ufc-abu-dhabi-2026-07-25",
+            "sourceType": "maintained-repo",
+            "sourceUrl": "repository:assets/data/picks-events.js",
+            "confirmationHash": "ebe58f06e138d2f11ac57bf8bd9f91d2768952b9a4ae47cc03bedad5f11fba56",
+            "fightsReceived": 13,
+            "pickableFightsReceived": 6,
+            "sectionAuthority": "maintained-repo",
+            "priorAuthority": "maintained-repo",
+            "skipped": false,
+            "inserted": 0,
+            "updated": 13,
+            "cancelled": 1,
+            "replacements": 0,
+            "promotions": 0,
+            "demotions": 1,
+            "picksReset": 1
+          },
+          "syncedAt": "2026-07-22T12:35:45.684Z"
+        }
+      },
+      {
+        "eventId": "ufc-belgrade-2026-08-01",
+        "sourceType": "maintained-repo",
+        "fights": 12,
+        "mainCardFights": 5,
+        "confirmationHash": "58d9aad202853d00812f61e726d3f0d3554bebf8b5706486c76b0adfb544371b",
+        "applied": true,
+        "result": {
+          "synced": true,
+          "summary": {
+            "eventId": "ufc-belgrade-2026-08-01",
+            "sourceType": "maintained-repo",
+            "sourceUrl": "repository:assets/data/picks-events.js",
+            "confirmationHash": "58d9aad202853d00812f61e726d3f0d3554bebf8b5706486c76b0adfb544371b",
+            "fightsReceived": 12,
+            "pickableFightsReceived": 5,
+            "sectionAuthority": "maintained-repo",
+            "priorAuthority": "maintained-repo",
+            "skipped": false,
+            "inserted": 0,
+            "updated": 12,
+            "cancelled": 1,
+            "replacements": 0,
+            "promotions": 0,
+            "demotions": 0,
+            "picksReset": 0
+          },
+          "syncedAt": "2026-07-22T12:35:47.971Z"
+        }
+      }
+    ]
+  },
+  "mmaManiaReport": null,
+  "baselineConsoleTail": "          \"replacements\": 0,\n          \"promotions\": 0,\n          \"demotions\": 1,\n          \"picksReset\": 1\n        },\n        \"syncedAt\": \"2026-07-22T12:35:45.684Z\"\n      }\n    },\n    {\n      \"eventId\": \"ufc-belgrade-2026-08-01\",\n      \"sourceType\": \"maintained-repo\",\n      \"fights\": 12,\n      \"mainCardFights\": 5,\n      \"confirmationHash\": \"58d9aad202853d00812f61e726d3f0d3554bebf8b5706486c76b0adfb544371b\",\n      \"applied\": true,\n      \"result\": {\n        \"synced\": true,\n        \"summary\": {\n          \"eventId\": \"ufc-belgrade-2026-08-01\",\n          \"sourceType\": \"maintained-repo\",\n          \"sourceUrl\": \"repository:assets/data/picks-events.js\",\n          \"confirmationHash\": \"58d9aad202853d00812f61e726d3f0d3554bebf8b5706486c76b0adfb544371b\",\n          \"fightsReceived\": 12,\n          \"pickableFightsReceived\": 5,\n          \"sectionAuthority\": \"maintained-repo\",\n          \"priorAuthority\": \"maintained-repo\",\n          \"skipped\": false,\n          \"inserted\": 0,\n          \"updated\": 12,\n          \"cancelled\": 1,\n          \"replacements\": 0,\n          \"promotions\": 0,\n          \"demotions\": 0,\n          \"picksReset\": 0\n        },\n        \"syncedAt\": \"2026-07-22T12:35:47.971Z\"\n      }\n    }\n  ]\n}",
+  "mmaManiaConsoleTail": "{\n  \"eventId\": \"ufc-abu-dhabi-2026-07-25\",\n  \"sourceType\": \"mma-mania\",\n  \"sourceUrl\": \"https://www.mmamania.com/ufc-fight-cards/447644/latest-ufc-abu-dhabi-fight-card-paramount-start-time-date-location-ankalaev-vs-guskov\",\n  \"fights\": 13,\n  \"mainCardFights\": 6,\n  \"requiredMainCardFights\": 6,\n  \"confirmationHash\": \"a52b885b41b36c26bfcf14cc4f254b4f75695f2707c215d5de6b9879edb4f7b5\",\n  \"applied\": true,\n  \"result\": {\n    \"synced\": true,\n    \"summary\": {\n      \"eventId\": \"ufc-abu-dhabi-2026-07-25\",\n      \"sourceType\": \"mma-mania\",\n      \"sourceUrl\": \"https://www.mmamania.com/ufc-fight-cards/447644/latest-ufc-abu-dhabi-fight-card-paramount-start-time-date-location-ankalaev-vs-guskov\",\n      \"confirmationHash\": \"a52b885b41b36c26bfcf14cc4f254b4f75695f2707c215d5de6b9879edb4f7b5\",\n      \"fightsReceived\": 13,\n      \"pickableFightsReceived\": 6,\n      \"sectionAuthority\": \"mma-mania\",\n      \"priorAuthority\": \"maintained-repo\",\n      \"skipped\": false,\n      \"inserted\": 0,\n      \"updated\": 13,\n      \"cancelled\": 1,\n      \"replacements\": 0,\n      \"promotions\": 0,\n      \"demotions\": 0,\n      \"picksReset\": 0\n    },\n    \"syncedAt\": \"2026-07-22T12:36:00.685Z\"\n  }\n}\nError: Snapshot validation failed for ufc-belgrade-2026-08-01: main-card-count-mismatch:4!=5\n    at validateSnapshot (file:///home/runner/work/ufc-goat-rankings/ufc-goat-rankings/scripts/sync-ufc-card.mjs:181:29)\n    at captureSource (file:///home/runner/work/ufc-goat-rankings/ufc-goat-rankings/scripts/sync-ufc-card.mjs:236:5)\n    at async confirmedSnapshot (file:///home/runner/work/ufc-goat-rankings/ufc-goat-rankings/scripts/sync-ufc-card.mjs:251:15)\n    at async main (file:///home/runner/work/ufc-goat-rankings/ufc-goat-rankings/scripts/sync-ufc-card.mjs:298:22)",
+  "verifiedAt": "2026-07-22T12:36:09.060Z"
+}
