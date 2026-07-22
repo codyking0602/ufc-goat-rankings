@@ -47,7 +47,7 @@ const supabaseStub=`
 
 try{
   browser=await chromium.launch({headless:true});
-  const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true});
+  const context=await browser.newContext({viewport:{width:390,height:844},deviceScaleFactor:2,isMobile:true,hasTouch:true,serviceWorkers:'block'});
   const page=await context.newPage();
 
   await page.addInitScript(()=>{
