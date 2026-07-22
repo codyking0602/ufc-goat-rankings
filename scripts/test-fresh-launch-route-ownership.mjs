@@ -4,7 +4,7 @@ import { chromium } from 'playwright';
 
 const base='http://127.0.0.1:4173/index.html';
 const reportPath='/tmp/profile-signin-stability-report.json';
-const stub="window.supabase={createClient(){const c={select(){return c},eq(){return c},order(){return Promise.resolve({data:[],error:null})},limit(){return Promise.resolve({data:[],error:null})},single(){return Promise.resolve({data:null,error:null})}};return{rpc:async()=>({data:null,error:null}),from:()=>c,channel(){return{on(){return this},subscribe(){return this}}},removeChannel:async()=>{}}}};";
+const stub="window.supabase={createClient(){const c={select(){return c},eq(){return c},order(){return Promise.resolve({data:[],error:null})},limit(){return Promise.resolve({data:null,error:null})},single(){return Promise.resolve({data:null,error:null})}};return{rpc:async()=>({data:null,error:null}),from:()=>c,channel(){return{on(){return this},subscribe(){return this}}},removeChannel:async()=>{}}}};";
 const report={proof:'fresh-launch-route-ownership',phase:'launch',snapshots:{}};
 
 async function pageFor(context){
@@ -64,19 +64,21 @@ try{
   assert.equal(direct.events.length,2,'Picks should receive one real handoff and no duplicate repeat.');
   await home.close();
 
-  report.phase='browser-picks-reload';
+  report.phase='browser-picks-reload-resets-home';
   const reload=await pageFor(context);
-  await reload.goto(`${base}?freshLaunchRouteOwner=reload#home`,{waitUntil:'domcontentloaded',timeout:60000});
+  await reload.goto(`${base}?group=GOAT26&freshLaunchRouteOwner=reload#picks`,{waitUntil:'domcontentloaded',timeout:60000});
   await ready(reload);
-  await reload.evaluate(()=>history.replaceState(history.state,'',`${location.pathname}${location.search}#picks`));
+  await reload.evaluate(()=>history.replaceState(history.state,'',`${location.pathname}?group=GOAT26&freshLaunchRouteOwner=reload#picks`));
   await reload.reload({waitUntil:'domcontentloaded',timeout:60000});
   await ready(reload);
   const picksReload=await snap(reload);
   report.snapshots.picksReload=picksReload;
+  const reloadUrl=new URL(picksReload.url);
   assert.equal(picksReload.navigationType,'reload');
-  assert.equal(picksReload.destination,'picks');
-  assert.deepEqual(picksReload.active,['picks']);
-  assert.deepEqual(picksReload.events,[{destination:'picks',view:'picks'}],'A Picks reload must publish exactly one canonical route event.');
+  assert.equal(picksReload.destination,'home');
+  assert.deepEqual(picksReload.active,['home']);
+  assert.equal(reloadUrl.searchParams.has('group'),false,'An unmarked browser reload retained the stale Picks group.');
+  assert.deepEqual(picksReload.events,[{destination:'home',view:'home'}],'An unmarked Picks reload must publish exactly one canonical Home route event.');
   await reload.close();
 
   report.phase='explicit-picks-invite';
