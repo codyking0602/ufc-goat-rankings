@@ -8,6 +8,7 @@ on:
     paths:
       - 'config/ufc-card-sources.json'
       - 'scripts/sync-ufc-card.mjs'
+      - 'scripts/test-ufc-card-section-authority.mjs'
       - 'scripts/check-ufc-odds-name-matching.mjs'
       - 'supabase/functions/_shared/ufc-name-matching.mjs'
       - 'supabase/functions/sync-ufc-card/**'
@@ -49,6 +50,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+
+      - name: Test UFC card section authority
+        shell: bash
+        run: node scripts/test-ufc-card-section-authority.mjs
 
       - name: Test sportsbook fighter-name reconciliation
         shell: bash

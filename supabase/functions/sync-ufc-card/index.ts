@@ -1,7 +1,14 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
+import {
+  buildReconciliationPlan,
+  isPickable,
+  matchupKey,
+  normalizeName,
+} from "./reconciliation.mjs";
 
 const JSON_HEADERS = { "content-type": "application/json; charset=utf-8" };
 const ALLOWED_SOURCE_HOSTS = new Set(["ufc.com", "www.ufc.com", "mmamania.com", "www.mmamania.com"]);
+const ALLOWED_SOURCE_TYPES = new Set(["official-ufc", "mma-mania"]);
 const RESOLVED_STATUSES = new Set(["complete", "draw", "no-contest"]);
 
 function json(status, body) {
@@ -10,37 +17,6 @@ function json(status, body) {
 
 function normalizeSpace(value) {
   return String(value || "").replace(/\s+/g, " ").trim();
-}
-
-function normalizeName(value) {
-  return normalizeSpace(value)
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/\b(jr|sr|ii|iii|iv)\b/g, "")
-    .replace(/[^a-z0-9]+/g, "")
-    .trim();
-}
-
-function normalizeWeight(value) {
-  return normalizeName(value).replace(/womens/g, "");
-}
-
-function matchupKey(first, second) {
-  return [normalizeName(first), normalizeName(second)].sort().join("|");
-}
-
-function isMainCard(section) {
-  return String(section || "").toLowerCase().includes("main");
-}
-
-function isPickable(event, fight) {
-  return event.event_type === "numbered" || /full card/i.test(String(event.card_rule || "")) || isMainCard(fight.card_section);
-}
-
-function sharedFighterCount(left, right) {
-  const leftNames = new Set([normalizeName(left.red_name), normalizeName(left.blue_name)]);
-  return [normalizeName(right.red_name), normalizeName(right.blue_name)].filter((name) => leftNames.has(name)).length;
 }
 
 function safeFightId(value) {
@@ -65,14 +41,15 @@ async function deleteFightPicks(supabase, fightIds, summary) {
 
 function validatePayload(body) {
   if (!body || body.confirmed !== true || !body.confirmationHash) throw new Error("Two matching source captures are required");
+  if (!ALLOWED_SOURCE_TYPES.has(body.sourceType)) throw new Error(`Unsupported card source type: ${body.sourceType}`);
   if (!body.event?.id || !body.event?.event_date || !body.event?.event_type) throw new Error("Incomplete event payload");
   if (!Array.isArray(body.fights)) throw new Error("Fight snapshot is missing");
   const minFights = Math.max(5, Number(body.validation?.minFights || 5));
   if (body.fights.length < minFights) throw new Error(`Snapshot contains only ${body.fights.length} fights; expected at least ${minFights}`);
   const expectedMainCardFights = Math.max(0, Number(body.validation?.expectedMainCardFights || 0));
-  const mainCardFights = body.fights.filter((fight) => isMainCard(fight.card_section)).length;
-  if (expectedMainCardFights && mainCardFights < expectedMainCardFights) {
-    throw new Error(`Snapshot contains only ${mainCardFights} main-card fights; expected at least ${expectedMainCardFights}`);
+  const mainCardFights = body.fights.filter((fight) => String(fight.card_section || "").toLowerCase().includes("main")).length;
+  if (expectedMainCardFights && mainCardFights !== expectedMainCardFights) {
+    throw new Error(`Snapshot contains ${mainCardFights} main-card fights; expected exactly ${expectedMainCardFights}`);
   }
   const sourceUrl = new URL(body.sourceUrl);
   if (!ALLOWED_SOURCE_HOSTS.has(sourceUrl.hostname.toLowerCase())) throw new Error(`Unapproved card source: ${sourceUrl.hostname}`);
@@ -136,6 +113,7 @@ Deno.serve(async (request) => {
     confirmationHash: body.confirmationHash,
     fightsReceived: incomingFights.length,
     pickableFightsReceived: incomingPickable.length,
+    sectionAuthority: body.sourceType === "official-ufc" ? "authoritative" : "preserve-existing",
     inserted: 0,
     updated: 0,
     cancelled: 0,
@@ -156,7 +134,7 @@ Deno.serve(async (request) => {
     const status = existingEvent && ["live", "complete"].includes(existingEvent.status)
       ? existingEvent.status
       : event.status;
-    const sourceNote = `${normalizeSpace(event.source_note)} · ${body.fights.length} fights · ${incomingPickable.length} pickable · confirmed ${body.confirmationHash.slice(0, 12)}`;
+    const sourceNote = `${normalizeSpace(event.source_note)} · ${body.fights.length} fights · ${incomingPickable.length} source-pickable · ${summary.sectionAuthority} · confirmed ${body.confirmationHash.slice(0, 12)}`;
     const { error: eventError } = await supabase.from("pick_events").upsert({
       id: event.id,
       name: normalizeSpace(event.name),
@@ -182,9 +160,13 @@ Deno.serve(async (request) => {
     if (activeExisting.length >= 5 && incomingFights.length < Math.ceil(activeExisting.length * 0.6)) {
       throw new Error(`Refusing destructive card shrink from ${activeExisting.length} to ${incomingFights.length} fights`);
     }
-    if (existingPickable.length >= 3 && incomingPickable.length < existingPickable.length && body.validation?.allowPickableShrink !== true) {
+    if (existingPickable.length >= 3 && incomingPickable.length < existingPickable.length && body.validation?.allowPickableShrink !== true && body.sourceType === "official-ufc") {
       throw new Error(`Refusing pickable-card shrink from ${existingPickable.length} to ${incomingPickable.length} fights`);
     }
+
+    // Build the complete plan before any fight rows are touched. If a fallback
+    // tries to change card slots, the request fails closed with zero mutations.
+    const plan = buildReconciliationPlan(existing, incomingFights, event, body.sourceType);
 
     for (const [index, fight] of existing.entries()) {
       const { error } = await supabase
@@ -194,30 +176,9 @@ Deno.serve(async (request) => {
       if (error) throw new Error(`Could not stage bout order for ${fight.id}: ${error.message}`);
     }
 
-    const unmatched = new Map(existing.map((fight) => [fight.id, fight]));
-    const byPair = new Map();
-    for (const fight of existing) {
-      const pair = matchupKey(fight.red_name, fight.blue_name);
-      const list = byPair.get(pair) || [];
-      list.push(fight);
-      byPair.set(pair, list);
-    }
-
-    for (const incoming of incomingFights) {
-      let previous = unmatched.get(incoming.id) || null;
-      if (!previous) {
-        previous = (byPair.get(matchupKey(incoming.red_name, incoming.blue_name)) || []).find((fight) => unmatched.has(fight.id)) || null;
-      }
-      if (!previous) {
-        const replacementCandidates = [...unmatched.values()].filter((fight) =>
-          !RESOLVED_STATUSES.has(fight.result_status) &&
-          sharedFighterCount(fight, incoming) === 1 &&
-          normalizeWeight(fight.weight_class) === normalizeWeight(incoming.weight_class)
-        );
-        if (replacementCandidates.length === 1) previous = replacementCandidates[0];
-      }
-
-      if (!previous) {
+    for (const action of plan.actions) {
+      if (action.type === "insert") {
+        const incoming = action.incoming;
         let fightId = incoming.id;
         if (existing.some((fight) => fight.id === fightId)) fightId = `${fightId}-${incoming.bout_order}`.slice(0, 120);
         const { error } = await supabase.from("pick_fights").insert({
@@ -235,14 +196,7 @@ Deno.serve(async (request) => {
         continue;
       }
 
-      unmatched.delete(previous.id);
-      const previousPair = matchupKey(previous.red_name, previous.blue_name);
-      const incomingPair = matchupKey(incoming.red_name, incoming.blue_name);
-      const matchupChanged = previousPair !== incomingPair;
-      const wasPickable = isPickable(event, previous);
-      const nowPickable = isPickable(event, incoming);
-      const promoted = !wasPickable && nowPickable;
-      const demoted = wasPickable && !nowPickable;
+      const { previous, incoming, matchupChanged, promoted, demoted } = action;
       if (matchupChanged || demoted) await deleteFightPicks(supabase, [previous.id], summary);
       if (matchupChanged) summary.replacements += 1;
       if (promoted) summary.promotions += 1;
@@ -284,7 +238,7 @@ Deno.serve(async (request) => {
     }
 
     let staleOrder = 1000;
-    for (const stale of unmatched.values()) {
+    for (const stale of plan.stale) {
       if (RESOLVED_STATUSES.has(stale.result_status)) {
         const { error } = await supabase.from("pick_fights").update({ bout_order: 10000 + staleOrder }).eq("id", stale.id);
         if (error) throw new Error(`Could not preserve resolved fight ${stale.id}: ${error.message}`);
