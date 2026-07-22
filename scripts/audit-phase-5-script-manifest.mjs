@@ -67,6 +67,9 @@ assert.match(profileChallengeSource,/window\.addEventListener\('click',[\s\S]*da
 assert.match(profileChallengeSource,/window\.UFC_GAME_CHALLENGES\?\.openChallenge[\s\S]*await loadInbox\(\);return true;/,'Non-Find Leader inbox challenges must delegate to the current all-game owner and refresh unread state after opening.');
 assert.match(profileChallengeSource,/function addedActivitySurface\(records\)[\s\S]*profile-activity-grid[\s\S]*if\(addedActivitySurface\(records\)\)loadInbox\(\);/,'Opening or restoring Activity Profile must refresh and render its challenge inbox.');
 assert.match(profileChallengeSource,/data-native-badge="play"[\s\S]*openInbox\(\)/,'The Play notification badge must open the Activity Profile challenge inbox.');
+assert(html.includes('assets/js/profile-challenges.js?v=profile-challenges-20260722a-all-game-inbox'),'Production must request the current profile challenge owner URL.');
+assert(html.includes('assets/js/keep-cut-standalone-share.js?v=keep-cut-standalone-share-20260722a-canonical-route-guard'),'Production must request the current Keep/Cut compatibility URL.');
+assert(html.includes('<meta name="app-build" content="profile-challenges-delivery-20260722a" />'),'The app build marker must publish the challenge delivery update.');
 
 const literalAssetScript=/["'`](assets\/js\/[^"'`?]+\.js)(?:\?[^"'`]*)?["'`]/g;
 const dynamicEdges=[];
@@ -135,7 +138,8 @@ const report={
   unapprovedDuplicateDynamicEdges,
   manifestOwnedPicksSeason:true,
   canonicalChallengeRouting:true,
-  profileChallengeInbox:true
+  profileChallengeInbox:true,
+  challengeDelivery:true
 };
 
 console.log(JSON.stringify(report,null,2));
