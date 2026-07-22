@@ -1,5 +1,5 @@
 const VERSION='octagon-hq-sw-20260721g-palette-shell-reset';
-const CACHE_NAME='octagon-hq-static-v16';
+const CACHE_NAME='octagon-hq-static-v15';
 const LEGACY_PREFIX='octagon-hq-static-';
 const CORE=['./','./index.html','./manifest.webmanifest'];
 const PALETTE_NETWORK_ONLY=/\/assets\/css\/(?:app|home-dashboard|native-app-shell|native-app-shell-stability|product-polish|find-leader|picks-mobile-polish)\.css$/i;
@@ -38,7 +38,7 @@ self.addEventListener('activate',event=>{
     const stale=await target.keys();
     await Promise.all(stale.filter(request=>{
       const path=new URL(request.url).pathname;
-      return FORCE_NETWORK.test(path)||PALETTE_NETWORK_ONLY.test(path);
+      return isShellPath(path)||FORCE_NETWORK.test(path)||PALETTE_NETWORK_ONLY.test(path);
     }).map(request=>target.delete(request)));
     await self.clients.claim();
     if(replacedLegacy){
