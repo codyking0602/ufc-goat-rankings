@@ -79,15 +79,27 @@ try{
   assert.deepEqual(picksReload.events,[{destination:'picks',view:'picks'}],'A Picks reload must publish exactly one canonical route event.');
   await reload.close();
 
-  report.phase='bare-picks-invite';
+  report.phase='explicit-picks-invite';
   const invite=await pageFor(context);
-  await invite.goto(`${base}?group=GOAT26&freshLaunchRouteOwner=invite`,{waitUntil:'domcontentloaded',timeout:60000});
+  await invite.goto(`${base}?group=GOAT26&invite=1&freshLaunchRouteOwner=invite#picks`,{waitUntil:'domcontentloaded',timeout:60000});
   await ready(invite);
-  const bareInvite=await snap(invite);
-  report.snapshots.bareInvite=bareInvite;
-  assert.equal(bareInvite.destination,'picks');
-  assert.deepEqual(bareInvite.active,['picks']);
-  assert.deepEqual(bareInvite.events,[{destination:'home',view:'home'},{destination:'picks',view:'picks'}],'A bare Picks invite must retain one necessary Home-to-Picks recovery handoff.');
+  const explicitInvite=await snap(invite);
+  report.snapshots.explicitInvite=explicitInvite;
+  const inviteUrl=new URL(explicitInvite.url);
+  assert.equal(explicitInvite.destination,'picks');
+  assert.deepEqual(explicitInvite.active,['picks']);
+  assert.deepEqual(explicitInvite.events,[{destination:'picks',view:'picks'}],'A marked Picks invite must produce one canonical Picks route event.');
+  assert.equal(inviteUrl.searchParams.get('group'),'GOAT26','The marked Picks invite lost its group.');
+  assert.equal(inviteUrl.searchParams.has('invite'),false,'The one-use invite marker was not consumed.');
+
+  const shareMarker=await invite.evaluate(()=>{
+    window.UFC_FRESH_HOME_LAUNCH.markPicksInviteForShare();
+    return new URL(location.href).searchParams.get('invite');
+  });
+  assert.equal(shareMarker,'1','The share boundary did not expose the explicit invite marker synchronously.');
+  await invite.waitForTimeout(20);
+  const clearedShareMarker=await invite.evaluate(()=>new URL(location.href).searchParams.has('invite'));
+  assert.equal(clearedShareMarker,false,'The local app URL retained the temporary share invite marker.');
   await invite.close();
 
   await context.close();

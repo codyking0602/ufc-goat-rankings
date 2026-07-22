@@ -4,16 +4,19 @@
   if(window.__UFC_FRESH_HOME_LAUNCH_STARTED__)return;
   window.__UFC_FRESH_HOME_LAUNCH_STARTED__=true;
 
-  const VERSION='fresh-home-launch-20260721a-single-route-activation';
+  const VERSION='fresh-home-launch-20260722c-explicit-picks-share';
   const RESUME_PICKS_KEY='__picks_resume';
+  const INVITE_KEY='invite';
   const RESUME_WINDOW_MS=30000;
   const deepLinkKeys=['challenge','share','fighter','message','notification','push'];
   const picksRouteKeys=['group','room','event','picksView','archive'];
-  const staleKeys=['group','room','event','picksView','archive','week','open','game',RESUME_PICKS_KEY];
+  const staleKeys=['group','room','event','picksView','archive','week','open','game',INVITE_KEY,RESUME_PICKS_KEY];
   const navigationType=performance.getEntriesByType?.('navigation')?.[0]?.type||'navigate';
   const standalone=window.navigator.standalone===true
     ||window.matchMedia?.('(display-mode: standalone)')?.matches===true;
+  const bootstrapEntry=String(window.__UFC_FRESH_HOME_PICKS_ENTRY__||document.documentElement.dataset.freshHomeBootstrapPicksEntry||'');
   let resumeMarkerTimer=0;
+  let shareInviteTimer=0;
 
   function currentUrl(){return new URL(location.href);}
   function hasExplicitDeepLink(url=currentUrl()){
@@ -31,12 +34,17 @@
       &&!url.searchParams.has('picksView')
       &&!url.searchParams.has('archive');
   }
+  function isExplicitPicksInvite(url=currentUrl()){
+    const group=String(url.searchParams.get('group')||'').trim();
+    const room=String(url.searchParams.get('room')||'').trim();
+    return bootstrapEntry==='invite'||(url.searchParams.get(INVITE_KEY)==='1'&&Boolean(group||room));
+  }
   function resumeTimestamp(url=currentUrl()){
     return Number(url.searchParams.get(RESUME_PICKS_KEY)||0);
   }
   function hasFreshPicksResume(url=currentUrl()){
     const markedAt=resumeTimestamp(url);
-    return markedAt>0&&Date.now()-markedAt<RESUME_WINDOW_MS;
+    return bootstrapEntry==='resume'||(markedAt>0&&Date.now()-markedAt<RESUME_WINDOW_MS);
   }
   function replaceUrl(url){
     history.replaceState(history.state,'',`${url.pathname}${url.search}${url.hash}`);
@@ -50,10 +58,23 @@
   }
   function markPicksResume(){
     const url=currentUrl();
+    url.searchParams.delete(INVITE_KEY);
     url.searchParams.set(RESUME_PICKS_KEY,String(Date.now()));
     replaceUrl(url);
     window.clearTimeout(resumeMarkerTimer);
     resumeMarkerTimer=window.setTimeout(clearResumeMarker,RESUME_WINDOW_MS);
+  }
+  function markPicksInviteForShare(){
+    const url=currentUrl();
+    url.searchParams.set(INVITE_KEY,'1');
+    replaceUrl(url);
+    window.clearTimeout(shareInviteTimer);
+    shareInviteTimer=window.setTimeout(()=>{
+      const active=currentUrl();
+      if(active.searchParams.get(INVITE_KEY)!=='1')return;
+      active.searchParams.delete(INVITE_KEY);
+      replaceUrl(active);
+    },0);
   }
   function activateDestinationOnce(destination){
     const owner=window.UFC_APP_SHELL||window.UFC_PRODUCT_ARCHITECTURE||null;
@@ -63,6 +84,7 @@
   }
   function activatePicks(source='startup'){
     const url=currentUrl();
+    url.searchParams.delete(INVITE_KEY);
     url.searchParams.delete(RESUME_PICKS_KEY);
     url.hash='picks';
     replaceUrl(url);
@@ -85,15 +107,23 @@
   const startupUrl=currentUrl();
   const picksRoute=hasPicksRoute(startupUrl);
   const barePicksInvite=isBarePicksInvite(startupUrl);
+  const explicitPicksInvite=isExplicitPicksInvite(startupUrl);
   const resumePicks=hasFreshPicksResume(startupUrl);
   const preserveBrowserReload=picksRoute&&navigationType==='reload'&&!standalone;
-  const picksContinuation=picksRoute&&(resumePicks||barePicksInvite||preserveBrowserReload);
+  const legacyBrowserInvite=!standalone&&barePicksInvite;
+  const picksContinuation=picksRoute&&(resumePicks||explicitPicksInvite||legacyBrowserInvite||preserveBrowserReload);
   const explicitDeepLink=hasExplicitDeepLink(startupUrl);
 
-  if(picksContinuation)activatePicks(resumePicks?'one-navigation-picks-resume':barePicksInvite?'picks-invite':'browser-reload');
+  if(picksContinuation)activatePicks(
+    resumePicks?'one-navigation-picks-resume':
+      explicitPicksInvite?'explicit-picks-invite':
+        legacyBrowserInvite?'legacy-browser-invite':'browser-reload'
+  );
   else if(!explicitDeepLink)activateHome('startup');
 
   document.addEventListener('click',event=>{
+    const shareTrigger=event.target.closest?.('#picksShareGroup,#picksShareRoom');
+    if(shareTrigger)markPicksInviteForShare();
     const trigger=event.target.closest?.('#picksPinSignInButton,[data-group-room],[data-history-room],#picksGroupAddEvent,#picksRoomAction');
     if(trigger)markPicksResume();
   },true);
@@ -114,11 +144,13 @@
     picksRoute,
     picksContinuation,
     barePicksInvite,
+    explicitPicksInvite,
     resumePicks,
     navigationType,
     standalone,
     route,
     markPicksResume,
+    markPicksInviteForShare,
     activateHome,
     activatePicks
   };
