@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 
-const source=fs.readFileSync('sw.js','utf8');
+const rawSource=fs.readFileSync('sw.js','utf8');
+const source=rawSource.replace("const SUPABASE_SCRIPT_TIMEOUT_MS=3200;","const SUPABASE_SCRIPT_TIMEOUT_MS=25;");
 const scope='https://example.test/ufc-goat-rankings/';
 const NativeRequest=globalThis.Request;
 const NativeResponse=globalThis.Response;
@@ -21,7 +22,9 @@ class ScopedRequest extends NativeRequest{
 function createRuntime(){
   const handlers=new Map();
   const stores=new Map();
+  const fetchLog=[];
   let networkMode='online';
+  let supabaseMode='online';
 
   const requestFor=input=>input instanceof NativeRequest?input:new ScopedRequest(input);
   const keyFor=input=>requestFor(input).url;
@@ -59,9 +62,17 @@ function createRuntime(){
 
   async function fetchImpl(input){
     const request=requestFor(input);
+    const url=new URL(request.url);
+    fetchLog.push(url.href);
+    const supabase=url.hostname==='cdn.jsdelivr.net'||url.hostname==='unpkg.com';
+    if(supabase){
+      if(supabaseMode==='offline')throw new TypeError('Supabase network unavailable');
+      if(supabaseMode==='error')return new NativeResponse('Supabase upstream error',{status:503});
+      if(supabaseMode==='primary-stall'&&url.hostname==='cdn.jsdelivr.net')return await new Promise(()=>{});
+      return new NativeResponse(`SUPABASE:${url.hostname}`,{status:200,headers:{'content-type':'application/javascript'}});
+    }
     if(networkMode==='offline')throw new TypeError('Network unavailable');
     if(networkMode==='error')return new NativeResponse('Temporary upstream error',{status:503});
-    const url=new URL(request.url);
     return new NativeResponse(`NETWORK:${url.pathname}`,{status:200,headers:{'content-type':url.pathname.endsWith('.css')?'text/css':'application/javascript'}});
   }
 
@@ -74,7 +85,7 @@ function createRuntime(){
   };
 
   vm.runInNewContext(source,{
-    self,caches,fetch:fetchImpl,Request:ScopedRequest,Response:NativeResponse,URL,Set,Promise,String,console
+    self,caches,fetch:fetchImpl,Request:ScopedRequest,Response:NativeResponse,URL,Set,Promise,String,Error,console,setTimeout,clearTimeout
   },{filename:'sw.js'});
 
   async function runLifecycle(type){
@@ -95,7 +106,9 @@ function createRuntime(){
 
   return{
     caches,
+    fetchLog,
     setNetworkMode(value){networkMode=value;},
+    setSupabaseMode(value){supabaseMode=value;},
     runLifecycle,
     request
   };
@@ -105,7 +118,7 @@ const runtime=createRuntime();
 await runtime.runLifecycle('install');
 await runtime.runLifecycle('activate');
 
-const cache=await runtime.caches.open('octagon-hq-static-v20');
+const cache=await runtime.caches.open('octagon-hq-static-v21');
 for(const path of [
   'index.html',
   'assets/css/app.css',
@@ -115,6 +128,11 @@ for(const path of [
   'assets/css/product-polish.css',
   'assets/js/fresh-home-route-bootstrap.js',
   'assets/js/octagon-hq-shell.js',
+  'assets/data/ranking-data.js',
+  'assets/data/display-overrides.js',
+  'assets/js/app.js',
+  'assets/data/play-data.js',
+  'assets/data/picks-events.js',
   'assets/js/app-update-watcher.js',
   'assets/js/home-dashboard.js',
   'assets/js/fresh-home-launch.js',
@@ -123,6 +141,17 @@ for(const path of [
 ]){
   assert(await cache.match(new URL(path,scope).href),`Installed cache is missing ${path}`);
 }
+assert(await cache.match('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'),'The installed cache did not warm a real Supabase browser library.');
+
+runtime.setSupabaseMode('primary-stall');
+const alternate=await runtime.request('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',{mode:'no-cors'});
+assert.equal(alternate.status,200,'A stalled primary Supabase CDN did not recover through the alternate CDN.');
+assert.match(await alternate.text(),/SUPABASE:unpkg\.com/,'The alternate CDN did not win the bounded startup race.');
+
+runtime.setSupabaseMode('offline');
+const cachedSupabase=await runtime.request('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',{mode:'no-cors'});
+assert.equal(cachedSupabase.status,200,'Both unavailable CDNs did not recover the installed real Supabase library.');
+assert.match(await cachedSupabase.text(),/SUPABASE:/,'The installed Supabase response was replaced by a fake client.');
 
 runtime.setNetworkMode('offline');
 const shellScript=await runtime.request('assets/js/octagon-hq-shell.js?v=old-shell-key');
@@ -142,13 +171,28 @@ const transientFailure=await runtime.request('assets/js/native-app-shell.js?v=te
 assert.equal(transientFailure.status,200,'A temporary non-OK network response bypassed the installed shell fallback.');
 assert.match(await transientFailure.text(),/NETWORK:\/ufc-goat-rankings\/assets\/js\/native-app-shell\.js/);
 
-assert.match(source,/await Promise\.all\(CORE\.map\(/,'The service worker may activate without completing the required shell cache.');
-assert.doesNotMatch(source,/Promise\.allSettled\(CORE\.map\(/,'Critical shell precaching still tolerates a partially empty cache.');
+const coldRuntime=createRuntime();
+coldRuntime.setSupabaseMode('offline');
+await coldRuntime.runLifecycle('install');
+await coldRuntime.runLifecycle('activate');
+const started=Date.now();
+const failedSupabase=await coldRuntime.request('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',{mode:'no-cors'});
+const elapsed=Date.now()-started;
+assert.equal(failedSupabase.status,0,'No-cache Supabase failure should unblock the parser with a network error.');
+assert(elapsed<500,`No-cache Supabase failure exceeded its startup deadline: ${elapsed}ms`);
+
+assert.match(rawSource,/await Promise\.all\(CORE\.map\(/,'The service worker may activate without completing the required shell cache.');
+assert.doesNotMatch(rawSource,/Promise\.allSettled\(CORE\.map\(/,'Critical shell precaching still tolerates a partially empty cache.');
+assert.match(rawSource,/Promise\.any\(sources\.map\(source=>fetchWithDeadline\(source\)\)\)/,'Supabase startup does not race its real transport sources.');
+assert.match(rawSource,/return installed\|\|Response\.error\(\)/,'Supabase startup can still hang instead of using cache or failing closed.');
 
 console.log(JSON.stringify({
   passed:true,
-  cache:'octagon-hq-static-v20',
+  cache:'octagon-hq-static-v21',
   requiredShellCached:true,
+  alternateSupabaseRecovered:true,
+  installedRealSupabaseRecovered:true,
+  noCacheSupabaseFailedWithinDeadline:true,
   offlineVersionedScriptRecovered:true,
   offlinePaletteRecovered:true,
   offlineNavigationRecovered:true,
