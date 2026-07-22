@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='product-polish-20260722e-semantic-rank-tiers';
+  const VERSION='product-polish-20260722f-semantic-rank-tiers';
   let scheduled=false;
   let resizeTimer=0;
 
@@ -140,10 +140,17 @@
     });
   }
 
+  function scheduleRankDecoration(event){
+    if(event.target.closest?.('.rankings-subnav,.category-leader-pill,.category-sex-toggle,.division-leader-pill,#resetBtn,#search,#eraFilter,#divisionFilter'))schedule();
+  }
+
   function start(){
     apply();
     [120,420,1100,2200].forEach(delay=>window.setTimeout(schedule,delay));
     ['octagon-hq:view-change','ufc-play-profile-ready','ufc-app-profile-updated','ufc-production-ranking-ready','ufc-scoring-pipeline-ready'].forEach(name=>window.addEventListener(name,schedule));
+    document.addEventListener('click',scheduleRankDecoration);
+    document.addEventListener('input',scheduleRankDecoration);
+    document.addEventListener('change',scheduleRankDecoration);
     window.addEventListener('resize',auditMobileCohesion,{passive:true});
     window.addEventListener('orientationchange',auditMobileCohesion,{passive:true});
   }
