@@ -132,6 +132,7 @@ input::placeholder,textarea::placeholder{color:var(--muted)!important}
 #picks .picks-code{border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important}
 #picks .picks-progress-bar{background:var(--panel)!important}
 #picks .picks-progress-bar i{background:var(--accent)!important}
+html body #picks .card.picks-standings-card{border-color:var(--line)!important;background-color:var(--panel2)!important;background-image:none!important;color:var(--text)!important;box-shadow:none!important}
 #picks .picks-standings-card h3{color:var(--text)!important}
 #picks .picks-standing-row{border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important;box-shadow:none!important}
 #picks .picks-standing-rank{color:var(--muted)!important}
