@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='keep-cut-standalone-share-20260717a-rating-ledger-bootstrap';
+  const VERSION='keep-cut-standalone-share-20260722a-canonical-route-guard';
   const RATING_LEDGER_SRC='assets/data/keep-cut-category-ratings.js?v=keep-cut-category-ratings-20260717a-phase-one';
   const profile=window.UFC_PLAY_PROFILE;
   const client=profile?.client;
@@ -27,6 +27,8 @@
   }
 
   function redirectIncomingLegacyLink(){
+    const source=new URL(window.location.href);
+    if(source.searchParams.get('share')==='play-challenge')return false;
     const code=challengeCodeFromUrl();
     if(!code)return false;
     const target=new URL('challenge.html',window.location.href);

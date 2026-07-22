@@ -1,14 +1,25 @@
 (function(){
   'use strict';
 
-  const VERSION='profile-challenges-20260720e-passive-identity-consumer';
+  const VERSION='profile-challenges-20260722a-all-game-inbox';
   const ROOT='https://codyking0602.github.io/ufc-goat-rankings/';
+  const GAME_TITLES={
+    'find-leader':'Find the Leader',
+    wavelength:'Wavelength',
+    blind:'Blind Resume',
+    'blind-resume':'Blind Resume',
+    'blind-rank':'Blind Rank 5',
+    'keep-cut':'Keep 4, Cut 4',
+    'better-than':'Better Than'
+  };
   const state={identity:null,inbox:{rows:[],unread_count:0},inboxPromise:null,active:null,modal:null,payload:null,recipient:'',busy:false,routed:false,observer:null,decorateTimer:0};
   const text=value=>String(value??'').trim();
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const tokenFor=identity=>text(identity?.memberToken||identity?.member_token);
   const client=()=>window.UFC_PLAY_PROFILE?.client||null;
   const clone=value=>JSON.parse(JSON.stringify(value));
+  const typeFor=value=>text(value?.game_type||value?.gameType||value?.type);
+  const titleFor=value=>GAME_TITLES[text(value)]||'UFC Game';
   const timeAgo=value=>{const then=new Date(value).getTime();if(!Number.isFinite(then))return'';const minutes=Math.max(0,Math.round((Date.now()-then)/60000));if(minutes<1)return'Just now';if(minutes<60)return`${minutes}m ago`;const hours=Math.floor(minutes/60);if(hours<24)return`${hours}h ago`;const days=Math.floor(hours/24);return days<7?`${days}d ago`:new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric'}).format(new Date(value));};
 
   function styles(){
@@ -49,15 +60,16 @@
     const badge=document.querySelector('.app-profile-chip-badge');if(!badge)return;const unread=Number(state.inbox.unread_count)||0,active=unread>0,desired=active?`${unread} NEW`:(window.UFC_APP_PROFILE?.group?.me?.is_admin?'ADMIN':'GOAT26');if(badge.classList.contains('challenge-new')!==active)badge.classList.toggle('challenge-new',active);if(badge.textContent!==desired)badge.textContent=desired;
   }
 
-  function inboxSignature(rows){return JSON.stringify([Number(state.inbox.unread_count)||0,...rows.map(row=>[row.code,row.opened_at,row.completed,row.score,row.created_at])]);}
+  function inboxSignature(rows){return JSON.stringify([Number(state.inbox.unread_count)||0,...rows.map(row=>[row.code,typeFor(row),row.opened_at,row.completed,row.score,row.created_at])]);}
   function renderActivityInbox(){
     const grid=document.querySelector('.profile-activity-body .profile-activity-grid');if(!grid)return false;const rows=state.inbox.rows||[],existing=grid.querySelector('[data-profile-challenge-inbox]');if(!rows.length){existing?.remove();return true;}const signature=inboxSignature(rows);if(existing?.dataset.signature===signature)return true;
-    const card=document.createElement('article');card.className='profile-activity-card wide profile-challenge-inbox';card.dataset.profileChallengeInbox='true';card.dataset.signature=signature;card.innerHTML=`<header class="profile-activity-card-head"><div><span>CHALLENGES</span><strong>Sent to your profile</strong></div><small>${Number(state.inbox.unread_count)||0} new · ${rows.length} active</small></header><div class="profile-challenge-inbox-list">${rows.map(row=>{const completed=Boolean(row.completed),unread=!row.opened_at&&!completed;return`<div class="profile-challenge-inbox-row${unread?' unread':''}" data-member-name="${esc(row.creator_name)}">${avatar({display_name:row.creator_name,fighter_avatar_slug:row.creator_fighter_avatar_slug,profile_photo_data:row.creator_profile_photo_data})}<div class="profile-challenge-inbox-copy"><span>${completed?'COMPLETED':unread?'NEW CHALLENGE':'OPENED'}</span><strong>${esc(row.creator_name)} sent Find the Leader</strong><small>${esc(timeAgo(row.created_at))}${completed&&row.score!==null?` · Your score ${Number(row.score)}/10`:''}</small></div><button type="button" data-open-profile-challenge="${esc(row.code)}" ${completed?'disabled':''}>${completed?'DONE':'PLAY'}</button></div>`;}).join('')}</div>`;
-    if(existing)existing.replaceWith(card);else grid.prepend(card);card.querySelectorAll('[data-open-profile-challenge]').forEach(button=>button.addEventListener('click',async()=>{const code=button.dataset.openProfileChallenge;if(!code)return;window.UFC_PROFILE_ACTIVITY?.close?.();await openChallenge(code,{directOnly:true});}));return true;
+    const card=document.createElement('article');card.className='profile-activity-card wide profile-challenge-inbox';card.dataset.profileChallengeInbox='true';card.dataset.signature=signature;card.innerHTML=`<header class="profile-activity-card-head"><div><span>CHALLENGES</span><strong>Sent to your profile</strong></div><small>${Number(state.inbox.unread_count)||0} new · ${rows.length} active</small></header><div class="profile-challenge-inbox-list">${rows.map(row=>{const completed=Boolean(row.completed),unread=!row.opened_at&&!completed;return`<div class="profile-challenge-inbox-row${unread?' unread':''}" data-member-name="${esc(row.creator_name)}">${avatar({display_name:row.creator_name,fighter_avatar_slug:row.creator_fighter_avatar_slug,profile_photo_data:row.creator_profile_photo_data})}<div class="profile-challenge-inbox-copy"><span>${completed?'COMPLETED':unread?'NEW CHALLENGE':'OPENED'}</span><strong>${esc(row.creator_name)} sent ${esc(titleFor(typeFor(row)))}</strong><small>${esc(timeAgo(row.created_at))}${completed&&row.score!==null?` · Your score ${Number(row.score)}/10`:''}</small></div><button type="button" data-open-profile-challenge="${esc(row.code)}" ${completed?'disabled':''}>${completed?'DONE':'PLAY'}</button></div>`;}).join('')}</div>`;
+    if(existing)existing.replaceWith(card);else grid.prepend(card);return true;
   }
 
   function decorateSurfaces(){decorateChip();renderActivityInbox();}
   function scheduleDecorate(){clearTimeout(state.decorateTimer);state.decorateTimer=setTimeout(decorateSurfaces,60);}
+  function addedActivitySurface(records){return records.some(record=>[...record.addedNodes].some(node=>node.nodeType===1&&(node.matches?.('.profile-activity-panel,.profile-activity-body,.profile-activity-grid')||node.querySelector?.('.profile-activity-panel,.profile-activity-body,.profile-activity-grid'))));}
   async function loadInbox(){
     if(state.inboxPromise)return state.inboxPromise;
     state.inboxPromise=(async()=>{
@@ -68,12 +80,17 @@
   }
 
   function waitFor(check,timeout=12000){return new Promise((resolve,reject)=>{const start=Date.now();const tick=()=>{let value;try{value=check();}catch(_error){}if(value)return resolve(value);if(Date.now()-start>timeout)return reject(new Error('Challenge tools did not load.'));setTimeout(tick,80);};tick();});}
+  async function openInbox(){const activity=await waitFor(()=>window.UFC_PROFILE_ACTIVITY?.open&&window.UFC_PROFILE_ACTIVITY);await activity.open();await loadInbox();scheduleDecorate();setTimeout(()=>document.querySelector('[data-profile-challenge-inbox]')?.scrollIntoView?.({behavior:'smooth',block:'start'}),80);return true;}
+  async function playInboxChallenge(rawCode){
+    const code=text(rawCode).toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,10),row=state.inbox.rows.find(value=>text(value.code).toUpperCase()===code);if(!code)return false;window.UFC_PROFILE_ACTIVITY?.close?.();
+    try{if(typeFor(row)&&typeFor(row)!=='find-leader'){const games=await waitFor(()=>window.UFC_GAME_CHALLENGES?.openChallenge&&window.UFC_GAME_CHALLENGES);const opened=await games.openChallenge(code,true);if(!opened)throw new Error('That challenge could not open.');}else await openChallenge(code,{directOnly:true});await loadInbox();return true;}catch(error){console.error(error);return false;}
+  }
   function banner(){const panel=document.getElementById('playFindLeaderPanel');if(!panel||!state.active)return;panel.querySelector('.play-profile-challenge-banner')?.remove();const node=document.createElement('div');node.className='play-profile-challenge-banner';node.innerHTML=`<span>PROFILE CHALLENGE</span><strong>${esc(state.active.creatorName||'A friend')} sent this exact board.</strong><small>Finish to reveal both scores.</small>`;panel.prepend(node);}
   async function fetchChallenge(code,who,{directOnly=false}={}){const rpc=client(),token=tokenFor(who);if(token){const direct=await rpc.rpc('play_open_profile_challenge',{p_member_token:token,p_challenge_code:code});if(!direct.error&&direct.data?.ok)return{...direct.data.challenge,direct:true};if(directOnly)throw direct.error||new Error(direct.data?.error||'That profile challenge is not available.');}if(directOnly)throw new Error('That profile challenge is not available.');const open=await rpc.rpc('play_get_challenge',{p_challenge_code:code});if(open.error)throw open.error;if(!open.data?.ok)throw new Error(open.data?.error||'Challenge not found.');return{...open.data.challenge,direct:false};}
 
   async function openChallenge(rawCode,options={}){
-    const code=text(rawCode).toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,10),who=await identity({title:'Open the challenge',description:'Sign in so the result belongs to your profile.'});if(!code||!who)return false;const challenge=await fetchChallenge(code,who,options);if(challenge.game_type!=='find-leader')throw new Error('That game is not supported here yet.');
-    window.UFC_APP_SHELL?.activateDestination?.('play')||window.UFC_PRODUCT_ARCHITECTURE?.activateDestination?.('play');const hub=await waitFor(()=>window.UFC_PLAY_HUB?.openGame&&window.UFC_PLAY_HUB);await hub.openGame('find-leader',{daily:false});const game=await waitFor(()=>window.UFC_FIND_LEADER?.startGame&&window.UFC_FIND_LEADER);if(!game.startGame({setup:challenge.setup}))throw new Error('The exact board could not open.');state.active={code,direct:challenge.direct,creatorName:challenge.creator_name,setup:clone(challenge.setup),identity:who};banner();loadInbox();return true;
+    const code=text(rawCode).toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,10),who=await identity({title:'Open the challenge',description:'Sign in so the result belongs to your profile.'});if(!code||!who)return false;const challenge=await fetchChallenge(code,who,options);if(challenge.game_type!=='find-leader')throw new Error('That game is handled by the all-game challenge owner.');
+    window.UFC_APP_SHELL?.activateDestination?.('play')||window.UFC_PRODUCT_ARCHITECTURE?.activateDestination?.('play');const hub=await waitFor(()=>window.UFC_PLAY_HUB?.openGame&&window.UFC_PLAY_HUB);await hub.openGame('find-leader',{daily:false});const game=await waitFor(()=>window.UFC_FIND_LEADER?.startGame&&window.UFC_FIND_LEADER);if(!game.startGame({setup:challenge.setup}))throw new Error('The exact board could not open.');state.active={code,direct:challenge.direct,creatorName:challenge.creator_name,setup:clone(challenge.setup),identity:who};banner();await loadInbox();return true;
   }
 
   function matches(){const current=window.UFC_FIND_LEADER?.state?.setup,expected=state.active?.setup;return current&&expected&&(current.candidates||[]).map(row=>row.id).join('|')===(expected.candidates||[]).map(row=>row.id).join('|');}
@@ -83,8 +100,12 @@
   }
 
   async function routeCurrent(){if(state.routed)return false;const params=new URL(location.href).searchParams,code=params.get('challenge');if(!code)return false;state.routed=true;try{return await openChallenge(code);}catch(error){console.error(error);return false;}}
-  function start(){styles();window.addEventListener('ufc-play-game-complete',event=>complete(event.detail||{}));window.addEventListener('ufc-play-profile-ready',event=>{state.identity=event.detail||null;loadInbox();});window.addEventListener('ufc-app-profile-updated',event=>{state.identity=event.detail?.identity||state.identity;loadInbox();});window.addEventListener('ufc-profile-challenge-sent',loadInbox);document.addEventListener('keydown',event=>{if(event.key==='Escape'&&state.modal)close();});state.observer=new MutationObserver(scheduleDecorate);state.observer.observe(document.body,{childList:true,subtree:true});setTimeout(()=>{loadInbox();routeCurrent();},200);}
+  function start(){
+    styles();
+    window.addEventListener('click',event=>{const challenge=event.target.closest?.('[data-open-profile-challenge]');if(challenge){event.preventDefault();event.stopImmediatePropagation();void playInboxChallenge(challenge.dataset.openProfileChallenge);return;}const badge=event.target.closest?.('[data-native-badge="play"]');if(badge&&Number(state.inbox.unread_count)>0){event.preventDefault();event.stopImmediatePropagation();void openInbox();}},true);
+    window.addEventListener('ufc-play-game-complete',event=>complete(event.detail||{}));window.addEventListener('ufc-play-profile-ready',event=>{state.identity=event.detail||null;loadInbox();});window.addEventListener('ufc-app-profile-updated',event=>{state.identity=event.detail?.identity||state.identity;loadInbox();});window.addEventListener('ufc-profile-challenge-sent',loadInbox);document.addEventListener('keydown',event=>{if(event.key==='Escape'&&state.modal)close();});state.observer=new MutationObserver(records=>{scheduleDecorate();if(addedActivitySurface(records))loadInbox();});state.observer.observe(document.body,{childList:true,subtree:true});setTimeout(async()=>{await loadInbox();await waitFor(()=>window.UFC_GAME_CHALLENGES?.route).catch(()=>null);const router=window.UFC_PROFILE_CHALLENGES?.routeCurrent;await (router&&router!==routeCurrent?router():routeCurrent());},200);
+  }
 
-  window.UFC_PROFILE_CHALLENGES={version:VERSION,openSendModal,openChallenge,loadInbox,routeCurrent,challengeUrl,renderActivityInbox,decorateChip,get rows(){return state.inbox.rows;},get unreadCount(){return Number(state.inbox.unread_count)||0;}};
+  window.UFC_PROFILE_CHALLENGES={version:VERSION,openSendModal,openChallenge,openInbox,playInboxChallenge,loadInbox,routeCurrent,challengeUrl,renderActivityInbox,decorateChip,get rows(){return state.inbox.rows;},get unreadCount(){return Number(state.inbox.unread_count)||0;}};
   document.documentElement.setAttribute('data-profile-challenges',VERSION);if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
