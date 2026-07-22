@@ -1,0 +1,78 @@
+{
+  "proof": "static-final-semantic-dark-palette",
+  "initial": {
+    "productPolishLinks": 0,
+    "tokens": {
+      "bg": "#000000",
+      "panel": "#0d0d0d",
+      "panel2": "#171717",
+      "accent": "#e10600",
+      "accent2": "#ff5a5f"
+    },
+    "actual": {
+      "bodyBackground": "rgb(0, 0, 0)",
+      "headerBackground": "rgb(0, 0, 0)",
+      "titleColor": "rgb(245, 245, 245)",
+      "profileBackground": "rgb(23, 23, 23)",
+      "refreshBackground": "rgb(23, 23, 23)",
+      "newBackground": "rgb(23, 23, 23)",
+      "unreadBackground": "rgb(225, 6, 0)",
+      "eventBackground": "rgba(0, 0, 0, 0)",
+      "eventBackgroundImage": "linear-gradient(155deg, rgb(23, 23, 23), rgb(13, 13, 13))",
+      "eventTitleColor": "rgb(245, 245, 245)",
+      "kickerColor": "rgb(255, 90, 95)",
+      "primaryBackground": "rgb(225, 6, 0)",
+      "primaryColor": "rgb(255, 255, 255)",
+      "progressBackground": "rgb(225, 6, 0)",
+      "activeNavColor": "rgb(255, 90, 95)",
+      "badgeBackground": "rgb(225, 6, 0)",
+      "badgeColor": "rgb(255, 255, 255)"
+    },
+    "expected": {
+      "bgBackground": "rgb(0, 0, 0)",
+      "panel2Background": "rgb(23, 23, 23)",
+      "textColor": "rgb(245, 245, 245)",
+      "accentBackground": "rgb(225, 6, 0)",
+      "accent2Color": "rgb(255, 90, 95)",
+      "whiteColor": "rgb(255, 255, 255)"
+    }
+  },
+  "final": {
+    "productPolishLinks": 0,
+    "tokens": {
+      "bg": "#000000",
+      "panel": "#0d0d0d",
+      "panel2": "#171717",
+      "accent": "#e10600",
+      "accent2": "#ff5a5f"
+    },
+    "actual": {
+      "bodyBackground": "rgb(0, 0, 0)",
+      "headerBackground": "rgb(0, 0, 0)",
+      "titleColor": "rgb(245, 245, 245)",
+      "profileBackground": "rgb(23, 23, 23)",
+      "refreshBackground": "rgb(23, 23, 23)",
+      "newBackground": "rgb(23, 23, 23)",
+      "unreadBackground": "rgb(225, 6, 0)",
+      "eventBackground": "rgba(0, 0, 0, 0)",
+      "eventBackgroundImage": "linear-gradient(155deg, rgb(23, 23, 23), rgb(13, 13, 13))",
+      "eventTitleColor": "rgb(245, 245, 245)",
+      "kickerColor": "rgb(255, 90, 95)",
+      "primaryBackground": "rgb(225, 6, 0)",
+      "primaryColor": "rgb(255, 255, 255)",
+      "progressBackground": "rgb(225, 6, 0)",
+      "activeNavColor": "rgb(255, 90, 95)",
+      "badgeBackground": "rgb(225, 6, 0)",
+      "badgeColor": "rgb(255, 255, 255)"
+    },
+    "expected": {
+      "bgBackground": "rgb(0, 0, 0)",
+      "panel2Background": "rgb(23, 23, 23)",
+      "textColor": "rgb(245, 245, 245)",
+      "accentBackground": "rgb(225, 6, 0)",
+      "accent2Color": "rgb(255, 90, 95)",
+      "whiteColor": "rgb(255, 255, 255)"
+    }
+  }
+}
+Static final semantic dark mobile theme contract passed.
