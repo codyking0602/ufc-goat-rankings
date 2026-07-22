@@ -4,7 +4,7 @@
   if(window.__UFC_NATIVE_APP_SHELL_STABILITY_STARTED__)return;
   window.__UFC_NATIVE_APP_SHELL_STABILITY_STARTED__=true;
 
-  const VERSION='native-app-shell-stability-20260722f-sticky-overflow-clip';
+  const VERSION='native-app-shell-stability-20260722f-drawer-observer-sticky-overflow-clip';
   let observer=null;
   let timer=0;
 
