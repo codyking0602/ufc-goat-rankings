@@ -36,8 +36,8 @@ const fixture=`<!doctype html><html><head><meta charset="utf-8"><meta name="view
 <main class="shell">
   <section id="home" class="view active-view"><div id="homeDashboardMount"><div class="home-dashboard">
     <article class="home-dashboard-card home-daily"><div><div class="home-dashboard-kicker">Today's Challenge</div><h2>Find the Leader</h2><button class="home-dashboard-action">Play Now</button></div></article>
-    <details class="home-shane-watchlist" open><summary><span class="home-shane-summary-copy"><small>SCOUTING BOARD</small><strong>Shane's Fighters to Watch</strong><em>Early prospect calls.</em></span><span class="home-shane-summary-count">3 FIGHTERS</span></summary><div class="home-shane-body"><div class="home-shane-grid"><article class="home-shane-card is-latest"><div class="home-shane-card-band"><span class="home-shane-card-number">01</span><span class="home-shane-status">Latest Call</span><time>July 2026</time></div><div class="home-shane-identity"><span class="home-shane-avatar">FK</span><div><h4>Fatima Kline</h4><p>The Archangel</p></div></div><div class="home-shane-meta">Strawweight · Age 26</div><div class="home-shane-stats"><div><strong>4–1</strong><span>UFC RECORD</span></div></div><p class="home-shane-note">Fighter to watch.</p><a class="home-shane-ufc-link" href="#">VIEW UFC PROFILE <span>↗</span></a></article></div></div></details>
-  </div></div></section>
+  </div><details class="home-shane-watchlist" open><summary><span class="home-shane-summary-copy"><small>SCOUTING BOARD</small><strong>Shane's Fighters to Watch</strong><em>Early prospect calls.</em></span><span class="home-shane-summary-count">3 FIGHTERS</span></summary><div class="home-shane-body"><div class="home-shane-grid"><article class="home-shane-card is-latest"><div class="home-shane-card-band"><span class="home-shane-card-number">01</span><span class="home-shane-status">Latest Call</span><time>July 2026</time></div><div class="home-shane-identity"><span class="home-shane-avatar">FK</span><div><h4>Fatima Kline</h4><p>The Archangel</p></div></div><div class="home-shane-meta">Strawweight · Age 26</div><div class="home-shane-stats"><div><strong>4–1</strong><span>UFC RECORD</span></div></div><p class="home-shane-note">Fighter to watch.</p><a class="home-shane-ufc-link" href="#">VIEW UFC PROFILE <span>↗</span></a></article></div></div></details>
+  </div></section>
 
   <nav class="rankings-subnav"><button class="active" aria-selected="true">Overall</button><button>Women</button></nav>
   <section class="toolbar"><input placeholder="Search fighter"><select><option>All eras</option></select><button id="resetBtn" class="ghost">Reset</button></section>
@@ -67,7 +67,7 @@ const fixture=`<!doctype html><html><head><meta charset="utf-8"><meta name="view
 
 const dark=['rgb(0, 0, 0)','rgb(13, 13, 13)','rgb(23, 23, 23)','rgb(32, 32, 32)'];
 const retired=[
-  'rgb(255, 255, 255)','rgb(248, 250, 252)','rgb(241, 245, 249)','rgb(238, 242, 247)',
+  'rgb(248, 250, 252)','rgb(241, 245, 249)','rgb(238, 242, 247)',
   'rgb(249, 115, 22)','rgb(251, 146, 60)','rgb(250, 204, 21)','rgb(253, 230, 138)','rgb(253, 186, 116)','rgb(254, 215, 170)',
   'rgb(17, 24, 39)','rgb(23, 32, 51)','rgb(15, 23, 42)','rgb(30, 41, 59)','rgb(37, 50, 71)','rgb(16, 23, 37)','rgb(25, 38, 59)','rgb(12, 19, 33)','rgb(17, 26, 42)','rgb(13, 21, 35)','rgb(51, 65, 85)','rgb(71, 85, 105)','rgb(82, 103, 134)'
 ];
