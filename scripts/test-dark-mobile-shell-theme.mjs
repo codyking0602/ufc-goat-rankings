@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { chromium } from 'playwright';
 
+const index=fs.readFileSync('index.html','utf8');
 const app=fs.readFileSync('assets/css/app.css','utf8');
 const home=fs.readFileSync('assets/css/home-dashboard.css','utf8');
 const shell=fs.readFileSync('assets/css/native-app-shell.css','utf8');
@@ -16,6 +17,16 @@ assert.ok(
 assert.ok(
   app.includes('background:radial-gradient(circle at top left,#1f0b0b,var(--bg) 45%)'),
   'The app canvas must use a black surface with only a restrained red tint.'
+);
+assert.ok(
+  index.includes('<meta name="theme-color" content="#080808" />')
+    &&index.includes('<meta name="app-build" content="visible-home-palette-20260721b" />')
+    &&index.includes('assets/css/app.css?v=app-css-20260721c-canonical-black-red')
+    &&index.includes('assets/css/home-dashboard.css?v=home-dashboard-20260721b-visible-black-red')
+    &&index.includes('assets/css/native-app-shell.css?v=native-app-shell-css-20260721c-canonical-black-red')
+    &&index.includes('assets/js/app-update-watcher.js?v=app-update-watcher-20260721b-palette-publication')
+    &&index.includes('assets/js/product-architecture.js?v=product-architecture-20260721b-palette-publication'),
+  'The HTML publication owner must request fresh canonical palette assets and advertise the matching build.'
 );
 assert.ok(
   home.includes('background:var(--panel2);')
@@ -71,9 +82,9 @@ assert.ok(
   'The canonical cache owner must fetch global, Home, and final-polish palette assets from the network.'
 );
 assert.ok(
-  serviceWorker.includes("const VERSION='octagon-hq-sw-20260721d-visible-home-palette';")
-    &&serviceWorker.includes("const CACHE_NAME='octagon-hq-static-v13';"),
-  'The visible Home palette must publish through a new service-worker identity and cache.'
+  serviceWorker.includes("const VERSION='octagon-hq-sw-20260721e-versioned-palette-assets';")
+    &&serviceWorker.includes("const CACHE_NAME='octagon-hq-static-v14';"),
+  'The versioned palette assets must publish through a fresh service-worker identity and cache.'
 );
 assert.ok(
   stability.includes('.drawer{z-index:5000!important;background:rgba(0,0,0,.72)!important}'),
