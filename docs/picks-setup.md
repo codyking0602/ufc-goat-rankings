@@ -109,16 +109,19 @@ Event cards are maintained directly in the repository and Supabase rather than t
 For each new event:
 
 1. Confirm the official card, event date, bout order, and sections.
-2. Add the event to `config/ufc-card-sources.json` and the local fallback in `assets/data/picks-events.js`.
-3. Verify the room and picks on the live site.
-4. Let the scheduled card-and-odds workflow refresh Supabase every six hours.
-5. Update the maintained source only when the next UFC event needs to be added or a source rule changes.
+2. Add the complete maintained card to `assets/data/picks-events.js` and add its external-source configuration to `config/ufc-card-sources.json`.
+3. Verify the maintained baseline with `node scripts/apply-maintained-ufc-baselines.mjs --force`.
+4. Verify the room and picks on the live site.
+5. Let the scheduled card-and-odds workflow refresh Supabase every six hours.
+6. Update the maintained card when an official card change is confirmed; do not encode speculative section placement.
+
+`assets/data/picks-events.js` is the safe repository baseline for every configured event. It seeds a new event and repairs a card that has never been confirmed by UFC.com. Once UFC.com successfully confirms that event, UFC.com owns card-slot changes and later baseline runs become no-ops for that event.
 
 `picks-event-manager-phase.sql` remains in the migration sequence because later group and commissioner schema depends on that phase, but its retired front-end files have been removed.
 
 ## Automated card and odds refresh
 
-The live Picks card is checked every six hours through `scripts/sync-ufc-card.mjs`, `supabase/functions/sync-ufc-card/index.ts`, and the **Sync UFC Card and Odds** GitHub Actions workflow. Once the confirmed card is applied to Supabase, `supabase/functions/refresh-ufc-odds/index.ts` refreshes available moneylines.
+The live Picks card is checked every six hours through `scripts/apply-maintained-ufc-baselines.mjs`, `scripts/sync-ufc-card.mjs`, `supabase/functions/sync-ufc-card/index.ts`, and the **Sync UFC Card and Odds** GitHub Actions workflow. The maintained baseline is applied first. External sources are checked second. Once the safe card is available in Supabase, `supabase/functions/refresh-ufc-odds/index.ts` refreshes available moneylines.
 
 ### Required repository secrets
 
@@ -133,10 +136,10 @@ Do not put any of these values in source files, browser JavaScript, workflow YAM
 ### First deployment
 
 1. Open **Actions → Deploy UFC Card and Odds Sync** and run it on `main`.
-2. Confirm the function deployment and verification requests finish green.
+2. Confirm the function deployment and maintained-baseline application finish green.
 3. Open **Actions → Sync UFC Card and Odds** and run it manually only when another immediate refresh is needed.
 
-The deploy workflow stores the required private values as Supabase Edge Function secrets, deploys both functions with JWT verification disabled, protects them with the custom refresh secret, and performs verification requests. It is not a second recurring refresh owner.
+The deploy workflow stores the required private values as Supabase Edge Function secrets, deploys the functions with JWT verification disabled, applies the maintained repository baseline, protects requests with the custom refresh secret, and performs verification requests. It is not a second recurring refresh owner.
 
 ### Scheduled behavior and ownership
 
@@ -144,10 +147,17 @@ The single recurring owner is `.github/workflows/refresh-ufc-odds.yml`. Its **Sy
 
 The browser does not run an odds polling timer and does not refresh odds on focus or visibility changes. Manual refresh behavior remains available through the scheduled workflow's `workflow_dispatch` entry point.
 
-- The card scraper uses UFC.com first and MMA Mania only as a fallback.
-- Two matching captures are required before a card can update Supabase.
-- The sync detects new fights, opponent replacements, order changes, main-card promotions or demotions, and cancellations.
-- Destructive card shrinkage and incomplete snapshots are rejected.
+- The maintained repository card is applied before any external scrape.
+- Maintained cards must contain explicit sections, complete fight rows, the expected main event, and the exact configured main-card count.
+- Expected counts are validation only. The sync never promotes or demotes a fight to satisfy a number.
+- UFC.com is the only external source allowed to add, remove, reorder, promote, or demote fight slots.
+- Once UFC.com confirms an event, it retains card-slot authority over later maintained-baseline runs.
+- MMA Mania is opponent-reconciliation only. It must preserve every existing section, bout order, and lock time and cannot establish a new event.
+- Two matching captures are required for an external card snapshot.
+- Missing, incomplete, ambiguous, or count-mismatched external snapshots fail closed and leave the safe Supabase card unchanged.
+- UFC.com or MMA Mania being unavailable does not remove the maintained card. Health is recorded as `baseline-safe-external-unavailable`.
+- The sync detects UFC-confirmed new fights, opponent replacements, order changes, main-card promotions or demotions, and cancellations.
+- Destructive card shrinkage is rejected.
 - The odds provider request is restricted to MMA head-to-head moneylines in the US region.
 - Only `upcoming` or `live` UFC events and `scheduled` pickable fights are eligible for odds.
 - Fighter pairs are matched after punctuation and accent normalization.
@@ -184,6 +194,8 @@ Browser notifications are opportunistic and only appear when the app is opened n
 
 ## Reliability checks
 
+- `scripts/apply-maintained-ufc-baselines.mjs --force` validates every configured repository baseline without writing to Supabase.
+- `scripts/test-ufc-card-section-authority.mjs` reproduces the Walker–Petersen / Bonfim–Sola failure and certifies the authority boundary.
 - On mobile, the desktop tab source is intentionally hidden. `scripts/test-picks-mobile-top-tabs.mjs` certifies the visible five-item native bottom navigation and the sticky-header Intelligence action at 390×844, including useful visibility after each enabled destination opens and no horizontal navigation scrolling.
 - `scripts/check-picks-ui.mjs` certifies that exactly one scheduled workflow owns card-and-odds refreshes, while manual dispatch remains available.
-- **Picks UI Smoke** runs both checks for relevant production changes.
+- **Picks UI Smoke** runs the Picks ownership and mobile checks for relevant production changes.
