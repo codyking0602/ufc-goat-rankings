@@ -26,10 +26,20 @@ jobs:
           npx playwright install chromium >/dev/null 2>&1
       - name: Start app
         run: python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/palette-diagnostic-http.log 2>&1 &
-      - name: Run aggregate with concise failure tail
+      - name: Run aggregate
+        id: aggregate
+        continue-on-error: true
+        run: node scripts/test-ios-standalone-resume-home.mjs >/tmp/palette-aggregate.log 2>&1
+      - name: Upload aggregate log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: palette-aggregate-log
+          path: /tmp/palette-aggregate.log
+          if-no-files-found: error
+          retention-days: 1
+      - name: Fail on aggregate error
+        if: steps.aggregate.outcome == 'failure'
         run: |
-          set +e
-          node scripts/test-ios-standalone-resume-home.mjs >/tmp/palette-aggregate.log 2>&1
-          status=$?
-          tail -n 120 /tmp/palette-aggregate.log
-          exit "$status"
+          tail -n 40 /tmp/palette-aggregate.log
+          exit 1
