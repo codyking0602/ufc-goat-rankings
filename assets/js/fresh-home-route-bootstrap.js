@@ -4,8 +4,8 @@
   if(window.__UFC_FRESH_HOME_ROUTE_BOOTSTRAP_STARTED__)return;
   window.__UFC_FRESH_HOME_ROUTE_BOOTSTRAP_STARTED__=true;
 
-  const VERSION='fresh-home-route-bootstrap-20260722n-existing-controller-repair';
-  const UPDATE_OWNER_SRC='assets/js/app-update-watcher.js?v=app-update-watcher-20260722f-existing-controller-repair';
+  const VERSION='fresh-home-route-bootstrap-20260722o-ios-controller-repair';
+  const UPDATE_OWNER_SRC='assets/js/app-update-watcher.js?v=app-update-watcher-20260722g-ios-controller-repair';
   const RESUME_PICKS_KEY='__picks_resume';
   const PIN_RESUME_STORAGE_KEY='__ufc_picks_pin_resume';
   const INVITE_KEY='invite';
@@ -14,7 +14,8 @@
   const picksRouteKeys=['group','room','event','picksView','archive'];
   const staleKeys=['group','room','event','picksView','archive','week','open','game',INVITE_KEY,RESUME_PICKS_KEY];
   const url=new URL(location.href);
-  const standalone=window.navigator.standalone===true
+  const iosStandalone=window.navigator.standalone===true;
+  const standalone=iosStandalone
     ||window.matchMedia?.('(display-mode: standalone)')?.matches===true;
 
   function publishUpdateOwner(){
@@ -31,7 +32,7 @@
     return true;
   }
 
-  if(standalone)publishUpdateOwner();
+  if(iosStandalone)publishUpdateOwner();
 
   const picksRoute=String(url.hash||'').toLowerCase()==='#picks'
     ||picksRouteKeys.some(key=>url.searchParams.has(key));
