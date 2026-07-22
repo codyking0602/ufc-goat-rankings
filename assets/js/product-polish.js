@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='product-polish-20260718c-header-final';
+  const VERSION='product-polish-20260722h-semantic-rank-tiers';
   let scheduled=false;
   let resizeTimer=0;
 
@@ -32,6 +32,31 @@
 
   function standardizeHeaders(){
     document.querySelectorAll('.section-title').forEach(header=>header.classList.add('product-page-header'));
+  }
+
+  function rankTier(value){
+    if(value===1)return'first';
+    if(value<=3)return'top-three';
+    if(value<=10)return'top-ten';
+    return'field';
+  }
+
+  function decorateRankHierarchy(){
+    ['menList','womenList','divisionList','categoryBoardList'].forEach(id=>{
+      const rows=[...document.querySelectorAll(`#${id} .fighter-row`)];
+      rows.forEach((row,index)=>{
+        const displayed=Number(text(row.querySelector('.rank')?.textContent).replace(/[^0-9]/g,''));
+        const boardScoped=id==='divisionList'||id==='categoryBoardList';
+        const value=boardScoped?index+1:displayed;
+        if(!Number.isFinite(value)||value<1){
+          delete row.dataset.rankValue;
+          delete row.dataset.rankTier;
+          return;
+        }
+        row.dataset.rankValue=String(value);
+        row.dataset.rankTier=rankTier(value);
+      });
+    });
   }
 
   function removeDeveloperResidue(){
@@ -97,6 +122,7 @@
     ensureHeaderTools();
     standardizeNavigation();
     standardizeHeaders();
+    decorateRankHierarchy();
     removeDeveloperResidue();
     normalizeWarRoomCopy();
     normalizeUpdateCopy();
@@ -114,10 +140,17 @@
     });
   }
 
+  function scheduleRankDecoration(event){
+    if(event.target.closest?.('.rankings-subnav,.category-leader-pill,.category-sex-toggle,.division-leader-pill,#resetBtn,#search,#eraFilter,#divisionFilter'))schedule();
+  }
+
   function start(){
     apply();
     [120,420,1100,2200].forEach(delay=>window.setTimeout(schedule,delay));
     ['octagon-hq:view-change','ufc-play-profile-ready','ufc-app-profile-updated','ufc-production-ranking-ready','ufc-scoring-pipeline-ready'].forEach(name=>window.addEventListener(name,schedule));
+    document.addEventListener('click',scheduleRankDecoration);
+    document.addEventListener('input',scheduleRankDecoration);
+    document.addEventListener('change',scheduleRankDecoration);
     window.addEventListener('resize',auditMobileCohesion,{passive:true});
     window.addEventListener('orientationchange',auditMobileCohesion,{passive:true});
   }
