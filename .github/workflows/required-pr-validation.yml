@@ -223,8 +223,12 @@ jobs:
           node scripts/test-better-than-find-leader-owner.mjs
           node scripts/test-better-than-photo-authority-owner.mjs
 
-      - name: Run dedicated mobile and iOS aggregate
-        if: needs.changes.outputs.ios == 'true' || needs.changes.outputs.startup == 'true' || needs.changes.outputs.phase5 == 'true'
+      - name: Run mobile presentation validation
+        if: needs.changes.outputs.ios == 'true' && needs.changes.outputs.startup != 'true' && needs.changes.outputs.phase5 != 'true'
+        run: node scripts/test-picks-mobile-top-tabs.mjs
+
+      - name: Run iOS startup aggregate
+        if: needs.changes.outputs.startup == 'true' || needs.changes.outputs.phase5 == 'true'
         run: node scripts/test-ios-standalone-resume-home.mjs
 
       - name: Publish exact-head validation summary
