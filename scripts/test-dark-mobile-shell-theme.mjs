@@ -21,7 +21,7 @@ for(const token of [
   '--accent2:#ff5a5f!important;'
 ])assert.ok(stability.includes(token),`The semantic dark owner is missing ${token}`);
 assert.ok(
-  stability.includes('.hero{border-bottom-color:var(--line)!important;background:#000!important;color:var(--text)!important;')
+  stability.includes('body>.hero,.hero{border-bottom-color:var(--line)!important;background-color:#000!important;background-image:none!important;color:var(--text)!important;')
     &&stability.includes('.native-ask-action,#whatsNewBtn,#manualRefreshBtn,.product-header-tools .app-profile-chip{border-color:var(--line)!important;background:var(--panel2)!important;color:var(--text)!important;')
     &&stability.includes('.home-event,.home-war-room,.home-spotlight{border-color:var(--line)!important;background:linear-gradient(155deg,var(--panel2),var(--panel))!important}')
     &&stability.includes('.native-nav-button.active{background:transparent!important;color:var(--accent2)!important;'),
@@ -39,10 +39,11 @@ assert.ok(
   'The cache owner must fetch canonical palette styles from the network without storing stale copies.'
 );
 assert.ok(
-  serviceWorker.includes("const VERSION='octagon-hq-sw-20260722a-local-preview-stability';")
-    &&serviceWorker.includes("const CACHE_NAME='octagon-hq-static-v16';")
+  serviceWorker.includes("const VERSION='octagon-hq-sw-20260722b-home-route-safety';")
+    &&serviceWorker.includes("const CACHE_NAME='octagon-hq-static-v17';")
+    &&serviceWorker.includes('app-canonical-group|app-notification-surface-fix')
     &&serviceWorker.includes('game-challenges|profile-challenges|share-deep-links'),
-  'The current service-worker identity must retain local-preview stability and refresh the Challenge Center owner.'
+  'The current service-worker identity must publish the Home-route fix and retain the current Challenge Center owners.'
 );
 assert.ok(
   index.includes('<meta name="theme-color" content="#080808" />')
