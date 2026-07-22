@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='what-changed-data-20260721e-auto-lifecycle';
+  const VERSION='what-changed-data-20260721f-ready-lifecycle';
   const DAY_MS=86400000;
   const RULES=Object.freeze({liveDays:7,retentionDays:15,maxLiveEntries:6,rankMoveThreshold:3});
   const AUTO_STORAGE_KEY='octagon-hq-what-changed-auto-v1';
@@ -54,6 +54,7 @@
   const text=value=>String(value??'').trim();
   const slugify=value=>text(value).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
   const number=value=>Number.isFinite(Number(value))?Number(value):null;
+  const pipelineReady=()=>document.documentElement.getAttribute('data-scoring-pipeline')==='ready';
 
   function centralDayParts(date){
     try{
@@ -215,12 +216,16 @@
 
   function detectAutomaticEntries(){
     const now=new Date();
-    const publishedAt=now.toISOString();
-    const current=currentSnapshot();
     const stored=readAutoState();
-    const previous=stored.snapshot;
     const retained=(Array.isArray(stored.events)?stored.events:[])
       .filter(entry=>ageDays(entry?.publishedAt,now)<=RULES.retentionDays);
+
+    // Consume the canonical ranking-ready state; never baseline transient startup rows.
+    if(!pipelineReady())return retained;
+
+    const publishedAt=now.toISOString();
+    const current=currentSnapshot();
+    const previous=stored.snapshot;
 
     if(!previous?.fighters){
       writeAutoState({snapshot:current,events:retained});
@@ -309,6 +314,9 @@
   window.OCTAGON_CHANGELOG=Object.freeze(source);
 
   window.addEventListener('ufc-picks-events-updated',()=>window.UFC_APP_UPDATE_WATCHER?.syncUnread?.());
+  if(!pipelineReady()){
+    window.addEventListener('ufc-scoring-pipeline-ready',()=>window.UFC_APP_UPDATE_WATCHER?.syncUnread?.(),{once:true});
+  }
 
   if(!document.querySelector('script[data-all-game-challenges-loader]')){
     const script=document.createElement('script');
