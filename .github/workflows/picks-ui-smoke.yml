@@ -71,6 +71,12 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Install mobile browser runtime
+        working-directory: repo
+        run: |
+          npm install --no-save --silent playwright@1.54.2 > /tmp/picks-playwright-install.log 2>&1
+          npx playwright install --with-deps chromium >> /tmp/picks-playwright-install.log 2>&1
+
       - name: Check Picks JavaScript syntax
         working-directory: repo
         run: |
@@ -90,12 +96,6 @@ jobs:
       - name: Verify Picks source and ownership contract
         working-directory: repo
         run: node scripts/check-picks-ui.mjs
-
-      - name: Install mobile browser runtime
-        working-directory: repo
-        run: |
-          npm install --no-save --silent playwright@1.54.2 > /tmp/picks-playwright-install.log 2>&1
-          npx playwright install --with-deps chromium >> /tmp/picks-playwright-install.log 2>&1
 
       - name: Start local app
         working-directory: repo
