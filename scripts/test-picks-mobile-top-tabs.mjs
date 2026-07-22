@@ -1,8 +1,10 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import { chromium } from 'playwright';
 
 const VIEWPORT={width:390,height:844};
 const ENABLED_BOTTOM_DESTINATIONS=['home','rankings','play','picks'];
+const DIAGNOSTIC_PATH='/tmp/picks-mobile-nav-diagnostic.json';
 const browser=await chromium.launch({headless:true});
 const page=await browser.newPage({viewport:VIEWPORT,deviceScaleFactor:1});
 const pageErrors=[];
@@ -19,6 +21,14 @@ async function navSnapshot(){
     const navRect=nav.getBoundingClientRect();
     const askRect=ask.getBoundingClientRect();
     const sourceRect=source?.getBoundingClientRect();
+    const hero=document.querySelector('.hero');
+    const title=document.querySelector('.hero h1');
+    const tools=document.querySelector('.product-header-tools');
+    const rectOf=node=>{
+      if(!node)return null;
+      const rect=node.getBoundingClientRect();
+      return{left:rect.left,right:rect.right,top:rect.top,bottom:rect.bottom,width:rect.width,height:rect.height};
+    };
     const buttons=[...nav.querySelectorAll('[data-native-destination]')].map(button=>{
       const rect=button.getBoundingClientRect();
       return{
@@ -34,6 +44,13 @@ async function navSnapshot(){
       scroll:{x:window.scrollX,y:window.scrollY},
       currentDestination:(window.UFC_APP_SHELL||window.UFC_PRODUCT_ARCHITECTURE)?.currentDestination||null,
       sourceHidden:Boolean(source)&&sourceRect?.width===0&&sourceRect?.height===0,
+      header:{
+        hero:rectOf(hero),
+        title:rectOf(title),
+        tools:rectOf(tools),
+        titleFontSize:title?getComputedStyle(title).fontSize:null,
+        titleText:title?.textContent||''
+      },
       nav:{
         scrollWidth:nav.scrollWidth,
         clientWidth:nav.clientWidth,
@@ -100,9 +117,12 @@ try{
   assert.equal(intelligence.currentDestination,'intelligence','Intelligence Ask action opens the canonical Intelligence destination');
 
   assert.deepEqual(pageErrors,[],'mobile native navigation causes no uncaught page errors');
+  fs.writeFileSync(DIAGNOSTIC_PATH,JSON.stringify({status:'passed',label:diagnosticLabel,snapshot:diagnosticSnapshot,pageErrors},null,2));
 }catch(error){
+  const diagnostic={status:'failed',label:diagnosticLabel,snapshot:diagnosticSnapshot,pageErrors,error:String(error?.stack||error)};
+  fs.writeFileSync(DIAGNOSTIC_PATH,JSON.stringify(diagnostic,null,2));
   console.error('PICKS_MOBILE_NAV_FAILURE');
-  console.error(JSON.stringify({label:diagnosticLabel,snapshot:diagnosticSnapshot,pageErrors}));
+  console.error(JSON.stringify(diagnostic));
   throw error;
 }finally{
   await browser.close();
