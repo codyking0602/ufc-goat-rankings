@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='better-than-standalone-share-20260721q-find-leader-owner';
+  const VERSION='better-than-standalone-share-20260721r-canonical-daily-owner';
   let creating=false;
 
   function loadScriptOnce(selector,src,datasetKey,onload){
@@ -25,26 +25,12 @@
     if(description)description.textContent='Eliminate nine fighters without removing the verified leader. Fifty questions rotate across eras, filters, main events, and official UFC stats.';
   }
 
-  function patchBalancedDailySetup(){
-    const game=window.UFC_FIND_LEADER;
-    const bank=window.UFC_FIND_LEADER_QUESTION_BANK;
-    if(!game||!bank?.daily||game.balancedDailyVersion===bank.version)return false;
-    const fallback=typeof game.dailySetup==='function'?game.dailySetup.bind(game):()=>null;
-    game.dailySetup=context=>bank.daily(context)||fallback(context);
-    game.balancedDailyVersion=bank.version;
-    document.documentElement.setAttribute('data-find-leader-daily-schedule',bank.version);
-    return true;
-  }
-
   function loadDailyTools(){
-    patchBalancedDailySetup();
     window.UFC_PLAY_PHOTO_AUTHORITY?.sync?.();
     const loadClients=()=>{
-      loadScriptOnce('script[data-play-daily-rotation-v3]','assets/js/play-daily-rotation.js?v=play-daily-rotation-20260716d-all-six-games','playDailyRotationV3');
-      loadScriptOnce('script[data-play-daily-leaderboard-community]','assets/js/play-daily-leaderboard.js?v=play-daily-leaderboard-20260716d-community-days','playDailyLeaderboardCommunity');
       loadScriptOnce('script[data-play-daily-polish]','assets/js/play-daily-polish.js?v=play-daily-polish-20260716a','playDailyPolish');
       loadScriptOnce('script[data-play-community-picks]','assets/js/play-community-picks.js?v=play-community-picks-20260717c-finish-flow','playCommunityPicks');
-      loadScriptOnce('script[data-play-daily-find-leader]','assets/js/play-daily-find-leader.js?v=play-daily-find-leader-20260717b-type-polish','playDailyFindLeader');
+      loadScriptOnce('script[data-play-daily-find-leader]','assets/js/play-daily-find-leader.js?v=play-daily-find-leader-20260721c-canonical-owner','playDailyFindLeader');
     };
     if(window.UFC_PLAY_SHARED?.dailyContext){loadClients();return;}
     loadScriptOnce('script[data-play-shared-daily-loader]','assets/js/play-shared-system.js?v=play-shared-system-20260715k-clean-rebuild','playSharedDailyLoader',loadClients);
@@ -64,10 +50,10 @@
       document.head.appendChild(link);
     }
 
-    const gameReady=()=>{patchBalancedDailySetup();window.UFC_PLAY_PHOTO_AUTHORITY?.sync?.();loadDailyTools();};
+    const gameReady=()=>{window.UFC_PLAY_PHOTO_AUTHORITY?.sync?.();loadDailyTools();};
     const loadGame=()=>{
       if(!window.UFC_FIND_LEADER){
-        loadScriptOnce('script[data-find-leader-owner-recovery]','assets/js/find-leader.js?v=find-leader-20260719a-group-leaders','findLeaderOwnerRecovery',gameReady);
+        loadScriptOnce('script[data-find-leader-owner-recovery]','assets/js/find-leader.js?v=find-leader-20260721b-canonical-daily-board','findLeaderOwnerRecovery',gameReady);
       }else gameReady();
     };
     const loadQuestionBank=()=>loadScriptOnce(
