@@ -2,9 +2,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 import {createHash} from 'node:crypto';
+import {fileURLToPath,pathToFileURL} from 'node:url';
 import {chromium} from 'playwright';
 
-const ROOT=path.resolve(path.dirname(new URL(import.meta.url).pathname),'..');
+const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const CONFIG_PATH=process.env.UFC_CARD_SOURCES_FILE || path.join(ROOT,'config','ufc-card-sources.json');
 const OUTPUT_DIR=process.env.UFC_CARD_SYNC_ARTIFACT_DIR || path.join(ROOT,'artifacts','ufc-card-sync');
 const APPLY=process.argv.includes('--apply');
@@ -44,18 +45,8 @@ function matchupKey(first,second){
   return [normalizeName(first),normalizeName(second)].sort().join('|');
 }
 
-function canonicalSection(value){
-  const text=normalizeSpace(value).toLowerCase();
-  if(text.includes('co-main') || text.includes('co main')) return 'Co-Main Event';
-  if(text.includes('main event')) return 'Main Event';
-  if(text.includes('early') && text.includes('prelim')) return 'Early Prelims';
-  if(text.includes('prelim')) return 'Prelims';
-  if(text.includes('main card') || text==='main') return 'Main Card';
-  return '';
-}
-
 function isMainSection(value){
-  return ['Main Card','Co-Main Event','Main Event'].includes(canonicalSection(value));
+  return ['Main Card','Main Event'].includes(String(value || ''));
 }
 
 function expectedMainCount(config){
@@ -65,114 +56,89 @@ function expectedMainCount(config){
   return count;
 }
 
-function weightClassFromText(value){
-  const text=normalizeSpace(value);
-  const lower=text.toLowerCase();
-  const named=[
-    ["women's strawweight","Women's Strawweight"],
-    ["women’s strawweight","Women's Strawweight"],
-    ["women's flyweight","Women's Flyweight"],
-    ["women’s flyweight","Women's Flyweight"],
-    ["women's bantamweight","Women's Bantamweight"],
-    ["women’s bantamweight","Women's Bantamweight"],
-    ['light heavyweight','Light Heavyweight'],
-    ['super heavyweight','Super Heavyweight'],
-    ['heavyweight','Heavyweight'],
-    ['middleweight','Middleweight'],
-    ['welterweight','Welterweight'],
-    ['lightweight','Lightweight'],
-    ['featherweight','Featherweight'],
-    ['bantamweight','Bantamweight'],
-    ['flyweight','Flyweight'],
-    ['strawweight','Strawweight'],
-    ['catchweight','Catchweight']
-  ];
-  for(const [needle,label] of named){
-    if(lower.includes(needle)) return label;
-  }
-  const pounds=lower.match(/\b(115|125|135|145|155|165|170|175|185|195|205|225|265)\s*lbs?\b/);
-  if(!pounds) return 'TBD';
+function weightClassFromPounds(value){
   return ({
     '115':'Strawweight','125':'Flyweight','135':'Bantamweight','145':'Featherweight',
     '155':'Lightweight','165':'Catchweight','170':'Welterweight','175':'Catchweight',
     '185':'Middleweight','195':'Catchweight','205':'Light Heavyweight','225':'Catchweight','265':'Heavyweight'
-  })[pounds[1]] || 'TBD';
+  })[String(value)] || 'TBD';
 }
 
-function signature(snapshot){
-  return createHash('sha256').update(JSON.stringify(snapshot.fights.map(fight=>({
-    pair:matchupKey(fight.red_name,fight.blue_name),
-    section:fight.card_section,
-    order:fight.bout_order,
-    weight:fight.weight_class
-  })))).digest('hex');
-}
+export function parseMmaManiaText(articleText){
+  const lines=String(articleText || '')
+    .split(/\n+/)
+    .map(line=>normalizeSpace(line))
+    .filter(Boolean);
+  let section='';
+  const rows=[];
 
-function expectedMainEventFound(fights,expected){
-  if(!Array.isArray(expected) || expected.length!==2) return true;
-  const expectedKey=matchupKey(expected[0],expected[1]);
-  return fights.some(fight=>matchupKey(fight.red_name,fight.blue_name)===expectedKey);
-}
+  for(const line of lines){
+    const lower=line.toLowerCase();
+    if(lower.includes('main event') && !lower.includes('original card')){
+      section='Main Event';
+      continue;
+    }
+    if(lower.includes('main card') && !lower.includes('main event')){
+      section='Main Card';
+      continue;
+    }
+    if(lower.includes('prelim') && lower.includes('card')){
+      section='Prelims';
+      continue;
+    }
+    if(!section) continue;
 
-function ensureFightSections(rawFights,config){
-  const expectedKey=matchupKey(config.expectedMainEvent?.[0],config.expectedMainEvent?.[1]);
-  const cleaned=[];
-  const seen=new Set();
-
-  for(const raw of rawFights){
-    const red=normalizeSpace(raw.red_name || raw.red || '');
-    const blue=normalizeSpace(raw.blue_name || raw.blue || '');
+    const match=line.match(/^(\d{3})\s*lbs?\.?\s*:\s*(.+?)\s+vs\.?\s+(.+)$/i);
+    if(!match) continue;
+    const red=normalizeSpace(match[2]);
+    const blue=normalizeSpace(match[3].replace(/\s*\([^)]*\)\s*$/,''));
     if(!red || !blue || normalizeName(red)===normalizeName(blue)) continue;
-    const pair=matchupKey(red,blue);
-    if(!pair || seen.has(pair)) continue;
-    seen.add(pair);
-    let section=canonicalSection(raw.card_section || raw.section);
-    // The expected main event is an identity guard, not permission to promote
-    // a prelim. It can only refine a row the source already placed on main.
-    if(pair===expectedKey && isMainSection(section)) section='Main Event';
-    cleaned.push({
+    rows.push({
       red_name:red,
       blue_name:blue,
-      weight_class:weightClassFromText(raw.weight_class || raw.weight || raw.text || ''),
+      weight_class:weightClassFromPounds(match[1]),
       card_section:section,
-      source_bout_id:normalizeSpace(raw.source_bout_id || raw.sourceBoutId || ''),
-      source_index:Number.isFinite(Number(raw.source_index)) ? Number(raw.source_index) : cleaned.length
+      source_index:rows.length,
     });
   }
 
-  return cleaned;
+  return rows;
 }
 
 function chronologicalFights(rawFights,config){
-  const cleaned=ensureFightSections(rawFights,config);
-  const early=cleaned.filter(fight=>fight.card_section==='Early Prelims').sort((a,b)=>b.source_index-a.source_index);
-  const prelims=cleaned.filter(fight=>fight.card_section==='Prelims').sort((a,b)=>b.source_index-a.source_index);
-  const main=cleaned.filter(fight=>fight.card_section==='Main Card').sort((a,b)=>b.source_index-a.source_index);
-  const coMain=cleaned.filter(fight=>fight.card_section==='Co-Main Event').sort((a,b)=>b.source_index-a.source_index);
-  const mainEvent=cleaned.filter(fight=>fight.card_section==='Main Event').sort((a,b)=>b.source_index-a.source_index);
-  const ordered=[...early,...prelims,...main,...coMain,...mainEvent];
+  const seen=new Set();
+  const cleaned=[];
+  const expectedMainKey=matchupKey(config.expectedMainEvent?.[0],config.expectedMainEvent?.[1]);
 
-  const grouped={
-    'Early Prelims':ordered.filter(fight=>fight.card_section==='Early Prelims'),
-    'Prelims':ordered.filter(fight=>fight.card_section==='Prelims'),
-    'Main Card':ordered.filter(fight=>isMainSection(fight.card_section))
-  };
-  const sectionNames=['Early Prelims','Prelims','Main Card'];
+  for(const raw of rawFights){
+    const pair=matchupKey(raw.red_name,raw.blue_name);
+    if(!pair || seen.has(pair)) continue;
+    seen.add(pair);
+    let section=raw.card_section;
+    if(pair===expectedMainKey){
+      if(section!=='Main Event') throw new Error(`Expected main event is not under the MMA Mania main-event heading for ${config.eventId}`);
+      section='Main Event';
+    }
+    cleaned.push({...raw,card_section:section});
+  }
+
+  const prelims=cleaned.filter(fight=>fight.card_section==='Prelims').reverse();
+  const main=cleaned.filter(fight=>fight.card_section==='Main Card').reverse();
+  const mainEvent=cleaned.filter(fight=>fight.card_section==='Main Event').reverse();
+  const ordered=[...prelims,...main,...mainEvent];
   const sectionStarts=config.sectionStarts || {};
   const defaultBoutMinutes=Math.max(15,Number(config.defaultBoutMinutes || 30));
 
-  for(let sectionIndex=0;sectionIndex<sectionNames.length;sectionIndex+=1){
-    const sectionName=sectionNames[sectionIndex];
-    const fights=grouped[sectionName];
+  for(const [sectionName,fights] of [
+    ['Prelims',prelims],
+    ['Main Card',[...main,...mainEvent]],
+  ]){
     if(!fights.length) continue;
-    const startIso=sectionStarts[sectionName];
-    if(!startIso) throw new Error(`Missing ${sectionName} start time for ${config.eventId}`);
-    const startMs=new Date(startIso).getTime();
-    if(!Number.isFinite(startMs)) throw new Error(`Invalid ${sectionName} start time for ${config.eventId}`);
-    const nextSectionName=sectionNames.slice(sectionIndex+1).find(name=>grouped[name].length && sectionStarts[name]);
-    const nextStartMs=nextSectionName ? new Date(sectionStarts[nextSectionName]).getTime() : NaN;
+    const startMs=new Date(sectionStarts[sectionName]).getTime();
+    if(!Number.isFinite(startMs)) throw new Error(`Missing or invalid ${sectionName} start time for ${config.eventId}`);
+    const nextStartMs=sectionName==='Prelims' ? new Date(sectionStarts['Main Card']).getTime() : NaN;
     let intervalMinutes=defaultBoutMinutes;
-    if(Number.isFinite(nextStartMs) && nextStartMs>startMs){
+    if(Number.isFinite(nextStartMs)&&nextStartMs>startMs){
       intervalMinutes=Math.max(15,Math.min(defaultBoutMinutes,Math.floor((nextStartMs-startMs)/60000/fights.length)));
     }
     fights.forEach((fight,index)=>{
@@ -188,22 +154,30 @@ function chronologicalFights(rawFights,config){
     red_name:fight.red_name,
     blue_name:fight.blue_name,
     lock_at:fight.lock_at,
-    source_bout_id:fight.source_bout_id || null
   }));
+}
+
+function signature(snapshot){
+  return createHash('sha256').update(JSON.stringify(snapshot.fights.map(fight=>({
+    pair:matchupKey(fight.red_name,fight.blue_name),
+    section:fight.card_section,
+    order:fight.bout_order,
+    weight:fight.weight_class,
+  })))).digest('hex');
 }
 
 function validateSnapshot(snapshot,config){
   const failures=[];
-  if(!snapshot.sourceUrl || !/^https:\/\//i.test(snapshot.sourceUrl)) failures.push('missing-source-url');
+  if(!snapshot.sourceUrl || new URL(snapshot.sourceUrl).hostname.replace(/^www\./,'')!=='mmamania.com') failures.push('invalid-source-url');
   if(snapshot.fights.length<Number(config.minFights || 5)) failures.push(`too-few-fights:${snapshot.fights.length}`);
-  if(!expectedMainEventFound(snapshot.fights,config.expectedMainEvent)) failures.push('expected-main-event-missing');
+  const expectedMainKey=matchupKey(config.expectedMainEvent?.[0],config.expectedMainEvent?.[1]);
+  if(expectedMainKey && !snapshot.fights.some(fight=>matchupKey(fight.red_name,fight.blue_name)===expectedMainKey&&fight.card_section==='Main Event')) failures.push('expected-main-event-missing');
   const mainCount=snapshot.fights.filter(fight=>isMainSection(fight.card_section)).length;
   const requiredMain=expectedMainCount(config);
   if(requiredMain && mainCount!==requiredMain) failures.push(`main-card-count-mismatch:${mainCount}!=${requiredMain}`);
-  const uniquePairs=new Set(snapshot.fights.map(fight=>matchupKey(fight.red_name,fight.blue_name)));
-  if(uniquePairs.size!==snapshot.fights.length) failures.push('duplicate-matchups');
-  if(snapshot.fights.some(fight=>!fight.lock_at || !Number.isFinite(new Date(fight.lock_at).getTime()))) failures.push('invalid-lock-time');
-  if(snapshot.fights.some(fight=>!fight.card_section || !fight.red_name || !fight.blue_name)) failures.push('incomplete-fight-row');
+  if(snapshot.fights.some(fight=>!fight.card_section||!fight.red_name||!fight.blue_name||!fight.lock_at)) failures.push('incomplete-fight-row');
+  const pairs=new Set(snapshot.fights.map(fight=>matchupKey(fight.red_name,fight.blue_name)));
+  if(pairs.size!==snapshot.fights.length) failures.push('duplicate-matchups');
   if(failures.length) throw new Error(`Snapshot validation failed for ${config.eventId}: ${failures.join(', ')}`);
 }
 
@@ -213,7 +187,7 @@ async function gotoWithRetry(page,url){
     try{
       const response=await page.goto(url,{waitUntil:'domcontentloaded',timeout:NAVIGATION_TIMEOUT_MS});
       if(response && response.status()>=400) throw new Error(`HTTP ${response.status()} for ${url}`);
-      await page.waitForTimeout(3500);
+      await page.waitForTimeout(2500);
       return;
     }catch(error){
       lastError=error;
@@ -223,153 +197,28 @@ async function gotoWithRetry(page,url){
   throw lastError;
 }
 
-async function discoverOfficialUrl(page,official,config){
-  await gotoWithRetry(page,official.discoveryUrl);
-  const candidates=await page.locator('a[href*="/event/"]').evaluateAll((anchors)=>anchors.map(anchor=>({
-    href:anchor.href,
-    text:(anchor.closest('article,li,div')?.innerText || anchor.innerText || '').replace(/\s+/g,' ').trim()
-  })));
-  const discoveryTerms=(official.discoveryTerms || []).map(value=>String(value).toLowerCase());
-  const dateTerms=(official.dateTerms || []).map(value=>String(value).toLowerCase());
-  const scored=candidates.map(candidate=>{
-    const text=String(candidate.text || '').toLowerCase();
-    let score=0;
-    discoveryTerms.forEach(term=>{ if(text.includes(term)) score+=10; });
-    dateTerms.forEach(term=>{ if(text.includes(term)) score+=4; });
-    if(String(candidate.href || '').includes('/event/')) score+=1;
-    return {...candidate,score};
-  }).sort((a,b)=>b.score-a.score);
-  if(scored[0]?.score>=10) return scored[0].href;
-  if(official.fallbackUrl) return official.fallbackUrl;
-  throw new Error(`Could not discover official UFC URL for ${config.eventId}`);
+function configuredSource(config){
+  const sources=(config.fallbackSources || []).filter(source=>source?.type==='mma-mania'&&source?.url);
+  if(sources.length!==1) throw new Error(`Exactly one MMA Mania source is required for ${config.eventId}`);
+  return sources[0];
 }
 
-async function parseOfficialUfc(page){
-  return page.evaluate(()=>{
-    const normalize=value=>String(value || '').replace(/\s+/g,' ').trim();
-    const sectionFromText=value=>{
-      const text=normalize(value).toLowerCase();
-      if(text.includes('co-main') || text.includes('co main')) return 'Co-Main Event';
-      if(text.includes('main event')) return 'Main Event';
-      if(text.includes('early') && text.includes('prelim')) return 'Early Prelims';
-      if(text.includes('prelim')) return 'Prelims';
-      if(text.includes('main card') || text==='main') return 'Main Card';
-      return '';
-    };
-    const athleteNameFromLink=link=>{
-      const text=normalize(link.innerText || link.textContent || '').replace(/\b(view profile|profile)\b/ig,'').trim();
-      if(text) return text;
-      const parts=new URL(link.href,location.href).pathname.split('/').filter(Boolean);
-      const athleteIndex=parts.indexOf('athlete');
-      return athleteIndex>=0 ? String(parts[athleteIndex+1] || '').split('-').map(part=>part ? part[0].toUpperCase()+part.slice(1) : '').join(' ') : '';
-    };
-    const candidateSelector='.c-listing-fight,[class*="listing-fight"],[data-fight-id],[class*="fight-card"] article';
-    const allCandidates=[...document.querySelectorAll(candidateSelector)].filter(node=>{
-      const athleteLinks=node.querySelectorAll('a[href*="/athlete/"]');
-      const cornerNames=node.querySelectorAll('[class*="corner-name"]');
-      return athleteLinks.length>=2 || cornerNames.length>=2;
-    });
-    const candidates=allCandidates.filter(node=>!allCandidates.some(other=>other!==node && node.contains(other)));
-    const candidateSet=new Set(candidates);
-    const markers=[...document.querySelectorAll('h1,h2,h3,h4,h5,[data-card-section],[class*="card-title"],[class*="card-label"]')]
-      .filter(node=>!node.closest(candidateSelector) || !candidateSet.has(node.closest(candidateSelector)))
-      .map(node=>({node,section:sectionFromText(`${node.getAttribute('data-card-section') || ''} ${node.innerText || node.textContent || ''}`)}))
-      .filter(item=>item.section);
-
-    const contextSection=node=>{
-      let current=node;
-      while(current && current!==document.body){
-        const descriptor=[
-          current.id,
-          typeof current.className==='string' ? current.className : '',
-          current.getAttribute?.('data-card-section'),
-          current.getAttribute?.('data-section'),
-          current.getAttribute?.('aria-label')
-        ].filter(Boolean).join(' ');
-        const section=sectionFromText(descriptor.replace(/[-_]+/g,' '));
-        if(section) return section;
-        current=current.parentElement;
-      }
-      let preceding='';
-      for(const marker of markers){
-        const relation=marker.node.compareDocumentPosition(node);
-        if(relation & Node.DOCUMENT_POSITION_FOLLOWING) preceding=marker.section;
-      }
-      return preceding;
-    };
-
-    const rows=[];
-    for(const [sourceIndex,node] of candidates.entries()){
-      const linkMap=new Map();
-      for(const link of node.querySelectorAll('a[href*="/athlete/"]')){
-        const name=athleteNameFromLink(link);
-        if(name && !linkMap.has(link.href)) linkMap.set(link.href,name);
-      }
-      let names=[...linkMap.values()];
-      if(names.length<2){
-        names=[...node.querySelectorAll('[class*="corner-name"]')].map(item=>normalize(item.innerText || item.textContent)).filter(Boolean);
-      }
-      names=[...new Set(names)].filter(Boolean);
-      if(names.length<2) continue;
-      const weightNode=node.querySelector('[class*="class-text"],[class*="weight-class"],[class*="weight"]');
-      rows.push({
-        red_name:names[0],
-        blue_name:names[1],
-        weight_class:normalize(weightNode?.innerText || weightNode?.textContent || node.innerText || ''),
-        card_section:contextSection(node),
-        source_bout_id:node.getAttribute('data-fight-id') || node.id || [...linkMap.keys()].sort().join('|'),
-        source_index:sourceIndex,
-        text:normalize(node.innerText || '')
-      });
-    }
-    return rows;
-  });
-}
-
-async function parseMmaMania(page){
-  return page.evaluate(()=>{
-    const root=document.querySelector('article') || document.querySelector('main') || document.body;
-    const lines=String(root.innerText || '').split(/\n+/).map(line=>line.replace(/\s+/g,' ').trim()).filter(Boolean);
-    let section='';
-    const rows=[];
-    for(const line of lines){
-      const lower=line.toLowerCase();
-      if(lower.includes('main event') && lower.includes('paramount')){ section='Main Event'; continue; }
-      if(lower.includes('main card') && lower.includes('paramount')){ section='Main Card'; continue; }
-      if(lower.includes('prelims') && lower.includes('card')){ section='Prelims'; continue; }
-      const match=line.match(/^(\d{3})\s*lbs?\.?\s*:\s*(.+?)\s+vs\.?\s+(.+)$/i);
-      if(!match) continue;
-      const blue=match[3].replace(/\s*\([^)]*\)\s*$/,'').trim();
-      rows.push({
-        red_name:match[2].trim(),
-        blue_name:blue,
-        weight_class:`${match[1]} lbs`,
-        card_section:section,
-        source_bout_id:'',
-        source_index:rows.length,
-        text:line
-      });
-    }
-    return rows;
-  });
-}
-
-async function captureSource(browser,source,config,captureLabel){
+async function captureSource(browser,config,captureLabel){
+  const source=configuredSource(config);
   const page=await browser.newPage({
     userAgent:'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/131.0.0.0 Safari/537.36',
     locale:'en-US',
-    viewport:{width:1440,height:1400}
+    viewport:{width:1440,height:1400},
   });
   page.setDefaultTimeout(NAVIGATION_TIMEOUT_MS);
-  let sourceUrl=source.url || '';
   try{
-    if(source.type==='official-ufc') sourceUrl=await discoverOfficialUrl(page,source.official,config);
-    await gotoWithRetry(page,sourceUrl);
-    const raw=source.type==='mma-mania' ? await parseMmaMania(page) : await parseOfficialUfc(page);
-    const fights=chronologicalFights(raw,config);
+    await gotoWithRetry(page,source.url);
+    const root=page.locator('article, main, body').first();
+    const articleText=await root.innerText();
+    const fights=chronologicalFights(parseMmaManiaText(articleText),config);
     const snapshot={
-      sourceType:source.type,
-      sourceUrl,
+      sourceType:'mma-mania',
+      sourceUrl:source.url,
       observedAt:new Date().toISOString(),
       event:{
         id:config.eventId,
@@ -380,14 +229,14 @@ async function captureSource(browser,source,config,captureLabel){
         location:config.location,
         card_rule:config.cardRule,
         status:config.status,
-        source_note:`Externally synced from ${source.type==='official-ufc' ? 'UFC.com' : 'MMA Mania fallback'} at ${new Date().toISOString()}`
+        source_note:`Externally synced from MMA Mania at ${new Date().toISOString()}`,
       },
-      fights
+      fights,
     };
     validateSnapshot(snapshot,config);
     return snapshot;
   }catch(error){
-    const safeName=`${slug(config.eventId)}-${captureLabel}-${slug(source.type)}`;
+    const safeName=`${slug(config.eventId)}-${captureLabel}-mma-mania`;
     try{
       fs.writeFileSync(path.join(OUTPUT_DIR,`${safeName}.html`),await page.content());
       await page.screenshot({path:path.join(OUTPUT_DIR,`${safeName}.png`),fullPage:true});
@@ -398,32 +247,14 @@ async function captureSource(browser,source,config,captureLabel){
   }
 }
 
-async function confirmedSnapshot(browser,source,config){
-  const first=await captureSource(browser,source,config,'first');
+async function confirmedSnapshot(browser,config){
+  const first=await captureSource(browser,config,'first');
   await new Promise(resolve=>setTimeout(resolve,CAPTURE_DELAY_MS));
-  const second=await captureSource(browser,source,config,'second');
+  const second=await captureSource(browser,config,'second');
   const firstSignature=signature(first);
   const secondSignature=signature(second);
-  if(firstSignature!==secondSignature){
-    throw new Error(`Two captures disagreed for ${config.eventId}: ${firstSignature} vs ${secondSignature}`);
-  }
+  if(firstSignature!==secondSignature) throw new Error(`Two MMA Mania captures disagreed for ${config.eventId}: ${firstSignature} vs ${secondSignature}`);
   return {...second,confirmed:true,confirmationHash:secondSignature};
-}
-
-async function chooseSnapshot(browser,config){
-  const attempts=[
-    {type:'official-ufc',official:config.official},
-    ...(config.fallbackSources || []).map(source=>({type:source.type,url:source.url}))
-  ];
-  const errors=[];
-  for(const source of attempts){
-    try{
-      return await confirmedSnapshot(browser,source,config);
-    }catch(error){
-      errors.push(`${source.type}: ${error.message}`);
-    }
-  }
-  throw new Error(`All card sources failed for ${config.eventId}. ${errors.join(' | ')}`);
 }
 
 async function postSnapshot(snapshot,config){
@@ -431,23 +262,19 @@ async function postSnapshot(snapshot,config){
   if(!ENDPOINT || !SECRET) throw new Error('CARD_SYNC_ENDPOINT and CARD_SYNC_SECRET are required with --apply');
   const response=await fetch(ENDPOINT,{
     method:'POST',
-    headers:{
-      'content-type':'application/json',
-      'x-card-sync-secret':SECRET
-    },
+    headers:{'content-type':'application/json','x-card-sync-secret':SECRET},
     body:JSON.stringify({
       ...snapshot,
       validation:{
         minFights:Number(config.minFights || 5),
         expectedMainEvent:config.expectedMainEvent || [],
-        expectedMainCardFights:expectedMainCount(config)
-      }
-    })
+        expectedMainCardFights:expectedMainCount(config),
+      },
+    }),
   });
   const text=await response.text();
   let body;
-  try{ body=JSON.parse(text); }
-  catch(_error){ body={raw:text}; }
+  try{body=JSON.parse(text);}catch(_error){body={raw:text};}
   if(!response.ok) throw new Error(`Supabase card sync failed (${response.status}): ${JSON.stringify(body)}`);
   return body;
 }
@@ -455,31 +282,31 @@ async function postSnapshot(snapshot,config){
 async function main(){
   const parsed=JSON.parse(fs.readFileSync(CONFIG_PATH,'utf8'));
   const events=Array.isArray(parsed.events) ? parsed.events : [];
-  if(!events.length) throw new Error('No UFC card sources are configured');
-  events.forEach(config=>expectedMainCount(config));
+  if(!events.length) throw new Error('No MMA Mania card sources are configured');
+  events.forEach(config=>{expectedMainCount(config);configuredSource(config);});
   const now=Date.now();
   const active=events.filter(event=>FORCE || !event.syncUntil || now<new Date(event.syncUntil).getTime());
   if(!active.length){
-    console.log('No active UFC card sources need synchronization.');
+    console.log('No active MMA Mania card sources need synchronization.');
     return;
   }
+
   const browser=await chromium.launch({headless:true,args:['--disable-dev-shm-usage','--no-sandbox']});
   const report=[];
   try{
     for(const config of active){
-      const snapshot=await chooseSnapshot(browser,config);
+      const snapshot=await confirmedSnapshot(browser,config);
       const result=await postSnapshot(snapshot,config);
-      const mainCardFights=snapshot.fights.filter(fight=>isMainSection(fight.card_section)).length;
       const reportRow={
         eventId:config.eventId,
         sourceType:snapshot.sourceType,
         sourceUrl:snapshot.sourceUrl,
         fights:snapshot.fights.length,
-        mainCardFights,
+        mainCardFights:snapshot.fights.filter(fight=>isMainSection(fight.card_section)).length,
         requiredMainCardFights:expectedMainCount(config),
         confirmationHash:snapshot.confirmationHash,
         applied:APPLY,
-        result
+        result,
       };
       report.push(reportRow);
       console.log(JSON.stringify(reportRow,null,2));
@@ -490,7 +317,10 @@ async function main(){
   fs.writeFileSync(path.join(OUTPUT_DIR,'card-sync-report.json'),JSON.stringify({generatedAt:new Date().toISOString(),report},null,2));
 }
 
-main().catch(error=>{
-  console.error(error.stack || error.message || String(error));
-  process.exit(1);
-});
+const directEntry=process.argv[1] && import.meta.url===pathToFileURL(path.resolve(process.argv[1])).href;
+if(directEntry){
+  main().catch(error=>{
+    console.error(error.stack || error.message || String(error));
+    process.exit(1);
+  });
+}
