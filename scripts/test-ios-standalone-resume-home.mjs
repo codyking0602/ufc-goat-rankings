@@ -41,7 +41,12 @@ try{
 
   await page.evaluate(()=>window.UFC_APP_SHELL.activateDestination('rankings'));
   await page.waitForFunction(()=>document.querySelector('#men')?.classList.contains('active-view'),null,{timeout:10000});
-  const baselineChanges=await page.evaluate(()=>window.__viewChanges.length);
+  await page.waitForFunction(()=>{
+    const last=window.__viewChanges.at(-1);
+    return last?.destination==='rankings'&&Date.now()-last.at>=750;
+  },null,{timeout:10000,polling:100});
+  await page.evaluate(()=>{window.__viewChanges.length=0;});
+  const baselineChanges=0;
 
   for(let index=0;index<3;index+=1){
     await page.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true})));
