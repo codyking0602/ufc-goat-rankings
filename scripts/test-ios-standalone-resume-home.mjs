@@ -94,11 +94,11 @@ try{
   await warm.waitForFunction(()=>Boolean(navigator.serviceWorker.controller),null,{timeout:60000});
   await warm.waitForFunction(async()=>{
     const keys=await caches.keys();
-    return keys.includes('octagon-hq-static-v20');
+    return keys.includes('octagon-hq-static-v21');
   },null,{timeout:60000});
 
   const cachedShell=await warm.evaluate(async()=>{
-    const cache=await caches.open('octagon-hq-static-v20');
+    const cache=await caches.open('octagon-hq-static-v21');
     const paths=[
       'index.html',
       'assets/css/app.css',
