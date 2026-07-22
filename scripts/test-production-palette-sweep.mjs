@@ -6,8 +6,9 @@ const index=fs.readFileSync('index.html','utf8');
 const styles=[...index.matchAll(/<link[^>]+rel="stylesheet"[^>]+href="([^"]+)"/g)]
   .map(match=>`<link rel="stylesheet" href="/${match[1]}">`)
   .join('\n');
+const legacyTokens='<style>:root{--bg:#f8fafc;--panel:#172033;--panel2:#1e293b;--text:#111827;--muted:#64748b;--line:#3b4352;--accent:#f97316;--accent2:#facc15}body{background:#f8fafc;color:#111827}</style>';
 
-const fixture=`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">${styles}</head><body>
+const fixture=`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">${legacyTokens}${styles}</head><body>
 <section id="play" class="view active-view">
   <div class="play-shell">
     <div class="play-mode-switch"><button class="active">Top 10</button><button>Blind</button></div>
@@ -27,6 +28,7 @@ const fixture=`<!doctype html><html><head><meta charset="utf-8"><meta name="view
     <details class="picks-room-more" open><summary>•••</summary><div class="picks-room-more-menu"><button id="picksSwitchRoom">Switch room</button></div></details>
   </div>
 </section>
+<section id="rankings"><article class="row"><div class="rank">#1</div><div><strong>Jon Jones</strong><span class="resume-tag">The standard everyone chases</span></div></article></section>
 <section id="compare" class="intelligence-view"><details class="intelligence-matchup" open><div class="intelligence-matchup-body"><select><option>Jon Jones</option></select><button class="intelligence-secondary">Open Verdict</button></div></details></section>
 </body></html>`;
 
@@ -50,7 +52,13 @@ try{
       const style=getComputedStyle(node);
       return{backgroundColor:style.backgroundColor,backgroundImage:style.backgroundImage,color:style.color,borderColor:style.borderColor};
     };
+    const root=getComputedStyle(document.documentElement);
     return{
+      tokens:{bg:root.getPropertyValue('--bg').trim(),panel:root.getPropertyValue('--panel').trim(),panel2:root.getPropertyValue('--panel2').trim(),text:root.getPropertyValue('--text').trim(),muted:root.getPropertyValue('--muted').trim(),line:root.getPropertyValue('--line').trim(),accent:root.getPropertyValue('--accent').trim(),accent2:root.getPropertyValue('--accent2').trim()},
+      body:read('body'),
+      rankingRow:read('#rankings .row'),
+      rankingRank:read('#rankings .rank'),
+      resumeTag:read('#rankings .resume-tag'),
       playMode:read('#play .play-mode-switch'),
       playActive:read('#play .play-mode-switch button.active'),
       playIntro:read('#play .play-intro-card'),
@@ -75,15 +83,19 @@ try{
 
   const report={proof:'production-palette-sweep',result};
   fs.writeFileSync(reportPath,JSON.stringify(report,null,2));
-  console.log(JSON.stringify(report,null,2));
+  console.log('PALETTE_TOKENS',JSON.stringify(result.tokens));
 
+  assert.deepEqual(result.tokens,{bg:'#080808',panel:'#111111',panel2:'#191919',text:'#f5f5f5',muted:'#a3a3a3',line:'#303030',accent:'#d20a0a',accent2:'#ff4d4d'},'Final palette owner did not replace legacy cached theme tokens.');
+  assert.ok(dark.includes(result.body.backgroundColor)||dark.some(color=>result.body.backgroundImage.includes(color)),'Body retained the cached light theme.');
   const text=JSON.stringify(result);
   for(const color of retired)assert.ok(!text.includes(color),`Retired production color survived the final owner: ${color}`);
-  for(const key of ['playMode','playRow','playSecondary','picksRoom','picksProgress','picksTier','fight','more']){
+  for(const key of ['rankingRow','playMode','playRow','playSecondary','picksRoom','picksProgress','picksTier','fight','more']){
     const value=result[key];
     assert.ok(value,`${key} palette sample is missing.`);
     assert.ok(dark.includes(value.backgroundColor)||dark.some(color=>value.backgroundImage.includes(color)),`${key} is not using a canonical dark surface.`);
   }
+  assert.equal(result.rankingRank.color,canonicalRedHighlight,'Ranking number is not using the canonical red highlight.');
+  assert.ok(result.resumeTag.color==='rgb(255, 208, 208)'||result.resumeTag.color===canonicalRedHighlight,'Ranking resume tag retained yellow text.');
   assert.equal(result.playActive.borderColor,canonicalRed,'Play active control is not owned by canonical UFC red.');
   assert.equal(result.playActive.color,white,'Play active control lost white contrast text.');
   assert.equal(result.blindB.borderColor,canonicalRed,'Blind Resume choice B retained a yellow/orange action.');
