@@ -33,17 +33,20 @@ assert.doesNotMatch(
   'Product architecture still owns a late stylesheet injection path.'
 );
 assert.ok(
-  serviceWorker.includes('const PALETTE_NETWORK_ONLY=/\\/assets\\/css\\/(?:app|home-dashboard|native-app-shell|native-app-shell-stability|product-polish)\\.css$/i;')
-    &&serviceWorker.includes('if(url.origin===self.location.origin&&PALETTE_NETWORK_ONLY.test(url.pathname))')
-    &&serviceWorker.includes("fetch(request,{cache:'no-store'})"),
-  'The cache owner must fetch canonical palette styles from the network without storing stale copies.'
+  serviceWorker.includes('const PALETTE_NETWORK_FIRST=/\\/assets\\/css\\/(?:app|home-dashboard|native-app-shell|native-app-shell-stability|product-polish)\\.css$/i;')
+    &&serviceWorker.includes('if(url.origin===self.location.origin&&PALETTE_NETWORK_FIRST.test(url.pathname))')
+    &&serviceWorker.includes('return await cachedFallback(cache,request)||Response.error();'),
+  'The cache owner must fetch canonical palette styles network-first and retain an installed fallback.'
 );
 assert.ok(
-  serviceWorker.includes("const VERSION='octagon-hq-sw-20260722d-safe-home-activation';")
-    &&serviceWorker.includes("const CACHE_NAME='octagon-hq-static-v19';")
+  serviceWorker.includes("const VERSION='octagon-hq-sw-20260722e-installed-shell-fallback';")
+    &&serviceWorker.includes("const CACHE_NAME='octagon-hq-static-v20';")
+    &&serviceWorker.includes('const SHELL_FALLBACKS=[')
+    &&serviceWorker.includes('await Promise.all(CORE.map(')
+    &&serviceWorker.includes('cache.match(request,{ignoreSearch:true})')
     &&serviceWorker.includes('fresh-home-route-bootstrap|fresh-home-launch')
     &&serviceWorker.includes('game-challenges|profile-challenges|share-deep-links'),
-  'The current service-worker identity must publish the safe Home launch and retain current app owners.'
+  'The current service-worker identity must require and publish a recoverable installed shell.'
 );
 const activation=serviceWorker.match(/self\.addEventListener\('activate',event=>\{([\s\S]*?)\n\}\);\n\nfunction isNavigation/);
 assert(activation,'The service-worker activation boundary could not be identified.');
