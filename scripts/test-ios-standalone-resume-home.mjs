@@ -1,5 +1,13 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import { chromium } from 'playwright';
+
+const diagnosticPath='/tmp/profile-signin-stability-report.json';
+const writeDiagnostic=error=>{
+  try{fs.writeFileSync(diagnosticPath,JSON.stringify({proof:'ios-standalone-resume-home',error:{name:error?.name||'Error',message:error?.message||String(error),stack:error?.stack||''}},null,2));}catch(_error){}
+};
+process.on('uncaughtExceptionMonitor',writeDiagnostic);
+process.on('unhandledRejection',writeDiagnostic);
 
 await import('./test-fresh-launch-route-ownership-contract.mjs');
 
