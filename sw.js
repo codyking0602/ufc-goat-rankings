@@ -1,5 +1,5 @@
-const VERSION='octagon-hq-sw-20260721d-visible-home-palette';
-const CACHE_NAME='octagon-hq-static-v13';
+const VERSION='octagon-hq-sw-20260721e-versioned-palette-assets';
+const CACHE_NAME='octagon-hq-static-v14';
 const LEGACY_PREFIX='octagon-hq-static-';
 const CORE=['./','./index.html','./manifest.webmanifest'];
 const FORCE_NETWORK=/\/assets\/(?:(?:js\/(?:app-notification-surface-fix|app-update-watcher|product-architecture|octagon-hq-shell|native-app-shell|native-app-shell-stability|community-profiles|fresh-home-launch|home-dashboard|find-leader|game-challenges|share-deep-links|picks|picks-auto-advance|octagon-notifications)|data\/(?:what-changed|supabase-config|picks-events))\.js|css\/(?:app|home-dashboard|native-app-shell|native-app-shell-stability|product-polish|community-profiles|find-leader)\.css)$/i;
