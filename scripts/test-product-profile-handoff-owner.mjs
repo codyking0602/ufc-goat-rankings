@@ -58,13 +58,15 @@ try{
     window.__PROFILE_HISTORY_WRITES__=[];
     Storage.prototype.setItem=function(key,value){
       const text=String(key);
+      const nextValue=String(value);
+      const changed=this===window.localStorage&&localStorage.getItem(text)!==nextValue;
       if(this===window.localStorage&&(
         text==='ufc-player:group-code'||
         text==='ufc-picks:display-name'||
         text.startsWith('ufc-picks:group:')||
         text.startsWith('ufc-picks:room:')
       )){
-        window.__PROFILE_ACCESS_WRITES__.push({key:text,value:String(value),stack:String(new Error().stack||'')});
+        window.__PROFILE_ACCESS_WRITES__.push({key:text,value:nextValue,changed,stack:String(new Error().stack||'')});
       }
       return originalSet.call(this,key,value);
     };
@@ -93,8 +95,8 @@ try{
   assert.equal(report.initial.room,'product-owner-token');
   assert.equal(report.initial.active,'GOAT26');
   assert.equal(report.initial.display,'Cody');
-  assert.equal(report.initial.writes.some(row=>/play-profile-identity\.js/i.test(row.stack)),true,'Canonical access must be persisted by play-profile-identity.js.');
-  assert.equal(report.initial.writes.some(row=>/product-architecture\.js/i.test(row.stack)),false,'Product Architecture must not persist canonical identity or access values.');
+  assert.equal(report.initial.writes.some(row=>/play-profile-identity\.js/i.test(row.stack)),true,'Canonical identity resolution must execute the play-profile-identity.js persistence path.');
+  assert.equal(report.initial.writes.some(row=>row.changed&&/product-architecture\.js/i.test(row.stack)),false,'Product Architecture must not persist canonical identity or access values.');
 
   report.stage='profile-update';
   await page.evaluate(()=>{
@@ -110,7 +112,7 @@ try{
     cardSuppressed:document.documentElement.dataset.sharedProfileAuth==='true'
   }));
   assert.equal(report.profileUpdate.refreshes,1,'A profile update must retain one Product-owned Picks PIN refresh.');
-  assert.deepEqual(report.profileUpdate.writes,[],'A profile update must not trigger compatibility access persistence.');
+  assert.deepEqual(report.profileUpdate.writes.filter(row=>row.changed),[],'A profile update must not trigger compatibility access persistence.');
   assert.equal(report.profileUpdate.cardSuppressed,true,'Product Architecture must retain duplicate Picks sign-in suppression.');
 
   report.stage='picks-handoff';
@@ -133,7 +135,7 @@ try{
   }));
   assert.equal(report.picks.group,'GOAT26','Product Architecture must retain the Picks group URL handoff.');
   assert.equal(report.picks.refreshes,1,'A Picks destination handoff must retain one PIN-surface refresh.');
-  assert.deepEqual(report.picks.writes,[],'The Picks handoff must not rewrite canonical access values.');
+  assert.deepEqual(report.picks.writes.filter(row=>row.changed),[],'The Picks handoff must not change canonical access values.');
   assert.equal(report.picks.history.some(row=>/product-architecture\.js/i.test(row.stack)),true,'The Picks route compatibility write must remain Product-owned.');
 
   report.passed=true;

@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='app-canonical-group-20260721c-resolved-handoff';
+  const VERSION='app-canonical-group-20260722a-home-route-safe';
   const CANONICAL_CODE='GOAT26';
   const GROUP_TOKEN_PREFIX='ufc-picks:group:';
   const GROUP_ADMIN_PREFIX='ufc-picks:group-admin:';
@@ -10,6 +10,7 @@
   const ACTIVE_GROUP_KEY='ufc-player:group-code';
   const DISPLAY_NAME_KEY='ufc-picks:display-name';
   const RELOAD_KEY='ufc-app:goat26-adoption-reload';
+  const PICKS_URL_KEYS=['room','event','picksView','archive'];
   const config=window.UFC_SUPABASE_CONFIG || {};
   const client=config.url&&config.anonKey&&window.supabase?.createClient
     ? window.supabase.createClient(config.url,config.anonKey)
@@ -42,6 +43,11 @@
     url.searchParams.set('group',CANONICAL_CODE);
     window.history.replaceState(null,'',url.toString());
     return true;
+  }
+
+  function hasPicksContext(url=new URL(window.location.href)){
+    return String(url.hash||'').toLowerCase()==='#picks'
+      ||PICKS_URL_KEYS.some(key=>url.searchParams.has(key));
   }
 
   function storeCanonical(candidate,identity){
@@ -88,7 +94,7 @@
         if(!identity)continue;
 
         storeCanonical(candidate,identity);
-        const urlChanged=canonicalizeUrl(true);
+        const urlChanged=canonicalizeUrl(hasPicksContext());
         const migrated=candidate.code!==CANONICAL_CODE;
         const reloadMarker=`${candidate.code}:${candidate.token.slice(0,8)}`;
         const alreadyReloaded=sessionStorage.getItem(RELOAD_KEY)===reloadMarker;

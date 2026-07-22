@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
@@ -10,6 +11,7 @@ const early=read('assets/js/fresh-home-route-bootstrap.js');
 const shell=read('assets/js/octagon-hq-shell.js');
 const picks=read('assets/js/picks.js');
 const launch=read('assets/js/fresh-home-launch.js');
+const canonicalGroup=read('assets/js/app-canonical-group.js');
 const serviceWorker=read('sw.js');
 
 const localPaths=[...index.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/gi)]
@@ -35,6 +37,9 @@ assert(shell.includes('get currentDestination(){return currentDestination;}'),'T
 assert.equal(picks.includes('UFC_APP_SHELL'),false,'Picks must not become a direct primary-route owner.');
 assert.equal(picks.includes('UFC_PRODUCT_ARCHITECTURE'),false,'Picks must not invoke the compatibility route owner directly.');
 assert(serviceWorker.includes('product-architecture|octagon-hq-shell|native-app-shell'),'The canonical shell must remain network-first in the installed app.');
+assert(serviceWorker.includes('app-canonical-group'),'The canonical group startup owner must remain network-first so installed apps cannot retain the route bug.');
+assert(canonicalGroup.includes('canonicalizeUrl(hasPicksContext())'),'Canonical group adoption must only force the group parameter in Picks context.');
+assert.equal(canonicalGroup.includes('const urlChanged=canonicalizeUrl(true);'),false,'Canonical group adoption must not manufacture a Picks invite during ordinary Home startup.');
 
 const helper=launch.match(/function activateDestinationOnce\(destination\)\{([\s\S]*?)\n  \}/);
 assert(helper,'Fresh launch must use one subordinate route-handoff helper.');
@@ -55,6 +60,65 @@ assert.equal((launch.match(/activateDestinationOnce\('picks'\)/g)||[]).length,1,
 assert(launch.includes("if(picksContinuation)activatePicks("),'Fresh launch must preserve Picks continuation recovery.');
 assert(launch.includes("else if(!explicitDeepLink)activateHome('startup')"),'Fresh launch must preserve ordinary Home normalization.');
 
+function makeStorage(seed={}){
+  const map=new Map(Object.entries(seed));
+  return {
+    get length(){return map.size;},
+    key:index=>[...map.keys()][index]??null,
+    getItem:key=>map.has(String(key))?map.get(String(key)):null,
+    setItem:(key,value)=>map.set(String(key),String(value)),
+    removeItem:key=>map.delete(String(key))
+  };
+}
+
+async function runCanonicalGroupScenario(href){
+  let currentHref=href;
+  let reloads=0;
+  const localStorage=makeStorage({'ufc-picks:group:GOAT26':'member-token-123'});
+  const sessionStorage=makeStorage();
+  const location={
+    get href(){return currentHref;},
+    set href(value){currentHref=String(value);},
+    reload(){reloads+=1;},
+    assign(value){currentHref=String(value);}
+  };
+  const history={replaceState(_state,_title,value){currentHref=new URL(String(value),currentHref).toString();}};
+  const document={
+    readyState:'complete',
+    body:{},
+    documentElement:{setAttribute(){}},
+    getElementById(){return null;},
+    querySelector(){return null;},
+    addEventListener(){}
+  };
+  class MutationObserver{observe(){}}
+  class CustomEvent{constructor(type,options={}){this.type=type;this.detail=options.detail;}}
+  const client={rpc:async name=>name==='app_profile_resolve'
+    ? {data:{ok:true,member:{display_name:'Cody'},rooms:[]},error:null}
+    : {data:null,error:{message:'unexpected fallback'}}};
+  const window={
+    UFC_SUPABASE_CONFIG:{url:'https://example.supabase.co',anonKey:'anon'},
+    supabase:{createClient:()=>client},
+    location,
+    history,
+    dispatchEvent(){}
+  };
+  const context={window,document,localStorage,sessionStorage,MutationObserver,CustomEvent,URL,console};
+  vm.runInNewContext(canonicalGroup,context,{filename:'app-canonical-group.js'});
+  await window.UFC_APP_IDENTITY_CONFIG.ready;
+  return{url:new URL(currentHref),reloads};
+}
+
+const signedInHome=await runCanonicalGroupScenario('https://example.test/#home');
+assert.equal(signedInHome.url.hash,'#home','Signed-in identity resolution moved the app away from Home.');
+assert.equal(signedInHome.url.searchParams.has('group'),false,'Signed-in Home startup manufactured a Picks group parameter.');
+assert.equal(signedInHome.reloads,0,'Signed-in Home startup reloaded after identity resolution.');
+
+const explicitPicks=await runCanonicalGroupScenario('https://example.test/#picks');
+assert.equal(explicitPicks.url.hash,'#picks','Explicit Picks startup lost its Picks route.');
+assert.equal(explicitPicks.url.searchParams.get('group'),'GOAT26','Explicit Picks startup did not receive the canonical group.');
+assert.equal(explicitPicks.reloads,1,'Explicit Picks canonicalization should reload exactly once.');
+
 console.log(JSON.stringify({
   passed:true,
   owner:shellPath,
@@ -66,5 +130,7 @@ console.log(JSON.stringify({
   sameViewActivationCoalesced:true,
   sameDestinationHandoffBlocked:true,
   bareInviteRecoveryPreserved:true,
+  signedInHomePreserved:true,
+  explicitPicksCanonicalized:true,
   installedSourceFreshnessProtected:true
 },null,2));
