@@ -4,10 +4,10 @@
   if(window.__UFC_PRODUCT_ARCHITECTURE_STARTED__)return;
   window.__UFC_PRODUCT_ARCHITECTURE_STARTED__=true;
 
-  const VERSION='product-architecture-20260721b-static-polish-css';
+  const VERSION='product-architecture-20260722c-final-semantic-polish';
   const SHELL_SRC='assets/js/octagon-hq-shell.js?v=app-shell-20260720a-recovery-handoff';
   const CONNECTIVITY_SRC='assets/js/product-connectivity.js?v=product-connectivity-20260718c-clean-handoffs';
-  const POLISH_SRC='assets/js/product-polish.js?v=product-polish-20260721d-static-css-owner';
+  const POLISH_SRC='assets/js/product-polish.js?v=product-polish-20260722f-semantic-rank-tiers';
   const AVATAR_SYNC_SRC='assets/js/profile-avatar-sync.js?v=profile-avatar-sync-20260718c-home-war-room';
   const ACTIVITY_SRC='assets/js/profile-activity.js?v=profile-activity-20260718a-phase-2a';
   const FIND_LEADER_RETENTION_SRC='assets/js/find-leader-retention.js?v=find-leader-retention-20260718c-phase-2b-lazy';
