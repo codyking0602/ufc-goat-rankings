@@ -103,8 +103,8 @@ jobs:
           grep -Fq 'RESUME_PICKS_KEY' assets/js/fresh-home-launch.js
           grep -Fq "picksRouteKeys=['group','room','event','picksView','archive']" assets/js/fresh-home-launch.js
           grep -Fq 'fresh-home-route-bootstrap.js?v=fresh-home-route-bootstrap-20260719a' index.html
-          grep -Fq 'product-architecture-20260718u-shared-profile-auth' assets/js/product-architecture.js
-          grep -Fq 'syncSharedProfileToPicks' assets/js/product-architecture.js
+          grep -Fq 'product-architecture-20260722c-final-semantic-polish' assets/js/product-architecture.js
+          grep -Fq 'handoffSharedProfileToPicks' assets/js/product-architecture.js
           grep -Fq '__UFC_PRODUCT_ARCHITECTURE_STARTED__' assets/js/product-architecture.js
           ! grep -Fq 'loadNativeShell();' assets/js/product-architecture.js
           ! grep -Fq 'loadNotificationSurfaceFix();' assets/js/product-architecture.js
