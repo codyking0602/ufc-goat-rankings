@@ -4,8 +4,8 @@
   if(window.__UFC_FRESH_HOME_ROUTE_BOOTSTRAP_STARTED__)return;
   window.__UFC_FRESH_HOME_ROUTE_BOOTSTRAP_STARTED__=true;
 
-  const VERSION='fresh-home-route-bootstrap-20260722k-standalone-update-owner';
-  const UPDATE_OWNER_SRC='assets/js/app-update-watcher.js?v=app-update-watcher-20260722c-early-worker-owner';
+  const VERSION='fresh-home-route-bootstrap-20260722l-installed-controller-repair';
+  const UPDATE_OWNER_SRC='assets/js/app-update-watcher.js?v=app-update-watcher-20260722d-installed-controller-repair';
   const RESUME_PICKS_KEY='__picks_resume';
   const PIN_RESUME_STORAGE_KEY='__ufc_picks_pin_resume';
   const INVITE_KEY='invite';
