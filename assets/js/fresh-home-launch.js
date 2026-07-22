@@ -4,7 +4,7 @@
   if(window.__UFC_FRESH_HOME_LAUNCH_STARTED__)return;
   window.__UFC_FRESH_HOME_LAUNCH_STARTED__=true;
 
-  const VERSION='fresh-home-launch-20260722d-explicit-picks-only';
+  const VERSION='fresh-home-launch-20260722e-explicit-picks-handoff';
   const RESUME_PICKS_KEY='__picks_resume';
   const INVITE_KEY='invite';
   const RESUME_WINDOW_MS=30000;
@@ -42,9 +42,17 @@
   function resumeTimestamp(url=currentUrl()){
     return Number(url.searchParams.get(RESUME_PICKS_KEY)||0);
   }
+  function isSameOriginRoomHandoff(url=currentUrl()){
+    const room=String(url.searchParams.get('room')||'').trim();
+    if(navigationType!=='navigate'||!room||!url.searchParams.has('event')||url.searchParams.get('picksView')!=='event')return false;
+    try{
+      const referrer=new URL(String(document.referrer||''));
+      return referrer.origin===url.origin&&referrer.pathname===url.pathname;
+    }catch(_error){return false;}
+  }
   function hasFreshPicksResume(url=currentUrl()){
     const markedAt=resumeTimestamp(url);
-    return bootstrapEntry==='resume'||(markedAt>0&&Date.now()-markedAt<RESUME_WINDOW_MS);
+    return bootstrapEntry==='resume'||(markedAt>0&&Date.now()-markedAt<RESUME_WINDOW_MS)||isSameOriginRoomHandoff(url);
   }
   function replaceUrl(url){
     history.replaceState(history.state,'',`${url.pathname}${url.search}${url.hash}`);
