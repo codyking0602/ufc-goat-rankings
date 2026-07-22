@@ -4,7 +4,7 @@
   if(window.__UFC_FRESH_HOME_LAUNCH_STARTED__)return;
   window.__UFC_FRESH_HOME_LAUNCH_STARTED__=true;
 
-  const VERSION='fresh-home-launch-20260722c-explicit-picks-share';
+  const VERSION='fresh-home-launch-20260722d-explicit-picks-only';
   const RESUME_PICKS_KEY='__picks_resume';
   const INVITE_KEY='invite';
   const RESUME_WINDOW_MS=30000;
@@ -109,16 +109,10 @@
   const barePicksInvite=isBarePicksInvite(startupUrl);
   const explicitPicksInvite=isExplicitPicksInvite(startupUrl);
   const resumePicks=hasFreshPicksResume(startupUrl);
-  const preserveBrowserReload=picksRoute&&navigationType==='reload'&&!standalone;
-  const legacyBrowserInvite=!standalone&&barePicksInvite;
-  const picksContinuation=picksRoute&&(resumePicks||explicitPicksInvite||legacyBrowserInvite||preserveBrowserReload);
+  const picksContinuation=picksRoute&&(resumePicks||explicitPicksInvite);
   const explicitDeepLink=hasExplicitDeepLink(startupUrl);
 
-  if(picksContinuation)activatePicks(
-    resumePicks?'one-navigation-picks-resume':
-      explicitPicksInvite?'explicit-picks-invite':
-        legacyBrowserInvite?'legacy-browser-invite':'browser-reload'
-  );
+  if(picksContinuation)activatePicks(resumePicks?'one-navigation-picks-resume':'explicit-picks-invite');
   else if(!explicitDeepLink)activateHome('startup');
 
   document.addEventListener('click',event=>{
