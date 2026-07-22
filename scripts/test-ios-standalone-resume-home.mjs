@@ -74,6 +74,7 @@ try{
 }
 
 const imports=[
+  ['installed-shell-offline-cache','./test-installed-shell-offline-cache.mjs'],
   ['fresh-launch-route-owner','./test-fresh-launch-route-ownership.mjs'],
   ['native-shell-spotlight-owner','./test-native-shell-stability-spotlight-owner.mjs'],
   ['native-shell-profile-owner','./test-native-shell-stability-profile-owner.mjs'],
