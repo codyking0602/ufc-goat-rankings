@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='product-polish-20260722g-mobile-header-rank-tiers';
+  const VERSION='product-polish-20260722h-semantic-rank-tiers';
   let scheduled=false;
   let resizeTimer=0;
 
@@ -32,11 +32,6 @@
 
   function standardizeHeaders(){
     document.querySelectorAll('.section-title').forEach(header=>header.classList.add('product-page-header'));
-    const title=document.querySelector('.hero h1');
-    if(!title)return;
-    if(window.innerWidth<=430)title.style.setProperty('font-size','31px','important');
-    else if(window.innerWidth<=900)title.style.setProperty('font-size','34px','important');
-    else title.style.removeProperty('font-size');
   }
 
   function rankTier(value){
@@ -156,9 +151,7 @@
     document.addEventListener('click',scheduleRankDecoration);
     document.addEventListener('input',scheduleRankDecoration);
     document.addEventListener('change',scheduleRankDecoration);
-    window.addEventListener('resize',schedule,{passive:true});
     window.addEventListener('resize',auditMobileCohesion,{passive:true});
-    window.addEventListener('orientationchange',schedule,{passive:true});
     window.addEventListener('orientationchange',auditMobileCohesion,{passive:true});
   }
 
