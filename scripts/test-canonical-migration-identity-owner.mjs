@@ -92,7 +92,7 @@ async function resolveTwice(page){
 
 function assertShared(value,{token,rpcNames,displayName,legacy=false}){
   assert.match(value.bridgeVersion,/home-route-safe/,'Home-route-safe migration bridge runtime did not load.');
-  assert.match(value.ownerVersion,/reuse-migration-handoff/,'Canonical identity owner did not load the handoff-aware runtime.');
+  assert.match(value.ownerVersion,/startup-ready/,'Canonical identity owner did not load the startup-ready runtime.');
   assert.deepEqual(value.rpcs.map(row=>row.name),rpcNames,'Migration and canonical owner performed the wrong RPC sequence.');
   assert.equal(value.canonicalEvents.length,1,'Migration-specific readiness must publish exactly once.');
   assert.equal(value.profileEvents.length,1,'Canonical profile readiness must publish exactly once across repeated resolve calls.');
