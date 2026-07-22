@@ -32,7 +32,7 @@ assert.doesNotMatch(
   'The visible Home presentation owner still contains the retired orange or white-card treatment.'
 );
 assert.ok(
-  stability.startsWith('@import url("./product-polish.css?v=product-polish-20260721e-static-final-owner");'),
+  stability.startsWith('@import url("./product-polish.css?v=product-polish-20260722a-canonical-tokens");'),
   'The existing final static CSS owner must import product polish before runtime startup.'
 );
 assert.doesNotMatch(
