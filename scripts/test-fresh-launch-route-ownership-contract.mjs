@@ -41,7 +41,9 @@ assert.equal(picks.includes('UFC_PRODUCT_ARCHITECTURE'),false,'Picks must not in
 assert(serviceWorker.includes('product-architecture|octagon-hq-shell|native-app-shell'),'The canonical shell must remain network-first in the installed app.');
 assert(serviceWorker.includes('fresh-home-route-bootstrap|fresh-home-launch'),'Both Home startup layers must remain network-first in the installed app.');
 assert(serviceWorker.includes('app-canonical-group'),'The canonical group startup owner must remain network-first so installed apps cannot retain the route bug.');
-assert(serviceWorker.includes('stalePicksClientUrl(client.url)?cleanHome:client.url'),'Service-worker publication must perform a one-time repair of an already-open stale Picks client.');
+const activation=serviceWorker.match(/self\.addEventListener\('activate',event=>\{([\s\S]*?)\n\}\);\n\nfunction isNavigation/);
+assert(activation,'The service-worker activation boundary could not be identified.');
+assert.doesNotMatch(activation[1],/clients\.matchAll|client\.navigate|openWindow/,'Service-worker activation must not replace the live standalone document.');
 assert(canonicalGroup.includes('canonicalizeUrl(hasPicksContext())'),'Canonical group adoption must only force the group parameter in Picks context.');
 assert.equal(canonicalGroup.includes('const urlChanged=canonicalizeUrl(true);'),false,'Canonical group adoption must not manufacture a Picks invite during ordinary Home startup.');
 
@@ -194,5 +196,5 @@ console.log(JSON.stringify({
   signedInHomePreserved:true,
   explicitPicksCanonicalized:true,
   installedSourceFreshnessProtected:true,
-  installedClientRepairPublished:true
+  safeServiceWorkerActivation:true
 },null,2));
