@@ -183,7 +183,7 @@ try{
     await page.waitForTimeout(150); // Let the existing 120 ms PIN mutation resync settle before the explicit retry.
     await Promise.all([
       page.waitForURL(url=>url.searchParams.get('room')==='ROOM01'&&url.hash==='#picks',{timeout:30000}),
-      page.click('#picksPinSignInButton')
+      page.click('#picksPinSignInButton',{noWaitAfter:true})
     ]);
     assert.equal((await rpcNames(page)).filter(name=>name==='app_profile_login').length,1,'Retry after owner recovery must perform one canonical login.');
     await context.close();
