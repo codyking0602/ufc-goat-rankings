@@ -1,0 +1,106 @@
+name: Verify Picks baseline rollout once
+
+on:
+  push:
+    branches:
+      - verification/picks-baseline-rollout
+    paths:
+      - '.github/workflows/verify-picks-baseline-rollout-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      ODDS_REFRESH_SECRET: ${{ secrets.ODDS_REFRESH_SECRET }}
+      PROJECT_REF: hdkjwezaswhisxupxydc
+      CARD_SYNC_ENDPOINT: https://hdkjwezaswhisxupxydc.supabase.co/functions/v1/sync-ufc-card
+      CARD_SYNC_SECRET: ${{ secrets.ODDS_REFRESH_SECRET }}
+    steps:
+      - name: Check out merged production code
+        uses: actions/checkout@v4
+        with:
+          ref: verification/picks-baseline-rollout
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Verify required secrets
+        id: secrets
+        continue-on-error: true
+        shell: bash
+        run: |
+          test -n "$SUPABASE_ACCESS_TOKEN"
+          test -n "$ODDS_REFRESH_SECRET"
+
+      - name: Re-run durable card contracts
+        id: contracts
+        continue-on-error: true
+        shell: bash
+        run: |
+          node scripts/apply-maintained-ufc-baselines.mjs --force
+          node scripts/test-ufc-card-section-authority.mjs
+
+      - name: Deploy canonical card reconciliation owner
+        id: deploy
+        continue-on-error: true
+        shell: bash
+        run: |
+          npx --yes supabase@latest functions deploy sync-ufc-card \
+            --project-ref "$PROJECT_REF" \
+            --no-verify-jwt
+
+      - name: Apply maintained production baseline
+        id: apply
+        continue-on-error: true
+        shell: bash
+        run: |
+          mkdir -p artifacts/ufc-card-sync
+          node scripts/apply-maintained-ufc-baselines.mjs --apply --force \
+            2>&1 | tee artifacts/ufc-card-sync/maintained-baseline-console.log
+
+      - name: Publish rollout evidence on verification branch
+        if: always()
+        env:
+          SECRETS_OUTCOME: ${{ steps.secrets.outcome }}
+          CONTRACTS_OUTCOME: ${{ steps.contracts.outcome }}
+          DEPLOY_OUTCOME: ${{ steps.deploy.outcome }}
+          APPLY_OUTCOME: ${{ steps.apply.outcome }}
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs=require('node:fs');
+          const path=require('node:path');
+          const reportPath=path.join('artifacts','ufc-card-sync','maintained-baseline-report.json');
+          const consolePath=path.join('artifacts','ufc-card-sync','maintained-baseline-console.log');
+          let report=null;
+          if(fs.existsSync(reportPath)){
+            try{report=JSON.parse(fs.readFileSync(reportPath,'utf8'));}
+            catch(error){report={parseError:error.message};}
+          }
+          const evidence={
+            secretsOutcome:process.env.SECRETS_OUTCOME||'unknown',
+            contractsOutcome:process.env.CONTRACTS_OUTCOME||'unknown',
+            deployOutcome:process.env.DEPLOY_OUTCOME||'unknown',
+            applyOutcome:process.env.APPLY_OUTCOME||'unknown',
+            report,
+            consoleTail:fs.existsSync(consolePath)
+              ? fs.readFileSync(consolePath,'utf8').trim().split('\n').slice(-30).join('\n')
+              : null,
+            verifiedAt:new Date().toISOString()
+          };
+          fs.mkdirSync('verification',{recursive:true});
+          fs.writeFileSync('verification/picks-baseline-live.json',JSON.stringify(evidence,null,2)+'\n');
+          NODE
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/verify-picks-baseline-rollout-once.yml
+          git add verification/picks-baseline-live.json
+          git commit -m "Record live Picks baseline rollout evidence"
+          git push origin HEAD:verification/picks-baseline-rollout
