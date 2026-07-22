@@ -45,6 +45,9 @@ for(const [before,after,message] of requiredOrder){
 const betterThanSource=fs.readFileSync('assets/js/better-than-standalone-share.js','utf8');
 const findLeaderSource=fs.readFileSync('assets/js/find-leader.js','utf8');
 const photoAuthoritySource=fs.readFileSync('assets/js/play-photo-authority.js','utf8');
+const challengeLoaderSource=fs.readFileSync('assets/data/what-changed.js','utf8');
+const profileChallengeSource=fs.readFileSync('assets/js/profile-challenges.js','utf8');
+const keepCutStandaloneSource=fs.readFileSync('assets/js/keep-cut-standalone-share.js','utf8');
 const findLeaderVersion=findLeaderSource.match(/const VERSION='([^']+)'/)?.[1]||'';
 const photoAuthorityVersion=photoAuthoritySource.match(/const VERSION='([^']+)'/)?.[1]||'';
 assert(findLeaderVersion,'Current Find the Leader version could not be identified.');
@@ -55,6 +58,15 @@ assert.match(betterThanSource,/if\(!window\.UFC_FIND_LEADER\)\{[\s\S]*data-find-
 assert(betterThanSource.includes(`assets/js/find-leader.js?v=${findLeaderVersion}`),'Find the Leader recovery must request the current owner build.');
 assert.match(betterThanSource,/if\(!window\.UFC_PLAY_PHOTO_AUTHORITY\)\{[\s\S]*data-play-photo-authority[\s\S]*return;[\s\S]*\}/,'Photo authority recovery must run only when the manifest owner is absent.');
 assert(betterThanSource.includes(`assets/js/play-photo-authority.js?v=${photoAuthorityVersion}`),'Photo authority recovery must request the current owner build.');
+
+assert.match(challengeLoaderSource,/script\.src='assets\/js\/game-challenges\.js\?v=game-challenges-[^']+';/,'The existing What Changed dependency owner must continue loading the all-game challenge controller.');
+assert.match(keepCutStandaloneSource,/if\(source\.searchParams\.get\('share'\)==='play-challenge'\)return false;/,'Legacy Keep/Cut routing must never intercept a canonical all-game challenge URL.');
+assert.match(profileChallengeSource,/const GAME_TITLES=\{[\s\S]*wavelength:'Wavelength'[\s\S]*'keep-cut':'Keep 4, Cut 4'/,'The profile inbox must label the actual challenge game.');
+assert.match(profileChallengeSource,/titleFor\(typeFor\(row\)\)/,'Challenge rows must render their real game title instead of hard-coding Find the Leader.');
+assert.match(profileChallengeSource,/window\.addEventListener\('click',[\s\S]*data-open-profile-challenge[\s\S]*playInboxChallenge/,'The profile challenge owner must intercept inbox Play actions before game-specific document handlers.');
+assert.match(profileChallengeSource,/window\.UFC_GAME_CHALLENGES\?\.openChallenge[\s\S]*await loadInbox\(\);return true;/,'Non-Find Leader inbox challenges must delegate to the current all-game owner and refresh unread state after opening.');
+assert.match(profileChallengeSource,/function addedActivitySurface\(records\)[\s\S]*profile-activity-grid[\s\S]*if\(addedActivitySurface\(records\)\)loadInbox\(\);/,'Opening or restoring Activity Profile must refresh and render its challenge inbox.');
+assert.match(profileChallengeSource,/data-native-badge=\\"play\\"[\s\S]*openInbox\(\)/,'The Play notification badge must open the Activity Profile challenge inbox.');
 
 const literalAssetScript=/["'`](assets\/js\/[^"'`?]+\.js)(?:\?[^"'`]*)?["'`]/g;
 const dynamicEdges=[];
@@ -121,7 +133,9 @@ const report={
   dynamicEdges,
   approvedRecoveryEdges,
   unapprovedDuplicateDynamicEdges,
-  manifestOwnedPicksSeason:true
+  manifestOwnedPicksSeason:true,
+  canonicalChallengeRouting:true,
+  profileChallengeInbox:true
 };
 
 console.log(JSON.stringify(report,null,2));
