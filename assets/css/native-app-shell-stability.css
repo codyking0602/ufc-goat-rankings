@@ -307,3 +307,90 @@ html body #octagon :is(.octagon-manage-beta,[data-octagon-manage-beta]){border-c
   .drawer .fighter-photo-img{object-fit:cover!important;background:#050505!important}
   body.fighter-profile-open{overflow:hidden!important;padding-bottom:0!important}
 }
+
+/* Final semantic pass: premium ranking identity, restrained prestige, and remaining lazy surfaces. */
+html body :is(#menList,#womenList,#divisionList,#categoryBoardList) .fighter-row .resume-tag{
+  position:relative!important;
+  display:block!important;
+  width:fit-content!important;
+  max-width:100%!important;
+  margin-top:8px!important;
+  padding:0 0 0 12px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:var(--muted)!important;
+  box-shadow:none!important;
+  line-height:1.3!important;
+}
+html body :is(#menList,#womenList,#divisionList,#categoryBoardList) .fighter-row .resume-tag::before{
+  content:""!important;
+  position:absolute!important;
+  left:0!important;
+  top:.12em!important;
+  bottom:.12em!important;
+  width:3px!important;
+  border-radius:999px!important;
+  background:var(--accent)!important;
+}
+html body :is(#menList,#womenList,#divisionList,#categoryBoardList) .fighter-row .rank{color:var(--muted)!important}
+html body :is(#menList,#womenList,#divisionList,#categoryBoardList) .fighter-row[data-rank-tier="first"] .rank{color:var(--accent2)!important;font-weight:950!important}
+html body :is(#menList,#womenList,#divisionList,#categoryBoardList) .fighter-row[data-rank-tier="top-three"] .rank{color:var(--text)!important}
+html body :is(#menList,#womenList,#divisionList,#categoryBoardList) .fighter-row[data-rank-tier="top-ten"] .rank{color:#d4d4d4!important}
+html body :is(#menList,#womenList,#divisionList,#categoryBoardList) .fighter-row[data-rank-tier="field"] .rank{color:var(--muted)!important}
+
+/* UFC history context follows the app palette instead of introducing an orange/yellow sub-theme. */
+html body .era-context{border-color:var(--line)!important;background:var(--panel2)!important;background-image:none!important;color:var(--text)!important;box-shadow:none!important}
+html body .era-context-kicker{color:var(--accent2)!important}
+html body .era-context-heading h3,html body .era-context-fight h4{color:var(--text)!important}
+html body .era-context-heading b{color:var(--muted)!important}
+html body .era-context-copy p{color:#d4d4d4!important}
+html body .era-context-fight{border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important}
+html body .era-context-fight>span{color:var(--accent2)!important}
+html body .era-context-fight a{border-color:var(--accent)!important;background:var(--accent)!important;color:#fff!important;box-shadow:none!important}
+
+/* Find the Leader retention uses charcoal; green means complete and red marks a perfect 10. */
+html body #play :is(.find-retention-card,.find-retention-result){border-color:var(--line)!important;background:var(--panel2)!important;background-image:none!important;color:var(--text)!important;box-shadow:none!important}
+html body #play :is(.find-retention-metric,.find-retention-day,.find-retention-row){border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important;box-shadow:none!important}
+html body #play .find-retention-card>summary span{color:var(--accent2)!important}
+html body #play .find-retention-card>summary small,html body #play .find-retention-metric span,html body #play .find-retention-metric small,html body #play .find-retention-row small,html body #play .find-retention-row em{color:var(--muted)!important}
+html body #play .find-retention-day{color:var(--subtle)!important}
+html body #play .find-retention-day.complete{border-color:color-mix(in srgb,var(--success) 58%,var(--line))!important;background:color-mix(in srgb,var(--success) 8%,var(--panel))!important;color:var(--success-soft)!important}
+html body #play .find-retention-day.perfect,html body .profile-streak-day.perfect{border-color:var(--accent)!important;background:var(--panel)!important;color:var(--text)!important}
+html body #play .find-retention-row b{color:var(--text)!important}
+html body #play .find-retention-result-head span{color:var(--accent2)!important}
+html body #play .find-retention-result p{color:var(--muted)!important}
+html body #play .find-retention-result button{border-color:var(--accent)!important;background:var(--accent)!important;color:#fff!important}
+
+/* Picks Home and season surfaces share the black/charcoal product hierarchy. */
+html body #picks :is(.picks-home-group-header,.picks-home-current,.picks-home-leaderboard,.picks-season-summary,.picks-season-reminder,.picks-season-personal-recap){border-color:var(--line)!important;background:var(--panel2)!important;background-image:none!important;color:var(--text)!important;box-shadow:none!important}
+html body #picks :is(.picks-season-summary-grid div,.picks-season-personal-grid div,.picks-home-current-event,.picks-home-no-event){border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important;box-shadow:none!important}
+html body #picks :is(.picks-home-group-header h3,.picks-home-section-head h3,.picks-season-summary-head strong,.picks-home-current-event strong){color:var(--text)!important}
+html body #picks :is(.picks-home-group-header p,.picks-home-group-header>small,.picks-home-leaderboard>p,.picks-home-section-head b,.picks-season-summary-head small,.picks-home-current-event small,.picks-home-no-event small){color:var(--muted)!important}
+html body #picks :is(.picks-home-group-header span,.picks-home-section-head span,.picks-season-summary-head span,.picks-home-current-event span){color:var(--accent2)!important}
+html body #picks :is(.picks-home-share-slot button,.picks-home-current-event button,.picks-season-reminder button){border-color:var(--accent)!important;background:var(--accent)!important;color:#fff!important;box-shadow:none!important}
+html body #picks .picks-season-summary-rank{border-color:var(--accent)!important;background:var(--panel)!important;color:var(--text)!important}
+html body #picks .picks-season-summary-rank em{color:var(--accent2)!important}
+html body #picks .picks-home-leaderboard .picks-group-member{border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important;box-shadow:none!important}
+html body #picks .picks-home-leaderboard .picks-group-member.leader{border-color:var(--accent)!important}
+html body #picks .profile-picks-season-action{border-color:var(--accent)!important;background:transparent!important;color:var(--text)!important}
+
+/* Commissioner corrections use neutral controls with restrained red ownership accents. */
+html body #picks #picksAdminPanel.picks-final-corrections{border-color:var(--line)!important;background:var(--panel2)!important;background-image:none!important;color:var(--text)!important;box-shadow:none!important}
+html body #picks #picksAdminPanel.picks-final-corrections>summary{border-bottom-color:var(--line)!important;background:var(--panel2)!important;background-image:none!important;color:var(--text)!important}
+html body #picks #picksAdminPanel.picks-final-corrections>summary span{display:inline-flex!important;align-items:center!important;border:1px solid var(--accent)!important;border-radius:999px!important;background:var(--panel)!important;color:var(--accent2)!important;padding:5px 9px!important}
+html body #picks #picksAdminContent{background:#000!important;color:var(--text)!important}
+html body #picks .picks-member-corrections{border-top-color:var(--line)!important;background:transparent!important;color:var(--text)!important}
+html body #picks .picks-member-corrections-head span,html body #picks .picks-member-correction>summary>b{color:var(--accent2)!important}
+html body #picks .picks-member-corrections-head h4,html body #picks .picks-member-correction>summary strong,html body #picks .picks-member-correction-row>div>strong{color:var(--text)!important}
+html body #picks .picks-member-corrections-head p,html body #picks .picks-member-corrections-head>b,html body #picks .picks-member-correction>summary small,html body #picks .picks-member-correction-row>div>small,html body #picks .picks-member-correction-row>label{color:var(--muted)!important}
+html body #picks :is(.picks-member-correction,.picks-member-correction-row){border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important;box-shadow:none!important}
+html body #picks .picks-member-correction-row{background:var(--panel2)!important}
+html body #picks .picks-member-correction-row>div>span{color:var(--accent2)!important}
+html body #picks .picks-member-correction-row select{border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important}
+
+@media(max-width:900px){
+  html,body{max-width:100%!important;overflow-x:hidden!important}
+  html body main.shell,html body main.shell>.view{min-width:0!important;max-width:100%!important;overflow-x:clip!important}
+  html body>.hero h1,html body .hero h1{max-width:100%!important;font-size:clamp(34px,9.8vw,44px)!important;line-height:.92!important;letter-spacing:-.055em!important;white-space:nowrap!important}
+}
