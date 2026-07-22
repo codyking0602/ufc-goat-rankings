@@ -159,6 +159,48 @@ try{
   const compareOptions=await page.locator('#fighterA option').allTextContents();
   assert.ok(compareOptions.some(text=>text.includes(PETTIS)),'Pettis appears in Compare selector');
 
+  const changelog=await page.evaluate(()=>{
+    const source=window.OCTAGON_CHANGELOG;
+    if(!source?.getEntries)return null;
+    const originalAutoState=localStorage.getItem(source.autoStorageKey);
+    const current=source.getEntries({now:'2026-07-21T12:00:00-05:00'});
+    const archived=source.getEntries({now:'2026-07-28T12:00:00-05:00'});
+    const expired=source.getEntries({now:'2026-08-04T12:00:00-05:00'});
+    const slugify=value=>String(value||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    const rows=[...(window.RANKING_DATA?.men||[]),...(window.RANKING_DATA?.women||[])];
+    const fighters=Object.fromEntries(rows.map(row=>[slugify(row.fighter),{name:row.fighter,rank:Number(row.rank)}]));
+    if(fighters['jon-jones'])fighters['jon-jones']={...fighters['jon-jones'],rank:Number(fighters['jon-jones'].rank)+3};
+    delete fighters['anthony-pettis'];
+    const games=(window.UFC_PLAY_HUB?.games||[]).filter(game=>game?.live).map(game=>String(game.id));
+    const watchlist=(window.SHANES_FIGHTERS_TO_WATCH?.fighters||[]).map(fighter=>String(fighter.id));
+    localStorage.setItem(source.autoStorageKey,JSON.stringify({snapshot:{fighters,games:games.slice(1),watchlist:watchlist.slice(1)},events:[]}));
+    source.getEntries();
+    const generatedState=JSON.parse(localStorage.getItem(source.autoStorageKey)||'{}');
+    const detected=(generatedState.events||[]).filter(entry=>['Fighter Added','Rank Changed','New Game','Fighter to Watch'].includes(entry.type));
+    if(originalAutoState===null)localStorage.removeItem(source.autoStorageKey);
+    else localStorage.setItem(source.autoStorageKey,originalAutoState);
+    return{
+      rules:source.rules,
+      automaticCategories:[...source.automaticCategories],
+      current:current.map(entry=>({id:entry.id,type:entry.type,lifecycle:entry.lifecycle,headline:entry.headline})),
+      lifecycle:{
+        current:current.find(entry=>entry.id==='wavelength-game-20260719')?.lifecycle||null,
+        archived:archived.find(entry=>entry.id==='wavelength-game-20260719')?.lifecycle||null,
+        expired:expired.some(entry=>entry.id==='wavelength-game-20260719')
+      },
+      detectedTypes:[...new Set(detected.map(entry=>entry.type))]
+    };
+  });
+  assert.deepEqual(changelog?.rules,{liveDays:7,retentionDays:15,maxLiveEntries:6,rankMoveThreshold:3});
+  assert.deepEqual(changelog?.automaticCategories,['Fighter Added','Rank Changed','New Game','Picks Results','Fighter to Watch']);
+  const liveEntries=changelog?.current.filter(entry=>entry.lifecycle==='live')||[];
+  assert.ok(liveEntries.length>0&&liveEntries.length<=6);
+  assert.ok(changelog?.current.some(entry=>entry.id==='picks-recap-ufc-oklahoma-city-2026-07-18'&&/Dricus Du Plessis wins/.test(entry.headline)));
+  assert.ok(changelog?.current.some(entry=>entry.type==='New Game'));
+  assert.ok(!changelog?.current.some(entry=>entry.type==='Game Updated'));
+  assert.deepEqual(changelog?.lifecycle,{current:'live',archived:'archive',expired:false});
+  assert.deepEqual(changelog?.detectedTypes.sort(),['Fighter Added','Fighter to Watch','New Game','Rank Changed'].sort());
+
   await activateView('play');
   const wavelengthCard=await page.evaluate(()=>{
     const card=document.querySelector('#playHub [data-open-game="top10"]');
@@ -193,6 +235,7 @@ try{
     },
     cardWatch,
     profile,
+    changelog,
     wavelength,
     audits:{facts:runtime.factsAudit,category:runtime.categoryAudit,division:runtime.divisionReport},
     crossTabs:{leaderboard:true,profile:true,compare:true,playWavelength:true,era:true},
