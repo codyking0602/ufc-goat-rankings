@@ -95,4 +95,17 @@ assert.match(edgeFunction,/slot-authority=/);
 assert.match(edgeFunction,/UFC\.com already owns this event's card slots/);
 assert.match(edgeFunction,/sectionAuthority/);
 
-console.log('UFC card section authority and maintained baseline checks passed.');
+const recurringWorkflow=fs.readFileSync(path.join(ROOT,'.github','workflows','refresh-ufc-odds.yml'),'utf8');
+assert.equal(/^\s*push:\s*$/m.test(recurringWorkflow),false,'the recurring owner must not race deployments with a push trigger');
+assert.match(recurringWorkflow,/schedule:\s*\n\s*- cron: '17 \*\/6 \* \* \*'/,'the six-hour recurring owner must remain scheduled');
+const baselineStep=recurringWorkflow.indexOf('Apply maintained repository card baseline');
+const externalStep=recurringWorkflow.indexOf('Sync confirmed external UFC card');
+assert.ok(baselineStep>=0&&externalStep>baselineStep,'maintained baseline must run before external card capture');
+
+const deployWorkflow=fs.readFileSync(path.join(ROOT,'.github','workflows','deploy-ufc-odds-refresh.yml'),'utf8');
+const deployFunctionStep=deployWorkflow.indexOf('Deploy card reconciliation function');
+const deployBaselineStep=deployWorkflow.indexOf('Apply maintained repository card baseline');
+assert.ok(deployFunctionStep>=0&&deployBaselineStep>deployFunctionStep,'deployment must install the Edge policy before applying the baseline');
+assert.match(deployWorkflow,/Record deployed UFC card health \[skip ci\]/,'deployment must publish card reconciliation evidence');
+
+console.log('UFC card section authority, maintained baseline, and workflow order checks passed.');
