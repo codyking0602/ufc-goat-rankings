@@ -81,6 +81,26 @@ assert.equal(parsedFixture.filter((fight)=>fight.card_section==='Prelims').lengt
 assert.equal(parsedFixture.find((fight)=>fight.red_name==='Valter Walker').card_section,'Prelims');
 assert.equal(parsedFixture.find((fight)=>fight.red_name==='Ismael Bonfim').card_section,'Prelims');
 
+const belgradeFixture=`
+UFC Belgrade Main Event on Paramount+:
+170 lbs.: Uros Medic vs. Daniel Rodriguez
+UFC Belgrade Main Card on Paramount+:
+265 lbs.: Marcin Tybura vs. Aleksandar Rakic
+265 lbs.: Ante Delija vs. Johnny Walker
+205 lbs.: Jan Błachowicz vs. Bogdan Guskov 2
+UFC Belgrade Preliminary Card on Paramount+:
+265 lbs.: Jovan Leka vs. Max Gimenis
+185 lbs.: Vlasto Cepo vs. Gilbert Urbina
+185 lbs.: Dusko Todorovic vs. Robert Valentin
+155 lbs.: Ludovit Klein vs. Tofiq Musayev
+170 lbs.: Oban Elliott vs. Michael Oliveira
+`;
+const parsedBelgrade=parseMmaManiaText(belgradeFixture);
+assert.equal(parsedBelgrade.length,9);
+assert.equal(parsedBelgrade.filter((fight)=>fight.card_section==='Main Event').length,1);
+assert.equal(parsedBelgrade.filter((fight)=>fight.card_section==='Main Card').length,3);
+assert.equal(parsedBelgrade.filter((fight)=>fight.card_section==='Prelims').length,5);
+
 const config=JSON.parse(fs.readFileSync(path.join(ROOT,'config','ufc-card-sources.json'),'utf8'));
 for(const configuredEvent of config.events){
   assert.equal('official' in configuredEvent,false,`${configuredEvent.eventId} must not configure UFC.com`);
@@ -89,7 +109,9 @@ for(const configuredEvent of config.events){
   assert.ok(configuredEvent.fallbackSources.every((source)=>new URL(source.url).hostname.endsWith('mmamania.com')));
 }
 const abuConfig=config.events.find((item)=>item.eventId==='ufc-abu-dhabi-2026-07-25');
+const belgradeConfig=config.events.find((item)=>item.eventId==='ufc-belgrade-2026-08-01');
 assert.equal(abuConfig.mainCardFightCount,6);
+assert.equal(belgradeConfig.mainCardFightCount,4);
 
 const eventsCode=fs.readFileSync(path.join(ROOT,'assets','data','picks-events.js'),'utf8');
 const store=new Map();
@@ -97,12 +119,18 @@ const localStorage={getItem:(key)=>store.get(key)||null,setItem:(key,value)=>sto
 const window={localStorage,dispatchEvent:()=>{},supabase:null};
 vm.runInNewContext(eventsCode,{window,localStorage,CustomEvent:class CustomEvent{},Date,console},{timeout:5000});
 const abu=window.UFC_PICKS_FULL_EVENTS.find((item)=>item.id==='ufc-abu-dhabi-2026-07-25');
+const belgrade=window.UFC_PICKS_FULL_EVENTS.find((item)=>item.id==='ufc-belgrade-2026-08-01');
 assert.equal(abu.fights.length,13);
 assert.equal(abu.fights.filter((fight)=>String(fight.cardSection).includes('Main')).length,6);
 assert.equal(abu.fights.find((fight)=>fight.id==='abu26-valter-walker-thomas-petersen').cardSection,'Prelims');
 assert.equal(abu.fights.find((fight)=>fight.id==='abu26-ismael-bonfim-axel-sola').cardSection,'Prelims');
 assert.ok(abu.fights.some((fight)=>fight.id==='abu26-abdul-hussein-cody-gibson'));
 assert.ok(abu.fights.some((fight)=>fight.id==='abu26-dustin-jacoby-muhammad-said'));
+assert.equal(belgrade.fights.length,9);
+assert.equal(belgrade.fights.filter((fight)=>String(fight.cardSection).includes('Main')).length,4);
+assert.ok(belgrade.fights.some((fight)=>fight.id==='belgrade26-ante-delija-johnny-walker'));
+assert.ok(belgrade.fights.some((fight)=>fight.id==='belgrade26-jan-blachowicz-bogdan-guskov'));
+assert.equal(belgrade.fights.some((fight)=>fight.id==='belgrade26-jan-blachowicz-navajo-stirling'),false);
 
 const scraper=fs.readFileSync(path.join(ROOT,'scripts','sync-ufc-card.mjs'),'utf8');
 assert.equal(scraper.includes('official-ufc'),false,'UFC.com must not participate in the scraper');
@@ -136,4 +164,4 @@ const deployBaselineStep=deployWorkflow.indexOf('Apply maintained repository car
 assert.ok(deployFunctionStep>=0&&deployBaselineStep>deployFunctionStep,'deployment must install the Edge policy before applying the baseline');
 assert.match(deployWorkflow,/Record deployed UFC card health \[skip ci\]/,'deployment must publish card reconciliation evidence');
 
-console.log('MMA Mania card authority, parser, and Abu Dhabi section checks passed.');
+console.log('MMA Mania card authority, Abu Dhabi, and Belgrade checks passed.');
