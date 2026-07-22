@@ -1,0 +1,73 @@
+{
+  "secretsOutcome": "success",
+  "contractsOutcome": "success",
+  "deployOutcome": "success",
+  "applyOutcome": "success",
+  "report": {
+    "generatedAt": "2026-07-22T10:53:55.631Z",
+    "report": [
+      {
+        "eventId": "ufc-abu-dhabi-2026-07-25",
+        "sourceType": "maintained-repo",
+        "fights": 12,
+        "mainCardFights": 7,
+        "confirmationHash": "a54893b8e64d6fd911efc89ddeeb594518eee1179026424648197049cc01e0bb",
+        "applied": true,
+        "result": {
+          "synced": true,
+          "summary": {
+            "eventId": "ufc-abu-dhabi-2026-07-25",
+            "sourceType": "maintained-repo",
+            "sourceUrl": "repository:assets/data/picks-events.js",
+            "confirmationHash": "a54893b8e64d6fd911efc89ddeeb594518eee1179026424648197049cc01e0bb",
+            "fightsReceived": 12,
+            "pickableFightsReceived": 7,
+            "sectionAuthority": "maintained-repo",
+            "priorAuthority": "maintained-repo",
+            "skipped": false,
+            "inserted": 0,
+            "updated": 12,
+            "cancelled": 2,
+            "replacements": 0,
+            "promotions": 0,
+            "demotions": 0,
+            "picksReset": 0
+          },
+          "syncedAt": "2026-07-22T10:53:53.443Z"
+        }
+      },
+      {
+        "eventId": "ufc-belgrade-2026-08-01",
+        "sourceType": "maintained-repo",
+        "fights": 12,
+        "mainCardFights": 5,
+        "confirmationHash": "58d9aad202853d00812f61e726d3f0d3554bebf8b5706486c76b0adfb544371b",
+        "applied": true,
+        "result": {
+          "synced": true,
+          "summary": {
+            "eventId": "ufc-belgrade-2026-08-01",
+            "sourceType": "maintained-repo",
+            "sourceUrl": "repository:assets/data/picks-events.js",
+            "confirmationHash": "58d9aad202853d00812f61e726d3f0d3554bebf8b5706486c76b0adfb544371b",
+            "fightsReceived": 12,
+            "pickableFightsReceived": 5,
+            "sectionAuthority": "maintained-repo",
+            "priorAuthority": "maintained-repo",
+            "skipped": false,
+            "inserted": 0,
+            "updated": 12,
+            "cancelled": 1,
+            "replacements": 0,
+            "promotions": 0,
+            "demotions": 0,
+            "picksReset": 0
+          },
+          "syncedAt": "2026-07-22T10:53:55.636Z"
+        }
+      }
+    ]
+  },
+  "consoleTail": "      \"sourceType\": \"maintained-repo\",\n      \"fights\": 12,\n      \"mainCardFights\": 5,\n      \"confirmationHash\": \"58d9aad202853d00812f61e726d3f0d3554bebf8b5706486c76b0adfb544371b\",\n      \"applied\": true,\n      \"result\": {\n        \"synced\": true,\n        \"summary\": {\n          \"eventId\": \"ufc-belgrade-2026-08-01\",\n          \"sourceType\": \"maintained-repo\",\n          \"sourceUrl\": \"repository:assets/data/picks-events.js\",\n          \"confirmationHash\": \"58d9aad202853d00812f61e726d3f0d3554bebf8b5706486c76b0adfb544371b\",\n          \"fightsReceived\": 12,\n          \"pickableFightsReceived\": 5,\n          \"sectionAuthority\": \"maintained-repo\",\n          \"priorAuthority\": \"maintained-repo\",\n          \"skipped\": false,\n          \"inserted\": 0,\n          \"updated\": 12,\n          \"cancelled\": 1,\n          \"replacements\": 0,\n          \"promotions\": 0,\n          \"demotions\": 0,\n          \"picksReset\": 0\n        },\n        \"syncedAt\": \"2026-07-22T10:53:55.636Z\"\n      }\n    }\n  ]\n}",
+  "verifiedAt": "2026-07-22T10:53:55.686Z"
+}
