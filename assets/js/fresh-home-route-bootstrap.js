@@ -4,7 +4,7 @@
   if(window.__UFC_FRESH_HOME_ROUTE_BOOTSTRAP_STARTED__)return;
   window.__UFC_FRESH_HOME_ROUTE_BOOTSTRAP_STARTED__=true;
 
-  const VERSION='fresh-home-route-bootstrap-20260722f-pin-resume-owner';
+  const VERSION='fresh-home-route-bootstrap-20260722g-pin-resume-owner';
   const RESUME_PICKS_KEY='__picks_resume';
   const INVITE_KEY='invite';
   const RESUME_WINDOW_MS=30000;
@@ -38,7 +38,7 @@
     history.replaceState(history.state,'',`${url.pathname}${url.search}#home`);
   }
 
-  document.addEventListener('click',event=>{
+  document.addEventListener?.('click',event=>{
     if(!event.target.closest?.('#picksPinSignInButton'))return;
     const next=new URL(location.href);
     next.searchParams.delete(INVITE_KEY);
