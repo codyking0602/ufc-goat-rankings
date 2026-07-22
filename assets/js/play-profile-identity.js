@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='play-profile-identity-20260721b-reuse-migration-handoff';
+  const VERSION='play-profile-identity-20260722c-pin-navigation-handoff';
   const CANONICAL_CODE='GOAT26';
   const GROUP_TOKEN_PREFIX='ufc-picks:group:';
   const GROUP_ADMIN_PREFIX='ufc-picks:group-admin:';
@@ -9,6 +9,7 @@
   const ROOM_ADMIN_PREFIX='ufc-picks:admin:';
   const ACTIVE_GROUP_KEY='ufc-player:group-code';
   const DISPLAY_NAME_KEY='ufc-picks:display-name';
+  const PIN_RESUME_STORAGE_KEY='__ufc_picks_pin_resume';
   const config=window.UFC_PLAY_SUPABASE_CONFIG||window.UFC_SUPABASE_CONFIG||{};
   const client=config.url&&config.anonKey&&window.supabase?.createClient
     ? window.supabase.createClient(config.url,config.anonKey)
@@ -167,6 +168,9 @@
     if(!data?.ok)throw new Error(data?.error||'Those UFC App sign-in details did not match.');
     if(!storeLogin(data))throw new Error('The profile login did not return valid access.');
     cache=loginIdentity(data,await snapshot(data.member_token));
+    if(options.source==='picks-member-pin'){
+      try{sessionStorage.setItem(PIN_RESUME_STORAGE_KEY,String(Date.now()));}catch(_error){}
+    }
     if(options.publish!==false)window.dispatchEvent(new CustomEvent('ufc-play-profile-ready',{detail:cache}));
     return cache;
   }
