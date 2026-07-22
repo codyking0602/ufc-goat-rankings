@@ -104,10 +104,10 @@ try{
 
   assert.deepEqual(pageErrors,[],'mobile native navigation causes no uncaught page errors');
   console.log('PICKS_MOBILE_NAV_CERTIFICATION');
-  console.log(JSON.stringify({viewport:'390x844',layout:'four visible native destinations plus sticky-header Intelligence action',desktopSourceHidden:true,warRoomHidden:true,routes:routeSnapshots,pageErrors},null,2));
+  console.log(JSON.stringify({viewport:'390x844',layout:'four visible native destinations plus sticky-header Intelligence action',desktopSourceHidden:true,warRoomHidden:true,routes:routeSnapshots.length,pageErrors}));
 }catch(error){
   console.error('PICKS_MOBILE_NAV_FAILURE');
-  console.error(JSON.stringify({label:diagnosticLabel,snapshot:diagnosticSnapshot,pageErrors},null,2));
+  console.error(JSON.stringify({label:diagnosticLabel,snapshot:diagnosticSnapshot,pageErrors}));
   throw error;
 }finally{
   await browser.close();
