@@ -26,7 +26,7 @@ try{
   });
   await page.route('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',route=>route.fulfill({status:200,contentType:'application/javascript',body:supabaseStub}));
 
-  const stale='http://127.0.0.1:4173/index.html?group=GOAT26&room=ROOM01&event=event-1&picksView=event#picks';
+  const stale='http://127.0.0.1:4173/index.html?group=GOAT26#picks';
   await page.goto(stale,{waitUntil:'domcontentloaded',timeout:60000});
   await page.waitForFunction(()=>window.UFC_APP_SHELL&&window.UFC_FRESH_HOME_LAUNCH,null,{timeout:60000});
   await page.waitForFunction(()=>document.querySelector('#home')?.classList.contains('active-view'),null,{timeout:10000});
@@ -38,9 +38,10 @@ try{
     active:[...document.querySelectorAll('main.shell>.view.active-view')].map(node=>node.id)
   }));
   const startupUrl=new URL(startup.url);
-  assert.equal(startupUrl.hash,'#home','Stale standalone Picks route was not normalized before app startup.');
-  for(const key of ['group','room','event','picksView'])assert.equal(startupUrl.searchParams.has(key),false,`Startup retained stale ${key}.`);
-  assert.equal(startup.bootstrapRoute,'home','Early route bootstrap did not classify the launch as Home.');
+  assert.equal(startupUrl.hash,'#home','A group-only standalone Picks restore was not normalized before app startup.');
+  assert.equal(startupUrl.searchParams.has('group'),false,'Startup retained the stale standalone group.');
+  assert.equal(startupUrl.searchParams.has('invite'),false,'Startup retained a consumed or stale invite marker.');
+  assert.equal(startup.bootstrapRoute,'home','Early route bootstrap did not classify the group-only restore as Home.');
   assert.equal(startup.route,'home','Late launch controller did not remain on Home.');
   assert.deepEqual(startup.active,['home'],'Home was not the only active startup view.');
 
