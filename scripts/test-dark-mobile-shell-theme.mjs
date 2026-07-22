@@ -115,11 +115,13 @@ assert.doesNotMatch(
 );
 assert.ok(
   index.includes('<meta name="theme-color" content="#080808" />')
-    &&index.includes('<meta name="app-build" content="visible-home-palette-20260721b" />')
+    &&index.includes('<meta name="app-build" content="profile-challenges-delivery-20260722a" />')
     &&index.includes('assets/css/app.css?v=app-css-20260721c-canonical-black-red')
     &&index.includes('assets/css/home-dashboard.css?v=home-dashboard-20260721b-visible-black-red')
-    &&index.includes('assets/css/native-app-shell.css?v=native-app-shell-css-20260721c-canonical-black-red'),
-  'The HTML publication owner must request the current canonical palette assets.'
+    &&index.includes('assets/css/native-app-shell.css?v=native-app-shell-css-20260721c-canonical-black-red')
+    &&index.includes('assets/js/profile-challenges.js?v=profile-challenges-20260722a-all-game-inbox')
+    &&index.includes('assets/js/keep-cut-standalone-share.js?v=keep-cut-standalone-share-20260722a-canonical-route-guard'),
+  'The HTML publication owner must request the current canonical palette and challenge assets.'
 );
 
 const fixture=`<!doctype html>
