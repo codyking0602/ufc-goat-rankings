@@ -8,8 +8,8 @@ import {
 } from "./reconciliation.mjs";
 
 const JSON_HEADERS = { "content-type": "application/json; charset=utf-8" };
-const ALLOWED_SOURCE_HOSTS = new Set(["ufc.com", "www.ufc.com", "mmamania.com", "www.mmamania.com"]);
-const ALLOWED_SOURCE_TYPES = new Set(["official-ufc", "maintained-repo", "mma-mania"]);
+const ALLOWED_SOURCE_HOSTS = new Set(["mmamania.com", "www.mmamania.com"]);
+const ALLOWED_SOURCE_TYPES = new Set(["maintained-repo", "mma-mania"]);
 const RESOLVED_STATUSES = new Set(["complete", "draw", "no-contest"]);
 
 function json(status, body) {
@@ -29,7 +29,7 @@ function safeFightId(value) {
 }
 
 function authorityFromNote(value) {
-  return String(value || "").match(/slot-authority=(official-ufc|maintained-repo)/i)?.[1]?.toLowerCase() || null;
+  return String(value || "").match(/slot-authority=(mma-mania|maintained-repo)/i)?.[1]?.toLowerCase() || null;
 }
 
 async function deleteFightPicks(supabase, fightIds, summary) {
@@ -144,13 +144,13 @@ Deno.serve(async (request) => {
 
     const priorAuthority = authorityFromNote(existingEvent?.source_note);
     summary.priorAuthority = priorAuthority;
-    if (body.sourceType === "maintained-repo" && priorAuthority === "official-ufc") {
+    if (body.sourceType === "maintained-repo" && priorAuthority === "mma-mania") {
       summary.skipped = true;
-      summary.sectionAuthority = "official-ufc";
+      summary.sectionAuthority = "mma-mania";
       return json(200, {
         synced: true,
         skipped: true,
-        reason: "UFC.com already owns this event's card slots",
+        reason: "MMA Mania already owns this event's card slots",
         summary,
         syncedAt: new Date().toISOString(),
       });
@@ -164,17 +164,13 @@ Deno.serve(async (request) => {
 
     const existing = existingRows || [];
     const activeExisting = existing.filter((fight) => !RESOLVED_STATUSES.has(fight.result_status));
-    const existingPickable = activeExisting.filter((fight) => isPickable(event, fight));
     if (activeExisting.length >= 5 && incomingFights.length < Math.ceil(activeExisting.length * 0.6)) {
       throw new Error(`Refusing destructive card shrink from ${activeExisting.length} to ${incomingFights.length} fights`);
     }
-    if (existingPickable.length >= 3 && incomingPickable.length < existingPickable.length && body.validation?.allowPickableShrink !== true && body.sourceType === "official-ufc") {
-      throw new Error(`Refusing pickable-card shrink from ${existingPickable.length} to ${incomingPickable.length} fights`);
-    }
 
     const plan = buildReconciliationPlan(existing, incomingFights, event, body.sourceType);
-    const nextAuthority = body.sourceType === "official-ufc"
-      ? "official-ufc"
+    const nextAuthority = body.sourceType === "mma-mania"
+      ? "mma-mania"
       : body.sourceType === "maintained-repo"
         ? "maintained-repo"
         : priorAuthority || "maintained-repo";
