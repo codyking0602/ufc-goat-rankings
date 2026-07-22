@@ -1,0 +1,97 @@
+name: Verify MMA Mania all events once
+
+on:
+  push:
+    branches:
+      - verification/mma-mania-all-events
+    paths:
+      - '.github/workflows/verify-mma-mania-all-events-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      ODDS_REFRESH_SECRET: ${{ secrets.ODDS_REFRESH_SECRET }}
+      CARD_SYNC_ENDPOINT: https://hdkjwezaswhisxupxydc.supabase.co/functions/v1/sync-ufc-card
+      CARD_SYNC_SECRET: ${{ secrets.ODDS_REFRESH_SECRET }}
+      UFC_CARD_CONFIRM_DELAY_MS: 1000
+    steps:
+      - name: Check out merged production code
+        uses: actions/checkout@v4
+        with:
+          ref: verification/mma-mania-all-events
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install parser runtime
+        id: runtime
+        continue-on-error: true
+        shell: bash
+        run: |
+          npm install --no-save playwright@1.54.2
+          npx playwright install --with-deps chromium
+
+      - name: Apply maintained cards
+        id: baseline
+        continue-on-error: true
+        shell: bash
+        run: |
+          mkdir -p artifacts/ufc-card-sync
+          node scripts/apply-maintained-ufc-baselines.mjs --apply --force \
+            2>&1 | tee artifacts/ufc-card-sync/maintained-console.log
+
+      - name: Apply two-capture MMA Mania cards
+        id: external
+        continue-on-error: true
+        shell: bash
+        run: |
+          node scripts/sync-ufc-card.mjs --apply --force \
+            2>&1 | tee artifacts/ufc-card-sync/mma-console.log
+
+      - name: Publish verification evidence
+        if: always()
+        env:
+          RUNTIME_OUTCOME: ${{ steps.runtime.outcome }}
+          BASELINE_OUTCOME: ${{ steps.baseline.outcome }}
+          EXTERNAL_OUTCOME: ${{ steps.external.outcome }}
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs=require('node:fs');
+          const path=require('node:path');
+          const readJson=(name)=>{
+            const file=path.join('artifacts','ufc-card-sync',name);
+            if(!fs.existsSync(file))return null;
+            try{return JSON.parse(fs.readFileSync(file,'utf8'));}
+            catch(error){return {parseError:error.message};}
+          };
+          const readTail=(name)=>{
+            const file=path.join('artifacts','ufc-card-sync',name);
+            return fs.existsSync(file)?fs.readFileSync(file,'utf8').trim().split('\n').slice(-50).join('\n'):null;
+          };
+          const evidence={
+            runtimeOutcome:process.env.RUNTIME_OUTCOME||'unknown',
+            baselineOutcome:process.env.BASELINE_OUTCOME||'unknown',
+            externalOutcome:process.env.EXTERNAL_OUTCOME||'unknown',
+            baselineReport:readJson('maintained-baseline-report.json'),
+            mmaManiaReport:readJson('card-sync-report.json'),
+            baselineConsoleTail:readTail('maintained-console.log'),
+            mmaManiaConsoleTail:readTail('mma-console.log'),
+            verifiedAt:new Date().toISOString()
+          };
+          fs.mkdirSync('verification',{recursive:true});
+          fs.writeFileSync('verification/mma-mania-all-events-live.json',JSON.stringify(evidence,null,2)+'\n');
+          NODE
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/verify-mma-mania-all-events-once.yml
+          git add verification/mma-mania-all-events-live.json
+          git commit -m "Record live MMA Mania all-events evidence"
+          git push origin HEAD:verification/mma-mania-all-events
