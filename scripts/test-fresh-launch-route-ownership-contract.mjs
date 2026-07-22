@@ -30,7 +30,9 @@ assert(position(launchPath)>position(picksPath),'Fresh launch must remain a subo
 
 assert(early.includes("url.hash='home'"),'The early bootstrap must keep ordinary startup URL normalization.');
 assert(early.includes("const INVITE_KEY='invite'"),'The early bootstrap must distinguish a fresh Picks invite from a restored Picks URL.');
-assert(early.includes('const legacyBrowserInvite=!standalone&&barePicksInvite;'),'Unmarked legacy invites may only bypass Home in a normal browser.');
+assert.equal(early.includes('legacyBrowserInvite'),false,'The early bootstrap still preserves an unmarked browser group URL as Picks.');
+assert.equal(early.includes('preserveBrowserReload'),false,'A browser reload still bypasses explicit Picks entry requirements.');
+assert(early.includes('const preservePicks=picksRoute&&(resumePicks||inviteMarked);'),'The early bootstrap must preserve Picks only for an explicit invite or fresh resume.');
 assert.equal(early.includes('activateDestination('),false,'The early bootstrap must not activate a primary destination.');
 assert(shell.includes('showView(initialView'),'The canonical shell must retain the one initial route activation.');
 assert(shell.includes("let currentView=''"),'The canonical shell must retain exact-view activation state.');
@@ -41,6 +43,7 @@ assert.equal(picks.includes('UFC_PRODUCT_ARCHITECTURE'),false,'Picks must not in
 assert(serviceWorker.includes('product-architecture|octagon-hq-shell|native-app-shell'),'The canonical shell must remain network-first in the installed app.');
 assert(serviceWorker.includes('fresh-home-route-bootstrap|fresh-home-launch'),'Both Home startup layers must remain network-first in the installed app.');
 assert(serviceWorker.includes('app-canonical-group'),'The canonical group startup owner must remain network-first so installed apps cannot retain the route bug.');
+assert(serviceWorker.includes('SUPABASE_SCRIPT_SOURCES'),'The cache owner must bound the external Supabase startup dependency.');
 const activation=serviceWorker.match(/self\.addEventListener\('activate',event=>\{([\s\S]*?)\n\}\);\n\nfunction isNavigation/);
 assert(activation,'The service-worker activation boundary could not be identified.');
 assert.doesNotMatch(activation[1],/clients\.matchAll|client\.navigate|openWindow/,'Service-worker activation must not replace the live standalone document.');
@@ -64,7 +67,9 @@ for(const [name,destination] of [['activatePicks','picks'],['activateHome','home
 assert.equal((launch.match(/activateDestinationOnce\('home'\)/g)||[]).length,1,'Home continuation must have exactly one route handoff.');
 assert.equal((launch.match(/activateDestinationOnce\('picks'\)/g)||[]).length,1,'Picks continuation must have exactly one route handoff.');
 assert(launch.includes('const explicitPicksInvite=isExplicitPicksInvite(startupUrl);'),'Fresh launch must consume the early explicit Picks entry classification.');
-assert(launch.includes('const legacyBrowserInvite=!standalone&&barePicksInvite;'),'Fresh launch must not preserve an unmarked group-only URL in standalone mode.');
+assert.equal(launch.includes('legacyBrowserInvite'),false,'Fresh launch still preserves an unmarked group-only browser URL.');
+assert.equal(launch.includes('preserveBrowserReload'),false,'Fresh launch still treats browser reload as Picks permission.');
+assert(launch.includes('const picksContinuation=picksRoute&&(resumePicks||explicitPicksInvite);'),'Fresh launch must require an explicit invite or fresh resume for Picks continuation.');
 assert(launch.includes("event.target.closest?.('#picksShareGroup,#picksShareRoom')"),'Existing Picks share buttons must mark outgoing links as explicit invites.');
 assert(launch.includes("url.searchParams.set(INVITE_KEY,'1')"),'The Picks share boundary must add the one-use invite marker.');
 assert(launch.includes('if(picksContinuation)activatePicks('),'Fresh launch must preserve explicit Picks continuation recovery.');
@@ -106,6 +111,14 @@ assert.equal(staleStandalonePicks.route,'home','A restored standalone Picks URL 
 const staleStandaloneHome=runEarlyScenario('https://example.test/?group=GOAT26#home');
 assert.equal(staleStandaloneHome.url.hash,'#home','A stale group parameter overrode an explicit Home hash.');
 assert.equal(staleStandaloneHome.url.searchParams.has('group'),false,'Home retained a stale Picks group parameter.');
+
+const staleBrowserPicks=runEarlyScenario('https://example.test/?group=GOAT26#picks',{standalone:false,navigationType:'navigate'});
+assert.equal(staleBrowserPicks.url.hash,'#home','A Safari navigation still treated an unmarked group URL as a Picks invite.');
+assert.equal(staleBrowserPicks.url.searchParams.has('group'),false,'A Safari navigation retained the stale group parameter.');
+
+const staleBrowserReload=runEarlyScenario('https://example.test/?group=GOAT26#picks',{standalone:false,navigationType:'reload'});
+assert.equal(staleBrowserReload.url.hash,'#home','A Safari reload still bypassed explicit Picks entry.');
+assert.equal(staleBrowserReload.url.searchParams.has('group'),false,'A Safari reload retained the stale group parameter.');
 
 const markedInvite=runEarlyScenario('https://example.test/?group=GOAT26&invite=1#picks');
 assert.equal(markedInvite.url.hash,'#picks','A marked fresh Picks invite was redirected to Home.');
@@ -190,11 +203,14 @@ console.log(JSON.stringify({
   sameViewActivationCoalesced:true,
   sameDestinationHandoffBlocked:true,
   standaloneGroupRestoreReset:true,
+  browserGroupRestoreReset:true,
+  browserReloadReset:true,
   markedInvitePreserved:true,
   freshResumePreserved:true,
   shareInviteMarked:true,
   signedInHomePreserved:true,
   explicitPicksCanonicalized:true,
   installedSourceFreshnessProtected:true,
+  boundedSupabaseStartup:true,
   safeServiceWorkerActivation:true
 },null,2));
