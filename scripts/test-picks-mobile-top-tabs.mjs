@@ -62,7 +62,7 @@ function assertNativeShellVisibility(snapshot,label,{selectedCount=1}={}){
   assert.ok(snapshot.nav.scrollWidth<=snapshot.nav.clientWidth+1,`${label}: native bottom navigation has no horizontal overflow`);
   assert.ok(Math.abs(snapshot.nav.scrollLeft)<=1,`${label}: native bottom navigation has no horizontal scroll offset`);
   assert.ok(withinViewport(snapshot.nav.rect,snapshot.viewport),`${label}: native bottom navigation remains fixed inside the viewport`);
-  assert.ok(withinViewport(snapshot.ask.rect,snapshot.viewport),`${label}: Intelligence Ask action remains visible in the sticky header`);
+  assert.ok(withinViewport(snapshot.ask.rect,snapshot.viewport),`${label}: Intelligence Ask action remains visible in the sticky header; ask=${JSON.stringify(snapshot.ask.rect)} viewport=${JSON.stringify(snapshot.viewport)}`);
   for(const button of visibleButtons){
     assert.ok(withinViewport(button.rect,snapshot.viewport),`${label}: ${button.destination} remains fully visible`);
   }
