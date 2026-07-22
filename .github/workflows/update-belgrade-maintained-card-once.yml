@@ -1,4 +1,5 @@
 name: Update maintained Belgrade card once
+# One-time branch-local data migration; removes itself after success.
 
 on:
   push:
