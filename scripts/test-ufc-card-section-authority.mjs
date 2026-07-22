@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {buildReconciliationPlan} from '../supabase/functions/sync-ufc-card/reconciliation.mjs';
+import {buildReconciliationPlan,isAuthoritativeSource} from '../supabase/functions/sync-ufc-card/reconciliation.mjs';
 
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const event={event_type:'fight-night',card_rule:'Main card only'};
@@ -60,6 +60,19 @@ assert.throws(
   /cannot establish an event/
 );
 
+const maintainedRepair=buildReconciliationPlan(staleFallback,baseline,event,'maintained-repo');
+assert.equal(maintainedRepair.authoritative,true);
+assert.equal(maintainedRepair.actions.find((action)=>action.previous.id.includes('walker')).incoming.card_section,'Prelims');
+assert.equal(maintainedRepair.actions.find((action)=>action.previous.id.includes('walker')).demoted,true);
+assert.equal(maintainedRepair.actions.find((action)=>action.previous.id.includes('bonfim')).incoming.card_section,'Main Card');
+assert.equal(maintainedRepair.actions.find((action)=>action.previous.id.includes('bonfim')).promoted,true);
+const maintainedSeed=buildReconciliationPlan([],baseline,event,'maintained-repo');
+assert.equal(maintainedSeed.authoritative,true);
+assert.equal(maintainedSeed.actions.filter((action)=>action.type==='insert').length,2);
+assert.equal(isAuthoritativeSource('maintained-repo'),true);
+assert.equal(isAuthoritativeSource('official-ufc'),true);
+assert.equal(isAuthoritativeSource('mma-mania'),false);
+
 const officialPlan=buildReconciliationPlan(baseline,staleFallback,event,'official-ufc');
 assert.equal(officialPlan.authoritative,true);
 assert.equal(officialPlan.actions.find((action)=>action.previous.id.includes('walker')).incoming.card_section,'Main Card');
@@ -71,8 +84,15 @@ assert.equal(scraper.includes("if(!fight.card_section) fight.card_section='Preli
 assert.match(scraper,/main-card-count-mismatch:\$\{mainCount\}!=\$\{requiredMain\}/,'main-card count must reject instead of rewrite');
 assert.match(scraper,/pair===expectedKey && isMainSection\(section\)/,'expected main event may only refine an already-main row');
 
+const baselineScript=fs.readFileSync(path.join(ROOT,'scripts','apply-maintained-ufc-baselines.mjs'),'utf8');
+assert.match(baselineScript,/UFC_PICKS_FULL_EVENTS/);
+assert.match(baselineScript,/sourceType:'maintained-repo'/);
+assert.match(baselineScript,/main-card-count-mismatch/);
+
 const edgeFunction=fs.readFileSync(path.join(ROOT,'supabase','functions','sync-ufc-card','index.ts'),'utf8');
 assert.match(edgeFunction,/buildReconciliationPlan\(existing, incomingFights, event, body\.sourceType\)/);
+assert.match(edgeFunction,/slot-authority=/);
+assert.match(edgeFunction,/UFC\.com already owns this event's card slots/);
 assert.match(edgeFunction,/sectionAuthority/);
 
-console.log('UFC card section authority regression checks passed.');
+console.log('UFC card section authority and maintained baseline checks passed.');
