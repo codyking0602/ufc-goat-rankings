@@ -1,12 +1,7 @@
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
 import { chromium } from 'playwright';
 
-const failures=[];
-const capture=(stage,error)=>failures.push({stage,name:error?.name||'Error',message:error?.message||String(error),stack:error?.stack||''});
-const runImport=async(stage,path)=>{try{await import(path);}catch(error){capture(stage,error);}};
-
-await runImport('fresh-launch-route-contract','./test-fresh-launch-route-ownership-contract.mjs');
+await import('./test-fresh-launch-route-ownership-contract.mjs');
 
 const supabaseStub=`
 window.supabase={createClient(){
@@ -65,32 +60,24 @@ try{
   assert.deepEqual(stable.active,['men'],'Visibility/page lifecycle churn repeatedly reset the active view.');
   assert.equal(stable.viewChanges,baselineChanges,'Lifecycle churn emitted additional route changes.');
   assert.notEqual(stable.freshSource,'standalone-pageshow-resume','Removed pageshow resume handler is still active.');
-}catch(error){
-  capture('standalone-resume-home',error);
 }finally{
   if(browser)await browser.close();
 }
 
-const imports=[
-  ['fresh-launch-route-owner','./test-fresh-launch-route-ownership.mjs'],
-  ['native-shell-spotlight-owner','./test-native-shell-stability-spotlight-owner.mjs'],
-  ['native-shell-profile-owner','./test-native-shell-stability-profile-owner.mjs'],
-  ['native-shell-whats-new-owner','./test-native-shell-stability-whats-new-owner.mjs'],
-  ['native-shell-drawer-owner','./test-native-shell-stability-drawer-owner.mjs'],
-  ['native-pull-refresh-owner','./test-native-pull-refresh-ownership.mjs'],
-  ['picks-commissioner-owner','./test-picks-commissioner-active-owner.mjs'],
-  ['native-shell-startup-resync-owner','./test-native-shell-startup-resync-owner.mjs'],
-  ['octagon-notification-startup-retry-owner','./test-octagon-notification-startup-retry-owner.mjs'],
-  ['octagon-access-startup-retry-owner','./test-octagon-access-startup-retry-owner.mjs'],
-  ['octagon-board-startup-retry-owner','./test-octagon-board-startup-retry-owner.mjs'],
-  ['picks-persistent-groups-owner','./test-picks-persistent-groups-active-owner.mjs'],
-  ['picks-social-owner','./test-picks-social-active-owner.mjs'],
-  ['product-startup-handoff-contract','./test-product-startup-handoff-contract.mjs'],
-  ['better-than-find-leader-owner','./test-better-than-find-leader-owner.mjs'],
-  ['better-than-photo-authority-owner','./test-better-than-photo-authority-owner.mjs'],
-  ['picks-mobile-top-tabs','./test-picks-mobile-top-tabs.mjs']
-];
-for(const [stage,path] of imports)await runImport(stage,path);
-
-fs.writeFileSync('/tmp/profile-signin-stability-report.json',JSON.stringify({proof:'ios-startup-aggregate',failures},null,2));
-if(failures.length)throw new AggregateError(failures.map(row=>new Error(`${row.stage}: ${row.message}`)),`${failures.length} iOS aggregate check${failures.length===1?'':'s'} failed.`);
+await import('./test-fresh-launch-route-ownership.mjs');
+await import('./test-native-shell-stability-spotlight-owner.mjs');
+await import('./test-native-shell-stability-profile-owner.mjs');
+await import('./test-native-shell-stability-whats-new-owner.mjs');
+await import('./test-native-shell-stability-drawer-owner.mjs');
+await import('./test-native-pull-refresh-ownership.mjs');
+await import('./test-picks-commissioner-active-owner.mjs');
+await import('./test-native-shell-startup-resync-owner.mjs');
+await import('./test-octagon-notification-startup-retry-owner.mjs');
+await import('./test-octagon-access-startup-retry-owner.mjs');
+await import('./test-octagon-board-startup-retry-owner.mjs');
+await import('./test-picks-persistent-groups-active-owner.mjs');
+await import('./test-picks-social-active-owner.mjs');
+await import('./test-product-startup-handoff-contract.mjs');
+await import('./test-better-than-find-leader-owner.mjs');
+await import('./test-better-than-photo-authority-owner.mjs');
+await import('./test-picks-mobile-top-tabs.mjs');
