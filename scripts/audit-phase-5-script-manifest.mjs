@@ -48,6 +48,8 @@ const photoAuthoritySource=fs.readFileSync('assets/js/play-photo-authority.js','
 const challengeLoaderSource=fs.readFileSync('assets/data/what-changed.js','utf8');
 const profileChallengeSource=fs.readFileSync('assets/js/profile-challenges.js','utf8');
 const keepCutStandaloneSource=fs.readFileSync('assets/js/keep-cut-standalone-share.js','utf8');
+const profileChallengeSql=fs.readFileSync('supabase/play-profile-challenges-phase.sql','utf8');
+const serviceWorkerSource=fs.readFileSync('sw.js','utf8');
 const findLeaderVersion=findLeaderSource.match(/const VERSION='([^']+)'/)?.[1]||'';
 const photoAuthorityVersion=photoAuthoritySource.match(/const VERSION='([^']+)'/)?.[1]||'';
 assert(findLeaderVersion,'Current Find the Leader version could not be identified.');
@@ -61,12 +63,19 @@ assert(betterThanSource.includes(`assets/js/play-photo-authority.js?v=${photoAut
 
 assert.match(challengeLoaderSource,/script\.src='assets\/js\/game-challenges\.js\?v=game-challenges-[^']+';/,'The existing What Changed dependency owner must continue loading the all-game challenge controller.');
 assert.match(keepCutStandaloneSource,/if\(source\.searchParams\.get\('share'\)==='play-challenge'\)return false;/,'Legacy Keep/Cut routing must never intercept a canonical all-game challenge URL.');
-assert.match(profileChallengeSource,/const GAME_TITLES=\{[\s\S]*wavelength:'Wavelength'[\s\S]*'keep-cut':'Keep 4, Cut 4'/,'The profile inbox must label the actual challenge game.');
-assert.match(profileChallengeSource,/titleFor\(typeFor\(row\)\)/,'Challenge rows must render their real game title instead of hard-coding Find the Leader.');
-assert.match(profileChallengeSource,/window\.addEventListener\('click',[\s\S]*data-open-profile-challenge[\s\S]*playInboxChallenge/,'The profile challenge owner must intercept inbox Play actions before game-specific document handlers.');
-assert.match(profileChallengeSource,/window\.UFC_GAME_CHALLENGES\?\.openChallenge[\s\S]*await loadInbox\(\);return true;/,'Non-Find Leader inbox challenges must delegate to the current all-game owner and refresh unread state after opening.');
-assert.match(profileChallengeSource,/function addedActivitySurface\(records\)[\s\S]*profile-activity-grid[\s\S]*if\(addedActivitySurface\(records\)\)loadInbox\(\);/,'Opening or restoring Activity Profile must refresh and render its challenge inbox.');
-assert.match(profileChallengeSource,/data-native-badge="play"[\s\S]*openInbox\(\)/,'The Play notification badge must open the Activity Profile challenge inbox.');
+assert.match(profileChallengeSource,/const VERSION='profile-challenges-20260722b-play-challenge-center'/,'The canonical challenge owner must publish the Play Challenge Center build.');
+assert.match(profileChallengeSource,/dataset\.playChallengeCenter='true'[\s\S]*dataset\.profileChallengeInbox='true'/,'The challenge owner must mount one first-class Challenge Center inside the Play hub.');
+assert.match(profileChallengeSource,/data-challenge-filter="received"[\s\S]*data-challenge-filter="sent"/,'Challenge Center must provide received and sent views.');
+assert.match(profileChallengeSource,/directionFor\(row\)==='sent'[\s\S]*data-view-profile-challenge/,'Sent challenges must remain visible and expose results after completion.');
+assert.match(profileChallengeSource,/data-open-profile-challenge[\s\S]*playInboxChallenge/,'Received waiting challenges must open their exact game.');
+assert.match(profileChallengeSource,/play_profile_challenge_detail[\s\S]*comparisonVerdict[\s\S]*challenge-results-scoreboard/,'Completed challenges must reopen a two-player comparison for either participant.');
+assert.match(profileChallengeSource,/data-native-destination="play"[\s\S]*openCenter\(\)/,'The Play badge must route to Challenge Center instead of Activity Profile.');
+assert.doesNotMatch(profileChallengeSource,/profile-activity-grid|renderActivityInbox|UFC_PROFILE_ACTIVITY\?\.open/,'Challenge Center must not remain hidden inside Activity Profile.');
+
+assert.match(profileChallengeSql,/create or replace function public\.play_profile_challenge_inbox\([\s\S]*'received'::text as direction[\s\S]*'sent'::text as direction/,'The inbox RPC must return both received and sent profile challenges.');
+assert.match(profileChallengeSql,/create or replace function public\.play_mark_profile_challenges_seen/,'The backend must clear unread state when Challenge Center is viewed.');
+assert.match(profileChallengeSql,/create or replace function public\.play_profile_challenge_detail[\s\S]*creator_result[\s\S]*responder_result/,'The backend must authorize both players to reopen completed matchup results.');
+assert.match(serviceWorkerSource,/profile-challenges\|share-deep-links/,'The cache owner must refresh the canonical challenge controller without requiring an index version bump.');
 
 const literalAssetScript=/["'`](assets\/js\/[^"'`?]+\.js)(?:\?[^"'`]*)?["'`]/g;
 const dynamicEdges=[];
@@ -135,7 +144,9 @@ const report={
   unapprovedDuplicateDynamicEdges,
   manifestOwnedPicksSeason:true,
   canonicalChallengeRouting:true,
-  profileChallengeInbox:true
+  playChallengeCenter:'received-sent-results',
+  sentChallengeHistory:true,
+  completedChallengeComparison:true
 };
 
 console.log(JSON.stringify(report,null,2));
