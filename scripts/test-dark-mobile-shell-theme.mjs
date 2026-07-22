@@ -39,11 +39,12 @@ assert.ok(
   'The cache owner must fetch canonical palette styles from the network without storing stale copies.'
 );
 assert.ok(
-  serviceWorker.includes("const VERSION='octagon-hq-sw-20260722b-home-route-safety';")
-    &&serviceWorker.includes("const CACHE_NAME='octagon-hq-static-v17';")
-    &&serviceWorker.includes('app-canonical-group|app-notification-surface-fix')
+  serviceWorker.includes("const VERSION='octagon-hq-sw-20260722c-force-home-cold-launch';")
+    &&serviceWorker.includes("const CACHE_NAME='octagon-hq-static-v18';")
+    &&serviceWorker.includes('fresh-home-route-bootstrap|fresh-home-launch')
+    &&serviceWorker.includes('stalePicksClientUrl(client.url)?cleanHome:client.url')
     &&serviceWorker.includes('game-challenges|profile-challenges|share-deep-links'),
-  'The current service-worker identity must publish the Home-route fix and retain the current Challenge Center owners.'
+  'The current service-worker identity must publish the standalone Home repair and retain current app owners.'
 );
 assert.ok(
   index.includes('<meta name="theme-color" content="#080808" />')
