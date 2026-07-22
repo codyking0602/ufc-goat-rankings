@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='play-profile-identity-20260722d-startup-ready';
+  const VERSION='play-profile-identity-20260722d-reuse-migration-handoff-startup-ready';
   const CANONICAL_CODE='GOAT26';
   const GROUP_TOKEN_PREFIX='ufc-picks:group:';
   const GROUP_ADMIN_PREFIX='ufc-picks:group-admin:';
