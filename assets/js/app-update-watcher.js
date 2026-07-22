@@ -4,7 +4,7 @@
   if(window.__UFC_APP_UPDATE_WATCHER_STARTED__)return;
   window.__UFC_APP_UPDATE_WATCHER_STARTED__=true;
 
-  const VERSION='app-update-watcher-20260722f-existing-controller-repair';
+  const VERSION='app-update-watcher-20260722g-ios-controller-repair';
   const WHAT_CHANGED_SRC='assets/js/what-changed.js?v=what-changed-20260718b-compact';
   const RESTORE_KEY='ufc-goat-manual-refresh-v1';
   const CONTROLLER_RELOAD_KEY='ufc-app:controller-reload:v21';
@@ -15,8 +15,7 @@
   let serviceWorkerUpdating=false;
   let controllerReloading=false;
   let uiInitialized=false;
-  const standalone=window.navigator.standalone===true
-    ||window.matchMedia?.('(display-mode: standalone)')?.matches===true;
+  const iosStandalone=window.navigator.standalone===true;
   const hadControllerAtStart=Boolean(navigator.serviceWorker?.controller);
 
   const currentBuild=()=>document.querySelector('meta[name="app-build"]')?.content||'';
@@ -64,7 +63,7 @@
   }
 
   function reloadForControllerChange(){
-    if(!standalone||!hadControllerAtStart||controllerReloading)return false;
+    if(!iosStandalone||!hadControllerAtStart||controllerReloading)return false;
     try{
       if(sessionStorage.getItem(CONTROLLER_RELOAD_KEY)==='1')return false;
       sessionStorage.setItem(CONTROLLER_RELOAD_KEY,'1');
@@ -82,7 +81,7 @@
     try{
       let registration=await navigator.serviceWorker.getRegistration();
       if(!registration){
-        if(!standalone)return false;
+        if(!iosStandalone)return false;
         registration=await navigator.serviceWorker.register('./sw.js',{scope:'./',updateViaCache:'none'});
       }
       await registration.update();
@@ -143,7 +142,7 @@
     cleanRefreshState();injectStyles();installButton();bindDeferredSupport();window.setTimeout(restoreState,100);
   }
 
-  if(standalone&&'serviceWorker' in navigator)navigator.serviceWorker.addEventListener('controllerchange',reloadForControllerChange);
+  if(iosStandalone&&'serviceWorker' in navigator)navigator.serviceWorker.addEventListener('controllerchange',reloadForControllerChange);
   void updateServiceWorker();
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initializeUi,{once:true});else initializeUi();
   window.addEventListener('octagon-hq:what-changed-seen',syncUnread);
