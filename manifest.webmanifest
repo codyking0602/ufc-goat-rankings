@@ -3,11 +3,11 @@
   "name": "Octagon HQ",
   "short_name": "Octagon HQ",
   "description": "UFC rankings, games, Picks, The War Room, Intelligence, and direct challenges.",
-  "start_url": "./#home",
+  "start_url": "./index.html#home",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#0b1220",
-  "theme_color": "#111827",
+  "background_color": "#000000",
+  "theme_color": "#080808",
   "orientation": "portrait-primary",
   "icons": [
     {

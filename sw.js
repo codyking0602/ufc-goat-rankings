@@ -1,5 +1,6 @@
 const VERSION='octagon-hq-sw-20260722e-installed-shell-fallback';
 const CACHE_NAME='octagon-hq-static-v20';
+const COLD_LAUNCH_REVISION='20260722f-complete-local-shell';
 const LEGACY_PREFIX='octagon-hq-static-';
 const SHELL_FALLBACKS=[
   './index.html',
@@ -10,6 +11,11 @@ const SHELL_FALLBACKS=[
   './assets/css/product-polish.css',
   './assets/js/fresh-home-route-bootstrap.js',
   './assets/js/octagon-hq-shell.js',
+  './assets/data/ranking-data.js',
+  './assets/data/display-overrides.js',
+  './assets/js/app.js',
+  './assets/data/play-data.js',
+  './assets/data/picks-events.js',
   './assets/js/app-update-watcher.js',
   './assets/js/home-dashboard.js',
   './assets/js/fresh-home-launch.js',
@@ -154,5 +160,5 @@ self.addEventListener('notificationclick',event=>{
 });
 
 self.addEventListener('message',event=>{
-  if(event.data?.type==='OCTAGON_SW_VERSION')event.source?.postMessage?.({type:'OCTAGON_SW_VERSION',version:VERSION,cache:CACHE_NAME});
+  if(event.data?.type==='OCTAGON_SW_VERSION')event.source?.postMessage?.({type:'OCTAGON_SW_VERSION',version:VERSION,cache:CACHE_NAME,revision:COLD_LAUNCH_REVISION});
 });
