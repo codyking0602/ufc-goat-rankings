@@ -5,7 +5,7 @@ import path from 'node:path';
 import {chromium} from 'playwright';
 
 const ROOT=process.cwd();
-const PORT=4173;
+const PORT=4174;
 const PREFIX='/ufc-goat-rankings';
 const ORIGIN=`http://127.0.0.1:${PORT}`;
 const BASE=`${ORIGIN}${PREFIX}`;
@@ -101,7 +101,7 @@ function verify(screen,value,label){
   noRetired(value,label);
 }
 async function stable(page,screen,label){const initial=await snapshot(page,screen);verify(screen,initial,`${label} initial`);await page.waitForTimeout(2800);const final=await snapshot(page,screen);verify(screen,final,`${label} delayed`);assert.deepEqual(final,initial,`${label} changed after startup`);return{initial,final};}
-async function exercise(page,label,url){await page.goto(url,{waitUntil:'domcontentloaded',timeout:60000});await ready(page);return{home:await stable(page,'home',`${label} Home`),picks:await stable(page,'picks',`${label} Picks`),leader:await stable(page,'leader',`${label} Find the Leader`)};}
+async function exercise(page,label,url){await page.goto(url,{waitUntil:'domcontentloaded',timeout:60000});await ready(page);return{home:await stable(page,'home',`${label} Home`),picks:await stable(page,'picks',`${label} Picks`),leader:await stable(page,'leader',`${label} Find the Leader`)}};
 
 try{
   const normal=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,serviceWorkers:'block'});
