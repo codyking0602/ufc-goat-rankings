@@ -1,0 +1,34 @@
+name: Diagnose Palette Aggregate
+
+on:
+  push:
+    branches: [agent/fix-installed-pwa-palette-regression]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install quiet browser runtime
+        run: |
+          npm install --silent --no-save --package-lock=false playwright@1.54.2 acorn@8 >/dev/null 2>&1
+          npx playwright install chromium >/dev/null 2>&1
+      - name: Start app
+        run: python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/palette-diagnostic-http.log 2>&1 &
+      - name: Run aggregate with concise failure tail
+        run: |
+          set +e
+          node scripts/test-ios-standalone-resume-home.mjs >/tmp/palette-aggregate.log 2>&1
+          status=$?
+          tail -n 120 /tmp/palette-aggregate.log
+          exit "$status"
