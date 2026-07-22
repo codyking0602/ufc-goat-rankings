@@ -1,0 +1,68 @@
+name: Update maintained Belgrade card once
+
+on:
+  push:
+    branches:
+      - fix/mma-mania-belgrade-card
+    paths:
+      - '.github/workflows/update-belgrade-maintained-card-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+        with:
+          ref: fix/mma-mania-belgrade-card
+
+      - name: Replace maintained Belgrade block
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='assets/data/picks-events.js';
+          const text=fs.readFileSync(file,'utf8');
+          const start=text.indexOf("    {\n      id: 'ufc-belgrade-2026-08-01'");
+          const marker="\n    }\n  ];";
+          const markerAt=text.indexOf(marker,start);
+          if(start<0||markerAt<0)throw new Error('Could not locate maintained Belgrade event block');
+          const end=markerAt+"\n    }".length;
+          const block=`    {
+      id: 'ufc-belgrade-2026-08-01',
+      name: 'UFC Fight Night',
+      subtitle: 'Medic vs. Rodriguez',
+      eventType: 'fight-night',
+      eventDate: '2026-08-01T13:00:00-04:00',
+      location: 'Belgrade Arena · Belgrade, Serbia',
+      cardRule: 'Main card only',
+      status: 'upcoming',
+      sourceNote: 'MMA Mania current card: five prelims and four main-card fights, including the main event.',
+      fights: [
+        { id:'belgrade26-oban-elliott-michael-oliveira', order:1, cardSection:'Prelims', weightClass:'Welterweight', red:'Oban Elliott', blue:'Michael Oliveira', lockAt:'2026-08-01T10:00:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-ludovit-klein-tofiq-musayev', order:2, cardSection:'Prelims', weightClass:'Lightweight', red:'Ludovit Klein', blue:'Tofiq Musayev', lockAt:'2026-08-01T10:36:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-dusko-todorovic-robert-valentin', order:3, cardSection:'Prelims', weightClass:'Middleweight', red:'Dusko Todorovic', blue:'Robert Valentin', lockAt:'2026-08-01T11:12:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-vlasto-cepo-gilbert-urbina', order:4, cardSection:'Prelims', weightClass:'Middleweight', red:'Vlasto Cepo', blue:'Gilbert Urbina', lockAt:'2026-08-01T11:48:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-jovan-leka-max-gimenis', order:5, cardSection:'Prelims', weightClass:'Heavyweight', red:'Jovan Leka', blue:'Max Gimenis', lockAt:'2026-08-01T12:24:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-jan-blachowicz-bogdan-guskov', order:6, cardSection:'Main Card', weightClass:'Light Heavyweight', red:'Jan Blachowicz', blue:'Bogdan Guskov', lockAt:'2026-08-01T13:00:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-ante-delija-johnny-walker', order:7, cardSection:'Main Card', weightClass:'Heavyweight', red:'Ante Delija', blue:'Johnny Walker', lockAt:'2026-08-01T13:30:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-marcin-tybura-aleksandar-rakic', order:8, cardSection:'Main Card', weightClass:'Heavyweight', red:'Marcin Tybura', blue:'Aleksandar Rakic', lockAt:'2026-08-01T14:00:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-uros-medic-daniel-rodriguez', order:9, cardSection:'Main Event', weightClass:'Welterweight', red:'Uros Medic', blue:'Daniel Rodriguez', lockAt:'2026-08-01T14:30:00-04:00', winner:null, resultStatus:'scheduled' }
+      ]
+    }`;
+          fs.writeFileSync(file,text.slice(0,start)+block+text.slice(end));
+          NODE
+          node --check assets/data/picks-events.js
+
+      - name: Commit and remove one-time workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/update-belgrade-maintained-card-once.yml
+          git add assets/data/picks-events.js
+          git commit -m "Align maintained Belgrade card with MMA Mania"
+          git push origin HEAD:fix/mma-mania-belgrade-card
