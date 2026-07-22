@@ -67,10 +67,11 @@ jobs:
               name === 'index.html' ||
               /^assets\/(js|css)\/picks/.test(name) ||
               /^assets\/data\/picks-/.test(name) ||
+              name.startsWith('supabase/functions/sync-ufc-card/') ||
               name.startsWith('supabase/functions/refresh-ufc-odds/') ||
               /^supabase\/.*(event|picks).*\.sql$/.test(name) ||
               name === 'docs/picks-setup.md' ||
-              /^scripts\/(check-picks-ui|test-picks-mobile-top-tabs)\.mjs$/.test(name) ||
+              /^scripts\/(apply-maintained-ufc-baselines|sync-ufc-card|test-ufc-card-section-authority|check-picks-ui|test-picks-mobile-top-tabs)\.mjs$/.test(name) ||
               /^\.github\/workflows\/(picks-ui-smoke|refresh-ufc-odds|deploy-ufc-odds-refresh)\.yml$/.test(name)
             );
 
@@ -204,6 +205,8 @@ jobs:
       - name: Run Picks validation
         if: needs.changes.outputs.picks == 'true'
         run: |
+          node scripts/apply-maintained-ufc-baselines.mjs --force
+          node scripts/test-ufc-card-section-authority.mjs
           node scripts/check-picks-ui.mjs
           node scripts/test-picks-mobile-top-tabs.mjs
 
