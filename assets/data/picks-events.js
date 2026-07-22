@@ -90,20 +90,17 @@
       location: 'Belgrade Arena · Belgrade, Serbia',
       cardRule: 'Main card only',
       status: 'upcoming',
-      sourceNote: 'Externally maintained from MMA Mania. Current 12-fight snapshot includes Blachowicz vs. Stirling.',
+      sourceNote: 'MMA Mania current card: five prelims and four main-card fights, including the main event.',
       fights: [
-        { id:'belgrade26-jovan-leka-max-gimenis', order:1, cardSection:'Prelims', weightClass:'Heavyweight', red:'Jovan Leka', blue:'Max Gimenis', lockAt:'2026-08-01T10:00:00-04:00', winner:null, resultStatus:'scheduled' },
-        { id:'belgrade26-nina-milosevic-hailey-cowan', order:2, cardSection:'Prelims', weightClass:"Women's Bantamweight", red:'Nina Milosevic', blue:'Hailey Cowan', lockAt:'2026-08-01T10:25:00-04:00', winner:null, resultStatus:'scheduled' },
-        { id:'belgrade26-mateusz-rebecki-kyle-prepolec', order:3, cardSection:'Prelims', weightClass:'Lightweight', red:'Mateusz Rebecki', blue:'Kyle Prepolec', lockAt:'2026-08-01T10:50:00-04:00', winner:null, resultStatus:'scheduled' },
-        { id:'belgrade26-dennis-buzukja-bogdan-grad', order:4, cardSection:'Prelims', weightClass:'Featherweight', red:'Dennis Buzukja', blue:'Bogdan Grad', lockAt:'2026-08-01T11:15:00-04:00', winner:null, resultStatus:'scheduled' },
-        { id:'belgrade26-mark-vologdin-josias-musasa', order:5, cardSection:'Prelims', weightClass:'Bantamweight', red:'Mark Vologdin', blue:'Josias Musasa', lockAt:'2026-08-01T11:40:00-04:00', winner:null, resultStatus:'scheduled' },
-        { id:'belgrade26-oban-elliott-michael-oliveira', order:6, cardSection:'Prelims', weightClass:'Welterweight', red:'Oban Elliott', blue:'Michael Oliveira', lockAt:'2026-08-01T12:05:00-04:00', winner:null, resultStatus:'scheduled' },
-        { id:'belgrade26-ludovit-klein-tofiq-musayev', order:7, cardSection:'Prelims', weightClass:'Lightweight', red:'Ludovit Klein', blue:'Tofiq Musayev', lockAt:'2026-08-01T12:30:00-04:00', winner:null, resultStatus:'scheduled' },
-        { id:'belgrade26-vlasto-cepo-gilbert-urbina', order:8, cardSection:'Main Card', weightClass:'Middleweight', red:'Vlasto Cepo', blue:'Gilbert Urbina', lockAt:'2026-08-01T13:00:00-04:00', winner:null, resultStatus:'scheduled' },
-        { id:'belgrade26-dusko-todorovic-robert-valentin', order:9, cardSection:'Main Card', weightClass:'Middleweight', red:'Dusko Todorovic', blue:'Robert Valentin', lockAt:'2026-08-01T13:30:00-04:00', winner:null, resultStatus:'scheduled' },
-        { id:'belgrade26-aleksandar-rakic-marcin-tybura', order:10, cardSection:'Main Card', weightClass:'Heavyweight', red:'Aleksandar Rakic', blue:'Marcin Tybura', lockAt:'2026-08-01T14:00:00-04:00', winner:null, resultStatus:'scheduled' },
-        { id:'belgrade26-jan-blachowicz-navajo-stirling', order:11, cardSection:'Co-Main Event', weightClass:'Light Heavyweight', red:'Jan Blachowicz', blue:'Navajo Stirling', lockAt:'2026-08-01T14:30:00-04:00', winner:null, resultStatus:'scheduled' },
-        { id:'belgrade26-uros-medic-daniel-rodriguez', order:12, cardSection:'Main Event', weightClass:'Welterweight', red:'Uros Medic', blue:'Daniel Rodriguez', lockAt:'2026-08-01T15:00:00-04:00', winner:null, resultStatus:'scheduled' }
+        { id:'belgrade26-oban-elliott-michael-oliveira', order:1, cardSection:'Prelims', weightClass:'Welterweight', red:'Oban Elliott', blue:'Michael Oliveira', lockAt:'2026-08-01T10:00:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-ludovit-klein-tofiq-musayev', order:2, cardSection:'Prelims', weightClass:'Lightweight', red:'Ludovit Klein', blue:'Tofiq Musayev', lockAt:'2026-08-01T10:36:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-dusko-todorovic-robert-valentin', order:3, cardSection:'Prelims', weightClass:'Middleweight', red:'Dusko Todorovic', blue:'Robert Valentin', lockAt:'2026-08-01T11:12:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-vlasto-cepo-gilbert-urbina', order:4, cardSection:'Prelims', weightClass:'Middleweight', red:'Vlasto Cepo', blue:'Gilbert Urbina', lockAt:'2026-08-01T11:48:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-jovan-leka-max-gimenis', order:5, cardSection:'Prelims', weightClass:'Heavyweight', red:'Jovan Leka', blue:'Max Gimenis', lockAt:'2026-08-01T12:24:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-jan-blachowicz-bogdan-guskov', order:6, cardSection:'Main Card', weightClass:'Light Heavyweight', red:'Jan Blachowicz', blue:'Bogdan Guskov', lockAt:'2026-08-01T13:00:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-ante-delija-johnny-walker', order:7, cardSection:'Main Card', weightClass:'Heavyweight', red:'Ante Delija', blue:'Johnny Walker', lockAt:'2026-08-01T13:30:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-marcin-tybura-aleksandar-rakic', order:8, cardSection:'Main Card', weightClass:'Heavyweight', red:'Marcin Tybura', blue:'Aleksandar Rakic', lockAt:'2026-08-01T14:00:00-04:00', winner:null, resultStatus:'scheduled' },
+        { id:'belgrade26-uros-medic-daniel-rodriguez', order:9, cardSection:'Main Event', weightClass:'Welterweight', red:'Uros Medic', blue:'Daniel Rodriguez', lockAt:'2026-08-01T14:30:00-04:00', winner:null, resultStatus:'scheduled' }
       ]
     }
   ];
