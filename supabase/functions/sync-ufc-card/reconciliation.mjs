@@ -30,6 +30,10 @@ export function isPickable(event, fight) {
   return event.event_type === 'numbered' || /full card/i.test(String(event.card_rule || '')) || isMainCard(fight.card_section);
 }
 
+export function isAuthoritativeSource(sourceType) {
+  return sourceType === 'official-ufc' || sourceType === 'maintained-repo';
+}
+
 function sharedFighterCount(left, right) {
   const leftNames = new Set([normalizeName(left.red_name), normalizeName(left.blue_name)]);
   return [normalizeName(right.red_name), normalizeName(right.blue_name)].filter((name) => leftNames.has(name)).length;
@@ -53,16 +57,16 @@ function findPreviousFight(incoming, unmatched, byPair) {
 }
 
 /**
- * UFC.com owns card slots: section, order, lock time, additions and removals.
- * A fallback source may only reconcile an opponent replacement inside an
- * already-known slot. It cannot add/remove/reorder/resection the card.
+ * UFC.com owns live card changes. The maintained repository baseline owns the
+ * initial safe slot layout when UFC.com is unavailable. A fallback source may
+ * only reconcile an opponent replacement inside an already-known slot.
  */
 export function buildReconciliationPlan(existing, incomingFights, event, sourceType) {
-  const authoritative = sourceType === 'official-ufc';
+  const authoritative = isAuthoritativeSource(sourceType);
   const activeExisting = existing.filter((fight) => !RESOLVED_STATUSES.has(fight.result_status));
 
   if (!authoritative && !activeExisting.length) {
-    throw new Error('Fallback card source cannot establish an event without an existing UFC-confirmed baseline');
+    throw new Error('Fallback card source cannot establish an event without an existing authoritative baseline');
   }
   if (!authoritative && incomingFights.length !== activeExisting.length) {
     throw new Error(`Fallback card source cannot add or remove fight slots (${activeExisting.length} existing vs ${incomingFights.length} incoming)`);
