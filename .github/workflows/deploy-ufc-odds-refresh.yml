@@ -178,6 +178,77 @@ jobs:
         shell: bash
         run: node scripts/sync-ufc-card.mjs --apply --force
 
+      - name: Publish deployed card health
+        if: always()
+        env:
+          BASELINE_OUTCOME: ${{ steps.maintained_baseline.outcome }}
+          EXTERNAL_OUTCOME: ${{ steps.card_import.outcome }}
+        shell: bash
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
+          node <<'NODE'
+          const fs=require('node:fs');
+          const path=require('node:path');
+          const read=(filename,key)=>{
+            const file=path.join('artifacts','ufc-card-sync',filename);
+            if(!fs.existsSync(file))return[];
+            try{return JSON.parse(fs.readFileSync(file,'utf8'))[key]||[];}catch(_error){return[];}
+          };
+          const baseline=read('maintained-baseline-report.json','report');
+          const external=read('card-sync-report.json','report');
+          const externalLog=path.join('artifacts','ufc-card-sync','card-sync-console.log');
+          const baselineOutcome=process.env.BASELINE_OUTCOME||'unknown';
+          const externalOutcome=process.env.EXTERNAL_OUTCOME||'unknown';
+          const health={
+            outcome:baselineOutcome==='success'?(externalOutcome==='success'?'success':'baseline-safe-external-unavailable'):'failure',
+            baselineOutcome,
+            externalOutcome,
+            baselines:baseline.map(row=>({
+              eventId:row.eventId,
+              fights:row.fights,
+              mainCardFights:row.mainCardFights,
+              confirmationHash:row.confirmationHash,
+              synced:Boolean(row.result?.synced),
+              skipped:Boolean(row.result?.skipped),
+              reason:row.result?.reason||null,
+              priorAuthority:row.result?.summary?.priorAuthority||null,
+              sectionAuthority:row.result?.summary?.sectionAuthority||null,
+              promotions:row.result?.summary?.promotions??null,
+              demotions:row.result?.summary?.demotions??null,
+              picksReset:row.result?.summary?.picksReset??null
+            })),
+            events:external.map(row=>({
+              eventId:row.eventId,
+              sourceType:row.sourceType,
+              sourceUrl:row.sourceUrl,
+              fights:row.fights,
+              mainCardFights:row.mainCardFights,
+              confirmationHash:row.confirmationHash,
+              synced:Boolean(row.result?.synced),
+              skipped:Boolean(row.result?.skipped),
+              sectionAuthority:row.result?.summary?.sectionAuthority||null,
+              promotions:row.result?.summary?.promotions??null,
+              demotions:row.result?.summary?.demotions??null,
+              picksReset:row.result?.summary?.picksReset??null
+            })),
+            verifiedAt:new Date().toISOString()
+          };
+          if(externalOutcome!=='success'&&fs.existsSync(externalLog)){
+            health.externalError=fs.readFileSync(externalLog,'utf8').trim().split('\n').slice(-20).join('\n');
+          }
+          fs.mkdirSync(path.join('assets','data'),{recursive:true});
+          fs.writeFileSync(path.join('assets','data','picks-sync-health.json'),JSON.stringify(health,null,2)+'\n');
+          NODE
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/data/picks-sync-health.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Record deployed UFC card health [skip ci]"
+            git pull --rebase origin main
+            git push
+          fi
+
       - name: Advance permanent groups to next event
         if: always()
         continue-on-error: true
