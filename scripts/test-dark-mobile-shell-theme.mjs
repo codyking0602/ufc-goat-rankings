@@ -8,6 +8,7 @@ const home=fs.readFileSync('assets/css/home-dashboard.css','utf8');
 const shell=fs.readFileSync('assets/css/native-app-shell.css','utf8');
 const stability=fs.readFileSync('assets/css/native-app-shell-stability.css','utf8');
 const polish=fs.readFileSync('assets/css/product-polish.css','utf8');
+const architecture=fs.readFileSync('assets/js/product-architecture.js','utf8');
 const serviceWorker=fs.readFileSync('sw.js','utf8');
 
 assert.ok(
@@ -17,16 +18,6 @@ assert.ok(
 assert.ok(
   app.includes('background:radial-gradient(circle at top left,#1f0b0b,var(--bg) 45%)'),
   'The app canvas must use a black surface with only a restrained red tint.'
-);
-assert.ok(
-  index.includes('<meta name="theme-color" content="#080808" />')
-    &&index.includes('<meta name="app-build" content="visible-home-palette-20260721b" />')
-    &&index.includes('assets/css/app.css?v=app-css-20260721c-canonical-black-red')
-    &&index.includes('assets/css/home-dashboard.css?v=home-dashboard-20260721b-visible-black-red')
-    &&index.includes('assets/css/native-app-shell.css?v=native-app-shell-css-20260721c-canonical-black-red')
-    &&index.includes('assets/js/app-update-watcher.js?v=app-update-watcher-20260721b-palette-publication')
-    &&index.includes('assets/js/product-architecture.js?v=product-architecture-20260721b-palette-publication'),
-  'The HTML publication owner must request fresh canonical palette assets and advertise the matching build.'
 );
 assert.ok(
   home.includes('background:var(--panel2);')
@@ -41,12 +32,33 @@ assert.doesNotMatch(
   'The visible Home presentation owner still contains the retired orange or white-card treatment.'
 );
 assert.ok(
+  stability.startsWith('@import url("./product-polish.css?v=product-polish-20260721e-static-final-owner");'),
+  'The existing final static CSS owner must import product polish before runtime startup.'
+);
+assert.doesNotMatch(
+  architecture,
+  /POLISH_CSS|loadStyleOnce|createElement\(['"]link['"]\)/,
+  'Product architecture still owns a late stylesheet injection path.'
+);
+assert.match(
+  architecture,
+  /function loadPolish\(\)\{[\s\S]*loadScriptOnce\('assets\/js\/product-polish\.js',POLISH_SRC\)/,
+  'Product architecture must retain only the non-visual product-polish controller.'
+);
+assert.ok(
   polish.includes('--product-surface:var(--panel);')
     &&polish.includes('--product-surface-2:var(--panel2);')
     &&polish.includes('--product-border:var(--line);')
     &&polish.includes('--product-muted:var(--muted);')
     &&polish.includes('--product-accent:var(--accent);'),
   'Final product polish must consume the canonical palette instead of owning a parallel navy and orange theme.'
+);
+assert.ok(
+  polish.includes('.product-header-tools .app-profile-chip{')
+    &&polish.includes('background:var(--panel2)!important;color:var(--text)!important')
+    &&polish.includes('#manualRefreshBtn,#whatsNewBtn{')
+    &&polish.includes('background:var(--panel2)!important;color:var(--text)!important'),
+  'The static final owner must neutralize late legacy profile and update-control colors.'
 );
 assert.doesNotMatch(
   `${shell}\n${polish}`,
@@ -78,13 +90,15 @@ assert.match(
   'Final product polish must own the canonical light mobile title color.'
 );
 assert.ok(
-  serviceWorker.includes('css\\/(?:app|home-dashboard|native-app-shell|native-app-shell-stability|product-polish|community-profiles|find-leader)\\.css'),
-  'The canonical cache owner must fetch global, Home, and final-polish palette assets from the network.'
+  serviceWorker.includes('const PALETTE_NETWORK_ONLY=/\\/assets\\/css\\/(?:app|home-dashboard|native-app-shell|native-app-shell-stability|product-polish)\\.css$/i;')
+    &&serviceWorker.includes('if(url.origin===self.location.origin&&PALETTE_NETWORK_ONLY.test(url.pathname))')
+    &&serviceWorker.includes("fetch(request,{cache:'no-store'})"),
+  'The cache owner must fetch canonical palette styles from the network without storing stale copies.'
 );
 assert.ok(
-  serviceWorker.includes("const VERSION='octagon-hq-sw-20260721e-versioned-palette-assets';")
-    &&serviceWorker.includes("const CACHE_NAME='octagon-hq-static-v14';"),
-  'The versioned palette assets must publish through a fresh service-worker identity and cache.'
+  serviceWorker.includes("const VERSION='octagon-hq-sw-20260721f-static-palette-owner';")
+    &&serviceWorker.includes("const CACHE_NAME='octagon-hq-static-v15';"),
+  'The static palette owner must publish through a fresh service-worker identity and cache.'
 );
 assert.ok(
   stability.includes('.drawer{z-index:5000!important;background:rgba(0,0,0,.72)!important}'),
@@ -94,14 +108,18 @@ assert.ok(
   stability.includes('background:var(--bg)!important;overscroll-behavior:contain!important'),
   'The fighter drawer panel must consume the canonical app background token.'
 );
-assert.ok(
-  stability.includes('border:1px solid var(--line)!important;border-radius:15px!important;background:var(--panel2)!important;color:var(--text)!important'),
-  'The fighter drawer close control must consume canonical dark-theme tokens.'
-);
 assert.doesNotMatch(
   stability,
   /#eef3f8/i,
   'The retired forced-light fighter drawer surface is still present.'
+);
+assert.ok(
+  index.includes('<meta name="theme-color" content="#080808" />')
+    &&index.includes('<meta name="app-build" content="visible-home-palette-20260721b" />')
+    &&index.includes('assets/css/app.css?v=app-css-20260721c-canonical-black-red')
+    &&index.includes('assets/css/home-dashboard.css?v=home-dashboard-20260721b-visible-black-red')
+    &&index.includes('assets/css/native-app-shell.css?v=native-app-shell-css-20260721c-canonical-black-red'),
+  'The HTML publication owner must request the current canonical palette assets.'
 );
 
 const fixture=`<!doctype html>
@@ -111,13 +129,12 @@ const fixture=`<!doctype html>
 <link rel="stylesheet" href="/assets/css/app.css">
 <link rel="stylesheet" href="/assets/css/home-dashboard.css">
 <link rel="stylesheet" href="/assets/css/native-app-shell.css">
-<link rel="stylesheet" href="/assets/css/product-polish.css">
+<link rel="stylesheet" href="/assets/css/native-app-shell-stability.css">
 </head><body>
-<header class="hero"><div><h1 id="paletteTitle">Octagon HQ</h1></div><div class="product-header-tools"><button class="native-ask-action" type="button">Ask</button></div></header>
+<header class="hero"><div><h1 id="paletteTitle">Octagon HQ</h1></div><div class="product-header-tools"><button id="paletteAsk" class="native-ask-action" type="button">Ask</button><div class="app-profile-tools"><button id="paletteProfile" class="app-profile-chip" type="button"><span class="app-profile-avatar">CK</span><span class="app-profile-chip-copy"><strong>Cody</strong></span></button></div><div id="manualRefreshControl"><div id="manualRefreshActions"><button id="manualRefreshBtn" type="button">Refresh</button><button id="whatsNewBtn" type="button">NEW<span id="whatsNewUnread">1</span></button></div><div id="manualRefreshProgress"><i id="manualRefreshProgressFill"></i></div></div></div></header>
 <main class="shell"><section id="home" class="view active-view"><div class="home-dashboard">
   <section id="paletteDaily" class="home-dashboard-card home-daily"><div class="home-daily-copy"><div id="paletteKicker" class="home-dashboard-kicker">TODAY'S CHALLENGE</div><h2>Find the Leader</h2><button id="palettePrimary" class="home-dashboard-action" type="button">Play Again</button></div></section>
   <section id="paletteEvent" class="home-dashboard-card home-event"><div class="home-dashboard-kicker">NEXT UFC EVENT</div><h3 id="paletteEventTitle">UFC Fight Night</h3><div class="home-event-matchup">Ankalaev vs. Guskov</div><div class="home-event-progress"><div class="home-event-track"><i id="paletteProgress" style="width:100%"></i></div></div><button class="home-dashboard-action secondary" type="button">Review Picks</button></section>
-  <section id="paletteWar" class="home-dashboard-card home-war-room"><div class="home-dashboard-kicker">THE WAR ROOM</div></section>
 </div></section></main>
 <nav class="native-bottom-nav"><button id="paletteActiveNav" class="native-nav-button active" type="button"><span>Home</span><b id="paletteBadge" class="native-nav-badge">1</b></button></nav>
 </body></html>`;
@@ -128,7 +145,8 @@ try{
   const page=await context.newPage();
   await page.route('**/canonical-dark-palette-proof.html*',route=>route.fulfill({status:200,contentType:'text/html',body:fixture}));
   await page.goto('http://127.0.0.1:4173/canonical-dark-palette-proof.html',{waitUntil:'networkidle',timeout:60000});
-  const rendered=await page.evaluate(()=>{
+
+  const snapshot=()=>page.evaluate(()=>{
     const root=getComputedStyle(document.documentElement);
     const style=id=>getComputedStyle(document.getElementById(id));
     const reference=declarations=>{
@@ -136,11 +154,12 @@ try{
       Object.assign(node.style,declarations);
       document.body.appendChild(node);
       const computed=getComputedStyle(node);
-      const result={backgroundColor:computed.backgroundColor,color:computed.color};
+      const result={backgroundColor:computed.backgroundColor,color:computed.color,borderColor:computed.borderColor};
       node.remove();
       return result;
     };
-    return {
+    return{
+      productPolishLinks:document.querySelectorAll('link[href*="product-polish.css"]').length,
       tokens:{
         bg:root.getPropertyValue('--bg').trim(),
         panel:root.getPropertyValue('--panel').trim(),
@@ -149,8 +168,13 @@ try{
         accent2:root.getPropertyValue('--accent2').trim()
       },
       actual:{
+        bodyBackground:getComputedStyle(document.body).backgroundColor,
         headerBackground:getComputedStyle(document.querySelector('.hero')).backgroundColor,
         titleColor:style('paletteTitle').color,
+        profileBackground:style('paletteProfile').backgroundColor,
+        refreshBackground:style('manualRefreshBtn').backgroundColor,
+        newBackground:style('whatsNewBtn').backgroundColor,
+        unreadBackground:style('whatsNewUnread').backgroundColor,
         eventBackground:style('paletteEvent').backgroundColor,
         eventTitleColor:style('paletteEventTitle').color,
         kickerColor:style('paletteKicker').color,
@@ -162,6 +186,7 @@ try{
         badgeColor:style('paletteBadge').color
       },
       expected:{
+        bgBackground:reference({background:'var(--bg)'}).backgroundColor,
         panelBackground:reference({background:'var(--panel)'}).backgroundColor,
         panel2Background:reference({background:'var(--panel2)'}).backgroundColor,
         textColor:reference({color:'var(--text)'}).color,
@@ -171,26 +196,43 @@ try{
       }
     };
   });
-  assert.deepEqual(
-    rendered.tokens,
-    {bg:'#080808',panel:'#111111',panel2:'#191919',accent:'#d20a0a',accent2:'#ff4d4d'},
-    'Rendered mobile CSS did not receive the canonical palette tokens.'
-  );
-  assert.equal(rendered.actual.headerBackground,rendered.expected.panelBackground,'The computed mobile header does not consume the canonical panel token.');
-  assert.equal(rendered.actual.titleColor,rendered.expected.textColor,'The computed mobile title does not consume the canonical text token.');
-  assert.equal(rendered.actual.eventBackground,rendered.expected.panel2Background,'The computed upcoming-event card is not a canonical charcoal surface.');
-  assert.equal(rendered.actual.eventTitleColor,rendered.expected.textColor,'The computed upcoming-event title does not use canonical light text.');
-  assert.equal(rendered.actual.kickerColor,rendered.expected.accent2Color,'The computed Home kicker does not use the canonical red highlight.');
-  assert.equal(rendered.actual.primaryBackground,rendered.expected.accentBackground,'The computed primary action does not consume canonical UFC red.');
-  assert.equal(rendered.actual.primaryColor,rendered.expected.whiteColor,'The computed primary action does not retain white contrast text.');
-  assert.equal(rendered.actual.progressBackground,rendered.expected.accentBackground,'The computed Home progress bar does not consume canonical UFC red.');
-  assert.equal(rendered.actual.activeNavColor,rendered.expected.accent2Color,'The computed active navigation state does not consume the canonical red highlight.');
-  assert.equal(rendered.actual.badgeBackground,rendered.expected.accentBackground,'The computed notification badge does not consume canonical UFC red.');
-  assert.equal(rendered.actual.badgeColor,rendered.expected.whiteColor,'The computed notification badge does not retain white contrast text.');
-  console.log(JSON.stringify({proof:'visible-home-black-red-palette',rendered},null,2));
+
+  const initial=await snapshot();
+  await page.evaluate(()=>{
+    const style=document.createElement('style');
+    style.id='legacyLatePaletteAttempt';
+    style.textContent=`
+      .hero{background:#f8fafc}
+      .app-profile-chip,#manualRefreshBtn,#whatsNewBtn{background:#111827;color:#fff;border-color:#334155}
+      #whatsNewUnread{background:#f97316;color:#111827}
+    `;
+    document.head.appendChild(style);
+  });
+  await page.waitForTimeout(2300);
+  const final=await snapshot();
+
+  assert.equal(final.productPolishLinks,0,'A late product-polish link was appended after startup.');
+  assert.deepEqual(final.tokens,{bg:'#080808',panel:'#111111',panel2:'#191919',accent:'#d20a0a',accent2:'#ff4d4d'},'Rendered mobile CSS did not retain the canonical palette tokens.');
+  assert.equal(final.actual.headerBackground,final.expected.panelBackground,'The final computed mobile header was repainted after startup.');
+  assert.equal(final.actual.titleColor,final.expected.textColor,'The final computed mobile title was repainted after startup.');
+  assert.equal(final.actual.profileBackground,final.expected.panel2Background,'The final profile control returned to the retired navy surface.');
+  assert.equal(final.actual.refreshBackground,final.expected.panel2Background,'The final refresh control returned to the retired navy surface.');
+  assert.equal(final.actual.newBackground,final.expected.panel2Background,'The final update control returned to the retired navy surface.');
+  assert.equal(final.actual.unreadBackground,final.expected.accentBackground,'The final update badge returned to the retired orange accent.');
+  assert.equal(final.actual.eventBackground,final.expected.panel2Background,'The final upcoming-event card is not a canonical charcoal surface.');
+  assert.equal(final.actual.eventTitleColor,final.expected.textColor,'The final upcoming-event title does not use canonical light text.');
+  assert.equal(final.actual.kickerColor,final.expected.accent2Color,'The final Home kicker does not use the canonical red highlight.');
+  assert.equal(final.actual.primaryBackground,final.expected.accentBackground,'The final primary action does not consume canonical UFC red.');
+  assert.equal(final.actual.primaryColor,final.expected.whiteColor,'The final primary action does not retain white contrast text.');
+  assert.equal(final.actual.progressBackground,final.expected.accentBackground,'The final Home progress bar does not consume canonical UFC red.');
+  assert.equal(final.actual.activeNavColor,final.expected.accent2Color,'The final active navigation state does not consume the canonical red highlight.');
+  assert.equal(final.actual.badgeBackground,final.expected.accentBackground,'The final notification badge does not consume canonical UFC red.');
+  assert.equal(final.actual.badgeColor,final.expected.whiteColor,'The final notification badge does not retain white contrast text.');
+  assert.deepEqual(final.actual,initial.actual,'The rendered palette changed during the late startup window.');
+  console.log(JSON.stringify({proof:'static-final-black-red-palette',initial,final},null,2));
   await context.close();
 }finally{
   await browser.close();
 }
 
-console.log('Visible Home black and red mobile theme contract passed.');
+console.log('Static final black and red mobile theme contract passed.');
