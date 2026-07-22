@@ -18,14 +18,25 @@
 .pick-fighter-photo .picks-photo-fallback[hidden],.pick-fighter-photo:has(>img) .picks-photo-fallback{display:none!important;opacity:0!important;visibility:hidden!important}
 .pick-fighter-photo img{position:relative;z-index:1;display:block}
 .pick-fighter-photo.photo-missing .picks-photo-fallback{display:flex!important;opacity:1!important;visibility:visible!important}
-.picks-event-hero.has-event-art{display:block;padding:0;background:#101827}
+.picks-event-hero.has-event-art{display:block;padding:0;background:var(--panel)}
 .picks-event-hero.has-event-art::after{display:none}
-.picks-event-hero.has-event-art>.picks-event-art{display:block;width:100%;height:auto;aspect-ratio:1058/702;object-fit:cover;object-position:center;background:#071318}
+.picks-event-hero.has-event-art>.picks-event-art{display:block;width:100%;height:auto;aspect-ratio:1058/702;object-fit:cover;object-position:center;background:var(--bg)}
 .picks-event-hero.has-event-art>.picks-event-kicker,.picks-event-hero.has-event-art>h3,.picks-event-hero.has-event-art>.picks-event-matchup{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
-.picks-event-hero.has-event-art>.picks-event-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0;padding:14px 16px 10px;background:#101827}
+.picks-event-hero.has-event-art>.picks-event-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0;padding:14px 16px 10px;background:var(--panel)}
 .picks-event-hero.has-event-art .picks-pill{display:flex;align-items:center;justify-content:center;min-width:0;text-align:center;line-height:1.25}
-.picks-event-hero.has-event-art>.picks-odds-source{margin:0;padding:2px 16px 16px;background:#101827;line-height:1.45}
+.picks-event-hero.has-event-art>.picks-odds-source{margin:0;padding:2px 16px 16px;background:var(--panel);line-height:1.45}
 @media(max-width:900px){
+  .picks-event-hero{border-color:var(--line);background:radial-gradient(circle at 92% 8%,color-mix(in srgb,var(--accent) 24%,transparent),transparent 34%),linear-gradient(135deg,var(--panel2) 0%,var(--panel) 72%);box-shadow:0 20px 48px rgba(0,0,0,.24)}
+  .picks-event-hero.is-live{border-color:color-mix(in srgb,var(--accent) 65%,var(--line))}
+  .picks-pill{border-color:var(--line);background:var(--panel);color:var(--text)}
+  .picks-odds-source{color:var(--muted)}
+  .picks-progress-card{background:var(--panel2)!important;border-color:var(--line)!important;box-shadow:none;color:var(--text)}
+  .picks-progress-top strong{color:var(--text)}
+  .picks-progress-top span,.picks-progress-top b{color:var(--muted)}
+  .picks-progress-bar{background:var(--panel)}
+  .picks-progress-bar i{background:var(--accent)}
+  .picks-summary-chips span{border-color:var(--line);background:var(--panel);color:var(--muted)}
+  .picks-card-heading h3{color:var(--text)}
   .tabs{scrollbar-width:none;overscroll-behavior-x:contain;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
   .tabs::-webkit-scrollbar{display:none}
   .tabs .tab{flex:0 0 auto;scroll-snap-align:center}
