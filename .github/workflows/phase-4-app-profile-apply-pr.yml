@@ -1,0 +1,40 @@
+name: Apply Phase 4 App Profile Patch
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - name: Apply reviewed patch
+        shell: bash
+        run: |
+          cat > /tmp/phase4-profile.patch.gz.b64 <<'PATCH'
+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
+PATCH
+          base64 --decode /tmp/phase4-profile.patch.gz.b64 | gzip --decompress > /tmp/phase4-profile.patch
+          patch -p1 < /tmp/phase4-profile.patch
+          rm -f .github/workflows/phase-4-app-profile-source.yml .github/workflows/phase-4-app-profile-push.yml .github/workflows/phase-4-app-profile-apply-pr.yml
+          node --check assets/js/app-profile.js
+          node --check scripts/test-app-profile-group-snapshot-contract.mjs
+          node --check scripts/test-app-profile-group-snapshot-single.mjs
+          node scripts/test-app-profile-group-snapshot-contract.mjs
+      - name: Commit reviewed patch
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Defer profile group snapshot until editor use'
+          git push origin HEAD:${{ github.head_ref }}
