@@ -1,9 +1,9 @@
-const VERSION='octagon-hq-sw-20260721f-static-palette-owner';
-const CACHE_NAME='octagon-hq-static-v15';
+const VERSION='octagon-hq-sw-20260721g-canonical-find-leader';
+const CACHE_NAME='octagon-hq-static-v16';
 const LEGACY_PREFIX='octagon-hq-static-';
 const CORE=['./','./index.html','./manifest.webmanifest'];
 const PALETTE_NETWORK_ONLY=/\/assets\/css\/(?:app|home-dashboard|native-app-shell|native-app-shell-stability|product-polish)\.css$/i;
-const FORCE_NETWORK=/\/assets\/(?:(?:js\/(?:app-notification-surface-fix|app-update-watcher|product-architecture|octagon-hq-shell|native-app-shell|native-app-shell-stability|community-profiles|fresh-home-launch|home-dashboard|find-leader|game-challenges|share-deep-links|picks|picks-auto-advance|octagon-notifications)|data\/(?:what-changed|supabase-config|picks-events))\.js|css\/(?:app|home-dashboard|native-app-shell|native-app-shell-stability|product-polish|community-profiles|find-leader)\.css)$/i;
+const FORCE_NETWORK=/\/assets\/(?:(?:js\/(?:app-notification-surface-fix|app-update-watcher|product-architecture|octagon-hq-shell|native-app-shell|native-app-shell-stability|community-profiles|fresh-home-launch|home-dashboard|find-leader|better-than-standalone-share|play-daily-find-leader|game-challenges|share-deep-links|picks|picks-auto-advance|octagon-notifications)|data\/(?:find-leader-question-bank|find-leader-record-book-data|what-changed|supabase-config|picks-events))\.js|css\/(?:app|home-dashboard|native-app-shell|native-app-shell-stability|product-polish|community-profiles|find-leader)\.css)$/i;
 
 self.addEventListener('install',event=>{
   event.waitUntil((async()=>{

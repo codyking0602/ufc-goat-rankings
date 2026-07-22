@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='play-daily-find-leader-20260717b-type-polish';
+  const VERSION='play-daily-find-leader-20260721c-canonical-owner';
   const DAILY={
     id:'find-leader',
     gameType:'find-leader',
@@ -35,30 +35,6 @@
     catch(_error){return String(day||'');}
   }
 
-  function dayNumber(day){
-    const [year,month,date]=String(day||centralDay()).split('-').map(Number);
-    return Math.floor(Date.UTC(year,month-1,date)/86400000);
-  }
-
-  function dayFromNumber(number){return new Date(number*86400000).toISOString().slice(0,10);}
-
-  function patchFindLeaderSchedule(){
-    const game=window.UFC_FIND_LEADER;
-    const bank=window.UFC_FIND_LEADER_QUESTION_BANK;
-    if(!game||!bank?.daily)return false;
-    game.dailySetup=context=>{
-      const actualDay=String(context?.challenge_day||centralDay());
-      const anchor=String(bank.dailyRules?.anchor||'2026-07-16');
-      const gap=Math.max(1,Number(bank.dailyRules?.gameGapDays)||1);
-      const offset=Math.max(0,dayNumber(actualDay)-dayNumber(anchor));
-      const scheduleDay=dayFromNumber(dayNumber(anchor)+(offset*gap));
-      return bank.daily({...context,challenge_day:scheduleDay});
-    };
-    game.everydayDailyVersion=VERSION;
-    document.documentElement.setAttribute('data-find-leader-daily-schedule',`${bank.version}-everyday`);
-    return true;
-  }
-
   function waitFor(check,timeout=16000){
     return new Promise((resolve,reject)=>{
       const started=Date.now();
@@ -83,7 +59,6 @@
     const key=`${day}|${context?.seed||context?.challenge_key||''}`;
     if(setupCache?.key===key)return setupCache.setup;
     const game=await waitFor(()=>window.UFC_FIND_LEADER?.dailySetup?window.UFC_FIND_LEADER:null);
-    patchFindLeaderSchedule();
     const setup=game.dailySetup(context);
     if(!setup)throw new Error('Today\'s Find the Leader board could not be built.');
     setupCache={key,setup};
@@ -95,7 +70,6 @@
   }
 
   function patchApi(){
-    patchFindLeaderSchedule();
     const api=window.UFC_PLAY_DAILY_ROTATION;
     if(!api)return false;
     api.version=VERSION;

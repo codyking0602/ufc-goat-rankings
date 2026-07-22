@@ -96,8 +96,8 @@ assert.ok(
   'The cache owner must fetch canonical palette styles from the network without storing stale copies.'
 );
 assert.ok(
-  serviceWorker.includes("const VERSION='octagon-hq-sw-20260721f-static-palette-owner';")
-    &&serviceWorker.includes("const CACHE_NAME='octagon-hq-static-v15';"),
+  serviceWorker.includes("const VERSION='octagon-hq-sw-20260721g-canonical-find-leader';")
+    &&serviceWorker.includes("const CACHE_NAME='octagon-hq-static-v16';"),
   'The static palette owner must publish through a fresh service-worker identity and cache.'
 );
 assert.ok(

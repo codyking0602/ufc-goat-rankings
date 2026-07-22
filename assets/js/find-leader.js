@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  const VERSION='find-leader-20260719a-group-leaders';
+  const VERSION='find-leader-20260721b-canonical-daily-board';
   const DAILY_VERSION='find-leader-daily-v1';
   const PERFECT_SCORE=10;
   const GROUP_POOL_BUILDS=12;
@@ -13,6 +13,7 @@
   if(!shell)return;
 
   const state={setup:null,eliminationOrder:[],safeIds:[],fatalId:null,score:null,perfect:false,feedback:'',phase:'loading',daily:false,dailyContext:null};
+  let dailySetupCache=null;
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const initials=name=>String(name||'UFC').split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase();
   const clone=value=>value===undefined?undefined:JSON.parse(JSON.stringify(value));
@@ -175,7 +176,38 @@
     state.setup=setup;state.eliminationOrder=perfect?order:[...safe,setup.leaderId];state.safeIds=safe;state.fatalId=perfect?null:setup.leaderId;state.score=perfect?PERFECT_SCORE:leaderIndex+1;state.perfect=perfect;state.feedback='';state.phase='complete';state.daily=Boolean(payload.daily);state.dailyContext=payload.dailyContext?clone(payload.dailyContext):null;panel.hidden=false;renderFinish();return true;
   }
 
-  function dailySetup(context){const seed=String(context?.seed||context?.challenge_key||`find-leader|${context?.challenge_day||''}|${DAILY_VERSION}`),random=mulberry32(hashSeed(seed));return createSetup(null,random);}
+  function dayNumber(day){
+    const [year,month,date]=String(day||'').split('-').map(Number);
+    if(!Number.isFinite(year)||!Number.isFinite(month)||!Number.isFinite(date))return null;
+    return Math.floor(Date.UTC(year,month-1,date)/86400000);
+  }
+  function dayFromNumber(number){return new Date(number*86400000).toISOString().slice(0,10);}
+  function dailySetup(context={}){
+    const bank=window.UFC_FIND_LEADER_QUESTION_BANK;
+    if(!bank?.scheduledDefinition||!bank?.create)return null;
+    const actualDay=String(context?.challenge_day||'');
+    const actualNumber=dayNumber(actualDay);
+    const anchor=String(bank.dailyRules?.anchor||actualDay);
+    const anchorNumber=dayNumber(anchor);
+    if(actualNumber===null||anchorNumber===null)return null;
+    const gap=Math.max(1,Number(bank.dailyRules?.gameGapDays)||1);
+    const offset=Math.max(0,actualNumber-anchorNumber);
+    const scheduleDay=dayFromNumber(anchorNumber+(offset*gap));
+    const definition=bank.scheduledDefinition(scheduleDay);
+    if(!definition?.id)return null;
+    const sourceSeed=String(context?.seed||context?.challenge_key||`find-leader|${actualDay}|${DAILY_VERSION}`);
+    const key=`${bank.version}|${context?.challenge_key||actualDay}|${sourceSeed}|${definition.id}`;
+    if(dailySetupCache?.key===key)return clone(dailySetupCache.setup);
+    const random=mulberry32(hashSeed(`${sourceSeed}|${definition.id}|group-board-v1`));
+    const setup=createSetup(definition.id,random);
+    if(!validateSetup(setup))return null;
+    setup.dailyChallengeDay=actualDay;
+    setup.dailyChallengeKey=String(context?.challenge_key||`find-leader:${actualDay}`);
+    setup.dailySetupKey=key;
+    dailySetupCache={key,setup:clone(setup)};
+    document.documentElement.setAttribute('data-find-leader-daily-schedule',`${bank.version}-everyday-owner`);
+    return clone(setup);
+  }
   function normalizeStartOptions(input){if(typeof input==='string')return{questionId:input};return input&&typeof input==='object'?input:{};}
 
   function startGame(input={}){
