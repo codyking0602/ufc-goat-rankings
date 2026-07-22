@@ -32,7 +32,9 @@ assert(early.includes("url.hash='home'"),'The early bootstrap must keep ordinary
 assert(early.includes("const INVITE_KEY='invite'"),'The early bootstrap must distinguish a fresh Picks invite from a restored Picks URL.');
 assert.equal(early.includes('legacyBrowserInvite'),false,'The early bootstrap still preserves an unmarked browser group URL as Picks.');
 assert.equal(early.includes('preserveBrowserReload'),false,'A browser reload still bypasses explicit Picks entry requirements.');
-assert(early.includes('const preservePicks=picksRoute&&(resumePicks||inviteMarked);'),'The early bootstrap must preserve Picks only for an explicit invite or fresh resume.');
+assert(early.includes('let sameOriginRoomHandoff=false;'),'The early bootstrap must identify only deliberate same-page room handoffs.');
+assert(early.includes('referrer.origin===url.origin&&referrer.pathname===url.pathname'),'The room handoff exception must require the exact same origin and path.');
+assert(early.includes('const preservePicks=picksRoute&&(resumePicks||inviteMarked);'),'The early bootstrap must preserve Picks only for an explicit invite or intentional resume.');
 assert.equal(early.includes('activateDestination('),false,'The early bootstrap must not activate a primary destination.');
 assert(shell.includes('showView(initialView'),'The canonical shell must retain the one initial route activation.');
 assert(shell.includes("let currentView=''"),'The canonical shell must retain exact-view activation state.');
@@ -69,13 +71,13 @@ assert.equal((launch.match(/activateDestinationOnce\('picks'\)/g)||[]).length,1,
 assert(launch.includes('const explicitPicksInvite=isExplicitPicksInvite(startupUrl);'),'Fresh launch must consume the early explicit Picks entry classification.');
 assert.equal(launch.includes('legacyBrowserInvite'),false,'Fresh launch still preserves an unmarked group-only browser URL.');
 assert.equal(launch.includes('preserveBrowserReload'),false,'Fresh launch still treats browser reload as Picks permission.');
-assert(launch.includes('const picksContinuation=picksRoute&&(resumePicks||explicitPicksInvite);'),'Fresh launch must require an explicit invite or fresh resume for Picks continuation.');
+assert(launch.includes('const picksContinuation=picksRoute&&(resumePicks||explicitPicksInvite);'),'Fresh launch must require an explicit invite or intentional resume for Picks continuation.');
 assert(launch.includes("event.target.closest?.('#picksShareGroup,#picksShareRoom')"),'Existing Picks share buttons must mark outgoing links as explicit invites.');
 assert(launch.includes("url.searchParams.set(INVITE_KEY,'1')"),'The Picks share boundary must add the one-use invite marker.');
 assert(launch.includes('if(picksContinuation)activatePicks('),'Fresh launch must preserve explicit Picks continuation recovery.');
 assert(launch.includes("else if(!explicitDeepLink)activateHome('startup')"),'Fresh launch must preserve ordinary Home normalization.');
 
-function runEarlyScenario(href,{standalone=true,navigationType='navigate'}={}){
+function runEarlyScenario(href,{standalone=true,navigationType='navigate',referrer=''}={}){
   let currentHref=href;
   const location={
     get href(){return currentHref;},
@@ -85,7 +87,7 @@ function runEarlyScenario(href,{standalone=true,navigationType='navigate'}={}){
     state:null,
     replaceState(_state,_title,value){currentHref=new URL(String(value),currentHref).toString();}
   };
-  const document={documentElement:{dataset:{}}};
+  const document={referrer,documentElement:{dataset:{}}};
   const window={
     navigator:{standalone},
     matchMedia:()=>({matches:standalone}),
@@ -119,6 +121,23 @@ assert.equal(staleBrowserPicks.url.searchParams.has('group'),false,'A Safari nav
 const staleBrowserReload=runEarlyScenario('https://example.test/?group=GOAT26#picks',{standalone:false,navigationType:'reload'});
 assert.equal(staleBrowserReload.url.hash,'#home','A Safari reload still bypassed explicit Picks entry.');
 assert.equal(staleBrowserReload.url.searchParams.has('group'),false,'A Safari reload retained the stale group parameter.');
+
+const deliberateRoomHandoff=runEarlyScenario(
+  'https://example.test/?group=GOAT26&room=ROOM01&event=event-1&picksView=event#picks',
+  {standalone:true,navigationType:'navigate',referrer:'https://example.test/#picks'}
+);
+assert.equal(deliberateRoomHandoff.url.hash,'#picks','A deliberate same-page room handoff was redirected to Home.');
+assert.equal(deliberateRoomHandoff.url.searchParams.get('room'),'ROOM01','A deliberate room handoff lost its room.');
+assert.equal(deliberateRoomHandoff.route,'picks','A deliberate room handoff was not classified as Picks.');
+assert.equal(deliberateRoomHandoff.entry,'resume','A deliberate room handoff was not published as a one-navigation resume.');
+
+const externalRoomLink=runEarlyScenario(
+  'https://example.test/?group=GOAT26&room=ROOM01&event=event-1&picksView=event#picks',
+  {standalone:false,navigationType:'navigate',referrer:'https://outside.test/somewhere'}
+);
+assert.equal(externalRoomLink.url.hash,'#home','An external unmarked room link bypassed Home.');
+assert.equal(externalRoomLink.url.searchParams.has('room'),false,'An external unmarked room link retained stale room state.');
+assert.equal(externalRoomLink.route,'home','An external unmarked room link was not classified as Home.');
 
 const markedInvite=runEarlyScenario('https://example.test/?group=GOAT26&invite=1#picks');
 assert.equal(markedInvite.url.hash,'#picks','A marked fresh Picks invite was redirected to Home.');
@@ -205,6 +224,8 @@ console.log(JSON.stringify({
   standaloneGroupRestoreReset:true,
   browserGroupRestoreReset:true,
   browserReloadReset:true,
+  deliberateRoomHandoffPreserved:true,
+  externalRoomLinkReset:true,
   markedInvitePreserved:true,
   freshResumePreserved:true,
   shareInviteMarked:true,
