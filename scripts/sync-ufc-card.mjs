@@ -114,35 +114,8 @@ function expectedMainEventFound(fights,expected){
   return fights.some(fight=>matchupKey(fight.red_name,fight.blue_name)===expectedKey);
 }
 
-function chooseMainWindow(fights,count,expectedKey){
-  if(!count || fights.length<count) return null;
-  const expectedIndex=fights.findIndex(fight=>matchupKey(fight.red_name,fight.blue_name)===expectedKey);
-  const firstStart=expectedIndex>=0 ? Math.max(0,expectedIndex-count+1) : 0;
-  const lastStart=expectedIndex>=0 ? Math.min(expectedIndex,fights.length-count) : fights.length-count;
-  let best=null;
-  for(let start=firstStart;start<=lastStart;start+=1){
-    const end=start+count;
-    let score=0;
-    for(let index=0;index<fights.length;index+=1){
-      const section=canonicalSection(fights[index].card_section);
-      const inside=index>=start && index<end;
-      if(inside){
-        if(isMainSection(section)) score+=12;
-        else if(section==='Prelims' || section==='Early Prelims') score-=3;
-        else score+=2;
-      }else if(isMainSection(section)){
-        score-=5;
-      }
-    }
-    if(start===0) score+=1;
-    if(!best || score>best.score) best={start,end,score};
-  }
-  return best;
-}
-
 function ensureFightSections(rawFights,config){
   const expectedKey=matchupKey(config.expectedMainEvent?.[0],config.expectedMainEvent?.[1]);
-  const mainMinimum=expectedMainCount(config);
   const cleaned=[];
   const seen=new Set();
 
@@ -154,7 +127,9 @@ function ensureFightSections(rawFights,config){
     if(!pair || seen.has(pair)) continue;
     seen.add(pair);
     let section=canonicalSection(raw.card_section || raw.section);
-    if(pair===expectedKey) section='Main Event';
+    // The expected main event is an identity guard, not permission to promote
+    // a prelim. It can only refine a row the source already placed on main.
+    if(pair===expectedKey && isMainSection(section)) section='Main Event';
     cleaned.push({
       red_name:red,
       blue_name:blue,
@@ -163,32 +138,6 @@ function ensureFightSections(rawFights,config){
       source_bout_id:normalizeSpace(raw.source_bout_id || raw.sourceBoutId || ''),
       source_index:Number.isFinite(Number(raw.source_index)) ? Number(raw.source_index) : cleaned.length
     });
-  }
-
-  if(!cleaned.length) return [];
-
-  const explicitMain=cleaned.filter(fight=>isMainSection(fight.card_section)).length;
-  if(mainMinimum && explicitMain<mainMinimum){
-    const window=chooseMainWindow(cleaned,mainMinimum,expectedKey);
-    if(window){
-      cleaned.forEach((fight,index)=>{
-        if(index<window.start || index>=window.end) return;
-        if(matchupKey(fight.red_name,fight.blue_name)===expectedKey) fight.card_section='Main Event';
-        else if(!['Main Event','Co-Main Event'].includes(fight.card_section)) fight.card_section='Main Card';
-      });
-    }
-  }
-
-  cleaned.forEach(fight=>{
-    if(!fight.card_section) fight.card_section='Prelims';
-  });
-
-  const mainEvent=cleaned.find(fight=>fight.card_section==='Main Event');
-  const mainCandidates=cleaned
-    .filter(fight=>fight.card_section==='Main Card')
-    .sort((a,b)=>Math.abs(a.source_index-(mainEvent?.source_index ?? 0))-Math.abs(b.source_index-(mainEvent?.source_index ?? 0)));
-  if(mainEvent && !cleaned.some(fight=>fight.card_section==='Co-Main Event') && mainCandidates[0]){
-    mainCandidates[0].card_section='Co-Main Event';
   }
 
   return cleaned;
@@ -250,7 +199,7 @@ function validateSnapshot(snapshot,config){
   if(!expectedMainEventFound(snapshot.fights,config.expectedMainEvent)) failures.push('expected-main-event-missing');
   const mainCount=snapshot.fights.filter(fight=>isMainSection(fight.card_section)).length;
   const requiredMain=expectedMainCount(config);
-  if(requiredMain && mainCount<requiredMain) failures.push(`too-few-main-card-fights:${mainCount}<${requiredMain}`);
+  if(requiredMain && mainCount!==requiredMain) failures.push(`main-card-count-mismatch:${mainCount}!=${requiredMain}`);
   const uniquePairs=new Set(snapshot.fights.map(fight=>matchupKey(fight.red_name,fight.blue_name)));
   if(uniquePairs.size!==snapshot.fights.length) failures.push('duplicate-matchups');
   if(snapshot.fights.some(fight=>!fight.lock_at || !Number.isFinite(new Date(fight.lock_at).getTime()))) failures.push('invalid-lock-time');
