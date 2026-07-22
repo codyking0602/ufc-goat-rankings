@@ -32,8 +32,10 @@ assert(early.includes("url.hash='home'"),'The early bootstrap must keep ordinary
 assert(early.includes("const INVITE_KEY='invite'"),'The early bootstrap must distinguish a fresh Picks invite from a restored Picks URL.');
 assert.equal(early.includes('legacyBrowserInvite'),false,'The early bootstrap still preserves an unmarked browser group URL as Picks.');
 assert.equal(early.includes('preserveBrowserReload'),false,'A browser reload still bypasses explicit Picks entry requirements.');
-assert(early.includes("if(!event.target.closest?.('#picksPinSignInButton'))return;"),'The earliest route owner must mark the deliberate PIN continuation before async sign-in begins.');
-assert(early.includes("next.searchParams.set(RESUME_PICKS_KEY,String(Date.now()))"),'The earliest route owner does not publish the one-navigation PIN resume marker.');
+assert(early.includes("const PIN_RESUME_STORAGE_KEY='__ufc_picks_pin_resume'"),'The earliest route owner must define the one-use PIN navigation handoff.');
+assert(early.includes("window.sessionStorage?.setItem(PIN_RESUME_STORAGE_KEY,String(Date.now()))"),'The earliest route owner must record the PIN handoff before async sign-in begins.');
+assert(early.includes('const pinResumeTarget=Boolean(room&&url.searchParams.has(\'event\')&&url.searchParams.get(\'picksView\')===\'event\');'),'The PIN handoff may only resume a complete room/event target.');
+assert(early.includes('if(pinResumeAt)window.sessionStorage?.removeItem(PIN_RESUME_STORAGE_KEY);'),'The PIN handoff must be consumed once on the next navigation.');
 assert(early.includes('const preservePicks=picksRoute&&(resumePicks||inviteMarked);'),'The early bootstrap must preserve Picks only for an explicit invite or intentional resume.');
 assert.equal(early.includes('activateDestination('),false,'The early bootstrap must not activate a primary destination.');
 assert(shell.includes('showView(initialView'),'The canonical shell must retain the one initial route activation.');
@@ -74,13 +76,26 @@ assert.equal(launch.includes('preserveBrowserReload'),false,'Fresh launch still 
 assert(launch.includes('const picksContinuation=picksRoute&&(resumePicks||explicitPicksInvite);'),'Fresh launch must require an explicit invite or intentional resume for Picks continuation.');
 assert(launch.includes("event.target.closest?.('#picksShareGroup,#picksShareRoom')"),'Existing Picks share buttons must mark outgoing links as explicit invites.');
 assert(launch.includes("url.searchParams.set(INVITE_KEY,'1')"),'The Picks share boundary must add the one-use invite marker.');
-assert.equal(launch.includes("#picksPinSignInButton,[data-group-room]"),false,'The late launch layer still duplicates the early PIN resume marker owner.');
+assert.equal(launch.includes('#picksPinSignInButton'),false,'The late launch layer still duplicates the early PIN navigation handoff owner.');
 assert(launch.includes('if(picksContinuation)activatePicks('),'Fresh launch must preserve explicit Picks continuation recovery.');
 assert(launch.includes("else if(!explicitDeepLink)activateHome('startup')"),'Fresh launch must preserve ordinary Home normalization.');
 
-function runEarlyScenario(href,{standalone=true,navigationType='navigate',pinClick=false}={}){
+function makeStorage(seed={}){
+  const map=new Map(Object.entries(seed).map(([key,value])=>[String(key),String(value)]));
+  return {
+    get length(){return map.size;},
+    key:index=>[...map.keys()][index]??null,
+    getItem:key=>map.has(String(key))?map.get(String(key)):null,
+    setItem:(key,value)=>map.set(String(key),String(value)),
+    removeItem:key=>map.delete(String(key)),
+    snapshot:()=>Object.fromEntries(map)
+  };
+}
+
+function runEarlyScenario(href,{standalone=true,navigationType='navigate',pinClick=false,sessionSeed={}}={}){
   let currentHref=href;
   let clickHandler=null;
+  const sessionStorage=makeStorage(sessionSeed);
   const location={
     get href(){return currentHref;},
     set href(value){currentHref=String(value);}
@@ -97,7 +112,8 @@ function runEarlyScenario(href,{standalone=true,navigationType='navigate',pinCli
     navigator:{standalone},
     matchMedia:()=>({matches:standalone}),
     location,
-    history
+    history,
+    sessionStorage
   };
   const performance={getEntriesByType:()=>[{type:navigationType}]};
   const context={window,document,location,history,performance,URL,Date};
@@ -109,7 +125,8 @@ function runEarlyScenario(href,{standalone=true,navigationType='navigate',pinCli
     url:new URL(currentHref),
     route:document.documentElement.dataset.freshHomeBootstrapRoute,
     entry:document.documentElement.dataset.freshHomeBootstrapPicksEntry||'',
-    windowEntry:window.__UFC_FRESH_HOME_PICKS_ENTRY__||''
+    windowEntry:window.__UFC_FRESH_HOME_PICKS_ENTRY__||'',
+    session:sessionStorage.snapshot()
   };
 }
 
@@ -130,11 +147,24 @@ const staleBrowserReload=runEarlyScenario('https://example.test/?group=GOAT26#pi
 assert.equal(staleBrowserReload.url.hash,'#home','A Safari reload still bypassed explicit Picks entry.');
 assert.equal(staleBrowserReload.url.searchParams.has('group'),false,'A Safari reload retained the stale group parameter.');
 
-const pinResume=runEarlyScenario('https://example.test/?group=GOAT26&invite=1#picks',{pinClick:true});
-assert.equal(pinResume.url.hash,'#picks','PIN continuation marking moved the active route away from Picks.');
-assert.equal(pinResume.url.searchParams.get('group'),'GOAT26','PIN continuation marking lost the active group.');
-assert(Number(pinResume.url.searchParams.get('__picks_resume'))>0,'PIN click did not publish a fresh one-navigation resume marker.');
-assert.equal(pinResume.url.searchParams.has('invite'),false,'PIN continuation retained the consumed invite marker.');
+const pinClick=runEarlyScenario('https://example.test/?group=GOAT26&invite=1#picks',{pinClick:true});
+const pinMarkedAt=Number(pinClick.session.__ufc_picks_pin_resume||0);
+assert(pinMarkedAt>0,'PIN click did not record the one-use navigation handoff.');
+assert.equal(pinClick.url.searchParams.has('__picks_resume'),false,'PIN click leaked its private handoff into the public URL.');
+
+const pinNavigation=runEarlyScenario(
+  'https://example.test/?group=GOAT26&room=ROOM01&event=event-1&picksView=event#picks',
+  {sessionSeed:pinClick.session}
+);
+assert.equal(pinNavigation.url.hash,'#picks','The next resolved PIN room navigation was redirected to Home.');
+assert.equal(pinNavigation.url.searchParams.get('room'),'ROOM01','The resolved PIN room navigation lost its room.');
+assert.equal(pinNavigation.route,'picks','The resolved PIN room navigation was not classified as Picks.');
+assert.equal(pinNavigation.entry,'resume','The resolved PIN room navigation was not published as a one-use resume.');
+assert.equal('__ufc_picks_pin_resume' in pinNavigation.session,false,'The PIN navigation handoff was not consumed after one use.');
+
+const unmarkedRoomNavigation=runEarlyScenario('https://example.test/?group=GOAT26&room=ROOM01&event=event-1&picksView=event#picks');
+assert.equal(unmarkedRoomNavigation.url.hash,'#home','An unmarked room/event URL bypassed Home.');
+assert.equal(unmarkedRoomNavigation.url.searchParams.has('room'),false,'An unmarked room/event URL retained stale room state.');
 
 const markedInvite=runEarlyScenario('https://example.test/?group=GOAT26&invite=1#picks');
 assert.equal(markedInvite.url.hash,'#picks','A marked fresh Picks invite was redirected to Home.');
@@ -145,20 +175,9 @@ assert.equal(markedInvite.entry,'invite','The early bootstrap did not publish th
 assert.equal(markedInvite.windowEntry,'invite','The late launch handoff cannot observe the consumed invite entry.');
 
 const freshResume=runEarlyScenario(`https://example.test/?group=GOAT26&__picks_resume=${Date.now()}#picks`);
-assert.equal(freshResume.url.hash,'#picks','A fresh one-navigation Picks resume was redirected to Home.');
-assert.equal(freshResume.route,'picks','A fresh Picks resume was not classified as Picks.');
-assert.equal(freshResume.entry,'resume','The early bootstrap did not publish the fresh resume entry.');
-
-function makeStorage(seed={}){
-  const map=new Map(Object.entries(seed));
-  return {
-    get length(){return map.size;},
-    key:index=>[...map.keys()][index]??null,
-    getItem:key=>map.has(String(key))?map.get(String(key)):null,
-    setItem:(key,value)=>map.set(String(key),String(value)),
-    removeItem:key=>map.delete(String(key))
-  };
-}
+assert.equal(freshResume.url.hash,'#picks','A fresh URL-based one-navigation Picks resume was redirected to Home.');
+assert.equal(freshResume.route,'picks','A fresh URL-based Picks resume was not classified as Picks.');
+assert.equal(freshResume.entry,'resume','The early bootstrap did not publish the fresh URL-based resume entry.');
 
 async function runCanonicalGroupScenario(href){
   let currentHref=href;
@@ -221,7 +240,8 @@ console.log(JSON.stringify({
   standaloneGroupRestoreReset:true,
   browserGroupRestoreReset:true,
   browserReloadReset:true,
-  pinResumeMarkedEarly:true,
+  pinNavigationHandoffPreserved:true,
+  unmarkedRoomNavigationReset:true,
   markedInvitePreserved:true,
   freshResumePreserved:true,
   shareInviteMarked:true,
