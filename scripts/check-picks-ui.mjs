@@ -169,7 +169,7 @@ check(mobilePolishCss.includes('position:relative!important')&&mobilePolishCss.i
 check(mobilePolishCss.includes('picks-room-banner-compact'),'Compact room banner styling is missing');
 check(mobilePolishCss.includes('scroll-snap-type:x proximity'),'Mobile Picks navigation scroll affordance is missing');
 check(mobilePolishCss.includes('picks-event-hero.has-event-art')&&mobilePolishCss.includes('picks-event-art'),'Event artwork styling is missing');
-check(mobilePolishCss.includes('>.picks-event-meta')&&mobilePolishCss.includes('background:#101827'),'Event details are not separated below the artwork');
+check(mobilePolishCss.includes('>.picks-event-meta')&&mobilePolishCss.includes('background:var(--panel)'),'Event details are not separated below the artwork with the canonical panel');
 check(mobilePolishCss.includes('.picks-photo-fallback[hidden]')&&mobilePolishCss.includes(':has(>img)'),'Loaded fighter photos do not fully hide fallback initials');
 
 check(oddsCoverage.includes('Not all odds available yet'),'Partial odds availability copy is missing');
