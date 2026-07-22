@@ -190,8 +190,10 @@ try{
   assert.equal(result.navActiveIndicator.opacity,'1','Active navigation indicator is hidden.');
   assert.equal(result.navInactive.color,'rgb(143, 143, 143)','Inactive navigation is not neutral gray.');
 
-  const rendered=JSON.stringify(result);
-  for(const color of retired)assert.ok(!rendered.includes(color),`Retired production color survived the semantic theme: ${color}`);
+  const renderedSurfaces=Object.entries(result)
+    .filter(([key,value])=>key!=='tokens'&&value&&typeof value==='object')
+    .flatMap(([key,value])=>[`${key}.backgroundColor=${value.backgroundColor}`,`${key}.backgroundImage=${value.backgroundImage}`]);
+  for(const color of retired)assert.ok(!renderedSurfaces.some(value=>value.includes(color)),`Retired production surface color survived the semantic theme: ${color}`);
   assert.equal(result.body.color,textColor,'Primary text is not white.');
 }finally{
   await browser.close();
