@@ -1,0 +1,146 @@
+{
+  "runtimeOutcome": "success",
+  "baselineOutcome": "success",
+  "externalOutcome": "success",
+  "baselineReport": {
+    "generatedAt": "2026-07-22T12:49:53.519Z",
+    "report": [
+      {
+        "eventId": "ufc-abu-dhabi-2026-07-25",
+        "sourceType": "maintained-repo",
+        "fights": 13,
+        "mainCardFights": 6,
+        "confirmationHash": "ebe58f06e138d2f11ac57bf8bd9f91d2768952b9a4ae47cc03bedad5f11fba56",
+        "applied": true,
+        "result": {
+          "synced": true,
+          "skipped": true,
+          "reason": "MMA Mania already owns this event's card slots",
+          "summary": {
+            "eventId": "ufc-abu-dhabi-2026-07-25",
+            "sourceType": "maintained-repo",
+            "sourceUrl": "repository:assets/data/picks-events.js",
+            "confirmationHash": "ebe58f06e138d2f11ac57bf8bd9f91d2768952b9a4ae47cc03bedad5f11fba56",
+            "fightsReceived": 13,
+            "pickableFightsReceived": 6,
+            "sectionAuthority": "mma-mania",
+            "priorAuthority": "mma-mania",
+            "skipped": true,
+            "inserted": 0,
+            "updated": 0,
+            "cancelled": 0,
+            "replacements": 0,
+            "promotions": 0,
+            "demotions": 0,
+            "picksReset": 0
+          },
+          "syncedAt": "2026-07-22T12:49:53.127Z"
+        }
+      },
+      {
+        "eventId": "ufc-belgrade-2026-08-01",
+        "sourceType": "maintained-repo",
+        "fights": 9,
+        "mainCardFights": 4,
+        "confirmationHash": "9fd3a73da720337ed1a51b4971fbd84c4e2c1823ede53e5cec1c08a3a0e7c2ad",
+        "applied": true,
+        "result": {
+          "synced": true,
+          "skipped": true,
+          "reason": "MMA Mania already owns this event's card slots",
+          "summary": {
+            "eventId": "ufc-belgrade-2026-08-01",
+            "sourceType": "maintained-repo",
+            "sourceUrl": "repository:assets/data/picks-events.js",
+            "confirmationHash": "9fd3a73da720337ed1a51b4971fbd84c4e2c1823ede53e5cec1c08a3a0e7c2ad",
+            "fightsReceived": 9,
+            "pickableFightsReceived": 4,
+            "sectionAuthority": "mma-mania",
+            "priorAuthority": "mma-mania",
+            "skipped": true,
+            "inserted": 0,
+            "updated": 0,
+            "cancelled": 0,
+            "replacements": 0,
+            "promotions": 0,
+            "demotions": 0,
+            "picksReset": 0
+          },
+          "syncedAt": "2026-07-22T12:49:53.476Z"
+        }
+      }
+    ]
+  },
+  "mmaManiaReport": {
+    "generatedAt": "2026-07-22T12:50:22.572Z",
+    "report": [
+      {
+        "eventId": "ufc-abu-dhabi-2026-07-25",
+        "sourceType": "mma-mania",
+        "sourceUrl": "https://www.mmamania.com/ufc-fight-cards/447644/latest-ufc-abu-dhabi-fight-card-paramount-start-time-date-location-ankalaev-vs-guskov",
+        "fights": 13,
+        "mainCardFights": 6,
+        "requiredMainCardFights": 6,
+        "confirmationHash": "a52b885b41b36c26bfcf14cc4f254b4f75695f2707c215d5de6b9879edb4f7b5",
+        "applied": true,
+        "result": {
+          "synced": true,
+          "summary": {
+            "eventId": "ufc-abu-dhabi-2026-07-25",
+            "sourceType": "mma-mania",
+            "sourceUrl": "https://www.mmamania.com/ufc-fight-cards/447644/latest-ufc-abu-dhabi-fight-card-paramount-start-time-date-location-ankalaev-vs-guskov",
+            "confirmationHash": "a52b885b41b36c26bfcf14cc4f254b4f75695f2707c215d5de6b9879edb4f7b5",
+            "fightsReceived": 13,
+            "pickableFightsReceived": 6,
+            "sectionAuthority": "mma-mania",
+            "priorAuthority": "mma-mania",
+            "skipped": false,
+            "inserted": 0,
+            "updated": 13,
+            "cancelled": 1,
+            "replacements": 0,
+            "promotions": 0,
+            "demotions": 0,
+            "picksReset": 0
+          },
+          "syncedAt": "2026-07-22T12:50:07.322Z"
+        }
+      },
+      {
+        "eventId": "ufc-belgrade-2026-08-01",
+        "sourceType": "mma-mania",
+        "sourceUrl": "https://www.mmamania.com/ufc-fight-cards/446488/latest-ufc-belgrade-fight-card-paramount-start-time-date-and-location-medic-vs-rodriguez-mma",
+        "fights": 9,
+        "mainCardFights": 4,
+        "requiredMainCardFights": 4,
+        "confirmationHash": "2e8103b9e82160871e1c5e41e683bbd4e1294596c22d111e1acf443c1db71ad8",
+        "applied": true,
+        "result": {
+          "synced": true,
+          "summary": {
+            "eventId": "ufc-belgrade-2026-08-01",
+            "sourceType": "mma-mania",
+            "sourceUrl": "https://www.mmamania.com/ufc-fight-cards/446488/latest-ufc-belgrade-fight-card-paramount-start-time-date-and-location-medic-vs-rodriguez-mma",
+            "confirmationHash": "2e8103b9e82160871e1c5e41e683bbd4e1294596c22d111e1acf443c1db71ad8",
+            "fightsReceived": 9,
+            "pickableFightsReceived": 4,
+            "sectionAuthority": "mma-mania",
+            "priorAuthority": "mma-mania",
+            "skipped": false,
+            "inserted": 0,
+            "updated": 9,
+            "cancelled": 6,
+            "replacements": 0,
+            "promotions": 0,
+            "demotions": 0,
+            "picksReset": 0
+          },
+          "syncedAt": "2026-07-22T12:50:22.539Z"
+        }
+      }
+    ]
+  },
+  "baselineConsoleTail": "          \"fightsReceived\": 13,\n          \"pickableFightsReceived\": 6,\n          \"sectionAuthority\": \"mma-mania\",\n          \"priorAuthority\": \"mma-mania\",\n          \"skipped\": true,\n          \"inserted\": 0,\n          \"updated\": 0,\n          \"cancelled\": 0,\n          \"replacements\": 0,\n          \"promotions\": 0,\n          \"demotions\": 0,\n          \"picksReset\": 0\n        },\n        \"syncedAt\": \"2026-07-22T12:49:53.127Z\"\n      }\n    },\n    {\n      \"eventId\": \"ufc-belgrade-2026-08-01\",\n      \"sourceType\": \"maintained-repo\",\n      \"fights\": 9,\n      \"mainCardFights\": 4,\n      \"confirmationHash\": \"9fd3a73da720337ed1a51b4971fbd84c4e2c1823ede53e5cec1c08a3a0e7c2ad\",\n      \"applied\": true,\n      \"result\": {\n        \"synced\": true,\n        \"skipped\": true,\n        \"reason\": \"MMA Mania already owns this event's card slots\",\n        \"summary\": {\n          \"eventId\": \"ufc-belgrade-2026-08-01\",\n          \"sourceType\": \"maintained-repo\",\n          \"sourceUrl\": \"repository:assets/data/picks-events.js\",\n          \"confirmationHash\": \"9fd3a73da720337ed1a51b4971fbd84c4e2c1823ede53e5cec1c08a3a0e7c2ad\",\n          \"fightsReceived\": 9,\n          \"pickableFightsReceived\": 4,\n          \"sectionAuthority\": \"mma-mania\",\n          \"priorAuthority\": \"mma-mania\",\n          \"skipped\": true,\n          \"inserted\": 0,\n          \"updated\": 0,\n          \"cancelled\": 0,\n          \"replacements\": 0,\n          \"promotions\": 0,\n          \"demotions\": 0,\n          \"picksReset\": 0\n        },\n        \"syncedAt\": \"2026-07-22T12:49:53.476Z\"\n      }\n    }\n  ]\n}",
+  "mmaManiaConsoleTail": "      \"sourceUrl\": \"https://www.mmamania.com/ufc-fight-cards/447644/latest-ufc-abu-dhabi-fight-card-paramount-start-time-date-location-ankalaev-vs-guskov\",\n      \"confirmationHash\": \"a52b885b41b36c26bfcf14cc4f254b4f75695f2707c215d5de6b9879edb4f7b5\",\n      \"fightsReceived\": 13,\n      \"pickableFightsReceived\": 6,\n      \"sectionAuthority\": \"mma-mania\",\n      \"priorAuthority\": \"mma-mania\",\n      \"skipped\": false,\n      \"inserted\": 0,\n      \"updated\": 13,\n      \"cancelled\": 1,\n      \"replacements\": 0,\n      \"promotions\": 0,\n      \"demotions\": 0,\n      \"picksReset\": 0\n    },\n    \"syncedAt\": \"2026-07-22T12:50:07.322Z\"\n  }\n}\n{\n  \"eventId\": \"ufc-belgrade-2026-08-01\",\n  \"sourceType\": \"mma-mania\",\n  \"sourceUrl\": \"https://www.mmamania.com/ufc-fight-cards/446488/latest-ufc-belgrade-fight-card-paramount-start-time-date-and-location-medic-vs-rodriguez-mma\",\n  \"fights\": 9,\n  \"mainCardFights\": 4,\n  \"requiredMainCardFights\": 4,\n  \"confirmationHash\": \"2e8103b9e82160871e1c5e41e683bbd4e1294596c22d111e1acf443c1db71ad8\",\n  \"applied\": true,\n  \"result\": {\n    \"synced\": true,\n    \"summary\": {\n      \"eventId\": \"ufc-belgrade-2026-08-01\",\n      \"sourceType\": \"mma-mania\",\n      \"sourceUrl\": \"https://www.mmamania.com/ufc-fight-cards/446488/latest-ufc-belgrade-fight-card-paramount-start-time-date-and-location-medic-vs-rodriguez-mma\",\n      \"confirmationHash\": \"2e8103b9e82160871e1c5e41e683bbd4e1294596c22d111e1acf443c1db71ad8\",\n      \"fightsReceived\": 9,\n      \"pickableFightsReceived\": 4,\n      \"sectionAuthority\": \"mma-mania\",\n      \"priorAuthority\": \"mma-mania\",\n      \"skipped\": false,\n      \"inserted\": 0,\n      \"updated\": 9,\n      \"cancelled\": 6,\n      \"replacements\": 0,\n      \"promotions\": 0,\n      \"demotions\": 0,\n      \"picksReset\": 0\n    },\n    \"syncedAt\": \"2026-07-22T12:50:22.539Z\"\n  }\n}",
+  "verifiedAt": "2026-07-22T12:50:22.623Z"
+}
