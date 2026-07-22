@@ -18,13 +18,20 @@ jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: repo
     steps:
-      - uses: actions/checkout@v4
+      - name: Quiet checkout
+        working-directory: .
+        env:
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+        run: git clone --quiet --depth 1 --branch "$BRANCH_NAME" "https://github.com/${GITHUB_REPOSITORY}.git" repo
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
       - run: node --check assets/js/fresh-home-route-bootstrap.js && node --check assets/js/fresh-home-launch.js && node --check scripts/test-ios-standalone-resume-home.mjs
-      - run: npm install --no-save --package-lock=false playwright@1.54.1 && npx playwright install --with-deps chromium
+      - run: npm install --no-save --package-lock=false playwright@1.54.1 > /tmp/ios-playwright-install.log 2>&1 && npx playwright install --with-deps chromium >> /tmp/ios-playwright-install.log 2>&1
       - run: |
           python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/ios-home-startup-server.log 2>&1 &
           for attempt in $(seq 1 20); do
@@ -33,4 +40,9 @@ jobs:
           done
           cat /tmp/ios-home-startup-server.log
           exit 1
-      - run: node scripts/test-ios-standalone-resume-home.mjs
+      - name: Show only final aggregate failure
+        run: |
+          if ! node scripts/test-ios-standalone-resume-home.mjs > /tmp/ios-aggregate.log 2>&1; then
+            tail -n 120 /tmp/ios-aggregate.log
+            exit 1
+          fi
