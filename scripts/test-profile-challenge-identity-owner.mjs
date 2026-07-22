@@ -4,23 +4,28 @@ import { chromium } from 'playwright';
 
 const ORIGIN='http://127.0.0.1:4173';
 const REPORT='/tmp/profile-challenge-identity-owner-report.json';
-const report={passed:false,stage:'boot',startup:null,concurrent:null,directSend:null,error:null};
+const report={passed:false,stage:'boot',startup:null,concurrent:null,playInbox:null,directSend:null,error:null};
 let browser;
 
 const html=`<!doctype html>
 <html><head><meta charset="utf-8"><title>Profile challenge identity owner</title></head>
 <body>
   <button class="app-profile-chip"><span class="app-profile-chip-badge">GOAT26</span></button>
-  <section class="profile-activity-body"><div class="profile-activity-grid"></div></section>
+  <button data-native-destination="play">Play</button>
+  <section id="play" class="view"><div id="playHub"><article class="play-daily-card"></article></div></section>
   <script>
   (function(){
     const identity={ok:true,group:{code:'GOAT26'},groupCode:'GOAT26',member:{id:'m1',display_name:'Cody',is_admin:true},memberToken:'challenge-token',member_token:'challenge-token',rooms:[]};
-    const counters=window.__PROFILE_CHALLENGE_PROOF__={canonicalResolves:0,canonicalRequires:0,editorResolves:0,readyEvents:0,updatedEvents:0,inboxCalls:0,groupSnapshots:0};
+    const counters=window.__PROFILE_CHALLENGE_PROOF__={canonicalResolves:0,canonicalRequires:0,editorResolves:0,readyEvents:0,updatedEvents:0,inboxCalls:0,seenCalls:0,groupSnapshots:0,hubShows:0};
     const client={async rpc(name,args){
       if(name==='play_profile_challenge_inbox'){
         counters.inboxCalls+=1;
         await new Promise(resolve=>setTimeout(resolve,200));
-        return{data:{ok:true,unread_count:1,rows:[{code:'ABC123',creator_name:'Shane',creator_fighter_avatar_slug:'',creator_profile_photo_data:'',created_at:new Date().toISOString(),opened_at:null,completed:false,score:null}]},error:null};
+        return{data:{ok:true,unread_count:1,received_count:1,sent_count:0,rows:[{code:'ABC123',direction:'received',game_type:'find-leader',creator_name:'Shane',counterpart_name:'Shane',creator_fighter_avatar_slug:'',creator_profile_photo_data:'',created_at:new Date().toISOString(),opened_at:null,completed:false,score:null}]},error:null};
+      }
+      if(name==='play_mark_profile_challenges_seen'){
+        counters.seenCalls+=1;
+        return{data:{ok:true,opened_at:new Date().toISOString()},error:null};
       }
       return{data:{ok:true},error:null};
     }};
@@ -40,9 +45,13 @@ const html=`<!doctype html>
       },
       avatarMarkup(member){return '<span class="app-profile-avatar friend"><span>'+String(member?.display_name||'U').slice(0,2)+'</span></span>';}
     };
+    window.UFC_APP_SHELL={
+      currentDestination:'home',
+      activateDestination(destination){this.currentDestination=destination;return true;}
+    };
+    window.UFC_PLAY_HUB={showHub(){counters.hubShows+=1;return true;}};
     window.addEventListener('ufc-play-profile-ready',()=>{counters.readyEvents+=1;});
     window.addEventListener('ufc-profile-challenges-updated',()=>{counters.updatedEvents+=1;});
-    window.UFC_PROFILE_ACTIVITY={close(){}};
     setTimeout(()=>{
       window.UFC_PLAY_PROFILE.identity=identity;
       window.dispatchEvent(new CustomEvent('ufc-play-profile-ready',{detail:identity}));
@@ -66,8 +75,10 @@ try{
   report.startup=await page.evaluate(()=>({
     ...window.__PROFILE_CHALLENGE_PROOF__,
     unread:window.UFC_PROFILE_CHALLENGES.unreadCount,
-    inboxCards:document.querySelectorAll('[data-profile-challenge-inbox]').length,
-    badge:document.querySelector('.app-profile-chip-badge')?.textContent||''
+    centers:document.querySelectorAll('[data-play-challenge-center]').length,
+    challengeRows:document.querySelectorAll('[data-open-profile-challenge]').length,
+    activityCards:document.querySelectorAll('.profile-activity-body [data-profile-challenge-inbox]').length,
+    profileBadge:document.querySelector('.app-profile-chip-badge')?.textContent||''
   }));
   assert.equal(report.startup.canonicalResolves,0,'Passive startup must not initiate canonical identity resolution.');
   assert.equal(report.startup.canonicalRequires,0,'Passive startup must not open canonical sign-in.');
@@ -75,8 +86,10 @@ try{
   assert.equal(report.startup.readyEvents,1,'The canonical owner must be able to publish readiness once.');
   assert.equal(report.startup.inboxCalls,1,'Ready-event and scheduled startup loads must coalesce into one inbox RPC.');
   assert.equal(report.startup.updatedEvents,1,'One startup inbox RPC must publish one inbox update.');
-  assert.equal(report.startup.inboxCards,1,'The Activity Profile must retain one challenge inbox card.');
-  assert.match(report.startup.badge,/1 NEW/,'The profile chip must retain the unread challenge badge.');
+  assert.equal(report.startup.centers,1,'Play must retain one first-class Challenge Center.');
+  assert.equal(report.startup.challengeRows,1,'The received challenge must render inside Challenge Center.');
+  assert.equal(report.startup.activityCards,0,'Activity Profile must not remain the challenge inbox owner.');
+  assert.equal(report.startup.profileBadge,'GOAT26','Challenge state must not overwrite the profile identity badge.');
 
   report.stage='concurrent';
   await page.evaluate(()=>{window.__PROFILE_CHALLENGE_PROOF__.inboxCalls=0;window.__PROFILE_CHALLENGE_PROOF__.updatedEvents=0;});
@@ -92,7 +105,23 @@ try{
   }));
   assert.equal(report.concurrent.inboxCalls,1,'Concurrent manual inbox refreshes must share one RPC.');
   assert.equal(report.concurrent.updatedEvents,1,'Concurrent refreshes must publish one update.');
-  assert.equal(report.concurrent.unread,1,'Concurrent refreshes must preserve inbox state.');
+  assert.equal(report.concurrent.unread,1,'Concurrent refreshes must preserve unseen challenge state.');
+
+  report.stage='play-inbox';
+  await page.click('[data-native-destination="play"]');
+  await page.waitForFunction(()=>window.UFC_PROFILE_CHALLENGES?.unreadCount===0&&window.__PROFILE_CHALLENGE_PROOF__?.seenCalls===1,null,{timeout:30000});
+  report.playInbox=await page.evaluate(()=>({
+    unseen:window.UFC_PROFILE_CHALLENGES.unreadCount,
+    seenCalls:window.__PROFILE_CHALLENGE_PROOF__.seenCalls,
+    hubShows:window.__PROFILE_CHALLENGE_PROOF__.hubShows,
+    centers:document.querySelectorAll('[data-play-challenge-center]').length,
+    receivedActive:document.querySelector('[data-challenge-filter="received"]')?.textContent||''
+  }));
+  assert.equal(report.playInbox.unseen,0,'Opening Challenge Center must clear the unseen badge count.');
+  assert.equal(report.playInbox.seenCalls,1,'Opening Challenge Center must mark received challenges seen once.');
+  assert.equal(report.playInbox.hubShows,1,'The Play badge route must open the current Play hub.');
+  assert.equal(report.playInbox.centers,1,'Opening Play must reuse the existing Challenge Center.');
+  assert.match(report.playInbox.receivedActive,/RECEIVED 1/,'Challenge Center must retain the received challenge after clearing unseen state.');
 
   report.stage='direct-send';
   const payload={setup:{question:'Who leads?',candidates:Array.from({length:10},(_,index)=>({id:`f${index+1}`}))},result:{score:7}};
@@ -114,7 +143,7 @@ try{
 
   report.passed=true;
   report.stage='complete';
-  console.log('Profile challenge passive identity proof passed.');
+  console.log('Profile challenge Play inbox and identity proof passed.');
   await context.close();
 }catch(error){
   report.error={message:error?.message||String(error),stack:error?.stack||null};

@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 const source=fs.readFileSync('assets/js/profile-challenges.js','utf8');
-const passive=source.match(/async function passiveIdentity\(\)\{([\s\S]*?)\}\n  async function identity/);
-const explicit=source.match(/async function identity\(options=\{\}\)\{([\s\S]*?)\}\n  function validPayload/);
-const inbox=source.match(/async function loadInbox\(\)\{([\s\S]*?)\n  \}\n\n  function waitFor/);
+const passive=source.match(/async function passiveIdentity\(\)\{([\s\S]*?)\}\s+async function identity/);
+const explicit=source.match(/async function identity\(options=\{\}\)\{([\s\S]*?)\}\s+function validPayload/);
+const inbox=source.match(/async function loadInbox\(\)\{([\s\S]*?)\n  \}\n\n  function isPlayActive/);
 const group=source.match(/async function groupSnapshot\(who\)\{([\s\S]*?)\}/);
 
 assert(passive,'Profile-challenge passive identity boundary could not be identified.');
@@ -28,11 +28,18 @@ assert(source.includes("window.addEventListener('ufc-play-profile-ready'"),'Prof
 assert(source.includes("window.addEventListener('ufc-app-profile-updated'"),'Profile challenges must retain profile-update refresh behavior.');
 assert(source.includes("window.addEventListener('ufc-profile-challenge-sent'"),'Profile challenges must retain sent-challenge inbox refresh behavior.');
 
+assert(source.includes("center.dataset.playChallengeCenter='true'"),'The canonical challenge owner must render Challenge Center on Play.');
+assert(source.includes('data-challenge-filter="received"')&&source.includes('data-challenge-filter="sent"'),'Challenge Center must expose received and sent filters.');
+assert(source.includes("rpc.rpc('play_mark_profile_challenges_seen'"),'Opening Play must clear unseen challenge state through the canonical challenge owner.');
+assert(source.includes("rpc.rpc('play_profile_challenge_detail'"),'Completed matchups must load both participants’ results through the canonical challenge owner.');
+assert.equal(source.includes('.profile-activity-body .profile-activity-grid'),false,'Activity Profile must not remain the primary challenge inbox surface.');
+
 console.log(JSON.stringify({
   passed:true,
   passiveIdentity:'cache-and-event-consumer',
   passiveResolver:false,
   explicitRequire:true,
   concurrentInbox:'coalesced',
-  directSendGroupSnapshot:true
+  directSendGroupSnapshot:true,
+  challengeCenter:'play-received-sent-results'
 },null,2));

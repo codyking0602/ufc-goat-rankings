@@ -352,3 +352,310 @@ grant execute on function public.play_send_profile_challenge(text,uuid,text,text
 grant execute on function public.play_profile_challenge_inbox(text) to anon,authenticated;
 grant execute on function public.play_open_profile_challenge(text,text) to anon,authenticated;
 grant execute on function public.play_submit_profile_challenge(text,text,jsonb,numeric,jsonb) to anon,authenticated;
+
+
+-- Play Challenge Center: one authenticated feed for received and sent profile challenges.
+create or replace function public.play_profile_challenge_inbox(
+  p_member_token text
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path=public,extensions
+as $$
+declare
+  v_group public.pick_groups;
+  v_member public.pick_group_members;
+begin
+  select * into v_group
+  from public.pick_groups
+  where is_canonical or code='GOAT26'
+  order by is_canonical desc
+  limit 1;
+
+  if not found then
+    return jsonb_build_object('ok',false,'error','GOAT26 has not been activated yet.');
+  end if;
+
+  select * into v_member
+  from public.pick_group_members
+  where group_id=v_group.id
+    and member_token_hash=digest(coalesce(p_member_token,''),'sha256')
+    and coalesce(is_active,true);
+
+  if not found then
+    return jsonb_build_object('ok',false,'error','Profile access was not recognized.');
+  end if;
+
+  return jsonb_build_object(
+    'ok',true,
+    'unread_count',(
+      select count(*)
+      from public.play_challenges c
+      where c.recipient_member_id=v_member.id
+        and c.status='active'
+        and c.expires_at>now()
+        and c.recipient_opened_at is null
+        and not exists(
+          select 1
+          from public.play_challenge_attempts a
+          where a.challenge_id=c.id
+            and a.responder_member_id=v_member.id
+        )
+    ),
+    'received_count',(
+      select count(*)
+      from public.play_challenges c
+      where c.recipient_member_id=v_member.id
+        and c.status='active'
+        and c.expires_at>now()
+    ),
+    'sent_count',(
+      select count(*)
+      from public.play_challenges c
+      where c.creator_member_id=v_member.id
+        and c.recipient_member_id is not null
+        and c.status='active'
+        and c.expires_at>now()
+    ),
+    'rows',coalesce((
+      select jsonb_agg(row_to_json(row_data)::jsonb order by row_data.created_at desc)
+      from (
+        select *
+        from (
+          select
+            'received'::text as direction,
+            c.code,
+            c.game_type,
+            c.game_version,
+            c.metadata,
+            c.created_at,
+            c.expires_at,
+            c.recipient_opened_at as opened_at,
+            attempt.completed_at,
+            attempt.score,
+            (attempt.id is not null) as completed,
+            creator.id as creator_member_id,
+            creator.display_name as creator_name,
+            creator.fighter_avatar_slug as creator_fighter_avatar_slug,
+            creator.profile_photo_data as creator_profile_photo_data,
+            recipient.id as recipient_member_id,
+            recipient.display_name as recipient_name,
+            recipient.fighter_avatar_slug as recipient_fighter_avatar_slug,
+            recipient.profile_photo_data as recipient_profile_photo_data,
+            creator.id as counterpart_member_id,
+            creator.display_name as counterpart_name,
+            creator.fighter_avatar_slug as counterpart_fighter_avatar_slug,
+            creator.profile_photo_data as counterpart_profile_photo_data
+          from public.play_challenges c
+          join public.pick_group_members creator on creator.id=c.creator_member_id
+          join public.pick_group_members recipient on recipient.id=c.recipient_member_id
+          left join public.play_challenge_attempts attempt
+            on attempt.challenge_id=c.id
+           and attempt.responder_member_id=c.recipient_member_id
+          where c.recipient_member_id=v_member.id
+            and c.status='active'
+            and c.expires_at>now()
+
+          union all
+
+          select
+            'sent'::text as direction,
+            c.code,
+            c.game_type,
+            c.game_version,
+            c.metadata,
+            c.created_at,
+            c.expires_at,
+            c.recipient_opened_at as opened_at,
+            attempt.completed_at,
+            attempt.score,
+            (attempt.id is not null) as completed,
+            creator.id as creator_member_id,
+            creator.display_name as creator_name,
+            creator.fighter_avatar_slug as creator_fighter_avatar_slug,
+            creator.profile_photo_data as creator_profile_photo_data,
+            recipient.id as recipient_member_id,
+            recipient.display_name as recipient_name,
+            recipient.fighter_avatar_slug as recipient_fighter_avatar_slug,
+            recipient.profile_photo_data as recipient_profile_photo_data,
+            recipient.id as counterpart_member_id,
+            recipient.display_name as counterpart_name,
+            recipient.fighter_avatar_slug as counterpart_fighter_avatar_slug,
+            recipient.profile_photo_data as counterpart_profile_photo_data
+          from public.play_challenges c
+          join public.pick_group_members creator on creator.id=c.creator_member_id
+          join public.pick_group_members recipient on recipient.id=c.recipient_member_id
+          left join public.play_challenge_attempts attempt
+            on attempt.challenge_id=c.id
+           and attempt.responder_member_id=c.recipient_member_id
+          where c.creator_member_id=v_member.id
+            and c.recipient_member_id is not null
+            and c.status='active'
+            and c.expires_at>now()
+        ) combined_rows
+        order by created_at desc
+        limit 60
+      ) row_data
+    ),'[]'::jsonb)
+  );
+end;
+$$;
+
+create or replace function public.play_mark_profile_challenges_seen(
+  p_member_token text
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path=public,extensions
+as $$
+declare
+  v_group public.pick_groups;
+  v_member public.pick_group_members;
+  v_opened_at timestamptz:=now();
+  v_updated integer:=0;
+begin
+  select * into v_group
+  from public.pick_groups
+  where is_canonical or code='GOAT26'
+  order by is_canonical desc
+  limit 1;
+
+  if not found then
+    return jsonb_build_object('ok',false,'error','GOAT26 has not been activated yet.');
+  end if;
+
+  select * into v_member
+  from public.pick_group_members
+  where group_id=v_group.id
+    and member_token_hash=digest(coalesce(p_member_token,''),'sha256')
+    and coalesce(is_active,true);
+
+  if not found then
+    return jsonb_build_object('ok',false,'error','Profile access was not recognized.');
+  end if;
+
+  update public.play_challenges c
+  set recipient_opened_at=coalesce(c.recipient_opened_at,v_opened_at)
+  where c.recipient_member_id=v_member.id
+    and c.status='active'
+    and c.expires_at>now()
+    and c.recipient_opened_at is null
+    and not exists(
+      select 1
+      from public.play_challenge_attempts a
+      where a.challenge_id=c.id
+        and a.responder_member_id=v_member.id
+    );
+
+  get diagnostics v_updated=row_count;
+
+  return jsonb_build_object(
+    'ok',true,
+    'updated_count',v_updated,
+    'opened_at',v_opened_at
+  );
+end;
+$$;
+
+create or replace function public.play_profile_challenge_detail(
+  p_member_token text,
+  p_challenge_code text
+)
+returns jsonb
+language plpgsql
+security definer
+set search_path=public,extensions
+as $$
+declare
+  v_group public.pick_groups;
+  v_member public.pick_group_members;
+  v_challenge public.play_challenges;
+  v_creator public.pick_group_members;
+  v_recipient public.pick_group_members;
+  v_attempt public.play_challenge_attempts;
+  v_completed boolean:=false;
+  v_direction text;
+begin
+  select * into v_group
+  from public.pick_groups
+  where is_canonical or code='GOAT26'
+  order by is_canonical desc
+  limit 1;
+
+  if not found then
+    return jsonb_build_object('ok',false,'error','GOAT26 has not been activated yet.');
+  end if;
+
+  select * into v_member
+  from public.pick_group_members
+  where group_id=v_group.id
+    and member_token_hash=digest(coalesce(p_member_token,''),'sha256')
+    and coalesce(is_active,true);
+
+  if not found then
+    return jsonb_build_object('ok',false,'error','Profile access was not recognized.');
+  end if;
+
+  select * into v_challenge
+  from public.play_challenges
+  where code=upper(trim(coalesce(p_challenge_code,'')))
+    and recipient_member_id is not null
+    and status='active'
+    and expires_at>now()
+    and (creator_member_id=v_member.id or recipient_member_id=v_member.id);
+
+  if not found then
+    return jsonb_build_object('ok',false,'error','That challenge is not available to this profile.');
+  end if;
+
+  select * into v_creator
+  from public.pick_group_members
+  where id=v_challenge.creator_member_id;
+
+  select * into v_recipient
+  from public.pick_group_members
+  where id=v_challenge.recipient_member_id;
+
+  select * into v_attempt
+  from public.play_challenge_attempts
+  where challenge_id=v_challenge.id
+    and responder_member_id=v_challenge.recipient_member_id
+  order by completed_at desc
+  limit 1;
+
+  v_completed:=found;
+  v_direction:=case when v_challenge.creator_member_id=v_member.id then 'sent' else 'received' end;
+
+  return jsonb_build_object(
+    'ok',true,
+    'challenge',jsonb_build_object(
+      'code',v_challenge.code,
+      'direction',v_direction,
+      'game_type',v_challenge.game_type,
+      'game_version',v_challenge.game_version,
+      'setup',v_challenge.setup,
+      'metadata',v_challenge.metadata,
+      'created_at',v_challenge.created_at,
+      'expires_at',v_challenge.expires_at,
+      'opened_at',v_challenge.recipient_opened_at,
+      'completed',v_completed,
+      'completed_at',case when v_completed then v_attempt.completed_at else null end,
+      'creator_name',v_creator.display_name,
+      'creator_fighter_avatar_slug',v_creator.fighter_avatar_slug,
+      'creator_profile_photo_data',v_creator.profile_photo_data,
+      'responder_name',v_recipient.display_name,
+      'responder_fighter_avatar_slug',v_recipient.fighter_avatar_slug,
+      'responder_profile_photo_data',v_recipient.profile_photo_data,
+      'creator_result',case when v_completed then v_challenge.creator_result else null end,
+      'responder_result',case when v_completed then v_attempt.result else null end,
+      'responder_score',case when v_completed then v_attempt.score else null end
+    )
+  );
+end;
+$$;
+
+grant execute on function public.play_profile_challenge_inbox(text) to anon,authenticated;
+grant execute on function public.play_mark_profile_challenges_seen(text) to anon,authenticated;
+grant execute on function public.play_profile_challenge_detail(text,text) to anon,authenticated;
