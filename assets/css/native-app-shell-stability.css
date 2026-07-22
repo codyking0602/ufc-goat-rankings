@@ -1,6 +1,22 @@
-@import url("./product-polish.css?v=product-polish-20260721e-static-final-owner");
+@import url("./product-polish.css?v=product-polish-20260722a-canonical-tokens");
 
-/* Final static presentation owner: shared product polish plus mobile shell stability. */
+/* Final static presentation owner: canonical palette tokens plus mobile shell stability. */
+:root{
+  --bg:#080808!important;
+  --panel:#111111!important;
+  --panel2:#191919!important;
+  --text:#f5f5f5!important;
+  --muted:#a3a3a3!important;
+  --line:#303030!important;
+  --accent:#d20a0a!important;
+  --accent2:#ff4d4d!important;
+}
+html,body{background:radial-gradient(circle at top left,#1f0b0b,var(--bg) 45%)!important;color:var(--text)!important}
+.row{border-color:var(--line)!important;background:linear-gradient(180deg,var(--panel2),var(--panel))!important;color:var(--text)!important}
+.row:hover{border-color:var(--accent)!important}
+.rank{color:var(--accent2)!important}
+.resume-tag{border-color:color-mix(in srgb,var(--accent2) 38%,var(--line))!important;background:color-mix(in srgb,var(--accent) 12%,var(--panel))!important;color:#ffd0d0!important}
+
 @media(max-width:900px){
   main.shell{padding-bottom:calc(var(--native-nav-height) + var(--native-safe-bottom) + 30px)!important}
   #whatsNewBtn [data-whats-new-label]{display:block;line-height:1!important}
