@@ -112,6 +112,9 @@ const originalLog=console.log;
 console.log=(...args)=>{if(args[0]==='PALETTE_TOKENS')return;originalLog(...args);};
 try{
   await import('./test-production-palette-sweep.mjs');
+}catch(error){
+  console.error(`PALETTE_FAILURE ${error?.message||error}`);
+  throw error;
 }finally{
   console.log=originalLog;
 }
