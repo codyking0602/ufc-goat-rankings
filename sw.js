@@ -1,6 +1,6 @@
 const VERSION='octagon-hq-sw-20260722e-installed-shell-fallback';
 const CACHE_NAME='octagon-hq-static-v20';
-const COLD_LAUNCH_REVISION='20260722f-complete-shell';
+const COLD_LAUNCH_REVISION='20260722f-complete-local-shell';
 const LEGACY_PREFIX='octagon-hq-static-';
 const SHELL_FALLBACKS=[
   './index.html',
@@ -23,38 +23,16 @@ const SHELL_FALLBACKS=[
   './assets/js/native-app-shell-stability.js'
 ];
 const CORE=['./','./manifest.webmanifest',...SHELL_FALLBACKS];
-const REMOTE_SHELL=new Set(['https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2']);
 const PALETTE_NETWORK_FIRST=/\/assets\/css\/(?:app|home-dashboard|native-app-shell|native-app-shell-stability|product-polish)\.css$/i;
 const FORCE_NETWORK=/\/assets\/(?:(?:js\/(?:app-canonical-group|app-notification-surface-fix|app-update-watcher|product-architecture|octagon-hq-shell|native-app-shell|native-app-shell-stability|community-profiles|fresh-home-route-bootstrap|fresh-home-launch|home-dashboard|find-leader|better-than-standalone-share|play-daily-find-leader|game-challenges|profile-challenges|share-deep-links|picks|picks-auto-advance|octagon-notifications)|data\/(?:find-leader-question-bank|find-leader-record-book-data|what-changed|supabase-config|picks-events))\.js|css\/(?:app|home-dashboard|native-app-shell|native-app-shell-stability|product-polish|community-profiles|find-leader|picks-mobile-polish)\.css)$/i;
 const scopedUrl=path=>new URL(path,self.registration.scope).href;
 const SHELL_FALLBACK_PATHS=new Set(SHELL_FALLBACKS.map(path=>new URL(path,self.registration.scope).pathname));
 const isShellFallbackPath=path=>SHELL_FALLBACK_PATHS.has(path);
-const SUPABASE_OFFLINE_STUB=`(function(){
-  if(window.supabase)return;
-  const result=()=>Promise.resolve({data:null,error:{message:'Offline launch'}});
-  const chain={select(){return chain;},eq(){return chain;},neq(){return chain;},in(){return chain;},order(){return chain;},limit(){return chain;},insert(){return chain;},update(){return chain;},upsert(){return chain;},delete(){return chain;},single:result,maybeSingle:result,then(resolve,reject){return result().then(resolve,reject);}};
-  window.supabase={createClient(){return{rpc:result,from(){return chain;},channel(){return{on(){return this;},subscribe(){return this;}};},removeChannel:async()=>{},auth:{getSession:async()=>({data:{session:null},error:null}),onAuthStateChange(){return{data:{subscription:{unsubscribe(){}}}};}}};}};
-})();`;
-
-function usable(response){
-  return Boolean(response&&(response.ok||response.type==='opaque'));
-}
-
-async function cacheRemoteShell(cache){
-  await Promise.allSettled([...REMOTE_SHELL].map(async url=>{
-    const request=new Request(url,{mode:'no-cors',credentials:'omit',cache:'reload'});
-    try{
-      const response=await fetch(request,{cache:'reload'});
-      if(usable(response))await cache.put(request,response.clone());
-    }catch(_error){}
-  }));
-}
 
 self.addEventListener('install',event=>{
   event.waitUntil((async()=>{
     const cache=await caches.open(CACHE_NAME);
     await Promise.all(CORE.map(path=>cache.add(new Request(scopedUrl(path),{cache:'reload'}))));
-    await cacheRemoteShell(cache);
     await self.skipWaiting();
   })());
 });
@@ -115,21 +93,6 @@ async function networkFirst(request){
   return await cachedFallback(cache,request)||Response.error();
 }
 
-async function remoteNetworkFirst(request,url){
-  const cache=await caches.open(CACHE_NAME);
-  try{
-    const response=await fetch(request,{cache:'no-cache'});
-    if(usable(response)){
-      await cache.put(request,response.clone());
-      return response;
-    }
-  }catch(_error){}
-  const installed=await cachedFallback(cache,request);
-  if(installed)return installed;
-  if(REMOTE_SHELL.has(url.href))return new Response(SUPABASE_OFFLINE_STUB,{status:200,headers:{'Content-Type':'application/javascript; charset=utf-8','Cache-Control':'no-store'}});
-  return Response.error();
-}
-
 async function instantNavigation(request){
   const cache=await caches.open(CACHE_NAME);
   const network=await updateCache(request);
@@ -159,10 +122,6 @@ self.addEventListener('fetch',event=>{
   const url=new URL(request.url);
   if(isNavigation(request)){
     event.respondWith(instantNavigation(request));
-    return;
-  }
-  if(REMOTE_SHELL.has(url.href)){
-    event.respondWith(remoteNetworkFirst(request,url));
     return;
   }
   if(url.origin===self.location.origin&&PALETTE_NETWORK_FIRST.test(url.pathname)){
