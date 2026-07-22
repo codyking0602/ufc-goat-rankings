@@ -223,6 +223,68 @@ html body #picks .pick-fighter-odds b{border-color:transparent!important;backgro
 .octagon-access-toggle.enabled{border-color:color-mix(in srgb,var(--success) 44%,var(--line))!important;background:color-mix(in srgb,var(--success) 12%,var(--panel))!important;color:var(--success-soft)!important}
 .octagon-access-toggle.enabled i{background:var(--success)!important}
 
+/* Screenshot-driven crevice cleanup for lazy runtime presentation injectors. */
+html body>.hero::before,html body>.hero::after,html body>.hero .product-header-tools::before,html body>.hero .product-header-tools::after{content:none!important;display:none!important;background:none!important}
+html body>.hero{background:#000!important;background-image:none!important}
+html body main.shell,html body main.shell>.view{border-bottom:0!important;background-color:#000!important;background-image:none!important}
+html body .toolbar #search,html body .toolbar #eraFilter,html body .toolbar #divisionFilter{border-color:var(--line)!important;background-color:var(--panel2)!important;background-image:none!important;color:var(--text)!important}
+html body :is(#menList,#womenList,#divisionList,#categoryBoardList) .fighter-row{border-color:var(--line)!important;background-color:var(--panel2)!important;background-image:none!important;color:var(--text)!important;box-shadow:none!important}
+html body :is(#menList,#womenList,#divisionList,#categoryBoardList) .fighter-row .resume-tag{border-color:var(--line)!important;background:var(--panel)!important;color:var(--muted)!important}
+html body :is(#menList,#womenList,#divisionList,#categoryBoardList) .fighter-row .watch-moment-link{border-color:var(--accent)!important;background:transparent!important;color:var(--text)!important;box-shadow:none!important}
+html body #categories :is(.category-leader-pill,.category-sex-toggle button),html body #division .division-leader-pill{border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important;box-shadow:none!important}
+html body #categories :is(.category-leader-pill.active,.category-sex-toggle button.active),html body #division .division-leader-pill.active{border-color:var(--accent)!important;background:var(--accent)!important;color:#fff!important}
+html body #categories .category-leader-summary,html body #division .division-leader-summary{border-color:var(--line)!important;background:var(--panel2)!important;color:var(--muted)!important;box-shadow:none!important}
+html body #categories .category-leader-summary strong,html body #division .division-leader-summary strong{color:var(--text)!important}
+html body #communityProfilesMount .community-directory-summary-meta i{border-color:var(--line)!important;background:var(--panel)!important;color:var(--muted)!important;box-shadow:none!important}
+html body #communityProfilesMount .community-directory[open] .community-directory-summary-meta i{border-color:var(--accent)!important;color:var(--accent2)!important}
+
+html body #picks>.section-title h2{color:var(--text)!important;text-shadow:none!important}
+html body #picks>.section-title p{color:var(--muted)!important}
+html body #picks :is(.picks-group-card,#picksHistoryCard,.picks-pin-card,.picks-profile-clean,.picks-commissioner-clean,.commissioner-clean-section,.picks-upcoming-event-section,.picks-final-corrections){border-color:var(--line)!important;background-color:var(--panel2)!important;background-image:none!important;color:var(--text)!important;box-shadow:none!important}
+html body #picks :is(.picks-group-content,.picks-history-list,.picks-pin-content,.commissioner-clean-section>.commissioner-section,.picks-upcoming-event-section>.picks-group-owner){border-color:var(--line)!important;background:var(--panel2)!important;color:var(--text)!important}
+html body #picks :is(.picks-group-member,.picks-group-event,.picks-history-row,.picks-pin-fields,.picks-pin-dialog,.picks-group-owner,.commissioner-subpanel,.picks-correction-gate){border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important;box-shadow:none!important}
+html body #picks :is(.picks-group-member.leader,.picks-group-event.active,.picks-history-row.current){border-color:var(--accent)!important;background:color-mix(in srgb,var(--accent) 10%,var(--panel))!important}
+html body #picks :is(.picks-group-card>summary,.picks-group-top h3,.picks-group-member strong,.picks-group-member>b,.picks-group-event strong,.picks-history-main>strong,.picks-history-result>strong,.picks-pin-card>summary strong,.picks-pin-profile-state strong,.commissioner-clean-section>summary strong,.picks-upcoming-event-section .picks-group-owner strong){color:var(--text)!important}
+html body #picks :is(.picks-group-card>summary>b,.picks-group-top p,.picks-group-member small,.picks-group-member>b small,.picks-group-section-head b,.picks-group-event small,.picks-history-main>small,.picks-history-result>small,.picks-pin-intro,.picks-pin-content>small,.picks-pin-profile-state small,.commissioner-clean-section>summary>b,.picks-upcoming-event-section .picks-group-owner small,.picks-upcoming-event-section .picks-group-owner p){color:var(--muted)!important}
+html body #picks :is(.picks-group-card>summary span,.picks-group-top span,.picks-group-section-head span,.picks-group-owner span,#picksHistoryCard>summary span,.picks-history-main>span,.picks-history-result>span,.picks-pin-card>summary span,.picks-pin-dialog>span,.commissioner-clean-section>summary span,.picks-upcoming-event-section .picks-group-owner span){color:var(--accent2)!important}
+html body #picks .picks-group-member strong em{background:color-mix(in srgb,var(--accent) 13%,var(--panel))!important;color:#ff9296!important}
+html body #picks #picksHistoryCard>summary b{background:var(--panel)!important;color:var(--muted)!important}
+html body #picks .picks-pin-fields label,html body #picks .picks-pin-dialog label{color:var(--muted)!important}
+html body #picks .picks-pin-fields input,html body #picks .picks-pin-dialog input,html body #picks .picks-group-owner select,html body #picks .picks-upcoming-event-section .picks-group-owner select{border-color:var(--line)!important;background:var(--panel2)!important;color:var(--text)!important}
+html body #picks :is(.picks-pin-primary,.picks-history-row button,.picks-group-event button,.picks-group-owner button,.picks-upcoming-event-section .picks-group-owner button,.picks-correction-gate button){border-color:var(--accent)!important;background:var(--accent)!important;color:#fff!important;box-shadow:none!important}
+html body #picks .picks-group-top button{border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important}
+html body #picks .picks-pin-profile-state.ready{border-color:color-mix(in srgb,var(--success) 55%,var(--line))!important;background:color-mix(in srgb,var(--success) 10%,var(--panel))!important}
+html body #picks .picks-pin-profile-state.ready>span,html body #picks .picks-pin-status.success{color:var(--success-soft)!important}
+
+html body .profile-activity-overlay{background:rgba(0,0,0,.88)!important}
+html body .profile-activity-panel{border-color:var(--line)!important;background:var(--panel2)!important;color:var(--text)!important;box-shadow:none!important}
+html body .profile-activity-head{border-bottom-color:var(--line)!important;background:var(--panel2)!important;background-image:none!important}
+html body .profile-activity-title span,html body .profile-activity-card-head span{color:var(--accent2)!important}
+html body .profile-activity-title strong,html body .profile-activity-stat strong,html body .profile-activity-card-head strong,html body .profile-activity-metric strong,html body .profile-recent-row strong{color:var(--text)!important}
+html body .profile-activity-title small,html body .profile-activity-stat span,html body .profile-activity-stat small,html body .profile-activity-card-head small,html body .profile-activity-metric span,html body .profile-activity-metric small,html body .profile-recent-row small,html body .profile-recent-row time{color:var(--muted)!important}
+html body :is(.profile-activity-stat,.profile-activity-card,.profile-activity-metric,.profile-achievement,.profile-recent-row){border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important;box-shadow:none!important}
+html body .profile-activity-edit,html body .profile-activity-actions button:first-child{border-color:var(--accent)!important;background:var(--accent)!important;color:#fff!important}
+html body .profile-activity-close,html body .profile-activity-actions button:not(:first-child){border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important}
+html body .profile-streak-day{border-color:var(--line)!important;background:var(--panel)!important;color:var(--muted)!important}
+html body .profile-streak-day.complete{border-color:color-mix(in srgb,var(--success) 55%,var(--line))!important;background:color-mix(in srgb,var(--success) 10%,var(--panel))!important;color:var(--success-soft)!important}
+html body .profile-streak-day.perfect{border-color:var(--accent-amber)!important;background:color-mix(in srgb,var(--accent-amber) 10%,var(--panel))!important;color:var(--accent-amber-soft)!important}
+
+html body #whatChangedDialog{border-color:var(--line)!important;background:var(--panel2)!important;background-image:none!important;color:var(--text)!important;box-shadow:none!important}
+html body .what-changed-head{border-bottom-color:var(--line)!important;background:var(--panel2)!important;background-image:none!important}
+html body .what-changed-head::before{background:var(--accent)!important}
+html body .what-changed-kicker{color:var(--accent2)!important}
+html body .what-changed-head h1{color:var(--text)!important;text-shadow:none!important}
+html body .what-changed-head p:last-of-type,html body .what-changed-entry>p,html body .what-changed-entry time,html body .what-changed-fighter small,html body .what-changed-group>h2{color:var(--muted)!important}
+html body #whatChangedClose{border-color:var(--line)!important;background:var(--panel)!important;color:var(--text)!important}
+html body .what-changed-entry,html body .what-changed-empty{border-color:var(--line)!important;background:var(--panel)!important;background-image:none!important;color:var(--text)!important;box-shadow:none!important}
+html body .what-changed-entry h3,html body .what-changed-fighter strong{color:var(--text)!important}
+html body .what-changed-type,html body .what-changed-verified span{border-color:color-mix(in srgb,var(--accent) 45%,var(--line))!important;background:color-mix(in srgb,var(--accent) 10%,var(--panel))!important;color:#ffb0b3!important}
+html body .what-changed-arrow{color:var(--accent2)!important}
+html body .what-changed-avatar{border-color:var(--line)!important;background:var(--panel2)!important;color:var(--accent2)!important}
+
+html body #octagon .octagon-board-head .octagon-intelligence-button,html body #octagon .octagon-intelligence-button{border-color:var(--accent)!important;background-color:var(--accent)!important;background-image:none!important;color:#fff!important;box-shadow:none!important}
+html body #octagon :is(.octagon-manage-beta,[data-octagon-manage-beta]){border-color:var(--line)!important;background:var(--panel)!important;color:var(--muted)!important;box-shadow:none!important}
+
 /* Native bottom navigation: ESPN-style black bar with a restrained active indicator. */
 .native-bottom-nav{border-top-color:var(--line)!important;background:#000!important;box-shadow:0 -10px 28px rgba(0,0,0,.42)!important}
 .native-nav-button{background:transparent!important;color:#8f8f8f!important;box-shadow:none!important}
