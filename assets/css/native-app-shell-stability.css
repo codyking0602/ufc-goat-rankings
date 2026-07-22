@@ -71,7 +71,7 @@ input::placeholder,textarea::placeholder{color:var(--muted)!important}
 .category-chip b{color:var(--text)!important}
 .category-chip span,.category-chip small{color:var(--muted)!important}
 .row button,.row a[role="button"],.watch-moment-link{border-color:color-mix(in srgb,var(--accent) 58%,var(--line))!important;background:transparent!important;color:#ffb0b3!important;box-shadow:none!important}
-.watch-moment-link{border-color:var(--accent)!important}
+.row a.watch-moment-link[role="button"]{border-color:var(--accent)!important}
 
 /* Play: one featured red rail/action, otherwise black and charcoal. */
 #play .play-daily-card{border-color:var(--line)!important;background:radial-gradient(circle at 88% 18%,color-mix(in srgb,var(--accent) 12%,transparent),transparent 34%),linear-gradient(145deg,var(--panel2),var(--panel))!important}
