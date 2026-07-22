@@ -7,6 +7,8 @@ on:
       - main
     paths:
       - 'config/ufc-card-sources.json'
+      - 'assets/data/picks-events.js'
+      - 'scripts/apply-maintained-ufc-baselines.mjs'
       - 'scripts/sync-ufc-card.mjs'
       - 'scripts/test-ufc-card-section-authority.mjs'
       - 'scripts/check-ufc-odds-name-matching.mjs'
@@ -51,6 +53,10 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Test maintained UFC card baselines
+        shell: bash
+        run: node scripts/apply-maintained-ufc-baselines.mjs --force
+
       - name: Test UFC card section authority
         shell: bash
         run: node scripts/test-ufc-card-section-authority.mjs
@@ -74,6 +80,14 @@ jobs:
           npx --yes supabase@latest functions deploy sync-ufc-card \
             --project-ref "$PROJECT_REF" \
             --no-verify-jwt
+
+      - name: Apply maintained repository card baseline
+        id: maintained_baseline
+        shell: bash
+        run: |
+          mkdir -p artifacts/ufc-card-sync
+          set -o pipefail
+          node scripts/apply-maintained-ufc-baselines.mjs --apply --force 2>&1 | tee artifacts/ufc-card-sync/maintained-baseline-console.log
 
       - name: Deploy next-event advance function
         shell: bash
@@ -145,6 +159,7 @@ jobs:
           git add assets/data/picks-odds-health.json
           if ! git diff --cached --quiet; then
             git commit -m "Record deployed UFC odds health [skip ci]"
+            git pull --rebase origin main
             git push
           fi
 
