@@ -1,0 +1,130 @@
+name: Verify MMA Mania card rollout once
+
+on:
+  push:
+    branches:
+      - verification/mma-mania-card-rollout
+    paths:
+      - '.github/workflows/verify-mma-mania-card-rollout-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      ODDS_REFRESH_SECRET: ${{ secrets.ODDS_REFRESH_SECRET }}
+      PROJECT_REF: hdkjwezaswhisxupxydc
+      CARD_SYNC_ENDPOINT: https://hdkjwezaswhisxupxydc.supabase.co/functions/v1/sync-ufc-card
+      CARD_SYNC_SECRET: ${{ secrets.ODDS_REFRESH_SECRET }}
+      UFC_CARD_CONFIRM_DELAY_MS: 1000
+    steps:
+      - name: Check out merged production code
+        uses: actions/checkout@v4
+        with:
+          ref: verification/mma-mania-card-rollout
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Verify required secrets
+        id: secrets
+        continue-on-error: true
+        shell: bash
+        run: |
+          test -n "$SUPABASE_ACCESS_TOKEN"
+          test -n "$ODDS_REFRESH_SECRET"
+
+      - name: Install parser runtime
+        id: runtime
+        continue-on-error: true
+        shell: bash
+        run: |
+          npm install --no-save playwright@1.54.2
+          npx playwright install --with-deps chromium
+
+      - name: Re-run MMA Mania contracts
+        id: contracts
+        continue-on-error: true
+        shell: bash
+        run: |
+          node scripts/apply-maintained-ufc-baselines.mjs --force
+          node scripts/test-ufc-card-section-authority.mjs
+
+      - name: Deploy canonical card reconciliation owner
+        id: deploy
+        continue-on-error: true
+        shell: bash
+        run: |
+          npx --yes supabase@latest functions deploy sync-ufc-card \
+            --project-ref "$PROJECT_REF" \
+            --no-verify-jwt
+
+      - name: Apply corrected maintained card
+        id: baseline
+        continue-on-error: true
+        shell: bash
+        run: |
+          mkdir -p artifacts/ufc-card-sync
+          node scripts/apply-maintained-ufc-baselines.mjs --apply --force \
+            2>&1 | tee artifacts/ufc-card-sync/maintained-baseline-console.log
+
+      - name: Apply confirmed MMA Mania card
+        id: external
+        continue-on-error: true
+        shell: bash
+        run: |
+          node scripts/sync-ufc-card.mjs --apply --force \
+            2>&1 | tee artifacts/ufc-card-sync/mma-mania-console.log
+
+      - name: Publish live rollout evidence
+        if: always()
+        env:
+          SECRETS_OUTCOME: ${{ steps.secrets.outcome }}
+          RUNTIME_OUTCOME: ${{ steps.runtime.outcome }}
+          CONTRACTS_OUTCOME: ${{ steps.contracts.outcome }}
+          DEPLOY_OUTCOME: ${{ steps.deploy.outcome }}
+          BASELINE_OUTCOME: ${{ steps.baseline.outcome }}
+          EXTERNAL_OUTCOME: ${{ steps.external.outcome }}
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs=require('node:fs');
+          const path=require('node:path');
+          const readJson=(name)=>{
+            const file=path.join('artifacts','ufc-card-sync',name);
+            if(!fs.existsSync(file))return null;
+            try{return JSON.parse(fs.readFileSync(file,'utf8'));}
+            catch(error){return {parseError:error.message};}
+          };
+          const readTail=(name)=>{
+            const file=path.join('artifacts','ufc-card-sync',name);
+            return fs.existsSync(file)?fs.readFileSync(file,'utf8').trim().split('\n').slice(-40).join('\n'):null;
+          };
+          const evidence={
+            secretsOutcome:process.env.SECRETS_OUTCOME||'unknown',
+            runtimeOutcome:process.env.RUNTIME_OUTCOME||'unknown',
+            contractsOutcome:process.env.CONTRACTS_OUTCOME||'unknown',
+            deployOutcome:process.env.DEPLOY_OUTCOME||'unknown',
+            baselineOutcome:process.env.BASELINE_OUTCOME||'unknown',
+            externalOutcome:process.env.EXTERNAL_OUTCOME||'unknown',
+            baselineReport:readJson('maintained-baseline-report.json'),
+            mmaManiaReport:readJson('card-sync-report.json'),
+            baselineConsoleTail:readTail('maintained-baseline-console.log'),
+            mmaManiaConsoleTail:readTail('mma-mania-console.log'),
+            verifiedAt:new Date().toISOString()
+          };
+          fs.mkdirSync('verification',{recursive:true});
+          fs.writeFileSync('verification/mma-mania-card-live.json',JSON.stringify(evidence,null,2)+'\n');
+          NODE
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/verify-mma-mania-card-rollout-once.yml
+          git add verification/mma-mania-card-live.json
+          git commit -m "Record live MMA Mania card rollout evidence"
+          git push origin HEAD:verification/mma-mania-card-rollout
