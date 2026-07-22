@@ -1,16 +1,6 @@
 name: Sync UFC Card and Odds
 
 on:
-  push:
-    # Card-source or automation changes should update Supabase immediately.
-    branches:
-      - main
-    paths:
-      - 'config/ufc-card-sources.json'
-      - 'assets/data/picks-events.js'
-      - 'scripts/apply-maintained-ufc-baselines.mjs'
-      - 'scripts/sync-ufc-card.mjs'
-      - '.github/workflows/refresh-ufc-odds.yml'
   schedule:
     - cron: '17 */6 * * *'
   workflow_dispatch:
