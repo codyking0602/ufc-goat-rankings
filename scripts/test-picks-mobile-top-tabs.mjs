@@ -84,7 +84,6 @@ try{
   assert.equal(warRoom.hidden,true,'War Room stays hidden while access is locked');
   assert.equal(warRoom.disabled,true,'War Room remains non-interactive while access is locked');
 
-  const routeSnapshots=[];
   for(const destination of ENABLED_BOTTOM_DESTINATIONS){
     const button=page.locator(`[data-native-bottom-nav] [data-native-destination="${destination}"]`);
     await button.click();
@@ -92,7 +91,6 @@ try{
     const snapshot=await navSnapshot();
     assertNativeShellVisibility(snapshot,`${destination} route`);
     assert.equal(snapshot.buttons.find(item=>item.destination===destination)?.selected,true,`${destination}: newly opened native destination remains visible and selected`);
-    routeSnapshots.push({destination,scroll:snapshot.scroll,nav:snapshot.nav,selected:snapshot.buttons.find(item=>item.selected)?.destination||null});
   }
 
   await page.locator('[data-native-ask]').click();
@@ -100,11 +98,8 @@ try{
   const intelligence=await navSnapshot();
   assertNativeShellVisibility(intelligence,'intelligence route',{selectedCount:0});
   assert.equal(intelligence.currentDestination,'intelligence','Intelligence Ask action opens the canonical Intelligence destination');
-  routeSnapshots.push({destination:'intelligence',scroll:intelligence.scroll,nav:intelligence.nav,selected:'header-ask'});
 
   assert.deepEqual(pageErrors,[],'mobile native navigation causes no uncaught page errors');
-  console.log('PICKS_MOBILE_NAV_CERTIFICATION');
-  console.log(JSON.stringify({viewport:'390x844',layout:'four visible native destinations plus sticky-header Intelligence action',desktopSourceHidden:true,warRoomHidden:true,routes:routeSnapshots.length,pageErrors}));
 }catch(error){
   console.error('PICKS_MOBILE_NAV_FAILURE');
   console.error(JSON.stringify({label:diagnosticLabel,snapshot:diagnosticSnapshot,pageErrors}));
