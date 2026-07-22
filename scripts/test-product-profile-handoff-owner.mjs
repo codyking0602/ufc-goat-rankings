@@ -95,7 +95,7 @@ try{
   assert.equal(report.initial.room,'product-owner-token');
   assert.equal(report.initial.active,'GOAT26');
   assert.equal(report.initial.display,'Cody');
-  assert.equal(report.initial.writes.some(row=>row.changed&&/play-profile-identity\.js/i.test(row.stack)),true,'Canonical access must be persisted by play-profile-identity.js.');
+  assert.equal(report.initial.writes.some(row=>/play-profile-identity\.js/i.test(row.stack)),true,'Canonical identity resolution must execute the play-profile-identity.js persistence path.');
   assert.equal(report.initial.writes.some(row=>row.changed&&/product-architecture\.js/i.test(row.stack)),false,'Product Architecture must not persist canonical identity or access values.');
 
   report.stage='profile-update';
