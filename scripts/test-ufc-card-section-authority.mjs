@@ -4,6 +4,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 import {fileURLToPath} from 'node:url';
 import {buildReconciliationPlan,isAuthoritativeSource,isPickable} from '../supabase/functions/sync-ufc-card/reconciliation.mjs';
+import {parseMmaManiaText} from './sync-ufc-card.mjs';
 
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const event={event_type:'fight-night',card_rule:'Main card only'};
@@ -54,10 +55,36 @@ assert.equal(isAuthoritativeSource('maintained-repo'),true);
 assert.equal(isAuthoritativeSource('mma-mania'),true);
 assert.equal(isAuthoritativeSource('official-ufc'),false);
 
+const mmaFixture=`
+UFC Abu Dhabi Main Event On Paramount+:
+205 lbs.: Magomed Ankalaev vs. Bogdan Guskov
+UFC Abu Dhabi Main Card On Paramount+:
+125 lbs.: Steve Erceg vs. Ramazan Temirov
+265 lbs.: Rizvan Kuniev vs. Tyrell Fortune
+170 lbs.: Islam Dulatov vs. Wellington Turman
+155 lbs.: Magomed Zaynukov vs. Damian Rzepecki
+170 lbs.: Saygid Izagakhmaev vs. Abubakar Vagaev
+UFC Abu Dhabi ‘Prelims’ Card On Paramount+:
+265 lbs.: Valter Walker vs. Thomas Petersen
+155 lbs.: Ismael Bonfim vs. Axel Sola
+205 lbs.: Brendson Ribeiro vs. Magomed Tuchalov
+155 lbs.: Nurullo Aliev vs. Mike Davis
+170 lbs.: Santiago Ponzinibbio vs. Sam Patterson
+205 lbs.: Dustin Jacoby vs. Muhammad Said
+135 lbs.: Abdul Hussein vs. Cody Gibson
+`;
+const parsedFixture=parseMmaManiaText(mmaFixture);
+assert.equal(parsedFixture.length,13);
+assert.equal(parsedFixture.filter((fight)=>fight.card_section==='Main Event').length,1);
+assert.equal(parsedFixture.filter((fight)=>fight.card_section==='Main Card').length,5);
+assert.equal(parsedFixture.filter((fight)=>fight.card_section==='Prelims').length,7);
+assert.equal(parsedFixture.find((fight)=>fight.red_name==='Valter Walker').card_section,'Prelims');
+assert.equal(parsedFixture.find((fight)=>fight.red_name==='Ismael Bonfim').card_section,'Prelims');
+
 const config=JSON.parse(fs.readFileSync(path.join(ROOT,'config','ufc-card-sources.json'),'utf8'));
 for(const configuredEvent of config.events){
   assert.equal('official' in configuredEvent,false,`${configuredEvent.eventId} must not configure UFC.com`);
-  assert.ok(Array.isArray(configuredEvent.fallbackSources)&&configuredEvent.fallbackSources.length>0);
+  assert.ok(Array.isArray(configuredEvent.fallbackSources)&&configuredEvent.fallbackSources.length===1);
   assert.ok(configuredEvent.fallbackSources.every((source)=>source.type==='mma-mania'));
   assert.ok(configuredEvent.fallbackSources.every((source)=>new URL(source.url).hostname.endsWith('mmamania.com')));
 }
@@ -78,10 +105,12 @@ assert.ok(abu.fights.some((fight)=>fight.id==='abu26-abdul-hussein-cody-gibson')
 assert.ok(abu.fights.some((fight)=>fight.id==='abu26-dustin-jacoby-muhammad-said'));
 
 const scraper=fs.readFileSync(path.join(ROOT,'scripts','sync-ufc-card.mjs'),'utf8');
+assert.equal(scraper.includes('official-ufc'),false,'UFC.com must not participate in the scraper');
+assert.equal(scraper.includes('ufc.com'),false,'the scraper must not contain a UFC.com URL or host');
 assert.equal(scraper.includes('chooseMainWindow'),false,'count-based main-card window inference must stay deleted');
-assert.equal(scraper.includes("if(!fight.card_section) fight.card_section='Prelims'"),false,'unknown sections must not default to prelims');
 assert.match(scraper,/main-card-count-mismatch:\$\{mainCount\}!=\$\{requiredMain\}/,'main-card count must reject instead of rewrite');
-assert.match(scraper,/parseMmaMania/,'MMA Mania parser must remain the active external parser');
+assert.match(scraper,/parseMmaManiaText/,'MMA Mania parser must remain the active external parser');
+assert.match(scraper,/Two MMA Mania captures disagreed/,'two matching MMA Mania captures must be required');
 
 const baselineScript=fs.readFileSync(path.join(ROOT,'scripts','apply-maintained-ufc-baselines.mjs'),'utf8');
 assert.match(baselineScript,/UFC_PICKS_FULL_EVENTS/);
@@ -107,4 +136,4 @@ const deployBaselineStep=deployWorkflow.indexOf('Apply maintained repository car
 assert.ok(deployFunctionStep>=0&&deployBaselineStep>deployFunctionStep,'deployment must install the Edge policy before applying the baseline');
 assert.match(deployWorkflow,/Record deployed UFC card health \[skip ci\]/,'deployment must publish card reconciliation evidence');
 
-console.log('MMA Mania card authority and Abu Dhabi section checks passed.');
+console.log('MMA Mania card authority, parser, and Abu Dhabi section checks passed.');
