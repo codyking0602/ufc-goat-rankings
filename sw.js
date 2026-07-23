@@ -23,16 +23,68 @@ const SHELL_FALLBACKS=[
   './assets/js/native-app-shell-stability.js'
 ];
 const CORE=['./','./manifest.webmanifest',...SHELL_FALLBACKS];
+const SUPABASE_SCRIPT_SOURCES=[
+  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',
+  'https://unpkg.com/@supabase/supabase-js@2'
+];
+const SUPABASE_SCRIPT_ROUTES=SUPABASE_SCRIPT_SOURCES.map(source=>new URL(source));
+const SUPABASE_SCRIPT_TIMEOUT_MS=3200;
 const PALETTE_NETWORK_FIRST=/\/assets\/css\/(?:app|home-dashboard|native-app-shell|native-app-shell-stability|product-polish)\.css$/i;
 const FORCE_NETWORK=/\/assets\/(?:(?:js\/(?:app-canonical-group|app-notification-surface-fix|app-update-watcher|product-architecture|octagon-hq-shell|native-app-shell|native-app-shell-stability|community-profiles|fresh-home-route-bootstrap|fresh-home-launch|home-dashboard|find-leader|better-than-standalone-share|play-daily-find-leader|game-challenges|profile-challenges|share-deep-links|picks|picks-auto-advance|octagon-notifications)|data\/(?:find-leader-question-bank|find-leader-record-book-data|what-changed|supabase-config|picks-events))\.js|css\/(?:app|home-dashboard|native-app-shell|native-app-shell-stability|product-polish|community-profiles|find-leader|picks-mobile-polish)\.css)$/i;
 const scopedUrl=path=>new URL(path,self.registration.scope).href;
 const SHELL_FALLBACK_PATHS=new Set(SHELL_FALLBACKS.map(path=>new URL(path,self.registration.scope).pathname));
 const isShellFallbackPath=path=>SHELL_FALLBACK_PATHS.has(path);
+const canonicalSupabaseRequest=()=>new Request(SUPABASE_SCRIPT_SOURCES[0],{mode:'no-cors',credentials:'omit'});
+
+function usableResponse(response){
+  return Boolean(response&&(response.ok||response.type==='opaque'));
+}
+
+function isSupabaseScript(url){
+  return SUPABASE_SCRIPT_ROUTES.some(route=>url.origin===route.origin&&url.pathname.startsWith(route.pathname));
+}
+
+function fetchWithDeadline(url,timeout=SUPABASE_SCRIPT_TIMEOUT_MS){
+  const request=new Request(url,{mode:'no-cors',credentials:'omit',cache:'no-store'});
+  return Promise.race([
+    fetch(request,{cache:'no-store'}).then(response=>{
+      if(!usableResponse(response))throw new Error(`Unusable Supabase response from ${url}`);
+      return response;
+    }),
+    new Promise((_,reject)=>setTimeout(()=>reject(new Error(`Supabase request timed out: ${url}`)),timeout))
+  ]);
+}
+
+async function fetchRealSupabase(preferredUrl=''){
+  const sources=[preferredUrl,...SUPABASE_SCRIPT_SOURCES].filter((source,index,list)=>source&&list.indexOf(source)===index);
+  return await Promise.any(sources.map(source=>fetchWithDeadline(source)));
+}
+
+async function warmSupabaseScript(cache){
+  try{
+    const response=await fetchRealSupabase();
+    if(usableResponse(response))await cache.put(canonicalSupabaseRequest(),response.clone());
+  }catch(_error){}
+}
+
+async function resolveSupabaseScript(request){
+  const cache=await caches.open(CACHE_NAME);
+  const installed=await cache.match(request)||await cache.match(canonicalSupabaseRequest());
+  try{
+    const response=await fetchRealSupabase(request.url);
+    if(usableResponse(response)){
+      await cache.put(canonicalSupabaseRequest(),response.clone());
+      return response;
+    }
+  }catch(_error){}
+  return installed||Response.error();
+}
 
 self.addEventListener('install',event=>{
   event.waitUntil((async()=>{
     const cache=await caches.open(CACHE_NAME);
     await Promise.all(CORE.map(path=>cache.add(new Request(scopedUrl(path),{cache:'reload'}))));
+    await warmSupabaseScript(cache);
     await self.skipWaiting();
   })());
 });
@@ -122,6 +174,10 @@ self.addEventListener('fetch',event=>{
   const url=new URL(request.url);
   if(isNavigation(request)){
     event.respondWith(instantNavigation(request));
+    return;
+  }
+  if(isSupabaseScript(url)){
+    event.respondWith(resolveSupabaseScript(request));
     return;
   }
   if(url.origin===self.location.origin&&PALETTE_NETWORK_FIRST.test(url.pathname)){
