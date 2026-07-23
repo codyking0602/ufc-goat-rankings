@@ -4,7 +4,7 @@
   if(window.__UFC_FRESH_HOME_ROUTE_BOOTSTRAP_STARTED__)return;
   window.__UFC_FRESH_HOME_ROUTE_BOOTSTRAP_STARTED__=true;
 
-  const VERSION='fresh-home-route-bootstrap-20260719a';
+  const VERSION='fresh-home-route-bootstrap-20260722b-force-standalone-home';
   const RESUME_PICKS_KEY='__picks_resume';
   const INVITE_KEY='invite';
   const RESUME_WINDOW_MS=30000;
@@ -13,7 +13,7 @@
   const staleKeys=['group','room','event','picksView','archive','week','open','game',INVITE_KEY,RESUME_PICKS_KEY];
 
   try{
-    navigator.serviceWorker?.getRegistration?.().then(registration=>registration?.update()).catch(()=>{});
+    window.navigator.serviceWorker?.getRegistration?.().then(registration=>registration?.update()).catch(()=>{});
   }catch(_error){}
 
   const url=new URL(location.href);
