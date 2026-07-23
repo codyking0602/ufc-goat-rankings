@@ -11,6 +11,11 @@
   const deepLinkKeys=['challenge','share','fighter','message','notification','push'];
   const picksRouteKeys=['group','room','event','picksView','archive'];
   const staleKeys=['group','room','event','picksView','archive','week','open','game',INVITE_KEY,RESUME_PICKS_KEY];
+
+  try{
+    window.navigator.serviceWorker?.getRegistration?.().then(registration=>registration?.update()).catch(()=>{});
+  }catch(_error){}
+
   const url=new URL(location.href);
   const navigationType=performance.getEntriesByType?.('navigation')?.[0]?.type||'navigate';
   const standalone=window.navigator.standalone===true
