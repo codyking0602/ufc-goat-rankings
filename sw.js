@@ -1,4 +1,4 @@
-const VERSION='octagon-hq-sw-20260722f-supabase-launch-deadline';
+const VERSION='octagon-hq-sw-20260722e-installed-shell-fallback';
 const CACHE_NAME='octagon-hq-static-v20';
 const COLD_LAUNCH_REVISION='20260722f-complete-local-shell';
 const LEGACY_PREFIX='octagon-hq-static-';
