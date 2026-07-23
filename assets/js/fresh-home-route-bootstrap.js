@@ -4,38 +4,17 @@
   if(window.__UFC_FRESH_HOME_ROUTE_BOOTSTRAP_STARTED__)return;
   window.__UFC_FRESH_HOME_ROUTE_BOOTSTRAP_STARTED__=true;
 
-  const VERSION='fresh-home-route-bootstrap-20260722b-force-standalone-home';
+  const VERSION='fresh-home-route-bootstrap-20260723a-worker-update-handoff';
   const RESUME_PICKS_KEY='__picks_resume';
   const INVITE_KEY='invite';
   const RESUME_WINDOW_MS=30000;
-  const WORKER_RECOVERY_RELOAD_KEY='ufc-startup-worker-reload-20260723a';
   const deepLinkKeys=['challenge','share','fighter','message','notification','push'];
   const picksRouteKeys=['group','room','event','picksView','archive'];
   const staleKeys=['group','room','event','picksView','archive','week','open','game',INVITE_KEY,RESUME_PICKS_KEY];
 
-  function unlockInstalledWorkerUpdate(){
-    if(!('serviceWorker' in navigator))return;
-    let reloading=false;
-    const reloadOnce=()=>{
-      if(reloading)return;
-      try{
-        if(sessionStorage.getItem(WORKER_RECOVERY_RELOAD_KEY)==='1')return;
-        sessionStorage.setItem(WORKER_RECOVERY_RELOAD_KEY,'1');
-      }catch(_error){}
-      reloading=true;
-      location.reload();
-    };
-    navigator.serviceWorker.addEventListener('controllerchange',reloadOnce,{once:true});
-    navigator.serviceWorker.getRegistration().then(registration=>{
-      if(!registration){
-        navigator.serviceWorker.removeEventListener('controllerchange',reloadOnce);
-        return false;
-      }
-      return registration.update();
-    }).catch(()=>{});
-  }
-
-  unlockInstalledWorkerUpdate();
+  try{
+    navigator.serviceWorker?.getRegistration?.().then(registration=>registration?.update()).catch(()=>{});
+  }catch(_error){}
 
   const url=new URL(location.href);
   const navigationType=performance.getEntriesByType?.('navigation')?.[0]?.type||'navigate';
