@@ -6,12 +6,14 @@ on:
       - agent/v1-data-export-for-v2
     paths:
       - .github/workflows/import-v1-history-into-v2.yml
+      - scripts/import-v1-history-into-v2.mjs
   pull_request:
     branches:
       - main
     types: [opened, synchronize, reopened]
     paths:
       - .github/workflows/import-v1-history-into-v2.yml
+      - scripts/import-v1-history-into-v2.mjs
 
 permissions:
   contents: read
@@ -73,158 +75,17 @@ jobs:
           node scripts/export-v1-for-v2.mjs > /tmp/v1-export-summary.json
           test -s "$EXPORT_OUTPUT"
           chmod 600 "$EXPORT_OUTPUT"
-          jq -e '
-            .schemaVersion == 1 and
-            .cutoff == "2026-07-25T00:00:00.000Z" and
-            .rules.canonicalSixMemberGroupOnly == true and
-            (.sourceGroupFingerprint | type == "string" and length > 0) and
-            ([.profiles[].normalizedName] | sort) == ["BROCK","CODY","RHONDA","SHANE","TONY","TYLER"] and
-            (.pickEvents | all(.status == "complete" and .startsAt < "2026-07-25T00:00:00.000Z")) and
-            (.pickFights | all(.winnerFighterSlug == .redFighterSlug or .winnerFighterSlug == .blueFighterSlug))
-          ' "$EXPORT_OUTPUT" > /dev/null
 
-      - name: Discover exactly one canonical V2 target
-        id: target
+      - name: Discover V2, import twice, and reconcile
         shell: bash
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
           set -euo pipefail
-          expected='["BROCK","CODY","RHONDA","SHANE","TONY","TYLER"]'
-          projects=$(curl --fail-with-body --silent --show-error \
-            -H "Authorization: Bearer ${SUPABASE_ACCESS_TOKEN}" \
-            "https://api.supabase.com/v1/projects")
-          candidate_count=0
-          target_ref=''
-          target_key=''
-
-          while IFS= read -r project_ref; do
-            [ -n "$project_ref" ] || continue
-            [ "$project_ref" != "$V1_PROJECT_REF" ] || continue
-
-            keys=$(curl --fail-with-body --silent --show-error \
-              -H "Authorization: Bearer ${SUPABASE_ACCESS_TOKEN}" \
-              "https://api.supabase.com/v1/projects/${project_ref}/api-keys" 2>/dev/null || true)
-            service_key=$(printf '%s' "$keys" | jq -r '[.[]? | select(.name == "service_role" or .name == "secret") | (.api_key // .key // empty)] | map(select(length > 0)) | first // empty' 2>/dev/null || true)
-            [ -n "$service_key" ] || continue
-
-            profile_rows=$(curl --silent --show-error \
-              -H "apikey: ${service_key}" \
-              -H "Authorization: Bearer ${service_key}" \
-              "https://${project_ref}.supabase.co/rest/v1/profiles?select=normalized_name&normalized_name=in.(BROCK,CODY,RHONDA,SHANE,TONY,TYLER)&order=normalized_name.asc" || true)
-            names=$(printf '%s' "$profile_rows" | jq -c '[.[].normalized_name] | sort' 2>/dev/null || true)
-            [ "$names" = "$expected" ] || continue
-
-            schema=$(curl --silent --show-error \
-              -H "apikey: ${service_key}" \
-              -H "Authorization: Bearer ${service_key}" \
-              -H "Accept: application/openapi+json" \
-              "https://${project_ref}.supabase.co/rest/v1/" || true)
-            printf '%s' "$schema" | jq -e '.paths["/rpc/import_v1_history_atomic_reconciled"]' > /dev/null 2>&1 || continue
-
-            candidate_count=$((candidate_count + 1))
-            target_ref="$project_ref"
-            target_key="$service_key"
-          done < <(printf '%s' "$projects" | jq -r '.[] | .id // .ref // empty')
-
-          if [ "$candidate_count" -ne 1 ] || [ -z "$target_ref" ] || [ -z "$target_key" ]; then
-            echo "::error title=Canonical V2 target unresolved::Expected exactly one accessible non-V1 project with the canonical six profiles and atomic reconciliation RPC; found ${candidate_count}."
-            exit 1
-          fi
-
-          echo "::add-mask::$target_key"
-          printf 'V2_TARGET_REF=%s\n' "$target_ref" >> "$GITHUB_ENV"
-          printf 'V2_SERVICE_ROLE_KEY=%s\n' "$target_key" >> "$GITHUB_ENV"
-          echo "target_ref=$target_ref" >> "$GITHUB_OUTPUT"
-
-      - name: Submit canonical payload atomically — first run
-        shell: bash
-        run: |
-          set -euo pipefail
-          jq -n --slurpfile payload "$EXPORT_OUTPUT" '{p_payload:$payload[0]}' > /tmp/v2-import-request.json
-          status=$(curl --silent --show-error \
-            --output "$FIRST_REPORT" \
-            --write-out '%{http_code}' \
-            --request POST \
-            --header "apikey: ${V2_SERVICE_ROLE_KEY}" \
-            --header "Authorization: Bearer ${V2_SERVICE_ROLE_KEY}" \
-            --header "Content-Type: application/json" \
-            --data-binary @/tmp/v2-import-request.json \
-            "https://${V2_TARGET_REF}.supabase.co/rest/v1/rpc/import_v1_history_atomic_reconciled")
-          if [[ "$status" != 2* ]]; then
-            echo "::error title=First atomic import rolled back::V2 returned HTTP ${status}."
-            head -c 600 "$FIRST_REPORT"
-            exit 1
-          fi
-          jq -e '.changes and .profiles and .recordScoringRules.missingSelectionCountsAsLoss == false and .recordScoringRules.predeterminedRecordExpected == false' "$FIRST_REPORT" > /dev/null
-
-      - name: Submit exact same payload atomically — idempotency run
-        shell: bash
-        run: |
-          set -euo pipefail
-          status=$(curl --silent --show-error \
-            --output "$SECOND_REPORT" \
-            --write-out '%{http_code}' \
-            --request POST \
-            --header "apikey: ${V2_SERVICE_ROLE_KEY}" \
-            --header "Authorization: Bearer ${V2_SERVICE_ROLE_KEY}" \
-            --header "Content-Type: application/json" \
-            --data-binary @/tmp/v2-import-request.json \
-            "https://${V2_TARGET_REF}.supabase.co/rest/v1/rpc/import_v1_history_atomic_reconciled")
-          if [[ "$status" != 2* ]]; then
-            echo "::error title=Second atomic import failed::V2 returned HTTP ${status}."
-            head -c 600 "$SECOND_REPORT"
-            exit 1
-          fi
-
-      - name: Verify zero-mutation rerun and write sanitized reconciliation
-        shell: bash
-        run: |
-          set -euo pipefail
-          checksum=$(sha256sum "$EXPORT_OUTPUT" | awk '{print $1}')
-          jq -e '
-            [.changes.avatarsInserted, .changes.findLeaderInserted, .changes.eventsInserted, .changes.boutsInserted, .changes.picksInserted]
-            | all(. == 0)
-          ' "$SECOND_REPORT" > /dev/null
-          jq -e '.protectedBeforeHash == .protectedAfterHash' "$FIRST_REPORT" > /dev/null
-          jq -e '.protectedBeforeHash == .protectedAfterHash' "$SECOND_REPORT" > /dev/null
-          first_after=$(jq -r '.protectedAfterHash' "$FIRST_REPORT")
-          second_before=$(jq -r '.protectedBeforeHash' "$SECOND_REPORT")
-          [ "$first_after" = "$second_before" ]
-          diff -u <(jq -S '.profiles' "$FIRST_REPORT") <(jq -S '.profiles' "$SECOND_REPORT")
-
-          jq -n \
-            --arg v1SourceSha "$GITHUB_SHA" \
-            --arg v2TargetRef "$V2_TARGET_REF" \
-            --arg payloadChecksum "$checksum" \
-            --slurpfile first "$FIRST_REPORT" \
-            --slurpfile second "$SECOND_REPORT" \
-            '{
-              schemaVersion: 1,
-              v1SourceSha: $v1SourceSha,
-              v2TargetRef: $v2TargetRef,
-              payloadChecksum: $payloadChecksum,
-              firstRun: $first[0],
-              secondRun: $second[0]
-            }' > "$COMBINED_REPORT"
-
-          jq -c '{
-            status:"reconciled",
-            codyRecord:{
-              wins:.firstRun.profiles.CODY.historicalPicksCorrect,
-              losses:.firstRun.profiles.CODY.historicalPicksIncorrect,
-              missing:.firstRun.profiles.CODY.historicalPicksMissing
-            },
-            codyFindLeader:{
-              recordedDays:.firstRun.profiles.CODY.recordedDays,
-              bestStreak:.firstRun.profiles.CODY.bestStreak,
-              perfect10s:.firstRun.profiles.CODY.perfect10s,
-              bestScore:.firstRun.profiles.CODY.bestScore
-            },
-            firstRunChanges:.firstRun.changes,
-            secondRunChanges:.secondRun.changes,
-            protectedHash:.firstRun.protectedAfterHash
-          }' "$COMBINED_REPORT"
+          node scripts/import-v1-history-into-v2.mjs
+          test -s "$FIRST_REPORT"
+          test -s "$SECOND_REPORT"
+          test -s "$COMBINED_REPORT"
 
       - name: Upload one-day sanitized reconciliation report
         uses: actions/upload-artifact@v4
@@ -235,10 +96,10 @@ jobs:
           if-no-files-found: error
           compression-level: 0
 
-      - name: Remove plaintext and temporary credentials from runner files
+      - name: Remove plaintext and temporary runner files
         if: always()
         shell: bash
-        run: rm -f "$EXPORT_OUTPUT" "$FIRST_REPORT" "$SECOND_REPORT" "$COMBINED_REPORT" /tmp/v1-export-summary.json /tmp/v2-import-request.json
+        run: rm -f "$EXPORT_OUTPUT" "$FIRST_REPORT" "$SECOND_REPORT" "$COMBINED_REPORT" /tmp/v1-export-summary.json
 
       - name: Record one-time migration boundary
         if: success()
@@ -247,7 +108,7 @@ jobs:
           {
             echo "### V1 → V2 history import reconciled"
             echo "- Exact V1 source SHA: \`${GITHUB_SHA}\`"
-            echo "- Canonical V2 target discovered by exact six-profile and RPC match"
+            echo "- Canonical V2 target discovered by exact six-profile match"
             echo "- One atomic PostgreSQL mutation owner"
             echo "- Exact payload invoked twice"
             echo "- Second invocation produced zero mutations"
