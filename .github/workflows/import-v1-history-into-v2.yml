@@ -6,6 +6,12 @@ on:
       - agent/v1-data-export-for-v2
     paths:
       - .github/workflows/import-v1-history-into-v2.yml
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+    paths:
+      - .github/workflows/import-v1-history-into-v2.yml
 
 permissions:
   contents: read
@@ -16,6 +22,10 @@ concurrency:
 
 jobs:
   import:
+    if: >-
+      github.event_name == 'push' ||
+      (github.event.pull_request.head.repo.full_name == github.repository &&
+       github.event.pull_request.head.ref == 'agent/v1-data-export-for-v2')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
