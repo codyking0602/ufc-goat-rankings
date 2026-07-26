@@ -1,9 +1,11 @@
+import { createHash } from "node:crypto";
 import { writeFile } from "node:fs/promises";
 
 const supabaseUrl = String(process.env.V1_SUPABASE_URL || "").replace(/\/$/, "");
 const serviceRoleKey = String(process.env.V1_SERVICE_ROLE_KEY || "");
 const outputPath = String(process.env.EXPORT_OUTPUT || "/tmp/octagon-v1-export.json");
 const cutoff = new Date(process.env.EXPORT_CUTOFF || "2026-07-25T00:00:00Z");
+const expectedMemberNames = ["CODY", "BROCK", "RHONDA", "SHANE", "TONY", "TYLER"];
 
 if (!supabaseUrl || !serviceRoleKey) {
   throw new Error("V1 Supabase service credentials are required.");
@@ -79,27 +81,60 @@ function slugify(value) {
     .replace(/^-+|-+$/g, "");
 }
 
-let groupMembers = await fetchRows("pick_group_members", {
-  select: "id,display_name,profile_photo_data",
+function sameNames(left, right) {
+  const a = [...new Set(left)].sort();
+  const b = [...new Set(right)].sort();
+  return a.length === b.length && a.every((value, index) => value === b[index]);
+}
+
+let allGroupMembers = await fetchRows("pick_group_members", {
+  select: "id,group_id,display_name,profile_photo_data",
   order: "created_at.asc",
 }, { allowFailure: true });
-if (!groupMembers) {
-  groupMembers = await fetchRows("pick_group_members", {
-    select: "id,display_name",
+if (!allGroupMembers) {
+  allGroupMembers = await fetchRows("pick_group_members", {
+    select: "id,group_id,display_name",
     order: "created_at.asc",
   });
 }
 
-groupMembers = groupMembers.map((member) => ({
+allGroupMembers = allGroupMembers.map((member) => ({
   ...member,
   profile_photo_data: member.profile_photo_data || null,
 }));
 
-const dailyAttempts = await fetchRows("play_daily_attempts", {
+const membersByGroup = new Map();
+for (const member of allGroupMembers) {
+  const rows = membersByGroup.get(member.group_id) || [];
+  rows.push(member);
+  membersByGroup.set(member.group_id, rows);
+}
+
+const canonicalCandidates = [...membersByGroup.entries()].filter(([, members]) => (
+  sameNames(members.map((member) => normalizeDisplayName(member.display_name)), expectedMemberNames)
+));
+
+if (canonicalCandidates.length !== 1) {
+  const overlapSummary = [...membersByGroup.values()]
+    .map((members) => ({
+      memberCount: members.length,
+      expectedOverlap: members.filter((member) => expectedMemberNames.includes(normalizeDisplayName(member.display_name))).length,
+    }))
+    .sort((left, right) => right.expectedOverlap - left.expectedOverlap || left.memberCount - right.memberCount)
+    .slice(0, 10);
+  throw new Error(`Canonical V1 group resolution failed: expected one exact six-member group, found ${canonicalCandidates.length}. Candidate summary: ${JSON.stringify(overlapSummary)}`);
+}
+
+const [canonicalGroupId, groupMembers] = canonicalCandidates[0];
+const canonicalGroupFingerprint = createHash("sha256").update(canonicalGroupId).digest("hex").slice(0, 16);
+const groupMemberIds = groupMembers.map((member) => member.id);
+
+const dailyAttempts = groupMemberIds.length ? await fetchRows("play_daily_attempts", {
   select: "member_id,challenge_day,game_type,official_score,best_score,attempt_count,first_completed_at",
+  member_id: inFilter(groupMemberIds),
   game_type: "eq.find-leader",
   order: "challenge_day.asc",
-});
+}) : [];
 
 const completedEvents = (await fetchRows("pick_events", {
   select: "id,name,subtitle,event_type,event_date,location,status",
@@ -108,7 +143,16 @@ const completedEvents = (await fetchRows("pick_events", {
   order: "event_date.asc",
 })).filter((event) => new Date(event.event_date).getTime() < cutoff.getTime());
 
-const eventIds = completedEvents.map((event) => event.id);
+const completedEventIds = completedEvents.map((event) => event.id);
+const groupEvents = completedEventIds.length ? await fetchRows("pick_group_events", {
+  select: "group_id,event_id,room_id",
+  group_id: `eq.${canonicalGroupId}`,
+  event_id: inFilter(completedEventIds),
+}) : [];
+const eventIds = unique(groupEvents.map((row) => row.event_id));
+const eventIdSet = new Set(eventIds);
+const canonicalEvents = completedEvents.filter((event) => eventIdSet.has(event.id));
+
 const fights = eventIds.length ? await fetchRows("pick_fights", {
   select: "id,event_id,bout_order,weight_class,red_name,blue_name,lock_at,winner_name,result_status",
   event_id: inFilter(eventIds),
@@ -122,18 +166,19 @@ const resolvedFights = fights.filter((fight) => (
 ));
 const resolvedFightIds = resolvedFights.map((fight) => fight.id);
 const resolvedEventIds = unique(resolvedFights.map((fight) => fight.event_id));
+const resolvedEventIdSet = new Set(resolvedEventIds);
 
-const groupEvents = resolvedEventIds.length ? await fetchRows("pick_group_events", {
-  select: "group_id,event_id,room_id",
-  event_id: inFilter(resolvedEventIds),
-}) : [];
-const roomIds = unique(groupEvents.map((row) => row.room_id));
+const roomIds = unique(groupEvents
+  .filter((row) => resolvedEventIdSet.has(row.event_id))
+  .map((row) => row.room_id));
 const roomMembers = roomIds.length ? await fetchRows("pick_room_members", {
   select: "id,room_id,display_name,group_member_id",
   room_id: inFilter(roomIds),
 }) : [];
-const selections = resolvedFightIds.length ? await fetchRows("pick_selections", {
+const roomMemberIds = roomMembers.map((member) => member.id);
+const selections = resolvedFightIds.length && roomMemberIds.length ? await fetchRows("pick_selections", {
   select: "member_id,fight_id,fighter_name,picked_at",
+  member_id: inFilter(roomMemberIds),
   fight_id: inFilter(resolvedFightIds),
   order: "picked_at.asc",
 }) : [];
@@ -141,13 +186,12 @@ const selections = resolvedFightIds.length ? await fetchRows("pick_selections", 
 const groupMemberById = new Map(groupMembers.map((member) => [member.id, member]));
 const roomMemberById = new Map(roomMembers.map((member) => [member.id, member]));
 const fightById = new Map(resolvedFights.map((fight) => [fight.id, fight]));
-const eventById = new Map(completedEvents.map((event) => [event.id, event]));
 
 const profiles = new Map();
 function ensureProfile(displayName, avatarPhotoData = null) {
   const cleaned = cleanDisplayName(displayName);
   const normalizedName = normalizeDisplayName(cleaned);
-  if (!normalizedName) return null;
+  if (!expectedMemberNames.includes(normalizedName)) return null;
   const current = profiles.get(normalizedName) || {
     displayName: cleaned,
     normalizedName,
@@ -193,7 +237,7 @@ for (const selection of selections) {
   const conflictKey = `${profile.normalizedName}|${fight.event_id}|${fight.id}`;
   const previous = pickConflictKey.get(conflictKey);
   if (previous && previous !== fighterName) {
-    throw new Error(`Conflicting V1 picks for ${profile.displayName} on ${fight.id}: ${previous} vs ${fighterName}`);
+    throw new Error(`Conflicting canonical-group picks for ${profile.displayName} on ${fight.id}`);
   }
   pickConflictKey.set(conflictKey, fighterName);
   profile.picks.push({
@@ -226,8 +270,12 @@ for (const profile of profiles.values()) {
   ));
 }
 
-const exportEvents = completedEvents
-  .filter((event) => resolvedEventIds.includes(event.id))
+if (!sameNames([...profiles.keys()], expectedMemberNames)) {
+  throw new Error(`Canonical profile set changed during export: ${JSON.stringify([...profiles.keys()].sort())}`);
+}
+
+const exportEvents = canonicalEvents
+  .filter((event) => resolvedEventIdSet.has(event.id))
   .map((event) => ({
     eventId: event.id,
     name: cleanDisplayName(event.name) || "UFC Event",
@@ -255,9 +303,11 @@ const exportFights = resolvedFights.map((fight) => ({
 const payload = {
   schemaVersion: 1,
   source: "Octagon HQ V1 production",
+  sourceGroupFingerprint: canonicalGroupFingerprint,
   generatedAt: new Date().toISOString(),
   cutoff: cutoff.toISOString(),
   rules: {
+    canonicalSixMemberGroupOnly: true,
     completedEventsOnly: true,
     resolvedWinnerFightsOnly: true,
     preserveExistingV2Rows: true,
@@ -281,5 +331,6 @@ await writeFile(outputPath, `${JSON.stringify(payload)}\n`, { mode: 0o600 });
 console.log(JSON.stringify({
   generatedAt: payload.generatedAt,
   cutoff: payload.cutoff,
+  sourceGroupFingerprint: payload.sourceGroupFingerprint,
   summary: payload.summary,
 }));
