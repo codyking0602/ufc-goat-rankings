@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
 
 concurrency:
   group: octagon-v1-data-export-for-v2
@@ -119,6 +120,7 @@ jobs:
           test -s "$ENCRYPTED_PATH"
 
       - name: Upload one-day encrypted handoff
+        id: upload
         uses: actions/upload-artifact@v4
         with:
           name: octagon-v1-export-${{ github.sha }}
@@ -139,3 +141,50 @@ jobs:
             echo "- Plaintext was deleted before artifact upload"
             echo "- Artifact retention: 1 day"
           } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Post encrypted handoff on export PR
+        if: success()
+        uses: actions/github-script@v7
+        env:
+          ARTIFACT_ID: ${{ steps.upload.outputs.artifact-id }}
+          ARTIFACT_URL: ${{ steps.upload.outputs.artifact-url }}
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: 248,
+              body: [
+                "## Encrypted V1 export ready",
+                "",
+                `- Source SHA: \`${context.sha}\``,
+                `- Workflow run: \`${context.runId}\``,
+                `- Artifact ID: \`${process.env.ARTIFACT_ID}\``,
+                `- Artifact: ${process.env.ARTIFACT_URL || "available from the workflow run"}`,
+                `- Cutoff: \`${process.env.EXPORT_CUTOFF}\``,
+                "- July 25 and later events were excluded.",
+                "- Artifact expires after one day.",
+                "",
+                "This PR remains export-only and must not be merged.",
+              ].join("\n"),
+            });
+
+      - name: Report export failure on export PR
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: 248,
+              body: [
+                "## V1 export failed",
+                "",
+                `- Source SHA: \`${context.sha}\``,
+                `- Workflow run: \`${context.runId}\``,
+                "- No export should be treated as available from this run.",
+                "",
+                "The failure notice intentionally contains no credentials or data payload.",
+              ].join("\n"),
+            });
