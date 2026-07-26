@@ -79,7 +79,7 @@ jobs:
             .rules.canonicalSixMemberGroupOnly == true and
             (.sourceGroupFingerprint | type == "string" and length > 0) and
             ([.profiles[].normalizedName] | sort) == ["BROCK","CODY","RHONDA","SHANE","TONY","TYLER"] and
-            (.pickEvents | all(.status == "complete" and (.startsAt | fromdateiso8601) < ("2026-07-25T00:00:00Z" | fromdateiso8601))) and
+            (.pickEvents | all(.status == "complete" and .startsAt < "2026-07-25T00:00:00.000Z")) and
             (.pickFights | all(.winnerFighterSlug == .redFighterSlug or .winnerFighterSlug == .blueFighterSlug))
           ' "$EXPORT_OUTPUT" > /dev/null
 
