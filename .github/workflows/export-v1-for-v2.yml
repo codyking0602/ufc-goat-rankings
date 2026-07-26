@@ -34,6 +34,9 @@ jobs:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
       SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+      EXPORT_OUTPUT: /tmp/octagon-v1-export.json
+      ENCRYPTED_OUTPUT: /tmp/octagon-v1-export.encrypted.json
+      DIAGNOSTIC_OUTPUT: /tmp/octagon-v1-export-diagnostic.txt
 
     steps:
       - name: Check out isolated export branch
@@ -67,18 +70,15 @@ jobs:
         id: build
         continue-on-error: true
         shell: bash
-        env:
-          EXPORT_OUTPUT: /tmp/octagon-v1-export.json
-          DIAGNOSTIC_OUTPUT: /tmp/octagon-v1-export-diagnostic.txt
         run: |
           set +e
-          node scripts/export-v1-for-v2.mjs >/tmp/export-stdout.txt 2>/tmp/export-stderr.txt
+          node scripts/export-v1-for-v2.mjs > /tmp/export-stdout.txt 2> /tmp/export-stderr.txt
           status=$?
           {
             echo "source_sha=${GITHUB_SHA}"
             echo "cutoff=${EXPORT_CUTOFF}"
             echo "exit_status=${status}"
-            echo ""
+            echo
             if [ "$status" -eq 0 ]; then
               echo "export_status=success"
               tail -n 20 /tmp/export-stdout.txt
@@ -106,9 +106,6 @@ jobs:
       - name: Encrypt export before it leaves the runner
         if: steps.build.outcome == 'success'
         shell: bash
-        env:
-          PLAINTEXT_PATH: /tmp/octagon-v1-export.json
-          ENCRYPTED_PATH: /tmp/octagon-v1-export.encrypted.json
         run: |
           set -euo pipefail
           python -m pip install --quiet cryptography
@@ -122,23 +119,22 @@ jobs:
           from cryptography.hazmat.primitives.ciphers.aead import AESGCM
           from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 
-          source = Path(os.environ["PLAINTEXT_PATH"])
-          destination = Path(os.environ["ENCRYPTED_PATH"])
+          source = Path(os.environ["EXPORT_OUTPUT"])
+          destination = Path(os.environ["ENCRYPTED_OUTPUT"])
           recipient = x25519.X25519PublicKey.from_public_bytes(
               base64.b64decode(os.environ["EXPORT_RECIPIENT_PUBLIC_KEY"])
           )
           ephemeral = x25519.X25519PrivateKey.generate()
-          shared = ephemeral.exchange(recipient)
           key = HKDF(
               algorithm=hashes.SHA256(),
               length=32,
               salt=None,
               info=b"octagon-v1-v2-import",
-          ).derive(shared)
+          ).derive(ephemeral.exchange(recipient))
           nonce = os.urandom(12)
           aad = b"octagon-v1-export-v1"
           ciphertext = AESGCM(key).encrypt(nonce, source.read_bytes(), aad)
-          envelope = {
+          destination.write_text(json.dumps({
               "version": 1,
               "algorithm": "X25519-HKDF-SHA256-AES256GCM",
               "ephemeralPublicKey": base64.b64encode(
@@ -150,21 +146,26 @@ jobs:
               "nonce": base64.b64encode(nonce).decode(),
               "aad": base64.b64encode(aad).decode(),
               "ciphertext": base64.b64encode(ciphertext).decode(),
-          }
-          destination.write_text(json.dumps(envelope) + "\n", encoding="utf-8")
+          }) + "\n", encoding="utf-8")
           source.unlink(missing_ok=True)
           PY
-          test -s "$ENCRYPTED_PATH"
+          test -s "$ENCRYPTED_OUTPUT"
+          chmod 600 "$ENCRYPTED_OUTPUT"
 
       - name: Upload one-day encrypted handoff
         if: steps.build.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
-          name: octagon-v1-export-${{ github.sha }}
+          name: octagon-v1-export-encrypted
           path: /tmp/octagon-v1-export.encrypted.json
           retention-days: 1
           if-no-files-found: error
           compression-level: 0
+
+      - name: Remove temporary export files
+        if: always()
+        shell: bash
+        run: rm -f "$EXPORT_OUTPUT" "$ENCRYPTED_OUTPUT" /tmp/export-stdout.txt /tmp/export-stderr.txt
 
       - name: Record export boundary
         if: steps.build.outcome == 'success'
@@ -173,6 +174,7 @@ jobs:
           {
             echo "### Encrypted V1 export prepared"
             echo "- Exact source SHA: \`${GITHUB_SHA}\`"
+            echo "- Stable artifact: \`octagon-v1-export-encrypted\`"
             echo "- Only completed events before \`${EXPORT_CUTOFF}\` were eligible"
             echo "- The July 25 unfinished event was excluded"
             echo "- Draws, no contests, cancelled fights, auth tokens, PIN data, and room secrets were excluded"
