@@ -38,6 +38,7 @@ jobs:
       FIRST_REPORT: /tmp/octagon-v1-import-first.json
       SECOND_REPORT: /tmp/octagon-v1-import-second.json
       COMBINED_REPORT: /tmp/octagon-v1-v2-reconciliation.json
+      DIAGNOSTIC_LOG: /tmp/octagon-v1-v2-import-diagnostic.txt
 
     steps:
       - name: Check out exact isolated V1 export head
@@ -82,12 +83,23 @@ jobs:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
           set -euo pipefail
-          node scripts/import-v1-history-into-v2.mjs
+          node scripts/import-v1-history-into-v2.mjs 2>&1 | tee "$DIAGNOSTIC_LOG"
           test -s "$FIRST_REPORT"
           test -s "$SECOND_REPORT"
           test -s "$COMBINED_REPORT"
 
+      - name: Upload one-day sanitized discovery diagnostic
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: octagon-v1-v2-import-diagnostic-${{ github.sha }}
+          path: /tmp/octagon-v1-v2-import-diagnostic.txt
+          retention-days: 1
+          if-no-files-found: warn
+          compression-level: 0
+
       - name: Upload one-day sanitized reconciliation report
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: octagon-v1-v2-reconciliation-${{ github.sha }}
@@ -99,7 +111,7 @@ jobs:
       - name: Remove plaintext and temporary runner files
         if: always()
         shell: bash
-        run: rm -f "$EXPORT_OUTPUT" "$FIRST_REPORT" "$SECOND_REPORT" "$COMBINED_REPORT" /tmp/v1-export-summary.json
+        run: rm -f "$EXPORT_OUTPUT" "$FIRST_REPORT" "$SECOND_REPORT" "$COMBINED_REPORT" "$DIAGNOSTIC_LOG" /tmp/v1-export-summary.json
 
       - name: Record one-time migration boundary
         if: success()
