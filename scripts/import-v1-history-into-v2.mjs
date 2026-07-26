@@ -44,10 +44,9 @@ function serviceKeyFrom(keys) {
   return String(row?.api_key || row?.key || "").trim();
 }
 
-function sameNames(rows) {
-  if (!Array.isArray(rows)) return false;
-  const names = rows.map((row) => String(row?.normalized_name || "").trim().toUpperCase()).sort();
-  return JSON.stringify(names) === JSON.stringify(expectedNames);
+function normalizedNames(rows) {
+  if (!Array.isArray(rows)) return [];
+  return rows.map((row) => String(row?.normalized_name || "").trim().toUpperCase()).filter(Boolean).sort();
 }
 
 const payloadText = await readFile(payloadPath, "utf8");
@@ -79,6 +78,7 @@ const diagnostics = {
   serviceCredentialProjects: 0,
   canonicalProfileMatches: 0,
   rpcSchemaMatches: 0,
+  profileNameSets: [],
 };
 
 for (const project of projects) {
@@ -99,7 +99,6 @@ for (const project of projects) {
   const serviceKey = serviceKeyFrom(keys);
   if (!serviceKey) continue;
   diagnostics.serviceCredentialProjects += 1;
-  console.log(`::add-mask::${serviceKey}`);
 
   const dataHeaders = {
     apikey: serviceKey,
@@ -113,9 +112,12 @@ for (const project of projects) {
       `read canonical profiles from ${projectRef}`,
     );
   } catch {
+    diagnostics.profileNameSets.push({ projectRef, names: [], readable: false });
     continue;
   }
-  const profileMatch = sameNames(profileRows);
+  const names = normalizedNames(profileRows);
+  diagnostics.profileNameSets.push({ projectRef, names, readable: true });
+  const profileMatch = JSON.stringify(names) === JSON.stringify(expectedNames);
   if (!profileMatch) continue;
   diagnostics.canonicalProfileMatches += 1;
 
