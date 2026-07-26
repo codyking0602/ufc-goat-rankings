@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { createHash, randomBytes, randomUUID } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
 
 const managementToken = process.env.SUPABASE_ACCESS_TOKEN?.trim();
@@ -20,7 +20,9 @@ for (const [name, value] of Object.entries({
 }
 
 const expectedNames = ["BROCK", "CODY", "RHONDA", "SHANE", "TONY", "TYLER"];
-const rpcPath = "/rpc/import_v1_history_atomic_reconciled";
+const expectedNameSet = new Set(expectedNames);
+const importRpcPath = "/rpc/import_v1_history_atomic_reconciled";
+const registerRpcPath = "/rpc/register_unclaimed_pin_profile";
 
 async function fetchJson(url, options = {}, label = "request") {
   const response = await fetch(url, options);
@@ -47,6 +49,10 @@ function serviceKeyFrom(keys) {
 function normalizedNames(rows) {
   if (!Array.isArray(rows)) return [];
   return rows.map((row) => String(row?.normalized_name || "").trim().toUpperCase()).filter(Boolean).sort();
+}
+
+function isCanonicalSubset(names) {
+  return names.includes("CODY") && names.every((name) => expectedNameSet.has(name));
 }
 
 const payloadText = await readFile(payloadPath, "utf8");
@@ -76,8 +82,9 @@ const diagnostics = {
   accessibleProjects: projects.length,
   nonV1Projects: 0,
   serviceCredentialProjects: 0,
-  canonicalProfileMatches: 0,
-  rpcSchemaMatches: 0,
+  canonicalProfileSubsets: 0,
+  importRpcSchemaMatches: 0,
+  registrationRpcSchemaMatches: 0,
   profileNameSets: [],
 };
 
@@ -117,54 +124,170 @@ for (const project of projects) {
   }
   const names = normalizedNames(profileRows);
   diagnostics.profileNameSets.push({ projectRef, names, readable: true });
-  const profileMatch = JSON.stringify(names) === JSON.stringify(expectedNames);
-  if (!profileMatch) continue;
-  diagnostics.canonicalProfileMatches += 1;
+  if (!isCanonicalSubset(names)) continue;
+  diagnostics.canonicalProfileSubsets += 1;
 
-  let rpcVisible = false;
+  let importRpcVisible = false;
+  let registrationRpcVisible = false;
   try {
     const schema = await fetchJson(
       `https://${projectRef}.supabase.co/rest/v1/`,
       { headers: { ...dataHeaders, accept: "application/openapi+json" } },
       `read PostgREST schema from ${projectRef}`,
     );
-    rpcVisible = Boolean(schema?.paths?.[rpcPath]);
+    importRpcVisible = Boolean(schema?.paths?.[importRpcPath]);
+    registrationRpcVisible = Boolean(schema?.paths?.[registerRpcPath]);
   } catch {
-    rpcVisible = false;
+    importRpcVisible = false;
+    registrationRpcVisible = false;
   }
-  if (rpcVisible) diagnostics.rpcSchemaMatches += 1;
+  if (importRpcVisible) diagnostics.importRpcSchemaMatches += 1;
+  if (registrationRpcVisible) diagnostics.registrationRpcSchemaMatches += 1;
 
-  candidates.push({ projectRef, serviceKey, rpcVisible });
+  candidates.push({
+    projectRef,
+    serviceKey,
+    names,
+    importRpcVisible,
+    registrationRpcVisible,
+  });
 }
 
 console.log(JSON.stringify({ targetDiscovery: diagnostics }));
 if (candidates.length !== 1) {
-  throw new Error(`Expected exactly one canonical six-profile V2 target; found ${candidates.length}.`);
+  throw new Error(`Expected exactly one canonical V2 target containing Cody and only approved member names; found ${candidates.length}.`);
 }
 
 const target = candidates[0];
-if (!target.rpcVisible) {
-  console.log(JSON.stringify({ warning: "RPC absent from cached OpenAPI schema; attempting exact endpoint once." }));
+if (!target.importRpcVisible || !target.registrationRpcVisible) {
+  console.log(JSON.stringify({
+    warning: "One or more RPCs are absent from the cached OpenAPI schema; exact service-role endpoints will be attempted once.",
+    importRpcVisible: target.importRpcVisible,
+    registrationRpcVisible: target.registrationRpcVisible,
+  }));
 }
+
 const dataHeaders = {
   apikey: target.serviceKey,
   authorization: `Bearer ${target.serviceKey}`,
   "content-type": "application/json",
 };
-const requestBody = JSON.stringify({ p_payload: payload });
+const authAdminHeaders = {
+  apikey: target.serviceKey,
+  authorization: `Bearer ${target.serviceKey}`,
+  "content-type": "application/json",
+};
 
+const createdUnclaimedUsers = [];
+let firstImportSucceeded = false;
+
+async function deleteCreatedUser(userId) {
+  const response = await fetch(
+    `https://${target.projectRef}.supabase.co/auth/v1/admin/users/${userId}`,
+    { method: "DELETE", headers: authAdminHeaders },
+  );
+  if (!response.ok && response.status !== 404) {
+    const detail = (await response.text()).slice(0, 300);
+    throw new Error(`cleanup of unclaimed Auth user failed (${response.status}): ${detail}`);
+  }
+}
+
+async function cleanupBeforeFirstImport() {
+  const errors = [];
+  for (const user of [...createdUnclaimedUsers].reverse()) {
+    try {
+      await deleteCreatedUser(user.id);
+    } catch (error) {
+      errors.push(String(error?.message || error));
+    }
+  }
+  if (errors.length) {
+    throw new Error(`Provisioning failed before history import and cleanup was incomplete: ${errors.join("; ")}`);
+  }
+}
+
+async function provisionMissingProfiles() {
+  const missingNames = expectedNames.filter((name) => !target.names.includes(name));
+  for (const name of missingNames) {
+    const email = `historical-${name.toLowerCase()}-${randomUUID()}@login.octagon-hq.app`;
+    const password = `${randomBytes(32).toString("hex")}!Aa1`;
+    const created = await fetchJson(
+      `https://${target.projectRef}.supabase.co/auth/v1/admin/users`,
+      {
+        method: "POST",
+        headers: authAdminHeaders,
+        body: JSON.stringify({
+          email,
+          password,
+          email_confirm: true,
+          user_metadata: {
+            display_name: name,
+            historical_unclaimed: true,
+          },
+        }),
+      },
+      `create unclaimed Auth identity for ${name}`,
+    );
+    const userId = String(created?.id || created?.user?.id || "").trim();
+    if (!userId) throw new Error(`Auth service did not return a UUID for ${name}.`);
+    createdUnclaimedUsers.push({ id: userId, name });
+
+    await fetchJson(
+      `https://${target.projectRef}.supabase.co/rest/v1${registerRpcPath}`,
+      {
+        method: "POST",
+        headers: dataHeaders,
+        body: JSON.stringify({
+          p_profile_id: userId,
+          p_display_name: name,
+          p_initials: name.slice(0, 1),
+        }),
+      },
+      `register unclaimed canonical profile for ${name}`,
+    );
+  }
+
+  const profileRows = await fetchJson(
+    `https://${target.projectRef}.supabase.co/rest/v1/profiles?select=normalized_name&normalized_name=in.(BROCK,CODY,RHONDA,SHANE,TONY,TYLER)&order=normalized_name.asc`,
+    { headers: dataHeaders },
+    "verify provisioned canonical profiles",
+  );
+  const names = normalizedNames(profileRows);
+  if (JSON.stringify(names) !== JSON.stringify(expectedNames)) {
+    throw new Error(`Canonical profile provisioning was incomplete: ${JSON.stringify(names)}.`);
+  }
+  return missingNames;
+}
+
+const requestBody = JSON.stringify({ p_payload: payload });
 async function runImport(label) {
   return fetchJson(
-    `https://${target.projectRef}.supabase.co/rest/v1${rpcPath}`,
+    `https://${target.projectRef}.supabase.co/rest/v1${importRpcPath}`,
     { method: "POST", headers: dataHeaders, body: requestBody },
     label,
   );
 }
 
-const first = await runImport("first atomic import");
-await writeFile(firstReportPath, `${JSON.stringify(first, null, 2)}\n`, { mode: 0o600 });
-const second = await runImport("second atomic import");
-await writeFile(secondReportPath, `${JSON.stringify(second, null, 2)}\n`, { mode: 0o600 });
+let provisionedNames = [];
+let first;
+let second;
+try {
+  provisionedNames = await provisionMissingProfiles();
+  first = await runImport("first atomic import");
+  firstImportSucceeded = true;
+  await writeFile(firstReportPath, `${JSON.stringify(first, null, 2)}\n`, { mode: 0o600 });
+  second = await runImport("second atomic import");
+  await writeFile(secondReportPath, `${JSON.stringify(second, null, 2)}\n`, { mode: 0o600 });
+} catch (error) {
+  if (!firstImportSucceeded) {
+    try {
+      await cleanupBeforeFirstImport();
+    } catch (cleanupError) {
+      throw new AggregateError([error, cleanupError], "Provisioning/import failed before the first atomic commit.");
+    }
+  }
+  throw error;
+}
 
 for (const [label, report] of [["first", first], ["second", second]]) {
   if (!report?.changes || !report?.profiles) throw new Error(`${label} report is missing reconciliation data.`);
@@ -199,6 +322,7 @@ const combined = {
   v2TargetRef: target.projectRef,
   payloadChecksum,
   targetDiscovery: diagnostics,
+  provisionedUnclaimedProfiles: provisionedNames,
   firstRun: first,
   secondRun: second,
 };
@@ -207,6 +331,7 @@ await writeFile(combinedReportPath, `${JSON.stringify(combined, null, 2)}\n`, { 
 const cody = first.profiles.CODY || {};
 console.log(JSON.stringify({
   status: "reconciled",
+  provisionedUnclaimedProfiles: provisionedNames,
   codyRecord: {
     wins: cody.historicalPicksCorrect || 0,
     losses: cody.historicalPicksIncorrect || 0,
