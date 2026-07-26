@@ -1,0 +1,141 @@
+name: Export V1 data for V2
+
+on:
+  push:
+    branches:
+      - agent/v1-data-export-for-v2
+    paths:
+      - .github/workflows/export-v1-for-v2.yml
+      - scripts/export-v1-for-v2.mjs
+
+permissions:
+  contents: read
+
+concurrency:
+  group: octagon-v1-data-export-for-v2
+  cancel-in-progress: true
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      V1_SUPABASE_URL: https://hdkjwezaswhisxupxydc.supabase.co
+      EXPORT_CUTOFF: 2026-07-25T00:00:00Z
+      EXPORT_RECIPIENT_PUBLIC_KEY: cj2zkK5xC6Yf2WIR8PZQR6jyGy1jQeRORTe/itqOPmw=
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+      SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+
+    steps:
+      - name: Check out isolated export branch
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+          show-progress: false
+
+      - name: Resolve V1 service credential without printing it
+        id: credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          project_ref="${SUPABASE_PROJECT_REF:-${SUPABASE_PROJECT_ID:-hdkjwezaswhisxupxydc}}"
+          if [ -z "${SUPABASE_ACCESS_TOKEN:-}" ]; then
+            echo "::error title=Missing V1 export credential::SUPABASE_ACCESS_TOKEN is not configured in the V1 repository."
+            exit 1
+          fi
+          response=$(curl --fail-with-body --silent --show-error \
+            -H "Authorization: Bearer ${SUPABASE_ACCESS_TOKEN}" \
+            "https://api.supabase.com/v1/projects/${project_ref}/api-keys")
+          service_key=$(printf '%s' "$response" | jq -r '[.[] | select(.name == "service_role" or .name == "secret") | (.api_key // .key // empty)] | map(select(length > 0)) | first // empty')
+          if [ -z "$service_key" ]; then
+            echo "::error title=V1 service key unavailable::The Supabase management response did not include a service credential."
+            exit 1
+          fi
+          echo "::add-mask::$service_key"
+          printf 'V1_SERVICE_ROLE_KEY=%s\n' "$service_key" >> "$GITHUB_ENV"
+
+      - name: Build sanitized historical export
+        shell: bash
+        env:
+          EXPORT_OUTPUT: /tmp/octagon-v1-export.json
+        run: |
+          set -euo pipefail
+          node scripts/export-v1-for-v2.mjs
+          test -s "$EXPORT_OUTPUT"
+          chmod 600 "$EXPORT_OUTPUT"
+
+      - name: Encrypt export before it leaves the runner
+        shell: bash
+        env:
+          PLAINTEXT_PATH: /tmp/octagon-v1-export.json
+          ENCRYPTED_PATH: /tmp/octagon-v1-export.encrypted.json
+        run: |
+          set -euo pipefail
+          python -m pip install --quiet cryptography
+          python - <<'PY'
+          import base64
+          import json
+          import os
+          from pathlib import Path
+          from cryptography.hazmat.primitives import hashes, serialization
+          from cryptography.hazmat.primitives.asymmetric import x25519
+          from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+          from cryptography.hazmat.primitives.kdf.hkdf import HKDF
+
+          source = Path(os.environ["PLAINTEXT_PATH"])
+          destination = Path(os.environ["ENCRYPTED_PATH"])
+          recipient = x25519.X25519PublicKey.from_public_bytes(
+              base64.b64decode(os.environ["EXPORT_RECIPIENT_PUBLIC_KEY"])
+          )
+          ephemeral = x25519.X25519PrivateKey.generate()
+          shared = ephemeral.exchange(recipient)
+          key = HKDF(
+              algorithm=hashes.SHA256(),
+              length=32,
+              salt=None,
+              info=b"octagon-v1-v2-import",
+          ).derive(shared)
+          nonce = os.urandom(12)
+          aad = b"octagon-v1-export-v1"
+          ciphertext = AESGCM(key).encrypt(nonce, source.read_bytes(), aad)
+          envelope = {
+              "version": 1,
+              "algorithm": "X25519-HKDF-SHA256-AES256GCM",
+              "ephemeralPublicKey": base64.b64encode(
+                  ephemeral.public_key().public_bytes(
+                      serialization.Encoding.Raw,
+                      serialization.PublicFormat.Raw,
+                  )
+              ).decode(),
+              "nonce": base64.b64encode(nonce).decode(),
+              "aad": base64.b64encode(aad).decode(),
+              "ciphertext": base64.b64encode(ciphertext).decode(),
+          }
+          destination.write_text(json.dumps(envelope) + "\n", encoding="utf-8")
+          source.unlink(missing_ok=True)
+          PY
+          test -s "$ENCRYPTED_PATH"
+
+      - name: Upload one-day encrypted handoff
+        uses: actions/upload-artifact@v4
+        with:
+          name: octagon-v1-export-${{ github.sha }}
+          path: /tmp/octagon-v1-export.encrypted.json
+          retention-days: 1
+          if-no-files-found: error
+          compression-level: 0
+
+      - name: Record export boundary
+        shell: bash
+        run: |
+          {
+            echo "### Encrypted V1 export prepared"
+            echo "- Exact source SHA: \`${GITHUB_SHA}\`"
+            echo "- Only completed events before \`${EXPORT_CUTOFF}\` were eligible"
+            echo "- The July 25 unfinished event was excluded"
+            echo "- Draws, no contests, cancelled fights, auth tokens, PIN data, and room secrets were excluded"
+            echo "- Plaintext was deleted before artifact upload"
+            echo "- Artifact retention: 1 day"
+          } >> "$GITHUB_STEP_SUMMARY"
