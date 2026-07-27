@@ -7,6 +7,13 @@ on:
     paths:
       - .github/workflows/recover-ankalaev-guskov-picks.yml
       - scripts/recover-ankalaev-guskov-picks.mjs
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+    paths:
+      - .github/workflows/recover-ankalaev-guskov-picks.yml
+      - scripts/recover-ankalaev-guskov-picks.mjs
 
 permissions:
   contents: read
@@ -17,6 +24,7 @@ concurrency:
 
 jobs:
   recover:
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
