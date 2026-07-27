@@ -60,7 +60,7 @@ async function source(){
 async function target(){
   const [e,b,p,pk,lk]=await Promise.all([
     get(v2,h2,'pick_events',{select:'event_id,name,subtitle,status,starts_at,locks_at,season,completed_at',event_id:`eq.${dstEvent}`}),
-    get(v2,h2,'pick_bouts',{select:'event_id,bout_id,position,weight_class,red_fighter_slug,red_fighter_name,blue_fighter_slug,blue_fighter_name,result_status,winner_fighter_slug',event_id:`eq.${dstEvent}`,order:'position.asc'}),
+    get(v2,h2,'pick_bouts',{select:'event_id,bout_id,position,weight_class,red_fighter_slug,red_fighter_name,blue_fighter_slug,blue_fighter_name,result_status,winner_fighter_slug,red_american_odds,blue_american_odds',event_id:`eq.${dstEvent}`,order:'position.asc'}),
     get(v2,h2,'profiles',{select:'id,display_name,normalized_name',normalized_name:'in.(CODY,SHANE)',order:'normalized_name.asc'}),
     get(v2,h2,'profile_event_picks',{select:'profile_id,event_id,bout_id,fighter_slug,picked_at,updated_at',event_id:`eq.${dstEvent}`,order:'profile_id.asc,bout_id.asc'}),
     get(v2,h2,'profile_event_underdog_locks',{select:'profile_id,event_id,bout_id,fighter_slug,selected_at,frozen_american_odds,frozen_at',event_id:`eq.${dstEvent}`,order:'profile_id.asc'})]);
@@ -100,8 +100,10 @@ function expected(src,t){
   const pm=new Map(t.profiles.map(x=>[norm(x.normalized_name),x])), bm=new Map(t.bouts.map(x=>[pair(x.red_fighter_name,x.blue_fighter_name),x]));
   const picks=src.picks.map(x=>{const p=pm.get(x.member),b=bm.get(x.pair);if(!p||!b)throw new Error(`map failed ${x.member}/${x.pair}`);const fs=x.fkey===slug(b.red_fighter_name)?b.red_fighter_slug:x.fkey===slug(b.blue_fighter_name)?b.blue_fighter_slug:null;if(!fs)throw new Error(`fighter map failed ${x.fighter}`);return{profile_id:p.id,event_id:dstEvent,bout_id:b.bout_id,fighter_slug:fs,picked_at:x.at,updated_at:x.at,member:x.member,fighter:fs===b.red_fighter_slug?b.red_fighter_name:b.blue_fighter_name,lock:x.lock,odds:x.odds}});
   if(picks.length!==12||new Set(picks.map(x=>`${x.profile_id}|${x.bout_id}`)).size!==12)throw new Error('expected 12 picks');
-  const locks=picks.filter(x=>x.lock).map(x=>({profile_id:x.profile_id,event_id:dstEvent,bout_id:x.bout_id,fighter_slug:x.fighter_slug,selected_at:x.picked_at,frozen_american_odds:x.odds,frozen_at:t.event.locks_at,member:x.member,fighter:x.fighter}));
-  return{picks,locks};
+  const current=new Map(t.picks.map(x=>[`${x.profile_id}|${x.bout_id}`,x]));
+  const skippedSourceLocks=picks.filter(x=>x.lock&&current.has(`${x.profile_id}|${x.bout_id}`)&&current.get(`${x.profile_id}|${x.bout_id}`).fighter_slug!==x.fighter_slug).map(x=>({member:x.member,boutId:x.bout_id,olderV1:x.fighter,reason:'final V2 pick differs'}));
+  const locks=picks.filter(x=>x.lock&&(!current.has(`${x.profile_id}|${x.bout_id}`)||current.get(`${x.profile_id}|${x.bout_id}`).fighter_slug===x.fighter_slug)).map(x=>({profile_id:x.profile_id,event_id:dstEvent,bout_id:x.bout_id,fighter_slug:x.fighter_slug,selected_at:x.picked_at,frozen_american_odds:x.odds,frozen_at:t.event.locks_at,member:x.member,fighter:x.fighter}));
+  return{picks,locks,skippedSourceLocks};
 }
 
 function diff(t,e){
@@ -123,7 +125,7 @@ function diff(t,e){
   const lockConflicts=[];
   for(const x of t.locks){
     const currentPick=cp.get(`${x.profile_id}|${x.bout_id}`),sourceLock=sourceLocks.get(x.profile_id),b=bouts.get(x.bout_id);
-    if(!currentPick||currentPick.fighter_slug!==x.fighter_slug||!b||!Number.isInteger(Number(x.frozen_american_odds))||Number(x.frozen_american_odds)<100)throw new Error(`invalid V2 lock ${x.profile_id}`);
+    if(!currentPick||currentPick.fighter_slug!==x.fighter_slug||!b||!Number.isInteger(Number(x.frozen_american_odds))||Number(x.frozen_american_odds)<100)throw new Error(`invalid V2 lock after normalization ${x.profile_id}`);
     const currentName=x.fighter_slug===b.red_fighter_slug?b.red_fighter_name:b.blue_fighter_name;
     if(!sourceLock||sourceLock.bout_id!==x.bout_id||sourceLock.fighter_slug!==x.fighter_slug||Number(sourceLock.frozen_american_odds)!==Number(x.frozen_american_odds)){
       const member=e.picks.find(p=>p.profile_id===x.profile_id)?.member||x.profile_id;
@@ -143,7 +145,7 @@ async function rows(src,label){
   return{
     insertedPicks:d.picks.length,insertedLocks:d.locks.length,pickCount:a.picks.length,lockCount:a.locks.length,
     recoveredFromV1:d.picks.map(x=>({member:x.member,boutId:x.bout_id,fighter:x.fighter})),
-    preservedV2:r.preserved,pickConflicts:r.pickConflicts,lockConflicts:r.lockConflicts,
+    preservedV2:r.preserved,pickConflicts:r.pickConflicts,lockConflicts:r.lockConflicts,skippedSourceLocks:e.skippedSourceLocks,
     finalPicks:a.picks.map(x=>{const b=a.bouts.find(y=>y.bout_id===x.bout_id),p=a.profiles.find(y=>y.id===x.profile_id);return{member:norm(p?.normalized_name),boutId:x.bout_id,fighter:x.fighter_slug===b?.red_fighter_slug?b.red_fighter_name:b?.blue_fighter_name}}).sort((x,y)=>x.member.localeCompare(y.member)||x.boutId.localeCompare(y.boutId)),
     finalLocks:a.locks.map(x=>{const b=a.bouts.find(y=>y.bout_id===x.bout_id),p=a.profiles.find(y=>y.id===x.profile_id);return{member:norm(p?.normalized_name),boutId:x.bout_id,fighter:x.fighter_slug===b?.red_fighter_slug?b.red_fighter_name:b?.blue_fighter_name,odds:Number(x.frozen_american_odds)}})
   };
