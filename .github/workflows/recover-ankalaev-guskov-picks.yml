@@ -7,6 +7,7 @@ on:
     paths:
       - .github/workflows/recover-ankalaev-guskov-picks.yml
       - scripts/recover-ankalaev-guskov-picks.mjs
+      - scripts/freeze-stranded-ankalaev-guskov-locks.mjs
   pull_request:
     branches:
       - main
@@ -14,6 +15,7 @@ on:
     paths:
       - .github/workflows/recover-ankalaev-guskov-picks.yml
       - scripts/recover-ankalaev-guskov-picks.mjs
+      - scripts/freeze-stranded-ankalaev-guskov-locks.mjs
 
 permissions:
   contents: read
@@ -34,6 +36,7 @@ jobs:
       V2_SUPABASE_URL: https://rvbspcjvebgwqzssayts.supabase.co
       RECOVERY_REPORT: /tmp/ankalaev-guskov-pick-recovery.json
       DIAGNOSTIC_LOG: /tmp/ankalaev-guskov-pick-recovery.log
+      LOCK_LOG: /tmp/ankalaev-guskov-lock-recovery.log
 
     steps:
       - name: Check out exact operational branch
@@ -71,6 +74,12 @@ jobs:
           resolve_key "$V1_PROJECT_REF" V1_SERVICE_ROLE_KEY
           resolve_key "$V2_PROJECT_REF" V2_SERVICE_ROLE_KEY
 
+      - name: Freeze only stranded matching V2 locks
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/freeze-stranded-ankalaev-guskov-locks.mjs 2>&1 | tee "$LOCK_LOG"
+
       - name: Audit and recover exact picks
         shell: bash
         run: |
@@ -86,6 +95,7 @@ jobs:
           path: |
             /tmp/ankalaev-guskov-pick-recovery.json
             /tmp/ankalaev-guskov-pick-recovery.log
+            /tmp/ankalaev-guskov-lock-recovery.log
           retention-days: 1
           if-no-files-found: warn
           compression-level: 0
@@ -100,8 +110,9 @@ jobs:
             echo "- Source: canonical six-member V1 production group"
             echo "- Entrants required: Cody and Shane only"
             echo "- Six selections required for each entrant"
-            echo "- Matching existing V2 rows preserved"
-            echo "- Only missing selections and proven Underdog Locks inserted"
+            echo "- Existing V2 selections remained authoritative"
+            echo "- V1 filled only missing selections and Shane's sheet"
+            echo "- Stranded matching V2 lock odds were frozen from stored positive odds"
             echo "- Official results and event status were not changed"
             echo "- Second pass produced zero mutations"
             echo "- Unrelated V2 data hash remained unchanged"
@@ -110,4 +121,4 @@ jobs:
       - name: Remove temporary runner files
         if: always()
         shell: bash
-        run: rm -f "$RECOVERY_REPORT" "$DIAGNOSTIC_LOG"
+        run: rm -f "$RECOVERY_REPORT" "$DIAGNOSTIC_LOG" "$LOCK_LOG"
