@@ -19,10 +19,10 @@ async function rows(table,params,label=table){
   if(!Array.isArray(body))throw new Error(`${label} did not return rows.`);
   return body;
 }
-async function patch(table,params,body,label){
+async function mutate(method,table,params,body,label){
   const url=new URL(`${base}/rest/v1/${table}`);
   for(const [name,value] of Object.entries(params))url.searchParams.set(name,String(value));
-  return request(url,{method:'PATCH',headers:{...headers,'content-type':'application/json',Prefer:'return=representation'},body:JSON.stringify(body)},label);
+  return request(url,{method,headers:{...headers,'content-type':'application/json',Prefer:'return=representation'},body:body===undefined?undefined:JSON.stringify(body)},label);
 }
 
 const [events,bouts,picks,locks,profiles]=await Promise.all([
@@ -39,20 +39,27 @@ if(allowed.size!==2)throw new Error('Cody and Shane profiles were not resolved e
 const pickByKey=new Map(picks.map(p=>[`${p.profile_id}|${p.bout_id}`,p]));
 const boutById=new Map(bouts.map(b=>[b.bout_id,b]));
 const repaired=[];
+const removedStale=[];
 for(const lock of locks){
   const member=allowed.get(lock.profile_id);
   if(!member)throw new Error('Unexpected member lock exists on the target event.');
   const pick=pickByKey.get(`${lock.profile_id}|${lock.bout_id}`);
   const bout=boutById.get(lock.bout_id);
-  if(!pick||pick.fighter_slug!==lock.fighter_slug||!bout)throw new Error(`Stranded ${member} lock does not match the preserved V2 pick.`);
+  if(!bout)throw new Error(`Stranded ${member} lock references a missing bout.`);
+  if(!pick||pick.fighter_slug!==lock.fighter_slug){
+    await mutate('DELETE','profile_event_underdog_locks',{profile_id:`eq.${lock.profile_id}`,event_id:`eq.${eventId}`},undefined,`remove stale ${member} lock`);
+    removedStale.push({member,boutId:lock.bout_id,fighterSlug:lock.fighter_slug});
+    continue;
+  }
   if(Number.isInteger(Number(lock.frozen_american_odds))&&Number(lock.frozen_american_odds)>=100&&lock.frozen_at)continue;
   const odds=lock.fighter_slug===bout.red_fighter_slug?Number(bout.red_american_odds):lock.fighter_slug===bout.blue_fighter_slug?Number(bout.blue_american_odds):NaN;
   if(!Number.isInteger(odds)||odds<100)throw new Error(`Stranded ${member} lock has no recoverable positive stored odds.`);
-  await patch('profile_event_underdog_locks',{profile_id:`eq.${lock.profile_id}`,event_id:`eq.${eventId}`},{frozen_american_odds:odds,frozen_at:events[0].locks_at},`freeze ${member} lock`);
+  await mutate('PATCH','profile_event_underdog_locks',{profile_id:`eq.${lock.profile_id}`,event_id:`eq.${eventId}`},{frozen_american_odds:odds,frozen_at:events[0].locks_at},`freeze ${member} lock`);
   repaired.push({member,boutId:lock.bout_id,fighterSlug:lock.fighter_slug,odds});
 }
 const verified=await rows('profile_event_underdog_locks',{select:'profile_id,bout_id,fighter_slug,frozen_american_odds,frozen_at',event_id:`eq.${eventId}`},'verify target locks');
 for(const lock of verified){
-  if(!Number.isInteger(Number(lock.frozen_american_odds))||Number(lock.frozen_american_odds)<100||!lock.frozen_at)throw new Error('A target lock remains unfrozen.');
+  const pick=pickByKey.get(`${lock.profile_id}|${lock.bout_id}`);
+  if(!pick||pick.fighter_slug!==lock.fighter_slug||!Number.isInteger(Number(lock.frozen_american_odds))||Number(lock.frozen_american_odds)<100||!lock.frozen_at)throw new Error('A target lock remains invalid.');
 }
-console.log(JSON.stringify({status:'verified',repaired,lockCount:verified.length}));
+console.log(JSON.stringify({status:'verified',repaired,removedStale,lockCount:verified.length}));
