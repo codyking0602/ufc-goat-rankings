@@ -1,9 +1,11 @@
-# Emergency recovery: deploy the last physically known-good PR #100 snapshot
+# Exact branch deployment for the Rankings nickname and thumbnail presentation release
 name: Deploy UFC GOAT Rankings
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - rankings-explicit-nicknames-black-thumbs
     paths:
       - 'index.html'
       - '*.html'
@@ -29,10 +31,10 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout frozen working snapshot
+      - name: Checkout exact Rankings presentation release
         uses: actions/checkout@v4
         with:
-          ref: 8136c728f5794229273b8a2c5ce9f291eeaf30db
+          ref: 123e7fdb86611748bcf66e9436857140e32e184f
           fetch-depth: 1
 
       - name: Prepare site
