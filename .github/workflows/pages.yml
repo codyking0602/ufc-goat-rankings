@@ -1,4 +1,4 @@
-# Emergency recovery: deploy the last physically known-good PR #100 snapshot
+# Canonical frontend deployment from production main
 name: Deploy UFC GOAT Rankings
 
 on:
@@ -29,10 +29,9 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout frozen working snapshot
+      - name: Checkout production main
         uses: actions/checkout@v4
         with:
-          ref: 8136c728f5794229273b8a2c5ce9f291eeaf30db
           fetch-depth: 1
 
       - name: Prepare site
