@@ -106,3 +106,15 @@ jobs:
       - name: Verify mobile top-tab layout
         working-directory: repo
         run: node scripts/test-picks-mobile-top-tabs.mjs
+
+      - name: Archive mobile shell diagnostic
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: picks-mobile-shell-diagnostic
+          path: |
+            /tmp/picks-mobile-nav-diagnostic.json
+            repo/assets/css/native-app-shell-stability.css
+            repo/scripts/test-production-palette-sweep.mjs
+          if-no-files-found: warn
+          retention-days: 7
