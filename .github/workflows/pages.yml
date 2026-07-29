@@ -37,6 +37,11 @@ jobs:
       - name: Refresh production cache keys
         run: node scripts/sync-production-cache-keys.mjs
 
+      - name: Verify current nickname asset key
+        run: |
+          expected="$(sha256sum assets/js/card-nicknames.js | cut -c1-12)"
+          grep -F "assets/js/card-nicknames.js?v=${expected}" index.html
+
       - name: Prepare site
         run: |
           mkdir -p _site
