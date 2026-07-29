@@ -1,11 +1,9 @@
-# Exact branch deployment for the Rankings nickname and thumbnail presentation release
+# Canonical frontend deployment from production main
 name: Deploy UFC GOAT Rankings
 
 on:
   push:
-    branches:
-      - main
-      - rankings-explicit-nicknames-black-thumbs
+    branches: [main]
     paths:
       - 'index.html'
       - '*.html'
@@ -31,10 +29,9 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout exact Rankings presentation release
+      - name: Checkout production main
         uses: actions/checkout@v4
         with:
-          ref: 123e7fdb86611748bcf66e9436857140e32e184f
           fetch-depth: 1
 
       - name: Prepare site
