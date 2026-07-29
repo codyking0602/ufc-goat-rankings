@@ -34,6 +34,9 @@ jobs:
         with:
           fetch-depth: 1
 
+      - name: Refresh production cache keys
+        run: node scripts/sync-production-cache-keys.mjs
+
       - name: Prepare site
         run: |
           mkdir -p _site
