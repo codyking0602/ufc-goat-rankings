@@ -1,0 +1,25 @@
+{
+  "name": "UFC Rankings",
+  "short_name": "UFC Rankings",
+  "description": "UFC-only all-time fighter rankings with OVR ratings, profiles, divisions, and compare mode.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#eef3f8",
+  "theme_color": "#f97316",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "assets/app-icon.png?v=20260702c",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/app-icon-512.png?v=20260702c",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

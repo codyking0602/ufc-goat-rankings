@@ -1,17 +1,6 @@
-# Canonical frontend deployment from production main
 name: Deploy UFC GOAT Rankings
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'index.html'
-      - '*.html'
-      - 'assets/**'
-      - 'week-one/**'
-      - 'manifest.webmanifest'
-      - 'sw.js'
-      - '.github/workflows/pages.yml'
   workflow_dispatch:
 
 permissions:
@@ -30,18 +19,8 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout production main
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Refresh production cache keys
-        run: node scripts/sync-production-cache-keys.mjs
-
-      - name: Verify current nickname asset key
-        run: |
-          expected="$(sha256sum assets/js/card-nicknames.js | cut -c1-12)"
-          grep -F "assets/js/card-nicknames.js?v=${expected}" index.html
 
       - name: Prepare site
         run: |
