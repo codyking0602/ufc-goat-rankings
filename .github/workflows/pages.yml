@@ -8,6 +8,7 @@ on:
       - 'index.html'
       - '*.html'
       - 'assets/**'
+      - 'week-one/**'
       - 'manifest.webmanifest'
       - 'sw.js'
       - '.github/workflows/pages.yml'
